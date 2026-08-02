@@ -26,8 +26,8 @@ const TR = {
     keyTakeaway: "Key Takeaway", tryThinking: "Think About This",
     locked: "Complete previous lessons first",
     // Markets
-    marketsTitle: "Market Dashboard", currentState: "Current State",
-    nowDate: "February 2026", rateTitle: "Interest Rates",
+    marketsTitle: "Market Dashboard", currentState: "Illustrative Scenario",
+    scenarioNote: "For teaching purposes — not live market data", rateTitle: "Interest Rates",
     rateHow: "How Rate Changes Affect Assets",
     ratesRising: "Rates ↑", ratesFalling: "Rates ↓",
     yieldCurveLabel: "Yield Curve Shapes",
@@ -71,8 +71,8 @@ const TR = {
     nextLesson: "Siguiente", prevLesson: "Anterior", markComplete: "Completar",
     keyTakeaway: "Punto Clave", tryThinking: "Piensa en Esto",
     locked: "Completa las lecciones anteriores primero",
-    marketsTitle: "Panel de Mercados", currentState: "Estado Actual",
-    nowDate: "Febrero 2026", rateTitle: "Tasas de Interés",
+    marketsTitle: "Panel de Mercados", currentState: "Escenario Ilustrativo",
+    scenarioNote: "Con fines educativos — no son datos de mercado en vivo", rateTitle: "Tasas de Interés",
     rateHow: "Cómo los Cambios Afectan los Activos",
     ratesRising: "Tasas ↑", ratesFalling: "Tasas ↓",
     yieldCurveLabel: "Formas de la Curva",
@@ -115,8 +115,8 @@ const TR = {
     nextLesson: "다음 레슨", prevLesson: "이전", markComplete: "완료하기",
     keyTakeaway: "핵심 포인트", tryThinking: "생각해보세요",
     locked: "이전 레슨을 먼저 완료하세요",
-    marketsTitle: "시장 대시보드", currentState: "현재 상태",
-    nowDate: "2026년 2월", rateTitle: "금리",
+    marketsTitle: "시장 대시보드", currentState: "예시 시나리오",
+    scenarioNote: "교육 목적입니다 — 실시간 시장 데이터가 아닙니다", rateTitle: "금리",
     rateHow: "금리 변동이 자산에 미치는 영향",
     ratesRising: "금리 ↑", ratesFalling: "금리 ↓",
     yieldCurveLabel: "수익률 곡선 형태",
@@ -159,8 +159,8 @@ const TR = {
     nextLesson: "下一课", prevLesson: "上一课", markComplete: "标记完成",
     keyTakeaway: "关键要点", tryThinking: "想一想",
     locked: "请先完成之前的课程",
-    marketsTitle: "市场仪表板", currentState: "当前状态",
-    nowDate: "2026年2月", rateTitle: "利率",
+    marketsTitle: "市场仪表板", currentState: "示例场景",
+    scenarioNote: "仅供教学用途——非实时市场数据", rateTitle: "利率",
     rateHow: "利率变化如何影响资产",
     ratesRising: "利率 ↑", ratesFalling: "利率 ↓",
     yieldCurveLabel: "收益率曲线形态",
@@ -203,8 +203,8 @@ const TR = {
     nextLesson: "次のレッスン", prevLesson: "前へ", markComplete: "完了にする",
     keyTakeaway: "重要ポイント", tryThinking: "考えてみよう",
     locked: "前のレッスンを先に完了してください",
-    marketsTitle: "マーケットダッシュボード", currentState: "現在の状態",
-    nowDate: "2026年2月", rateTitle: "金利",
+    marketsTitle: "マーケットダッシュボード", currentState: "例示シナリオ",
+    scenarioNote: "教育目的の例です — リアルタイムの市場データではありません", rateTitle: "金利",
     rateHow: "金利変動が資産に与える影響",
     ratesRising: "金利 ↑", ratesFalling: "金利 ↓",
     yieldCurveLabel: "イールドカーブの形状",
@@ -676,11 +676,11 @@ const lessons = [
       ja: "一つの指標だけでは全体像は分からない。複数の指標を合わせて見よう。",
     },
     thinkAbout: {
-      en: "In February 2026: GDP is growing but slowing, CPI is ~2.4%, the Fed is divided on rate direction, and tariffs are the highest since 1932. What phase do you think we're in?",
-      es: "En febrero 2026: PIB crece pero desacelera, IPC ~2.4%, aranceles en máximo desde 1932. ¿En qué fase estamos?",
-      ko: "2026년 2월: GDP 성장 둔화, CPI ~2.4%, 연준 금리 방향 분열, 1932년 이후 최고 관세. 어떤 단계라고 생각하시나요?",
-      zh: "2026年2月：GDP增长但放缓，CPI约2.4%，美联储对利率方向分歧，关税为1932年以来最高。你认为我们在哪个阶段？",
-      ja: "2026年2月：GDP成長は鈍化、CPI約2.4%、FRBは方向性で分裂、関税は1932年以来最高。どの局面だと思いますか？",
+      en: "Imagine an economy where: GDP is growing but slowing, inflation is running above target, the central bank is divided on which way to move rates, and tariffs are pushing costs to a multi-generational high. What phase do you think it's in?",
+      es: "Imagina una economía donde: el PIB crece pero se desacelera, la inflación supera el objetivo, el banco central está dividido sobre la dirección de las tasas, y los aranceles empujan los costos a un máximo de varias generaciones. ¿En qué fase crees que está?",
+      ko: "다음과 같은 경제를 상상해보세요: GDP는 성장하지만 둔화되고, 인플레이션은 목표치를 웃돌며, 중앙은행은 금리 방향에 대해 의견이 갈리고, 관세는 비용을 수십 년 만의 최고 수준으로 밀어올립니다. 어떤 단계라고 생각하시나요?",
+      zh: "想象一个这样的经济体：GDP增长但放缓，通胀高于目标，央行对利率方向存在分歧，关税将成本推高至几十年来的最高水平。你认为这处于哪个阶段？",
+      ja: "次のような経済を想像してください：GDP成長は鈍化し、インフレは目標を上回り、中央銀行は金利の方向性で意見が分かれ、関税がコストを数十年ぶりの高水準に押し上げています。どの局面だと思いますか？",
     },
   },
   {
@@ -1128,21 +1128,21 @@ export default function App() {
           <div>
             <div style={{ background: "linear-gradient(135deg, #1e3a5f, #1e40af)", borderRadius: 10, padding: 14, color: "#fff", marginBottom: 10 }}>
               <h2 style={{ fontSize: 16, fontWeight: 800, margin: "0 0 4px" }}>📊 {t.marketsTitle}</h2>
-              <p style={{ fontSize: 11, opacity: 0.9, margin: 0 }}>{t.nowDate}</p>
+              <p style={{ fontSize: 11, opacity: 0.9, margin: 0 }}>{t.scenarioNote}</p>
             </div>
 
             {/* Economic Cycle Visual */}
             <CycleChart lang={lang} />
 
-            {/* Current State */}
+            {/* Illustrative Scenario (not live data — see launch plan §2.3) */}
             <div style={{ background: "#fffbeb", border: "1px solid #fde68a", borderRadius: 10, padding: 12, marginBottom: 10 }}>
-              <h3 style={{ fontSize: 12, fontWeight: 700, color: "#92400e", margin: "0 0 6px" }}>🔍 {t.currentState} — {t.nowDate}</h3>
+              <h3 style={{ fontSize: 12, fontWeight: 700, color: "#92400e", margin: "0 0 6px" }}>🔍 {t.currentState}</h3>
               <div style={{ fontSize: 11, color: "#78350f", lineHeight: 1.7 }}>
-                {lang === "en" ? "Late expansion with elevated uncertainty. GDP growing but slowing. CPI at ~2.4% (above target). Fed Funds Rate: 4.25-4.50% — Fed divided on direction. Effective tariff rate ~17% (highest since 1932). The Jan 2026 Fed minutes revealed deep divisions — some members discussed rate hikes while others favored cuts." :
-                 lang === "ko" ? "불확실성이 높아진 확장 후기. GDP 성장 둔화 중. CPI ~2.4%. 연방기금금리: 4.25-4.50% — 연준 방향성 분열. 실효 관세율 ~17% (1932년 이후 최고)." :
-                 lang === "es" ? "Expansión tardía con incertidumbre elevada. PIB creciendo pero desacelerando. IPC ~2.4%. Tasa Fed: 4.25-4.50% — Fed dividido." :
-                 lang === "zh" ? "晚期扩张，不确定性升高。GDP增长但放缓。CPI约2.4%。联邦基金利率：4.25-4.50%——美联储意见分歧。" :
-                 "不確実性の高い拡大後期。GDP成長は鈍化中。CPI約2.4%。FF金利：4.25-4.50%——FRB方向性分裂。"}
+                {lang === "en" ? "A 'late expansion' scenario: GDP growing but slowing, inflation running above the central bank's target, the policy rate elevated with policymakers divided on the next move, and rising tariffs adding cost pressure. This mix of signals is the kind that has historically shown up late in an expansion, before growth clearly turns." :
+                 lang === "ko" ? "'확장 후기' 시나리오: GDP는 성장하지만 둔화되고, 인플레이션은 중앙은행 목표치를 웃돌며, 정책금리는 높은 수준에서 정책 당국자들 사이에 방향성 이견이 있고, 관세 인상이 비용 압박을 더합니다. 이런 혼합 신호는 역사적으로 확장기 후반, 즉 성장이 뚜렷하게 꺾이기 전에 나타나는 패턴입니다." :
+                 lang === "es" ? "Un escenario de 'expansión tardía': el PIB crece pero se desacelera, la inflación supera el objetivo del banco central, la tasa de política está elevada con los responsables divididos sobre el próximo paso, y los aranceles en aumento añaden presión de costos. Esta combinación de señales es la que históricamente aparece en la fase tardía de una expansión, antes de que el crecimiento cambie claramente de rumbo." :
+                 lang === "zh" ? "一个“扩张后期”情形：GDP增长但放缓，通胀高于央行目标，政策利率处于高位且决策者对下一步方向存在分歧，关税上升带来成本压力。这种信号组合历来出现在扩张后期，即增长明显转向之前。" :
+                 "「拡大後期」の状況：GDP成長は鈍化しつつあり、インフレは中央銀行の目標を上回り、政策金利は高水準で当局者の間で次の一手について意見が分かれ、関税の上昇がコスト圧力を高めています。こうした混在シグナルは、成長がはっきりと転換する前の拡大期後半に歴史的に見られるパターンです。"}
               </div>
             </div>
 
@@ -1193,7 +1193,7 @@ export default function App() {
             {/* Balance Sheet Chart */}
             <Bar data={[
               { l: "Pre\n'08", v: 0.9 }, { l: "QE1-3\n'14", v: 4.5 }, { l: "QT1\n'19", v: 3.8 },
-              { l: "COVID\nQE", v: 9.0 }, { l: "QT2\nNow", v: 6.7 },
+              { l: "COVID\nQE", v: 9.0 }, { l: "QT2\n'22-24", v: 6.7 },
             ]} title={`📊 ${t.balanceSheet} ($T)`} colors={["#94a3b8", "#059669", "#dc2626", "#059669", "#dc2626"]} h={90} />
 
             {/* Key Principles */}
