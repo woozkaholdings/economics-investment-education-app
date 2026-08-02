@@ -25,19 +25,46 @@ The launch plan explicitly calls resolving 10.1–10.3 "your first five moves," 
 
 ## Prioritized backlog
 
-Ordered by the launch plan's own priority (legal/compliance first, since it's cheap and de-risks everything else) and by what unblocks future runs. Re-checked against `reviews/2026-08-02-weekly-review.md` (an independent weekly-review scheduled task on this repo, `economics-app-sunday-review` — legitimate, confirmed via `list_scheduled_tasks`; left untouched/uncommitted since this run didn't create it) — several of its findings are folded in below.
+> **Curated by the weekly review, 2026-08-02** (`reviews/2026-08-02-weekly-review.md`).
+> This ordering supersedes previous orderings. **Work P0 items before anything else**, and
+> do not start a P2/P3 item while a P1 is open. The 2026-08-02 dev run had already folded
+> some review findings in here before this curation; those are kept and re-ranked.
 
-1. **[P0] Finish §10.1 properly — advice-adjacent language still in the lessons.** `economic-cycles-v5.jsx` (search "Don't fight the Fed") has a lesson sentence reading "When the Fed is cutting → be bullish. When hiking → be cautious." That's direction-to-the-reader phrasing the launch plan's §10.1 says to avoid, and it sits on the Learn tab, which doesn't currently render the `disclaimer` key (only Home and Markets do). Reword to historical/descriptive framing ("historically, easing cycles have coincided with...") and add the disclaimer to the Learn/lesson surface too.
-2. **[MED] Split the monolithic JSX (launch plan §2.2)**: extract `TR`, `lessons`, `quizData`, `glossary`, `kidsContent` into `src/content/*.json` or `src/content/*.js` data modules, and split `App` into per-tab components (`Home`, `Learn`, `Markets`, `More`) under `src/components/`. Do this incrementally over several runs — one section at a time — verifying `npm run build` after each extraction so the app never breaks. Preserve all existing content and behavior exactly.
-3. **[MED] Non-English content parity gap**: lesson body text in es/ko/zh/ja is a fraction of the English (rough character-count ratios: es ~0.4x, ko ~0.24x, zh ~0.15x, ja ~0.18x — whole paragraphs exist only in English). Either fill out the translations, or per launch plan §3.5, label non-English languages "beta" in the language picker until a native speaker reviews each — do not let this be mistaken for a cosmetic translation-polish task.
-4. **[MED] Dark mode**: the launch plan notes finance audiences skew toward dark mode and recommends shipping it from day one. Add a theme toggle + dark color tokens once the monolith split makes styling more tractable (or do a lighter-weight pass directly on the current inline styles if that's faster).
-5. **[LOW-MED] Accessibility pass**: add screen-reader labels to interactive elements (tab buttons, quiz options, language picker), verify dynamic font-size support, check color contrast on the phase colors used throughout.
-6. **[LOW-MED] Mobile responsiveness check**: verify the fixed-width inline styles (many `px` values) hold up at small viewport widths (375px); the app targets mobile-first per the launch plan.
-7. **[LOW] Basic tests**: no test runner exists yet. Once content is split into data modules, add lightweight tests validating data shape (e.g., every lesson has all 5 languages, every quiz question's `answer` index is valid) — cheap, high-value regression protection for a content-heavy app.
-8. **[LOW] FRED live-data integration for Markets tab**: explicitly a *post-launch premium feature* per the launch plan (§2.3) — do not build until the core app has users. The static/educational Markets tab rework (no dates, no "current state" framing) shipped 2026-08-02.
-9. **[LOW] Clean up unused translation keys**: `TR` still defines `indicators`, `bestInvest`, `avoidInvest`, `psychology`, `why`, `expansion`, `peak`, `contraction`, `trough`, `expDesc`, `peakDesc`, `contDesc`, `troughDesc` in every language, but nothing in the current `App` component renders them. Either remove the dead keys or build the feature properly with historical/educational framing (not personalized advice) and the same disclaimer treatment as the rest of the Markets tab.
-10. **[LOW] Stale/dated factual figures (from weekly review C4)**: e.g. "total credit ~$50T vs. actual money ~$3T" and "falling 2+ quarters = recession" (a rule of thumb, not how NBER actually dates US recessions) — worth a content-accuracy pass, lower priority than the structural/legal items above.
-11. **[LOW] Reproducible build environment**: this sandboxed execution environment has no system Node; every run currently either downloads a portable Node tarball or reuses one surviving in another session's scratchpad (fragile — not guaranteed to persist). Consider a committed, checked-in bootstrap script if this keeps costing agent time.
+**P0 — do these first**
+
+1. **[P0] Finish §10.1 properly — advice-adjacent language still in the lessons.** `economic-cycles-v5.jsx` (search "Don't fight the Fed") has a lesson sentence reading "When the Fed is cutting → be bullish. When hiking → be cautious." That's direction-to-the-reader phrasing the launch plan's §10.1 says to avoid, and it sits on the Learn tab, which doesn't currently render the `disclaimer` key (only Home and Markets do). Reword to historical/descriptive framing ("historically, easing cycles have coincided with...") in every language that carries the sentence, and add the disclaimer to the Learn/lesson surface too. **Also still missing from §10.1:** the plan requires the disclaimer **on first launch** and **in a settings/about area**. Neither exists — the More tab has only Quiz/Kids/Glossary sub-sections. Add an "About" sub-section plus a one-time first-launch notice. Until all three land, §10.1 is not closed, regardless of what earlier run-log entries say.
+2. **[P0] Reproducible build environment.** No system Node exists here; each run downloads a portable Node tarball or borrows one from another session's scratchpad, which is not guaranteed to survive. The 2026-08-02 run lost time to exactly this. Commit a small `scripts/bootstrap-node.sh` that fetches and caches pinned Node v20.18.1 **outside** the repo and prints its `bin` path, so every run (and the weekly review) verifies identically without rediscovering the trick.
+
+**P1 — the foundation**
+
+3. **[P1] Split the monolithic JSX (launch plan §2.2)** — the plan calls this "the foundation everything else stands on" and puts it in weeks 1–2, ahead of new features. Extract `TR` → `src/locales/*.js`, then `lessons`, `quizData`, `glossary`, `kidsContent` → `src/content/*.js`, then split `App` into per-tab components (`Home`, `Learn`, `Markets`, `More`) under `src/components/`. **One extraction per run**, `npm run build` verified after each, content and behavior preserved exactly.
+4. **[P1] Non-English content parity gap.** Lesson body text in es/ko/zh/ja is a fraction of the English — measured character-count ratios across all 23 lesson body blocks: **es 0.41x, ko 0.24x, ja 0.18x, zh 0.15x**. Whole paragraphs exist only in English. This is missing content, not rough phrasing. Per launch plan §3.5 the v1 fix is **not** to translate everything — it is to **label es/ko/zh/ja "Beta" in the language picker** and not market them until a native speaker reviews each. Do that; keep the ratios recorded here so the gap stays visible.
+
+**P2 — after the split**
+
+5. **[P2] Data-shape tests.** No test runner exists. As soon as item 3 puts content in modules, add lightweight tests: every lesson/quiz/glossary/kids entry has all 5 language keys; every quiz `answer` index is within its `opts` range; no referenced translation key is undefined. This is what makes an item-4-class gap impossible to reintroduce silently — and a fast check that a 2-minute `vite build` does not give you.
+6. **[P2] Stale/dated factual figures.** "total credit ~$50T vs. actual money ~$3T" (early-2010s numbers, far off current US aggregates) and "falling 2+ quarters = recession" stated as a definition in both a lesson body and the `GDP` glossary entry (it's a rule of thumb; US recessions are dated by NBER). Reword. Spot-checked and **correct — leave alone**: QE1/QE2/QE3 sizes, the ~$900B → ~$9T Fed balance-sheet arc, PMI 50 threshold, VIX bands.
+7. **[P2] Clean up unused translation keys** — `indicators`, `bestInvest`, `avoidInvest`, `psychology`, `why`, `expansion`, `peak`, `contraction`, `trough`, `expDesc`, `peakDesc`, `contDesc`, `troughDesc` are defined in all 5 languages but nothing renders them. Either delete them or build the feature with historical/educational framing and the same disclaimer treatment. Pick one — don't leave this open indefinitely.
+
+**P3 — polish, only after P1 is done**
+
+8. **[P3] Dark mode** (plan §3.4). Do this *after* item 3; against the current inline styles it would just have to be redone.
+9. **[P3] Accessibility pass**: screen-reader labels on tab buttons, quiz options, and the language picker; dynamic font-size support; contrast check on the phase colors (plan §3.5).
+10. **[P3] Mobile responsiveness check** at 375px — the file is full of fixed `px` values and the product is mobile-first.
+
+**Not yet scheduled — needs decomposing before it can be a run**
+
+11. **[UNSCHEDULED] First-session flow (launch plan §3.2–3.3).** The plan calls the first five minutes "your most important feature": no-signup entry straight into lesson 1, a sub-4-minute lesson 1, a completion animation, a progress ring, a streak prompt. **None of this exists and nothing in the backlog covered it until now.** It belongs after item 3 and is much larger than one run — decompose it into per-run pieces before starting.
+
+**HELD — owner decisions, do not act on these**
+
+12. **[HELD] Expo vs. Vite — needs a human call.** Launch plan §2.2 and §8 (weeks 1–2) specify building on **Expo (React Native)** so web/iOS/Android share one codebase; the 2026-08-01 scaffold run chose **Vite + React (web-only)** instead. That was a reasonable way to make the prototype runnable and the plan does sequence web first, but every further web-only UI change (items 8–10) raises the eventual port cost. The dev agent must **not** migrate to Expo on its own initiative and must **not** deepen the web-only investment beyond items 1–7. Surface this for the project owner to decide.
+13. **[HELD] FRED live-data integration for the Markets tab** — explicitly a *post-launch premium feature* per launch plan §2.3. Do not start. The static/educational Markets tab rework shipped 2026-08-02.
+
+**Completed and pruned**
+
+- Blindspot register §10.2 (Dalio de-branding) and §10.3 (parent-facing Kids framing) — done 2026-08-01, verified by the weekly review. §10.1 is only partly done; see item 1.
+- Markets tab stale date (§2.3) — done 2026-08-02.
 
 ## Environment note
 
@@ -82,3 +109,32 @@ Resolved the launch plan's §2.3 "Markets tab problem" using its own zero-cost r
 - **Verified**: `grep -n "nowDate|February 2026|1932|4.25-4.50|Jan 2026"` returns zero matches in the file. Ran `npm run build` using the portable Node v20.18.1 runtime (reused from a prior run's session scratchpad, copied into this run's scratchpad since sessions don't share `/tmp`) — first attempt failed with a JS syntax error (straight double-quotes nested inside a double-quoted string in the new Chinese "Current State" text, `"一个"扩张后期"情形..."`); fixed by switching to Chinese curly quotes (`“…”`), matching the pattern already used in the Japanese string. Second build succeeded: `✓ 30 modules transformed`, `dist/assets/index-1Iu_pOM1.js` ~241 kB / ~99.75 kB gzip, built in ~2m 52s. Could not visually verify in the browser preview tool — confirmed (again) that this sandboxed environment has no system Node/npm in `PATH`, so `preview_start` fails to spawn `npm run dev` (`Failed to spawn process: No such file or directory`); this is the same limitation noted in the 2026-08-01 entries, not new.
 - **Found in passing**: an untracked `reviews/2026-08-02-weekly-review.md` existed in the working tree from a separate, legitimate scheduled task (`economics-app-sunday-review`, confirmed via `list_scheduled_tasks`) that had reviewed the repo's state earlier the same day, including this run's in-progress uncommitted diff. Left it untouched and did not commit it — not this run's file to manage — but folded its concrete findings (advice-adjacent lesson language not fully closed, translation-parity gap, stale factual figures) into the backlog above.
 - **Next run should pick**: backlog item 1 (P0 — finish §10.1: reword the "be bullish when cutting / be cautious when hiking" lesson sentence to historical framing and add the disclaimer to the Learn tab). It's flagged P0 by the independent weekly review, it's a genuine gap in previously-reported-as-done work, and it's cheap.
+
+### 2026-08-02 — Weekly review (quality control, not a dev run)
+
+Written by the `economics-app-sunday-review` scheduled task. Full report:
+`reviews/2026-08-02-weekly-review.md`. This entry is a pointer — read the report before
+picking the next item.
+
+- **Reviewed**: all three commits to date (`eda6dd0` user prototype, `deea610` scaffold,
+  `ecdda70` blindspot fixes). Run 3 (`5ab5c48`, Markets stale-date) committed while the
+  review was running and is deferred to next week's review.
+- **Log ↔ commit cross-check: clean.** Every run-log entry maps to a real commit and vice
+  versa. The log is also honest about what it skipped, which is the right instinct — keep
+  doing that.
+- **Build: PASS** on `ecdda70` — Vite 5.4.21, `✓ 30 modules transformed`, 240.54 kB /
+  98.93 kB gzip, 2m 4s, exit 0. Verified in an isolated copy of the tree so the repo's own
+  `dist/` and the in-flight working tree were not disturbed. **No tests exist.**
+- **Grade for the week: B+.** Right items, right order, small reversible diffs, no churn
+  and no regressions. Marked down for reporting §10.1 as resolved when it was about half
+  done, and for the translation-parity gap going unnoticed.
+- **Course corrections now in the backlog above** — the two P0s (finish §10.1 including the
+  first-launch/settings disclaimer; make the Node bootstrap reproducible), the
+  language-beta labelling, dark mode demoted below the monolith split, the previously
+  absent first-session flow, and the Expo-vs-Vite question marked HELD for the owner.
+- **A note on self-verification**: run 3's first build *failed* (a JS syntax error from
+  straight quotes nested inside a double-quoted Chinese string) and the agent caught and
+  fixed it before committing. That is the process working — and it is also the strongest
+  argument for backlog item 5: a 2-minute full build is a slow way to learn you typo'd a
+  quote mark.
+- No files were reverted or deleted by this review, and nothing was pushed to any remote.
