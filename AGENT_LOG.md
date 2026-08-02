@@ -32,11 +32,11 @@ The launch plan explicitly calls resolving 10.1–10.3 "your first five moves," 
 
 **P1 — do these in order**
 
-1. **[P1] Split `App` into per-tab components — continue.** `Home` is done (see completed items below). Remaining: `Learn`, `Markets`, `More` under `src/components/`, plus the `Bar`/`YieldCurve`/`CycleChart` helpers (currently still inline in `economic-cycles-v5.jsx`, used by `Markets`). **One tab per run**, `npm test` and `npm run build` green after each. Suggested next: `Markets` (self-contained, uses the `Bar`/`YieldCurve`/`CycleChart` helpers — extract those alongside it since nothing else uses them), then `Learn`, then `More` (largest, has 4 sub-sections: quiz/kids/glossary/about).
+1. **[P1] Split `App` into per-tab components — continue.** `Home` and `Markets` are done (see completed items below), along with the `Bar`/`YieldCurve`/`CycleChart` helpers (now `src/components/charts.jsx`). Remaining: `Learn`, `More` under `src/components/`. **One tab per run**, `npm test` and `npm run build` green after each. Suggested next: `Learn` (has `currentLesson`/navigation state — keep it lifted in `App` and pass down, matching the `Home`/`Markets` pattern rather than moving state into the component), then `More` (largest, 4 sub-sections: quiz/kids/glossary/about, each with its own local state — decide per-section whether state stays lifted or moves in; lifted is simpler and every extraction so far has kept state in `App`).
 
 **P2 — after P1 is clear**
 
-2. **[P2] Fix the quiz answer key.** Found by the 2026-08-02 review, reconfirmed by the new `npm test` harness: `quizData` answer indices are `0,0,0,0,0,0,0,0,0,3,0,0,0` — **12 of 13 correct answers are option 0**, so a user who always taps the first option scores 92% without reading. Every index is in range, so this is a content-design defect, not a data defect. Shuffle the *stored* answer positions (reorder `opts` and update `answer`) — do not shuffle at render time, because the `explain` text references option content. `npm test` will keep warning about this until it's fixed.
+2. ~~**[P2] Fix the quiz answer key.**~~ **DONE 2026-08-02** — see the run log entry below and the completed list. Answer indices went from `0,0,0,0,0,0,0,0,0,3,0,0,0` (12 of 13 on option 0) to `2,0,3,1,3,2,0,3,1,2,0,1,2`; `npm test` no longer warns. Prune this slot at the next curation.
 3. **[P2] Stale/dated factual figures.** Wider than previously recorded. **"~$50T total credit vs ~$3T actual money"** (early-2010s numbers, far off current US aggregates) appears in a lesson body, a quiz `explain`, **and** the `Credit` glossary entry. **"2+ quarters of falling GDP = recession"** is stated as a *definition* in a lesson body, the `GDP` glossary entry, **and** the `Recession` glossary entry — it is a rule of thumb; US recessions are dated by the NBER on broader criteria. Also reword the quiz claim that inverted yield curves "have predicted every US recession since 1955" — the pattern is real but the standard framing acknowledges false positives. Spot-checked and **correct — leave alone**: QE1/QE2/QE3 sizes, the ~$900B → ~$9T Fed balance-sheet arc, PMI 50 threshold, VIX bands.
 4. **[P2] First-session flow (launch plan §3.2–3.3) — now decomposed, so it can actually be picked up.** The plan calls the first five minutes "your most important feature" and sequences it as Move 4, right after the §2.2 migration. None of it exists. Take these one per run, in order:
    - 6a. **Progress ring on Home** (lessons completed / 12) plus an estimated "≈N min" label on each lesson card.
@@ -62,6 +62,8 @@ The launch plan explicitly calls resolving 10.1–10.3 "your first five moves," 
 
 **Completed and pruned**
 
+- **JSX split, step 4b (`Markets` tab → `src/components/Markets.jsx`, chart helpers → `src/components/charts.jsx`)** — done 2026-08-02, see run log. Second of the four per-tab extractions; `economic-cycles-v5.jsx` down to 380 lines.
+- **Quiz answer key de-skewed** — done 2026-08-02 (by the weekly reviewer, at the owner's request, out of normal priority order). Correct-answer positions now spread `2,0,3,1,3,2,0,3,1,2,0,1,2` (counts by index `{0:3, 1:3, 2:4, 3:3}`, max share 31%) instead of 12 of 13 on index 0. `npm test` reports 0 warnings. **`src/content/quizData.js` now carries a header comment explaining the invariant — read it before adding or editing a question.**
 - **JSX split, step 4a (`Home` tab → `src/components/Home.jsx`)** — done 2026-08-02, see run log. First of the four per-tab extractions; `economic-cycles-v5.jsx` down to 529 lines.
 - **Data-shape check harness (`npm test`)** — added 2026-08-02, see run log below. Checks locale/content modules structurally in ~5s; no browser or 2-minute build needed to catch a missing language field.
 - **JSX split, step 3 (`quizData`, `glossary`, `kidsContent` → `src/content/*.js`)** — done 2026-08-02, see run log. All content now lives in modules; `economic-cycles-v5.jsx` down to 591 lines.
@@ -496,3 +498,114 @@ no sub-navigation, unlike `Learn` (lesson state), `Markets` (three chart helpers
   navigation state — decide whether that stays lifted in `App` and is passed down, or
   moves into the component; lifted is simpler and matches the `Home` pattern), then
   `More` (largest — 4 sub-sections with their own local state: quiz/kids/glossary/about).
+
+### 2026-08-02 — Quiz answer key de-skewed (out-of-order, owner-requested)
+
+Done by the `economics-app-sunday-review` reviewer, **not** a normal dev run: the project
+owner asked for backlog item 2 (P2) directly, ahead of the open P1. Recording it here so
+the next dev run doesn't re-do it. Content-only change to `src/content/quizData.js`; the
+dev agent's in-flight `Markets` extraction was untouched.
+
+- **The problem**: `quizData` answer indices were `0,0,0,0,0,0,0,0,0,3,0,0,0` — 12 of 13
+  correct answers sat at option index 0, so tapping the first option every time scored 92%
+  without reading a single question. Every index was in range, so this was invisible to a
+  naive validity check; the `npm test` harness's distribution warning was what kept it
+  visible.
+- **The fix**: for each affected question, the correct option string was **moved** to a new
+  position and the distractors kept their relative order, applying the *same* permutation
+  to all five language arrays. `answer` was updated to match. New distribution:
+  `2,0,3,1,3,2,0,3,1,2,0,1,2` — counts by index `{0:3, 1:3, 2:4, 3:3}`, max share 31%,
+  comfortably under the harness's 50% threshold. Three questions (2, 7, 11) already had a
+  workable position and were left byte-identical to reduce diff noise.
+- Shuffled the **stored** positions, not at render time, as the backlog item specified —
+  `explain` text refers to option *content* (e.g. the "which is NOT one of the 4 tools"
+  question), so render-time shuffling would have been safe for position but pointless for
+  memorisation, and stored order is what a reviewer can actually inspect.
+- Added a header comment to `src/content/quizData.js` recording the invariant and how to
+  keep it when adding or editing questions — the failure mode here is habit (writing the
+  correct answer first), so the counter-measure belongs next to the data.
+- **Verified three ways.** (1) A scratch script diffed the old module (from
+  `git show HEAD:...`) against the new one: for all 13 questions × 5 languages, the option
+  *set* is unchanged and `oldOpts[oldAnswer] === newOpts[newAnswer]` — i.e. the correct
+  answer is still the same string everywhere, and no `q`/`explain` text changed. This is
+  the check that matters; a reordering bug would otherwise silently make a wrong option
+  correct in one language only. (2) `npm test` → `PASS: 0 failure(s), 0 warning(s)` — the
+  degenerate-distribution warning is gone. Note `npm test` imports the module through
+  Node's real ESM loader, so a parse or shape error would have failed there.
+- **No bundler build was run for this change, and the commit message for `99a5a03`
+  overstates this — read this entry, not that message.** A `vite build` was attempted twice
+  in an isolated copy of the tree (HEAD + this one file, with `node_modules` symlinked back
+  to the repo so the agent's in-flight `Markets.jsx`/`charts.jsx` and the repo's `dist/`
+  stayed untouched); both attempts exited without emitting `dist/` or any log output —
+  the symlinked `node_modules` appears to break vite's resolution when its realpath lies
+  outside the project root. A full `npm run build` in the repo itself was deliberately
+  **not** run, because the working tree contained the dev agent's half-finished `Markets`
+  extraction and a failure there would have been theirs, not this change's. Given the file
+  is pure data (string arrays and integers, no JSX, no new syntax) and Node parsed and
+  evaluated it during `npm test`, the residual bundler risk is very low — but it is
+  non-zero, so **the next dev run should confirm `npm run build` is green** as it would
+  anyway.
+- **Still open, unchanged by this run**: the quiz `explain` for question 2 still carries the
+  stale "~$50T vs ~$3T" figure and question 6 still overstates the yield-curve record —
+  both are backlog item 3 (stale factual figures), deliberately not touched here.
+- **Next run should pick**: unchanged — continue P1 item 1, the `Markets` tab extraction
+  that was already in flight.
+
+### 2026-08-02 — JSX split, step 4b: extract Markets tab → `src/components/Markets.jsx`
+
+Continued backlog item 1, picking up right where the previous run (step 4a, `Home`) left
+off, per its own "next run should pick" note. `Markets` was the next-best candidate: fully
+self-contained (only reads `t`/`lang`, no local `App` state), and a natural pairing with
+hoisting the three chart helpers it exclusively calls.
+
+- Added `src/components/charts.jsx` — `Bar`, `YieldCurve`, `CycleChart`, each now a named
+  export (`export function ...`) instead of a private top-of-file function in
+  `economic-cycles-v5.jsx`. Bodies are byte-identical to what they replaced.
+- Added `src/components/Markets.jsx`: `export default function Markets({ t, lang })`,
+  importing `{ Bar, YieldCurve, CycleChart }` from `./charts.jsx`. JSX body is
+  byte-identical to the old inline `{tab === "markets" && (...)}` block — only the
+  wrapping `<div>...</div>` was hoisted into a component and its two free variables
+  (`t`, `lang`) turned into props.
+- In `economic-cycles-v5.jsx`: removed the three now-unused inline helper functions,
+  added `import Markets from "./src/components/Markets.jsx";`, and replaced the
+  89-line inline Markets block with `{tab === "markets" && <Markets t={t} lang={lang} />}`.
+  File went 529 → 380 lines (149 lines removed — the 3 helpers plus the inline tab body,
+  replaced by 2 import lines and 1 component call). `grep` confirmed zero remaining
+  references to `Bar`/`YieldCurve`/`CycleChart` in the main file.
+- **Mistake caught by the build, fixed same run**: first wrote the chart-helpers file as
+  `charts.js` — Vite's import-analysis plugin rejected it (`Failed to parse source for
+  import analysis because the content contains invalid JS syntax`) since the file contains
+  JSX and only `.jsx`/`.tsx` are parsed as such. Renamed to `charts.jsx` and updated the
+  one import in `Markets.jsx` to match; second build succeeded. Noting this so a future
+  extraction doesn't repeat it: **any new file with JSX syntax needs a `.jsx` extension**,
+  even a "helpers" file that doesn't look like a component at first glance.
+- **Concurrent-session note**: partway through this run, `AGENT_LOG.md` and
+  `src/content/quizData.js` were found modified on disk by another session (the weekly
+  reviewer, fixing the quiz-answer-key item at the owner's direct request — see the run
+  log entry directly above this one). Re-read the full current `AGENT_LOG.md` before
+  making any further edits to it, appended this entry and the backlog updates on top of
+  the current version rather than the one held in memory from earlier in this run, and
+  did not touch `quizData.js` — not this run's file, and the other session's own entry
+  confirms it deliberately left this run's in-flight `Markets`/`charts` files alone. No
+  overwriting occurred in either direction.
+- **Verified**: `npm test` (data-shape harness) passes clean —
+  `PASS: 0 failure(s), 0 warning(s)` (the previously-tracked quiz-distribution warning is
+  gone because of the other session's fix noted above, not this run's change — confirmed
+  by re-running twice for consistency). `npm run build` succeeded on the second attempt
+  (after the `.jsx` rename): `✓ 43 modules transformed` (up from 41, the +2 being
+  `charts.jsx` and `Markets.jsx`), `dist/assets/index-CLqi2Cgj.js` **245.39 kB /
+  101.18 kB gzip** — within 0.06 kB of the pre-extraction build (245.33 kB), consistent
+  with relocating render functions rather than altering behavior.
+- Did not visually verify in the browser preview tool — same known limitation as every
+  prior run (`preview_start` can't spawn `npm run dev` because its process spawn doesn't
+  see the bootstrapped Node on `PATH`).
+- **Next run should pick**: continue backlog item 1 — extract the `Learn` tab into
+  `src/components/Learn.jsx`. It carries `currentLesson`/lesson-navigation state and the
+  `markLessonComplete`/`isLessonUnlocked` helpers — keep that state lifted in `App` and
+  pass it down as props (matching the pattern used for `Home` and `Markets`) rather than
+  moving it into the component, since `currentLesson` likely needs to stay visible to
+  `App` for the header progress bar and any future first-open routing (backlog item 4,
+  6c). After `Learn`: `More` (largest remaining — 4 sub-sections, each with its own local
+  state: quiz `qIdx`/`qStarted`/`qAnswer`/`qScore`/`qDone`, kids `kidsAge`, glossary
+  `glossSearch`; consider whether `More`'s sub-nav state can move into the component itself
+  since nothing outside `More` reads it, unlike `currentLesson`).
