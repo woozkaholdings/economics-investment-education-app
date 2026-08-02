@@ -55,6 +55,9 @@ const TR = {
     viewAllLessonsTemplate: "View all {n} lessons →",
     qeNarrative: "Fed BUYS bonds → money in → yields ↓ → stocks ↑↑ → USD ↓",
     qtNarrative: "Fed STOPS buying → money out → yields ↑ → stocks ↓ → USD ↑",
+    aboutTabLabel: "About", aboutTitle: "About This App",
+    aboutBody: "Economic Cycles teaches how economic cycles, interest rates, and market phases work, using historical patterns and principles popularized by economists and investors. It is an educational tool only — it doesn't collect accounts or personal data, and nothing in it is personalized investment, legal, or tax advice.",
+    firstLaunchTitle: "Welcome to Economic Cycles", firstLaunchOk: "Got it, let's start",
   },
   es: {
     appTitle: "Ciclos Económicos", appSub: "Domina la Economía",
@@ -99,6 +102,9 @@ const TR = {
     viewAllLessonsTemplate: "Ver las {n} lecciones →",
     qeNarrative: "El Fed COMPRA bonos → entra dinero → rendimientos ↓ → acciones ↑↑ → USD ↓",
     qtNarrative: "El Fed DEJA de comprar → sale dinero → rendimientos ↑ → acciones ↓ → USD ↑",
+    aboutTabLabel: "Acerca de", aboutTitle: "Acerca de esta App",
+    aboutBody: "Ciclos Económicos enseña cómo funcionan los ciclos económicos, las tasas de interés y las fases del mercado, usando patrones históricos y principios popularizados por economistas e inversores. Es solo una herramienta educativa — no recopila cuentas ni datos personales, y nada en ella es asesoría de inversión, legal o fiscal personalizada.",
+    firstLaunchTitle: "Bienvenido a Ciclos Económicos", firstLaunchOk: "Entendido, empecemos",
   },
   ko: {
     appTitle: "경제 순환", appSub: "경제를 마스터하세요",
@@ -143,6 +149,9 @@ const TR = {
     viewAllLessonsTemplate: "{n}개 레슨 모두 보기 →",
     qeNarrative: "연준 채권 매입 → 자금 유입 → 수익률 ↓ → 주식 ↑↑ → 달러 ↓",
     qtNarrative: "연준 매입 중단 → 자금 유출 → 수익률 ↑ → 주식 ↓ → 달러 ↑",
+    aboutTabLabel: "정보", aboutTitle: "앱 정보",
+    aboutBody: "경제 순환은 경제학자와 투자자들이 널리 알린 원칙과 역사적 패턴을 바탕으로 경제 순환, 금리, 시장 단계가 어떻게 작동하는지 가르치는 교육용 앱입니다. 계정이나 개인 데이터를 수집하지 않으며, 이 앱의 어떤 내용도 개인 맞춤형 투자·법률·세무 조언이 아닙니다.",
+    firstLaunchTitle: "경제 순환에 오신 것을 환영합니다", firstLaunchOk: "확인했어요, 시작할게요",
   },
   zh: {
     appTitle: "经济周期", appSub: "掌握经济运行",
@@ -187,6 +196,9 @@ const TR = {
     viewAllLessonsTemplate: "查看全部{n}节课 →",
     qeNarrative: "美联储购债 → 资金流入 → 收益率↓ → 股票↑↑ → 美元↓",
     qtNarrative: "美联储停止购债 → 资金流出 → 收益率↑ → 股票↓ → 美元↑",
+    aboutTabLabel: "关于", aboutTitle: "关于本应用",
+    aboutBody: "《经济周期》利用历史规律和经济学家、投资者广泛传播的原则，讲解经济周期、利率和市场阶段的运作方式。这只是一个教育工具——不收集账户或个人数据，其中任何内容都不构成个性化的投资、法律或税务建议。",
+    firstLaunchTitle: "欢迎使用经济周期", firstLaunchOk: "知道了，开始学习",
   },
   ja: {
     appTitle: "経済サイクル", appSub: "経済をマスターしよう",
@@ -231,6 +243,9 @@ const TR = {
     viewAllLessonsTemplate: "全{n}レッスンを見る →",
     qeNarrative: "FRBが債券購入 → 資金流入 → 利回り↓ → 株↑↑ → ドル↓",
     qtNarrative: "FRBが購入停止 → 資金流出 → 利回り↑ → 株↓ → ドル↑",
+    aboutTabLabel: "概要", aboutTitle: "このアプリについて",
+    aboutBody: "経済サイクルは、経済学者や投資家によって広く知られている原則と歴史的パターンを用いて、経済サイクル・金利・市場の局面がどのように機能するかを教える教育ツールです。アカウントや個人データは収集せず、内容はいずれも個別の投資・法律・税務アドバイスではありません。",
+    firstLaunchTitle: "経済サイクルへようこそ", firstLaunchOk: "了解、始めよう",
   },
 };
 
@@ -516,7 +531,7 @@ const lessons = [
       {
         heading: { en: "How Rates Affect Everything", es: "Cómo las Tasas Afectan Todo", ko: "금리가 모든 것에 미치는 영향", zh: "利率如何影响一切", ja: "金利がすべてに与える影響" },
         body: {
-          en: "When rates RISE: Stocks fall (especially growth stocks), bond prices fall, real estate slows (6-12 month lag), cash yields become competitive, USD strengthens.\n\nWhen rates FALL: Stocks rise, bond prices rise, real estate recovers, gold rises, USD weakens.\n\nThe golden rule: \"Don't fight the Fed.\" When the Fed is cutting → be bullish. When hiking → be cautious.",
+          en: "When rates RISE: Stocks fall (especially growth stocks), bond prices fall, real estate slows (6-12 month lag), cash yields become competitive, USD strengthens.\n\nWhen rates FALL: Stocks rise, bond prices rise, real estate recovers, gold rises, USD weakens.\n\nThe golden rule investors cite: \"Don't fight the Fed.\" Historically, Fed easing (rate cuts) has coincided with rising asset prices, while Fed tightening (rate hikes) has coincided with more cautious market conditions.",
           es: "Tasas SUBEN: acciones bajan, bonos bajan, inmuebles se frenan.\nTasas BAJAN: acciones suben, bonos suben, inmuebles se recuperan.\n\nRegla de oro: \"No luches contra el Fed.\"",
           ko: "금리 상승: 주식 하락, 채권 가격 하락, 부동산 둔화, 현금 수익률 경쟁력.\n금리 하락: 주식 상승, 채권 가격 상승, 부동산 회복.\n\n황금률: \"연준에 맞서지 마라.\"",
           zh: "利率上升：股票下跌、债券价格下跌、房地产放缓。\n利率下降：股票上涨、债券价格上涨、房地产复苏。\n\n黄金法则：\"不要和美联储作对。\"",
@@ -619,21 +634,21 @@ const lessons = [
       {
         heading: { en: "Expansion & Peak", es: "Expansión y Pico", ko: "확장기와 정점", zh: "扩张与顶峰", ja: "拡大期とピーク" },
         body: {
-          en: "EXPANSION: Credit flows freely. GDP rises, jobs are created, confidence builds. People borrow more, spend more, feel wealthier. S&P 500 avg return: +14-28%.\n\nBest investments: Growth stocks, cyclical stocks, real estate.\n\nPEAK: Maximum output. Inflation at highs, Fed raising rates. Growth stalling. The seeds of contraction are planted here.\n\nBest investments: Value stocks, commodities, short-duration bonds.",
-          es: "EXPANSIÓN: El crédito fluye. PIB sube, empleo crece. Mejores inversiones: acciones de crecimiento.\n\nPICO: Producción máxima. Inflación alta, Fed subiendo tasas.",
-          ko: "확장기: 신용이 자유롭게 흐릅니다. GDP 상승, 일자리 창출. 최적 투자: 성장주, 경기순환주.\n\n정점: 최대 생산량. 인플레이션 고점, 연준 금리 인상.",
-          zh: "扩张期：信贷自由流动。GDP上升、就业增加。最佳投资：成长股、周期股。\n\n顶峰：最大产出。通胀高位、美联储加息。",
-          ja: "拡大期：信用が自由に流れる。GDP上昇、雇用創出。最適投資：グロース株、景気循環株。\n\nピーク：最大産出。インフレ高水準、FRB利上げ。",
+          en: "EXPANSION: Credit flows freely. GDP rises, jobs are created, confidence builds. People borrow more, spend more, feel wealthier. S&P 500 avg return: +14-28%.\n\nHistorically favored in this phase: growth stocks, cyclical stocks, real estate.\n\nPEAK: Maximum output. Inflation at highs, Fed raising rates. Growth stalling. The seeds of contraction are planted here.\n\nHistorically favored in this phase: value stocks, commodities, short-duration bonds.",
+          es: "EXPANSIÓN: El crédito fluye. PIB sube, empleo crece. Históricamente favorecidas en esta fase: acciones de crecimiento.\n\nPICO: Producción máxima. Inflación alta, Fed subiendo tasas.",
+          ko: "확장기: 신용이 자유롭게 흐릅니다. GDP 상승, 일자리 창출. 역사적으로 이 시기에 강세를 보인 자산: 성장주, 경기순환주.\n\n정점: 최대 생산량. 인플레이션 고점, 연준 금리 인상.",
+          zh: "扩张期：信贷自由流动。GDP上升、就业增加。历史上此阶段表现较强的资产：成长股、周期股。\n\n顶峰：最大产出。通胀高位、美联储加息。",
+          ja: "拡大期：信用が自由に流れる。GDP上昇、雇用創出。歴史的にこの局面で強かった資産：グロース株、景気循環株。\n\nピーク：最大産出。インフレ高水準、FRB利上げ。",
         },
       },
       {
         heading: { en: "Contraction & Trough", es: "Contracción y Valle", ko: "수축기와 저점", zh: "收缩与低谷", ja: "収縮期と底" },
         body: {
-          en: "CONTRACTION: Credit contracts, spending falls, unemployment rises. The Fed starts cutting rates. S&P 500 avg decline: -22-35%.\n\nBest investments: Treasury bonds, gold, defensive stocks (utilities, healthcare), cash.\n\nTROUGH: Maximum pessimism. But this is where the BEST investment opportunities are. S&P 500 avg return in first year after bottom: +38-50%.\n\nBest investments: Beaten-down quality stocks, high-yield bonds, real estate at distressed prices.",
-          es: "CONTRACCIÓN: Crédito se contrae, desempleo sube, Fed recorta tasas.\n\nVALLE: Máximo pesimismo pero mejores oportunidades. S&P 500: +38-50% el primer año después del fondo.",
-          ko: "수축기: 신용 수축, 실업률 상승, 연준 금리 인하 시작.\n\n저점: 최대 비관론이지만 최고의 투자 기회. S&P 500 바닥 후 첫해 평균: +38-50%.",
-          zh: "收缩期：信贷收缩、失业率上升、美联储开始降息。\n\n低谷：最大悲观但最佳投资机会。标普500触底后第一年平均回报+38-50%。",
-          ja: "収縮期：信用収縮、失業率上昇、FRB利下げ開始。\n\n底：最大の悲観だが最高の投資機会。S&P500底打ち後1年目：+38-50%。",
+          en: "CONTRACTION: Credit contracts, spending falls, unemployment rises. The Fed starts cutting rates. S&P 500 avg decline: -22-35%.\n\nHistorically favored in this phase: Treasury bonds, gold, defensive stocks (utilities, healthcare), cash.\n\nTROUGH: Maximum pessimism. But this is historically where the strongest rebounds have started. S&P 500 avg return in first year after bottom: +38-50%.\n\nHistorically favored in this phase: beaten-down quality stocks, high-yield bonds, real estate at distressed prices.",
+          es: "CONTRACCIÓN: Crédito se contrae, desempleo sube, Fed recorta tasas.\n\nVALLE: Máximo pesimismo, pero históricamente aquí han comenzado los rebotes más fuertes. S&P 500: +38-50% el primer año después del fondo.",
+          ko: "수축기: 신용 수축, 실업률 상승, 연준 금리 인하 시작.\n\n저점: 최대 비관론이지만, 역사적으로 이 시점에서 가장 강한 반등이 시작되었습니다. S&P 500 바닥 후 첫해 평균: +38-50%.",
+          zh: "收缩期：信贷收缩、失业率上升、美联储开始降息。\n\n低谷：情绪最悲观，但历史上最强的反弹往往从这里开始。标普500触底后第一年平均回报+38-50%。",
+          ja: "収縮期：信用収縮、失業率上昇、FRB利下げ開始。\n\n底：悲観が最大化する時期だが、歴史的に最も強い反発がここから始まっている。S&P500底打ち後1年目：+38-50%。",
         },
       },
     ],
@@ -912,6 +927,17 @@ export default function App() {
   const [glossSearch, setGlossSearch] = useState("");
   // More sub-tab
   const [moreSection, setMoreSection] = useState("quiz");
+  // First-launch disclaimer notice
+  const [showFirstLaunch, setShowFirstLaunch] = useState(false);
+  useEffect(() => {
+    try {
+      if (!localStorage.getItem("ecycles_seen_disclaimer")) setShowFirstLaunch(true);
+    } catch (e) { /* localStorage unavailable (e.g. private mode) — skip the notice */ }
+  }, []);
+  const dismissFirstLaunch = () => {
+    try { localStorage.setItem("ecycles_seen_disclaimer", "1"); } catch (e) {}
+    setShowFirstLaunch(false);
+  };
 
   const topRef = useRef(null);
   const scrollTop = () => {
@@ -943,8 +969,21 @@ export default function App() {
   const lesson = lessons[currentLesson];
 
   return (
-    <div style={{ fontFamily: "'Segoe UI', system-ui, -apple-system, sans-serif", maxWidth: 480, margin: "0 auto", color: "#1f2937", fontSize: 13, background: "#f8fafc", minHeight: "100vh", display: "flex", flexDirection: "column" }}>
+    <div style={{ fontFamily: "'Segoe UI', system-ui, -apple-system, sans-serif", maxWidth: 480, margin: "0 auto", color: "#1f2937", fontSize: 13, background: "#f8fafc", minHeight: "100vh", display: "flex", flexDirection: "column", position: "relative" }}>
       <div ref={topRef} />
+
+      {/* ─── FIRST-LAUNCH DISCLAIMER NOTICE ─── */}
+      {showFirstLaunch && (
+        <div style={{ position: "fixed", inset: 0, background: "rgba(15,23,42,0.6)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 200, padding: 20 }}>
+          <div style={{ background: "#fff", borderRadius: 14, padding: 20, maxWidth: 400, width: "100%", boxShadow: "0 10px 30px rgba(0,0,0,0.2)" }}>
+            <h2 style={{ fontSize: 16, fontWeight: 800, margin: "0 0 10px", color: "#1e3a5f" }}>👋 {t.firstLaunchTitle}</h2>
+            <p style={{ fontSize: 12, color: "#4b5563", lineHeight: 1.6, margin: "0 0 14px" }}>ℹ️ {t.disclaimer}</p>
+            <button onClick={dismissFirstLaunch} style={{ width: "100%", padding: "12px 16px", borderRadius: 10, border: "none", background: "#2563eb", color: "#fff", fontSize: 13, fontWeight: 700, cursor: "pointer" }}>
+              {t.firstLaunchOk}
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* ─── HEADER ─── */}
       <div style={{ background: "linear-gradient(135deg, #1e3a5f 0%, #1e40af 50%, #4f46e5 100%)", padding: "14px 16px", color: "#fff", flexShrink: 0 }}>
@@ -1086,6 +1125,11 @@ export default function App() {
                   <div style={{ fontSize: 12, color: "#581c87", lineHeight: 1.6, fontStyle: "italic" }}>{lesson.thinkAbout[lang]}</div>
                 </div>
 
+                {/* Disclaimer */}
+                <div style={{ fontSize: 9, color: "#9ca3af", textAlign: "center", padding: "2px 4px 10px", lineHeight: 1.5 }}>
+                  ℹ️ {t.disclaimer}
+                </div>
+
                 {/* Navigation */}
                 <div style={{ display: "flex", gap: 8 }}>
                   {currentLesson > 0 && (
@@ -1223,6 +1267,7 @@ export default function App() {
                 { k: "quiz", l: "🧠 " + t.quizTabLabel },
                 { k: "kids", l: "👨‍👩‍👧 " + t.kidsTabLabel },
                 { k: "glossary", l: "📚 " + t.glossTitle },
+                { k: "about", l: "ℹ️ " + t.aboutTabLabel },
               ].map(s => (
                 <button key={s.k} onClick={() => setMoreSection(s.k)}
                   style={{ flex: 1, padding: "8px 6px", border: moreSection === s.k ? "2px solid #2563eb" : "1px solid #d1d5db", borderRadius: 8, background: moreSection === s.k ? "#eff6ff" : "#fff", color: moreSection === s.k ? "#2563eb" : "#6b7280", fontWeight: moreSection === s.k ? 700 : 500, fontSize: 10, cursor: "pointer" }}>
@@ -1340,6 +1385,21 @@ export default function App() {
                       </div>
                     );
                   })}
+              </div>
+            )}
+
+            {/* About Section */}
+            {moreSection === "about" && (
+              <div>
+                <div style={{ background: "linear-gradient(135deg, #1e3a5f, #1e40af)", borderRadius: 10, padding: 14, color: "#fff", marginBottom: 10 }}>
+                  <h2 style={{ fontSize: 16, fontWeight: 800, margin: 0 }}>ℹ️ {t.aboutTitle}</h2>
+                </div>
+                <div style={{ background: "#fff", border: "1px solid #e5e7eb", borderRadius: 10, padding: 14, marginBottom: 10 }}>
+                  <div style={{ fontSize: 12, color: "#4b5563", lineHeight: 1.7 }}>{t.aboutBody}</div>
+                </div>
+                <div style={{ fontSize: 9, color: "#9ca3af", textAlign: "center", padding: "10px 4px", lineHeight: 1.5 }}>
+                  ℹ️ {t.disclaimer}
+                </div>
               </div>
             )}
           </div>
