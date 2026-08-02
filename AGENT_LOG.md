@@ -32,7 +32,7 @@ The launch plan explicitly calls resolving 10.1–10.3 "your first five moves," 
 
 **P1 — do these in order**
 
-1. **[P1] Split `App` into per-tab components** — `Home`, `Learn`, `Markets`, `More` under `src/components/`, plus the `Bar`/`YieldCurve`/`CycleChart` helpers. `App` is now roughly lines 90–591 (~500 lines, after the 2026-08-02 content extraction) and this is the genuinely risky half of §2.2. **One tab per run**, `npm test` (see completed items below) green after each.
+1. **[P1] Split `App` into per-tab components — continue.** `Home` is done (see completed items below). Remaining: `Learn`, `Markets`, `More` under `src/components/`, plus the `Bar`/`YieldCurve`/`CycleChart` helpers (currently still inline in `economic-cycles-v5.jsx`, used by `Markets`). **One tab per run**, `npm test` and `npm run build` green after each. Suggested next: `Markets` (self-contained, uses the `Bar`/`YieldCurve`/`CycleChart` helpers — extract those alongside it since nothing else uses them), then `Learn`, then `More` (largest, has 4 sub-sections: quiz/kids/glossary/about).
 
 **P2 — after P1 is clear**
 
@@ -62,6 +62,7 @@ The launch plan explicitly calls resolving 10.1–10.3 "your first five moves," 
 
 **Completed and pruned**
 
+- **JSX split, step 4a (`Home` tab → `src/components/Home.jsx`)** — done 2026-08-02, see run log. First of the four per-tab extractions; `economic-cycles-v5.jsx` down to 529 lines.
 - **Data-shape check harness (`npm test`)** — added 2026-08-02, see run log below. Checks locale/content modules structurally in ~5s; no browser or 2-minute build needed to catch a missing language field.
 - **JSX split, step 3 (`quizData`, `glossary`, `kidsContent` → `src/content/*.js`)** — done 2026-08-02, see run log. All content now lives in modules; `economic-cycles-v5.jsx` down to 591 lines.
 - **Language picker "Beta" labelling (§3.5/§10.4)** — done 2026-08-02, see run log. The es/ko/zh/ja options in the language `<select>` now read e.g. "🇰🇷 한국어 (Beta)"; English is unchanged. Translation-volume ratios measured 2026-08-02 (**es 0.41x, ko 0.24x, ja 0.18x, zh 0.15x** of English lesson-body chars) are noted here for reference if a future run wants to re-measure after content is added.
@@ -440,3 +441,58 @@ environment still can't run) to surface.
   the `Bar`/`YieldCurve`/`CycleChart` helpers). Do one tab per run per the existing
   guidance, and run `npm test` (fast) alongside `npm run build` after each to confirm
   the extraction didn't drop a prop or a language field.
+
+### 2026-08-02 — JSX split, step 4a: extract Home tab → `src/components/Home.jsx`
+
+Picked backlog item 1 (P1, top of the list, now unblocked by the data-shape harness):
+began the `App`-into-per-tab-components split, the riskier half of the launch plan's
+§2.2 migration. Did the smallest, most self-contained tab first, per the existing
+"one tab per run" guidance — `Home` has no local state of its own (only reads props) and
+no sub-navigation, unlike `Learn` (lesson state), `Markets` (three chart helpers), or
+`More` (four sub-sections).
+
+- Added `src/components/Home.jsx`: `export default function Home({ t, lang,
+  completedLessons, lessons, isLessonUnlocked, setCurrentLesson, setTab, scrollTop })`.
+  JSX body is byte-identical to the old inline `{tab === "home" && (...)}` block (old
+  lines 180–244 of `economic-cycles-v5.jsx`) — only the wrapping `<div>...</div>` was
+  hoisted into a component function and its free variables (`t`, `lang`,
+  `completedLessons`, `lessons`, `isLessonUnlocked`, `setCurrentLesson`, `setTab`,
+  `scrollTop`) turned into named props; no rendering logic changed.
+- In `economic-cycles-v5.jsx`: added `import Home from "./src/components/Home.jsx";`
+  alongside the existing content imports, and replaced the 66-line inline Home block
+  with `{tab === "home" && (<Home t={t} lang={lang} completedLessons={completedLessons}
+  lessons={lessons} isLessonUnlocked={isLessonUnlocked}
+  setCurrentLesson={setCurrentLesson} setTab={setTab} scrollTop={scrollTop} />)}`.
+  `git diff --stat` confirmed exactly "3 insertions(+), 65 deletions(-)" on that one
+  file, nothing else touched. File went 591 → 529 lines.
+- **Verified**: `npm test` (data-shape harness, cached Node v20.18.1 via
+  `scripts/bootstrap-node.sh`) still passes — `PASS: 0 failure(s), 1 warning(s)`, the one
+  warning being the already-tracked degenerate quiz-answer-index issue (unrelated to this
+  change). `npm install` (no new deps, same 2 pre-existing dev-tooling audit advisories)
+  then `npm run build` succeeded: `✓ 41 modules transformed` (up from 40, the +1 being
+  the new `Home.jsx`), `dist/assets/index-BjMrKTAT.js` **245.33 kB / 101.24 kB gzip** —
+  within 0.23 kB of the pre-extraction build (245.10 kB), consistent with relocating a
+  render function (plus its `export default`/`import` boilerplate) rather than altering
+  behavior. Build ran ~2m 24s in the background while another process may have been
+  competing for CPU, per the log's standing note — waited for completion rather than
+  assuming a hang.
+- Did not visually verify in the browser preview tool — same known limitation as every
+  prior run since the JSX-split work began (`preview_start` can't spawn `npm run dev`
+  because its process spawn doesn't see the bootstrapped Node on `PATH`). Risk is low:
+  the extracted JSX is textually identical to what it replaced, and only prop-passing
+  was added.
+- **Environment note reconfirmed**: sandboxed `git status`/`git diff --stat` timed out
+  at the 2-minute tool limit on the first attempt (no stale lock found afterward — it
+  appears the index write simply hadn't finished, consistent with the existing
+  iCloud-sync-latency note in memory). Retried unsandboxed and it succeeded immediately.
+  No destructive git operations were used; matches the standing guidance to retry rather
+  than escalate.
+- **Next run should pick**: continue backlog item 1 — extract the `Markets` tab into
+  `src/components/Markets.jsx`. It's the next-best candidate: fully self-contained (no
+  local `App` state, only reads `t`/`lang`), and it's a natural pairing with hoisting the
+  `Bar`/`YieldCurve`/`CycleChart` helper components (currently still inline at the top of
+  `economic-cycles-v5.jsx`) into the same file or a shared `src/components/charts.js`,
+  since `Markets` is their only caller. After `Markets`: `Learn` (has `currentLesson`
+  navigation state — decide whether that stays lifted in `App` and is passed down, or
+  moves into the component; lifted is simpler and matches the `Home` pattern), then
+  `More` (largest — 4 sub-sections with their own local state: quiz/kids/glossary/about).
