@@ -30,45 +30,50 @@ The launch plan explicitly calls resolving 10.1–10.3 "your first five moves," 
 > do not start a P2/P3 item while a P1 is open. The 2026-08-02 dev run had already folded
 > some review findings in here before this curation; those are kept and re-ranked.
 
-**P0 — do this first**
-
-1. **[P0] Reproducible build environment.** No system Node exists here; each run downloads a portable Node tarball or borrows one from another session's scratchpad, which is not guaranteed to survive. The 2026-08-02 run lost time to exactly this. Commit a small `scripts/bootstrap-node.sh` that fetches and caches pinned Node v20.18.1 **outside** the repo and prints its `bin` path, so every run (and the weekly review) verifies identically without rediscovering the trick.
-
 **P1 — the foundation**
 
-2. **[P1] Split the monolithic JSX (launch plan §2.2)** — the plan calls this "the foundation everything else stands on" and puts it in weeks 1–2, ahead of new features. Extract `TR` → `src/locales/*.js`, then `lessons`, `quizData`, `glossary`, `kidsContent` → `src/content/*.js`, then split `App` into per-tab components (`Home`, `Learn`, `Markets`, `More`) under `src/components/`. **One extraction per run**, `npm run build` verified after each, content and behavior preserved exactly.
-3. **[P1] Non-English content parity gap.** Lesson body text in es/ko/zh/ja is a fraction of the English — measured character-count ratios across all 23 lesson body blocks: **es 0.41x, ko 0.24x, ja 0.18x, zh 0.15x**. Whole paragraphs exist only in English. This is missing content, not rough phrasing. Per launch plan §3.5 the v1 fix is **not** to translate everything — it is to **label es/ko/zh/ja "Beta" in the language picker** and not market them until a native speaker reviews each. Do that; keep the ratios recorded here so the gap stays visible.
+1. **[P1] Split the monolithic JSX (launch plan §2.2)** — the plan calls this "the foundation everything else stands on" and puts it in weeks 1–2, ahead of new features. Extract `TR` → `src/locales/*.js`, then `lessons`, `quizData`, `glossary`, `kidsContent` → `src/content/*.js`, then split `App` into per-tab components (`Home`, `Learn`, `Markets`, `More`) under `src/components/`. **One extraction per run**, `npm run build` verified after each, content and behavior preserved exactly.
+2. **[P1] Non-English content parity gap.** Lesson body text in es/ko/zh/ja is a fraction of the English — measured character-count ratios across all 23 lesson body blocks: **es 0.41x, ko 0.24x, ja 0.18x, zh 0.15x**. Whole paragraphs exist only in English. This is missing content, not rough phrasing. Per launch plan §3.5 the v1 fix is **not** to translate everything — it is to **label es/ko/zh/ja "Beta" in the language picker** and not market them until a native speaker reviews each. Do that; keep the ratios recorded here so the gap stays visible.
 
 **P2 — after the split**
 
-4. **[P2] Data-shape tests.** No test runner exists. As soon as item 2 puts content in modules, add lightweight tests: every lesson/quiz/glossary/kids entry has all 5 language keys; every quiz `answer` index is within its `opts` range; no referenced translation key is undefined. This is what makes an item-3-class gap impossible to reintroduce silently — and a fast check that a 2-minute `vite build` does not give you.
-5. **[P2] Stale/dated factual figures.** "total credit ~$50T vs. actual money ~$3T" (early-2010s numbers, far off current US aggregates) and "falling 2+ quarters = recession" stated as a definition in both a lesson body and the `GDP` glossary entry (it's a rule of thumb; US recessions are dated by NBER). Reword. Spot-checked and **correct — leave alone**: QE1/QE2/QE3 sizes, the ~$900B → ~$9T Fed balance-sheet arc, PMI 50 threshold, VIX bands.
-6. **[P2] Clean up unused translation keys** — `indicators`, `bestInvest`, `avoidInvest`, `psychology`, `why`, `expansion`, `peak`, `contraction`, `trough`, `expDesc`, `peakDesc`, `contDesc`, `troughDesc` are defined in all 5 languages but nothing renders them (the *rendered* "Best investments" phase language elsewhere in lesson 10 was a different, now-fixed issue — see the 2026-08-02 §10.1 completion entry below; these specific keys were never wired to any UI). Either delete them or build the feature with historical/educational framing and the same disclaimer treatment. Pick one — don't leave this open indefinitely.
+3. **[P2] Data-shape tests.** No test runner exists. As soon as item 1 puts content in modules, add lightweight tests: every lesson/quiz/glossary/kids entry has all 5 language keys; every quiz `answer` index is within its `opts` range; no referenced translation key is undefined. This is what makes an item-2-class gap impossible to reintroduce silently — and a fast check that a 2-minute `vite build` does not give you.
+4. **[P2] Stale/dated factual figures.** "total credit ~$50T vs. actual money ~$3T" (early-2010s numbers, far off current US aggregates) and "falling 2+ quarters = recession" stated as a definition in both a lesson body and the `GDP` glossary entry (it's a rule of thumb; US recessions are dated by NBER). Reword. Spot-checked and **correct — leave alone**: QE1/QE2/QE3 sizes, the ~$900B → ~$9T Fed balance-sheet arc, PMI 50 threshold, VIX bands.
+5. **[P2] Clean up unused translation keys** — `indicators`, `bestInvest`, `avoidInvest`, `psychology`, `why`, `expansion`, `peak`, `contraction`, `trough`, `expDesc`, `peakDesc`, `contDesc`, `troughDesc` are defined in all 5 languages but nothing renders them (the *rendered* "Best investments" phase language elsewhere in lesson 10 was a different, now-fixed issue — see the 2026-08-02 §10.1 completion entry below; these specific keys were never wired to any UI). Either delete them or build the feature with historical/educational framing and the same disclaimer treatment. Pick one — don't leave this open indefinitely.
 
 **P3 — polish, only after P1 is done**
 
-7. **[P3] Dark mode** (plan §3.4). Do this *after* item 2; against the current inline styles it would just have to be redone.
-8. **[P3] Accessibility pass**: screen-reader labels on tab buttons, quiz options, and the language picker; dynamic font-size support; contrast check on the phase colors (plan §3.5). Also add `aria-label`/keyboard-dismiss support to the new first-launch modal (2026-08-02) — it currently has no focus trap or Escape handling.
-9. **[P3] Mobile responsiveness check** at 375px — the file is full of fixed `px` values and the product is mobile-first.
+6. **[P3] Dark mode** (plan §3.4). Do this *after* item 1; against the current inline styles it would just have to be redone.
+7. **[P3] Accessibility pass**: screen-reader labels on tab buttons, quiz options, and the language picker; dynamic font-size support; contrast check on the phase colors (plan §3.5). Also add `aria-label`/keyboard-dismiss support to the new first-launch modal (2026-08-02) — it currently has no focus trap or Escape handling.
+8. **[P3] Mobile responsiveness check** at 375px — the file is full of fixed `px` values and the product is mobile-first.
 
 **Not yet scheduled — needs decomposing before it can be a run**
 
-10. **[UNSCHEDULED] First-session flow (launch plan §3.2–3.3).** The plan calls the first five minutes "your most important feature": no-signup entry straight into lesson 1, a sub-4-minute lesson 1, a completion animation, a progress ring, a streak prompt. **None of this exists and nothing in the backlog covered it until now.** It belongs after item 2 and is much larger than one run — decompose it into per-run pieces before starting.
+9. **[UNSCHEDULED] First-session flow (launch plan §3.2–3.3).** The plan calls the first five minutes "your most important feature": no-signup entry straight into lesson 1, a sub-4-minute lesson 1, a completion animation, a progress ring, a streak prompt. **None of this exists and nothing in the backlog covered it until now.** It belongs after item 1 and is much larger than one run — decompose it into per-run pieces before starting.
 
 **HELD — owner decisions, do not act on these**
 
-11. **[HELD] Expo vs. Vite — needs a human call.** Launch plan §2.2 and §8 (weeks 1–2) specify building on **Expo (React Native)** so web/iOS/Android share one codebase; the 2026-08-01 scaffold run chose **Vite + React (web-only)** instead. That was a reasonable way to make the prototype runnable and the plan does sequence web first, but every further web-only UI change (items 7–9) raises the eventual port cost. The dev agent must **not** migrate to Expo on its own initiative and must **not** deepen the web-only investment beyond items 1–6. Surface this for the project owner to decide.
-12. **[HELD] FRED live-data integration for the Markets tab** — explicitly a *post-launch premium feature* per launch plan §2.3. Do not start. The static/educational Markets tab rework shipped 2026-08-02.
+10. **[HELD] Expo vs. Vite — needs a human call.** Launch plan §2.2 and §8 (weeks 1–2) specify building on **Expo (React Native)** so web/iOS/Android share one codebase; the 2026-08-01 scaffold run chose **Vite + React (web-only)** instead. That was a reasonable way to make the prototype runnable and the plan does sequence web first, but every further web-only UI change (items 6–8) raises the eventual port cost. The dev agent must **not** migrate to Expo on its own initiative and must **not** deepen the web-only investment beyond items 1–5. Surface this for the project owner to decide.
+11. **[HELD] FRED live-data integration for the Markets tab** — explicitly a *post-launch premium feature* per launch plan §2.3. Do not start. The static/educational Markets tab rework shipped 2026-08-02.
 
 **Completed and pruned**
 
+- **Reproducible build environment** — `scripts/bootstrap-node.sh` added 2026-08-02, see run log below.
 - Blindspot register §10.2 (Dalio de-branding) and §10.3 (parent-facing Kids framing) — done 2026-08-01, verified by the weekly review.
 - Markets tab stale date (§2.3) — done 2026-08-02.
 - **§10.1 (investment-advice adjacency) — fully closed 2026-08-02.** All three gaps the weekly review flagged are resolved: (1) the "be bullish when cutting / be cautious when hiking" directive sentence and, more significantly, a previously-unnoticed set of rendered "Best investments: growth stocks / value stocks / ..." per-phase lines in lesson 10 (all 5 languages) were reworded to historical/descriptive framing ("historically favored in this phase..."); (2) the `disclaimer` key now also renders on the Learn tab (below "Think About This") and in a new About sub-section, so it appears on Home, Learn, Markets, and About; (3) a one-time first-launch modal (localStorage-backed, key `ecycles_seen_disclaimer`) shows the disclaimer before first use, and a permanent About sub-section was added to the More tab for ongoing access. See the run-log entry below for details.
 
 ## Environment note
 
-This automated execution environment has **no Node.js in `PATH`** (confirmed 2026-08-01 — no `node`, `npm`, `nvm`, `volta`, `asdf`, or Homebrew present). To verify `npm install && npm run build` for the scaffold introduced today, the agent downloaded a portable Node.js v20.18.1 (darwin-x64) tarball from the official `nodejs.org` distribution into the session scratchpad (outside the repo) and used it locally, without any system-wide install. Future runs should do the same if `node`/`npm` aren't found in `PATH`, rather than skipping build verification.
+This automated execution environment has **no Node.js in `PATH`** (confirmed 2026-08-01 — no `node`, `npm`, `nvm`, `volta`, `asdf`, or Homebrew present). **As of 2026-08-02, use `scripts/bootstrap-node.sh` instead of re-downloading Node by hand.** It caches a pinned Node v20.18.1 under `$HOME/.cache/ecycles-node` (real home directory — persists across runs, unlike the session scratchpad) and prints the runtime's `bin` directory on stdout:
+
+```bash
+BIN_DIR="$(scripts/bootstrap-node.sh)"
+export PATH="$BIN_DIR:$PATH"
+npm install && npm run build
+```
+
+First run on a given machine downloads (~30s); every run after that reuses the cache instantly. Never installs anything system-wide, never touches the repo.
 
 ## Run log
 
@@ -150,3 +155,40 @@ picking the next item.
   argument for backlog item 5: a 2-minute full build is a slow way to learn you typo'd a
   quote mark.
 - No files were reverted or deleted by this review, and nothing was pushed to any remote.
+
+### 2026-08-02 — Reproducible build environment (backlog P0)
+
+Picked the sole remaining P0: every prior run's log had a variant of "downloaded a portable
+Node tarball into the session scratchpad, which doesn't survive between runs" — pure waste,
+and exactly the item the 2026-08-02 weekly review called out. Fixed it properly instead of
+re-discovering the trick again next run:
+
+- Added `scripts/bootstrap-node.sh` (new file, executable). It detects OS/arch (`darwin`/
+  `linux`, `x64`/`arm64`), checks a cache directory for an already-extracted Node runtime,
+  and if missing downloads the pinned `node-v20.18.1-<platform>-<arch>.tar.gz` from
+  `nodejs.org`'s official distribution, extracts it, and prints the runtime's `bin`
+  directory to stdout (all progress logging goes to stderr, so the stdout stream is clean
+  for `BIN_DIR="$(scripts/bootstrap-node.sh)"`-style capture).
+- **Key fix over past runs**: the cache directory defaults to `$HOME/.cache/ecycles-node`,
+  not the session scratchpad. Confirmed by inspection that `$HOME` in this execution
+  environment is the real, persistent `/Users/woojoongkim` — unlike `/tmp`/scratchpad paths,
+  which are per-session and don't survive. This means the ~30s download only happens once
+  ever on this machine; every run after this one (including the weekly review) reuses the
+  cached extraction in well under a second.
+- Confirmed the "another session's scratchpad" copy-hack that showed up in three separate
+  prior run-log entries is no longer needed.
+- Updated the Environment note above with the new usage pattern and removed the old
+  scratchpad-copy advice.
+- **Verified**: ran the script cold (no cache) — downloaded and extracted correctly,
+  `node --version` → `v20.18.1`. Ran it again immediately — hit the cache, skipped the
+  download, same version reported. Then, using the script's output, ran the full
+  `npm install && npm run build` from a clean shell (`PATH` prefixed with the script's
+  `bin` dir, nothing installed system-wide) — `npm install` succeeded (64 packages, up to
+  date), `npm run build` succeeded: `vite v5.4.21`, `✓ 30 modules transformed`,
+  `dist/assets/index-C0PXGqaw.js` 245.05 kB / 101.02 kB gzip, built in 1m 55s. This is the
+  same output hash as the previous run's build, confirming no content regression.
+- **Next run should pick**: backlog item 1 (P1 — start splitting the monolithic JSX,
+  launch plan §2.2). It's now the top of the list, it's explicitly sequenced first in the
+  launch plan ("the foundation everything else stands on"), and the reproducible build
+  environment this run just landed is exactly what makes multi-step extraction work safe to
+  verify incrementally. Start with the smallest, lowest-risk extraction: `TR` → `src/locales/*.js`.
