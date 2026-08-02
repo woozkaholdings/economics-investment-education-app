@@ -32,7 +32,7 @@ The launch plan explicitly calls resolving 10.1–10.3 "your first five moves," 
 
 **P1 — the foundation**
 
-1. **[P1] Split the monolithic JSX (launch plan §2.2), continued** — `TR` → `src/locales/*.js` is done (2026-08-02, see run log). Next extraction: `lessons`, `quizData`, `glossary`, `kidsContent` → `src/content/*.js`, then split `App` into per-tab components (`Home`, `Learn`, `Markets`, `More`) under `src/components/`. **One extraction per run**, `npm run build` verified after each, content and behavior preserved exactly. Suggested next step: `lessons` (largest single content block, lines 17–504 of `economic-cycles-v5.jsx`) → `src/content/lessons.js`.
+1. **[P1] Split the monolithic JSX (launch plan §2.2), continued** — `TR` → `src/locales/*.js` and `lessons` → `src/content/lessons.js` are done (2026-08-02, see run log). Next extraction: `quizData`, `glossary`, `kidsContent` → `src/content/*.js`, then split `App` into per-tab components (`Home`, `Learn`, `Markets`, `More`) under `src/components/`. **One extraction per run**, `npm run build` verified after each, content and behavior preserved exactly. Suggested next step: `quizData` (now lines 17–61 of `economic-cycles-v5.jsx`) → `src/content/quizData.js`.
 2. **[P1] Non-English content parity gap.** Lesson body text in es/ko/zh/ja is a fraction of the English — measured character-count ratios across all 23 lesson body blocks: **es 0.41x, ko 0.24x, ja 0.18x, zh 0.15x**. Whole paragraphs exist only in English. This is missing content, not rough phrasing. Per launch plan §3.5 the v1 fix is **not** to translate everything — it is to **label es/ko/zh/ja "Beta" in the language picker** and not market them until a native speaker reviews each. Do that; keep the ratios recorded here so the gap stays visible.
 
 **P2 — after the split**
@@ -58,7 +58,7 @@ The launch plan explicitly calls resolving 10.1–10.3 "your first five moves," 
 
 **Completed and pruned**
 
-- **JSX split, step 1 (`TR` → `src/locales/*.js`)** — done 2026-08-02, see run log.
+- **JSX split, step 1 (`TR` → `src/locales/*.js`)** and **step 2 (`lessons` → `src/content/lessons.js`)** — done 2026-08-02, see run log.
 - **Reproducible build environment** — `scripts/bootstrap-node.sh` added 2026-08-02, see run log below.
 - Blindspot register §10.2 (Dalio de-branding) and §10.3 (parent-facing Kids framing) — done 2026-08-01, verified by the weekly review.
 - Markets tab stale date (§2.3) — done 2026-08-02.
@@ -212,3 +212,33 @@ own "one extraction per run" guidance.
 - **Verified build**: using `scripts/bootstrap-node.sh` (cached Node v20.18.1, no download needed), `npm run build` succeeded — `✓ 36 modules transformed` (up from 30, the +6 being the 5 new locale files + index), `dist/assets/index-B22SSX9B.js` 245.08 kB / 101.05 kB gzip, built in 2m 13s. Bundle size is within 0.03 kB of the previous build (245.05 kB), consistent with content being relocated rather than altered.
 - **Did not visually verify in the browser preview tool** — `preview_start` still fails with `Failed to spawn process: No such file or directory` because that tool's spawn environment doesn't see the bootstrapped Node on `PATH` (the same limitation noted in every prior run's entry; not a regression from this change). Given the byte-exact content diff and successful build, risk is low, but a local interactive session should still click through all 5 languages once to eyeball rendering.
 - **Next run should pick**: continue backlog item 1 — extract `lessons` (now at lines 17–504 of `economic-cycles-v5.jsx`, the next-largest content block) into `src/content/lessons.js`, following the same pattern (module export, single import, byte-diff verification, build). After `lessons`, `quizData`/`glossary`/`kidsContent` remain, then the `App`-component split into per-tab files.
+
+### 2026-08-02 — JSX split, step 2: extract `lessons` → `src/content/lessons.js`
+
+Continued backlog item 1, picking up right where the previous run left off (same day,
+requested directly rather than waiting for the next scheduled run). Extracted the
+`lessons` array — the next-largest content block after `TR` (484 lines, all 12 lessons
+across 5 languages) — following the same pattern established for the `TR` extraction.
+
+- Added `src/content/lessons.js`: `export const lessons = [ ... ];`, body byte-identical
+  to the array previously inline in `economic-cycles-v5.jsx` (old lines 18–499).
+- In `economic-cycles-v5.jsx`, replaced the 488-line block (section-header comment +
+  `const lessons = [ ... ];`, old lines 13–500) with `import { lessons } from
+  "./src/content/lessons.js";`, placed with the other top-of-file import. No call site
+  changed — `lessons` is referenced the same way everywhere in `App` (`lessons[idx]`,
+  `lessons.length`, `lessons.map`, etc.).
+- **Verified content integrity**: diffed the old in-file array body (via `git show
+  HEAD:...`) against the new module's body line-for-line — 483 lines on both sides,
+  exact string match. `git diff --stat` on `economic-cycles-v5.jsx` showed exactly the
+  expected single contiguous deletion (489 lines removed, 1 import line added), nothing
+  else touched.
+- **Verified build**: `npm run build` (bootstrapped Node v20.18.1) succeeded —
+  `✓ 37 modules transformed` (up from 36), `dist/assets/index-Dq_-UGyp.js` 245.08 kB /
+  101.06 kB gzip, built in ~2m — byte-for-byte identical bundle size to the pre-extraction
+  build, confirming no content or behavior change.
+- Same known limitation as every prior run: `preview_start` can't spawn `npm run dev`
+  (its process spawn doesn't see the bootstrapped Node on `PATH`), so no browser
+  visual check. Risk is low given the exact content-diff match.
+- **Next run should pick**: continue backlog item 1 — extract `quizData` (now lines
+  17–61 of `economic-cycles-v5.jsx`) into `src/content/quizData.js`, then `glossary`
+  and `kidsContent`, then split `App` into per-tab components.
