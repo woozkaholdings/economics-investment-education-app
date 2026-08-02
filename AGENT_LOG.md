@@ -32,38 +32,38 @@ The launch plan explicitly calls resolving 10.1–10.3 "your first five moves," 
 
 **P1 — do these in order**
 
-1. **[P1] Finish the content extractions — all three in ONE run** (launch plan §2.2, continued). `quizData` (lines 17–57), `glossary` (62–80), and `kidsContent` (85–116) → `src/content/*.js`. **The "one extraction per run" rule is retired for these three**: they are ~95 lines combined and use a mechanical pattern already proven twice on much larger blocks. Same verification standard as before — byte-exact content diff plus `npm run build`. Keep the new modules **pure data** (no imports, no functions, no template literals), as `lessons.js` already is; that is what keeps the eventual JSON conversion trivial.
-2. **[P1] Add the data-shape check harness (`npm test`) — before touching `App`.** Promoted from P2. Once item 1 lands, all content lives in modules and this becomes cheap: assert every lesson/quiz/glossary/kids entry has all 5 language keys; every quiz `answer` index is within its `opts` range; **the answer-index distribution is not degenerate** (see item 4 — a naive in-range check passes today's quiz); no referenced translation key is undefined. The weekly review wrote ~20 lines of Node that runs in under a second and produced real signal; a 2-minute `vite build` proves the JSX parses, not that a Korean lesson still renders. **This must be green before item 3 starts.**
-3. **[P1] Split `App` into per-tab components** — `Home`, `Learn`, `Markets`, `More` under `src/components/`, plus the `Bar`/`YieldCurve`/`CycleChart` helpers. `App` is now lines 183–692 (~510 lines) and this is the genuinely risky half of §2.2. **One tab per run**, item 2's checks green after each.
+1. **[P1] Add the data-shape check harness (`npm test`) — before touching `App`.** Now that all content lives in `src/content/*.js` + `src/locales/*.js` modules (see completed items below), this is cheap: assert every lesson/quiz/glossary/kids entry has all 5 language keys; every quiz `answer` index is within its `opts` range; **the answer-index distribution is not degenerate** (see item 3 — a naive in-range check passes today's quiz); no referenced translation key is undefined. The weekly review wrote ~20 lines of Node that runs in under a second and produced real signal; a 2-minute `vite build` proves the JSX parses, not that a Korean lesson still renders. **This must be green before item 2 starts.**
+2. **[P1] Split `App` into per-tab components** — `Home`, `Learn`, `Markets`, `More` under `src/components/`, plus the `Bar`/`YieldCurve`/`CycleChart` helpers. `App` is now roughly lines 90–591 (~500 lines, after the 2026-08-02 content extraction) and this is the genuinely risky half of §2.2. **One tab per run**, item 1's checks green after each.
 
 **P2 — after P1 is clear**
 
-4. **[P2] Fix the quiz answer key.** Found by the 2026-08-02 review: `quizData` answer indices are `0,0,0,0,0,0,0,0,0,3,0,0,0` — **12 of 13 correct answers are option 0**, so a user who always taps the first option scores 92% without reading. Every index is in range, so this is a content-design defect, not a data defect. Shuffle the *stored* answer positions (reorder `opts` and update `answer`) — do not shuffle at render time, because the `explain` text references option content.
-5. **[P2] Stale/dated factual figures.** Wider than previously recorded. **"~$50T total credit vs ~$3T actual money"** (early-2010s numbers, far off current US aggregates) appears in a lesson body, a quiz `explain`, **and** the `Credit` glossary entry. **"2+ quarters of falling GDP = recession"** is stated as a *definition* in a lesson body, the `GDP` glossary entry, **and** the `Recession` glossary entry — it is a rule of thumb; US recessions are dated by the NBER on broader criteria. Also reword the quiz claim that inverted yield curves "have predicted every US recession since 1955" — the pattern is real but the standard framing acknowledges false positives. Spot-checked and **correct — leave alone**: QE1/QE2/QE3 sizes, the ~$900B → ~$9T Fed balance-sheet arc, PMI 50 threshold, VIX bands.
-6. **[P2] First-session flow (launch plan §3.2–3.3) — now decomposed, so it can actually be picked up.** The plan calls the first five minutes "your most important feature" and sequences it as Move 4, right after the §2.2 migration. None of it exists. Take these one per run, in order:
+3. **[P2] Fix the quiz answer key.** Found by the 2026-08-02 review: `quizData` answer indices are `0,0,0,0,0,0,0,0,0,3,0,0,0` — **12 of 13 correct answers are option 0**, so a user who always taps the first option scores 92% without reading. Every index is in range, so this is a content-design defect, not a data defect. Shuffle the *stored* answer positions (reorder `opts` and update `answer`) — do not shuffle at render time, because the `explain` text references option content.
+4. **[P2] Stale/dated factual figures.** Wider than previously recorded. **"~$50T total credit vs ~$3T actual money"** (early-2010s numbers, far off current US aggregates) appears in a lesson body, a quiz `explain`, **and** the `Credit` glossary entry. **"2+ quarters of falling GDP = recession"** is stated as a *definition* in a lesson body, the `GDP` glossary entry, **and** the `Recession` glossary entry — it is a rule of thumb; US recessions are dated by the NBER on broader criteria. Also reword the quiz claim that inverted yield curves "have predicted every US recession since 1955" — the pattern is real but the standard framing acknowledges false positives. Spot-checked and **correct — leave alone**: QE1/QE2/QE3 sizes, the ~$900B → ~$9T Fed balance-sheet arc, PMI 50 threshold, VIX bands.
+5. **[P2] First-session flow (launch plan §3.2–3.3) — now decomposed, so it can actually be picked up.** The plan calls the first five minutes "your most important feature" and sequences it as Move 4, right after the §2.2 migration. None of it exists. Take these one per run, in order:
    - 6a. **Progress ring on Home** (lessons completed / 12) plus an estimated "≈N min" label on each lesson card.
    - 6b. **Lesson-completion celebration** — a small animation on "Mark Complete" and the ring advancing.
    - 6c. **First-open routing** — with no saved progress, land straight in lesson 1 rather than on Home. (No signup exists to skip, which is already what the plan wants; make it explicit and keep it that way.)
    - 6d. **Streak counter on Home**, localStorage-backed — reuse the `try/catch` pattern already established by `ecycles_seen_disclaimer`.
    - 6e. **One-tap "continue tomorrow" prompt** at lesson end. **localStorage only** — real reminder notifications need the Expo decision (item 14) and must not be started here.
-7. **[P2] Clean up unused translation keys** — `indicators`, `bestInvest`, `avoidInvest`, `psychology`, `why`, `expansion`, `peak`, `contraction`, `trough`, `expDesc`, `peakDesc`, `contDesc`, `troughDesc` are defined in all 5 languages but nothing renders them. (The *rendered* "Best investments" phase language in lesson 10 was a different, now-fixed issue — see the §10.1 completion entry below.) Either delete them or build the feature with historical/educational framing and the same disclaimer treatment. Pick one — don't leave this open indefinitely.
-8. **[P2] Refresh `README.md` — it now misdescribes the repo, publicly.** It says `economic-cycles-v5.jsx` is "the entire app … all in one file (~1,340 lines)"; the file is 692 lines and the translations and lessons live in `src/locales/` and `src/content/`. `origin` is a public GitHub repo (`woozkaholdings/economics-investment-education-app`), so this is the first thing a visitor reads. Update the structure description, mention `scripts/bootstrap-node.sh` under "Running locally", and **fold this into whichever run changes the structure next** rather than spending a whole run on it. The Ray Dalio attribution line stays — launch plan §10.2 explicitly permits credit in an acknowledgments line; keep it as attribution, never as branding.
-9. **[P2] Add `DECISIONS.md`** — launch plan Move 1 asks for a decision log and this file is a *work* log, not serving that purpose. Small: record the Expo-vs-Vite choice and its status, the `.js`-not-JSON content format and why, and the localStorage-only progress approach. One short run.
+6. **[P2] Clean up unused translation keys** — `indicators`, `bestInvest`, `avoidInvest`, `psychology`, `why`, `expansion`, `peak`, `contraction`, `trough`, `expDesc`, `peakDesc`, `contDesc`, `troughDesc` are defined in all 5 languages but nothing renders them. (The *rendered* "Best investments" phase language in lesson 10 was a different, now-fixed issue — see the §10.1 completion entry below.) Either delete them or build the feature with historical/educational framing and the same disclaimer treatment. Pick one — don't leave this open indefinitely.
+7. **[P2] Refresh `README.md` — it now misdescribes the repo, publicly.** It says `economic-cycles-v5.jsx` is "the entire app … all in one file (~1,340 lines)"; the file is now 591 lines and the translations, lessons, quiz data, glossary, and kids content all live in `src/locales/` and `src/content/`. `origin` is a public GitHub repo (`woozkaholdings/economics-investment-education-app`), so this is the first thing a visitor reads. Update the structure description, mention `scripts/bootstrap-node.sh` under "Running locally", and **fold this into whichever run changes the structure next** rather than spending a whole run on it. The Ray Dalio attribution line stays — launch plan §10.2 explicitly permits credit in an acknowledgments line; keep it as attribution, never as branding.
+8. **[P2] Add `DECISIONS.md`** — launch plan Move 1 asks for a decision log and this file is a *work* log, not serving that purpose. Small: record the Expo-vs-Vite choice and its status, the `.js`-not-JSON content format and why, and the localStorage-only progress approach. One short run.
 
 **P3 — polish, only after P1 and P2**
 
-10. **[P3] Triage `npm audit`.** `npm install` on 2026-08-02 reports **2 vulnerabilities (1 moderate, 1 high)** in the dev-dependency tree (`npm audit fix --force` was suggested, breaking changes implied). Only Vite and React are direct dependencies, so this is probably transitive dev-tooling noise that never ships to users — but nobody has run `npm audit` itself to see which packages. **Do not run `--force`.**
-11. **[P3] Dark mode** (plan §3.4). After item 3 — against the current inline styles it would just have to be redone.
-12. **[P3] Accessibility pass**: screen-reader labels on tab buttons, quiz options, and the language picker; dynamic font-size support; contrast check on the phase colors (plan §3.5). Also add `aria-label`/keyboard-dismiss support to the first-launch modal — it currently has no focus trap or Escape handling.
-13. **[P3] Mobile responsiveness check** at 375px — the file is full of fixed `px` values and the product is mobile-first.
+9. **[P3] Triage `npm audit`.** `npm install` on 2026-08-02 reports **2 vulnerabilities (1 moderate, 1 high)** in the dev-dependency tree (`npm audit fix --force` was suggested, breaking changes implied). Only Vite and React are direct dependencies, so this is probably transitive dev-tooling noise that never ships to users — but nobody has run `npm audit` itself to see which packages. **Do not run `--force`.**
+10. **[P3] Dark mode** (plan §3.4). After item 2 (the `App` split) — against the current inline styles it would just have to be redone.
+11. **[P3] Accessibility pass**: screen-reader labels on tab buttons, quiz options, and the language picker; dynamic font-size support; contrast check on the phase colors (plan §3.5). Also add `aria-label`/keyboard-dismiss support to the first-launch modal — it currently has no focus trap or Escape handling.
+12. **[P3] Mobile responsiveness check** at 375px — the file is full of fixed `px` values and the product is mobile-first.
 
 **HELD — owner decisions, do not act on these**
 
-14. **[HELD] Expo vs. Vite — needs a human call, and it is now closer to the critical path.** Launch plan §2.2 and §8 (weeks 1–2) specify building on **Expo (React Native)** so web/iOS/Android share one codebase; the 2026-08-01 scaffold run chose **Vite + React (web-only)** instead. That was a reasonable way to make the prototype runnable and the plan does sequence web first, but every further web-only UI change raises the eventual port cost — and item 6 is a large one. The dev agent must **not** migrate to Expo on its own initiative and must **not** deepen the web-only investment beyond items 1–9. Surface this for the project owner to decide.
-15. **[HELD] FRED live-data integration for the Markets tab** — explicitly a *post-launch premium feature* per launch plan §2.3. Do not start. The static/educational Markets tab rework shipped 2026-08-02.
+13. **[HELD] Expo vs. Vite — needs a human call, and it is now closer to the critical path.** Launch plan §2.2 and §8 (weeks 1–2) specify building on **Expo (React Native)** so web/iOS/Android share one codebase; the 2026-08-01 scaffold run chose **Vite + React (web-only)** instead. That was a reasonable way to make the prototype runnable and the plan does sequence web first, but every further web-only UI change raises the eventual port cost — and item 5 (first-session flow) is a large one. The dev agent must **not** migrate to Expo on its own initiative and must **not** deepen the web-only investment beyond items 1–8. Surface this for the project owner to decide.
+14. **[HELD] FRED live-data integration for the Markets tab** — explicitly a *post-launch premium feature* per launch plan §2.3. Do not start. The static/educational Markets tab rework shipped 2026-08-02.
 
 **Completed and pruned**
 
+- **JSX split, step 3 (`quizData`, `glossary`, `kidsContent` → `src/content/*.js`)** — done 2026-08-02, see run log. All content now lives in modules; `economic-cycles-v5.jsx` down to 591 lines.
 - **Language picker "Beta" labelling (§3.5/§10.4)** — done 2026-08-02, see run log. The es/ko/zh/ja options in the language `<select>` now read e.g. "🇰🇷 한국어 (Beta)"; English is unchanged. Translation-volume ratios measured 2026-08-02 (**es 0.41x, ko 0.24x, ja 0.18x, zh 0.15x** of English lesson-body chars) are noted here for reference if a future run wants to re-measure after content is added.
 - **JSX split, step 1 (`TR` → `src/locales/*.js`)** and **step 2 (`lessons` → `src/content/lessons.js`)** — done 2026-08-02, see run log. Independently verified by the second weekly review: 12 lessons intact, 0 missing language fields, exact locale key parity, `economic-cycles-v5.jsx` down from 1,340 to 692 lines.
 - **Reproducible build environment** — `scripts/bootstrap-node.sh` added 2026-08-02, see run log below.
@@ -327,3 +327,51 @@ previously disclosed that.
   weekly review's guidance). It's now the top of P1, it's mechanical and low-risk
   (~95 lines combined, same proven pattern as the `TR` and `lessons` extractions), and it's
   the precondition for item 2 (the data-shape check harness).
+
+### 2026-08-02 — JSX split, step 3: extract `quizData`, `glossary`, `kidsContent` → `src/content/*.js`
+
+Picked up the second weekly review's top P1 item: finished the monolithic-JSX content
+extraction by moving the three remaining content blocks in one run, as instructed (the
+"one extraction per run" rule was retired for these three since they total ~95 lines,
+far smaller than the `TR` and `lessons` blocks already extracted with the same pattern).
+
+- Added `src/content/quizData.js` (`export const quizData = [ ... ];`, was
+  `economic-cycles-v5.jsx` lines 17–57, 13 quiz questions across 5 languages),
+  `src/content/glossary.js` (`export const glossary = { ... };`, was lines 62–80, 16
+  terms), and `src/content/kidsContent.js` (`export const kidsContent = { ... };`, was
+  lines 85–116, 3 age bands). All three are pure data — no imports, no functions, no
+  template literals — matching `lessons.js`.
+- In `economic-cycles-v5.jsx`, added three import lines (`quizData`, `glossary`,
+  `kidsContent` from `./src/content/*.js`) alongside the existing `TR`/`lessons` imports,
+  and deleted the now-redundant inline blocks together with their section-header comments
+  (old lines 17–120, replacing the whole "QUIZ DATA" / "GLOSSARY" / "KIDS CONTENT" section).
+  No call site elsewhere in the file changed — `quizData[i]`, `glossary["GDP"]`,
+  `kidsContent["5-8"]`, etc. are referenced identically.
+- **Verified content integrity precisely, not just "it builds"**: diffed each old inline
+  body (via `sed` on the pre-edit file) against the corresponding new module's body,
+  line-for-line — `quizData` 39/39 lines, `glossary` 17/17 lines, `kidsContent` 30/30
+  lines, all exact matches, zero diff output. `git diff --stat` on
+  `economic-cycles-v5.jsx` confirmed exactly "3 insertions(+), 104 deletions(-)" (692 →
+  591 lines), consistent with relocating ~104 lines of content into 3 new import lines.
+- **Verified build**: `npm install` (0 new packages, same 2 pre-existing dev-tooling
+  audit advisories as every prior run — unchanged, not investigated further per the
+  existing P3 npm-audit item) then `npm run build` using
+  `scripts/bootstrap-node.sh` (cached Node v20.18.1) — succeeded: `✓ 40 modules
+  transformed` (up from 37, the +3 being the new content files), `dist/assets/index-
+  C_i7fFmG.js` **245.10 kB / 101.07 kB gzip** — identical to the pre-extraction build
+  size, confirming the change relocated content without altering it. The build itself
+  ran slow (~2m 35s, and a first attempt hit the 4-minute foreground timeout with no
+  output yet) — consistent with the log's existing note that another concurrent
+  automated session can slow builds; re-ran in the background and waited for it to
+  finish rather than assuming a hang.
+- Did not visually verify in the browser preview tool — same known limitation as every
+  prior run (`preview_start` can't spawn `npm run dev` because its process spawn doesn't
+  see the bootstrapped Node on `PATH`). Risk is low given the exact line-diff match.
+- Renumbered the backlog to reflect this item's completion: the former item 2 (data-shape
+  check harness) is now item 1 and is unblocked; the former item 3 (split `App`) is now
+  item 2; every P2/P3/HELD item shifted down by one accordingly, with cross-references
+  (e.g. the Expo-vs-Vite HELD item's reference to "item 6") updated to match.
+- **Next run should pick**: backlog item 1 (P1 — add the data-shape check harness,
+  `npm test`). It's now unblocked, it's cheap (~20 lines of Node per the weekly review's
+  own prototype), and it's an explicit precondition the backlog sets before item 2 (the
+  riskier `App`-into-per-tab-components split) can start.
