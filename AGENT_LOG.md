@@ -32,37 +32,37 @@ The launch plan explicitly calls resolving 10.1–10.3 "your first five moves," 
 
 **P1 — do these in order**
 
-1. **[P1] Add the data-shape check harness (`npm test`) — before touching `App`.** Now that all content lives in `src/content/*.js` + `src/locales/*.js` modules (see completed items below), this is cheap: assert every lesson/quiz/glossary/kids entry has all 5 language keys; every quiz `answer` index is within its `opts` range; **the answer-index distribution is not degenerate** (see item 3 — a naive in-range check passes today's quiz); no referenced translation key is undefined. The weekly review wrote ~20 lines of Node that runs in under a second and produced real signal; a 2-minute `vite build` proves the JSX parses, not that a Korean lesson still renders. **This must be green before item 2 starts.**
-2. **[P1] Split `App` into per-tab components** — `Home`, `Learn`, `Markets`, `More` under `src/components/`, plus the `Bar`/`YieldCurve`/`CycleChart` helpers. `App` is now roughly lines 90–591 (~500 lines, after the 2026-08-02 content extraction) and this is the genuinely risky half of §2.2. **One tab per run**, item 1's checks green after each.
+1. **[P1] Split `App` into per-tab components** — `Home`, `Learn`, `Markets`, `More` under `src/components/`, plus the `Bar`/`YieldCurve`/`CycleChart` helpers. `App` is now roughly lines 90–591 (~500 lines, after the 2026-08-02 content extraction) and this is the genuinely risky half of §2.2. **One tab per run**, `npm test` (see completed items below) green after each.
 
 **P2 — after P1 is clear**
 
-3. **[P2] Fix the quiz answer key.** Found by the 2026-08-02 review: `quizData` answer indices are `0,0,0,0,0,0,0,0,0,3,0,0,0` — **12 of 13 correct answers are option 0**, so a user who always taps the first option scores 92% without reading. Every index is in range, so this is a content-design defect, not a data defect. Shuffle the *stored* answer positions (reorder `opts` and update `answer`) — do not shuffle at render time, because the `explain` text references option content.
-4. **[P2] Stale/dated factual figures.** Wider than previously recorded. **"~$50T total credit vs ~$3T actual money"** (early-2010s numbers, far off current US aggregates) appears in a lesson body, a quiz `explain`, **and** the `Credit` glossary entry. **"2+ quarters of falling GDP = recession"** is stated as a *definition* in a lesson body, the `GDP` glossary entry, **and** the `Recession` glossary entry — it is a rule of thumb; US recessions are dated by the NBER on broader criteria. Also reword the quiz claim that inverted yield curves "have predicted every US recession since 1955" — the pattern is real but the standard framing acknowledges false positives. Spot-checked and **correct — leave alone**: QE1/QE2/QE3 sizes, the ~$900B → ~$9T Fed balance-sheet arc, PMI 50 threshold, VIX bands.
-5. **[P2] First-session flow (launch plan §3.2–3.3) — now decomposed, so it can actually be picked up.** The plan calls the first five minutes "your most important feature" and sequences it as Move 4, right after the §2.2 migration. None of it exists. Take these one per run, in order:
+2. **[P2] Fix the quiz answer key.** Found by the 2026-08-02 review, reconfirmed by the new `npm test` harness: `quizData` answer indices are `0,0,0,0,0,0,0,0,0,3,0,0,0` — **12 of 13 correct answers are option 0**, so a user who always taps the first option scores 92% without reading. Every index is in range, so this is a content-design defect, not a data defect. Shuffle the *stored* answer positions (reorder `opts` and update `answer`) — do not shuffle at render time, because the `explain` text references option content. `npm test` will keep warning about this until it's fixed.
+3. **[P2] Stale/dated factual figures.** Wider than previously recorded. **"~$50T total credit vs ~$3T actual money"** (early-2010s numbers, far off current US aggregates) appears in a lesson body, a quiz `explain`, **and** the `Credit` glossary entry. **"2+ quarters of falling GDP = recession"** is stated as a *definition* in a lesson body, the `GDP` glossary entry, **and** the `Recession` glossary entry — it is a rule of thumb; US recessions are dated by the NBER on broader criteria. Also reword the quiz claim that inverted yield curves "have predicted every US recession since 1955" — the pattern is real but the standard framing acknowledges false positives. Spot-checked and **correct — leave alone**: QE1/QE2/QE3 sizes, the ~$900B → ~$9T Fed balance-sheet arc, PMI 50 threshold, VIX bands.
+4. **[P2] First-session flow (launch plan §3.2–3.3) — now decomposed, so it can actually be picked up.** The plan calls the first five minutes "your most important feature" and sequences it as Move 4, right after the §2.2 migration. None of it exists. Take these one per run, in order:
    - 6a. **Progress ring on Home** (lessons completed / 12) plus an estimated "≈N min" label on each lesson card.
    - 6b. **Lesson-completion celebration** — a small animation on "Mark Complete" and the ring advancing.
    - 6c. **First-open routing** — with no saved progress, land straight in lesson 1 rather than on Home. (No signup exists to skip, which is already what the plan wants; make it explicit and keep it that way.)
    - 6d. **Streak counter on Home**, localStorage-backed — reuse the `try/catch` pattern already established by `ecycles_seen_disclaimer`.
-   - 6e. **One-tap "continue tomorrow" prompt** at lesson end. **localStorage only** — real reminder notifications need the Expo decision (item 14) and must not be started here.
-6. **[P2] Clean up unused translation keys** — `indicators`, `bestInvest`, `avoidInvest`, `psychology`, `why`, `expansion`, `peak`, `contraction`, `trough`, `expDesc`, `peakDesc`, `contDesc`, `troughDesc` are defined in all 5 languages but nothing renders them. (The *rendered* "Best investments" phase language in lesson 10 was a different, now-fixed issue — see the §10.1 completion entry below.) Either delete them or build the feature with historical/educational framing and the same disclaimer treatment. Pick one — don't leave this open indefinitely.
-7. **[P2] Refresh `README.md` — it now misdescribes the repo, publicly.** It says `economic-cycles-v5.jsx` is "the entire app … all in one file (~1,340 lines)"; the file is now 591 lines and the translations, lessons, quiz data, glossary, and kids content all live in `src/locales/` and `src/content/`. `origin` is a public GitHub repo (`woozkaholdings/economics-investment-education-app`), so this is the first thing a visitor reads. Update the structure description, mention `scripts/bootstrap-node.sh` under "Running locally", and **fold this into whichever run changes the structure next** rather than spending a whole run on it. The Ray Dalio attribution line stays — launch plan §10.2 explicitly permits credit in an acknowledgments line; keep it as attribution, never as branding.
-8. **[P2] Add `DECISIONS.md`** — launch plan Move 1 asks for a decision log and this file is a *work* log, not serving that purpose. Small: record the Expo-vs-Vite choice and its status, the `.js`-not-JSON content format and why, and the localStorage-only progress approach. One short run.
+   - 6e. **One-tap "continue tomorrow" prompt** at lesson end. **localStorage only** — real reminder notifications need the Expo decision (item 13) and must not be started here.
+5. **[P2] Clean up unused translation keys** — `indicators`, `bestInvest`, `avoidInvest`, `psychology`, `why`, `expansion`, `peak`, `contraction`, `trough`, `expDesc`, `peakDesc`, `contDesc`, `troughDesc` are defined in all 5 languages but nothing renders them (confirmed again by the new `npm test` harness's used-vs-defined `TR` key check — these 13 show up as defined-but-unused). (The *rendered* "Best investments" phase language in lesson 10 was a different, now-fixed issue — see the §10.1 completion entry below.) Either delete them or build the feature with historical/educational framing and the same disclaimer treatment. Pick one — don't leave this open indefinitely.
+6. **[P2] Refresh `README.md` — it now misdescribes the repo, publicly.** It says `economic-cycles-v5.jsx` is "the entire app … all in one file (~1,340 lines)"; the file is now 591 lines and the translations, lessons, quiz data, glossary, and kids content all live in `src/locales/` and `src/content/`. `origin` is a public GitHub repo (`woozkaholdings/economics-investment-education-app`), so this is the first thing a visitor reads. Update the structure description, mention `scripts/bootstrap-node.sh` under "Running locally" and `npm test` alongside `npm run build`, and **fold this into whichever run changes the structure next** rather than spending a whole run on it. The Ray Dalio attribution line stays — launch plan §10.2 explicitly permits credit in an acknowledgments line; keep it as attribution, never as branding.
+7. **[P2] Add `DECISIONS.md`** — launch plan Move 1 asks for a decision log and this file is a *work* log, not serving that purpose. Small: record the Expo-vs-Vite choice and its status, the `.js`-not-JSON content format and why, and the localStorage-only progress approach. One short run.
 
 **P3 — polish, only after P1 and P2**
 
-9. **[P3] Triage `npm audit`.** `npm install` on 2026-08-02 reports **2 vulnerabilities (1 moderate, 1 high)** in the dev-dependency tree (`npm audit fix --force` was suggested, breaking changes implied). Only Vite and React are direct dependencies, so this is probably transitive dev-tooling noise that never ships to users — but nobody has run `npm audit` itself to see which packages. **Do not run `--force`.**
-10. **[P3] Dark mode** (plan §3.4). After item 2 (the `App` split) — against the current inline styles it would just have to be redone.
-11. **[P3] Accessibility pass**: screen-reader labels on tab buttons, quiz options, and the language picker; dynamic font-size support; contrast check on the phase colors (plan §3.5). Also add `aria-label`/keyboard-dismiss support to the first-launch modal — it currently has no focus trap or Escape handling.
-12. **[P3] Mobile responsiveness check** at 375px — the file is full of fixed `px` values and the product is mobile-first.
+8. **[P3] Triage `npm audit`.** `npm install` on 2026-08-02 reports **2 vulnerabilities (1 moderate, 1 high)** in the dev-dependency tree (`npm audit fix --force` was suggested, breaking changes implied). Only Vite and React are direct dependencies, so this is probably transitive dev-tooling noise that never ships to users — but nobody has run `npm audit` itself to see which packages. **Do not run `--force`.**
+9. **[P3] Dark mode** (plan §3.4). After item 1 (the `App` split) — against the current inline styles it would just have to be redone.
+10. **[P3] Accessibility pass**: screen-reader labels on tab buttons, quiz options, and the language picker; dynamic font-size support; contrast check on the phase colors (plan §3.5). Also add `aria-label`/keyboard-dismiss support to the first-launch modal — it currently has no focus trap or Escape handling.
+11. **[P3] Mobile responsiveness check** at 375px — the file is full of fixed `px` values and the product is mobile-first.
 
 **HELD — owner decisions, do not act on these**
 
-13. **[HELD] Expo vs. Vite — needs a human call, and it is now closer to the critical path.** Launch plan §2.2 and §8 (weeks 1–2) specify building on **Expo (React Native)** so web/iOS/Android share one codebase; the 2026-08-01 scaffold run chose **Vite + React (web-only)** instead. That was a reasonable way to make the prototype runnable and the plan does sequence web first, but every further web-only UI change raises the eventual port cost — and item 5 (first-session flow) is a large one. The dev agent must **not** migrate to Expo on its own initiative and must **not** deepen the web-only investment beyond items 1–8. Surface this for the project owner to decide.
-14. **[HELD] FRED live-data integration for the Markets tab** — explicitly a *post-launch premium feature* per launch plan §2.3. Do not start. The static/educational Markets tab rework shipped 2026-08-02.
+12. **[HELD] Expo vs. Vite — needs a human call, and it is now closer to the critical path.** Launch plan §2.2 and §8 (weeks 1–2) specify building on **Expo (React Native)** so web/iOS/Android share one codebase; the 2026-08-01 scaffold run chose **Vite + React (web-only)** instead. That was a reasonable way to make the prototype runnable and the plan does sequence web first, but every further web-only UI change raises the eventual port cost — and item 4 (first-session flow) is a large one. The dev agent must **not** migrate to Expo on its own initiative and must **not** deepen the web-only investment beyond items 1–7. Surface this for the project owner to decide.
+13. **[HELD] FRED live-data integration for the Markets tab** — explicitly a *post-launch premium feature* per launch plan §2.3. Do not start. The static/educational Markets tab rework shipped 2026-08-02.
 
 **Completed and pruned**
 
+- **Data-shape check harness (`npm test`)** — added 2026-08-02, see run log below. Checks locale/content modules structurally in ~5s; no browser or 2-minute build needed to catch a missing language field.
 - **JSX split, step 3 (`quizData`, `glossary`, `kidsContent` → `src/content/*.js`)** — done 2026-08-02, see run log. All content now lives in modules; `economic-cycles-v5.jsx` down to 591 lines.
 - **Language picker "Beta" labelling (§3.5/§10.4)** — done 2026-08-02, see run log. The es/ko/zh/ja options in the language `<select>` now read e.g. "🇰🇷 한국어 (Beta)"; English is unchanged. Translation-volume ratios measured 2026-08-02 (**es 0.41x, ko 0.24x, ja 0.18x, zh 0.15x** of English lesson-body chars) are noted here for reference if a future run wants to re-measure after content is added.
 - **JSX split, step 1 (`TR` → `src/locales/*.js`)** and **step 2 (`lessons` → `src/content/lessons.js`)** — done 2026-08-02, see run log. Independently verified by the second weekly review: 12 lessons intact, 0 missing language fields, exact locale key parity, `economic-cycles-v5.jsx` down from 1,340 to 692 lines.
@@ -375,3 +375,68 @@ far smaller than the `TR` and `lessons` blocks already extracted with the same p
   `npm test`). It's now unblocked, it's cheap (~20 lines of Node per the weekly review's
   own prototype), and it's an explicit precondition the backlog sets before item 2 (the
   riskier `App`-into-per-tab-components split) can start.
+
+### 2026-08-02 — Data-shape check harness (`npm test`)
+
+Picked backlog item 1 (P1, top of the list, and an explicit precondition for the `App`
+split that follows it): added the structural test harness the second weekly review asked
+for, so a missing language field or a bad index doesn't have to wait on a 2-minute
+`vite build` (which only proves the JSX parses) or a browser session (which this
+environment still can't run) to surface.
+
+- Added `scripts/check-data.mjs` (plain Node, ESM, no test framework/dependency —
+  matches the weekly review's own ~20-line prototype in spirit, ended up closer to 90
+  lines because it checks five differently-shaped content modules plus the app's
+  translation-key usage, not just one). Wired as `npm test` in `package.json`
+  (`"test": "node scripts/check-data.mjs"`).
+- **What it checks**, per module:
+  - `src/locales/*.js` (`TR`): every language has exactly the same key set as `en`
+    (missing/extra keys both fail), every value a non-empty string.
+  - `src/content/lessons.js`: unique lesson `id`s; `title`/`subtitle`/`takeaway`/
+    `thinkAbout` and every section's `heading`/`body` present in all 5 languages and
+    non-empty.
+  - `src/content/quizData.js`: `q`/`opts`/`explain` present in all 5 languages; `opts`
+    has the *same option count* in every language (not just present); `answer` is an
+    integer in range. Also computes the answer-index distribution and **warns
+    (non-fatal)** if one index accounts for more than half of correct answers — this is
+    what catches the "12 of 13 answers are option 0" defect backlog item 2 (formerly
+    item 3) exists to fix. It's a warning, not a failure, on purpose: the fix itself is
+    a separate, deliberately-sequenced P2 item, and this harness's job right now is to
+    surface the signal, not to block on content decisions that aren't in scope for this
+    run.
+  - `src/content/glossary.js`: every term has all 5 languages, each a non-empty
+    `{s, f}` pair.
+  - `src/content/kidsContent.js`: every age band's `title`/`activity`/`parentTip` and
+    every entry in `lessons[]` present in all 5 languages and non-empty.
+  - `economic-cycles-v5.jsx`: every `t.someKey` reference (regex over the file, `t` is
+    the per-render `const t = TR[lang]`) resolves to a real key in `TR.en` — catches a
+    dangling reference a build wouldn't (JSX renders `undefined` silently, it doesn't
+    throw).
+- **Verified the checks are real, not rubber-stamps**: manually cross-checked the `t.`
+  usage scan outside the script (67 unique `t.KEY` references found via the same regex,
+  all 67 resolve against `TR.en`'s 83 keys, confirming the 16-key gap is exactly the
+  known-and-tracked unused-translation-keys backlog item, not a script bug). Also
+  grepped the file for any other single-letter `t` identifier (loop/callback params)
+  that could collide with the `t.KEY` regex and confirmed there are none.
+- **Verified it runs and is green**: `npm test` (via `scripts/bootstrap-node.sh`'s
+  cached Node v20.18.1) completes in ~5 seconds — `PASS: 0 failure(s), 1 warning(s)`,
+  the one warning being the already-tracked degenerate quiz-answer-index issue described
+  above. Ran it both directly (`node scripts/check-data.mjs`) and via `npm run test` to
+  confirm the `package.json` wiring works.
+- **Verified no regression**: `npm run build` still succeeds —
+  `dist/assets/index-C_i7fFmG.js` **245.10 kB / 101.07 kB gzip**, the *exact same bundle
+  hash* as the previous run's build, confirming this run touched only tooling
+  (`package.json`, `scripts/check-data.mjs`), not any shipped content or app code.
+- **Environment note for future runs**: `git diff`, `git show <file> | ...` via process
+  substitution, and a chained `git add && git status` all hung in this session (matches
+  the standing memory note that git commands can stall here). Worked around it by not
+  using `git diff` at all (relied on precise, deliberate edits instead) and by running
+  `git add` on its own. One of the hung commands left a stale `.git/index.lock`; before
+  removing it, confirmed via `ps aux` that no real `git` process was still running (the
+  earlier grep match on "git" was a false positive from `Logitech`-named processes), then
+  removed the lock. No files were reverted or force-anything used.
+- **Next run should pick**: backlog item 1 (P1, now unblocked — split `App` into
+  per-tab components under `src/components/`: `Home`, `Learn`, `Markets`, `More`, plus
+  the `Bar`/`YieldCurve`/`CycleChart` helpers). Do one tab per run per the existing
+  guidance, and run `npm test` (fast) alongside `npm run build` after each to confirm
+  the extraction didn't drop a prop or a language field.
