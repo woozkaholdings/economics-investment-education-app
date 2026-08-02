@@ -12,7 +12,7 @@ This file is the memory of the autonomous development agent that runs every 3 ho
 - **Quiz engine** (`quizData`) — ~13 multiple-choice questions with explanations, in all 5 languages.
 - **Kids section** (`kidsContent`) — age-banded (5-8, 9-12, 13-17) lessons, an activity, and a parent tip.
 - **Glossary** (`glossary`) — ~16 terms, searchable, translated.
-- **Markets dashboard** — yield curve shapes, Fed balance sheet (QE/QT) narrative, rate-change effects on assets. Currently hardcodes `nowDate: "February 2026"` in every language — a stale-data problem flagged in the launch plan (Section 2.3).
+- **Markets dashboard** — yield curve shapes, Fed balance sheet (QE/QT) narrative, rate-change effects on assets. (The hardcoded `nowDate: "February 2026"` stale-data problem flagged in launch plan §2.3 was fixed 2026-08-02 — the tab is now explicitly an illustrative teaching scenario with no dates.)
 - Helper chart components (`Bar`, `YieldCurve`, `CycleChart`) are plain inline-styled SVG/divs, no charting library dependency.
 
 There was no `package.json`, no bundler, and no way to actually run the app before this run. `Economic_Cycles_Launch_Plan.docx` (see `working_files/Economic_Cycles_Launch_Plan.pdf` for the same content as images) is a full launch playbook: Expo/React Native + Supabase + RevenueCat + PostHog stack, freemium pricing ($6.99/mo, $39.99/yr, $79.99 lifetime), a 16-week roadmap, and — importantly — a "Blindspot Register" (Section 10) flagging legal/compliance risks in the *current content* that should be fixed before anything else:
