@@ -2,7 +2,7 @@ import { useState, useRef, useEffect, useCallback } from "react";
 
 // ═══════════════════════════════════════════════════════════════
 // ECONOMIC CYCLES v5 — Step-by-Step Lessons + Bottom Tabs
-// Based on Ray Dalio's "How The Economic Machine Works"
+// Inspired by principles popularized by economists and investors
 // ═══════════════════════════════════════════════════════════════
 
 // ─── TRANSLATIONS (5 Languages) ───
@@ -18,7 +18,8 @@ const TR = {
     continueLesson: "Continue Learning", startLesson: "Start Learning",
     lessonsCompleted: "Lessons Completed", totalLessons: "Total Lessons",
     featuredInsight: "Featured Insight",
-    dalioQuote: "The economy works like a simple machine. It's made up of a few simple parts and a lot of simple transactions repeated over and over.",
+    heroInsight: "Think of the economy as a machine built from a few simple parts: transactions. Millions of them, repeating every day, add up to booms, busts, and everything in between.",
+    disclaimer: "Educational content only — not personalized investment, legal, or tax advice. Markets carry risk; past patterns don't guarantee future results.",
     // Learn
     lessonLabel: "Lesson", ofLabel: "of", completeLabel: "Complete!",
     nextLesson: "Next Lesson", prevLesson: "Previous", markComplete: "Mark Complete",
@@ -36,8 +37,9 @@ const TR = {
     quizTitle: "Test Your Knowledge", quizStart: "Start Quiz", quizNext: "Next",
     quizFinish: "See Results", quizCorrect: "Correct!", quizWrong: "Not quite.",
     quizScore: "Your Score", quizTryAgain: "Try Again", quizExplain: "Explanation",
-    kidsTitle: "Economics for Kids", kidsAges58: "Ages 5-8", kidsAges912: "Ages 9-12",
+    kidsTitle: "Teach Your Kids About Money", kidsAges58: "Ages 5-8", kidsAges912: "Ages 9-12",
     kidsAges1317: "Ages 13-17", kidsParentTip: "Parent Tip", kidsActivity: "Try This Activity",
+    kidsParentIntro: "A parent's guide — pick your child's age band, then read and share these explanations together.",
     glossTitle: "Glossary", glossSearch: "Search terms...",
     expansion: "Expansion", peak: "Peak", contraction: "Contraction", trough: "Trough",
     expDesc: "Economy grows. GDP rises, jobs created, confidence builds.",
@@ -63,7 +65,8 @@ const TR = {
     continueLesson: "Continuar", startLesson: "Empezar",
     lessonsCompleted: "Lecciones Completadas", totalLessons: "Total",
     featuredInsight: "Idea Destacada",
-    dalioQuote: "La economía funciona como una máquina simple. Está compuesta por pocas partes simples y muchas transacciones repetidas.",
+    heroInsight: "Piensa en la economía como una máquina hecha de pocas partes simples: transacciones. Millones de ellas, repitiéndose cada día, forman los auges y las caídas.",
+    disclaimer: "Solo contenido educativo — no es asesoría de inversión, legal ni fiscal personalizada. Los mercados conllevan riesgo; los patrones pasados no garantizan resultados futuros.",
     lessonLabel: "Lección", ofLabel: "de", completeLabel: "¡Completo!",
     nextLesson: "Siguiente", prevLesson: "Anterior", markComplete: "Completar",
     keyTakeaway: "Punto Clave", tryThinking: "Piensa en Esto",
@@ -78,8 +81,9 @@ const TR = {
     quizTitle: "Pon a Prueba tu Conocimiento", quizStart: "Iniciar", quizNext: "Siguiente",
     quizFinish: "Ver Resultados", quizCorrect: "¡Correcto!", quizWrong: "No exactamente.",
     quizScore: "Tu Puntuación", quizTryAgain: "Intentar de Nuevo", quizExplain: "Explicación",
-    kidsTitle: "Economía para Niños", kidsAges58: "5-8 años", kidsAges912: "9-12 años",
+    kidsTitle: "Enseña Economía a tus Hijos", kidsAges58: "5-8 años", kidsAges912: "9-12 años",
     kidsAges1317: "13-17 años", kidsParentTip: "Consejo para Padres", kidsActivity: "Prueba Esta Actividad",
+    kidsParentIntro: "Una guía para padres — elige la banda de edad de tu hijo y lean juntos estas explicaciones.",
     glossTitle: "Glosario", glossSearch: "Buscar términos...",
     expansion: "Expansión", peak: "Pico", contraction: "Contracción", trough: "Valle",
     expDesc: "La economía crece. El PIB sube, se crean empleos.",
@@ -105,7 +109,8 @@ const TR = {
     continueLesson: "학습 계속하기", startLesson: "학습 시작",
     lessonsCompleted: "완료한 레슨", totalLessons: "전체 레슨",
     featuredInsight: "주요 인사이트",
-    dalioQuote: "경제는 간단한 기계처럼 작동합니다. 몇 가지 단순한 부분과 반복되는 많은 거래로 이루어져 있습니다.",
+    heroInsight: "경제를 몇 가지 단순한 부분으로 이루어진 기계라고 생각해보세요: 바로 거래입니다. 매일 반복되는 수백만 건의 거래가 호황과 불황을 만들어냅니다.",
+    disclaimer: "교육용 콘텐츠입니다 — 개인 맞춤형 투자·법률·세무 조언이 아닙니다. 시장에는 위험이 따르며 과거 패턴이 미래 결과를 보장하지 않습니다.",
     lessonLabel: "레슨", ofLabel: "/", completeLabel: "완료!",
     nextLesson: "다음 레슨", prevLesson: "이전", markComplete: "완료하기",
     keyTakeaway: "핵심 포인트", tryThinking: "생각해보세요",
@@ -120,8 +125,9 @@ const TR = {
     quizTitle: "지식을 테스트하세요", quizStart: "퀴즈 시작", quizNext: "다음",
     quizFinish: "결과 보기", quizCorrect: "정답!", quizWrong: "아쉽네요.",
     quizScore: "당신의 점수", quizTryAgain: "다시 시도", quizExplain: "설명",
-    kidsTitle: "어린이를 위한 경제", kidsAges58: "5-8세", kidsAges912: "9-12세",
+    kidsTitle: "자녀에게 경제 가르치기", kidsAges58: "5-8세", kidsAges912: "9-12세",
     kidsAges1317: "13-17세", kidsParentTip: "부모 팁", kidsActivity: "이 활동을 해보세요",
+    kidsParentIntro: "부모를 위한 가이드입니다 — 자녀의 연령대를 선택한 후, 이 설명을 함께 읽어보세요.",
     glossTitle: "용어집", glossSearch: "용어 검색...",
     expansion: "확장기", peak: "정점", contraction: "수축기", trough: "저점",
     expDesc: "경제가 성장합니다. GDP 상승, 일자리 창출, 신뢰 형성.",
@@ -147,7 +153,8 @@ const TR = {
     continueLesson: "继续学习", startLesson: "开始学习",
     lessonsCompleted: "已完成课程", totalLessons: "总课程",
     featuredInsight: "精选见解",
-    dalioQuote: "经济像一台简单的机器运行。它由几个简单的部分和大量重复的交易组成。",
+    heroInsight: "把经济想象成由几个简单部分构成的机器：交易。每天重复发生的数百万笔交易，造就了繁荣与衰退。",
+    disclaimer: "仅供教育用途 — 不构成个性化投资、法律或税务建议。市场存在风险，过去的规律不保证未来的结果。",
     lessonLabel: "课程", ofLabel: "/", completeLabel: "完成！",
     nextLesson: "下一课", prevLesson: "上一课", markComplete: "标记完成",
     keyTakeaway: "关键要点", tryThinking: "想一想",
@@ -162,8 +169,9 @@ const TR = {
     quizTitle: "测试你的知识", quizStart: "开始", quizNext: "下一题",
     quizFinish: "查看结果", quizCorrect: "正确！", quizWrong: "不太对。",
     quizScore: "你的分数", quizTryAgain: "再试一次", quizExplain: "解释",
-    kidsTitle: "儿童经济学", kidsAges58: "5-8岁", kidsAges912: "9-12岁",
+    kidsTitle: "教孩子学经济", kidsAges58: "5-8岁", kidsAges912: "9-12岁",
     kidsAges1317: "13-17岁", kidsParentTip: "家长提示", kidsActivity: "试试这个活动",
+    kidsParentIntro: "家长指南——选择孩子的年龄段，然后一起阅读这些讲解。",
     glossTitle: "术语表", glossSearch: "搜索术语...",
     expansion: "扩张期", peak: "顶峰", contraction: "收缩期", trough: "低谷",
     expDesc: "经济增长。GDP上升，就业增加，信心增强。",
@@ -189,7 +197,8 @@ const TR = {
     continueLesson: "学習を続ける", startLesson: "学習を始める",
     lessonsCompleted: "完了レッスン", totalLessons: "全レッスン",
     featuredInsight: "注目のインサイト",
-    dalioQuote: "経済はシンプルな機械のように動きます。いくつかの単純な部品と何度も繰り返される取引で構成されています。",
+    heroInsight: "経済を、いくつかの単純な部品でできた機械だと考えてみましょう。それは「取引」です。毎日繰り返される何百万もの取引が、好況と不況を生み出します。",
+    disclaimer: "教育目的のコンテンツです — 個別の投資・法律・税務アドバイスではありません。市場にはリスクが伴い、過去のパターンが将来の結果を保証するものではありません。",
     lessonLabel: "レッスン", ofLabel: "/", completeLabel: "完了！",
     nextLesson: "次のレッスン", prevLesson: "前へ", markComplete: "完了にする",
     keyTakeaway: "重要ポイント", tryThinking: "考えてみよう",
@@ -204,8 +213,9 @@ const TR = {
     quizTitle: "知識をテストしよう", quizStart: "開始", quizNext: "次へ",
     quizFinish: "結果を見る", quizCorrect: "正解！", quizWrong: "惜しい。",
     quizScore: "あなたのスコア", quizTryAgain: "もう一度", quizExplain: "解説",
-    kidsTitle: "こどもの経済学", kidsAges58: "5-8歳", kidsAges912: "9-12歳",
+    kidsTitle: "子どもにお金の話を", kidsAges58: "5-8歳", kidsAges912: "9-12歳",
     kidsAges1317: "13-17歳", kidsParentTip: "保護者のヒント", kidsActivity: "このアクティビティを試そう",
+    kidsParentIntro: "保護者向けガイドです — お子さんの年齢帯を選び、この説明を一緒に読んでみましょう。",
     glossTitle: "用語集", glossSearch: "用語を検索...",
     expansion: "拡大期", peak: "ピーク", contraction: "収縮期", trough: "底",
     expDesc: "経済が成長。GDPが上昇し、雇用が創出される。",
@@ -228,7 +238,7 @@ const langFlags = { en: "🇺🇸", es: "🇪🇸", ko: "🇰🇷", zh: "🇨�
 const langNames = { en: "English", es: "Español", ko: "한국어", zh: "中文", ja: "日本語" };
 
 // ═══════════════════════════════════════════════════════════════
-// STEP-BY-STEP LESSONS (Based on Ray Dalio's Economic Machine)
+// STEP-BY-STEP LESSONS (inspired by principles popularized by economists and investors)
 // Sequential learning — each lesson builds on the previous
 // ═══════════════════════════════════════════════════════════════
 const lessons = [
@@ -676,7 +686,7 @@ const lessons = [
   {
     id: 12, icon: "🎯", color: "#15803d",
     title: { en: "Three Rules of Thumb", es: "Tres Reglas de Oro", ko: "세 가지 경험 법칙", zh: "三条经验法则", ja: "3つの経験則" },
-    subtitle: { en: "Ray Dalio's summary — simple but powerful", es: "Resumen de Ray Dalio — simple pero poderoso", ko: "레이 달리오의 요약 — 간단하지만 강력합니다", zh: "瑞·达利欧的总结——简单但强大", ja: "レイ・ダリオの要約 — シンプルだが強力" },
+    subtitle: { en: "A classic summary — simple but powerful", es: "Un resumen clásico — simple pero poderoso", ko: "고전적인 요약 — 간단하지만 강력합니다", zh: "经典总结——简单但强大", ja: "古典的な要約 — シンプルだが強力" },
     sections: [
       {
         heading: { en: "The Three Rules", es: "Las Tres Reglas", ko: "세 가지 법칙", zh: "三条法则", ja: "3つのルール" },
@@ -741,7 +751,7 @@ const quizData = [
   { q: { en: "What is QE (Quantitative Easing)?", es: "¿Qué es QE?", ko: "양적완화(QE)란?", zh: "什么是QE？", ja: "QEとは？" },
     opts: { en: ["Central bank buys bonds to inject money when rates are at 0%", "Government raises taxes", "Banks stop lending", "Prices frozen by law"], es: ["Banco central compra bonos cuando tasas están en 0%", "Gobierno sube impuestos", "Bancos dejan de prestar", "Precios congelados"], ko: ["금리가 0%일 때 중앙은행이 채권 매입으로 자금 공급", "정부 세금 인상", "은행 대출 중단", "법으로 물가 동결"], zh: ["利率为0%时央行买债券注入资金", "政府加税", "银行停贷", "法律冻结价格"], ja: ["金利0%時に中央銀行が債券購入で資金注入", "政府が増税", "銀行が融資停止", "法律で物価凍結"] },
     answer: 0, explain: { en: "QE is the Fed's emergency tool. When rates are at 0%, it prints money to buy bonds, injecting liquidity into the system.", es: "QE es la herramienta de emergencia del Fed.", ko: "QE는 연준의 비상 도구입니다.", zh: "QE是美联储的紧急工具。", ja: "QEはFRBの緊急ツール。" } },
-  { q: { en: "Ray Dalio's Rule #1 is:", es: "La Regla #1 de Dalio es:", ko: "달리오의 법칙 #1은:", zh: "达利欧的法则1是：", ja: "ダリオのルール1は：" },
+  { q: { en: "The first rule of thumb for managing debt is:", es: "La primera regla general para manejar la deuda es:", ko: "부채 관리의 첫 번째 경험 법칙은:", zh: "管理债务的第一条经验法则是：", ja: "債務管理における最初の経験則は：" },
     opts: { en: ["Don't have debt rise faster than income", "Always buy stocks", "Never borrow money", "Save 50% of income"], es: ["No dejes que la deuda crezca más rápido que los ingresos", "Siempre comprar acciones", "Nunca pedir prestado", "Ahorrar 50%"], ko: ["부채가 소득보다 빠르게 증가하지 않게 하라", "항상 주식을 사라", "절대 빌리지 마라", "소득의 50%를 저축하라"], zh: ["不要让债务增长快于收入", "总是买股票", "永不借钱", "存收入的50%"], ja: ["債務が所得より速く増えないようにする", "常に株を買う", "決して借金しない", "収入の50%を貯蓄"] },
     answer: 0, explain: { en: "If debt rises faster than income, your debt burdens will eventually crush you. This applies to individuals AND nations.", es: "Si la deuda crece más rápido que los ingresos, te aplastará.", ko: "부채가 소득보다 빠르게 증가하면 결국 부채 부담에 짓눌립니다.", zh: "如果债务增长快于收入，债务负担最终会压垮你。", ja: "債務が所得より速く増えると、債務負担に押しつぶされる。" } },
   { q: { en: "What matters most for economic growth in the long run?", es: "¿Qué es lo más importante para el crecimiento económico a largo plazo?", ko: "장기적으로 경제 성장에 가장 중요한 것은?", zh: "从长期来看，什么对经济增长最重要？", ja: "長期的に経済成長にとって最も重要なものは？" },
@@ -811,7 +821,7 @@ const kidsContent = {
   "13-17": {
     title: { en: "Real-World Economics", es: "Economía del Mundo Real", ko: "현실 세계의 경제학", zh: "现实世界经济学", ja: "実社会の経済学" },
     lessons: [
-      { en: "Ray Dalio explains: every dollar you spend is someone else's income. When you buy a coffee, you pay the barista, who pays rent, whose landlord pays a mortgage. It's all connected!", es: "Ray Dalio explica: cada dólar que gastas es el ingreso de alguien más. ¡Todo está conectado!", ko: "레이 달리오의 설명: 당신이 쓰는 모든 달러는 다른 사람의 소득입니다. 커피를 사면 바리스타에게 돈이 가고, 그 사람이 월세를 내고, 집주인이 모기지를 갚습니다. 모두 연결되어 있습니다!", zh: "达利欧解释：你花的每一美元都是别人的收入。买咖啡时，你付钱给咖啡师，咖啡师付房租，房东付按揭。全都连在一起！", ja: "レイ・ダリオの説明：使った1ドルは誰かの収入。コーヒーを買えばバリスタに、バリスタは家賃を、大家はローンを。全部つながっている！" },
+      { en: "Economists have a saying: every dollar you spend is someone else's income. When you buy a coffee, you pay the barista, who pays rent, whose landlord pays a mortgage. It's all connected!", es: "Los economistas tienen un dicho: cada dólar que gastas es el ingreso de alguien más. ¡Todo está conectado!", ko: "경제학자들이 흔히 하는 말이 있습니다: 당신이 쓰는 모든 달러는 다른 사람의 소득입니다. 커피를 사면 바리스타에게 돈이 가고, 그 사람이 월세를 내고, 집주인이 모기지를 갚습니다. 모두 연결되어 있습니다!", zh: "经济学家常说：你花的每一美元都是别人的收入。买咖啡时，你付钱给咖啡师，咖啡师付房租，房东付按揭。全都连在一起！", ja: "経済学者たちはこう言います：使った1ドルは誰かの収入になる。コーヒーを買えばバリスタに、バリスタは家賃を、大家はローンを。全部つながっている！" },
       { en: "The Fed is like a thermostat for the economy. Too hot (inflation)? Raise rates to cool it. Too cold (recession)? Lower rates to warm it up. But it takes 12-24 months to feel the change!", es: "El Fed es como un termostato económico. ¿Muy caliente? Sube tasas. ¿Muy frío? Baja tasas. ¡Tarda 12-24 meses en sentirse!", ko: "연준은 경제의 온도 조절 장치와 같습니다. 너무 뜨거우면(인플레이션)? 금리를 올려 식힙니다. 너무 차가우면(경기침체)? 금리를 내려 따뜻하게 합니다.", zh: "美联储就像经济的恒温器。太热（通胀）？加息降温。太冷（衰退）？降息升温。但需要12-24个月才能感受到变化！", ja: "FRBは経済のサーモスタット。熱すぎ（インフレ）？利上げで冷ます。寒すぎ（後退）？利下げで温める。でも効果は12-24ヶ月後！" },
       { en: "In 2008, banks lent too much to people who couldn't pay back. When the bubble burst, it created a deleveraging — the first in 75 years. The Fed printed $2+ trillion to stop the collapse.", es: "En 2008, los bancos prestaron demasiado a quienes no podían pagar. Cuando la burbuja estalló, el Fed imprimió $2T+.", ko: "2008년, 은행들이 갚을 수 없는 사람들에게 너무 많이 빌려줬습니다. 버블이 터지자 75년 만의 디레버리징이 발생했고, 연준은 $2조 이상을 발행했습니다.", zh: "2008年，银行向无力还款的人大量放贷。泡沫破裂时产生了75年来首次去杠杆。美联储印了2万亿+美元阻止崩溃。", ja: "2008年、銀行が返済できない人に貸しすぎた。バブル崩壊で75年ぶりのデレバレッジ。FRBは2兆ドル以上を印刷。" },
     ],
@@ -990,9 +1000,13 @@ export default function App() {
             <div style={{ background: "linear-gradient(135deg, #1a1a2e, #16213e)", borderRadius: 12, padding: 14, color: "#fff" }}>
               <div style={{ fontSize: 9, color: "#a5b4fc", fontWeight: 600, marginBottom: 6 }}>💡 {t.featuredInsight}</div>
               <p style={{ fontSize: 12, lineHeight: 1.6, margin: 0, color: "#e0e7ff", fontStyle: "italic" }}>
-                "{t.dalioQuote}"
+                "{t.heroInsight}"
               </p>
-              <div style={{ fontSize: 9, color: "#6366f1", marginTop: 6, textAlign: "right" }}>— Ray Dalio</div>
+            </div>
+
+            {/* Disclaimer */}
+            <div style={{ fontSize: 9, color: "#9ca3af", textAlign: "center", padding: "10px 4px", lineHeight: 1.5 }}>
+              ℹ️ {t.disclaimer}
             </div>
 
             {/* Lesson Cards Preview */}
@@ -1192,6 +1206,11 @@ export default function App() {
               5. Don't fight the Fed<br/>
               6. Terminal rate determines landing severity
             </div>
+
+            {/* Disclaimer */}
+            <div style={{ fontSize: 9, color: "#9ca3af", textAlign: "center", padding: "10px 4px", lineHeight: 1.5, marginTop: 8 }}>
+              ℹ️ {t.disclaimer}
+            </div>
           </div>
         )}
 
@@ -1269,8 +1288,11 @@ export default function App() {
             {/* Kids Section */}
             {moreSection === "kids" && (
               <div>
-                <div style={{ background: "linear-gradient(135deg, #f97316, #ea580c)", borderRadius: 10, padding: 14, color: "#fff", marginBottom: 10 }}>
+                <div style={{ background: "linear-gradient(135deg, #f97316, #ea580c)", borderRadius: 10, padding: 14, color: "#fff", marginBottom: 6 }}>
                   <h2 style={{ fontSize: 16, fontWeight: 800, margin: 0 }}>👨‍👩‍👧‍👦 {t.kidsTitle}</h2>
+                </div>
+                <div style={{ fontSize: 11, color: "#78350f", background: "#fff7ed", border: "1px solid #fed7aa", borderRadius: 8, padding: 8, marginBottom: 10, lineHeight: 1.5 }}>
+                  {t.kidsParentIntro}
                 </div>
                 <div style={{ display: "flex", gap: 4, marginBottom: 10 }}>
                   {["5-8", "9-12", "13-17"].map(age => (
