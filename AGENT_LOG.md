@@ -32,7 +32,7 @@ The launch plan explicitly calls resolving 10.1–10.3 "your first five moves," 
 
 **P1 — do these in order**
 
-1. **[P1] Split `App` into per-tab components — continue.** `Home` and `Markets` are done (see completed items below), along with the `Bar`/`YieldCurve`/`CycleChart` helpers (now `src/components/charts.jsx`). Remaining: `Learn`, `More` under `src/components/`. **One tab per run**, `npm test` and `npm run build` green after each. Suggested next: `Learn` (has `currentLesson`/navigation state — keep it lifted in `App` and pass down, matching the `Home`/`Markets` pattern rather than moving state into the component), then `More` (largest, 4 sub-sections: quiz/kids/glossary/about, each with its own local state — decide per-section whether state stays lifted or moves in; lifted is simpler and every extraction so far has kept state in `App`).
+1. **[P1] Split `App` into per-tab components — continue.** `Home`, `Markets`, and `Learn` are done (see completed items below), along with the `Bar`/`YieldCurve`/`CycleChart` helpers (now `src/components/charts.jsx`). Remaining: `More` under `src/components/` — the largest, 4 sub-sections (quiz/kids/glossary/about), each with its own local state (`qIdx`/`qStarted`/`qAnswer`/`qScore`/`qDone`, `kidsAge`, `glossSearch`, and the `moreSection` sub-nav switch itself). Decide per-section whether state stays lifted in `App` or moves into the component — lifted is simpler and every extraction so far (`Home`, `Markets`, `Learn`) has kept state in `App`, but nothing outside `More` reads any of `More`'s local state (unlike `currentLesson`, which the header progress bar reads), so moving it into the component is also a reasonable option worth considering this time.
 
 **P2 — after P1 is clear**
 
@@ -62,6 +62,7 @@ The launch plan explicitly calls resolving 10.1–10.3 "your first five moves," 
 
 **Completed and pruned**
 
+- **JSX split, step 4c (`Learn` tab → `src/components/Learn.jsx`)** — done 2026-08-02, see run log. Third of the four per-tab extractions; `economic-cycles-v5.jsx` down to 294 lines.
 - **JSX split, step 4b (`Markets` tab → `src/components/Markets.jsx`, chart helpers → `src/components/charts.jsx`)** — done 2026-08-02, see run log. Second of the four per-tab extractions; `economic-cycles-v5.jsx` down to 380 lines.
 - **Quiz answer key de-skewed** — done 2026-08-02 (by the weekly reviewer, at the owner's request, out of normal priority order). Correct-answer positions now spread `2,0,3,1,3,2,0,3,1,2,0,1,2` (counts by index `{0:3, 1:3, 2:4, 3:3}`, max share 31%) instead of 12 of 13 on index 0. `npm test` reports 0 warnings. **`src/content/quizData.js` now carries a header comment explaining the invariant — read it before adding or editing a question.**
 - **JSX split, step 4a (`Home` tab → `src/components/Home.jsx`)** — done 2026-08-02, see run log. First of the four per-tab extractions; `economic-cycles-v5.jsx` down to 529 lines.
@@ -609,3 +610,66 @@ hoisting the three chart helpers it exclusively calls.
   state: quiz `qIdx`/`qStarted`/`qAnswer`/`qScore`/`qDone`, kids `kidsAge`, glossary
   `glossSearch`; consider whether `More`'s sub-nav state can move into the component itself
   since nothing outside `More` reads it, unlike `currentLesson`).
+
+### 2026-08-02 — JSX split, step 4c: extract Learn tab → `src/components/Learn.jsx`
+
+Continued backlog item 1, picking up right where the previous run (step 4b, `Markets`)
+left off, per its own "next run should pick" note. `Learn` was the next-best candidate:
+it carries `currentLesson`/navigation state, but per the established pattern that state
+stays lifted in `App` (the header's progress bar and lesson-count reads elsewhere in
+`App` depend on `completedLessons`/`lessons`, and `currentLesson` is exactly the kind of
+value a future first-open-routing feature, backlog item 4/6c, would need `App` to see)
+and is simply passed down as props, matching `Home` and `Markets`.
+
+- Added `src/components/Learn.jsx`: `export default function Learn({ t, lang, lessons,
+  completedLessons, currentLesson, isLessonUnlocked, setCurrentLesson,
+  markLessonComplete, scrollTop })`. JSX body is byte-identical to the old inline
+  `{tab === "learn" && (...)}` block (old lines 125–214 of `economic-cycles-v5.jsx`) —
+  only the wrapping `<div>...</div>` was hoisted into a component function, its free
+  variables turned into named props, and the derived `const lesson = lessons[currentLesson];`
+  line (previously computed once in `App`, used only inside this block) moved inside the
+  new component since nothing else in `App` reads the singular `lesson` value (confirmed
+  by grepping every `\blesson\b` occurrence in the file before editing — all matches were
+  either the original declaration or inside the block being extracted).
+- In `economic-cycles-v5.jsx`: added `import Learn from "./src/components/Learn.jsx";`
+  alongside the other tab-component imports, deleted the now-dead `const lesson = ...`
+  line, and replaced the 90-line inline Learn block with `{tab === "learn" && (<Learn
+  t={t} lang={lang} lessons={lessons} completedLessons={completedLessons}
+  currentLesson={currentLesson} isLessonUnlocked={isLessonUnlocked}
+  setCurrentLesson={setCurrentLesson} markLessonComplete={markLessonComplete}
+  scrollTop={scrollTop} />)}`. `git diff --stat` confirmed exactly "4 insertions(+), 90
+  deletions(-)" on that one file, nothing else touched. File went 380 → 294 lines.
+- **Verified**: `npm test` (data-shape harness, cached Node v20.18.1 via
+  `scripts/bootstrap-node.sh`) passes clean — `PASS: 0 failure(s), 0 warning(s)`. `npm
+  install` (0 new packages, same 2 pre-existing dev-tooling audit advisories as every
+  prior run) then `npm run build` succeeded: `✓ 44 modules transformed` (up from 43, the
+  +1 being the new `Learn.jsx`), `dist/assets/index-DNlsDuGT.js` **245.67 kB / 101.28 kB
+  gzip** — within 0.28 kB of the pre-extraction build (245.39 kB), consistent with
+  relocating a render function rather than altering behavior. The build ran slow again
+  (~3m 10s, first foreground attempt hit a 5-minute timeout with no output yet) —
+  consistent with the log's existing note that a concurrent automated session can slow
+  builds; re-ran in the background and waited for completion rather than assuming a hang.
+- Did not visually verify in the browser preview tool — same known limitation as every
+  prior run since the JSX-split work began (`preview_start` can't spawn `npm run dev`
+  because its process spawn doesn't see the bootstrapped Node on `PATH`). Risk is low:
+  the extracted JSX is textually identical to what it replaced, only prop-passing and the
+  `lesson` derivation were added/moved.
+- **Environment note reconfirmed twice this run**: sandboxed `git status` timed out (2-min
+  tool limit) on the very first call of the run — no stale lock found at that point,
+  consistent with the iCloud-sync-latency explanation already in memory. Later, after the
+  build, unsandboxed `git status` also timed out (twice, at 1 min then 3 min) and this time
+  *did* leave a stale 0-byte `index.lock` with no live git process holding it; removed it
+  per the standing memory note and re-ran `git status` in the background (rather than
+  foreground) to give the iCloud enumeration enough time — it completed in well under the
+  5-minute monitor window. No destructive git operations were used.
+- **Next run should pick**: continue backlog item 1 — extract the `More` tab into
+  `src/components/More.jsx`. It's the last of the four per-tab extractions and the
+  largest: 4 sub-sections (quiz/kids/glossary/about) each with their own local state.
+  Decide whether `moreSection` and the per-section state (`qIdx`/`qStarted`/`qAnswer`/
+  `qScore`/`qDone`, `kidsAge`, `glossSearch`) move into the new component or stay lifted
+  in `App` — nothing outside `More` currently reads any of it, unlike `currentLesson`,
+  so moving it in is a reasonable option this time, but lifted-and-passed-down (matching
+  every prior extraction) is the lower-risk default if time is short. After `More` is
+  done, `App` itself should be just tab-switching/header/first-launch-modal glue, and the
+  next backlog item becomes free: the stale-figures content fixes (`$50T`/`2+ quarters`),
+  the README refresh, or `DECISIONS.md`.
