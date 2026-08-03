@@ -45,7 +45,7 @@ the run log entries below for all four steps. **P2 is now open.**
    - 6d. **Streak counter on Home**, localStorage-backed — reuse the `try/catch` pattern already established by `ecycles_seen_disclaimer`.
    - 6e. **One-tap "continue tomorrow" prompt** at lesson end. **localStorage only** — real reminder notifications need the Expo decision (item 12) and must not be started here.
 2. **[P2] Clean up unused translation keys** — `indicators`, `bestInvest`, `avoidInvest`, `psychology`, `why`, `expansion`, `peak`, `contraction`, `trough`, `expDesc`, `peakDesc`, `contDesc`, `troughDesc` are defined in all 5 languages but nothing renders them (confirmed again by the new `npm test` harness's used-vs-defined `TR` key check — these 13 show up as defined-but-unused). (The *rendered* "Best investments" phase language in lesson 10 was a different, now-fixed issue — see the §10.1 completion entry below.) Either delete them or build the feature with historical/educational framing and the same disclaimer treatment. Pick one — don't leave this open indefinitely.
-3. **[P2] Refresh `README.md` — it now misdescribes the repo, publicly.** It says `economic-cycles-v5.jsx` is "the entire app … all in one file (~1,340 lines)"; the file is now 135 lines and the translations, lessons, quiz data, glossary, kids content, and all four tab components live in `src/locales/`, `src/content/`, and `src/components/`. `origin` is a public GitHub repo (`woozkaholdings/economics-investment-education-app`), so this is the first thing a visitor reads. Update the structure description, mention `scripts/bootstrap-node.sh` under "Running locally" and `npm test` alongside `npm run build`, and **fold this into whichever run changes the structure next** rather than spending a whole run on it. The Ray Dalio attribution line stays — launch plan §10.2 explicitly permits credit in an acknowledgments line; keep it as attribution, never as branding.
+3. ~~**[P2] Refresh `README.md`.**~~ **DONE 2026-08-02** — see the run log entry below and the completed list. Prune this slot at the next curation.
 4. **[P2] Add `DECISIONS.md`** — launch plan Move 1 asks for a decision log and this file is a *work* log, not serving that purpose. Small: record the Expo-vs-Vite choice and its status, the `.js`-not-JSON content format and why, and the localStorage-only progress approach. One short run.
 5. ~~**[P2] Broaden `scripts/check-data.mjs`'s `t.key` usage scan beyond `economic-cycles-v5.jsx`.**~~ **DONE 2026-08-02** — see the run log entry below and the completed list. The scan now also globs `src/components/*.jsx`; verified by deliberately injecting a dangling `t.` reference into `More.jsx` and confirming the harness fails with the correct file path, then reverting. Prune this slot at the next curation.
 
@@ -63,6 +63,7 @@ the run log entries below for all four steps. **P2 is now open.**
 
 **Completed and pruned**
 
+- **`README.md` refreshed to match the current split structure** — done 2026-08-02, see run log. Replaced the stale "one 1,340-line file" description with the actual `src/locales/` / `src/content/` / `src/components/` layout, added a Testing section for `npm test`, and mentioned `scripts/bootstrap-node.sh`.
 - **`scripts/check-data.mjs` `t.key` scan broadened to `src/components/*.jsx`** — done 2026-08-02, see run log. Was only reading `economic-cycles-v5.jsx`, silently covering less of the translation-key surface with each JSX-split extraction. Now reads the main file plus every component file; verified with an injected-then-reverted dangling-key test.
 - **Stale/dated factual figures reworded** — done 2026-08-02, see run log. The `~$50T total credit vs ~$3T actual money` figures (lesson body, quiz `explain`, `Credit` glossary entry) were replaced with figure-free "many times larger than the base money supply" framing; the `2+ quarters of falling GDP = recession` line (lesson body, `GDP` and `Recession` glossary entries) is now framed as a rule of thumb with an NBER note; the yield-curve "has predicted EVERY US recession since 1955" claim (lesson subtitle+body, quiz `explain`) now acknowledges inversions have preceded every recession since 1955 but not every inversion is followed by one.
 - **JSX split, step 4d (`More` tab → `src/components/More.jsx`) — the `App` split is now fully done.** Done 2026-08-02, see run log. Fourth and last of the four per-tab extractions. Unlike `Home`/`Markets`/`Learn`, `More`'s local state (`moreSection`, quiz `qIdx`/`qStarted`/`qAnswer`/`qScore`/`qDone`, `kidsAge`, `glossSearch`) moved *into* the component rather than staying lifted in `App`, since nothing outside `More` read any of it. `quizData`/`glossary`/`kidsContent` are now imported directly in `More.jsx` rather than passed as props, matching the precedent `Markets.jsx` set for `charts.jsx`. `economic-cycles-v5.jsx` down to 135 lines — now just tab-switching/header/first-launch-modal glue.
@@ -867,3 +868,41 @@ left untouched — that observation was this run, not a third session).
 - **Next run should pick**: item 1 (first-session flow, 6a — progress ring on Home) or item 3
   (README refresh) are the cheapest remaining P2 items; item 2 (unused translation keys) and
   item 4 (`DECISIONS.md`) are also open and unblocked. No P0/P1 remains open.
+
+### 2026-08-02 — Refresh `README.md`
+
+Picked up directly at the owner's request, closing backlog item 3 — the README had said
+`economic-cycles-v5.jsx` was "the entire app … all in one file (~1,340 lines)" since before
+any of the four JSX-split steps landed, and this is a public repo (`origin` is
+`woozkaholdings/economics-investment-education-app`), so it was misdescribing the codebase
+to the first thing any visitor reads.
+
+- **"What's here" section rewritten** to describe the actual current structure: `src/locales/`
+  (5 per-language translation files + `index.js`), `src/content/` (lessons/quizData/glossary/
+  kidsContent, pure data), `src/components/` (one file per bottom tab — `Home`/`Learn`/
+  `Markets`/`More` — plus the shared `charts.jsx` helpers), and `economic-cycles-v5.jsx` itself
+  now described accurately as just the tab-switching/header/first-launch-modal shell it's
+  been since the `More` extraction, not "the entire app."
+- **Added a new "Testing" section** documenting `npm test` (`scripts/check-data.mjs`) — this
+  didn't exist in the README at all before, despite being added to the repo two runs ago.
+- **Mentioned `scripts/bootstrap-node.sh`** in the file listing, framed correctly for an
+  external reader: it's for sandboxed environments without Node already on `PATH` (i.e. this
+  automated agent's own execution environment), not something a normal contributor with Node
+  installed needs to run.
+- **Left unchanged, deliberately**: the intro paragraph (still accurate) and the Ray Dalio
+  attribution line — launch plan §10.2 explicitly permits credit in an acknowledgments-style
+  line; this reads as attribution, not branding, so it stays as-is.
+- **Verified**: confirmed current line counts by hand before writing (`economic-cycles-v5.jsx`
+  135 lines; `Home.jsx` 69, `Learn.jsx` 93, `Markets.jsx` 93, `More.jsx` 163, `charts.jsx` 58)
+  so every file reference and description in the new README matches the repo's actual current
+  state, not a stale snapshot. Ran `npm test` (cached Node v20.18.1 via
+  `scripts/bootstrap-node.sh`) to confirm the working tree is otherwise undisturbed —
+  `PASS: 0 failure(s), 0 warning(s)`. **Did not run `npm run build`** — `README.md` is not part
+  of the Vite module graph (confirmed by reading `vite.config.js`/`index.html`; nothing
+  references it), so a full ~2-3 minute build would verify nothing a docs-only change could
+  have broken. `git status` before staging showed only `README.md` modified — no concurrent
+  session collision this run, unlike the previous one.
+- **Next run should pick**: item 1 (first-session flow, 6a — progress ring on Home) is the
+  next-most-valuable P2 item and is fully decomposed into small sub-steps already; item 2
+  (unused translation keys) and item 4 (`DECISIONS.md`) remain open and unblocked as smaller
+  alternatives. No P0/P1 remains open.
