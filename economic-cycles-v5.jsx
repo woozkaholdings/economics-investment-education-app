@@ -11,6 +11,7 @@ import Home from "./src/components/Home.jsx";
 import Learn from "./src/components/Learn.jsx";
 import Markets from "./src/components/Markets.jsx";
 import More from "./src/components/More.jsx";
+import { todayStr, dayDiff } from "./src/utils/date.js";
 
 const langFlags = { en: "🇺🇸", es: "🇪🇸", ko: "🇰🇷", zh: "🇨🇳", ja: "🇯🇵" };
 const langNames = { en: "English", es: "Español", ko: "한국어", zh: "中文", ja: "日本語" };
@@ -20,16 +21,6 @@ const langNames = { en: "English", es: "Español", ko: "한국어", zh: "中文"
 // on which the user completes at least one lesson.
 // ═══════════════════════════════════════════════════════════════
 const STREAK_KEY = "ecycles_streak";
-
-function todayStr() {
-  const d = new Date();
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
-}
-
-function dayDiff(a, b) {
-  const toUTC = (s) => { const [y, m, d] = s.split("-").map(Number); return Date.UTC(y, m - 1, d); };
-  return Math.round((toUTC(b) - toUTC(a)) / 86400000);
-}
 
 // Reads the stored streak without recording new activity — used on mount so a
 // streak that's already broken (gap > 1 day since last activity) shows as 0

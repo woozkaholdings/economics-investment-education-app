@@ -1,4 +1,30 @@
 import { useState, useEffect } from "react";
+import { todayStr } from "../utils/date.js";
+
+// ═══════════════════════════════════════════════════════════════
+// CONTINUE-TOMORROW PROMPT — localStorage only. Shown once per day at most,
+// the first time a lesson is marked complete that day. Records the user's
+// choice locally for a future reminder feature to read; does NOT schedule any
+// actual notification (that needs the held Expo/React Native decision).
+// ═══════════════════════════════════════════════════════════════
+const CONTINUE_PROMPT_KEY = "ecycles_continue_pref";
+
+function wasContinuePromptShownToday() {
+  try {
+    const raw = localStorage.getItem(CONTINUE_PROMPT_KEY);
+    if (!raw) return false;
+    const { lastPromptDate } = JSON.parse(raw);
+    return lastPromptDate === todayStr();
+  } catch (e) {
+    return true; // localStorage unreliable — fail closed, don't show
+  }
+}
+
+function recordContinuePromptChoice(optedIn) {
+  try {
+    localStorage.setItem(CONTINUE_PROMPT_KEY, JSON.stringify({ optedIn, lastPromptDate: todayStr() }));
+  } catch (e) {}
+}
 
 function CelebrationToast({ text }) {
   return (
@@ -24,6 +50,7 @@ function CelebrationToast({ text }) {
 export default function Learn({ t, lang, lessons, completedLessons, currentLesson, isLessonUnlocked, setCurrentLesson, markLessonComplete, scrollTop }) {
   const lesson = lessons[currentLesson];
   const [celebrate, setCelebrate] = useState(false);
+  const [continuePrompt, setContinuePrompt] = useState(null); // null | "shown" | "confirmed"
 
   useEffect(() => {
     if (!celebrate) return;
@@ -34,6 +61,15 @@ export default function Learn({ t, lang, lessons, completedLessons, currentLesso
   const handleMarkComplete = () => {
     markLessonComplete(lesson.id);
     setCelebrate(true);
+    if (!wasContinuePromptShownToday()) {
+      recordContinuePromptChoice(null); // marks "shown today"; choice recorded below
+      setContinuePrompt("shown");
+    }
+  };
+
+  const chooseContinuePrompt = (optedIn) => {
+    recordContinuePromptChoice(optedIn);
+    setContinuePrompt(optedIn ? "confirmed" : null);
   };
 
   return (
@@ -85,6 +121,29 @@ export default function Learn({ t, lang, lessons, completedLessons, currentLesso
             <div style={{ fontSize: 10, fontWeight: 700, color: "#7c3aed", marginBottom: 4 }}>🧠 {t.tryThinking}</div>
             <div style={{ fontSize: 12, color: "#581c87", lineHeight: 1.6, fontStyle: "italic" }}>{lesson.thinkAbout[lang]}</div>
           </div>
+
+          {/* Continue-Tomorrow Prompt (one-tap, localStorage only — see const above) */}
+          {continuePrompt === "shown" && (
+            <div style={{ background: "#eff6ff", border: "1px solid #93c5fd", borderRadius: 10, padding: 12, marginBottom: 8, textAlign: "center" }}>
+              <div style={{ fontSize: 12, fontWeight: 700, color: "#1e40af", marginBottom: 4 }}>🌙 {t.continueTomorrowTitle}</div>
+              <div style={{ fontSize: 11, color: "#3b5c8f", lineHeight: 1.5, marginBottom: 10 }}>{t.continueTomorrowBody}</div>
+              <button onClick={() => chooseContinuePrompt(true)}
+                style={{ padding: "8px 16px", borderRadius: 8, border: "none", background: "#2563eb", color: "#fff", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>
+                🔔 {t.continueTomorrowCta}
+              </button>
+              <div>
+                <button onClick={() => chooseContinuePrompt(false)}
+                  style={{ marginTop: 6, padding: "4px 8px", border: "none", background: "transparent", color: "#93a5c9", fontSize: 10, cursor: "pointer", textDecoration: "underline" }}>
+                  {t.continueTomorrowDismiss}
+                </button>
+              </div>
+            </div>
+          )}
+          {continuePrompt === "confirmed" && (
+            <div style={{ background: "#ecfdf5", border: "1px solid #6ee7b7", borderRadius: 10, padding: 10, marginBottom: 8, textAlign: "center", fontSize: 12, color: "#065f46", fontWeight: 600 }}>
+              ✅ {t.continueTomorrowConfirmed}
+            </div>
+          )}
 
           {/* Disclaimer */}
           <div style={{ fontSize: 9, color: "#9ca3af", textAlign: "center", padding: "2px 4px 10px", lineHeight: 1.5 }}>

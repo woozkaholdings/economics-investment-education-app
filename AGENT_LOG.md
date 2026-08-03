@@ -38,16 +38,17 @@ the run log entries below for all four steps. **P2 is now open.**
 
 **P2 — after P1 is clear**
 
-1. **[P2] First-session flow (launch plan §3.2–3.3) — now decomposed, so it can actually be picked up.** The plan calls the first five minutes "your most important feature" and sequences it as Move 4, right after the §2.2 migration. Take these one per run, in order:
+1. ~~**[P2] First-session flow (launch plan §3.2–3.3).**~~ **DONE 2026-08-03** — all six steps (6a–6e) complete, see run log for 6e (final step) below. Prune this slot at the next curation.
    - ~~6a. **Progress ring on Home** (lessons completed / 12) plus an estimated "≈N min" label on each lesson card.~~ **DONE 2026-08-02** — see run log.
    - ~~6b. **Lesson-completion celebration** — a small animation on "Mark Complete" and the ring advancing.~~ **DONE 2026-08-03** — see run log.
    - ~~6c. **First-open routing** — with no saved progress, land straight in lesson 1 rather than on Home.~~ **DONE 2026-08-03** — see run log.
    - ~~6d. **Streak counter on Home**, localStorage-backed.~~ **DONE 2026-08-03** — see run log.
-   - 6e. **One-tap "continue tomorrow" prompt** at lesson end. **localStorage only** — real reminder notifications need the Expo decision (item 12) and must not be started here. **Now unblocked, last item in the 6a–6e sequence.**
+   - ~~6e. **One-tap "continue tomorrow" prompt** at lesson end.~~ **DONE 2026-08-03** — see run log. Records opt-in/opt-out locally only; does not schedule real notifications (still gated on item 12's Expo decision).
 2. **[P2] Clean up unused translation keys** — `indicators`, `bestInvest`, `avoidInvest`, `psychology`, `why`, `expansion`, `peak`, `contraction`, `trough`, `expDesc`, `peakDesc`, `contDesc`, `troughDesc` are defined in all 5 languages but nothing renders them (confirmed again by the new `npm test` harness's used-vs-defined `TR` key check — these 13 show up as defined-but-unused). (The *rendered* "Best investments" phase language in lesson 10 was a different, now-fixed issue — see the §10.1 completion entry below.) Either delete them or build the feature with historical/educational framing and the same disclaimer treatment. Pick one — don't leave this open indefinitely.
 3. ~~**[P2] Refresh `README.md`.**~~ **DONE 2026-08-02** — see the run log entry below and the completed list. Prune this slot at the next curation.
 4. **[P2] Add `DECISIONS.md`** — launch plan Move 1 asks for a decision log and this file is a *work* log, not serving that purpose. Small: record the Expo-vs-Vite choice and its status, the `.js`-not-JSON content format and why, and the localStorage-only progress approach. One short run.
 5. ~~**[P2] Broaden `scripts/check-data.mjs`'s `t.key` usage scan beyond `economic-cycles-v5.jsx`.**~~ **DONE 2026-08-02** — see the run log entry below and the completed list. The scan now also globs `src/components/*.jsx`; verified by deliberately injecting a dangling `t.` reference into `More.jsx` and confirming the harness fails with the correct file path, then reverting. Prune this slot at the next curation.
+6. **[P2, flagged for owner/weekly-review prioritization — not yet a curated numbered slot] `completedLessons` doesn't persist across reloads.** First noted 2026-08-03 (6c's run log entry) and flagged again 2026-08-03 (6d's entry) as arguably higher-value than finishing the 6a–6e sequence, since the streak counter (6d, now shipped) and the continue-tomorrow prompt (6e, now shipped) both persist locally while `App`'s core `completedLessons` state does not — a returning user can reload and see "0/12 lessons" next to a multi-day streak and a "see you tomorrow" reminder they already opted into, which reads as broken. Now that the full first-session-flow item is closed, this is arguably the most user-visible remaining gap. Deliberately **not started** by this run: it touches `App`'s core state shape and every component reading `completedLessons`/`isLessonUnlocked` (`Home`, `Learn`, `More`'s progress display, the header progress bar) — larger and riskier than a single-run item, and the standing sequencing rule ("do not start a P2/P3 item while a P1 is open... work P1 items in the numbered order — the ordering is deliberate, not a menu") means a dev-agent run shouldn't unilaterally reprioritize ahead of the curated list. Surfacing here explicitly so the next weekly review can decide whether to give it a numbered slot.
 
 **P3 — polish, only after P1 and P2**
 
@@ -63,6 +64,7 @@ the run log entries below for all four steps. **P2 is now open.**
 
 **Completed and pruned**
 
+- **First-session flow, step 6e (continue-tomorrow prompt) — the entire 6a–6e first-session-flow item is now closed.** Done 2026-08-03, see run log. A one-tap, localStorage-only prompt (`ecycles_continue_pref`) shown at most once per day, the first time a lesson is marked complete that day; records the user's opt-in/opt-out locally for a future reminder feature, does not schedule real notifications.
 - **First-session flow, step 6d (streak counter)** — done 2026-08-03, see run log. localStorage-backed daily streak (`ecycles_streak`), incremented once per calendar day a lesson is completed; shown as a 🔥 badge on Home when > 0.
 - **First-session flow, step 6c (first-open routing)** — done 2026-08-03, see run log. New users with no saved progress now land in Learn/lesson 1 on first open instead of Home.
 - **First-session flow, step 6b (lesson-completion celebration)** — done 2026-08-03, see run log. A toast animation on "Mark Complete" (Learn.jsx) and an animate-in effect on the Home progress ring.
@@ -1155,3 +1157,72 @@ last item still explicitly gated ("now unblocked") in the backlog before 6e.
   feature (streak) depends on user state surviving a reload while the primary progress state still
   doesn't — worth surfacing for the owner as a candidate to prioritize ahead of 6e. Item 2 (unused
   translation keys, still 12) and item 4 (`DECISIONS.md`) remain smaller open alternatives.
+
+### 2026-08-03 — First-session flow, step 6e: continue-tomorrow prompt (closes the 6a–6e item)
+
+Picked up item 1's 6e directly, per the previous run's "next run should pick" and the standing
+sequencing rule ("work P1 items in the numbered order — the ordering is deliberate, not a menu").
+The same entry flagged the `completedLessons` persistence gap as an arguably higher-value
+alternative, but explicitly as something to "surface for the owner" rather than a directive to
+reprioritize — so this run closed out 6e as sequenced and re-flagged the persistence gap as a new
+backlog line (item 6, P2 section) for the next weekly review to decide on, rather than unilaterally
+jumping to it.
+
+- **Design**: a one-tap, localStorage-only prompt shown at most once per calendar day, the first
+  time a lesson is marked complete that day. Its only job is to record the user's opt-in/opt-out
+  intent locally — it does **not** schedule any real notification, since that needs the still-held
+  Expo/React Native decision (item 12) and the item's own text says explicitly not to start that
+  here.
+- **Shared date-utils extraction (`src/utils/date.js`, new file)**: before adding the feature,
+  extracted `todayStr()`/`dayDiff()` out of `economic-cycles-v5.jsx` (where 6d's streak counter
+  had defined them inline) into a small shared module, since 6e's prompt needed the same
+  day-boundary logic and duplicating a second copy of the same date formatter across two files
+  would have let them drift. `economic-cycles-v5.jsx` now imports `{ todayStr, dayDiff }` from it;
+  `dayDiff` is unused by the new prompt logic but still needed by the existing streak code, so it
+  stays exported from the shared module rather than being split further.
+- **Implementation** (`src/components/Learn.jsx`): added `CONTINUE_PROMPT_KEY =
+  "ecycles_continue_pref"`, `wasContinuePromptShownToday()` (read-only, fails closed — returns
+  `true`/don't-show if `localStorage` throws mid-check, matching this app's established
+  fail-safe-not-fail-open convention for optional UI) and `recordContinuePromptChoice(optedIn)`
+  (writes `{ optedIn, lastPromptDate }`). `handleMarkComplete` now also calls
+  `recordContinuePromptChoice(null)` (marking "shown today" immediately, before the user has made
+  a choice) and sets a new `continuePrompt` state to `"shown"`, but only if
+  `wasContinuePromptShownToday()` was false at that moment — recording "shown" immediately rather
+  than only on user action prevents a second lesson completed the same day from re-triggering the
+  card. A `chooseContinuePrompt(optedIn)` helper updates the stored choice and flips
+  `continuePrompt` to `"confirmed"` (opted in) or back to `null`/hidden (declined).
+- **UI**: a dismissible card between the "Think About This" section and the disclaimer line —
+  title + body copy, a primary "🔔 Remind me tomorrow" button (the one tap), and a small
+  underlined "No thanks" text-link below it for explicit decline. On accept, the card is replaced
+  by a small green "✅ Got it — see you tomorrow!" confirmation (no auto-dismiss timer, unlike the
+  6b celebration toast — this one is meant to be read, not glanced past). On decline, the card
+  disappears with no confirmation, matching the low-friction expectation of a "no thanks" tap.
+- **New translation keys**: `continueTomorrowTitle`, `continueTomorrowBody`, `continueTomorrowCta`,
+  `continueTomorrowDismiss`, `continueTomorrowConfirmed` added to all 5 `src/locales/*.js` files,
+  following the same location-next-to-`streakTemplate` convention 6d established.
+- **Verified**: `npm test` (data-shape harness, cached Node v20.18.1 via
+  `scripts/bootstrap-node.sh`) passes clean — `PASS: 0 failure(s), 0 warning(s)` — confirming the 5
+  new keys resolve in all 5 languages and the harness's `t.key` scan (which covers
+  `src/components/*.jsx`) picked up the new `t.continueTomorrow*` references in `Learn.jsx` cleanly.
+  `npm install` reported 0 new packages (same 2 pre-existing dev-tooling audit advisories as every
+  prior run, 64 packages). `npm run build` succeeded with explicit exit-code capture —
+  `EXIT_CODE=0`, `✓ 46 modules transformed` (up from 45 — the new `src/utils/date.js` module),
+  `dist/assets/index-DMYpTu9N.js` **253.67 kB / 106.57 kB gzip** — up from the prior run's 251.20
+  kB / 105.62 kB gzip, consistent with the new prompt component, its translations, and the new
+  utils module rather than a regression; built in 785ms. Re-ran `git status`/`git diff --stat`
+  before writing this entry — exactly the 7 files this run touched (`economic-cycles-v5.jsx`,
+  `src/components/Learn.jsx`, the 5 locale files) plus the new untracked `src/utils/` directory, no
+  concurrent-session collision.
+- Did not visually verify in the browser preview tool — same known sandbox limitation as every
+  prior run (`preview_start` can't spawn `npm run dev` because its process spawn doesn't see the
+  bootstrapped Node on `PATH`). Risk is judged low: the prompt is entirely additive UI gated behind
+  new state that starts `null` (no existing render path is affected unless a lesson is freshly
+  marked complete), uses the same `try/catch`-wrapped-localStorage pattern proven by the
+  disclaimer flag and 6d's streak, and both the data-shape harness and a clean build pass.
+- **Next run should pick**: the 6a–6e first-session-flow item is now fully closed. The
+  `completedLessons` persistence gap (new backlog item 6, P2 section) is the most user-visible
+  remaining issue and a reasonable next pick, though it's a larger single-run item (touches `App`'s
+  core state plus every component reading `completedLessons`/`isLessonUnlocked`) — worth budgeting
+  a full run for it specifically rather than treating it as a quick item. Item 2 (unused translation
+  keys, still 12) and item 4 (`DECISIONS.md`) remain smaller open alternatives if a future run wants
+  a lower-risk pick instead.
