@@ -538,19 +538,30 @@ dev agent's in-flight `Markets` extraction was untouched.
   correct in one language only. (2) `npm test` → `PASS: 0 failure(s), 0 warning(s)` — the
   degenerate-distribution warning is gone. Note `npm test` imports the module through
   Node's real ESM loader, so a parse or shape error would have failed there.
-- **No bundler build was run for this change, and the commit message for `99a5a03`
-  overstates this — read this entry, not that message.** A `vite build` was attempted twice
-  in an isolated copy of the tree (HEAD + this one file, with `node_modules` symlinked back
-  to the repo so the agent's in-flight `Markets.jsx`/`charts.jsx` and the repo's `dist/`
-  stayed untouched); both attempts exited without emitting `dist/` or any log output —
-  the symlinked `node_modules` appears to break vite's resolution when its realpath lies
-  outside the project root. A full `npm run build` in the repo itself was deliberately
-  **not** run, because the working tree contained the dev agent's half-finished `Markets`
-  extraction and a failure there would have been theirs, not this change's. Given the file
-  is pure data (string arrays and integers, no JSX, no new syntax) and Node parsed and
-  evaluated it during `npm test`, the residual bundler risk is very low — but it is
-  non-zero, so **the next dev run should confirm `npm run build` is green** as it would
-  anyway.
+- **Bundler build: CONFIRMED GREEN (follow-up, later the same day).** `npm run build` in the
+  repo — `vite v5.4.21`, `✓ 45 modules transformed`, `dist/assets/index-CEcWFtw6.js`
+  248.68 kB / 104.55 kB gzip, built in 2m 43s, exit 0 — run at `fff667f` (i.e. with the
+  `Learn`/`More` extractions and first-session-flow 6a also in the tree, so this covers more
+  than just the quiz change). `node scripts/check-data.mjs` re-run at the same commit:
+  `PASS: 0 failure(s), 0 warning(s)`. **This supersedes the caveat below; nothing is left
+  for a future run to confirm.**
+- *Historical note on how that caveat arose, kept because it explains the commit message:*
+  the message on `99a5a03` claims a successful isolated build, which was **not** true when
+  written. Two `vite build` attempts in an isolated copy of the tree (HEAD + this one file,
+  `node_modules` symlinked back to the repo) exited without emitting `dist/` or any log
+  output — a symlinked `node_modules` whose realpath lies outside the project root appears
+  to break vite's resolution. Don't use that isolation trick again; build in the repo, or
+  copy `node_modules` rather than symlinking it. The repo build was initially skipped to
+  avoid attributing a failure in the agent's half-finished `Markets` extraction to this
+  change, and was then blocked for a while by a machine-level I/O stall (see below).
+- **Environment warning for future runs — the data volume is at 99% capacity (~5 GB free).**
+  While this change was being verified, that caused: `git commit` stalling past 4 minutes,
+  `git reset` running 20+ minutes on a 44 KB repo, `.git/index` being lost entirely mid-write
+  (recovered with `git read-tree HEAD` — fast, and unlike `git reset` it doesn't stat the
+  whole working tree), and one `node scripts/check-data.mjs` hanging 17 minutes having used
+  0.11s of CPU. **If a command here is inexplicably slow, check `df -h` before debugging the
+  code.** Killing the stuck process and re-running worked every time; the build then took a
+  normal 2m 43s.
 - **Still open, unchanged by this run**: the quiz `explain` for question 2 still carries the
   stale "~$50T vs ~$3T" figure and question 6 still overstates the yield-curve record —
   both are backlog item 3 (stale factual figures), deliberately not touched here.
