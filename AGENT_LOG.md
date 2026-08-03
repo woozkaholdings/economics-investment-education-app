@@ -42,8 +42,8 @@ the run log entries below for all four steps. **P2 is now open.**
    - ~~6a. **Progress ring on Home** (lessons completed / 12) plus an estimated "≈N min" label on each lesson card.~~ **DONE 2026-08-02** — see run log.
    - ~~6b. **Lesson-completion celebration** — a small animation on "Mark Complete" and the ring advancing.~~ **DONE 2026-08-03** — see run log.
    - ~~6c. **First-open routing** — with no saved progress, land straight in lesson 1 rather than on Home.~~ **DONE 2026-08-03** — see run log.
-   - 6d. **Streak counter on Home**, localStorage-backed — reuse the `try/catch` pattern already established by `ecycles_seen_disclaimer`. **Now unblocked.**
-   - 6e. **One-tap "continue tomorrow" prompt** at lesson end. **localStorage only** — real reminder notifications need the Expo decision (item 12) and must not be started here.
+   - ~~6d. **Streak counter on Home**, localStorage-backed.~~ **DONE 2026-08-03** — see run log.
+   - 6e. **One-tap "continue tomorrow" prompt** at lesson end. **localStorage only** — real reminder notifications need the Expo decision (item 12) and must not be started here. **Now unblocked, last item in the 6a–6e sequence.**
 2. **[P2] Clean up unused translation keys** — `indicators`, `bestInvest`, `avoidInvest`, `psychology`, `why`, `expansion`, `peak`, `contraction`, `trough`, `expDesc`, `peakDesc`, `contDesc`, `troughDesc` are defined in all 5 languages but nothing renders them (confirmed again by the new `npm test` harness's used-vs-defined `TR` key check — these 13 show up as defined-but-unused). (The *rendered* "Best investments" phase language in lesson 10 was a different, now-fixed issue — see the §10.1 completion entry below.) Either delete them or build the feature with historical/educational framing and the same disclaimer treatment. Pick one — don't leave this open indefinitely.
 3. ~~**[P2] Refresh `README.md`.**~~ **DONE 2026-08-02** — see the run log entry below and the completed list. Prune this slot at the next curation.
 4. **[P2] Add `DECISIONS.md`** — launch plan Move 1 asks for a decision log and this file is a *work* log, not serving that purpose. Small: record the Expo-vs-Vite choice and its status, the `.js`-not-JSON content format and why, and the localStorage-only progress approach. One short run.
@@ -63,6 +63,7 @@ the run log entries below for all four steps. **P2 is now open.**
 
 **Completed and pruned**
 
+- **First-session flow, step 6d (streak counter)** — done 2026-08-03, see run log. localStorage-backed daily streak (`ecycles_streak`), incremented once per calendar day a lesson is completed; shown as a 🔥 badge on Home when > 0.
 - **First-session flow, step 6c (first-open routing)** — done 2026-08-03, see run log. New users with no saved progress now land in Learn/lesson 1 on first open instead of Home.
 - **First-session flow, step 6b (lesson-completion celebration)** — done 2026-08-03, see run log. A toast animation on "Mark Complete" (Learn.jsx) and an animate-in effect on the Home progress ring.
 - **`README.md` refreshed to match the current split structure** — done 2026-08-02, see run log. Replaced the stale "one 1,340-line file" description with the actual `src/locales/` / `src/content/` / `src/components/` layout, added a Testing section for `npm test`, and mentioned `scripts/bootstrap-node.sh`.
@@ -1089,3 +1090,68 @@ Picked up item 1's 6c directly, as the previous run's "next run should pick" poi
   streak counter will sit somewhat awkwardly next to (a streak that persists next to progress that
   doesn't) — may be worth resolving before more first-session-flow steps build further on top of
   today's non-persistent progress model.
+
+### 2026-08-03 — First-session flow, step 6d: streak counter on Home
+
+Picked up item 1's 6d directly, as the previous run's "next run should pick" pointed here — the
+last item still explicitly gated ("now unblocked") in the backlog before 6e.
+
+- **Design**: a localStorage-backed daily streak, incremented once per calendar day on which the
+  user completes at least one lesson (a real learning action, not just opening the app or visiting
+  a tab). Stored as `{ count, lastDate }` JSON under a new key `ecycles_streak`, following the same
+  `try/catch`-wrapped-localStorage pattern established by `ecycles_seen_disclaimer` (6c's own run
+  log entry pointed here explicitly).
+- **Implementation** (`economic-cycles-v5.jsx`): added `todayStr()` (local-timezone `YYYY-MM-DD`),
+  `dayDiff(a, b)` (whole-day difference between two such strings via `Date.UTC`, avoiding DST/
+  timezone drift issues a raw millisecond subtraction across local dates would have), `loadStreak()`
+  (read-only — returns the stored count if the gap since `lastDate` is 0 or 1 day, else `0`, so a
+  genuinely broken streak shows as broken immediately on load rather than showing a stale count
+  until the next completion), and `recordStreakActivity()` (read-modify-write — no-ops if today is
+  already recorded, increments if `lastDate` was exactly yesterday, otherwise resets to `1`; returns
+  the new count). `App` gained a `streak` state initialized via `loadStreak()` in a mount-only
+  `useEffect` (mirrors the existing `showFirstLaunch` effect's shape) and updated inside
+  `markLessonComplete` via `setStreak(recordStreakActivity())`, called only inside the existing
+  `if (!completedLessons.includes(id))` guard so re-clicking "Mark Complete" on an already-completed
+  lesson can't inflate the count. `streak` is passed to `Home` alongside its existing props.
+- **UI** (`src/components/Home.jsx`): a small 🔥 badge (`{t.streakTemplate.replace("{n}", streak)}`)
+  between the progress card and the Continue/Start button, shown only when `streak > 0` — a
+  first-time user with no streak yet sees nothing rather than a "0 day streak" that would read as
+  broken. Styled as a small pill (`#fff7ed` background, `#fdba74` border, `#c2410c` text) distinct
+  from the existing blue progress-card palette, matching the app's convention of a different accent
+  color per card type (blue progress, dark "featured insight," etc.).
+- **New translation key**: `streakTemplate` added to all 5 `src/locales/*.js` files —
+  `en`: `"{n} day streak"`, `es`: `"Racha de {n} días"`, `ko`: `"{n}일 연속 학습"`,
+  `zh`: `"连续{n}天"`, `ja`: `"{n}日連続"` — following the existing `{n}`-template pattern already
+  used by `estMinTemplate`/`viewAllLessonsTemplate` (no plural-form branching, consistent with how
+  those templates already handle `n`).
+- **Known interaction gap, not fixed this run (flagged by 6c's own log entry, confirmed still
+  true)**: `completedLessons` still isn't persisted anywhere, so a page reload resets visible
+  lesson progress to zero while the streak (now genuinely persisted) survives — a returning user
+  mid-streak could reload and see "0/12 lessons" next to "🔥 3 day streak." This run's item was
+  scoped to the streak counter itself, not fixing `completedLessons` persistence (a materially
+  larger change touching `App`'s core state shape and every component reading
+  `completedLessons`/`isLessonUnlocked`); the mismatch is real but pre-existing in what it exposes,
+  not introduced by this change. Left as an explicit backlog candidate below rather than expanding
+  this run's scope.
+- **Verified**: `npm test` (data-shape harness, cached Node v20.18.1 via `scripts/bootstrap-node.sh`)
+  passes clean — `PASS: 0 failure(s), 0 warning(s)` — confirming `streakTemplate` resolves in all 5
+  languages *and* that the harness's broadened `t.key` scan (landed just before this run, see the
+  entry above) correctly picked up the new `t.streakTemplate` reference in `Home.jsx` without any
+  extra wiring. `npm install` reported 0 new packages (same 2 pre-existing dev-tooling audit
+  advisories as every prior run). `npm run build` succeeded: `✓ 45 modules transformed` (unchanged —
+  no new files, only edits to existing modules), `dist/assets/index-CDX1XBdT.js` **251.20 kB /
+  105.62 kB gzip**, built in 811ms. Re-checked `git status` immediately before writing this entry —
+  only the 7 files this run touched were modified, no concurrent-session collision this time.
+- Did not visually verify in the browser preview tool — same known sandbox limitation as every
+  prior run (`preview_start` can't spawn `npm run dev` because its process spawn doesn't see the
+  bootstrapped Node on `PATH`). Risk is judged low: the streak logic is pure, side-effect-isolated
+  arithmetic on two localStorage-derived date strings (no timezone-sensitive `Date` math beyond the
+  `Date.UTC` day-boundary comparison), gated by the same `try/catch` pattern already proven
+  elsewhere, and both the data-shape harness and a clean build pass.
+- **Next run should pick**: item 1's 6e (one-tap "continue tomorrow" prompt at lesson end,
+  localStorage only) is the last item in the 6a–6e sequence and is now unblocked — closing it
+  finishes the entire first-session-flow backlog item. Alternatively, the `completedLessons`
+  persistence gap flagged above (and by 6c before it) is arguably higher-value now that a second
+  feature (streak) depends on user state surviving a reload while the primary progress state still
+  doesn't — worth surfacing for the owner as a candidate to prioritize ahead of 6e. Item 2 (unused
+  translation keys, still 12) and item 4 (`DECISIONS.md`) remain smaller open alternatives.

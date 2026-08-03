@@ -40,6 +40,7 @@ export default {
     kidsTabLabel: "Niños", quizTabLabel: "Cuestionario", questionsLabel: "preguntas",
     viewAllLessonsTemplate: "Ver las {n} lecciones →",
     estMinTemplate: "≈{n} min", progressLabel: "Progreso",
+    streakTemplate: "Racha de {n} días",
     qeNarrative: "El Fed COMPRA bonos → entra dinero → rendimientos ↓ → acciones ↑↑ → USD ↓",
     qtNarrative: "El Fed DEJA de comprar → sale dinero → rendimientos ↑ → acciones ↓ → USD ↑",
     aboutTabLabel: "Acerca de", aboutTitle: "Acerca de esta App",

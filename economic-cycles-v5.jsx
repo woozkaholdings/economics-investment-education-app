@@ -16,6 +16,64 @@ const langFlags = { en: "🇺🇸", es: "🇪🇸", ko: "🇰🇷", zh: "🇨�
 const langNames = { en: "English", es: "Español", ko: "한국어", zh: "中文", ja: "日本語" };
 
 // ═══════════════════════════════════════════════════════════════
+// STREAK COUNTER — localStorage-backed, one increment per calendar day
+// on which the user completes at least one lesson.
+// ═══════════════════════════════════════════════════════════════
+const STREAK_KEY = "ecycles_streak";
+
+function todayStr() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+}
+
+function dayDiff(a, b) {
+  const toUTC = (s) => { const [y, m, d] = s.split("-").map(Number); return Date.UTC(y, m - 1, d); };
+  return Math.round((toUTC(b) - toUTC(a)) / 86400000);
+}
+
+// Reads the stored streak without recording new activity — used on mount so a
+// streak that's already broken (gap > 1 day since last activity) shows as 0
+// rather than a stale count.
+function loadStreak() {
+  try {
+    const raw = localStorage.getItem(STREAK_KEY);
+    if (!raw) return 0;
+    const { count, lastDate } = JSON.parse(raw);
+    if (!lastDate) return 0;
+    return dayDiff(lastDate, todayStr()) <= 1 ? (count || 0) : 0;
+  } catch (e) {
+    return 0;
+  }
+}
+
+// Call once per genuine lesson-completion event. No-ops (same count) if
+// today was already recorded; extends the streak if the last activity was
+// yesterday; otherwise starts a new streak at 1.
+function recordStreakActivity() {
+  try {
+    const today = todayStr();
+    const raw = localStorage.getItem(STREAK_KEY);
+    let count = 0, lastDate = null;
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      count = parsed.count || 0;
+      lastDate = parsed.lastDate || null;
+    }
+    if (lastDate === today) {
+      // already recorded today — count unchanged
+    } else if (lastDate && dayDiff(lastDate, today) === 1) {
+      count += 1;
+    } else {
+      count = 1;
+    }
+    localStorage.setItem(STREAK_KEY, JSON.stringify({ count, lastDate: today }));
+    return count;
+  } catch (e) {
+    return 0;
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
 // MAIN APP
 // ═══════════════════════════════════════════════════════════════
 export default function App() {
@@ -32,6 +90,8 @@ export default function App() {
   });
   const [currentLesson, setCurrentLesson] = useState(0);
   const [completedLessons, setCompletedLessons] = useState([]);
+  const [streak, setStreak] = useState(0);
+  useEffect(() => { setStreak(loadStreak()); }, []);
   // First-launch disclaimer notice
   const [showFirstLaunch, setShowFirstLaunch] = useState(false);
   useEffect(() => {
@@ -54,6 +114,7 @@ export default function App() {
   const markLessonComplete = (id) => {
     if (!completedLessons.includes(id)) {
       setCompletedLessons(prev => [...prev, id]);
+      setStreak(recordStreakActivity());
     }
   };
 
@@ -111,7 +172,7 @@ export default function App() {
         {/* ═══ HOME TAB ═══ */}
         {tab === "home" && (
           <Home t={t} lang={lang} completedLessons={completedLessons} lessons={lessons}
-            isLessonUnlocked={isLessonUnlocked} setCurrentLesson={setCurrentLesson} setTab={setTab} scrollTop={scrollTop} />
+            isLessonUnlocked={isLessonUnlocked} setCurrentLesson={setCurrentLesson} setTab={setTab} scrollTop={scrollTop} streak={streak} />
         )}
 
         {/* ═══ LEARN TAB ═══ */}

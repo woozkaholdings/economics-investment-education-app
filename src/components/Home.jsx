@@ -14,7 +14,7 @@ function ProgressRing({ pct, size = 64, stroke = 7, color = "#2563eb", track = "
   );
 }
 
-export default function Home({ t, lang, completedLessons, lessons, isLessonUnlocked, setCurrentLesson, setTab, scrollTop }) {
+export default function Home({ t, lang, completedLessons, lessons, isLessonUnlocked, setCurrentLesson, setTab, scrollTop, streak }) {
   const pct = lessons.length > 0 ? completedLessons.length / lessons.length : 0;
   // Ring starts at 0 and animates up to pct on mount/update, so returning to Home
   // after completing a lesson shows the ring visibly fill in rather than snapping.
@@ -53,6 +53,13 @@ export default function Home({ t, lang, completedLessons, lessons, isLessonUnloc
           </div>
         </div>
       </div>
+
+      {/* Streak Badge */}
+      {streak > 0 && (
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 6, background: "#fff7ed", border: "1px solid #fdba74", borderRadius: 10, padding: "6px 10px", marginBottom: 12, fontSize: 11, fontWeight: 700, color: "#c2410c" }}>
+          <span>🔥</span> {t.streakTemplate.replace("{n}", streak)}
+        </div>
+      )}
 
       {/* Continue / Start Button */}
       <button onClick={() => { setTab("learn"); scrollTop(); }} style={{ width: "100%", padding: "14px 20px", borderRadius: 12, border: "none", background: "linear-gradient(135deg, #2563eb, #4f46e5)", color: "#fff", fontSize: 14, fontWeight: 700, cursor: "pointer", marginBottom: 16, boxShadow: "0 4px 12px rgba(37,99,235,0.3)" }}>

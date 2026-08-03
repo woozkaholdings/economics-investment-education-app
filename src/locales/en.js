@@ -45,6 +45,7 @@ export default {
     kidsTabLabel: "Kids", quizTabLabel: "Quiz", questionsLabel: "questions",
     viewAllLessonsTemplate: "View all {n} lessons →",
     estMinTemplate: "≈{n} min", progressLabel: "Progress",
+    streakTemplate: "{n} day streak",
     qeNarrative: "Fed BUYS bonds → money in → yields ↓ → stocks ↑↑ → USD ↓",
     qtNarrative: "Fed STOPS buying → money out → yields ↑ → stocks ↓ → USD ↑",
     aboutTabLabel: "About", aboutTitle: "About This App",
