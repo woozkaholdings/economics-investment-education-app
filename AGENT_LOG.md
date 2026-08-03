@@ -40,8 +40,8 @@ the run log entries below for all four steps. **P2 is now open.**
 
 1. **[P2] First-session flow (launch plan §3.2–3.3) — now decomposed, so it can actually be picked up.** The plan calls the first five minutes "your most important feature" and sequences it as Move 4, right after the §2.2 migration. Take these one per run, in order:
    - ~~6a. **Progress ring on Home** (lessons completed / 12) plus an estimated "≈N min" label on each lesson card.~~ **DONE 2026-08-02** — see run log.
-   - 6b. **Lesson-completion celebration** — a small animation on "Mark Complete" and the ring advancing. **Now unblocked** — the ring built for 6a is the thing that should advance.
-   - 6c. **First-open routing** — with no saved progress, land straight in lesson 1 rather than on Home. (No signup exists to skip, which is already what the plan wants; make it explicit and keep it that way.)
+   - ~~6b. **Lesson-completion celebration** — a small animation on "Mark Complete" and the ring advancing.~~ **DONE 2026-08-03** — see run log.
+   - 6c. **First-open routing** — with no saved progress, land straight in lesson 1 rather than on Home. (No signup exists to skip, which is already what the plan wants; make it explicit and keep it that way.) **Now unblocked.**
    - 6d. **Streak counter on Home**, localStorage-backed — reuse the `try/catch` pattern already established by `ecycles_seen_disclaimer`.
    - 6e. **One-tap "continue tomorrow" prompt** at lesson end. **localStorage only** — real reminder notifications need the Expo decision (item 12) and must not be started here.
 2. **[P2] Clean up unused translation keys** — `indicators`, `bestInvest`, `avoidInvest`, `psychology`, `why`, `expansion`, `peak`, `contraction`, `trough`, `expDesc`, `peakDesc`, `contDesc`, `troughDesc` are defined in all 5 languages but nothing renders them (confirmed again by the new `npm test` harness's used-vs-defined `TR` key check — these 13 show up as defined-but-unused). (The *rendered* "Best investments" phase language in lesson 10 was a different, now-fixed issue — see the §10.1 completion entry below.) Either delete them or build the feature with historical/educational framing and the same disclaimer treatment. Pick one — don't leave this open indefinitely.
@@ -63,6 +63,7 @@ the run log entries below for all four steps. **P2 is now open.**
 
 **Completed and pruned**
 
+- **First-session flow, step 6b (lesson-completion celebration)** — done 2026-08-03, see run log. A toast animation on "Mark Complete" (Learn.jsx) and an animate-in effect on the Home progress ring.
 - **`README.md` refreshed to match the current split structure** — done 2026-08-02, see run log. Replaced the stale "one 1,340-line file" description with the actual `src/locales/` / `src/content/` / `src/components/` layout, added a Testing section for `npm test`, and mentioned `scripts/bootstrap-node.sh`.
 - **`scripts/check-data.mjs` `t.key` scan broadened to `src/components/*.jsx`** — done 2026-08-02, see run log. Was only reading `economic-cycles-v5.jsx`, silently covering less of the translation-key surface with each JSX-split extraction. Now reads the main file plus every component file; verified with an injected-then-reverted dangling-key test.
 - **Stale/dated factual figures reworded** — done 2026-08-02, see run log. The `~$50T total credit vs ~$3T actual money` figures (lesson body, quiz `explain`, `Credit` glossary entry) were replaced with figure-free "many times larger than the base money supply" framing; the `2+ quarters of falling GDP = recession` line (lesson body, `GDP` and `Recession` glossary entries) is now framed as a rule of thumb with an NBER note; the yield-curve "has predicted EVERY US recession since 1955" claim (lesson subtitle+body, quiz `explain`) now acknowledges inversions have preceded every recession since 1955 but not every inversion is followed by one.
@@ -968,3 +969,62 @@ pointed here (with the intervening README run landing between them).
   "Mark Complete" and the ring built this run advancing) is the natural next step and is now
   unblocked. Item 2 (unused translation keys) and item 4 (`DECISIONS.md`) remain open smaller
   alternatives if 6b turns out to need more design thought than a 6-hour run allows.
+
+### 2026-08-03 — First-session flow, step 6b: lesson-completion celebration
+
+Picked up item 1's 6b, as the previous run's "next run should pick" pointed here directly.
+Two small, self-contained additions, no new translation keys needed:
+
+- **"Mark Complete" celebration toast (`Learn.jsx`)**: added local `celebrate` state, set to
+  `true` by a new `handleMarkComplete` wrapper (calls the existing `markLessonComplete(lesson.id)`
+  then flips the flag) and auto-cleared after 1.5s via a `useEffect`/`setTimeout`. Renders a
+  fixed-position toast (🎉 + text) that pops in with a spring-ish scale/opacity keyframe and fades
+  out, via a `<style>` tag with two `@keyframes` blocks scoped to a new `CelebrationToast`
+  component — the app has no CSS file anywhere (everything is inline `style` objects), so a local
+  `<style>` tag is the established-by-necessity way to get animation here rather than introducing
+  a stylesheet or a dependency. The toast text reuses `t.completeLabel` ("Complete!" and
+  per-language equivalents), which was **already defined in all 5 locale files but never
+  rendered anywhere** (confirmed via `grep -rn "completeLabel"` before using it) — using it here
+  needed zero new i18n work and incidentally shrinks the unused-translation-keys backlog item
+  (item 2) by one key, though that item's own 13 keys are unrelated and still open.
+- **Progress ring animate-in (`Home.jsx`)**: the ring built in 6a already had a CSS
+  `transition` on `stroke-dashoffset`, but since `Home` fully unmounts/remounts on every tab
+  switch (`{tab === "home" && <Home .../>}` in `economic-cycles-v5.jsx`), the transition never
+  actually played — the SVG just painted at its final value on each mount, so completing a lesson
+  and returning to Home never showed the ring "advance," only a static jump. Fixed by adding a
+  `ringPct` state initialized to `0` and a `useEffect` that sets it to the real `pct` one
+  `requestAnimationFrame` after mount/update — this reliably retriggers the existing transition on
+  every Home visit, so the ring now visibly fills in each time (a bigger jump right after
+  finishing a lesson, a small one otherwise). The percentage **text** label and the `aria-label`
+  still read the real `pct` directly, not the animating `ringPct`, so a screen reader or a glance
+  at the number is never out of sync with the animation.
+- **Verified**: `npm test` (data-shape harness, cached Node v20.18.1 via
+  `scripts/bootstrap-node.sh`) passes clean — `PASS: 0 failure(s), 0 warning(s)`. `npm install`
+  reported 0 new packages (same 2 pre-existing dev-tooling audit advisories as every prior run).
+  `npm run build` succeeded: `✓ 45 modules transformed` (unchanged — no new files, only edits to
+  the two existing components), `dist/assets/index-DLTBtxPS.js` **249.87 kB / 105.07 kB gzip** —
+  up from the prior build's 248.68 kB / 104.55 kB gzip, consistent with the added toast component
+  and animation logic rather than a regression; built in 2m 59s, confirmed via an explicit
+  `echo "EXIT_CODE=$?"` after the build (not just absence of stderr output) since a first
+  background-captured build run in this session showed truncated output (`vite v5.4.21
+  building for production...` / `transforming...` with no success line) that looked ambiguous — a
+  clean re-run with explicit exit-code capture confirmed `EXIT_CODE=0` and the full success output
+  (`✓ 45 modules transformed.`, `✓ built in 2m 59s`), so the truncation was a background-output
+  buffering artifact of that specific capture, not a real build failure.
+- Did not visually verify in the browser preview tool — same known limitation as every prior run
+  (`preview_start` can't spawn `npm run dev` because its process spawn doesn't see the bootstrapped
+  Node on `PATH`). Risk is judged low: both changes are additive (a new toast component gated
+  behind existing state, and a ring animation that only affects timing, not the final rendered
+  value), and the data-shape harness plus a clean build both pass.
+- **Environment note reconfirmed**: at the start of this run, sandboxed `git status` timed out at
+  the 2-minute tool limit (checked `ps aux` and found no live git process, no stale lock file
+  either — the index write appears to have simply been slow); disk usage was checked directly
+  (`df -h`) and confirmed at 99% capacity (5.0 GiB free), the same condition a prior run's log
+  entry ties to slow git ops on this machine. Retried every git status/log check unsandboxed and
+  in the background via `Monitor`, which succeeded every time — consistent with the standing
+  guidance to retry rather than escalate. No destructive git operations were used, and no stale
+  lock needed removing this run.
+- **Next run should pick**: item 1's 6c (first-open routing — land new users straight in lesson 1
+  instead of Home) is next in the 6a–6e sequence and is now unblocked. Item 2 (unused translation
+  keys, now 12 remaining after this run's `completeLabel` use) and item 4 (`DECISIONS.md`) remain
+  open smaller alternatives.

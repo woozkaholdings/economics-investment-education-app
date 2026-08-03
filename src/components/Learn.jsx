@@ -1,7 +1,44 @@
+import { useState, useEffect } from "react";
+
+function CelebrationToast({ text }) {
+  return (
+    <>
+      <style>{`
+        @keyframes ecCelebratePop {
+          0% { transform: translateX(-50%) scale(0.5); opacity: 0; }
+          60% { transform: translateX(-50%) scale(1.08); opacity: 1; }
+          100% { transform: translateX(-50%) scale(1); opacity: 1; }
+        }
+        @keyframes ecCelebrateFade {
+          0%, 70% { opacity: 1; }
+          100% { opacity: 0; }
+        }
+      `}</style>
+      <div style={{ position: "fixed", top: "16%", left: "50%", zIndex: 300, background: "#059669", color: "#fff", borderRadius: 14, padding: "12px 22px", display: "flex", alignItems: "center", gap: 8, boxShadow: "0 8px 24px rgba(5,150,105,0.35)", fontSize: 14, fontWeight: 700, animation: "ecCelebratePop 0.4s cubic-bezier(0.34,1.56,0.64,1), ecCelebrateFade 1.5s ease forwards", pointerEvents: "none" }}>
+        <span style={{ fontSize: 20 }}>🎉</span> {text}
+      </div>
+    </>
+  );
+}
+
 export default function Learn({ t, lang, lessons, completedLessons, currentLesson, isLessonUnlocked, setCurrentLesson, markLessonComplete, scrollTop }) {
   const lesson = lessons[currentLesson];
+  const [celebrate, setCelebrate] = useState(false);
+
+  useEffect(() => {
+    if (!celebrate) return;
+    const timer = setTimeout(() => setCelebrate(false), 1500);
+    return () => clearTimeout(timer);
+  }, [celebrate]);
+
+  const handleMarkComplete = () => {
+    markLessonComplete(lesson.id);
+    setCelebrate(true);
+  };
+
   return (
     <div>
+      {celebrate && <CelebrationToast text={t.completeLabel} />}
       {/* Lesson List */}
       <div style={{ marginBottom: 12 }}>
         <div style={{ display: "flex", flexWrap: "wrap", gap: 3, marginBottom: 12 }}>
@@ -63,7 +100,7 @@ export default function Learn({ t, lang, lessons, completedLessons, currentLesso
               </button>
             )}
             {!completedLessons.includes(lesson.id) && (
-              <button onClick={() => markLessonComplete(lesson.id)}
+              <button onClick={handleMarkComplete}
                 style={{ flex: 2, padding: "10px 12px", borderRadius: 10, border: "none", background: lesson.color, color: "#fff", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>
                 ✅ {t.markComplete}
               </button>

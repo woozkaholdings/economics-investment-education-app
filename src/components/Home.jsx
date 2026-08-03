@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { estimateMinutes } from "../content/lessons.js";
 
 function ProgressRing({ pct, size = 64, stroke = 7, color = "#2563eb", track = "#bfdbfe" }) {
@@ -15,6 +16,13 @@ function ProgressRing({ pct, size = 64, stroke = 7, color = "#2563eb", track = "
 
 export default function Home({ t, lang, completedLessons, lessons, isLessonUnlocked, setCurrentLesson, setTab, scrollTop }) {
   const pct = lessons.length > 0 ? completedLessons.length / lessons.length : 0;
+  // Ring starts at 0 and animates up to pct on mount/update, so returning to Home
+  // after completing a lesson shows the ring visibly fill in rather than snapping.
+  const [ringPct, setRingPct] = useState(0);
+  useEffect(() => {
+    const raf = requestAnimationFrame(() => setRingPct(pct));
+    return () => cancelAnimationFrame(raf);
+  }, [pct]);
   return (
     <div>
       <div style={{ textAlign: "center", padding: "20px 10px" }}>
@@ -27,7 +35,7 @@ export default function Home({ t, lang, completedLessons, lessons, isLessonUnloc
       <div style={{ background: "linear-gradient(135deg, #eff6ff, #dbeafe)", border: "1px solid #bfdbfe", borderRadius: 12, padding: 16, marginBottom: 12 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
           <div style={{ position: "relative", width: 64, height: 64 }} role="img" aria-label={`${t.progressLabel}: ${Math.round(pct * 100)}%`}>
-            <ProgressRing pct={pct} />
+            <ProgressRing pct={ringPct} />
             <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13, fontWeight: 800, color: "#1e40af" }}>
               {Math.round(pct * 100)}%
             </div>
