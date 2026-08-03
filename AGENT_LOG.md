@@ -38,18 +38,16 @@ the run log entries below for all four steps. **P2 is now open.**
 
 **P2 — after P1 is clear**
 
-1. ~~**[P2] Fix the quiz answer key.**~~ **DONE 2026-08-02** — see the run log entry below and the completed list. Answer indices went from `0,0,0,0,0,0,0,0,0,3,0,0,0` (12 of 13 on option 0) to `2,0,3,1,3,2,0,3,1,2,0,1,2`; `npm test` no longer warns. Prune this slot at the next curation.
-2. **[P2] Stale/dated factual figures.** Wider than previously recorded. **"~$50T total credit vs ~$3T actual money"** (early-2010s numbers, far off current US aggregates) appears in a lesson body, a quiz `explain`, **and** the `Credit` glossary entry. **"2+ quarters of falling GDP = recession"** is stated as a *definition* in a lesson body, the `GDP` glossary entry, **and** the `Recession` glossary entry — it is a rule of thumb; US recessions are dated by the NBER on broader criteria. Also reword the quiz claim that inverted yield curves "have predicted every US recession since 1955" — the pattern is real but the standard framing acknowledges false positives. Spot-checked and **correct — leave alone**: QE1/QE2/QE3 sizes, the ~$900B → ~$9T Fed balance-sheet arc, PMI 50 threshold, VIX bands.
-3. **[P2] First-session flow (launch plan §3.2–3.3) — now decomposed, so it can actually be picked up.** The plan calls the first five minutes "your most important feature" and sequences it as Move 4, right after the §2.2 migration. None of it exists. Take these one per run, in order:
+1. **[P2] First-session flow (launch plan §3.2–3.3) — now decomposed, so it can actually be picked up.** The plan calls the first five minutes "your most important feature" and sequences it as Move 4, right after the §2.2 migration. None of it exists. Take these one per run, in order:
    - 6a. **Progress ring on Home** (lessons completed / 12) plus an estimated "≈N min" label on each lesson card.
    - 6b. **Lesson-completion celebration** — a small animation on "Mark Complete" and the ring advancing.
    - 6c. **First-open routing** — with no saved progress, land straight in lesson 1 rather than on Home. (No signup exists to skip, which is already what the plan wants; make it explicit and keep it that way.)
    - 6d. **Streak counter on Home**, localStorage-backed — reuse the `try/catch` pattern already established by `ecycles_seen_disclaimer`.
    - 6e. **One-tap "continue tomorrow" prompt** at lesson end. **localStorage only** — real reminder notifications need the Expo decision (item 12) and must not be started here.
-4. **[P2] Clean up unused translation keys** — `indicators`, `bestInvest`, `avoidInvest`, `psychology`, `why`, `expansion`, `peak`, `contraction`, `trough`, `expDesc`, `peakDesc`, `contDesc`, `troughDesc` are defined in all 5 languages but nothing renders them (confirmed again by the new `npm test` harness's used-vs-defined `TR` key check — these 13 show up as defined-but-unused). (The *rendered* "Best investments" phase language in lesson 10 was a different, now-fixed issue — see the §10.1 completion entry below.) Either delete them or build the feature with historical/educational framing and the same disclaimer treatment. Pick one — don't leave this open indefinitely.
-5. **[P2] Refresh `README.md` — it now misdescribes the repo, publicly.** It says `economic-cycles-v5.jsx` is "the entire app … all in one file (~1,340 lines)"; the file is now 135 lines and the translations, lessons, quiz data, glossary, kids content, and all four tab components live in `src/locales/`, `src/content/`, and `src/components/`. `origin` is a public GitHub repo (`woozkaholdings/economics-investment-education-app`), so this is the first thing a visitor reads. Update the structure description, mention `scripts/bootstrap-node.sh` under "Running locally" and `npm test` alongside `npm run build`, and **fold this into whichever run changes the structure next** rather than spending a whole run on it. The Ray Dalio attribution line stays — launch plan §10.2 explicitly permits credit in an acknowledgments line; keep it as attribution, never as branding.
-6. **[P2] Add `DECISIONS.md`** — launch plan Move 1 asks for a decision log and this file is a *work* log, not serving that purpose. Small: record the Expo-vs-Vite choice and its status, the `.js`-not-JSON content format and why, and the localStorage-only progress approach. One short run.
-7. **[P2] Broaden `scripts/check-data.mjs`'s `t.key` usage scan beyond `economic-cycles-v5.jsx`.** Found in passing 2026-08-02: the harness's dangling-translation-key check (`every t.someKey reference in economic-cycles-v5.jsx resolves to a real key in TR.en`) only reads the main file. After the four-step JSX split, almost all `t.` usage now lives in `src/components/*.jsx` — the check has been silently covering less each extraction (`Home`, `Markets`, `Learn` already moved most of it out; `More`, just extracted, moved the rest). It still passed clean this run (0 failures/warnings) so there's no known live bug, but the safety net is much thinner than it looks. Fix: have the script glob `src/components/*.jsx` alongside the main file for the `t.` scan.
+2. **[P2] Clean up unused translation keys** — `indicators`, `bestInvest`, `avoidInvest`, `psychology`, `why`, `expansion`, `peak`, `contraction`, `trough`, `expDesc`, `peakDesc`, `contDesc`, `troughDesc` are defined in all 5 languages but nothing renders them (confirmed again by the new `npm test` harness's used-vs-defined `TR` key check — these 13 show up as defined-but-unused). (The *rendered* "Best investments" phase language in lesson 10 was a different, now-fixed issue — see the §10.1 completion entry below.) Either delete them or build the feature with historical/educational framing and the same disclaimer treatment. Pick one — don't leave this open indefinitely.
+3. **[P2] Refresh `README.md` — it now misdescribes the repo, publicly.** It says `economic-cycles-v5.jsx` is "the entire app … all in one file (~1,340 lines)"; the file is now 135 lines and the translations, lessons, quiz data, glossary, kids content, and all four tab components live in `src/locales/`, `src/content/`, and `src/components/`. `origin` is a public GitHub repo (`woozkaholdings/economics-investment-education-app`), so this is the first thing a visitor reads. Update the structure description, mention `scripts/bootstrap-node.sh` under "Running locally" and `npm test` alongside `npm run build`, and **fold this into whichever run changes the structure next** rather than spending a whole run on it. The Ray Dalio attribution line stays — launch plan §10.2 explicitly permits credit in an acknowledgments line; keep it as attribution, never as branding.
+4. **[P2] Add `DECISIONS.md`** — launch plan Move 1 asks for a decision log and this file is a *work* log, not serving that purpose. Small: record the Expo-vs-Vite choice and its status, the `.js`-not-JSON content format and why, and the localStorage-only progress approach. One short run.
+5. **[P2] Broaden `scripts/check-data.mjs`'s `t.key` usage scan beyond `economic-cycles-v5.jsx`.** Found in passing 2026-08-02: the harness's dangling-translation-key check (`every t.someKey reference in economic-cycles-v5.jsx resolves to a real key in TR.en`) only reads the main file. After the four-step JSX split, almost all `t.` usage now lives in `src/components/*.jsx` — the check has been silently covering less each extraction (`Home`, `Markets`, `Learn` already moved most of it out; `More`, just extracted, moved the rest). It still passed clean this run (0 failures/warnings) so there's no known live bug, but the safety net is much thinner than it looks. Fix: have the script glob `src/components/*.jsx` alongside the main file for the `t.` scan. **A concurrent session appears to be mid-edit on this exact item as of 2026-08-02 evening** — `scripts/check-data.mjs` and a stray `src/components/More.jsx.bak2` showed up modified/untracked in the working tree partway through this run's build; left both untouched (not this run's files) — see the run log entry below.
 
 **P3 — polish, only after P1 and P2**
 
@@ -65,6 +63,7 @@ the run log entries below for all four steps. **P2 is now open.**
 
 **Completed and pruned**
 
+- **Stale/dated factual figures reworded** — done 2026-08-02, see run log. The `~$50T total credit vs ~$3T actual money` figures (lesson body, quiz `explain`, `Credit` glossary entry) were replaced with figure-free "many times larger than the base money supply" framing; the `2+ quarters of falling GDP = recession` line (lesson body, `GDP` and `Recession` glossary entries) is now framed as a rule of thumb with an NBER note; the yield-curve "has predicted EVERY US recession since 1955" claim (lesson subtitle+body, quiz `explain`) now acknowledges inversions have preceded every recession since 1955 but not every inversion is followed by one.
 - **JSX split, step 4d (`More` tab → `src/components/More.jsx`) — the `App` split is now fully done.** Done 2026-08-02, see run log. Fourth and last of the four per-tab extractions. Unlike `Home`/`Markets`/`Learn`, `More`'s local state (`moreSection`, quiz `qIdx`/`qStarted`/`qAnswer`/`qScore`/`qDone`, `kidsAge`, `glossSearch`) moved *into* the component rather than staying lifted in `App`, since nothing outside `More` read any of it. `quizData`/`glossary`/`kidsContent` are now imported directly in `More.jsx` rather than passed as props, matching the precedent `Markets.jsx` set for `charts.jsx`. `economic-cycles-v5.jsx` down to 135 lines — now just tab-switching/header/first-launch-modal glue.
 - **JSX split, step 4c (`Learn` tab → `src/components/Learn.jsx`)** — done 2026-08-02, see run log. Third of the four per-tab extractions; `economic-cycles-v5.jsx` down to 294 lines.
 - **JSX split, step 4b (`Markets` tab → `src/components/Markets.jsx`, chart helpers → `src/components/charts.jsx`)** — done 2026-08-02, see run log. Second of the four per-tab extractions; `economic-cycles-v5.jsx` down to 380 lines.
@@ -751,3 +750,71 @@ sub-sections (quiz/kids/glossary/about), each with its own local state.
   self-contained), or the README refresh (item 5, now especially overdue since the repo
   structure changed again). The first-session flow (item 3) is the largest remaining P2
   item and likely deserves its own dedicated run per its own 6a–6e breakdown.
+
+### 2026-08-02 — Stale/dated factual figures reworded (P2)
+
+Picked backlog item 2 (stale factual figures): the app's core value is teaching accurate
+economics, and this item had been independently flagged by two weekly reviews as a real
+correctness gap. Content-only changes, no structural edits:
+
+- **`~$50T total credit vs ~$3T actual money`** — these were early-2010s US aggregate
+  figures presented as current, in three places: the "Credit vs Money" lesson body (all 5
+  languages), the corresponding quiz question's `explain` (English only had the numbers;
+  other languages were already generic), and the `Credit` glossary entry's English `f`
+  field. Replaced with figure-free framing that teaches the same concept without going
+  stale: "total credit outstanding is many times larger than the base money supply — a
+  gap that has only widened over time" (and per-language equivalents in the lesson body,
+  where all 5 languages had carried the specific numbers).
+- **`2+ quarters of falling GDP = recession`** — stated as a flat *definition* in three
+  places: the "Reading Economic Indicators" lesson body (English only), the `GDP`
+  glossary entry (English only), and the `Recession` glossary entry (all 5 languages).
+  Reworded everywhere to frame it as a widely-used **rule of thumb**, not the official
+  definition, and added that the US officially dates recessions via the NBER using
+  broader criteria (employment, income, spending), not GDP alone. The `Recession` entry
+  needed a genuine rewrite in all 5 languages since all 5 carried the flat definition;
+  `GDP`'s rule-of-thumb note was only added to the English entry since the other 4
+  languages already just said "total value of goods/services produced" with no recession
+  claim to fix.
+- **`Has predicted EVERY US recession since 1955`** — the underlying claim (every
+  recession since 1955 was preceded by an inversion) is true and worth keeping, but the
+  standard framing also notes inversions don't perfectly forecast recessions (false
+  positives exist), so the flat "predicted every recession" phrasing overstates certainty.
+  Reworded in the yield-curve lesson's subtitle, section body (all 5 languages), and the
+  corresponding quiz `explain` (all 5 languages) to: every recession since 1955 was
+  preceded by an inversion, but not every inversion has been followed by a recession — a
+  strong signal, not a certainty. Left the quiz question's `answer` index (2, "Recession
+  within 12-18 months") unchanged since the softened wording doesn't change which option
+  is correct.
+- **Spot-checked and confirmed correct, left alone** (per the backlog's own note, not
+  re-verified from scratch this run): QE1/QE2/QE3 sizes, the ~$900B → ~$9T Fed
+  balance-sheet arc, PMI's 50 threshold, VIX bands.
+- **Verified**: `grep` for `50T`/`50 trillion`/`50万亿`/`50조`/`50兆`, `$3T`/`3 trillion`,
+  `2+ quarters`/`Falling 2+`, and the various "predicted every recession" phrasings
+  (en/es/ko/zh/ja) across `src/content/*.js` returns zero remaining stale-figure matches —
+  only the deliberately-rewritten, now-qualified "1955" sentences remain. `npm test`
+  (data-shape harness, cached Node v20.18.1 via `scripts/bootstrap-node.sh`) passes clean:
+  `PASS: 0 failure(s), 0 warning(s)`. `npm install` (0 new packages, same 2 pre-existing
+  dev-tooling audit advisories as every prior run) then `npm run build` succeeded:
+  `✓ 45 modules transformed` (unchanged — this run only edited existing data files, added
+  no new modules), `dist/assets/index-B5ScNqHG.js` **247.22 kB / 103.94 kB gzip** — up
+  from the prior build's 245.71 kB / 102.89 kB, consistent with the reworded strings being
+  longer (added qualifying clauses) rather than a regression; built in ~2m 25s.
+- Did not visually verify in the browser preview tool — same known limitation as every
+  prior run (`preview_start` can't spawn `npm run dev` because its process spawn doesn't
+  see the bootstrapped Node on `PATH`). Risk is low: every change is a like-for-like
+  string rewording with no logic or shape change, confirmed by the clean `npm test` pass.
+- **Concurrent-session note**: partway through this run, while `npm run build` was
+  running in the background, `git status` showed `scripts/check-data.mjs` modified and an
+  untracked `src/components/More.jsx.bak2` — neither created by this run. This looks like
+  another session mid-edit on backlog item 7 (broadening `check-data.mjs`'s `t.key` scan
+  to `src/components/*.jsx`, exactly what that item describes) with an in-progress backup
+  artifact from its editing tool. Left both completely untouched, per the standing
+  concurrent-session precedent from the `Markets` extraction run — this run's commit
+  includes only the files it intentionally changed
+  (`src/content/{lessons,quizData,glossary}.js` and this log).
+- **Next run should pick**: whichever P2 item is highest-value once `scripts/check-data.mjs`'s
+  in-flight edit (observed above) has landed and this log reflects it — likely item 5
+  (`check-data.mjs` scan broadening) if that other session stalled before committing, or
+  otherwise item 1 (first-session flow, 6a) or item 3 (README refresh, now overdue across
+  two structural changes). Re-read this file and re-run `git status` first, since a
+  concurrent session was active during this run's build.

@@ -58,11 +58,11 @@ export const lessons = [
       {
         heading: { en: "Credit vs Money", es: "Crédito vs Dinero", ko: "신용 vs 돈", zh: "信贷 vs 货币", ja: "信用 vs お金" },
         body: {
-          en: "Money settles transactions immediately. When you buy a beer with cash — done.\n\nCredit is like a bar tab. You promise to pay later. You and the bartender just created an asset and a liability — out of thin air.\n\nHere's the stunning reality: most of what people call \"money\" is actually credit. In the US, total credit is about $50 trillion while actual money is only about $3 trillion.",
-          es: "El dinero cierra transacciones inmediatamente. El crédito es como una cuenta de bar — prometes pagar después.\n\nLa realidad: la mayoría del \"dinero\" es crédito. En EE.UU., el crédito total es ~$50T y el dinero real solo ~$3T.",
-          ko: "돈은 거래를 즉시 완결합니다. 신용은 바 탭과 같습니다 — 나중에 지불하겠다는 약속입니다.\n\n놀라운 현실: 사람들이 \"돈\"이라고 부르는 것의 대부분은 사실 신용입니다. 미국의 총 신용은 약 $50조이고 실제 돈은 약 $3조에 불과합니다.",
-          zh: "货币立即结算交易。信贷像酒吧记账——你承诺以后付。\n\n惊人的现实：人们所说的\"钱\"大部分实际是信贷。美国总信贷约50万亿美元，实际货币只有约3万亿。",
-          ja: "お金は取引を即座に決済。信用はバーのツケ。後で払うと約束する。\n\n驚くべき現実：人々が「お金」と呼ぶものの大半は実は信用です。米国の総信用は約50兆ドル、実際のお金はわずか約3兆ドル。",
+          en: "Money settles transactions immediately. When you buy a beer with cash — done.\n\nCredit is like a bar tab. You promise to pay later. You and the bartender just created an asset and a liability — out of thin air.\n\nHere's the stunning reality: most of what people call \"money\" is actually credit. In the US, total credit outstanding is many times larger than the base money supply — a gap that has only widened over time as the economy has grown.",
+          es: "El dinero cierra transacciones inmediatamente. El crédito es como una cuenta de bar — prometes pagar después.\n\nLa realidad: la mayoría del \"dinero\" es crédito. En EE.UU., el crédito total supera muchas veces la oferta de dinero base, una brecha que ha crecido con el tiempo.",
+          ko: "돈은 거래를 즉시 완결합니다. 신용은 바 탭과 같습니다 — 나중에 지불하겠다는 약속입니다.\n\n놀라운 현실: 사람들이 \"돈\"이라고 부르는 것의 대부분은 사실 신용입니다. 미국의 총 신용은 기초 통화량보다 훨씬 크며, 이 격차는 경제가 성장하며 계속 커져왔습니다.",
+          zh: "货币立即结算交易。信贷像酒吧记账——你承诺以后付。\n\n惊人的现实：人们所说的\"钱\"大部分实际是信贷。美国总信贷规模是基础货币供应量的许多倍，且随着经济增长这一差距不断扩大。",
+          ja: "お金は取引を即座に決済。信用はバーのツケ。後で払うと約束する。\n\n驚くべき現実：人々が「お金」と呼ぶものの大半は実は信用です。米国の総信用残高は基礎マネーサプライの何倍にも達し、経済成長とともにその差は広がり続けています。",
         },
       },
       {
@@ -299,16 +299,16 @@ export const lessons = [
   {
     id: 8, icon: "📐", color: "#9333ea",
     title: { en: "The Yield Curve: Crystal Ball", es: "La Curva de Rendimiento: Bola de Cristal", ko: "수익률 곡선: 수정 구슬", zh: "收益率曲线：水晶球", ja: "イールドカーブ：水晶玉" },
-    subtitle: { en: "The most reliable recession predictor since 1955", es: "El predictor de recesión más fiable desde 1955", ko: "1955년 이후 가장 신뢰할 수 있는 경기침체 예측 지표", zh: "自1955年以来最可靠的衰退预测指标", ja: "1955年以来最も信頼性の高い景気後退予測指標" },
+    subtitle: { en: "A historically reliable recession predictor since 1955", es: "Un predictor de recesión históricamente fiable desde 1955", ko: "1955년 이후 역사적으로 신뢰할 수 있는 경기침체 예측 지표", zh: "自1955年以来历史上较为可靠的衰退预测指标", ja: "1955年以来、歴史的に信頼性の高い景気後退予測指標" },
     sections: [
       {
         heading: { en: "What is the Yield Curve?", es: "¿Qué es la Curva?", ko: "수익률 곡선이란?", zh: "什么是收益率曲线？", ja: "イールドカーブとは？" },
         body: {
-          en: "A graph of interest rates on government bonds at different maturities (2-year, 10-year, 30-year).\n\nNORMAL (upward slope) — Healthy economy. Longer lending = more risk = higher rates.\n\nFLAT — Warning signal. The market expects slowdown.\n\nINVERTED (short rates above long rates) — DANGER! The most reliable recession predictor. Lead time: 12-18 months. Has predicted EVERY US recession since 1955.\n\nSTEEP — Recovery signal. Often seen after the Fed starts cutting rates.",
-          es: "Un gráfico de tasas de interés de bonos a diferentes plazos.\n\nNormal = saludable. Invertida = peligro — ha predicho CADA recesión de EE.UU. desde 1955.",
-          ko: "다른 만기의 국채 금리 그래프입니다.\n\n정상(우상향) = 건강한 경제\n역전(단기>장기) = 위험! 1955년 이후 모든 미국 경기침체를 예측했습니다.",
-          zh: "不同期限国债利率的图表。\n\n正常（向上倾斜）= 健康经济\n倒挂（短期>长期）= 危险！自1955年以来预测了美国的每一次衰退。",
-          ja: "異なる満期の国債金利のグラフ。\n\n正常（右肩上がり）= 健全な経済\n逆転（短期>長期）= 危険！1955年以来全ての景気後退を予測。",
+          en: "A graph of interest rates on government bonds at different maturities (2-year, 10-year, 30-year).\n\nNORMAL (upward slope) — Healthy economy. Longer lending = more risk = higher rates.\n\nFLAT — Warning signal. The market expects slowdown.\n\nINVERTED (short rates above long rates) — DANGER! Historically one of the most reliable recession signals. Lead time: typically 12-18 months. Every US recession since 1955 was preceded by an inversion — though not every inversion has been followed by a recession, so it's a strong signal, not a certainty.\n\nSTEEP — Recovery signal. Often seen after the Fed starts cutting rates.",
+          es: "Un gráfico de tasas de interés de bonos a diferentes plazos.\n\nNormal = saludable. Invertida = peligro — cada recesión de EE.UU. desde 1955 estuvo precedida por una inversión, aunque no toda inversión ha sido seguida de recesión.",
+          ko: "다른 만기의 국채 금리 그래프입니다.\n\n정상(우상향) = 건강한 경제\n역전(단기>장기) = 위험! 1955년 이후 모든 미국 경기침체 전에 역전이 있었지만, 모든 역전이 경기침체로 이어진 것은 아닙니다.",
+          zh: "不同期限国债利率的图表。\n\n正常（向上倾斜）= 健康经济\n倒挂（短期>长期）= 危险！自1955年以来，每次美国衰退前都出现过收益率曲线倒挂，但并非每次倒挂后都发生了衰退。",
+          ja: "異なる満期の国債金利のグラフ。\n\n正常（右肩上がり）= 健全な経済\n逆転（短期>長期）= 危険！1955年以来、全ての米国景気後退の前に逆イールドが発生していますが、逆イールドの後に必ず景気後退が起きるとは限りません。",
         },
       },
     ],
@@ -417,7 +417,7 @@ export const lessons = [
       {
         heading: { en: "Key Indicators", es: "Indicadores Clave", ko: "핵심 지표", zh: "关键指标", ja: "主要指標" },
         body: {
-          en: "GDP — Total value of everything produced. Rising = expansion. Falling 2+ quarters = recession.\n\nCPI — Consumer Price Index. Measures inflation. Fed targets ~2%.\n\nPMI — Purchasing Managers' Index. Above 50 = expansion. Below 50 = contraction. A LEADING indicator.\n\nVIX — The 'Fear Gauge.' Below 15 = calm. Above 40 = extreme panic. Contrarians buy when VIX spikes.\n\nCredit Spreads — Difference between corporate and gov bond yields. Narrow = confidence. Wide = fear.",
+          en: "GDP — Total value of everything produced. Rising = expansion. A common rule of thumb calls two straight quarters of decline a recession — but in the US, recessions are officially dated by the NBER using broader criteria (employment, income, spending), not GDP alone.\n\nCPI — Consumer Price Index. Measures inflation. Fed targets ~2%.\n\nPMI — Purchasing Managers' Index. Above 50 = expansion. Below 50 = contraction. A LEADING indicator.\n\nVIX — The 'Fear Gauge.' Below 15 = calm. Above 40 = extreme panic. Contrarians buy when VIX spikes.\n\nCredit Spreads — Difference between corporate and gov bond yields. Narrow = confidence. Wide = fear.",
           es: "PIB, IPC, PMI, VIX, Spreads de Crédito — los indicadores clave para leer el estado de la economía.",
           ko: "GDP, CPI, PMI, VIX, 신용 스프레드 — 경제 상태를 읽는 핵심 지표들.",
           zh: "GDP、CPI、PMI、VIX、信用利差——读懂经济状态的关键指标。",
