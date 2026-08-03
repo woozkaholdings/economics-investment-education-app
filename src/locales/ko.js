@@ -39,6 +39,7 @@ export default {
     ratePrinciples: "핵심 원칙",
     kidsTabLabel: "키즈", quizTabLabel: "퀴즈", questionsLabel: "문항",
     viewAllLessonsTemplate: "{n}개 레슨 모두 보기 →",
+    estMinTemplate: "약 {n}분", progressLabel: "진행률",
     qeNarrative: "연준 채권 매입 → 자금 유입 → 수익률 ↓ → 주식 ↑↑ → 달러 ↓",
     qtNarrative: "연준 매입 중단 → 자금 유출 → 수익률 ↑ → 주식 ↓ → 달러 ↑",
     aboutTabLabel: "정보", aboutTitle: "앱 정보",

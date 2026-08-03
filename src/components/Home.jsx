@@ -1,4 +1,20 @@
+import { estimateMinutes } from "../content/lessons.js";
+
+function ProgressRing({ pct, size = 64, stroke = 7, color = "#2563eb", track = "#bfdbfe" }) {
+  const r = (size - stroke) / 2;
+  const c = 2 * Math.PI * r;
+  return (
+    <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} style={{ transform: "rotate(-90deg)", flexShrink: 0 }}>
+      <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke={track} strokeWidth={stroke} />
+      <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke={color} strokeWidth={stroke}
+        strokeDasharray={c} strokeDashoffset={c * (1 - pct)} strokeLinecap="round"
+        style={{ transition: "stroke-dashoffset 0.6s ease" }} />
+    </svg>
+  );
+}
+
 export default function Home({ t, lang, completedLessons, lessons, isLessonUnlocked, setCurrentLesson, setTab, scrollTop }) {
+  const pct = lessons.length > 0 ? completedLessons.length / lessons.length : 0;
   return (
     <div>
       <div style={{ textAlign: "center", padding: "20px 10px" }}>
@@ -9,15 +25,23 @@ export default function Home({ t, lang, completedLessons, lessons, isLessonUnloc
 
       {/* Progress Card */}
       <div style={{ background: "linear-gradient(135deg, #eff6ff, #dbeafe)", border: "1px solid #bfdbfe", borderRadius: 12, padding: 16, marginBottom: 12 }}>
-        <div style={{ display: "flex", justifyContent: "space-around", textAlign: "center" }}>
-          <div>
-            <div style={{ fontSize: 24, fontWeight: 800, color: "#1e40af" }}>{completedLessons.length}</div>
-            <div style={{ fontSize: 9, color: "#6b7280" }}>{t.lessonsCompleted}</div>
+        <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+          <div style={{ position: "relative", width: 64, height: 64 }} role="img" aria-label={`${t.progressLabel}: ${Math.round(pct * 100)}%`}>
+            <ProgressRing pct={pct} />
+            <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13, fontWeight: 800, color: "#1e40af" }}>
+              {Math.round(pct * 100)}%
+            </div>
           </div>
-          <div style={{ width: 1, background: "#bfdbfe" }} />
-          <div>
-            <div style={{ fontSize: 24, fontWeight: 800, color: "#1e40af" }}>{lessons.length}</div>
-            <div style={{ fontSize: 9, color: "#6b7280" }}>{t.totalLessons}</div>
+          <div style={{ flex: 1, display: "flex", justifyContent: "space-around", textAlign: "center" }}>
+            <div>
+              <div style={{ fontSize: 22, fontWeight: 800, color: "#1e40af" }}>{completedLessons.length}</div>
+              <div style={{ fontSize: 9, color: "#6b7280" }}>{t.lessonsCompleted}</div>
+            </div>
+            <div style={{ width: 1, background: "#bfdbfe" }} />
+            <div>
+              <div style={{ fontSize: 22, fontWeight: 800, color: "#1e40af" }}>{lessons.length}</div>
+              <div style={{ fontSize: 9, color: "#6b7280" }}>{t.totalLessons}</div>
+            </div>
           </div>
         </div>
       </div>
@@ -53,6 +77,7 @@ export default function Home({ t, lang, completedLessons, lessons, isLessonUnloc
               <div style={{ flex: 1 }}>
                 <div style={{ fontSize: 11, fontWeight: 700, color: done ? "#059669" : "#1f2937" }}>{t.lessonLabel} {l.id}: {l.title[lang]}</div>
                 <div style={{ fontSize: 9, color: "#9ca3af" }}>{l.subtitle[lang]}</div>
+                <div style={{ fontSize: 8, color: "#9ca3af", marginTop: 2 }}>{t.estMinTemplate.replace("{n}", estimateMinutes(l))}</div>
               </div>
               <div style={{ fontSize: 14, color: unlocked ? "#2563eb" : "#d1d5db" }}>{unlocked ? "›" : "🔒"}</div>
             </div>

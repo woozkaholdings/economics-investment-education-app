@@ -39,6 +39,7 @@ export default {
     ratePrinciples: "核心原则",
     kidsTabLabel: "儿童", quizTabLabel: "测验", questionsLabel: "题",
     viewAllLessonsTemplate: "查看全部{n}节课 →",
+    estMinTemplate: "约{n}分钟", progressLabel: "进度",
     qeNarrative: "美联储购债 → 资金流入 → 收益率↓ → 股票↑↑ → 美元↓",
     qtNarrative: "美联储停止购债 → 资金流出 → 收益率↑ → 股票↓ → 美元↑",
     aboutTabLabel: "关于", aboutTitle: "关于本应用",

@@ -38,9 +38,9 @@ the run log entries below for all four steps. **P2 is now open.**
 
 **P2 — after P1 is clear**
 
-1. **[P2] First-session flow (launch plan §3.2–3.3) — now decomposed, so it can actually be picked up.** The plan calls the first five minutes "your most important feature" and sequences it as Move 4, right after the §2.2 migration. None of it exists. Take these one per run, in order:
-   - 6a. **Progress ring on Home** (lessons completed / 12) plus an estimated "≈N min" label on each lesson card.
-   - 6b. **Lesson-completion celebration** — a small animation on "Mark Complete" and the ring advancing.
+1. **[P2] First-session flow (launch plan §3.2–3.3) — now decomposed, so it can actually be picked up.** The plan calls the first five minutes "your most important feature" and sequences it as Move 4, right after the §2.2 migration. Take these one per run, in order:
+   - ~~6a. **Progress ring on Home** (lessons completed / 12) plus an estimated "≈N min" label on each lesson card.~~ **DONE 2026-08-02** — see run log.
+   - 6b. **Lesson-completion celebration** — a small animation on "Mark Complete" and the ring advancing. **Now unblocked** — the ring built for 6a is the thing that should advance.
    - 6c. **First-open routing** — with no saved progress, land straight in lesson 1 rather than on Home. (No signup exists to skip, which is already what the plan wants; make it explicit and keep it that way.)
    - 6d. **Streak counter on Home**, localStorage-backed — reuse the `try/catch` pattern already established by `ecycles_seen_disclaimer`.
    - 6e. **One-tap "continue tomorrow" prompt** at lesson end. **localStorage only** — real reminder notifications need the Expo decision (item 12) and must not be started here.
@@ -906,3 +906,54 @@ to the first thing any visitor reads.
   next-most-valuable P2 item and is fully decomposed into small sub-steps already; item 2
   (unused translation keys) and item 4 (`DECISIONS.md`) remain open and unblocked as smaller
   alternatives. No P0/P1 remains open.
+
+### 2026-08-02 — First-session flow, step 6a: progress ring + per-lesson time estimate on Home
+
+Picked up item 1's first sub-step, as the previous two runs' "next run should pick" both
+pointed here (with the intervening README run landing between them).
+
+- **Progress ring**: `Home.jsx` had a numbers-only progress card (`completed / total` side
+  by side) with no visual sense of how far along the learner is. Added a small `ProgressRing`
+  component (plain inline SVG, two stacked `<circle>`s with `strokeDasharray`/
+  `strokeDashoffset` — same no-dependency approach as the existing `Bar`/`YieldCurve`/
+  `CycleChart` helpers in `charts.jsx`) showing `completedLessons.length / lessons.length` as
+  an animated ring with the percentage centered inside it, alongside the existing two-number
+  stat block rather than replacing it. Kept the ring local to `Home.jsx` rather than adding it
+  to `charts.jsx`, since that file's exports are Markets-specific by existing convention.
+- **Per-lesson time estimate**: added `estimateMinutes(lesson)` to `src/content/lessons.js` —
+  sums English-language word counts across all of a lesson's `sections[].body`, `takeaway`,
+  and `thinkAbout`, divides by 200 wpm, rounds, floors at 1 minute. **Deliberately always
+  reads the `en` text, regardless of the active UI language** — the Beta-labelling run's
+  measured translation-volume ratios (es 0.41x, ko 0.24x, ja 0.18x, zh 0.15x of English
+  length) mean a per-language word count would make the same lesson claim a different time in
+  different locales; English is used as a fixed yardstick instead. Rendered as `t.estMinTemplate`
+  (`"≈{n} min"` and equivalents) under each lesson card's subtitle on Home.
+- **i18n**: added two new keys — `estMinTemplate` and `progressLabel` — to all 5
+  `src/locales/*.js` files (en/es/ko/zh/ja), matching the existing `{n}`-template convention
+  used by `viewAllLessonsTemplate`. `progressLabel` is used as the ring's `aria-label`
+  (`role="img"` on its wrapper) rather than left to sit unused — the backlog already tracks a
+  dead-translation-key problem (item 2) and there was no reason to add to it when a one-line
+  accessibility label was the natural use.
+- **Verified**: `npm test` (data-shape harness, cached Node v20.18.1 via
+  `scripts/bootstrap-node.sh`) passes clean — `PASS: 0 failure(s), 0 warning(s)` — confirming
+  locale key parity across all 5 languages and no dangling `t.` references. `npm install`
+  reported 0 new packages (same 2 pre-existing dev-tooling audit advisories as every prior
+  run). `npm run build` succeeded: `✓ 45 modules transformed` (unchanged — no new modules,
+  only edits to existing ones), `dist/assets/index-CEcWFtw6.js` **248.68 kB / 104.55 kB
+  gzip** — up from the prior run's 247.22 kB / 103.94 kB, consistent with the added
+  `ProgressRing` component and new locale strings rather than a regression; built in 3m 11s.
+  Did not visually verify in the browser preview tool — same known sandbox limitation noted in
+  every prior run (`preview_start` can't spawn `npm run dev` because its process spawn doesn't
+  see the bootstrapped Node on `PATH`).
+- **Concurrent-session note**: partway through this run, a re-read of this file's backlog
+  section showed item 3 (README refresh) had flipped from open to struck-through/`DONE
+  2026-08-02` between two of my own reads, with no corresponding change in `git status` for
+  `AGENT_LOG.md` — `git log` confirmed a new commit (`9642fba`, "Refresh README to match
+  current split structure") had landed and been fully committed by another session in the
+  interim. It touched only `README.md` and `AGENT_LOG.md`, neither of which overlaps this
+  run's files (`Home.jsx`, `lessons.js`, `src/locales/*.js`), so no conflict; re-read the
+  current backlog before writing this entry rather than editing a stale copy.
+- **Next run should pick**: item 1's 6b (lesson-completion celebration — a small animation on
+  "Mark Complete" and the ring built this run advancing) is the natural next step and is now
+  unblocked. Item 2 (unused translation keys) and item 4 (`DECISIONS.md`) remain open smaller
+  alternatives if 6b turns out to need more design thought than a 6-hour run allows.

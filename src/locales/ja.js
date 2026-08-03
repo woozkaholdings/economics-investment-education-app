@@ -39,6 +39,7 @@ export default {
     ratePrinciples: "重要な原則",
     kidsTabLabel: "キッズ", quizTabLabel: "クイズ", questionsLabel: "問",
     viewAllLessonsTemplate: "全{n}レッスンを見る →",
+    estMinTemplate: "約{n}分", progressLabel: "進捗",
     qeNarrative: "FRBが債券購入 → 資金流入 → 利回り↓ → 株↑↑ → ドル↓",
     qtNarrative: "FRBが購入停止 → 資金流出 → 利回り↑ → 株↓ → ドル↑",
     aboutTabLabel: "概要", aboutTitle: "このアプリについて",

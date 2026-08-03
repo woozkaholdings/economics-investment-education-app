@@ -482,3 +482,22 @@ export const lessons = [
     },
   },
 ];
+
+// Estimated reading time for a lesson, always based on the English body text
+// regardless of the active UI language. Translation volume varies a lot by
+// language (see the Beta-labelling note in AGENT_LOG.md — es/ko/zh/ja run
+// 15-41% of English length), so per-language word counts would make the
+// same lesson claim a wildly different "≈N min" depending on locale. Using
+// English as the fixed yardstick keeps the estimate stable and comparable
+// across lessons.
+export function estimateMinutes(lesson) {
+  const words = [
+    ...lesson.sections.map((s) => s.body.en),
+    lesson.takeaway.en,
+    lesson.thinkAbout.en,
+  ]
+    .join(" ")
+    .trim()
+    .split(/\s+/).length;
+  return Math.max(1, Math.round(words / 200));
+}
