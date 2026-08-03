@@ -41,8 +41,8 @@ the run log entries below for all four steps. **P2 is now open.**
 1. **[P2] First-session flow (launch plan §3.2–3.3) — now decomposed, so it can actually be picked up.** The plan calls the first five minutes "your most important feature" and sequences it as Move 4, right after the §2.2 migration. Take these one per run, in order:
    - ~~6a. **Progress ring on Home** (lessons completed / 12) plus an estimated "≈N min" label on each lesson card.~~ **DONE 2026-08-02** — see run log.
    - ~~6b. **Lesson-completion celebration** — a small animation on "Mark Complete" and the ring advancing.~~ **DONE 2026-08-03** — see run log.
-   - 6c. **First-open routing** — with no saved progress, land straight in lesson 1 rather than on Home. (No signup exists to skip, which is already what the plan wants; make it explicit and keep it that way.) **Now unblocked.**
-   - 6d. **Streak counter on Home**, localStorage-backed — reuse the `try/catch` pattern already established by `ecycles_seen_disclaimer`.
+   - ~~6c. **First-open routing** — with no saved progress, land straight in lesson 1 rather than on Home.~~ **DONE 2026-08-03** — see run log.
+   - 6d. **Streak counter on Home**, localStorage-backed — reuse the `try/catch` pattern already established by `ecycles_seen_disclaimer`. **Now unblocked.**
    - 6e. **One-tap "continue tomorrow" prompt** at lesson end. **localStorage only** — real reminder notifications need the Expo decision (item 12) and must not be started here.
 2. **[P2] Clean up unused translation keys** — `indicators`, `bestInvest`, `avoidInvest`, `psychology`, `why`, `expansion`, `peak`, `contraction`, `trough`, `expDesc`, `peakDesc`, `contDesc`, `troughDesc` are defined in all 5 languages but nothing renders them (confirmed again by the new `npm test` harness's used-vs-defined `TR` key check — these 13 show up as defined-but-unused). (The *rendered* "Best investments" phase language in lesson 10 was a different, now-fixed issue — see the §10.1 completion entry below.) Either delete them or build the feature with historical/educational framing and the same disclaimer treatment. Pick one — don't leave this open indefinitely.
 3. ~~**[P2] Refresh `README.md`.**~~ **DONE 2026-08-02** — see the run log entry below and the completed list. Prune this slot at the next curation.
@@ -63,6 +63,7 @@ the run log entries below for all four steps. **P2 is now open.**
 
 **Completed and pruned**
 
+- **First-session flow, step 6c (first-open routing)** — done 2026-08-03, see run log. New users with no saved progress now land in Learn/lesson 1 on first open instead of Home.
 - **First-session flow, step 6b (lesson-completion celebration)** — done 2026-08-03, see run log. A toast animation on "Mark Complete" (Learn.jsx) and an animate-in effect on the Home progress ring.
 - **`README.md` refreshed to match the current split structure** — done 2026-08-02, see run log. Replaced the stale "one 1,340-line file" description with the actual `src/locales/` / `src/content/` / `src/components/` layout, added a Testing section for `npm test`, and mentioned `scripts/bootstrap-node.sh`.
 - **`scripts/check-data.mjs` `t.key` scan broadened to `src/components/*.jsx`** — done 2026-08-02, see run log. Was only reading `economic-cycles-v5.jsx`, silently covering less of the translation-key surface with each JSX-split extraction. Now reads the main file plus every component file; verified with an injected-then-reverted dangling-key test.
@@ -1028,3 +1029,63 @@ Two small, self-contained additions, no new translation keys needed:
   instead of Home) is next in the 6a–6e sequence and is now unblocked. Item 2 (unused translation
   keys, now 12 remaining after this run's `completeLabel` use) and item 4 (`DECISIONS.md`) remain
   open smaller alternatives.
+
+### 2026-08-03 — First-session flow, step 6c: first-open routing
+
+Picked up item 1's 6c directly, as the previous run's "next run should pick" pointed here.
+
+- **The actual design question wasn't "route to lesson 1," it was "how do we know it's a first
+  open."** `App`'s `completedLessons` state (`economic-cycles-v5.jsx`) is **not persisted anywhere**
+  — confirmed via `grep -rn "localStorage" src economic-cycles-v5.jsx`, which turns up only the
+  `ecycles_seen_disclaimer` first-launch-modal flag. So `completedLessons` is always `[]` on every
+  fresh page load regardless of how much progress a returning user has made — using it as the "no
+  saved progress" signal would route *every* load to lesson 1, including returning users', which is
+  exactly the flicker/regression the item is trying to avoid. `ecycles_seen_disclaimer` is the only
+  durable per-device signal the app currently has, and the item's own text ("no signup exists to
+  skip") points at exactly this: a device that has opened the app before (and dismissed the
+  disclaimer) is "returning" for routing purposes; a device that hasn't is a first open.
+- **Implementation** (`economic-cycles-v5.jsx`): changed `tab`'s `useState("home")` to a lazy
+  initializer that reads `localStorage.getItem("ecycles_seen_disclaimer")` synchronously on mount —
+  present → `"home"` (unchanged behavior), absent → `"learn"` (new). Used a lazy initializer
+  specifically (not a `useEffect` set-after-mount) so there's no flash of Home before switching to
+  Learn on a genuine first open. `currentLesson` already defaulted to `0` (lesson 1), so no change
+  needed there — landing on the Learn tab alone is sufficient. Wrapped in the same `try/catch` as
+  the existing `ecycles_seen_disclaimer` reads, falling back to `"home"` if `localStorage` is
+  unavailable (e.g. private-mode Safari), matching the app's established pattern for that failure
+  case. On a genuine first open the disclaimer modal still renders on top (its own `showFirstLaunch`
+  effect is unaffected), so the sequence is: modal shown → user dismisses → Learn/lesson 1
+  underneath, rather than Home.
+- **Left for a future item, not this one**: persisting `completedLessons` itself (so progress
+  survives a reload) is a materially larger and riskier change — it touches `App`'s core state
+  shape and every component that reads `completedLessons`/`isLessonUnlocked` — and wasn't what this
+  item asked for. Noting it here since it's a real gap a future run or the owner should decide on
+  explicitly rather than it staying implicit.
+- **Verified**: `npm test` (data-shape harness, cached Node v20.18.1 via `scripts/bootstrap-node.sh`)
+  passes clean — `PASS: 0 failure(s), 0 warning(s)`, unaffected by this change since it only checks
+  content-module shape. `npm install` reported 0 new packages (same 2 pre-existing dev-tooling audit
+  advisories as every prior run, 64 packages). `npm run build` succeeded with explicit exit-code
+  capture — `EXIT_CODE=0`, `✓ 45 modules transformed` (unchanged, no new files), `dist/assets/index-vcsIYxJN.js`
+  **249.97 kB / 105.09 kB gzip** — up only marginally from the prior run's 249.87 kB / 105.07 kB gzip,
+  consistent with a ~10-line lazy-initializer change and not a regression; built in 759ms (this
+  machine's disk pressure from the 2026-08-03 log entry appears to have cleared — no multi-minute
+  build this run). Re-ran `git status`/`git diff --stat` right before writing this entry, confirming
+  only `economic-cycles-v5.jsx` was modified — no concurrent-session collision. Did not visually
+  verify in the browser preview tool — same known sandbox limitation as every prior run
+  (`preview_start` can't spawn `npm run dev` because its process spawn doesn't see the bootstrapped
+  Node on `PATH`); confirmed the specific failure again this run (`Failed to spawn process: No such
+  file or directory`) rather than assuming it from the log. Risk is judged low: the change is a
+  single conditional on an already-tested localStorage key, gated by the same `try/catch` pattern
+  used elsewhere, and both the data-shape harness and a clean build pass.
+- **Environment note**: `git log`/`git status` triggered a `Bus error: 10` when run through the
+  sandboxed Bash tool at the start of this run (not a timeout this time, an actual crash) but
+  succeeded immediately when re-run either with the sandbox disabled or with `--no-pager` appended
+  — consistent with prior runs' guidance to retry rather than escalate on sandboxed git flakiness on
+  this machine.
+- **Next run should pick**: item 1's 6d (streak counter on Home, localStorage-backed) is next in
+  the 6a–6e sequence and is now unblocked — it can reuse the same `try/catch` localStorage pattern
+  this run and the disclaimer flag both establish. Item 2 (unused translation keys, 12 remaining)
+  and item 4 (`DECISIONS.md`) remain open smaller alternatives. Worth flagging for a future run or
+  the owner: `completedLessons` not persisting across reloads (noted above) is a real gap that 6d's
+  streak counter will sit somewhat awkwardly next to (a streak that persists next to progress that
+  doesn't) — may be worth resolving before more first-session-flow steps build further on top of
+  today's non-persistent progress model.

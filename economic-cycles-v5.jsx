@@ -20,7 +20,16 @@ const langNames = { en: "English", es: "Español", ko: "한국어", zh: "中文"
 // ═══════════════════════════════════════════════════════════════
 export default function App() {
   const [lang, setLang] = useState("en");
-  const [tab, setTab] = useState("home");
+  // completedLessons isn't persisted across sessions, so ecycles_seen_disclaimer
+  // (the only durable per-device flag the app has) doubles as the "has this
+  // device used the app before" signal: first open lands in lesson 1, not Home.
+  const [tab, setTab] = useState(() => {
+    try {
+      return localStorage.getItem("ecycles_seen_disclaimer") ? "home" : "learn";
+    } catch (e) {
+      return "home";
+    }
+  });
   const [currentLesson, setCurrentLesson] = useState(0);
   const [completedLessons, setCompletedLessons] = useState([]);
   // First-launch disclaimer notice
