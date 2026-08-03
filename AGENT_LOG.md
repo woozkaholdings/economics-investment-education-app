@@ -47,7 +47,7 @@ the run log entries below for all four steps. **P2 is now open.**
 2. **[P2] Clean up unused translation keys** — `indicators`, `bestInvest`, `avoidInvest`, `psychology`, `why`, `expansion`, `peak`, `contraction`, `trough`, `expDesc`, `peakDesc`, `contDesc`, `troughDesc` are defined in all 5 languages but nothing renders them (confirmed again by the new `npm test` harness's used-vs-defined `TR` key check — these 13 show up as defined-but-unused). (The *rendered* "Best investments" phase language in lesson 10 was a different, now-fixed issue — see the §10.1 completion entry below.) Either delete them or build the feature with historical/educational framing and the same disclaimer treatment. Pick one — don't leave this open indefinitely.
 3. **[P2] Refresh `README.md` — it now misdescribes the repo, publicly.** It says `economic-cycles-v5.jsx` is "the entire app … all in one file (~1,340 lines)"; the file is now 135 lines and the translations, lessons, quiz data, glossary, kids content, and all four tab components live in `src/locales/`, `src/content/`, and `src/components/`. `origin` is a public GitHub repo (`woozkaholdings/economics-investment-education-app`), so this is the first thing a visitor reads. Update the structure description, mention `scripts/bootstrap-node.sh` under "Running locally" and `npm test` alongside `npm run build`, and **fold this into whichever run changes the structure next** rather than spending a whole run on it. The Ray Dalio attribution line stays — launch plan §10.2 explicitly permits credit in an acknowledgments line; keep it as attribution, never as branding.
 4. **[P2] Add `DECISIONS.md`** — launch plan Move 1 asks for a decision log and this file is a *work* log, not serving that purpose. Small: record the Expo-vs-Vite choice and its status, the `.js`-not-JSON content format and why, and the localStorage-only progress approach. One short run.
-5. **[P2] Broaden `scripts/check-data.mjs`'s `t.key` usage scan beyond `economic-cycles-v5.jsx`.** Found in passing 2026-08-02: the harness's dangling-translation-key check (`every t.someKey reference in economic-cycles-v5.jsx resolves to a real key in TR.en`) only reads the main file. After the four-step JSX split, almost all `t.` usage now lives in `src/components/*.jsx` — the check has been silently covering less each extraction (`Home`, `Markets`, `Learn` already moved most of it out; `More`, just extracted, moved the rest). It still passed clean this run (0 failures/warnings) so there's no known live bug, but the safety net is much thinner than it looks. Fix: have the script glob `src/components/*.jsx` alongside the main file for the `t.` scan. **A concurrent session appears to be mid-edit on this exact item as of 2026-08-02 evening** — `scripts/check-data.mjs` and a stray `src/components/More.jsx.bak2` showed up modified/untracked in the working tree partway through this run's build; left both untouched (not this run's files) — see the run log entry below.
+5. ~~**[P2] Broaden `scripts/check-data.mjs`'s `t.key` usage scan beyond `economic-cycles-v5.jsx`.**~~ **DONE 2026-08-02** — see the run log entry below and the completed list. The scan now also globs `src/components/*.jsx`; verified by deliberately injecting a dangling `t.` reference into `More.jsx` and confirming the harness fails with the correct file path, then reverting. Prune this slot at the next curation.
 
 **P3 — polish, only after P1 and P2**
 
@@ -63,6 +63,7 @@ the run log entries below for all four steps. **P2 is now open.**
 
 **Completed and pruned**
 
+- **`scripts/check-data.mjs` `t.key` scan broadened to `src/components/*.jsx`** — done 2026-08-02, see run log. Was only reading `economic-cycles-v5.jsx`, silently covering less of the translation-key surface with each JSX-split extraction. Now reads the main file plus every component file; verified with an injected-then-reverted dangling-key test.
 - **Stale/dated factual figures reworded** — done 2026-08-02, see run log. The `~$50T total credit vs ~$3T actual money` figures (lesson body, quiz `explain`, `Credit` glossary entry) were replaced with figure-free "many times larger than the base money supply" framing; the `2+ quarters of falling GDP = recession` line (lesson body, `GDP` and `Recession` glossary entries) is now framed as a rule of thumb with an NBER note; the yield-curve "has predicted EVERY US recession since 1955" claim (lesson subtitle+body, quiz `explain`) now acknowledges inversions have preceded every recession since 1955 but not every inversion is followed by one.
 - **JSX split, step 4d (`More` tab → `src/components/More.jsx`) — the `App` split is now fully done.** Done 2026-08-02, see run log. Fourth and last of the four per-tab extractions. Unlike `Home`/`Markets`/`Learn`, `More`'s local state (`moreSection`, quiz `qIdx`/`qStarted`/`qAnswer`/`qScore`/`qDone`, `kidsAge`, `glossSearch`) moved *into* the component rather than staying lifted in `App`, since nothing outside `More` read any of it. `quizData`/`glossary`/`kidsContent` are now imported directly in `More.jsx` rather than passed as props, matching the precedent `Markets.jsx` set for `charts.jsx`. `economic-cycles-v5.jsx` down to 135 lines — now just tab-switching/header/first-launch-modal glue.
 - **JSX split, step 4c (`Learn` tab → `src/components/Learn.jsx`)** — done 2026-08-02, see run log. Third of the four per-tab extractions; `economic-cycles-v5.jsx` down to 294 lines.
@@ -818,3 +819,51 @@ correctness gap. Content-only changes, no structural edits:
   otherwise item 1 (first-session flow, 6a) or item 3 (README refresh, now overdue across
   two structural changes). Re-read this file and re-run `git status` first, since a
   concurrent session was active during this run's build.
+
+### 2026-08-02 — Broaden `scripts/check-data.mjs`'s `t.key` scan to `src/components/*.jsx`
+
+Picked up directly at the owner's request, completing exactly the in-flight edit the
+previous run's entry flagged (its own `scripts/check-data.mjs` and a stray
+`src/components/More.jsx.bak2` were observed modified/untracked mid-build and correctly
+left untouched — that observation was this run, not a third session).
+
+- **The gap**: the harness's dangling-translation-key check (§6 of `check-data.mjs`) only
+  read `economic-cycles-v5.jsx`. After the four-step JSX split (`Home`/`Markets`/`Learn`/
+  `More`), almost all `t.someKey` usage now lives in `src/components/*.jsx` — the check had
+  been silently covering less of the app with every extraction, down to just the ~5 `t.`
+  references remaining in the now-135-line `App` shell.
+- **The fix**: replaced the single hardcoded `economic-cycles-v5.jsx` read with a list built
+  from that file plus every `*.jsx` file in `src/components/` (`readdirSync`), scanning each
+  independently so a failure names the actual offending file rather than a generic "the app."
+- **Verified the check is real, not a rubber stamp — deliberately broke it and watched it
+  catch the break.** Before trusting the "0 failures" result, grepped every component file
+  for a standalone `t` identifier that could collide with the `\bt\.` regex (loop params,
+  other variables) — none found (`Learn.jsx`, `Home.jsx` `l`/`i` map params; `More.jsx`'s own
+  state setters; nothing named bare `t` except inside the word "Don't" in a `Markets.jsx`
+  comment, which the regex correctly ignores since it requires `.` immediately after `t`).
+  Then injected a real dangling reference (`{t.thisKeyDoesNotExistAnywhere}`) into
+  `More.jsx`, ran `npm test`, confirmed it failed with `src/components/More.jsx references
+  t.thisKeyDoesNotExistAnywhere, but "thisKeyDoesNotExistAnywhere" is not defined in TR.en` —
+  correct file, correct key — then reverted the injection (diffed clean against the
+  pre-injection copy) and re-ran to confirm `PASS: 0 failure(s), 0 warning(s)` again.
+- **Verified build**: `npm run build` (bootstrapped Node v20.18.1) succeeded — `✓ 45 modules
+  transformed` (unchanged; `check-data.mjs` is a dev-only Node script, never part of the Vite
+  bundle graph). Bundle output matched the previous run's own reported hash exactly
+  (`index-B5ScNqHG.js`, 247.22 kB / 103.94 kB gzip) — confirming the earlier-observed gzip
+  jump was entirely that run's content reword, not this run's tooling-only change.
+- **Concurrent-edit hazard encountered directly this run, not just observed in passing.**
+  Immediately after staging `scripts/check-data.mjs`, a `git diff --cached --stat` showed
+  someone else's staged files (`AGENT_LOG.md` + the three stale-figures content files)
+  instead of mine — the other session's own `git add`/commit landed between my stage and my
+  check. A follow-up `git status` confirmed their commit (`790cd77`) had gone through cleanly
+  and my staged `check-data.mjs` was untouched, just knocked back to unstaged by the
+  intervening index write (not lost — `Write`/`Edit` tool changes live in the working tree,
+  independent of the index). Re-staged only `scripts/check-data.mjs` after their commit
+  settled, rather than re-running a broad `git add`. No files were reverted, no one's commit
+  was interfered with.
+- Also removed `src/components/More.jsx.bak2` — a stray backup file this run's own test
+  procedure (`sed -i.bak2`) created and then no longer needed once the injected-key test was
+  reverted via a clean file copy instead.
+- **Next run should pick**: item 1 (first-session flow, 6a — progress ring on Home) or item 3
+  (README refresh) are the cheapest remaining P2 items; item 2 (unused translation keys) and
+  item 4 (`DECISIONS.md`) are also open and unblocked. No P0/P1 remains open.

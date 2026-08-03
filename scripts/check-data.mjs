@@ -4,7 +4,7 @@
 // check can't: a missing language field, an out-of-range quiz answer, or a
 // dangling `t.someKey` reference — without needing a browser.
 
-import { readFileSync } from "node:fs";
+import { readFileSync, readdirSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 
@@ -178,15 +178,26 @@ function checkNonEmptyString(value, path) {
   }
 }
 
-// 6. every `t.someKey` reference in the app component resolves to a real
-//    TR.en key (t is the per-render `const t = TR[lang]` translation object).
+// 6. every `t.someKey` reference in the app component and its extracted
+//    src/components/*.jsx pieces resolves to a real TR.en key (t is the
+//    `const t = TR[lang]` translation object, passed down as a prop after
+//    the App-into-per-tab-components split).
 {
-  const jsxPath = join(ROOT, "economic-cycles-v5.jsx");
-  const src = readFileSync(jsxPath, "utf8");
-  const used = new Set([...src.matchAll(/\bt\.([a-zA-Z_][a-zA-Z0-9_]*)/g)].map((m) => m[1]));
+  const componentsDir = join(ROOT, "src", "components");
+  const jsxFiles = [
+    join(ROOT, "economic-cycles-v5.jsx"),
+    ...readdirSync(componentsDir)
+      .filter((f) => f.endsWith(".jsx"))
+      .map((f) => join(componentsDir, f)),
+  ];
   const defined = new Set(Object.keys(TR.en));
-  for (const key of used) {
-    if (!defined.has(key)) fail(`economic-cycles-v5.jsx references t.${key}, but "${key}" is not defined in TR.en`);
+  for (const jsxPath of jsxFiles) {
+    const src = readFileSync(jsxPath, "utf8");
+    const used = new Set([...src.matchAll(/\bt\.([a-zA-Z_][a-zA-Z0-9_]*)/g)].map((m) => m[1]));
+    const rel = jsxPath.slice(ROOT.length + 1);
+    for (const key of used) {
+      if (!defined.has(key)) fail(`${rel} references t.${key}, but "${key}" is not defined in TR.en`);
+    }
   }
 }
 
