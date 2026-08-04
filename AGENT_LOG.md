@@ -111,6 +111,42 @@ npm install && npm run build
 
 First run on a given machine downloads (~30s); every run after that reuses the cache instantly. Never installs anything system-wide, never touches the repo.
 
+**Browser visual verification — now possible, use this instead of assuming it can't be done.**
+Every run-log entry since the JSX split began has a line like "did not visually verify — `preview_start`
+can't spawn `npm run dev` because its process spawn doesn't see the bootstrapped Node in `PATH`." That
+limitation is real (the browser-preview tool's process spawn uses a different, minimal `PATH` than the
+shell `Bash` tool, so the `scripts/bootstrap-node.sh`-provided `node`/`npm` are invisible to it), but it
+only blocks the **dev server** (`npm run dev`, which needs `node` to stay running as a process). A static
+build does not have that problem, because `/usr/bin/python3` **is** on the browser-preview tool's `PATH`
+(confirmed 2026-08-04) even though `node`/`npm` are not. Workaround, verified working end-to-end
+2026-08-04:
+
+```bash
+BIN_DIR="$(scripts/bootstrap-node.sh)"
+export PATH="$BIN_DIR:$PATH"
+npm run build                                    # produces dist/
+(cd dist && nohup /usr/bin/python3 -m http.server 8763 --bind 127.0.0.1 \
+  > /tmp/ecycles-static-preview.log 2>&1 & disown)
+```
+
+Then call the browser-preview tool's start action with a plain `url` (`http://127.0.0.1:8763`) rather
+than a `name` — passing `url` opens a browser tab directly at that address and does **not** go through
+`.claude/launch.json` or spawn any command, so the `PATH`-visibility problem never comes up. No changes
+to `.claude/launch.json` are needed or were made; the existing `npm run dev` entry there is unaffected
+and still won't work in this sandbox.
+
+**What this verified in practice (2026-08-04, interactive session, not an automated dev-agent run)**: the
+built app boots, first-open routing lands on Lesson 1 with the first-launch disclaimer modal, the `More`
+sub-nav and kids age-selector switch panels correctly with the right live `aria-selected`/`aria-controls`/
+`aria-labelledby` wiring (checked via the browser tool's JS-eval action, not just eyeballed), and the
+quiz flow renders the WCAG-contrast-fixed green correct-answer text. This is the first time any run —
+automated or interactive — has gotten a real rendered/DOM-level check in this sandbox, as opposed to
+build-success-plus-code-review. **Future dev-agent runs should use this static-build-plus-python-server
+technique for visual verification instead of writing another "could not visually verify" caveat.** The
+server is not persistent infrastructure — it's started fresh, points at whatever `dist/` was just built,
+and doesn't need to be torn down deliberately (it's a plain background process against a throwaway port,
+not something committed or relied on between runs).
+
 ## Run log
 
 ### 2026-08-01 — Initial scaffolding (first run)
