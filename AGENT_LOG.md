@@ -54,7 +54,7 @@ the run log entries below for all four steps. **P2 is now open.**
 
 8. **[P3] `npm audit` triaged, not fixed — see run log 2026-08-04.** `npm audit` (not just `npm install`'s summary line) now shows the actual finding: `esbuild <=0.24.2` (moderate, GHSA-67mh-4wv8-2f99 — "esbuild enables any website to send any requests to the development server and read the response"), pulled in transitively via `vite <=6.4.2`. This is a **dev-server-only** vulnerability — it affects `npm run dev`, not the built `dist/` output users receive — so it is not user-facing risk. The only fix path is `npm audit fix --force`, which bumps to `vite@6.4.3` (a major-version jump from the currently-pinned Vite 5, breaking change, untested against this project). **Still do not run `--force`** — that upgrade is a scoped task of its own (verify the build + dev server after the bump), not a one-line audit fix. Next step if picked up: try the Vite 6 bump in isolation and verify `npm run build`/`npm test` before committing.
 9. **[P3] Dark mode** (plan §3.4). Now unblocked (the `App` split is done) — against the current inline styles it would just have to be redone.
-10. **[P3] Accessibility pass — partially done 2026-08-04.** ~~screen-reader labels on tab buttons, quiz options, and the language picker~~ **DONE 2026-08-04** — see run log. ~~Also add `aria-label`/keyboard-dismiss support to the first-launch modal — it currently has no focus trap or Escape handling.~~ **DONE 2026-08-04.** Remaining for a future run: **dynamic font-size support** and a **contrast check on the phase colors** (plan §3.5) — neither was touched this run.
+10. **[P3] Accessibility pass — partially done 2026-08-04.** ~~screen-reader labels on tab buttons, quiz options, and the language picker~~ **DONE 2026-08-04** — see run log. ~~Also add `aria-label`/keyboard-dismiss support to the first-launch modal — it currently has no focus trap or Escape handling.~~ **DONE 2026-08-04.** ~~`More` sub-nav (quiz/kids/glossary/about) and the kids age-selector button-group semantics.~~ **DONE 2026-08-04** — see run log. Remaining for a future run: **dynamic font-size support** and a **contrast check on the phase colors** (plan §3.5) — neither was touched by any run yet.
 11. **[P3] Mobile responsiveness check** at 375px — the file is full of fixed `px` values and the product is mobile-first.
 
 **HELD — owner decisions, do not act on these**
@@ -1386,3 +1386,68 @@ persistence is flagged but not yet a numbered slot) and picked the next open num
   kids-age-selector button-group semantics this run left out), item 9 (dark mode), item 11 (mobile
   responsiveness at 375px), or actually attempting the Vite 6 bump from the audit triage above in
   an isolated, reverify-before-commit run.
+
+### 2026-08-04 — Accessibility pass, part 2: `More` sub-nav and kids age-selector semantics (P3 item 10)
+
+- `git status` was clean at the start of this run — no in-progress work to recover, no user edits to
+  avoid. Re-read this file's backlog and the last few `git log` entries. All five numbered P2 items
+  remain done/pruned and item 6 (`completedLessons` persistence) is still explicitly flagged as *not*
+  a curated slot pending weekly review, so per the standing sequencing rule this run stayed in P3.
+  Picked up exactly the two pieces the previous run (accessibility part 1) named as left out for a
+  future run: the `More` tab's own sub-nav (quiz/kids/glossary/about) and the kids age-selector
+  button group, in `src/components/More.jsx`. Left dynamic font-size support and the phase-color
+  contrast check open — both are separate, non-trivial pieces of work in their own right.
+- **Change, all in `src/components/More.jsx` plus one new translation key**: applied the exact
+  `role="tablist"`/`role="tab"`/`role="tabpanel"` pattern already established for the app's bottom
+  tab bar (`economic-cycles-v5.jsx`) to these two button groups, since both are "switch which content
+  panel is visible" controls, not radio-style single-answer choices (that pattern was already used
+  correctly for the quiz options in part 1).
+  - `More` sub-nav: container is `role="tablist"` (`aria-label={t.tabMore}` — reused the existing
+    "More" tab label rather than adding a new key, matching how the bottom tab bar reuses
+    `t.appTitle` for its own tablist's `aria-label`). Each button got `id={`more-tab-${key}`}`,
+    `role="tab"`, `aria-selected`, `aria-controls={`more-tabpanel-${key}`}`. Each of the four content
+    sections (quiz/kids/glossary/about) is conditionally rendered, so `role="tabpanel"` plus the
+    matching `id`/`aria-labelledby` were added directly to each section's existing root `<div>` —
+    no new wrapper elements.
+  - Kids age-selector: same pattern, `role="tablist"` with a **new** `aria-label`
+    (`t.kidsAgeGroupLabel` — no existing key fit; the group has no adjacent heading to point
+    `aria-labelledby` at, unlike the sub-nav). Each age button got `id`, `role="tab"`,
+    `aria-selected`, `aria-controls="kids-age-tabpanel"`; the results panel below got
+    `role="tabpanel"` + matching `id`/`aria-labelledby={`kids-age-tab-${kidsAge}`}` (dynamic, since
+    which age's content is shown changes).
+  - Added `kidsAgeGroupLabel` ("Select age group" / "Seleccionar grupo de edad" / "연령대 선택" /
+    "选择年龄段" / "年齢帯を選択") to all 5 `src/locales/*.js` files, next to `kidsParentIntro` where
+    the other kids-section keys live.
+  - Did not touch the emoji-prefixed label strings (`"🧠 " + t.quizTabLabel`, etc.) to add a
+    separate `aria-hidden` span around the emoji, unlike the bottom tab bar's icon/label split —
+    that would mean restructuring each label from a single concatenated string into two JSX
+    children, a bigger and more visually-risky change than this run's scope; the label text is still
+    announced correctly, just with the emoji glyph included, which most screen readers already skip
+    or announce briefly rather than describe.
+- **Verified**: `BIN_DIR="$(scripts/bootstrap-node.sh)"` (cache hit, instant) → `npm test` →
+  `PASS: 0 failure(s), 0 warning(s)` (confirms the new `kidsAgeGroupLabel` key resolves in all 5
+  languages and the harness's `t.key` usage scan, which covers `src/components/*.jsx`, picked up the
+  new `t.kidsAgeGroupLabel`/`t.tabMore` references in `More.jsx` cleanly). `npm install` reported 0
+  new packages (same 2 pre-existing dev-tooling audit advisories as every prior run — 1 moderate + 1
+  high, unchanged, not investigated further per the existing P3 npm-audit item). `npm run build`
+  succeeded with explicit exit-code capture — `EXIT_CODE=0`, `✓ 46 modules transformed` (unchanged —
+  no new files, only edits to existing modules), `dist/assets/index-DxYT71Sh.js` **253.67 kB /
+  106.15 kB gzip** (essentially unchanged from the prior run's 253.67 kB / 106.57 kB gzip — a handful
+  of ARIA attribute strings and one short translation key added to 5 languages, no content removed).
+  Reviewed the full diff by eye (`git diff src/components/More.jsx`) for correctness of the ARIA
+  wiring (matching `id`s, `aria-controls`/`aria-labelledby` pairs, `aria-selected` bound to the right
+  state variable) before committing. `git status --short` immediately before writing this entry
+  showed only the 6 files this run touched (`More.jsx` + 5 locale files) — no concurrent-session
+  collision.
+- Did not visually verify in the browser preview tool — `preview_start` failed with the same known
+  sandbox limitation as every prior run since the JSX-split work began (`Failed to spawn process: No
+  such file or directory`, because its process spawn doesn't see the bootstrapped Node in `PATH`).
+  Risk is judged low: the change only adds ARIA attributes and one new translation string, touches no
+  layout/style properties, and both the data-shape harness and a clean build pass.
+- **Next run should pick**: per the standing sequencing rule, continue to raise backlog item 6
+  (`completedLessons` persistence) with the weekly-review process for a numbered slot rather than
+  starting it unilaterally. If it's not yet slotted, remaining P3 work is: the rest of item 10
+  (dynamic font-size support and the phase-color contrast check — both still open, both non-trivial
+  enough to deserve their own run), item 9 (dark mode), item 11 (mobile responsiveness at 375px), or
+  the Vite 6 bump from the earlier audit triage, done in isolation with a full reverify before
+  committing.

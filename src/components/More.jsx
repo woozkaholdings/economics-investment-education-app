@@ -18,14 +18,14 @@ export default function More({ t, lang }) {
   return (
     <div>
       {/* Sub-nav for More */}
-      <div style={{ display: "flex", gap: 4, marginBottom: 12 }}>
+      <div role="tablist" aria-label={t.tabMore} style={{ display: "flex", gap: 4, marginBottom: 12 }}>
         {[
           { k: "quiz", l: "🧠 " + t.quizTabLabel },
           { k: "kids", l: "👨‍👩‍👧 " + t.kidsTabLabel },
           { k: "glossary", l: "📚 " + t.glossTitle },
           { k: "about", l: "ℹ️ " + t.aboutTabLabel },
         ].map(s => (
-          <button key={s.k} onClick={() => setMoreSection(s.k)}
+          <button key={s.k} id={`more-tab-${s.k}`} role="tab" aria-selected={moreSection === s.k} aria-controls={`more-tabpanel-${s.k}`} onClick={() => setMoreSection(s.k)}
             style={{ flex: 1, padding: "8px 6px", border: moreSection === s.k ? "2px solid #2563eb" : "1px solid #d1d5db", borderRadius: 8, background: moreSection === s.k ? "#eff6ff" : "#fff", color: moreSection === s.k ? "#2563eb" : "#6b7280", fontWeight: moreSection === s.k ? 700 : 500, fontSize: 10, cursor: "pointer" }}>
             {s.l}
           </button>
@@ -34,7 +34,7 @@ export default function More({ t, lang }) {
 
       {/* Quiz Section */}
       {moreSection === "quiz" && (
-        <div>
+        <div role="tabpanel" id="more-tabpanel-quiz" aria-labelledby="more-tab-quiz">
           <div style={{ background: "linear-gradient(135deg, #7c3aed, #a855f7)", borderRadius: 10, padding: 14, color: "#fff", marginBottom: 10 }}>
             <h2 style={{ fontSize: 16, fontWeight: 800, margin: 0 }}>🧠 {t.quizTitle}</h2>
           </div>
@@ -90,22 +90,22 @@ export default function More({ t, lang }) {
 
       {/* Kids Section */}
       {moreSection === "kids" && (
-        <div>
+        <div role="tabpanel" id="more-tabpanel-kids" aria-labelledby="more-tab-kids">
           <div style={{ background: "linear-gradient(135deg, #f97316, #ea580c)", borderRadius: 10, padding: 14, color: "#fff", marginBottom: 6 }}>
             <h2 style={{ fontSize: 16, fontWeight: 800, margin: 0 }}>👨‍👩‍👧‍👦 {t.kidsTitle}</h2>
           </div>
           <div style={{ fontSize: 11, color: "#78350f", background: "#fff7ed", border: "1px solid #fed7aa", borderRadius: 8, padding: 8, marginBottom: 10, lineHeight: 1.5 }}>
             {t.kidsParentIntro}
           </div>
-          <div style={{ display: "flex", gap: 4, marginBottom: 10 }}>
+          <div role="tablist" aria-label={t.kidsAgeGroupLabel} style={{ display: "flex", gap: 4, marginBottom: 10 }}>
             {["5-8", "9-12", "13-17"].map(age => (
-              <button key={age} onClick={() => setKidsAge(age)}
+              <button key={age} id={`kids-age-tab-${age}`} role="tab" aria-selected={kidsAge === age} aria-controls="kids-age-tabpanel" onClick={() => setKidsAge(age)}
                 style={{ flex: 1, padding: "8px 6px", borderRadius: 8, border: kidsAge === age ? "2px solid #f97316" : "1px solid #d1d5db", background: kidsAge === age ? "#fff7ed" : "#fff", color: kidsAge === age ? "#ea580c" : "#6b7280", fontWeight: kidsAge === age ? 700 : 500, fontSize: 11, cursor: "pointer" }}>
                 {age === "5-8" ? t.kidsAges58 : age === "9-12" ? t.kidsAges912 : t.kidsAges1317}
               </button>
             ))}
           </div>
-          <div style={{ background: "#fff", borderRadius: 10, padding: 14, border: "1px solid #e5e7eb" }}>
+          <div role="tabpanel" id="kids-age-tabpanel" aria-labelledby={`kids-age-tab-${kidsAge}`} style={{ background: "#fff", borderRadius: 10, padding: 14, border: "1px solid #e5e7eb" }}>
             <h3 style={{ fontSize: 14, fontWeight: 700, color: "#ea580c", margin: "0 0 10px" }}>{kidsContent[kidsAge].title[lang]}</h3>
             {kidsContent[kidsAge].lessons.map((l, i) => (
               <div key={i} style={{ background: "#fff7ed", borderRadius: 8, padding: 10, marginBottom: 6, fontSize: 12, lineHeight: 1.6, color: "#78350f" }}>
@@ -126,7 +126,7 @@ export default function More({ t, lang }) {
 
       {/* Glossary Section */}
       {moreSection === "glossary" && (
-        <div>
+        <div role="tabpanel" id="more-tabpanel-glossary" aria-labelledby="more-tab-glossary">
           <div style={{ background: "linear-gradient(135deg, #059669, #047857)", borderRadius: 10, padding: 14, color: "#fff", marginBottom: 10 }}>
             <h2 style={{ fontSize: 16, fontWeight: 800, margin: 0 }}>📚 {t.glossTitle}</h2>
           </div>
@@ -148,7 +148,7 @@ export default function More({ t, lang }) {
 
       {/* About Section */}
       {moreSection === "about" && (
-        <div>
+        <div role="tabpanel" id="more-tabpanel-about" aria-labelledby="more-tab-about">
           <div style={{ background: "linear-gradient(135deg, #1e3a5f, #1e40af)", borderRadius: 10, padding: 14, color: "#fff", marginBottom: 10 }}>
             <h2 style={{ fontSize: 16, fontWeight: 800, margin: 0 }}>ℹ️ {t.aboutTitle}</h2>
           </div>

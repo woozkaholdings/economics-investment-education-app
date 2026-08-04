@@ -26,6 +26,7 @@ export default {
     kidsTitle: "자녀에게 경제 가르치기", kidsAges58: "5-8세", kidsAges912: "9-12세",
     kidsAges1317: "13-17세", kidsParentTip: "부모 팁", kidsActivity: "이 활동을 해보세요",
     kidsParentIntro: "부모를 위한 가이드입니다 — 자녀의 연령대를 선택한 후, 이 설명을 함께 읽어보세요.",
+    kidsAgeGroupLabel: "연령대 선택",
     glossTitle: "용어집", glossSearch: "용어 검색...",
     balanceSheet: "연준 대차대조표",
     qeLabel: "양적완화 (QE)", qtLabel: "양적긴축 (QT)",

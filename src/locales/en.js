@@ -31,6 +31,7 @@ export default {
     kidsTitle: "Teach Your Kids About Money", kidsAges58: "Ages 5-8", kidsAges912: "Ages 9-12",
     kidsAges1317: "Ages 13-17", kidsParentTip: "Parent Tip", kidsActivity: "Try This Activity",
     kidsParentIntro: "A parent's guide — pick your child's age band, then read and share these explanations together.",
+    kidsAgeGroupLabel: "Select age group",
     glossTitle: "Glossary", glossSearch: "Search terms...",
     balanceSheet: "Fed Balance Sheet",
     qeLabel: "Quantitative Easing (QE)", qtLabel: "Quantitative Tightening (QT)",
