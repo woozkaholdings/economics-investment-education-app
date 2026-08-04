@@ -37,7 +37,7 @@ export default function Markets({ t, lang }) {
           <div key={i} style={{ background: "#fff", border: "1px solid #e5e7eb", borderRadius: 7, padding: 7, textAlign: "center" }}>
             <div style={{ fontWeight: 700, fontSize: 10, marginBottom: 3 }}>{a.n}</div>
             <div style={{ fontSize: 9, color: "#dc2626" }}>{t.ratesRising} {a.r}</div>
-            <div style={{ fontSize: 9, color: "#059669" }}>{t.ratesFalling} {a.f}</div>
+            <div style={{ fontSize: 9, color: "#047857" }}>{t.ratesFalling} {a.f}</div>
             <div style={{ fontSize: 7, color: "#9ca3af", marginTop: 1 }}>{a.note}</div>
           </div>
         ))}
@@ -54,7 +54,7 @@ export default function Markets({ t, lang }) {
       {/* QE/QT Summary */}
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 6, marginBottom: 10 }}>
         <div style={{ background: "#ecfdf5", border: "1px solid #059669", borderRadius: 8, padding: 8 }}>
-          <div style={{ fontSize: 10, fontWeight: 800, color: "#059669", marginBottom: 3 }}>📈 {t.qeLabel}</div>
+          <div style={{ fontSize: 10, fontWeight: 800, color: "#047857", marginBottom: 3 }}>📈 {t.qeLabel}</div>
           <div style={{ fontSize: 8, color: "#065f46", lineHeight: 1.5 }}>
             {t.qeNarrative}
           </div>
@@ -71,7 +71,7 @@ export default function Markets({ t, lang }) {
       <Bar data={[
         { l: "Pre\n'08", v: 0.9 }, { l: "QE1-3\n'14", v: 4.5 }, { l: "QT1\n'19", v: 3.8 },
         { l: "COVID\nQE", v: 9.0 }, { l: "QT2\n'22-24", v: 6.7 },
-      ]} title={`📊 ${t.balanceSheet} ($T)`} colors={["#94a3b8", "#059669", "#dc2626", "#059669", "#dc2626"]} h={90} />
+      ]} title={`📊 ${t.balanceSheet} ($T)`} colors={["#94a3b8", "#047857", "#dc2626", "#047857", "#dc2626"]} h={90} />
 
       {/* Key Principles */}
       <div style={{ background: "#fffbeb", border: "1px solid #fde68a", borderRadius: 8, padding: 10, fontSize: 11, color: "#78350f", lineHeight: 1.7, marginTop: 8 }}>

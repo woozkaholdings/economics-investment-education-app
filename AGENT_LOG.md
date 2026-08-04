@@ -54,7 +54,7 @@ the run log entries below for all four steps. **P2 is now open.**
 
 8. **[P3] `npm audit` triaged, not fixed — see run log 2026-08-04.** `npm audit` (not just `npm install`'s summary line) now shows the actual finding: `esbuild <=0.24.2` (moderate, GHSA-67mh-4wv8-2f99 — "esbuild enables any website to send any requests to the development server and read the response"), pulled in transitively via `vite <=6.4.2`. This is a **dev-server-only** vulnerability — it affects `npm run dev`, not the built `dist/` output users receive — so it is not user-facing risk. The only fix path is `npm audit fix --force`, which bumps to `vite@6.4.3` (a major-version jump from the currently-pinned Vite 5, breaking change, untested against this project). **Still do not run `--force`** — that upgrade is a scoped task of its own (verify the build + dev server after the bump), not a one-line audit fix. Next step if picked up: try the Vite 6 bump in isolation and verify `npm run build`/`npm test` before committing.
 9. **[P3] Dark mode** (plan §3.4). Now unblocked (the `App` split is done) — against the current inline styles it would just have to be redone.
-10. **[P3] Accessibility pass — partially done 2026-08-04.** ~~screen-reader labels on tab buttons, quiz options, and the language picker~~ **DONE 2026-08-04** — see run log. ~~Also add `aria-label`/keyboard-dismiss support to the first-launch modal — it currently has no focus trap or Escape handling.~~ **DONE 2026-08-04.** ~~`More` sub-nav (quiz/kids/glossary/about) and the kids age-selector button-group semantics.~~ **DONE 2026-08-04** — see run log. Remaining for a future run: **dynamic font-size support** and a **contrast check on the phase colors** (plan §3.5) — neither was touched by any run yet.
+10. **[P3] Accessibility pass — partially done 2026-08-04.** ~~screen-reader labels on tab buttons, quiz options, and the language picker~~ **DONE 2026-08-04** — see run log. ~~Also add `aria-label`/keyboard-dismiss support to the first-launch modal — it currently has no focus trap or Escape handling.~~ **DONE 2026-08-04.** ~~`More` sub-nav (quiz/kids/glossary/about) and the kids age-selector button-group semantics.~~ **DONE 2026-08-04.** ~~Contrast check on the phase colors (plan §3.5).~~ **DONE 2026-08-04** — see run log. Remaining for a future run: **dynamic font-size support** — not yet touched by any run.
 11. **[P3] Mobile responsiveness check** at 375px — the file is full of fixed `px` values and the product is mobile-first.
 
 **HELD — owner decisions, do not act on these**
@@ -64,6 +64,11 @@ the run log entries below for all four steps. **P2 is now open.**
 
 **Completed and pruned**
 
+- **Phase-color contrast check (plan §3.5)** — done 2026-08-04, see run log. Measured WCAG contrast
+  ratios for the app's green/amber/red/blue phase-indicator palette; green (`#059669`, ~3.8:1) and
+  amber (`#d97706`, ~3.2:1) failed the 4.5:1 AA threshold for small text on white. Swapped those two
+  to darker `-700` shades (`#047857`, `#b45309`) everywhere they're used as *text* color; left them
+  unchanged as borders/backgrounds/graphical fills, which only need 3:1 and already clear it.
 - **`DECISIONS.md` added** — done 2026-08-03, see run log. Three entries: Expo-vs-Vite (open,
   owner decision), `.js`-not-JSON content modules (closed), localStorage-only progress/personalization
   state (closed, with the `completedLessons` persistence gap cross-referenced from item 6).
@@ -1451,3 +1456,80 @@ persistence is flagged but not yet a numbered slot) and picked the next open num
   enough to deserve their own run), item 9 (dark mode), item 11 (mobile responsiveness at 375px), or
   the Vite 6 bump from the earlier audit triage, done in isolation with a full reverify before
   committing.
+
+### 2026-08-04 — Phase-color contrast check (P3 item 10, the last remaining sub-part but one)
+
+- `git status` was clean at the start of this run — no in-progress work to recover, no user edits
+  to avoid. Re-read this file's backlog and the last few `git log` entries. All five numbered P2
+  items remain done/pruned and item 6 (`completedLessons` persistence) is still flagged as *not* a
+  curated slot pending weekly review, so this run stayed in P3 per the standing sequencing rule.
+  Picked the phase-color contrast check named in item 10 over dynamic font-size support (a bigger,
+  more speculative piece of work touching every font-size declaration in the app) and over item 9
+  (dark mode) / item 11 (mobile responsiveness) — this was the most concretely scoped, quickest to
+  verify objectively (contrast ratios are a computable pass/fail, not a judgment call), and it was
+  the specific gap the two prior accessibility-pass runs both explicitly left open.
+- **What was checked**: the app's four-color "phase" palette (green `#059669`, amber `#d97706`, red
+  `#dc2626`, blue `#2563eb` — used for Expansion/Peak/Contraction/Trough in `CycleChart` and for the
+  four yield-curve shapes in `YieldCurve`, both in `src/components/charts.jsx`) plus every other
+  place in the app reusing the identical green/amber hex values as text color (financial
+  rising/falling indicators, lesson-done state, quiz right/wrong feedback, kids-section activity
+  label, glossary term names, lesson key-takeaway label — the same semantic "positive/growth" green
+  and "caution" amber recurring throughout `Home.jsx`, `Markets.jsx`, `More.jsx`, `Learn.jsx`).
+  Computed WCAG 2.1 relative-luminance contrast ratios with a small Python script (standard
+  `sRGB → linear → relative luminance → (L1+0.05)/(L2+0.05)` formula) against every background color
+  each was actually rendered on (`#ffffff`, `#f8fafc`, `#ecfdf5`, `#fff7ed`). Result: **green
+  `#059669` measured ~3.6–3.8:1 and amber `#d97706` measured ~3.0–3.2:1 — both below the 4.5:1 WCAG
+  AA threshold for small/normal text** (all usages found were 7–12px, well under the 18px/14px-bold
+  "large text" threshold that would only require 3:1). Red `#dc2626` (~4.6–4.8:1) and blue `#2563eb`
+  (~4.9–5.2:1) already passed and were untouched. The other 8 per-lesson badge colors in
+  `src/content/lessons.js` (`#7c3aed`, `#4f46e5`, `#1e40af`, `#9333ea`, `#be185d`, `#b45309`,
+  `#15803d`, plus the two that duplicate the failing green/amber) were also checked; the 8 distinct
+  ones all clear 5:1+, so that file was not touched.
+- **Fix**: swapped the two failing colors to darker `-700`-shade equivalents — `#059669` →
+  `#047857` (~5.2–5.5:1, already present elsewhere in the app's own palette, e.g. `More.jsx`'s
+  glossary-header gradient) and `#d97706` → `#b45309` (~4.7–5.0:1, already used as lesson 11's
+  badge color) — **only where the color was used as text** (`color:` in JSX style objects, `fill:`
+  on SVG `<text>` elements). Left every `border:`/`background:`/gradient/SVG-`stroke`/SVG-`<circle>`-
+  fill usage of the original brighter hexes untouched, since those are non-text UI/graphical
+  elements needing only 3:1 (both original colors already clear that). In `charts.jsx`'s
+  `YieldCurve` and `CycleChart`, this meant adding a second, text-only color map/array (`textCols` /
+  `textColors`) alongside the existing `cols`/`colors` used for the curve stroke and phase-dot fill,
+  rather than changing those in place, so the line/dot and the label under it can use slightly
+  different shades of the same hue without one map serving two conflicting contrast requirements.
+  Touched files: `src/components/charts.jsx` (2 new maps, 2 call-site swaps), `src/components/
+  Markets.jsx` (3 spots: rates-falling text, QE label, and the QE/QT balance-sheet `Bar` chart's
+  color array — the array also colors the bars themselves, a decorative-but-fine side effect since
+  the shift is barely visible), `src/components/Home.jsx` (1 spot: lesson-done label),
+  `src/components/More.jsx` (3 spots: quiz-correct feedback, kids-activity label, glossary term
+  name), `src/components/Learn.jsx` (1 spot: key-takeaway label). Did **not** touch the celebration
+  toast in `Learn.jsx` (white text on a `#059669` background, ephemeral/decorative, a different kind
+  of contrast question than the phase-color text audit this run scoped to) or the per-lesson circle
+  digit in `Learn.jsx`'s lesson list (`l.color` as text on `l.color + "20"` tint — deliberately not
+  touching `lessons.js`'s 12-color badge palette this run, since only 2 of 12 fail and changing that
+  array has a larger blast radius across the whole Learn timeline's visual identity than fits a
+  single-run item). Both are reasonable follow-ups for a future run if a broader color-contrast pass
+  is ever prioritized.
+- **Verified**: `BIN_DIR="$(scripts/bootstrap-node.sh)"` (cache hit, instant) → `npm install` (0 new
+  packages, same 2 pre-existing dev-tooling audit advisories noted in every prior run, unrelated to
+  this change) → `npm test` → `PASS: 0 failure(s), 0 warning(s)` (data-shape harness, unaffected by a
+  color-only change but confirms nothing else broke) → `npm run build` — `EXIT_CODE=0`,
+  `✓ 46 modules transformed` (unchanged — no new files), `dist/assets/index-y_qb-ukj.js` **253.79 kB
+  / 106.19 kB gzip** (essentially unchanged from the prior run's 253.67 kB / 106.15 kB gzip — a
+  handful of hex-string literals added). Reviewed the full diff by eye (`git diff`) confirming every
+  changed line is a `color`/`fill` (text) property, none a `border`/`background`/`stroke`, and that
+  no color was swapped somewhere it shouldn't have been (e.g. the red/blue phase colors, which
+  already passed, were left untouched). Grepped for any remaining text-color usage of the two old
+  hex values after editing (`grep -rn 'color: "#059669"\|color: "#d97706"\|color: cols\[type\]\|
+  fill={colors\[p.i\]}'`) — the only hit left was the intentionally-unchanged phase-dot `<circle>`
+  fill in `charts.jsx`. Did not visually verify in the browser preview tool —
+  `preview_start` failed with the same known sandbox limitation as every prior accessibility-pass
+  run (`Failed to spawn process: No such file or directory`; its process spawn doesn't see the
+  bootstrapped Node in `PATH`). Risk is judged low: this is a like-for-like hex swap to slightly
+  darker shades of the same hues, verified programmatically against the actual WCAG formula and the
+  actual background colors each swap renders on, not eyeballed.
+- **Next run should pick**: per the standing sequencing rule, continue to raise backlog item 6
+  (`completedLessons` persistence) with the weekly-review process for a numbered slot rather than
+  starting it unilaterally. If it's not yet slotted, remaining P3 work is: **dynamic font-size
+  support** (the one remaining sub-part of item 10), item 9 (dark mode), item 11 (mobile
+  responsiveness at 375px), or the Vite 6 bump from the earlier audit triage, done in isolation with
+  a full reverify before committing.

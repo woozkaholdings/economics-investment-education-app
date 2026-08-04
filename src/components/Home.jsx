@@ -90,7 +90,7 @@ export default function Home({ t, lang, completedLessons, lessons, isLessonUnloc
               style={{ display: "flex", alignItems: "center", gap: 10, padding: "10px 12px", background: done ? "#ecfdf5" : unlocked ? "#fff" : "#f3f4f6", border: `1px solid ${done ? "#059669" : unlocked ? "#e5e7eb" : "#d1d5db"}`, borderRadius: 10, marginBottom: 6, cursor: unlocked ? "pointer" : "default", opacity: unlocked ? 1 : 0.5 }}>
               <div style={{ fontSize: 22, width: 36, textAlign: "center" }}>{done ? "✅" : l.icon}</div>
               <div style={{ flex: 1 }}>
-                <div style={{ fontSize: 11, fontWeight: 700, color: done ? "#059669" : "#1f2937" }}>{t.lessonLabel} {l.id}: {l.title[lang]}</div>
+                <div style={{ fontSize: 11, fontWeight: 700, color: done ? "#047857" : "#1f2937" }}>{t.lessonLabel} {l.id}: {l.title[lang]}</div>
                 <div style={{ fontSize: 9, color: "#9ca3af" }}>{l.subtitle[lang]}</div>
                 <div style={{ fontSize: 8, color: "#9ca3af", marginTop: 2 }}>{t.estMinTemplate.replace("{n}", estimateMinutes(l))}</div>
               </div>

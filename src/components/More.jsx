@@ -61,7 +61,7 @@ export default function More({ t, lang }) {
               </div>
               {qAnswer !== null && (
                 <div aria-live="polite" style={{ marginTop: 8 }}>
-                  <div style={{ fontSize: 12, fontWeight: 700, color: qAnswer === quizData[qIdx].answer ? "#059669" : "#dc2626", marginBottom: 4 }}>
+                  <div style={{ fontSize: 12, fontWeight: 700, color: qAnswer === quizData[qIdx].answer ? "#047857" : "#dc2626", marginBottom: 4 }}>
                     {qAnswer === quizData[qIdx].answer ? `✅ ${t.quizCorrect}` : `❌ ${t.quizWrong}`}
                   </div>
                   <div style={{ fontSize: 11, color: "#4b5563", background: "#f3f4f6", padding: 8, borderRadius: 6, lineHeight: 1.5 }}>
@@ -113,7 +113,7 @@ export default function More({ t, lang }) {
               </div>
             ))}
             <div style={{ background: "#ecfdf5", borderRadius: 8, padding: 10, marginTop: 8 }}>
-              <div style={{ fontSize: 10, fontWeight: 700, color: "#059669", marginBottom: 3 }}>🎮 {t.kidsActivity}</div>
+              <div style={{ fontSize: 10, fontWeight: 700, color: "#047857", marginBottom: 3 }}>🎮 {t.kidsActivity}</div>
               <div style={{ fontSize: 11, color: "#065f46" }}>{kidsContent[kidsAge].activity[lang]}</div>
             </div>
             <div style={{ background: "#eff6ff", borderRadius: 8, padding: 10, marginTop: 6 }}>
@@ -138,7 +138,7 @@ export default function More({ t, lang }) {
               const entry = v[lang] || v.en;
               return (
                 <div key={k} style={{ background: "#fff", border: "1px solid #e5e7eb", borderRadius: 8, padding: 10, marginBottom: 6 }}>
-                  <div style={{ fontWeight: 700, fontSize: 12, color: "#059669" }}>{entry.s || k}</div>
+                  <div style={{ fontWeight: 700, fontSize: 12, color: "#047857" }}>{entry.s || k}</div>
                   <div style={{ fontSize: 11, color: "#4b5563", lineHeight: 1.5, marginTop: 2 }}>{entry.f}</div>
                 </div>
               );

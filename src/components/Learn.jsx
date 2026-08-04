@@ -112,7 +112,7 @@ export default function Learn({ t, lang, lessons, completedLessons, currentLesso
 
           {/* Key Takeaway */}
           <div style={{ background: "#ecfdf5", border: "1px solid #059669", borderRadius: 10, padding: 12, marginBottom: 8 }}>
-            <div style={{ fontSize: 10, fontWeight: 700, color: "#059669", marginBottom: 4 }}>🎯 {t.keyTakeaway}</div>
+            <div style={{ fontSize: 10, fontWeight: 700, color: "#047857", marginBottom: 4 }}>🎯 {t.keyTakeaway}</div>
             <div style={{ fontSize: 12, color: "#065f46", lineHeight: 1.6 }}>{lesson.takeaway[lang]}</div>
           </div>
 
