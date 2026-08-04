@@ -57,6 +57,13 @@ the run log entries below for all four steps. **P2 is now open.**
 9. **[P3] Dark mode** (plan §3.4). Now unblocked (the `App` split is done) — against the current inline styles it would just have to be redone.
 10. **[P3] Accessibility pass — partially done 2026-08-04.** ~~screen-reader labels on tab buttons, quiz options, and the language picker~~ **DONE 2026-08-04** — see run log. ~~Also add `aria-label`/keyboard-dismiss support to the first-launch modal — it currently has no focus trap or Escape handling.~~ **DONE 2026-08-04.** ~~`More` sub-nav (quiz/kids/glossary/about) and the kids age-selector button-group semantics.~~ **DONE 2026-08-04.** ~~Contrast check on the phase colors (plan §3.5).~~ **DONE 2026-08-04** — see run log. Remaining for a future run: **dynamic font-size support** — not yet touched by any run.
 11. **[P3] Mobile responsiveness check** at 375px — the file is full of fixed `px` values and the product is mobile-first.
+15. **[P3, process] Launch-readiness scorecard.** Added 2026-08-04, owner-requested (part of a broader "self-improving, self-refuting, autonomous launch" push). Add a new file (e.g. `LAUNCH_READINESS.md`) tracking the launch plan's actual gating criteria — blindspot-register status (§10.1–10.3, already all closed, but re-derive rather than trust this note), the Expo-vs-Vite decision (item 12, still HELD), pricing/roadmap milestones from the 16-week plan — so backlog work is visibly tied to "is this launchable," not just "is the backlog list shorter." Not yet built.
+16. **[P3, process] Tighten the builder/critic feedback loop.** Added 2026-08-04, owner-requested (same push as item 15). Currently the weekly review (`economics-app-sunday-review`) is the only thing that catches a dev-agent run's mistaken "done" claims, and it runs at most once a week — real example: §10.1 was reported closed 2026-08-02 when it was about half done, and that wasn't caught until the same day's weekly review. Item 5 (the adversarial self-check, done 2026-08-04 — see the dev-agent's own `SKILL.md`, not this file) is the first piece of this; this item is the rest: e.g. having the dev-agent re-verify one *prior* run's "done" claim before starting new work, or shortening how long a wrong claim can sit uncaught. Not yet built — needs design before implementation, since it changes what the scheduled task does on every run.
+
+**Notes for future runs (informational — not actionable backlog items)**
+
+- **`economic-cycles-v6.jsx` (repo root, untracked) is reference/inspiration material only — do not treat it as a build fixture or merge from it directly.** Added 2026-08-04, owner-clarified. It's a much larger, differently-designed prototype (neon dark-mode `DS` design-system object, extra tabs for Sectors/Industries/Finance, a "Be the Fed Chair" simulator, flashcards) that appeared in the working tree with no git history and no download metadata — its actual origin is unknown. It also reintroduces two things the real app deliberately removed: direct "Ray Dalio" branding/quotes (§10.2, closed) and a hardcoded current date (`nowDate: "April 2026"`, plus an odd `"April 2026 • Late Cycle / Iran War Week 5"` line) — the exact stale/dated-content problem §2.3 fixed. If a future run picks up item 9 (dark mode) or item 14 (sector performance, HELD), `v6.jsx`'s design ideas may be worth a look for inspiration, but its Dalio references and dated content must not carry over, and it should not be added to git as-is.
+- **`main`'s reachable git history currently starts at commit `2dc0264` ("Split monolithic JSX step 4a").** Found 2026-08-04 while investigating unrelated work. Roughly a dozen earlier commits (initial scaffold, the original blindspot-register fixes, the Markets stale-date fix, `scripts/bootstrap-node.sh`'s addition, JSX-split steps 1–3, the language-Beta labelling, the data-shape harness) still exist as objects in the repo (`git cat-file -t <hash>` succeeds for e.g. `eda6dd0`, `ecdda70`, `5ab5c48`, `6feca25`, `76be081`, `053f8b2`) but aren't ancestors of the current `main` tip — something reset or rewrote history before this was noticed, likely an early run's plumbing-commit (`commit-tree`/`update-ref`, used because `git commit` hangs in this environment — see the memory note on this) picking up a stale parent hash instead of the true current `HEAD`. No content appears lost — the tree at `2dc0264` already contains everything those steps produced (locales, content modules, the bootstrap script) — but the historical commit-by-commit record for that early stretch is orphaned, not part of `main`. Not fixed; flagged for the owner to decide whether it's worth reattaching (the old commits are still around, not yet garbage-collected) or leaving as-is.
 
 **HELD — owner decisions, do not act on these**
 
@@ -1601,3 +1608,41 @@ in an interactive session (asked to "have the weekly review add it as a numbered
   unblocked — the standing "work P1 items in numbered order" sequencing rule extends the same way to
   P2, and P2 is now open with exactly one item in it. Per its own scope note, budget a full run for
   it rather than a quick pick.
+
+### 2026-08-04 — `v6.jsx` discovery, git-history anomaly, and self-improving-loop kickoff (P3 items 15/16)
+
+Not a normal dev run — an interactive session covering several small, related pieces at the owner's
+direct request. `git status` was clean of anything relevant at the start (only the untracked,
+unrelated `economic-cycles-v6.jsx` present — see below).
+
+- **Investigated `economic-cycles-v6.jsx`**: a large (349 KB / 4,763 lines), untracked file that
+  appeared in the repo root with no git history and no download/quarantine metadata. Read enough of
+  it to characterize it (different neon dark-mode design system, several extra tabs/features, direct
+  Dalio branding, a hardcoded `"April 2026"` date and an odd war reference) and scanned it for
+  embedded instructions directed at an AI — found none. Owner clarified it's reference/inspiration
+  material only, not a build fixture; recorded as a permanent note above (see "Notes for future
+  runs") rather than a backlog item, since there's nothing to *do* with it, only something to *not*
+  do (don't merge from it, don't treat it as source of truth).
+- **Found and recorded a genuine git-history anomaly** (also in "Notes for future runs" above):
+  `main`'s reachable history currently starts at `2dc0264`, orphaning roughly a dozen earlier, still-
+  extant commit objects. Left uninvestigated further and unfixed — flagged for the owner, not acted
+  on, per the standing "if repo state looks wrong, do nothing destructive and report" rule.
+- **Added backlog items 15 and 16** (P3, process) for the launch-readiness scorecard and tightening
+  the builder/critic feedback loop — both are pieces of a broader ask to make the dev-agent/weekly-
+  review pair genuinely self-improving and self-refuting, not started yet, described in full above.
+- **Shipped the first piece of that push directly**, outside this repo: added a mandatory
+  "adversarial self-check" step to `economics-app-dev-agent`'s own `SKILL.md` (in
+  `~/.claude/scheduled-tasks/economics-app-dev-agent/SKILL.md`, not tracked by this repo's git). It
+  requires every future dev-agent run to actively try to refute its own change before committing —
+  check for blindspot-register regressions, `DECISIONS.md` conflicts, redoing an already-"done"
+  backlog item, and whether an independent reviewer would actually get the same verification result
+  — and to say so explicitly in the run-log entry (a silent skip isn't allowed). Exists specifically
+  because a past run reported §10.1 "closed" when it was only about half done. Noting it here since
+  the change itself lives outside this file's own version control and wouldn't otherwise be
+  discoverable from this repo alone.
+- **Verified**: documentation-only changes to `AGENT_LOG.md` plus the `SKILL.md` edit outside the
+  repo — no source touched, no build or test run needed or would exercise anything new. Confirmed
+  via `git status` that this run touched only `AGENT_LOG.md`.
+- **Next run should pick**: unchanged from the previous entry — backlog item 6 (`completedLessons`
+  persistence) is still the top of P2 and the standing next pick, unless the owner wants item 15 or
+  16 prioritized first.
