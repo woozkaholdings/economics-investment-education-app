@@ -48,8 +48,7 @@ the run log entries below for all four steps. **P2 is now open.**
 3. ~~**[P2] Refresh `README.md`.**~~ **DONE 2026-08-02** — see the run log entry below and the completed list. Prune this slot at the next curation.
 ~~4. **[P2] Add `DECISIONS.md`**~~ **DONE 2026-08-03** — see run log. Prune this slot at the next curation.
 5. ~~**[P2] Broaden `scripts/check-data.mjs`'s `t.key` usage scan beyond `economic-cycles-v5.jsx`.**~~ **DONE 2026-08-02** — see the run log entry below and the completed list. The scan now also globs `src/components/*.jsx`; verified by deliberately injecting a dangling `t.` reference into `More.jsx` and confirming the harness fails with the correct file path, then reverting. Prune this slot at the next curation.
-6. **[P2] `completedLessons` doesn't persist across reloads.** **Promoted to a numbered P2 slot 2026-08-04, owner-requested ahead of the next scheduled weekly review (2026-08-09)** — see the note at the end of this entry and the run log. First noted 2026-08-03 (6c's run log entry) and flagged again 2026-08-03 (6d's entry) as arguably higher-value than finishing the 6a–6e sequence, since the streak counter (6d, shipped) and the continue-tomorrow prompt (6e, shipped) both persist locally while `App`'s core `completedLessons` state does not — a returning user can reload and see "0/12 lessons" next to a multi-day streak and a "see you tomorrow" reminder they already opted into, which reads as broken. This is now the most user-visible remaining gap and the top of P2. **Scope note for whichever run picks this up**: it touches `App`'s core state shape and every component reading `completedLessons`/`isLessonUnlocked` (`Home`, `Learn`, `More`'s progress display, the header progress bar) — larger and riskier than a typical single-run item, budget a full run for it rather than treating it as a quick pick, and re-run `npm test` plus a full `npm run build` after the change given the number of call sites touched.
-   - **Provenance**: this slot was added directly by the project owner in an interactive session on 2026-08-04, not by an actual run of the `economics-app-sunday-review` scheduled task — there is currently no "run now" control for that task (only `list`/`create`/`update`/`delete`, and it isn't registered as a claude.ai remote trigger), and the next scheduled run is 2026-08-09. Recorded here plainly so the log doesn't misattribute this curation to a review that didn't run, matching the existing "Quiz answer key de-skewed (out-of-order, owner-requested)" precedent below.
+**P2 is now cleared** — item 6 (`completedLessons` persistence) shipped 2026-08-04, see run log. No open P2 items remain.
 
 **P3 — polish, only after P1 and P2**
 
@@ -73,6 +72,11 @@ the run log entries below for all four steps. **P2 is now open.**
 
 **Completed and pruned**
 
+- **`completedLessons` persistence (P2 item 6)** — done 2026-08-04, see run log. `App`'s core
+  `completedLessons` state now lazy-loads from and writes to `localStorage`
+  (`ecycles_completed_lessons`), following the same pattern as the streak counter and
+  continue-tomorrow opt-in. `Home`, `Learn`, and the header progress bar needed no changes — they
+  already just read the prop `App` passes down.
 - **Phase-color contrast check (plan §3.5)** — done 2026-08-04, see run log. Measured WCAG contrast
   ratios for the app's green/amber/red/blue phase-indicator palette; green (`#059669`, ~3.8:1) and
   amber (`#d97706`, ~3.2:1) failed the 4.5:1 AA threshold for small text on white. Swapped those two
@@ -1646,3 +1650,58 @@ unrelated `economic-cycles-v6.jsx` present — see below).
 - **Next run should pick**: unchanged from the previous entry — backlog item 6 (`completedLessons`
   persistence) is still the top of P2 and the standing next pick, unless the owner wants item 15 or
   16 prioritized first.
+
+### 2026-08-04 — `completedLessons` persistence (P2 item 6, now cleared)
+
+- `git status` was clean of anything relevant at the start except the already-documented, untracked
+  `economic-cycles-v6.jsx` (reference material, see "Notes for future runs" above — left untouched).
+  Re-read this file's backlog and `DECISIONS.md`; item 6 was the sole open P2 item and the standing
+  next pick per the last three run-log entries.
+- **What was done**: `App`'s core `completedLessons` state (`economic-cycles-v5.jsx`) was a plain
+  `useState([])` with no persistence, unlike the streak counter (`ecycles_streak`) and
+  continue-tomorrow opt-in (`ecycles_continue_pref`) built on top of it — a returning user could
+  reload and see "0/12 lessons" next to an intact multi-day streak. Added a `loadCompletedLessons`/
+  `saveCompletedLessons` pair (new `ecycles_completed_lessons` localStorage key, `try`/`catch`-wrapped
+  like every other key in the file) mirroring the existing `loadStreak`/`recordStreakActivity`
+  pattern: `completedLessons` now lazy-initializes from storage on mount, and `markLessonComplete`
+  writes the updated array back on every completion. Also trimmed the stale code comment above `tab`'s
+  initializer that said "`completedLessons` isn't persisted across sessions" — no longer true.
+  Checked every consumer first (`grep -rn completedLessons\|isLessonUnlocked src/components/*.jsx`):
+  only `Home.jsx` and `Learn.jsx` read either prop (the backlog note's mention of "`More`'s progress
+  display" turned out not to match the actual code — `More.jsx` has no progress display), and both
+  just consume the props `App` already passes them — so **no component files needed changes**, only
+  `economic-cycles-v5.jsx` (net +28/-5 lines). This came in smaller than the backlog's own scope note
+  anticipated ("larger and riskier than a typical single-run item... touches every component reading
+  completedLessons/isLessonUnlocked") once the actual call sites were checked instead of assumed.
+- **Adversarial self-check**: (1) *Blindspot register* — `grep -n "Dalio\|dalio" economic-cycles-v5.jsx`
+  returned nothing; the change touches no lesson/quiz/kids content, no dates, no market figures, so
+  §10.1–10.3 and the Markets stale-data fix are all untouched. (2) *DECISIONS.md* — checked before
+  starting; the "localStorage-only progress and personalization state" entry explicitly named this
+  exact gap and described the expected fix as "follows the same `localStorage` pattern," which is
+  what was built — no conflict, this closes a documented gap rather than contradicting a decision.
+  Updated that entry (see below) to record the gap as closed. (3) *Already-done backlog item* — item 6
+  was still open (not in "Completed and pruned") before this run; not a duplicate. (4) *Verification
+  claim reproducibility* — every check below (`npm test`, `npm run build`, the browser reload test) is
+  a plain command or a described click sequence an independent reviewer could re-run and get the same
+  result; nothing was eyeballed-only. No conflicts found by the check.
+- **Verified**: `BIN_DIR="$(scripts/bootstrap-node.sh)"` → `npm install` (0 new packages, same 2
+  pre-existing dev-tooling audit advisories as every prior run) → `npm test` → `PASS: 0 failure(s),
+  0 warning(s)` → `npm run build` — `EXIT_CODE=0`, `✓ 46 modules transformed`,
+  `dist/assets/index-1zkHsT0H.js` 254.04 kB / 106.28 kB gzip (up ~0.3 kB from the prior run's
+  253.79 kB, consistent with the small added persistence code). Then did a real browser-level check
+  using the static-build-plus-python-server technique documented above (`dist/` served via
+  `python3 -m http.server 8763`, opened with the browser tool's `url` form): loaded the app fresh,
+  clicked into Learn, clicked "Mark Complete" on lesson 1, confirmed via JS-eval that
+  `localStorage.getItem('ecycles_completed_lessons')` was `"[1]"`, then did a full page **reload**
+  (not just a re-render) and confirmed Home now showed "1/12 Lessons" / 8% / "Continue Learning →"
+  (previously "0/12" / "Start Learning →") and the Learn tab showed lesson 1 with a checkmark and
+  lesson 2 unlocked — i.e. persistence survives an actual reload, not just in-session state.
+- **Also updated `DECISIONS.md`**: the "localStorage-only progress and personalization state" entry's
+  "Known gap" paragraph was replaced with a "Gap closed 2026-08-04" paragraph describing the fix and
+  citing the same browser verification above, and the "what was decided" list now includes
+  `ecycles_completed_lessons` alongside the other three keys.
+- **Next run should pick**: P2 is now fully cleared. Per the standing "P1 items in numbered order,
+  don't start P3 while P2 is open" sequencing rule, P3 is open again: **dynamic font-size support**
+  (the one remaining sub-part of item 10), item 9 (dark mode), item 11 (mobile responsiveness at
+  375px), the Vite 6 bump from the audit triage, or process items 15/16 (launch-readiness scorecard;
+  tightening the builder/critic loop) if the owner wants those prioritized over further UI polish.

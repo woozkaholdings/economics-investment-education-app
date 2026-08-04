@@ -52,21 +52,22 @@ Add a new entry when a run makes a choice future work should be able to look up 
 
 - **Status:** closed as the *current* approach; known gap flagged below.
 - **What was decided:** every piece of per-user state added so far — the disclaimer-seen flag
-  (`ecycles_seen_disclaimer`), the streak counter (`ecycles_streak`), and the continue-tomorrow
-  opt-in (`ecycles_continue_pref`) — is stored client-side in `localStorage`, keyed by a fixed string,
-  with no backend, no account system, and no sync across devices.
+  (`ecycles_seen_disclaimer`), the streak counter (`ecycles_streak`), the continue-tomorrow
+  opt-in (`ecycles_continue_pref`), and now `completedLessons` itself (`ecycles_completed_lessons`,
+  added 2026-08-04) — is stored client-side in `localStorage`, keyed by a fixed string, with no
+  backend, no account system, and no sync across devices.
 - **Why:** the launch plan's own stack (Supabase-backed accounts) doesn't land until later in the
   roadmap, and none of these features need cross-device sync to be useful — they're single-device
   "did you do something today" signals. Building them against `localStorage` now means zero backend
   dependency and each one degrades safely (wrapped in `try`/`catch`, since `localStorage` throws in
   private-browsing contexts) rather than blocking the feature.
-- **Known gap — `completedLessons` does NOT follow this pattern:** `App`'s core
-  `completedLessons` state (`economic-cycles-v5.jsx`) is a plain `useState([])` with no persistence at
-  all, unlike the streak/continue-tomorrow features built on top of it. A user can reload the page and
-  see "0/12 lessons" next to a multi-day streak and a reminder they opted into. Flagged in
-  `AGENT_LOG.md`'s backlog (item 6, not yet given a numbered P2 slot) as arguably the most
-  user-visible remaining gap in this area — surfaced here too since it's the natural next entry in
-  this decision once addressed.
-- **Revisit when:** (a) `completedLessons` gets persisted — update this entry to reflect it follows the
-  same `localStorage` pattern; (b) the app gains real accounts (Supabase), at which point this whole
-  section should be superseded by a sync strategy (local-first with server sync, vs. server-authoritative).
+- **Gap closed 2026-08-04:** `App`'s core `completedLessons` state now follows the same pattern —
+  lazy-initialized from `localStorage` on mount (`loadCompletedLessons`, falls back to `[]` if unset,
+  unparseable, or not an array) and written back on every `markLessonComplete` call
+  (`saveCompletedLessons`), both wrapped in `try`/`catch` like every other key here. No component
+  changes were needed: `Home`, `Learn`, and the header progress bar all just read the
+  `completedLessons`/`isLessonUnlocked` props `App` already passed them, so a persisted value flows
+  through unchanged. Verified in the browser (static build + local server): completed lesson 1,
+  reloaded, Home still showed "1/12" and lesson 2 remained unlocked.
+- **Revisit when:** the app gains real accounts (Supabase), at which point this whole section should
+  be superseded by a sync strategy (local-first with server sync, vs. server-authoritative).

@@ -65,13 +65,34 @@ function recordStreakActivity() {
 }
 
 // ═══════════════════════════════════════════════════════════════
+// COMPLETED LESSONS — localStorage-backed so progress survives a reload,
+// mirroring the streak/continue-tomorrow persistence pattern above.
+// ═══════════════════════════════════════════════════════════════
+const COMPLETED_LESSONS_KEY = "ecycles_completed_lessons";
+
+function loadCompletedLessons() {
+  try {
+    const raw = localStorage.getItem(COMPLETED_LESSONS_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch (e) {
+    return [];
+  }
+}
+
+function saveCompletedLessons(ids) {
+  try { localStorage.setItem(COMPLETED_LESSONS_KEY, JSON.stringify(ids)); } catch (e) {}
+}
+
+// ═══════════════════════════════════════════════════════════════
 // MAIN APP
 // ═══════════════════════════════════════════════════════════════
 export default function App() {
   const [lang, setLang] = useState("en");
-  // completedLessons isn't persisted across sessions, so ecycles_seen_disclaimer
-  // (the only durable per-device flag the app has) doubles as the "has this
-  // device used the app before" signal: first open lands in lesson 1, not Home.
+  // ecycles_seen_disclaimer (the only durable per-device flag besides progress
+  // itself) doubles as the "has this device used the app before" signal: first
+  // open lands in lesson 1, not Home.
   const [tab, setTab] = useState(() => {
     try {
       return localStorage.getItem("ecycles_seen_disclaimer") ? "home" : "learn";
@@ -80,7 +101,7 @@ export default function App() {
     }
   });
   const [currentLesson, setCurrentLesson] = useState(0);
-  const [completedLessons, setCompletedLessons] = useState([]);
+  const [completedLessons, setCompletedLessons] = useState(loadCompletedLessons);
   const [streak, setStreak] = useState(0);
   useEffect(() => { setStreak(loadStreak()); }, []);
   // First-launch disclaimer notice
@@ -119,7 +140,9 @@ export default function App() {
 
   const markLessonComplete = (id) => {
     if (!completedLessons.includes(id)) {
-      setCompletedLessons(prev => [...prev, id]);
+      const next = [...completedLessons, id];
+      setCompletedLessons(next);
+      saveCompletedLessons(next);
       setStreak(recordStreakActivity());
     }
   };
