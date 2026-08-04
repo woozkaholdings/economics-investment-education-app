@@ -55,7 +55,7 @@ the run log entries below for all four steps. **P2 is now open.**
 8. ~~**[P3] `npm audit` triaged, not fixed.**~~ **DONE 2026-08-04** — see run log. Bumped `vite` `^5.4.11` → `^6.4.3` via `npm audit fix --force`, isolated to that one dependency (`@vitejs/plugin-react`/React untouched). `npm audit` now reports 0 vulnerabilities. Prune this slot at the next curation.
 9. **[P3] Dark mode** (plan §3.4). Now unblocked (the `App` split is done) — against the current inline styles it would just have to be redone.
 10. ~~**[P3] Accessibility pass**~~ **DONE 2026-08-04 — fully closed.** Screen-reader labels on tab buttons/quiz options/language picker, first-launch modal focus trap + Escape, `More` sub-nav + kids age-selector semantics, phase-color contrast, and (last remaining sub-part) **dynamic font-size support** are all done — see run log. Prune this slot at the next curation.
-11. ~~**[P3] Mobile responsiveness check** at 375px~~ **DONE 2026-08-04 (first pass)** — see run log. Found and fixed a real overflow risk (missing global `box-sizing: border-box`); browser-verified no horizontal scroll on Home/Learn/Markets/More/Quiz/Glossary at 375px. Re-check after any future layout work (e.g. item 9, dark mode) since this pass didn't audit every possible viewport width or orientation. Prune this slot at the next curation.
+11. ~~**[P3] Mobile responsiveness check**~~ **DONE 2026-08-04 — closed after two passes.** First pass (375px) found and fixed a real overflow risk (missing global `box-sizing: border-box`). Second pass swept 320px portrait, 320px at max font-scale (130%, stacking with item 10's feature), and 568×320 landscape, across every tab plus five interactive states (quiz answered, Kids age-selector, first-launch modal at short viewport height); found no further bugs. See run log for both passes. Re-check after any future layout work (e.g. item 9, dark mode). Prune this slot at the next curation.
 15. **[P3, process] Launch-readiness scorecard.** Added 2026-08-04, owner-requested (part of a broader "self-improving, self-refuting, autonomous launch" push). Add a new file (e.g. `LAUNCH_READINESS.md`) tracking the launch plan's actual gating criteria — blindspot-register status (§10.1–10.3, already all closed, but re-derive rather than trust this note), the Expo-vs-Vite decision (item 12, still HELD), pricing/roadmap milestones from the 16-week plan — so backlog work is visibly tied to "is this launchable," not just "is the backlog list shorter." Not yet built.
 16. **[P3, process] Tighten the builder/critic feedback loop.** Added 2026-08-04, owner-requested (same push as item 15). Currently the weekly review (`economics-app-sunday-review`) is the only thing that catches a dev-agent run's mistaken "done" claims, and it runs at most once a week — real example: §10.1 was reported closed 2026-08-02 when it was about half done, and that wasn't caught until the same day's weekly review. Item 5 (the adversarial self-check, done 2026-08-04 — see the dev-agent's own `SKILL.md`, not this file) is the first piece of this; this item is the rest: e.g. having the dev-agent re-verify one *prior* run's "done" claim before starting new work, or shortening how long a wrong claim can sit uncaught. Not yet built — needs design before implementation, since it changes what the scheduled task does on every run.
 
@@ -72,6 +72,13 @@ the run log entries below for all four steps. **P2 is now open.**
 
 **Completed and pruned**
 
+- **Mobile responsiveness check, second pass (P3 item 11 — now fully closed)** — done 2026-08-04,
+  see run log. Swept 320px portrait (all four tabs plus quiz-answered, Kids age-selector, and the
+  first-launch modal states), 320px combined with the max font-scale step from item 10 (130%, to
+  check the two features don't compound badly), and 568×320 landscape (including the first-launch
+  modal at a short viewport height, a common fixed-modal failure mode). No horizontal overflow or
+  clipping found anywhere (`scrollWidth === innerWidth` at every check) — a clean result, not a
+  skipped check; see the adversarial self-check in the run log for how that claim was verified.
 - **`npm audit` vulnerabilities fixed (P3 item 8)** — done 2026-08-04, see run log. `vite` bumped
   `^5.4.11` → `^6.4.3` via `npm audit fix --force`, run in isolation with a full build/test/browser
   reverify before committing. `npm audit` now reports 0 vulnerabilities (previously 1 moderate,
@@ -1893,3 +1900,56 @@ pick" line named dynamic font-size support first among the open P3 items, so pic
   alternatives if a quicker pick is preferred: a second, deeper mobile-responsiveness pass (320px,
   landscape, mid-interaction states) building on item 11's first pass, or process items 15/16
   (launch-readiness scorecard; tightening the builder/critic feedback loop).
+
+### 2026-08-04 — Mobile responsiveness check, second pass (P3 item 11, now fully closed) — owner-requested
+
+The owner directly asked to pick up item 11 (not a scheduled trigger), which the last two entries'
+"Next run should pick" both named as an open option. **Orientation surprise, resolved without any
+destructive action**: `git status`/`git diff` run *inside the sandbox* reported `package.json` and
+`package-lock.json` as locally modified (showing a vite `^5.4.11` → `^6.4.3` diff) even though
+nothing in this run had touched either file. Investigated rather than assuming the repo was broken:
+`ps aux` showed no live git/node process, and re-running the exact same `git status`/`git diff`
+**unsandboxed** (`dangerouslyDisableSandbox`) showed the working tree was actually clean — this was
+the known sandboxed-git-reads-a-stale-index quirk (see the memory note on git in this repo), not a
+real divergence. `git log` explained the content: two other automated runs (`d3dd82e`, item 11 first
+pass, and `06b507b`, item 8's vite bump) had landed in the background while this session was
+mid-work. Re-read the current `AGENT_LOG.md` and backlog before writing anything, per the standing
+"another automated session may have changed it" rule, rather than working from a stale in-memory
+copy.
+
+- **What was done**: built on the first pass's `box-sizing: border-box` fix with a broader sweep,
+  using the static-build-plus-python-server technique (fresh `npm run build`, `dist/` served via
+  `python3 -m http.server`, opened with the browser tool's `url` form) rather than editing any
+  source file — this run's job was to find bugs, and it found none, so nothing needed fixing.
+  Checked, all via live browser DOM (`document.documentElement.scrollWidth === window.innerWidth`
+  plus screenshots, not just eyeballing): **320px portrait** (the narrowest genuinely-still-common
+  width, one step below the first pass's 375px) across all four tabs, the first-launch modal
+  pre-dismissal, the 12-lesson-circle row on Learn, a mid-quiz answered state (radio selection +
+  explanation + Next button) on More, and the Kids age-selector panel; **320px combined with the
+  130% (largest) font-scale step** added by the previous run's item 10 work, specifically because
+  stacking two independent UI features is exactly the kind of interaction a single-feature check
+  would miss — the header title wraps to two lines gracefully rather than clipping, confirmed with a
+  screenshot; and **568×320 landscape** (the shortest common phone-landscape height), including the
+  first-launch modal — a `position: fixed; inset: 0` element with a fixed-content card is a classic
+  short-viewport failure mode — and confirming the fixed bottom tab bar doesn't permanently obscure
+  scrolled-to-bottom content on the Markets tab (checked the disclaimer text at the very end of the
+  tab clears the nav with real spacing, not just barely).
+- **Adversarial self-check**: (1) *Blindspot register* — this run touched no content and no source
+  file at all (verification-only), so it cannot reintroduce Dalio branding, investment-advice
+  language, kids child-facing framing, or a stale date; confirmed by inspection (nothing to grep,
+  since nothing changed). (2) *DECISIONS.md conflict* — no file changed besides `AGENT_LOG.md`, so
+  no decision is touched. (3) *Already-done backlog item* — item 11's own backlog text called this
+  exact "second, deeper pass (320px, landscape, mid-interaction states)" out as the open next step;
+  this is that step, not a redo of the first pass's box-sizing fix. (4) *Verification claim
+  reproducibility* — every result above is a `scrollWidth === innerWidth` JS-eval or a screenshot at
+  a stated viewport size and click sequence; an independent reviewer re-running the same static-
+  build-plus-server steps would see the same thing. The sandboxed-git false positive noted above was
+  itself resolved by a reproducible check (unsandboxed re-run), not asserted away.
+- **Verified**: `npm run build` (`EXIT_CODE=0`, 48 modules transformed — unaffected by this run,
+  confirms the build inherited from the two background runs is still healthy) plus the full browser
+  sweep described above. No `npm test` re-run needed (no content/locale/data file touched).
+- **Next run should pick**: item 9 (dark mode) is now the only substantial open P3 item — per two
+  prior entries' notes, it likely needs its own sub-step breakdown (the whole app is inline-styled,
+  not component-classed, so theming needs a real design before implementation) rather than being
+  attempted in one sitting. Otherwise, process items 15/16 (launch-readiness scorecard; tightening
+  the builder/critic feedback loop) are the remaining open P3 work.
