@@ -2026,3 +2026,58 @@ be user-selectable.
   deeper responsive pass against the new layout, process items 15/16 (launch-readiness scorecard;
   builder/critic loop), and the still-HELD platform decision (§2.1) which now gates store release.
   **Read `LAUNCH_PLAN.md` before picking anything** — it, not the `.docx`, is now authoritative.
+
+### 2026-08-04 — Charts into lessons, per-lesson checks, spaced review (owner-directed, research-led)
+
+Followed a research pass on how the leading education apps are structured (Duolingo's tree→single-path
+reboot, Brilliant's learn-by-doing, Zogo's test-on-the-spot, plus category retention benchmarks —
+education apps sit near 14–15% D1 and 2–3% D30, and getting a user to a core value action in the
+first session is worth 2–3× on D7). Three gaps came out of comparing the app against that, and the
+owner asked for all three.
+
+- **1. Diagrams moved into the lessons that teach them** (`src/components/LessonVisual.jsx`). They had
+  been only in Reference → Market signals, so the yield-curve lesson was pure prose while the curve
+  itself sat three taps away. This was a regression I introduced in the restructure earlier today,
+  and the research is unambiguous that the visual should *be* the explanation. Mapped conservatively —
+  only lessons whose subject *is* the diagram (4, 5, 10 → cycle; 8 → yield curves; 9 → balance sheet);
+  a chart on an unrelated lesson would be decoration. Reference keeps its own copy on purpose: looking
+  something up later is a different job, not the duplication §3.1 removed.
+- **2. End-of-lesson checks.** `quizData` questions are now tagged with the lesson that teaches them
+  (`lesson: N`), and the reader renders that lesson's questions after the takeaway. **Lesson 5 had no
+  question at all** — found while mapping, and it would have rendered an empty check — so one was
+  written for it in all five languages; answer index 1 keeps the answer-position spread even
+  (`{0:3,1:4,2:4,3:3}`, max share 29%). `npm test` now fails if any lesson has no question, so the
+  hole cannot reopen silently.
+- **3. Practice became spaced review** (`src/lib/review.js`, Leitner boxes with 1/2/4/8/16-day
+  intervals). It was a one-shot 13-question test that never resurfaced anything. Now a correct answer
+  moves a question up a box and pushes it further out; a miss drops it to box 1 and it returns
+  tomorrow. Answers from the lesson check and from review feed **one** schedule. Never-answered
+  questions are deliberately excluded from the due queue — surfacing them would quiz material the
+  learner hasn't reached. Nothing-due is an invitation, not a locked door: "practice all" stays
+  available.
+- **Design flaw caught in my own verification**: the review session initially rendered "Next" before
+  the question was answered, which invites tapping straight past the retrieval step — the one thing
+  that makes review work — and a skipped question would have stayed due forever. The advance button
+  now appears only after answering. Browser-confirmed: `advanceBtnBeforeAnswer: []`,
+  `advanceBtnAfterAnswer: ["Next"]`.
+- **Adversarial self-check**: (1) *Blindspot register* — no Dalio, no dates, no live-looking figures
+  introduced (`LessonVisual` reuses the existing dateless charts, and the balance-sheet bars stay
+  labelled by era); the disclaimer still renders on Learn, the reader, Review and Reference; the new
+  lesson-5 question is descriptive and historical, with no recommendation. (2) *DECISIONS.md* —
+  review state is localStorage-only under `ecycles_review`, following the existing pattern; content
+  stayed `.js`. (3) *Redoing done work* — the chart move reverses a regression from earlier today and
+  says so rather than presenting it as new ground. (4) *Verification claims* — the scheduler is now
+  covered by eight assertions inside `npm test` (box advance, reset-on-miss, cap, month rollover,
+  unseen-never-due, due-today-vs-future, overdue ordering), so these are reproducible rather than
+  asserted.
+- **Verified**: `npm test` → `PASS: 0 failure(s), 0 warning(s)` (now including the scheduler suite);
+  `npm run build` → exit 0, 56 modules, 308.34 kB / 115.53 kB gzip. Browser at 375×812 on the built
+  output: lesson 8 renders 4 in-lesson curve SVGs plus its check; answering wrong wrote
+  `{"5":{"box":1,"due":"2026-08-05","seen":1,"wrong":1}}`; Review correctly showed "all caught up"
+  while due-tomorrow, then "2 ready to review" after backdating, ordering the most-overdue item first
+  and labelling it "From lesson 6".
+- **Next run should pick**: two owner requests arrived at the end of this session and are **not**
+  started — live market state / sector performance / relative strength (see the new DECISIONS.md
+  entry; it unholds backlog items 13/14 but needs a real data source, and must not be faked), and
+  monetization, which **no run has ever touched** — there is no paywall, no tier gating and no
+  RevenueCat anywhere in `src/`, despite the plan's §4 specifying four tiers.

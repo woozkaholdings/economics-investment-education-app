@@ -15,6 +15,7 @@ import { KEYS, readArray, readJSON, readRaw, writeJSON, writeRaw } from "./stora
 import { todayStr, dayDiff } from "../utils/date.js";
 import { DEFAULT_FONT_SCALE, DEFAULT_THEME_MODE, FONT_SCALE_STEPS, THEME_MODES } from "../theme.js";
 import { TR } from "../locales/index.js";
+import { loadReview, recordAnswer, saveReview } from "./review.js";
 
 // ── streak ────────────────────────────────────────────────────────────────
 // One increment per calendar day on which at least one lesson is completed.
@@ -67,6 +68,7 @@ export function useAppState() {
   const [streak, setStreak] = useState(0);
   const [fontScale, setFontScaleState] = useState(loadFontScale);
   const [themeMode, setThemeModeState] = useState(loadThemeMode);
+  const [review, setReview] = useState(loadReview);
 
   // Whether this device has opened the app before. Drives both the one-time
   // disclaimer notice and first-open routing, so a brand-new user lands in
@@ -113,6 +115,16 @@ export function useAppState() {
     setShowDisclaimer(false);
   }, []);
 
+  // Called from both the end-of-lesson check and the review queue, so every
+  // answer anywhere feeds one schedule.
+  const recordReview = useCallback((questionIndex, wasCorrect) => {
+    setReview((prev) => {
+      const next = recordAnswer(prev, questionIndex, wasCorrect);
+      saveReview(next);
+      return next;
+    });
+  }, []);
+
   const completeLesson = useCallback((id) => {
     setCompletedLessons((prev) => {
       if (prev.includes(id)) return prev;
@@ -130,6 +142,7 @@ export function useAppState() {
     streak,
     fontScale, setFontScale,
     themeMode, setThemeMode,
+    review, recordReview,
     isFirstVisit,
     showDisclaimer, dismissDisclaimer,
   };

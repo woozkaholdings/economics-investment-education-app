@@ -3,8 +3,19 @@
 **Status:** authoritative. Supersedes `Economic_Cycles_Launch_Plan.docx` (v1, August 2026), which is
 kept unchanged as the historical original.
 **Last revised:** 2026-08-04.
-**Product goal:** an economics/investing education app that is *easy to understand* — the clarity
-standard in §3.0 is the primary success criterion, ahead of feature count.
+**Product goal:** a **financial-literacy and money-lessons app for kids through adults**, in plain
+language and an easy-to-read format. The clarity standard in §3.0 is the primary success criterion,
+ahead of topical coverage or feature count.
+
+> **On the name.** The repository, the v1 document title, and much of the lesson content
+> ("economic cycles", yield curves, QE/QT) read as an economics course for adults. That is the
+> *vehicle*, not the product — owner-clarified 2026-08-04. How the economy works is taught in
+> service of someone understanding money. Judge every screen and every lesson by whether a
+> motivated beginner, or an older child, can follow it without re-reading.
+>
+> This widened audience pulls against §10.3, which deliberately made the kids material
+> **parent-facing** to avoid COPPA's child-directed classification. That tension is real and is
+> **an owner decision, not a design one** — see §10.3.
 
 > **How to use this file.** This is the plan automated runs and the project owner both read.
 > `AGENT_LOG.md` records *what was done*; `DECISIONS.md` records *why*; this file records *what we
@@ -344,9 +355,15 @@ it, build the smallest test this week. Never sit in ambiguity longer than a week
 - **10.2 Dalio dependency** — *closed 2026-08-01.* No name-brand framing, no direct quotes, anywhere
   in the app or its marketing. Credit belongs in an acknowledgments line, not the product.
   *(v1's own §1 violated this; corrected in v2.)*
-- **10.3 Kids content / COPPA** — *closed 2026-08-01.* Ships as a **parent-facing** "teach your kids"
-  feature: no child accounts, no ads anywhere near it. A dedicated kids mode only if data shows real
-  demand.
+- **10.3 Kids content / COPPA** — *closed 2026-08-01, but now under tension.* Ships as a
+  **parent-facing** "teach your kids" feature: no child accounts, no ads anywhere near it.
+  **Reopened as a question 2026-08-04**: the owner clarified the product spans kids to adults, which
+  is not the same as an adult product with a parent guide bolted on. Going genuinely child-facing
+  changes the app's COPPA classification, its store privacy category, and what it may show — it is a
+  legal and business decision, **not a UI one**, and no run should make it unilaterally. Until the
+  owner decides, the parent-facing framing stands and the closed-item rules above still bind.
+  A middle path that needs no reclassification: keep the *reading level* accessible to an older
+  child throughout while keeping accounts, data collection, and ads adult-only.
 - **Markets stale data (§2.3)** — *closed 2026-08-02.* Dateless and figure-free by design.
 
 Closed items are **regressions to guard against**, not settled history — every change near this

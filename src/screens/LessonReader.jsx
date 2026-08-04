@@ -9,11 +9,15 @@
 // body without being another stack of coloured boxes.
 // ═══════════════════════════════════════════════════════════════════════════
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { estimateMinutes } from "../content/lessons.js";
+import { quizData } from "../content/quizData.js";
 import { recordContinueChoice, wasContinuePromptShownToday } from "../lib/useAppState.js";
+import { questionsForLesson } from "../lib/review.js";
 import Icon from "../components/Icon.jsx";
-import { Button, Disclaimer, Note, Stack, Text } from "../components/ui.jsx";
+import LessonVisual from "../components/LessonVisual.jsx";
+import Question from "../components/Question.jsx";
+import { Button, Card, Disclaimer, Note, Stack, Text } from "../components/ui.jsx";
 import { fill, ink, line, radius, shadow, space, surface } from "../theme.js";
 
 function Toast({ label }) {
@@ -36,11 +40,15 @@ function Toast({ label }) {
   );
 }
 
-export default function LessonReader({ t, lang, lessons, index, completedLessons, completeLesson, onBack, onNavigate }) {
+export default function LessonReader({ t, lang, lessons, index, completedLessons, completeLesson, recordReview, onBack, onNavigate }) {
   const lesson = lessons[index];
   const [celebrating, setCelebrating] = useState(false);
   const [prompt, setPrompt] = useState(null); // null | "asking" | "confirmed"
   const headingRef = useRef(null);
+
+  // This lesson's own retrieval check. Answers feed the same spaced schedule
+  // the Review tab drives, so a question missed here comes back tomorrow.
+  const check = useMemo(() => questionsForLesson(quizData, lesson.id), [lesson.id]);
 
   // Moving between lessons should feel like a new page: reset scroll and put
   // focus on the new title so screen-reader users hear where they landed.
@@ -127,10 +135,36 @@ export default function LessonReader({ t, lang, lessons, index, completedLessons
         ))}
       </Stack>
 
+      {/* The diagram for lessons whose subject is a diagram. */}
+      <LessonVisual lessonId={lesson.id} t={t} lang={lang} />
+
       <Stack gap={space["3"]} style={{ marginTop: space["5"] }}>
         <Note tone="ok" label={t.keyTakeaway} icon="target">{lesson.takeaway[lang]}</Note>
         <Note tone="accent" label={t.tryThinking} icon="info">{lesson.thinkAbout[lang]}</Note>
       </Stack>
+
+      {/* Retrieval check — answering is what makes the reading stick. */}
+      {check.length > 0 && (
+        <Card style={{ marginTop: space["5"] }}>
+          <Text variant="caption" color={ink.muted} style={{ textTransform: "uppercase", letterSpacing: "0.05em", fontWeight: 700 }}>
+            {t.checkTitle}
+          </Text>
+          <Text variant="small" color={ink.muted} style={{ margin: `${space["1"]}px 0 ${space["4"]}px` }}>
+            {t.checkIntro}
+          </Text>
+          <Stack gap={space["5"]}>
+            {check.map(({ question, index: qIndex }) => (
+              <Question
+                key={qIndex}
+                question={question}
+                lang={lang}
+                t={t}
+                onAnswered={(wasCorrect) => recordReview(qIndex, wasCorrect)}
+              />
+            ))}
+          </Stack>
+        </Card>
+      )}
 
       {/* Continue-tomorrow prompt — local only, schedules no real notification */}
       {prompt === "asking" && (

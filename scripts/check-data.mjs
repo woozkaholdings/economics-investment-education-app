@@ -14,6 +14,7 @@ import { quizData } from "../src/content/quizData.js";
 import { glossary } from "../src/content/glossary.js";
 import { kidsContent } from "../src/content/kidsContent.js";
 import * as marketsContent from "../src/content/markets.js";
+import { MAX_BOX, dueQuestions, recordAnswer } from "../src/lib/review.js";
 
 const LANGS = ["en", "es", "ja", "ko", "zh"];
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
@@ -122,7 +123,22 @@ function checkNonEmptyString(value, path) {
         answerCounts[item.answer] = (answerCounts[item.answer] || 0) + 1;
       }
     }
+
+    // Every question belongs to the lesson that teaches it — the lesson reader
+    // builds its end-of-lesson check from this field.
+    if (!Number.isInteger(item.lesson) || !lessons.some((l) => l.id === item.lesson)) {
+      fail(`${path}.lesson: ${JSON.stringify(item.lesson)} is not a real lesson id`);
+    }
   });
+
+  // A lesson with no question renders an empty check, which reads as a bug to
+  // the learner and silently drops that lesson out of the spaced-review pool.
+  const withQuestions = new Set(quizData.map((q) => q.lesson));
+  for (const lesson of lessons) {
+    if (!withQuestions.has(lesson.id)) {
+      fail(`quizData: lesson ${lesson.id} ("${lesson.title.en}") has no question — its end-of-lesson check would be empty`);
+    }
+  }
 
   const total = quizData.length;
   const counts = Object.values(answerCounts);
@@ -241,6 +257,51 @@ function checkNonEmptyString(value, path) {
       }
     }
   }
+}
+
+// 8. spaced-review scheduler. Pure logic, so it is checked here rather than in
+//    a browser: the schedule decides when a learner sees a question again, and
+//    an off-by-one there is invisible until days later.
+{
+  const eq = (label, actual, expected) => {
+    if (JSON.stringify(actual) !== JSON.stringify(expected)) {
+      fail(`review: ${label} — got ${JSON.stringify(actual)}, expected ${JSON.stringify(expected)}`);
+    }
+  };
+
+  let s = recordAnswer({}, 3, true, "2026-08-04");
+  eq("first correct answer enters box 1, due next day", [s["3"].box, s["3"].due], [1, "2026-08-05"]);
+
+  s = recordAnswer(s, 3, true, "2026-08-05");
+  eq("second correct answer advances to box 2", [s["3"].box, s["3"].due], [2, "2026-08-07"]);
+
+  s = recordAnswer(s, 3, false, "2026-08-07");
+  eq("a miss drops back to box 1", [s["3"].box, s["3"].due, s["3"].wrong], [1, "2026-08-08", 1]);
+
+  let capped = {};
+  for (let i = 0; i < 10; i++) capped = recordAnswer(capped, 0, true, "2026-08-04");
+  eq("box is capped", capped["0"].box, MAX_BOX);
+
+  eq("interval arithmetic crosses a month boundary",
+    recordAnswer({}, 1, true, "2026-08-31")["1"].due, "2026-09-01");
+
+  // Never-answered questions belong to their lesson's check, not to review —
+  // surfacing them here would quiz material the learner hasn't reached.
+  eq("unseen questions are never due", dueQuestions({}, quizData, "2026-08-04").length, 0);
+
+  const mixed = {
+    "2": { box: 1, due: "2026-08-04", seen: 1, wrong: 0 },
+    "5": { box: 1, due: "2026-08-09", seen: 1, wrong: 0 },
+  };
+  eq("due today is included, future is not",
+    dueQuestions(mixed, quizData, "2026-08-04").map((x) => x.index), [2]);
+
+  const overdue = {
+    "2": { box: 1, due: "2026-08-04", seen: 1, wrong: 0 },
+    "5": { box: 1, due: "2026-08-01", seen: 1, wrong: 0 },
+  };
+  eq("most overdue comes first",
+    dueQuestions(overdue, quizData, "2026-08-04").map((x) => x.index), [5, 2]);
 }
 
 console.log(`\n${failures === 0 ? "PASS" : "FAIL"}: ${failures} failure(s), ${warnings} warning(s).`);

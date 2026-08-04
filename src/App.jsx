@@ -70,6 +70,7 @@ export default function App() {
     lang, setLang, t,
     completedLessons, completeLesson,
     streak, fontScale, setFontScale, themeMode, setThemeMode,
+    review, recordReview,
     isFirstVisit, showDisclaimer, dismissDisclaimer,
   } = useAppState();
 
@@ -100,7 +101,7 @@ export default function App() {
 
   const tabs = [
     { key: "learn", label: t.tabLearn, icon: "book" },
-    { key: "practice", label: t.tabPractice, icon: "target" },
+    { key: "practice", label: t.reviewTitle, icon: "target" },
     { key: "reference", label: t.tabReference, icon: "library" },
   ];
 
@@ -163,10 +164,13 @@ export default function App() {
           <LessonReader
             t={t} lang={lang} lessons={lessons} index={reading}
             completedLessons={completedLessons} completeLesson={completeLesson}
+            recordReview={recordReview}
             onBack={closeLesson} onNavigate={setReading}
           />
         )}
-        {tab === "practice" && <Practice t={t} lang={lang} />}
+        {tab === "practice" && (
+          <Practice t={t} lang={lang} review={review} recordReview={recordReview} />
+        )}
         {tab === "reference" && (
           <Reference
             t={t} lang={lang}
