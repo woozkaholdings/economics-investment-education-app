@@ -48,7 +48,8 @@ the run log entries below for all four steps. **P2 is now open.**
 3. ~~**[P2] Refresh `README.md`.**~~ **DONE 2026-08-02** — see the run log entry below and the completed list. Prune this slot at the next curation.
 ~~4. **[P2] Add `DECISIONS.md`**~~ **DONE 2026-08-03** — see run log. Prune this slot at the next curation.
 5. ~~**[P2] Broaden `scripts/check-data.mjs`'s `t.key` usage scan beyond `economic-cycles-v5.jsx`.**~~ **DONE 2026-08-02** — see the run log entry below and the completed list. The scan now also globs `src/components/*.jsx`; verified by deliberately injecting a dangling `t.` reference into `More.jsx` and confirming the harness fails with the correct file path, then reverting. Prune this slot at the next curation.
-6. **[P2, flagged for owner/weekly-review prioritization — not yet a curated numbered slot] `completedLessons` doesn't persist across reloads.** First noted 2026-08-03 (6c's run log entry) and flagged again 2026-08-03 (6d's entry) as arguably higher-value than finishing the 6a–6e sequence, since the streak counter (6d, now shipped) and the continue-tomorrow prompt (6e, now shipped) both persist locally while `App`'s core `completedLessons` state does not — a returning user can reload and see "0/12 lessons" next to a multi-day streak and a "see you tomorrow" reminder they already opted into, which reads as broken. Now that the full first-session-flow item is closed, this is arguably the most user-visible remaining gap. Deliberately **not started** by this run: it touches `App`'s core state shape and every component reading `completedLessons`/`isLessonUnlocked` (`Home`, `Learn`, `More`'s progress display, the header progress bar) — larger and riskier than a single-run item, and the standing sequencing rule ("do not start a P2/P3 item while a P1 is open... work P1 items in the numbered order — the ordering is deliberate, not a menu") means a dev-agent run shouldn't unilaterally reprioritize ahead of the curated list. Surfacing here explicitly so the next weekly review can decide whether to give it a numbered slot.
+6. **[P2] `completedLessons` doesn't persist across reloads.** **Promoted to a numbered P2 slot 2026-08-04, owner-requested ahead of the next scheduled weekly review (2026-08-09)** — see the note at the end of this entry and the run log. First noted 2026-08-03 (6c's run log entry) and flagged again 2026-08-03 (6d's entry) as arguably higher-value than finishing the 6a–6e sequence, since the streak counter (6d, shipped) and the continue-tomorrow prompt (6e, shipped) both persist locally while `App`'s core `completedLessons` state does not — a returning user can reload and see "0/12 lessons" next to a multi-day streak and a "see you tomorrow" reminder they already opted into, which reads as broken. This is now the most user-visible remaining gap and the top of P2. **Scope note for whichever run picks this up**: it touches `App`'s core state shape and every component reading `completedLessons`/`isLessonUnlocked` (`Home`, `Learn`, `More`'s progress display, the header progress bar) — larger and riskier than a typical single-run item, budget a full run for it rather than treating it as a quick pick, and re-run `npm test` plus a full `npm run build` after the change given the number of call sites touched.
+   - **Provenance**: this slot was added directly by the project owner in an interactive session on 2026-08-04, not by an actual run of the `economics-app-sunday-review` scheduled task — there is currently no "run now" control for that task (only `list`/`create`/`update`/`delete`, and it isn't registered as a claude.ai remote trigger), and the next scheduled run is 2026-08-09. Recorded here plainly so the log doesn't misattribute this curation to a review that didn't run, matching the existing "Quiz answer key de-skewed (out-of-order, owner-requested)" precedent below.
 
 **P3 — polish, only after P1 and P2**
 
@@ -1533,3 +1534,33 @@ persistence is flagged but not yet a numbered slot) and picked the next open num
   support** (the one remaining sub-part of item 10), item 9 (dark mode), item 11 (mobile
   responsiveness at 375px), or the Vite 6 bump from the earlier audit triage, done in isolation with
   a full reverify before committing.
+
+### 2026-08-04 — Backlog curation: promote item 6 (`completedLessons` persistence) to a numbered P2 slot
+
+Not a dev run — a documentation-only backlog curation, done directly at the project owner's request
+in an interactive session (asked to "have the weekly review add it as a numbered slot").
+
+- Checked for a way to actually invoke the `economics-app-sunday-review` scheduled task on demand
+  first, rather than editing the backlog by hand and calling it done: `list_scheduled_tasks` only
+  exposes `list`/`create`/`update`/`delete`, no run-now action; `RemoteTrigger` operates on a
+  separate claude.ai routines registry and this task isn't registered there. No on-demand trigger
+  exists. Its next scheduled run stays 2026-08-09.
+- Given that, made the same backlog edit the review would make: re-worded item 6 from "flagged for
+  owner/weekly-review prioritization — not yet a curated numbered slot" to a plain numbered `[P2]`
+  item, now at the top of open P2 work (items 1–5 are all done/pruned). Left the item's existing
+  rationale (first noted 6c/6d, the streak/continue-tomorrow-persist-but-progress-doesn't
+  inconsistency) untouched and added a scope note for whoever picks it up: it's larger than a typical
+  single-run item (touches `App`'s core state plus every reader of `completedLessons`/
+  `isLessonUnlocked` — `Home`, `Learn`, `More`, the header progress bar), so budget a full run and
+  re-run both `npm test` and `npm run build` after, not just one.
+- **Provenance note added inline** (see item 6 in the backlog above) so the log doesn't later read as
+  if the actual `economics-app-sunday-review` task ran and curated this — it didn't; this was a
+  human-directed edit standing in for that process ahead of its 2026-08-09 schedule. Mirrors the
+  existing "Quiz answer key de-skewed (out-of-order, owner-requested)" entry's honesty about
+  attribution.
+- **Verified**: documentation-only change, no source touched — `git diff --stat` confirmed exactly
+  one file (`AGENT_LOG.md`) changed, no build or test run needed or would exercise anything new.
+- **Next run should pick**: backlog item 6 (`completedLessons` persistence) is now the top of P2 and
+  unblocked — the standing "work P1 items in numbered order" sequencing rule extends the same way to
+  P2, and P2 is now open with exactly one item in it. Per its own scope note, budget a full run for
+  it rather than a quick pick.
