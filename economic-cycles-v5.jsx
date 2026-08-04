@@ -95,6 +95,21 @@ export default function App() {
     setShowFirstLaunch(false);
   };
 
+  // Focus trap + Escape-to-dismiss for the first-launch modal. The modal has
+  // exactly one focusable control, so trapping focus just means refocusing it
+  // on every Tab press rather than tracking a boundary list.
+  const firstLaunchBtnRef = useRef(null);
+  useEffect(() => {
+    if (!showFirstLaunch) return;
+    firstLaunchBtnRef.current?.focus();
+    const onKeyDown = (e) => {
+      if (e.key === "Escape") dismissFirstLaunch();
+      else if (e.key === "Tab") { e.preventDefault(); firstLaunchBtnRef.current?.focus(); }
+    };
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, [showFirstLaunch]);
+
   const topRef = useRef(null);
   const scrollTop = () => {
     try { window.scrollTo({ top: 0, behavior: "smooth" }); } catch(e) {}
@@ -128,11 +143,11 @@ export default function App() {
 
       {/* ─── FIRST-LAUNCH DISCLAIMER NOTICE ─── */}
       {showFirstLaunch && (
-        <div style={{ position: "fixed", inset: 0, background: "rgba(15,23,42,0.6)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 200, padding: 20 }}>
+        <div role="dialog" aria-modal="true" aria-labelledby="first-launch-title" style={{ position: "fixed", inset: 0, background: "rgba(15,23,42,0.6)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 200, padding: 20 }}>
           <div style={{ background: "#fff", borderRadius: 14, padding: 20, maxWidth: 400, width: "100%", boxShadow: "0 10px 30px rgba(0,0,0,0.2)" }}>
-            <h2 style={{ fontSize: 16, fontWeight: 800, margin: "0 0 10px", color: "#1e3a5f" }}>👋 {t.firstLaunchTitle}</h2>
+            <h2 id="first-launch-title" style={{ fontSize: 16, fontWeight: 800, margin: "0 0 10px", color: "#1e3a5f" }}>👋 {t.firstLaunchTitle}</h2>
             <p style={{ fontSize: 12, color: "#4b5563", lineHeight: 1.6, margin: "0 0 14px" }}>ℹ️ {t.disclaimer}</p>
-            <button onClick={dismissFirstLaunch} style={{ width: "100%", padding: "12px 16px", borderRadius: 10, border: "none", background: "#2563eb", color: "#fff", fontSize: 13, fontWeight: 700, cursor: "pointer" }}>
+            <button ref={firstLaunchBtnRef} onClick={dismissFirstLaunch} style={{ width: "100%", padding: "12px 16px", borderRadius: 10, border: "none", background: "#2563eb", color: "#fff", fontSize: 13, fontWeight: 700, cursor: "pointer" }}>
               {t.firstLaunchOk}
             </button>
           </div>
@@ -146,19 +161,19 @@ export default function App() {
             <h1 style={{ fontSize: 18, fontWeight: 800, margin: 0, letterSpacing: -0.5 }}>{t.appTitle}</h1>
             <p style={{ fontSize: 10, opacity: 0.8, margin: "2px 0 0" }}>{t.appSub}</p>
           </div>
-          <select value={lang} onChange={e => setLang(e.target.value)} style={{ background: "rgba(255,255,255,0.15)", color: "#fff", border: "1px solid rgba(255,255,255,0.3)", borderRadius: 6, padding: "4px 6px", fontSize: 11, cursor: "pointer" }}>
+          <select value={lang} onChange={e => setLang(e.target.value)} aria-label={t.langLabel} style={{ background: "rgba(255,255,255,0.15)", color: "#fff", border: "1px solid rgba(255,255,255,0.3)", borderRadius: 6, padding: "4px 6px", fontSize: 11, cursor: "pointer" }}>
             {Object.keys(langFlags).map(l => <option key={l} value={l} style={{ color: "#000" }}>{langFlags[l]} {langNames[l]}{l !== "en" ? " (Beta)" : ""}</option>)}
           </select>
         </div>
         {/* Progress bar */}
-        <div style={{ marginTop: 8, background: "rgba(255,255,255,0.15)", borderRadius: 6, height: 6, overflow: "hidden" }}>
+        <div role="progressbar" aria-valuemin={0} aria-valuemax={lessons.length} aria-valuenow={completedLessons.length} aria-label={`${completedLessons.length}/${lessons.length} ${t.lessonLabel}s`} style={{ marginTop: 8, background: "rgba(255,255,255,0.15)", borderRadius: 6, height: 6, overflow: "hidden" }}>
           <div style={{ height: "100%", width: `${(completedLessons.length / lessons.length) * 100}%`, background: "linear-gradient(90deg, #fbbf24, #34d399)", borderRadius: 6, transition: "width 0.5s" }} />
         </div>
         <div style={{ fontSize: 9, opacity: 0.7, marginTop: 3, textAlign: "right" }}>{completedLessons.length}/{lessons.length} {t.lessonLabel}s</div>
       </div>
 
       {/* ─── MAIN CONTENT ─── */}
-      <div style={{ flex: 1, overflow: "auto", padding: "10px 12px", paddingBottom: 80 }}>
+      <div role="tabpanel" id={`tabpanel-${tab}`} aria-labelledby={`tab-${tab}`} style={{ flex: 1, overflow: "auto", padding: "10px 12px", paddingBottom: 80 }}>
 
         {/* ═══ HOME TAB ═══ */}
         {tab === "home" && (
@@ -181,13 +196,14 @@ export default function App() {
       </div>
 
       {/* ─── BOTTOM TAB BAR ─── */}
-      <div style={{ position: "fixed", bottom: 0, left: "50%", transform: "translateX(-50%)", width: "100%", maxWidth: 480, background: "#fff", borderTop: "1px solid #e5e7eb", display: "flex", zIndex: 100, boxShadow: "0 -2px 10px rgba(0,0,0,0.06)" }}>
+      <div role="tablist" aria-label={t.appTitle} style={{ position: "fixed", bottom: 0, left: "50%", transform: "translateX(-50%)", width: "100%", maxWidth: 480, background: "#fff", borderTop: "1px solid #e5e7eb", display: "flex", zIndex: 100, boxShadow: "0 -2px 10px rgba(0,0,0,0.06)" }}>
         {bottomTabs.map(bt => (
-          <button key={bt.key} onClick={() => { setTab(bt.key); scrollTop(); }}
+          <button key={bt.key} id={`tab-${bt.key}`} role="tab" aria-selected={tab === bt.key} aria-controls={`tabpanel-${bt.key}`}
+            onClick={() => { setTab(bt.key); scrollTop(); }}
             style={{ flex: 1, padding: "8px 0 6px", border: "none", background: "transparent", cursor: "pointer", display: "flex", flexDirection: "column", alignItems: "center", gap: 2, color: tab === bt.key ? "#2563eb" : "#9ca3af", transition: "color 0.2s" }}>
-            <span style={{ fontSize: 18 }}>{bt.icon}</span>
+            <span aria-hidden="true" style={{ fontSize: 18 }}>{bt.icon}</span>
             <span style={{ fontSize: 9, fontWeight: tab === bt.key ? 700 : 500 }}>{bt.label}</span>
-            {tab === bt.key && <div style={{ width: 20, height: 2, background: "#2563eb", borderRadius: 1, marginTop: 1 }} />}
+            {tab === bt.key && <div aria-hidden="true" style={{ width: 20, height: 2, background: "#2563eb", borderRadius: 1, marginTop: 1 }} />}
           </button>
         ))}
       </div>

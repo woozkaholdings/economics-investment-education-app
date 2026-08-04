@@ -52,9 +52,9 @@ the run log entries below for all four steps. **P2 is now open.**
 
 **P3 — polish, only after P1 and P2**
 
-8. **[P3] Triage `npm audit`.** `npm install` on 2026-08-02 reports **2 vulnerabilities (1 moderate, 1 high)** in the dev-dependency tree (`npm audit fix --force` was suggested, breaking changes implied). Only Vite and React are direct dependencies, so this is probably transitive dev-tooling noise that never ships to users — but nobody has run `npm audit` itself to see which packages. **Do not run `--force`.**
+8. **[P3] `npm audit` triaged, not fixed — see run log 2026-08-04.** `npm audit` (not just `npm install`'s summary line) now shows the actual finding: `esbuild <=0.24.2` (moderate, GHSA-67mh-4wv8-2f99 — "esbuild enables any website to send any requests to the development server and read the response"), pulled in transitively via `vite <=6.4.2`. This is a **dev-server-only** vulnerability — it affects `npm run dev`, not the built `dist/` output users receive — so it is not user-facing risk. The only fix path is `npm audit fix --force`, which bumps to `vite@6.4.3` (a major-version jump from the currently-pinned Vite 5, breaking change, untested against this project). **Still do not run `--force`** — that upgrade is a scoped task of its own (verify the build + dev server after the bump), not a one-line audit fix. Next step if picked up: try the Vite 6 bump in isolation and verify `npm run build`/`npm test` before committing.
 9. **[P3] Dark mode** (plan §3.4). Now unblocked (the `App` split is done) — against the current inline styles it would just have to be redone.
-10. **[P3] Accessibility pass**: screen-reader labels on tab buttons, quiz options, and the language picker; dynamic font-size support; contrast check on the phase colors (plan §3.5). Also add `aria-label`/keyboard-dismiss support to the first-launch modal — it currently has no focus trap or Escape handling.
+10. **[P3] Accessibility pass — partially done 2026-08-04.** ~~screen-reader labels on tab buttons, quiz options, and the language picker~~ **DONE 2026-08-04** — see run log. ~~Also add `aria-label`/keyboard-dismiss support to the first-launch modal — it currently has no focus trap or Escape handling.~~ **DONE 2026-08-04.** Remaining for a future run: **dynamic font-size support** and a **contrast check on the phase colors** (plan §3.5) — neither was touched this run.
 11. **[P3] Mobile responsiveness check** at 375px — the file is full of fixed `px` values and the product is mobile-first.
 
 **HELD — owner decisions, do not act on these**
@@ -1317,3 +1317,72 @@ persistence is flagged but not yet a numbered slot) and picked the next open num
   most user-visible remaining gap, now also documented as the one exception in `DECISIONS.md`'s
   localStorage-state entry. Otherwise, the P3 items (npm audit triage, dark mode, accessibility
   pass, mobile responsiveness check) are the next work.
+
+### 2026-08-04 — Accessibility pass, part 1: tab buttons, quiz options, language picker, first-launch modal (P3 item 10)
+
+- `git status` was clean at the start of this run — no in-progress work to recover, no user edits
+  to avoid. Re-read this file's backlog and the last few `git log` entries per the usual
+  orientation step. All five numbered P2 items are done/pruned and item 6
+  (`completedLessons` persistence) is explicitly flagged as *not* a curated slot pending weekly
+  review, so per the standing sequencing rule this run moved to P3 rather than starting item 6
+  unilaterally. Picked item 10 (accessibility pass) over item 8 (npm audit) and item 9 (dark mode)
+  as the most user-facing, appropriately-scoped-for-one-run choice; ran `npm audit` anyway while the
+  Node toolchain was already set up (see below) since it cost nothing extra and the backlog item
+  had been sitting on stale information.
+- **Scope**: item 10 lists five sub-parts. This run closed the two most concretely specified ones —
+  screen-reader labels on tab buttons/quiz options/the language picker, and focus-trap +
+  Escape-dismiss on the first-launch modal — and explicitly left **dynamic font-size support** and
+  a **contrast check on the phase colors** open for a future run (both are separate, non-trivial
+  pieces of work; bundling them in would have broken the "small enough to review in minutes" rule).
+  Changes, all in `economic-cycles-v5.jsx` unless noted:
+  - **First-launch modal**: added `role="dialog"`, `aria-modal="true"`, `aria-labelledby` (pointing
+    at a new `id` on the `<h2>`). Added a `useEffect` that, while the modal is open, focuses the
+    single "OK" button on mount, refocuses it on every `Tab` keypress (a full focus trap is
+    unnecessary — the modal has exactly one focusable control, so "always refocus the same
+    element" *is* the trap), and calls the existing `dismissFirstLaunch` on `Escape`.
+  - **Language `<select>`**: added `aria-label={t.langLabel}`. `langLabel` already existed,
+    translated, in all 5 `src/locales/*.js` files but had zero call sites anywhere in the app
+    (confirmed via `grep -rn langLabel economic-cycles-v5.jsx src/components/` before use) — no new
+    translation keys were needed.
+  - **Bottom tab bar**: converted to proper tab semantics — the container is `role="tablist"`
+    (`aria-label={t.appTitle}`), each button is `role="tab"` with `aria-selected` and
+    `aria-controls` pointing at the content region's `id`; the content region itself is now
+    `role="tabpanel"` with a matching `id`/`aria-labelledby`. Decorative icon `<span>`s and the
+    active-tab underline `<div>` got `aria-hidden="true"` so screen readers announce only the
+    visible text label, not a redundant emoji description.
+  - **Progress bar** (same header block, touched while already there): added
+    `role="progressbar"` with `aria-valuemin`/`aria-valuemax`/`aria-valuenow`/`aria-label` mirroring
+    the adjacent visible "N/12 lessons" text.
+  - **Quiz options** (`src/components/More.jsx`): wrapped the answer buttons in
+    `role="radiogroup"` (`aria-labelledby` pointing at a new `id` on the question `<h3>`), each
+    button is now `role="radio"` with `aria-checked`. The correct/incorrect feedback block that
+    appears after answering got `aria-live="polite"` so it's announced automatically rather than
+    requiring the user to find it.
+  - Did **not** touch the `More` sub-nav (quiz/kids/glossary/about) or the kids age-selector
+    buttons — same "toggle button group" pattern as the bottom tab bar, and a reasonable follow-up
+    for whichever future run finishes the accessibility item, but out of scope for keeping this run
+    small.
+- **`npm audit` triage** (opportunistic, not the run's main item): ran `npm audit` itself instead of
+  relying on `npm install`'s one-line summary. Finding: `esbuild <=0.24.2` (moderate,
+  GHSA-67mh-4wv8-2f99, dev-server request-forwarding), pulled in transitively by `vite <=6.4.2`.
+  This only affects `npm run dev`'s local dev server, not the built `dist/` output end users get —
+  so it's confirmed non-user-facing, as the backlog had guessed but never verified. The only fix is
+  `npm audit fix --force`, which bumps to `vite@6.4.3` (a major-version jump from the pinned Vite 5)
+  — did **not** run it; that's a scoped upgrade-and-reverify task of its own, not a one-line part of
+  this run. Backlog item 8 updated with the specifics so a future run doesn't have to re-discover
+  them.
+- **Verified**: `BIN_DIR="$(scripts/bootstrap-node.sh)"` (cache hit, instant) → `npm install`
+  (already up to date) → `npm test` → `PASS: 0 failure(s), 0 warning(s)` → `npm run build` →
+  `✓ 46 modules transformed` / `✓ built in 790ms`, no errors or warnings from either. Did not
+  visually verify in the browser preview tool — same known sandbox limitation as every prior run
+  since the JSX-split work began (`preview_start` can't spawn `npm run dev` because its process
+  spawn doesn't see the bootstrapped Node in `PATH`). Reviewed the full diff by eye
+  (`git diff economic-cycles-v5.jsx src/components/More.jsx`) for correctness of the ARIA
+  attribute wiring (matching `id`s, `aria-controls`/`aria-labelledby` pairs) before committing.
+- **Next run should pick**: per the standing sequencing rule, raise backlog item 6
+  (`completedLessons` persistence) with the weekly-review process for a numbered slot rather than
+  starting it unilaterally. If it's not yet slotted, remaining P3 work is: finish item 10
+  (dynamic font-size support, phase-color contrast check, and optionally the `More` sub-nav /
+  kids-age-selector button-group semantics this run left out), item 9 (dark mode), item 11 (mobile
+  responsiveness at 375px), or actually attempting the Vite 6 bump from the audit triage above in
+  an isolated, reverify-before-commit run.
