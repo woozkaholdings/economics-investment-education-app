@@ -44,7 +44,7 @@ the run log entries below for all four steps. **P2 is now open.**
    - ~~6c. **First-open routing** — with no saved progress, land straight in lesson 1 rather than on Home.~~ **DONE 2026-08-03** — see run log.
    - ~~6d. **Streak counter on Home**, localStorage-backed.~~ **DONE 2026-08-03** — see run log.
    - ~~6e. **One-tap "continue tomorrow" prompt** at lesson end.~~ **DONE 2026-08-03** — see run log. Records opt-in/opt-out locally only; does not schedule real notifications (still gated on item 12's Expo decision).
-2. **[P2] Clean up unused translation keys** — `indicators`, `bestInvest`, `avoidInvest`, `psychology`, `why`, `expansion`, `peak`, `contraction`, `trough`, `expDesc`, `peakDesc`, `contDesc`, `troughDesc` are defined in all 5 languages but nothing renders them (confirmed again by the new `npm test` harness's used-vs-defined `TR` key check — these 13 show up as defined-but-unused). (The *rendered* "Best investments" phase language in lesson 10 was a different, now-fixed issue — see the §10.1 completion entry below.) Either delete them or build the feature with historical/educational framing and the same disclaimer treatment. Pick one — don't leave this open indefinitely.
+2. ~~**[P2] Clean up unused translation keys**~~ **DONE 2026-08-03** — see run log. Deleted (didn't build the feature): a `t.`-usage grep across `economic-cycles-v5.jsx` and every `src/components/*.jsx` confirmed all 13 keys had zero call sites, and 10.1 (investment-advice adjacency) is already closed with a "never personalized" framing that a new "Best Investments"/"Avoid" phase-language feature would sit awkwardly next to — deleting was the lower-risk pick. Prune this slot at the next curation.
 3. ~~**[P2] Refresh `README.md`.**~~ **DONE 2026-08-02** — see the run log entry below and the completed list. Prune this slot at the next curation.
 4. **[P2] Add `DECISIONS.md`** — launch plan Move 1 asks for a decision log and this file is a *work* log, not serving that purpose. Small: record the Expo-vs-Vite choice and its status, the `.js`-not-JSON content format and why, and the localStorage-only progress approach. One short run.
 5. ~~**[P2] Broaden `scripts/check-data.mjs`'s `t.key` usage scan beyond `economic-cycles-v5.jsx`.**~~ **DONE 2026-08-02** — see the run log entry below and the completed list. The scan now also globs `src/components/*.jsx`; verified by deliberately injecting a dangling `t.` reference into `More.jsx` and confirming the harness fails with the correct file path, then reverting. Prune this slot at the next curation.
@@ -64,6 +64,11 @@ the run log entries below for all four steps. **P2 is now open.**
 
 **Completed and pruned**
 
+- **Unused translation keys deleted** — done 2026-08-03, see run log. `indicators`, `bestInvest`,
+  `avoidInvest`, `psychology`, `why`, `expansion`, `peak`, `contraction`, `trough`, `expDesc`,
+  `peakDesc`, `contDesc`, `troughDesc` had zero `t.` call sites in `economic-cycles-v5.jsx` or any
+  `src/components/*.jsx` file; removed from all 5 `src/locales/*.js` files rather than building the
+  feature, since it would reopen the already-closed §10.1 investment-advice-adjacency question.
 - **First-session flow, step 6e (continue-tomorrow prompt) — the entire 6a–6e first-session-flow item is now closed.** Done 2026-08-03, see run log. A one-tap, localStorage-only prompt (`ecycles_continue_pref`) shown at most once per day, the first time a lesson is marked complete that day; records the user's opt-in/opt-out locally for a future reminder feature, does not schedule real notifications.
 - **First-session flow, step 6d (streak counter)** — done 2026-08-03, see run log. localStorage-backed daily streak (`ecycles_streak`), incremented once per calendar day a lesson is completed; shown as a 🔥 badge on Home when > 0.
 - **First-session flow, step 6c (first-open routing)** — done 2026-08-03, see run log. New users with no saved progress now land in Learn/lesson 1 on first open instead of Home.
@@ -1226,3 +1231,39 @@ jumping to it.
   a full run for it specifically rather than treating it as a quick item. Item 2 (unused translation
   keys, still 12) and item 4 (`DECISIONS.md`) remain smaller open alternatives if a future run wants
   a lower-risk pick instead.
+
+### 2026-08-03 — Delete unused translation keys (P2 item 2)
+
+Followed the standing sequencing rule (work numbered P2 items in order; `completedLessons`
+persistence is flagged but not yet a numbered slot) and picked the next open numbered item.
+
+- Confirmed via `grep -rn "\bt\.<key>\b"` across `economic-cycles-v5.jsx` and every
+  `src/components/*.jsx` that all 13 previously-flagged keys (`indicators`, `bestInvest`,
+  `avoidInvest`, `psychology`, `why`, `expansion`, `peak`, `contraction`, `trough`, `expDesc`,
+  `peakDesc`, `contDesc`, `troughDesc`) had **zero** call sites — the earlier grep hits for words
+  like "expansion" and "trough" in the backlog note were all prose text inside lesson/quiz/glossary
+  content strings, not `t.` property access.
+- **Decision: delete, don't build the feature.** §10.1 (investment-advice adjacency) is already
+  closed with a "never personalized, always historical/educational" framing (disclaimer added on
+  Home and Markets); building a new "Best Investments"/"Avoid" per-phase grid now would reopen that
+  same compliance question the plan explicitly flagged, for a feature nothing currently requests.
+  Deleting unused dead code carries no such risk.
+- Removed the same 7-line block (the `expansion`/`peak`/`contraction`/`trough` line, the 4
+  `*Desc` lines, and the `indicators`/`bestInvest`/`avoidInvest`/`psychology`/`why` line) from all 5
+  `src/locales/*.js` files — the key ordering was identical across languages, confirmed by `grep -n`
+  on each file before editing.
+- **Verified**: `npm test` (data-shape harness, cached Node v20.18.1 via
+  `scripts/bootstrap-node.sh`) passes clean — `PASS: 0 failure(s), 0 warning(s)` — confirming no
+  remaining `t.<deletedKey>` references exist anywhere the harness scans and the 5 locale files
+  still have matching key sets. `npm run build` succeeded — `✓ 46 modules transformed`,
+  `dist/assets/index-SqSs87e7.js` 251.90 kB / 105.55 kB gzip, built in 860ms (smaller than the
+  253.67 kB from the previous run, consistent with removing dead translation strings, not a
+  regression). Re-ran `git status` before writing this entry — only the 5 locale files this run
+  touched, no concurrent-session collision. Did not visually verify in the browser preview tool —
+  same known sandbox limitation as every prior run (deleted keys were confirmed unused by source
+  grep across every file that reads `t.*`, so no rendered surface should be affected).
+- **Next run should pick**: item 4 (`DECISIONS.md`) is now the next open numbered P2 slot — small,
+  self-contained, low risk. The `completedLessons` persistence gap (backlog item 6) remains the
+  most user-visible issue and a good candidate for a run specifically budgeted for it, per the
+  standing note that a dev-agent run shouldn't unilaterally jump the curated order onto an
+  un-numbered item.
