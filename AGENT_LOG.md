@@ -54,7 +54,7 @@ the run log entries below for all four steps. **P2 is now open.**
 
 8. **[P3] `npm audit` triaged, not fixed — see run log 2026-08-04.** `npm audit` (not just `npm install`'s summary line) now shows the actual finding: `esbuild <=0.24.2` (moderate, GHSA-67mh-4wv8-2f99 — "esbuild enables any website to send any requests to the development server and read the response"), pulled in transitively via `vite <=6.4.2`. This is a **dev-server-only** vulnerability — it affects `npm run dev`, not the built `dist/` output users receive — so it is not user-facing risk. The only fix path is `npm audit fix --force`, which bumps to `vite@6.4.3` (a major-version jump from the currently-pinned Vite 5, breaking change, untested against this project). **Still do not run `--force`** — that upgrade is a scoped task of its own (verify the build + dev server after the bump), not a one-line audit fix. Next step if picked up: try the Vite 6 bump in isolation and verify `npm run build`/`npm test` before committing.
 9. **[P3] Dark mode** (plan §3.4). Now unblocked (the `App` split is done) — against the current inline styles it would just have to be redone.
-10. **[P3] Accessibility pass — partially done 2026-08-04.** ~~screen-reader labels on tab buttons, quiz options, and the language picker~~ **DONE 2026-08-04** — see run log. ~~Also add `aria-label`/keyboard-dismiss support to the first-launch modal — it currently has no focus trap or Escape handling.~~ **DONE 2026-08-04.** ~~`More` sub-nav (quiz/kids/glossary/about) and the kids age-selector button-group semantics.~~ **DONE 2026-08-04.** ~~Contrast check on the phase colors (plan §3.5).~~ **DONE 2026-08-04** — see run log. Remaining for a future run: **dynamic font-size support** — not yet touched by any run.
+10. ~~**[P3] Accessibility pass**~~ **DONE 2026-08-04 — fully closed.** Screen-reader labels on tab buttons/quiz options/language picker, first-launch modal focus trap + Escape, `More` sub-nav + kids age-selector semantics, phase-color contrast, and (last remaining sub-part) **dynamic font-size support** are all done — see run log. Prune this slot at the next curation.
 11. **[P3] Mobile responsiveness check** at 375px — the file is full of fixed `px` values and the product is mobile-first.
 15. **[P3, process] Launch-readiness scorecard.** Added 2026-08-04, owner-requested (part of a broader "self-improving, self-refuting, autonomous launch" push). Add a new file (e.g. `LAUNCH_READINESS.md`) tracking the launch plan's actual gating criteria — blindspot-register status (§10.1–10.3, already all closed, but re-derive rather than trust this note), the Expo-vs-Vite decision (item 12, still HELD), pricing/roadmap milestones from the 16-week plan — so backlog work is visibly tied to "is this launchable," not just "is the backlog list shorter." Not yet built.
 16. **[P3, process] Tighten the builder/critic feedback loop.** Added 2026-08-04, owner-requested (same push as item 15). Currently the weekly review (`economics-app-sunday-review`) is the only thing that catches a dev-agent run's mistaken "done" claims, and it runs at most once a week — real example: §10.1 was reported closed 2026-08-02 when it was about half done, and that wasn't caught until the same day's weekly review. Item 5 (the adversarial self-check, done 2026-08-04 — see the dev-agent's own `SKILL.md`, not this file) is the first piece of this; this item is the rest: e.g. having the dev-agent re-verify one *prior* run's "done" claim before starting new work, or shortening how long a wrong claim can sit uncaught. Not yet built — needs design before implementation, since it changes what the scheduled task does on every run.
@@ -72,6 +72,12 @@ the run log entries below for all four steps. **P2 is now open.**
 
 **Completed and pruned**
 
+- **Dynamic font-size support (P3 item 10, last sub-part — the whole accessibility-pass item is
+  now closed)** — done 2026-08-04, see run log. Every inline `fontSize` in the app (103 spots
+  across `economic-cycles-v5.jsx` and all 5 `src/components/*.jsx` files) converted from a fixed
+  px number to an equivalent `rem` string; a new 4-step "Aa" text-size control in More → About
+  scales the root element's font-size (persisted to `localStorage` as `ecycles_font_scale`),
+  which scales every `rem`-based size in the app proportionally.
 - **`completedLessons` persistence (P2 item 6)** — done 2026-08-04, see run log. `App`'s core
   `completedLessons` state now lazy-loads from and writes to `localStorage`
   (`ecycles_completed_lessons`), following the same pattern as the streak counter and
@@ -1705,3 +1711,66 @@ unrelated `economic-cycles-v6.jsx` present — see below).
   (the one remaining sub-part of item 10), item 9 (dark mode), item 11 (mobile responsiveness at
   375px), the Vite 6 bump from the audit triage, or process items 15/16 (launch-readiness scorecard;
   tightening the builder/critic loop) if the owner wants those prioritized over further UI polish.
+
+### 2026-08-04 — Dynamic font-size support (P3 item 10, last sub-part — item 10 now fully closed)
+
+`git status` at the start was clean except the already-documented, untracked
+`economic-cycles-v6.jsx` (reference material only, see "Notes for future runs" above — left
+untouched, per the standing memory note not to treat it as a fixture). Re-read this file's
+backlog and the last run-log entry; P2 is fully cleared and the previous entry's "Next run should
+pick" line named dynamic font-size support first among the open P3 items, so picked that.
+
+- **What was done**: every one of the app's `fontSize` inline-style values was authored as a raw
+  px number (e.g. `fontSize: 12`), so nothing in the app responded to a browser/OS text-size
+  preference and there was no in-app control either. Converted all 103 numeric `fontSize:` object-
+  literal occurrences across `economic-cycles-v5.jsx` and all 5 `src/components/*.jsx` files to
+  equivalent `rem` strings (`fontSize: 12` → `fontSize: "0.75rem"`, i.e. `px / 16`) via a small,
+  reviewed conversion script — mechanical and value-preserving at the default scale. Left the SVG
+  `fontSize="N"` presentation attributes in `charts.jsx` (`<text>` elements) untouched: those are
+  SVG user-space units tied to each chart's `viewBox`, not CSS pixels, and don't participate in
+  root-font-size scaling the same way. Added `src/utils/fontScale.js` (`FONT_SCALE_STEPS` — four
+  presets, 87.5%/100%/115%/130% — plus `loadFontScale`/`saveFontScale`, `try`/`catch`-wrapped
+  `localStorage` under `ecycles_font_scale`, mirroring every other persistence key's pattern). `App`
+  now holds `fontScale` state, applies it via `document.documentElement.style.fontSize =
+  \`${fontScale * 100}%\`` in a `useEffect` (a percentage of the browser's own 16px default, so an
+  OS/browser zoom on top of this preference still composes rather than being overridden), and
+  passes `fontScale`/`changeFontScale` down to `More`. Added a 4-step "Aa" `radiogroup` control
+  (same accessible button-group pattern as the existing kids age-selector) to the More → About
+  section — the natural home for an app-wide preference, and picked deliberately over the header to
+  avoid touching header layout ahead of the still-open item 11 (mobile responsiveness). Added a new
+  `fontSizeLabel` translation key to all 5 `src/locales/*.js` files ("Text Size" / "Tamaño de
+  texto" / "글자 크기" / "字体大小" / "文字サイズ").
+- **Adversarial self-check**: (1) *Blindspot register* — `grep -in dalio` across every changed file
+  returned nothing; the diff (`git diff --stat`) touches only `fontSize` values, the new util
+  module, `DECISIONS.md`, and one new translation key per locale file — no lesson/quiz/kids/Markets
+  content changed, so §10.1–10.3 and the Markets stale-data fix are all untouched. (2)
+  *DECISIONS.md conflict* — the new `ecycles_font_scale` key follows the exact pattern the
+  "localStorage-only progress and personalization state" entry already describes (client-side only,
+  `try`/`catch`-wrapped, no backend); updated that entry to list the new key alongside the other
+  four rather than contradicting it. (3) *Already-done backlog item* — item 10's own text named
+  dynamic font-size support as the one sub-part "not yet touched by any run"; not a duplicate. (4)
+  *Verification claim reproducibility* — every check below is a plain command, a described click
+  sequence, or a JS-eval an independent reviewer could re-run and get the same result. No conflicts
+  found by the check.
+- **Verified**: `BIN_DIR="$(scripts/bootstrap-node.sh)"` → `npm install` (0 new packages) →
+  `npm test` → `PASS: 0 failure(s), 0 warning(s)` (confirms locale key parity across all 5
+  languages and that every `t.fontSizeLabel` reference resolves) → `npm run build` — `EXIT_CODE=0`,
+  `✓ 47 modules transformed`. Then a real browser-level check using the static-build-plus-python-
+  server technique documented above (`dist/` served via `python3 -m http.server 8764`, opened with
+  the browser tool's `url` form): loaded the app, dismissed the first-launch modal, navigated More →
+  About, confirmed the new "Text Size" control renders with four increasingly-large "Aa" previews
+  and the default step visibly selected, clicked the largest step and confirmed via screenshot that
+  header title, body copy, tab labels, and bottom-nav labels all scaled up together (not just the
+  clicked element), confirmed via JS-eval that `localStorage.getItem('ecycles_font_scale')` was
+  `"1.3"` and `document.documentElement.style.fontSize` was `"130%"`, then did a full page
+  **reload** and confirmed the 130% scale was still applied immediately (persistence survives
+  reload, not just in-session state). Also resized the viewport to 375px (the product's mobile-first
+  target) at the 130% scale and confirmed no clipping or horizontal overflow — the header title
+  wraps to two lines gracefully instead of being cut off. Reset the preference back to default
+  (100%) before finishing.
+- **Next run should pick**: item 10 (the whole accessibility pass) is now fully closed — prune its
+  backlog slot at the next curation. Remaining open P3 work: item 9 (dark mode), item 11 (mobile
+  responsiveness at 375px — this run's 375px spot-check only covered the font-scale interaction, not
+  a full pass), the Vite 6 bump from the audit triage (item 8), or process items 15/16
+  (launch-readiness scorecard; tightening the builder/critic loop) if the owner wants those
+  prioritized over further UI polish.

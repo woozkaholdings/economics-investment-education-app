@@ -12,6 +12,7 @@ import Learn from "./src/components/Learn.jsx";
 import Markets from "./src/components/Markets.jsx";
 import More from "./src/components/More.jsx";
 import { todayStr, dayDiff } from "./src/utils/date.js";
+import { loadFontScale, saveFontScale } from "./src/utils/fontScale.js";
 
 const langFlags = { en: "🇺🇸", es: "🇪🇸", ko: "🇰🇷", zh: "🇨🇳", ja: "🇯🇵" };
 const langNames = { en: "English", es: "Español", ko: "한국어", zh: "中文", ja: "日本語" };
@@ -104,6 +105,16 @@ export default function App() {
   const [completedLessons, setCompletedLessons] = useState(loadCompletedLessons);
   const [streak, setStreak] = useState(0);
   useEffect(() => { setStreak(loadStreak()); }, []);
+
+  // Dynamic font size — scales every `rem`-based fontSize in the app by
+  // resizing the root element. Applied as a percentage of the browser's
+  // 16px default rather than a fixed px, so it still respects a user's own
+  // browser/OS zoom on top of this in-app preference.
+  const [fontScale, setFontScale] = useState(loadFontScale);
+  useEffect(() => {
+    document.documentElement.style.fontSize = `${fontScale * 100}%`;
+  }, [fontScale]);
+  const changeFontScale = (scale) => { setFontScale(scale); saveFontScale(scale); };
   // First-launch disclaimer notice
   const [showFirstLaunch, setShowFirstLaunch] = useState(false);
   useEffect(() => {
@@ -161,16 +172,16 @@ export default function App() {
   ];
 
   return (
-    <div style={{ fontFamily: "'Segoe UI', system-ui, -apple-system, sans-serif", maxWidth: 480, margin: "0 auto", color: "#1f2937", fontSize: 13, background: "#f8fafc", minHeight: "100vh", display: "flex", flexDirection: "column", position: "relative" }}>
+    <div style={{ fontFamily: "'Segoe UI', system-ui, -apple-system, sans-serif", maxWidth: 480, margin: "0 auto", color: "#1f2937", fontSize: "0.8125rem", background: "#f8fafc", minHeight: "100vh", display: "flex", flexDirection: "column", position: "relative" }}>
       <div ref={topRef} />
 
       {/* ─── FIRST-LAUNCH DISCLAIMER NOTICE ─── */}
       {showFirstLaunch && (
         <div role="dialog" aria-modal="true" aria-labelledby="first-launch-title" style={{ position: "fixed", inset: 0, background: "rgba(15,23,42,0.6)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 200, padding: 20 }}>
           <div style={{ background: "#fff", borderRadius: 14, padding: 20, maxWidth: 400, width: "100%", boxShadow: "0 10px 30px rgba(0,0,0,0.2)" }}>
-            <h2 id="first-launch-title" style={{ fontSize: 16, fontWeight: 800, margin: "0 0 10px", color: "#1e3a5f" }}>👋 {t.firstLaunchTitle}</h2>
-            <p style={{ fontSize: 12, color: "#4b5563", lineHeight: 1.6, margin: "0 0 14px" }}>ℹ️ {t.disclaimer}</p>
-            <button ref={firstLaunchBtnRef} onClick={dismissFirstLaunch} style={{ width: "100%", padding: "12px 16px", borderRadius: 10, border: "none", background: "#2563eb", color: "#fff", fontSize: 13, fontWeight: 700, cursor: "pointer" }}>
+            <h2 id="first-launch-title" style={{ fontSize: "1rem", fontWeight: 800, margin: "0 0 10px", color: "#1e3a5f" }}>👋 {t.firstLaunchTitle}</h2>
+            <p style={{ fontSize: "0.75rem", color: "#4b5563", lineHeight: 1.6, margin: "0 0 14px" }}>ℹ️ {t.disclaimer}</p>
+            <button ref={firstLaunchBtnRef} onClick={dismissFirstLaunch} style={{ width: "100%", padding: "12px 16px", borderRadius: 10, border: "none", background: "#2563eb", color: "#fff", fontSize: "0.8125rem", fontWeight: 700, cursor: "pointer" }}>
               {t.firstLaunchOk}
             </button>
           </div>
@@ -181,10 +192,10 @@ export default function App() {
       <div style={{ background: "linear-gradient(135deg, #1e3a5f 0%, #1e40af 50%, #4f46e5 100%)", padding: "14px 16px", color: "#fff", flexShrink: 0 }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <div>
-            <h1 style={{ fontSize: 18, fontWeight: 800, margin: 0, letterSpacing: -0.5 }}>{t.appTitle}</h1>
-            <p style={{ fontSize: 10, opacity: 0.8, margin: "2px 0 0" }}>{t.appSub}</p>
+            <h1 style={{ fontSize: "1.125rem", fontWeight: 800, margin: 0, letterSpacing: -0.5 }}>{t.appTitle}</h1>
+            <p style={{ fontSize: "0.625rem", opacity: 0.8, margin: "2px 0 0" }}>{t.appSub}</p>
           </div>
-          <select value={lang} onChange={e => setLang(e.target.value)} aria-label={t.langLabel} style={{ background: "rgba(255,255,255,0.15)", color: "#fff", border: "1px solid rgba(255,255,255,0.3)", borderRadius: 6, padding: "4px 6px", fontSize: 11, cursor: "pointer" }}>
+          <select value={lang} onChange={e => setLang(e.target.value)} aria-label={t.langLabel} style={{ background: "rgba(255,255,255,0.15)", color: "#fff", border: "1px solid rgba(255,255,255,0.3)", borderRadius: 6, padding: "4px 6px", fontSize: "0.6875rem", cursor: "pointer" }}>
             {Object.keys(langFlags).map(l => <option key={l} value={l} style={{ color: "#000" }}>{langFlags[l]} {langNames[l]}{l !== "en" ? " (Beta)" : ""}</option>)}
           </select>
         </div>
@@ -192,7 +203,7 @@ export default function App() {
         <div role="progressbar" aria-valuemin={0} aria-valuemax={lessons.length} aria-valuenow={completedLessons.length} aria-label={`${completedLessons.length}/${lessons.length} ${t.lessonLabel}s`} style={{ marginTop: 8, background: "rgba(255,255,255,0.15)", borderRadius: 6, height: 6, overflow: "hidden" }}>
           <div style={{ height: "100%", width: `${(completedLessons.length / lessons.length) * 100}%`, background: "linear-gradient(90deg, #fbbf24, #34d399)", borderRadius: 6, transition: "width 0.5s" }} />
         </div>
-        <div style={{ fontSize: 9, opacity: 0.7, marginTop: 3, textAlign: "right" }}>{completedLessons.length}/{lessons.length} {t.lessonLabel}s</div>
+        <div style={{ fontSize: "0.5625rem", opacity: 0.7, marginTop: 3, textAlign: "right" }}>{completedLessons.length}/{lessons.length} {t.lessonLabel}s</div>
       </div>
 
       {/* ─── MAIN CONTENT ─── */}
@@ -215,7 +226,7 @@ export default function App() {
         {tab === "markets" && <Markets t={t} lang={lang} />}
 
         {/* ═══ MORE TAB ═══ */}
-        {tab === "more" && <More t={t} lang={lang} />}
+        {tab === "more" && <More t={t} lang={lang} fontScale={fontScale} changeFontScale={changeFontScale} />}
       </div>
 
       {/* ─── BOTTOM TAB BAR ─── */}
@@ -224,8 +235,8 @@ export default function App() {
           <button key={bt.key} id={`tab-${bt.key}`} role="tab" aria-selected={tab === bt.key} aria-controls={`tabpanel-${bt.key}`}
             onClick={() => { setTab(bt.key); scrollTop(); }}
             style={{ flex: 1, padding: "8px 0 6px", border: "none", background: "transparent", cursor: "pointer", display: "flex", flexDirection: "column", alignItems: "center", gap: 2, color: tab === bt.key ? "#2563eb" : "#9ca3af", transition: "color 0.2s" }}>
-            <span aria-hidden="true" style={{ fontSize: 18 }}>{bt.icon}</span>
-            <span style={{ fontSize: 9, fontWeight: tab === bt.key ? 700 : 500 }}>{bt.label}</span>
+            <span aria-hidden="true" style={{ fontSize: "1.125rem" }}>{bt.icon}</span>
+            <span style={{ fontSize: "0.5625rem", fontWeight: tab === bt.key ? 700 : 500 }}>{bt.label}</span>
             {tab === bt.key && <div aria-hidden="true" style={{ width: 20, height: 2, background: "#2563eb", borderRadius: 1, marginTop: 1 }} />}
           </button>
         ))}

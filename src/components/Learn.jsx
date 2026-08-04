@@ -40,8 +40,8 @@ function CelebrationToast({ text }) {
           100% { opacity: 0; }
         }
       `}</style>
-      <div style={{ position: "fixed", top: "16%", left: "50%", zIndex: 300, background: "#059669", color: "#fff", borderRadius: 14, padding: "12px 22px", display: "flex", alignItems: "center", gap: 8, boxShadow: "0 8px 24px rgba(5,150,105,0.35)", fontSize: 14, fontWeight: 700, animation: "ecCelebratePop 0.4s cubic-bezier(0.34,1.56,0.64,1), ecCelebrateFade 1.5s ease forwards", pointerEvents: "none" }}>
-        <span style={{ fontSize: 20 }}>🎉</span> {text}
+      <div style={{ position: "fixed", top: "16%", left: "50%", zIndex: 300, background: "#059669", color: "#fff", borderRadius: 14, padding: "12px 22px", display: "flex", alignItems: "center", gap: 8, boxShadow: "0 8px 24px rgba(5,150,105,0.35)", fontSize: "0.875rem", fontWeight: 700, animation: "ecCelebratePop 0.4s cubic-bezier(0.34,1.56,0.64,1), ecCelebrateFade 1.5s ease forwards", pointerEvents: "none" }}>
+        <span style={{ fontSize: "1.25rem" }}>🎉</span> {text}
       </div>
     </>
   );
@@ -84,7 +84,7 @@ export default function Learn({ t, lang, lessons, completedLessons, currentLesso
             const active = currentLesson === i;
             return (
               <button key={l.id} onClick={() => { if (unlocked) setCurrentLesson(i); }}
-                style={{ width: 28, height: 28, borderRadius: "50%", border: active ? `2px solid ${l.color}` : "1px solid #d1d5db", background: done ? "#059669" : active ? l.color + "20" : unlocked ? "#fff" : "#f3f4f6", color: done ? "#fff" : active ? l.color : unlocked ? "#374151" : "#9ca3af", fontSize: 9, fontWeight: 700, cursor: unlocked ? "pointer" : "default", display: "flex", alignItems: "center", justifyContent: "center", opacity: unlocked ? 1 : 0.4 }}>
+                style={{ width: 28, height: 28, borderRadius: "50%", border: active ? `2px solid ${l.color}` : "1px solid #d1d5db", background: done ? "#059669" : active ? l.color + "20" : unlocked ? "#fff" : "#f3f4f6", color: done ? "#fff" : active ? l.color : unlocked ? "#374151" : "#9ca3af", fontSize: "0.5625rem", fontWeight: 700, cursor: unlocked ? "pointer" : "default", display: "flex", alignItems: "center", justifyContent: "center", opacity: unlocked ? 1 : 0.4 }}>
                 {done ? "✓" : l.id}
               </button>
             );
@@ -97,56 +97,56 @@ export default function Learn({ t, lang, lessons, completedLessons, currentLesso
         <div>
           {/* Lesson Header */}
           <div style={{ background: `linear-gradient(135deg, ${lesson.color}15, ${lesson.color}08)`, border: `2px solid ${lesson.color}30`, borderRadius: 12, padding: 14, marginBottom: 10 }}>
-            <div style={{ fontSize: 9, color: lesson.color, fontWeight: 600, marginBottom: 4 }}>{t.lessonLabel} {lesson.id} {t.ofLabel} {lessons.length}</div>
-            <h2 style={{ fontSize: 17, fontWeight: 800, color: lesson.color, margin: "0 0 4px" }}>{lesson.icon} {lesson.title[lang]}</h2>
-            <p style={{ fontSize: 11, color: "#6b7280", margin: 0 }}>{lesson.subtitle[lang]}</p>
+            <div style={{ fontSize: "0.5625rem", color: lesson.color, fontWeight: 600, marginBottom: 4 }}>{t.lessonLabel} {lesson.id} {t.ofLabel} {lessons.length}</div>
+            <h2 style={{ fontSize: "1.0625rem", fontWeight: 800, color: lesson.color, margin: "0 0 4px" }}>{lesson.icon} {lesson.title[lang]}</h2>
+            <p style={{ fontSize: "0.6875rem", color: "#6b7280", margin: 0 }}>{lesson.subtitle[lang]}</p>
           </div>
 
           {/* Lesson Sections */}
           {lesson.sections.map((sec, i) => (
             <div key={i} style={{ background: "#fff", border: "1px solid #e5e7eb", borderRadius: 10, padding: 14, marginBottom: 8, boxShadow: "0 1px 3px rgba(0,0,0,0.04)" }}>
-              <h3 style={{ fontSize: 14, fontWeight: 700, color: "#1f2937", margin: "0 0 8px" }}>{sec.heading[lang]}</h3>
-              <div style={{ fontSize: 12, color: "#4b5563", lineHeight: 1.7, whiteSpace: "pre-line" }}>{sec.body[lang]}</div>
+              <h3 style={{ fontSize: "0.875rem", fontWeight: 700, color: "#1f2937", margin: "0 0 8px" }}>{sec.heading[lang]}</h3>
+              <div style={{ fontSize: "0.75rem", color: "#4b5563", lineHeight: 1.7, whiteSpace: "pre-line" }}>{sec.body[lang]}</div>
             </div>
           ))}
 
           {/* Key Takeaway */}
           <div style={{ background: "#ecfdf5", border: "1px solid #059669", borderRadius: 10, padding: 12, marginBottom: 8 }}>
-            <div style={{ fontSize: 10, fontWeight: 700, color: "#047857", marginBottom: 4 }}>🎯 {t.keyTakeaway}</div>
-            <div style={{ fontSize: 12, color: "#065f46", lineHeight: 1.6 }}>{lesson.takeaway[lang]}</div>
+            <div style={{ fontSize: "0.625rem", fontWeight: 700, color: "#047857", marginBottom: 4 }}>🎯 {t.keyTakeaway}</div>
+            <div style={{ fontSize: "0.75rem", color: "#065f46", lineHeight: 1.6 }}>{lesson.takeaway[lang]}</div>
           </div>
 
           {/* Think About */}
           <div style={{ background: "#faf5ff", border: "1px solid #9333ea", borderRadius: 10, padding: 12, marginBottom: 12 }}>
-            <div style={{ fontSize: 10, fontWeight: 700, color: "#7c3aed", marginBottom: 4 }}>🧠 {t.tryThinking}</div>
-            <div style={{ fontSize: 12, color: "#581c87", lineHeight: 1.6, fontStyle: "italic" }}>{lesson.thinkAbout[lang]}</div>
+            <div style={{ fontSize: "0.625rem", fontWeight: 700, color: "#7c3aed", marginBottom: 4 }}>🧠 {t.tryThinking}</div>
+            <div style={{ fontSize: "0.75rem", color: "#581c87", lineHeight: 1.6, fontStyle: "italic" }}>{lesson.thinkAbout[lang]}</div>
           </div>
 
           {/* Continue-Tomorrow Prompt (one-tap, localStorage only — see const above) */}
           {continuePrompt === "shown" && (
             <div style={{ background: "#eff6ff", border: "1px solid #93c5fd", borderRadius: 10, padding: 12, marginBottom: 8, textAlign: "center" }}>
-              <div style={{ fontSize: 12, fontWeight: 700, color: "#1e40af", marginBottom: 4 }}>🌙 {t.continueTomorrowTitle}</div>
-              <div style={{ fontSize: 11, color: "#3b5c8f", lineHeight: 1.5, marginBottom: 10 }}>{t.continueTomorrowBody}</div>
+              <div style={{ fontSize: "0.75rem", fontWeight: 700, color: "#1e40af", marginBottom: 4 }}>🌙 {t.continueTomorrowTitle}</div>
+              <div style={{ fontSize: "0.6875rem", color: "#3b5c8f", lineHeight: 1.5, marginBottom: 10 }}>{t.continueTomorrowBody}</div>
               <button onClick={() => chooseContinuePrompt(true)}
-                style={{ padding: "8px 16px", borderRadius: 8, border: "none", background: "#2563eb", color: "#fff", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>
+                style={{ padding: "8px 16px", borderRadius: 8, border: "none", background: "#2563eb", color: "#fff", fontSize: "0.75rem", fontWeight: 700, cursor: "pointer" }}>
                 🔔 {t.continueTomorrowCta}
               </button>
               <div>
                 <button onClick={() => chooseContinuePrompt(false)}
-                  style={{ marginTop: 6, padding: "4px 8px", border: "none", background: "transparent", color: "#93a5c9", fontSize: 10, cursor: "pointer", textDecoration: "underline" }}>
+                  style={{ marginTop: 6, padding: "4px 8px", border: "none", background: "transparent", color: "#93a5c9", fontSize: "0.625rem", cursor: "pointer", textDecoration: "underline" }}>
                   {t.continueTomorrowDismiss}
                 </button>
               </div>
             </div>
           )}
           {continuePrompt === "confirmed" && (
-            <div style={{ background: "#ecfdf5", border: "1px solid #6ee7b7", borderRadius: 10, padding: 10, marginBottom: 8, textAlign: "center", fontSize: 12, color: "#065f46", fontWeight: 600 }}>
+            <div style={{ background: "#ecfdf5", border: "1px solid #6ee7b7", borderRadius: 10, padding: 10, marginBottom: 8, textAlign: "center", fontSize: "0.75rem", color: "#065f46", fontWeight: 600 }}>
               ✅ {t.continueTomorrowConfirmed}
             </div>
           )}
 
           {/* Disclaimer */}
-          <div style={{ fontSize: 9, color: "#9ca3af", textAlign: "center", padding: "2px 4px 10px", lineHeight: 1.5 }}>
+          <div style={{ fontSize: "0.5625rem", color: "#9ca3af", textAlign: "center", padding: "2px 4px 10px", lineHeight: 1.5 }}>
             ℹ️ {t.disclaimer}
           </div>
 
@@ -154,25 +154,25 @@ export default function Learn({ t, lang, lessons, completedLessons, currentLesso
           <div style={{ display: "flex", gap: 8 }}>
             {currentLesson > 0 && (
               <button onClick={() => { setCurrentLesson(currentLesson - 1); scrollTop(); }}
-                style={{ flex: 1, padding: "10px 12px", borderRadius: 10, border: "1px solid #d1d5db", background: "#fff", color: "#374151", fontSize: 12, fontWeight: 600, cursor: "pointer" }}>
+                style={{ flex: 1, padding: "10px 12px", borderRadius: 10, border: "1px solid #d1d5db", background: "#fff", color: "#374151", fontSize: "0.75rem", fontWeight: 600, cursor: "pointer" }}>
                 ← {t.prevLesson}
               </button>
             )}
             {!completedLessons.includes(lesson.id) && (
               <button onClick={handleMarkComplete}
-                style={{ flex: 2, padding: "10px 12px", borderRadius: 10, border: "none", background: lesson.color, color: "#fff", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>
+                style={{ flex: 2, padding: "10px 12px", borderRadius: 10, border: "none", background: lesson.color, color: "#fff", fontSize: "0.75rem", fontWeight: 700, cursor: "pointer" }}>
                 ✅ {t.markComplete}
               </button>
             )}
             {currentLesson < lessons.length - 1 && isLessonUnlocked(currentLesson + 1) && (
               <button onClick={() => { setCurrentLesson(currentLesson + 1); scrollTop(); }}
-                style={{ flex: 1, padding: "10px 12px", borderRadius: 10, border: "none", background: "#2563eb", color: "#fff", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>
+                style={{ flex: 1, padding: "10px 12px", borderRadius: 10, border: "none", background: "#2563eb", color: "#fff", fontSize: "0.75rem", fontWeight: 700, cursor: "pointer" }}>
                 {t.nextLesson} →
               </button>
             )}
             {currentLesson < lessons.length - 1 && !isLessonUnlocked(currentLesson + 1) && completedLessons.includes(lesson.id) && (
               <button onClick={() => { setCurrentLesson(currentLesson + 1); scrollTop(); }}
-                style={{ flex: 1, padding: "10px 12px", borderRadius: 10, border: "none", background: "#2563eb", color: "#fff", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>
+                style={{ flex: 1, padding: "10px 12px", borderRadius: 10, border: "none", background: "#2563eb", color: "#fff", fontSize: "0.75rem", fontWeight: 700, cursor: "pointer" }}>
                 {t.nextLesson} →
               </button>
             )}
@@ -180,7 +180,7 @@ export default function Learn({ t, lang, lessons, completedLessons, currentLesso
         </div>
       ) : (
         <div style={{ textAlign: "center", padding: 30, color: "#9ca3af" }}>
-          <div style={{ fontSize: 40, marginBottom: 8 }}>🔒</div>
+          <div style={{ fontSize: "2.5rem", marginBottom: 8 }}>🔒</div>
           <p>{t.locked}</p>
         </div>
       )}

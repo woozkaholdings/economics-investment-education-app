@@ -43,6 +43,7 @@ export default {
     qeNarrative: "美联储购债 → 资金流入 → 收益率↓ → 股票↑↑ → 美元↓",
     qtNarrative: "美联储停止购债 → 资金流出 → 收益率↑ → 股票↓ → 美元↑",
     aboutTabLabel: "关于", aboutTitle: "关于本应用",
+    fontSizeLabel: "字体大小",
     aboutBody: "《经济周期》利用历史规律和经济学家、投资者广泛传播的原则，讲解经济周期、利率和市场阶段的运作方式。这只是一个教育工具——不收集账户或个人数据，其中任何内容都不构成个性化的投资、法律或税务建议。",
     firstLaunchTitle: "欢迎使用经济周期", firstLaunchOk: "知道了，开始学习",
 };

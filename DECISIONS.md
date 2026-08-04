@@ -53,9 +53,10 @@ Add a new entry when a run makes a choice future work should be able to look up 
 - **Status:** closed as the *current* approach; known gap flagged below.
 - **What was decided:** every piece of per-user state added so far — the disclaimer-seen flag
   (`ecycles_seen_disclaimer`), the streak counter (`ecycles_streak`), the continue-tomorrow
-  opt-in (`ecycles_continue_pref`), and now `completedLessons` itself (`ecycles_completed_lessons`,
-  added 2026-08-04) — is stored client-side in `localStorage`, keyed by a fixed string, with no
-  backend, no account system, and no sync across devices.
+  opt-in (`ecycles_continue_pref`), `completedLessons` itself (`ecycles_completed_lessons`,
+  added 2026-08-04), and the text-size preference (`ecycles_font_scale`, added 2026-08-04) — is
+  stored client-side in `localStorage`, keyed by a fixed string, with no backend, no account
+  system, and no sync across devices.
 - **Why:** the launch plan's own stack (Supabase-backed accounts) doesn't land until later in the
   roadmap, and none of these features need cross-device sync to be useful — they're single-device
   "did you do something today" signals. Building them against `localStorage` now means zero backend

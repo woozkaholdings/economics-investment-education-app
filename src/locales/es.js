@@ -43,6 +43,7 @@ export default {
     qeNarrative: "El Fed COMPRA bonos → entra dinero → rendimientos ↓ → acciones ↑↑ → USD ↓",
     qtNarrative: "El Fed DEJA de comprar → sale dinero → rendimientos ↑ → acciones ↓ → USD ↑",
     aboutTabLabel: "Acerca de", aboutTitle: "Acerca de esta App",
+    fontSizeLabel: "Tamaño de texto",
     aboutBody: "Ciclos Económicos enseña cómo funcionan los ciclos económicos, las tasas de interés y las fases del mercado, usando patrones históricos y principios popularizados por economistas e inversores. Es solo una herramienta educativa — no recopila cuentas ni datos personales, y nada en ella es asesoría de inversión, legal o fiscal personalizada.",
     firstLaunchTitle: "Bienvenido a Ciclos Económicos", firstLaunchOk: "Entendido, empecemos",
 };

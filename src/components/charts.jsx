@@ -2,14 +2,14 @@ export function Bar({ data, title, colors, h = 140 }) {
   const mx = Math.max(...data.map(d => Math.abs(d.v)));
   return (
     <div style={{ background: "#fff", border: "1px solid #e5e7eb", borderRadius: 8, padding: 10, marginBottom: 8 }}>
-      {title && <div style={{ fontSize: 11, fontWeight: 700, marginBottom: 6 }}>{title}</div>}
+      {title && <div style={{ fontSize: "0.6875rem", fontWeight: 700, marginBottom: 6 }}>{title}</div>}
       <div style={{ display: "flex", alignItems: "flex-end", gap: 2, height: h }}>
         {data.map((d, i) => {
           const pct = Math.abs(d.v) / mx * 100;
           return (<div key={i} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "flex-end", height: "100%" }}>
-            <div style={{ fontSize: 8, fontWeight: 700, marginBottom: 2, color: colors[i] }}>{typeof d.v === 'number' && d.v > 1 ? d.v.toFixed(1) : d.v}</div>
+            <div style={{ fontSize: "0.5rem", fontWeight: 700, marginBottom: 2, color: colors[i] }}>{typeof d.v === 'number' && d.v > 1 ? d.v.toFixed(1) : d.v}</div>
             <div style={{ width: "80%", height: `${pct}%`, background: colors[i], borderRadius: 3, minHeight: 2, transition: "height 0.5s" }} />
-            <div style={{ fontSize: 7, color: "#6b7280", marginTop: 2, textAlign: "center", whiteSpace: "pre-line", lineHeight: 1.2 }}>{d.l}</div>
+            <div style={{ fontSize: "0.4375rem", color: "#6b7280", marginTop: 2, textAlign: "center", whiteSpace: "pre-line", lineHeight: 1.2 }}>{d.l}</div>
           </div>);
         })}
       </div>
@@ -33,7 +33,7 @@ export function YieldCurve({ type, label }) {
         <text x="115" y="69" fill="#9ca3af" fontSize="6">30Y</text>
         <path d={pts[type]} fill="none" stroke={cols[type]} strokeWidth="2.5" strokeLinecap="round" />
       </svg>
-      <div style={{ fontSize: 9, fontWeight: 700, color: textCols[type], marginTop: 2 }}>{label}</div>
+      <div style={{ fontSize: "0.5625rem", fontWeight: 700, color: textCols[type], marginTop: 2 }}>{label}</div>
     </div>
   );
 }
