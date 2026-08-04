@@ -46,4 +46,12 @@ export default {
     fontSizeLabel: "文字サイズ",
     aboutBody: "経済サイクルは、経済学者や投資家によって広く知られている原則と歴史的パターンを用いて、経済サイクル・金利・市場の局面がどのように機能するかを教える教育ツールです。アカウントや個人データは収集せず、内容はいずれも個別の投資・法律・税務アドバイスではありません。",
     firstLaunchTitle: "経済サイクルへようこそ", firstLaunchOk: "了解、始めよう",
+    tabPractice: "練習",
+    tabReference: "資料",
+    backLabel: "戻る",
+    themeLabel: "外観",
+    themeSystem: "システム",
+    themeLight: "ライト",
+    themeDark: "ダーク",
+    lessonProgressTemplate: "{total}レッスン中{done}完了",
 };

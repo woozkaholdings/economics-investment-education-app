@@ -13,6 +13,7 @@ import { lessons } from "../src/content/lessons.js";
 import { quizData } from "../src/content/quizData.js";
 import { glossary } from "../src/content/glossary.js";
 import { kidsContent } from "../src/content/kidsContent.js";
+import * as marketsContent from "../src/content/markets.js";
 
 const LANGS = ["en", "es", "ja", "ko", "zh"];
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
@@ -178,18 +179,26 @@ function checkNonEmptyString(value, path) {
   }
 }
 
-// 6. every `t.someKey` reference in the app component and its extracted
-//    src/components/*.jsx pieces resolves to a real TR.en key (t is the
-//    `const t = TR[lang]` translation object, passed down as a prop after
-//    the App-into-per-tab-components split).
+// 6. every `t.someKey` reference anywhere under src/ resolves to a real TR.en
+//    key (`t` is the `TR[lang]` translation object, passed down as a prop).
+//    Walks the tree rather than listing directories, so moving or adding a
+//    screen can't silently shrink this check's coverage — which is exactly
+//    what happened while components were being extracted one at a time.
+//
+//    Note this scans src/ only. The `economic-cycles-v*.jsx` files at the repo
+//    root are reference material, not part of the app (LAUNCH_PLAN.md §0), and
+//    are deliberately excluded.
 {
-  const componentsDir = join(ROOT, "src", "components");
-  const jsxFiles = [
-    join(ROOT, "economic-cycles-v5.jsx"),
-    ...readdirSync(componentsDir)
-      .filter((f) => f.endsWith(".jsx"))
-      .map((f) => join(componentsDir, f)),
-  ];
+  const walk = (dir) =>
+    readdirSync(dir, { withFileTypes: true }).flatMap((e) => {
+      const full = join(dir, e.name);
+      if (e.isDirectory()) return walk(full);
+      return e.isFile() && e.name.endsWith(".jsx") ? [full] : [];
+    });
+
+  const jsxFiles = walk(join(ROOT, "src"));
+  if (jsxFiles.length === 0) fail("no .jsx files found under src/ — the t.key scan covered nothing");
+
   const defined = new Set(Object.keys(TR.en));
   for (const jsxPath of jsxFiles) {
     const src = readFileSync(jsxPath, "utf8");
@@ -197,6 +206,39 @@ function checkNonEmptyString(value, path) {
     const rel = jsxPath.slice(ROOT.length + 1);
     for (const key of used) {
       if (!defined.has(key)) fail(`${rel} references t.${key}, but "${key}" is not defined in TR.en`);
+    }
+  }
+}
+
+// 7. markets content: the same 5-language parity the other content modules get.
+{
+  for (const [name, value] of Object.entries(marketsContent)) {
+    const path = `markets.${name}`;
+    if (Array.isArray(value)) {
+      value.forEach((item, i) => {
+        // Entries are either a bare language map or an object containing them.
+        const maps = "en" in item ? { "": item } : item;
+        for (const [field, inner] of Object.entries(maps)) {
+          if (inner && typeof inner === "object" && "en" in inner) {
+            const p = field ? `${path}[${i}].${field}` : `${path}[${i}]`;
+            if (checkLangSet(inner, p)) {
+              for (const lang of LANGS) checkNonEmptyString(inner[lang], `${p}.${lang}`);
+            }
+          }
+        }
+      });
+    } else if (value && typeof value === "object" && "en" in value) {
+      if (checkLangSet(value, path)) {
+        for (const lang of LANGS) {
+          const v = value[lang];
+          if (Array.isArray(v)) {
+            if (v.length === 0) fail(`${path}.${lang}: expected a non-empty array`);
+            v.forEach((s, i) => checkNonEmptyString(s, `${path}.${lang}[${i}]`));
+          } else {
+            checkNonEmptyString(v, `${path}.${lang}`);
+          }
+        }
+      }
     }
   }
 }

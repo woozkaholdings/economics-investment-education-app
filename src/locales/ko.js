@@ -46,4 +46,12 @@ export default {
     fontSizeLabel: "글자 크기",
     aboutBody: "경제 순환은 경제학자와 투자자들이 널리 알린 원칙과 역사적 패턴을 바탕으로 경제 순환, 금리, 시장 단계가 어떻게 작동하는지 가르치는 교육용 앱입니다. 계정이나 개인 데이터를 수집하지 않으며, 이 앱의 어떤 내용도 개인 맞춤형 투자·법률·세무 조언이 아닙니다.",
     firstLaunchTitle: "경제 순환에 오신 것을 환영합니다", firstLaunchOk: "확인했어요, 시작할게요",
+    tabPractice: "연습",
+    tabReference: "자료",
+    backLabel: "뒤로",
+    themeLabel: "화면 모드",
+    themeSystem: "시스템",
+    themeLight: "밝게",
+    themeDark: "어둡게",
+    lessonProgressTemplate: "{total}개 중 {done}개 완료",
 };

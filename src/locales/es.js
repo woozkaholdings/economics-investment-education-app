@@ -46,4 +46,12 @@ export default {
     fontSizeLabel: "Tamaño de texto",
     aboutBody: "Ciclos Económicos enseña cómo funcionan los ciclos económicos, las tasas de interés y las fases del mercado, usando patrones históricos y principios popularizados por economistas e inversores. Es solo una herramienta educativa — no recopila cuentas ni datos personales, y nada en ella es asesoría de inversión, legal o fiscal personalizada.",
     firstLaunchTitle: "Bienvenido a Ciclos Económicos", firstLaunchOk: "Entendido, empecemos",
+    tabPractice: "Práctica",
+    tabReference: "Referencia",
+    backLabel: "Atrás",
+    themeLabel: "Apariencia",
+    themeSystem: "Sistema",
+    themeLight: "Claro",
+    themeDark: "Oscuro",
+    lessonProgressTemplate: "{done} de {total} lecciones",
 };

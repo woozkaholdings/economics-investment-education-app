@@ -53,7 +53,7 @@ the run log entries below for all four steps. **P2 is now open.**
 **P3 — polish, only after P1 and P2**
 
 8. ~~**[P3] `npm audit` triaged, not fixed.**~~ **DONE 2026-08-04** — see run log. Bumped `vite` `^5.4.11` → `^6.4.3` via `npm audit fix --force`, isolated to that one dependency (`@vitejs/plugin-react`/React untouched). `npm audit` now reports 0 vulnerabilities. Prune this slot at the next curation.
-9. **[P3] Dark mode** (plan §3.4). Now unblocked (the `App` split is done) — against the current inline styles it would just have to be redone.
+9. ~~**[P3] Dark mode** (plan §3.4).~~ **DONE 2026-08-04** — see run log. Implemented as light/dark/**system** via CSS custom properties in `src/index.css`, with a three-way selector in Reference → About persisted as `ecycles_theme_mode`. Prune this slot at the next curation.
 10. ~~**[P3] Accessibility pass**~~ **DONE 2026-08-04 — fully closed.** Screen-reader labels on tab buttons/quiz options/language picker, first-launch modal focus trap + Escape, `More` sub-nav + kids age-selector semantics, phase-color contrast, and (last remaining sub-part) **dynamic font-size support** are all done — see run log. Prune this slot at the next curation.
 11. ~~**[P3] Mobile responsiveness check**~~ **DONE 2026-08-04 — closed after two passes.** First pass (375px) found and fixed a real overflow risk (missing global `box-sizing: border-box`). Second pass swept 320px portrait, 320px at max font-scale (130%, stacking with item 10's feature), and 568×320 landscape, across every tab plus five interactive states (quiz answered, Kids age-selector, first-launch modal at short viewport height); found no further bugs. See run log for both passes. Re-check after any future layout work (e.g. item 9, dark mode). Prune this slot at the next curation.
 15. **[P3, process] Launch-readiness scorecard.** Added 2026-08-04, owner-requested (part of a broader "self-improving, self-refuting, autonomous launch" push). Add a new file (e.g. `LAUNCH_READINESS.md`) tracking the launch plan's actual gating criteria — blindspot-register status (§10.1–10.3, already all closed, but re-derive rather than trust this note), the Expo-vs-Vite decision (item 12, still HELD), pricing/roadmap milestones from the 16-week plan — so backlog work is visibly tied to "is this launchable," not just "is the backlog list shorter." Not yet built.
@@ -1953,3 +1953,76 @@ copy.
   not component-classed, so theming needs a real design before implementation) rather than being
   attempted in one sitting. Otherwise, process items 15/16 (launch-readiness scorecard; tightening
   the builder/critic feedback loop) are the remaining open P3 work.
+
+### 2026-08-04 — Rebuild: app authored from scratch, launch plan corrected (owner-directed)
+
+Not a scheduled dev-agent run — an interactive session driven directly by the project owner, who
+gave three instructions in sequence: stop building on `economic-cycles-v5.jsx`, fix the master
+launch plan so it stops pointing runs back at the prototypes, and ditch the prototypes' design and
+structure too. A fourth followed mid-work: the colour theme must follow the system setting and also
+be user-selectable.
+
+- **Root cause found.** `src/main.jsx` still imported `../economic-cycles-v5.jsx` as the live `App`.
+  Every run since the JSX split had been patching a prototype at the repo root. The launch plan was
+  the reason: v1 §2.2/§7.1/§8/§11 all instruct "migrate the v5 file", and runs had been following it
+  faithfully. The plan also contradicted itself and the project's own decisions — its §1 credited
+  Ray Dalio by name while its §10.2 says to remove exactly that, and §2.2 specified JSON content
+  after `DECISIONS.md` had closed that question in favour of `.js` modules.
+- **`LAUNCH_PLAN.md` added** as the authoritative plan (v2), superseding the `.docx`. The `.docx` is
+  **not** modified — it stays as the historical original; it is a binary the owner cannot diff, so
+  overwriting it would have destroyed the record rather than corrected it. v2 carries a §0 table of
+  what changed and why, and a standing rule that `v5.jsx`/`v6.jsx` are reference material for
+  *requirements* only — never imported, extended, or wired into the build. Also corrected: Dalio
+  framing removed, `.js`-not-JSON recorded, Markets §2.3 restated as a standing rule rather than a
+  defect, Expo-vs-Vite marked as the open owner decision it actually is, and a new §10.7 blindspot
+  ("plan/practice drift") naming the failure mode that caused all of this.
+- **App rewritten under `src/`.** New `theme.js` (design tokens), `lib/storage.js` +
+  `lib/useAppState.js` (all persisted state in one hook), `components/` (`ui.jsx` primitives,
+  `Icon.jsx` line icons, `charts.jsx`), `screens/` (`Learn`, `LessonReader`, `Practice`,
+  `Reference` + four reference panels). `main.jsx` now imports `./App.jsx`. The four v5-derived
+  components and `utils/fontScale.js` were deleted. **No content was lost** — `content/` and
+  `locales/` are unchanged data and remain the real asset.
+- **Structure redesigned** (plan §3.1, rewritten). The prototype's four tabs had the lesson list on
+  two of them and filed the quiz and glossary under a generic "More". Now three destinations —
+  **Learn** (the path), **Practice** (quiz), **Reference** (glossary · market signals · parent guide
+  · settings) — with a lesson as a *pushed full-screen reader*, not a tab.
+- **Visual system redesigned** (plan §3.1.1, new). 16px base type instead of 10–13px, one accent
+  colour instead of a per-lesson rainbow, whitespace instead of stacked tinted boxes, line icons
+  instead of emoji-as-controls. Emoji remain only where they are content (a lesson's own symbol).
+- **Light/dark/system theming** (closes P3 item 9). Colour moved out of JS into CSS custom
+  properties in `index.css`, because JS constants cannot respond to `prefers-color-scheme`. Resolution
+  order is `:root` light → `@media (prefers-color-scheme: dark)` → explicit `[data-theme]` override,
+  so "System" genuinely follows the OS and Light/Dark genuinely beat it. Persisted as
+  `ecycles_theme_mode`. Charts re-colour automatically because they read the same variables.
+- **Two real bugs fixed in passing**, both found by the work rather than assumed: the old
+  `#9ca3af` muted text measured **2.85:1** (failing AA) and is now `#5b6472`; and the Markets asset
+  table and six rate principles were **English-only hardcoded JSX** — now translated into all five
+  languages in a new `content/markets.js`. Principle 5 was also reworded from the imperative "Don't
+  fight the Fed" to a descriptive historical statement, since a directive sits badly against §10.1.
+- **Adversarial self-check**: (1) *Blindspot register* — grepped for Dalio (zero hits); disclaimer
+  renders on Learn, the reader, Practice, Market signals and Settings plus the first-run notice;
+  kids material is parent-facing and now explicitly named "Parent guide"; no date or live-looking
+  figure was introduced (the balance-sheet bars are labelled by era, not year). (2) *DECISIONS.md* —
+  content stayed `.js`; state stayed localStorage-only; no Expo migration. (3) *Redoing done work* —
+  this deliberately replaces earlier work, at the owner's explicit instruction, and the log says so
+  rather than presenting it as new ground. (4) *Verification claims* — every number below is a
+  command output or a DOM measurement quoted verbatim.
+- **Verified**: `npm test` → `PASS: 0 failure(s), 0 warning(s)`; `npm run build` → exit 0, 53 modules,
+  300.39 kB / 112.11 kB gzip. The harness caught a genuine mistake mid-rebuild — local variables
+  named `t` in `ui.jsx` shadowed the project-wide translation identifier; renamed rather than
+  loosening the check. `scripts/check-data.mjs` now walks `src/**/*.jsx` (instead of a hardcoded file
+  list that named `economic-cycles-v5.jsx`) and validates `content/markets.js` for 5-language parity.
+  Browser-verified at 375×812 on the built output: first-run notice and routing into lesson 1,
+  lesson completion persisting to `ecycles_completed_lessons`, next-lesson unlocking, quiz answer →
+  explanation → advance, all three tabs free of horizontal overflow, zero console errors, system
+  dark mode applying with no user action, and forced Light beating a dark system
+  (`--surface-canvas` resolved to `#fbfbfd` with `prefers-color-scheme: dark` active).
+- **Note on one false alarm**: a mid-verification reading suggested forcing Light had failed
+  (`body` background still dark). It was a sampling artifact — `index.css` transitions
+  `background-color` over 0.2s and the value was read mid-transition. Confirmed correct by reading
+  the resolved custom property instead. Recorded because the first reading looked like a real bug
+  and a less careful check would have "fixed" something that was never broken.
+- **Next run should pick**: P3 item 9 (dark mode) is now **closed**. Remaining open: item 11's
+  deeper responsive pass against the new layout, process items 15/16 (launch-readiness scorecard;
+  builder/critic loop), and the still-HELD platform decision (§2.1) which now gates store release.
+  **Read `LAUNCH_PLAN.md` before picking anything** — it, not the `.docx`, is now authoritative.

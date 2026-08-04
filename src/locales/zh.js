@@ -46,4 +46,12 @@ export default {
     fontSizeLabel: "字体大小",
     aboutBody: "《经济周期》利用历史规律和经济学家、投资者广泛传播的原则，讲解经济周期、利率和市场阶段的运作方式。这只是一个教育工具——不收集账户或个人数据，其中任何内容都不构成个性化的投资、法律或税务建议。",
     firstLaunchTitle: "欢迎使用经济周期", firstLaunchOk: "知道了，开始学习",
+    tabPractice: "练习",
+    tabReference: "参考",
+    backLabel: "返回",
+    themeLabel: "外观",
+    themeSystem: "跟随系统",
+    themeLight: "浅色",
+    themeDark: "深色",
+    lessonProgressTemplate: "{total} 课中已完成 {done} 课",
 };

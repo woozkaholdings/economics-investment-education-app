@@ -51,4 +51,12 @@ export default {
     fontSizeLabel: "Text Size",
     aboutBody: "Economic Cycles teaches how economic cycles, interest rates, and market phases work, using historical patterns and principles popularized by economists and investors. It is an educational tool only — it doesn't collect accounts or personal data, and nothing in it is personalized investment, legal, or tax advice.",
     firstLaunchTitle: "Welcome to Economic Cycles", firstLaunchOk: "Got it, let's start",
+    tabPractice: "Practice",
+    tabReference: "Reference",
+    backLabel: "Back",
+    themeLabel: "Appearance",
+    themeSystem: "System",
+    themeLight: "Light",
+    themeDark: "Dark",
+    lessonProgressTemplate: "{done} of {total} lessons",
 };
