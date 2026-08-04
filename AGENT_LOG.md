@@ -52,7 +52,7 @@ the run log entries below for all four steps. **P2 is now open.**
 
 **P3 — polish, only after P1 and P2**
 
-8. **[P3] `npm audit` triaged, not fixed — see run log 2026-08-04.** `npm audit` (not just `npm install`'s summary line) now shows the actual finding: `esbuild <=0.24.2` (moderate, GHSA-67mh-4wv8-2f99 — "esbuild enables any website to send any requests to the development server and read the response"), pulled in transitively via `vite <=6.4.2`. This is a **dev-server-only** vulnerability — it affects `npm run dev`, not the built `dist/` output users receive — so it is not user-facing risk. The only fix path is `npm audit fix --force`, which bumps to `vite@6.4.3` (a major-version jump from the currently-pinned Vite 5, breaking change, untested against this project). **Still do not run `--force`** — that upgrade is a scoped task of its own (verify the build + dev server after the bump), not a one-line audit fix. Next step if picked up: try the Vite 6 bump in isolation and verify `npm run build`/`npm test` before committing.
+8. ~~**[P3] `npm audit` triaged, not fixed.**~~ **DONE 2026-08-04** — see run log. Bumped `vite` `^5.4.11` → `^6.4.3` via `npm audit fix --force`, isolated to that one dependency (`@vitejs/plugin-react`/React untouched). `npm audit` now reports 0 vulnerabilities. Prune this slot at the next curation.
 9. **[P3] Dark mode** (plan §3.4). Now unblocked (the `App` split is done) — against the current inline styles it would just have to be redone.
 10. ~~**[P3] Accessibility pass**~~ **DONE 2026-08-04 — fully closed.** Screen-reader labels on tab buttons/quiz options/language picker, first-launch modal focus trap + Escape, `More` sub-nav + kids age-selector semantics, phase-color contrast, and (last remaining sub-part) **dynamic font-size support** are all done — see run log. Prune this slot at the next curation.
 11. ~~**[P3] Mobile responsiveness check** at 375px~~ **DONE 2026-08-04 (first pass)** — see run log. Found and fixed a real overflow risk (missing global `box-sizing: border-box`); browser-verified no horizontal scroll on Home/Learn/Markets/More/Quiz/Glossary at 375px. Re-check after any future layout work (e.g. item 9, dark mode) since this pass didn't audit every possible viewport width or orientation. Prune this slot at the next curation.
@@ -72,6 +72,10 @@ the run log entries below for all four steps. **P2 is now open.**
 
 **Completed and pruned**
 
+- **`npm audit` vulnerabilities fixed (P3 item 8)** — done 2026-08-04, see run log. `vite` bumped
+  `^5.4.11` → `^6.4.3` via `npm audit fix --force`, run in isolation with a full build/test/browser
+  reverify before committing. `npm audit` now reports 0 vulnerabilities (previously 1 moderate,
+  1 high, all dev-server-only). `@vitejs/plugin-react` and React versions untouched.
 - **Mobile responsiveness check at 375px (P3 item 11, first pass)** — done 2026-08-04, see run log.
   Added a global `box-sizing: border-box` reset (`src/index.css`, imported from `src/main.jsx`) —
   the app had no global stylesheet before, so every `width: "100%"` element with its own padding
@@ -1839,3 +1843,53 @@ pick" line named dynamic font-size support first among the open P3 items, so pic
   rather than attempted as one run. A smaller, more focused alternative: a second, deeper mobile-
   responsiveness pass (320px width, landscape, mid-interaction states) building on this run's
   box-sizing fix, or the Vite 6 bump from the audit triage (item 8, isolated verification task).
+
+### 2026-08-04 — Vite 6 bump, isolated (P3 item 8, `npm audit` vulnerabilities fixed)
+
+- **Orientation**: `git status` was clean except the pre-existing untracked `economic-cycles-v6.jsx`.
+  Re-read the backlog: items 10 (accessibility/dynamic font-size) and 11 (mobile responsiveness,
+  first pass) had already been completed and committed (`de081f9`, `d3dd82e`) by a run that happened
+  between this session's own prior entry and now — read both run-log entries in full before picking
+  new work so as not to duplicate them. With those closed, item 8 (the Vite 6 bump the audit triage
+  entry explicitly scoped out as "a task of its own") was the most concretely scoped remaining P3
+  item — isolated to one dependency, objectively verifiable (`npm audit` count, build success),
+  versus item 9 (dark mode) which the prior run's own note said needs to be split into sub-steps
+  before attempting.
+- **What was done**: ran `npm audit` first to confirm the exact finding was unchanged from the
+  triage entry (`esbuild <=0.24.2` moderate + a `vite <=6.4.2` high covering three more advisories —
+  path traversal in optimized-deps `.map` handling, `launch-editor` NTLMv2 hash disclosure on
+  Windows, `server.fs.deny` bypass on Windows alternate paths — all dev-server-only, none affecting
+  the built `dist/` output). Ran `npm audit fix --force` in isolation. Confirmed via `git diff
+  package.json` that only `vite` changed (`^5.4.11` → `^6.4.3`); `@vitejs/plugin-react` and both
+  React packages were untouched. `npm audit` now reports 0 vulnerabilities.
+- **Verified**: `npm test` → `PASS: 0 failure(s), 0 warning(s)` (unaffected, no content touched).
+  `npm run build` → `EXIT_CODE=0`, `✓ 44 modules transformed` (down from 48 — Vite 6/Rollup's own
+  module-graph accounting changed, not a sign of missing content), `dist/assets/index-*.js`
+  292.77 kB / **107.34 kB gzip** (up from the prior build's 254 kB raw / 106.28 kB gzip — investigated
+  the ~15% raw-size jump before accepting it: gzip size, the actual over-the-wire cost, moved by
+  only ~1%, and `grep`s for `"development"` and `sourceMappingURL` in the built JS both returned
+  zero hits while `"Minified React error"` returned one hit, confirming this is still a real
+  production-minified build, not an accidental dev bundle — the raw-size delta is just Vite 6's
+  esbuild/rollup producing less-compact-but-more-repetitive (hence better-gzipping) minified output).
+  Then did a real browser check via the static-build-plus-python-server technique: served the
+  Vite-6-built `dist/` over `python3 -m http.server`, opened it with the browser tool's `url` action,
+  confirmed zero console errors, and clicked through Home → Markets → More → About, including
+  exercising the item-10 "Text Size" control (clicked the largest "Aa" option and confirmed the
+  whole page's text visibly scaled up) — the newest, most build-tooling-sensitive feature in the app,
+  specifically chosen as the check most likely to catch a Vite-6-related regression.
+- **Adversarial self-check**: (1) Blindspot register — `grep -n "Dalio\|dalio" economic-cycles-v5.jsx
+  src/components/*.jsx` returned nothing; this change touches zero content files, only
+  `package.json`/`package-lock.json`. (2) `DECISIONS.md` — the open Expo-vs-Vite entry is about
+  **framework** choice (Expo/React Native vs. Vite/web), not a specific Vite version pin; bumping
+  Vite's major version within the already-chosen web-only approach doesn't touch that decision.
+  (3) Already-done backlog item — item 8 was still open (marked "triaged, not fixed") going into this
+  run, and items 10/11 (confirmed done by the other run) were left untouched, not redone.
+  (4) Own verification claim — every number/command above (`npm audit` count, `npm test`,
+  `npm run build`, the two `grep`s, the browser click-through) is exactly what was run and is
+  reproducible by anyone with `scripts/bootstrap-node.sh`. Nothing contradicted; proceeding as a
+  genuine, isolated dependency fix.
+- **Next run should pick**: item 9 (dark mode) remains the largest open P3 item and, per the prior
+  run's note, likely needs its own sub-step breakdown before being attempted in one sitting. Smaller
+  alternatives if a quicker pick is preferred: a second, deeper mobile-responsiveness pass (320px,
+  landscape, mid-interaction states) building on item 11's first pass, or process items 15/16
+  (launch-readiness scorecard; tightening the builder/critic feedback loop).
