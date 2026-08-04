@@ -46,7 +46,7 @@ the run log entries below for all four steps. **P2 is now open.**
    - ~~6e. **One-tap "continue tomorrow" prompt** at lesson end.~~ **DONE 2026-08-03** — see run log. Records opt-in/opt-out locally only; does not schedule real notifications (still gated on item 12's Expo decision).
 2. ~~**[P2] Clean up unused translation keys**~~ **DONE 2026-08-03** — see run log. Deleted (didn't build the feature): a `t.`-usage grep across `economic-cycles-v5.jsx` and every `src/components/*.jsx` confirmed all 13 keys had zero call sites, and 10.1 (investment-advice adjacency) is already closed with a "never personalized" framing that a new "Best Investments"/"Avoid" phase-language feature would sit awkwardly next to — deleting was the lower-risk pick. Prune this slot at the next curation.
 3. ~~**[P2] Refresh `README.md`.**~~ **DONE 2026-08-02** — see the run log entry below and the completed list. Prune this slot at the next curation.
-4. **[P2] Add `DECISIONS.md`** — launch plan Move 1 asks for a decision log and this file is a *work* log, not serving that purpose. Small: record the Expo-vs-Vite choice and its status, the `.js`-not-JSON content format and why, and the localStorage-only progress approach. One short run.
+~~4. **[P2] Add `DECISIONS.md`**~~ **DONE 2026-08-03** — see run log. Prune this slot at the next curation.
 5. ~~**[P2] Broaden `scripts/check-data.mjs`'s `t.key` usage scan beyond `economic-cycles-v5.jsx`.**~~ **DONE 2026-08-02** — see the run log entry below and the completed list. The scan now also globs `src/components/*.jsx`; verified by deliberately injecting a dangling `t.` reference into `More.jsx` and confirming the harness fails with the correct file path, then reverting. Prune this slot at the next curation.
 6. **[P2, flagged for owner/weekly-review prioritization — not yet a curated numbered slot] `completedLessons` doesn't persist across reloads.** First noted 2026-08-03 (6c's run log entry) and flagged again 2026-08-03 (6d's entry) as arguably higher-value than finishing the 6a–6e sequence, since the streak counter (6d, now shipped) and the continue-tomorrow prompt (6e, now shipped) both persist locally while `App`'s core `completedLessons` state does not — a returning user can reload and see "0/12 lessons" next to a multi-day streak and a "see you tomorrow" reminder they already opted into, which reads as broken. Now that the full first-session-flow item is closed, this is arguably the most user-visible remaining gap. Deliberately **not started** by this run: it touches `App`'s core state shape and every component reading `completedLessons`/`isLessonUnlocked` (`Home`, `Learn`, `More`'s progress display, the header progress bar) — larger and riskier than a single-run item, and the standing sequencing rule ("do not start a P2/P3 item while a P1 is open... work P1 items in the numbered order — the ordering is deliberate, not a menu") means a dev-agent run shouldn't unilaterally reprioritize ahead of the curated list. Surfacing here explicitly so the next weekly review can decide whether to give it a numbered slot.
 
@@ -64,6 +64,9 @@ the run log entries below for all four steps. **P2 is now open.**
 
 **Completed and pruned**
 
+- **`DECISIONS.md` added** — done 2026-08-03, see run log. Three entries: Expo-vs-Vite (open,
+  owner decision), `.js`-not-JSON content modules (closed), localStorage-only progress/personalization
+  state (closed, with the `completedLessons` persistence gap cross-referenced from item 6).
 - **Unused translation keys deleted** — done 2026-08-03, see run log. `indicators`, `bestInvest`,
   `avoidInvest`, `psychology`, `why`, `expansion`, `peak`, `contraction`, `trough`, `expDesc`,
   `peakDesc`, `contDesc`, `troughDesc` had zero `t.` call sites in `economic-cycles-v5.jsx` or any
@@ -1267,3 +1270,50 @@ persistence is flagged but not yet a numbered slot) and picked the next open num
   most user-visible issue and a good candidate for a run specifically budgeted for it, per the
   standing note that a dev-agent run shouldn't unilaterally jump the curated order onto an
   un-numbered item.
+
+### 2026-08-03 — Add `DECISIONS.md` (P2 backlog item 4)
+
+- `git status` was clean at the start of this run (no in-progress work from a prior stalled run to
+  recover, no user edits to avoid). Read this file's current state and the top of `git log` per the
+  usual orientation step.
+- Backlog item 4 ("Add `DECISIONS.md`") was the next open numbered P2 slot — items 1, 2, 3, and 5
+  are all done and pruned, so this followed the curated order without jumping ahead to the
+  un-numbered `completedLessons` item (6).
+- Added `DECISIONS.md` at the repo root with three entries, written to be looked up later rather
+  than re-derived from git history:
+  - **Expo vs. Vite (open)** — restates why the 2026-08-01 scaffold chose web-only Vite against the
+    launch plan's Expo/React Native call, the compounding port cost of further web-only UI work,
+    and that this stays an owner decision per backlog item 12 (HELD) — the dev agent does not
+    decide this on its own.
+  - **`.js`-not-JSON content modules (closed)** — why `src/locales/*.js` and `src/content/*.js` are
+    plain ES module exports rather than `.json`, and the trade-off (no non-JS tooling can edit them
+    directly).
+  - **localStorage-only progress/personalization state (closed, with a flagged gap)** — covers the
+    disclaimer-seen flag, streak counter, and continue-tomorrow opt-in, and explicitly cross-references
+    the `completedLessons` persistence gap (item 6) as the one piece of per-user state that does *not*
+    yet follow this pattern.
+  - To ground the Expo/Vite and content-format context accurately (rather than relying on memory of
+    earlier run-log summaries), re-extracted the launch plan's own text via the same
+    `zipfile`/regex approach the first run used, spot-checking §2.2's Expo rationale and confirming
+    the earlier AGENT_LOG paraphrase "launch plan Move 1" doesn't correspond to a literal section
+    heading in the document (no exact match for "Move 1" or "decision log" as a title) — the
+    intended source is most likely §9.1's "falsifiable claims" decision-log concept, which is a
+    different (product-metrics) kind of decision log than the engineering-choices one this backlog
+    item actually asked for. Wrote `DECISIONS.md` as the engineering/architecture log the item's own
+    description specified (Expo/Vite, content format, localStorage) rather than reinterpreting it as
+    §9.1's falsifiable-claims tracker, to avoid scope creep beyond a "small, one short run" item;
+    flagging the distinction here in case a future run or the weekly review wants a *second*,
+    separate falsifiable-claims log per §9.1.
+- **Verified**: this is a documentation-only change (one new untracked markdown file, no source
+  edited) — no build or test run was needed or would exercise anything new. Confirmed with
+  `git status` that only `DECISIONS.md` was untracked before staging, and reviewed the full file
+  content for accuracy against current source (`grep -rn localStorage src economic-cycles-v5.jsx`,
+  `wc -l economic-cycles-v5.jsx`, `ls src/content src/locales`) before writing it, rather than
+  trusting older run-log summaries at face value.
+- **Next run should pick**: no numbered P2 slot remains open (1–5 are all done/pruned). Per the
+  standing sequencing rule, the next run should raise this at/with the weekly-review process rather
+  than unilaterally start on the un-numbered item — but if a numbered slot is opened for it, backlog
+  item 6 (`completedLessons` not persisted across reloads) is the clear next candidate: it's the
+  most user-visible remaining gap, now also documented as the one exception in `DECISIONS.md`'s
+  localStorage-state entry. Otherwise, the P3 items (npm audit triage, dark mode, accessibility
+  pass, mobile responsiveness check) are the next work.
