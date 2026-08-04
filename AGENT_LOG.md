@@ -55,7 +55,7 @@ the run log entries below for all four steps. **P2 is now open.**
 8. **[P3] `npm audit` triaged, not fixed — see run log 2026-08-04.** `npm audit` (not just `npm install`'s summary line) now shows the actual finding: `esbuild <=0.24.2` (moderate, GHSA-67mh-4wv8-2f99 — "esbuild enables any website to send any requests to the development server and read the response"), pulled in transitively via `vite <=6.4.2`. This is a **dev-server-only** vulnerability — it affects `npm run dev`, not the built `dist/` output users receive — so it is not user-facing risk. The only fix path is `npm audit fix --force`, which bumps to `vite@6.4.3` (a major-version jump from the currently-pinned Vite 5, breaking change, untested against this project). **Still do not run `--force`** — that upgrade is a scoped task of its own (verify the build + dev server after the bump), not a one-line audit fix. Next step if picked up: try the Vite 6 bump in isolation and verify `npm run build`/`npm test` before committing.
 9. **[P3] Dark mode** (plan §3.4). Now unblocked (the `App` split is done) — against the current inline styles it would just have to be redone.
 10. ~~**[P3] Accessibility pass**~~ **DONE 2026-08-04 — fully closed.** Screen-reader labels on tab buttons/quiz options/language picker, first-launch modal focus trap + Escape, `More` sub-nav + kids age-selector semantics, phase-color contrast, and (last remaining sub-part) **dynamic font-size support** are all done — see run log. Prune this slot at the next curation.
-11. **[P3] Mobile responsiveness check** at 375px — the file is full of fixed `px` values and the product is mobile-first.
+11. ~~**[P3] Mobile responsiveness check** at 375px~~ **DONE 2026-08-04 (first pass)** — see run log. Found and fixed a real overflow risk (missing global `box-sizing: border-box`); browser-verified no horizontal scroll on Home/Learn/Markets/More/Quiz/Glossary at 375px. Re-check after any future layout work (e.g. item 9, dark mode) since this pass didn't audit every possible viewport width or orientation. Prune this slot at the next curation.
 15. **[P3, process] Launch-readiness scorecard.** Added 2026-08-04, owner-requested (part of a broader "self-improving, self-refuting, autonomous launch" push). Add a new file (e.g. `LAUNCH_READINESS.md`) tracking the launch plan's actual gating criteria — blindspot-register status (§10.1–10.3, already all closed, but re-derive rather than trust this note), the Expo-vs-Vite decision (item 12, still HELD), pricing/roadmap milestones from the 16-week plan — so backlog work is visibly tied to "is this launchable," not just "is the backlog list shorter." Not yet built.
 16. **[P3, process] Tighten the builder/critic feedback loop.** Added 2026-08-04, owner-requested (same push as item 15). Currently the weekly review (`economics-app-sunday-review`) is the only thing that catches a dev-agent run's mistaken "done" claims, and it runs at most once a week — real example: §10.1 was reported closed 2026-08-02 when it was about half done, and that wasn't caught until the same day's weekly review. Item 5 (the adversarial self-check, done 2026-08-04 — see the dev-agent's own `SKILL.md`, not this file) is the first piece of this; this item is the rest: e.g. having the dev-agent re-verify one *prior* run's "done" claim before starting new work, or shortening how long a wrong claim can sit uncaught. Not yet built — needs design before implementation, since it changes what the scheduled task does on every run.
 
@@ -72,6 +72,15 @@ the run log entries below for all four steps. **P2 is now open.**
 
 **Completed and pruned**
 
+- **Mobile responsiveness check at 375px (P3 item 11, first pass)** — done 2026-08-04, see run log.
+  Added a global `box-sizing: border-box` reset (`src/index.css`, imported from `src/main.jsx`) —
+  the app had no global stylesheet before, so every `width: "100%"` element with its own padding
+  (the first-launch modal's OK button, the Home CTA/skip buttons, quiz option buttons, chart SVGs)
+  was sized in the default `content-box` model, meaning padding added to the box's width instead of
+  being subtracted from it. Not visibly broken at the viewport widths spot-checked so far, but a
+  real latent overflow risk this fix removes outright. Verified with a live 375×812 browser check
+  (`document.documentElement.scrollWidth === window.innerWidth`, i.e. no horizontal scroll) across
+  Home, Learn (tab list + Lesson 1), Markets, More/Quiz, and More/Glossary.
 - **Dynamic font-size support (P3 item 10, last sub-part — the whole accessibility-pass item is
   now closed)** — done 2026-08-04, see run log. Every inline `fontSize` in the app (103 spots
   across `economic-cycles-v5.jsx` and all 5 `src/components/*.jsx` files) converted from a fixed
@@ -1774,3 +1783,59 @@ pick" line named dynamic font-size support first among the open P3 items, so pic
   a full pass), the Vite 6 bump from the audit triage (item 8), or process items 15/16
   (launch-readiness scorecard; tightening the builder/critic loop) if the owner wants those
   prioritized over further UI polish.
+
+### 2026-08-04 — Mobile responsiveness check at 375px, first pass (P3 item 11)
+
+- **Orientation**: `git status` showed only the pre-existing untracked `economic-cycles-v6.jsx`
+  (reference material, per the note above — left untouched) and no uncommitted tracked-file
+  changes, so this was a normal run, not a stalled-commit recovery.
+- **What I did**: audited the app's inline styles for likely 375px-viewport failure modes before
+  touching anything. `grep`-ing for `maxWidth`/`gridTemplateColumns`/fixed pixel `width`s found
+  nothing alarming (the app shell is already `maxWidth: 480` and centers itself, so it fills a
+  375px viewport with no horizontal slack), but a `boxSizing`/`box-sizing` grep across
+  `economic-cycles-v5.jsx` and every `src/components/*.jsx` file turned up exactly **one** local
+  `boxSizing: "border-box"` (the Glossary search input in `More.jsx`) — every other
+  `width: "100%"` element with its own padding (first-launch modal OK button, Home's "Start
+  Learning"/skip buttons, quiz option buttons in `More.jsx`, the bottom tab bar) was relying on the
+  browser default `content-box` model, where padding is added on top of the specified width rather
+  than eating into it. That's a real latent overflow risk, not yet visibly broken at the widths I
+  could screenshot, so I fixed it at the root instead of patching each element: added
+  `src/index.css` (a **new** file — no global stylesheet existed before) with a standard
+  `*, *::before, *::after { box-sizing: border-box; }` reset plus `body { margin: 0; }`, and
+  imported it from `src/main.jsx` (one new `import "./index.css";` line, nothing else in that file
+  touched).
+- **Verified**: `npm test` (the data-shape harness) passed with 0 failures/0 warnings — unaffected,
+  since this change touches no content. `npm run build` succeeded (48 modules transformed, new
+  `dist/assets/index-*.css` ~0.06 kB confirms the stylesheet made it into the bundle). Used the
+  static-build-plus-python-server technique (build → serve `dist/` over `python3 -m http.server` →
+  browser-preview tool's `url` action) to actually render the app, resized the browser viewport to
+  375×812, and checked `document.documentElement.scrollWidth === window.innerWidth` (both `375`,
+  i.e. zero horizontal overflow) plus a visual screenshot on **five** distinct screens: Home
+  (first-launch/default state), Markets (grids, yield-curve SVGs), More → Quiz, More → Glossary,
+  and Learn → Lesson 1 (the 12-circle lesson-number row, which wraps to two rows at this width
+  rather than overflowing). All five were clean — no clipped buttons, no stray horizontal
+  scrollbar, no overlapping text.
+- **Adversarial self-check**: (1) Blindspot register — this change touches no user-facing copy at
+  all (pure CSS, one import line), so it cannot reintroduce Dalio branding, investment-advice
+  language, child-facing kids framing, or a stale hardcoded date; confirmed by inspection, no grep
+  needed since no strings were touched. (2) `DECISIONS.md` — doesn't touch the Expo-vs-Vite,
+  `.js`-content-modules, or localStorage-only-state decisions; a global CSS reset bundled by the
+  existing Vite build is orthogonal to all three. (3) Already-done backlog item — item 11 was still
+  listed as open (not in "Completed and pruned") going into this run, and the box-sizing gap wasn't
+  mentioned in any prior run-log entry, so this isn't a redo. (4) Own verification claim — the
+  commands above (`npm test`, `npm run build`, the static-server browser check) are exactly what's
+  written here and are reproducible by anyone with `scripts/bootstrap-node.sh`; the pass/fail signal
+  (`scrollWidth === innerWidth`) is an objective DOM measurement, not a subjective "looks fine."
+  Nothing contradicted — treating this as a genuine, narrowly-scoped fix.
+- **Scope note**: this is a "first pass," not a full close-out of item 11 — I fixed the one concrete
+  bug the audit surfaced and spot-checked five screens at one width (375×812, portrait). I did not
+  check every interactive state (e.g. the quiz mid-question with an answer selected, the Kids
+  age-selector panels, the first-launch modal itself pre-dismissal) or other narrow widths (320px)
+  or landscape orientation. Left the backlog item open-but-marked-done-for-this-pass rather than
+  fully pruning it, so a future run (or the weekly review) knows a second pass is still reasonable.
+- **Next run should pick**: item 9 (dark mode) is the next largest open P3 item, but note it's
+  large enough (the whole app would need re-theming against its current inline-style approach) that
+  it likely needs to be split into sub-steps the way the JSX split and accessibility pass were,
+  rather than attempted as one run. A smaller, more focused alternative: a second, deeper mobile-
+  responsiveness pass (320px width, landscape, mid-interaction states) building on this run's
+  box-sizing fix, or the Vite 6 bump from the audit triage (item 8, isolated verification task).
