@@ -481,6 +481,211 @@ export const lessons = [
       ja: "あなたは今、ほとんどの人より経済の仕組みを理解しています。この3つのルールをどう活かしますか？",
     },
   },
+  {
+    id: 13, icon: "💵", color: "#0891b2",
+    title: { en: "Budgeting: Know Where Your Money Goes", es: "Presupuesto: Sabe A Dónde Va Tu Dinero", ko: "예산 관리: 돈이 어디로 가는지 알기", zh: "预算：知道钱花去了哪里", ja: "予算管理：お金の流れを知る" },
+    subtitle: { en: "The foundation everything else builds on", es: "La base sobre la que se construye todo lo demás", ko: "다른 모든 것의 토대가 되는 기초", zh: "一切的基础", ja: "他のすべての土台となるもの" },
+    sections: [
+      {
+        heading: { en: "Income vs. Expenses", es: "Ingresos vs. Gastos", ko: "소득 대 지출", zh: "收入与支出", ja: "収入と支出" },
+        body: {
+          en: "A budget is just a plan for your money: how much comes in (income) and how much goes out (expenses).\n\nFixed expenses (rent, a phone bill) stay about the same every month. Variable expenses (food, entertainment) change.\n\nA simple starting split many people use: about 50% needs, 30% wants, 20% savings or debt payoff. That's a rule of thumb, not a rule — adjust it to your own situation.",
+          es: "Un presupuesto es un plan para tu dinero: cuánto entra (ingresos) y cuánto sale (gastos).\n\nLos gastos fijos (alquiler, teléfono) se mantienen similares cada mes. Los variables (comida, ocio) cambian.\n\nUna división simple que muchos usan: 50% necesidades, 30% deseos, 20% ahorro o deudas. Es una guía, no una regla.",
+          ko: "예산은 단순히 돈에 대한 계획입니다: 얼마가 들어오고(소득) 얼마가 나가는지(지출).\n\n고정 지출(임대료, 통신비)은 매달 비슷합니다. 가변 지출(식비, 오락)은 달라집니다.\n\n많은 사람이 쓰는 간단한 출발점: 필요 50%, 원함 30%, 저축·부채상환 20%. 이는 경험 법칙일 뿐 절대적인 규칙은 아닙니다.",
+          zh: "预算就是给你的钱做一个计划：收入多少，支出多少。\n\n固定支出（房租、话费）每月大致相同。可变支出（食品、娱乐）会变化。\n\n许多人使用的简单起点：需求50%，欲望30%，储蓄或还债20%。这只是经验法则，不是硬性规定。",
+          ja: "予算とは、お金の計画のこと：いくら入り（収入）、いくら出るか（支出）。\n\n固定費（家賃、電話代）は毎月ほぼ同じ。変動費（食費、娯楽）は変わります。\n\n多くの人が使う簡単な出発点：必要50%、欲しいもの30%、貯蓄・借金返済20%。これは目安であり絶対的な規則ではありません。",
+        },
+      },
+      {
+        heading: { en: "Tracking Before Trimming", es: "Registrar Antes de Recortar", ko: "줄이기 전에 추적하기", zh: "先记录，后削减", ja: "減らす前に記録する" },
+        body: {
+          en: "Before cutting anything, it helps to simply track where money already goes for a month — every coffee, every subscription.\n\nYou can't manage what you don't measure. Small recurring costs add up: a $12 monthly subscription is $144 a year.\n\nMany people find one or two categories where spending drifted up without them noticing — that's usually the easiest place to start, not the hardest.",
+          es: "Antes de recortar, ayuda registrar durante un mes a dónde va tu dinero — cada café, cada suscripción.\n\nNo puedes gestionar lo que no mides. Los gastos pequeños recurrentes suman: una suscripción de $12 al mes son $144 al año.",
+          ko: "무언가를 줄이기 전에, 한 달 동안 돈이 실제로 어디로 가는지 추적해보는 것이 도움이 됩니다 — 커피 한 잔까지.\n\n측정하지 않으면 관리할 수 없습니다. 작은 반복 비용도 쌓입니다: 월 12달러 구독료는 연 144달러입니다.",
+          zh: "在削减任何支出之前，先花一个月记录钱实际花在哪里会很有帮助——每一杯咖啡、每一项订阅。\n\n不衡量就无法管理。小额的重复支出会累积：每月12美元的订阅一年就是144美元。",
+          ja: "何かを減らす前に、まず1ヶ月お金の実際の流れを記録すると役立ちます——コーヒー一杯まで。\n\n測らなければ管理できません。小さな定期支出も積み重なります：月12ドルの定期購入は年144ドルになります。",
+        },
+      },
+    ],
+    takeaway: {
+      en: "A budget isn't about restriction — it's about knowing where your money goes so you can decide, on purpose, where it should go instead.",
+      es: "Un presupuesto no es restricción — es saber a dónde va tu dinero para decidir, a propósito, a dónde debería ir.",
+      ko: "예산은 제약이 아니라, 돈이 어디로 가는지 알아서 어디로 가야 할지 스스로 정하는 것입니다.",
+      zh: "预算不是限制，而是知道钱去了哪里，从而主动决定它该去哪里。",
+      ja: "予算は制限ではなく、お金の流れを知り、意図的にどこへ向かわせるか決めること。",
+    },
+    thinkAbout: {
+      en: "Pick one week and write down every purchase, no matter how small. Most people are surprised by at least one category. What do you think yours will be?",
+      es: "Elige una semana y anota cada compra, sin importar cuán pequeña. La mayoría se sorprende de al menos una categoría.",
+      ko: "일주일을 정해 아무리 작아도 모든 구매를 적어보세요. 대부분 적어도 한 항목에서 놀랍니다. 당신은 어떤 항목일 것 같나요?",
+      zh: "选一周记录每一笔消费，无论多小。大多数人至少会对一个类别感到惊讶。你觉得会是哪一类？",
+      ja: "1週間を選び、どんなに小さくても全ての購入を記録してみましょう。多くの人が少なくとも一つのカテゴリーに驚きます。あなたはどれだと思いますか？",
+    },
+  },
+  {
+    id: 14, icon: "🐷", color: "#ca8a04",
+    title: { en: "Emergency Funds: Your Financial Shock Absorber", es: "Fondo de Emergencia: Tu Amortiguador Financiero", ko: "비상금: 재정적 충격 완화 장치", zh: "应急基金：你的财务缓冲垫", ja: "緊急資金：あなたの経済的ショック吸収装置" },
+    subtitle: { en: "Why 'save some money' isn't specific enough", es: "Por qué 'ahorra algo de dinero' no es suficientemente específico", ko: "'돈을 좀 모아라'가 왜 충분히 구체적이지 않은가", zh: "为什么“存点钱”这个建议还不够具体", ja: "「お金を貯めよう」だけでは不十分な理由" },
+    sections: [
+      {
+        heading: { en: "What Counts as an Emergency", es: "Qué Cuenta Como Emergencia", ko: "무엇이 비상상황인가", zh: "什么才算紧急情况", ja: "何が「緊急」にあたるか" },
+        body: {
+          en: "An emergency fund is money set aside only for genuine surprises — a job loss, a medical bill, a car repair you can't skip. Not a sale, not a vacation.\n\nA common guideline is 3-6 months of essential expenses, though people with less predictable income sometimes aim higher.\n\nBuilding it doesn't have to happen all at once — even a small starter fund, some suggest $500-1,000 to begin, already covers many common surprises.",
+          es: "Un fondo de emergencia es dinero reservado solo para sorpresas genuinas — perder el empleo, una factura médica, una reparación del auto. No una oferta, no unas vacaciones.\n\nUna guía común: 3-6 meses de gastos esenciales. No tiene que lograrse de golpe — incluso $500-1,000 iniciales ya cubren muchas sorpresas comunes.",
+          ko: "비상금은 오직 진짜 예상치 못한 일을 위한 돈입니다 — 실직, 병원비, 차 수리비. 세일이나 휴가가 아닙니다.\n\n흔한 기준은 필수 생활비의 3-6개월치입니다. 한 번에 다 모을 필요는 없습니다 — 500-1,000달러 정도의 시작 기금만으로도 흔한 위기 상당수를 감당할 수 있습니다.",
+          zh: "应急基金是专为真正的意外情况准备的钱——失业、医疗账单、绕不开的汽车维修。不是促销，也不是旅行。\n\n常见标准是3-6个月的基本生活费。不必一次性存够——即使从500-1000美元的启动基金开始，也能应对许多常见意外。",
+          ja: "緊急資金は本当に予期しない事態のためだけに取っておくお金です——失業、医療費、避けられない車の修理。セールや旅行のためではありません。\n\nよくある目安は生活必需費の3〜6ヶ月分。一度に貯める必要はなく、500〜1,000ドル程度の最初の基金でも多くの一般的な不意の出費に対応できます。",
+        },
+      },
+      {
+        heading: { en: "Where to Keep It", es: "Dónde Guardarlo", ko: "어디에 보관할까", zh: "放在哪里", ja: "どこに置くべきか" },
+        body: {
+          en: "The goal for emergency savings is safety and access, not growth. That usually means a savings account you can reach within a day or two — not something tied up long-term (like a retirement account) or something that swings in value day to day (like stocks).\n\nThis is a different job than investing. An emergency fund's job is to be there when everything else in your life is not going according to plan.",
+          es: "El objetivo del fondo de emergencia es seguridad y acceso, no crecimiento. Suele ser una cuenta de ahorros accesible en un día o dos — no algo bloqueado (como una cuenta de jubilación) ni algo que fluctúa (como acciones).\n\nEs un trabajo distinto al de invertir: estar disponible cuando todo lo demás no va según el plan.",
+          ko: "비상금의 목표는 성장이 아니라 안전과 접근성입니다. 보통 하루 이틀 안에 찾을 수 있는 저축 계좌를 의미합니다 — 은퇴 계좌처럼 묶여있거나 주식처럼 매일 값이 변하는 것이 아닙니다.\n\n이는 투자와는 다른 역할입니다. 비상금의 역할은 삶의 다른 모든 것이 계획대로 되지 않을 때 그 자리에 있는 것입니다.",
+          zh: "应急储蓄的目标是安全和可取用性，而不是增值。通常意味着一两天内就能取出的储蓄账户——不是像退休账户那样被锁住，也不是像股票那样天天波动。\n\n这和投资是不同的任务：应急基金的任务是在生活中其他一切都不顺时依然在那里。",
+          ja: "緊急資金の目的は成長ではなく、安全性とすぐに使えることです。通常は1〜2日で引き出せる普通預金口座を指します——退職口座のように固定されたものや、株式のように日々値動きするものではありません。\n\nこれは投資とは別の役割です。緊急資金の役割は、人生の他のことが計画通りに進まないときにそこにあることです。",
+        },
+      },
+    ],
+    takeaway: {
+      en: "An emergency fund's whole purpose is to turn a crisis into an inconvenience.",
+      es: "El propósito del fondo de emergencia es convertir una crisis en una molestia.",
+      ko: "비상금의 존재 이유는 위기를 단순한 불편함으로 바꾸는 것입니다.",
+      zh: "应急基金存在的全部意义，就是把危机变成不便。",
+      ja: "緊急資金の目的は、危機を単なる不便に変えること。",
+    },
+    thinkAbout: {
+      en: "If your income stopped tomorrow, how many months could you cover your essential expenses with what you have saved right now?",
+      es: "Si tu ingreso se detuviera mañana, ¿cuántos meses podrías cubrir tus gastos esenciales con lo que tienes ahorrado?",
+      ko: "내일 소득이 끊긴다면, 지금 저축으로 필수 생활비를 몇 달이나 감당할 수 있나요?",
+      zh: "如果明天你的收入停止，用现在的存款你能覆盖几个月的基本生活费？",
+      ja: "もし明日から収入が止まったら、今の貯蓄で必需費を何ヶ月カバーできますか？",
+    },
+  },
+  {
+    id: 15, icon: "🌱", color: "#16a34a",
+    title: { en: "Compound Interest: Money That Makes Money", es: "Interés Compuesto: Dinero Que Genera Dinero", ko: "복리: 돈이 돈을 버는 원리", zh: "复利：让钱生钱", ja: "複利：お金がお金を生む仕組み" },
+    subtitle: { en: "Why starting early matters more than starting big", es: "Por qué empezar temprano importa más que empezar en grande", ko: "크게 시작하는 것보다 일찍 시작하는 것이 왜 더 중요한가", zh: "为什么早开始比多投入更重要", ja: "早く始めることが、大きく始めることより重要な理由" },
+    sections: [
+      {
+        heading: { en: "Interest on Interest", es: "Interés Sobre Interés", ko: "이자에 붙는 이자", zh: "利息生利息", ja: "利息に付く利息" },
+        body: {
+          en: "Simple interest is earned only on your original amount. Compound interest is earned on your original amount PLUS all the interest it has already earned — so the growth itself starts growing.\n\nA rough shortcut called the Rule of 72: divide 72 by an annual growth rate to estimate how many years it takes money to double. At 6% a year, that's about 12 years; at 9%, about 8 years. This is an approximation, not a precise formula.",
+          es: "El interés simple se gana solo sobre el monto original. El interés compuesto se gana sobre el monto original MÁS todo el interés ya generado — el crecimiento mismo empieza a crecer.\n\nUn atajo llamado Regla del 72: divide 72 entre la tasa anual para estimar en cuántos años se duplica el dinero. Al 6% son unos 12 años; al 9%, unos 8. Es una aproximación, no una fórmula exacta.",
+          ko: "단리는 원금에만 이자가 붙습니다. 복리는 원금뿐 아니라 이미 붙은 이자에도 이자가 붙습니다 — 성장 자체가 성장하기 시작하는 것입니다.\n\n72의 법칙이라는 간단한 방법: 72를 연간 성장률로 나누면 돈이 두 배가 되는 데 걸리는 대략적인 연수를 알 수 있습니다. 연 6%면 약 12년, 9%면 약 8년입니다. 이는 근사치이며 정확한 공식은 아닙니다.",
+          zh: "单利只按本金计算利息。复利则是本金加上已经产生的所有利息一起计息——增长本身开始增长。\n\n一个简单的估算方法叫72法则：用72除以年增长率，可估算钱翻倍所需的大致年数。年化6%大约需要12年，9%大约8年。这只是近似估算，不是精确公式。",
+          ja: "単利は元本にのみ利息がつきます。複利は元本に加え、すでに得た利息にも利息がつきます——成長そのものが成長し始めるのです。\n\n72の法則という簡単な目安があります：72を年間成長率で割ると、お金が2倍になるおおよその年数がわかります。年6%なら約12年、9%なら約8年。これは近似であり厳密な式ではありません。",
+        },
+      },
+      {
+        heading: { en: "Time Beats Timing", es: "El Tiempo Vence a la Sincronización", ko: "시간이 타이밍을 이긴다", zh: "时间胜过时机", ja: "タイミングより時間" },
+        body: {
+          en: "Because compounding builds on itself, TIME matters enormously — often more than the amount you start with.\n\nSomeone who saves a modest amount starting in their 20s can end up with more than someone who saves twice as much but starts a decade later, purely because compounding had more years to work.\n\nThe same math works against you with debt: interest you don't pay off compounds too, which is why carrying high-interest debt for years can cost far more than the original amount borrowed.",
+          es: "Porque el interés compuesto se construye sobre sí mismo, el TIEMPO importa enormemente — a menudo más que el monto inicial.\n\nAlguien que ahorra poco desde sus 20 años puede terminar con más que alguien que ahorra el doble pero empieza una década después, solo porque el interés compuesto tuvo más años para trabajar.\n\nLa misma matemática funciona en tu contra con las deudas: el interés que no pagas también se compone.",
+          ko: "복리는 스스로 위에 쌓이기 때문에 시간이 엄청나게 중요합니다 — 종종 시작 금액보다 더 중요합니다.\n\n20대에 적은 금액을 저축하기 시작한 사람이, 10년 늦게 두 배를 저축한 사람보다 더 많은 돈을 갖게 될 수 있습니다 — 단지 복리가 작동할 시간이 더 많았기 때문입니다.\n\n같은 수학이 부채에서는 당신에게 불리하게 작동합니다: 갚지 않은 이자에도 이자가 붙습니다.",
+          zh: "因为复利是建立在自身之上的，所以时间非常重要——往往比起始金额更重要。\n\n从20多岁就开始存少量钱的人，最终可能比十年后才开始存两倍金额的人拥有更多财富——仅仅因为复利有更多年份来发挥作用。\n\n同样的数学在债务上对你不利：没还清的利息也会产生复利，这就是为什么背负高息债务多年可能远超原始借款金额。",
+          ja: "複利は自らの上に積み重なるため、時間が非常に重要です——多くの場合、始める金額よりも重要です。\n\n20代からわずかな額を貯め始めた人は、10年後に2倍の額を貯め始めた人より最終的に多くを持つことがあります——単に複利が働く年数が長かったからです。\n\n同じ数学が借金では不利に働きます：払っていない利息にも利息がつくため、高金利の借金を何年も抱えると元の借入額をはるかに超えるコストになります。",
+        },
+      },
+    ],
+    takeaway: {
+      en: "Compounding rewards time above almost everything else — which makes today the earliest day you'll ever be able to start.",
+      es: "El interés compuesto premia el tiempo por encima de casi todo — lo que hace que hoy sea el día más temprano que tendrás para empezar.",
+      ko: "복리는 거의 모든 것보다 시간을 우선시합니다 — 그래서 오늘이 당신이 시작할 수 있는 가장 빠른 날입니다.",
+      zh: "复利几乎重视时间胜过一切——这意味着今天就是你能开始的最早的一天。",
+      ja: "複利はほぼ何よりも時間を重視します——だから今日が、あなたが始められる最も早い日なのです。",
+    },
+    thinkAbout: {
+      en: "Using the Rule of 72, roughly how many years would it take money to double at a 4% annual rate? At 12%?",
+      es: "Usando la Regla del 72, ¿aproximadamente cuántos años tardaría el dinero en duplicarse a una tasa anual del 4%? ¿Y al 12%?",
+      ko: "72의 법칙을 사용하면, 연 4% 성장률에서 돈이 두 배가 되는 데 대략 몇 년이 걸릴까요? 12%에서는?",
+      zh: "用72法则估算，年增长率为4%时钱翻倍大约需要多少年？12%时呢？",
+      ja: "72の法則を使うと、年4%の成長率でお金が2倍になるのにおおよそ何年かかりますか？12%では？",
+    },
+  },
+  {
+    id: 16, icon: "🪪", color: "#ea580c",
+    title: { en: "Credit Scores: Your Financial Reputation", es: "Puntaje de Crédito: Tu Reputación Financiera", ko: "신용점수: 당신의 금융 신용도", zh: "信用分数：你的财务信誉", ja: "クレジットスコア：あなたの金融上の信用" },
+    subtitle: { en: "A number that follows you into almost every big purchase", es: "Un número que te acompaña en casi cada compra grande", ko: "거의 모든 큰 구매를 따라다니는 숫자", zh: "几乎跟随你每一次大额购买的数字", ja: "ほぼすべての大きな買い物についてくる数字" },
+    sections: [
+      {
+        heading: { en: "What Goes Into a Score", es: "Qué Compone el Puntaje", ko: "점수를 구성하는 요소", zh: "分数由什么构成", ja: "スコアを構成する要素" },
+        body: {
+          en: "A credit score is a number — in the US, commonly 300-850 — that summarizes how reliably you've repaid debt in the past, used by lenders to judge risk.\n\nThe biggest factors are usually payment history (do you pay on time?) and credit utilization (how much of your available credit you're using). Length of credit history, types of credit, and recent applications matter too, but less.\n\nLesson 3 talked about good debt vs. bad debt for the economy; a credit score is asking a similar question about you personally: can you handle what you've borrowed?",
+          es: "El puntaje de crédito es un número — en EE.UU. suele ir de 300 a 850 — que resume qué tan confiablemente has pagado tus deudas, usado por prestamistas para evaluar el riesgo.\n\nLos factores más grandes suelen ser el historial de pagos y el uso del crédito disponible. La duración del historial, los tipos de crédito y las solicitudes recientes también importan, pero menos.",
+          ko: "신용점수는 숫자입니다 — 미국에서는 보통 300-850점 — 과거에 부채를 얼마나 신뢰성 있게 상환했는지를 요약하며, 대출기관이 위험을 평가하는 데 사용합니다.\n\n가장 큰 요소는 보통 상환 이력(제때 갚는가)과 신용 이용률(사용 가능한 신용 중 얼마를 쓰고 있는가)입니다. 신용 기록 기간, 신용 종류, 최근 신청도 영향을 주지만 비중은 적습니다.",
+          zh: "信用分数是一个数字——在美国通常是300到850——它概括了你过去偿还债务的可靠程度，被贷方用来评估风险。\n\n最重要的因素通常是还款记录（是否按时还款）和信用使用率（正在使用的信用额度占比）。信用历史长度、信用类型和近期申请也有影响，但影响较小。",
+          ja: "クレジットスコアとは数字です——米国では通常300〜850——過去にどれだけ確実に借金を返済してきたかを示し、貸し手がリスクを判断するために使います。\n\n最も大きな要素は通常、支払い履歴（期限内に払っているか）と信用利用率（利用可能な信用のうちどれだけ使っているか）です。信用履歴の長さ、信用の種類、最近の申請も影響しますが、比重は小さめです。",
+        },
+      },
+      {
+        heading: { en: "Why It Follows You", es: "Por Qué Te Acompaña", ko: "왜 당신을 따라다니는가", zh: "为什么它会跟着你", ja: "なぜついてくるのか" },
+        body: {
+          en: "A credit score can affect the interest rate offered on a car loan or mortgage, whether an apartment will rent to you, and — depending on where you live — sometimes even job applications or insurance rates.\n\nBuilding it is mostly unglamorous: pay on time, every time; keep balances low relative to your limits; and let accounts age instead of closing them the moment they're paid off. There's no shortcut that replaces consistency over time.",
+          es: "El puntaje de crédito puede afectar la tasa de interés en un préstamo para auto o hipoteca, si un apartamento te alquilará, y a veces incluso solicitudes de empleo o tarifas de seguro.\n\nConstruirlo es poco glamuroso: paga a tiempo siempre; mantén saldos bajos; deja que las cuentas envejezcan en vez de cerrarlas.",
+          ko: "신용점수는 자동차 대출이나 모기지의 이자율, 아파트 임대 여부, 그리고 지역에 따라 취업이나 보험료에까지 영향을 줄 수 있습니다.\n\n점수를 쌓는 것은 대체로 화려하지 않습니다: 항상 제때 갚고, 한도 대비 잔액을 낮게 유지하며, 계정을 다 갚았다고 바로 닫지 말고 오래 유지하세요. 시간에 걸친 일관성을 대체할 지름길은 없습니다.",
+          zh: "信用分数会影响车贷或房贷的利率、房东是否愿意把公寓租给你，在某些地区甚至会影响求职或保险费率。\n\n提升信用分数并不炫酷：始终按时还款；让余额保持在额度较低的比例；账户还完也别急着关闭，让它继续留存。没有捷径能替代长期的一致性。",
+          ja: "クレジットスコアは自動車ローンや住宅ローンの金利、アパートを貸してもらえるかどうか、居住地によっては就職や保険料にまで影響することがあります。\n\nスコアを築くのは地味な作業です：常に期限内に支払う、上限に対して残高を低く保つ、完済してもすぐに口座を閉じずに残す。長年の一貫性に代わる近道はありません。",
+        },
+      },
+    ],
+    takeaway: {
+      en: "A credit score rewards boring, consistent behavior over years — there's no clever trick that substitutes for paying on time.",
+      es: "El puntaje de crédito premia el comportamiento aburrido y constante durante años — no hay truco que sustituya pagar a tiempo.",
+      ko: "신용점수는 수년에 걸친 지루하고 일관된 행동에 보상을 줍니다 — 제때 갚는 것을 대신할 요령은 없습니다.",
+      zh: "信用分数奖励的是多年如一日的乏味但一贯的行为——没有任何技巧能替代按时还款。",
+      ja: "クレジットスコアは何年にもわたる地味で一貫した行動に報酬を与えます——期限内の支払いに代わる巧妙な手はありません。",
+    },
+    thinkAbout: {
+      en: "Of the factors above, which one do you think would be easiest for you to improve first?",
+      es: "De los factores anteriores, ¿cuál crees que sería el más fácil de mejorar primero?",
+      ko: "위 요소들 중 당신이 가장 먼저 개선하기 쉬운 것은 무엇일까요?",
+      zh: "在上述因素中，你觉得哪一个对你来说最容易先改善？",
+      ja: "上記の要素の中で、あなたが最初に改善しやすいのはどれだと思いますか？",
+    },
+  },
+  {
+    id: 17, icon: "🧺", color: "#6d28d9",
+    title: { en: "Stocks, Bonds & Diversification", es: "Acciones, Bonos y Diversificación", ko: "주식, 채권, 그리고 분산투자", zh: "股票、债券与分散投资", ja: "株式・債券・分散投資" },
+    subtitle: { en: "The building blocks of a portfolio, in plain language", es: "Los bloques básicos de una cartera, en lenguaje sencillo", ko: "쉬운 말로 풀어본 포트폴리오의 기본 구성 요소", zh: "用简单的话讲清楚投资组合的基本构件", ja: "ポートフォリオの基本要素を、わかりやすく" },
+    sections: [
+      {
+        heading: { en: "Two Basic Building Blocks", es: "Dos Bloques Básicos", ko: "두 가지 기본 구성 요소", zh: "两个基本构件", ja: "2つの基本要素" },
+        body: {
+          en: "A stock is a small ownership slice of a company — if the company grows more valuable, the stock has historically tended to become more valuable too, though it can also lose value, including sharply.\n\nA bond is closer to a loan: you lend money to a company or government, and they promise to pay it back with interest by a set date. Bonds have historically been less volatile than stocks, but they generally offer lower long-run average returns.\n\nNeither is inherently 'better' — they behave differently, which is exactly why people combine them.",
+          es: "Una acción es una pequeña porción de propiedad de una empresa — si la empresa crece en valor, la acción históricamente ha tendido a valer más también, aunque también puede perder valor, incluso de forma brusca.\n\nUn bono se parece más a un préstamo: prestas dinero a una empresa o gobierno, que promete devolverlo con interés en una fecha fijada. Los bonos han sido históricamente menos volátiles que las acciones, pero suelen ofrecer retornos promedio más bajos a largo plazo.",
+          ko: "주식은 회사의 작은 소유권 조각입니다 — 회사 가치가 오르면 주식도 역사적으로 함께 오르는 경향이 있었지만, 급격히 가치를 잃을 수도 있습니다.\n\n채권은 대출에 더 가깝습니다: 회사나 정부에 돈을 빌려주고, 정해진 날짜에 이자와 함께 갚겠다는 약속을 받습니다. 채권은 역사적으로 주식보다 변동성이 낮았지만, 장기 평균 수익률은 대체로 더 낮습니다.",
+          zh: "股票是公司所有权的一小部分——如果公司价值增长，股票历史上也往往随之增值，但也可能大幅贬值。\n\n债券更接近于借款：你把钱借给公司或政府，对方承诺在约定日期按约定利息还款。债券历史上的波动性比股票低，但长期平均回报通常也较低。",
+          ja: "株式は会社の小さな所有権の一部です——会社の価値が上がれば、株式も歴史的にはそれに伴って価値が上がる傾向がありましたが、大きく値を下げることもあります。\n\n債券はむしろ融資に近いものです：企業や政府にお金を貸し、決められた期日に利息付きで返してもらう約束をします。債券は歴史的に株式より変動が小さい一方、長期的な平均リターンは概して低めです。",
+        },
+      },
+      {
+        heading: { en: "Why Diversification Exists", es: "Por Qué Existe la Diversificación", ko: "분산투자가 존재하는 이유", zh: "分散投资存在的原因", ja: "分散投資が存在する理由" },
+        body: {
+          en: "Diversification means not putting all your money into one company, sector, or asset type. If one holding falls sharply, the rest can cushion the impact.\n\nLesson 10 showed how different asset classes have historically performed differently across cycle phases — that pattern is part of why spreading investments across many holdings, rather than concentrating in a few, has been a long-standing approach to managing risk.\n\nA fund that holds hundreds or thousands of companies at once is one common way people diversify without picking individual stocks themselves.",
+          es: "Diversificar significa no poner todo el dinero en una empresa, sector o tipo de activo. Si una inversión cae bruscamente, el resto puede amortiguar el impacto.\n\nLa lección 10 mostró cómo distintas clases de activos se han comportado diferente según la fase del ciclo — ese patrón es parte de por qué repartir inversiones en muchas posiciones, en vez de concentrarse en pocas, ha sido un enfoque duradero para gestionar el riesgo.",
+          ko: "분산투자는 모든 돈을 하나의 회사, 산업, 자산 유형에 넣지 않는 것을 의미합니다. 하나가 크게 떨어져도 나머지가 충격을 완화할 수 있습니다.\n\n10강에서 서로 다른 자산군이 순환의 각 국면마다 역사적으로 다르게 움직였음을 보았습니다 — 그 패턴이 몇 개에 집중하기보다 많은 자산에 나누어 투자하는 것이 오랫동안 위험 관리 방법으로 쓰여온 이유 중 하나입니다.",
+          zh: "分散投资意味着不把所有钱都投入一家公司、一个行业或一种资产类型。如果其中一项大幅下跌，其余部分可以缓冲冲击。\n\n第10课展示了不同资产类别在周期各阶段历史上表现不同——这一规律正是为何把投资分散到多个持仓，而不是集中在少数几个上，长期以来被用作管理风险的方法。",
+          ja: "分散投資とは、すべてのお金を一つの会社、業種、資産タイプに入れないことを意味します。一つが大きく下落しても、他が影響を和らげてくれます。\n\n第10課では、異なる資産クラスがサイクルの局面ごとに歴史的に異なる動きをしてきたことを見ました——このパターンこそ、少数に集中するより多くの資産に分散する方が、長年リスク管理の手法とされてきた理由の一部です。",
+        },
+      },
+    ],
+    takeaway: {
+      en: "Stocks and bonds tend to respond differently to the same economic conditions — which is the whole point of holding both, not a coincidence.",
+      es: "Las acciones y los bonos tienden a responder distinto a las mismas condiciones económicas — ese es el punto de tener ambos, no una coincidencia.",
+      ko: "주식과 채권은 같은 경제 상황에도 다르게 반응하는 경향이 있습니다 — 둘 다 보유하는 이유이며, 우연이 아닙니다.",
+      zh: "股票和债券在相同经济环境下往往反应不同——这正是同时持有两者的意义所在，而非巧合。",
+      ja: "株式と債券は同じ経済状況にも異なる反応をする傾向があります——それが両方を持つ意味であり、偶然ではありません。",
+    },
+    thinkAbout: {
+      en: "Think back to lesson 10's four cycle phases. Why might holding both stocks and bonds smooth out the ride compared to holding just one?",
+      es: "Piensa en las cuatro fases del ciclo de la lección 10. ¿Por qué tener acciones y bonos juntos podría suavizar el camino comparado con tener solo uno?",
+      ko: "10강의 네 가지 순환 국면을 떠올려보세요. 주식과 채권을 함께 보유하면 하나만 보유할 때보다 왜 더 안정적일 수 있을까요?",
+      zh: "回想第10课的四个周期阶段。为什么同时持有股票和债券，比只持有一种，可能让过程更平稳？",
+      ja: "第10課の4つのサイクル局面を思い出してください。株式と債券の両方を持つことが、一方だけを持つより値動きを穏やかにするのはなぜでしょうか？",
+    },
+  },
 ];
 
 // Estimated reading time for a lesson, always based on the English body text
