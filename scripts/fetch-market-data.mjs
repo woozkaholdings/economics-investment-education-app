@@ -21,7 +21,7 @@
 // records which one produced the file. See src/lib/relativeStrength.js.
 // ═══════════════════════════════════════════════════════════════════════════
 
-import { mkdirSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -32,6 +32,29 @@ import { activeStrategy, computeRelativeStrength } from "../src/lib/relativeStre
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const OUT = join(ROOT, "public", "data", "market.json");
+
+// ── keys ──────────────────────────────────────────────────────────────────
+// Loaded from a gitignored `.env.local` so the only thing anyone has to edit
+// is one file, and no key ever reaches git or the browser. Deliberately a
+// hand-rolled 10-line parser rather than a dependency: this runs in a
+// scheduled job on a machine with a pinned portable Node, and one fewer
+// install step is worth more here than dotenv's edge-case handling.
+function loadEnvLocal() {
+  const path = join(ROOT, ".env.local");
+  if (!existsSync(path)) return;
+  for (const rawLine of readFileSync(path, "utf8").split("\n")) {
+    const line = rawLine.trim();
+    if (!line || line.startsWith("#")) continue;
+    const eq = line.indexOf("=");
+    if (eq === -1) continue;
+    const key = line.slice(0, eq).trim();
+    // Strip optional surrounding quotes; leave the value otherwise untouched.
+    const value = line.slice(eq + 1).trim().replace(/^["']|["']$/g, "");
+    // A real environment variable wins, so a one-off run can override the file.
+    if (key && process.env[key] === undefined) process.env[key] = value;
+  }
+}
+loadEnvLocal();
 
 // Windows the UI offers. Trading days, not calendar days.
 const WINDOWS = { "1m": 21, "3m": 63, "6m": 126 };
@@ -116,6 +139,29 @@ async function main() {
     sectors,
     economics,
   };
+
+  // Guard: never let an accidental fixture run clobber real data. Without this,
+  // one scheduled run with a missing key (or a hand-run that forgot --adapter)
+  // silently replaces live figures with synthetic ones that still look
+  // plausible on screen. Failing loudly and leaving yesterday's real file in
+  // place is strictly better — the UI already shows its age.
+  if (useFixtures && existsSync(OUT)) {
+    try {
+      const current = JSON.parse(readFileSync(OUT, "utf8"));
+      if (current.source && current.source !== "fixture" && !process.argv.includes("--force")) {
+        throw new Error(
+          `refusing to overwrite real data (source="${current.source}", asOf=${current.asOf}) `
+          + `with fixtures. Pass --force if that is genuinely what you want.`
+        );
+      }
+    } catch (err) {
+      if (err instanceof SyntaxError) {
+        console.warn("[market] existing file is unreadable; overwriting");
+      } else {
+        throw err;
+      }
+    }
+  }
 
   mkdirSync(dirname(OUT), { recursive: true });
   writeFileSync(OUT, `${JSON.stringify(payload, null, 2)}\n`);
