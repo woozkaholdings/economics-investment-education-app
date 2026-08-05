@@ -63,3 +63,12 @@ export function formatPercent(value, digits = 1) {
   const pct = value * 100;
   return `${pct >= 0 ? "+" : ""}${pct.toFixed(digits)}%`;
 }
+
+// Formats one FRED reading (src/lib/marketData/fred.js). Unlike formatPercent
+// above, these values are already in percent units (4.33 means 4.33%, not a
+// fraction) — a different shape from the sector change data, so it gets its
+// own formatter rather than reusing formatPercent and silently misreading it.
+export function formatEconomicReading(entry) {
+  if (!entry || !Number.isFinite(entry.value)) return "—";
+  return entry.unit === "percent" ? `${entry.value.toFixed(2)}%` : entry.value.toFixed(1);
+}

@@ -12,8 +12,9 @@
 // ═══════════════════════════════════════════════════════════════════════════
 
 import { useState } from "react";
+import { economicSignals } from "../../content/economicSignals.js";
 import { BENCHMARK, sectors } from "../../content/sectors.js";
-import { formatPercent, useMarketData } from "../../lib/useMarketData.js";
+import { formatEconomicReading, formatPercent, useMarketData } from "../../lib/useMarketData.js";
 import Icon from "../../components/Icon.jsx";
 import { EmptyState, Note, Segmented, Text } from "../../components/ui.jsx";
 import { ink, line, radius, space, surface } from "../../theme.js";
@@ -125,6 +126,46 @@ export default function Sectors({ t, lang }) {
           ranking as the product's real relative-strength calculation. */}
       {data.relativeStrength?.provisional && (
         <Note tone="neutral" style={{ marginTop: space["4"] }}>{t.provisionalNotice}</Note>
+      )}
+
+      {/* FRED readings the same daily job already fetches (src/lib/marketData/
+          fred.js) — each carries its own observation date, since CPI/
+          unemployment update monthly while yields update daily; showing one
+          shared "as of" for all of them would misstate the monthly ones as
+          more current than they are. */}
+      {data.economics && (
+        <div style={{ marginTop: space["5"] }}>
+          <Text as="h2" variant="heading" color={ink.strong} style={{ marginBottom: space["3"] }}>
+            {t.economyNowTitle}
+          </Text>
+          <ul style={{ listStyle: "none", margin: 0, padding: 0 }}>
+            {economicSignals.map((signal) => {
+              const reading = data.economics[signal.key];
+              if (!reading) return null;
+              return (
+                <li
+                  key={signal.key}
+                  style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: space["3"], padding: `${space["3"]}px 0`, borderBottom: `1px solid ${line.hairline}` }}
+                >
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <Text variant="small" color={ink.strong} style={{ fontWeight: 600 }}>
+                      {signal.name[lang]}
+                    </Text>
+                    <Text variant="caption" color={ink.muted} style={{ marginTop: 2 }}>
+                      {signal.what[lang]}
+                    </Text>
+                    <Text variant="caption" color={ink.muted} style={{ marginTop: space["1"] }}>
+                      {t.asOfTemplate.replace("{date}", reading.date)}
+                    </Text>
+                  </div>
+                  <Text as="span" variant="small" color={ink.strong} style={{ fontWeight: 700, fontVariantNumeric: "tabular-nums", flexShrink: 0 }}>
+                    {formatEconomicReading(reading)}
+                  </Text>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
       )}
 
       <Text variant="caption" color={ink.muted} style={{ marginTop: space["4"], textAlign: "center" }}>

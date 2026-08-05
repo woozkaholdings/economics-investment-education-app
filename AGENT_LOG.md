@@ -67,8 +67,8 @@ the run log entries below for all four steps. **P2 is now open.**
 **HELD — owner decisions, do not act on these**
 
 12. **[HELD] Expo vs. Vite — needs a human call, and it is now closer to the critical path.** Launch plan §2.2 and §8 (weeks 1–2) specify building on **Expo (React Native)** so web/iOS/Android share one codebase; the 2026-08-01 scaffold run chose **Vite + React (web-only)** instead. That was a reasonable way to make the prototype runnable and the plan does sequence web first, but every further web-only UI change raises the eventual port cost — and item 3 (first-session flow) is a large one. The dev agent must **not** migrate to Expo on its own initiative and must **not** deepen the web-only investment beyond the P2 items above. Surface this for the project owner to decide.
-13. **[HELD] FRED live-data integration for the Markets tab** — explicitly a *post-launch premium feature* per launch plan §2.3. Do not start. The static/educational Markets tab rework shipped 2026-08-02.
-14. **[HELD] Sector performance / breakdown in the Markets tab** — added 2026-08-04, owner-requested. The Markets tab (`src/components/Markets.jsx`) currently covers only broad asset classes (Stocks, Bonds, Real Estate, Gold, Cash, USD — direction-only, no numbers), yield-curve shapes, a QE/QT narrative, and a historical Fed-balance-sheet chart; `grep -rin sector economic-cycles-v5.jsx src/` returns zero hits — sector performance (e.g. tech vs. energy vs. financials) was never scoped in, not a dropped feature. Held for the same reason as item 13: it would mean real, current, numeric market data, which is exactly what the 2026-08-02 Markets-tab rework deliberately removed (the tab used to hardcode a `"February 2026"` date and real figures — launch plan §2.3's "stale data problem" — and was fixed by going dateless/figureless, not live). Building sector breakdowns now would need a live data source and reintroduce that same staleness risk pre-launch. Do not start; revisit alongside item 13 once a live-data source is actually wired up post-launch.
+13. ~~**[HELD] FRED live-data integration.**~~ **DONE 2026-08-04** (later same day as item 14 — see run log for both). Unheld alongside item 14 (the original wording here, since removed, predated the rebuild and referenced a `Markets.jsx` that no longer exists). The daily job (`scripts/fetch-market-data.mjs`) already fetched FRED economics readings earlier that day, but no screen displayed them; completed by surfacing them in Reference → Sector performance under a new "The economy right now" section — see run log. Prune this slot at the next curation.
+14. ~~**[HELD] Sector performance / breakdown.**~~ **DONE 2026-08-04** — see the "Sector performance + relative strength" run-log entry that date. Prune this slot at the next curation.
 
 **Completed and pruned**
 
@@ -2205,3 +2205,77 @@ relative-strength formula will replace the default later**.
   fixture-built. `npm run market` runs it by hand. Monetization remains **completely untouched** by
   any run to date (no paywall, no tier gating, no RevenueCat in `src/`) despite plan §4 specifying
   four tiers — and it is gated behind the still-open platform decision (§2.1).
+
+### 2026-08-04 — Surface the FRED economic readings the daily job already fetches (closes backlog item 13)
+
+Scheduled dev-agent run. `git status` showed only the pre-existing, long-documented untracked
+`economic-cycles-v6.jsx` (reference-only, left untouched) — no user work in progress. Read this file's
+App summary/backlog, `LAUNCH_PLAN.md`, and `DECISIONS.md` before picking work; also found two commits
+made since the last run-log entry (`4a45856` key handling + fixture-overwrite guard for the market job,
+`2826b2d` the §4 monetization rewrite) that hadn't been recorded here — noted, not re-narrated, since
+their own commit messages already cover what/why.
+
+- **What I found**: `scripts/fetch-market-data.mjs` already calls `fetchEconomics`/`fixtureEconomics`
+  (`src/lib/marketData/fred.js`) and writes the result into `market.json`'s `economics` field — verified
+  by `grep`, not assumption. But `grep -rn economics src/screens src/components` had zero hits: no screen
+  read that field. `src/locales/en.js` (and the other four) already carry an `economyNowTitle` key
+  ("The economy right now" / translated equivalents) that no `.jsx` file referenced — a scaffolded-but-
+  unbuilt feature, the same shape as the P2-item-2 dead-translation-key problem from 2026-08-03, just not
+  yet caught. This is backlog item 13 (FRED live-data integration), unheld 2026-08-04 alongside item 14
+  (sector performance, which did ship that day) — the FRED half of that same unhold was left half-done.
+- **What I built**: a new "The economy right now" section in `Reference → Sector performance`
+  (`src/screens/reference/Sectors.jsx`), reading `data.economics` from the same `useMarketData()` call
+  the sector list already uses — no new fetch, no new key, no new staleness logic. Six readings (Fed
+  funds rate, 2y/10y Treasury yield, the 10y-2y spread, CPI, unemployment), each with a plain-language
+  one-line description (`src/content/economicSignals.js`, new file, mirrors `sectors.js`'s
+  name/what shape, 5 languages). Placed in the Sectors screen rather than the dateless `MarketSignals.jsx`
+  screen — the yield-curve/QE teaching surface stays dateless by design (§2.3); this lives beside the
+  sector list instead, inside the same freshness contract.
+- **A correctness point worth recording**: each reading shows its own `date`, not the payload's shared
+  `asOf`. CPI and unemployment update monthly while the Treasury yields update daily; showing one shared
+  "as of" for all six would overstate CPI's freshness. `formatEconomicReading` (`src/lib/useMarketData.js`)
+  is a second formatter, not a reuse of `formatPercent` — FRED values are already in percent units
+  (4.33 means 4.33%), the opposite convention from the sector-change fractions `formatPercent` expects;
+  reusing it would have silently divided every reading by 100.
+- **Also fixed while in this code**: `scripts/check-data.mjs`'s 5-language parity check (§7) covered
+  `markets.js` but never `sectors.js` — a real, pre-existing gap (sector `name`/`what` fields had no
+  automated check). Refactored the existing generic loop into `checkModuleParity()` and ran it over
+  `markets.js`, `sectors.js`, and the new `economicSignals.js`, closing that gap as a side effect of
+  covering the new file rather than adding a fourth near-duplicate block.
+- **Adversarial self-check**: (1) *Blindspot register* — `grep -rn Dalio src/` is empty; the curve-spread
+  description reuses the exact established phrasing from `markets.js`/`lessons.js` ("has preceded past
+  recessions, though not every inversion was followed by one") rather than inventing new claims; no
+  "buy"/"avoid" language; the disclaimer still renders below the new section (confirmed in-browser,
+  quoted below); the section is inside the same `status`/`isStale` gate the sector list already uses, so
+  a stopped job shows "unavailable" for economics too, not stale numbers — and each row's own date is
+  real, not hardcoded (`grep` for a literal year in the new content file returns nothing). (2)
+  *DECISIONS.md* — no conflict: content stayed `.js`, no new state format, the job/static-file
+  architecture is unchanged, this only adds a consumer of a field the job already wrote. (3) *Redoing
+  done work* — this is not a repeat of the 2026-08-04 sector-performance run; that run built the pipeline
+  and the sector UI and left FRED-display as an explicit gap (visible in its own "Not done / next," which
+  only mentions job scheduling and monetization — the FRED-UI gap wasn't even named there, it was found by
+  grepping, not by re-reading a stated TODO). (4) *Verification claims* — every number and string below is
+  quoted from an actual command or browser read, not summarized from memory. Also fixed two small backlog
+  inconsistencies noticed while here: this file's HELD section still listed items 13 and 14 as held
+  (stale since the 2026-08-04 unhold) and `LAUNCH_PLAN.md` §10's Held list still named both — both
+  corrected above/there rather than left to compound; the bigger, previously-flagged staleness in this
+  file's own App-summary/backlog sections (still describing pre-rebuild `Home.jsx`/`Markets.jsx`) is
+  **not** fixed by this run — flagged a third time below rather than attempted alongside a feature change.
+- **Verified**: `npm test` → `PASS: 0 failure(s), 0 warning(s)` (now including sector/economicSignals
+  parity). `npm run build` → exit 0, `✓ 60 modules transformed` (up from 56), 323.30 kB / 121.57 kB gzip.
+  Browser-verified on the built output (static `dist/` + local `python3 -m http.server`, per this file's
+  established workaround), English and Korean: the new section renders all six readings with correct
+  per-row `As of 2026-08-04`, `4.33%`/`3.86%`/`4.21%`/`0.35%`/`320.1`/`4.10%` values (CPI correctly shown
+  as a plain index number, not a percent), the disclaimer immediately below it, zero console errors, and
+  `document.documentElement.scrollWidth === window.innerWidth` at 375px (no horizontal overflow).
+- **Next run should pick**: this file's own App summary and Prioritized backlog sections (top of this
+  file) are still stale — third time this has been flagged (see the two prior entries above) — they
+  describe the pre-rebuild `economic-cycles-v5.jsx`/`Home.jsx`/`Markets.jsx` structure the 2026-08-04
+  rebuild deleted. A future run should actually do the rewrite rather than flagging it again. After that:
+  items 15/16 (launch-readiness scorecard; tighter builder/critic loop) are still open; the market job is
+  still unscheduled on this machine (a scheduled task, `economics-app-market-data`, now exists per
+  `.claude/scheduled-tasks/`, but whether it has real API keys configured yet is outside this repo and
+  wasn't checked here); monetization remains code-untouched, and per the rewritten §4, that is *correct*
+  for now — §4.3 gates Phase 1 billing work on ~2 hours of content and ≥40% D1 lesson-1 completion, neither
+  measured yet, so the honest next monetization-adjacent step is writing lessons or instrumenting (§9.2),
+  not billing code.

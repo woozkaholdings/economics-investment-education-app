@@ -499,9 +499,11 @@ content should be checked against them.
 ### Held — owner decisions, do not start
 
 - **Expo vs. web-first** (§2.1) — needs a human call.
-- **FRED live data** for Markets — post-launch premium feature.
-- **Sector performance breakdown** — same reasoning; needs a live data source, would reintroduce the
-  §2.3 staleness risk pre-launch.
+
+Two items previously held here — FRED live data and sector performance breakdown — were unheld
+2026-08-04 by explicit owner direction and have since shipped (daily job + UI, see §2.3 and
+`DECISIONS.md`). Removed from Held rather than left inconsistent with reality; see `AGENT_LOG.md`'s
+2026-08-04 run log for what was built.
 
 ---
 

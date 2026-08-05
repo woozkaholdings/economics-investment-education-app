@@ -14,6 +14,8 @@ import { quizData } from "../src/content/quizData.js";
 import { glossary } from "../src/content/glossary.js";
 import { kidsContent } from "../src/content/kidsContent.js";
 import * as marketsContent from "../src/content/markets.js";
+import { economicSignals } from "../src/content/economicSignals.js";
+import { sectors } from "../src/content/sectors.js";
 import { MAX_BOX, dueQuestions, recordAnswer } from "../src/lib/review.js";
 
 const LANGS = ["en", "es", "ja", "ko", "zh"];
@@ -226,14 +228,18 @@ function checkNonEmptyString(value, path) {
   }
 }
 
-// 7. markets content: the same 5-language parity the other content modules get.
-{
-  for (const [name, value] of Object.entries(marketsContent)) {
-    const path = `markets.${name}`;
+// 7. Generic 5-language parity for a content module's named exports — used
+//    for markets.js, sectors.js and economicSignals.js. Handles both a bare
+//    array of language maps and an array of objects that contain them (e.g.
+//    sectors.js's { symbol, name, what }), so a new module in the same shape
+//    gets checked for free by adding it to CONTENT_MODULES below.
+function checkModuleParity(moduleExports, moduleLabel) {
+  for (const [name, value] of Object.entries(moduleExports)) {
+    const path = `${moduleLabel}.${name}`;
     if (Array.isArray(value)) {
       value.forEach((item, i) => {
         // Entries are either a bare language map or an object containing them.
-        const maps = "en" in item ? { "": item } : item;
+        const maps = item && typeof item === "object" && "en" in item ? { "": item } : item;
         for (const [field, inner] of Object.entries(maps)) {
           if (inner && typeof inner === "object" && "en" in inner) {
             const p = field ? `${path}[${i}].${field}` : `${path}[${i}]`;
@@ -257,6 +263,18 @@ function checkNonEmptyString(value, path) {
       }
     }
   }
+}
+
+const CONTENT_MODULES = {
+  markets: marketsContent,
+  // sectors.js was never wired into this check before — its `name`/`what`
+  // language maps had no automated parity check. economicSignals.js is new
+  // this run and gets the same coverage from day one.
+  sectors: { sectors },
+  economicSignals: { economicSignals },
+};
+for (const [label, moduleExports] of Object.entries(CONTENT_MODULES)) {
+  checkModuleParity(moduleExports, label);
 }
 
 // 8. spaced-review scheduler. Pure logic, so it is checked here rather than in
