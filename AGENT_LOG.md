@@ -86,13 +86,15 @@ for the history. No open P1/P2 items.
     installers finish lesson 1. Per §4.3 verbatim: "the highest-value monetization work right now is
     writing lessons, not writing billing code." Do not start billing/paywall work ahead of this gate —
     see item 15.
-20. **[Content] Non-English lesson translations now lag English by more than before.** New 2026-08-05.
-    The example-rewrite below only expanded the `en` field of every lesson section/takeaway/thinkAbout;
-    es/ko/zh/ja were deliberately left untouched to avoid rushed, lower-quality translations under time
-    pressure. This was already a known gap (the 2026-08-02 Beta-labelling work measured es/ko/zh/ja at
-    0.15x-0.41x of English volume) but English just grew ~1.7x while translations stayed flat, so the
-    ratio is now noticeably wider. Not urgent — the Beta label already discloses this — but a future run
-    should either translate the new real-life examples or re-measure and update the Beta-labelling note.
+20. **[Content] Non-English lesson translations now lag English by more than before.** Re-measured
+    2026-08-05 (evening run) — see run log ("Re-measure Beta-labelling translation ratios"). Ratios:
+    es 0.37x, ko 0.19x, zh 0.12x, ja 0.15x of English (down from 0.41x/0.24x/0.15x/0.18x measured
+    2026-08-02), confirming the gap widened as expected once English grew ~1.7x on 2026-08-05 morning
+    while translations stayed flat. The re-measurement itself is done and `LAUNCH_READINESS.md`/
+    `lessons.js`'s comment are current again. What's still open: actually translating the new real-life
+    examples into es/ko/zh/ja (deliberately deferred both times to avoid rushed, lower-quality
+    translations under time pressure) — a future run should either do that translation work or decide
+    it's out of scope for a single automated run and needs a human translator.
 18. **[Process] Instrumentation (§9.2).** Not built — `grep -rn "posthog\|analytics" src/ package.json`
     returns nothing. The plan is explicit this must land *before* launch, not after; items 15 and 17 are
     both unmeasurable without it (there's no way to know D1 lesson-1 completion without an analytics
@@ -2464,3 +2466,47 @@ doesn't rest on a run's own word. Pure documentation — no code, content, or co
   reasonable next pick once content work is caught up. **A human should also look at the
   `API_KEYS.template.txt` diff before it's committed by anyone** — if that real key value lands in git
   history via the template file, it's exposed permanently even after being removed in a later commit.
+
+### 2026-08-05 (evening) — Re-measure Beta-labelling translation ratios (backlog item 20)
+
+Picked backlog item 20's "at minimum re-measure" fallback rather than the translation work itself: the
+previous run explicitly deferred translating the expanded English examples to avoid rushed, lower-quality
+translations under time pressure, and that reasoning still applies to an unsupervised automated run — a
+character-count re-measurement is a bounded, verifiable task that doesn't carry that risk.
+
+- Wrote a small one-off script (not committed — scratchpad only) that imports `src/content/lessons.js`
+  with the bootstrapped Node runtime and sums `title`/`subtitle`/`takeaway`/`thinkAbout`/every section's
+  `heading`+`body` length per language across all 17 lessons.
+- **Result**: en 38,146 / es 13,926 / ko 7,369 / zh 4,662 / ja 5,901 characters. Ratios to English:
+  es 0.37x, ko 0.19x, zh 0.12x, ja 0.15x — all four narrower than the 2026-08-02 baseline (0.41x/0.24x/
+  0.15x/0.18x), which is the expected direction since only the `en` field grew ~1.7x on 2026-08-05
+  morning and translations weren't touched.
+- Updated `LAUNCH_READINESS.md` row 10.4 with the new numbers and both old/new values side by side, and
+  added a copy-pasteable refresh command (mirroring the existing lesson-catalogue-size command's style)
+  so the next re-measurement doesn't need to reconstruct the script from scratch. Updated the stale
+  "15-41%" range in `src/content/lessons.js`'s `estimateMinutes` comment to "12-37%" to match. Rewrote
+  backlog item 20 above to reflect that the re-measurement is done and only the translation work itself
+  remains open.
+- **Adversarial self-check**: (1) *Blindspot register* — `grep -in dalio src/content/lessons.js
+  LAUNCH_READINESS.md` returns only the grep-command text inside LAUNCH_READINESS.md's own 10.2 evidence
+  cell (the check description, not actual Dalio content); `grep -inE "you should (buy|sell|invest)|we
+  recommend|invest in" src/content/lessons.js LAUNCH_READINESS.md` returns nothing. No lesson content or
+  advice-adjacent language was touched — this run only edited a markdown scorecard and one code comment.
+  (2) *DECISIONS.md conflict* — none: no state, storage, or build-tooling decision touched, and content
+  stays in `.js` modules unchanged (only the comment above `estimateMinutes`, not any lesson data, was
+  edited). (3) *Redoing done work* — none; this is the "at minimum" fallback item 20 explicitly named as
+  still open, not a repeat of anything in "Completed and pruned." (4) *Verification claims* — the
+  character totals above are literal script output, re-run and pasted directly, not summarized from
+  memory; an independent reviewer running the refresh command now added to `LAUNCH_READINESS.md` should
+  get the same numbers.
+- **Verified**: `npm test` → `PASS: 0 failure(s), 0 warning(s)`. No `npm run build` needed — the only
+  `src/` change was a comment (no logic, JSX, or content-data touched), and the test suite's data-shape
+  checks already confirm nothing in `lessons.js`'s structure broke.
+- **Not touched, and why**: `API_KEYS.template.txt` and `economic-cycles-v6.jsx` — same pre-existing
+  owner-flagged files as the last two runs (real-looking Tiingo key sitting unstaged in the template file;
+  untracked reference prototype with known Dalio/dated-content issues). `git status` before and after this
+  run's edits shows only those two plus `LAUNCH_READINESS.md` and `src/content/lessons.js`.
+- **Next run should pick**: item 20's remaining half — translate the expanded real-life examples into
+  es/ko/zh/ja — or, if that's judged too large/risky for a single unsupervised run, explicitly say so and
+  move to item 16 (tighten the builder/critic feedback loop) instead. **The `API_KEYS.template.txt` key
+  value still needs a human's attention before any run stages or commits that file.**
