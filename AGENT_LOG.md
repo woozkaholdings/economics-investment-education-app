@@ -2081,3 +2081,71 @@ owner asked for all three.
   entry; it unholds backlog items 13/14 but needs a real data source, and must not be faked), and
   monetization, which **no run has ever touched** — there is no paywall, no tier gating and no
   RevenueCat anywhere in `src/`, despite the plan's §4 specifying four tiers.
+
+### 2026-08-04 — Reword reintroduced dated/live-looking figures in lesson content (blindspot regression)
+
+Scheduled dev-agent run. `git status` was clean except the long-standing untracked `economic-cycles-v6.jsx`
+(already documented above as reference-only, left untouched). Read this file's App summary/backlog and
+`LAUNCH_PLAN.md` before picking work.
+
+- **What I found**: per this file's own mandatory self-check ("a hardcoded current date / live-looking
+  market figure — the Markets-tab stale-data fix"), grepped `src/content/*.js` for exactly that pattern
+  and found three spots in `src/content/lessons.js` that violate the standing rule `LAUNCH_PLAN.md` §2.3
+  states and `src/content/markets.js`'s own header comment restates ("nothing here may carry a date... or
+  any figure that reads as live market data... a reader cannot mistake '2008' for 'today'"): lesson 5's
+  `thinkAbout` asserted "The US debt-to-GDP ratio is about 120% in 2026" as present fact; lesson 7's
+  `thinkAbout` asked how a 2022-23 rate hike "might still be rippling through the economy in 2026"; and
+  lesson 9's QT section body stated "As of 2026: ~$6.7 trillion." All three pin a specific number to the
+  app's literal current year as if verified-current, in all 5 languages — the same defect the Markets tab
+  was fixed for on 2026-08-02, now present in lesson content instead. `git log -p` on this file doesn't
+  show when these lines were added (consistent with the git-history anomaly already flagged above, where
+  early commits are orphaned from `main`), so origin is unknown, but that doesn't change that it's live
+  in `HEAD` today and reads as a real bug.
+- **Fix**: reworded all three, all 5 languages, keeping the pedagogical point:
+  - Lesson 5: dropped the specific "120% in 2026" figure for a dateless "climbed well past 100% in
+    recent decades" — same technique as the 2026-08-02 Markets fix.
+  - Lesson 7: kept the (genuinely historical, like the file's existing 2008/1989/1929 references)
+    2022-23 hike, but replaced "rippling through the economy in 2026" with "look up today's Fed funds
+    rate — how much of that move do you think has already rippled through the economy?" — turns the
+    stale-prone assertion into a self-lookup prompt, which ages fine no matter when it's read.
+  - Lesson 9: dropped "As of 2026: ~$6.7 trillion" entirely, kept the genuinely historical steps ($95B/mo
+    starting 2022, slowing in 2024) with no current-balance claim.
+  - Left the QE section's "~$9 trillion peak in 2022" and the `thinkAbout`'s "$2+ trillion in 2008 ...
+    unlimited in 2020" untouched — both are backward-looking historical facts about *past* events, the
+    same category `markets.js`'s comment says is fine, not a claim about "now."
+- **Correcting a claim in the entry directly above this one** (this session's own prior work, same day):
+  it says "see the new DECISIONS.md entry" for sector performance being unheld. I checked — no such entry
+  exists in `DECISIONS.md` (only the pre-existing Expo-vs-Vite Open entry and two Closed entries), and
+  `LAUNCH_PLAN.md` §10 "Held" section still explicitly lists "Sector performance breakdown" as held ("same
+  reasoning; needs a live data source"). So backlog items 13/14 are **still HELD**, not unheld — the
+  previous entry's claim doesn't hold up against the files it cites. Recording this here rather than
+  editing that entry, per this file's "keep the run log intact" rule.
+- **Adversarial self-check**: (1) *Blindspot register* — this fix directly targets a live-data/stale-date
+  regression, so I re-grepped the full `src/content/` tree afterward (`in 202[4-9]|as of 202[4-9]`) and
+  confirmed the only remaining match is lesson 9's "slowing... in 2024," a past-tense historical date, not
+  a "now" claim; also confirmed zero `Dalio` hits and that the disclaimer still renders (untouched by this
+  change). (2) *DECISIONS.md* — no conflict; this is a content-accuracy fix, not a new state/content-format
+  decision. (3) *Redoing done work* — this is not a re-run of the 2026-08-02 "stale figures reworded" item
+  (that item covered different content — the $50T/$3T credit figure, the 2+ quarters/recession rule, the
+  yield-curve-since-1955 claim, all in different lessons/glossary entries — and is separately still marked
+  done and pruned below; this is new content the rebuild carried forward from `lessons.js`, which that
+  earlier pass never touched). (4) *Verification claim* — every number above is a literal `grep` result or
+  browser-observed page text, quoted directly below, not summarized from memory.
+- **Verified**: `npm test` → `PASS: 0 failure(s), 0 warning(s)`. `npm run build` (bootstrapped Node
+  v20.18.1) → exit 0, `✓ 56 modules transformed`, `dist/assets/index-D2E7fcZR.js` 309.18 kB / 115.92 kB
+  gzip (same module count and materially the same size as the pre-change build — expected, since only
+  string content changed). Browser-verified on the static build (`dist/` + local `python3 -m http.server`,
+  per this file's established workaround): set `ecycles_completed_lessons` to unlock lessons 5, 7, and 9,
+  opened each, and confirmed via `get_page_text` that the "Think About This" boxes and the QT section now
+  read exactly as reworded above, with no leftover "2026" framed as current.
+- **Next run should pick**: this file's own **App summary** and **Prioritized backlog** sections (top of
+  this file) are now significantly stale — they still describe the pre-rebuild four-tab `economic-cycles-
+  v5.jsx` structure and components (`Home.jsx`, `Markets.jsx`, `More.jsx`, `charts.jsx`) that the
+  2026-08-04 rebuild (see two entries above) deleted; the real structure is `src/App.jsx` +
+  `src/screens/*` + `src/components/*` as described in `LAUNCH_PLAN.md` §2.2/§3.1. A future run should
+  rewrite those two sections to match current reality (re-deriving from `LAUNCH_PLAN.md` and the actual
+  `src/` tree, not trusting this file's own out-of-date summary) rather than continuing to layer new
+  backlog items on top of a description of an app that no longer exists. After that: items 15/16 (launch-
+  readiness scorecard; tighter builder/critic loop) are still open and not started; sector performance and
+  live market data remain correctly HELD (see the correction above); monetization remains completely
+  unstarted.
