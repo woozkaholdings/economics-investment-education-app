@@ -34,27 +34,44 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const OUT = join(ROOT, "public", "data", "market.json");
 
 // ── keys ──────────────────────────────────────────────────────────────────
-// Loaded from a gitignored `.env.local` so the only thing anyone has to edit
-// is one file, and no key ever reaches git or the browser. Deliberately a
-// hand-rolled 10-line parser rather than a dependency: this runs in a
-// scheduled job on a machine with a pinned portable Node, and one fewer
-// install step is worth more here than dotenv's edge-case handling.
-function loadEnvLocal() {
-  const path = join(ROOT, ".env.local");
-  if (!existsSync(path)) return;
-  for (const rawLine of readFileSync(path, "utf8").split("\n")) {
-    const line = rawLine.trim();
-    if (!line || line.startsWith("#")) continue;
-    const eq = line.indexOf("=");
-    if (eq === -1) continue;
-    const key = line.slice(0, eq).trim();
-    // Strip optional surrounding quotes; leave the value otherwise untouched.
-    const value = line.slice(eq + 1).trim().replace(/^["']|["']$/g, "");
-    // A real environment variable wins, so a one-off run can override the file.
-    if (key && process.env[key] === undefined) process.env[key] = value;
+// Read from a gitignored file at the repo root, so no key ever reaches git or
+// the browser. Two filenames are accepted, in this order:
+//
+//   1. `api-keys.txt`  — VISIBLE in Finder. Copy `API_KEYS.template.txt` to
+//                        this name and fill it in. Recommended.
+//   2. `.env.local`    — the dotfile convention, for anyone who prefers it.
+//                        macOS hides dotfiles, which is precisely why the
+//                        visible name exists as well.
+//
+// Real environment variables always win over both, so a one-off run can
+// override the file without editing it.
+//
+// Deliberately a hand-rolled parser rather than a dependency: this runs in a
+// scheduled job against a pinned portable Node, and one fewer install step is
+// worth more here than dotenv's edge-case handling.
+const KEY_FILES = ["api-keys.txt", ".env.local"];
+
+function loadKeyFile() {
+  for (const name of KEY_FILES) {
+    const path = join(ROOT, name);
+    if (!existsSync(path)) continue;
+
+    for (const rawLine of readFileSync(path, "utf8").split("\n")) {
+      const line = rawLine.trim();
+      if (!line || line.startsWith("#")) continue;
+      const eq = line.indexOf("=");
+      if (eq === -1) continue;
+      const key = line.slice(0, eq).trim();
+      // Strip optional surrounding quotes; leave the value otherwise untouched.
+      const value = line.slice(eq + 1).trim().replace(/^["']|["']$/g, "");
+      if (key && process.env[key] === undefined) process.env[key] = value;
+    }
+    return name;   // first file found wins; don't merge two sources
   }
+  return null;
 }
-loadEnvLocal();
+
+const keyFileUsed = loadKeyFile();
 
 // Windows the UI offers. Trading days, not calendar days.
 const WINDOWS = { "1m": 21, "3m": 63, "6m": 126 };

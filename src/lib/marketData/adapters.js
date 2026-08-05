@@ -18,9 +18,19 @@
 
 const DAY = 86400;
 
-async function getJSON(url) {
+// Strips credentials out of a URL before it can reach a log, an error report,
+// or the scheduled job's output. Providers pass keys as query parameters, so
+// the naive `for ${url}` in an error message publishes the key to wherever
+// that message lands.
+export function redactUrl(url) {
+  return String(url).replace(/([?&](?:token|api_?key|apikey)=)[^&]*/gi, "$1[REDACTED]");
+}
+
+async function getJSON(url, label) {
   const res = await fetch(url);
-  if (!res.ok) throw new Error(`${res.status} ${res.statusText} for ${url}`);
+  if (!res.ok) {
+    throw new Error(`${res.status} ${res.statusText} for ${label ?? redactUrl(url)}`);
+  }
   return res.json();
 }
 
@@ -37,7 +47,8 @@ export const finnhub = {
     const out = {};
     for (const symbol of symbols) {
       const url = `https://finnhub.io/api/v1/stock/candle?symbol=${encodeURIComponent(symbol)}&resolution=D&from=${from}&to=${to}&token=${apiKey}`;
-      const data = await getJSON(url);
+      // Label rather than URL: never let a key reach an error message.
+      const data = await getJSON(url, `finnhub candles for ${symbol}`);
       if (data.s !== "ok" || !Array.isArray(data.c)) {
         throw new Error(`finnhub returned no candles for ${symbol}`);
       }

@@ -28,7 +28,8 @@ async function latestObservation(seriesId, apiKey) {
     + `?series_id=${encodeURIComponent(seriesId)}`
     + `&api_key=${apiKey}&file_type=json&sort_order=desc&limit=8`;
   const res = await fetch(url);
-  if (!res.ok) throw new Error(`FRED ${res.status} for ${seriesId}`);
+  // Reports the series id, never the URL — the key rides in the query string.
+  if (!res.ok) throw new Error(`FRED ${res.status} ${res.statusText} for series ${seriesId}`);
   const data = await res.json();
   // FRED writes "." for missing observations (holidays, not-yet-published), so
   // take the most recent row that actually carries a number.

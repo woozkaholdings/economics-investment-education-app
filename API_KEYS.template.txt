@@ -1,0 +1,83 @@
+═══════════════════════════════════════════════════════════════════════════════
+ API KEYS — TEMPLATE
+═══════════════════════════════════════════════════════════════════════════════
+
+ HOW TO USE THIS FILE
+
+   1. Make a copy of it in this same folder.
+   2. Rename the copy to exactly:   api-keys.txt
+   3. Fill in the two values below (paste the key after the "=" sign).
+   4. Save. Nothing else to do — the daily job picks it up automatically.
+
+ Do NOT edit this template directly. It is tracked by git; your copy is not.
+ `api-keys.txt` is listed in .gitignore, so your keys can never be committed
+ by accident.
+
+ (If you prefer the usual developer convention, the file may also be named
+ `.env.local` — same contents. macOS hides filenames starting with a dot,
+ which is why `api-keys.txt` is the recommended name here.)
+
+───────────────────────────────────────────────────────────────────────────────
+ COPY EVERYTHING BELOW THIS LINE INTO api-keys.txt
+───────────────────────────────────────────────────────────────────────────────
+
+# Sector performance and relative strength.
+# Get a free key: https://finnhub.io/register
+# Free tier is 60 requests/minute — the job uses 12 requests per DAY.
+FINNHUB_API_KEY=
+
+# Economics data: interest rates, yield curve, CPI, unemployment.
+# Get a free key: https://fredaccount.stlouisfed.org/apikeys
+# Free, no meaningful rate limit for this use.
+FRED_API_KEY=
+
+───────────────────────────────────────────────────────────────────────────────
+ WHAT THESE ARE FOR
+───────────────────────────────────────────────────────────────────────────────
+
+ A scheduled job ("economics-app-market-data") runs on weekdays at 6:30pm ET,
+ after the US market closes. It fetches end-of-day data, computes what the app
+ displays, and writes public/data/market.json.
+
+ The app itself NEVER calls these APIs and never sees a key. It only reads the
+ static file the job produces. That is why one update per day needs no backend
+ and no server — see DECISIONS.md, "Market data".
+
+ To run it by hand at any time:
+
+     npm run market -- --adapter=finnhub
+
+───────────────────────────────────────────────────────────────────────────────
+ WHAT HAPPENS IF YOU DON'T ADD KEYS
+───────────────────────────────────────────────────────────────────────────────
+
+ Nothing breaks. The daily job fails cleanly, does not commit anything, and
+ the app keeps serving whatever data it already had.
+
+ The app is built to degrade honestly rather than to bluff:
+
+   • Every figure is shown with the date it was taken ("As of 4 Aug 2026").
+   • Data older than 4 days is hidden entirely and replaced with
+     "Market data isn't available right now" — stale numbers are never
+     presented as current.
+   • The sample data shipped in the repo is labelled on screen as
+     "Sample data for layout only — not a real market reading."
+
+ There is also a hard guard in the job: it REFUSES to overwrite real market
+ data with sample data. That protects against a run with a missing key
+ silently replacing live figures with synthetic ones that still look
+ plausible on screen.
+
+───────────────────────────────────────────────────────────────────────────────
+ SECURITY NOTES
+───────────────────────────────────────────────────────────────────────────────
+
+ • Never paste a key into any file other than your own api-keys.txt.
+ • Never paste a key into a chat, an issue, or a commit message.
+ • These keys are read-only market-data keys — they cannot move money or
+   place trades. Still treat them as secrets: they are rate-limited per
+   account, so a leaked key can be exhausted by someone else.
+ • If a key is ever exposed, revoke it in the provider's dashboard and issue
+   a new one. Both providers let you do that in one click.
+
+═══════════════════════════════════════════════════════════════════════════════
