@@ -35,7 +35,12 @@ Add a new entry when a run makes a choice future work should be able to look up 
   1. **Economics data comes from FRED directly** — rates, yield curve, CPI and similar. Owner's
      instruction: use it as-is.
   2. **Equity/sector data comes from a licensed free-tier API behind an adapter interface.**
-     Finnhub is the default; Tiingo and Stooq adapters are drop-in alternatives.
+     **Tiingo is now the default** (switched 2026-08-04, commit `3f5d4a1`) — Finnhub's free tier
+     authenticates but returns 403 on `/stock/candle`, the only endpoint with the daily history this
+     job needs, and Stooq's CSV endpoint is now behind a JavaScript bot challenge this project will
+     not defeat. Twelve Data is the drop-in alternative; Finnhub and Stooq adapters remain in
+     `src/lib/marketData/adapters.js` for reference (Finnhub still works for paid plans; Stooq's
+     adapter throws immediately, pointing callers at Tiingo/Twelve Data instead of pretending to work).
   3. **Update cadence is once daily after close**, not live. A scheduled job fetches, computes, and
      writes a static `market.json`; the app reads that file.
   4. **The relative-strength calculation is a pluggable strategy.** A proprietary formula will

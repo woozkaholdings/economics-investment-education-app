@@ -18,20 +18,22 @@ Current structure, under `src/`:
   `storage.js`, `review.js` (Leitner-box spaced-repetition scheduler), `useMarketData.js` (reads the
   daily job's static file and owns the staleness contract), `marketData/{adapters,fred}.js` (equity/
   economics fetch adapters — used only by the offline job, never by the browser), `relativeStrength.js`
-  (a swappable strategy, currently a plainly-labelled placeholder).
+  (a pluggable strategy; the owner's own `WJ_Sector_Comparison` formula landed 2026-08-04 —
+  `provisional: false` — replacing the earlier placeholder, see `DECISIONS.md`).
 - **`components/`** — `ui.jsx` (Text/Card/Button/Note/Segmented primitives), `Icon.jsx`, `charts.jsx`,
   `LessonVisual.jsx`, `Question.jsx`.
 - **`screens/`** — `Learn.jsx` (the lesson path), `LessonReader.jsx` (lesson content, inline charts on
   the 4 lessons that teach a diagram, and an end-of-lesson check), `Practice.jsx` (the spaced-review
   queue), `Reference.jsx` (sub-nav: Glossary, Market signals, Sector performance, Parent guide, About)
   with its five sub-screens under `screens/reference/`.
-- **`content/`** — plain `.js` modules, 5-language parity enforced by `npm test`: `lessons.js` (12
-  lessons), `quizData.js` (tagged by lesson — feeds both the end-of-lesson check and spaced review),
+- **`content/`** — plain `.js` modules, 5-language parity enforced by `npm test`: `lessons.js` (17
+  lessons, 12 macro/cycle-theory + 5 personal-finance, added `c29bac3` 2026-08-04), `quizData.js`
+  (tagged by lesson — feeds both the end-of-lesson check and spaced review),
   `glossary.js`, `kidsContent.js`, `markets.js` (dateless yield-curve/QE-QT teaching copy), `sectors.js`,
   `economicSignals.js`.
 - **`locales/`** — one file per language.
 
-Feature set as of this entry: 12 sequential unlocking lessons with inline charts on the 4 that teach a
+Feature set as of this entry: 17 sequential unlocking lessons with inline charts on the 4 that teach a
 diagram, an end-of-lesson check per lesson, a Leitner spaced-review queue fed by those same checks, a
 streak counter, `completedLessons`/font-scale/theme all persisted to `localStorage` (`DECISIONS.md`),
 light/dark/system theming, dynamic font scaling, the disclaimer rendered on Learn, the reader, Review,
@@ -80,11 +82,21 @@ for the history. No open P1/P2 items.
     the motivating example (§10.1 reported closed 2026-08-02 when it was actually half done, caught only
     by that week's review) is why this item exists.
 17. **[Content] Grow the lesson catalogue.** New 2026-08-04, derived from `LAUNCH_PLAN.md` §4.3, not
-    owner-assigned but the plan's own explicit gate: the catalogue is 12 lessons / ~10,900 English
-    characters / ~12 minutes end to end, and Phase 0 ("free, instrumented, no payment code") doesn't end
-    until it reaches roughly 40 lessons / 2 hours of content **and** ≥40% of installers finish lesson 1.
-    Per §4.3 verbatim: "the highest-value monetization work right now is writing lessons, not writing
-    billing code." Do not start billing/paywall work ahead of this gate — see item 15.
+    owner-assigned but the plan's own explicit gate: the catalogue is now 17 lessons / ~38,100 English
+    characters / ~33 minutes end to end (measured directly from `src/content/lessons.js` — up from 12
+    lessons / ~10,900 chars / ~12 min before commit `c29bac3` added lessons 13-17, and further deepened,
+    not widened, by the 2026-08-05 example-rewrite below), and Phase 0 ("free, instrumented, no payment
+    code") doesn't end until it reaches roughly 40 lessons / 2 hours of content **and** ≥40% of
+    installers finish lesson 1. Per §4.3 verbatim: "the highest-value monetization work right now is
+    writing lessons, not writing billing code." Do not start billing/paywall work ahead of this gate —
+    see item 15.
+20. **[Content] Non-English lesson translations now lag English by more than before.** New 2026-08-05.
+    The example-rewrite below only expanded the `en` field of every lesson section/takeaway/thinkAbout;
+    es/ko/zh/ja were deliberately left untouched to avoid rushed, lower-quality translations under time
+    pressure. This was already a known gap (the 2026-08-02 Beta-labelling work measured es/ko/zh/ja at
+    0.15x-0.41x of English volume) but English just grew ~1.7x while translations stayed flat, so the
+    ratio is now noticeably wider. Not urgent — the Beta label already discloses this — but a future run
+    should either translate the new real-life examples or re-measure and update the Beta-labelling note.
 18. **[Process] Instrumentation (§9.2).** Not built — `grep -rn "posthog\|analytics" src/ package.json`
     returns nothing. The plan is explicit this must land *before* launch, not after; items 15 and 17 are
     both unmeasurable without it (there's no way to know D1 lesson-1 completion without an analytics
@@ -2325,3 +2337,81 @@ their own commit messages already cover what/why.
   for now — §4.3 gates Phase 1 billing work on ~2 hours of content and ≥40% D1 lesson-1 completion, neither
   measured yet, so the honest next monetization-adjacent step is writing lessons or instrumenting (§9.2),
   not billing code.
+
+### 2026-08-05 — Rewrite all 17 lessons with real-life examples (owner-directed, mid-run)
+
+Scheduled dev-agent run. `git status` showed a modified `API_KEYS.template.txt` (a real-looking
+`TIINGO_API_KEY` value filled into the tracked template — the owner's own key, apparently pasted in to
+test the new Tiingo adapter locally) plus the long-documented untracked `economic-cycles-v6.jsx`. Neither
+matches a stalled prior run (no run-log entry describes adding a real key to the template, and doing so
+would be a real secret-leak risk if ever committed), so per this file's own rule this is owner mid-work:
+**left both untouched, not staged, not committed.**
+
+- **Four commits landed since the last run-log entry with no corresponding entries**: `42e4bbb` (rewrote
+  this file's App summary/backlog to match the post-rebuild `src/` tree — the thing three prior entries
+  had flagged as stale), `53b3857` (visible `API_KEYS.template.txt`, key-leak fix in error messages),
+  `c29bac3` (5 new personal-finance lessons, 12 → 17 total), `3f5d4a1` (owner's `WJ_Sector_Comparison`
+  relative-strength formula replaces the placeholder; provider switched to Tiingo after Finnhub's free
+  tier turned out not to serve historical candles and Stooq went behind a bot challenge). Noted here, not
+  re-narrated — their own commit messages cover what/why. All four are already reflected correctly in
+  `DECISIONS.md`'s relative-strength section.
+- **Started a small doc-accuracy pass**, then the owner joined the session live and redirected: they asked
+  directly for the lessons to be expanded with real-life examples, made less textbook, easier to read.
+  That request became this run's actual focus; the doc fixes below were finished first since they were
+  already in flight and are low-risk:
+  - This file's App summary still said `relativeStrength.js` was "a plainly-labelled placeholder" and
+    `lessons.js` had "12 lessons" — both stale since the four commits above. Corrected to reflect the real
+    `WJ_Sector_Comparison` formula (`provisional: false`) and the real 17-lesson count, in two places
+    (the `content/` bullet and the "Feature set" paragraph).
+  - `DECISIONS.md`'s market-data entry still said "Finnhub is the default; Tiingo and Stooq adapters are
+    drop-in alternatives" — backwards since `3f5d4a1`. Corrected to name Tiingo as the actual default,
+    Twelve Data as the working alternative, and explain concretely why Finnhub and Stooq no longer work
+    (403 on paid-only candle data; bot-walled CSV endpoint), rather than silently pretending they still do.
+- **The owner's actual request — lesson content**: reread every lesson in `src/content/lessons.js`. The
+  12 macro/cycle-theory lessons (adapted from Dalio's "How the Economic Machine Works" template, per
+  `DECISIONS.md`/App summary) were dense and abstract — definitions and mechanisms with no concrete
+  scenario attached ("Lenders want to turn their money into more money. Borrowers want to buy something
+  they can't afford now"). Rewrote the **English** `body` text of every section (34 of them across all 17
+  lessons), plus a few `takeaway`/`thinkAbout` fields, to open with or build around a specific relatable
+  scene — a car loan, a bar tab, a coffee purchase, a factory town moving through boom and bust, a family
+  whose mortgage payment outgrows their paycheck, named individuals (Maria budgeting her first paycheck,
+  James's $600 car repair, Priya and Tom's compounding race, Elena and David's credit scores) — before or
+  while stating the underlying concept, instead of stating the concept in the abstract alone. Titles,
+  subtitles, section headings, and the quiz stayed untouched; only body prose changed. `es`/`ko`/`zh`/`ja`
+  were deliberately **not** touched — see new backlog item 20 below.
+- **Adversarial self-check**: (1) *Blindspot register* — `grep -in dalio src/content/lessons.js` and
+  `grep -inE "you should (buy|sell|invest)|we recommend|invest in"` both return nothing; the one `202[4-9]`
+  match left in the diff (`"in 2022"`/`"in 2024"` inside the pre-existing QT paragraph) is the same
+  backward-looking historical dating the 2026-08-04 blindspot-regression fix explicitly allows, not new
+  content I introduced, and every other lesson's previously-fixed dated/live-figure wording (lesson 5's
+  "climbed past 100%", lesson 7's self-lookup prompt, lesson 9's dropped "$6.7T as of 2026") was preserved
+  verbatim rather than rewritten. The disclaimer still renders below every lesson (confirmed in-browser,
+  quoted below) and no rendered text frames anything as personal advice — the new prose stays in the same
+  historical/descriptive register the existing lessons already used, just with a concrete scene attached.
+  (2) *DECISIONS.md conflict* — none: content stays in `.js` modules (untouched decision), no new
+  state/storage format, and the DECISIONS.md edit above only corrects stale prose to match code that
+  already shipped, it doesn't reverse a decision. (3) *Redoing done work* — this is not a repeat of
+  backlog item 17 (growing the catalogue, i.e. adding more lessons): item 17 is about breadth (12 → 17
+  lessons via `c29bac3`), this run is about depth on the existing 17, a distinct axis the backlog didn't
+  previously track. (4) *Verification claims* — every number below is a literal command output or a
+  `javascript_tool`-read DOM property, not a summary from memory.
+- **Verified**: `npm test` → `PASS: 0 failure(s), 0 warning(s)`, both before and after the content edits.
+  `npm run build` → exit 0, `✓ 60 modules transformed`, `dist/assets/index-*.js` grew from a same-HEAD
+  pre-edit baseline of 364.48 kB / 140.87 kB gzip to 380.09 kB / 147.71 kB gzip post-edit — a size increase
+  consistent with the added prose and nothing else, module count unchanged. Measured content volume
+  directly (not estimated): the English body/takeaway/thinkAbout/heading text across all 17 lessons grew
+  from ~22,600 to **38,146 characters**, and `estimateMinutes()`'s own per-lesson sum grew from ~17 to
+  **33 minutes** end to end. Browser-verified on the static build (`dist/` + local `python3 -m http.server`,
+  this file's established workaround): Lesson 1 and Lesson 13 both render the new prose correctly end to
+  end (quoted via `get_page_text`), the disclaimer and end-of-lesson quiz still appear on both, and at a
+  375×812 viewport `document.documentElement.scrollWidth === window.innerWidth` (no horizontal overflow)
+  — the new, longer paragraphs didn't break mobile layout.
+- **Not touched, and why**: `API_KEYS.template.txt` and `economic-cycles-v6.jsx` (owner mid-work / long-
+  standing reference file, per above) — `git status` after this run's edits still shows only those two
+  plus this run's own changes, confirming nothing else was disturbed.
+- **Next run should pick**: new item 20 — translate the expanded real-life examples into es/ko/zh/ja, or
+  at minimum re-measure the Beta-labelling translation-volume ratios now that English grew ~1.7x while
+  translations stayed flat. After that, items 15/16/18 (launch-readiness scorecard, builder/critic loop,
+  instrumentation) remain open and untouched by this run; monetization remains correctly gated behind
+  §4.3's content/completion thresholds, which grew closer (17/~40 lessons, ~33/~120 minutes) but aren't
+  met yet.
