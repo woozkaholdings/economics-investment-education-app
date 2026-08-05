@@ -85,7 +85,7 @@ web-only, no backend, all state in `localStorage`.
 | App | Vite + React (web) | **Open** — Expo (React Native) vs. staying web-first | `DECISIONS.md`. Blocks store release, not web release. |
 | Content | `.js` modules in `src/content/`, `src/locales/` | Same; possibly server-hosted later | Closed decision. |
 | State | `localStorage` | Supabase accounts + sync | Closed as current approach; revisit with real accounts. |
-| Payments | none | RevenueCat (App Store + Play + Stripe) | Free below $2.5k/mo revenue. |
+| Payments | none | Route depends on §4.3 phase and the §2.1 platform call | Not built. See §4 — the current phase has no payment code by design. |
 | Analytics | none | PostHog | Must land before launch, not after (§9.2). |
 | Hosting | static build | Vercel / EAS Hosting | $0 at launch scale. |
 
@@ -114,9 +114,15 @@ what QE/QT are, how rate changes have historically related to asset classes. It 
 date and no live-looking market numbers.
 
 This is not a stylistic preference — a finance app showing stale data loses credibility instantly,
-which is worse than showing none. Any run tempted to add a number that *looks* current (a rate, an
-index level, a "as of" date) is reintroducing the defect v1 flagged. Live data via FRED remains a
-post-launch premium feature (§10 held items), not a pre-launch addition.
+which is worse than showing none.
+
+**Updated 2026-08-04:** daily end-of-day data now ships (Reference → Sector performance), so the rule
+is sharper than "no numbers". The distinction that matters is *fake freshness* versus *dated
+freshness*. v1's defect was a hardcoded date that never moved. What is permitted is a real `asOf`
+that updates, is shown before any figure, and suppresses itself: data older than four days renders
+"unavailable" rather than as a current reading, and fixture-built data is labelled as a sample. Any
+figure without that machinery behind it still violates this section. See `DECISIONS.md`, "Market
+data", and the teaching surfaces (yield-curve shapes, QE/QT) remain deliberately dateless.
 
 ---
 
@@ -211,23 +217,128 @@ increasingly check this and it widens the audience at near-zero cost.
 
 ---
 
-## 4. Pricing
+## 4. Monetization
 
-Unchanged from v1 — the reasoning survived review.
+> Rewritten 2026-08-04. v1's pricing table was written when the app was an idea; it did not survive
+> contact with the content that actually exists. This section replaces it.
 
-| Tier | Price | Includes |
+### 4.0 What is actually for sale
+
+Measure before pricing. The lesson content today is **12 lessons, ~10,900 characters of English body
+text, ~12 minutes of reading end to end** (`npm test` territory: count it again rather than trusting
+this line). That is roughly 1,800 words — a long magazine article.
+
+The catalogue splits into two very different things, and conflating them is what produced v1's
+pricing:
+
+| Asset | Recurs? | Monetizable as |
 |---|---|---|
-| Free | $0 | Lessons 1–4, basic quiz, glossary, Markets tab. Good enough to recommend. |
-| Premium monthly | $6.99/mo, 7-day trial | All lessons, all quizzes with explanations, kids section, offline, no ads. |
-| Premium yearly | $39.99/yr | Same. Priced so yearly is the obvious choice — most revenue should land here. |
-| Founding lifetime | $79.99, first 500 | Everything forever + founder badge. Early cash, invested users. |
+| 12 lessons + quiz + glossary | **No** — finite, finishable in one sitting | A one-time purchase |
+| Spaced review queue | Yes — value accrues the longer you use it | Subscription |
+| Daily sector + FRED data | Yes — updates every weekday | Subscription |
+| Parent guide (kids bands) | No, but recurs *per child* | Family purchase |
+| 5 languages, plain-language reading level | No — a reach multiplier, not a product | Distribution |
 
-Paywall sits at the end of lesson 4, where the story reaches long-term debt cycles — maximum
-curiosity. Never mid-lesson, never during a first session. Apply to Apple's and Google's
-small-business fee programs (30% → 15%) the week store accounts are approved; they are not automatic.
+**A subscription must be justified by what recurs.** Charging a recurring fee for a finite
+12-minute course invites the obvious question at renewal — "I finished it, why am I still paying?" —
+and the honest answer today would be "you aren't getting anything new."
 
-Expect 1–5% free-to-paid conversion. At 2%, ~5,000 MAU ≈ 100 subscribers ≈ ~$350/month. A slope, not
-a spike. Change nothing for 90 days after launch — experiments below ~2,000 users produce noise.
+### 4.1 Why v1's numbers don't hold
+
+v1 proposed $6.99/mo and $39.99/yr, benchmarked against Bloom (~$15/mo) and Finimize (~$200/yr).
+Those are the wrong comparables: Bloom bundles actual investing tools and Finimize sells market
+briefings to active investors. Against the *real* competitive set, consumer willingness to pay for
+financial-literacy content alone is weak:
+
+- **Khan Academy** — comprehensive, free, nonprofit.
+- **Zogo** — free to the user; **financial institutions pay for it** as a white-label product.
+- **Greenlight** — parents do pay ($5.99–14.98/mo), but the anchor is a **debit card and allowance
+  tooling**, not lessons. It serves 6.5M+ parents and children with ~75 institutional partnerships
+  including JPMorgan Chase and U.S. Bank.
+
+The pattern across the category: **where financial literacy is the whole product, the consumer
+usually does not pay — an institution does.** Where consumers pay, it is because the lessons ride on
+top of a tool that does something.
+
+### 4.2 Three revenue paths, ranked by fit
+
+**1. Institutional / white-label — the strongest fit, and absent from v1.**
+Credit unions, banks, employers and schools buy financial-literacy tools as a compliance, CRA and
+member-acquisition line item, on budgets that do not depend on 2% consumer conversion. This app's
+genuine assets map unusually well: five languages, a plain-language reading level that spans kids to
+adults, and a parent-facing kids module — exactly what an institution needs for a mixed-age
+membership. Zogo proves the model; Greenlight proves institutions will white-label. One credit-union
+contract can exceed a year of consumer subscriptions.
+*Cost:* a sales motion, not a build. Slow, relationship-driven, and unglamorous for a solo builder —
+but the numbers work at small scale in a way consumer freemium does not.
+
+**2. One-time unlock — the honest consumer offer for finite content.**
+A "full course" unlock at **$14.99–$19.99** matches what the catalogue actually is. No churn to
+manage, no renewal question to answer, far higher conversion than a subscription at the same
+perceived value, and it can be sold today without pretending to depth that does not exist. Weaker
+LTV, but real revenue from a small audience.
+
+**3. Subscription — only once something genuinely recurs.**
+Defensible when the daily data and an expanding lesson catalogue carry it, not the 12 lessons. Price
+lower than v1: **$3.99/mo or $24.99/yr**. What renews is the market data, the review queue, and new
+tracks — say so on the paywall instead of listing lessons.
+
+**Ads** stay exactly as §6 defines them: rewarded video only, free tier only, not before ~1,000 DAU,
+and **never** in or near the parent/kids material (§10.3). Not a pillar; a nudge toward paying.
+
+### 4.3 Recommended sequence
+
+Each phase has a gate. Do not skip a gate because the next phase is more exciting.
+
+| Phase | Ship | Gate to leave it |
+|---|---|---|
+| **0 — Free, instrumented** *(now)* | No payment code. Analytics live (§9.2). Grow the catalogue. | ≥40 lessons / ~2 hours of content **and** ≥40% of installers finishing lesson 1 |
+| **1 — One-time unlock** | Free: lessons 1–4 + glossary + market signals. $14.99 unlocks everything. | ≥3% of active users purchasing, sustained a month |
+| **2 — Subscription alongside** | $3.99/mo · $24.99/yr for data + review + new tracks. Keep the one-time unlock. | Renewal at month 2 ≥60% |
+| **3 — Family & institutional** | Family plan (one purchase, several children's bands — parent-held, **no child accounts**). Begin credit-union / employer outreach. | — |
+
+Phase 0 is where the app is now, and the gate is not close: 12 minutes is not 2 hours. **The highest-
+value monetization work right now is writing lessons, not writing billing code.**
+
+### 4.4 Where the paywall sits
+
+v1 put it after lesson 4, at peak curiosity. That still holds, with two corrections: never mid-lesson,
+never in a first session, and — new — **never between a learner and their review queue.** Review is
+the retention mechanic; gating it would trade the habit for a conversion, and the habit is what makes
+anything else sellable later.
+
+Apply to Apple's and Google's small-business programmes (30% → 15%) the week store accounts are
+approved; they are not automatic. On web, card processing is ~3%, which is why the web version is
+where subscriptions should be sold whenever a store's rules permit it.
+
+**Blocked on §2.1.** Payment rails follow the platform decision: web-only means card processing
+directly, while app stores mean a cross-store layer. Wiring payments before that call is decided
+means building it twice.
+
+### 4.5 What must not be monetized
+
+- **No advice, at any tier.** Paying cannot unlock anything that reads as personalized guidance —
+  §10.1 does not have a premium exception.
+- **No ads near the kids/parent material, and no child accounts, ever** (§10.3). A family plan is
+  purchased and held by a parent.
+- **No paywalled disclaimer or safety content.** The educational-purpose notice stays free and
+  visible at every tier.
+- **No selling of learner data.** There is none to sell — state is local-only (`DECISIONS.md`) — and
+  that should stay a deliberate position, not an accident of not having a backend yet.
+
+### 4.6 Falsifiable claims (§9.1)
+
+Written now, while nothing is at stake:
+
+- *"People will pay for this content at all."* — **Refuted if** under 3% of active users buy the
+  one-time unlock within a month of Phase 1.
+- *"The recurring parts justify a subscription."* — **Refuted if** month-2 renewal is under 60%, or
+  if under 25% of subscribers open the app in a week where no new lesson shipped.
+- *"Consumer-direct is the right channel."* — **Refuted if** twelve months of consumer revenue is
+  under $300/month while a single institutional conversation reaches a quote. Then Path 1 becomes
+  the primary business and consumer becomes the top of its funnel.
+- *"The paywall is in the right place."* — **Refuted if** under 5% of users who reach it start a
+  purchase within a week.
 
 ---
 
@@ -280,9 +391,10 @@ release.
 | Phase | What ships |
 |---|---|
 | Foundation | App authored in `src/` — screens, theme, content modules, runnable locally. *(done)* |
-| Core build | First-session flow, streaks, progress persistence, polished lessons 1–4, dark mode. *(largely done; dark mode open)* |
-| Platform decision | Resolve §2.1 (Expo vs. web-first). **Gates store release.** |
-| Monetization + web | RevenueCat, paywall, tiers; analytics events (§9.2); web deployed; 10 clips recorded. |
+| Core build | First-session flow, streaks, progress persistence, polished lessons 1–4, dark mode. *(done)* |
+| **Content depth** | **The §4.3 Phase 0 gate: ~40 lessons / ~2 hours. This is the blocker on every revenue path and is currently the highest-value work in the project.** |
+| Platform decision | Resolve §2.1 (Expo vs. web-first). **Gates store release and the payment route.** |
+| Monetization + web | Analytics events (§9.2) *first*, then the one-time unlock (§4.3 Phase 1). No subscription until Phase 2's gate is met. Web deployed; 10 clips recorded. |
 | Web launch | Product Hunt + Show HN + Reddit. Watch funnels daily. |
 | Store prep | Fixes from real feedback; listings, screenshots, privacy labels; submit; apply to fee programs. |
 | Store launch | Apps live. Rating prompts on. Clips continue. |
