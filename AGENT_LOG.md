@@ -73,10 +73,6 @@ for the history. No open P1/P2 items.
 
 **Open**
 
-15. **[Process] Launch-readiness scorecard.** Added 2026-08-04, owner-requested, not yet built. Track the
-    plan's actual gates in one place rather than trusting a run's own "done" claim: blindspot-register
-    status (§10.1–10.3 — **10.3 is not fully closed**, see the App summary above), the §2.1 platform
-    decision, and — now that §4 has real numbers — the §4.3 phase thresholds (item 17 below).
 16. **[Process] Tighten the builder/critic feedback loop.** Added 2026-08-04, not yet built — needs
     design. The per-run adversarial self-check (this file's own dev-agent `SKILL.md`) is the first piece;
     the motivating example (§10.1 reported closed 2026-08-02 when it was actually half done, caught only
@@ -118,6 +114,11 @@ for the history. No open P1/P2 items.
 
 **Completed and pruned**
 
+- **Launch-readiness scorecard (former item 15)** — done 2026-08-05, see run log ("Launch-readiness
+  scorecard"). New `LAUNCH_READINESS.md` at repo root tracks the plan's actual gates in one place:
+  blindspot register (§10.1–10.7 + §2.1), the §4.3 Phase-0 monetization gate, and §9.2 instrumentation —
+  each with the exact command that produced its status, not a narrative claim. Refresh instructions
+  included so future runs (or the weekly reviewer) can update it in seconds.
 - **FRED economic readings surfaced in Reference → Sector performance (former item 13)** — done
   2026-08-04, see run log ("Surface the FRED economic readings the daily job already fetches"). The
   daily job had fetched Fed funds rate, 2y/10y yields, the curve spread, CPI and unemployment since the
@@ -2415,3 +2416,51 @@ would be a real secret-leak risk if ever committed), so per this file's own rule
   instrumentation) remain open and untouched by this run; monetization remains correctly gated behind
   §4.3's content/completion thresholds, which grew closer (17/~40 lessons, ~33/~120 minutes) but aren't
   met yet.
+
+### 2026-08-05 — Launch-readiness scorecard (backlog item 15)
+
+Picked backlog item 15, owner-requested 2026-08-04 and still open after the previous run left it aside
+for the example-rewrite: a single place tracking the launch plan's actual gates, so a "done" claim
+doesn't rest on a run's own word. Pure documentation — no code, content, or config touched.
+
+- Added `LAUNCH_READINESS.md` at the repo root. Covers, each with the exact command whose output backs
+  the status (not a narrative restated from `AGENT_LOG.md`): the blindspot register (10.1–10.7 plus the
+  §2.1 platform decision), the §4.3 Phase-0 monetization gate (lesson-catalogue size **and** installer
+  lesson-1 completion — both must clear before Phase 1 billing work starts), §9.2 instrumentation, and
+  the two process items (15 itself, 16 — the feedback-loop item, left open).
+- **Numbers verified directly, not carried forward**: imported `src/content/lessons.js` with the
+  bootstrapped Node runtime and summed English `title`/`subtitle`/`takeaway`/`thinkAbout`/section
+  `heading`+`body` characters myself — **17 lessons, 38,146 characters, ~33–35 minutes** — rather than
+  trusting the previous run's "~38,100" figure at face value (it turned out to match closely, but the
+  scorecard's own credibility requires an independently-reproduced number, not a copied one).
+  `grep -rn "best investments|be bullish|be cautious" src/content/` and `grep -rni "dalio" src/
+  economic-cycles-v5.jsx` both returned zero matches (10.1/10.2 stay closed); `grep -rn "posthog|
+  analytics" src/ package.json` returned zero matches (§9.2 not built); `grep -rni "paywall|stripe|
+  purchase|subscri" src/` returned only lesson-content prose and a CSS comment, no billing code.
+- **Adversarial self-check**: (1) *Blindspot regression* — none. The file only reports on closed items
+  (10.1/10.2/Markets-date) and the reopened one (10.3); it doesn't touch any lesson, marketing, or UI
+  copy, so it cannot reintroduce Dalio branding, advice-adjacent language, child-facing framing, or a
+  hardcoded live-looking date. Its own "Last refreshed: 2026-08-05" line is document metadata about when
+  the scorecard was written, not an in-app display of current market data, so it isn't the §2.3 pattern.
+  (2) *DECISIONS.md conflict* — none: no state, storage, or build-tooling decision is touched. (3)
+  *Redoing done work* — none; item 15 was explicitly listed as "not yet built," and nothing in
+  "Completed and pruned" covers a scorecard. (4) *Verification claims* — every grep and the lesson-count
+  script above were re-run and their exact output is what's quoted, not a summary from memory; an
+  independent reviewer running the same commands should get the same results.
+- **Verified**: `npm test` → `PASS: 0 failure(s), 0 warning(s)` (this run added no code, so this
+  confirms no regression, not that the new work was tested — there's nothing executable to test in a
+  markdown file). No `npm run build` needed for the same reason; nothing under `src/` changed.
+- **Not touched, and why**: `API_KEYS.template.txt` (unstaged modification — a real-looking Tiingo API
+  key value, `TIINGO_API_KEY=4c88c4...`, now sits in the *template* file rather than the gitignored
+  `api-keys.txt`; this looks like the owner's own in-progress edit, possibly accidental given the
+  template is meant to stay blank and is tracked by git — left completely alone, not staged, not
+  reverted, flagged here for the owner's attention rather than fixed unilaterally) and
+  `economic-cycles-v6.jsx` (long-standing untracked reference file, per the App summary above and the
+  `economics-app-unexplained-files-not-fixtures` note) — both pre-existed this run untouched; `git
+  status` before and after this run's own edits shows only those two plus `LAUNCH_READINESS.md`.
+- **Next run should pick**: item 20 (translate the expanded real-life examples into es/ko/zh/ja, or at
+  minimum re-measure the Beta-labelling ratios) is still the top content item. On the process side, item
+  16 (tighten the builder/critic feedback loop) is now the only open item in that category and a
+  reasonable next pick once content work is caught up. **A human should also look at the
+  `API_KEYS.template.txt` diff before it's committed by anyone** — if that real key value lands in git
+  history via the template file, it's exposed permanently even after being removed in a later commit.
