@@ -64,4 +64,13 @@ export default {
     reviewCompleteTitle: "복습 완료",
     reviewFromLesson: "레슨 {n}",
     doneLabel: "완료",
+    sectorsTitle: "섹터별 성과",
+    relativeStrengthLabel: "상대강도",
+    asOfTemplate: "{date} 기준",
+    sampleDataNotice: "화면 구성 확인용 샘플 데이터이며 실제 시장 수치가 아닙니다.",
+    dataUnavailable: "지금은 시장 데이터를 불러올 수 없습니다.",
+    vsBenchmark: "{name} 대비",
+    provisionalNotice: "상대강도는 현재 임시 계산 방식을 사용합니다.",
+    economyNowTitle: "지금의 경제",
+    rankTemplate: "{of}개 중 {rank}위",
 };

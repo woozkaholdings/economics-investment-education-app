@@ -27,6 +27,47 @@ Add a new entry when a run makes a choice future work should be able to look up 
 - **Revisit when:** before starting any large new web-only UI feature, or whenever the owner is ready
   to schedule the Expo migration.
 
+### Market data: FRED direct, a swappable equity adapter, and a pluggable relative-strength formula
+
+- **Status:** open (being built) — owner-directed 2026-08-04. Unholds `AGENT_LOG.md` backlog items
+  13 and 14, which were HELD pending exactly this decision.
+- **What was decided:**
+  1. **Economics data comes from FRED directly** — rates, yield curve, CPI and similar. Owner's
+     instruction: use it as-is.
+  2. **Equity/sector data comes from a licensed free-tier API behind an adapter interface.**
+     Finnhub is the default; Tiingo and Stooq adapters are drop-in alternatives.
+  3. **Update cadence is once daily after close**, not live. A scheduled job fetches, computes, and
+     writes a static `market.json`; the app reads that file.
+  4. **The relative-strength calculation is a pluggable strategy.** A proprietary formula will
+     replace the default later.
+- **Why not Yahoo Finance or Finviz** (both were considered at the owner's suggestion): Finviz's API
+  is a paid Elite feature, so free use means scraping — against their ToS, and rate-limited to one
+  request per 60 seconds on pain of a ban. Yahoo has had no official API since 2017; the unofficial
+  endpoints change without notice and are documented as unsuitable for commercial use. This app is
+  intended to charge a subscription and ship through app stores, so a data source that can silently
+  break for every paying user, or that is used in breach of terms, is not acceptable at the base of
+  the feature.
+- **Why a job rather than client fetches:** at one update per day there is no reason to put an API
+  key in the browser or to call a provider once per user. The job holds the key; the app fetches a
+  static file. Twelve calls a day sits inside every free tier permanently.
+- **Why only derived values are published:** caching a provider's data and serving it to users is
+  redistribution, which several free tiers prohibit even when calling the API is fine. The published
+  file therefore carries computed outputs — percent change, relative-strength value, rank — never
+  raw OHLCV. Raw series stay inside the job.
+- **How the proprietary RS formula is protected for later:** `computeRelativeStrength` is a strategy
+  with one clearly-labelled placeholder implementation. **The placeholder is not the product's
+  intended calculation** and must not be presented as one — in code, in the UI, or in a run log. Two
+  consequences future work must respect: (a) no caller may assume the formula's shape, its range, or
+  that it is comparable across time; (b) because the real formula may need more history than the
+  placeholder, the job keeps a local rolling price cache so a future formula can be applied without
+  re-fetching years of data.
+- **How this squares with §2.3 (the stale-data blindspot):** that defect was a *hardcoded* date that
+  never changed — fake freshness. A real `asOf` that updates daily is the opposite. The binding rule
+  is that the UI never presents figures as current without showing when they were taken, and shows
+  "unavailable" rather than stale numbers if the job has not run recently.
+- **Revisit when:** the proprietary RS formula is ready (swap the strategy, keep everything else); or
+  a provider's terms change; or the product needs intraday data, which would reopen every point here.
+
 ## Closed
 
 ### Content as `.js` modules, not JSON

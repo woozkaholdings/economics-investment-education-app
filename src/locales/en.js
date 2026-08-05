@@ -69,4 +69,13 @@ export default {
     reviewCompleteTitle: "Review complete",
     reviewFromLesson: "From lesson {n}",
     doneLabel: "Done",
+    sectorsTitle: "Sector performance",
+    relativeStrengthLabel: "Relative strength",
+    asOfTemplate: "As of {date}",
+    sampleDataNotice: "Sample data for layout only — not a real market reading.",
+    dataUnavailable: "Market data isn't available right now.",
+    vsBenchmark: "vs {name}",
+    provisionalNotice: "Relative strength currently uses a placeholder measure.",
+    economyNowTitle: "The economy right now",
+    rankTemplate: "#{rank} of {of}",
 };

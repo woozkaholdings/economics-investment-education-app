@@ -64,4 +64,13 @@ export default {
     reviewCompleteTitle: "Repaso completado",
     reviewFromLesson: "De la lección {n}",
     doneLabel: "Listo",
+    sectorsTitle: "Rendimiento por sector",
+    relativeStrengthLabel: "Fuerza relativa",
+    asOfTemplate: "A {date}",
+    sampleDataNotice: "Datos de muestra solo para el diseño; no es una lectura real del mercado.",
+    dataUnavailable: "Los datos de mercado no están disponibles ahora.",
+    vsBenchmark: "vs {name}",
+    provisionalNotice: "La fuerza relativa usa por ahora una medida provisional.",
+    economyNowTitle: "La economía ahora mismo",
+    rankTemplate: "#{rank} de {of}",
 };

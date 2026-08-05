@@ -2149,3 +2149,59 @@ Scheduled dev-agent run. `git status` was clean except the long-standing untrack
   readiness scorecard; tighter builder/critic loop) are still open and not started; sector performance and
   live market data remain correctly HELD (see the correction above); monetization remains completely
   unstarted.
+
+### 2026-08-04 — Sector performance + relative strength: data pipeline and UI (owner-directed)
+
+Unholds backlog items 13 and 14. Owner directed: FRED for economics data used as-is, a free source
+for sector data, **no live data — one update per day after close**, and a note that a **proprietary
+relative-strength formula will replace the default later**.
+
+- **Rejected the two sources the owner floated, with reasons**: Finviz's API is a paid Elite feature,
+  so free use means scraping against their terms, and they ban at more than one request per 60
+  seconds. Yahoo has had no official API since 2017; its unofficial endpoints change without notice
+  and are documented as unsuitable for commercial use. This app is meant to carry a subscription and
+  ship through app stores, so neither is a safe base. Chose **Finnhub** (free tier, 60 req/min, real
+  terms) as the default adapter, with **Stooq** as a keyless fallback and a **fixture** adapter for
+  offline work. Recorded in `DECISIONS.md`.
+- **Architecture — the daily cadence is what removes the backend.** At one update per day there is no
+  reason to put a key in the browser or call a provider per user. `scripts/fetch-market-data.mjs`
+  fetches twelve symbols (11 SPDR sector ETFs + SPY), computes, and writes
+  `public/data/market.json`; the app reads that static file. Twelve calls/day sits inside every free
+  tier permanently.
+- **Only derived values are published** — percent change, relative-strength value and rank, latest
+  FRED readings. Never raw OHLCV: caching a provider's series and serving it to users is
+  redistribution, which several free tiers prohibit even where calling the API is fine.
+- **The RS formula is a swappable strategy** (`src/lib/relativeStrength.js`). The current
+  implementation is a plainly-labelled placeholder (simple excess return, `method:
+  "baseline-excess-return"`), the payload carries `relativeStrength.provisional: true`, and the UI
+  prints "Relative strength currently uses a placeholder measure." Callers are forbidden from
+  assuming the output's range, sign convention or cross-day comparability, so the proprietary formula
+  can drop in without touching the pipeline or the UI.
+- **Freshness contract, and why this does not reopen §2.3**: that blindspot was a *hardcoded* date
+  that never changed — fake freshness. Here the `asOf` is real and updates daily, is shown before any
+  figure, and data older than four days (`STALE_AFTER_DAYS`) is suppressed entirely rather than shown
+  as current. Fixture-built files carry `source: "fixture"` and render a "sample data" banner.
+- **Content note**: sector names and one-line plain-language descriptions are translated into all
+  five languages (`src/content/sectors.js`), and tickers are deliberately never headlines — this is a
+  financial-literacy product, so "Consumer Staples — things people buy no matter what" leads and
+  "XLP" stays an implementation detail.
+- **Adversarial self-check**: (1) *Blindspot register* — no Dalio; no hardcoded current date (the only
+  date shown is the payload's real `asOf`); no live-looking figure survives staleness; disclaimer
+  renders on the new screen. §10.1 holds — the screen reports what sectors did and never suggests an
+  action. (2) *DECISIONS.md* — a new entry was written *before* building, and the localStorage-only
+  and `.js`-content decisions are untouched (this adds a build artefact, not user state).
+  (3) *Redoing done work* — items 13/14 were HELD, not done; the hold is lifted by the owner and the
+  log says so. (4) *Verification claims* — every behaviour below was exercised in a browser against
+  the built output, including the two failure paths, which is what a reviewer would re-run.
+- **Verified**: `npm test` → `PASS: 0 failure(s), 0 warning(s)`; `npm run build` → exit 0, 318.89 kB /
+  120.07 kB gzip, with `dist/data/market.json` present and served (HTTP 200). Job runs clean:
+  `[market] wrote … (asOf=2026-08-04, source=fixture)`. In-browser at 375×812: the sector list renders
+  ranked with the sample-data banner, `As of 2026-08-04`, benchmark change, 1M/3M/6M switching, and
+  per-sector rank; **backdating the file to 2026-07-01 suppressed every figure** (`showsAnyPercent:
+  false`) and showed the unavailable message with the date; **deleting the file entirely** degraded to
+  the same message with no console errors.
+- **Not done / next**: the job is not scheduled yet — owner has not chosen between a scheduled task on
+  this machine and a GitHub Action, and no API keys are set, so the committed `market.json` is
+  fixture-built. `npm run market` runs it by hand. Monetization remains **completely untouched** by
+  any run to date (no paywall, no tier gating, no RevenueCat in `src/`) despite plan §4 specifying
+  four tiers — and it is gated behind the still-open platform decision (§2.1).

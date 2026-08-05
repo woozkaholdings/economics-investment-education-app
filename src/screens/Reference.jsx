@@ -12,6 +12,7 @@ import { ink, space } from "../theme.js";
 import Glossary from "./reference/Glossary.jsx";
 import MarketSignals from "./reference/MarketSignals.jsx";
 import ParentGuide from "./reference/ParentGuide.jsx";
+import Sectors from "./reference/Sectors.jsx";
 import Settings from "./reference/Settings.jsx";
 
 export default function Reference({ t, lang, fontScale, setFontScale, themeMode, setThemeMode }) {
@@ -20,6 +21,7 @@ export default function Reference({ t, lang, fontScale, setFontScale, themeMode,
   const sections = {
     glossary: { label: t.glossTitle, render: () => <Glossary t={t} lang={lang} /> },
     markets: { label: t.marketsTitle, render: () => <MarketSignals t={t} lang={lang} /> },
+    sectors: { label: t.sectorsTitle, render: () => <Sectors t={t} lang={lang} /> },
     parents: { label: t.kidsTabLabel, render: () => <ParentGuide t={t} lang={lang} /> },
     about: {
       label: t.aboutTabLabel,

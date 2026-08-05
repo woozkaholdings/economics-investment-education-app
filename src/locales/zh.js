@@ -64,4 +64,13 @@ export default {
     reviewCompleteTitle: "复习完成",
     reviewFromLesson: "来自第 {n} 课",
     doneLabel: "完成",
+    sectorsTitle: "板块表现",
+    relativeStrengthLabel: "相对强度",
+    asOfTemplate: "截至 {date}",
+    sampleDataNotice: "仅用于布局的示例数据，并非真实市场数据。",
+    dataUnavailable: "暂时无法获取市场数据。",
+    vsBenchmark: "相对 {name}",
+    provisionalNotice: "相对强度目前使用的是临时算法。",
+    economyNowTitle: "当前经济状况",
+    rankTemplate: "{of} 中第 {rank}",
 };

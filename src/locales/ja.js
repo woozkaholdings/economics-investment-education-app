@@ -64,4 +64,13 @@ export default {
     reviewCompleteTitle: "復習完了",
     reviewFromLesson: "レッスン {n}",
     doneLabel: "完了",
+    sectorsTitle: "セクター別パフォーマンス",
+    relativeStrengthLabel: "相対強度",
+    asOfTemplate: "{date} 時点",
+    sampleDataNotice: "レイアウト確認用のサンプルデータで、実際の市場の数値ではありません。",
+    dataUnavailable: "現在、市場データを取得できません。",
+    vsBenchmark: "{name} 比",
+    provisionalNotice: "相対強度は現在、暫定的な計算方法を使用しています。",
+    economyNowTitle: "いまの経済",
+    rankTemplate: "{of} 中 {rank} 位",
 };
