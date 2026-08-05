@@ -28,7 +28,7 @@ import { fileURLToPath } from "node:url";
 import { BENCHMARK, SECTOR_SYMBOLS } from "../src/content/sectors.js";
 import { getAdapter } from "../src/lib/marketData/adapters.js";
 import { fetchEconomics, fixtureEconomics } from "../src/lib/marketData/fred.js";
-import { activeStrategy, computeRelativeStrength } from "../src/lib/relativeStrength.js";
+import { MIN_BARS, OUTPERFORM_THRESHOLD, WJ_PERIODS, activeStrategy, computeRelativeStrength } from "../src/lib/relativeStrength.js";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const OUT = join(ROOT, "public", "data", "market.json");
@@ -97,9 +97,15 @@ async function main() {
   const useFixtures = adapterName === "fixture";
   const asOf = arg("as-of", todayISO());
 
-  const apiKey = process.env.FINNHUB_API_KEY;
+  // Each adapter declares which variable holds its key, so adding a provider
+  // never means editing this function.
+  const keyEnv = adapter.keyEnv ?? "FINNHUB_API_KEY";
+  const apiKey = process.env[keyEnv];
   if (adapter.needsKey && !apiKey) {
-    throw new Error(`adapter "${adapterName}" needs FINNHUB_API_KEY`);
+    throw new Error(
+      `adapter "${adapterName}" needs ${keyEnv}. Add it to api-keys.txt `
+      + `(copy API_KEYS.template.txt) — see that file for where to get one.`
+    );
   }
 
   const symbols = [...SECTOR_SYMBOLS, BENCHMARK.symbol];
@@ -109,13 +115,25 @@ async function main() {
   const benchmark = closes[BENCHMARK.symbol];
   if (!benchmark) throw new Error(`no closes returned for benchmark ${BENCHMARK.symbol}`);
 
-  // Relative strength over the longest window the UI shows.
+  // The measure needs at least MIN_BARS of history (its longest lookback plus
+  // the current bar). Pass a margin above that rather than the exact minimum,
+  // and slice asset and benchmark identically so the positional lookbacks stay
+  // aligned to the same trading days.
+  const rsBars = Math.max(MIN_BARS, WINDOWS["3m"] + 1);
+  if (benchmark.length < MIN_BARS) {
+    throw new Error(
+      `benchmark ${BENCHMARK.symbol} returned ${benchmark.length} closes; `
+      + `relative strength needs at least ${MIN_BARS}`
+    );
+  }
   const sectorSeries = Object.fromEntries(
-    SECTOR_SYMBOLS.filter((s) => closes[s]).map((s) => [s, closes[s].slice(-WINDOWS["3m"] - 1)])
+    SECTOR_SYMBOLS
+      .filter((s) => Array.isArray(closes[s]) && closes[s].length >= MIN_BARS)
+      .map((s) => [s, closes[s].slice(-rsBars)])
   );
   const rs = computeRelativeStrength(
     sectorSeries,
-    benchmark.slice(-WINDOWS["3m"] - 1),
+    benchmark.slice(-rsBars),
     activeStrategy
   );
   const rsBySymbol = Object.fromEntries(rs.map((r) => [r.symbol, r]));
@@ -148,10 +166,14 @@ async function main() {
     },
     relativeStrength: {
       method: rs[0]?.method ?? null,
-      window: "3m",
-      // Flags that the current formula is a stand-in, so a consumer of this
-      // file never has to guess whether the proprietary one has landed.
-      provisional: rs[0]?.method === "baseline-excess-return",
+      // No single "window": the measure sums excess return across all three
+      // lookbacks in `periods`, which is what distinguishes it from a return.
+      unit: "percentage-points",
+      outperformThreshold: OUTPERFORM_THRESHOLD,
+      // False now that the owner's own measure is in place; kept in the
+      // payload so any future stand-in has to declare itself.
+      provisional: rs[0]?.method !== "wj-sector-comparison",
+      periods: WJ_PERIODS,
     },
     sectors,
     economics,

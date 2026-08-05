@@ -17,6 +17,7 @@ import * as marketsContent from "../src/content/markets.js";
 import { economicSignals } from "../src/content/economicSignals.js";
 import { sectors } from "../src/content/sectors.js";
 import { MAX_BOX, dueQuestions, recordAnswer } from "../src/lib/review.js";
+import { MIN_BARS, OUTPERFORM_THRESHOLD, WJ_PERIODS, wjSectorComparison } from "../src/lib/relativeStrength.js";
 
 const LANGS = ["en", "es", "ja", "ko", "zh"];
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
@@ -320,6 +321,47 @@ for (const [label, moduleExports] of Object.entries(CONTENT_MODULES)) {
   };
   eq("most overdue comes first",
     dueQuestions(overdue, quizData, "2026-08-04").map((x) => x.index), [5, 2]);
+}
+
+
+// 9. relative strength (WJ_Sector_Comparison). The measure decides what the
+//    sector screen ranks, and an off-by-one in a positional lookback is
+//    invisible on screen — it just produces a plausible wrong order.
+{
+  const eq = (label, actual, expected) => {
+    if (JSON.stringify(actual) !== JSON.stringify(expected)) {
+      fail(`relativeStrength: ${label} — got ${JSON.stringify(actual)}, expected ${JSON.stringify(expected)}`);
+    }
+  };
+
+  const bars = MIN_BARS;
+  const flat = (v) => Array(bars).fill(v);
+  const jumpTo = (end) => { const a = flat(100); a[bars - 1] = end; return a; };
+
+  eq("lookback set matches the study", WJ_PERIODS, [10, 30, 60]);
+  eq("needs longest lookback + current bar", MIN_BARS, 61);
+
+  // +10% over every lookback against a flat benchmark: three excesses of 0.10.
+  const plus10 = wjSectorComparison(jumpTo(110), flat(100));
+  eq("+10% across all three lookbacks scores 30.0", plus10.value, 30);
+  eq("raw sum is the decimal the threshold uses", Math.round(plus10.raw * 1000) / 1000, 0.3);
+  eq("0.3 does not clear the 0.5 threshold", plus10.outperforming, false);
+  eq("per-lookback breakdown is exposed", Object.keys(plus10.parts), ["d10", "d30", "d60"]);
+
+  eq("+20% clears the threshold", wjSectorComparison(jumpTo(120), flat(100)).outperforming, true);
+  eq("underperformance is negative", wjSectorComparison(jumpTo(90), flat(100)).value, -30);
+
+  // Matching the benchmark exactly is zero excess, not zero return.
+  const matched = wjSectorComparison(jumpTo(110), jumpTo(110));
+  eq("matching the benchmark scores 0", matched.value, 0);
+
+  // Guards: a silently misaligned comparison is worse than no number.
+  eq("insufficient history returns null", wjSectorComparison(Array(bars - 1).fill(100), Array(bars - 1).fill(100)), null);
+  eq("mismatched series lengths return null", wjSectorComparison(flat(100), Array(bars + 9).fill(100)), null);
+
+  if (OUTPERFORM_THRESHOLD !== 0.5) {
+    warn(`relativeStrength: OUTPERFORM_THRESHOLD is ${OUTPERFORM_THRESHOLD}, not the study's 0.5`);
+  }
 }
 
 console.log(`\n${failures === 0 ? "PASS" : "FAIL"}: ${failures} failure(s), ${warnings} warning(s).`);

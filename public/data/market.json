@@ -11,9 +11,15 @@
     }
   },
   "relativeStrength": {
-    "method": "baseline-excess-return",
-    "window": "3m",
-    "provisional": true
+    "method": "wj-sector-comparison",
+    "unit": "percentage-points",
+    "outperformThreshold": 0.5,
+    "provisional": false,
+    "periods": [
+      10,
+      30,
+      60
+    ]
   },
   "sectors": [
     {
@@ -24,8 +30,8 @@
         "6m": -0.104523408888449
       },
       "relativeStrength": {
-        "value": -0.04551418826373571,
-        "rank": 9,
+        "value": 30.4,
+        "rank": 5,
         "of": 11
       }
     },
@@ -37,7 +43,7 @@
         "6m": -0.08667936087424466
       },
       "relativeStrength": {
-        "value": -0.022822921439114734,
+        "value": 6.6,
         "rank": 8,
         "of": 11
       }
@@ -50,8 +56,8 @@
         "6m": -0.11521946564885492
       },
       "relativeStrength": {
-        "value": -0.0034207416047542724,
-        "rank": 7,
+        "value": -3.9,
+        "rank": 10,
         "of": 11
       }
     },
@@ -63,7 +69,7 @@
         "6m": 0.3233090120291856
       },
       "relativeStrength": {
-        "value": 0.19979430792761216,
+        "value": 57.9,
         "rank": 1,
         "of": 11
       }
@@ -76,8 +82,8 @@
         "6m": 0.09953924372418177
       },
       "relativeStrength": {
-        "value": 0.05920377364359839,
-        "rank": 3,
+        "value": 51.3,
+        "rank": 2,
         "of": 11
       }
     },
@@ -89,8 +95,8 @@
         "6m": -0.16488052710962925
       },
       "relativeStrength": {
-        "value": -0.07470623937196764,
-        "rank": 11,
+        "value": 9.5,
+        "rank": 7,
         "of": 11
       }
     },
@@ -102,8 +108,8 @@
         "6m": -0.03614058355437665
       },
       "relativeStrength": {
-        "value": 0.029365847639188297,
-        "rank": 4,
+        "value": -0.1,
+        "rank": 9,
         "of": 11
       }
     },
@@ -115,8 +121,8 @@
         "6m": 0.09162529678394139
       },
       "relativeStrength": {
-        "value": 0.10577247052545792,
-        "rank": 2,
+        "value": 28,
+        "rank": 6,
         "of": 11
       }
     },
@@ -128,8 +134,8 @@
         "6m": 0.004787658480361663
       },
       "relativeStrength": {
-        "value": 0.022451493826684127,
-        "rank": 5,
+        "value": 43,
+        "rank": 3,
         "of": 11
       }
     },
@@ -141,8 +147,8 @@
         "6m": 0.03324946081955435
       },
       "relativeStrength": {
-        "value": 0.019428758157311144,
-        "rank": 6,
+        "value": 37.3,
+        "rank": 4,
         "of": 11
       }
     },
@@ -154,8 +160,8 @@
         "6m": -0.1777198497278234
       },
       "relativeStrength": {
-        "value": -0.060262477807640505,
-        "rank": 10,
+        "value": -9.3,
+        "rank": 11,
         "of": 11
       }
     }

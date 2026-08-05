@@ -1,60 +1,95 @@
 // ═══════════════════════════════════════════════════════════════════════════
 // RELATIVE STRENGTH
 //
-// ⚠️ THE IMPLEMENTATION BELOW IS A PLACEHOLDER, NOT THE PRODUCT'S CALCULATION.
+// Implements the owner's own measure (`WJ_Sector_Comparison`, supplied
+// 2026-08-04 as a thinkScript study for daily candles). This replaced an
+// explicitly-labelled placeholder; see DECISIONS.md.
 //
-// A proprietary relative-strength formula will replace `baselineStrategy`
-// later (owner-stated 2026-08-04; see DECISIONS.md). Everything downstream is
-// written against the *strategy interface*, never against this arithmetic, so
-// that swap is one file.
+// THE MEASURE
+//   For each of three lookbacks — 10, 30 and 60 daily bars — take the asset's
+//   return over that window minus the benchmark's return over the same window.
+//   Sum the three excess returns. That sum is the score.
 //
-// Rules for anyone touching this or its callers:
-//   • Do not describe the placeholder as the app's relative-strength measure —
-//     not in the UI, not in a commit message, not in a run log.
-//   • Do not assume the output's range, sign convention, or scale. A future
-//     formula may be a ratio, a z-score, a 0-100 rank, or something else.
-//     Treat the value as opaque and rank-comparable within a single snapshot
-//     only — not comparable across days.
-//   • Do not move this maths into a component. The UI renders whatever the
-//     strategy returns and knows nothing about how it was produced.
+//     excess(p) = (close/close[p] - 1) − (spy/spy[p] − 1)
+//     score     = excess(10) + excess(30) + excess(60)
 //
-// A strategy has the shape:
-//   (series: number[], benchmark: number[], opts) => { value, label }
-// where `series` and `benchmark` are closes, oldest first.
+//   The study plots `round(score * 100, 1)` — percentage points, one decimal —
+//   and shades the background when the raw (decimal) sum clears
+//   `Outperform_Percent_1`, default 0.5.
+//
+//   Combining three lookbacks is what makes it a *strength* measure rather
+//   than a return: a sector only scores well by leading the benchmark across
+//   short, medium and longer horizons at once, so a single sharp week cannot
+//   carry it.
+//
+// The strategy interface is unchanged, so the job and the UI did not need to
+// know this landed:
+//   (series: number[], benchmark: number[], opts) => { value, method, ... }
+// with closes oldest-first.
 // ═══════════════════════════════════════════════════════════════════════════
 
-// Percentage change across the whole window, as a decimal.
-function totalReturn(closes) {
-  if (!Array.isArray(closes) || closes.length < 2) return null;
-  const first = closes[0];
+// Lookbacks in daily bars, matching the study's `period` / `period2` / `period3`.
+export const WJ_PERIODS = [10, 30, 60];
+
+// The study's `Outperform_Percent_1`. Compared against the RAW decimal sum,
+// not the ×100 plotted value — keep that distinction when tuning it.
+export const OUTPERFORM_THRESHOLD = 0.5;
+
+// Longest lookback plus the current bar: the minimum history the measure needs.
+export const MIN_BARS = Math.max(...WJ_PERIODS) + 1;
+
+// Return over `period` bars, measured from the most recent close.
+// `closes[len - 1]` is today; `closes[len - 1 - period]` is the reference bar.
+function periodReturn(closes, period) {
+  if (!Array.isArray(closes) || closes.length < period + 1) return null;
   const last = closes[closes.length - 1];
-  if (!first || !last) return null;
-  return (last - first) / first;
+  const prior = closes[closes.length - 1 - period];
+  if (!Number.isFinite(last) || !Number.isFinite(prior) || prior === 0) return null;
+  return (last - prior) / prior;
 }
 
-// ── placeholder ───────────────────────────────────────────────────────────
-// Simple excess return over the benchmark across the window. Chosen because it
-// is obvious and easy to sanity-check by hand — NOT because it is a good
-// measure. It has no volatility adjustment, no smoothing, and no trend term.
-export function baselineStrategy(series, benchmark) {
-  const assetReturn = totalReturn(series);
-  const benchReturn = totalReturn(benchmark);
-  if (assetReturn === null || benchReturn === null) return null;
+// ── the measure ───────────────────────────────────────────────────────────
+export function wjSectorComparison(series, benchmark, opts = {}) {
+  const periods = opts.periods ?? WJ_PERIODS;
+  const threshold = opts.outperformThreshold ?? OUTPERFORM_THRESHOLD;
+
+  // Lookbacks are positional, so the two series must cover the same trading
+  // days. They do when both come from one provider call, which is how the job
+  // fetches them; a length mismatch means a gap or a late listing, and a
+  // silently misaligned comparison would be worse than no number.
+  if (!Array.isArray(series) || !Array.isArray(benchmark)) return null;
+  if (series.length !== benchmark.length) return null;
+
+  let sum = 0;
+  const parts = {};
+  for (const period of periods) {
+    const assetReturn = periodReturn(series, period);
+    const benchReturn = periodReturn(benchmark, period);
+    if (assetReturn === null || benchReturn === null) return null;
+    const excess = assetReturn - benchReturn;
+    parts[`d${period}`] = excess;
+    sum += excess;
+  }
+
   return {
-    value: assetReturn - benchReturn,
-    // Marks provenance in the payload itself, so a stale `market.json` built
-    // with the placeholder can be told apart from one built with the real
-    // formula without reading the job's source.
-    method: "baseline-excess-return",
+    // Percentage points to one decimal — the study's plotted value.
+    value: Math.round(sum * 1000) / 10,
+    // Raw decimal sum, which is what the threshold is expressed against.
+    raw: sum,
+    // Per-lookback excess, so a future UI can show *why* a sector ranks where
+    // it does rather than only the total.
+    parts,
+    outperforming: sum >= threshold,
+    method: "wj-sector-comparison",
   };
 }
 
-// The strategy the job currently uses. Swapping this is the whole migration.
-export const activeStrategy = baselineStrategy;
+// The strategy the job uses. Swapping this is the whole migration path.
+export const activeStrategy = wjSectorComparison;
 
 // Computes relative strength for every symbol against one benchmark, then
-// ranks them. Ranking is done here rather than in the UI because rank depends
-// on the strategy's ordering convention, which only the strategy knows.
+// ranks them. Ranking lives here rather than in the UI because rank depends on
+// the measure's ordering convention, which only the measure knows.
 export function computeRelativeStrength(seriesBySymbol, benchmarkCloses, strategy = activeStrategy) {
   const scored = Object.entries(seriesBySymbol)
     .map(([symbol, closes]) => {
@@ -63,8 +98,8 @@ export function computeRelativeStrength(seriesBySymbol, benchmarkCloses, strateg
     })
     .filter(Boolean);
 
-  // Higher is stronger. If a future strategy inverts that, it must also update
-  // this comparator — hence the explicit note rather than a silent assumption.
+  // Higher is stronger. A measure that inverts that must update this
+  // comparator too — stated explicitly rather than left as an assumption.
   scored.sort((a, b) => b.value - a.value);
 
   return scored.map((entry, i) => ({ ...entry, rank: i + 1, of: scored.length }));

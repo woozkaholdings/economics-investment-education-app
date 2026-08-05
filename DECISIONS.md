@@ -54,13 +54,18 @@ Add a new entry when a run makes a choice future work should be able to look up 
   redistribution, which several free tiers prohibit even when calling the API is fine. The published
   file therefore carries computed outputs — percent change, relative-strength value, rank — never
   raw OHLCV. Raw series stay inside the job.
-- **How the proprietary RS formula is protected for later:** `computeRelativeStrength` is a strategy
-  with one clearly-labelled placeholder implementation. **The placeholder is not the product's
-  intended calculation** and must not be presented as one — in code, in the UI, or in a run log. Two
-  consequences future work must respect: (a) no caller may assume the formula's shape, its range, or
-  that it is comparable across time; (b) because the real formula may need more history than the
-  placeholder, the job keeps a local rolling price cache so a future formula can be applied without
-  re-fetching years of data.
+- **The relative-strength measure landed 2026-08-04.** The placeholder is gone. The measure is the
+  owner's own `WJ_Sector_Comparison`, supplied as a thinkScript study for daily candles: for each of
+  three lookbacks (10, 30 and 60 bars) take the sector's return minus the benchmark's over the same
+  window, and sum the three. Published as percentage points to one decimal, with the study's
+  `Outperform_Percent_1` threshold of 0.5 applied to the raw decimal sum. Combining three horizons is
+  the point — a sector only scores well by leading across short, medium and longer windows at once,
+  so one sharp week cannot carry it.
+  Consequences that still bind: (a) the lookbacks are **positional**, so asset and benchmark must
+  cover the same trading days — the implementation returns `null` on a length mismatch rather than
+  producing a silently misaligned number; (b) the measure needs 61 bars minimum, which the job
+  enforces before computing; (c) `relativeStrength.provisional` stays in the payload so any future
+  stand-in has to declare itself.
 - **How this squares with §2.3 (the stale-data blindspot):** that defect was a *hardcoded* date that
   never changed — fake freshness. A real `asOf` that updates daily is the opposite. The binding rule
   is that the UI never presents figures as current without showing when they were taken, and shows

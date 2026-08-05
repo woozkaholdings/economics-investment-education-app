@@ -34,9 +34,14 @@ async function getJSON(url, label) {
   return res.json();
 }
 
-// ── Finnhub (default) ─────────────────────────────────────────────────────
-// Free tier is 60 requests/minute, which a twelve-symbol daily job never
-// approaches. Requires a free API key.
+// ── Finnhub ───────────────────────────────────────────────────────────────
+// ⚠️ NOT USABLE ON THE FREE TIER (verified 2026-08-04). The key authenticates
+// fine — `/quote` returns 200 — but `/stock/candle`, the only endpoint with
+// the history this job needs, answers 403 "You don't have access to this
+// resource." Historical candles are a paid plan.
+//
+// Kept because it works immediately on a paid Finnhub plan, and because
+// `/quote` remains available if a future feature only needs a last price.
 export const finnhub = {
   name: "finnhub",
   needsKey: true,
@@ -58,27 +63,82 @@ export const finnhub = {
   },
 };
 
-// ── Stooq (keyless fallback) ──────────────────────────────────────────────
-// Plain CSV, no key, no signup. There is no formal API or terms of service
-// behind it, so it is a fallback and a local-development convenience rather
-// than something to depend on in production.
-export const stooq = {
-  name: "stooq",
-  needsKey: false,
-  async dailyCloses(symbols, { days = 260 } = {}) {
+// ── Tiingo (default) ──────────────────────────────────────────────────────
+// Free tier includes end-of-day history, which is exactly what this job needs.
+// Free key: https://www.tiingo.com/account/api/token
+// Returns oldest-first already.
+export const tiingo = {
+  name: "tiingo",
+  needsKey: true,
+  keyEnv: "TIINGO_API_KEY",
+  async dailyCloses(symbols, { days = 260, apiKey } = {}) {
+    if (!apiKey) throw new Error("tiingo adapter requires TIINGO_API_KEY");
+    // Ask for calendar days generously; ~365 covers 260 trading days.
+    const start = new Date(Date.now() - Math.ceil(days * 1.5) * 86400_000)
+      .toISOString().slice(0, 10);
     const out = {};
     for (const symbol of symbols) {
-      const url = `https://stooq.com/q/d/l/?s=${symbol.toLowerCase()}.us&i=d`;
-      const res = await fetch(url);
-      if (!res.ok) throw new Error(`${res.status} for ${symbol} from stooq`);
-      const rows = (await res.text()).trim().split("\n").slice(1);
+      const url = `https://api.tiingo.com/tiingo/daily/${encodeURIComponent(symbol)}/prices`
+        + `?startDate=${start}&token=${apiKey}`;
+      const rows = await getJSON(url, `tiingo prices for ${symbol}`);
+      if (!Array.isArray(rows) || rows.length === 0) {
+        throw new Error(`tiingo returned no rows for ${symbol}`);
+      }
+      // adjClose accounts for splits and dividends — the right basis for a
+      // performance comparison; close alone would show a split as a crash.
       const closes = rows
-        .map((row) => Number(row.split(",")[4]))
-        .filter((n) => Number.isFinite(n));
-      if (closes.length === 0) throw new Error(`stooq returned no rows for ${symbol}`);
+        .map((r) => Number(r.adjClose ?? r.close))
+        .filter(Number.isFinite);
       out[symbol] = closes.slice(-days);
     }
     return out;
+  },
+};
+
+// ── Twelve Data ───────────────────────────────────────────────────────────
+// Alternative free tier with EOD history. Free key:
+// https://twelvedata.com/pricing  (the free plan is enough — 12 calls/day)
+// NOTE: returns newest-first, so the series is reversed to match the
+// oldest-first contract every other adapter honours.
+export const twelveData = {
+  name: "twelvedata",
+  needsKey: true,
+  keyEnv: "TWELVEDATA_API_KEY",
+  async dailyCloses(symbols, { days = 260, apiKey } = {}) {
+    if (!apiKey) throw new Error("twelvedata adapter requires TWELVEDATA_API_KEY");
+    const out = {};
+    for (const symbol of symbols) {
+      const url = `https://api.twelvedata.com/time_series?symbol=${encodeURIComponent(symbol)}`
+        + `&interval=1day&outputsize=${days}&apikey=${apiKey}`;
+      const data = await getJSON(url, `twelvedata time_series for ${symbol}`);
+      if (data.status === "error" || !Array.isArray(data.values)) {
+        throw new Error(`twelvedata error for ${symbol}: ${data.message ?? "no values"}`);
+      }
+      const closes = data.values
+        .map((v) => Number(v.close))
+        .filter(Number.isFinite)
+        .reverse();
+      out[symbol] = closes;
+    }
+    return out;
+  },
+};
+
+// ── Stooq ─────────────────────────────────────────────────────────────────
+// ⚠️ NO LONGER USABLE (verified 2026-08-04). The CSV endpoint now answers with
+// a JavaScript proof-of-work bot challenge instead of data:
+//   "This site requires JavaScript to verify your browser."
+// Fetching it programmatically would mean defeating bot detection, which this
+// project will not do. Kept only so the failure is explicit rather than
+// looking like an empty response.
+export const stooq = {
+  name: "stooq",
+  needsKey: false,
+  async dailyCloses() {
+    throw new Error(
+      "stooq is behind a JavaScript bot challenge and is no longer a usable data source. "
+      + "Use --adapter=tiingo or --adapter=twelvedata."
+    );
   },
 };
 
@@ -110,7 +170,7 @@ export const fixture = {
   },
 };
 
-export const ADAPTERS = { finnhub, stooq, fixture };
+export const ADAPTERS = { tiingo, twelvedata: twelveData, finnhub, stooq, fixture };
 
 export function getAdapter(name) {
   const adapter = ADAPTERS[name];
