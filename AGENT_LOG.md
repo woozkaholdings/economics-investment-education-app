@@ -2,76 +2,122 @@
 
 This file is the memory of the autonomous development agent that runs every 3 hours on this repo. Each run reads this file, picks the single highest-value backlog item, implements it, verifies it, and appends a dated entry below. Do not delete history — prune the backlog as items complete, but keep the run log intact.
 
-## App summary (as of 2026-08-01)
+## App summary (rewritten 2026-08-04 — third time this rewrite was flagged before anyone did it)
 
-`economic-cycles-v5.jsx` is a 1,340-line single-file React app (no build tooling existed before this run). It implements:
+The app was rebuilt from scratch 2026-08-04. `economic-cycles-v5.jsx` and `economic-cycles-v6.jsx` at
+the repo root are both reference material only — neither is imported by anything under `src/` (see
+"Notes for future runs" below for what each one is and why it's there).
 
-- **5 languages** (en, es, ko, zh, ja) via a `TR` translation dictionary and per-item `{en, es, ko, zh, ja}` objects throughout.
-- **4 bottom tabs**: Home, Learn, Markets, More.
-- **12 sequential lessons** based on the economic-machine framework popularized by Ray Dalio (transactions → credit → productivity growth → short-term debt cycle → long-term debt cycle → deleveraging tools, etc.), each with sections, a key takeaway, and a "think about this" prompt. Lessons unlock in order as prior ones are completed.
-- **Quiz engine** (`quizData`) — ~13 multiple-choice questions with explanations, in all 5 languages.
-- **Kids section** (`kidsContent`) — age-banded (5-8, 9-12, 13-17) lessons, an activity, and a parent tip.
-- **Glossary** (`glossary`) — ~16 terms, searchable, translated.
-- **Markets dashboard** — yield curve shapes, Fed balance sheet (QE/QT) narrative, rate-change effects on assets. (The hardcoded `nowDate: "February 2026"` stale-data problem flagged in launch plan §2.3 was fixed 2026-08-02 — the tab is now explicitly an illustrative teaching scenario with no dates.)
-- Helper chart components (`Bar`, `YieldCurve`, `CycleChart`) are plain inline-styled SVG/divs, no charting library dependency.
+Current structure, under `src/`:
 
-There was no `package.json`, no bundler, and no way to actually run the app before this run. `Economic_Cycles_Launch_Plan.docx` (see `working_files/Economic_Cycles_Launch_Plan.pdf` for the same content as images) is a full launch playbook: Expo/React Native + Supabase + RevenueCat + PostHog stack, freemium pricing ($6.99/mo, $39.99/yr, $79.99 lifetime), a 16-week roadmap, and — importantly — a "Blindspot Register" (Section 10) flagging legal/compliance risks in the *current content* that should be fixed before anything else:
+- **`App.jsx`** — the shell. Three bottom tabs (**Learn**, **Review**, **Reference**) plus a pushed
+  lesson-reader view; a sticky header with the 5-language picker (en + Beta-labelled es/ko/zh/ja,
+  §10.4); a first-run disclaimer modal (§10.1) with a focus trap that must be dismissed before first use.
+- **`theme.js`** — design tokens (color, type scale, spacing). No inline hex anywhere else in the app.
+- **`lib/`** — pure logic, no JSX: `useAppState.js` (every piece of client state, see below),
+  `storage.js`, `review.js` (Leitner-box spaced-repetition scheduler), `useMarketData.js` (reads the
+  daily job's static file and owns the staleness contract), `marketData/{adapters,fred}.js` (equity/
+  economics fetch adapters — used only by the offline job, never by the browser), `relativeStrength.js`
+  (a swappable strategy, currently a plainly-labelled placeholder).
+- **`components/`** — `ui.jsx` (Text/Card/Button/Note/Segmented primitives), `Icon.jsx`, `charts.jsx`,
+  `LessonVisual.jsx`, `Question.jsx`.
+- **`screens/`** — `Learn.jsx` (the lesson path), `LessonReader.jsx` (lesson content, inline charts on
+  the 4 lessons that teach a diagram, and an end-of-lesson check), `Practice.jsx` (the spaced-review
+  queue), `Reference.jsx` (sub-nav: Glossary, Market signals, Sector performance, Parent guide, About)
+  with its five sub-screens under `screens/reference/`.
+- **`content/`** — plain `.js` modules, 5-language parity enforced by `npm test`: `lessons.js` (12
+  lessons), `quizData.js` (tagged by lesson — feeds both the end-of-lesson check and spaced review),
+  `glossary.js`, `kidsContent.js`, `markets.js` (dateless yield-curve/QE-QT teaching copy), `sectors.js`,
+  `economicSignals.js`.
+- **`locales/`** — one file per language.
 
-1. **10.1 Investment-advice adjacency**: lessons include "Best Investments" / "Avoid" per cycle phase — must stay general/historical, never personalized, plus needs a plain-language "educational, not investment advice" disclaimer. **Closed 2026-08-02** — see run log.
-2. **10.2 Dalio dependency**: the app directly quotes Ray Dalio (`dalioQuote` in every language) and credits him by name — legal/platform risk; should be reframed as "principles popularized by economists and investors" with quotes removed. **Closed 2026-08-01.**
-3. **10.3 Kids content / COPPA**: a kids section aimed at ages 5-17 can make the whole app "child-directed" under COPPA, restricting data collection and ads. Should be reframed as a parent-facing "teach your kids" feature rather than a child-facing mode. **Closed 2026-08-01.**
+Feature set as of this entry: 12 sequential unlocking lessons with inline charts on the 4 that teach a
+diagram, an end-of-lesson check per lesson, a Leitner spaced-review queue fed by those same checks, a
+streak counter, `completedLessons`/font-scale/theme all persisted to `localStorage` (`DECISIONS.md`),
+light/dark/system theming, dynamic font scaling, the disclaimer rendered on Learn, the reader, Review,
+and Reference plus the first-run modal, a parent-facing (not child-facing, see below) kids guide, a
+searchable glossary, a dateless Market-signals explainer, and — built across two runs on 2026-08-04 —
+a daily Sector-performance screen: eleven S&P sectors ranked by relative strength against SPY, plus six
+FRED macro readings (Fed funds rate, 2y/10y yields, the yield-curve spread, CPI, unemployment). Both
+source from a static `public/data/market.json` that a scheduled task (`economics-app-market-data`, run
+weekdays after close) writes once a day by running `scripts/fetch-market-data.mjs` — no client-side API
+key, no live calls, and figures older than 4 days are suppressed rather than shown as current (§2.3's
+standing rule).
 
-The launch plan explicitly calls resolving 10.1–10.3 "your first five moves," ahead of any refactor or new feature. **All three are now closed** as of 2026-08-02.
+`LAUNCH_PLAN.md` (v2, rewritten 2026-08-04) is the authoritative launch plan —
+`Economic_Cycles_Launch_Plan.docx` is superseded. `DECISIONS.md` records the reasoning behind standing
+architectural choices (Vite-not-Expo, `.js`-not-JSON content, localStorage-only state, the market-data
+pipeline).
+
+Blindspot register (`LAUNCH_PLAN.md` §10): **10.1** (investment-advice adjacency) and **10.2** (Dalio
+dependency) are closed and are standing rules, not settled history — check any lesson or market-copy
+change against them before assuming they don't apply. **10.3** (kids/COPPA) ships parent-facing today,
+closed on that basis 2026-08-01, but is explicitly **"reopened as a question"** as of 2026-08-04: the
+owner has flagged that a genuinely child-facing product is a legal/store-classification decision, not a
+UI one, and no run should make it unilaterally. The parent-facing framing stands until the owner decides.
 
 ## Prioritized backlog
 
-> **Curated by the weekly review, 2026-08-02 (second pass)**
-> (`reviews/2026-08-02-weekly-review-2.md`). This ordering supersedes every previous one,
-> including the 00:26 curation. **Do not start a P2/P3 item while a P1 is open**, and work
-> P1 items in the numbered order — the ordering is deliberate, not a menu.
+> Rewritten 2026-08-04 (dev-agent run). The previous version of this section, and of the App summary
+> above, still described the pre-rebuild `economic-cycles-v5.jsx` + `Home.jsx`/`Markets.jsx`/`More.jsx`
+> split — three separate run-log entries flagged that staleness (2026-08-04, twice) before this run
+> actually did the rewrite. Re-derived from `LAUNCH_PLAN.md`, `DECISIONS.md`, and the real `src/` tree,
+> not carried forward from the old text. Nothing is deleted — the old numbered items now live in
+> "Completed and pruned" below, and the full detail is always in the run log.
 
-**P1 — cleared.** The `App`-into-per-tab-components split (launch plan §2.2) is complete:
-`Home`, `Markets`, `Learn`, and `More` all now live under `src/components/`, along with the
-`Bar`/`YieldCurve`/`CycleChart` chart helpers (`src/components/charts.jsx`). `App` itself
-is down to 135 lines and is now just tab-switching/header/first-launch-modal glue — see
-the run log entries below for all four steps. **P2 is now open.**
+**P1/P2 — cleared.** The JSX-monolith split, the first-session flow, and the 2026-08-04 rebuild onto
+`src/App.jsx` + `src/screens/*` + `src/lib/*` are all done. See "Completed and pruned" and the run log
+for the history. No open P1/P2 items.
 
-**P2 — after P1 is clear**
+**Open**
 
-1. ~~**[P2] First-session flow (launch plan §3.2–3.3).**~~ **DONE 2026-08-03** — all six steps (6a–6e) complete, see run log for 6e (final step) below. Prune this slot at the next curation.
-   - ~~6a. **Progress ring on Home** (lessons completed / 12) plus an estimated "≈N min" label on each lesson card.~~ **DONE 2026-08-02** — see run log.
-   - ~~6b. **Lesson-completion celebration** — a small animation on "Mark Complete" and the ring advancing.~~ **DONE 2026-08-03** — see run log.
-   - ~~6c. **First-open routing** — with no saved progress, land straight in lesson 1 rather than on Home.~~ **DONE 2026-08-03** — see run log.
-   - ~~6d. **Streak counter on Home**, localStorage-backed.~~ **DONE 2026-08-03** — see run log.
-   - ~~6e. **One-tap "continue tomorrow" prompt** at lesson end.~~ **DONE 2026-08-03** — see run log. Records opt-in/opt-out locally only; does not schedule real notifications (still gated on item 12's Expo decision).
-2. ~~**[P2] Clean up unused translation keys**~~ **DONE 2026-08-03** — see run log. Deleted (didn't build the feature): a `t.`-usage grep across `economic-cycles-v5.jsx` and every `src/components/*.jsx` confirmed all 13 keys had zero call sites, and 10.1 (investment-advice adjacency) is already closed with a "never personalized" framing that a new "Best Investments"/"Avoid" phase-language feature would sit awkwardly next to — deleting was the lower-risk pick. Prune this slot at the next curation.
-3. ~~**[P2] Refresh `README.md`.**~~ **DONE 2026-08-02** — see the run log entry below and the completed list. Prune this slot at the next curation.
-~~4. **[P2] Add `DECISIONS.md`**~~ **DONE 2026-08-03** — see run log. Prune this slot at the next curation.
-5. ~~**[P2] Broaden `scripts/check-data.mjs`'s `t.key` usage scan beyond `economic-cycles-v5.jsx`.**~~ **DONE 2026-08-02** — see the run log entry below and the completed list. The scan now also globs `src/components/*.jsx`; verified by deliberately injecting a dangling `t.` reference into `More.jsx` and confirming the harness fails with the correct file path, then reverting. Prune this slot at the next curation.
-**P2 is now cleared** — item 6 (`completedLessons` persistence) shipped 2026-08-04, see run log. No open P2 items remain.
-
-**P3 — polish, only after P1 and P2**
-
-8. ~~**[P3] `npm audit` triaged, not fixed.**~~ **DONE 2026-08-04** — see run log. Bumped `vite` `^5.4.11` → `^6.4.3` via `npm audit fix --force`, isolated to that one dependency (`@vitejs/plugin-react`/React untouched). `npm audit` now reports 0 vulnerabilities. Prune this slot at the next curation.
-9. ~~**[P3] Dark mode** (plan §3.4).~~ **DONE 2026-08-04** — see run log. Implemented as light/dark/**system** via CSS custom properties in `src/index.css`, with a three-way selector in Reference → About persisted as `ecycles_theme_mode`. Prune this slot at the next curation.
-10. ~~**[P3] Accessibility pass**~~ **DONE 2026-08-04 — fully closed.** Screen-reader labels on tab buttons/quiz options/language picker, first-launch modal focus trap + Escape, `More` sub-nav + kids age-selector semantics, phase-color contrast, and (last remaining sub-part) **dynamic font-size support** are all done — see run log. Prune this slot at the next curation.
-11. ~~**[P3] Mobile responsiveness check**~~ **DONE 2026-08-04 — closed after two passes.** First pass (375px) found and fixed a real overflow risk (missing global `box-sizing: border-box`). Second pass swept 320px portrait, 320px at max font-scale (130%, stacking with item 10's feature), and 568×320 landscape, across every tab plus five interactive states (quiz answered, Kids age-selector, first-launch modal at short viewport height); found no further bugs. See run log for both passes. Re-check after any future layout work (e.g. item 9, dark mode). Prune this slot at the next curation.
-15. **[P3, process] Launch-readiness scorecard.** Added 2026-08-04, owner-requested (part of a broader "self-improving, self-refuting, autonomous launch" push). Add a new file (e.g. `LAUNCH_READINESS.md`) tracking the launch plan's actual gating criteria — blindspot-register status (§10.1–10.3, already all closed, but re-derive rather than trust this note), the Expo-vs-Vite decision (item 12, still HELD), pricing/roadmap milestones from the 16-week plan — so backlog work is visibly tied to "is this launchable," not just "is the backlog list shorter." Not yet built.
-16. **[P3, process] Tighten the builder/critic feedback loop.** Added 2026-08-04, owner-requested (same push as item 15). Currently the weekly review (`economics-app-sunday-review`) is the only thing that catches a dev-agent run's mistaken "done" claims, and it runs at most once a week — real example: §10.1 was reported closed 2026-08-02 when it was about half done, and that wasn't caught until the same day's weekly review. Item 5 (the adversarial self-check, done 2026-08-04 — see the dev-agent's own `SKILL.md`, not this file) is the first piece of this; this item is the rest: e.g. having the dev-agent re-verify one *prior* run's "done" claim before starting new work, or shortening how long a wrong claim can sit uncaught. Not yet built — needs design before implementation, since it changes what the scheduled task does on every run.
-
-**Notes for future runs (informational — not actionable backlog items)**
-
-- **`economic-cycles-v6.jsx` (repo root, untracked) is reference/inspiration material only — do not treat it as a build fixture or merge from it directly.** Added 2026-08-04, owner-clarified. It's a much larger, differently-designed prototype (neon dark-mode `DS` design-system object, extra tabs for Sectors/Industries/Finance, a "Be the Fed Chair" simulator, flashcards) that appeared in the working tree with no git history and no download metadata — its actual origin is unknown. It also reintroduces two things the real app deliberately removed: direct "Ray Dalio" branding/quotes (§10.2, closed) and a hardcoded current date (`nowDate: "April 2026"`, plus an odd `"April 2026 • Late Cycle / Iran War Week 5"` line) — the exact stale/dated-content problem §2.3 fixed. If a future run picks up item 9 (dark mode) or item 14 (sector performance, HELD), `v6.jsx`'s design ideas may be worth a look for inspiration, but its Dalio references and dated content must not carry over, and it should not be added to git as-is.
-- **`main`'s reachable git history currently starts at commit `2dc0264` ("Split monolithic JSX step 4a").** Found 2026-08-04 while investigating unrelated work. Roughly a dozen earlier commits (initial scaffold, the original blindspot-register fixes, the Markets stale-date fix, `scripts/bootstrap-node.sh`'s addition, JSX-split steps 1–3, the language-Beta labelling, the data-shape harness) still exist as objects in the repo (`git cat-file -t <hash>` succeeds for e.g. `eda6dd0`, `ecdda70`, `5ab5c48`, `6feca25`, `76be081`, `053f8b2`) but aren't ancestors of the current `main` tip — something reset or rewrote history before this was noticed, likely an early run's plumbing-commit (`commit-tree`/`update-ref`, used because `git commit` hangs in this environment — see the memory note on this) picking up a stale parent hash instead of the true current `HEAD`. No content appears lost — the tree at `2dc0264` already contains everything those steps produced (locales, content modules, the bootstrap script) — but the historical commit-by-commit record for that early stretch is orphaned, not part of `main`. Not fixed; flagged for the owner to decide whether it's worth reattaching (the old commits are still around, not yet garbage-collected) or leaving as-is.
+15. **[Process] Launch-readiness scorecard.** Added 2026-08-04, owner-requested, not yet built. Track the
+    plan's actual gates in one place rather than trusting a run's own "done" claim: blindspot-register
+    status (§10.1–10.3 — **10.3 is not fully closed**, see the App summary above), the §2.1 platform
+    decision, and — now that §4 has real numbers — the §4.3 phase thresholds (item 17 below).
+16. **[Process] Tighten the builder/critic feedback loop.** Added 2026-08-04, not yet built — needs
+    design. The per-run adversarial self-check (this file's own dev-agent `SKILL.md`) is the first piece;
+    the motivating example (§10.1 reported closed 2026-08-02 when it was actually half done, caught only
+    by that week's review) is why this item exists.
+17. **[Content] Grow the lesson catalogue.** New 2026-08-04, derived from `LAUNCH_PLAN.md` §4.3, not
+    owner-assigned but the plan's own explicit gate: the catalogue is 12 lessons / ~10,900 English
+    characters / ~12 minutes end to end, and Phase 0 ("free, instrumented, no payment code") doesn't end
+    until it reaches roughly 40 lessons / 2 hours of content **and** ≥40% of installers finish lesson 1.
+    Per §4.3 verbatim: "the highest-value monetization work right now is writing lessons, not writing
+    billing code." Do not start billing/paywall work ahead of this gate — see item 15.
+18. **[Process] Instrumentation (§9.2).** Not built — `grep -rn "posthog\|analytics" src/ package.json`
+    returns nothing. The plan is explicit this must land *before* launch, not after; items 15 and 17 are
+    both unmeasurable without it (there's no way to know D1 lesson-1 completion without an analytics
+    pipeline).
 
 **HELD — owner decisions, do not act on these**
 
-12. **[HELD] Expo vs. Vite — needs a human call, and it is now closer to the critical path.** Launch plan §2.2 and §8 (weeks 1–2) specify building on **Expo (React Native)** so web/iOS/Android share one codebase; the 2026-08-01 scaffold run chose **Vite + React (web-only)** instead. That was a reasonable way to make the prototype runnable and the plan does sequence web first, but every further web-only UI change raises the eventual port cost — and item 3 (first-session flow) is a large one. The dev agent must **not** migrate to Expo on its own initiative and must **not** deepen the web-only investment beyond the P2 items above. Surface this for the project owner to decide.
-13. ~~**[HELD] FRED live-data integration.**~~ **DONE 2026-08-04** (later same day as item 14 — see run log for both). Unheld alongside item 14 (the original wording here, since removed, predated the rebuild and referenced a `Markets.jsx` that no longer exists). The daily job (`scripts/fetch-market-data.mjs`) already fetched FRED economics readings earlier that day, but no screen displayed them; completed by surfacing them in Reference → Sector performance under a new "The economy right now" section — see run log. Prune this slot at the next curation.
-14. ~~**[HELD] Sector performance / breakdown.**~~ **DONE 2026-08-04** — see the "Sector performance + relative strength" run-log entry that date. Prune this slot at the next curation.
+12. **[HELD] Expo vs. Vite** (§2.1) — needs a human call; blocks store release, not the web launch. See
+    `DECISIONS.md`. The dev agent must not migrate to Expo on its own initiative or deepen the web-only
+    investment in a way that raises the eventual port cost beyond what's already committed.
+19. **[HELD] Genuinely child-facing kids content** (§10.3, reopened 2026-08-04) — a COPPA/store-
+    classification decision, not a UI one. The parent-facing framing (closed 2026-08-01) stands until the
+    owner decides otherwise; do not change `ParentGuide.jsx`'s framing on this run's own initiative.
+
+**Notes for future runs (informational — not actionable backlog items)**
+
+- **`economic-cycles-v6.jsx` (repo root, untracked) is reference/inspiration material only — do not treat it as a build fixture or merge from it directly.** Added 2026-08-04, owner-clarified. It's a much larger, differently-designed prototype (neon dark-mode `DS` design-system object, extra tabs for Sectors/Industries/Finance, a "Be the Fed Chair" simulator, flashcards) that appeared in the working tree with no git history and no download metadata — its actual origin is unknown. It also reintroduces two things the real app deliberately removed: direct "Ray Dalio" branding/quotes (§10.2, closed) and a hardcoded current date (`nowDate: "April 2026"`, plus an odd `"April 2026 • Late Cycle / Iran War Week 5"` line) — the exact stale/dated-content problem §2.3 fixed. Its dark-mode and sector-performance ideas (the two features it was once a candidate reference for) have both since shipped independently, built without consulting it, so there's no longer a live pointer to a specific future use — but its Dalio references and dated content must still never carry over, and it should not be added to git as-is.
+- **`main`'s reachable git history currently starts at commit `2dc0264` ("Split monolithic JSX step 4a").** Found 2026-08-04 while investigating unrelated work. Roughly a dozen earlier commits (initial scaffold, the original blindspot-register fixes, the Markets stale-date fix, `scripts/bootstrap-node.sh`'s addition, JSX-split steps 1–3, the language-Beta labelling, the data-shape harness) still exist as objects in the repo (`git cat-file -t <hash>` succeeds for e.g. `eda6dd0`, `ecdda70`, `5ab5c48`, `6feca25`, `76be081`, `053f8b2`) but aren't ancestors of the current `main` tip — something reset or rewrote history before this was noticed, likely an early run's plumbing-commit (`commit-tree`/`update-ref`, used because `git commit` hangs in this environment — see the memory note on this) picking up a stale parent hash instead of the true current `HEAD`. No content appears lost — the tree at `2dc0264` already contains everything those steps produced (locales, content modules, the bootstrap script) — but the historical commit-by-commit record for that early stretch is orphaned, not part of `main`. Not fixed; flagged for the owner to decide whether it's worth reattaching (the old commits are still around, not yet garbage-collected) or leaving as-is.
 
 **Completed and pruned**
 
+- **FRED economic readings surfaced in Reference → Sector performance (former item 13)** — done
+  2026-08-04, see run log ("Surface the FRED economic readings the daily job already fetches"). The
+  daily job had fetched Fed funds rate, 2y/10y yields, the curve spread, CPI and unemployment since the
+  sector-performance run earlier that day, but no screen displayed them — a dangling `economyNowTitle`
+  translation key was the tell. Closed by adding a section to `Sectors.jsx`, each reading dated
+  individually rather than sharing the payload's `asOf` (CPI/unemployment update monthly; the Treasury
+  yields update daily).
+- **Sector performance and relative strength (former item 14)** — done 2026-08-04, see run log
+  ("Sector performance + relative strength: data pipeline and UI"). Daily job
+  (`scripts/fetch-market-data.mjs`) writes `public/data/market.json`; `Sectors.jsx` ranks eleven S&P
+  sectors against SPY with a placeholder relative-strength formula, plainly labelled as such. Now
+  scheduled (`economics-app-market-data`, weekdays after close).
 - **Mobile responsiveness check, second pass (P3 item 11 — now fully closed)** — done 2026-08-04,
   see run log. Swept 320px portrait (all four tabs plus quiz-answered, Kids age-selector, and the
   first-launch modal states), 320px combined with the max font-scale step from item 10 (130%, to
