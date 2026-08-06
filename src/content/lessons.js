@@ -686,6 +686,47 @@ export const lessons = [
       ja: "第10課の4つのサイクル局面を思い出してください。株式と債券の両方を持つことが、一方だけを持つより値動きを穏やかにするのはなぜでしょうか？",
     },
   },
+  {
+    id: 18, icon: "🏖️", color: "#0d9488",
+    title: { en: "Retirement Accounts: 401(k) and IRA Basics", es: "Cuentas de Jubilación: Fundamentos del 401(k) y el IRA", ko: "은퇴 계좌: 401(k)와 IRA 기초", zh: "退休账户：401(k)与IRA基础", ja: "退職口座：401(k)とIRAの基本" },
+    subtitle: { en: "Ordinary accounts with an unusual perk: the tax rules", es: "Cuentas comunes con una ventaja poco común: las reglas fiscales", ko: "특별한 혜택이 있는 평범한 계좌: 세금 규칙", zh: "普通账户里藏着不普通的福利：税收规则", ja: "普通の口座に隠された特典：税制優遇" },
+    sections: [
+      {
+        heading: { en: "Why These Accounts Exist", es: "Por Qué Existen Estas Cuentas", ko: "이 계좌들이 존재하는 이유", zh: "这些账户为何存在", ja: "これらの口座が存在する理由" },
+        body: {
+          en: "Picture two coworkers who each set aside $200 a month for 30 years and earn the same return on it. One puts the money in an ordinary brokerage account; the other puts it in a workplace 401(k). Every year, the brokerage saver owes tax on the dividends and gains their investments produce, even though they never touched the money. The 401(k) saver owes nothing on that same growth until they actually withdraw it decades later — letting the full amount, tax included, keep compounding in the meantime (see Lesson 15 on why compounding rewards time above almost everything else).\n\nA 401(k) is a retirement account offered through an employer; an IRA (Individual Retirement Account) is the equivalent that anyone can open on their own through a bank or brokerage, employer or not. Both exist for the same reason: the government designed them to encourage long-term saving by changing the tax treatment, not by changing what you're allowed to invest in — a 401(k) or IRA can hold many of the same stocks, bonds, or funds an ordinary brokerage account can.\n\nMany employers that offer a 401(k) also add a 'match' — contributing some additional money of their own whenever an employee contributes, up to a set limit. That match is usually subject to a vesting schedule (you may need to stay employed a certain number of years before it's fully yours), a detail worth checking rather than assuming.",
+          es: "Un 401(k) es una cuenta de jubilación ofrecida por un empleador; un IRA es su equivalente que cualquiera puede abrir por su cuenta.\n\nAmbos retrasan o eliminan el impuesto sobre las ganancias de inversión hasta que retiras el dinero, a diferencia de una cuenta de corretaje ordinaria que se grava cada año.\n\nMuchos empleadores añaden un 'match' — dinero adicional cuando contribuyes — a menudo sujeto a un período de adquisición de derechos.",
+          ko: "401(k)는 고용주가 제공하는 은퇴 계좌이고, IRA는 누구나 직접 개설할 수 있는 동등한 계좌입니다.\n\n둘 다 일반 증권 계좌와 달리 인출할 때까지 투자 수익에 대한 세금을 늦추거나 없애줍니다.\n\n많은 고용주가 기여할 때마다 추가 자금을 매칭해주며, 이는 보통 일정 근속 기간이 필요한 베스팅 조건이 붙습니다.",
+          zh: "401(k)是雇主提供的退休账户；IRA是任何人都可以自行开设的对等账户。\n\n两者都会推迟或免除投资收益的税，直到你真正取款为止，这与每年都要缴税的普通券商账户不同。\n\n许多雇主还会提供\"匹配\"——你每缴纳一笔，雇主额外追加一笔资金——通常附带归属期限制。",
+          ja: "401(k)は雇用主が提供する退職口座で、IRAは誰でも自分で開設できる同等の口座です。\n\nどちらも、毎年課税される通常の証券口座と違い、実際に引き出すまで投資収益への課税を遅らせるか免除します。\n\n多くの雇用主は拠出額に応じて追加拠出する「マッチング」を提供しますが、通常は一定の勤続年数を要するベスティング条件が伴います。",
+        },
+      },
+      {
+        heading: { en: "Traditional vs Roth: Pay Tax Now or Later", es: "Traditional vs Roth: Pagar Impuestos Ahora o Después", ko: "Traditional vs Roth: 지금 세금을 내느냐, 나중에 내느냐", zh: "Traditional 与 Roth：现在缴税还是以后缴税", ja: "TraditionalとRoth：税金を今払うか後で払うか" },
+        body: {
+          en: "Both the 401(k) and the IRA come in two versions that differ in exactly one place: when the tax bill comes due.\n\nA Traditional account is funded with money that hasn't been taxed yet — it lowers the saver's taxable income the year they contribute — but withdrawals in retirement are taxed as ordinary income. A Roth account works in reverse: it's funded with money that's already been taxed, so contributions don't reduce that year's taxable income, but qualified withdrawals in retirement are entirely tax-free, growth included.\n\nNeither version is universally better — it depends on a comparison nobody can make with certainty: is the saver's tax rate today higher or lower than it's likely to be decades from now, in retirement? A worker early in their career, likely earning less now than they will later, is often described as a candidate for Roth; a worker at peak career earnings, likely to have lower income in retirement, is often described as a candidate for Traditional. Both are simplifications of a genuinely individual, forward-looking tax question — not a rule that fits everyone, and not something this lesson can answer for any specific person.",
+          es: "Traditional se financia con dinero sin gravar (reduce el impuesto de este año), pero los retiros en la jubilación se gravan como ingreso normal.\n\nRoth se financia con dinero ya gravado, pero los retiros calificados en la jubilación son completamente libres de impuestos.\n\nCuál conviene depende de una comparación que nadie puede saber con certeza: la tasa de impuestos de hoy frente a la de dentro de décadas.",
+          ko: "Traditional은 아직 세금을 내지 않은 돈으로 채워져 올해 세금을 줄여주지만, 은퇴 후 인출 시 일반 소득으로 과세됩니다.\n\nRoth는 이미 세금을 낸 돈으로 채워지지만, 은퇴 후 적격 인출은 완전히 비과세입니다.\n\n어느 쪽이 유리한지는 아무도 확실히 알 수 없는 비교, 즉 오늘의 세율과 수십 년 후의 세율에 달려 있습니다.",
+          zh: "Traditional账户用尚未缴税的钱存入（能降低当年应税收入），但退休后取款要按普通收入缴税。\n\nRoth账户用已缴税的钱存入，但退休后符合条件的取款完全免税。\n\n哪种更合适取决于一个没人能确定的比较：今天的税率与几十年后的税率。",
+          ja: "Traditionalはまだ課税されていないお金で拠出し（その年の課税所得を減らせる）、退職後の引き出しは通常所得として課税されます。\n\nRothはすでに課税済みのお金で拠出しますが、退職後の適格な引き出しは完全に非課税です。\n\nどちらが有利かは、誰にも確実にはわからない比較——今日の税率と数十年後の税率——次第です。",
+        },
+      },
+    ],
+    takeaway: {
+      en: "The account type doesn't change what you can invest in — it changes when the tax bill comes due. That single difference, compounded over decades, is why these accounts exist at all.",
+      es: "El tipo de cuenta no cambia en qué puedes invertir — cambia cuándo llega el impuesto. Esa diferencia, compuesta durante décadas, es la razón de ser de estas cuentas.",
+      ko: "계좌 종류는 무엇에 투자할 수 있는지를 바꾸지 않습니다 — 세금이 언제 부과되는지를 바꿀 뿐입니다. 이 한 가지 차이가 수십 년간 복리로 쌓이는 것이 바로 이 계좌들이 존재하는 이유입니다.",
+      zh: "账户类型不会改变你能投资什么——它改变的是税什么时候缴。这一个差异，经过几十年复利，正是这些账户存在的原因。",
+      ja: "口座の種類は投資できるものを変えません——変わるのは税金がいつ発生するかだけです。この一つの違いが数十年かけて複利で積み重なることこそ、これらの口座が存在する理由です。",
+    },
+    thinkAbout: {
+      en: "Lesson 15 showed that starting early matters more than starting big, because compounding needs time above all else. A tax-advantaged account doesn't add extra return by itself — it just lets more of the growth compound undisturbed. Why might that matter more the earlier someone starts?",
+      es: "La lección 15 mostró que empezar temprano importa más que empezar en grande, porque la capitalización necesita tiempo sobre todo. ¿Por qué importaría más cuanto antes empieza alguien?",
+      ko: "15강에서는 복리가 무엇보다 시간을 필요로 하기 때문에 크게 시작하는 것보다 일찍 시작하는 것이 더 중요하다는 것을 보여주었습니다. 일찍 시작할수록 이것이 왜 더 중요할까요?",
+      zh: "第15课说明了早开始比多投入更重要，因为复利最需要的是时间。为什么开始得越早，这一点就越重要？",
+      ja: "第15課では、複利は何よりも時間を必要とするため、大きく始めるより早く始める方が重要だと示しました。早く始めるほど、なぜこれがより重要になるのでしょうか？",
+    },
+  },
 ];
 
 // Estimated reading time for a lesson, always based on the English body text

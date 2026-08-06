@@ -73,15 +73,14 @@ for the history. No open P1/P2 items.
 
 **Open**
 
-17. **[Content] Grow the lesson catalogue.** New 2026-08-04, derived from `LAUNCH_PLAN.md` §4.3, not
-    owner-assigned but the plan's own explicit gate: the catalogue is now 17 lessons / ~38,100 English
-    characters / ~33 minutes end to end (measured directly from `src/content/lessons.js` — up from 12
-    lessons / ~10,900 chars / ~12 min before commit `c29bac3` added lessons 13-17, and further deepened,
-    not widened, by the 2026-08-05 example-rewrite below), and Phase 0 ("free, instrumented, no payment
-    code") doesn't end until it reaches roughly 40 lessons / 2 hours of content **and** ≥40% of
-    installers finish lesson 1. Per §4.3 verbatim: "the highest-value monetization work right now is
-    writing lessons, not writing billing code." Do not start billing/paywall work ahead of this gate —
-    see item 15.
+17. **[Content] Grow the lesson catalogue.** Derived from `LAUNCH_PLAN.md` §4.3, not owner-assigned but
+    the plan's own explicit gate: the catalogue is now 18 lessons / ~41,300 English characters / ~37-40
+    minutes end to end (measured directly from `src/content/lessons.js` — up from 17 lessons / ~38,100
+    chars / ~33 min after 2026-08-06 added lesson 18, "Retirement Accounts: 401(k) and IRA Basics"), and
+    Phase 0 ("free, instrumented, no payment code") doesn't end until it reaches roughly 40 lessons / 2
+    hours of content **and** ≥40% of installers finish lesson 1. Per §4.3 verbatim: "the highest-value
+    monetization work right now is writing lessons, not writing billing code." Do not start
+    billing/paywall work ahead of this gate — see item 15.
 20. **[Content] Non-English lesson translations now lag English by more than before.** Re-measured
     2026-08-05 (evening run) — see run log ("Re-measure Beta-labelling translation ratios"). Ratios:
     es 0.37x, ko 0.19x, zh 0.12x, ja 0.15x of English (down from 0.41x/0.24x/0.15x/0.18x measured
@@ -2665,3 +2664,72 @@ manual adversarial self-check the dev-agent `SKILL.md` already mandates was itse
   attempt a fourth automated translation pass without one. Otherwise: item 17 (grow the lesson catalogue
   toward the ~40-lesson/2-hour §4.3 gate — still the largest gap versus any Phase-0 threshold), or begin
   the real analytics-provider swap once a PostHog account/key exists (owner action).
+
+### 2026-08-06 — Add lesson 18: "Retirement Accounts: 401(k) and IRA Basics" (backlog item 17)
+
+`git status` at start showed only the long-standing untracked `economic-cycles-v6.jsx` — same
+reference-only prototype flagged by the last several runs and the
+`economics-app-unexplained-files-not-fixtures` memory note. No other uncommitted state; nothing to
+recover, nothing blocking normal work.
+
+Picked backlog item 17 (grow the lesson catalogue toward the §4.3 40-lesson/2-hour Phase-0 gate) —
+explicitly the "next run should pick" item from the last two entries, and per §4.3 verbatim the
+highest-value monetization work right now. Item 20 (translation) still correctly deferred — three prior
+runs' consistent "needs a human translator or owner sign-off" verdict stands; item 18's remaining half
+(real analytics provider) needs an owner-created PostHog account this run can't produce.
+
+- **Added lesson 18** to `src/content/lessons.js`: "Retirement Accounts: 401(k) and IRA Basics," the
+  natural next step after lesson 17 (stocks/bonds/diversification) and lesson 15 (compound interest,
+  which this lesson explicitly cross-references) — a topic not yet covered anywhere in the catalogue.
+  Two sections (why tax-advantaged accounts exist and employer matching; Traditional vs Roth) plus
+  takeaway and think-about, all five languages, following the existing narrative-example-then-concept
+  style. Deliberately **excluded specific dollar figures** (contribution limits, match caps) since those
+  change annually and would recreate the exact live-looking-figure problem §2.3 already fixed once —
+  the lesson describes mechanics and trade-offs, not numbers that go stale. Framed the Traditional-vs-Roth
+  choice explicitly as "depends on an individual's own tax situation... not something this lesson can
+  answer for any specific person" rather than picking a side, to stay clear of §10.1.
+- **Added a matching `quizData.js` entry** (lesson: 18, answer index 0 — chosen to balance the
+  already-slightly-skewed distribution rather than by habit): a Traditional-vs-Roth question with a
+  reversed-logic distractor as the second option, testing the actual concept rather than surface
+  recall. `npm test`'s "lesson has no question" check would have failed loudly if this were skipped.
+- **Verified with a real click-through, not just a build**: built the static bundle, served it via the
+  documented Python-server workaround, opened it in the browser-preview tool. Confirmed "LESSON 1 OF
+  18" / "LESSON 18 OF 18" (lesson count picked up automatically, no hardcoded total anywhere), unlocked
+  lesson 18 via `localStorage.setItem("ecycles_completed_lessons", ...)` (the sequential-unlock gate is
+  working as designed, not a bug — had to bypass it deliberately to reach lesson 18 directly), read the
+  full English lesson body rendered correctly, answered the check question and got "CORRECT!" with the
+  right explanation text, and confirmed `analytics.js` fired `lesson_started` (`lessonId: 18`) and
+  `quiz_taken` (`lessonId: 18, correct: true, source: "lesson_check"`) into
+  `localStorage.ecycles_analytics_log` in order. Also switched the language picker to `ko` and confirmed
+  the Korean translation rendered (title, both section bodies, takeaway, think-about, and the
+  already-answered quiz state all in Korean) — a real DOM-level multi-language check, not just a
+  structural parity pass. Killed the Python server afterward.
+- **Adversarial self-check**: (1) *Blindspot register* — ran `npm run check-blindspot` after the edit;
+  all six checks passed (no Dalio references, no advice-adjacent phrasing, disclaimer key present, kids
+  framing signals intact, no live-looking dates). Manually re-read the new lesson's English and Korean
+  text specifically looking for anything that reads as a buy/sell recommendation or a "you should"
+  directive — the Traditional-vs-Roth "it depends" framing and the explicit "not something this lesson
+  can answer for any specific person" line were written to stay on the descriptive side of that line, not
+  just to dodge the grep patterns. (2) *DECISIONS.md conflict* — none; this run touches only content
+  modules, no state/storage/platform/data-source decision. (3) *Redoing done work* — none; lesson 18 is
+  new content, not a rewrite of any of the 17 existing lessons or a redo of the 2026-08-05 example-rewrite
+  or Beta-labelling work. (4) *Verification claim* — the click-through above (including the language
+  switch and the analytics-log inspection) was actually run this session against the actual build output,
+  not inferred from code reading; an independent reviewer repeating the same steps against this commit
+  should see the same "LESSON 18 OF 18," the same quiz result, and the same two analytics-log entries.
+- **Verified build and tests**: `npm test` → `check-data.mjs`: `PASS: 0 failure(s), 0 warning(s)` (lesson
+  18's structure, language parity, and quiz linkage all validated automatically); `check-blindspot.mjs`:
+  `PASS: 0 failure(s)`. `npm run build` → `vite v6.4.3`, `✓ 61 modules transformed`,
+  `dist/assets/index-Djwk-OEU.js` 392.52 kB / 153.20 kB gzip, built in 799ms.
+- **Updated `LAUNCH_READINESS.md`**: Phase-0 lesson-catalogue row now reads 18 lessons / 41,324 English
+  chars / ~37-40 min (~47% of the char/time target, ~45% of the lesson-count target), up from 17 /
+  38,146 / ~33-35 min. Also re-measured the §10.4 translation-ratio row since this run touched every
+  language field: es/ko/zh stayed at their prior ratios (0.37x/0.19x/0.12x) and ja ticked up slightly
+  (0.15x → 0.16x) — expected, since this run translated the new lesson in step rather than adding
+  English-only content, unlike the runs item 20 discusses.
+- **Not touched, and why**: `economic-cycles-v6.jsx` — long-standing untracked reference file, unchanged
+  before and after. `economic-cycles-v5.jsx` and `API_KEYS.template.txt` likewise untouched.
+- **Next run should pick**: item 17 again (one more lesson toward the 40-lesson gate — still the
+  largest gap versus any Phase-0 threshold; candidate topics not yet covered include taxes, insurance
+  basics, or inflation's effect on savings), or item 20's translation work if the owner has since given
+  sign-off, or the real analytics-provider swap once a PostHog account/key exists (owner action).

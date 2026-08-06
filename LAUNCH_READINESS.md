@@ -5,7 +5,7 @@ actual gates, so a run's own "done" claim isn't the only record. This file lists
 what is actually true right now, and how that was checked — not a narrative, a checklist. Update it
 whenever a gate's status changes; don't let it go stale the way `AGENT_LOG.md`'s App summary once did.
 
-**Last refreshed: 2026-08-05 (night, second run — blindspot-check automation, item 16).**
+**Last refreshed: 2026-08-06 (lesson 18 added, item 17).**
 
 ## Blindspot register (`LAUNCH_PLAN.md` §10)
 
@@ -14,7 +14,7 @@ whenever a gate's status changes; don't let it go stale the way `AGENT_LOG.md`'s
 | 10.1 | Financial-advice adjacency | ✅ Closed | `npm run check-blindspot` (added 2026-08-05 night, item 16) — no matches for advice-adjacent phrasing, disclaimer key present in every locale. Disclaimer renders on Home, Learn, Markets, About, first-launch modal. |
 | 10.2 | Dalio dependency | ✅ Closed | `npm run check-blindspot` — no Dalio references in `src/` or `economic-cycles-v5.jsx`. |
 | 10.3 | Kids content / COPPA | ⚠️ Closed-but-reopened | Ships parent-facing (`src/screens/reference/ParentGuide.jsx`), which is the standing rule until the owner decides. **Reopened as a question 2026-08-04 — the owner, not a run, must resolve this.** Do not change the framing without that decision. |
-| 10.4 | Five languages = maintenance debt | 🟡 Open, tracked | es/ko/zh/ja labelled "(Beta)" in the language picker. Volume ratio **re-measured 2026-08-05** after the same day's example-rewrite grew English ~1.7x: es 13,926 chars (0.37x of English, was 0.41x), ko 7,369 (0.19x, was 0.24x), ja 5,901 (0.15x, was 0.18x), zh 4,662 (0.12x, was 0.15x) — all four ratios narrowed as expected, since only the `en` field was expanded and translations weren't touched. See item 20 in `AGENT_LOG.md`. |
+| 10.4 | Five languages = maintenance debt | 🟡 Open, tracked | es/ko/zh/ja labelled "(Beta)" in the language picker. Volume ratio **re-measured 2026-08-06** after lesson 18 was added with translations on every field: es 15,321 chars (0.37x of English, unchanged), ko 8,031 (0.19x, unchanged), zh 5,080 (0.12x, unchanged), ja 6,462 (0.16x, was 0.15x) — essentially flat, since this run translated the new lesson in step rather than leaving it English-only. See item 20 in `AGENT_LOG.md`. |
 | 10.5 | Solo-founder single point of failure | 🟡 Open | Code is on git. No confirmation yet that data exports / store credentials / 2FA recovery codes are in a password manager — that's outside what a dev-agent run can verify or do. |
 | 10.6 | Building instead of distributing | 🟡 Open, ongoing | Pre-launch (no store presence yet), so the "half of weekly hours to distribution" rule doesn't bind yet. Becomes checkable only after web launch. |
 | 10.7 | Plan/practice drift | 🟡 Open, ongoing | Reconciled well so far — `AGENT_LOG.md`'s App summary and `DECISIONS.md` are both current as of the 2026-08-04 rebuild. Recheck at each monthly audit (§9.3). |
@@ -26,13 +26,12 @@ Phase 0 ("free, instrumented, no payment code") must clear **both**:
 
 | Threshold | Target | Actual | Status |
 |---|---|---|---|
-| Lesson catalogue size | ≥40 lessons / ~2 hours | **17 lessons / 38,146 English chars / ~33–35 min** | ❌ Not met — roughly 43% of the char/time target, 42% of the lesson-count target |
+| Lesson catalogue size | ≥40 lessons / ~2 hours | **18 lessons / 41,324 English chars / ~37–40 min** | ❌ Not met — roughly 47% of the char/time target, 45% of the lesson-count target |
 | Installer lesson-1 completion | ≥40% | **Unmeasured** — no analytics pipeline exists | ❌ Unmeasurable |
 
-Verified 2026-08-05 by importing `src/content/lessons.js` directly (bootstrapped Node) and summing
+Verified 2026-08-06 by importing `src/content/lessons.js` directly (bootstrapped Node) and summing
 `title`/`subtitle`/`takeaway`/`thinkAbout`/every section's `heading`+`body`, English only — not carried
-forward from the last run-log claim. Matches AGENT_LOG's "~38,100" figure closely (38,146 exact);
-reading-time estimate uses ~5.5 chars/word at 200 wpm.
+forward from the last run-log claim. Reading-time estimate uses ~5.5 chars/word at 200 wpm.
 
 **Per §4.3 verbatim: "the highest-value monetization work right now is writing lessons, not writing
 billing code."** No billing/paywall code exists in `src/` — confirmed by `grep -rni "paywall\|stripe\|purchase\|subscri" src/` returning no matches outside comments/content copy that merely *describes* the future plan.
