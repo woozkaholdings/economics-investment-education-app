@@ -74,14 +74,14 @@ for the history. No open P1/P2 items.
 **Open**
 
 17. **[Content] Grow the lesson catalogue.** Derived from `LAUNCH_PLAN.md` §4.3, not owner-assigned but
-    the plan's own explicit gate: the catalogue is now 20 lessons / ~46,900 English characters / ~40
-    minutes end to end (measured directly from `src/content/lessons.js` — up from 19 lessons / ~43,900
-    chars / ~40 min after 2026-08-06 (second run) added lesson 19; this run added lesson 20, "Insurance:
-    Trading a Small Certain Cost for Protection from a Large Uncertain One"), and Phase 0 ("free,
-    instrumented, no payment code") doesn't end until it reaches roughly 40 lessons / 2 hours of content
-    **and** ≥40% of installers finish lesson 1. Per §4.3 verbatim: "the highest-value monetization work
-    right now is writing lessons, not writing billing code." Do not start billing/paywall work ahead of
-    this gate — see item 15.
+    the plan's own explicit gate: the catalogue is now 21 lessons / ~49,700 English characters / ~45
+    minutes end to end (measured directly from `src/content/lessons.js` — up from 20 lessons / ~46,900
+    chars / ~40 min after lesson 20 was added; this run added lesson 21, "Inflation and Your Money: Why
+    a Growing Balance Isn't Always Growing Wealth"), and Phase 0 ("free, instrumented, no payment code")
+    doesn't end until it reaches roughly 40 lessons / 2 hours of content **and** ≥40% of installers
+    finish lesson 1. Per §4.3 verbatim: "the highest-value monetization work right now is writing
+    lessons, not writing billing code." Do not start billing/paywall work ahead of this gate — see item
+    15.
 20. **[Content] Non-English lesson translations now lag English by more than before.** Re-measured
     2026-08-05 (evening run) — see run log ("Re-measure Beta-labelling translation ratios"). Ratios:
     es 0.37x, ko 0.19x, zh 0.12x, ja 0.15x of English (down from 0.41x/0.24x/0.15x/0.18x measured
@@ -2902,3 +2902,56 @@ cross-reference back would land on the wrong lesson.
   correction.
 - **Next run should pick**: same as above — item 17 (more lessons, e.g. inflation/purchasing power,
   credit-score depth, estate-planning basics) or item 20's translation work pending owner sign-off.
+
+### 2026-08-06 (third run) — Add lesson 21: "Inflation and Your Money" (backlog item 17, owner-directed)
+
+`git status` at start showed only the long-standing untracked `economic-cycles-v6.jsx` — no other
+uncommitted state. Owner asked for lesson 21 with no topic specified; picked inflation/purchasing power,
+the top candidate named in the previous two entries' "next run should pick" line and a genuine gap —
+inflation is defined in lesson 4 as a side effect of the short-term debt cycle but had no dedicated
+lesson connecting it to personal savings and real vs. nominal returns.
+
+- **Added lesson 21** to `src/content/lessons.js`: two sections — why a dollar buys less over time
+  (grandparent-and-movie-ticket framing, explicitly built on lesson 4's own definition of inflation
+  rather than introducing a competing one), and real vs. nominal return (`real ≈ nominal − inflation`),
+  which cross-references lesson 15's compounding lesson directly (compounding has to *outpace* inflation,
+  not just be positive, to grow real purchasing power). All five languages, same narrative-then-concept
+  style as the last three lessons. The $1,000-in-a-drawer and 3%/5% examples are illustrative round
+  numbers for teaching the mechanism, not live/current data — same pattern lessons 2, 3, and 6 already
+  use for their loan/spending examples, and distinct from the §2.3 problem (a hardcoded *current* market
+  figure that goes stale), since these numbers aren't claimed to reflect today's actual rates.
+- **Added a matching `quizData.js` entry** (lesson: 21, answer index 0 — distribution was 5/6/6/5 before
+  this run, so index 0 keeps it balanced at 6/6/6/5 rather than skewing further): a real-return
+  arithmetic question (3% nominal, 5% inflation → roughly -2% real) that requires applying the lesson's
+  formula, not just recalling a fact.
+- **Verified with a real click-through**: built the static bundle, served it via the documented
+  Python-server workaround, opened it in the browser-preview tool. Confirmed "LESSON 21 OF 21," unlocked
+  it via `localStorage.setItem("ecycles_completed_lessons", ...)`, read the full English body, answered
+  the check question and got "CORRECT!" with the right explanation, confirmed `lesson_started`/
+  `quiz_taken` (`lessonId: 21, correct: true`) fired into the analytics log in order, then switched to
+  `ja` and confirmed the Japanese translation rendered correctly end to end (title through quiz options).
+  Killed the Python server afterward.
+- **Adversarial self-check**: (1) *Blindspot register* — `npm run check-blindspot` clean (all six
+  checks); manually re-read the English and Japanese text for advice-adjacent framing — none found, the
+  lesson explains a mechanism (real vs. nominal return) without telling the reader what to do about it,
+  and the standard disclaimer still renders. No Dalio references, no live-looking current-date figures
+  (the illustrative $1,000/3%/5% numbers are clearly a worked example, not a claimed present-day rate —
+  reasoned through explicitly above rather than just trusting the grep). (2) *DECISIONS.md conflict* —
+  none; content-only change. (3) *Redoing done work* — none; lesson 21 is new content, not a rewrite of
+  lesson 4 (which still only covers inflation as a cycle mechanism, not a personal-finance topic) or
+  lesson 15. (4) *Verification claim* — the click-through above (including the language switch and
+  analytics-log inspection) was actually run this session against the real build output.
+- **Verified build and tests**: `npm test` → `check-data.mjs`: `PASS: 0 failure(s), 0 warning(s)`;
+  `check-blindspot.mjs`: `PASS: 0 failure(s)`. `npm run build` → `vite v6.4.3`, `✓ 61 modules
+  transformed`, `dist/assets/index-DwoLg7A1.js` 431.32 kB / 169.58 kB gzip, built in 826ms.
+- **Updated `LAUNCH_READINESS.md`**: Phase-0 lesson-catalogue row now reads 21 lessons / 49,725 English
+  chars / ~45 min (~56% of the char/time target, ~53% of the lesson-count target), up from 20 / 46,925 /
+  ~40 min. Re-measured §10.4: es/ko/zh/ja stayed essentially flat (0.40x/0.21x/0.13x/0.17x) versus the
+  lesson-20 measurement, consistent with translating each new lesson in step.
+- **Not touched, and why**: `economic-cycles-v6.jsx` — long-standing untracked reference file, unchanged
+  before and after. `economic-cycles-v5.jsx` and `API_KEYS.template.txt` likewise untouched.
+- **Next run should pick**: item 17 again if more lessons are wanted (candidates not yet covered:
+  estate-planning basics, understanding pay stubs/W-2 vs 1099, or basic real-estate/mortgage concepts),
+  or item 20's translation work pending owner sign-off, or the real analytics-provider swap once a
+  PostHog account/key exists (owner action). At 21/40 lessons the catalogue is now past the halfway mark
+  on both thresholds (53% lesson count, 56% char/time).

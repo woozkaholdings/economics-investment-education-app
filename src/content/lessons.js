@@ -809,6 +809,47 @@ export const lessons = [
       ja: "第14課では緊急資金の準備について学びました。保険と緊急資金は関連していますが、異なる問題を解決します。それぞれがより適切に対応できる損失を考えてみてください。",
     },
   },
+  {
+    id: 21, icon: "🛒", color: "#a21caf",
+    title: { en: "Inflation and Your Money: Why a Growing Balance Isn't Always Growing Wealth", es: "La Inflación y Tu Dinero: Por Qué un Saldo Creciente No Siempre Es Más Riqueza", ko: "인플레이션과 내 돈: 잔고가 늘어도 부가 늘지 않을 수 있는 이유", zh: "通胀与你的钱：余额增长不一定等于财富增长", ja: "インフレとあなたのお金：残高が増えても富が増えるとは限らない理由" },
+    subtitle: { en: "The difference between the number in your account and what it can actually buy", es: "La diferencia entre el número en tu cuenta y lo que realmente puede comprar", ko: "계좌의 숫자와 그것이 실제로 살 수 있는 것의 차이", zh: "账户里的数字和它实际能买到的东西之间的差别", ja: "口座の数字と、それが実際に買えるものとの違い" },
+    sections: [
+      {
+        heading: { en: "Why a Dollar Buys Less Over Time", es: "Por Qué un Dólar Compra Menos Con el Tiempo", ko: "시간이 지나면 돈의 구매력이 줄어드는 이유", zh: "为什么一美元随时间贬值", ja: "なぜ時間とともにお金の価値は下がるのか" },
+        body: {
+          en: "Ask a grandparent what a movie ticket or a loaf of bread cost when they were young, and the number will sound tiny. That's not because those things got more valuable — it's the flip side of Lesson 4's definition of inflation: when spending and incomes across an economy grow faster than the goods and services actually produced, prices rise. Repeated year after year, that steady rise means the same dollar buys a little less each year than it did before.\n\nThis matters most for money that just sits still. Picture $1,000 in cash kept in a drawer for twenty years, never touched. The number printed on those bills never changes — it's still $1,000. But the groceries, gas, and rent that $1,000 could have covered on day one would cost noticeably more twenty years later, meaning that same stack of bills now covers less of ordinary life than it used to.\n\nThis isn't a flaw unique to cash in a drawer — it's what inflation does to purchasing power generally, whether the money is in a drawer, a low-interest savings account, or anywhere else that doesn't grow fast enough to keep up.",
+          es: "Pregúntale a un abuelo cuánto costaba una entrada de cine cuando era joven — sonará minúsculo. No es que esas cosas se volvieran más valiosas; es el reverso de la inflación (Lección 4): cuando el gasto crece más rápido que lo que se produce, los precios suben, año tras año.\n\nEsto importa más para el dinero que no se mueve. $1,000 guardados en un cajón durante veinte años siguen siendo $1,000 en el papel, pero compran menos vida cotidiana que antes.",
+          ko: "할아버지, 할머니께 젊었을 때 영화표 가격을 물어보면 아주 작게 들릴 것입니다. 그것들이 더 가치 있어져서가 아니라, 4강에서 배운 인플레이션의 반대편입니다: 지출과 소득이 생산보다 빠르게 늘면 가격이 오릅니다. 이것이 해마다 반복되면 같은 돈으로 살 수 있는 것이 조금씩 줄어듭니다.\n\n이는 가만히 있는 돈에 가장 크게 적용됩니다. 서랍 속 1,000달러는 20년이 지나도 여전히 1,000달러지만, 그때 살 수 있었던 만큼의 생필품을 이제는 살 수 없습니다.",
+          zh: "问问祖父母年轻时一张电影票多少钱，那个数字听起来会小得惊人。这不是因为那些东西变得更值钱了，而是第4课通胀定义的另一面：当支出和收入的增长快于实际生产的商品和服务时，价格就会上涨。年复一年，同样的钱能买到的东西就会一点点变少。\n\n这对静止不动的钱影响最大。抽屉里放二十年的1000美元，票面数字始终是1000，但能买到的日常用品却比当初少了。",
+          ja: "祖父母に、若い頃の映画のチケット代を聞いてみてください。とても小さな金額に聞こえるはずです。それらの価値が上がったからではなく、第4課で学んだインフレの裏返しです：支出と所得が実際に生産される財やサービスより速く増えると、物価が上がります。これが毎年繰り返されると、同じお金で買えるものが少しずつ減っていきます。\n\nこれは動かないお金に最も大きく影響します。引き出しに20年間しまわれた1,000ドルは紙の上では今も1,000ドルですが、当時買えた日用品の量はもう買えません。",
+        },
+      },
+      {
+        heading: { en: "Real Return vs Nominal Return", es: "Rendimiento Real vs Rendimiento Nominal", ko: "실질 수익률 vs 명목 수익률", zh: "实际回报率 vs 名义回报率", ja: "実質リターン vs 名目リターン" },
+        body: {
+          en: "A savings account that pays interest sounds like it's protecting against this problem — the balance grows every year, after all. But the number on the statement is the nominal return: growth measured in plain dollars, without asking what those dollars can actually buy.\n\nThe real return strips inflation back out: roughly, real return ≈ nominal return − inflation rate. If an account grows by a modest percentage in a year where prices across the economy rose by a similar or larger percentage, the balance is bigger in dollar terms but roughly flat — or even shrinking — in terms of what it can actually purchase. A bigger number on the screen doesn't automatically mean more real wealth.\n\nThis is exactly why Lesson 15's point about compounding matters so much: compounding needs to outpace inflation, not just be positive, for an account's growth to translate into growing purchasing power rather than merely growing numbers.",
+          es: "Una cuenta de ahorros con interés parece proteger contra esto — el saldo crece cada año. Pero ese número es el rendimiento nominal: crecimiento en dólares simples, sin preguntar qué pueden comprar esos dólares.\n\nEl rendimiento real resta la inflación: rendimiento real ≈ rendimiento nominal − inflación. Un saldo mayor en dólares no siempre significa más riqueza real.",
+          ko: "이자를 주는 저축 계좌는 이 문제를 막아주는 것처럼 보입니다 — 잔고가 매년 늘어나니까요. 하지만 그 숫자는 명목 수익률입니다: 단순히 달러로 측정한 성장일 뿐, 그 달러로 무엇을 살 수 있는지는 묻지 않습니다.\n\n실질 수익률은 인플레이션을 뺀 것입니다: 대략 실질 수익률 ≈ 명목 수익률 − 인플레이션율. 화면 속 더 큰 숫자가 항상 더 많은 실질 부를 의미하지는 않습니다.",
+          zh: "有利息的储蓄账户看起来能防止这个问题——毕竟余额每年都在增长。但那个数字是名义回报率：只是用美元衡量的增长，并没有问这些美元实际能买到什么。\n\n实际回报率则把通胀去掉：大致是 实际回报率 ≈ 名义回报率 − 通胀率。屏幕上更大的数字不一定意味着更多的实际财富。",
+          ja: "利息の付く預金口座は、この問題を防いでくれるように見えます——残高が毎年増えるのですから。しかしその数字は名目リターンです：単にドルで測った増加であり、そのドルで実際に何が買えるかは問いません。\n\n実質リターンはインフレを差し引いたものです：おおよそ 実質リターン ≈ 名目リターン − インフレ率。画面上の大きな数字が、必ずしもより多くの実質的な富を意味するわけではありません。",
+        },
+      },
+    ],
+    takeaway: {
+      en: "A growing account balance isn't the same as growing wealth. What matters is the real return — nominal growth minus inflation — because that's what determines whether your money's actual purchasing power is rising or falling.",
+      es: "Un saldo creciente no es lo mismo que riqueza creciente. Lo que importa es el rendimiento real — crecimiento nominal menos inflación.",
+      ko: "잔고가 느는 것이 부가 느는 것과 같지는 않습니다. 중요한 것은 실질 수익률 — 명목 성장에서 인플레이션을 뺀 것 — 입니다.",
+      zh: "余额增长不等于财富增长。重要的是实际回报率——名义增长减去通胀。",
+      ja: "残高が増えることは富が増えることと同じではありません。重要なのは実質リターン——名目成長からインフレを引いたもの——です。",
+    },
+    thinkAbout: {
+      en: "Lesson 15 showed how compounding rewards time above almost everything else. Now add inflation to that picture: money that sits still, even in an account with a small positive interest rate, can still lose real purchasing power every year inflation outpaces it. Does that change how you think about the difference between saving and simply not spending?",
+      es: "La Lección 15 mostró que la capitalización premia el tiempo sobre casi todo lo demás. Ahora añade la inflación: el dinero quieto, incluso con un poco de interés, puede perder poder adquisitivo real cada año que la inflación lo supere. ¿Cambia eso tu forma de pensar sobre ahorrar frente a simplemente no gastar?",
+      ko: "15강에서는 복리가 거의 모든 것보다 시간을 우대한다는 것을 보여주었습니다. 이제 인플레이션을 더해보세요: 작은 양의 이자가 붙어도 가만히 있는 돈은 인플레이션이 앞지르는 해마다 실질 구매력을 잃을 수 있습니다. 이것이 저축과 단순히 쓰지 않는 것의 차이를 생각하는 방식을 바꾸나요?",
+      zh: "第15课说明了复利几乎比其他任何因素都更重视时间。现在把通胀也加进来看：即使有一点正利息，静止不动的钱也会在通胀超过它的每一年损失实际购买力。这是否改变了你对\"储蓄\"和\"仅仅不花钱\"之间区别的看法？",
+      ja: "第15課では、複利がほぼ何よりも時間を重視することを示しました。ここにインフレを加えてみましょう：わずかなプラスの利息がついていても、動かないお金はインフレがそれを上回る年ごとに実質的な購買力を失う可能性があります。これは、貯蓄と単に使わないことの違いについての考え方を変えますか？",
+    },
+  },
 ];
 
 // Estimated reading time for a lesson, always based on the English body text
