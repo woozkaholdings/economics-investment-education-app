@@ -10,6 +10,7 @@
 // ═══════════════════════════════════════════════════════════════════════════
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import { EVENTS, track } from "../lib/analytics.js";
 import { estimateMinutes } from "../content/lessons.js";
 import { quizData } from "../content/quizData.js";
 import { recordContinueChoice, wasContinuePromptShownToday } from "../lib/useAppState.js";
@@ -56,6 +57,7 @@ export default function LessonReader({ t, lang, lessons, index, completedLessons
     setPrompt(null);
     window.scrollTo({ top: 0 });
     headingRef.current?.focus();
+    track(EVENTS.LESSON_STARTED, { lessonId: lesson.id });
   }, [index]);
 
   useEffect(() => {
@@ -69,6 +71,7 @@ export default function LessonReader({ t, lang, lessons, index, completedLessons
 
   const handleComplete = () => {
     completeLesson(lesson.id);
+    track(EVENTS.LESSON_COMPLETED, { lessonId: lesson.id });
     setCelebrating(true);
     if (!wasContinuePromptShownToday()) {
       recordContinueChoice(null); // records "asked today"; the answer follows
@@ -159,7 +162,10 @@ export default function LessonReader({ t, lang, lessons, index, completedLessons
                 question={question}
                 lang={lang}
                 t={t}
-                onAnswered={(wasCorrect) => recordReview(qIndex, wasCorrect)}
+                onAnswered={(wasCorrect) => {
+                  recordReview(qIndex, wasCorrect);
+                  track(EVENTS.QUIZ_TAKEN, { lessonId: lesson.id, source: "lesson_check", correct: wasCorrect });
+                }}
               />
             ))}
           </Stack>

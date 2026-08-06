@@ -95,10 +95,15 @@ for the history. No open P1/P2 items.
     examples into es/ko/zh/ja (deliberately deferred both times to avoid rushed, lower-quality
     translations under time pressure) — a future run should either do that translation work or decide
     it's out of scope for a single automated run and needs a human translator.
-18. **[Process] Instrumentation (§9.2).** Not built — `grep -rn "posthog\|analytics" src/ package.json`
-    returns nothing. The plan is explicit this must land *before* launch, not after; items 15 and 17 are
-    both unmeasurable without it (there's no way to know D1 lesson-1 completion without an analytics
-    pipeline).
+18. **[Process] Instrumentation (§9.2) — call sites done 2026-08-05, real provider still open.**
+    `src/lib/analytics.js` (`track()`/`EVENTS`) fires `app_opened`, `lesson_started`,
+    `lesson_completed`, and `quiz_taken` (see run log entry "Wire the §9.2 minimum analytics event set").
+    `paywall_viewed`/`trial_started`/`subscribed`/`cancelled`/`ad_watched` have names reserved but don't
+    fire — no paywall/billing/ad feature exists yet to fire them from. Events currently land in a local
+    `localStorage` rolling log, not a real provider (PostHog, per the plan) — that swap needs an account
+    and API key a dev-agent run can't create; see `DECISIONS.md`. What's left: create that account
+    (owner action) and swap `analytics.js`'s `sink()`; item 17's D1 lesson-1-completion measurement is
+    still blocked until then, since a per-device local log can't be aggregated across installs.
 
 **HELD — owner decisions, do not act on these**
 
@@ -2510,3 +2515,66 @@ character-count re-measurement is a bounded, verifiable task that doesn't carry 
   es/ko/zh/ja — or, if that's judged too large/risky for a single unsupervised run, explicitly say so and
   move to item 16 (tighten the builder/critic feedback loop) instead. **The `API_KEYS.template.txt` key
   value still needs a human's attention before any run stages or commits that file.**
+
+### 2026-08-05 (night) — Wire the §9.2 minimum analytics event set
+
+Picked backlog item 18 (instrumentation), the one open item `LAUNCH_READINESS.md` marks fully
+unbuilt (0%) and the plan calls a hard pre-launch gate, not a nice-to-have. Translating the
+real-life examples (item 20's other half) was the other candidate but was deliberately skipped again —
+still judged too large/risky for a single unsupervised run across 4 languages, per the reasoning the
+last two runs already recorded; a future run should either do it or formally decide it needs a human
+translator instead of deferring a third time.
+
+- **Added `src/lib/analytics.js`**: a single `track(event, props)` plus an `EVENTS` map covering every
+  event `LAUNCH_PLAN.md` §9.2 names (app opened, lesson started/completed, quiz taken, paywall viewed,
+  trial started, subscribed, cancelled, ad watched). `track()` writes to a rolling `localStorage` log
+  (`ecycles_analytics_log`, capped at 200 entries via `KEYS.analyticsLog` in `storage.js`) rather than
+  calling a real provider — there's no PostHog account or API key for this project, and a dev-agent run
+  can't create one. This mirrors the swappable-sink shape `DECISIONS.md` already documents for the
+  market-data adapters: every `track()` call site stays put, only `sink()`'s body changes once a
+  provider exists. See the new DECISIONS.md entry ("Instrumentation: minimum event set wired to a local
+  sink, not PostHog yet") for the full reasoning, including why `quiz_taken` fires per answered
+  question rather than per quiz session, and why the paywall/trial/subscription/ad events are named but
+  never fired (no such feature exists yet — firing them would be fabricated data).
+- **Wired the four events the app can actually produce today**: `app_opened` once per load
+  (`App.jsx`, new `useEffect`); `lesson_started` when `LessonReader` mounts a lesson (existing
+  index-change effect); `lesson_completed` in `handleComplete`; `quiz_taken` in both
+  `LessonReader.jsx`'s end-of-lesson check and `Practice.jsx`'s review queue, each tagged
+  `source: "lesson_check"` / `"review_queue"` plus `lessonId` and `correct`.
+- **Verified with a real click-through, not just a build**: built the static bundle, served it from
+  the sandbox's Python-server workaround (`AGENT_LOG.md`'s documented technique), opened it in the
+  browser-preview tool, and drove it — opened the app (`app_opened` logged), continued into an
+  unfinished lesson (`lesson_started` logged with the right `lessonId`), answered its check question
+  (`quiz_taken` logged with `source: "lesson_check"` and the actual `correct` value), marked it
+  complete (`lesson_completed` logged), then switched to Review → Practice all questions and answered
+  one there too (`quiz_taken` logged with `source: "review_queue"`). Inspected
+  `localStorage.getItem("ecycles_analytics_log")` after each step and confirmed each event appended
+  in order with the expected shape — this is a real DOM-level verification, not a code-review guess.
+- **Adversarial self-check**: (1) *Blindspot register* — this change touches no lesson/glossary/quiz
+  content and no dates; ran the standing greps anyway (`grep -rni dalio src/ economic-cycles-v5.jsx`,
+  `grep -rn "best investments\|be bullish\|be cautious" src/content/`, checked `kidsTitle` is still the
+  parent-facing string) — all clean, nothing reintroduced. (2) *DECISIONS.md conflict* — none; the new
+  entry extends the existing localStorage-only-state decision (same file, same try/catch-wrapped
+  read/write helpers) rather than contradicting it, and touches no content-format or platform decision.
+  (3) *Redoing done work* — none; item 18 was 0% built (`grep -rn "posthog\|analytics" src/
+  package.json` returned nothing before this run), so there's no prior implementation to duplicate or
+  undo. (4) *Verification claim* — the click-through above was actually run in this session, not
+  inferred; an independent reviewer repeating the same browser steps against the same build should see
+  the same four `localStorage` entries in the same order.
+- **Verified build and tests**: `npm test` → `PASS: 0 failure(s), 0 warning(s)`. `npm run build` →
+  `vite v6.4.3`, `✓ 61 modules transformed`, `dist/assets/index-BoFwYtZg.js` 380.72 kB / 148.04 kB
+  gzip, built in ~1s (this sandbox's build finished fast this run — no concurrent automated session
+  competing for CPU, unlike several past runs' ~2-3 minute builds).
+- **Updated `LAUNCH_READINESS.md`**'s instrumentation table to reflect exactly what's built (call sites:
+  yes; real provider: no) instead of the previous flat "not built," and updated its refresh instructions
+  (the old `grep -rn "posthog|analytics"` command would now false-positive on `analytics.js`'s own
+  filename/imports).
+- **Not touched, and why**: `API_KEYS.template.txt` and `economic-cycles-v6.jsx` — confirmed via
+  `git log -- API_KEYS.template.txt` and a content grep that the committed template only has empty
+  placeholder values (the "real-looking key sitting unstaged" the previous run flagged was an
+  in-progress state that never got committed, not a live secret); `git status` before and after this
+  run's edits shows no changes to either file.
+- **Next run should pick**: item 20's translation work (still deferred, third time now — worth a
+  decision either way rather than a fourth deferral), or begin the real analytics-provider swap once a
+  PostHog account/key exists (owner action, not something this run can do), or item 16 (tighten the
+  builder/critic feedback loop, still just a design note).

@@ -5,7 +5,7 @@ actual gates, so a run's own "done" claim isn't the only record. This file lists
 what is actually true right now, and how that was checked — not a narrative, a checklist. Update it
 whenever a gate's status changes; don't let it go stale the way `AGENT_LOG.md`'s App summary once did.
 
-**Last refreshed: 2026-08-05 (evening — item 20 re-measurement).**
+**Last refreshed: 2026-08-05 (night — instrumentation call sites, item 18).**
 
 ## Blindspot register (`LAUNCH_PLAN.md` §10)
 
@@ -41,12 +41,18 @@ billing code."** No billing/paywall code exists in `src/` — confirmed by `grep
 
 | Requirement | Status |
 |---|---|
-| Any analytics library present | ❌ None — `grep -rn "posthog\|analytics" src/ package.json` returns zero matches |
-| Minimum event set (app opened, lesson started/completed, quiz taken, paywall viewed, trial started, subscribed, cancelled, ad watched) | ❌ Not built |
+| Analytics call-site abstraction present | 🟡 Built 2026-08-05 — `src/lib/analytics.js` (`track()`/`EVENTS`), not PostHog yet |
+| Minimum event set — app opened | ✅ Fires (`App.jsx`, once per load) |
+| Minimum event set — lesson started / completed | ✅ Fires (`LessonReader.jsx`) |
+| Minimum event set — quiz taken | ✅ Fires per answered question (`LessonReader.jsx` lesson-check + `Practice.jsx` review queue), tagged `source` |
+| Minimum event set — paywall viewed / trial started / subscribed / cancelled / ad watched | ❌ Not fired — no paywall/billing/ad feature exists yet to fire them from |
+| Real analytics provider (events actually collected off-device) | ❌ None — `track()` writes to a local `localStorage` rolling log only; `grep -rn "posthog" src/ package.json` returns zero matches. See `DECISIONS.md`. |
 
-This is backlog item 18 in `AGENT_LOG.md` and is explicitly required *before* launch, not after. It's
-also the reason the installer-completion half of the Phase 0 gate above is unmeasurable — there's no
-pipeline to measure it with.
+This is backlog item 18 in `AGENT_LOG.md`. The call-site plumbing for every event the app can
+currently produce is done; **still open** is swapping the local sink for a real provider (needs an
+account/API key a dev-agent run can't create) — until that lands, the installer-completion half of
+the Phase 0 gate above stays unmeasurable off-device, though it is now inspectable per-device via
+`localStorage.getItem("ecycles_analytics_log")`.
 
 ## Process items tracking this scorecard itself
 
@@ -87,7 +93,9 @@ pipeline to measure it with.
     console.log(t);
   });'
   ```
-- Instrumentation: `grep -rn "posthog\|analytics" src/ package.json`.
+- Instrumentation: `grep -rn "track(EVENTS\." src/` for call sites (expect App/LessonReader/Practice);
+  `grep -rn "posthog" src/ package.json` for whether a real provider has been wired in yet (expect no
+  matches until that happens).
 - Installer completion / paywall conversion: not checkable until §9.2 ships — leave marked
   "Unmeasured," don't estimate.
 - Do not mark a gate closed here without the same command a skeptical reviewer would run producing the

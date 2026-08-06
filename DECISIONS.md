@@ -78,6 +78,31 @@ Add a new entry when a run makes a choice future work should be able to look up 
 - **Revisit when:** the proprietary RS formula is ready (swap the strategy, keep everything else); or
   a provider's terms change; or the product needs intraday data, which would reopen every point here.
 
+### Instrumentation: minimum event set wired to a local sink, not PostHog yet
+
+- **Status:** open — the seam exists, the real provider doesn't yet. See `AGENT_LOG.md` backlog
+  item 18.
+- **What was decided:** `src/lib/analytics.js` exports a single `track(event, props)` and an
+  `EVENTS` map covering `LAUNCH_PLAN.md` §9.2's minimum set (app opened, lesson started/completed,
+  quiz taken, paywall viewed, trial started, subscribed, cancelled, ad watched). `track()` currently
+  writes to a rolling `localStorage` log (`ecycles_analytics_log`, capped at 200 entries) rather than
+  calling PostHog, which §9.2 names as the target provider.
+- **Why not PostHog now:** it needs a real account and a public API key, neither of which a dev-agent
+  run can create. Shipping the call sites now (`app_opened` in `App.jsx`; `lesson_started`/
+  `lesson_completed`/`quiz_taken` in `LessonReader.jsx` and `Practice.jsx`) means the only thing left
+  when a key exists is swapping `sink()`'s body — no call site changes, same shape as the market-data
+  adapter seam.
+- **Why fire `quiz_taken` per answered question, not per quiz session:** the app's review/check unit
+  is a single question, not a multi-question test with a start/end boundary; per-question granularity
+  (with `correct` and a `source` of `"lesson_check"` or `"review_queue"`) needed no new session-tracking
+  state and is at least as useful for a completion-rate metric later.
+- **Why `paywall_viewed`/`trial_started`/`subscribed`/`cancelled`/`ad_watched` are unfired:** none of
+  those features exist in the app yet (no paywall/billing code — confirmed by
+  `LAUNCH_READINESS.md`'s own grep). The event names exist so the provider swap-in doesn't also have
+  to invent names later, but firing them now would be fabricated data.
+- **Revisit when:** a PostHog (or other provider) account and key exist — swap `sink()`, keep every
+  `track()` call site as-is.
+
 ## Closed
 
 ### Content as `.js` modules, not JSON

@@ -20,6 +20,7 @@ export const KEYS = {
   lang: "ecycles_lang",
   themeMode: "ecycles_theme_mode",
   review: "ecycles_review",
+  analyticsLog: "ecycles_analytics_log",
 };
 
 export function readRaw(key, fallback = null) {

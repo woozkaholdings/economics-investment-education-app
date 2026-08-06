@@ -13,6 +13,7 @@
 // ═══════════════════════════════════════════════════════════════════════════
 
 import { useMemo, useState } from "react";
+import { EVENTS, track } from "../lib/analytics.js";
 import { quizData } from "../content/quizData.js";
 import { dueQuestions, seenCount } from "../lib/review.js";
 import Icon from "../components/Icon.jsx";
@@ -76,7 +77,11 @@ export default function Practice({ t, lang, review, recordReview }) {
           question={item.question}
           lang={lang}
           t={t}
-          onAnswered={(wasCorrect) => { recordReview(item.index, wasCorrect); setAnswered(true); }}
+          onAnswered={(wasCorrect) => {
+            recordReview(item.index, wasCorrect);
+            track(EVENTS.QUIZ_TAKEN, { lessonId: item.question.lesson, source: "review_queue", correct: wasCorrect });
+            setAnswered(true);
+          }}
         />
 
         {/* Only after answering. Offering "Next" up front invites tapping past

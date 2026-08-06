@@ -12,6 +12,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { lessons } from "./content/lessons.js";
+import { EVENTS, track } from "./lib/analytics.js";
 import { useAppState } from "./lib/useAppState.js";
 import Icon from "./components/Icon.jsx";
 import { Button, Card, Text } from "./components/ui.jsx";
@@ -82,6 +83,9 @@ export default function App() {
   const scrollTop = useCallback(() => {
     try { window.scrollTo({ top: 0, behavior: "smooth" }); } catch { /* older browsers */ }
   }, []);
+
+  // Once per app load, not per tab switch — see LAUNCH_PLAN §9.2.
+  useEffect(() => { track(EVENTS.APP_OPENED); }, []);
 
   // Lessons unlock in order: the first is always open, the rest need the one
   // before them completed.
