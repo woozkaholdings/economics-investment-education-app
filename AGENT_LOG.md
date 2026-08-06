@@ -73,10 +73,6 @@ for the history. No open P1/P2 items.
 
 **Open**
 
-16. **[Process] Tighten the builder/critic feedback loop.** Added 2026-08-04, not yet built — needs
-    design. The per-run adversarial self-check (this file's own dev-agent `SKILL.md`) is the first piece;
-    the motivating example (§10.1 reported closed 2026-08-02 when it was actually half done, caught only
-    by that week's review) is why this item exists.
 17. **[Content] Grow the lesson catalogue.** New 2026-08-04, derived from `LAUNCH_PLAN.md` §4.3, not
     owner-assigned but the plan's own explicit gate: the catalogue is now 17 lessons / ~38,100 English
     characters / ~33 minutes end to end (measured directly from `src/content/lessons.js` — up from 12
@@ -91,10 +87,16 @@ for the history. No open P1/P2 items.
     es 0.37x, ko 0.19x, zh 0.12x, ja 0.15x of English (down from 0.41x/0.24x/0.15x/0.18x measured
     2026-08-02), confirming the gap widened as expected once English grew ~1.7x on 2026-08-05 morning
     while translations stayed flat. The re-measurement itself is done and `LAUNCH_READINESS.md`/
-    `lessons.js`'s comment are current again. What's still open: actually translating the new real-life
-    examples into es/ko/zh/ja (deliberately deferred both times to avoid rushed, lower-quality
-    translations under time pressure) — a future run should either do that translation work or decide
-    it's out of scope for a single automated run and needs a human translator.
+    `lessons.js`'s comment are current again. **Decision, 2026-08-05 (night) — three consecutive
+    automated runs have now independently declined to attempt this translation, all citing the same
+    reasoning (rushed machine translation of financial-education content into es/ko/zh/ja, unreviewed
+    by a native speaker, risks both inaccuracy and inadvertently reintroducing advice-adjacent framing
+    in a language `check-blindspot.mjs` doesn't scan for — see item 16 below).** That consistent,
+    independently-reached judgment is itself the answer: this is not "too large for one run," it
+    genuinely needs a human/professional translator or explicit owner sign-off to attempt via LLM, not
+    a fourth automated attempt. Recommend the owner either commission translation for the 34 rewritten
+    sections or explicitly authorize an automated attempt (accepting the review-risk above) before a
+    future run touches this again.
 18. **[Process] Instrumentation (§9.2) — call sites done 2026-08-05, real provider still open.**
     `src/lib/analytics.js` (`track()`/`EVENTS`) fires `app_opened`, `lesson_started`,
     `lesson_completed`, and `quiz_taken` (see run log entry "Wire the §9.2 minimum analytics event set").
@@ -121,6 +123,14 @@ for the history. No open P1/P2 items.
 
 **Completed and pruned**
 
+- **Tighten the builder/critic feedback loop, first piece (former item 16)** — done 2026-08-05 (night),
+  see run log ("Automate the blindspot-register regression checks"). New `scripts/check-blindspot.mjs`,
+  wired into `npm test` and callable alone via `npm run check-blindspot`, codifies the grep commands
+  every run's manual adversarial self-check (and `LAUNCH_READINESS.md`) had been retyping by hand:
+  §10.2 Dalio references, §10.1 advice-adjacent language + disclaimer-key presence, §10.3 parent-facing
+  kids framing signal, §2.3 live-looking dates in teaching copy. Not a full replacement for the
+  judgment-based half of the self-check (framing calls, "does this read like advice" calls still need a
+  human or an agent reading the diff) — see the run log for what's still manual.
 - **Launch-readiness scorecard (former item 15)** — done 2026-08-05, see run log ("Launch-readiness
   scorecard"). New `LAUNCH_READINESS.md` at repo root tracks the plan's actual gates in one place:
   blindspot register (§10.1–10.7 + §2.1), the §4.3 Phase-0 monetization gate, and §9.2 instrumentation —
@@ -2578,3 +2588,80 @@ translator instead of deferring a third time.
   decision either way rather than a fourth deferral), or begin the real analytics-provider swap once a
   PostHog account/key exists (owner action, not something this run can do), or item 16 (tighten the
   builder/critic feedback loop, still just a design note).
+
+### 2026-08-05 (night, second run) — Automate the blindspot-register regression checks (backlog item 16)
+
+`git status` at start showed only the long-standing untracked `economic-cycles-v6.jsx` (documented
+reference-only prototype, per the App summary's "Notes for future runs" and the
+`economics-app-unexplained-files-not-fixtures` memory note — left untouched, not staged). No other
+uncommitted state; `API_KEYS.template.txt`, flagged dirty by the two previous runs, is clean again (all
+placeholder values empty) — resolved on its own, not by this run.
+
+Picked backlog item 16 (tighten the builder/critic feedback loop) over item 20's translation work. Read
+the last three run-log entries first: item 20's translation half has now been explicitly deferred by
+three consecutive automated runs (2026-08-05 morning, evening, and the instrumentation run), each citing
+the same reasoning — unsupervised machine translation of financial-education content into es/ko/zh/ja,
+with no native-speaker review, risks both inaccuracy and silently reintroducing advice-adjacent framing
+in a language none of this repo's checks (including the new one below) scan for. Three independent
+"defer" verdicts reaching the same conclusion is itself a decision, not an absence of one — see the
+rewritten backlog item 20 above, which now states that recommendation explicitly instead of leaving
+"future run should decide" hanging a fourth time. Item 16 was next in line, explicitly named as the
+process item to pick "once content work is caught up," and was concretely buildable in one run — the
+manual adversarial self-check the dev-agent `SKILL.md` already mandates was itself the design.
+
+- **Added `scripts/check-blindspot.mjs`**: codifies the exact grep commands that `LAUNCH_READINESS.md`
+  and five separate run-log entries have quoted by hand as their self-check evidence — Dalio references
+  anywhere in `src/` or `economic-cycles-v5.jsx` (§10.2), advice-adjacent language ("best investments:",
+  "be bullish/cautious", "you should buy/sell/invest", "we recommend") plus disclaimer-key presence
+  across `src/content/` and `src/locales/` (§10.1), the `kidsParentIntro` parent-facing framing signal
+  plus a specific guard against `kidsTitle` reverting to the old child-facing string (§10.3), and a
+  "Month YYYY"-shaped live-looking date in the three teaching-copy content modules (`markets.js`,
+  `economicSignals.js`, `sectors.js`) that must stay dateless per §2.3 — deliberately scoped to exclude
+  `public/data/market.json`, which legitimately carries a real `asOf` date as part of the documented
+  staleness contract, not a bug. Wired as `npm run check-blindspot` and chained into `npm test`
+  (`check-data.mjs && check-blindspot.mjs`), so every future run's existing `npm test` step now catches
+  these regressions automatically instead of relying on a run remembering to retype the greps.
+- **This does not replace the judgment half of the self-check.** Framing calls ("does this new prose
+  read like advice even though it doesn't match a fixed phrase"), whether a UI change needs an owner
+  decision, and DECISIONS.md-conflict review still need a human or an agent actually reading the diff —
+  the script only catches grep-shaped regressions of issues that were already found and fixed once.
+  Said explicitly in the script's own header comment so a future run doesn't mistake a green
+  `check-blindspot` for "the self-check is done."
+- **Verified the checks are real, not rubber-stamps**: ran `node scripts/check-blindspot.mjs` cold — all
+  six checks passed against the current tree. Then temporarily appended a `// Dalio test` comment to
+  `src/locales/en.js`, re-ran — the script correctly failed with the exact file/line/text of the
+  injected string, confirming the Dalio check isn't a no-op. Restored `en.js` from a backup copy
+  immediately after (not via `git checkout`, since the file had no other diff to preserve accidentally)
+  and re-ran a third time — back to `PASS: 0 failure(s)`. `git status --short` after the restore showed
+  only this run's two real changes (`package.json`, `scripts/check-blindspot.mjs`) plus the pre-existing
+  untracked `v6.jsx` — the injection-and-restore left no residue.
+- **Adversarial self-check**: (1) *Blindspot register* — this run adds a checker, it doesn't touch any
+  lesson, locale, or market-copy content; the checker's own clean run against the current tree is direct
+  evidence nothing was reintroduced, and the injection test above proves the check isn't vacuous. (2)
+  *DECISIONS.md conflict* — none: no state/storage/content-format/platform decision touched; the new
+  script follows the same plain-Node-ESM, no-dependency pattern `scripts/check-data.mjs` already
+  established, extending it rather than contradicting anything. (3) *Redoing done work* — none; item 16
+  was explicitly "not yet built" in both `AGENT_LOG.md` and `LAUNCH_READINESS.md` before this run, and
+  nothing in "Completed and pruned" covers automated content-safety checks. (4) *Verification claims* —
+  every command above (`npm test`, `npm run build`, the injection test, `git status --short`) was
+  actually run this session and its real output is what's quoted; an independent reviewer re-running
+  `npm run check-blindspot` on this commit should see the same six `ok:` lines and `PASS: 0 failure(s)`.
+- **Verified**: `npm test` → both sub-checks pass (`check-data.mjs`: `PASS: 0 failure(s), 0 warning(s)`;
+  `check-blindspot.mjs`: `PASS: 0 failure(s)`). `npm run build` → `vite v6.4.3`, `✓ 61 modules
+  transformed`, `dist/assets/index-BoFwYtZg.js` 380.72 kB / 148.04 kB gzip — byte-identical bundle hash
+  to the previous run's build, confirming this change (dev-tooling only, nothing under `src/` imported
+  by the app) altered no shipped code or content.
+- **Updated `LAUNCH_READINESS.md`**: item 16's row now reads "🟡 Partially built — the mechanical half
+  (`npm run check-blindspot`) is automated; the judgment half (does new prose read like advice, does a
+  framing change need the owner) still needs a human/agent reading the diff, not a script." Also added a
+  one-line pointer under "How to refresh this file" so the blindspot-grep row's evidence points at the
+  new command instead of asking a future reviewer to retype four separate greps.
+- **Not touched, and why**: `economic-cycles-v6.jsx` — long-standing untracked reference file, per the
+  App summary and the `economics-app-unexplained-files-not-fixtures` memory note; `git status` before and
+  after this run's edits shows no change to it. `economic-cycles-v5.jsx` and `API_KEYS.template.txt`
+  likewise untouched (the latter was already clean at the start of this run, see above).
+- **Next run should pick**: item 20 (translation) now has an explicit recommendation rather than an open
+  question — a future run should treat owner sign-off or a human translator as a precondition, not
+  attempt a fourth automated translation pass without one. Otherwise: item 17 (grow the lesson catalogue
+  toward the ~40-lesson/2-hour §4.3 gate — still the largest gap versus any Phase-0 threshold), or begin
+  the real analytics-provider swap once a PostHog account/key exists (owner action).

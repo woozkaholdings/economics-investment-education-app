@@ -5,14 +5,14 @@ actual gates, so a run's own "done" claim isn't the only record. This file lists
 what is actually true right now, and how that was checked — not a narrative, a checklist. Update it
 whenever a gate's status changes; don't let it go stale the way `AGENT_LOG.md`'s App summary once did.
 
-**Last refreshed: 2026-08-05 (night — instrumentation call sites, item 18).**
+**Last refreshed: 2026-08-05 (night, second run — blindspot-check automation, item 16).**
 
 ## Blindspot register (`LAUNCH_PLAN.md` §10)
 
 | # | Item | Status | Evidence |
 |---|---|---|---|
-| 10.1 | Financial-advice adjacency | ✅ Closed | `grep -rn "best investments\|be bullish\|be cautious" src/content/` — no matches. Disclaimer renders on Home, Learn, Markets, About, first-launch modal. |
-| 10.2 | Dalio dependency | ✅ Closed | `grep -rni "dalio" src/ economic-cycles-v5.jsx` — no matches. |
+| 10.1 | Financial-advice adjacency | ✅ Closed | `npm run check-blindspot` (added 2026-08-05 night, item 16) — no matches for advice-adjacent phrasing, disclaimer key present in every locale. Disclaimer renders on Home, Learn, Markets, About, first-launch modal. |
+| 10.2 | Dalio dependency | ✅ Closed | `npm run check-blindspot` — no Dalio references in `src/` or `economic-cycles-v5.jsx`. |
 | 10.3 | Kids content / COPPA | ⚠️ Closed-but-reopened | Ships parent-facing (`src/screens/reference/ParentGuide.jsx`), which is the standing rule until the owner decides. **Reopened as a question 2026-08-04 — the owner, not a run, must resolve this.** Do not change the framing without that decision. |
 | 10.4 | Five languages = maintenance debt | 🟡 Open, tracked | es/ko/zh/ja labelled "(Beta)" in the language picker. Volume ratio **re-measured 2026-08-05** after the same day's example-rewrite grew English ~1.7x: es 13,926 chars (0.37x of English, was 0.41x), ko 7,369 (0.19x, was 0.24x), ja 5,901 (0.15x, was 0.18x), zh 4,662 (0.12x, was 0.15x) — all four ratios narrowed as expected, since only the `en` field was expanded and translations weren't touched. See item 20 in `AGENT_LOG.md`. |
 | 10.5 | Solo-founder single point of failure | 🟡 Open | Code is on git. No confirmation yet that data exports / store credentials / 2FA recovery codes are in a password manager — that's outside what a dev-agent run can verify or do. |
@@ -59,11 +59,14 @@ the Phase 0 gate above stays unmeasurable off-device, though it is now inspectab
 | Item | Status |
 |---|---|
 | 15 — this scorecard | ✅ Built 2026-08-05 |
-| 16 — tighten builder/critic feedback loop | 🟡 Open — needs design, not yet built. The dev-agent `SKILL.md`'s mandatory adversarial self-check (added before this scorecard existed) is the first piece. |
+| 16 — tighten builder/critic feedback loop | 🟡 Partially built (2026-08-05 night) — the mechanical half is automated: `scripts/check-blindspot.mjs` (`npm run check-blindspot`, also chained into `npm test`) codifies the §10.1/10.2/10.3/§2.3 grep checks every run used to retype by hand. The judgment half — does new prose *read* like advice, does a framing change need the owner — still needs a human or an agent reading the actual diff; the dev-agent `SKILL.md`'s mandatory adversarial self-check covers that part. |
 
 ## How to refresh this file
 
-- Blindspot grep checks: the `grep` commands quoted above, run from the repo root.
+- Blindspot grep checks: `npm run check-blindspot` from the repo root (or `npm test`, which chains it
+  after the data-shape checks). Runs the §10.1/10.2/10.3/§2.3 checks quoted above in one command instead
+  of retyping four separate greps — see `scripts/check-blindspot.mjs`'s header comment for what it does
+  and, importantly, what it doesn't (judgment calls still need a human/agent reading the diff).
 - Lesson catalogue size: 
   ```bash
   BIN_DIR="$(scripts/bootstrap-node.sh)"; export PATH="$BIN_DIR:$PATH"
