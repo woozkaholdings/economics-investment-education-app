@@ -802,11 +802,11 @@ export const lessons = [
       ja: "保険はリスクをなくすものではなく、多くの人に分散させることで、一人に稀に起こる大きな損失を、全員にとって予測可能な小さな費用に変えるものです。保険料、自己負担額、補償上限がこの兼ね合いを形作る3つの要素です。",
     },
     thinkAbout: {
-      en: "Lesson 15 covered building an emergency fund for unexpected expenses. Insurance and an emergency fund solve related but different problems — one pools risk across many people for losses too large for most individual budgets, the other is money set aside by one person for smaller, more everyday surprises. Can you think of a loss each one would be better suited to cover?",
-      es: "La Lección 15 trató sobre construir un fondo de emergencia. El seguro y un fondo de emergencia resuelven problemas relacionados pero distintos. ¿Puedes pensar en una pérdida que cada uno cubriría mejor?",
-      ko: "15강에서는 비상금 마련을 다뤘습니다. 보험과 비상금은 관련이 있지만 서로 다른 문제를 해결합니다. 각각이 더 잘 대응할 수 있는 손실을 생각해볼 수 있나요?",
-      zh: "第15课讲过建立应急基金。保险和应急基金解决的是相关但不同的问题。你能想到哪种损失更适合由哪一种来应对吗？",
-      ja: "第15課では緊急資金の準備について学びました。保険と緊急資金は関連していますが、異なる問題を解決します。それぞれがより適切に対応できる損失を考えてみてください。",
+      en: "Lesson 14 covered building an emergency fund for unexpected expenses. Insurance and an emergency fund solve related but different problems — one pools risk across many people for losses too large for most individual budgets, the other is money set aside by one person for smaller, more everyday surprises. Can you think of a loss each one would be better suited to cover?",
+      es: "La Lección 14 trató sobre construir un fondo de emergencia. El seguro y un fondo de emergencia resuelven problemas relacionados pero distintos. ¿Puedes pensar en una pérdida que cada uno cubriría mejor?",
+      ko: "14강에서는 비상금 마련을 다뤘습니다. 보험과 비상금은 관련이 있지만 서로 다른 문제를 해결합니다. 각각이 더 잘 대응할 수 있는 손실을 생각해볼 수 있나요?",
+      zh: "第14课讲过建立应急基金。保险和应急基金解决的是相关但不同的问题。你能想到哪种损失更适合由哪一种来应对吗？",
+      ja: "第14課では緊急資金の準備について学びました。保険と緊急資金は関連していますが、異なる問題を解決します。それぞれがより適切に対応できる損失を考えてみてください。",
     },
   },
 ];

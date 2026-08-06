@@ -2871,3 +2871,34 @@ still needs an owner-created PostHog account.
   analytics-provider swap once a PostHog account/key exists (owner action). At 20/40 lessons the
   catalogue has now crossed the halfway point on lesson count (50%) though still trails on the char/time
   target (~53%), since later lessons have run a bit shorter than the earlier macro/cycle-theory ones.
+
+### 2026-08-06 — Fix a wrong lesson cross-reference in lesson 20 (owner-directed follow-up)
+
+Owner asked for "lesson 20 on insurance basics" — already done by the time this request was picked up
+(the scheduled dev-agent run above had already added it, commit `43cc966`). Rather than duplicate that
+work, reviewed the already-committed lesson 20 for correctness before reporting it done, and found a
+real bug: lesson 20's `thinkAbout` field (all 5 languages) said "Lesson 15 covered building an emergency
+fund," but Emergency Funds is lesson **14** — lesson 15 is Compound Interest. A learner following that
+cross-reference back would land on the wrong lesson.
+
+- **Fixed**: changed "Lesson 15" / "Lección 15" / "15강" / "第15课" / "第15課" → "Lesson 14" / "Lección
+  14" / "14강" / "第14课" / "第14課" in `src/content/lessons.js`'s lesson-20 `thinkAbout` field, all 5
+  languages. No other reference to a lesson number appears elsewhere in lesson 20's content (checked by
+  re-reading the full lesson).
+- **Verified**: `npm test` → both checks pass. `npm run build` → clean. Real browser click-through of the
+  rebuilt static bundle: lesson 20 now reads "Lesson 14 covered building an emergency fund..." correctly;
+  answered its check question (deductible/premium trade-off) and got "CORRECT!"; confirmed
+  `lesson_started`/`quiz_taken` (`lessonId: 20`) fired into the analytics log as expected.
+- **Adversarial self-check**: (1) *Blindspot register* — `npm run check-blindspot` clean; this is a
+  lesson-number correction, not a content/framing change, so no new advice-adjacent language or dated
+  content risk. (2) *DECISIONS.md conflict* — none. (3) *Redoing done work* — this is a fix to, not a
+  redo of, the already-completed lesson 20; the lesson itself (content, quiz, LAUNCH_READINESS.md/
+  AGENT_LOG.md numbers from the 43cc966 commit) was left as-is since it was already correct and verified.
+  (4) *Verification claim* — the click-through above was actually run this session against the rebuilt
+  bundle.
+- **Not touched, and why**: `economic-cycles-v6.jsx` unchanged, as always. `LAUNCH_READINESS.md` and
+  `AGENT_LOG.md`'s lesson-count/char numbers from the prior commit are still accurate (this fix didn't
+  change any lesson's length or the catalogue total) — no scorecard refresh needed for a same-length text
+  correction.
+- **Next run should pick**: same as above — item 17 (more lessons, e.g. inflation/purchasing power,
+  credit-score depth, estate-planning basics) or item 20's translation work pending owner sign-off.
