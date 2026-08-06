@@ -768,6 +768,47 @@ export const lessons = [
       ja: "限界税率区分の仕組みを理解した今、第18課のTraditional対Rothの問いを振り返ってみましょう。Traditionalの拠出は今日の限界税率で課税所得を減らします。これはその比較についての考え方を変えますか？",
     },
   },
+  {
+    id: 20, icon: "🛡️", color: "#0369a1",
+    title: { en: "Insurance: Trading a Small Certain Cost for Protection from a Large Uncertain One", es: "Seguros: Cambiar un Costo Pequeño y Seguro por Protección Ante uno Grande e Incierto", ko: "보험: 작고 확실한 비용으로 크고 불확실한 손실을 막다", zh: "保险：用小额确定成本换取对大额不确定损失的保护", ja: "保険：小さく確実な費用で、大きく不確実な損失から身を守る" },
+    subtitle: { en: "Why paying a little every month can make sense even if you never file a claim", es: "Por qué pagar un poco cada mes puede tener sentido aunque nunca hagas un reclamo", ko: "한 번도 보험금을 청구하지 않아도 매달 조금씩 내는 것이 합리적인 이유", zh: "为什么即使从不理赔，每月支付一点钱也可能是合理的", ja: "一度も保険金を請求しなくても、毎月少し払う意味がある理由" },
+    sections: [
+      {
+        heading: { en: "Insurance Pools Risk Across Many People", es: "El Seguro Agrupa el Riesgo Entre Muchas Personas", ko: "보험은 많은 사람들 사이에 위험을 분산시킨다", zh: "保险将风险分摊到许多人身上", ja: "保険は多くの人にリスクを分散させる" },
+        body: {
+          en: "Picture a neighborhood of a thousand homes. In any given year, maybe two or three will have a serious fire, but nobody knows in advance which ones. If each homeowner had to cover a fire's full cost alone, a handful of unlucky families would face a devastating loss while everyone else paid nothing.\n\nInsurance changes that math. Every homeowner pays a relatively small amount — the premium — into a shared pool. The insurer uses that pool to pay the full cost for the few homes that do have a fire that year. Nobody knows in advance whether they'll be one of the unlucky few, so everyone trades a small, certain cost (the premium) for protection against a large, uncertain one (rebuilding a house from nothing).\n\nThis is the same underlying idea across every type of insurance — health, auto, home or renters, life — just applied to a different kind of risk: a large group of people facing the same category of unpredictable loss, pooling small contributions so the few who actually experience it aren't left to cover it alone.",
+          es: "Imagina un vecindario de mil casas. En un año dado, quizás dos o tres tendrán un incendio grave, pero nadie sabe cuáles de antemano. El seguro agrupa el riesgo: cada propietario paga una prima relativamente pequeña a un fondo compartido, y ese fondo cubre el costo total para las pocas casas que sí tienen un incendio.\n\nNadie sabe de antemano si será de los pocos desafortunados, así que todos cambian un costo pequeño y seguro (la prima) por protección ante uno grande e incierto. Es la misma idea detrás de cualquier tipo de seguro — salud, auto, hogar, vida — aplicada a un tipo distinto de riesgo.",
+          ko: "천 채의 집이 있는 동네를 상상해 보세요. 어느 해든 두세 채 정도는 심각한 화재를 겪지만, 누가 그럴지는 아무도 미리 알 수 없습니다. 보험은 이 계산을 바꿉니다: 모든 집주인이 비교적 적은 금액인 보험료를 공동 기금에 냅니다. 그 기금은 그해 실제로 화재를 겪은 소수의 집에 전체 비용을 지급합니다.\n\n누구도 자신이 그 불운한 소수가 될지 미리 알 수 없기 때문에, 모두가 작고 확실한 비용(보험료)을 크고 불확실한 비용(집을 처음부터 다시 짓는 것)에 대한 보호와 맞바꿉니다. 건강, 자동차, 주택, 생명 등 어떤 보험이든 같은 원리가 다른 종류의 위험에 적용될 뿐입니다.",
+          zh: "想象一个有一千户人家的社区。在任何一年里，也许只有两三户会遭遇严重火灾，但事先没人知道会是哪几户。保险改变了这个算法：每个房主向共同基金支付相对较小的一笔钱——保费，而这个基金会为当年真正发生火灾的少数房屋支付全部损失。\n\n由于没人能事先知道自己会不会是那不幸的少数，所有人都是在用一笔小额且确定的支出（保费）换取对一笔巨额且不确定的损失（从零开始重建房屋）的保护。健康险、车险、房屋险、寿险背后都是同一个原理，只是应用在不同类型的风险上。",
+          ja: "千戸の住宅がある地域を想像してください。ある年、深刻な火災に遭うのはおそらく2、3戸ですが、それがどの家かは誰も事前にわかりません。保険はこの計算を変えます：すべての住宅所有者が比較的少額の保険料を共同の基金に払い込み、その基金がその年実際に火災に遭った少数の住宅に全額を支払います。\n\n自分がその不運な少数になるかどうかは誰にも事前にわからないため、全員が小さく確実な費用（保険料）を、大きく不確実な費用（家をゼロから建て直すこと）への備えと交換しているのです。医療保険、自動車保険、住宅保険、生命保険——どれも同じ原理が異なる種類のリスクに適用されているだけです。",
+        },
+      },
+      {
+        heading: { en: "Premiums, Deductibles, and Coverage Limits", es: "Primas, Deducibles y Límites de Cobertura", ko: "보험료, 자기부담금, 보장 한도", zh: "保费、免赔额与保额上限", ja: "保険料、自己負担額、補償上限" },
+        body: {
+          en: "Three numbers shape almost every insurance policy. The premium is the recurring amount paid to keep the coverage active, whether or not a claim is ever filed. The deductible is the amount the policyholder pays out of pocket before the insurer starts paying anything on a claim. The coverage limit is the maximum the insurer will pay out, even if the actual loss is larger.\n\nThese three interact directly. A policy with a higher deductible generally carries a lower premium, because the policyholder is agreeing to absorb more of the smaller, more common losses themselves — the insurer only steps in once things get more expensive. A policy with a lower deductible generally carries a higher premium, since the insurer is taking on more of the cost from the very first dollar.\n\nThat trade-off — a bit more paid every month versus a bit more paid out of pocket if something goes wrong — depends on an individual's own finances, risk tolerance, and circumstances, not a rule this lesson can hand out. The goal here is understanding how the pieces fit together, not which combination is right for any specific person.",
+          es: "Tres cifras dan forma a casi toda póliza. La prima es el pago recurrente para mantener la cobertura activa. El deducible es lo que el asegurado paga de su bolsillo antes de que el asegurador empiece a pagar un reclamo. El límite de cobertura es el máximo que el asegurador pagará.\n\nUn deducible más alto generalmente implica una prima más baja, y viceversa. Ese balance depende de las finanzas y circunstancias de cada persona, no de una regla que esta lección pueda dar.",
+          ko: "거의 모든 보험 상품은 세 가지 숫자로 구성됩니다. 보험료는 보장을 유지하기 위해 정기적으로 내는 금액입니다. 자기부담금은 보험사가 보험금을 지급하기 전에 가입자가 먼저 부담하는 금액입니다. 보장 한도는 보험사가 지급하는 최대 금액입니다.\n\n자기부담금이 높을수록 보통 보험료는 낮아지고, 그 반대도 마찬가지입니다. 이 균형은 특정한 규칙이 아니라 개인의 재정 상황과 위험 감수 성향에 따라 달라집니다.",
+          zh: "几乎每份保单都由三个数字决定。保费是为维持保障而定期支付的金额。免赔额是保险公司开始理赔前，投保人自己先承担的金额。保额上限是保险公司最多会赔付的金额。\n\n免赔额越高，保费通常越低，反之亦然。这种权衡取决于每个人自身的财务状况和风险承受能力，而不是本课能给出的固定规则。",
+          ja: "ほとんどの保険契約は3つの数字で決まります。保険料は補償を維持するために定期的に支払う金額です。自己負担額は、保険会社が保険金を支払う前に契約者が自分で負担する金額です。補償上限は保険会社が支払う最大金額です。\n\n自己負担額が高いほど、通常は保険料が低くなり、その逆もまた同じです。この兼ね合いは、個人の財政状況やリスク許容度によって決まるものであり、この講で答えを出せる規則ではありません。",
+        },
+      },
+    ],
+    takeaway: {
+      en: "Insurance doesn't eliminate risk — it pools it across many people so that a rare, large loss for one person becomes a small, predictable cost for everyone. Premiums, deductibles, and coverage limits are the three levers that shape that trade-off.",
+      es: "El seguro no elimina el riesgo — lo agrupa entre muchas personas para que una pérdida grande y rara se convierta en un costo pequeño y predecible para todos. Prima, deducible y límite de cobertura son las tres palancas de ese balance.",
+      ko: "보험은 위험을 없애는 것이 아니라 여러 사람에게 분산시켜, 한 사람에게 드물게 발생하는 큰 손실을 모두에게 작고 예측 가능한 비용으로 바꿉니다. 보험료, 자기부담금, 보장 한도가 이 균형을 결정하는 세 가지 요소입니다.",
+      zh: "保险并不能消除风险——它把风险分摊到许多人身上，让一个人身上罕见的巨大损失，变成所有人都可预期的小额成本。保费、免赔额和保额上限是决定这一权衡的三个关键因素。",
+      ja: "保険はリスクをなくすものではなく、多くの人に分散させることで、一人に稀に起こる大きな損失を、全員にとって予測可能な小さな費用に変えるものです。保険料、自己負担額、補償上限がこの兼ね合いを形作る3つの要素です。",
+    },
+    thinkAbout: {
+      en: "Lesson 15 covered building an emergency fund for unexpected expenses. Insurance and an emergency fund solve related but different problems — one pools risk across many people for losses too large for most individual budgets, the other is money set aside by one person for smaller, more everyday surprises. Can you think of a loss each one would be better suited to cover?",
+      es: "La Lección 15 trató sobre construir un fondo de emergencia. El seguro y un fondo de emergencia resuelven problemas relacionados pero distintos. ¿Puedes pensar en una pérdida que cada uno cubriría mejor?",
+      ko: "15강에서는 비상금 마련을 다뤘습니다. 보험과 비상금은 관련이 있지만 서로 다른 문제를 해결합니다. 각각이 더 잘 대응할 수 있는 손실을 생각해볼 수 있나요?",
+      zh: "第15课讲过建立应急基金。保险和应急基金解决的是相关但不同的问题。你能想到哪种损失更适合由哪一种来应对吗？",
+      ja: "第15課では緊急資金の準備について学びました。保険と緊急資金は関連していますが、異なる問題を解決します。それぞれがより適切に対応できる損失を考えてみてください。",
+    },
+  },
 ];
 
 // Estimated reading time for a lesson, always based on the English body text

@@ -74,13 +74,14 @@ for the history. No open P1/P2 items.
 **Open**
 
 17. **[Content] Grow the lesson catalogue.** Derived from `LAUNCH_PLAN.md` §4.3, not owner-assigned but
-    the plan's own explicit gate: the catalogue is now 19 lessons / ~43,900 English characters / ~40
-    minutes end to end (measured directly from `src/content/lessons.js` — up from 18 lessons / ~41,300
-    chars / ~37-40 min after 2026-08-06 added lesson 19, "Taxes: How Your Paycheck Is Actually Taxed"),
-    and Phase 0 ("free, instrumented, no payment code") doesn't end until it reaches roughly 40 lessons /
-    2 hours of content **and** ≥40% of installers finish lesson 1. Per §4.3 verbatim: "the highest-value
-    monetization work right now is writing lessons, not writing billing code." Do not start
-    billing/paywall work ahead of this gate — see item 15.
+    the plan's own explicit gate: the catalogue is now 20 lessons / ~46,900 English characters / ~40
+    minutes end to end (measured directly from `src/content/lessons.js` — up from 19 lessons / ~43,900
+    chars / ~40 min after 2026-08-06 (second run) added lesson 19; this run added lesson 20, "Insurance:
+    Trading a Small Certain Cost for Protection from a Large Uncertain One"), and Phase 0 ("free,
+    instrumented, no payment code") doesn't end until it reaches roughly 40 lessons / 2 hours of content
+    **and** ≥40% of installers finish lesson 1. Per §4.3 verbatim: "the highest-value monetization work
+    right now is writing lessons, not writing billing code." Do not start billing/paywall work ahead of
+    this gate — see item 15.
 20. **[Content] Non-English lesson translations now lag English by more than before.** Re-measured
     2026-08-05 (evening run) — see run log ("Re-measure Beta-labelling translation ratios"). Ratios:
     es 0.37x, ko 0.19x, zh 0.12x, ja 0.15x of English (down from 0.41x/0.24x/0.15x/0.18x measured
@@ -2793,3 +2794,80 @@ more scoped lesson rather than folded hastily into this one to cover both topics
   still the largest gap versus any Phase-0 threshold at 48% of the lesson-count target. Otherwise item
   20's translation work if the owner has given sign-off, or the real analytics-provider swap once a
   PostHog account/key exists (owner action).
+
+### 2026-08-06 (third run) — Add lesson 20: "Insurance: Trading a Small Certain Cost for Protection from a Large Uncertain One" (backlog item 17)
+
+`git status` at start showed only the long-standing untracked `economic-cycles-v6.jsx` — same
+reference-only prototype flagged by every prior run and the
+`economics-app-unexplained-files-not-fixtures` memory note. No other uncommitted state; nothing to
+recover, nothing blocking normal work.
+
+Picked backlog item 17 (grow the lesson catalogue) — explicitly the "next run should pick" item from
+the last run's entry, which named insurance basics as the natural next topic after taxes (lesson 19)
+deferred it. Item 20 (translation) remains correctly deferred per three-plus prior runs' consistent
+"needs a human translator or owner sign-off" verdict; item 18's remaining half (real analytics provider)
+still needs an owner-created PostHog account.
+
+- **Added lesson 20** to `src/content/lessons.js`: "Insurance: Trading a Small Certain Cost for
+  Protection from a Large Uncertain One." Two sections — risk-pooling as the mechanism underlying every
+  type of insurance (health, auto, home/renters, life), illustrated with a neighborhood-of-homes fire
+  example; and how premium, deductible, and coverage limit interact (higher deductible → generally lower
+  premium, and vice versa). All five languages, matching the existing narrative-example-then-concept
+  style. **Deliberately omitted specific dollar figures, percentages, or premium amounts** — same
+  reasoning as lessons 18 and 19: concrete numbers here would go stale and recreate the exact
+  live-looking-figure problem §2.3 already fixed, and aren't needed to teach the risk-pooling and
+  premium/deductible/limit trade-off mechanisms. Framed the deductible/premium trade-off explicitly as
+  depending on "an individual's own finances, risk tolerance, and circumstances, not a rule this lesson
+  can hand out" rather than recommending a specific choice, staying clear of §10.1. `thinkAbout` cross-
+  references lesson 15's emergency fund to distinguish insurance (pooled risk for losses too large for
+  most budgets) from a personal emergency fund (self-funded, for smaller everyday surprises).
+- **Added a matching `quizData.js` entry** (lesson: 20, answer index 1 — the pre-existing distribution
+  was 5/5/6/5 across indices 0-3; this lesson's natural question ordering put the correct answer at
+  index 1, balancing it to 5/6/6/5 rather than being chosen to game the distribution): tests the
+  deductible-premium trade-off directly, with "higher deductible → higher premium" and "no relationship"
+  as distractors targeting the two most likely misreadings of the mechanism.
+- **Verified with a real click-through, not just a build**: built the static bundle, served it via the
+  documented Python-server workaround, opened it in the browser-preview tool. Confirmed "LESSON 20 OF
+  20" (lesson count picked up automatically), unlocked lesson 20 via
+  `localStorage.setItem("ecycles_completed_lessons", ...)` to bypass the sequential-unlock gate
+  deliberately, read the full English lesson body via `get_page_text` (including the disclaimer footer),
+  answered the check question and got "CORRECT!" with the right explanation, clicked "Mark Complete," and
+  confirmed `analytics.js` fired `lesson_started` (`lessonId: 20`), `quiz_taken` (`lessonId: 20, correct:
+  true, source: "lesson_check"`), and `lesson_completed` (`lessonId: 20`) into
+  `localStorage.ecycles_analytics_log` in order. Also switched the language picker to `es` and confirmed
+  the Spanish translation rendered correctly (title, both section bodies, takeaway, think-about, quiz
+  options, and the already-answered "¡CORRECTO!" state, plus the disclaimer footer in Spanish). Killed
+  the Python server afterward.
+- **Adversarial self-check**: (1) *Blindspot register* — ran `npm run check-blindspot` after the edit;
+  all six checks passed (no Dalio references, no advice-adjacent phrasing, disclaimer key present, kids
+  framing signals intact, no live-looking dates). Manually re-read the new lesson's English and Spanish
+  text specifically for anything that reads as a buy/don't-buy recommendation for any specific insurance
+  product — found none; the lesson explains the mechanism (risk pooling, premium/deductible/limit
+  trade-offs) without ever telling a reader what coverage or deductible to choose, and explicitly says
+  that choice "depends on an individual's own finances... not a rule this lesson can hand out," matching
+  the same pattern lessons 18 and 19 used for their own owner-directed choices. (2) *DECISIONS.md
+  conflict* — none; this run touches only content modules (`lessons.js`, `quizData.js`), no
+  state/storage/platform/data-source decision. (3) *Redoing done work* — none; lesson 20 is new content;
+  grepped `AGENT_LOG.md`'s "Completed and pruned" list and found no prior insurance lesson, confirming
+  this wasn't already built. (4) *Verification claim* — the click-through above (including the language
+  switch, the Mark Complete click, and the analytics-log inspection) was actually run this session
+  against the real build output; an independent reviewer repeating the same steps against this commit
+  should see the same "LESSON 20 OF 20," the same quiz result, and the same three analytics-log entries
+  in order.
+- **Verified build and tests**: `npm test` → `check-data.mjs`: `PASS: 0 failure(s), 0 warning(s)`;
+  `check-blindspot.mjs`: `PASS: 0 failure(s)`. `npm run build` → `vite v6.4.3`, `✓ 61 modules
+  transformed`, `dist/assets/index-C2aUwpRp.js` 418.45 kB / 164.30 kB gzip, built in 801ms.
+- **Updated `LAUNCH_READINESS.md`**: Phase-0 lesson-catalogue row now reads 20 lessons / 46,925 English
+  chars / ~40 min (~53% of the char/time target, ~50% of the lesson-count target), up from 19 / 43,928 /
+  ~40 min, using the file's own documented refresh commands (`estimateMinutes`-based char count, not a
+  hand rewrite). Re-measured the §10.4 translation-ratio row: es/ko/zh/ja all stayed essentially flat
+  versus the lesson-19 measurement (0.39x/0.20x/0.13x/0.17x), consistent with translating each new lesson
+  in step.
+- **Not touched, and why**: `economic-cycles-v6.jsx` — long-standing untracked reference file, unchanged
+  before and after. `economic-cycles-v5.jsx` and `API_KEYS.template.txt` likewise untouched.
+- **Next run should pick**: item 17 again if more lessons are still wanted before the 40-lesson gate
+  (candidates not yet covered: inflation's effect on savings/purchasing power, credit scores, or basic
+  estate-planning concepts), or item 20's translation work if the owner has given sign-off, or the real
+  analytics-provider swap once a PostHog account/key exists (owner action). At 20/40 lessons the
+  catalogue has now crossed the halfway point on lesson count (50%) though still trails on the char/time
+  target (~53%), since later lessons have run a bit shorter than the earlier macro/cycle-theory ones.
