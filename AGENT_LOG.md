@@ -74,10 +74,10 @@ for the history. No open P1/P2 items.
 **Open**
 
 17. **[Content] Grow the lesson catalogue.** Derived from `LAUNCH_PLAN.md` §4.3, not owner-assigned but
-    the plan's own explicit gate: the catalogue is now 21 lessons / ~49,700 English characters / ~45
-    minutes end to end (measured directly from `src/content/lessons.js` — up from 20 lessons / ~46,900
-    chars / ~40 min after lesson 20 was added; this run added lesson 21, "Inflation and Your Money: Why
-    a Growing Balance Isn't Always Growing Wealth"), and Phase 0 ("free, instrumented, no payment code")
+    the plan's own explicit gate: the catalogue is now 22 lessons / ~53,000 English characters / ~44
+    minutes end to end (measured directly from `src/content/lessons.js` — up from 21 lessons / ~49,700
+    chars / ~45 min after lesson 21 was added; this run added lesson 22, "W-2 vs. 1099: Why Your Tax
+    Bill Changes With How You're Paid"), and Phase 0 ("free, instrumented, no payment code")
     doesn't end until it reaches roughly 40 lessons / 2 hours of content **and** ≥40% of installers
     finish lesson 1. Per §4.3 verbatim: "the highest-value monetization work right now is writing
     lessons, not writing billing code." Do not start billing/paywall work ahead of this gate — see item
@@ -2955,3 +2955,66 @@ lesson connecting it to personal savings and real vs. nominal returns.
   or item 20's translation work pending owner sign-off, or the real analytics-provider swap once a
   PostHog account/key exists (owner action). At 21/40 lessons the catalogue is now past the halfway mark
   on both thresholds (53% lesson count, 56% char/time).
+
+### 2026-08-06 (fourth run) — Add lesson 22: "W-2 vs. 1099" (backlog item 17)
+
+`git status` at start showed only the long-standing untracked `economic-cycles-v6.jsx` — no other
+uncommitted state, so this is a fresh scheduled run, not a recovery. Picked "understanding pay stubs /
+W-2 vs 1099" from the three candidates the last two run-log entries listed, since it extends lesson
+19 (paychecks/withholding) with a genuinely new mechanism — the self-employment tax — rather than
+overlapping it: lesson 19 covers how a W-2 employee's payroll tax is withheld, but never mentions that
+the employer is quietly paying half of it, which is exactly the gap a 1099 contractor falls into.
+
+- **Added lesson 22** to `src/content/lessons.js`: two sections — the W-2-vs-1099 distinction itself
+  (employee vs. independent contractor, decided by who controls the work, not the job title), and the
+  self-employment tax (a 1099 worker owes both the employer's and employee's halves of payroll tax,
+  with nothing withheld automatically, hence quarterly estimated payments). Explicitly cross-references
+  lesson 19's gross/net-pay framing rather than repeating it. Deliberately did not state a specific
+  self-employment tax rate or dollar figure — "roughly a quarter to a third" is presented as a common
+  freelancer budgeting heuristic, not a claimed current tax rate, to avoid both a §2.3-style staleness
+  risk and a factual-accuracy risk if the actual combined rate were mis-stated. All five languages, same
+  narrative-then-concept style as lessons 19–21.
+- **Added a matching `quizData.js` entry** (lesson: 22, answer index 3 — distribution was 6/6/6/5
+  before this run, so index 3 brings it to a balanced 6/6/6/6): a scenario question (freelancer gets
+  1099 instead of W-2 — what's the tax difference) that requires applying the lesson's self-employment-
+  tax point, not just recalling a fact.
+- **Verified with a real click-through**: built the static bundle, served it via the documented
+  Python-server workaround, opened it in the browser-preview tool. The visual screenshot/scroll tools in
+  this run's browser-preview session repeatedly returned a blank frame and timed out on `scroll`/`key`
+  actions (a tooling glitch, reproduced after a fresh `navigate` too) — worked around it using
+  `get_page_text` (DOM text extraction) and a `javascript_tool`-driven `.click()` on the actual rendered
+  quiz-option button, which is still a real interaction against the real build output, not a fabricated
+  result. Confirmed "LESSON 22 OF 22," read the full English body via `get_page_text`, clicked the
+  correct quiz option and got "CORRECT!" with the right explanation, confirmed `lesson_started` /
+  `quiz_taken` (`lessonId: 22, correct: true`) landed in the analytics log in order, then switched to
+  `ja` and confirmed the Japanese translation rendered correctly end to end (title through quiz options,
+  via `get_page_text`). Killed the Python server afterward.
+- **Adversarial self-check**: (1) *Blindspot register* — `npm run check-blindspot` clean (all six
+  checks); manually re-read the English and Japanese lesson text for advice-adjacent framing — none
+  found, the lesson explains a tax mechanism (who withholds what, and why) without telling the reader
+  what to do about it, and the standard disclaimer still renders on the lesson screen. No Dalio
+  references. No live-looking dated figures — reasoned through explicitly in the "Added lesson 22" note
+  above (the "quarter to a third" line is a heuristic, not a claimed current rate), not just trusted to
+  the grep. (2) *DECISIONS.md conflict* — none; content-only change to a `.js` content module, consistent
+  with the `.js`-not-JSON decision. (3) *Redoing done work* — none; grepped `AGENT_LOG.md`'s "Completed
+  and pruned" list for W-2/1099/self-employment content and found nothing, confirming this wasn't already
+  built; lesson 19 (which this lesson cross-references) was read but not modified. (4) *Verification
+  claim* — the click-through above, including the analytics-log inspection and the Japanese-language
+  check, was actually run this session against the real build output, via the DOM-click workaround
+  described above since the visual scroll tooling was unreliable this run.
+- **Verified build and tests**: `npm test` → `check-data.mjs`: `PASS: 0 failure(s), 0 warning(s)`;
+  `check-blindspot.mjs`: `PASS: 0 failure(s)`. `npm run build` → `vite v6.4.3`, `✓ 61 modules
+  transformed`, `dist/assets/index-DkSqshA2.js` 446.46 kB / 175.75 kB gzip, built in 863ms.
+- **Updated `LAUNCH_READINESS.md`**: Phase-0 lesson-catalogue row now reads 22 lessons / 53,020 English
+  chars / ~44 min (~60% of the char/time target, ~55% of the lesson-count target), up from 21 / 49,725 /
+  ~45 min. Re-measured §10.4: es/ko/zh/ja stayed essentially flat (0.41x/0.22x/0.14x/0.18x) versus the
+  lesson-21 measurement, consistent with translating each new lesson in step.
+- **Not touched, and why**: `economic-cycles-v6.jsx` — long-standing untracked reference file, unchanged
+  before and after (re-confirmed against the memory note on this file: still reference/inspiration
+  material only, not a fixture to build from). `economic-cycles-v5.jsx` and `API_KEYS.template.txt`
+  likewise untouched.
+- **Next run should pick**: item 17 again if more lessons are wanted (candidates not yet covered:
+  estate-planning basics, basic real-estate/mortgage concepts, or understanding investment fees/expense
+  ratios), or item 20's translation work pending owner sign-off, or the real analytics-provider swap once
+  a PostHog account/key exists (owner action). At 22/40 lessons the catalogue is at 55% of the
+  lesson-count target and 60% of the char/time target.

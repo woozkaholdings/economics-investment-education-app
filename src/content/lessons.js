@@ -850,6 +850,47 @@ export const lessons = [
       ja: "第15課では、複利がほぼ何よりも時間を重視することを示しました。ここにインフレを加えてみましょう：わずかなプラスの利息がついていても、動かないお金はインフレがそれを上回る年ごとに実質的な購買力を失う可能性があります。これは、貯蓄と単に使わないことの違いについての考え方を変えますか？",
     },
   },
+  {
+    id: 22, icon: "📋", color: "#78350f",
+    title: { en: "W-2 vs. 1099: Why Your Tax Bill Changes With How You're Paid", es: "W-2 vs. 1099: Por Qué Tu Factura de Impuestos Cambia Según Cómo Te Pagan", ko: "W-2 vs. 1099: 받는 방식에 따라 세금 부담이 달라지는 이유", zh: "W-2与1099：为什么你的纳税方式取决于你如何被支付", ja: "W-2対1099：支払われ方によって税金が変わる理由" },
+    subtitle: { en: "The same income can owe very different taxes depending on whether you're an employee or a contractor", es: "El mismo ingreso puede deber impuestos muy distintos según seas empleado o contratista", ko: "같은 소득이라도 직원인지 계약자인지에 따라 세금 부담이 크게 달라질 수 있습니다", zh: "同样的收入，作为雇员和作为承包商所欠的税可能大不相同", ja: "同じ収入でも、従業員か契約者かによって税額は大きく変わり得る" },
+    sections: [
+      {
+        heading: { en: "Employee (W-2) or Independent Contractor (1099)?", es: "¿Empleado (W-2) o Contratista Independiente (1099)?", ko: "직원(W-2)인가, 독립계약자(1099)인가?", zh: "雇员（W-2）还是独立承包商（1099）？", ja: "従業員（W-2）か独立契約者（1099）か？" },
+        body: {
+          en: "A W-2 and a 1099 are both tax forms a worker receives each January summarizing the previous year's pay — but which one you get depends on your working relationship, not your job title. A W-2 means you're an employee: your employer directs how, when, and where the work gets done, and — as Lesson 19 covered — automatically withholds income tax and payroll taxes from every paycheck. A 1099 means you were paid as an independent contractor: a business or client paid you for a service, but nothing was withheld, and no employer relationship existed.\n\nThe same kind of work can show up either way. A graphic designer on staff at an agency, with set hours and a manager, gets a W-2. A graphic designer who takes freelance projects for different clients, sets her own hours, and uses her own equipment gets a 1099 from each client who paid her over a threshold. The distinction isn't about what work was done — it's about who controls how it gets done, and it changes what happens with taxes.",
+          es: "Un W-2 y un 1099 son formularios fiscales que resumen tus ingresos del año anterior. El W-2 significa que eres empleado: el empleador retiene automáticamente impuestos de cada cheque (Lección 19). El 1099 significa que trabajaste como contratista independiente: nadie retuvo nada. La diferencia no es el tipo de trabajo, sino quién controla cómo se hace — y eso cambia todo en materia de impuestos.",
+          ko: "W-2와 1099는 전년도 소득을 요약하는 세금 서류입니다. W-2는 직원임을 의미하며, 고용주가 매 급여에서 자동으로 세금을 원천징수합니다(19강 참고). 1099는 독립계약자로 일했음을 의미하며, 아무것도 원천징수되지 않습니다. 차이는 어떤 일을 했느냐가 아니라 누가 일하는 방식을 통제하느냐이며, 이는 세금 처리 방식을 완전히 바꿉니다.",
+          zh: "W-2和1099都是总结上一年收入的报税表。W-2意味着你是雇员：雇主会自动从每次薪水中代扣税款（见第19课）。1099意味着你是以独立承包商身份获得报酬：没有任何代扣。区别不在于做了什么工作，而在于谁掌控工作方式——这彻底改变了税务处理方式。",
+          ja: "W-2と1099はどちらも前年の所得をまとめた税務書類です。W-2は従業員であることを意味し、雇用主が毎回の給料から自動的に税金を源泉徴収します（第19課参照）。1099は独立契約者として報酬を受け取ったことを意味し、何も源泉徴収されません。違いはどんな仕事をしたかではなく、誰が仕事のやり方を管理するかであり、それが税金の扱いを大きく変えます。",
+        },
+      },
+      {
+        heading: { en: "The Self-Employment Tax: Paying Both Halves", es: "El Impuesto de Trabajo por Cuenta Propia: Pagando Ambas Mitades", ko: "자영업세: 양쪽 절반을 모두 부담하기", zh: "自雇税：承担两份负担", ja: "自営業税：両方の半分を自分で払う" },
+        body: {
+          en: "Lesson 19 explained that a paycheck's gap between gross and net includes payroll taxes funding Social Security and Medicare — and that an employer normally withholds and pays part of that automatically. What that lesson didn't say: the employer isn't paying that payroll tax alone. It's split roughly in half between employer and employee, with the employer's half never even appearing on the employee's pay stub.\n\nA 1099 contractor has no employer to cover that other half — so a self-employed person owes both halves themselves, a combined self-employment tax on top of ordinary income tax. Because nothing is automatically withheld from a 1099 payment the way it is from a W-2 paycheck, the responsibility shifts entirely onto the worker: setting money aside from every payment, and — depending on how much is owed — sending estimated tax payments to the IRS quarterly throughout the year rather than paying everything at once the following spring.\n\nThis is exactly why freelancers, gig workers, and small-business owners are consistently told to set aside roughly a quarter to a third of what they earn before it ever reaches their checking account: on a W-2, that setting-aside already happened automatically, paycheck by paycheck.",
+          es: "La Lección 19 explicó que parte de la diferencia entre el sueldo bruto y el neto son los impuestos de nómina (Seguro Social, Medicare), divididos aproximadamente a la mitad entre empleador y empleado. Un contratista 1099 no tiene empleador que pague esa otra mitad — así que debe pagar ambas mitades él mismo, el llamado impuesto de trabajo por cuenta propia, además del impuesto sobre la renta normal. Como nada se retiene automáticamente, el trabajador independiente debe apartar dinero de cada pago y a menudo enviar pagos de impuestos estimados trimestralmente al IRS.",
+          ko: "19강에서는 총급여와 실수령액의 차이 중 일부가 사회보장세·메디케어 같은 급여세이며, 이는 고용주와 직원이 대략 절반씩 부담한다고 설명했습니다. 1099 계약자에게는 그 절반을 대신 내줄 고용주가 없으므로, 본인이 양쪽 절반을 모두 부담하는 '자영업세'를 일반 소득세에 더해 내야 합니다. 자동으로 원천징수되는 것이 없기 때문에, 프리랜서는 매 지급액에서 스스로 돈을 떼어 놓고 IRS에 분기별로 추정세를 납부해야 하는 경우가 많습니다.",
+          zh: "第19课解释过，税前和税后工资之间的差额部分是社保、医疗保险等工资税，大约由雇主和雇员各承担一半。1099承包商没有雇主替自己承担另一半，所以自雇者要自己承担两半，即在普通所得税之外还要缴纳自雇税。由于没有任何自动代扣，独立工作者必须自己从每笔收入中留出税款，通常还需要每季度向IRS缴纳预估税款。",
+          ja: "第19課では、総支給額と手取り額の差の一部が社会保障やメディケアなどの給与税であり、それが雇用主と従業員でおおよそ半分ずつ負担されると説明しました。1099の契約者にはその半分を負担してくれる雇用主がいないため、自営業者は両方の半分を自分で負担する「自営業税」を通常の所得税に加えて払う必要があります。自動的に源泉徴収されるものが何もないため、フリーランスは各支払いから自分でお金を取り分け、四半期ごとにIRSへ見積納税を行うことが多くなります。",
+        },
+      },
+    ],
+    takeaway: {
+      en: "The same work can arrive as a W-2 or a 1099, and that single distinction decides whether taxes are withheld automatically or become the worker's own responsibility to set aside and pay — including a self-employment tax that covers the half an employer would otherwise pay.",
+      es: "El mismo trabajo puede llegar como W-2 o 1099, y esa distinción decide si los impuestos se retienen automáticamente o si el trabajador debe apartarlos y pagarlos él mismo — incluido un impuesto de trabajo por cuenta propia que cubre la mitad que normalmente paga el empleador.",
+      ko: "같은 일이라도 W-2로 받느냐 1099로 받느냐에 따라 세금이 자동으로 원천징수되는지, 아니면 근로자 본인이 직접 떼어 내고 납부해야 하는지가 결정됩니다 — 여기에는 고용주가 원래 부담했을 절반을 대신 내는 자영업세도 포함됩니다.",
+      zh: "同样的工作可能以W-2或1099的形式到来，这一区别决定了税款是自动代扣，还是需要工作者自己留出并缴纳——包括覆盖雇主本应承担那一半的自雇税。",
+      ja: "同じ仕事でもW-2として来るか1099として来るかで、税金が自動的に源泉徴収されるか、それとも働く本人が自分で取り分けて納めなければならないかが決まります——本来雇用主が負担するはずの半分をカバーする自営業税も含めてです。",
+    },
+    thinkAbout: {
+      en: "Lesson 19 showed that a raise can never shrink your take-home pay because payroll withholding just takes a slightly bigger automatic slice. Now picture that same raise arriving as 1099 income instead — with nothing withheld at all. Does thinking through what you'd need to set aside yourself change how you'd size up a freelance opportunity against a salaried one paying the same headline number?",
+      es: "La Lección 19 mostró que un aumento nunca reduce tu sueldo neto, porque la retención automática solo toma una porción algo mayor. Ahora imagina ese mismo aumento llegando como ingreso 1099 — sin nada retenido. ¿Cambia eso cómo evaluarías una oportunidad freelance frente a un salario con el mismo número nominal?",
+      ko: "19강에서는 급여 인상이 실수령액을 절대 줄이지 않는다는 것을 보여주었습니다. 자동 원천징수가 그저 조금 더 큰 몫을 가져갈 뿐이기 때문입니다. 이제 같은 인상분이 1099 소득으로 들어온다고 상상해보세요 — 아무것도 원천징수되지 않습니다. 스스로 떼어 놓아야 할 금액을 계산해보는 것이, 같은 명목 금액의 정규직 급여와 프리랜서 기회를 비교하는 방식을 바꾸나요?",
+      zh: "第19课说明了加薪永远不会让到手工资变少，因为自动代扣只是多拿走了稍大的一部分。现在设想同样的加薪以1099收入的形式到来——完全没有任何代扣。想清楚自己需要留出多少钱，是否会改变你比较自由职业机会和相同名义数字的受薪工作时的看法？",
+      ja: "第19課では、昇給が手取りを減らすことは絶対にないと示しました。自動源泉徴収がやや大きめの分を取るだけだからです。今度は同じ昇給が1099所得として、何も源泉徴収されずに入ってくると想像してください。自分で取り分けるべき金額を考えることは、同じ額面の給与職と比べてフリーランスの機会をどう評価するかを変えますか？",
+    },
+  },
 ];
 
 // Estimated reading time for a lesson, always based on the English body text
