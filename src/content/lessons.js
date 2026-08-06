@@ -727,6 +727,47 @@ export const lessons = [
       ja: "第15課では、複利は何よりも時間を必要とするため、大きく始めるより早く始める方が重要だと示しました。早く始めるほど、なぜこれがより重要になるのでしょうか？",
     },
   },
+  {
+    id: 19, icon: "🧾", color: "#57534e",
+    title: { en: "Taxes: How Your Paycheck Is Actually Taxed", es: "Impuestos: Cómo Se Grava Realmente Tu Sueldo", ko: "세금: 급여가 실제로 과세되는 방식", zh: "税收：你的薪水究竟是怎么被征税的", ja: "税金：あなたの給料は実際どう課税されるか" },
+    subtitle: { en: "Why a raise can never shrink your take-home pay", es: "Por qué un aumento nunca puede reducir tu sueldo neto", ko: "왜 급여 인상이 실수령액을 줄일 수 없는가", zh: "为什么加薪永远不会让到手工资变少", ja: "昇給が手取りを減らすことは絶対にない理由" },
+    sections: [
+      {
+        heading: { en: "Tax Brackets Are Layers, Not a Single Rate", es: "Los Tramos Fiscales Son Capas, No una Tasa Única", ko: "세율 구간은 층이지 단일 세율이 아니다", zh: "税级是分层的，不是单一税率", ja: "税率区分は層であり、単一税率ではない" },
+        body: {
+          en: "Imagine income tax as a stack of buckets, each with its own rate, and money fills them from the bottom up. The first bucket might tax the first slice of income at a low rate; once that bucket is full, the next slice spills into a bucket taxed at a higher rate — but only that slice, not everything below it.\n\nThis is why a raise can never make your take-home pay go down, even if it pushes you into a new bracket. Say a worker's income grows enough to spill into a higher bucket. Only the new, additional slice of income — the part that overflowed into that higher bucket — gets taxed at the higher rate. Every dollar in the lower buckets keeps being taxed exactly as before.\n\nA common and costly misconception is thinking a raise, or a bonus, can leave you with less money overall by 'pushing you into a higher bracket.' It can't — it can only mean the marginal (extra) dollars are taxed a bit more, never that already-earned income gets taxed retroactively at the new, higher rate.",
+          es: "El impuesto sobre la renta funciona como una pila de cubos, cada uno con su propia tasa; el dinero los llena de abajo hacia arriba. Solo la porción que rebosa a un cubo superior se grava a la tasa más alta — no todo el ingreso.\n\nPor eso un aumento nunca puede reducir tu sueldo neto, aunque te empuje a un tramo superior. Es un error común y costoso pensar lo contrario.",
+          ko: "소득세는 각기 다른 세율을 가진 양동이가 쌓여 있는 것과 같습니다. 돈은 아래부터 채워집니다. 위 양동이로 넘친 부분만 더 높은 세율로 과세됩니다 — 전체 소득이 아닙니다.\n\n그래서 급여 인상이 더 높은 세율 구간으로 밀어 넣더라도 실수령액이 줄어드는 일은 절대 없습니다. 반대로 생각하는 것은 흔하지만 비용이 큰 오해입니다.",
+          zh: "所得税就像一叠水桶，每个水桶税率不同，钱从下往上填满。只有溢出到上层水桶的那部分才按更高税率征税——不是全部收入。\n\n所以加薪即使把你推入更高的税级，也绝不会让到手工资变少。认为相反是常见但代价不小的误解。",
+          ja: "所得税は、それぞれ異なる税率を持つバケツが積み重なっているようなものです。お金は下から満たされます。上のバケツにあふれた部分だけがより高い税率で課税されます——収入全体ではありません。\n\nだから昇給でより高い税率区分に押し上げられても、手取りが減ることは絶対にありません。逆だと考えるのはよくある、しかし代償の大きい誤解です。",
+        },
+      },
+      {
+        heading: { en: "Gross Pay, Net Pay, and Where the Difference Goes", es: "Sueldo Bruto, Sueldo Neto y A Dónde Va la Diferencia", ko: "총급여, 실수령액, 그리고 그 차이가 어디로 가는가", zh: "税前工资、税后工资，以及差额去了哪里", ja: "総支給額、手取り額、その差はどこへ行くのか" },
+        body: {
+          en: "Look at any pay stub and two numbers stand out: gross pay (everything earned before anything is taken out) and net pay (what actually lands in the bank account). The gap between them is usually more than just income tax.\n\nIn the US, a paycheck typically also has separate payroll taxes withheld — funding programs like Social Security and Medicare — plus, depending on the state, a state income tax on top of the federal one. All of it is usually withheld automatically by the employer before the money ever reaches the worker, which is why most people never have to hand over a lump sum at tax time — most of it was already collected paycheck by paycheck.\n\nThis connects directly to Lesson 18: a Traditional 401(k) or IRA contribution is subtracted from income before it's taxed, which is exactly why it lowers the taxable income shown on that pay stub in the first place — not a separate mechanism, but this same withholding process working on a smaller number.",
+          es: "En un recibo de sueldo destacan dos cifras: sueldo bruto y sueldo neto. La diferencia suele incluir más que solo el impuesto sobre la renta — en EE.UU., también hay impuestos de nómina (Seguro Social, Medicare) y, según el estado, impuesto estatal.\n\nEsto conecta con la Lección 18: una aportación a un 401(k) Traditional se resta del ingreso antes de calcular el impuesto, por eso reduce el ingreso gravable.",
+          ko: "급여명세서에는 총급여와 실수령액 두 숫자가 눈에 띕니다. 그 차이는 보통 소득세만이 아닙니다 — 미국에서는 사회보장세, 메디케어 같은 별도의 급여세와, 주에 따라 주소득세도 포함됩니다.\n\n이는 18강과 직접 연결됩니다: Traditional 401(k) 기여금은 과세 전 소득에서 공제되므로 과세 대상 소득이 줄어드는 것입니다.",
+          zh: "工资单上有两个数字很显眼：税前工资和税后工资。两者的差额通常不只是所得税——在美国还包括社保、医疗保险等单独的工资税，以及视州而定的州所得税。\n\n这与第18课直接相关：Traditional 401(k)的缴款是在计税前从收入中扣除的，这正是它降低应税收入的原因。",
+          ja: "給与明細には総支給額と手取り額という2つの数字が目立ちます。その差は通常、所得税だけではありません——米国では社会保障やメディケアなどの別の給与税、そして州によっては州所得税も含まれます。\n\nこれは第18課と直接つながっています：Traditional 401(k)の拠出は課税前の収入から差し引かれるため、課税対象の所得が下がるのです。",
+        },
+      },
+    ],
+    takeaway: {
+      en: "Marginal tax brackets tax layers of income, not your whole income at one rate. A raise, a bonus, or extra freelance income can only ever add to your take-home pay, never subtract from it.",
+      es: "Los tramos fiscales gravan capas de ingreso, no todo el ingreso a una sola tasa. Un aumento nunca puede restar de tu sueldo neto, solo sumar.",
+      ko: "누진세 구간은 소득의 층을 과세하는 것이지, 전체 소득을 하나의 세율로 과세하는 것이 아닙니다. 급여 인상은 실수령액을 늘릴 뿐 절대 줄이지 않습니다.",
+      zh: "累进税级只对分层的收入征税，而不是用同一税率对全部收入征税。加薪只会增加你的到手工资，绝不会减少它。",
+      ja: "累進課税は所得の層に課税するのであり、所得全体を単一税率で課税するのではありません。昇給は手取りを増やすだけで、決して減らすことはありません。",
+    },
+    thinkAbout: {
+      en: "Now that you understand how marginal brackets work, look back at Lesson 18's Traditional-vs-Roth question. A Traditional contribution reduces taxable income at today's marginal rate. Does that change how you'd think about the 'higher tax rate now vs. later' comparison that lesson described?",
+      es: "Ahora que entiendes los tramos marginales, piensa en la pregunta Traditional vs Roth de la Lección 18. Una aportación Traditional reduce el ingreso gravable a la tasa marginal de hoy. ¿Cambia eso tu forma de pensar la comparación?",
+      ko: "이제 한계세율 구간의 작동 방식을 이해했으니, 18강의 Traditional vs Roth 질문을 다시 생각해보세요. Traditional 기여금은 오늘의 한계세율로 과세 대상 소득을 줄입니다. 이것이 그 비교를 생각하는 방식을 바꾸나요?",
+      zh: "现在你已经理解了边际税级的运作方式，回想一下第18课的Traditional与Roth问题。Traditional缴款是按今天的边际税率减少应税收入的。这是否改变了你对那个比较的看法？",
+      ja: "限界税率区分の仕組みを理解した今、第18課のTraditional対Rothの問いを振り返ってみましょう。Traditionalの拠出は今日の限界税率で課税所得を減らします。これはその比較についての考え方を変えますか？",
+    },
+  },
 ];
 
 // Estimated reading time for a lesson, always based on the English body text

@@ -5,7 +5,7 @@ actual gates, so a run's own "done" claim isn't the only record. This file lists
 what is actually true right now, and how that was checked — not a narrative, a checklist. Update it
 whenever a gate's status changes; don't let it go stale the way `AGENT_LOG.md`'s App summary once did.
 
-**Last refreshed: 2026-08-06 (lesson 18 added, item 17).**
+**Last refreshed: 2026-08-06 (lesson 19 added, item 17).**
 
 ## Blindspot register (`LAUNCH_PLAN.md` §10)
 
@@ -14,7 +14,7 @@ whenever a gate's status changes; don't let it go stale the way `AGENT_LOG.md`'s
 | 10.1 | Financial-advice adjacency | ✅ Closed | `npm run check-blindspot` (added 2026-08-05 night, item 16) — no matches for advice-adjacent phrasing, disclaimer key present in every locale. Disclaimer renders on Home, Learn, Markets, About, first-launch modal. |
 | 10.2 | Dalio dependency | ✅ Closed | `npm run check-blindspot` — no Dalio references in `src/` or `economic-cycles-v5.jsx`. |
 | 10.3 | Kids content / COPPA | ⚠️ Closed-but-reopened | Ships parent-facing (`src/screens/reference/ParentGuide.jsx`), which is the standing rule until the owner decides. **Reopened as a question 2026-08-04 — the owner, not a run, must resolve this.** Do not change the framing without that decision. |
-| 10.4 | Five languages = maintenance debt | 🟡 Open, tracked | es/ko/zh/ja labelled "(Beta)" in the language picker. Volume ratio **re-measured 2026-08-06** after lesson 18 was added with translations on every field: es 15,321 chars (0.37x of English, unchanged), ko 8,031 (0.19x, unchanged), zh 5,080 (0.12x, unchanged), ja 6,462 (0.16x, was 0.15x) — essentially flat, since this run translated the new lesson in step rather than leaving it English-only. See item 20 in `AGENT_LOG.md`. |
+| 10.4 | Five languages = maintenance debt | 🟡 Open, tracked | es/ko/zh/ja labelled "(Beta)" in the language picker. Volume ratio **re-measured 2026-08-06** after lesson 19 was added with translations on every field: es 16,667 chars (0.38x of English), ko 8,704 (0.20x), zh 5,520 (0.13x), ja 7,053 (0.16x) — all four essentially flat versus lesson 18's measurement, since this run (like the last) translated the new lesson in step rather than leaving it English-only. See item 20 in `AGENT_LOG.md`. |
 | 10.5 | Solo-founder single point of failure | 🟡 Open | Code is on git. No confirmation yet that data exports / store credentials / 2FA recovery codes are in a password manager — that's outside what a dev-agent run can verify or do. |
 | 10.6 | Building instead of distributing | 🟡 Open, ongoing | Pre-launch (no store presence yet), so the "half of weekly hours to distribution" rule doesn't bind yet. Becomes checkable only after web launch. |
 | 10.7 | Plan/practice drift | 🟡 Open, ongoing | Reconciled well so far — `AGENT_LOG.md`'s App summary and `DECISIONS.md` are both current as of the 2026-08-04 rebuild. Recheck at each monthly audit (§9.3). |
@@ -26,7 +26,7 @@ Phase 0 ("free, instrumented, no payment code") must clear **both**:
 
 | Threshold | Target | Actual | Status |
 |---|---|---|---|
-| Lesson catalogue size | ≥40 lessons / ~2 hours | **18 lessons / 41,324 English chars / ~37–40 min** | ❌ Not met — roughly 47% of the char/time target, 45% of the lesson-count target |
+| Lesson catalogue size | ≥40 lessons / ~2 hours | **19 lessons / 43,928 English chars / ~40 min** | ❌ Not met — roughly 50% of the char/time target, 48% of the lesson-count target |
 | Installer lesson-1 completion | ≥40% | **Unmeasured** — no analytics pipeline exists | ❌ Unmeasurable |
 
 Verified 2026-08-06 by importing `src/content/lessons.js` directly (bootstrapped Node) and summing
