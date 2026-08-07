@@ -82,17 +82,18 @@ for the history. No open P1/P2 items.
     finish lesson 1. Per §4.3 verbatim: "the highest-value monetization work right now is writing
     lessons, not writing billing code." Do not start billing/paywall work ahead of this gate — see item
     15.
-21. **[Content] Kids financial literacy is a gap, not a built feature.** Assessed 2026-08-07 after the
-    owner asked whether kids lessons were already in the master plan — see `LAUNCH_PLAN.md` §2.6.
-    `kidsContent.js` has three age bands with **three blurbs + one activity each (nine blurbs total)**,
-    surfaced only in Reference → Parent Guide. Two problems: it isn't lesson-shaped (nine blurbs vs. 26
-    adult lessons), and its *content is economics, not money skills* — toy-trading transactions,
-    inflation, the Fed, 2008 — with no allowance, saving, wants-vs-needs, earning, or first-account
-    material. That is the same defect item 22 just fixed for adults, still present in the kids module.
-    **Safe work (do this):** expand the parent-facing bands with real money-skills content; stays
-    parent-directed, so §10.3's COPPA posture is untouched. **Not a design decision (do NOT do this):**
-    making kids material child-facing — child accounts, a kids mode, kid-directed lesson UI — changes
-    COPPA classification, store privacy category, and ad eligibility. §10.3 reserves it for the owner.
+21. **[Content] Kids financial literacy — content gap partially closed; structural gap remains.**
+    Assessed 2026-08-07 after the owner asked whether kids lessons were already in the master plan —
+    see `LAUNCH_PLAN.md` §2.6. **Update, 2026-08-07 (tenth run):** each of the three age bands grew from
+    three blurbs to five (fifteen total, up from nine), adding the missing money-skills material —
+    wants-vs-needs, earning an allowance, saving toward a goal, a first kids' bank account, checking a
+    balance before spending, "pay yourself first" — see that run's log entry. **Still open:** it isn't
+    lesson-shaped (fifteen blurbs vs. 26 adult lessons, still just three fields — `lessons`/`activity`/
+    `parentTip` — per band). Whether to grow further within the current format or move to a lesson-shaped
+    structure is an open call for a future run, not decided here. **Not a design decision (do NOT do
+    this):** making kids material child-facing — child accounts, a kids mode, kid-directed lesson UI —
+    changes COPPA classification, store privacy category, and ad eligibility. §10.3 reserves it for the
+    owner.
 22. **[Structure] Renumber lesson ids to match track order.** Deferred deliberately 2026-08-07 when the
     two tracks landed — see `DECISIONS.md`, "Two lesson tracks." The money track runs 13→26 and the
     economy track 1→12, so a new learner's first lesson is numbered 13. Cosmetic, but it reads as a
@@ -3533,3 +3534,58 @@ row corrected. **Not touched:** `economic-cycles-v6.jsx`, `economic-cycles-v5.js
 **Next run should pick:** item 21 (kids money-skills content — parent-facing only) or item 17 (more
 adult lessons, now declaring a `track`). **The app name is still unresolved** — the owner said "not
 decided yet," so every string still says "Economic Cycles." Do not invent one.
+
+### 2026-08-07 (tenth run) — Add money-skills content to the kids parent guide (backlog item 21, partial)
+
+`git status` at start showed only the long-standing untracked `economic-cycles-v6.jsx`; `git log`
+matched exactly where the ninth run's entry left off. Picked item 21's explicitly-flagged "safe work"
+over item 17 (another adult lesson): item 21's own backlog text names this exact gap and marks it safe
+to do without touching §10.3, and it doesn't compound item 20's translation-lag concern any more than
+another adult lesson would.
+
+- **What changed**: `src/content/kidsContent.js` — added two new lessons to each of the three age
+  bands (5-8, 9-12, 13-17), all five languages each (30 new strings total; existing content untouched).
+  These are the money-skills topics item 21 named as missing: **5-8** — wants vs. needs, earning an
+  allowance through chores; **9-12** — saving toward a goal with a savings chart, opening a first kids'
+  bank account; **13-17** — checking your balance before you spend (paycheck/debit card), "pay yourself
+  first." Every band went from 3 lessons to 5. Did **not** touch `activity`/`parentTip` (already
+  reasonably money-skills-oriented — allowance jars, tracking grocery prices, a savings account), and did
+  **not** restructure the format into a lesson-shaped catalogue like the 26 adult lessons — item 21 itself
+  separates that ("isn't lesson-shaped") from "safe work (do this)," and treats the format change as a
+  bigger, undecided question; this run only did the explicitly-safe half.
+- **Verified with a real click-through**: `npm test` clean (`check-data.mjs` 0 failures/warnings —
+  confirms all 5 languages present and non-empty for every new entry; `check-blindspot.mjs` all six
+  checks pass). `npm run build` succeeded, 494.69 kB main chunk (unchanged — `kidsContent.js` was
+  already part of the lazy-loaded `Reference` chunk, which grew from 38.06 kB to 44.08 kB gzip 20.94 kB).
+  Built `dist/`, served it via the documented static-build-plus-python-server technique, opened it in
+  the browser-preview tool: navigated Reference → Kids, clicked through all three age bands in English
+  and confirmed all 5 lessons render per band (the 2 new ones included, in the correct order); switched
+  the language picker to Korean and re-checked the 13-17 band — both new lessons rendered in Korean with
+  no missing-string fallback. `read_console_messages` showed zero errors throughout.
+- **Adversarial self-check**: (1) *Blindspot register* — `check-blindspot` clean. Manually re-read all
+  6 new English strings against §10.1/§10.2: no Dalio reference, no specific buy/sell recommendation, no
+  "you should invest in X" framing — these describe general practices (allowance, saving goals, checking
+  a balance, pay-yourself-first) the same way the pre-existing lemonade-stand/mortgage/2008 blurbs
+  already did. §10.3 — the new content is still only reachable via Reference → Kids (Parent Guide), no
+  child account, no ads; wrote the new blurbs in the same second-person-to-the-child voice the existing
+  9 blurbs already use (the screen's parent-facing status comes from where it's surfaced and who
+  navigates to it, per `ParentGuide.jsx`'s own header comment — not from every sentence being addressed
+  to the parent — so this isn't a new interpretation of §10.3, just matching the established pattern).
+  No live/hardcoded dates introduced. (2) *DECISIONS.md conflict* — none; grepped `DECISIONS.md` for
+  "kids" — only the `.js`-not-JSON content-module decision mentions it, and this change kept that format
+  exactly (added array entries, no schema change). (3) *Redoing done work* — grepped "money-skills" and
+  "kidsContent" in the "Completed and pruned" list: zero matches; this is genuinely new, first attempt.
+  (4) *Verification claim* — every check above (test, build, browser click-through in two languages
+  across all three bands) was actually run this session against the real built output, not asserted.
+- **Not touched, and why**: `economic-cycles-v6.jsx`/`economic-cycles-v5.jsx` — unchanged, per the
+  standing note. Did not restructure `kidsContent.js` into a lesson-shaped catalogue (see above — that's
+  the still-open, larger half of item 21). Did not add allowance/first-account content to the adult
+  lessons — out of scope for a kids-guide change.
+- **Backlog changes**: item 21 narrowed — the money-skills *content* gap this run's entry describes is
+  addressed for all three bands; the *lesson-shaped-catalogue* structural question remains open below.
+- **Next run should pick**: item 17 (grow the adult lesson catalogue — credit-report-vs-credit-score,
+  identity theft/fraud protection, or filing-taxes are the open topic candidates) is the natural next
+  pick, having now waited two runs. If revisiting kids content instead: consider whether the parent guide
+  should grow past 5 lessons/band or move toward the lesson-shaped format item 21 originally flagged —
+  that's a bigger, dedicated-run-sized change, not a fold-in. Items 18/20/22 remain blocked on owner
+  action or a dedicated scripted change, as before.
