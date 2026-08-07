@@ -10,6 +10,7 @@ import { dirname, join } from "node:path";
 
 import { TR } from "../src/locales/index.js";
 import { lessons, TRACKS, lessonsByTrack } from "../src/content/lessons.js";
+import { lessonContent } from "../src/content/lessonContent.js";
 import { quizData } from "../src/content/quizData.js";
 import { glossary } from "../src/content/glossary.js";
 import { kidsContent } from "../src/content/kidsContent.js";
@@ -70,7 +71,11 @@ function checkNonEmptyString(value, path) {
   }
 }
 
-// 2. lessons: unique ids, and every translated field present in all 5 languages.
+// 2. lessons: unique ids, every translated field present in all 5 languages,
+//    and — since content/lessonContent.js (backlog item 23) — that every
+//    lesson has a matching content entry (and vice versa) with no orphans on
+//    either side, plus that the metadata's `minutes` estimate still matches a
+//    fresh count of the content it's a snapshot of.
 {
   const seenIds = new Set();
   lessons.forEach((lesson, i) => {
@@ -84,25 +89,56 @@ function checkNonEmptyString(value, path) {
       fail(`${path} (id ${lesson.id}): track is ${JSON.stringify(lesson.track)}, expected one of [${[...TRACK_KEYS].join(", ")}]`);
     }
 
-    for (const field of ["title", "subtitle", "takeaway", "thinkAbout"]) {
+    for (const field of ["title", "subtitle"]) {
       if (checkLangSet(lesson[field], `${path}.${field}`)) {
         for (const lang of LANGS) checkNonEmptyString(lesson[field][lang], `${path}.${field}.${lang}`);
       }
     }
 
-    if (!Array.isArray(lesson.sections) || lesson.sections.length === 0) {
-      fail(`${path}.sections: expected a non-empty array`);
+    const content = lessonContent[lesson.id];
+    if (content == null) {
+      fail(`${path} (id ${lesson.id}): no matching entry in lessonContent.js`);
+      return;
+    }
+
+    for (const field of ["takeaway", "thinkAbout"]) {
+      if (checkLangSet(content[field], `lessonContent[${lesson.id}].${field}`)) {
+        for (const lang of LANGS) checkNonEmptyString(content[field][lang], `lessonContent[${lesson.id}].${field}.${lang}`);
+      }
+    }
+
+    if (!Array.isArray(content.sections) || content.sections.length === 0) {
+      fail(`lessonContent[${lesson.id}].sections: expected a non-empty array`);
     } else {
-      lesson.sections.forEach((section, si) => {
-        const sPath = `${path}.sections[${si}]`;
+      content.sections.forEach((section, si) => {
+        const sPath = `lessonContent[${lesson.id}].sections[${si}]`;
         for (const field of ["heading", "body"]) {
           if (checkLangSet(section[field], `${sPath}.${field}`)) {
             for (const lang of LANGS) checkNonEmptyString(section[field][lang], `${sPath}.${field}.${lang}`);
           }
         }
       });
+
+      // `minutes` in lessons.js is a snapshot of what estimateMinutes() used
+      // to compute live from this same body text before the 2026-08-07 split.
+      // Recomputing it here means a future run that edits a lesson's body
+      // without updating `minutes` fails loudly instead of leaving a stale
+      // reading-time estimate on the Learn list.
+      const words = [...content.sections.map((s) => s.body.en), content.takeaway.en, content.thinkAbout.en]
+        .join(" ")
+        .trim()
+        .split(/\s+/).length;
+      const expectedMinutes = Math.max(1, Math.round(words / 200));
+      if (lesson.minutes !== expectedMinutes) {
+        fail(`${path} (id ${lesson.id}): minutes is ${lesson.minutes}, but its content computes to ${expectedMinutes} — update lessons.js's minutes field to match the edited body`);
+      }
     }
   });
+
+  for (const idStr of Object.keys(lessonContent)) {
+    const id = Number(idStr);
+    if (!seenIds.has(id)) fail(`lessonContent[${id}]: no matching lesson in lessons.js — orphaned content`);
+  }
 }
 
 // 2b. tracks: every track's label/blurb resolves in all 5 languages, no track

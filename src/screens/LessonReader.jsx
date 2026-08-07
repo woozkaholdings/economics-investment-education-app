@@ -11,7 +11,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { EVENTS, track } from "../lib/analytics.js";
-import { estimateMinutes } from "../content/lessons.js";
+import { lessonContent } from "../content/lessonContent.js";
 import { quizData } from "../content/quizData.js";
 import { recordContinueChoice, wasContinuePromptShownToday } from "../lib/useAppState.js";
 import { questionsForLesson } from "../lib/review.js";
@@ -43,6 +43,7 @@ function Toast({ label }) {
 
 export default function LessonReader({ t, lang, lessons, index, completedLessons, completeLesson, recordReview, onBack, onNavigate }) {
   const lesson = lessons[index];
+  const content = lessonContent[lesson.id];
   const [celebrating, setCelebrating] = useState(false);
   const [prompt, setPrompt] = useState(null); // null | "asking" | "confirmed"
   const headingRef = useRef(null);
@@ -120,13 +121,13 @@ export default function LessonReader({ t, lang, lessons, index, completedLessons
           {lesson.subtitle[lang]}
         </Text>
         <Text variant="caption" color={ink.muted} style={{ marginTop: space["3"] }}>
-          {t.estMinTemplate.replace("{n}", estimateMinutes(lesson))}
+          {t.estMinTemplate.replace("{n}", lesson.minutes)}
         </Text>
       </div>
 
       {/* Body — one idea per section */}
       <Stack gap={space["5"]}>
-        {lesson.sections.map((section) => (
+        {content.sections.map((section) => (
           <section key={section.heading.en}>
             <Text as="h2" variant="heading" color={ink.strong} style={{ marginBottom: space["2"] }}>
               {section.heading[lang]}
@@ -142,8 +143,8 @@ export default function LessonReader({ t, lang, lessons, index, completedLessons
       <LessonVisual lessonId={lesson.id} t={t} lang={lang} />
 
       <Stack gap={space["3"]} style={{ marginTop: space["5"] }}>
-        <Note tone="ok" label={t.keyTakeaway} icon="target">{lesson.takeaway[lang]}</Note>
-        <Note tone="accent" label={t.tryThinking} icon="info">{lesson.thinkAbout[lang]}</Note>
+        <Note tone="ok" label={t.keyTakeaway} icon="target">{content.takeaway[lang]}</Note>
+        <Note tone="accent" label={t.tryThinking} icon="info">{content.thinkAbout[lang]}</Note>
       </Stack>
 
       {/* Retrieval check — answering is what makes the reading stick. */}

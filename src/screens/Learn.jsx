@@ -7,7 +7,7 @@
 // not as another tab.
 // ═══════════════════════════════════════════════════════════════════════════
 
-import { estimateMinutes, TRACKS } from "../content/lessons.js";
+import { TRACKS } from "../content/lessons.js";
 import Icon from "../components/Icon.jsx";
 import { Button, Card, Disclaimer, ProgressBar, Text } from "../components/ui.jsx";
 import { fill, font, ink, line, radius, space, surface } from "../theme.js";
@@ -147,7 +147,7 @@ export default function Learn({ t, lang, lessons, completedLessons, isUnlocked, 
                         {lesson.title[lang]}
                       </Text>
                       <Text variant="caption" color={ink.muted} style={{ marginTop: 2 }}>
-                        {unlocked ? t.estMinTemplate.replace("{n}", estimateMinutes(lesson)) : t.locked}
+                        {unlocked ? t.estMinTemplate.replace("{n}", lesson.minutes) : t.locked}
                       </Text>
                     </span>
                     {unlocked && (

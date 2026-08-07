@@ -125,16 +125,6 @@ for the history. No open P1/P2 items.
     and API key a dev-agent run can't create; see `DECISIONS.md`. What's left: create that account
     (owner action) and swap `analytics.js`'s `sink()`; item 17's D1 lesson-1-completion measurement is
     still blocked until then, since a per-device local log can't be aggregated across installs.
-23. **[Perf] Main JS chunk back over the 500 kB build warning threshold.** Noticed 2026-08-07 (eleventh
-    run) while verifying lesson 27's build: `npm run build` now reports `index-*.js` at 522.40 kB
-    (warning threshold is 500 kB) — up from 494.69 kB after the ninth run's `React.lazy` code-split
-    (backlog: chunk-size warning) closed this same warning two runs ago. `lessons.js`/`quizData.js` are
-    not behind the `Reference`/`Practice` lazy boundary, so every lesson added by item 17 grows the main
-    chunk directly; this will keep recurring as the catalogue grows toward the ~40-lesson §4.3 gate.
-    Not fixed this run (out of scope for a one-lesson content change) — a future run should either move
-    lesson content behind its own lazy boundary or accept a higher `chunkSizeWarningLimit` deliberately
-    (with a comment explaining why) rather than let the warning silently reappear every few lessons.
-
 **HELD — owner decisions, do not act on these**
 
 12. **[HELD] Expo vs. Vite** (§2.1) — needs a human call; blocks store release, not the web launch. See
@@ -151,6 +141,12 @@ for the history. No open P1/P2 items.
 
 **Completed and pruned**
 
+- **Main JS chunk back over the 500 kB warning threshold (former item 23)** — done 2026-08-07 (twelfth
+  run, owner-directed), see run log ("Split lesson content out of the main bundle"). `content/lessons.js`
+  split into lightweight metadata (kept at the same path) and a new `content/lessonContent.js` holding
+  the heavy per-lesson body; `LessonReader` (which needs the body, plus `quizData.js`) is now lazy-loaded
+  like `Practice`/`Reference` already were. Main chunk: 522.40 kB → 207.01 kB, no warning. See
+  `scripts/check-data.mjs`'s new drift check, which keeps the two files from silently diverging.
 - **Tighten the builder/critic feedback loop, first piece (former item 16)** — done 2026-08-05 (night),
   see run log ("Automate the blindspot-register regression checks"). New `scripts/check-blindspot.mjs`,
   wired into `npm test` and callable alone via `npm run check-blindspot`, codifies the grep commands
@@ -3654,3 +3650,77 @@ candidate topics, having waited two runs.
   remaining named candidates) or item 23 (the chunk-size regression, if a structural change is preferred
   over more content this time). Items 18/20/22 remain blocked on owner action or a dedicated scripted
   change, as before. Item 21's structural (lesson-shaped-catalogue) question is also still open.
+
+### 2026-08-07 (twelfth run, owner-directed) — Split lesson content out of the main bundle (backlog item 23)
+
+Owner asked directly to pick item 23 and reduce the main chunk size, rather than waiting for the next
+scheduled run to choose between it and item 17. `git status` at start showed only the long-standing
+untracked `economic-cycles-v6.jsx` and no in-progress user edits; `git log` matched the eleventh run's
+entry exactly.
+
+- **Root cause**: `App.jsx` statically imports `Learn.jsx`, which imports `content/lessons.js` for
+  `TRACKS` and (until this run) `estimateMinutes()`. That single import pulled the *entire* `lessons.js`
+  — 261 KB, mostly the full body text of all 27 lessons, needed only once a specific lesson is actually
+  opened — into the main bundle everyone downloads before ever tapping into the app. `LessonReader.jsx`
+  (which needs that body) was also imported statically in `App.jsx`, unlike `Practice`/`Reference`, which
+  were already `React.lazy`-split back on 2026-08-07 (ninth run). So the fix from that run only ever
+  covered two of the three heavy screens.
+- **What changed**:
+  - `src/content/lessons.js` — kept at the same import path and export names (`lessons`, `TRACKS`,
+    `lessonsInTrack`, `lessonsByTrack`), but each lesson entry now holds only `id`, `track`, `icon`,
+    `color`, `title`, `subtitle`, and a new precomputed `minutes` field. Down from 261 KB to 23 KB.
+  - `src/content/lessonContent.js` (new) — the heavy part that moved out: `{ [id]: { sections, takeaway,
+    thinkAbout } }` for all 27 lessons, ~246 KB. Nothing eagerly imports it.
+  - `src/screens/LessonReader.jsx` — imports `lessonContent` directly (fine, since this file is now
+    itself the lazy boundary) and looks up `lessonContent[lesson.id]` for the body; reads `lesson.minutes`
+    instead of calling the now-removed `estimateMinutes()`.
+  - `src/screens/Learn.jsx` — same swap, `estimateMinutes(lesson)` → `lesson.minutes`.
+  - `src/App.jsx` — `LessonReader` changed from a static import to `lazy(() => import(...))`, wrapped in
+    the same `<Suspense fallback={<ScreenFallback />}>` `Practice`/`Reference` already use.
+  - `scripts/check-data.mjs` — extended the lessons check to also validate `lessonContent.js`: every
+    lesson id has a matching content entry and vice versa (no orphans either direction), full 5-language
+    parity on `sections`/`takeaway`/`thinkAbout` (unchanged validation, just re-pointed at the new file),
+    and a **new drift check**: recomputes the word-count-based minutes estimate from `lessonContent.js`
+    and fails if it no longer matches the `minutes` snapshot stored in `lessons.js` — so a future run
+    editing a lesson's body without updating `minutes` fails loudly instead of leaving a stale estimate
+    on the Learn list.
+  - The actual split was done with a one-off Node script (not committed — deleted after use) that
+    imported the old `lessons.js`, called the old `estimateMinutes()` on each lesson to snapshot its
+    current value, and wrote both new files from that data. This avoided hand-copying ~270 KB of
+    5-language text, which is exactly the kind of mechanical transcription a human or an agent typing by
+    hand would eventually get wrong on one lesson out of 27.
+- **Verified**: `npm test` clean (`check-data.mjs` 0 failures/warnings including the new drift check;
+  `check-blindspot.mjs` all six checks pass). `npm run build`: main chunk **522.40 kB → 207.01 kB**, no
+  chunk-size warning printed at all; `LessonReader` is now its own 234.84 kB lazy chunk (which also
+  absorbed `quizData.js`), and Rollup additionally split a shared `Question-*.js` (69.23 kB, used by both
+  `LessonReader` and `Practice`) on its own. Built `dist/`, served it with `python3 -m http.server` on a
+  **fresh port** (a genuinely new origin, so no seeded `localStorage` — this exercised the riskiest path:
+  a brand-new visitor's `reading` state initializes to lesson 1 immediately per the 2026-08-03 first-open
+  routing, meaning the lazy `LessonReader` chunk has to load before the very first paint of lesson
+  content). Confirmed: the first-run disclaimer modal renders correctly over it, `read_network_requests`
+  showed `LessonReader-*.js` fetched with a real `200 OK`, `read_console_messages` showed zero errors.
+  Navigated back to Learn and confirmed all 27 lessons render with their exact pre-split minute values
+  (spot-checked against the values captured from the old `estimateMinutes()` before editing anything —
+  all 27 matched exactly). Re-opened lesson 27 (added last run) through the same chunk and confirmed its
+  content, quiz, and "CORRECT!" scoring still work identically post-split.
+- **Adversarial self-check**: (1) *Blindspot register* — `check-blindspot` clean; this run touched no
+  lesson/quiz/UI strings at all, only data structure and import wiring, so there's no new surface for
+  Dalio references, advice-adjacent language, or kids-framing changes to hide in. (2) *DECISIONS.md
+  conflict* — none; re-read the "Content as `.js` modules, not JSON" entry — `lessonContent.js` is still
+  a plain `.js` module with the same per-language-object shape the decision describes, not a format
+  change. No localStorage or Expo/Vite implication. (3) *Redoing done work* — checked "Completed and
+  pruned": the ninth run's `React.lazy` split (Practice/Reference) is a different, narrower fix that this
+  run extends rather than redoes — LessonReader was never covered by it. This is the first attempt at
+  splitting lesson content specifically. (4) *Verification claim* — every check above (test, build,
+  browser click-through against a fresh origin with zero seeded state, network-request confirmation of
+  the lazy fetch, exact minute-value parity check) was actually run this session against the real built
+  output.
+- **Not touched, and why**: `economic-cycles-v6.jsx`/`economic-cycles-v5.jsx` — unchanged, per the
+  standing note. Did not touch `quizData.js` itself (71 KB) — it didn't need splitting; it was already
+  only reachable through `LessonReader`'s own import, so lazy-loading `LessonReader` was sufficient to
+  move it out of the main chunk for free.
+- **Backlog changes**: item 23 closed, moved to "Completed and pruned" above.
+- **Next run should pick**: item 17 (identity theft/fraud protection or filing-taxes are the remaining
+  named candidates) — the natural next pick now that the chunk-size distraction is cleared. Items
+  18/20/22 remain blocked on owner action or a dedicated scripted change, as before. Item 21's structural
+  (lesson-shaped-catalogue) question is also still open.

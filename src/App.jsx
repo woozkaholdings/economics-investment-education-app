@@ -18,14 +18,22 @@ import Icon from "./components/Icon.jsx";
 import { Button, Card, EmptyState, Text } from "./components/ui.jsx";
 import { APP_MAX_WIDTH, fill, ink, line, radius, shadow, space, surface } from "./theme.js";
 import Learn from "./screens/Learn.jsx";
-import LessonReader from "./screens/LessonReader.jsx";
 
 // Practice and Reference (plus its five sub-screens and their content
 // modules — glossary, kids guide, sectors, economic signals, market copy)
 // are only needed once a reader taps past Learn, so they're split into their
 // own chunks instead of riding in the bundle everyone downloads for lesson 1.
+//
+// LessonReader pulls in content/lessonContent.js — the ~250KB of actual
+// lesson body text (sections/takeaway/thinkAbout) — plus quizData.js, so it
+// gets the same treatment (backlog item 23, chunk-size regression): everyone
+// downloads Learn's lightweight lesson list first, and only pays for a
+// lesson's own text when they open it. Even a first-time visitor, who is
+// routed straight into Lesson 1 (see `reading` below), sees the same brief
+// ScreenFallback a Practice/Reference tap already produces.
 const Practice = lazy(() => import("./screens/Practice.jsx"));
 const Reference = lazy(() => import("./screens/Reference.jsx"));
+const LessonReader = lazy(() => import("./screens/LessonReader.jsx"));
 
 // Same loading affordance `Sectors.jsx` already uses for its own async
 // content, so a lazy-chunk fetch doesn't look different from data the app
@@ -190,12 +198,14 @@ export default function App() {
           />
         )}
         {tab === "learn" && reading !== null && (
-          <LessonReader
-            t={t} lang={lang} lessons={lessons} index={reading}
-            completedLessons={completedLessons} completeLesson={completeLesson}
-            recordReview={recordReview}
-            onBack={closeLesson} onNavigate={setReading}
-          />
+          <Suspense fallback={<ScreenFallback />}>
+            <LessonReader
+              t={t} lang={lang} lessons={lessons} index={reading}
+              completedLessons={completedLessons} completeLesson={completeLesson}
+              recordReview={recordReview}
+              onBack={closeLesson} onNavigate={setReading}
+            />
+          </Suspense>
         )}
         {tab === "practice" && (
           <Suspense fallback={<ScreenFallback />}>
