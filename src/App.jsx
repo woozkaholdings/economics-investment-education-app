@@ -10,17 +10,29 @@
 // repository root are reference material and are deliberately not imported.
 // ═══════════════════════════════════════════════════════════════════════════
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { lazy, Suspense, useCallback, useEffect, useRef, useState } from "react";
 import { lessons } from "./content/lessons.js";
 import { EVENTS, track } from "./lib/analytics.js";
 import { useAppState } from "./lib/useAppState.js";
 import Icon from "./components/Icon.jsx";
-import { Button, Card, Text } from "./components/ui.jsx";
+import { Button, Card, EmptyState, Text } from "./components/ui.jsx";
 import { APP_MAX_WIDTH, fill, ink, line, radius, shadow, space, surface } from "./theme.js";
 import Learn from "./screens/Learn.jsx";
 import LessonReader from "./screens/LessonReader.jsx";
-import Practice from "./screens/Practice.jsx";
-import Reference from "./screens/Reference.jsx";
+
+// Practice and Reference (plus its five sub-screens and their content
+// modules — glossary, kids guide, sectors, economic signals, market copy)
+// are only needed once a reader taps past Learn, so they're split into their
+// own chunks instead of riding in the bundle everyone downloads for lesson 1.
+const Practice = lazy(() => import("./screens/Practice.jsx"));
+const Reference = lazy(() => import("./screens/Reference.jsx"));
+
+// Same loading affordance `Sectors.jsx` already uses for its own async
+// content, so a lazy-chunk fetch doesn't look different from data the app
+// was already used to waiting on.
+function ScreenFallback() {
+  return <EmptyState icon="path">…</EmptyState>;
+}
 
 const LANGUAGES = [
   { code: "en", name: "English" },
@@ -173,14 +185,18 @@ export default function App() {
           />
         )}
         {tab === "practice" && (
-          <Practice t={t} lang={lang} review={review} recordReview={recordReview} />
+          <Suspense fallback={<ScreenFallback />}>
+            <Practice t={t} lang={lang} review={review} recordReview={recordReview} />
+          </Suspense>
         )}
         {tab === "reference" && (
-          <Reference
-            t={t} lang={lang}
-            fontScale={fontScale} setFontScale={setFontScale}
-            themeMode={themeMode} setThemeMode={setThemeMode}
-          />
+          <Suspense fallback={<ScreenFallback />}>
+            <Reference
+              t={t} lang={lang}
+              fontScale={fontScale} setFontScale={setFontScale}
+              themeMode={themeMode} setThemeMode={setThemeMode}
+            />
+          </Suspense>
         )}
       </main>
 

@@ -3371,3 +3371,66 @@ content to cover at all.
   lesson; worth addressing via code-splitting before it becomes a real performance problem rather than
   just a build-time notice. At 26/40 lessons the catalogue is at 65% of the lesson-count target and 81%
   of the char/time target.
+
+### 2026-08-07 (ninth run) — Code-split Practice and Reference behind React.lazy (build chunk-size warning)
+
+`git status` at start showed only the long-standing untracked `economic-cycles-v6.jsx`; `git log`
+matched exactly where the eighth run's entry left off. Picked the build's >500 kB chunk-size warning
+over another lesson (item 17) — it's been flagged as "worth doing" in the last three run-log entries
+without anyone picking it up, and unlike another lesson it doesn't compound the item-20 translation gap
+further.
+
+- **What changed**: `src/App.jsx` — `Practice` and `Reference` (the latter pulling in all five
+  `screens/reference/*` sub-screens and their content modules: `glossary.js`, `kidsContent.js`,
+  `sectors.js`, `economicSignals.js`, `markets.js`) switched from static imports to
+  `React.lazy(() => import(...))`, each wrapped in its own `<Suspense>` at the call site in the tab
+  switch. `Learn`/`LessonReader` stay static imports since a first-time visitor lands directly in
+  Lesson 1 (`App.jsx`'s existing `isFirstVisit` routing) and shouldn't wait on a chunk fetch for that.
+  Fallback is a one-line `<EmptyState icon="path">…</EmptyState>`, reusing the exact loading affordance
+  `Sectors.jsx` already shows for its own async market-data fetch, rather than inventing a new pattern.
+  No content, locale, or logic changes — this is bundle topology only.
+- **Result**: `npm run build` before this change (per the lesson-26 entry): `dist/assets/index-*.js`
+  530.46 kB / 210.60 kB gzip, with Vite's >500 kB chunk-size warning. After: three chunks —
+  `index-*.js` 491.65 kB / 194.53 kB gzip (**no warning**, back under the threshold), plus
+  `Practice-*.js` 2.80 kB / 1.04 kB gzip and `Reference-*.js` 38.06 kB / 17.93 kB gzip, both fetched
+  only when their tab is opened. A first-time visitor (who lands straight in Lesson 1) now downloads
+  ~39 kB / ~16 kB gzip less JS than before to see the lesson they open the app for.
+- **Verified with a real click-through**: `npm test` clean (`check-data.mjs` 0 failures/warnings,
+  `check-blindspot.mjs` all six checks pass — no content touched so this was a formality, but ran it
+  anyway). `npm run build` succeeded, chunk sizes as above. Built `dist/`, served it via the documented
+  static-build-plus-python-server workaround, opened it in the browser-preview tool: confirmed via
+  `read_network_requests` that the initial page load fetches only `index-*.js` and the CSS bundle (no
+  `Practice-*.js`/`Reference-*.js` requests yet); clicked the Practice tab and confirmed
+  `Practice-*.js` fetches with a `200 OK` and the review-queue screen renders correctly (1 due question,
+  in Korean — the language a previous interactive session had left in `localStorage`); clicked the
+  Reference tab and confirmed `Reference-*.js` fetches and the Glossary sub-screen renders; clicked into
+  the Market dashboard sub-tab (nested inside the already-loaded `Reference` chunk) and confirmed it
+  renders its yield-curve chart correctly too. `read_console_messages` showed zero errors at every step.
+- **Adversarial self-check**: (1) *Blindspot register* — no content, copy, or translation file was
+  touched by this change at all (App.jsx's import/render wiring only), so §10.1/§10.2/§10.3 and the
+  §2.3 stale-date rule are structurally out of scope here; `npm run check-blindspot` ran clean anyway
+  as a formality, not a substitute for that reasoning. (2) *DECISIONS.md conflict* — none; re-read both
+  entries — this doesn't touch storage (`localStorage`-only decision unaffected), content-module format
+  (`.js` files still imported the same way, just lazily), or the Expo-vs-Vite question (still web-only
+  Vite, no React Native concerns introduced by `React.lazy`, which is standard React). (3) *Redoing done
+  work* — grepped "chunk" and "code-split" in `AGENT_LOG.md`'s "Completed and pruned" list: zero matches;
+  it has only ever appeared as an open note in the last three run-log entries, never as a completed
+  item, confirming this is genuinely new work, not a re-do. (4) *Verification claim* — the
+  network-request/console checks above were run against the actual built `dist/` output in this session,
+  not asserted from reading the diff; screenshots were taken at each step and matched what the network
+  log reported.
+- **Not touched, and why**: `economic-cycles-v6.jsx` — long-standing untracked reference file, still
+  unchanged (per the standing memory note: reference/inspiration material only, never a build fixture).
+  `economic-cycles-v5.jsx` likewise untouched. Did not also lazy-split `LessonReader` or any
+  `content/*.js` module — `lessons.js` (1,078 lines, the single largest content file) is needed by
+  `Learn`'s lesson list on first paint regardless, so splitting it further would need a real
+  metadata/body split of the lessons data structure itself, a larger and riskier change than this run's
+  scope; noted below as a follow-up rather than attempted here.
+- **Next run should pick**: item 17 (grow the lesson catalogue — credit-report-vs-credit-score, identity
+  theft/fraud protection, or an end-to-end filing-taxes lesson are the open topic candidates) is still
+  the plan's own explicit gate and the natural next pick. If the chunk-size line is revisited again: the
+  next-largest lever would be splitting `lessons.js` into per-lesson metadata (id/title/icon, needed by
+  `Learn`) versus body content (needed only by `LessonReader`, and only for the lesson actually being
+  read) — bigger surgery than this run's Suspense-boundary change, worth its own dedicated run rather
+  than folding into a future lesson-content run. Item 18 (real analytics provider) and item 20
+  (translations) remain blocked on owner action as before.
