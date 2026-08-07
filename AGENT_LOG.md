@@ -74,10 +74,10 @@ for the history. No open P1/P2 items.
 **Open**
 
 17. **[Content] Grow the lesson catalogue.** Derived from `LAUNCH_PLAN.md` §4.3, not owner-assigned but
-    the plan's own explicit gate: the catalogue is now 24 lessons / ~59,900 English characters / ~54
-    minutes end to end (measured directly from `src/content/lessons.js` — up from 23 lessons / ~56,000
-    chars / ~47 min after lesson 23 was added; this run added lesson 24, "Renting vs. Buying: The Real
-    Trade-offs of a Home"), and Phase 0 ("free, instrumented, no payment code")
+    the plan's own explicit gate: the catalogue is now 25 lessons / ~62,900 English characters / ~57
+    minutes end to end (measured directly from `src/content/lessons.js` — up from 24 lessons / ~59,900
+    chars / ~54 min after lesson 24 was added; this run added lesson 25, "Brokerage Accounts: How
+    Investing Actually Works Mechanically"), and Phase 0 ("free, instrumented, no payment code")
     doesn't end until it reaches roughly 40 lessons / 2 hours of content **and** ≥40% of installers
     finish lesson 1. Per §4.3 verbatim: "the highest-value monetization work right now is writing
     lessons, not writing billing code." Do not start billing/paywall work ahead of this gate — see item
@@ -3185,3 +3185,93 @@ costs beyond the sticker price.
   stocks/bonds/diversification concepts), or item 20's translation work pending owner sign-off, or the
   real analytics-provider swap once a PostHog account/key exists (owner action). At 24/40 lessons the
   catalogue is at 60% of the lesson-count target and 73% of the char/time target.
+
+### 2026-08-06 (seventh run, owner-directed) — Add lesson 25: "Brokerage Accounts: How Investing Actually Works Mechanically" (backlog item 17)
+
+Owner explicitly asked to add another lesson toward the 40-lesson gate, mid-session (not a scheduled
+trigger). `git status` at start showed only the long-standing untracked `economic-cycles-v6.jsx`; also
+re-confirmed the repo had moved forward since an earlier point in this same session (lessons 21-24 and a
+cross-reference fix to lesson 20 landed via the regular scheduled runs in between) — re-read the actual
+current `git log` and the live end of `AGENT_LOG.md` before picking anything, rather than trusting a
+stale in-context assumption about what the latest lesson number was.
+
+Picked "investing account mechanics" (brokerage accounts, order types) — explicitly one of the three
+candidates the last run-log entry listed, over estate planning or a deeper credit-report dive, because it
+plugs directly into two lessons the app already teaches without overlapping them: Lesson 17 (stocks,
+bonds, diversification — the *what* to hold) and Lesson 18 (401(k)/IRA — the tax-advantaged account type),
+leaving a clear gap around the *mechanics* of a plain taxable brokerage account and how an order actually
+executes, which neither lesson covers.
+
+- **Added lesson 25** to `src/content/lessons.js` (icon 💼, color `#0e7490` — checked against every
+  existing lesson's icon/color for a collision, found none): two sections — what a brokerage account
+  actually is (a container, not an investment; uninvested cash inside it generally doesn't grow on its
+  own; and how a taxable brokerage account differs from the 401(k)/IRA accounts Lesson 18 covered — no
+  contribution limit or early-withdrawal penalty, but gains taxed as realized instead of tax-deferred/
+  tax-free), and how orders work (market vs. limit orders and the certainty-of-execution vs.
+  certainty-of-price trade-off between them, plus fractional shares and T+1 settlement). Explicitly
+  cross-references Lesson 17 (what actually gets bought inside the account) and Lesson 18 (the
+  tax-advantaged account comparison). Deliberately named no specific broker, platform, or fee structure,
+  and used only clearly-labelled illustrative figures ($500 uninvested cash, $50 of a $500 stock, a 5%
+  limit-order gap) rather than any claimed current rate, fee, or market price, matching the illustrative-
+  numbers pattern lessons 21/23/24 already established (not the §2.3 problem, which is about live-looking
+  *current* market data). All five languages, same narrative-then-concept style as lessons 19-24.
+- **Added a matching `quizData.js` entry** (lesson: 25, answer index 3 — distribution was 6/7/7/6 before
+  this run, so index 3 brings it to a balanced 6/7/7/7): a scenario question (uninvested cash sitting in
+  a brokerage account — what happens to it) that directly targets the most common misconception this
+  lesson addresses — that a brokerage account behaves like a savings account or auto-invests deposited
+  cash — rather than a fact a reader could answer without having read the lesson.
+- **Verified with a real click-through**: built the static bundle (`npm run build`, `vite v6.4.3`, 61
+  modules, `dist/assets/index-BP43EuVH.js` 510.72 kB / 202.13 kB gzip, 835ms — crossed Vite's 500 kB
+  chunk-size warning threshold for the first time; noted below, not treated as a failure since the build
+  still succeeded), served it via the documented Python-server workaround, opened it in the
+  browser-preview tool. Confirmed "LESSON 25 OF 25" (lesson count picked up automatically), unlocked
+  lessons 1-24 via `localStorage.setItem("ecycles_completed_lessons", ...)` to bypass the sequential-
+  unlock gate deliberately, read the full lesson body via `get_page_text` in `ja` (the language the
+  browser tab happened to be in from earlier in this session — a real persisted-state check, not staged),
+  confirmed the Japanese translation rendered correctly end to end including the disclaimer footer,
+  clicked the correct quiz option via a DOM-click workaround (`document.querySelectorAll('button')` +
+  text match + `.click()`) and got the correct-answer state, confirmed `lesson_started`/`quiz_taken`
+  (`lessonId: 25, correct: true, source: "lesson_check"`) landed in the analytics log in order, then
+  switched the language picker to `en` via `<select>` + a dispatched `change` event and confirmed the
+  English translation rendered correctly with the already-answered "CORRECT!" state persisting across the
+  language switch, clicked "Mark Complete," and confirmed `lesson_completed` (`lessonId: 25`) landed as
+  the log's final entry. Killed the Python server afterward.
+- **Adversarial self-check**: (1) *Blindspot register* — `npm run check-blindspot` clean (all six
+  checks); manually re-read the English and Japanese lesson text for advice-adjacent framing — none
+  found, the lesson explains account mechanics and order-type trade-offs without recommending any
+  specific broker, order type, or investment, and the standard disclaimer still renders on the lesson
+  screen (confirmed in the click-through). No Dalio references. No live-looking dated figures — the
+  $500/$50-of-$500/5% numbers are clearly-labelled illustrative examples for teaching the mechanism, not
+  claimed current prices or fees, reasoned through explicitly above rather than just trusted to the grep
+  (which also passed). (2) *DECISIONS.md conflict* — none; content-only change to `.js` content modules,
+  consistent with the `.js`-not-JSON decision; no state/storage/platform changes. (3) *Redoing done
+  work* — grepped `AGENT_LOG.md` for "brokerage," "market order," "limit order," and "fractional share"
+  and found only this run's own entry and the prior run's "candidate" mention, confirming account
+  mechanics weren't already built; lessons 17 and 18 (cross-referenced, not modified) were read to confirm
+  this lesson's claims about them are accurate to what those lessons actually say. (4) *Verification
+  claim* — the click-through above, including the analytics-log inspection and the bidirectional
+  language-switch check (ja read, then switched to en with state persisting), was actually run this
+  session against the real build output.
+- **Verified build and tests**: `npm test` → `check-data.mjs`: `PASS: 0 failure(s), 0 warning(s)`; `npm
+  run check-blindspot`: `PASS: 0 failure(s)` (all six checks). `npm run build` → succeeded with a new
+  Vite warning (chunk >500 kB, see above) — not a regression to fix in this content-only run, but worth
+  flagging for a future run since it will only grow as more lessons are added; no code-splitting exists
+  yet for the lesson content.
+- **Updated `LAUNCH_READINESS.md`**: refreshed using the file's own documented refresh commands. Phase-0
+  lesson-catalogue row now reads 25 lessons / 62,938 English chars / ~57 min (~77% of the char/time
+  target, ~63% of the lesson-count target), up from 24 / 59,862 / ~54 min. Cross-checked against the
+  app's own `estimateMinutes` sum (52 min vs. 57 min) — drift is about the same as at 24 lessons, still
+  close enough to trust both. Re-measured §10.4: es/ko/zh/ja stayed essentially flat-to-slightly-up
+  (0.50x/0.25x/0.16x/0.21x) versus the lesson-24 measurement, consistent with translating the new lesson
+  in step.
+- **Not touched, and why**: `economic-cycles-v6.jsx` — long-standing untracked reference file, unchanged
+  before and after (re-confirmed against the memory note on this file: still reference/inspiration
+  material only, not a fixture to build from). `economic-cycles-v5.jsx` and `API_KEYS.template.txt`
+  likewise untouched.
+- **Next run should pick**: item 17 again if more lessons are wanted (candidates not yet covered:
+  estate-planning basics, or a deeper credit-report dive distinct from Lesson 16's credit-score
+  overview), or item 20's translation work pending owner sign-off, or the real analytics-provider swap
+  once a PostHog account/key exists (owner action). Also worth a future run's attention: the build now
+  emits a >500 kB chunk-size warning (see above) — not urgent, but code-splitting (e.g. lazy-loading
+  `LessonReader`/lesson content) will eventually be worth doing before this compounds further. At 25/40
+  lessons the catalogue is at 63% of the lesson-count target and 77% of the char/time target.
