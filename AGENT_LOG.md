@@ -103,12 +103,12 @@ for the history. No open P1/P2 items.
       it is a pointer to a genre the owner named, not a source to copy.
 17. **[Content] Grow the lesson catalogue** — *now subordinate to item 24: prefer a judgment/mindset
     lesson over another mechanics lesson unless there's a reason not to.* Derived from `LAUNCH_PLAN.md`
-    §4.3, not owner-assigned but the plan's own explicit gate: the catalogue is now **29 lessons /
-    75,604 English characters / 13,018 words / 66 minutes** end to end — measured this session by
+    §4.3, not owner-assigned but the plan's own explicit gate: the catalogue is now **30 lessons /
+    80,295 English characters / 13,838 words / 70 minutes** end to end — measured this session by
     summing every lesson's `sections[].body.en` + `takeaway.en` + `thinkAbout.en` from
-    `content/lessonContent.js` and its `minutes` from `content/lessons.js` (17 money / 12 economy).
-    This session added lessons 28 ("Does It Put Money In Your Pocket, or Take It Out?") and 29 ("Where
-    Did the Raise Go?"), both judgment lessons per item 24. **Correction to
+    `content/lessonContent.js` and its `minutes` from `content/lessons.js` (18 money / 12 economy).
+    This run added lesson 30 ("What Did That Really Cost You?", opportunity cost + delayed
+    gratification), the third judgment lesson per item 24 — see run log. **Correction to
     prior entries:** runs 8-11 reported figures (e.g. "27 lessons / ~68,700 chars / ~63 min") that the
     above method does not reproduce — 28 lessons now measure *fewer* minutes than 27 supposedly did, so
     the older numbers were computed some other way or estimated. Future runs should re-measure with the
@@ -3913,3 +3913,90 @@ sequence rather than a one-off before the next scheduled run inherits it.
   strongest remaining candidate (sunk cost and FOMO-and-herd-behaviour are the others), continuing the
   strand rather than reverting to item 17's mechanics list. Items 18/20/22 and item 21's structural
   question are unchanged. **App name still unresolved** — do not invent one.
+
+### 2026-08-07 (thirteenth run) — Lesson 30: "What Did That Really Cost You?" (item 24, third judgment lesson: opportunity cost + delayed gratification)
+
+Picked up exactly where the previous entry's "next run should pick" note left off — the strongest
+remaining item-24 candidate was opportunity cost / delayed gratification, and this run treats them as
+one lesson rather than two, since opportunity cost is the *why* (a choice's real cost includes what you
+gave up) and delayed gratification is the *how* (acting on that when the alternative is invisible and
+the temptation isn't).
+
+- **Checked for duplication before writing.** Grepped all 29 existing lessons for "opportunity cost",
+  "delayed gratification", and "sunk cost": **zero hits on all three** — genuinely new ground, not a
+  restatement of lesson 28 (asset-vs-liability direction of cash flow) or lesson 29 (the earn-spend gap
+  and lifestyle inflation). Section 1 uses a fresh example pair (Jordan/Alex, a $2,000 bonus) built
+  around the opportunity-cost concept itself — the real cost of a purchase includes what the money would
+  have become — rather than reusing the asset/liability framing lesson 28 already owns. Section 2's
+  technique (automating the choice in advance so it doesn't need daily willpower) is deliberately a
+  different lever from lesson 28's pause-before-buying tactics (24-hour/30-day rule, price-in-hours),
+  so the two lessons don't overlap even though both touch impulse control.
+- **Numbers double-checked, not guessed.** $2,000 at 6%/year for 10 years (the same rate Lesson 15 uses
+  in its own worked example, chosen deliberately over a stock-market-return figure to avoid any
+  appearance of an investment-return promise) compounds to $2,000 × 1.06¹⁰ ≈ $3,581.69, rounded to
+  "roughly $3,580" in the lesson body and "$1,580 more" in the quiz option — verified by direct
+  calculation, not estimated.
+- **Cross-reference verified**: Lesson 15's compound-interest example (6% rate, the "interest on
+  interest" framing) was reread before citing it, and the lesson body describes it accurately.
+- **§10.1 handling** — this topic's main risk is drifting into "always delay, always save" as a
+  directive. The lesson explicitly avoids that: it states Jordan's purchase was "not a mistake," frames
+  the comparison as an honest one to make rather than a right answer, and the automation technique is
+  introduced as "one way people do this," not an instruction. No specific investment vehicle or product
+  is named (deliberately used "an account earning compound interest," not "an index fund," even though
+  the latter is already established vocabulary in Lesson 23 — the point here didn't need it and a
+  vaguer, already-precedented number was safer). The marshmallow-experiment paragraph names the
+  replication complication (outcomes depend on factors outside a child's control) rather than presenting
+  the original simple finding as settled fact, matching the app's existing standard for epistemic
+  hedging (yield-curve, NBER-recession-definition, "actively managed funds rarely beat index funds"
+  framings elsewhere in the catalogue).
+- **What changed**: `lessons.js` — lesson 30, `id: 30, track: "money"`, icon ⚖️, color `#0f766e`
+  (previously unused), `minutes: 4` (computed from the actual word count, 820 words ≈ 4.1 min at
+  200 wpm, not guessed). `lessonContent.js` — two sections, takeaway, thinkAbout, all 5 languages.
+  `quizData.js` — one question, `answer: 0`, chosen specifically to bring the answer-position spread
+  from 7/8/8/8 (31 questions) to 8/8/8/8 (32 questions) — the most even distribution possible.
+- **Translation-quality process** (per the standing advice lesson 29's entry recorded, since that run's
+  entire "what went wrong" section was translation leaks): before touching quizData.js, ran an automated
+  scan of every new ko/zh/ja string for stray Latin-alphabet runs of 3+ characters — zero hits, vs. four
+  leaks caught by manual reading in the previous run. Also scanned the whole diff for Cyrillic — zero
+  hits. Imported all three edited modules (`lessons.js`, `lessonContent.js`, `quizData.js`) via dynamic
+  `import()` before running `npm test`, to catch a parse failure before the slower test/build pipeline.
+- **Verified**: `npm test` clean (0 failures/0 warnings — 5-language parity, id↔content match, the
+  `minutes` drift check, and the answer-spread warning all pass at 32 questions). `check-blindspot.mjs`
+  all six checks pass. `npm run build` clean, main chunk 209.56 kB (well under the 500 kB warning
+  threshold; the new lesson body landed in the lazy `LessonReader` chunk, now 313.76 kB, as the item-23
+  split intends). Browser check via `vite preview` on a fresh port (4173): seeded lessons 1-29 complete
+  in `localStorage`, "Continue Learning" opened lesson 30 directly, confirmed "LESSON 30 OF 30", both
+  section headings and bodies, the ≈4 min estimate, takeaway, think-about-this, and the §10.1 disclaimer
+  all render. Clicked the correct quiz option through a real UI click (computed the button's actual
+  screen coordinates via `getBoundingClientRect` rather than a synthetic `.click()`, per the previous
+  run's finding that synthetic clicks can produce a false negative) and got "CORRECT!" with the intended
+  explanation text. Switched the language selector to Chinese and Japanese via the real `<select>`
+  element and confirmed full non-fallback renders in both, including the already-answered quiz state
+  persisting ("正确！" / "正解！"). `read_console_messages` reported zero errors throughout. (The
+  browser tool's screenshot capability was unreliable this run — several `computer` screenshot calls
+  returned a blank frame while `get_page_text` and DOM queries against the same live page returned full,
+  correct content — so verification here relied on `get_page_text`/`javascript_tool` rather than visual
+  screenshots; this reads as a tool/rendering-pane issue, not an app defect, since the underlying page
+  state was consistently correct across every non-screenshot check.)
+- **Adversarial self-check**: (1) *Blindspot register* — `check-blindspot` clean; beyond the script,
+  re-read both sections specifically for advice-adjacency (the live risk named in item 24's own
+  backlog note) — no directive language, no product name, no Dalio reference, no live-looking date or
+  market figure (the 6% rate is a fixed illustrative constant already used in Lesson 15, not a market
+  quote). Kids framing (`ParentGuide.jsx`) untouched. (2) *DECISIONS.md conflict* — none: content stayed
+  in `.js` modules using the quoted-key style lessons 28/29 already established (still plain JS, not
+  JSON); `track: "money"` set so the two-track guard in `npm test` passes; lesson `id`s not renumbered
+  (item 22 is its own dedicated future change); `localStorage`-only state and Vite untouched. (3) *Redoing
+  done work* — the duplication-check grep above is the substantive answer; also confirmed this isn't a
+  re-run of item 17's mechanics pattern, since it's explicitly a judgment lesson per item 24.
+  (4) *Verification claim* — every claim above was observed this session against the live dev-server
+  build via `get_page_text`/`javascript_tool`/console inspection, not assumed; the quiz result was
+  re-confirmed after a language switch, not just once.
+- **Not touched, and why**: `economic-cycles-v6.jsx` — still present, untracked, unchanged since
+  2026-08-04; confirmed again this run that it's the same known reference-only file (byte-for-byte same
+  mtime), not new user work, so left alone per standing guidance.
+  `economic-cycles-v5.jsx` unchanged. Did not retrofit the eighteen existing mechanics lessons.
+- **Next run should pick**: item 24 again — **sunk cost** and **FOMO/herd behaviour in markets** are
+  the two remaining candidates from the original shortlist; either is fair game, sunk cost pairs more
+  naturally with this run's opportunity-cost lesson (same "how to evaluate a choice honestly" theme) if
+  a future run wants to keep building a visible sequence. Items 18/20/21/22 unchanged. **App name still
+  unresolved** — do not invent one.

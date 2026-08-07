@@ -200,4 +200,9 @@ export const lessons = [
     title: {"en":"Where Did the Raise Go?","es":"¿A Dónde Se Fue el Aumento?","ko":"오른 월급은 어디로 갔을까?","zh":"加的薪水去哪儿了？","ja":"昇給はどこへ消えたのか？"},
     subtitle: {"en":"Why earning more so often doesn't feel like more — and what the gap between earning and spending actually decides","es":"Por qué ganar más tantas veces no se siente como más — y qué decide realmente la brecha entre ganar y gastar","ko":"더 버는데도 더 번 것 같지 않은 이유 — 그리고 버는 것과 쓰는 것의 격차가 실제로 결정하는 것","zh":"为什么赚得更多却常常感觉不到——以及赚与花之间的差额究竟决定了什么","ja":"収入が増えても増えた気がしない理由 — そして稼ぎと支出の差が実際に決めていること"},
   },
+  {
+    id: 30, track: "money", icon: "⚖️", color: "#0f766e", minutes: 4,
+    title: {"en":"What Did That Really Cost You?","es":"¿Qué Te Costó Eso Realmente?","ko":"그건 정말로 얼마짜리였을까?","zh":"那真的花了你多少？","ja":"それは本当は、いくらだったのか？"},
+    subtitle: {"en":"The price tag only shows half of what a choice costs — the other half is invisible until later","es":"La etiqueta de precio solo muestra la mitad de lo que cuesta una elección — la otra mitad es invisible hasta después","ko":"가격표는 선택의 절반만 보여줍니다 — 나머지 절반은 나중에야 보입니다","zh":"价签只显示了一个选择的一半代价——另一半要等到以后才看得见","ja":"値札は選択のコストの半分しか見せてくれません——残りの半分は後になるまで見えません"},
+  },
 ];
