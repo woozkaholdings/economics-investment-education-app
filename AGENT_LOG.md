@@ -73,15 +73,51 @@ for the history. No open P1/P2 items.
 
 **Open**
 
-17. **[Content] Grow the lesson catalogue.** Derived from `LAUNCH_PLAN.md` §4.3, not owner-assigned but
-    the plan's own explicit gate: the catalogue is now 27 lessons / ~68,700 English characters / ~63
-    minutes end to end (measured directly from `src/content/lessons.js` — up from 26 lessons / ~66,300
-    chars / ~60 min after lesson 26 was added; this run added lesson 27, "Credit Reports vs. Credit
-    Scores: What's the Difference?"), and Phase 0 ("free, instrumented, no payment code")
-    doesn't end until it reaches roughly 40 lessons / 2 hours of content **and** ≥40% of installers
-    finish lesson 1. Per §4.3 verbatim: "the highest-value monetization work right now is writing
-    lessons, not writing billing code." Do not start billing/paywall work ahead of this gate — see item
-    15.
+24. **[Content — READ THIS BEFORE PICKING ITEM 17] The money track teaches mechanics, but the owner
+    asked for judgment.** Owner-stated 2026-08-07 (interactive session), and it is a correction of the
+    direction fifteen consecutive lessons were built in, so it takes precedence over item 17's raw
+    lesson-count framing. Verbatim intent: *money lessons* means lessons in the spirit of books like
+    **"Rich Dad, Poor Dad"** — "it is crucial to be wise rather than impulsive and the app is there to
+    help learn about making wise choices."
+    - **What the gap actually is.** Audit lessons 13-27 (budgeting, emergency funds, compound interest,
+      credit scores, stocks/bonds, retirement accounts, taxes, insurance, inflation, W-2 vs 1099, fees,
+      renting vs buying, brokerage accounts, estate planning, credit reports): **every one is procedural**
+      — here is how a mechanism works. Not one teaches *decision-making*: how to choose, how to notice
+      you're about to choose badly, why people who know all the mechanics still end up broke. Mechanics
+      are necessary and the existing lessons are not wasted — but on their own they are a reference
+      manual, not the product the owner described.
+    - **What to write instead (the safe, teachable core).** Mental models and behaviour: assets vs.
+      liabilities as a *decision lens*; lifestyle inflation and why raises vanish; delayed gratification
+      and impulse spending; opportunity cost; sunk cost; FOMO and herd behaviour in markets; wants
+      dressed up as needs; making money work for you rather than only working for money. Lesson 28
+      (added this session) is the first of these and is the pattern to follow.
+    - **The §10.1 tension — do not skip this.** That genre is advice-heavy and parts of it are contested
+      (e.g. Kiyosaki's "your house is not an asset" conflicts with standard accounting; his leveraged
+      real-estate advocacy is genuinely risky prescriptive advice; parts of the book are disputed as
+      fictionalised). §10.1 forbids advice-adjacency and `check-blindspot.mjs` only catches five literal
+      phrases — it cannot catch "this reads like advice," which the script's own header says stays a
+      judgment call. **Take the genre's mental models and its behavioural insight; leave its
+      prescriptions.** Teach the lens ("does this put money in or take it out?") and be honest that real
+      purchases sit in between; never write "buy assets, not liabilities" as a directive, never name a
+      product to buy, never imply a path to wealth. Do not cite or quote the book as an authority —
+      it is a pointer to a genre the owner named, not a source to copy.
+17. **[Content] Grow the lesson catalogue** — *now subordinate to item 24: prefer a judgment/mindset
+    lesson over another mechanics lesson unless there's a reason not to.* Derived from `LAUNCH_PLAN.md`
+    §4.3, not owner-assigned but the plan's own explicit gate: the catalogue is now **28 lessons /
+    70,716 English characters / 12,171 words / ~62 minutes** end to end — measured this session by
+    summing every lesson's `sections[].body.en` + `takeaway.en` + `thinkAbout.en` from
+    `content/lessonContent.js` and its `minutes` from `content/lessons.js` (16 money / 12 economy).
+    This session added lesson 28, "Does It Put Money In Your Pocket, or Take It Out?". **Correction to
+    prior entries:** runs 8-11 reported figures (e.g. "27 lessons / ~68,700 chars / ~63 min") that the
+    above method does not reproduce — 28 lessons now measure *fewer* minutes than 27 supposedly did, so
+    the older numbers were computed some other way or estimated. Future runs should re-measure with the
+    command above rather than incrementing the previous run's claim. Phase 0 ("free, instrumented, no
+    payment code") doesn't end until it reaches roughly 40 lessons / 2 hours of content **and** ≥40% of
+    installers finish lesson 1. Per §4.3 verbatim: "the highest-value monetization work right now is
+    writing lessons, not writing billing code." Do not start billing/paywall work ahead of this gate —
+    see item 15. **Note the failure mode this item created:** nine consecutive scheduled runs each
+    picked "add one lesson" and optimised the count, and the *direction* drifted unexamined until the
+    owner corrected it. Counting lessons is not the same as building the product.
 21. **[Content] Kids financial literacy — content gap partially closed; structural gap remains.**
     Assessed 2026-08-07 after the owner asked whether kids lessons were already in the master plan —
     see `LAUNCH_PLAN.md` §2.6. **Update, 2026-08-07 (tenth run):** each of the three age bands grew from
@@ -3724,3 +3760,84 @@ entry exactly.
   named candidates) — the natural next pick now that the chunk-size distraction is cleared. Items
   18/20/22 remain blocked on owner action or a dedicated scripted change, as before. Item 21's structural
   (lesson-shaped-catalogue) question is also still open.
+
+### 2026-08-07 (owner-directed, interactive session) — The money track was teaching mechanics, not judgment; lesson 28 starts the correction
+
+Not a scheduled run. The owner corrected the *direction* of the money track: by "money lessons" they
+mean lessons in the spirit of books like "Rich Dad, Poor Dad" — "it is crucial to be wise rather than
+impulsive and the app is there to help learn about making wise choices."
+
+**Why this is a real finding and not a rewording.** Audited all fifteen money lessons (13-27) before
+writing anything. Every single one is *procedural* — how a 401(k) works, what an expense ratio is, what
+PITI stands for, how a credit report differs from a score. Not one teaches *decision-making*: how to
+choose, how to notice you're about to choose badly, why someone who can explain all of the above still
+overspends. The lessons aren't wasted — mechanics are necessary — but on their own the track is a
+reference manual, which is not the product §0 describes. **The drift has a specific cause worth naming:
+nine consecutive scheduled runs each picked item 17 ("grow the catalogue"), optimised the lesson
+*count*, and never re-examined the direction.** A backlog item phrased as a number will be satisfied as
+a number.
+
+- **What changed**:
+  - `src/content/lessons.js` + `src/content/lessonContent.js` — new lesson 28, `track: "money"`,
+    "Does It Put Money In Your Pocket, or Take It Out?" (icon 🧭, `minutes: 4`). Section 1 teaches
+    assets vs. liabilities as a *decision lens* via two people who get the same raise and spend it
+    oppositely, then explicitly refuses the clean-columns oversimplification: a commuting car does real
+    work, a home does both at once (cross-referencing Lesson 24). Section 2 is the "wise vs. impulsive"
+    core the owner named — the decision's two halves run at different speeds (wanting is seconds, cost
+    arrives monthly for years), one-tap checkout and countdown timers are built inside that gap,
+    lifestyle inflation is what happens when nobody is choosing, and the counters people use all do one
+    thing: put time between wanting and buying.
+  - `src/content/quizData.js` — one question, `lesson: 28`, `answer: 1` (chosen to keep the
+    answer-position spread even per the file's own invariant: 7/7/8/7 → 7/8/8/7 of 30).
+  - `AGENT_LOG.md` — **new backlog item 24**, written as the thing a future run must read *before*
+    item 17, and item 17 explicitly subordinated to it so the next scheduled run doesn't default to
+    another mechanics lesson. Item 24 names the topics worth writing (lifestyle inflation, delayed
+    gratification, opportunity cost, sunk cost, FOMO, wants-dressed-as-needs) and the §10.1 boundary.
+- **The §10.1 tension, handled deliberately rather than ignored.** That genre is advice-heavy and parts
+  of it are contested — Kiyosaki's "your house is not an asset" conflicts with standard accounting, and
+  his leveraged real-estate advocacy is genuinely prescriptive risk-taking advice. I took the genre's
+  *mental models and behavioural insight* and left its *prescriptions*: the lesson teaches the lens and
+  is honest that real purchases sit in between, never says "buy assets, not liabilities" as a directive,
+  names no product to buy, and promises no path to wealth. The savings/tools example was deliberately
+  chosen over an investment product for the same reason. The book is not cited or quoted — it was a
+  pointer to a genre, not a source. Recorded this reasoning in item 24 so it isn't re-litigated.
+- **Verified**: `npm test` clean — `check-data.mjs` 0 failures/0 warnings (this covers 5-language parity
+  on every new field, the lesson↔content id match, the `minutes` drift check, and the answer-spread
+  warning) and `check-blindspot.mjs` all six checks pass. `npm run build` clean, main chunk 207.86 kB —
+  no chunk-size warning, and the new content landed in the lazy `LessonReader` chunk, which independently
+  confirms the twelfth run's item-23 split does what it claimed. Browser check against the real built
+  `dist/` on a fresh port: seeded lessons 1-27 complete, confirmed Home reads 27/28 and Your Money 15/16,
+  opened lesson 28 and confirmed both sections, takeaway, think-about-this, the "≈4 min" estimate
+  (matching the computed value), and the §10.1 disclaimer all render; answered the quiz and got
+  "CORRECT!" with the intended explanation; switched to Korean and confirmed a full non-fallback render.
+  `read_console_messages` clean at every step.
+- **Two errors I made and caught, recorded because the log's credibility depends on it**: (1) I wrote
+  the English word "still" into the middle of the Chinese section-2 body; caught it by grepping all
+  CJK bodies for Latin runs ≥3 chars, fixed, re-verified the grep returns nothing. A visual spot-check
+  would likely have missed it. (2) I first wrote "~73,000 chars / ~67 min" into item 17 by extrapolating
+  from the previous run's figure instead of measuring. Measured properly: **28 lessons / 70,716 chars /
+  12,171 words / ~62 min**. That also exposed a real problem — 28 lessons now measure *fewer* minutes
+  than runs 8-11 claimed for 27, so those figures were never reproducible. Corrected item 17 and
+  recorded the exact measurement method so future runs re-measure instead of incrementing a claim.
+- **Adversarial self-check**: (1) *Blindspot register* — `check-blindspot` clean; beyond the script, I
+  re-read both English sections specifically for advice-adjacency, which is the live risk given the
+  source genre (see the §10.1 paragraph above — this was the run's main judgment call, not a formality).
+  No Dalio reference. No live dates. Kids framing untouched — §10.3 not approached. (2) *DECISIONS.md
+  conflict* — none; `.js` content modules, localStorage, Vite all unaffected; lesson id 28 is additive
+  and the two-track structure was respected (`track: "money"` declared, so `check-data.mjs`'s track
+  guard passes). Deliberately did *not* renumber ids — that's item 22's dedicated, scripted change.
+  (3) *Redoing done work* — checked "Completed and pruned" and the last ten entries: no prior run has
+  written a judgment/behavioural lesson; all fifteen money lessons are mechanics, which is the finding
+  itself. (4) *Verification claim* — every result above was observed this session against the built
+  output; the two claims I got wrong I caught and corrected rather than shipping, and both are recorded
+  above rather than quietly fixed.
+- **Not touched, and why**: `economic-cycles-v6.jsx`/`economic-cycles-v5.jsx` — unchanged, per the
+  standing note. Did not retrofit the existing fifteen mechanics lessons — the owner corrected the
+  direction, not the existing content, and rewriting 15 lessons unprompted would be a much larger change
+  than one run should make on its own initiative. Did not touch the kids module, whose parallel
+  money-skills gap item 21 covers separately.
+- **Next run should pick**: item 24 — a second judgment lesson (lifestyle inflation / "where the raise
+  went", or delayed gratification and opportunity cost are the strongest candidates) — **not** another
+  mechanics lesson from item 17's old list. Item 21's structural question and items 18/20/22 are
+  unchanged. **The app name is still unresolved** and every string still says "Economic Cycles" — the
+  owner said "not decided yet"; do not invent one.

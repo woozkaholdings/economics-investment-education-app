@@ -190,4 +190,9 @@ export const lessons = [
     title: {"en":"Credit Reports vs. Credit Scores: What's the Difference?","es":"Informes de Crédito vs. Puntajes de Crédito: ¿Cuál es la Diferencia?","ko":"신용 보고서와 신용 점수: 무엇이 다른가?","zh":"信用报告与信用评分：有什么区别？","ja":"信用報告書と信用スコア：その違いとは？"},
     subtitle: {"en":"A report is a record; a score is a number calculated from it — and that means everyone has more than one score","es":"Un informe es un registro; un puntaje es un número calculado a partir de él — lo que significa que todos tienen más de un puntaje","ko":"보고서는 기록이고 점수는 그것으로 계산된 숫자입니다 — 즉 누구나 하나 이상의 점수를 가집니다","zh":"报告是记录，评分是根据记录计算出的数字——这意味着每个人都不止一个信用评分","ja":"報告書は記録であり、スコアはそこから計算される数字です——つまり誰もが複数のスコアを持っています"},
   },
+  {
+    id: 28, track: "money", icon: "🧭", color: "#15803d", minutes: 4,
+    title: {"en":"Does It Put Money In Your Pocket, or Take It Out?","es":"¿Te Mete Dinero en el Bolsillo, o Te lo Saca?","ko":"내 주머니에 돈을 넣어주는가, 빼가는가?","zh":"它是把钱放进你的口袋，还是拿走？","ja":"それは財布にお金を入れるのか、持ち出すのか？"},
+    subtitle: {"en":"Two purchases can feel identical at the register and turn out to be opposites years later","es":"Dos compras pueden sentirse idénticas al pagar y ser opuestas años después","ko":"계산대에서는 똑같이 느껴진 두 소비가 몇 년 뒤에는 정반대일 수 있습니다","zh":"两笔在收银台感觉完全一样的消费，几年后可能截然相反","ja":"レジでは同じに感じた2つの買い物が、数年後には正反対になることがあります"},
+  },
 ];
