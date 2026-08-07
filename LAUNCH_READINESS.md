@@ -5,7 +5,7 @@ actual gates, so a run's own "done" claim isn't the only record. This file lists
 what is actually true right now, and how that was checked — not a narrative, a checklist. Update it
 whenever a gate's status changes; don't let it go stale the way `AGENT_LOG.md`'s App summary once did.
 
-**Last refreshed: 2026-08-06 (lesson 23 added, item 17).**
+**Last refreshed: 2026-08-06 (lesson 24 added, item 17).**
 
 ## Blindspot register (`LAUNCH_PLAN.md` §10)
 
@@ -14,7 +14,7 @@ whenever a gate's status changes; don't let it go stale the way `AGENT_LOG.md`'s
 | 10.1 | Financial-advice adjacency | ✅ Closed | `npm run check-blindspot` (added 2026-08-05 night, item 16) — no matches for advice-adjacent phrasing, disclaimer key present in every locale. Disclaimer renders on Home, Learn, Markets, About, first-launch modal. |
 | 10.2 | Dalio dependency | ✅ Closed | `npm run check-blindspot` — no Dalio references in `src/` or `economic-cycles-v5.jsx`. |
 | 10.3 | Kids content / COPPA | ⚠️ Closed-but-reopened | Ships parent-facing (`src/screens/reference/ParentGuide.jsx`), which is the standing rule until the owner decides. **Reopened as a question 2026-08-04 — the owner, not a run, must resolve this.** Do not change the framing without that decision. |
-| 10.4 | Five languages = maintenance debt | 🟡 Open, tracked | es/ko/zh/ja labelled "(Beta)" in the language picker. Volume ratio **re-measured 2026-08-06** after lesson 23 was added with translations on every field: es 24,333 chars (0.43x of English), ko 12,486 (0.22x), zh 7,926 (0.14x), ja 10,375 (0.19x) — all four essentially flat versus lesson 22's measurement, since this run (like the last five) translated the new lesson in step rather than leaving it English-only. See item 20 in `AGENT_LOG.md`. |
+| 10.4 | Five languages = maintenance debt | 🟡 Open, tracked | es/ko/zh/ja labelled "(Beta)" in the language picker. Volume ratio **re-measured 2026-08-06** after lesson 24 was added with translations on every field: es 28,701 chars (0.48x of English), ko 14,368 (0.24x), zh 9,145 (0.15x), ja 12,077 (0.20x) — all four essentially flat-to-slightly-up versus lesson 23's measurement, since this run (like the last six) translated the new lesson in step rather than leaving it English-only. See item 20 in `AGENT_LOG.md`. |
 | 10.5 | Solo-founder single point of failure | 🟡 Open | Code is on git. No confirmation yet that data exports / store credentials / 2FA recovery codes are in a password manager — that's outside what a dev-agent run can verify or do. |
 | 10.6 | Building instead of distributing | 🟡 Open, ongoing | Pre-launch (no store presence yet), so the "half of weekly hours to distribution" rule doesn't bind yet. Becomes checkable only after web launch. |
 | 10.7 | Plan/practice drift | 🟡 Open, ongoing | Reconciled well so far — `AGENT_LOG.md`'s App summary and `DECISIONS.md` are both current as of the 2026-08-04 rebuild. Recheck at each monthly audit (§9.3). |
@@ -26,12 +26,15 @@ Phase 0 ("free, instrumented, no payment code") must clear **both**:
 
 | Threshold | Target | Actual | Status |
 |---|---|---|---|
-| Lesson catalogue size | ≥40 lessons / ~2 hours | **23 lessons / 56,045 English chars / ~47 min** | ❌ Not met — roughly 63% of the char/time target, 58% of the lesson-count target |
+| Lesson catalogue size | ≥40 lessons / ~2 hours | **24 lessons / 59,862 English chars / ~54 min** | ❌ Not met — roughly 73% of the char/time target, 60% of the lesson-count target |
 | Installer lesson-1 completion | ≥40% | **Unmeasured** — no analytics pipeline exists | ❌ Unmeasurable |
 
 Verified 2026-08-06 by importing `src/content/lessons.js` directly (bootstrapped Node) and summing
 `title`/`subtitle`/`takeaway`/`thinkAbout`/every section's `heading`+`body`, English only — not carried
-forward from the last run-log claim. Reading-time estimate uses ~5.5 chars/word at 200 wpm.
+forward from the last run-log claim. Reading-time estimate uses ~5.5 chars/word at 200 wpm. Cross-checked
+against the app's own per-lesson `estimateMinutes` (summed): 50 min — the two methods drift apart a bit
+more at 24 lessons than they did at 22/23 (54 vs. 50), still close enough to trust both, consistent with
+the same drift noted when this cross-check was first added.
 
 **Per §4.3 verbatim: "the highest-value monetization work right now is writing lessons, not writing
 billing code."** No billing/paywall code exists in `src/` — confirmed by `grep -rni "paywall\|stripe\|purchase\|subscri" src/` returning no matches outside comments/content copy that merely *describes* the future plan.

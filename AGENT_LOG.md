@@ -74,10 +74,10 @@ for the history. No open P1/P2 items.
 **Open**
 
 17. **[Content] Grow the lesson catalogue.** Derived from `LAUNCH_PLAN.md` §4.3, not owner-assigned but
-    the plan's own explicit gate: the catalogue is now 23 lessons / ~56,000 English characters / ~47
-    minutes end to end (measured directly from `src/content/lessons.js` — up from 22 lessons / ~53,000
-    chars / ~44 min after lesson 22 was added; this run added lesson 23, "Investment Fees: The Cost You
-    Don't See on a Bill"), and Phase 0 ("free, instrumented, no payment code")
+    the plan's own explicit gate: the catalogue is now 24 lessons / ~59,900 English characters / ~54
+    minutes end to end (measured directly from `src/content/lessons.js` — up from 23 lessons / ~56,000
+    chars / ~47 min after lesson 23 was added; this run added lesson 24, "Renting vs. Buying: The Real
+    Trade-offs of a Home"), and Phase 0 ("free, instrumented, no payment code")
     doesn't end until it reaches roughly 40 lessons / 2 hours of content **and** ≥40% of installers
     finish lesson 1. Per §4.3 verbatim: "the highest-value monetization work right now is writing
     lessons, not writing billing code." Do not start billing/paywall work ahead of this gate — see item
@@ -3096,3 +3096,92 @@ makes "why pay more for the same underlying holdings" a natural question once fe
   scores in more depth, or homeownership/renting trade-offs), or item 20's translation work pending owner
   sign-off, or the real analytics-provider swap once a PostHog account/key exists (owner action). At
   23/40 lessons the catalogue is at 58% of the lesson-count target and 63% of the char/time target.
+
+### 2026-08-06 (sixth run) — Add lesson 24: "Renting vs. Buying" (backlog item 17)
+
+`git status` at start showed only the long-standing untracked `economic-cycles-v6.jsx` — no other
+uncommitted state, so this is a fresh scheduled run, not a recovery. Confirmed against the memory note
+on that file (and every prior run-log entry below it) that it's still reference-only and left it
+untouched.
+
+Picked "homeownership/renting trade-offs" (with basic mortgage mechanics folded in, since the two
+candidates overlap heavily) from the list the last run-log entry left, over estate planning or a
+deeper dive on credit reports, because rent-vs-buy is one of the most common real-world financial
+decisions and the app had no housing content at all yet — lesson 16 covers credit scores and lesson 13
+covers budgeting, but nothing touches the actual mechanics of a mortgage payment or what buying a home
+costs beyond the sticker price.
+
+- **Added lesson 24** to `src/content/lessons.js` (icon 🏠, color `#334155` — checked against every
+  existing lesson's icon/color for a collision, found none): two sections — what renting and buying each
+  actually cost (rent buys a fixed-term right to live somewhere with no long-term claim on the property
+  and no exposure to surprise repair/tax costs; buying trades that flexibility for equity plus upfront
+  costs a renter never sees, i.e. 2%-5% closing costs going in and 5%-6% agent commissions going out,
+  plus ongoing property tax/insurance/repairs), and how a mortgage payment is actually made of principal,
+  interest, taxes, and insurance, with the principal/interest split explained via the same compounding
+  math as Lesson 15 (interest charged on the full remaining balance means early payments are mostly
+  interest), plus a short PMI/down-payment-size explanation. Explicitly cross-references Lesson 15
+  (compounding mechanism, here working against the borrower) and Lesson 20 (insurance as trading a small
+  certain cost for protection against a large uncertain one, now mandatory with a mortgage). Deliberately
+  included a caveat sentence that neither option is a "mistake" ("None of this means buying is a mistake
+  or renting is 'wasting money'") so the lesson explains the cost/risk/flexibility trade-off without
+  telling the reader which one to choose. All five languages, same narrative-then-concept style as
+  lessons 19-23.
+- **Added a matching `quizData.js` entry** (lesson: 24, answer index 2 — distribution was 6/7/6/6 before
+  this run, so index 2 brings it to 6/7/7/6, still well under the "no index over half" warning threshold):
+  a scenario question (homeowner 3 years into a 30-year mortgage — what's the principal/interest split)
+  that requires applying the lesson's compounding-interest explanation, not just recalling a fact.
+- **Verified with a real click-through**: built the static bundle (`npm run build`, `vite v6.4.3`, 61
+  modules, `dist/assets/index-R3T0Dozl.js` 491.43 kB / 194.25 kB gzip, 904ms), served it via the
+  documented Python-server workaround, opened it in the browser-preview tool. Confirmed the Home progress
+  ring read "23/24" before completion and "LESSON 24 OF 24" on the lesson screen, read the full English
+  body via `get_page_text` (disclaimer rendered at the bottom, as expected), clicked the correct quiz
+  option — via a DOM-click workaround (`document.querySelectorAll('button')` + text match + `.click()`)
+  since the visual scroll tooling was unreliable this run, timing out on `computer scroll` — and got
+  "CORRECT!" with the right explanation, confirmed `lesson_started`/`quiz_taken` (`lessonId: 24, correct:
+  true`) landed in the analytics log in order (inspected `localStorage.getItem("ecycles_analytics_log")`
+  directly), then switched to `ja` and confirmed the Japanese translation rendered correctly end to end
+  (title through quiz options, including the already-answered "正解！" state persisting across the
+  language switch). Killed the Python server afterward.
+- **Verified build and tests**: `npm test` → `check-data.mjs`: `PASS: 0 failure(s), 0 warning(s)`; `npm
+  run check-blindspot`: `PASS: 0 failure(s)` (all six checks, run both standalone and as part of `npm
+  test`). `npm run build` → clean, as above.
+- **Adversarial self-check**: (1) *Blindspot register* — `npm run check-blindspot` clean (all six
+  checks); manually re-read the English and Japanese lesson text for advice-adjacent framing — none
+  found, the lesson explains what renting and buying each cost and how a mortgage payment breaks down
+  without recommending either option, and includes an explicit caveat against reading either choice as a
+  "mistake." The standard disclaimer still renders on the lesson screen (confirmed in the click-through).
+  No Dalio references. No live-looking dated figures — the "$1,800/month rent vs. $1,900/month mortgage"
+  `thinkAbout` scenario is a labelled hypothetical comparison for the reader to reason through, not a
+  claimed current rent or mortgage rate, same illustrative-numbers pattern as lesson 23's $10,000 example
+  and lesson 21's inflation example, not the §2.3 problem (a live-looking *current* market figure); no
+  specific interest rate is stated anywhere in the lesson. (2) *DECISIONS.md conflict* — none;
+  content-only change to `.js` content modules, consistent with the `.js`-not-JSON decision; no
+  localStorage/Vite/Expo changes. (3) *Redoing done work* — grepped `AGENT_LOG.md` for "mortgage,"
+  "renting," "homeowner," "real estate," and "down payment" and found only prior run-log entries listing
+  this as a *candidate* backlog item, never a completed one, confirming housing content wasn't already
+  built; lessons 15 and 20 (cross-referenced, not modified) were read to confirm this lesson's claims
+  about them are accurate to what those lessons actually say. (4) *Verification claim* — the click-through
+  above, including the analytics-log inspection and the Japanese-language check with state persistence,
+  was actually run this session against the real build output; the DOM-click workaround was necessary
+  because `computer scroll` timed out mid-session (browser pane reported "hidden"/unresponsive) — the
+  page itself kept working throughout, confirmed by `get_page_text` returning correct content
+  immediately after each timeout.
+- **Updated `LAUNCH_READINESS.md`**: refreshed using the file's own documented refresh commands — the
+  exact `node -e` snippets it prescribes for both the lesson-catalogue char count and the per-language
+  translation-ratio measurement. Phase-0 lesson-catalogue row now reads 24 lessons / 59,862 English chars
+  / ~54 min (~73% of the char/time target, ~60% of the lesson-count target), up from 23 / 56,045 / ~47
+  min. Cross-checked the char-based estimate against the app's own `estimateMinutes` sum (50 min vs. 54
+  min) — the two methods have drifted apart slightly more than at 22/23 lessons but are still close
+  enough to trust both; noted this explicitly rather than silently picking the more favorable number.
+  Re-measured §10.4: es/ko/zh/ja stayed essentially flat-to-slightly-up (0.48x/0.24x/0.15x/0.20x) versus
+  the lesson-23 measurement, consistent with translating the new lesson in step.
+- **Not touched, and why**: `economic-cycles-v6.jsx` — long-standing untracked reference file, unchanged
+  before and after (re-confirmed against the memory note on this file: still reference/inspiration
+  material only, not a fixture to build from). `economic-cycles-v5.jsx` and `API_KEYS.template.txt`
+  likewise untouched.
+- **Next run should pick**: item 17 again if more lessons are wanted (candidates not yet covered:
+  estate-planning basics, credit reports vs. credit scores in more depth, or a first "investing account
+  mechanics" lesson — how to actually open/fund a brokerage account, distinct from Lesson 17's
+  stocks/bonds/diversification concepts), or item 20's translation work pending owner sign-off, or the
+  real analytics-provider swap once a PostHog account/key exists (owner action). At 24/40 lessons the
+  catalogue is at 60% of the lesson-count target and 73% of the char/time target.
