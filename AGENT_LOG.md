@@ -82,6 +82,24 @@ for the history. No open P1/P2 items.
     finish lesson 1. Per §4.3 verbatim: "the highest-value monetization work right now is writing
     lessons, not writing billing code." Do not start billing/paywall work ahead of this gate — see item
     15.
+21. **[Content] Kids financial literacy is a gap, not a built feature.** Assessed 2026-08-07 after the
+    owner asked whether kids lessons were already in the master plan — see `LAUNCH_PLAN.md` §2.6.
+    `kidsContent.js` has three age bands with **three blurbs + one activity each (nine blurbs total)**,
+    surfaced only in Reference → Parent Guide. Two problems: it isn't lesson-shaped (nine blurbs vs. 26
+    adult lessons), and its *content is economics, not money skills* — toy-trading transactions,
+    inflation, the Fed, 2008 — with no allowance, saving, wants-vs-needs, earning, or first-account
+    material. That is the same defect item 22 just fixed for adults, still present in the kids module.
+    **Safe work (do this):** expand the parent-facing bands with real money-skills content; stays
+    parent-directed, so §10.3's COPPA posture is untouched. **Not a design decision (do NOT do this):**
+    making kids material child-facing — child accounts, a kids mode, kid-directed lesson UI — changes
+    COPPA classification, store privacy category, and ad eligibility. §10.3 reserves it for the owner.
+22. **[Structure] Renumber lesson ids to match track order.** Deferred deliberately 2026-08-07 when the
+    two tracks landed — see `DECISIONS.md`, "Two lesson tracks." The money track runs 13→26 and the
+    economy track 1→12, so a new learner's first lesson is numbered 13. Cosmetic, but it reads as a
+    seam. Renumbering is blocked on remapping **142 in-prose cross-references** ("Lesson 15") across
+    five languages *plus* `quizData.lesson`, the review scheduler, and persisted
+    `ecycles_completed_lessons`. Do it as its own dedicated change with a scripted, verified id→id map
+    and a per-language check — never by hand, and never folded into a content run.
 20. **[Content] Non-English lesson translations now lag English by more than before.** Re-measured
     2026-08-05 (evening run) — see run log ("Re-measure Beta-labelling translation ratios"). Ratios:
     es 0.37x, ko 0.19x, zh 0.12x, ja 0.15x of English (down from 0.41x/0.24x/0.15x/0.18x measured
@@ -3434,3 +3452,84 @@ further.
   read) — bigger surgery than this run's Suspense-boundary change, worth its own dedicated run rather
   than folding into a future lesson-content run. Item 18 (real analytics provider) and item 20
   (translations) remain blocked on owner action as before.
+
+### 2026-08-07 (owner-directed, interactive session) — Split the catalogue into two tracks; fix the permanent-greeting bug and 7 wrong cross-references
+
+Not a scheduled run. The owner raised three things: "Welcome to Economic Cycles" reads awkwardly, the
+app name is not Economic Cycles, and pure economics and real-life money lessons look bundled with no
+purpose — asking for the whole lesson plan and app structure to be validated.
+
+**Note on repo state:** a scheduled run committed `275b80e` (React.lazy code-splitting) *while this
+work was in progress*. Verified explicitly that it did not sweep up these uncommitted edits
+(`git show 275b80e:src/App.jsx` contains no `lessonsByTrack`/`useMemo`/track logic) and that this
+working tree preserves its `lazy()` changes intact. The build's drop under the 500 kB chunk warning is
+**that run's** doing, not this one's — confirmed by building `275b80e` in a throwaway `git worktree`
+(491.65 kB there vs 494.69 kB here; the ~3 kB delta is this change). Attributing it here would have
+been a false claim.
+
+**Validation findings (what was actually wrong):**
+- **The greeting was a real bug, not just wording.** `welcomeTitle` was rendered as the Learn `<h1>` on
+  *every* visit (`Learn.jsx:29`), so a learner 20 lessons in was still being welcomed to the app. A
+  *separate* `firstLaunchTitle` key holds the identical string for the genuine first-run modal
+  (`App.jsx:70`) — the greeting was duplicated and one copy was in the wrong place.
+- **"Economic Cycles" names 46% of the catalogue.** Lessons 13-26 (budgeting, taxes, insurance,
+  mortgages, estate planning) are not economic cycles. `LAUNCH_PLAN.md` §0 already said this on
+  2026-08-04 ("the *vehicle*, not the product") and the app was never changed — textbook §10.7 drift,
+  which `LAUNCH_READINESS.md` was still scoring "🟡 Reconciled well so far."
+- **The bundling was build order, not teaching.** Clean split at 12/13; lessons 1-12 are the original
+  prototype, 13-17 arrived via `c29bac3`, 18-26 one per scheduled run chasing the §4.3 count. Proof it
+  was never designed: taxes are split across lessons 19 and 22 with insurance and inflation wedged
+  between them, and investing is scattered across 17/18/23/25.
+- **The unlock rule made it harmful.** Strict global chain, so budgeting sat behind ~24 min of macro
+  theory — and lesson 1 for a money-seeking audience was "Transactions," working against §4.3's own
+  "≥40% of installers finish lesson 1" gate that these runs have been optimising the other half of.
+- **A content bug, found by extracting every cross-reference:** lesson 23 cited "Lesson 12" for
+  diversification **7 times** (3 en + 1 each es/ko/zh/ja). Lesson 12 is "Three Rules of Thumb" and
+  contains no mention of diversification or index funds; the diversification lesson is **17**. The run
+  that wrote lesson 23 claimed in its own log that it "read lessons 12 and 15 to confirm this lesson's
+  claims about them are accurate" — that verification claim was false. Same class as `64537fb`.
+  (Checked the other three cross-track refs too: 16→3 is *correct*, lesson 3 does have a "Good Debt vs
+  Bad Debt" section.)
+
+**What was built:**
+- **`TRACKS` + per-lesson `track` field** in `content/lessons.js` (annotated programmatically, not by
+  hand, across all 26), with `lessonsInTrack`/`lessonsByTrack` helpers. `money` (13-26) leads,
+  `economy` (1-12) follows. Ids deliberately **not** renumbered — see the new `DECISIONS.md` entry for
+  the full reasoning (142 in-prose references, `localStorage`, `quizData`, the review scheduler).
+- **Per-track unlocking** (`App.jsx`): first lesson of each track always open; others need the
+  previous lesson *of that same track*. Both tracks are startable from install.
+- **Learn renders one section per track** with label, blurb and per-track progress; the greeting `<h1>`
+  is now shown only before a learner has started, with `returningTitle`/`returningSub` after.
+- **New locale keys in all five languages**: `returningTitle`, `returningSub`, `trackMoney`,
+  `trackMoneyBlurb`, `trackEconomy`, `trackEconomyBlurb`.
+- **`check-data.mjs` gained a track block**: every lesson's `track` must be a known key, no track may
+  be empty, both label/blurb keys must resolve in all 5 languages, and `lessonsByTrack()` must lose or
+  duplicate no lesson. This is the guardrail that stops a future run adding a lesson into neither track.
+- **Fixed lesson 23's 7 wrong references** (12 → 17), scoped to that lesson's line range only.
+
+**Verified (browser, against the real build):** cleared `localStorage` → a brand-new user opens into
+**"Budgeting: Know Where Your Money Goes"**, not "Transactions." Learn shows "Your Money" (0/14) and
+"How the Economy Works" (0/12) as separate sections, each with its first lesson unlocked. Completed
+only lesson 13 → lesson 14 unlocked, lesson 1 still independently open, **lesson 2 still locked**
+(proving money progress does not advance the economy track). `<h1>` flipped from "Welcome to Economic
+Cycles" to "Your learning path." Track labels render correctly in es/ko/zh/ja. Opened lesson 23:
+0 remaining "Lesson 12" refs, 3 correct "Lesson 17" refs.
+**Tests/build:** `npm test` → both checks pass. Injection-tested the new track check (set lesson 20's
+track to `"typo"` → 3 correct failures naming it; restored, back to PASS) so it is not vacuous.
+`npm run build` → clean, 494.69 kB main chunk.
+
+**Adversarial self-check:** (1) *Blindspot register* — `check-blindspot` clean; no Dalio, no
+advice-adjacent phrasing (this change adds structure and six UI strings, no teaching claims), no live
+dates, kids framing untouched — and specifically **did not** make kids material child-facing, which
+§10.3 reserves for the owner. (2) *DECISIONS.md conflict* — none; localStorage-only state, `.js`
+content and Vite are all unaffected, and the id-stability reasoning was recorded rather than assumed.
+(3) *Redoing done work* — none; no prior run touched track structure. (4) *Verification claim* — every
+result above was observed in the browser this session; the one claim I could have overstated (the
+chunk-size improvement) I explicitly attributed to `275b80e` after testing it in an isolated worktree.
+
+**Backlog changes:** added the renumbering task and the kids-curriculum gap (below); §10.7's scorecard
+row corrected. **Not touched:** `economic-cycles-v6.jsx`, `economic-cycles-v5.jsx` (unchanged).
+
+**Next run should pick:** item 21 (kids money-skills content — parent-facing only) or item 17 (more
+adult lessons, now declaring a `track`). **The app name is still unresolved** — the owner said "not
+decided yet," so every string still says "Economic Cycles." Do not invent one.

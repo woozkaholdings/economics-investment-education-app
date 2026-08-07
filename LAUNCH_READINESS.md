@@ -17,7 +17,7 @@ whenever a gate's status changes; don't let it go stale the way `AGENT_LOG.md`'s
 | 10.4 | Five languages = maintenance debt | 🟡 Open, tracked | es/ko/zh/ja labelled "(Beta)" in the language picker. Volume ratio **re-measured 2026-08-06** after lesson 26 was added with translations on every field: es 34,313 chars (0.52x of English), ko 16,938 (0.26x), zh 10,848 (0.16x), ja 14,333 (0.22x) — all four essentially flat-to-slightly-up versus lesson 25's measurement, since this run (like the last eight) translated the new lesson in step rather than leaving it English-only. See item 20 in `AGENT_LOG.md`. |
 | 10.5 | Solo-founder single point of failure | 🟡 Open | Code is on git. No confirmation yet that data exports / store credentials / 2FA recovery codes are in a password manager — that's outside what a dev-agent run can verify or do. |
 | 10.6 | Building instead of distributing | 🟡 Open, ongoing | Pre-launch (no store presence yet), so the "half of weekly hours to distribution" rule doesn't bind yet. Becomes checkable only after web launch. |
-| 10.7 | Plan/practice drift | 🟡 Open, ongoing | Reconciled well so far — `AGENT_LOG.md`'s App summary and `DECISIONS.md` are both current as of the 2026-08-04 rebuild. Recheck at each monthly audit (§9.3). |
+| 10.7 | Plan/practice drift | 🟠 **Open — one real instance found and fixed 2026-08-07** | This row previously read "Reconciled well so far," which was **wrong**. `LAUNCH_PLAN.md` §0 was rewritten 2026-08-04 to say the economics content is "the *vehicle*, not the product," but the app kept gating all 14 practical money lessons behind 12 macro-theory lessons, and every string still says "Economic Cycles." The plan changed; the product didn't. Fixed structurally by §2.5's two tracks (owner-directed); **the name is still unreconciled and is an open owner decision.** Lesson: this row was scored from "are the docs current?" — the real test is whether the *app* matches them. Recheck that way at each monthly audit (§9.3). |
 | §2.1 | Platform: Expo vs. web-first | 🔒 Held | Owner decision, not started. Blocks store release only, not web launch. |
 
 ## Monetization gate — Phase 0 (`LAUNCH_PLAN.md` §4.3)
@@ -26,7 +26,9 @@ Phase 0 ("free, instrumented, no payment code") must clear **both**:
 
 | Threshold | Target | Actual | Status |
 |---|---|---|---|
-| Lesson catalogue size | ≥40 lessons / ~2 hours | **26 lessons / 66,289 English chars / ~60 min** | ❌ Not met — roughly 81% of the char/time target, 65% of the lesson-count target |
+| Lesson catalogue size | ≥40 lessons / ~2 hours | **26 lessons / 66,289 English chars / ~60 min** — split 2026-08-07 into **Your Money (14)** + **How the Economy Works (12)**, see `LAUNCH_PLAN.md` §2.5 | ❌ Not met — roughly 81% of the char/time target, 65% of the lesson-count target |
+| Installer finishes lesson 1 — *structural precondition* | Lesson 1 should be worth finishing | **Fixed 2026-08-07:** a new install now opens into "Budgeting," not "Transactions: The Building Block" | ⚠️ Still unmeasurable (no analytics pipeline), but the structural obstacle is gone |
+| Kids curriculum | Part of the product per §0 (kids→adults) | **9 blurbs, parent-facing, economics-themed** — not a curriculum; see `LAUNCH_PLAN.md` §2.6 and backlog item 21 | ❌ Gap — expanding it parent-facing is safe work; making it child-facing is an owner/COPPA decision |
 | Installer lesson-1 completion | ≥40% | **Unmeasured** — no analytics pipeline exists | ❌ Unmeasurable |
 
 Verified 2026-08-06 by importing `src/content/lessons.js` directly (bootstrapped Node) and summing

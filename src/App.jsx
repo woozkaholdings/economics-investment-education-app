@@ -10,8 +10,8 @@
 // repository root are reference material and are deliberately not imported.
 // ═══════════════════════════════════════════════════════════════════════════
 
-import { lazy, Suspense, useCallback, useEffect, useRef, useState } from "react";
-import { lessons } from "./content/lessons.js";
+import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { lessonsByTrack } from "./content/lessons.js";
 import { EVENTS, track } from "./lib/analytics.js";
 import { useAppState } from "./lib/useAppState.js";
 import Icon from "./components/Icon.jsx";
@@ -87,9 +87,14 @@ export default function App() {
     isFirstVisit, showDisclaimer, dismissDisclaimer,
   } = useAppState();
 
+  // Whole tracks in TRACKS order (money first), so a lesson's index here is
+  // its position on the Learn path. Lesson `id` is unchanged by the reorder.
+  const lessons = useMemo(() => lessonsByTrack(), []);
+
   const [tab, setTab] = useState("learn");
   // null = showing the path; a number = reading that lesson. A first-time
-  // visitor opens straight into lesson 1 (LAUNCH_PLAN §3.2).
+  // visitor opens straight into the first lesson of the money track, which
+  // index 0 now is (LAUNCH_PLAN §3.2).
   const [reading, setReading] = useState(() => (isFirstVisit ? 0 : null));
 
   const scrollTop = useCallback(() => {
@@ -99,11 +104,19 @@ export default function App() {
   // Once per app load, not per tab switch — see LAUNCH_PLAN §9.2.
   useEffect(() => { track(EVENTS.APP_OPENED); }, []);
 
-  // Lessons unlock in order: the first is always open, the rest need the one
-  // before them completed.
+  // Lessons unlock in order WITHIN a track, not across tracks: the first
+  // lesson of each track is always open, the rest need the previous lesson of
+  // that same track completed. Before 2026-08-07 this was a single global
+  // chain, which gated the whole money curriculum behind twelve macro-theory
+  // lessons — see the TRACKS comment in content/lessons.js.
   const isUnlocked = useCallback(
-    (index) => index === 0 || completedLessons.includes(lessons[index - 1].id),
-    [completedLessons]
+    (index) => {
+      const lesson = lessons[index];
+      const prev = lessons[index - 1];
+      if (!prev || prev.track !== lesson.track) return true;   // first of its track
+      return completedLessons.includes(prev.id);
+    },
+    [completedLessons, lessons]
   );
 
   const openLesson = useCallback((index) => { setReading(index); setTab("learn"); }, []);

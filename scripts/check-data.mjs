@@ -9,7 +9,7 @@ import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 
 import { TR } from "../src/locales/index.js";
-import { lessons } from "../src/content/lessons.js";
+import { lessons, TRACKS, lessonsByTrack } from "../src/content/lessons.js";
 import { quizData } from "../src/content/quizData.js";
 import { glossary } from "../src/content/glossary.js";
 import { kidsContent } from "../src/content/kidsContent.js";
@@ -20,6 +20,7 @@ import { MAX_BOX, dueQuestions, recordAnswer } from "../src/lib/review.js";
 import { MIN_BARS, OUTPERFORM_THRESHOLD, WJ_PERIODS, wjSectorComparison } from "../src/lib/relativeStrength.js";
 
 const LANGS = ["en", "es", "ja", "ko", "zh"];
+const TRACK_KEYS = new Set(TRACKS.map((tr) => tr.key));
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 
 let failures = 0;
@@ -77,6 +78,12 @@ function checkNonEmptyString(value, path) {
     if (seenIds.has(lesson.id)) fail(`${path}: duplicate lesson id ${lesson.id}`);
     seenIds.add(lesson.id);
 
+    // Every lesson belongs to exactly one track. Without this, a lesson added
+    // by a future run with no `track` would silently appear on neither path.
+    if (!TRACK_KEYS.has(lesson.track)) {
+      fail(`${path} (id ${lesson.id}): track is ${JSON.stringify(lesson.track)}, expected one of [${[...TRACK_KEYS].join(", ")}]`);
+    }
+
     for (const field of ["title", "subtitle", "takeaway", "thinkAbout"]) {
       if (checkLangSet(lesson[field], `${path}.${field}`)) {
         for (const lang of LANGS) checkNonEmptyString(lesson[field][lang], `${path}.${field}.${lang}`);
@@ -96,6 +103,29 @@ function checkNonEmptyString(value, path) {
       });
     }
   });
+}
+
+// 2b. tracks: every track's label/blurb resolves in all 5 languages, no track
+//     is empty, and grouping by track loses or duplicates no lesson.
+{
+  for (const tr of TRACKS) {
+    for (const key of [tr.labelKey, tr.blurbKey]) {
+      for (const lang of LANGS) {
+        checkNonEmptyString(TR[lang]?.[key], `TR.${lang}.${key} (track "${tr.key}")`);
+      }
+    }
+    const count = lessons.filter((l) => l.track === tr.key).length;
+    if (count === 0) fail(`TRACKS: track "${tr.key}" has no lessons — it would render as an empty section`);
+  }
+
+  const grouped = lessonsByTrack();
+  if (grouped.length !== lessons.length) {
+    fail(`lessonsByTrack(): returned ${grouped.length} lessons, expected ${lessons.length} — a lesson's track matches no TRACKS entry`);
+  }
+  const groupedIds = new Set(grouped.map((l) => l.id));
+  for (const l of lessons) {
+    if (!groupedIds.has(l.id)) fail(`lessonsByTrack(): lesson ${l.id} is missing from every track`);
+  }
 }
 
 // 3. quizData: language parity on q/opts/explain, matching option counts

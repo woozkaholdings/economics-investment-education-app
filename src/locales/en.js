@@ -6,6 +6,16 @@ export default {
     // Home
     welcomeTitle: "Welcome to Economic Cycles",
     welcomeSub: "Learn how the economy really works — step by step",
+    // Learn heading for someone who has already started. `welcomeTitle` is a
+    // greeting and was previously shown as the Learn <h1> on every visit, so a
+    // learner 20 lessons in was still being welcomed. Greet once; then this.
+    returningTitle: "Your learning path",
+    returningSub: "Pick up where you left off",
+    // Tracks (see TRACKS in content/lessons.js)
+    trackMoney: "Your Money",
+    trackMoneyBlurb: "Practical money skills — budgeting, taxes, saving, insurance, investing.",
+    trackEconomy: "How the Economy Works",
+    trackEconomyBlurb: "Optional background: cycles, interest rates, and why the economy moves.",
     continueLesson: "Continue Learning", startLesson: "Start Learning",
     lessonsCompleted: "Lessons Completed", totalLessons: "Total Lessons",
     featuredInsight: "Featured Insight",

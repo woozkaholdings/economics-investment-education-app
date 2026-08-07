@@ -1,6 +1,48 @@
+// ═══════════════════════════════════════════════════════════════════════════
+// TRACKS
+//
+// The catalogue is two independent curricula, not one path. Until 2026-08-07
+// they were a single sequential chain, which meant someone who installed a
+// financial-literacy app to learn budgeting had to finish the long-term debt
+// cycle, deleveraging, the yield curve and QE/QT first — ~24 minutes of macro
+// theory before the first practical money lesson. That ordering was an
+// artifact of build order (the macro lessons came from the original
+// prototype; the money lessons were appended one per run chasing the §4.3
+// lesson-count gate), never a teaching decision.
+//
+// `money` leads because it is the product (LAUNCH_PLAN.md §0: "how the
+// economy works is the *vehicle*, not the product"). `economy` is optional
+// context. Lessons unlock sequentially WITHIN a track and not across them.
+//
+// Order here is display order. Every lesson must declare a `track` matching
+// one of these keys — `npm test` fails otherwise, so a future run adding a
+// lesson can't silently leave it out of both tracks.
+// ═══════════════════════════════════════════════════════════════════════════
+export const TRACKS = [
+  { key: "money", labelKey: "trackMoney", blurbKey: "trackMoneyBlurb" },
+  { key: "economy", labelKey: "trackEconomy", blurbKey: "trackEconomyBlurb" },
+];
+
+/** Lessons belonging to `trackKey`, in id order. */
+export function lessonsInTrack(trackKey, all = lessons) {
+  return all.filter((l) => l.track === trackKey);
+}
+
+/**
+ * Every lesson, reordered so whole tracks run in TRACKS order (money first).
+ * The app uses this as its lesson list, so a lesson's position in it is also
+ * its position on the Learn path. Lesson `id` is deliberately NOT renumbered:
+ * ids are persisted in localStorage, keyed by `quizData`, drive the review
+ * scheduler, and are cited by 142 in-prose cross-references ("Lesson 15"),
+ * all of which resolve against the id the reader displays.
+ */
+export function lessonsByTrack(all = lessons) {
+  return TRACKS.flatMap((tr) => lessonsInTrack(tr.key, all));
+}
+
 export const lessons = [
   {
-    id: 1, icon: "🔄", color: "#2563eb",
+    id: 1, track: "economy", icon: "🔄", color: "#2563eb",
     title: { en: "Transactions: The Building Block", es: "Transacciones: El Pilar Fundamental", ko: "거래: 경제의 기본 단위", zh: "交易：经济的基石", ja: "取引：経済の基本単位" },
     subtitle: { en: "Every time you buy something, you create a transaction", es: "Cada vez que compras algo, creas una transacción", ko: "무언가를 살 때마다 거래가 만들어집니다", zh: "每次购买都创造一笔交易", ja: "何かを買うたびに取引が生まれる" },
     sections: [
@@ -41,7 +83,7 @@ export const lessons = [
     },
   },
   {
-    id: 2, icon: "💳", color: "#7c3aed",
+    id: 2, track: "economy", icon: "💳", color: "#7c3aed",
     title: { en: "Credit: The Most Important Part", es: "Crédito: La Parte Más Importante", ko: "신용: 가장 중요한 부분", zh: "信贷：最重要的部分", ja: "信用：最も重要な部分" },
     subtitle: { en: "Credit is the biggest and most volatile part of the economy", es: "El crédito es la parte más grande y volátil de la economía", ko: "신용은 경제에서 가장 크고 변동성이 큰 부분입니다", zh: "信贷是经济中最大且最不稳定的部分", ja: "信用は経済で最大かつ最も変動が大きい部分" },
     sections: [
@@ -92,7 +134,7 @@ export const lessons = [
     },
   },
   {
-    id: 3, icon: "📈", color: "#059669",
+    id: 3, track: "economy", icon: "📈", color: "#059669",
     title: { en: "Productivity Growth: The Long-Run Driver", es: "Crecimiento de Productividad", ko: "생산성 성장: 장기 동력", zh: "生产力增长：长期驱动力", ja: "生産性成長：長期的な推進力" },
     subtitle: { en: "What really matters in the long run", es: "Lo que realmente importa a largo plazo", ko: "장기적으로 정말 중요한 것", zh: "长期来看真正重要的是什么", ja: "長期的に本当に重要なこと" },
     sections: [
@@ -133,7 +175,7 @@ export const lessons = [
     },
   },
   {
-    id: 4, icon: "🔁", color: "#d97706",
+    id: 4, track: "economy", icon: "🔁", color: "#d97706",
     title: { en: "The Short-Term Debt Cycle", es: "El Ciclo de Deuda a Corto Plazo", ko: "단기 부채 순환", zh: "短期债务周期", ja: "短期債務サイクル" },
     subtitle: { en: "5-8 years — the business cycle most people know", es: "5-8 años — el ciclo que la mayoría conoce", ko: "5-8년 — 대부분의 사람들이 아는 경기 순환", zh: "5-8年——大多数人熟知的经济周期", ja: "5-8年 — ほとんどの人が知る景気循環" },
     sections: [
@@ -174,7 +216,7 @@ export const lessons = [
     },
   },
   {
-    id: 5, icon: "🌊", color: "#dc2626",
+    id: 5, track: "economy", icon: "🌊", color: "#dc2626",
     title: { en: "The Long-Term Debt Cycle", es: "El Ciclo de Deuda a Largo Plazo", ko: "장기 부채 순환", zh: "长期债务周期", ja: "長期債務サイクル" },
     subtitle: { en: "75-100 years — the big wave underneath", es: "75-100 años — la gran ola debajo", ko: "75-100년 — 밑에 깔린 큰 파도", zh: "75-100年——潜藏的大浪", ja: "75-100年 — 底に潜む大きな波" },
     sections: [
@@ -215,7 +257,7 @@ export const lessons = [
     },
   },
   {
-    id: 6, icon: "🏗️", color: "#4f46e5",
+    id: 6, track: "economy", icon: "🏗️", color: "#4f46e5",
     title: { en: "Deleveraging: The 4 Tools", es: "Desapalancamiento: Las 4 Herramientas", ko: "디레버리징: 4가지 도구", zh: "去杠杆：4大工具", ja: "デレバレッジング：4つの手段" },
     subtitle: { en: "How economies deal with too much debt", es: "Cómo las economías manejan demasiada deuda", ko: "경제가 과다 부채를 다루는 방법", zh: "经济如何应对过多债务", ja: "経済が過大な借金にどう対処するか" },
     sections: [
@@ -256,7 +298,7 @@ export const lessons = [
     },
   },
   {
-    id: 7, icon: "💹", color: "#1e40af",
+    id: 7, track: "economy", icon: "💹", color: "#1e40af",
     title: { en: "Interest Rates: The Master Signal", es: "Tasas de Interés: La Señal Maestra", ko: "금리: 마스터 신호", zh: "利率：主导信号", ja: "金利：マスターシグナル" },
     subtitle: { en: "How the Fed steers the economy", es: "Cómo el Fed dirige la economía", ko: "연준이 경제를 조종하는 방법", zh: "美联储如何引导经济", ja: "FRBが経済を舵取りする方法" },
     sections: [
@@ -297,7 +339,7 @@ export const lessons = [
     },
   },
   {
-    id: 8, icon: "📐", color: "#9333ea",
+    id: 8, track: "economy", icon: "📐", color: "#9333ea",
     title: { en: "The Yield Curve: Crystal Ball", es: "La Curva de Rendimiento: Bola de Cristal", ko: "수익률 곡선: 수정 구슬", zh: "收益率曲线：水晶球", ja: "イールドカーブ：水晶玉" },
     subtitle: { en: "A historically reliable recession predictor since 1955", es: "Un predictor de recesión históricamente fiable desde 1955", ko: "1955년 이후 역사적으로 신뢰할 수 있는 경기침체 예측 지표", zh: "自1955年以来历史上较为可靠的衰退预测指标", ja: "1955年以来、歴史的に信頼性の高い景気後退予測指標" },
     sections: [
@@ -328,7 +370,7 @@ export const lessons = [
     },
   },
   {
-    id: 9, icon: "🏦", color: "#be185d",
+    id: 9, track: "economy", icon: "🏦", color: "#be185d",
     title: { en: "QE & QT: The Fed's Power Tools", es: "QE y QT: Las Herramientas del Fed", ko: "QE & QT: 연준의 강력한 도구", zh: "QE与QT：美联储的强力工具", ja: "QE & QT：FRBのパワーツール" },
     subtitle: { en: "When rates at 0% aren't enough", es: "Cuando las tasas en 0% no son suficientes", ko: "0% 금리로도 충분하지 않을 때", zh: "当利率降到0%还不够时", ja: "金利0%でも不十分な時" },
     sections: [
@@ -369,7 +411,7 @@ export const lessons = [
     },
   },
   {
-    id: 10, icon: "🔄", color: "#059669",
+    id: 10, track: "economy", icon: "🔄", color: "#059669",
     title: { en: "The 4 Phases of Economic Cycles", es: "Las 4 Fases del Ciclo Económico", ko: "경제 순환의 4단계", zh: "经济周期的4个阶段", ja: "経済サイクルの4つの局面" },
     subtitle: { en: "Expansion → Peak → Contraction → Trough", es: "Expansión → Pico → Contracción → Valle", ko: "확장 → 정점 → 수축 → 저점", zh: "扩张 → 顶峰 → 收缩 → 低谷", ja: "拡大 → ピーク → 収縮 → 底" },
     sections: [
@@ -410,7 +452,7 @@ export const lessons = [
     },
   },
   {
-    id: 11, icon: "📊", color: "#b45309",
+    id: 11, track: "economy", icon: "📊", color: "#b45309",
     title: { en: "Reading Economic Indicators", es: "Leyendo Indicadores Económicos", ko: "경제 지표 읽기", zh: "解读经济指标", ja: "経済指標を読む" },
     subtitle: { en: "The dashboard of the economic machine", es: "El tablero de la máquina económica", ko: "경제 기계의 대시보드", zh: "经济机器的仪表板", ja: "経済マシンのダッシュボード" },
     sections: [
@@ -441,7 +483,7 @@ export const lessons = [
     },
   },
   {
-    id: 12, icon: "🎯", color: "#15803d",
+    id: 12, track: "economy", icon: "🎯", color: "#15803d",
     title: { en: "Three Rules of Thumb", es: "Tres Reglas de Oro", ko: "세 가지 경험 법칙", zh: "三条经验法则", ja: "3つの経験則" },
     subtitle: { en: "A classic summary — simple but powerful", es: "Un resumen clásico — simple pero poderoso", ko: "고전적인 요약 — 간단하지만 강력합니다", zh: "经典总结——简单但强大", ja: "古典的な要約 — シンプルだが強力" },
     sections: [
@@ -482,7 +524,7 @@ export const lessons = [
     },
   },
   {
-    id: 13, icon: "💵", color: "#0891b2",
+    id: 13, track: "money", icon: "💵", color: "#0891b2",
     title: { en: "Budgeting: Know Where Your Money Goes", es: "Presupuesto: Sabe A Dónde Va Tu Dinero", ko: "예산 관리: 돈이 어디로 가는지 알기", zh: "预算：知道钱花去了哪里", ja: "予算管理：お金の流れを知る" },
     subtitle: { en: "The foundation everything else builds on", es: "La base sobre la que se construye todo lo demás", ko: "다른 모든 것의 토대가 되는 기초", zh: "一切的基础", ja: "他のすべての土台となるもの" },
     sections: [
@@ -523,7 +565,7 @@ export const lessons = [
     },
   },
   {
-    id: 14, icon: "🐷", color: "#ca8a04",
+    id: 14, track: "money", icon: "🐷", color: "#ca8a04",
     title: { en: "Emergency Funds: Your Financial Shock Absorber", es: "Fondo de Emergencia: Tu Amortiguador Financiero", ko: "비상금: 재정적 충격 완화 장치", zh: "应急基金：你的财务缓冲垫", ja: "緊急資金：あなたの経済的ショック吸収装置" },
     subtitle: { en: "Why 'save some money' isn't specific enough", es: "Por qué 'ahorra algo de dinero' no es suficientemente específico", ko: "'돈을 좀 모아라'가 왜 충분히 구체적이지 않은가", zh: "为什么“存点钱”这个建议还不够具体", ja: "「お金を貯めよう」だけでは不十分な理由" },
     sections: [
@@ -564,7 +606,7 @@ export const lessons = [
     },
   },
   {
-    id: 15, icon: "🌱", color: "#16a34a",
+    id: 15, track: "money", icon: "🌱", color: "#16a34a",
     title: { en: "Compound Interest: Money That Makes Money", es: "Interés Compuesto: Dinero Que Genera Dinero", ko: "복리: 돈이 돈을 버는 원리", zh: "复利：让钱生钱", ja: "複利：お金がお金を生む仕組み" },
     subtitle: { en: "Why starting early matters more than starting big", es: "Por qué empezar temprano importa más que empezar en grande", ko: "크게 시작하는 것보다 일찍 시작하는 것이 왜 더 중요한가", zh: "为什么早开始比多投入更重要", ja: "早く始めることが、大きく始めることより重要な理由" },
     sections: [
@@ -605,7 +647,7 @@ export const lessons = [
     },
   },
   {
-    id: 16, icon: "🪪", color: "#ea580c",
+    id: 16, track: "money", icon: "🪪", color: "#ea580c",
     title: { en: "Credit Scores: Your Financial Reputation", es: "Puntaje de Crédito: Tu Reputación Financiera", ko: "신용점수: 당신의 금융 신용도", zh: "信用分数：你的财务信誉", ja: "クレジットスコア：あなたの金融上の信用" },
     subtitle: { en: "A number that follows you into almost every big purchase", es: "Un número que te acompaña en casi cada compra grande", ko: "거의 모든 큰 구매를 따라다니는 숫자", zh: "几乎跟随你每一次大额购买的数字", ja: "ほぼすべての大きな買い物についてくる数字" },
     sections: [
@@ -646,7 +688,7 @@ export const lessons = [
     },
   },
   {
-    id: 17, icon: "🧺", color: "#6d28d9",
+    id: 17, track: "money", icon: "🧺", color: "#6d28d9",
     title: { en: "Stocks, Bonds & Diversification", es: "Acciones, Bonos y Diversificación", ko: "주식, 채권, 그리고 분산투자", zh: "股票、债券与分散投资", ja: "株式・債券・分散投資" },
     subtitle: { en: "The building blocks of a portfolio, in plain language", es: "Los bloques básicos de una cartera, en lenguaje sencillo", ko: "쉬운 말로 풀어본 포트폴리오의 기본 구성 요소", zh: "用简单的话讲清楚投资组合的基本构件", ja: "ポートフォリオの基本要素を、わかりやすく" },
     sections: [
@@ -687,7 +729,7 @@ export const lessons = [
     },
   },
   {
-    id: 18, icon: "🏖️", color: "#0d9488",
+    id: 18, track: "money", icon: "🏖️", color: "#0d9488",
     title: { en: "Retirement Accounts: 401(k) and IRA Basics", es: "Cuentas de Jubilación: Fundamentos del 401(k) y el IRA", ko: "은퇴 계좌: 401(k)와 IRA 기초", zh: "退休账户：401(k)与IRA基础", ja: "退職口座：401(k)とIRAの基本" },
     subtitle: { en: "Ordinary accounts with an unusual perk: the tax rules", es: "Cuentas comunes con una ventaja poco común: las reglas fiscales", ko: "특별한 혜택이 있는 평범한 계좌: 세금 규칙", zh: "普通账户里藏着不普通的福利：税收规则", ja: "普通の口座に隠された特典：税制優遇" },
     sections: [
@@ -728,7 +770,7 @@ export const lessons = [
     },
   },
   {
-    id: 19, icon: "🧾", color: "#57534e",
+    id: 19, track: "money", icon: "🧾", color: "#57534e",
     title: { en: "Taxes: How Your Paycheck Is Actually Taxed", es: "Impuestos: Cómo Se Grava Realmente Tu Sueldo", ko: "세금: 급여가 실제로 과세되는 방식", zh: "税收：你的薪水究竟是怎么被征税的", ja: "税金：あなたの給料は実際どう課税されるか" },
     subtitle: { en: "Why a raise can never shrink your take-home pay", es: "Por qué un aumento nunca puede reducir tu sueldo neto", ko: "왜 급여 인상이 실수령액을 줄일 수 없는가", zh: "为什么加薪永远不会让到手工资变少", ja: "昇給が手取りを減らすことは絶対にない理由" },
     sections: [
@@ -769,7 +811,7 @@ export const lessons = [
     },
   },
   {
-    id: 20, icon: "🛡️", color: "#0369a1",
+    id: 20, track: "money", icon: "🛡️", color: "#0369a1",
     title: { en: "Insurance: Trading a Small Certain Cost for Protection from a Large Uncertain One", es: "Seguros: Cambiar un Costo Pequeño y Seguro por Protección Ante uno Grande e Incierto", ko: "보험: 작고 확실한 비용으로 크고 불확실한 손실을 막다", zh: "保险：用小额确定成本换取对大额不确定损失的保护", ja: "保険：小さく確実な費用で、大きく不確実な損失から身を守る" },
     subtitle: { en: "Why paying a little every month can make sense even if you never file a claim", es: "Por qué pagar un poco cada mes puede tener sentido aunque nunca hagas un reclamo", ko: "한 번도 보험금을 청구하지 않아도 매달 조금씩 내는 것이 합리적인 이유", zh: "为什么即使从不理赔，每月支付一点钱也可能是合理的", ja: "一度も保険金を請求しなくても、毎月少し払う意味がある理由" },
     sections: [
@@ -810,7 +852,7 @@ export const lessons = [
     },
   },
   {
-    id: 21, icon: "🛒", color: "#a21caf",
+    id: 21, track: "money", icon: "🛒", color: "#a21caf",
     title: { en: "Inflation and Your Money: Why a Growing Balance Isn't Always Growing Wealth", es: "La Inflación y Tu Dinero: Por Qué un Saldo Creciente No Siempre Es Más Riqueza", ko: "인플레이션과 내 돈: 잔고가 늘어도 부가 늘지 않을 수 있는 이유", zh: "通胀与你的钱：余额增长不一定等于财富增长", ja: "インフレとあなたのお金：残高が増えても富が増えるとは限らない理由" },
     subtitle: { en: "The difference between the number in your account and what it can actually buy", es: "La diferencia entre el número en tu cuenta y lo que realmente puede comprar", ko: "계좌의 숫자와 그것이 실제로 살 수 있는 것의 차이", zh: "账户里的数字和它实际能买到的东西之间的差别", ja: "口座の数字と、それが実際に買えるものとの違い" },
     sections: [
@@ -851,7 +893,7 @@ export const lessons = [
     },
   },
   {
-    id: 22, icon: "📋", color: "#78350f",
+    id: 22, track: "money", icon: "📋", color: "#78350f",
     title: { en: "W-2 vs. 1099: Why Your Tax Bill Changes With How You're Paid", es: "W-2 vs. 1099: Por Qué Tu Factura de Impuestos Cambia Según Cómo Te Pagan", ko: "W-2 vs. 1099: 받는 방식에 따라 세금 부담이 달라지는 이유", zh: "W-2与1099：为什么你的纳税方式取决于你如何被支付", ja: "W-2対1099：支払われ方によって税金が変わる理由" },
     subtitle: { en: "The same income can owe very different taxes depending on whether you're an employee or a contractor", es: "El mismo ingreso puede deber impuestos muy distintos según seas empleado o contratista", ko: "같은 소득이라도 직원인지 계약자인지에 따라 세금 부담이 크게 달라질 수 있습니다", zh: "同样的收入，作为雇员和作为承包商所欠的税可能大不相同", ja: "同じ収入でも、従業員か契約者かによって税額は大きく変わり得る" },
     sections: [
@@ -892,14 +934,14 @@ export const lessons = [
     },
   },
   {
-    id: 23, icon: "💸", color: "#be123c",
+    id: 23, track: "money", icon: "💸", color: "#be123c",
     title: { en: "Investment Fees: The Cost You Don't See on a Bill", es: "Comisiones de Inversión: El Costo Que No Ves en una Factura", ko: "투자 수수료: 청구서에 안 보이는 비용", zh: "投资费用：账单上看不到的成本", ja: "投資手数料：請求書に現れないコスト" },
     subtitle: { en: "A 1% annual fee sounds tiny, but it compounds against you the same way interest compounds for you", es: "Una comisión anual del 1% suena pequeña, pero se compone en tu contra igual que el interés se compone a tu favor", ko: "연 1% 수수료는 작아 보이지만, 이자가 당신에게 유리하게 복리로 쌓이듯 수수료도 당신에게 불리하게 복리로 쌓입니다", zh: "年化1%的费用听起来很小，但它会像复利那样不利地累积，正如利息会像复利那样对你有利地累积", ja: "年1%の手数料は小さく聞こえますが、利息があなたに有利に複利で積み上がるのと同じように、手数料もあなたに不利に複利で積み上がります" },
     sections: [
       {
         heading: { en: "The Expense Ratio: A Fee You Never Get a Bill For", es: "El Ratio de Gastos: Una Comisión Que Nunca Te Facturan", ko: "운용보수: 청구서가 오지 않는 수수료", zh: "费用率：一笔从不给你开账单的费用", ja: "経費率：請求書が来ない手数料" },
         body: {
-          en: "Mutual funds and ETFs charge an annual fee called an expense ratio, expressed as a percentage of the money invested — for example, 0.05% or 1.00% per year. Unlike a phone bill or a subscription, nothing arrives in the mail asking to be paid: the fund simply deducts a small slice of the fund's total assets continuously, so the balance an investor sees has already had the fee taken out. That invisibility is exactly what makes it easy to ignore — there's no moment where the cost becomes obvious.\n\nExpense ratios vary enormously for reasons that have nothing to do with quality. A fund that simply tracks a market index (Lesson 12's diversification idea, done automatically) needs little human decision-making to run, so index funds commonly charge 0.03%-0.20% a year. A fund where a manager actively picks investments, trying to beat the market, costs more to run and commonly charges 0.5%-1.5% a year — and Lesson 12's own point about diversification applies here too: most actively managed funds don't reliably beat a comparable index fund after fees, over long periods.",
+          en: "Mutual funds and ETFs charge an annual fee called an expense ratio, expressed as a percentage of the money invested — for example, 0.05% or 1.00% per year. Unlike a phone bill or a subscription, nothing arrives in the mail asking to be paid: the fund simply deducts a small slice of the fund's total assets continuously, so the balance an investor sees has already had the fee taken out. That invisibility is exactly what makes it easy to ignore — there's no moment where the cost becomes obvious.\n\nExpense ratios vary enormously for reasons that have nothing to do with quality. A fund that simply tracks a market index (Lesson 17's diversification idea, done automatically) needs little human decision-making to run, so index funds commonly charge 0.03%-0.20% a year. A fund where a manager actively picks investments, trying to beat the market, costs more to run and commonly charges 0.5%-1.5% a year — and Lesson 17's own point about diversification applies here too: most actively managed funds don't reliably beat a comparable index fund after fees, over long periods.",
           es: "Los fondos mutuos y ETFs cobran una comisión anual llamada ratio de gastos, expresada como porcentaje del dinero invertido. A diferencia de una factura de teléfono, nada llega pidiendo ser pagado: el fondo simplemente deduce continuamente una pequeña porción de los activos totales, así que el saldo que ve el inversionista ya tiene la comisión descontada. Esa invisibilidad es justo lo que la hace fácil de ignorar.\n\nLos ratios de gastos varían enormemente. Un fondo que simplemente sigue un índice de mercado suele cobrar 0.03%-0.20% al año. Un fondo con un gestor que elige activamente las inversiones suele cobrar 0.5%-1.5% al año — y la mayoría de los fondos gestionados activamente no superan de forma confiable a un fondo índice comparable después de comisiones, a largo plazo.",
           ko: "뮤추얼펀드와 ETF는 운용보수라는 연간 수수료를 투자 금액의 비율로 부과합니다. 휴대폰 요금처럼 청구서가 오는 게 아니라, 펀드가 총자산에서 조금씩 계속 떼어가기 때문에 투자자가 보는 잔고에는 이미 수수료가 빠져 있습니다. 이렇게 보이지 않는다는 점이 바로 무시하기 쉽게 만드는 이유입니다.\n\n운용보수는 크게 차이가 납니다. 시장 지수를 그대로 추종하는 펀드는 보통 연 0.03%~0.20%를 부과합니다. 매니저가 적극적으로 투자를 고르는 펀드는 보통 연 0.5%~1.5%를 부과합니다 — 그리고 대부분의 액티브 펀드는 장기적으로 수수료를 뺀 후에는 비교 가능한 인덱스 펀드를 꾸준히 이기지 못합니다.",
           zh: "共同基金和ETF会收取一种叫做费用率的年费，以投资金额的百分比表示。和电话账单不同，没有任何账单寄来要求付款：基金只是持续从总资产中扣除一小部分，所以投资者看到的余额已经是扣除费用之后的了。这种看不见正是它容易被忽视的原因。\n\n费用率差异很大。单纯跟踪市场指数的基金通常每年收取0.03%-0.20%。由基金经理主动挑选投资的基金通常每年收取0.5%-1.5%——而且从长期看，大多数主动管理型基金在扣除费用后并不能可靠地跑赢可比的指数基金。",
@@ -925,15 +967,15 @@ export const lessons = [
       ja: "手数料は請求書を送ってきませんが、第15課の利息とまったく同じように毎年複利で積み重なります——ただし残高に有利にではなく不利に働くだけなので、1%未満の手数料でも投資前に確認する価値があります。",
     },
     thinkAbout: {
-      en: "Two funds track the same market index and hold virtually identical investments, but one charges 0.05% and the other charges 0.75% a year. Since Lesson 12 showed that diversification, not stock-picking skill, is what an index fund already provides, what would justify paying the higher fee for the same underlying holdings?",
-      es: "Dos fondos siguen el mismo índice y tienen inversiones casi idénticas, pero uno cobra 0.05% y el otro 0.75% al año. Como la Lección 12 mostró que la diversificación, no la habilidad para elegir acciones, es lo que ya ofrece un fondo índice, ¿qué justificaría pagar la comisión más alta por las mismas inversiones subyacentes?",
-      ko: "두 펀드가 같은 시장 지수를 추종하며 거의 동일한 투자 자산을 보유하고 있지만, 하나는 연 0.05%를, 다른 하나는 연 0.75%를 부과합니다. 12강에서 인덱스 펀드가 이미 제공하는 것은 주식 선택 실력이 아니라 분산투자라고 설명했는데, 같은 기초 자산에 더 높은 수수료를 내는 것을 정당화할 이유가 있을까요?",
-      zh: "两只基金追踪同一个市场指数，持仓几乎完全相同，但一只每年收费0.05%，另一只收费0.75%。既然第12课说明了指数基金已经提供的是分散投资而不是选股能力，那么为相同的底层持仓支付更高的费用有什么理由呢？",
-      ja: "2つのファンドが同じ市場指数に連動し、ほぼ同一の投資対象を保有していますが、一方は年0.05%、もう一方は年0.75%を課しています。第12課で、インデックスファンドがすでに提供しているのは銘柄選択の腕前ではなく分散投資だと示されたことを踏まえると、同じ原資産に対してより高い手数料を払う理由は何でしょうか？",
+      en: "Two funds track the same market index and hold virtually identical investments, but one charges 0.05% and the other charges 0.75% a year. Since Lesson 17 showed that diversification, not stock-picking skill, is what an index fund already provides, what would justify paying the higher fee for the same underlying holdings?",
+      es: "Dos fondos siguen el mismo índice y tienen inversiones casi idénticas, pero uno cobra 0.05% y el otro 0.75% al año. Como la Lección 17 mostró que la diversificación, no la habilidad para elegir acciones, es lo que ya ofrece un fondo índice, ¿qué justificaría pagar la comisión más alta por las mismas inversiones subyacentes?",
+      ko: "두 펀드가 같은 시장 지수를 추종하며 거의 동일한 투자 자산을 보유하고 있지만, 하나는 연 0.05%를, 다른 하나는 연 0.75%를 부과합니다. 17강에서 인덱스 펀드가 이미 제공하는 것은 주식 선택 실력이 아니라 분산투자라고 설명했는데, 같은 기초 자산에 더 높은 수수료를 내는 것을 정당화할 이유가 있을까요?",
+      zh: "两只基金追踪同一个市场指数，持仓几乎完全相同，但一只每年收费0.05%，另一只收费0.75%。既然第17课说明了指数基金已经提供的是分散投资而不是选股能力，那么为相同的底层持仓支付更高的费用有什么理由呢？",
+      ja: "2つのファンドが同じ市場指数に連動し、ほぼ同一の投資対象を保有していますが、一方は年0.05%、もう一方は年0.75%を課しています。第17課で、インデックスファンドがすでに提供しているのは銘柄選択の腕前ではなく分散投資だと示されたことを踏まえると、同じ原資産に対してより高い手数料を払う理由は何でしょうか？",
     },
   },
   {
-    id: 24, icon: "🏠", color: "#334155",
+    id: 24, track: "money", icon: "🏠", color: "#334155",
     title: { en: "Renting vs. Buying: The Real Trade-offs of a Home", es: "Alquilar vs. Comprar: Las Verdaderas Disyuntivas de una Vivienda", ko: "임대 vs. 매수: 주택의 진짜 트레이드오프", zh: "租房与购房：住房的真实权衡", ja: "賃貸か購入か：住宅の本当のトレードオフ" },
     subtitle: { en: "A mortgage payment and a rent payment look similar, but they buy very different things", es: "Un pago de hipoteca y un pago de alquiler parecen similares, pero compran cosas muy distintas", ko: "주택담보대출 상환금과 월세는 비슷해 보이지만, 사는 것은 완전히 다릅니다", zh: "房贷月供和房租看起来相似，但它们买到的东西却大不相同", ja: "住宅ローンの返済と家賃の支払いは似ているようで、買っているものはまったく違います" },
     sections: [
@@ -974,7 +1016,7 @@ export const lessons = [
     },
   },
   {
-    id: 25, icon: "💼", color: "#0e7490",
+    id: 25, track: "money", icon: "💼", color: "#0e7490",
     title: { en: "Brokerage Accounts: How Investing Actually Works Mechanically", es: "Cuentas de Corretaje: Cómo Funciona Realmente Invertir", ko: "증권 계좌: 투자가 실제로 작동하는 방식", zh: "券商账户：投资到底是如何运作的", ja: "証券口座：投資は実際どう機能するのか" },
     subtitle: { en: "A brokerage account is a container, not an investment by itself", es: "Una cuenta de corretaje es un contenedor, no una inversión en sí misma", ko: "증권 계좌는 그 자체로 투자가 아니라 담는 그릇일 뿐입니다", zh: "券商账户只是一个容器，本身并不是投资", ja: "証券口座はそれ自体が投資ではなく、あくまで入れ物です" },
     sections: [
@@ -1015,7 +1057,7 @@ export const lessons = [
     },
   },
   {
-    id: 26, icon: "📜", color: "#4c1d95",
+    id: 26, track: "money", icon: "📜", color: "#4c1d95",
     title: { en: "Estate Planning Basics: Wills and Beneficiary Designations", es: "Fundamentos de Planificación Patrimonial: Testamentos y Designaciones de Beneficiario", ko: "상속 계획의 기초: 유언장과 수익자 지정", zh: "遗产规划基础：遗嘱与受益人指定", ja: "遺産計画の基本：遺言書と受取人指定" },
     subtitle: { en: "A will decides less than most people think — beneficiary forms often decide more", es: "Un testamento decide menos de lo que la mayoría piensa — los formularios de beneficiario suelen decidir más", ko: "유언장이 결정하는 것은 생각보다 적고, 수익자 양식이 더 많이 결정합니다", zh: "遗嘱能决定的比大多数人想的要少——受益人表格往往决定得更多", ja: "遺言書が決めることは多くの人が思うより少なく、受取人フォームの方が決めることが多い" },
     sections: [

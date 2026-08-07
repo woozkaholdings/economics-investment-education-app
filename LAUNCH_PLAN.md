@@ -126,6 +126,55 @@ data", and the teaching surfaces (yield-curve shapes, QE/QT) remain deliberately
 
 ---
 
+## 2.5 Curriculum structure — two tracks
+
+*Added 2026-08-07 (owner-directed). Implements §0's "the economics is the vehicle, not the product."*
+
+The catalogue is **two independent curricula**, not one sequential path:
+
+| Track | Key | Lessons | Role |
+|---|---|---|---|
+| **Your Money** | `money` | 13-26 (14) | The product. Budgeting, emergency funds, compound interest, credit, investing, retirement, taxes, insurance, inflation, fees, housing, brokerage mechanics, estate planning. |
+| **How the Economy Works** | `economy` | 1-12 (12) | Optional context. Transactions, credit, productivity, the debt cycles, deleveraging, rates, the yield curve, QE/QT, phases, indicators. |
+
+Both tracks have their first lesson unlocked from install; lessons gate sequentially **within** a
+track only. **Your Money leads** — a new install opens into "Budgeting," not "Transactions."
+
+**Why this had to change.** Until 2026-08-07 these were one chain in build order, so the entire
+practical curriculum sat behind ~24 minutes of macro theory. That is the single clearest instance of
+the §10.7 drift this plan warns about: §0 was rewritten on 2026-08-04 to say the economics is the
+vehicle, and the app was never changed to match. It also worked against §4.3's own second gate
+(≥40% of installers finish lesson 1) by putting the least audience-relevant lesson first.
+
+**When adding a lesson,** declare its `track` — `npm test` fails otherwise. Ask which track *and*
+which age band it serves before writing it (§3.0).
+
+### 2.6 Kids financial literacy — a real gap, not a built feature
+
+*Assessed 2026-08-07 after the owner asked whether kids lessons are already in the plan.*
+
+**What exists today is not a kids curriculum.** `src/content/kidsContent.js` holds three age bands
+(5-8, 9-12, 13-17) with **three short blurbs and one activity each — nine blurbs total**, surfaced
+only inside Reference → Parent Guide as parent-facing "teach your kids" material.
+
+Two problems, and the second is the same defect §2.5 just fixed for adults:
+
+1. **It is not lesson-shaped.** Nine blurbs against 26 adult lessons. It is an appendix.
+2. **Its content is economics, not money skills.** The 5-8 band teaches transactions (trading toys)
+   and inflation; 9-12 teaches borrowing and economic cycles; 13-17 teaches the Fed and 2008. There
+   is no allowance, saving, wants-vs-needs, earning, or first-bank-account material — the money
+   topics a child actually encounters. It is the cycles curriculum miniaturised.
+
+**The safe next step, needing no legal decision:** expand the parent-facing bands with real
+money-skills content (allowance and saving, wants vs. needs, earning, price comparison, a first
+account). This stays parent-directed, so §10.3's COPPA posture is untouched.
+
+**The step that is NOT a design decision:** making the kids material *child-facing* — child accounts,
+a kids mode, or kid-directed lesson UI — changes the app's COPPA classification, its store privacy
+category, and its ad eligibility. Per §10.3 that is an **owner decision**; no run may make it.
+
+---
+
 ## 3. UI/UX
 
 ### 3.0 The clarity standard (primary success criterion)

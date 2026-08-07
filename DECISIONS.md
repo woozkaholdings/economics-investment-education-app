@@ -148,3 +148,36 @@ Add a new entry when a run makes a choice future work should be able to look up 
   reloaded, Home still showed "1/12" and lesson 2 remained unlocked.
 - **Revisit when:** the app gains real accounts (Supabase), at which point this whole section should
   be superseded by a sync strategy (local-first with server sync, vs. server-authoritative).
+
+### Two lesson tracks, money-first, instead of one sequential path
+
+*Decided 2026-08-07 (owner-directed, in session).*
+
+- **What was decided:** the lesson catalogue is two independent curricula, not one chain.
+  `TRACKS` in `src/content/lessons.js` defines them in display order — **`money`** ("Your Money",
+  lessons 13-26: budgeting, taxes, saving, insurance, investing) followed by **`economy`**
+  ("How the Economy Works", lessons 1-12: transactions through the debt cycles, QE/QT, indicators).
+  Every lesson carries a `track` field; `npm test` fails if a lesson's track isn't a known key, so a
+  lesson added by a future run cannot silently belong to neither. Lessons unlock sequentially
+  **within** a track and not across them, so both tracks have their first lesson open from install.
+- **Why:** the single chain was an artifact of build order, not teaching. Lessons 1-12 came from the
+  original economics prototype; the money lessons were appended one per scheduled run chasing the
+  §4.3 lesson-count gate. The result gated the entire practical curriculum behind ~24 minutes of
+  macro theory — someone installing a financial-literacy app to learn budgeting had to finish the
+  long-term debt cycle, deleveraging, the yield curve and QE/QT first. That directly contradicts
+  `LAUNCH_PLAN.md` §0 ("how the economy works is the *vehicle*, not the product") and worked against
+  the other half of the §4.3 gate, "≥40% of installers finish lesson 1," since lesson 1 was
+  "Transactions: The Building Block" for an audience that came for money help.
+- **Why the two tracks are cleanly separable:** every in-prose cross-reference was extracted and
+  checked before splitting. The `economy` track never references a money lesson. The `money` track
+  reaches back only four times (16→3, 17→10, 21→4, 23→12-now-17), each a one-sentence aside rather
+  than a dependency, so neither track requires the other to make sense.
+- **Lesson `id`s were deliberately NOT renumbered.** Ids are persisted in `localStorage`
+  (`ecycles_completed_lessons`), keyed by `quizData.lesson`, drive the Leitner review scheduler, and
+  are cited by **142 in-prose cross-references** ("Lesson 15") across five languages. `LessonReader`
+  displays `lesson.id`, so every one of those references resolves today; renumbering would require
+  remapping all 142 strings in the same change as a structural refactor, which is how silent content
+  corruption happens. The visible cost is a cosmetic seam: the money track runs 13→26 and the
+  economy track 1→12, so a new learner's first lesson is numbered 13.
+- **Revisit when:** someone does the renumbering as its own dedicated change (see the backlog item in
+  `AGENT_LOG.md`), ideally scripted with a verified id→id map and a per-language check, not by hand.
