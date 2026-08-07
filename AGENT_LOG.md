@@ -74,10 +74,10 @@ for the history. No open P1/P2 items.
 **Open**
 
 17. **[Content] Grow the lesson catalogue.** Derived from `LAUNCH_PLAN.md` §4.3, not owner-assigned but
-    the plan's own explicit gate: the catalogue is now 26 lessons / ~66,300 English characters / ~60
-    minutes end to end (measured directly from `src/content/lessons.js` — up from 25 lessons / ~62,900
-    chars / ~57 min after lesson 25 was added; this run added lesson 26, "Estate Planning Basics: Wills
-    and Beneficiary Designations"), and Phase 0 ("free, instrumented, no payment code")
+    the plan's own explicit gate: the catalogue is now 27 lessons / ~68,700 English characters / ~63
+    minutes end to end (measured directly from `src/content/lessons.js` — up from 26 lessons / ~66,300
+    chars / ~60 min after lesson 26 was added; this run added lesson 27, "Credit Reports vs. Credit
+    Scores: What's the Difference?"), and Phase 0 ("free, instrumented, no payment code")
     doesn't end until it reaches roughly 40 lessons / 2 hours of content **and** ≥40% of installers
     finish lesson 1. Per §4.3 verbatim: "the highest-value monetization work right now is writing
     lessons, not writing billing code." Do not start billing/paywall work ahead of this gate — see item
@@ -125,6 +125,15 @@ for the history. No open P1/P2 items.
     and API key a dev-agent run can't create; see `DECISIONS.md`. What's left: create that account
     (owner action) and swap `analytics.js`'s `sink()`; item 17's D1 lesson-1-completion measurement is
     still blocked until then, since a per-device local log can't be aggregated across installs.
+23. **[Perf] Main JS chunk back over the 500 kB build warning threshold.** Noticed 2026-08-07 (eleventh
+    run) while verifying lesson 27's build: `npm run build` now reports `index-*.js` at 522.40 kB
+    (warning threshold is 500 kB) — up from 494.69 kB after the ninth run's `React.lazy` code-split
+    (backlog: chunk-size warning) closed this same warning two runs ago. `lessons.js`/`quizData.js` are
+    not behind the `Reference`/`Practice` lazy boundary, so every lesson added by item 17 grows the main
+    chunk directly; this will keep recurring as the catalogue grows toward the ~40-lesson §4.3 gate.
+    Not fixed this run (out of scope for a one-lesson content change) — a future run should either move
+    lesson content behind its own lazy boundary or accept a higher `chunkSizeWarningLimit` deliberately
+    (with a comment explaining why) rather than let the warning silently reappear every few lessons.
 
 **HELD — owner decisions, do not act on these**
 
@@ -3589,3 +3598,59 @@ another adult lesson would.
   should grow past 5 lessons/band or move toward the lesson-shaped format item 21 originally flagged —
   that's a bigger, dedicated-run-sized change, not a fold-in. Items 18/20/22 remain blocked on owner
   action or a dedicated scripted change, as before.
+
+### 2026-08-07 (eleventh run) — Add lesson 27: "Credit Reports vs. Credit Scores: What's the Difference?" (backlog item 17)
+
+`git status` at start showed only the long-standing untracked `economic-cycles-v6.jsx` (unmodified since
+2026-08-04, per its "Notes for future runs" entry above) and no in-progress user edits; `git log` matched
+exactly where the tenth run's entry left off. Picked item 17 over the still-open item 21 structural
+question, per the tenth run's explicit hand-off — "credit-report-vs-credit-score" was one of three named
+candidate topics, having waited two runs.
+
+- **What changed**: `src/content/lessons.js` — added lesson 27, `track: "money"`, two sections covering
+  (1) that a credit *report* is a detailed record kept separately by three bureaus (Equifax, Experian,
+  TransUnion) while a credit *score* is a three-digit number a scoring model (FICO, VantageScore)
+  calculates from that report — so one person has multiple scores, not one, and (2) that because a
+  report is compiled from other companies' data it can contain errors, with U.S. federal law entitling
+  a free copy from each bureau (AnnualCreditReport.com) and the right to dispute inaccuracies — distinct
+  from actually improving a score, which only changes as the underlying behavior does. All 5 languages
+  written in full (not stubbed). `src/content/quizData.js` — added one question (`lesson: 27`, answer
+  index 2), keeping the answer-position spread even per the file's own header invariant (7/7/7/7 → 8/7/7/7
+  of 29, no index over half).
+- **Why this doesn't duplicate the existing lesson 16 ("Credit Scores: Your Financial Reputation")**:
+  checked before writing, since both mention credit scores. Lesson 16 teaches what a score *is* and how
+  to build one (payment history, utilization, the Elena/David comparison). Lesson 27 teaches a different,
+  narrower mechanism the tenth run's log explicitly separated out: the report-vs-score distinction, why
+  the same person sees different numbers in different apps, and the dispute-rights process — genuinely
+  new content, not a rewrite of 16's material. Lesson 27's body cross-references nothing from 16 because
+  the two don't overlap enough to need it.
+- **Verified**: `npm test` (`check-data.mjs` 0 failures/warnings, `check-blindspot.mjs` all six checks
+  pass) and `npm run build` (succeeded — see the new chunk-size note below) both run this session, not
+  asserted. Built `dist/`, served it with `python3 -m http.server`, opened it in the browser-preview
+  tool: seeded `localStorage` with lessons 1-26 complete, confirmed the Home progress ring reads "26/27"
+  and "Continue Learning" opens directly on "Lesson 27 of 27" with both sections, the takeaway, the
+  think-about-this prompt, and the disclaimer all rendering; answered the quiz question and got "CORRECT!"
+  with the intended explanation text; switched the language picker to Korean mid-lesson and confirmed a
+  full, non-fallback Korean render of the entire lesson and quiz. `read_console_messages` showed zero
+  errors throughout.
+- **Adversarial self-check**: (1) *Blindspot register* — `check-blindspot` clean; manually re-read both
+  English sections against §10.1/§10.2: no Dalio reference, no "you should dispute X" or "you should aim
+  for a Y score" directive framing, no specific buy/sell/product recommendation — AnnualCreditReport.com
+  is cited as a factual federal consumer right (like §10.1's existing disclaimer pattern), not a
+  recommendation to use a particular service; no live/hardcoded dates. §10.3 untouched — this is an adult
+  lesson, not kids content. (2) *DECISIONS.md conflict* — none; grepped for "lesson" and "content module" —
+  this is a plain addition to the existing `.js` array format, no schema change, no localStorage or
+  Expo/Vite implication. (3) *Redoing done work* — see the duplication check above against lesson 16;
+  also grepped "credit report" across "Completed and pruned": zero matches, genuinely new. (4)
+  *Verification claim* — every check above (test, build, browser click-through in English and Korean,
+  quiz interaction) was actually run this session against the real built output.
+- **New finding, not this run's fix**: `npm run build`'s main chunk is back over the 500 kB warning
+  threshold (522.40 kB) — the ninth run's `React.lazy` split had brought it to 494.69 kB. Recorded as new
+  backlog item 23 rather than fixed here, since `lessons.js` isn't behind the lazy boundary and pulling it
+  there is a bigger, separate change than one lesson's content.
+- **Backlog changes**: item 17's character/lesson/time counts updated (26→27 lessons). Added item 23
+  (chunk-size regression, above).
+- **Next run should pick**: item 17 again (identity theft/fraud protection or filing-taxes are the
+  remaining named candidates) or item 23 (the chunk-size regression, if a structural change is preferred
+  over more content this time). Items 18/20/22 remain blocked on owner action or a dedicated scripted
+  change, as before. Item 21's structural (lesson-shaped-catalogue) question is also still open.
