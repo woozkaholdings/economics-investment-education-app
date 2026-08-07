@@ -103,11 +103,12 @@ for the history. No open P1/P2 items.
       it is a pointer to a genre the owner named, not a source to copy.
 17. **[Content] Grow the lesson catalogue** — *now subordinate to item 24: prefer a judgment/mindset
     lesson over another mechanics lesson unless there's a reason not to.* Derived from `LAUNCH_PLAN.md`
-    §4.3, not owner-assigned but the plan's own explicit gate: the catalogue is now **28 lessons /
-    70,716 English characters / 12,171 words / ~62 minutes** end to end — measured this session by
+    §4.3, not owner-assigned but the plan's own explicit gate: the catalogue is now **29 lessons /
+    75,604 English characters / 13,018 words / 66 minutes** end to end — measured this session by
     summing every lesson's `sections[].body.en` + `takeaway.en` + `thinkAbout.en` from
-    `content/lessonContent.js` and its `minutes` from `content/lessons.js` (16 money / 12 economy).
-    This session added lesson 28, "Does It Put Money In Your Pocket, or Take It Out?". **Correction to
+    `content/lessonContent.js` and its `minutes` from `content/lessons.js` (17 money / 12 economy).
+    This session added lessons 28 ("Does It Put Money In Your Pocket, or Take It Out?") and 29 ("Where
+    Did the Raise Go?"), both judgment lessons per item 24. **Correction to
     prior entries:** runs 8-11 reported figures (e.g. "27 lessons / ~68,700 chars / ~63 min") that the
     above method does not reproduce — 28 lessons now measure *fewer* minutes than 27 supposedly did, so
     the older numbers were computed some other way or estimated. Future runs should re-measure with the
@@ -3841,3 +3842,74 @@ a number.
   mechanics lesson from item 17's old list. Item 21's structural question and items 18/20/22 are
   unchanged. **The app name is still unresolved** and every string still says "Economic Cycles" — the
   owner said "not decided yet"; do not invent one.
+
+### 2026-08-07 (owner-directed, same session) — Lesson 29: "Where Did the Raise Go?" (item 24, second judgment lesson)
+
+Owner picked the lifestyle-inflation topic from the previous entry's shortlist. Second lesson in the
+item-24 judgment strand, immediately after lesson 28 — deliberately, to establish the strand as a real
+sequence rather than a one-off before the next scheduled run inherits it.
+
+- **Checked for duplication before writing, since lesson 28 already mentions this.** Lesson 28's
+  section 2 names lifestyle inflation in a single paragraph, as one *illustration* of the impulse gap.
+  Lesson 29 teaches the mechanism itself and does not restate it: the ratchet (each upgrade individually
+  reasonable, pleasure fades while cost doesn't, reversing feels like loss rather than a return to
+  normal) and then the arithmetic of the earn-minus-spend gap. Grepped all 28 existing lessons for
+  "savings rate"/"lifestyle": **zero hits** — genuinely new ground.
+- **Cross-references verified against the actual target lessons before citing** (this repo has two
+  recorded incidents of wrong cross-references — `64537fb`, and lesson 23's 7 wrong refs):
+  **Lesson 19** — read its takeaway, which really does say marginal brackets mean a raise can never
+  reduce take-home pay; lesson 29 uses it to rule out taxes as the culprit, which is consistent, not
+  contradictory. **Lesson 14** (emergency fund "turns a crisis into an inconvenience") and **Lesson 15**
+  (compounding rewards time) — both confirmed to say what lesson 29 attributes to them.
+- **What changed**: `lessons.js` + `lessonContent.js` — lesson 29, `track: "money"`, icon 📈,
+  `minutes: 4` (computed, not guessed). `quizData.js` — one question, `answer: 3`, chosen to keep the
+  spread even (7/8/8/7 → 7/8/8/8 of 31). The quiz tests the counterintuitive core: two people with the
+  same $5,000 gap but very different incomes are the same distance from any goal the gap funds.
+- **§10.1 handling.** The savings-rate idea is where this genre most easily turns into advice, so the
+  lesson states the *relationship* (a wider gap shortens the distance to goals measured in years of
+  expenses, and moves from both ends at once) and then says explicitly that this is "arithmetic, not a
+  rule about how much anyone ought to save; people weigh that trade-off very differently and reasonably
+  so." No target percentage, no savings-rate table, no retire-by-X claim, no product named. Also kept
+  the closing frame from lesson 28 — the failure is the upgrade nobody decided on, not upgrading at all.
+- **Verified**: `npm test` clean (0 failures/0 warnings — includes 5-language parity, id↔content match,
+  the `minutes` drift check, and the answer-spread warning); `check-blindspot.mjs` all six pass.
+  `npm run build` clean, main chunk 208.72 kB, no chunk-size warning — the new content went into the
+  lazy `LessonReader` chunk as the item-23 split intends. Browser check against the built `dist/` on a
+  fresh port: seeded lessons 1-28 complete, opened lesson 29 via Continue Learning, confirmed
+  "LESSON 29 OF 29", both sections, the ≈4 min estimate, takeaway, think-about-this and the §10.1
+  disclaimer all render; clicked the correct quiz option through the real UI and got "CORRECT!" with the
+  intended explanation; switched to Chinese and Japanese and confirmed full non-fallback renders.
+  `read_console_messages` clean throughout.
+- **Four authoring errors I made and caught — recorded because a run log that only reports successes is
+  not evidence of anything.** All four were in the non-English text, which is exactly where an
+  English-reading reviewer is least likely to catch them:
+  1. **The file did not parse at all.** I used ASCII `"` for the inner quotation marks in six places in
+     the Chinese text, inside double-quoted JS strings. Caught by importing the module before doing
+     anything else; fixed by replacing them with typographic `“ ”` (which Chinese should use anyway).
+  2. **English `each` leaked into a Chinese sentence** (`对收入的each层`).
+  3. **Russian `новых` leaked into a Japanese sentence** — I have no idea how, and that is the point:
+     it would have shipped invisibly to anyone reviewing in English.
+  4. **English `measured` leaked into a Korean sentence.**
+     A `perl -i` pass I wrote to fix (1) also silently did nothing the first time — the pattern literals
+     weren't UTF-8-decoded without `-Mutf8`, so it reported success while changing zero bytes, and a
+     second attempt with a clever alternating-quote regex corrupted the pairing. Reverted from a backup
+     and used explicit per-string replacements instead. **Standing advice for future runs: after editing
+     any non-English content, (a) import the module to prove it parses, and (b) run a scan for Latin
+     runs ≥3 chars and Cyrillic inside `zh`/`ja`/`ko` values, and for raw `"` inside any value. The
+     scan is what caught 2-4; reading the diff did not.**
+- **Adversarial self-check**: (1) *Blindspot register* — `check-blindspot` clean, and beyond the script
+  I re-read both sections for advice-adjacency, which is the live risk for this specific topic (see the
+  §10.1 paragraph — the savings-rate framing was the run's main judgment call). No Dalio, no live dates,
+  kids framing untouched. (2) *DECISIONS.md conflict* — none; `.js` content modules, localStorage-only
+  state and Vite all unaffected; `track: "money"` declared so the track guard passes; ids not renumbered
+  (item 22's dedicated change). (3) *Redoing done work* — the duplication check above is the substantive
+  version of this, since lesson 28 genuinely touches the topic; concluded new ground with a grep, not a
+  vibe. (4) *Verification claim* — every result was observed this session against the built output; the
+  quiz result specifically was re-tested through a real UI click after a synthetic `.click()` produced a
+  false negative (React didn't register it), so the "CORRECT!" claim reflects the real interaction.
+- **Not touched, and why**: `economic-cycles-v6.jsx`/`economic-cycles-v5.jsx` unchanged. Did not
+  retrofit the fifteen mechanics lessons — same reasoning as the previous entry.
+- **Next run should pick**: item 24 again — **delayed gratification / opportunity cost** is the
+  strongest remaining candidate (sunk cost and FOMO-and-herd-behaviour are the others), continuing the
+  strand rather than reverting to item 17's mechanics list. Items 18/20/22 and item 21's structural
+  question are unchanged. **App name still unresolved** — do not invent one.
