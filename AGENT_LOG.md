@@ -74,10 +74,10 @@ for the history. No open P1/P2 items.
 **Open**
 
 17. **[Content] Grow the lesson catalogue.** Derived from `LAUNCH_PLAN.md` §4.3, not owner-assigned but
-    the plan's own explicit gate: the catalogue is now 25 lessons / ~62,900 English characters / ~57
-    minutes end to end (measured directly from `src/content/lessons.js` — up from 24 lessons / ~59,900
-    chars / ~54 min after lesson 24 was added; this run added lesson 25, "Brokerage Accounts: How
-    Investing Actually Works Mechanically"), and Phase 0 ("free, instrumented, no payment code")
+    the plan's own explicit gate: the catalogue is now 26 lessons / ~66,300 English characters / ~60
+    minutes end to end (measured directly from `src/content/lessons.js` — up from 25 lessons / ~62,900
+    chars / ~57 min after lesson 25 was added; this run added lesson 26, "Estate Planning Basics: Wills
+    and Beneficiary Designations"), and Phase 0 ("free, instrumented, no payment code")
     doesn't end until it reaches roughly 40 lessons / 2 hours of content **and** ≥40% of installers
     finish lesson 1. Per §4.3 verbatim: "the highest-value monetization work right now is writing
     lessons, not writing billing code." Do not start billing/paywall work ahead of this gate — see item
@@ -3275,3 +3275,99 @@ executes, which neither lesson covers.
   emits a >500 kB chunk-size warning (see above) — not urgent, but code-splitting (e.g. lazy-loading
   `LessonReader`/lesson content) will eventually be worth doing before this compounds further. At 25/40
   lessons the catalogue is at 63% of the lesson-count target and 77% of the char/time target.
+
+### 2026-08-06 (eighth run, owner-directed) — Add lesson 26: "Estate Planning Basics: Wills and Beneficiary Designations" (backlog item 17)
+
+Owner explicitly asked to add another lesson toward the 40-lesson gate, mid-session (not a scheduled
+trigger). `git status` at start showed only the long-standing untracked `economic-cycles-v6.jsx` and
+`git log` confirmed the repo was exactly where the previous entry left it (no other run landed in
+between) — re-checked rather than assumed, since a prior turn in this same session had already found the
+repo further along than expected once before.
+
+Picked "estate-planning basics" over the other listed candidate (a deeper credit-report dive distinct
+from Lesson 16) because it opens a genuinely new topic area rather than deepening one already covered,
+and it plugs directly into two existing lessons without overlapping them: Lesson 18 (401(k)/IRA accounts)
+and Lesson 20 (life insurance) both turn out to have their own beneficiary designations that a will
+doesn't control — a mechanism neither lesson currently explains and that the app had no estate-planning
+content to cover at all.
+
+- **Added lesson 26** to `src/content/lessons.js` (icon 📜, color `#4c1d95` — checked against every
+  existing lesson's icon/color for a collision, found none): two sections — what a will actually does
+  (directs distribution of belongings/money and names guardians for minor children) and what happens
+  without one (intestate succession — a fixed state-law formula applied regardless of the deceased's
+  actual wishes), and how beneficiary designations on accounts like the 401(k)/IRA from Lesson 18 and the
+  life insurance from Lesson 20 pass directly to the named beneficiary and override even a more recently
+  written will — illustrated with the common divorce/remarriage scenario where an outdated beneficiary
+  form still lists an ex-spouse. Deliberately avoided any state-specific legal rules, estate-tax
+  thresholds, or "how to write a will" instructions — those vary by jurisdiction and change over time,
+  which would recreate a §2.3-style staleness/accuracy risk in a domain (law) where getting a specific
+  detail wrong is worse than in most of this app's other content; the lesson explains the *mechanism*
+  (will vs. beneficiary-designation precedence) rather than jurisdiction-specific procedure. Included an
+  explicit disclaimer sentence that the practical takeaway is the mechanism itself, not an instruction on
+  what any one person's beneficiaries should be, since that "depends entirely on someone's own
+  relationships and circumstances" — mirroring the framing pattern lessons 18/19/20/23/24 already used
+  for owner-specific financial choices, applied here to a legal one; confirmed the standing disclaimer
+  ("not personalized investment, legal, or tax advice") explicitly covers "legal" and rendered correctly
+  in the click-through below, which matters more for this lesson than most since it's the first one to
+  touch legal (not just financial) territory. All five languages, same narrative-then-concept style as
+  lessons 19-25.
+- **Added a matching `quizData.js` entry** (lesson: 26, answer index 0 — distribution was 6/7/7/7 before
+  this run, so index 0 brings it to a perfectly balanced 7/7/7/7): the same divorce/beneficiary scenario
+  from the lesson body, restated as a quiz question, testing whether the reader internalized that the
+  account's own beneficiary form wins over a more recent will rather than assuming the newer document
+  should control.
+- **Verified with a real click-through**: built the static bundle (`npm run build`, `vite v6.4.3`, 61
+  modules, `dist/assets/index-B5ZW1KrF.js` 530.46 kB / 210.60 kB gzip, 853ms — chunk-size warning persists
+  and grew slightly, as expected, not a new issue), served it via the documented Python-server workaround,
+  opened it in the browser-preview tool. Confirmed "LESSON 26 OF 26" (lesson count picked up
+  automatically), unlocked lessons 1-25 via `localStorage.setItem("ecycles_completed_lessons", ...)` to
+  bypass the sequential-unlock gate deliberately, switched to `en` via the `<select>` + dispatched
+  `change` event, read the full lesson body via `get_page_text` (disclaimer footer rendered, explicitly
+  confirmed it says "legal" not just "investment"/"tax"), clicked the correct quiz option via a DOM-click
+  workaround (`document.querySelectorAll('button')` + text match + `.click()`) and got the correct-answer
+  state, confirmed `lesson_started`/`quiz_taken` (`lessonId: 26, correct: true, source: "lesson_check"`)
+  landed in the analytics log in order, then switched the language picker to `ko` and confirmed the
+  Korean translation rendered correctly end to end (title through quiz options, including the
+  already-answered "정답!" state and the Korean disclaimer footer persisting across the language switch),
+  clicked "완료하기" (Mark Complete), and confirmed `lesson_completed` (`lessonId: 26`) landed as the
+  log's final entry. Killed the Python server afterward.
+- **Adversarial self-check**: (1) *Blindspot register* — `npm run check-blindspot` clean (all six
+  checks); manually re-read the English and Korean lesson text for advice-adjacent framing, with extra
+  scrutiny since this is the first lesson to touch legal (not just financial) territory — none found; the
+  lesson explains what a will and a beneficiary designation each do and how they interact, without ever
+  instructing a reader to write a will, choose specific beneficiaries, or take any particular legal
+  action, and includes an explicit sentence stating the takeaway is the mechanism, not personal
+  instruction. No Dalio references. No live-looking dated figures — no state-specific rules, estate-tax
+  thresholds, or dollar amounts appear anywhere in the lesson, deliberately, per the reasoning in "Added
+  lesson 26" above. (2) *DECISIONS.md conflict* — none; content-only change to `.js` content modules,
+  consistent with the `.js`-not-JSON decision; no state/storage/platform changes. (3) *Redoing done
+  work* — grepped `AGENT_LOG.md` for "estate," "beneficiary," and "will" (filtering out unrelated modal-
+  verb matches) and found only prior run-log entries listing estate planning as a *candidate*, never a
+  completed item, confirming this wasn't already built; lessons 18 and 20 (cross-referenced, not
+  modified) were read to confirm this lesson's claims about them are accurate to what those lessons
+  actually say. (4) *Verification claim* — the click-through above, including the analytics-log
+  inspection and the bidirectional language-switch check (en read and quiz-answered, then switched to ko
+  with state persisting), was actually run this session against the real build output.
+- **Verified build and tests**: `npm test` → `check-data.mjs`: `PASS: 0 failure(s), 0 warning(s)`; `npm
+  run check-blindspot`: `PASS: 0 failure(s)` (all six checks). `npm run build` → succeeded; chunk-size
+  warning present as noted above, unchanged in kind from lesson 25's entry.
+- **Updated `LAUNCH_READINESS.md`**: refreshed using the file's own documented refresh commands. Phase-0
+  lesson-catalogue row now reads 26 lessons / 66,289 English chars / ~60 min (~81% of the char/time
+  target, ~65% of the lesson-count target), up from 25 / 62,938 / ~57 min. Cross-checked against the
+  app's own `estimateMinutes` sum (55 min vs. 60 min) — drift is about the same as at 25 lessons, still
+  close enough to trust both. Re-measured §10.4: es/ko/zh/ja stayed essentially flat-to-slightly-up
+  (0.52x/0.26x/0.16x/0.22x) versus the lesson-25 measurement, consistent with translating the new lesson
+  in step.
+- **Not touched, and why**: `economic-cycles-v6.jsx` — long-standing untracked reference file, unchanged
+  before and after (re-confirmed against the memory note on this file: still reference/inspiration
+  material only, not a fixture to build from). `economic-cycles-v5.jsx` and `API_KEYS.template.txt`
+  likewise untouched.
+- **Next run should pick**: item 17 again if more lessons are wanted — the credit-report-vs-credit-score
+  deep dive is now the only previously-listed candidate not yet built; other untouched topic areas
+  include basic identity-theft/fraud protection or an intro to filing taxes end to end (distinct from
+  Lesson 19's paycheck-withholding mechanics) — or item 20's translation work pending owner sign-off, or
+  the real analytics-provider swap once a PostHog account/key exists (owner action). The build's >500 kB
+  chunk-size warning (noted in the last two entries) is still open and will keep growing with each new
+  lesson; worth addressing via code-splitting before it becomes a real performance problem rather than
+  just a build-time notice. At 26/40 lessons the catalogue is at 65% of the lesson-count target and 81%
+  of the char/time target.
