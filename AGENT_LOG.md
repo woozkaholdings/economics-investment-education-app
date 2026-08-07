@@ -74,10 +74,10 @@ for the history. No open P1/P2 items.
 **Open**
 
 17. **[Content] Grow the lesson catalogue.** Derived from `LAUNCH_PLAN.md` §4.3, not owner-assigned but
-    the plan's own explicit gate: the catalogue is now 22 lessons / ~53,000 English characters / ~44
-    minutes end to end (measured directly from `src/content/lessons.js` — up from 21 lessons / ~49,700
-    chars / ~45 min after lesson 21 was added; this run added lesson 22, "W-2 vs. 1099: Why Your Tax
-    Bill Changes With How You're Paid"), and Phase 0 ("free, instrumented, no payment code")
+    the plan's own explicit gate: the catalogue is now 23 lessons / ~56,000 English characters / ~47
+    minutes end to end (measured directly from `src/content/lessons.js` — up from 22 lessons / ~53,000
+    chars / ~44 min after lesson 22 was added; this run added lesson 23, "Investment Fees: The Cost You
+    Don't See on a Bill"), and Phase 0 ("free, instrumented, no payment code")
     doesn't end until it reaches roughly 40 lessons / 2 hours of content **and** ≥40% of installers
     finish lesson 1. Per §4.3 verbatim: "the highest-value monetization work right now is writing
     lessons, not writing billing code." Do not start billing/paywall work ahead of this gate — see item
@@ -3018,3 +3018,81 @@ the employer is quietly paying half of it, which is exactly the gap a 1099 contr
   ratios), or item 20's translation work pending owner sign-off, or the real analytics-provider swap once
   a PostHog account/key exists (owner action). At 22/40 lessons the catalogue is at 55% of the
   lesson-count target and 60% of the char/time target.
+
+### 2026-08-06 (fifth run) — Add lesson 23: "Investment Fees" (backlog item 17)
+
+`git status` at start showed only the long-standing untracked `economic-cycles-v6.jsx` — no other
+uncommitted state, so this is a fresh scheduled run, not a recovery. Confirmed against the memory note
+on that file (and this log's own entry below it) that it's still reference-only and left it untouched.
+Picked "investment fees/expense ratios" from the three candidates the last run-log entry listed, over
+estate planning or mortgages, because it plugs directly into two lessons the app already teaches rather
+than opening a new topic area: Lesson 15 (compound interest — a fee is functionally negative compounding)
+and Lesson 12 (diversification — the reason most people hold an index fund in the first place, which
+makes "why pay more for the same underlying holdings" a natural question once fees are on the table).
+
+- **Added lesson 23** to `src/content/lessons.js` (icon 💸, color `#be123c` — checked against every
+  existing lesson's icon/color for a collision, found none): two sections — what an expense ratio is and
+  why it's easy to miss (deducted continuously from fund assets, never billed), and why a small
+  percentage fee becomes large money (fees compound every year exactly like Lesson 15's compound
+  interest, just working against the balance — worked example: $10,000 at 7%/30 years, 0.05% fee →
+  ~$76,000 vs. 1.05% fee → ~$57,000, a ~25% difference from a 1-point fee gap). Explicitly cross-
+  references Lesson 15 (compounding mechanism) and Lesson 12 (diversification as what an index fund
+  already provides). The $10,000/7%/30-year figures are a labelled worked example for teaching the
+  compounding mechanism, not a claimed current return or fee — same illustrative-numbers pattern as
+  Lesson 15's own Rule-of-72 example and Lesson 21's inflation example, not the §2.3 problem (a live-
+  looking *current* market figure). Deliberately included a caveat sentence that the cheapest fund isn't
+  automatically the right choice ("some strategies genuinely cost more to run") so the lesson explains
+  the fee-compounding mechanism without telling the reader which specific fund to buy. All five
+  languages, same narrative-then-concept style as lessons 19-22.
+- **Added a matching `quizData.js` entry** (lesson: 23, answer index 1 — distribution was 6/6/6/6 before
+  this run, so index 1 brings it to 6/7/6/6, still well under the "no index over half" warning threshold):
+  a scenario question (two funds, same holdings, 0.05% vs. 1.05% fee, 30 years — what happens) that
+  requires applying the lesson's compounding-fee math, not just recalling a fact.
+- **Verified with a real click-through**: built the static bundle (`npm run build`, `vite v6.4.3`, 61
+  modules, `dist/assets/index-CRx68KA8.js` 465.64 kB / 183.62 kB gzip, 791ms), served it via the
+  documented Python-server workaround, opened it in the browser-preview tool. Confirmed "LESSON 23 OF
+  23," unlocked lessons 1-22 via `localStorage.setItem("ecycles_completed_lessons", ...)`, read the full
+  English body via `get_page_text`, clicked the correct quiz option and got "CORRECT!" with the right
+  explanation, confirmed `lesson_started`/`quiz_taken` (`lessonId: 23, correct: true`) landed in the
+  analytics log in order (inspected `localStorage.getItem("ecycles_analytics_log")` directly), then
+  switched to `ja` and confirmed the Japanese translation rendered correctly end to end (title through
+  quiz options, including the already-answered "正解！" state persisting across the language switch).
+  Killed the Python server afterward.
+- **Verified build and tests**: `npm test` → `check-data.mjs`: `PASS: 0 failure(s), 0 warning(s)`
+  (quiz answer-index warning threshold not tripped); `check-blindspot.mjs`: `PASS: 0 failure(s)` (all six
+  checks). `npm run build` → clean, as above.
+- **Adversarial self-check**: (1) *Blindspot register* — `npm run check-blindspot` clean (all six
+  checks); manually re-read the English and Japanese lesson text for advice-adjacent framing — none
+  found, the lesson explains a fee mechanism (how expense ratios are charged and why they compound)
+  without recommending a specific fund, and includes an explicit caveat against "cheapest is always
+  best" framing; the standard disclaimer still renders on the lesson screen (confirmed in the
+  click-through). No Dalio references. No live-looking dated figures — the $10,000/7%/30-year example is
+  a labelled illustrative calculation, not a claimed current rate or fee, reasoned through explicitly
+  above rather than just trusted to the grep (which also passed). (2) *DECISIONS.md conflict* — none;
+  content-only change to `.js` content modules, consistent with the `.js`-not-JSON decision; no
+  localStorage/Vite/Expo changes. (3) *Redoing done work* — grepped `AGENT_LOG.md`'s "Completed and
+  pruned" list and the full backlog for "expense ratio," "fee," and "fund" and found nothing, confirming
+  investment fees weren't already covered; lessons 12 and 15 (cross-referenced, not modified) were read
+  to confirm this lesson's claims about them are accurate to what those lessons actually say. (4)
+  *Verification claim* — the click-through above, including the analytics-log inspection and the
+  Japanese-language check with state persistence, was actually run this session against the real build
+  output.
+- **Updated `LAUNCH_READINESS.md`**: refreshed using the file's own documented refresh commands (not
+  hand-estimated) — re-imported `src/content/lessons.js` via the exact `node -e` snippets the file
+  prescribes for both the lesson-catalogue char count and the per-language translation-ratio measurement.
+  Phase-0 lesson-catalogue row now reads 23 lessons / 56,045 English chars / ~47 min (~63% of the
+  char/time target, ~58% of the lesson-count target), up from 22 / 53,020 / ~44 min. Cross-checked the
+  new method's 22-lesson figure (44 min via `estimateMinutes`) against the prior run's reported ~44 min
+  before trusting the 23-lesson number, since the two measurement methods (chars/5.5 at 200wpm vs. the
+  app's own per-lesson word-count `estimateMinutes`) could in principle drift apart. Re-measured §10.4:
+  es/ko/zh/ja stayed essentially flat (0.43x/0.22x/0.14x/0.19x) versus the lesson-22 measurement,
+  consistent with translating the new lesson in step. Updated the file's "Last refreshed" line.
+- **Not touched, and why**: `economic-cycles-v6.jsx` — long-standing untracked reference file, unchanged
+  before and after (re-confirmed against the memory note on this file: still reference/inspiration
+  material only, not a fixture to build from). `economic-cycles-v5.jsx` and `API_KEYS.template.txt`
+  likewise untouched.
+- **Next run should pick**: item 17 again if more lessons are wanted (candidates not yet covered:
+  estate-planning basics, basic real-estate/mortgage concepts, understanding credit reports vs. credit
+  scores in more depth, or homeownership/renting trade-offs), or item 20's translation work pending owner
+  sign-off, or the real analytics-provider swap once a PostHog account/key exists (owner action). At
+  23/40 lessons the catalogue is at 58% of the lesson-count target and 63% of the char/time target.
