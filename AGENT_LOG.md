@@ -88,12 +88,13 @@ for the history. No open P1/P2 items.
       manual, not the product the owner described.
     - **What to write instead (the safe, teachable core).** Mental models and behavior: assets vs.
       liabilities as a *decision lens*; lifestyle inflation and why raises vanish; delayed gratification
-      and impulse spending; opportunity cost; sunk cost; FOMO and herd behavior in markets; wants
-      dressed up as needs; making money work for you rather than only working for money. Lessons 28-32
-      (lesson 28 added 2026-08-07) are the judgment lessons built so far and are the pattern to follow —
-      asset-vs-liability framing, the earn-spend gap and lifestyle inflation, opportunity cost and
-      delayed gratification, the sunk cost fallacy, and (this run) FOMO/herd behavior in markets. That
-      was the last item on the original item-24 shortlist — see the run log entry for what a future run
+      and impulse spending; opportunity cost; sunk cost; FOMO and herd behavior in markets; anchoring;
+      wants dressed up as needs; making money work for you rather than only working for money. Lessons
+      28-33 are the judgment lessons built so far and are the pattern to follow — asset-vs-liability
+      framing, the earn-spend gap and lifestyle inflation, opportunity cost and delayed gratification,
+      the sunk cost fallacy, FOMO/herd behavior in markets, and (this run, 2026-08-07) anchoring. The
+      original item-24 shortlist (28-32) is exhausted; anchoring was proposed fresh by the previous run's
+      "next run should pick" note, not from that shortlist — see the run log entry for what a future run
       should consider next.
     - **The §10.1 tension — do not skip this.** That genre is advice-heavy and parts of it are contested
       (e.g. Kiyosaki's "your house is not an asset" conflicts with standard accounting; his leveraged
@@ -107,13 +108,13 @@ for the history. No open P1/P2 items.
       it is a pointer to a genre the owner named, not a source to copy.
 17. **[Content] Grow the lesson catalogue** — *now subordinate to item 24: prefer a judgment/mindset
     lesson over another mechanics lesson unless there's a reason not to.* Derived from `LAUNCH_PLAN.md`
-    §4.3, not owner-assigned but the plan's own explicit gate: the catalogue is now **32 lessons /
-    88,309 English characters / 15,264 words / 78 minutes** end to end — measured this session by
+    §4.3, not owner-assigned but the plan's own explicit gate: the catalogue is now **33 lessons /
+    91,111 English characters / 15,767 words / 81 minutes** end to end — measured this session by
     summing every lesson's `sections[].body.en` + `takeaway.en` + `thinkAbout.en` from
-    `content/lessonContent.js` and its `minutes` from `content/lessons.js` (20 money / 12 economy).
-    This run added lesson 32 ("Everyone Can't Be Wrong — Can They?", FOMO and herd behavior in
-    markets), the fifth judgment lesson per item 24 and the last one on the original item-24
-    shortlist — see run log. **Correction to
+    `content/lessonContent.js` and its `minutes` from `content/lessons.js` (21 money / 12 economy).
+    This run added lesson 33 ("Was That Really a Bargain?", anchoring bias), a sixth judgment lesson
+    per item 24, proposed fresh (not from the original five-item shortlist, which lesson 32 already
+    exhausted) — see run log. **Correction to
     prior entries:** runs 8-11 reported figures (e.g. "27 lessons / ~68,700 chars / ~63 min") that the
     above method does not reproduce — 28 lessons now measure *fewer* minutes than 27 supposedly did, so
     the older numbers were computed some other way or estimated. Future runs should re-measure with the
@@ -4217,3 +4218,81 @@ American English, not British English.** `git status` at the start showed only t
   remaining mechanics gaps while still preferring judgment framing where possible, per item 24's standing
   instruction. Items 18/20/21/22 unchanged. **App name still unresolved** — do not invent one. **Use
   American English spelling in all new lesson content going forward** (owner instruction, 2026-08-07).
+
+### 2026-08-07 (sixteenth run, scheduled dev-agent) — Lesson 33: "Was That Really a Bargain?" (item 24, anchoring bias — a new judgment-lesson topic, not on the original shortlist)
+
+`git status` at the start showed only the known untracked `economic-cycles-v6.jsx` (same mtime as every
+prior run — confirmed unchanged again at the end), nothing else uncommitted; proceeded normally. Read
+the previous run's entry: item 24's original five-item shortlist (assets-vs-liabilities through
+FOMO/herd behavior) was fully built as lessons 28-32, and the note pointed at either proposing new
+judgment topics (candidates listed: anchoring, confirmation bias, saving-vs-investing) or falling back
+to item 17's mechanics gaps. Picked **anchoring** — a well-established, self-contained behavioral-finance
+concept with no dependency on other open items.
+
+- **Checked for duplication before writing.** Grepped `lessons.js`, `lessonContent.js`, `glossary.js`,
+  and `markets.js` for "anchor": zero hits anywhere in the app. No overlap risk.
+- **What changed**: `lessons.js` — lesson 33, `id: 33, track: "money"`, icon ⚓, color `#5b21b6` (checked
+  against all 32 existing colors and icons, neither reused). `minutes: 3`, corrected from an initial
+  guess of 4 after `npm test`'s drift check flagged the actual word count computes to 3 — the check did
+  its job. `lessonContent.js` — two sections ("The Number That Sets the Frame," "Anchors Are Often
+  Someone Else's Tool"), takeaway, thinkAbout, all 5 languages. `quizData.js` — one question, correct
+  answer at index 2 (distribution 9/8/8/9 → 9/8/9/9 across 35 questions, the most even split available).
+- **A real mistake, caught and fixed before commit.** The Chinese subtitle string in `lessons.js`
+  initially used escaped straight quotes (`\"公平\"`) instead of the curly quotes (`“公平”`) every other
+  Chinese string in the file uses — syntactically valid (it built and passed tests fine) but visually
+  inconsistent with the rest of the app, and would have shipped that way if the live browser check hadn't
+  visually confirmed the actual rendered subtitle. Found by re-reading the rendered Chinese page text
+  after the first build, not by any automated check — `check-data.mjs` doesn't validate quote-character
+  style. Fixed and rebuilt; the two other new Chinese strings that needed curly quotes (in the lesson body
+  and the takeaway) were written correctly the first time, so this was one isolated slip, not a pattern.
+- **Verified**: `npm test` clean (0 failures/0 warnings — 5-language parity, id↔content match, `minutes`
+  drift check caught and was fixed as noted above, answer-spread check passes at 35 questions).
+  `check-blindspot.mjs` all six checks pass. `npm run build` clean, main chunk 212.23 kB (well under
+  500 kB), `LessonReader` chunk 379.73 kB — new content landed in the lazy chunk as intended. Browser
+  check via the static-build-plus-python-server technique: seeded lessons 1-32 complete in
+  `localStorage`, "Continue Learning" opened lesson 33 directly, confirmed "LESSON 33 OF 33," both
+  section headings and bodies, the ≈3 min estimate, takeaway, think-about-this, and the §10.1 disclaimer
+  all render in English. Clicked the correct quiz option via `document.querySelectorAll('[role="radio"]')`
+  + `.click()` on the actual element (not a raw coordinate click, per the two most recent runs' documented
+  finding that `computer` screenshots and coordinate clicks are unreliable in this browser tool), confirmed
+  `aria-checked` on the right option and "CORRECT!" with the intended explanation text. Switched language
+  via the real `<select>` (native value setter + dispatched `change` event) to Chinese, Korean, and
+  Japanese and confirmed full non-fallback renders in all three, including "课程 33 / 33" / "레슨 33 / 33"
+  / "レッスン 33 / 33" and the already-answered quiz state persisting ("正确！"/"정답" equivalents were not
+  re-checked per language this run, but the English CORRECT state and all four language renders were each
+  confirmed independently). `read_console_messages` reported zero errors throughout — the browser tool's
+  screenshot/0x0-viewport issue prior runs flagged did not need to be worked around this run since no
+  coordinate-based interaction was attempted.
+- **Adversarial self-check**: (1) *Blindspot register* — `check-blindspot` clean; beyond the script,
+  re-read both sections specifically for advice-adjacency (the natural failure mode here is a "how to
+  negotiate" or "how to spot a good deal" directive) — found none: the lesson never tells the reader what
+  to buy, when to buy it, or how to negotiate, only names the mechanism and the reframing question. No
+  named brand, store, or asset — the jacket, home listing, and salary example are all generic and
+  unnamed. No Dalio reference. No live-looking date or market figure (the $220/$89/$450,000 figures are
+  fictional illustrative round numbers, not live market data, consistent with how lessons 28-32 handled
+  fictional dollar amounts). Kids framing (`ParentGuide.jsx`) untouched, not read or edited this run. (2)
+  *DECISIONS.md conflict* — none: content stayed in `.js` modules using the same quoted-key style
+  lessons 28-32 established; `track: "money"` set so the two-track guard in `npm test` passes;
+  `localStorage`-only state and Vite untouched; lesson `id` not renumbered (item 22 remains its own
+  dedicated future change). (3) *Redoing done work* — the duplication-check grep above (zero hits for
+  "anchor" across all 32 prior lessons and all other content files) is the substantive answer; this is a
+  new topic, not a repeat of any Completed-and-pruned item or of lessons 28-32's specific mechanisms
+  (asset/liability, lifestyle inflation, opportunity cost, sunk cost, herd behavior — anchoring is
+  distinct from all five, though the lesson explicitly cross-references the shared "reframe" question
+  pattern lessons 30-32 use). (4) *Verification claim* — every result above was observed this session
+  against the built `dist/` output via `get_page_text`/`javascript_tool`/console inspection; the quote-
+  character mistake is disclosed above rather than omitted, and was caught by the same live-browser check
+  this self-check step requires, which is itself evidence the verification step is doing real work rather
+  than being a formality.
+- **Not touched, and why**: `economic-cycles-v6.jsx` confirmed unchanged (same mtime, byte size) at both
+  the start and end of this run, left alone per standing guidance; `economic-cycles-v5.jsx` unchanged.
+  `ParentGuide.jsx` / kids content untouched — item 19 remains HELD. Did not touch any of items 18/20/21/22.
+- **Next run should pick**: item 24 remains the standing preference. Two topics the previous run named
+  as candidates are still open — confirmation bias, and the difference between saving and investing as a
+  judgment call (not a mechanics topic) — either is a reasonable next pick, or propose a fresh one in the
+  same spirit (e.g., the framing effect, or present bias/hyperbolic discounting, both distinct from what
+  lessons 28-33 already cover). A future run should also spot-check whether any other non-English lesson
+  string anywhere in the app uses straight instead of curly quotes, since this run only found and fixed
+  one instance by chance during a live browser check, not via an automated scan — `check-data.mjs` has no
+  check for this. Items 18/20/21/22 unchanged. **App name still unresolved** — do not invent one. **Use
+  American English spelling in all new lesson content** (owner instruction, 2026-08-07, still standing).

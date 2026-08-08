@@ -215,4 +215,9 @@ export const lessons = [
     title: {"en":"Everyone Can't Be Wrong — Can They?","es":"Tanta Gente No Puede Estar Equivocada, ¿Verdad?","ko":"다들 하는데, 설마 틀렸을까?","zh":"大家都在买，难道会错吗？","ja":"みんなが買っているなら、間違っているはずがない？"},
     subtitle: {"en":"The fear of missing out feels like information. Usually, it's just a crowd moving together.","es":"El miedo a quedarte fuera se siente como información. Casi siempre, es solo una multitud moviéndose junta.","ko":"놓칠까 봐 두려운 마음은 정보처럼 느껴지지만, 대개는 그저 무리가 함께 움직이는 것일 뿐입니다.","zh":"害怕错过的感觉像是一种信息，但它通常只是人群在一起行动。","ja":"取り残される恐怖は情報のように感じられますが、たいていはただ群衆が一緒に動いているだけです。"},
   },
+  {
+    id: 33, track: "money", icon: "⚓", color: "#5b21b6", minutes: 3,
+    title: {"en":"Was That Really a Bargain?","es":"¿De Verdad Era una Ganga?","ko":"그거, 정말 싸게 산 거였을까?","zh":"那真的是个划算的价格吗？","ja":"それは本当にお得だったのか？"},
+    subtitle: {"en":"The number crossed out above the price you paid does more to shape what feels fair than the price itself.","es":"El número tachado arriba del precio que pagaste hace más para definir lo que se siente justo que el precio en sí.","ko":"가격 위에 그어진 원래 가격 숫자가, 실제로 낸 가격보다 더 크게 '적정하다'는 느낌을 만들어냅니다.","zh":"价格上方那个被划掉的数字，比你实际付的价格更能左右你觉得“公平”的感觉。","ja":"価格の上に線を引かれた数字は、実際に支払った価格そのものよりも、何が「妥当」に感じられるかを左右します。"},
+  },
 ];
