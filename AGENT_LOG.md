@@ -86,14 +86,15 @@ for the history. No open P1/P2 items.
       you're about to choose badly, why people who know all the mechanics still end up broke. Mechanics
       are necessary and the existing lessons are not wasted — but on their own they are a reference
       manual, not the product the owner described.
-    - **What to write instead (the safe, teachable core).** Mental models and behaviour: assets vs.
+    - **What to write instead (the safe, teachable core).** Mental models and behavior: assets vs.
       liabilities as a *decision lens*; lifestyle inflation and why raises vanish; delayed gratification
-      and impulse spending; opportunity cost; sunk cost; FOMO and herd behaviour in markets; wants
-      dressed up as needs; making money work for you rather than only working for money. Lessons 28-31
+      and impulse spending; opportunity cost; sunk cost; FOMO and herd behavior in markets; wants
+      dressed up as needs; making money work for you rather than only working for money. Lessons 28-32
       (lesson 28 added 2026-08-07) are the judgment lessons built so far and are the pattern to follow —
       asset-vs-liability framing, the earn-spend gap and lifestyle inflation, opportunity cost and
-      delayed gratification, and (this run) the sunk cost fallacy. Remaining candidate from the original
-      shortlist: FOMO/herd behaviour in markets.
+      delayed gratification, the sunk cost fallacy, and (this run) FOMO/herd behavior in markets. That
+      was the last item on the original item-24 shortlist — see the run log entry for what a future run
+      should consider next.
     - **The §10.1 tension — do not skip this.** That genre is advice-heavy and parts of it are contested
       (e.g. Kiyosaki's "your house is not an asset" conflicts with standard accounting; his leveraged
       real-estate advocacy is genuinely risky prescriptive advice; parts of the book are disputed as
@@ -106,12 +107,13 @@ for the history. No open P1/P2 items.
       it is a pointer to a genre the owner named, not a source to copy.
 17. **[Content] Grow the lesson catalogue** — *now subordinate to item 24: prefer a judgment/mindset
     lesson over another mechanics lesson unless there's a reason not to.* Derived from `LAUNCH_PLAN.md`
-    §4.3, not owner-assigned but the plan's own explicit gate: the catalogue is now **31 lessons /
-    84,230 English characters / 14,539 words / 74 minutes** end to end — measured this session by
+    §4.3, not owner-assigned but the plan's own explicit gate: the catalogue is now **32 lessons /
+    88,309 English characters / 15,264 words / 78 minutes** end to end — measured this session by
     summing every lesson's `sections[].body.en` + `takeaway.en` + `thinkAbout.en` from
-    `content/lessonContent.js` and its `minutes` from `content/lessons.js` (19 money / 12 economy).
-    This run added lesson 31 ("Throwing Good Money After Bad", the sunk cost fallacy), the fourth
-    judgment lesson per item 24 — see run log. **Correction to
+    `content/lessonContent.js` and its `minutes` from `content/lessons.js` (20 money / 12 economy).
+    This run added lesson 32 ("Everyone Can't Be Wrong — Can They?", FOMO and herd behavior in
+    markets), the fifth judgment lesson per item 24 and the last one on the original item-24
+    shortlist — see run log. **Correction to
     prior entries:** runs 8-11 reported figures (e.g. "27 lessons / ~68,700 chars / ~63 min") that the
     above method does not reproduce — 28 lessons now measure *fewer* minutes than 27 supposedly did, so
     the older numbers were computed some other way or estimated. Future runs should re-measure with the
@@ -324,6 +326,22 @@ technique for visual verification instead of writing another "could not visually
 server is not persistent infrastructure — it's started fresh, points at whatever `dist/` was just built,
 and doesn't need to be torn down deliberately (it's a plain background process against a throwaway port,
 not something committed or relied on between runs).
+
+**Browser-tool click/screenshot unreliability, seen across multiple runs (2026-08-04 through 2026-08-07)
+— when this happens, stop trusting `computer` and drive the DOM directly.** Several runs have hit the
+`computer` tool's screenshot action returning a blank/black frame, and `read_page` reporting
+`Viewport: 0x0` even though the page genuinely has content at a real size (confirmed via
+`window.innerWidth`/`innerHeight` in `javascript_tool`). When that happens, coordinate-based `computer`
+clicks land on the wrong element — the fifteenth run (2026-08-07) accidentally answered a quiz question
+wrong this way before catching it via `aria-checked` inspection. **The reliable fallback**: do everything
+through `javascript_tool` — find the target element via `querySelectorAll`/`textContent` matching, call
+`.click()` on it directly (this does work; React's synthetic event system does receive a real DOM
+`click()` dispatch), and confirm the result by re-reading `document.querySelector('main').innerText` or
+an `aria-*` attribute afterward, **not** by the immediate return value of the click call — a real click's
+effect can take one extra tool round-trip to show up, so checking too early reads as "nothing happened"
+even when the click worked. For a native `<select>`, plain `el.value = "x"` does not notify React; use
+`Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype, "value").set.call(el, "x")` followed by
+`el.dispatchEvent(new Event("change", {bubbles: true}))`.
 
 ## Run log
 
@@ -4106,3 +4124,96 @@ whose "next run should pick" note pointed straight at this run's topic.
   lesson lands, item 24's shortlist is exhausted and a future run should either propose new judgment-
   lesson topics or fall back to item 17's remaining mechanics gaps with item 24's framing in mind. Items
   18/20/21/22 unchanged. **App name still unresolved** — do not invent one.
+
+### 2026-08-07 (fifteenth run, interactive/owner-directed) — Lesson 32: "Everyone Can't Be Wrong — Can They?" (item 24, fifth and final shortlist lesson: FOMO and herd behavior in markets)
+
+Owner asked directly in-session to build the FOMO/herd-behavior lesson next — exactly the item the
+previous entry's "next run should pick" note pointed at — with one explicit instruction: **write it in
+American English, not British English.** `git status` at the start showed only the known untracked
+`economic-cycles-v6.jsx` (same mtime as every prior run), nothing else uncommitted; proceeded normally.
+
+- **American English requirement.** The backlog text itself (this file) had been using British spelling
+  ("behaviour") in item 24's own prose for several runs, and the app's actual EN lesson content was
+  already consistently American (`npm test`/`check-blindspot` don't check spelling, so this was never
+  enforced, just happened to be consistent). Wrote lesson 32 with American spelling throughout
+  ("behavior", not "behaviour") and ran a scripted check afterward for a list of common British-only
+  spellings (behaviour, colour, favour, organise, realise, analyse, modelling, travelled, centre,
+  defence, licence, programme, labelled, labour, recognise, criticise, emphasise, cancelled) across every
+  `"en"` string in `lessonContent.js` — zero hits. Also corrected item 24's own backlog prose in this
+  file from "behaviour" to "behavior" for consistency going forward, since the owner's instruction reads
+  as a standing preference for this project, not a one-off for this lesson only.
+- **Checked for duplication before writing.** Grepped `lessonContent.js`, `lessons.js`, `glossary.js`,
+  and `markets.js` for "bubble", "herd", "FOMO", "crowd", "tulip", "dot-com", "mania": the only hit was
+  Lesson 5's existing definition of a *bubble* (people borrowing heavily to buy an asset because they
+  expect the price to keep rising) — a macro/credit-cycle mechanism, not the individual psychological
+  mechanism (informational cascades, loss-averse panic selling) this lesson teaches. Confirmed the two
+  are complementary, not overlapping, and cited Lesson 5 directly in section 1 rather than silently
+  reusing its ground.
+- **Cross-references verified against the actual target lessons before citing**: reread Lesson 5's body
+  ("confidence feeds on itself" as people watch each other bid an asset higher) before paraphrasing it as
+  "close to the mechanism Lesson 5 described" — deliberately hedged ("close to," not "the same as") since
+  Lesson 5's context is lenders/borrowers and this lesson's is buyers generally. Reread Lesson 31's
+  reframe question (deciding fresh today, ignoring what's already committed) before echoing its shape for
+  a crowd-influence check ("if you'd never seen anyone else buying or selling this... would you make the
+  same choice?").
+- **§10.1 handling** — this topic's natural failure mode is either recommending a strategy ("follow the
+  trend" or "never follow the crowd") or naming a specific historical bubble/asset, which would also risk
+  §2.3-adjacent dated-content problems. The lesson uses a fictional, unnamed-asset example (Marcus) and
+  never names a real bubble, index, or asset class; states explicitly that a crowd isn't always wrong and
+  that the lesson isn't telling the reader which way to act, only what the crowd's size is and isn't
+  evidence of. `check-blindspot.mjs`'s five §10.1 patterns don't match anywhere in the new text, and a
+  manual re-read confirmed no directive language beyond that automated check.
+- **What changed**: `lessons.js` — lesson 32, `id: 32, track: "money"`, icon 🐑, color `#c2410c` (checked
+  against every existing color, not reused). `minutes: 4`, computed from the actual English word count
+  (727 words across both section bodies + takeaway + thinkAbout ≈ 3.6 min, rounds to 4). `lessonContent.js`
+  — two sections, takeaway, thinkAbout, all 5 languages. `quizData.js` — one question with the correct
+  option placed at index 3 (not 0, to keep the answer-position spread even): 9/8/8/8 (33 questions) →
+  9/8/8/9 (34 questions), the most even split possible since 34 doesn't divide evenly by 4.
+- **Verified**: `npm test` clean (0 failures/0 warnings — 5-language parity, id↔content match, `minutes`
+  drift check, answer-spread check all pass at 34 questions). `check-blindspot.mjs` all six checks pass.
+  `npm run build` clean, main chunk 211.31 kB (well under 500 kB), `LessonReader` chunk 362.43 kB — new
+  content landed in the lazy chunk as intended. Browser check via the static-build-plus-python-server
+  technique: seeded lessons 1-31 complete, opened lesson 32, confirmed "Lesson 32 of 32," both sections,
+  ≈4 min estimate, takeaway, think-about-this, and the §10.1 disclaimer all render in English. Clicked the
+  correct quiz option (`document.querySelectorAll('[role="radio"]')[3].click()`) and got "CORRECT!" with
+  the intended explanation. Switched language via the real `<select>` element (native value setter +
+  dispatched `change` event, since a plain `.value =` assignment doesn't notify React) to Chinese and
+  Korean and confirmed full non-fallback renders in both, including the answered-quiz state persisting
+  ("正确！" / "정답!"). `read_console_messages` reported zero errors throughout.
+- **Browser-tool reliability note for future runs (update to the "Browser visual verification" section
+  below).** This session, `computer` screenshot actions returned a blank/black frame every time (not just
+  once, as lesson 30's entry first noted), and `read_page` consistently reported `Viewport: 0x0` even
+  though the page was genuinely 1280×720 (confirmed via `window.innerWidth/innerHeight` in
+  `javascript_tool`). Coordinate-based `computer` clicks against that broken viewport landed on the wrong
+  element (accidentally answered the lesson 32 quiz with the wrong option once, confirmed via
+  `aria-checked` inspection, before retrying correctly) — **do not trust `computer` screenshot or raw
+  coordinate clicks when `read_page` reports a 0x0 viewport; fall back entirely to
+  `javascript_tool`-driven DOM interaction** (`querySelectorAll` + `.click()` on the actual target
+  element, confirmed by re-reading `main.innerText` or `aria-checked` afterward, not by the tool's
+  immediate return value — a real click's effect showed up one tool round-trip later than the call that
+  triggered it, so an immediate post-click check can read as "nothing happened" when it actually worked).
+  This is consistent with, and adds detail to, the blank-screenshot issue lesson 30's entry first flagged.
+- **Adversarial self-check**: (1) *Blindspot register* — `check-blindspot` clean; beyond the script,
+  re-read both sections specifically for advice-adjacency and for any named asset/bubble that could read
+  as a §2.3-style dated claim — found neither; Marcus's investment is deliberately never named or typed.
+  No Dalio reference. Kids framing (`ParentGuide.jsx`) untouched, not read or edited this run. (2)
+  *DECISIONS.md conflict* — none: `.js` content modules, `track: "money"` set, `localStorage`-only state
+  and Vite untouched, lesson `id` not renumbered. (3) *Redoing done work* — the duplication-check grep
+  above is the substantive answer; confirmed this extends item 24's strand as its fifth and final
+  shortlist entry, not a repeat of Lesson 5's existing bubble content (different mechanism: macro/credit
+  vs. individual psychology) or a reversion to item 17's mechanics pattern. (4) *Verification claim* —
+  every result above was observed this session against the built `dist/` output via
+  `get_page_text`/`javascript_tool`/console inspection; the incorrect first quiz attempt is disclosed
+  above rather than omitted, and the correct-answer claim was re-confirmed via `aria-checked`, not just
+  the visible "CORRECT!" text, after the retry.
+- **Not touched, and why**: `economic-cycles-v6.jsx` confirmed unchanged (same mtime) at the start of this
+  run, left alone; `economic-cycles-v5.jsx` unchanged. `ParentGuide.jsx` / kids content untouched — item
+  19 remains HELD.
+- **Next run should pick**: item 24's original shortlist (assets-vs-liabilities, lifestyle inflation,
+  opportunity cost/delayed gratification, sunk cost, FOMO/herd behavior) is now fully built as lessons
+  28-32. A future run should either (a) propose new judgment/behavioral-finance lesson topics in the same
+  spirit — candidates not yet covered include anchoring, confirmation bias, and the difference between
+  saving and investing as a judgment call rather than a mechanics topic — or (b) fall back to item 17's
+  remaining mechanics gaps while still preferring judgment framing where possible, per item 24's standing
+  instruction. Items 18/20/21/22 unchanged. **App name still unresolved** — do not invent one. **Use
+  American English spelling in all new lesson content going forward** (owner instruction, 2026-08-07).

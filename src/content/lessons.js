@@ -210,4 +210,9 @@ export const lessons = [
     title: {"en":"Throwing Good Money After Bad","es":"Tirar Dinero Bueno Detrás del Malo","ko":"밑 빠진 독에 물 붓기","zh":"往坏钱里再砸好钱","ja":"悪いお金の後を良いお金で追いかける"},
     subtitle: {"en":"Money already spent is gone either way — the only real question is what to do next","es":"El dinero ya gastado se fue de cualquier forma — la única pregunta real es qué hacer ahora","ko":"이미 쓴 돈은 어차피 돌아오지 않습니다 — 진짜 질문은 지금부터 무엇을 할 것인가입니다","zh":"钱已经花了，无论如何都拿不回来了——真正的问题是接下来该怎么办","ja":"すでに使ったお金はどのみち戻ってきません——本当の問いは、これからどうするかです"},
   },
+  {
+    id: 32, track: "money", icon: "🐑", color: "#c2410c", minutes: 4,
+    title: {"en":"Everyone Can't Be Wrong — Can They?","es":"Tanta Gente No Puede Estar Equivocada, ¿Verdad?","ko":"다들 하는데, 설마 틀렸을까?","zh":"大家都在买，难道会错吗？","ja":"みんなが買っているなら、間違っているはずがない？"},
+    subtitle: {"en":"The fear of missing out feels like information. Usually, it's just a crowd moving together.","es":"El miedo a quedarte fuera se siente como información. Casi siempre, es solo una multitud moviéndose junta.","ko":"놓칠까 봐 두려운 마음은 정보처럼 느껴지지만, 대개는 그저 무리가 함께 움직이는 것일 뿐입니다.","zh":"害怕错过的感觉像是一种信息，但它通常只是人群在一起行动。","ja":"取り残される恐怖は情報のように感じられますが、たいていはただ群衆が一緒に動いているだけです。"},
+  },
 ];
