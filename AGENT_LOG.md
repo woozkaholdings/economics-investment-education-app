@@ -90,12 +90,12 @@ for the history. No open P1/P2 items.
       liabilities as a *decision lens*; lifestyle inflation and why raises vanish; delayed gratification
       and impulse spending; opportunity cost; sunk cost; FOMO and herd behavior in markets; anchoring;
       wants dressed up as needs; making money work for you rather than only working for money. Lessons
-      28-33 are the judgment lessons built so far and are the pattern to follow — asset-vs-liability
+      28-34 are the judgment lessons built so far and are the pattern to follow — asset-vs-liability
       framing, the earn-spend gap and lifestyle inflation, opportunity cost and delayed gratification,
-      the sunk cost fallacy, FOMO/herd behavior in markets, and (this run, 2026-08-07) anchoring. The
-      original item-24 shortlist (28-32) is exhausted; anchoring was proposed fresh by the previous run's
-      "next run should pick" note, not from that shortlist — see the run log entry for what a future run
-      should consider next.
+      the sunk cost fallacy, FOMO/herd behavior in markets, anchoring, and (this run, 2026-08-08)
+      confirmation bias. The original item-24 shortlist (28-32) is exhausted; anchoring and confirmation
+      bias were both proposed fresh by prior runs' "next run should pick" notes, not from that shortlist
+      — see the run log entry for what a future run should consider next.
     - **The §10.1 tension — do not skip this.** That genre is advice-heavy and parts of it are contested
       (e.g. Kiyosaki's "your house is not an asset" conflicts with standard accounting; his leveraged
       real-estate advocacy is genuinely risky prescriptive advice; parts of the book are disputed as
@@ -108,13 +108,13 @@ for the history. No open P1/P2 items.
       it is a pointer to a genre the owner named, not a source to copy.
 17. **[Content] Grow the lesson catalogue** — *now subordinate to item 24: prefer a judgment/mindset
     lesson over another mechanics lesson unless there's a reason not to.* Derived from `LAUNCH_PLAN.md`
-    §4.3, not owner-assigned but the plan's own explicit gate: the catalogue is now **33 lessons /
-    91,111 English characters / 15,767 words / 81 minutes** end to end — measured this session by
+    §4.3, not owner-assigned but the plan's own explicit gate: the catalogue is now **34 lessons /
+    93,528 English characters / 16,167 words / 83 minutes** end to end — measured this session by
     summing every lesson's `sections[].body.en` + `takeaway.en` + `thinkAbout.en` from
-    `content/lessonContent.js` and its `minutes` from `content/lessons.js` (21 money / 12 economy).
-    This run added lesson 33 ("Was That Really a Bargain?", anchoring bias), a sixth judgment lesson
-    per item 24, proposed fresh (not from the original five-item shortlist, which lesson 32 already
-    exhausted) — see run log. **Correction to
+    `content/lessonContent.js` and its `minutes` from `content/lessons.js` (22 money / 12 economy).
+    This run added lesson 34 ("Are You Checking, or Just Confirming?", confirmation bias), a seventh
+    judgment lesson per item 24, proposed fresh (not from the original five-item shortlist, which
+    lesson 32 already exhausted) — see run log. **Correction to
     prior entries:** runs 8-11 reported figures (e.g. "27 lessons / ~68,700 chars / ~63 min") that the
     above method does not reproduce — 28 lessons now measure *fewer* minutes than 27 supposedly did, so
     the older numbers were computed some other way or estimated. Future runs should re-measure with the
@@ -4296,3 +4296,72 @@ concept with no dependency on other open items.
   one instance by chance during a live browser check, not via an automated scan — `check-data.mjs` has no
   check for this. Items 18/20/21/22 unchanged. **App name still unresolved** — do not invent one. **Use
   American English spelling in all new lesson content** (owner instruction, 2026-08-07, still standing).
+
+### 2026-08-08 (seventeenth run, scheduled dev-agent) — Lesson 34: "Are You Checking, or Just Confirming?" (item 24, confirmation bias)
+
+`git status` at the start showed only the known untracked `economic-cycles-v6.jsx` (same mtime and byte
+size as every prior run — reconfirmed at the end), nothing else uncommitted; proceeded normally. Read the
+previous run's entry: the previous run named confirmation bias and saving-vs-investing as the two open
+candidates for the next judgment lesson. Picked **confirmation bias** — well-established, self-contained,
+no dependency on item 22's deferred renumbering or any other open item.
+
+- **Checked for duplication before writing.** Grepped `lessons.js`, `lessonContent.js`, `glossary.js`,
+  and `quizData.js` for "confirm"/"confirmation": zero hits anywhere before this run's edit. No overlap
+  risk with any existing lesson or glossary entry.
+- **What changed**: `lessons.js` — lesson 34, `id: 34, track: "money"`, icon 🔍, color `#0c4a6e` (checked
+  against all 33 existing colors and icons, neither reused). `minutes: 2` — my first guess of 3 was
+  flagged by `npm test`'s drift check as computing to 2 from the actual word count; corrected before
+  proceeding, the check did its job. `lessonContent.js` — two sections ("The Search That Already Knows
+  What It Wants to Find," "The Bias Gets Stronger the More You've Already Committed"), takeaway,
+  thinkAbout, all 5 languages. Uses a fictional, unnamed company (a friend's tip that it's "about to take
+  off") rather than any real ticker or asset, matching the pattern lessons 28-33 established. `quizData.js`
+  — one question, correct answer at index 1 (distribution 9/8/9/9 → 9/9/9/9 across 36 questions, a
+  perfectly even split, the first time this has been achievable since the index-0 skew was fixed).
+- **Verified**: `npm test` clean (0 failures/0 warnings — 5-language parity, id↔content match, the
+  `minutes` drift check caught and was fixed as noted above, answer-spread check passes at 36 questions
+  with a perfectly even 9/9/9/9 split). `check-blindspot.mjs` all six checks pass. `npm run build` clean,
+  main chunk 213.49 kB (well under 500 kB), `LessonReader` chunk 394.55 kB — new content landed in the
+  lazy chunk as intended. Browser check via the static-build-plus-python-server technique (seeded lessons
+  1-33 complete in `localStorage`): opened lesson 34 directly, confirmed "课程 34 / 34" first in the
+  browser's default Chinese, both section headings and bodies, the ≈2 min estimate, takeaway,
+  think-about-this, and the §10.1 disclaimer all rendered. Clicked the correct quiz option via
+  `document.querySelectorAll('[role="radio"]')[1].click()` (not a raw coordinate click, per prior runs'
+  documented finding that `computer` screenshots and coordinate clicks are unreliable in this browser
+  tool — confirmed again this run, `read_page` still reports `Viewport: 0x0`), confirmed `aria-checked`
+  on the right option and "正确！" with the intended explanation text. Switched language via the real
+  `<select>` (native value setter + dispatched `change` event) to English, Korean, and Japanese and
+  confirmed full non-fallback renders in all three ("LESSON 34 OF 34" / "레슨 34 / 34" / "レッスン 34 /
+  34"), including the disclaimer line and, in English, the already-answered quiz state with "CORRECT!"
+  persisting. `read_console_messages` (`onlyErrors: true`) reported zero errors across all four language
+  checks.
+- **Adversarial self-check**: (1) *Blindspot register* — `check-blindspot` clean; beyond the script,
+  re-read both sections specifically for advice-adjacency (the natural failure mode here is telling the
+  reader which sources to trust or how to "do research correctly") — found none: the lesson never tells
+  the reader what to buy, what to read, or how to verify a specific claim, only names the mechanism and
+  offers a self-reflection question ("would you have given the opposite version the same attention?").
+  No named company, ticker, or real news outlet — the two headlines Tomás reads are both generic and
+  invented. No Dalio reference (grepped, zero hits). Kids framing (`ParentGuide.jsx`) untouched, not read
+  or edited this run. (2) *DECISIONS.md conflict* — none: content stayed in `.js` modules using the same
+  quoted-key style lessons 28-33 established; `track: "money"` set so the two-track guard in `npm test`
+  passes; `localStorage`-only state and Vite untouched; lesson `id` not renumbered (item 22 remains its
+  own dedicated future change). (3) *Redoing done work* — the duplication-check grep above (zero hits for
+  "confirm"/"confirmation" across all 33 prior lessons and all other content files) is the substantive
+  answer; this is a new topic, distinct from anchoring (lesson 33, which is about an externally-placed
+  reference number, not self-selected evidence) and from FOMO/herd behavior (lesson 32, which is about
+  matching a crowd's action, not filtering information to protect a belief already held). (4)
+  *Verification claim* — every result above was observed this session against the built `dist/` output
+  via `get_page_text`/`javascript_tool`/console inspection; the minutes-field correction is disclosed
+  above rather than omitted, and the "正确！"/"CORRECT!" claims were confirmed via `aria-checked` on the
+  actual DOM element, not just the visible text.
+- **Not touched, and why**: `economic-cycles-v6.jsx` confirmed unchanged (same mtime, byte size) at both
+  the start and end of this run, left alone per standing guidance; `economic-cycles-v5.jsx` unchanged.
+  `ParentGuide.jsx` / kids content untouched — item 19 remains HELD. Did not touch any of items 18/20/21/22.
+- **Next run should pick**: item 24 remains the standing preference. The one topic the previous run named
+  that's still open is saving-vs-investing framed as a judgment call (not a mechanics topic); other fresh
+  candidates in the same spirit include present bias/hyperbolic discounting, or "wants dressed up as
+  needs" (explicitly named in item 24's own "what to write instead" list but not yet built as its own
+  lesson). The non-English straight-vs-curly-quote spot-check the previous run flagged is still
+  outstanding — this run did not do it (out of scope for a single-lesson content run) and no automated
+  check covers it yet. Items 18/20/21/22 unchanged. **App name still unresolved** — do not invent one.
+  **Use American English spelling in all new lesson content** (owner instruction, 2026-08-07, still
+  standing).

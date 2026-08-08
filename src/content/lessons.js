@@ -220,4 +220,9 @@ export const lessons = [
     title: {"en":"Was That Really a Bargain?","es":"¿De Verdad Era una Ganga?","ko":"그거, 정말 싸게 산 거였을까?","zh":"那真的是个划算的价格吗？","ja":"それは本当にお得だったのか？"},
     subtitle: {"en":"The number crossed out above the price you paid does more to shape what feels fair than the price itself.","es":"El número tachado arriba del precio que pagaste hace más para definir lo que se siente justo que el precio en sí.","ko":"가격 위에 그어진 원래 가격 숫자가, 실제로 낸 가격보다 더 크게 '적정하다'는 느낌을 만들어냅니다.","zh":"价格上方那个被划掉的数字，比你实际付的价格更能左右你觉得“公平”的感觉。","ja":"価格の上に線を引かれた数字は、実際に支払った価格そのものよりも、何が「妥当」に感じられるかを左右します。"},
   },
+  {
+    id: 34, track: "money", icon: "🔍", color: "#0c4a6e", minutes: 2,
+    title: {"en":"Are You Checking, or Just Confirming?","es":"¿Estás Comprobando, o Solo Confirmando?","ko":"확인하고 있나요, 아니면 그냥 확인받고 있나요?","zh":"你是在核实，还是只是在确认？","ja":"確かめているのか、それとも確認しているだけなのか？"},
+    subtitle: {"en":"Once you've made a decision, your mind gets much better at finding reasons you were right than at noticing reasons you might be wrong.","es":"Una vez que has tomado una decisión, tu mente se vuelve mucho mejor para encontrar razones de que tenías razón que para notar razones de que podrías estar equivocado.","ko":"일단 결정을 내리고 나면, 우리 마음은 자신이 틀렸을 수도 있다는 이유를 알아차리는 것보다 자신이 옳았다는 이유를 찾아내는 데 훨씬 능숙해집니다.","zh":"一旦你做出了决定，比起注意到自己可能错了的理由，你的大脑会更擅长找到证明自己是对的的理由。","ja":"一度決断を下すと、あなたの心は、自分が間違っているかもしれない理由に気づくことよりも、自分が正しかった理由を見つけることの方がずっと得意になります。"},
+  },
 ];

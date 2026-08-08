@@ -1650,4 +1650,54 @@ export const lessonContent = {
       "ja": "「以前/今」の価格表示、売り出し価格、あるいは最初の提示が、何が公正に感じられるかを決めてしまった瞬間を思い出してください。もしその数字を一度も見ていなかったら、それにいくらの価値があると判断していたでしょうか。"
     }
   },
+  34: {
+    "sections": [
+      {
+        "heading": {
+          "en": "The Search That Already Knows What It Wants to Find",
+          "es": "La Búsqueda Que Ya Sabe Qué Quiere Encontrar",
+          "ko": "이미 무엇을 찾고 싶은지 알고 있는 검색",
+          "zh": "早已知道自己想找到什么的搜索",
+          "ja": "何を見つけたいか、すでに分かっている検索"
+        },
+        "body": {
+          "en": "Tomás puts money into a company after a friend tells him it's \"about to take off.\" That night he searches for the company online. He clicks the article headlined \"Why analysts are bullish,\" reads it closely, and comes away more confident. He skims past the one titled \"Three risks investors are ignoring\" and closes the tab within seconds, telling himself it's probably just clickbait.\n\nTomás isn't lying to himself, and he isn't careless — he's doing what most people do after they've already decided something: looking for information that confirms the decision, and looking past information that would complicate it. This is confirmation bias. It doesn't feel like avoiding evidence; it feels like doing research. The search returned both headlines either way — what changed was which one felt worth Tomás's time.",
+          "es": "Tomás invierte dinero en una empresa después de que un amigo le dice que \"está a punto de despegar\". Esa noche busca la empresa en internet. Hace clic en el artículo titulado \"Por qué los analistas son optimistas\", lo lee con atención, y termina más confiado. Pasa por encima del artículo titulado \"Tres riesgos que los inversionistas están ignorando\" y cierra la pestaña en segundos, diciéndose que probablemente sea solo clickbait.\n\nTomás no se está mintiendo a sí mismo, y no es descuidado — está haciendo lo que la mayoría de la gente hace después de haber decidido algo: buscar información que confirme la decisión, y pasar por alto la información que la complicaría. Esto es el sesgo de confirmación. No se siente como evitar evidencia; se siente como hacer una investigación. La búsqueda arrojó los dos titulares de todos modos — lo que cambió fue cuál de ellos le pareció que valía la pena su tiempo.",
+          "ko": "토마스는 친구가 '곧 뜰 것 같다'고 말한 회사에 돈을 넣습니다. 그날 밤 그는 그 회사를 인터넷에서 검색합니다. '왜 애널리스트들이 낙관적인가'라는 제목의 기사를 클릭해 꼼꼼히 읽고 더 자신감을 얻습니다. '투자자들이 무시하고 있는 세 가지 위험'이라는 제목의 기사는 대충 훑어보고는 몇 초 만에 탭을 닫으며, 아마 그냥 낚시성 기사일 거라고 스스로에게 말합니다.\n\n토마스는 자신에게 거짓말을 하는 것도, 부주의한 것도 아닙니다 — 그는 이미 무언가를 결정한 뒤 대부분의 사람들이 하는 일을 하고 있을 뿐입니다: 그 결정을 확인해주는 정보를 찾고, 그것을 복잡하게 만들 정보는 지나치는 것입니다. 이것이 확증 편향입니다. 증거를 회피하는 것처럼 느껴지지 않습니다 — 조사를 하고 있는 것처럼 느껴집니다. 검색은 어느 쪽이든 두 제목을 모두 보여주었습니다 — 달라진 것은 어느 쪽이 토마스의 시간을 쓸 가치가 있다고 느껴졌는가였습니다.",
+          "zh": "托马斯听朋友说某家公司“即将起飞”，于是把钱投了进去。当晚他在网上搜索这家公司。他点开了标题为《为什么分析师看好》的文章，仔细读完，变得更有信心。他一眼扫过标题为《投资者正在忽视的三个风险》的那篇，几秒钟内就关掉了标签页，告诉自己那大概只是标题党。\n\n托马斯并没有对自己撒谎，他也不粗心——他只是在做大多数人做过决定之后会做的事：寻找能证实这个决定的信息，略过会让它变复杂的信息。这就是确认偏误。它感觉不像是在回避证据，而像是在做研究。无论如何，搜索结果都同时给出了这两个标题——变化的只是哪一个让托马斯觉得值得花时间。",
+          "ja": "トマスは、友人から「これから伸びる」と言われた会社にお金を入れます。その夜、彼はその会社をネットで検索します。「アナリストが強気な理由」という見出しの記事をクリックし、じっくり読んで、より自信を深めます。「投資家が見落としている3つのリスク」という見出しの記事はざっと目を通しただけで、数秒でタブを閉じ、おそらくただの釣り記事だろうと自分に言い聞かせます。\n\nトマスは自分に嘘をついているわけでも、不注意なわけでもありません——彼はすでに何かを決めた後、ほとんどの人がすることをしているだけです。決断を裏付ける情報を探し、それを複雑にする情報から目をそらすことです。これが確証バイアスです。証拠を避けているようには感じられません——調査をしているように感じられます。検索結果はどちらにしても両方の見出しを返していました——変わったのは、どちらがトマスの時間を使う価値があると感じられたかだけです。"
+        }
+      },
+      {
+        "heading": {
+          "en": "The Bias Gets Stronger the More You've Already Committed",
+          "es": "El Sesgo Se Vuelve Más Fuerte Cuanto Más Ya Te Has Comprometido",
+          "ko": "이미 몰입할수록 편향은 더 강해집니다",
+          "zh": "投入越多，偏见就越强",
+          "ja": "すでに関わってしまうほど、バイアスは強くなる"
+        },
+        "body": {
+          "en": "Confirmation bias doesn't only shape which articles someone clicks — it shapes what they remember afterward. A source that supports what Tomás already believes lodges in memory as \"the one that proved it\"; a source that contradicts it gets waved off as biased, outdated, or written by someone who \"doesn't get it,\" and fades. Over time, someone can feel more and more certain about a decision while actually taking in less and less of the information that would have challenged it — certainty and accuracy quietly pulling apart.\n\nThis isn't only about money — the same pattern shows up defending a choice of school, a diet, a political opinion, or a job already taken. The reframe worth trying: before treating a piece of information as support, ask whether you went looking for it, or whether you'd have given equal attention to the version that said the opposite. A quick honest test: name one thing that would change your mind about the decision, then notice whether you've actually gone looking for it — or only for the headlines that don't.",
+          "es": "El sesgo de confirmación no solo determina qué artículos hace clic alguien — también determina qué recuerda después. Una fuente que apoya lo que Tomás ya cree se aloja en la memoria como \"la que lo demostró\"; una fuente que la contradice se descarta como sesgada, desactualizada, o escrita por alguien que \"no lo entiende\", y se desvanece. Con el tiempo, alguien puede sentirse cada vez más seguro de una decisión mientras en realidad absorbe cada vez menos de la información que la habría desafiado — la certeza y la precisión se van separando en silencio.\n\nEsto no se trata solo de dinero — el mismo patrón aparece al defender la elección de una escuela, una dieta, una opinión política, o un trabajo ya aceptado. El replanteamiento que vale la pena intentar: antes de tratar una información como respaldo, pregúntate si la buscaste tú, o si le habrías dado la misma atención a la versión que dijera lo contrario. Una prueba rápida y honesta: nombra algo que te haría cambiar de opinión sobre la decisión, y luego fíjate si realmente has buscado eso — o solo los titulares que no lo hacen.",
+          "ko": "확증 편향은 사람이 어떤 기사를 클릭하는지만 결정하는 것이 아니라 — 나중에 무엇을 기억하는지도 결정합니다. 토마스가 이미 믿고 있는 것을 뒷받침하는 자료는 '그것을 증명해준 것'으로 기억에 자리 잡습니다. 반대되는 자료는 편향되었다거나, 시대에 뒤떨어졌다거나, '이해를 못 하는' 사람이 썼다며 치워지고 흐릿해집니다. 시간이 지나면서 누군가는 결정에 대해 점점 더 확신하게 되지만, 실제로는 그 결정에 도전했을 정보를 점점 덜 받아들이게 됩니다 — 확신과 정확성이 조용히 서로 멀어지는 것입니다.\n\n이것은 돈에 관한 것만이 아닙니다 — 같은 패턴이 학교 선택, 식단, 정치적 견해, 이미 받아들인 직장을 옹호할 때도 나타납니다. 시도해볼 만한 재구성 방법은 이렇습니다: 어떤 정보를 근거로 삼기 전에, 내가 그것을 일부러 찾아본 것인지, 아니면 반대되는 버전에도 똑같은 관심을 기울였을지 스스로에게 물어보는 것입니다. 빠르고 정직한 테스트: 그 결정에 대한 내 마음을 바꿀 만한 것 한 가지를 말해보고, 실제로 그것을 찾아본 적이 있는지 — 아니면 그렇지 않은 제목들만 찾아봤는지 확인해보세요.",
+          "zh": "确认偏误不仅左右一个人会点开哪些文章——它还左右他们之后会记住什么。支持托马斯已有信念的信息，会作为“证明了这一点的那篇”留在记忆里；与之相悖的信息则被当作有偏见、过时，或者是“不懂行”的人写的，从而被打发掉、渐渐淡忘。久而久之，一个人可能对某个决定越来越有把握，实际上却吸收了越来越少本该挑战这个决定的信息——确信程度和准确程度悄悄地分道扬镳。\n\n这不仅仅关乎金钱——同样的模式也出现在为一个学校的选择、一种饮食方式、一个政治观点，或一份已经接受的工作辩护时。值得一试的重新框定方式是：在把一条信息当作支持依据之前，先问问自己，是主动去找的它，还是对相反的说法也会给予同样的关注。一个快速而诚实的测试：说出一件会让你改变对这个决定看法的事，然后留意自己是否真的去找过它——还是只找了那些不会改变你想法的标题。",
+          "ja": "確証バイアスは、人がどの記事をクリックするかだけでなく——その後何を覚えているかも左右します。トマスがすでに信じていることを裏付ける情報源は「それを証明したもの」として記憶に残ります。それに反する情報源は、偏っている、時代遅れだ、あるいは「分かっていない」人が書いたものだと片付けられ、薄れていきます。時間が経つにつれ、ある決断についてますます確信が強まる一方で、実際にはその決断に異を唱えるはずだった情報をますます取り入れなくなっていきます——確信と正確さが、静かに離れていくのです。\n\nこれはお金だけの話ではありません——同じパターンは、学校の選択、食事法、政治的な意見、すでに受け入れた仕事を擁護するときにも現れます。試す価値のある捉え直し方はこうです。ある情報を裏付けとして扱う前に、自分がそれを探しに行ったのか、それとも反対のことを言うバージョンにも同じだけ注意を払っただろうかと自問すること。手早く正直にできるテスト：その決断について自分の考えを変えさせるものを一つ挙げてみて、実際にそれを探しに行ったことがあるか——それとも、そうならない見出しばかり探していたか、確かめてみてください。"
+        }
+      }
+    ],
+    "takeaway": {
+      "en": "Confirmation bias is the tendency to seek out, favor, and remember information that supports a decision you've already made (or a belief you already hold), while dismissing or forgetting what contradicts it — so certainty grows even when accuracy doesn't. Before treating something as evidence you were right, ask whether you'd have given the opposite version the same attention.",
+      "es": "El sesgo de confirmación es la tendencia a buscar, favorecer y recordar información que respalda una decisión que ya tomaste (o una creencia que ya tienes), mientras descartas u olvidas lo que la contradice — así que la certeza crece incluso cuando la precisión no lo hace. Antes de tratar algo como evidencia de que tenías razón, pregúntate si le habrías dado la misma atención a la versión contraria.",
+      "ko": "확증 편향은 이미 내린 결정(또는 이미 가진 믿음)을 뒷받침하는 정보를 찾고, 선호하고, 기억하는 반면 그것에 반하는 정보는 무시하거나 잊어버리는 경향입니다 — 그래서 정확성은 그대로여도 확신은 커집니다. 무언가를 자신이 옳았다는 증거로 여기기 전에, 반대되는 버전에도 똑같은 관심을 기울였을지 자문해 보세요.",
+      "zh": "确认偏误是指人们倾向于寻找、偏爱并记住那些支持自己已做决定（或已有信念）的信息，同时忽视或忘记与之相悖的信息——于是确信程度在增长，即使准确程度并没有。在把某件事当作自己是对的证据之前，先问问自己是否会对相反的说法给予同样的关注。",
+      "ja": "確証バイアスとは、すでに下した決断（またはすでに持っている考え）を裏付ける情報を探し、好み、記憶する一方で、それに反する情報は退けたり忘れたりする傾向です——そのため、正確さが増えていなくても確信は増えていきます。何かを自分が正しかった証拠として扱う前に、反対のバージョンにも同じだけ注意を払っただろうかと自問してください。"
+    },
+    "thinkAbout": {
+      "en": "Think of a decision you've already made — a purchase, an investment, an opinion. Have you actually looked for information that could prove you wrong, or only skimmed past it?",
+      "es": "Piensa en una decisión que ya hayas tomado — una compra, una inversión, una opinión. ¿Has buscado realmente información que pudiera demostrar que estabas equivocado, o solo la has pasado por alto?",
+      "ko": "이미 내린 결정을 하나 떠올려 보세요 — 구매, 투자, 의견. 자신이 틀렸을 수도 있다는 것을 보여줄 정보를 실제로 찾아본 적이 있나요, 아니면 그냥 지나쳤나요?",
+      "zh": "想一个你已经做过的决定——一次购买、一项投资、一个观点。你是否真的去找过能证明自己错了的信息，还是只是一带而过？",
+      "ja": "すでに下した決断を一つ思い浮かべてください——買い物、投資、意見など。自分が間違っている可能性を示す情報を実際に探しに行ったことがありますか、それともただ素通りしてきましたか。"
+    }
+  },
 };
