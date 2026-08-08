@@ -205,4 +205,9 @@ export const lessons = [
     title: {"en":"What Did That Really Cost You?","es":"¿Qué Te Costó Eso Realmente?","ko":"그건 정말로 얼마짜리였을까?","zh":"那真的花了你多少？","ja":"それは本当は、いくらだったのか？"},
     subtitle: {"en":"The price tag only shows half of what a choice costs — the other half is invisible until later","es":"La etiqueta de precio solo muestra la mitad de lo que cuesta una elección — la otra mitad es invisible hasta después","ko":"가격표는 선택의 절반만 보여줍니다 — 나머지 절반은 나중에야 보입니다","zh":"价签只显示了一个选择的一半代价——另一半要等到以后才看得见","ja":"値札は選択のコストの半分しか見せてくれません——残りの半分は後になるまで見えません"},
   },
+  {
+    id: 31, track: "money", icon: "🕳️", color: "#9f1239", minutes: 4,
+    title: {"en":"Throwing Good Money After Bad","es":"Tirar Dinero Bueno Detrás del Malo","ko":"밑 빠진 독에 물 붓기","zh":"往坏钱里再砸好钱","ja":"悪いお金の後を良いお金で追いかける"},
+    subtitle: {"en":"Money already spent is gone either way — the only real question is what to do next","es":"El dinero ya gastado se fue de cualquier forma — la única pregunta real es qué hacer ahora","ko":"이미 쓴 돈은 어차피 돌아오지 않습니다 — 진짜 질문은 지금부터 무엇을 할 것인가입니다","zh":"钱已经花了，无论如何都拿不回来了——真正的问题是接下来该怎么办","ja":"すでに使ったお金はどのみち戻ってきません——本当の問いは、これからどうするかです"},
+  },
 ];

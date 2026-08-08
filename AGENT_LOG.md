@@ -89,8 +89,11 @@ for the history. No open P1/P2 items.
     - **What to write instead (the safe, teachable core).** Mental models and behaviour: assets vs.
       liabilities as a *decision lens*; lifestyle inflation and why raises vanish; delayed gratification
       and impulse spending; opportunity cost; sunk cost; FOMO and herd behaviour in markets; wants
-      dressed up as needs; making money work for you rather than only working for money. Lesson 28
-      (added this session) is the first of these and is the pattern to follow.
+      dressed up as needs; making money work for you rather than only working for money. Lessons 28-31
+      (lesson 28 added 2026-08-07) are the judgment lessons built so far and are the pattern to follow —
+      asset-vs-liability framing, the earn-spend gap and lifestyle inflation, opportunity cost and
+      delayed gratification, and (this run) the sunk cost fallacy. Remaining candidate from the original
+      shortlist: FOMO/herd behaviour in markets.
     - **The §10.1 tension — do not skip this.** That genre is advice-heavy and parts of it are contested
       (e.g. Kiyosaki's "your house is not an asset" conflicts with standard accounting; his leveraged
       real-estate advocacy is genuinely risky prescriptive advice; parts of the book are disputed as
@@ -103,12 +106,12 @@ for the history. No open P1/P2 items.
       it is a pointer to a genre the owner named, not a source to copy.
 17. **[Content] Grow the lesson catalogue** — *now subordinate to item 24: prefer a judgment/mindset
     lesson over another mechanics lesson unless there's a reason not to.* Derived from `LAUNCH_PLAN.md`
-    §4.3, not owner-assigned but the plan's own explicit gate: the catalogue is now **30 lessons /
-    80,295 English characters / 13,838 words / 70 minutes** end to end — measured this session by
+    §4.3, not owner-assigned but the plan's own explicit gate: the catalogue is now **31 lessons /
+    84,230 English characters / 14,539 words / 74 minutes** end to end — measured this session by
     summing every lesson's `sections[].body.en` + `takeaway.en` + `thinkAbout.en` from
-    `content/lessonContent.js` and its `minutes` from `content/lessons.js` (18 money / 12 economy).
-    This run added lesson 30 ("What Did That Really Cost You?", opportunity cost + delayed
-    gratification), the third judgment lesson per item 24 — see run log. **Correction to
+    `content/lessonContent.js` and its `minutes` from `content/lessons.js` (19 money / 12 economy).
+    This run added lesson 31 ("Throwing Good Money After Bad", the sunk cost fallacy), the fourth
+    judgment lesson per item 24 — see run log. **Correction to
     prior entries:** runs 8-11 reported figures (e.g. "27 lessons / ~68,700 chars / ~63 min") that the
     above method does not reproduce — 28 lessons now measure *fewer* minutes than 27 supposedly did, so
     the older numbers were computed some other way or estimated. Future runs should re-measure with the
@@ -4000,3 +4003,106 @@ the temptation isn't).
   naturally with this run's opportunity-cost lesson (same "how to evaluate a choice honestly" theme) if
   a future run wants to keep building a visible sequence. Items 18/20/21/22 unchanged. **App name still
   unresolved** — do not invent one.
+
+### 2026-08-07 (fourteenth run) — Lesson 31: "Throwing Good Money After Bad" (item 24, fourth judgment lesson: the sunk cost fallacy)
+
+Orientation: `git status` showed one untracked file, `economic-cycles-v6.jsx`, mtime unchanged
+(Aug 4 02:27) from every prior run's observation — confirmed via memory and this file's own "Notes for
+future runs" section that it's known reference-only material, not something to build from or touched by
+a stalled run; left alone. Read this file's App summary, backlog, and the last two run-log entries,
+whose "next run should pick" note pointed straight at this run's topic.
+
+- **Picked up exactly where the previous entry left off.** Of the two remaining item-24 candidates —
+  sunk cost and FOMO/herd behaviour — sunk cost was the one the prior run flagged as pairing naturally
+  with lesson 30's opportunity-cost lesson (same "evaluate a choice honestly" theme), so this run built
+  that one, leaving FOMO/herd behaviour as the sole remaining shortlist item for a future run.
+- **Checked for duplication before writing.** Grepped all 30 existing lessons plus `quizData.js` and
+  every `src/locales/*.js` file for "sunk": zero hits — genuinely new ground. Confirmed the concept
+  doesn't overlap lesson 30 (opportunity cost, which is about weighing what a choice gives up *going
+  forward*) or lesson 28 (asset-vs-liability cash-flow direction) or lesson 29 (the earn-spend gap):
+  sunk cost is specifically about a *past*, unrecoverable cost that should carry zero weight in a
+  forward-looking decision — the mirror image of opportunity cost, not a restatement of it.
+- **Example and mechanism.** Section 1 uses a fresh scenario (Priya, a $120 concert ticket, a cold the
+  night of the show) chosen to isolate the concept cleanly — no compounding, no dollar-growth
+  arithmetic to double-check, just "this money is gone regardless of what happens next," so the lesson
+  doesn't lean on lesson 15/30's compound-interest example a third time. Names the trap in three
+  everyday domains (gym membership, home renovation, a college major) deliberately avoiding any
+  investment-specific framing in section 1. Section 2 covers *why* it's hard (loss aversion, admitting
+  a mistake, escalation of commitment in organizations) and gives a reframe technique (the "deciding
+  fresh today, ignoring what's spent" question) without ever telling the reader what to conclude —
+  explicitly states sunk costs aren't a reason to always quit either, since the honest fresh look
+  sometimes still says continue.
+- **§10.1 handling** — this topic's natural failure mode is drifting into "always cut your losses" as a
+  directive, especially since sunk cost reasoning is most often invoked around a losing investment. The
+  lesson deliberately never mentions a stock, fund, or any investment vehicle at all — every example is
+  non-financial-market (concert ticket, gym membership, renovation, college major, an org's project
+  budget) specifically so the concept teaches cleanly without brushing against "sell your losing
+  position" language. States explicitly that the point isn't which answer (continue vs. quit) is right,
+  only that the amount already spent shouldn't be what decides it either way. No product named, no
+  Dalio reference, no directive language.
+- **Translation-quality process** (continuing the standing advice lesson 29's and 30's entries
+  recorded): wrote es/ko/zh/ja by hand rather than a mechanical pass, using the established per-language
+  quote convention (en: escaped `\"..\"`, es/ko: `'..'`, zh: `“..”` curly, ja: `「..」`) matched against
+  the two most recent lessons' actual text rather than assumed. Before touching `npm test`, imported all
+  three edited modules (`lessons.js`, `lessonContent.js`, `quizData.js`) via dynamic `import()` to catch
+  a parse failure early — all three parsed clean on the first attempt. Ran a scripted scan (Python regex)
+  for Latin-alphabet runs of 3+ characters and Cyrillic characters inside every ko/zh/ja string added
+  this run: zero hits, so none of the four leak types the lesson-29 entry catalogued (broken quoting,
+  English/Russian/English words leaking into non-English sentences) recurred here.
+- **What changed**: `lessons.js` — lesson 31, `id: 31, track: "money"`, icon 🕳️, color `#9f1239`
+  (checked against every existing lesson color, not reused — a repo audit found several already-reused
+  colors from past runs, but this run chose a fresh one anyway rather than following that precedent).
+  `minutes: 4`, computed from the actual English word count (701 words across both section bodies +
+  takeaway + thinkAbout ≈ 3.5 min, rounds to 4 by the `Math.round(words/200)` formula
+  `scripts/check-data.mjs` enforces) — not guessed. `lessonContent.js` — two sections, takeaway,
+  thinkAbout, all 5 languages. `quizData.js` — one question, `answer: 0`, bringing the answer-position
+  spread from 8/8/8/8 (32 questions) to 9/8/8/8 (33 questions) — the most even distribution possible
+  since 33 doesn't divide evenly by 4.
+- **Verified**: `npm test` clean (0 failures/0 warnings — 5-language parity, id↔content match, the
+  `minutes` drift check, and the answer-spread warning all pass at 33 questions). `check-blindspot.mjs`
+  all six checks pass. `npm run build` clean, main chunk 210.38 kB (well under the 500 kB warning
+  threshold), `LessonReader` chunk 337.62 kB — the new content landed in the lazy chunk as the item-23
+  split intends. Browser check via the documented static-build-plus-python-server technique (built
+  `dist/`, served on a fresh port with `/usr/bin/python3 -m http.server`, opened via the browser tool's
+  plain-`url` preview path): seeded lessons 1-30 complete in `localStorage`, "Continue Learning" opened
+  lesson 31 directly, confirmed "LESSON 31 OF 31" (in the app's active language), both section headings
+  and bodies, the ≈4 min estimate, takeaway, think-about-this, and the §10.1 disclaimer all render.
+  Clicked the correct quiz option via a real UI click — used `read_page`'s accessibility-tree `ref` for
+  the radio option rather than computed screen coordinates or a synthetic `.click()`, per the previous
+  two runs' findings about unreliable synthetic clicks — and got "正解！" (the app defaulted to Japanese
+  this session, cause not investigated since it didn't block verification) with the intended explanation
+  text. Switched the language selector to Chinese and Korean via the real `<select>` element (`ref`-based
+  `form_input`) and confirmed full non-fallback renders in both, including the already-answered quiz
+  state persisting ("正确！"). `read_console_messages` reported zero errors throughout. The browser
+  tool's `computer` screenshot action returned a blank frame again this run (same known issue lesson
+  30's entry recorded) — verification relied on `get_page_text`/`read_page`/console inspection instead,
+  which returned consistent, correct content throughout, so this reads as the same tool/rendering-pane
+  quirk, not an app defect.
+- **Adversarial self-check**: (1) *Blindspot register* — `check-blindspot` clean; beyond the script,
+  re-read both sections specifically for advice-adjacency, the live risk for this exact topic since sunk
+  cost is most commonly invoked around losing investments — confirmed no stock/fund/investment-vehicle
+  example anywhere in the lesson, no "sell"/"hold" directive, explicit statement that continuing is
+  sometimes the honest answer too. No Dalio reference, no live-looking date or market figure (the loss-
+  aversion "roughly twice as painful" figure is a stable behavioral-economics finding, not a market
+  quote). Kids framing (`ParentGuide.jsx`) untouched, not read or edited this run. (2) *DECISIONS.md
+  conflict* — none: content stayed in `.js` modules using the same quoted-key style lessons 28-30
+  established; `track: "money"` set so the two-track guard in `npm test` passes; lesson `id` not
+  renumbered (item 22 remains its own dedicated future change); `localStorage`-only state and Vite
+  untouched. (3) *Redoing done work* — the duplication-check grep above (zero hits for "sunk" across all
+  30 prior lessons) is the substantive answer; also confirmed this extends rather than repeats item 24's
+  strand (asset/liability → earn-spend gap → opportunity cost → sunk cost), not a reversion to item 17's
+  mechanics pattern. (4) *Verification claim* — every result above was observed this session against the
+  built `dist/` output via `get_page_text`/`read_page`/console inspection; the quiz result was
+  re-confirmed after two separate language switches (zh, ko), not just once, and the ref-based click
+  method was chosen specifically because two prior runs documented synthetic clicks producing false
+  negatives.
+- **Not touched, and why**: `economic-cycles-v6.jsx` — confirmed unchanged (byte-for-byte same mtime) at
+  the start of this run, left alone per standing guidance; `economic-cycles-v5.jsx` unchanged. Did not
+  retrofit any of the nineteen mechanics-framed money lessons. `ParentGuide.jsx` / kids content untouched
+  — item 19 remains HELD, owner decision only.
+- **Next run should pick**: item 24 one more time — **FOMO and herd behaviour in markets** is now the
+  only item left on the original item-24 shortlist (assets-vs-liabilities, lifestyle inflation,
+  opportunity cost/delayed gratification, and sunk cost are all now shipped as lessons 28-31); after that
+  lesson lands, item 24's shortlist is exhausted and a future run should either propose new judgment-
+  lesson topics or fall back to item 17's remaining mechanics gaps with item 24's framing in mind. Items
+  18/20/21/22 unchanged. **App name still unresolved** — do not invent one.
