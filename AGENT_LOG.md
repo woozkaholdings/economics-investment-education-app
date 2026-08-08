@@ -4365,3 +4365,89 @@ no dependency on item 22's deferred renumbering or any other open item.
   check covers it yet. Items 18/20/21/22 unchanged. **App name still unresolved** — do not invent one.
   **Use American English spelling in all new lesson content** (owner instruction, 2026-08-07, still
   standing).
+
+### 2026-08-08 (eighteenth run, scheduled dev-agent) — Full straight-vs-curly quote spot-check across all content files (the outstanding item runs 16 and 17 both flagged, finally done)
+
+`git status` at the start showed only the known untracked `economic-cycles-v6.jsx` (same mtime and byte
+size as every prior run — reconfirmed unchanged at the end), nothing else uncommitted; proceeded
+normally. Read the previous two runs' entries: both independently found one straight-quote-in-Chinese
+mistake by chance during a live browser check and flagged that no automated scan covers this class of
+bug, recommending a future run do the spot-check properly. Picked that, instead of another item-24
+lesson — nine runs picking "add one lesson" before the 2026-08-07 direction correction is exactly the
+counting-not-building failure mode item 17 warns about, and this is a different kind of improvement
+(content-accuracy/consistency, one of the task's own "good candidates").
+
+- **Method.** Wrote a Python script (not committed — one-off analysis) that parses every `"lang":"..."`
+  and `lang: "..."` / `lang: [...]` value across all five `src/content/*.js` files (`lessons.js`,
+  `lessonContent.js`, `glossary.js`, `kidsContent.js`, `quizData.js`) with a proper JS-string-escape-aware
+  regex (`(?:[^"\\]|\\.)*`, so it doesn't get confused by escaped quotes or the object's own delimiters),
+  and counts occurrences of escaped straight double quotes (`\"`), curly quotes (`“”`), curly single
+  quotes (`‘’`), Japanese corner brackets (`「」`), and straight single quotes (`'`) inside each language's
+  values, keyed by `ko`/`zh`/`ja`/`es` (`en` excluded — straight quotes are correct English style, not a
+  bug there).
+- **What the data showed.** Each language has its own established, internally-consistent convention for
+  *attributed quotes/idioms in prose* (e.g. Buffett's saying, "lost decade," "pay yourself first," a
+  crossed-out "original price"): `es` and `ko` use escaped straight double quotes (`\"..\"` — correct,
+  matches their own script's normal typography) with zero curly usage anywhere; `ja` exclusively uses
+  corner brackets (`「...」`, 53 pairs in `lessonContent.js` alone, zero straight-quote instances) — fully
+  consistent already; `zh` is the one language that had drifted, mixing curly `“...”` (majority — 20 pairs
+  in `lessonContent.js` alone) with straight escaped `\"..\"`  (minority — a leftover from before the
+  file's Chinese content settled on curly quotes as its house style). A second, unrelated pattern —
+  short *lists of category labels* like 'Spend,' 'Save,' 'Give' — uses straight single quotes consistently
+  across `en`/`es`/`ko`/`zh` (with `ja` still using its own corner-bracket convention there), which is a
+  different, already-consistent style and correctly left alone; conflating the two patterns would have
+  been a mistake.
+- **What changed** (three files, quote characters only — no wording, translation, or meaning touched):
+  `lessonContent.js` — 8 pairs of `\"..\"` → `“...”` in `zh` values across lessons on credit/money
+  ("钱"), deleveraging ("失去的十年"), Fed policy ("不要和美联储作对"), a Buffett quote, 401(k) employer
+  "match", the savings-vs-not-spending distinction, and two pairs in the credit-report lesson ("硬查询"
+  and, within the same lesson, a second instance found only by the full scan, not by the live browser
+  check that caught the first). `quizData.js` — 1 pair, a quiz answer option in the credit-score lesson's
+  question ("真正"). `kidsContent.js` — 1 pair, the 13-17 band's "先付钱给自己" (pay-yourself-first) kids
+  lesson blurb. All three previously silently rendered a literal backslash-quote artifact in the Chinese
+  UI instead of a proper quotation mark — a real, user-visible rendering bug, not just a style
+  inconsistency. **Full-file re-scan after the fix confirms zero remaining `\"` inside any `zh` value
+  across all five content files** — this is not a partial pass.
+- **Verified**: `npm test` clean (0 failures/0 warnings — unaffected by a punctuation-only change, but run
+  to confirm no accidental syntax breakage). `check-blindspot.mjs` all six checks pass (expected — no
+  wording changed, only quote glyphs). `npm run build` clean, same chunk sizes as before (213.49 kB
+  main / 394.58 kB `LessonReader`, byte-for-byte content size unaffected by swapping one Unicode
+  character for two). Live browser check via the static-build-plus-python-server technique: seeded
+  lessons 1-26 complete in `localStorage` (browser default language was already Chinese, confirming
+  prior runs' observation), opened lesson 2 and confirmed "钱" renders as a real curly-quoted word in the
+  credit-vs-money section; opened lesson 27 (credit report) and confirmed both "硬查询" *and* the
+  second, previously-unnoticed "真正的投资" instance in the body render correctly, then read the actual
+  quiz radio options via `document.querySelectorAll('[role="radio"]')` (not a screenshot — this browser
+  tool's `read_page`/`computer` still report `Viewport: 0x0` per prior runs' documented finding) and
+  confirmed the "真正" quiz option renders correctly too; navigated Reference → Kids → 13-17 and
+  confirmed "先付钱给自己" renders correctly. `read_console_messages` (`onlyErrors: true`) reported zero
+  errors across all three checks.
+- **Adversarial self-check**: (1) *Blindspot register* — `check-blindspot` clean; this change touches only
+  punctuation glyphs inside existing, already-reviewed strings, so it cannot introduce new advice-adjacent
+  language, a Dalio reference, child-facing framing, or a live-looking date — there is no new prose to
+  reintroduce any of those in. Confirmed by inspection of the diff (`git diff`), which shows only `\"` ↔
+  `“`/`”` character substitutions, nothing else. (2) *DECISIONS.md conflict* — none: content stayed in the
+  same `.js` modules with the same quoting style for the *object* syntax (only the *value contents*
+  changed); no state-management, build-tool, or persistence code touched. (3) *Redoing done work* — this
+  is not a repeat of any Completed-and-pruned item; it's the direct completion of the specific gap runs 16
+  and 17 both named and left open, done via a systematic scan rather than another chance discovery. (4)
+  *Verification claim* — the "8 + 1 + 1 = 10 pairs fixed, 0 remaining" count is reproducible by any
+  reviewer re-running the same regex-based scan described above against `src/content/*.js`; the three
+  spot-checked renders were read from actual DOM text (`get_page_text`/`querySelectorAll(...).textContent`),
+  not inferred from the source diff.
+- **Not touched, and why**: `economic-cycles-v6.jsx` confirmed unchanged (same mtime, byte size) at both
+  the start and end of this run, left alone per standing guidance; `economic-cycles-v5.jsx` unchanged.
+  `ParentGuide.jsx` framing untouched — item 19 remains HELD. Did not touch any of items 18/20/21/22. Did
+  not add a new lesson this run (a deliberate choice, explained above, not an oversight).
+- **Next run should pick**: item 24 remains the standing preference for new content — saving-vs-investing
+  as a judgment call, present bias/hyperbolic discounting, and "wants dressed up as needs" (explicitly
+  named in item 24's own list, not yet built) are all still open candidates, unchanged from the last two
+  runs' notes. The quote spot-check itself is now fully done and should not need repeating unless new
+  non-English content is added without checking against the per-language conventions documented above
+  (`es`/`ko`: straight `\"..\"` for quoted idioms; `zh`: curly `“...”`; `ja`: corner brackets `「...」`;
+  straight single quotes `'...'` for short label lists in all of `en`/`es`/`ko`/`zh`). A future run could
+  consider adding this as an automated check (a `check-data.mjs` rule flagging any `\"` inside a `zh`
+  value) rather than relying on a human/agent re-scan — noted as an idea, not done this run, since it
+  wasn't the highest-value single change available. Items 18/20/21/22 unchanged. **App name still
+  unresolved** — do not invent one. **Use American English spelling in all new lesson content** (owner
+  instruction, 2026-08-07, still standing).
