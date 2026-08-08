@@ -90,12 +90,14 @@ for the history. No open P1/P2 items.
       liabilities as a *decision lens*; lifestyle inflation and why raises vanish; delayed gratification
       and impulse spending; opportunity cost; sunk cost; FOMO and herd behavior in markets; anchoring;
       wants dressed up as needs; making money work for you rather than only working for money. Lessons
-      28-34 are the judgment lessons built so far and are the pattern to follow — asset-vs-liability
+      28-35 are the judgment lessons built so far and are the pattern to follow — asset-vs-liability
       framing, the earn-spend gap and lifestyle inflation, opportunity cost and delayed gratification,
-      the sunk cost fallacy, FOMO/herd behavior in markets, anchoring, and (this run, 2026-08-08)
-      confirmation bias. The original item-24 shortlist (28-32) is exhausted; anchoring and confirmation
-      bias were both proposed fresh by prior runs' "next run should pick" notes, not from that shortlist
-      — see the run log entry for what a future run should consider next.
+      the sunk cost fallacy, FOMO/herd behavior in markets, anchoring, confirmation bias, and (this run,
+      2026-08-08) present bias / hyperbolic discounting. The original item-24 shortlist (28-32) is
+      exhausted; anchoring, confirmation bias, and present bias were all proposed fresh by prior runs'
+      "next run should pick" notes, not from that shortlist — see the run log entry for what a future
+      run should consider next. "Wants dressed up as needs" is the one item explicitly named in this
+      backlog item's own list that still hasn't been built as its own lesson.
     - **The §10.1 tension — do not skip this.** That genre is advice-heavy and parts of it are contested
       (e.g. Kiyosaki's "your house is not an asset" conflicts with standard accounting; his leveraged
       real-estate advocacy is genuinely risky prescriptive advice; parts of the book are disputed as
@@ -108,13 +110,13 @@ for the history. No open P1/P2 items.
       it is a pointer to a genre the owner named, not a source to copy.
 17. **[Content] Grow the lesson catalogue** — *now subordinate to item 24: prefer a judgment/mindset
     lesson over another mechanics lesson unless there's a reason not to.* Derived from `LAUNCH_PLAN.md`
-    §4.3, not owner-assigned but the plan's own explicit gate: the catalogue is now **34 lessons /
-    93,528 English characters / 16,167 words / 83 minutes** end to end — measured this session by
+    §4.3, not owner-assigned but the plan's own explicit gate: the catalogue is now **35 lessons /
+    96,424 English characters / 16,674 words / 86 minutes** end to end — measured this session by
     summing every lesson's `sections[].body.en` + `takeaway.en` + `thinkAbout.en` from
-    `content/lessonContent.js` and its `minutes` from `content/lessons.js` (22 money / 12 economy).
-    This run added lesson 34 ("Are You Checking, or Just Confirming?", confirmation bias), a seventh
-    judgment lesson per item 24, proposed fresh (not from the original five-item shortlist, which
-    lesson 32 already exhausted) — see run log. **Correction to
+    `content/lessonContent.js` and its `minutes` from `content/lessons.js` (23 money / 12 economy).
+    This run added lesson 35 ("Why 'Later' Never Feels as Real as 'Now'", present bias / hyperbolic
+    discounting), an eighth judgment lesson per item 24, proposed fresh (not from the original
+    five-item shortlist, which lesson 32 already exhausted) — see run log. **Correction to
     prior entries:** runs 8-11 reported figures (e.g. "27 lessons / ~68,700 chars / ~63 min") that the
     above method does not reproduce — 28 lessons now measure *fewer* minutes than 27 supposedly did, so
     the older numbers were computed some other way or estimated. Future runs should re-measure with the
@@ -4451,3 +4453,69 @@ counting-not-building failure mode item 17 warns about, and this is a different 
   wasn't the highest-value single change available. Items 18/20/21/22 unchanged. **App name still
   unresolved** — do not invent one. **Use American English spelling in all new lesson content** (owner
   instruction, 2026-08-07, still standing).
+
+### 2026-08-08 (nineteenth run, scheduled dev-agent) — Add lesson 35: "Why 'Later' Never Feels as Real as 'Now'" (backlog item 24, present bias / hyperbolic discounting)
+
+`git status` at the start showed only the known untracked `economic-cycles-v6.jsx` (same mtime, `Aug 4
+16:05`/`02:27`, and byte size, 13207/348933, as every prior run) and nothing else uncommitted — proceeded
+normally. Read `AGENT_LOG.md`; item 24 remains the standing content preference over item 17's raw
+lesson-count framing, and the previous run's "next run should pick" note explicitly listed present
+bias/hyperbolic discounting as one of the still-open candidates alongside saving-vs-investing and "wants
+dressed up as needs." Picked present bias: it's a clean, well-defined, single behavioral-economics
+concept, distinct from every judgment lesson already built (28-34 cover asset/liability framing,
+lifestyle inflation, opportunity cost, sunk cost, FOMO/herd behavior, anchoring, and confirmation bias —
+none of them is about *time* discounting specifically).
+
+- **What was added.** Lesson 35 (`id: 35`, `track: "money"`, icon `⏳`, color `#4338ca` — both previously
+  unused, checked against every existing lesson's icon/color before picking) in `src/content/lessons.js`,
+  with matching entries in `src/content/lessonContent.js` (two sections + takeaway + thinkAbout) and
+  `src/content/quizData.js` (one question, answer index 1 of 4, kept in the item-16-era even spread —
+  the position counts across all 37 questions were re-checked before commit: 9/10/9/9 over indices
+  0/1/2/3, no index anywhere near half). All five languages (en/es/ko/zh/ja) written directly, not machine-translated after the
+  fact, matching the working method of lessons 28-34.
+  - **Scenario.** Priya is offered $50 today vs. $65 in a month (picks $50 today), then $50 in twelve
+    months vs. $65 in thirteen months (picks $65) — the classic hyperbolic-discounting preference
+    reversal: identical one-month wait and $15 difference in both choices, but the presence of "today" as
+    an option flips the answer. Section 2 generalizes to "I'll start saving next paycheck" / "I'll cancel
+    this subscription next month" — because "later" always eventually arrives as "now" and gets the same
+    outsized pull, such plans keep sliding — and introduces the commitment-device framing (an automatic
+    transfer set up today, so the decision is made once by a version of you not facing the pull of "now,"
+    rather than re-litigated every time "later" becomes "now") as the practical takeaway, not a specific
+    product or provider.
+- **Verified.** `npm test` (via `scripts/bootstrap-node.sh`'s cached Node 20.18.1): `check-data.mjs`
+  reports 0 failures/0 warnings; `check-blindspot.mjs` all six checks pass. `npm run build` clean —
+  `LessonReader` chunk 412.58 kB (176.15 kB gzip), no size-warning regression; the other four chunks
+  unchanged in shape. Live browser check via the static-build-plus-python-server technique
+  (`dist/` served on `127.0.0.1:8764` via `/usr/bin/python3 -m http.server`, opened with the
+  browser-preview tool's `url` action so the `node`/`npm` `PATH`-visibility limitation never applies):
+  seeded lessons 13-34 complete in `localStorage` (browser default language was Korean, confirming prior
+  runs' observation) so lesson 35 unlocks as the next money-track lesson; confirmed via
+  `document.querySelector('main').innerText` that the Korean title, both section headings/bodies, the
+  takeaway, the "think about this" prompt, all four quiz options, and the disclaimer render correctly;
+  clicked the correct quiz option via `querySelector('[role="radio"]').click()` (not coordinate-based
+  `computer`, per the documented click/screenshot unreliability) and confirmed `aria-checked="true"` on
+  it and the "정답"(correct) feedback string appearing in the DOM text, not just the immediate click
+  return value. `read_console_messages` (`onlyErrors: true`) reported zero errors.
+- **Adversarial self-check**: (1) *Blindspot register* — `check-blindspot` clean; separately grepped the
+  diff for advice-adjacent phrasing ("recommend," "guarantee," "you should invest," "buy now," "Dalio")
+  and found none — the lesson never names a product, provider, or specific action beyond the general
+  "automatic transfer" commitment-device pattern already used in the analogous point of lessons 28-34.
+  (2) *DECISIONS.md conflict* — none: only the three `.js` content modules changed, same shape as every
+  prior content-only lesson add; no state-management, persistence, or build-tool code touched. (3)
+  *Redoing done work* — present bias/hyperbolic discounting is not covered by any of lessons 1-34;
+  confirmed by re-reading all eight judgment-lesson topics (28-34 plus this one) side by side before
+  writing — the closest neighbor is lesson 30 (opportunity cost/delayed gratification), which is about
+  the *value* given up by a choice, not about *why* immediate rewards get overweighted relative to
+  delayed ones; the two are complementary, not overlapping. (4) *Verification claim* — the build/test
+  output and the live-DOM Korean render described above are what an independent reviewer would get
+  re-running `npm test`, `npm run build`, and the same browser-tool script against this commit; nothing
+  here is inferred from the source diff alone.
+- **Not touched, and why**: `economic-cycles-v6.jsx` confirmed unchanged (same mtime, byte size) at both
+  the start and end of this run, left alone per standing guidance; `economic-cycles-v5.jsx` unchanged.
+  `ParentGuide.jsx` / kids content untouched — item 19 remains HELD. Did not touch any of items 18/20/21/22.
+- **Next run should pick**: item 24 remains the standing preference for new content. Open candidates,
+  unchanged from prior runs' notes except present bias now being done: saving-vs-investing framed as a
+  judgment call, and "wants dressed up as needs" (the one item explicitly named in item 24's own "what to
+  write instead" list that still hasn't been built as its own lesson — arguably now the most overdue
+  candidate). Items 18/20/21/22 unchanged. **App name still unresolved** — do not invent one. **Use
+  American English spelling in all new lesson content** (owner instruction, 2026-08-07, still standing).

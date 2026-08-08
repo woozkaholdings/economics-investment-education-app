@@ -225,4 +225,9 @@ export const lessons = [
     title: {"en":"Are You Checking, or Just Confirming?","es":"¿Estás Comprobando, o Solo Confirmando?","ko":"확인하고 있나요, 아니면 그냥 확인받고 있나요?","zh":"你是在核实，还是只是在确认？","ja":"確かめているのか、それとも確認しているだけなのか？"},
     subtitle: {"en":"Once you've made a decision, your mind gets much better at finding reasons you were right than at noticing reasons you might be wrong.","es":"Una vez que has tomado una decisión, tu mente se vuelve mucho mejor para encontrar razones de que tenías razón que para notar razones de que podrías estar equivocado.","ko":"일단 결정을 내리고 나면, 우리 마음은 자신이 틀렸을 수도 있다는 이유를 알아차리는 것보다 자신이 옳았다는 이유를 찾아내는 데 훨씬 능숙해집니다.","zh":"一旦你做出了决定，比起注意到自己可能错了的理由，你的大脑会更擅长找到证明自己是对的的理由。","ja":"一度決断を下すと、あなたの心は、自分が間違っているかもしれない理由に気づくことよりも、自分が正しかった理由を見つけることの方がずっと得意になります。"},
   },
+  {
+    id: 35, track: "money", icon: "⏳", color: "#4338ca", minutes: 3,
+    title: {"en":"Why 'Later' Never Feels as Real as 'Now'","es":"Por Qué 'Luego' Nunca Se Siente Tan Real Como 'Ahora'","ko":"왜 '나중'은 '지금'만큼 실감 나지 않을까?","zh":"为什么“以后”从来不像“现在”那样真实？","ja":"なぜ「あとで」は「今」ほど現実に感じられないのか"},
+    subtitle: {"en":"The same choice can flip depending on whether the reward is available today or has to wait — even when the math never changes.","es":"La misma elección puede cambiar según si la recompensa está disponible hoy o tiene que esperar — incluso cuando las matemáticas nunca cambian.","ko":"수학은 전혀 달라지지 않는데도, 보상이 오늘 당장인지 나중에 받아야 하는지에 따라 같은 선택이 뒤집힐 수 있습니다.","zh":"即便数字从未改变，同一个选择也会因为奖励是今天就能拿到、还是要等，而发生反转。","ja":"報酬が今すぐ手に入るか、待たなければならないかによって、計算は何も変わらないのに同じ選択がひっくり返ることがあります。"},
+  },
 ];
