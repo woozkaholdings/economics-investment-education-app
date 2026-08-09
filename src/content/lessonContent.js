@@ -1750,4 +1750,54 @@ export const lessonContent = {
       "ja": "「来月から」や「次の給料日から」と一度ならず自分に言い聞かせてきたことを思い浮かべてください。それを毎回改めて決め直すことではなく、一度だけ自動的に下す決断に変えるには、何が必要でしょうか。"
     }
   },
+  36: {
+    "sections": [
+      {
+        "heading": {
+          "en": "Needs Skip the Question. That's Exactly Why Wants Borrow the Name.",
+          "es": "Las Necesidades Se Saltan la Pregunta. Por Eso los Deseos Toman Prestado el Nombre.",
+          "ko": "필요는 질문을 건너뜁니다. 그래서 욕구가 그 이름을 빌려 씁니다.",
+          "zh": "需要跳过了那个问题。这正是想要要借用它的名字的原因。",
+          "ja": "必要はその問いを飛び越えます。だからこそ欲しいものはその名前を借りるのです。"
+        },
+        "body": {
+          "en": "A need is something you can't functionally do without — food, shelter, basic clothing, healthcare, a way to get to work. A want is everything else: the things worth having, sometimes worth a lot, that you could still live and function without. Almost nobody argues with themselves before buying groceries. The purchase doesn't get scrutinized because a need doesn't have to earn its place — it's already justified by definition.\n\nThat's exactly why calling something a need is so useful, whether or not it's true. Jordan's phone works. The screen has one hairline crack in the corner, barely visible, and every app still opens fine. But somewhere between browsing the store and checking out, 'I want the new phone' quietly became 'I need a new phone' — and once it's a need, there's nothing left to weigh. Nobody budgets a debate over whether to eat this week. The relabeling isn't a lie exactly; it's a shortcut past the part where you'd have to defend the purchase to yourself.",
+          "es": "Una necesidad es algo sin lo cual no puedes funcionar — comida, vivienda, ropa básica, atención médica, una forma de llegar al trabajo. Un deseo es todo lo demás: cosas que vale la pena tener, a veces mucho la pena, pero sin las cuales igual podrías vivir y funcionar. Casi nadie discute consigo mismo antes de comprar comida. La compra no se examina porque una necesidad no tiene que ganarse su lugar — ya está justificada por definición.\n\nPor eso llamar 'necesidad' a algo es tan útil, sea cierto o no. El teléfono de Jordan funciona. La pantalla tiene una grieta apenas visible en la esquina, y cada aplicación abre sin problema. Pero en algún punto entre mirar la tienda y pagar, 'quiero el teléfono nuevo' se convirtió en silencio en 'necesito un teléfono nuevo' — y una vez que es una necesidad, ya no queda nada que sopesar. Nadie se pregunta si debería comer esta semana. El cambio de nombre no es exactamente una mentira; es un atajo para saltarse la parte donde tendrías que defender la compra ante ti mismo.",
+          "ko": "필요는 그것 없이는 기능적으로 살아갈 수 없는 것입니다 — 음식, 주거, 기본적인 옷, 의료, 출근할 방법. 욕구는 그 외의 모든 것입니다: 가질 만한 가치가 있는, 때로는 아주 큰 가치가 있는 것들이지만, 없어도 여전히 살아가고 기능할 수 있는 것들입니다. 식료품을 사기 전에 자신과 논쟁하는 사람은 거의 없습니다. 그 구매는 자세히 따져보지 않는데, 필요는 자기 자리를 스스로 증명할 필요가 없기 때문입니다 — 정의상 이미 정당화되어 있으니까요.\n\n바로 그래서 무언가를 '필요'라고 부르는 것이 그토록 유용합니다, 사실이든 아니든 상관없이요. 조던의 휴대폰은 잘 작동합니다. 화면 모서리에 거의 보이지도 않는 머리카락 굵기의 금이 하나 있을 뿐이고, 모든 앱이 여전히 문제없이 열립니다. 하지만 매장을 둘러보다가 결제하기까지의 어느 순간, '새 휴대폰을 원해'가 조용히 '새 휴대폰이 필요해'로 바뀌었습니다 — 그리고 일단 필요가 되면, 더 이상 저울질할 것이 남지 않습니다. 이번 주에 밥을 먹을지 말지 예산을 세우는 사람은 없습니다. 이름을 바꾸는 것이 정확히 거짓말은 아닙니다 — 스스로에게 그 구매를 정당화해야 하는 부분을 건너뛰는 지름길일 뿐입니다.",
+          "zh": "需要是没有它你就无法正常生活的东西——食物、住所、基本的衣物、医疗、上班的交通方式。想要是其他一切：值得拥有、有时非常值得拥有的东西，但没有它你依然能生活、能正常运转。几乎没有人会在买食物之前先跟自己争论一番。这笔支出不会被仔细审视，因为需要不需要证明自己有资格存在——按定义它已经是正当的了。\n\n这正是为什么把某样东西称为“需要”如此好用，不管是不是真的。乔丹的手机好好的。屏幕角落只有一道几乎看不见的细纹，每个应用照样打开无碍。但在浏览商店和结账之间的某个瞬间，“我想要新手机”悄悄变成了“我需要新手机”——而一旦它成了需要，就没有什么好权衡的了。没有人会在预算里争论这周该不该吃饭。这种重新贴标签严格来说不算撒谎；它只是一条捷径，绕过了本该向自己证明这笔消费合理的那一步。",
+          "ja": "必要とは、それなしでは機能的に生きていけないもの——食べ物、住まい、最低限の衣服、医療、通勤の手段です。欲しいものはそれ以外のすべて：持つ価値がある、時には大いに価値のあるものだけれど、それがなくても生きて機能し続けられるものです。食料品を買う前に自分と議論する人はほとんどいません。その買い物が精査されないのは、必要は自分の存在を証明する必要がないからです——定義上、すでに正当化されているのです。\n\nだからこそ、何かを「必要」と呼ぶことはとても便利です、それが本当かどうかにかかわらず。ジョーダンのスマートフォンは問題なく使えています。画面の端にほとんど見えないほどの小さなひびが一本入っているだけで、どのアプリも問題なく開きます。ですが、店を見て回ってから会計をするまでのどこかで、「新しいスマホが欲しい」がひそかに「新しいスマホが必要だ」に変わりました——そして一度それが必要になれば、もう天秤にかけるものは何も残っていません。今週食事をするかどうかを予算で議論する人はいません。この呼び名の付け替えは、厳密には嘘ではありません——自分自身にその買い物を弁護しなければならない部分を飛び越える近道なのです。"
+        }
+      },
+      {
+        "heading": {
+          "en": "The Test: What Actually Breaks If You Don't Buy It?",
+          "es": "La Prueba: ¿Qué Se Rompe Realmente Si No Lo Compras?",
+          "ko": "테스트: 사지 않으면 실제로 무엇이 망가지는가?",
+          "zh": "测试：如果不买，到底会出什么问题？",
+          "ja": "テスト：買わなければ実際に何が壊れるのか？"
+        },
+        "body": {
+          "en": "A real need survives a blunt question: what happens if I don't buy this? Skip rent, and you lose housing. Skip groceries, and you go hungry. The answer is concrete and immediate, which is exactly why the purchase never felt like a decision worth agonizing over in the first place.\n\nAsk the same question of a relabeled want, and the honest answer is usually softer: nothing breaks. The phone still makes calls, sends texts, and takes photos tomorrow exactly as well as it does today. That doesn't mean the new phone is a bad purchase — wants are allowed, and plenty of them are worth the money. The problem isn't wanting things. It's skipping the one step a want is supposed to get and a need doesn't need: actually weighing whether this particular purchase, at this price, right now, is worth it to you. Calling it a need is how that step gets skipped without anyone — including you — noticing it happened.",
+          "es": "Una necesidad real sobrevive a una pregunta directa: ¿qué pasa si no compro esto? Si te saltas el alquiler, pierdes la vivienda. Si te saltas la comida, pasas hambre. La respuesta es concreta e inmediata, y por eso la compra nunca se sintió como una decisión que valiera la pena debatir.\n\nHazle la misma pregunta a un deseo disfrazado de necesidad, y la respuesta honesta suele ser más suave: no se rompe nada. El teléfono seguirá haciendo llamadas, enviando mensajes y tomando fotos mañana tan bien como hoy. Eso no significa que el teléfono nuevo sea una mala compra — los deseos están permitidos, y muchos valen el dinero. El problema no es querer cosas. Es saltarse el único paso que un deseo debe pasar y una necesidad no necesita: sopesar de verdad si esta compra en particular, a este precio, ahora mismo, vale la pena para ti. Llamarlo necesidad es cómo ese paso se salta sin que nadie — ni siquiera tú — note que pasó.",
+          "ko": "진짜 필요는 직설적인 질문을 견뎌냅니다: 이걸 사지 않으면 어떻게 되지? 월세를 내지 않으면 살 곳을 잃습니다. 식료품을 사지 않으면 배가 고픕니다. 답은 구체적이고 즉각적이며, 바로 그래서 그 구매는 애초에 고민할 가치가 있는 결정처럼 느껴진 적이 없었습니다.\n\n같은 질문을 필요로 위장한 욕구에게 던져 보면, 솔직한 답은 대개 훨씬 부드럽습니다: 아무것도 망가지지 않습니다. 그 휴대폰은 내일도 오늘과 똑같이 전화를 걸고, 문자를 보내고, 사진을 찍을 것입니다. 그렇다고 새 휴대폰을 사는 게 나쁜 소비라는 뜻은 아닙니다 — 욕구를 갖는 것은 괜찮고, 그중 많은 것들이 그만한 돈을 쓸 가치가 있습니다. 문제는 무언가를 원하는 것 자체가 아닙니다. 문제는 욕구라면 반드시 거쳐야 하지만 필요는 거칠 필요가 없는 그 한 단계를 건너뛰는 것입니다: 바로 지금, 이 가격에, 이 특정한 구매가 정말로 나에게 그만한 가치가 있는지를 실제로 따져보는 단계 말입니다. 무언가를 필요라고 부르는 것은 그 단계를 아무도 — 나 자신조차도 — 눈치채지 못한 채 건너뛰는 방법입니다.",
+          "zh": "真正的需要经得起一个直白的问题：如果我不买这个，会怎样？不交房租，你就没地方住。不买食物，你就会挨饿。答案具体而立即，这也正是为什么这笔支出从一开始就从未让人觉得是个需要纠结的决定。\n\n把同样的问题问给一个披着需要外衣的想要，诚实的答案通常要温和得多：什么都不会出问题。那部手机明天照样能打电话、发短信、拍照，跟今天一样好用。这并不是说买新手机就是个糟糕的消费——想要是被允许的，其中很多也确实值这个钱。问题不在于想要东西本身。问题在于跳过了那唯一一步——想要本该经历、而需要不必经历的一步：真正权衡一下，眼下这笔具体的花费、这个价钱，对你来说到底值不值。把它称为需要，就是这一步在无人察觉——包括你自己——的情况下被跳过的方式。",
+          "ja": "本物の必要は、率直な問いに耐えられます：これを買わなかったらどうなるのか？家賃を払わなければ、住まいを失います。食料品を買わなければ、空腹になります。答えは具体的で即座に出てくるものであり、だからこそその買い物はそもそも思い悩む価値のある決断だと感じられたことがなかったのです。\n\n同じ問いを、必要という仮面をかぶった欲しいものに投げかけると、正直な答えはたいてい、もっと穏やかなものになります：何も壊れません。そのスマホは明日も、今日とまったく同じように電話をかけ、メッセージを送り、写真を撮れます。だからといって新しいスマホを買うのが悪い買い物だという意味ではありません——欲しいものを持つことは許されていますし、その多くはお金を出す価値があります。問題は物を欲しがること自体ではありません。問題は、欲しいものが本来受けるべきでありながら必要には要らない、たった一つのステップを飛ばしてしまうことです：この特定の買い物が、この価格で、今、自分にとって本当に価値があるのかを実際に天秤にかけるステップです。何かを必要と呼ぶことは、そのステップが誰にも——自分自身にさえも——気づかれずに飛ばされる方法なのです。"
+        }
+      }
+    ],
+    "takeaway": {
+      "en": "Needs are things you can't function without; wants are everything else, including plenty of things worth buying. The tell isn't the price or the item — it's whether you'd still buy it after asking 'what actually breaks if I don't.' A real need survives that question without flinching. A want wearing a need's disguise is really just a purchase trying to skip the evaluation it's supposed to get.",
+      "es": "Las necesidades son cosas sin las cuales no puedes funcionar; los deseos son todo lo demás, incluidas muchas cosas que vale la pena comprar. La señal no es el precio ni el artículo — es si seguirías comprándolo después de preguntarte 'qué se rompe realmente si no lo hago'. Una necesidad real sobrevive esa pregunta sin titubear. Un deseo disfrazado de necesidad es en realidad una compra tratando de saltarse la evaluación que le corresponde.",
+      "ko": "필요는 그것 없이는 기능할 수 없는 것이고, 욕구는 그 외의 모든 것입니다 — 살 만한 가치가 있는 많은 것들을 포함해서요. 신호는 가격도, 물건 자체도 아닙니다 — '사지 않으면 실제로 무엇이 망가지지'라는 질문을 던진 뒤에도 여전히 사고 싶은가입니다. 진짜 필요는 그 질문 앞에서 흔들리지 않고 살아남습니다. 필요로 위장한 욕구는 사실 자신이 마땅히 받아야 할 평가를 건너뛰려는 구매일 뿐입니다.",
+      "zh": "需要是没有它你就无法正常生活的东西；想要是其他一切，其中不乏很多值得买的东西。区分的关键不在价格或物品本身——而在于问完“如果不买，到底会出什么问题”之后，你是否还会买。真正的需要经得起这个问题，毫不动摇。而披着需要外衣的想要，其实只是一笔想要跳过本该经历的评估的消费。",
+      "ja": "必要とはそれなしでは機能できないものであり、欲しいものはそれ以外のすべて——買う価値のある多くのものも含みます。見分ける手がかりは価格でも品物そのものでもありません——「買わなければ実際に何が壊れるのか」と自問した後でも、それでも買うかどうかです。本物の必要はその問いにひるまず耐えます。必要という仮面をかぶった欲しいものは、実のところ、本来受けるべき評価を飛び越えようとしている買い物にすぎません。"
+    },
+    "thinkAbout": {
+      "en": "Think of something you've called a 'need' recently. Ask the blunt question honestly: what would actually break if you hadn't bought it? If the answer is 'nothing, I'd just prefer to have it,' that's not a problem — it just means it was a want that deserved a real yes-or-no, not an automatic one.",
+      "es": "Piensa en algo que llamaste 'necesidad' recientemente. Hazte la pregunta directa, con honestidad: ¿qué se habría roto realmente si no lo hubieras comprado? Si la respuesta es 'nada, solo prefería tenerlo', eso no es un problema — solo significa que era un deseo que merecía un sí o un no real, no uno automático.",
+      "ko": "최근에 '필요'라고 불렀던 무언가를 떠올려 보세요. 솔직하게 그 직설적인 질문을 던져 보세요: 그것을 사지 않았다면 실제로 무엇이 망가졌을까요? 답이 '아무것도 아니야, 그냥 있으면 좋겠다고 생각했을 뿐이야'라면, 그건 문제가 아닙니다 — 그저 자동으로 '예'가 아니라 진짜 예-아니오 판단을 받을 자격이 있는 욕구였다는 뜻일 뿐입니다.",
+      "zh": "想一件你最近称之为“需要”的东西。诚实地问自己那个直白的问题：如果没买它，到底会出什么问题？如果答案是“什么都不会，我只是更想拥有它”，那不是问题——这只说明它是一件想要的东西，理应得到一个真正的是或否，而不是自动的“是”。",
+      "ja": "最近「必要」と呼んだものを思い浮かべてください。その率直な問いを正直に自分に投げかけてみましょう：それを買わなかったら、実際に何が壊れていたでしょうか？答えが「何も。ただ持っていたかっただけ」なら、それは問題ではありません——それはただ、自動的な「はい」ではなく、本物のはい・いいえの判断に値する、欲しいものだったというだけのことです。"
+    }
+  },
 };

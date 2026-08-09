@@ -230,4 +230,9 @@ export const lessons = [
     title: {"en":"Why 'Later' Never Feels as Real as 'Now'","es":"Por Qué 'Luego' Nunca Se Siente Tan Real Como 'Ahora'","ko":"왜 '나중'은 '지금'만큼 실감 나지 않을까?","zh":"为什么“以后”从来不像“现在”那样真实？","ja":"なぜ「あとで」は「今」ほど現実に感じられないのか"},
     subtitle: {"en":"The same choice can flip depending on whether the reward is available today or has to wait — even when the math never changes.","es":"La misma elección puede cambiar según si la recompensa está disponible hoy o tiene que esperar — incluso cuando las matemáticas nunca cambian.","ko":"수학은 전혀 달라지지 않는데도, 보상이 오늘 당장인지 나중에 받아야 하는지에 따라 같은 선택이 뒤집힐 수 있습니다.","zh":"即便数字从未改变，同一个选择也会因为奖励是今天就能拿到、还是要等，而发生反转。","ja":"報酬が今すぐ手に入るか、待たなければならないかによって、計算は何も変わらないのに同じ選択がひっくり返ることがあります。"},
   },
+  {
+    id: 36, track: "money", icon: "🛍️", color: "#a16207", minutes: 2,
+    title: {"en":"Is That a Need — Or Just a Want Wearing a Disguise?","es":"¿Eso Es una Necesidad — o Solo un Deseo Disfrazado?","ko":"그건 필요일까, 아니면 필요로 위장한 욕구일까?","zh":"那是需要，还是披着需要外衣的想要？","ja":"それは必要なのか、それとも必要という仮面をかぶった欲しいものなのか？"},
+    subtitle: {"en":"The label doesn't change what happens to your money when you say yes — but it changes whether you ever ask the question at all.","es":"La etiqueta no cambia lo que le pasa a tu dinero cuando dices que sí — pero cambia si alguna vez te haces la pregunta.","ko":"이름표가 바뀐다고 해서 '예'라고 답했을 때 돈에 일어나는 일이 달라지진 않습니다 — 다만 애초에 그 질문을 던지는지 여부가 달라질 뿐입니다.","zh":"标签的改变不会改变你说“好”之后钱包发生的事——但它会决定你到底有没有问过自己那个问题。","ja":"ラベルが変わっても、「はい」と答えたときにお金に起こることは変わりません——変わるのは、そもそもその問いを自分に投げかけるかどうかです。"},
+  },
 ];

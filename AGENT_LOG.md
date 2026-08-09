@@ -90,14 +90,18 @@ for the history. No open P1/P2 items.
       liabilities as a *decision lens*; lifestyle inflation and why raises vanish; delayed gratification
       and impulse spending; opportunity cost; sunk cost; FOMO and herd behavior in markets; anchoring;
       wants dressed up as needs; making money work for you rather than only working for money. Lessons
-      28-35 are the judgment lessons built so far and are the pattern to follow — asset-vs-liability
+      28-36 are the judgment lessons built so far and are the pattern to follow — asset-vs-liability
       framing, the earn-spend gap and lifestyle inflation, opportunity cost and delayed gratification,
-      the sunk cost fallacy, FOMO/herd behavior in markets, anchoring, confirmation bias, and (this run,
-      2026-08-08) present bias / hyperbolic discounting. The original item-24 shortlist (28-32) is
-      exhausted; anchoring, confirmation bias, and present bias were all proposed fresh by prior runs'
-      "next run should pick" notes, not from that shortlist — see the run log entry for what a future
-      run should consider next. "Wants dressed up as needs" is the one item explicitly named in this
-      backlog item's own list that still hasn't been built as its own lesson.
+      the sunk cost fallacy, FOMO/herd behavior in markets, anchoring, confirmation bias, present bias /
+      hyperbolic discounting, and (this run, 2026-08-08) needs-vs-wants relabeling. The original item-24
+      shortlist (28-32) is exhausted; anchoring, confirmation bias, present bias, and needs-vs-wants were
+      all proposed fresh by prior runs' "next run should pick" notes, not from that shortlist. **Every
+      topic explicitly named in this backlog item's own "what to write instead" list is now built** —
+      "making money work for you rather than only working for money" is closest to lesson 28's
+      asset-vs-liability lens rather than a wholly separate concept, so nothing on the original list
+      remains unaddressed. A future run should re-scope this item (e.g. against `LAUNCH_PLAN.md` §0/§4.3)
+      rather than keep extending the list ad hoc — see the run log entry for what a future run should
+      consider next.
     - **The §10.1 tension — do not skip this.** That genre is advice-heavy and parts of it are contested
       (e.g. Kiyosaki's "your house is not an asset" conflicts with standard accounting; his leveraged
       real-estate advocacy is genuinely risky prescriptive advice; parts of the book are disputed as
@@ -110,13 +114,13 @@ for the history. No open P1/P2 items.
       it is a pointer to a genre the owner named, not a source to copy.
 17. **[Content] Grow the lesson catalogue** — *now subordinate to item 24: prefer a judgment/mindset
     lesson over another mechanics lesson unless there's a reason not to.* Derived from `LAUNCH_PLAN.md`
-    §4.3, not owner-assigned but the plan's own explicit gate: the catalogue is now **35 lessons /
-    96,424 English characters / 16,674 words / 86 minutes** end to end — measured this session by
+    §4.3, not owner-assigned but the plan's own explicit gate: the catalogue is now **36 lessons /
+    99,005 English characters / 17,127 words / 88 minutes** end to end — measured this session by
     summing every lesson's `sections[].body.en` + `takeaway.en` + `thinkAbout.en` from
-    `content/lessonContent.js` and its `minutes` from `content/lessons.js` (23 money / 12 economy).
-    This run added lesson 35 ("Why 'Later' Never Feels as Real as 'Now'", present bias / hyperbolic
-    discounting), an eighth judgment lesson per item 24, proposed fresh (not from the original
-    five-item shortlist, which lesson 32 already exhausted) — see run log. **Correction to
+    `content/lessonContent.js` and its `minutes` from `content/lessons.js` (24 money / 12 economy).
+    This run added lesson 36 ("Is That a Need — Or Just a Want Wearing a Disguise?", needs-vs-wants
+    relabeling), a ninth judgment lesson per item 24 and the last one named in item 24's original "what
+    to write instead" list — see run log. **Correction to
     prior entries:** runs 8-11 reported figures (e.g. "27 lessons / ~68,700 chars / ~63 min") that the
     above method does not reproduce — 28 lessons now measure *fewer* minutes than 27 supposedly did, so
     the older numbers were computed some other way or estimated. Future runs should re-measure with the
@@ -4519,3 +4523,73 @@ none of them is about *time* discounting specifically).
   write instead" list that still hasn't been built as its own lesson — arguably now the most overdue
   candidate). Items 18/20/21/22 unchanged. **App name still unresolved** — do not invent one. **Use
   American English spelling in all new lesson content** (owner instruction, 2026-08-07, still standing).
+
+### 2026-08-08 (twentieth run, scheduled dev-agent) — Add lesson 36: "Is That a Need — Or Just a Want Wearing a Disguise?" (backlog item 24, needs-vs-wants relabeling)
+
+`git status` at the start showed only the known untracked `economic-cycles-v6.jsx` (same mtime, `Aug 4
+16:05`/`02:27`, and byte size, 13207/348933, as every prior run) and nothing else uncommitted — proceeded
+normally, left it untouched. Read `AGENT_LOG.md`; item 24 remains the standing content preference, and
+the previous run's "next run should pick" note named "wants dressed up as needs" as the one topic
+explicitly listed in item 24's own "what to write instead" text that still hadn't been built — called out
+there as arguably the most overdue candidate. Picked it over the other open candidate (saving-vs-investing)
+for that reason.
+
+- **What was added.** Lesson 36 (`id: 36`, `track: "money"`, icon `🛍️`, color `#a16207` — both checked
+  against every existing lesson's icon/color before picking, neither previously used) in
+  `src/content/lessons.js`, with matching entries in `src/content/lessonContent.js` (two sections +
+  takeaway + thinkAbout) and `src/content/quizData.js` (one question, answer index 2 of 4 — the position
+  counts across all 38 questions were re-checked before commit: 9/10/10/9 over indices 0/1/2/3, no index
+  anywhere near half). All five languages (en/es/ko/zh/ja) written directly, not machine-translated after
+  the fact, matching the working method of lessons 28-35.
+  - **Content.** Section 1 draws the need/want line (a need is something you can't functionally do
+    without; a want is everything else, including things worth having) and names the mechanism: a need
+    doesn't have to justify itself, so relabeling a want as a need is a shortcut past the evaluation a want
+    is supposed to get. Jordan's phone — fully working, one barely-visible crack — becomes the running
+    example: "I want a new phone" quietly becomes "I need a new phone" during checkout, with nothing about
+    the phone itself having changed. Section 2 gives the practical test: ask "what actually breaks if I
+    don't buy this" — a real need survives that question (lose housing, go hungry); a relabeled want
+    usually doesn't ("nothing breaks"). Explicitly not anti-want: wants are allowed and plenty are worth
+    the money — the point is the purchase should get a real evaluation instead of an automatic pass earned
+    by mislabeling it.
+- **Verified.** `npm test` (via `scripts/bootstrap-node.sh`'s cached Node 20.18.1): `check-data.mjs`
+  first failed loudly as designed — `minutes` was set to 3 but the body's word count computed to 2 — fixed
+  by setting `minutes: 2` to match, then 0 failures/0 warnings; `check-blindspot.mjs` all six checks pass.
+  `npm run build` clean — `LessonReader` chunk 429.48 kB (182.97 kB gzip), no size-warning regression; the
+  other four chunks unchanged in shape. Live browser check via the static-build-plus-python-server
+  technique (`dist/` served on `127.0.0.1:8764` via `/usr/bin/python3 -m http.server`, opened with the
+  browser-preview tool's `url` action): seeded lessons 13-35 complete in `localStorage` (browser default
+  language was Korean, confirming prior runs' observation) so lesson 36 unlocks as the next money-track
+  lesson (Home showed 23/24 correctly, then 36/36 as the lesson-list badge); confirmed via
+  `document.querySelector('main').innerText` that the Korean title, both section headings/bodies, the
+  takeaway, the "think about this" prompt, all four quiz options, and the disclaimer render correctly;
+  clicked the correct quiz option via `querySelectorAll('[role="radio"]')[2].click()` (not coordinate-based
+  `computer`) and confirmed the "정답"(correct) feedback string and the correct explanation text appeared
+  in the DOM text after a fresh page load (the first attempt clicked option 0 by mistake and correctly
+  showed it as wrong, confirming the answer key isn't just always reporting "correct" — reloaded and
+  re-answered with the right option to get a clean positive result). `read_console_messages`
+  (`onlyErrors: true`) reported zero errors.
+- **Adversarial self-check**: (1) *Blindspot register* — `check-blindspot` clean; separately grepped the
+  diff for advice-adjacent phrasing ("recommend," "guarantee," "you should," "buy now," "invest in,"
+  "Dalio") and found none — the lesson never tells the reader whether to buy anything, only offers a test
+  to apply to a purchase already being considered. (2) *DECISIONS.md conflict* — none: only the three
+  `.js` content modules changed, same shape as every prior content-only lesson add; no state-management,
+  persistence, or build-tool code touched. (3) *Redoing done work* — needs-vs-wants relabeling is not
+  covered by any of lessons 1-35; the closest neighbors are lesson 28 (asset-vs-liability framing) and
+  lesson 30 (opportunity cost), both re-read before writing — 28 is about what a purchase *does* to your
+  finances over time, 30 is about the *hidden cost* of a choice, and this lesson is about a *labeling*
+  move that happens before either of those questions gets asked at all, so the three are complementary,
+  not overlapping. (4) *Verification claim* — the build/test output and the live-DOM Korean render
+  described above, including the deliberate wrong-answer-then-right-answer check, are what an independent
+  reviewer would get re-running `npm test`, `npm run build`, and the same browser-tool script against this
+  commit; nothing here is inferred from the source diff alone.
+- **Not touched, and why**: `economic-cycles-v6.jsx` confirmed unchanged (same mtime, byte size) at both
+  the start and end of this run, left alone per standing guidance; `economic-cycles-v5.jsx` unchanged.
+  `ParentGuide.jsx` / kids content untouched — item 19 remains HELD. Did not touch any of items 18/20/21/22.
+- **Next run should pick**: item 24's explicit "what to write instead" shortlist is now fully built (every
+  named topic has a lesson). Open candidates for a ninth-plus judgment lesson, unchanged from prior runs'
+  notes: saving-vs-investing framed as a judgment call. A future run should also consider whether item 24
+  itself needs re-scoping now that its original named list is exhausted — e.g. re-reading `LAUNCH_PLAN.md`
+  §0/§4.3 for other judgment-shaped gaps rather than picking topics ad hoc — but that's a judgment call for
+  that run, not decided here. Items 18/20/21/22 unchanged. **App name still unresolved** — do not invent
+  one. **Use American English spelling in all new lesson content** (owner instruction, 2026-08-07, still
+  standing).
