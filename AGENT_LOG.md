@@ -112,15 +112,23 @@ for the history. No open P1/P2 items.
       purchases sit in between; never write "buy assets, not liabilities" as a directive, never name a
       product to buy, never imply a path to wealth. Do not cite or quote the book as an authority —
       it is a pointer to a genre the owner named, not a source to copy.
+    - **Update, 2026-08-08 (twenty-first run):** added lesson 37 ("Does This Money Need to Be There
+      Tomorrow, or Can It Wait Ten Years?", saving-vs-investing as a time-horizon judgment call — the
+      candidate the previous run's "next run should pick" note named). This is a tenth judgment lesson;
+      the item's original named shortlist was already fully built as of lesson 36, so this one was picked
+      from the open-candidates note rather than the original list. See run log for detail. A future run
+      should re-scope this item per the previous entry's note (re-read `LAUNCH_PLAN.md` §0/§4.3 for other
+      judgment-shaped gaps) rather than keep extending an informal candidate list — that re-scoping still
+      hasn't happened.
 17. **[Content] Grow the lesson catalogue** — *now subordinate to item 24: prefer a judgment/mindset
     lesson over another mechanics lesson unless there's a reason not to.* Derived from `LAUNCH_PLAN.md`
-    §4.3, not owner-assigned but the plan's own explicit gate: the catalogue is now **36 lessons /
-    99,005 English characters / 17,127 words / 88 minutes** end to end — measured this session by
-    summing every lesson's `sections[].body.en` + `takeaway.en` + `thinkAbout.en` from
-    `content/lessonContent.js` and its `minutes` from `content/lessons.js` (24 money / 12 economy).
-    This run added lesson 36 ("Is That a Need — Or Just a Want Wearing a Disguise?", needs-vs-wants
-    relabeling), a ninth judgment lesson per item 24 and the last one named in item 24's original "what
-    to write instead" list — see run log. **Correction to
+    §4.3, not owner-assigned but the plan's own explicit gate: the catalogue is now **37 lessons /
+    104,937 English characters / 18,093 words / 91 minutes** end to end — re-measured 2026-08-08 (same
+    method: summing every lesson's `sections[].body.en` + `takeaway.en` + `thinkAbout.en` from
+    `content/lessonContent.js` and its `minutes` from `content/lessons.js`; 25 money / 12 economy).
+    This run added lesson 37 ("Does This Money Need to Be There Tomorrow, or Can It Wait Ten Years?",
+    saving-vs-investing framed as a time-horizon judgment call), a tenth judgment lesson per item 24 —
+    see run log. **Correction to
     prior entries:** runs 8-11 reported figures (e.g. "27 lessons / ~68,700 chars / ~63 min") that the
     above method does not reproduce — 28 lessons now measure *fewer* minutes than 27 supposedly did, so
     the older numbers were computed some other way or estimated. Future runs should re-measure with the
@@ -4593,3 +4601,85 @@ for that reason.
   that run, not decided here. Items 18/20/21/22 unchanged. **App name still unresolved** — do not invent
   one. **Use American English spelling in all new lesson content** (owner instruction, 2026-08-07, still
   standing).
+
+### 2026-08-08 (twenty-first run, scheduled dev-agent) — Add lesson 37: "Does This Money Need to Be There Tomorrow, or Can It Wait Ten Years?" (backlog item 24, saving-vs-investing as a time-horizon judgment call)
+
+`git status` at the start showed only the known untracked `economic-cycles-v6.jsx` (same mtime, `Aug 4
+16:05`/`02:27`, and byte size, 13207/348933, as every prior run) and nothing else uncommitted — matched
+the long-documented reference-only file described in "Notes for future runs," so proceeded normally and
+left it untouched. Read `AGENT_LOG.md`; item 24 remains the standing content preference, and the previous
+run's "next run should pick" note explicitly named "saving-vs-investing framed as a judgment call" as the
+one open candidate (the item's original named shortlist was already exhausted as of lesson 36). Picked it
+over starting the item's re-scoping the same note flagged, since a single run doing both a re-scope and a
+new lesson risked doing neither well — re-scoping is left for a future run per that note.
+
+- **What was added.** Lesson 37 (`id: 37`, `track: "money"`, icon `🌉`, color `#065f46` — both checked
+  against every existing lesson's icon/color before picking, neither previously used) in
+  `src/content/lessons.js`, with matching entries in `src/content/lessonContent.js` (two sections +
+  takeaway + thinkAbout) and `src/content/quizData.js` (one question, answer index 3 of 4 — the position
+  counts across all 39 questions were re-checked before commit: 9/10/10/10 over indices 0/1/2/3, no index
+  anywhere near half). All five languages (en/es/ko/zh/ja) written directly, not machine-translated after
+  the fact, matching the working method of lessons 28-36.
+  - **Content and the §10.1 line it deliberately stays on.** Section 1 reframes the common "which grows
+    money faster, saving or investing" instinct as a category error: a savings account's job is to be
+    exactly where you left it, in full, on demand (that stability is the entire point, and the trade-off
+    for it); an investment account's value moves and there's no guarantee which direction over any given
+    stretch — the two aren't competing for the same job, so asking "which is better" in the abstract is
+    like asking whether a raincoat beats a winter coat without knowing what you're about to walk into.
+    Section 2 gives the practical test: how soon might this specific money be needed, and can it afford to
+    be down the day it's needed? Money due soon (rent, an emergency fund, a near-term goal) needs to be
+    where it can't be down when called on, regardless of how well it might have done elsewhere over ten
+    years; money with a genuinely long horizon has time to recover from a bad stretch before it's ever
+    withdrawn, which is what makes weighing the growth trade-off worth doing. Explicitly points out the
+    quieter, opposite mismatch too — money not needed for decades sitting in a sub-inflation savings
+    account is paying for stability it doesn't currently need. **Deliberately never says what to actually
+    do with any given dollar, never names a percentage split or "rule of thumb" allocation (e.g. no
+    "100 minus your age"), never names an investment vehicle or product, and never tells the reader they
+    should invest** — the lesson teaches the time-horizon lens and stops there, consistent with item 24's
+    "teach the lens, leave the prescriptions" standing instruction, because this topic sits closer to
+    §10.1's line (advice-adjacency) than most of the other judgment lessons have.
+- **Verified.** `npm test` (via `scripts/bootstrap-node.sh`'s cached Node 20.18.1): `check-data.mjs` 0
+  failures/0 warnings on the first run (minutes/word-count matched without a fixup this time);
+  `check-blindspot.mjs` all six checks pass. Separately grepped the full diff for `dalio`,
+  `you should (buy|sell|invest)`, `we recommend`, `best investments`, `be bullish`, `be cautious`, and
+  `guarantee` — the only `guarantee`-adjacent hits are inside quiz distractor text describing a
+  *misconception* ("guarantees the $3,000 will shrink") and a hedging statement in the lesson body ("no
+  guarantee which direction"), neither of which asserts anything the reader should do. `npm run build`
+  clean — `LessonReader` chunk 451.66 kB (192.29 kB gzip, up from 429.48 kB), no size-warning regression;
+  other chunks unchanged in shape. Live browser check via the static-build-plus-python-server technique
+  (`dist/` served on `127.0.0.1:8765` via `/usr/bin/python3 -m http.server`, opened with the
+  browser-preview tool's `url` action): seeded lessons 13-36 complete in `localStorage` so lesson 37
+  unlocked as the next money-track lesson (badge showed 24/37, then 37/37); confirmed via
+  `document.querySelector('main').innerText` that both the Korean (default) and English renders show the
+  correct title, both section headings/bodies, the takeaway, the "think about this" prompt, all four quiz
+  options, and the disclaimer. Clicked the wrong option first (`querySelectorAll('[role="radio"]')[0]`)
+  and confirmed the Korean "아쉽네요" (incorrect) feedback and its explanation text appeared, `aria-checked`
+  set only on the clicked option; reloaded and clicked the correct option
+  (`querySelectorAll('[role="radio"]')[3]`) and confirmed "정답" (correct) feedback appeared instead —
+  the same deliberate wrong-then-right check as the previous two runs, so the answer key isn't just always
+  reporting correct. `read_console_messages` (`onlyErrors: true`) reported zero errors in either state.
+- **Adversarial self-check**: (1) *Blindspot register* — `check-blindspot` clean and the manual grep above
+  found nothing that asserts advice; separately re-read the full lesson text once more specifically
+  looking for anything that reads as a directive (a specific split, a specific product, an implied "you
+  should") — found none, and confirmed the disclaimer still renders on this lesson via the live-DOM check.
+  (2) *DECISIONS.md conflict* — none: only the three `.js` content modules changed, same shape as every
+  prior content-only lesson add; no state-management, persistence, or build-tool code touched. (3)
+  *Redoing done work* — re-read lesson 17 (Stocks, Bonds & Diversification — mechanics of what the
+  instruments are) and lesson 14 (Emergency Funds — why a buffer exists) before writing, since both are
+  the closest existing neighbors; neither teaches the judgment of matching a specific dollar's time
+  horizon to where it sits, which is this lesson's actual subject, so the three are complementary, not
+  overlapping. (4) *Verification claim* — the build/test output, the seven-pattern advice-language grep,
+  and the live-DOM bilingual/right-and-wrong-answer checks described above are what an independent
+  reviewer would get re-running `npm test`, `npm run build`, and the same grep/browser-tool commands
+  against this commit; nothing here is inferred from the source diff alone.
+- **Not touched, and why**: `economic-cycles-v6.jsx` confirmed unchanged (same mtime, byte size) at both
+  the start and end of this run, left alone per standing guidance; `economic-cycles-v5.jsx` unchanged.
+  `ParentGuide.jsx` / kids content untouched — item 19 remains HELD. Did not touch any of items 18/20/21/22.
+- **Next run should pick**: item 24's informal open-candidates note (from lesson 36's entry) is now also
+  exhausted — saving-vs-investing was the last one named. A future run should treat re-scoping item 24
+  (re-reading `LAUNCH_PLAN.md` §0/§4.3 for other judgment-shaped gaps, rather than continuing to invent one
+  topic per run) as the next step before adding an eleventh judgment lesson ad hoc — this is now the
+  second consecutive entry flagging that re-scoping without anyone doing it, so it's a good candidate for
+  the *next* run to actually pick up rather than defer again. Items 18/20/21/22 unchanged. **App name
+  still unresolved** — do not invent one. **Use American English spelling in all new lesson content**
+  (owner instruction, 2026-08-07, still standing).

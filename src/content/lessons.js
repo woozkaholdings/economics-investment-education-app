@@ -235,4 +235,9 @@ export const lessons = [
     title: {"en":"Is That a Need — Or Just a Want Wearing a Disguise?","es":"¿Eso Es una Necesidad — o Solo un Deseo Disfrazado?","ko":"그건 필요일까, 아니면 필요로 위장한 욕구일까?","zh":"那是需要，还是披着需要外衣的想要？","ja":"それは必要なのか、それとも必要という仮面をかぶった欲しいものなのか？"},
     subtitle: {"en":"The label doesn't change what happens to your money when you say yes — but it changes whether you ever ask the question at all.","es":"La etiqueta no cambia lo que le pasa a tu dinero cuando dices que sí — pero cambia si alguna vez te haces la pregunta.","ko":"이름표가 바뀐다고 해서 '예'라고 답했을 때 돈에 일어나는 일이 달라지진 않습니다 — 다만 애초에 그 질문을 던지는지 여부가 달라질 뿐입니다.","zh":"标签的改变不会改变你说“好”之后钱包发生的事——但它会决定你到底有没有问过自己那个问题。","ja":"ラベルが変わっても、「はい」と答えたときにお金に起こることは変わりません——変わるのは、そもそもその問いを自分に投げかけるかどうかです。"},
   },
+  {
+    id: 37, track: "money", icon: "🌉", color: "#065f46", minutes: 3,
+    title: {"en":"Does This Money Need to Be There Tomorrow, or Can It Wait Ten Years?","es":"¿Este Dinero Debe Estar Disponible Mañana, o Puede Esperar Diez Años?","ko":"이 돈은 내일 필요한가요, 아니면 10년을 기다릴 수 있나요?","zh":"这笔钱是明天就要用，还是能等上十年？","ja":"このお金は明日必要なのか、それとも十年待てるのか？"},
+    subtitle: {"en":"Saving and investing aren't rivals fighting over the same dollar — the judgment call is figuring out which job a given dollar actually has, before deciding where it goes.","es":"Ahorrar e invertir no compiten por el mismo dólar — el criterio está en descubrir qué trabajo tiene realmente ese dólar antes de decidir dónde ponerlo.","ko":"저축과 투자는 같은 돈을 두고 경쟁하는 관계가 아닙니다 — 판단은 그 돈이 어디로 갈지 정하기 전에, 그 돈이 실제로 어떤 역할을 맡고 있는지 알아내는 것입니다.","zh":"储蓄和投资并不是在争夺同一笔钱——真正的判断，是在决定钱放在哪之前，先弄清楚这笔钱到底该干什么活。","ja":"貯めることと投資することは、同じ1ドルを取り合うライバルではありません——判断とは、そのお金をどこに置くか決める前に、そのお金が実際にどんな役目を持っているのかを見極めることです。"},
+  },
 ];
