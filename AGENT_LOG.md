@@ -130,26 +130,34 @@ for the history. No open P1/P2 items.
       windfall, "too good to be true" pattern recognition) is recorded in that entry's "Next run should
       pick" for whoever picks this item up next — still not a complete formal re-scope, but no longer
       starting from nothing either.
+    - **Update, 2026-08-09 (twenty-third run):** added lesson 39 ("Why Does Losing $50 Hurt More Than
+      Finding $50 Feels Good?", loss aversion — losses feel roughly twice as painful as an equivalent
+      gain feels good, distinct from sunk cost, which is about being unable to let go of money already
+      spent rather than the asymmetric weight of the loss itself). Picked from the previous run's
+      starter list. A twelfth judgment lesson. See run log for detail. Remaining starter-list items for
+      the next run: overconfidence after a lucky outcome, lifestyle creep after a windfall, "too good to
+      be true" pattern recognition.
 17. **[Content] Grow the lesson catalogue** — *now subordinate to item 24: prefer a judgment/mindset
     lesson over another mechanics lesson unless there's a reason not to.* Derived from `LAUNCH_PLAN.md`
-    §4.3, not owner-assigned but the plan's own explicit gate: the catalogue is now **38 lessons /
-    105,758 English characters / ~19,229 words / 94 minutes** end to end — re-measured 2026-08-09 (same
-    method: summing every lesson's `sections[].body.en` + `takeaway.en` + `thinkAbout.en` from
-    `content/lessonContent.js` and its `minutes` from `content/lessons.js`; 26 money / 12 economy).
-    This run added lesson 38 ("Is 'Found' Money Worth Less Than Money You Earned?", mental accounting),
-    an eleventh judgment lesson per item 24 — see run log. At 38/40 lessons and 94/120 minutes, the
-    §4.3 gate is close: one or two more judgment lessons would likely clear the lesson-count half of it.
-    **Correction to
-    prior entries:** runs 8-11 reported figures (e.g. "27 lessons / ~68,700 chars / ~63 min") that the
-    above method does not reproduce — 28 lessons now measure *fewer* minutes than 27 supposedly did, so
-    the older numbers were computed some other way or estimated. Future runs should re-measure with the
-    command above rather than incrementing the previous run's claim. Phase 0 ("free, instrumented, no
-    payment code") doesn't end until it reaches roughly 40 lessons / 2 hours of content **and** ≥40% of
-    installers finish lesson 1. Per §4.3 verbatim: "the highest-value monetization work right now is
-    writing lessons, not writing billing code." Do not start billing/paywall work ahead of this gate —
-    see item 15. **Note the failure mode this item created:** nine consecutive scheduled runs each
-    picked "add one lesson" and optimised the count, and the *direction* drifted unexamined until the
-    owner corrected it. Counting lessons is not the same as building the product.
+    §4.3, not owner-assigned but the plan's own explicit gate: the catalogue is now **39 lessons /
+    108,987 English characters / 97 minutes** end to end — re-measured 2026-08-09 (same method: summing
+    every lesson's `sections[].body.en` + `takeaway.en` + `thinkAbout.en` from `content/lessonContent.js`
+    and its `minutes` from `content/lessons.js`; 27 money / 12 economy). **Word count dropped from this
+    entry**: a fresh script run gives 18,238 words for the *same* 38-lesson/105,758-char text the
+    previous entry measured as "~19,229 words" — chars and minutes both reproduce exactly, so the char
+    and minutes methodology is confirmed stable, but whatever word-splitting approach produced the prior
+    word figure isn't reproduced by a straightforward `text.split(/\s+/)` count; treat past word-count
+    figures in this log as approximate, and chars/minutes as the reliable numbers. This run added lesson
+    39 ("Why Does Losing $50 Hurt More Than Finding $50 Feels Good?", loss aversion), a twelfth judgment
+    lesson per item 24 — see run log. At **39/40 lessons and 97/120 minutes**, the §4.3 gate's lesson-count
+    half would clear with one more lesson; the minutes half still needs roughly 23 more minutes of
+    content even after that. Phase 0 ("free, instrumented, no payment code") doesn't end until it reaches
+    roughly 40 lessons / 2 hours of content **and** ≥40% of installers finish lesson 1. Per §4.3 verbatim:
+    "the highest-value monetization work right now is writing lessons, not writing billing code." Do not
+    start billing/paywall work ahead of this gate — see item 15. **Note the failure mode this item
+    created:** nine consecutive scheduled runs each picked "add one lesson" and optimised the count, and
+    the *direction* drifted unexamined until the owner corrected it. Counting lessons is not the same as
+    building the product.
 21. **[Content] Kids financial literacy — content gap partially closed; structural gap remains.**
     Assessed 2026-08-07 after the owner asked whether kids lessons were already in the master plan —
     see `LAUNCH_PLAN.md` §2.6. **Update, 2026-08-07 (tenth run):** each of the three age bands grew from
@@ -4769,3 +4777,79 @@ new lesson risked doing neither well — re-scoping is left for a future run per
   is met, which would be a bigger event than another single-lesson entry. Items 18/20/21/22 unchanged.
   **App name still unresolved** — do not invent one. **Use American English spelling in all new lesson
   content** (owner instruction, 2026-08-07, still standing).
+
+### 2026-08-09 (twenty-third run, scheduled dev-agent) — Add lesson 39: "Why Does Losing $50 Hurt More Than Finding $50 Feels Good?" (backlog item 24, loss aversion)
+
+- **Orientation**: `git status` showed one untracked file, `economic-cycles-v6.jsx` — matches the
+  long-standing, already-documented reference file (see App summary and "Notes for future runs"),
+  not a stalled prior run; left untouched. Read the backlog and the previous run's "Next run should
+  pick" note, which listed four unbuilt judgment-shaped topics: loss aversion, overconfidence after a
+  lucky outcome, lifestyle creep after a windfall, and "too good to be true" pattern recognition.
+  Picked **loss aversion** — a standard, well-defined behavioral-finance concept, and one the note
+  itself distinguished explicitly from sunk cost (already built as lesson 31), reducing the risk of
+  building a near-duplicate.
+- **What changed**: added lesson 39 to the money track — `src/content/lessons.js` (metadata, icon 💔,
+  color `#b91c1c`, both previously unused, `minutes: 3`), `src/content/lessonContent.js` (two sections,
+  takeaway, thinkAbout), `src/content/quizData.js` (one
+  end-of-lesson question, `answer: 1`). The lesson opens with a matched-pair example (finding $50 on
+  the sidewalk vs. discovering $50 missing from a wallet) to make the asymmetry concrete before naming
+  it, explicitly differentiates loss aversion from sunk cost in its own body text (not just in this log),
+  and closes on a practical question rather than a directive: is a decision being driven by the fear of
+  the *feeling* of loss, or by the loss's actual size? Examples used (holding a falling investment too
+  long, staying in a bad subscription/apartment/deal, declining a favorably-balanced risk) are framed
+  descriptively, never as "sell now" or "buy this instead." All fields carry parallel en/es/ko/zh/ja
+  content, matching the format of lessons 28-38.
+- **Catalogue re-measured** (same method as prior entries): **39 lessons / 108,987 English characters /
+  97 minutes** (27 money, 12 economy), up from 38/105,758/94. Word count is flagged separately in the
+  updated item 17 above — a fresh count of the *unchanged* 38-lesson text no longer reproduces the
+  previous entry's word figure even though chars and minutes both reproduce exactly, so word counts in
+  this log before this entry should be read as approximate, not a spot-check-verified figure. Phase-0
+  gate (§4.3): 39/40 lessons (one more clears this half), 97/120 minutes (roughly 23 minutes short even
+  after the next lesson) — not yet met.
+- **Verified**: `npm test` → `check-data.mjs` `PASS: 0 failure(s), 0 warning(s)` and `check-blindspot.mjs`
+  all six checks `ok`. `npm run build` → `vite v6.4.3`, 63 modules, clean build, no chunk-size warning
+  (`LessonReader` chunk 491.82 kB, gzip 208.68 kB). **Live browser click-through**: built `dist/`, served
+  it on `127.0.0.1:8764`, opened it in the browser tool, set `ecycles_completed_lessons` to `[1..38]` via
+  `javascript_tool` to unlock lesson 39, opened it from the Korean-locale Learn tab and confirmed the
+  Korean title/subtitle/both section bodies/takeaway/thinkAbout/quiz render, switched the language
+  `<select>` to English via the documented React-aware-setter technique and confirmed the same content
+  re-rendered in English, then clicked the correct quiz option via `document.querySelectorAll('button')`
+  (the coordinate-based click failed once when a scroll action left the page briefly blank — recovered
+  by finding and clicking the button directly in JS rather than retrying the same coordinate click) and
+  confirmed the "CORRECT!" state and English explanation text rendered.
+- **Adversarial self-check**: (1) *Blindspot regression* — `check-blindspot.mjs` passed all six checks;
+  manually re-read both sections for "you should," product names, or implied buy/sell guidance — found
+  none. The lesson never says to sell or hold a specific position, only to separate the fear of the
+  feeling from the actual math. (2) *DECISIONS.md* — no interaction with localStorage-state,
+  `.js`-content-module, or Vite-vs-Expo decisions; not touched. (3) *Already-done backlog item* — checked
+  loss aversion against every topic named in lessons 28-38's own descriptions and against the "Completed
+  and pruned" list; not a duplicate. Specifically re-read lesson 31 (sunk cost) to confirm the
+  distinction holds — sunk cost is about past spending already sunk, loss aversion is about the asymmetric
+  *feeling* of a loss regardless of whether money has been spent — and wrote that distinction into the
+  lesson body itself, not just this log, so a future run auditing the catalogue can see it without
+  re-deriving it. (4) *Verification claim* — the test/build output and the live bilingual + quiz-answer
+  browser check above are exactly what an independent reviewer would reproduce running the same commands
+  against this commit. **Caught and fixed during this check**: initially set `minutes: 3` by copying the
+  pattern of similarly-sized recent lessons without re-measuring; re-checked against lesson 38's actual
+  body length (comparable) and lesson 37 (also comparable, `minutes: 3`) and confirmed 3 is consistent
+  with the app's existing minutes-estimation pattern for this length of content — no change needed, but
+  recording that the check was actually performed rather than assumed, since a past run's failure mode
+  was exactly this kind of unverified claim.
+- **Not touched, and why**: `economic-cycles-v6.jsx` — confirmed untouched, long-standing untracked
+  reference file. `economic-cycles-v5.jsx` unchanged. `ParentGuide.jsx`/kids content untouched — item 19
+  remains HELD. Did not touch items 18/20/21/22 or `LAUNCH_READINESS.md` (last refreshed 2026-08-06 and
+  now further stale — its lesson-catalogue row still says "26 lessons"; flagging this explicitly rather
+  than silently leaving it, since no prior lesson-addition run appears to have refreshed it either,
+  meaning it has been drifting for many runs, not just this one — a future run should decide whether to
+  refresh it now or fold that refresh into whichever run actually closes the §4.3 gate).
+- **Next run should pick**: item 24 is not closed. Two starter-list topics remain from the previous
+  entry's list: **overconfidence after a lucky outcome** (e.g. trading more after a lucky win, as if
+  skill explained the outcome) and **lifestyle creep specifically after a windfall/raise** (distinct from
+  lesson 29's earn-spend-gap framing — a step-change event, not gradual drift); **"too good to be true"
+  pattern recognition** was also on that list but is arguably close enough to lesson 32's FOMO/herd-behavior
+  lesson that a future run should read both before committing to it, to avoid a near-duplicate. At 39/40
+  lessons, the *next* lesson added would clear the Phase-0 §4.3 lesson-count gate — worth explicitly
+  checking gate status against `LAUNCH_READINESS.md`'s criteria (and refreshing that file) once it does,
+  since that's a bigger event than another routine single-lesson entry. Items 18/20/21/22 unchanged. App
+  name still unresolved — do not invent one. Use American English spelling in all new lesson content
+  (owner instruction, 2026-08-07, still standing).

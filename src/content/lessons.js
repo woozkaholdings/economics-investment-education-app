@@ -245,4 +245,9 @@ export const lessons = [
     title: {"en":"Is 'Found' Money Worth Less Than Money You Earned?","es":"¿Vale Menos el Dinero 'Encontrado' que el Dinero que Ganaste Trabajando?","ko":"'공돈'은 일해서 번 돈보다 가치가 덜할까?","zh":"“意外之财”真的不如“辛苦赚来的钱”值钱吗？","ja":"「棚から落ちてきたお金」は、働いて稼いだお金より価値が低いのか？"},
     subtitle: {"en":"A dollar buys the same thing no matter where it came from — but the story you tell about where it came from quietly changes what you do with it.","es":"Un dólar compra lo mismo sin importar de dónde vino — pero la historia que te cuentas sobre su origen cambia en silencio lo que haces con él.","ko":"돈이 어디서 왔든 1달러는 똑같은 것을 살 수 있지만, 그 돈이 어디서 왔는지에 대해 스스로에게 하는 이야기는 조용히 당신이 그 돈으로 무엇을 하는지를 바꿉니다.","zh":"不管钱从哪儿来，一块钱能买到的东西都一样——但你对它来源讲的那个故事，会悄悄改变你如何花它。","ja":"お金がどこから来たとしても、1ドルは同じものを買えます——けれど、その出どころについて自分に語る物語が、静かにそのお金の使い道を変えてしまいます。"},
   },
+  {
+    id: 39, track: "money", icon: "💔", color: "#b91c1c", minutes: 3,
+    title: {"en":"Why Does Losing $50 Hurt More Than Finding $50 Feels Good?","es":"¿Por Qué Perder $50 Duele Más Que Encontrar $50 se Siente Bien?","ko":"왜 50달러를 잃는 것이 50달러를 줍는 것보다 더 아플까?","zh":"为什么损失50美元比捡到50美元更让人难受？","ja":"なぜ50ドルを失うことは、50ドルを拾うことよりも辛いのか？"},
+    subtitle: {"en":"The pain of a loss and the pleasure of an equal gain aren't mirror images of each other — and that lopsided math quietly shapes decisions where the dollar amounts are supposed to be the only thing that matters.","es":"El dolor de una pérdida y el placer de una ganancia equivalente no son imágenes especulares el uno del otro — y esa aritmética desigual moldea en silencio decisiones en las que se supone que solo importan las cifras.","ko":"손실의 고통과 그와 같은 크기의 이득이 주는 기쁨은 서로 거울처럼 대칭을 이루지 않습니다 — 그리고 이 기울어진 셈법은 오직 금액만이 중요해야 할 결정들을 조용히 좌우합니다.","zh":"同样大小的损失带来的痛苦和收益带来的快乐并不是彼此的镜像——而这种不对称的算法，正悄悄左右着那些本该只看金额大小的决定。","ja":"同じ大きさの損失がもたらす痛みと利益がもたらす喜びは、互いの鏡像ではありません——そしてこの偏った計算が、本来なら金額だけが問題であるはずの決断を、静かに左右しています。"},
+  },
 ];
