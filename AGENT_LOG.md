@@ -88,13 +88,15 @@ for the history. No open P1/P2 items.
 > (item 18). A run that adds lesson 41 is optimizing the one clause that is already satisfied.
 > Do not add a new lesson until P-2 through P-4 below are cleared. This is a stop, not a slowdown.
 >
-> **P-2. Refresh `LAUNCH_READINESS.md`.** It says **26 lessons / 66,289 chars / ~60 min**; the truth is
-> **40 / 112,387 / 100 min**, and the §4.3 lesson-count clause it reports as "❌ Not met — 65% of the
-> lesson-count target" is now met. Its §10.4 row's translation ratios are stale the same way. Two
-> consecutive run-log entries flagged this file as stale and neither fixed it. This is the one artifact
-> whose entire purpose is to be the single true statement of launch status, and it has been wrong for
-> four days — a scorecard nobody refreshes is worse than no scorecard, because it gets trusted.
-> Refresh every row using the commands the file itself documents, and record the measurement date.
+> **P-2. ✅ DONE 2026-08-09 (twenty-fifth run).** Refreshed `LAUNCH_READINESS.md`: now correctly reports
+> **40 lessons / 112,387 chars / 100 min**, the §4.3 lesson-count clause as met, current translation
+> ratios (es 0.745x/ko 0.371x/zh 0.235x/ja 0.325x), 15 kids blurbs (was stale at 9), and current
+> disclaimer-render screen names. Also fixed a real bug found along the way: the file's own documented
+> refresh script read `content/lessons.js` alone, which stopped holding lesson body text after item 23's
+> 2026-08-07 split into `lessonContent.js` — the *documented* method would have returned ~4,860 chars,
+> not 112,387. Both refresh snippets in the file now read the correct two files. See that run's log entry
+> for full detail. **P-1 still requires P-3 and P-4 before the lesson freeze lifts — P-2 alone doesn't
+> unfreeze items 17/24.**
 >
 > **P-3. Extend `check-blindspot.mjs`'s §10.1 patterns to es/ko/zh/ja.** Concrete, mechanical, fits one
 > run. All five advice-adjacency regexes (`best investments:`, `be bullish`, `be cautious`,
@@ -5089,3 +5091,79 @@ direction is the problem.
   highest-leverage unblock in the project — without it §4.3's completion clause is unmeasurable and 40
   lessons have shipped with zero real-user signal; (2) the translation decision (item 20 / P-4);
   (3) the app name (§10.7). Items 12 and 19 remain HELD and were correctly left untouched.
+
+### 2026-08-09 (twenty-fifth run, scheduled dev-agent) — Refresh `LAUNCH_READINESS.md` (backlog P-2) and fix its stale measurement method
+
+- **Orientation**: `git status` showed one untracked file, `economic-cycles-v6.jsx` — confirmed same
+  size/mtime as prior runs recorded, the long-standing reference-only file, left untouched. Read the new
+  PRIORITY BLOCK the weekly review set at the top of the backlog: **P-1 freezes lesson-adding** (items 17
+  and 24) until P-2/P-3/P-4 clear. Read both P-2 (refresh `LAUNCH_READINESS.md`) and P-3 (extend
+  `check-blindspot.mjs`'s §10.1 patterns to es/ko/zh/ja) before picking — both are marked as fitting one
+  run. Picked **P-2**: it's the artifact whose entire job is to be the trusted single source of launch
+  status, it was four days stale, and refreshing it first surfaces exactly the numbers P-3/P-4 need to be
+  judged against (translation ratio, lesson-count gate status).
+- **What changed**: `LAUNCH_READINESS.md` only — no `src/` changes, no lesson content, no code.
+  - **Found and fixed a real bug in the scorecard's own documented refresh method, not just stale
+    numbers.** The "How to refresh this file" section's lesson-catalogue and translation-ratio scripts
+    read `content/lessons.js` alone. That was correct when written, but item 23 (2026-08-07) split lesson
+    body text out into `content/lessonContent.js`, leaving `lessons.js` holding only metadata
+    (id/track/icon/color/minutes/title/subtitle). Running the *documented* script today returns ~4,860
+    English chars across all 40 lessons — the actual figure, sourced correctly, is **112,387**. The
+    scorecard hadn't just gone stale from disuse; its own refresh instructions had been silently wrong
+    for three days and would have produced a wildly wrong number for anyone who followed them literally.
+    Rewrote both snippets to read `lessons.js` (metadata/minutes) and `lessonContent.js`
+    (sections/takeaway/thinkAbout) together.
+  - Re-measured every gate with the corrected method (bootstrapped Node 20.18.1, same technique as every
+    prior run): **40 lessons / 112,387 English chars / 100 minutes** (28 money / 12 economy) — this
+    exactly reproduces the twenty-fourth run's independently-reported figure, which is good evidence both
+    measurements are sound. Translation ratios: **es 0.745x, ko 0.371x, zh 0.235x, ja 0.325x**, zero
+    missing fields — also an exact match to the weekly review's re-measurement. §4.3 lesson-count clause
+    updated from "❌ Not met, 65%" to "🟡 met (40/40), char/time clause still short at 100/120 min (~83%)."
+    Kids-curriculum row updated from the stale "9 blurbs" to the actual **15** (5 per age band × 3 bands,
+    unchanged since 2026-08-07's item-21 work — just never propagated here). §10.1's disclaimer-location
+    evidence updated from pre-rebuild screen names ("Home, Markets, About") to the actual current
+    Learn/Review/Reference screens the disclaimer renders on (`App.jsx`, `Learn.jsx`, `LessonReader.jsx`,
+    `Practice.jsx`, `MarketSignals.jsx`, `Sectors.jsx`, `Settings.jsx` — verified via
+    `grep -rln "disclaimer" src/`). Added explicit pointers from §10.1 and §10.4's rows to **P-3** and
+    **P-4** respectively, so a reader of the scorecard lands on the open owner/process items directly
+    instead of only in the backlog.
+  - Left everything else in the file as-is where it was still accurate: instrumentation table (re-checked
+    `grep -rn "track(EVENTS\." src/` — same four call sites; `grep -rn "posthog"` — still zero matches, no
+    provider wired in), §10.2/10.3/10.5/10.6/10.7/§2.1 rows, process-items table.
+- **Verified**: `npm test` → `check-data.mjs` `PASS: 0 failure(s), 0 warning(s)`, `check-blindspot.mjs`
+  all six checks `ok` (re-run after the edit, confirming the docs-only change didn't touch anything the
+  checker scans). `npm run build` → `vite v6.4.3`, 63 modules, clean build, 828ms — same pre-existing
+  chunk-size advisory on `LessonReader` (513.09 kB) already logged as candidate item 25 by the prior run,
+  not a new regression from this change. `git diff --stat` after the edit confirmed only
+  `LAUNCH_READINESS.md` changed (58 lines touched) and `economic-cycles-v6.jsx` remained untracked and
+  unmodified throughout.
+- **Adversarial self-check**: (1) *Blindspot register* — this is a markdown-only change to a scorecard
+  file; `check-blindspot.mjs`'s six checks ran clean before and after; manually re-read every sentence I
+  added for anything reading as advice-adjacent, Dalio-referencing, child-facing, or a hardcoded live
+  date — found none, since the content is entirely measurement methodology and gate status. (2)
+  *DECISIONS.md conflict* — none: no state-management, persistence, content-schema, or build-tool code
+  touched; the change is documentation of existing, already-decided facts (item-23's content split,
+  which `DECISIONS.md` doesn't cover directly but which is uncontested repo history). (3) *Already-done
+  backlog item* — P-2 was explicitly open and un-picked; this isn't a re-do of anything in "Completed and
+  pruned." Confirmed I did **not** touch items 17/24 (frozen) or add any lesson content — the temptation
+  to "just also fix P-3 since it's related" was noted and declined, since the run guidance is one focused
+  change per run and P-3 is a distinct, separately-scoped mechanical task. (4) *Verification claim* — every
+  number in the diff (112,387 chars, 100 minutes, the four translation ratios, the 15 kids blurbs, the
+  seven disclaimer-rendering files) was produced by a command I ran this run and is reproducible by
+  re-running the exact snippets now embedded in the file's own "How to refresh this file" section — not
+  copied from `AGENT_LOG.md`'s prose without independent verification, though it's reassuring that it
+  matches. No conflict found by this check.
+- **Not touched, and why**: `economic-cycles-v6.jsx` — confirmed untouched (same size/mtime at start and
+  end). Items 17/24 (frozen per P-1) — no lesson content added or edited. P-3 (`check-blindspot.mjs`
+  language extension) and P-4 (owner escalation on machine translation) — both read and understood, left
+  for a future run per the priority block's sequencing; P-2 being done now makes P-3/P-4 easier to verify
+  against, since the numbers they'd cite are now current. `LAUNCH_PLAN.md`, `DECISIONS.md` unchanged.
+- **Next run should pick**: **P-3** — extend `check-blindspot.mjs`'s five §10.1 regexes
+  (`best investments:`, `be bullish`, `be cautious`, `you should (buy|sell|invest)`, `we recommend`) to
+  es/ko/zh/ja equivalents; verify each new pattern the way the original five were verified (inject a
+  violation, confirm `npm test` fails, revert). This is now doubly motivated: P-2's refresh confirmed
+  non-English content is 60%+ of volume by character count and growing. **P-4** (owner escalation on the
+  reversed machine-translation decision) still needs to reach the owner directly — a scheduled run can
+  write the finding but not resolve it; consider whether the next *interactive* session is a better venue
+  than another scheduled run for that one. Items 17/24 stay frozen until P-3 and P-4 are both addressed.
+  Item 25 (LessonReader chunk over Vite's 500kB warning) still open and untouched.
