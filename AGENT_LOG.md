@@ -73,8 +73,56 @@ for the history. No open P1/P2 items.
 
 **Open**
 
-24. **[Content — READ THIS BEFORE PICKING ITEM 17] The money track teaches mechanics, but the owner
-    asked for judgment.** Owner-stated 2026-08-07 (interactive session), and it is a correction of the
+> **PRIORITY BLOCK — set by the weekly review 2026-08-09. Read this before picking anything below.**
+>
+> **P-1. STOP ADDING LESSONS. The lesson treadmill is closed until P-2, P-3 and P-4 are done.**
+> Thirteen of this week's runs added exactly one lesson each; twenty-two of the last twenty-four runs
+> were single-lesson adds. The lessons themselves are good — that is not the problem. The problem is
+> that item 17 *already names this failure mode in its own text* ("nine consecutive scheduled runs each
+> picked 'add one lesson' and the direction drifted unexamined... Counting lessons is not the same as
+> building the product"), the owner corrected it once on 2026-08-07, and the pattern re-formed inside
+> the correction — the runs switched from mechanics lessons to judgment lessons and kept counting.
+> The §4.3 Phase-0 gate has three clauses. Lesson count (≥40) is now **met**. The other two —
+> ~2 hours of content, and ≥40% of installers finishing lesson 1 — are the ones that actually gate
+> Phase 0, and **neither moved at all this week**; the completion-rate clause is not even measurable
+> (item 18). A run that adds lesson 41 is optimizing the one clause that is already satisfied.
+> Do not add a new lesson until P-2 through P-4 below are cleared. This is a stop, not a slowdown.
+>
+> **P-2. Refresh `LAUNCH_READINESS.md`.** It says **26 lessons / 66,289 chars / ~60 min**; the truth is
+> **40 / 112,387 / 100 min**, and the §4.3 lesson-count clause it reports as "❌ Not met — 65% of the
+> lesson-count target" is now met. Its §10.4 row's translation ratios are stale the same way. Two
+> consecutive run-log entries flagged this file as stale and neither fixed it. This is the one artifact
+> whose entire purpose is to be the single true statement of launch status, and it has been wrong for
+> four days — a scorecard nobody refreshes is worse than no scorecard, because it gets trusted.
+> Refresh every row using the commands the file itself documents, and record the measurement date.
+>
+> **P-3. Extend `check-blindspot.mjs`'s §10.1 patterns to es/ko/zh/ja.** Concrete, mechanical, fits one
+> run. All five advice-adjacency regexes (`best investments:`, `be bullish`, `be cautious`,
+> `you should (buy|sell|invest)`, `we recommend`) are **English-only**. Non-English text is now ~60% of
+> total content volume and is scanned by nothing except the language-agnostic Dalio check. A Spanish
+> "deberías comprar" or the Korean/Japanese/Chinese equivalent passes `npm test` silently today. Item 20
+> has cited "a language `check-blindspot.mjs` doesn't scan for" as a *reason to decline work* three
+> times without anyone closing the gap that reasoning points at. Add per-language pattern sets for all
+> four languages, and verify each one the way the existing checks were verified — inject a violation,
+> confirm the check fails, revert.
+>
+> **P-4. Escalate to the owner: the "no machine translation" decision was reversed in practice.**
+> See the rewritten item 20 below for the finding and the numbers. This needs an owner decision, not a
+> dev-agent fix. Do not "resolve" it by translating more, and do not resolve it by deleting translations.
+>
+> **After P-2/P-3/P-4 are done**, the lesson treadmill does *not* simply resume. The next content work
+> should be aimed at a clause that actually gates Phase 0 — the ~20 remaining minutes (§4.3's content-
+> duration clause), or deepening existing lessons rather than adding a forty-first topic. Re-read
+> §4.3's table before picking, and write down in the run entry *which clause* the run moves.
+
+24. **[Content — FROZEN 2026-08-09 alongside item 17, see the PRIORITY BLOCK's P-1] The money track
+    teaches mechanics, but the owner asked for judgment.** The owner's correction here was right and the
+    thirteen judgment lessons it produced are good work — but the item's own text now records four
+    consecutive runs each noting "a future run should re-scope this rather than keep extending the list
+    ad hoc," and each then extending the list ad hoc anyway. It is functioning as a perpetual
+    lesson-generator. Do not pick it until P-2/P-3/P-4 are cleared; when it unfreezes, re-scope it
+    properly against §4.3 or close it as satisfied — do not add a fourteenth judgment lesson by default.
+    Original text follows. Owner-stated 2026-08-07 (interactive session), and it is a correction of the
     direction fifteen consecutive lessons were built in, so it takes precedence over item 17's raw
     lesson-count framing. Verbatim intent: *money lessons* means lessons in the spirit of books like
     **"Rich Dad, Poor Dad"** — "it is crucial to be wise rather than impulsive and the app is there to
@@ -146,7 +194,12 @@ for the history. No open P1/P2 items.
       run: lifestyle creep after a windfall, "too good to be true" pattern recognition (the latter still
       flagged as possibly overlapping lesson 32's FOMO/herd-behavior lesson — read both before
       committing).
-17. **[Content] Grow the lesson catalogue** — *now subordinate to item 24: prefer a judgment/mindset
+17. **[Content — FROZEN 2026-08-09 by the weekly review, see the PRIORITY BLOCK's P-1] Grow the lesson
+    catalogue.** *Do not pick this item, or item 24, until P-2/P-3/P-4 are cleared.* The lesson-count
+    clause this item exists to move is **met**; continuing to add lessons now moves nothing that gates
+    Phase 0. When it unfreezes, the target is §4.3's **content-duration** clause (~20 minutes short) or
+    depth in existing lessons — not a forty-first topic. Rest of the item retained below for context.
+    *Previously: subordinate to item 24 — prefer a judgment/mindset
     lesson over another mechanics lesson unless there's a reason not to.* Derived from `LAUNCH_PLAN.md`
     §4.3, not owner-assigned but the plan's own explicit gate: the catalogue is now **40 lessons /
     112,387 English characters / 100 minutes** end to end — re-measured 2026-08-09 (same method: summing
@@ -185,21 +238,40 @@ for the history. No open P1/P2 items.
     five languages *plus* `quizData.lesson`, the review scheduler, and persisted
     `ecycles_completed_lessons`. Do it as its own dedicated change with a scripted, verified id→id map
     and a per-language check — never by hand, and never folded into a content run.
-20. **[Content] Non-English lesson translations now lag English by more than before.** Re-measured
-    2026-08-05 (evening run) — see run log ("Re-measure Beta-labelling translation ratios"). Ratios:
-    es 0.37x, ko 0.19x, zh 0.12x, ja 0.15x of English (down from 0.41x/0.24x/0.15x/0.18x measured
-    2026-08-02), confirming the gap widened as expected once English grew ~1.7x on 2026-08-05 morning
-    while translations stayed flat. The re-measurement itself is done and `LAUNCH_READINESS.md`/
-    `lessons.js`'s comment are current again. **Decision, 2026-08-05 (night) — three consecutive
-    automated runs have now independently declined to attempt this translation, all citing the same
-    reasoning (rushed machine translation of financial-education content into es/ko/zh/ja, unreviewed
-    by a native speaker, risks both inaccuracy and inadvertently reintroducing advice-adjacent framing
-    in a language `check-blindspot.mjs` doesn't scan for — see item 16 below).** That consistent,
-    independently-reached judgment is itself the answer: this is not "too large for one run," it
-    genuinely needs a human/professional translator or explicit owner sign-off to attempt via LLM, not
-    a fourth automated attempt. Recommend the owner either commission translation for the 34 rewritten
-    sections or explicitly authorize an automated attempt (accepting the review-risk above) before a
-    future run touches this again.
+20. **[Content — REWRITTEN 2026-08-09 by the weekly review; the previous text was factually inverted]
+    The machine-translation decision was reversed in practice, one lesson at a time. Owner decision
+    needed (see P-4).**
+    - **What this item used to say, and why it was wrong.** It read "translations now lag English by
+      more than before" and reported ratios of **es 0.37x, ko 0.19x, zh 0.12x, ja 0.15x** (measured
+      2026-08-05), describing a widening gap. Re-measured 2026-08-09 by the weekly review over all 40
+      lessons in `content/lessonContent.js` (summing `sections[].body` + `takeaway` + `thinkAbout` per
+      language): **es 0.745x, ko 0.371x, zh 0.235x, ja 0.325x**, and **zero missing fields in any
+      language**. Every ratio roughly *doubled*. The gap did not widen — it closed by half, because
+      lessons 28–40 were each authored with full es/ko/zh/ja content in the same run.
+    - **The actual finding, which is the opposite of a success.** On 2026-08-05 this item recorded a
+      firm decision: three consecutive runs had independently declined to machine-translate, all citing
+      the same risk — *unreviewed LLM translation of financial-education content into a language
+      `check-blindspot.mjs` doesn't scan, risking inaccuracy and inadvertently reintroducing
+      advice-adjacent framing* — and concluded it "genuinely needs a human/professional translator or
+      explicit owner sign-off." **That exposure was then created anyway**, by thirteen consecutive
+      lesson-add runs each quietly translating its own new lesson, and no run re-raised the decision.
+      Spanish went from ~37% to ~75% unreviewed machine translation of financial-education prose. Each
+      individual run was defensible in isolation (translating a new lesson at authoring time is not the
+      same act as a bulk retro-translation); the aggregate is precisely the outcome the decision was
+      written to prevent. **This is a process failure, not a content failure** — a standing decision was
+      neutralized by per-run habit without anyone noticing, and the backlog entry recording the decision
+      kept being read past for four days while its own numbers went stale in the opposite direction.
+    - **What a dev-agent run may and may not do here.** May: P-3 (extend `check-blindspot.mjs` to the
+      four non-English languages — that at least puts the mechanical half of the guard behind the
+      content that already shipped). May: keep translating new lessons in step *once P-3 lands*, since
+      the scan gap is the specific risk that was cited. **May not**: bulk-translate, delete existing
+      translations, or drop the "(Beta)" labels (§10.4) — all three are owner calls.
+    - **Owner decision requested (P-4).** Three options, and one of them has to be picked rather than
+      drifted into: (a) accept the current state — ~40 lessons of unreviewed LLM translation ships under
+      "(Beta)" labelling, with P-3's scanner as the only guard; (b) commission native-speaker review of
+      the shipped es/ko/zh/ja content (scope is now ~168,000 characters across four languages, not the
+      "34 rewritten sections" this item used to quote); or (c) ship English-only at launch and cut the
+      four Beta languages from Phase 0 entirely. Note that (a) is what is happening today by default.
 18. **[Process] Instrumentation (§9.2) — call sites done 2026-08-05, real provider still open.**
     `src/lib/analytics.js` (`track()`/`EVENTS`) fires `app_opened`, `lesson_started`,
     `lesson_completed`, and `quiz_taken` (see run log entry "Wire the §9.2 minimum analytics event set").
@@ -209,6 +281,17 @@ for the history. No open P1/P2 items.
     and API key a dev-agent run can't create; see `DECISIONS.md`. What's left: create that account
     (owner action) and swap `analytics.js`'s `sink()`; item 17's D1 lesson-1-completion measurement is
     still blocked until then, since a per-device local log can't be aggregated across installs.
+25. **[Build — added 2026-08-09 by the weekly review] The lazy `LessonReader` chunk crossed Vite's
+    500 kB warning threshold.** Confirmed independently by this review's own `npm run build`:
+    `LessonReader-*.js` is **513.09 kB (gzip 217.53 kB)** and the "Some chunks are larger than 500 kB"
+    advisory is back in the build output. **This is not a regression of the closed item-23 fix** — the
+    entry chunk is 221.91 kB and `LessonReader` is still lazy-loaded, which is what item 23 actually
+    guaranteed. Low priority, but it grows with every lesson and 217 kB gzip is a real wait on a slow
+    connection before the *first* lesson renders. Two reasonable fixes: split `lessonContent.js` and
+    `quizData.js` per track (money / economy) so a reader pulls only its own track, or raise
+    `build.chunkSizeWarningLimit` as a deliberate, documented decision in `DECISIONS.md`. Pick one
+    consciously — do not let it keep drifting upward unremarked.
+
 **HELD — owner decisions, do not act on these**
 
 12. **[HELD] Expo vs. Vite** (§2.1) — needs a human call; blocks store release, not the web launch. See
@@ -4963,3 +5046,46 @@ new lesson risked doing neither well — re-scoping is left for a future run per
   count and the §4.3 gate status (lesson-count clause now actually met). Items 18/20/21/22 unchanged. App
   name still unresolved — do not invent one. Use American English spelling in all new lesson content
   (owner instruction, 2026-08-07, still standing).
+
+### 2026-08-09 — Weekly review (quality control, not a dev run)
+
+Full report: `reviews/2026-08-09-weekly-review.md`. **Grade: B** — execution quality high and rising,
+direction is the problem.
+
+- **Health**: `npm test` PASS (0 failures, 0 warnings; all 6 blindspot checks ok), `npm run build` PASS
+  (vite 6.4.3, 63 modules, 909ms). 40 lessons, 0 missing language fields, 42 quiz questions with every
+  lesson covered, answer-key spread `{0:10,1:11,2:11,3:10}` (max 26.2%) — the 2026-08-02 fix held across
+  29 new questions. Untracked `economic-cycles-v6.jsx` left untouched. No code changes made by this
+  review (build was green, so the one permitted code change didn't apply).
+- **Log-vs-commit cross-check: clean.** Every run-log entry has a matching commit and vice versa; the
+  three `Refresh market data` commits correctly have no entries (different scheduled task). The
+  twenty-fourth run's catalogue measurement and chunk-size figure both reproduced exactly. The run log
+  is trustworthy — worth stating, since most of this review's criticism is about direction, not honesty.
+- **Primary concern — the lesson treadmill re-formed inside its own correction.** 22 of the last 24 runs
+  were single-lesson adds, 13 consecutively. Item 17 already names this exact failure mode in its own
+  text; the owner corrected it 2026-08-07; the runs switched from mechanics lessons to judgment lessons
+  and kept counting. Item 24's own text shows the loop closing — four consecutive entries each say "a
+  future run should re-scope this rather than keep extending the list ad hoc," then extend it ad hoc.
+  Meanwhile §4.3's other two Phase-0 clauses didn't move at all this week and one isn't measurable.
+  **Items 17 and 24 are frozen** — see the PRIORITY BLOCK now at the top of the backlog.
+- **Second concern — the no-machine-translation decision was reversed in practice.** Item 20's headline
+  was factually inverted: it read "translations lag by more than before" at es 0.37x/ko 0.19x/zh 0.12x/
+  ja 0.15x; re-measured over all 40 lessons today it is **es 0.745x / ko 0.371x / zh 0.235x / ja 0.325x**
+  with zero missing fields. Every ratio roughly doubled, because 13 lesson-add runs each translated their
+  own new lesson — creating exactly the unreviewed-LLM-translation exposure that three runs had
+  deliberately declined to create, without anyone re-raising the decision. Item 20 rewritten with correct
+  numbers and three owner options. **This is a process failure, not a content failure.**
+- **Also flagged**: `LAUNCH_READINESS.md` is four days stale (says 26 lessons, reality is 40; scores a
+  now-met §4.3 clause as not met) after two consecutive entries flagged it and deferred → now **P-2**.
+  `check-blindspot.mjs`'s five §10.1 patterns are **English-only** while non-English is ~60% of content
+  volume → now **P-3**; note item 20 has cited that scan gap as a reason to decline work three times
+  without anyone closing it. New **item 25**: lazy `LessonReader` chunk at 513.09 kB (gzip 217.53 kB),
+  over Vite's threshold — not an item-23 regression (entry chunk 221.91 kB, still lazy), but growing.
+- **Content quality: good, and no advice-adjacency found.** Read lessons 39 and 40 in full plus an
+  independent grep across `lessonContent.js` — concrete scenario first, neighbors distinguished in the
+  lesson body, closes on a question not a directive. Lesson 40's post-gain-overtrading claim is the real
+  retail-brokerage finding, appropriately hedged. No personalized advice, no buy/sell recommendations.
+- **For the owner, in priority order**: (1) the **analytics provider** (item 18) is now the single
+  highest-leverage unblock in the project — without it §4.3's completion clause is unmeasurable and 40
+  lessons have shipped with zero real-user signal; (2) the translation decision (item 20 / P-4);
+  (3) the app name (§10.7). Items 12 and 19 remain HELD and were correctly left untouched.
