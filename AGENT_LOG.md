@@ -98,24 +98,29 @@ for the history. No open P1/P2 items.
 > for full detail. **P-1 still requires P-3 and P-4 before the lesson freeze lifts — P-2 alone doesn't
 > unfreeze items 17/24.**
 >
-> **P-3. Extend `check-blindspot.mjs`'s §10.1 patterns to es/ko/zh/ja.** Concrete, mechanical, fits one
-> run. All five advice-adjacency regexes (`best investments:`, `be bullish`, `be cautious`,
-> `you should (buy|sell|invest)`, `we recommend`) are **English-only**. Non-English text is now ~60% of
-> total content volume and is scanned by nothing except the language-agnostic Dalio check. A Spanish
-> "deberías comprar" or the Korean/Japanese/Chinese equivalent passes `npm test` silently today. Item 20
-> has cited "a language `check-blindspot.mjs` doesn't scan for" as a *reason to decline work* three
-> times without anyone closing the gap that reasoning points at. Add per-language pattern sets for all
-> four languages, and verify each one the way the existing checks were verified — inject a violation,
-> confirm the check fails, revert.
+> **P-3. ✅ DONE 2026-08-11.** Extended `check-blindspot.mjs`'s §10.1 check with per-language pattern
+> sets for es/ko/zh/ja (5 patterns each, mirroring the shape of the 5 English ones — heading, "be
+> bullish", "be cautious", "you should buy/sell/invest", "we recommend"). Verified against current
+> content with zero false positives before landing, then injected one real violation phrase per
+> language (e.g. Spanish "deberías comprar esta acción ahora mismo", Korean "지금 이 주식을 사야 합니다")
+> into a scratch append to `src/content/glossary.js`, confirmed `check-blindspot.mjs` failed on each,
+> then `git checkout --` reverted the file — `git status` was clean before committing this entry.
+> `npm test` and `npm run build` both pass with the extended check. See run log for full detail.
 >
 > **P-4. Escalate to the owner: the "no machine translation" decision was reversed in practice.**
 > See the rewritten item 20 below for the finding and the numbers. This needs an owner decision, not a
 > dev-agent fix. Do not "resolve" it by translating more, and do not resolve it by deleting translations.
 >
-> **After P-2/P-3/P-4 are done**, the lesson treadmill does *not* simply resume. The next content work
-> should be aimed at a clause that actually gates Phase 0 — the ~20 remaining minutes (§4.3's content-
-> duration clause), or deepening existing lessons rather than adding a forty-first topic. Re-read
-> §4.3's table before picking, and write down in the run entry *which clause* the run moves.
+> **P-1 status: P-2 and P-3 are done; P-4 is an owner escalation, not a dev-agent task — it cannot be
+> "done" by a run.** Read P-4's three options before assuming the lesson freeze is still blocking on
+> agent-doable work. Whether P-4 needing an owner decision (rather than an owner action) counts as
+> "cleared" for the freeze is itself a judgment call the next run should make deliberately, not by
+> default — if picking a lesson, say explicitly why P-4's state permits it.
+>
+> **After P-1 lifts**, the lesson treadmill does *not* simply resume. The next content work should be
+> aimed at a clause that actually gates Phase 0 — the ~20 remaining minutes (§4.3's content-duration
+> clause), or deepening existing lessons rather than adding a forty-first topic. Re-read §4.3's table
+> before picking, and write down in the run entry *which clause* the run moves.
 
 24. **[Content — FROZEN 2026-08-09 alongside item 17, see the PRIORITY BLOCK's P-1] The money track
     teaches mechanics, but the owner asked for judgment.** The owner's correction here was right and the
@@ -5167,3 +5172,69 @@ direction is the problem.
   write the finding but not resolve it; consider whether the next *interactive* session is a better venue
   than another scheduled run for that one. Items 17/24 stay frozen until P-3 and P-4 are both addressed.
   Item 25 (LessonReader chunk over Vite's 500kB warning) still open and untouched.
+
+### 2026-08-11 (scheduled dev-agent) — Extend `check-blindspot.mjs`'s §10.1 check to es/ko/zh/ja (backlog P-3)
+
+- **Orient**: `git status` at start showed one pre-existing untracked file,
+  `economic-cycles-v6.jsx` (confirmed against `AGENT_LOG.md`'s "Notes for future runs" — known
+  reference-only material, not this run's concern, not touched). No uncommitted work belonging to a
+  prior stalled run. Read the priority block and picked **P-3**, the item explicitly named "concrete,
+  mechanical, fits one run" and next-in-line per the twenty-fifth run's note above.
+- **What P-3 was**: `check-blindspot.mjs`'s §10.1 investment-advice-adjacency check ran five regexes
+  (`best investments:`, `be bullish`, `be cautious`, `you should (buy|sell|invest)`, `we recommend`)
+  against `src/content/*.js` and `src/locales/*.js` — but all five were English-only, even though
+  translated content for all four other languages lives inline in those same files (one language per
+  line, e.g. `"es": "..."`, `"ko": "..."` — confirmed by reading `content/lessonContent.js`), and is now
+  itself 60%+ of content volume by character count (P-2's measurement).
+- **What I did**: read existing es/ko/zh/ja content across `src/content/` and `src/locales/` first to
+  calibrate real vocabulary already in use (e.g. `deber[íi]as` already appears descriptively, `강세`/
+  `看涨`/`強気` already appear in lessons *describing* market sentiment as a teaching topic — confirmed
+  those uses are descriptive/past-tense/question-form, not the imperative-advice shape the check targets,
+  so they don't collide with the new patterns). Wrote five regexes per language mirroring the same
+  prescriptive-imperative shape as the English set (a "best investments:" heading, an imperative "be
+  bullish"/"be cautious," "you should buy/sell/invest," "we recommend") — 20 new patterns total, 25
+  overall. Ran them via a standalone script against every file in `src/content/` and `src/locales/`
+  before touching `check-blindspot.mjs` itself: zero hits on current content, confirming no false
+  positives against real shipped copy.
+- **Verified**:
+  1. Added the 20 patterns to `scripts/check-blindspot.mjs`'s §10.1 block. `npm test` (which chains
+     `check-data.mjs` then `check-blindspot.mjs`) passed clean — all six checks report `ok:`, `PASS: 0
+     failure(s)`.
+  2. `npm run build` succeeded — same known "LessonReader chunk >500kB" advisory as backlog item 25 (not
+     a regression, matches AGENT_LOG.md's existing record of that gap).
+  3. **Verified the checks the way the original five were verified (the item's own instruction)**:
+     appended one real violation phrase per new language to a scratch line in `src/content/glossary.js`
+     (Spanish "deberías comprar esta acción ahora mismo", Korean "지금 이 주식을 사야 합니다", Chinese
+     "您应该购买这只股票", Japanese "この株を買うべきです"), ran `check-blindspot.mjs` after each append,
+     confirmed it printed `FAIL: §10.1 investment-advice-adjacent language reintroduced` and exited
+     non-zero for all four, then `git checkout -- src/content/glossary.js` after each to revert. Final
+     `git status --short` after all four rounds showed only the intended `scripts/check-blindspot.mjs`
+     change plus the pre-existing untracked `economic-cycles-v6.jsx` — the scratch edits left no trace.
+- **Adversarial self-check** (mandatory, done before committing):
+  - *Blindspot register regression*: this change only strengthens a check script; it adds no Dalio
+    references, no advice-adjacent content, no child-facing framing, no hardcoded date. Grepped for the
+    five closed-issue signal strings across the diff — none present. No conflict.
+  - *DECISIONS.md conflict*: grepped `DECISIONS.md` for "blindspot", "check-blindspot", "§10.1",
+    "translat" — nothing there constrains how `check-blindspot.mjs`'s patterns are scoped; the localStorage
+    /`.js`-content-module/Vite decisions are untouched by this change. No conflict.
+  - *Already-done backlog item*: P-3's own text ("All five... are English-only") and the "Completed and
+    pruned" section confirm this gap was open, not previously closed. Not a duplicate.
+  - *Own verification claim*: an independent reviewer re-running `npm test` on the current tree gets the
+    same six `ok:` lines and `PASS: 0 failure(s)` reported here — nothing in this report depends on state
+    that isn't now committed. The injected-violation test itself is not reproducible from the committed
+    tree (by design — the violations were reverted), but the commands used to run it are given above
+    verbatim so it can be re-run.
+- **Not touched, and why**: `economic-cycles-v6.jsx` — untouched, confirmed by size/mtime unchanged.
+  Items 17/24 (lesson content, frozen per P-1) — no lesson content added or edited. P-4 (owner escalation
+  on machine translation) — read, understood, explicitly out of scope for a dev-agent run (needs the
+  owner directly, not agent action); left open below.
+- **Next run should pick**: P-1's freeze technically has P-2 and P-3 both done now; **P-4 is the
+  remaining named blocker, and it's an owner escalation, not a task a dev-agent run can complete** — so
+  whether the lesson freeze should be read as "lifted" is a judgment call, not an automatic unlock. A
+  future run (or better, an interactive session with the owner) should either (a) get an explicit owner
+  answer to P-4's three options and record it, or (b) make an explicit, reasoned call that P-4's
+  escalation-not-fix nature means it doesn't block the freeze the way P-2/P-3 did, and say so plainly
+  before picking a lesson item again. Do not resume item 17/24 by default without that reasoning written
+  down — that is exactly the drift P-1 was written to stop. If not picking up P-4/the freeze question,
+  good non-lesson candidates remain: item 25 (LessonReader >500kB chunk, two concrete fix options
+  already scoped) or item 22 (renumber lesson ids — deliberately deferred, needs a scripted id→id map).

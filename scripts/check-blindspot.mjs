@@ -72,19 +72,50 @@ const allCheckedFiles = [...srcFiles, ...(existsSync(v5Path) ? [v5Path] : [])];
 }
 
 // --- §10.1 investment-advice adjacency (closed 2026-08-02) ---
+// Non-English equivalents added 2026-08-11 (P-3): the five English-only regexes
+// below missed the ~60% of content volume that ships in es/ko/zh/ja (translated
+// content lives inline in these same files, one language per line — see
+// content/lessonContent.js). Each set targets the same prescriptive-imperative
+// shape as its English counterpart ("be bullish", not descriptive "was bullish"),
+// checked against current content for false positives before landing.
 {
   const patterns = [
+    // English
     /best investments\s*:/i,
     /\bbe bullish\b/i,
     /\bbe cautious\b/i,
     /you should (buy|sell|invest)/i,
     /\bwe recommend\b/i,
+    // Spanish
+    /mejores inversiones\s*:/i,
+    /\bs(?:é|ea)\s+alcista\b/i,
+    /\bs(?:é|ea)\s+cauteloso\b/i,
+    /deber[ií]as?\s+(comprar|vender|invertir)/i,
+    /\brecomendamos\b/i,
+    // Korean
+    /최고의\s*투자\s*[:：]/,
+    /낙관적이어야\s?합니다|강세를\s?예상하세요/,
+    /신중해야\s?합니다|조심하세요/,
+    /(사야|팔아야|투자해야)\s?합니다/,
+    /추천합니다|권장합니다/,
+    // Chinese
+    /最佳投资\s*[:：]/,
+    /应该看涨|建议看涨/,
+    /应该谨慎/,
+    /应该(购买|买入|卖出|投资)/,
+    /我们(建议|推荐)/,
+    // Japanese
+    /最良の投資\s*[:：]|最高の投資\s*[:：]/,
+    /強気になるべき|強気を推奨/,
+    /慎重になるべき/,
+    /(買う|売る|投資する)べきです/,
+    /推奨します|お勧めします/,
   ];
   const hits = patterns.flatMap((p) => grepFiles([...contentFiles, ...localeFiles], p));
   if (hits.length) {
     fail(`§10.1 investment-advice-adjacent language reintroduced:\n  ${hits.join("\n  ")}`);
   } else {
-    ok("§10.1 no advice-adjacent language in src/content/ or src/locales/");
+    ok("§10.1 no advice-adjacent language (en/es/ko/zh/ja) in src/content/ or src/locales/");
   }
 }
 
