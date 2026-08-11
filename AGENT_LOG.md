@@ -107,15 +107,24 @@ for the history. No open P1/P2 items.
 > then `git checkout --` reverted the file — `git status` was clean before committing this entry.
 > `npm test` and `npm run build` both pass with the extended check. See run log for full detail.
 >
-> **P-4. Escalate to the owner: the "no machine translation" decision was reversed in practice.**
-> See the rewritten item 20 below for the finding and the numbers. This needs an owner decision, not a
-> dev-agent fix. Do not "resolve" it by translating more, and do not resolve it by deleting translations.
+> **P-4. ✅ DONE 2026-08-11 (owner decision, interactive session).** Owner chose **option (a)**: accept
+> the current state (~40 lessons of unreviewed es/ko/zh/ja machine translation ships under "(Beta)"
+> labelling), rather than (b) commissioning native-speaker review or (c) cutting the four languages.
+> Landed alongside the decision, not after it: `scripts/translation-review.mjs` +
+> `scripts/translation-review-ledger.json`, a review-tracking ledger (per lesson per language: reviewed
+> by whom, when, against what English-source hash; drift-detected if English is edited after review) so
+> "accept for now" is a tracked, revisitable state rather than the same kind of silent drift that caused
+> P-4 to need escalating in the first place. `npm run review-status` reports coverage on demand; `npm
+> test` now prints a non-blocking one-line summary every run via `check-data.mjs` (currently 0% in all
+> four languages — accurate, not a bug). See `DECISIONS.md` ("Machine-translated lesson content...") for
+> the full writeup and this run's log entry for verification detail.
 >
-> **P-1 status: P-2 and P-3 are done; P-4 is an owner escalation, not a dev-agent task — it cannot be
-> "done" by a run.** Read P-4's three options before assuming the lesson freeze is still blocking on
-> agent-doable work. Whether P-4 needing an owner decision (rather than an owner action) counts as
-> "cleared" for the freeze is itself a judgment call the next run should make deliberately, not by
-> default — if picking a lesson, say explicitly why P-4's state permits it.
+> **P-1 status: P-2, P-3, and P-4 are all done. The lesson freeze's stated unlock condition is met.**
+> That does not mean the next run should default straight back to "add lesson 41" — re-read the
+> "After P-1 lifts" note just below; the freeze existed to stop optimizing an already-met clause, and
+> that reasoning doesn't reverse just because the three named blockers cleared. A run resuming lesson
+> content should say explicitly which §4.3 clause it moves (minutes, not count) or that it's
+> deliberately deepening an existing lesson instead of adding a 41st topic.
 >
 > **After P-1 lifts**, the lesson treadmill does *not* simply resume. The next content work should be
 > aimed at a clause that actually gates Phase 0 — the ~20 remaining minutes (§4.3's content-duration
@@ -245,40 +254,6 @@ for the history. No open P1/P2 items.
     five languages *plus* `quizData.lesson`, the review scheduler, and persisted
     `ecycles_completed_lessons`. Do it as its own dedicated change with a scripted, verified id→id map
     and a per-language check — never by hand, and never folded into a content run.
-20. **[Content — REWRITTEN 2026-08-09 by the weekly review; the previous text was factually inverted]
-    The machine-translation decision was reversed in practice, one lesson at a time. Owner decision
-    needed (see P-4).**
-    - **What this item used to say, and why it was wrong.** It read "translations now lag English by
-      more than before" and reported ratios of **es 0.37x, ko 0.19x, zh 0.12x, ja 0.15x** (measured
-      2026-08-05), describing a widening gap. Re-measured 2026-08-09 by the weekly review over all 40
-      lessons in `content/lessonContent.js` (summing `sections[].body` + `takeaway` + `thinkAbout` per
-      language): **es 0.745x, ko 0.371x, zh 0.235x, ja 0.325x**, and **zero missing fields in any
-      language**. Every ratio roughly *doubled*. The gap did not widen — it closed by half, because
-      lessons 28–40 were each authored with full es/ko/zh/ja content in the same run.
-    - **The actual finding, which is the opposite of a success.** On 2026-08-05 this item recorded a
-      firm decision: three consecutive runs had independently declined to machine-translate, all citing
-      the same risk — *unreviewed LLM translation of financial-education content into a language
-      `check-blindspot.mjs` doesn't scan, risking inaccuracy and inadvertently reintroducing
-      advice-adjacent framing* — and concluded it "genuinely needs a human/professional translator or
-      explicit owner sign-off." **That exposure was then created anyway**, by thirteen consecutive
-      lesson-add runs each quietly translating its own new lesson, and no run re-raised the decision.
-      Spanish went from ~37% to ~75% unreviewed machine translation of financial-education prose. Each
-      individual run was defensible in isolation (translating a new lesson at authoring time is not the
-      same act as a bulk retro-translation); the aggregate is precisely the outcome the decision was
-      written to prevent. **This is a process failure, not a content failure** — a standing decision was
-      neutralized by per-run habit without anyone noticing, and the backlog entry recording the decision
-      kept being read past for four days while its own numbers went stale in the opposite direction.
-    - **What a dev-agent run may and may not do here.** May: P-3 (extend `check-blindspot.mjs` to the
-      four non-English languages — that at least puts the mechanical half of the guard behind the
-      content that already shipped). May: keep translating new lessons in step *once P-3 lands*, since
-      the scan gap is the specific risk that was cited. **May not**: bulk-translate, delete existing
-      translations, or drop the "(Beta)" labels (§10.4) — all three are owner calls.
-    - **Owner decision requested (P-4).** Three options, and one of them has to be picked rather than
-      drifted into: (a) accept the current state — ~40 lessons of unreviewed LLM translation ships under
-      "(Beta)" labelling, with P-3's scanner as the only guard; (b) commission native-speaker review of
-      the shipped es/ko/zh/ja content (scope is now ~168,000 characters across four languages, not the
-      "34 rewritten sections" this item used to quote); or (c) ship English-only at launch and cut the
-      four Beta languages from Phase 0 entirely. Note that (a) is what is happening today by default.
 18. **[Process] Instrumentation (§9.2) — call sites done 2026-08-05, real provider still open.**
     `src/lib/analytics.js` (`track()`/`EVENTS`) fires `app_opened`, `lesson_started`,
     `lesson_completed`, and `quiz_taken` (see run log entry "Wire the §9.2 minimum analytics event set").
@@ -315,6 +290,14 @@ for the history. No open P1/P2 items.
 
 **Completed and pruned**
 
+- **Machine-translation decision reversal, owner escalation (former item 20 / backlog P-4)** — resolved
+  2026-08-11 (owner decision, interactive session): option (a), accept the current unreviewed
+  es/ko/zh/ja translation state under "(Beta)" labelling. See `DECISIONS.md`
+  ("Machine-translated lesson content...") for the full three-option writeup and the reasoning, and this
+  run's log entry ("Translation review engine...") for what shipped alongside the decision —
+  `scripts/translation-review.mjs` + a per-language review-status ledger with drift detection, so the
+  0%-reviewed state is now tracked and visible (via `npm run review-status` and a non-blocking `npm test`
+  summary line) instead of able to drift unnoticed the way it did between 2026-08-05 and 2026-08-09.
 - **Main JS chunk back over the 500 kB warning threshold (former item 23)** — done 2026-08-07 (twelfth
   run, owner-directed), see run log ("Split lesson content out of the main bundle"). `content/lessons.js`
   split into lightweight metadata (kept at the same path) and a new `content/lessonContent.js` holding
@@ -5238,3 +5221,72 @@ direction is the problem.
   down — that is exactly the drift P-1 was written to stop. If not picking up P-4/the freeze question,
   good non-lesson candidates remain: item 25 (LessonReader >500kB chunk, two concrete fix options
   already scoped) or item 22 (renumber lesson ids — deliberately deferred, needs a scripted id→id map).
+
+### 2026-08-11 (interactive session, owner present) — P-4 resolved (owner decision) + translation review engine
+
+- **Context**: this was an interactive session, not a scheduled dev-agent run — the owner was asked
+  directly ("what does P-4 need from me") and given the three options item 20/P-4 laid out. Owner chose
+  **option (a)**: accept the current unreviewed es/ko/zh/ja translation state, ship under "(Beta)"
+  labelling, and asked for a "review engine for each language" built alongside that choice — i.e. accept
+  for now, but stop the acceptance from being another silent, untracked drift like the one that made P-4
+  necessary in the first place.
+- **What was built**:
+  1. `scripts/translation-review.mjs` — CLI with `report` (coverage by language: reviewed/stale/
+     unreviewed counts, plus a prioritized list), `mark <lessonId> <lang> <reviewerName>` (records a
+     review against a hash of the lesson's current English source), and `unmark` (undo). Exports
+     `englishSourceHash`/`computeCoverage` for reuse.
+  2. `scripts/translation-review-ledger.json` — the ledger itself, starts as `{}` (nothing has actually
+     been reviewed, so an empty ledger is the accurate starting state, not a placeholder to fill in).
+  3. `scripts/check-data.mjs` — added a tenth, non-fatal check that imports `computeCoverage` and prints
+     a one-line coverage summary via the existing `warn()` path (increments the warning count, never the
+     failure count) so every `npm test` run — including every future scheduled dev-agent run — surfaces
+     the number without needing anyone to remember `npm run review-status`.
+  4. `package.json` — added the `review-status` script.
+  5. `DECISIONS.md` — new closed entry ("Machine-translated lesson content: accept for now, track review
+     debt instead of blocking on it") recording the owner's choice, what shipped alongside it, and
+     explicitly addressing why a JSON ledger doesn't conflict with the existing "content as `.js`
+     modules" decision (the ledger is tooling state read only by the script, never imported by the app
+     bundle — the tradeoff the `.js`-modules decision weighed doesn't apply to it).
+  6. `AGENT_LOG.md` — P-4 marked done in the priority block, item 20 moved from "Open" to "Completed and
+     pruned" with a pointer to `DECISIONS.md` and this entry for detail.
+- **A real bug found and fixed during verification**: the script's initial "only run main() if invoked
+  directly" guard compared `import.meta.url === \`file://${process.argv[1]}\`` — a string concatenation
+  that does not URL-encode `process.argv[1]`. This repo's own path contains both a space and Korean
+  characters, both of which `import.meta.url` percent-encodes, so the comparison silently failed and
+  every CLI command (`report`, `mark`, `unmark`) exited 0 having done nothing — no error, just silence,
+  which is the worst failure mode for a tool whose entire job is making state visible. Caught only
+  because the verification step actually inspected command *output*, not just exit codes. Fixed with
+  `pathToFileURL(process.argv[1]).href === import.meta.url`, which resolves both sides through the same
+  encoding instead of hand-constructing one side.
+- **Verified**:
+  1. `npm test` — the new non-fatal check prints `WARN: translation review coverage — es 0%, ko 0%, zh
+     0%, ja 0% ...` and the run still reports `PASS: 0 failure(s), 1 warning(s)` / exits 0 — confirms the
+     warning path never blocks a build, matching the "accept for now" decision.
+  2. `npm run build` — succeeds, same known LessonReader >500kB advisory as item 25 (not a regression).
+  3. End-to-end CLI round-trip, done twice (once before the bug fix, confirming the failure; once after):
+     `mark 1 es "Test Reviewer"` → ledger gained the expected entry with a `sourceHash` → `report`
+     correctly showed `es: 1/40 reviewed`. Then edited lesson 1's English body in a scratch copy to
+     simulate drift → `report` correctly reclassified it `stale` and listed it with the original
+     reviewer/date. Reverted the content edit (`git diff --stat` on `lessonContent.js` empty afterward)
+     and ran `unmark 1 es` to return the ledger to a clean `{}` before committing — `git status --short`
+     confirmed only the intended new/changed files remained.
+- **Adversarial self-check**:
+  - *Blindspot register regression*: no content shipped by this change — no Dalio references, no
+    advice-adjacent language, no child-facing framing, no hardcoded date. It's tooling only.
+  - *DECISIONS.md conflict*: checked directly — the new ledger is JSON while the existing "content as
+    `.js` modules" decision mandates `.js`. Resolved explicitly in the new DECISIONS.md entry: that
+    decision's own stated scope is content the Vite/React build imports at runtime, which the ledger
+    never is. No unresolved conflict.
+  - *Already-done backlog item*: nothing like this existed before — item 20/P-4 was open until this
+    session. Not a duplicate.
+  - *Own verification claim*: every command in "Verified" above is given close to verbatim and is
+    reproducible from the current tree (the ledger is committed as `{}`, matching the "nothing reviewed
+    yet" state actually reported).
+- **Not touched, and why**: no lesson content added — P-1's freeze conditions (P-2/P-3/P-4) are now all
+  met per the priority block, but resuming lesson-writing wasn't what was asked this turn, and the
+  priority block's own text warns against defaulting back into it without saying which §4.3 clause a run
+  moves. Left for whoever picks up lesson work next to state explicitly.
+- **Next step**: whoever actually reviews a translation should run
+  `node scripts/translation-review.mjs mark <lessonId> <lang> "<name>"` to record it — that's the only
+  way review coverage moves from 0%. Otherwise, item 25 (LessonReader >500kB chunk) or item 22 (lesson
+  id renumbering) remain the best-scoped non-lesson backlog items for the next scheduled run.

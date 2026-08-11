@@ -19,6 +19,7 @@ import { economicSignals } from "../src/content/economicSignals.js";
 import { sectors } from "../src/content/sectors.js";
 import { MAX_BOX, dueQuestions, recordAnswer } from "../src/lib/review.js";
 import { MIN_BARS, OUTPERFORM_THRESHOLD, WJ_PERIODS, wjSectorComparison } from "../src/lib/relativeStrength.js";
+import { computeCoverage } from "./translation-review.mjs";
 
 const LANGS = ["en", "es", "ja", "ko", "zh"];
 const TRACK_KEYS = new Set(TRACKS.map((tr) => tr.key));
@@ -428,6 +429,27 @@ for (const [label, moduleExports] of Object.entries(CONTENT_MODULES)) {
   if (OUTPERFORM_THRESHOLD !== 0.5) {
     warn(`relativeStrength: OUTPERFORM_THRESHOLD is ${OUTPERFORM_THRESHOLD}, not the study's 0.5`);
   }
+}
+
+// 10. Translation review coverage (informational, non-blocking — never fails
+//     the build). Surfaces P-4's accepted-for-now state (see AGENT_LOG.md item
+//     20, DECISIONS.md "Machine translation review") on every `npm test` run
+//     instead of only when someone remembers to run
+//     `npm run review-status` by hand — the whole reason P-4 needed an owner
+//     escalation was that this exact number drifted for weeks, unnoticed,
+//     between weekly reviews.
+{
+  const ledgerPath = join(ROOT, "scripts", "translation-review-ledger.json");
+  const ledger = JSON.parse(readFileSync(ledgerPath, "utf8"));
+  const coverage = computeCoverage(lessonContent, lessons, ledger);
+  const parts = Object.entries(coverage).map(([lang, c]) => {
+    const pct = c.total ? Math.round((c.reviewed / c.total) * 100) : 0;
+    return `${lang} ${pct}%${c.stale ? ` (${c.stale} stale)` : ""}`;
+  });
+  warn(
+    `translation review coverage — ${parts.join(", ")} of lesson content human-reviewed. ` +
+      `Run 'npm run review-status' for detail.`,
+  );
 }
 
 console.log(`\n${failures === 0 ? "PASS" : "FAIL"}: ${failures} failure(s), ${warnings} warning(s).`);

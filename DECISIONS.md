@@ -149,6 +149,47 @@ Add a new entry when a run makes a choice future work should be able to look up 
 - **Revisit when:** the app gains real accounts (Supabase), at which point this whole section should
   be superseded by a sync strategy (local-first with server sync, vs. server-authoritative).
 
+### Machine-translated lesson content: accept for now, track review debt instead of blocking on it
+
+- **Status:** closed — owner decision, 2026-08-11 (interactive session).
+- **Background:** `AGENT_LOG.md` item 20 / backlog P-4. A 2026-08-05 decision to not machine-translate
+  lesson content (three runs independently declined, citing unreviewed-LLM-translation risk in a
+  language `check-blindspot.mjs` didn't scan) was reversed in practice — thirteen consecutive
+  lesson-add runs each translated its own new lesson at authoring time, and by 2026-08-09 ~168,000
+  characters across es/ko/zh/ja had shipped as unreviewed machine translation, "(Beta)"-labelled, with
+  no automated guard scanning the non-English text at all.
+- **What was decided:** option (a) of the three the weekly review laid out — accept the current state
+  and ship as-is under "(Beta)" labelling, rather than (b) commissioning native-speaker review before
+  trusting it, or (c) cutting the four Beta languages from Phase 0.
+- **What ships alongside the decision, so "accept for now" doesn't repeat the same silent drift:**
+  1. `scripts/check-blindspot.mjs`'s §10.1 advice-adjacency patterns were already extended to
+     es/ko/zh/ja the same day (P-3, done first, see the run log) — the specific risk the original
+     2026-08-05 decision named (advice-adjacent language slipping through unscanned) now has a
+     mechanical guard in all five languages.
+  2. `scripts/translation-review.mjs` + `scripts/translation-review-ledger.json` — a lightweight ledger
+     tracking, per lesson per non-English language, whether a human has reviewed the shipped
+     translation against the current English source, with drift detection (an English edit after a
+     review invalidates it as "stale" rather than silently staying trusted). `npm run review-status`
+     reports coverage on demand; `npm test` prints a one-line non-blocking summary every run (via
+     `check-data.mjs`) specifically so the number stays visible instead of only surfacing at the next
+     weekly review, which is what let it drift for weeks last time.
+  3. The ledger starts empty — 0% reviewed in every language is the honest current state, not a bug.
+     Coverage only grows when someone (owner, hired translator, or a future run with explicit
+     permission) actually reviews a translation and runs `translation-review.mjs mark`.
+- **Why JSON for the ledger, not `.js` like the content modules** (see "Content as `.js` modules, not
+  JSON" above): that decision is scoped to content the Vite/React build imports at runtime. The ledger
+  is dev-tooling state, read/written only by `translation-review.mjs` via `JSON.parse`/`stringify` —
+  never imported by the app bundle — so the tradeoff that decision weighed (diffability vs. needing a
+  JSON loader in the browser) doesn't apply, and JSON's exact round-trip on programmatic writes is the
+  better fit here.
+- **What this does NOT do:** it does not review anything. There is no automated substitute for a native
+  speaker reading the text. A dev-agent run may keep translating newly-added lessons at authoring time
+  (the P-3 scanner now covers that) but may not use this ledger to claim content is reviewed without an
+  actual human review behind the `mark` call.
+- **Revisit when:** review coverage is meaningfully non-zero and the actual quality of the shipped
+  translations is known, or before any paid/committed use of the app in a market where one of these
+  four languages is the primary language.
+
 ### Two lesson tracks, money-first, instead of one sequential path
 
 *Decided 2026-08-07 (owner-directed, in session).*

@@ -9,6 +9,7 @@
     "preview": "vite preview",
     "test": "node scripts/check-data.mjs && node scripts/check-blindspot.mjs",
     "check-blindspot": "node scripts/check-blindspot.mjs",
+    "review-status": "node scripts/translation-review.mjs report",
     "market": "node scripts/fetch-market-data.mjs"
   },
   "dependencies": {
