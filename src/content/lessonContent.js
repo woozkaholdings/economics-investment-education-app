@@ -399,6 +399,22 @@ export const lessonContent = {
           "zh": "不同期限国债利率的图表。\n\n正常（向上倾斜）= 健康经济\n倒挂（短期>长期）= 危险！自1955年以来，每次美国衰退前都出现过收益率曲线倒挂，但并非每次倒挂后都发生了衰退。",
           "ja": "異なる満期の国債金利のグラフ。\n\n正常（右肩上がり）= 健全な経済\n逆転（短期>長期）= 危険！1955年以来、全ての米国景気後退の前に逆イールドが発生していますが、逆イールドの後に必ず景気後退が起きるとは限りません。"
         }
+      },
+      {
+        "heading": {
+          "en": "Why the Signal Works — and Where It Can Mislead",
+          "es": "Por Qué Funciona la Señal — y Dónde Puede Engañar",
+          "ko": "이 신호가 작동하는 이유 — 그리고 오해할 수 있는 지점",
+          "zh": "为什么这个信号有效——以及它可能误导的地方",
+          "ja": "このシグナルが機能する理由——そして誤解を招きうる点"
+        },
+        "body": {
+          "en": "The mechanism behind the signal is expectations, not magic. A long-term yield is, roughly, a market bet on where short-term rates will average out over that whole stretch of time. If the market expects the central bank to cut rates sharply because a slowdown is coming, that expectation pulls the 10-year yield down today — even while the 2-year yield still reflects today's higher short-term rate. That gap flipping negative is the market pricing in future weakness before it shows up in jobs or GDP data.\n\nThe specific spread economists cite most often is '2s10s' — the 2-year Treasury yield minus the 10-year. It inverted in mid-2022 and stayed inverted for roughly two years, the longest stretch on record, before turning positive again in 2024, well past the 'typical' 12-18 month lead time.\n\nThat gap between the signal and the outcome is the real limit to keep in mind: it says a slowdown is more likely, not when, and not how severe. The 1966 inversion preceded a sharp growth slowdown but no official recession. Reading the curve well means weighing it alongside employment, inflation, and credit data — one input, not a standalone forecast.",
+          "es": "El mecanismo es de expectativas, no magia. El rendimiento a largo plazo refleja dónde el mercado espera que estén las tasas de corto plazo, en promedio, durante ese período. El diferencial más citado es '2s10s' (2 años menos 10 años) — se invirtió a mediados de 2022 y se mantuvo invertido casi dos años, el período más largo registrado, antes de volver a positivo en 2024, mucho después del plazo 'típico' de 12-18 meses. La señal indica que una desaceleración es más probable, no cuándo ni qué tan severa será: en 1966 una inversión precedió una fuerte desaceleración sin llegar a ser recesión oficial.",
+          "ko": "이 신호의 원리는 마법이 아니라 기대심리입니다. 장기 금리는 대체로 그 기간 동안 단기 금리가 평균적으로 어디에 있을지에 대한 시장의 베팅을 반영합니다. 가장 많이 인용되는 스프레드는 '2s10s'(2년물-10년물)로, 2022년 중반에 역전되어 약 2년간(사상 최장) 지속되다 '전형적인' 12-18개월보다 훨씬 늦은 2024년에야 다시 플러스로 전환되었습니다. 이 신호는 둔화 가능성이 높다는 것만 말해줄 뿐 시점이나 심각도는 알려주지 않습니다 — 1966년의 역전은 공식 경기침체 없이 급격한 성장 둔화만 초래했습니다.",
+          "zh": "这个信号的原理是预期，而非魔法。长期收益率大致反映了市场对该期间短期利率平均水平的押注。最常被引用的利差是「2s10s」（2年期减10年期）——它在2022年年中出现倒挂，并持续了近两年（历史最长），直到远超「典型」12-18个月周期的2024年才转为正值。这个信号只能说明放缓的可能性更高，而不能说明具体时间或严重程度——1966年的一次倒挂之后经济大幅放缓，但并未演变成官方认定的衰退。",
+          "ja": "このシグナルの仕組みは魔法ではなく期待です。長期利回りは、その期間中の短期金利の平均がどこに落ち着くかについての市場の見立てをおおよそ反映しています。最もよく引用されるスプレッドは「2s10s」（2年物マイナス10年物）で、2022年半ばに逆転し、過去最長となる約2年間逆転が続いた後、「典型的」とされる12-18ヶ月をはるかに超えた2024年にようやくプラスに戻りました。このシグナルが示すのは減速の可能性が高いということだけで、時期や深刻さまでは示しません——1966年の逆転は公式の景気後退には至らず、急激な成長減速にとどまりました。"
+        }
       }
     ],
     "takeaway": {
