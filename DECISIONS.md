@@ -103,6 +103,35 @@ Add a new entry when a run makes a choice future work should be able to look up 
 - **Revisit when:** a PostHog (or other provider) account and key exist — swap `sink()`, keep every
   `track()` call site as-is.
 
+### `LessonReader` chunk size warning threshold raised, not split
+
+- **Status:** open — a deliberate, temporary mitigation, not a fix. See `AGENT_LOG.md` backlog item 25.
+- **What was decided:** `vite.config.js` now sets `build.chunkSizeWarningLimit: 600` (was Vite's
+  default 500). Measured at decision time: `LessonReader-*.js` is **513.09 kB minified / 217.53 kB
+  gzip** — 13 kB over the default limit, so the build's "Some chunks are larger than 500 kB" advisory
+  fires on every build even though nothing regressed; the entry chunk is a separate 221.91 kB and
+  `LessonReader` is already lazy-loaded (only fetched when a lesson is opened), so this is not the
+  item-23 main-bundle regression, just the same lazy chunk slowly growing as lesson content grew.
+- **Why raise the limit instead of the real fix:** the item's other option — splitting
+  `src/content/lessonContent.js` (531 kB source, the actual bulk of this chunk) per track
+  (`money`/`economy`) so `LessonReader` only pulls the track it needs — is a genuine architectural
+  change: it needs `LessonReader.jsx` to dynamically `import()` per-track content keyed by
+  `lessonsByTrack`, a loading state while that resolves, and re-verification that `scripts/
+  check-data.mjs` and `scripts/translation-review.mjs` (which both import the full merged
+  `lessonContent` object) still see every lesson. That's multi-file, review-worthy-on-its-own work,
+  not a single focused run — and this run found `scripts/translation-review.mjs` already carrying
+  uncommitted, in-progress edits (an ai/human review-method distinction) that make touching
+  content-loading code it depends on the wrong move right now (see `AGENT_LOG.md`'s current run-log
+  entry). Raising the limit is the smaller, contained choice available without touching that file.
+- **This is not "let it drift."** 600 kB is chosen as a small, deliberate margin above the measured
+  513.09 kB, not a number picked to silence the warning indefinitely. Lesson content is currently
+  frozen (P-1, see `AGENT_LOG.md`), so this chunk should not grow again until that freeze lifts and
+  new lesson content is added.
+- **Revisit when:** the chunk approaches 600 kB again (i.e. the next time lesson content grows), or
+  when a dedicated run can do the real per-track split — at that point, lower this limit back toward
+  (or below) 500 kB as part of the same change, so the threshold stays a real signal rather than a
+  ratchet that only ever goes up.
+
 ## Closed
 
 ### Content as `.js` modules, not JSON

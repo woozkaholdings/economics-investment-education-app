@@ -263,17 +263,24 @@ for the history. No open P1/P2 items.
     and API key a dev-agent run can't create; see `DECISIONS.md`. What's left: create that account
     (owner action) and swap `analytics.js`'s `sink()`; item 17's D1 lesson-1-completion measurement is
     still blocked until then, since a per-device local log can't be aggregated across installs.
-25. **[Build — added 2026-08-09 by the weekly review] The lazy `LessonReader` chunk crossed Vite's
-    500 kB warning threshold.** Confirmed independently by this review's own `npm run build`:
-    `LessonReader-*.js` is **513.09 kB (gzip 217.53 kB)** and the "Some chunks are larger than 500 kB"
-    advisory is back in the build output. **This is not a regression of the closed item-23 fix** — the
-    entry chunk is 221.91 kB and `LessonReader` is still lazy-loaded, which is what item 23 actually
-    guaranteed. Low priority, but it grows with every lesson and 217 kB gzip is a real wait on a slow
-    connection before the *first* lesson renders. Two reasonable fixes: split `lessonContent.js` and
-    `quizData.js` per track (money / economy) so a reader pulls only its own track, or raise
-    `build.chunkSizeWarningLimit` as a deliberate, documented decision in `DECISIONS.md`. Pick one
-    consciously — do not let it keep drifting upward unremarked.
-
+25. **[Build — re-opened 2026-08-12, mitigation only] Split `lessonContent.js` per track so `LessonReader`
+    only pulls its own track.** The 2026-08-09 version of this item (raise-the-limit-or-split) is
+    **mitigated, not fixed**: 2026-08-12 raised `vite.config.js`'s `chunkSizeWarningLimit` to 600 (see
+    `DECISIONS.md`, "`LessonReader` chunk size warning threshold raised, not split") purely because the
+    real fix is multi-file architectural work unsuited to a single focused run, not because it's no
+    longer worth doing. `LessonReader-*.js` is still 513.09 kB / 217.53 kB gzip — a real wait on a slow
+    connection before the first lesson renders — the warning is just quieted. The real fix: split
+    `src/content/lessonContent.js` (531 kB source, the actual bulk of this chunk — `quizData.js` is
+    already in its own `Question-*.js` chunk, not this one) into per-track files, have
+    `LessonReader.jsx` dynamically `import()` only the track of the lesson being opened (looked up via
+    `lessonsByTrack` from `src/content/lessons.js`, already exported), add a loading state for that
+    async import, and re-verify `scripts/check-data.mjs` and `scripts/translation-review.mjs` (both
+    import the full merged `lessonContent` object today) still see every lesson afterward — likely by
+    keeping a merged re-export in `lessonContent.js` for those two consumers while `LessonReader.jsx`
+    imports the per-track files directly instead. **Do not attempt this while `scripts/
+    translation-review.mjs` still shows uncommitted changes in `git status`** (see the Notes section
+    below) — confirm that's resolved (committed or reverted) first, since this fix touches the same
+    content-loading surface that file's in-progress edits depend on.
 **HELD — owner decisions, do not act on these**
 
 12. **[HELD] Expo vs. Vite** (§2.1) — needs a human call; blocks store release, not the web launch. See
@@ -285,11 +292,29 @@ for the history. No open P1/P2 items.
 
 **Notes for future runs (informational — not actionable backlog items)**
 
+- **`scripts/translation-review.mjs` has uncommitted changes in the working tree as of 2026-08-12 —
+  confirm their status (committed, or explicitly abandoned) before touching that file or anything that
+  imports it.** Found at the start of this run's `git status`: a real, in-progress feature (an
+  ai-vs-human `method` field on ledger records — `mark <id> <lang> <name> [ai|human]`, a
+  `computeCoverage`/`printReport` breakdown of `aiReviewed`/`humanReviewed`, and header prose citing a
+  2026-08-11 owner instruction "no one will be reviewing, you figure out"), not corruption or a stalled
+  scheduled run — this run's `AGENT_LOG.md` entry for 2026-08-11 (the interactive P-4 session) doesn't
+  mention an ai/human distinction, so this is follow-on work from that session that was never committed
+  or logged. Per the dev-agent workflow's rule on uncommitted changes that don't match a previous
+  scheduled run, this run left the file untouched rather than guessing whether to finish, commit, or
+  discard someone else's in-progress edit. `npm test`/`npm run build` both still pass with it in place
+  (verified 2026-08-12), so it isn't blocking builds — but item 25's real fix (see above) would touch
+  the same file's dependencies and should wait until this is resolved one way or another.
 - **`economic-cycles-v6.jsx` (repo root, untracked) is reference/inspiration material only — do not treat it as a build fixture or merge from it directly.** Added 2026-08-04, owner-clarified. It's a much larger, differently-designed prototype (neon dark-mode `DS` design-system object, extra tabs for Sectors/Industries/Finance, a "Be the Fed Chair" simulator, flashcards) that appeared in the working tree with no git history and no download metadata — its actual origin is unknown. It also reintroduces two things the real app deliberately removed: direct "Ray Dalio" branding/quotes (§10.2, closed) and a hardcoded current date (`nowDate: "April 2026"`, plus an odd `"April 2026 • Late Cycle / Iran War Week 5"` line) — the exact stale/dated-content problem §2.3 fixed. Its dark-mode and sector-performance ideas (the two features it was once a candidate reference for) have both since shipped independently, built without consulting it, so there's no longer a live pointer to a specific future use — but its Dalio references and dated content must still never carry over, and it should not be added to git as-is.
 - **`main`'s reachable git history currently starts at commit `2dc0264` ("Split monolithic JSX step 4a").** Found 2026-08-04 while investigating unrelated work. Roughly a dozen earlier commits (initial scaffold, the original blindspot-register fixes, the Markets stale-date fix, `scripts/bootstrap-node.sh`'s addition, JSX-split steps 1–3, the language-Beta labelling, the data-shape harness) still exist as objects in the repo (`git cat-file -t <hash>` succeeds for e.g. `eda6dd0`, `ecdda70`, `5ab5c48`, `6feca25`, `76be081`, `053f8b2`) but aren't ancestors of the current `main` tip — something reset or rewrote history before this was noticed, likely an early run's plumbing-commit (`commit-tree`/`update-ref`, used because `git commit` hangs in this environment — see the memory note on this) picking up a stale parent hash instead of the true current `HEAD`. No content appears lost — the tree at `2dc0264` already contains everything those steps produced (locales, content modules, the bootstrap script) — but the historical commit-by-commit record for that early stretch is orphaned, not part of `main`. Not fixed; flagged for the owner to decide whether it's worth reattaching (the old commits are still around, not yet garbage-collected) or leaving as-is.
 
 **Completed and pruned**
 
+- **`LessonReader` 500 kB chunk-size warning (2026-08-09 backlog item 25) — mitigated 2026-08-12, real
+  fix re-opened as a new item 25.** `vite.config.js`'s `build.chunkSizeWarningLimit` raised to 600; see
+  `DECISIONS.md` and this run's log entry. The underlying 513 kB/217.53 kB gzip chunk is unchanged —
+  this closed the *stale build-warning* item, not the *chunk is heavy* problem, which is re-listed above
+  as a fresh open item pointing at the actual split.
 - **Machine-translation decision reversal, owner escalation (former item 20 / backlog P-4)** — resolved
   2026-08-11 (owner decision, interactive session): option (a), accept the current unreviewed
   es/ko/zh/ja translation state under "(Beta)" labelling. See `DECISIONS.md`
@@ -5290,3 +5315,73 @@ direction is the problem.
   `node scripts/translation-review.mjs mark <lessonId> <lang> "<name>"` to record it — that's the only
   way review coverage moves from 0%. Otherwise, item 25 (LessonReader >500kB chunk) or item 22 (lesson
   id renumbering) remain the best-scoped non-lesson backlog items for the next scheduled run.
+
+### 2026-08-12 — Raise `LessonReader` chunk-size warning threshold (backlog item 25, mitigation)
+
+- **Orient**: `git status` showed the tree was *not* clean at run start —
+  `scripts/translation-review.mjs` modified (uncommitted), `economic-cycles-v6.jsx` untracked. Checked
+  both against the "does this match a previous stalled run" rule before doing anything else:
+  - `economic-cycles-v6.jsx` is the already-documented reference-only file (see the Notes section,
+    entry dated 2026-08-04) — untouched, not this run's concern.
+  - `scripts/translation-review.mjs`'s diff (`git diff --text`, since `git diff` alone reported it as
+    binary — a raw NUL byte landed inside a `.join("\x00")` call from some prior edit, which V8's string
+    parser accepts so it doesn't break `npm test`, it just confuses git's binary heuristic) turned out to
+    be a real, substantive, in-progress feature (ai/human review-method tracking) with a header comment
+    citing a 2026-08-11 owner instruction — but the *previous* run's log entry (the interactive P-4
+    session, same date) describes a version of this file *without* that feature. So this is genuine
+    follow-on work from an owner session that was never committed or logged, not a stalled scheduled run
+    of mine. Per the workflow's rule, left it untouched entirely — did not read further into what it was
+    for beyond confirming it wasn't corruption, did not stage it, did not build on top of it. Documented
+    it as a new Notes-section entry (above) so the next run doesn't have to redo this investigation.
+- **What was done**: picked backlog item 25 (`LessonReader` chunk crossed Vite's 500 kB warning,
+  open since 2026-08-09, explicitly not lesson content — safe to touch without going near the dirty
+  file above). Confirmed the warning still fires (`npm run build`: `LessonReader-*.js` 513.09 kB / gzip
+  217.53 kB, unchanged from 2026-08-09 since lesson content has been frozen since then). Of the item's
+  two named options, chose the smaller one (raise `build.chunkSizeWarningLimit`) over the real fix
+  (split `lessonContent.js` per track) — the split needs `LessonReader.jsx` changes, a new async loading
+  state, and re-verification of two other files that import the full `lessonContent` object, one of
+  which is the dirty file above. That's multi-file architectural work, not a single focused run, and
+  touching it while that file has unrelated uncommitted edits risks exactly the "swept-up work" failure
+  mode a past run's memory note warns about. Set `chunkSizeWarningLimit: 600` in `vite.config.js` (small
+  deliberate margin above the measured 513.09 kB, not a number chosen to silence the warning
+  indefinitely) and added a full "open" `DECISIONS.md` entry explaining the trade-off and stating when
+  to revisit. Re-opened the real per-track-split fix as a fresh backlog item 25 (the old item is in
+  "Completed and pruned" as mitigated, not solved) so the underlying 217 kB gzip weight doesn't quietly
+  stop being tracked just because the build warning went quiet.
+- **Verified**: `npm run build` — `✓ 63 modules transformed`, same eight output chunks at the same
+  sizes as before (`LessonReader-*.js` still 513.09 kB / gzip 217.53 kB — confirms this is a threshold
+  change, not a size change), and the "Some chunks are larger than 500 kB" advisory is gone from the
+  output. `npm test` — `PASS: 0 failure(s), 1 warning(s)` (the same pre-existing translation-coverage
+  warning as every run since 2026-08-11, not a new one) and all six `ok:` blindspot/data-shape checks
+  pass. `git status --short` after both commands showed only the two intended files
+  (`vite.config.js`, `DECISIONS.md`) plus this `AGENT_LOG.md` edit newly modified — the pre-existing
+  `scripts/translation-review.mjs` diff and `economic-cycles-v6.jsx` untracked file were unchanged by
+  either command, confirmed by re-running `git diff --stat` scoped to just the two files I intended.
+- **Adversarial self-check**:
+  - *Blindspot register regression*: `git diff -- vite.config.js DECISIONS.md | grep -iE
+    "dalio|you should (buy|sell|invest)|we recommend|be bullish|be cautious|child|kid.?mode|nowDate|
+    April 2026"` returned no matches (grep exit 1). Both files are build config and decision-log prose,
+    not app content — no lesson text, no locale files, no UI copy touched. No conflict.
+  - *DECISIONS.md conflict*: the new entry is additive (a new "Open" section) and doesn't reference or
+    contradict the Expo-vs-Vite, `.js`-content-modules, localStorage-state, or two-lesson-tracks closed
+    decisions — checked by reading the full file before editing, not just grepping. No conflict.
+  - *Already-done backlog item*: item 25 was explicitly listed under "Open" (not "Completed and
+    pruned") going into this run, confirmed by reading the backlog section before picking it. Not a
+    duplicate — and the entry is honest that this is a mitigation, re-opening the real fix rather than
+    marking the whole problem solved, so it doesn't create a false "done" the way closing it outright
+    would have.
+  - *Own verification claim*: every command and its output above (`npm run build`'s chunk table, `npm
+    test`'s pass/warning counts, the grep's exit code) is reproducible from the current tree exactly as
+    given — nothing here depends on the uncommitted `translation-review.mjs` state, which this run never
+    modified.
+- **Not touched, and why**: `scripts/translation-review.mjs` and anything that depends on its current
+  shape (the real item-25 split, which needs that file's consumers stable) — see Orient above and the
+  new Notes-section entry. `economic-cycles-v6.jsx` — reference-only, already documented, confirmed
+  unchanged. No lesson content — item 24/17 unfroze 2026-08-11 but this run's pick was explicitly a
+  non-content item per this run's own reasoning, not a default avoidance of content work.
+- **Next run should pick**: resolve the `scripts/translation-review.mjs` uncommitted-changes question
+  first if picking up the real item-25 split (commit it, or confirm with the owner it should be
+  discarded) — don't build the split on top of an unknown-status file. If that's not resolved yet, other
+  safe candidates untouched by this note: item 22 (lesson id renumbering, needs a scripted id→id map) or
+  resuming content work per P-1's post-unfreeze guidance (deepen existing lessons or move the §4.3
+  minutes clause — state explicitly which clause, per the priority block).
