@@ -633,6 +633,22 @@ export const lessonContent = {
           "zh": "在削减任何支出之前，先花一个月记录钱实际花在哪里会很有帮助——每一杯咖啡、每一项订阅。\n\n不衡量就无法管理。小额的重复支出会累积：每月12美元的订阅一年就是144美元。",
           "ja": "何かを減らす前に、まず1ヶ月お金の実際の流れを記録すると役立ちます——コーヒー一杯まで。\n\n測らなければ管理できません。小さな定期支出も積み重なります：月12ドルの定期購入は年144ドルになります。"
         }
+      },
+      {
+        "heading": {
+          "en": "Make Saving Automatic, Not a Decision",
+          "es": "Automatiza el Ahorro, No Lo Decidas",
+          "ko": "저축을 자동화하라, 결정하지 말고",
+          "zh": "让储蓄自动化，而非靠决定",
+          "ja": "貯蓄は自動化する、決断に頼らない"
+        },
+        "body": {
+          "en": "Maria's budget puts $600 a month toward savings — but that only works if the $600 actually gets set aside, instead of quietly becoming part of whatever's left in her checking account by the end of the month. A budget that depends on remembering to save what's left over routinely fails, not because the plan was wrong, but because by the time rent, groceries, and a few unplanned purchases are done, there's rarely much left to remember.\n\nThe fix is to flip the order: set up an automatic transfer that moves $600 out of checking and into savings the same day her paycheck lands, before she's had a chance to spend any of it. The budget itself doesn't change — she's still following the same 50/30/20 split — but the savings portion no longer depends on Maria's discipline in week three of the month. It's already handled by week one.\n\nThis works for the same reason a habit is easier to keep than a fresh decision: it removes the moment where willpower is required. Lesson 35 covers why that moment is so easy to lose even for people who genuinely mean to save — the practical fix here is simply not to schedule that moment at all.",
+          "es": "El presupuesto de Maria destina $600 al mes al ahorro — pero solo funciona si ese dinero se aparta de verdad, en vez de quedar disuelto en lo que sobre en la cuenta a fin de mes.\n\nLa solución es invertir el orden: una transferencia automática mueve los $600 a ahorros el mismo día que llega el sueldo, antes de que haya oportunidad de gastarlos. El presupuesto no cambia, pero el ahorro ya no depende de la disciplina de Maria en la tercera semana del mes.\n\nEsto funciona por la misma razón que un hábito es más fácil de mantener que una decisión: elimina el momento en que se necesita fuerza de voluntad.",
+          "ko": "마리아의 예산은 매달 600달러를 저축에 배정하지만, 그 돈이 실제로 따로 떼어지지 않으면 월말에 남은 돈 속으로 조용히 섞여버립니다.\n\n해법은 순서를 뒤집는 것입니다: 월급이 들어오는 날 자동이체로 600달러를 바로 저축 계좌로 옮기면, 쓸 기회조차 없습니다. 예산 자체는 바뀌지 않지만, 저축은 더 이상 3주차 마리아의 의지력에 달려 있지 않습니다.\n\n습관이 결정보다 지키기 쉬운 것과 같은 이유입니다: 의지력이 필요한 순간 자체를 없애버리기 때문입니다.",
+          "zh": "玛丽亚的预算每月拨出600美元用于储蓄——但只有这笔钱真正被单独存起来才有效，否则它会悄悄混入月底账户里剩下的钱中。\n\n解决办法是颠倒顺序：在发薪当天就用自动转账把600美元转入储蓄账户，让她根本没有机会花掉它。预算本身没有变，但储蓄不再依赖玛丽亚在月底第三周的自制力。\n\n这和习惯比决定更容易坚持是同一个道理：它直接消除了需要意志力的那一刻。",
+          "ja": "マリアの予算は毎月600ドルを貯蓄に充てていますが、そのお金が実際に取り分けられなければ、月末に口座に残ったお金へと静かに紛れ込んでしまいます。\n\n解決策は順序を逆にすることです：給料が入るその日のうちに自動振替で600ドルを貯蓄口座へ移してしまえば、使う機会すらありません。予算そのものは変わりませんが、貯蓄はもうマリアの第3週の意志力に頼らなくて済みます。\n\nこれは習慣が決断より続けやすいのと同じ理由です：意志力が必要になる瞬間そのものをなくしてしまうからです。"
+        }
       }
     ],
     "takeaway": {

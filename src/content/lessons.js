@@ -116,7 +116,7 @@ export const lessons = [
     subtitle: {"en":"A classic summary — simple but powerful","es":"Un resumen clásico — simple pero poderoso","ko":"고전적인 요약 — 간단하지만 강력합니다","zh":"经典总结——简单但强大","ja":"古典的な要約 — シンプルだが強力"},
   },
   {
-    id: 13, track: "money", icon: "💵", color: "#0891b2", minutes: 2,
+    id: 13, track: "money", icon: "💵", color: "#0891b2", minutes: 3,
     title: {"en":"Budgeting: Know Where Your Money Goes","es":"Presupuesto: Sabe A Dónde Va Tu Dinero","ko":"예산 관리: 돈이 어디로 가는지 알기","zh":"预算：知道钱花去了哪里","ja":"予算管理：お金の流れを知る"},
     subtitle: {"en":"The foundation everything else builds on","es":"La base sobre la que se construye todo lo demás","ko":"다른 모든 것의 토대가 되는 기초","zh":"一切的基础","ja":"他のすべての土台となるもの"},
   },
