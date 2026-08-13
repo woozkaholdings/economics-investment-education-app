@@ -211,10 +211,33 @@ Add a new entry when a run makes a choice future work should be able to look up 
   never imported by the app bundle — so the tradeoff that decision weighed (diffability vs. needing a
   JSON loader in the browser) doesn't apply, and JSON's exact round-trip on programmatic writes is the
   better fit here.
-- **What this does NOT do:** it does not review anything. There is no automated substitute for a native
-  speaker reading the text. A dev-agent run may keep translating newly-added lessons at authoring time
-  (the P-3 scanner now covers that) but may not use this ledger to claim content is reviewed without an
-  actual human review behind the `mark` call.
+- **What this does NOT do (original scope):** it does not review anything itself. There is no
+  automated substitute for a native speaker reading the text. As originally written, a dev-agent run
+  could keep translating newly-added lessons at authoring time (the P-3 scanner covers that) but could
+  not use this ledger to claim content is reviewed without an actual human review behind the `mark`
+  call. **Superseded in part — see the 2026-08-13 update below.**
+- **Update, 2026-08-13 (interactive session, owner instruction "no one will be reviewing, you figure
+  out"):** since no dedicated human or professional translator is actually available, the owner
+  authorized Claude to perform the review itself and land the `ai`/`human` `method` field that
+  distinguishes the two (this had been drafted 2026-08-11 in the same session as the original P-4
+  decision above, but was left uncommitted for two days — see AGENT_LOG.md's Notes section history —
+  until this session finished and committed it). Claude then read all 40 lessons' es/ko/zh/ja
+  translations in full against the English source (checking faithfulness, fluency, and blindspot
+  safety beyond what `check-blindspot.mjs`'s literal-phrase grep catches) and marked every lesson/
+  language pair `method: "ai"` in the ledger — **160/160 pairs now `method: "ai"`, 0 `human`, coverage
+  100% in all four languages.** This review is real content judgment, not a mechanical check, but it
+  is explicitly NOT equivalent to native-speaker or professional review — a same-family LLM checking
+  another LLM's output has correlated blind spots a native reader wouldn't share. The `method` field
+  exists specifically so an eventual human/professional pass (option (b), still open) can supersede
+  AI-reviewed entries rather than being blocked by them looking already-done; `npm run review-status`
+  and `check-data.mjs`'s summary line now both report the human share (0%) alongside total coverage
+  so this distinction stays visible. The review found and fixed three real translation-fidelity
+  issues along the way (an overclaim in lesson 5's es/ko/zh/ja — "rates are already at 0%" instead of
+  the English's hedged "often already close to 0%" — and an invented example replacing lesson 13's
+  specific four-subscription/$648-a-year case study, in es/ko/zh/ja; plus an es-only drop of "incomes"
+  from lesson 21's inflation-mechanism sentence) — see AGENT_LOG.md's run log for the full account and
+  verification detail. Coverage being 100% now describes AI review of the content as it stood after
+  these fixes, not a claim that every subtlety a native speaker would catch has been caught.
 - **Revisit when:** review coverage is meaningfully non-zero and the actual quality of the shipped
   translations is known, or before any paid/committed use of the app in a market where one of these
   four languages is the primary language.

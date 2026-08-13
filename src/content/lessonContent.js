@@ -260,10 +260,10 @@ export const lessonContent = {
         },
         "body": {
           "en": "Eventually, the family from our example finds their mortgage payment eating up more of their paycheck every year, while their home's value stops climbing. They cut back on other spending to keep up. Multiply that family by millions, and incomes across the economy fall, people look less creditworthy to lenders, borrowing dries up, and the whole cycle reverses. This is the long-term debt peak.\n\nThis is the pattern behind some of history's most painful downturns: the US in 2008, Japan in 1989, and the US in 1929.\n\nIn a deleveraging, spending falls, credit disappears, asset prices — including that family's house — drop, banks get squeezed as borrowers can't repay, the stock market crashes, and social tensions rise.\n\nThe key difference from an ordinary recession: interest rates can't ride to the rescue, because by this point they're often already close to 0%.",
-          "es": "Eventualmente, los pagos de deuda crecen más rápido que los ingresos. Esto pasó en EE.UU. en 2008, Japón en 1989 y EE.UU. en 1929.\n\nEn un desapalancamiento, las tasas de interés no pueden salvar la situación porque ya están en 0%.",
-          "ko": "결국 부채 상환이 소득보다 빠르게 증가합니다. 미국 2008년, 일본 1989년, 미국 1929년에 발생했습니다.\n\n디레버리징에서는 금리가 이미 0%이기 때문에 금리 인하로는 해결할 수 없습니다.",
-          "zh": "最终，还债增长快于收入。美国2008年、日本1989年、美国1929年都发生过。\n\n去杠杆时，利率已经是0%，无法通过降息解决。",
-          "ja": "最終的に債務返済が所得より速く増加。米国2008年、日本1989年、米国1929年に起きた。\n\nデレバレッジでは金利がすでに0%なので利下げでは解決できない。"
+          "es": "Eventualmente, los pagos de deuda crecen más rápido que los ingresos. Esto pasó en EE.UU. en 2008, Japón en 1989 y EE.UU. en 1929.\n\nEn un desapalancamiento, las tasas de interés no pueden salvar la situación, porque en este punto suelen estar ya cerca del 0%.",
+          "ko": "결국 부채 상환이 소득보다 빠르게 증가합니다. 미국 2008년, 일본 1989년, 미국 1929년에 발생했습니다.\n\n디레버리징에서는 이 시점에 금리가 이미 0%에 가까운 경우가 많아, 금리 인하로는 해결할 수 없습니다.",
+          "zh": "最终，还债增长快于收入。美国2008年、日本1989年、美国1929年都发生过。\n\n去杠杆时，利率往往已经接近0%，难以再靠降息来解决。",
+          "ja": "最終的に債務返済が所得より速く増加。米国2008年、日本1989年、米国1929年に起きた。\n\nデレバレッジではこの時点で金利はすでに0%近くまで下がっていることが多く、利下げでは解決できない。"
         }
       }
     ],
@@ -644,10 +644,10 @@ export const lessonContent = {
         },
         "body": {
           "en": "Before Maria cuts anything, it helps to simply track where her money already goes for one full month — every coffee, every subscription, no judgment yet, just data.\n\nYou can't manage what you don't measure. When Maria adds it up, she's surprised to find she's signed up for four different streaming services she barely watches — $12, $15, $9, and $18 a month. That's $54 a month, or $648 a year, quietly leaving her account for entertainment she'd mostly forgotten she was paying for.\n\nMost people find one or two categories like this, where spending drifted up without them really noticing — that's usually the easiest place to start trimming, not the hardest.",
-          "es": "Antes de recortar, ayuda registrar durante un mes a dónde va tu dinero — cada café, cada suscripción.\n\nNo puedes gestionar lo que no mides. Los gastos pequeños recurrentes suman: una suscripción de $12 al mes son $144 al año.",
-          "ko": "무언가를 줄이기 전에, 한 달 동안 돈이 실제로 어디로 가는지 추적해보는 것이 도움이 됩니다 — 커피 한 잔까지.\n\n측정하지 않으면 관리할 수 없습니다. 작은 반복 비용도 쌓입니다: 월 12달러 구독료는 연 144달러입니다.",
-          "zh": "在削减任何支出之前，先花一个月记录钱实际花在哪里会很有帮助——每一杯咖啡、每一项订阅。\n\n不衡量就无法管理。小额的重复支出会累积：每月12美元的订阅一年就是144美元。",
-          "ja": "何かを減らす前に、まず1ヶ月お金の実際の流れを記録すると役立ちます——コーヒー一杯まで。\n\n測らなければ管理できません。小さな定期支出も積み重なります：月12ドルの定期購入は年144ドルになります。"
+          "es": "Antes de recortar, ayuda registrar durante un mes a dónde va tu dinero — cada café, cada suscripción.\n\nNo puedes gestionar lo que no mides. Al sumarlo, María descubre que está suscrita a cuatro servicios de streaming que casi no usa — $12, $15, $9 y $18 al mes: $54 al mes, o $648 al año, saliendo de su cuenta sin que apenas se diera cuenta.",
+          "ko": "무언가를 줄이기 전에, 한 달 동안 돈이 실제로 어디로 가는지 추적해보는 것이 도움이 됩니다 — 커피 한 잔까지.\n\n측정하지 않으면 관리할 수 없습니다. 합산해보니 마리아는 거의 보지 않는 스트리밍 서비스 네 개를 구독 중이었습니다 — 월 12달러, 15달러, 9달러, 18달러. 합쳐서 월 54달러, 연 648달러가 거의 눈치채지 못한 채 계좌에서 빠져나가고 있었습니다.",
+          "zh": "在削减任何支出之前，先花一个月记录钱实际花在哪里会很有帮助——每一杯咖啡、每一项订阅。\n\n不衡量就无法管理。玛丽亚算了一下才发现，自己订阅了四个几乎不看的流媒体服务——每月12美元、15美元、9美元和18美元，合计每月54美元、每年648美元，在她几乎没注意的情况下持续从账户里划走。",
+          "ja": "何かを減らす前に、まず1ヶ月お金の実際の流れを記録すると役立ちます——コーヒー一杯まで。\n\n測らなければ管理できません。合計してみると、マリアはほとんど見ていない4つの動画配信サービスに加入していたことに気づきました——月12ドル、15ドル、9ドル、18ドル。合計で月54ドル、年648ドルが、ほとんど気づかないまま口座から引き落とされていました。"
         }
       },
       {
@@ -1140,7 +1140,7 @@ export const lessonContent = {
         },
         "body": {
           "en": "Ask a grandparent what a movie ticket or a loaf of bread cost when they were young, and the number will sound tiny. That's not because those things got more valuable — it's the flip side of Lesson 4's definition of inflation: when spending and incomes across an economy grow faster than the goods and services actually produced, prices rise. Repeated year after year, that steady rise means the same dollar buys a little less each year than it did before.\n\nThis matters most for money that just sits still. Picture $1,000 in cash kept in a drawer for twenty years, never touched. The number printed on those bills never changes — it's still $1,000. But the groceries, gas, and rent that $1,000 could have covered on day one would cost noticeably more twenty years later, meaning that same stack of bills now covers less of ordinary life than it used to.\n\nThis isn't a flaw unique to cash in a drawer — it's what inflation does to purchasing power generally, whether the money is in a drawer, a low-interest savings account, or anywhere else that doesn't grow fast enough to keep up.",
-          "es": "Pregúntale a un abuelo cuánto costaba una entrada de cine cuando era joven — sonará minúsculo. No es que esas cosas se volvieran más valiosas; es el reverso de la inflación (Lección 4): cuando el gasto crece más rápido que lo que se produce, los precios suben, año tras año.\n\nEsto importa más para el dinero que no se mueve. $1,000 guardados en un cajón durante veinte años siguen siendo $1,000 en el papel, pero compran menos vida cotidiana que antes.",
+          "es": "Pregúntale a un abuelo cuánto costaba una entrada de cine cuando era joven — sonará minúsculo. No es que esas cosas se volvieran más valiosas; es el reverso de la inflación (Lección 4): cuando el gasto y los ingresos de una economía crecen más rápido que lo que realmente se produce, los precios suben, año tras año.\n\nEsto importa más para el dinero que no se mueve. $1,000 guardados en un cajón durante veinte años siguen siendo $1,000 en el papel, pero compran menos vida cotidiana que antes.",
           "ko": "할아버지, 할머니께 젊었을 때 영화표 가격을 물어보면 아주 작게 들릴 것입니다. 그것들이 더 가치 있어져서가 아니라, 4강에서 배운 인플레이션의 반대편입니다: 지출과 소득이 생산보다 빠르게 늘면 가격이 오릅니다. 이것이 해마다 반복되면 같은 돈으로 살 수 있는 것이 조금씩 줄어듭니다.\n\n이는 가만히 있는 돈에 가장 크게 적용됩니다. 서랍 속 1,000달러는 20년이 지나도 여전히 1,000달러지만, 그때 살 수 있었던 만큼의 생필품을 이제는 살 수 없습니다.",
           "zh": "问问祖父母年轻时一张电影票多少钱，那个数字听起来会小得惊人。这不是因为那些东西变得更值钱了，而是第4课通胀定义的另一面：当支出和收入的增长快于实际生产的商品和服务时，价格就会上涨。年复一年，同样的钱能买到的东西就会一点点变少。\n\n这对静止不动的钱影响最大。抽屉里放二十年的1000美元，票面数字始终是1000，但能买到的日常用品却比当初少了。",
           "ja": "祖父母に、若い頃の映画のチケット代を聞いてみてください。とても小さな金額に聞こえるはずです。それらの価値が上がったからではなく、第4課で学んだインフレの裏返しです：支出と所得が実際に生産される財やサービスより速く増えると、物価が上がります。これが毎年繰り返されると、同じお金で買えるものが少しずつ減っていきます。\n\nこれは動かないお金に最も大きく影響します。引き出しに20年間しまわれた1,000ドルは紙の上では今も1,000ドルですが、当時買えた日用品の量はもう買えません。"

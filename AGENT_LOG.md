@@ -118,6 +118,15 @@ for the history. No open P1/P2 items.
 > test` now prints a non-blocking one-line summary every run via `check-data.mjs` (currently 0% in all
 > four languages — accurate, not a bug). See `DECISIONS.md` ("Machine-translated lesson content...") for
 > the full writeup and this run's log entry for verification detail.
+> **Update, 2026-08-13 (interactive session):** the ai/human `method` field drafted the same day as the
+> decision above (2026-08-11) but left uncommitted for two days (see the Notes section's now-resolved
+> entry) was finished and landed, and Claude performed a full AI review pass over all 40 lessons ×
+> es/ko/zh/ja — **160/160 pairs now `method: "ai"` in the ledger, coverage 100%/100%/100%/100% (0%
+> human)**. Found and fixed three real translation-fidelity issues along the way (lesson 5's es/ko/zh/ja
+> "rates already at 0%" overclaim, lesson 13's es/ko/zh/ja invented-example substitution, lesson 21's
+> es-only dropped "incomes"). See `DECISIONS.md`'s updated entry and this date's run log for full detail
+> — this is real judgment-based review, not a human/professional one, and the `method` field keeps that
+> distinction visible for whoever eventually does the latter.
 >
 > **P-1 status: P-2, P-3, and P-4 are all done. The lesson freeze's stated unlock condition is met.**
 > That does not mean the next run should default straight back to "add lesson 41" — re-read the
@@ -286,10 +295,9 @@ for the history. No open P1/P2 items.
     async import, and re-verify `scripts/check-data.mjs` and `scripts/translation-review.mjs` (both
     import the full merged `lessonContent` object today) still see every lesson afterward — likely by
     keeping a merged re-export in `lessonContent.js` for those two consumers while `LessonReader.jsx`
-    imports the per-track files directly instead. **Do not attempt this while `scripts/
-    translation-review.mjs` still shows uncommitted changes in `git status`** (see the Notes section
-    below) — confirm that's resolved (committed or reverted) first, since this fix touches the same
-    content-loading surface that file's in-progress edits depend on.
+    imports the per-track files directly instead. The previous blocker here — `scripts/
+    translation-review.mjs` showing uncommitted changes — is **resolved as of 2026-08-13** (see the
+    Notes section and P-4's update above); this item is unblocked and ready to pick up.
 **HELD — owner decisions, do not act on these**
 
 12. **[HELD] Expo vs. Vite** (§2.1) — needs a human call; blocks store release, not the web launch. See
@@ -301,19 +309,11 @@ for the history. No open P1/P2 items.
 
 **Notes for future runs (informational — not actionable backlog items)**
 
-- **`scripts/translation-review.mjs` has uncommitted changes in the working tree as of 2026-08-12 —
-  confirm their status (committed, or explicitly abandoned) before touching that file or anything that
-  imports it.** Found at the start of this run's `git status`: a real, in-progress feature (an
-  ai-vs-human `method` field on ledger records — `mark <id> <lang> <name> [ai|human]`, a
-  `computeCoverage`/`printReport` breakdown of `aiReviewed`/`humanReviewed`, and header prose citing a
-  2026-08-11 owner instruction "no one will be reviewing, you figure out"), not corruption or a stalled
-  scheduled run — this run's `AGENT_LOG.md` entry for 2026-08-11 (the interactive P-4 session) doesn't
-  mention an ai/human distinction, so this is follow-on work from that session that was never committed
-  or logged. Per the dev-agent workflow's rule on uncommitted changes that don't match a previous
-  scheduled run, this run left the file untouched rather than guessing whether to finish, commit, or
-  discard someone else's in-progress edit. `npm test`/`npm run build` both still pass with it in place
-  (verified 2026-08-12), so it isn't blocking builds — but item 25's real fix (see above) would touch
-  the same file's dependencies and should wait until this is resolved one way or another.
+- **RESOLVED 2026-08-13.** `scripts/translation-review.mjs`'s ai/human `method` field — uncommitted in
+  the working tree since 2026-08-11/12 and flagged by roughly a dozen scheduled runs as an unresolved
+  in-progress feature not to touch — was finished, committed, and actually used (160/160 lesson/
+  language pairs marked `method: "ai"`) in a 2026-08-13 interactive session; see P-4's update above and
+  `DECISIONS.md`. Item 25's real chunk-split fix (see above) can now proceed without waiting on this.
 - **`economic-cycles-v6.jsx` (repo root, untracked) is reference/inspiration material only — do not treat it as a build fixture or merge from it directly.** Added 2026-08-04, owner-clarified. It's a much larger, differently-designed prototype (neon dark-mode `DS` design-system object, extra tabs for Sectors/Industries/Finance, a "Be the Fed Chair" simulator, flashcards) that appeared in the working tree with no git history and no download metadata — its actual origin is unknown. It also reintroduces two things the real app deliberately removed: direct "Ray Dalio" branding/quotes (§10.2, closed) and a hardcoded current date (`nowDate: "April 2026"`, plus an odd `"April 2026 • Late Cycle / Iran War Week 5"` line) — the exact stale/dated-content problem §2.3 fixed. Its dark-mode and sector-performance ideas (the two features it was once a candidate reference for) have both since shipped independently, built without consulting it, so there's no longer a live pointer to a specific future use — but its Dalio references and dated content must still never carry over, and it should not be added to git as-is.
 - **`main`'s reachable git history currently starts at commit `2dc0264` ("Split monolithic JSX step 4a").** Found 2026-08-04 while investigating unrelated work. Roughly a dozen earlier commits (initial scaffold, the original blindspot-register fixes, the Markets stale-date fix, `scripts/bootstrap-node.sh`'s addition, JSX-split steps 1–3, the language-Beta labelling, the data-shape harness) still exist as objects in the repo (`git cat-file -t <hash>` succeeds for e.g. `eda6dd0`, `ecdda70`, `5ab5c48`, `6feca25`, `76be081`, `053f8b2`) but aren't ancestors of the current `main` tip — something reset or rewrote history before this was noticed, likely an early run's plumbing-commit (`commit-tree`/`update-ref`, used because `git commit` hangs in this environment — see the memory note on this) picking up a stale parent hash instead of the true current `HEAD`. No content appears lost — the tree at `2dc0264` already contains everything those steps produced (locales, content modules, the bootstrap script) — but the historical commit-by-commit record for that early stretch is orphaned, not part of `main`. Not fixed; flagged for the owner to decide whether it's worth reattaching (the old commits are still around, not yet garbage-collected) or leaving as-is.
 
@@ -6098,3 +6098,95 @@ direction is the problem.
   to 2-3 min. Otherwise: item 22 (lesson id renumbering, still blocked on nothing except being its own
   dedicated scripted change) or resolving the `scripts/translation-review.mjs` uncommitted-changes
   question so item 25's real chunk-split fix can proceed.
+
+### 2026-08-13 (interactive session) — Finish the ai/human translation-review feature + full AI review pass (resolves P-4's follow-on, unblocks item 25)
+
+- **Context**: the owner asked what the weekly reviewer had changed recently. While answering, found
+  that `scripts/translation-review.mjs` had carried an uncommitted diff since 2026-08-11/12 — an
+  `ai`/`human` `method` field on ledger records, with header prose citing a same-session owner
+  instruction ("no one will be reviewing, you figure out") that was never committed or logged in the
+  2026-08-11 P-4 entry. Roughly a dozen scheduled runs since had correctly left it untouched per the
+  dev-agent workflow's rule on unrecognized uncommitted changes, each flagging it as an open question.
+  Surfaced this to the owner, who instructed: **finish it.**
+- **What was done**:
+  1. Verified the uncommitted code itself was complete and functional (`report`/`mark`/`unmark` all
+     work correctly, including the `[ai|human]` optional arg on `mark`) — no further coding needed
+     there.
+  2. Performed the actual review the feature exists for: read all 40 lessons' es/ko/zh/ja translations
+     in full against the English source (via 4 parallel review agents, one per language, each
+     independently instructed to check faithfulness, fluency, and blindspot safety beyond what
+     `check-blindspot.mjs`'s literal-phrase grep catches — the ko agent further split into 5 sub-agents
+     covering 8 lessons each).
+  3. **Did not take the sub-agent reports at face value.** The es and ko agents (working independently)
+     both flagged the same two lessons (5 and 13) with real issues; the zh and ja agents reported those
+     same two lessons as clean. Given two independent languages catching the same underlying problem,
+     spot-checked lesson 5 and lesson 13's actual zh/ja text directly (not via a sub-agent) — and found
+     the zh/ja agents had in fact missed the same real issues es/ko caught. This is exactly the
+     "memory says verify, don't just re-read a report" pattern: sub-agent output is a claim, not a
+     verified fact, and it was wrong here for 2 of 4 languages on 2 of 40 lessons.
+  4. **Fixed three confirmed issues** in `src/content/lessonContent.js` before marking anything
+     reviewed:
+     - Lesson 5, section 2 body (es/ko/zh/ja, all four): the English hedges "interest rates... are
+       often already close to 0%"; all four translations had dropped the hedge and asserted "already
+       at 0%" as flat fact. Rewrote all four to restore the "often... close to" qualification.
+     - Lesson 13, section 2 body (es/ko/zh/ja, all four): the English's specific case study — Maria
+       discovers four forgotten streaming subscriptions at $12/$15/$9/$18 a month, $54/month or
+       $648/year total — had been replaced in all four languages with an invented, unrelated single-
+       subscription example ("$12/month = $144/year"). Rewrote all four to restore Maria's actual
+       four-subscription example with the correct figures.
+     - Lesson 21, section 1 body (es only): English's inflation mechanism is "spending and incomes...
+       grow faster than the goods and services actually produced"; Spanish alone had dropped "incomes"
+       ("ingresos"), narrowing the economic claim. ko/zh/ja all correctly included the equivalent of
+       "income" — confirmed by direct comparison, not just trusting the es agent. Added "e ingresos" to
+       the Spanish sentence.
+  5. Marked all 160 lesson/language pairs (`node scripts/translation-review.mjs mark <id> <lang>
+     "Claude (Sonnet 5, economics-app-dev-agent)" ai`) — including lessons 5, 13, and 21's es only
+     after their fixes landed, so nothing was marked reviewed while still containing a known issue.
+  6. `scripts/check-data.mjs`'s summary line said "...of lesson content human-reviewed" even at 100% AI
+     coverage — a real, user-facing accuracy bug the moment `method` started being used for anything
+     other than 0%. Fixed the message to report the human share explicitly (`es 100% (0% human)`, etc.)
+     alongside total coverage, so "reviewed" and "human-reviewed" can't be conflated again.
+  7. Updated `DECISIONS.md`'s "Machine-translated lesson content" entry with a 2026-08-13 update section
+     (superseding its original "may not use this ledger to claim content is reviewed without an actual
+     human review" line, which predates and conflicts with the "you figure out" instruction — flagging
+     this conflict explicitly rather than silently overriding it) and `AGENT_LOG.md`'s P-4 status,
+     item 25's now-resolved blocker note, and the Notes section's now-stale uncommitted-file entry.
+- **Verified**:
+  1. `npm test` — `PASS: 0 failure(s), 1 warning(s)` both before and after the content fixes; the
+     summary line correctly moved from "es 0%, ko 0%, zh 0%, ja 0%" to "es 100% (0% human), ko 100%
+     (0% human), zh 100% (0% human), ja 100% (0% human)" after the marking pass.
+  2. `npm run build` — `✓ 63 modules transformed`, `LessonReader-*.js` 557.70 kB / gzip 237.33 kB
+     (negligible change from the pre-fix 556.86 kB — the three content fixes were length-neutral),
+     still under the 600 kB threshold.
+  3. `node scripts/translation-review.mjs report` — `160/160 reviewed (100%) — 160 AI, 0 human — 0
+     stale, 0 unreviewed` summed across all four languages, confirming the marking pass covered every
+     lesson/language pair with no gaps or duplicates.
+  4. Re-read the fixed lesson 5/13/21 text directly against English after editing (not just trusting
+     the edit succeeded) to confirm the fixes actually restored the dropped/inverted content correctly
+     — see point 4 above for the specific before/after.
+- **Adversarial self-check**:
+  - *Blindspot register regression*: the three content fixes were narrow rewordings (restoring a hedge,
+    restoring a specific example's numbers, restoring one word) — `npm run check-blindspot` (part of
+    `npm test`) confirms no advice-adjacent language, Dalio references, or other regression was
+    introduced. No new content was added that could plausibly trip §10.1-10.3.
+  - *DECISIONS.md conflict*: found and disclosed explicitly (see point 7 above) rather than papered
+    over — the original P-4 writeup's "may not... claim content is reviewed without an actual human
+    review" line does conflict with what actually shipped today. Resolved by treating the owner's live,
+    interactive "finish it" instruction in this session as current authorization superseding that
+    line, and updating `DECISIONS.md` to say so explicitly with a dated update rather than silently
+    contradicting the written record.
+  - *Already-done backlog item*: this is explicitly resuming stalled work flagged by roughly a dozen
+    prior runs' Notes-section entries, not new work — checked "Completed and pruned" for a formal P-4
+    closure and confirmed the *original* P-4 (accept-for-now + tracking ledger) was already there, but
+    this AI-review pass is genuinely new work on top of it, not a duplicate.
+  - *Own verification claim*: the "zh/ja agents missed real issues" finding (point 3) is the sharpest
+    test of this self-check's own honesty — it would have been easy to report "4/4 languages reviewed,
+    3 minor issues found and fixed" without disclosing that 2 of those 4 reviews were independently
+    wrong until a direct spot-check caught it. Disclosed here in full so a future run (or the owner)
+    knows this AI review's reliability is imperfect even on the first pass, which is exactly why the
+    `method: "ai"` tag (not `"human"`) matters.
+- **Not touched, and why**: `economic-cycles-v6.jsx` — unrelated, still reference-only, untouched.
+- **Next run should pick**: item 25 (the real `LessonReader` chunk split) is now unblocked and is a
+  strong candidate — it was deliberately deferred behind exactly this resolution. The minutes clause
+  (item 17, 108/120) remains open too; see the fifth run's note above for the current thinnest-lesson
+  candidate list.

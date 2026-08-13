@@ -444,11 +444,13 @@ for (const [label, moduleExports] of Object.entries(CONTENT_MODULES)) {
   const coverage = computeCoverage(lessonContent, lessons, ledger);
   const parts = Object.entries(coverage).map(([lang, c]) => {
     const pct = c.total ? Math.round((c.reviewed / c.total) * 100) : 0;
-    return `${lang} ${pct}%${c.stale ? ` (${c.stale} stale)` : ""}`;
+    const humanPct = c.total ? Math.round((c.humanReviewed / c.total) * 100) : 0;
+    return `${lang} ${pct}% (${humanPct}% human)${c.stale ? ` (${c.stale} stale)` : ""}`;
   });
   warn(
-    `translation review coverage — ${parts.join(", ")} of lesson content human-reviewed. ` +
-      `Run 'npm run review-status' for detail.`,
+    `translation review coverage — ${parts.join(", ")} of lesson content reviewed; see the ` +
+      `per-language human share above — most review so far is AI (see the method field, ` +
+      `DECISIONS.md). Run 'npm run review-status' for detail.`,
   );
 }
 
