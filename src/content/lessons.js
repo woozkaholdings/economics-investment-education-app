@@ -151,7 +151,7 @@ export const lessons = [
     subtitle: {"en":"Why a raise can never shrink your take-home pay","es":"Por qué un aumento nunca puede reducir tu sueldo neto","ko":"왜 급여 인상이 실수령액을 줄일 수 없는가","zh":"为什么加薪永远不会让到手工资变少","ja":"昇給が手取りを減らすことは絶対にない理由"},
   },
   {
-    id: 20, track: "money", icon: "🛡️", color: "#0369a1", minutes: 2,
+    id: 20, track: "money", icon: "🛡️", color: "#0369a1", minutes: 3,
     title: {"en":"Insurance: Trading a Small Certain Cost for Protection from a Large Uncertain One","es":"Seguros: Cambiar un Costo Pequeño y Seguro por Protección Ante uno Grande e Incierto","ko":"보험: 작고 확실한 비용으로 크고 불확실한 손실을 막다","zh":"保险：用小额确定成本换取对大额不确定损失的保护","ja":"保険：小さく確実な費用で、大きく不確実な損失から身を守る"},
     subtitle: {"en":"Why paying a little every month can make sense even if you never file a claim","es":"Por qué pagar un poco cada mes puede tener sentido aunque nunca hagas un reclamo","ko":"한 번도 보험금을 청구하지 않아도 매달 조금씩 내는 것이 합리적인 이유","zh":"为什么即使从不理赔，每月支付一点钱也可能是合理的","ja":"一度も保険金を請求しなくても、毎月少し払う意味がある理由"},
   },
