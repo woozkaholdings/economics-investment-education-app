@@ -131,7 +131,7 @@ export const lessons = [
     subtitle: {"en":"Why starting early matters more than starting big","es":"Por qué empezar temprano importa más que empezar en grande","ko":"크게 시작하는 것보다 일찍 시작하는 것이 왜 더 중요한가","zh":"为什么早开始比多投入更重要","ja":"早く始めることが、大きく始めることより重要な理由"},
   },
   {
-    id: 16, track: "money", icon: "🪪", color: "#ea580c", minutes: 2,
+    id: 16, track: "money", icon: "🪪", color: "#ea580c", minutes: 3,
     title: {"en":"Credit Scores: Your Financial Reputation","es":"Puntaje de Crédito: Tu Reputación Financiera","ko":"신용점수: 당신의 금융 신용도","zh":"信用分数：你的财务信誉","ja":"クレジットスコア：あなたの金融上の信用"},
     subtitle: {"en":"A number that follows you into almost every big purchase","es":"Un número que te acompaña en casi cada compra grande","ko":"거의 모든 큰 구매를 따라다니는 숫자","zh":"几乎跟随你每一次大额购买的数字","ja":"ほぼすべての大きな買い物についてくる数字"},
   },
