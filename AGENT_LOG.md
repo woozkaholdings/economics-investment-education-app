@@ -218,17 +218,17 @@ for the history. No open P1/P2 items.
     *Previously: subordinate to item 24 — prefer a judgment/mindset
     lesson over another mechanics lesson unless there's a reason not to.* Derived from `LAUNCH_PLAN.md`
     §4.3, not owner-assigned but the plan's own explicit gate: the catalogue is now **40 lessons /
-    119,387 English characters / 106 minutes** end to end — re-measured 2026-08-13 (third run same date;
+    120,718 English characters / 107 minutes** end to end — re-measured 2026-08-13 (fourth run same date;
     same method: summing every lesson's `sections[].body.en` + `takeaway.en` + `thinkAbout.en` from
     `content/lessonContent.js` and its `minutes` from `content/lessons.js`; 28 money / 12 economy).
     Lesson 40 ("Does One Lucky Win Prove You Have a System?", overconfidence after a lucky outcome), a
     thirteenth judgment lesson per item 24, was the last lesson *added* (2026-08-09) — see run log.
     **The §4.3 gate's lesson-count half (≥40 lessons) is now met for
-    the first time.** The minutes half (~120 min / 2 hours) is not: **106/120 minutes** — moved by 1
-    minute 2026-08-13 (third run) by deepening lesson 17 (Stocks, Bonds & Diversification), following
-    that same date's two earlier runs (lessons 15, 16) and the three prior runs' identical moves on
-    lessons 13, 8, and 14. No run this date added a 41st lesson, per this item's own "depth in existing
-    lessons" guidance above. Roughly 14 minutes short. Per §4.3,
+    the first time.** The minutes half (~120 min / 2 hours) is not: **107/120 minutes** — moved by 1
+    minute 2026-08-13 (fourth run) by deepening lesson 19 (Taxes: How Your Paycheck Is Actually Taxed),
+    following that same date's three earlier runs (lessons 15, 16, 17) and the three prior runs' identical
+    moves on lessons 13, 8, and 14. No run this date added a 41st lesson, per this item's own "depth in
+    existing lessons" guidance above. Roughly 13 minutes short. Per §4.3,
     Phase 0 ("free, instrumented, no payment code") doesn't end until the catalogue
     reaches roughly 40 lessons / 2 hours of content **and** ≥40% of installers finish lesson 1 — the
     lesson-count clause is satisfied but the other two clauses (minutes, completion rate) are not, so
@@ -236,8 +236,9 @@ for the history. No open P1/P2 items.
     2026-08-09 (P-2), 2026-08-12 (second run, 101-minute figure, lesson-13 deepening), 2026-08-12
     (third run, 102-minute figure, lesson-8 deepening), 2026-08-12 (fourth run, 103-minute
     figure, lesson-14 deepening), 2026-08-13 (104-minute figure, lesson-15 deepening), 2026-08-13
-    (second run, 105-minute figure, lesson-16 deepening), and again 2026-08-13 (third run, 106-minute
-    figure, lesson-17 deepening).
+    (second run, 105-minute figure, lesson-16 deepening), 2026-08-13 (third run, 106-minute
+    figure, lesson-17 deepening), and again 2026-08-13 (fourth run, 107-minute figure, lesson-19
+    deepening).
     Per §4.3 verbatim: "the highest-value monetization work right now is writing
     lessons, not writing billing code." Do not start billing/paywall work ahead of this gate — see item
     15. **Note the failure mode this item created:** nine consecutive scheduled runs each picked "add one
@@ -5901,6 +5902,102 @@ direction is the problem.
   thinnest-lesson list fresh from `lessons.js` rather than reusing this note — as of this run, the
   remaining candidates at the 2-minute floor are lessons 1, 3, 4, 5, 6, 7, 9, 10, 11, 12 (economy track)
   and 19, 20, 21, 22, 25, 34, 36 (money track); lessons 13, 8, 14, 15, 16, and 17 have now all been moved
+  to 2-3 min. Otherwise: item 22 (lesson id renumbering, still blocked on nothing except being its own
+  dedicated scripted change) or resolving the `scripts/translation-review.mjs` uncommitted-changes
+  question so item 25's real chunk-split fix can proceed.
+
+### 2026-08-13 (fourth run) — Deepen lesson 19 (backlog item 17, moves the §4.3 minutes clause by +1)
+
+- **Orient**: `git status` showed the same two long-standing items as every run since 2026-08-12:
+  `scripts/translation-review.mjs` modified (unrelated, in-progress ai/human-review-tracking feature —
+  see the Notes section) and `economic-cycles-v6.jsx` untracked (reference-only, see Notes). Both left
+  untouched throughout, verified again after the build/test steps below. Read the PRIORITY BLOCK and this
+  date's three prior run-log entries (lessons 15, 16, 17) to confirm the pattern and pick the next
+  candidate from the previous run's "next run should pick" list.
+- **What was done**: picked **lesson 19** ("Taxes: How Your Paycheck Is Actually Taxed") from the
+  previous run's candidate list — one of the 2-minute-floor lessons named there. Read the lesson's two
+  existing sections first: section 1 covers marginal tax brackets (why a raise can't shrink take-home
+  pay), section 2 covers the gross-pay/net-pay gap and payroll withholding, cross-referencing lesson 18's
+  401(k)/IRA pre-tax contributions. Neither explains that withholding itself is only an estimate, or what
+  a refund or an amount owed at filing actually means. Added a third section, "A Big Refund Isn't a Gift —
+  It's an Interest-Free Loan": explains that paycheck withholding is based on the Form W-4's estimate, not
+  the real tax bill (computed only at filing); that a refund is the return of the worker's own money after
+  months held with no interest, not a bonus; that owing money at filing (plus a possible underpayment
+  penalty) is the mirror case, and neither changes the actual amount of tax owed for the year, only its
+  timing; and that the W-4 is the adjustable lever most workers fill out once and never revisit. Checked
+  for overlap with lesson 38 (mental accounting, which uses a tax refund as its "found money" example) —
+  lesson 38 is about the psychological tendency to spend windfall money more loosely, this section is the
+  mechanical explanation of what withholding and a refund actually are; genuinely distinct, and the new
+  section doesn't repeat lesson 38's "found money" framing. `grep -in "w-4\|underpayment penalty"
+  src/content/lessonContent.js` before writing returned zero hits outside lesson 19, confirming no
+  duplication elsewhere. Written and translated (en/es/ko/zh/ja) in the same pass, following the same
+  condensed (not literal) translation style the existing sections use. Updated `lessons.js`'s `minutes: 2`
+  → `minutes: 3` for lesson 19 to match. Refreshed `LAUNCH_READINESS.md`'s lesson-catalogue row (120,718
+  chars/107 min, was 119,387/106) and this file's item-17 paragraph (lead figures, the
+  `LAUNCH_READINESS.md`-refresh history line, and the "moved by"/"roughly N minutes short" sentences) with
+  the same figures.
+- **Verified**:
+  1. Word-count math, via bootstrapped Node (`--input-type=module` + named import): lesson 19's
+     `sections[].body.en` + `takeaway.en` + `thinkAbout.en` started at 432 words (→ 2 min). The first draft
+     of the new section (292 words) would have pushed the total to 724 words → `Math.round(724/200) = 4`,
+     overshooting the intended one-clause move — trimmed the English body down to 245 words (total 677,
+     → `Math.round(677/200) = 3`) before finalizing, matching the `minutes: 3` now in `lessons.js`. This is
+     the first run in this series where the first-draft word count didn't already land on the intended
+     minute value; recomputed after every edit rather than assuming the draft-length pattern from lessons
+     15-17 would hold, and confirmed the mismatch and the fix numerically rather than by eyeballing length.
+  2. `npm test` (`check-data.mjs` + `check-blindspot.mjs`) — `PASS: 0 failure(s), 1 warning(s)` (the same
+     pre-existing 0%-translation-review-coverage warning as every run since 2026-08-11, not new), and all
+     six blindspot `ok:` checks pass. `check-data.mjs`'s own minutes-recomputation check passing
+     independently confirms the `minutes: 3` edit is correct — it would have failed loudly on the 724-word
+     first draft's mismatched `minutes: 2`, and did not fail after the trim.
+  3. `npm run build` — `✓ 63 modules transformed`, `LessonReader-*.js` 550.36 kB / gzip 234.12 kB (up
+     ~8.2 kB from the pre-this-run 542.20 kB baseline, consistent with one new section's worth of text
+     across 5 languages; still comfortably under the 600 kB threshold), no chunk-size warning.
+  4. Recomputed catalogue-wide totals via the same bootstrapped-Node method `LAUNCH_READINESS.md`
+     documents: 40 lessons / 120,718 English chars / 107 minutes (was 119,387 / 106; 28 money / 12
+     economy, unchanged). Confirms the `LAUNCH_READINESS.md` and item-17 edits above are accurate, not
+     asserted.
+  5. `git status --short` after build showed exactly `src/content/lessonContent.js`, `src/content/
+     lessons.js`, `LAUNCH_READINESS.md`, plus this `AGENT_LOG.md` edit newly modified — `scripts/
+     translation-review.mjs`'s pre-existing diff and `economic-cycles-v6.jsx`'s untracked status were
+     both unchanged, confirmed the same way as in Orient, both before and after this run's edits.
+- **Adversarial self-check**:
+  - *Blindspot register regression*: `git diff --unified=0 -- src/content/lessonContent.js
+    src/content/lessons.js | grep -iE "dalio|you should (buy|sell|invest)|we recommend|be bullish|be
+    cautious|child|kid.?mode|nowDate|April 2026|file your taxes this way|use this deduction|claim this
+    credit"` returned zero matches — the extra terms beyond the usual grep (`file your taxes this way`,
+    `use this deduction`, `claim this credit`) were added specifically because this section is about a
+    government tax process, where a directive filing instruction was the most plausible advice-adjacency
+    risk. `npm run check-blindspot` (part of `npm test` above) independently confirms no advice-adjacent
+    phrasing anywhere in `src/content/`. No regression.
+  - *DECISIONS.md conflict*: re-read the closed-decision section headers before editing. The new section
+    stayed inside the existing `.js`-module content system, didn't touch `localStorage` state, the
+    machine-translation ledger, or the two-track structure, and translations were written in the same
+    pass as the English — consistent with the "Content as `.js` modules," "localStorage-only progress
+    state," and "Two lesson tracks" closed decisions. No conflict.
+  - *Already-done backlog item*: checked "Completed and pruned" — nothing there resembles deepening
+    lesson 19 or a withholding-estimate/refund-mechanics section anywhere in the catalogue. Specifically
+    read lesson 38 in full (not just grepped), since it's the only other lesson that mentions tax refunds
+    at all (as a mental-accounting example) and the most likely place for accidental duplication —
+    confirmed no overlap (38 is about the psychology of spending "found" money loosely, this section is
+    the mechanics of what withholding and a refund actually are). Not a duplicate.
+  - *Own verification claim*: every number and command above is reproducible from the current tree — the
+    word-count script, `npm test`, `npm run build`, and the catalogue-totals script were all run against
+    the tree as it stands, not against an intermediate state. The word-count mismatch found and fixed
+    mid-run (see point 1 above) is disclosed rather than smoothed over, since a reviewer re-running the
+    same word-count script against the committed tree should get 677, not the 724 the first draft would
+    have produced.
+- **Not touched, and why**: `scripts/translation-review.mjs`, `economic-cycles-v6.jsx` — see Orient, and
+  every prior run's log entry since 2026-08-12 for the fuller reasoning. Did not add a 41st lesson — this
+  run's own log entry states which clause it moves (minutes, not count), per the PRIORITY BLOCK's
+  guidance. Did not touch item 24's money-track judgment scope — this section is procedural/mechanics
+  content (how withholding and refunds work), not a decision-psychology lesson, so it stays inside item
+  17's "depth in existing lessons" lane. Did not touch `translation-review-ledger.json` — the English edit
+  to lesson 19 can't trigger its drift-detection since nothing was marked reviewed yet for any lesson.
+- **Next run should pick**: the minutes clause still needs ~13 more minutes (107/120). Re-derive the
+  thinnest-lesson list fresh from `lessons.js` rather than reusing this note — as of this run, the
+  remaining candidates at the 2-minute floor are lessons 1, 3, 4, 5, 6, 7, 9, 10, 11, 12 (economy track)
+  and 20, 21, 22, 25, 34, 36 (money track); lessons 13, 8, 14, 15, 16, 17, and 19 have now all been moved
   to 2-3 min. Otherwise: item 22 (lesson id renumbering, still blocked on nothing except being its own
   dedicated scripted change) or resolving the `scripts/translation-review.mjs` uncommitted-changes
   question so item 25's real chunk-split fix can proceed.
