@@ -126,7 +126,7 @@ export const lessons = [
     subtitle: {"en":"Why 'save some money' isn't specific enough","es":"Por qué 'ahorra algo de dinero' no es suficientemente específico","ko":"'돈을 좀 모아라'가 왜 충분히 구체적이지 않은가","zh":"为什么“存点钱”这个建议还不够具体","ja":"「お金を貯めよう」だけでは不十分な理由"},
   },
   {
-    id: 15, track: "money", icon: "🌱", color: "#16a34a", minutes: 2,
+    id: 15, track: "money", icon: "🌱", color: "#16a34a", minutes: 3,
     title: {"en":"Compound Interest: Money That Makes Money","es":"Interés Compuesto: Dinero Que Genera Dinero","ko":"복리: 돈이 돈을 버는 원리","zh":"复利：让钱生钱","ja":"複利：お金がお金を生む仕組み"},
     subtitle: {"en":"Why starting early matters more than starting big","es":"Por qué empezar temprano importa más que empezar en grande","ko":"크게 시작하는 것보다 일찍 시작하는 것이 왜 더 중요한가","zh":"为什么早开始比多投入更重要","ja":"早く始めることが、大きく始めることより重要な理由"},
   },

@@ -781,6 +781,22 @@ export const lessonContent = {
           "zh": "因为复利是建立在自身之上的，所以时间非常重要——往往比起始金额更重要。\n\n从20多岁就开始存少量钱的人，最终可能比十年后才开始存两倍金额的人拥有更多财富——仅仅因为复利有更多年份来发挥作用。\n\n同样的数学在债务上对你不利：没还清的利息也会产生复利，这就是为什么背负高息债务多年可能远超原始借款金额。",
           "ja": "複利は自らの上に積み重なるため、時間が非常に重要です——多くの場合、始める金額よりも重要です。\n\n20代からわずかな額を貯め始めた人は、10年後に2倍の額を貯め始めた人より最終的に多くを持つことがあります——単に複利が働く年数が長かったからです。\n\n同じ数学が借金では不利に働きます：払っていない利息にも利息がつくため、高金利の借金を何年も抱えると元の借入額をはるかに超えるコストになります。"
         }
+      },
+      {
+        "heading": {
+          "en": "Compounding Needs to Stay Invested",
+          "es": "El Interés Debe Reinvertirse",
+          "ko": "이자는 재투자되어야 한다",
+          "zh": "复利需要持续再投资",
+          "ja": "複利には再投資が必要"
+        },
+        "body": {
+          "en": "The math above only works if you leave the interest — or investment returns — in the account instead of pulling it out. If Priya's account pays 6% and she withdraws that 6% in cash every year to spend, she's back to simple interest: the same $60 a year, forever, on her original $1,000. The compounding disappears the moment growth isn't reinvested — the balance stops growing on top of itself and just sits there earning the same flat amount year after year.\n\nThis is why savings accounts, index funds, and dividend-paying stocks often have a \"reinvest\" setting — automatically buying more of the same investment with any interest or dividends earned, rather than paying it out as cash. Checking whether that setting is on (some accounts default to paying interest out instead of reinvesting it) is a five-minute task that can be the difference between watching a balance actually compound and watching it stay flat while every year's interest quietly disappears somewhere else. It's worth checking on every account you open, not just once — some providers reset the default when an account is renewed or transferred.",
+          "es": "La matemática anterior solo funciona si dejas el interés — o los rendimientos de inversión — en la cuenta en vez de retirarlo. Si retiras el interés en efectivo cada año, vuelves al interés simple: los mismos $60 al año, siempre, sobre los $1,000 originales.\n\nPor eso las cuentas de ahorro, los fondos indexados y las acciones que pagan dividendos suelen tener una opción de \"reinvertir\" — comprar automáticamente más del mismo activo con el interés o los dividendos ganados, en vez de pagarlos en efectivo. Revisar si esa opción está activada puede ser la diferencia entre ver tu saldo componerse de verdad o verlo estancado.",
+          "ko": "위의 수학은 이자나 투자 수익을 계좌에 남겨둘 때만 작동합니다. 매년 이자를 현금으로 인출하면 단리로 돌아갑니다 — 원금 $1,000에 대해 항상 같은 $60뿐입니다.\n\n그래서 저축 계좌, 인덱스 펀드, 배당주는 흔히 \"재투자\" 옵션이 있습니다 — 받은 이자나 배당금을 현금으로 지급받는 대신 같은 자산을 자동으로 더 사는 것입니다. 이 옵션이 켜져 있는지 확인하는 것이 잔액이 실제로 복리로 불어나는 것과 매년 이자가 어딘가로 사라져 잔액이 그대로인 것의 차이를 만들 수 있습니다.",
+          "zh": "上面的数学只有在你把利息或投资收益留在账户里、而不是取出时才成立。如果你每年把利息以现金形式取出，就又变回了单利——始终是基于最初1,000美元的60美元。\n\n这就是为什么储蓄账户、指数基金和派息股票通常有\"再投资\"选项——用赚到的利息或股息自动买入更多同样的资产，而不是以现金形式支付。检查这个选项是否开启，可能决定了你的余额是真正在复利增长，还是每年的利息悄悄消失、余额停滞不前。",
+          "ja": "上記の計算は、利息や投資リターンを口座に残しておく場合にのみ成立します。毎年利息を現金で引き出すと単利に戻ります——元本1,000ドルに対して常に同じ60ドルです。\n\nそのため、貯蓄口座やインデックスファンド、配当株にはよく「再投資」設定があります——受け取った利息や配当を現金で受け取る代わりに、自動的に同じ資産をさらに購入する仕組みです。この設定がオンになっているか確認することが、残高が本当に複利で増えていくか、それとも毎年の利息がどこかに消えて残高が変わらないままかの分かれ目になります。"
+        }
       }
     ],
     "takeaway": {
