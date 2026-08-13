@@ -913,6 +913,22 @@ export const lessonContent = {
           "zh": "分散投资意味着不把所有钱都投入一家公司、一个行业或一种资产类型。如果其中一项大幅下跌，其余部分可以缓冲冲击。\n\n第10课展示了不同资产类别在周期各阶段历史上表现不同——这一规律正是为何把投资分散到多个持仓，而不是集中在少数几个上，长期以来被用作管理风险的方法。",
           "ja": "分散投資とは、すべてのお金を一つの会社、業種、資産タイプに入れないことを意味します。一つが大きく下落しても、他が影響を和らげてくれます。\n\n第10課では、異なる資産クラスがサイクルの局面ごとに歴史的に異なる動きをしてきたことを見ました——このパターンこそ、少数に集中するより多くの資産に分散する方が、長年リスク管理の手法とされてきた理由の一部です。"
         }
+      },
+      {
+        "heading": {
+          "en": "What Diversification Doesn't Protect Against",
+          "es": "Lo Que la Diversificación No Puede Evitar",
+          "ko": "분산투자로 막을 수 없는 것",
+          "zh": "分散投资无法防范的风险",
+          "ja": "分散投資では防げないもの"
+        },
+        "body": {
+          "en": "Diversification cancels out one specific kind of risk: something that happens to a single company. If the coffee chain's new product flops, spreading your money across a thousand other companies means that one flop barely dents your total. This is called company-specific risk — it's diversifiable, because a hit to any one holding shrinks into a smaller share of a much bigger whole.\n\nBut there's a second kind of risk that diversifying within stocks alone can't touch: something that affects nearly the whole market at once. Lesson 10's four cycle phases showed that a broad economic contraction tends to pull most companies' stock prices down together, regardless of how many you hold — a thousand coffee chains, retailers, and tech firms all facing the same downturn don't cancel each other out the way one company's bad news does. This is often called market-wide, or systematic, risk, and it's the part that diversifying within a single asset class can't eliminate.\n\nThis is exactly why the previous section pointed at holding stocks *and* bonds, not just many different stocks. Bonds don't sidestep market-wide risk entirely, but they've historically tended to respond to the same conditions differently than stocks do — which is what actually cushions a portfolio during a downturn that no amount of stock-only diversification can.",
+          "es": "La diversificación elimina un tipo específico de riesgo: algo que le pasa a una sola empresa. Si el nuevo producto de la cadena de café fracasa, repartir tu dinero entre miles de otras empresas hace que ese fracaso apenas te afecte — esto se llama riesgo específico de la empresa, y es diversificable.\n\nPero hay un segundo tipo de riesgo que la diversificación dentro de las acciones no puede eliminar: algo que afecta a casi todo el mercado a la vez. Las cuatro fases de la lección 10 mostraron que una contracción económica amplia tiende a arrastrar hacia abajo el precio de la mayoría de las acciones juntas, sin importar cuántas empresas tengas — esto se llama riesgo sistemático (o de mercado), y es la parte que diversificar solo entre acciones no puede eliminar.\n\nPor eso la sección anterior señalaba tener acciones y bonos, no solo muchas acciones distintas. Los bonos no evitan el riesgo de mercado por completo, pero históricamente han respondido de forma diferente a las mismas condiciones — eso es lo que realmente amortigua una cartera durante una caída que ninguna diversificación solo en acciones puede lograr.",
+          "ko": "분산투자는 한 가지 특정 위험만 없앱니다: 한 회사에만 일어나는 일입니다. 커피 체인의 신제품이 실패해도, 수천 개의 다른 회사에 나눠 투자했다면 그 실패는 전체에 거의 영향을 주지 않습니다 — 이를 기업 고유 위험이라 하며, 분산으로 없앨 수 있습니다.\n\n하지만 주식 안에서의 분산으로는 없앨 수 없는 두 번째 위험이 있습니다: 시장 전체에 동시에 영향을 미치는 것입니다. 10강의 네 국면은 광범위한 경기 수축이 보유 기업 수와 상관없이 대부분의 주가를 함께 끌어내리는 경향을 보여주었습니다 — 이를 시장 위험(체계적 위험)이라 하며, 주식만으로 분산해서는 없앨 수 없는 부분입니다.\n\n앞선 섹션이 여러 주식이 아니라 주식과 채권을 함께 보유하라고 짚었던 이유가 여기 있습니다. 채권도 시장 위험을 완전히 피하지는 못하지만, 역사적으로 같은 상황에 주식과 다르게 반응해왔습니다 — 이것이 주식만으로는 만들 수 없는 완충 효과를 만듭니다.",
+          "zh": "分散投资能消除一种特定风险：只发生在单一公司身上的风险。如果那家咖啡连锁店的新产品失败，把钱分散到上千家其他公司，这次失败几乎不会伤及整体——这叫公司特有风险，是可以通过分散消除的。\n\n但还有第二种风险，仅在股票内部分散无法消除：几乎同时影响整个市场的风险。第10课的四个周期阶段表明，广泛的经济收缩往往会把大多数股票的价格一起拉低，无论你持有多少家公司——这通常称为市场风险（系统性风险），是仅靠股票内部分散无法消除的部分。\n\n这正是前一节强调同时持有股票和债券、而不仅是多只股票的原因。债券并不能完全避开市场风险，但历史上对相同环境的反应往往与股票不同——这才是任何股票内部分散都无法带来的缓冲效果。",
+          "ja": "分散投資が消せるのは特定の種類のリスクだけです：一つの会社だけに起こることです。あのコーヒーチェーンの新商品が失敗しても、資金を何千もの他社に分散していれば、その失敗が全体に与える影響はわずかです——これは企業固有リスクと呼ばれ、分散で消せます。\n\nしかし、株式の中だけの分散では消せない二つ目のリスクがあります：市場ほぼ全体に同時に影響するものです。第10課の4つの局面が示した通り、広範な景気後退はどれだけ多くの企業を持っていても、たいていの株価を一緒に押し下げます——これは市場リスク（システマティックリスク）と呼ばれ、株式だけの分散では消せない部分です。\n\n前のセクションが多くの株式ではなく株式と債券の両方を持つことを指摘していたのはこのためです。債券も市場リスクを完全には避けられませんが、歴史的に同じ状況に株式とは異なる反応をしてきました——これこそ、株式だけの分散では作れない緩衝効果です。"
+        }
       }
     ],
     "takeaway": {

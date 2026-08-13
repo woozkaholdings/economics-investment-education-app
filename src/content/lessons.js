@@ -136,7 +136,7 @@ export const lessons = [
     subtitle: {"en":"A number that follows you into almost every big purchase","es":"Un número que te acompaña en casi cada compra grande","ko":"거의 모든 큰 구매를 따라다니는 숫자","zh":"几乎跟随你每一次大额购买的数字","ja":"ほぼすべての大きな買い物についてくる数字"},
   },
   {
-    id: 17, track: "money", icon: "🧺", color: "#6d28d9", minutes: 2,
+    id: 17, track: "money", icon: "🧺", color: "#6d28d9", minutes: 3,
     title: {"en":"Stocks, Bonds & Diversification","es":"Acciones, Bonos y Diversificación","ko":"주식, 채권, 그리고 분산투자","zh":"股票、债券与分散投资","ja":"株式・債券・分散投資"},
     subtitle: {"en":"The building blocks of a portfolio, in plain language","es":"Los bloques básicos de una cartera, en lenguaje sencillo","ko":"쉬운 말로 풀어본 포트폴리오의 기본 구성 요소","zh":"用简单的话讲清楚投资组合的基本构件","ja":"ポートフォリオの基本要素を、わかりやすく"},
   },
