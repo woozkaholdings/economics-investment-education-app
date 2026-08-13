@@ -715,6 +715,22 @@ export const lessonContent = {
           "zh": "应急储蓄的目标是安全和可取用性，而不是增值。通常意味着一两天内就能取出的储蓄账户——不是像退休账户那样被锁住，也不是像股票那样天天波动。\n\n这和投资是不同的任务：应急基金的任务是在生活中其他一切都不顺时依然在那里。",
           "ja": "緊急資金の目的は成長ではなく、安全性とすぐに使えることです。通常は1〜2日で引き出せる普通預金口座を指します——退職口座のように固定されたものや、株式のように日々値動きするものではありません。\n\nこれは投資とは別の役割です。緊急資金の役割は、人生の他のことが計画通りに進まないときにそこにあることです。"
         }
+      },
+      {
+        "heading": {
+          "en": "Emergency, or Just Irregular?",
+          "es": "¿Emergencia, o Simplemente Irregular?",
+          "ko": "비상상황인가, 그저 불규칙한 지출인가?",
+          "zh": "是紧急情况，还是只是不规律的支出？",
+          "ja": "緊急事態か、それとも単なる不定期支出か？"
+        },
+        "body": {
+          "en": "Not every surprise bill is really an emergency. A car repair from an accident is unpredictable. But car registration, holiday gifts, an annual insurance premium, or a friend's wedding are all expenses you could have seen coming — they just don't happen every month, so they feel like surprises when they land. Pulling from the emergency fund for these blurs the line and leaves less there for a genuine crisis.\n\nA separate tool handles this better: a sinking fund, where you set aside a little each month for a specific expense you know is coming (say, $50/month toward a $600 annual insurance bill), so the money is already there when the bill arrives. James's car repair — sudden, unplanned, unavoidable — is exactly what the emergency fund is for. His car registration renewal, due the same month every year, is not.\n\nAnd when the emergency fund is used, it isn't done — refilling it back to its target is the next month's priority, not an optional extra. A fund drawn down once and never rebuilt only protects you the first time.",
+          "es": "No toda factura sorpresa es realmente una emergencia. La reparación de un accidente es impredecible, pero la renovación de la placa, regalos navideños o un seguro anual son gastos previsibles que simplemente no ocurren cada mes. Usar el fondo de emergencia para esto deja menos disponible para una crisis real.\n\nUn fondo de reserva (sinking fund) maneja mejor estos casos: apartas un poco cada mes para un gasto que sabes que vendrá, así el dinero ya está listo cuando llega la factura.\n\nY cuando se usa el fondo de emergencia, reponerlo es la prioridad del mes siguiente, no algo opcional — un fondo que nunca se reconstruye solo protege una vez.",
+          "ko": "모든 예상치 못한 청구서가 진짜 비상상황은 아닙니다. 사고로 인한 차 수리는 예측 불가능하지만, 자동차 등록 갱신이나 명절 선물, 연간 보험료는 매달 발생하지 않을 뿐 충분히 예상 가능한 지출입니다. 이런 곳에 비상금을 쓰면 진짜 위기를 위한 자금이 줄어듭니다.\n\n이런 경우엔 별도의 도구가 더 낫습니다: 싱킹펀드(sinking fund)는 다가올 것을 아는 지출을 위해 매달 조금씩 모아두는 방식으로, 청구서가 왔을 때 이미 돈이 준비되어 있습니다.\n\n그리고 비상금을 사용했다면, 다음 달에는 그것을 다시 채우는 것이 선택이 아니라 우선순위여야 합니다 — 한 번 쓰고 다시 채우지 않는 기금은 딱 한 번만 당신을 보호할 뿐입니다.",
+          "zh": "并非每一笔意外账单都真的是紧急情况。事故导致的汽车维修是不可预测的，但车辆年检、节日礼物、年度保险费这些支出其实是可以预见的——只是不是每个月都发生，所以到来时感觉像意外。用应急基金支付这些，会模糊界限，留给真正危机的钱就变少了。\n\n有一个更合适的工具：储蓄专项基金（sinking fund），每月为一笔你知道即将到来的支出存一点钱，这样账单到来时钱已经准备好了。\n\n而当应急基金被动用后，事情并未结束——把它补充回目标金额是下个月的首要任务，而不是可选项。一个用过就不补的基金只能保护你一次。",
+          "ja": "予期しない請求がすべて本当の緊急事態とは限りません。事故による車の修理は予測不可能ですが、車の登録更新や季節の贈り物、年間保険料は毎月ではないだけで、実は予測できる支出です。こうした支出に緊急資金を使うと境界があいまいになり、本物の危機のために残る額が減ってしまいます。\n\nこうした場合は別の道具がより適しています：シンキングファンドは、来ることが分かっている特定の支出のために毎月少しずつ取り分けておく方法で、請求が来たときにはすでにお金が用意されています。\n\nそして緊急資金を使ったら、それで終わりではありません——目標額まで補充することが翌月の最優先事項であり、任意ではありません。一度使って補充されない基金は、最初の一度しか守ってくれません。"
+        }
       }
     ],
     "takeaway": {

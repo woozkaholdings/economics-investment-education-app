@@ -121,7 +121,7 @@ export const lessons = [
     subtitle: {"en":"The foundation everything else builds on","es":"La base sobre la que se construye todo lo demás","ko":"다른 모든 것의 토대가 되는 기초","zh":"一切的基础","ja":"他のすべての土台となるもの"},
   },
   {
-    id: 14, track: "money", icon: "🐷", color: "#ca8a04", minutes: 1,
+    id: 14, track: "money", icon: "🐷", color: "#ca8a04", minutes: 2,
     title: {"en":"Emergency Funds: Your Financial Shock Absorber","es":"Fondo de Emergencia: Tu Amortiguador Financiero","ko":"비상금: 재정적 충격 완화 장치","zh":"应急基金：你的财务缓冲垫","ja":"緊急資金：あなたの経済的ショック吸収装置"},
     subtitle: {"en":"Why 'save some money' isn't specific enough","es":"Por qué 'ahorra algo de dinero' no es suficientemente específico","ko":"'돈을 좀 모아라'가 왜 충분히 구체적이지 않은가","zh":"为什么“存点钱”这个建议还不够具体","ja":"「お金を貯めよう」だけでは不十分な理由"},
   },
