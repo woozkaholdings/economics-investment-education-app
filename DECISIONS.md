@@ -103,35 +103,6 @@ Add a new entry when a run makes a choice future work should be able to look up 
 - **Revisit when:** a PostHog (or other provider) account and key exist — swap `sink()`, keep every
   `track()` call site as-is.
 
-### `LessonReader` chunk size warning threshold raised, not split
-
-- **Status:** open — a deliberate, temporary mitigation, not a fix. See `AGENT_LOG.md` backlog item 25.
-- **What was decided:** `vite.config.js` now sets `build.chunkSizeWarningLimit: 600` (was Vite's
-  default 500). Measured at decision time: `LessonReader-*.js` is **513.09 kB minified / 217.53 kB
-  gzip** — 13 kB over the default limit, so the build's "Some chunks are larger than 500 kB" advisory
-  fires on every build even though nothing regressed; the entry chunk is a separate 221.91 kB and
-  `LessonReader` is already lazy-loaded (only fetched when a lesson is opened), so this is not the
-  item-23 main-bundle regression, just the same lazy chunk slowly growing as lesson content grew.
-- **Why raise the limit instead of the real fix:** the item's other option — splitting
-  `src/content/lessonContent.js` (531 kB source, the actual bulk of this chunk) per track
-  (`money`/`economy`) so `LessonReader` only pulls the track it needs — is a genuine architectural
-  change: it needs `LessonReader.jsx` to dynamically `import()` per-track content keyed by
-  `lessonsByTrack`, a loading state while that resolves, and re-verification that `scripts/
-  check-data.mjs` and `scripts/translation-review.mjs` (which both import the full merged
-  `lessonContent` object) still see every lesson. That's multi-file, review-worthy-on-its-own work,
-  not a single focused run — and this run found `scripts/translation-review.mjs` already carrying
-  uncommitted, in-progress edits (an ai/human review-method distinction) that make touching
-  content-loading code it depends on the wrong move right now (see `AGENT_LOG.md`'s current run-log
-  entry). Raising the limit is the smaller, contained choice available without touching that file.
-- **This is not "let it drift."** 600 kB is chosen as a small, deliberate margin above the measured
-  513.09 kB, not a number picked to silence the warning indefinitely. Lesson content is currently
-  frozen (P-1, see `AGENT_LOG.md`), so this chunk should not grow again until that freeze lifts and
-  new lesson content is added.
-- **Revisit when:** the chunk approaches 600 kB again (i.e. the next time lesson content grows), or
-  when a dedicated run can do the real per-track split — at that point, lower this limit back toward
-  (or below) 500 kB as part of the same change, so the threshold stays a real signal rather than a
-  ratchet that only ever goes up.
-
 ## Closed
 
 ### Content as `.js` modules, not JSON
@@ -152,6 +123,37 @@ Add a new entry when a run makes a choice future work should be able to look up 
   the same person/agent who can write JS.
 - **Revisit when:** if a non-technical content editor or third-party localization tool needs to edit
   these files directly without going through this codebase.
+
+### `LessonReader` chunk split per track (real fix, supersedes the raised-threshold mitigation)
+
+- **Status:** closed 2026-08-14 (dev-agent run). Supersedes the "chunk size warning threshold raised,
+  not split" entry that used to be here — that mitigation is no longer needed and was removed rather
+  than left stacked on top of the real fix.
+- **What was decided:** `src/content/lessonContent.js` (531 kB source, every lesson's full body text)
+  is split into `lessonContent.economy.js` (12 lessons) and `lessonContent.money.js` (28 lessons).
+  `LessonReader.jsx` no longer statically imports the merged file — it dynamically `import()`s only
+  the track (`lesson.track`) of the lesson being opened, with a brief `EmptyState` loading affordance
+  (the same one `App.jsx`'s other lazy screens already use) while that resolves.
+  `content/lessonContent.js` still exists, now as a two-line merged re-export
+  (`{ ...economyContent, ...moneyContent }`) — `scripts/check-data.mjs` and
+  `scripts/translation-review.mjs` both still import it unchanged, since they genuinely need every
+  lesson regardless of track and aren't part of the client bundle, so merging costs nothing there.
+- **Result:** `LessonReader-*.js` (the code, no longer any content) dropped from 557.70 kB to 5.92 kB.
+  The two content chunks are fetched lazily and independently: `lessonContent.economy` 69.83 kB
+  (31.94 kB gzip), `lessonContent.money` 482.39 kB (204.58 kB gzip) — both under Vite's default 500 kB
+  *source* warning threshold on their own, and a money-track lesson open never fetches the economy
+  chunk (or vice versa), confirmed via a live network-request check in the browser preview.
+  `vite.config.js`'s `build.chunkSizeWarningLimit` override (raised to 600 by the mitigation this
+  entry supersedes) was removed — back to Vite's default 500, and the build produces no warning.
+- **Verified:** `npm test` (`check-data.mjs` + `check-blindspot.mjs`) passes; `node
+  scripts/translation-review.mjs report` still shows 160/160 reviewed, 0 stale (confirms the split didn't
+  alter any lesson's hashed English source text, only its file location); a static-build browser check
+  opened both a money-track and an economy-track lesson and confirmed each fetched only its own
+  content chunk and rendered its real English text.
+- **Revisit when:** the money-track chunk (currently 482.39 kB, closest to the 500 kB default) grows
+  enough from future lesson content to need its own further split — at that point split by something
+  finer than track (e.g. alphabetically or by id range within `money`) rather than raising the
+  threshold again.
 
 ### localStorage-only progress and personalization state
 

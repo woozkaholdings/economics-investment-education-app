@@ -11,15 +11,23 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { EVENTS, track } from "../lib/analytics.js";
-import { lessonContent } from "../content/lessonContent.js";
 import { quizData } from "../content/quizData.js";
 import { recordContinueChoice, wasContinuePromptShownToday } from "../lib/useAppState.js";
 import { questionsForLesson } from "../lib/review.js";
 import Icon from "../components/Icon.jsx";
 import LessonVisual from "../components/LessonVisual.jsx";
 import Question from "../components/Question.jsx";
-import { Button, Card, Disclaimer, Note, Stack, Text } from "../components/ui.jsx";
+import { Button, Card, Disclaimer, EmptyState, Note, Stack, Text } from "../components/ui.jsx";
 import { fill, ink, line, radius, shadow, space, surface } from "../theme.js";
+
+// Each lesson's body text now lives in a per-track file (backlog item 25 —
+// content/lessonContent.js used to hold every lesson and was the single
+// biggest contributor to this screen's lazy chunk). Loading only the track
+// being read halves what a lesson-open has to download.
+const TRACK_CONTENT_LOADERS = {
+  economy: () => import("../content/lessonContent.economy.js"),
+  money: () => import("../content/lessonContent.money.js"),
+};
 
 function Toast({ label }) {
   return (
@@ -43,7 +51,7 @@ function Toast({ label }) {
 
 export default function LessonReader({ t, lang, lessons, index, completedLessons, completeLesson, recordReview, onBack, onNavigate }) {
   const lesson = lessons[index];
-  const content = lessonContent[lesson.id];
+  const [content, setContent] = useState(null);
   const [celebrating, setCelebrating] = useState(false);
   const [prompt, setPrompt] = useState(null); // null | "asking" | "confirmed"
   const headingRef = useRef(null);
@@ -51,6 +59,18 @@ export default function LessonReader({ t, lang, lessons, index, completedLessons
   // This lesson's own retrieval check. Answers feed the same spaced schedule
   // the Review tab drives, so a question missed here comes back tomorrow.
   const check = useMemo(() => questionsForLesson(quizData, lesson.id), [lesson.id]);
+
+  // Fetch just this lesson's track content — see TRACK_CONTENT_LOADERS above.
+  useEffect(() => {
+    let cancelled = false;
+    setContent(null);
+    TRACK_CONTENT_LOADERS[lesson.track]().then((mod) => {
+      if (!cancelled) setContent(mod.lessonContent[lesson.id]);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [lesson.id, lesson.track]);
 
   // Moving between lessons should feel like a new page: reset scroll and put
   // focus on the new title so screen-reader users hear where they landed.
@@ -125,27 +145,35 @@ export default function LessonReader({ t, lang, lessons, index, completedLessons
         </Text>
       </div>
 
-      {/* Body — one idea per section */}
-      <Stack gap={space["5"]}>
-        {content.sections.map((section) => (
-          <section key={section.heading.en}>
-            <Text as="h2" variant="heading" color={ink.strong} style={{ marginBottom: space["2"] }}>
-              {section.heading[lang]}
-            </Text>
-            <Text variant="body" style={{ whiteSpace: "pre-line" }}>
-              {section.body[lang]}
-            </Text>
-          </section>
-        ))}
-      </Stack>
+      {/* Body — one idea per section. `content` is fetched per-track (see
+          TRACK_CONTENT_LOADERS above) and briefly null right after opening a
+          lesson or crossing a track boundary via prev/next. */}
+      {content ? (
+        <>
+          <Stack gap={space["5"]}>
+            {content.sections.map((section) => (
+              <section key={section.heading.en}>
+                <Text as="h2" variant="heading" color={ink.strong} style={{ marginBottom: space["2"] }}>
+                  {section.heading[lang]}
+                </Text>
+                <Text variant="body" style={{ whiteSpace: "pre-line" }}>
+                  {section.body[lang]}
+                </Text>
+              </section>
+            ))}
+          </Stack>
 
-      {/* The diagram for lessons whose subject is a diagram. */}
-      <LessonVisual lessonId={lesson.id} t={t} lang={lang} />
+          {/* The diagram for lessons whose subject is a diagram. */}
+          <LessonVisual lessonId={lesson.id} t={t} lang={lang} />
 
-      <Stack gap={space["3"]} style={{ marginTop: space["5"] }}>
-        <Note tone="ok" label={t.keyTakeaway} icon="target">{content.takeaway[lang]}</Note>
-        <Note tone="accent" label={t.tryThinking} icon="info">{content.thinkAbout[lang]}</Note>
-      </Stack>
+          <Stack gap={space["3"]} style={{ marginTop: space["5"] }}>
+            <Note tone="ok" label={t.keyTakeaway} icon="target">{content.takeaway[lang]}</Note>
+            <Note tone="accent" label={t.tryThinking} icon="info">{content.thinkAbout[lang]}</Note>
+          </Stack>
+        </>
+      ) : (
+        <EmptyState icon="path">…</EmptyState>
+      )}
 
       {/* Retrieval check — answering is what makes the reading stick. */}
       {check.length > 0 && (

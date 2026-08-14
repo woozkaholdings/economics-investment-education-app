@@ -281,23 +281,6 @@ for the history. No open P1/P2 items.
     and API key a dev-agent run can't create; see `DECISIONS.md`. What's left: create that account
     (owner action) and swap `analytics.js`'s `sink()`; item 17's D1 lesson-1-completion measurement is
     still blocked until then, since a per-device local log can't be aggregated across installs.
-25. **[Build — re-opened 2026-08-12, mitigation only] Split `lessonContent.js` per track so `LessonReader`
-    only pulls its own track.** The 2026-08-09 version of this item (raise-the-limit-or-split) is
-    **mitigated, not fixed**: 2026-08-12 raised `vite.config.js`'s `chunkSizeWarningLimit` to 600 (see
-    `DECISIONS.md`, "`LessonReader` chunk size warning threshold raised, not split") purely because the
-    real fix is multi-file architectural work unsuited to a single focused run, not because it's no
-    longer worth doing. `LessonReader-*.js` is still 513.09 kB / 217.53 kB gzip — a real wait on a slow
-    connection before the first lesson renders — the warning is just quieted. The real fix: split
-    `src/content/lessonContent.js` (531 kB source, the actual bulk of this chunk — `quizData.js` is
-    already in its own `Question-*.js` chunk, not this one) into per-track files, have
-    `LessonReader.jsx` dynamically `import()` only the track of the lesson being opened (looked up via
-    `lessonsByTrack` from `src/content/lessons.js`, already exported), add a loading state for that
-    async import, and re-verify `scripts/check-data.mjs` and `scripts/translation-review.mjs` (both
-    import the full merged `lessonContent` object today) still see every lesson afterward — likely by
-    keeping a merged re-export in `lessonContent.js` for those two consumers while `LessonReader.jsx`
-    imports the per-track files directly instead. The previous blocker here — `scripts/
-    translation-review.mjs` showing uncommitted changes — is **resolved as of 2026-08-13** (see the
-    Notes section and P-4's update above); this item is unblocked and ready to pick up.
 **HELD — owner decisions, do not act on these**
 
 12. **[HELD] Expo vs. Vite** (§2.1) — needs a human call; blocks store release, not the web launch. See
@@ -319,11 +302,17 @@ for the history. No open P1/P2 items.
 
 **Completed and pruned**
 
-- **`LessonReader` 500 kB chunk-size warning (2026-08-09 backlog item 25) — mitigated 2026-08-12, real
-  fix re-opened as a new item 25.** `vite.config.js`'s `build.chunkSizeWarningLimit` raised to 600; see
-  `DECISIONS.md` and this run's log entry. The underlying 513 kB/217.53 kB gzip chunk is unchanged —
-  this closed the *stale build-warning* item, not the *chunk is heavy* problem, which is re-listed above
-  as a fresh open item pointing at the actual split.
+- **`lessonContent.js` split per track, the real fix (former item 25)** — done 2026-08-14 (dev-agent
+  run), see run log and `DECISIONS.md` ("`LessonReader` chunk split per track"). Split the 531 kB
+  `src/content/lessonContent.js` into `lessonContent.economy.js`/`lessonContent.money.js`;
+  `LessonReader.jsx` now dynamically `import()`s only the track being read. `LessonReader-*.js` code
+  chunk dropped from 557.70 kB to 5.92 kB; the two content chunks (69.83 kB / 482.39 kB) are both under
+  Vite's default 500 kB warning threshold, which was restored (the 600 kB override this superseded is
+  removed). This closes the actual "chunk is heavy" problem, not just the build-warning symptom the
+  2026-08-12 mitigation (below) had quieted.
+- **`LessonReader` 500 kB chunk-size warning (2026-08-09 backlog item 25) — mitigated 2026-08-12,
+  superseded by the real fix above (2026-08-14).** `vite.config.js`'s `build.chunkSizeWarningLimit`
+  raised to 600, later removed once the real split (above) made it unnecessary; see `DECISIONS.md`.
 - **Machine-translation decision reversal, owner escalation (former item 20 / backlog P-4)** — resolved
   2026-08-11 (owner decision, interactive session): option (a), accept the current unreviewed
   es/ko/zh/ja translation state under "(Beta)" labelling. See `DECISIONS.md`
@@ -6190,3 +6179,115 @@ direction is the problem.
   strong candidate — it was deliberately deferred behind exactly this resolution. The minutes clause
   (item 17, 108/120) remains open too; see the fifth run's note above for the current thinnest-lesson
   candidate list.
+
+### 2026-08-14 — Split `lessonContent.js` per track, the real `LessonReader` chunk-size fix (backlog item 25)
+
+- **Orient**: `git status` showed only the same long-standing `economic-cycles-v6.jsx` untracked file
+  every run since 2026-08-04 has left alone (reference-only, see Notes section) — no tracked-file
+  changes, so nothing to treat as another session's in-progress work. Read the PRIORITY BLOCK and the
+  previous (2026-08-13 interactive session) entry, whose "Next run should pick" explicitly named item
+  25 — the real chunk-split fix — as now unblocked, since the `scripts/translation-review.mjs`
+  uncommitted-changes blocker it was deferred behind was resolved that same day.
+- **What was done**: implemented item 25's fix as scoped in the backlog text. (1) Wrote a one-off Node
+  script (scratchpad, not committed) that imported the existing merged `lessonContent` object and
+  `lessons.js`'s track field, partitioned all 40 lessons by `track` (economy: ids 1-12, money: ids
+  13-40 — a clean split, no lesson id straddles both), and wrote `src/content/lessonContent.economy.js`
+  / `src/content/lessonContent.money.js`, each a plain `export const lessonContent = {...}` keyed by
+  id, same shape as the original file. (2) Rewrote `src/content/lessonContent.js` down to a 26-line
+  merged re-export (`import` both track files, `export const lessonContent = {...economyContent,
+  ...moneyContent}`) — kept specifically so `scripts/check-data.mjs` and
+  `scripts/translation-review.mjs` (both of which import the full object to validate/hash every lesson
+  regardless of track) needed zero changes. (3) Rewrote `src/screens/LessonReader.jsx`: removed the
+  static `import { lessonContent } from "../content/lessonContent.js"`, added a
+  `TRACK_CONTENT_LOADERS` map (`economy`/`money` → `() => import(...)`), and a `content` state
+  populated by a `useEffect` keyed on `[lesson.id, lesson.track]` that calls the right loader and sets
+  `content` from the resolved module (with a `cancelled` guard against a stale response landing after
+  the user has already navigated to a different lesson). Sections/visual/takeaway/thinkAbout — the
+  parts that read `content.*` — now render inside `content ? (...) : <EmptyState icon="path">…</EmptyState>`,
+  reusing the same loading affordance `App.jsx`'s other lazy screens and `Sectors.jsx` already use, so
+  a lesson-open's brief per-track fetch doesn't look like a new UI pattern. (4) Removed
+  `vite.config.js`'s `build.chunkSizeWarningLimit: 600` override entirely — with the real split done,
+  the largest chunk (money, 482.39 kB) is back under Vite's default 500 kB threshold on its own, so the
+  override that existed purely to quiet the warning is no longer needed. (5) Replaced the (now
+  superseded) "`LessonReader` chunk size warning threshold raised, not split" entry in `DECISIONS.md`
+  with a new closed entry describing the actual fix, its measured result, and when to revisit (the
+  money-track chunk approaching 500 kB again from future lesson content).
+- **Verified**:
+  1. `npm test` (`check-data.mjs` + `check-blindspot.mjs`) — `PASS: 0 failure(s), 1 warning(s)` (the
+     same pre-existing 0%-human-review warning as every run since 2026-08-11), all six blindspot `ok:`
+     checks pass. Confirms `check-data.mjs`'s import of the merged `lessonContent.js` still sees all 40
+     lessons correctly after the split.
+  2. `npm run build` — `✓ 64 modules transformed`, no chunk-size warning of any kind. Concretely:
+     `LessonReader-*.js` (now code-only) 5.92 kB / gzip 2.47 kB, down from 557.70 kB / 237.33 kB gzip
+     before this run — a >99% drop, since it no longer carries any lesson text at all.
+     `lessonContent.economy-*.js` 69.83 kB / gzip 31.94 kB and `lessonContent.money-*.js` 482.39 kB /
+     gzip 204.58 kB are two separate lazy chunks, each below Vite's default 500 kB source-size warning
+     threshold on its own (which is why the `chunkSizeWarningLimit` override could be removed).
+  3. Wrote a standalone verification script (scratchpad, not committed) that imported the pre-edit
+     `lessonContent.js` via `git show HEAD:...` and the post-edit merged file, diffed all 40 lesson
+     entries by `JSON.stringify` equality — **0 diffs**. Confirms the split reorganized content into
+     two files without altering a single character of any lesson's text (the split script only grouped
+     existing objects by id, never re-derived or retyped any of the actual English/es/ko/zh/ja strings).
+  4. `node scripts/translation-review.mjs report` — `160/160 reviewed (100%) — 160 AI, 0 human — 0
+     stale, 0 unreviewed` across all four languages, unchanged from before this run. 0 stale specifically
+     confirms `englishSourceHash()` (which hashes each lesson's `sections[].heading.en`/`body.en` +
+     `takeaway.en` + `thinkAbout.en`) produced identical hashes before and after the split — independent
+     confirmation of point 3's content-preservation claim, from a different code path.
+  5. Live browser check against a static `npm run build` + local Python server (the documented
+     workaround for this sandbox's `node`-invisible-to-preview-tool limitation): opened lesson 13
+     ("Budgeting", money track) and confirmed via `read_network_requests` that only
+     `lessonContent.money-*.js` was fetched (not the economy chunk), and the rendered `<h1>` and body
+     text matched the real lesson content. Then opened lesson 1 ("Transactions", economy track) and
+     confirmed the economy chunk fetched (only then, not on the earlier money-track open) and its
+     content rendered correctly too. This is the first time an automated run in this series has
+     verified a *specific claim about which network request a specific user action triggers*, not just
+     that the app renders — the strongest available confirmation that lazy per-track loading actually
+     works as designed, not just that the build succeeded.
+  6. `git status --short` after the build/verification steps showed exactly the four intended
+     modifications (`DECISIONS.md`, `src/content/lessonContent.js`, `src/screens/LessonReader.jsx`,
+     `vite.config.js`) plus the two new tracked-to-be-added files
+     (`src/content/lessonContent.economy.js`, `src/content/lessonContent.money.js`) — `economic-cycles-
+     v6.jsx`'s untracked status was unchanged throughout, confirmed both before and after this run's
+     edits.
+- **Adversarial self-check**:
+  - *Blindspot register regression*: the two new content files are a mechanical re-partition of the
+    existing merged file (see Verified point 3 — 0 diffs against the pre-edit content), so no new
+    English/es/ko/zh/ja text was written this run at all; `npm run check-blindspot` (part of `npm test`
+    above) independently confirms no advice-adjacent phrasing, Dalio references, or child-facing
+    framing anywhere in `src/content/`. `LessonReader.jsx`'s new code (the `TRACK_CONTENT_LOADERS` map,
+    the `content` state/effect, the `EmptyState` fallback) is plumbing, not user-facing lesson prose, so
+    it was not a plausible source of a blindspot regression in the first place — checked anyway,
+    nothing found. No regression.
+  - *DECISIONS.md conflict*: this run's change is the direct, named resolution of an open DECISIONS.md
+    entry ("`LessonReader` chunk size warning threshold raised, not split"), not a conflict with one —
+    that entry explicitly said "Revisit when... a dedicated run can do the real per-track split", which
+    is exactly this run. Replaced it with a new closed entry rather than leaving both the open
+    mitigation and a new closed entry both live, so there's a single current source of truth. Checked
+    the other closed-decision headers (`.js`-not-JSON content modules, localStorage-only state, two
+    lesson tracks) before editing — this change stays inside all three: content is still `.js` modules
+    (now two files instead of one), no `localStorage` keys were touched, and the `money`/`economy`
+    track split used here is `lessons.js`'s existing `track` field, not a new grouping invented for
+    this change. No conflict.
+  - *Already-done backlog item*: checked "Completed and pruned" — the 2026-08-12 entry there explicitly
+    describes the *mitigation* (raised threshold) as distinct from the *real fix* this run performs, and
+    itself says the real fix is "re-listed above as a fresh open item" — so this run is that fresh item,
+    not a repeat of the 2026-08-12 work. Not a duplicate.
+  - *Own verification claim*: point 5 above (the specific network-request check) is the sharpest test of
+    this self-check's own honesty — it would have been easy to report "build succeeded, chunk sizes
+    look right" without actually confirming a money-track lesson doesn't fetch the economy chunk. Ran
+    the live check specifically because a chunk-size number alone doesn't prove the *lazy* part of
+    "lazy per-track loading" actually happens at runtime. Every other number/command above (build
+    output, `npm test`, the content-diff script, `translation-review.mjs report`) is reproducible
+    against the committed tree, not an intermediate state.
+- **Not touched, and why**: `economic-cycles-v6.jsx` — unrelated, still reference-only, untouched.
+  `src/content/quizData.js` and `src/content/glossary.js` — already their own separate lazy/main chunks
+  respectively (per the item-23 and item-25-original run-log entries), not part of this item's scope.
+  Did not renumber lesson ids (item 22) or touch the minutes clause (item 17) — this run is purely the
+  build/architecture fix item 25 named, not content work.
+- **Next run should pick**: item 17 (the §4.3 minutes clause, still 108/120 — re-derive the thinnest-
+  lesson list fresh from `lessons.js` rather than reusing an old note, per that item's own guidance) is
+  the strongest remaining open backlog item now that item 25 is closed. Also worth a future run's
+  attention, not urgent: the money-track content chunk (482.39 kB) is now the single largest chunk in
+  the build and the one closest to Vite's default 500 kB warning threshold — if item 17's minutes work
+  adds much more money-track content before a further split, watch for that threshold being approached
+  again (see this run's new `DECISIONS.md` entry's "Revisit when" note).
