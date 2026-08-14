@@ -276,3 +276,26 @@ Add a new entry when a run makes a choice future work should be able to look up 
   economy track 1→12, so a new learner's first lesson is numbered 13.
 - **Revisit when:** someone does the renumbering as its own dedicated change (see the backlog item in
   `AGENT_LOG.md`), ideally scripted with a verified id→id map and a per-language check, not by hand.
+- **Update, 2026-08-14 (dev-agent run, owner-directed pick, backlog item 22).** Done. Ids now match
+  track display order: **money is 1-28, economy is 29-40** (was money 13-40, economy 1-12) — a new
+  learner's first lesson is now genuinely numbered 1, not 13. Scripted, not hand-edited: a single
+  old→new table (bijective over 1-40) drove regex-based rewrites of `lessons.js`'s `id` field,
+  `quizData.js`'s `lesson` field, both `lessonContent.{economy,money}.js`'s top-level keys,
+  `LessonVisual.jsx`'s `LESSON_VISUALS` map, every in-prose "Lesson N" cross-reference (52 in lesson
+  body text + 2 in `quizData.js` explanations — English only, confirmed by grepping the other four
+  languages for their own "lesson" phrasing, which found none; the condensed es/ko/zh/ja bodies don't
+  carry these references at all), and `scripts/translation-review-ledger.json`'s keys. The English
+  edits changed 24 lessons' `englishSourceHash` (only the referenced number changed, not meaning), so
+  the ledger briefly showed 24/40 stale in all four languages after the remap — re-marked reviewed
+  (method `ai`, same reviewer-of-record convention) once confirmed the actual es/ko/zh/ja text needed
+  no change, restoring 100%/0-stale. Added a one-time client-side migration
+  (`src/lib/lessonIdMigration.js`, wired into `useAppState.js`'s `completedLessons` load, guarded by a
+  new `ecycles_legacy_lesson_id_migrated` marker key) so an already-installed user's persisted
+  `ecycles_completed_lessons` — the earlier "142 in-prose cross-references" figure above was this
+  decision's original estimate, not re-derived at the time; the actual current count (measured before
+  this remap) was 55 including three system-comment mentions — survives the renumbering instead of
+  silently pointing at the wrong lessons. Verified end-to-end in a real browser against genuine
+  leftover localStorage state from a prior run's own verification (old ids `[1..9]` → migrated to new
+  ids `[29..37]`, idempotent on reload); see `AGENT_LOG.md`'s run log for full detail. The Leitner
+  review schedule (`ecycles_review`) needed no migration — it's keyed by a question's array index in
+  `quizData`, never by lesson id.

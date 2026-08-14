@@ -25,11 +25,11 @@ import { graph, ink, space } from "../theme.js";
 // appear here — a chart bolted onto an unrelated lesson would be decoration,
 // and decoration is what §3.1.1 set out to remove.
 export const LESSON_VISUALS = {
-  4: "cycle",         // The Short-Term Debt Cycle
-  5: "cycle",         // The Long-Term Debt Cycle
-  8: "yieldCurve",    // The Yield Curve: Crystal Ball
-  9: "balanceSheet",  // QE & QT: The Fed's Power Tools
-  10: "cycle",        // The 4 Phases of Economic Cycles
+  32: "cycle",         // The Short-Term Debt Cycle
+  33: "cycle",         // The Long-Term Debt Cycle
+  36: "yieldCurve",    // The Yield Curve: Crystal Ball
+  37: "balanceSheet",  // QE & QT: The Fed's Power Tools
+  38: "cycle",        // The 4 Phases of Economic Cycles
 };
 
 const CURVE_TYPES = ["normal", "flat", "inverted", "steep"];

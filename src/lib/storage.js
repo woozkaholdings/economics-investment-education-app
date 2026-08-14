@@ -21,6 +21,7 @@ export const KEYS = {
   themeMode: "ecycles_theme_mode",
   review: "ecycles_review",
   analyticsLog: "ecycles_analytics_log",
+  legacyLessonIdMigrated: "ecycles_legacy_lesson_id_migrated",
 };
 
 export function readRaw(key, fallback = null) {

@@ -274,18 +274,6 @@ for the history. No open P1/P2 items.
     this):** making kids material child-facing — child accounts, a kids mode, kid-directed lesson UI —
     changes COPPA classification, store privacy category, and ad eligibility. §10.3 reserves it for the
     owner.
-22. **[Structure — OWNER-DIRECTED PICK for the next scheduled run, set 2026-08-14 (interactive session,
-    after the fifth dev-agent run).** Do not default back to another lesson deepening; pick this item
-    next instead. The owner's stated reason: five consecutive scheduled runs today (and many more this
-    week) all picked "deepen a lesson," the same single-backlog-item drift pattern the weekly review's
-    P-1 already flagged once for lesson-adding — take on structural work instead of extending that
-    streak.] Renumber lesson ids to match track order.** Deferred deliberately 2026-08-07 when the
-    two tracks landed — see `DECISIONS.md`, "Two lesson tracks." The money track runs 13→26 and the
-    economy track 1→12, so a new learner's first lesson is numbered 13. Cosmetic, but it reads as a
-    seam. Renumbering is blocked on remapping **142 in-prose cross-references** ("Lesson 15") across
-    five languages *plus* `quizData.lesson`, the review scheduler, and persisted
-    `ecycles_completed_lessons`. Do it as its own dedicated change with a scripted, verified id→id map
-    and a per-language check — never by hand, and never folded into a content run.
 18. **[Process] Instrumentation (§9.2) — call sites done 2026-08-05, real provider still open.**
     `src/lib/analytics.js` (`track()`/`EVENTS`) fires `app_opened`, `lesson_started`,
     `lesson_completed`, and `quiz_taken` (see run log entry "Wire the §9.2 minimum analytics event set").
@@ -316,6 +304,16 @@ for the history. No open P1/P2 items.
 
 **Completed and pruned**
 
+- **Renumber lesson ids to match track order (former item 22)** — done 2026-08-14 (dev-agent run,
+  owner-directed pick), see run log entry "Renumber lesson ids to match track order" and
+  `DECISIONS.md`'s "Two lesson tracks" entry's 2026-08-14 update for full detail. Ids now match track
+  display order: money is 1-28, economy is 29-40 (was money 13-40, economy 1-12) — a new learner's
+  first lesson now displays as "Lesson 1," not "Lesson 13." Scripted (regex-based, verified id→id
+  table), not hand-edited; covered every id-bearing surface (`lessons.js`, `quizData.js`, both
+  `lessonContent.*.js` files, `LessonVisual.jsx`'s `LESSON_VISUALS` map, all in-prose "Lesson N"
+  cross-references, `scripts/translation-review-ledger.json`) plus a new one-time client-side
+  migration (`src/lib/lessonIdMigration.js`) for already-installed users' persisted
+  `ecycles_completed_lessons`.
 - **`lessonContent.js` split per track, the real fix (former item 25)** — done 2026-08-14 (dev-agent
   run), see run log and `DECISIONS.md` ("`LessonReader` chunk split per track"). Split the 531 kB
   `src/content/lessonContent.js` into `lessonContent.economy.js`/`lessonContent.money.js`;
@@ -6772,3 +6770,134 @@ direction is the problem.
   may not fit in one run's "small enough to review in minutes" bar; if so, split it into its own
   sub-steps (e.g. build and verify the remap script first, apply it in a follow-up run) rather than
   forcing it into a single commit or reverting to a lesson deepening instead.
+
+### 2026-08-14 (sixth run) — Renumber lesson ids to match track order (backlog item 22, owner-directed pick)
+
+- **Orient**: `git status` showed only the same long-standing untracked `economic-cycles-v6.jsx` — no
+  tracked-file changes, confirmed against the memory note that this file is known reference-only
+  material. Read the owner directive at the end of the previous run's log (pick item 22 next, not
+  another deepening) and item 22's own text (money track runs 13→26, economy 1→12, blocked on
+  remapping cross-references, `quizData.lesson`, the review scheduler, and persisted
+  `ecycles_completed_lessons`).
+- **Re-derived the actual scope before trusting the backlog's own numbers.** Item 22's text and
+  `DECISIONS.md`'s "Two lesson tracks" entry both cite "142 in-prose cross-references" — that figure
+  turned out to be a 2026-08-07 estimate, not something to take at face value. Grepped fresh: 55
+  `Lesson N` occurrences in `src/`, of which 52 are real content (16 in `lessonContent.economy.js`, 36
+  in `lessonContent.money.js`, 2 in `quizData.js` explanations) and 3 are system comments describing
+  the old numbering (`lessons.js`, `Learn.jsx`, `App.jsx`) — all English; grepped the other four
+  languages for their own "lesson"-referencing phrasing (Lección/레슨/강의/第...课/レッスン) and found zero
+  matches, confirming the condensed es/ko/zh/ja bodies never carry these references at all. Also traced
+  every id-bearing surface by reading `useAppState.js`, `App.jsx`'s `isUnlocked`, `review.js`,
+  `storage.js`, `LessonVisual.jsx`, and `scripts/check-data.mjs`/`translation-review.mjs`: the Leitner
+  review schedule (`ecycles_review`) is keyed by a question's *array index* in `quizData`, not by
+  lesson id, so it needs no migration (this correction matters — item 22's own text calls it a blocker
+  it isn't); `LessonVisual.jsx`'s `LESSON_VISUALS` map (keyed by id, gates the inline diagrams) was not
+  named in the backlog item at all and would have silently broken the 4 lessons with charts if missed.
+- **What was done**: a scripted, verified renumbering (built and run from the session scratchpad, not
+  committed — it's a one-time historical transform, not a reusable tool). Old→new table: economy ids
+  1-12 → 29-40 (+28), money ids 13-40 → 1-28 (−12), a bijection over 1-40 (asserted in-script before
+  any file write). Rewrote, via regex substitution (not by hand): `lessons.js`'s `id` field (40),
+  `quizData.js`'s `lesson` field (42) and its 2 in-prose refs, `lessonContent.economy.js`'s 12
+  top-level keys and 16 in-prose refs, `lessonContent.money.js`'s 28 top-level keys and 36 in-prose
+  refs, `LessonVisual.jsx`'s 5 `LESSON_VISUALS` keys, and `scripts/translation-review-ledger.json`'s 40
+  top-level keys. Updated the three stale system comments in `lessons.js`, `Learn.jsx` (both explained
+  the *old* "ids are not renumbered" state) to describe the new state instead. Added
+  `src/lib/lessonIdMigration.js` (a hardcoded old→new table — a historical fact about this one
+  renumbering, not a general mechanism) and wired it into `useAppState.js`'s `completedLessons`
+  initializer, guarded by a new `ecycles_legacy_lesson_id_migrated` marker key so it can run at most
+  once per device and never re-apply the table to already-current ids.
+- **A bug found and fixed mid-run, worth recording**: the first script pass under-replaced
+  `lessonContent.money.js`'s in-prose refs (34 of 36) because the regex used a leading `\b` — but the
+  file's paragraph breaks are the *literal two-character sequence* `\n\n` (backslash-n, not an actual
+  newline, since this is JS source), and the `n` immediately before "Lesson" is itself a word
+  character, so `\b` silently fails to match at that boundary (`\bLesson` requires a transition between
+  \w and \W, and \w-to-\w isn't one). Caught by diffing the ordered list of original vs. transformed
+  "Lesson N" occurrences position-by-position against the expected map rather than just trusting the
+  replacement count — that comparison ("money.js check: ALL MATCH 36 36" only after the fix) is what
+  surfaced the 2 silent misses. Fixed by dropping the leading `\b` (verified safe first: grepped all
+  three touched files for `[A-Za-z]Lesson`, i.e. "Lesson" as a word-suffix, found none — so a bare
+  `Lesson (\d+)\b` can't over-match). Reverted the partially-wrong first pass with `git checkout --`
+  and re-ran clean from HEAD rather than patching the two misses by hand.
+- **Verified**:
+  1. Script-internal: printed and manually checked replacement counts against pre-computed expected
+     totals for every file (40/42/12/16/28/36/5/40 — all matched on the second, fixed run).
+  2. Position-by-position reconciliation: for each of `lessonContent.economy.js`,
+     `lessonContent.money.js`, and `quizData.js`, extracted the ordered list of `Lesson N` numbers from
+     `git show HEAD:<path>` (before) and the working tree (after), and asserted
+     `after[i] === ID_MAP[before[i]]` for every position — "ALL MATCH" for all three files, not just a
+     replacement-count match (which is exactly the check that would have hidden the `\b` bug above).
+  3. `npm test` (`check-data.mjs` + `check-blindspot.mjs`): `PASS: 0 failure(s)` on the structural
+     check (unique ids, every `lessonContent[id]` has a matching `lessons.js` entry and vice versa,
+     `lessonsByTrack()` returns all 40, every `quizData[i].lesson` resolves to a real id, `minutes`
+     still matches a fresh word count — unaffected, since replacing digits doesn't change word count).
+     All six blindspot `ok:` checks passed — no regression from the comment/prose edits.
+  4. Translation-review ledger: remapped its 40 top-level keys via the same `ID_MAP` (40→40, no drops).
+     Recomputing `englishSourceHash` afterward showed 24 lessons stale in all four languages (the
+     lessons whose in-prose "Lesson N" text changed digits — a real hash change, since the hash is a
+     function of the English body only). Confirmed by inspection this is *not* a translation-quality
+     problem (the es/ko/zh/ja text for those 24 lessons doesn't mention lesson numbers at all, per the
+     scope grep above), then ran `node scripts/translation-review.mjs mark <id> <lang> "Claude (Sonnet
+     5, economics-app-dev-agent)" ai` for all 24 ids × 4 languages (96 calls), matching the established
+     reviewer-of-record convention. `npm run review-status` confirmed 100%/0-stale/40-AI in all four
+     languages afterward — the same coverage state as before this run, not a regression.
+  5. `npm run build`: `vite v6.4.3`, `✓ 65 modules transformed`, no chunk-size warning;
+     `lessonContent.economy-*.js` 83.81 kB / `lessonContent.money-*.js` 482.36 kB gzip sizes essentially
+     unchanged from the previous run (content, not structure, changed).
+  6. Live browser (static `npm run build` + local Python server, the documented workaround): the
+     Learn screen showed the money track's first lesson as step "1" (was "13") and the economy track's
+     "The 4 Phases of Economic Cycles" as step "38" (was "10"); opening it showed "LESSON 38 OF 40" in
+     the reader header, its cycle-phase diagram rendered (confirms `LESSON_VISUALS[38]` wired
+     correctly), and its body read "the same factory town from Lesson 32" and "the same
+     rate-transmission mechanism from Lesson 35" — both in-prose refs correctly resolved to their new
+     ids (old 4 → 32, old 7 → 35). `read_network_requests` showed only `lessonContent.economy-*.js`
+     fetched for that lesson, confirming per-track lazy-loading survived. Opened "Budgeting" (new id 1,
+     old id 13) and confirmed "LESSON 1 OF 40", with `lessonContent.money-*.js` now also fetched.
+  7. **Migration, verified against real data, not a synthetic seed**: this session's browser tab
+     reused the same origin (`http://127.0.0.1:8763`) prior automated runs have used for their own
+     static-build verification, so its `localStorage` already held genuine leftover progress —
+     `ecycles_completed_lessons` was `[1,2,3,4,5,6,7,8,9]` (economy lessons, old numbering) with no
+     migration marker set. On first load post-build, it read as `[29,30,31,32,33,34,35,36,37]` and
+     `ecycles_legacy_lesson_id_migrated` was now `"1"` — exactly `ID_MAP` applied to the old array.
+     Reloaded again: value unchanged, confirming the marker makes the migration a no-op the second
+     time (idempotency — the actual risk this migration exists to avoid: re-applying the old→new table
+     to ids that are already current). The Learn screen's economy-track progress correctly showed
+     "9/12" both before and after, with the newly-current "The 4 Phases of Economic Cycles" (new id 38)
+     shown as unlocked-but-not-done, matching what old id 10 would have shown before this run.
+  8. `read_console_messages` (onlyErrors): no console errors on either the Learn path or the Review
+     (Practice) tab, which reads `quizData` by array index and was expected to be — and was — entirely
+     unaffected by the id remap.
+- **Adversarial self-check**:
+  - *Blindspot register regression*: `git diff --unified=0 -- src/content/ src/components/LessonVisual.jsx
+    src/screens/Learn.jsx src/lib/` `| grep -iE "dalio|you should (buy|sell|invest)|we recommend|be
+    bullish|be cautious|child|kid.?mode|nowDate|april 2026|will rise|will fall|guaranteed"` returned no
+    matches beyond the expected digit changes in "Lesson N" text and the two new comment blocks (which
+    only describe the migration itself). `npm run check-blindspot` (part of `npm test` above)
+    independently confirms this. No regression.
+  - *DECISIONS.md conflict*: re-read "Two lesson tracks" and "localStorage-only progress state" before
+    editing. This change is exactly the "Revisit when" condition that closed decision named (a
+    scripted, verified id→id map, not by hand) — not a contradiction, its fulfillment. Content stayed
+    inside the existing `.js`-module system and the existing per-track chunk split (verification point
+    5); state stayed in `localStorage` under the existing `KEYS` pattern in `storage.js`, with a new key
+    following that file's own naming and safe-read/write conventions, not a new storage mechanism.
+    Updated `DECISIONS.md`'s own entry in the same commit (see below) rather than leaving it to
+    describe a superseded state.
+  - *Already-done backlog item*: checked "Completed and pruned" — nothing there resembles a lesson-id
+    renumbering; this is the first. Not a duplicate.
+  - *Own verification claim*: every check above is reproducible from the current tree and was actually
+    run, not assumed — the position-by-position reconciliation (point 2) is stronger than the
+    replacement-count check that hid the `\b` bug in the first pass, and is disclosed as such rather
+    than presented as if it were the first thing tried. The migration check (point 7) discloses that it
+    used real leftover browser state rather than a synthetic seed, and states the exact before/after
+    values rather than just asserting "migration works."
+- **Not touched, and why**: `economic-cycles-v6.jsx` — unrelated, still reference-only, untouched
+  (confirmed it uses no lesson ids that this remap could have touched even in principle, since it isn't
+  part of `src/`). Did not touch item 17's minutes clause or item 24's frozen money-track judgment
+  scope — this is pure structural work, no lesson content was added or reworded beyond the mechanical
+  digit substitution in existing cross-references. Did not add a script to `scripts/` — the transform
+  is a one-time historical fact (this run's `ID_MAP`), not a reusable tool, so it was run from the
+  session scratchpad and not committed; the resulting migration table that *does* need to persist
+  (for already-installed users) lives in the committed `src/lib/lessonIdMigration.js` instead.
+- **Next run should pick**: item 17's minutes clause (still ~8 minutes short, 112/120 — the same
+  candidate list the fifth run's entry left: economy lessons 1, 3, 5, 6, 7, 12 and money lessons 21, 22,
+  25, 34, 36, though every one of those is now numbered differently after this run — re-check each
+  lesson by *title*, not by the id remembered from before this entry, before picking one).

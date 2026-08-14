@@ -14,7 +14,7 @@
 // ═══════════════════════════════════════════════════════════════════════════
 
 export const lessonContent = {
-  1: {
+  29: {
     "sections": [
       {
         "heading": {
@@ -64,7 +64,7 @@ export const lessonContent = {
       "ja": "最後の買い物を思い出してください。お金（または信用）を何かと交換しました。その取引は誰かの収入になりました。"
     }
   },
-  2: {
+  30: {
     "sections": [
       {
         "heading": {
@@ -75,7 +75,7 @@ export const lessonContent = {
           "ja": "信用の仕組み"
         },
         "body": {
-          "en": "Say you want to buy a $20,000 car but only have $5,000 saved. A lender — a bank, a credit union, or the dealership itself — offers you a loan: they hand you $15,000 now, and you promise to pay it back over time, plus interest as their fee for taking the risk.\n\nThe moment you sign that promise, and the lender believes you'll keep it, $15,000 of brand-new credit is created out of thin air — nobody had to save it first. You drive off with the car; the lender now holds an asset (you owe them money), and you hold a liability (you owe it).\n\nInterest rates decide how expensive that promise is. When rates are high → borrowing costs more → fewer people take out loans. When rates are low → borrowing is cheap → more people do. That's exactly the lever the Federal Reserve uses to speed up or slow down the whole economy (more on that in Lesson 7).",
+          "en": "Say you want to buy a $20,000 car but only have $5,000 saved. A lender — a bank, a credit union, or the dealership itself — offers you a loan: they hand you $15,000 now, and you promise to pay it back over time, plus interest as their fee for taking the risk.\n\nThe moment you sign that promise, and the lender believes you'll keep it, $15,000 of brand-new credit is created out of thin air — nobody had to save it first. You drive off with the car; the lender now holds an asset (you owe them money), and you hold a liability (you owe it).\n\nInterest rates decide how expensive that promise is. When rates are high → borrowing costs more → fewer people take out loans. When rates are low → borrowing is cheap → more people do. That's exactly the lever the Federal Reserve uses to speed up or slow down the whole economy (more on that in Lesson 35).",
           "es": "Los prestamistas quieren más dinero. Los prestatarios quieren comprar algo que no pueden pagar ahora.\n\nCuando los prestatarios prometen pagar y los prestamistas les creen, ¡el crédito se crea de la nada!\n\nTasas altas → menos préstamos\nTasas bajas → más préstamos",
           "ko": "대출자는 돈을 더 많은 돈으로 만들고 싶어합니다. 차입자는 지금 살 수 없는 것을 사고 싶어합니다.\n\n차입자가 상환을 약속하고 대출자가 이를 믿으면, 신용이 무에서 만들어집니다!\n\n금리가 높으면 → 차입 감소\n금리가 낮으면 → 차입 증가",
           "zh": "放贷者想让钱生更多钱。借款者想买现在买不起的东西。\n\n当借款者承诺还款，放贷者相信时，信贷就凭空创造了！\n\n利率高 → 借贷减少\n利率低 → 借贷增加",
@@ -130,7 +130,7 @@ export const lessonContent = {
       "ja": "1万ドル借りて使えば、それは誰かの収入になります。その人も借入できる。信用が成長を生む仕組みが見えますか？"
     }
   },
-  3: {
+  31: {
     "sections": [
       {
         "heading": {
@@ -180,7 +180,7 @@ export const lessonContent = {
       "ja": "未来の自分から借りて今使うなら、必ず少なく使う時期が来る。だから信用はサイクルを作る。"
     }
   },
-  4: {
+  32: {
     "sections": [
       {
         "heading": {
@@ -191,7 +191,7 @@ export const lessonContent = {
           "ja": "拡大局面"
         },
         "body": {
-          "en": "Imagine a town where a new factory opens and hires hundreds of workers. Those workers now have paychecks to spend — at restaurants, on cars, at the hardware store. Restaurant owners hire more staff to keep up; the car dealer orders more inventory. This is expansion: spending increases, and because credit can be created instantly (Lesson 2), people borrow to spend even more than their paychecks alone would allow.\n\nBut there's a limit to how many meals a town's restaurants can actually cook in a day. When spending and incomes grow faster than the town can really produce, businesses respond by raising prices instead of magically producing more — that's inflation.\n\nThe Central Bank doesn't want inflation running too hot, so it raises interest rates. Higher rates mean the factory worker's car loan gets pricier, fewer people take out new loans, and existing variable-rate debts cost more to service — all of which cools spending back down.",
+          "en": "Imagine a town where a new factory opens and hires hundreds of workers. Those workers now have paychecks to spend — at restaurants, on cars, at the hardware store. Restaurant owners hire more staff to keep up; the car dealer orders more inventory. This is expansion: spending increases, and because credit can be created instantly (Lesson 30), people borrow to spend even more than their paychecks alone would allow.\n\nBut there's a limit to how many meals a town's restaurants can actually cook in a day. When spending and incomes grow faster than the town can really produce, businesses respond by raising prices instead of magically producing more — that's inflation.\n\nThe Central Bank doesn't want inflation running too hot, so it raises interest rates. Higher rates mean the factory worker's car loan gets pricier, fewer people take out new loans, and existing variable-rate debts cost more to service — all of which cools spending back down.",
           "es": "La actividad económica aumenta. El gasto sube, los precios suben. El banco central sube tasas para controlar la inflación.",
           "ko": "경제 활동이 증가하면 확장기가 시작됩니다. 지출이 늘고 가격이 오릅니다.\n\n지출과 소득이 생산보다 빠르게 증가하면 → 가격 상승 → 이것이 인플레이션입니다.\n\n중앙은행은 과도한 인플레이션을 원하지 않아 금리를 올립니다.",
           "zh": "经济活动增加时出现扩张。支出增加，价格上涨。\n\n当支出增长快于生产 → 价格上涨 → 这就是通胀。\n\n央行不想通胀太高，所以加息。",
@@ -223,7 +223,7 @@ export const lessonContent = {
           "ja": "この解決策に限界がある理由"
         },
         "body": {
-          "en": "There's a hidden assumption behind the fix in the last section: the central bank has room to cut rates. Each time the short-term cycle turns down, cutting rates works because the previous expansion pushed rates up first — there's slack to give back. But look again at the question at the end of this lesson: if each cycle's peak carries more debt than the one before it, rates don't always return to where they started. Debt payments compete with new borrowing for a household's or a business's income, so lenders and central banks tend to keep rates a little lower on average, cycle after cycle, just to keep debt serviceable.\n\nRun that pattern across many 5-8 year cycles — decades, not years — and the room to cut keeps shrinking. Eventually rates approach zero, and the tool that ended every previous recession in this lesson (lower rates → cheaper borrowing → renewed spending) runs out of room to use. That's not hypothetical: it's the situation Lesson 9 describes, where central banks turned to buying bonds directly (quantitative easing) because cutting rates further wasn't possible.\n\nThis is the seam between the two debt cycles: the short-term cycle in this lesson resolves through nothing more than a rate cut, roughly every 5-8 years. The long-term cycle — the subject of the next lesson — is what happens when decades of these small cycles compound into a debt burden that a rate cut alone can no longer fix, and a different, harder kind of adjustment becomes necessary instead.",
+          "en": "There's a hidden assumption behind the fix in the last section: the central bank has room to cut rates. Each time the short-term cycle turns down, cutting rates works because the previous expansion pushed rates up first — there's slack to give back. But look again at the question at the end of this lesson: if each cycle's peak carries more debt than the one before it, rates don't always return to where they started. Debt payments compete with new borrowing for a household's or a business's income, so lenders and central banks tend to keep rates a little lower on average, cycle after cycle, just to keep debt serviceable.\n\nRun that pattern across many 5-8 year cycles — decades, not years — and the room to cut keeps shrinking. Eventually rates approach zero, and the tool that ended every previous recession in this lesson (lower rates → cheaper borrowing → renewed spending) runs out of room to use. That's not hypothetical: it's the situation Lesson 37 describes, where central banks turned to buying bonds directly (quantitative easing) because cutting rates further wasn't possible.\n\nThis is the seam between the two debt cycles: the short-term cycle in this lesson resolves through nothing more than a rate cut, roughly every 5-8 years. The long-term cycle — the subject of the next lesson — is what happens when decades of these small cycles compound into a debt burden that a rate cut alone can no longer fix, and a different, harder kind of adjustment becomes necessary instead.",
           "es": "Este arreglo depende de que el banco central tenga margen para bajar tasas. Cada ciclo corto se resuelve con un recorte — pero si cada pico acumula más deuda que el anterior, ese margen se reduce con el tiempo.\n\nEventualmente las tasas se acercan a cero y el recorte ya no basta (como en la Lección 9, que llevó a la compra directa de bonos).\n\nEsta es la diferencia entre el ciclo corto — resuelto con un recorte de tasas cada 5-8 años — y el ciclo largo, que aparece cuando décadas de estos ciclos acumulan una deuda que un simple recorte ya no puede arreglar.",
           "ko": "이 해결책은 중앙은행이 금리를 낮출 여력이 있다는 전제에 달려 있습니다. 매 단기 순환은 금리 인하로 해결되지만, 매번 정점의 부채가 이전보다 크다면 그 여력은 점점 줄어듭니다.\n\n결국 금리가 0%에 가까워지면 인하만으로는 부족해집니다 (레슨 9에서 다룬, 채권을 직접 매입하게 된 상황).\n\n이것이 5-8년마다 금리 인하로 풀리는 단기 순환과, 수십 년간 쌓인 부채를 금리 인하만으로 해결할 수 없을 때 나타나는 장기 순환의 차이입니다.",
           "zh": "这个方案的前提是央行有降息的空间。每个短期周期都靠降息化解——但如果每次高峰的债务都比上一次更多，这个空间会逐渐缩小。\n\n最终利率接近零，降息不再够用（如第9课所述，央行转向直接购买债券）。\n\n这就是短期周期（每5-8年靠降息化解）与长期周期（数十年积累的债务无法仅靠降息解决时出现）之间的区别。",
@@ -246,7 +246,7 @@ export const lessonContent = {
       "ja": "各サイクルの底と頂上が前回より多くの成長と多くの借金で終わることに注目。数十年蓄積するとどうなると思いますか？"
     }
   },
-  5: {
+  33: {
     "sections": [
       {
         "heading": {
@@ -257,7 +257,7 @@ export const lessonContent = {
           "ja": "借金の蓄積"
         },
         "body": {
-          "en": "Picture a neighborhood where home prices have risen every year for a decade. A family buys a house not just to live in, but because they're confident it'll be worth more next year — so they stretch their budget and take out the biggest mortgage a bank will approve. Across many short-term cycles like the one in Lesson 4, this happens over and over: debts rise faster than incomes, because human nature favors borrowing and spending more today over paying down debt.\n\nLenders keep lending freely through all of this, because everyone can see the evidence with their own eyes — incomes are rising, home values are up, the stock market is roaring. Confidence feeds on itself.\n\nWhen enough people borrow heavily to buy an asset — houses, stocks, anything — purely because they expect the price to keep rising, that pushes prices higher still. That's a bubble.\n\nAs long as incomes keep rising too, the debt burden (the ratio of what's owed to what's earned) looks manageable. But nothing rises forever, and that's exactly the problem.",
+          "en": "Picture a neighborhood where home prices have risen every year for a decade. A family buys a house not just to live in, but because they're confident it'll be worth more next year — so they stretch their budget and take out the biggest mortgage a bank will approve. Across many short-term cycles like the one in Lesson 32, this happens over and over: debts rise faster than incomes, because human nature favors borrowing and spending more today over paying down debt.\n\nLenders keep lending freely through all of this, because everyone can see the evidence with their own eyes — incomes are rising, home values are up, the stock market is roaring. Confidence feeds on itself.\n\nWhen enough people borrow heavily to buy an asset — houses, stocks, anything — purely because they expect the price to keep rising, that pushes prices higher still. That's a bubble.\n\nAs long as incomes keep rising too, the debt burden (the ratio of what's owed to what's earned) looks manageable. But nothing rises forever, and that's exactly the problem.",
           "es": "A lo largo de muchos ciclos cortos, la deuda crece más rápido que los ingresos. La gente prefiere gastar que pagar deuda.\n\nCuando la gente pide mucho prestado para comprar activos como inversión, eso es una burbuja.",
           "ko": "여러 단기 순환을 거치면서 부채가 소득보다 빠르게 증가합니다. 사람들이 부채를 갚기보다 더 빌리고 쓰는 것을 선호하기 때문입니다.\n\n사람들이 투자로 자산을 사기 위해 많이 빌리면 — 그것이 버블입니다. 하지만 이것은 영원히 계속될 수 없습니다.",
           "zh": "经过许多短期周期，债务增长快于收入。人们更愿意借钱消费而非还债。\n\n当人们大量借钱购买资产投资，推动价格越来越高——这就是泡沫。但这不可能永远持续。",
@@ -296,7 +296,7 @@ export const lessonContent = {
       "ja": "近年、米国の債務/GDP比率は100%を大きく超えています。長期債務サイクルの後期段階に聞こえますか？"
     }
   },
-  6: {
+  34: {
     "sections": [
       {
         "heading": {
@@ -346,7 +346,7 @@ export const lessonContent = {
       "ja": "紙幣印刷が消える信用を相殺すれば、総支出は同じ。これは紙幣印刷への見方を変えますか？"
     }
   },
-  7: {
+  35: {
     "sections": [
       {
         "heading": {
@@ -357,7 +357,7 @@ export const lessonContent = {
           "ja": "フェデラルファンド金利"
         },
         "body": {
-          "en": "Think of the Federal Funds Rate as the master dial in the economy's control room. When the Fed turns it, nearly every other rate in your financial life follows — the rate on a new mortgage, what your savings account pays you, the APR on your credit card.\n\nRaise the dial → borrowing gets more expensive → the economy slows down.\nLower the dial → borrowing gets cheaper → the economy speeds up.\n\nThis is the Fed's primary tool for managing the short-term debt cycle from Lesson 4. But here's the catch: turning the dial doesn't change anything instantly. It typically takes 12-24 months for a rate change to fully work its way through mortgages, business loans, and hiring decisions — which is part of why the Fed sometimes turns the dial too far in one direction before the earlier turn has fully kicked in.",
+          "en": "Think of the Federal Funds Rate as the master dial in the economy's control room. When the Fed turns it, nearly every other rate in your financial life follows — the rate on a new mortgage, what your savings account pays you, the APR on your credit card.\n\nRaise the dial → borrowing gets more expensive → the economy slows down.\nLower the dial → borrowing gets cheaper → the economy speeds up.\n\nThis is the Fed's primary tool for managing the short-term debt cycle from Lesson 32. But here's the catch: turning the dial doesn't change anything instantly. It typically takes 12-24 months for a rate change to fully work its way through mortgages, business loans, and hiring decisions — which is part of why the Fed sometimes turns the dial too far in one direction before the earlier turn has fully kicked in.",
           "es": "La tasa de fondos federales influye en TODAS las demás tasas.\n\nSubir tasas → frena la economía\nBajar tasas → estimula la economía\n\nLa política funciona con retraso de 12-24 meses.",
           "ko": "연방기금금리는 모기지, 저축, 신용카드 등 모든 금리에 영향을 미치는 핵심 금리입니다.\n\n금리 인상 → 경제 둔화\n금리 인하 → 경제 부양\n\n정책 효과는 12-24개월의 시차가 있습니다.",
           "zh": "联邦基金利率是影响所有其他利率的关键利率。\n\n加息 → 经济减速\n降息 → 经济刺激\n\n政策效果有12-24个月的滞后。",
@@ -396,7 +396,7 @@ export const lessonContent = {
       "ja": "FRBは2022-23年にインフレ対策で5.25-5.50%まで利上げしました。政策効果が完全に表れるには12-24ヶ月かかります——現在のFF金利を調べてみましょう。この影響はどれくらい経済に波及したと思いますか？"
     }
   },
-  8: {
+  36: {
     "sections": [
       {
         "heading": {
@@ -446,7 +446,7 @@ export const lessonContent = {
       "ja": "2022年にイールドカーブが逆転。歴史的パターンでは12-18ヶ月以内に景気後退。今回は違うと思いますか？"
     }
   },
-  9: {
+  37: {
     "sections": [
       {
         "heading": {
@@ -457,7 +457,7 @@ export const lessonContent = {
           "ja": "量的緩和（QE）"
         },
         "body": {
-          "en": "Normally the Fed's master dial (Lesson 7) is interest rates. But once that dial is already turned all the way down to 0%, it can't go any lower — and if the economy still needs help, the Fed reaches for a different tool entirely.\n\nQuantitative Easing works like this: the Fed creates new money electronically (no printing press involved, just entries in a ledger) and uses it to buy up government bonds and mortgage-backed securities from banks and investors — stepping into the bond market as an enormous buyer, competing for the same bonds everyone else wants.\n\nThat buying pressure pushes bond prices up (and yields, meaning the return on those bonds, down), makes borrowing cheaper across the economy, and — because bonds now pay less — nudges investors who want a decent return toward riskier assets like stocks instead.\n\nQE1 (2008): $1.75 trillion\nQE2 (2010): $600 billion\nQE3 (2012): $85B/month\nCOVID QE (2020): Unlimited\n\nThe scale of this tool shows up on the Fed's own balance sheet, which grew from roughly $900 billion before 2008 to a peak of about $9 trillion in 2022 — a stack of bonds nine times the size of the entire pre-2008 institution.",
+          "en": "Normally the Fed's master dial (Lesson 35) is interest rates. But once that dial is already turned all the way down to 0%, it can't go any lower — and if the economy still needs help, the Fed reaches for a different tool entirely.\n\nQuantitative Easing works like this: the Fed creates new money electronically (no printing press involved, just entries in a ledger) and uses it to buy up government bonds and mortgage-backed securities from banks and investors — stepping into the bond market as an enormous buyer, competing for the same bonds everyone else wants.\n\nThat buying pressure pushes bond prices up (and yields, meaning the return on those bonds, down), makes borrowing cheaper across the economy, and — because bonds now pay less — nudges investors who want a decent return toward riskier assets like stocks instead.\n\nQE1 (2008): $1.75 trillion\nQE2 (2010): $600 billion\nQE3 (2012): $85B/month\nCOVID QE (2020): Unlimited\n\nThe scale of this tool shows up on the Fed's own balance sheet, which grew from roughly $900 billion before 2008 to a peak of about $9 trillion in 2022 — a stack of bonds nine times the size of the entire pre-2008 institution.",
           "es": "Cuando las tasas llegan a 0%, el banco central imprime dinero electrónicamente y compra bonos.\n\nEl balance del Fed creció de ~$900B antes de 2008 a ~$9T pico en 2022.",
           "ko": "금리가 0%에 도달하면 중앙은행이 전자적으로 돈을 발행하여 국채와 MBS를 매입합니다.\n\n연준 대차대조표: 2008년 이전 ~$9000억 → 2022년 정점 ~$9조.",
           "zh": "当利率降至0%时，央行电子印钞购买国债和抵押贷款支持证券。\n\n美联储资产负债表：2008年前约9000亿 → 2022年峰值约9万亿。",
@@ -512,7 +512,7 @@ export const lessonContent = {
       "ja": "FRBは2008年に2兆ドル以上、2020年は無制限に印刷。QEの最大受益者は？金融資産所有者です。"
     }
   },
-  10: {
+  38: {
     "sections": [
       {
         "heading": {
@@ -523,7 +523,7 @@ export const lessonContent = {
           "ja": "拡大期とピーク"
         },
         "body": {
-          "en": "Picture the same factory town from Lesson 4, a few years into its boom. EXPANSION: credit flows freely, GDP rises, new jobs keep appearing, and confidence builds. People borrow more, spend more, and feel wealthier — the town adds a second restaurant, then a third. Historically, this phase has coincided with S&P 500 average returns of roughly +14-28%, and assets like growth stocks, cyclical stocks, and real estate have historically been favored in it.\n\nPEAK: the town's output is now about as high as it can go — every worker is employed, every restaurant full. Inflation is running at highs, and the Fed is raising rates to cool things down. Growth stalls, even though the mood hasn't caught up yet. This is where the seeds of the next contraction are quietly planted.\n\nHistorically favored in this phase: value stocks, commodities, and short-duration bonds.",
+          "en": "Picture the same factory town from Lesson 32, a few years into its boom. EXPANSION: credit flows freely, GDP rises, new jobs keep appearing, and confidence builds. People borrow more, spend more, and feel wealthier — the town adds a second restaurant, then a third. Historically, this phase has coincided with S&P 500 average returns of roughly +14-28%, and assets like growth stocks, cyclical stocks, and real estate have historically been favored in it.\n\nPEAK: the town's output is now about as high as it can go — every worker is employed, every restaurant full. Inflation is running at highs, and the Fed is raising rates to cool things down. Growth stalls, even though the mood hasn't caught up yet. This is where the seeds of the next contraction are quietly planted.\n\nHistorically favored in this phase: value stocks, commodities, and short-duration bonds.",
           "es": "EXPANSIÓN: El crédito fluye. PIB sube, empleo crece. Históricamente favorecidas en esta fase: acciones de crecimiento.\n\nPICO: Producción máxima. Inflación alta, Fed subiendo tasas.",
           "ko": "확장기: 신용이 자유롭게 흐릅니다. GDP 상승, 일자리 창출. 역사적으로 이 시기에 강세를 보인 자산: 성장주, 경기순환주.\n\n정점: 최대 생산량. 인플레이션 고점, 연준 금리 인상.",
           "zh": "扩张期：信贷自由流动。GDP上升、就业增加。历史上此阶段表现较强的资产：成长股、周期股。\n\n顶峰：最大产出。通胀高位、美联储加息。",
@@ -555,7 +555,7 @@ export const lessonContent = {
           "ja": "なぜこの局面でこれらの資産なのか"
         },
         "body": {
-          "en": "None of the asset patterns above are random — each one falls out of the same rate-transmission mechanism from Lesson 7. In Expansion, rates are still low to moderate and profits look likely to keep growing, so growth stocks — priced mostly on profits still years away — get a bigger lift from cheap money than a company already earning steady profits today; real estate and cyclical businesses ride the same wave of easy credit and rising incomes.\n\nAt the Peak, the Fed is actively raising rates to cool the boom, and that same mechanism now runs in reverse on the assets priced furthest into the future — growth stocks lose their edge first — while value stocks (companies profitable today, not counting on tomorrow) and short-duration bonds (less exposed than a 30-year bond to further hikes) tend to hold up better; commodities often keep climbing on the inflation the rate hikes are trying to tame.\n\nIn Contraction, rates are falling and investors grow less willing to hold anything that could default or keep falling in price — money moves toward Treasury bonds (the safest income there is), gold (no company behind it that can go bankrupt), and defensive stocks selling things people buy regardless of the economy, like medicine or electricity.\n\nBy the Trough, prices for the same beaten-down companies and high-yield bonds have already fallen so far that even a small improvement in the outlook makes them look cheap relative to what they still earn — the mechanical reason the strongest rebounds have historically started exactly when the headlines felt worst.",
+          "en": "None of the asset patterns above are random — each one falls out of the same rate-transmission mechanism from Lesson 35. In Expansion, rates are still low to moderate and profits look likely to keep growing, so growth stocks — priced mostly on profits still years away — get a bigger lift from cheap money than a company already earning steady profits today; real estate and cyclical businesses ride the same wave of easy credit and rising incomes.\n\nAt the Peak, the Fed is actively raising rates to cool the boom, and that same mechanism now runs in reverse on the assets priced furthest into the future — growth stocks lose their edge first — while value stocks (companies profitable today, not counting on tomorrow) and short-duration bonds (less exposed than a 30-year bond to further hikes) tend to hold up better; commodities often keep climbing on the inflation the rate hikes are trying to tame.\n\nIn Contraction, rates are falling and investors grow less willing to hold anything that could default or keep falling in price — money moves toward Treasury bonds (the safest income there is), gold (no company behind it that can go bankrupt), and defensive stocks selling things people buy regardless of the economy, like medicine or electricity.\n\nBy the Trough, prices for the same beaten-down companies and high-yield bonds have already fallen so far that even a small improvement in the outlook makes them look cheap relative to what they still earn — the mechanical reason the strongest rebounds have historically started exactly when the headlines felt worst.",
           "es": "Estos patrones no son aleatorios — vienen del mismo mecanismo de tasas de la Lección 7. En Expansión, el dinero barato impulsa más a las acciones de crecimiento. En el Pico, ese mecanismo se invierte: las acciones de valor y bonos de corto plazo resisten mejor. En Contracción, el dinero busca refugio en bonos del Tesoro y oro. En el Valle, los precios ya cayeron tanto que hasta una pequeña mejora los hace ver baratos.",
           "ko": "이 패턴들은 무작위가 아니라 7강의 금리 전달 메커니즘에서 나옵니다. 확장기에는 저렴한 자금이 성장주를 더 밀어올립니다. 정점에서는 그 메커니즘이 반대로 작동해 가치주와 단기 채권이 더 잘 버팁니다. 수축기에는 자금이 국채와 금으로 몰립니다. 저점에서는 가격이 이미 너무 떨어져서 작은 개선만으로도 저렴해 보입니다.",
           "zh": "这些模式并非随意——都源自第7课的利率传导机制。扩张期，廉价资金更能推动成长股。顶峰期，机制反转，价值股和短期债券更抗跌。收缩期，资金流向美国国债和黄金避险。低谷期，价格已跌至谷底，哪怕一点好转也显得便宜。",
@@ -578,7 +578,7 @@ export const lessonContent = {
       "ja": "バフェットは「他人が貪欲な時に恐れ、恐れている時に貪欲になれ」と言います。"
     }
   },
-  11: {
+  39: {
     "sections": [
       {
         "heading": {
@@ -605,7 +605,7 @@ export const lessonContent = {
           "ja": "指標から診断へ：指標と局面を対応させる"
         },
         "body": {
-          "en": "Knowing what each gauge measures is only half the job — the other half is knowing what a normal reading looks like in each phase from Lesson 10, so an unusual one stands out.\n\nIn Expansion, the gauges tend to point the same direction: GDP rising steadily, CPI near the Fed's target, PMI above 50 and climbing, VIX low, and credit spreads narrow — lenders confident and growth broad-based.\n\nAt Peak, the gauges start to disagree, which is itself the signal: GDP growth is still positive but decelerating, CPI has drifted above target, PMI hovers near 50 and starts slipping, VIX ticks up from its lows, and credit spreads begin to widen even while headlines still sound upbeat.\n\nIn Contraction, the gauges realign in the other direction: GDP falling, CPI cooling as weaker demand pulls prices down, PMI below 50, VIX elevated or spiking, and credit spreads wide as lenders demand extra compensation for rising default risk.\n\nAt Trough, the gauges are still weak in level but starting to turn: GDP near its low point, CPI low, PMI below 50 but stabilizing or ticking up, VIX easing back from its extremes, and credit spreads beginning to narrow. The earliest signs of a turn tend to show up in the leading indicators (PMI, VIX, credit spreads) before GDP itself confirms it, since GDP only measures activity that already happened.\n\nThat lag is exactly why watching several gauges together, instead of waiting for GDP alone to confirm a turn, is what lets you read the cycle rather than just react to it after the fact.",
+          "en": "Knowing what each gauge measures is only half the job — the other half is knowing what a normal reading looks like in each phase from Lesson 38, so an unusual one stands out.\n\nIn Expansion, the gauges tend to point the same direction: GDP rising steadily, CPI near the Fed's target, PMI above 50 and climbing, VIX low, and credit spreads narrow — lenders confident and growth broad-based.\n\nAt Peak, the gauges start to disagree, which is itself the signal: GDP growth is still positive but decelerating, CPI has drifted above target, PMI hovers near 50 and starts slipping, VIX ticks up from its lows, and credit spreads begin to widen even while headlines still sound upbeat.\n\nIn Contraction, the gauges realign in the other direction: GDP falling, CPI cooling as weaker demand pulls prices down, PMI below 50, VIX elevated or spiking, and credit spreads wide as lenders demand extra compensation for rising default risk.\n\nAt Trough, the gauges are still weak in level but starting to turn: GDP near its low point, CPI low, PMI below 50 but stabilizing or ticking up, VIX easing back from its extremes, and credit spreads beginning to narrow. The earliest signs of a turn tend to show up in the leading indicators (PMI, VIX, credit spreads) before GDP itself confirms it, since GDP only measures activity that already happened.\n\nThat lag is exactly why watching several gauges together, instead of waiting for GDP alone to confirm a turn, is what lets you read the cycle rather than just react to it after the fact.",
           "es": "Cada fase tiene una firma típica de indicadores: en Expansión todos apuntan igual (PIB subiendo, PMI >50, VIX bajo, spreads estrechos); en Pico empiezan a discrepar (PIB desacelera, PMI ronda 50, VIX y spreads suben) — eso es la señal. En Contracción todos se alinean a la baja; en Valle los indicadores líderes (PMI, VIX, spreads) giran antes que el PIB, que siempre confirma tarde.",
           "ko": "각 국면마다 지표들의 전형적인 조합이 있습니다: 확장기에는 모두 같은 방향(GDP 상승, PMI 50 이상, VIX 낮음, 스프레드 좁음)을 가리키고, 정점에서는 지표들이 서로 어긋나기 시작합니다(GDP 둔화, PMI 50 근처, VIX·스프레드 상승) — 그 어긋남 자체가 신호입니다. 수축기에는 모두 하락 쪽으로 정렬되고, 저점에서는 선행 지표(PMI, VIX, 스프레드)가 항상 뒤늦게 확인되는 GDP보다 먼저 방향을 바꿉니다.",
           "zh": "每个阶段都有典型的指标组合：扩张期所有指标同向（GDP上升、PMI高于50、VIX低、利差窄）；顶峰时指标开始分歧（GDP放缓、PMI接近50、VIX和利差上升）——分歧本身就是信号。收缩期所有指标一致走弱；触底期领先指标（PMI、VIX、利差）会先于总是滞后确认的GDP转向。",
@@ -628,7 +628,7 @@ export const lessonContent = {
       "ja": "次のような経済を想像してください：GDP成長は鈍化し、インフレは目標を上回り、中央銀行は金利の方向性で意見が分かれ、関税がコストを数十年ぶりの高水準に押し上げています。どの局面だと思いますか？"
     }
   },
-  12: {
+  40: {
     "sections": [
       {
         "heading": {
@@ -639,7 +639,7 @@ export const lessonContent = {
           "ja": "3つのルール"
         },
         "body": {
-          "en": "RULE 1: Don't let debt rise faster than income. Remember the family from Lesson 5 whose mortgage payment kept eating a bigger share of their paycheck? That's Rule 1 being broken in slow motion — eventually the debt burden crushes you, whether you're a household or a country.\n\nRULE 2: Don't let income rise faster than productivity. If a factory worker's wage keeps climbing but they're not producing any more per hour than before, the factory eventually can't compete with one elsewhere that pays less for the same output — jobs move, or prices rise until customers walk away.\n\nRULE 3: Do everything you can to raise your own productivity — learn a new skill, adopt a better tool or process, like the farmer's tractor from Lesson 3. In the long run, this is what actually matters most, because it's the only one of the three that isn't just moving numbers around.\n\nThis is simple advice for you AND for policy makers alike. Most people — including most policy makers — don't pay nearly enough attention to it.",
+          "en": "RULE 1: Don't let debt rise faster than income. Remember the family from Lesson 33 whose mortgage payment kept eating a bigger share of their paycheck? That's Rule 1 being broken in slow motion — eventually the debt burden crushes you, whether you're a household or a country.\n\nRULE 2: Don't let income rise faster than productivity. If a factory worker's wage keeps climbing but they're not producing any more per hour than before, the factory eventually can't compete with one elsewhere that pays less for the same output — jobs move, or prices rise until customers walk away.\n\nRULE 3: Do everything you can to raise your own productivity — learn a new skill, adopt a better tool or process, like the farmer's tractor from Lesson 31. In the long run, this is what actually matters most, because it's the only one of the three that isn't just moving numbers around.\n\nThis is simple advice for you AND for policy makers alike. Most people — including most policy makers — don't pay nearly enough attention to it.",
           "es": "REGLA 1: No dejes que la deuda crezca más rápido que los ingresos.\nREGLA 2: No dejes que los ingresos crezcan más rápido que la productividad.\nREGLA 3: Haz todo lo posible por aumentar tu productividad.",
           "ko": "법칙 1: 부채가 소득보다 빠르게 증가하지 않게 하라.\n법칙 2: 소득이 생산성보다 빠르게 증가하지 않게 하라.\n법칙 3: 생산성을 높이기 위해 할 수 있는 모든 것을 하라.",
           "zh": "法则1：不要让债务增长快于收入。\n法则2：不要让收入增长快于生产力。\n法则3：尽一切努力提高生产力。",
@@ -655,7 +655,7 @@ export const lessonContent = {
           "ja": "まとめ"
         },
         "body": {
-          "en": "Now you have the whole template, built lesson by lesson: a slow, steady line of productivity growth (Lesson 3) running underneath everything; a 75-100 year long-term debt cycle (Lesson 5) rising and falling on top of that; and a faster 5-8 year short-term debt cycle (Lesson 4) bouncing on top of both. Layer all three together, and you get a map for understanding where an economy has been, where it is now, and where it's probably headed.\n\nThe economy isn't random noise — it's a machine driven by transactions (Lesson 1), credit (Lesson 2), and human nature repeating the same patterns generation after generation. Once you can see those patterns, whether you're an investor, a small business owner, or just someone trying to make sense of the news, you're equipped to make better decisions than someone reacting to headlines one at a time.",
+          "en": "Now you have the whole template, built lesson by lesson: a slow, steady line of productivity growth (Lesson 31) running underneath everything; a 75-100 year long-term debt cycle (Lesson 33) rising and falling on top of that; and a faster 5-8 year short-term debt cycle (Lesson 32) bouncing on top of both. Layer all three together, and you get a map for understanding where an economy has been, where it is now, and where it's probably headed.\n\nThe economy isn't random noise — it's a machine driven by transactions (Lesson 29), credit (Lesson 30), and human nature repeating the same patterns generation after generation. Once you can see those patterns, whether you're an investor, a small business owner, or just someone trying to make sense of the news, you're equipped to make better decisions than someone reacting to headlines one at a time.",
           "es": "Ahora tienes la plantilla: superponer el ciclo corto sobre el largo sobre la línea de productividad te da un mapa para entender la economía.",
           "ko": "이제 템플릿이 있습니다: 단기 부채 순환을 장기 부채 순환 위에, 둘 다 생산성 성장 위에 겹치면 경제를 이해하는 지도가 됩니다.",
           "zh": "现在你有了模板：将短期债务周期叠加在长期债务周期上，再叠加在生产力增长线上，就是理解经济的地图。",

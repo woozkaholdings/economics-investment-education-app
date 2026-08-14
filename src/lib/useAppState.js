@@ -16,6 +16,7 @@ import { todayStr, dayDiff } from "../utils/date.js";
 import { DEFAULT_FONT_SCALE, DEFAULT_THEME_MODE, FONT_SCALE_STEPS, THEME_MODES } from "../theme.js";
 import { TR } from "../locales/index.js";
 import { loadReview, recordAnswer, saveReview } from "./review.js";
+import { migrateLegacyLessonIds } from "./lessonIdMigration.js";
 
 // ── streak ────────────────────────────────────────────────────────────────
 // One increment per calendar day on which at least one lesson is completed.
@@ -37,6 +38,22 @@ function bumpStreak() {
   else next = 1;                                     // first day, or broken
   writeJSON(KEYS.streak, { count: next, lastDate: today });
   return next;
+}
+
+// ── completed lessons ────────────────────────────────────────────────────
+// One-time migration (backlog item 22, 2026-08-14): lesson ids were
+// renumbered to match track order. Runs at most once per device — the
+// migration marker is set unconditionally on first read after this ships
+// (even for an install with nothing completed yet), so a later read can
+// never re-apply the old→new table to ids that are already current.
+
+function loadCompletedLessons() {
+  const stored = readArray(KEYS.completedLessons);
+  if (readRaw(KEYS.legacyLessonIdMigrated) !== null) return stored;
+  const migrated = migrateLegacyLessonIds(stored);
+  writeJSON(KEYS.completedLessons, migrated);
+  writeRaw(KEYS.legacyLessonIdMigrated, "1");
+  return migrated;
 }
 
 // ── font scale ────────────────────────────────────────────────────────────
@@ -64,7 +81,7 @@ function loadThemeMode() {
 
 export function useAppState() {
   const [lang, setLangState] = useState(loadLang);
-  const [completedLessons, setCompletedLessons] = useState(() => readArray(KEYS.completedLessons));
+  const [completedLessons, setCompletedLessons] = useState(loadCompletedLessons);
   const [streak, setStreak] = useState(0);
   const [fontScale, setFontScaleState] = useState(loadFontScale);
   const [themeMode, setThemeModeState] = useState(loadThemeMode);

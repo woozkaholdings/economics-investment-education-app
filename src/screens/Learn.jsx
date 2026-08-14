@@ -112,7 +112,9 @@ export default function Learn({ t, lang, lessons, completedLessons, isUnlocked, 
 
                   {/* Step marker. Shows the lesson's own id, which is what
                       LessonReader displays and what in-prose cross-references
-                      ("Lesson 15") cite — ids are not renumbered per track. */}
+                      ("Lesson 15") cite. Ids were renumbered 2026-08-14 to
+                      match track order (money 1-28, economy 29-40) — see the
+                      lessonsByTrack() comment in content/lessons.js. */}
                   <span
                     aria-hidden="true"
                     style={{
