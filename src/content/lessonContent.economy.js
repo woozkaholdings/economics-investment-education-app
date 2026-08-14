@@ -529,6 +529,22 @@ export const lessonContent = {
           "zh": "收缩期：信贷收缩、失业率上升、美联储开始降息。\n\n低谷：情绪最悲观，但历史上最强的反弹往往从这里开始。标普500触底后第一年平均回报+38-50%。",
           "ja": "収縮期：信用収縮、失業率上昇、FRB利下げ開始。\n\n底：悲観が最大化する時期だが、歴史的に最も強い反発がここから始まっている。S&P500底打ち後1年目：+38-50%。"
         }
+      },
+      {
+        "heading": {
+          "en": "Why These Assets, in This Phase",
+          "es": "Por Qué Estos Activos, en Esta Fase",
+          "ko": "왜 이 국면에 이 자산인가",
+          "zh": "为何这些资产适合这个阶段",
+          "ja": "なぜこの局面でこれらの資産なのか"
+        },
+        "body": {
+          "en": "None of the asset patterns above are random — each one falls out of the same rate-transmission mechanism from Lesson 7. In Expansion, rates are still low to moderate and profits look likely to keep growing, so growth stocks — priced mostly on profits still years away — get a bigger lift from cheap money than a company already earning steady profits today; real estate and cyclical businesses ride the same wave of easy credit and rising incomes.\n\nAt the Peak, the Fed is actively raising rates to cool the boom, and that same mechanism now runs in reverse on the assets priced furthest into the future — growth stocks lose their edge first — while value stocks (companies profitable today, not counting on tomorrow) and short-duration bonds (less exposed than a 30-year bond to further hikes) tend to hold up better; commodities often keep climbing on the inflation the rate hikes are trying to tame.\n\nIn Contraction, rates are falling and investors grow less willing to hold anything that could default or keep falling in price — money moves toward Treasury bonds (the safest income there is), gold (no company behind it that can go bankrupt), and defensive stocks selling things people buy regardless of the economy, like medicine or electricity.\n\nBy the Trough, prices for the same beaten-down companies and high-yield bonds have already fallen so far that even a small improvement in the outlook makes them look cheap relative to what they still earn — the mechanical reason the strongest rebounds have historically started exactly when the headlines felt worst.",
+          "es": "Estos patrones no son aleatorios — vienen del mismo mecanismo de tasas de la Lección 7. En Expansión, el dinero barato impulsa más a las acciones de crecimiento. En el Pico, ese mecanismo se invierte: las acciones de valor y bonos de corto plazo resisten mejor. En Contracción, el dinero busca refugio en bonos del Tesoro y oro. En el Valle, los precios ya cayeron tanto que hasta una pequeña mejora los hace ver baratos.",
+          "ko": "이 패턴들은 무작위가 아니라 7강의 금리 전달 메커니즘에서 나옵니다. 확장기에는 저렴한 자금이 성장주를 더 밀어올립니다. 정점에서는 그 메커니즘이 반대로 작동해 가치주와 단기 채권이 더 잘 버팁니다. 수축기에는 자금이 국채와 금으로 몰립니다. 저점에서는 가격이 이미 너무 떨어져서 작은 개선만으로도 저렴해 보입니다.",
+          "zh": "这些模式并非随意——都源自第7课的利率传导机制。扩张期，廉价资金更能推动成长股。顶峰期，机制反转，价值股和短期债券更抗跌。收缩期，资金流向美国国债和黄金避险。低谷期，价格已跌至谷底，哪怕一点好转也显得便宜。",
+          "ja": "これらのパターンは無作為ではなく、第7課の金利伝達メカニズムから生じる。拡大期は安いお金がグロース株を押し上げる。ピークではそのメカニズムが逆転し、バリュー株と短期債が持ちこたえやすい。収縮期は資金が米国債と金に向かう。底では価格が下がり切り、小さな改善でも割安に見える。"
+        }
       }
     ],
     "takeaway": {

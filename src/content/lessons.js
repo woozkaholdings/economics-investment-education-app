@@ -101,7 +101,7 @@ export const lessons = [
     subtitle: {"en":"When rates at 0% aren't enough","es":"Cuando las tasas en 0% no son suficientes","ko":"0% 금리로도 충분하지 않을 때","zh":"当利率降到0%还不够时","ja":"金利0%でも不十分な時"},
   },
   {
-    id: 10, track: "economy", icon: "🔄", color: "#059669", minutes: 2,
+    id: 10, track: "economy", icon: "🔄", color: "#059669", minutes: 3,
     title: {"en":"The 4 Phases of Economic Cycles","es":"Las 4 Fases del Ciclo Económico","ko":"경제 순환의 4단계","zh":"经济周期的4个阶段","ja":"経済サイクルの4つの局面"},
     subtitle: {"en":"Expansion → Peak → Contraction → Trough","es":"Expansión → Pico → Contracción → Valle","ko":"확장 → 정점 → 수축 → 저점","zh":"扩张 → 顶峰 → 收缩 → 低谷","ja":"拡大 → ピーク → 収縮 → 底"},
   },
