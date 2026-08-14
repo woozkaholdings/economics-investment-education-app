@@ -329,6 +329,22 @@ export const lessonContent = {
           "zh": "关键是平衡。通缩手段和通胀手段必须平衡。\n\n漂亮的去杠杆：债务下降、增长为正。2008-2015美国是例子。\n\n丑陋的去杠杆：过度使用某一工具。恢复大约需要十年——“失去的十年”。",
           "ja": "鍵はバランス。デフレ的手段とインフレ的手段のバランス。\n\n美しいデレバレッジ：債務が所得比で低下、成長維持。2008-2015年の米国が例。\n\n醜いデレバレッジ：一つの手段を使いすぎる。回復には約10年 — 「失われた10年」。"
         }
+      },
+      {
+        "heading": {
+          "en": "Why Tool #4 Isn't Available to Everyone",
+          "es": "Por Qué la Herramienta #4 No Está Disponible para Todos",
+          "ko": "왜 4번 도구는 모두에게 열려 있지 않은가",
+          "zh": "为什么第4种工具并非人人可用",
+          "ja": "なぜ4番目の手段は誰にでも使えるわけではないのか"
+        },
+        "body": {
+          "en": "All four tools assume one thing that isn't actually true everywhere: that the debt is owed in a currency the borrower's own central bank can create.\n\nWhen a country's debt is denominated in its own currency, printing money is a real option — painful and inflationary, but it converts an unpayable debt into a payable one, because the central bank can literally create the units needed to pay it. A country whose debt is denominated in a foreign currency it cannot print doesn't have that fourth lever at all. If the money runs out, there is no press to run — only tool 1 (austerity) and tool 2 (default) are actually on the table, however painful.\n\nThis single fact — whose currency the debt is in — is a big part of why debt crises hit very differently depending on where they happen. Countries that borrowed heavily in a foreign currency during the 1980s Latin American debt crisis had no printing option when foreign lenders pulled back, and mostly went through default and restructuring instead. Japan, by contrast, carries one of the highest government-debt-to-GDP ratios in the world, but because that debt is almost entirely yen-denominated and owed largely to its own citizens and institutions, its central bank has been able to lean on tool 4 for decades without a default.\n\nSo before asking whether a country's deleveraging will be 'beautiful' or 'ugly,' the more basic question is whether tool 4 is even on the menu.",
+          "es": "Los 4 herramientas asumen que la deuda está en la moneda propia del banco central. Si la deuda está en moneda extranjera, no se puede imprimir para pagarla — solo quedan la austeridad y el impago. Esto explica por qué las crisis de deuda de los 1980 en América Latina (deuda en dólares) terminaron en impago, mientras Japón, con deuda casi toda en yenes, ha podido usar la herramienta 4 durante décadas sin impago.",
+          "ko": "네 가지 도구는 모두 부채가 자국 중앙은행이 발행할 수 있는 통화로 표시되어 있다고 가정합니다. 부채가 외국 통화로 표시되어 있다면 화폐를 찍어 갚을 수 없고, 긴축과 채무불이행만 남습니다. 1980년대 중남미 부채 위기(달러 표시 부채)가 대부분 채무불이행으로 끝난 이유이자, 거의 전부 엔화 표시인 일본이 수십 년간 채무불이행 없이 4번 도구를 써온 이유입니다.",
+          "zh": "这四种工具都假设债务以本国央行能够发行的货币计价。如果债务以外币计价，就无法靠印钞偿还——只剩紧缩和违约。这解释了为什么1980年代拉美债务危机（美元计价债务）大多以违约收场，而债务几乎全部以日元计价的日本，几十年来一直能靠第4种工具而不违约。",
+          "ja": "4つの手段はすべて、債務が自国中央銀行が発行できる通貨建てであることを前提としています。債務が外貨建てなら紙幣を刷って返済することはできず、緊縮とデフォルトしか残りません。1980年代のラテンアメリカ債務危機（ドル建て債務）の多くがデフォルトに終わった理由であり、ほぼ全て円建てである日本が数十年間デフォルトなしに4番目の手段を使えてきた理由です。"
+        }
       }
     ],
     "takeaway": {

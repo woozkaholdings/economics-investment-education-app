@@ -93,7 +93,7 @@ export const lessons = [
     subtitle: {"en":"75-100 years — the big wave underneath","es":"75-100 años — la gran ola debajo","ko":"75-100년 — 밑에 깔린 큰 파도","zh":"75-100年——潜藏的大浪","ja":"75-100年 — 底に潜む大きな波"},
   },
   {
-    id: 34, track: "economy", icon: "🏗️", color: "#4f46e5", minutes: 2,
+    id: 34, track: "economy", icon: "🏗️", color: "#4f46e5", minutes: 3,
     title: {"en":"Deleveraging: The 4 Tools","es":"Desapalancamiento: Las 4 Herramientas","ko":"디레버리징: 4가지 도구","zh":"去杠杆：4大工具","ja":"デレバレッジング：4つの手段"},
     subtitle: {"en":"How economies deal with too much debt","es":"Cómo las economías manejan demasiada deuda","ko":"경제가 과다 부채를 다루는 방법","zh":"经济如何应对过多债务","ja":"経済が過大な借金にどう対処するか"},
   },
