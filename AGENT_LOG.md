@@ -274,7 +274,12 @@ for the history. No open P1/P2 items.
     this):** making kids material child-facing — child accounts, a kids mode, kid-directed lesson UI —
     changes COPPA classification, store privacy category, and ad eligibility. §10.3 reserves it for the
     owner.
-22. **[Structure] Renumber lesson ids to match track order.** Deferred deliberately 2026-08-07 when the
+22. **[Structure — OWNER-DIRECTED PICK for the next scheduled run, set 2026-08-14 (interactive session,
+    after the fifth dev-agent run).** Do not default back to another lesson deepening; pick this item
+    next instead. The owner's stated reason: five consecutive scheduled runs today (and many more this
+    week) all picked "deepen a lesson," the same single-backlog-item drift pattern the weekly review's
+    P-1 already flagged once for lesson-adding — take on structural work instead of extending that
+    streak.] Renumber lesson ids to match track order.** Deferred deliberately 2026-08-07 when the
     two tracks landed — see `DECISIONS.md`, "Two lesson tracks." The money track runs 13→26 and the
     economy track 1→12, so a new learner's first lesson is numbered 13. Cosmetic, but it reads as a
     seam. Renumbering is blocked on remapping **142 in-prose cross-references** ("Lesson 15") across
@@ -6741,10 +6746,29 @@ direction is the problem.
   economy track, and the new section is mechanics/economics content, not decision-psychology. Did not
   touch `src/content/lessonContent.money.js` — this run's edit stayed entirely inside the economy-track
   file, confirmed by verification point 3's chunk-size check above.
-- **Next run should pick**: the minutes clause still needs ~8 more minutes (112/120). Re-derive the
-  thinnest-lesson list fresh from `lessons.js` rather than reusing this note — as of this run, the
-  remaining candidates at the 2-minute floor are lessons 1, 3, 5, 6, 7, 12 (economy track, now excluding
-  4, 8, 9, 10, and 11) and 21, 22, 25, 34, 36 (money track, unchanged). Given this item's own "note the
-  failure mode" text about single-item runs drifting unexamined, a future run might also consider
-  breaking pattern with item 22 (lesson id renumbering, still blocked on nothing except being its own
-  dedicated scripted change) rather than defaulting straight to a sixth consecutive deepening pick.
+- **Next run should pick**: superseded by the owner directive immediately below — pick item 22, not
+  another deepening. (For reference, the minutes clause still needs ~8 more minutes / 112/120, and the
+  remaining deepening candidates at the 2-minute floor are lessons 1, 3, 5, 6, 7, 12 economy track plus
+  21, 22, 25, 34, 36 money track — unchanged from this run's own count, kept here only so that figure
+  doesn't need re-deriving once item 22 is done and the treadmill resumes.)
+
+### 2026-08-14 (owner directive, interactive session) — Pick item 22 next, not another deepening
+
+- **What happened**: immediately after this run's commit landed, the owner said explicitly: "Take on
+  item 22 next run instead of another deepening." Five consecutive scheduled runs today (this run plus
+  the four before it — lessons 9, 11, 10, 4) had each picked "deepen a lesson," continuing a longer
+  streak from 2026-08-12/13. That's the same single-backlog-item drift shape the weekly review's P-1
+  already named once, for lesson-*adding* rather than lesson-*deepening* — the owner is heading it off
+  again before it needs a formal correction.
+- **What was done**: marked backlog item 22 (renumber lesson ids to match track order) as an
+  owner-directed pick for the next scheduled run, with the reasoning recorded inline so it survives
+  independently of this note. Did not touch item 17's minutes-clause figures or pick a lesson to deepen
+  this pass — this is a backlog-priority change only, not a content run, so no build/test/browser
+  verification applies. `git status` was clean before and after (only the long-standing untracked
+  `economic-cycles-v6.jsx`).
+- **Note for whoever picks up item 22**: it is a bigger, riskier change than a single-lesson deepening —
+  142 in-prose cross-references across five languages, plus `quizData.lesson`, the review scheduler, and
+  persisted `ecycles_completed_lessons` all need a scripted, verified id→id remap, not a hand edit. It
+  may not fit in one run's "small enough to review in minutes" bar; if so, split it into its own
+  sub-steps (e.g. build and verify the remap script first, apply it in a follow-up run) rather than
+  forcing it into a single commit or reverting to a lesson deepening instead.
