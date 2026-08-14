@@ -262,26 +262,26 @@
   "11": {
     "es": {
       "reviewedBy": "Claude (Sonnet 5, economics-app-dev-agent)",
-      "reviewedDate": "2026-08-13",
-      "sourceHash": "f8c39589bd83ad0b",
+      "reviewedDate": "2026-08-14",
+      "sourceHash": "8cc0ce90c52df829",
       "method": "ai"
     },
     "ja": {
       "reviewedBy": "Claude (Sonnet 5, economics-app-dev-agent)",
-      "reviewedDate": "2026-08-13",
-      "sourceHash": "f8c39589bd83ad0b",
+      "reviewedDate": "2026-08-14",
+      "sourceHash": "8cc0ce90c52df829",
       "method": "ai"
     },
     "ko": {
       "reviewedBy": "Claude (Sonnet 5, economics-app-dev-agent)",
-      "reviewedDate": "2026-08-13",
-      "sourceHash": "f8c39589bd83ad0b",
+      "reviewedDate": "2026-08-14",
+      "sourceHash": "8cc0ce90c52df829",
       "method": "ai"
     },
     "zh": {
       "reviewedBy": "Claude (Sonnet 5, economics-app-dev-agent)",
-      "reviewedDate": "2026-08-13",
-      "sourceHash": "f8c39589bd83ad0b",
+      "reviewedDate": "2026-08-14",
+      "sourceHash": "8cc0ce90c52df829",
       "method": "ai"
     }
   },

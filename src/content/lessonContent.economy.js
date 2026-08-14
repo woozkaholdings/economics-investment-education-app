@@ -563,6 +563,22 @@ export const lessonContent = {
           "zh": "GDP、CPI、PMI、VIX、信用利差——读懂经济状态的关键指标。",
           "ja": "GDP、CPI、PMI、VIX、クレジットスプレッド — 経済の状態を読む重要指標。"
         }
+      },
+      {
+        "heading": {
+          "en": "From Gauges to a Diagnosis: Matching Indicators to Phase",
+          "es": "De Indicadores a un Diagnóstico: Cómo Encajan con Cada Fase",
+          "ko": "지표에서 진단으로: 국면과 지표 맞춰보기",
+          "zh": "从指标到诊断：将指标与阶段对应",
+          "ja": "指標から診断へ：指標と局面を対応させる"
+        },
+        "body": {
+          "en": "Knowing what each gauge measures is only half the job — the other half is knowing what a normal reading looks like in each phase from Lesson 10, so an unusual one stands out.\n\nIn Expansion, the gauges tend to point the same direction: GDP rising steadily, CPI near the Fed's target, PMI above 50 and climbing, VIX low, and credit spreads narrow — lenders confident and growth broad-based.\n\nAt Peak, the gauges start to disagree, which is itself the signal: GDP growth is still positive but decelerating, CPI has drifted above target, PMI hovers near 50 and starts slipping, VIX ticks up from its lows, and credit spreads begin to widen even while headlines still sound upbeat.\n\nIn Contraction, the gauges realign in the other direction: GDP falling, CPI cooling as weaker demand pulls prices down, PMI below 50, VIX elevated or spiking, and credit spreads wide as lenders demand extra compensation for rising default risk.\n\nAt Trough, the gauges are still weak in level but starting to turn: GDP near its low point, CPI low, PMI below 50 but stabilizing or ticking up, VIX easing back from its extremes, and credit spreads beginning to narrow. The earliest signs of a turn tend to show up in the leading indicators (PMI, VIX, credit spreads) before GDP itself confirms it, since GDP only measures activity that already happened.\n\nThat lag is exactly why watching several gauges together, instead of waiting for GDP alone to confirm a turn, is what lets you read the cycle rather than just react to it after the fact.",
+          "es": "Cada fase tiene una firma típica de indicadores: en Expansión todos apuntan igual (PIB subiendo, PMI >50, VIX bajo, spreads estrechos); en Pico empiezan a discrepar (PIB desacelera, PMI ronda 50, VIX y spreads suben) — eso es la señal. En Contracción todos se alinean a la baja; en Valle los indicadores líderes (PMI, VIX, spreads) giran antes que el PIB, que siempre confirma tarde.",
+          "ko": "각 국면마다 지표들의 전형적인 조합이 있습니다: 확장기에는 모두 같은 방향(GDP 상승, PMI 50 이상, VIX 낮음, 스프레드 좁음)을 가리키고, 정점에서는 지표들이 서로 어긋나기 시작합니다(GDP 둔화, PMI 50 근처, VIX·스프레드 상승) — 그 어긋남 자체가 신호입니다. 수축기에는 모두 하락 쪽으로 정렬되고, 저점에서는 선행 지표(PMI, VIX, 스프레드)가 항상 뒤늦게 확인되는 GDP보다 먼저 방향을 바꿉니다.",
+          "zh": "每个阶段都有典型的指标组合：扩张期所有指标同向（GDP上升、PMI高于50、VIX低、利差窄）；顶峰时指标开始分歧（GDP放缓、PMI接近50、VIX和利差上升）——分歧本身就是信号。收缩期所有指标一致走弱；触底期领先指标（PMI、VIX、利差）会先于总是滞后确认的GDP转向。",
+          "ja": "各局面には指標の典型的な組み合わせがある。拡大期は全指標が同じ方向（GDP上昇、PMIは50超、VIXは低い、スプレッドは狭い）を示す。ピークでは指標が食い違い始める（GDP鈍化、PMIは50付近、VIXとスプレッドが上昇）——その食い違い自体がシグナル。収縮期は全指標が下向きに揃い、底では先行指標（PMI、VIX、スプレッド）が、常に遅れて確認されるGDPより先に転換する。"
+        }
       }
     ],
     "takeaway": {

@@ -106,7 +106,7 @@ export const lessons = [
     subtitle: {"en":"Expansion → Peak → Contraction → Trough","es":"Expansión → Pico → Contracción → Valle","ko":"확장 → 정점 → 수축 → 저점","zh":"扩张 → 顶峰 → 收缩 → 低谷","ja":"拡大 → ピーク → 収縮 → 底"},
   },
   {
-    id: 11, track: "economy", icon: "📊", color: "#b45309", minutes: 2,
+    id: 11, track: "economy", icon: "📊", color: "#b45309", minutes: 3,
     title: {"en":"Reading Economic Indicators","es":"Leyendo Indicadores Económicos","ko":"경제 지표 읽기","zh":"解读经济指标","ja":"経済指標を読む"},
     subtitle: {"en":"The dashboard of the economic machine","es":"El tablero de la máquina económica","ko":"경제 기계의 대시보드","zh":"经济机器的仪表板","ja":"経済マシンのダッシュボード"},
   },
