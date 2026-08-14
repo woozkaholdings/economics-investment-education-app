@@ -213,6 +213,22 @@ export const lessonContent = {
           "zh": "利率升高 → 借贷减少 → 支出减少 → 收入下降 → 衰退。\n\n如果衰退太严重，央行降息。低利率 → 更多支出 → 新的扩张。这个周期每5-8年重复一次。",
           "ja": "金利上昇 → 借入減 → 支出減 → 収入減 → 景気後退。\n\n深刻なら中央銀行が利下げ。低金利 → 支出増 → 新たな拡大。5-8年ごとに繰り返す。"
         }
+      },
+      {
+        "heading": {
+          "en": "Why This Fix Has a Limit",
+          "es": "Por Qué Este Arreglo Tiene un Límite",
+          "ko": "이 해결책에 한계가 있는 이유",
+          "zh": "为什么这个方案有限度",
+          "ja": "この解決策に限界がある理由"
+        },
+        "body": {
+          "en": "There's a hidden assumption behind the fix in the last section: the central bank has room to cut rates. Each time the short-term cycle turns down, cutting rates works because the previous expansion pushed rates up first — there's slack to give back. But look again at the question at the end of this lesson: if each cycle's peak carries more debt than the one before it, rates don't always return to where they started. Debt payments compete with new borrowing for a household's or a business's income, so lenders and central banks tend to keep rates a little lower on average, cycle after cycle, just to keep debt serviceable.\n\nRun that pattern across many 5-8 year cycles — decades, not years — and the room to cut keeps shrinking. Eventually rates approach zero, and the tool that ended every previous recession in this lesson (lower rates → cheaper borrowing → renewed spending) runs out of room to use. That's not hypothetical: it's the situation Lesson 9 describes, where central banks turned to buying bonds directly (quantitative easing) because cutting rates further wasn't possible.\n\nThis is the seam between the two debt cycles: the short-term cycle in this lesson resolves through nothing more than a rate cut, roughly every 5-8 years. The long-term cycle — the subject of the next lesson — is what happens when decades of these small cycles compound into a debt burden that a rate cut alone can no longer fix, and a different, harder kind of adjustment becomes necessary instead.",
+          "es": "Este arreglo depende de que el banco central tenga margen para bajar tasas. Cada ciclo corto se resuelve con un recorte — pero si cada pico acumula más deuda que el anterior, ese margen se reduce con el tiempo.\n\nEventualmente las tasas se acercan a cero y el recorte ya no basta (como en la Lección 9, que llevó a la compra directa de bonos).\n\nEsta es la diferencia entre el ciclo corto — resuelto con un recorte de tasas cada 5-8 años — y el ciclo largo, que aparece cuando décadas de estos ciclos acumulan una deuda que un simple recorte ya no puede arreglar.",
+          "ko": "이 해결책은 중앙은행이 금리를 낮출 여력이 있다는 전제에 달려 있습니다. 매 단기 순환은 금리 인하로 해결되지만, 매번 정점의 부채가 이전보다 크다면 그 여력은 점점 줄어듭니다.\n\n결국 금리가 0%에 가까워지면 인하만으로는 부족해집니다 (레슨 9에서 다룬, 채권을 직접 매입하게 된 상황).\n\n이것이 5-8년마다 금리 인하로 풀리는 단기 순환과, 수십 년간 쌓인 부채를 금리 인하만으로 해결할 수 없을 때 나타나는 장기 순환의 차이입니다.",
+          "zh": "这个方案的前提是央行有降息的空间。每个短期周期都靠降息化解——但如果每次高峰的债务都比上一次更多，这个空间会逐渐缩小。\n\n最终利率接近零，降息不再够用（如第9课所述，央行转向直接购买债券）。\n\n这就是短期周期（每5-8年靠降息化解）与长期周期（数十年积累的债务无法仅靠降息解决时出现）之间的区别。",
+          "ja": "この解決策は、中央銀行に金利を下げる余地があることが前提です。短期サイクルはそれぞれ利下げで解決されますが、毎回のピークで前回より多くの債務を抱えていれば、その余地は次第に縮小します。\n\nやがて金利がゼロに近づくと、利下げだけでは不十分になります（レッスン9で扱った、債券を直接購入するようになった状況）。\n\nこれが、5-8年ごとに利下げで解決する短期サイクルと、数十年にわたる蓄積が利下げだけでは解決できない負債になったときに現れる長期サイクルとの違いです。"
+        }
       }
     ],
     "takeaway": {

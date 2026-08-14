@@ -71,7 +71,7 @@ export const lessons = [
     subtitle: {"en":"What really matters in the long run","es":"Lo que realmente importa a largo plazo","ko":"장기적으로 정말 중요한 것","zh":"长期来看真正重要的是什么","ja":"長期的に本当に重要なこと"},
   },
   {
-    id: 4, track: "economy", icon: "🔁", color: "#d97706", minutes: 2,
+    id: 4, track: "economy", icon: "🔁", color: "#d97706", minutes: 3,
     title: {"en":"The Short-Term Debt Cycle","es":"El Ciclo de Deuda a Corto Plazo","ko":"단기 부채 순환","zh":"短期债务周期","ja":"短期債務サイクル"},
     subtitle: {"en":"5-8 years — the business cycle most people know","es":"5-8 años — el ciclo que la mayoría conoce","ko":"5-8년 — 대부분의 사람들이 아는 경기 순환","zh":"5-8年——大多数人熟知的经济周期","ja":"5-8年 — ほとんどの人が知る景気循環"},
   },
