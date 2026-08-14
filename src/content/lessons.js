@@ -96,7 +96,7 @@ export const lessons = [
     subtitle: {"en":"A historically reliable recession predictor since 1955","es":"Un predictor de recesión históricamente fiable desde 1955","ko":"1955년 이후 역사적으로 신뢰할 수 있는 경기침체 예측 지표","zh":"自1955年以来历史上较为可靠的衰退预测指标","ja":"1955年以来、歴史的に信頼性の高い景気後退予測指標"},
   },
   {
-    id: 9, track: "economy", icon: "🏦", color: "#be185d", minutes: 2,
+    id: 9, track: "economy", icon: "🏦", color: "#be185d", minutes: 3,
     title: {"en":"QE & QT: The Fed's Power Tools","es":"QE y QT: Las Herramientas del Fed","ko":"QE & QT: 연준의 강력한 도구","zh":"QE与QT：美联储的强力工具","ja":"QE & QT：FRBのパワーツール"},
     subtitle: {"en":"When rates at 0% aren't enough","es":"Cuando las tasas en 0% no son suficientes","ko":"0% 금리로도 충분하지 않을 때","zh":"当利率降到0%还不够时","ja":"金利0%でも不十分な時"},
   },

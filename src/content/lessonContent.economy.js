@@ -463,6 +463,22 @@ export const lessonContent = {
           "zh": "QE的反面。美联储让债券到期不再投资来缩减资产负债表。\n\n2022年起每月950亿美元的速度实施，2024年放缓节奏，资产负债表从9万亿美元的峰值持续下降。",
           "ja": "QEの逆。FRBが債券を再投資せず満期にしバランスシートを縮小。\n\n2022年から月950億ドルのペースで実施し、2024年には速度を緩めながら、バランスシートは9兆ドルのピークから縮小しています。"
         }
+      },
+      {
+        "heading": {
+          "en": "From the Bond Market to Your Mortgage Rate",
+          "es": "Del Mercado de Bonos a tu Tasa Hipotecaria",
+          "ko": "채권 시장에서 모기지 금리까지",
+          "zh": "从债券市场到房贷利率",
+          "ja": "債券市場から住宅ローン金利まで"
+        },
+        "body": {
+          "en": "Buying government bonds is a strange way to help a small business get a loan or a family buy a house — the Fed never lends to either one directly. The connection runs through a chain of linked prices. A 30-year mortgage rate is priced as a spread on top of the 10-year Treasury yield, so when QE's buying pushes that yield down, mortgage rates tend to fall with it. Corporate bonds work the same way, so cheaper government borrowing tends to cheapen business borrowing too, encouraging investment and hiring. There's a second channel: as bond yields fall, investors chasing a decent return keep rotating into stocks and other assets, which raises the value of what people already own — a \"wealth effect\" that can make people feel richer and spend more, even if they never bought a single bond. Both channels take time, and neither reaches everyone equally: cheaper borrowing helps most whoever is already creditworthy enough to qualify for a loan, and the wealth effect only reaches people who already own financial assets or a home.",
+          "es": "Un bono del Tesoro a 10 años fija el precio de las hipotecas a 30 años, así que cuando el QE baja ese rendimiento, las hipotecas también bajan — igual con los bonos corporativos. Además, al caer los rendimientos, los inversores rotan hacia acciones, elevando su valor: un 'efecto riqueza' que hace gastar más a quienes ya poseen activos. Ninguno de los dos canales llega por igual a todos.",
+          "ko": "10년물 국채 금리가 30년 모기지 금리의 기준이 되므로, QE로 그 금리가 내려가면 모기지 금리도 함께 내려갑니다 — 회사채도 마찬가지입니다. 또한 채권 수익률이 낮아지면 투자자들이 주식 등으로 옮겨가며 자산 가치가 오르는 '부의 효과'가 생기는데, 이는 이미 자산을 가진 사람에게만 해당됩니다.",
+          "zh": "10年期国债收益率是30年期房贷利率的定价基准，QE压低该收益率时，房贷利率也随之下降——公司债同理。此外，债券收益率下降促使投资者转向股票等资产，推高资产价值，形成让已持有资产者更愿意消费的\"财富效应\"。这两条渠道都无法惠及所有人。",
+          "ja": "10年国債利回りは30年住宅ローン金利の基準となるため、QEでその利回りが下がると住宅ローン金利も下がります——社債も同様です。さらに債券利回りの低下で投資家が株式などへ資金を移し資産価格が上昇、既に資産を持つ人の消費を促す「資産効果」が生まれますが、これは資産を持つ人にしか及びません。"
+        }
       }
     ],
     "takeaway": {

@@ -227,17 +227,19 @@ for the history. No open P1/P2 items.
     *Previously: subordinate to item 24 — prefer a judgment/mindset
     lesson over another mechanics lesson unless there's a reason not to.* Derived from `LAUNCH_PLAN.md`
     §4.3, not owner-assigned but the plan's own explicit gate: the catalogue is now **40 lessons /
-    122,042 English characters / 108 minutes** end to end — re-measured 2026-08-13 (fifth run same date;
+    123,075 English characters / 109 minutes** end to end — re-measured 2026-08-14 (dev-agent run;
     same method: summing every lesson's `sections[].body.en` + `takeaway.en` + `thinkAbout.en` from
     `content/lessonContent.js` and its `minutes` from `content/lessons.js`; 28 money / 12 economy).
     Lesson 40 ("Does One Lucky Win Prove You Have a System?", overconfidence after a lucky outcome), a
     thirteenth judgment lesson per item 24, was the last lesson *added* (2026-08-09) — see run log.
     **The §4.3 gate's lesson-count half (≥40 lessons) is now met for
-    the first time.** The minutes half (~120 min / 2 hours) is not: **108/120 minutes** — moved by 1
-    minute 2026-08-13 (fifth run) by deepening lesson 20 (Insurance: Trading a Small Certain Cost for
-    Protection from a Large Uncertain One), following that same date's four earlier runs (lessons 15, 16,
-    17, 19) and the three prior runs' identical moves on lessons 13, 8, and 14. No run this date added a
-    41st lesson, per this item's own "depth in existing lessons" guidance above. Roughly 12 minutes short.
+    the first time.** The minutes half (~120 min / 2 hours) is not: **109/120 minutes** — moved by 1
+    minute 2026-08-14 by deepening lesson 9 (QE & QT: The Fed's Power Tools, adding a transmission-
+    mechanism section explaining how Fed bond-buying reaches mortgage/corporate borrowing rates and
+    asset prices), following 2026-08-13's five runs (lessons 15, 16, 17, 19, 20) and the three prior
+    runs' identical moves on lessons 13, 8, and 14 — the first economy-track lesson deepened by this
+    item (all eight prior deepenings were money-track). No run this date added a 41st lesson, per this
+    item's own "depth in existing lessons" guidance above. Roughly 11 minutes short.
     Per §4.3, Phase 0 ("free, instrumented, no payment code") doesn't end until the catalogue
     reaches roughly 40 lessons / 2 hours of content **and** ≥40% of installers finish lesson 1 — the
     lesson-count clause is satisfied but the other two clauses (minutes, completion rate) are not, so
@@ -247,7 +249,8 @@ for the history. No open P1/P2 items.
     figure, lesson-14 deepening), 2026-08-13 (104-minute figure, lesson-15 deepening), 2026-08-13
     (second run, 105-minute figure, lesson-16 deepening), 2026-08-13 (third run, 106-minute
     figure, lesson-17 deepening), 2026-08-13 (fourth run, 107-minute figure, lesson-19
-    deepening), and again 2026-08-13 (fifth run, 108-minute figure, lesson-20 deepening).
+    deepening), 2026-08-13 (fifth run, 108-minute figure, lesson-20 deepening), and again
+    2026-08-14 (109-minute figure, lesson-9 deepening).
     Per §4.3 verbatim: "the highest-value monetization work right now is writing
     lessons, not writing billing code." Do not start billing/paywall work ahead of this gate — see item
     15. **Note the failure mode this item created:** nine consecutive scheduled runs each picked "add one
@@ -6291,3 +6294,114 @@ direction is the problem.
   the build and the one closest to Vite's default 500 kB warning threshold — if item 17's minutes work
   adds much more money-track content before a further split, watch for that threshold being approached
   again (see this run's new `DECISIONS.md` entry's "Revisit when" note).
+
+### 2026-08-14 (second run) — Deepen lesson 9 (backlog item 17, moves the §4.3 minutes clause by +1)
+
+- **Orient**: `git status` showed only the same long-standing `economic-cycles-v6.jsx` untracked file
+  every run since 2026-08-04 has left alone — no tracked-file changes, so nothing to treat as another
+  session's in-progress work. Read the PRIORITY BLOCK and the previous (item-25) entry's "Next run
+  should pick," which named item 17 as the strongest remaining open item.
+- **What was done**: re-derived the thinnest-lesson candidate list fresh from `lessons.js` (not reused
+  from an old note, per item 17's own guidance) — `minutes: 2` lessons, excluding 8 and 14 which were
+  already deepened once (they started at `minutes: 1`, not `minutes: 2`, so they still read "2" today
+  despite having already been touched): economy track 1, 3, 4, 5, 6, 7, 9, 10, 11, 12; money track 21,
+  22, 25, 34, 36. Picked **lesson 9** ("QE & QT: The Fed's Power Tools") — the first economy-track
+  lesson this item has deepened (all eight prior deepenings, 2026-08-12 through 2026-08-13, were
+  money-track). Read the lesson's two existing sections: section 1 explains QE's mechanics (the Fed
+  buying bonds, pushing bond prices up/yields down), section 2 explains QT as QE's mirror image.
+  Neither explains *how* that bond-buying actually reaches an ordinary borrower or saver — the text
+  says "makes borrowing cheaper across the economy" without saying how, and the lesson's own
+  `thinkAbout` prompt raises wealth inequality ("who benefits most from QE?") with no supporting
+  mechanism in the body to reason from. Added a third section, "From the Bond Market to Your Mortgage
+  Rate": explains the two transmission channels — (1) mortgage and corporate-bond rates are priced as
+  spreads over Treasury yields, so QE's yield-suppression passes through to real borrowing costs, and
+  (2) falling bond yields push investors toward stocks and other assets, raising asset values and
+  producing a "wealth effect" that only reaches existing asset owners — closing the gap between the
+  `thinkAbout` prompt's question and the body's own explanation, without answering the question itself
+  or making any forward-looking claim about rates. `grep -in "wealth effect\|transmission mechanism\|
+  mortgage rate" src/content/lessonContent.js src/content/lessons.js src/content/glossary.js` before
+  writing returned zero hits, confirming no duplication elsewhere in the catalogue. Written and
+  translated (en/es/ko/zh/ja) in the same pass, condensed (not literal) translation style matching the
+  lesson's existing two sections. Updated `lessons.js`'s `minutes: 2` → `minutes: 3` for lesson 9.
+  Marked all four newly-stale translations reviewed via `node scripts/translation-review.mjs mark 9
+  <lang> "Claude (Sonnet 5, economics-app-dev-agent)" ai` — a new step this run added to the pattern:
+  every prior single-lesson-deepening run since P-4's ledger existed left its lesson's translations
+  stale for a later batch pass rather than marking them itself; since the reviewer of record for `ai`
+  reviews is Claude writing the same-pass translations, marking immediately keeps the ledger's "0
+  stale" state accurate without depending on a future session doing a batch catch-up. Refreshed
+  `LAUNCH_READINESS.md`'s lesson-catalogue row (123,075 chars/109 min, was 122,042/108) and this file's
+  item-17 paragraph (lead figures, the `LAUNCH_READINESS.md`-refresh history line, and the "moved
+  by"/"roughly N minutes short" sentences) with the same figures.
+- **Verified**:
+  1. Word-count math, via bootstrapped Node (`--input-type=module` + named import): lesson 9's
+     `sections[].body.en` + `heading.en`s + `takeaway.en` + `thinkAbout.en` started at 390 words (→ 2
+     min, `Math.round(390/200) = 2`). Drafted the new section at 186 words (heading + body) — total 576
+     words → `Math.round(576/200) = 3`, matching the `minutes: 3` now in `lessons.js`, with margin on
+     both sides (would need ≥500 words added to fall back to 2, or ≥700 to overshoot to 4).
+  2. `npm test` (`check-data.mjs` + `check-blindspot.mjs`) — before marking translations reviewed:
+     `PASS: 0 failure(s), 1 warning(s)` with the coverage summary correctly showing "1 stale" per
+     language (proof the ledger's drift detection fired on this run's own edit, not just on someone
+     else's). After marking: `PASS: 0 failure(s), 1 warning(s)`, warning line back to "0 stale" for all
+     four languages. All six blindspot `ok:` checks pass both times.
+  3. `npm run build` — `✓ 64 modules transformed`, no chunk-size warning. `lessonContent.economy-*.js`
+     (the chunk this lesson's content lives in, per the previous run's per-track split) grew from
+     69.83 kB to 72.70 kB (33.24 kB gzip) — consistent with one new section's worth of text across 5
+     languages; `lessonContent.money-*.js` untouched at 482.39 kB, confirming the edit stayed inside
+     the economy-track chunk as expected.
+  4. Recomputed catalogue-wide totals via the same bootstrapped-Node method `LAUNCH_READINESS.md`
+     documents: 40 lessons / 123,075 English chars / 109 minutes (was 122,042 / 108; 28 money / 12
+     economy, unchanged). Confirms the `LAUNCH_READINESS.md` and item-17 edits above are accurate, not
+     asserted.
+  5. `git status --short` after build showed exactly `src/content/lessonContent.economy.js`,
+     `src/content/lessons.js`, `scripts/translation-review-ledger.json`, `LAUNCH_READINESS.md`, plus
+     this `AGENT_LOG.md` edit newly modified — `economic-cycles-v6.jsx`'s untracked status was
+     unchanged, confirmed both before and after this run's edits.
+  6. Live browser check against a static `npm run build` + local Python server (the documented
+     workaround for this sandbox): unlocked lesson 9 via a `localStorage` write (lessons 1-8 marked
+     complete, matching how the app's own unlock logic works — not a test-only shortcut to different
+     behavior), opened it, and confirmed via `read_page`/`querySelectorAll('h2')` that all three
+     section headings render including the new one, the new section's English body text matches what
+     was written, and `read_network_requests` showed only `lessonContent.economy-*.js` fetched — not
+     the money chunk — confirming the previous run's per-track lazy-loading still works correctly with
+     newly-added content, not just the content that existed when it was built.
+- **Adversarial self-check**:
+  - *Blindspot register regression*: `git diff --unified=0 -- src/content/lessonContent.economy.js
+    src/content/lessons.js | grep -iE "dalio|you should (buy|sell|invest)|we recommend|be bullish|be
+    cautious|child|kid.?mode|nowDate|april 2026|the fed will|rates will|expect the fed"` returned zero
+    matches — the extra terms beyond the usual grep (`the fed will`, `rates will`, `expect the fed`)
+    were added specifically because this section explains monetary-policy transmission, where a
+    forward-looking rate/policy prediction was the most plausible advice-adjacency risk; the section as
+    written only explains the historical/mechanical *how*, never predicts future Fed action or rates.
+    `npm run check-blindspot` (part of `npm test` above) independently confirms no advice-adjacent
+    phrasing anywhere in `src/content/`. No regression.
+  - *DECISIONS.md conflict*: re-read the closed-decision section headers before editing. The new
+    section stayed inside the existing `.js`-module content system (specifically, the per-track file
+    this item's previous run created — `lessonContent.economy.js`, not the old single-file layout),
+    didn't touch `localStorage` progress-state keys, and used `lessons.js`'s existing `track` field
+    rather than inventing a new grouping — consistent with the "Content as `.js` modules,"
+    "localStorage-only progress state," and this item's own "`LessonReader` chunk split per track"
+    closed decisions. No conflict.
+  - *Already-done backlog item*: checked "Completed and pruned" — nothing there resembles deepening
+    lesson 9 or a QE-transmission-mechanism section anywhere in the catalogue. Grepped the full
+    catalogue for "wealth effect", "transmission mechanism", and "mortgage rate" (see above) — zero
+    hits before this run's edit. Not a duplicate. Also confirmed this is item 17's first economy-track
+    pick (all eight prior deepenings were money-track) — not a re-run of the item-24 money-track
+    judgment-lesson pattern, since QE transmission is mechanics/economics content, squarely inside item
+    17's economy-track lane, not item 24's frozen money-track judgment lane.
+  - *Own verification claim*: every number and command above is reproducible from the current tree —
+    the word-count script, `npm test` (both before and after marking), `npm run build`, and the
+    catalogue-totals script were all run against the tree as it stands, not against an intermediate
+    state. The live browser check (point 6) is disclosed with its actual method (a `localStorage`
+    unlock write, since lesson 9 is gated behind completing lessons 1-8) rather than glossed over as an
+    unqualified "verified in the browser."
+- **Not touched, and why**: `economic-cycles-v6.jsx` — unrelated, still reference-only, untouched. Did
+  not add a 41st lesson — this run's own log entry states which clause it moves (minutes, not count),
+  per the PRIORITY BLOCK's guidance. Did not touch item 24's money-track judgment scope — lesson 9 is
+  economy track, and the new section is mechanics/economics content, not decision-psychology. Did not
+  touch `src/content/lessonContent.money.js` — this run's edit stayed entirely inside the economy-track
+  file, confirmed by point 3's chunk-size check above.
+- **Next run should pick**: the minutes clause still needs ~11 more minutes (109/120). Re-derive the
+  thinnest-lesson list fresh from `lessons.js` rather than reusing this note — as of this run, the
+  remaining candidates at the 2-minute floor are lessons 1, 3, 4, 5, 6, 7, 10, 11, 12 (economy track,
+  now excluding 8 and 9) and 21, 22, 25, 34, 36 (money track, unchanged). Otherwise: item 22 (lesson id
+  renumbering, still blocked on nothing except being its own dedicated scripted change).
