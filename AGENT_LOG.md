@@ -227,8 +227,8 @@ for the history. No open P1/P2 items.
     *Previously: subordinate to item 24 — prefer a judgment/mindset
     lesson over another mechanics lesson unless there's a reason not to.* Derived from `LAUNCH_PLAN.md`
     §4.3, not owner-assigned but the plan's own explicit gate: the catalogue is now **40 lessons /
-    129,069 English characters / 113 minutes** end to end — re-measured 2026-08-14 (dev-agent run,
-    seventh run this date; same method: summing every lesson's `sections[].body.en` + `takeaway.en` +
+    130,217 English characters / 114 minutes** end to end — re-measured 2026-08-14 (dev-agent run,
+    eighth run this date; same method: summing every lesson's `sections[].body.en` + `takeaway.en` +
     `thinkAbout.en` from `content/lessonContent.economy.js`+`content/lessonContent.money.js` and its
     `minutes` from `content/lessons.js`; 28 money / 12 economy).
     Lesson 40 ("Does One Lucky Win Prove You Have a System?", overconfidence after a lucky outcome), a
@@ -7031,3 +7031,114 @@ direction is the problem.
   BLOCK's underlying concern (a single backlog item consuming many consecutive runs unexamined) applies
   to this deepening pattern too, not just the original lesson-adding treadmill; if this becomes the next
   ten-plus consecutive picks, that is itself worth flagging to the owner rather than continuing silently.
+
+### 2026-08-14 (eighth run) — Deepen lesson 22 (Are You Checking, or Just Confirming?) with an algorithmic-feed-amplification section (backlog item 17, moves §4.3 minutes clause 113->114/120)
+
+- **Orient**: `git status` showed only the same long-standing untracked `economic-cycles-v6.jsx` — no
+  tracked-file changes, matching the memory note that this file is reference-only and never a build
+  fixture. Noted `git log` showed `ffd23d2 Refresh market data (asOf=2026-08-14)` as HEAD, one commit
+  ahead of the seventh run's own commit (`c05c46f`) — confirmed via `git show --stat` this is a
+  separate automated market-data-refresh process that only ever touches `public/data/market.json` and
+  doesn't write `AGENT_LOG.md`, so the log's last entry (seventh run, lesson 34) was still the correct
+  place to continue from, not stale.
+- **Picked from the seventh run's own candidate list** (money lessons 9, 10, 13, 22, 24; economy 29,
+  31, 33, 35, 36, 40 — all confirmed genuinely at 2 sections, money id 2 already excluded as a false
+  positive). Chose money id 22, "Are You Checking, or Just Confirming?" (confirmation bias — a judgment
+  lesson under item 24, not item 17's original mechanics framing, but item 24 only freezes *adding* a
+  14th judgment lesson, not deepening an existing one). Read both of its existing sections first: §1
+  establishes what confirmation bias feels like from the inside (a story about selectively reading
+  search results after already deciding); §2 covers how it strengthens with commitment and distorts
+  memory over time, ending with a self-test reframe. Neither section addresses the environment the
+  search itself happens in — this run's gap.
+- **What was done**: added a third section, "Why Your Feed Makes It Worse"
+  (`src/content/lessonContent.money.js`, lesson 22), continuing the same Tomás story to explain that
+  search engines, investing forums, and social feeds are optimized for engagement, not accuracy — a
+  headline that confirms what someone already believes reliably gets more clicks than one that
+  challenges it, so the algorithm (trained on the reader's own past clicks) quietly amplifies whatever
+  belief was already there, without anyone deliberately curating the results. Closes with a concrete
+  counter distinct from §2's self-test: treat an entire feed agreeing with you as a signal to
+  deliberately look elsewhere (a different platform, someone holding the opposite view, a source with
+  no stake in being right) before committing money, not after. Written in full for all five languages
+  at the same translation depth as this lesson's existing two sections (not condensed paraphrase, since
+  that's the precedent this specific lesson already set — unlike some other lessons' condensed
+  es/ko/zh/ja style). Updated `lessons.js`'s lesson-22 `minutes` field from 2 to 3 to match the
+  recomputed word count.
+- **Verified**:
+  1. `npm test` (`check-data.mjs` + `check-blindspot.mjs`) — before updating `lessons.js`, `check-data.mjs`
+     correctly failed with `minutes is 2, but its content computes to 3` (confirms the check catches a
+     stale `minutes` field rather than passively trusting whatever is written); after the fix,
+     `PASS: 0 failure(s)`. All six blindspot `ok:` checks passed both times.
+  2. Translation-review ledger: the edit made all four languages' lesson-22 review record stale
+     (`npm run review-status` showed 98%/1-stale per language). Reviewed the es/ko/zh/ja text against
+     the new English section for faithfulness and blindspot safety (confirmed each conveys: the
+     platform isn't neutral, the algorithm optimizes for clicks not accuracy, the counter is
+     deliberately seeking disagreement before spending), then ran
+     `node scripts/translation-review.mjs mark 22 <lang> "Claude (Sonnet 5, economics-app-dev-agent)"
+     ai` for all four languages. `npm run review-status` back to 100%/0-stale/40-AI in all four
+     languages, matching pre-run coverage.
+  3. `npm run build` — `vite v6.4.3`, `✓ 65 modules transformed`, no chunk-size warning.
+     `lessonContent.money-*.js` grew from 482.36 kB to 489.75 kB (207.65 kB gzip);
+     `lessonContent.economy-*.js` untouched at 87.36 kB, confirming the edit stayed inside the
+     money-track chunk.
+  4. Recomputed catalogue-wide totals via a full re-import of `lessons.js` + `lessonContent.economy.js`
+     + `lessonContent.money.js`: **40 lessons / 130,217 English chars / 114 minutes** (was 129,069
+     chars / 113 min before this run). 28 money / 12 economy, unchanged. Refreshed both `AGENT_LOG.md`'s
+     item 17 and `LAUNCH_READINESS.md`'s lesson-catalogue row with these figures in this same commit.
+  5. `git status --short` after the build showed exactly `src/content/lessonContent.money.js`,
+     `src/content/lessons.js`, `scripts/translation-review-ledger.json`, `LAUNCH_READINESS.md`, plus
+     this `AGENT_LOG.md` edit — `economic-cycles-v6.jsx`'s untracked status was unchanged, confirmed
+     both before and after this run's edits.
+  6. Live browser check against a static `npm run build` + local Python server (the documented
+     workaround): set `localStorage.ecycles_completed_lessons` to `[1..21]` (unlocking through money
+     lesson 21, matching the app's own sequential-unlock logic), reloaded, confirmed via `get_page_text`
+     the Learn list now shows "Are You Checking, or Just Confirming? ≈3 min" (was "≈2 min"), clicked
+     into the lesson via a direct DOM `.click()` on the matched list item (per the documented
+     click/screenshot-unreliability fallback) and confirmed "LESSON 22 OF 40" with all three section
+     headings rendering in order ("The Search That Already Knows What It Wants to Find," "The Bias Gets
+     Stronger the More You've Already Committed," "Why Your Feed Makes It Worse") and the new section's
+     full body text present and reading correctly, followed by the unchanged takeaway/think-about/quiz
+     content. `read_network_requests` filtered to `lessonContent` showed only
+     `lessonContent.money-*.js` fetched — not the economy chunk — confirming per-track lazy-loading
+     still works. `read_console_messages` (onlyErrors) showed no console errors.
+- **Adversarial self-check**:
+  - *Blindspot register regression*: `git diff --unified=0 -- src/content/lessonContent.money.js
+    src/content/lessons.js | grep -iE "dalio|you should (buy|sell|invest)|we recommend|be bullish|be
+    cautious|child|kid.?mode|nowDate|april 2026|will rise|will fall|guaranteed|the fed will|expect the
+    fed|rates will"` returned zero matches. The new section describes a general mechanism (engagement-
+    optimized recommendation algorithms) in the same descriptive voice as the lesson's existing two
+    sections — no specific platform named as good or bad, no directive to buy/sell/invest, no
+    prediction about any company or the Fed. `npm run check-blindspot` (part of `npm test` above)
+    independently confirms no advice-adjacent phrasing anywhere in `src/content/`. No regression.
+  - *DECISIONS.md conflict*: re-read the closed-decision section headers before editing. The new section
+    stayed inside the existing `.js`-module content system, specifically `lessonContent.money.js` (not
+    the economy-track file), didn't touch `localStorage` progress-state keys, and used the existing
+    per-track chunk split without adding a new chunk — consistent with "Content as `.js` modules,"
+    "localStorage-only progress state," and "`LessonReader` chunk split per track." No conflict.
+  - *Already-done backlog item*: checked "Completed and pruned" and grepped the full log for prior
+    mentions of "confirmation bias" and "lesson 22" — the lesson was added once (2026-08-08, then id
+    34, item 24) and has never been deepened since; this is its first deepening pass, and the earlier
+    "lesson 22" log hits (2026-08-06, W-2 vs 1099) refer to a different lesson under the pre-renumbering
+    id scheme. Not a duplicate.
+  - *Own verification claim*: every command and figure above is reproducible from the current tree —
+    `npm test` was run both before and after the `lessons.js` edit specifically to show the check
+    catching the stale-minutes case; the catalogue-totals recomputation used a fresh full re-import of
+    both content files; the live browser check discloses its exact method (a `localStorage` unlock
+    write plus a direct DOM `.click()`) and the specific section headings and body text confirmed
+    present, rather than asserting the lesson "renders correctly."
+- **Not touched, and why**: `economic-cycles-v6.jsx` — unrelated, still reference-only, untouched. Did
+  not add a 41st lesson or a 14th judgment lesson — this is a deepening of an existing, already-approved
+  lesson, and the run's own log entry states which clause it moves (minutes, not count). Did not touch
+  `src/content/lessonContent.economy.js` — this run's edit stayed entirely inside the money-track file,
+  confirmed by verification point 3's chunk-size check above.
+- **Note on the deepening streak**: this is the second consecutive scheduled run to deepen an existing
+  lesson (after the seventh run's lesson 34), following the sixth run's one-off item-22-renumbering
+  interruption — not yet the ten-plus-in-a-row pattern the seventh run's entry flagged as worth
+  escalating, but worth continuing to count rather than losing track of.
+- **Next run should pick**: item 17's minutes clause (still ~6 minutes short, 114/120). Remaining
+  candidates, all confirmed at 2 sections as of the seventh run's list minus this run's pick: economy 29
+  ("Transactions: The Building Block"), 31 ("Productivity Growth: The Long-Run Driver"), 33 ("The
+  Long-Term Debt Cycle"), 35 ("Interest Rates: The Master Signal"), 36 ("The Yield Curve: Crystal
+  Ball"), 40 ("Three Rules of Thumb"); money 9 ("Inflation and Your Money..."), 10 ("W-2 vs. 1099..."),
+  13 ("Brokerage Accounts..."), 24 ("Is That a Need — Or Just a Want Wearing a Disguise?"). Ten
+  candidates remain (money id 2 still excluded as the already-deepened false positive, per the seventh
+  run's note).
