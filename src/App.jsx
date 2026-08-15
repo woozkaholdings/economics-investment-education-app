@@ -142,6 +142,23 @@ export default function App() {
     { key: "reference", label: t.tabReference, icon: "library" },
   ];
 
+  // Roving tabindex (WAI-ARIA APG "tabs" pattern): arrow keys move focus
+  // between tabs and activate them, Home/End jump to the first/last. Only the
+  // active tab is Tab-stoppable; the rest are reached via arrow keys once the
+  // tablist has focus, matching how a native OS tab strip behaves.
+  const tabRefs = useRef([]);
+  const onTabKeyDown = useCallback((e, currentIndex) => {
+    let nextIndex = null;
+    if (e.key === "ArrowRight") nextIndex = (currentIndex + 1) % tabs.length;
+    else if (e.key === "ArrowLeft") nextIndex = (currentIndex - 1 + tabs.length) % tabs.length;
+    else if (e.key === "Home") nextIndex = 0;
+    else if (e.key === "End") nextIndex = tabs.length - 1;
+    if (nextIndex === null) return;
+    e.preventDefault();
+    goToTab(tabs[nextIndex].key);
+    tabRefs.current[nextIndex]?.focus();
+  }, [goToTab, tabs]);
+
   return (
     <div style={{ maxWidth: APP_MAX_WIDTH, margin: "0 auto", minHeight: "100vh", background: surface.canvas, display: "flex", flexDirection: "column" }}>
       {showDisclaimer && <FirstRunNotice t={t} onDismiss={dismissDisclaimer} />}
@@ -236,17 +253,20 @@ export default function App() {
           paddingBottom: "env(safe-area-inset-bottom, 0px)",
         }}
       >
-        {tabs.map((item) => {
+        {tabs.map((item, index) => {
           const active = tab === item.key;
           return (
             <button
               key={item.key}
+              ref={(el) => { tabRefs.current[index] = el; }}
               type="button"
               role="tab"
               id={`tab-${item.key}`}
               aria-selected={active}
               aria-controls={`panel-${item.key}`}
+              tabIndex={active ? 0 : -1}
               onClick={() => goToTab(item.key)}
+              onKeyDown={(e) => onTabKeyDown(e, index)}
               style={{
                 flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: space["1"],
                 padding: `${space["2"]}px 0 ${space["3"]}px`,

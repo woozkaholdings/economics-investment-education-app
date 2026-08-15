@@ -7712,3 +7712,79 @@ direction is the problem.
   Tab-focusable `<button>`, which is keyboard-operable but not the full authoring-practice pattern for a
   tablist); or item 21 (kids content, still not lesson-shaped) if a future run is ready to make that
   explicitly-open design call rather than defer it again.
+
+### 2026-08-15 (fifth run this date) — Roving-tabindex arrow-key navigation for the bottom tab bar (accessibility, the fourth run's "Next run should pick")
+
+- **Orient**: `git status` showed only the same long-standing untracked `economic-cycles-v6.jsx`
+  (confirmed reference-only per the Notes section, unchanged) — no uncommitted edits to any tracked file,
+  so nothing that looked like another session's in-progress work. `git log --oneline -3` topped at the
+  fourth run's commit (`a48b8c2`), confirming no concurrent session had landed anything since. Read the
+  PRIORITY BLOCK (items 17/24 still frozen for content — both §4.3 content clauses already met, item 18
+  blocked on an owner action) and the fourth run's "Next run should pick," which named three
+  dev-agent-actionable candidates: `storage.js` test coverage (needs a `localStorage` mock, flagged as a
+  bigger separate piece), `analytics.js` call-site tests, or the WAI-ARIA APG roving-tabindex pattern for
+  `App.jsx`'s bottom tab bar. Picked the accessibility pass — no design judgment call required (unlike
+  item 21) and no new test-infrastructure decision required (unlike the `storage.js` mock question the
+  previous run explicitly deferred).
+- **What was the gap**: `App.jsx`'s bottom nav already had correct ARIA plumbing — `role="tablist"` on the
+  `<nav>`, `role="tab"`/`aria-selected`/`aria-controls` on each `<button>`, and a matching
+  `id="panel-${tab}"`/`role="tabpanel"` on `<main>` (verified this was already wired correctly, not
+  something to fix). What was missing was the *keyboard interaction* half of the WAI-ARIA APG tabs
+  pattern: every tab button was a separately `Tab`-focusable element with no arrow-key support between
+  them — operable, but not matching how a native OS or screen-reader user expects a tablist to behave
+  (single Tab stop into the group, then Left/Right/Home/End to move within it).
+- **What was done**: `src/App.jsx` — added a `tabRefs` ref array and an `onTabKeyDown(e, currentIndex)`
+  handler: `ArrowRight`/`ArrowLeft` move to the next/previous tab (wrapping at the ends), `Home`/`End` jump
+  to the first/last tab; each calls the existing `goToTab(key)` (so arrow navigation activates the tab
+  immediately — automatic activation, matching the existing click behavior and this bar's already-instant,
+  side-effect-free tab switch) and then moves DOM focus to the newly active button via `tabRefs`. Each tab
+  button now has `tabIndex={active ? 0 : -1}` (roving tabindex — only the currently-selected tab is a
+  `Tab` stop; the widget is reached with one `Tab` press and navigated internally with arrow keys) and
+  `onKeyDown={(e) => onTabKeyDown(e, index)}`. No visual, layout, or click-path change — `onClick` and all
+  existing styling are untouched; this is additive keyboard support only. 20 lines added, 0 removed
+  besides the two touched lines (`tabs.map((item)` → `tabs.map((item, index)`, and the new `ref`/
+  `tabIndex`/`onKeyDown` props on the button).
+- **Verified**:
+  1. `npm test` — `PASS: 0 failure(s), 1 warning(s)` (the pre-existing, unrelated translation-review
+     warning); `check-blindspot.mjs` — all 6 checks `ok`.
+  2. `npm run build` — `vite v6.4.3`, `✓ 65 modules transformed`, no chunk-size warning, no errors; bundle
+     sizes unchanged from before this run (`lessonContent.money` 499.36 kB, `lessonContent.economy`
+     98.47 kB, `index` 222.78 kB) — expected, since this change is JS logic inside `App.jsx`'s own chunk,
+     not content.
+  3. `git diff -- src/App.jsx` read in full before committing to confirm the diff is exactly the described
+     roving-tabindex/keydown addition and nothing else — no stray whitespace or unrelated line touched.
+  4. **Browser interaction was not verified live** — this is an unattended scheduled-task run, and
+     `preview_start` returned "Dev servers can't be started from unattended sessions... nobody is present
+     to approve the command." Verification here is build+test+diff-review only, not a live keyboard-nav
+     check in a real browser. Flagging this explicitly rather than implying full parity with the browser
+     checks earlier interactive-session accessibility runs (e.g. the P3 item 11 responsiveness passes)
+     were able to do — a real gap this run's own claims should not paper over.
+- **Adversarial self-check**:
+  - *Blindspot register regression*: this run touched no lesson content, locale strings, or user-facing
+    copy — only `App.jsx`'s tab-bar interaction logic. `npm test`'s `check-blindspot.mjs` (§10.1/§10.2/
+    §10.3/§2.3) ran clean regardless; not skipped just because the change looked out-of-scope for it.
+  - *DECISIONS.md conflict*: read every closed-decision section header. None concerns tab-bar keyboard
+    interaction, ARIA roles, or focus management. No conflict.
+  - *Already-done backlog item*: grepped the full log for "roving", "tabIndex", and "arrow-key" before
+    starting — the only hits were the fourth run's own "Next run should pick" note that named this item
+    and two unrelated substring matches (a `<h1>` line, a "score" sentence). Confirmed this had not been
+    attempted before, partially or otherwise.
+  - *Own verification claim*: the `npm test`/`npm run build` commands above are reproducible from the
+    current tree. The one claim that does *not* hold up to independent re-running is any implied "verified
+    in a real browser" — see verification point 4, called out explicitly rather than silently omitted, per
+    the past-run incident (§10.1 reported "closed" when only half done) this self-check step exists to
+    catch.
+- **Not touched, and why**: `economic-cycles-v6.jsx` — unrelated, still reference-only, untouched, its
+  untracked status unchanged before and after (confirmed via `git status --short` at orient and again
+  post-build). No lesson content, locale file, or item 17/21/24 frozen/open content question touched. Did
+  not add the `storage.js` localStorage-mock tests or `analytics.js` call-site tests the fourth run also
+  named as candidates — picked the accessibility item instead per the reasoning above; both remain valid
+  candidates for a future run.
+- **Next run should pick**: a live browser keyboard-nav check of this run's change (Tab into the bar,
+  arrow through the three tabs, confirm focus and `aria-selected` move together, confirm Home/End jump
+  correctly) the next time an interactive session or a session with preview access touches `App.jsx` —
+  this run could only verify it by code review, not by driving it. Otherwise, the same two
+  dev-agent-actionable candidates remain open: `src/lib/storage.js` test coverage (needs a minimal
+  in-memory `localStorage` mock — the natural next piece, twice deferred now) and
+  `src/lib/analytics.js`'s `track()`/`EVENTS` call sites; item 18's completion-rate clause is still blocked
+  on an owner action; item 21 (kids content) is still an open design call, not a default pick.
