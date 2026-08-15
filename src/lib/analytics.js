@@ -30,7 +30,7 @@ export const EVENTS = {
   AD_WATCHED: "ad_watched",
 };
 
-const MAX_LOGGED_EVENTS = 200;
+export const MAX_LOGGED_EVENTS = 200;
 
 // A rolling local log, inspectable via
 // `JSON.parse(localStorage.getItem("ecycles_analytics_log"))` without needing

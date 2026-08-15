@@ -7871,3 +7871,97 @@ direction is the problem.
   roving-tabindex change is still queued for whenever an interactive/preview-capable session next touches
   `App.jsx`. Item 18's completion-rate clause remains blocked on an owner action; item 21 (kids content)
   remains an open design call, not a default pick.
+
+### 2026-08-15 (seventh run this date) — `src/lib/analytics.js` test coverage (`track()`/`EVENTS`, the last named test-coverage candidate)
+
+- **Orient**: `git status` showed only the same long-standing untracked `economic-cycles-v6.jsx`
+  (unchanged, reference-only per the Notes section) — no uncommitted edits to any tracked file. `git log
+  --oneline -3` topped at the sixth run's commit (`ee13f71`), confirming no concurrent session had landed
+  anything since. Read the PRIORITY BLOCK (items 17/24 still frozen for content, both §4.3 content clauses
+  already met, item 18 blocked on an owner action) and the sixth run's "Next run should pick," which named
+  exactly one remaining dev-agent-actionable candidate: `src/lib/analytics.js`'s `track()`/`EVENTS` call
+  sites. Picked it — the only named candidate left, and no design judgment call required.
+- **What was picked and why**: `analytics.js` wraps `storage.js`'s `readJSON`/`writeJSON` to maintain a
+  capped rolling event log (`sink()`, `MAX_LOGGED_EVENTS = 200`) with zero test coverage of its own, even
+  though `storage.js` underneath it now has thorough coverage (fifth/sixth runs). The actual call sites
+  (`App.jsx`'s `APP_OPENED`, `LessonReader.jsx`'s `LESSON_STARTED`/`LESSON_COMPLETED`/`QUIZ_TAKEN`,
+  `Practice.jsx`'s `QUIZ_TAKEN`) live inside React components and need a browser/DOM harness this
+  environment doesn't have (`preview_start` is blocked in unattended scheduled-task sessions, per the
+  fifth run's note) — so, consistent with how the fourth/sixth runs scoped `lessonIdMigration.js` and
+  `storage.js` as pure-module tests rather than full integration tests, this run tests `analytics.js`
+  itself as a module: does `track()` correctly shape and cap the log it writes, and does it degrade safely
+  under a throwing `localStorage`, the same property `storage.js`'s own tests establish for the layer
+  underneath it.
+- **What was done**:
+  1. `src/lib/analytics.js` — changed `const MAX_LOGGED_EVENTS = 200` to `export const MAX_LOGGED_EVENTS =
+     200`, the only source change. Follows the existing precedent of `review.js` exporting `MAX_BOX` and
+     `relativeStrength.js` exporting `MIN_BARS`/`WJ_PERIODS` specifically so a pure-logic constant can be
+     asserted against in tests instead of hand-duplicated as a magic number that could silently drift out
+     of sync with the real value.
+  2. `scripts/check-data.mjs` — added a new section 13 (after section 12, `storage.js`), reusing
+     `FakeLocalStorage`/`ThrowingLocalStorage` from section 12 since `analytics.js` is itself a thin
+     wrapper over `storage.js`. Ten assertions: `EVENTS` has no duplicate value and covers every §9.2
+     minimum event name; a single `track()` call appends one correctly-shaped `{event, props, at}` entry
+     (ISO-parseable timestamp) to `KEYS.analyticsLog`; omitting `props` defaults to `{}`; pushing
+     `MAX_LOGGED_EVENTS + 5` events caps the log at exactly `MAX_LOGGED_EVENTS`, drops the *oldest* entries
+     first (FIFO — asserted by checking both the surviving oldest entry's payload and the newest entry's
+     payload, not just the length), and `track()` doesn't throw when `localStorage.setItem` throws.
+- **Verified**:
+  1. `npm test` (after `bash scripts/bootstrap-node.sh` for the portable Node runtime) — `PASS: 0
+     failure(s), 1 warning(s)` (the pre-existing, unrelated translation-review-coverage warning);
+     `check-blindspot.mjs` — all 6 checks `ok`.
+  2. **Injected-bug check**: temporarily changed `sink()`'s eviction line from `while (log.length >
+     MAX_LOGGED_EVENTS) log.shift();` to `... log.pop();` — a realistic bug (evicting the newest entry
+     instead of the oldest, inverting the FIFO cap) — and reran `node scripts/check-data.mjs`. It failed
+     exactly as expected, on exactly the two assertions that check *which* entries survive the cap ("the
+     cap drops the oldest entries first" got `{"i":0}` instead of `{"i":5}`; "the newest entry is the very
+     last one pushed" got `{"i":199}` instead of `{"i":204}`) — the length-cap, EVENTS-shape, default-props,
+     and throw-safety assertions all still passed, showing the two FIFO-order assertions are the ones
+     actually earning their keep, not redundant with the length check. Restored the file from a `cp`-made
+     backup and confirmed `git diff --stat -- src/lib/analytics.js` showed only the intended
+     `export const MAX_LOGGED_EVENTS` line (1 insertion, 1 deletion) before re-running the real suite.
+  3. `npm run build` — `vite v6.4.3`, `✓ 65 modules transformed`, no errors; bundle sizes unchanged from the
+     sixth run's entry (`lessonContent.money` 499.36 kB, `lessonContent.economy` 98.47 kB, `index`
+     222.78 kB) — expected, since this run's only `src/` change is adding one `export` keyword to a
+     constant already in scope.
+  4. `git status --short` before committing: only `scripts/check-data.mjs` and `src/lib/analytics.js`
+     modified, plus the same long-standing untracked `economic-cycles-v6.jsx` — no stray file, no leftover
+     injected-bug diff.
+- **Adversarial self-check**:
+  - *Blindspot register regression*: `git diff --unified=0 -- src/lib/analytics.js scripts/check-data.mjs
+    | grep -iE "dalio|you should (buy|sell|invest)|we recommend|be bullish|be cautious|child|kid.?mode|
+    nowDate|april 2026|will rise|will fall|guaranteed|the fed will|expect the fed|rates will"` matched
+    nothing (grep exit 1). This run touched no lesson content, locale, or user-facing copy — only a test
+    script and a single `export` keyword — but the grep was run rather than assumed clean, per the
+    standing rule.
+  - *DECISIONS.md conflict*: read every closed/open decision section header, and in full the open
+    "Instrumentation: minimum event set wired to a local sink, not PostHog yet" entry specifically, since
+    this run's tests exercise that exact mechanism. The tests assert the documented local-sink/capped-log
+    behavior; they don't change the sink, add a provider, or touch the swap-in seam (`sink()`'s
+    signature/location are untouched). No conflict.
+  - *Already-done backlog item*: grepped the full log for "analytics.js" (13 hits before this entry) and
+    read every one — the original 2026-08-05 addition of the module, three lesson-add runs' manual
+    verification that specific events fired in a live browser, and the fourth/fifth/sixth runs naming this
+    as a remaining candidate. No prior run added automated tests for `analytics.js`; not a duplicate.
+  - *Own verification claim*: every command above is reproducible from the current tree. The injected-bug
+    check is the strongest evidence — it doesn't just assert the tests pass, it demonstrates they fail on
+    the exact defect class they exist to catch (an inverted eviction order), on only the two assertions
+    that check eviction order specifically, then confirms the working tree was fully restored before
+    committing — the same pattern the three prior test-coverage entries this date used.
+- **Not touched, and why**: `economic-cycles-v6.jsx` — unrelated, still reference-only, untouched, its
+  untracked status unchanged before and after (confirmed via `git status --short` at orient and again
+  post-build). No lesson content, locale file, or item 17/21/24 frozen/open content question touched. Did
+  not add integration tests for the real call sites in `App.jsx`/`LessonReader.jsx`/`Practice.jsx` — those
+  need a browser/DOM harness this unattended session doesn't have (see "what was picked and why" above);
+  the module-level `track()`/`EVENTS` coverage this run added is the dev-agent-actionable subset of what
+  the sixth run's note named.
+- **Next run should pick**: the three-run stretch of dev-agent-actionable test-coverage candidates named by
+  the fourth run's "Next run should pick" is now exhausted (`lessonIdMigration.js`, `storage.js`,
+  `analytics.js` all covered). No further specific candidate is queued. A future run should re-read
+  `LAUNCH_PLAN.md` §0/§4.3 fresh (per the third run's guidance, never fully acted on) rather than default
+  to another test-coverage pick: item 18's completion-rate clause is still blocked on an owner action; item
+  21 (kids content, still not lesson-shaped) is still an open design call worth deciding rather than
+  deferring again; a live browser keyboard-nav check of the fifth run's roving-tabindex change is still
+  queued for whenever an interactive/preview-capable session next touches `App.jsx`; and a structural sweep
+  (e.g. remaining `src/lib/` or `src/screens/` modules without coverage, or a fresh accessibility/
+  performance pass) is a reasonable default if nothing more specific surfaces first.

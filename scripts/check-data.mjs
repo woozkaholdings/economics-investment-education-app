@@ -22,6 +22,7 @@ import { MIN_BARS, OUTPERFORM_THRESHOLD, WJ_PERIODS, wjSectorComparison } from "
 import { OLD_TO_NEW_LESSON_ID, migrateLegacyLessonIds } from "../src/lib/lessonIdMigration.js";
 import { computeCoverage } from "./translation-review.mjs";
 import * as storageLib from "../src/lib/storage.js";
+import { EVENTS, MAX_LOGGED_EVENTS, track } from "../src/lib/analytics.js";
 
 // A minimal in-memory localStorage mock, installed as a global before
 // storage.js's tests run below (node has no localStorage of its own).
@@ -574,6 +575,58 @@ for (const [label, moduleExports] of Object.entries(CONTENT_MODULES)) {
     storageLib.writeJSON("anything", { x: 1 }), false);
   eq("readArray falls back to [] instead of throwing when localStorage.getItem throws",
     storageLib.readArray("anything"), []);
+
+  delete globalThis.localStorage;
+}
+
+// 13. src/lib/analytics.js — the §9.2 minimum-event-set sink. `track()`'s
+//     entire job is appending a well-shaped entry to a capped rolling log
+//     (see the file's own header comment); nothing enforced that shape or
+//     the cap before this. Reuses FakeLocalStorage/ThrowingLocalStorage from
+//     section 12, since analytics.js is itself a thin wrapper over
+//     storage.js's readJSON/writeJSON.
+{
+  const eq = (label, actual, expected) => {
+    if (JSON.stringify(actual) !== JSON.stringify(expected)) {
+      fail(`analytics: ${label} — got ${JSON.stringify(actual)}, expected ${JSON.stringify(expected)}`);
+    }
+  };
+
+  const eventValues = Object.values(EVENTS);
+  eq("EVENTS has no duplicate event-name value", eventValues.length, new Set(eventValues).size);
+  eq("EVENTS includes every §9.2 minimum event", [
+    "app_opened", "lesson_started", "lesson_completed", "quiz_taken",
+    "paywall_viewed", "trial_started", "subscribed", "cancelled", "ad_watched",
+  ].every((name) => eventValues.includes(name)), true);
+
+  globalThis.localStorage = new FakeLocalStorage();
+
+  track(EVENTS.LESSON_STARTED, { lessonId: 5 });
+  let log = storageLib.readArray("ecycles_analytics_log");
+  eq("track() appends one entry to the rolling log", log.length, 1);
+  eq("the logged entry carries the event name and props", { event: log[0].event, props: log[0].props },
+    { event: "lesson_started", props: { lessonId: 5 } });
+  eq("the logged entry stamps an ISO timestamp", typeof log[0].at === "string" && !Number.isNaN(Date.parse(log[0].at)), true);
+
+  track(EVENTS.APP_OPENED);
+  log = storageLib.readArray("ecycles_analytics_log");
+  eq("track() defaults props to {} when the caller omits it", log[1].props, {});
+
+  globalThis.localStorage.clear();
+  for (let i = 0; i < MAX_LOGGED_EVENTS + 5; i++) track(EVENTS.QUIZ_TAKEN, { i });
+  log = storageLib.readArray("ecycles_analytics_log");
+  eq(`the rolling log is capped at MAX_LOGGED_EVENTS (${MAX_LOGGED_EVENTS})`, log.length, MAX_LOGGED_EVENTS);
+  eq("the cap drops the oldest entries first (FIFO), keeping the most recent", log[0].props, { i: 5 });
+  eq("...and the newest entry is the very last one pushed", log[log.length - 1].props, { i: MAX_LOGGED_EVENTS + 4 });
+
+  globalThis.localStorage = new ThrowingLocalStorage();
+  let threw = false;
+  try {
+    track(EVENTS.LESSON_COMPLETED, { lessonId: 1 });
+  } catch {
+    threw = true;
+  }
+  eq("track() degrades safely instead of throwing when localStorage.setItem throws", threw, false);
 
   delete globalThis.localStorage;
 }
