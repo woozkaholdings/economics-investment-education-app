@@ -279,6 +279,22 @@ export const lessonContent = {
           "zh": "最终，还债增长快于收入。美国2008年、日本1989年、美国1929年都发生过。\n\n去杠杆时，利率往往已经接近0%，难以再靠降息来解决。",
           "ja": "最終的に債務返済が所得より速く増加。米国2008年、日本1989年、米国1929年に起きた。\n\nデレバレッジではこの時点で金利はすでに0%近くまで下がっていることが多く、利下げでは解決できない。"
         }
+      },
+      {
+        "heading": {
+          "en": "Why It's Hard to See From the Inside",
+          "es": "Por Qué Es Difícil Verlo Desde Dentro",
+          "ko": "왜 안에서는 보기 어려운가",
+          "zh": "为什么身处其中难以察觉",
+          "ja": "なぜ渦中では見えにくいのか"
+        },
+        "body": {
+          "en": "There's a reason short-term downturns feel familiar and long-term ones catch people by surprise: most adults alive today have lived through several short-term debt cycles — each one arrives every 5-8 years, so by adulthood most people have direct memory of at least two or three. The long-term cycle spans 75-100 years, roughly the length of a human lifetime. That means almost nobody alive personally remembers the last time it peaked.\n\nThe generation that lived through the 1929 crash and the Depression that followed carried a lasting caution about debt and leverage for the rest of their lives. But that generation is now gone, and what they learned firsthand was never fully transferable to people who only read about it in a textbook. Each new generation tends to relearn the pattern by living through it, not by remembering it — part of why 'this time is different' keeps getting said right before a peak, not because people are foolish, but because there's no living memory left to check the claim against.\n\nThis isn't a reason to expect a repeat on any particular timeline — nobody can time it — but it is a reason the long-term cycle is easy to miss even while the same warning signs (rising debt relative to income, borrowing to buy assets purely because prices are rising) sit in the data the whole time.",
+          "es": "Los ciclos cortos se repiten cada 5-8 años, así que la mayoría los recuerda. El ciclo largo dura 75-100 años — casi nadie vivo recuerda el último pico (1929). La generación que vivió la Depresión aprendió cautela de primera mano, pero esa generación ya no está, y la lección no se transmite igual solo leyéndola. Por eso 'esta vez es diferente' se repite justo antes de cada pico — no por tontería, sino porque no queda memoria viva para comprobarlo.",
+          "ko": "단기 순환은 5-8년마다 반복되어 대부분 기억합니다. 장기 순환은 75-100년 — 거의 아무도 마지막 정점(1929년)을 직접 기억하지 못합니다. 대공황을 겪은 세대는 부채에 대한 경계심을 몸으로 배웠지만, 그 세대는 이제 없고 교훈은 책만으로는 온전히 전해지지 않습니다. 그래서 정점 직전마다 '이번엔 다르다'는 말이 반복됩니다 — 어리석어서가 아니라, 확인할 살아있는 기억이 남아있지 않기 때문입니다.",
+          "zh": "短期周期每5-8年重复一次，大多数人都记得。长期周期长达75-100年——几乎没有人活着记得上一次顶峰（1929年）。经历过大萧条的一代人亲身学到了对债务的警惕，但那一代人已经不在了，教训无法仅靠书本完整传递。这就是为什么每次顶峰前都会重复出现\"这次不一样\"——不是因为愚蠢，而是因为已经没有活着的记忆可以核对。",
+          "ja": "短期サイクルは5-8年ごとに繰り返されるため、多くの人が覚えている。長期サイクルは75-100年 — 前回のピーク（1929年）を直接記憶している人はほとんどいない。大恐慌を経験した世代は借金への警戒を身をもって学んだが、その世代はもういなくなり、教訓は本で読むだけでは完全には伝わらない。だからこそピークの直前になると『今回は違う』という言葉が繰り返される — 愚かだからではなく、確認できる生きた記憶がもう残っていないからだ。"
+        }
       }
     ],
     "takeaway": {

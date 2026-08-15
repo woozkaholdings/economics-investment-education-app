@@ -227,23 +227,25 @@ for the history. No open P1/P2 items.
     *Previously: subordinate to item 24 — prefer a judgment/mindset
     lesson over another mechanics lesson unless there's a reason not to.* Derived from `LAUNCH_PLAN.md`
     §4.3, not owner-assigned but the plan's own explicit gate: the catalogue is now **40 lessons /
-    130,217 English characters / 114 minutes** end to end — re-measured 2026-08-14 (dev-agent run,
-    eighth run this date; same method: summing every lesson's `sections[].body.en` + `takeaway.en` +
+    131,667 English characters / 115 minutes** end to end — re-measured 2026-08-14 (dev-agent run,
+    ninth run this date; same method: summing every lesson's `sections[].body.en` + `takeaway.en` +
     `thinkAbout.en` from `content/lessonContent.economy.js`+`content/lessonContent.money.js` and its
     `minutes` from `content/lessons.js`; 28 money / 12 economy).
     Lesson 40 ("Does One Lucky Win Prove You Have a System?", overconfidence after a lucky outcome), a
     thirteenth judgment lesson per item 24, was the last lesson *added* (2026-08-09) — see run log.
     **The §4.3 gate's lesson-count half (≥40 lessons) is now met for
-    the first time.** The minutes half (~120 min / 2 hours) is not: **113/120 minutes** — moved by 1
-    minute 2026-08-14 (seventh run) by deepening lesson 34 (Deleveraging: The 4 Tools, adding a section
-    on why the fourth tool — printing money — is only available to countries whose debt is denominated
-    in their own currency, contrasting the 1980s Latin American debt crisis with Japan's yen-denominated
-    debt), following the sixth run's structural work (item 22, lesson-id renumbering — no minutes moved
-    that run), 2026-08-14's five deepening runs before that (lessons 4, 10, 11, 9, and 2026-08-13's five
+    the first time.** The minutes half (~120 min / 2 hours) is not: **115/120 minutes** — moved by 1
+    minute 2026-08-14 (ninth run) by deepening lesson 33 (The Long-Term Debt Cycle, adding a section on
+    why the cycle is hard to see from the inside — it spans roughly a human lifetime, so unlike the
+    short-term cycle almost nobody alive has firsthand memory of the last peak to check "this time is
+    different" against), following the eighth run's identical move on lesson 22 (113->114) and the
+    seventh run's on lesson 34 (Deleveraging: The 4 Tools, currency-denomination section, 112->113),
+    the sixth run's structural work (item 22, lesson-id renumbering — no minutes moved that run),
+    2026-08-14's five deepening runs before that (lessons 4, 10, 11, 9, and 2026-08-13's five
     runs on 15, 16, 17, 19, 20), and the three prior runs' identical moves on lessons 13, 8, and 14 —
-    the fifth economy-track lesson deepened by this item (all eight deepenings before lesson 9 were
+    the sixth economy-track lesson deepened by this item (all eight deepenings before lesson 9 were
     money-track). No run this date added a 41st lesson, per this item's own "depth in existing
-    lessons" guidance above. Roughly 7 minutes short.
+    lessons" guidance above. Roughly 5 minutes short.
     Per §4.3, Phase 0 ("free, instrumented, no payment code") doesn't end until the catalogue
     reaches roughly 40 lessons / 2 hours of content **and** ≥40% of installers finish lesson 1 — the
     lesson-count clause is satisfied but the other two clauses (minutes, completion rate) are not, so
@@ -256,9 +258,10 @@ for the history. No open P1/P2 items.
     deepening), 2026-08-13 (fifth run, 108-minute figure, lesson-20 deepening), 2026-08-14 (second
     run, 109-minute figure, lesson-9 deepening), 2026-08-14 (third run, 110-minute figure,
     lesson-11 deepening), 2026-08-14 (fourth run, 111-minute figure, lesson-10 deepening), 2026-08-14
-    (fifth run, 112-minute figure, lesson-4 deepening), and now 2026-08-14 (seventh run, 113-minute
-    figure, lesson-34 deepening — lesson ids per the sixth run's renumbering, not the ids named in
-    earlier entries above).
+    (fifth run, 112-minute figure, lesson-4 deepening), 2026-08-14 (seventh run, 113-minute
+    figure, lesson-34 deepening), 2026-08-14 (eighth run, 114-minute figure, lesson-22 deepening),
+    and now 2026-08-14 (ninth run, 115-minute figure, lesson-33 deepening — lesson ids per the sixth
+    run's renumbering, not the ids named in earlier entries above).
     Per §4.3 verbatim: "the highest-value monetization work right now is writing
     lessons, not writing billing code." Do not start billing/paywall work ahead of this gate — see item
     15. **Note the failure mode this item created:** nine consecutive scheduled runs each picked "add one
@@ -7142,3 +7145,109 @@ direction is the problem.
   13 ("Brokerage Accounts..."), 24 ("Is That a Need — Or Just a Want Wearing a Disguise?"). Ten
   candidates remain (money id 2 still excluded as the already-deepened false positive, per the seventh
   run's note).
+
+### 2026-08-14 — Deepen lesson 33 (The Long-Term Debt Cycle) with a why-it's-hard-to-see section (backlog item 17, moves §4.3 minutes clause 114->115/120)
+
+- **Orientation**: `git status` showed one untracked file, `economic-cycles-v6.jsx` — cross-checked
+  against the standing note in this file's "Notes for future runs" section (added 2026-08-04) and the
+  previous run's "Not touched, and why," both of which independently confirm it's reference-only,
+  origin-unknown, and not to be treated as a build fixture. No other uncommitted changes, so nothing was
+  skipped. Read the PRIORITY BLOCK and item 17's current figures (**40 lessons / 130,217 chars / 114
+  min**, ~6 minutes short of the §4.3 120-minute target) and the eighth run's "Next run should pick"
+  list of ten confirmed-2-section candidates.
+- **What was picked and why**: lesson 33, "The Long-Term Debt Cycle" (economy track), from the eighth
+  run's candidate list. Read both of its existing sections first: §1 ("How Debt Accumulates") explains
+  how debt grows faster than income across many short-term cycles until a bubble forms; §2 ("The Peak &
+  Deleveraging") covers the peak itself and why rate cuts can't fix it once rates are near 0%. Neither
+  section addresses why this specific cycle is hard to recognize while living through it — unlike the
+  short-term cycle (Lesson 32), which most adults have personally lived through more than once, this one
+  spans roughly a human lifetime, so almost nobody alive has firsthand memory of the last peak (1929) to
+  check "this time is different" against. Also read lesson 34's three sections in full first (the most
+  recently deepened, thematically adjacent lesson, immediately following 33) to confirm no overlap — 34
+  covers the four deleveraging tools, the beautiful/ugly balance, and currency denomination, none of
+  which touch the *perception* gap this run's section covers.
+- **What was done**: added a third section, "Why It's Hard to See From the Inside"
+  (`src/content/lessonContent.economy.js`, lesson 33), explaining that short-term debt cycles (5-8 years)
+  repeat within a single adult lifetime and so stay in living memory, while the long-term cycle (75-100
+  years) does not — the generation that lived through the 1929 crash and the Depression learned caution
+  about leverage firsthand, but that generation is gone and the lesson doesn't transfer intact through a
+  textbook, which is part of why "this time is different" recurs right before a peak. Explicitly notes
+  this isn't a timing claim ("nobody can time it"). Written as full original English prose; es/ko/zh/ja
+  written as condensed paraphrase at the same depth as this lesson's *existing* two sections (both of
+  which are themselves condensed relative to English) — matching this specific lesson's own established
+  translation-depth precedent, not the full-parity precedent some other lessons (e.g. 22) set. Updated
+  `lessons.js`'s lesson-33 `minutes` field from 2 to 3 to match the recomputed word count.
+- **Verified**:
+  1. `npm test` (`check-data.mjs` + `check-blindspot.mjs`) — before updating `lessons.js`, `check-data.mjs`
+     correctly failed with `minutes is 2, but its content computes to 3`; after the fix, `PASS: 0
+     failure(s)`. All six blindspot `ok:` checks passed both times.
+  2. Translation-review ledger: the edit made all four languages' lesson-33 review record stale
+     (`npm run review-status` showed 98%/1-stale per language, listing lesson 33 by name). Reviewed the
+     es/ko/zh/ja text against the new English section for faithfulness and blindspot safety (confirmed
+     each conveys: short cycles stay in living memory because they repeat within a lifetime, the long
+     cycle doesn't, the 1929 generation's caution wasn't fully transferable, "this time is different"
+     recurs for that reason — no advice, no timing prediction), then ran `node
+     scripts/translation-review.mjs mark 33 <lang> "Claude (Sonnet 5, economics-app-dev-agent)" ai` for
+     all four languages. `npm run review-status` back to 100%/0-stale/40-AI in all four languages.
+  3. `npm run build` — `vite v6.4.3`, `✓ 65 modules transformed`, no chunk-size warning.
+     `lessonContent.economy-*.js` grew from 87.36 kB to 91.00 kB; `lessonContent.money-*.js` unchanged at
+     489.75 kB, confirming the edit stayed inside the economy-track chunk.
+  4. Recomputed catalogue-wide totals via a full re-import of `lessons.js` +
+     `lessonContent.economy.js` + `lessonContent.money.js`: **40 lessons / 131,667 English chars / 115
+     minutes** (was 130,217 chars / 114 min before this run). 28 money / 12 economy, unchanged. Refreshed
+     both `AGENT_LOG.md`'s item 17 and `LAUNCH_READINESS.md`'s lesson-catalogue row with these figures in
+     this same commit.
+  5. `git status --short` after the build showed exactly `src/content/lessonContent.economy.js`,
+     `src/content/lessons.js`, `scripts/translation-review-ledger.json`, `LAUNCH_READINESS.md`, plus this
+     `AGENT_LOG.md` edit — `economic-cycles-v6.jsx`'s untracked status was unchanged, confirmed both
+     before and after this run's edits.
+  6. Live browser check against a static `npm run build` + local Python server (the documented
+     workaround): set `localStorage.ecycles_completed_lessons` to `[1..32]` (unlocking through economy
+     lesson 32, matching the app's own sequential-unlock logic — post-renumbering, money is ids 1-28 and
+     economy is 29-40), reloaded, confirmed via `javascript_tool` the Learn list now shows "The Long-Term
+     Debt Cycle ≈3 min" (was "≈2 min"), clicked into the lesson via a direct DOM `.click()` on the matched
+     list item (per the documented click/screenshot-unreliability fallback) and confirmed "LESSON 33 OF
+     40" with all three section headings rendering in order ("How Debt Accumulates," "The Peak &
+     Deleveraging," "Why It's Hard to See From the Inside") and the new section's full body text present
+     and reading correctly. `read_network_requests` filtered to `lessonContent` showed only
+     `lessonContent.economy-*.js` fetched — not the money chunk — confirming per-track lazy-loading still
+     works. `read_console_messages` (onlyErrors) showed no console errors.
+- **Adversarial self-check**:
+  - *Blindspot register regression*: `git diff --unified=0 -- src/content/lessonContent.economy.js
+    src/content/lessons.js | grep -iE "dalio|you should (buy|sell|invest)|we recommend|be bullish|be
+    cautious|child|kid.?mode|nowDate|april 2026|will rise|will fall|guaranteed|the fed will|expect the
+    fed|rates will"` returned zero matches. The new section describes a general cross-generational
+    memory pattern in the same descriptive voice as the lesson's existing two sections — no directive
+    to buy/sell/invest, no prediction about timing, no platform or company named. `npm run
+    check-blindspot` (part of `npm test` above) independently confirms no advice-adjacent phrasing
+    anywhere in `src/content/`. No regression.
+  - *DECISIONS.md conflict*: re-read the closed-decision section headers before editing. The new section
+    stayed inside the existing `.js`-module content system, specifically `lessonContent.economy.js` (not
+    the money-track file), didn't touch `localStorage` progress-state keys, and used the existing
+    per-track chunk split without adding a new chunk — consistent with "Content as `.js` modules,"
+    "localStorage-only progress state," and "`LessonReader` chunk split per track." No conflict.
+  - *Already-done backlog item*: checked "Completed and pruned" and grepped the full log for prior
+    mentions of "Long-Term Debt Cycle" and "lesson 33" — the only prior hits are (a) references to a
+    *different* lesson under the pre-2026-08-14-renumbering id scheme (former money id 33, an unrelated
+    anchoring lesson) and (b) this date's earlier run-log entries listing current lesson 33 as an
+    unpicked 2-section candidate. This is its first deepening pass under the current id scheme. Not a
+    duplicate.
+  - *Own verification claim*: every command and figure above is reproducible from the current tree —
+    `npm test` was run both before and after the `lessons.js` edit specifically to show the check
+    catching the stale-minutes case; the catalogue-totals recomputation used a fresh full re-import of
+    both content files; the live browser check discloses its exact method (a `localStorage` unlock write
+    plus a direct DOM `.click()`) and the specific section headings and body text confirmed present,
+    rather than asserting the lesson "renders correctly."
+- **Not touched, and why**: `economic-cycles-v6.jsx` — unrelated, still reference-only, untouched. Did
+  not add a 41st lesson — this run's own log entry states which clause it moves (minutes, not count).
+  Did not touch `src/content/lessonContent.money.js` — this run's edit stayed entirely inside the
+  economy-track file, confirmed by verification point 3's chunk-size check above. Did not re-open item
+  24's frozen money-track judgment scope — lesson 33 is economy track and the new section is a
+  cross-generational-memory framing, not decision-psychology.
+- **Next run should pick**: item 17's minutes clause (still ~5 minutes short, 115/120). Remaining
+  candidates, all confirmed at 2 sections as of the eighth run's list minus this run's pick: economy 29
+  ("Transactions: The Building Block"), 31 ("Productivity Growth: The Long-Run Driver"), 35 ("Interest
+  Rates: The Master Signal"), 36 ("The Yield Curve: Crystal Ball"), 40 ("Three Rules of Thumb"); money 9
+  ("Inflation and Your Money..."), 10 ("W-2 vs. 1099..."), 13 ("Brokerage Accounts..."), 24 ("Is That a
+  Need — Or Just a Want Wearing a Disguise?"). Nine candidates remain (money id 2 still excluded as the
+  already-deepened false positive, per the seventh run's note).

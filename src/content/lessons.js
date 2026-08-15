@@ -88,7 +88,7 @@ export const lessons = [
     subtitle: {"en":"5-8 years — the business cycle most people know","es":"5-8 años — el ciclo que la mayoría conoce","ko":"5-8년 — 대부분의 사람들이 아는 경기 순환","zh":"5-8年——大多数人熟知的经济周期","ja":"5-8年 — ほとんどの人が知る景気循環"},
   },
   {
-    id: 33, track: "economy", icon: "🌊", color: "#dc2626", minutes: 2,
+    id: 33, track: "economy", icon: "🌊", color: "#dc2626", minutes: 3,
     title: {"en":"The Long-Term Debt Cycle","es":"El Ciclo de Deuda a Largo Plazo","ko":"장기 부채 순환","zh":"长期债务周期","ja":"長期債務サイクル"},
     subtitle: {"en":"75-100 years — the big wave underneath","es":"75-100 años — la gran ola debajo","ko":"75-100년 — 밑에 깔린 큰 파도","zh":"75-100年——潜藏的大浪","ja":"75-100年 — 底に潜む大きな波"},
   },
