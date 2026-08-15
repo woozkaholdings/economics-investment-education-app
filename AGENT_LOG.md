@@ -8148,3 +8148,93 @@ direction is the problem.
   can reasonably make progress on within the current parent-facing format (adding blurbs) without
   deciding the structural question, and a live browser keyboard-nav check of the fifth run's
   roving-tabindex change is still queued for an interactive/preview-capable session, not this one.
+
+### 2026-08-15 (tenth run this date) — live browser keyboard-nav verification of the fifth run's roving-tabindex change (`App.jsx`'s bottom tab bar), no code change
+
+- **Orient**: `git status` showed only the same long-standing untracked `economic-cycles-v6.jsx` — no
+  uncommitted edits to any tracked file. `git log --oneline -3` topped at the ninth run's commit
+  (`6a3678e`), confirming no concurrent session had landed anything since. Read the PRIORITY BLOCK
+  (items 17/24 still frozen/exhausted for content, item 18 blocked on an owner action) and the ninth
+  run's "Next run should pick," which named three live candidates: item 21 (kids blurbs), item 18
+  (blocked), and — explicitly flagged as "queued for an interactive/preview-capable session, not this
+  one" by every test-coverage run this date — a live browser keyboard-nav check of the fifth run's
+  roving-tabindex change (commit `ebf64a5`), whose own commit message says "live browser interaction
+  could not be checked in this unattended session (`preview_start` is disabled for scheduled tasks)."
+- **What was picked and why**: tested whether that stated limitation still holds in this session before
+  assuming it does. Called `preview_start` with a plain `url` — it succeeded and opened a real browser
+  tab (`serverId` returned, `navOk: true`). The fifth run's assumption was wrong for *this* run's
+  environment (this scheduled task apparently does have preview/browser tool access, unlike whatever
+  the fifth run hit) — so the queued verification was actually possible, no longer a wait for "an
+  interactive session." Picked it over item 21/18 because it closes a five-run-old queued item with a
+  concrete, low-risk, code-free check rather than opening new surface area, and because a real DOM/
+  keyboard check is exactly the kind of verification a scheduled run normally can't do (per the
+  Environment note's "what this verified in practice" precedent, which was an interactive session, not
+  an automated one) — this is the first time an *automated* run has done one.
+- **What was done**: no source change. Built and served the app per the Environment note's documented
+  static-build-plus-python-server technique (`scripts/bootstrap-node.sh` → `npm install && npm run
+  build` → `python3 -m http.server 8763` against `dist/`), opened it via `preview_start`'s `url` mode
+  (bypassing `.claude/launch.json`, so the earlier `npm run dev`-can't-see-Node limitation never came
+  up), and drove the bottom tab bar with real keyboard events via the browser tool's `key` action,
+  reading DOM state after each via `javascript_tool` (per the Environment note's guidance: don't trust
+  `computer`'s screenshot/click return value alone, read `aria-*`/`tabIndex`/`document.activeElement`
+  to confirm).
+- **Verified** (all against the live rendered app, not just source review):
+  1. `npm test` — `PASS: 0 failure(s), 1 warning(s)` (pre-existing translation-review warning);
+     `check-blindspot.mjs` — all 6 checks `ok`. `npm run build` — `vite v6.4.3`, `✓ 65 modules
+     transformed`, no errors; bundle sizes unchanged from the ninth run's entry.
+  2. Clicked the Learn tab (`tab-learn`) to focus it; confirmed `document.activeElement.id ===
+     "tab-learn"` and the roving-tabindex contract at rest: `tab-learn` had `aria-selected="true"`/
+     `tabIndex=0`, `tab-practice`/`tab-reference` both `aria-selected="false"`/`tabIndex=-1`.
+  3. **Found and worked around a tool-naming gap, not an app bug**: the browser tool's `key` action with
+     text `"Right"` sent a keypress that did *nothing* — focus and `aria-selected` stayed on
+     `tab-learn`. Re-tested with the literal key name `"ArrowRight"` and it worked correctly: focus
+     moved to `tab-practice`, `aria-selected`/`tabIndex` flipped correctly (`tab-learn` → false/-1,
+     `tab-practice` → true/0), and the rendered panel's text changed from the Learn content to
+     `"Review2 ready to review..."` — confirming the keydown handler both moved focus **and** activated
+     the tab, matching click behavior, not just a focus-only fake tab stop.
+  4. `ArrowLeft` from `tab-practice` correctly wrapped back to `tab-learn` (focus, `aria-selected`,
+     `tabIndex`, and panel content all updated together).
+  5. `End` from `tab-learn` correctly jumped straight to `tab-reference` (not a sequential walk) —
+     confirmed focus/`aria-selected`/`tabIndex` on `tab-reference`, and the panel eventually rendered
+     real Reference content (`"ReferenceGlossaryMarket Dashboard..."`, 2255 chars) after an initial
+     lazy-chunk-load flash — expected, since `Reference` is dynamically imported.
+  6. `Home` from `tab-reference` correctly jumped straight back to `tab-learn`.
+  7. `Tab` from `tab-learn` (the active, `tabIndex=0` tab) moved focus **out of the tablist entirely**
+     (landed on the language-picker `<select>`, the page's first focusable element — i.e. cycled past
+     the last tabbable element on the page) rather than onto `tab-practice`/`tab-reference`, confirming
+     the "single Tab stop into the group" half of the pattern: the two `tabIndex=-1` tabs are correctly
+     unreachable by `Tab` and reachable only via the arrow-key handler.
+  8. Killed the throwaway `python3 -m http.server` process afterward (`pkill -f "http.server 8763"`) —
+     not persistent infrastructure, matching the Environment note's stated cleanup expectation.
+- **Adversarial self-check**:
+  - *Blindspot register regression*: no source files were touched this run (only `AGENT_LOG.md`); `git
+    diff --unified=0 -- AGENT_LOG.md | grep -iE "dalio|you should (buy|sell|invest)|we recommend|be
+    bullish|be cautious|child|kid.?mode|nowDate|april 2026|will rise|will fall|guaranteed|the fed
+    will|expect the fed|rates will"` matched nothing (grep exit 1). Ran it anyway per the standing rule
+    rather than assuming a log-only diff is automatically clean.
+  - *DECISIONS.md conflict*: re-read every section header; none govern accessibility/keyboard behavior
+    or browser-tool capability, and this run made no architectural change. No conflict.
+  - *Already-done backlog item*: grepped the log for "roving-tabindex" and "keyboard-nav" before this
+    entry — every prior hit is the fifth run's original implementation and the sixth-through-ninth
+    runs' "Next run should pick" notes re-queuing this exact check (never previously performed). Not a
+    duplicate — this is the first time it's actually been executed live.
+  - *Own verification claim*: every finding above is reproducible from the current tree plus a fresh
+    `preview_start`/`javascript_tool` session — the DOM-state JSON dumps after each key press are the
+    evidence, not an eyeballed screenshot. The one genuine surprise (`"Right"` silently no-op'ing vs.
+    `"ArrowRight"` working) was caught by checking `document.activeElement` after *every* key press
+    rather than only at the end, which is exactly the kind of premature-success claim the standing rule
+    about re-running only the reported commands exists to prevent — recorded here so a future run
+    reaching for the `key` action uses the correct literal name the first time.
+- **Not touched, and why**: `economic-cycles-v6.jsx` — unrelated, still reference-only, untouched, its
+  untracked status unchanged before and after. No lesson content, locale file, `App.jsx`, or any other
+  source file was modified — this run is verification-only, confirming the fifth run's implementation
+  is correct rather than changing it. Item 21 (kids blurbs) and item 18 (blocked) were read but not
+  picked, per "what was picked and why" above.
+- **Next run should pick**: the fifth run's commit message's caveat ("live browser interaction could not
+  be checked... `preview_start` is disabled for scheduled tasks") is now known to be environment-
+  dependent, not a fixed constraint — a future run should test `preview_start` itself before assuming
+  it's unavailable, rather than copying that caveat forward unverified. With the roving-tabindex check
+  now closed, the concrete open items are unchanged from the ninth run's note: item 18's completion-rate
+  clause remains blocked on an owner action, and item 21 (kids content — grow within the current
+  three-field format vs. move to a lesson-shaped structure) is an open design call a scheduled run can
+  make progress on within the current parent-facing format without deciding the structural question.
