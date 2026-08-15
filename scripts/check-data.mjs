@@ -24,6 +24,7 @@ import { computeCoverage } from "./translation-review.mjs";
 import * as storageLib from "../src/lib/storage.js";
 import { EVENTS, MAX_LOGGED_EVENTS, track } from "../src/lib/analytics.js";
 import { redactUrl, getAdapter, fixture, ADAPTERS } from "../src/lib/marketData/adapters.js";
+import { FRED_SERIES, fixtureEconomics } from "../src/lib/marketData/fred.js";
 
 // A minimal in-memory localStorage mock, installed as a global before
 // storage.js's tests run below (node has no localStorage of its own).
@@ -682,6 +683,41 @@ for (const [label, moduleExports] of Object.entries(CONTENT_MODULES)) {
   eq("fixture.dailyCloses is deterministic across repeated calls (stable diffs)", fixtureRun1, fixtureRun2);
   eq("fixture.dailyCloses returns exactly `days` closes per symbol", Object.values(fixtureRun1).map((c) => c.length), [30, 30]);
   eq("fixture.dailyCloses returns only finite numeric closes", Object.values(fixtureRun1).flat().every(Number.isFinite), true);
+}
+
+// 15. src/lib/marketData/fred.js — fixtureEconomics(), the offline stand-in
+//     for the six FRED readings the Sector-performance screen displays.
+//     fetchEconomics() itself calls fetch() and isn't testable here; the
+//     real regression risk on the fixture side is silent drift between
+//     FRED_SERIES (what the job/screen expect) and fixtureEconomics()'s
+//     hardcoded keys (what local/offline runs actually get).
+{
+  const eq = (label, actual, expected) => {
+    if (JSON.stringify(actual) !== JSON.stringify(expected)) {
+      fail(`marketData/fred: ${label} — got ${JSON.stringify(actual)}, expected ${JSON.stringify(expected)}`);
+    }
+  };
+
+  const seriesKeys = FRED_SERIES.map((s) => s.key).sort();
+  const out = fixtureEconomics("2026-08-15");
+  eq("fixtureEconomics has exactly one entry per FRED_SERIES key (no drift)",
+    Object.keys(out).sort(), seriesKeys);
+  eq("every fixture entry's unit matches its FRED_SERIES declaration",
+    FRED_SERIES.every((s) => out[s.key].unit === s.unit), true);
+  eq("every fixture entry's seriesId matches its FRED_SERIES id",
+    FRED_SERIES.every((s) => out[s.key].seriesId === s.id), true);
+  eq("every fixture entry carries a finite numeric value",
+    Object.values(out).every((entry) => Number.isFinite(entry.value)), true);
+  eq("every fixture entry is stamped with the asOf date passed in",
+    Object.values(out).every((entry) => entry.date === "2026-08-15"), true);
+
+  const outRepeat = fixtureEconomics("2026-08-15");
+  eq("fixtureEconomics is deterministic across repeated calls with the same asOf", outRepeat, out);
+
+  const outOtherDate = fixtureEconomics("2026-01-01");
+  eq("a different asOf only changes the date field, not the illustrative values",
+    Object.fromEntries(Object.entries(outOtherDate).map(([k, v]) => [k, v.value])),
+    Object.fromEntries(Object.entries(out).map(([k, v]) => [k, v.value])));
 }
 
 console.log(`\n${failures === 0 ? "PASS" : "FAIL"}: ${failures} failure(s), ${warnings} warning(s).`);

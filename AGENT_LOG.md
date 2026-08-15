@@ -8064,3 +8064,87 @@ direction is the problem.
   note (still not acted on): item 18's completion-rate clause remains blocked on an owner action, item 21
   (kids content) remains an open design call, and a live browser keyboard-nav check of the fifth run's
   roving-tabindex change is still queued for the next interactive/preview-capable session.
+
+### 2026-08-15 (ninth run this date) — `src/lib/marketData/fred.js` test coverage (`fixtureEconomics()`), the eighth run's named next pick
+
+- **Orient**: `git status` showed only the same long-standing untracked `economic-cycles-v6.jsx` (still
+  no git history, no download metadata, unchanged content — per the standing memory note, left alone as
+  reference-only, not touched) — no uncommitted edits to any tracked file. `git log --oneline -3` topped
+  at the eighth run's commit (`9bf8a51`), confirming no concurrent session had landed anything since.
+  Read the PRIORITY BLOCK (items 17/24 still frozen/exhausted for content, item 18 blocked on an owner
+  action) and the eighth run's "Next run should pick," which named `fred.js`'s `fixtureEconomics()`
+  explicitly as the next structural-sweep candidate, the same shape it had just closed for
+  `adapters.js` (deterministic, pure, currently untested).
+- **What was picked and why**: took the named candidate as-is rather than re-deriving one. `fred.js`
+  exports `fetchEconomics()` (calls `fetch()`, not testable without a network mock — out of scope, same
+  reasoning as `adapters.js`'s real providers) and `fixtureEconomics(asOf)`, the offline stand-in that
+  the daily job (`scripts/fetch-market-data.mjs`) and local/dev runs use in place of a real FRED call.
+  Its real regression risk isn't the illustrative numbers themselves — it's silent drift between
+  `FRED_SERIES` (the six-series list the job and the Sector-performance screen both key off) and the
+  fixture's hardcoded return object: if a series is ever added to or renamed in `FRED_SERIES` without a
+  matching edit to `fixtureEconomics()`, the fixture path would silently return `undefined` for that
+  reading in local/offline runs instead of erroring.
+- **What was done**: `scripts/check-data.mjs` — added the import
+  `import { FRED_SERIES, fixtureEconomics } from "../src/lib/marketData/fred.js";` and a new section 15
+  (after section 14, `marketData/adapters.js`). Seven assertions: the fixture's key set matches
+  `FRED_SERIES`'s key set exactly (the drift check — sorted-array equality, so it also catches an extra
+  fixture key with no `FRED_SERIES` counterpart, not just a missing one); every fixture entry's `unit`
+  and `seriesId` match its `FRED_SERIES` declaration; every entry's `value` is a finite number; every
+  entry is stamped with the `asOf` argument passed in; two calls with the same `asOf` are deep-equal
+  (determinism); and a call with a different `asOf` changes only the `date` field, not any `value` — i.e.
+  the illustrative numbers are genuinely static, not silently keyed off the date string.
+- **Verified**:
+  1. `npm test` (after `bash scripts/bootstrap-node.sh`) — `PASS: 0 failure(s), 1 warning(s)` (the
+     pre-existing, unrelated translation-review-coverage warning); `check-blindspot.mjs` — all 6 checks
+     `ok`.
+  2. **Injected-bug check**: temporarily removed the `unemployment` line from `fixtureEconomics()`'s
+     return object — a realistic drift bug (a series present in `FRED_SERIES` silently missing from the
+     fixture) — and reran `node scripts/check-data.mjs`. It failed exactly as expected, on the drift
+     assertion first (`got [...5 keys...], expected [...6 keys...]`), then the script's own (pre-existing,
+     unguarded) reference to the now-`undefined` entry threw a `TypeError` on the very next assertion —
+     both are correct fail-loud behavior for a genuine drift, not a false negative. Restored the file from
+     a `cp`-made backup (`/tmp/fred.js.bak`) and confirmed `git diff --stat -- src/lib/marketData/fred.js`
+     showed no output (clean) before re-running the real suite, which passed clean.
+  3. `npm run build` — `vite v6.4.3`, `✓ 65 modules transformed`, no errors; bundle sizes unchanged from
+     the eighth run's entry (`lessonContent.money` 499.36 kB, `lessonContent.economy` 98.47 kB, `index`
+     222.78 kB) — expected, since `fred.js` is job-side tooling never imported by the client bundle and
+     this run's only change is to a test script.
+  4. `git status --short` before committing: only `scripts/check-data.mjs` modified, plus the same
+     long-standing untracked `economic-cycles-v6.jsx` — no stray file, no leftover injected-bug diff, and
+     `src/lib/marketData/fred.js` itself shows no diff (source unchanged, tests-only run).
+- **Adversarial self-check**:
+  - *Blindspot register regression*: `git diff --unified=0 -- scripts/check-data.mjs | grep -iE
+    "dalio|you should (buy|sell|invest)|we recommend|be bullish|be cautious|child|kid.?mode|nowDate|april
+    2026|will rise|will fall|guaranteed|the fed will|expect the fed|rates will"` matched nothing (grep exit
+    1). This run touched no lesson content, locale, or user-facing copy — only a test script — but the grep
+    was run rather than assumed clean, per the standing rule.
+  - *DECISIONS.md conflict*: re-read the "Market data: FRED direct, a swappable equity adapter, and a
+    pluggable relative-strength formula" entry in full, since this run's tests exercise the file that
+    decision's point 1 ("economics data comes from FRED directly") governs. The tests assert the
+    documented fixture's shape and consistency with `FRED_SERIES` — they don't touch `fetchEconomics()`,
+    change the data source, the update cadence, or any series definition. No conflict.
+  - *Already-done backlog item*: grepped the full log for "fred.js" and "fixtureEconomics" before this
+    entry — the only prior hits are the 2026-08-04 build entry noting `fetchEconomics`/`fixtureEconomics`
+    already existed and get called by the daily job, and the eighth run's own "Next run should pick" line
+    naming this exact candidate. Not a duplicate; this is the named follow-up.
+  - *Own verification claim*: every command above is reproducible from the current tree. The injected-bug
+    check is the strongest evidence — removing one series from the fixture's return object reproduces the
+    exact silent-drift failure mode the drift assertion exists to catch, the test fails loudly on it, and
+    the working tree was fully restored (`git diff --stat` empty) before committing — the same pattern the
+    five prior test-coverage entries this date used.
+- **Not touched, and why**: `economic-cycles-v6.jsx` — unrelated, still reference-only, untouched, its
+  untracked status unchanged before and after (confirmed via `git status --short` at orient and again
+  post-build). No lesson content, locale file, or item 17/21/24 frozen/open content question touched.
+  `src/lib/marketData/fred.js` itself was never modified in the committed diff — only read, and
+  temporarily mutated then restored during the injected-bug check.
+- **Next run should pick**: the named structural-sweep pure-logic candidates are now exhausted —
+  `review.js`, `relativeStrength.js`, `lessonIdMigration.js`, `storage.js`, `analytics.js`, and both
+  `marketData/adapters.js` and `marketData/fred.js`'s testable pure functions all have coverage now. A
+  future scheduled run should not default to hunting for one more untested pure function; instead
+  genuinely re-read `LAUNCH_PLAN.md` §0/§4.3 fresh, per the note the seventh and eighth runs both left and
+  neither acted on. The concrete open items remain: item 18's completion-rate clause is blocked on an
+  owner action (a real analytics provider account), item 21 (kids content — grow within the current
+  three-field format vs. move to a lesson-shaped structure) is an open design call that a scheduled run
+  can reasonably make progress on within the current parent-facing format (adding blurbs) without
+  deciding the structural question, and a live browser keyboard-nav check of the fifth run's
+  roving-tabindex change is still queued for an interactive/preview-capable session, not this one.
