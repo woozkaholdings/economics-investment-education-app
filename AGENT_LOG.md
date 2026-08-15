@@ -7613,3 +7613,102 @@ direction is the problem.
   entry deliberately does not re-scope item 17/24 itself or declare Phase 0 over — that reads as a
   judgment call for the weekly review or the owner, not a unilateral call for a single 6-hourly run to
   make alone.
+
+### 2026-08-15 (fourth run this date) — Add automated bijection/regression tests for the lesson-id migration table (test coverage, non-content structural item per the third run's "Next run should pick")
+
+- **Orient**: `git status` showed the same single untracked file as every prior run today,
+  `economic-cycles-v6.jsx` (confirmed reference-only, see Notes section) — nothing else uncommitted, no
+  other run's work in progress. `git log --oneline -3` topped at the third run's commit (`0858260`), so
+  no concurrent session had landed anything since. Read the PRIORITY BLOCK and the third run's explicit
+  "Next run should pick" note: item 17's §4.3 content clauses (lesson count, minutes) are both now met
+  and its stated purpose is exhausted, item 18's completion-rate clause is blocked on an owner action a
+  dev-agent run can't take, and the note recommends picking either item 21 (kids content — an explicitly
+  open design call, not just an implementation task) or a structural/non-content item (accessibility,
+  performance, test coverage). Chose test coverage as the most dev-agent-actionable of those — no design
+  judgment call required, unlike item 21's lesson-shaped-vs-blurb question.
+- **What was picked and why**: audited `src/lib/` for pure-logic modules with no automated test coverage.
+  `review.js` (the Leitner scheduler) and `relativeStrength.js` (`wjSectorComparison`) already have
+  thorough unit tests in `scripts/check-data.mjs` sections 8 and 9 — confirmed by reading both sections in
+  full before picking anything, specifically to avoid re-adding coverage that already exists (see the
+  adversarial self-check below). `src/lib/lessonIdMigration.js` — a 40-entry hand-written table
+  (`OLD_TO_NEW_LESSON_ID`, added 2026-08-14 for the lesson-id renumbering, backlog item 22) plus a
+  `migrateLegacyLessonIds()` function that remaps an already-installed user's persisted
+  `ecycles_completed_lessons` ids on first load after that update — had zero automated checks. This is
+  exactly the kind of large hand-transcribed table where a single typo (a duplicated target id, or one
+  silently dropped) would misroute an existing user's unlock state with no visible symptom until their
+  progress looked wrong days later — the same "invisible until later" property review.js's and
+  relativeStrength.js's existing test comments cite as their own reason for being tested this way.
+  `storage.js` was considered and set aside: its core functions (`readRaw`/`writeJSON`/etc.) all branch on
+  a real `localStorage` global, which plain Node doesn't have — testing it properly would mean adding a
+  mock/stub, a bigger and more debatable addition than this run's scope, not a same-shape extension of the
+  existing pure-function test pattern.
+- **What was done**: added a new section 10 to `scripts/check-data.mjs` (renumbering the prior section 10,
+  translation-review coverage, to 11 — no other change to that section), testing:
+  1. `OLD_TO_NEW_LESSON_ID`'s keys are exactly `1..40` with no gap or duplicate (catches a missing entry).
+  2. Its values are exactly `1..40` with no gap or duplicate — i.e. the table is a true bijection, no two
+     old ids mapping to the same new id and no new id left unhit (catches the specific typo class
+     described above: a duplicated target).
+  3. `migrateLegacyLessonIds([1, 13, 40])` returns `[29, 1, 28]` — spot-checks the function actually reads
+     the table correctly (matches the module's own worked comment: 1→29, 13→1, 40→28).
+  4. `migrateLegacyLessonIds([41, 99])` returns `[41, 99]` unchanged — the `?? id` fallback for ids outside
+     this one-time historical table (e.g. a lesson added after this migration shipped) works as intended.
+  5. `migrateLegacyLessonIds([])` returns `[]` — no crash on the common empty-progress case (a fresh
+     install with nothing completed yet).
+  No change to `src/` — this is test-only, added to the existing `scripts/check-data.mjs` harness, in the
+  same style (a local `eq(label, actual, expected)` helper, same as sections 8/9) rather than introducing
+  a new test framework or file.
+- **Verified**:
+  1. `npm test` — `PASS: 0 failure(s), 1 warning(s)` (the pre-existing, unrelated translation-review-
+     coverage warning). All new assertions passed against the real table.
+  2. **Proved the new checks actually catch the bug they're meant to catch, not just pass trivially**:
+     copied `lessonIdMigration.js` aside, edited the live file to change `39: 27, 40: 28,` to
+     `39: 28, 40: 28,` (a duplicated target id — exactly the failure mode described above), reran
+     `npm test`, and confirmed `check-data.mjs` failed with `FAIL: lessonIdMigration: every new id 1-40 is
+     hit exactly once — ...` naming the exact malformed array. Restored the original file from the backup
+     copy and reran `npm test` to confirm a clean `PASS: 0 failure(s)` again before committing. `git diff
+     src/lib/lessonIdMigration.js` showed no diff after restoring, confirming the file returned to its
+     exact prior state.
+  3. `npm run build` — `vite v6.4.3`, `✓ 65 modules transformed`, no chunk-size warning, no errors. Bundle
+     output identical to before this run's change (a build-time-only test script has no client-bundle
+     effect) — spot-checked `lessonContent.money-*.js` still at 499.36 kB and `lessonContent.economy-*.js`
+     still at 98.47 kB, confirming this run touched nothing content-related.
+  4. `git status --short` after the build showed exactly `M scripts/check-data.mjs` plus the unchanged
+     untracked `economic-cycles-v6.jsx` — no other file touched, no `src/lib/lessonIdMigration.js` diff
+     left over from the injected-bug test.
+- **Adversarial self-check**:
+  - *Blindspot register regression*: `git diff --unified=0 -- scripts/check-data.mjs | grep -iE
+    "dalio|you should (buy|sell|invest)|we recommend|be bullish|be cautious|child|kid.?mode|nowDate|
+    april 2026|will rise|will fall|guaranteed|the fed will|expect the fed|rates will"` matched nothing
+    (grep exit 1). This run touched no lesson content, locale, or user-facing copy at all — only a
+    build-time test script — so the whole regression class this check guards against doesn't apply here,
+    but the grep was still run rather than assumed clean.
+  - *DECISIONS.md conflict*: read every closed-decision section header. None concerns test methodology or
+    `check-data.mjs`'s structure; the new section is a same-shape extension of the existing pure-function
+    test pattern (sections 8/9), not a new architectural choice. No conflict.
+  - *Already-done backlog item*: this was the specific risk this run was most likely to hit, since "add
+    tests" is a generic-sounding pick — read `review.js`'s full test section (8) and
+    `relativeStrength.js`'s (9) *before* deciding what to test, specifically to confirm neither was being
+    re-covered. Grepped the full log for "lessonIdMigration" and "OLD_TO_NEW_LESSON_ID" — the only prior
+    hits are the original 2026-08-14 addition of the module itself (former item 22's run log entry); no
+    prior run added tests for it. Not a duplicate.
+  - *Own verification claim*: every command above is reproducible from the current tree. The
+    injected-bug check (verification point 2) is the strongest evidence here — it doesn't just assert the
+    tests pass, it demonstrates they fail loudly on the exact defect class they exist to catch, then
+    confirms the working tree was fully restored before committing.
+- **Not touched, and why**: `economic-cycles-v6.jsx` — unrelated, still reference-only, untouched, its
+  untracked status unchanged before and after (confirmed via `git status --short` at both orient and
+  verification steps). No lesson content, locale file, or `src/` application code touched — this is a
+  test-only addition to `scripts/check-data.mjs`. Did not add tests for `storage.js` — see "what was
+  picked and why" above for why that needs a `localStorage` mock and was set aside as a larger, separate
+  piece of work rather than folded into this run silently. Did not touch item 17/21/24's frozen or open
+  content questions.
+- **Next run should pick**: the completion-rate clause (item 18, §4.3's last unmet Phase-0 gate) is still
+  blocked on an owner action (a real analytics-provider account) — not dev-agent-actionable. Remaining
+  candidates in the same spirit as this run (dev-agent-actionable, no owner/design decision required):
+  more test coverage — `src/lib/storage.js` with a minimal in-memory `localStorage` mock (the natural next
+  piece this run explicitly set aside), or `src/lib/analytics.js`'s `track()`/`EVENTS` call sites; an
+  accessibility pass — WAI-ARIA APG recommends roving-tabindex arrow-key navigation for the bottom tab bar
+  (`App.jsx`'s `role="tablist"`/`role="tab"` elements currently rely on each tab being a separately
+  Tab-focusable `<button>`, which is keyboard-operable but not the full authoring-practice pattern for a
+  tablist); or item 21 (kids content, still not lesson-shaped) if a future run is ready to make that
+  explicitly-open design call rather than defer it again.

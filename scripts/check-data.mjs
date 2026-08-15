@@ -19,6 +19,7 @@ import { economicSignals } from "../src/content/economicSignals.js";
 import { sectors } from "../src/content/sectors.js";
 import { MAX_BOX, dueQuestions, recordAnswer } from "../src/lib/review.js";
 import { MIN_BARS, OUTPERFORM_THRESHOLD, WJ_PERIODS, wjSectorComparison } from "../src/lib/relativeStrength.js";
+import { OLD_TO_NEW_LESSON_ID, migrateLegacyLessonIds } from "../src/lib/lessonIdMigration.js";
 import { computeCoverage } from "./translation-review.mjs";
 
 const LANGS = ["en", "es", "ja", "ko", "zh"];
@@ -431,7 +432,33 @@ for (const [label, moduleExports] of Object.entries(CONTENT_MODULES)) {
   }
 }
 
-// 10. Translation review coverage (informational, non-blocking — never fails
+// 10. Lesson-id migration table (backlog item 22's OLD_TO_NEW_LESSON_ID). This
+//     is a large hand-written 40-entry table with no structural constraint
+//     enforcing it — a single transcription typo (a duplicated target id, or a
+//     missing one) would silently point an already-installed user's unlock
+//     state at the wrong lesson, with no error and no visible symptom until
+//     someone's progress looked wrong. Checked here as a pure function, no
+//     browser needed.
+{
+  const eq = (label, actual, expected) => {
+    if (JSON.stringify(actual) !== JSON.stringify(expected)) {
+      fail(`lessonIdMigration: ${label} — got ${JSON.stringify(actual)}, expected ${JSON.stringify(expected)}`);
+    }
+  };
+
+  const expected1to40 = Array.from({ length: 40 }, (_, i) => i + 1);
+  const keys = Object.keys(OLD_TO_NEW_LESSON_ID).map(Number).sort((a, b) => a - b);
+  const vals = Object.values(OLD_TO_NEW_LESSON_ID).slice().sort((a, b) => a - b);
+  eq("every old id 1-40 has an entry, none extra or missing", keys, expected1to40);
+  eq("every new id 1-40 is hit exactly once — a true bijection, no dropped or duplicated target", vals, expected1to40);
+
+  eq("known ids remap via the table", migrateLegacyLessonIds([1, 13, 40]), [29, 1, 28]);
+  eq("an id not in the table (e.g. a lesson added after this one-time migration) passes through unchanged",
+    migrateLegacyLessonIds([41, 99]), [41, 99]);
+  eq("empty input stays empty", migrateLegacyLessonIds([]), []);
+}
+
+// 11. Translation review coverage (informational, non-blocking — never fails
 //     the build). Surfaces P-4's accepted-for-now state (see AGENT_LOG.md item
 //     20, DECISIONS.md "Machine translation review") on every `npm test` run
 //     instead of only when someone remembers to run
