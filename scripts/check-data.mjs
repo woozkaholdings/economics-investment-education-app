@@ -23,6 +23,7 @@ import { OLD_TO_NEW_LESSON_ID, migrateLegacyLessonIds } from "../src/lib/lessonI
 import { computeCoverage } from "./translation-review.mjs";
 import * as storageLib from "../src/lib/storage.js";
 import { EVENTS, MAX_LOGGED_EVENTS, track } from "../src/lib/analytics.js";
+import { redactUrl, getAdapter, fixture, ADAPTERS } from "../src/lib/marketData/adapters.js";
 
 // A minimal in-memory localStorage mock, installed as a global before
 // storage.js's tests run below (node has no localStorage of its own).
@@ -629,6 +630,58 @@ for (const [label, moduleExports] of Object.entries(CONTENT_MODULES)) {
   eq("track() degrades safely instead of throwing when localStorage.setItem throws", threw, false);
 
   delete globalThis.localStorage;
+}
+
+// 14. src/lib/marketData/adapters.js — the daily market-data job's provider
+//     interface. Only the three pure, network-free pieces are testable here
+//     (dailyCloses() itself calls fetch()): redactUrl(), which exists
+//     specifically to keep a provider API key out of any log or error
+//     message the job produces, so a regression here is a real key-leak
+//     risk, not just a cosmetic bug; getAdapter()'s unknown-name error path;
+//     and fixture.dailyCloses(), the offline/no-key adapter used for local
+//     development.
+{
+  const eq = (label, actual, expected) => {
+    if (JSON.stringify(actual) !== JSON.stringify(expected)) {
+      fail(`marketData/adapters: ${label} — got ${JSON.stringify(actual)}, expected ${JSON.stringify(expected)}`);
+    }
+  };
+
+  eq("redactUrl masks a trailing token= param (finnhub/tiingo shape)",
+    redactUrl("https://finnhub.io/api/v1/stock/candle?symbol=SPY&resolution=D&token=sk_live_abc123"),
+    "https://finnhub.io/api/v1/stock/candle?symbol=SPY&resolution=D&token=[REDACTED]");
+  eq("redactUrl masks a leading ?token= param",
+    redactUrl("https://api.tiingo.com/tiingo/daily/SPY/prices?token=sk_live_abc123&startDate=2026-01-01"),
+    "https://api.tiingo.com/tiingo/daily/SPY/prices?token=[REDACTED]&startDate=2026-01-01");
+  eq("redactUrl masks apikey= (twelvedata shape), case-insensitively",
+    redactUrl("https://api.twelvedata.com/time_series?symbol=SPY&apikey=sk_live_abc123&interval=1day"),
+    "https://api.twelvedata.com/time_series?symbol=SPY&apikey=[REDACTED]&interval=1day");
+  eq("redactUrl masks camelCase apiKey= and api_key= variants",
+    redactUrl("https://example.com/?apiKey=abc&x=1") + " | " + redactUrl("https://example.com/?api_key=abc&x=1"),
+    "https://example.com/?apiKey=[REDACTED]&x=1 | https://example.com/?api_key=[REDACTED]&x=1");
+  eq("redactUrl masks every credential param when more than one is present",
+    redactUrl("https://example.com/?token=aaa&apikey=bbb"),
+    "https://example.com/?token=[REDACTED]&apikey=[REDACTED]");
+  eq("redactUrl leaves a URL with no credential param unchanged",
+    redactUrl("https://example.com/?symbol=SPY&resolution=D"),
+    "https://example.com/?symbol=SPY&resolution=D");
+
+  eq("getAdapter returns the named adapter for every key in ADAPTERS",
+    Object.keys(ADAPTERS).every((name) => getAdapter(name) === ADAPTERS[name]), true);
+  let threwOnUnknownAdapter = false;
+  try {
+    getAdapter("not-a-real-provider");
+  } catch (err) {
+    threwOnUnknownAdapter = /unknown market-data adapter/.test(err.message);
+  }
+  eq("getAdapter throws a named error for an unknown adapter", threwOnUnknownAdapter, true);
+
+  eq("fixture adapter declares it needs no API key", fixture.needsKey, false);
+  const fixtureRun1 = await fixture.dailyCloses(["SPY", "XLK"], { days: 30 });
+  const fixtureRun2 = await fixture.dailyCloses(["SPY", "XLK"], { days: 30 });
+  eq("fixture.dailyCloses is deterministic across repeated calls (stable diffs)", fixtureRun1, fixtureRun2);
+  eq("fixture.dailyCloses returns exactly `days` closes per symbol", Object.values(fixtureRun1).map((c) => c.length), [30, 30]);
+  eq("fixture.dailyCloses returns only finite numeric closes", Object.values(fixtureRun1).flat().every(Number.isFinite), true);
 }
 
 console.log(`\n${failures === 0 ? "PASS" : "FAIL"}: ${failures} failure(s), ${warnings} warning(s).`);

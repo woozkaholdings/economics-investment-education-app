@@ -7965,3 +7965,102 @@ direction is the problem.
   queued for whenever an interactive/preview-capable session next touches `App.jsx`; and a structural sweep
   (e.g. remaining `src/lib/` or `src/screens/` modules without coverage, or a fresh accessibility/
   performance pass) is a reasonable default if nothing more specific surfaces first.
+
+### 2026-08-15 (eighth run this date) — `src/lib/marketData/adapters.js` test coverage (`redactUrl`, `getAdapter`, `fixture`), following the seventh run's "structural sweep" fallback
+
+- **Orient**: `git status` showed only the same long-standing untracked `economic-cycles-v6.jsx` — no
+  uncommitted edits to any tracked file. `git log --oneline -3` topped at the seventh run's commit
+  (`02eaa0a`), confirming no concurrent session had landed anything since. Read the PRIORITY BLOCK (items
+  17/24 still frozen for content, item 18 blocked on an owner action) and the seventh run's "Next run
+  should pick," which found its own named three-candidate test-coverage stretch exhausted and offered a
+  structural sweep of remaining `src/lib/`/`src/screens/` modules without coverage as the fallback, since
+  neither a live-browser keyboard-nav check nor the item-21 design call fit an unattended unsupervised
+  scheduled run.
+- **What was picked and why**: surveyed `src/lib/` for modules with zero test coverage in
+  `scripts/check-data.mjs`. `useAppState.js`/`useMarketData.js` are React hooks and `src/screens/*` are
+  React components — none testable without a DOM/React test harness, which isn't in `package.json`
+  (`node_modules` has only `react`/`react-dom`/`vite`/`@vitejs/plugin-react`, no `jsdom` or
+  `@testing-library/*`), and adding one is a scaffolding decision bigger than a single focused run, not
+  attempted here. `src/lib/marketData/adapters.js` (the daily job's provider interface — tiingo/finnhub/
+  twelvedata/stooq/fixture) had zero coverage and, unlike the hooks/components, most of its interesting
+  logic is plain synchronous/deterministic code outside the network calls: `redactUrl()` (strips API keys
+  out of URLs before they can reach a log or error message — see the file's own header comment), the
+  `getAdapter()` lookup/error path, and the offline `fixture` adapter (deterministic synthetic data, no
+  network, no key). `redactUrl()` in particular is security-relevant — it is the only thing standing
+  between a provider key and a log line — and had never been tested despite being untouched since its
+  2026-08-04 addition.
+- **What was done**: `scripts/check-data.mjs` — added the import `import { redactUrl, getAdapter, fixture,
+  ADAPTERS } from "../src/lib/marketData/adapters.js";` and a new section 14 (after section 13,
+  `analytics.js`). Eleven assertions: `redactUrl` masks a trailing `token=` (finnhub/tiingo URL shape), a
+  leading `?token=`, `apikey=` case-insensitively (twelvedata shape), both the camelCase `apiKey=` and
+  `api_key=` variants, and every credential param when more than one is present in the same URL; it leaves
+  a URL with no credential param byte-for-byte unchanged. `getAdapter` returns the correct adapter object
+  for every key already in `ADAPTERS` and throws a named error (message includes "unknown market-data
+  adapter") for an unrecognized name. `fixture.needsKey` is `false`; `fixture.dailyCloses()` is
+  deterministic across two independent calls with the same arguments (asserted by deep-equality of the
+  full two-symbol/30-day payload, not just a spot value), returns exactly `days` closes per symbol, and
+  every close is a finite number. `dailyCloses()` for the real providers (tiingo/finnhub/twelvedata) and
+  `getJSON()` were deliberately left untested — both call `fetch()`, which this environment's test runner
+  has no mock/stub for, and stubbing global `fetch` for one section only to unstub it after would be new
+  test-harness machinery for a single-run scope; not attempted.
+- **Verified**:
+  1. `npm test` (after `bash scripts/bootstrap-node.sh`) — `PASS: 0 failure(s), 1 warning(s)` (the
+     pre-existing, unrelated translation-review-coverage warning); `check-blindspot.mjs` — all 6 checks
+     `ok`.
+  2. **Injected-bug check**: temporarily narrowed `redactUrl`'s regex from
+     `/([?&](?:token|api_?key|apikey)=)[^&]*/gi` to `/([?&](?:token)=)[^&]*/gi` — a realistic bug (the
+     twelvedata `apikey=` case, and the camelCase/underscore variants, silently stop being redacted) — and
+     reran `node scripts/check-data.mjs`. It failed exactly as expected, on exactly the three assertions
+     that depend on the `api_?key`/`apikey` branch ("masks apikey= (twelvedata shape)", "masks camelCase
+     apiKey= and api_key= variants", "masks every credential param when more than one is present" — this
+     last one because its second param is `apikey=bbb`), while the two `token=`-only assertions and the
+     no-credential-param assertion still passed — showing the apikey-branch assertions are the ones
+     actually earning their keep, not redundant with the token= case. Restored the file from a `cp`-made
+     backup (`/tmp/adapters.js.bak`) and confirmed `git diff --stat -- src/lib/marketData/adapters.js`
+     showed no output (clean) before re-running the real suite.
+  3. `npm run build` — `vite v6.4.3`, `✓ 65 modules transformed`, no errors; bundle sizes unchanged from the
+     seventh run's entry (`lessonContent.money` 499.36 kB, `lessonContent.economy` 98.47 kB, `index`
+     222.78 kB) — expected, since `adapters.js` is job-side tooling never imported by the client bundle and
+     this run's only change is to a test script.
+  4. `git status --short` before committing: only `scripts/check-data.mjs` modified, plus the same
+     long-standing untracked `economic-cycles-v6.jsx` — no stray file, no leftover injected-bug diff, and
+     `src/lib/marketData/adapters.js` itself shows no diff (source unchanged, tests-only run).
+- **Adversarial self-check**:
+  - *Blindspot register regression*: `git diff --unified=0 -- scripts/check-data.mjs | grep -iE
+    "dalio|you should (buy|sell|invest)|we recommend|be bullish|be cautious|child|kid.?mode|nowDate|april
+    2026|will rise|will fall|guaranteed|the fed will|expect the fed|rates will"` matched nothing (grep exit
+    1). This run touched no lesson content, locale, or user-facing copy — only a test script — but the grep
+    was run rather than assumed clean, per the standing rule.
+  - *DECISIONS.md conflict*: re-read the open "Market data: FRED direct, a swappable equity adapter, and a
+    pluggable relative-strength formula" entry in full, since this run's tests exercise exactly the file
+    that decision governs. The tests assert the documented behavior (URL redaction, the adapter-lookup
+    contract, the fixture adapter's determinism) — they don't change which provider is default, the update
+    cadence, what gets published, or any adapter's `dailyCloses()` logic. No conflict.
+  - *Already-done backlog item*: grepped the full log for "redactUrl", "marketData/adapters", and
+    "adapters.js" before this entry — zero hits (the only prior mention of the `marketData` directory in
+    the log is the original 2026-08-04 build entry, which doesn't name `adapters.js` test coverage). Not a
+    duplicate.
+  - *Own verification claim*: every command above is reproducible from the current tree. The injected-bug
+    check is the strongest evidence — it demonstrates the tests fail on exactly the defect class they exist
+    to catch (a narrowed credential-param regex silently letting a key through), on only the three
+    assertions that check the apikey/api_key branch specifically, then confirms the working tree was fully
+    restored (`git diff --stat` empty) before committing — the same pattern the four prior test-coverage
+    entries this date used.
+- **Not touched, and why**: `economic-cycles-v6.jsx` — unrelated, still reference-only, untouched, its
+  untracked status unchanged before and after (confirmed via `git status --short` at orient and again
+  post-build). No lesson content, locale file, or item 17/21/24 frozen/open content question touched.
+  `src/lib/marketData/adapters.js` itself was never modified in the committed diff — only read, and
+  temporarily mutated then restored during the injected-bug check. Did not add a `fetch` mock/stub to test
+  the real network-calling adapters (`tiingo`/`finnhub`/`twelvedata`) or `getJSON()` — see "what was done"
+  above for why that's out of scope for this run. Did not touch `src/lib/marketData/fred.js` (its
+  `fixtureEconomics()` is a similarly-testable pure function) — left as a named candidate for a future run
+  rather than expanding this run's scope further.
+- **Next run should pick**: `src/lib/marketData/fred.js`'s `fixtureEconomics()` is the same shape of
+  candidate this run just closed for `adapters.js` (deterministic, pure, currently untested) if another
+  structural-sweep pick is wanted. Beyond that, `src/lib/` and job-side `scripts/` pure-logic coverage is
+  now fairly thin (`review.js`, `relativeStrength.js`, `lessonIdMigration.js`, `storage.js`, `analytics.js`,
+  and now `adapters.js`'s pure functions are all covered) — a future run should genuinely re-read
+  `LAUNCH_PLAN.md` §0/§4.3 fresh rather than default to another test-coverage pick, per the seventh run's
+  note (still not acted on): item 18's completion-rate clause remains blocked on an owner action, item 21
+  (kids content) remains an open design call, and a live browser keyboard-nav check of the fifth run's
+  roving-tabindex change is still queued for the next interactive/preview-capable session.
