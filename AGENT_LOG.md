@@ -234,18 +234,25 @@ for the history. No open P1/P2 items.
     Lesson 40 ("Does One Lucky Win Prove You Have a System?", overconfidence after a lucky outcome), a
     thirteenth judgment lesson per item 24, was the last lesson *added* (2026-08-09) — see run log.
     **The §4.3 gate's lesson-count half (≥40 lessons) is now met for
-    the first time.** The minutes half (~120 min / 2 hours) is not: **115/120 minutes** — moved by 1
-    minute 2026-08-14 (ninth run) by deepening lesson 33 (The Long-Term Debt Cycle, adding a section on
-    why the cycle is hard to see from the inside — it spans roughly a human lifetime, so unlike the
-    short-term cycle almost nobody alive has firsthand memory of the last peak to check "this time is
-    different" against), following the eighth run's identical move on lesson 22 (113->114) and the
-    seventh run's on lesson 34 (Deleveraging: The 4 Tools, currency-denomination section, 112->113),
-    the sixth run's structural work (item 22, lesson-id renumbering — no minutes moved that run),
-    2026-08-14's five deepening runs before that (lessons 4, 10, 11, 9, and 2026-08-13's five
-    runs on 15, 16, 17, 19, 20), and the three prior runs' identical moves on lessons 13, 8, and 14 —
-    the sixth economy-track lesson deepened by this item (all eight deepenings before lesson 9 were
-    money-track). No run this date added a 41st lesson, per this item's own "depth in existing
-    lessons" guidance above. Roughly 5 minutes short.
+    the first time.** The minutes half (~120 min / 2 hours) is not: **117/120 minutes** — moved by 2
+    minutes 2026-08-15 (first run this date) by deepening lesson 13 (Brokerage Accounts: How Investing
+    Actually Works Mechanically, adding a section on how "commission-free" brokerages actually make
+    money — interest on pooled uninvested cash, payment for order flow, and the bid-ask spread — as a
+    financial-literacy point distinct from Lesson 11's expense-ratio content), following 2026-08-14's
+    ninth run on lesson 33 (The Long-Term Debt Cycle, 114->115), the eighth run's identical move on
+    lesson 22 (113->114), the seventh run's on lesson 34 (Deleveraging: The 4 Tools,
+    currency-denomination section, 112->113), the sixth run's structural work (item 22, lesson-id
+    renumbering — no minutes moved that run), 2026-08-14's five deepening runs before that (lessons 4,
+    10, 11, 9, and 2026-08-13's five runs on 15, 16, 17, 19, 20), and the three prior runs' identical
+    moves on lessons 13 (former id), 8, and 14 — this run is the second deepening pass money-track
+    lesson 13 has received under its current id (the first, 2026-08-12, was a different lesson under
+    the pre-2026-08-14-renumbering id scheme; confirmed by title before picking, see this date's run
+    log entry). No run this date added a 41st lesson, per this item's own "depth in existing lessons"
+    guidance above. Roughly 3 minutes short. **Note for a future run:** the `lessonContent.money`
+    build chunk is now 499.36 kB, just under Vite's 500 kB warning threshold — the next deepening pass
+    on a money-track lesson should check the post-build chunk size and, if it crosses 500 kB, that's a
+    build-warning fix to make in the same run (raise the threshold or split further), not a reason to
+    avoid touching money-track content.
     Per §4.3, Phase 0 ("free, instrumented, no payment code") doesn't end until the catalogue
     reaches roughly 40 lessons / 2 hours of content **and** ≥40% of installers finish lesson 1 — the
     lesson-count clause is satisfied but the other two clauses (minutes, completion rate) are not, so
@@ -7251,3 +7258,121 @@ direction is the problem.
   ("Inflation and Your Money..."), 10 ("W-2 vs. 1099..."), 13 ("Brokerage Accounts..."), 24 ("Is That a
   Need — Or Just a Want Wearing a Disguise?"). Nine candidates remain (money id 2 still excluded as the
   already-deepened false positive, per the seventh run's note).
+
+### 2026-08-15 (first run this date) — Deepen lesson 13 (Brokerage Accounts) with a broker-revenue section (backlog item 17, moves §4.3 minutes clause 115->117/120)
+
+- **Orient**: `git status` at run start showed one untracked file, `economic-cycles-v6.jsx` — already
+  fully investigated in the Notes section (added 2026-08-04, owner-clarified reference/inspiration
+  material, origin-unknown, not a build fixture). No other uncommitted changes, so nothing to treat as
+  another session's in-progress work; nothing was skipped. Read the PRIORITY BLOCK, item 17's current
+  figures (**40 lessons / 133,022 chars / 117 min**, this run's own figure — see below for the
+  before/after), and the ninth run's (2026-08-14) "Next run should pick" list of nine confirmed-2-section
+  candidates.
+- **What was picked and why**: money lesson 13, "Brokerage Accounts: How Investing Actually Works
+  Mechanically," from the previous run's candidate list. Read both of its existing sections first: §1
+  ("What a Brokerage Account Is (and Isn't)") covers the account-as-container framing, uninvested cash
+  sitting idle, and the taxable-vs-tax-advantaged distinction; §2 ("Placing an Order: Market vs. Limit")
+  covers market/limit orders, fractional shares, and trade settlement. Neither section explains where a
+  "commission-free" brokerage's actual revenue comes from — a real financial-literacy gap distinct from
+  Lesson 11's expense-ratio content (confirmed by reading lesson 11 first: it's about fund fees an
+  *investor* pays, not how a *brokerage* itself earns money on a supposedly free trade). Also grepped the
+  full catalogue for "payment for order flow," "bid-ask," "market maker," and "expense ratio" before
+  writing anything, to confirm no existing lesson already covered this angle — only the (distinct)
+  expense-ratio content in lesson 11 matched, and glossary.js had no relevant entry either.
+- **What was done**: added a third section, "If Trades Are Free, Who's Paying for This?"
+  (`src/content/lessonContent.money.js`, lesson 13), explaining that "commission-free" trading doesn't
+  mean a brokerage earns nothing — it typically earns through interest on pooled uninvested customer cash
+  (tying back to §1's point about idle cash), payment for order flow (routing orders to a market maker in
+  exchange for a fee), and the bid-ask spread the market maker captures on execution — all legal and
+  disclosed, with regulation requiring "best execution," but a real reason "free" isn't the same as "no
+  stake in the trade." Written as full original English prose with full (not condensed) es/ko/zh/ja
+  translations, matching this specific lesson's own existing precedent — its first two sections are
+  themselves close-to-full-length translations, not the condensed style some other lessons (e.g. 33) use.
+  Updated `lessons.js`'s lesson-13 `minutes` field from 2 to 4 to match the recomputed word count (a
+  bigger jump than most single-section deepenings, since the new section runs three full paragraphs in
+  all five languages).
+- **Verified**:
+  1. `npm test` (`check-data.mjs` + `check-blindspot.mjs`) — before updating `lessons.js`, `check-data.mjs`
+     correctly failed with `minutes is 2, but its content computes to 4`; after the fix, `PASS: 0
+     failure(s), 1 warning(s)` (the warning is the pre-existing, expected translation-review-coverage
+     line, not a new failure). All six blindspot `ok:` checks passed both times.
+  2. Translation-review ledger: the edit made all four languages' lesson-13 review record stale (`npm run
+     review-status` showed 98%/1-stale per language, listing lesson 13 by name). Reviewed the es/ko/zh/ja
+     text against the new English section for faithfulness and blindspot safety (confirmed each conveys:
+     interest on pooled cash, payment for order flow, the bid-ask spread, "best execution" regulation,
+     free-isn't-stakeless — no advice, no specific broker named, no directive to use or avoid any
+     platform), then ran `node scripts/translation-review.mjs mark 13 <lang> "Claude (Sonnet 5,
+     economics-app-dev-agent)" ai` for all four languages. `npm run review-status` back to
+     100%/0-stale/40-AI in all four languages.
+  3. `npm run build` — `vite v6.4.3`, `✓ 65 modules transformed`, no chunk-size warning.
+     `lessonContent.money-*.js` grew from 489.75 kB to 499.36 kB — still under Vite's 500 kB default
+     threshold, but close enough to flag for whoever deepens the next money-track lesson (noted in item
+     17's backlog text above); `lessonContent.economy-*.js` unchanged at 91.00 kB, confirming the edit
+     stayed inside the money-track chunk.
+  4. Recomputed catalogue-wide totals via a full re-import of `lessons.js` +
+     `lessonContent.economy.js` + `lessonContent.money.js`: **40 lessons / 133,022 English chars / 117
+     minutes** (was 131,667 chars / 115 min before this run). 28 money / 12 economy, unchanged. Refreshed
+     both `AGENT_LOG.md`'s item 17 and `LAUNCH_READINESS.md`'s lesson-catalogue row with these figures in
+     this same commit.
+  5. `git status --short` after the build showed exactly `src/content/lessonContent.money.js`,
+     `src/content/lessons.js`, `scripts/translation-review-ledger.json`, `LAUNCH_READINESS.md`, plus this
+     `AGENT_LOG.md` edit — `economic-cycles-v6.jsx`'s untracked status was unchanged, confirmed both
+     before and after this run's edits.
+  6. Live browser check against a static `npm run build` + local Python server (the documented
+     workaround): set `localStorage.ecycles_completed_lessons` to `[1..12]` (unlocking through money
+     lesson 12, matching the app's own sequential-unlock logic — money is ids 1-28), reloaded, confirmed
+     via `javascript_tool` the Learn list now shows "Brokerage Accounts: How Investing Actually Works
+     Mechanically ≈4 min" (was "≈2 min"). The list item's outer `<li>` had no click handler this run — a
+     nested `<button>` did (previous runs' entries don't record hitting this; noting it here in case a
+     future run's initial `.click()` on the `<li>` also silently no-ops) — clicking the inner `<button>`
+     navigated correctly. Confirmed "LESSON 13 OF 40" with all three section headings rendering in order
+     ("What a Brokerage Account Is (and Isn't)," "Placing an Order: Market vs. Limit," "If Trades Are
+     Free, Who's Paying for This?") and the new section's full body text present and reading correctly,
+     plus the existing takeaway text still present. `read_network_requests` filtered to `lessonContent`
+     showed only `lessonContent.money-*.js` fetched — not the economy chunk — confirming per-track
+     lazy-loading still works. `read_console_messages` (onlyErrors) showed no console errors.
+- **Adversarial self-check**:
+  - *Blindspot register regression*: `git diff --unified=0 -- src/content/lessonContent.money.js
+    src/content/lessons.js | grep -iE "dalio|you should (buy|sell|invest)|we recommend|be bullish|be
+    cautious|child|kid.?mode|nowDate|april 2026|will rise|will fall|guaranteed|the fed will|expect the
+    fed|rates will"` returned zero matches. The new section describes brokerage revenue mechanics
+    (interest, order-flow payments, bid-ask spread) in the same descriptive voice as the lesson's
+    existing two sections — no directive to buy/sell/invest, no broker named or recommended/avoided, no
+    prediction about future rates or prices. `npm run check-blindspot` (part of `npm test` above)
+    independently confirms no advice-adjacent phrasing anywhere in `src/content/`. No regression.
+  - *DECISIONS.md conflict*: re-read the closed-decision section headers before editing. The new section
+    stayed inside the existing `.js`-module content system, specifically `lessonContent.money.js` (not
+    the economy-track file), didn't touch `localStorage` progress-state keys, and used the existing
+    per-track chunk split without adding a new chunk — consistent with "Content as `.js` modules,"
+    "localStorage-only progress state," and "`LessonReader` chunk split per track." No conflict.
+  - *Already-done backlog item*: checked "Completed and pruned" and grepped the full log for prior
+    mentions of "Brokerage Accounts" and "lesson 13" — the only prior hits are (a) the 2026-08-06 addition
+    of the lesson itself (then id 25, "Add lesson 25: Brokerage Accounts...") and (b) a 2026-08-12 second
+    run's deepening of a *different* lesson that happened to share the id "13" under the
+    pre-2026-08-14-renumbering scheme (that lesson was "Budgeting: Know Where Your Money Goes" — confirmed
+    by reading that run's own entry, which names the lesson by title). This is the Brokerage Accounts
+    lesson's first deepening pass under any id scheme. Not a duplicate.
+  - *Own verification claim*: every command and figure above is reproducible from the current tree —
+    `npm test` was run both before and after the `lessons.js` edit specifically to show the check
+    catching the stale-minutes case; the catalogue-totals recomputation used a fresh full re-import of
+    both content files; the live browser check discloses its exact method (a `localStorage` unlock write
+    plus a nested-`<button>` DOM `.click()`, noting where the outer `<li>` click didn't register) and the
+    specific section headings and body text confirmed present, rather than asserting the lesson "renders
+    correctly."
+- **Not touched, and why**: `economic-cycles-v6.jsx` — unrelated, still reference-only, untouched. Did
+  not add a 41st lesson — this run's own log entry states which clause it moves (minutes, not count).
+  Did not touch `src/content/lessonContent.economy.js` — this run's edit stayed entirely inside the
+  money-track file, confirmed by verification point 3's chunk-size check above. Did not re-open item 24's
+  frozen money-track judgment scope — the new section is broker-mechanics content (an extension of
+  lesson 13's existing mechanics framing), not a new judgment/mindset lesson.
+- **Next run should pick**: item 17's minutes clause (still ~3 minutes short, 117/120). Remaining
+  candidates, all confirmed at 2 sections as of the ninth run's list minus this run's pick: economy 29
+  ("Transactions: The Building Block"), 31 ("Productivity Growth: The Long-Run Driver"), 35 ("Interest
+  Rates: The Master Signal"), 36 ("The Yield Curve: Crystal Ball"), 40 ("Three Rules of Thumb"); money 9
+  ("Inflation and Your Money..."), 10 ("W-2 vs. 1099..."), 24 ("Is That a Need — Or Just a Want Wearing a
+  Disguise?"). Eight candidates remain (money id 2 still excluded as the already-deepened false positive,
+  per the seventh run's note). Given how close item 17's minutes clause now is (117/120, ~3 minutes
+  short), the *next* run may be the one that actually clears the clause — worth re-reading the PRIORITY
+  BLOCK's "After P-1 lifts" guidance once it does, since that guidance was written for a ~20-minute gap,
+  not a cleared one, and doesn't itself say what comes next once minutes hits 120. Also worth checking the
+  `lessonContent.money` chunk size (499.36 kB after this run) before adding more to that file.

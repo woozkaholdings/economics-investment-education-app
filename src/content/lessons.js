@@ -188,7 +188,7 @@ export const lessons = [
     subtitle: {"en":"A mortgage payment and a rent payment look similar, but they buy very different things","es":"Un pago de hipoteca y un pago de alquiler parecen similares, pero compran cosas muy distintas","ko":"주택담보대출 상환금과 월세는 비슷해 보이지만, 사는 것은 완전히 다릅니다","zh":"房贷月供和房租看起来相似，但它们买到的东西却大不相同","ja":"住宅ローンの返済と家賃の支払いは似ているようで、買っているものはまったく違います"},
   },
   {
-    id: 13, track: "money", icon: "💼", color: "#0e7490", minutes: 2,
+    id: 13, track: "money", icon: "💼", color: "#0e7490", minutes: 4,
     title: {"en":"Brokerage Accounts: How Investing Actually Works Mechanically","es":"Cuentas de Corretaje: Cómo Funciona Realmente Invertir","ko":"증권 계좌: 투자가 실제로 작동하는 방식","zh":"券商账户：投资到底是如何运作的","ja":"証券口座：投資は実際どう機能するのか"},
     subtitle: {"en":"A brokerage account is a container, not an investment by itself","es":"Una cuenta de corretaje es un contenedor, no una inversión en sí misma","ko":"증권 계좌는 그 자체로 투자가 아니라 담는 그릇일 뿐입니다","zh":"券商账户只是一个容器，本身并不是投资","ja":"証券口座はそれ自体が投資ではなく、あくまで入れ物です"},
   },
