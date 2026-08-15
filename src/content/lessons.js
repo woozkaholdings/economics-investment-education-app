@@ -98,7 +98,7 @@ export const lessons = [
     subtitle: {"en":"How economies deal with too much debt","es":"Cómo las economías manejan demasiada deuda","ko":"경제가 과다 부채를 다루는 방법","zh":"经济如何应对过多债务","ja":"経済が過大な借金にどう対処するか"},
   },
   {
-    id: 35, track: "economy", icon: "💹", color: "#1e40af", minutes: 2,
+    id: 35, track: "economy", icon: "💹", color: "#1e40af", minutes: 3,
     title: {"en":"Interest Rates: The Master Signal","es":"Tasas de Interés: La Señal Maestra","ko":"금리: 마스터 신호","zh":"利率：主导信号","ja":"金利：マスターシグナル"},
     subtitle: {"en":"How the Fed steers the economy","es":"Cómo el Fed dirige la economía","ko":"연준이 경제를 조종하는 방법","zh":"美联储如何引导经济","ja":"FRBが経済を舵取りする方法"},
   },

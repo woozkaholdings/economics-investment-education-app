@@ -411,6 +411,22 @@ export const lessonContent = {
           "zh": "利率上升：股票下跌、债券价格下跌、房地产放缓。\n利率下降：股票上涨、债券价格上涨、房地产复苏。\n\n黄金法则：“不要和美联储作对。”",
           "ja": "金利上昇：株下落、債券価格下落、不動産減速。\n金利下降：株上昇、債券価格上昇、不動産回復。\n\n黄金ルール：「FRBに逆らうな。」"
         }
+      },
+      {
+        "heading": {
+          "en": "The Fed's Dual Mandate: Two Goals That Can Conflict",
+          "es": "El Doble Mandato del Fed: Dos Objetivos Que Pueden Chocar",
+          "ko": "연준의 이중 책무: 충돌할 수 있는 두 가지 목표",
+          "zh": "美联储的双重使命：可能冲突的两个目标",
+          "ja": "FRBの二重の使命：対立しうる2つの目標"
+        },
+        "body": {
+          "en": "Turning the dial isn't a free choice made in a vacuum — Congress gave the Fed two legally required goals at once, known as its dual mandate: stable prices (in practice, roughly 2% inflation per year, the same target from Lesson 39's indicator dashboard) and maximum employment (as many people working as the economy can sustain without overheating).\n\nMost of the time these two goals point the same direction: a healthy, growing economy tends to keep prices stable and unemployment low together. The hard part is when they pull apart. Raising rates to cool inflation also cools hiring — businesses facing pricier loans expand less and hire less. Cutting rates to protect jobs can let inflation run hotter, since cheaper borrowing fuels more spending than the economy can supply without prices rising.\n\nThis tension is exactly why Fed decisions get debated so heavily rather than following a fixed formula: 2021-2023 is widely read as a case where the Fed judged inflation was overheating and leaned hard toward the price-stability half of the mandate, accepting some risk to the employment half. A Fed reading the data differently, or facing a different economic moment, could reasonably lean the other way. There's no equation that resolves the trade-off — it's a judgment call the Fed's policy committee makes meeting by meeting, weighing the same indicators from Lesson 39.",
+          "es": "El Fed tiene un doble mandato: precios estables (~2% de inflación, el mismo objetivo de la Lección 39) y máximo empleo. Ambos objetivos suelen coincidir, pero a veces chocan — subir tasas frena la inflación pero también el empleo; bajar tasas protege empleos pero puede recalentar la inflación. No hay fórmula que resuelva esto: es una decisión de juicio que el comité de política del Fed toma reunión a reunión.",
+          "ko": "연준은 이중 책무를 가집니다: 물가 안정(약 2% 인플레이션, 39강의 목표와 동일)과 최대 고용. 두 목표는 대개 함께 가지만 때로는 충돌합니다 — 금리 인상은 인플레이션을 억제하지만 고용도 둔화시키고, 금리 인하는 고용을 보호하지만 인플레이션을 과열시킬 수 있습니다. 이를 풀어주는 공식은 없으며, 연준의 정책위원회가 회의마다 39강의 지표들을 놓고 내리는 판단입니다.",
+          "zh": "美联储有双重使命：物价稳定（约2%通胀，与第39课的目标一致）和充分就业。这两个目标通常一致，但有时会冲突——加息能抑制通胀，但也会拖累就业；降息能保护就业，却可能让通胀过热。没有公式能解决这种权衡，这是美联储政策委员会每次会议参照第39课的指标做出的判断。",
+          "ja": "FRBには二重の使命があります：物価安定（インフレ率約2%、第39課の目標と同じ）と最大雇用です。この2つの目標は通常一致しますが、時に対立します——利上げはインフレを抑えますが雇用も冷やし、利下げは雇用を守りますがインフレが過熱する可能性があります。これを解決する公式はなく、FRBの政策委員会が会合ごとに第39課の指標を踏まえて下す判断です。"
+        }
       }
     ],
     "takeaway": {

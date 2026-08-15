@@ -28,7 +28,7 @@ Phase 0 ("free, instrumented, no payment code") must clear **both**:
 
 | Threshold | Target | Actual | Status |
 |---|---|---|---|
-| Lesson catalogue size | ≥40 lessons / ~2 hours | **40 lessons / 133,022 English chars / 117 min** — split across **money (28)** + **economy (12)** tracks, see `LAUNCH_PLAN.md` §2.5 | 🟡 Lesson-count clause **met** (40/40) since lesson 40 (2026-08-09); char/time clause not met — 117/120 min, ~98% |
+| Lesson catalogue size | ≥40 lessons / ~2 hours | **40 lessons / 134,398 English chars / 118 min** — split across **money (28)** + **economy (12)** tracks, see `LAUNCH_PLAN.md` §2.5 | 🟡 Lesson-count clause **met** (40/40) since lesson 40 (2026-08-09); char/time clause not met — 118/120 min, ~98% |
 | Installer finishes lesson 1 — *structural precondition* | Lesson 1 should be worth finishing | A new install opens into the money track's first lesson (fixed 2026-08-07), not the macro-theory chain | ⚠️ Still unmeasurable (no analytics pipeline), but the structural obstacle is gone |
 | Kids curriculum | Part of the product per §0 (kids→adults) | **15 blurbs** (5 per age band x 3 bands), parent-facing, up from 9 as of 2026-08-07 — see `LAUNCH_PLAN.md` §2.6 and backlog item 21 | ❌ Gap — still 3 fields/band (`lessons`/`activity`/`parentTip`), not lesson-shaped; expanding it parent-facing is safe work, making it child-facing is an owner/COPPA decision (§10.3) |
 | Installer lesson-1 completion | ≥40% | **Unmeasured** — no analytics pipeline exists | ❌ Unmeasurable |

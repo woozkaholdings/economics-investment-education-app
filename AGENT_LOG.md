@@ -234,25 +234,23 @@ for the history. No open P1/P2 items.
     Lesson 40 ("Does One Lucky Win Prove You Have a System?", overconfidence after a lucky outcome), a
     thirteenth judgment lesson per item 24, was the last lesson *added* (2026-08-09) — see run log.
     **The §4.3 gate's lesson-count half (≥40 lessons) is now met for
-    the first time.** The minutes half (~120 min / 2 hours) is not: **117/120 minutes** — moved by 2
-    minutes 2026-08-15 (first run this date) by deepening lesson 13 (Brokerage Accounts: How Investing
-    Actually Works Mechanically, adding a section on how "commission-free" brokerages actually make
-    money — interest on pooled uninvested cash, payment for order flow, and the bid-ask spread — as a
-    financial-literacy point distinct from Lesson 11's expense-ratio content), following 2026-08-14's
-    ninth run on lesson 33 (The Long-Term Debt Cycle, 114->115), the eighth run's identical move on
-    lesson 22 (113->114), the seventh run's on lesson 34 (Deleveraging: The 4 Tools,
-    currency-denomination section, 112->113), the sixth run's structural work (item 22, lesson-id
+    the first time.** The minutes half (~120 min / 2 hours) is not: **118/120 minutes** — moved by 1
+    minute 2026-08-15 (second run this date) by deepening lesson 35 (Interest Rates: The Master Signal,
+    adding a "Fed's Dual Mandate" section explaining the two legally required goals — price stability
+    and maximum employment — and why they sometimes conflict, cross-referencing Lesson 39's indicator
+    dashboard), following the first run this date's deepening of lesson 13 (Brokerage Accounts,
+    115->117), 2026-08-14's ninth run on lesson 33 (The Long-Term Debt Cycle, 114->115), the eighth
+    run's identical move on lesson 22 (113->114), the seventh run's on lesson 34 (Deleveraging: The 4
+    Tools, currency-denomination section, 112->113), the sixth run's structural work (item 22, lesson-id
     renumbering — no minutes moved that run), 2026-08-14's five deepening runs before that (lessons 4,
     10, 11, 9, and 2026-08-13's five runs on 15, 16, 17, 19, 20), and the three prior runs' identical
-    moves on lessons 13 (former id), 8, and 14 — this run is the second deepening pass money-track
-    lesson 13 has received under its current id (the first, 2026-08-12, was a different lesson under
-    the pre-2026-08-14-renumbering id scheme; confirmed by title before picking, see this date's run
-    log entry). No run this date added a 41st lesson, per this item's own "depth in existing lessons"
-    guidance above. Roughly 3 minutes short. **Note for a future run:** the `lessonContent.money`
-    build chunk is now 499.36 kB, just under Vite's 500 kB warning threshold — the next deepening pass
-    on a money-track lesson should check the post-build chunk size and, if it crosses 500 kB, that's a
-    build-warning fix to make in the same run (raise the threshold or split further), not a reason to
-    avoid touching money-track content.
+    moves on lessons 13 (former id), 8, and 14 — this run picked an economy-track lesson specifically
+    because the previous run's note flagged `lessonContent.money` at 499.36 kB, just under Vite's 500 kB
+    warning threshold; economy-track content stayed in `lessonContent.economy.js` (91.00 kB -> 94.53 kB),
+    leaving the money chunk untouched. No run this date added a 41st lesson, per this item's own
+    "depth in existing lessons" guidance above. Roughly 2 minutes short. **Note for a future run:** the
+    `lessonContent.money` chunk is still at 499.36 kB (unchanged by this run) — the next deepening pass
+    on a money-track lesson should still check the post-build chunk size before committing.
     Per §4.3, Phase 0 ("free, instrumented, no payment code") doesn't end until the catalogue
     reaches roughly 40 lessons / 2 hours of content **and** ≥40% of installers finish lesson 1 — the
     lesson-count clause is satisfied but the other two clauses (minutes, completion rate) are not, so
@@ -267,8 +265,10 @@ for the history. No open P1/P2 items.
     lesson-11 deepening), 2026-08-14 (fourth run, 111-minute figure, lesson-10 deepening), 2026-08-14
     (fifth run, 112-minute figure, lesson-4 deepening), 2026-08-14 (seventh run, 113-minute
     figure, lesson-34 deepening), 2026-08-14 (eighth run, 114-minute figure, lesson-22 deepening),
-    and now 2026-08-14 (ninth run, 115-minute figure, lesson-33 deepening — lesson ids per the sixth
-    run's renumbering, not the ids named in earlier entries above).
+    2026-08-14 (ninth run, 115-minute figure, lesson-33 deepening — lesson ids per the sixth
+    run's renumbering, not the ids named in earlier entries above), 2026-08-15 (first run this date,
+    117-minute figure, lesson-13 deepening), and now 2026-08-15 (second run this date, 118-minute
+    figure, lesson-35 deepening).
     Per §4.3 verbatim: "the highest-value monetization work right now is writing
     lessons, not writing billing code." Do not start billing/paywall work ahead of this gate — see item
     15. **Note the failure mode this item created:** nine consecutive scheduled runs each picked "add one
@@ -7376,3 +7376,116 @@ direction is the problem.
   BLOCK's "After P-1 lifts" guidance once it does, since that guidance was written for a ~20-minute gap,
   not a cleared one, and doesn't itself say what comes next once minutes hits 120. Also worth checking the
   `lessonContent.money` chunk size (499.36 kB after this run) before adding more to that file.
+
+### 2026-08-15 (second run this date) — Deepen lesson 35 (Interest Rates: The Master Signal) with a Fed dual-mandate section (backlog item 17, moves §4.3 minutes clause 117->118/120)
+
+- **Orient**: `git status` at run start showed one untracked file, `economic-cycles-v6.jsx` — already
+  investigated in the Notes section (owner-clarified reference-only, not a build fixture). No other
+  uncommitted changes, so nothing from another session to avoid touching. `git log --oneline -5` matched
+  the first run's commit at the top, confirming no concurrent session had landed anything since. Read the
+  PRIORITY BLOCK, item 17's current figures (40 lessons / 133,022 chars / 117 min after the first run
+  today), and that run's "Next run should pick" list of eight confirmed-2-section candidates: economy 29,
+  31, 35, 36, 40; money 9, 10, 24.
+- **What was picked and why**: economy lesson 35, "Interest Rates: The Master Signal," specifically
+  *instead of* a money-track candidate — the first run today flagged `lessonContent.money` at 499.36 kB,
+  just under Vite's 500 kB chunk-size warning threshold, and asked the next money-track deepening to check
+  that size before committing. Picking an economy-track lesson sidesteps the risk entirely this run rather
+  than needing to manage it. Read lesson 35's existing two sections first: §1 ("The Fed Funds Rate")
+  explains the rate as the economy's master dial and the 12-24 month policy lag; §2 ("How Rates Affect
+  Everything") walks through the transmission mechanism into stocks, bonds, real estate, and the dollar.
+  Neither section explains *why* the Fed sets rates the way it does — the dual-mandate framework (price
+  stability + maximum employment) that drives the "turn the dial" decisions §1/§2 describe the effects of.
+  Grepped the full catalogue for "dual mandate," "maximum employment," "price stability," "2% inflation,"
+  and "inflation target" before writing anything: only a passing "Fed targets roughly 2% inflation as
+  healthy" line in lesson 39's indicator dashboard (economy) matched — no lesson anywhere covers the
+  employment half of the mandate or the tension between the two goals. Also checked money lesson 9
+  ("Inflation and Your Money") since it has a "Real Return vs Nominal Return" section — confirmed that's a
+  different angle entirely (savings purchasing power, not Fed policy goals), so no overlap.
+- **What was done**: added a third section, "The Fed's Dual Mandate: Two Goals That Can Conflict"
+  (`src/content/lessonContent.economy.js`, lesson 35), explaining Congress's two legally required Fed
+  goals — price stability (~2% inflation, cross-referencing lesson 39's dashboard) and maximum employment —
+  that the goals usually align but sometimes conflict (rate hikes cool inflation but also hiring; rate cuts
+  protect jobs but risk overheating inflation), and that 2021-2023 is widely read as a case where the Fed
+  leaned toward the price-stability half, framed as one read of history rather than a prediction of what
+  the Fed will do next. Written as full original English prose with full es/ko/zh/ja translations in the
+  same condensed style lesson 35's existing two sections already use (short declarative lines rather than
+  full paragraphs, matching that specific lesson's precedent — distinct from lesson 13's full-paragraph
+  style, which matched *that* lesson's precedent instead). Updated `lessons.js`'s lesson-35 `minutes` field
+  from 2 to 3.
+- **Verified**:
+  1. `npm test` (`check-data.mjs` + `check-blindspot.mjs`) — before updating `lessons.js`, `check-data.mjs`
+     correctly failed with `minutes is 2, but its content computes to 3`; after the fix, `PASS: 0
+     failure(s), 1 warning(s)` (the pre-existing translation-review-coverage warning, not new). All six
+     blindspot `ok:` checks passed both times.
+  2. Translation-review ledger: the edit made all four languages' lesson-35 review record stale (98%/
+     1-stale). Reviewed the es/ko/zh/ja text against the new English section for faithfulness and
+     blindspot safety (confirmed each conveys: the two mandate goals, the 2% target, the conflict
+     mechanism, the 2021-2023 framing as description not prediction, the Lesson 39 cross-reference — no
+     advice, no forecast of future Fed action, no directive language), then ran
+     `node scripts/translation-review.mjs mark 35 <lang> "Claude (Sonnet 5, economics-app-dev-agent)" ai`
+     for all four languages. `npm run review-status` back to 100%/0-stale/40-AI in all four languages.
+  3. `npm run build` — `vite v6.4.3`, `✓ 65 modules transformed`, no chunk-size warning.
+     `lessonContent.economy-*.js` grew from 91.00 kB to 94.53 kB; `lessonContent.money-*.js` unchanged at
+     499.36 kB, confirming the edit stayed inside the economy-track chunk and didn't push the money chunk
+     any closer to the 500 kB threshold.
+  4. Recomputed catalogue-wide totals via a full re-import of `lessons.js` + `lessonContent.economy.js` +
+     `lessonContent.money.js`: **40 lessons / 134,398 English chars / 118 minutes** (was 133,022 chars /
+     117 min before this run). 28 money / 12 economy, unchanged. Refreshed both `AGENT_LOG.md`'s item 17
+     and `LAUNCH_READINESS.md`'s lesson-catalogue row with these figures in this same commit.
+  5. `git status --short` after the build showed exactly `src/content/lessonContent.economy.js`,
+     `src/content/lessons.js`, `scripts/translation-review-ledger.json`, `LAUNCH_READINESS.md`, plus this
+     `AGENT_LOG.md` edit — `economic-cycles-v6.jsx`'s untracked status was unchanged, confirmed both before
+     and after this run's edits.
+  6. Live browser check against a static `npm run build` + local Python server (the documented
+     workaround): set `localStorage.ecycles_completed_lessons` to money ids 1-28 plus economy ids 29-34
+     (unlocking through lesson 35 itself, matching the app's sequential-unlock logic), reloaded, clicked
+     the "Interest Rates: The Master Signal" button via `querySelectorAll`/`.click()` (per the documented
+     browser-tool-unreliability workaround), and confirmed via `javascript_tool` that `main.innerText`
+     contained `"LESSON 35"`, the new heading `"The Fed's Dual Mandate: Two Goals That Can Conflict"`, and
+     the body text (`"legally required goals"`), plus the updated `"≈3 min"` reading-time line.
+     `read_network_requests` filtered to `lessonContent` showed only `lessonContent.economy-*.js` fetched
+     — not the money chunk — confirming per-track lazy-loading still works. `read_console_messages`
+     (onlyErrors) showed no console errors.
+- **Adversarial self-check**:
+  - *Blindspot register regression*: `git diff --unified=0 -- src/content/lessonContent.economy.js
+    src/content/lessons.js | grep -iE "dalio|you should (buy|sell|invest)|we recommend|be bullish|be
+    cautious|child|kid.?mode|nowDate|april 2026|will rise|will fall|guaranteed|the fed will|expect the
+    fed|rates will"` returned zero matches. The new section describes the Fed's *legal mandate structure*
+    and *why past decisions were made*, not what the Fed will do next or what a reader should do —
+    "2021-2023 is widely read as a case where the Fed judged..." is historical framing, and the closing
+    line explicitly states there's no formula and it's a judgment call the Fed's committee makes, not
+    advice to the reader. `npm run check-blindspot` independently confirms no advice-adjacent phrasing
+    anywhere in `src/content/`. No regression.
+  - *DECISIONS.md conflict*: re-read the closed-decision section headers before editing. The new section
+    stayed inside the existing `.js`-module content system, specifically `lessonContent.economy.js` (not
+    the money-track file, deliberately, per the "what was picked and why" note above), didn't touch
+    `localStorage` progress-state keys, and used the existing per-track chunk split without adding a new
+    chunk. Consistent with "Content as `.js` modules," "localStorage-only progress state," and
+    "`LessonReader` chunk split per track." No conflict.
+  - *Already-done backlog item*: checked "Completed and pruned" and grepped the full log for prior
+    mentions of "dual mandate," "maximum employment," and "lesson 35" — the only prior hits are the
+    original 2026-08-07 addition of the lesson itself and this date's first run listing lesson 35 as an
+    open candidate. This is lesson 35's first deepening pass. Not a duplicate.
+  - *Own verification claim*: every command and figure above is reproducible from the current tree —
+    `npm test` was run both before and after the `lessons.js` edit specifically to show the check catching
+    the stale-minutes case; the catalogue-totals recomputation used a fresh full re-import of both content
+    files; the live browser check discloses its exact method (a `localStorage` unlock write, a button
+    `.click()` via `querySelectorAll` text matching, and the specific heading/body substrings confirmed
+    present) rather than asserting the lesson "renders correctly."
+- **Not touched, and why**: `economic-cycles-v6.jsx` — unrelated, still reference-only, untouched. Did not
+  add a 41st lesson — this run's own log entry states which clause it moves (minutes, not count). Did not
+  touch `src/content/lessonContent.money.js` — this run's edit stayed entirely inside the economy-track
+  file, confirmed by verification point 3's chunk-size check above, and was the whole reason an
+  economy-track lesson was picked over the money-track candidates this run's predecessor listed. Did not
+  re-open item 24's frozen money-track judgment scope — this is economy-track content, not a money-track
+  judgment lesson.
+- **Next run should pick**: item 17's minutes clause (still ~2 minutes short, 118/120). Remaining
+  candidates, all confirmed at 2 sections as of this run's list minus this run's pick: economy 29
+  ("Transactions: The Building Block"), 31 ("Productivity Growth: The Long-Run Driver"), 36 ("The Yield
+  Curve: Crystal Ball"), 40 ("Three Rules of Thumb"); money 9 ("Inflation and Your Money..."), 10 ("W-2 vs.
+  1099..."), 24 ("Is That a Need — Or Just a Want Wearing a Disguise?"). Seven candidates remain (money id
+  2 still excluded as the already-deepened false positive). At ~2 minutes short, the *next* run is likely
+  the one that clears the clause — worth re-reading the PRIORITY BLOCK's "After P-1 lifts" guidance once it
+  does, and deciding what item 17 becomes once there's no minutes gap left to move (the guidance as written
+  doesn't say). `lessonContent.money` chunk size is unchanged at 499.36 kB — a money-track pick should
+  still check it post-build.
