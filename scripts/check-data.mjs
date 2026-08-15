@@ -21,6 +21,42 @@ import { MAX_BOX, dueQuestions, recordAnswer } from "../src/lib/review.js";
 import { MIN_BARS, OUTPERFORM_THRESHOLD, WJ_PERIODS, wjSectorComparison } from "../src/lib/relativeStrength.js";
 import { OLD_TO_NEW_LESSON_ID, migrateLegacyLessonIds } from "../src/lib/lessonIdMigration.js";
 import { computeCoverage } from "./translation-review.mjs";
+import * as storageLib from "../src/lib/storage.js";
+
+// A minimal in-memory localStorage mock, installed as a global before
+// storage.js's tests run below (node has no localStorage of its own).
+// storage.js reads `localStorage` lazily inside each function rather than
+// at module scope, so it's safe to import it up top and only install the
+// mock right before exercising it in section 12.
+class FakeLocalStorage {
+  constructor() {
+    this._data = new Map();
+  }
+  getItem(key) {
+    return this._data.has(key) ? this._data.get(key) : null;
+  }
+  setItem(key, value) {
+    this._data.set(key, String(value));
+  }
+  removeItem(key) {
+    this._data.delete(key);
+  }
+  clear() {
+    this._data.clear();
+  }
+}
+
+// A variant that throws on every access, mirroring the real-world case
+// storage.js exists to guard against — privacy modes where localStorage
+// throws instead of returning null (see the file's own header comment).
+class ThrowingLocalStorage {
+  getItem() {
+    throw new DOMException("access denied", "SecurityError");
+  }
+  setItem() {
+    throw new DOMException("access denied", "SecurityError");
+  }
+}
 
 const LANGS = ["en", "es", "ja", "ko", "zh"];
 const TRACK_KEYS = new Set(TRACKS.map((tr) => tr.key));
@@ -479,6 +515,67 @@ for (const [label, moduleExports] of Object.entries(CONTENT_MODULES)) {
       `per-language human share above — most review so far is AI (see the method field, ` +
       `DECISIONS.md). Run 'npm run review-status' for detail.`,
   );
+}
+
+// 12. src/lib/storage.js — every persisted value in the app goes through
+//     this file (see its own header comment), but it had no test coverage
+//     of its own; AGENT_LOG.md flagged this twice as the natural next piece
+//     and twice deferred it for needing a localStorage mock (node has none
+//     built in). FakeLocalStorage/ThrowingLocalStorage above supply that.
+//     Two things this checks that a human skim wouldn't: (a) the read/write
+//     round trip and fallback behavior for every exported function, and
+//     (b) that KEYS has no accidental duplicate string value — two features
+//     silently sharing one localStorage key would corrupt each other's
+//     state with no error and no visible symptom, the same failure shape
+//     section 10 above guards against for lesson ids.
+{
+  const eq = (label, actual, expected) => {
+    if (JSON.stringify(actual) !== JSON.stringify(expected)) {
+      fail(`storage: ${label} — got ${JSON.stringify(actual)}, expected ${JSON.stringify(expected)}`);
+    }
+  };
+
+  const keyValues = Object.values(storageLib.KEYS);
+  eq("KEYS has no duplicate storage key across different features", keyValues.length, new Set(keyValues).size);
+
+  globalThis.localStorage = new FakeLocalStorage();
+
+  eq("readRaw returns the fallback when nothing is stored", storageLib.readRaw("missing", "fallback"), "fallback");
+  eq("readRaw returns null fallback by default", storageLib.readRaw("missing"), null);
+  eq("writeRaw reports success", storageLib.writeRaw("k1", "hello"), true);
+  eq("readRaw reads back what writeRaw wrote", storageLib.readRaw("k1"), "hello");
+  eq("writeRaw stores non-string values via String()", storageLib.writeRaw("k2", 42), true);
+  eq("readRaw returns the stringified value", storageLib.readRaw("k2"), "42");
+
+  eq("readJSON returns the fallback when nothing is stored", storageLib.readJSON("missing-json", { a: 1 }), { a: 1 });
+  eq("writeJSON reports success", storageLib.writeJSON("k3", { streak: 5, days: [1, 2, 3] }), true);
+  eq("readJSON round-trips a nested object", storageLib.readJSON("k3", null), { streak: 5, days: [1, 2, 3] });
+  eq("writeJSON/readJSON round-trip null falls back instead of returning null",
+    (storageLib.writeJSON("k4", null), storageLib.readJSON("k4", "fallback")), "fallback");
+
+  globalThis.localStorage.setItem("corrupt", "{not valid json");
+  eq("readJSON falls back on unparseable stored data", storageLib.readJSON("corrupt", "fallback"), "fallback");
+
+  eq("readArray returns [] when nothing is stored", storageLib.readArray("missing-array"), []);
+  storageLib.writeJSON("arr", [1, 2, 3]);
+  eq("readArray reads back a stored array", storageLib.readArray("arr"), [1, 2, 3]);
+  storageLib.writeJSON("not-arr", { not: "an array" });
+  eq("readArray guards a wrong-shape stored value instead of returning it", storageLib.readArray("not-arr"), []);
+
+  globalThis.localStorage = new ThrowingLocalStorage();
+
+  eq("readRaw falls back instead of throwing when localStorage.getItem throws",
+    storageLib.readRaw("anything", "safe"), "safe");
+  eq("writeRaw reports failure instead of throwing when localStorage.setItem throws",
+    storageLib.writeRaw("anything", "x"), false);
+  eq("readJSON falls back instead of throwing when localStorage.getItem throws",
+    storageLib.readJSON("anything", "safe"), "safe");
+  eq("writeJSON reports failure instead of throwing when localStorage.setItem throws",
+    storageLib.writeJSON("anything", { x: 1 }), false);
+  eq("readArray falls back to [] instead of throwing when localStorage.getItem throws",
+    storageLib.readArray("anything"), []);
+
+  delete globalThis.localStorage;
 }
 
 console.log(`\n${failures === 0 ? "PASS" : "FAIL"}: ${failures} failure(s), ${warnings} warning(s).`);

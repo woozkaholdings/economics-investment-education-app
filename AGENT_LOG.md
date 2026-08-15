@@ -7788,3 +7788,86 @@ direction is the problem.
   in-memory `localStorage` mock — the natural next piece, twice deferred now) and
   `src/lib/analytics.js`'s `track()`/`EVENTS` call sites; item 18's completion-rate clause is still blocked
   on an owner action; item 21 (kids content) is still an open design call, not a default pick.
+
+### 2026-08-15 (sixth run this date) — `src/lib/storage.js` test coverage (the localStorage mock, twice deferred)
+
+- **Orient**: `git status` showed only the same long-standing untracked `economic-cycles-v6.jsx`
+  (unchanged, reference-only per the Notes section) — no uncommitted edits to any tracked file. `git log
+  --oneline -3` topped at the fifth run's commit (`ebf64a5`), confirming no concurrent session had landed
+  anything since. Read the PRIORITY BLOCK and the fifth run's "Next run should pick," which named the
+  browser keyboard-nav check (not dev-agent-actionable — `preview_start` is blocked in unattended
+  scheduled-task sessions, confirmed by the fourth run's own note) and two dev-agent-actionable
+  candidates: `storage.js` test coverage and `analytics.js` call-site tests. Picked `storage.js`, since it
+  was explicitly named "twice deferred" — the second run to set it aside (2026-08-14's section-10 addition
+  for `lessonIdMigration.js`) said in so many words that a mock was "a bigger and more debatable addition
+  than this run's scope," so building it is overdue rather than optional.
+- **What was done**: `scripts/check-data.mjs` — added `FakeLocalStorage` (a `Map`-backed in-memory
+  implementation of `getItem`/`setItem`/`removeItem`/`clear`) and `ThrowingLocalStorage` (throws a
+  `DOMException` on every access, mirroring the private-browsing-mode failure `storage.js`'s own header
+  comment says every wrapper exists to guard against), installed as `globalThis.localStorage` only inside
+  the new section 12, not at module scope — `storage.js` reads the global lazily inside each function
+  rather than at import time, so importing it up top and swapping the mock in right before exercising it
+  is safe and doesn't disturb any earlier section. Section 12 tests, in order: `KEYS` has no duplicate
+  string value across different features (the same "silent collision" failure shape section 10 guards for
+  `lessonIdMigration`'s table, applied here to the key namespace); `readRaw`/`writeRaw` round-trip and
+  fallback-when-missing, including a non-string value going through `String()`; `readJSON`/`writeJSON`
+  round-trip a nested object, `null` written and read back returns the fallback (not `null`) per the
+  function's own documented behavior, and unparseable stored JSON falls back instead of throwing;
+  `readArray` returns `[]` when nothing is stored, round-trips a real array, and — the one guard clause in
+  the whole file — returns `[]` instead of the raw value when the stored JSON parses but isn't an array;
+  then every read/write function is re-exercised against `ThrowingLocalStorage` to confirm each one
+  degrades to its fallback/`false` return instead of letting the thrown `DOMException` propagate, which is
+  the entire reason this file wraps every access in `try`/`catch` (see its header comment and
+  `DECISIONS.md`'s "localStorage-only progress and personalization state"). 24 new assertions, no existing
+  section modified besides the new import line.
+- **Verified**:
+  1. `npm test` (after `bash scripts/bootstrap-node.sh` to get the portable Node v20.18.1 runtime onto
+     `PATH`, per the Environment note) — `PASS: 0 failure(s), 1 warning(s)` (the pre-existing, unrelated
+     translation-review warning); `check-blindspot.mjs` — all 6 checks `ok`.
+  2. **Injected-bug check**: temporarily changed `readArray`'s guard clause in `src/lib/storage.js` from
+     `Array.isArray(v) ? v : []` to `return v;` (a realistic bug — returning the raw parsed value without
+     the shape guard) and re-ran `node scripts/check-data.mjs`. It failed exactly as expected, on exactly
+     the three assertions that exercise that guard: "readArray returns [] when nothing is stored" (got
+     `null`), "readArray guards a wrong-shape stored value" (got the raw object), and "readArray falls back
+     to [] instead of throwing" (got `null`) — all other section-12 assertions still passed, showing the
+     new tests are targeted, not vacuously green. Reverted with `git diff -- src/lib/storage.js` confirmed
+     empty before re-running the real suite.
+  3. `npm run build` — `vite v6.4.3`, `✓ 65 modules transformed`, no errors; bundle sizes unchanged from
+     the fifth run's entry (`lessonContent.money` 499.36 kB, `lessonContent.economy` 98.47 kB, `index`
+     222.78 kB) — expected, since this change is test-script-only and touches no `src/` file in the final
+     diff.
+  4. `git status --short` before committing: only `scripts/check-data.mjs` modified and the same
+     long-standing untracked `economic-cycles-v6.jsx` — no stray file touched, no leftover mock-injection
+     diff.
+- **Adversarial self-check**:
+  - *Blindspot register regression*: this run touched no lesson content, locale strings, market copy, or
+    kids content — only a test script and a momentary, fully-reverted one-line change to `storage.js`'s
+    internals (no user-facing text). `npm test`'s `check-blindspot.mjs` (§10.1/§10.2/§10.3/§2.3) ran clean
+    regardless; not skipped for looking out-of-scope.
+  - *DECISIONS.md conflict*: read every closed-decision section header, and in full the
+    "localStorage-only progress and personalization state" entry specifically, since this run's tests
+    exercise that exact mechanism. The tests assert the documented try/catch-degrades-safely behavior;
+    they don't change or contradict the architecture decision itself.
+  - *Already-done backlog item*: grepped the full log for "storage.js" before starting (20 hits) and read
+    the two that explicitly discuss testing it — the 2026-08-14 run that set it aside as bigger-scope, and
+    the fifth run's "Next run should pick" naming it again. No prior run added a `localStorage` mock or
+    `storage.js` test section; not a duplicate.
+  - *Own verification claim*: every command above is reproducible from the current tree. The
+    injected-bug check is the strongest evidence — it doesn't just assert the tests pass, it demonstrates
+    they fail on the exact defect class they exist to catch (a dropped shape guard), and on only those
+    three assertions, then confirms the working tree was fully restored (`git diff` empty) before
+    committing — the same pattern the 2026-08-14 `lessonIdMigration` test entry and the fourth run's
+    `lessonIdMigration` bijection-test entry both used, applied here per the past-run incident (§10.1
+    reported "closed" when only half done) this self-check step exists to catch.
+- **Not touched, and why**: `economic-cycles-v6.jsx` — unrelated, still reference-only, untouched, its
+  untracked status unchanged before and after (confirmed via `git status --short` at orient and again
+  post-verification). No lesson content, locale file, or item 17/21/24 frozen/open content question
+  touched. Did not add `analytics.js` call-site tests — the other dev-agent-actionable candidate the fifth
+  run also named; picked `storage.js` instead per the reasoning above, `analytics.js` remains a valid
+  candidate for a future run.
+- **Next run should pick**: `src/lib/analytics.js`'s `track()`/`EVENTS` call sites — the last
+  dev-agent-actionable test-coverage candidate named across the last two runs, now that both `storage.js`
+  and `lessonIdMigration.js` have coverage. A live browser keyboard-nav check of the fifth run's
+  roving-tabindex change is still queued for whenever an interactive/preview-capable session next touches
+  `App.jsx`. Item 18's completion-rate clause remains blocked on an owner action; item 21 (kids content)
+  remains an open design call, not a default pick.
