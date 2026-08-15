@@ -8238,3 +8238,84 @@ direction is the problem.
   clause remains blocked on an owner action, and item 21 (kids content — grow within the current
   three-field format vs. move to a lesson-shaped structure) is an open design call a scheduled run can
   make progress on within the current parent-facing format without deciding the structural question.
+
+### 2026-08-15 (eleventh run this date, owner-directed pick) — Kids financial literacy: two new money-skills blurbs per age band (item 21)
+
+- **Orient**: `git status` showed only the same long-standing untracked `economic-cycles-v6.jsx` — no
+  uncommitted edits to any tracked file. `git log --oneline -3` topped at the tenth run's commit
+  (`c5cf2b3`). The owner explicitly asked this session to pick item 21 and add kids blurbs, so this run
+  skipped the usual freshest-backlog-item selection step — the pick was made by the owner, not derived
+  from the log.
+- **What was picked and why**: item 21 (`AGENT_LOG.md`, and `LAUNCH_PLAN.md` §2.6) says the "safe next
+  step, needing no legal decision" is to "expand the parent-facing bands with real money-skills content
+  (allowance and saving, wants vs. needs, earning, price comparison, a first account)." The 2026-08-07
+  update already covered every topic §2.6 named explicitly — so this run picked genuinely new
+  money-skills topics in the same spirit, one age-appropriate step past what's already there, rather
+  than re-covering ground: **5-8** — comparison shopping, and waiting/delayed gratification when a want
+  costs more than what's saved; **9-12** — budgeting as a plan made before spending (not after), and
+  sales tax on receipts (sticker price ≠ amount paid); **13-17** — gross vs. net pay on a first paycheck
+  (why taxes get withheld), and what a credit score actually measures (explicitly framed as *not*
+  something to build on purpose as a teenager — the underlying habits are the point, not an instruction
+  to open credit early). This stays entirely within the existing three-field parent-facing format (no
+  new fields, no structural change) — the open "grow within current format vs. lesson-shaped structure"
+  question itself was deliberately left undecided, per item 21's own framing.
+- **What was done**: `src/content/kidsContent.js` — added one `lessons[]` entry (all 5 languages) after
+  each band's existing 5th entry, taking each band from 5 to 7 blurbs (18 total, was 15). No other file
+  touched — `activity`/`parentTip` per band unchanged, `ParentGuide.jsx` needed no change since it already
+  maps over `content.lessons` with no length assumption. Translated en→es/ko/zh/ja by hand for this run
+  (matching every existing entry's method — this codebase's translation-review ledger tracks the 40
+  adult lessons only, not `kidsContent.js`, so there's no ledger update needed here).
+- **Verified**:
+  1. `npm test` (`bash scripts/bootstrap-node.sh` for the portable Node runtime) — `PASS: 0 failure(s),
+     1 warning(s)` (pre-existing, unrelated translation-review-coverage warning, which doesn't cover
+     kids content); `check-blindspot.mjs` — all 6 checks `ok`, including §10.1's advice-adjacent-language
+     scan (which does cover `src/content/kidsContent.js`) and §10.3's parent-facing signal checks.
+  2. `npm run build` — `vite v6.4.3`, `✓ 65 modules transformed`, no errors. The `Reference` chunk grew
+     51.81 kB from the tenth run's 44.12 kB (expected — six new multi-language paragraphs); every other
+     chunk unchanged, including both `lessonContent.*` chunks (this run never touches lesson content).
+  3. **Live browser verification** (not just build/test — the app was actually rendered and clicked
+     through): reused the tenth run's static-build-plus-python-server technique. Navigated Reference →
+     Kids, confirmed via `document.querySelector('main').innerText` that all 7 blurbs render in order
+     for **each of the three age bands** (5-8, 9-12, 13-17), with the two new entries appearing as items
+     6 and 7 exactly as written. Switched the language `<select>` to Korean (`ko`) via the documented
+     `Object.getOwnPropertyDescriptor(...).set`-then-`dispatchEvent("change")` technique (a plain
+     `el.value =` doesn't notify React) and confirmed the 13-17 band's Korean text rendered correctly for
+     both new entries, not just the pre-existing five. Did not screenshot every band/language
+     combination (15 total) — spot-checked English across all 3 bands plus Korean on 1 band, which is
+     the same coverage pattern the original 2026-08-04 interactive verification used for other features.
+  4. `git status --short` before committing: only `src/content/kidsContent.js` modified, plus the same
+     long-standing untracked `economic-cycles-v6.jsx`.
+- **Adversarial self-check**:
+  - *Blindspot register regression*: `git diff --unified=0 -- src/content/kidsContent.js | grep -iE
+    "dalio|you should (buy|sell|invest)|we recommend|be bullish|be cautious|child|kid.?mode|nowDate|
+    april 2026|will rise|will fall|guaranteed|the fed will|expect the fed|rates will"` matched nothing
+    (grep exit 1). Specifically checked the credit-score blurb against §10.1 — it describes what a
+    credit score is and explicitly says it's *not* something to build on purpose as a teenager, rather
+    than instructing any action; and the new content stays in the same "you" read-together voice every
+    existing blurb already uses, so §10.3's parent-facing framing (not child-facing) is unchanged.
+  - *DECISIONS.md conflict*: re-read every section header. `.js`-not-JSON content modules — this run adds
+    plain JS object entries to an existing `.js` module, consistent. localStorage-only state — untouched,
+    this is static content not state. No conflict.
+  - *Already-done backlog item*: grepped the log for "comparison shopping", "sales tax", "credit score",
+    "gross pay", "budget" in the kids context — no prior kids-content run added these; item 21's
+    2026-08-07 entry names its covered topics explicitly (wants-vs-needs, earning, saving goal, first
+    bank account, checking balance, pay yourself first) and none of this run's six new topics overlap
+    that list. Not a duplicate.
+  - *Own verification claim*: every command and browser check above is reproducible from the current
+    tree — the `innerText` dumps captured mid-run are the evidence for both the English ordering claim
+    and the Korean-translation claim, not an assumption that translation "should" have worked because the
+    build succeeded.
+- **Not touched, and why**: `economic-cycles-v6.jsx` — unrelated, still reference-only, untouched, its
+  untracked status unchanged before and after. Did not touch `LAUNCH_PLAN.md` §2.6's "nine blurbs total"
+  figure or its "not lesson-shaped" framing — both are now stale (18 blurbs, still 3 fields), but editing
+  the plan document itself was out of scope for a content-only pick; a future run refreshing
+  `LAUNCH_READINESS.md` or `LAUNCH_PLAN.md` should update that count. Did not decide the "grow further vs.
+  move to lesson-shaped structure" structural question — per item 21's own text, that's explicitly left
+  open for a future call, not something this run's blurb-adding resolves.
+- **Next run should pick**: item 18's completion-rate clause remains blocked on an owner action (a real
+  analytics provider account). Item 21 itself could take another pass at more money-skills topics in the
+  same format (e.g., 5-8: coins/bills recognition; 9-12: bank fees; 13-17: debit vs. credit cards) if a
+  future run wants to keep growing within the current format, or a future run could finally take up the
+  lesson-shaped-structure question this item has deferred since 2026-08-07. `LAUNCH_PLAN.md` §2.6's
+  "nine blurbs total" figure is now stale (18) and worth refreshing alongside whichever of those is
+  picked.
