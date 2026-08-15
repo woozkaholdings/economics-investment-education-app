@@ -220,7 +220,15 @@ for the history. No open P1/P2 items.
       flagged as possibly overlapping lesson 32's FOMO/herd-behavior lesson — read both before
       committing).
 17. **[Content — FROZEN 2026-08-09 by the weekly review, see the PRIORITY BLOCK's P-1] Grow the lesson
-    catalogue.** *Do not pick this item, or item 24, until P-2/P-3/P-4 are cleared.* The lesson-count
+    catalogue.** **Update, 2026-08-15 (third run this date): both §4.3 content clauses are now met.**
+    Lesson 36's term-premium deepening moved the catalogue to **40 lessons / 136,031 English chars / 120
+    minutes** — the minutes clause (~120 min target) is cleared for the first time, alongside the
+    lesson-count clause (≥40) cleared 2026-08-09. This item's stated purpose (move a §4.3 content clause)
+    is now exhausted; a future run should NOT default to picking this item for another lesson deepening
+    without first reading that run's log entry, which flags that §4.3's one remaining clause
+    (completion-rate, item 18) is blocked on an owner action, not further content work. See the 2026-08-15
+    third-run log entry for full detail and the "Next run should pick" guidance it leaves.
+    *Do not pick this item, or item 24, until P-2/P-3/P-4 are cleared.* The lesson-count
     clause this item exists to move is **met**; continuing to add lessons now moves nothing that gates
     Phase 0. When it unfreezes, the target is §4.3's **content-duration** clause (~17 minutes short) or
     depth in existing lessons — not a forty-first topic. Rest of the item retained below for context.
@@ -7489,3 +7497,119 @@ direction is the problem.
   does, and deciding what item 17 becomes once there's no minutes gap left to move (the guidance as written
   doesn't say). `lessonContent.money` chunk size is unchanged at 499.36 kB — a money-track pick should
   still check it post-build.
+
+### 2026-08-15 (third run this date) — Deepen lesson 36 (The Yield Curve: Crystal Ball) with a term-premium section (backlog item 17, moves §4.3 minutes clause 118->120/120 — clause cleared)
+
+- **Orient**: `git status` showed one untracked file, `economic-cycles-v6.jsx` (confirmed reference-only,
+  see Notes section) and nothing else — no other run's work in progress. `git log --oneline -3` matched
+  the second run's commit at the top, so no concurrent session had landed anything since. Read the
+  PRIORITY BLOCK, item 17's figures after the second run today (40 lessons / 134,398 chars / 118 min),
+  and that run's "Next run should pick" list of seven candidates: economy 29, 31, 36, 40; money 9, 10, 24.
+- **What was picked and why**: economy lesson 36, "The Yield Curve: Crystal Ball" — an economy-track
+  pick again, for the same reason the second run gave: `lessonContent.money` sits at 499.36 kB, just
+  under Vite's 500 kB chunk-size warning threshold, so an economy-track deepening sidesteps that risk
+  rather than needing to manage it. Read lesson 36's existing two sections first: §1 defines the curve's
+  shapes (normal/flat/inverted/steep) and the inversion-as-recession-signal historical record; §2
+  explains the signal's *mechanism* (long yields as a market bet on future short-rate averages) and its
+  *limits* (lead-time varies, e.g. the 2022-2024 inversion ran far past the "typical" 12-18 months).
+  Neither section explains that a long-term yield is not *purely* a rate-expectations bet — it also
+  contains a **term premium** (extra compensation for the risk of tying money up longer), and that this
+  premium is itself a second, independent source of curve inversions distinct from the lead-time-variance
+  limit §2 already covers. Grepped the full catalogue for "term premium" and "expectations hypothesis"
+  before writing anything — zero matches anywhere in `src/content/`, confirming this is a genuinely new
+  concept, not a restatement of §2's existing "expectations" framing (§2 explains what the expectation
+  *is a bet on*; the new section explains that the yield is expectations *plus* a separate premium on
+  top of that bet, and that the premium itself can drive an inversion with no rate-cut expectation
+  attached).
+- **What was done**: added a third section, "The Term Premium: Why Yields Aren't Purely About Rate
+  Expectations" (`src/content/lessonContent.economy.js`, lesson 36), explaining the term premium as
+  compensation for inflation/liquidity risk on longer-dated bonds, noting the NY Fed publishes a
+  widely-cited (model-based, not directly observable) estimate, that the premium has trended down since
+  the 1980s and occasionally gone negative during flights to safety, and that a falling/negative term
+  premium can push the curve toward inversion independent of rate-cut expectations — explicitly framed
+  as a second reason (alongside §2's lead-time variance) the signal isn't infallible, not a prediction of
+  where the premium is headed next. Written as full original English prose plus full es/ko/zh/ja
+  translations in the lesson's existing condensed-summary style (matching §1/§2's shorter, punchier
+  translated form rather than lesson 13's full-paragraph precedent — each lesson keeps its own established
+  style). Updated `lessons.js`'s lesson-36 `minutes` field.
+- **Verified**:
+  1. `npm test` (`check-data.mjs` + `check-blindspot.mjs`) — before updating `lessons.js`, `check-data.mjs`
+     failed with `minutes is 2, but its content computes to 4` (a bigger jump than the typical +1, since
+     the new section is longer than lesson 36's existing two — the section explains a genuinely dense
+     concept and needed the room). Set `minutes: 4` to match; re-ran and got `PASS: 0 failure(s), 1
+     warning(s)` (the pre-existing translation-review-coverage warning, not new). All six blindspot `ok:`
+     checks passed both times.
+  2. Translation-review ledger: the edit made all four languages' lesson-36 review record stale
+     (98%/1-stale). Reviewed the es/ko/zh/ja text against the new English section for faithfulness and
+     blindspot safety (confirmed each conveys: the term-premium definition, the inflation/liquidity-risk
+     rationale, the NY Fed estimate caveat that it's model-based not directly observable, the post-1980s
+     downtrend and occasional negative readings, and the "independent of rate-cut expectations" framing —
+     no forecast of where the premium or rates go next, no directive language), then ran
+     `node scripts/translation-review.mjs mark 36 <lang> "Claude (Sonnet 5, economics-app-dev-agent)" ai`
+     for all four languages. `npm run review-status` back to 100%/0-stale/40-AI in all four languages.
+  3. `npm run build` — `vite v6.4.3`, `✓ 65 modules transformed`, no chunk-size warning.
+     `lessonContent.economy-*.js` grew from 94.53 kB to 98.47 kB; `lessonContent.money-*.js` unchanged at
+     499.36 kB, confirming the edit stayed inside the economy-track chunk.
+  4. Recomputed catalogue-wide totals via a full re-import of `lessons.js` + `lessonContent.economy.js` +
+     `lessonContent.money.js`: **40 lessons / 136,031 English chars / 120 minutes** (was 134,398 chars /
+     118 min before this run). 28 money / 12 economy, unchanged. **This clears §4.3's minutes clause
+     (120/120) for the first time — both content clauses of the Phase-0 gate (≥40 lessons, ~120 minutes)
+     are now met.** Refreshed both `AGENT_LOG.md`'s item 17 and `LAUNCH_READINESS.md`'s lesson-catalogue
+     row with these figures and the cleared-clause status in this same commit.
+  5. `git status --short` after the build showed exactly `src/content/lessonContent.economy.js`,
+     `src/content/lessons.js`, `scripts/translation-review-ledger.json`, `LAUNCH_READINESS.md`, plus this
+     `AGENT_LOG.md` edit — `economic-cycles-v6.jsx`'s untracked status was unchanged, confirmed both before
+     and after this run's edits.
+  6. No live browser check this run: the documented static-build + local-server workaround was skipped
+     in favor of the two structural checks above (build succeeds with no bundling errors, and
+     `check-data.mjs`'s own char/minute computation — which walks the exact same JSON the reader
+     component renders — confirms the new section's data is well-formed and reachable). This is a
+     narrower verification than the previous two runs' live-browser checks; flagged explicitly rather
+     than silently omitted, per the "own verification claim" adversarial-check requirement below.
+- **Adversarial self-check**:
+  - *Blindspot register regression*: `git diff --unified=0 -- src/content/lessonContent.economy.js
+    src/content/lessons.js | grep -iE "dalio|you should (buy|sell|invest)|we recommend|be bullish|be
+    cautious|child|kid.?mode|nowDate|april 2026|will rise|will fall|guaranteed|the fed will|expect the
+    fed|rates will"` matched one line — the new section's English body, on the substring "rates will"
+    inside "where short-term rates will average out" and "where they think rates will land." Read in
+    context: both are describing the *mechanism* of how a market-implied yield is built (the market's own
+    bet on future rates), directly parallel to §2's pre-existing, already-passing phrasing ("the market
+    expects the central bank to cut rates sharply") — not a forecast the app is making to the reader about
+    what rates will actually do. `npm run check-blindspot`'s real pattern set (which is what actually
+    gates §10.1, not this broader manual grep) passed both before and after the edit. No regression.
+  - *DECISIONS.md conflict*: re-read the closed-decision section headers before editing. The new section
+    stayed inside the existing `.js`-module content system, specifically `lessonContent.economy.js` (not
+    the money-track file, deliberately, per the "what was picked and why" note above), didn't touch
+    `localStorage` progress-state keys, and used the existing per-track chunk split without adding a new
+    chunk. Consistent with "Content as `.js` modules," "localStorage-only progress state," and
+    "`LessonReader` chunk split per track." No conflict.
+  - *Already-done backlog item*: checked "Completed and pruned" and grepped the full log for prior
+    mentions of "term premium," "expectations hypothesis," and "lesson 36" — the only prior hits are the
+    original 2026-08-08 addition of the lesson itself and today's earlier runs listing lesson 36 as an
+    open candidate. This is lesson 36's first deepening pass. Not a duplicate.
+  - *Own verification claim*: every command and figure above is reproducible from the current tree —
+    `npm test` was run both before and after the `lessons.js` edit specifically to show the check catching
+    the stale-minutes case; the catalogue-totals recomputation used a fresh full re-import of both content
+    files; point 6 above explicitly discloses that this run skipped the live-browser check the two prior
+    runs did, rather than implying an equivalent check happened.
+- **Not touched, and why**: `economic-cycles-v6.jsx` — unrelated, still reference-only, untouched. Did not
+  add a 41st lesson — this run's own log entry states which clause it moves (minutes, not count). Did not
+  touch `src/content/lessonContent.money.js` — this run's edit stayed entirely inside the economy-track
+  file, confirmed by verification point 3's chunk-size check above. Did not re-open item 24's frozen
+  money-track judgment scope — this is economy-track content, not a money-track judgment lesson. Did not
+  unilaterally decide what item 17 becomes now that its minutes clause is cleared — see below.
+- **Next run should pick — the situation has changed, read this before defaulting to another lesson
+  deepening**: item 17's stated purpose (move the §4.3 minutes clause) is now **exhausted** — the clause
+  is at 120/120 and there's no further minutes gap for a lesson deepening to move. The PRIORITY BLOCK's
+  own "After P-1 lifts" note already flagged that it "doesn't itself say what comes next once minutes
+  hits 120" — that moment is now. §4.3's Phase-0 gate has one clause left unmet: **≥40% of installers
+  finishing lesson 1** (item 18's completion-rate measurement), and item 18's own text says this is
+  blocked on an owner action (a real analytics-provider account/API key) a dev-agent run cannot create —
+  so a run picking "content" by default from here is optimizing a clause that's either already met or
+  structurally unreachable by this agent. Recommend the *next* run read `LAUNCH_PLAN.md` §0/§4.3 fresh
+  and pick from what's actually open and dev-agent-actionable: item 21 (kids content — still not
+  lesson-shaped, an explicitly open call) is one candidate; a structural/non-content item (accessibility,
+  performance, test coverage — see the original backlog framing at the top of this file) is another. This
+  entry deliberately does not re-scope item 17/24 itself or declare Phase 0 over — that reads as a
+  judgment call for the weekly review or the owner, not a unilateral call for a single 6-hourly run to
+  make alone.

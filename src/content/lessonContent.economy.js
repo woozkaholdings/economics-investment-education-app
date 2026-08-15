@@ -477,6 +477,22 @@ export const lessonContent = {
           "zh": "这个信号的原理是预期，而非魔法。长期收益率大致反映了市场对该期间短期利率平均水平的押注。最常被引用的利差是「2s10s」（2年期减10年期）——它在2022年年中出现倒挂，并持续了近两年（历史最长），直到远超「典型」12-18个月周期的2024年才转为正值。这个信号只能说明放缓的可能性更高，而不能说明具体时间或严重程度——1966年的一次倒挂之后经济大幅放缓，但并未演变成官方认定的衰退。",
           "ja": "このシグナルの仕組みは魔法ではなく期待です。長期利回りは、その期間中の短期金利の平均がどこに落ち着くかについての市場の見立てをおおよそ反映しています。最もよく引用されるスプレッドは「2s10s」（2年物マイナス10年物）で、2022年半ばに逆転し、過去最長となる約2年間逆転が続いた後、「典型的」とされる12-18ヶ月をはるかに超えた2024年にようやくプラスに戻りました。このシグナルが示すのは減速の可能性が高いということだけで、時期や深刻さまでは示しません——1966年の逆転は公式の景気後退には至らず、急激な成長減速にとどまりました。"
         }
+      },
+      {
+        "heading": {
+          "en": "The Term Premium: Why Yields Aren't Purely About Rate Expectations",
+          "es": "La Prima por Plazo: Por Qué los Rendimientos No Son Solo Expectativas de Tasas",
+          "ko": "기간 프리미엄: 수익률이 순수한 금리 기대만이 아닌 이유",
+          "zh": "期限溢价：为何收益率不仅仅是利率预期",
+          "ja": "タームプレミアム：利回りが単なる金利予想だけではない理由"
+        },
+        "body": {
+          "en": "The previous section described a long-term yield as roughly a bet on where short-term rates will average out. That's most of the story, but not all of it — investors also want extra compensation just for tying their money up longer, separate from where they think rates will land. That extra compensation is called the term premium.\n\nHere's why it exists: locking money into a 10-year bond carries risks a 2-year bond doesn't — more years for unexpected inflation to erode the return, more years of price swings if the investor needs to sell before maturity, and less certainty overall. Investors demand a bit more yield to accept that, over and above pure rate expectations.\n\nSo a 10-year yield is really two things stacked together: the market's average rate expectation, plus the term premium. The Federal Reserve Bank of New York publishes one widely-cited estimate, but the term premium itself isn't directly observable in the data — it has to be estimated from a model, and different models disagree with each other.\n\nThis matters for reading the curve: the term premium has trended lower since the 1980s and has occasionally turned negative — meaning investors were willing to accept less for a 10-year bond than pure rate expectations alone would suggest, often during flights to safety. A falling or negative term premium can help push the curve toward inversion even without the market expecting a large rate-cutting cycle, which is one more reason the signal from the previous section isn't infallible: an inversion can reflect a shift in the term premium instead of, or in addition to, a real change in rate expectations.",
+          "es": "El rendimiento a largo plazo no es solo la expectativa de tasas — también incluye una 'prima por plazo': compensación extra por el riesgo de inmovilizar dinero más tiempo (inflación inesperada, volatilidad de precio). La prima por plazo ha bajado desde los años 80 y a veces se vuelve negativa, lo que puede empujar la curva hacia la inversión incluso sin un gran recorte de tasas esperado — una razón más por la que la señal no es infalible.",
+          "ko": "장기 수익률은 단순히 금리 기대만이 아니라 '기간 프리미엄'도 포함합니다 — 돈을 더 오래 묶어두는 위험(예상치 못한 인플레이션, 가격 변동성)에 대한 추가 보상입니다. 기간 프리미엄은 1980년대 이후 하락해왔고 때때로 마이너스가 되기도 하는데, 이는 큰 금리 인하 기대 없이도 곡선을 역전 쪽으로 밀 수 있습니다 — 이 신호가 완벽하지 않은 또 다른 이유입니다.",
+          "zh": "长期收益率不仅仅反映利率预期——还包含一种“期限溢价”：为把资金锁定更长时间所承担的风险（意外通胀、价格波动）而要求的额外补偿。期限溢价自1980年代以来一直呈下降趋势，有时甚至变为负值，这可能在没有大幅降息预期的情况下也推动曲线走向倒挂——这也是该信号并非万无一失的另一个原因。",
+          "ja": "長期利回りは単なる金利予想だけでなく「タームプレミアム」も含みます——資金をより長く固定するリスク（予期せぬインフレ、価格変動）への追加補償です。タームプレミアムは1980年代以降低下傾向にあり、時にマイナスになることもあり、大きな利下げ期待がなくてもカーブを逆転方向に押しやることがあります——このシグナルが完璧ではないもう一つの理由です。"
+        }
       }
     ],
     "takeaway": {
