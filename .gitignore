@@ -11,3 +11,15 @@ api-keys.txt
 # notes, not tooling — anything worth keeping belongs in a named script that
 # package.json or check-data.mjs actually calls.
 .scratch-*
+
+# The two prototypes. Owner decision 2026-08-16: neither should appear in the
+# project any more, and BOTH FILES STAY ON DISK — they are ignored, not
+# deleted. v5 was tracked until this date and is now untracked (`git rm
+# --cached`, working copy untouched); its content remains in git history.
+# Neither is imported by anything under src/ — the app was rebuilt from
+# scratch 2026-08-04 and they are reference inputs only (LAUNCH_PLAN.md §2.1).
+# v6's one salvageable idea is preserved as AGENT_LOG.md backlog item 34.
+# Do not "restore" these to the repo without asking; do not merge their
+# content — v6 carries Dalio branding (§10.2) and hardcoded dates (§2.3).
+economic-cycles-v5.jsx
+economic-cycles-v6.jsx

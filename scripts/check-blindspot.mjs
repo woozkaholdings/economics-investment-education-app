@@ -58,8 +58,15 @@ const contentFiles = walk(join(ROOT, "src", "content"), [".js"]);
 const localeFiles = walk(join(ROOT, "src", "locales"), [".js"]).filter(
   (f) => /(en|es|ko|zh|ja)\.js$/.test(f),
 );
+// The v5 prototype is scanned when present but is no longer part of the repo:
+// the owner untracked it 2026-08-16 (kept on disk, gitignored — see
+// .gitignore's note), so a fresh clone won't have it. The existsSync guard
+// already handled that; what follows reports which of the two actually
+// happened, because "checked v5 and it was clean" and "there was no v5 to
+// check" are different facts and the old message asserted the first either way.
 const v5Path = join(ROOT, "economic-cycles-v5.jsx");
-const allCheckedFiles = [...srcFiles, ...(existsSync(v5Path) ? [v5Path] : [])];
+const v5Present = existsSync(v5Path);
+const allCheckedFiles = [...srcFiles, ...(v5Present ? [v5Path] : [])];
 
 // --- §10.2 Dalio dependency (closed 2026-08-01) ---
 {
@@ -67,7 +74,11 @@ const allCheckedFiles = [...srcFiles, ...(existsSync(v5Path) ? [v5Path] : [])];
   if (hits.length) {
     fail(`§10.2 Dalio dependency reintroduced:\n  ${hits.join("\n  ")}`);
   } else {
-    ok("§10.2 no Dalio references in src/ or economic-cycles-v5.jsx");
+    ok(
+      v5Present
+        ? "§10.2 no Dalio references in src/ or economic-cycles-v5.jsx"
+        : "§10.2 no Dalio references in src/ (economic-cycles-v5.jsx not present — not scanned)",
+    );
   }
 }
 
