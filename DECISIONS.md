@@ -105,6 +105,38 @@ Add a new entry when a run makes a choice future work should be able to look up 
 
 ## Closed
 
+### Kids financial-literacy content: format stays parent-facing, structural depth un-scoped
+
+- **Status:** closed (dev-agent decision, 2026-08-16) — not owner-held. See `AGENT_LOG.md` backlog
+  item 21, which is not marked HELD (unlike item 19, its child-facing sibling).
+- **What was asked:** item 21's text had carried, since 2026-08-07, an open question — "grow further
+  within the current [parent-facing, 3-field] format or move to a lesson-shaped structure" — without
+  resolving it. Three content-adding runs (2026-08-07, twice on 2026-08-15) each deferred the question
+  again while adding more blurbs (nine → 15 → 21 total).
+- **What was decided:** the question conflated two different things.
+  1. **A kid-directed lesson UI** (the child navigates their own lessons/quizzes, the way
+     `LessonReader.jsx` works for adults) — stays exactly where item 19 already put it: **owner-only**,
+     HELD, blocked on a COPPA/store-classification call. Nothing about this decision changes that.
+  2. **Richer parent-facing content structure** (more depth per topic — headings, a "why this matters"
+     note, something closer to the adult lesson's shape — while still rendering only inside
+     `ParentGuide.jsx`, never shown to a child) does not touch COPPA status, since the audience and
+     surface don't change, only the content's richness. But it *is* a real structural change (new
+     fields on `kidsContent.js`'s entries, a new render shape in `ParentGuide.jsx`), not a drop-in
+     blurb addition, so it isn't something a run should back into while adding a topic — it needs its
+     own scoping pass (what fields, what UI) before implementation.
+- **Why decide now rather than leave it open:** the unresolved question was functioning as license to
+  keep doing the one thing it was ostensibly weighing against — three runs in a row deferred the
+  question and added another blurb anyway, the same count-shaped-drift pattern the PRIORITY BLOCK's
+  P-1 named for item 17/24 ("counting lessons is not the same as building the product"). Splitting the
+  question removes that ambiguity: the child-facing half was never actually open (item 19 already
+  settled it), and the content-depth half needs a scoping decision, not a blurb, as its next move.
+- **What this does NOT decide:** whether or when a future run should actually do the content-depth
+  scoping in point 2 above. That remains open — this decision only says growing the blurb *count*
+  isn't the default next step, and building kid-facing UI isn't a decision this item can make.
+- **Revisit when:** a future run wants to scope the content-depth structural change (point 2), or the
+  owner makes the child-facing call (point 1, tracked at item 19 / `DECISIONS.md`'s Expo entry's
+  sibling COPPA question).
+
 ### Content as `.js` modules, not JSON
 
 - **Status:** closed, in effect since the 2026-08-02 JSX-split (steps 1–3).

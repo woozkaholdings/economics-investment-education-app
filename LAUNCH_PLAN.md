@@ -163,8 +163,11 @@ inside Reference → Parent Guide as parent-facing "teach your kids" material.
 Two problems as originally assessed; the first is unchanged, the second is now partially closed:
 
 1. **It is still not lesson-shaped.** 21 blurbs against 40 adult lessons, still just three fields
-   per band (`lessons`/`activity`/`parentTip`). Whether to keep growing this format or move to a
-   lesson-shaped structure remains an open call — see backlog item 21.
+   per band (`lessons`/`activity`/`parentTip`). **Resolved 2026-08-16:** a kid-directed lesson UI
+   stays owner-only (§10.3/item 19, unchanged); richer parent-facing content structure is not
+   blocked but isn't scoped either, and growing the blurb count by default is explicitly discouraged
+   (it isn't gated by any §4.3-style clause). See `DECISIONS.md` ("Kids financial-literacy content:
+   format stays parent-facing, structural depth un-scoped") and backlog item 21.
 2. **Its content was economics, not money skills — now a mix.** Each band's original three blurbs
    are still economics (5-8: trading toys, inflation, a piggy bank; 9-12: mortgages/credit, economic
    seasons, "good" debt; 13-17: connected spending, the Fed as thermostat, 2008). The four blurbs

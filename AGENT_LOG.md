@@ -282,18 +282,41 @@ for the history. No open P1/P2 items.
     15. **Note the failure mode this item created:** nine consecutive scheduled runs each picked "add one
     lesson" and optimised the count, and the *direction* drifted unexamined until the owner corrected it.
     Counting lessons is not the same as building the product.
-21. **[Content] Kids financial literacy — content gap partially closed; structural gap remains.**
+21. **[Content] Kids financial literacy — content gap partially closed; structural question now resolved (2026-08-16).**
     Assessed 2026-08-07 after the owner asked whether kids lessons were already in the master plan —
     see `LAUNCH_PLAN.md` §2.6. **Update, 2026-08-07 (tenth run):** each of the three age bands grew from
     three blurbs to five (fifteen total, up from nine), adding the missing money-skills material —
     wants-vs-needs, earning an allowance, saving toward a goal, a first kids' bank account, checking a
-    balance before spending, "pay yourself first" — see that run's log entry. **Still open:** it isn't
-    lesson-shaped (fifteen blurbs vs. 26 adult lessons, still just three fields — `lessons`/`activity`/
-    `parentTip` — per band). Whether to grow further within the current format or move to a lesson-shaped
-    structure is an open call for a future run, not decided here. **Not a design decision (do NOT do
-    this):** making kids material child-facing — child accounts, a kids mode, kid-directed lesson UI —
-    changes COPPA classification, store privacy category, and ad eligibility. §10.3 reserves it for the
-    owner.
+    balance before spending, "pay yourself first." **Update, 2026-08-15 (eleventh run):** each band grew
+    from five to seven blurbs (**21 total**), adding comparison shopping, delayed gratification, budgeting
+    as a plan, sales tax, gross-vs-net pay, and what a credit score measures. This backlog item's own text
+    went stale after that run — it still said "fifteen... vs. 26 adult lessons" — while `LAUNCH_PLAN.md`
+    §2.6 and `LAUNCH_READINESS.md` were correctly refreshed to 21 blurbs / 40 adult lessons the same date
+    (twelfth run). Corrected here to match: **21 blurbs (7 per band × 3 bands) vs. 40 adult lessons.**
+    **The "grow further vs. lesson-shaped structure" question, resolved:** this was really two different
+    questions wearing one label.
+    (a) *Making kids content **child-facing*** — a kid-directed lesson UI the child navigates themselves,
+    with its own progress/quiz flow like `LessonReader.jsx` — was already answered: §10.3 reserves this
+    for the owner (COPPA/store-classification decision), and item 19 (HELD) says so explicitly. Nothing
+    changes here; still owner-only, still not to be built on this item's initiative.
+    (b) *Deepening the **content** itself* (richer per-topic material — more structure per entry, not
+    just a longer list) while staying strictly parent-facing (rendered only in `ParentGuide.jsx`, never
+    surfaced to a child) does *not* touch COPPA status — but it's a real content-architecture change (new
+    fields, a new render shape), not a same-shaped addition, so it needs its own scoping pass rather than
+    being decided implicitly by whichever run gets to it next.
+    **Decision:** do not pursue (a) on this item's initiative — unchanged, owner-only, see item 19.
+    Do not default to (b) either, absent a future run actually scoping it. See `DECISIONS.md` ("Kids
+    financial-literacy content: format stays parent-facing, structural depth un-scoped") for the full
+    writeup. **A parallel, narrower caution:** simply adding another blurb to the existing three-field
+    format (the pattern the 2026-08-07 and 2026-08-15 updates both followed) is itself a count-shaped
+    backlog item — the same failure mode the PRIORITY BLOCK's P-1 flagged for item 17/24 ("counting
+    lessons is not the same as building the product"), and it has already repeated once here (nine → 15 →
+    21). Nothing in `LAUNCH_PLAN.md` §4.3 or elsewhere gates on a kids-blurb *count* the way it gates on
+    adult lesson count/minutes, so there is no launch-plan reason to keep growing this number by default.
+    A future run picking this item should have a specific new topic or a specific structural change in
+    mind, not "add one more blurb because the list has room." **Not a design decision (do NOT do this):**
+    making kids material child-facing — child accounts, a kids mode, kid-directed lesson UI — changes
+    COPPA classification, store privacy category, and ad eligibility. §10.3 reserves it for the owner.
 18. **[Process] Instrumentation (§9.2) — call sites done 2026-08-05, real provider still open.**
     `src/lib/analytics.js` (`track()`/`EVENTS`) fires `app_opened`, `lesson_started`,
     `lesson_completed`, and `quiz_taken` (see run log entry "Wire the §9.2 minimum analytics event set").
@@ -9107,3 +9130,89 @@ direction is the problem.
   its two open axes: grow within the current 3-field format vs. move to a lesson-shaped structure) and
   item 18 (blocked on an owner action — a real analytics provider account) remain the open alternatives
   if a future run prefers not to extend this thread further.
+
+### 2026-08-16 (scheduled dev-agent, seventh run this date) — Resolve item 21's stale figures and its "lesson-shaped structure" open question
+
+- **Orient**: `git status` showed only the same long-standing untracked `economic-cycles-v6.jsx` — no
+  uncommitted edits to any tracked file, matching the standing memory note and this file's own
+  reference-only line for that fixture. `git log --oneline -3` topped at `72222a0` (the prior run's
+  glossary bookmark toggle), matching the environment's reported HEAD — no concurrent session had landed
+  anything since. Read the PRIORITY BLOCK (items 17/24 exhausted for content, item 18 blocked on an owner
+  action) and the prior run's "Next run should pick," which named surfacing bookmarked terms as a
+  candidate but explicitly said to wait and see whether the toggle gets used first — so looked elsewhere.
+  Read backlog item 21's full text and traced its history via `git --no-pager log --oneline --follow --
+  src/content/kidsContent.js`: three content-adding runs (2026-08-07, and twice more via commit `34d466b`
+  on 2026-08-15) each grew the kids blurb count (9 → 15 → 21) while deferring the item's own "grow within
+  format vs. move to lesson-shaped structure" question every time. Two problems found by inspection: (1)
+  item 21's backlog text in this file still said "fifteen [blurbs]... vs. 26 adult lessons" — stale by one
+  full growth round; `LAUNCH_PLAN.md` §2.6 and `LAUNCH_READINESS.md` had already been corrected to 21/40
+  by the 2026-08-15 twelfth run, but that run touched only those two files, not this backlog item's own
+  text. (2) The "lesson-shaped structure" question itself, unresolved for three runs, was functioning as
+  license to keep doing the very thing it was nominally weighing against — the same count-shaped-drift
+  pattern the PRIORITY BLOCK's P-1 already named and froze for item 17/24 ("counting lessons is not the
+  same as building the product"), now visibly repeating on a second backlog item nothing in `LAUNCH_PLAN.md`
+  actually gates a count on. Picked this over adding a 22nd blurb specifically because repeating that
+  pattern a fourth time, on the same item that already shows it, would be the wrong move to make by default.
+- **What was done**: docs-only changes, no source files touched.
+  1. **Independently re-verified the current counts from source** rather than trusting either the stale
+     backlog text or the twelfth run's own log claim: `node --input-type=module -e "import { kidsContent }
+     from './src/content/kidsContent.js'; ..."` (CommonJS `require` fails on this ESM file — the correct
+     invocation needed a dynamic-import/`--input-type=module` form, confirmed on the first attempt's error)
+     — **7 blurbs per band × 3 bands = 21**, matching the twelfth run's figure. Adult lesson count:
+     `grep -o '"id"\s*:\s*[0-9]*' src/content/lessons.js | wc -l` → **40**, matching item 17's figure.
+  2. `AGENT_LOG.md` backlog item 21 — corrected the stale "fifteen... vs. 26" text to 21/40; added the
+     missing 2026-08-15 update summary (the six new topics from `34d466b`) that this item's own text had
+     never recorded, so the item's history and the actual commit history now agree. Resolved the
+     "lesson-shaped structure" question by splitting it into two: (a) a kid-directed, child-navigated
+     lesson UI — already settled by item 19/§10.3 as owner-only; this decision changes nothing there — and
+     (b) deepening the *content* while staying strictly parent-facing (rendered only in `ParentGuide.jsx`)
+     — not COPPA-blocked, but a real structural change (new fields/render shape) that needs its own scoping
+     pass, not something to default into. Added an explicit caution against growing the blurb count by
+     default going forward, naming the repeated-drift pattern.
+  3. `DECISIONS.md` — added a new entry under "Closed" ("Kids financial-literacy content: format stays
+     parent-facing, structural depth un-scoped") recording the same reasoning in the file's standard
+     decision-log format, cross-referenced from item 21.
+  4. `LAUNCH_PLAN.md` §2.6 and `LAUNCH_READINESS.md`'s Kids-curriculum row — updated their own
+     "remains an open call" / count-growth phrasing to point at the new `DECISIONS.md` entry instead of
+     describing the question as still fully open, so all four documents (`AGENT_LOG.md`, `DECISIONS.md`,
+     `LAUNCH_PLAN.md`, `LAUNCH_READINESS.md`) now agree.
+- **Verified**:
+  1. `npm test` (`bash scripts/bootstrap-node.sh` for the portable Node runtime) — `PASS: 0 failure(s),
+     1 warning(s)` (the same pre-existing translation-review-coverage warning every run reports, unrelated
+     — this run touched no lesson content); `check-blindspot.mjs` — all 6 checks `ok`.
+  2. `npm run build` — `vite v6.4.3`, `✓ 66 modules transformed`, no errors; chunk sizes identical to the
+     prior (sixth) run's post-build figures (`Reference` still 64.68 kB, `lessonContent.money` still
+     499.36 kB) — confirms this run touched no source, content, or locale file, only Markdown.
+  3. `git status --short` before committing: only `AGENT_LOG.md`, `DECISIONS.md`, `LAUNCH_PLAN.md`,
+     `LAUNCH_READINESS.md` modified, plus the same long-standing untracked `economic-cycles-v6.jsx`.
+- **Adversarial self-check**:
+  - *Blindspot register regression*: `git diff --unified=0 -- AGENT_LOG.md DECISIONS.md LAUNCH_PLAN.md
+    LAUNCH_READINESS.md | grep -iE "dalio|(you should (buy|sell|invest))|we recommend|be bullish|be
+    cautious|nowDate|april 2026|will rise|will fall|guaranteed|the fed will|expect the fed|rates will"`
+    matched nothing (grep exit 1). Ran a second pass including `child|kid.?mode` separately (both patterns
+    are expected to hit in this diff, since the topic is kids content) and read every match: all of them
+    reaffirm that child-facing UI stays owner-only/HELD — none newly proposes or builds child-facing
+    framing, matching the pre-existing text this replaced.
+  - *DECISIONS.md conflict*: re-read every section header before adding the new entry. Expo-vs-Vite,
+    market-data, instrumentation — untouched, no conflict. The new entry is itself the resolution of an
+    open question, correctly filed under "Closed" (it was first drafted before the `## Closed` heading by
+    mistake and moved after re-reading the file's own Open/Closed structure — caught and fixed within this
+    same run, not left as an inconsistency).
+  - *Already-done backlog item*: this isn't a re-decision of anything in "Completed and pruned" — item 21's
+    structural question has never been resolved before (three prior runs each explicitly deferred it). Not
+    a duplicate.
+  - *Own verification claim*: the 21-blurb and 40-lesson figures come from running fresh commands against
+    current source this run (see "What was done" #1 above), including a real ESM-vs-CJS module-loading
+    error encountered and corrected live, not from copying the twelfth run's log text forward — that prior
+    figure happened to be right, but this run checked rather than assumed it.
+- **Not touched, and why**: `economic-cycles-v6.jsx` — unrelated, untouched. Did not add a 22nd kids blurb
+  or any new lesson content — that's precisely the default this run argues against picking without a
+  specific new topic or structural plan in mind. Did not attempt the content-depth scoping pass named as
+  still-open in point (b) above — that's real design work (what fields, what render shape) deliberately
+  left for a future run that wants to pick it up, not something to improvise inside a docs-correction run.
+- **Next run should pick**: item 21's content-depth scoping question (point (b) in the new `DECISIONS.md`
+  entry) is a legitimate next pick if a future run wants to design it properly, but should not default to
+  "add one more blurb" per this run's explicit caution. Item 18 remains blocked on an owner action. The
+  Glossary bookmark toggle (prior run) still has its own open follow-up — surfacing saved terms somewhere
+  — flagged as worth waiting on. §4.3's content-duration clause (a few minutes short per item 17's last
+  measurement) remains a legitimate alternative if a future run wants to deepen an existing lesson instead.
