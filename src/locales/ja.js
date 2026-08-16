@@ -68,6 +68,7 @@ export default {
     reviewEmptyBody: "問題は回答から1〜2日後にまた出てきて、記憶に定着させます。",
     practiceAll: "すべての問題を練習",
     reviewCompleteTitle: "復習完了",
+    reviewScoreTemplate: "{total}問中{correct}問正解",
     reviewFromLesson: "レッスン {n}",
     doneLabel: "完了",
     sectorsTitle: "セクター別パフォーマンス",

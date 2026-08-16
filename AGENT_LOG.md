@@ -8412,3 +8412,108 @@ direction is the problem.
   reads as describing a past decision's reasoning, not a live count claim — worth a second look if this
   becomes a recurring pattern.
   picked.
+
+### 2026-08-15 (interactive session, owner-directed) — Two UX improvements from a Quizlet/Vocabulary design-reference review: dual right/wrong markers, and a real Review results recap
+
+- **Context**: the owner shared ~200 Mobbin-exported screenshots of the Quizlet and Vocabulary iOS
+  apps (onboarding, login, flashcard creation, quiz/test-taking, feature-info tooltips, plus
+  subscription/paywall and Terms screens noted reference-only per the owner's explicit instruction not
+  to build paywall UI while item 15/§4.3's Phase-0 gate is still open) and two Mobbin screen-share
+  links, asking for the patterns to be reviewed and applied to specific screens in this app. Two
+  background research agents reviewed the screenshot sets (one per app) and reported back structured
+  per-flow findings plus a ranked "most transferable ideas" list each; the two Mobbin links were then
+  also checked directly (in the owner's logged-in Chrome, after the agents' anonymous `WebFetch`
+  attempts hit HTTP 403) and corroborated the same findings — a Quizlet onboarding personalization
+  screen and a Vocabulary quiz screen with solid-fill correct-answer highlighting.
+- **What was picked and why**: of the ideas surfaced, two mapped cleanly onto this app's own design
+  system (`theme.js`'s "ONE ACCENT, SPACE NOT BORDERS" rules) without importing Quizlet/Vocabulary's
+  own visual style (illustrations, gradients, confetti, hearts/lives — none of that fits here and none
+  was brought over):
+  1. **Dual right/wrong markers on quiz answers.** Quizlet's "Completing a quiz" flow marks the
+     learner's wrong pick with an explicit X, not just a colour shift, alongside the check on the
+     correct answer — both marked, so what-you-picked and what-was-right are equally legible at a
+     glance. This app's `Question.jsx` already recolours both (via `fill.ok`/`fill.bad`), but only ever
+     iconed the *correct* answer; the learner's own wrong pick had no icon, just a border/wash tint.
+  2. **A real results recap after a Review session.** Quizlet's test-completion screen and the
+     Vocabulary app's session-summary both show a scrollable per-question recap after a batch, not just
+     a bare completion state. This app's `Practice.jsx` already had a "See Results" button
+     (`t.quizFinish`) at the end of a session — but the completion screen it led to was just a
+     checkmark and a "Done" button, no results shown. The button's copy had been promising something the
+     UI never delivered.
+  Both fit the existing "explain, don't score" philosophy already stated in `Question.jsx`'s own header
+  comment (a wrong answer teaches via its explanation, not via a grade) — so the recap leads with a
+  plain "{correct} of {total}" line, not a percentage or letter grade, and reuses `ink.ok`/`ink.bad` and
+  the existing hairline-row list pattern (`ParentGuide.jsx`/`Glossary.jsx` already use it) rather than
+  Quizlet's solid colour bands, which don't fit `theme.js`'s "space, not borders" rule.
+- **What was done**:
+  1. `src/components/Icon.jsx` — added an `x` glyph (two crossing strokes, same viewBox/stroke
+     conventions as every other icon here).
+  2. `src/components/Question.jsx` — the learner's own wrong pick now also renders an `x` icon in
+     `ink.bad`, mirroring the existing `check`-in-`ink.ok` treatment of the correct answer. No change to
+     the correct-answer branch, the colour logic, or any other file.
+  3. `src/screens/Practice.jsx` — added a `results` state array (one `{item, correct}` entry per
+     question answered this session, pushed from the existing `onAnswered` callback that already calls
+     `recordReview`/`track`). The session-complete branch (`!item`) now renders, in addition to the
+     existing checkmark/title: a `t.reviewScoreTemplate` line ("{correct} of {total} correct"), then a
+     `Card` of hairline-separated rows — one per question, each with a check/x icon in `ink.ok`/`ink.bad`,
+     the question text, and its existing `t.reviewFromLesson` lesson attribution — before the `Done`
+     button. Covers both entry points into the completion branch (`due` review and "Practice all
+     questions") since they share this one code path.
+  4. `src/locales/{en,es,ko,zh,ja}.js` — added the new `reviewScoreTemplate` key (multi-placeholder
+     `{correct}`/`{total}`, matching the existing `lessonProgressTemplate` key's `{done}`/`{total}`
+     precedent) in all 5 languages. No other locale keys added — the recap reuses `reviewFromLesson`,
+     `reviewCompleteTitle`, and `doneLabel`, which already existed.
+- **Verified**:
+  1. `npm test` (`bash scripts/bootstrap-node.sh`) — `PASS: 0 failure(s), 1 warning(s)` (pre-existing,
+     unrelated translation-review warning); `check-blindspot.mjs` — all 6 checks `ok`.
+  2. `npm run build` — `vite v6.4.3`, `✓ 65 modules transformed`, no errors. `Practice` chunk grew from
+     2.84 kB to 3.80 kB (expected — new recap markup); every other chunk unchanged.
+  3. **Live browser verification**, not just build/test: served the static build, started a 2-question
+     due-review session, answered question 1 correctly (confirmed via `aria-checked`/icon-presence
+     inspection, not just visual assumption) and question 2 correctly, finished the session, and
+     confirmed via `document.querySelector('main').innerText` that the recap read exactly "Review
+     complete / 2 of 2 correct" followed by both questions with their "From lesson N" captions and a
+     `Done` button — then screenshotted it to confirm the visual styling (hairline rows, green check
+     icons) matches the rest of the app. Separately opened a lesson's end-of-lesson check (Lesson 6,
+     Retirement Accounts — same shared `Question` component) and deliberately picked the *wrong* answer
+     to exercise the new X-marker path: confirmed via `getComputedStyle(...).color` that the correct
+     option's check icon rendered in `rgb(84,214,160)` (the `ink.ok` green) and the learner's wrong pick's
+     new X icon rendered in `rgb(255,154,154)` (the `ink.bad` red/salmon), then screenshotted it —
+     both icons visible side by side, exactly the "what I picked vs. what was right, both marked" pattern
+     the Quizlet review named as the most transferable idea.
+  4. `git status --short` before committing: only the 8 files listed above modified, plus the same
+     long-standing untracked `economic-cycles-v6.jsx`.
+- **Adversarial self-check**:
+  - *Blindspot register regression*: `git diff --unified=0 -- src/components/Icon.jsx
+    src/components/Question.jsx src/screens/Practice.jsx src/locales/{en,es,ja,ko,zh}.js | grep -iE
+    "dalio|you should (buy|sell|invest)|we recommend|be bullish|be cautious|child|kid.?mode|nowDate|
+    april 2026|will rise|will fall|guaranteed|the fed will|expect the fed|rates will"` matched nothing
+    (grep exit 1). None of this change touches lesson content, market copy, or kids framing — it's UI
+    chrome and one new locale template — but the grep was run anyway per the standing rule. Also
+    explicitly did not build any paywall/subscription UI from the Quizlet/Vocabulary reference material,
+    per the owner's own instruction and item 15/§4.3's standing hold.
+  - *DECISIONS.md conflict*: re-read every section header. `.js`-not-JSON content modules — the new
+    locale key follows that pattern. localStorage-only state — `results` is component-local `useState`,
+    reset every session, never persisted; no conflict with the review-schedule's own localStorage-backed
+    state (`review.js`), which this change reads from via the existing `recordReview` call but doesn't
+    alter. No conflict.
+  - *Already-done backlog item*: grepped the log for "reviewScoreTemplate", "results recap", "wrong
+    answer icon", and "Quizlet" before this entry — no prior run touched any of this; this is the first
+    design-reference-driven UI pass in the log. Not a duplicate.
+  - *Own verification claim*: the `aria-checked`/icon-presence and `getComputedStyle(...).color` checks
+    above are the evidence — not an assumption that the right CSS variable "should" resolve to the right
+    colour because the token name looked correct. Checking the *wrong*-answer path required deliberately
+    picking a wrong option and confirming the specific RGB value, not just confirming the page didn't
+    error.
+- **Not touched, and why**: `economic-cycles-v6.jsx` — unrelated, untouched. No lesson content, glossary
+  entry, or kids blurb was touched — this is UI-only. Did not build the coach-mark-tooltip, "keep going"
+  interstitial, or glossary-example-sentence ideas the two research agents also surfaced — those are
+  reasonable follow-ups but out of this pass's scope (content-shaped or bigger structural changes,
+  respectively); see "Next" below. Did not attempt to render the paywall/Terms reference screens into
+  any UI, per the owner's explicit "reference only" instruction.
+- **Next (owner-directed session, not necessarily the next scheduled run)**: the two research agents'
+  full reports named several more transferable ideas not acted on this pass — an inline coach-mark
+  tooltip pattern (Quizlet) for teaching a first interaction without a modal, a low-pressure interstitial
+  between review batches, and (Vocabulary) example-sentence content on glossary entries plus a
+  persistent bottom action bar on term-detail screens. Any of these would be reasonable next picks if
+  the owner wants to continue this design-reference pass.

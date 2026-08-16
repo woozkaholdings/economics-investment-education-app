@@ -68,6 +68,7 @@ export default {
     reviewEmptyBody: "문제는 답한 뒤 하루이틀 지나 다시 나타나 기억에 남도록 도와줍니다.",
     practiceAll: "전체 문제 풀기",
     reviewCompleteTitle: "복습 완료",
+    reviewScoreTemplate: "{total}개 중 {correct}개 정답",
     reviewFromLesson: "레슨 {n}",
     doneLabel: "완료",
     sectorsTitle: "섹터별 성과",

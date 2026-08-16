@@ -75,6 +75,15 @@ export default function Question({ question, lang, t, onAnswered, autoFocusHeadi
                   <Icon name="check" size="1.1em" strokeWidth={2.5} />
                 </span>
               )}
+              {/* The learner's own wrong pick gets an equally explicit marker,
+                  not just a colour shift — so "what I picked" and "what was
+                  right" are both legible at a glance, not one marked and one
+                  merely tinted. */}
+              {revealed && !isRight && picked && (
+                <span style={{ color: ink.bad, display: "flex" }}>
+                  <Icon name="x" size="1.1em" strokeWidth={2.5} />
+                </span>
+              )}
             </button>
           );
         })}

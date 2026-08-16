@@ -68,6 +68,7 @@ export default {
     reviewEmptyBody: "Las preguntas vuelven aquí uno o dos días después de responderlas, para que se fijen.",
     practiceAll: "Practicar todas las preguntas",
     reviewCompleteTitle: "Repaso completado",
+    reviewScoreTemplate: "{correct} de {total} correctas",
     reviewFromLesson: "De la lección {n}",
     doneLabel: "Listo",
     sectorsTitle: "Rendimiento por sector",

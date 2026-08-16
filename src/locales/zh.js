@@ -68,6 +68,7 @@ export default {
     reviewEmptyBody: "题目会在你作答一两天后再次出现，帮助你记牢。",
     practiceAll: "练习全部题目",
     reviewCompleteTitle: "复习完成",
+    reviewScoreTemplate: "{total}题中答对{correct}题",
     reviewFromLesson: "来自第 {n} 课",
     doneLabel: "完成",
     sectorsTitle: "板块表现",

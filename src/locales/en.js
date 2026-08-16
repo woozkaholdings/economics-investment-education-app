@@ -77,6 +77,7 @@ export default {
     reviewEmptyBody: "Questions come back here a day or two after you answer them, so they stick.",
     practiceAll: "Practice all questions",
     reviewCompleteTitle: "Review complete",
+    reviewScoreTemplate: "{correct} of {total} correct",
     reviewFromLesson: "From lesson {n}",
     doneLabel: "Done",
     sectorsTitle: "Sector performance",
