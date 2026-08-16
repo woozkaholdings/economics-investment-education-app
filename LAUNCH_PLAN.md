@@ -151,23 +151,33 @@ which age band it serves before writing it (§3.0).
 
 ### 2.6 Kids financial literacy — a real gap, not a built feature
 
-*Assessed 2026-08-07 after the owner asked whether kids lessons are already in the plan.*
+*Assessed 2026-08-07 after the owner asked whether kids lessons are already in the plan. Figures
+refreshed 2026-08-15 (dev-agent run) — this section had gone stale after two rounds of content
+additions (AGENT_LOG.md backlog item 21); see that item's run-log entries for what changed and why.*
 
-**What exists today is not a kids curriculum.** `src/content/kidsContent.js` holds three age bands
-(5-8, 9-12, 13-17) with **three short blurbs and one activity each — nine blurbs total**, surfaced
-only inside Reference → Parent Guide as parent-facing "teach your kids" material.
+**What exists today is a growing appendix, not yet a kids curriculum.** `src/content/kidsContent.js`
+holds three age bands (5-8, 9-12, 13-17), each now with **seven short blurbs and one activity —
+21 blurbs total** (up from three per band / nine total as originally assessed here), surfaced only
+inside Reference → Parent Guide as parent-facing "teach your kids" material.
 
-Two problems, and the second is the same defect §2.5 just fixed for adults:
+Two problems as originally assessed; the first is unchanged, the second is now partially closed:
 
-1. **It is not lesson-shaped.** Nine blurbs against 26 adult lessons. It is an appendix.
-2. **Its content is economics, not money skills.** The 5-8 band teaches transactions (trading toys)
-   and inflation; 9-12 teaches borrowing and economic cycles; 13-17 teaches the Fed and 2008. There
-   is no allowance, saving, wants-vs-needs, earning, or first-bank-account material — the money
-   topics a child actually encounters. It is the cycles curriculum miniaturised.
+1. **It is still not lesson-shaped.** 21 blurbs against 40 adult lessons, still just three fields
+   per band (`lessons`/`activity`/`parentTip`). Whether to keep growing this format or move to a
+   lesson-shaped structure remains an open call — see backlog item 21.
+2. **Its content was economics, not money skills — now a mix.** Each band's original three blurbs
+   are still economics (5-8: trading toys, inflation, a piggy bank; 9-12: mortgages/credit, economic
+   seasons, "good" debt; 13-17: connected spending, the Fed as thermostat, 2008). The four blurbs
+   added per band since (2026-08-07 and 2026-08-15) are genuine money-skills content: wants vs.
+   needs, earning an allowance, saving toward a goal, a first bank account, checking a balance
+   before spending, "pay yourself first," comparison shopping, delayed gratification, budgeting as a
+   plan made before spending, sales tax, gross vs. net pay, and what a credit score measures (framed
+   as not something to build on purpose as a teenager).
 
-**The safe next step, needing no legal decision:** expand the parent-facing bands with real
-money-skills content (allowance and saving, wants vs. needs, earning, price comparison, a first
-account). This stays parent-directed, so §10.3's COPPA posture is untouched.
+**The safe next step, needing no legal decision:** the money-skills topics originally named here
+(allowance and saving, wants vs. needs, earning, price comparison, a first account) are now built —
+see the list above. More topics can still be added in the same parent-directed format without a
+legal decision; §10.3's COPPA posture stays untouched either way.
 
 **The step that is NOT a design decision:** making the kids material *child-facing* — child accounts,
 a kids mode, or kid-directed lesson UI — changes the app's COPPA classification, its store privacy

@@ -8319,3 +8319,96 @@ direction is the problem.
   lesson-shaped-structure question this item has deferred since 2026-08-07. `LAUNCH_PLAN.md` §2.6's
   "nine blurbs total" figure is now stale (18) and worth refreshing alongside whichever of those is
   picked.
+
+### 2026-08-15 (twelfth run this date) — refresh `LAUNCH_PLAN.md` §2.6 and `LAUNCH_READINESS.md`'s stale kids-curriculum figures (item 21)
+
+- **Orient**: `git status` showed only the same long-standing untracked `economic-cycles-v6.jsx` — no
+  uncommitted edits to any tracked file, confirmed against the standing memory note before treating it
+  as anything other than the documented reference-only fixture. `git log --oneline -3` topped at the
+  eleventh run's commit (`34d466b`), confirming no concurrent session had landed anything since. Read
+  the PRIORITY BLOCK (items 17/24 still exhausted/frozen for content, item 18 blocked on an owner
+  action) and the eleventh run's "Next run should pick," which explicitly named `LAUNCH_PLAN.md` §2.6's
+  "nine blurbs total" figure as stale (actually 18 per that run's own count) and worth refreshing.
+- **What was picked and why**: took the eleventh run's named candidate, but re-counted from source
+  first rather than trusting either the doc's stale "nine" or the log's own "18" — both turned out
+  wrong. `src/content/kidsContent.js` currently holds **7 blurbs per band × 3 bands = 21 total**
+  (confirmed two ways: manual line count of each band's `lessons[]` array, and `grep -c "en:"` = 30,
+  which equals 21 lesson blurbs + 3 titles + 3 activities + 3 parentTips). The eleventh run's own log
+  entry undercounted (said "18, was 15" — arithmetic should have been 7×3=21, not 18); this run's log
+  entry corrects that going forward without editing the eleventh run's historical text. Adult lesson
+  count re-confirmed at 40 via `id` count in `src/content/lessons.js`, matching item 17's already-current
+  figure. This was picked over adding more kids blurbs or taking up the lesson-shaped-structure question
+  (both also legitimate per the eleventh run's note) because it's a pure factual-accuracy fix with no
+  content-authoring judgment calls, closes a two-run-old named staleness flag, and — per the PRIORITY
+  BLOCK's spirit of not defaulting straight back into content-adding — doesn't add to either the lesson
+  or kids-blurb count itself.
+- **What was done**: two docs-only edits, no source/content files touched.
+  1. `LAUNCH_PLAN.md` §2.6 — replaced the 2026-08-07-vintage "three short blurbs... nine blurbs total"
+     and "Nine blurbs against 26 adult lessons" text with the current 21-blurb/40-lesson figures; split
+     problem #2 ("content is economics, not money skills") into what's still true (each band's original
+     three blurbs remain economics-only) versus what's now closed (the four blurbs added per band since,
+     itemized: wants-vs-needs, earning, saving goal, first bank account, checking balance, pay-yourself-
+     first, comparison shopping, delayed gratification, budgeting-as-a-plan, sales tax, gross-vs-net pay,
+     credit score); rewrote the "safe next step" paragraph to note its originally-named topics are now
+     built rather than still being a to-do list.
+  2. `LAUNCH_READINESS.md`'s Phase-0 gate table, "Kids curriculum" row — "15 blurbs... up from 9 as of
+     2026-08-07" → "21 blurbs... up from 9 as of 2026-08-07 and 15 as of the first round of 2026-08-15
+     additions." Left the row's ❌ Gap status and "still 3 fields/band, not lesson-shaped" reasoning
+     unchanged — both remain accurate, this run doesn't close that gap, only corrects the count.
+- **Verified**:
+  1. `npm test` (`bash scripts/bootstrap-node.sh` for the portable Node runtime) — `PASS: 0 failure(s),
+     1 warning(s)` (pre-existing, unrelated translation-review-coverage warning); `check-blindspot.mjs`
+     — all 6 checks `ok`.
+  2. `npm run build` — `vite v6.4.3`, `✓ 65 modules transformed`, no errors; every chunk's byte size
+     identical to the eleventh run's entry (`lessonContent.money` 499.36 kB, `lessonContent.economy`
+     98.47 kB, `Reference` 51.81 kB, `index` 222.78 kB) — expected, since neither edited file is imported
+     by the client bundle (both are root-level Markdown).
+  3. Re-derived the 21-blurb and 40-lesson figures directly from source rather than trusting either the
+     doc's old "nine" or the eleventh run's log entry's "18" — see "what was picked and why" above; this
+     is the evidence behind the numbers actually landing in the docs, not a copy of a possibly-wrong
+     prior claim.
+  4. `git status --short` before committing: only `LAUNCH_PLAN.md` and `LAUNCH_READINESS.md` modified,
+     plus the same long-standing untracked `economic-cycles-v6.jsx`.
+- **Adversarial self-check**:
+  - *Blindspot register regression*: `git diff --unified=0 -- LAUNCH_PLAN.md LAUNCH_READINESS.md | grep
+    -iE "dalio|you should (buy|sell|invest)|we recommend|be bullish|be cautious|child|kid.?mode|
+    nowDate|april 2026|will rise|will fall|guaranteed|the fed will|expect the fed|rates will"` matched
+    two lines, both pre-existing "child"-shaped text carried through unchanged in meaning ("a child
+    actually encounters" describing the money topics a kid meets day to day, and the
+    `LAUNCH_READINESS.md` row's existing "child-facing is an owner/COPPA decision" clause, which this
+    edit's diff context included because the row itself changed) — neither is new advice-adjacent or
+    child-facing framing; both restate the same COPPA-deferral position the section already held before
+    this run. Checked deliberately since §10.1/§10.3 both touch this exact section.
+  - *DECISIONS.md conflict*: re-read every section header (`Content as .js modules`, `LessonReader chunk
+    split`, `localStorage-only state`, `Machine-translated lesson content`, `Two lesson tracks`, plus the
+    open Expo/market-data/instrumentation entries). None govern kids-curriculum figures or launch-plan
+    prose; this run changes no architecture, no state, no content module. No conflict.
+  - *Already-done backlog item*: this is exactly the staleness the eleventh run's "Next run should pick"
+    named and left undone — not a duplicate of prior work, it's the named follow-up. Grepped the log for
+    "21 blurbs" and "nine blurbs total... refreshing" before writing this entry to confirm no run between
+    the eleventh and this one already did it — none had (`git log --oneline -3` at orient confirmed no
+    intervening commits at all).
+  - *Own verification claim*: the 21/40 figures are reproducible by anyone re-running the same `grep -c`
+    and manual-count steps against the current tree — recorded above rather than left as an assertion.
+    The one substantive correction (the eleventh run's own "18" being arithmetically wrong) is called out
+    explicitly rather than silently carried forward, per the standing rule that a log entry's own claims
+    must hold up to a re-check, not just look plausible.
+- **Not touched, and why**: `economic-cycles-v6.jsx` — unrelated, still reference-only, untouched, its
+  untracked status unchanged before and after (confirmed via `git status --short` at orient and again
+  post-build). No lesson content, kids content, locale file, or any `src/` source file was modified —
+  this run is documentation-accuracy-only. Did not add more kids blurbs and did not decide the
+  lesson-shaped-structure question — both remain open per item 21, exactly as the eleventh run left them;
+  this run only corrects the numbers describing the current state, not the state itself. Did not correct
+  the eleventh run's own log entry's "18 total, was 15" arithmetic — past run-log entries are historical
+  record, not live documentation, per the file's own "do not delete history" rule; the correction lives
+  here instead.
+- **Next run should pick**: item 18's completion-rate clause remains blocked on an owner action (a real
+  analytics provider account). Item 21 (kids content) is open on two independent axes — more blurbs in
+  the current format, or the lesson-shaped-structure question — either is a reasonable pick for a future
+  run. No other doc staleness was found while re-reading `LAUNCH_PLAN.md` §2.6 and the
+  `LAUNCH_READINESS.md` Phase-0 table in full for this fix; if a future run wants another docs-accuracy
+  pass, `LAUNCH_PLAN.md`'s other lesson-count mentions (e.g. "twelve-lesson app" in §3.1, discussing the
+  pre-rebuild navigation history) were not audited here and are out of this run's scope, since §3.1
+  reads as describing a past decision's reasoning, not a live count claim — worth a second look if this
+  becomes a recurring pattern.
+  picked.
