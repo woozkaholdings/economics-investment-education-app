@@ -696,7 +696,30 @@ for the history. No open P1/P2 items.
     concludes even that conflicts with item 12, **say so and leave it** — flagging the conflict is a
     legitimate outcome and better than a silent port-cost increase.
 
-37. **[Process — small, found 2026-08-16 by the item-30 run while grounding claim A3] `LAUNCH_READINESS.md`'s
+37. **[Process — ✅ DONE 2026-08-16. Refreshed, and the item's own "since it will keep moving" is now
+    enforced rather than trusted: `check-data.mjs` §11b fails the build when this figure disagrees with
+    the live ledger.]**
+    - **What shipped:** §10.4 now reads **es/ko/zh/ja 93% (0% human, 3 stale)** each, and says plainly
+      that the drop from 100% is the ledger *working* — English bodies for lessons 5, 27 and 28 were
+      edited after review, so those pairs are flagged stale instead of still counted as covered.
+    - **The one-line fix was not the valuable half.** This figure went stale for five days because
+      nothing compared the scorecard to the ledger it quotes, which is the same shape as item 36's
+      blind patterns: the data was right and the document reporting it was wrong. §11b closes that —
+      it **fails** (not warns, per §16's precedent that an unread warning is no check) and its message
+      prints the exact replacement string, so the fix is a copy-paste. Proven by three injections,
+      including re-inserting the real historical `100%/…/100%` text and **deleting the sentence
+      entirely** — the latter is the hole a check like this usually has, where removing the claim
+      satisfies the checker.
+    - **Deliberately NOT guarded: the same row's character-count figures.** They move by single digits
+      on any content edit, and a build that fails over 19 characters gets switched off within a week.
+      Stated in §11b's header so a later run doesn't "complete" it.
+    - **Char figures refreshed anyway** (es 97,994 / ko 48,469 / zh 30,733 / ja 42,555): every
+      non-English count fell by **exactly 19** on 2026-08-16 while English stayed identical to the
+      character — item 36's cross-reference fixes shortening two-digit lesson numbers to one digit.
+      Worth recording because "all four moved by the same 19" is what identifies the cause; a run
+      seeing this in isolation would suspect a translation edit.
+    *(Original text below.)*
+    **`LAUNCH_READINESS.md`'s
     translation-coverage figure is stale.** Its §10.4 row reports "currently 100%/100%/100%/100%
     coverage, 0% human," which was true when the P-4 decision landed 2026-08-11. `npm run
     review-status` now reports **93% in each language with 3 entries stale** — English lesson text has
@@ -6945,3 +6968,93 @@ data", which moves it into the same pile as the other nine claims item 18 gates.
 **Next run should pick**: **item 37** (`LAUNCH_READINESS.md`'s stale translation-coverage figure —
 one line, reports 100%, actual 93% with 3 stale) as a small pick, or **item 34**'s `<ol>`/`<ul>` a11y
 call. **Item 32**'s monthly audit is dated **2026-09-05** and should not be pulled forward.
+
+### 2026-08-16 (scheduled dev-agent) — `LAUNCH_READINESS.md`'s coverage figure refreshed, and made self-checking (backlog item 37)
+
+**Picked** item 37, owner-directed ("do item 37 next") after the item-31 run.
+
+**The stale figure, confirmed live rather than copied from the item:** `npm run review-status` reports
+**37/40 reviewed (93%) in each of es/ko/zh/ja, 0% human, 3 stale** — lessons 5, 27 and 28, whose English
+bodies were edited after their reviews. §10.4 said "currently 100%/100%/100%/100% coverage, 0% human,"
+true when P-4 landed 2026-08-11 and wrong since. The row now states the live figure **and** why it
+fell: the ledger's drift detection working, not a regression.
+
+**The one-line refresh was the smaller half.** This number went stale for five days because nothing
+compared the scorecard against the ledger it quotes — the same shape as item 36's blind patterns, where
+the data was correct and the document reporting it was not. So `check-data.mjs` §11 gained **§11b**: it
+recomputes the four percentages from the ledger and **fails** if `LAUNCH_READINESS.md` disagrees.
+- **Fails rather than warns**, on §16's precedent that a warning nobody reads is indistinguishable from
+  no check. The failure message prints the exact replacement string, so the fix is a copy-paste.
+- **Deliberately narrow.** The trigger is only the four percentages, which move when a review lands or
+  a lesson's English drifts past the staleness line. The same row's **character counts are not
+  guarded** — they shift by single digits on any content edit, and a build failing over 19 characters
+  would be turned off within a week. That exclusion is written into §11b's header so a later run does
+  not "finish" it.
+
+**Proven by three injections**, file restored and green after each: (1) the **real historical text**
+(`es 100% (0% human, 0 stale), …`) re-inserted — caught, printing both what the file said and what it
+should say; (2) one language drifting alone (`ja 95%`) — caught; (3) **the sentence deleted entirely** —
+caught as "no coverage figure found in the file at all". (3) is the important one: a check of this shape
+is normally satisfiable by removing the claim it checks, which is precisely the §16 hole.
+
+**Char figures refreshed while in the row**, using the file's own documented command: es 97,994
+(0.720x of English's 136,031), ko 48,469 (0.356x), zh 30,733 (0.226x), ja 42,555 (0.313x). Every
+non-English count fell by **exactly 19** on 2026-08-16 while English stayed identical to the character —
+item 36's cross-reference fixes shortening two-digit lesson numbers to one digit. The uniform 19 is what
+identifies the cause; seen in isolation it would look like a translation edit.
+
+**⚠️ Concurrent session — a collision that actually happened this time, recorded in full because the
+repo state is confusing without it.** Mid-run, `git status` showed uncommitted edits to
+`src/content/lessonContent.money.js` that were not this run's. Handled per the hard rules: not touched,
+not staged, not reverted. Two things followed from it that matter:
+1. **A measurement was contaminated and had to be redone.** The first char-count pass ran against the
+   working tree, which contained that session's in-flight **Japanese-only** edits, and returned
+   ja = 42,558. Re-measured against `HEAD` blobs extracted with `git show` — the correct committed
+   figure is **42,555**. Three characters, and it would have baked another session's uncommitted work
+   into this file as though it were committed state. **The general rule this run learned: a figure
+   written into a tracked document must be measured against `HEAD`, not against the working tree,
+   whenever the tree is dirty with someone else's work.**
+2. **That session then committed `0a8a7af`, which swept up this run's `check-data.mjs` §11b edit into
+   their commit** — we were editing the same file in the same working tree, so their `git add` took
+   both. Nothing was lost or altered; §11b, §18 and their own item-36 `REF_PATTERNS` work are all
+   present in `HEAD` and `npm test` is green on it. **No history was rewritten to correct the
+   attribution** — the code is right, and rewriting shared history to fix a byline is the more
+   dangerous act. Recorded here so a later reader is not confused by finding §11b in a commit whose
+   message is about item 36.
+3. **This left `HEAD` transiently red**, and it is worth naming: their commit contained the new §11b
+   check but not this run's `LAUNCH_READINESS.md` fix, so between `0a8a7af` and this commit, a fresh
+   clone would fail `npm test` — the check demanded the live figure while the committed document still
+   said 100%. Committing this entry is what closes it. A check and the document it checks should land
+   in one commit; they did not, through no decision of either session.
+
+**Verification.** `npm test` — 0 failures (the coverage warning is unchanged and expected).
+`npm run build` — succeeds. No `src/` file was touched by this run, so the bundle is unchanged.
+
+**Adversarial self-check — one finding, already acted on above.**
+1. **Blindspot register** — nothing reintroduced. No user-facing content changed; `LAUNCH_READINESS.md`
+   is an internal scorecard, so §10.1's advice-adjacency surface is not involved. No Dalio (§10.2), no
+   kids framing (§10.3). **§2.3 deserves a word since it is the closest call:** this run writes dates
+   ("2026-08-16") into a document, but §2.3's rule is about *live-looking data in shipped content* —
+   these are measurement dates in a repo document, the same form the row already used, and nothing in
+   `src/` gained a date. `check-blindspot.mjs` passes.
+2. **`DECISIONS.md` conflict** — none. The machine-translation entry is the relevant one and this
+   change *serves* it: P-4's decision was explicitly "accept for now, track the debt," and a scorecard
+   misreporting the debt is that decision quietly failing.
+3. **Already-done backlog item** — item 37 was open, filed hours earlier by the item-30 run. Checked
+   "Completed and pruned" for prior readiness-refresh work: the 2026-08-09 P-2 entry refreshed this
+   file's lesson-count figures, a different row and a different number, and it is the precedent for
+   doing it, not a duplicate of it.
+4. **Own verification claims** — this is the finding. The first version of the char figures was wrong,
+   and it was wrong in the direction of *looking fine*: 42,558 is plausible, close, and would never have
+   been questioned. It was caught by asking whether a dirty tree could have contaminated the
+   measurement, not by re-reading the number. Both figures are reported above so a reviewer re-running
+   `git show HEAD:…` sees what this run saw.
+
+**Item 18 remains the entire critical path to ending Phase 0** — blocked on the owner creating a
+PostHog account and supplying its key.
+
+**Next run should pick**: **item 34**'s `<ol>`/`<ul>` a11y call (small, needs a live accessibility-tree
+check and a look at whether other lists share the shape). **Item 32**'s monthly audit is dated
+**2026-09-05** and should not be pulled forward. Newly worth filing if a run wants it: nothing in this
+repo checks that a *check* and the document it guards land together — this run and `0a8a7af` split one
+across two commits by accident, and only luck made the window short.
