@@ -8934,3 +8934,88 @@ direction is the problem.
   were re-read this run and found still accurate — not re-verified line-by-line against fresh commands,
   so a future refresh pass could still double-check them rather than assuming this run's spot-check
   covers the whole file.
+
+### 2026-08-16 (scheduled dev-agent, fifth run this date) — Term-detail screen/routing (Quizlet/Vocabulary design review, first half)
+
+- **Orient**: `git status` showed only the same long-standing untracked `economic-cycles-v6.jsx` — no
+  uncommitted edits to any tracked file. `git log --oneline -3` topped at `d12becf` (the prior run's
+  `LAUNCH_READINESS.md` refresh), matching the environment's reported HEAD — no concurrent session had
+  landed anything since. Read the PRIORITY BLOCK (items 17/24 exhausted/frozen, item 18 blocked on an
+  owner action) and the prior two runs' "Next run should pick," both of which named the term-detail
+  screen/routing as the concrete next step and explicitly scoped it separately from the action bar that
+  motivated it — "one run for the term-detail screen/routing, a later run for the action bar." Picked
+  that scoped-down piece: a per-term view reached by tapping a Glossary row, with a back control, and
+  nothing else (no action bar, no favoriting/bookmarking, no new persisted state).
+- **What was done**: added `src/screens/reference/TermDetail.jsx` — a focused single-term screen (back
+  button matching `LessonReader.jsx`'s existing pattern exactly: same icon, same label via the existing
+  `t.backLabel` key, same focus-the-heading-on-mount/scroll-to-top effect) showing the term's translated
+  name, full definition, and example sentence (when present) in a visually distinct card, styled from the
+  same `Card`/`Text` primitives and `surface.sunken` tone every other screen already uses — no new colors,
+  no new UI primitives. Wired it into `src/screens/reference/Glossary.jsx`: added `selectedTerm` local
+  state (`null` | a glossary key); each list row (previously a plain `<div>`) now also carries
+  `role="button" tabIndex={0}` plus an `onClick`/Enter-or-Space `onKeyDown` handler that sets
+  `selectedTerm`, with a concise `aria-label` (the term's translated short name) so a screen reader
+  announces the row concisely rather than reading the full definition and example as the button's name;
+  when `selectedTerm` is set, `Glossary` renders `TermDetail` instead of the list. The list's own visible
+  content is unchanged — this is additive (tap-to-open), not a rewrite of what the flat list already
+  shows. No new locale keys were needed (`t.backLabel` already exists in all 5 locales); no new routing
+  library — this reuses the same plain-`useState` "pushed view" pattern `App.jsx` already uses for the
+  lesson reader, not React Router or similar, consistent with `DECISIONS.md`'s Vite-not-Expo /
+  localStorage-only-state architecture (no new persisted state was added — `selectedTerm` is
+  component-local and resets whenever `Reference`'s sub-nav unmounts `Glossary`, same as the existing
+  search-query state already does).
+- **Verified**:
+  1. `npm test` — `PASS: 0 failure(s), 1 warning(s)` (same pre-existing translation-review-coverage
+     warning every run reports); `check-blindspot.mjs` — all 6 checks `ok`.
+  2. `npm run build` — `vite v6.4.3`, `✓ 66 modules transformed` (up from 65 — the one new file), no
+     errors. `Reference` chunk grew 62.84 kB → 64.05 kB (the new screen); `lessonContent.money` unchanged
+     at 499.36 kB, still under Vite's 500 kB warning threshold.
+  3. Live browser verification against the built `dist/` (`python3 -m http.server 8763`, driven via
+     `javascript_tool` per the documented click/screenshot-unreliability fallback): dismissed the
+     first-run disclaimer, navigated Reference → Glossary, confirmed all 17 terms render as
+     `role="button"` rows. Clicked the "Gross Domestic Product" row (`dispatchEvent(new MouseEvent(...))`,
+     since a plain `.click()` synchronous read raced the re-render once and showed stale text — the retry
+     with a 100ms wait after the event confirmed the state change was real, not a fluke of timing) and
+     confirmed the detail screen rendered: a "Back" button, the term heading (and — checked directly via
+     `document.activeElement` — focus had actually moved to that heading, not just visually present),
+     the full definition, and the example sentence in its own card. Clicked "Back" and confirmed the
+     17-row list reappeared. Separately, focused the "Volatility Index (Fear Gauge)" row and dispatched a
+     `keydown` `Enter` event (not a click) to confirm the keyboard-activation path independently of the
+     mouse path — the detail screen opened for that term too. Took a screenshot of the resulting detail
+     view (VIX term) confirming the visual layout matches the app's existing dark theme and card styling
+     with no ad-hoc colors.
+  4. `git status --short` before committing: only `src/screens/reference/Glossary.jsx` (modified) and
+     `src/screens/reference/TermDetail.jsx` (new) staged, plus the same long-standing untracked
+     `economic-cycles-v6.jsx`.
+- **Adversarial self-check**:
+  - *Blindspot register regression*: `git diff --unified=0 -- src/screens/reference/Glossary.jsx
+    src/screens/reference/TermDetail.jsx | grep -iE "dalio|(you should (buy|sell|invest))|we recommend|be
+    bullish|be cautious|child|kid.?mode|nowDate|april 2026|will rise|will fall|guaranteed|the fed
+    will|expect the fed|rates will"` matched nothing (grep exit 1). This change touches no lesson
+    content, market copy, or kids framing — it's a new screen displaying existing glossary text verbatim
+    plus one new locale-key reuse (`backLabel`, already reviewed).
+  - *DECISIONS.md conflict*: re-read every section header. `.js`-not-JSON content — unchanged, no content
+    module touched. localStorage-only state — `selectedTerm` is `useState`, not persisted, exactly like
+    `LessonReader`'s `reading`/`prompt` state and `Glossary`'s own pre-existing `query` state. Expo-vs-Vite
+    — untouched, no navigation library added. No conflict.
+  - *Already-done backlog item*: `grep -in "term-detail\|TermDetail" AGENT_LOG.md` before this entry
+    returned only prior runs' notes saying the screen "doesn't exist yet" and naming it as the next pick
+    — no prior run built it. Not a duplicate.
+  - *Own verification claim*: the browser-driven click/keydown/back-button checks above are real DOM
+    reads of `document.activeElement`, `document.body.innerText`, and `role="button"` element counts
+    against the actual built `dist/` output, not an assumption that the `selectedTerm` conditional
+    "should" work because the diff looked right — and the one hiccup (a `.click()` read racing the
+    re-render) is recorded rather than silently smoothed over, per the standing rule that this step must
+    say what it found, not just that everything passed.
+- **Not touched, and why**: `economic-cycles-v6.jsx` — unrelated, untouched. Did not build the persistent
+  term-detail action bar itself — per the prior two runs' explicit scoping, that's a separate follow-up
+  now that the screen it attaches to exists. Did not add any new locale keys, persisted state, favoriting/
+  bookmarking, or routing library — kept to exactly "the screen and the tap-to-open routing," matching the
+  scope the prior runs called for.
+- **Next run should pick**: the persistent term-detail action bar (e.g. "add to review queue" / a
+  bookmark toggle) can now be scoped and built against `TermDetail.jsx`, which exists as of this run —
+  the prerequisite the last two runs were waiting on is cleared. Whatever the action does needs its own
+  small design decision (what does "action" mean here — is there a review/bookmark concept for glossary
+  terms at all today? there isn't one yet) before implementation, so that scoping is real work for
+  whichever run picks this up, not just wiring a button. Item 21 (kids content) and item 18 (blocked on
+  an owner action) remain open alternatives.

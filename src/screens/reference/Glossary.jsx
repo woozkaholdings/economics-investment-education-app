@@ -11,9 +11,11 @@ import { glossary } from "../../content/glossary.js";
 import Icon from "../../components/Icon.jsx";
 import { EmptyState, Text } from "../../components/ui.jsx";
 import { ink, line, radius, space, surface } from "../../theme.js";
+import TermDetail from "./TermDetail.jsx";
 
 export default function Glossary({ t, lang }) {
   const [query, setQuery] = useState("");
+  const [selectedTerm, setSelectedTerm] = useState(null); // null | a glossary key
 
   const entries = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -23,6 +25,11 @@ export default function Glossary({ t, lang }) {
         !q || term.toLowerCase().includes(q) || (entry.s || "").toLowerCase().includes(q)
       );
   }, [query, lang]);
+
+  if (selectedTerm && glossary[selectedTerm]) {
+    const entry = glossary[selectedTerm][lang] || glossary[selectedTerm].en;
+    return <TermDetail t={t} term={selectedTerm} entry={entry} onBack={() => setSelectedTerm(null)} />;
+  }
 
   return (
     <div>
@@ -53,7 +60,20 @@ export default function Glossary({ t, lang }) {
       ) : (
         <dl style={{ margin: 0 }}>
           {entries.map(({ term, entry }) => (
-            <div key={term} style={{ padding: `${space["3"]}px 0`, borderBottom: `1px solid ${line.hairline}` }}>
+            <div
+              key={term}
+              role="button"
+              tabIndex={0}
+              aria-label={entry.s || term}
+              onClick={() => setSelectedTerm(term)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  setSelectedTerm(term);
+                }
+              }}
+              style={{ padding: `${space["3"]}px 0`, borderBottom: `1px solid ${line.hairline}`, cursor: "pointer" }}
+            >
               <dt>
                 <Text as="span" variant="small" color={ink.strong} style={{ fontWeight: 700 }}>
                   {entry.s || term}
