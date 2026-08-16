@@ -34,6 +34,7 @@ export default {
     kidsParentIntro: "家长指南——选择孩子的年龄段，然后一起阅读这些讲解。",
     kidsAgeGroupLabel: "选择年龄段", kidsWhyLabel: "为什么重要",
     glossTitle: "术语表", glossSearch: "搜索术语...",
+    glossNoResults: "没有与您的搜索匹配的术语。",
     balanceSheet: "美联储资产负债表",
     qeLabel: "量化宽松（QE）", qtLabel: "量化紧缩（QT）",
     ratePrinciples: "核心原则",

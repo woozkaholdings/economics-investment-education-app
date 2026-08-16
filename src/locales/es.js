@@ -34,6 +34,7 @@ export default {
     kidsParentIntro: "Una guía para padres — elige la banda de edad de tu hijo y lean juntos estas explicaciones.",
     kidsAgeGroupLabel: "Seleccionar grupo de edad", kidsWhyLabel: "Por qué importa",
     glossTitle: "Glosario", glossSearch: "Buscar términos...",
+    glossNoResults: "Ningún término coincide con tu búsqueda.",
     balanceSheet: "Balance del Fed",
     qeLabel: "Flexibilización Cuantitativa (QE)", qtLabel: "Ajuste Cuantitativo (QT)",
     ratePrinciples: "Principios Clave",

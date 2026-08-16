@@ -9429,3 +9429,105 @@ direction is the problem.
   waiting on. Beyond that, remaining dev-agent-actionable areas are thin — see the eighth run's note for
   the same assessment; a future run should look for a specific, checked gap (as this run did) rather than
   defaulting to more content.
+
+### 2026-08-16 (scheduled dev-agent, tenth run this date) — Fixed Glossary's "no results" state showing the search placeholder text back at the user
+
+- **Orient**: `git status` showed only the same long-standing untracked `economic-cycles-v6.jsx` — no
+  uncommitted edits to any tracked file, matching this file's own reference-only note for that fixture.
+  `git log --oneline -3` topped at `62aeb51` (the ninth run's Practice focus-management fix), matching the
+  environment's reported HEAD. Read the PRIORITY BLOCK and the ninth run's "Next run should pick": item 18
+  blocked on an owner action, the Glossary bookmark "surface saved terms" follow-up explicitly flagged to
+  wait, and a note to find "a specific, checked gap" rather than default to more content. Before picking a
+  lesson-deepening (item 17's remaining §4.3 content-duration clause), independently re-measured it from
+  source rather than trusting the log's last figure (per the standing memory note that a logged decision
+  can go stale) — `node --input-type=module` over `lessons.js` + both `lessonContent.*.js` files gave
+  **40 lessons / 136,031 chars / 120 minutes**, i.e. the minutes clause is already at 120/120, not the
+  "118/120, ~2 min short" the log's most recent figure implied (that number was current as of 2026-08-15's
+  second run; the third run that same date already closed it via lesson 36 but a couple of intermediate
+  entries still carry the older figure). Both §4.3 content clauses are fully met — picking a lesson
+  deepening now would move nothing and would repeat the exact "already-done backlog item" failure mode the
+  self-check step exists to catch. Looked elsewhere instead: read through `src/screens/reference/*.jsx`
+  (Glossary, MarketSignals, Sectors, Settings — screens with no dedicated review since they were built) by
+  hand rather than assuming a gap exists.
+- **What was found**: `src/screens/reference/Glossary.jsx`'s zero-results state
+  (`entries.length === 0 → <EmptyState icon="search">{t.glossSearch}</EmptyState>`) reuses `t.glossSearch`
+  — the string `"Search terms..."`, which is also the search input's placeholder and `aria-label` — as the
+  empty-state body text. A user who searches for a term not in the glossary sees an empty-state box that
+  just repeats "Search terms..." back at them instead of saying no match was found; a screen-reader user
+  gets no distinct signal either, since the same string is announced by both the input's label and the
+  result region. Grepped every other `EmptyState` call site (`App.jsx`, `LessonReader.jsx`, `Sectors.jsx`)
+  to check whether this was an established pattern before flagging it as a bug — the other three either
+  show a loading ellipsis or dedicated unavailable-data copy (`t.dataUnavailable`); Glossary was the only
+  one reusing an unrelated label. No dedicated "no results" locale key existed anywhere in the app to reuse
+  instead (checked via `grep -in "no results\|noResults\|empty.state" AGENT_LOG.md` — never previously
+  flagged or fixed).
+- **Fix**: added a new locale key `glossNoResults` to all five `src/locales/*.js` files, hand-translated
+  (not machine-copied) following the same short-UI-string convention the bookmark-toggle run set for
+  `bookmarkAdd`/`bookmarkRemove`/`bookmarkedLabel` — en "No terms match your search.", es "Ningún término
+  coincide con tu búsqueda.", ko "검색과 일치하는 용어가 없습니다.", zh "没有与您的搜索匹配的术语。", ja
+  "検索に一致する用語がありません。". `src/screens/reference/Glossary.jsx`'s empty-state now renders
+  `t.glossNoResults` instead of `t.glossSearch`. One-line change plus five one-line locale additions —
+  no new component, no new state, no render-shape change.
+- **Verified**:
+  1. `npm test` (`bash scripts/bootstrap-node.sh` for the portable Node runtime) — `PASS: 0 failure(s),
+     1 warning(s)` (the same pre-existing translation-review-coverage warning every run reports, unrelated).
+     `check-data.mjs`'s locale-parity check (section 1: every language has the same key set as `en`) passing
+     confirms all five `glossNoResults` additions keep exact key parity; `check-blindspot.mjs` — all 6
+     checks `ok`.
+  2. `npm run build` — `vite v6.4.3`, `✓ 66 modules transformed`, no errors, no chunk-size warning; every
+     chunk's size is unchanged from the ninth run's post-build figures except `Reference-*.js` (81.88 kB →
+     81.89 kB, the expected effect of one longer string) and `index-*.js` (226.54 kB → 226.83 kB, the five
+     locale additions bundled into the main chunk) — both trivial.
+  3. Live browser verification was attempted and unavailable: `preview_start` returned the same "Dev
+     servers can't be started from unattended sessions... nobody is present to approve the command" the
+     ninth run hit. **Not claiming a visual check that didn't happen** — verification here rests on
+     `npm test`'s locale-parity check plus a manual read of `EmptyState`'s render (a plain `<Text>` wrapping
+     `children`, confirmed by reading `src/components/ui.jsx`) rather than an in-browser confirmation that
+     the new string actually displays.
+  4. `git status --short` before committing: `src/locales/{en,es,ja,ko,zh}.js` and
+     `src/screens/reference/Glossary.jsx` — exactly the files this change touches — plus the same
+     long-standing untracked `economic-cycles-v6.jsx`.
+- **Adversarial self-check**:
+  - *Blindspot register regression*: `git diff --unified=0 -- src/ | grep -iE "dalio|(you should (buy|
+    sell|invest))|we recommend|be bullish|be cautious|nowDate|april 2026|will rise|will fall|guaranteed|
+    the fed will|expect the fed|rates will|child.?facing|kid.?mode"` matched nothing (grep exit 1). This
+    change is UI copy for a "no search results" state, nowhere near investment-advice or kids-framing
+    territory, but ran the check anyway per the mandatory step rather than skipping it as obviously N/A.
+  - *DECISIONS.md conflict*: re-read every section header. `.js`-not-JSON content modules — unchanged, this
+    is still a plain ES module edit. localStorage-only state — untouched, no new persisted state added.
+    Expo-vs-Vite — untouched. No conflict.
+  - *Already-done backlog item*: grepped `AGENT_LOG.md` for `glossNoResults`/"no results"/"empty state"/
+    `glossSearch` before starting (see "What was found" above) — the only prior `glossSearch` mentions are
+    about the *old* pre-2026-08-02 lifted-state variable of the same name in the now-deleted monolithic
+    `More.jsx`, unrelated to this bug. Not a duplicate or a re-decision.
+  - *Own verification claim*: see point 3 under Verified above — this entry states plainly that browser
+    verification didn't happen and why (the same `preview_start` restriction the ninth run hit), rather
+    than implying `npm test`/`npm run build` passing means a sighted or screen-reader user actually sees
+    the corrected copy. That gap is real and is left open below, same as the ninth run's Practice fix.
+- **Not touched, and why**: `economic-cycles-v6.jsx` — unrelated, untouched. Did not pick a lesson
+  deepening — both §4.3 content clauses are already met (see Orient above); the log's own text still
+  carrying the older "118/120" figure in a couple of places is a separate, low-stakes staleness issue not
+  worth a dedicated run on its own, but is flagged here so a future run doesn't repeat the same
+  nearly-picked-a-closed-item mistake without checking first. Did not touch the Glossary bookmark
+  "surface saved terms" follow-up — still explicitly waiting per the sixth/seventh run's reasoning, and
+  nothing changed this run to revisit that call. Did not touch `MarketSignals.jsx`'s dead
+  `counterReset: "principle"` CSS property (set on the `<ol>` but never paired with a `content:
+  counter(principle)`/`counter-increment`, so it has zero visible effect) — noticed while reading that file
+  for this run's gap-hunt but left alone as a separate, even smaller cleanup rather than bundling two
+  unrelated fixes into one commit. Did not touch `Settings.jsx`'s `ChoiceRow` (`role="radiogroup"` /
+  `role="radio"` buttons using plain Tab-focus rather than the ARIA radio pattern's roving-tabindex
+  arrow-key navigation) — functionally operable via Tab+Enter/Space today, and changing the keyboard model
+  is a bigger, riskier change than this run's scope; flagged as a real but low-urgency a11y gap for a
+  future run to evaluate on its own.
+- **Next run should pick**: two small, low-risk cleanups surfaced but deliberately not bundled into this
+  commit: (1) `MarketSignals.jsx`'s dead `counterReset: "principle"` style (either remove it, or actually
+  implement numbered principles via `counter-increment`/`::before` if numbering was the original intent —
+  read the git history for that line before choosing which). (2) `Settings.jsx`'s `ChoiceRow` radiogroup
+  keyboard pattern (arrow-key roving tabindex per the ARIA APG, vs. today's working-but-nonstandard
+  Tab-per-option). Also worth a pass: correct item 17's backlog text, which still shows a stale
+  "118/120 minutes" figure in intermediate updates even though the third run on 2026-08-15 already closed
+  the clause at 120/120 — a documentation-only fix, not a code change, similar in shape to the seventh
+  run's item-21 cleanup. Item 18 remains blocked on an owner action. The Glossary bookmark "surface saved
+  terms" follow-up remains flagged as worth waiting on. This run's own fix has not been verified in a live
+  browser for the same environment reason the ninth run's fix hasn't — a future interactive session should
+  spot-check the Glossary search-with-no-matches state in all five languages.

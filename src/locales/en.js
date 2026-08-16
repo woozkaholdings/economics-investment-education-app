@@ -43,6 +43,7 @@ export default {
     kidsParentIntro: "A parent's guide — pick your child's age band, then read and share these explanations together.",
     kidsAgeGroupLabel: "Select age group", kidsWhyLabel: "Why it matters",
     glossTitle: "Glossary", glossSearch: "Search terms...",
+    glossNoResults: "No terms match your search.",
     balanceSheet: "Fed Balance Sheet",
     qeLabel: "Quantitative Easing (QE)", qtLabel: "Quantitative Tightening (QT)",
     ratePrinciples: "Key Principles",

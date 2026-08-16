@@ -34,6 +34,7 @@ export default {
     kidsParentIntro: "부모를 위한 가이드입니다 — 자녀의 연령대를 선택한 후, 이 설명을 함께 읽어보세요.",
     kidsAgeGroupLabel: "연령대 선택", kidsWhyLabel: "왜 중요할까요",
     glossTitle: "용어집", glossSearch: "용어 검색...",
+    glossNoResults: "검색과 일치하는 용어가 없습니다.",
     balanceSheet: "연준 대차대조표",
     qeLabel: "양적완화 (QE)", qtLabel: "양적긴축 (QT)",
     ratePrinciples: "핵심 원칙",

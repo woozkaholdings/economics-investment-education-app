@@ -75,7 +75,7 @@ export default function Glossary({ t, lang }) {
       </div>
 
       {entries.length === 0 ? (
-        <EmptyState icon="search">{t.glossSearch}</EmptyState>
+        <EmptyState icon="search">{t.glossNoResults}</EmptyState>
       ) : (
         <dl style={{ margin: 0 }}>
           {entries.map(({ term, entry }) => {

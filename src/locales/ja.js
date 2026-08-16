@@ -34,6 +34,7 @@ export default {
     kidsParentIntro: "保護者向けガイドです — お子さんの年齢帯を選び、この説明を一緒に読んでみましょう。",
     kidsAgeGroupLabel: "年齢帯を選択", kidsWhyLabel: "大切な理由",
     glossTitle: "用語集", glossSearch: "用語を検索...",
+    glossNoResults: "検索に一致する用語がありません。",
     balanceSheet: "FRBのバランスシート",
     qeLabel: "量的緩和（QE）", qtLabel: "量的引き締め（QT）",
     ratePrinciples: "重要な原則",
