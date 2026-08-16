@@ -13,6 +13,9 @@ Current structure, under `src/`:
 - **`App.jsx`** — the shell. Three bottom tabs (**Learn**, **Review**, **Reference**) plus a pushed
   lesson-reader view; a sticky header with the 5-language picker (en + Beta-labelled es/ko/zh/ja,
   §10.4); a first-run disclaimer modal (§10.1) with a focus trap that must be dismissed before first use.
+  Since 2026-08-16 the shell is also addressable: `#/learn`, `#/practice`, `#/reference` and
+  `#/lesson/<id>` (§5, item 31), owned entirely by `lib/deepLink.js` — two call sites here and nothing
+  else. **A URL does not unlock a lesson**; see `DECISIONS.md` for why, and for the owner-facing cost.
 - **`theme.js`** — design tokens (color, type scale, spacing). No inline hex anywhere else in the app.
 - **`lib/`** — pure logic, no JSX: `useAppState.js` (every piece of client state, see below),
   `storage.js`, `review.js` (Leitner-box spaced-repetition scheduler), `useMarketData.js` (reads the
@@ -624,7 +627,30 @@ for the history. No open P1/P2 items.
     parent-facing kids content, the spaced-review queue — each with a refuting number and a check date.
     Where a claim is unmeasurable today, say so and name what would make it measurable (usually item 18).
 
-31. **[Feature] Shareable per-lesson URLs — §5's web-funnel requirement. Read the §2.1 caution first.**
+31. **[Feature — ✅ DONE 2026-08-16. Shipped as scoped: hash routes, one module, no router. What is
+    left is not routing work — it is the product question the build surfaced, below.]**
+    - **What shipped:** `src/lib/deepLink.js` — `#/learn`, `#/practice`, `#/reference`,
+      `#/lesson/<id>`, addressed by stable lesson **id** rather than path index (an index rots into a
+      link to a *different* lesson the next time a track is reordered). `App.jsx` gained exactly two
+      call sites. No dependency added. Guarded by `check-data.mjs` §18, proven by five injections.
+    - **The item's own caution was the design constraint, and it held.** Item 12's port-cost rule is
+      why this is hash routing and not a router: the entire web-specific surface is one file plus two
+      call sites, which a native shell deletes. Hash routing also needs no server-side rewrite, which
+      the static `public/` deployment shape does not have.
+    - **⚠️ What this surfaced, and it is an OWNER question, not a follow-up task:** §5's acquisition
+      engine is screen-recorded clips, but **a link to a locked lesson cannot open it** — sequential
+      unlocking is a recorded product bet (`CLAIMS.md` A1), and letting a URL walk past it would void
+      that bet silently from outside the app. So a clip of lesson 20 lands a new visitor in lesson 1
+      (not on a cold menu — §3.2), having been promised lesson 20. Options are (a) accept, (b) let a
+      link open any lesson read-only without marking progress, (c) drop sequential unlocking. Written
+      up in `DECISIONS.md` and on `CLAIMS.md` C2. **A run must not decide this unilaterally** — it is
+      the same shape as §10.3's kids framing.
+    - **Deliberately not built:** routes for the Reference sub-nav (every route is surface a native
+      port must reproduce), and a share/copy-link button (new UI in five languages, and the address
+      bar already carries the URL). Neither is queued; a run wanting either should say which clause it
+      moves first.
+    *(Original text below, retained for the measurement that motivated it.)*
+    **Shareable per-lesson URLs — §5's web-funnel requirement. Read the §2.1 caution first.**
     §5: "Web is top-of-funnel: lessons 1–2 playable with no signup, **each lesson a shareable URL**."
     §8's roadmap puts "Web deployed; 10 clips recorded" on the monetization/web row. Verified 2026-08-16:
     **the app has no routing of any kind** — no `history.pushState`, no hash routing, no router
@@ -6785,3 +6811,105 @@ account and supplying its key.
 seven claims, so the two rituals now coincide by construction), or **item 34's `<ol>`/`<ul>` a11y
 call** as a small pick. Also newly filed: **item 37**, `LAUNCH_READINESS.md`'s stale translation-
 coverage figure (reports 100%, actual 93% with 3 stale).
+
+### 2026-08-16 (scheduled dev-agent) — Every lesson now has a URL: hash deep links in one module (backlog item 31, §5)
+
+**Picked** item 31 from the backlog, not from the previous run's note (W-2's standing rule). The
+previous run queued item 32, whose monthly audit is dated **2026-09-05** and is not due today; of what
+is actually actionable now, item 31 is the only unbuilt *feature* serving a plan clause, and it is the
+named blocker on `CLAIMS.md` C2.
+
+**The gap, re-verified rather than inherited from the item's text:** no `pushState`, no hash routing,
+no router dependency anywhere in `src/` — tab and lesson selection were component state, every screen
+lived at one URL, and §5's whole distribution motion ("every lesson yields two or three clips") had no
+link to put in a clip description.
+
+**What shipped — `src/lib/deepLink.js`, four routes, no dependency added.**
+`#/learn`, `#/practice`, `#/reference`, `#/lesson/<id>`. `App.jsx` gained exactly two call sites:
+`initialRoute()` for the opening destination and `useDeepLink()` to keep the address bar and
+`{tab, reading}` in step in both directions.
+
+**Item 12's port-cost rule was the design constraint, not a caveat added afterwards.** The item warned
+that a full web router would deepen the web-only investment; it would also need server-side rewrites to
+survive a refresh, which this project's static `public/` deployment shape does not have. Hash routing
+needs neither, and the module is split so the web-specific part is quarantined: everything except
+`useDeepLink` is pure and touches no DOM, so `npm test` checks the routing *rules* without a browser.
+The port cost added is bounded and stated in `DECISIONS.md`: delete one file and two call sites.
+
+**Lesson `id`, not path index.** An index is a position in `lessonsByTrack()` and moves whenever a
+track is reordered — an indexed link would rot into a link to a *different lesson*, silently, which is
+precisely what made the 2026-08-14 renumbering need a scripted migration. Since no URL existed before
+today, no shared link can carry a pre-renumbering id, so `lessonIdMigration`'s table is deliberately
+**not** applied to URLs (stated in the module header so a later run doesn't "fix" this).
+
+**The one real decision here, and it is recorded rather than settled: a URL does not unlock a lesson.**
+Sequential unlocking is a recorded product bet (`CLAIMS.md` A1). A permissive resolver would void it
+from outside the app with no decision written anywhere and nothing in the repo noticing. So a link to a
+locked lesson resolves to the lesson path — **except** for a first-time visitor, who gets lesson 1
+rather than a cold menu. That exception was added *because of what the live browser showed*: the first
+build landed a fresh install arriving at `#/lesson/3` on the Learn path, which is the "menu instead of
+a lesson" outcome §3.2 calls the most important thing to avoid, for exactly the §5 audience this
+feature exists to serve — someone who clicked a lesson link demonstrably wanted a lesson.
+**The cost is real and is owner-facing:** a clip of lesson 20 links to a lesson a new visitor cannot
+open. Options (accept / read-only link / drop unlocking) are written up in `DECISIONS.md` and on
+`CLAIMS.md` C2. **This run did not decide it** — same shape as §10.3's kids framing.
+
+**`CLAIMS.md` C2 updated, and it moved in the right direction.** It read "no refuting number can be
+written yet — the app has no routing at all." It now carries a real threshold (under 10% of `#/lesson/N`
+arrivals open a second lesson), is marked build-gap-closed, and states the locked-link tension as a
+second gap the claim now exposes. Still unmeasurable — needs a deploy and item 18's provider.
+
+**Verification.**
+- **`check-data.mjs` §18 added and proven by five injections**, file restored and green after each:
+  (1) formatting a lesson link by index instead of id — 81 failures, caught at index 0; (2) a resolver
+  that ignores the unlock gate — "a URL opened lesson 2, which is locked"; (3) a nonexistent id
+  resolving to a lesson instead of the path; (4) `App.jsx` no longer calling `useDeepLink()`; (5)
+  first-open routing regressed so a new install no longer opens in lesson 1. Each failed with the
+  intended message and nothing else.
+- **`npm test`** — 0 failures (the pre-existing translation-coverage warning is unchanged).
+  **`npm run build`** — succeeds; no new chunk, `index-*.js` grew by ~1 kB.
+- **Live browser (W-1), against the built `dist/` on `python3 -m http.server`** — the technique in the
+  Environment note worked verbatim; `navOk: true`. Note the browser profile carried localStorage from a
+  previous run's verification (all 40 lessons complete, Korean), so it was cleared before the
+  first-visit cases. Driven through `javascript_tool`, per the note's warning about `computer`:
+  - `#/lesson/3` with that lesson unlocked → opens lesson 3, URL preserved.
+  - `#/lesson/3` on a **fresh install** → opens **lesson 1**, URL normalized to `#/lesson/1`, first-run
+    disclaimer showing (§10.1 unaffected).
+  - Before the §3.2 refinement, the same case landed on the path with `#/learn` — recorded because it
+    is what prompted the change, and because it is the behaviour a **returning** visitor still gets.
+  - `#/practice` and `#/reference` open the right tab with the right `aria-selected`.
+  - In-app navigation writes the hash; **Back walks it correctly**: reference → practice → learn →
+    lesson 1, with the reader re-opening. Reader Next/Previous move `#/lesson/3` ↔ `#/lesson/4` and
+    Back returns.
+  - `history.length` was **1** after first load — the opening sync uses `replaceState`, so landing on
+    the app costs no history entry and a visitor's first Back leaves the site.
+  - A pasted `#/lesson/999` normalized to `#/learn` and rendered the path. No console errors, and
+    `history.length` did not grow — the state↔hash sync settles rather than looping.
+
+**Adversarial self-check — no conflict found; two things checked that were not obvious.**
+1. **Blindspot register** — nothing reintroduced. This change adds **no user-facing copy at all** (zero
+   new locale keys), so §10.1's advice-adjacency surface is untouched; no Dalio (§10.2); kids framing
+   unchanged (§10.3); no date or market figure anywhere. `check-blindspot.mjs` passes.
+2. **`DECISIONS.md` conflict** — read the Expo-vs-Vite entry in full rather than relying on the backlog
+   item's summary of it. Its rule is "must not deepen the web-only investment in a way that raises the
+   eventual port cost", not "no web features" — and the module is shaped to satisfy it. localStorage-only
+   state is respected (routes persist nothing). Worth flagging: item 28's decision entry says its
+   in-place glossary expansion kept clear of item 12 by having "no router, no deep link" — that was a
+   *scoping* statement about that change, not a prohibition, and item 31 was already an open backlog
+   item at the time. No contradiction, but it is the closest thing to one here.
+3. **Already-done backlog item** — checked "Completed and pruned" and grepped the log for prior routing
+   work: nothing. C2's "the app has no routing at all" (written a few hours earlier, same date) was
+   independently re-verified before starting.
+4. **Own verification claims** — the §3.2 fallback is the honest test of this: the first version of this
+   run's own summary would have said "a locked link lands on the path" and called that correct. The live
+   browser is what showed it was the wrong destination for the audience §5 targets. Both behaviours are
+   reported above, including the one that was replaced, so a reviewer re-running these commands sees
+   what this run saw rather than only its conclusion.
+
+**Item 18 remains the entire critical path to ending Phase 0** — blocked on the owner creating a
+PostHog account and supplying its key. This run narrowed C2 from "blocked on a build gap" to "blocked on
+data", which moves it into the same pile as the other nine claims item 18 gates.
+
+**Next run should pick**: **item 37** (`LAUNCH_READINESS.md`'s stale translation-coverage figure —
+one line, reports 100%, actual 93% with 3 stale) as a small pick, or **item 34**'s `<ol>`/`<ul>` a11y
+call. **Item 32**'s monthly audit is dated **2026-09-05** and should not be pulled forward.

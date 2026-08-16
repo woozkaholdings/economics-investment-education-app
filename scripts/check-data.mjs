@@ -22,6 +22,7 @@ import { sectors } from "../src/content/sectors.js";
 import { MAX_BOX, dueQuestions, recordAnswer } from "../src/lib/review.js";
 import { MIN_BARS, OUTPERFORM_THRESHOLD, WJ_PERIODS, wjSectorComparison } from "../src/lib/relativeStrength.js";
 import { OLD_TO_NEW_LESSON_ID, migrateLegacyLessonIds } from "../src/lib/lessonIdMigration.js";
+import { ROUTED_TABS, initialRoute, parseRoute, resolveRoute, routeHash } from "../src/lib/deepLink.js";
 import { computeCoverage } from "./translation-review.mjs";
 import * as storageLib from "../src/lib/storage.js";
 import { EVENTS, MAX_LOGGED_EVENTS, elapsedSeconds, monotonicNow, quizScore, track } from "../src/lib/analytics.js";
@@ -1107,6 +1108,132 @@ for (const [label, moduleExports] of Object.entries(CONTENT_MODULES)) {
   const reader = readFileSync(new URL("../src/screens/LessonReader.jsx", import.meta.url), "utf8");
   if (!/<GlossaryTerms[\s\S]{0,160}termsForSection\(/.test(reader)) {
     fail("LessonReader must render <GlossaryTerms> with termsForSection() (§3.0.3, backlog item 28)");
+  }
+}
+
+// 18. src/lib/deepLink.js — §5's "each lesson a shareable URL" (backlog item
+//     31). The module is deliberately split so its rules are checkable without
+//     a browser: everything except `useDeepLink` is pure, and that is the half
+//     where a shared link actually breaks.
+//
+//     What is checked, and why each one is a real failure mode rather than a
+//     restatement of the code:
+//
+//       (a) round-tripping. A hash the app WRITES must parse back to the state
+//           it was written from, for every lesson and every tab. If it doesn't,
+//           the sync in `useDeepLink` never settles: state writes a hash, the
+//           hash resolves to different state, which writes a different hash.
+//       (b) lesson links address a lesson by `id`, not by path index. An
+//           indexed link rots into a link to a *different lesson* the next time
+//           a track is reordered — silently, which is the whole reason the
+//           2026-08-14 renumbering took a scripted migration.
+//       (c) garbage in a shared link is survivable: a nonexistent id, a
+//           non-numeric id, an unknown tab and an empty hash all resolve to the
+//           lesson path rather than to a blank screen or a crash.
+//       (d) a locked lesson does not open from a URL. This is the check that
+//           guards a product decision (CLAIMS.md A1, sequential unlocking)
+//           rather than a coding mistake — a permissive resolver would void
+//           that bet from outside the app, and nothing else in the repo would
+//           notice.
+//       (e) `App.jsx` actually calls both halves. The module can be perfect
+//           while nothing imports it — the same "it greps as done" failure §13b
+//           was added for.
+{
+  const lessonPath = lessonsByTrack();
+
+  // (a) + (b): every lesson round-trips, through its id.
+  for (const [index, lesson] of lessonPath.entries()) {
+    const hash = routeHash({ tab: "learn", reading: index, lessons: lessonPath });
+    if (hash !== `#/lesson/${lesson.id}`) {
+      fail(`deepLink: lesson at index ${index} formats as "${hash}", expected "#/lesson/${lesson.id}" (§5 links address lessons by id, not index)`);
+    }
+    const back = resolveRoute(hash, lessonPath, () => true);
+    if (back.tab !== "learn" || back.reading !== index) {
+      fail(`deepLink: "${hash}" resolved to ${JSON.stringify(back)}, expected {tab:"learn",reading:${index}}`);
+    }
+  }
+
+  // (a) for the three tab routes.
+  for (const tab of ROUTED_TABS) {
+    const hash = routeHash({ tab, reading: null, lessons: lessonPath });
+    if (hash !== `#/${tab}`) fail(`deepLink: tab "${tab}" formats as "${hash}"`);
+    const back = resolveRoute(hash, lessonPath, () => true);
+    if (back.tab !== tab || back.reading !== null) {
+      fail(`deepLink: "${hash}" resolved to ${JSON.stringify(back)}, expected {tab:"${tab}",reading:null}`);
+    }
+  }
+
+  // (c) garbage resolves to the path, never to a crash or a blank tab.
+  const maxId = Math.max(...lessonPath.map((l) => l.id));
+  for (const bad of ["", "#", "#/", "#/nope", `#/lesson/${maxId + 1}`, "#/lesson/abc", "#/lesson/1e2", "#/lesson/", "#/lesson/1/2", "#/glossary"]) {
+    const back = resolveRoute(bad, lessonPath, () => true);
+    if (back.tab !== "learn" || back.reading !== null) {
+      fail(`deepLink: unrecognised hash ${JSON.stringify(bad)} resolved to ${JSON.stringify(back)}, expected the lesson path`);
+    }
+  }
+
+  // Parsing is case-insensitive and tolerates a trailing slash — a link that
+  // has been through a chat client or a CMS should still open.
+  for (const variant of ["#/LESSON/1", "#/lesson/1/", "#lesson/1", "#/Practice"]) {
+    if (parseRoute(variant) === null) fail(`deepLink: "${variant}" should parse (links get case-mangled and slash-mangled in transit)`);
+  }
+
+  // (d) a locked lesson does not open from a URL.
+  {
+    const lockedIndex = lessonPath.findIndex((l, i) => i > 0 && lessonPath[i - 1].track === l.track);
+    const lockedId = lessonPath[lockedIndex].id;
+    const nothingCompleted = (index) => {
+      const prev = lessonPath[index - 1];
+      return !prev || prev.track !== lessonPath[index].track;
+    };
+    const back = resolveRoute(`#/lesson/${lockedId}`, lessonPath, nothingCompleted);
+    if (back.reading !== null) {
+      fail(`deepLink: a URL opened lesson ${lockedId}, which is locked — sequential unlocking (CLAIMS.md A1) must not be reachable around`);
+    }
+    // ...and the first lesson of a track, which is never locked, still does.
+    const openBack = resolveRoute(`#/lesson/${lessonPath[0].id}`, lessonPath, nothingCompleted);
+    if (openBack.reading !== 0) {
+      fail(`deepLink: lesson ${lessonPath[0].id} is the first of its track and must open from a URL, got ${JSON.stringify(openBack)}`);
+    }
+  }
+
+  // §3.2's first-open routing survives: no link still lands a new install in
+  // lesson 1, and a returning visitor still lands on the path.
+  if (initialRoute("", lessonPath, () => true, true).reading !== 0) {
+    fail("deepLink: initialRoute with no hash must still open a first-time visitor in lesson 1 (§3.2)");
+  }
+  if (initialRoute("", lessonPath, () => true, false).reading !== null) {
+    fail("deepLink: initialRoute with no hash must land a returning visitor on the path");
+  }
+  // A link always wins over first-open routing, or a shared link is useless to
+  // exactly the audience §5 is trying to reach — people who have never opened
+  // the app before.
+  const linked = initialRoute(`#/lesson/${lessonPath[1].id}`, lessonPath, () => true, true);
+  if (linked.reading !== 1) fail("deepLink: a link must win over first-open routing for a first-time visitor");
+  if (initialRoute("#/reference", lessonPath, () => true, true).tab !== "reference") {
+    fail("deepLink: a tab link must win over first-open routing for a first-time visitor");
+  }
+  // ...but a lesson link a first-time visitor CANNOT open (locked, or a bad
+  // id) falls back to lesson 1, not to a cold menu. This is the §5 arrival
+  // case — someone sent a clip of lesson 20 has no progress, so the link
+  // cannot resolve, and a menu is the §3.2 outcome the app exists to avoid.
+  for (const dead of [`#/lesson/${lessonPath[1].id}`, `#/lesson/${maxId + 1}`]) {
+    const first = initialRoute(dead, lessonPath, (i) => i === 0, true);
+    if (first.reading !== 0) {
+      fail(`deepLink: a first-time visitor arriving at an unopenable ${dead} should land in lesson 1 (§3.2), got ${JSON.stringify(first)}`);
+    }
+    // A returning visitor keeps the path: they have their own progress on it,
+    // and dropping them back into lesson 1 would discard it.
+    const returning = initialRoute(dead, lessonPath, (i) => i === 0, false);
+    if (returning.reading !== null) {
+      fail(`deepLink: a returning visitor arriving at an unopenable ${dead} should land on the path, got ${JSON.stringify(returning)}`);
+    }
+  }
+
+  // (e) the shell wires both halves up.
+  const app = readFileSync(join(ROOT, "src/App.jsx"), "utf8");
+  if (!/initialRoute\(/.test(app) || !/useDeepLink\(/.test(app)) {
+    fail("App.jsx must call both initialRoute() and useDeepLink() — the module routing nothing is indistinguishable from no routing (§5, backlog item 31)");
   }
 }
 

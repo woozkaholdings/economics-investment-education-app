@@ -93,7 +93,7 @@ date is therefore a date to review *whether the gate has moved*, not a date to r
 | ID | Claim | Refuted if | Check | Measurable today | Status |
 |---|---|---|---|---|---|
 | C1 | Clips drive installs. (§9.1's own example; §5's acquisition engine.) | 30 posted clips produce under 200 store visits. | 2026-10-03 | No | **Unstarted — 0 clips posted, no store presence, no web deploy.** §8 puts "Web deployed; 10 clips recorded" on the monetization row. |
-| C2 | Web is viable top-of-funnel: lessons 1–2 playable with no signup, each lesson a shareable URL (§5). | No refuting number can be written yet — **the app has no routing at all**, so there is no URL to share and nothing to measure. See backlog item 31. | 2026-09-05 | No | **Blocked on a build gap, not on data.** This row is deliberately left without a threshold rather than given a fake one. |
+| C2 | Web is viable top-of-funnel: lessons 1–2 playable with no signup, each lesson a shareable URL (§5). | Under 10% of visitors arriving on a `#/lesson/N` link open a second lesson. | 2026-09-05 | No — needs item 18's analytics and a web deploy | **Build gap closed 2026-08-16 (backlog item 31): every lesson now has a URL and no lesson needs a signup.** The threshold above is now writable because the mechanism exists; it stays unmeasurable until there is a deploy to receive arrivals and a provider to count them. **A second gap this claim now exposes:** a link to a locked lesson cannot open it (sequential unlocking, A1), so a shared clip of lesson 20 lands a new visitor in lesson 1 instead. That tension is real and owner-facing — see `DECISIONS.md`. |
 
 ---
 

@@ -13,6 +13,7 @@
 import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { lessonsByTrack } from "./content/lessons.js";
 import { EVENTS, track } from "./lib/analytics.js";
+import { initialRoute, useDeepLink } from "./lib/deepLink.js";
 import { useAppState } from "./lib/useAppState.js";
 import Icon from "./components/Icon.jsx";
 import { Button, Card, EmptyState, Text } from "./components/ui.jsx";
@@ -153,24 +154,14 @@ export default function App() {
   // its position on the Learn path. Lesson `id` is unchanged by the reorder.
   const lessons = useMemo(() => lessonsByTrack(), []);
 
-  const [tab, setTab] = useState("learn");
-  // null = showing the path; a number = reading that lesson. A first-time
-  // visitor opens straight into the first lesson of the money track, which
-  // index 0 now is (LAUNCH_PLAN §3.2).
-  const [reading, setReading] = useState(() => (isFirstVisit ? 0 : null));
-
-  const scrollTop = useCallback(() => {
-    try { window.scrollTo({ top: 0, behavior: "smooth" }); } catch { /* older browsers */ }
-  }, []);
-
-  // Once per app load, not per tab switch — see LAUNCH_PLAN §9.2.
-  useEffect(() => { track(EVENTS.APP_OPENED); }, []);
-
   // Lessons unlock in order WITHIN a track, not across tracks: the first
   // lesson of each track is always open, the rest need the previous lesson of
   // that same track completed. Before 2026-08-07 this was a single global
   // chain, which gated the whole money curriculum behind twelve macro-theory
   // lessons — see the TRACKS comment in content/lessons.js.
+  //
+  // Declared above the navigation state because the opening route consults
+  // it: a deep link to a locked lesson lands on the path (see deepLink.js).
   const isUnlocked = useCallback(
     (index) => {
       const lesson = lessons[index];
@@ -180,6 +171,39 @@ export default function App() {
     },
     [completedLessons, lessons]
   );
+
+  // Where this load starts. A `#/lesson/12` or `#/practice` link wins; with no
+  // link, a first-time visitor still opens straight into the first lesson of
+  // the money track, which index 0 now is (LAUNCH_PLAN §3.2). Read once, from
+  // a ref-stable initializer — after mount, `useDeepLink` owns the URL.
+  const opening = useRef(null);
+  if (opening.current === null) {
+    opening.current = initialRoute(
+      typeof window === "undefined" ? "" : window.location.hash,
+      lessons, isUnlocked, isFirstVisit
+    );
+  }
+
+  const [tab, setTab] = useState(opening.current.tab);
+  // null = showing the path; a number = reading that lesson.
+  const [reading, setReading] = useState(opening.current.reading);
+
+  const scrollTop = useCallback(() => {
+    try { window.scrollTo({ top: 0, behavior: "smooth" }); } catch { /* older browsers */ }
+  }, []);
+
+  // Once per app load, not per tab switch — see LAUNCH_PLAN §9.2.
+  useEffect(() => { track(EVENTS.APP_OPENED); }, []);
+
+  // Keeps the address bar in step with `tab`/`reading` and handles Back,
+  // Forward, and a pasted `#/lesson/12`. The whole web-routing surface is
+  // this call plus `initialRoute` above — see deepLink.js for why it is hash
+  // routing with no router (backlog items 31 and 12).
+  const onRoute = useCallback((route) => {
+    setTab(route.tab);
+    setReading(route.reading);
+  }, []);
+  useDeepLink({ tab, reading, lessons, isUnlocked, onRoute });
 
   const openLesson = useCallback((index) => { setReading(index); setTab("learn"); }, []);
   const closeLesson = useCallback(() => { setReading(null); scrollTop(); }, [scrollTop]);

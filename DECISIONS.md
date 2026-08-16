@@ -164,6 +164,46 @@ Add a new entry when a run makes a choice future work should be able to look up 
   log entry ("Item 21's content-depth scoping, executed") for the full design reasoning and verification.
   Point 1 (child-facing UI) is unaffected and remains owner-only.
 
+### Deep links are hash routing in one module, and a locked lesson still does not open
+
+- **Status:** closed 2026-08-16 (dev-agent run, backlog item 31). Implements `LAUNCH_PLAN.md` §5
+  ("web is top-of-funnel: lessons 1–2 playable with no signup, **each lesson a shareable URL**").
+  Closes the build gap `CLAIMS.md` C2 was blocked on.
+- **What was decided:** four hash routes — `#/learn`, `#/practice`, `#/reference`, `#/lesson/<id>` —
+  implemented in a single module, `src/lib/deepLink.js`, with **no routing library added**. `App.jsx`
+  gains exactly two call sites: `initialRoute()` for the opening destination and `useDeepLink()` to
+  keep the address bar and `{tab, reading}` in step.
+- **Why hash routing, and why one module:** backlog item 12 (Expo vs. Vite) is HELD, and its standing
+  rule is that the dev agent must not deepen the web-only investment in a way that raises the eventual
+  port cost. A router dependency plus history-API paths would raise it — and would also need
+  server-side rewrites to survive a refresh on a static host, which the market-data pipeline's
+  `public/` deployment shape does not have. Hash routing needs neither. The port cost this adds is
+  bounded and stated: delete one file and two call sites.
+- **Lesson `id`, not path index:** an index is a position in `lessonsByTrack()` and moves whenever a
+  track is reordered, so an indexed link would rot into a link to a *different* lesson — silently,
+  which is exactly what made the 2026-08-14 renumbering need a scripted migration. Ids are stable, and
+  since no URL existed before this change, no shared link can be carrying a pre-renumbering id;
+  `lessonIdMigration`'s table is deliberately **not** applied to URLs.
+- **The real decision: a URL does not unlock a lesson.** Sequential unlocking is a recorded product
+  bet (`CLAIMS.md` A1). A permissive resolver would void it from outside the app, with no decision
+  recorded anywhere, and nothing in the repo would notice. So a link to a locked lesson resolves to the
+  lesson path instead — except for a first-time visitor, who gets lesson 1 rather than a cold menu,
+  because §3.2 calls the first five minutes the most important feature and someone who clicked a
+  lesson link demonstrably wanted a lesson.
+- **Cost accepted, and it is owner-facing:** §5's acquisition engine is screen-recorded clips, and a
+  clip of lesson 20 links to a lesson a new visitor cannot open. They land in lesson 1 having been
+  promised lesson 20. The honest options are (a) accept it, (b) let a link open any lesson read-only
+  without marking progress, or (c) drop sequential unlocking. **This is a product call, not a routing
+  one** — it is recorded here rather than settled by the module, and `CLAIMS.md` C2 carries the same
+  note so it surfaces at the next audit.
+- **Guarded by `check-data.mjs` §18:** every lesson round-trips through its id, unparseable and
+  nonexistent links resolve to the path rather than a blank screen, first-open routing still holds, a
+  locked lesson does not open from a URL, and `App.jsx` actually calls both halves. All proven by
+  injection.
+- **Revisit when:** the Expo decision (item 12) is made, or the app needs a route the grammar cannot
+  express — the Reference sub-nav is deliberately unrouted for now, since every route added here is
+  surface a native port has to reproduce.
+
 ### In-lesson glossary links are a curated map, not an automatic prose match
 
 - **Status:** closed 2026-08-16 (dev-agent run, backlog item 28). Implements `LAUNCH_PLAN.md` §3.0.3
