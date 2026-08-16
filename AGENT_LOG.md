@@ -5673,3 +5673,73 @@ direction is the problem.
   `93ea015` and W-1 closed earlier, those two are what remains of the weekly review's block. Item 18
   remains the entire critical path to ending Phase 0, blocked on an owner action (analytics provider
   account) — flagging again per the block's standing instruction.
+
+### 2026-08-16 — Settings' ChoiceRow: implement the ARIA APG radiogroup keyboard pattern (W-4 item 4)
+
+- **The item**: W-4 flagged `src/screens/reference/Settings.jsx`'s `ChoiceRow` (the Appearance and Text
+  Size controls) as using Tab-per-option instead of the ARIA APG roving-tabindex radiogroup pattern.
+  Picked over the remaining `MarketSignals.jsx` dead-CSS item because it is a real keyboard-accessibility
+  defect rather than code hygiene; the dead-CSS one is a one-line deletion and is now the last W-4 item.
+- **Confirmed live before changing anything** (same technique as the previous two runs — `dist/` served on
+  `127.0.0.1:8764` via `/usr/bin/python3 -m http.server`, driven through `javascript_tool`). Both halves
+  of the bug were real: **all 7 radios across the two groups reported `tabIndex === 0`** (native `<button>`
+  default, no explicit tabindex anywhere), so a keyboard user tabbing through Settings hit seven stops
+  where the pattern calls for two; and dispatching `ArrowRight` on a focused radio changed **nothing** —
+  focus stayed put, `aria-checked` unchanged — because no key handler existed at all.
+- **The fix**: roving tabindex (`tabIndex={i === tabbable ? 0 : -1}`, where `tabbable` is the checked
+  option, falling back to index 0 so the group always has exactly one tab stop even if `value` matches
+  nothing) plus a `keydown` handler implementing the APG key set — Arrow Right/Down → next, Arrow
+  Left/Up → previous, both wrapping, plus Home/End. Per APG, arrow keys **both move focus and check** the
+  option they land on, so the handler calls `onChange` and then focuses the new option via a ref array.
+  Added a header comment stating why the pattern exists, since plain focusable buttons look correct until
+  you count tab stops.
+- **Verification of the fix** (live, against a freshly rebuilt `dist/`): each group now reports exactly
+  **1 tab stop**, on the checked option. Arrow keys walk the group and wrap correctly in both directions,
+  Home/End jump to the ends. Selection genuinely takes effect end-to-end, not just visually: ArrowRight
+  from "System" left `focused`, `aria-checked`, and the roving tab stop all on "Light", wrote
+  `ecycles_theme_mode: "light"` to `localStorage`, and applied `data-theme="light"` to the root. The Text
+  Size group (numeric option values, so a separate equality path from the theme group's strings) wrapped
+  100% → 90% → 130% and applied it — root `font-size` measured 20.8px, i.e. 16 × 1.3. Mouse clicking
+  still selects (no regression), and both controls were restored to System / 100% / 16px afterward.
+  `npm test` — 0 failures, same 1 pre-existing translation-review warning; `npm run build` — succeeds,
+  `lessonContent.money` unchanged at 499.36 kB.
+- **A verification trap worth recording**: the first arrow-key check appeared to *fail* — focus moved but
+  `aria-checked` never changed. That was a measurement artifact, not a bug: all the key presses and the
+  DOM reads ran inside one synchronous `javascript_tool` block, so React had not re-rendered yet. Reading
+  the state in a **separate** tool call showed the selection had applied correctly all along. This is the
+  same one-round-trip lag the Environment note already documents for clicks; it applies to state-changing
+  key events too. Had this run trusted the first reading it would have "fixed" a working implementation.
+- **Adversarial self-check**: (1) Blindspot register — no lesson, glossary, market, or kids copy touched;
+  this is keyboard wiring in a settings control. `check-blindspot.mjs`'s §10.1/§10.2/§10.3/§2.3 checks all
+  pass. (2) `DECISIONS.md` — no entry covers Settings, ARIA patterns, or keyboard behaviour; nothing to
+  conflict with. The change is consistent with the localStorage-only state decision (it routes through the
+  existing `setThemeMode`/`setFontScale` props, adding no new persistence). (3) Already-done backlog item
+  — this bullet was open before this run; the accessibility pass recorded in "Completed and pruned" (P3
+  item 10) was about font scaling and contrast, not radiogroup keyboard semantics, so this is not a redo.
+  (4) Reproducibility — every claim above rests on live DOM/`localStorage`/computed-style reads that an
+  independent reviewer can re-run with the documented technique, and the one reading that looked like a
+  failure is explained rather than quietly dropped. No conflict found.
+- **Concurrent-session note — this happened again, and differently.** While this run worked, another
+  automated session committed **twice**: `93ea015` earlier, and then `02e23a6` ("Refill the backlog with
+  six plan-derived items (W-2, owner-requested)") during this run. `02e23a6` **swept this run's
+  uncommitted W-4 bullet edit into its own commit**, because that edit was sitting in the working tree
+  when the other session staged `AGENT_LOG.md`. Nothing was lost — the bullet is in `HEAD`, just under
+  another session's commit rather than this one's — but it is a real hazard worth naming: on a shared
+  working tree, an edit left uncommitted can be committed *by someone else*, attributed to their change.
+  The practical lesson is the operational note's existing one, sharpened: **commit your own log edit in
+  the same breath as the code it describes, rather than leaving it staged-but-uncommitted across a long
+  verification step.** `git status` was re-run before every stage in this run, which is how this was caught.
+- **Not touched, and why**: `economic-cycles-v6.jsx` — unrelated, untouched. Did not do the
+  `MarketSignals.jsx` `counterReset` deletion (deliberately kept as its own focused change, though this
+  run did re-verify it is genuinely dead — see the W-4 bullet). Did not convert the `role="radio"` buttons
+  to native `<input type="radio">`, which would be the more orthodox markup but would mean rebuilding the
+  segmented-control styling from scratch; the ARIA pattern is fully conformant once the keyboard support
+  it presumes is present, which is exactly what was missing. Did not touch the six new backlog items
+  (27–32) the other session added this run.
+- **Next run should pick**: **W-4 is down to its last item** — `MarketSignals.jsx`'s dead
+  `counterReset: "principle"` (one-line deletion, already re-verified dead). After that the weekly
+  review's block is fully closed, and the natural next pick is the refilled backlog the other session just
+  landed, whose own top-priority entry is **item 27 (lesson visuals for the money track)**. Item 18 remains
+  the entire critical path to ending Phase 0, blocked on an owner action (analytics provider account) —
+  flagging again per the block's standing instruction. Note that item 29 claims to be the non-owner-blocked
+  half of item 18 and is worth reading alongside it.
