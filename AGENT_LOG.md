@@ -282,6 +282,33 @@ for the history. No open P1/P2 items.
 > each names the plan clause it serves. They are listed in the reviewer's value order; a run is free to
 > disagree, but should say why in its entry. **Pick from here, not from the previous run's note.**
 
+33. **[Content — PRIORITY, a shipped correctness bug in four languages] The 2026-08-14 lesson-id
+    renumbering missed every non-English in-prose cross-reference, and the lowercase English ones.**
+    Found 2026-08-16 while building item 27's lesson-27 visual: the prose read "a different pattern from
+    sunk cost (lesson 31, throwing good money after bad)" — but lesson 31 is now *Productivity Growth*,
+    and sunk cost is lesson 19. The reference was a pre-renumbering id.
+    - **English half: fixed 2026-08-16** (4 references, all lowercase `lesson N`, in lessons 5, 27 and
+      28). The renumbering run's regex matched capital `Lesson N` only, so lowercase mentions survived
+      untouched. Each fix was confirmed by title match, not by arithmetic alone. Zero lowercase
+      references remain in English.
+    - **Non-English half: OPEN, and it is the bigger one. 62 stale references across es/ko/zh/ja.**
+      The renumbering entry states the cross-references are "English only — the other four languages
+      don't carry these references." **That is false.** The four languages carry **77** numbered
+      references (`Lección N`, `레슨 N`, `第N课`, `レッスンN`), of which **62 do not match any English
+      reference in the same lesson**, and they are stale in a completely regular way — e.g. lesson 6's
+      English says Lesson 3 while its es and zh say 15; lesson 7's English says 6 while es/zh say 18;
+      lesson 8's English says 2 while es/zh say 14. Every one is the **old** id.
+    - **The mapping is exact and mechanical**, so this is a scripted fix, not a retranslation:
+      **old money 13–40 → new = old − 12**, **old economy 1–12 → new = old + 28.**
+    - **How to verify** (the method that found it): for each lesson, extract the numbered references per
+      language and compare against that lesson's English references — they should agree. A run should
+      also add this as a permanent check in `scripts/check-data.mjs` so the next renumbering cannot
+      reintroduce it silently; that check is arguably more valuable than the one-time fix.
+    - **Impact:** an es/ko/zh/ja reader following an in-lesson cross-reference is sent to the wrong
+      lesson. It has been shipping since 2026-08-14. Note this is exactly the failure mode item 24's
+      compression warned about — ids quoted anywhere that predate the renumbering are not to be trusted.
+
+
 27. **[Content/UX — PRIORITY, the highest-value open item] Lesson visuals for the money track.
     `LAUNCH_PLAN.md` §3.0.4, §3.2, §5.** Measured 2026-08-16 by the weekly review, from
     `LESSON_VISUALS` in `src/components/LessonVisual.jsx` against `src/content/lessons.js`:
