@@ -23,6 +23,7 @@ export const KEYS = {
   analyticsLog: "ecycles_analytics_log",
   legacyLessonIdMigrated: "ecycles_legacy_lesson_id_migrated",
   seenPracticeCoachMark: "ecycles_seen_practice_coachmark",
+  glossaryBookmarks: "ecycles_glossary_bookmarks",
 };
 
 export function readRaw(key, fallback = null) {

@@ -55,6 +55,7 @@ export default {
     tabPractice: "練習",
     tabReference: "資料",
     backLabel: "戻る",
+    bookmarkAdd: "用語を保存", bookmarkRemove: "保存を解除", bookmarkedLabel: "保存済み",
     themeLabel: "外観",
     themeSystem: "システム",
     themeLight: "ライト",

@@ -11,11 +11,21 @@ import { glossary } from "../../content/glossary.js";
 import Icon from "../../components/Icon.jsx";
 import { EmptyState, Text } from "../../components/ui.jsx";
 import { ink, line, radius, space, surface } from "../../theme.js";
+import { KEYS, readArray, writeJSON } from "../../lib/storage.js";
 import TermDetail from "./TermDetail.jsx";
 
 export default function Glossary({ t, lang }) {
   const [query, setQuery] = useState("");
   const [selectedTerm, setSelectedTerm] = useState(null); // null | a glossary key
+  const [bookmarks, setBookmarks] = useState(() => readArray(KEYS.glossaryBookmarks));
+
+  const toggleBookmark = (term) => {
+    setBookmarks((prev) => {
+      const next = prev.includes(term) ? prev.filter((x) => x !== term) : [...prev, term];
+      writeJSON(KEYS.glossaryBookmarks, next);
+      return next;
+    });
+  };
 
   const entries = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -28,7 +38,16 @@ export default function Glossary({ t, lang }) {
 
   if (selectedTerm && glossary[selectedTerm]) {
     const entry = glossary[selectedTerm][lang] || glossary[selectedTerm].en;
-    return <TermDetail t={t} term={selectedTerm} entry={entry} onBack={() => setSelectedTerm(null)} />;
+    return (
+      <TermDetail
+        t={t}
+        term={selectedTerm}
+        entry={entry}
+        isBookmarked={bookmarks.includes(selectedTerm)}
+        onToggleBookmark={() => toggleBookmark(selectedTerm)}
+        onBack={() => setSelectedTerm(null)}
+      />
+    );
   }
 
   return (
@@ -59,12 +78,14 @@ export default function Glossary({ t, lang }) {
         <EmptyState icon="search">{t.glossSearch}</EmptyState>
       ) : (
         <dl style={{ margin: 0 }}>
-          {entries.map(({ term, entry }) => (
+          {entries.map(({ term, entry }) => {
+            const isBookmarked = bookmarks.includes(term);
+            return (
             <div
               key={term}
               role="button"
               tabIndex={0}
-              aria-label={entry.s || term}
+              aria-label={isBookmarked ? `${entry.s || term}, ${t.bookmarkedLabel}` : entry.s || term}
               onClick={() => setSelectedTerm(term)}
               onKeyDown={(e) => {
                 if (e.key === "Enter" || e.key === " ") {
@@ -74,10 +95,13 @@ export default function Glossary({ t, lang }) {
               }}
               style={{ padding: `${space["3"]}px 0`, borderBottom: `1px solid ${line.hairline}`, cursor: "pointer" }}
             >
-              <dt>
+              <dt style={{ display: "flex", alignItems: "center", gap: space["1"] }}>
                 <Text as="span" variant="small" color={ink.strong} style={{ fontWeight: 700 }}>
                   {entry.s || term}
                 </Text>
+                {isBookmarked && (
+                  <Icon name="bookmark" size="0.9em" style={{ fill: "currentColor", color: ink.accent }} />
+                )}
               </dt>
               <dd style={{ margin: `${space["1"]}px 0 0` }}>
                 <Text variant="small" color={ink.muted}>{entry.f}</Text>
@@ -90,7 +114,8 @@ export default function Glossary({ t, lang }) {
                 </dd>
               )}
             </div>
-          ))}
+            );
+          })}
         </dl>
       )}
     </div>

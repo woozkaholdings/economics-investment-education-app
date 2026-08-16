@@ -9019,3 +9019,91 @@ direction is the problem.
   terms at all today? there isn't one yet) before implementation, so that scoping is real work for
   whichever run picks this up, not just wiring a button. Item 21 (kids content) and item 18 (blocked on
   an owner action) remain open alternatives.
+
+### 2026-08-16 (scheduled dev-agent, sixth run this date) — Term-detail persistent action bar: bookmark toggle (Quizlet/Vocabulary design review, second half)
+
+- **Orient**: `git status` showed only the untracked `economic-cycles-v6.jsx` (unchanged, no uncommitted
+  edits to any tracked file). `git log --oneline -3` topped at `4eab308` (the prior run's term-detail
+  screen/routing), matching the environment's reported HEAD. Read the prior run's "Next run should pick,"
+  which named this exact item and its own open design question: "is there a review/bookmark concept for
+  glossary terms at all today? there isn't one yet." Checked `src/lib/review.js` before deciding — it's a
+  Leitner spaced-repetition scheduler keyed by *quiz question index*, not by glossary term, so it isn't a
+  concept to plug a term into; building a plain save/bookmark list was the actual design decision this
+  run made, not a redirect into the existing review system.
+- **What was done**: added a `bookmark` icon path to `src/components/Icon.jsx` (a simple ribbon outline,
+  same stroke-based style as every other icon in that file — no new visual language). Added
+  `KEYS.glossaryBookmarks` (`ecycles_glossary_bookmarks`) to `src/lib/storage.js`, following the file's
+  existing one-key-per-persisted-value convention. `Glossary.jsx` now holds `bookmarks` state
+  (`readArray`-loaded on mount) and a `toggleBookmark(term)` function that flips membership and
+  `writeJSON`s the array back — the same plain `useState` + localStorage-write pattern `completedLessons`
+  and the streak counter already use, not a new persistence abstraction. `TermDetail.jsx` gained the
+  actual action bar: a full-width `Button` (existing primitive, `variant="outline"`/`"primary"` toggled by
+  state) reading "Save term" / "Remove from saved" with `aria-pressed` reflecting the boolean, `iconLeft="bookmark"`.
+  The Glossary list rows now show a small filled bookmark glyph next to a saved term's name (via a `style`
+  override setting `fill: currentColor` on the otherwise-stroke-only icon — CSS wins over the SVG
+  presentation attribute, so no change to `Icon.jsx`'s rendering for every other icon), and each
+  bookmarked row's `aria-label` appends the translated "Saved" label so a screen reader announces the
+  state, not just the term name. Added three new locale keys (`bookmarkAdd`, `bookmarkRemove`,
+  `bookmarkedLabel`) to all five `src/locales/*.js` files, translated (not machine-copied — short UI
+  strings, done directly): es "Guardar término"/"Quitar de guardados"/"Guardado", ko "용어
+  저장"/"저장 해제"/"저장됨", zh "保存术语"/"取消保存"/"已保存", ja "用語を保存"/"保存を解除"/"保存済み".
+  No new routing, no filter/bookmarks-only view, no wiring into `review.js` — kept to exactly "the action
+  bar and what it does," matching the scope the prior run's note called for.
+- **Verified**:
+  1. `npm test` — `PASS: 0 failure(s), 1 warning(s)` (same pre-existing translation-review-coverage
+     warning every run reports, unrelated to this change — it's about lesson content, not UI strings);
+     `check-blindspot.mjs` — all 6 checks `ok`.
+  2. `npm run build` — `vite v6.4.3`, `✓ 66 modules transformed` (same module count as the prior run — no
+     new file added this time, only existing files edited), no errors. `Reference` chunk grew 64.05 kB →
+     64.68 kB; `lessonContent.money` unchanged at 499.36 kB.
+  3. Live browser verification against the built `dist/` (`python3 -m http.server 8764`, driven via
+     `javascript_tool`/`computer`): opened Reference → Glossary, clicked "Gross Domestic Product" to open
+     `TermDetail`, confirmed the "Save term" button renders. Clicked it — button flipped to filled
+     "Remove from saved" styling and text. Clicked Back — the Glossary list now shows a filled bookmark
+     glyph next to "Gross Domestic Product." Read `localStorage.getItem('ecycles_glossary_bookmarks')` —
+     confirmed `["GDP"]`, the real persisted key, not an assumption from the diff. Reloaded the page from
+     scratch (fresh navigation, not just React re-render) and re-opened Reference → Glossary — the
+     bookmark glyph was still present, confirming the state survives a real page load, not just
+     in-memory React state. Switched the language selector to 한국어 and re-opened the same term —
+     confirmed the button read "저장 해제" (matches the bookmarked state carried over from English) with
+     no layout overflow or clipping in the full-width button. `read_console_messages` with `onlyErrors`
+     returned no console errors at any point in this sequence.
+  4. `git status --short` before committing: the nine files listed below, plus the same long-standing
+     untracked `economic-cycles-v6.jsx`.
+- **Adversarial self-check**:
+  - *Blindspot register regression*: `git diff --unified=0 -- src/ | grep -iE "dalio|(you should (buy|
+    sell|invest))|we recommend|be bullish|be cautious|child|kid.?mode|nowDate|april 2026|will rise|will
+    fall|guaranteed|the fed will|expect the fed|rates will"` matched nothing (grep exit 1). This change
+    touches no lesson content, market copy, or kids framing — new UI strings are all "save/remove this
+    term" phrasing, reviewed by eye across all 5 languages while writing them.
+  - *DECISIONS.md conflict*: re-read every section header. localStorage-only state — `bookmarks` is
+    `useState` + explicit `readArray`/`writeJSON` calls, the same pattern as every other persisted
+    feature in this codebase (no new persistence layer, no backend). `.js`-not-JSON content — untouched,
+    no content module touched (only locale UI strings and a storage key). Expo-vs-Vite — untouched, no
+    navigation library added, no new screen (this run extended `TermDetail.jsx`, it didn't add a route).
+    No conflict.
+  - *Already-done backlog item*: `grep -in "bookmark" AGENT_LOG.md` before this entry returned only prior
+    runs' notes naming "a bookmark toggle" as a *candidate* for what the action bar could be, and this
+    run's own prerequisite (the term-detail screen) — no prior run built the toggle itself. Not a
+    duplicate.
+  - *Own verification claim*: the browser checks above read `localStorage.getItem` directly and did a
+    real full-page reload (not a soft client-side re-render) before re-checking the bookmark glyph, so
+    the "persists across reloads" claim is backed by an actual fresh `navigate`, not an assumption that a
+    `useState` initializer reading `readArray` "should" work because the code looks right.
+  - **Files changed**: `src/components/Icon.jsx`, `src/lib/storage.js`, `src/locales/{en,es,ko,zh,ja}.js`,
+    `src/screens/reference/Glossary.jsx`, `src/screens/reference/TermDetail.jsx`.
+- **Not touched, and why**: `economic-cycles-v6.jsx` — unrelated, untouched. Did not add a "bookmarks
+  only" filter or a dedicated Bookmarks screen — the prior run's note scoped this as "the action bar,"
+  not a new view; a filter/list screen is a reasonable candidate for a future run once it's clear the
+  toggle itself gets used. Did not wire glossary bookmarks into `src/lib/review.js`'s Leitner scheduler —
+  that system is quiz-question-shaped (box/due-date/seen/wrong per question index) and a term isn't a
+  question; conflating the two would either force a fake question-like shape onto glossary terms or
+  require redesigning `review.js`, neither of which this run's scope called for.
+- **Next run should pick**: with both halves of the Quizlet/Vocabulary term-detail idea now shipped
+  (screen/routing + bookmark action), the design-review backlog this thread has been working from for
+  several runs is fully built. A natural next step, if useful, is surfacing the bookmarked terms
+  somewhere (a filter chip on the Glossary search, or a small "Saved terms" count) — but that should wait
+  to see whether the underlying toggle gets used before building a view around it. Item 21 (kids content,
+  its two open axes: grow within the current 3-field format vs. move to a lesson-shaped structure) and
+  item 18 (blocked on an owner action — a real analytics provider account) remain the open alternatives
+  if a future run prefers not to extend this thread further.

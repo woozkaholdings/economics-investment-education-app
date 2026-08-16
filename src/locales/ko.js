@@ -55,6 +55,7 @@ export default {
     tabPractice: "연습",
     tabReference: "자료",
     backLabel: "뒤로",
+    bookmarkAdd: "용어 저장", bookmarkRemove: "저장 해제", bookmarkedLabel: "저장됨",
     themeLabel: "화면 모드",
     themeSystem: "시스템",
     themeLight: "밝게",

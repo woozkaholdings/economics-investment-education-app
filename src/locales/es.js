@@ -55,6 +55,7 @@ export default {
     tabPractice: "Práctica",
     tabReference: "Referencia",
     backLabel: "Atrás",
+    bookmarkAdd: "Guardar término", bookmarkRemove: "Quitar de guardados", bookmarkedLabel: "Guardado",
     themeLabel: "Apariencia",
     themeSystem: "Sistema",
     themeLight: "Claro",
