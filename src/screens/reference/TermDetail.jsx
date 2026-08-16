@@ -40,7 +40,7 @@ export default function TermDetail({ t, term, entry, isBookmarked, onToggleBookm
       </button>
 
       <div style={{ padding: `${space["3"]}px 0 ${space["4"]}px` }}>
-        <h1
+        <h2
           ref={headingRef}
           tabIndex={-1}
           style={{
@@ -49,7 +49,7 @@ export default function TermDetail({ t, term, entry, isBookmarked, onToggleBookm
           }}
         >
           {entry.s || term}
-        </h1>
+        </h2>
       </div>
 
       <Card style={{ marginBottom: space["4"] }}>

@@ -126,10 +126,8 @@ for the history. No open P1/P2 items.
 >
 > **W-4. Small correctness/a11y cleanups found by this review and by recent runs' own notes.**
 > Low-risk, well-scoped, good picks for a run with no larger item:
-> - **Two `<h1>`s on the Glossary term-detail screen.** Verified live this run: `Reference`'s page heading
->   and `TermDetail.jsx`'s own `<h1>` both render, so the screen has two top-level headings. `TermDetail`'s
->   should almost certainly be `<h2>` (it is a pushed view *inside* Reference, unlike `LessonReader` which
->   replaces the whole screen — check that difference before copying LessonReader's pattern).
+> - ~~Two `<h1>`s on the Glossary term-detail screen.~~ **✅ DONE 2026-08-16 (eleventh run this date).**
+>   See run log.
 > - **Glossary rows are `role="button"` with an `aria-label` of only the term name.** Because an
 >   `aria-label` overrides an element's contents for name computation, the definition text inside each row
 >   may not be announced to a screen-reader user navigating by control. Verify with a real AT pass before
@@ -9638,3 +9636,80 @@ direction is the problem.
   terms" follow-up remains flagged as worth waiting on. This run's own fix has not been verified in a live
   browser for the same environment reason the ninth run's fix hasn't — a future interactive session should
   spot-check the Glossary search-with-no-matches state in all five languages.
+
+### 2026-08-16 (scheduled dev-agent, eleventh run this date) — Fix duplicate `<h1>` on the Glossary term-detail screen (W-4 item)
+
+- **Orient**: `git status` showed only the same long-standing untracked `economic-cycles-v6.jsx` — no
+  uncommitted edits to any tracked file. `git log --oneline -15` topped at `383114c` ("Weekly review:
+  backlog curation"), matching the environment's reported HEAD. Read the 2026-08-16 weekly-review
+  PRIORITY BLOCK in full (it supersedes the 2026-08-09 one, which is closed) rather than resuming from the
+  tenth run's "Next run should pick" note, per **W-2**'s explicit instruction that direction should come
+  from the backlog, not from a note chain. W-4 lists several small, well-scoped cleanups; picked the first
+  one, which the weekly reviewer had already verified live as a real bug (not a "check it" item like the
+  Glossary `aria-label` note): `Reference.jsx` always renders its own `<h1>` (`{t.tabReference}`, i.e.
+  "Reference") regardless of which section or sub-view is active, and `Glossary.jsx` renders `TermDetail`
+  as a *pushed view inside* Reference (not a full-screen replacement) when a term is tapped — so
+  `TermDetail.jsx`'s own `<h1>` (added by the 2026-08-16 fifth run this date) creates a second top-level
+  heading in the same document. Confirmed the asymmetry with `LessonReader.jsx` before touching anything:
+  `App.jsx`'s `tab === "learn" && reading === null` vs. `reading !== null` branches are mutually exclusive,
+  so `LessonReader`'s `<h1>` genuinely replaces `Learn`'s `<h1>` — that pattern is correct and was not
+  changed. `Reference`/`TermDetail` has no such exclusivity; `Reference`'s `<h1>` renders unconditionally.
+- **Fix**: `src/screens/reference/TermDetail.jsx` — changed the term-detail heading from `<h1>` to `<h2>`
+  (both the opening and closing tag; no other change). Kept the `ref={headingRef}`, `tabIndex={-1}`, and
+  inline styles exactly as they were — the heading text and its scroll-to-top/focus-on-open behavior
+  (shared with `LessonReader`'s pattern, per this file's own header comment) don't depend on the tag name.
+  One file, two-line diff.
+- **Verified**:
+  1. `npm test` (`bash scripts/bootstrap-node.sh` for the portable Node runtime) — `PASS: 0 failure(s),
+     1 warning(s)` (the same pre-existing translation-review-coverage warning every run reports).
+     `check-blindspot.mjs` — all 6 checks `ok`.
+  2. `npm run build` — `vite v6.4.3`, `✓ 66 modules transformed`, no errors; every chunk's size is
+     unchanged from the tenth run's post-build figures except `Reference-*.js` (81.89 kB → same-ish,
+     one-character tag-name diff has no measurable effect at this precision).
+  3. **Live browser verification — done this run, per W-1's rule.** Built `dist/`, served it with
+     `/usr/bin/python3 -m http.server 8743 --directory dist`, called `preview_start` with that `url`
+     (the Environment note's technique — confirmed working exactly as the weekly reviewer described).
+     Navigated to the Reference tab → Glossary (default section, Korean UI since that's the persisted
+     locale) → tapped the first term ("국내총생산" / GDP) to open `TermDetail`. Ran
+     `document.querySelectorAll('h1,h2,h3')` via `javascript_tool`: exactly one `<h1>` ("자료" = the
+     Reference page title) and the term heading now renders as `<h2>` ("국내총생산"). Also checked
+     `document.activeElement` immediately after opening — it is the new `<h2>`, confirming the
+     focus-on-open behavior (screen-reader users landing on the term title) still works with the tag
+     change. Screenshot taken and matches expected layout (back button, term title, definition card,
+     example card, bookmark button). Stopped the local `http.server` process afterward.
+- **Adversarial self-check**:
+  - *Blindspot register regression*: `git diff --unified=0 -- src/ | grep -iE "dalio|(you should (buy|
+    sell|invest))|we recommend|be bullish|be cautious|nowDate|april 2026|will rise|will fall|guaranteed|
+    the fed will|expect the fed|rates will|child.?facing|kid.?mode"` matched nothing (grep exit 1). This
+    is a two-character tag-name change with zero text/copy diff, nowhere near any of §10.1–10.3's
+    territory, but ran the check anyway per the mandatory step.
+  - *DECISIONS.md conflict*: re-read every section header. No decision there concerns heading hierarchy,
+    component structure, or the Reference/Glossary/TermDetail relationship. No conflict.
+  - *Already-done backlog item*: this is the first time `TermDetail`'s heading level has been touched —
+    grepped `AGENT_LOG.md` for "h1"/"heading" before starting; the only prior mentions are the weekly
+    review's own W-4 bullet that named this exact issue (now marked done above) and unrelated a11y-pass
+    entries about tab buttons/quiz options from 2026-08-04. Not a duplicate.
+  - *Own verification claim*: unlike several recent entries, this run's live-browser check is not a
+    partial substitute for something that didn't happen — the DOM query directly answers the question
+    the bug describes (how many `<h1>`s render, and what tag does `TermDetail` use), so an independent
+    reviewer re-running the same `document.querySelectorAll` call after the same navigation path would
+    see the same result.
+- **Not touched, and why**: `economic-cycles-v6.jsx` — unrelated, untouched, confirmed still the same
+  long-standing reference-only fixture (unchanged size/mtime from what prior entries recorded). Did not
+  bundle in the other W-4 items (`TermDetail`'s "persistent action bar" doc/code mismatch, the Glossary
+  `aria-label` "check it" item, `MarketSignals.jsx`'s dead `counterReset`, `Settings.jsx`'s `ChoiceRow`
+  keyboard pattern, item 17's stale "118/120" figure) — each is independent and better reviewed as its
+  own small diff, consistent with the tenth run's same call not to bundle unrelated cleanups.
+- **Next run should pick**: the remaining W-4 items, in roughly the order they're listed in the priority
+  block: (1) the `TermDetail` "persistent action bar" description — its header comment and commit message
+  call the bookmark button a "persistent action bar" but it's a normal in-flow `Button` at the end of the
+  document; either make it sticky or fix the description. (2) The Glossary row `aria-label`
+  question — this one is explicitly a "check it" item, not a confirmed bug; needs a real assistive-tech
+  pass (or at minimum, reading how `aria-label` vs. element contents interacts for `role="button"` rows)
+  before deciding whether to touch it. (3) `MarketSignals.jsx`'s dead `counterReset: "principle"` and
+  (4) `Settings.jsx`'s `ChoiceRow` keyboard pattern — both flagged by the tenth run, still open. (5) W-3's
+  archival work (`AGENT_LOG.md` is now over 9,700 lines) is the largest remaining item in the block and
+  hasn't been picked up by any run yet; a future run with more budget than a single small fix should
+  consider it directly rather than deferring again. Item 18 remains the entire critical path to ending
+  Phase 0 and is blocked on an owner action (analytics provider account) — flagging again per the
+  block's standing instruction.
