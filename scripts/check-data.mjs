@@ -811,6 +811,19 @@ for (const [label, moduleExports] of Object.entries(CONTENT_MODULES)) {
 //     references there — it walked lesson prose only, so quiz explanations
 //     went unscanned through two separate repair passes.
 //
+//     SECOND KNOWN LIMIT, added 2026-08-16 after it bit: this check is only as
+//     good as REF_PATTERNS covering the surface forms each language ACTUALLY
+//     writes. The ko and ja patterns originally matched `레슨 N` / `レッスン N`
+//     while the prose overwhelmingly used `N강` / `第N課`, so those two
+//     languages went effectively unscanned — and the earlier repair pass that
+//     reported "74 fixed, 0 remain" was measuring through the same blind
+//     patterns. 67 stale ko/ja references were still there, and `npm test`
+//     passed the whole time. Before trusting a green result here, check that
+//     each language's reference COUNT is plausible against its prose; a
+//     near-zero count means the pattern is wrong, not that the content is
+//     clean. The coverage tripwire at the end of this section prints the
+//     per-language match count on every run and warns when one collapses.
+//
 //     KNOWN LIMIT, do not mistake this check for more than it is: it verifies
 //     the translations AGREE WITH English. It cannot verify English is right.
 //     When the renumbering left "Lessons 18 and 20" stale in every language at
@@ -833,12 +846,25 @@ for (const [label, moduleExports] of Object.entries(CONTENT_MODULES)) {
   // check and a correctness check are not the same thing, and pooling every
   // number in the phrase is what lets this one catch the English side at all
   // (via the real-lesson-id check below).
+  // Every language needs EVERY surface form its own prose actually uses, not
+  // the one form a reader of the English would guess. The ko and ja patterns
+  // below each carry two alternatives because the translations overwhelmingly
+  // use the second one: of 44 Korean references, `레슨 N` covered exactly 1 and
+  // `N강` covered 43; of 31 Japanese references, `レッスン N` covered 1 and
+  // `第N課` covered 30. So for two of the five languages this check was, in
+  // practice, scanning nothing — and it reported a clean pass over 67 stale
+  // references (item 36). A pattern that matches almost none of its language's
+  // real prose fails silently and looks exactly like a pattern that passes.
+  //
+  // Note zh `第N课` and ja `第N課` differ only in simplified vs. traditional
+  // 课/課. That single-codepoint difference is why the ja form was missed while
+  // the zh one worked: they look like the same pattern and are not.
   const REF_PATTERNS = {
     en: /\bLessons?\s+(\d+(?:\s*(?:,|and|&)\s*\d+)*)/gi,
     es: /\bLecci[óo]n(?:es)?\s+(\d+(?:\s*(?:,|y|e)\s*\d+)*)/gi,
-    ko: /레슨\s*(\d+)/g,
+    ko: /레슨\s*(\d+)|(\d+)\s*강/g,
     zh: /第\s*(\d+)\s*课/g,
-    ja: /レッスン\s*(\d+)/g,
+    ja: /レッスン\s*(\d+)|第\s*(\d+)\s*課/g,
   };
 
   const lessonTitle = new Map(lessons.map((l) => [l.id, l.title.en]));
@@ -849,7 +875,12 @@ for (const [label, moduleExports] of Object.entries(CONTENT_MODULES)) {
     const out = [];
     let m;
     while ((m = re.exec(text))) {
-      for (const n of m[1].match(/\d+/g) ?? []) out.push(Number(n));
+      // Pool ALL capture groups, not just group 1: the ko/ja patterns are
+      // alternations, so the number lands in group 2 for the `N강` / `第N課`
+      // branch. Reading only m[1] would make those branches match-but-capture-
+      // nothing, which is the same silent no-op as not having the pattern.
+      const captured = m.slice(1).filter(Boolean).join(" ");
+      for (const n of captured.match(/\d+/g) ?? []) out.push(Number(n));
     }
     return out;
   };
@@ -936,6 +967,41 @@ for (const [label, moduleExports] of Object.entries(CONTENT_MODULES)) {
       }
     }
   });
+
+  // Surface-form coverage tripwire. The failure this exists for is not a stale
+  // reference — it is a PATTERN that silently matches nothing, which presents
+  // as a clean pass. ko and ja each sat at 1 matched reference against 40+ real
+  // ones in the prose, and every check above passed for as long as that lasted.
+  //
+  // The rule is deliberately loose: translations legitimately condense and drop
+  // references, so a lower count than English is normal and not worth a warning.
+  // What is NOT normal is a language whose count collapses toward zero while its
+  // prose plainly carries references. 20% of English is well under any real
+  // translation ratio (the lowest here is ~48%) and well above the ~1.5% a
+  // dead pattern produces.
+  const refTotals = Object.fromEntries(LANGS.map((l) => [l, 0]));
+  const countIn = (map) => {
+    for (const lang of LANGS) refTotals[lang] += refsIn(map[lang], lang).length;
+  };
+  for (const [idKey, entry] of Object.entries(lessonContent)) {
+    for (const [, map] of proseFields(entry, Number(idKey))) countIn(map);
+  }
+  for (const item of quizData) if (item.explain) countIn(item.explain);
+
+  console.log(
+    `  cross-references matched per language: ${LANGS.map((l) => `${l}=${refTotals[l]}`).join(", ")}`,
+  );
+  for (const lang of LANGS) {
+    if (lang === "en") continue;
+    if (refTotals[lang] < refTotals.en * 0.2) {
+      warn(
+        `§16: only ${refTotals[lang]} cross-references matched in "${lang}" against ${refTotals.en} in English. ` +
+          `That is almost certainly a REF_PATTERNS surface-form gap, not clean content — ` +
+          `grep the ${lang} prose for how it actually writes "Lesson N". ` +
+          `This is exactly how 67 stale ko/ja references passed every check (AGENT_LOG.md item 36).`,
+      );
+    }
+  }
 }
 
 // 17. src/content/lessonTerms.js — the §3.0.3 lesson→glossary links (backlog

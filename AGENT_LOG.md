@@ -301,6 +301,14 @@ for the history. No open P1/P2 items.
     >   policy," and 6 is *Retirement Accounts: 401(k) and IRA Basics*, 8 is *Insurance*.
     > **Verified after:** across `lessonContent.{money,economy}.js` + `quizData.js`, all five languages —
     > 64 English references, 89 translated, **0 mismatches, 0 pointing at a nonexistent lesson id.**
+    > **⚠️ CORRECTION, 2026-08-16 (item-36 run): this "0 mismatches" was measured through the blind
+    > ko/ja patterns and was wrong.** The 89 translated references counted were es+zh plus one each from
+    > ko/ja; the ~73 ko/ja references written as `N강` / `第N課` were invisible to the measurement, and
+    > **67 of them were stale.** es and zh were genuinely fixed by these passes. ko and ja were not.
+    > All 67 are fixed and the patterns widened under item 36 — see its closing update. The lesson this
+    > adds to the two already recorded here: **a measurement taken with the same instrument that has the
+    > blind spot cannot detect the blind spot.** Both this item's "0 remain" and `npm test`'s green were
+    > produced by the very patterns that were failing to match.
     > **Lesson for future checks: a consistency check and a correctness check are different things.**
     > §16 verifies translations agree with English; it cannot verify English is right. The plural form
     > was invisible to it for exactly that reason.
@@ -510,8 +518,34 @@ for the history. No open P1/P2 items.
     Do **not** turn this into a count-shaped item: the target is "the jargon money lessons actually
     use is definable," not a term total.
 
-36. **[Process — HALF CLOSED within the hour it was filed. Blind spot 2 fixed by `7526e44`; blind spot
-    1 is still open and still hides 8 stale references. Re-measured after their commit, not assumed.]**
+36. **[Process — ✅ FULLY CLOSED 2026-08-16. Blind spot 1 fixed, and the count it hid was 67, not 8 —
+    this item's own estimate was low by 8×, for the same reason the bug existed. See the run log.]**
+    > **Closing update, 2026-08-16.** Blind spot 1 is fixed: `REF_PATTERNS` now carries `ko:
+    > /레슨\s*(\d+)|(\d+)\s*강/g` and `ja: /レッスン\s*(\d+)|第\s*(\d+)\s*課/g`, `refsIn` pools **all**
+    > capture groups (reading only `m[1]` would have made the new branches match-but-capture-nothing —
+    > a silent no-op that looks identical to a passing check), and **67 stale references** were fixed
+    > across `lessonContent.money.js` (50 strings), `lessonContent.economy.js` (2) and `quizData.js` (6).
+    > **This item said 8, because it measured only `quizData.js`.** The other 59 were in lesson prose,
+    > where the same two patterns were equally blind. The honest scale of the miss is in the counts:
+    > of 44 Korean references `레슨 N` matched **1**; of 31 Japanese, `レッスン N` matched **1**. For two
+    > of five languages this check was scanning essentially nothing while reporting a clean pass.
+    > **This also corrects item 33's "0 remain" claim** (and the 2026-08-16 entry that asserted "all 74
+    > are now correct; 0 remain"). That measurement was taken *through the blind patterns*, so it could
+    > only ever have come back clean — es and zh genuinely were fixed, ko and ja largely were not.
+    > **A tripwire now guards the class, not just the instance:** §16 prints the per-language match count
+    > on every `npm test` and warns when a non-English language falls below 20% of English's. Proven by
+    > reverting both patterns to their old form against the *now-correct* content — it reports `ko=1,
+    > ja=1` and fires both warnings, i.e. it would have caught this on day one.
+    > **Verified by injection, not inspection:** re-injected the ko `15강` bug (caught), the ja `第15課`
+    > bug (caught), and the ja multi-number `第18課と第20課` quiz case (caught, **both** numbers). Live
+    > browser confirmed the fixed text renders — lesson 6's ko/ja "think about" now cites lesson 3
+    > (복리 / 複利, Compound Interest) instead of 15, and lesson 14's ja quiz explanation reads
+    > `第6課と第8課` (Retirement Accounts / Insurance). `en`/`es`/`zh` strings verified byte-identical.
+    > **Checked for further gaps:** grepped for other plausible surface forms (`제N강`, `N과`, `第N章`,
+    > `第N节`, `课程N`, `unidad/módulo N`) — none present. Coverage is complete for the forms the prose
+    > actually uses.
+    *(Original text below, including its 8-reference estimate — left as filed, because the gap between
+    that number and 67 is the useful part of this item's history.)*
     **Update, 2026-08-16 (item-35 run, a few minutes after filing):** the concurrent run that owns item
     33 shipped `7526e44` "Extend the cross-reference check to quiz explanations and plural forms,"
     which closes **blind spot 2** (§16 now walks `quizData.js` `explain` fields, not just lesson prose)
@@ -6514,3 +6548,101 @@ analytics provider account and supplying its key.
 monthly audit depends on it, and it is the discipline this project's drift keeps violating), or
 **item 36**'s remaining half if item 33's owner has released `check-data.mjs`. A *second* batch of
 glossary terms is **not** the default next step — item 35's closing note says why.
+
+### 2026-08-16 (dev-agent run) — Item 36 closed: the ko/ja cross-reference patterns matched almost nothing, and 67 stale references were hiding behind them
+
+**Picked** item 36 from the backlog (not from the previous run's note chain, though that note also
+pointed here). Its precondition was met: `check-data.mjs` was released by `7526e44`/`0161b89`.
+
+**The item said 8 stale references. There were 67.** That gap is the finding, not a detail. Item 36
+measured `quizData.js` only; the same two blind patterns covered lesson prose, where the other 59 sat.
+Measured before touching anything, by re-running §16's exact logic with the extra surface forms added:
+
+| lang | refs matched by old patterns | actually present |
+|------|------|------|
+| en | 64 | 64 |
+| es | 43 | 43 |
+| zh | 44 | 44 |
+| **ko** | **1** | **44** |
+| **ja** | **1** | **31** |
+
+`레슨 N` and `レッスン N` are simply not how these translations write it — they use **`N강`** and
+**`第N課`**. So for two of five languages §16 was scanning essentially nothing and reporting a clean
+pass. Note the ja/zh trap: `第N課` vs `第N课` differ by one codepoint (traditional vs. simplified
+课/課), which is why the zh pattern worked and the ja one silently didn't.
+
+**This corrects a claim in this log.** Item 33's 2026-08-16 entry asserted "all 74 are now correct; 0
+remain," and `npm test` agreed. Both were produced *by the blind patterns themselves* — a measurement
+taken with the instrument that has the blind spot cannot detect the blind spot. es and zh were really
+fixed; ko and ja largely were not. Item 33 and item 36 are both annotated with this.
+
+**What shipped.**
+- **67 references fixed** across `lessonContent.money.js` (50 strings), `lessonContent.economy.js` (2),
+  `quizData.js` (6) — 58 strings, all ko/ja.
+- **`REF_PATTERNS` widened**: `ko: /레슨\s*(\d+)|(\d+)\s*강/g`, `ja: /レッスン\s*(\d+)|第\s*(\d+)\s*課/g`.
+- **`refsIn` now pools every capture group.** This was a real trap: with an alternation the number lands
+  in group 2, so the original `m[1]` read would have made both new branches match-but-capture-nothing —
+  a no-op indistinguishable from a working check. Adding patterns without this changes nothing.
+- **A tripwire for the class, not the instance.** §16 now prints per-language match counts every
+  `npm test` and warns when a non-English language drops below 20% of English's. Translations
+  legitimately carry fewer references (the real floor here is ja at 48%), but a *dead pattern* produces
+  ~1.5%, and those are far apart enough to separate cleanly.
+
+**The fix was scripted but decided per occurrence, never file-wide.** The renumbering map (money
+`new = old − 12`, economy `new = old + 28`) is mechanical, but the same surface number means different
+lessons in different places — lesson 20's `5강` is old economy id 5 → 33, while a correct reference to
+money lesson 5 is *also* written `5강` and had to stay. The script therefore only rewrote a number when
+it was absent from that lesson's English reference set **and** its remapped value was present, and it
+refused to write at all if any occurrence failed that test. **All 67 passed; 0 problems.** Applied by
+verbatim JSON round-trip replacement with an ambiguity guard (abort if the source literal is missing or
+appears twice).
+
+**Verification.**
+- **`npm test`** — 0 failures, 1 warning (the pre-existing translation-ledger one). Counts now read
+  `en=64, es=43, ja=31, ko=44, zh=44`.
+- **The ledger warning is not from this change, and that was checked rather than assumed:** it reports
+  "English source changed since last review" identically for all four languages including es and zh,
+  which this run never touched. Confirmed directly — every `en`/`es`/`zh` string literal in all three
+  edited files is **byte-identical** to `HEAD`; the diff touches only `"ko":` and `"ja":` lines.
+- **Injection tests, all three caught** (restored from backup after each, `npm test` green):
+  ko `3강`→`15강` in lesson 6, ja `第3課`→`第15課`, and the ja multi-number quiz case
+  `第6課と第8課`→`第18課と第20課` — the last one flagged **both** numbers.
+- **Tripwire proven** by reverting both patterns to their old form against the *now-correct* content:
+  reports `ko=1, ja=1` and fires both warnings. It would have caught this on day one.
+- **`npm run build`** — succeeds. `lessonContent.money` 499.32 → **499.28 kB** (a hair smaller; some
+  ids went two-digit to one-digit). Item 17's chunk-size caution respected.
+- **Live browser** (`dist/` on `127.0.0.1:8823`, static-build technique, per W-1 — this changes rendered
+  lesson text, so a live check was required, not optional): lesson 6's "생각해보세요" now reads
+  **3강** and its ja "考えてみよう" reads **第3課**, both citing 복리/複利 (Compound Interest) — the lesson
+  the sentence is actually about; `15강`/`第15課` (Credit Reports) is gone. Lesson 14's ja quiz
+  explanation renders **第6課と第8課** (Retirement Accounts / Insurance). Mobile 375×812, no console errors.
+- **Checked for further gaps** rather than assuming these were the last two: grepped for `제N강`, `N과`,
+  `第N章`, `第N节`, `课程N`, `unidad/módulo N` — none present.
+
+**Adversarial self-check — one finding, and it changed the code.**
+1. **Blindspot register** — nothing reintroduced. No prose was authored; only numerals inside existing
+   sentences changed. No Dalio (§10.2), no advice-adjacent language (§10.1 — `check-blindspot.mjs`
+   passes all six checks), no kids-framing change (§10.3), no date or live-looking market figure (§2.3).
+2. **`DECISIONS.md` conflict** — none. Content stays `.js`-not-JSON, localStorage untouched, no router,
+   no Expo move, per-track chunk split preserved.
+3. **Already-done backlog item** — item 36 was explicitly open and half-closed. This does not redo item
+   33's passes; it fixes the surface forms those passes could not see, and *corrects* their claim rather
+   than repeating their work.
+4. **Own verification claims — this is where the check bit.** The first version of the pattern change
+   added the two alternations and stopped there. Re-reading `refsIn` before trusting the green test
+   showed it reads `m[1]` only, so the `N강` / `第N課` branches would have captured nothing and `npm
+   test` would have passed for exactly the same reason it had been passing all along — a second silent
+   no-op layered on the first. Caught by asking "would this pass even if it were broken?", which is the
+   question this whole item is about. The injection tests exist so the answer is demonstrated, not
+   asserted.
+
+**Item 18 remains the entire critical path to ending Phase 0**, blocked on the owner creating an
+analytics provider account (PostHog per the plan) and supplying its key so `analytics.js`'s `sink()`
+can be swapped. Flagging per the standing instruction.
+
+**Next run should pick**: **item 30** (`CLAIMS.md`, the §9.1 falsifiable-claims register — item 32's
+monthly audit depends on it, and this run is a good argument for it: three separate log entries stated
+a number that was never checked against the thing it described). **Item 34's `<ol>`/`<ul>` a11y call**
+is a clean small pick. Note for the weekly reviewer: **two backlog items are still numbered 34** (the
+`MarketSignals` a11y one and `cbec154`'s "Be the Fed Chair" one) — deliberately not renumbered here
+again, for the reason the item-35 run gave.
