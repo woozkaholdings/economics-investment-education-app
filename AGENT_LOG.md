@@ -73,7 +73,100 @@ for the history. No open P1/P2 items.
 
 **Open**
 
-> **PRIORITY BLOCK — set by the weekly review 2026-08-09. Read this before picking anything below.**
+> **PRIORITY BLOCK — set by the weekly review 2026-08-16. This supersedes the 2026-08-09 block below,
+> which is retained for history because its P-1/P-2/P-3/P-4 are all now closed. Read this first.**
+>
+> The 2026-08-09 freeze worked. Both §4.3 content clauses are met (40 lessons, 120/120 minutes), P-2/P-3/
+> P-4 all closed, and the agent broadened correctly into structural work, test coverage, accessibility and
+> owner-directed UX. This block is not a correction of direction — it fixes three process faults that
+> showed up in the last 48 hours of an otherwise strong week.
+>
+> **W-1. PRIORITY — browser verification is available to scheduled runs. Use it on every UI change.**
+> This is the most important item in this block because it is a *regression in what the agent knows about
+> its own environment*, and it silently degraded the verification standard of six shipped UI features.
+> Timeline: the 2026-08-15 tenth run explicitly tested the "preview_start is disabled for scheduled tasks"
+> assumption, **disproved it**, did the first live keyboard/DOM verification ever done by an automated run,
+> and wrote it up. One day later the 2026-08-16 **ninth** run wrote "`preview_start` is unavailable to
+> unattended scheduled runs in this environment" and deferred verification to "a future *interactive*
+> session"; the **tenth** run repeated the same claim. Both are false. **The weekly reviewer re-proved it
+> this run** (2026-08-16): built `dist/`, served it with `/usr/bin/python3 -m http.server`, called
+> `preview_start` with a plain `url`, and drove the live app via `javascript_tool` — see the Environment
+> note, whose documented technique works verbatim. What that verification found is in the review report;
+> in short, the features work.
+> **Rule going forward: a run that changes rendered UI must either verify it in a live browser using the
+> Environment note's technique, or state specifically what it tried and what error it got — not assert a
+> capability limit from memory.** The Environment note has been updated so this finding stops being lost.
+> **Also do**: the six UI features shipped 2026-08-15/16 (coach mark, glossary example sentences, Practice
+> review-batch interstitial, term-detail screen, bookmark toggle, glossary no-results fix) were shipped
+> without rendered verification. The reviewer verified the term-detail screen, the bookmark toggle and its
+> persistence, the no-results empty state, and TermDetail's focus-on-open. **Still unverified: the Practice
+> review-batch interstitial's focus management and the one-time Practice coach mark** — both need a
+> populated review queue to reach. A run should drive a quiz to completion and check those two.
+>
+> **W-2. PRIORITY — refill the backlog. Direction is currently coming from run-log notes, not from here.**
+> Seven of the last eight runs picked their work from the previous run's "Next run should pick" line rather
+> than from this backlog. That chain has produced good work, but it is the same structural failure the
+> 2026-08-09 block named in a different costume: the *backlog* stopped being the place direction lives.
+> The evidence is that this Open section currently lists only items 24, 17, 21 and 18 — and 17 and 24 are
+> self-declared exhausted, 21 is closed on both its axes, and 18 is owner-blocked. Two recent entries say
+> "remaining dev-agent-actionable areas are thin," which is a symptom of an unrefilled backlog, not of a
+> finished product. **The owner-directed Quizlet/Vocabulary design-review stream was never entered here as
+> an item at all** despite driving six commits — it is now item 26 below.
+> A run that finds nothing to pick should **write backlog items** (re-read `LAUNCH_PLAN.md` §4.3/§5/§9 and
+> propose Phase-0-facing work) rather than extend a note chain. That is a legitimate, valuable run.
+>
+> **W-3. Archive the run log. `AGENT_LOG.md` is 883 KB / 9,533 lines and every run reads it.**
+> Each of the 17 lesson-deepening runs wrote ~110 lines of log for a one-paragraph content change. The
+> file has roughly tripled in a week. This is a real and compounding per-run cost, and it makes the
+> backlog (the part that should be read every run) hard to find inside the run log (the part that is
+> history). Move run-log entries older than ~14 days to `AGENT_LOG.archive.md`, leave a pointer, and keep
+> the App summary + backlog + Environment note in `AGENT_LOG.md`. Do not delete anything. Also trim the
+> *backlog items themselves* — items 17 and 24 have accreted a dozen "Update, <date>" paragraphs each and
+> should be compressed to their current state plus a pointer to the run log.
+>
+> **W-4. Small correctness/a11y cleanups found by this review and by recent runs' own notes.**
+> Low-risk, well-scoped, good picks for a run with no larger item:
+> - **Two `<h1>`s on the Glossary term-detail screen.** Verified live this run: `Reference`'s page heading
+>   and `TermDetail.jsx`'s own `<h1>` both render, so the screen has two top-level headings. `TermDetail`'s
+>   should almost certainly be `<h2>` (it is a pushed view *inside* Reference, unlike `LessonReader` which
+>   replaces the whole screen — check that difference before copying LessonReader's pattern).
+> - **Glossary rows are `role="button"` with an `aria-label` of only the term name.** Because an
+>   `aria-label` overrides an element's contents for name computation, the definition text inside each row
+>   may not be announced to a screen-reader user navigating by control. Verify with a real AT pass before
+>   changing anything — this is a "check it" item, not a confirmed bug.
+> - **`TermDetail`'s bookmark control is described in its commit message and header comment as a
+>   "persistent action bar" but is a normal in-flow `Button` at the end of the document.** Either make it
+>   sticky or correct the description; right now the code and its own docs disagree.
+> - `MarketSignals.jsx`'s dead `counterReset: "principle"` (no paired `counter-increment`/`content`), and
+>   `Settings.jsx`'s `ChoiceRow` radiogroup using Tab-per-option rather than the ARIA APG roving-tabindex
+>   pattern — both flagged by the 2026-08-16 tenth run's own note.
+> - **Item 17's text still carries a stale "118/120 minutes" figure** in its intermediate updates although
+>   the clause closed at 120/120 on 2026-08-15. Fold this into W-3's item-17 compression rather than
+>   spending a run on it alone.
+>
+> **Not a priority, and deliberately so:** more lesson content. Both §4.3 content clauses are met. A run
+> that wants to add or deepen a lesson must first say which *unmet* gate it moves — there currently is no
+> content-side gate left, so the honest answer is "none." The single remaining Phase-0 clause is item 18's
+> ≥40% lesson-1 completion rate, and it is blocked on an owner action (an analytics provider account), not
+> on more content. **Item 18 is now the entire critical path to ending Phase 0** — flag it to the owner in
+> every run's output until it moves.
+
+26. **[UX — owner-directed, entered as a backlog item by the 2026-08-16 weekly review] Quizlet/Vocabulary
+    design-reference review.** The owner shared ~200 Mobbin-exported screenshots of the Quizlet and
+    Vocabulary iOS apps in a 2026-08-15 interactive session and asked for transferable patterns to be
+    applied. Six commits have shipped from it (dual right/wrong quiz markers, Review results recap,
+    one-time Practice coach mark, glossary example sentences, Practice review-batch interstitial,
+    term-detail screen + bookmark toggle). It was driven entirely from run-log notes and never appeared in
+    this backlog — recorded here so the stream is visible and prioritizable. **Status: the ideas the
+    review named are all built.** The one named-but-deferred follow-up is surfacing bookmarked glossary
+    terms (a filter chip or a "Saved terms" count); three consecutive runs correctly deferred it pending
+    evidence the toggle gets used, and that reasoning still holds — **it is blocked on item 18's analytics,
+    not on effort.** Do not extend this stream with new invented ideas; the owner's explicit instruction
+    was that no paywall/subscription UI be built from the reference material while §4.3's Phase-0 gate is
+    open, and that still binds.
+
+> **PRIORITY BLOCK — set by the weekly review 2026-08-09. SUPERSEDED 2026-08-16 (see above); all four
+> items below are closed. Retained for history.**
 >
 > **P-1. STOP ADDING LESSONS. The lesson treadmill is closed until P-2, P-3 and P-4 are done.**
 > Thirteen of this week's runs added exactly one lesson each; twenty-two of the last twenty-four runs
@@ -515,6 +608,20 @@ than a `name` — passing `url` opens a browser tab directly at that address and
 `.claude/launch.json` or spawn any command, so the `PATH`-visibility problem never comes up. No changes
 to `.claude/launch.json` are needed or were made; the existing `npm run dev` entry there is unaffected
 and still won't work in this sandbox.
+
+**This works in unattended scheduled runs, not just interactive sessions — confirmed twice, and do not
+re-derive it as impossible.** A 2026-08-15 scheduled dev-agent run (tenth run that date) tested the
+then-standing "`preview_start` is disabled for scheduled tasks" assumption instead of inheriting it, found
+it false, and did the first live keyboard/DOM verification by an automated run. The 2026-08-16 **weekly
+review run** independently re-confirmed it: `npm run build`, `python3 -m http.server 8791` against `dist/`,
+`preview_start` with a plain `url` (returned `navOk: true`), then drove the live app through
+`javascript_tool` — dismissed the first-launch modal, opened Reference → Glossary, opened a term-detail
+view, toggled its bookmark and read `localStorage` back, and exercised the no-results empty state.
+Nevertheless the 2026-08-16 ninth and tenth runs *both* asserted "`preview_start` is unavailable to
+unattended scheduled runs," deferred verification to "a future interactive session," and shipped six UI
+features unverified. **That assertion is false. If a UI change needs verification, try the technique above
+and report the actual error if it fails — do not assert the limit from memory.** See the 2026-08-16
+weekly review's W-1.
 
 **What this verified in practice (2026-08-04, interactive session, not an automated dev-agent run)**: the
 built app boots, first-open routing lands on Lesson 1 with the first-launch disclaimer modal, the `More`
