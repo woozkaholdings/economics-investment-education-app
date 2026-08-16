@@ -99,9 +99,10 @@ for the history. No open P1/P2 items.
 > **Also do**: the six UI features shipped 2026-08-15/16 (coach mark, glossary example sentences, Practice
 > review-batch interstitial, term-detail screen, bookmark toggle, glossary no-results fix) were shipped
 > without rendered verification. The reviewer verified the term-detail screen, the bookmark toggle and its
-> persistence, the no-results empty state, and TermDetail's focus-on-open. **Still unverified: the Practice
-> review-batch interstitial's focus management and the one-time Practice coach mark** — both need a
-> populated review queue to reach. A run should drive a quiz to completion and check those two.
+> persistence, the no-results empty state, and TermDetail's focus-on-open. ~~Still unverified: the Practice
+> review-batch interstitial's focus management and the one-time Practice coach mark~~ **✅ VERIFIED
+> 2026-08-16 (twelfth run this date, live browser).** Both work correctly as built; no bug found. See run
+> log for full detail.
 >
 > **W-2. PRIORITY — refill the backlog. Direction is currently coming from run-log notes, not from here.**
 > Seven of the last eight runs picked their work from the previous run's "Next run should pick" line rather
@@ -9713,3 +9714,101 @@ direction is the problem.
   consider it directly rather than deferring again. Item 18 remains the entire critical path to ending
   Phase 0 and is blocked on an owner action (analytics provider account) — flagging again per the
   block's standing instruction.
+
+### 2026-08-16 (scheduled dev-agent, twelfth run this date) — Live-browser verification of the Practice review-batch interstitial and one-time coach mark (W-1)
+
+- **Orient**: `git status` showed only the same long-standing untracked `economic-cycles-v6.jsx` — no
+  uncommitted edits to any tracked file, confirmed against `git log --oneline -15` (HEAD `f58a253`,
+  matching the environment's reported HEAD). Read the 2026-08-16 weekly-review PRIORITY BLOCK. W-1 names
+  two shipped UI features that six recent runs left unverified because they need a populated review queue
+  to reach: the Practice review-batch interstitial's focus management, and the one-time Practice coach
+  mark. This is explicitly the block's top-priority item (ahead of W-2/W-3/W-4), so picked it over the
+  W-4 small-cleanup queue the eleventh run's note pointed at next — consistent with W-2's instruction that
+  direction should come from the backlog's stated priority order, not the note chain, when the two
+  disagree.
+- **Work done — verification only, no code change.** Built `dist/` (`scripts/bootstrap-node.sh` for the
+  portable Node runtime, `npm run build`), served it with `/usr/bin/python3 -m http.server 8781 --bind
+  127.0.0.1`, called `preview_start` with that plain `url` (the Environment note's technique — worked as
+  documented). Drove the app entirely via `javascript_tool` per the Environment note's click-reliability
+  guidance (`computer`'s screenshot/viewport reporting was intermittently unreliable this run too —
+  `window.innerHeight` read `0` right after a fresh load/reload more than once, matching the documented
+  flakiness — so DOM state was always cross-checked via direct queries, not screenshots alone, and
+  screenshots were only trusted once `innerWidth`/`innerHeight` read sane values).
+  1. **Coach mark**: cleared `localStorage`, reloaded, dismissed the first-run modal, answered and marked
+     complete Lesson 1's end-of-lesson check, dismissed the post-lesson streak prompt, tapped "Back" to
+     return to the Learn path (not the bottom-nav Review tab, which the code deliberately treats as
+     "seen" — see below). Confirmed via `document.querySelector('[role="status"]').outerHTML` that the
+     coach mark renders: `role="status"`, non-modal, text "Nice work! Come back here anytime to review
+     what you've learned.", with a labelled dismiss button — matches `App.jsx`'s `PracticeCoachMark`
+     exactly. A `computer` screenshot (after confirming a sane viewport) visually confirmed it sits above
+     the tab bar pointing at Review, as designed. Clicked the dismiss (×) button via `javascript_tool`
+     and confirmed both effects: `localStorage.getItem('ecycles_seen_practice_coachmark')` flipped from
+     `null` to `"1"`, and the `[role="status"]` node was removed from the DOM. **Also confirmed, reading
+     `App.jsx`'s `goToTab` (lines 187-194) and reproducing it live**: tapping the Review/Practice
+     bottom-nav tab directly (without ever seeing the coach mark rendered, e.g. right after finishing a
+     lesson from the reader) also sets the same "seen" flag. This looked like a bug at first — the coach
+     mark can be marked seen without ever being shown — but the code's own comment says this is
+     intentional ("tapping Practice is the coach mark's own suggestion acted on, not a dismissal of
+     something unwanted — but it's the same 'seen it' state"): the mark's job is to get the learner to
+     Practice, and reaching Practice by any path satisfies that regardless of whether the visual tip was
+     seen. Confirmed this is deliberate design, not a defect — no fix filed.
+  2. **Review-batch interstitial**: from a cleared-state run, used Review's "Practice all questions" to
+     start a 42-question session (bypasses the Leitner due-date gate, which a single fresh lesson
+     wouldn't otherwise satisfy — item 14 wasn't due until the next day). Answered through question 10 to
+     trigger the `BATCH_SIZE` pause. Confirmed via `document.activeElement` that focus lands on the
+     result `<h2>` ("10 done — nice work"), `tabIndex === -1`, matching the `resultHeadingRef`/`useEffect`
+     pattern `Practice.jsx`'s own header comment describes (shared with `LessonReader`/`TermDetail`).
+     This is the same DOM-level check the eleventh run used for `TermDetail`'s focus-on-open, not a
+     screenshot-only "looks right." One live-testing artifact worth recording so a future run doesn't
+     repeat the confusion: an earlier attempt to batch multiple answer/next clicks inside a single
+     `async`/`setTimeout` `javascript_tool` call timed out at 30s but kept running in the page's event
+     loop after the tool call returned, and its leftover clicks landed on later screens (including
+     "Keep going") out of sync with subsequent manual single-step calls — this produced a confusing
+     jump in question count and a bogus-looking `getBoundingClientRect`/`innerHeight: 0` reading right
+     after. Not an app bug — reloading the page (which kills any orphaned timers) and re-running the same
+     check with single, deliberate clicks reproduced the clean result reported above. **Lesson for future
+     runs: don't wrap multi-step UI interactions in one `async` `javascript_tool` call with `setTimeout`
+     delays — do one click per tool round-trip**, per the Environment note's existing "check too early"
+     warning, which this extends.
+- **Verified**: `npm test` — `PASS: 0 failure(s), 1 warning(s)` (same pre-existing translation-review
+  warning). `npm run build` — `vite v6.4.3`, `✓ 66 modules transformed`, no errors, same chunk sizes as
+  the eleventh run's build (no source changed). No `git diff` — this run made no code changes; the two
+  live-browser checks above are the deliverable and are independently reproducible by any future run
+  using the same steps.
+- **Adversarial self-check**:
+  - *Blindspot register regression*: no `src/` files were edited this run (verification-only), so this
+    check is structurally inapplicable — ran it anyway on principle: `git diff` is empty, confirming
+    nothing to regress.
+  - *DECISIONS.md conflict*: re-read every section header. Nothing here touches localStorage-schema,
+    content-module format, or build tooling decisions. No conflict.
+  - *Already-done backlog item*: grepped `AGENT_LOG.md` for "coach mark" and "batch pause"/"interstitial"
+    before starting — all prior mentions are the six 2026-08-15/16 commits that *built* these features and
+    the 2026-08-16 weekly review's W-1 note that they were shipped unverified; this is the first run to
+    actually reach and check them live, not a repeat.
+  - *Own verification claim*: both checks used `document.activeElement`/`localStorage`/DOM queries that
+    directly answer the question W-1 asked (does focus move to the heading; does the coach mark render
+    and get marked seen correctly) — an independent reviewer re-running the same steps (clear storage,
+    complete lesson 1, tap Back, read `[role="status"]`; separately, practice-all through question 10,
+    read `document.activeElement`) would see the same result. The one caveat: this run's Practice session
+    used "Practice all questions" rather than a naturally-due Leitner queue, because a single freshly
+    completed lesson isn't due for review until the next calendar day — this exercises the identical
+    `Practice.jsx` code path (`session`/`BATCH_SIZE`/`atBatchPause` don't branch on how the session was
+    started) so the finding still applies to the due-queue path, but is noted here rather than left
+    implicit.
+- **Not touched, and why**: `economic-cycles-v6.jsx` — unrelated, untouched, confirmed still the same
+  long-standing reference-only fixture. Did not pick any W-4 item (TermDetail's "persistent action bar"
+  description, Glossary `aria-label`, `MarketSignals.jsx`'s dead `counterReset`, `Settings.jsx`'s
+  `ChoiceRow` keyboard pattern, item 17's stale figure) or W-3's archival work — W-1 was explicitly the
+  block's top-priority item and this run's full budget went to it. No code was written or changed, so
+  there is nothing to have introduced a Dalio/advice-adjacent/child-facing/stale-date regression in.
+- **Next run should pick**: with W-1 now fully closed (all six 2026-08-15/16 UI features have live-browser
+  verification on record), the block's remaining priorities are W-2 is already addressed by this backlog
+  having real, prioritized, non-exhausted items in it (this entry itself is evidence the backlog — not a
+  note chain — is driving work); **W-3 (archive `AGENT_LOG.md`, now ~9,780 lines, to
+  `AGENT_LOG.archive.md`)** is the largest remaining item and a good pick for a run with more budget than
+  a single small fix. Otherwise, the W-4 small cleanups remain open in the order the eleventh run left
+  them: (1) `TermDetail`'s "persistent action bar" doc/code mismatch, (2) the Glossary row `aria-label`
+  "check it" item, (3) `MarketSignals.jsx`'s dead `counterReset: "principle"`, (4) `Settings.jsx`'s
+  `ChoiceRow` keyboard pattern, (5) item 17's stale "118/120" figure. Item 18 remains the entire critical
+  path to ending Phase 0, blocked on an owner action (analytics provider account) — flagging again per
+  the block's standing instruction.
