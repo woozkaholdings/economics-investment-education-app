@@ -116,8 +116,8 @@ for the history. No open P1/P2 items.
 > A run that finds nothing to pick should **write backlog items** (re-read `LAUNCH_PLAN.md` §4.3/§5/§9 and
 > propose Phase-0-facing work) rather than extend a note chain. That is a legitimate, valuable run.
 >
-> **W-3. Archive the run log. ✅ ARCHIVING DONE 2026-08-16 (owner-requested, weekly reviewer).
-> The backlog-item compression half is still open — see below.**
+> **W-3. Archive the run log. ✅ FULLY DONE 2026-08-16 (owner-requested, weekly reviewer) — both
+> halves. Nothing left to pick here.**
 > Each of the 17 lesson-deepening runs wrote ~110 lines of log for a one-paragraph content change; the
 > file had roughly tripled in a week to 909 KB / 9,814 lines, of which the run log was ~93% — a cost paid
 > by every run, since each one reads this file to orient.
@@ -130,9 +130,19 @@ for the history. No open P1/P2 items.
 > live. **The archiving rule for future reviews is stated at the top of the archive file** — each Sunday,
 > move entries older than the *previous* review boundary across, appending under a new `## Archived
 > <range>` heading. A dev-agent run should not need to do this; it is weekly-reviewer work.
-> **Still open (do this):** trim the *backlog items themselves* — items 17 and 24 have accreted a dozen
-> "Update, <date>" paragraphs each and should be compressed to their current state plus a pointer to the
-> run log. Item 17's stale "118/120 minutes" figure (see W-4's last bullet) gets fixed as part of that.
+> **Also done (second half):** items **17 and 24 compressed** the same day, from 63 and ~80 lines down to
+> 27 and 39 — each now states its current status, its standing guidance, and a pointer to the run log,
+> instead of carrying a dozen accreted "Update, `<date>`" paragraphs. What was deliberately **kept**:
+> item 24's verbatim owner intent (the "wise rather than impulsive" quote) and its full §10.1 tension
+> guidance, both load-bearing; item 17's reproducible measurement method, its `lessonContent.money`
+> chunk-size caution, and both items' failure-mode warnings. What was **dropped**: the seventeen-run
+> deepening chronology and the eighteen `LAUNCH_READINESS.md` refresh notes — history, and still in the
+> run log. Two staleness bugs were fixed in passing: item 17's "118/120 minutes" figure (the clause
+> closed at 120/120 on 2026-08-15), and **item 24's lesson-id references, which predated the 2026-08-14
+> renumbering and were simply wrong** — it cited "lessons 13-27" for mechanics and "28-36" for judgment,
+> when money is now 1-28 (mechanics **1–15**, judgment **16–28**). Both items now warn that ids quoted in
+> pre-2026-08-14 run-log entries are stale and that `src/content/lessons.js` is the source of truth.
+> Backlog section: 142 lines → 66. `AGENT_LOG.md` overall: 909 KB → 515 KB.
 >
 > **W-4. Small correctness/a11y cleanups found by this review and by recent runs' own notes.**
 > Low-risk, well-scoped, good picks for a run with no larger item:
@@ -150,9 +160,8 @@ for the history. No open P1/P2 items.
 > - `MarketSignals.jsx`'s dead `counterReset: "principle"` (no paired `counter-increment`/`content`), and
 >   `Settings.jsx`'s `ChoiceRow` radiogroup using Tab-per-option rather than the ARIA APG roving-tabindex
 >   pattern — both flagged by the 2026-08-16 tenth run's own note.
-> - **Item 17's text still carries a stale "118/120 minutes" figure** in its intermediate updates although
->   the clause closed at 120/120 on 2026-08-15. Fold this into W-3's item-17 compression rather than
->   spending a run on it alone.
+> - ~~Item 17's stale "118/120 minutes" figure.~~ **✅ DONE 2026-08-16** as part of W-3's item-17
+>   compression, along with item 24's pre-renumbering lesson-id references, which were also wrong.
 >
 > **Not a priority, and deliberately so:** more lesson content. Both §4.3 content clauses are met. A run
 > that wants to add or deepen a lesson must first say which *unmet* gate it moves — there currently is no
@@ -243,148 +252,74 @@ for the history. No open P1/P2 items.
 > clause), or deepening existing lessons rather than adding a forty-first topic. Re-read §4.3's table
 > before picking, and write down in the run entry *which clause* the run moves.
 
-24. **[Content — FROZEN 2026-08-09 alongside item 17, see the PRIORITY BLOCK's P-1] The money track
-    teaches mechanics, but the owner asked for judgment.** The owner's correction here was right and the
-    thirteen judgment lessons it produced are good work — but the item's own text now records four
-    consecutive runs each noting "a future run should re-scope this rather than keep extending the list
-    ad hoc," and each then extending the list ad hoc anyway. It is functioning as a perpetual
-    lesson-generator. Do not pick it until P-2/P-3/P-4 are cleared; when it unfreezes, re-scope it
-    properly against §4.3 or close it as satisfied — do not add a fourteenth judgment lesson by default.
-    Original text follows. Owner-stated 2026-08-07 (interactive session), and it is a correction of the
-    direction fifteen consecutive lessons were built in, so it takes precedence over item 17's raw
-    lesson-count framing. Verbatim intent: *money lessons* means lessons in the spirit of books like
-    **"Rich Dad, Poor Dad"** — "it is crucial to be wise rather than impulsive and the app is there to
-    help learn about making wise choices."
-    - **What the gap actually is.** Audit lessons 13-27 (budgeting, emergency funds, compound interest,
-      credit scores, stocks/bonds, retirement accounts, taxes, insurance, inflation, W-2 vs 1099, fees,
-      renting vs buying, brokerage accounts, estate planning, credit reports): **every one is procedural**
-      — here is how a mechanism works. Not one teaches *decision-making*: how to choose, how to notice
-      you're about to choose badly, why people who know all the mechanics still end up broke. Mechanics
-      are necessary and the existing lessons are not wasted — but on their own they are a reference
-      manual, not the product the owner described.
-    - **What to write instead (the safe, teachable core).** Mental models and behavior: assets vs.
-      liabilities as a *decision lens*; lifestyle inflation and why raises vanish; delayed gratification
-      and impulse spending; opportunity cost; sunk cost; FOMO and herd behavior in markets; anchoring;
-      wants dressed up as needs; making money work for you rather than only working for money. Lessons
-      28-36 are the judgment lessons built so far and are the pattern to follow — asset-vs-liability
-      framing, the earn-spend gap and lifestyle inflation, opportunity cost and delayed gratification,
-      the sunk cost fallacy, FOMO/herd behavior in markets, anchoring, confirmation bias, present bias /
-      hyperbolic discounting, and (this run, 2026-08-08) needs-vs-wants relabeling. The original item-24
-      shortlist (28-32) is exhausted; anchoring, confirmation bias, present bias, and needs-vs-wants were
-      all proposed fresh by prior runs' "next run should pick" notes, not from that shortlist. **Every
-      topic explicitly named in this backlog item's own "what to write instead" list is now built** —
-      "making money work for you rather than only working for money" is closest to lesson 28's
-      asset-vs-liability lens rather than a wholly separate concept, so nothing on the original list
-      remains unaddressed. A future run should re-scope this item (e.g. against `LAUNCH_PLAN.md` §0/§4.3)
-      rather than keep extending the list ad hoc — see the run log entry for what a future run should
-      consider next.
+24. **[Content — EXHAUSTED in substance; do not pick by default] The money track teaches mechanics, but
+    the owner asked for judgment.** Compressed 2026-08-16 by the weekly review (W-3) from ~80 lines of
+    accreted "Update, `<date>`" paragraphs; nothing below is new, and the full history is in the run log
+    (2026-08-07 → 2026-08-09). Owner-stated 2026-08-07 in an interactive session, correcting the
+    direction fifteen consecutive lessons had been built in — **it takes precedence over item 17's raw
+    lesson-count framing.**
+    **Verbatim owner intent, do not paraphrase this away:** *money lessons* means lessons in the spirit
+    of books like **"Rich Dad, Poor Dad"** — "it is crucial to be wise rather than impulsive and the app
+    is there to help learn about making wise choices."
+    - **Status: satisfied in substance. Do not add a fourteenth judgment lesson by default.** Thirteen
+      judgment lessons were built 2026-08-07 → 2026-08-09, and **every topic this item's own "what to
+      write instead" list named is now built.** The gap it was written against — that every money lesson
+      was procedural (*here is how a mechanism works*) and none taught decision-making (*how to choose,
+      how to notice you're about to choose badly, why people who know the mechanics still end up broke*)
+      — is closed.
+    - **Current ids, post-2026-08-14 renumbering:** money **1–15 are the mechanics lessons**; money
+      **16–28 are the judgment lessons** — asset-vs-liability lens, lifestyle inflation, opportunity
+      cost, sunk cost, FOMO/herd behavior, anchoring, confirmation bias, present bias, needs-vs-wants,
+      time horizon, mental accounting, loss aversion, overconfidence after a lucky win. **Ids cited in
+      run-log entries written before 2026-08-14 are pre-renumbering and are wrong now — read
+      `src/content/lessons.js`, don't trust a quoted id.**
+    - **Two unbuilt candidates remain**, and they come from an informal starter list, not from this
+      item's original scope: lifestyle creep after a windfall, and "too good to be true" pattern
+      recognition (the latter possibly overlapping lesson 20's FOMO/herd-behavior lesson — read both
+      before committing). **Neither moves any §4.3 clause**; read item 17 and the 2026-08-16 PRIORITY
+      BLOCK before picking either.
     - **The §10.1 tension — do not skip this.** That genre is advice-heavy and parts of it are contested
       (e.g. Kiyosaki's "your house is not an asset" conflicts with standard accounting; his leveraged
       real-estate advocacy is genuinely risky prescriptive advice; parts of the book are disputed as
-      fictionalised). §10.1 forbids advice-adjacency and `check-blindspot.mjs` only catches five literal
+      fictionalised). §10.1 forbids advice-adjacency and `check-blindspot.mjs` only catches literal
       phrases — it cannot catch "this reads like advice," which the script's own header says stays a
       judgment call. **Take the genre's mental models and its behavioural insight; leave its
       prescriptions.** Teach the lens ("does this put money in or take it out?") and be honest that real
       purchases sit in between; never write "buy assets, not liabilities" as a directive, never name a
-      product to buy, never imply a path to wealth. Do not cite or quote the book as an authority —
-      it is a pointer to a genre the owner named, not a source to copy.
-    - **Update, 2026-08-08 (twenty-first run):** added lesson 37 ("Does This Money Need to Be There
-      Tomorrow, or Can It Wait Ten Years?", saving-vs-investing as a time-horizon judgment call — the
-      candidate the previous run's "next run should pick" note named). This is a tenth judgment lesson;
-      the item's original named shortlist was already fully built as of lesson 36, so this one was picked
-      from the open-candidates note rather than the original list. See run log for detail. A future run
-      should re-scope this item per the previous entry's note (re-read `LAUNCH_PLAN.md` §0/§4.3 for other
-      judgment-shaped gaps) rather than keep extending an informal candidate list — that re-scoping still
-      hasn't happened.
-    - **Update, 2026-08-09 (twenty-second run):** did the re-scoping (re-read §0/§4.3, confirmed the
-      Phase-0 gate is ≥40 lessons/~2 hours **and** ≥40% lesson-1 completion) and added lesson 38 ("Is
-      'Found' Money Worth Less Than Money You Earned?", mental accounting — the tendency to apply a
-      looser rule to "found" money than earned money of the same value, even though a dollar buys the
-      same thing either way). An eleventh judgment lesson, and a genuinely new concept, not drawn from
-      the exhausted informal list. See run log for the full self-check. A starter list of further
-      judgment-shaped gaps (loss aversion, overconfidence after a lucky outcome, lifestyle creep after a
-      windfall, "too good to be true" pattern recognition) is recorded in that entry's "Next run should
-      pick" for whoever picks this item up next — still not a complete formal re-scope, but no longer
-      starting from nothing either.
-    - **Update, 2026-08-09 (twenty-third run):** added lesson 39 ("Why Does Losing $50 Hurt More Than
-      Finding $50 Feels Good?", loss aversion — losses feel roughly twice as painful as an equivalent
-      gain feels good, distinct from sunk cost, which is about being unable to let go of money already
-      spent rather than the asymmetric weight of the loss itself). Picked from the previous run's
-      starter list. A twelfth judgment lesson. See run log for detail. Remaining starter-list items for
-      the next run: overconfidence after a lucky outcome, lifestyle creep after a windfall, "too good to
-      be true" pattern recognition.
-    - **Update, 2026-08-09 (twenty-fourth run):** added lesson 40 ("Does One Lucky Win Prove You Have a
-      System?", overconfidence after a lucky outcome / self-attribution bias — crediting a win to one's
-      own skill and increasing risk-taking as a result, without weighing how much of the outcome was
-      actually luck). Picked from the previous run's starter list. A thirteenth judgment lesson. This
-      lesson also happens to be the 40th lesson overall, clearing the §4.3 lesson-count gate for the
-      first time — see item 17 below. See run log for detail. Remaining starter-list items for the next
-      run: lifestyle creep after a windfall, "too good to be true" pattern recognition (the latter still
-      flagged as possibly overlapping lesson 32's FOMO/herd-behavior lesson — read both before
-      committing).
-17. **[Content — FROZEN 2026-08-09 by the weekly review, see the PRIORITY BLOCK's P-1] Grow the lesson
-    catalogue.** **Update, 2026-08-15 (third run this date): both §4.3 content clauses are now met.**
-    Lesson 36's term-premium deepening moved the catalogue to **40 lessons / 136,031 English chars / 120
-    minutes** — the minutes clause (~120 min target) is cleared for the first time, alongside the
-    lesson-count clause (≥40) cleared 2026-08-09. This item's stated purpose (move a §4.3 content clause)
-    is now exhausted; a future run should NOT default to picking this item for another lesson deepening
-    without first reading that run's log entry, which flags that §4.3's one remaining clause
-    (completion-rate, item 18) is blocked on an owner action, not further content work. See the 2026-08-15
-    third-run log entry for full detail and the "Next run should pick" guidance it leaves.
-    *Do not pick this item, or item 24, until P-2/P-3/P-4 are cleared.* The lesson-count
-    clause this item exists to move is **met**; continuing to add lessons now moves nothing that gates
-    Phase 0. When it unfreezes, the target is §4.3's **content-duration** clause (~17 minutes short) or
-    depth in existing lessons — not a forty-first topic. Rest of the item retained below for context.
-    *Previously: subordinate to item 24 — prefer a judgment/mindset
-    lesson over another mechanics lesson unless there's a reason not to.* Derived from `LAUNCH_PLAN.md`
-    §4.3, not owner-assigned but the plan's own explicit gate: the catalogue is now **40 lessons /
-    131,667 English characters / 115 minutes** end to end — re-measured 2026-08-14 (dev-agent run,
-    ninth run this date; same method: summing every lesson's `sections[].body.en` + `takeaway.en` +
-    `thinkAbout.en` from `content/lessonContent.economy.js`+`content/lessonContent.money.js` and its
-    `minutes` from `content/lessons.js`; 28 money / 12 economy).
-    Lesson 40 ("Does One Lucky Win Prove You Have a System?", overconfidence after a lucky outcome), a
-    thirteenth judgment lesson per item 24, was the last lesson *added* (2026-08-09) — see run log.
-    **The §4.3 gate's lesson-count half (≥40 lessons) is now met for
-    the first time.** The minutes half (~120 min / 2 hours) is not: **118/120 minutes** — moved by 1
-    minute 2026-08-15 (second run this date) by deepening lesson 35 (Interest Rates: The Master Signal,
-    adding a "Fed's Dual Mandate" section explaining the two legally required goals — price stability
-    and maximum employment — and why they sometimes conflict, cross-referencing Lesson 39's indicator
-    dashboard), following the first run this date's deepening of lesson 13 (Brokerage Accounts,
-    115->117), 2026-08-14's ninth run on lesson 33 (The Long-Term Debt Cycle, 114->115), the eighth
-    run's identical move on lesson 22 (113->114), the seventh run's on lesson 34 (Deleveraging: The 4
-    Tools, currency-denomination section, 112->113), the sixth run's structural work (item 22, lesson-id
-    renumbering — no minutes moved that run), 2026-08-14's five deepening runs before that (lessons 4,
-    10, 11, 9, and 2026-08-13's five runs on 15, 16, 17, 19, 20), and the three prior runs' identical
-    moves on lessons 13 (former id), 8, and 14 — this run picked an economy-track lesson specifically
-    because the previous run's note flagged `lessonContent.money` at 499.36 kB, just under Vite's 500 kB
-    warning threshold; economy-track content stayed in `lessonContent.economy.js` (91.00 kB -> 94.53 kB),
-    leaving the money chunk untouched. No run this date added a 41st lesson, per this item's own
-    "depth in existing lessons" guidance above. Roughly 2 minutes short. **Note for a future run:** the
-    `lessonContent.money` chunk is still at 499.36 kB (unchanged by this run) — the next deepening pass
-    on a money-track lesson should still check the post-build chunk size before committing.
-    Per §4.3, Phase 0 ("free, instrumented, no payment code") doesn't end until the catalogue
-    reaches roughly 40 lessons / 2 hours of content **and** ≥40% of installers finish lesson 1 — the
-    lesson-count clause is satisfied but the other two clauses (minutes, completion rate) are not, so
-    this does not end Phase 0 by itself. `LAUNCH_READINESS.md`'s lesson-catalogue row was refreshed
-    2026-08-09 (P-2), 2026-08-12 (second run, 101-minute figure, lesson-13 deepening), 2026-08-12
-    (third run, 102-minute figure, lesson-8 deepening), 2026-08-12 (fourth run, 103-minute
-    figure, lesson-14 deepening), 2026-08-13 (104-minute figure, lesson-15 deepening), 2026-08-13
-    (second run, 105-minute figure, lesson-16 deepening), 2026-08-13 (third run, 106-minute
-    figure, lesson-17 deepening), 2026-08-13 (fourth run, 107-minute figure, lesson-19
-    deepening), 2026-08-13 (fifth run, 108-minute figure, lesson-20 deepening), 2026-08-14 (second
-    run, 109-minute figure, lesson-9 deepening), 2026-08-14 (third run, 110-minute figure,
-    lesson-11 deepening), 2026-08-14 (fourth run, 111-minute figure, lesson-10 deepening), 2026-08-14
-    (fifth run, 112-minute figure, lesson-4 deepening), 2026-08-14 (seventh run, 113-minute
-    figure, lesson-34 deepening), 2026-08-14 (eighth run, 114-minute figure, lesson-22 deepening),
-    2026-08-14 (ninth run, 115-minute figure, lesson-33 deepening — lesson ids per the sixth
-    run's renumbering, not the ids named in earlier entries above), 2026-08-15 (first run this date,
-    117-minute figure, lesson-13 deepening), and now 2026-08-15 (second run this date, 118-minute
-    figure, lesson-35 deepening).
-    Per §4.3 verbatim: "the highest-value monetization work right now is writing
-    lessons, not writing billing code." Do not start billing/paywall work ahead of this gate — see item
-    15. **Note the failure mode this item created:** nine consecutive scheduled runs each picked "add one
-    lesson" and optimised the count, and the *direction* drifted unexamined until the owner corrected it.
-    Counting lessons is not the same as building the product.
+      product to buy, never imply a path to wealth. Do not cite or quote the book as an authority — it
+      is a pointer to a genre the owner named, not a source to copy.
+    - **The failure mode this item created:** four consecutive runs each wrote "a future run should
+      re-scope this rather than keep extending the list ad hoc," and each then extended the list ad hoc
+      anyway. It functioned as a perpetual lesson-generator.
+
+17. **[Content — EXHAUSTED, both §4.3 content clauses met] Grow the lesson catalogue.** Compressed
+    2026-08-16 by the weekly review (W-3) from ~63 lines; the deepening-run chronology and the eighteen
+    `LAUNCH_READINESS.md` refresh notes it carried are history and live in the run log (2026-08-12 →
+    2026-08-15). Derived from `LAUNCH_PLAN.md` §4.3 — the plan's own explicit gate, not owner-assigned.
+    - **Status: 40 lessons / 136,031 English chars / 120 minutes (28 money + 12 economy). Both §4.3
+      content clauses are met** — lesson count (≥40) cleared 2026-08-09; minutes (~120) cleared
+      2026-08-15 by lesson 36's term-premium section, after seventeen consecutive +1-minute deepening
+      runs. **This item's stated purpose — move a §4.3 content clause — is exhausted. Do not pick it for
+      another deepening, and do not add a forty-first topic.**
+    - **Measurement method, reproducible:** sum every lesson's `sections[].body.en` + `takeaway.en` +
+      `thinkAbout.en` across `content/lessonContent.economy.js` + `content/lessonContent.money.js`, and
+      sum `minutes` from `content/lessons.js`. **`minutes` is not hand-set and cannot silently drift:**
+      `scripts/check-data.mjs` recomputes it as `round(words / 200)` from the body text and fails
+      `npm test` on mismatch — so the number scored against the gate is the same number the app shows a
+      learner. (Independently verified by the 2026-08-16 weekly review.)
+    - **This does not end Phase 0.** §4.3 requires the content clauses **and** ≥40% of installers
+      finishing lesson 1. That third clause is unmeasured and blocked on an owner action (item 18 — a
+      real analytics provider), **not on more content**. Per §4.3 verbatim: "the highest-value
+      monetization work right now is writing lessons, not writing billing code" — but with both content
+      clauses met, that sentence no longer points at more lessons. Do not start billing/paywall work
+      ahead of the gate either; see item 15.
+    - **Chunk-size caution for any future content edit:** `lessonContent.money` builds to 499.36 kB,
+      just under Vite's 500 kB warning threshold. A deepening pass on a *money*-track lesson must check
+      the post-build chunk size before committing; economy-track content lands in a separate chunk.
+    - **The failure mode this item created:** nine consecutive scheduled runs each picked "add one
+      lesson" and optimised the count while the direction drifted unexamined, until the owner corrected
+      it (item 24). **Counting lessons is not the same as building the product.**
+
 21. **[Content] Kids financial literacy — content gap closed; content-depth structural change built (2026-08-16, eighth run).**
     **Update, 2026-08-16 (eighth run this date):** executed the content-depth scoping this item's own text
     below calls "a real content-architecture change... needs its own scoping pass" — added a `why` field
