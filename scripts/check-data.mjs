@@ -805,11 +805,37 @@ for (const [label, moduleExports] of Object.entries(CONTENT_MODULES)) {
 //     one), but every number it does carry must appear in that lesson's
 //     English reference set. That is the property a renumbering breaks, and
 //     it needs no per-language translation judgement to verify.
+//
+//     Covers lesson prose AND quizData.js `explain` fields. The quiz half was
+//     added 2026-08-16 after this check's first version missed seven stale
+//     references there — it walked lesson prose only, so quiz explanations
+//     went unscanned through two separate repair passes.
+//
+//     KNOWN LIMIT, do not mistake this check for more than it is: it verifies
+//     the translations AGREE WITH English. It cannot verify English is right.
+//     When the renumbering left "Lessons 18 and 20" stale in every language at
+//     once, all five agreed and this check stayed silent; a human reading the
+//     sentence ("a 401(k) or life insurance policy from Lessons 18 and 20")
+//     against the lesson titles is what caught it. The only correctness guard
+//     here is the real-lesson-id check below, which catches a reference to an
+//     id that does not exist — not one that exists but is wrong.
 {
-  // Per-language surface forms of "Lesson N". Capture group 1 is the number.
+  // Per-language surface forms of "Lesson N". Capture group 1 is the number,
+  // or — for the languages that write them that way — a *list* of numbers.
+  //
+  // The plural/multi-number form matters more than it looks. The 2026-08-14
+  // renumbering's regex matched the singular "Lesson N", so the one plural
+  // reference in the content ("...a 401(k) or life insurance policy from
+  // Lessons 18 and 20") survived untouched in English, es AND zh at once. All
+  // five languages therefore agreed with each other, and the first version of
+  // this check — which only ever compared translations against English —
+  // structurally could not see it. See item 33's third pass: a consistency
+  // check and a correctness check are not the same thing, and pooling every
+  // number in the phrase is what lets this one catch the English side at all
+  // (via the real-lesson-id check below).
   const REF_PATTERNS = {
-    en: /\bLessons?\s+(\d+)/gi,
-    es: /\bLecci[óo]n(?:es)?\s+(\d+)/gi,
+    en: /\bLessons?\s+(\d+(?:\s*(?:,|and|&)\s*\d+)*)/gi,
+    es: /\bLecci[óo]n(?:es)?\s+(\d+(?:\s*(?:,|y|e)\s*\d+)*)/gi,
     ko: /레슨\s*(\d+)/g,
     zh: /第\s*(\d+)\s*课/g,
     ja: /レッスン\s*(\d+)/g,
@@ -822,7 +848,9 @@ for (const [label, moduleExports] of Object.entries(CONTENT_MODULES)) {
     const re = new RegExp(REF_PATTERNS[lang].source, REF_PATTERNS[lang].flags);
     const out = [];
     let m;
-    while ((m = re.exec(text))) out.push(Number(m[1]));
+    while ((m = re.exec(text))) {
+      for (const n of m[1].match(/\d+/g) ?? []) out.push(Number(n));
+    }
     return out;
   };
 
@@ -872,6 +900,42 @@ for (const [label, moduleExports] of Object.entries(CONTENT_MODULES)) {
       }
     }
   }
+
+  // Quiz explanations carry cross-references too ("...the same compounding
+  // math from Lesson 3"), and the first version of this check walked lesson
+  // prose only — so seven stale references survived *two* separate repair
+  // passes before anyone scanned quizData.js at all (item 33, third pass).
+  //
+  // Scoped per quiz item rather than pooled per lesson: unlike a lesson's
+  // prose, an `explain` field has no sibling field for a translation to move a
+  // reference into, so the item's own English set is the correct comparison
+  // and a looser one would just re-open the hole.
+  quizData.forEach((item, i) => {
+    if (!item.explain) return;
+    const path = `quizData[${i}] (lesson ${item.lesson}).explain`;
+    const englishRefs = new Set(refsIn(item.explain.en, "en"));
+
+    for (const n of englishRefs) {
+      if (!lessonTitle.has(n)) {
+        fail(`${path}.en: references "Lesson ${n}", which is not a real lesson id`);
+      }
+    }
+
+    for (const lang of LANGS) {
+      if (lang === "en") continue;
+      for (const n of refsIn(item.explain[lang], lang)) {
+        if (englishRefs.has(n)) continue;
+        const expected = [...englishRefs].sort((a, b) => a - b);
+        fail(
+          `${path}.${lang}: references lesson ${n} ("${lessonTitle.get(n) ?? "no such lesson"}"), ` +
+            `which this quiz explanation's English text never references — ` +
+            `its English references are [${expected.join(", ") || "none"}]. ` +
+            `Quiz explanations were the blind spot that kept item 33 open through two repair passes; ` +
+            `see AGENT_LOG.md item 33.`,
+        );
+      }
+    }
+  });
 }
 
 // 17. src/content/lessonTerms.js — the §3.0.3 lesson→glossary links (backlog

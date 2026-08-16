@@ -304,10 +304,22 @@ for the history. No open P1/P2 items.
     > **Lesson for future checks: a consistency check and a correctness check are different things.**
     > §16 verifies translations agree with English; it cannot verify English is right. The plural form
     > was invisible to it for exactly that reason.
-    > **STILL OPEN — do this:** extend §16's scan to `quizData.js`'s `explain` fields, and widen the
-    > English pattern to the plural/multi-number form (`Lessons 6 and 8`, `Lessons 3, 5 and 7`) in all
-    > five languages. Not done in this pass only because a concurrent run held uncommitted edits to
-    > `scripts/check-data.mjs` and this pass would not clobber them.
+    > **✅ Check extended, 2026-08-16 (fourth pass, owner-requested).** §16 now scans `quizData.js`'s
+    > `explain` fields as well as lesson prose, and the `en`/`es` patterns capture the multi-number form
+    > (`Lessons 6 and 8`, `Lecciones 6 y 8`, `Lessons 3, 5 and 7`) instead of only the first number.
+    > Quiz items are scoped **per item**, not pooled per lesson: an `explain` field has no sibling field
+    > for a translation to move a reference into, so the item's own English set is the right comparison
+    > and pooling would just re-open the hole.
+    > **Proven against the real bugs, not just written:** re-injected Q24's zh `第3课`→`第15课` (caught,
+    > naming the wrong lesson's title), Q27's es `Lecciones 6 y 8`→`18 y 20` (caught, **both** numbers —
+    > which the old single-number pattern would have missed), and an English `Lessons 6 and 99` (caught
+    > as a nonexistent id). Negative control: a translation that legitimately carries **fewer**
+    > references than its English still passes, so the intended asymmetry survives. File restored and
+    > `npm test` green after each.
+    > **The known limit is now written into §16's header comment** so the next reader doesn't over-trust
+    > it: this verifies translations *agree with* English; it cannot verify English is *right*. The
+    > plural bug was invisible precisely because all five languages agreed. The only correctness guard
+    > is the nonexistent-id check.
     Found 2026-08-16 while building item 27's lesson-27 visual: the prose read "a different pattern from
     sunk cost (lesson 31, throwing good money after bad)" — but lesson 31 is now *Productivity Growth*,
     and sunk cost is lesson 19. The reference was a pre-renumbering id.
