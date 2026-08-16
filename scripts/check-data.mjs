@@ -265,7 +265,7 @@ function checkNonEmptyString(value, path) {
   }
 }
 
-// 4. glossary: every term has all 5 languages, each with a non-empty {s, f}.
+// 4. glossary: every term has all 5 languages, each with a non-empty {s, f, ex}.
 {
   for (const [term, entry] of Object.entries(glossary)) {
     const path = `glossary["${term}"]`;
@@ -273,11 +273,12 @@ function checkNonEmptyString(value, path) {
       for (const lang of LANGS) {
         const def = entry[lang];
         if (def == null || typeof def !== "object") {
-          fail(`${path}.${lang}: expected an {s, f} object, got ${typeof def}`);
+          fail(`${path}.${lang}: expected an {s, f, ex} object, got ${typeof def}`);
           continue;
         }
         checkNonEmptyString(def.s, `${path}.${lang}.s`);
         checkNonEmptyString(def.f, `${path}.${lang}.f`);
+        checkNonEmptyString(def.ex, `${path}.${lang}.ex`);
       }
     }
   }

@@ -8645,3 +8645,96 @@ direction is the problem.
   picks. Item 21 (kids content) also remains open on its own two axes (more blurbs in the current format,
   or the lesson-shaped-structure question) if a future run prefers content work over more design-review
   UX passes.
+
+### 2026-08-16 (scheduled dev-agent, second run this date) — Glossary example sentences, the design review's next-named idea
+
+- **Orient**: `git status` showed only the same long-standing untracked `economic-cycles-v6.jsx` — no
+  uncommitted edits to any tracked file; cross-checked against the standing memory note and this file's
+  own "reference/inspiration material only" line before treating it as anything other than the
+  documented fixture. `git log --oneline -3` topped at `2e25fd6` (the prior run's Practice-tab coach
+  mark), matching the environment's reported HEAD — no concurrent session had landed anything since.
+  Read the PRIORITY BLOCK and the prior run's own "Next run should pick" note, which named the glossary
+  example-sentence content (the Vocabulary app's most transferable idea from the design review) as the
+  next most self-contained pick and explicitly flagged it as a content-authoring pass across 17 existing
+  glossary terms × 5 languages, not a UI-structure change — scoped this run accordingly.
+- **What the gap actually is**: `src/content/glossary.js` holds 17 terms, each with a short name (`s`)
+  and a one-line definition (`f`) per language, rendered by `src/screens/reference/Glossary.jsx`. A
+  definition alone ("Total value of all goods/services produced...") tells a learner what a term means
+  but not what it looks like used in a sentence — the gap the Vocabulary app's design review named as
+  its most transferable pattern (word → definition → example sentence).
+- **What was done**:
+  1. `src/content/glossary.js` — added a third field, `ex`, to every language object of all 17 terms (17
+     × 5 = 85 new strings): one natural, descriptive sentence using the term in context. Wrote English
+     first, then translated directly into es/ko/zh/ja (matching how every other multi-language field in
+     this file — and the prior run's locale-key additions — has always been done; the
+     `translation-review.mjs` ledger is explicitly scoped to per-lesson body content in
+     `lessonContent.*.js`, not glossary/UI strings, so this isn't a new or different risk surface than
+     the `s`/`f` fields already ship under). Every sentence is purely descriptive ("when X happens,
+     economists/investors typically observe Y"), never a directive or recommendation — deliberately
+     avoided phrasing close to the disclaimer/advice-adjacency line given this item sits right next to
+     that boundary.
+  2. `src/screens/reference/Glossary.jsx` — renders `entry.ex` (when present) as a third line below the
+     definition, styled `fontStyle: "italic"` in the same muted ink token the definition already uses,
+     visually distinguishing "what it means" from "used in a sentence" without a new locale label key.
+  3. `scripts/check-data.mjs` — extended the existing glossary structural check (previously `{s, f}`) to
+     also require a non-empty `ex` per language per term, so a future edit that drops or empties the
+     field fails `npm test` loudly instead of silently shipping an incomplete entry.
+- **Verified**:
+  1. `npm test` (`bash scripts/bootstrap-node.sh`) — `PASS: 0 failure(s), 1 warning(s)` (the same
+     pre-existing translation-review-coverage warning every run reports, unrelated to this change);
+     `check-blindspot.mjs` — all 6 checks `ok`, including the extended per-language §10.1
+     advice-adjacency scan that reads `src/content/*.js` (glossary.js included).
+  2. `npm run build` — `vite v6.4.3`, `✓ 65 modules transformed`, no errors. `Reference` chunk grew from
+     51.81 kB to 62.84 kB (confirmed by stashing this run's changes, rebuilding to capture the true
+     pre-change size, then popping the stash and rebuilding again — not an assumed/approximate figure;
+     expected growth, 85 new strings inline in the lazy-loaded Reference bundle); every other chunk
+     unchanged.
+  3. **Live browser verification**, not just build/test: served the static build, navigated to Reference
+     → Glossary, and read `document.querySelector('main').innerText` — confirmed all 17 terms render in
+     order (GDP through Debt-to-GDP Ratio) each followed immediately by its new example sentence, and
+     screenshotted the top of the list to confirm the italic styling reads as a distinct line beneath
+     the definition, not a formatting glitch. Switched the language `<select>` to Korean (via the
+     documented `Object.getOwnPropertyDescriptor(...).set` + `dispatchEvent("change")` pattern, since
+     plain `.value =` doesn't notify React) and re-read `innerText` — confirmed the Korean example
+     sentences render correctly alongside the existing Korean definitions, not just the English pass.
+  4. `git status --short` before committing: only the 3 files listed above modified, plus the same
+     long-standing untracked `economic-cycles-v6.jsx`.
+- **Adversarial self-check**:
+  - *Blindspot register regression*: ran `check-blindspot.mjs` (all 6 checks `ok`, as above) plus a
+    manual `git diff --unified=0 -- src/content/glossary.js src/screens/reference/Glossary.jsx
+    scripts/check-data.mjs | grep -iE` pass over the Dalio/advice-adjacent/kids/dated-content patterns
+    with every alternation properly parenthesized — the first attempt at this manual grep used
+    unparenthesized `|` alternation and false-flagged on stray substrings (e.g. Japanese `買う` alone,
+    without the required `べきです` suffix, because the alternation split at the wrong point); the
+    corrected, properly-grouped version matched nothing (exit 1), consistent with the automated checker.
+    Recording the false-positive-and-correction here per the standing rule that this step must say what
+    it found, not just that it ran clean.
+  - *DECISIONS.md conflict*: re-read every section header. `.js`-not-JSON content modules — `ex` is a
+    plain object property in the existing `.js` glossary module, consistent. localStorage-only state —
+    no new persisted state, this is static content. Machine-translated lesson content /
+    `translation-review.mjs` ledger — confirmed its scope (re-read the "Machine-translated lesson
+    content" entry) is per-lesson body content specifically, keyed by lesson id in
+    `lessonContent.*.js`; the glossary module has never been in that ledger's scope (its existing `s`/`f`
+    fields aren't tracked there either), so adding `ex` the same direct-translation way is consistent,
+    not a new gap. No conflict found.
+  - *Already-done backlog item*: `grep -in "example.sentence\|glossary.*ex field" AGENT_LOG.md` before
+    this entry only matched the prior run's own "Next run should pick" note naming this as unbuilt — not
+    a duplicate.
+  - *Own verification claim*: the Korean-language check above reads live `innerText` after a real
+    `dispatchEvent`-driven language switch, not an assumption that the `entry.ex || undefined` lookup
+    "should" resolve correctly because the data shape looked right in the source; the build's `Reference`
+    chunk byte-size delta (51.81 kB → 62.84 kB, confirmed via a stash/rebuild/pop rather than assumed) is
+    an independent confirmation that the 85 new strings actually landed in the shipped bundle, not just
+    in source.
+- **Not touched, and why**: `economic-cycles-v6.jsx` — unrelated, untouched, its untracked status
+  unchanged before and after. Did not touch the review-batch interstitial or persistent term-detail
+  action bar (the two remaining design-review ideas) — both are bigger structural changes than fit one
+  focused run, per the prior run's own scoping note. Did not add a glossary-example analytics event —
+  no existing event in `EVENTS` covers glossary interaction at all, and item 18's own note says the open
+  question is swapping the sink to a real provider, not growing the event set.
+- **Next run should pick**: the design review's two remaining ideas — a low-pressure interstitial
+  between Practice review batches, and a persistent term-detail action bar on Reference entries — are
+  both reasonable but larger, structure-touching picks; a future run should scope whichever it picks as
+  a real UI-structure change, not assume it's as small as this run's content addition. Item 21 (kids
+  content, its two open axes) and item 18 (blocked on an owner action) remain open as alternatives if a
+  future run prefers not to continue the design-review pass.

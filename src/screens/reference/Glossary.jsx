@@ -62,6 +62,13 @@ export default function Glossary({ t, lang }) {
               <dd style={{ margin: `${space["1"]}px 0 0` }}>
                 <Text variant="small" color={ink.muted}>{entry.f}</Text>
               </dd>
+              {entry.ex && (
+                <dd style={{ margin: `${space["1"]}px 0 0` }}>
+                  <Text variant="small" color={ink.muted} style={{ fontStyle: "italic" }}>
+                    {entry.ex}
+                  </Text>
+                </dd>
+              )}
             </div>
           ))}
         </dl>
