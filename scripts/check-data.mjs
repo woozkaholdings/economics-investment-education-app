@@ -285,7 +285,10 @@ function checkNonEmptyString(value, path) {
 }
 
 // 5. kidsContent: every age band has title/activity/parentTip in all 5
-//    languages, plus a non-empty lessons array translated the same way.
+//    languages, plus a non-empty lessons array. Each lesson entry is
+//    { text: {lang}, why: {lang} } — the "why" field (added 2026-08-16,
+//    backlog item 21's content-depth scoping) explains why the concept
+//    matters, translated the same way as text.
 {
   for (const [band, entry] of Object.entries(kidsContent)) {
     const path = `kidsContent["${band}"]`;
@@ -298,8 +301,11 @@ function checkNonEmptyString(value, path) {
       fail(`${path}.lessons: expected a non-empty array`);
     } else {
       entry.lessons.forEach((l, li) => {
-        if (checkLangSet(l, `${path}.lessons[${li}]`)) {
-          for (const lang of LANGS) checkNonEmptyString(l[lang], `${path}.lessons[${li}].${lang}`);
+        for (const field of ["text", "why"]) {
+          const lPath = `${path}.lessons[${li}].${field}`;
+          if (checkLangSet(l[field], lPath)) {
+            for (const lang of LANGS) checkNonEmptyString(l[field][lang], `${lPath}.${lang}`);
+          }
         }
       });
     }

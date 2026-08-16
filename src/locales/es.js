@@ -32,7 +32,7 @@ export default {
     kidsTitle: "Enseña Economía a tus Hijos", kidsAges58: "5-8 años", kidsAges912: "9-12 años",
     kidsAges1317: "13-17 años", kidsParentTip: "Consejo para Padres", kidsActivity: "Prueba Esta Actividad",
     kidsParentIntro: "Una guía para padres — elige la banda de edad de tu hijo y lean juntos estas explicaciones.",
-    kidsAgeGroupLabel: "Seleccionar grupo de edad",
+    kidsAgeGroupLabel: "Seleccionar grupo de edad", kidsWhyLabel: "Por qué importa",
     glossTitle: "Glosario", glossSearch: "Buscar términos...",
     balanceSheet: "Balance del Fed",
     qeLabel: "Flexibilización Cuantitativa (QE)", qtLabel: "Ajuste Cuantitativo (QT)",

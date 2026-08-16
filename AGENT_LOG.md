@@ -282,7 +282,15 @@ for the history. No open P1/P2 items.
     15. **Note the failure mode this item created:** nine consecutive scheduled runs each picked "add one
     lesson" and optimised the count, and the *direction* drifted unexamined until the owner corrected it.
     Counting lessons is not the same as building the product.
-21. **[Content] Kids financial literacy — content gap partially closed; structural question now resolved (2026-08-16).**
+21. **[Content] Kids financial literacy — content gap closed; content-depth structural change built (2026-08-16, eighth run).**
+    **Update, 2026-08-16 (eighth run this date):** executed the content-depth scoping this item's own text
+    below calls "a real content-architecture change... needs its own scoping pass" — added a `why` field
+    (one sentence, all 5 languages, written fresh not machine-copied) to all 21 existing blurbs, rendered
+    in `ParentGuide.jsx` under a new "Why it matters" label. Full detail, including why this was done as
+    one uniform migration across all three age bands rather than a single-band pilot, is in that date's
+    run log entry. This closes point (b) below — do not treat content-depth scoping as still-open work; a
+    future run wanting more depth here needs a fresh scoping decision (e.g. per-blurb activities), not a
+    default extension of this shape. Text below is retained for the item's full history.
     Assessed 2026-08-07 after the owner asked whether kids lessons were already in the master plan —
     see `LAUNCH_PLAN.md` §2.6. **Update, 2026-08-07 (tenth run):** each of the three age bands grew from
     three blurbs to five (fifteen total, up from nine), adding the missing money-skills material —
@@ -9216,3 +9224,110 @@ direction is the problem.
   Glossary bookmark toggle (prior run) still has its own open follow-up — surfacing saved terms somewhere
   — flagged as worth waiting on. §4.3's content-duration clause (a few minutes short per item 17's last
   measurement) remains a legitimate alternative if a future run wants to deepen an existing lesson instead.
+
+### 2026-08-16 (scheduled dev-agent, eighth run this date) — Item 21's content-depth scoping, executed: a "why it matters" field per kids blurb
+
+- **Orient**: `git status` showed only the same long-standing untracked `economic-cycles-v6.jsx`; `git log
+  --oneline -3` topped at the seventh run's commit, matching the reported HEAD. This run's own note above
+  named two candidates: §4.3's content-duration clause ("a few minutes short") or item 21's content-depth
+  scoping. **Checked the first candidate before picking it and found it stale**: the note was quoting old
+  sub-text buried inside backlog item 17, not that item's own current top line. Independently re-measured
+  from source (`node --input-type=module`, summing `lessons.js`'s `minutes` field) — **40 lessons, 120
+  minutes total** — and cross-checked against `LAUNCH_READINESS.md`'s Phase-0 table, which already says
+  "✅ Both §4.3 content clauses met... minutes (120/120) since 2026-08-15." The "few minutes short" framing
+  was superseded three days ago; deepening a lesson now would move a clause that's already closed. This is
+  exactly the mistake the standing memory note "verify decisions still hold in practice" warns about —
+  a prior run's note repeated a stale sub-detail instead of the item's own resolved status, and taking it
+  at face value would have picked the wrong item. Picked item 21's content-depth scoping instead, which
+  `DECISIONS.md`'s "Kids financial-literacy content" entry explicitly names as dev-agent-actionable (not
+  owner-held, unlike the child-facing question) and gives a concrete example of what "depth" means: "a
+  'why this matters' note."
+- **What was done**: designed and implemented that exact example, as a full structural migration (not a
+  partial pilot — see reasoning below) across all 21 existing kids blurbs (7 per age band × 3 bands):
+  1. **Schema change**: each `kidsContent[band].lessons[i]` entry changed from a flat `{en,es,ko,zh,ja}`
+     string object to `{ text: {en,es,ko,zh,ja}, why: {en,es,ko,zh,ja} }` — `text` holds the existing
+     blurb unchanged, `why` is a new one-sentence note (written fresh per entry, not machine-copied)
+     explaining why the concept matters for a real adult money decision, e.g. entry 4 in the 5-8 band
+     ("need vs. want"): *"Confusing a want for a need is one of the most common ways people overspend —
+     the skill of telling them apart only gets more useful with age."* Translated into es/ko/zh/ja by
+     hand for each of the 21 entries (105 new strings total), matching this content's existing tone.
+  2. **Why a full migration, not a one-band pilot**: considered scoping this to a single age band first
+     (smaller diff) but rejected it — `ParentGuide.jsx` renders whichever band is selected with one code
+     path, so a mixed old/new shape across bands would force the render code to branch on data shape per
+     band, which is exactly the kind of half-finished, dual-shape state the project's own conventions
+     warn against. A uniform schema change across all three bands, applied once, is architecturally
+     simpler than a "pilot" that has to be extended later — the added string volume (105 vs. ~35) is the
+     honest cost of doing it as one coherent change instead of a staged one.
+  3. `src/screens/reference/ParentGuide.jsx` — renders `lesson.text[lang]` as before, plus a new
+     `lesson.why[lang]` line underneath (muted, italic, prefixed with a new `t.kidsWhyLabel` translated
+     key — "Why it matters" / "Por qué importa" / "왜 중요할까요" / "为什么重要" / "大切な理由").
+  4. `src/locales/{en,es,ko,zh,ja}.js` — added `kidsWhyLabel` to all five, next to the existing
+     `kidsAgeGroupLabel` key.
+  5. `scripts/check-data.mjs`'s kidsContent check (#5) — updated to validate the new nested shape:
+     `text` and `why` must each have all 5 language keys with non-empty strings, per lesson entry. The
+     old flat-object check would have silently passed on a malformed entry (e.g. a `why` field present in
+     only 3 languages) since it only checked `l[lang]` directly; the new check iterates both fields.
+- **Verified**:
+  1. `npm test` — `PASS: 0 failure(s), 1 warning(s)` (same pre-existing translation-review-coverage
+     warning, which covers `lessons.js`/`lessonContent.*.js`, not `kidsContent.js` — unrelated to this
+     change); `check-blindspot.mjs` — all 6 checks `ok`. The updated kidsContent check (#5) passed against
+     all 21 real entries × 2 fields × 5 languages — 210 language-string checks, not just the 21 that
+     existed before this run.
+  2. `npm run build` — `vite v6.4.3`, `✓ 66 modules transformed` (same module count — no new file added),
+     no errors, no chunk-size warning. `Reference` chunk grew 64.68 kB → 81.88 kB (the new `why` strings
+     and label); `lessonContent.money` unchanged at 499.36 kB, still under the 500 kB threshold.
+  3. Live browser verification against the built `dist/`: `preview_start` opened a Browser-pane tab, but
+     `computer` click actions timed out repeatedly ("the Browser pane is currently hidden") — this looks
+     like an artifact of running as an unattended scheduled task with no user watching the pane, not a
+     page bug (screenshots and `read_page` worked fine throughout). Worked around it for navigation only
+     by dispatching real DOM `click`/`change` events via `javascript_tool` (Reference tab → Kids →
+     age-band tabs → language selector) — used strictly to reach the screen for inspection, not to
+     "implement" anything. Then read the actual rendered output with `get_page_text` (not source code):
+     confirmed all 7 "why it matters" notes render correctly, in order, under their matching blurb for the
+     5-8 band in English, and separately confirmed all 7 render correctly in Korean for the 13-17 band
+     (spot-checked a different band × a different language, not the same pair twice, since data-shape
+     parity across all 21×5 combinations is already covered exhaustively by the automated check above). A
+     screenshot confirmed the visual styling (muted italic secondary line) reads cleanly, no overflow or
+     clipping, in the app's actual dark theme.
+  4. `git status --short` before committing: `scripts/check-data.mjs`, `src/content/kidsContent.js`,
+     `src/locales/{en,es,ja,ko,zh}.js`, `src/screens/reference/ParentGuide.jsx` — exactly the files this
+     change touches — plus the same long-standing untracked `economic-cycles-v6.jsx`.
+- **Adversarial self-check**:
+  - *Blindspot register regression*: `git diff --unified=0 -- src/ | grep -iE "dalio|(you should (buy|
+    sell|invest))|we recommend|be bullish|be cautious|nowDate|april 2026|will rise|will fall|guaranteed|
+    the fed will|expect the fed|rates will|child.?facing|kid.?mode"` matched nothing (grep exit 1). This
+    change adds explanatory "why" sentences, not prescriptive advice — each one explains a mechanism or
+    a consequence ("X is common," "X matters because Y"), never an instruction ("you should X"), and none
+    of the 21 new sentences was written to sound like a directive — reread all 21 English originals before
+    committing specifically checking for imperative phrasing and found none.
+  - *DECISIONS.md conflict*: re-read every section header. This change directly executes what the "Kids
+    financial-literacy content" decision (2026-08-16, earlier today) explicitly scoped as open and
+    dev-agent-actionable — point 2's own example ("a 'why this matters' note") is what got built, so this
+    is the decision's fulfillment, not a conflict. Point 1 (child-facing UI) is untouched: no new screen,
+    no child navigation, content still renders only inside `ParentGuide.jsx`, still addressed to the
+    parent in both the existing intro copy and the new "why" notes' own wording ("the skill of telling
+    them apart," "worth understanding before..." — parent-to-parent framing, never second-person to a
+    child). `.js`-not-JSON — unchanged, still a plain ES module. Expo-vs-Vite — untouched.
+  - *Already-done backlog item*: not a re-decision — the earlier-today decision explicitly left "whether
+    or when a future run should actually do the content-depth scoping... open." This is the first run to
+    act on it, not a repeat.
+  - *Own verification claim*: the "why it matters" text a skeptical reviewer would see by opening the app
+    is the same text confirmed via `get_page_text` above — real rendered DOM output, in two different
+    band/language combinations, not an assumption that the data-shape change "should" render correctly
+    because the code looks right. The chunk-size and test-count figures come from this run's own fresh
+    `npm test`/`npm run build` output, not carried forward from a prior run's numbers.
+- **Not touched, and why**: `economic-cycles-v6.jsx` — unrelated, untouched. Did not touch
+  `lessons.js`/`lessonContent.*.js` (the §4.3 minutes clause is already met, confirmed above — deepening a
+  lesson now would not move anything). Did not build a kid-facing UI or child navigation — `DECISIONS.md`
+  point 1 keeps that owner-only. Did not add a 22nd/23rd blurb to any band — this run added depth to the
+  existing 21, not more of them, matching the item's own caution against count-shaped growth.
+- **Next run should pick**: item 21's content-depth scoping (the specific "why it matters" example) is now
+  built across all three age bands — a future run should not treat this as still-open work. If further
+  depth is wanted later (e.g. a short related activity per blurb, not just per band), that would need its
+  own fresh scoping decision, not a default extension of this run's shape. Item 18 remains blocked on an
+  owner action. The Glossary bookmark toggle's "surface saved terms somewhere" follow-up is still flagged
+  as worth waiting on. With item 21's structural work and both §4.3 content clauses done, the remaining
+  open, dev-agent-actionable areas are thinner than usual — a future run might look at accessibility/
+  mobile-responsiveness spot-checks against recently added screens (`TermDetail.jsx`, the review-batch
+  interstitial, `ParentGuide.jsx`'s new "why" line) that haven't had a dedicated a11y pass since they
+  shipped, rather than assuming one is needed without checking first.

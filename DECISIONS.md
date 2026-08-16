@@ -136,6 +136,11 @@ Add a new entry when a run makes a choice future work should be able to look up 
 - **Revisit when:** a future run wants to scope the content-depth structural change (point 2), or the
   owner makes the child-facing call (point 1, tracked at item 19 / `DECISIONS.md`'s Expo entry's
   sibling COPPA question).
+- **Update, 2026-08-16 (same date, later run):** point 2 was scoped and built the same day — a `why`
+  field (one sentence, all 5 languages) added to all 21 existing kids blurbs, rendered in
+  `ParentGuide.jsx` under a new "Why it matters" label. See `AGENT_LOG.md` item 21 and that date's run
+  log entry ("Item 21's content-depth scoping, executed") for the full design reasoning and verification.
+  Point 1 (child-facing UI) is unaffected and remains owner-only.
 
 ### Content as `.js` modules, not JSON
 

@@ -32,7 +32,7 @@ export default {
     kidsTitle: "子どもにお金の話を", kidsAges58: "5-8歳", kidsAges912: "9-12歳",
     kidsAges1317: "13-17歳", kidsParentTip: "保護者のヒント", kidsActivity: "このアクティビティを試そう",
     kidsParentIntro: "保護者向けガイドです — お子さんの年齢帯を選び、この説明を一緒に読んでみましょう。",
-    kidsAgeGroupLabel: "年齢帯を選択",
+    kidsAgeGroupLabel: "年齢帯を選択", kidsWhyLabel: "大切な理由",
     glossTitle: "用語集", glossSearch: "用語を検索...",
     balanceSheet: "FRBのバランスシート",
     qeLabel: "量的緩和（QE）", qtLabel: "量的引き締め（QT）",

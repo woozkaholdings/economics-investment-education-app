@@ -32,7 +32,7 @@ export default {
     kidsTitle: "教孩子学经济", kidsAges58: "5-8岁", kidsAges912: "9-12岁",
     kidsAges1317: "13-17岁", kidsParentTip: "家长提示", kidsActivity: "试试这个活动",
     kidsParentIntro: "家长指南——选择孩子的年龄段，然后一起阅读这些讲解。",
-    kidsAgeGroupLabel: "选择年龄段",
+    kidsAgeGroupLabel: "选择年龄段", kidsWhyLabel: "为什么重要",
     glossTitle: "术语表", glossSearch: "搜索术语...",
     balanceSheet: "美联储资产负债表",
     qeLabel: "量化宽松（QE）", qtLabel: "量化紧缩（QT）",

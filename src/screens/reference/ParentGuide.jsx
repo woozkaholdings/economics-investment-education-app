@@ -43,11 +43,16 @@ export default function ParentGuide({ t, lang }) {
 
         <ol style={{ margin: 0, padding: 0, listStyle: "none" }}>
           {content.lessons.map((lesson, i) => (
-            <li key={lesson.en} style={{ display: "flex", gap: space["3"], padding: `${space["3"]}px 0`, borderBottom: `1px solid ${line.hairline}` }}>
+            <li key={lesson.text.en} style={{ display: "flex", gap: space["3"], padding: `${space["3"]}px 0`, borderBottom: `1px solid ${line.hairline}` }}>
               <Text as="span" variant="small" color={ink.muted} style={{ fontWeight: 700, flexShrink: 0 }}>
                 {i + 1}
               </Text>
-              <Text variant="small">{lesson[lang]}</Text>
+              <div>
+                <Text variant="small">{lesson.text[lang]}</Text>
+                <Text variant="small" color={ink.muted} style={{ marginTop: space["1"], fontStyle: "italic" }}>
+                  {t.kidsWhyLabel}: {lesson.why[lang]}
+                </Text>
+              </div>
             </li>
           ))}
         </ol>
