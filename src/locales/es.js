@@ -63,6 +63,8 @@ export default {
     checkTitle: "Comprueba lo aprendido",
     checkIntro: "Una pregunta rápida antes de continuar.",
     reviewTitle: "Repaso",
+    coachMarkPractice: "¡Buen trabajo! Vuelve aquí cuando quieras para repasar lo que aprendiste.",
+    coachMarkDismissLabel: "Cerrar consejo",
     reviewDueTemplate: "{n} para repasar",
     reviewEmptyTitle: "Estás al día",
     reviewEmptyBody: "Las preguntas vuelven aquí uno o dos días después de responderlas, para que se fijen.",

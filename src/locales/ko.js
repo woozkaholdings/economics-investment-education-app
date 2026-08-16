@@ -63,6 +63,8 @@ export default {
     checkTitle: "배운 내용 확인하기",
     checkIntro: "다음으로 넘어가기 전에 간단한 질문입니다.",
     reviewTitle: "복습",
+    coachMarkPractice: "잘했어요! 배운 내용을 복습하려면 언제든 여기로 돌아오세요.",
+    coachMarkDismissLabel: "팁 닫기",
     reviewDueTemplate: "복습할 문제 {n}개",
     reviewEmptyTitle: "모두 복습했습니다",
     reviewEmptyBody: "문제는 답한 뒤 하루이틀 지나 다시 나타나 기억에 남도록 도와줍니다.",

@@ -93,6 +93,17 @@ export function useAppState() {
   const [isFirstVisit] = useState(() => readRaw(KEYS.seenDisclaimer) === null);
   const [showDisclaimer, setShowDisclaimer] = useState(isFirstVisit);
 
+  // A one-time, non-modal pointer at the Practice tab — shown once the
+  // learner has finished their first lesson (so there's actually something
+  // to review) and never again once dismissed, whether by tapping it, its
+  // close control, or the Practice tab itself. Unlike FirstRunNotice this
+  // never blocks interaction; App.jsx only mounts it while the Learn path is
+  // on screen, matching the "teach the next step without a modal" idea from
+  // the 2026-08-15 Quizlet/Vocabulary design review.
+  const [seenPracticeCoachMark, setSeenPracticeCoachMark] = useState(
+    () => readRaw(KEYS.seenPracticeCoachMark) !== null
+  );
+
   // Read after mount rather than during render: the streak depends on today's
   // date, and deriving it lazily would freeze it for the session.
   useEffect(() => { setStreak(loadStreak()); }, []);
@@ -132,6 +143,11 @@ export function useAppState() {
     setShowDisclaimer(false);
   }, []);
 
+  const dismissPracticeCoachMark = useCallback(() => {
+    writeRaw(KEYS.seenPracticeCoachMark, "1");
+    setSeenPracticeCoachMark(true);
+  }, []);
+
   // Called from both the end-of-lesson check and the review queue, so every
   // answer anywhere feeds one schedule.
   const recordReview = useCallback((questionIndex, wasCorrect) => {
@@ -162,6 +178,8 @@ export function useAppState() {
     review, recordReview,
     isFirstVisit,
     showDisclaimer, dismissDisclaimer,
+    showPracticeCoachMark: completedLessons.length > 0 && !seenPracticeCoachMark,
+    dismissPracticeCoachMark,
   };
 }
 

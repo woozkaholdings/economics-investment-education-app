@@ -22,6 +22,7 @@ export const KEYS = {
   review: "ecycles_review",
   analyticsLog: "ecycles_analytics_log",
   legacyLessonIdMigrated: "ecycles_legacy_lesson_id_migrated",
+  seenPracticeCoachMark: "ecycles_seen_practice_coachmark",
 };
 
 export function readRaw(key, fallback = null) {

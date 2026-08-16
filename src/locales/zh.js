@@ -63,6 +63,8 @@ export default {
     checkTitle: "检验所学",
     checkIntro: "继续之前，先来一个小问题。",
     reviewTitle: "复习",
+    coachMarkPractice: "做得好！随时回到这里复习你学过的内容。",
+    coachMarkDismissLabel: "关闭提示",
     reviewDueTemplate: "{n} 题待复习",
     reviewEmptyTitle: "已全部复习完",
     reviewEmptyBody: "题目会在你作答一两天后再次出现，帮助你记牢。",

@@ -72,6 +72,8 @@ export default {
     checkTitle: "Check what you learned",
     checkIntro: "A quick question before you move on.",
     reviewTitle: "Review",
+    coachMarkPractice: "Nice work! Come back here anytime to review what you've learned.",
+    coachMarkDismissLabel: "Dismiss tip",
     reviewDueTemplate: "{n} ready to review",
     reviewEmptyTitle: "You're all caught up",
     reviewEmptyBody: "Questions come back here a day or two after you answer them, so they stick.",

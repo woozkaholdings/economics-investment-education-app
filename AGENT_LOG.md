@@ -8517,3 +8517,131 @@ direction is the problem.
   between review batches, and (Vocabulary) example-sentence content on glossary entries plus a
   persistent bottom action bar on term-detail screens. Any of these would be reasonable next picks if
   the owner wants to continue this design-reference pass.
+
+### 2026-08-16 (scheduled dev-agent) — Practice-tab coach mark, the first named idea from the Quizlet/Vocabulary design review
+
+- **Orient**: `git status` showed only the same long-standing untracked `economic-cycles-v6.jsx` — no
+  uncommitted edits to any tracked file; confirmed against the standing memory note and this file's own
+  "reference/inspiration material only" line before treating it as anything other than the documented
+  fixture. `git log --oneline -15` topped at `eb46ca5` (the prior run's Quizlet/Vocabulary UX pass),
+  matching the environment's reported HEAD — no concurrent session had landed anything since. Read the
+  PRIORITY BLOCK: items 17/24 (lesson content) are exhausted — both §4.3 content clauses (lesson count
+  and minutes) are now met, so a run should not default back to adding or deepening lesson content
+  without naming which clause it moves. Item 18 (completion-rate instrumentation) is blocked on an
+  owner action (a real analytics provider account). The most recent run's own "Next" note named four
+  unbuilt ideas from the design review; picked the first one, the coach-mark tooltip, since it's the
+  smallest-scoped of the four (one new UI element, not a content-authoring pass like the glossary
+  example-sentences idea, and not a bigger structural change like the persistent action bar or batch
+  interstitial) and squarely fits "teach a first interaction without a modal," the framing the design
+  review itself used for it.
+- **What the gap actually is**: the app has a real spaced-repetition Practice/Review tab
+  (`src/screens/Practice.jsx`, wired to `src/lib/review.js`) but nothing in the UI ever tells a learner
+  it exists or why they'd come back to it — the bottom-nav icon and label are the only signal, same as
+  Reference. A first-time visitor is routed straight into Lesson 1 (`App.jsx`'s `isFirstVisit` routing)
+  and reads that one lesson to completion without ever being pointed at the tab that makes the spaced
+  schedule actually work. `FirstRunNotice` (the existing disclaimer dialog) is the only "teach a new
+  user something" pattern in the app today, and it's a blocking modal — not a fit for "hey, this feature
+  exists" the way it is for a required legal notice.
+- **What was done**: a one-time, non-modal pointer bubble aimed at the Practice tab, shown once and
+  never again.
+  1. `src/lib/storage.js` — added `KEYS.seenPracticeCoachMark` (`ecycles_seen_practice_coachmark`),
+     following the same one-flag-per-key pattern every other persisted value here already uses.
+  2. `src/lib/useAppState.js` — added `seenPracticeCoachMark` state (lazy-read from storage, same
+     pattern as `isFirstVisit`) and derived `showPracticeCoachMark = completedLessons.length > 0 &&
+     !seenPracticeCoachMark` — it only has something to say once there's actually a question to review
+     — plus a `dismissPracticeCoachMark` callback that writes the flag and never shows it again on that
+     device.
+  3. `src/App.jsx` — new `PracticeCoachMark` component: a small `role="status"` card (announced to
+     assistive tech via the live region semantics `role="status"` already carries, but never focus-
+     trapping or blocking interaction, unlike `FirstRunNotice`'s `role="dialog"`), fixed above the
+     bottom nav and horizontally centered — which lands it directly over the Practice tab, since it's
+     the middle of three equally-flexed tabs, without needing a ref-measured position. Tapping the
+     bubble's text calls `goToTab("practice")`; a separate small "×" (the `x` icon the prior run added
+     to `Icon.jsx`) dismisses in place without navigating. `goToTab` itself now also calls
+     `dismissPracticeCoachMark()` when the destination is `"practice"`, so navigating there any other
+     way (a future deep link, keyboard nav) still counts as "seen." Only mounted when
+     `!showDisclaimer && showPracticeCoachMark && tab === "learn" && reading === null` — i.e. never
+     stacked on top of the first-run dialog, and only visible on the Learn path view, not mid-lesson or
+     on Practice/Reference themselves.
+  4. `src/locales/{en,es,ko,zh,ja}.js` — two new keys, `coachMarkPractice` (the bubble's message) and
+     `coachMarkDismissLabel` (the × button's `aria-label`), added directly in all five languages rather
+     than English-only-then-backfilled, matching how the prior run's `reviewScoreTemplate` key shipped.
+     Translated by Claude directly (not the `translation-review.mjs` ledger) — that ledger tracks
+     per-lesson body-content review specifically (see `DECISIONS.md`'s "Machine-translated lesson
+     content" entry, scoped to lesson content), not UI microcopy; every other UI string in the app's
+     five locale files (tab labels, button text, etc.) has always been translated the same direct way,
+     so this isn't a new or different risk surface. Matched each language's existing punctuation
+     convention (straight `'`/inverted `¡` in `es.js`, fullwidth `！` in `zh.js`/`ja.js`) rather than
+     defaulting to ASCII, checked against neighboring keys before writing.
+- **Verified**:
+  1. `npm test` (`bash scripts/bootstrap-node.sh`) — `PASS: 0 failure(s), 1 warning(s)` (the same
+     pre-existing translation-review-coverage warning every run reports); `check-blindspot.mjs` — all 6
+     checks `ok`.
+  2. `npm run build` — `vite v6.4.3`, `✓ 65 modules transformed`, no errors. `index` chunk grew 222.78 kB
+     → 225.27 kB (expected — the new component, hook state, and locale keys all ride in the main
+     bundle since `App.jsx` isn't lazy-loaded); every lazy chunk (`Practice`, `LessonReader`,
+     `Reference`, both `lessonContent.*`) byte-for-byte unchanged, confirming the change didn't leak
+     into any chunk it shouldn't have.
+  3. **Live browser verification**, not just build/test: served the static build, and for each check
+     read the actual DOM/localStorage state rather than only looking at a screenshot.
+     - With `ecycles_completed_lessons` seeded to `[1]` and the disclaimer already dismissed: the coach
+       mark rendered on reload, in Chinese after switching `<select>` to `zh` — confirmed via
+       `getBoundingClientRect()` that the bubble's horizontal center (632.5px) exactly matched the
+       Practice tab's own center (632.5px), and screenshotted it to confirm it visually reads as
+       pointing at that tab, not a generic floating banner.
+     - Tapping the bubble's text: confirmed via `document.querySelector('[role=tab][aria-selected=true]').id`
+       that it switched to `tab-practice`, confirmed the bubble was gone from the DOM, and confirmed
+       `localStorage.getItem('ecycles_seen_practice_coachmark') === "1"`.
+     - Reloaded after that: confirmed the bubble does not reappear, on Learn or anywhere else — the
+       one-time behavior actually persists across a fresh page load, not just within one session's
+       React state.
+     - Reset to an undismissed state (`completedLessons=[1]`, flag cleared) and clicked between tabs:
+       confirmed present on Learn, absent on Reference, present again on returning to Learn (case: seen
+       but not yet dismissed keeps showing on the path view, per its own design) — then confirmed the
+       standalone "×" button dismisses in place (`tab-learn` stays selected) and also sets the flag.
+     - Cleared all storage to simulate a brand-new install (`completedLessons` absent/empty): confirmed
+       the coach mark never renders with zero completed lessons, so a user who hasn't finished anything
+       yet never sees "come back to review what you've learned" before there's anything to review.
+     - Switched back to English and re-screenshotted to confirm the English copy and layout both read
+       correctly, not just the Chinese pass used for the position check.
+  4. `git status --short` before committing: only the 8 files listed above modified, plus the same
+     long-standing untracked `economic-cycles-v6.jsx`.
+- **Adversarial self-check**:
+  - *Blindspot register regression*: `git diff --unified=0 -- src/App.jsx src/lib/useAppState.js
+    src/lib/storage.js src/locales/{en,es,ko,zh,ja}.js | grep -iE "dalio|you should (buy|sell|invest)|
+    we recommend|be bullish|be cautious|child|kid.?mode|nowDate|april 2026|will rise|will fall|
+    guaranteed|the fed will|expect the fed|rates will"` matched nothing (grep exit 1). This change adds
+    no lesson content, market copy, or kids framing — it's UI chrome and two new locale strings — but
+    the grep was run anyway per the standing rule.
+  - *DECISIONS.md conflict*: re-read every section header. `.js`-not-JSON content modules — the two new
+    locale keys are plain object properties in the existing `.js` locale files, consistent.
+    localStorage-only state — the new coach-mark flag goes through the same `storage.js` wrapper every
+    other persisted value uses; no backend, no new state category. Machine-translated lesson content —
+    that decision and its ledger are explicitly scoped to lesson body text, not UI microcopy (see "What
+    was done" §4 above); no conflict. Instrumentation (§9.2 minimum event set) — not extended to log a
+    coach-mark-shown/dismissed event; considered it, but the decision's open item is "swap the sink to a
+    real provider," not "grow the event set," so adding a new event type wasn't this run's job to decide
+    unprompted.
+  - *Already-done backlog item*: `grep -in "coach.?mark\|coachmark" AGENT_LOG.md` before this entry
+    returned nothing — the idea was named in the prior run's "Next" note but never built. Not a
+    duplicate.
+  - *Own verification claim*: every check above is a DOM/localStorage read taken mid-run, not an
+    assumption that a CSS rule or callback "should" behave a given way because it looked correct in the
+    source — the center-alignment claim in particular is a measured `getBoundingClientRect()` comparison,
+    not a screenshot eyeballed as "looks centered."
+- **Not touched, and why**: `economic-cycles-v6.jsx` — unrelated, untouched, its untracked status
+  unchanged before and after. No lesson content, glossary entry, or kids blurb was touched — this is
+  UI-only, same scope discipline as the prior run's dual-marker/results-recap pass. Did not build the
+  other three design-review ideas the prior run's note named (glossary example-sentence content,
+  a between-batch review interstitial, a persistent term-detail action bar) — each is either
+  content-authoring-shaped or a bigger structural change than fits one focused run; left for a future
+  pick. Did not add a coach-mark-shown analytics event — see the self-check above.
+- **Next run should pick**: item 18's completion-rate clause remains blocked on an owner action. Of the
+  design review's remaining three ideas, the glossary example-sentence content (Vocabulary) is the next
+  most self-contained — it's a content addition (17 existing glossary terms × 5 languages) rather than a
+  UI-structure change, so a future run should scope it as a content-authoring pass, not assume it's as
+  small as this run's coach mark. The review-batch interstitial and persistent term-detail action bar
+  both touch more of `Practice.jsx`/`Reference.jsx`'s existing structure and are reasonable but larger
+  picks. Item 21 (kids content) also remains open on its own two axes (more blurbs in the current format,
+  or the lesson-shaped-structure question) if a future run prefers content work over more design-review
+  UX passes.

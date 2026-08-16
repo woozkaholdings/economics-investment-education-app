@@ -86,6 +86,59 @@ function FirstRunNotice({ t, onDismiss }) {
   );
 }
 
+// ── Practice coach mark ─────────────────────────────────────────────────
+// A one-time, non-modal pointer at the Practice tab (see useAppState.js).
+// `role="status"` so it's announced to screen readers without stealing
+// focus or trapping it the way FirstRunNotice's dialog does — the point is
+// to introduce the next step, not to block on it.
+function PracticeCoachMark({ t, onOpenPractice, onDismiss }) {
+  return (
+    <div
+      role="status"
+      style={{
+        position: "fixed", zIndex: 150,
+        bottom: "calc(64px + env(safe-area-inset-bottom, 0px) + 10px)",
+        left: "50%", transform: "translateX(-50%)",
+        width: "calc(100% - 32px)", maxWidth: 320,
+      }}
+    >
+      <div
+        style={{
+          display: "flex", alignItems: "flex-start", gap: space["2"],
+          background: surface.card, border: `1px solid ${line.strong}`,
+          borderRadius: radius.md, boxShadow: shadow.overlay,
+          padding: `${space["3"]}px ${space["3"]}px`,
+        }}
+      >
+        <button
+          type="button"
+          onClick={onOpenPractice}
+          style={{ flex: 1, textAlign: "left", background: "none", border: "none", padding: 0, cursor: "pointer" }}
+        >
+          <Text variant="small" color={ink.body}>{t.coachMarkPractice}</Text>
+        </button>
+        <button
+          type="button"
+          onClick={onDismiss}
+          aria-label={t.coachMarkDismissLabel}
+          style={{ flexShrink: 0, background: "none", border: "none", padding: 2, cursor: "pointer", color: ink.muted, display: "flex" }}
+        >
+          <Icon name="x" size="1rem" />
+        </button>
+      </div>
+      {/* Small pointer triangle, aimed at the Practice tab beneath it. */}
+      <div
+        aria-hidden="true"
+        style={{
+          width: 0, height: 0, margin: "0 auto",
+          borderLeft: "7px solid transparent", borderRight: "7px solid transparent",
+          borderTop: `7px solid ${surface.card}`,
+        }}
+      />
+    </div>
+  );
+}
+
 export default function App() {
   const {
     lang, setLang, t,
@@ -93,6 +146,7 @@ export default function App() {
     streak, fontScale, setFontScale, themeMode, setThemeMode,
     review, recordReview,
     isFirstVisit, showDisclaimer, dismissDisclaimer,
+    showPracticeCoachMark, dismissPracticeCoachMark,
   } = useAppState();
 
   // Whole tracks in TRACKS order (money first), so a lesson's index here is
@@ -134,7 +188,10 @@ export default function App() {
     setTab(key);
     setReading(null);   // leaving Learn always exits the reader
     scrollTop();
-  }, [scrollTop]);
+    // Tapping Practice is the coach mark's own suggestion acted on, not a
+    // dismissal of something unwanted — but it's the same "seen it" state.
+    if (key === "practice" && showPracticeCoachMark) dismissPracticeCoachMark();
+  }, [scrollTop, showPracticeCoachMark, dismissPracticeCoachMark]);
 
   const tabs = [
     { key: "learn", label: t.tabLearn, icon: "book" },
@@ -162,6 +219,9 @@ export default function App() {
   return (
     <div style={{ maxWidth: APP_MAX_WIDTH, margin: "0 auto", minHeight: "100vh", background: surface.canvas, display: "flex", flexDirection: "column" }}>
       {showDisclaimer && <FirstRunNotice t={t} onDismiss={dismissDisclaimer} />}
+      {!showDisclaimer && showPracticeCoachMark && tab === "learn" && reading === null && (
+        <PracticeCoachMark t={t} onOpenPractice={() => goToTab("practice")} onDismiss={dismissPracticeCoachMark} />
+      )}
 
       {/* Header — a quiet bar, not a coloured banner. */}
       <header

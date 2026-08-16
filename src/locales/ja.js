@@ -63,6 +63,8 @@ export default {
     checkTitle: "学んだことを確認",
     checkIntro: "次に進む前に、かんたんな質問です。",
     reviewTitle: "復習",
+    coachMarkPractice: "よくできました！学んだことはいつでもここで復習できます。",
+    coachMarkDismissLabel: "ヒントを閉じる",
     reviewDueTemplate: "復習する問題 {n} 問",
     reviewEmptyTitle: "すべて復習済みです",
     reviewEmptyBody: "問題は回答から1〜2日後にまた出てきて、記憶に定着させます。",
