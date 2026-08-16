@@ -390,7 +390,8 @@ means building it twice.
 
 ### 4.6 Falsifiable claims (§9.1)
 
-Written now, while nothing is at stake:
+Written now, while nothing is at stake. **These four are B1–B4 in [`CLAIMS.md`](CLAIMS.md)**, which
+adds the check dates this section never gave them and is where their status is maintained:
 
 - *"People will pay for this content at all."* — **Refuted if** under 3% of active users buy the
   one-time unlock within a month of Phase 1.
@@ -484,6 +485,12 @@ refute it, when you will check. Examples:
 
 When a claim is refuted, the response is a change to the product — **not a softer restatement of the
 claim.** That is what makes this self-refuting rather than self-justifying.
+
+**The live register is [`CLAIMS.md`](CLAIMS.md)** (created 2026-08-16, backlog item 30). It holds all
+14 claims — §4.6's four monetization ones, the product-shape bets this build had made in code without
+ever writing down, distribution, and the process claims — each with a refuting number, an ISO check
+date, and an honest note on whether it is measurable at all today. `npm test` fails on a malformed row
+and warns on a past-due check date; §9.3's audit question 4 reads that output.
 
 ### 9.2 Instrument before launch
 

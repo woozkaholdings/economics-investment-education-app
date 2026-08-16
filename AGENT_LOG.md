@@ -579,8 +579,39 @@ for the history. No open P1/P2 items.
       first number. So widening the English pattern to the plural/multi-number form is required for
       the check to be *correct*, not merely broader. `543fd90` already names this.
 
-30. **[Process] Create the §9.1 falsifiable-claims register (`CLAIMS.md`) — the plan's core discipline,
-    never implemented.** §9.1: "Before building anything significant, write one sentence: what you
+30. **[Process — ✅ DONE 2026-08-16. `CLAIMS.md` + `scripts/check-claims.mjs`, wired into `npm test`.
+    14 claims, 2 of them already refuted by this repo's own history.]**
+    > **Closing update, 2026-08-16.** Built as specified, with one correction to this item's premise:
+    > **"no such artifact exists" was half wrong.** `LAUNCH_PLAN.md` **§4.6 already held four
+    > monetization claims**, each with a refuting number. What they lacked was a **check date** — the
+    > third of §9.1's three parts, and the one that makes a claim self-refuting rather than merely
+    > well-phrased. They are imported as B1–B4 rather than reinvented, and §4.6 now points here.
+    > **What shipped:** 14 claims in four groups — **A1–A6** the product-shape bets this build made in
+    > code and never wrote down (sequential unlocking, the money-first two-track split, five languages,
+    > parent-facing kids content, the Leitner queue, catalogue size), **B1–B4** from §4.6, **C1–C2**
+    > distribution, **D1–D2** process. Each carries a refuting number, an ISO check date, and an honest
+    > measurability verdict.
+    > **The register's most useful output is a concentration, not a claim:** 10 of 14 are unmeasurable
+    > today and nearly all name **item 18**. That reframes item 18 from one blocked backlog line into
+    > the thing keeping most of this project's stated beliefs unfalsifiable.
+    > **D1 and D2 are recorded as already REFUTED**, by evidence from this log: D1 (a run's
+    > self-reported verification can be trusted) failed twice — the §10.1 "closed" claim that was half
+    > done, and item 33's "0 remain" that the item-36 run disproved 67 references later. D2 (a green
+    > `npm test` means the property holds) failed via §16's ko/ja patterns matching 1-of-44 and 1-of-31.
+    > Per §9.1 the response must be a product change, not a softer restatement, so the three changes
+    > those forced are listed in the file (the adversarial self-check, the §16 coverage tripwire, and
+    > this register) — written down specifically so they cannot later be quietly softened.
+    > **`scripts/check-claims.mjs`** fails on a malformed row, a non-ISO check date ("when analytics
+    > land" is rejected by design), a duplicate id, a bad measurability value, or a missing file; it
+    > **warns** on past-due dates, which is what §9.3's audit question 4 reads. All six guards proven by
+    > injection, file restored and green after each. `CLAIMS_TODAY` overrides today's date so the
+    > past-due path is testable and so no date is hardcoded (§2.3).
+    > **Known limit, written into the script's header:** it verifies shape and dates. It cannot verify
+    > that a claim is any good, that a threshold is the right number, or that a status is honest — and
+    > it specifically cannot catch a threshold softened *after* seeing the result, which is the failure
+    > §9.1 actually cares about. That one stays a human duty.
+    *(Original text below.)*
+    §9.1: "Before building anything significant, write one sentence: what you
     believe, the number that would refute it, when you will check." Confirmed 2026-08-16 that **no such
     artifact exists** — `DECISIONS.md` records *why* choices were made and `LAUNCH_READINESS.md` records
     *what is true now*, but nothing records *what we believe and what would prove us wrong by when*.
@@ -606,6 +637,17 @@ for the history. No open P1/P2 items.
     small module so a native shell can ignore or replace it, and no routing library added. If a run
     concludes even that conflicts with item 12, **say so and leave it** — flagging the conflict is a
     legitimate outcome and better than a silent port-cost increase.
+
+37. **[Process — small, found 2026-08-16 by the item-30 run while grounding claim A3] `LAUNCH_READINESS.md`'s
+    translation-coverage figure is stale.** Its §10.4 row reports "currently 100%/100%/100%/100%
+    coverage, 0% human," which was true when the P-4 decision landed 2026-08-11. `npm run
+    review-status` now reports **93% in each language with 3 entries stale** — English lesson text has
+    been edited since those reviews, so the ledger correctly flags drift. The file is not wrong about
+    the *decision*, only about the *number*. Fix is a one-line refresh, but re-run `npm run
+    review-status` for the live figure rather than copying this item's, since it will keep moving.
+    Worth doing alongside item 32's audit, which reads that file. Recorded as the checkable half of
+    claim **A3** in `CLAIMS.md` — the debt is currently drifting the wrong way, which is exactly what
+    that claim's second refutation clause watches.
 
 32. **[Process] Run the §9.3 monthly blindspot audit — it has never been run.** §9.3 specifies one hour,
     first Saturday, five standing questions (the number you avoided looking at; what survives only
@@ -6647,3 +6689,99 @@ a number that was never checked against the thing it described). **Item 34's `<o
 is a clean small pick. Note for the weekly reviewer: **two backlog items are still numbered 34** (the
 `MarketSignals` a11y one and `cbec154`'s "Be the Fed Chair" one) — deliberately not renumbered here
 again, for the reason the item-35 run gave.
+
+### 2026-08-16 (dev-agent run) — `CLAIMS.md`: the §9.1 falsifiable-claims register, plus a check that keeps it honest (backlog item 30)
+
+**Picked** item 30, owner-directed ("do item 30 next") straight after the item-36 run.
+
+**One correction to the item's premise, found by reading the plan rather than the item's summary of
+it.** Item 30 said "no such artifact exists." **§4.6 of `LAUNCH_PLAN.md` already held four monetization
+claims**, each with a refuting number. What they lacked was the **check date** — the third of §9.1's
+three parts, and the one that turns a well-phrased belief into a self-refuting one. So those four are
+imported as **B1–B4** rather than reinvented, with dates added, and §4.6 now points here instead of
+quietly duplicating.
+
+**What shipped — `CLAIMS.md`, 14 claims in four groups:**
+- **A1–A6, the product-shape bets this build made in code and never wrote down** — sequential
+  unlocking, the money-first two-track split, five languages under "(Beta)", parent-facing kids
+  content, the Leitner review queue, catalogue size. Each names the mechanism implementing it, so a
+  refutation points at the thing that would have to change.
+- **B1–B4** from §4.6. **C1–C2** distribution. **D1–D2** process.
+- Each row: refuting number, ISO check date, honest measurability verdict, current status.
+
+**The register's sharpest output is a concentration, not any single row:** **10 of 14 claims are
+unmeasurable today, and nearly all of them name item 18.** That reframes item 18 from one blocked
+backlog line into *the thing keeping most of this project's stated beliefs unfalsifiable* — a stronger
+argument for it than "the §4.3 completion clause needs it."
+
+**Two claims are recorded as already REFUTED, from this log's own evidence.** D1 (a run's
+self-reported verification can be trusted at face value) failed twice: the §10.1 "closed" claim that
+was about half done, and item 33's "0 remain" that the item-36 run disproved 67 references later. D2
+(a green `npm test` means the property it checks holds) failed via §16's ko/ja patterns matching 1 of
+44 and 1 of 31. §9.1 requires the response be a product change rather than a softer restatement, so
+the three changes those forced — the adversarial self-check, the §16 coverage tripwire, and this
+register — are listed in the file explicitly so they cannot later be softened away.
+
+**`scripts/check-claims.mjs`**, wired into `npm test` (also `npm run claims`). Fails on: a malformed
+row, a non-ISO check date, a duplicate id, an unrecognised measurability value, a missing file, or a
+file with no parseable rows. **Warns** on past-due check dates — that warning is what §9.3's audit
+question 4 reads. `CLAIMS_TODAY` overrides "today" so the past-due path is testable and no date is
+hardcoded (§2.3).
+
+**A design choice worth recording:** "when analytics land" is *rejected* as a check date. A blocked
+claim still gets a date — a date to review whether it is still blocked. Open-ended check conditions are
+exactly how a claim goes a quarter unexamined, which is the drift §9.1 exists to prevent.
+
+**Verification.**
+- **All six guards proven by injection**, file restored and green after each: past-due (simulated via
+  `CLAIMS_TODAY=2026-11-01`, all 14 warn), non-ISO date, duplicate id, bad measurability value, wrong
+  cell count, missing file.
+- **`npm test`** — 0 failures across all three checks; the claims line reads `14 claims, 2 refuted,
+  0 past due`. **`npm run build`** — succeeds, bundle unchanged (nothing here is imported by `src/`).
+- **Factual assertions in the register were verified, not inherited from backlog items.** The
+  no-routing claim behind C2 was re-checked directly (no `pushState`, no hash routing, no router
+  dependency); the translation-debt figures came from `npm run review-status`; the 40-lesson/120-minute
+  figure from `LAUNCH_READINESS.md`.
+
+**A real bug caught by reading the output instead of trusting it.** The first version reported "3
+refuted" when there are 2 — the counter used a loose `/refuted/i` substring test, and A4's status
+mentions what *would* follow *if* it were refuted. In a register whose subject is refutation that test
+was always going to over-count. Now anchored to a status that opens with `REFUTED`.
+
+**Adversarial self-check — one finding, already folded in above.**
+1. **Blindspot register** — nothing reintroduced. No Dalio (§10.2). §10.1 is live here and respected:
+   the register discusses conversion and pricing as *business* thresholds, and adds no user-facing
+   content at all — nothing in `src/`, so no reader ever sees it. A4 explicitly records that §10.3 is
+   an owner-held COPPA/store decision and that a refutation there is not a unilateral UI change.
+   `check-blindspot.mjs` passes.
+2. **`DECISIONS.md` conflict** — none. No content-module, storage, routing or build-tool change; this
+   adds a doc and a check. It *complements* `DECISIONS.md` rather than overlapping it, and the file
+   states the division of labour between the three docs so a later run doesn't merge them.
+3. **Already-done backlog item** — item 30 was open. The §4.6 overlap is the one real duplication risk
+   and is handled by importing rather than restating, with a pointer added in the plan.
+4. **Own verification claims** — the "3 refuted" miscount is exactly this check biting: the number was
+   printed, plausible, and wrong. Every guard is now demonstrated by breaking it on purpose rather than
+   asserted from the source.
+
+**Concurrent session — handled without collision, and one alarm worth recording.** Mid-run, `git
+status` showed a **staged deletion of `economic-cycles-v5.jsx`** plus unexplained `.gitignore` and
+`check-blindspot.mjs` edits. Treated as a stop-and-investigate rather than committed around: the file
+was confirmed **present and intact on disk**, and the log's own new note explains it — a **2026-08-16
+owner decision** gitignored both prototypes via `git rm --cached` (untracked, byte-identical working
+copy, content preserved in history). Benign. **Their work was left entirely alone.** While this run was
+writing up, that session committed its own work as `9e2fd3c` ("Record the prototype-disposal decision
+in AGENT_LOG"), which cleared the shared index — so this run's commit is an ordinary one on top of it,
+touching only its own three tracked files plus the two new ones. Their one-line `AGENT_LOG.md` addition
+is theirs, in `9e2fd3c`, and is not re-committed here. The contingency plan had this run committing via
+a temporary index built from `HEAD` to avoid their staged changes; it proved unnecessary and was not
+used. Verified before committing: the diff against the new `HEAD` is three hunks, all this run's.
+
+**Item 18 remains the entire critical path to ending Phase 0** — and this run sharpened why: it is now
+the named blocker on 10 of the 14 claims in the register. Blocked on the owner creating a PostHog
+account and supplying its key.
+
+**Next run should pick**: **item 32** (the §9.3 monthly blindspot audit — its stated dependency on item
+30 is now satisfied, its next first-Saturday date is **2026-09-05**, which is also the check date on
+seven claims, so the two rituals now coincide by construction), or **item 34's `<ol>`/`<ul>` a11y
+call** as a small pick. Also newly filed: **item 37**, `LAUNCH_READINESS.md`'s stale translation-
+coverage figure (reports 100%, actual 93% with 3 stale).
