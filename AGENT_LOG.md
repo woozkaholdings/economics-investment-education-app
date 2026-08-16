@@ -8738,3 +8738,100 @@ direction is the problem.
   a real UI-structure change, not assume it's as small as this run's content addition. Item 21 (kids
   content, its two open axes) and item 18 (blocked on an owner action) remain open as alternatives if a
   future run prefers not to continue the design-review pass.
+
+### 2026-08-16 (scheduled dev-agent, third run this date) — Practice review-batch interstitial, the design review's last un-scoped idea
+
+- **Orient**: `git status` showed only the same long-standing untracked `economic-cycles-v6.jsx` — no
+  uncommitted edits to any tracked file; cross-checked against the standing memory note and this file's
+  own "reference/inspiration material only" line before treating it as anything but the documented
+  fixture. `git log --oneline -3` topped at `291264c` (the prior run's glossary example-sentences pass),
+  matching the environment's reported HEAD — no concurrent session had landed anything since. Read the
+  PRIORITY BLOCK (items 17/24 exhausted, item 18 blocked on an owner action) and the prior run's own
+  "Next run should pick" note, which named two remaining design-review ideas — a low-pressure interstitial
+  between Practice review batches, and a persistent term-detail action bar on Reference entries — both
+  flagged as larger, structure-touching picks. Read `src/screens/reference/Glossary.jsx` first to scope
+  the action-bar idea: the Glossary is a single flat scrolling list with no per-term detail screen or
+  routing today, so a "persistent bottom action bar on term-detail screens" would first require building
+  a term-detail screen that doesn't exist — a materially bigger change than fits one focused run. The
+  batch-interstitial idea, by contrast, only touches `Practice.jsx`'s existing session/position state
+  machine, which already has a "session complete" screen to reuse for an early-stop path — picked this
+  one as the more contained of the two.
+- **What the gap actually is**: `Practice.jsx`'s "practice all questions" button starts a single session
+  over the full `quizData` set — currently 42 questions — with no natural stopping point until the end.
+  The only way out mid-session is closing the tab, which drops the in-progress `results` recap silently.
+  The design review named this as its "low-pressure interstitial between batches" pattern: pause every
+  so often with an explicit, guilt-free choice to continue or stop, rather than one long queue the
+  learner has to either finish or abandon.
+- **What was done**: a `BATCH_SIZE = 10` constant in `Practice.jsx`. The existing "Next" button's
+  `onClick`, which previously always called `advance(position + 1)`, now checks whether the question just
+  answered completes a batch (`(position + 1) % BATCH_SIZE === 0`) and isn't the session's last question;
+  if so, it sets a new `atBatchPause` state instead of advancing. A new render branch (checked before the
+  existing "session complete" `!item` branch) shows a pause screen — reusing the same check-icon Card
+  pattern as the completion screen, with a live `results.length`/correct-count line (new locale key
+  `reviewBatchTitle`, reusing the existing `reviewScoreTemplate`) — with two buttons: "Keep going"
+  (`reviewKeepGoing`, clears the pause and advances to the next question, same as the old unconditional
+  path) and "Stop here for now" (`reviewStopHere`, clears the pause and jumps `position` straight to
+  `session.length`, which lands on the *existing* completion branch — no new results/recap UI needed,
+  it's the same screen every session-end already used, now reachable early with a partial `results`
+  array). Three new locale keys per language (`reviewBatchTitle`, `reviewKeepGoing`, `reviewStopHere`)
+  added to all 5 `src/locales/*.js` files, directly translated following the same pattern every other
+  key in this file already uses (no `translation-review.mjs` scope change — that ledger is lesson-body
+  content only, not UI microcopy, same reasoning the prior two runs' entries recorded for their own new
+  keys).
+- **Verified**:
+  1. `npm test` — `PASS: 0 failure(s), 1 warning(s)` (the same pre-existing translation-review-coverage
+     warning every run reports); `check-blindspot.mjs` — all 6 checks `ok`.
+  2. `npm run build` — `vite v6.4.3`, `✓ 65 modules transformed`, no errors. `Practice` chunk grew from
+     3.9 kB to 4.74 kB (new branch + constant); every other chunk unchanged in shape (`Reference` still
+     62.84 kB, matching the prior run's post-build figure — confirms this run touched nothing there).
+  3. **Live browser verification**, not just build/test: served the static build (the documented
+     `vite build` + `python3 -m http.server 8763` technique), drove the DOM directly via
+     `javascript_tool` per the documented click/screenshot-unreliability fallback (`read_page` again
+     reported `Viewport: 0x0` this run — confirmed the fallback is still needed, not a one-off). Started
+     "practice all" (42 questions), answered through questions 1-10 one at a time (`[role=radio]` click,
+     confirm feedback text, click "다음"/Next, confirm the header's `N / 42` counter advanced by exactly
+     one each time — caught and worked around a stray still-running background async loop from an earlier
+     failed automation attempt that had double-advanced the count once mid-run, by re-synchronizing on a
+     stable read before continuing manually). At question 10/10 (`position + 1 === 10`), clicking Next
+     produced the pause screen — read `document.querySelector('main').innerText`, confirmed it showed
+     "10개 완료 — 잘하고 있어요" / "10개 중 2개 정답" (Korean; the browser's persisted `ecycles_lang` was
+     already `ko` from a prior run's testing) and both buttons, not the raw next question. Tested **both**
+     exits from the pause screen, each from a fresh 42-question session: "여기서 멈추기" (Stop here) landed
+     on the completion screen with exactly the 10 answered questions in the recap list and the correct
+     2/10 score — confirming the early-exit path reuses the existing completion UI correctly with a
+     partial, not full, `results` array; "계속하기" (Keep going) advanced to question 11/42 unanswered —
+     confirming the session correctly resumes past the batch boundary rather than treating the pause as a
+     terminal state.
+  4. `git status --short` before committing: only the 6 files listed above modified, plus the same
+     long-standing untracked `economic-cycles-v6.jsx`.
+- **Adversarial self-check**:
+  - *Blindspot register regression*: `git diff --unified=0 -- src/screens/Practice.jsx src/locales/{en,
+    es,ko,zh,ja}.js | grep -iE "dalio|(you should (buy|sell|invest))|we recommend|be bullish|be cautious|
+    child|kid.?mode|nowDate|april 2026|will rise|will fall|guaranteed|the fed will|expect the fed|rates
+    will"` matched nothing (grep exit 1), with every alternation parenthesized correctly from the start
+    this time (a prior run's entry flagged getting this wrong once). This change is UI/state-machine
+    chrome plus three short button/heading strings — no lesson content, market copy, or kids framing
+    touched.
+  - *DECISIONS.md conflict*: re-read every section header. `.js`-not-JSON content modules — the three new
+    keys are plain object properties in the existing `.js` locale modules, consistent. localStorage-only
+    state — `atBatchPause` is component-local `useState`, reset on `start`/`exit` exactly like `results`
+    and `answered` already are; nothing new persisted to `localStorage`. No conflict.
+  - *Already-done backlog item*: `grep -in "batch interstitial\|BATCH_SIZE\|atBatchPause\|review-batch"
+    AGENT_LOG.md` before this entry only matched prior runs' "Next" notes naming the idea as unbuilt, not
+    an implementation. Not a duplicate.
+  - *Own verification claim*: the 10-question walk-through above is a real DOM read of the rendered pause
+    screen's text and both button labels, not an assumption that `(position + 1) % BATCH_SIZE === 0`
+    "should" fire correctly because the arithmetic looked right in the diff — and both exits (Stop here,
+    Keep going) were independently driven end-to-end from fresh sessions, not inferred from one path
+    working. The mid-verification background-loop glitch is recorded above rather than silently
+    smoothed over, per the standing rule that this step must say what it found.
+- **Not touched, and why**: `economic-cycles-v6.jsx` — unrelated, untouched. Did not build the persistent
+  term-detail action bar — see "Orient" above for why it's a bigger change (no term-detail screen exists
+  yet to attach a bar to). Did not add a batch-pause analytics event — no existing `EVENTS` entry covers
+  it, and item 18's own note says the open question is swapping the sink to a real provider, not growing
+  the event set, same reasoning the prior two runs recorded for their own new UI surfaces.
+- **Next run should pick**: the persistent term-detail action bar is now the last unbuilt idea from the
+  Quizlet/Vocabulary design review, and it's a real structural change — building a term-detail screen
+  (routing from the Glossary list into a per-term view) before the action bar itself makes sense on it.
+  A future run should scope that as its own multi-part item rather than assume it fits one pass. Item 21
+  (kids content, its two open axes) and item 18 (blocked on an owner action) remain open alternatives.

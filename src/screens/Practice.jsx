@@ -21,6 +21,13 @@ import Question from "../components/Question.jsx";
 import { Button, Card, Disclaimer, ProgressBar, Text } from "../components/ui.jsx";
 import { ink, line, space } from "../theme.js";
 
+// A straight-through 40-question "practice all" session has no natural stop.
+// Pausing every BATCH_SIZE questions with an explicit "keep going or stop
+// here" choice turns that into a series of small, exitable commitments —
+// the review's "low-pressure interstitial" idea — instead of one long queue
+// the learner has to either finish or abandon mid-question.
+const BATCH_SIZE = 10;
+
 export default function Practice({ t, lang, review, recordReview }) {
   // Frozen when a session starts: answering mutates `review`, and a live queue
   // would drop the current question out from under the learner mid-answer.
@@ -31,18 +38,58 @@ export default function Practice({ t, lang, review, recordReview }) {
   // Results" button (t.quizFinish) has always promised a results view; this
   // is what it now shows instead of a bare checkmark.
   const [results, setResults] = useState([]);
+  // True right after finishing a batch of BATCH_SIZE questions, before the
+  // learner has chosen whether to continue.
+  const [atBatchPause, setAtBatchPause] = useState(false);
 
   const due = useMemo(() => dueQuestions(review, quizData), [review]);
   const seen = seenCount(review);
 
-  const start = (items) => { setSession(items); setPosition(0); setAnswered(false); setResults([]); };
-  const exit = () => { setSession(null); setPosition(0); setAnswered(false); setResults([]); };
+  const start = (items) => { setSession(items); setPosition(0); setAnswered(false); setResults([]); setAtBatchPause(false); };
+  const exit = () => { setSession(null); setPosition(0); setAnswered(false); setResults([]); setAtBatchPause(false); };
   const advance = (to) => { setPosition(to); setAnswered(false); };
 
   // ── in a session ────────────────────────────────────────────────────────
   if (session) {
     const item = session[position];
     const last = position === session.length - 1;
+
+    if (atBatchPause) {
+      const correctCount = results.filter((r) => r.correct).length;
+      return (
+        <div>
+          <Text as="h1" variant="display" color={ink.strong}>{t.reviewTitle}</Text>
+          <Card style={{ marginTop: space["5"], textAlign: "center" }}>
+            <div style={{ display: "flex", justifyContent: "center", color: ink.ok, marginBottom: space["3"] }}>
+              <Icon name="check" size="2rem" strokeWidth={2.2} />
+            </div>
+            <Text variant="heading" color={ink.strong}>
+              {t.reviewBatchTitle.replace("{n}", results.length)}
+            </Text>
+            <Text variant="small" color={ink.muted} style={{ marginTop: space["1"] }}>
+              {t.reviewScoreTemplate.replace("{correct}", correctCount).replace("{total}", results.length)}
+            </Text>
+          </Card>
+
+          <Button
+            full
+            iconRight="arrowRight"
+            onClick={() => { setAtBatchPause(false); advance(position + 1); }}
+            style={{ marginTop: space["4"] }}
+          >
+            {t.reviewKeepGoing}
+          </Button>
+          <Button
+            full
+            variant="outline"
+            onClick={() => { setAtBatchPause(false); setPosition(session.length); }}
+            style={{ marginTop: space["3"] }}
+          >
+            {t.reviewStopHere}
+          </Button>
+        </div>
+      );
+    }
 
     if (!item) {
       const correctCount = results.filter((r) => r.correct).length;
@@ -132,7 +179,13 @@ export default function Practice({ t, lang, review, recordReview }) {
           <Button
             full
             iconRight={last ? undefined : "arrowRight"}
-            onClick={() => advance(last ? session.length : position + 1)}
+            onClick={() => {
+              if (last) { advance(session.length); return; }
+              // Pause between batches only when there's a next batch left to
+              // pause before — never on the very last question of a session.
+              if ((position + 1) % BATCH_SIZE === 0) { setAtBatchPause(true); return; }
+              advance(position + 1);
+            }}
             style={{ marginTop: space["4"] }}
           >
             {last ? t.quizFinish : t.quizNext}
