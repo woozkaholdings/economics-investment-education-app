@@ -179,7 +179,7 @@ for the history. No open P1/P2 items.
 >   a live browser before deleting (`counterReset: "principle 0"` with `counterIncrement: none` and
 >   `::before` content `none`), and the rendered list was byte-identical afterward. See run log — it also
 >   records an adjacent question this run deliberately did **not** decide (the list is an `<ol>` whose
->   content is unordered), left as item 33 below.
+>   content is unordered), left as item 34 below (filed as 33, renumbered to 34 — see that item).
 > - ~~`Settings.jsx`'s `ChoiceRow` radiogroup using Tab-per-option rather than the ARIA APG
 >   roving-tabindex pattern.~~ **✅ DONE 2026-08-16.** Confirmed live before fixing (all 7 radios were tab
 >   stops; arrow keys did nothing), then implemented roving tabindex + arrow/Home/End selection. See run
@@ -282,8 +282,9 @@ for the history. No open P1/P2 items.
 > each names the plan clause it serves. They are listed in the reviewer's value order; a run is free to
 > disagree, but should say why in its entry. **Pick from here, not from the previous run's note.**
 
-33. **[Content — PRIORITY, a shipped correctness bug in four languages] The 2026-08-14 lesson-id
-    renumbering missed every non-English in-prose cross-reference, and the lowercase English ones.**
+33. **[Content — ✅ FULLY DONE 2026-08-16. Both halves fixed; a permanent regression check now guards it.]
+    The 2026-08-14 lesson-id renumbering missed every non-English in-prose cross-reference, and the
+    lowercase English ones.**
     Found 2026-08-16 while building item 27's lesson-27 visual: the prose read "a different pattern from
     sunk cost (lesson 31, throwing good money after bad)" — but lesson 31 is now *Productivity Growth*,
     and sunk cost is lesson 19. The reference was a pre-renumbering id.
@@ -291,22 +292,41 @@ for the history. No open P1/P2 items.
       28). The renumbering run's regex matched capital `Lesson N` only, so lowercase mentions survived
       untouched. Each fix was confirmed by title match, not by arithmetic alone. Zero lowercase
       references remain in English.
-    - **Non-English half: OPEN, and it is the bigger one. 62 stale references across es/ko/zh/ja.**
-      The renumbering entry states the cross-references are "English only — the other four languages
-      don't carry these references." **That is false.** The four languages carry **77** numbered
-      references (`Lección N`, `레슨 N`, `第N课`, `レッスンN`), of which **62 do not match any English
-      reference in the same lesson**, and they are stale in a completely regular way — e.g. lesson 6's
-      English says Lesson 3 while its es and zh say 15; lesson 7's English says 6 while es/zh say 18;
-      lesson 8's English says 2 while es/zh say 14. Every one is the **old** id.
-    - **The mapping is exact and mechanical**, so this is a scripted fix, not a retranslation:
-      **old money 13–40 → new = old − 12**, **old economy 1–12 → new = old + 28.**
-    - **How to verify** (the method that found it): for each lesson, extract the numbered references per
-      language and compare against that lesson's English references — they should agree. A run should
-      also add this as a permanent check in `scripts/check-data.mjs` so the next renumbering cannot
-      reintroduce it silently; that check is arguably more valuable than the one-time fix.
-    - **Impact:** an es/ko/zh/ja reader following an in-lesson cross-reference is sent to the wrong
-      lesson. It has been shipping since 2026-08-14. Note this is exactly the failure mode item 24's
-      compression warned about — ids quoted anywhere that predate the renumbering are not to be trusted.
+    - **Non-English half: ✅ FIXED 2026-08-16 (later run this date). The count was higher than this item
+      estimated — 74 stale references, not 62.** The renumbering entry states the cross-references are
+      "English only — the other four languages don't carry these references." **That was false.** The
+      four languages carry **77** numbered references (`Lección N`, `레슨 N`, `第N课`, `レッスンN`), of
+      which **74 did not match any English reference in the same lesson**, and they were stale in a
+      completely regular way — e.g. lesson 6's English says Lesson 3 while its es and zh said 15;
+      lesson 7's English says 6 while es/zh said 18. Every one was the **old** id. The 62-vs-74 gap is
+      a counting difference, not a content difference: 74 is a per-occurrence count over all five
+      surface forms (a single lesson often repeats one reference two or three times), spread across 64
+      distinct translated strings. **All 74 are now correct; 0 remain.**
+    - **The mapping is exact and mechanical**, so this was a scripted fix, not a retranslation:
+      **old money 13–40 → new = old − 12**, **old economy 1–12 → new = old + 28.** Every one of the 74
+      resolved under it — zero unresolved, zero needing judgement.
+    - **The 3 non-English references that were already correct were left alone** (lesson 35's es/zh
+      `Lección 39`/`第39课`, which match the English). The fix only rewrote a number when it was absent
+      from that lesson's English reference set *and* its mapped value was present — so it could not
+      "fix" a correct reference into a wrong one.
+    - **✅ Permanent check added** (§16 of `scripts/check-data.mjs`), which this item correctly called
+      more valuable than the one-time fix: every non-English numbered reference must appear in the same
+      lesson's English reference set. Deliberately asymmetric — a translation may carry **fewer**
+      references than English (several legitimately condense and drop one), but never a *different* one.
+      Also fails if English references a nonexistent lesson id. Proven to catch the real bug by
+      re-injecting it in all four languages (es `Lección 19`→`31`, and zh/ko/ja `37`→`9`) and confirming
+      `npm test` failed each time, then restoring.
+    - **Impact:** an es/ko/zh/ja reader following an in-lesson cross-reference was sent to the wrong
+      lesson, for two days. Note this is exactly the failure mode item 24's compression warned about —
+      ids quoted anywhere that predate the renumbering are not to be trusted.
+    - **What this says about the translation-review ledger, worth carrying forward:** `DECISIONS.md`'s
+      2026-08-13 entry records an AI review pass over all 40 lessons × es/ko/zh/ja "checking
+      faithfulness," and marks 160/160 pairs reviewed (100% coverage, 0% human). That pass did **not**
+      catch these 74 wrong references, in 20 different lessons. This is not a reason to redo the pass —
+      it is concrete evidence for the caveat that entry already states, that AI review has correlated
+      blind spots. The useful generalization: **a mechanical, checkable property should get a script in
+      `check-data.mjs`, not a reviewer's attention.** The ledger was deliberately not touched by this
+      run (its hash tracks *English* source drift, and no English changed here).
 
 
 27. **[Content/UX — PRIORITY, the highest-value open item] Lesson visuals for the money track.
@@ -394,7 +414,9 @@ for the history. No open P1/P2 items.
     Write the result as `reviews/YYYY-MM-DD-monthly-audit.md` and update §10 per the plan. Depends on
     item 30 for question 4 (there are no claims with check dates yet to be past).
 
-33. **[A11y — small, but a judgment call, which is why it is here and not just done] `MarketSignals.jsx`'s
+34. **[A11y — small, but a judgment call, which is why it is here and not just done] `MarketSignals.jsx`'s
+    (renumbered from 33 → 34 on 2026-08-16: two different items were both filed as "33" by two runs the
+    same day — the content bug above and this one. This is the a11y one.)
     "Key Principles" list is an `<ol>` whose content is not ordered.** Noticed 2026-08-16 while removing
     that element's dead `counterReset` (W-4's last item). The element is
     `<ol style={{ listStyle: "none" }}>` and each `<li>` renders a hardcoded, `aria-hidden` em-dash marker
@@ -5841,3 +5863,99 @@ direction is the problem.
   **item 29** (the non-owner-blocked half of item 18's instrumentation), or the small **item 33** above.
   Item 18 remains the entire critical path to ending Phase 0, blocked on an owner action (analytics provider
   account) — flagging again per the block's standing instruction.
+
+### 2026-08-16 — Fix 74 stale es/ko/zh/ja lesson cross-references, and add a check so a renumbering can't do it again (item 33's non-English half)
+
+- **What was done**: two things, and the second is the more valuable one.
+  (1) Rewrote **74 stale numbered lesson cross-references across es/ko/zh/ja**, in 64 distinct
+  translated strings across 20 lessons, from their pre-2026-08-14 ids to the current ones.
+  (2) Added **§16 to `scripts/check-data.mjs`**: every non-English numbered reference must appear in the
+  same lesson's English reference set. Item 33 itself argued the check is worth more than the one-time
+  fix, and that is right — the fix is a one-day repair, the check is why it stays repaired.
+- **Why this item over item 27 (the backlog's stated top priority)**: 27 is the higher-value *feature*
+  work, but this was a **correctness bug already shipping to users** in four of five languages, and the
+  previous run had just filed it as PRIORITY with the mapping worked out. A reader tapping a
+  cross-reference was being sent to a real but wrong lesson — silent, and invisible to every existing
+  check. Fixing a shipped wrong-content bug outranks adding a diagram.
+- **Verified the claim before acting, and it was understated.** Item 33 estimated 62 stale references;
+  an independent audit (extract per-language references per lesson, compare against that lesson's
+  English set) found **77 total non-English references, 74 of them stale** — the gap is a counting
+  difference, not a content difference (74 counts every occurrence; a lesson often repeats one
+  reference two or three times). The mapping (old money 13–40 → −12, old economy 1–12 → +28) resolved
+  **all 74, with zero unresolved** — strong evidence it really is mechanical.
+- **Not fixed by arithmetic alone.** Every rewrite was checked to land on a lesson whose *title matches
+  what the surrounding prose says*, and four were read in full context across three languages:
+  ko lesson 32's "채권을 직접 매입" (buying bonds directly) → Lesson 37 *QE & QT* ✅; zh lesson 38's
+  "利率传导机制" (rate-transmission mechanism) → Lesson 35 *Interest Rates* ✅; es lesson 20's "desde el
+  lado de los préstamos" (from the lending side) → Lesson 33 *Long-Term Debt Cycle* ✅; es lesson 9's
+  inflation definition → Lesson 32 ✅.
+- **The 3 already-correct references were left alone**, deliberately: lesson 35's es/zh `Lección 39`/
+  `第39课` match the English. The rewrite only fired when a number was **absent** from the lesson's
+  English set **and** its mapped value was **present**, so it structurally could not corrupt a correct
+  reference. (Lesson 35's es/zh also carry *fewer* references than the English — a condensed
+  translation dropping one. That is a translation-completeness question, not a wrong-link bug, and was
+  left out of scope rather than silently "fixed".)
+- **Proved only the numbers changed**, rather than asserting it: normalized both the `HEAD` and working
+  -tree versions of `lessonContent.money.js` and `lessonContent.economy.js` by blanking the numeric part
+  of every reference in all five surface forms, then compared — **byte-identical**. So no translated
+  prose was altered, reflowed, or re-escaped. (The first attempt at this check used `perl` and produced
+  false "other changes" on accented `Lección`: the pattern `[oó]` compiled as three single *bytes*
+  while `ó` is two bytes in UTF-8, so accented forms never matched. Redone in node with real Unicode
+  regexes. Recorded because the byte-vs-character trap will bite the next run that greps this content.)
+- **The new check is proven to catch the real bug, not just to pass.** Re-injected the original defect in
+  each language — es `Lección 19`→`31`, and zh `第37课`/ko `레슨 37`/ja `レッスン37`→`9` — and confirmed
+  `npm test` **failed** each time with a message naming the file, language, wrong lesson and its title,
+  then restored the files and confirmed PASS. (The injection itself hit the same byte-vs-character trap;
+  the CJK edits only landed once the `perl -CSD` flag was dropped so both sides were raw bytes.)
+- **Verified live in a browser per W-1** (`dist/` on `127.0.0.1:8801`, the Environment note's technique,
+  which worked verbatim in this unattended scheduled run — a third confirmation): unlocked all 40 lessons
+  via `localStorage`, switched to Spanish, opened lesson 20 and read the rendered text — **"Lección 33"**
+  and **"Lección 19"**, both correct, in the right sentences. Switched to Korean, opened lesson 32 —
+  **"레슨 37"** in the bond-buying sentence, correct. Cross-checked the app's own rendered lesson list to
+  confirm 33 = *El Ciclo de Deuda a Largo Plazo* and 19 = *Tirar Dinero Bueno Detrás del Malo*, i.e. the
+  numbers now resolve to the lessons the prose describes.
+- **`npm test`** — 0 failures, 1 warning; **`npm run build`** — succeeds, `lessonContent.money` at
+  **499.32 kB**, still under item 17's 500 kB caution (marginally *smaller* than the previous 499.36 kB,
+  since several ids got shorter).
+- **A pre-existing warning that is NOT from this run, checked rather than assumed**: `npm test` reports
+  "3 stale" per language in the translation-review coverage line. The stale lessons are **5, 27 and 28** —
+  exactly the three whose *English* text the previous commit (`1e6af79`) edited. `englishSourceHash()`
+  hashes English fields only, so this run's non-English-only edits cannot have caused it, and it was
+  already present at `HEAD` before this run started. Left for whoever re-marks the ledger; not silently
+  absorbed into this run's numbers.
+- **Adversarial self-check**: (1) **Blindspot register** — no new prose was written at all; only integers
+  inside existing sentences changed, so no §10.1 advice-adjacency, §10.2 Dalio, §10.3 kids-framing or
+  §2.3 date/live-figure surface was touched. `check-blindspot.mjs` passes all six checks including the
+  per-language §10.1 patterns. (2) **`DECISIONS.md`** — read the "Machine-translated lesson content"
+  and "Content as `.js` modules" entries specifically: this run changes no content *shape*, adds no
+  persistence, writes no JSON, and does not touch the review ledger, so nothing conflicts. (3)
+  **Already-done backlog item** — item 33's non-English half was explicitly OPEN, filed hours earlier by
+  the previous run, and the 2026-08-14 renumbering only ever touched capital-`Lesson N` English strings,
+  so this is not a redo or a partial undo of it. (4) **Reproducibility** — every number above comes from
+  a script an independent reviewer can re-run; the "it's fixed" claim rests on a re-audit returning 0,
+  the "the check works" claim rests on injected faults actually failing the build, and the "nothing else
+  changed" claim rests on a normalized byte comparison, not on reading the diff. **One real conflict was
+  found and it changed the entry, not the code**: the initial draft of this write-up reported item 33's
+  own figure of 62 stale references; the audit says 74. Reporting 62 would have been repeating a number
+  rather than measuring one, which is the exact fault W-1 was written about — corrected to 74 with the
+  discrepancy explained in the backlog item.
+- **Housekeeping**: two different backlog items had both been filed as **33** by two runs on the same
+  date. The a11y `<ol>`/`<ul>` one is **renumbered to 34**, with a note on the item and on the W-4 bullet
+  that points at it. The content bug keeps 33.
+- **Something worth carrying forward, recorded in item 33**: `DECISIONS.md`'s 2026-08-13 AI translation
+  review marked **160/160 lesson/language pairs reviewed for faithfulness (100% coverage)** — and did not
+  catch these 74 wrong references in 20 lessons. That is not a reason to redo the pass; it is concrete
+  evidence for the caveat that entry already carries about correlated AI blind spots. The generalization
+  worth keeping: **a mechanical, checkable property belongs in `check-data.mjs`, not in a reviewer's
+  attention.** §16 is that lesson applied to this specific bug.
+- **Not touched, and why**: `economic-cycles-v6.jsx` — untracked, not this agent's file, left completely
+  alone (`git status` re-checked before every stage; `HEAD` stayed at `1e6af79` throughout, so unlike the
+  last three runs there was no concurrent session to work around). No lesson was added, deepened, or
+  re-translated; no English text changed anywhere.
+- **Next run should pick**: **item 27 (lesson visuals for the money track)** — the refilled backlog's
+  stated top priority, partly started by another session (`src/content/moneyVisuals.js` and the lesson-27
+  visual are now committed, so check what already exists before adding more). Good independent
+  alternatives: **item 28** (glossary links from lesson text, §3.0.3 unmet) or **item 29** (the
+  non-owner-blocked half of item 18's instrumentation — event payloads). **Item 18 remains the entire
+  critical path to ending Phase 0 and is blocked on an owner action** (creating an analytics provider
+  account) — flagging again per the standing instruction.

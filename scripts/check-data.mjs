@@ -734,5 +734,88 @@ for (const [label, moduleExports] of Object.entries(CONTENT_MODULES)) {
     Object.fromEntries(Object.entries(out).map(([k, v]) => [k, v.value])));
 }
 
+// 16. In-prose lesson cross-references ("...see Lesson 32") must point at the
+//     same lesson in every language. This exists because of a real shipped
+//     bug (backlog item 33): the 2026-08-14 lesson-id renumbering rewrote
+//     English references with a regex that matched capital "Lesson N" only,
+//     so lowercase English mentions and *every* non-English mention kept
+//     their pre-renumbering ids. 74 references across es/ko/zh/ja pointed at
+//     the wrong lesson for two days, silently — nothing in the app or the
+//     build can notice a link that resolves to a real-but-wrong lesson.
+//
+//     The check is deliberately asymmetric: a translation may carry FEWER
+//     references than English (several are condensed and legitimately drop
+//     one), but every number it does carry must appear in that lesson's
+//     English reference set. That is the property a renumbering breaks, and
+//     it needs no per-language translation judgement to verify.
+{
+  // Per-language surface forms of "Lesson N". Capture group 1 is the number.
+  const REF_PATTERNS = {
+    en: /\bLessons?\s+(\d+)/gi,
+    es: /\bLecci[óo]n(?:es)?\s+(\d+)/gi,
+    ko: /레슨\s*(\d+)/g,
+    zh: /第\s*(\d+)\s*课/g,
+    ja: /レッスン\s*(\d+)/g,
+  };
+
+  const lessonTitle = new Map(lessons.map((l) => [l.id, l.title.en]));
+
+  const refsIn = (text, lang) => {
+    if (!text) return [];
+    const re = new RegExp(REF_PATTERNS[lang].source, REF_PATTERNS[lang].flags);
+    const out = [];
+    let m;
+    while ((m = re.exec(text))) out.push(Number(m[1]));
+    return out;
+  };
+
+  // Every translated prose field of a lesson, as [path, languageMap] pairs.
+  const proseFields = (entry, id) => {
+    const fields = [];
+    (entry.sections ?? []).forEach((sec, i) => {
+      if (sec.heading) fields.push([`lessonContent[${id}].sections[${i}].heading`, sec.heading]);
+      if (sec.body) fields.push([`lessonContent[${id}].sections[${i}].body`, sec.body]);
+    });
+    if (entry.takeaway) fields.push([`lessonContent[${id}].takeaway`, entry.takeaway]);
+    if (entry.thinkAbout) fields.push([`lessonContent[${id}].thinkAbout`, entry.thinkAbout]);
+    return fields;
+  };
+
+  for (const [idKey, entry] of Object.entries(lessonContent)) {
+    const id = Number(idKey);
+    const fields = proseFields(entry, id);
+
+    // The lesson's English references, pooled across all its prose fields —
+    // pooled rather than per-field because translations routinely move a
+    // reference into a different section or into the takeaway.
+    const englishRefs = new Set(fields.flatMap(([, map]) => refsIn(map.en, "en")));
+
+    // An English reference to a lesson that doesn't exist is its own bug.
+    for (const n of englishRefs) {
+      if (!lessonTitle.has(n)) {
+        fail(`lessonContent[${id}]: English prose references "Lesson ${n}", which is not a real lesson id`);
+      }
+    }
+
+    for (const [path, map] of fields) {
+      for (const lang of LANGS) {
+        if (lang === "en") continue;
+        for (const n of refsIn(map[lang], lang)) {
+          if (englishRefs.has(n)) continue;
+          const expected = [...englishRefs].sort((a, b) => a - b);
+          fail(
+            `${path}.${lang}: references lesson ${n} ("${lessonTitle.get(n) ?? "no such lesson"}"), ` +
+              `which the English text of lesson ${id} never references — ` +
+              `its English references are [${expected.join(", ") || "none"}]. ` +
+              `A translated cross-reference must point at the same lesson as the English it mirrors ` +
+              `(this is how the 2026-08-14 renumbering left 74 stale references in es/ko/zh/ja; ` +
+              `see AGENT_LOG.md item 33).`,
+          );
+        }
+      }
+    }
+  }
+}
+
 console.log(`\n${failures === 0 ? "PASS" : "FAIL"}: ${failures} failure(s), ${warnings} warning(s).`);
 process.exit(failures === 0 ? 0 : 1);
