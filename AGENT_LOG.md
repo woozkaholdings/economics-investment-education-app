@@ -104,7 +104,22 @@ for the history. No open P1/P2 items.
 > 2026-08-16 (twelfth run this date, live browser).** Both work correctly as built; no bug found. See run
 > log for full detail.
 >
-> **W-2. PRIORITY — refill the backlog. Direction is currently coming from run-log notes, not from here.**
+> **W-2. ✅ REFILL DONE 2026-08-16 (owner-requested, weekly reviewer) — six new items, 27–32, derived
+> from the launch plan and listed above items 24/17. The standing rule below still applies.**
+> **What was added and why it is not more of the same:** each item names the §-clause it serves and was
+> checked against the actual `src/` tree, not proposed from a note. The two sharpest findings, both
+> measured rather than asserted: **money 0/28 lessons have a visual** while economy has 5/12 — so the
+> "animated diagrams are the differentiator" claim (§3.0.4) is currently carried entirely by the track
+> §0 calls "the vehicle, not the product," and a new install opens on money lesson 1, which has none
+> (item 27) — and **the app has no routing at all**, so §5's "each lesson a shareable URL" web-funnel
+> requirement has nothing to point at (item 31, scoped to respect item 12's port-cost rule). Also added:
+> glossary linking from lesson text, which §3.0.3 requires and which this week's term-detail screen
+> finally makes worth building (28); the §9.2 event payloads, which are **the half of item 18 that is not
+> owner-blocked** (29); the §9.1 falsifiable-claims register, the plan's core discipline and the one this
+> project's recurring drift keeps violating (30); and the §9.3 monthly audit, which has never been run
+> (32). **Nothing in 27–32 is owner-blocked.**
+>
+> **W-2 standing rule — refill the backlog rather than extending a note chain.**
 > Seven of the last eight runs picked their work from the previous run's "Next run should pick" line rather
 > than from this backlog. That chain has produced good work, but it is the same structural failure the
 > 2026-08-09 block named in a different costume: the *backlog* stopped being the place direction lives.
@@ -159,9 +174,14 @@ for the history. No open P1/P2 items.
 >   comment to describe the button accurately (in-flow, full-width, not sticky/fixed) rather than making it
 >   sticky — see run log for why sticky was rejected (no existing per-screen sticky-bar precedent, and it
 >   would need z-index/safe-area coordination with `App.jsx`'s fixed bottom nav).
-> - `MarketSignals.jsx`'s dead `counterReset: "principle"` (no paired `counter-increment`/`content`), and
->   `Settings.jsx`'s `ChoiceRow` radiogroup using Tab-per-option rather than the ARIA APG roving-tabindex
->   pattern — both flagged by the 2026-08-16 tenth run's own note.
+> - **`MarketSignals.jsx`'s dead `counterReset: "principle"`** (no paired `counter-increment`/`content`)
+>   — flagged by the 2026-08-16 tenth run's own note. **Re-verified 2026-08-16 and it is genuinely dead:**
+>   a `grep -rn "counterReset\|counter-reset\|counterIncrement\|counter-increment\|counter("` over `src/`
+>   returns that one line and nothing else. This is the **last open W-4 item** and is a one-line deletion.
+> - ~~`Settings.jsx`'s `ChoiceRow` radiogroup using Tab-per-option rather than the ARIA APG
+>   roving-tabindex pattern.~~ **✅ DONE 2026-08-16.** Confirmed live before fixing (all 7 radios were tab
+>   stops; arrow keys did nothing), then implemented roving tabindex + arrow/Home/End selection. See run
+>   log.
 > - ~~Item 17's stale "118/120 minutes" figure.~~ **✅ DONE 2026-08-16** as part of W-3's item-17
 >   compression, along with item 24's pre-renumbering lesson-id references, which were also wrong.
 >
@@ -253,6 +273,98 @@ for the history. No open P1/P2 items.
 > aimed at a clause that actually gates Phase 0 — the ~20 remaining minutes (§4.3's content-duration
 > clause), or deepening existing lessons rather than adding a forty-first topic. Re-read §4.3's table
 > before picking, and write down in the run entry *which clause* the run moves.
+
+> **Backlog refilled 2026-08-16 (W-2, owner-requested).** Items 27–32 below were derived by re-reading
+> `LAUNCH_PLAN.md` §3.0, §3.2, §5, §8, §9.1, §9.2 and §9.3 against the actual `src/` tree — not carried
+> forward from a run-log note chain. Every one is dev-agent-actionable today (none is owner-blocked), and
+> each names the plan clause it serves. They are listed in the reviewer's value order; a run is free to
+> disagree, but should say why in its entry. **Pick from here, not from the previous run's note.**
+
+27. **[Content/UX — PRIORITY, the highest-value open item] Lesson visuals for the money track.
+    `LAUNCH_PLAN.md` §3.0.4, §3.2, §5.** Measured 2026-08-16 by the weekly review, from
+    `LESSON_VISUALS` in `src/components/LessonVisual.jsx` against `src/content/lessons.js`:
+    **money 0/28 lessons have a visual; economy 5/12 do** (ids 32, 33, 36, 37, 38 — cycle, yield curve,
+    balance sheet). Money is 28 of the 40 lessons and, per §0, *is the product* — economics is "the
+    vehicle, not the product." So the entire diagram differentiator currently sits on the vehicle.
+    Three separate plan clauses converge on this, which is why it ranks first:
+    - **§3.0.4 "Show, don't only tell"** names the animated diagrams as *the* differentiator, in those
+      words: "an LLM can explain a yield curve in text; a curve inverting in front of the reader is what
+      a chat window cannot do." §3.0 is the **primary success criterion** and §11's second move is
+      "hold the line on §3.0 — it is the one most easily lost to feature work."
+    - **§3.2 "The first five minutes... the most important feature."** First-open routing lands a new
+      install on **money lesson 1 (Budgeting)** — which has no visual at all. The first thing a new
+      learner sees is the case *against* the app's stated differentiator.
+    - **§5 Distribution** makes screen-recorded diagram clips the whole acquisition engine ("every
+      lesson yields two or three clips"). With 0/28 money lessons illustrated, the clip pipeline has
+      nothing to film on the track the product is actually about.
+    **Scope guidance:** do **not** bulk-add 28 visuals. Pick the two or three money lessons where a
+    diagram teaches something prose cannot (compound interest over time is the obvious first — a curve
+    is the concept; budgeting's needs/wants/savings split and loss aversion's asymmetric-weight
+    diagram are plausible seconds), build them to the existing `charts.jsx`/`LessonVisual.jsx` pattern
+    and `theme.js` tokens, and verify each in a live browser per **W-1**. A visual that merely decorates
+    fails §3.0.1 ("one idea per screen") — if it doesn't teach, don't ship it.
+
+28. **[Content/UX] Lesson text does not link to the glossary — §3.0.3 is unmet.** §3.0.3: "No undefined
+    jargon. A term either gets defined where it appears **or links to the glossary**." The app has a
+    searchable glossary and (since 2026-08-16) a per-term detail screen, but **nothing in
+    `LessonReader.jsx` links lesson body text to it** — verified 2026-08-16, no glossary import or
+    reference anywhere in the reader. A learner who hits "yield curve" mid-lesson has to leave the
+    reader, switch tabs, open Reference → Glossary, and search. That is exactly the friction §3.0 exists
+    to prevent, and the term-detail screen built this week is the piece that was missing to make linking
+    worth doing. **Scope note:** the hard part is deciding *how* terms are marked, not the rendering —
+    lesson bodies are plain strings in five languages, so an automatic match-and-link pass has real
+    false-positive risk across languages. Prefer an explicit per-section term list over regex-matching
+    prose, and read `check-data.mjs`'s locale-parity checks before changing the content shape.
+
+29. **[Process] Finish the §9.2 event payloads — this is the half of item 18 that is NOT owner-blocked.**
+    §9.2 specifies the minimum set as "lesson started, lesson **completed (with duration)**, quiz taken
+    (**with score**)". Verified 2026-08-16 against the call sites: `LESSON_COMPLETED` fires with
+    `{lessonId}` and **no duration**; `QUIZ_TAKEN` fires per question with `{lessonId, source, correct}`
+    and **no batch score**, even though `Practice.jsx` now computes a real session score for its results
+    recap. Item 18 is blocked on the owner creating an analytics account — **but fixing the payloads is
+    not**, and doing it now means the day a provider is wired in, the data is already the shape §4.3's
+    ≥40%-completion gate needs, instead of starting a fresh measurement window with a known gap. Cheap,
+    self-contained, and it has test coverage to extend (`src/lib/analytics.js` was covered 2026-08-15).
+
+30. **[Process] Create the §9.1 falsifiable-claims register (`CLAIMS.md`) — the plan's core discipline,
+    never implemented.** §9.1: "Before building anything significant, write one sentence: what you
+    believe, the number that would refute it, when you will check." Confirmed 2026-08-16 that **no such
+    artifact exists** — `DECISIONS.md` records *why* choices were made and `LAUNCH_READINESS.md` records
+    *what is true now*, but nothing records *what we believe and what would prove us wrong by when*.
+    §11's first move is to keep the decision log current **and calendar the audit**; §9.1 closes with the
+    line that makes it matter: "When a claim is refuted, the response is a change to the product — **not
+    a softer restatement of the claim.**" That is precisely the failure this project keeps re-running:
+    item 17 and item 24 each softened their own framing across a dozen updates rather than concluding.
+    Seed it with the plan's own three examples plus the live bets this build has already made without
+    writing them down — sequential unlocking, the two-track split, five languages under "(Beta)",
+    parent-facing kids content, the spaced-review queue — each with a refuting number and a check date.
+    Where a claim is unmeasurable today, say so and name what would make it measurable (usually item 18).
+
+31. **[Feature] Shareable per-lesson URLs — §5's web-funnel requirement. Read the §2.1 caution first.**
+    §5: "Web is top-of-funnel: lessons 1–2 playable with no signup, **each lesson a shareable URL**."
+    §8's roadmap puts "Web deployed; 10 clips recorded" on the monetization/web row. Verified 2026-08-16:
+    **the app has no routing of any kind** — no `history.pushState`, no hash routing, no router
+    dependency; tab and lesson selection are component state only. So there is no link to post to
+    Product Hunt, Show HN, Reddit or a clip description, and §5's entire distribution motion has nothing
+    to point at. **The caution, and it is real:** item 12 (§2.1 Expo vs. web-first) is HELD, and its
+    standing rule is that the dev agent "must not deepen the web-only investment in a way that raises
+    the eventual port cost." A full web router would do exactly that. **Scope it so it doesn't:** plain
+    hash deep-links (`#/lesson/12`) read once on load and written on navigation, isolated behind one
+    small module so a native shell can ignore or replace it, and no routing library added. If a run
+    concludes even that conflicts with item 12, **say so and leave it** — flagging the conflict is a
+    legitimate outcome and better than a silent port-cost increase.
+
+32. **[Process] Run the §9.3 monthly blindspot audit — it has never been run.** §9.3 specifies one hour,
+    first Saturday, five standing questions (the number you avoided looking at; what survives only
+    because removing it feels wasteful; what the last three users said, where "I haven't spoken to any"
+    *is* the finding; which claim is past its check date; what a skeptical friend would call obviously
+    wrong). `LAUNCH_READINESS.md`'s §10.7 row already defers to it ("Recheck that way at each monthly
+    audit"), so something is pointing at a ritual nobody has performed. **Next first Saturday is
+    2026-09-05.** A dev-agent run can do the preparation honestly — questions 1, 2, 4 and 5 are
+    answerable from the repo, and question 3's honest answer today is "none, and that is the finding."
+    Write the result as `reviews/YYYY-MM-DD-monthly-audit.md` and update §10 per the plan. Depends on
+    item 30 for question 4 (there are no claims with check dates yet to be past).
+
 
 24. **[Content — EXHAUSTED in substance; do not pick by default] The money track teaches mechanics, but
     the owner asked for judgment.** Compressed 2026-08-16 by the weekly review (W-3) from ~80 lines of
@@ -374,6 +486,12 @@ for the history. No open P1/P2 items.
     and API key a dev-agent run can't create; see `DECISIONS.md`. What's left: create that account
     (owner action) and swap `analytics.js`'s `sink()`; item 17's D1 lesson-1-completion measurement is
     still blocked until then, since a per-device local log can't be aggregated across installs.
+    **This is now the only thing gating the end of Phase 0** — both §4.3 content clauses are met (item
+    17), so no amount of further content work moves the gate. Flag it to the owner in every run's output.
+    **But do not read "blocked" as "nothing to do here": item 29 is the half of this item that is not
+    owner-blocked** — §9.2 specifies `lesson_completed` *with duration* and `quiz_taken` *with score*,
+    and neither payload carries them today. Fixing that now means the data is the right shape the day an
+    account exists, instead of starting the measurement window with a known gap.
 **HELD — owner decisions, do not act on these**
 
 12. **[HELD] Expo vs. Vite** (§2.1) — needs a human call; blocks store release, not the web launch. See
