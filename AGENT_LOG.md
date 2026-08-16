@@ -282,9 +282,32 @@ for the history. No open P1/P2 items.
 > each names the plan clause it serves. They are listed in the reviewer's value order; a run is free to
 > disagree, but should say why in its entry. **Pick from here, not from the previous run's note.**
 
-33. **[Content — ✅ FULLY DONE 2026-08-16. Both halves fixed; a permanent regression check now guards it.]
-    The 2026-08-14 lesson-id renumbering missed every non-English in-prose cross-reference, and the
-    lowercase English ones.**
+33. **[Content — ✅ DONE 2026-08-16 after a third pass. `lessonContent` fixed, then `quizData.js` — which
+    the first two passes both missed entirely. A permanent regression check guards the first half only;
+    extending it to quiz explanations is the one piece still open, see the last bullet.]
+    The 2026-08-14 lesson-id renumbering missed every non-English in-prose cross-reference, the
+    lowercase English ones, and the plural `Lessons N and M` form.**
+    > **Third pass, 2026-08-16 (owner-requested, weekly reviewer).** The two passes above fixed
+    > `lessonContent.{money,economy}.js` and left **`src/content/quizData.js` untouched** — 7 stale
+    > references in 3 quiz explanations survived, and the §16 check added below did not catch them
+    > because it only walks lesson prose fields, never quiz `explain` text. Fixed:
+    > - Q24 (lesson 11) and Q25 (lesson 12): es `Lección 15` and zh `第15课` → **3** (Compound Interest);
+    >   the English in both already correctly said Lesson 3.
+    > - Q27 (lesson 14): `Lessons 18 and 20` → **6 and 8** — in **English, es and zh alike**. This one
+    >   is the more interesting find: **the English was stale too.** The renumbering regex matched the
+    >   singular `Lesson N`, so the *plural* `Lessons 18 and 20` survived in every language at once, and
+    >   because all five agreed with each other, a translation-vs-English consistency check can never
+    >   see it. Confirmed by content, not arithmetic: the sentence describes "a 401(k) or life insurance
+    >   policy," and 6 is *Retirement Accounts: 401(k) and IRA Basics*, 8 is *Insurance*.
+    > **Verified after:** across `lessonContent.{money,economy}.js` + `quizData.js`, all five languages —
+    > 64 English references, 89 translated, **0 mismatches, 0 pointing at a nonexistent lesson id.**
+    > **Lesson for future checks: a consistency check and a correctness check are different things.**
+    > §16 verifies translations agree with English; it cannot verify English is right. The plural form
+    > was invisible to it for exactly that reason.
+    > **STILL OPEN — do this:** extend §16's scan to `quizData.js`'s `explain` fields, and widen the
+    > English pattern to the plural/multi-number form (`Lessons 6 and 8`, `Lessons 3, 5 and 7`) in all
+    > five languages. Not done in this pass only because a concurrent run held uncommitted edits to
+    > `scripts/check-data.mjs` and this pass would not clobber them.
     Found 2026-08-16 while building item 27's lesson-27 visual: the prose read "a different pattern from
     sunk cost (lesson 31, throwing good money after bad)" — but lesson 31 is now *Productivity Growth*,
     and sunk cost is lesson 19. The reference was a pre-renumbering id.
