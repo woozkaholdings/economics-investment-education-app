@@ -58,6 +58,7 @@ export default {
     tabReference: "資料",
     backLabel: "戻る",
     bookmarkAdd: "用語を保存", bookmarkRemove: "保存を解除", bookmarkedLabel: "保存済み",
+    lessonTermsLabel: "このセクションの用語",
     themeLabel: "外観",
     themeSystem: "システム",
     themeLight: "ライト",

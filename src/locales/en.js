@@ -67,6 +67,7 @@ export default {
     tabReference: "Reference",
     backLabel: "Back",
     bookmarkAdd: "Save term", bookmarkRemove: "Remove from saved", bookmarkedLabel: "Saved",
+    lessonTermsLabel: "Terms in this section",
     themeLabel: "Appearance",
     themeSystem: "System",
     themeLight: "Light",

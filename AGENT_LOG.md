@@ -389,7 +389,28 @@ for the history. No open P1/P2 items.
     and `theme.js` tokens, and verify each in a live browser per **W-1**. A visual that merely decorates
     fails §3.0.1 ("one idea per screen") — if it doesn't teach, don't ship it.
 
-28. **[Content/UX] Lesson text does not link to the glossary — §3.0.3 is unmet.** §3.0.3: "No undefined
+28. **[Content/UX — ✅ MECHANISM DONE 2026-08-16. The linking is built, curated and guarded; what
+    remains is a glossary *coverage* gap, filed separately as item 35 — do not re-pick this item to
+    "finish" it.]** Lesson text now links to the glossary.
+    - **What shipped:** `src/content/lessonTerms.js` (a curated `{ lessonId: { sectionIndex: [glossary
+      keys] } }` map) + `src/components/GlossaryTerms.jsx` (a chip row under each tagged section; a
+      chip expands that term's definition and example **in place**, without leaving the reader), wired
+      into `LessonReader.jsx`, with the label in all five locales. See `DECISIONS.md`
+      ("In-lesson glossary links are a curated map, not an automatic prose match").
+    - **The scope note's warning was right, and is now backed by a measurement rather than a worry.**
+      An automatic English pass over all 40 lessons for the 17 glossary terms yields 47 hits, and the
+      false positives are load-bearing: money lesson 12's **"PMI" is private mortgage insurance**, not
+      Purchasing Managers' Index; lesson 17's is **"lifestyle inflation"**; lessons 2/3/4/15 say
+      "credit card"/"credit score"/"credit report", not the glossary's macro **Credit**. Auto-linking
+      would have shipped four wrong definitions on the money track alone.
+    - **Guarded by `check-data.mjs` §17**, which fails the build if a link names a missing lesson,
+      section or glossary key, repeats a term inside one lesson, or — the one nothing else catches —
+      points at a section whose English text no longer contains the term. All six failure modes were
+      proven by injection, not by inspection.
+    - **Coverage shipped: 21 links across 10 lessons (9 economy, 1 money).** That the money track got
+      one is not a curation choice; it is item 35.
+    *(Original text below, retained for the reasoning.)*
+    §3.0.3: "No undefined
     jargon. A term either gets defined where it appears **or links to the glossary**." The app has a
     searchable glossary and (since 2026-08-16) a per-term detail screen, but **nothing in
     `LessonReader.jsx` links lesson body text to it** — verified 2026-08-16, no glossary import or
@@ -425,6 +446,49 @@ for the history. No open P1/P2 items.
     - **Guard against regression:** `check-data.mjs` gained §13b, which asserts the *call sites* pass
       the §9.2 fields (not just that the helpers can compute them) — the precise gap that existed
       before was that both events fired and neither carried its field, which greps as "done."
+
+35. **[Content — PRIORITY among the open items. Measured 2026-08-16 while building item 28.] The
+    glossary is 17 terms and every one of them is macroeconomic. The money track — 28 of 40 lessons,
+    and per §0 *the product* — has almost no jargon it can link to.**
+    Item 28 built the linking mechanism and it works, but it could only produce **1 link across the 28
+    money lessons** versus 20 across the 12 economy ones. That ratio is not a curation artifact: it is
+    that `glossary.js` holds GDP, CPI, PMI, VIX, QE, QT, yield curve, deleveraging, credit spread,
+    debt-to-GDP and so on, and holds **nothing** for the money track's own vocabulary — compound
+    interest, principal, APR, expense ratio, index fund, diversification, deductible, premium,
+    beneficiary, vesting, 401(k)/IRA, escrow, amortization, emergency fund, net vs. gross pay. Those
+    words appear throughout money lessons 1–28 and a learner who doesn't know one has nowhere to go.
+    So **§3.0.3 is now met on the vehicle and still unmet on the product** — which is exactly the
+    imbalance item 27 flagged for visuals, recurring in a different surface.
+    **Scope guidance, and read it before starting:** this is a *content* item, not a code one — the
+    mechanism is done and needs no change. Adding a term means writing `s`/`f`/`ex` in **five
+    languages**, which lands it squarely in the P-4 machine-translation decision (`DECISIONS.md`:
+    accept AI translation under "(Beta)", track the debt). Note the translation-review ledger tracks
+    *lessons*, not glossary entries, so new glossary terms are currently untracked by it — say
+    explicitly how that is handled rather than leaving it implicit. Pick **8–12 terms that money
+    lessons actually use** (grep the lesson bodies; don't invent a vocabulary list), add them, then
+    extend `lessonTerms.js` — §17 will refuse any link whose term isn't literally in the section.
+    Do **not** turn this into a count-shaped item: the target is "the jargon money lessons actually
+    use is definable," not a term total.
+
+36. **[Process — small, and it belongs to item 33's owner; recorded here so it isn't lost.] The §16
+    cross-reference check has two blind spots that let 8 stale references survive in `quizData.js`
+    today.** Found 2026-08-16 by this run while a *concurrent* run was committing `543fd90`, which
+    fixed the es/zh half of exactly this. That commit's own message defers the check work — "Not done
+    here because a concurrent run holds uncommitted edits to `check-data.mjs`" — i.e. it was blocked on
+    this run. `check-data.mjs` is free again as of this commit.
+    - **Blind spot 1 — surface forms.** §16's patterns are `레슨 N` (ko) and `レッスン N` (ja), but
+      `quizData.js`'s Korean and Japanese prose uses **`N강`** and **`第N課`**. Neither pattern matches,
+      so those references are invisible to the check *and* were missed by both fix passes.
+    - **Blind spot 2 — scope.** §16 walks `lessonContent` prose fields only; it never reads `quizData`
+      explain text at all. `543fd90` fixed that file by hand, with nothing to stop it regressing.
+    - **Measured, not asserted:** scanning `quizData` with the two extra surface forms finds **8
+      genuinely stale references** remaining after `543fd90` — q#24 ko/ja (`15강`/`第15課` → 3), q#25
+      ko/ja (same), q#27 ko/ja (`18`/`20` → 6/8). Every one resolves under the documented mapping
+      (old money id − 12), confirming they are pre-renumbering leftovers rather than real references.
+    - **Also worth carrying:** a naive pooled-English check reports a 9th (q#27 zh) that is a **false
+      positive** — English reads "Lessons 6 and 8" and the singular-anchored pattern captures only the
+      first number. So widening the English pattern to the plural/multi-number form is required for
+      the check to be *correct*, not merely broader. `543fd90` already names this.
 
 30. **[Process] Create the §9.1 falsifiable-claims register (`CLAIMS.md`) — the plan's core discipline,
     never implemented.** §9.1: "Before building anything significant, write one sentence: what you
@@ -6126,3 +6190,130 @@ about preferring an explicit per-section term list over regex-matching prose in 
 **item 30** (`CLAIMS.md`, the §9.1 falsifiable-claims register — never implemented, and item 32's
 monthly audit depends on it). Item 27 is **not** the pick unless a run can name the specific money
 lesson whose diagram would teach something its prose cannot.
+
+### 2026-08-16 (scheduled dev-agent) — Link lesson text to the glossary: a curated per-section term map with an in-place definition (backlog item 28, §3.0.3)
+
+**Picked** item 28, which both the weekly reviewer's value order (W-2) and the previous run's
+"next run should pick" named first. §3.0.3 — "a term either gets defined where it appears **or links
+to the glossary**" — was the last *unmet* §3.0 clause with no owner dependency: the app has had a
+searchable glossary and, since this week, a term-detail screen, and nothing in the reader pointed at
+either.
+
+**What shipped** (3 files new/changed in `src/`, 5 locales, 1 check):
+- `src/content/lessonTerms.js` — a curated `{ lessonId: { sectionIndex: [glossary keys] } }` map,
+  **21 links across 10 lessons**, plus `termsForSection()`.
+- `src/components/GlossaryTerms.jsx` — the chip row. A chip expands that term's definition and
+  example **in place**; it does not navigate to the Glossary tab, because the friction §3.0.3 exists
+  to remove is *leaving the lesson*. Keys are language-independent, so the chip and the panel render
+  from `glossary.js` in the reader's own language and no prose is matched at runtime.
+- `src/screens/LessonReader.jsx` — renders it per section; `src/locales/{en,es,ko,zh,ja}.js` gained
+  `lessonTermsLabel`; `scripts/check-data.mjs` gained §17; `DECISIONS.md` gained the entry.
+
+**The scope note said "prefer an explicit term list over regex-matching prose." That was right, and
+this run measured why instead of taking it on faith.** An automatic English pass over all 40 lessons
+for the 17 glossary terms produces 47 lesson-term hits — and the false positives are not edge cases:
+money lesson 12 (renting vs. buying) contains **"PMI" meaning private mortgage insurance**, which an
+auto-linker defines as the Purchasing Managers' Index; lesson 17 is about **"lifestyle inflation"**,
+not the macro kind; lessons 2/3/4/15 say "credit card"/"credit score"/"credit report"/"credit limit",
+none of which is the glossary's macro **Credit**. Four wrong definitions on the money track alone,
+before considering that per-language matching means five matchers with five false-positive profiles.
+The curation rules (same sense only; not on the lesson whose subject *is* the term; once per lesson on
+first use; literally present) are written at the top of `lessonTerms.js`.
+
+**Verification — live browser, per W-1** (`dist/` on `127.0.0.1:8817`, the Environment note's
+static-build + `python3 -m http.server` technique, `preview_start` with a plain `url`, `navOk: true`;
+**fifth** unattended scheduled run to confirm this works — do not re-derive it as impossible). Read
+from the live DOM and ARIA state, not from the source:
+- **Negative case first:** money lesson 1, which the map deliberately does not tag, renders **no** chip
+  row at all.
+- **Lesson 25** (the one money link): one `Inflation` chip; `aria-expanded` flips `false`→`true` on
+  click and the panel fills with the glossary's definition *and* example; the panel is the chip row's
+  next sibling in DOM order.
+- **Lesson 32** (5 chips over 3 sections): each section gets its **own** panel id (`:r5:`/`:r6:`/`:r7:`).
+  Opening a second chip in a section **swaps** rather than stacks (`false,true` → `true,false`);
+  opening one in section 1 leaves section 0 untouched; re-clicking the active chip closes it. The
+  first attempt at this read all-`false` because it sampled synchronously inside the click tick —
+  re-run with awaits, which is the real result above.
+- **All five languages** on the same chip: `양적완화` / `量化宽松` / `量的緩和` /
+  `Flexibilización Cuantitativa` / `Quantitative Easing`, each with its own localized definition and
+  example, and the section label present in each.
+- **Mobile + light scheme** (375×812): the chip row wraps (`flex-wrap: wrap`), nothing overflows the
+  viewport, no horizontal body scroll, and the longest label (`Flexibilización Cuantitativa`) fits.
+  Active chip is `#2563eb` on `#eef2ff`. Console: **no errors**.
+
+**The new §17 check is proven to catch the real defect, not merely to pass.** Six faults injected one
+at a time, each confirmed to fail `npm test`, then restored — `diff` confirmed all three touched files
+byte-identical afterward, and the suite green again:
+1. link moved to a section whose English never mentions the term → the stale-link failure (the one
+   nothing else would catch);
+2. a term repeated twice in one lesson → curation rule 3;
+3. a glossary key that doesn't exist;
+4. a section index past the end of the lesson;
+5. `<GlossaryTerms>` removed from the reader → "the map and the component can both be perfect while
+   nothing calls them," which is precisely the state §3.0.3 was in before this item;
+6. `lessonTermsLabel` deleted from `ko.js` → caught twice, by locale parity and by §17.
+
+**`npm test`** — 0 failures, 1 warning; **`npm run build`** — succeeds. **Chunk sizes, measured
+before *and* after rather than quoted from the log** (baseline built from `git show HEAD:` of the
+reader, then restored):
+
+| chunk | before | after |
+|---|---|---|
+| `lessonContent.money` | 499.32 kB | **499.32 kB (unchanged)** |
+| `LessonReader` | 13.53 kB | 15.47 kB |
+| `Reference` | 82.31 kB | 61.92 kB |
+| shared (`markets-*`) | 17.64 kB | 38.06 kB |
+
+Item 17's 500 kB money-chunk caution is respected exactly — putting the map in its own module instead
+of inside `lessonContent.money.js` was chosen for this reason and it held. The 20.4 kB swing between
+`Reference` and the shared chunk is `glossary.js` being hoisted now that two lazy routes import it, not
+new weight: **only +1.94 kB is genuinely new**, and a Reference visit now downloads 20 kB less.
+(Note `DECISIONS.md`'s "5.92 kB" figure for this chunk is its 2026-08-14 historical result; the real
+pre-change baseline today is 13.53 kB. Left as written — it is a dated record, not a live claim.)
+
+**Adversarial self-check — no conflict found, and the two things worth checking were checked, not
+assumed.**
+1. **Blindspot register** — no lesson, glossary, market or kids copy was authored. The only new prose
+   is five UI labels meaning "Terms in this section." The definitions the chips show are existing
+   `glossary.js` entries rendered verbatim, so there is no second copy to drift and no §10.1 surface.
+   No §10.2 Dalio string, no §10.3 kids-framing change, no §2.3 date or live-looking figure.
+   `check-blindspot.mjs` passes all six checks.
+2. **`DECISIONS.md` conflict** — checked all four standing entries, none contradicted: content stays
+   `.js`-not-JSON (the new module is `.js`, and carries exactly the header comment that entry's
+   rationale cites); localStorage-only state is untouched (the disclosure is local React state, nothing
+   persisted); the per-track chunk split is preserved and its money-chunk figure is unchanged; and
+   **item 12's port-cost rule is respected deliberately** — the chip expands in place rather than
+   routing to the Glossary tab, so no router, no deep link and no dependency was added. A new entry was
+   written for the curated-vs-automatic choice, because that is the one a later run is most likely to
+   "improve" into a regex matcher without knowing about the PMI case.
+3. **Already-done backlog item** — item 28 was open and explicitly named. It does not redo item 27
+   (visuals), and it is *not* an extension of item 26's Quizlet/Vocabulary stream, whose standing
+   instruction is not to add invented ideas — item 28 is plan-derived (§3.0.3) and was filed by the
+   weekly reviewer's W-2 refill.
+4. **Reproducibility of this entry's own claims** — the 47-hit figure and every false positive come
+   from a scan script re-runnable against the content; the chunk table from two real builds, not from a
+   remembered number; the behaviour from live ARIA state; "the check works" from six injected faults
+   actually failing, with byte-identical restores confirmed by `diff`.
+
+**Concurrent session, handled.** `HEAD` moved mid-run (`9b496f4` → `543fd90`, another run fixing
+`quizData.js` cross-references) and `quizData.js` appeared modified in the working tree while this run
+was verifying. It was **not** touched, waited out rather than worked around, and it committed cleanly
+before this one; the two changes share no file. That run's message defers its remaining check work
+because "a concurrent run holds uncommitted edits to `check-data.mjs`" — that was this run, and the
+file is free as of this commit. While confirming the two changes didn't collide, this run measured **8
+stale ko/ja references still in `quizData.js`** after `543fd90`, in the surface forms `N강` and `第N課`
+that §16's patterns don't know about — filed as **item 36** with the measurement rather than fixed
+here, because it is item 33's work and actively held by another session.
+`economic-cycles-v6.jsx` — untracked, not this agent's file, left completely alone; `git status`
+re-checked before every stage, and the commit was made by explicit path, never `git add -A`.
+
+**Item 18 remains the entire critical path to ending Phase 0 and is blocked on an owner action** —
+creating a real analytics provider account (PostHog per the plan) and providing its key so
+`analytics.js`'s `sink()` can be swapped. Flagging per the standing instruction.
+
+**Next run should pick**: **item 35** (the glossary has no money-track vocabulary — §3.0.3 is now met
+on the economy track and still unmet on the 28 lessons that per §0 *are* the product; read its scope
+guidance about the five-language cost and the ledger gap before starting) or **item 30**
+(`CLAIMS.md`, the §9.1 register, which item 32's monthly audit depends on and which is the discipline
+this project's recurring drift keeps violating). **Item 36** is a good small pick once item 33's owner
+is done with `check-data.mjs`.

@@ -58,6 +58,7 @@ export default {
     tabReference: "Referencia",
     backLabel: "Atrás",
     bookmarkAdd: "Guardar término", bookmarkRemove: "Quitar de guardados", bookmarkedLabel: "Guardado",
+    lessonTermsLabel: "Términos de esta sección",
     themeLabel: "Apariencia",
     themeSystem: "Sistema",
     themeLight: "Claro",

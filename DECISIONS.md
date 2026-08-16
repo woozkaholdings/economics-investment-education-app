@@ -164,6 +164,39 @@ Add a new entry when a run makes a choice future work should be able to look up 
   log entry ("Item 21's content-depth scoping, executed") for the full design reasoning and verification.
   Point 1 (child-facing UI) is unaffected and remains owner-only.
 
+### In-lesson glossary links are a curated map, not an automatic prose match
+
+- **Status:** closed 2026-08-16 (dev-agent run, backlog item 28). Implements `LAUNCH_PLAN.md` §3.0.3
+  ("a term either gets defined where it appears or links to the glossary").
+- **What was decided:** the lesson→glossary links live in a hand-curated map,
+  `src/content/lessonTerms.js` (`{ lessonId: { sectionIndex: [glossary keys] } }`), rendered as a chip
+  row under each tagged section by `src/components/GlossaryTerms.jsx`. Tapping a chip expands that
+  term's definition **in place**, inside the reader — it does not navigate to the Glossary tab.
+- **Why curated and not matched:** an automatic pass over lesson prose links the wrong sense, and this
+  is measured, not hypothetical. Scanning all 40 lessons' English text for the 17 glossary terms
+  produced 47 lesson-term hits, and the false positives were not edge cases:
+  - money lesson 12 (renting vs. buying) contains **"PMI" meaning private mortgage insurance**, which
+    an auto-linker would define as the Purchasing Managers' Index;
+  - money lesson 17 is about **"lifestyle inflation"**, not the macroeconomic kind;
+  - money lessons 2/3/4/15 say "credit card", "credit score", "credit report", "credit limit" — none
+    of which is the glossary's macro sense of **Credit**.
+  Matching per-language would multiply the problem: five locales, five surface-form inflections, five
+  separate false-positive profiles. Curation moves that judgement to authoring time, where it is
+  reviewable in a diff, and keys are language-independent so the chip renders from `glossary.js` in
+  the reader's own language without ever matching prose at runtime.
+- **Why in place rather than navigating to the Glossary tab:** the friction §3.0.3 exists to remove is
+  *leaving the lesson*. It also keeps the change clear of item 12's port-cost rule — no router, no deep
+  link, no new dependency.
+- **Trade-off accepted:** links must be added by hand when a lesson or a glossary term is added, and
+  nothing forces a new lesson to be tagged. What is enforced (`check-data.mjs` §17) is that every
+  existing link stays *true*: the lesson and section must exist, the key must be in `glossary.js`, a
+  term is linked at most once per lesson, and the term's English name must literally appear in that
+  section's English text — so a reworded or reordered section fails the build instead of silently
+  leaving a chip pointing at a word that is no longer on screen.
+- **Revisit when:** the glossary grows past roughly 40–50 terms, or lesson content starts changing
+  faster than the map is maintained — at that point consider generating *candidates* automatically and
+  keeping the human accept/reject step, rather than dropping curation entirely.
+
 ### Content as `.js` modules, not JSON
 
 - **Status:** closed, in effect since the 2026-08-02 JSX-split (steps 1–3).

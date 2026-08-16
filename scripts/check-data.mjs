@@ -13,6 +13,7 @@ import { lessons, TRACKS, lessonsByTrack } from "../src/content/lessons.js";
 import { lessonContent } from "../src/content/lessonContent.js";
 import { quizData } from "../src/content/quizData.js";
 import { glossary } from "../src/content/glossary.js";
+import { lessonTerms } from "../src/content/lessonTerms.js";
 import { kidsContent } from "../src/content/kidsContent.js";
 import * as marketsContent from "../src/content/markets.js";
 import * as moneyVisualsContent from "../src/content/moneyVisuals.js";
@@ -870,6 +871,101 @@ for (const [label, moduleExports] of Object.entries(CONTENT_MODULES)) {
         }
       }
     }
+  }
+}
+
+// 17. src/content/lessonTerms.js — the §3.0.3 lesson→glossary links (backlog
+//     item 28). The map is hand-curated because an automatic prose match links
+//     the wrong sense (money lesson 12's "PMI" is private mortgage insurance,
+//     not Purchasing Managers' Index; lesson 17's is *lifestyle* inflation).
+//     Curation is a judgement call and cannot be checked here — but the four
+//     ways a curated map rots mechanically can be, and are:
+//
+//       (a) it names a lesson or section that no longer exists,
+//       (b) it names a glossary key that no longer exists,
+//       (c) it repeats a term inside one lesson (rule 3 — chips are once per
+//           lesson, on first use), or
+//       (d) it tags a section whose English text does not actually contain
+//           the term any more.
+//
+//     (d) is the one that matters most and the one nothing else would catch:
+//     a chip whose section was reworded or reordered still renders happily,
+//     pointing a learner at a definition for a word that is no longer on the
+//     screen. The presence test is a plain case-insensitive substring against
+//     the ENGLISH heading + body only — English is the source the curation was
+//     done against, and the chips render from glossary keys rather than from
+//     matched prose, so no per-language matching is involved or wanted here.
+{
+  const seenPerLesson = new Map();
+
+  for (const [idKey, byIndex] of Object.entries(lessonTerms)) {
+    const id = Number(idKey);
+    const entry = lessonContent[id];
+    if (!entry) {
+      fail(`lessonTerms[${id}]: no lesson with that id in lessonContent`);
+      continue;
+    }
+
+    for (const [indexKey, terms] of Object.entries(byIndex)) {
+      const index = Number(indexKey);
+      const section = entry.sections[index];
+      const path = `lessonTerms[${id}][${index}]`;
+
+      if (!section) {
+        fail(`${path}: lesson ${id} has only ${entry.sections.length} section(s)`);
+        continue;
+      }
+      if (!Array.isArray(terms) || terms.length === 0) {
+        fail(`${path}: must be a non-empty array of glossary keys`);
+        continue;
+      }
+
+      const haystack = `${section.heading.en}\n${section.body.en}`.toLowerCase();
+
+      for (const term of terms) {
+        if (!glossary[term]) {
+          fail(`${path}: "${term}" is not a key in glossary.js`);
+          continue;
+        }
+
+        const key = `${id}:${term}`;
+        if (seenPerLesson.has(key)) {
+          fail(
+            `${path}: "${term}" is already linked in section ${seenPerLesson.get(key)} of lesson ${id} — ` +
+              `a term is chipped once per lesson, on its first use (lessonTerms.js curation rule 3)`,
+          );
+        } else {
+          seenPerLesson.set(key, index);
+        }
+
+        // The English key and the English short name are both acceptable
+        // surface forms — glossary keys like "QE" are spelled out in prose as
+        // "quantitative easing" and vice versa.
+        const names = [term, glossary[term].en.s].filter(Boolean);
+        if (!names.some((name) => haystack.includes(name.toLowerCase()))) {
+          fail(
+            `${path}: "${term}" is linked from a section whose English text never mentions it ` +
+              `(looked for ${names.map((n) => `"${n}"`).join(" or ")} in "${section.heading.en}"). ` +
+              `Either the section was reworded and the link is now stale, or the link was wrong ` +
+              `to begin with — see lessonTerms.js curation rule 4.`,
+          );
+        }
+      }
+    }
+  }
+
+  // Every locale must carry the chip row's label, or four of the five
+  // languages render an unlabelled row of buttons.
+  for (const lang of LANGS) {
+    checkNonEmptyString(TR[lang]?.lessonTermsLabel, `TR.${lang}.lessonTermsLabel`);
+  }
+
+  // The reader must actually render the component. The map and the component
+  // can both be perfect while nothing calls them — which is exactly the state
+  // §3.0.3 was in before item 28 (a glossary existed; nothing linked to it).
+  const reader = readFileSync(new URL("../src/screens/LessonReader.jsx", import.meta.url), "utf8");
+  if (!/<GlossaryTerms[\s\S]{0,160}termsForSection\(/.test(reader)) {
+    fail("LessonReader must render <GlossaryTerms> with termsForSection() (§3.0.3, backlog item 28)");
   }
 }
 

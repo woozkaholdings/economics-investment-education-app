@@ -14,6 +14,8 @@ import { EVENTS, elapsedSeconds, monotonicNow, quizScore, track } from "../lib/a
 import { quizData } from "../content/quizData.js";
 import { recordContinueChoice, wasContinuePromptShownToday } from "../lib/useAppState.js";
 import { questionsForLesson } from "../lib/review.js";
+import { termsForSection } from "../content/lessonTerms.js";
+import GlossaryTerms from "../components/GlossaryTerms.jsx";
 import Icon from "../components/Icon.jsx";
 import LessonVisual from "../components/LessonVisual.jsx";
 import Question from "../components/Question.jsx";
@@ -175,7 +177,7 @@ export default function LessonReader({ t, lang, lessons, index, completedLessons
       {content ? (
         <>
           <Stack gap={space["5"]}>
-            {content.sections.map((section) => (
+            {content.sections.map((section, sectionIndex) => (
               <section key={section.heading.en}>
                 <Text as="h2" variant="heading" color={ink.strong} style={{ marginBottom: space["2"] }}>
                   {section.heading[lang]}
@@ -183,6 +185,9 @@ export default function LessonReader({ t, lang, lessons, index, completedLessons
                 <Text variant="body" style={{ whiteSpace: "pre-line" }}>
                   {section.body[lang]}
                 </Text>
+                {/* §3.0.3's "or links to the glossary" — the jargon this
+                    section uses, definable without leaving the lesson. */}
+                <GlossaryTerms terms={termsForSection(lesson.id, sectionIndex)} t={t} lang={lang} />
               </section>
             ))}
           </Stack>

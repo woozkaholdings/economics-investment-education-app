@@ -58,6 +58,7 @@ export default {
     tabReference: "参考",
     backLabel: "返回",
     bookmarkAdd: "保存术语", bookmarkRemove: "取消保存", bookmarkedLabel: "已保存",
+    lessonTermsLabel: "本节术语",
     themeLabel: "外观",
     themeSystem: "跟随系统",
     themeLight: "浅色",
