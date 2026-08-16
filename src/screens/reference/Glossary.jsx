@@ -4,6 +4,11 @@
 // Backs the clarity rule that no jargon goes undefined (LAUNCH_PLAN §3.0.3).
 // Search matches the English key *and* the translated name, so a Korean reader
 // can find "수익률 곡선" without knowing it is filed under "Yield Curve".
+//
+// Each row's aria-label carries only the term (plus a bookmarked marker), which
+// overrides its contents for name computation — so the definition and example
+// inside the row would otherwise never reach a screen reader navigating by
+// control. aria-describedby points back at them to restore that.
 // ═══════════════════════════════════════════════════════════════════════════
 
 import { useMemo, useState } from "react";
@@ -78,14 +83,17 @@ export default function Glossary({ t, lang }) {
         <EmptyState icon="search">{t.glossNoResults}</EmptyState>
       ) : (
         <dl style={{ margin: 0 }}>
-          {entries.map(({ term, entry }) => {
+          {entries.map(({ term, entry }, i) => {
             const isBookmarked = bookmarks.includes(term);
+            const defId = `gloss-def-${i}`;
+            const exId = `gloss-ex-${i}`;
             return (
             <div
               key={term}
               role="button"
               tabIndex={0}
               aria-label={isBookmarked ? `${entry.s || term}, ${t.bookmarkedLabel}` : entry.s || term}
+              aria-describedby={entry.ex ? `${defId} ${exId}` : defId}
               onClick={() => setSelectedTerm(term)}
               onKeyDown={(e) => {
                 if (e.key === "Enter" || e.key === " ") {
@@ -103,11 +111,11 @@ export default function Glossary({ t, lang }) {
                   <Icon name="bookmark" size="0.9em" style={{ fill: "currentColor", color: ink.accent }} />
                 )}
               </dt>
-              <dd style={{ margin: `${space["1"]}px 0 0` }}>
+              <dd id={defId} style={{ margin: `${space["1"]}px 0 0` }}>
                 <Text variant="small" color={ink.muted}>{entry.f}</Text>
               </dd>
               {entry.ex && (
-                <dd style={{ margin: `${space["1"]}px 0 0` }}>
+                <dd id={exId} style={{ margin: `${space["1"]}px 0 0` }}>
                   <Text variant="small" color={ink.muted} style={{ fontStyle: "italic" }}>
                     {entry.ex}
                   </Text>

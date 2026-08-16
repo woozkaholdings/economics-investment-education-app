@@ -148,10 +148,12 @@ for the history. No open P1/P2 items.
 > Low-risk, well-scoped, good picks for a run with no larger item:
 > - ~~Two `<h1>`s on the Glossary term-detail screen.~~ **✅ DONE 2026-08-16 (eleventh run this date).**
 >   See run log.
-> - **Glossary rows are `role="button"` with an `aria-label` of only the term name.** Because an
->   `aria-label` overrides an element's contents for name computation, the definition text inside each row
->   may not be announced to a screen-reader user navigating by control. Verify with a real AT pass before
->   changing anything — this is a "check it" item, not a confirmed bug.
+> - ~~Glossary rows are `role="button"` with an `aria-label` of only the term name, so the definition
+>   text inside each row may not be announced.~~ **✅ DONE 2026-08-16 — the "check it" came back
+>   CONFIRMED, not a false alarm.** Verified in a live browser against the accessibility tree (not by
+>   reading the code): each row exposed only its term as its accessible name, and removing the
+>   `aria-label` in the live DOM made the definition and example text appear — proving the label was
+>   suppressing them. Fixed with `aria-describedby` pointing at the row's own `<dd>`s. See run log.
 > - ~~`TermDetail`'s bookmark control described as a "persistent action bar" but coded as a normal
 >   in-flow `Button`.~~ **✅ DONE 2026-08-16.** Reworded `src/screens/reference/TermDetail.jsx`'s header
 >   comment to describe the button accurately (in-flow, full-width, not sticky/fixed) rather than making it
@@ -5492,3 +5494,64 @@ direction is the problem.
   just the one stale number patched). Item 18 remains the entire critical path to ending Phase 0, blocked
   on an owner action (analytics provider account) — flagging again per the priority block's standing
   instruction.
+
+### 2026-08-16 — Glossary rows: restore the definition text to the accessibility tree (W-4 item 2)
+
+- **The item, and why it needed checking rather than fixing on sight**: W-4's second bullet flagged that
+  `src/screens/reference/Glossary.jsx`'s rows are `role="button"` divs carrying an `aria-label` of only
+  the term name, so the definition and example inside each row might never reach a screen-reader user
+  navigating by control. Its own text called this a "check it" item, not a confirmed bug, and asked for a
+  real AT pass before any change — so this run verified first and only then edited.
+- **Verification that it was real** (live browser, `dist/` built and served on `127.0.0.1:8764` via
+  `/usr/bin/python3 -m http.server`, per the Environment note): read the actual accessibility tree with
+  the browser tool's `read_page`. Every row exposed as `button "Gross Domestic Product"` — term only. Then
+  removed that one row's `aria-label` in the live DOM and re-read the tree: the row's name went empty and
+  its definition/example `generic` nodes became its content. **That is the confirmation** — the label was
+  overriding the row's contents for name computation exactly as the bullet suspected. Confirmed, not a
+  false alarm.
+- **The fix**: added `aria-describedby` on each row pointing at that row's own `<dd>` elements (the
+  definition, plus the example sentence when present), with ids assigned per rendered row. The
+  `aria-label` is deliberately kept — it is what kept the bookmarked-state marker ("…, Saved") on the
+  accessible name, and it keeps the *name* short (just the term) while the description carries the prose,
+  which is the correct division for control-by-control navigation. Added a header comment explaining why
+  the `aria-describedby` exists, since a future reader would otherwise see it as redundant with the
+  visible text.
+- **Verification of the fix** (same live-browser session, against a freshly rebuilt `dist/`): all 17 rows
+  carry a resolving `aria-describedby`; 34 generated ids with **zero duplicates and zero broken
+  references**; each row's description resolves to *its own* text, not a neighbour's. Exercised the
+  search filter (`"credit"` → 2 rows), which re-indexes the list — ids stayed unique and each row still
+  resolved to its own definition, which was the real risk of index-derived ids and the reason it was
+  tested rather than assumed. Clicking a row still opens the term detail (no functional regression), and
+  a bookmarked row keeps both its "…, Saved" name *and* a working description. Cleared the test bookmark
+  from `localStorage` afterward. `npm test` — 0 failures, same 1 pre-existing translation-review warning;
+  `npm run build` — succeeds, `lessonContent.money` unchanged at 499.36 kB.
+- **Adversarial self-check**: (1) Blindspot register — no lesson/glossary/market copy changed, only ARIA
+  wiring; `check-blindspot.mjs`'s §10.1/§10.2/§10.3/§2.3 checks all still pass. (2) `DECISIONS.md` — no
+  entry covers Glossary markup or ARIA patterns; nothing to conflict with. (3) Already-done backlog item
+  — this bullet was open (not struck through) before this run. (4) Reproducibility — the strongest claim
+  here is "the definition text was genuinely missing from the accessible name," and it rests on a live
+  accessibility-tree read plus a remove-the-attribute A/B in the DOM, both re-runnable by the technique
+  written up above, not on reasoning from the source. No conflict found.
+- **Concurrent-session note, worth reading**: while this run was working, another automated session
+  (the weekly reviewer) modified `AGENT_LOG.md` in the working tree and then committed it as `93ea015`
+  ("Compress backlog items 17 and 24 (W-3, owner-requested)") on top of this run's own earlier commit
+  `058e889` — i.e. **`HEAD` moved mid-run.** This run staged and committed **only**
+  `src/screens/reference/Glossary.jsx`, deliberately leaving `AGENT_LOG.md` untouched while the other
+  session held it, and re-read the file afterward before appending this entry. Nothing was clobbered in
+  either direction; the earlier run-log entry and the reviewer's compression both survive. The standing
+  instruction to re-run `git status` and re-read the log before writing is what caught this — it is not
+  hypothetical.
+- **Not touched, and why**: `economic-cycles-v6.jsx` — unrelated, untouched, still the long-standing
+  reference-only file. Did not pick the remaining W-4 items (`MarketSignals.jsx`'s dead `counterReset`,
+  `Settings.jsx`'s `ChoiceRow` keyboard pattern). Did not change the `aria-label` itself or convert the
+  rows from `role="button"` divs to real `<button>` elements — the latter is arguably the cleaner markup,
+  but it is a larger change to a `<dl>`'s semantics and was out of scope for a bullet scoped as a small
+  a11y cleanup.
+- **Next run should pick**: the two remaining W-4 items, both flagged by the 2026-08-16 tenth run:
+  (1) `MarketSignals.jsx`'s dead `counterReset: "principle"` (no paired `counter-increment`/`content` —
+  straightforward dead-CSS removal), and (2) `Settings.jsx`'s `ChoiceRow` radiogroup using Tab-per-option
+  instead of the ARIA APG roving-tabindex pattern (the larger of the two, and worth verifying live in the
+  browser the same way this run did rather than fixing from the code alone). With W-3 now fully closed by
+  `93ea015` and W-1 closed earlier, those two are what remains of the weekly review's block. Item 18
+  remains the entire critical path to ending Phase 0, blocked on an owner action (analytics provider
+  account) — flagging again per the block's standing instruction.
