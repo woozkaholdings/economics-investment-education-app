@@ -68,6 +68,158 @@ export function YieldCurve({ type, label, description }) {
   );
 }
 
+// ── ProportionBar ─────────────────────────────────────────────────────────
+// One number divided into named parts. Used by lesson 1, where a budget *is*
+// a division of take-home pay — the bar shows in one glance what the prose
+// spends three paragraphs establishing.
+export function ProportionBar({ title, segments, colors, labelInks, formatValue, description, caption }) {
+  const total = segments.reduce((sum, s) => sum + s.value, 0);
+  return (
+    <figure style={{ background: surface.card, border: `1px solid ${line.hairline}`, borderRadius: radius.lg, padding: space["4"], margin: 0 }}>
+      {title && (
+        <figcaption style={{ marginBottom: space["3"] }}>
+          <Text as="span" variant="caption" color={ink.muted} style={{ textTransform: "uppercase", letterSpacing: "0.05em", fontWeight: 700 }}>
+            {title}
+          </Text>
+        </figcaption>
+      )}
+      <div role="img" aria-label={description} style={{ display: "flex", width: "100%", height: 28, borderRadius: radius.sm, overflow: "hidden" }}>
+        {segments.map((s, i) => (
+          <div key={s.label} style={{ width: `${(s.value / total) * 100}%`, background: colors[i], transition: "width 0.5s" }} />
+        ))}
+      </div>
+      <ul style={{ listStyle: "none", margin: `${space["3"]}px 0 0`, padding: 0, display: "flex", flexWrap: "wrap", gap: `${space["1"]}px ${space["4"]}px` }}>
+        {segments.map((s, i) => (
+          <li key={s.label} style={{ display: "flex", alignItems: "baseline", gap: space["2"] }}>
+            <span aria-hidden="true" style={{ width: 10, height: 10, borderRadius: 3, background: colors[i], flexShrink: 0, alignSelf: "center" }} />
+            <Text as="span" variant="caption" color={labelInks[i]} style={{ fontWeight: 700 }}>{s.label}</Text>
+            <Text as="span" variant="caption" color={ink.muted}>
+              {formatValue(s.value)} · {Math.round((s.value / total) * 100)}%
+            </Text>
+          </li>
+        ))}
+      </ul>
+      {caption && <Text variant="caption" color={ink.muted} style={{ marginTop: space["3"], lineHeight: 1.5 }}>{caption}</Text>}
+    </figure>
+  );
+}
+
+// ── GrowthCurve ───────────────────────────────────────────────────────────
+// Two series over the same x-axis, for lesson 3. The whole point of compound
+// interest is the *shape* of the divergence, so a straight line and a curve
+// from one shared origin is the explanation rather than an illustration of it.
+const CURVE_W = 300;
+const CURVE_H = 120;
+const CURVE_PAD = { left: 6, right: 6, top: 8, bottom: 20 };
+
+// `xSuffix` defaults to empty: the lesson titles above these charts already
+// carry the unit ("over 30 years") in all five languages, and abbreviating
+// "years" per locale on a two-character axis label reads badly in several.
+export function GrowthCurve({ title, xValues, series, colors, labelInks, formatValue, xSuffix = "", description, caption }) {
+  const max = Math.max(...series.flatMap((s) => s.values));
+  const lastX = xValues[xValues.length - 1];
+  const plotW = CURVE_W - CURVE_PAD.left - CURVE_PAD.right;
+  const plotH = CURVE_H - CURVE_PAD.top - CURVE_PAD.bottom;
+  const px = (x) => CURVE_PAD.left + (x / lastX) * plotW;
+  const py = (v) => CURVE_PAD.top + plotH - (v / max) * plotH;
+
+  return (
+    <figure style={{ background: surface.card, border: `1px solid ${line.hairline}`, borderRadius: radius.lg, padding: space["4"], margin: 0 }}>
+      {title && (
+        <figcaption style={{ marginBottom: space["3"] }}>
+          <Text as="span" variant="caption" color={ink.muted} style={{ textTransform: "uppercase", letterSpacing: "0.05em", fontWeight: 700 }}>
+            {title}
+          </Text>
+        </figcaption>
+      )}
+      <svg viewBox={`0 0 ${CURVE_W} ${CURVE_H}`} style={{ width: "100%", height: 132 }} role="img" aria-label={description}>
+        <line x1={CURVE_PAD.left} y1={py(0)} x2={CURVE_W - CURVE_PAD.right} y2={py(0)} stroke={line.hairline} strokeWidth="1" />
+        {xValues.filter((x) => x > 0 && x < lastX).map((x) => (
+          <line key={x} x1={px(x)} y1={CURVE_PAD.top} x2={px(x)} y2={py(0)} stroke={line.hairline} strokeWidth="0.5" strokeDasharray="3" />
+        ))}
+        {series.map((s, i) => (
+          <polyline
+            key={s.label}
+            points={s.values.map((v, j) => `${px(xValues[j])},${py(v)}`).join(" ")}
+            fill="none"
+            stroke={colors[i]}
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        ))}
+        {series.map((s, i) => (
+          <circle key={s.label} cx={px(lastX)} cy={py(s.values[s.values.length - 1])} r="3.5" fill={colors[i]} />
+        ))}
+        <text x={CURVE_PAD.left} y={CURVE_H - 6} fill={ink.muted} fontSize="9">0{xSuffix}</text>
+        <text x={CURVE_W - CURVE_PAD.right} y={CURVE_H - 6} textAnchor="end" fill={ink.muted} fontSize="9">{lastX}{xSuffix}</text>
+      </svg>
+      <ul style={{ listStyle: "none", margin: `${space["2"]}px 0 0`, padding: 0, display: "flex", flexWrap: "wrap", gap: `${space["1"]}px ${space["4"]}px` }}>
+        {series.map((s, i) => (
+          <li key={s.label} style={{ display: "flex", alignItems: "center", gap: space["2"] }}>
+            <span aria-hidden="true" style={{ width: 14, height: 3, borderRadius: 2, background: colors[i], flexShrink: 0 }} />
+            <Text as="span" variant="caption" color={labelInks[i]} style={{ fontWeight: 700 }}>{s.label}</Text>
+            <Text as="span" variant="caption" color={ink.muted}>{formatValue(s.values[s.values.length - 1])}</Text>
+          </li>
+        ))}
+      </ul>
+      {caption && <Text variant="caption" color={ink.muted} style={{ marginTop: space["3"], lineHeight: 1.5 }}>{caption}</Text>}
+    </figure>
+  );
+}
+
+// ── AsymmetryChart ────────────────────────────────────────────────────────
+// Two bars off a shared zero line, deliberately unequal in length while the
+// money they represent is equal. For lesson 27: the asymmetry is the entire
+// finding, and a reader who *sees* one bar run twice as far has it immediately.
+export function AsymmetryChart({ title, axisLabel, bars, colors, labelInks, description, caption }) {
+  const max = Math.max(...bars.map((b) => Math.abs(b.felt)));
+  return (
+    <figure style={{ background: surface.card, border: `1px solid ${line.hairline}`, borderRadius: radius.lg, padding: space["4"], margin: 0 }}>
+      {title && (
+        <figcaption style={{ marginBottom: space["3"] }}>
+          <Text as="span" variant="caption" color={ink.muted} style={{ textTransform: "uppercase", letterSpacing: "0.05em", fontWeight: 700 }}>
+            {title}
+          </Text>
+        </figcaption>
+      )}
+      {/*
+        The zero line is drawn once across the whole plot rather than per
+        column: it is a shared axis, and rendering it per bar made it read as
+        two unrelated baselines instead of one line the bars are measured from.
+      */}
+      <div role="img" aria-label={description} style={{ position: "relative", display: "flex", gap: space["4"], height: 150 }}>
+        <div aria-hidden="true" style={{ position: "absolute", left: 0, right: 0, top: "50%", borderTop: `1px solid ${line.strong}` }} />
+        {bars.map((b, i) => {
+          const up = b.felt > 0;
+          const frac = (Math.abs(b.felt) / max) * 50;
+          return (
+            <div key={b.label} style={{ flex: 1, display: "flex", flexDirection: "column" }}>
+              <div style={{ flex: 1, display: "flex", alignItems: "flex-end", justifyContent: "center" }}>
+                {up && <div style={{ width: "60%", height: `${frac * 2}%`, background: colors[i], borderRadius: `${radius.sm}px ${radius.sm}px 0 0`, transition: "height 0.5s" }} />}
+              </div>
+              <div style={{ flex: 1, display: "flex", alignItems: "flex-start", justifyContent: "center" }}>
+                {!up && <div style={{ width: "60%", height: `${frac * 2}%`, background: colors[i], borderRadius: `0 0 ${radius.sm}px ${radius.sm}px`, transition: "height 0.5s" }} />}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+      <ul style={{ listStyle: "none", margin: `${space["2"]}px 0 0`, padding: 0, display: "flex", gap: space["4"] }}>
+        {bars.map((b, i) => (
+          <li key={b.label} style={{ flex: 1, textAlign: "center" }}>
+            <Text as="span" variant="caption" color={labelInks[i]} style={{ fontWeight: 700 }}>{b.label}</Text>
+          </li>
+        ))}
+      </ul>
+      {axisLabel && (
+        <Text variant="caption" color={ink.muted} style={{ marginTop: space["2"], textAlign: "center" }}>{axisLabel}</Text>
+      )}
+      {caption && <Text variant="caption" color={ink.muted} style={{ marginTop: space["3"], lineHeight: 1.5 }}>{caption}</Text>}
+    </figure>
+  );
+}
+
 // ── CycleChart ────────────────────────────────────────────────────────────
 const PHASE_DOT = [graph.green, graph.amber, graph.red, graph.blue];
 const PHASE_INK = [ink.ok, ink.warn, ink.bad, ink.accent];

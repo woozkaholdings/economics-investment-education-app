@@ -20,6 +20,7 @@ export default {
     keyTakeaway: "핵심 포인트", tryThinking: "생각해보세요",
     locked: "이전 레슨을 먼저 완료하세요",
     marketsTitle: "시장 대시보드", currentState: "예시 시나리오",
+    illustrationNote: "교육용 예시 수치입니다 — 실제 결과에 대한 예측이 아닙니다",
     scenarioNote: "교육 목적입니다 — 실시간 시장 데이터가 아닙니다", rateTitle: "금리",
     rateHow: "금리 변동이 자산에 미치는 영향",
     ratesRising: "금리 ↑", ratesFalling: "금리 ↓",

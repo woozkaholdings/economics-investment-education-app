@@ -20,6 +20,7 @@ export default {
     keyTakeaway: "关键要点", tryThinking: "想一想",
     locked: "请先完成之前的课程",
     marketsTitle: "市场仪表板", currentState: "示例场景",
+    illustrationNote: "用于教学的示例数字——并非对你实际结果的预测",
     scenarioNote: "仅供教学用途——非实时市场数据", rateTitle: "利率",
     rateHow: "利率变化如何影响资产",
     ratesRising: "利率 ↑", ratesFalling: "利率 ↓",

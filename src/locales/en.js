@@ -28,6 +28,7 @@ export default {
     locked: "Complete previous lessons first",
     // Markets
     marketsTitle: "Market Dashboard", currentState: "Illustrative Scenario",
+    illustrationNote: "Example figures, for teaching — not a projection of your own results",
     scenarioNote: "For teaching purposes — not live market data", rateTitle: "Interest Rates",
     rateHow: "How Rate Changes Affect Assets",
     ratesRising: "Rates ↑", ratesFalling: "Rates ↓",

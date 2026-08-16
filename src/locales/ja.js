@@ -20,6 +20,7 @@ export default {
     keyTakeaway: "重要ポイント", tryThinking: "考えてみよう",
     locked: "前のレッスンを先に完了してください",
     marketsTitle: "マーケットダッシュボード", currentState: "例示シナリオ",
+    illustrationNote: "教育用の例示数値です — あなたの結果の予測ではありません",
     scenarioNote: "教育目的の例です — リアルタイムの市場データではありません", rateTitle: "金利",
     rateHow: "金利変動が資産に与える影響",
     ratesRising: "金利 ↑", ratesFalling: "金利 ↓",

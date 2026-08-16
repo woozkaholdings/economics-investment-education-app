@@ -163,6 +163,10 @@ const allCheckedFiles = [...srcFiles, ...(existsSync(v5Path) ? [v5Path] : [])];
     join(ROOT, "src", "content", "markets.js"),
     join(ROOT, "src", "content", "economicSignals.js"),
     join(ROOT, "src", "content", "sectors.js"),
+    // Added 2026-08-16 with backlog item 27: moneyVisuals.js is teaching copy
+    // carrying figures, which is exactly the shape §2.3 guards. It has no dates
+    // today — this keeps a future run from introducing one unnoticed.
+    join(ROOT, "src", "content", "moneyVisuals.js"),
   ].filter(existsSync);
   const monthYear =
     /\b(january|february|march|april|may|june|july|august|september|october|november|december)\s+20\d{2}\b/i;
@@ -170,7 +174,7 @@ const allCheckedFiles = [...srcFiles, ...(existsSync(v5Path) ? [v5Path] : [])];
   if (hits.length) {
     fail(`§2.3 a "Month YYYY"-shaped date appears in teaching copy (reads as live/current):\n  ${hits.join("\n  ")}`);
   } else {
-    ok("§2.3 no live-looking dates in src/content/{markets,economicSignals,sectors}.js");
+    ok("§2.3 no live-looking dates in src/content/{markets,economicSignals,sectors,moneyVisuals}.js");
   }
 }
 

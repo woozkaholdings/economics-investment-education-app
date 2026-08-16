@@ -15,6 +15,7 @@ import { quizData } from "../src/content/quizData.js";
 import { glossary } from "../src/content/glossary.js";
 import { kidsContent } from "../src/content/kidsContent.js";
 import * as marketsContent from "../src/content/markets.js";
+import * as moneyVisualsContent from "../src/content/moneyVisuals.js";
 import { economicSignals } from "../src/content/economicSignals.js";
 import { sectors } from "../src/content/sectors.js";
 import { MAX_BOX, dueQuestions, recordAnswer } from "../src/lib/review.js";
@@ -387,6 +388,12 @@ const CONTENT_MODULES = {
   // this run and gets the same coverage from day one.
   sectors: { sectors },
   economicSignals: { economicSignals },
+  // moneyVisuals.js is new 2026-08-16 (backlog item 27) and gets parity
+  // coverage from day one. Its numeric exports (budgetSegments,
+  // compoundSeries, compoundYears, lossFelt) carry no language maps, so
+  // checkModuleParity skips them and only the label/caption/description
+  // sets are checked — which is the intent.
+  moneyVisuals: moneyVisualsContent,
 };
 for (const [label, moduleExports] of Object.entries(CONTENT_MODULES)) {
   checkModuleParity(moduleExports, label);

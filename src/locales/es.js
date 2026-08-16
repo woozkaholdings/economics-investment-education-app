@@ -20,6 +20,7 @@ export default {
     keyTakeaway: "Punto Clave", tryThinking: "Piensa en Esto",
     locked: "Completa las lecciones anteriores primero",
     marketsTitle: "Panel de Mercados", currentState: "Escenario Ilustrativo",
+    illustrationNote: "Cifras de ejemplo, con fines didácticos — no son una proyección de tus resultados",
     scenarioNote: "Con fines educativos — no son datos de mercado en vivo", rateTitle: "Tasas de Interés",
     rateHow: "Cómo los Cambios Afectan los Activos",
     ratesRising: "Tasas ↑", ratesFalling: "Tasas ↓",
