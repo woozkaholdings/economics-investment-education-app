@@ -684,6 +684,40 @@ for the history. No open P1/P2 items.
     owner-blocked** — §9.2 specifies `lesson_completed` *with duration* and `quiz_taken` *with score*,
     and neither payload carries them today. Fixing that now means the data is the right shape the day an
     account exists, instead of starting the measurement window with a known gap.
+34. **[Feature — the one idea worth salvaging from `economic-cycles-v6.jsx`] A "Be the Fed Chair"
+    policy simulator.** Extracted 2026-08-16 (owner-requested audit of that file) so the idea survives
+    independently of the file, whatever is eventually done with it. **Do not copy v6's code** — it uses
+    its own `DS` design-system object, carries Dalio branding (§10.2) and hardcoded "April 2026" dates
+    (§2.3), and none of that may cross over. This item is the *concept* only.
+    - **What it is, in v6:** a scenario card with a macro situation, a question, and three policy
+      levers; picking one returns an explanation of the consequence rather than a score. Its two
+      scenarios: *"Inflation is raging at 7%. Unemployment is very low at 3.5%. The stock market is
+      overheating — what is your move as Fed Chair?"* (hike / cut / do nothing) and *"A severe recession
+      hits. Unemployment jumps to 8%, inflation drops to 1%, markets crash 30% — how do you stimulate?"*
+      (hike / cut to zero / start QT). Feedback is explanatory: *"Raising rates increases the cost of
+      borrowing, cooling demand and slowing inflation."*
+    - **Why it is worth building, and why it ranks with item 27 rather than below it:** §3.0.4 says the
+      differentiator is what a chat window cannot do. A diagram shows a mechanism; **a simulator lets a
+      learner drive one and watch it respond** — the same argument one step further. It maps directly
+      onto the economy track's existing spine (lessons 35 interest rates, 37 QE/QT, 32/33 the debt
+      cycles) and turns lesson 35's Fed dual-mandate section from prose into a decision the learner
+      makes. `grep -rn "simulat" src/` confirms nothing like it exists today.
+    - **It is also unusually safe ground for this app.** The §10.1 advice-adjacency rule constrains
+      almost every interactive idea in a *personal-finance* app — but this is **central-bank policy, not
+      a buy/sell decision**, so the "what would you do" framing carries none of the usual risk. The
+      scenarios are hypothetical and dateless, satisfying §2.3 by construction. Keep it that way: no
+      real dates, no current readings, and no drift from "here is how the lever works" toward "here is
+      what markets will do next."
+    - **Scope caution:** build it as one lesson-embedded component (`LessonVisual.jsx`'s pattern), not a
+      new tab. §3.1 deliberately cut the app to three destinations, and v6's extra Sectors/Industries/
+      Finance tabs are exactly the junk-drawer growth that section removed.
+    - **Everything else in v6 has already shipped independently** — audited 2026-08-16: its charts
+      (`YieldCurve`, `CycleChart`, `BarChart`), `SectorTable`, `Flashcards`/spaced repetition,
+      `MiniQuiz`, `LearningPath`, `Onboarding` and dark mode all have real equivalents in `src/`, built
+      without consulting it. `HistoryTimeline` is the only other unshipped piece and it overlaps
+      existing lesson content; it is **not** recommended. After this item, v6 holds no unique live idea.
+
+
 **HELD — owner decisions, do not act on these**
 
 12. **[HELD] Expo vs. Vite** (§2.1) — needs a human call; blocks store release, not the web launch. See
