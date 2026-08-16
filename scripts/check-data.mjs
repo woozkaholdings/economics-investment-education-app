@@ -534,6 +534,51 @@ for (const [label, moduleExports] of Object.entries(CONTENT_MODULES)) {
       `per-language human share above — most review so far is AI (see the method field, ` +
       `DECISIONS.md). Run 'npm run review-status' for detail.`,
   );
+
+  //   11b. LAUNCH_READINESS.md's §10.4 row quotes this coverage figure, and
+  //   quoting a number is how it goes stale. It reported 100%/100%/100%/100%
+  //   from 2026-08-11 until backlog item 37 caught it on 2026-08-16, by which
+  //   time the real figure was 93% with 3 stale entries per language — the
+  //   ledger was doing its job and the scorecard was reporting the opposite.
+  //   That is the same failure this whole section exists to prevent, one level
+  //   up: §11 surfaces the number on every run, and nothing checked that the
+  //   document claiming to be the scorecard agreed with it.
+  //
+  //   This FAILS rather than warns, on the §16 precedent — a warning nobody
+  //   reads is indistinguishable from no check. It is deliberately narrow:
+  //   the trigger is only the four coverage percentages, which move when a
+  //   review lands or a lesson's English drifts past the staleness line, not
+  //   on every keystroke. The row's *character-count* figures are NOT guarded,
+  //   because they shift by single digits on any content edit and a build that
+  //   fails over 19 characters would be turned off within a week.
+  //
+  //   The failure message states the exact replacement string, so the fix is a
+  //   copy-paste rather than a re-derivation.
+  const READINESS = "LAUNCH_READINESS.md";
+  const readiness = readFileSync(join(ROOT, READINESS), "utf8");
+  const expected = ["es", "ko", "zh", "ja"]
+    .map((lang) => {
+      const c = coverage[lang];
+      const pct = c.total ? Math.round((c.reviewed / c.total) * 100) : 0;
+      const humanPct = c.total ? Math.round((c.humanReviewed / c.total) * 100) : 0;
+      return `${lang} ${pct}% (${humanPct}% human, ${c.stale} stale)`;
+    })
+    .join(", ");
+
+  if (!readiness.includes(expected)) {
+    // Report what the file currently claims, so the failure names the drift
+    // rather than only the fix. An absent figure is also a failure: a run that
+    // "fixes" this by deleting the sentence would otherwise pass, which is the
+    // §16 blind-spot shape — a check that can be satisfied by removing the
+    // thing it checks.
+    const found = readiness.match(/es \d+% \(\d+% human, \d+ stale\)(?:, (?:ko|zh|ja) \d+% \(\d+% human, \d+ stale\))*/);
+    fail(
+      `${READINESS} §10.4's translation-coverage figure disagrees with the live ledger.\n` +
+        `       it says:  ${found ? found[0] : "(no coverage figure found in the file at all)"}\n` +
+        `       should be: ${expected}\n` +
+        `       Replace that sentence verbatim. See backlog item 37 for why this is checked.`,
+    );
+  }
 }
 
 // 12. src/lib/storage.js — every persisted value in the app goes through
@@ -865,7 +910,13 @@ for (const [label, moduleExports] of Object.entries(CONTENT_MODULES)) {
     es: /\bLecci[óo]n(?:es)?\s+(\d+(?:\s*(?:,|y|e)\s*\d+)*)/gi,
     ko: /레슨\s*(\d+)|(\d+)\s*강/g,
     zh: /第\s*(\d+)\s*课/g,
-    ja: /レッスン\s*(\d+)|第\s*(\d+)\s*課/g,
+    // 講 added 2026-08-16: the ja prose uses 課 and 講 interchangeably, and the
+    // item-36 pass added only 課 — leaving 11 more stale references invisible.
+    // That miss did not trip the coverage tripwire below either, because ja
+    // still matched ~48% of English. See the UNRECOGNIZED-COUNTER guard after
+    // the tripwire, which is what actually generalizes: enumerating surface
+    // forms by hand has now failed three times in a row.
+    ja: /レッスン\s*(\d+)|第\s*(\d+)\s*[課講]/g,
   };
 
   const lessonTitle = new Map(lessons.map((l) => [l.id, l.title.en]));
@@ -1002,6 +1053,62 @@ for (const [label, moduleExports] of Object.entries(CONTENT_MODULES)) {
           `This is exactly how 67 stale ko/ja references passed every check (AGENT_LOG.md item 36).`,
       );
     }
+  }
+
+  // UNRECOGNIZED-COUNTER GUARD.
+  //
+  // The tripwire above only catches a pattern that matches almost NOTHING. It
+  // cannot catch a PARTIAL surface-form gap, and that is what has actually
+  // happened every time: ja wrote both 第N課 and 第N講, the item-36 pass added
+  // only 課, and the remaining 11 stale 講 references sat at ~48% coverage —
+  // comfortably above the 20% floor, so nothing complained.
+  //
+  // Hand-enumerating surface forms has now failed three times (singular-only
+  // "Lesson N"; then 레슨/レッスン while the prose used N강/第N課; then 課
+  // while it also used 講). So this guard inverts the problem: instead of
+  // listing the forms we accept, it finds the unambiguous CJK ordinal
+  // construction 第<number><counter> and fails on any counter NOT in the known
+  // set. A translator reaching for a fourth counter breaks the build with the
+  // exact character in the message, instead of silently disabling the check.
+  {
+    // Counters that DO mean "Lesson N" — every one of these is matched by
+    // REF_PATTERNS above, so the cross-reference check actually sees them.
+    const LESSON_COUNTERS = new Set(["課", "講", "课"]);
+
+    // Counters that appear in this content and do NOT mean "Lesson N". Each was
+    // read in context against its English source before being listed here — an
+    // unexplained entry in this set would re-create exactly the blind spot the
+    // guard exists to close, so keep the justification attached:
+    //   週 — lessonContent[1].sections[2].ja "マリアの第3週の意志力" = her third
+    //        WEEK's willpower. A duration, not a lesson.
+    //   節 — lessonContent[8].sections[2].ja "第1節では" mirrors the English
+    //        "Section 1 explained..." — an intra-lesson section, not a lesson.
+    //   种 — lessonContent[34].sections[2].zh "第4种工具" = the fourth KIND of
+    //        tool, mirroring the English "All four tools...".
+    const NON_LESSON_COUNTERS = new Set(["週", "節", "种"]);
+
+    const scanCounters = (path, map) => {
+      for (const lang of ["ja", "zh", "ko"]) {
+        for (const m of (map[lang] ?? "").matchAll(/第\s*(\d+)\s*(.)/g)) {
+          if (LESSON_COUNTERS.has(m[2]) || NON_LESSON_COUNTERS.has(m[2])) continue;
+          fail(
+            `${path}.${lang}: found "第${m[1]}${m[2]}" — an ordinal construction whose counter ` +
+              `"${m[2]}" is in neither LESSON_COUNTERS nor NON_LESSON_COUNTERS. If it means ` +
+              `"Lesson ${m[1]}", the cross-reference check is silently skipping it (this is how ` +
+              `11 stale ja references survived the item-36 pass): add "${m[2]}" to ` +
+              `REF_PATTERNS.${lang} and LESSON_COUNTERS, then re-verify. If it means something ` +
+              `else, add it to NON_LESSON_COUNTERS **with the sentence and its English source**, ` +
+              `the way the existing entries are justified. Do not add it bare.`,
+          );
+        }
+      }
+    };
+    for (const [idKey, entry] of Object.entries(lessonContent)) {
+      for (const [path, map] of proseFields(entry, Number(idKey))) scanCounters(path, map);
+    }
+    quizData.forEach((item, i) => {
+      if (item.explain) scanCounters(`quizData[${i}].explain`, item.explain);
+    });
   }
 }
 

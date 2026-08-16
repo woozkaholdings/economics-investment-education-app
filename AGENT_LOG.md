@@ -521,8 +521,40 @@ for the history. No open P1/P2 items.
     Do **not** turn this into a count-shaped item: the target is "the jargon money lessons actually
     use is definable," not a term total.
 
-36. **[Process — ✅ FULLY CLOSED 2026-08-16. Blind spot 1 fixed, and the count it hid was 67, not 8 —
-    this item's own estimate was low by 8×, for the same reason the bug existed. See the run log.]**
+36. **[Process — reopened and closed again the same day. "FULLY CLOSED" below was the FOURTH premature
+    all-clear on this bug; `第N講` was still unscanned and 11 more ja references were still stale.
+    Now fixed, and the guard that generalizes is in — see the fifth-pass note immediately below.]**
+    > **Fifth pass, 2026-08-16 (owner-requested: "fix the ko/ja patterns").** Checked rather than
+    > assumed, and ja was still broken. **Korean was genuinely fixed** by the pass below (`강` is its
+    > only marker — confirmed by tallying every character adjacent to a digit in the ko corpus, not by
+    > eyeballing). **Japanese was not:** the prose writes `第N課` *and* `第N講`, and that pass added only
+    > `課`. That left **11 more stale ja references** in lessons 16, 17, 18, 20, 27 and 28 — every one a
+    > pre-renumbering id, each confirmed against the English reference in the same field.
+    > **Why nothing caught it, which is the part worth keeping:** the coverage tripwire added below
+    > fires under 20% of English. With `課` matching but `講` not, ja sat at **31/64 ≈ 48%** — a partial
+    > surface-form gap passes a ratio floor comfortably. A tripwire catches a *dead* pattern; it cannot
+    > catch a *half-dead* one.
+    > **So the fix is not another hand-added surface form.** Hand-enumeration has now failed four times
+    > (singular-only `Lesson N` → `레슨`/`レッスン` while the prose used `N강`/`第N課` → `課` while it also
+    > used `講`). The new **UNRECOGNIZED-COUNTER GUARD** inverts it: it finds the unambiguous CJK
+    > ordinal construction `第<number><counter>` and **fails on any counter in neither
+    > `LESSON_COUNTERS` nor `NON_LESSON_COUNTERS`.** A translator reaching for a fifth counter now
+    > breaks the build with the exact character in the message instead of silently disabling the check.
+    > Running it immediately surfaced three real non-references, each read in context against its
+    > English source before being whitelisted **with its justification attached**: `第3週` ("her third
+    > *week*'s willpower"), `第1節` (mirrors English "Section 1 explained..."), `第4种` ("the fourth
+    > *kind* of tool"). The guard rejects a bare addition to that set by design.
+    > **Verified:** ja coverage **31 → 44**, now equal to ko and zh (es is 43, and that one is genuine
+    > condensation — its near-misses are `elección`/`selección`/"esta lección", checked). Injection
+    > tests all pass: a re-injected stale `講` reference is now caught; a novel `第7章` trips the guard
+    > with an actionable message; the whitelisted `第3週` stays silent. The 11 fixes were applied in a
+    > **single-pass** substitution — a two-pass replace would have turned 31→19 and then 19→7,
+    > corrupting the references it had just repaired.
+    > **The standing lesson, fourth restatement: a green `npm test` on this check has repeatedly meant
+    > "the pattern matched nothing," not "the content is correct."** Before trusting it, read the
+    > `cross-references matched per language:` line it now prints every run.
+    >
+    > *(Original 2026-08-16 closing update — the fourth premature all-clear — follows.)*
     > **Closing update, 2026-08-16.** Blind spot 1 is fixed: `REF_PATTERNS` now carries `ko:
     > /레슨\s*(\d+)|(\d+)\s*강/g` and `ja: /レッスン\s*(\d+)|第\s*(\d+)\s*課/g`, `refsIn` pools **all**
     > capture groups (reading only `m[1]` would have made the new branches match-but-capture-nothing —
