@@ -142,9 +142,11 @@ for the history. No open P1/P2 items.
 >   `aria-label` overrides an element's contents for name computation, the definition text inside each row
 >   may not be announced to a screen-reader user navigating by control. Verify with a real AT pass before
 >   changing anything — this is a "check it" item, not a confirmed bug.
-> - **`TermDetail`'s bookmark control is described in its commit message and header comment as a
->   "persistent action bar" but is a normal in-flow `Button` at the end of the document.** Either make it
->   sticky or correct the description; right now the code and its own docs disagree.
+> - ~~`TermDetail`'s bookmark control described as a "persistent action bar" but coded as a normal
+>   in-flow `Button`.~~ **✅ DONE 2026-08-16.** Reworded `src/screens/reference/TermDetail.jsx`'s header
+>   comment to describe the button accurately (in-flow, full-width, not sticky/fixed) rather than making it
+>   sticky — see run log for why sticky was rejected (no existing per-screen sticky-bar precedent, and it
+>   would need z-index/safe-area coordination with `App.jsx`'s fixed bottom nav).
 > - `MarketSignals.jsx`'s dead `counterReset: "principle"` (no paired `counter-increment`/`content`), and
 >   `Settings.jsx`'s `ChoiceRow` radiogroup using Tab-per-option rather than the ARIA APG roving-tabindex
 >   pattern — both flagged by the 2026-08-16 tenth run's own note.
@@ -5504,3 +5506,54 @@ direction is the problem.
   `ChoiceRow` keyboard pattern, (5) item 17's stale "118/120" figure. Item 18 remains the entire critical
   path to ending Phase 0, blocked on an owner action (analytics provider account) — flagging again per
   the block's standing instruction.
+
+### 2026-08-16 — Fix TermDetail's "persistent action bar" doc/code mismatch (W-4 item 1)
+
+- **What was done**: `src/screens/reference/TermDetail.jsx`'s header comment (and the `72222a0` commit
+  message that introduced it) described the bookmark toggle as "the persistent action bar" the
+  Quizlet/Vocabulary design review called for. The actual code is a normal in-flow, full-width `Button`
+  (from `src/components/ui.jsx`) as the last element in the screen's `<div>` — no `position: sticky`/
+  `fixed`, no elevated `zIndex`, no dedicated action-bar wrapper; it scrolls away with the rest of the
+  content like any other element. Confirmed via an Explore-agent read of the file (lines 4–11 for the
+  comment, 67–76 for the button JSX) that the mismatch was real, not already fixed.
+- **Which fix, and why**: two options were open — make the button genuinely sticky, or correct the
+  comment to match the existing behavior. Chose the comment fix. `App.jsx` already has two sticky/fixed
+  elements (the header, `position: sticky, top: 0, zIndex: 100`; the bottom tab nav, `position: fixed,
+  bottom: 0, zIndex: 100`, with its own safe-area padding), and there is no existing precedent anywhere
+  in the app for a *third*, per-screen sticky bar stacked above the bottom nav. Adding one would mean
+  picking a `zIndex` that doesn't fight the nav's, adding its own safe-area padding, and checking it
+  doesn't visually overlap the nav on short viewports — a real layout change touching shared stacking
+  order, not the "small correctness cleanup" this W-4 bullet was scoped as. Reworded the comment instead
+  to state plainly that the button is in-flow and full-width, not sticky/fixed, with a pointer back to
+  this AGENT_LOG note for the reasoning, so a future run isn't tempted to "fix" the wording back the
+  other way without re-deriving why sticky was rejected.
+- **Verification**: `npm test` (`scripts/check-data.mjs` + `scripts/check-blindspot.mjs`) — 0 failures,
+  the same 1 pre-existing translation-review warning as before (unrelated to this change). `npm run
+  build` — succeeds, same 10-chunk output as prior runs, `lessonContent.money` unchanged at 499.36 kB
+  (still under Vite's 500 kB warning threshold). No UI-rendered behavior changed (comment-only edit; the
+  button's actual DOM output, styling, and behavior are identical before and after), so no browser
+  verification was done — this is a documentation-accuracy fix, not a rendered-UI change, and the
+  `<when_to_verify>` guidance for browser checks doesn't apply to it.
+- **Adversarial self-check**: (1) Blindspot register — comment-only change, touches no lesson content,
+  glossary copy, market data, or kids framing; `check-blindspot.mjs`'s §10.1/§10.2/§10.3/§2.3 checks all
+  still pass, confirming no regression. (2) `DECISIONS.md` — grepped for "TermDetail", "action bar", and
+  "sticky"; no existing decision entry addresses this screen or a sticky-bar pattern, so nothing to
+  conflict with. (3) Already-done backlog item — this W-4 bullet was listed as open (not struck through)
+  before this run; not a re-do of prior work. (4) Reproducibility — the two commands above (`npm test`,
+  `npm run build`) are exactly what an independent reviewer would re-run, and their output (0 failures,
+  successful 10-chunk build) is what's reported here, not a paraphrase. No conflict found by the check.
+- **Not touched, and why**: `economic-cycles-v6.jsx` — unrelated, untouched. Did not pick the remaining
+  W-4 items (Glossary `aria-label` "check it" item, `MarketSignals.jsx`'s dead `counterReset`,
+  `Settings.jsx`'s `ChoiceRow` keyboard pattern) or item 17's stale "118/120" figure — this run's budget
+  went to the single item above, per the previous run's ordered "next run should pick" list. Did not
+  touch W-3's remaining archival work (larger than a single-item run) or W-2 (already satisfied — this
+  entry itself came from a real backlog item, not a note chain).
+- **Next run should pick**: continue down the eleventh run's ordered W-4 list: (2) the Glossary row
+  `aria-label` "check it" item (needs a real AT/screen-reader pass before changing anything, per its own
+  text — read that carefully before treating it as a simple fix), (3) `MarketSignals.jsx`'s dead
+  `counterReset: "principle"`, (4) `Settings.jsx`'s `ChoiceRow` keyboard pattern, or (5) item 17's stale
+  "118/120" figure (part of W-3's still-open backlog-item-compression sub-task — item 17 and 24's
+  accreted "Update, <date>" paragraphs should be compressed to current state + a run-log pointer, not
+  just the one stale number patched). Item 18 remains the entire critical path to ending Phase 0, blocked
+  on an owner action (analytics provider account) — flagging again per the priority block's standing
+  instruction.

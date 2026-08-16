@@ -3,11 +3,13 @@
 //
 // A focused, single-term view reached by tapping a Glossary row — the
 // term-detail screen the Quizlet/Vocabulary design review called for, plus
-// the persistent action bar it called for alongside it: a bookmark toggle
-// so a learner can mark terms worth revisiting. There is no existing
-// "review queue" concept for glossary terms (the Leitner scheduler in
-// src/lib/review.js is keyed by quiz question, not by term), so this is a
-// plain localStorage-backed save list, not a plug-in to that system.
+// the bookmark toggle it called for alongside it: a full-width Button in
+// normal document flow at the end of the term detail (not a sticky/fixed
+// action bar — see AGENT_LOG.md's W-4 note on this) so a learner can mark
+// terms worth revisiting. There is no existing "review queue" concept for
+// glossary terms (the Leitner scheduler in src/lib/review.js is keyed by
+// quiz question, not by term), so this is a plain localStorage-backed save
+// list, not a plug-in to that system.
 // ═══════════════════════════════════════════════════════════════════════════
 
 import { useEffect, useRef } from "react";
