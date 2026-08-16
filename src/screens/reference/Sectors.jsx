@@ -83,7 +83,9 @@ export default function Sectors({ t, lang }) {
         panelId="sector-list"
       />
 
-      <ol id="sector-list" style={{ listStyle: "none", margin: 0, padding: 0 }}>
+      {/* Genuinely an <ol>: `ranked` is ordered by relative strength, and each
+          row states its own "rank N of M". `role="list"` per check-data.mjs §20. */}
+      <ol role="list" id="sector-list" style={{ listStyle: "none", margin: 0, padding: 0 }}>
         {ranked.map((sector) => {
           const row = bySymbol[sector.symbol];
           const change = row?.change?.[window];
@@ -138,7 +140,7 @@ export default function Sectors({ t, lang }) {
           <Text as="h2" variant="heading" color={ink.strong} style={{ marginBottom: space["3"] }}>
             {t.economyNowTitle}
           </Text>
-          <ul style={{ listStyle: "none", margin: 0, padding: 0 }}>
+          <ul role="list" style={{ listStyle: "none", margin: 0, padding: 0 }}>
             {economicSignals.map((signal) => {
               const reading = data.economics[signal.key];
               if (!reading) return null;

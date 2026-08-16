@@ -741,7 +741,36 @@ for the history. No open P1/P2 items.
     Write the result as `reviews/YYYY-MM-DD-monthly-audit.md` and update §10 per the plan. Depends on
     item 30 for question 4 (there are no claims with check dates yet to be past).
 
-34. **[A11y — small, but a judgment call, which is why it is here and not just done] `MarketSignals.jsx`'s
+34. **[A11y — ✅ DONE 2026-08-16. Fixed as a pattern, not one line: the audit found the `<ol>`/`<ul>`
+    question was the *smaller* of the two defects in these lists.]**
+    > **Closing update, 2026-08-16.** `MarketSignals.jsx`'s list is now a `<ul>`. `ratePrinciples` was
+    > read before changing it and the six principles have no sequence, ranking or dependency — confirmed
+    > by content, not by assuming this item was right.
+    > **All eight lists under `src/` were audited, and the verdicts are recorded in `check-data.mjs`
+    > §20's header so a later run reads them instead of re-deriving them:** `Learn.jsx`'s lesson path
+    > (order is the feature — lessons unlock in sequence) and `Sectors.jsx`'s relative-strength ranking
+    > (each row states its own "rank N of M") are genuinely ordered and stay `<ol>`. `ParentGuide.jsx`
+    > stays `<ol>` too, on a different ground: it renders a **visible ordinal** per row, so its semantics
+    > already match what is on screen. That its ordinal is announced *as well as* the item's position is
+    > redundant rather than wrong, and `aria-hidden`-ing it was deliberately **not** done — see the run
+    > log for why that would have made the ordinal depend on the WebKit behaviour below. The three
+    > `charts.jsx` legends were already `<ul>`.
+    > **The bigger find, which this item did not anticipate:** every list in the app sets
+    > `listStyle: "none"`, and **WebKit removes list semantics from exactly that** — so under VoiceOver
+    > on iOS all eight were announced as loose text, with no "list, N items" and no item position. The
+    > `<ol>`/`<ul>` mixup affected one list; this affected all of them, on the platform the app targets.
+    > All eight now carry an explicit `role="list"`.
+    > **⚠️ Honest limit on that half, stated because this log's D1 claim exists:** the `<ol>`→`<ul>` fix
+    > and the `role="list"` attributes were verified live; **the WebKit behaviour itself was not**, because
+    > the preview browser here is Chromium, where `role="list"` is a no-op. That half rests on documented
+    > WebKit behaviour, not on a measurement taken in this environment.
+    > **Guarded by `check-data.mjs` §20**, which fails if any `listStyle: "none"` list lacks
+    > `role="list"`, and — per item 36's lesson — fails *itself* if its scan matches fewer than 8 lists,
+    > so a dead pattern can't pass vacuously. Proven by three injections. §20's header also states what
+    > it **cannot** do: it cannot tell whether `<ol>` or `<ul>` is right, which is the content judgment
+    > this item was actually about.
+    *(Original text below.)*
+    `MarketSignals.jsx`'s
     (renumbered from 33 → 34 on 2026-08-16: two different items were both filed as "33" by two runs the
     same day — the content bug above and this one. This is the a11y one.)
     "Key Principles" list is an `<ol>` whose content is not ordered.** Noticed 2026-08-16 while removing
@@ -7189,3 +7218,113 @@ engagement signal and the cheapest possible test of whether interactive content 
 than prose, but adding an event type touches `analytics.js`'s minimum-event-set check, so it was left
 out of a change that was already large. Also still open from the previous run: nothing in this repo
 checks that a *check* and the document it guards land in the same commit.
+
+### 2026-08-16 (scheduled dev-agent) — The `<ol>` that isn't ordered, and the `role="list"` every list in the app was missing (backlog item 34, the a11y one)
+
+**What changed.** Six files, no content strings touched — the entire `src/` diff is list elements,
+`role` attributes and comments (verified by filtering the diff, not by claiming it).
+- **`src/screens/reference/MarketSignals.jsx`** — the "Key Principles" list is now a `<ul>`. This is
+  the item as filed.
+- **Seven other lists** — `Learn.jsx`, `Sectors.jsx` (×2), `ParentGuide.jsx`, `charts.jsx` (×3) — gained
+  an explicit `role="list"`. So did the `<ul>` above.
+- **`scripts/check-data.mjs` §20** — the regression guard.
+
+**The item asked for a pattern, and the audit found the pattern was not the one the item named.**
+All eight lists under `src/` were read. Only one had the `<ol>`-styled-as-`<ul>` mismatch. But **all
+eight** set `listStyle: "none"`, and WebKit drops list semantics from a list whose computed
+`list-style-type` is `none` — so on iOS, where every browser is WebKit and where this app's stated
+target is, every list in the app was announced as loose text: no "list, 6 items", no item position.
+The mismatch this item was filed about affected one list; the missing `role` affected all of them.
+
+**Verdicts on the other seven, recorded in §20's header rather than only here:**
+- `Learn.jsx`'s lesson path — genuinely `<ol>`. Lessons unlock in sequence; the order *is* the feature.
+- `Sectors.jsx`'s sector list — genuinely `<ol>`. `ranked` is ordered by relative strength and each row
+  states "rank N of M".
+- `ParentGuide.jsx`'s kids blurbs — **stays `<ol>`, on different grounds than the two above.** The
+  seven blurbs per band are accretion-ordered (3 → 5 → 7 across three runs), not a curriculum sequence,
+  so by content alone `<ul>` would be defensible. But the rows render a **visible ordinal**, so the
+  element already matches what is on screen, and changing the element while leaving the numbers would
+  create the mismatch this item exists to remove. **What I deliberately did not do:** `aria-hidden` the
+  ordinal (the treatment `Learn.jsx` gives its own step marker, and `MarketSignals` its em-dash). It is
+  the technically tidier answer — the ordinal duplicates the list position — but it makes the ordinal
+  *depend* on list semantics surviving, and the WebKit half of this fix is precisely the part I could
+  not verify here. Redundant announcement is a smaller harm than a lost one. Left as a note, not a
+  change, per this repo's norm on settling unscoped questions in passing.
+- The three `charts.jsx` legends — already `<ul>`, correct.
+
+**New check: `check-data.mjs` §20.** Walks every `.jsx` under `src/` and fails if a `<ul>`/`<ol>` sets
+`listStyle: "none"` without `role="list"`. Two things about it are deliberate:
+1. **It fails itself if it matches fewer than 8 lists.** This is item 36's lesson applied before the
+   fact rather than after: a pattern check that matches nothing passes vacuously and looks identical to
+   a passing check. §16's ko/ja patterns spent two days in that state.
+2. **Its header states what it cannot do** — it cannot tell whether `<ol>` or `<ul>` is correct. That is
+   a content judgment (is this list's order load-bearing?), and getting it wrong is the exact bug this
+   item was filed for. So the header also records the eight per-list verdicts, so the next reader checks
+   them rather than re-derives them.
+
+**Verification.**
+- `npm test` — `PASS: 0 failure(s), 1 warning(s)` (the standing translation-coverage warning,
+  unchanged). `check-blindspot.mjs` all six `ok`. `check-claims.mjs` `PASS`.
+- `npm run build` — clean, 1.12s. No chunk moved; this change adds no runtime code.
+- **§20 proven by three injections**, each run then reverted, green re-confirmed after: (a) `role`
+  removed from the `<ul>` this run just fixed — caught, with file and line; (b) `role` removed from a
+  `charts.jsx` legend, to prove the walk isn't scoped to the one file — caught; (c) **the scan itself
+  blinded**, by pointing its regex at tag names that don't exist — caught by the count guard, which is
+  the failure mode injections (a) and (b) cannot detect.
+- **Live browser** (static-build-plus-python-server, port 8812, `preview_start` with a plain `url` —
+  worked as the Environment note says). Reference → Market Dashboard: the list reports
+  `tagName: "UL"`, `role="list"`, `list-style-type: none`, 6 items, and its `<li>`'s first child is the
+  `aria-hidden="true"` em-dash. Accessibility tree shows `list` → six `listitem`s with the em-dash
+  correctly absent. Kids: `OL`, role list, 7 items, first row text begins `"1"` — the visible ordinal is
+  intact. Sector performance: `OL` (11 sectors) + `UL` (6 FRED readings), both role list. Learn: two
+  `OL`s, 28 and 12 items — the two tracks. At 375px, `scrollWidth === clientWidth` (no horizontal
+  overflow) and `paddingLeft` is `0px` on every list, i.e. the layout is byte-for-byte what it was —
+  screenshotted, and the rendered Key Principles list is visually identical to before.
+
+**Adversarial self-check — two findings, one of them about this run's own process.**
+1. **Blindspot register.** Nothing reintroduced. The `src/` diff contains **no content strings at all** —
+   confirmed by filtering the diff for lines that are neither a list tag nor a comment, which came back
+   containing only comment text and the one `</ol>`→`</ul>`. So §10.1 advice language, §10.2 Dalio and
+   §2.3 dates are untouchable by construction here; `grep -ric dalio src/` is 0 across all 51 files and
+   `check-blindspot` passes all six. §10.3: `ParentGuide.jsx` was edited, but only its list element —
+   `kidsParentIntro`, the Note that *is* the parent-facing framing, is unchanged and still present.
+2. **`DECISIONS.md` conflict.** None. No state, no persistence, no dependency, no content-module shape
+   change. The one entry worth naming is item 12's port-cost rule (do not deepen the web-only
+   investment): eight `role` attributes are HTML-only surface a native port discards, but they are an
+   accessibility correction to markup that already exists, not new web-shaped feature surface, and the
+   alternative is shipping eight lists that are broken on the platform the port is *for*.
+3. **Already-done backlog item.** No. Item 34 (a11y) was open and explicitly queued as this run's pick
+   by the previous entry. It is adjacent to W-4's last item — the same element's dead `counterReset` —
+   but that run explicitly left this question open rather than deciding it, so this completes a
+   deferral rather than redoing work.
+4. **My own verification claim — and this is the finding.** Two things an independent reviewer would
+   catch me on if I stated them loosely:
+   - **The accessibility tree does not prove the `<ol>`→`<ul>` change.** Chromium reports role `list`
+     for both elements, so the tree looked identical before and after. The evidence for that half is
+     the DOM `tagName` read, not the a11y tree. Stated that way above.
+   - **The WebKit half is not verified in this environment.** `role="list"` is a no-op in Chromium,
+     which is the only browser available here, so I verified that the attributes are present and that
+     nothing regressed — *not* that they fix VoiceOver. That rests on documented WebKit behaviour. Given
+     this log records D1 ("a run's self-reported verification can be trusted") as already REFUTED twice,
+     writing "fixed for VoiceOver" would have been the third instance. It is written as what it is.
+   - **A process finding, recorded because it nearly shipped wrong:** while reverting injection (a) I
+     used `git checkout --` on `MarketSignals.jsx`, which reverted **this run's actual fix** along with
+     the injected bug. I caught it and reapplied. Two things worth carrying: `git checkout --` is on
+     this task's forbidden-command list for good reason and I should have used a scratchpad copy (which
+     is what injections (b) and (c) then did); and had I not caught it, **§20 would have failed the
+     build**, because the check I had just written asserts the fix it guards. That is the check working
+     on its author, which is the only real test of one.
+
+**Item 18 remains the entire critical path to ending Phase 0** — blocked on the owner creating an
+analytics provider account and supplying its key. Nothing in this run moves it.
+
+**Next run should pick**: **item 32's §9.3 monthly audit is dated 2026-09-05 and must not be pulled
+forward**, so the open field is items 27 (a fourth money visual — but only against its own bar: name the
+lesson where a diagram teaches what prose cannot) and 26's deferred bookmark-surfacing (blocked on item
+18, correctly). Two smaller things this run leaves filed rather than done: **`PolicySim` has no §9.2
+instrumentation** (carried from the previous entry — a lever pick is the cheapest available test of
+whether interactive content holds attention, but it touches `analytics.js`'s minimum-event-set check),
+and **`ParentGuide`'s duplicate ordinal announcement**, which needs the WebKit behaviour confirmed on a
+real iOS VoiceOver before it can be safely fixed — an owner or interactive session with a Mac/iPhone
+could settle it in minutes, and no automated run in this sandbox can. Also still open from two runs
+back: nothing in this repo checks that a *check* and the document it guards land in the same commit.

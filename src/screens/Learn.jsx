@@ -97,7 +97,9 @@ export default function Learn({ t, lang, lessons, completedLessons, isUnlocked, 
             </Text>
           </div>
 
-          <ol style={{ listStyle: "none", margin: 0, padding: 0 }}>
+          {/* Genuinely an <ol>: lessons unlock in sequence, so the order is the
+              feature. `role="list"` per check-data.mjs §20. */}
+          <ol role="list" style={{ listStyle: "none", margin: 0, padding: 0 }}>
             {tr.items.map(({ lesson, i }, posInTrack) => {
               const isDone = completedLessons.includes(lesson.id);
               const unlocked = isUnlocked(i);

@@ -1437,5 +1437,62 @@ for (const [label, moduleExports] of Object.entries(CONTENT_MODULES)) {
   }
 }
 
+// 20. Every <ul>/<ol> under src/ that hides its markers with
+//     `listStyle: "none"` must carry an explicit `role="list"` (backlog item
+//     34, the a11y one).
+//
+//     Why this is a real check and not decoration: WebKit removes list
+//     semantics from a list whose computed `list-style-type` is `none` — so
+//     under VoiceOver such a list is announced as loose text, with no "list, 6
+//     items" and no item position. Every list in this app sets `listStyle:
+//     "none"` and draws its own marker, so before this check every list in the
+//     app was affected, and the app's stated target is mobile, where iOS makes
+//     WebKit unavoidable. `role="list"` restores the semantics and is a no-op
+//     in engines that never dropped them.
+//
+//     What this check CANNOT do, stated so it isn't over-trusted: it cannot
+//     tell whether <ol> or <ul> is the right element. That is a content
+//     judgment — is this list's order load-bearing? — and getting it wrong is
+//     exactly the bug this item was filed for (MarketSignals' six unordered
+//     principles were an <ol>). The current verdicts, so a later reader can
+//     check them rather than re-derive them: Learn's lesson path and Sectors'
+//     relative-strength ranking are genuinely ordered; ParentGuide's kids
+//     blurbs render a visible ordinal, so <ol> matches what is on screen;
+//     every other list is unordered.
+{
+  const walkJsx = (dir) =>
+    readdirSync(dir, { withFileTypes: true }).flatMap((e) => {
+      const full = join(dir, e.name);
+      if (e.isDirectory()) return walkJsx(full);
+      return e.isFile() && e.name.endsWith(".jsx") ? [full] : [];
+    });
+
+  // Matches an opening <ul>/<ol> tag and everything up to its closing ">",
+  // so the role and the style can be found in either order.
+  const openTag = /<(ul|ol)\b([^>]*)>/g;
+  let listsSeen = 0;
+
+  for (const jsxPath of walkJsx(join(ROOT, "src"))) {
+    const src = readFileSync(jsxPath, "utf8");
+    const rel = jsxPath.slice(ROOT.length + 1);
+    const lineOf = (index) => src.slice(0, index).split("\n").length;
+
+    for (const m of src.matchAll(openTag)) {
+      const [, tag, attrs] = m;
+      if (!/listStyle:\s*"none"/.test(attrs)) continue;
+      listsSeen += 1;
+      if (!/role="list"/.test(attrs)) {
+        fail(`${rel}:${lineOf(m.index)}: <${tag}> sets listStyle "none" but has no role="list" — WebKit will drop its list semantics (backlog item 34)`);
+      }
+    }
+  }
+
+  // A pattern check that matches nothing passes vacuously — the failure mode
+  // §16's ko/ja patterns spent two days in. Assert the scan found the lists.
+  if (listsSeen < 8) {
+    fail(`§20 found only ${listsSeen} marker-less lists under src/ (expected at least 8) — the scan is probably matching nothing, not the lists having gone away`);
+  }
+}
+
 console.log(`\n${failures === 0 ? "PASS" : "FAIL"}: ${failures} failure(s), ${warnings} warning(s).`);
 process.exit(failures === 0 ? 0 : 1);

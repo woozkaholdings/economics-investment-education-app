@@ -88,7 +88,7 @@ export function ProportionBar({ title, segments, colors, labelInks, formatValue,
           <div key={s.label} style={{ width: `${(s.value / total) * 100}%`, background: colors[i], transition: "width 0.5s" }} />
         ))}
       </div>
-      <ul style={{ listStyle: "none", margin: `${space["3"]}px 0 0`, padding: 0, display: "flex", flexWrap: "wrap", gap: `${space["1"]}px ${space["4"]}px` }}>
+      <ul role="list" style={{ listStyle: "none", margin: `${space["3"]}px 0 0`, padding: 0, display: "flex", flexWrap: "wrap", gap: `${space["1"]}px ${space["4"]}px` }}>
         {segments.map((s, i) => (
           <li key={s.label} style={{ display: "flex", alignItems: "baseline", gap: space["2"] }}>
             <span aria-hidden="true" style={{ width: 10, height: 10, borderRadius: 3, background: colors[i], flexShrink: 0, alignSelf: "center" }} />
@@ -154,7 +154,7 @@ export function GrowthCurve({ title, xValues, series, colors, labelInks, formatV
         <text x={CURVE_PAD.left} y={CURVE_H - 6} fill={ink.muted} fontSize="9">0{xSuffix}</text>
         <text x={CURVE_W - CURVE_PAD.right} y={CURVE_H - 6} textAnchor="end" fill={ink.muted} fontSize="9">{lastX}{xSuffix}</text>
       </svg>
-      <ul style={{ listStyle: "none", margin: `${space["2"]}px 0 0`, padding: 0, display: "flex", flexWrap: "wrap", gap: `${space["1"]}px ${space["4"]}px` }}>
+      <ul role="list" style={{ listStyle: "none", margin: `${space["2"]}px 0 0`, padding: 0, display: "flex", flexWrap: "wrap", gap: `${space["1"]}px ${space["4"]}px` }}>
         {series.map((s, i) => (
           <li key={s.label} style={{ display: "flex", alignItems: "center", gap: space["2"] }}>
             <span aria-hidden="true" style={{ width: 14, height: 3, borderRadius: 2, background: colors[i], flexShrink: 0 }} />
@@ -205,7 +205,7 @@ export function AsymmetryChart({ title, axisLabel, bars, colors, labelInks, desc
           );
         })}
       </div>
-      <ul style={{ listStyle: "none", margin: `${space["2"]}px 0 0`, padding: 0, display: "flex", gap: space["4"] }}>
+      <ul role="list" style={{ listStyle: "none", margin: `${space["2"]}px 0 0`, padding: 0, display: "flex", gap: space["4"] }}>
         {bars.map((b, i) => (
           <li key={b.label} style={{ flex: 1, textAlign: "center" }}>
             <Text as="span" variant="caption" color={labelInks[i]} style={{ fontWeight: 700 }}>{b.label}</Text>

@@ -89,14 +89,19 @@ export default function MarketSignals({ t, lang }) {
       <Text as="h2" variant="heading" color={ink.strong} style={{ margin: `${space["5"]}px 0 ${space["3"]}px` }}>
         {t.ratePrinciples}
       </Text>
-      <ol style={{ margin: 0, padding: 0, listStyle: "none" }}>
+      {/* A <ul>, not an <ol>: the six principles have no sequence, ranking or
+          dependency between them, and the row marker is a decorative em-dash.
+          `role="list"` is not redundant here — WebKit drops list semantics from
+          any list carrying `list-style: none`, and every list in this app does
+          (see check-data.mjs §20). */}
+      <ul role="list" style={{ margin: 0, padding: 0, listStyle: "none" }}>
         {ratePrinciples.map((p) => (
           <li key={p.en} style={{ display: "flex", gap: space["3"], padding: `${space["3"]}px 0`, borderBottom: `1px solid ${line.hairline}` }}>
             <span aria-hidden="true" style={{ color: ink.accent, fontWeight: 700, fontSize: "0.875rem", flexShrink: 0 }}>—</span>
             <Text variant="small">{p[lang]}</Text>
           </li>
         ))}
-      </ol>
+      </ul>
 
       <Disclaimer text={t.disclaimer} />
     </div>

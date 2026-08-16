@@ -41,7 +41,12 @@ export default function ParentGuide({ t, lang }) {
           {content.title[lang]}
         </Text>
 
-        <ol style={{ margin: 0, padding: 0, listStyle: "none" }}>
+        {/* Stays an <ol>: unlike MarketSignals' principles, these rows render a
+            visible ordinal, so the semantics match what is on screen. That the
+            ordinal is announced as well as the item's position is redundant, not
+            wrong — see the run log of 2026-08-16 for why it was left alone.
+            `role="list"` per check-data.mjs §20. */}
+        <ol role="list" style={{ margin: 0, padding: 0, listStyle: "none" }}>
           {content.lessons.map((lesson, i) => (
             <li key={lesson.text.en} style={{ display: "flex", gap: space["3"], padding: `${space["3"]}px 0`, borderBottom: `1px solid ${line.hairline}` }}>
               <Text as="span" variant="small" color={ink.muted} style={{ fontWeight: 700, flexShrink: 0 }}>
