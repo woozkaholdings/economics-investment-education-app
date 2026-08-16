@@ -28,7 +28,48 @@ export const EVENTS = {
   SUBSCRIBED: "subscribed",
   CANCELLED: "cancelled",
   AD_WATCHED: "ad_watched",
+
+  // Beyond §9.2's minimum. `quiz_taken` is specified there as carrying a
+  // score, which only exists once a whole quiz is done — so it fires once per
+  // finished quiz. The per-question signal the app used to fire under that
+  // name is still worth keeping (it is what the Leitner queue's behaviour
+  // would be analysed against), so it moved here rather than being dropped.
+  QUIZ_ANSWERED: "quiz_answered",
 };
+
+// ── §9.2 payload helpers ───────────────────────────────────────────────────
+// §9.2 asks for "lesson completed (**with duration**), quiz taken (**with
+// score**)". Both numbers are computed here rather than at the call sites so
+// they are shaped identically wherever they are produced, and so they are
+// testable without rendering a screen (scripts/check-data.mjs §13).
+
+// A monotonic reading, in ms, for measuring elapsed time. `performance.now()`
+// is immune to the wall clock jumping (NTP correction, the user changing the
+// system time, DST) mid-lesson, which `Date.now()` is not — a duration is the
+// one thing that must not be measured against a clock that can move.
+export function monotonicNow() {
+  return typeof performance?.now === "function" ? performance.now() : Date.now();
+}
+
+// Whole seconds between a `monotonicNow()` reading and now. Returns `null`
+// rather than a wrong number when the start reading is missing or unusable —
+// a missing duration is analysable ("we failed to time this one"), a zero is
+// not, because it is indistinguishable from a real instant completion.
+export function elapsedSeconds(startedAt, endedAt = monotonicNow()) {
+  if (!Number.isFinite(startedAt) || !Number.isFinite(endedAt)) return null;
+  const seconds = Math.round((endedAt - startedAt) / 1000);
+  return seconds >= 0 ? seconds : null;
+}
+
+// The score half of `quiz_taken`. Carries the raw counts as well as the
+// percentage: a percentage alone loses how many questions it was out of, and
+// "3/3" and "30/40" are not the same evidence about a learner.
+export function quizScore(correct, total) {
+  if (!Number.isInteger(correct) || !Number.isInteger(total) || total <= 0 || correct < 0 || correct > total) {
+    return { correct: null, total: null, scorePct: null };
+  }
+  return { correct, total, scorePct: Math.round((correct / total) * 100) };
+}
 
 export const MAX_LOGGED_EVENTS = 200;
 

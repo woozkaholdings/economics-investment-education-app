@@ -10,7 +10,7 @@
 // ═══════════════════════════════════════════════════════════════════════════
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { EVENTS, track } from "../lib/analytics.js";
+import { EVENTS, elapsedSeconds, monotonicNow, quizScore, track } from "../lib/analytics.js";
 import { quizData } from "../content/quizData.js";
 import { recordContinueChoice, wasContinuePromptShownToday } from "../lib/useAppState.js";
 import { questionsForLesson } from "../lib/review.js";
@@ -56,6 +56,16 @@ export default function LessonReader({ t, lang, lessons, index, completedLessons
   const [prompt, setPrompt] = useState(null); // null | "asking" | "confirmed"
   const headingRef = useRef(null);
 
+  // §9.2 payload state. Refs, not state, on purpose: none of this is rendered,
+  // and re-rendering the reader every time a check question is answered would
+  // be a real cost on a screen this long.
+  //   `startedAt`   — when this lesson was opened, for lesson_completed's duration.
+  //   `checkAnswers`— one entry per check question answered, for quiz_taken's score.
+  //   `quizFired`   — quiz_taken is once per lesson-open, not once per answer.
+  const startedAtRef = useRef(null);
+  const checkAnswersRef = useRef([]);
+  const quizFiredRef = useRef(false);
+
   // This lesson's own retrieval check. Answers feed the same spaced schedule
   // the Review tab drives, so a question missed here comes back tomorrow.
   const check = useMemo(() => questionsForLesson(quizData, lesson.id), [lesson.id]);
@@ -78,6 +88,12 @@ export default function LessonReader({ t, lang, lessons, index, completedLessons
     setPrompt(null);
     window.scrollTo({ top: 0 });
     headingRef.current?.focus();
+    // Reset the §9.2 counters with the rest of the per-lesson state: a
+    // duration or a score carried over from the previous lesson would be
+    // worse than none at all.
+    startedAtRef.current = monotonicNow();
+    checkAnswersRef.current = [];
+    quizFiredRef.current = false;
     track(EVENTS.LESSON_STARTED, { lessonId: lesson.id });
   }, [index]);
 
@@ -92,7 +108,15 @@ export default function LessonReader({ t, lang, lessons, index, completedLessons
 
   const handleComplete = () => {
     completeLesson(lesson.id);
-    track(EVENTS.LESSON_COMPLETED, { lessonId: lesson.id });
+    // §9.2's "lesson completed (with duration)" — time on this lesson since it
+    // was opened. It measures the reader being open, not attention: a
+    // backgrounded tab still accrues. That is a known limit of a client-side
+    // timer, and the §4.3 gate it feeds ("finishing lesson 1") cares about
+    // completion, not about a precise minutes figure.
+    track(EVENTS.LESSON_COMPLETED, {
+      lessonId: lesson.id,
+      durationSec: elapsedSeconds(startedAtRef.current),
+    });
     setCelebrating(true);
     if (!wasContinuePromptShownToday()) {
       recordContinueChoice(null); // records "asked today"; the answer follows
@@ -193,7 +217,21 @@ export default function LessonReader({ t, lang, lessons, index, completedLessons
                 t={t}
                 onAnswered={(wasCorrect) => {
                   recordReview(qIndex, wasCorrect);
-                  track(EVENTS.QUIZ_TAKEN, { lessonId: lesson.id, source: "lesson_check", correct: wasCorrect });
+                  track(EVENTS.QUIZ_ANSWERED, { lessonId: lesson.id, source: "lesson_check", correct: wasCorrect });
+                  // The check has no "finish" button — every question is on
+                  // screen at once — so the quiz is "taken" when the last one
+                  // is answered. `Question` allows one answer per question,
+                  // and `quizFiredRef` guards the rest.
+                  const answers = checkAnswersRef.current;
+                  if (!answers.some((a) => a.qIndex === qIndex)) answers.push({ qIndex, correct: wasCorrect });
+                  if (!quizFiredRef.current && answers.length === check.length) {
+                    quizFiredRef.current = true;
+                    track(EVENTS.QUIZ_TAKEN, {
+                      lessonId: lesson.id,
+                      source: "lesson_check",
+                      ...quizScore(answers.filter((a) => a.correct).length, answers.length),
+                    });
+                  }
                 }}
               />
             ))}

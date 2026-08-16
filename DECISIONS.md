@@ -91,11 +91,33 @@ Add a new entry when a run makes a choice future work should be able to look up 
   run can create. Shipping the call sites now (`app_opened` in `App.jsx`; `lesson_started`/
   `lesson_completed`/`quiz_taken` in `LessonReader.jsx` and `Practice.jsx`) means the only thing left
   when a key exists is swapping `sink()`'s body — no call site changes, same shape as the market-data
-  adapter seam.
-- **Why fire `quiz_taken` per answered question, not per quiz session:** the app's review/check unit
-  is a single question, not a multi-question test with a start/end boundary; per-question granularity
-  (with `correct` and a `source` of `"lesson_check"` or `"review_queue"`) needed no new session-tracking
-  state and is at least as useful for a completion-rate metric later.
+  adapter seam. (Payload shapes were corrected 2026-08-16; see the superseded entry below. Doing that
+  *before* a provider exists is the point — the day a key lands, the measurement window starts with
+  the data §4.3's ≥40%-completion gate needs, rather than with a known gap in it.)
+- **~~Why fire `quiz_taken` per answered question, not per quiz session:~~ SUPERSEDED 2026-08-16 —
+  its premise expired.** The original reasoning was: "the app's review/check unit is a single
+  question, not a multi-question test with a start/end boundary; per-question granularity (with
+  `correct` and a `source` of `"lesson_check"` or `"review_queue"`) needed no new session-tracking
+  state and is at least as useful for a completion-rate metric later." That was true when written
+  (2026-08-05). It stopped being true on 2026-08-15/16, when `Practice.jsx` gained real sessions —
+  a start, `BATCH_SIZE` pauses, a single terminal complete screen, and a session score it already
+  computes and displays in its results recap. §9.2 asks for "quiz taken (**with score**)", and a
+  score is a property of a finished quiz, not of one answer.
+- **What replaced it (2026-08-16, backlog item 29):** `quiz_taken` now fires **once per finished
+  quiz** carrying `{correct, total, scorePct}` — at the last answer of a lesson check (that screen
+  has no finish button, so the last answer *is* the end) and on the review session's complete
+  screen, which both "answered the last question" and "stop here" at a batch pause land on. A batch
+  pause deliberately does not fire it: the session continues. **The per-question signal was
+  preserved, not dropped** — it fires under a new `quiz_answered` name, so nothing that was being
+  recorded before stopped being recorded. `lesson_completed` likewise gained the `durationSec` §9.2
+  asks for, measured from `performance.now()` rather than the wall clock so an NTP or timezone jump
+  mid-lesson cannot corrupt it. The numbers are computed by pure helpers (`elapsedSeconds`,
+  `quizScore`) so `npm test` can check them without a browser, and `check-data.mjs` §13b now asserts
+  the call sites actually pass them — the previous gap was that both events fired but neither
+  carried its §9.2 field, which reads as "done" in a grep and isn't.
+- **`quiz_answered` is beyond §9.2's minimum, deliberately.** §9.2 names a *minimum* set; keeping
+  per-question granularity costs one extra event name and is what the Leitner queue's behaviour
+  would have to be analysed against.
 - **Why `paywall_viewed`/`trial_started`/`subscribed`/`cancelled`/`ad_watched` are unfired:** none of
   those features exist in the app yet (no paywall/billing code — confirmed by
   `LAUNCH_READINESS.md`'s own grep). The event names exist so the provider swap-in doesn't also have

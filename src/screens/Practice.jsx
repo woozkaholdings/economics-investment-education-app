@@ -13,7 +13,7 @@
 // ═══════════════════════════════════════════════════════════════════════════
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { EVENTS, track } from "../lib/analytics.js";
+import { EVENTS, quizScore, track } from "../lib/analytics.js";
 import { quizData } from "../content/quizData.js";
 import { dueQuestions, seenCount } from "../lib/review.js";
 import Icon from "../components/Icon.jsx";
@@ -62,6 +62,17 @@ export default function Practice({ t, lang, review, recordReview }) {
     if (!resultPhase) return;
     window.scrollTo({ top: 0 });
     resultHeadingRef.current?.focus();
+    // §9.2's "quiz taken (with score)". The complete screen is a review
+    // session's single terminal state — both "answered the last question" and
+    // "stop here" at a batch pause land on it — so firing here counts each
+    // session exactly once, with the same score the recap above shows. A
+    // batch pause is deliberately not a quiz taken: the session continues.
+    if (resultPhase === "complete" && results.length > 0) {
+      track(EVENTS.QUIZ_TAKEN, {
+        source: "review_queue",
+        ...quizScore(results.filter((r) => r.correct).length, results.length),
+      });
+    }
   }, [resultPhase]);
 
   // ── in a session ────────────────────────────────────────────────────────
@@ -184,7 +195,7 @@ export default function Practice({ t, lang, review, recordReview }) {
           t={t}
           onAnswered={(wasCorrect) => {
             recordReview(item.index, wasCorrect);
-            track(EVENTS.QUIZ_TAKEN, { lessonId: item.question.lesson, source: "review_queue", correct: wasCorrect });
+            track(EVENTS.QUIZ_ANSWERED, { lessonId: item.question.lesson, source: "review_queue", correct: wasCorrect });
             setResults((prev) => [...prev, { item, correct: wasCorrect }]);
             setAnswered(true);
           }}

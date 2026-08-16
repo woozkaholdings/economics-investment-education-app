@@ -329,7 +329,20 @@ for the history. No open P1/P2 items.
       run (its hash tracks *English* source drift, and no English changed here).
 
 
-27. **[Content/UX — PRIORITY, the highest-value open item] Lesson visuals for the money track.
+27. **[Content/UX — the scope this item defines is now BUILT (2026-08-16); re-scope before picking it
+    again.] Lesson visuals for the money track.**
+    **Status check, 2026-08-16 (item-29 run):** `LESSON_VISUALS` in `src/components/LessonVisual.jsx`
+    now maps money lessons **1 (`budgetSplit`), 3 (`compounding`) and 27 (`lossAsymmetry`)**, plus the
+    five economy ones — i.e. money is **3/28, not 0/28**, and the three lessons this item's own "Scope
+    guidance" names verbatim (compound interest first; budgeting's needs/wants/savings split and loss
+    aversion's asymmetric-weight diagram as the seconds) are **exactly the three that exist**. §3.2's
+    sharpest point is closed too: a new install opens on money lesson 1, which now has a visual. So the
+    work this item specifies is done, and its own guidance ("do **not** bulk-add 28 visuals... a visual
+    that merely decorates fails §3.0.1") argues against treating the remaining 25 as a queue.
+    **A run wanting to add a fourth money visual must first name the specific lesson where a diagram
+    teaches something the prose cannot** — otherwise this becomes the count-shaped backlog item that
+    items 17, 21 and 24 each turned into. Original text retained below for the reasoning.
+    *(Original framing — PRIORITY, the highest-value open item)*
     `LAUNCH_PLAN.md` §3.0.4, §3.2, §5.** Measured 2026-08-16 by the weekly review, from
     `LESSON_VISUALS` in `src/components/LessonVisual.jsx` against `src/content/lessons.js`:
     **money 0/28 lessons have a visual; economy 5/12 do** (ids 32, 33, 36, 37, 38 — cycle, yield curve,
@@ -365,15 +378,30 @@ for the history. No open P1/P2 items.
     false-positive risk across languages. Prefer an explicit per-section term list over regex-matching
     prose, and read `check-data.mjs`'s locale-parity checks before changing the content shape.
 
-29. **[Process] Finish the §9.2 event payloads — this is the half of item 18 that is NOT owner-blocked.**
+29. **[Process — ✅ DONE 2026-08-16. Both payload gaps closed, both proven in a live browser.]
+    Finish the §9.2 event payloads — the half of item 18 that is NOT owner-blocked.**
     §9.2 specifies the minimum set as "lesson started, lesson **completed (with duration)**, quiz taken
-    (**with score**)". Verified 2026-08-16 against the call sites: `LESSON_COMPLETED` fires with
-    `{lessonId}` and **no duration**; `QUIZ_TAKEN` fires per question with `{lessonId, source, correct}`
+    (**with score**)". Verified 2026-08-16 against the call sites: `LESSON_COMPLETED` fired with
+    `{lessonId}` and **no duration**; `QUIZ_TAKEN` fired per question with `{lessonId, source, correct}`
     and **no batch score**, even though `Practice.jsx` now computes a real session score for its results
-    recap. Item 18 is blocked on the owner creating an analytics account — **but fixing the payloads is
+    recap. Item 18 is blocked on the owner creating an analytics account — **but fixing the payloads was
     not**, and doing it now means the day a provider is wired in, the data is already the shape §4.3's
-    ≥40%-completion gate needs, instead of starting a fresh measurement window with a known gap. Cheap,
-    self-contained, and it has test coverage to extend (`src/lib/analytics.js` was covered 2026-08-15).
+    ≥40%-completion gate needs, instead of starting a fresh measurement window with a known gap.
+    - **What shipped:** `lesson_completed` now carries `durationSec`, measured from `performance.now()`
+      (monotonic — an NTP correction or timezone change mid-lesson cannot corrupt it, which a
+      `Date.now()` difference can). `quiz_taken` now fires **once per finished quiz** with
+      `{correct, total, scorePct}`, and the per-question signal it used to carry moved to a new
+      `quiz_answered` event rather than being dropped. Two pure helpers (`elapsedSeconds`, `quizScore`)
+      do the arithmetic so `npm test` can check it without a browser.
+    - **This reversed a recorded decision, and that was handled rather than ignored** — see the run log
+      and `DECISIONS.md`. The 2026-08-05 entry explicitly chose per-question `quiz_taken` because "the
+      app's review/check unit is a single question, not a multi-question test with a start/end
+      boundary." That premise expired on 2026-08-15/16 when `Practice.jsx` gained real sessions with a
+      terminal complete screen and a computed score. The decision entry is now marked superseded with
+      the reason, not silently overwritten.
+    - **Guard against regression:** `check-data.mjs` gained §13b, which asserts the *call sites* pass
+      the §9.2 fields (not just that the helpers can compute them) — the precise gap that existed
+      before was that both events fired and neither carried its field, which greps as "done."
 
 30. **[Process] Create the §9.1 falsifiable-claims register (`CLAIMS.md`) — the plan's core discipline,
     never implemented.** §9.1: "Before building anything significant, write one sentence: what you
@@ -5959,3 +5987,119 @@ direction is the problem.
   non-owner-blocked half of item 18's instrumentation — event payloads). **Item 18 remains the entire
   critical path to ending Phase 0 and is blocked on an owner action** (creating an analytics provider
   account) — flagging again per the standing instruction.
+
+### 2026-08-16 (scheduled dev-agent) — §9.2 event payloads: `lesson_completed` gains a duration, `quiz_taken` gains a score (backlog item 29)
+
+**Why this item, and not the one the last run named.** The previous entry's "next run should pick" was
+**item 27** (money-track lesson visuals). Checked it first rather than inheriting it: `LESSON_VISUALS`
+already maps money **1, 3 and 27** — `budgetSplit`, `compounding`, `lossAsymmetry` — which are
+*verbatim the three* item 27's own "Scope guidance" names, and that guidance explicitly says not to
+bulk-add the other 25. Money is 3/28, not the 0/28 the item's text still claimed. So item 27's defined
+scope is built; adding a fourth visual without naming why that specific lesson needs one would be the
+count-shaped drift items 17/21/24 each fell into. Backlog item 27 updated to say so. Picked **item 29**,
+which the same entry names as an independent alternative and which W-2 lists in the refilled backlog —
+so this is a backlog pick, not a note-chain extension.
+
+**What changed.**
+- `src/lib/analytics.js`: added `monotonicNow()`, `elapsedSeconds()`, `quizScore()` (pure, exported,
+  testable) and a new `EVENTS.QUIZ_ANSWERED`.
+- `src/screens/LessonReader.jsx`: `lesson_completed` now carries `durationSec`, timed from lesson-open;
+  the per-question fire became `quiz_answered`; a new `quiz_taken` fires once when the *last* check
+  question is answered, carrying `{correct, total, scorePct}`. Three refs (`startedAt`, `checkAnswers`,
+  `quizFired`) reset in the existing per-lesson effect. Refs not state — none of it renders, and
+  re-rendering this screen on every answer would be a real cost.
+- `src/screens/Practice.jsx`: per-question fire became `quiz_answered`; `quiz_taken` fires once from
+  the existing result-phase effect when a session reaches its complete screen, with the same score the
+  recap displays. A batch pause deliberately does **not** fire it — the session continues.
+- `scripts/check-data.mjs`: §13 extended with helper tests; new **§13b** asserts the call sites
+  actually pass the §9.2 fields.
+- `DECISIONS.md` + `LAUNCH_READINESS.md` updated in the same commit (see the conflict below).
+
+**Why `quiz_taken` moved from per-question to per-quiz.** §9.2 asks for "quiz taken (**with score**)".
+A score is a property of a finished quiz; there is no score to attach to a single answer. The
+per-question data was **not dropped** — it fires under `quiz_answered`, which is beyond §9.2's stated
+*minimum* and is what the Leitner queue's behaviour would be analysed against.
+
+**Verification — live browser, per W-1** (`dist/` on `127.0.0.1:8815`, the Environment note's
+static-build + `python3 -m http.server` technique, `preview_start` with a plain `url`, `navOk: true`;
+this is the **fourth** unattended scheduled run to confirm it works — do not re-derive it as impossible).
+Read back from `localStorage.ecycles_analytics_log`, not from the source:
+- **Lesson check, single question** (lesson 1): `quiz_answered` then `quiz_taken`
+  `{lessonId:1, source:"lesson_check", correct:0, total:1, scorePct:0}`.
+- **Lesson check, two questions** (lesson 30, chosen because `quizData` shows only lessons 30 and 34
+  have >1): after the **first** answer the log held `quiz_answered` and **no** `quiz_taken` — the guard
+  works; after the second, exactly one `quiz_taken` `{correct:1, total:2, scorePct:50}`, matching the
+  two `quiz_answered` results (true, false).
+- **Duration**: `lesson_completed` `{lessonId:1, durationSec:22}` — and the independent wall-clock gap
+  between the `lesson_started` and `lesson_completed` entries' own `at` timestamps was also **22 s**.
+  Two independent measurements, not one number read twice.
+- **Review session**: drove 10 questions to the batch pause. The pause screen rendered "3 of 10
+  correct" and fired **no** `quiz_taken` (correct — not a finished quiz). "Stop here for now" then
+  produced exactly one: `{source:"review_queue", correct:3, total:10, scorePct:30}`. Cross-checked
+  against the log itself: 10 `quiz_answered` with `source:"review_queue"`, of which 3 had
+  `correct:true`. Total across the whole browser session: **2** `quiz_taken`, one per finished quiz.
+
+**The new checks are proven to catch the real defect, not merely to pass.** Three faults injected into
+the working tree, each confirmed to fail `npm test`, then restored:
+1. removed `durationSec` from `LESSON_COMPLETED` → *"LessonReader's LESSON_COMPLETED must carry a
+   durationSec"*;
+2. regressed `Practice.jsx` to per-question `QUIZ_TAKEN` with a bare correct-count → **2** failures
+   (missing `quizScore` spread, and `QUIZ_ANSWERED` gone);
+3. removed the `quizFiredRef` double-fire guard → *"fires QUIZ_TAKEN exactly once per lesson-open"*.
+Files were backed up to the scratchpad first and `diff` confirmed all three restores byte-identical
+before building.
+
+**`npm test`** — 0 failures, 1 warning; **`npm run build`** — succeeds, `lessonContent.money` unchanged
+at **499.32 kB** (no content touched), still under item 17's 500 kB caution. The single warning is the
+**pre-existing** translation-ledger one (3 stale lessons per language, from commit `1e6af79`'s English
+edits) that the previous entry already documented — checked, not absorbed: this run edited no content
+and `englishSourceHash()` hashes English fields only.
+
+**Adversarial self-check — it found a real conflict, and the conflict changed the commit.**
+1. **Blindspot register** — no prose, lesson, glossary, market or kids copy was touched at all; this
+   run edits three code files and three docs. No §10.1 advice-adjacency, §10.2 Dalio, §10.3
+   kids-framing or §2.3 date/live-figure surface is anywhere near it. `check-blindspot.mjs` passes all
+   six checks.
+2. **`DECISIONS.md` conflict — CONFIRMED, not a false alarm.** The instrumentation entry contains an
+   explicit clause, *"Why fire `quiz_taken` per answered question, not per quiz session,"* whose
+   reasoning this change reverses. Per step 5 this could not be committed as-is. It was **fixed within
+   the run** rather than by reverting, because the decision's stated premise has expired on the record:
+   it justified itself with "the app's review/check unit is a single question, **not a multi-question
+   test with a start/end boundary**" — and `Practice.jsx` acquired exactly that boundary on
+   2026-08-15/16 (sessions, `BATCH_SIZE` pauses, a terminal complete screen, a computed score). Newer
+   authority also points the other way: §9.2's literal text, and backlog item 29 itself, written by the
+   2026-08-16 owner-requested refill. The entry is now marked **superseded with the reason and the
+   date**, and records that the per-question signal was preserved as `quiz_answered` — not silently
+   overwritten. `LAUNCH_READINESS.md`'s §9.2 rows were stale in the same way and are corrected: they
+   read "✅ Fires per answered question," which met the event-*name* half of §9.2 while quietly failing
+   its *with score* / *with duration* half. Both rows now say what changed and what the old text
+   overstated. Finding this is the whole point of the step — the code change was right, the two
+   documents describing it were not, and shipping the code alone would have left the repo contradicting
+   itself.
+3. **Already-done backlog item** — item 29 was explicitly open. Item 18's *call sites* were done
+   2026-08-05, but item 18's own text names the payloads as the remaining non-owner-blocked half and
+   points at item 29 by number. Not a redo, and not a partial undo of the 2026-08-05 work: every
+   existing `track()` call site still fires, and `sink()` is untouched, so `DECISIONS.md`'s
+   "swap `sink()`, keep every call site" revisit plan still holds.
+4. **Reproducibility of this entry's own claims** — every number above came from a command an
+   independent reviewer can re-run: the payloads from `localStorage` in a live browser rather than
+   from reading the diff, the duration cross-checked against the events' own timestamps, the score
+   cross-checked against a count of the per-answer events, and "the checks work" from injected faults
+   actually failing the build rather than from the suite passing.
+
+**Not touched, and why**: `economic-cycles-v6.jsx` — untracked, not this agent's file, left completely
+alone (`git status` re-checked before every stage). `HEAD` stayed at `bfeb719` throughout, so no
+concurrent session to work around. No content, lesson, translation or ledger file was modified.
+
+**Item 18 remains the entire critical path to ending Phase 0 and is blocked on an owner action** —
+creating a real analytics provider account (PostHog per the plan) and providing its key, so
+`analytics.js`'s `sink()` can be swapped. Flagging per the standing instruction. This run removes the
+last dev-agent-actionable excuse around it: the day that key exists, the events already carry the
+duration and score §4.3's ≥40%-completion gate needs.
+
+**Next run should pick**: **item 28** (glossary links from lesson text — §3.0.3 is unmet, and the
+term-detail screen built this week is the piece that makes linking worth doing; read its scope note
+about preferring an explicit per-section term list over regex-matching prose in five languages) or
+**item 30** (`CLAIMS.md`, the §9.1 falsifiable-claims register — never implemented, and item 32's
+monthly audit depends on it). Item 27 is **not** the pick unless a run can name the specific money
+lesson whose diagram would teach something its prose cannot.

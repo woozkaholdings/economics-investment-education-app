@@ -23,7 +23,7 @@ import { MIN_BARS, OUTPERFORM_THRESHOLD, WJ_PERIODS, wjSectorComparison } from "
 import { OLD_TO_NEW_LESSON_ID, migrateLegacyLessonIds } from "../src/lib/lessonIdMigration.js";
 import { computeCoverage } from "./translation-review.mjs";
 import * as storageLib from "../src/lib/storage.js";
-import { EVENTS, MAX_LOGGED_EVENTS, track } from "../src/lib/analytics.js";
+import { EVENTS, MAX_LOGGED_EVENTS, elapsedSeconds, monotonicNow, quizScore, track } from "../src/lib/analytics.js";
 import { redactUrl, getAdapter, fixture, ADAPTERS } from "../src/lib/marketData/adapters.js";
 import { FRED_SERIES, fixtureEconomics } from "../src/lib/marketData/fred.js";
 
@@ -645,6 +645,62 @@ for (const [label, moduleExports] of Object.entries(CONTENT_MODULES)) {
   eq("track() degrades safely instead of throwing when localStorage.setItem throws", threw, false);
 
   delete globalThis.localStorage;
+
+  // §9.2's two payload requirements — "lesson completed (with duration)" and
+  // "quiz taken (with score)". Both numbers are produced by pure helpers in
+  // analytics.js precisely so they can be checked here without a browser;
+  // the screens only supply the readings and the counts.
+  eq("elapsedSeconds rounds a millisecond span to whole seconds", elapsedSeconds(1_000, 62_400), 61);
+  eq("elapsedSeconds returns 0 for an instant completion, not null", elapsedSeconds(500, 500), 0);
+  eq("elapsedSeconds returns null when the start reading was never taken",
+    elapsedSeconds(null, 5_000), null);
+  eq("elapsedSeconds returns null rather than a wrong number when time appears to run backwards",
+    elapsedSeconds(9_000, 1_000), null);
+  eq("monotonicNow returns a finite millisecond reading", Number.isFinite(monotonicNow()), true);
+  eq("two monotonicNow readings never go backwards", monotonicNow() <= monotonicNow(), true);
+
+  eq("quizScore carries the raw counts alongside the percentage",
+    quizScore(3, 4), { correct: 3, total: 4, scorePct: 75 });
+  eq("quizScore rounds the percentage", quizScore(1, 3), { correct: 1, total: 3, scorePct: 33 });
+  eq("quizScore handles a perfect and a zero score", [quizScore(2, 2).scorePct, quizScore(0, 5).scorePct], [100, 0]);
+  eq("quizScore refuses to divide by zero", quizScore(0, 0), { correct: null, total: null, scorePct: null });
+  eq("quizScore rejects more correct answers than questions",
+    quizScore(5, 3), { correct: null, total: null, scorePct: null });
+
+  // The event-name split this instrumentation depends on: `quiz_taken` is now
+  // once per finished quiz (with a score) and `quiz_answered` is the
+  // per-question signal it used to carry. Both names must exist and differ,
+  // or one of the two call-site kinds is silently logging as the other.
+  eq("QUIZ_ANSWERED exists and is distinct from QUIZ_TAKEN",
+    EVENTS.QUIZ_ANSWERED !== undefined && EVENTS.QUIZ_ANSWERED !== EVENTS.QUIZ_TAKEN, true);
+}
+
+// 13b. The §9.2 payload requirements at the *call sites*, checked against the
+//      screen sources. The helpers above prove the numbers are computed
+//      correctly; this proves the screens actually pass them — the exact gap
+//      that existed before (both events fired, neither carried its §9.2
+//      field). Source-text checks, not behavioural ones: these files render
+//      React and cannot be imported here.
+{
+  const reader = readFileSync(new URL("../src/screens/LessonReader.jsx", import.meta.url), "utf8");
+  const practice = readFileSync(new URL("../src/screens/Practice.jsx", import.meta.url), "utf8");
+
+  const check = (label, ok) => { if (!ok) fail(`analytics call sites: ${label}`); };
+
+  check("LessonReader's LESSON_COMPLETED must carry a durationSec (§9.2 'with duration')",
+    /EVENTS\.LESSON_COMPLETED[\s\S]{0,200}?durationSec:\s*elapsedSeconds\(/.test(reader));
+  check("LessonReader's QUIZ_TAKEN must spread a quizScore (§9.2 'with score')",
+    /EVENTS\.QUIZ_TAKEN[\s\S]{0,240}?\.\.\.quizScore\(/.test(reader));
+  check("Practice's QUIZ_TAKEN must spread a quizScore (§9.2 'with score')",
+    /EVENTS\.QUIZ_TAKEN[\s\S]{0,240}?\.\.\.quizScore\(/.test(practice));
+  check("per-question answers must fire QUIZ_ANSWERED, not QUIZ_TAKEN, in LessonReader",
+    /EVENTS\.QUIZ_ANSWERED/.test(reader));
+  check("per-question answers must fire QUIZ_ANSWERED, not QUIZ_TAKEN, in Practice",
+    /EVENTS\.QUIZ_ANSWERED/.test(practice));
+  // A quiz is taken once, not once per answer: neither screen may fire
+  // QUIZ_TAKEN from inside a Question's onAnswered handler without a guard.
+  check("LessonReader fires QUIZ_TAKEN exactly once per lesson-open (guarded by quizFiredRef)",
+    /quizFiredRef\.current\s*=\s*true;\s*\n\s*track\(EVENTS\.QUIZ_TAKEN/.test(reader));
 }
 
 // 14. src/lib/marketData/adapters.js — the daily market-data job's provider
