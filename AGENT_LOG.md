@@ -8835,3 +8835,102 @@ direction is the problem.
   (routing from the Glossary list into a per-term view) before the action bar itself makes sense on it.
   A future run should scope that as its own multi-part item rather than assume it fits one pass. Item 21
   (kids content, its two open axes) and item 18 (blocked on an owner action) remain open alternatives.
+
+### 2026-08-16 (scheduled dev-agent, fourth run this date) — Refresh stale rows in LAUNCH_READINESS.md
+
+- **Orient**: `git status` showed only the same long-standing untracked `economic-cycles-v6.jsx` — no
+  uncommitted edits to any tracked file; matches the standing memory note and this file's own
+  "reference/inspiration material only" line. `git log --oneline -3` topped at `5a3db5d` (the prior run's
+  Practice review-batch interstitial), matching the environment's reported HEAD — no concurrent session
+  had landed anything since. Read the PRIORITY BLOCK (items 17/24 exhausted/frozen, item 18 blocked on an
+  owner action) and the prior run's own "Next run should pick," which named the persistent term-detail
+  action bar as the last unbuilt design-review idea but explicitly flagged it as a real structural change
+  (no term-detail screen exists yet to attach a bar to) that "a future run should scope... as its own
+  multi-part item rather than assume it fits one pass." Read `Glossary.jsx` to confirm that scoping call
+  independently — it's still a single flat scrolling `<dl>` with no per-term route or detail view, so
+  building even a minimal term-detail screen means adding new routing/navigation state, a new screen
+  component, tap handlers, and new locale strings — more than fits one focused, minutes-to-review change.
+  Declined to pick it up this run for that reason and looked for a different highest-value item instead.
+- **What the gap actually is**: `LAUNCH_READINESS.md` (item 15) exists specifically so a run's "done"
+  claim isn't the only record of gate status — but the file itself had drifted. Its header still said
+  "Last refreshed: 2026-08-09" despite three of P-2/P-3/P-4 (the PRIORITY BLOCK's own unlock conditions)
+  having closed since then (P-3 2026-08-11, P-4 2026-08-11/13), and despite the 2026-08-15 run only
+  patching the Kids-curriculum row, not the rest of the file. Concretely: the §10.1 row still described
+  the per-language blindspot check as open ("tracked as backlog P-3") three days after P-3 actually
+  closed; the §10.4 row still carried 2026-08-09's translation-volume figures and described P-4 as
+  needing an owner decision that was made 2026-08-11; and the "How to refresh this file" section's own
+  documented node commands still imported `content/lessonContent.js` as a single file — a path that
+  stopped existing 2026-08-14 when item 25's real fix split it into `lessonContent.economy.js` +
+  `lessonContent.money.js`. That last one isn't just stale text, it's a broken command: running it as
+  written would throw an import error, not return an old number.
+- **What was done**: docs-only changes to `LAUNCH_READINESS.md`. (1) Rewrote the header to date this
+  refresh 2026-08-16, note which rows changed and why, and keep the 2026-08-09 note for history rather
+  than deleting it. (2) §10.1 row: replaced the "English-only... tracked as P-3" line with "P-3 done
+  2026-08-11" and a one-line description of what the per-language check now covers. (3) §10.4 row:
+  re-measured translation volume from source (see Verified below) and replaced the 2026-08-09 figures
+  (es 83,758/0.745x, ko 41,727/0.371x, zh 26,397/0.235x, ja 36,551/0.325x over 112,387 English chars)
+  with current ones (es 98,013/0.721x, ko 48,488/0.356x, zh 30,752/0.226x, ja 42,574/0.313x over 136,031
+  English chars — the lesson catalogue grew via deepening runs between the two measurements, count
+  unchanged at 40); replaced "P-4 (owner decision needed)" with "P-4 done 2026-08-11" and a pointer to
+  the actual decision (option (a), tracked via the translation-review ledger) instead of describing it as
+  still open. Left the row's genuinely-still-true point intact: five-language maintenance debt is real
+  ongoing cost, not a decision left to make. (4) Fixed the "How to refresh this file" section's two node
+  one-liners to import the two split `lessonContent.*.js` files and merge them, matching the commands I
+  actually ran to get the new figures, and added a one-line callout that the old single-file path would
+  throw, not just be stale, so a future run trusts the code block over the surrounding prose.
+- **Verified**:
+  1. Re-ran the (now-fixed) documented node commands via `scripts/bootstrap-node.sh`'s Node 20.18.1:
+     confirmed `40 lessons, 136031 en chars, 120 minutes` (matches the figure already in the Monetization
+     gate table, unchanged by this run) and the per-language totals/ratios quoted above, computed fresh
+     from `content/lessonContent.economy.js` + `content/lessonContent.money.js`, not carried over from
+     any prior doc text.
+  2. `npm test` — `PASS: 0 failure(s), 1 warning(s)` (the same pre-existing translation-review-coverage
+     warning every run reports, now itself cross-checked: `review-status` reports 100%/100%/100%/100%
+     coverage, 0% human, matching what the rewritten §10.4 row now says); `check-blindspot.mjs` — all 6
+     checks `ok`, confirming the §10.1 row's "P-3 done" claim against the actual current check, not just
+     against memory of when it was added.
+  3. `npm run build` — `vite v6.4.3`, `✓ 65 modules transformed`, no errors; every chunk's byte size
+     identical to the prior run's post-build figures (`lessonContent.money` still 499.36 kB, `Reference`
+     still 62.84 kB, `Practice` still 4.74 kB) — confirms this run touched no source, content, or locale
+     file, only the one markdown file.
+  4. `git status --short` before committing: only `LAUNCH_READINESS.md` modified, plus the same
+     long-standing untracked `economic-cycles-v6.jsx`.
+- **Adversarial self-check**:
+  - *Blindspot register regression*: this run touched no `src/` or `LAUNCH_PLAN.md` content, only
+    `LAUNCH_READINESS.md` prose describing already-run checks — `check-blindspot.mjs`'s 6 checks all
+    passed unchanged (verification step 2), so there is nothing to regress. Checked anyway that the new
+    §10.1/§10.4 prose doesn't itself introduce Dalio references, advice-adjacent phrasing, child-facing
+    kids framing, or a hardcoded current date — it doesn't; it's dated-history prose about when past
+    fixes landed, the same pattern the rest of this file already uses throughout.
+  - *DECISIONS.md conflict*: re-read every section header. The rewritten §10.4 row now correctly
+    references the "`LessonReader` chunk split per track" decision (2026-08-14) and the "Machine-
+    translated lesson content" decision (2026-08-11) instead of describing the latter as still open —
+    this brings the row *into* agreement with `DECISIONS.md`, not out of it. No conflict.
+  - *Already-done backlog item*: this isn't a re-pick of backlog item 15 (building the scorecard, already
+    "Completed and pruned") — it's routine upkeep of that scorecard, the kind item 15's own text calls
+    for ("Update it whenever a gate's status changes; don't let it go stale"). Checked it doesn't
+    duplicate the 2026-08-15 run's kids-curriculum-row patch: `git log -p --follow -- LAUNCH_READINESS.md
+    | grep -n "^-.*Kids curriculum\|^+.*Kids curriculum"` shows that row already updated to "21 blurbs" by
+    commit `1565c8e`; this run left it untouched and fixed the two different rows (10.1, 10.4) plus the
+    broken refresh-command code block that run didn't touch.
+  - *Own verification claim*: the new §10.1/§10.4 figures come from actually re-running `npm test` and
+    the file's own documented (and, this run, corrected) node commands against current source — not from
+    assuming the 2026-08-09 numbers "should" have grown proportionally, and not from trusting the prior
+    run's log-entry prose about what P-3/P-4 closed without independently confirming the check-blindspot
+    output and the ledger's `review-status` output myself this run.
+- **Not touched, and why**: `economic-cycles-v6.jsx` — unrelated, untouched. Did not build the persistent
+  term-detail action bar or its prerequisite term-detail screen — see "Orient" above; still a
+  multi-part, structure-touching item per the prior run's own scoping note, confirmed independently this
+  run by reading `Glossary.jsx`. Did not touch item 21 (kids content) or item 18 (blocked on an owner
+  action) — this run found a different, better-scoped gap (a stale, and in one place broken, scorecard)
+  rather than defaulting to one of those two.
+- **Next run should pick**: the persistent term-detail action bar (routing from the Glossary list into a
+  per-term view, then the action bar itself) remains the last unbuilt Quizlet/Vocabulary design-review
+  idea and the most concrete "next" item, but should be scoped as its own multi-part item — e.g. one run
+  for the term-detail screen/routing, a later run for the action bar — rather than attempted in one pass.
+  Item 21 (kids content, its two open axes: grow within the current 3-field format vs. move to a
+  lesson-shaped structure) and item 18 (blocked on an owner action — a real analytics provider account)
+  remain open alternatives. `LAUNCH_READINESS.md`'s §10.5/§10.6/§10.7 rows and the Instrumentation table
+  were re-read this run and found still accurate — not re-verified line-by-line against fresh commands,
+  so a future refresh pass could still double-check them rather than assuming this run's spot-check
+  covers the whole file.

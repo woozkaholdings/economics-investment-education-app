@@ -5,18 +5,23 @@ actual gates, so a run's own "done" claim isn't the only record. This file lists
 what is actually true right now, and how that was checked — not a narrative, a checklist. Update it
 whenever a gate's status changes; don't let it go stale the way `AGENT_LOG.md`'s App summary once did.
 
-**Last refreshed: 2026-08-09 (backlog item P-2, set by the 2026-08-09 weekly review — this file was
-four days stale, still reporting 26 lessons against an actual 40, and scoring the §4.3 lesson-count
-clause "Not met" after it had already cleared).**
+**Last refreshed: 2026-08-16 (scheduled dev-agent run).** Prior partial refresh 2026-08-15 (backlog
+item 21) updated only the Kids-curriculum row below; this pass re-verified and updated the two rows
+that had drifted furthest — 10.1 (still describing P-3 as open three days after it closed) and 10.4
+(char/ratio figures dated 2026-08-09, three lesson-deepening runs and a lesson-count freeze ago), plus
+this header. Every other row was re-checked against current source and left as-is where still accurate.
+Original 2026-08-09 refresh note, for history: backlog item P-2, set by the 2026-08-09 weekly review —
+the file was four days stale, still reporting 26 lessons against an actual 40, and scoring the §4.3
+lesson-count clause "Not met" after it had already cleared.
 
 ## Blindspot register (`LAUNCH_PLAN.md` §10)
 
 | # | Item | Status | Evidence |
 |---|---|---|---|
-| 10.1 | Financial-advice adjacency | ✅ Closed | `npm run check-blindspot` (added 2026-08-05 night, item 16) — re-run 2026-08-09, all 6 checks `ok`, no matches for advice-adjacent phrasing, disclaimer key present in every locale. Disclaimer renders on the first-launch modal (`App.jsx`) plus `Learn.jsx`, `LessonReader.jsx`, `Practice.jsx` (Review tab), and the Reference sub-screens `MarketSignals.jsx`/`Sectors.jsx`/`Settings.jsx` — screen names updated 2026-08-09 to match the current Learn/Review/Reference tab structure (the "Home, Markets, About" wording was from before the 2026-08-04 rebuild). **English-only**: the five regex patterns in `check-blindspot.mjs` don't scan es/ko/zh/ja, which is now ~60% of content volume by character count — tracked as backlog **P-3**. |
+| 10.1 | Financial-advice adjacency | ✅ Closed | `npm run check-blindspot` (added 2026-08-05 night, item 16) — re-run 2026-08-16, all 6 checks `ok`, no matches for advice-adjacent phrasing, disclaimer key present in every locale. Disclaimer renders on the first-launch modal (`App.jsx`) plus `Learn.jsx`, `LessonReader.jsx`, `Practice.jsx` (Review tab), and the Reference sub-screens `MarketSignals.jsx`/`Sectors.jsx`/`Settings.jsx`. **P-3 done 2026-08-11**: `check-blindspot.mjs`'s §10.1 check now carries per-language pattern sets for es/ko/zh/ja (5 patterns each, mirroring the English ones) in addition to English — no longer English-only. |
 | 10.2 | Dalio dependency | ✅ Closed | `npm run check-blindspot` — no Dalio references in `src/` or `economic-cycles-v5.jsx`. |
 | 10.3 | Kids content / COPPA | ⚠️ Closed-but-reopened | Ships parent-facing (`src/screens/reference/ParentGuide.jsx`), which is the standing rule until the owner decides. **Reopened as a question 2026-08-04 — the owner, not a run, must resolve this.** Do not change the framing without that decision. |
-| 10.4 | Five languages = maintenance debt | 🟡 Open, tracked | es/ko/zh/ja labelled "(Beta)" in the language picker. Volume ratio **re-measured 2026-08-09** over all 40 lessons, sourced from `content/lessonContent.js` (`sections[].body`+`takeaway`+`thinkAbout`) — the previous 2026-08-06 measurement read `content/lessons.js` alone, which stopped holding lesson body text once item 23 split it out into `lessonContent.js` on 2026-08-07, so that figure had been silently wrong for three days: **es 83,758 chars (0.745x of English's 112,387), ko 41,727 (0.371x), zh 26,397 (0.235x), ja 36,551 (0.325x)**, zero missing fields in any language. Every ratio roughly doubled since 2026-08-06 because lessons 27-40 were each authored with full parallel translations. This is a bigger exposure, not a smaller one — see item 20 in `AGENT_LOG.md` and **P-4** (owner decision needed: the "no bulk machine translation" call from 2026-08-05 was reversed in practice, one lesson at a time, in a language `check-blindspot.mjs` doesn't scan). |
+| 10.4 | Five languages = maintenance debt | 🟡 Open, tracked (translation coverage), but the owner decision this row used to flag is resolved | es/ko/zh/ja labelled "(Beta)" in the language picker. Volume ratio **re-measured 2026-08-16** over all 40 lessons (unchanged lesson count since 2026-08-09, but content grew from lesson-deepening runs through 2026-08-15), sourced from `content/lessonContent.economy.js`+`content/lessonContent.money.js` (split from the single `lessonContent.js` on 2026-08-14, item 25's real fix — see `DECISIONS.md`): **es 98,013 chars (0.721x of English's 136,031), ko 48,488 (0.356x), zh 30,752 (0.226x), ja 42,574 (0.313x)**, zero missing fields in any language. **P-3 (above) and P-4 are both done**: the blindspot check now scans all five languages, and the owner resolved the machine-translation question 2026-08-11 — option (a), accept the current unreviewed state under "(Beta)" labelling, tracked going forward via `scripts/translation-review.mjs`'s ledger (currently 100%/100%/100%/100% coverage, 0% human — see `npm run review-status`). See "former item 20" in `AGENT_LOG.md`'s Completed-and-pruned section and `DECISIONS.md` for the full writeup. Remaining open part of this row: the five-language surface is still real ongoing maintenance debt (a sixth lesson deepening, translated four ways, keeps outpacing this file's own last-measured snapshot) — not a decision left to make, just a cost to keep tracking. |
 | 10.5 | Solo-founder single point of failure | 🟡 Open | Code is on git. No confirmation yet that data exports / store credentials / 2FA recovery codes are in a password manager — that's outside what a dev-agent run can verify or do. |
 | 10.6 | Building instead of distributing | 🟡 Open, ongoing | Pre-launch (no store presence yet), so the "half of weekly hours to distribution" rule doesn't bind yet. Becomes checkable only after web launch. |
 | 10.7 | Plan/practice drift | 🟠 **Open — one real instance found and fixed 2026-08-07** | This row previously read "Reconciled well so far," which was **wrong**. `LAUNCH_PLAN.md` §0 was rewritten 2026-08-04 to say the economics content is "the *vehicle*, not the product," but the app kept gating all 14 practical money lessons behind 12 macro-theory lessons, and every string still says "Economic Cycles." The plan changed; the product didn't. Fixed structurally by §2.5's two tracks (owner-directed); **the name is still unreconciled and is an open owner decision.** Lesson: this row was scored from "are the docs current?" — the real test is whether the *app* matches them. Recheck that way at each monthly audit (§9.3). |
@@ -80,13 +85,16 @@ the Phase 0 gate above stays unmeasurable off-device, though it is now inspectab
   after the data-shape checks). Runs the §10.1/10.2/10.3/§2.3 checks quoted above in one command instead
   of retyping four separate greps — see `scripts/check-blindspot.mjs`'s header comment for what it does
   and, importantly, what it doesn't (judgment calls still need a human/agent reading the diff).
-- Lesson catalogue size — **as of 2026-08-07 (item 23), lesson body text lives in
-  `content/lessonContent.js`, not `content/lessons.js`** (which now holds only id/track/icon/color/
-  minutes/title/subtitle). Read both:
+- Lesson catalogue size — **as of 2026-08-14 (item 25's real fix), lesson body text lives in
+  `content/lessonContent.economy.js` + `content/lessonContent.money.js`, not one `lessonContent.js`**
+  (this section named the single-file path until 2026-08-16, three days after the split — the commands
+  below would have thrown an import error, not just returned a stale number; run them, don't trust the
+  text). `content/lessons.js` still holds only id/track/icon/color/minutes/title/subtitle. Read all three:
   ```bash
   BIN_DIR="$(scripts/bootstrap-node.sh)"; export PATH="$BIN_DIR:$PATH"
   node -e '
-  Promise.all([import("./src/content/lessons.js"), import("./src/content/lessonContent.js")]).then(([{lessons}, {lessonContent}]) => {
+  Promise.all([import("./src/content/lessons.js"), import("./src/content/lessonContent.economy.js"), import("./src/content/lessonContent.money.js")]).then(([{lessons}, econ, money]) => {
+    const lessonContent = {...econ.lessonContent, ...money.lessonContent};
     let chars = 0, minutes = 0;
     for (const l of lessons) {
       minutes += l.minutes || 0;
@@ -97,11 +105,12 @@ the Phase 0 gate above stays unmeasurable off-device, though it is now inspectab
     console.log(lessons.length, "lessons,", chars, "en chars,", minutes, "minutes");
   });'
   ```
-- Translation volume ratio (10.4) — same `lessonContent.js` source:
+- Translation volume ratio (10.4) — same split-file source:
   ```bash
   BIN_DIR="$(scripts/bootstrap-node.sh)"; export PATH="$BIN_DIR:$PATH"
   node -e '
-  Promise.all([import("./src/content/lessons.js"), import("./src/content/lessonContent.js")]).then(([{lessons}, {lessonContent}]) => {
+  Promise.all([import("./src/content/lessons.js"), import("./src/content/lessonContent.economy.js"), import("./src/content/lessonContent.money.js")]).then(([{lessons}, econ, money]) => {
+    const lessonContent = {...econ.lessonContent, ...money.lessonContent};
     const langs = ["en","es","ko","zh","ja"];
     const t = Object.fromEntries(langs.map(l => [l, 0]));
     for (const l of lessons) {
