@@ -9331,3 +9331,101 @@ direction is the problem.
   mobile-responsiveness spot-checks against recently added screens (`TermDetail.jsx`, the review-batch
   interstitial, `ParentGuide.jsx`'s new "why" line) that haven't had a dedicated a11y pass since they
   shipped, rather than assuming one is needed without checking first.
+
+### 2026-08-16 (scheduled dev-agent, ninth run this date) — Accessibility spot-check of the three recently-added screens; fixed a real focus-management gap in Practice's review-batch interstitial
+
+- **Orient**: `git status` showed only the same long-standing untracked `economic-cycles-v6.jsx`;
+  `git log --oneline -3` topped at the eighth run's commit, matching HEAD. Picked up the previous run's
+  own suggestion verbatim: an a11y spot-check of `TermDetail.jsx`, the Practice review-batch interstitial,
+  and `ParentGuide.jsx`'s new "why it matters" line — none had a dedicated accessibility pass since they
+  shipped. Read all three source files rather than assuming a gap exists.
+- **What was found**:
+  1. `TermDetail.jsx` — already follows the established "new page" pattern: a `headingRef` on the `<h1>`,
+     `tabIndex={-1}`, and a `useEffect` keyed on `[term]` that calls `window.scrollTo({top:0})` and
+     `headingRef.current?.focus()` on term change (same shape as `LessonReader.jsx`). The bookmark button
+     carries `aria-pressed={isBookmarked}`. No gap found here.
+  2. `ParentGuide.jsx` — the new "why it matters" line is plain `Text` inside the existing per-lesson
+     `<li>`, using the same `ink.muted`/italic treatment already used elsewhere in this same list (the
+     `lesson.text` line above it) and throughout the app (e.g. `TermDetail`'s example-sentence card,
+     Practice's score-recap captions) — not a new color/contrast choice introduced by this line, so not a
+     new regression to flag here. The age-band `Segmented` control already has `role="tabpanel"` /
+     `aria-labelledby` wiring. No gap found here.
+  3. **Practice's review-batch interstitial (`src/screens/Practice.jsx`) — real gap found.** Neither the
+     batch-pause screen (`atBatchPause`) nor the session-complete screen (`!item`) manage focus at all —
+     `grep -n "useRef\|\.focus(\|useEffect\|aria-live\|role="` over the file returned nothing before this
+     run. Both screens replace the question in place (no route change, same component tree), so a
+     screen-reader user got no signal that content changed, and a sighted keyboard user's focus was left
+     on a button element that had just unmounted. Both screens' dynamic result text
+     (`t.reviewBatchTitle`/`t.reviewCompleteTitle`) also rendered as a bare `<p>` (`Text`'s default tag),
+     with no heading semantics at all for a screen-reader user to land on or jump to. This is the same
+     "new page inside a tab" shape `LessonReader.jsx`/`TermDetail.jsx` already solve — Practice was the one
+     screen of the three that hadn't adopted the pattern.
+- **Fix**: `src/screens/Practice.jsx` —
+  1. Promoted `item` (`session ? session[position] : null`) to a value computed once at the top of the
+     component (previously redeclared inside the `if (session)` block), so a new top-level `resultPhase`
+     (`"batchPause" | "complete" | null`) and its `useEffect` can read it without violating the Rules of
+     Hooks (hooks can't live inside a conditional branch that also does an early `return`).
+  2. Added one `resultHeadingRef` + one `useEffect` keyed on `resultPhase`: on transition into either
+     screen, `window.scrollTo({top:0})` then focuses the ref — identical mechanism to
+     `LessonReader`/`TermDetail`, reused rather than reinvented.
+  3. Wrapped each screen's dynamic result text in a real `<h2 ref={resultHeadingRef} tabIndex={-1}>`
+     (raw element, not the `Text` component — `Text` in `src/components/ui.jsx` is a plain function
+     component, not `forwardRef`-wrapped, so a `ref` prop on it would silently fail; `Button` is the only
+     `forwardRef`-wrapped primitive in that file, confirmed by grepping for `forwardRef` before choosing
+     this approach). `Text as="span"` nested inside keeps the existing typographic styling; the outer
+     `<h2>` supplies the semantics and the focus target. The page's own `t.reviewTitle` stays an `<h1>`
+     above both screens (unchanged), so this is a valid, non-duplicated heading level under it.
+- **Verified**:
+  1. `npm test` (`bash scripts/bootstrap-node.sh` for the portable Node runtime) — `PASS: 0 failure(s),
+     1 warning(s)` (same pre-existing translation-review-coverage warning, unrelated); `check-blindspot.mjs`
+     — all 6 checks `ok`.
+  2. `npm run build` — `vite v6.4.3`, `✓ 66 modules transformed`, no errors, no chunk-size warning. Every
+     chunk's size is unchanged from the eighth run's post-build figures except `Practice-*.js`, which grew
+     to reflect the new markup (5.06 kB — still far under the 500 kB threshold); `lessonContent.money`
+     unchanged at 499.36 kB.
+  3. Live browser verification was attempted but unavailable: `preview_start` returned "Dev servers can't
+     be started from unattended sessions (scheduled-task runs...) — nobody is present to approve the
+     command" — a stricter version of the eighth run's "Browser pane is currently hidden" finding (that
+     run could still reach a built `dist/` via `javascript_tool` workarounds; this run's `preview_start`
+     call was rejected outright before any workaround was possible). **Not claiming a visual/interactive
+     check that didn't happen** — verification here rests on `npm test`/`npm run build` passing plus a
+     manual code review of the diff (React ref/effect wiring, matched against the working
+     `LessonReader.jsx`/`TermDetail.jsx` precedent line-by-line) rather than an in-browser tab/focus trace.
+     Flagging this explicitly rather than reporting "verified" the way an interactive-session run would.
+  4. `git status --short` before committing: only `src/screens/Practice.jsx` modified, plus the same
+     long-standing untracked `economic-cycles-v6.jsx`.
+- **Adversarial self-check**:
+  - *Blindspot register regression*: `git diff --unified=0 -- src/ | grep -iE "dalio|(you should (buy|
+    sell|invest))|we recommend|be bullish|be cautious|nowDate|april 2026|will rise|will fall|guaranteed|
+    the fed will|expect the fed|rates will|child.?facing|kid.?mode"` matched nothing (grep exit 1). This
+    change touches no copy/content strings at all — pure ref/effect/markup restructuring of existing
+    translated text — so this check was never likely to find anything, but ran it anyway per the mandatory
+    self-check rather than skipping it as "obviously not applicable."
+  - *DECISIONS.md conflict*: re-read every section header. Nothing here touches Expo-vs-Vite,
+    `.js`-not-JSON content modules, localStorage-only state, or the machine-translation/kids-content
+    decisions — this is a component-internal accessibility fix with no data-shape or architecture
+    implications. No conflict.
+  - *Already-done backlog item*: the eighth run's own note explicitly named this as unchecked ("haven't
+    had a dedicated a11y pass since they shipped"), and grepping the file before editing confirmed zero
+    prior focus-management code existed in `Practice.jsx` — not a re-decision or duplicate of anything in
+    "Completed and pruned" (the two prior accessibility-pass items there covered tab buttons/quiz
+    options/language picker/first-launch modal and `More`'s sub-nav/kids age-selector — neither mentions
+    `Practice.jsx` or focus-on-screen-transition).
+  - *Own verification claim*: see point 3 under Verified above — this entry states plainly that browser
+    verification didn't happen and why, rather than implying `npm test`/`npm run build` passing means the
+    fix behaves correctly for a screen-reader/keyboard user. That gap is real and is left open below.
+- **Not touched, and why**: `economic-cycles-v6.jsx` — unrelated, untouched. `TermDetail.jsx` and
+  `ParentGuide.jsx` — inspected, no gap found, left as-is (see "What was found" above) rather than making
+  a speculative change to files that already follow the established pattern. Did not add lesson content,
+  a new kids blurb, or touch `DECISIONS.md`/`LAUNCH_PLAN.md`/`LAUNCH_READINESS.md` — this run's scope was
+  the named a11y spot-check only.
+- **Next run should pick**: this fix is code-reviewed and passes the automated checks but has **not** been
+  verified in an actual browser with a real screen reader or keyboard-only pass — `preview_start` is
+  unavailable to unattended scheduled runs in this environment. A future *interactive* session (or a
+  scheduled run where the Browser pane isn't rejected outright) should do a real keyboard/VoiceOver pass
+  over Practice's batch-pause and session-complete screens to confirm focus actually lands where this
+  entry claims it does, before treating this as fully closed. Item 18 remains blocked on an owner action.
+  The Glossary bookmark toggle's "surface saved terms somewhere" follow-up is still flagged as worth
+  waiting on. Beyond that, remaining dev-agent-actionable areas are thin — see the eighth run's note for
+  the same assessment; a future run should look for a specific, checked gap (as this run did) rather than
+  defaulting to more content.

@@ -12,7 +12,7 @@
 // an invitation, not a locked door.
 // ═══════════════════════════════════════════════════════════════════════════
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { EVENTS, track } from "../lib/analytics.js";
 import { quizData } from "../content/quizData.js";
 import { dueQuestions, seenCount } from "../lib/review.js";
@@ -44,14 +44,28 @@ export default function Practice({ t, lang, review, recordReview }) {
 
   const due = useMemo(() => dueQuestions(review, quizData), [review]);
   const seen = seenCount(review);
+  const item = session ? session[position] : null;
 
   const start = (items) => { setSession(items); setPosition(0); setAnswered(false); setResults([]); setAtBatchPause(false); };
   const exit = () => { setSession(null); setPosition(0); setAnswered(false); setResults([]); setAtBatchPause(false); };
   const advance = (to) => { setPosition(to); setAnswered(false); };
 
+  // The batch-pause and session-complete screens replace the question in
+  // place (no route change), so nothing would otherwise tell a screen-reader
+  // user the content just changed, and sighted keyboard users' focus would
+  // be left on a button that no longer exists. Same "new page" pattern as
+  // LessonReader/TermDetail: move focus to the result heading when one of
+  // these two screens appears.
+  const resultPhase = atBatchPause ? "batchPause" : session && !item ? "complete" : null;
+  const resultHeadingRef = useRef(null);
+  useEffect(() => {
+    if (!resultPhase) return;
+    window.scrollTo({ top: 0 });
+    resultHeadingRef.current?.focus();
+  }, [resultPhase]);
+
   // ── in a session ────────────────────────────────────────────────────────
   if (session) {
-    const item = session[position];
     const last = position === session.length - 1;
 
     if (atBatchPause) {
@@ -63,9 +77,11 @@ export default function Practice({ t, lang, review, recordReview }) {
             <div style={{ display: "flex", justifyContent: "center", color: ink.ok, marginBottom: space["3"] }}>
               <Icon name="check" size="2rem" strokeWidth={2.2} />
             </div>
-            <Text variant="heading" color={ink.strong}>
-              {t.reviewBatchTitle.replace("{n}", results.length)}
-            </Text>
+            <h2 ref={resultHeadingRef} tabIndex={-1} style={{ margin: 0, outline: "none" }}>
+              <Text as="span" variant="heading" color={ink.strong}>
+                {t.reviewBatchTitle.replace("{n}", results.length)}
+              </Text>
+            </h2>
             <Text variant="small" color={ink.muted} style={{ marginTop: space["1"] }}>
               {t.reviewScoreTemplate.replace("{correct}", correctCount).replace("{total}", results.length)}
             </Text>
@@ -100,7 +116,9 @@ export default function Practice({ t, lang, review, recordReview }) {
             <div style={{ display: "flex", justifyContent: "center", color: ink.ok, marginBottom: space["3"] }}>
               <Icon name="check" size="2rem" strokeWidth={2.2} />
             </div>
-            <Text variant="heading" color={ink.strong}>{t.reviewCompleteTitle}</Text>
+            <h2 ref={resultHeadingRef} tabIndex={-1} style={{ margin: 0, outline: "none" }}>
+              <Text as="span" variant="heading" color={ink.strong}>{t.reviewCompleteTitle}</Text>
+            </h2>
             {results.length > 0 && (
               <Text variant="small" color={ink.muted} style={{ marginTop: space["1"] }}>
                 {t.reviewScoreTemplate.replace("{correct}", correctCount).replace("{total}", results.length)}
