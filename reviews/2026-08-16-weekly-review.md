@@ -4,6 +4,12 @@ Reviewer: scheduled weekly-review task (quality control, not a dev run).
 Period: 2026-08-09 → 2026-08-16. Branch `main`, local only, nothing pushed.
 HEAD at review start and end of curation: `683a947`.
 
+> **Updated end of day 2026-08-16, HEAD `2836338`.** Sections 1–4 below are the review as written
+> that morning and are left as the record of the week. **Everything that happened after it — 28 more
+> commits in nine hours, all four priorities closed the same day, and a content bug that took five
+> passes to actually fix — is in [§5, the addendum](#5-addendum--the-rest-of-2026-08-16).** Where the
+> two disagree, §5 is current: in particular §2's build figures and §4's plan are superseded there.
+
 **Grade: A−.** The strongest week the project has had. Every priority the 2026-08-09 review set
 was closed, the freeze it imposed did its job, and the agent broadened out of the content
 treadmill into structural work, test coverage, accessibility and owner-directed UX. It is marked
@@ -252,3 +258,145 @@ The dev agent ran roughly every two hours this week (12 runs on 08-15, 10 on 08-
 quality held — but it is worth the owner knowing that backlog burn is now much faster than the
 weekly-review cadence assumes, which is part of why Concern 2 (an empty backlog) appeared within a
 week of the last one being set.
+
+---
+
+## 5. Addendum — the rest of 2026-08-16
+
+Written at end of day, HEAD `2836338`. The review above was committed at 09:17. Between then and
+18:19, **28 further commits landed** — more than half the week's total (51) in nine hours, from the
+scheduled dev agent and from owner-directed work in an interactive session.
+
+### 5.1 All four W-priorities closed the same day they were set
+
+| Priority set that morning | Closed by |
+|---|---|
+| **W-1** Browser verification | `b624f19` — the agent verified the Practice interstitial and coach mark live, the two features the review couldn't reach. Verification is now standard practice in run entries. |
+| **W-2** Refill the backlog | `02e23a6` — items 27–32, each derived from a named launch-plan clause. |
+| **W-3** Archive the run log | `57d9f89` (909 KB → 516 KB) + `93ea015` (items 17/24 compressed, 142 lines → 66). |
+| **W-4** Small cleanups | `f58a253`, `058e889`, `9ec55fc`, `40ad455`, `8a78cfd` — all five done, including both a11y items. |
+
+The agent's own run notes cite picking from the backlog "not from a note chain," which is W-2's
+standing rule taking effect immediately.
+
+### 5.2 What shipped from the refilled backlog — most of it the same day
+
+- **Item 27 — money-track lesson visuals** (`39513e9`). Money went **0/28 → 3/28**: lesson 1
+  (budget split), lesson 3 (compound vs simple interest), lesson 27 (loss-aversion asymmetry).
+  Every figure is its own lesson's worked example. Verified live at 375px in dark mode.
+- **Item 28 — glossary linking from lesson text** (`9cfd3c7`), plus **item 35**, 12 money-track
+  glossary terms linked into lessons (`0161b89`). §3.0.3 was unmet since launch; it is now met.
+- **Item 29 — §9.2 event payloads** (`9b496f4`): `lesson_completed` now carries duration,
+  `quiz_taken` a score. The half of item 18 that was never owner-blocked.
+- **Item 30 — `CLAIMS.md`**, the §9.1 falsifiable-claims register, with `check-claims.mjs` wired
+  into `npm test` (`0112fc7`). 14 claims. Its most useful output is a concentration, not a claim:
+  **10 of 14 are unmeasurable today and nearly all name item 18.**
+- **Item 31 — shareable per-lesson URLs** (`a984b2d`), scoped as hash routes in one module with no
+  router, respecting item 12's port-cost constraint. §5's web funnel now has something to link to.
+- **Item 34 — "Be the Fed Chair"** (`2836338`). Extracted from the v6 prototype at 15:31 as a
+  concept-only backlog item; **shipped inside lesson 35 by 18:19.** The one idea worth salvaging
+  from that file is now a real feature, and the file itself is retired (§5.4).
+
+### 5.3 The cross-reference bug — five passes, ~163 stale references, four premature all-clears
+
+This is the day's most important finding, and it is a process finding, not a content one. The
+2026-08-14 lesson-id renumbering left cross-references pointing at real-but-wrong lessons. It was
+declared fixed four times before it actually was:
+
+| Pass | Commit | Fixed | Why the previous "done" was wrong |
+|---|---|---|---|
+| 1 | `1e6af79` | 4 English | Renumbering regex matched capital `Lesson N`; lowercase survived |
+| 2 | `bfeb719` | 74 es/ko/zh/ja + a §16 check | Pass 1 only looked at English |
+| 3 | `543fd90` | 7 in `quizData.js` | Passes 1–2 and the new check all walked lesson prose only |
+| 4 | `c9884bf` | 67 ko/ja | `레슨`/`レッスン` patterns matched **1 of 44** and **1 of 31**; the check was scanning almost nothing while reporting a clean pass |
+| 5 | `0a8a7af` | 11 ja | The ja prose uses `第N課` **and** `第N講`; pass 4 added only `課` |
+
+Two findings generalize beyond this bug:
+
+- **A consistency check is not a correctness check.** §16 verifies translations agree with English.
+  When the renumbering left `Lessons 18 and 20` stale in *every* language at once, all five agreed
+  and the check stayed silent. A human reading the sentence against the lesson titles caught it.
+- **A coverage ratio catches a dead pattern, not a half-dead one.** The tripwire added in pass 4
+  fires below 20% of English; with `課` matching and `講` not, Japanese sat at ~48% and passed.
+
+Pass 5 therefore stopped hand-enumerating surface forms (which had failed four times) and added an
+**unrecognized-counter guard**: it finds the CJK ordinal `第<number><counter>` and fails on any
+counter that isn't explicitly classified as a lesson reference or explicitly justified as not one.
+A fifth surface form now breaks the build with the character in the message. Japanese coverage went
+**31 → 44**, equal to ko and zh.
+
+**This pattern is now recorded where it cannot be quietly forgotten:** `CLAIMS.md` carries D1 ("a
+run's self-reported verification can be trusted") and D2 ("a green `npm test` means the property
+holds") as **already refuted**, citing this bug as the evidence.
+
+### 5.4 Both prototypes retired (owner decision)
+
+`economic-cycles-v5.jsx` and `economic-cycles-v6.jsx` are now **gitignored and left on disk,
+untouched** — ignored, not deleted (`d7b7153`, `9e2fd3c`). v5 was untracked via `git rm --cached`
+with its content still in git history; v6 was never tracked. This ends twelve days of every run
+writing a "not touched, and why" note about v6. It was safe because v6 was audited first
+(`cbec154`): it is imported by no code, everything in it had shipped independently, and its one
+exception became item 34 — which then shipped the same day. Also `f111ca6`: `.scratch-*` ignored,
+since runs leave throwaway analysis scripts behind.
+
+### 5.5 Health at end of day — still green, with two things to watch
+
+```
+npm run build   ✓ 952ms, no warnings
+npm test        PASS: 0 failure(s), 1 warning(s)   (check-data)
+                PASS: 0 failure(s)                 (check-blindspot)
+                PASS: 0 failure(s), 0 warning(s)   (check-claims, new)
+                cross-references matched: en=64, es=43, ja=44, ko=44, zh=44
+```
+
+**Bundle sizes moved a lot** and deserve a look next week — `LessonReader` 5.92 → **38.46 kB**,
+`markets` 17.57 → **58.70 kB** (glossary linking, deep links, the simulator), `Reference` 82.31 →
+61.96 kB. `lessonContent.money` sits at **499.27 kB, still under Vite's 500 kB threshold by under a
+kilobyte** — the next money-track content edit of any size will cross it. Item 17 already carries
+this caution; it is now urgent rather than theoretical.
+
+**Translation coverage dropped 100% → 93%** (3 lessons × 4 languages marked stale). **This is the
+system working, not a regression** — lessons 5, 27 and 28 had their English edited by the
+cross-reference fixes, and the P-4 ledger's drift detection fired for the first time since it was
+built. It does need action: those 12 pairs need re-review.
+
+### 5.6 New concerns found this evening
+
+1. **Duplicate backlog item number.** Two different items are both numbered **34** — an a11y item
+   about `MarketSignals.jsx`, and the Fed Chair simulator. Cosmetic today, but the backlog is now
+   the direction mechanism (W-2), and two items sharing an id is exactly how a run picks the wrong
+   one. Worth a renumber.
+2. **An incomplete commit needed a follow-up.** `df4f3f8` is titled "Carry the item-37 content
+   `6e9f766` was supposed to contain" — i.e. a run committed a message describing work the commit
+   didn't include. Self-corrected within a minute, and worth watching rather than acting on.
+3. **The premature all-clear pattern (§5.3)** is the one to actually carry forward. Four "done"
+   claims on one bug, each made in good faith and each measured through the very instrument that
+   was broken.
+
+### 5.7 Revised plan for next week — supersedes §4
+
+W-1 through W-4 are all closed, so the priority block that opened them is spent. What remains:
+
+1. **Re-review the 12 stale translation pairs** (lessons 5, 27, 28 × es/ko/zh/ja). Small, and it
+   restores the ledger to a true 100%.
+2. **The `lessonContent.money` chunk at 499.27 kB.** Split it or raise the limit *consciously*, as
+   a `DECISIONS.md` entry — do not let the next content edit cross the threshold by accident.
+3. **Item 32 — run the §9.3 monthly blindspot audit.** Never performed; next first Saturday is
+   **2026-09-05**. Item 30's `CLAIMS.md` now supplies audit question 4 ("which claim is past its
+   check date"), which was previously unanswerable.
+4. **Renumber the duplicate item 34.**
+5. **Do not start new content.** Both §4.3 content clauses remain met; items 17 and 24 remain
+   exhausted. Item 27's own text now says the scope it defined is built and needs re-scoping before
+   anyone picks it again.
+
+**For the owner, unchanged and now sharper: item 18 (the analytics provider) is the entire critical
+path.** `CLAIMS.md` quantified it — **10 of this project's 14 written-down beliefs are unfalsifiable
+until it exists.** Everything else on the Phase-0 gate is met. The app name (§10.7) and item 12
+(Expo vs. Vite) remain open owner decisions; item 19 (child-facing kids content) remains HELD and
+untouched.
+
+**Grade for the week: unchanged at A−.** Today does not change the week's assessment, but it sharpens
+the reason for the minus: throughput and craft are both excellent, and the thing holding it back from
+an A is not effort or direction — it is that "done" has repeatedly been asserted through an
+instrument that was itself broken. The unrecognized-counter guard and `CLAIMS.md`'s D1/D2 are the
+first structural answers to that, and both landed today.
