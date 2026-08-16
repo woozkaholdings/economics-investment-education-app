@@ -174,10 +174,12 @@ for the history. No open P1/P2 items.
 >   comment to describe the button accurately (in-flow, full-width, not sticky/fixed) rather than making it
 >   sticky — see run log for why sticky was rejected (no existing per-screen sticky-bar precedent, and it
 >   would need z-index/safe-area coordination with `App.jsx`'s fixed bottom nav).
-> - **`MarketSignals.jsx`'s dead `counterReset: "principle"`** (no paired `counter-increment`/`content`)
->   — flagged by the 2026-08-16 tenth run's own note. **Re-verified 2026-08-16 and it is genuinely dead:**
->   a `grep -rn "counterReset\|counter-reset\|counterIncrement\|counter-increment\|counter("` over `src/`
->   returns that one line and nothing else. This is the **last open W-4 item** and is a one-line deletion.
+> - ~~`MarketSignals.jsx`'s dead `counterReset: "principle"`~~ **✅ DONE 2026-08-16 — W-4 IS NOW FULLY
+>   CLOSED, and so is the entire 2026-08-16 weekly-review block (W-1, W-2, W-3, W-4).** Confirmed inert in
+>   a live browser before deleting (`counterReset: "principle 0"` with `counterIncrement: none` and
+>   `::before` content `none`), and the rendered list was byte-identical afterward. See run log — it also
+>   records an adjacent question this run deliberately did **not** decide (the list is an `<ol>` whose
+>   content is unordered), left as item 33 below.
 > - ~~`Settings.jsx`'s `ChoiceRow` radiogroup using Tab-per-option rather than the ARIA APG
 >   roving-tabindex pattern.~~ **✅ DONE 2026-08-16.** Confirmed live before fixing (all 7 radios were tab
 >   stops; arrow keys did nothing), then implemented roving tabindex + arrow/Home/End selection. See run
@@ -364,6 +366,20 @@ for the history. No open P1/P2 items.
     answerable from the repo, and question 3's honest answer today is "none, and that is the finding."
     Write the result as `reviews/YYYY-MM-DD-monthly-audit.md` and update §10 per the plan. Depends on
     item 30 for question 4 (there are no claims with check dates yet to be past).
+
+33. **[A11y — small, but a judgment call, which is why it is here and not just done] `MarketSignals.jsx`'s
+    "Key Principles" list is an `<ol>` whose content is not ordered.** Noticed 2026-08-16 while removing
+    that element's dead `counterReset` (W-4's last item). The element is
+    `<ol style={{ listStyle: "none" }}>` and each `<li>` renders a hardcoded, `aria-hidden` em-dash marker
+    — so it is *presented* as an unordered list while being *announced* as an ordered one. The six
+    principles (policy lags, curve inversions, speed-vs-level, real rates, sustained tightening, where
+    tightening stops) have no sequence, ranking, or dependency between them, so `<ul>` looks more accurate.
+    **Why this run did not just change it:** the fix is one word, but it is a semantics change nobody has
+    decided, and this repo's own norm (see item 21's (b) clause) is that a run should not settle an
+    unscoped question implicitly just because it happened to be touching the file. Whoever picks it up
+    should confirm the principles really are unordered — read `ratePrinciples` in `src/content/markets.js`
+    — and check whether any other list in the app has the same `<ol>`-styled-as-`<ul>` shape, so this is
+    fixed as a pattern rather than one line. Verify against a live accessibility tree, not just the source.
 
 
 24. **[Content — EXHAUSTED in substance; do not pick by default] The money track teaches mechanics, but
@@ -5743,3 +5759,58 @@ direction is the problem.
   the entire critical path to ending Phase 0, blocked on an owner action (analytics provider account) —
   flagging again per the block's standing instruction. Note that item 29 claims to be the non-owner-blocked
   half of item 18 and is worth reading alongside it.
+
+### 2026-08-16 — Remove MarketSignals' dead `counterReset` (W-4's last item; the weekly block is now closed)
+
+- **What was done**: deleted `counterReset: "principle"` from the "Key Principles" `<ol>` in
+  `src/screens/reference/MarketSignals.jsx`. One line, no behaviour change — which was the thing to prove
+  rather than assume.
+- **Confirmed inert before deleting** (live browser, `dist/` on `127.0.0.1:8764` per the Environment note):
+  the computed style on that element read `counterReset: "principle 0"` with `counterIncrement: "none"`,
+  `listStyleType: "none"`, and `::before` content `"none"` on the items. So the counter was reset and then
+  never incremented and never rendered — inert, not half-wired. **Why it could never have worked as
+  written:** displaying a CSS counter requires `content: counter(...)` on a pseudo-element, and React
+  inline styles cannot express pseudo-elements at all. This was an abandoned idea, not an incomplete one,
+  which is also why deleting it (rather than completing it) is the right fix — the list already carries
+  deliberate `aria-hidden` em-dash markers instead of numbers.
+- **Verified identical after**: re-read the same element post-rebuild — `counterReset` now `"none"`, and
+  everything else unchanged: 6 items, 6 em-dash markers, same `listStyleType`, same `::before` (none),
+  same first-item text. `npm test` — 0 failures, same 1 pre-existing translation-review warning;
+  `npm run build` — succeeds, `lessonContent.money` unchanged at 499.36 kB.
+- **A mis-specified check, recorded because it nearly produced a false alarm**: this run's first pass also
+  asserted `document.documentElement.scrollWidth === window.innerWidth` as a no-horizontal-overflow check
+  and it came back **false**, which looks alarming. It was the wrong test: `innerWidth` (283) includes the
+  vertical scrollbar, while `scrollWidth` (268) equals `clientWidth` (268) — i.e. **no overflow**. The
+  correct predicate is `scrollWidth <= clientWidth`. Worth knowing because the equality form is the one
+  written into this log's own completed mobile-responsiveness entries; it happens to hold only when no
+  vertical scrollbar is present, so it can read as a regression when nothing is wrong. (Removing a CSS
+  counter cannot affect layout in any case.) The elements extending past `innerWidth` were the Reference
+  sub-nav's tabs inside their own horizontal scroll container, which is by design.
+- **Adversarial self-check**: (1) Blindspot register — no content, copy, date, or framing touched; a dead
+  CSS property was removed. `check-blindspot.mjs`'s §10.1/§10.2/§10.3/§2.3 checks all pass. (2)
+  `DECISIONS.md` — nothing covers this screen's markup. (3) Already-done backlog item — this bullet was
+  open before this run and is the one W-4 item never previously attempted. (4) Reproducibility — the claim
+  "this was dead code" rests on computed-style reads (`counterIncrement: none`, `::before` content `none`)
+  taken live before and after, not on reading the source, and an independent reviewer re-running those
+  reads gets the same values. No conflict found.
+- **What this run deliberately did NOT decide**: the same element is an `<ol>` whose six principles have no
+  order, styled with `listStyle: none` and em-dash markers — i.e. presented as unordered while announced as
+  ordered. Changing it to `<ul>` is one word and probably right, but it is an undecided semantics question,
+  and this repo's norm (item 21's (b) clause) is that a run should not settle an unscoped question
+  implicitly just because it is already in the file. Recorded as **new backlog item 33** with the checks
+  whoever picks it up should run, rather than folded silently into a "remove dead CSS" commit.
+- **Concurrent-session note**: `HEAD` was stable at `40ad455` throughout this run, but a new untracked file
+  `src/content/moneyVisuals.js` appeared in the working tree mid-run — another session starting **item 27**
+  (money-track lesson visuals), the refilled backlog's top item. This run staged only its own two files and
+  left that file untouched. Third consecutive run to overlap with another session; `git status` before each
+  stage remains the thing that keeps it safe.
+- **Not touched, and why**: `economic-cycles-v6.jsx` and `src/content/moneyVisuals.js` — both untracked and
+  not this run's work. No lesson content, locale file, or frozen/open content question touched.
+- **Next run should pick**: **the 2026-08-16 weekly-review block is now fully closed** — W-1, W-2, W-3 and
+  W-4 all done, so direction now comes from the refilled backlog (items 27–33). Its own stated top priority
+  is **item 27 (lesson visuals for the money track)**, which another session appears to have just started —
+  **check `git status` and recent commits before picking it up to avoid duplicating that work**; if it is in
+  progress, good independent picks are **item 28** (glossary links from lesson text, §3.0.3 unmet),
+  **item 29** (the non-owner-blocked half of item 18's instrumentation), or the small **item 33** above.
+  Item 18 remains the entire critical path to ending Phase 0, blocked on an owner action (analytics provider
+  account) — flagging again per the block's standing instruction.

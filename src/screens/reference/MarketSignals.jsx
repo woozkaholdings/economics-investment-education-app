@@ -89,7 +89,7 @@ export default function MarketSignals({ t, lang }) {
       <Text as="h2" variant="heading" color={ink.strong} style={{ margin: `${space["5"]}px 0 ${space["3"]}px` }}>
         {t.ratePrinciples}
       </Text>
-      <ol style={{ margin: 0, padding: 0, listStyle: "none", counterReset: "principle" }}>
+      <ol style={{ margin: 0, padding: 0, listStyle: "none" }}>
         {ratePrinciples.map((p) => (
           <li key={p.en} style={{ display: "flex", gap: space["3"], padding: `${space["3"]}px 0`, borderBottom: `1px solid ${line.hairline}` }}>
             <span aria-hidden="true" style={{ color: ink.accent, fontWeight: 700, fontSize: "0.875rem", flexShrink: 0 }}>—</span>
