@@ -178,6 +178,11 @@ const allCheckedFiles = [...srcFiles, ...(v5Present ? [v5Path] : [])];
     // carrying figures, which is exactly the shape §2.3 guards. It has no dates
     // today — this keeps a future run from introducing one unnoticed.
     join(ROOT, "src", "content", "moneyVisuals.js"),
+    // policyScenarios.js (backlog item 34) states inflation and unemployment
+    // figures, which is exactly the shape §2.3 guards: a scenario that named
+    // a month and year would read as a description of right now rather than
+    // as the hypothetical it is.
+    join(ROOT, "src", "content", "policyScenarios.js"),
   ].filter(existsSync);
   const monthYear =
     /\b(january|february|march|april|may|june|july|august|september|october|november|december)\s+20\d{2}\b/i;
@@ -185,7 +190,7 @@ const allCheckedFiles = [...srcFiles, ...(v5Present ? [v5Path] : [])];
   if (hits.length) {
     fail(`§2.3 a "Month YYYY"-shaped date appears in teaching copy (reads as live/current):\n  ${hits.join("\n  ")}`);
   } else {
-    ok("§2.3 no live-looking dates in src/content/{markets,economicSignals,sectors,moneyVisuals}.js");
+    ok("§2.3 no live-looking dates in src/content/{markets,economicSignals,sectors,moneyVisuals,policyScenarios}.js");
   }
 }
 

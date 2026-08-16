@@ -884,8 +884,31 @@ for the history. No open P1/P2 items.
     owner-blocked** — §9.2 specifies `lesson_completed` *with duration* and `quiz_taken` *with score*,
     and neither payload carries them today. Fixing that now means the data is the right shape the day an
     account exists, instead of starting the measurement window with a known gap.
-34. **[Feature — the one idea worth salvaging from `economic-cycles-v6.jsx`] A "Be the Fed Chair"
-    policy simulator.** Extracted 2026-08-16 (owner-requested audit of that file) so the idea survives
+34. **[Feature — ✅ BUILT 2026-08-16 (scheduled dev-agent). Shipped inside lesson 35, two scenarios,
+    three levers each, five languages, no score. Do not re-pick this item to "extend" it — the last
+    bullet says what a third scenario has to justify first.] A "Be the Fed Chair" policy simulator.**
+    > **Built 2026-08-16.** `src/content/policyScenarios.js` (the scenarios) +
+    > `src/components/PolicySim.jsx` (the component) + one call site in `LessonReader.jsx`, which is the
+    > whole surface — it renders `null` for the other 39 lessons, so §3.1's three destinations are
+    > untouched, as this item's own scope caution required. Guarded by `check-data.mjs` §19, and the
+    > file is now in `check-blindspot.mjs`'s §2.3 teaching-copy list. Verified in a live browser (both
+    > themes, 375px, en + ko). See the run log entry of this date for the full writeup, including the
+    > blind-pattern bug the §19 injection test caught in the check itself.
+    > **Two design decisions are load-bearing and are protected only by file-header comments, so they
+    > are restated here.** (a) **No score and no correct answer** — every lever returns a consequence,
+    > including the ones a committee would rarely pick, because the hosting lesson's whole point is that
+    > the trade-off has no formula. A future run that adds scoring reverses the lesson. (b) **No
+    > numbered lesson references in the scenario prose** — it names other lessons by subject ("the QE
+    > and QT lesson"), because §16's cross-reference guard does not walk this file; §19 fails the build
+    > if a number appears. Extend §16 rather than delete that check.
+    > **What a third scenario would have to justify:** the two built cover the dual mandate's two
+    > directions (overheating, contraction), which is the tension the lesson teaches. A third is only
+    > worth it if it teaches a *different* mechanism — the zero lower bound and the handoff to
+    > balance-sheet tools is the obvious candidate, and it would belong in the QE/QT lesson, not this
+    > one. Adding a fourth scenario to lesson 35 would be the count-shaped drift items 17, 21, 24 and 27
+    > each turned into.
+    *(Original framing below.)*
+    Extracted 2026-08-16 (owner-requested audit of that file) so the idea survives
     independently of the file, whatever is eventually done with it. **Do not copy v6's code** — it uses
     its own `DS` design-system object, carries Dalio branding (§10.2) and hardcoded "April 2026" dates
     (§2.3), and none of that may cross over. This item is the *concept* only.
@@ -7058,3 +7081,111 @@ check and a look at whether other lists share the shape). **Item 32**'s monthly 
 **2026-09-05** and should not be pulled forward. Newly worth filing if a run wants it: nothing in this
 repo checks that a *check* and the document it guards land together — this run and `0a8a7af` split one
 across two commits by accident, and only luck made the window short.
+
+### 2026-08-16 (scheduled dev-agent) — "Be the Fed Chair": the policy simulator, built inside lesson 35 (backlog item 34, §3.0.4)
+
+**What changed.** Three files added or wired, one behaviour added:
+- **`src/content/policyScenarios.js`** (new) — two scenarios for lesson 35 (*Interest Rates: The Master
+  Signal*), each with a situation, a question and three levers, in all five languages. Scenario 1 is an
+  overheating economy (inflation near 7%, unemployment 3.5%); its levers are raise / cut / hold.
+  Scenario 2 is a contraction (output shrinking, unemployment 8%, inflation 1%); its levers are cut
+  toward zero / raise / start QT. Picking a lever returns **what it sets in motion**, never a verdict.
+- **`src/components/PolicySim.jsx`** (new) — renders the scenarios for whatever lesson hosts them and
+  `null` for every other lesson, so this is one component and **one call site**, not a fourth tab. That
+  was this item's own scope caution (§3.1 cut the app to three destinations deliberately, and v6's
+  extra tabs are exactly the junk-drawer growth that section removed).
+- **`src/screens/LessonReader.jsx`** — one line, after `<LessonVisual>` and before the takeaway. It sits
+  with the body rather than after it because it is an exercise on what was just read, and the
+  takeaway/reflection pair should still be what closes every lesson.
+- **Five locale files** — five new keys (`policySimTitle`, `policySimIntro`, `policySimSituation`,
+  `policySimOutcome`, `policySimNote`).
+
+**Why this lesson, and why a simulator rather than a sixth diagram.** Lesson 35's last section ends on
+"there's no equation that resolves the trade-off — it's a judgment call the Fed's policy committee makes
+meeting by meeting." That sentence asks the reader for a judgment and then gives them nothing to make it
+with. §3.0.4's differentiator argument runs the same way one step further than the diagrams do: a
+diagram shows a mechanism; this lets the learner move one and read what it set off. It is also, as the
+backlog item noted, unusually safe ground — **central-bank policy, not a buy/sell decision** — so the
+"what would you do" framing carries none of the §10.1 risk it would carry in a money-track lesson.
+
+**Two design decisions, both deliberate, both restated in item 34 so they survive this entry:**
+1. **No score, no correct answer.** Every lever returns a consequence — including "raise the rate into a
+   recession," which is the most instructive of the six because it moves *both* halves of the mandate
+   the wrong way at once. The options are therefore `<button>`s with `aria-pressed`, not radio inputs: a
+   radiogroup implies one right choice and a submission. Picking a second lever swaps the panel; picking
+   the same one again clears it. Nothing locks in.
+2. **No numbered lesson references in the scenario prose.** It says "the QE and QT lesson," not "Lesson
+   37". `check-data.mjs` §16 — the guard that now catches stale cross-references — walks lesson prose and
+   quiz `explain` fields, **not this file**, so a number written here would be invisible to exactly the
+   check that exists to catch it. §19 fails the build if one appears.
+
+**New check: `check-data.mjs` §19**, plus `policyScenarios.js` added to `check-blindspot.mjs`'s §2.3
+teaching-copy list (it states inflation and unemployment figures, which is the shape §2.3 guards).
+§19 covers: unique scenario ids, `lessonId` resolving to a real lesson, ≥2 options with unique ids,
+five-language parity and non-emptiness on `situation`/`question`/`label`/`outcome` (the generic
+`checkModuleParity` would have covered the first two but **not** the language maps nested inside the
+options array, which is where most of the words are), the numbered-reference ban, and that
+`LessonReader.jsx` actually mounts `<PolicySim>`.
+
+**Verification.**
+- `npm test` — `PASS: 0 failure(s), 1 warning(s)` (the warning is the standing translation-coverage
+  line, unchanged). `check-blindspot.mjs` all six checks `ok`. `check-claims.mjs` `PASS`.
+- `npm run build` — clean, 933ms. The new module lands in the already-lazy `LessonReader` chunk
+  (38.46 kB / gzip 18.49 kB); no chunk crossed a threshold.
+- **§19 proven against injected bugs, not just written** — seven injections, each run and then reverted:
+  a numbered reference in each of the five languages' surface forms (`Lesson 37`, `Lección 37`, `37강의`,
+  `第37課`, `第37講`, `第37课`, `레슨 37`), a deleted `ko` key, a duplicated option id, a `lessonId` of 99,
+  and a renamed `<PolicySim>` mount. Green again after restoring, confirmed by re-running.
+- **Live browser** (static-build-plus-python-server technique, port 8801, `preview_start` with a plain
+  `url` — it worked, as the Environment note says it does). Deep-linked to `#/lesson/35` with all 40
+  lessons marked complete in `localStorage`. Confirmed: the card renders with both scenarios; each
+  scenario's three levers carry `aria-pressed` and an `aria-controls` that resolves to a real element;
+  clicking "Raise the rate" filled panel 1 while panel 2 stayed empty (**the two scenarios are
+  independent**, which was the thing most likely to be wired wrong); clicking "Start QT" filled panel 2
+  without disturbing panel 1; clicking a second lever in scenario 1 swapped its text and moved
+  `aria-pressed` with it; clicking the same lever again cleared the panel. The outcome panel is
+  `role="status"` in the live DOM. Heading order is `h1` → four `h2`s with "Be the Fed Chair" as the
+  last — no second `h1`, the bug W-4 fixed on the term-detail screen. Switched the language select to
+  Korean via the React-aware setter: title, intro, both situations, all six lever labels and the outcome
+  text all re-rendered in Korean. Opened lesson 36 and confirmed **nothing** renders there while its own
+  yield-curve figure still does. At 375px: `document.scrollWidth === innerWidth` (no horizontal
+  overflow) and the levers wrap onto two rows. Screenshotted in both dark and light.
+
+**Adversarial self-check — one real finding, in my own new check.**
+1. **Blindspot register.** No Dalio (§10.2) and no v6 code crossed over — the component was written to
+   this repo's `theme.js`/`ui.jsx` primitives, and `grep` confirms no `DS.`, no Dalio, no "April 2026"
+   in either new file. §10.3 untouched. §10.1: the content is central-bank policy and names no security,
+   recommends no action to the reader, and forecasts no market outcome; `check-blindspot` passes all
+   five languages' pattern sets. **§2.3 is the closest call and deserves naming**: scenario 1's figures
+   (7% inflation, 3.5% unemployment) resemble a real recent period, and the hosting lesson discusses
+   2021-23 by name. I kept them because the resemblance is what makes the trade-off legible, and
+   bounded the risk three ways — no dates anywhere in the file, `policySimNote` states outright that
+   these are hypothetical and not a description of current conditions or a forecast, and the file is now
+   in the §2.3 automated check so a future run cannot add a date here unnoticed.
+2. **`DECISIONS.md` conflict.** None. No persistence (the choice is component state and deliberately
+   does not survive a reload — a lever picked is not progress), so localStorage-only is untouched;
+   content is a `.js` module, per that decision; no new dependency, so Expo-vs-Vite is unaffected.
+3. **Already-done backlog item.** Item 34 was open and explicitly unbuilt. Its claim that
+   `grep -rn "simulat" src/` finds nothing was **re-verified before starting** and held — the only hits
+   now are this run's own comments.
+4. **My own verification claim — this is the finding.** The first draft of §19's numbered-reference
+   regex ended the Korean form with `\d\s*강\b`, and the injected `37강의` **passed straight through it**:
+   JS's `\b` is ASCII-based, so between `강` and `의` there is no boundary to match. The check would have
+   reported "no numbered references" while being blind to the single most common Korean surface form —
+   the *exact* instrument-blindness item 36 was about, reproduced in a check written by someone who had
+   just read item 36. It was caught only because the injection test was actually run rather than
+   assumed. Fixed by copying §16's `REF_PATTERNS` surface forms verbatim (including ja's `講`, which my
+   draft also lacked) instead of re-inventing them, and the reasoning is now a comment above the regex.
+
+**Item 18 remains the entire critical path to ending Phase 0** — blocked on the owner creating an
+analytics provider account and supplying its key.
+
+**Next run should pick**: **item 34's `<ol>`/`<ul>` a11y call** (the a11y item 34, not this one — small,
+needs a live accessibility-tree check and a look at whether other lists share the shape); it was queued
+by the previous run and deferred this run only because this item ranked with item 27 at the top of the
+refilled backlog. **Item 32**'s monthly audit is dated **2026-09-05** and should not be pulled forward.
+Newly worth filing from this run: the simulator has **no §9.2 instrumentation** — a lever pick is a real
+engagement signal and the cheapest possible test of whether interactive content holds attention better
+than prose, but adding an event type touches `analytics.js`'s minimum-event-set check, so it was left
+out of a change that was already large. Also still open from the previous run: nothing in this repo
+checks that a *check* and the document it guards land in the same commit.

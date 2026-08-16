@@ -18,6 +18,7 @@ import { kidsContent } from "../src/content/kidsContent.js";
 import * as marketsContent from "../src/content/markets.js";
 import * as moneyVisualsContent from "../src/content/moneyVisuals.js";
 import { economicSignals } from "../src/content/economicSignals.js";
+import { policyScenarios } from "../src/content/policyScenarios.js";
 import { sectors } from "../src/content/sectors.js";
 import { MAX_BOX, dueQuestions, recordAnswer } from "../src/lib/review.js";
 import { MIN_BARS, OUTPERFORM_THRESHOLD, WJ_PERIODS, wjSectorComparison } from "../src/lib/relativeStrength.js";
@@ -1341,6 +1342,98 @@ for (const [label, moduleExports] of Object.entries(CONTENT_MODULES)) {
   const app = readFileSync(join(ROOT, "src/App.jsx"), "utf8");
   if (!/initialRoute\(/.test(app) || !/useDeepLink\(/.test(app)) {
     fail("App.jsx must call both initialRoute() and useDeepLink() — the module routing nothing is indistinguishable from no routing (§5, backlog item 31)");
+  }
+}
+
+// 19. src/content/policyScenarios.js — the "Be the Fed Chair" simulator
+//     (backlog item 34). checkModuleParity above would cover `situation` and
+//     `question` for free, but not the language maps nested inside each
+//     option's array — which is where most of the words are — so this walks
+//     the whole shape instead of adding the module to CONTENT_MODULES.
+//
+//     The last check here is the interesting one. This content deliberately
+//     names other lessons by subject ("the QE and QT lesson") rather than by
+//     number, because §16's cross-reference guard walks lesson prose and quiz
+//     explanations and would never see a stale number in this file. Two
+//     renumberings have already left stale ids across five languages; this
+//     fails the build rather than let a third one hide here. If a future run
+//     genuinely wants numbered references, the fix is to extend §16's scan to
+//     this module, not to delete this check.
+{
+  const seenIds = new Set();
+  const lessonIds = new Set(lessons.map((l) => l.id));
+
+  // The surface forms §16 knows about, in all five languages — deliberately
+  // copied from its REF_PATTERNS rather than re-invented, including ja's 課
+  // *and* 講 (the prose uses both) and zh's simplified 课.
+  //
+  // The `\d\s*강` form carries no trailing \b on purpose. The first draft of
+  // this check wrote `\d\s*강\b` and an injected `37강의` sailed straight
+  // through it: JS's \b is ASCII-based, so between 강 and 의 — two non-word
+  // characters — there is no boundary to match. That is the same instrument-
+  // blindness item 36 was about, caught here only because the injection test
+  // was actually run instead of assumed.
+  const numberedRef =
+    /(?:Lesson|Lección|Lecciones|Lessons)\s*\d|레슨\s*\d|\d\s*강|第\s*\d+\s*[课課講]|レッスン\s*\d/i;
+
+  if (policyScenarios.length === 0) fail("policyScenarios: no scenarios defined — PolicySim would render nothing anywhere");
+
+  for (const scenario of policyScenarios) {
+    const path = `policyScenarios[${scenario.id}]`;
+
+    if (typeof scenario.id !== "string" || scenario.id.length === 0) fail(`${path}: scenario needs a non-empty string id`);
+    if (seenIds.has(scenario.id)) fail(`${path}: duplicate scenario id — ids key React lists and must be unique`);
+    seenIds.add(scenario.id);
+
+    if (!lessonIds.has(scenario.lessonId)) {
+      fail(`${path}: lessonId ${scenario.lessonId} is not a real lesson — the simulator would never render`);
+    }
+
+    for (const field of ["situation", "question"]) {
+      if (checkLangSet(scenario[field], `${path}.${field}`)) {
+        for (const lang of LANGS) checkNonEmptyString(scenario[field][lang], `${path}.${field}.${lang}`);
+      }
+    }
+
+    // Two levers is a choice; one is a statement with a button on it.
+    if (!Array.isArray(scenario.options) || scenario.options.length < 2) {
+      fail(`${path}.options: expected at least 2 options, got ${scenario.options?.length}`);
+      continue;
+    }
+
+    const seenOptions = new Set();
+    for (const option of scenario.options) {
+      const oPath = `${path}.options[${option.id}]`;
+      if (typeof option.id !== "string" || option.id.length === 0) fail(`${oPath}: option needs a non-empty string id`);
+      if (seenOptions.has(option.id)) fail(`${oPath}: duplicate option id within one scenario`);
+      seenOptions.add(option.id);
+
+      for (const field of ["label", "outcome"]) {
+        if (checkLangSet(option[field], `${oPath}.${field}`)) {
+          for (const lang of LANGS) checkNonEmptyString(option[field][lang], `${oPath}.${field}.${lang}`);
+        }
+      }
+    }
+  }
+
+  // Every string in the module, checked for a numbered lesson reference.
+  for (const scenario of policyScenarios) {
+    const strings = [
+      ...LANGS.flatMap((l) => [scenario.situation?.[l], scenario.question?.[l]]),
+      ...(scenario.options || []).flatMap((o) => LANGS.flatMap((l) => [o.label?.[l], o.outcome?.[l]])),
+    ].filter((s) => typeof s === "string");
+    for (const s of strings) {
+      if (numberedRef.test(s)) {
+        fail(`policyScenarios[${scenario.id}]: numbered lesson reference in "${s.slice(0, 80)}…" — name the lesson by subject, or extend §16's scan to this file`);
+      }
+    }
+  }
+
+  // And the component actually mounts it: a module nothing renders is
+  // indistinguishable from no simulator (the §5 lesson from item 31's check).
+  const reader = readFileSync(join(ROOT, "src/screens/LessonReader.jsx"), "utf8");
+  if (!/<PolicySim\b/.test(reader)) {
+    fail("LessonReader.jsx must render <PolicySim> — the scenarios exist but nothing shows them (backlog item 34)");
   }
 }
 

@@ -68,6 +68,15 @@ export default {
     backLabel: "Back",
     bookmarkAdd: "Save term", bookmarkRemove: "Remove from saved", bookmarkedLabel: "Saved",
     lessonTermsLabel: "Terms in this section",
+    // "Be the Fed Chair" policy simulator (backlog item 34) — rendered by
+    // components/PolicySim.jsx inside the lessons content/policyScenarios.js
+    // names. "No score" is stated in the intro on purpose: without it the
+    // three levers read as a quiz whose answer is being withheld.
+    policySimTitle: "Be the Fed Chair",
+    policySimIntro: "The dual mandate has no formula — so make the call yourself. Pick a lever to see what it sets in motion. There is no score, and you can try all three.",
+    policySimSituation: "The situation",
+    policySimOutcome: "What that sets in motion",
+    policySimNote: "Hypothetical scenarios for teaching — not a description of current conditions and not a forecast.",
     themeLabel: "Appearance",
     themeSystem: "System",
     themeLight: "Light",

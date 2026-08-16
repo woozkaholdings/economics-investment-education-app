@@ -18,6 +18,7 @@ import { termsForSection } from "../content/lessonTerms.js";
 import GlossaryTerms from "../components/GlossaryTerms.jsx";
 import Icon from "../components/Icon.jsx";
 import LessonVisual from "../components/LessonVisual.jsx";
+import PolicySim from "../components/PolicySim.jsx";
 import Question from "../components/Question.jsx";
 import { Button, Card, Disclaimer, EmptyState, Note, Stack, Text } from "../components/ui.jsx";
 import { fill, ink, line, radius, shadow, space, surface } from "../theme.js";
@@ -194,6 +195,13 @@ export default function LessonReader({ t, lang, lessons, index, completedLessons
 
           {/* The diagram for lessons whose subject is a diagram. */}
           <LessonVisual lessonId={lesson.id} t={t} lang={lang} />
+
+          {/* The policy simulator, for the lesson whose subject is a decision.
+              Sits with the body rather than after the takeaway: it is an
+              exercise on what was just read, and the takeaway/reflection pair
+              should still be what closes every lesson. Renders nothing for the
+              39 lessons that host no scenario. */}
+          <PolicySim lessonId={lesson.id} t={t} lang={lang} />
 
           <Stack gap={space["3"]} style={{ marginTop: space["5"] }}>
             <Note tone="ok" label={t.keyTakeaway} icon="target">{content.takeaway[lang]}</Note>
