@@ -459,7 +459,35 @@ for the history. No open P1/P2 items.
       the §9.2 fields (not just that the helpers can compute them) — the precise gap that existed
       before was that both events fired and neither carried its field, which greps as "done."
 
-35. **[Content — PRIORITY among the open items. Measured 2026-08-16 while building item 28.] The
+35. **[Content — ✅ DONE 2026-08-16 (owner-directed pick, same date it was filed). 12 money-track terms
+    added; money-track links went 1 → 20, covering 13 lessons instead of 1.]**
+    - **What shipped:** `glossary.js` grew from 17 to **29** terms. The 12 are Compound Interest,
+      Emergency Fund, Diversification, Index Fund, Expense Ratio, 401(k), IRA, Principal, Deductible,
+      Premium (insurance sense), Vesting, Purchasing Power — each chosen by grepping money lessons
+      1–28 for jargon they *actually use*, per this item's own scope guidance, not from a generic
+      vocabulary list. All five languages; definitions describe mechanisms only, never what to do
+      (§10.1), and `glossary.js` now carries a header saying so.
+    - **`lessonTerms.js` gained 19 links** across money lessons 2, 3, 6, 7, 9, 11, 12, 13, 14, 17, 18,
+      25 and 26. Two of the twelve (Expense Ratio, Deductible) are **glossary-only by design** — the
+      one lesson each appears in is the lesson that defines it, so curation rule 2 excludes a chip.
+      Whole-app total: **40 links across 22 of 40 lessons** (was 21 across 10).
+    - **A real bug was caught before shipping, and the check was strengthened because of it.** The
+      first link computation put **Vesting on six lessons** — because a plain substring test matches
+      "vesting" inside **"investing"**. §17's presence check had the same weakness and would have
+      passed all six. It now matches with both-side lookarounds plus an optional plural (`\b` is
+      unusable — "401(k)" ends in a non-word character), so "index funds" still satisfies "Index Fund"
+      while "investing" no longer satisfies "Vesting". Proven by injecting exactly that link and
+      confirming it now fails.
+    - **Ledger gap answered, not left implicit:** the translation-review ledger covers lesson content
+      only, so these 48 non-English glossary fields are outside its coverage number. Written up in
+      `DECISIONS.md` under the machine-translation entry, including why widening the ledger is a schema
+      change rather than a config one.
+    - **Still open here:** a second batch is *possible* (Bond, Collateral, Credit Utilization, Tax
+      Bracket, Withholding, Beneficiary, Risk Tolerance all appear in money lessons) but is **not
+      queued** — re-read this item's own warning against count-shaped work before adding one. The bar
+      is "a word money lessons use that a learner can't look up," not a term total.
+    *(Original text below, retained for the measurement that motivated it.)*
+    **The
     glossary is 17 terms and every one of them is macroeconomic. The money track — 28 of 40 lessons,
     and per §0 *the product* — has almost no jargon it can link to.**
     Item 28 built the linking mechanism and it works, but it could only produce **1 link across the 28
@@ -482,7 +510,22 @@ for the history. No open P1/P2 items.
     Do **not** turn this into a count-shaped item: the target is "the jargon money lessons actually
     use is definable," not a term total.
 
-36. **[Process — small, and it belongs to item 33's owner; recorded here so it isn't lost.] The §16
+36. **[Process — HALF CLOSED within the hour it was filed. Blind spot 2 fixed by `7526e44`; blind spot
+    1 is still open and still hides 8 stale references. Re-measured after their commit, not assumed.]**
+    **Update, 2026-08-16 (item-35 run, a few minutes after filing):** the concurrent run that owns item
+    33 shipped `7526e44` "Extend the cross-reference check to quiz explanations and plural forms,"
+    which closes **blind spot 2** (§16 now walks `quizData.js` `explain` fields, not just lesson prose)
+    and widens the English *and* Spanish patterns to the multi-number form (`Lessons 6 and 8`) — the
+    false-positive fix this item said was required for correctness. **Blind spot 1 is untouched:**
+    `REF_PATTERNS` still reads `ko: /레슨\s*(\d+)/` and `ja: /レッスン\s*(\d+)/`, while the Korean and
+    Japanese prose in `quizData.js` uses **`N강`** and **`第N課`**. Re-running the measurement against
+    the post-`7526e44` tree still finds the same **8 stale references** — q#24 ko/ja, q#25 ko/ja
+    (`15` → 3) and q#27 ko/ja (`18`/`20` → 6/8) — and `npm test` still passes, because no pattern
+    matches them. **What is left is small and specific:** add the two surface forms to `REF_PATTERNS`
+    and fix the 8 references (all resolve under old money id − 12). Note the order matters — adding the
+    patterns first will fail the build until the content is fixed, which is the point.
+    *(Original text below.)*
+    **The §16
     cross-reference check has two blind spots that let 8 stale references survive in `quizData.js`
     today.** Found 2026-08-16 by this run while a *concurrent* run was committing `543fd90`, which
     fixed the es/zh half of exactly this. That commit's own message defers the check work — "Not done
@@ -6363,3 +6406,111 @@ guidance about the five-language cost and the ledger gap before starting) or **i
 (`CLAIMS.md`, the §9.1 register, which item 32's monthly audit depends on and which is the discipline
 this project's recurring drift keeps violating). **Item 36** is a good small pick once item 33's owner
 is done with `check-data.mjs`.
+
+### 2026-08-16 (owner-directed, interactive) — Money-track glossary: 12 terms in five languages, and 19 new in-lesson links (backlog item 35)
+
+**Picked** item 35, filed hours earlier by the item-28 run and chosen by the owner ("add money-track
+glossary terms next") the same session. Item 28 built the linking mechanism; this closes the gap that
+mechanism exposed — the glossary's 17 terms were **all** macroeconomic, so the linking could only reach
+**1 of the 28 money lessons** while covering 9 of the 12 economy ones. §3.0.3 was met on what §0 calls
+"the vehicle" and unmet on what it calls the product.
+
+**What shipped.** `glossary.js`: **17 → 29 terms**, all five languages. The 12 are Compound Interest,
+Emergency Fund, Diversification, Index Fund, Expense Ratio, 401(k), IRA, Principal, Deductible, Premium
+(insurance sense), Vesting, Purchasing Power. `lessonTerms.js`: **+19 links** on money lessons 2, 3, 6,
+7, 9, 11, 12, 13, 14, 17, 18, 25, 26 — money coverage **1 → 20 links across 13 lessons**, app total
+**40 links across 22 of 40 lessons**. `check-data.mjs` §17's matcher hardened (below). `DECISIONS.md`
+updated for the ledger scope. `glossary.js` gained a header stating the §10.1 rule for this file.
+
+**Term selection was measured, per the item's own scope guidance.** Candidates came from grepping money
+lessons 1–28 for ~60 finance terms and keeping what the lessons actually use, not from a generic
+vocabulary list. The raw scan's own noise is worth recording, because it is the same failure family as
+item 28's PMI case: `will` matched 11 lessons (the modal verb), `stock`/`expense`/`default` matched as
+substrings of unrelated words. Two of the twelve terms ended up **glossary-only** — Expense Ratio and
+Deductible each appear in exactly one lesson and that lesson is the one that defines them, so curation
+rule 2 excludes a chip. They were kept anyway because the Glossary tab is itself a lookup surface;
+that is a deliberate call, not an oversight.
+
+**A real bug was caught before shipping, and it hardened the check.** The first link computation put
+**Vesting on six lessons**. Cause: a plain substring test matches "vesting" inside **"investing"** —
+and every one of those six lessons talks about investing. §17's presence check used the same plain
+substring test and **would have passed all six**, so the guard written one commit earlier had the
+defect it existed to prevent. §17 now matches with lookarounds on both sides plus an optional plural:
+`(?<![A-Za-z0-9])term s?(?![A-Za-z0-9])`. `\b` is not usable — `401(k)` ends in `)`, which is not a
+word character. Verified both directions: injecting `Vesting` onto lesson 11's "investing" section now
+**fails** with the stale-link error, while `Index Fund` still matches lesson 3's "index fund**s**".
+
+**§10.1 was the live risk in this change and was treated as one.** This is the first content this repo
+has added about products a reader could actually buy — retirement accounts, index funds, insurance. The
+rule applied throughout: a definition says what a thing *is* and how it works, never what to do with
+it. "A higher deductible generally comes with a lower premium" is a mechanism; "choose a higher
+deductible to save money" would be advice and is not in the file. No product, provider or ticker is
+named; no term implies a path to wealth. `check-blindspot.mjs` passes all six checks — but note its own
+header says it catches literal phrases only, so that pass is corroboration, not proof, and the header
+now written into `glossary.js` says so for whoever adds term 30.
+
+**Verification — live browser** (`dist/` on `127.0.0.1:8819`, static-build technique, sixth unattended
+confirmation that this works):
+- **Curation rule 2 visible in the product:** lesson 6 ("Retirement Accounts: 401(k) and IRA Basics")
+  renders **only** a `Vesting` chip — no 401(k) or IRA chip, because that lesson *is* their definition.
+- **Lesson 13** renders `401(k)` + `Individual Retirement Account (IRA)` on section 0 and
+  `Diversification` on section 1; opening IRA shows the full definition and example. Note this lesson's
+  title contains "Investing" and correctly carries **no** Vesting chip.
+- **Lesson 25** now renders three links across two sections (`Inflation`; `Emergency Fund`,
+  `Purchasing Power`) — and the same three in Korean (`인플레이션`; `비상금`, `구매력`) with fully
+  localized definitions and examples.
+- **Glossary tab** lists **29** terms; search returns `Emergency Fund` for "emergency" and
+  `Compound Interest` for "compound". Mobile 375×812, no console errors.
+
+**`npm test`** — 0 failures, 1 warning (the pre-existing translation-ledger one; unchanged, and see the
+ledger note below). **`npm run build`** — succeeds. `lessonContent.money` **unchanged at 499.32 kB**,
+item 17's caution respected again. The shared chunk carrying `glossary.js` grew 38.06 → **58.67 kB**
+(+20.6 kB) — that is the 12 terms × 5 languages, the honest cost of this change, and it is paid by both
+the reader and the Reference tab since both import the glossary.
+
+**The ledger question item 35 asked to answer explicitly, answered:** `translation-review.mjs` walks
+lesson content only, so these 48 non-English glossary fields are **outside** the coverage number
+`npm run review-status` reports. They are AI-written under the P-4 "(Beta)" decision like the lessons,
+but they are not tracked. Written into `DECISIONS.md` rather than left implicit, including why widening
+the ledger is a schema change (it hashes an English *lesson* source and assumes per-lesson records) and
+so was not done here.
+
+**Adversarial self-check — one finding, and it changed the code.**
+1. **Blindspot register** — §10.1 is the one that applies and is covered above; it drove the wording of
+   all 12 definitions. No §10.2 Dalio reference, no §10.3 kids-framing change, no §2.3 date or
+   live-looking market figure (the only numbers are illustrative arithmetic — "$10 a year per $1,000" —
+   not readings). `check-blindspot.mjs` passes.
+2. **`DECISIONS.md` conflict** — none. Content stays `.js`-not-JSON; localStorage untouched; the
+   per-track chunk split is preserved with the money chunk byte-identical; no router. The
+   machine-translation entry is *extended* with the ledger scope limit rather than contradicted.
+3. **Already-done backlog item** — item 35 was open and owner-directed. It does not redo item 28 (that
+   built the mechanism; this fills the vocabulary) and does not touch item 33's stream.
+4. **Own verification claims** — **this is where the check bit.** The first pass would have reported
+   "12 terms, links computed and verified" with Vesting wrong on six lessons and a §17 check that
+   passed them. What caught it was reading the computed link list instead of trusting the count, then
+   asking why one term had six times the hits of any other. The check is now stronger than before the
+   run, and the fix is proven by injection rather than by inspection.
+
+**Concurrent sessions — three commits landed mid-run, all handled without collision.** `HEAD` moved
+`9cfd3c7` → `7526e44` → `f111ca6` → `cbec154` while this work was in progress. Each was checked rather
+than assumed: `7526e44` edits `check-data.mjs`, which this run also holds — confirmed by diff that this
+run's §17 changes sit **on top of** their §16 extension and remove none of it; `f111ca6` adds
+`.scratch-*` to `.gitignore` (their file, left alone, and this run's scratch scripts were deleted
+anyway); `cbec154` adds a new backlog item. **Two follow-ups for whoever reads this next:**
+- **Item 36 is now half closed** — `7526e44` fixed its scope blind spot and the English/Spanish plural
+  patterns, but the ko `N강` / ja `第N課` surface forms are still unmatched. Re-measured against the
+  post-`7526e44` tree: the same **8 stale references** survive and `npm test` still passes. Item 36 is
+  updated with that measurement.
+- **There are now two backlog items numbered 34** — the `MarketSignals` `<ol>`/`<ul>` a11y one and
+  `cbec154`'s new "Be the Fed Chair" one. Not renumbered here, deliberately: the same collision
+  happened with item 33 on this date, and unilaterally renumbering another session's just-committed
+  item while it may still be running is how the first collision got worse. Flagged for the weekly
+  reviewer.
+
+**Item 18 remains the entire critical path to ending Phase 0**, blocked on the owner creating an
+analytics provider account and supplying its key.
+
+**Next run should pick**: **item 30** (`CLAIMS.md`, the §9.1 falsifiable-claims register — item 32's
+monthly audit depends on it, and it is the discipline this project's drift keeps violating), or
+**item 36**'s remaining half if item 33's owner has released `check-data.mjs`. A *second* batch of
+glossary terms is **not** the default next step — item 35's closing note says why.

@@ -60,9 +60,29 @@
 
 export const lessonTerms = {
   // ── Money track ──────────────────────────────────────────────────────────
+  // Expanded 2026-08-16 (item 35) once the glossary gained money-track terms.
+  // Each link was computed by matching the term against the section's English
+  // text with word boundaries and an optional plural, then filtered by the
+  // curation rules above — notably rule 2, which is why 401(k)/IRA carry no
+  // chip on lesson 6, Emergency Fund none on 2, Diversification none on 5, and
+  // Compound Interest none on 3. Two of the twelve new terms (Expense Ratio,
+  // Deductible) are glossary-only: the single lesson each appears in is the
+  // lesson that defines it, so a chip there would be redundant.
+  2: { 2: ["Premium"] },
+  3: { 2: ["Index Fund"] },
+  6: { 0: ["Vesting"] },
+  7: { 1: ["401(k)", "IRA"] },
+  9: { 0: ["Purchasing Power"] },
+  11: { 0: ["Diversification", "Index Fund"] },
+  12: { 1: ["Principal"] },
+  13: { 0: ["401(k)", "IRA"], 1: ["Diversification"] },
+  14: { 1: ["401(k)", "IRA"] },
+  17: { 1: ["Emergency Fund"] },
+  18: { 0: ["Compound Interest"] },
   // 25 "Does This Money Need to Be There Tomorrow, or in Thirty Years?" uses
   // macro inflation as the reason a savings account loses ground over decades.
-  25: { 0: ["Inflation"] },
+  25: { 0: ["Inflation"], 1: ["Emergency Fund", "Purchasing Power"] },
+  26: { 1: ["Emergency Fund"] },
 
   // ── Economy track ────────────────────────────────────────────────────────
   // 29 introduces credit a full lesson before 30 teaches it.

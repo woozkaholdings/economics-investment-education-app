@@ -955,12 +955,23 @@ for (const [label, moduleExports] of Object.entries(CONTENT_MODULES)) {
 //     (d) is the one that matters most and the one nothing else would catch:
 //     a chip whose section was reworded or reordered still renders happily,
 //     pointing a learner at a definition for a word that is no longer on the
-//     screen. The presence test is a plain case-insensitive substring against
-//     the ENGLISH heading + body only — English is the source the curation was
-//     done against, and the chips render from glossary keys rather than from
-//     matched prose, so no per-language matching is involved or wanted here.
+//     screen. The presence test runs against the ENGLISH heading + body only —
+//     English is the source the curation was done against, and the chips
+//     render from glossary keys rather than from matched prose, so no
+//     per-language matching is involved or wanted here.
+//
+//     The match is case-insensitive and allows a trailing plural "s" ("index
+//     funds" satisfies "Index Fund"), but is anchored on both sides so it
+//     cannot fire on a word that merely CONTAINS the term. That anchoring is
+//     not hypothetical tidiness: a plain substring test accepted "Vesting" on
+//     six lessons during item 35 because every one of them says "investing".
+//     \b is not usable here — glossary keys include "401(k)", whose last
+//     character is not a word character — hence the explicit lookarounds.
 {
   const seenPerLesson = new Map();
+  const escapeRe = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const mentions = (haystack, name) =>
+    new RegExp(`(?<![A-Za-z0-9])${escapeRe(name)}s?(?![A-Za-z0-9])`, "i").test(haystack);
 
   for (const [idKey, byIndex] of Object.entries(lessonTerms)) {
     const id = Number(idKey);
@@ -984,7 +995,7 @@ for (const [label, moduleExports] of Object.entries(CONTENT_MODULES)) {
         continue;
       }
 
-      const haystack = `${section.heading.en}\n${section.body.en}`.toLowerCase();
+      const haystack = `${section.heading.en}\n${section.body.en}`;
 
       for (const term of terms) {
         if (!glossary[term]) {
@@ -1006,7 +1017,7 @@ for (const [label, moduleExports] of Object.entries(CONTENT_MODULES)) {
         // surface forms — glossary keys like "QE" are spelled out in prose as
         // "quantitative easing" and vice versa.
         const names = [term, glossary[term].en.s].filter(Boolean);
-        if (!names.some((name) => haystack.includes(name.toLowerCase()))) {
+        if (!names.some((name) => mentions(haystack, name))) {
           fail(
             `${path}: "${term}" is linked from a section whose English text never mentions it ` +
               `(looked for ${names.map((n) => `"${n}"`).join(" or ")} in "${section.heading.en}"). ` +
