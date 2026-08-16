@@ -5,3 +5,9 @@ dist/
 .claude/settings.local.json
 .env.local
 api-keys.txt
+
+# Throwaway analysis scripts a dev-agent run writes while investigating and
+# doesn't always clean up (e.g. scripts/.scratch-cands.mjs). They are working
+# notes, not tooling — anything worth keeping belongs in a named script that
+# package.json or check-data.mjs actually calls.
+.scratch-*
