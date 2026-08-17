@@ -118,11 +118,74 @@ function checkNonEmptyString(value, path) {
   }
 }
 
+// ───────────────────────────────────────────────────────────────────────────
+// READING_MODEL — what "≈N min" on a lesson means (backlog item 56).
+//
+// §3.0.5 asks for "an honest minutes estimate"; the figure is shown on the
+// Learn list and again in the reader, and `refresh-readiness.mjs` sums it into
+// the ~2-hour total that §4.3's Phase-0 content clause is measured against. So
+// the model below is load-bearing three ways over, and it is written here
+// rather than inline because deciding it is the actual work — see DECISIONS.md
+// ("How a lesson's `minutes` estimate is computed").
+//
+// WHAT ITEM 56 GOT RIGHT AND WRONG. It was filed as "nothing checks that a
+// lesson's stated minutes is honest." That premise was **false**: this check
+// has enforced `minutes === round(words/200)` since before the 2026-08-07
+// content split, and all 40 lessons satisfied it. The item's evidence — "6 of
+// 40 overstate by more than 15%" — was two artifacts stacked: it estimated
+// word count as `chars / 5.5` when the real ratio is 5.77 (inflating every
+// lesson by ~5%), and it then read *rounding* as error, since a lesson stated
+// as 2 minutes legitimately covers anything in [1.5, 2.5) — a ratio of up to
+// 1.25x with nothing wrong. Its direction word was also backwards: those six
+// lessons take *longer* than stated, which understates rather than overstates.
+//
+// WHAT WAS ACTUALLY WRONG is the thing the item told the run to decide, and it
+// is a modelling error, not a data error: the old count read section *bodies*
+// plus takeaway and thinkAbout, and nothing else. It omitted the lesson title
+// and subtitle, every section heading, and **the entire end-of-lesson check** —
+// its question, its four options, and the explanation the reader is shown after
+// answering. That is 5,807 of 29,385 words, ~20% of what the default path puts
+// on screen, so every estimate in the app was systematically short. The check
+// is not optional or secondary: LessonReader renders it in the same pushed view
+// with no separate navigation, and its own comment calls it the thing that
+// "makes the reading stick."
+//
+// WHAT IS COUNTED: every English word the default path renders — title,
+// subtitle, each section heading and body, takeaway, thinkAbout, and for each
+// of the lesson's check questions its text, all options, and the explanation.
+//
+// WHAT IS NOT, deliberately, and each of these makes the estimate conservative
+// rather than optimistic — except the last:
+//   • Time spent *thinking* before answering a check question. Reading the
+//     question is counted; deliberating over it is not. Quantifying it would
+//     mean inventing a second constant with no measurement behind it.
+//   • Time on the four inline diagrams and the policy simulator.
+//   • Glossary term chips, which are optional taps — this one cuts the other
+//     way, and is why the count is a floor on a curious reader's time, not a
+//     promise about one.
+// English is the reference language: the figure is one integer shown in all
+// five, and whitespace word-counting is meaningless for zh/ja.
+const READING_WPM = 200;
+const wordsIn = (...texts) =>
+  texts.reduce((n, t) => n + (String(t || "").match(/\S+/g) || []).length, 0);
+
+function lessonWords(lesson, content) {
+  let words = wordsIn(lesson.title?.en, lesson.subtitle?.en, content.takeaway?.en, content.thinkAbout?.en);
+  for (const section of content.sections || []) words += wordsIn(section.heading?.en, section.body?.en);
+  for (const q of quizData.filter((q) => q.lesson === lesson.id)) {
+    words += wordsIn(q.q?.en, q.explain?.en, ...(q.opts?.en || []));
+  }
+  return words;
+}
+
+const estimateMinutes = (lesson, content) =>
+  Math.max(1, Math.round(lessonWords(lesson, content) / READING_WPM));
+
 // 2. lessons: unique ids, every translated field present in all 5 languages,
 //    and — since content/lessonContent.js (backlog item 23) — that every
 //    lesson has a matching content entry (and vice versa) with no orphans on
 //    either side, plus that the metadata's `minutes` estimate still matches a
-//    fresh count of the content it's a snapshot of.
+//    fresh count of the text it is derived from (READING_MODEL above).
 {
   const seenIds = new Set();
   lessons.forEach((lesson, i) => {
@@ -166,18 +229,18 @@ function checkNonEmptyString(value, path) {
         }
       });
 
-      // `minutes` in lessons.js is a snapshot of what estimateMinutes() used
-      // to compute live from this same body text before the 2026-08-07 split.
-      // Recomputing it here means a future run that edits a lesson's body
-      // without updating `minutes` fails loudly instead of leaving a stale
-      // reading-time estimate on the Learn list.
-      const words = [...content.sections.map((s) => s.body.en), content.takeaway.en, content.thinkAbout.en]
-        .join(" ")
-        .trim()
-        .split(/\s+/).length;
-      const expectedMinutes = Math.max(1, Math.round(words / 200));
+      // `minutes` is derived, not typed: it must equal READING_MODEL's count
+      // of this lesson's own text. A future run that edits a lesson without
+      // updating `minutes` fails loudly instead of leaving a stale estimate on
+      // the Learn list. See READING_MODEL above for what is counted and why,
+      // and DECISIONS.md for the reading rate.
+      const expectedMinutes = estimateMinutes(lesson, content);
       if (lesson.minutes !== expectedMinutes) {
-        fail(`${path} (id ${lesson.id}): minutes is ${lesson.minutes}, but its content computes to ${expectedMinutes} — update lessons.js's minutes field to match the edited body`);
+        fail(
+          `${path} (id ${lesson.id}): minutes is ${lesson.minutes}, but its text computes to ` +
+            `${expectedMinutes} — update lessons.js's minutes field to match the edited lesson ` +
+            `(READING_MODEL in check-data.mjs §2 defines the count; DECISIONS.md defines the rate)`,
+        );
       }
     }
   });
@@ -186,6 +249,42 @@ function checkNonEmptyString(value, path) {
     const id = Number(idStr);
     if (!seenIds.has(id)) fail(`lessonContent[${id}]: no matching lesson in lessons.js — orphaned content`);
   }
+
+  // A floor on the model itself. Every per-lesson comparison above passes
+  // trivially if `lessonWords` returns 0 for everything — the expected value
+  // would clamp to 1 and the only lessons flagged would be the ones stating
+  // something else. §20/§22's lesson: a measurement that can silently return
+  // nothing needs a check that it returned something.
+  const totalWords = lessons.reduce(
+    (n, l) => n + (lessonContent[l.id] ? lessonWords(l, lessonContent[l.id]) : 0),
+    0,
+  );
+  if (totalWords < 8_000) {
+    fail(
+      `§2 reading model: the whole catalogue counts ${totalWords} words (expect ≥8,000). The model, ` +
+        `not the content, is what looks broken — check that lessons.js/lessonContent.js/quizData.js ` +
+        `still expose the fields lessonWords() reads before trusting any minutes figure.`,
+    );
+  }
+
+  // §3.0.5's one hard number: "Lesson 1 under four minutes." The rest of the
+  // clause is a judgment ("an honest minutes estimate") that the derivation
+  // above serves; this half is checkable, and nothing checked it. Lesson 1 is
+  // the first screen of a new install and the subject of §4.3's completion-rate
+  // gate, so it is the one lesson whose length is a product commitment.
+  const first = lessons.find((l) => l.id === 1);
+  if (first && first.minutes >= 4) {
+    fail(
+      `§3.0.5: lesson 1 is ${first.minutes} minutes and the clause requires under four. Either ` +
+        `shorten it or take the clause to the owner — do not adjust the estimate, which is derived.`,
+    );
+  }
+
+  console.log(
+    `  reading model: ${totalWords.toLocaleString("en-US")} words @ ${READING_WPM} wpm → ` +
+      `${lessons.reduce((n, l) => n + l.minutes, 0)} min across ${lessons.length} lessons; ` +
+      `lesson 1 is ${first?.minutes} min (§3.0.5 requires <4).`,
+  );
 }
 
 // 2b. tracks: every track's label/blurb resolves in all 5 languages, no track

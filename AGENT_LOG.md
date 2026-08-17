@@ -253,8 +253,20 @@ for the history. No open P1/P2 items.
     > a figure the argument doesn't need is to remove it, and that keeps the generated set small, which
     > is this script's own stated scope rule.
 
-56. **[Content/Process — P2. Phase-0-facing, which is not obvious until you see how §4.3 is
-    measured.] Nothing checks that a lesson's stated `minutes` is honest, and §4.3's content gate is
+56. **✅ DONE 2026-08-17 (owner-directed pick). Pruned below as `former item 56` — but read the
+    correction first, because this item's premise was false and its evidence was an artifact.**
+    **The premise "nothing checks it" was wrong**: `check-data.mjs` §2 has enforced
+    `minutes === round(bodyWords/200)` since before the 2026-08-07 split, all 40 lessons satisfied it,
+    and an injection test confirmed the check bites. **The evidence was two artifacts stacked**: a
+    `chars / 5.5` word proxy (the real ratio is 5.77, inflating every lesson ~5%) read on top of
+    ordinary rounding — a lesson stated as 2 minutes legitimately covers [1.5, 2.5), so a 1.25x ratio
+    means nothing is wrong. The direction word was backwards too: those six lessons take *longer*
+    than stated, which understates. **What was really wrong is what the item told the run to decide** —
+    the model. It counted section bodies, takeaway and thinkAbout, and omitted the title, subtitle,
+    section headings and **the entire end-of-lesson check**: 5,807 of 29,385 words, ~20% of what the
+    reader sees. Fixed, all 40 lessons recalibrated (23 moved, all up), catalogue 120 → 144 min. See
+    `DECISIONS.md` and the run log. **[Content/Process — was P2.] Nothing checks that a lesson's
+    stated `minutes` is honest, and §4.3's content gate is
     computed by summing exactly that unvalidated field.** §3.0.5 requires "an honest minutes
     estimate"; the figure is shown to learners twice (`src/screens/Learn.jsx:154`,
     `src/screens/LessonReader.jsx:218`) and summed by `refresh-readiness.mjs` into the 120 minutes
@@ -1616,6 +1628,14 @@ for the history. No open P1/P2 items.
 
 **Completed and pruned**
 
+- **The `minutes` reading model corrected to count the whole lesson (former item 56)** — done
+  2026-08-17 (owner-directed pick), see run log and `DECISIONS.md` ("How a lesson's `minutes`
+  estimate is computed"). The field was already derived and enforced; what was wrong was the
+  formula, which omitted the title, subtitle, section headings and the entire end-of-lesson check
+  (~20% of the words on screen). `check-data.mjs` §2 now counts all of it at 200 wpm, with a
+  catalogue-wide floor so a blind count cannot read as a pass, plus a new assertion of §3.0.5's
+  "lesson 1 under four minutes". 23 of 40 estimates moved, all upward; the catalogue total went
+  **120 → 144 minutes**, so §4.3's content clause is further clear rather than reopened.
 - **`LAUNCH_PLAN.md`'s catalogue figures generated, and its Phase-0 gate verdict with them (former
   item 55)** — done 2026-08-17 (dev-agent run), see run log. `scripts/refresh-readiness.mjs` now owns
   **10 figures across two documents**: the two it already had in `LAUNCH_READINESS.md`, plus §1's
@@ -5483,3 +5503,108 @@ P1 of the remaining refill, and this run raises its stakes: §4.3's "met" verdic
 summing exactly that unvalidated field, so if the estimates are inflated, the sentence this run just
 guarded is confidently guarding a wrong answer. Read item 56's warning about choosing the reading-rate
 model *before* editing any number.
+
+### 2026-08-17 (owner-directed, interactive) — The minutes field was already guarded; the model behind it was wrong (item 56)
+
+**Owner asked for item 56 next.** It was filed as "nothing checks that a lesson's stated `minutes` is
+honest, and §4.3's content gate is computed by summing exactly that unvalidated field," with six
+lessons named as deviating. **Both halves of that turned out to be wrong, and the item's own
+instruction — decide the model before touching a number — is what found the real defect.**
+
+**The premise is false, and this was proved, not argued.** `scripts/check-data.mjs` §2 has enforced
+`minutes === max(1, round(bodyWords/200))` since before the 2026-08-07 content split. Re-derived it
+independently across all 40 lessons: **0 violations**. Then injected `minutes: 9` into lesson 10 and
+ran the check — it failed, naming the lesson and the expected value — so the guard is live, not
+inert. The field was never unvalidated; it is derived.
+
+**The evidence was two artifacts stacked.** Item 56 measured word count as `chars / 5.5`; the real
+ratio in this content is **5.77**, which inflates every lesson's computed time by ~5%. On top of that
+it read **rounding** as error: a lesson stated at 2 minutes legitimately covers anything in
+[1.5, 2.5), so a computed/stated ratio up to 1.25x means nothing is wrong. Reproducing its exact
+model returns its exact numbers (L10 1.31x, L8 1.24x, L34 1.23x), and switching only the word count
+to a real one collapses them (L10 1.22x). Its direction word was also backwards — those six lessons
+take *longer* than stated, which **understates**, not overstates.
+
+**What was actually wrong is the model, which is the half the item told the run to decide.** The
+enforced count read section bodies plus takeaway and thinkAbout. It omitted the lesson title and
+subtitle, every section heading, and **the entire end-of-lesson check** — its question, its four
+options, and the explanation shown after answering. That is **5,807 of 29,385 words, 20% of what the
+default path renders**, so every estimate in the app was systematically short. The check is not a
+footnote: `LessonReader` renders it in the same pushed view with no separate navigation, and its own
+comment calls it the thing that "makes the reading stick."
+
+- **What changed.** `check-data.mjs` §2 gained a `READING_MODEL` block — what is counted, what is
+  deliberately not, and why — and now computes `minutes` from all default-path English text at
+  200 wpm. **The rate was not touched**: 200 wpm was already in force, and moving it would have been
+  the easy way to manufacture a result. What changed is what the rate is applied to.
+  `src/content/lessons.js`: **23 of 40 values recalibrated**, all upward, rewritten from the model
+  itself rather than by hand (the one-shot script refused to guess if a metadata line didn't match,
+  then was deleted). `DECISIONS.md` gained the standing entry, with the reading-rate reasoning and
+  its source.
+- **Two new guards, because the old check could pass while blind.** A catalogue-wide floor
+  (≥8,000 words) so a model that silently counts nothing fails on *itself* rather than quietly
+  agreeing with whatever is in the file — §20/§22's lesson, and the same failure shape that bit
+  `glossary.length` yesterday. And **§3.0.5's one hard number**, "lesson 1 under four minutes,"
+  which nothing had ever asserted; lesson 1 computes to 3 and passes.
+- **The gate moved, and it moved the right way.** Catalogue total **120 → 144 minutes**. §4.3's
+  content clause is *further* clear, not reopened — the item warned this could reopen a closed gate,
+  and it is worth saying plainly that it did not, because the estimates were too *low*, not too high.
+  `npm run readiness -- --write` propagated 144 into all three generated figures. One hand-written
+  figure beside a generated one had to be fixed too: `LAUNCH_READINESS.md`'s status cell still read
+  "minutes (120/120)" next to the regenerated 144 — the exact adjacency item 55 was about.
+  **The deeper effect: because the field is now pinned to the content by a check, §4.3's
+  content-duration clause is effectively measured from content volume rather than from a number a run
+  could edit.**
+
+**Verified.** `npm test` green (`reading model: 29,385 words @ 200 wpm → 144 min across 40 lessons;
+lesson 1 is 3 min`), `npm run build` green. Three injection tests, each restored from a scratchpad
+copy and re-verified byte-identical by `shasum`, never `git checkout --`:
+1. **Old check bites** — `minutes: 9` on lesson 10 → FAIL naming the expected 2.
+2. **§3.0.5 clause bites** — lesson 1 forced to 4 → FAIL, "the clause requires under four."
+3. **Floor bites** — `wordsIn` stubbed to return 0 → FAIL, "counts 0 words (expect ≥8,000)", instead
+   of the 40 clamp-to-1 passes it would otherwise have produced.
+**Live browser** (static build + `python3 -m http.server 8798`), because this changes rendered UI:
+the Learn list renders `≈3 min` for lesson 2 and lesson 10 (both were 2), `≈5 min` for lessons 13,
+16 and 17 (all were 4), and unchanged `≈3 min` for lessons 1 and 3; the reader's own header
+(`LessonReader.jsx:218`, the second render site) shows `LESSON 13 OF 40 … ≈5 min`. An incidental
+confirmation fell out of a mistake: seeding `[1..12]` unlocked the *economy* track, because
+`lessonIdMigration` correctly read those as pre-2026-08-14 ids and remapped them to 29–40.
+
+**Adversarial self-check.**
+1. **Blindspot register.** No lesson prose changed — the diff is one integer per lesson, a script, and
+   three documents. `check-blindspot.mjs` green on all six checks. §10.1: nothing added that reads as
+   advice; §10.2: no Dalio; §10.3: kids material untouched; §2.3: no dates or market figures.
+2. **`DECISIONS.md` conflict.** None — this *adds* a decision rather than contradicting one. Checked
+   it against the localStorage, `.js`-content and Vite entries; no interaction.
+3. **Already-done backlog item.** This is the first time the reading *model* has been revisited; the
+   only prior work on this field is the check itself, which predates the backlog's current numbering
+   and which this run extends rather than duplicates. Not item 55 (that generated document figures;
+   this changes the content the figures measure — though it did expose one stale hand-written figure
+   sitting next to a generated one).
+4. **My own verification claim — and the one that matters here.** I nearly shipped the item as
+   written. The honest sequence: I chose a model, measured 26 lessons "off by >15%", and was about to
+   report that as the finding — then grepped for existing usages of `minutes` and found the check
+   that already enforced it. **The measurement was right and the conclusion would have been wrong**,
+   because I had not asked what already guarded the field. That is the same failure this log records
+   under items 33/36 and 49 in three other costumes: measuring with an instrument that cannot see
+   what is already there. It is why the run entry leads with the false premise instead of burying it.
+5. **Concurrent state.** HEAD `cbf5193` at start and at commit; `git status` clean apart from the
+   owner's untracked `UIUX/`, which remains untouched.
+
+**Filed, not fixed:** the estimate ignores time spent *thinking* about a check question and time on
+the four diagrams and the policy simulator, so it is conservative by construction; and glossary chips
+are optional taps, so it is a floor rather than a promise. All three are recorded in `DECISIONS.md`
+rather than modelled, because each would be a second constant with no measurement behind it. The
+first real evidence either way is item 18's analytics.
+
+**Item 18 remains the entire critical path to ending Phase 0.** Unchanged by this run, and now
+doubly so: both §4.3 content clauses are comfortably met and correctly measured, and the only
+unmeasured clause is the one needing an analytics provider the owner has to create.
+
+**Next run should pick**: **item 57** — §3.0.3's no-undefined-jargon coverage (7 lessons use a
+glossary term in prose with no link, 11 occurrences). It is small, bounded, and its measurement has a
+documented control that must be re-run: assert a *linked* lesson shows hits before believing any
+zero, because the first attempt at that measurement returned 0 for an instrument reason. **Given what
+this run found, add one step to it**: before building anything, check what already covers the
+surface — item 56's premise survived a backlog refill and a run's own reading because nobody grepped
+for the existing guard.

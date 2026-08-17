@@ -150,6 +150,43 @@ Add a new entry when a run makes a choice future work should be able to look up 
 
 ## Closed
 
+### How a lesson's `minutes` estimate is computed — 200 wpm over everything on screen
+
+- **Status:** closed (dev-agent decision, 2026-08-17, owner-directed pick). See `AGENT_LOG.md`
+  backlog item 56 and `scripts/check-data.mjs`'s `READING_MODEL` block, which is the implementation
+  and the long-form reasoning.
+- **What was decided:** `minutes` is **derived, never authored**. It equals
+  `max(1, round(words / 200))` where *words* is every English word the lesson's default path renders:
+  title, subtitle, each section heading and body, takeaway, thinkAbout, and — new as of this
+  decision — the end-of-lesson check's question, all four options, and the explanation shown after
+  answering. `check-data.mjs` §2 recomputes it on every `npm test` and fails on drift.
+- **Why the rate is 200 wpm.** Adult silent reading of English non-fiction centres around ~238 wpm
+  in the meta-analytic literature (Brysbaert 2019, ~190 studies). 200 is deliberately below that:
+  the material is unfamiliar to the reader by construction, and §0's audience spans kids to adults,
+  so the median reader here is slower than the average adult. It is not as low as the 100–150 wpm
+  figures used for dense study reading, because §3.0.6 mandates plain language and short sentences.
+  **The rate was not changed by this decision** — 200 wpm was already in force; what changed is what
+  the rate is applied to.
+- **Why the check counts.** It is rendered in the same pushed view as the lesson, with no separate
+  navigation, and `LessonReader.jsx` calls it the thing that "makes the reading stick." Excluding it
+  was not a modelling choice, it was an oversight: with the headings and title it came to 5,807 of
+  29,385 words, so **every estimate in the app was ~20% short**.
+- **What is deliberately not counted:** time spent *thinking* before answering a check question
+  (reading it is counted; deliberating is not — that would be a second constant with no measurement
+  behind it), and time on the four inline diagrams and the policy simulator. Both make the figure
+  conservative. Cutting the other way: optional glossary chips are not counted either, so the number
+  is a floor on a curious reader's time rather than a promise about one.
+- **Why one number for five languages:** the field is a single integer shown in every locale, and
+  whitespace word-counting is meaningless for zh/ja. English is the reference.
+- **What it cost:** 23 of 40 lessons moved, all upward, and the catalogue total went **120 → 144
+  minutes**. That is a Phase-0 gate metric moving because the metadata behind it was corrected — §4.3
+  is *further* clear, not reopened. The deeper point: because the field is now pinned to the content
+  by a check, §4.3's content-duration clause is effectively measured from content volume rather than
+  from a number a run could edit.
+- **Revisit when:** the reading rate is challenged by real completion-time data (item 18's analytics
+  would be the first evidence either way), or if a lesson ever gains a non-text step long enough that
+  ignoring its duration stops being conservative.
+
 ### Kids financial-literacy content: format stays parent-facing, structural depth un-scoped
 
 - **Status:** closed (dev-agent decision, 2026-08-16) — not owner-held. See `AGENT_LOG.md` backlog
