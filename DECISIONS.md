@@ -286,6 +286,13 @@ Add a new entry when a run makes a choice future work should be able to look up 
   than left stacked on top of the real fix.
 - **What was decided:** `src/content/lessonContent.js` (531 kB source, every lesson's full body text)
   is split into `lessonContent.economy.js` (12 lessons) and `lessonContent.money.js` (28 lessons).
+  **Superseded on the file layout, not on the reasoning, 2026-08-17 (item 45):** those two files were
+  split again on a second axis, per language, into ten `lessonContent.<track>.<lang>.js`. The two
+  per-track paths named in this entry no longer exist; the full reasoning is in `AGENT_LOG.md`'s
+  backlog item 45 and its 2026-08-17 run entry, which is where it currently lives — this file has no
+  entry of its own for the second split yet. Kept as written
+  because the decision recorded here — load only the track being read — is what the second split
+  extends.
   `LessonReader.jsx` no longer statically imports the merged file — it dynamically `import()`s only
   the track (`lesson.track`) of the lesson being opened, with a brief `EmptyState` loading affordance
   (the same one `App.jsx`'s other lazy screens already use) while that resolves.

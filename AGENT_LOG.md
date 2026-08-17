@@ -1046,6 +1046,93 @@ for the history. No open P1/P2 items.
     figure went stale for five days. **Scope it honestly before picking it** — this may not be
     checkable in a script at all, in which case saying so and writing the reasoning down is the
     valuable outcome, not a half-guard that reads as coverage.
+    > **✅ SCOPED 2026-08-17 (owner-requested). The item as written is not buildable here, and the
+    > reason is structural rather than a matter of effort. What replaces it is two smaller items, 46
+    > and 47, both buildable. Everything below is measured — commands in the run-log entry.**
+    >
+    > **1. "Same commit" is unreachable in this repo, provably — not merely awkward.** The three places
+    > a co-landing rule could be enforced are a commit hook, CI, and `npm test`:
+    > - **Hook: dead by construction.** `.git/hooks/` holds only samples, and it would not matter if it
+    >   did. This repo's commits are made with `git write-tree` + `git commit-tree` + `git update-ref`,
+    >   because `git commit` porcelain hangs here for minutes (a documented, long-standing workaround).
+    >   **Plumbing runs no hooks.** Verified in a throwaway repo, not assumed: with a `pre-commit` that
+    >   `exit 1`s, porcelain refused to commit and the plumbing path created the commit anyway.
+    > - **CI: does not exist**, and cannot without a usable remote — `origin` is unusable by standing
+    >   rule, so there is no server-side gate to add.
+    > - **`npm test`: the only real gate, and it runs before a commit exists.** It sees a working tree,
+    >   not a commit boundary. Anything phrased as "in the same commit" is outside what it can observe.
+    >   Anything phrased as a property of the tree is inside.
+    >
+    > **2. Even with an enforcement point, the literal rule is too noisy to be a gate. Measured over the
+    > whole history:** 62 commits touched `LAUNCH_READINESS.md` / `LAUNCH_PLAN.md` / `DECISIONS.md` /
+    > `CLAIMS.md`; **51** of them changed a line carrying a measurement-shaped figure; **29 of those 51
+    > (57%) touched no file under `scripts/`.** A gate firing on 57% of figure-touching commits is
+    > noise — and most of those 29 are *correct*, because the guard already existed and needed no edit.
+    > That is the tell that the rule is mis-stated: what matters is **coverage** (every live figure has
+    > a guard, whenever it was written), not **co-landing**.
+    >
+    > **3. Why blanket "every figure is guarded" cannot be automatic: live claims and dated records are
+    > the same syntax, and they share sentences.** `LAUNCH_READINESS.md`'s §10.4 row contains, in one
+    > line, `es 97,994 chars (0.720x…)` — live, must equal the content today — next to "dropped to 93%
+    > earlier that day" and "fell by exactly 19 characters", which are history and must *never* change.
+    > No parser separates those. The distinction has to be supplied by whoever writes the figure, so
+    > some annotation is unavoidable; the only real question is how much. **Size of the surface:** ~119
+    > measurement-shaped figures across the four docs plus the App summary, of which **2 are guarded**
+    > (§11b's coverage sentence, `check-claims.mjs`'s §9.1 claim count). Annotating all 119 is not
+    > worth it, and most of them are history that needs no guard.
+    >
+    > **4. What is actually worth building — items 46 and 47, in that order.** Both are tree
+    > properties, so `npm test` can hold them, and both attack the recurring failure rather than the
+    > general one. The recurring failure is not a wrong number: **in every instance on record the
+    > number was still right and the *method* had rotted** (see 5 below). Guard the method.
+    >
+    > **5. What this scoping found while measuring it — the failure, live, for the second time.** The
+    > commit that landed *during this scoping* (`6f5c48c`, item 45, per-language content split) deleted
+    > `lessonContent.economy.js` and `lessonContent.money.js` and touched no document. Both of
+    > `LAUNCH_READINESS.md`'s runnable refresh snippets still imported those paths and threw
+    > `ERR_MODULE_NOT_FOUND`; `DECISIONS.md` still described the two-file layout. The figures those
+    > snippets produce were all still **correct** (re-derived through the merged view: 40 lessons /
+    > 136,031 en chars / 120 min, es 0.720x / ko 0.356x / zh 0.226x / ja 0.313x — exact matches), so
+    > nothing numeric was stale. **The procedure was.** And the same paragraph had already recorded
+    > this happening once before, three days stale after item 25's split — its own warning text ("the
+    > commands below would have thrown an import error… run them, don't trust the text") was true
+    > again, about itself. Fixed in this commit; the guards are 46 and 47.
+    > **The instrument mattered again**: reading that paragraph shows nothing wrong. Running it fails
+    > instantly. Fourth entry in this repo's list (items 33, 36, 43, 44).
+    >
+    > **Not to be built:** the co-landing detector as a build gate (57% false-positive rate, §2 above).
+    > As a *reporting* line in the weekly review — "commits since the last review that changed a doc
+    > figure without touching a guard" — it is cheap and possibly useful. That is a reviewer tool, not
+    > a `npm test` failure, and it should never be described as coverage.
+
+46. **[Process — filed 2026-08-17 by item 39's scoping. Cheapest half, do this first.] Every repo path
+    a tracked document names must exist.** A ~30-line check over `LAUNCH_READINESS.md`,
+    `LAUNCH_PLAN.md`, `DECISIONS.md` and `CLAIMS.md`: every backtick-quoted `*.js/.jsx/.mjs/.json/.md`
+    path resolves to a real file, or carries an inline exemption marker — the `utc-date-ok:` shape from
+    §23, with the exemption count asserted so a new one has to be argued for.
+    - **Measured before proposing:** 93 distinct path references across the four docs; **11 do not
+      resolve today**. Four are the real, current breakage item 39's scoping fixed. The other seven are
+      exactly the two false-positive classes the exemption vocabulary has to cover, and they are the
+      design work: `LAUNCH_PLAN.md`'s `lessons.json`/`quizzes.json`/`glossary.json` name a format the
+      project **deliberately rejected** (`DECISIONS.md`: `.js`, not JSON) and must never be "fixed";
+      `v5.jsx`/`v6.jsx`/`market.json` are shorthand for paths that do exist elsewhere in the tree.
+    - **Why it earns its place:** it would have failed within seconds of `6f5c48c` landing, and it is
+      the only check proposed here that needs no annotation of existing content.
+
+47. **[Process — filed 2026-08-17 by item 39's scoping. The one that kills the class.] Move
+    `LAUNCH_READINESS.md`'s refresh snippets out of the document and compare their output to the
+    figures the document states.** The snippets are *code stored in prose*: nothing imports them,
+    nothing runs them, and they have now rotted twice while the numbers beside them stayed right.
+    - **Scope:** a `scripts/refresh-readiness.mjs` that computes the catalogue figures (lesson count,
+      English chars, minutes, per-language chars and ratios) and prints them; the doc references the
+      script instead of inlining a copy; `npm test` runs it and fails if the doc's stated figures
+      disagree — the generate-and-diff shape (`gofmt -l`), and a generalisation of what §11b already
+      does for the one coverage sentence.
+    - **Why this and not annotation:** it removes the duplicate rather than checking it. A figure that
+      is derived cannot go stale, and a snippet that is executed cannot name a file that does not
+      exist. Both of this item's recorded failures die at once.
+    - **Deliberately out of scope:** the other ~119 figures. Only the catalogue block and the coverage
+      sentence are worth generating today; the rest are history, and history needs no guard.
 
 41. **[A11y — ✅ DONE 2026-08-16. Fixed, guarded by a new §22 check — and the live verification of the
     fix found that the same figure was failing sighted readers too, which is the more interesting
@@ -8172,3 +8259,72 @@ point for it (§25 and the code it guards landed together, by habit rather than 
 scoping job. **Item 32's monthly audit is dated 2026-09-05 and must not be pulled forward.** One small
 thing noticed and deliberately not done: `formatPercent` and `formatEconomicReading` in the same file
 still have no test coverage; §25 was kept to the freshness rule rather than growing into a file sweep.
+
+### 2026-08-17 (owner-requested, interactive) — Scope item 39: the rule is unbuildable as written, and the failure happened again mid-scoping
+
+Owner asked for item 39 to be scoped, which is what the item itself asks for ("this may not be checkable
+in a script at all, in which case saying so and writing the reasoning down is the valuable outcome").
+**Answer: not checkable as written, for a structural reason, and the honest replacement is two narrower
+items — 46 and 47, both filed.** Full reasoning is in item 39's closing note; this entry records the
+measurements and the live finding.
+
+**Measurements, all reproducible.**
+- **Hooks are not an enforcement point here, and this was tested rather than reasoned.** In a throwaway
+  repo under the scratchpad: installed a `pre-commit` that `echo`s and `exit 1`s; `git commit` refused,
+  and `git write-tree` + `git commit-tree` + `git update-ref` — **the exact sequence this repo commits
+  with, because porcelain hangs here** — created the commit with that hook still installed. Plumbing
+  runs no hooks. There is also no CI and no usable remote, so `npm test` is the only gate, and it runs
+  against a working tree, before any commit exists.
+- **The literal rule as a gate: 57% false positives.** Over all 166 commits — 62 touched one of the four
+  tracked docs, 51 of those changed a figure-bearing line, and **29 of the 51 touched nothing under
+  `scripts/`**. Most correctly: the guard already existed. Method note: `git log --name-only`,
+  `git rev-list` and `git log --format` **bus-error partway through** in this repo when redirected to a
+  file (deterministically, after 99 commits) but complete when piped; the analysis was done by piping
+  per-doc `git log --format=%H --` output through `cat`. Worth knowing before the next history query.
+- **The surface, counted:** ~119 measurement-shaped figures across `LAUNCH_READINESS.md`,
+  `LAUNCH_PLAN.md`, `DECISIONS.md`, `CLAIMS.md` and the App summary. **Two are guarded.** And they
+  cannot be separated mechanically: §10.4's row carries a live figure and two historical ones *in one
+  line*, so any blanket check needs annotation supplied by a writer.
+- **Path references: 93 across the four docs, 11 dead today.** Four real; the other seven are the two
+  false-positive classes item 46 has to define exemptions for (deliberately-rejected JSON paths from
+  the plan; shorthand for files that exist elsewhere).
+
+**The finding: item 39's failure, live, during the scoping.** `6f5c48c` (item 45, per-language content
+split) landed on top of my previous commit while I was measuring. It deleted
+`lessonContent.economy.js`/`lessonContent.money.js` and touched no document. `LAUNCH_READINESS.md`'s two
+runnable refresh snippets still imported those paths — **`ERR_MODULE_NOT_FOUND`, not a stale number** —
+and `DECISIONS.md` still described the two-file layout. Re-derived every figure through the surviving
+merged view: **40 lessons / 136,031 en chars / 120 min, es 0.720x / ko 0.356x / zh 0.226x / ja 0.313x —
+all still exactly what the document says.** The numbers were fine; the method had rotted. **Second time
+for the same paragraph**, whose own warning text ("run them, don't trust the text") was true again about
+itself. That is the whole argument for item 47: guard the procedure, not the figure.
+
+**Fixed in this commit** (small, and leaving them broken while writing about guards would be absurd):
+both snippets now import `content/lessonContent.js`, the node-only merged view item 45 kept for exactly
+this; §10.4's source description and the catalogue paragraph updated; `DECISIONS.md`'s item-25 entry
+marked superseded on layout with a pointer to where item 45's reasoning actually lives. Snippet 1 was
+**run verbatim after editing** and returns `40 lessons, 136031 en chars, 120 minutes`, matching the
+document. No guard was built this run — 46 and 47 are the next run's work, and building one while
+scoping would have prejudged the scoping.
+
+**Adversarial self-check.** Blindspot register: no user-facing content touched; no advice language, no
+Dalio, no kids framing, no dates hardcoded (the figures written down are measurements with a stated
+measurement date, which is the §2.3-compliant form). `DECISIONS.md` conflict: none — the edit marks an
+entry superseded on file layout while explicitly preserving its decision, and adds no new decision.
+Already-done item: 39 was open and unowned since 2026-08-15; 46/47 duplicate nothing (checked against
+§11b and `check-claims.mjs`, which are the two existing doc guards and are cited as precedent, not
+reinvented). My own verification claim: the 57% figure depends on my "measurement-shaped figure" regex —
+a different regex moves it, and the point survives that (it is far from a usable gate either way); the
+hook finding and the `ERR_MODULE_NOT_FOUND` are not judgment calls and reproduce exactly. **Concurrent
+runs: HEAD moved mid-session** — `01d6d6d` → my `2389346` → `6f5c48c` (not mine). I re-read the backlog
+after it landed, appended rather than clobbered, and confirmed `git status` listed only my three files.
+Flagged, not touched: `6f5c48c` added backlog item 45 but **no run-log entry**, the same omission
+`9f24a0b` made and the previous entry recorded.
+
+**Item 18 remains the entire critical path to ending Phase 0** — an analytics provider account and key,
+an owner action. Unchanged by this run.
+
+**Next run should pick**: **item 46** (doc path liveness) — cheapest, needs no annotation of existing
+content, and would have caught today's breakage within seconds. Then **47**. Item 39 is now scoped and
+should not be picked again as an item; if 46 and 47 both land, close it. **Item 32's monthly audit is
+dated 2026-09-05 and must not be pulled forward.**
