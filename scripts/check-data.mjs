@@ -1615,5 +1615,109 @@ for (const [label, moduleExports] of Object.entries(CONTENT_MODULES)) {
   }
 }
 
+// 22. Every chart primitive in src/components/charts.jsx exposes a text
+//     alternative, and every call site supplies one (backlog item 41).
+//
+//     The bug this generalises from: `Bar` was the one primitive that took no
+//     `description`, so lesson 37's Fed balance-sheet figure was a stack of
+//     unlabelled <div>s — the only lesson visual in the app with no text
+//     alternative. Six of seven primitives already had the property; nothing
+//     asserted it, so the seventh could be written without it and nothing said
+//     so for as long as the figure existed.
+//
+//     Both halves are needed and neither implies the other. A primitive can
+//     accept `description` and never render it; a primitive that renders it
+//     correctly is still silent at a call site that omits the prop, because
+//     `aria-label={undefined}` drops the attribute entirely and leaves a
+//     `role="img"` with no accessible name — worse than no role at all.
+//
+//     The permitted-props set is read out of each primitive's own aria-label
+//     expression rather than hardcoded, so `aria-label={description || label}`
+//     (YieldCurve, whose grid of four curves is labelled by its short `label`)
+//     is accepted on its own terms instead of being special-cased here.
+{
+  const chartsPath = join(ROOT, "src/components/charts.jsx");
+  const chartsSrc = readFileSync(chartsPath, "utf8");
+  const lineIn = (src, index) => src.slice(0, index).split("\n").length;
+
+  // name → props that may supply the accessible name at a call site.
+  const labelProps = new Map();
+
+  for (const m of chartsSrc.matchAll(/export function (\w+)\(\{([^}]*)\}/g)) {
+    const [, name, params] = m;
+    const takesDescription = /\bdescription\b/.test(params);
+    // The primitive's body runs to the next export, or to end of file.
+    const bodyStart = m.index;
+    const next = chartsSrc.indexOf("\nexport function ", bodyStart + 1);
+    const body = chartsSrc.slice(bodyStart, next === -1 ? chartsSrc.length : next);
+    const aria = body.match(/role="img"[^>]*?aria-label=\{([^}]+)\}/);
+
+    if (!takesDescription) {
+      fail(`§22: charts.jsx:${lineIn(chartsSrc, bodyStart)}: <${name}> takes no \`description\` prop — every chart primitive must expose a text alternative (backlog item 41)`);
+      continue;
+    }
+    if (!aria) {
+      fail(`§22: charts.jsx:${lineIn(chartsSrc, bodyStart)}: <${name}> accepts \`description\` but renders no \`role="img"\` with an \`aria-label\` bound to it, so the description never reaches a screen reader`);
+      continue;
+    }
+    const props = aria[1].split("||").map((s) => s.trim()).filter((s) => /^\w+$/.test(s));
+    if (!props.includes("description")) {
+      fail(`§22: charts.jsx:${lineIn(chartsSrc, bodyStart)}: <${name}>'s aria-label is \`${aria[1].trim()}\`, which does not read \`description\``);
+      continue;
+    }
+    labelProps.set(name, props);
+  }
+
+  if (labelProps.size < 7) {
+    fail(`§22: found only ${labelProps.size} chart primitives in charts.jsx (expected at least 7) — the export scan is probably matching nothing, not the charts having gone away`);
+  }
+
+  // Call sites. The attribute span ends at the first ">" at brace depth 0 —
+  // depth tracking is not optional here, since `data={rows.map((d) => ...)}`
+  // puts a ">" inside an attribute value, and taking the first one would cut
+  // the span short and report a missing prop that is right there.
+  const attrsOf = (src, from) => {
+    let depth = 0;
+    for (let i = from; i < src.length; i += 1) {
+      const c = src[i];
+      if (c === "{") depth += 1;
+      else if (c === "}") depth -= 1;
+      else if (c === ">" && depth === 0) return src.slice(from, i);
+    }
+    return src.slice(from);
+  };
+
+  const walkJsx = (dir) =>
+    readdirSync(dir, { withFileTypes: true }).flatMap((e) => {
+      const full = join(dir, e.name);
+      if (e.isDirectory()) return walkJsx(full);
+      return e.isFile() && e.name.endsWith(".jsx") ? [full] : [];
+    });
+
+  let callSites = 0;
+  for (const jsxPath of walkJsx(join(ROOT, "src"))) {
+    if (jsxPath === chartsPath) continue;
+    const src = readFileSync(jsxPath, "utf8");
+    const rel = jsxPath.slice(ROOT.length + 1);
+
+    for (const [name, props] of labelProps) {
+      for (const m of src.matchAll(new RegExp(`<${name}\\b`, "g"))) {
+        const attrs = attrsOf(src, m.index + name.length + 1);
+        callSites += 1;
+        if (!props.some((p) => new RegExp(`\\b${p}=`).test(attrs))) {
+          fail(
+            `§22: ${rel}:${lineIn(src, m.index)}: <${name}> passes none of ${props.map((p) => `\`${p}\``).join(" / ")} — ` +
+            "its `role=\"img\"` would render with no accessible name (backlog item 41)"
+          );
+        }
+      }
+    }
+  }
+
+  if (callSites < 10) {
+    fail(`§22: found only ${callSites} chart call sites under src/ (expected at least 10) — the scan is probably matching nothing`);
+  }
+}
+
 console.log(`\n${failures === 0 ? "PASS" : "FAIL"}: ${failures} failure(s), ${warnings} warning(s).`);
 process.exit(failures === 0 ? 0 : 1);

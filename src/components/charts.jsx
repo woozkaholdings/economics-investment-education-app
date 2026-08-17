@@ -15,7 +15,13 @@ import { graph, ink, line, radius, space, surface } from "../theme.js";
 import { Text } from "./ui.jsx";
 
 // ── Bar ───────────────────────────────────────────────────────────────────
-export function Bar({ data, title, colors, height = 140, caption }) {
+// `description` is the figure's text alternative, and it is not optional in
+// practice: the bar heights carry the whole comparison, and the per-bar numbers
+// inside the `role="img"` container stop being announced individually once the
+// container is one image. §22 of check-data.mjs asserts every call site passes
+// one, which is what keeps the unconditional `aria-label` below from silently
+// resolving to `undefined`.
+export function Bar({ data, title, colors, height = 140, description, caption }) {
   const max = Math.max(...data.map((d) => Math.abs(d.value)));
   return (
     <figure style={{ background: surface.card, border: `1px solid ${line.hairline}`, borderRadius: radius.lg, padding: space["4"], margin: 0 }}>
@@ -26,11 +32,23 @@ export function Bar({ data, title, colors, height = 140, caption }) {
           </Text>
         </figcaption>
       )}
-      <div style={{ display: "flex", alignItems: "flex-end", gap: space["1"], height }}>
+      <div role="img" aria-label={description} style={{ display: "flex", alignItems: "flex-end", gap: space["1"], height }}>
         {data.map((d, i) => (
           <div key={d.label} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "flex-end", height: "100%" }}>
             <span style={{ fontSize: "0.75rem", fontWeight: 700, marginBottom: space["1"], color: ink.body }}>{d.value}</span>
-            <div style={{ width: "72%", height: `${(Math.abs(d.value) / max) * 100}%`, background: colors[i], borderRadius: 4, minHeight: 2, transition: "height 0.5s" }} />
+            {/*
+              The bar's percentage height must resolve against the space left
+              for bars, not against the whole column — the column also holds the
+              value and the (often two-line) label. Measured before this track
+              existed: at height={90} the 4.5, 3.8, 9.0 and 6.7 bars all rendered
+              at exactly 35.5px, so the Fed balance sheet's ten-fold expansion
+              was drawn as four bars of equal height with the true numbers
+              printed above them. `minHeight: 0` is what lets the track actually
+              shrink to its flex size instead of its content's.
+            */}
+            <div style={{ flex: 1, minHeight: 0, width: "100%", display: "flex", alignItems: "flex-end", justifyContent: "center" }}>
+              <div style={{ width: "72%", height: `${(Math.abs(d.value) / max) * 100}%`, background: colors[i], borderRadius: 4, minHeight: 2, transition: "height 0.5s" }} />
+            </div>
             <span style={{ fontSize: "0.6875rem", color: ink.muted, marginTop: space["2"], textAlign: "center", whiteSpace: "pre-line", lineHeight: 1.25 }}>{d.label}</span>
           </div>
         ))}

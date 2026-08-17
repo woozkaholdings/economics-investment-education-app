@@ -1029,8 +1029,9 @@ for the history. No open P1/P2 items.
     checkable in a script at all, in which case saying so and writing the reasoning down is the
     valuable outcome, not a half-guard that reads as coverage.
 
-41. **[A11y — small, found in passing 2026-08-16 and deliberately not fixed in that run] `Bar` is the
-    one chart primitive with no accessible description.**
+41. **[A11y — ✅ DONE 2026-08-16. Fixed, guarded by a new §22 check — and the live verification of the
+    fix found that the same figure was failing sighted readers too, which is the more interesting
+    half. See the run log.] `Bar` is the one chart primitive with no accessible description.**
     > Filed as 40 and renumbered to **41** before commit, because `check-backlog.mjs` — which landed from
     > a concurrent run *while this one was in flight* — failed the build on the collision with the
     > renumbered a11y item 40. Working exactly as designed, on its first day, against the next run to
@@ -1049,6 +1050,25 @@ for the history. No open P1/P2 items.
     - **Worth a check, not just a fix:** the general property — every chart primitive that renders a
       figure exposes a text alternative — is assertable in `check-data.mjs` the same way §20 asserts list
       semantics, and would have caught this at the time `Bar` was written.
+    > **Closing note, 2026-08-16.** All three bullets done: `balanceSheetDescription` (5 languages, parity
+    > for free via §7's `CONTENT_MODULES`), both call sites wired, and **§22** in `check-data.mjs` asserting
+    > the general property in both directions — every primitive accepts `description` *and* binds it to a
+    > `role="img"` label, and every call site passes a prop that can supply that label. The permitted-prop
+    > set is read out of each primitive's own aria-label expression, so `YieldCurve`'s documented
+    > `description || label` fallback is accepted on its own terms rather than special-cased.
+
+42. **[A11y — small, found by §22's own output 2026-08-16, filed not fixed] The four `YieldCurve` figures
+    are labelled by `label`, not by a description — so their accessible name is "Normal (healthy)", which
+    names the curve without describing it.** §22 passes them legitimately: `YieldCurve` declares
+    `aria-label={description || label}`, both call sites (`LessonVisual` lesson 36, `MarketSignals`'s 2×2
+    grid) pass only `label`, and the fallback is deliberate. But a sighted reader sees *the shape* — short
+    end below long end, or above it — and the label alone does not carry it, which is the same gap item 41
+    just closed for `Bar`, one notch less severe (a name exists; it is thin). Measured: lesson 36 returns 4
+    `[role="img"]` whose names are the four short labels.
+    - **Scope:** a five-language `yieldCurveDescriptions` keyed by the four curve types in `markets.js`,
+      passed at both call sites. No component change — `YieldCurve` already takes `description`.
+    - **Do not** "fix" this by deleting the `|| label` fallback: that is what makes §22's derivation
+      honest, and injection test (d) confirmed removing it fails both call sites.
 
 **HELD — owner decisions, do not act on these**
 
@@ -7635,3 +7655,101 @@ alternative." **Item 38** is now better motivated than when it was filed, since 
 in a document. Item 39 remains unowned and still needs honest scoping before anyone picks it. Item 27's bar
 for a fifth money visual stands — do not add one without naming the lesson. **Item 32's monthly audit is
 dated 2026-09-05 and must still not be pulled forward.**
+
+### 2026-08-16 (scheduled dev-agent, late evening) — The Fed balance-sheet figure gets a text alternative, and the geometry it needed to be true (item 41, + item 42 filed)
+
+**Picked from the backlog, not from the previous run's note** — item 41, which that run filed after
+measuring lesson 37 returning **0** `[role="img"]`. Its own scope line said "small, but not a one-liner,"
+and that turned out to be right for a reason it did not anticipate.
+
+**What shipped, in three parts.**
+1. **`balanceSheetDescription`** in `src/content/markets.js`, five languages, written the way the other
+   six figure descriptions are: it says what is *on screen* (five bars, the five values, in order) and
+   leaves the meaning to the existing `balanceSheetCaption` beside it. A reader who cannot see the bars
+   needs the values before "the shape, not the exact level" has anything to refer to. Parity is free —
+   `markets` is already in §7's `CONTENT_MODULES`, so the new export is checked in all five languages
+   from the moment it exists.
+2. **`Bar` takes `description`** and renders `role="img" aria-label={description}` on its bar row, the
+   same shape as the other six primitives; both call sites (`LessonVisual` lesson 37, `MarketSignals`)
+   pass it.
+3. **§22 in `check-data.mjs`** — the general property item 41 asked for, in both directions, because
+   neither half implies the other: every primitive must accept `description` *and* bind it to a
+   `role="img"` label, and every call site must pass a prop that can supply that label. A primitive that
+   renders the label perfectly is still silent at a call site that omits the prop, since
+   `aria-label={undefined}` drops the attribute and leaves a `role="img"` with **no** accessible name —
+   worse than no role at all. The permitted-prop set is **read out of each primitive's own aria-label
+   expression** rather than hardcoded here, so `YieldCurve`'s `description || label` is accepted on its
+   own terms instead of being special-cased.
+
+**The finding: the figure was failing sighted readers too, and only a rendered measurement showed it.**
+Verifying the new `aria-label` in a live browser, I measured the bars themselves — and at `height={90}`
+four of the five (**4.5, 3.8, 9.0, 6.7**) rendered at *exactly 35.5px*. The Fed balance sheet's ten-fold
+expansion was drawn as four bars of identical height with the true numbers printed above them. Cause:
+each bar's percentage height resolved against the whole column, which also holds the value text and a
+frequently two-line label, so everything above ~40% clamped to the leftover space. Fixed by giving the
+bars their own `flex: 1; minHeight: 0` track so the percentage resolves against the space actually
+available for bars. After: 0.9→3.5px, 4.5→17.8px, 3.8→15px, 9.0→35.5px, 6.7→26.4px — each within 0.1px of
+its exact ratio, a true 10:1 between the smallest and largest. **The figure is the same size on screen as
+before** (the tallest bar was already 35.5px, clamped); only the ratios changed, so this is a correctness
+fix, not a redesign. I took it in this commit rather than filing it: shipping an accurate text alternative
+next to a picture that renders three different numbers identically would have been half a fix, in the same
+component, found by the same measurement.
+
+**Verified.**
+- `npm test` green (0 failures, 1 pre-existing translation-coverage warning), `npm run build` green.
+- **§22 proven against four injected regressions, not just written.** (a) `Bar` reverted to no
+  `description` param → caught, *and* the vacuity guards fired (6 primitives / 8 call sites); (b)
+  `description=` dropped from the lesson-37 call site → caught, naming file and line; (c) `Bar`'s
+  aria-label repointed at `title` → caught, quoting the expression; (d) `YieldCurve`'s `|| label`
+  fallback removed → caught at **both** its call sites, which is the check's derivation proving it is
+  real rather than decorative. `shasum` confirmed all three touched files byte-identical after restore.
+- **The brace-depth attribute parser earns its place, demonstrated rather than asserted**: `<Bar>`'s
+  attribute list contains `data={…map((d) => …)}`, so a naive "first `>`" span stops at the arrow. Ran
+  both parsers over the real call site — naive sees `description=`: **false**; depth-tracked: **true**.
+  The obvious version of this check would have false-failed on the very call site this run fixes.
+- **Live browser** (per W-1; `npm run build`, `dist/` served by `/usr/bin/python3 -m http.server 8847`,
+  `preview_start` with a plain `url`, 375×812). Lesson 37 now returns **1** `[role="img"]` (was 0) with
+  the full English label; Reference → Market signals returns the same figure with the **Korean** label,
+  bars proportional, colours resolving through the `graph` tokens to their light-scheme values under
+  `data-theme="light"`, no horizontal overflow in either place. Regression sweep, lessons 1/3/7/27/32/36
+  each still render their figure with an intact label, and lesson 2 correctly renders none.
+
+**Adversarial self-check — one thing filed, nothing reverted.**
+1. **Blindspot register.** Nothing reintroduced. §10.2: no Dalio (`check-blindspot` green). §10.1: the new
+   description states five numbers and their order and stops — no advice verb in any of the five
+   languages, and it deliberately does **not** characterise the levels as high, excessive or worrying,
+   which is the easy line to cross when describing a chart of central-bank policy. §10.3: untouched.
+   §2.3: no dates and no live-looking figures — the values are labelled by era ("Before 2008", "After
+   QE1–3"), which is why this data was written that way in the first place; `check-blindspot`'s §2.3 scan
+   over `markets.js` passes.
+2. **`DECISIONS.md` conflict.** None. Content went into an existing `.js` module, not JSON; no state,
+   storage or routing touched; no dependency added, so item 12's port-cost rule is unaffected — the
+   geometry fix is plain flexbox, portable to any renderer.
+3. **Already-done backlog item.** Item 41 was open and explicitly unbuilt, filed by the immediately
+   previous run. It does not redo item 40 (list semantics) or item 27 (money visuals). The one real
+   duplication risk was re-solving §20's problem in §22; they assert different properties over different
+   elements, and §22 deliberately reuses §20's vacuity-guard idea rather than its logic.
+4. **My own verification claim — this is where the check bit, twice.** First: my §22 draft's call-site
+   parser was the naive `indexOf(">")` version. It passed the suite — because at that moment I had not
+   yet added `description` to the `<Bar>` call sites in a way it could see, and I nearly read its green
+   as confirmation. The proof above is what settled it. Second, and the one worth carrying forward: **the
+   text alternative I added was accurate while the picture beside it was not**, and every check I own —
+   including the one I wrote this run — was green over that state. §22 asserts a figure has a text
+   alternative; nothing in this repo can assert the figure is *true*. That is the same lesson the item-27
+   run recorded one commit earlier, arriving from the opposite direction, and it is now twice-evidenced:
+   for a rendered change, the suite tells you the data is consistent, never that the picture teaches what
+   the words claim.
+5. **Item 38's bug, avoided by hand.** `check-claims.mjs` printed "as of 2026-08-17"; local time was
+   2026-08-16 22:10 EDT. Dated this entry from `date`, not from the tool line. Second run in a row to
+   trip over this — item 38 is small and now has two occurrences behind it.
+6. **Concurrent runs.** `HEAD` was `6fbdfcc` at start and at commit; `git status` listed only my own
+   five files at every checkpoint.
+
+**Item 18 remains the entire critical path to ending Phase 0** — an analytics provider account and key,
+an owner action. Unchanged by this run.
+
+**Next run should pick**: **item 42** (filed above — the four `YieldCurve` figures are named by their
+short `label`, not described) is the natural continuation and is now fully scoped: content only, no
+component change. **Item 38** is better motivated than ever, having now cost two consecutive runs a
+manual correction. Item 39 remains unowned and still needs honest scoping. **Item 32's monthly audit is
+dated 2026-09-05 and must not be pulled forward.**

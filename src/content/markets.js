@@ -134,6 +134,18 @@ export const balanceSheetHistory = [
   { key: "qt2", value: 6.7, label: { en: "Second\ntightening", es: "Segundo\najuste", ko: "2차\n긴축", zh: "第二次\n紧缩", ja: "第2次\n引き締め" } },
 ];
 
+// The figure's text alternative (backlog item 41). The caption below explains
+// what the shape *means*; this one says what is on screen, because a reader who
+// cannot see the bars still needs the five values and their order before the
+// caption's "the shape, not the exact level" has anything to refer to.
+export const balanceSheetDescription = {
+  en: "Five bars, in trillions of dollars: 0.9 before 2008, 4.5 after QE1–3, 3.8 after the first tightening, 9.0 after the pandemic response, 6.7 after the second tightening. Two large rises, each followed by a smaller fall.",
+  es: "Cinco barras, en billones de dólares: 0,9 antes de 2008; 4,5 tras QE1–3; 3,8 tras el primer ajuste; 9,0 tras la respuesta a la pandemia; 6,7 tras el segundo ajuste. Dos grandes subidas, cada una seguida de una bajada menor.",
+  ko: "막대 다섯 개, 단위는 조 달러: 2008년 이전 0.9, QE1~3 이후 4.5, 1차 긴축 이후 3.8, 팬데믹 대응 이후 9.0, 2차 긴축 이후 6.7. 크게 두 번 올라가고, 그때마다 그보다 작게 내려옵니다.",
+  zh: "五根柱，单位为万亿美元：2008年之前0.9，QE1–3之后4.5，首次紧缩之后3.8，疫情应对之后9.0，第二次紧缩之后6.7。两次大幅上升，每次之后是一次较小的回落。",
+  ja: "棒が5本、単位は兆ドル：2008年以前は0.9、QE1〜3後は4.5、第1次引き締め後は3.8、パンデミック対応後は9.0、第2次引き締め後は6.7。大きな上昇が2回あり、そのたびにより小さな下落が続きます。",
+};
+
 export const balanceSheetCaption = {
   en: "Each expansion came from buying bonds to support the economy; each decline came from letting them mature. The shape, not the exact level, is the point.",
   es: "Cada expansión vino de comprar bonos para apoyar la economía; cada caída, de dejarlos vencer. Lo importante es la forma, no el nivel exacto.",
