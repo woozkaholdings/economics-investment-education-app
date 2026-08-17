@@ -57,7 +57,12 @@
   --graph-amber: #d97706;
   --graph-red: #dc2626;
   --graph-blue: #2563eb;
-  --graph-neutral: #9aa2b1;
+  /* Darkened from #9aa2b1 on 2026-08-17 (backlog item 63). The old value was
+     2.57:1 against --surface-card — the surface every chart figure actually
+     renders on — where WCAG 1.4.11 asks 3:1 for a meaningful graphical object,
+     and the compounding curve's second series is exactly that. Now 3.76:1 on
+     card, 3.36:1 at worst across all seven surfaces. Enforced by §28b. */
+  --graph-neutral: #7c8494;
 
   --shadow-raised: 0 1px 2px rgba(16, 24, 40, 0.04), 0 1px 3px rgba(16, 24, 40, 0.06);
   --shadow-overlay: 0 12px 32px rgba(16, 24, 40, 0.18);

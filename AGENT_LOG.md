@@ -371,7 +371,21 @@ for the history. No open P1/P2 items.
     > it is `#ffffff` in light mode, so pairing it with `--surface-canvas` manufactures a 1.0:1
     > failure for a pair the app never renders.
 
-63. **[A11y — the non-text half §28 deliberately did not decide, filed 2026-08-17 by the run that
+63. **✅ DONE 2026-08-17 (scheduled dev-agent). Light `--graph-neutral` is `#7c8494`, the four uses are
+    classified, and `check-data.mjs` §28b enforces 3:1 on 70 graph×surface pairs. For the ninth item
+    running the premise was partly wrong — and this time BOTH of its headline numbers were, in the
+    direction that had made the item look optional.** (a) **"5 of 7 surfaces" was 7 of 7.** The two it
+    omitted are `--surface-canvas` (2.48) and **`--surface-card` (2.57) — and card is the surface every
+    chart figure in `charts.jsx` actually renders on**, so the one pair that was certainly rendered was
+    the one missing from the measurement that deferred the fix. (b) **"Only `--graph-neutral` is
+    affected" is false**: light `--graph-amber` is also under 3:1 on three surfaces (sunken 2.92,
+    accent-wash 2.85, bad-wash 2.91). That one is *not* rendered — no chart is drawn on a wash — so it
+    is exempted with its measured ratios and filed as **item 65** rather than fixed by darkening a
+    second colour on the way past. The item's suggested `#7c8494` was checked and adopted: 3.76:1 on
+    card, 3.36:1 worst across all seven surfaces. See the run log entry of this date.
+    <details><summary>Original text of item 63, as filed 2026-08-17</summary>
+
+    **[A11y — the non-text half §28 deliberately did not decide, filed 2026-08-17 by the run that
     closed item 59. Measured, not suspected.] `--graph-neutral` is under WCAG 1.4.11's 3:1 in the
     light palette against 5 of 7 surfaces** — worst **2.30:1** on `--surface-accent-wash`, then 2.35
     (bad-wash), 2.36 (sunken), 2.44 (ok-wash), 2.48 (warn-wash). Only `--graph-neutral` is affected;
@@ -392,6 +406,28 @@ for the history. No open P1/P2 items.
       change or `npm test` fails, which is the intended behaviour and not a bug.
     - **Honest priority: low, and lower than item 60.** No text is affected, so §3.0.7 is untouched;
       this is a stricter reading of a rule the app volunteered.
+    </details>
+
+65. **[A11y/Design — the residual item 63's fix measured and deliberately did not absorb, filed
+    2026-08-17 by the run that closed it. Not rendered today; latent tomorrow.] Light `--graph-amber`
+    (`#d97706`) is under WCAG 1.4.11's 3:1 against three surfaces** — `--surface-sunken` **2.92**,
+    `--surface-accent-wash` **2.85**, `--surface-bad-wash` **2.91**. It clears the bar on the surfaces
+    that matter today (card 3.44, canvas 3.24), and **no chart renders anywhere but `surface.card`**,
+    so nothing on screen is currently below 3:1. Both facts are asserted, not assumed:
+    `check-data.mjs` §28b carries the three pairs in `GRAPH_EXEMPT` **with their measured ratios**, and
+    separately asserts that every `background: surface.*` in `charts.jsx` is `surface.card` — so the
+    exemption's premise fails loudly the moment a chart moves onto a wash.
+    - **Why it was not just fixed.** Darkening `--graph-amber` is a visual-design change to a colour
+      used for the flat yield curve, the 2nd cycle-phase dot, a budget segment and a tax tier — not an
+      accessibility fix for a defect anyone can see. Item 63's own lesson argues for the split: it sat
+      unfixed partly because its scope had quietly grown past its finding.
+    - **Also worth knowing before touching it:** the light palette's worst *non-exempt* graph pair is
+      now `--graph-amber` on `--surface-ok-wash` at **3.02:1** — a 0.02 margin. Any warming of amber or
+      lightening of that wash trips §28b immediately, which is the check working, not a bug.
+    - **Scope:** decide whether amber moves or the exemption becomes permanent; if it moves, update the
+      three `GRAPH_EXEMPT` ratios or delete the entries (§28b fails on a stale exemption, by design).
+    - **Honest priority: low.** Lower than item 63 was, because item 63 had a rendered failure and this
+      does not.
 
 60. **✅ DONE 2026-08-17 (scheduled dev-agent). The residual now has an instrument (`npm run jargon`),
     and the one real gap it found is closed: Brokerage Account is a glossary entry, chipped on lesson 6.
@@ -6720,3 +6756,121 @@ cross-references; it needs a decision (which one is current), not an edit. Small
 64's APR line** (one acronym, expand in place) or **this run's residual (b)**, the `stocks Bonds`
 phantom candidate in `jargon-candidates.mjs`. **Item 18 remains the entire critical path to ending Phase
 0 and is blocked on an owner action: an analytics provider account and key.**
+
+### 2026-08-17 (scheduled dev-agent) — Item 63: the contrast bar `theme.js` claimed for four years of chart strokes, and the one pair its own measurement omitted
+
+**The recommended pick was blocked, and that is the first thing to record.** The previous entry said to
+take item 62's F6 — the duplicate "Visual system" §-titles in `LAUNCH_PLAN.md`. **`LAUNCH_PLAN.md` has
+uncommitted owner edits** (along with `src/App.jsx`, `src/components/ui.jsx`, all five `src/locales/*.js`,
+`src/screens/{Learn,Practice,Reference}.jsx` and `scripts/check-blindspot.mjs`, all touched 11:00–11:11
+while this run started at 11:15), against a new untracked `UIUX/` directory of ~30 Mobbin reference
+screens collected today. `src/components/ui.jsx`'s new header says in as many words that the owner asked
+for the app to be redesigned against them. **That is live owner work, not a stalled agent run** — the
+log's latest entry matches `HEAD` (`bcd8855`) exactly and describes none of it — so per the standing
+rule nothing of theirs was touched, stashed, or committed, and every file with an uncommitted edit was
+left alone. Item 62's F6 is therefore **deferred, not skipped**: it cannot be done without editing a
+file the owner is editing.
+
+**Picked instead: item 63**, the highest-value open item whose files are all clean — and the check
+ran on a clean-file basis, not a hopeful one (`git status --porcelain` on each candidate path first).
+
+**The item's premise was wrong twice, for the ninth item running, and both errors pointed the same way:
+they made the item look more optional than it was.**
+
+- **"Under 3:1 against 5 of 7 surfaces" was 7 of 7.** The two it omitted are `--surface-canvas` (2.48)
+  and **`--surface-card` (2.57)**. Every chart figure in `charts.jsx` paints itself `surface.card`, so
+  **the single pair that is certainly rendered was the one missing from the measurement that deferred
+  the fix.** The five it did list (accent-wash 2.30, bad-wash 2.35, sunken 2.36, ok-wash 2.44, warn-wash
+  2.48) all reproduce exactly, so this is an omission, not a different formula.
+- **"Only `--graph-neutral` is affected" is false.** Light `--graph-amber` is also under 3:1 on three
+  surfaces (sunken 2.92, accent-wash 2.85, bad-wash 2.91). It is *not* rendered below the bar — amber on
+  card is 3.44 — so it is exempted with its measured ratios and filed as **item 65**, not fixed on the
+  way past. Darkening a second palette colour is a visual-design change, and item 63's own history is
+  the argument for the split: it sat unfixed partly because its scope had quietly outgrown its finding.
+
+**The classification the item said to make, made.** All four rendered `graph.neutral` uses:
+
+- **Meaningful (3).** `GrowthCurve` via `LessonVisual.jsx:107` — the compounding diagram's two series are
+  both plain 2.5px polylines with nothing but hue between them; and `Bar` via `LessonVisual.jsx:169` and
+  `MarketSignals.jsx:89`, where the bar's *height* carries the comparison (`Bar`'s own comment records
+  the run where a ten-fold expansion drew as four equal bars).
+- **Decorative (1).** `charts.jsx:286`, `BracketStack`'s dashed "raise" outline: `aria-hidden`,
+  non-interactive, and redundant twice over — `BracketStack`'s header says it "only names what the
+  height difference already shows", and a bold `raiseLabel` sits directly above it.
+
+**Shipped.** Light `--graph-neutral` `#9aa2b1` → **`#7c8494`** (the value item 63 itself estimated;
+checked, not taken on trust) — **3.76:1 on card, 3.36:1 worst across all seven surfaces**. Dark was
+already clear at 3.27 worst and is unchanged. And the claim behind it is now a check: **`check-data.mjs`
+§28b**, 70 graph×surface pairs at 1.4.11's 3:1 across both palettes, pair set derived by prefix like
+§28's. `theme.js`'s "3:1 is the bar" had been a comment with nothing behind it.
+
+**Why §28b asserts more than the finding.** Only graph×`--surface-card` is rendered today, so asserting
+just that pair would bake "charts only ever sit on card" in as an invisible premise — F7's failure mode.
+Instead the full cartesian is asserted, the three amber pairs carry **their measured ratios**, and the
+premise itself is checked: §28b reads `charts.jsx` and fails if any `background: surface.*` is not
+`surface.card`. An exemption that records its own number cannot rot quietly, and a stale one is a
+failure too (it fails if an exempted pair starts *passing*).
+
+**Verification — three injection tests, each proved to land before its failure was believed** (the
+standing rule: prove the injection took, and restore from a scratchpad copy, never `git checkout --`,
+which here would have destroyed owner work):
+
+1. Token reverted to `#9aa2b1` → §28b failed on **all 7 light pairs**, naming card at **2.57:1** —
+   independently reproducing the number this run says item 63 missed.
+2. `GrowthCurve`'s figure moved to `surface.sunken` → the **premise guard** failed, naming the exemption
+   it invalidates.
+3. `--graph-amber` darkened to `#a85c05` → the **stale-exemption** branch failed on all three entries.
+
+Files were restored from `scratchpad/*.backup` and re-verified by `shasum` (`89c50d86` / `8bb9b198`).
+
+**Live browser** (Environment note's technique: `npm run build`, `python3 -m http.server 8877` on
+`dist/`, `preview_start` with a plain `url`, mobile preset). Note `dist/` necessarily contains the
+owner's in-flight redesign — unavoidable, and it changes nothing about the token under test:
+
+- Money lesson 3, **light** scheme: figure background reads `rgb(255,255,255)`, the second series stroke
+  reads `rgb(124,132,148)` = `#7c8494`, and contrast computed **from the live DOM** is **3.76:1** (was
+  2.57). Screenshot taken; the "Simple interest" line is plainly legible.
+- The same lesson in **dark** confirmed the classification empirically rather than by reading: both
+  polylines are `2.5px` and differ *only* in stroke colour, which is exactly what makes the neutral one
+  a graphical object required to understand the content.
+- Reference → Market Dashboard: the "Fed Balance Sheet" bar chart's neutral bar also measures **3.76:1**
+  against its white card — the second meaningful use, checked on screen.
+- Console: **0 errors**.
+
+**`npm test` — PASS, exit 0**, 0 failures, 1 pre-existing unrelated warning (translation-review
+coverage), identical to the **baseline captured on the dirty tree before any edit** — which is why this
+run can say the owner's in-flight edits were green when it started and are green now. `npm run build` —
+exit 0, 0.94 s. New line in the output: `§28b graph contrast: 70 pairs at 1.4.11 >= 3:1 across both
+palettes, 3 exempted`. It failed once on the way, correctly: the backlog-citation check refused
+"backlog item 65" until item 65 actually existed.
+
+**Adversarial self-check (step 5).** **Blindspot register:** nothing reintroduced — this run adds no
+learner-facing copy at all (one hex value, three comments, one check), so §10.1's advice-adjacent
+surface is untouched and the disclaimer guard is unmoved; §10.2 names no person; §10.3 kids content
+untouched; §2.3's live-date/market-figure scan covers `src/content/*` and this run edited none of it.
+`check-blindspot.mjs` green on all seven checks. **DECISIONS.md conflict:** none — and checked rather
+than assumed: `DECISIONS.md` contains **no** palette, colour or contrast decision, so there was nothing
+to contradict; no storage, routing, build or content-module change here either. **Already-done backlog
+item:** no. Item 63 was open, and it is the exact half item 59 *deliberately excluded* from §28 (§28's
+own comment says so and files it as 63) — §28 is text at 4.5:1, §28b is graphics at 3:1, disjoint token
+groups. **Own verification claims:** an independent reviewer re-running `npm test`, `npm run build` and
+the three injections gets these results, and the live figures reproduce via the Environment note. Four
+caveats stated rather than buried — (a) **which uses are "meaningful" is judgment**: a reviewer could
+argue the `Bar` fills are decorative because every bar prints its own value and label above and below
+it, and the counter-argument is `Bar`'s own recorded bug, where the printed numbers were right while the
+heights were wrong; nothing hangs on it, since the `GrowthCurve` series decides the item alone; (b) the
+**decorative** exemption for the dashed outline is asserted only in a comment — no check enforces that
+it stays `aria-hidden`; (c) `dist/` was built from a tree containing owner edits, so the screenshot shows
+their redesign, and **only the token, the computed ratios and the console were read as this run's
+evidence**; (d) §28b measures the *palette*, not the render — it cannot see a chart drawn on a
+non-`surface.card` parent by a caller rather than by `charts.jsx`, which is why the premise guard reads
+`charts.jsx` and why that residual is stated here rather than implied closed.
+
+**Next run should pick item 62's F6 only if `LAUNCH_PLAN.md` is clean by then** — it is a decision (which
+of the two "Visual system" sections is current), not an edit, and it was blocked this run purely by the
+owner's uncommitted redesign. **If the owner's redesign is still in flight, do not queue doc work at
+all**: prefer **item 64's APR line** (one acronym, expanded in place in content files) or the
+`stocks Bonds` phantom candidate in `jargon-candidates.mjs` — both touch files the redesign does not.
+**Item 65** (light `--graph-amber`) is filed but honestly low, and lower than 63 was, because 63 had a
+rendered failure and 65 does not. **Item 18 remains the entire critical path to ending Phase 0 and is
+blocked on an owner action: an analytics provider account and key.**

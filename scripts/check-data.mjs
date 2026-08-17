@@ -2631,12 +2631,13 @@ if (keyedGroupsChecked < 4) {
 //       1.0:1, and including it would manufacture a failure for a pair the app
 //       never renders.
 //     • `--line-*` is not text. • `--graph-*` is not text either — `theme.js`
-//       says "Graphics only ... where 3:1 is the bar. Never text." Measured
-//       anyway while here: light `--graph-neutral` is under 3:1 against 5 of 7
-//       surfaces (worst 2.30 on `--surface-accent-wash`). Whether that matters
-//       depends on whether those strokes are meaningful or decorative under
-//       WCAG 1.4.11, which is a judgment call, not an assertion. Filed as
-//       backlog item 63 rather than silently folded in here.
+//       says "Graphics only ... where 3:1 is the bar. Never text." It is now
+//       checked at that lower bar by §28b below, which closed backlog item 63.
+//       This note used to say light `--graph-neutral` was "under 3:1 against 5
+//       of 7 surfaces"; that undercounted — it was under 3:1 against **all 7**,
+//       and the two it omitted (`--surface-card` at 2.57, `--surface-canvas` at
+//       2.48) included the only surface any chart actually renders on. See
+//       §28b's header for the classification that resolved the judgment call.
 // ─────────────────────────────────────────────────────────────────────────────
 {
   const AA = 4.5;
@@ -2812,6 +2813,149 @@ if (keyedGroupsChecked < 4) {
         (worst.light && worst.dark
           ? ` (worst light ${worst.light.ratio.toFixed(2)}:1 ${worst.light.pair}; ` +
             `worst dark ${worst.dark.ratio.toFixed(2)}:1 ${worst.dark.pair}).`
+          : "."),
+    );
+  }
+
+  // ───────────────────────────────────────────────────────────────────────────
+  // 28b. `--graph-*` at WCAG 1.4.11's 3:1 (backlog item 63).
+  //
+  // 1.4.11 binds only graphical objects "required to understand the content",
+  // so item 63 correctly refused to assert anything until the uses were
+  // classified. They now are — all four rendered uses of `graph.neutral`:
+  //
+  //   MEANINGFUL (colour is the only thing distinguishing the object)
+  //   • charts.jsx GrowthCurve via LessonVisual.jsx:107 — the compounding
+  //     diagram's two series are both plain 2.5px polylines. Nothing but hue
+  //     separates them, so the neutral stroke must be perceivable. This is the
+  //     case that decides the item.
+  //   • charts.jsx Bar via LessonVisual.jsx:169 and MarketSignals.jsx:89 — the
+  //     bar's *height* carries the comparison (see Bar's own comment: at
+  //     height={90} a ten-fold expansion once drew as four equal bars), so the
+  //     bar has to be distinguishable from the card it sits on.
+  //
+  //   DECORATIVE (exempt, and not relied on)
+  //   • charts.jsx:286 BracketStack's dashed "raise" outline. It is
+  //     `aria-hidden`, non-interactive, and BracketStack's header comment says
+  //     it "only names what the height difference already shows" — and a bold
+  //     `raiseLabel` in `ink.body` sits directly above it. Redundant twice.
+  //
+  // Three meaningful uses, so the token must clear 3:1 — and the old #9aa2b1
+  // did not, at 2.57:1 against `--surface-card`. Item 63's own figures missed
+  // that pair: it reported "5 of 7 surfaces" and listed only the washes and
+  // sunken, omitting card and canvas, so the surface every chart renders on
+  // was the one absent from the measurement that deferred the fix.
+  //
+  // WHY THE ASSERTION IS WIDER THAN THE FINDING. Only graph x `--surface-card`
+  // is rendered today. Asserting just that pair would encode "charts only ever
+  // sit on card" as an invisible premise, which is F7's failure (a check that
+  // freezes a guess). So the full cartesian is asserted, the three pairs it
+  // cannot yet clear are exempted *by measured value*, and the premise that
+  // makes them safe to exempt is itself checked below. An exemption that
+  // records its own ratio cannot rot silently: move the colour and it fails.
+  // ───────────────────────────────────────────────────────────────────────────
+  const GRAPH_MIN = 3.0;
+
+  // Each exemption states the pair, the ratio measured on 2026-08-17, and why
+  // it is tolerable. Remove an entry the moment its pair clears the bar — the
+  // check below fails if an exempted pair starts passing, so a later palette
+  // fix cannot leave a stale exemption behind claiming a problem that is gone.
+  const GRAPH_EXEMPT = [
+    ["light", "--graph-amber", "--surface-sunken", 2.92],
+    ["light", "--graph-amber", "--surface-accent-wash", 2.85],
+    ["light", "--graph-amber", "--surface-bad-wash", 2.91],
+  ];
+  // The shared reason, asserted rather than trusted: every chart figure in
+  // charts.jsx paints itself `surface.card`, so no graph token is ever drawn
+  // on a wash or on sunken. `--graph-amber` on card is 3.44:1 and passes; its
+  // three sub-3:1 pairs are with surfaces charts do not use. Filed as backlog
+  // item 65 rather than fixed here — darkening a second palette colour is a
+  // visual-design change, not an accessibility fix for a rendered defect.
+  {
+    const chartsSrc = readFileSync(join(ROOT, "src", "components", "charts.jsx"), "utf8");
+    const figureSurfaces = [...chartsSrc.matchAll(/background:\s*surface\.([A-Za-z]+)/g)].map((m) => m[1]);
+    if (figureSurfaces.length < 5) {
+      fail(
+        `§28b: found only ${figureSurfaces.length} \`background: surface.*\` declarations in ` +
+          `src/components/charts.jsx (expected at least 5, one per chart figure). The scan is ` +
+          `probably broken — and it is the premise that makes §28b's exemptions safe, so a scan ` +
+          `that matches nothing must not read as a pass.`,
+      );
+    }
+    const offCard = [...new Set(figureSurfaces.filter((s) => s !== "card"))];
+    if (offCard.length) {
+      fail(
+        `§28b: a chart figure in src/components/charts.jsx now renders on surface.` +
+          `${offCard.join(", surface.")} rather than surface.card. §28b exempts three ` +
+          `\`--graph-amber\` pairs *because* no chart is drawn on a wash or on sunken — that ` +
+          `premise just stopped holding. Either revert the surface, or re-measure the graph ` +
+          `tokens against it and drop the exemption (backlog item 65).`,
+      );
+    }
+  }
+
+  let graphPairs = 0;
+  const graphWorst = {};
+  if (probesOk) {
+    for (const [label, palette] of [["light", light], ["dark", darkExplicit]]) {
+      if (!palette) continue;
+      const graphs = Object.keys(palette).filter((k) => k.startsWith("--graph-"));
+      const surfaces = Object.keys(palette).filter((k) => k.startsWith("--surface-"));
+      // Floor: 5 graph tokens x 7 surfaces = 35 since 2026-08-04.
+      if (graphs.length * surfaces.length < 30) {
+        fail(
+          `§28b: the ${label} palette yielded only ${graphs.length} graph tokens x ` +
+            `${surfaces.length} surfaces (expected at least 30 pairs). The prefix filters are ` +
+            `probably broken rather than the chart palette having been deleted.`,
+        );
+        continue;
+      }
+      let low = { ratio: Infinity, pair: null };
+      for (const g of graphs) {
+        for (const s of surfaces) {
+          const r = contrast(palette[g], palette[s]);
+          graphPairs++;
+          const exempt = GRAPH_EXEMPT.find(([l, gg, ss]) => l === label && gg === g && ss === s);
+          if (exempt) {
+            if (r >= GRAPH_MIN) {
+              fail(
+                `§28b: ${label} ${g} on ${s} is now ${r.toFixed(2)}:1 and clears ${GRAPH_MIN}:1, but ` +
+                  `it is still listed in GRAPH_EXEMPT. Delete the entry — a stale exemption ` +
+                  `understates the palette and hides the next real regression behind it.`,
+              );
+            } else if (Math.abs(r - exempt[3]) >= 0.005) {
+              fail(
+                `§28b: ${label} ${g} (${palette[g]}) on ${s} (${palette[s]}) is ${r.toFixed(2)}:1, but ` +
+                  `GRAPH_EXEMPT records it as ${exempt[3]}:1. The colour moved without the ` +
+                  `exemption being revisited; re-measure and update the entry, or fix the pair.`,
+              );
+            }
+            continue;
+          }
+          if (r < low.ratio) low = { ratio: r, pair: `${g} on ${s}` };
+          if (r < GRAPH_MIN) {
+            fail(
+              `§28b: ${label} palette fails WCAG 1.4.11 — ${g} (${palette[g]}) on ${s} ` +
+                `(${palette[s]}) is ${r.toFixed(2)}:1, below ${GRAPH_MIN}:1. theme.js says graph ` +
+                `tokens are "chart strokes and dots, where 3:1 is the bar"; charts render on ` +
+                `surface.card, and a series stroke that only colour distinguishes is a graphical ` +
+                `object required to understand the content. Darken the token, or — if this ` +
+                `particular use is decorative — say so in GRAPH_EXEMPT with its measured ratio.`,
+            );
+          }
+        }
+      }
+      graphWorst[label] = low;
+    }
+  }
+
+  if (graphPairs > 0) {
+    console.log(
+      `  §28b graph contrast: ${graphPairs} pairs at 1.4.11 >= ${GRAPH_MIN}:1 across both palettes, ` +
+        `${GRAPH_EXEMPT.length} exempted` +
+        (graphWorst.light && graphWorst.dark
+          ? ` (worst light ${graphWorst.light.ratio.toFixed(2)}:1 ${graphWorst.light.pair}; ` +
+            `worst dark ${graphWorst.dark.ratio.toFixed(2)}:1 ${graphWorst.dark.pair}).`
           : "."),
     );
   }
