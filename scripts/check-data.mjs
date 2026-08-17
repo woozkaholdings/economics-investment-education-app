@@ -381,9 +381,35 @@ function checkModuleParity(moduleExports, moduleLabel) {
           }
         }
       }
+    } else if (isKeyedLangMaps(value)) {
+      // A named export can also be a plain object keyed by something *other*
+      // than a language, whose values are language maps — markets.js's
+      // yieldCurveDescriptions, keyed by curve type, is the first of these.
+      // Before backlog item 42 this shape fell through both branches above and
+      // was therefore checked by nothing at all. Verified by injection rather
+      // than assumed: deleting the whole `ko` line from one curve left `npm
+      // test` green, which is how this branch came to be written.
+      for (const [key, inner] of Object.entries(value)) {
+        const p = `${path}.${key}`;
+        keyedGroupsChecked += 1;
+        if (checkLangSet(inner, p)) {
+          for (const lang of LANGS) checkNonEmptyString(inner[lang], `${p}.${lang}`);
+        }
+      }
     }
   }
 }
+
+// True for a plain object whose every value is a language map. Requires *every*
+// value to qualify, so a mixed object (say, numbers alongside a caption) is left
+// to the branches above rather than half-checked here.
+function isKeyedLangMaps(value) {
+  if (!value || typeof value !== "object" || Array.isArray(value) || "en" in value) return false;
+  const inner = Object.values(value);
+  return inner.length > 0 && inner.every((v) => v && typeof v === "object" && !Array.isArray(v) && "en" in v);
+}
+
+let keyedGroupsChecked = 0;
 
 const CONTENT_MODULES = {
   markets: marketsContent,
@@ -401,6 +427,13 @@ const CONTENT_MODULES = {
 };
 for (const [label, moduleExports] of Object.entries(CONTENT_MODULES)) {
   checkModuleParity(moduleExports, label);
+}
+
+// The keyed-language-map branch above is the one that spent its whole life
+// before item 42 matching nothing, so it asserts it matched something — the
+// four yield-curve descriptions are the floor.
+if (keyedGroupsChecked < 4) {
+  fail(`§7: the keyed-language-map branch checked only ${keyedGroupsChecked} group(s) (expected at least 4) — it is probably matching nothing again`);
 }
 
 // 8. spaced-review scheduler. Pure logic, so it is checked here rather than in
@@ -1632,9 +1665,18 @@ for (const [label, moduleExports] of Object.entries(CONTENT_MODULES)) {
 //     `role="img"` with no accessible name — worse than no role at all.
 //
 //     The permitted-props set is read out of each primitive's own aria-label
-//     expression rather than hardcoded, so `aria-label={description || label}`
-//     (YieldCurve, whose grid of four curves is labelled by its short `label`)
-//     is accepted on its own terms instead of being special-cased here.
+//     expression rather than hardcoded, which is what lets the call-site
+//     failure message name the fallback a call site would land on.
+//
+//     Call sites must pass `description` outright. That is stricter than it was
+//     when this section landed, one commit earlier: `YieldCurve`'s
+//     `description || label` fallback was then accepted at call sites, because
+//     no curve descriptions existed and a short `label` was the only accessible
+//     name available. Item 42 wrote those descriptions, and at that point a
+//     call site falling back to `label` is a silent downgrade rather than a
+//     design choice. The fallback stays in the component — it still guards
+//     against a figure with no name at all — but it no longer excuses a call
+//     site from passing the real thing.
 {
   const chartsPath = join(ROOT, "src/components/charts.jsx");
   const chartsSrc = readFileSync(chartsPath, "utf8");
@@ -1704,10 +1746,23 @@ for (const [label, moduleExports] of Object.entries(CONTENT_MODULES)) {
       for (const m of src.matchAll(new RegExp(`<${name}\\b`, "g"))) {
         const attrs = attrsOf(src, m.index + name.length + 1);
         callSites += 1;
-        if (!props.some((p) => new RegExp(`\\b${p}=`).test(attrs))) {
+        if (!/\bdescription=/.test(attrs)) {
+          const viaFallback = props.filter((p) => p !== "description");
           fail(
-            `§22: ${rel}:${lineIn(src, m.index)}: <${name}> passes none of ${props.map((p) => `\`${p}\``).join(" / ")} — ` +
-            "its `role=\"img\"` would render with no accessible name (backlog item 41)"
+            `§22: ${rel}:${lineIn(src, m.index)}: <${name}> passes no \`description\` — ` +
+            (viaFallback.length
+              // Tightened 2026-08-16 by item 42, and the tightening is the
+              // point: this call site was legal the day before, because
+              // YieldCurve's `description || label` fallback meant a `label`
+              // alone still produced an accessible name. Once five-language
+              // descriptions existed for those curves, relying on the fallback
+              // stopped being a design choice and became a silent downgrade to
+              // a four-word name. The fallback stays in the component as a
+              // defence against an unlabelled figure; it is no longer a licence
+              // for a call site. Verified: dropping `description=` here passed
+              // under the old rule.
+              ? `its \`aria-label\` would fall back to ${viaFallback.map((p) => `\`${p}\``).join(" / ")}, which names the figure without describing it (backlog item 42)`
+              : "its `role=\"img\"` would render with no accessible name (backlog item 41)")
           );
         }
       }

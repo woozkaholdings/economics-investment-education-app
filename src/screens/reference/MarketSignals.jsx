@@ -14,7 +14,7 @@ import { Disclaimer, Note, Stack, Text } from "../../components/ui.jsx";
 import {
   balanceSheetCaption, balanceSheetDescription, balanceSheetHistory,
   cycleChartDescription, phaseNames, rateEffects, ratePrinciples, scenario,
-  trendLabel,
+  trendLabel, yieldCurveDescriptions,
 } from "../../content/markets.js";
 import { graph, ink, line, radius, space, surface } from "../../theme.js";
 
@@ -68,7 +68,12 @@ export default function MarketSignals({ t, lang }) {
       </Text>
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: space["2"], marginBottom: space["5"] }}>
         {CURVE_TYPES.map((type) => (
-          <YieldCurve key={type} type={type} label={curveLabels[type]} />
+          <YieldCurve
+            key={type}
+            type={type}
+            label={curveLabels[type]}
+            description={yieldCurveDescriptions[type][lang]}
+          />
         ))}
       </div>
 

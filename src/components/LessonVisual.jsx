@@ -17,7 +17,7 @@ import { AsymmetryChart, Bar, BracketStack, CycleChart, GrowthCurve, ProportionB
 import { Text } from "./ui.jsx";
 import {
   balanceSheetCaption, balanceSheetDescription, balanceSheetHistory,
-  cycleChartDescription, phaseNames, trendLabel,
+  cycleChartDescription, phaseNames, trendLabel, yieldCurveDescriptions,
 } from "../content/markets.js";
 import {
   bracketBands, bracketCaption, bracketColumnLabels, bracketDescription, bracketIncomes,
@@ -81,6 +81,7 @@ export default function LessonVisual({ lessonId, t, lang }) {
               key={type}
               type={type}
               label={{ normal: t.curveNormal, flat: t.curveFlat, inverted: t.curveInverted, steep: t.curveSteep }[type]}
+              description={yieldCurveDescriptions[type][lang]}
             />
           ))}
         </div>

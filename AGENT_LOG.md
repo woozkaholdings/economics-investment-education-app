@@ -1057,7 +1057,8 @@ for the history. No open P1/P2 items.
     > set is read out of each primitive's own aria-label expression, so `YieldCurve`'s documented
     > `description || label` fallback is accepted on its own terms rather than special-cased.
 
-42. **[A11y — small, found by §22's own output 2026-08-16, filed not fixed] The four `YieldCurve` figures
+42. **[A11y — ✅ DONE 2026-08-16 (owner-requested, same evening it was filed). Content shipped as scoped;
+    two guard gaps found on the way, both closed — see the closing note and the run log.] The four `YieldCurve` figures
     are labelled by `label`, not by a description — so their accessible name is "Normal (healthy)", which
     names the curve without describing it.** §22 passes them legitimately: `YieldCurve` declares
     `aria-label={description || label}`, both call sites (`LessonVisual` lesson 36, `MarketSignals`'s 2×2
@@ -1069,6 +1070,23 @@ for the history. No open P1/P2 items.
       passed at both call sites. No component change — `YieldCurve` already takes `description`.
     - **Do not** "fix" this by deleting the `|| label` fallback: that is what makes §22's derivation
       honest, and injection test (d) confirmed removing it fails both call sites.
+    > **Closing note, 2026-08-16.** Shipped exactly as scoped — `yieldCurveDescriptions` in `markets.js`,
+    > five languages × four curve types, passed at both call sites, no component change. The fallback was
+    > kept, per the bullet above. **Two guard gaps surfaced while doing it, and both are the real content
+    > of this item:**
+    > 1. **§7's parity helper silently skipped this export's shape.** An object keyed by something other
+    >    than a language, holding language maps, matched neither of its two branches — so it was checked by
+    >    *nothing*. Proven before fixing: deleting the entire `ko` line from the flat curve left `npm test`
+    >    green. A third branch now handles keyed language maps, with a vacuity guard, and the same injection
+    >    now fails. Any future export of this shape is covered from day one.
+    > 2. **§22's call-site rule was one commit out of date the moment this content existed.** It accepted
+    >    `label` for `YieldCurve` because the `|| label` fallback made it a legitimate accessible name — true
+    >    while no descriptions existed, false afterwards. Tightened: call sites must pass `description`
+    >    outright, and the failure message names the fallback they would otherwise land on. The component
+    >    keeps its fallback as a defence against an unnamed figure; it is no longer a licence for a call site.
+    > **Verified in a live browser, both call sites, en + ko**: all four curves expose the shape description
+    > as their accessible name while the verdict labels ("Inverted (Danger)" / "역전 (위험)") remain exposed
+    > separately in their figcaptions, so nothing was traded away for the richer name.
 
 **HELD — owner decisions, do not act on these**
 
@@ -7753,3 +7771,79 @@ short `label`, not described) is the natural continuation and is now fully scope
 component change. **Item 38** is better motivated than ever, having now cost two consecutive runs a
 manual correction. Item 39 remains unowned and still needs honest scoping. **Item 32's monthly audit is
 dated 2026-09-05 and must not be pulled forward.**
+
+### 2026-08-16 (owner-requested, interactive) — The four yield curves get described rather than named, and two guards that weren't guarding (item 42)
+
+Owner asked for item 42 immediately after the item-41 run filed it. Shipped as scoped —
+`yieldCurveDescriptions` in `src/content/markets.js`, five languages × four curve types, passed at both
+call sites (`LessonVisual` lesson 36, `MarketSignals`'s 2×2 grid), no component change, `|| label`
+fallback left in place as the item instructed. Each description says which end of the curve sits higher,
+because that is what a sighted reader takes from the drawing; the verdict word ("Danger", "Recovery")
+stays in the visible figcaption, which the accessibility tree exposes separately — confirmed, so the
+richer name costs nothing.
+
+**The content was the easy half. Two guards turned out not to be guarding.**
+
+1. **§7's parity helper silently skipped the new export's shape — proven before fixing, not after.**
+   `yieldCurveDescriptions` is an object keyed by curve type whose values are language maps. That matched
+   neither of `checkModuleParity`'s two branches (not an array; no `en` at the top level), so it fell
+   through to *nothing*. I checked this before writing the branch rather than assuming either way:
+   deleting the whole `ko` line from the flat curve and running `npm test` returned **PASS**. A third
+   branch now handles keyed language maps, guarded by `isKeyedLangMaps` (every value must be a language
+   map, so a mixed object is left to the other branches rather than half-checked) and by a vacuity
+   counter, since this is precisely the kind of branch that can spend its life matching nothing. The same
+   injection now fails with `markets.yieldCurveDescriptions.flat: language keys are [en, es, ja, zh]`, and
+   an empty-string injection fails too. **Any future export of this shape is covered from day one** — the
+   gap was never about yield curves.
+2. **§22's call-site rule was out of date the moment this content landed — one commit after I wrote it.**
+   It accepted `label` at a `YieldCurve` call site, derived from the component's own
+   `aria-label={description || label}`. That was right yesterday: no descriptions existed, and a short
+   label was the only accessible name available. It is wrong today, and the test showed it — dropping
+   `description=` from the `MarketSignals` call site raised **nothing**, silently reverting all four
+   figures to four-word names. Tightened: call sites must pass `description` outright; the failure message
+   names the fallback they would otherwise land on. The component keeps its fallback as a defence against
+   an unnamed figure, but it no longer excuses a call site. Re-ran the injection: caught, naming file,
+   line, and the fallback.
+
+**Verified.** `npm test` and `npm run build` green. Three injections against the new parity branch (missing
+language, empty string, plus the call-site one against §22), each caught, `shasum` byte-identical after
+every restore. **Live browser** (`dist/` served by `/usr/bin/python3 -m http.server 8848`, `preview_start`
+with a plain `url`, 375×812): lesson 36 exposes 4 `img` nodes whose names are the four shape descriptions,
+with "Normal (Healthy)" … "Steep (Recovery)" still exposed as separate figcaption text — read from the
+**accessibility tree**, not the DOM. Same in Korean. Reference → Market signals now exposes 6 described
+figures (cycle chart, four curves, balance-sheet bar), no horizontal overflow. Screenshot confirms the
+visible rendering is unchanged, which is the intent: this change is ARIA-only. **The descriptions were
+checked against the render, not against the path data** — the rising, level, falling and steeply-climbing
+curves match what each description claims.
+
+**Adversarial self-check.**
+1. **Blindspot register.** Nothing reintroduced. §10.1 is the live one: describing a curve labelled
+   "Danger" is an easy place to slide into advice, so the descriptions state geometry only — which end
+   sits higher — and carry no verb about what a reader should do, in any of the five languages. §2.3: no
+   yield numbers and no dates; the paths are stylised shapes, and the descriptions say nothing that could
+   read as a current market reading. `check-blindspot` green, including its §2.3 scan over `markets.js`.
+   §10.2 and §10.3 untouched.
+2. **`DECISIONS.md` conflict.** None. Content in an existing `.js` module, no JSON; no storage, routing or
+   dependency change.
+3. **Already-done backlog item.** Item 42 was open, filed hours earlier. It does not redo item 41: that
+   one added a missing text alternative to `Bar`; this one replaces a thin name with a real description on
+   a different primitive. The §22 edit is a tightening of my own previous commit, named as such here
+   rather than presented as new coverage.
+4. **My own verification claim — where it bit.** The §22 tightening is a **reversal of a claim I made in
+   the previous commit message and run entry**, that the `|| label` fallback "is accepted on its own terms"
+   at call sites. That was a reasonable reading of a component contract and a bad reading of what the
+   check is for; the test that exposed it is one I only ran because item 42's own text told me not to
+   delete the fallback, which made me ask what the fallback was still permitting. Recorded plainly because
+   the previous entry's wording is now wrong and a later reader will find both.
+5. **Concurrent runs.** `HEAD` was `f862a0a` at start and at commit; `git status` listed only my four
+   files throughout.
+
+**Item 18 remains the entire critical path to ending Phase 0** — an analytics provider account and key, an
+owner action. Unchanged by this run.
+
+**Next run should pick**: **item 38** (`check-claims.mjs`'s UTC "today"), now with three consecutive runs
+having had to correct a date by hand — it is small, and the file is well understood. Item 39 remains
+unowned and still needs honest scoping before anyone picks it. **Item 32's monthly audit is dated
+2026-09-05 and must not be pulled forward.** Every chart primitive and every chart call site now carries a
+real description, so the a11y-figure thread that ran from item 40 through 41 to 42 is closed; a run
+looking for the next one should re-read §3.0.4 rather than assume more chart work exists.

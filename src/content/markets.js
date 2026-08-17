@@ -124,6 +124,44 @@ export const rateEffects = [
   },
 ];
 
+// Text alternatives for the four yield-curve figures (backlog item 42), keyed
+// by the same curve types `CURVE_PATHS` draws. Each one describes the *shape* —
+// which end of the curve sits higher — because that is what a sighted reader
+// takes from the drawing; the verdict word ("Healthy", "Danger") is already in
+// each figure's visible label, which stays in the figcaption beside it.
+// Deliberately carries no yield numbers: the paths are stylised shapes, not a
+// reading of any particular day's curve (§2.3).
+export const yieldCurveDescriptions = {
+  normal: {
+    en: "A line rising from left to right: the 2-year yield sits lowest and the 30-year highest — the usual upward slope.",
+    es: "Una línea que sube de izquierda a derecha: el rendimiento a 2 años queda más bajo y el de 30 años más alto, la pendiente ascendente habitual.",
+    ko: "왼쪽에서 오른쪽으로 올라가는 선: 2년 금리가 가장 낮고 30년 금리가 가장 높은, 일반적인 우상향 모양입니다.",
+    zh: "一条自左向右上行的曲线：2年期收益率最低，30年期最高，即通常的向上斜率。",
+    ja: "左から右へ上がる線：2年物の利回りが最も低く、30年物が最も高い、通常の右肩上がりの形です。",
+  },
+  flat: {
+    en: "An almost level line: the 2-year and 30-year yields sit at nearly the same height.",
+    es: "Una línea casi horizontal: los rendimientos a 2 y a 30 años quedan casi a la misma altura.",
+    ko: "거의 수평인 선: 2년 금리와 30년 금리가 거의 같은 높이에 있습니다.",
+    zh: "一条几乎水平的曲线：2年期与30年期收益率几乎处于同一高度。",
+    ja: "ほぼ水平な線：2年物と30年物の利回りがほぼ同じ高さにあります。",
+  },
+  inverted: {
+    en: "A line falling from left to right: the 2-year yield sits above the 30-year — the usual slope reversed.",
+    es: "Una línea que baja de izquierda a derecha: el rendimiento a 2 años queda por encima del de 30 años, la pendiente habitual invertida.",
+    ko: "왼쪽에서 오른쪽으로 내려가는 선: 2년 금리가 30년 금리보다 높아, 평소의 우상향이 뒤집힌 모양입니다.",
+    zh: "一条自左向右下行的曲线：2年期收益率高于30年期，通常的向上斜率被反转。",
+    ja: "左から右へ下がる線：2年物の利回りが30年物を上回り、通常の右肩上がりが逆転した形です。",
+  },
+  steep: {
+    en: "A line climbing sharply from left to right: the 30-year yield sits far above the 2-year.",
+    es: "Una línea que sube con fuerza de izquierda a derecha: el rendimiento a 30 años queda muy por encima del de 2 años.",
+    ko: "왼쪽에서 오른쪽으로 가파르게 올라가는 선: 30년 금리가 2년 금리보다 훨씬 높습니다.",
+    zh: "一条自左向右陡峭上行的曲线：30年期收益率远高于2年期。",
+    ja: "左から右へ急に上がる線：30年物の利回りが2年物を大きく上回っています。",
+  },
+};
+
 // Historical US Federal Reserve balance sheet, in trillions of dollars. Labelled
 // by era rather than by date so it reads unambiguously as history.
 export const balanceSheetHistory = [
