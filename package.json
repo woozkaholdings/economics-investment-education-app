@@ -7,9 +7,10 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "test": "node scripts/check-data.mjs && node scripts/check-blindspot.mjs && node scripts/check-claims.mjs",
+    "test": "node scripts/check-data.mjs && node scripts/check-blindspot.mjs && node scripts/check-claims.mjs && node scripts/check-backlog.mjs",
     "check-blindspot": "node scripts/check-blindspot.mjs",
     "claims": "node scripts/check-claims.mjs",
+    "check-backlog": "node scripts/check-backlog.mjs",
     "review-status": "node scripts/translation-review.mjs report",
     "market": "node scripts/fetch-market-data.mjs"
   },

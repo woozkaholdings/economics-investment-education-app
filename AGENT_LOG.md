@@ -182,7 +182,8 @@ for the history. No open P1/P2 items.
 >   a live browser before deleting (`counterReset: "principle 0"` with `counterIncrement: none` and
 >   `::before` content `none`), and the rendered list was byte-identical afterward. See run log — it also
 >   records an adjacent question this run deliberately did **not** decide (the list is an `<ol>` whose
->   content is unordered), left as item 34 below (filed as 33, renumbered to 34 — see that item).
+>   content is unordered), left as item 40 below (filed as 33, then 34, renumbered to 40 on 2026-08-16
+>   to resolve a collision with the policy-simulator item 34 — see that item's own note).
 > - ~~`Settings.jsx`'s `ChoiceRow` radiogroup using Tab-per-option rather than the ARIA APG
 >   roving-tabindex pattern.~~ **✅ DONE 2026-08-16.** Confirmed live before fixing (all 7 radios were tab
 >   stops; arrow keys did nothing), then implemented roving tabindex + arrow/Home/End selection. See run
@@ -741,8 +742,23 @@ for the history. No open P1/P2 items.
     Write the result as `reviews/YYYY-MM-DD-monthly-audit.md` and update §10 per the plan. Depends on
     item 30 for question 4 (there are no claims with check dates yet to be past).
 
-34. **[A11y — ✅ DONE 2026-08-16. Fixed as a pattern, not one line: the audit found the `<ol>`/`<ul>`
+40. **[A11y — ✅ DONE 2026-08-16. Fixed as a pattern, not one line: the audit found the `<ol>`/`<ul>`
     question was the *smaller* of the two defects in these lists.]**
+    > **Renumbered 34 → 40 on 2026-08-16 (owner-requested).** Two different items were both numbered
+    > 34: this one and the "Be the Fed Chair" policy simulator. This item had the number first (filed
+    > as 33 at 13:11, renumbered to 34 in the same commit); the simulator took 34 at 15:31 without
+    > noticing. **This one moved anyway** — not by seniority but by blast radius: the simulator's
+    > number is cited from `src/content/policyScenarios.js`, `src/components/PolicySim.jsx`,
+    > `src/locales/en.js`, `scripts/check-data.mjs`, `scripts/check-blindspot.mjs`, `DECISIONS.md` and
+    > `.gitignore`, while every reference to this one is `AGENT_LOG.md` prose. Renumbering the cheaper
+    > side is the fix that cannot leave a stale pointer in code.
+    > **Reading older entries:** run-log entries dated 2026-08-16 that say *"item 34's `<ol>`/`<ul>`
+    > a11y call"* mean **this item (40)**. Those entries are history and were accurate when written, so
+    > they are left as they were rather than rewritten. Any other "backlog item 34" — and every one in
+    > source code — means the simulator.
+    > A duplicate-number check now guards this: `scripts/check-data.mjs` fails if two backlog items in
+    > `AGENT_LOG.md` share a number, so the next collision breaks the build instead of being noticed
+    > three days later by a human reading the file.
     > **Closing update, 2026-08-16.** `MarketSignals.jsx`'s list is now a `<ul>`. `ratePrinciples` was
     > read before changing it and the six principles have no sequence, ranking or dependency — confirmed
     > by content, not by assuming this item was right.
@@ -916,6 +932,13 @@ for the history. No open P1/P2 items.
 34. **[Feature — ✅ BUILT 2026-08-16 (scheduled dev-agent). Shipped inside lesson 35, two scenarios,
     three levers each, five languages, no score. Do not re-pick this item to "extend" it — the last
     bullet says what a third scenario has to justify first.] A "Be the Fed Chair" policy simulator.**
+    > **Number note, 2026-08-16.** A second item also carried number 34 — the `<ol>`/`<ul>`
+    > accessibility item, which actually held it first — until it was renumbered to **40** to end the
+    > collision. **This item kept 34**, because its number is cited from source code and config
+    > (`policyScenarios.js`, `PolicySim.jsx`, `locales/en.js`, `check-data.mjs`, `check-blindspot.mjs`,
+    > `DECISIONS.md`, `.gitignore`), and moving it would have meant a stale pointer in seven files.
+    > **Every "backlog item 34" in source code means this item.** In `AGENT_LOG.md` run-log prose, an
+    > "item 34" about `<ol>`/`<ul>` lists means item 40.
     > **Built 2026-08-16.** `src/content/policyScenarios.js` (the scenarios) +
     > `src/components/PolicySim.jsx` (the component) + one call site in `LessonReader.jsx`, which is the
     > whole surface — it renders `null` for the other 39 lessons, so §3.1's three destinations are
