@@ -216,7 +216,11 @@ for the history. No open P1/P2 items.
 >   deliberately marked low value: it guards a property that currently holds, which is worth doing
 >   cheaply and worth nobody's afternoon.
 
-55. **[Process/Docs — P1 of this refill. The same class item 47 killed, one document over, and this
+55. **✅ DONE 2026-08-17 (scheduled dev-agent). Pruned to "Completed and pruned" below as
+    `former item 55`; the diagnosis is kept here because three of its five findings are worth not
+    re-deriving.** `LAUNCH_PLAN.md`'s eight live catalogue figures are generated now, §4.3's gate
+    verdict included, and §2.5's ids are fixed. See the run log entry of this date. **[Process/Docs —
+    was P1 of this refill. The same class item 47 killed, one document over, and this
     one changes what a reader believes about a gate.] `LAUNCH_PLAN.md`'s live figures are stale, and
     its curriculum table names lesson ids that were abandoned three days ago.** Measured against the
     tree, not read off the page:
@@ -241,6 +245,13 @@ for the history. No open P1/P2 items.
       arguments around the figures; §4.1/§4.2's reasoning about *finite content* is judgment that
       happens to cite a number, and rewriting it is an owner call, not a regeneration. Flag it and
       leave it.
+    > **What the doing changed about the scope, 2026-08-17.** §2.5's ids were *generated*, not fixed by
+    > hand — a hand fix is the thing that rotted. The generator refuses to write a range at all if a
+    > track's ids stop being contiguous, since "1–28 (27)" is worse than no figure. §4.1/§4.2 were left
+    > alone as instructed, but the three stale counts *inside* their sentences were **deleted rather
+    > than guarded** ("a finite 12-minute course" → "a finite course"): the cheapest permanent fix for
+    > a figure the argument doesn't need is to remove it, and that keeps the generated set small, which
+    > is this script's own stated scope rule.
 
 56. **[Content/Process — P2. Phase-0-facing, which is not obvious until you see how §4.3 is
     measured.] Nothing checks that a lesson's stated `minutes` is honest, and §4.3's content gate is
@@ -283,6 +294,16 @@ for the history. No open P1/P2 items.
     §9.3's audit has never run. **Bounded deliverable:** a list of contradictions with file:line, in
     the run entry — not a rewrite. Fixing them is a separate decision per item, some of them owner
     calls.
+    > **Two entries for the list, found while doing item 55 (2026-08-17) and deliberately not fixed
+    > there** — item 55's remit was figures, and neither of these is one:
+    > - `LAUNCH_PLAN.md` §3.2 promises a **progress ring**; the app renders a progress **bar**
+    >   (`src/components/ui.jsx`'s `ProgressBar`, `role="progressbar"`, confirmed live in a browser
+    >   that run). Which one is wrong — the design intent or the implementation — is a judgment call.
+    > - §3.1's IA table describes Learn as one ordered list of lessons; since §2.5 it is two tracks,
+    >   grouped. Reworded there to "both tracks' lessons in order", but §3.1's surrounding argument
+    >   still reasons about a single chain.
+    > Item 55 also demonstrated the cheapest disposition for a third class: a stale count inside an
+    > argument that doesn't need it should be **deleted**, not corrected and not guarded.
 
 59. **[A11y — P5, and deliberately last. It guards something that is currently TRUE.] `theme.js` and
     `index.css` both claim the palette's contrast is verified; nothing verifies it, and the note one
@@ -312,6 +333,12 @@ for the history. No open P1/P2 items.
     not on effort.** Do not extend this stream with new invented ideas; the owner's explicit instruction
     was that no paywall/subscription UI be built from the reference material while §4.3's Phase-0 gate is
     open, and that still binds.
+    > **New reference material appeared 2026-08-17, unread and uninterpreted.** An untracked `UIUX/`
+    > directory (~13 Mobbin-style "Buddy iOS" screenshots, file-dated 2026-08-14) was added to the repo
+    > root during that day's dev-agent run. It is owner material: not committed, not opened, and **not
+    > turned into backlog items by an agent guessing at intent** — the last design-reference drop came
+    > with a spoken brief, and this one has none yet. A run that finds it should leave it alone and say
+    > so; the owner naming what they want from it is what turns it into work.
 
 > **PRIORITY BLOCK — set by the weekly review 2026-08-09. SUPERSEDED 2026-08-16 (see above); all four
 > items below are closed. Retained for history.**
@@ -1589,6 +1616,15 @@ for the history. No open P1/P2 items.
 
 **Completed and pruned**
 
+- **`LAUNCH_PLAN.md`'s catalogue figures generated, and its Phase-0 gate verdict with them (former
+  item 55)** — done 2026-08-17 (dev-agent run), see run log. `scripts/refresh-readiness.mjs` now owns
+  **10 figures across two documents**: the two it already had in `LAUNCH_READINESS.md`, plus §1's
+  asset sentence, §2.5's two track-id ranges, §3.2's progress figure, §4.0's volume/word-count/
+  asset-table figures, and **§4.3's "is the gate met?" verdict**, which is derived from the catalogue
+  rather than from whoever last read the table. That last one is why the item was P1: the plan said
+  "the gate is not close: 12 minutes is not 2 hours" while the generated scorecard said both content
+  clauses were met. Three stale counts inside §4.0/§4.2's *arguments* were deleted rather than
+  guarded; §4.1/§4.2's reasoning was left alone, as the item required.
 - **Renumber lesson ids to match track order (former item 22)** — done 2026-08-14 (dev-agent run,
   owner-directed pick), see run log entry "Renumber lesson ids to match track order" and
   `DECISIONS.md`'s "Two lesson tracks" entry's 2026-08-14 update for full detail. Ids now match track
@@ -5330,3 +5366,120 @@ an owner action. Unchanged by this run.
 about a gate, and its mechanism already exists in `refresh-readiness.mjs`. Note for whoever takes it:
 item 50 (the other run's payload check) also landed today, so re-read the backlog rather than trusting
 this line's numbering.
+
+### 2026-08-17 (scheduled dev-agent) — The plan stops answering its own gate question from memory (item 55)
+
+**Picked item 55**, the previous run's recommendation and the P1 of that refill, unchanged after
+re-reading the backlog: it is the only open item that changes what a reader believes about a
+Phase-0 gate. `LAUNCH_PLAN.md` said **"the gate is not close: 12 minutes is not 2 hours"** while
+`LAUNCH_READINESS.md` — whose figures are generated — said both §4.3 content clauses were **met**.
+Two authoritative documents, opposite answers to the only question the plan exists to answer, for
+two days.
+
+- **What changed.** `scripts/refresh-readiness.mjs` now owns **10 generated figures across two
+  documents** (was 2 in one). New in `LAUNCH_PLAN.md`: §1's asset sentence (40 lessons / 42 quiz
+  questions / 29 glossary terms — was "twelve / thirteen / seventeen"), §2.5's two track-id ranges,
+  §3.2's first-session progress figure, §4.0's volume sentence + word count + asset-table row, and
+  **§4.3's Phase-0 gate verdict**. The script grew a `doc` field per figure and a per-document write
+  pass, so a failure in one document never half-writes another.
+- **The gate verdict is derived, not restated.** `GATE_LESSONS`/`GATE_MINUTES` live in the script and
+  the sentence reads `its first gate is **met** (40 lessons / 120 min)`. Delete a lesson and the
+  clause reopens, `npm test` fails, and `--write` flips the word to "not met". The old sentence's
+  second half was also wrong in a way no number captures: it said the highest-value work is "writing
+  lessons," which the 2026-08-09 lesson freeze and the owner-directed 2026-08-16 review both reversed
+  ("Item 18 is now the entire critical path"). §4.3 now says the remaining clause — ≥40% finishing
+  lesson 1 — is **unmeasurable**, not unmet, and names item 18's owner-blocked analytics as the work.
+  **This is the one place this run edited an argument rather than a figure**, and it is flagged here
+  deliberately: it is derived from the plan's own gate table plus two prior owner-directed decisions,
+  not a new business judgment, but an owner who disagrees should overrule it.
+- **§2.5 was generated, not hand-fixed, which is a deliberate departure from the item's stated
+  scope.** The item said "fix §2.5's ids by hand." A hand fix is exactly what rotted — the table read
+  `money 13-26 (14)` / `economy 1-12 (12)`, ids abandoned in the 2026-08-14 renumbering, sitting in
+  the section that *defines* the curriculum. It now reads **`money 1–28 (28)` / `economy 29–40 (12)`**
+  from `lessons.js`, and the generator **refuses to write at all** if a track's ids stop being
+  contiguous, because "1–28 (27)" is worse than no figure. The Your Money row also now names the
+  mechanics (1–15) / judgment (16–28) split, which item 24 records and the table did not show.
+- **Three stale counts inside arguments were deleted, not guarded.** §4.0's "a finite 12-minute
+  course", §4.2's "not the 12 lessons", §3.1's "a twelve-lesson app" and "the twelve lessons in
+  order". §4.1/§4.2's reasoning about finite content is untouched, per the item. The cheapest
+  permanent fix for a figure an argument doesn't need is to remove it, and it keeps the generated set
+  small — this script's own scope rule.
+- **Also corrected without a guard:** §4.0's "roughly 1,800 words — a long magazine article" (now a
+  generated **23,600 words**, "a short book"), and the asset table's "finite, finishable in one
+  sitting", which stopped being true somewhere between 12 and 120 minutes.
+
+**Verified — and the guards were made to fail before being believed.** `npm test` green (all six
+checks; the one warning is the standing 0%-human translation-review line). `npm run build` green,
+`✓ built in 1.22s`, no chunk-size warning. Then four injection tests, each with the file restored from
+a scratchpad copy and re-checked green afterwards (never `git checkout --`):
+1. **Wrong figure** — `money 1–28 (28)` → `1–27 (27)`: `--check` failed naming the line, `--write`
+   repaired it, and `shasum` of the repaired file matched the pre-injection backup **byte for byte**.
+2. **Deleted sentence** — restored the literal old wording "the gate is not close": failed with "the
+   sentence this guard reads is not in the file at all," which is the branch that matters, since a
+   guard satisfiable by deleting its subject is not a guard.
+3. **Verdict is derived** — set `GATE_MINUTES = 999` in the script: `--check` demanded
+   `**not met** (40 lessons / 120 min)`. So the word is computed, not typed.
+4. **Live browser** (static-build-plus-`python3 -m http.server` on 8797, per the Environment note —
+   it works in scheduled runs, as recorded there): a cleared-`localStorage` install renders
+   `PROGRESS 0 / 40` with `aria-valuemax="40"`; with `ecycles_completed_lessons` set to `[1]` it reads
+   `Progress: 1/40`. §3.2's "progress ring at 1/40" is now a *verified* claim, not a regenerated one.
+   No rendered UI changed this run — this was to check the document, not the app.
+
+**A generator floor earned its keep on the first run**, which is worth recording because it is the
+same instrument-blindness item 57 warns about: `glossary` is keyed by term, not an array, so
+`glossary.length` was `undefined`. Had the floors not run before the write, `--write` would have
+put "undefined glossary terms" into the executive summary and `--check` would have agreed with it
+forever.
+
+**Adversarial self-check.**
+1. **Blindspot register.** No `src/` change, no user-facing copy. Grepped the LAUNCH_PLAN diff for
+   the §10.2 strings (`Dalio`, `Principles`, `Big Debt Crises`) — none, and `check-blindspot.mjs`
+   passes all six checks including README, which item 49 added to the scan. §10.1: the only new prose
+   about money is §4.3's gate status, which discusses *this project's* revenue gates, not a reader's
+   money. §10.3: §2.5's kids row untouched. No dates or market figures added.
+2. **`DECISIONS.md` conflict.** None. No state, content-module-format, or platform decision is
+   touched; the script is node-only tooling and is not imported by anything under `src/`.
+3. **Already-done backlog item.** Not item 47 — that generated `LAUNCH_READINESS.md`'s two figures;
+   this is a different document, eight more figures, and a derived *verdict* rather than a count. Not
+   items 33/36, which fixed stale ids in lesson prose and quiz explanations; this is the plan's own
+   table, the one surface those four passes never touched. Checked against all 36 live items and
+   "Completed and pruned".
+4. **My own verification claim.** The four tests above are reproducible from this commit by anyone
+   with the bootstrapped Node: the injections are two `python3` one-liners, a constant edit, and a
+   `localStorage` set. What an independent reviewer would *not* reproduce by reading the diff alone
+   is test 1's byte-identical restore, which is the one that proves `--write` is a repair and not a
+   second way to introduce drift.
+5. **Concurrent state — and this bullet was wrong when first written, which is why it is worth
+   reading.** It originally said "HEAD was `37cfe72` at start and at commit." Re-running `git status`
+   before committing (workflow step 6, the one that exists for exactly this) showed HEAD had moved to
+   **`269b6d0`, "Archive run-log entries 2026-08-09 through 08-15 (second pass)"** — another session
+   archived 3,675 lines out of `AGENT_LOG.md` *while this run was editing it*, taking the file from
+   9,007 lines to 5,332. The claim was corrected rather than left standing.
+   **Nothing was clobbered in either direction, and that was checked, not assumed:** my working copy
+   diffs against the new HEAD as **+140 / −1**, the single deletion being the item-55 heading line
+   this run intentionally replaced — so no archived content was resurrected. And `git show
+   HEAD:AGENT_LOG.md` contains **none** of this run's five edit strings, so the archiving commit did
+   not sweep up half-finished work of mine. The reason both held: every edit went through an
+   exact-string replace or an append, so each one landed on whatever the file was at that moment
+   rather than overwriting it wholesale. **A run that re-reads the log's line count from an early
+   `wc -l` would have reported a 9,007-line file that no longer exists.**
+   Earlier in the run `git status` also flagged `AGENT_LOG.md` and `AGENT_LOG.archive.md` as modified
+   when they were not — a **stale stat**, cleared by `git diff` coming back empty. Both halves of this
+   bullet point the same way: do not act on a bare `git status` line without diffing it.
+   **A new untracked `UIUX/` directory appeared mid-run** (03:07, ~13 Mobbin-style "Buddy iOS"
+   screenshots dated 2026-08-14): owner material, not read, not committed, and not interpreted into
+   work — see the note added to item 26.
+
+**Filed, not fixed:** §3.2 says "progress ring" and the app renders a progress **bar**
+(`ProgressBar`, `role="progressbar"`) — confirmed live this run. Added to item 58's list of
+prose claims that no longer hold, rather than changed here: whether the design intent or the
+implementation is wrong is not a figure, and item 58 is exactly the item for it.
+
+**Item 18 remains the entire critical path to ending Phase 0** — an analytics provider account and
+key, an owner action. This run makes that statement the plan's own text rather than only the log's.
+
+**Next run should pick**: **item 56** — the honesty of each lesson's `minutes` field. It is now the
+P1 of the remaining refill, and this run raises its stakes: §4.3's "met" verdict is generated by
+summing exactly that unvalidated field, so if the estimates are inflated, the sentence this run just
+guarded is confidently guarding a wrong answer. Read item 56's warning about choosing the reading-rate
+model *before* editing any number.
