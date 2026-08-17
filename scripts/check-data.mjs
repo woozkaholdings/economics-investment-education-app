@@ -17,6 +17,7 @@ import { lessonTerms } from "../src/content/lessonTerms.js";
 import { kidsContent } from "../src/content/kidsContent.js";
 import * as marketsContent from "../src/content/markets.js";
 import * as moneyVisualsContent from "../src/content/moneyVisuals.js";
+import { bracketBands, bracketIncomes, bracketTax, bracketTiers } from "../src/content/moneyVisuals.js";
 import { economicSignals } from "../src/content/economicSignals.js";
 import { policyScenarios } from "../src/content/policyScenarios.js";
 import { sectors } from "../src/content/sectors.js";
@@ -1519,6 +1520,98 @@ for (const [label, moduleExports] of Object.entries(CONTENT_MODULES)) {
   // §16's ko/ja patterns spent two days in. Assert the scan found the lists.
   if (listsSeen < 8) {
     fail(`§20 found only ${listsSeen} marker-less lists under src/ (expected at least 8) — the scan is probably matching nothing, not the lists having gone away`);
+  }
+}
+
+// 21. src/content/moneyVisuals.js — lesson 7's marginal-bracket figure
+//     (backlog item 27). This checks the *claim the diagram makes*, not that
+//     the numbers parse.
+//
+//     The chart's entire argument is that a raise cannot re-tax the income
+//     underneath it: the two stacks must be identical below the old income
+//     line, and the extra tax must be smaller than the raise. Both are
+//     properties of `bracketBands`, so both are assertable here — which is the
+//     point. A diagram whose teaching claim is only true by inspection is one
+//     edit away from teaching the opposite of the lesson beside it, and the
+//     misconception this lesson exists to correct ("a raise can leave you with
+//     less") is exactly what a broken figure would appear to confirm.
+{
+  const { before, after } = bracketIncomes;
+  const raise = after - before;
+  const beforeBands = bracketBands(before);
+  const afterBands = bracketBands(after, before);
+  const sum = (bands) => bands.reduce((s, b) => s + b.amount, 0);
+  const key = (b) => `${b.tier}:${b.rate}:${b.amount}`;
+
+  if (raise <= 0) fail(`§21: bracketIncomes must rise (${before} → ${after}) — the figure is a raise`);
+
+  // Checked first because `bracketBands` stops at the first tier that does not
+  // extend the one below it. On a monotonic list that is correct (income ran
+  // out); on a mis-ordered one it silently drops the top of the stack, and the
+  // symptom — "bands sum to less than the income" — points at the wrong line.
+  // Found by an injection test of this very check, not by reading the code.
+  for (const [i, t] of bracketTiers.entries()) {
+    if (i > 0 && !(t.upTo > bracketTiers[i - 1].upTo)) {
+      fail(`§21: bracketTiers must ascend — tier ${i} ends at ${t.upTo}, at or below tier ${i - 1}'s ${bracketTiers[i - 1].upTo}`);
+    }
+    if (i > 0 && !(t.rate > bracketTiers[i - 1].rate)) {
+      fail(`§21: bracketTiers rates must ascend — tier ${i} is ${t.rate}%, at or below tier ${i - 1}'s ${bracketTiers[i - 1].rate}%. A flat or falling top band would make the raise look punitive, which is the opposite of lesson 7.`);
+    }
+  }
+
+  // The scenario has to cross a bracket, or it illustrates nothing.
+  const topTier = bracketTiers.findIndex((t) => after <= t.upTo);
+  if (topTier === bracketTiers.findIndex((t) => before <= t.upTo)) {
+    fail("§21: bracketIncomes must straddle a tier boundary — a raise inside one band cannot show the misconception this lesson corrects");
+  }
+
+  for (const [label, income, bands] of [["before", before, beforeBands], ["after", after, afterBands]]) {
+    if (sum(bands) !== income) fail(`§21: ${label} bands sum to ${sum(bands)}, not ${income}`);
+    for (const b of bands) {
+      if (b.amount <= 0) fail(`§21: ${label} has a zero-width band at tier ${b.tier}`);
+      if (b.rate !== bracketTiers[b.tier].rate) fail(`§21: ${label} band at tier ${b.tier} carries rate ${b.rate}, not ${bracketTiers[b.tier].rate}`);
+    }
+  }
+
+  // THE claim. Not "the totals work out" — the layers below the old income
+  // line must be the same objects, band for band, in both stacks.
+  const unchanged = afterBands.filter((b) => !b.isRaise);
+  if (unchanged.map(key).join("|") !== beforeBands.map(key).join("|")) {
+    fail(
+      "§21: the non-raise layers of the 'after' stack differ from the 'before' stack — " +
+      `${JSON.stringify(unchanged.map(key))} vs ${JSON.stringify(beforeBands.map(key))}. ` +
+      "The diagram would be showing a raise re-taxing income underneath it, which is the misconception lesson 7 corrects."
+    );
+  }
+
+  const raiseBands = afterBands.filter((b) => b.isRaise);
+  if (sum(raiseBands) !== raise) fail(`§21: the flagged raise bands total ${sum(raiseBands)}, not the ${raise} raise`);
+  if (raiseBands.length < 2) {
+    fail("§21: the raise should split across two bands — the part still taxed at the old rate is what 'only the overflow is taxed higher' means, and one band cannot show it");
+  }
+
+  const extraTax = bracketTax(afterBands) - bracketTax(beforeBands);
+  if (!(extraTax > 0 && extraTax < raise)) {
+    fail(`§21: extra tax on the raise is ${extraTax} against a raise of ${raise} — take-home pay must rise, which is the lesson's takeaway in one sentence`);
+  }
+  // The caption states these two figures in all five languages, so a change to
+  // the tiers that left the prose alone would ship a chart disagreeing with the
+  // words beside it. Pinned rather than recomputed for that reason.
+  if (extraTax !== 2400 || raise - extraTax !== 7600) {
+    fail(`§21: bracketCaption says $2,400 extra tax and $7,600 kept in all five languages; the figures now compute to ${extraTax} and ${raise - extraTax} — update the captions in the same commit`);
+  }
+
+  // The caption also names the split of the raise itself ($6,000 at the old
+  // rate, $4,000 at the new one), and that split is the whole reason this
+  // scenario was widened from a $6,000 raise — see moneyVisuals.js. A change
+  // that keeps the totals but flattens the split would leave the picture
+  // arguing that a raise is taxed entirely at the top rate.
+  const [lowerSlice, upperSlice] = raiseBands.map((b) => b.amount);
+  if (lowerSlice !== 6000 || upperSlice !== 4000) {
+    fail(`§21: bracketCaption says the raise splits $6,000 at 20% and $4,000 at 30%; it now splits ${lowerSlice}/${upperSlice}`);
+  }
+  if (!(lowerSlice > upperSlice)) {
+    fail("§21: the part of the raise still taxed at the old rate must be the larger slice — at 375px the smaller one renders too thin to read, and the figure then shows the misconception rather than the correction");
   }
 }
 

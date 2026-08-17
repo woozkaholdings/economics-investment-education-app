@@ -385,7 +385,8 @@ Add a new entry when a run makes a choice future work should be able to look up 
   these fixes, not a claim that every subtlety a native speaker would catch has been caught.
 - **Scope limit, made explicit 2026-08-16 (backlog item 35) rather than left implicit:** the ledger
   tracks **lesson content only** — `scripts/translation-review.mjs` walks `lessonContent.js`, so
-  `glossary.js`, `kidsContent.js`, `markets.js` and the `locales/*.js` UI strings have never been in
+  `glossary.js`, `kidsContent.js`, `markets.js`, `moneyVisuals.js`, `policyScenarios.js` and the
+  `locales/*.js` UI strings have never been in
   its coverage numbers. This surfaced when item 35 added 12 money-track glossary terms in all five
   languages: those 48 non-English fields are AI-written under this decision, ship under the same
   "(Beta)" labelling, and are **not** counted by `npm run review-status`. The reported coverage figure
@@ -394,6 +395,13 @@ Add a new entry when a run makes a choice future work should be able to look up 
   hashes an English *lesson* source and its shape assumes per-lesson records, so covering other content
   types is a schema change, not a config change. Recorded so the next person to quote a coverage number
   knows what it excludes.
+  **Amended 2026-08-16 (item 27's lesson-7 figure):** the list above was written from the files item 35
+  happened to touch, and was incomplete — `moneyVisuals.js` and `policyScenarios.js` are excluded on
+  exactly the same grounds and are now named. The lesson-7 bracket figure added 6 more five-language
+  string sets there. Worth noting for whoever eventually widens the ledger: chart labels are the content
+  type where an unreviewed translation is *least* visible, because a wrong label still renders as a
+  correctly-shaped chart. The `check-data.mjs` locale-parity checks catch a **missing** language, never a
+  wrong one.
 - **Revisit when:** review coverage is meaningfully non-zero and the actual quality of the shipped
   translations is known, or before any paid/committed use of the app in a market where one of these
   four languages is the primary language.

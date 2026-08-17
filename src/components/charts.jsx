@@ -220,6 +220,94 @@ export function AsymmetryChart({ title, axisLabel, bars, colors, labelInks, desc
   );
 }
 
+// ── BracketStack ──────────────────────────────────────────────────────────
+// Income sliced into rate layers and filled bottom-up, drawn twice: before a
+// raise and after it. For lesson 7, whose own first sentence is "imagine income
+// tax as a stack of buckets... money fills them from the bottom up" — prose
+// that was already describing a picture the app declined to draw.
+//
+// Two things carry the teaching and both are structural rather than annotated:
+// the columns share one scale and one baseline, so the layers below the old
+// income line are visibly the same height in both (a raise cannot re-tax what
+// is underneath it); and because the new bands sit on top, the second column's
+// extra *height is* the raise, which is why no separate scale bar is needed.
+// The dashed outline only names what the height difference already shows.
+const STACK_H = 176;
+
+export function BracketStack({ title, columns, tierColors, tierLabels, raiseLabel, summary, description, caption }) {
+  const max = Math.max(...columns.map((c) => c.total));
+  return (
+    <figure style={{ background: surface.card, border: `1px solid ${line.hairline}`, borderRadius: radius.lg, padding: space["4"], margin: 0 }}>
+      {title && (
+        <figcaption style={{ marginBottom: space["3"] }}>
+          <Text as="span" variant="caption" color={ink.muted} style={{ textTransform: "uppercase", letterSpacing: "0.05em", fontWeight: 700 }}>
+            {title}
+          </Text>
+        </figcaption>
+      )}
+      {/*
+        `paddingTop` reserves the row the raise label sits in. It is on the
+        flex row rather than on the taller column so both columns keep the same
+        baseline — the alignment is the argument here, not decoration.
+      */}
+      <div role="img" aria-label={description} style={{ display: "flex", alignItems: "flex-end", gap: space["5"], paddingTop: space["5"] }}>
+        {columns.map((col) => {
+          const raise = col.bands.reduce((sum, b) => sum + (b.isRaise ? b.amount : 0), 0);
+          return (
+            <div key={col.label} style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ position: "relative", height: (col.total / max) * STACK_H }}>
+                <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column-reverse", borderRadius: `${radius.sm}px ${radius.sm}px 0 0`, overflow: "hidden" }}>
+                  {col.bands.map((b, i) => (
+                    <div key={i} style={{ height: `${(b.amount / col.total) * 100}%`, background: tierColors[b.tier], minHeight: 2, transition: "height 0.5s" }} />
+                  ))}
+                </div>
+                {raise > 0 && (
+                  <>
+                    <div
+                      aria-hidden="true"
+                      style={{ position: "absolute", top: 0, left: -3, right: -3, height: `${(raise / col.total) * 100}%`, border: `2px dashed ${graph.neutral}`, borderRadius: radius.sm, pointerEvents: "none" }}
+                    />
+                    <Text
+                      as="span" variant="caption" color={ink.body}
+                      style={{ position: "absolute", bottom: "100%", left: 0, right: 0, marginBottom: space["1"], textAlign: "center", fontWeight: 700 }}
+                    >
+                      {raiseLabel}
+                    </Text>
+                  </>
+                )}
+              </div>
+              <Text variant="caption" color={ink.muted} style={{ marginTop: space["2"], textAlign: "center" }}>{col.label}</Text>
+            </div>
+          );
+        })}
+      </div>
+      <ul role="list" style={{ listStyle: "none", margin: `${space["4"]}px 0 0`, padding: 0, display: "flex", flexDirection: "column", gap: space["1"] }}>
+        {tierLabels.map((label, i) => (
+          <li key={label} style={{ display: "flex", alignItems: "baseline", gap: space["2"] }}>
+            <span aria-hidden="true" style={{ width: 10, height: 10, borderRadius: 3, background: tierColors[i], flexShrink: 0, alignSelf: "center" }} />
+            <Text as="span" variant="caption" color={ink.muted}>{label}</Text>
+          </li>
+        ))}
+      </ul>
+      {/*
+        A description list, not another legend row: each line is a name and the
+        number that answers it, which is what <dt>/<dd> are for. These two lines
+        are the lesson's actual claim in numbers, so they must survive being
+        read aloud without the chart.
+      */}
+      <dl style={{ margin: `${space["3"]}px 0 0`, paddingTop: space["3"], borderTop: `1px solid ${line.hairline}` }}>
+        {summary.map((row) => (
+          <div key={row.label} style={{ display: "flex", justifyContent: "space-between", gap: space["3"] }}>
+            <dt><Text as="span" variant="caption" color={ink.muted}>{row.label}</Text></dt>
+            <dd style={{ margin: 0 }}><Text as="span" variant="caption" color={ink.body} style={{ fontWeight: 700 }}>{row.value}</Text></dd>
+          </div>
+        ))}
+      </dl>
+      {caption && <Text variant="caption" color={ink.muted} style={{ marginTop: space["3"], lineHeight: 1.5 }}>{caption}</Text>}
+    </figure>
+  );
+}
+
 // ── CycleChart ────────────────────────────────────────────────────────────
 const PHASE_DOT = [graph.green, graph.amber, graph.red, graph.blue];
 const PHASE_INK = [ink.ok, ink.warn, ink.bad, ink.accent];

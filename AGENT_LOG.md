@@ -389,6 +389,20 @@ for the history. No open P1/P2 items.
     **A run wanting to add a fourth money visual must first name the specific lesson where a diagram
     teaches something the prose cannot** — otherwise this becomes the count-shaped backlog item that
     items 17, 21 and 24 each turned into. Original text retained below for the reasoning.
+    > **Fourth visual added 2026-08-16 (evening dev-agent run) — money is now 4/28. The bar above was
+    > met by the lesson's own prose, not by an argument constructed for it.** Lesson 7 (marginal tax
+    > brackets) opens with *"Imagine income tax as a stack of buckets, each with its own rate, and money
+    > fills them from the bottom up"* — the lesson was already asking the reader to picture a diagram the
+    > app declined to draw, and then spending three paragraphs on the misconception ("a raise can push
+    > you into a higher bracket and leave you with less") that one picture settles. Shipped as
+    > `BracketStack` in `charts.jsx` + `bracket*` in `moneyVisuals.js`, guarded by `check-data.mjs` §21.
+    > **The guard checks the diagram's teaching claim, not its data shape** — that the two stacks are
+    > band-for-band identical below the old income line, that the raise splits across two bands with the
+    > old-rate slice the larger of them, and that take-home rises. See the run log for the injection
+    > tests and for the rendered measurement that changed the scenario mid-run.
+    > **The bar for a fifth is unchanged and still binds.** Note what this one did *not* do: it added no
+    > visual to lessons 9, 11 or 12, each of which has a plausible diagram, because "plausible" is the
+    > count-shaped reasoning this item warns about.
     *(Original framing — PRIORITY, the highest-value open item)*
     `LAUNCH_PLAN.md` §3.0.4, §3.2, §5.** Measured 2026-08-16 by the weekly review, from
     `LESSON_VISUALS` in `src/components/LessonVisual.jsx` against `src/content/lessons.js`:
@@ -1014,6 +1028,27 @@ for the history. No open P1/P2 items.
     figure went stale for five days. **Scope it honestly before picking it** — this may not be
     checkable in a script at all, in which case saying so and writing the reasoning down is the
     valuable outcome, not a half-guard that reads as coverage.
+
+41. **[A11y — small, found in passing 2026-08-16 and deliberately not fixed in that run] `Bar` is the
+    one chart primitive with no accessible description.**
+    > Filed as 40 and renumbered to **41** before commit, because `check-backlog.mjs` — which landed from
+    > a concurrent run *while this one was in flight* — failed the build on the collision with the
+    > renumbered a11y item 40. Working exactly as designed, on its first day, against the next run to
+    > make the mistake. Nothing cites 41 from code yet, so this side had the smaller blast radius.
+    Every other chart in `charts.jsx`
+    (`YieldCurve`, `ProportionBar`, `GrowthCurve`, `AsymmetryChart`, `CycleChart`, and the new
+    `BracketStack`) takes a `description` and renders `role="img" aria-label={description}`. `Bar` takes
+    none, so lesson 37's Fed balance-sheet figure is a stack of unlabelled `<div>`s to a screen reader —
+    the *only* lesson visual in the app with no text alternative. Measured, not assumed: walking lessons
+    1/3/7/27/32/36/37 in a live browser returns one `[role="img"]` each except **37, which returns 0**.
+    - **Scope:** add `description` to `Bar` and a five-language `balanceSheetDescription` to `markets.js`
+      alongside the existing `balanceSheetCaption`, matching how the other six figures are written.
+      `Bar` is also used by Reference → Market signals, so check both call sites.
+    - **Why it wasn't done in passing:** it needs new five-language content, which is a different kind of
+      change from the run that found it, and §17-style parity checks apply. Small, but not a one-liner.
+    - **Worth a check, not just a fix:** the general property — every chart primitive that renders a
+      figure exposes a text alternative — is assertable in `check-data.mjs` the same way §20 asserts list
+      semantics, and would have caught this at the time `Bar` was written.
 
 **HELD — owner decisions, do not act on these**
 
@@ -7489,4 +7524,114 @@ Otherwise the honest options are the two small filed items below (the UTC date b
 `ParentGuide` ordinal, which needs a real iOS VoiceOver and **cannot** be settled in this sandbox), or
 — per W-2's standing rule — a run that **refills the backlog** by re-reading `LAUNCH_PLAN.md` §5/§8/§9
 against `src/`, which is a legitimate and currently valuable use of a run. **Item 32's monthly audit is
+dated 2026-09-05 and must still not be pulled forward.**
+
+### 2026-08-16 (evening) — Lesson 7's marginal-bracket figure: the fourth money visual (item 27)
+
+- **What changed**: money lesson 7 (*Taxes: How Your Paycheck Is Actually Taxed*) now renders a diagram.
+  Three files: `src/components/charts.jsx` gains a `BracketStack` primitive; `src/content/moneyVisuals.js`
+  gains `bracketTiers`/`bracketIncomes`/`bracketBands()`/`bracketTax()` plus six five-language string sets;
+  `src/components/LessonVisual.jsx` maps `7: "taxBrackets"` and wires them. `scripts/check-data.mjs` gains
+  §21. `DECISIONS.md` gets a two-line amendment (below). **Money visuals: 3/28 → 4/28.**
+- **Why lesson 7, against item 27's own bar** ("name the specific lesson where a diagram teaches
+  something the prose cannot"). The bar was met by the lesson's existing text rather than by an argument
+  built to fit it: section 1 opens *"Imagine income tax as a stack of buckets, each with its own rate, and
+  money fills them from the bottom up."* The lesson was already asking the reader to picture a diagram,
+  and then spending three paragraphs on the misconception it exists to correct — that a raise can push you
+  into a higher bracket and leave you with less. That is the case where prose demonstrably labours and one
+  picture settles it. **I did not add a fourth-and-fifth**: lessons 9 (inflation), 11 (fee drag) and 12
+  (rent vs. buy) all have plausible diagrams, and "plausible" is exactly the count-shaped reasoning item
+  27 warns about. Item 27's bar is left standing, not lowered.
+- **The figure**: two stacks on one baseline and one scale — $44,000 before a raise, $54,000 after — each
+  sliced bottom-up into rate bands. Below the old income line the two stacks are band-for-band identical,
+  which *is* the argument ("a raise cannot re-tax what is underneath it"); because the new bands sit on
+  top, the second stack's extra height simply **is** the raise, so no separate scale bar is needed. A
+  dashed outline names what the height difference already shows. Under it: a rate legend, and a `<dl>`
+  giving take-home ($37,200 → $44,800) and what's kept from the raise ($7,600 / $10,000) — the two numbers
+  that carry the lesson, in text, so they survive being read without the chart.
+- **The rates are stylised (10/20/30% at $20k/$50k) and that is a §2.3 decision, not a shortcut.** The
+  lesson deliberately carries no rates or thresholds of its own — it says "a low rate," "a higher rate" —
+  because real brackets are re-indexed annually and jurisdiction-specific. Copying real ones in would have
+  planted a figure that silently goes stale, which is the class §2.3 exists to stop. So: round numbers, the
+  title reads "at example rates" in all five languages, and `illustrationNote` renders beneath as it does
+  for the other three money figures. This is the one place the module's "figures are the lessons' own" rule
+  is broken, and the file header now says so and why, rather than leaving a future reader to wonder.
+- **A rendered measurement changed the design mid-run — this is the part worth keeping.** The first draft
+  used $48,000 → $54,000. It passed every check and read fine in source. In a live browser at 375px the
+  $2,000 of that raise still taxed at 20% came out **6.5px tall**, so the picture read as *"the raise is
+  the top band, taxed at 30%"* — the misconception the lesson exists to correct, drawn as if true, under a
+  caption saying the opposite. Re-scoped to $44,000 → $54,000: the same slice is now $6,000 and **19.5px**,
+  visibly the larger part of the raise. **No test I could have written from the source would have caught
+  this**; it needed the pixels. §21 now pins the split ($6,000/$4,000) and asserts the old-rate slice is
+  the larger one, with the 375px reason in the failure message, so the next edit can't quietly undo it.
+- **Verified — checks.** `npm test` (now four scripts; `check-backlog.mjs` arrived from a concurrent run
+  mid-session, see below) and `npm run build` both green. §21 was **proven against injected regressions,
+  not just written**: (a) the raise-boundary `>=` flipped to `>` → caught, non-raise layers no longer match
+  ("the diagram would be showing a raise re-taxing income underneath it"); (b) `after` lowered to 49,000 so
+  the raise stops crossing a bracket → caught; (c) a tier rate edited without touching the five captions →
+  caught, naming both figures; (d) a tier boundary moved past both incomes → caught. `moneyVisuals.js`
+  verified byte-identical by `shasum` after each injection (`bf7f806a…` before and after all four).
+  **(d) found a real weakness in my own check** — the failure it reported ("bands sum to 52000, not 54000")
+  was the symptom of a non-monotonic tier list, and pointed at the wrong line. Added an ascending-tiers
+  assertion so the message names the cause; re-injected, and it now reports the cause first.
+- **Verified — live browser** (per W-1; `npm run build`, `dist/` served by `/usr/bin/python3 -m http.server
+  8841`, `preview_start` with a plain `url`, 375×812). Not eyeballed — **measured**: both stacks share
+  baseline y=493.1; the two lower bands are pixel-identical in both columns (65.2px and 78.2px, tops 427.9
+  and 349.7), which is the teaching claim confirmed in rendered pixels rather than asserted; the raise
+  bands are 19.5px (20%) + 13px (30%) and the dashed outline is 32.6px, exactly their sum and exactly the
+  height difference between the stacks. No console errors, no horizontal overflow (`scrollWidth` 375 =
+  `clientWidth`). Checked in **light theme and Korean** as well as dark/English — the band colours resolve
+  through the `graph` tokens to their light-scheme values (no inline hex anywhere), and the `<dl>`, legend
+  and `aria-label` all read correctly in ko. Regression sweep across lessons 1/3/27/32/36 (each still
+  renders its figure) and lesson 2 (correctly renders none).
+- **A finding in that sweep, filed rather than fixed**: lesson 37 returned **0** `[role="img"]` — `Bar` is
+  the one chart primitive that takes no `description`, so the Fed balance-sheet figure is the only lesson
+  visual in the app with no text alternative. It needs new five-language content, so it is **item 41**
+  below, not a fix smuggled into this commit.
+- **`DECISIONS.md` amended**: the machine-translation entry's "what the ledger excludes" list named
+  `glossary.js`/`kidsContent.js`/`markets.js`/`locales`, but had been written from the files item 35
+  happened to touch — `moneyVisuals.js` and `policyScenarios.js` were excluded on identical grounds and
+  unnamed. Both added, plus the observation that chart labels are where an unreviewed translation is least
+  visible, since a wrong label still renders as a correctly-shaped chart.
+
+**Adversarial self-check — two findings, one of them in my own writing.**
+1. **Blindspot register.** Nothing reintroduced. §10.2: `grep -ric dalio src/` is 0 across all 50 files.
+   §10.1: no advice verb in any of the six new string sets in any language (grepped for `you should`/
+   `debería`/`해야 합니다`/`应该`/`すべき`/`recommend`); the caption states arithmetic and stops — it does
+   **not** tell anyone to revisit a W-4, which the lesson's own section 3 makes an easy line to cross.
+   §10.3: `ParentGuide` untouched. **§2.3 is the one that genuinely bore on this change**, and it is why
+   the rates are stylised rather than real — reasoned through above, and `check-blindspot`'s §2.3 scan over
+   `moneyVisuals.js` passes.
+2. **`DECISIONS.md` conflict.** None. Content went into a `.js` module (not JSON); no state or storage
+   touched, so localStorage-only is untouched; no dependency added — `BracketStack` is plain divs and
+   theme tokens, so item 12's port-cost rule is respected (nothing here is web-only surface).
+3. **Already-done backlog item.** No, and this is the item most at risk of it. Item 27 is marked "BUILT —
+   re-scope before picking it again," and the re-scope is the first bullet above: a named lesson, the
+   reason named from that lesson's own text, and an explicit refusal to add the three other plausible ones.
+4. **My own verification claim — the finding.** An independent reviewer re-running only my commands gets
+   my numbers; the geometry figures are reproducible from the same seeded state. But the honest note is
+   that **my first draft passed every check I had written and was still wrong** — the figure contradicted
+   its own caption, and only a rendered measurement showed it. Recorded because the inverse of W-1's
+   lesson is the useful one: a green suite over a UI change means the data is consistent, never that the
+   picture teaches what the words claim.
+5. **A second finding, in my own prose.** I first dated the `DECISIONS.md` amendment **2026-08-17**, having
+   absorbed it from `check-claims.mjs`'s output line ("as of 2026-08-17") without checking. The machine's
+   local date was 2026-08-16 21:15 EDT — i.e. **I reproduced item 38's UTC-vs-local bug in a document, by
+   trusting the tool's rendering of "today."** Corrected before commit. This is a small concrete argument
+   for actually fixing item 38: its cosmetic warning is being read as a date and copied.
+6. **Concurrent run, handled not ignored.** HEAD moved from `20f82e7` to `72bf47b` while I worked (a
+   sibling session shipped `check-backlog.mjs`). Re-checked `git status` and the commit's file list before
+   writing anything: it touched `AGENT_LOG.md`, `package.json`, `scripts/check-backlog.mjs` — no overlap
+   with my five files, and my `DECISIONS.md` diff was confirmed to contain only my two hunks. Its new check
+   is included in the `npm test` reported above and passes, including "all 36 backlog-item citations in
+   `src/` and `scripts/` resolve," which now covers the two this commit adds.
+
+**Item 18 remains the entire critical path to ending Phase 0** — an analytics provider account and key, an
+owner action. Unchanged by this run.
+
+**Next run should pick**: **item 41** (the `Bar` text-alternative gap filed above) is the best-scoped open
+item — it is real, measured, small, and its check generalises to "every chart primitive exposes a text
+alternative." **Item 38** is now better motivated than when it was filed, since this run reproduced its bug
+in a document. Item 39 remains unowned and still needs honest scoping before anyone picks it. Item 27's bar
+for a fifth money visual stands — do not add one without naming the lesson. **Item 32's monthly audit is
 dated 2026-09-05 and must still not be pulled forward.**

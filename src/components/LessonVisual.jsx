@@ -13,13 +13,15 @@
 // (look something up again later), which is not the duplication §3.1 removed.
 // ═══════════════════════════════════════════════════════════════════════════
 
-import { AsymmetryChart, Bar, CycleChart, GrowthCurve, ProportionBar, YieldCurve } from "./charts.jsx";
+import { AsymmetryChart, Bar, BracketStack, CycleChart, GrowthCurve, ProportionBar, YieldCurve } from "./charts.jsx";
 import { Text } from "./ui.jsx";
 import {
   balanceSheetCaption, balanceSheetHistory, cycleChartDescription,
   phaseNames, trendLabel,
 } from "../content/markets.js";
 import {
+  bracketBands, bracketCaption, bracketColumnLabels, bracketDescription, bracketIncomes,
+  bracketRaiseLabel, bracketSummaryLabels, bracketTax, bracketTierLabels, bracketTitle,
   budgetCaption, budgetDescription, budgetLabels, budgetSegments, budgetTitle,
   compoundCaption, compoundDescription, compoundLabels, compoundSeries, compoundTitle, compoundYears,
   lossAxisLabel, lossCaption, lossDescription, lossFelt, lossLabels, lossTitle,
@@ -38,6 +40,7 @@ export const LESSON_VISUALS = {
   // money
   1: "budgetSplit",    // Budgeting: Know Where Your Money Goes
   3: "compounding",    // Compound Interest: Money That Makes Money
+  7: "taxBrackets",    // Taxes: How Your Paycheck Is Actually Taxed
   27: "lossAsymmetry", // Why Does Losing $50 Hurt More Than Finding $50 Feels Good?
   // economy
   32: "cycle",         // The Short-Term Debt Cycle
@@ -50,7 +53,7 @@ export const LESSON_VISUALS = {
 const CURVE_TYPES = ["normal", "flat", "inverted", "steep"];
 
 // Which `kind`s are money-track figures — drives the figcaption note below.
-const MONEY_VISUALS = new Set(["budgetSplit", "compounding", "lossAsymmetry"]);
+const MONEY_VISUALS = new Set(["budgetSplit", "compounding", "taxBrackets", "lossAsymmetry"]);
 
 // Figures are US dollars in every language — the lessons' own worked examples
 // are written that way, and converting them per locale would make the chart
@@ -107,6 +110,41 @@ export default function LessonVisual({ lessonId, t, lang }) {
           caption={compoundCaption[lang]}
         />
       )}
+
+      {/*
+        Every number below is derived from `bracketTiers` + `bracketIncomes`,
+        never written out here. The diagram's claim is that the layers under the
+        old income line are unchanged, and two hand-typed stacks can drift apart
+        while each still looks plausible — so both come out of one function, and
+        `check-data.mjs` §21 asserts the property rather than trusting it.
+      */}
+      {kind === "taxBrackets" && (() => {
+        const before = bracketBands(bracketIncomes.before);
+        const after = bracketBands(bracketIncomes.after, bracketIncomes.before);
+        const raise = bracketIncomes.after - bracketIncomes.before;
+        const kept = raise - (bracketTax(after) - bracketTax(before));
+        return (
+          <BracketStack
+            title={bracketTitle[lang]}
+            columns={[
+              { label: bracketColumnLabels[lang][0], total: bracketIncomes.before, bands: before },
+              { label: bracketColumnLabels[lang][1], total: bracketIncomes.after, bands: after },
+            ]}
+            tierColors={[graph.blue, graph.green, graph.amber]}
+            tierLabels={bracketTierLabels[lang]}
+            raiseLabel={bracketRaiseLabel[lang]}
+            summary={[
+              {
+                label: bracketSummaryLabels[lang][0],
+                value: `${usd(bracketIncomes.before - bracketTax(before))} → ${usd(bracketIncomes.after - bracketTax(after))}`,
+              },
+              { label: bracketSummaryLabels[lang][1], value: `${usd(kept)} / ${usd(raise)}` },
+            ]}
+            description={bracketDescription[lang]}
+            caption={bracketCaption[lang]}
+          />
+        );
+      })()}
 
       {kind === "lossAsymmetry" && (
         <AsymmetryChart
