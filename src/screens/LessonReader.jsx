@@ -11,7 +11,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { EVENTS, elapsedSeconds, monotonicNow, quizScore, track } from "../lib/analytics.js";
-import { quizData } from "../content/quizData.js";
+import { quizMeta } from "../content/quizMeta.js";
 import { recordContinueChoice, wasContinuePromptShownToday } from "../lib/useAppState.js";
 import { questionsForLesson } from "../lib/review.js";
 import { termsForSection } from "../content/lessonTerms.js";
@@ -46,6 +46,16 @@ const CONTENT_LOADERS = {
   "money:ko": () => import("../content/lessonContent.money.ko.js"),
   "money:zh": () => import("../content/lessonContent.money.zh.js"),
   "money:ja": () => import("../content/lessonContent.money.ja.js"),
+};
+
+// Quiz text is split per language too (item 48) and loaded alongside the
+// lesson body, since a lesson and its check are always read together.
+const QUIZ_TEXT_LOADERS = {
+  en: () => import("../content/quizText.en.js"),
+  es: () => import("../content/quizText.es.js"),
+  ko: () => import("../content/quizText.ko.js"),
+  zh: () => import("../content/quizText.zh.js"),
+  ja: () => import("../content/quizText.ja.js"),
 };
 
 function Toast({ label }) {
@@ -87,7 +97,20 @@ export default function LessonReader({ t, lang, lessons, index, completedLessons
 
   // This lesson's own retrieval check. Answers feed the same spaced schedule
   // the Review tab drives, so a question missed here comes back tomorrow.
-  const check = useMemo(() => questionsForLesson(quizData, lesson.id), [lesson.id]);
+  // Indices come from quizMeta, never from the loaded text — review.js keys
+  // persisted Leitner state by a question's index in that array, so the
+  // schedule must not depend on which language module happens to be loaded.
+  const [quizText, setQuizText] = useState(null);
+  const check = useMemo(
+    () =>
+      quizText
+        ? questionsForLesson(quizMeta, lesson.id).map(({ question, index }) => ({
+            question: { ...question, ...quizText[index] },
+            index,
+          }))
+        : [],
+    [lesson.id, quizText],
+  );
 
   // Fetch just this lesson's track content, in this reader's language — see
   // CONTENT_LOADERS above. `lang` is in the dependency list because switching
@@ -97,8 +120,12 @@ export default function LessonReader({ t, lang, lessons, index, completedLessons
   useEffect(() => {
     let cancelled = false;
     setContent(null);
+    setQuizText(null);
     CONTENT_LOADERS[`${lesson.track}:${lang}`]().then((mod) => {
       if (!cancelled) setContent(mod.lessonContent[lesson.id]);
+    });
+    QUIZ_TEXT_LOADERS[lang]().then((mod) => {
+      if (!cancelled) setQuizText(mod.quizText);
     });
     return () => {
       cancelled = true;

@@ -1292,6 +1292,50 @@ for the history. No open P1/P2 items.
     > payload win should measure it before inventing something new.
 
 
+48. **[Perf — ✅ DONE 2026-08-17 (owner-requested). Quiz text split per language, the same second
+    axis item 45 applied to lesson bodies. The 140.88 kB shared quiz chunk is gone.]**
+    > **Why.** `quizData.js` held all 42 questions in all five languages in one array — 128 kB of
+    > text, of which any one reader can read ~25 kB (en 25, es 25, ko 28, zh 21, ja 30) — and it was
+    > **statically** imported by both `Practice.jsx` and `LessonReader.jsx`, so it landed in a shared
+    > 140.88 kB chunk every reader downloaded. Same waste item 45 removed from lesson bodies. Nothing
+    > forced it (it was well under the threshold); item 45's closing note flagged it and this is that.
+    > **The shape of the split is dictated by one constraint.** `src/lib/review.js` keys every
+    > learner's Leitner state by a question's **index** in the array, and that state is persisted in
+    > `localStorage`. Reordering would silently re-point real review histories at different questions.
+    > So the split is index-preserving by construction: `quizMeta.js` holds the two
+    > language-independent fields (`lesson`, `answer`) once, in order; `quizText.<lang>.js` holds
+    > `{q, opts, explain}` at matching indices. **The answer key lives once, not five times** — five
+    > copies of a correctness-critical key is precisely the drift this project keeps paying for.
+    > **Scheduling never depends on what finished downloading.** `dueQuestions` and
+    > `questionsForLesson` read only indices and `lesson`, both in meta, so the queue is computed
+    > synchronously from meta and the words are merged in by index at render.
+    > **Result:** the 140.88 kB shared chunk is gone; the largest quiz chunk is **31.81 kB** (ja) and a
+    > reader fetches exactly one. Opening a lesson now pulls two files — its track/language body and
+    > its language's quiz text — where it used to pull one 480 kB body plus a 140 kB quiz blob.
+    > **Verified live, and the verification found two real bugs the tests could not see:**
+    > 1. **A mid-session language switch kept the old language's question.** `Practice` merged text
+    >    into `session` state at start, freezing the words while the chrome around them translated.
+    >    Fixed by storing meta-only in `session` and merging text at render — the class of bug, not
+    >    the instance. The same mistake had also left the results recap reading `question.q[lang]` on
+    >    what was now a plain string, i.e. blank.
+    > 2. **Then the fix crashed the screen.** Blanking `quizText` during the swap left
+    >    `question.opts` undefined for one render, and a live session renders from it every frame:
+    >    `TypeError: Cannot read properties of undefined (reading 'map')`, blank page. Fixed by not
+    >    blanking it — the previous language stays on screen until the new module resolves, which
+    >    removes the window and a content flash together.
+    > Re-verified after: no console errors, question and options render in Japanese mid-session,
+    > index 0 still maps to lesson 29's "What drives the economy?" with its options in order, grading
+    > still matches the answer key, and a seeded Leitner entry advanced box 1→2 with the right due
+    > date while the untouched entry stayed put.
+    > **Proven equivalent before deleting anything:** the merged node-only view is
+    > `JSON.stringify`-identical to the pre-split `quizData`, and the `answer` and `lesson` keys match
+    > index-for-index across all 42 questions.
+    > **Note for whoever adds a question next:** append to `quizMeta.js` **and** all five
+    > `quizText.<lang>.js` at the same index. `check-data.mjs`'s parity checks fail on a half-added
+    > question, and the merged view takes its length from the longest input specifically so a question
+    > added to one language but not to meta surfaces rather than being dropped off the end.
+
+
 **HELD — owner decisions, do not act on these**
 
 12. **[HELD] Expo vs. Vite** (§2.1) — needs a human call; blocks store release, not the web launch. See

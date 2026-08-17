@@ -7,6 +7,13 @@
 // result into the same schedule.
 //
 // The explanation is the point: a wrong answer teaches rather than scoring.
+//
+// `question` arrives with its text already resolved to one language — plain
+// strings, not { en, es, … } maps. Since the 2026-08-17 quiz split (item 48)
+// the words live in a per-language module the screens load, so the language
+// is chosen before this component sees the question rather than by indexing
+// a map here. `lang` is still taken because the caller passes it, but nothing
+// below needs it.
 // ═══════════════════════════════════════════════════════════════════════════
 
 import { useState } from "react";
@@ -14,7 +21,7 @@ import Icon from "./Icon.jsx";
 import { Note, Text } from "./ui.jsx";
 import { fill, ink, line, radius, space, surface } from "../theme.js";
 
-export default function Question({ question, lang, t, onAnswered, autoFocusHeading = false }) {
+export default function Question({ question, t, onAnswered, autoFocusHeading = false }) {
   const [choice, setChoice] = useState(null);
   const revealed = choice !== null;
   const correct = choice === question.answer;
@@ -34,11 +41,11 @@ export default function Question({ question, lang, t, onAnswered, autoFocusHeadi
         tabIndex={autoFocusHeading ? -1 : undefined}
         style={{ marginBottom: space["3"], outline: "none" }}
       >
-        {question.q[lang]}
+        {question.q}
       </Text>
 
-      <div role="radiogroup" aria-label={question.q[lang]}>
-        {question.opts[lang].map((option, i) => {
+      <div role="radiogroup" aria-label={question.q}>
+        {question.opts.map((option, i) => {
           const isRight = i === question.answer;
           const picked = i === choice;
 
@@ -96,7 +103,7 @@ export default function Question({ question, lang, t, onAnswered, autoFocusHeadi
             label={correct ? t.quizCorrect : t.quizWrong}
             icon={correct ? "check" : "info"}
           >
-            {question.explain[lang]}
+            {question.explain}
           </Note>
         </div>
       )}

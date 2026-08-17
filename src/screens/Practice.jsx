@@ -14,7 +14,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { EVENTS, quizScore, track } from "../lib/analytics.js";
-import { quizData } from "../content/quizData.js";
+import { quizMeta } from "../content/quizMeta.js";
 import { dueQuestions, seenCount } from "../lib/review.js";
 import Icon from "../components/Icon.jsx";
 import Question from "../components/Question.jsx";
@@ -27,6 +27,16 @@ import { ink, line, space } from "../theme.js";
 // the review's "low-pressure interstitial" idea — instead of one long queue
 // the learner has to either finish or abandon mid-question.
 const BATCH_SIZE = 10;
+
+// Quiz text, one language per module (item 48). The schedule lives in
+// quizMeta and is always available synchronously; only the words are fetched.
+const QUIZ_TEXT_LOADERS = {
+  en: () => import("../content/quizText.en.js"),
+  es: () => import("../content/quizText.es.js"),
+  ko: () => import("../content/quizText.ko.js"),
+  zh: () => import("../content/quizText.zh.js"),
+  ja: () => import("../content/quizText.ja.js"),
+};
 
 export default function Practice({ t, lang, review, recordReview }) {
   // Frozen when a session starts: answering mutates `review`, and a live queue
@@ -42,7 +52,35 @@ export default function Practice({ t, lang, review, recordReview }) {
   // learner has chosen whether to continue.
   const [atBatchPause, setAtBatchPause] = useState(false);
 
-  const due = useMemo(() => dueQuestions(review, quizData), [review]);
+  // Question TEXT is a per-language module (item 48); the schedule is not.
+  // dueQuestions reads only indices and `lesson`, both of which live in
+  // quizMeta, so the queue is computed from meta and the words are merged in
+  // afterwards by index. Deriving the schedule from the loaded language file
+  // instead would make a learner's review order depend on which module had
+  // finished downloading.
+  const [quizText, setQuizText] = useState(null);
+  useEffect(() => {
+    let cancelled = false;
+    // Deliberately NOT setQuizText(null) here. A review session renders from
+    // this every frame, so blanking it mid-session left `question.opts`
+    // undefined for one render and crashed the screen. Keeping the previous
+    // language on screen until the new module resolves removes that window,
+    // and removes a content flash on the way.
+    QUIZ_TEXT_LOADERS[lang]().then((mod) => {
+      if (!cancelled) setQuizText(mod.quizText);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [lang]);
+
+  // Merged at render, never stored in `session`. Storing merged text would
+  // freeze a session in whichever language was loaded when it started — the
+  // language picker changed the chrome around the question but not the
+  // question, which is exactly the bug the first cut of this split shipped.
+  const withText = ({ question, index }) => ({ ...question, ...quizText?.[index] });
+
+  const due = useMemo(() => dueQuestions(review, quizMeta), [review]);
   const seen = seenCount(review);
   const item = session ? session[position] : null;
 
@@ -156,7 +194,7 @@ export default function Practice({ t, lang, review, recordReview }) {
                     <Icon name={r.correct ? "check" : "x"} size="1.1em" strokeWidth={2.5} />
                   </span>
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    <Text variant="small" color={ink.body}>{r.item.question.q[lang]}</Text>
+                    <Text variant="small" color={ink.body}>{withText(r.item).q}</Text>
                     <Text variant="caption" color={ink.muted} style={{ marginTop: space["1"] }}>
                       {t.reviewFromLesson.replace("{n}", r.item.question.lesson)}
                     </Text>
@@ -190,7 +228,7 @@ export default function Practice({ t, lang, review, recordReview }) {
         {/* Keyed so each question remounts with fresh state. */}
         <Question
           key={item.index}
-          question={item.question}
+          question={withText(item)}
           lang={lang}
           t={t}
           onAnswered={(wasCorrect) => {
@@ -237,7 +275,7 @@ export default function Practice({ t, lang, review, recordReview }) {
               {t.reviewDueTemplate.replace("{n}", due.length)}
             </Text>
           </div>
-          <Button full onClick={() => start(due)} iconRight="arrowRight">{t.quizStart}</Button>
+          <Button full disabled={!quizText} onClick={() => start(due)} iconRight="arrowRight">{t.quizStart}</Button>
         </Card>
       ) : (
         <Card style={{ marginTop: space["5"], textAlign: "center" }}>
@@ -255,7 +293,8 @@ export default function Practice({ t, lang, review, recordReview }) {
       <Button
         full
         variant="outline"
-        onClick={() => start(quizData.map((question, index) => ({ question, index })))}
+        disabled={!quizText}
+        onClick={() => start(quizMeta.map((question, index) => ({ question, index })))}
         style={{ marginTop: space["3"] }}
       >
         {t.practiceAll}
