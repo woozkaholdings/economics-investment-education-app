@@ -20,6 +20,37 @@
 // term used in four and defined in one is the forward-reference shape item 60
 // actually found.
 //
+// THE GLOSSARY CORPUS (`npm run jargon -- glossary`), added by backlog item 66.
+// Until 2026-08-17 the corpus was lesson prose and nothing else, and so was
+// §17b's: `jargon-candidates.mjs` read lesson heading/body/takeaway/thinkAbout,
+// §17b's `mentionedIn` read heading+body, and **neither ever opened
+// glossary.js's own `f` and `ex` strings**. So §3.0.3's "no undefined jargon"
+// was measured across lessons and nowhere else — while a reader who taps a chip
+// lands on exactly that unmeasured text. This mode points the same extractor at
+// it: one doc per glossary entry, `en.f` + `en.ex`.
+//
+// Two things about it differ from the lesson corpus, deliberately:
+//
+//  1. **Self-reference needs no special case.** A term appearing in its own
+//     definition ("A Dividend is…") is a glossary key, so the existing
+//     subtraction puts it in the CONTROL bucket, never the candidate list. The
+//     glossary-mode candidate list is by construction "words used in
+//     definitions that have no entry of their own".
+//  2. **Reach is not the signal here, so the thresholds drop to 1.** Curation
+//     rule 2 ("the lesson whose subject IS the term defines it") depends on
+//     lessons being read in order; a glossary has no order. A reader arrives at
+//     one entry directly, from a chip, and reads only that entry — so a term
+//     left undefined in a single definition is already a dead end, and
+//     suppressing it for low reach would hide exactly the case this mode
+//     exists to find. The cost is a noisier list, which is correct for a
+//     measurement and is why the item that filed this said measure first and
+//     decide once, with the number in hand.
+//
+// The judgement call in WHY THIS IS NOT A CHECK applies here with MORE force,
+// not less: glossary prose is written for a reader who is already looking
+// something up, so "define every term used in a definition" is circular past a
+// point. Do not add keys to shorten this list.
+//
 // WHY THIS IS NOT A CHECK, and must not be turned into one. Its output is a
 // *candidate* list, ~85% of which is ordinary compositional English ("savings
 // account", "monthly payment", "lose value") that needs no definition at all.
@@ -45,10 +76,13 @@ import { lessons } from "../src/content/lessons.js";
 import { lessonContent } from "../src/content/lessonContent.js";
 
 const track = process.argv[2] ?? "money";
-if (!["money", "economy", "all"].includes(track)) {
-  console.error(`usage: node scripts/jargon-candidates.mjs [money|economy|all]`);
+if (!["money", "economy", "all", "glossary"].includes(track)) {
+  console.error(`usage: node scripts/jargon-candidates.mjs [money|economy|all|glossary]`);
   process.exit(2);
 }
+// `glossary` scans glossary definitions instead of lesson prose (item 66).
+const isGlossaryCorpus = track === "glossary";
+const UNIT = isGlossaryCorpus ? "entries" : "lessons";
 
 const norm = (s) => s.toLowerCase().replace(/[^a-z0-9%()]+/g, " ").trim();
 
@@ -74,20 +108,31 @@ for (const [key, entry] of Object.entries(glossary)) {
   if (entry.en?.s) add(entry.en.s);
 }
 
-// ── Corpus: everything a reader of these lessons actually sees, in English.
-const inTrack = lessons.filter((l) => track === "all" || l.track === track);
+// ── Corpus: everything a reader of this surface actually sees, in English.
+//    One doc per unit — a lesson, or (glossary mode) a glossary entry.
 const docs = [];
-for (const lesson of inTrack) {
-  const c = lessonContent[lesson.id];
-  if (!c) continue;
-  const parts = [];
-  for (const s of c.sections ?? []) {
-    if (s.heading?.en) parts.push(s.heading.en);
-    if (s.body?.en) parts.push(s.body.en);
+if (isGlossaryCorpus) {
+  for (const [key, entry] of Object.entries(glossary)) {
+    const parts = [];
+    if (entry.en?.f) parts.push(entry.en.f);
+    if (entry.en?.ex) parts.push(entry.en.ex);
+    if (!parts.length) continue;
+    docs.push({ id: key, text: parts.join("\n\n") });
   }
-  if (c.takeaway?.en) parts.push(c.takeaway.en);
-  if (c.thinkAbout?.en) parts.push(c.thinkAbout.en);
-  docs.push({ id: lesson.id, text: parts.join("\n\n") });
+} else {
+  const inTrack = lessons.filter((l) => track === "all" || l.track === track);
+  for (const lesson of inTrack) {
+    const c = lessonContent[lesson.id];
+    if (!c) continue;
+    const parts = [];
+    for (const s of c.sections ?? []) {
+      if (s.heading?.en) parts.push(s.heading.en);
+      if (s.body?.en) parts.push(s.body.en);
+    }
+    if (c.takeaway?.en) parts.push(c.takeaway.en);
+    if (c.thinkAbout?.en) parts.push(c.thinkAbout.en);
+    docs.push({ id: lesson.id, text: parts.join("\n\n") });
+  }
 }
 
 // Head nouns that make a phrase financial rather than ordinary. Not a term
@@ -156,10 +201,18 @@ for (const { id, text } of docs) {
   }
 }
 
+// Doc ids are lesson numbers on the lesson corpus and glossary keys (strings)
+// on the glossary corpus, so the id sort has to be told which it is: `a - b` on
+// two strings is NaN, which leaves the citation list in hash order rather than
+// failing, i.e. wrong and quiet.
+const byDocId = isGlossaryCorpus
+  ? (a, b) => String(a).localeCompare(String(b))
+  : (a, b) => a - b;
+
 const known = [];
 const candidates = [];
 for (const [n, h] of hits) {
-  const row = { n, display: h.display, lessons: [...h.lessons].sort((a, b) => a - b), count: h.count };
+  const row = { n, display: h.display, lessons: [...h.lessons].sort(byDocId), count: h.count };
   (glossaryForms.has(n) ? known : candidates).push(row);
 }
 const byReach = (a, b) => b.lessons.length - a.lessons.length || b.count - a.count;
@@ -167,30 +220,46 @@ known.sort(byReach);
 candidates.sort(byReach);
 
 // ── Report ────────────────────────────────────────────────────────────────
-console.log(`jargon candidates — track "${track}", ${docs.length} lessons, ${hits.size} raw candidates`);
+const corpusLabel = isGlossaryCorpus
+  ? `glossary definitions (en.f + en.ex)`
+  : `track "${track}"`;
+console.log(`jargon candidates — ${corpusLabel}, ${docs.length} ${UNIT}, ${hits.size} raw candidates`);
 console.log(`glossary: ${Object.keys(glossary).length} entries, ${glossaryForms.size} surface forms\n`);
 
 console.log(`CONTROL — extracted terms that ARE already in the glossary (${known.length}):`);
-for (const h of known) console.log(`  ${h.display.padEnd(24)} ${h.lessons.length} lessons, ${h.count}x`);
+for (const h of known) console.log(`  ${h.display.padEnd(24)} ${h.lessons.length} ${UNIT}, ${h.count}x`);
 
-const REACH = 2;
-const USES = 3;
+// On the glossary corpus every occurrence is reported (see the header): reach
+// across entries is not the signal it is across lessons, because a glossary is
+// not read in order.
+const REACH = isGlossaryCorpus ? 1 : 2;
+const USES = isGlossaryCorpus ? 1 : 3;
 const reported = candidates.filter((h) => h.lessons.length >= REACH || h.count >= USES);
-console.log(`\nCANDIDATES not in the glossary, used in >= ${REACH} lessons or >= ${USES}x (${reported.length}):`);
+console.log(`\nCANDIDATES not in the glossary, used in >= ${REACH} ${UNIT} or >= ${USES}x (${reported.length}):`);
+const pad = isGlossaryCorpus ? 34 : 30;
 for (const h of reported) {
   console.log(
-    `  ${h.display.padEnd(30)} ${String(h.lessons.length).padStart(2)} lessons ${String(h.count).padStart(3)}x   ` +
-      `lessons ${h.lessons.join(",")}`,
+    `  ${h.display.padEnd(pad)} ${String(h.lessons.length).padStart(2)} ${UNIT} ${String(h.count).padStart(3)}x   ` +
+      `${UNIT} ${h.lessons.join(", ")}`,
   );
 }
 console.log(`\n  (${candidates.length - reported.length} lower-reach candidates suppressed; most are ordinary English)`);
 console.log(
-  `\nREADING THIS: reach is the signal, and a single-lesson term is usually defined by that lesson\n` +
-    `(curation rule 2). The shape to look for is a term used across several lessons and defined in\n` +
-    `only one — a reader meeting it earlier gets no definition. Before adding any glossary entry:\n` +
-    `read the first use, confirm the prose does not already define it, and remember each entry is\n` +
-    `learner-facing copy under §10.1 (what a thing IS, never what to do about it). Do not batch-add\n` +
-    `entries to shorten this list — every new key also obliges a chip or an exclusion in §17b.`,
+  isGlossaryCorpus
+    ? `\nREADING THIS: reach is NOT the filter here — everything found is listed, because a reader\n` +
+        `arrives at one entry from a chip and reads only that entry, so there is no "a later entry\n` +
+        `defines it". Most of this list is still ordinary compositional English and needs nothing.\n` +
+        `The shape worth acting on is a term of art a reader could not have met yet, used as though\n` +
+        `already known. Definitions are written for someone mid-lookup, so "define every word used\n` +
+        `in a definition" is circular past a point — decide once, with the number in hand, and do\n` +
+        `NOT add keys to shorten the list: every new key also obliges §17b chips in every lesson\n` +
+        `that uses it (item 64's Stock/Bond half was 15 lessons of chip decisions).`
+    : `\nREADING THIS: reach is the signal, and a single-lesson term is usually defined by that lesson\n` +
+        `(curation rule 2). The shape to look for is a term used across several lessons and defined in\n` +
+        `only one — a reader meeting it earlier gets no definition. Before adding any glossary entry:\n` +
+        `read the first use, confirm the prose does not already define it, and remember each entry is\n` +
+        `learner-facing copy under §10.1 (what a thing IS, never what to do about it). Do not batch-add\n` +
+        `entries to shorten this list — every new key also obliges a chip or an exclusion in §17b.`,
 );
 
 // ── Control. The only failure mode this script has is matching nothing.
@@ -272,11 +341,23 @@ const phantoms = reported.filter((h) => {
   // `norm` flattens a hyphen to a space, so "self-employment tax" must still
   // match (joining on \s+ alone reported it as a phantom — a false positive
   // this control hit on its first run), while a comma or full stop must not.
-  const re = new RegExp(
-    words.map((w) => w.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join(`[^A-Za-z0-9.,;:!?"]+`),
-    "i",
-  );
-  return !re.test(corpus);
+  //
+  // ONE EXCEPTION, and it is the same false positive twice. `norm` also splits
+  // *inside a number*: "$1,000" becomes "1 000", so rejoining it needs the very
+  // comma the clause rule forbids, and `$1,000 deductible` — ordinary
+  // contiguous prose in the Deductible entry — was reported as an artefact on
+  // the glossary corpus's first run (item 66). A digit-grouping comma (or a
+  // decimal point) is not a clause boundary, so when BOTH sides of a gap are
+  // numeric the join relaxes to "any non-letter run". Between two *words* a
+  // comma still fails, which is the case this control exists for: "stocks
+  // Bonds" is rejected exactly as before.
+  const esc = (w) => w.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  let src = esc(words[0]);
+  for (let i = 1; i < words.length; i++) {
+    const numericGap = /\d$/.test(words[i - 1]) && /^\d/.test(words[i]);
+    src += (numericGap ? `[^A-Za-z]+` : `[^A-Za-z0-9.,;:!?"]+`) + esc(words[i]);
+  }
+  return !new RegExp(src, "i").test(corpus);
 });
 if (phantoms.length) {
   problems.push(

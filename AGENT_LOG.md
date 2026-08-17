@@ -429,7 +429,62 @@ for the history. No open P1/P2 items.
     - **Honest priority: low.** Lower than item 63 was, because item 63 had a rendered failure and this
       does not.
 
-66. **[Content/Instrument — a learner-facing surface BOTH jargon instruments are blind to. Filed
+67. **[Content — the step-2 decision item 66 said to make once, with the number in hand. Filed
+    2026-08-17 by the run that measured it. BLOCKED the same way item 64's `Dividend` is.]
+    Three of the 56 glossary-definition candidates are real; the rest is noise, and that is the
+    finding.** The measurement (below, and reproducible via `npm run jargon -- glossary`) returned 56
+    candidates across 32 entries. Read one by one, **53 are extractor noise or ordinary compositional
+    English** — acronym-rule hits on the shouty emphasis in `Fed Funds Rate` (`THE`, `ALL`), fragments
+    of an entry's own key (`fed funds`, `funds rate`), and phrases like `higher deductible`,
+    `regular payment`, `investment account` that need no definition. **The genuine residual is three
+    terms**, and none is a surprise of scale — item 66 predicted one and there are three:
+    - **`dividends`** (`Brokerage Account`.`en.f`) — item 66's confirmed instance, unchanged.
+      **Already solved and already blocked:** the `Dividend` entry is written, verified and sitting in
+      `scratchpad/{glossary.with-dividend.js,lessonTerms.with-dividend.js,dividend-glossary.patch}`
+      from item 64. Ships with that.
+    - **`realized gains`** (`Brokerage Account`.`en.f`) — a tax term of art, used as though known.
+      **This one is the argument for the whole item:** it occurs in *no lesson at all* (proved — the
+      lesson corpus returns 0 for it, the glossary corpus 1), so it was unreachable by every
+      instrument the repo had until now. Not merely unchipped: unmeasurable.
+    - **`NBER`** (`Recession`.`en.f`) — an unexpanded acronym, the exact shape item 64 fixed for APR.
+      Weaker than the other two: the sentence around it ("US recessions are dated by the NBER using
+      broader criteria") does most of the work, so this may be a one-word expansion rather than an
+      entry.
+    - **Also worth one line, not an entry:** `gov bond` / `gov bond rates` (`Credit Spread`,
+      `Yield Curve`) is an *abbreviation* — "gov" — in learner-facing copy, which is a plain-language
+      question (the real product definition's bar), not an undefined-jargon one.
+    - **Why nothing was fixed in the same run, and it is not timidity.** Adding any glossary key moves
+      `LAUNCH_PLAN.md` §1's generated "32 glossary terms", which `npm test` gates — and that file has
+      owner edits in flight. This is the identical blocker that stopped item 64's `Dividend`, proved
+      there rather than predicted. Expanding `NBER` or `gov` in place adds no key and is *not* blocked,
+      but it is a content edit and item 66's own scope note says measure first, fix separately.
+    - **Scope when unblocked:** ship `Dividend` from scratchpad (item 64), decide `realized gains`
+      (entry, or rewrite the clause to not need one — the cheaper option and probably the right one),
+      and expand `NBER`/`gov` in place. **Honest priority: low-medium.** Three terms on a surface a
+      reader reaches only by tapping a chip.
+
+66. **✅ DONE 2026-08-17 (scheduled dev-agent) — measured, and the instrument is permanent.**
+    `npm run jargon -- glossary` now points the existing extractor at `glossary.js`'s own `en.f`/`en.ex`
+    strings: 32 entries, 70 raw candidates, 56 reported, **14 known glossary terms re-found by the
+    control**. The residual is **three real terms, not a body of them** (item 67 carries the decision).
+    Two design calls are recorded in the script header rather than here: self-reference needs no special
+    case (a term in its own definition is a glossary key, so the existing subtraction handles it), and
+    **the reach thresholds drop to 1 on this corpus** because a glossary is not read in order — curation
+    rule 2 has no analogue when the reader arrives at one entry from a chip and reads only that entry.
+    **The run also found and fixed a false positive in the contiguity control** (`$1,000 deductible`):
+    `norm` splits inside a number, so rejoining needed the very comma the clause rule forbids. The join
+    now relaxes only when **both** sides of a gap are digits — proved narrow by re-injecting the dead
+    clause-break guard and confirming `"stocks Bonds", "interest taxes"` are still caught. See the run
+    log entry of this date.
+    > **The premise held for once, and the scale held too.** Six of the last seven items had a partly
+    > wrong premise. This one predicted "one confirmed instance, the rest unmeasured" and the rest
+    > measured out at two more — a rare case where the filing run guessed the shape right. Worth not
+    > re-deriving: **`realized gains` appears in zero lessons**, which is the cleanest possible proof
+    > that this corpus was genuinely unreachable rather than merely unchecked.
+
+    <details><summary>Original filing (2026-08-17)</summary>
+
+    **[Content/Instrument — a learner-facing surface BOTH jargon instruments are blind to. Filed
     2026-08-17 by the run that closed item 64's APR and phantom halves; found by accident, which is
     the point.] Glossary definitions are prose that no undefined-jargon check reads.** `npm run
     jargon` builds its corpus from lesson `heading`/`body`/`takeaway`/`thinkAbout`
@@ -452,6 +507,8 @@ for the history. No open P1/P2 items.
       lessons of chip decisions).
     - **Cheap and self-limiting:** the corpus is ~32 entries × 2 strings, all in one file, and the
       extractor already exists. This is a measurement run, not a content run.
+
+    </details>
 
 60. **✅ DONE 2026-08-17 (scheduled dev-agent). The residual now has an instrument (`npm run jargon`),
     and the one real gap it found is closed: Brokerage Account is a glossary entry, chipped on lesson 6.
@@ -7074,6 +7131,100 @@ scratchpad plus `npm run readiness -- --write` plus a log entry, with every judg
 made and recorded in item 64. **If the owner's redesign is still in flight, do not queue anything that
 touches `LAUNCH_PLAN.md`** — prefer **item 66** (measure the glossary-definition residual; one file,
 the extractor already exists, and it is a measurement not a content change) over **item 65** (light
+`--graph-amber`, still honestly low — nothing renders below the bar). **Item 18 remains the entire
+critical path to ending Phase 0 and is blocked on an owner action: an analytics provider account and
+key.**
+
+### 2026-08-17 — Item 66: point the extractor at the glossary's own prose (`npm run jargon -- glossary`)
+
+**The owner's redesign is in flight, and this run was chosen to fit around it.** `git status` on arrival:
+twelve modified files (`LAUNCH_PLAN.md`, `check-blindspot.mjs`, `App.jsx`, `ui.jsx`, all five locales,
+`Learn/Practice/Reference.jsx`) plus an untracked `UIUX/` of Mobbin/Duolingo design captures dated
+08-14→08-17. **This is owner work, not a stalled run of mine** — the previous entry already identified
+it as such ("`dist/` necessarily contains the owner's in-flight redesign"), and the `UIUX/` folder
+corroborates. Nothing of theirs was touched, stashed or committed. The previous run also pre-decided
+this exact situation: *"if the owner's redesign is still in flight, do not queue anything that touches
+`LAUNCH_PLAN.md` — prefer item 66."* Its first choice (ship the saved `Dividend` work) is gated on
+`LAUNCH_PLAN.md` being clean. It is not. **So item 66, exactly as queued.** Baseline `npm test` was
+captured on the dirty tree **before any edit**: exit 0 — the owner's work was green on arrival and is
+green now. **One file changed this run: `scripts/jargon-candidates.mjs`.**
+
+**Shipped — the corpus neither instrument opened.** `npm run jargon -- glossary` builds one doc per
+glossary entry from `en.f` + `en.ex`. Until today `jargon-candidates.mjs` read lesson
+heading/body/takeaway/thinkAbout and §17b's `mentionedIn` read heading+body, so §3.0.3's "no undefined
+jargon" was measured across lessons **and nowhere else** — while a reader who taps a chip lands on
+exactly this text. Two design calls, both argued in the script header:
+
+- **Self-reference needs no special case.** A term used in its own definition is a glossary key, so the
+  existing subtraction routes it to the CONTROL bucket. The candidate list is by construction "words
+  used in definitions that have no entry of their own" — which is the question being asked.
+- **Reach thresholds drop to 1 here.** Curation rule 2 ("the lesson whose subject IS the term defines
+  it") depends on lessons being read in order. A glossary has none: the reader arrives at one entry
+  from a chip and reads only that entry, so a term left undefined in a *single* definition is already
+  a dead end. Suppressing it for low reach would hide the exact case the mode exists to find. The cost
+  is a noisier list, which is what a measurement should look like.
+
+**The measurement: 32 entries, 70 raw candidates, 56 reported, 14 known terms re-found.** Read one by
+one, **53 of the 56 are noise or ordinary compositional English** and 3 are real (`dividends`,
+`realized gains`, `NBER`) — filed as **item 67** with the decision, not acted on. Two things in the
+noise are worth a sentence: the acronym rule fires on `THE` and `ALL` because `Fed Funds Rate`'s
+definition uses all-caps emphasis, and several candidates are fragments of an entry's own key.
+
+**`realized gains` is the result that justifies the item.** It occurs in **zero lessons** — proved,
+not assumed: the `all`-track corpus returns 0 for it and the glossary corpus returns 1, and `grep`
+confirms it exists in `glossary.js` and in no lesson content file. So it was not merely unchipped, it
+was **unreachable by every instrument this repo had**. An absence report's whole risk is looking
+reassuring, and this is the one candidate that could not have surfaced any other way.
+
+**The control failed on its own first run against this corpus, on a false positive, and the fix is
+kept narrow.** It reported `$1,000 deductible` — ordinary contiguous prose in the `Deductible` entry —
+as an artefact. Cause: `norm` splits *inside a number* (`$1,000` → `1 000`), so rejoining it needs the
+very comma the "not clause punctuation" rule forbids. This is the second time this control has hit a
+false positive from `norm` reshaping a token (the first was the hyphen in `Self-Employment Tax`). The
+join now relaxes to "any non-letter run" **only when both sides of the gap are digits**; between two
+words a comma still fails.
+
+**Verification — both injections proved to land before their failure was believed** (standing rule;
+restored from `scratchpad/jargon.item66.backup`, re-verified by `shasum 4a2f6142`, never
+`git checkout --`, which here would have destroyed owner work):
+
+1. **Numeric-gap relaxation disabled** (`const numericGap = false;`, `grep -c` = 1) → contiguity
+   control failed naming **`"$1,000 deductible"`**. So the relaxation is load-bearing, not decoration.
+2. **The dead clause-break guard revived** (`endsClause` read off the stripped word again) → control
+   failed naming **`"stocks Bonds", "interest taxes"`** on the money corpus, independently reproducing
+   the previous run's result. So the relaxation did **not** defang the control it modifies.
+
+**All four modes green after restore:** `glossary` ✓ 14 known terms, `money` ✓ 12, `economy` ✓ 9,
+`all` ✓ 19. **`money` re-finding exactly 12 is the regression check** — it is the number the previous
+run's entry recorded, unchanged. **`npm test` exit 0**, **`npm run build` exit 0** (943 ms).
+`refresh-readiness.mjs --check` passes and **`--write` was deliberately not run**: it rewrites
+`LAUNCH_PLAN.md`, which has owner edits. No content changed, so no generated figure moved.
+
+**Adversarial self-check (step 5).** **Blindspot register:** nothing reintroduced — but note the honest
+limit, `check-blindspot.mjs` has owner edits so I did **not** run or rely on it this run; instead the
+claim is narrowed to what is checkable: this run changed **one script and no learner-facing string**,
+so §10.1 (no advice language, disclaimer surfaces), §10.2 (no person's name — grepped the diff),
+§10.3 (kids framing) and §2.3 (no live dates/figures) have no surface to regress through. `npm test`
+runs `check-blindspot.mjs` in the owner's edited form and passed, which is evidence about their tree,
+not mine. **DECISIONS.md conflict:** none — no storage, routing, build, or content-module-shape change;
+`.js`-not-JSON, localStorage-only and Vite-not-Expo are all untouched. **Already-done backlog item:**
+no — item 66 was filed yesterday by the run that closed item 64 and was explicitly named as this run's
+preferred pick. **Own verification claims:** an independent reviewer re-running `npm test`,
+`npm run build`, the four `jargon` modes and the two injections gets these results. Four caveats stated
+rather than buried: **(a)** `npm run jargon` is still a report, not part of `npm test`, so this new mode
+runs only when someone runs it — deliberate (the header's "WHY THIS IS NOT A CHECK"), but a regression
+here is silent until then; **(b)** the "53 of 56 are noise" split is **my judgement**, not a
+measurement — a reader who disagrees has the full list and can re-read it; **(c)** the corpus is `en`
+only, so the four Beta translations' definitions are still entirely unmeasured by anything, and this
+run did not change that; **(d)** the contiguity control proves a phrase occurs *somewhere* in the
+corpus, not in the entry its citation names — a subtler mis-attribution would still pass, unchanged
+from before.
+
+**Next run: the queue is unchanged and still gated on the owner's tree.** If `LAUNCH_PLAN.md` is clean,
+**ship the saved `Dividend` work** (item 64 — a copy-in from scratchpad plus `npm run readiness --
+--write` plus a log entry, every judgement already made). **If the redesign is still in flight, do not
+queue anything touching `LAUNCH_PLAN.md`** — the cheapest unblocked work is **item 67's `NBER`/`gov`
+expansions**, which add no glossary key and so move no gated figure, or **item 65** (light
 `--graph-amber`, still honestly low — nothing renders below the bar). **Item 18 remains the entire
 critical path to ending Phase 0 and is blocked on an owner action: an analytics provider account and
 key.**
