@@ -445,6 +445,19 @@ Add a new entry when a run makes a choice future work should be able to look up 
   `completedLessons`/`isLessonUnlocked` props `App` already passed them, so a persisted value flows
   through unchanged. Verified in the browser (static build + local server): completed lesson 1,
   reloaded, Home still showed "1/12" and lesson 2 remained unlocked.
+  > **Read that bullet as of its date — it is a dated verification record, not a description of the
+  > current app.** Every name in it belonged to the tree at `c7651a6`, the commit that closed the gap.
+  > Later the *same day*, `79d9507` ("Rebuild app from scratch") replaced the component tree wholesale
+  > and took four of those names with it — `Home`, `isLessonUnlocked`, `markLessonComplete` and
+  > `saveCompletedLessons`; `loadCompletedLessons` was the only one it left standing. "1/12" was the
+  > true reading when the catalogue held 12 lessons — it held 40 the day this note was written.
+  > **Deliberately not corrected: rewriting a dated verification falsifies
+  > it** — the same rule the lesson-id ranges below carry,
+  > where `check-data.mjs` §29's failure message says to append a *new* dated note rather than edit
+  > the old claim. What this bullet records is unchanged: `completedLessons` persists through
+  > `localStorage` like every other key above, which is the decision. Only the names it verified
+  > *through* are historical. *Dated 2026-08-17 (item 62's F11); F11 named two of the four dead
+  > names, the other two turned up on re-measuring.*
 - **Revisit when:** the app gains real accounts (Supabase), at which point this whole section should
   be superseded by a sync strategy (local-first with server sync, vs. server-authoritative).
 

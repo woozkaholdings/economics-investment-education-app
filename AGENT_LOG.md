@@ -876,12 +876,26 @@ for the history. No open P1/P2 items.
       emphases on per-lesson colour (§3.1.1: one accent, colour never as a fill; §3.4: one accent *per
       lesson/phase*). §3.4 reads as a v1 leftover §3.1.1 superseded. Duplicate §-titles are their own
       hazard in a document whose section numbers are load-bearing cross-references.
-    - **F11.** `DECISIONS.md`'s localStorage entry has a *verification note* naming `isLessonUnlocked`
-      and `Home` — neither exists (the gate is `isUnlocked(index)`, `src/App.jsx`). **The disposition
-      differs from the rest:** it is a dated record of what was true on 2026-08-04, and correcting it
-      would falsify the record. The honest fix is a dating note, not a rewrite — the same call item 55
-      faced with §4.1/§4.2. *Note this entry's* other *half was rewritten by item 61 (F10); the
-      verification note below it was deliberately left.*
+    - **F11. ✅ DONE 2026-08-17 (scheduled dev-agent) — dated, not rewritten, and not guarded either.**
+      A blockquote under the "Gap closed 2026-08-04" bullet marks it as a dated verification record and
+      names the commits: every name in it belonged to `c7651a6` (the commit that closed the gap), and
+      `79d9507` **the same day** ("Rebuild app from scratch") replaced the component tree and took the
+      names with it. **F11 named two dead names; re-measuring found four** — `Home`, `isLessonUnlocked`,
+      `markLessonComplete`, `saveCompletedLessons`, with only `loadCompletedLessons` left standing
+      (`src/lib/useAppState.js`). **Two design calls worth not re-deriving.** (1) *No guard was added,
+      on purpose.* The obvious one — assert the dead names stay dead — would have fired on the owner's
+      in-flight redesign, which is Duolingo-shaped and may well reintroduce a `Home` screen; a check
+      that breaks the owner's build to protect a footnote is a bad trade. (2) *The note states no live
+      claim about the tree.* Its facts are commit hashes (immutable) or explicitly dated ("it held 40
+      the day this note was written"), because a dating note that names current internals would rot the
+      exact way the text it annotates did. First draft failed this and said `loadCompletedLessons`
+      "is the one that survived" — present tense, rot-capable; caught by step 5, reworded to a claim
+      about what the rebuild left. *This entry's* other *half was rewritten by item 61 (F10).*
+      *Original text:* `DECISIONS.md`'s localStorage entry has a *verification note* naming
+      `isLessonUnlocked` and `Home` — neither exists (the gate is `isUnlocked(index)`, `src/App.jsx`).
+      **The disposition differs from the rest:** it is a dated record of what was true on 2026-08-04,
+      and correcting it would falsify the record. The honest fix is a dating note, not a rewrite — the
+      same call item 55 faced with §4.1/§4.2.
     - **F12. ✅ DONE 2026-08-17 (scheduled dev-agent) — guarded, and deliberately NOT generated.**
       `check-data.mjs` **§29** classifies all **11** lesson ranges in the two-tracks section as `live`
       (must equal a track's current range) or `historical` (must equal none), and checks both
@@ -7906,3 +7920,109 @@ findings but one; **item 65** and **item 71** remain filed and honestly low, and
 until the redesign lands rather than move a palette colour underneath it. **Item 18 is still the entire
 critical path to ending Phase 0 and is still blocked on an owner action: an analytics provider account
 and key.**
+
+### 2026-08-17 (scheduled dev-agent) — Date the verification note instead of correcting it (item 62's F11)
+
+**What I picked, and why the queue was right this time.** The previous entry's "Next run" line said:
+if `LAUNCH_PLAN.md` is still owner-dirty, `Dividend` stays blocked and **F11 is the cheapest remaining
+unblocked pick**. It also said to re-check which files the owner has dirty *before* picking, because
+the entry before it had queued an item that turned out to live in an owner-modified file. Re-checked:
+the owner's redesign is still in flight and still the same twelve files (`git diff --stat` reports
+**12 files, 540+/78−**, identical to the previous run's arrival reading), plus an untracked `UIUX/`
+of Duolingo/Mobbin screen captures. `DECISIONS.md` is not among them. F11 it is — and F12's entry
+already established that these two are not to be batched, so this run is F11 alone.
+
+**F11 restated.** The localStorage entry's "Gap closed 2026-08-04" bullet is a *verification record* —
+it says what someone did in a browser and what they saw. It names `Home` and `isLessonUnlocked`, and
+neither exists. The trap is that the obvious fix is wrong: correcting the names would make the
+paragraph describe a verification that never happened. Item 55 faced the same call on §4.1/§4.2 and
+the answer there was the answer here — **date it, don't rewrite it**.
+
+**Re-measuring found twice what F11 filed.** F11 named two dead names. Grepping all five identifiers
+in the bullet against `src/` found **four** dead — `Home`, `isLessonUnlocked`, `markLessonComplete`
+and `saveCompletedLessons` — with `loadCompletedLessons` the only survivor (`src/lib/useAppState.js`;
+the write path is now `completeLesson` → `writeJSON(KEYS.completedLessons, next)`). Worth stating
+because it is a small argument for re-measuring a filed finding rather than implementing its text: the
+finding was a sample of the defect, not the extent of it.
+
+**The history the note can point at, which F11 did not have.** `git log` for 2026-08-04 shows
+`c7651a6` ("Persist completedLessons to localStorage") — the commit this bullet *is* the verification
+of — and then, **later the same day**, `79d9507` ("Rebuild app from scratch"). Confirmed by tree
+inspection: at `c7651a6` there is a real `src/components/Home.jsx` and `isLessonUnlocked` resolves; at
+`79d9507` the `src/screens/` layout exists, there is no `Home`, and `isUnlocked` has replaced it. The
+catalogue was **12** lessons at `c7651a6` and is **40** now, which is why "1/12" reads wrong. So the
+note does not have to assert "these names are gone" as a bare claim — it can name the commit that
+removed them, and a commit hash does not rot.
+
+**Two design calls, both of which are the change rather than commentary on it.**
+
+1. **No guard was added, and that is a decision, not an omission.** The house style here is to convert
+   a corrected claim into an asserted one (§26 for paths, §27 for `KEYS`, §29 for lesson ranges), and
+   the guard for this one is obvious: assert the four dead names stay dead. **I did not add it,
+   because it would fire on the owner.** The redesign in flight is Duolingo-shaped — `UIUX/` is full
+   of Duolingo and Buddy home-screen captures — and a `src/screens/Home.jsx` reappearing is a
+   *likely* outcome of it, not a far-fetched one. A check that fails the owner's build to protect a
+   footnote's negative claim is the wrong trade, and "the guard was cheap" is not a reason to ship a
+   guard that is wrong. The asymmetry with F12 is real and deliberate: F12's ranges are claims about
+   content the agent owns, F11's names are claims about UI structure the owner is actively rewriting.
+2. **The note itself states nothing that can rot.** This is the part the adversarial check earned.
+   Every fact in it is either a commit hash or explicitly dated — including the catalogue size, which
+   is written as "it held 40 the day this note was written" rather than as a live figure. The note
+   also deliberately does **not** say "the gate is now `isUnlocked`", which was my first instinct and
+   is exactly the sentence that created F11 in the first place: naming a current internal inside a
+   dated record is the defect, and repeating it one line below the annotation would have been comic.
+
+**Verified.** `npm test` (portable Node via `bash scripts/bootstrap-node.sh`) — `PASS: 0 failure(s), 1
+warning(s)` on `check-data.mjs`, and `PASS: 0 failure(s)` on each of `check-blindspot.mjs`,
+`check-claims.mjs`, `check-backlog.mjs`, `check-payload.mjs`, `check-measurements.mjs`,
+`refresh-readiness.mjs --check`. The one warning is the standing translation-review AI-share warning,
+unrelated. Three counter-assertions specifically relevant to this change, pasted from the tool's own
+lines rather than retyped (item 70): `§26 doc paths: 282 references across 5 docs (7 as Markdown
+links), 12 exempted, 2 command lines skipped.` — 281 → 282 is my single new `check-data.mjs`
+reference, which **resolves**, so no new exemption and `EXPECTED_EXEMPTIONS` is untouched at 12.
+`§27 persisted state: all 12 KEYS members named in DECISIONS.md.` — I edited this very entry and did
+not disturb the key list §27 reads out of it. `§29 DECISIONS.md lesson ranges: 11 claims in the
+two-tracks section, 2 live and checked against the tree (money 1-28, economy 29-40), 9 dated and
+required not to match.` — still 11, so the "12 lessons" and "40" in my note did not leak into §29's
+net (it is section-scoped, and this entry is a different section). **No build or browser check**, and
+W-1 is not being dodged: the change is one blockquote in a Markdown document, renders nothing, and is
+imported by nothing.
+
+**Owner's tree provably untouched.** `git diff --stat` restricted to their twelve paths reports the
+identical **12 files, 540+/78−** as on arrival; my own diff is `DECISIONS.md | 13 +++++++++++++`, one
+file, 13 insertions, 0 deletions, plus this log. `UIUX/` is still untracked and unread beyond `ls`.
+`check-blindspot.mjs` carries owner edits and was not touched; I did not lean on its result for the
+blindspot check below.
+
+**Adversarial self-check (step 5) — it found one thing, and the fix is in the change.**
+**Blindspot register:** grepped my own added lines directly (`git diff -U0 | grep '^+'`) for Dalio and
+person names, advice verbs, child-facing framing, currency figures and hardcoded current dates —
+**0 hits**. Done by hand rather than via `check-blindspot.mjs` because that file is owner-modified;
+in any case its scope is `src/content/` + `src/locales/` and this change is a document. The dates in
+my note are record dates, which is this file's convention throughout, not the live-date defect §2.3
+guards. **DECISIONS.md conflict:** none, and the direction is worth naming — this change *annotates*
+a decision entry while explicitly preserving it. No storage, routing, build or content-module-shape
+change; localStorage-only, `.js`-not-JSON and Vite-not-Expo untouched. **Already-done item:** no —
+`grep` for F11 across the log returns filings and cross-references, never a closure, and F12's entry
+records that F11 was deliberately left alone. **My own verification claims:** an independent reviewer
+re-running `npm test` gets these lines; all three figures above are pasted from the tool's output.
+**What the check actually caught:** my first draft wrote "`loadCompletedLessons` is the one that
+survived" — present tense, a live claim about `src/lib/useAppState.js`, i.e. the precise defect F11
+describes, reintroduced inside the note fixing it. Reworded to "was the only one it left standing", a
+claim about what commit `79d9507` did, which is immutable. The catalogue figure got the same
+treatment in the same pass. **One limit, stated not buried:** this note is unguarded prose by
+deliberate choice (call 1 above), so nothing stops a future run from "helpfully" correcting the four
+dead names — the note argues against that in its own text, and that is all it does. If the guard ever
+becomes safe to add, the trigger is the redesign landing, not a change of mind about its value.
+
+**Next run.** `Dividend` (items 64/67) remains the highest-value queued item and is **still gated on
+`LAUNCH_PLAN.md` being clean**; the saved work is at session `48dad761`'s scratchpad and the
+durability caveat is now **four entries old** — if that scratchpad is gone, redo it from item 64's
+entry, which records every judgement. **Re-check the owner's dirty files before picking anything**;
+that check has changed the answer in two of the last three runs. Item 62 is now down to **F6 alone**
+(`LAUNCH_PLAN.md`'s two sections both titled "Visual system" — owner-dirty file, and a redesign is
+precisely when that duplicate matters, so it may be worth raising with the owner rather than
+resolving unilaterally). **Item 65 should still wait for the redesign to land** rather than move a
+palette colour underneath it; **item 71** remains filed and honestly low. If everything is blocked,
+the honest report is that everything is blocked. **Item 18 is still the entire critical path to
+ending Phase 0 and is still blocked on an owner action: an analytics provider account and key.**
