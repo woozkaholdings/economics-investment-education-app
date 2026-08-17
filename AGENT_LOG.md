@@ -311,7 +311,19 @@ for the history. No open P1/P2 items.
     > this control if you re-measure.
     </details>
 
-58. **[Process — P4. The generalisation of the finding that closed item 49.] Read `LAUNCH_PLAN.md`
+58. **✅ DONE 2026-08-17 (scheduled dev-agent). The sweep ran; 13 contradictions are listed with
+    file:line in the run entry of this date, and the fixes are filed as item 61.** Two things this
+    item predicted turned out wrong, both worth not re-deriving. **(a) "Some of them owner calls" —
+    none are.** 9 are mechanical (make the doc match the measured tree), 4 are judgment, 0 need the
+    owner. **(b) The `measured 20`/`as of 20` grep it prescribed found nothing.** Its one same-day
+    annotation (`src/content/lessonTerms.js:52`) recomputed *correct* at 44/22/13/9 — the
+    stale-on-arrival pattern is real history but did not recur, so don't re-run that grep expecting a
+    hit. The sharpest finding was **not** either of the two this item pre-named: it is
+    `LAUNCH_PLAN.md:568`, where **§10.1 — a standing rule the adversarial self-check tells every run
+    to check against — names two screens deleted in the 2026-08-04 rebuild**, so the check cannot be
+    performed as written. One candidate was measured and **rejected** (§4.3's "Analytics live" is in
+    the table's *Ship* column, a requirement, not a status claim). See the run log entry of this date.
+    **[Process — was P4. The generalisation of the finding that closed item 49.] Read `LAUNCH_PLAN.md`
     and `DECISIONS.md` end to end against the current tree, and record every claim that no longer
     holds.** `README.md` carried a §10.2 violation in its opening sentence for sixteen days while the
     register said "✅ Closed", because the check that certified it scanned `src/` and the v5 prototype
@@ -378,6 +390,45 @@ for the history. No open P1/P2 items.
       check what already covers the surface — §17b, §17 and item 35's notes — before building anything.
     - **Honest priority: below item 58.** This is content growth on a clause whose measurable half is
       now green, and §4.3's content gates are both met. It is worth doing well, not doing soon.
+
+61. **[Process — P1 of what is left, and the cheapest real item on this list. Filed 2026-08-17 by the
+    run that closed item 58; the measurement is already done, so this is execution, not discovery.]
+    Apply the 9 mechanical corrections from item 58's sweep.** Each is "make the document match a tree
+    fact that was measured, with the measurement in the run entry of 2026-08-17." Ordered by value,
+    with F-numbers matching that entry:
+    - **F7 first, and it is not just tidying.** `LAUNCH_PLAN.md:568`–`569`'s §10.1 entry says the
+      disclaimer renders on "Home, Learn, Markets and About". `Home.jsx` and `Markets.jsx` were
+      deleted in the 2026-08-04 rebuild. Real sites, five: `Learn.jsx:168`, `LessonReader.jsx:324`,
+      `Practice.jsx:303`, `reference/MarketSignals.jsx:113`, `reference/Settings.jsx:119`. **§10.1 is
+      the rule the mandatory adversarial self-check names by number**, so this sentence being
+      unresolvable degrades every future run's check, not just this document. Strongly consider
+      pairing the fix with a `check-blindspot.mjs` assertion on the render *surfaces* — it currently
+      asserts only that the disclaimer key exists per locale, which is why this drifted unseen.
+    - **F1.** `LAUNCH_PLAN.md:493`'s §8 roadmap row still calls the §4.3 content gate the project's
+      blocker and highest-value work; `:386` (generated) says it is met. Prefer **deleting** the
+      figures from the row over regenerating them — item 55's own cheapest-disposition rule, and §8 is
+      a roadmap, not a scoreboard.
+    - **F2** `:96` analytics "none" → the local-sink seam that exists (`src/lib/analytics.js`).
+      **F3** `:247` Reference sub-nav is five, not four (add Sector performance). **F5** `:285` dark
+      mode is shipped, and "§backlog" is a dangling reference. **F8** `:179` kids blurbs carry a
+      fourth field (`why`, added 2026-08-16, `DECISIONS.md:221`).
+    - **F9** `DECISIONS.md:15`–`17` attributes "Expo from week 1" to §2.2/§8 of the *current* plan;
+      all four Expo mentions in `LAUNCH_PLAN.md` record it as open, and `:41` is the row that retracted
+      it. Retarget the citation to v1 / §0's table. **This one misleads a run about what the plan
+      demands**, so treat it as higher than its position here suggests.
+    - **F10** `DECISIONS.md:365`–`369` claims to list "every piece of per-user state added so far" and
+      names 5 of 12. **The better fix than editing the list is generating it** — a check asserting the
+      entry names every `KEYS` member, the shape §17b and §26 already use. **F13** `DECISIONS.md:333`
+      says this file still owes an entry for item 45's per-language split; write it.
+    - **Do not fold in the 4 judgment findings (F4, F6, F11, F12).** They need a decision, not an
+      edit, and mixing them in is how a reviewable diff stops being reviewable. F4 (three lines
+      promise a progress ring, the app renders a bar — and `refresh-readiness.mjs:230` keeps the
+      *figure* in one of them true while the noun stays wrong) is the one worth deciding soon; the
+      run entry's recommendation is to make the plan match the app.
+    - **Carry the control this list already earned.** Item 58 measured a fourteenth candidate and
+      **rejected** it — §4.3's "Analytics live" is in the *Ship* column, so it states a requirement,
+      not a status. Before "fixing" anything not in the nine above, check which column or clause the
+      sentence is actually making a claim in.
 
 26. **[UX — owner-directed, entered as a backlog item by the 2026-08-16 weekly review] Quizlet/Vocabulary
     design-reference review.** The owner shared ~200 Mobbin-exported screenshots of the Quizlet and
@@ -5776,3 +5827,171 @@ and its bounded deliverable is a list, not a rewrite. The generalisable lesson f
 should shape it: **items 55, 56 and 57 were each filed against a real §-clause and each got its
 numbers wrong**, because a measurement was taken without first subtracting what the code already says.
 Item 58 is a whole document of that risk, so measure a control on every claim before believing it.
+
+### 2026-08-17 (scheduled dev-agent) — Item 58: the plan/practice reconciliation sweep, 13 contradictions with file:line
+
+**Item 58, the §10.7 reconciliation.** Read `LAUNCH_PLAN.md` (620 lines) and `DECISIONS.md` (525
+lines) end to end against the current tree and recorded every claim that no longer holds. This is the
+prose half of the problem item 55 solved for figures: §10.7 asks for exactly this at each monthly
+audit, and §9.3's audit has never run. **Bounded to a list, per the item — nothing was rewritten.**
+Every finding below was measured against `src/` or `scripts/`, never read off the page for
+plausibility.
+
+**LAUNCH_PLAN.md**
+
+- **F1. `LAUNCH_PLAN.md:493` contradicts `LAUNCH_PLAN.md:386`, on a gate verdict, in the same
+  document.** §8's roadmap row still reads "**The §4.3 Phase 0 gate: ~40 lessons / ~2 hours. This is
+  the blocker on every revenue path and is currently the highest-value work in the project.**" §4.3
+  at :386 — *generated* by item 55 — says that gate is **met** (40 lessons / 144 min), and :390 says
+  the remaining work "is therefore instrumentation, not billing code and **not more lessons**." This
+  is the same defect item 55 closed one section over, surviving in the row a run scanning for
+  "highest-value work" would actually read. Item 55 generated §4.3's verdict and left §8's
+  restatement of it ungenerated. *Mechanical.*
+- **F2. `LAUNCH_PLAN.md:96` says analytics do not exist. They do.** §2.1's stack table: "| Analytics |
+  none | PostHog |". Measured: `src/lib/analytics.js` (5,617 bytes) exports `track()`/`EVENTS`, writes
+  to `ecycles_analytics_log` capped at `MAX_LOGGED_EVENTS = 200` (`src/lib/analytics.js:87`), and
+  fires from live call sites at `src/App.jsx:196`, `src/screens/LessonReader.jsx:147,166,283,292` and
+  `src/screens/Practice.jsx:109,236`. `DECISIONS.md:93`–`149` records the whole thing as a decision.
+  The "Current" column is a status claim, and it is false. *Mechanical.*
+- **F3. `LAUNCH_PLAN.md:247` omits an entire Reference sub-screen.** §3.1's IA table lists Reference as
+  "Glossary · Market signals · For parents · About" — four. `src/screens/Reference.jsx:22`–`26` has
+  **five**: glossary, markets, **sectors**, parents, about. Sector performance shipped 2026-08-04 and
+  this row never moved. The plan contradicts itself here as well: §2.3 at :126 does name
+  "Reference → Sector performance". *Mechanical.*
+- **F4. Three lines promise a progress ring; the app has never had one.** `LAUNCH_PLAN.md:271`
+  ("progress ring at 1/40"), `:274` (the status line, "shipped as a local-only flow (progress ring,
+  …)"), `:279` (§3.3, "Visible streak, progress ring"). Measured: `src/components/ui.jsx:196`
+  `ProgressBar` with `role="progressbar"` (`:200`), rendered at `src/screens/Learn.jsx:63` and
+  `src/screens/Practice.jsx:225`. No ring component exists anywhere under `src/`. **The sharp part is
+  the interaction with item 55:** the *figure* in that sentence ("1/40") is generated —
+  `scripts/refresh-readiness.mjs:230`, "§3.2 first-session progress figure" — so a script now keeps
+  the number true inside a sentence whose noun is wrong, and `npm test` passes. Item 58's original
+  filing named this; what is new is that it is three lines rather than one, and that one of them is
+  machine-maintained. *Judgment — design intent vs. implementation.*
+- **F5. `LAUNCH_PLAN.md:285` says dark mode is "still open"; it shipped.** §3.4: "**dark mode**
+  (finance audiences skew dark — still open, §backlog)". Measured: `src/lib/useAppState.js:76,87,
+  122`–`124,133` implements light/dark/system via `root.dataset.theme`, persisted at
+  `ecycles_theme_mode`; the picker is `Settings.jsx`'s `ChoiceRow` — the same control W-4 gave the
+  ARIA APG radiogroup pattern. Also "**§backlog**" is a dangling cross-reference: there is no
+  §backlog. *Mechanical.*
+- **F6. Two sections share a title and pull opposite ways.** `LAUNCH_PLAN.md:256` (§3.1.1) and `:283`
+  (§3.4) are both "Visual system". §3.1.1: "**one accent colour** plus semantic …", "Per-lesson colour
+  survives only as a thin accent, never as body text or a fill." §3.4 opens "One accent colour **per
+  lesson/phase**". Not a flat contradiction, but they encode opposite emphases, and duplicate §-titles
+  in a document whose section numbers are load-bearing cross-references is its own hazard. §3.4 reads
+  as a v1 leftover §3.1.1 superseded. *Judgment.*
+- **F7. `LAUNCH_PLAN.md:568`–`569` states a standing safety rule in terms of two screens that do not
+  exist.** §10.1's closed entry: "disclaimer renders on **Home**, Learn, **Markets** and About."
+  `src/screens/Home.jsx` and `src/screens/Markets.jsx` were removed in the 2026-08-04 rebuild.
+  Measured render sites, five: `src/screens/Learn.jsx:168`, `src/screens/LessonReader.jsx:324`,
+  `src/screens/Practice.jsx:303`, `src/screens/reference/MarketSignals.jsx:113`,
+  `src/screens/reference/Settings.jsx:119`. **This is the finding with teeth.** §10.1 is a standing
+  rule the adversarial self-check instructs every run to check its change against, and it is written
+  against a screen layout that has not existed for thirteen days — a run asking "does the disclaimer
+  still render where §10.1 says it does" cannot answer the question as posed. `check-blindspot.mjs`
+  asserts the disclaimer *key* exists in every locale; nothing asserts the *surfaces*.
+  *Mechanical, and the highest-value one here.*
+- **F8. `LAUNCH_PLAN.md:179`–`180` says the kids blurbs have three fields; a fourth landed the same
+  day that sentence was last touched.** §2.6: "still just three fields per band
+  (`lessons`/`activity`/`parentTip`)". Measured from `src/content/kidsContent.js`: bands carry **four**
+  top-level fields (`title|lessons|activity|parentTip`), and each of the 21 blurbs carries
+  **`text|why`** — the `why` field added 2026-08-16 and recorded at `DECISIONS.md:221`–`224`. The blurb
+  count in the same sentence (21, 7 per band) is correct. *Mechanical.*
+
+**DECISIONS.md**
+
+- **F9. `DECISIONS.md:15`–`17` cites the current plan for a requirement the current plan exists to
+  retract.** The Expo entry: "**What the launch plan asks for:** §2.2/§8 specify **Expo (React Native)
+  from week 1**." Measured — every occurrence of "Expo" in `LAUNCH_PLAN.md` is at `:41`, `:92`, `:494`,
+  `:605`, and all four record it as an **open owner decision**. §2.2 is "Code structure" and never
+  mentions Expo; §8's row is "Resolve §2.1". `LAUNCH_PLAN.md:41` is §0's change-table row whose entire
+  purpose is retiring v1's "Build on Expo from week 1". **Why this outranks a stale citation:** this
+  entry is what a run reads to decide whether a web-only change is "against the plan", and it tells
+  that run the plan demands React Native. *Mechanical — retarget the citation to v1 / §0's table.*
+- **F10. `DECISIONS.md:365`–`369` says "every piece of per-user state added so far" and lists 5 of
+  12.** Named: `ecycles_seen_disclaimer`, `ecycles_streak`, `ecycles_continue_pref`,
+  `ecycles_completed_lessons`, `ecycles_font_scale`. Measured across `src/lib/`: **12** keys.
+  Unlisted: `ecycles_analytics_log`, `ecycles_glossary_bookmarks`, `ecycles_lang`,
+  `ecycles_legacy_lesson_id_migrated`, `ecycles_review`, `ecycles_seen_practice_coachmark`,
+  `ecycles_theme_mode`. The claim is universally quantified, so it is **false rather than merely
+  incomplete** — and this entry is the reference for what the app persists, which §4.5 leans on ("no
+  selling of learner data … state is local-only"). *Mechanical, and the one candidate here for
+  generation rather than correction: a check asserting the entry names every `KEYS` member is the
+  shape §17b and §26 already use.*
+- **F11. The same entry's verification note names a prop and a screen that no longer exist.**
+  `DECISIONS.md:380`–`383`: "`Home`, `Learn`, and the header progress bar all just read the
+  `completedLessons`/**`isLessonUnlocked`** props" and "Home still showed **1/12**". Measured: no
+  `isLessonUnlocked` anywhere in `src/` — the current gate is `isUnlocked(index)` at
+  `src/App.jsx:165`–`173`; no `Home.jsx`; the catalogue is 40. **Disposition differs from the rest of
+  this list:** it is a *dated verification record* of what was true on 2026-08-04, and correcting it
+  would falsify the record. The honest fix is a dating note, not a rewrite — the same call item 55
+  faced with §4.1/§4.2. *Judgment.*
+- **F12. The two-tracks entry's body still carries pre-renumbering ids.** `DECISIONS.md:476`–`478`
+  ("**`money`** … lessons **13-26**", "**`economy`** … lessons **1-12**"), `:491`–`492` (the
+  cross-reference list "16→3, 17→10, 21→4, 23→12-now-17"), `:498`–`499` ("the money track runs 13→26
+  and the economy track 1→12, so a new learner's first lesson is numbered 13"). Actual: money 1–28,
+  economy 29–40. **It is corrected** by the entry's own "Update, 2026-08-14" at `:502`–`503`, so a
+  reader who reaches the bottom is not misled — which is why this is judgment and not a defect. **The
+  finding is the asymmetry:** this is the identical table `LAUNCH_PLAN.md` §2.5 carries, and §2.5's
+  was *generated* by item 55 specifically because a hand-written range rots. One document over, the
+  same table is unguarded. *Judgment.*
+- **F13. `DECISIONS.md:333`–`335` declares its own missing entry.** The chunk-split entry says item
+  45's per-language re-split "is in `AGENT_LOG.md`'s backlog item 45 … **this file has no entry of its
+  own for the second split yet**." Still outstanding. Filed because "the reasoning lives in the other
+  file" is this document's stated purpose failing, and item 58's remit is claims that no longer hold —
+  including a document's claim about itself. *Mechanical.*
+
+**Measured and deliberately NOT filed — this is the half that keeps the list trustworthy.**
+
+- **§4.3's "Analytics live (§9.2)" (`LAUNCH_PLAN.md:381`) is not a contradiction, and I nearly filed
+  it as one.** It sits in the table's **Ship** column — it states what Phase 0 is *supposed* to ship,
+  not what exists. §4.3 is then internally consistent: analytics are unwired, which is precisely why
+  `:388`–`391` says the gate is still open. Filing it would have been this run committing the exact
+  error items 55, 56 and 57 each committed — filing against a real clause on a wrong reading. F2
+  stands on its own because §2.1's column is headed **Current**.
+- **The item's own pattern hint produced zero findings.** Item 58 warns that a "measured `<date>`"
+  annotation is least trustworthy when its date matches the change beneath it, and says to grep
+  `measured 20`/`as of 20` in `src/` and `scripts/`. Two hits. `src/content/lessonTerms.js:52` —
+  "re-measured 2026-08-17 (item 57): 44 chips across 22 lessons — 13 money, 9 economy" — is same-day
+  and is **correct**: recomputed from `lessonTerms.js` + `lessons.js`, exactly 44/22/13/9.
+  `scripts/translation-review.mjs:14` is a reviewer-of-record convention, not a figure. Recorded so a
+  later run does not re-run this grep expecting a hit.
+- **`AGENT_LOG.md`'s absence from §26's doc list is deliberate, not a gap.** Checked before filing:
+  `scripts/check-data.mjs:2336`–`2346` argues a dated snapshot *accrues* dead paths by doing its job.
+  Not filed. (It does mean this entry's file:line citations are unchecked by §26 — they were verified
+  by hand instead.)
+- **Sound on measurement:** §2.5's unlock rule (`src/App.jsx:169` returns unlocked when the previous
+  lesson is in another track); §3.5's "(Beta)" labelling (`src/App.jsx:281`); the deep-link entry's
+  four routes in one module (`src/lib/deepLink.js:39,55`); the instrumentation entry's cap and call
+  sites; and all **10 generated figures**, which `npm test` reports as agreeing with the content.
+
+**Disposition: 9 mechanical, 4 judgment, 0 owner calls.** Item 58 predicted "some of them owner
+calls" and that turned out to be wrong — none of the thirteen needs a decision the owner alone can
+make. F4 (ring vs. bar) is the closest, and even there the cheap disposition is to make the plan match
+the app: nothing has ever asked for a ring, §3.0 does not need one, and building one to satisfy a
+sentence is the tail wagging the dog. Filed as **item 61** below rather than fixed here — item 58's
+deliverable is the list, and bundling thirteen doc edits into the run that found them is how a
+reviewable diff stops being reviewable.
+
+**Verification.** `npm test` passes — 0 failures, 1 pre-existing warning (the translation-review
+coverage line, non-blocking and unrelated). Run before and after the log edit; this run changes no
+code, so the meaningful verification is that every file:line above was resolved against the working
+tree at `8b09515`, by reading the cited line, not by grep count alone. `npm run build` not run: no
+source file changed.
+
+**Adversarial self-check (step 5).** Blindspot register: no code or content touched, so no §10.1/
+§10.2/§10.3/§2.3 surface moved — and F7 is the opposite of a §10.1 regression, it is a report that the
+rule's own text has drifted from the app. `DECISIONS.md` conflicts: none; nothing here contradicts a
+closed decision, and F12/F13 are *about* DECISIONS.md rather than changes to it. Already-done backlog
+item: checked "Completed and pruned" — item 49 fixed the README's §10.2 violation and widened §26's
+path check, which is adjacent but disjoint (paths vs. prose claims), and item 55 fixed the *figures*
+in `LAUNCH_PLAN.md`, which is why F1 exists as a leftover rather than as a duplicate. Own verification
+claim: an independent reviewer re-running the greps above gets these line numbers, with one caveat
+worth stating — **F6 and F11 are the two findings where a reasonable reviewer could disagree with the
+disposition** (duplicate section titles as a "contradiction"; a dated record as a "claim"), and both
+are marked judgment for that reason. The check also **caught a real error before it shipped**: the
+"Analytics live" candidate above, dropped on re-reading the table's column header.
+
+**Next run should pick item 61** (the mechanical half of this list — nine doc corrections, no
+judgment needed), or **item 59** if a smaller change is wanted. **Item 18 remains the entire critical
+path to ending Phase 0 and is blocked on an owner action: an analytics provider account and key.**
