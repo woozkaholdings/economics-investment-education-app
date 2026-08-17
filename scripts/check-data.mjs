@@ -2961,5 +2961,181 @@ if (keyedGroupsChecked < 4) {
   }
 }
 
+// ───────────────────────────────────────────────────────────────────────────
+// 29. DECISIONS.md's lesson-id ranges (backlog item 62's F12).
+//
+//     Item 55 generated `LAUNCH_PLAN.md` §2.5's track table *because* a
+//     hand-written lesson range rots: §2.5 said money `13-26` / economy `1-12`
+//     for three days after the 2026-08-14 renumbering made it money 1–28 /
+//     economy 29–40. F12's finding is that the identical table sits one
+//     document over, in DECISIONS.md's two-tracks entry, still hand-written
+//     and unguarded.
+//
+//     **Why this asserts rather than generates, which is the whole design.**
+//     The obvious fix — add the sentence to `refresh-readiness.mjs`'s guarded
+//     list — is wrong here, and F11 says why: DECISIONS.md's entries are
+//     *dated records*. The live range lives inside "Update, 2026-08-14", and a
+//     `--write` pass would silently rewrite what a run recorded as true on a
+//     date, which falsifies the record rather than fixing it. So this check
+//     never edits: it fails, and its message names the honest repair —
+//     **append a new dated Update and reclassify the old claim as historical
+//     below.** Generation is right for a document that states current truth;
+//     assertion is right for one that states dated truth.
+//
+//     Scope is the one section that talks about lesson ids, located by its
+//     heading. Scoping to the section is not laziness, it is what makes the
+//     net sound: run document-wide, the same pattern also matches "weeks 1–8",
+//     "steps 1–3", "roughly 40–50 terms" and a §5 quote about "lessons 1–2",
+//     none of which are lesson ids. Six false positives document-wide, zero
+//     inside the section — and §26's lesson is that a guard whose false
+//     positives are ordinary prose is off within a week.
+//
+//     Every range the net finds must be classified below. `live` means it must
+//     equal a track's current range; `historical` means it must equal none of
+//     them (a historical claim that starts matching again is either mislabelled
+//     or a coincidence worth looking at). Both directions are checked, so a
+//     classification cannot outlive its reason — the same property §26's
+//     `path-ok` markers and §28b's `GRAPH_EXEMPT` ratios have.
+{
+  const HEADING = "### Two lesson tracks, money-first, instead of one sequential path";
+  const doc = readFileSync(join(ROOT, "DECISIONS.md"), "utf8");
+  const start = doc.indexOf(HEADING);
+
+  if (start === -1) {
+    fail(
+      `§29: DECISIONS.md no longer contains the heading "${HEADING}". That section is where this ` +
+        `repo records which lesson ids belong to which track, and §29 has nothing to check without ` +
+        `it. If the entry was retitled, update HEADING here in the same change; if it was removed, ` +
+        `delete §29 and say so in DECISIONS.md rather than leaving a check that passes vacuously.`,
+    );
+  } else {
+    const end = doc.indexOf("\n### ", start + HEADING.length);
+    const section = doc.slice(start, end === -1 ? doc.length : end);
+
+    // A range written as `13-26`, `13–26` or `13→26`. Two-digit endpoints only,
+    // and neither side may touch another digit or a dash: that is what keeps
+    // `2026-08-14` out (its `08` is preceded by `-`, its `26` by `20`) without
+    // needing a date exception. Trailing punctuation is deliberately *allowed*
+    // — an earlier draft excluded a following `,` and silently lost three of
+    // the eleven claims, including one of the two live ones.
+    const NET = /(?<![\d-])(\d{1,2})\s*(?:[-–—]|→|-now-)\s*(\d{1,2})(?![\d-])/g;
+    const found = [...section.matchAll(NET)]
+      .map((m) => ({ text: m[0], lo: +m[1], hi: +m[2] }))
+      // Ascending pairs inside the lesson-id space. The money track's four
+      // backward cross-references ("16→3, 17→10, 21→4") are lesson *pointers*,
+      // not ranges, and read as noise here.
+      .filter((r) => r.lo >= 1 && r.hi > r.lo && r.hi <= 60);
+
+    // Classified by hand, once, with the reason. Ordered as they appear.
+    const CLAIMS = [
+      ["13-26", 1, "historical", "the 2026-08-07 money range, before the renumbering"],
+      ["1-12", 3, "historical", "the 2026-08-07 economy range: the track table, the sentence about where those lessons came from, and the `(was ...)` note in the Update"],
+      ["12-now-17", 1, "historical", "part of the `23→12-now-17` cross-reference audit, itself a pre-renumbering id"],
+      ["13→26", 1, "historical", "the 'cosmetic seam' the renumbering removed — money as it then ran"],
+      ["1→12", 1, "historical", "the same sentence's economy half"],
+      ["1-28", 1, "live", "money"],
+      ["29-40", 1, "live", "economy"],
+      ["13-40", 1, "historical", "the money range immediately before the 2026-08-14 remap"],
+      ["1-40", 1, "historical", "the remap table's domain, not a track — `bijective over 1-40`"],
+    ];
+
+    // Floor first: if the net breaks, every assertion below passes by matching
+    // nothing, which is the vacuous pass §20/§22 exist to make impossible.
+    const expectedTotal = CLAIMS.reduce((n, [, count]) => n + count, 0);
+    if (found.length < 8) {
+      fail(
+        `§29: the range pattern found only ${found.length} lesson ranges in DECISIONS.md's ` +
+          `two-tracks section (expected ${expectedTotal}). The pattern is probably broken rather ` +
+          `than the section having been emptied — a scan that matches nothing must not read as a pass.`,
+      );
+    } else {
+      // `TRACKS` is an array of `{key, ...}`, not a keyed object — reading it
+      // as one yields a single `undefined` track whose range matches nothing,
+      // which made every live claim "wrong" on the first run of this check.
+      const current = Object.fromEntries(
+        TRACKS.map(({ key }) => {
+          const ids = lessons.filter((l) => l.track === key).map((l) => l.id).sort((a, b) => a - b);
+          return [key, {
+            ids,
+            lo: ids[0],
+            hi: ids[ids.length - 1],
+            contiguous: ids.every((id, i) => i === 0 || id === ids[i - 1] + 1),
+          }];
+        }),
+      );
+      for (const [key, r] of Object.entries(current)) {
+        if (!Number.isInteger(r.lo) || !Number.isInteger(r.hi)) {
+          fail(`§29: track "${key}" yielded no lesson ids, so its range cannot be derived — the tree read is broken, not the document.`);
+        } else if (!r.contiguous) {
+          // Same argument refresh-readiness.mjs makes for §2.5: a range is only
+          // an honest description of a contiguous set. Without this, a track
+          // with a hole in it still produces a first/last pair, and DECISIONS.md
+          // could be certified as "matching the tree" against a range that
+          // skips lessons.
+          fail(
+            `§29: track "${key}" ids are not contiguous (${r.ids.join(", ")}), so "${r.lo}-${r.hi}" ` +
+              `is not a description of it. DECISIONS.md states each track as a range; a catalogue ` +
+              `with a hole in it needs the entry reworded to a list, and §29's CLAIMS table with it.`,
+          );
+        }
+      }
+      const trackFor = (r) =>
+        Object.keys(current).find((t) => current[t].lo === r.lo && current[t].hi === r.hi);
+
+      const seen = new Map();
+      for (const r of found) seen.set(r.text, (seen.get(r.text) ?? 0) + 1);
+
+      for (const [text, count, status, why] of CLAIMS) {
+        const actual = seen.get(text) ?? 0;
+        if (actual !== count) {
+          fail(
+            `§29: DECISIONS.md's two-tracks section states "${text}" ${actual} time(s); §29 has it ` +
+              `classified ${status} and expects ${count} (${why}). A claim that was reworded or ` +
+              `removed must be re-read and reclassified here, not quietly dropped from the check.`,
+          );
+          continue;
+        }
+        const [lo, hi] = text.split(/[-–—]|→|-now-/).map(Number);
+        const matches = trackFor({ lo, hi });
+        if (status === "live" && matches !== why) {
+          fail(
+            `§29: DECISIONS.md states the ${why} track as "${text}", but ${why} is now ` +
+              `${current[why].lo}-${current[why].hi} in src/content/lessons.js. ` +
+              `**Do not edit the 2026-08-14 Update to say the new numbers** — it is a dated record ` +
+              `of what was true then, and rewriting it falsifies the record (backlog item 62's F11). ` +
+              `Append a NEW dated Update stating the current ranges, then move "${text}" to ` +
+              `historical in §29's CLAIMS table and add the new range as live.`,
+          );
+        }
+        if (status === "historical" && matches) {
+          fail(
+            `§29: "${text}" is classified historical, but it is now the ${matches} track's actual ` +
+              `range. Either the classification is wrong, or a renumbering has landed back on an old ` +
+              `range — read the sentence before deciding which. A historical claim that has become ` +
+              `true again is not an exemption worth keeping.`,
+          );
+        }
+      }
+
+      const classified = new Set(CLAIMS.map(([t]) => t));
+      for (const text of [...seen.keys()].filter((t) => !classified.has(t))) {
+        fail(
+          `§29: DECISIONS.md's two-tracks section states a lesson range "${text}" that §29 does not ` +
+            `classify. Read it, then add it to CLAIMS as \`live\` (it must equal a track's current ` +
+            `range) or \`historical\` (it must equal none). An unclassified range is exactly the ` +
+            `hand-written table item 55 had to generate one document over.`,
+        );
+      }
+
+      console.log(
+        `  §29 DECISIONS.md lesson ranges: ${found.length} claims in the two-tracks section, ` +
+          `${CLAIMS.filter(([, , s]) => s === "live").length} live and checked against the tree ` +
+          `(money ${current.money.lo}-${current.money.hi}, economy ${current.economy.lo}-${current.economy.hi}), ` +
+          `${CLAIMS.filter(([, , s]) => s === "historical").reduce((n, [, c]) => n + c, 0)} dated and required not to match.`,
+      );
+    }
+  }
+}
+
 console.log(`\n${failures === 0 ? "PASS" : "FAIL"}: ${failures} failure(s), ${warnings} warning(s).`);
 process.exit(failures === 0 ? 0 : 1);

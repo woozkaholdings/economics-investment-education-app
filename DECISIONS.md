@@ -535,6 +535,13 @@ Add a new entry when a run makes a choice future work should be able to look up 
 
 *Decided 2026-08-07 (owner-directed, in session).*
 
+<!-- Every lesson-id range written in this entry is checked by `scripts/check-data.mjs` §29 (backlog
+     item 62's F12): each is classified there as either current — it must equal a track's live range in
+     `src/content/lessons.js` — or dated, in which case it must equal none of them. §29 asserts rather
+     than rewrites, because the ranges below sit inside dated records: when a renumbering lands, the
+     repair is a NEW dated Update plus a reclassification in §29, never an edit to what an earlier run
+     recorded as true on its date. -->
+
 - **What was decided:** the lesson catalogue is two independent curricula, not one chain.
   `TRACKS` in `src/content/lessons.js` defines them in display order — **`money`** ("Your Money",
   lessons 13-26: budgeting, taxes, saving, insurance, investing) followed by **`economy`**

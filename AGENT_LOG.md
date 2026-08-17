@@ -882,11 +882,27 @@ for the history. No open P1/P2 items.
       would falsify the record. The honest fix is a dating note, not a rewrite — the same call item 55
       faced with §4.1/§4.2. *Note this entry's* other *half was rewritten by item 61 (F10); the
       verification note below it was deliberately left.*
-    - **F12.** `DECISIONS.md`'s two-tracks entry carries pre-renumbering ids in its body (money 13-26,
+    - **F12. ✅ DONE 2026-08-17 (scheduled dev-agent) — guarded, and deliberately NOT generated.**
+      `check-data.mjs` **§29** classifies all **11** lesson ranges in the two-tracks section as `live`
+      (must equal a track's current range) or `historical` (must equal none), and checks both
+      directions, so a classification cannot outlive its reason. **The design call worth not
+      re-deriving: it asserts rather than generating, and F11 is why** — these ranges sit inside *dated
+      records*, so a `refresh-readiness.mjs` `--write` entry would silently rewrite what an earlier run
+      recorded as true on its date. The failure message therefore names the repair (append a NEW dated
+      Update, reclassify the old claim) instead of performing it. Scoped to the one section by
+      measurement, not by preference: the same net run document-wide picks up `weeks 1–8`, `steps 1–3`
+      and `roughly 40–50 terms` — **6 false positives document-wide, 0 in the section**. Proved by
+      seven injections including a broken-net floor and a non-contiguous track. `DECISIONS.md`'s prose
+      was not rewritten; the only doc change is a pointer comment. See the run log entry of this date.
+      *Original text:* `DECISIONS.md`'s two-tracks entry carries pre-renumbering ids in its body (money 13-26,
       economy 1-12; actual: money 1–28, economy 29–40), **corrected by its own "Update, 2026-08-14"**
       at the bottom, so a reader who finishes it is not misled. The finding is the asymmetry: this is
       the identical table `LAUNCH_PLAN.md` §2.5 carries, and §2.5's was *generated* by item 55
       precisely because a hand-written range rots. One document over, the same table is unguarded.
+    > **A blocking pattern worth naming, found by this run while picking F12.** Two consecutive "Next
+    > run should pick" lines have queued an item that was **already blocked by an owner-dirty file** —
+    > this run's queued pick, item 69, lives in `src/locales/es.js`. A queuing run should check
+    > `git status` against the item's files before naming it, or say the pick is contingent.
 
 26. **[UX — owner-directed, entered as a backlog item by the 2026-08-16 weekly review] Quizlet/Vocabulary
     design-reference review.** The owner shared ~200 Mobbin-exported screenshots of the Quizlet and
@@ -7751,3 +7767,142 @@ log entry. If the redesign is **still in flight**, the cheapest unblocked pick i
 calque (one clause, judgement already recorded); **item 65** (light `--graph-amber`) and the new **item
 71** both remain filed and honestly low. **Item 18 is still the entire critical path to ending Phase 0
 and is still blocked on an owner action: an analytics provider account and key.**
+
+### 2026-08-17 (scheduled dev-agent) — Guard the lesson ranges in `DECISIONS.md`: `check-data.mjs` §29 (item 62's F12)
+
+**What I picked, and why it wasn't the item the last entry queued.** The previous entry's "Next run"
+line said: if `LAUNCH_PLAN.md` is clean, ship `Dividend`; if the redesign is still in flight, take
+**item 69**'s `es` calque. `LAUNCH_PLAN.md` is still owner-dirty, so `Dividend` stays blocked as
+described — but **item 69 is blocked too, and the previous entry did not notice**: it lives in
+`src/locales/es.js`, which is one of the owner's twelve modified files. The same is true of item 26's
+follow-ups (`src/screens/Reference.jsx`) and F6 (`LAUNCH_PLAN.md`). Of everything filed, exactly three
+items sit entirely outside the owner's tree: **62's F11 and F12** (`DECISIONS.md`) and **item 65**
+(theme + `check-data.mjs`). Item 65 is a visual-design change to a palette colour **while the owner is
+mid-redesign of the UI**, which is the wrong week for it, and its own text rates it low with nothing
+rendered below the bar today. That leaves F12, which is the more valuable of the two `DECISIONS.md`
+findings — F11 is a one-line dating note. **Item 62 says do not batch these; F11 was left alone.**
+
+**What F12 is.** Item 55 *generated* `LAUNCH_PLAN.md` §2.5's track table precisely because a
+hand-written lesson range rots — §2.5 said money `13-26` / economy `1-12` for three days after the
+2026-08-14 renumbering made it money 1–28 / economy 29–40. The identical table sits one document over,
+in `DECISIONS.md`'s two-tracks entry, hand-written and unguarded.
+
+**The design decision, which is the actual content of this run: §29 asserts, it does not generate.**
+The obvious fix is to add the sentence to `refresh-readiness.mjs`'s guarded-sentence list and let
+`--write` keep it true. That is wrong here, and **F11 is the reason** — `DECISIONS.md`'s entries are
+*dated records*, and the live range lives inside "Update, 2026-08-14". A `--write` pass would silently
+rewrite what a run recorded as true on a date, which falsifies the record rather than fixing it. So
+§29 never edits: it fails, and its failure message names the honest repair — **append a NEW dated
+Update and reclassify the old claim as historical**, never edit the old one. Generation is right for a
+document that states current truth; assertion is right for one that states dated truth. That
+distinction is now written into the check's header comment so it is not re-litigated.
+
+**Scope, measured before it was chosen.** The net is scoped to the one section that talks about lesson
+ids, located by its heading. That is not laziness — it is what makes the net sound. Run document-wide,
+the same pattern also matches `weeks 1–8`, `weeks ~9–14`, `steps 1–3`, `roughly 40–50 terms`, a §5
+quote about `lessons 1–2`, and `nine → 15 → 21` blurbs: **6 false positives document-wide, 0 inside
+the section** (14 hits vs. 11). §26's lesson is that a guard whose false positives are ordinary English
+is off within a week, and a document-wide version of this would have needed six prose literals pinned
+to keep it quiet.
+
+**Every range found is classified `live` or `historical`, and both directions are checked.** `live`
+must equal a track's current range; `historical` must equal none of them, so a classification cannot
+outlive its reason — the property §26's `path-ok` markers and §28b's `GRAPH_EXEMPT` ratios have. The
+eleven claims are 2 live (the 2026-08-14 Update's `1-28` / `29-40`) and 9 dated, including the entry
+body's pre-renumbering `13-26` / `1-12`, the "cosmetic seam" sentence's `13→26` / `1→12`, the
+`23→12-now-17` cross-reference, and `bijective over 1-40` (the remap table's domain, not a track).
+
+**The measured line, pasted rather than retyped** (item 70's rule (c), and the reason this entry
+quotes rather than describes):
+
+```
+  §29 DECISIONS.md lesson ranges: 11 claims in the two-tracks section, 2 live and checked against the tree (money 1-28, economy 29-40), 9 dated and required not to match.
+```
+
+**Verification — `npm test` PASS on all seven checkers, `npm run build` ✓ in 1.06s, and seven
+injections, each with its landing proved before the run.** Every injection script asserted its own
+anchor text was found and threw if it was not, so "it didn't land" cannot be mistaken for "it passed";
+every restore was from a scratchpad copy verified by `shasum` + empty `git diff`, never
+`git checkout --`.
+- **(A) The tree drifts under a live claim.** Moved lesson 28 to `economy`: both live claims fail, each
+  naming the new range *and* telling the reader not to edit the dated Update.
+- **(B) A historical claim becomes true again.** Rewrote all 40 `track` fields back to their
+  pre-2026-08-14 assignment, recreating money 13-40 / economy 1-12 exactly: **five** failures — the two
+  live claims drift, and `1-12`, `1→12` and `13-40` all fire "classified historical, but it is now the
+  … track's actual range."
+- **(C) A new, unclassified range appears in the section.** Injected "lessons 5-9 are the investing
+  block": fails naming `5-9` and what to do with it.
+- **(D) A claim is reworded out from under the check.** Changed the live sentence to "money is 1 to 28":
+  both live claims fail as *missing* (`states "1-28" 0 time(s)`) rather than silently dropping out of
+  the check — the failure mode that would otherwise make this guard rot the way the table did.
+- **(E) The anchor moves.** Retitled the heading: §29 fails saying it has nothing to check, rather than
+  passing vacuously.
+- **(F) The instrument itself breaks.** Replaced the separator alternation with `ZZZ` so the net matches
+  nothing: the floor fires (`found only 0 … expected 11`). Without it this check would have passed
+  green while measuring nothing, which is the vacuous pass §20/§22 exist to make impossible.
+- **(G) A track stops being range-shaped.** Moved lesson 14 to `economy`, punching a hole in money:
+  the contiguity guard fires for both tracks. **This guard was added because injection B exposed its
+  absence** — the first draft derived `lo`/`hi` without checking contiguity, so a catalogue with a gap
+  in it would still have produced a first/last pair and certified the document against a range that
+  skips lessons. `refresh-readiness.mjs` makes exactly this argument for §2.5; §29 was missing it.
+
+**One real bug in my own first draft, caught by measurement rather than by reading.** The initial net
+excluded a following `,` and `.` (meant to stop `1,000-2,000` splitting). That silently dropped **3 of
+the 11 claims** — including `1→12` and, worse, the `(was money 13-40, economy 1-12)` pair — because a
+range followed by a comma is the common case in prose. Found by comparing the section scan's count
+against a hand read of the section, not by re-reading the regex. A second defect died the same way:
+`TRACKS` is an array of `{key, …}`, not a keyed object, and reading it as one yielded a single
+`undefined` track whose range matched nothing, so **every live claim reported as wrong** on the first
+execution. Both are noted in the code at the line that would reintroduce them.
+
+**`DECISIONS.md` was not rewritten.** The classification lives in the checker, so the dated records are
+untouched; the only doc change is an HTML comment under the heading pointing at §29 and stating the
+assert-don't-generate rule, so a reader who wonders "is this range current?" can find the answer. It
+deliberately contains **no numerals**, or the net would read it as a twelfth claim — checked: the count
+stayed 11. It did move §26 from 279 to 281 path references (both backticked paths resolve, no exemption
+needed), which is a free cross-check that the comment names real files.
+
+**No browser verification, and W-1 is not being dodged.** This is node-only tooling: `grep` for an
+actual `import` of `check-data.mjs` anywhere under `src/` returns **0** (the ten textual hits are
+comments citing it), it renders nothing, and the one doc change is an HTML comment. There is no
+rendered surface to open.
+
+**Owner's tree provably untouched.** `git diff --stat` over their twelve files reports the identical
+counts as on arrival (**12 files, 540+/78−**); `UIUX/` is still untracked and unread beyond `ls`. My
+paths are `scripts/check-data.mjs`, `DECISIONS.md` and `AGENT_LOG.md` — none owner-modified.
+`check-blindspot.mjs` **has** owner edits and was not touched, and I did not lean on it (see below).
+`src/content/lessons.js` was injected into three times and restored to its exact arrival hash
+(`9a8145b3…`) each time, confirmed by `shasum` and an empty `git diff`.
+
+**Adversarial self-check (step 5) — it found one thing, and it is in the change rather than in a
+footnote.** **Blindspot register:** grepped my own added lines directly for Dalio/person names, advice
+verbs, child-facing framing, currency figures and hardcoded current dates — **zero hits**. I did this
+independently rather than by running `check-blindspot.mjs`, because that file carries owner edits; both
+of my touched surfaces are outside its `src/content/` + `src/locales/` scope in any case, and nothing
+here renders. **DECISIONS.md:** no conflict — no storage, routing, build or content-module-shape change;
+localStorage-only, `.js`-not-JSON and Vite-not-Expo are all untouched. This change *guards* a
+`DECISIONS.md` entry rather than contradicting one. **Already-done item:** no — `grep -n "F12"` over the
+log returns only its filings and cross-references, never a closure, and §29 is a new section number.
+**My own verification claims:** an independent reviewer re-running `npm test`, `npm run build` and the
+seven injections gets these results; the one headline figure is pasted from the tool's own line rather
+than retyped, per item 70. **What the check actually caught:** the missing contiguity guard (G above) —
+found by noticing that injection B's construction could just as easily have produced a *non-contiguous*
+track, against which my first draft would have compared a meaningless first/last pair and passed. That
+is the same "the range form is unwritable over a gap" argument `refresh-readiness.mjs` already carried
+for §2.5, which my draft had not ported across. **Two limits stated, not buried:** (a) §29 guards
+**one section of one document** — `DECISIONS.md`'s other entries and every other doc still state lesson
+ids unguarded, and widening it means re-running the false-positive measurement per section rather than
+pointing the same net at the file; (b) it cannot stop a run that renumbers *and* hand-edits the dated
+Update in the same change — it stops **silent** rot, which is the failure that actually happened twice.
+
+**Next run.** `Dividend` (items 64/67) remains the highest-value queued item and is still gated on
+`LAUNCH_PLAN.md` being clean — the saved work is at session `48dad761`'s scratchpad and the
+**durability caveat is now three entries old**: if that scratchpad is gone, redo it from item 64's entry,
+which records every judgement. **Before picking anything, check which files the owner still has dirty** —
+this run found the previously-queued item was blocked by a file the queuing run hadn't checked. If the
+redesign is still in flight, **item 62's F11** (a dating note on `DECISIONS.md`'s localStorage
+verification note) is the cheapest remaining unblocked pick and is now the last of item 62's four
+findings but one; **item 65** and **item 71** remain filed and honestly low, and item 65 should wait
+until the redesign lands rather than move a palette colour underneath it. **Item 18 is still the entire
+critical path to ending Phase 0 and is still blocked on an owner action: an analytics provider account
+and key.**
