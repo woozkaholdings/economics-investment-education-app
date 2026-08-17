@@ -1426,6 +1426,46 @@ for the history. No open P1/P2 items.
     > added to one language but not to meta surfaces rather than being dropped off the end.
 
 
+50. **[Process — ✅ DONE 2026-08-17 (owner-requested). `scripts/check-payload.mjs`, wired into
+    `npm test`. Closes the first concern the 2026-08-16 review's §6.6 raised.]** Assert the payload
+    property that items 45 and 48 produced.
+    > **The gap.** Those two splits took the largest content chunk from 499.27 kB to 116.84 kB and
+    > deleted a 140.88 kB shared quiz chunk — and **nothing asserted any of it.** It was verified by a
+    > human opening the app and reading the network panel. A single
+    > `import { quizData } from "../content/quizData.js"` added to a screen — the most natural line in
+    > the world to write — silently restores all five languages to that screen's chunk, and **every
+    > existing check stays green, because the data is still correct. Only the bytes change.** That is
+    > the same shape as every other failure this week: a fact nobody checks is a fact that rots.
+    > **What it asserts, and why structure rather than bytes.** Byte assertions need `vite build`
+    > (which `npm test` does not run) and would need rewriting every time a lesson is edited. The
+    > structure that *produces* the payload is stable, and each failure mode is a specific nameable
+    > line of code. Four rules:
+    > 1. Every per-language module the split promises exists — 15 of them, derived from `lessons.js`'s
+    >    `TRACKS` × `LANGS`, so adding a track or a language without its content files fails here
+    >    rather than at a reader's first tap.
+    > 2. **No module under `src/` imports a merged view** (`lessonContent.js`, `quizData.js`),
+    >    statically or dynamically. This is the load-bearing rule: those views exist for
+    >    `check-data.mjs` and `translation-review.mjs`, they statically import every language, and any
+    >    path from the bundle into one drags the whole catalogue back.
+    > 3. Per-language modules are imported **only** dynamically from `src/` — a static import hoists
+    >    that language into the importing chunk, which is rule 2's failure one language at a time.
+    > 4. Every per-language module is named by some dynamic `import()` — the inverse. A module no
+    >    loader map reaches is unreachable, and `LOADERS[key]()` on a missing key is a `TypeError` at
+    >    runtime, for one language only, which is precisely the gap nobody notices until a reader
+    >    switches to it.
+    > **All four proven by injection, each restored after:** adding `import { quizData }` to
+    > `Practice.jsx` (rule 2), a static `quizText.ko.js` import (rule 3), deleting the `"money:ja"`
+    > loader entry (rule 4), and moving `quizText.zh.js` aside (rule 1). Each failed with the specific
+    > file named; the tree was clean and green after every one.
+    > **Deliberately not checked:** chunk sizes, module counts, anything needing a build. If those are
+    > ever wanted they belong in a separate build-time check — this one has to stay fast enough to run
+    > on every commit.
+    > **Why a fifth script rather than a section in `check-data.mjs`:** contention. Three separate
+    > edits to `check-data.mjs` collided with concurrent dev-agent runs on 2026-08-16/17, twice
+    > forcing a commit to be reconstructed. A standalone file with its own name has no such conflict,
+    > and matches the existing sibling pattern (blindspot, claims, backlog).
+
+
 **HELD — owner decisions, do not act on these**
 
 12. **[HELD] Expo vs. Vite** (§2.1) — needs a human call; blocks store release, not the web launch. See
