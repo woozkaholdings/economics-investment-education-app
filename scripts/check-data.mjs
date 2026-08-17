@@ -1774,5 +1774,154 @@ if (keyedGroupsChecked < 4) {
   }
 }
 
+// ───────────────────────────────────────────────────────────────────────────
+// 23. Nothing computes a calendar date as a UTC date (backlog item 38).
+//
+//     `new Date().toISOString().slice(0, 10)` is not today. It is today in
+//     UTC, which after 8pm Eastern is tomorrow. Two places had it:
+//     `check-claims.mjs`, where it reported §9.1 claims past due a day early
+//     and cost three consecutive runs a hand-corrected date; and the market
+//     job, where it stamps `asOf` on `public/data/market.json` — the field
+//     `useMarketData` compares against `todayStr()` to decide whether a
+//     reading is too old to show. That one was correct only by the ninety
+//     minutes between a 6:30pm ET job and UTC midnight, thirty in winter.
+//
+//     So this fails on the *idiom*, not on those two files. Any `.toISOString()`
+//     truncated to its date half is caught wherever it appears, because the
+//     mistake is not specific to a receiver: a `Date` built from anything and
+//     then sliced to ten characters yields a UTC calendar date, and a calendar
+//     date in this app always means a local one (`src/utils/date.js`).
+//
+//     There is one legitimate use — a loose lower bound for a provider query,
+//     where a day either way is swallowed by a 1.5x over-fetch. Rather than
+//     exempting that file by path, a line may opt out with a `utc-date-ok:`
+//     comment stating why, so the exemption is reviewable where it is taken
+//     and a second one has to be argued for rather than inherited.
+//
+//     Known limit, stated so this is not over-trusted: it catches the idiom,
+//     not the mistake. `new Date().getFullYear()` composed by hand, or a
+//     `toISOString()` whose slice happens on another line, would pass. What
+//     makes that acceptable is the second half below — the two scripts that
+//     actually need a date must import the shared helper, so the way to get a
+//     date here is a positive requirement and not merely an absence.
+{
+  const walkSource = (dir) =>
+    readdirSync(dir, { withFileTypes: true }).flatMap((e) => {
+      const full = join(dir, e.name);
+      if (e.isDirectory()) return e.name === "node_modules" ? [] : walkSource(full);
+      return e.isFile() && /\.(js|jsx|mjs)$/.test(e.name) ? [full] : [];
+    });
+
+  // `.toISOString()` followed by a date truncation: slice/substring to 10, or
+  // split on the "T". Allows whitespace and a newline between the calls, which
+  // is how the one exempted call site in adapters.js is actually written.
+  const UTC_DATE = /\.toISOString\(\)\s*\.\s*(?:slice|substring)\(\s*0\s*,\s*10\s*\)|\.toISOString\(\)\s*\.\s*split\(\s*(["'])T\1\s*\)\s*\[\s*0\s*\]/g;
+
+  // Comments are blanked before matching, or every explanation of this bug —
+  // including the four written in the commit that added this check — reads as
+  // an occurrence of it. Blanked rather than removed so match indices still
+  // point at the right line. The `[^:]` guard keeps a `https://` inside a
+  // string from being read as the start of a line comment.
+  const blankComments = (s) =>
+    s
+      .replace(/\/\*[\s\S]*?\*\//g, (m) => m.replace(/[^\n]/g, " "))
+      .replace(/(^|[^:"'`\\])\/\/[^\n]*/gm, (m, keep) => keep + " ".repeat(m.length - keep.length));
+
+  let filesScanned = 0;
+  let dateBearingFiles = 0;
+  let exempted = 0;
+
+  for (const path of [join(ROOT, "src"), join(ROOT, "scripts")].flatMap(walkSource)) {
+    const src = readFileSync(path, "utf8");
+    const rel = path.slice(ROOT.length + 1);
+    filesScanned += 1;
+    if (src.includes("new Date(")) dateBearingFiles += 1;
+
+    for (const m of blankComments(src).matchAll(UTC_DATE)) {
+      const line = src.slice(0, m.index).split("\n").length;
+      // The opt-out applies to the statement, which may span lines: look back
+      // over the few lines above the match for the marker.
+      const preceding = src.slice(0, m.index).split("\n").slice(-6).join("\n");
+      if (/utc-date-ok:/.test(preceding)) {
+        exempted += 1;
+        continue;
+      }
+      fail(
+        `§23: ${rel}:${line}: computes a calendar date as a UTC date ` +
+          `(\`.toISOString()\` truncated to ten characters). That is tomorrow's date every evening ` +
+          `east of UTC. Use \`todayStr()\` from src/utils/date.js — the same function the app compares ` +
+          `against — or add a \`utc-date-ok:\` comment above the line saying why UTC is right here.`,
+      );
+    }
+  }
+
+  // Positive half: the two scripts that derive a date must get it from the
+  // shared helper. The absence check above cannot see a hand-rolled UTC date;
+  // this says where a date is allowed to come from. If a script here stops
+  // needing a date, remove it from this list in the same commit rather than
+  // adding an unused import to satisfy the check.
+  for (const rel of ["scripts/check-claims.mjs", "scripts/fetch-market-data.mjs", "scripts/translation-review.mjs"]) {
+    const src = readFileSync(join(ROOT, rel), "utf8");
+    if (!/import\s*\{[^}]*\btodayStr\b[^}]*\}\s*from\s*["']\.\.\/src\/utils\/date\.js["']/.test(src)) {
+      fail(
+        `§23: ${rel} no longer imports \`todayStr\` from src/utils/date.js. Its notion of "today" must ` +
+          `be the app's, not its own — that divergence is backlog item 38.`,
+      );
+    }
+  }
+
+  if (filesScanned < 40 || dateBearingFiles < 3) {
+    fail(
+      `§23: scanned ${filesScanned} source files, ${dateBearingFiles} of them containing \`new Date(\` ` +
+        `(expected at least 40 and 3) — the walk is probably matching nothing, which for an ` +
+        `absence check reads exactly like a pass.`,
+    );
+  }
+  if (exempted !== 1) {
+    fail(
+      `§23: expected exactly 1 \`utc-date-ok:\` exemption (the Tiingo query lower bound), found ${exempted}. ` +
+        `A new one is a decision to review, not a default; a vanished one means the marker moved out of ` +
+        `range of the line it excuses.`,
+    );
+  }
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // 24. No source file is invisible to grep (found while writing §23).
+  //
+  //     §23's third hit was `translation-review.mjs`, which the hand grep that
+  //     scoped this work had reported clean. It was not clean; grep had
+  //     skipped the whole file, because line 91 wrote its hash separator as a
+  //     literal NUL byte rather than the `\0` escape, and one NUL makes grep
+  //     class a file as binary and refuse to search it.
+  //
+  //     That is worth its own check because of what it costs, which is not one
+  //     stale date. Every guard in this repo that scans text — §16's
+  //     cross-references, §17's glossary links, §20's list markers, §22's chart
+  //     descriptions, all of check-blindspot.mjs — reads files the same way a
+  //     person greps them. A file that reads as binary is exempt from all of
+  //     them at once, silently, and reports as a pass. This repo already has
+  //     the lesson written down twice: a measurement taken with the instrument
+  //     that has the blind spot cannot detect the blind spot.
+  //
+  //     Escapes are the fix, never a raw control byte: `"\0"` and a literal NUL
+  //     are the same string to the parser and a different file to every tool
+  //     around it. Verified when this landed — all 40 `englishSourceHash`
+  //     values are byte-identical across the change, so the ledger's stored
+  //     hashes stayed valid.
+  for (const path of [join(ROOT, "src"), join(ROOT, "scripts")].flatMap(walkSource)) {
+    const bytes = readFileSync(path);
+    const nul = bytes.indexOf(0);
+    if (nul !== -1) {
+      const line = bytes.slice(0, nul).toString("utf8").split("\n").length;
+      fail(
+        `§24: ${path.slice(ROOT.length + 1)}:${line}: contains a literal NUL byte, which makes grep ` +
+          `treat the whole file as binary and skip it — every text-scanning check in this repo, ` +
+          `including the ones in this file, then passes it without reading it. Write the escape ` +
+          `(\`\\0\`) instead; it is the same string to the parser and a text file to everything else.`,
+      );
+    }
+  }
+}
+
 console.log(`\n${failures === 0 ? "PASS" : "FAIL"}: ${failures} failure(s), ${warnings} warning(s).`);
 process.exit(failures === 0 ? 0 : 1);

@@ -1,5 +1,14 @@
 // Shared local-timezone date helpers for localStorage-backed daily features
 // (streak counter, continue-tomorrow prompt). Kept dependency-free.
+//
+// Also imported by the Node scripts — `scripts/check-claims.mjs` for the §9.1
+// register's "today", and `scripts/fetch-market-data.mjs` for the `asOf` it
+// stamps on `public/data/market.json`. That is deliberate rather than
+// incidental: `useMarketData` compares that stamp against `todayStr()`, so the
+// writer and the reader must agree on what day it is. Both scripts previously
+// computed their own date as `new Date().toISOString().slice(0, 10)`, which is
+// the UTC day and is a different day from this one every evening east of UTC
+// (see check-data.mjs §23, which now fails the build on that idiom).
 
 export function todayStr() {
   const d = new Date();

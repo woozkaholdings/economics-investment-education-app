@@ -1013,12 +1013,30 @@ for the history. No open P1/P2 items.
       existing lesson content; it is **not** recommended. After this item, v6 holds no unique live idea.
 
 
-38. **[Process — small, filed 2026-08-16 rather than fixed in passing] `check-claims.mjs` computes
-    "today" in UTC.** `new Date().toISOString().slice(0,10)` gave `2026-08-17` while the machine's
-    local date was still `2026-08-16` (EDT), so a §9.1 past-due warning can fire up to a day early.
-    Cosmetic — the warning is a prompt to look, not a build break, and `CLAIMS_TODAY` already overrides
-    the value for testing. Worth doing correctly if a run is in the file anyway; not worth a run of its
-    own. **Do not "fix" it by hardcoding a date** (§2.3).
+38. **[Process — ✅ DONE 2026-08-16. Filed as cosmetic and one file; it was neither. Three files had the
+    idiom, one of them in the market pipeline, and the third was found by the guard rather than by the
+    grep that scoped the work.]** `check-claims.mjs` computed "today" in UTC.
+    - **What shipped:** all three now import `todayStr` from `src/utils/date.js` — the same function
+      `useMarketData` compares against, so the writer and the reader of a date cannot disagree.
+      `check-claims.mjs` (the §9.1 past-due warning), `scripts/fetch-market-data.mjs` (the `asOf` stamp
+      on `public/data/market.json`), and `scripts/translation-review.mjs` (a ledger entry's
+      `reviewedDate`). Guarded by **`check-data.mjs` §23**, which fails on the idiom anywhere under
+      `src/` or `scripts/` and separately requires those three scripts to import the shared helper.
+    - **The market one was the consequential half, and it was not cosmetic.** `asOf` is what
+      `useMarketData` measures staleness from. The job runs 6:30pm ET — 22:30 UTC in EDT, 23:30 in EST
+      — so the UTC day was right by ninety minutes in summer and **thirty in winter**. A late start or
+      a slow fetch in January stamps tomorrow's date, which reads as a negative age and keeps a
+      genuinely stale file looking fresh past `STALE_AFTER_DAYS`. Verified end-to-end: a forced fixture
+      run wrote `asOf=2026-08-16` at 23:11 EDT, where the old idiom returned `2026-08-17`.
+    - **The one legitimate UTC use is exempted by comment, not by path** — Tiingo's query lower bound,
+      where a day either way is swallowed by a 1.5x over-fetch. §23 counts the exemptions and fails if
+      the count changes, so a second one has to be argued for rather than inherited.
+    - **Known limit, written into §23's header:** it catches the idiom, not the mistake. A hand-composed
+      `getFullYear()` date, or a `.toISOString()` sliced on another line, passes. The positive
+      import-requirement half is what makes that acceptable — but it names three script paths
+      explicitly, so a *fourth* script that starts deriving a date is not covered until someone adds it.
+
+    See item 43 for what this run found on the way, which is the more valuable half.
 
 39. **[Process — carried forward, still unowned] Nothing checks that a check and the document it
     guards land in the same commit.** Filed two runs ago and restated here so it stops living only in a
@@ -1087,6 +1105,43 @@ for the history. No open P1/P2 items.
     > **Verified in a live browser, both call sites, en + ko**: all four curves expose the shape description
     > as their accessible name while the verdict labels ("Inverted (Danger)" / "역전 (위험)") remain exposed
     > separately in their figcaptions, so nothing was traded away for the richer name.
+
+43. **[Process — ✅ FOUND AND FIXED 2026-08-16 by item 38's guard, on its first run. Filed as its own
+    item because the fix is one character and the finding is repo-wide.] `scripts/translation-review.mjs`
+    was invisible to `grep` — and had been since it was written on 2026-08-11.**
+    Line 91 wrote its hash separator as a **literal NUL byte** rather than the `\0` escape. One NUL makes
+    `grep` class a file as binary and refuse to search it; `file` reported it as "binary data" and
+    `grep -n toISOString` on that exact path returned nothing while `sed -n '195p'` printed the match.
+    - **How it surfaced, which is the point.** The hand grep that scoped item 38 reported two occurrences
+      of the UTC-date idiom. §23's first run reported three. The third was this file. **The scoping
+      measurement and the blind spot were the same instrument** — the third recurrence of a lesson items
+      33 and 36 each recorded independently, and the first time a *guard* caught it rather than a later
+      run cleaning up after it.
+    - **What it cost, which is not one stale date.** Every text-scanning check in this repo reads files
+      the way a person greps them: §16's cross-references, §17's glossary links, §20's list markers,
+      §22's chart descriptions, all of `check-blindspot.mjs` — including its **§10.1 advice-language
+      scan**. A file that reads as binary is exempt from all of them at once and reports as a pass. This
+      file is a script rather than user-facing content, so nothing was actually shipping unchecked; the
+      exposure was that nothing would have said so if it were.
+    - **Fixed and guarded.** Raw NUL → `\0`, the same string to the parser and a text file to every tool
+      around it. **`check-data.mjs` §24** now fails on a literal NUL anywhere under `src/` or `scripts/`.
+      Because the byte lives inside `englishSourceHash`, the change was verified by output rather than by
+      inspection: all 40 hashes byte-identical across the edit, and the ledger still reports 100%
+      coverage / 0 stale in all four languages.
+    - **Worth generalising, and deliberately not done in this run:** §24 checks NUL only. Other things
+      make a file effectively unsearchable — invalid UTF-8, a `.gitattributes` binary marking, a
+      minified single line. Whether that is worth a broader "every source file is greppable" assertion
+      is a real question and an honest scoping job, not an obvious yes.
+
+44. **[Small — filed, not fixed] `useMarketData` treats a future `asOf` as fresh, and `Sectors.jsx`
+    destructures `ageDays` without using it.** With item 38's fix the job can no longer stamp tomorrow's
+    date, so the cause is closed — but `isStale` is `ageDays > STALE_AFTER_DAYS`, so any negative age
+    still reads as fresh, and a user whose device date is behind the job machine's (a Hawaii evening
+    against an Eastern job) sees exactly that. **No §2.3 violation**: the screen prints `asOf` outright
+    and never says "N days ago", so nothing is presented as current without its date — which is why this
+    is filed small rather than fixed in passing. The unused `ageDays` binding at
+    `src/screens/reference/Sectors.jsx:29` is the other half; a run in this file should decide whether
+    the hook should clamp, whether the screen should show the age, or whether the binding should go.
 
 **HELD — owner decisions, do not act on these**
 
@@ -7847,3 +7902,114 @@ unowned and still needs honest scoping before anyone picks it. **Item 32's month
 2026-09-05 and must not be pulled forward.** Every chart primitive and every chart call site now carries a
 real description, so the a11y-figure thread that ran from item 40 through 41 to 42 is closed; a run
 looking for the next one should re-read §3.0.4 rather than assume more chart work exists.
+
+### 2026-08-16 (scheduled dev-agent, late run) — Three notions of "today", and a file grep could not see (items 38, 43)
+
+Picked **item 38** from the backlog — `check-claims.mjs` computing "today" as the UTC day, filed as
+cosmetic and "not worth a run of its own," and named as the next pick by the previous run after three
+consecutive runs had hand-corrected a date they read off that line. It was not cosmetic and it was not
+one file.
+
+**What the idiom actually cost, per site.**
+`new Date().toISOString().slice(0, 10)` is not today; it is today in UTC, which after 8pm Eastern is
+tomorrow. Three sites had it, all now importing `todayStr` from `src/utils/date.js` — the same function
+`useMarketData` compares against, so a date's writer and its reader cannot disagree about what day it is:
+
+1. **`check-claims.mjs`** — the §9.1 past-due warning, the filed bug. Now prints `as of 2026-08-16` where
+   it printed `2026-08-17` an hour earlier. `CLAIMS_TODAY` still overrides, untouched.
+2. **`scripts/fetch-market-data.mjs`** — the `asOf` stamp on `public/data/market.json`, and the
+   consequential one. That field is what `useMarketData` measures staleness from. The job runs 6:30pm ET:
+   22:30 UTC in EDT, **23:30 in EST**. The UTC day was correct by ninety minutes in summer and thirty in
+   winter — a late start, a retry, or a slow fetch in January stamps tomorrow, which reads as a negative
+   age and keeps a genuinely stale file looking fresh past `STALE_AFTER_DAYS`. Nothing had gone wrong yet;
+   the margin was thirty minutes wide.
+3. **`scripts/translation-review.mjs`** — a ledger entry's `reviewedDate`. **This one was not in the
+   scoping grep. §23 found it.** See below.
+
+**The guard: `check-data.mjs` §23.** Fails on the idiom anywhere under `src/` or `scripts/`, not on the
+three files that had it — the mistake is not specific to a receiver. Three deliberate design points:
+- **Comments are blanked before matching, and that was not a precaution.** §23's first run failed on four
+  hits, all of them explanations of the bug written in this very commit. Blanked rather than stripped, so
+  match indices still name the right line.
+- **The one legitimate UTC use is exempted by an inline `utc-date-ok:` comment, not by path** — Tiingo's
+  query lower bound, where a day either way is swallowed by a 1.5x over-fetch. §23 asserts the exemption
+  count is exactly 1, so a second one has to be argued for rather than inherited.
+- **A positive half, because an absence check passes loudest when it is broken.** The three date-deriving
+  scripts must import the shared helper; plus vacuity guards on files scanned and files containing
+  `new Date(`.
+
+**The finding that was worth more than the fix — item 43.** §23's first run reported three occurrences.
+The hand grep that scoped this work had reported two. The third, `translation-review.mjs`, was invisible
+to `grep`: line 91 wrote its hash separator as a **literal NUL byte** instead of the `\0` escape, and one
+NUL makes grep class a file as binary and skip it. `file` called it "binary data"; `grep -n toISOString`
+on that exact path returned nothing while `sed -n '195p'` printed the match. It had been that way since
+the file was written on 2026-08-11.
+
+That is the third recurrence of a lesson items 33 and 36 each recorded independently — **a measurement
+taken with the instrument that has the blind spot cannot detect the blind spot** — and the first time a
+guard caught it instead of a later run cleaning up after it. What it exposed is not one stale date: every
+text-scanning check here reads files the way a person greps them (§16, §17, §20, §22, and all of
+`check-blindspot.mjs` **including its §10.1 advice-language scan**), so a file that reads as binary is
+exempt from all of them at once and reports as a pass. This particular file is a script, not shipped
+content, so nothing was actually going unchecked — the exposure was that nothing would have said so.
+Fixed to `\0` and guarded by a new **§24**. Because the byte lives inside `englishSourceHash`, it was
+verified by output, not inspection: all 40 hashes byte-identical across the edit, ledger still 100%
+coverage / 0 stale in all four languages.
+
+**Verified.**
+- `npm test` and `npm run build` green.
+- **Seven injections against `check-data.mjs`, each restored byte-identical (sha256 compared):**
+  `.slice(0,10)` idiom in app code → §23 caught, naming file and line; `.split("T")[0]` form → caught;
+  `check-claims.mjs` losing the `todayStr` import → positive half caught; the `utc-date-ok:` marker
+  removed → both the line *and* the exemption count caught; a raw NUL restored to
+  `translation-review.mjs` → §24 caught. **Two negative controls held**: a second full ISO *timestamp*
+  in `analytics.js` still passes (a timestamp is not a calendar date), and the idiom written inside a
+  comment is not reported.
+- **The market fix end-to-end, not by reading it**: backed up `public/data/market.json`, ran
+  `npm run market -- --force` at 23:11 EDT, and it wrote **`asOf=2026-08-16`** where the old idiom
+  returned `2026-08-17`; restored the real tiingo file and confirmed `shasum` identical and
+  `git status public/data/` clean, so no fixture figures reached the repo.
+- **No live-browser check, and it is not owed here (W-1).** Every changed line under `src/` is a comment
+  — confirmed by filtering the diff — so nothing rendered changed. W-1's rule binds on rendered UI; this
+  says so explicitly rather than omitting the step.
+
+**Adversarial self-check.**
+1. **Blindspot register.** Nothing reintroduced. §2.3 is the live one and it points *at* this change:
+   item 38's own text warns "do not fix it by hardcoding a date," and a grep of the diff for
+   `20\d\d-\d\d-\d\d` returns nothing — the fix is a function call, and `DECISIONS.md`'s §2.3 note
+   ("a real `asOf` that updates daily is the opposite of fake freshness") is strengthened, not
+   contradicted, by making that daily value correct. The fixture run touched `market.json` and was
+   restored to a matching `shasum`. §10.1/§10.2/§10.3: no user-facing content, `check-blindspot` green.
+2. **`DECISIONS.md` conflict.** None. No storage, routing, content-module-format or dependency change;
+   the market-data entry's binding rule is about what the UI shows, which is untouched.
+3. **Already-done backlog item.** Item 38 was open, filed hours earlier by the item-30 work and never
+   picked. Not in "Completed and pruned". §23/§24 duplicate no existing section — the nearest neighbours
+   (§13b call-site shapes, §20/§22 vacuity counters) are patterns reused deliberately, and this entry
+   names them as borrowed rather than new.
+4. **My own verification claim — two places it needed qualifying.** First, the headline demonstration is
+   **time-dependent**: an independent reviewer re-running `npm test` after local midnight sees UTC and
+   local agree and finds nothing. The *fix* is not time-dependent, but the *proof* only reproduces during
+   the evening window, so the injections and the `asOf` write are the durable evidence and the printed
+   date is not. Second, §23's positive half **names three script paths literally** — a fourth script that
+   starts deriving a date is uncovered until someone edits that list, and §23 catches only the idiom, not
+   a hand-composed `getFullYear()` date. Both limits are written into the section header rather than left
+   for a reader to discover, because a check whose coverage is over-read is the failure mode this repo
+   keeps hitting.
+5. **Item 38's own bug, no longer hand-corrected.** The previous three runs dated their entries from
+   `date` to work around this line. This entry is dated 2026-08-16 from `date` as well — but
+   `check-claims.mjs` now agrees with it, which is the first run where the two sources match.
+6. **Concurrent runs.** `HEAD` was `9f24a0b` at start and at commit; `git status` listed only my own
+   seven files at every checkpoint. Note `9f24a0b` (the translation-ledger re-review) landed without an
+   AGENT_LOG entry — flagged, not touched.
+
+**Item 18 remains the entire critical path to ending Phase 0** — an analytics provider account and key,
+an owner action. Unchanged by this run.
+
+**Next run should pick**: **item 39** is now better motivated and partly answerable — this run is a live
+example of a guard and the thing it guards landing together, and §24 is an instance of the "check the
+class, not the instance" shape that item 39 is groping toward; it still needs the honest scoping the item
+asks for, including the possibility that the answer is "not checkable in a script." **Item 44** (filed
+above, the future-`asOf`/unused-`ageDays` pair) is small and well-scoped. Item 43's closing bullet names a
+real open question — whether "every source file is greppable" is worth asserting beyond NUL — and that is
+a scoping job, not a coding one. **Item 32's monthly audit is dated 2026-09-05 and must not be pulled
+forward.**

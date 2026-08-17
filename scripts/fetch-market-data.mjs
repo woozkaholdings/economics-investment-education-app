@@ -26,6 +26,7 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { BENCHMARK, SECTOR_SYMBOLS } from "../src/content/sectors.js";
+import { todayStr } from "../src/utils/date.js";
 import { getAdapter } from "../src/lib/marketData/adapters.js";
 import { fetchEconomics, fixtureEconomics } from "../src/lib/marketData/fred.js";
 import { MIN_BARS, OUTPERFORM_THRESHOLD, WJ_PERIODS, activeStrategy, computeRelativeStrength } from "../src/lib/relativeStrength.js";
@@ -89,13 +90,22 @@ const pctChange = (closes, days) => {
   return first ? (last - first) / first : null;
 };
 
-const todayISO = () => new Date().toISOString().slice(0, 10);
+// The trading day this file describes, in the machine's own timezone — the
+// same `todayStr` the browser compares it against in `useMarketData`, so the
+// writer and the reader cannot disagree about what day it is.
+//
+// This was `new Date().toISOString().slice(0, 10)` (backlog item 38). The job
+// runs at 6:30pm Eastern, which is 22:30 UTC in EDT and 23:30 UTC in EST — so
+// the UTC day was still the right one, by ninety minutes in summer and thirty
+// in winter. A late start, a retry, or a slow fetch in January was enough to
+// stamp the file with tomorrow's date, which reads as a negative age and would
+// have kept a genuinely stale file looking fresh past STALE_AFTER_DAYS.
 
 async function main() {
   const adapterName = arg("adapter", "fixture");
   const adapter = getAdapter(adapterName);
   const useFixtures = adapterName === "fixture";
-  const asOf = arg("as-of", todayISO());
+  const asOf = arg("as-of", todayStr());
 
   // Each adapter declares which variable holds its key, so adding a provider
   // never means editing this function.

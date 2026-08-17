@@ -74,6 +74,10 @@ export const tiingo = {
   async dailyCloses(symbols, { days = 260, apiKey } = {}) {
     if (!apiKey) throw new Error("tiingo adapter requires TIINGO_API_KEY");
     // Ask for calendar days generously; ~365 covers 260 trading days.
+    // utc-date-ok: a deliberately loose lower bound for a provider query, not
+    // a claim about what day it is here. The 1.5x over-fetch above is orders
+    // of magnitude larger than the at-most-one-day UTC/local difference, and
+    // Tiingo interprets startDate in its own terms regardless.
     const start = new Date(Date.now() - Math.ceil(days * 1.5) * 86400_000)
       .toISOString().slice(0, 10);
     const out = {};

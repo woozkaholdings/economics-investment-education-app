@@ -28,6 +28,8 @@ import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 
+import { todayStr } from "../src/utils/date.js";
+
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const FILE = join(ROOT, "CLAIMS.md");
 
@@ -38,7 +40,14 @@ const warn = (m) => (console.warn(`WARN: ${m}`), warnings++);
 
 // The register's own "today". Passed in so a run is reproducible and so this
 // never depends on a hardcoded date drifting stale (§2.3's standing rule).
-const today = process.env.CLAIMS_TODAY ?? new Date().toISOString().slice(0, 10);
+//
+// The *local* day, via the same helper the app uses (backlog item 38). This
+// was `new Date().toISOString().slice(0, 10)` — the UTC day — which after 8pm
+// Eastern is tomorrow, so a check date could be reported past due up to a day
+// early, and three consecutive runs had to hand-correct a date they read off
+// this line. Nothing here needs UTC: every date in CLAIMS.md is a calendar
+// date a person wrote, and past-due is a question about the reader's day.
+const today = process.env.CLAIMS_TODAY ?? todayStr();
 if (!/^\d{4}-\d{2}-\d{2}$/.test(today)) {
   fail(`CLAIMS_TODAY is "${today}", expected YYYY-MM-DD`);
   process.exit(1);
