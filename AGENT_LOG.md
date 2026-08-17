@@ -198,6 +198,107 @@ for the history. No open P1/P2 items.
 > on more content. **Item 18 is now the entire critical path to ending Phase 0** — flag it to the owner in
 > every run's output until it moves.
 
+> **BACKLOG REFILLED 2026-08-17 (owner-directed), items 55–59.** Derived by reading `LAUNCH_PLAN.md`
+> §0–§11 end to end and checking each clause against the actual `src/` tree — not carried forward from a
+> run-log note. Every one names the plan clause it serves, every one is unblocked today, and **every
+> number below was measured, with a control where the measurement could silently return zero.** They are
+> listed in value order; a run may disagree, but should say why.
+>
+> **Two candidates were measured and NOT filed, which is half the value of a refill:**
+> - *§3.3's opt-in daily reminder.* It does not exist — but `src/lib/useAppState.js:188` already says so
+>   in a comment, and correctly attributes the blocker to the **held §2.1 platform decision** (a static
+>   web page cannot notify a closed tab without a service worker and push infrastructure). The code is
+>   already honest; filing an item would just restate it. **Owner-blocked, not backlog work.**
+> - *§3.0.7 WCAG AA contrast.* `theme.js` claims "Contrast for both palettes is verified in
+>   `index.css`", and `index.css:91` points at a "contrast note above" **that does not exist**. So the
+>   claim is unverifiable as written — but computing it says the claim is **true**: every ink×surface and
+>   ink-on-fill pair in both palettes clears 4.5:1, **0 violations**. Filed as **59** at the bottom, and
+>   deliberately marked low value: it guards a property that currently holds, which is worth doing
+>   cheaply and worth nobody's afternoon.
+
+55. **[Process/Docs — P1 of this refill. The same class item 47 killed, one document over, and this
+    one changes what a reader believes about a gate.] `LAUNCH_PLAN.md`'s live figures are stale, and
+    its curriculum table names lesson ids that were abandoned three days ago.** Measured against the
+    tree, not read off the page:
+    - **§2.5's track table is wrong on both rows.** It says Your Money = `13-26 (14)` and How the
+      Economy Works = `1-12 (12)`. Actual: **money = 1–28 (28)**, **economy = 29–40 (12)**. The ids
+      predate the 2026-08-14 renumbering — the exact defect items 33 and 36 spent four passes chasing
+      through lesson prose and quiz explanations, sitting untouched in the section that *defines the
+      curriculum* and tells a run "when adding a lesson, declare its `track`."
+    - **§4.0 states "12 lessons, ~10,900 characters of English body text, ~12 minutes"** against an
+      actual **40 / 136,031 / 120**. The same sentence ends "count it again rather than trusting this
+      line," which is item 39's lesson written down and then not followed — by the document that
+      wrote it.
+    - **§4.3 says "the gate is not close: 12 minutes is not 2 hours."** `LAUNCH_READINESS.md` says both
+      §4.3 content clauses are **met** (120/120 since 2026-08-15). **Two authoritative documents
+      disagree about whether a Phase-0 gate is cleared** — that is not a stale number, it is a wrong
+      answer to the only question the plan exists to answer.
+    - Also stale, same cause: §3.1's "the twelve lessons in order", §3.2's "progress ring at 1/12",
+      §4.0's asset table and §4.2's "not the 12 lessons".
+    - **Scope:** extend `scripts/refresh-readiness.mjs` to generate `LAUNCH_PLAN.md`'s catalogue
+      figures as well (it already computes every one of them — the guarded-sentence list is data, and
+      this is one more entry), and fix §2.5's ids by hand. **Do not** try to generate the prose
+      arguments around the figures; §4.1/§4.2's reasoning about *finite content* is judgment that
+      happens to cite a number, and rewriting it is an owner call, not a regeneration. Flag it and
+      leave it.
+
+56. **[Content/Process — P2. Phase-0-facing, which is not obvious until you see how §4.3 is
+    measured.] Nothing checks that a lesson's stated `minutes` is honest, and §4.3's content gate is
+    computed by summing exactly that unvalidated field.** §3.0.5 requires "an honest minutes
+    estimate"; the figure is shown to learners twice (`src/screens/Learn.jsx:154`,
+    `src/screens/LessonReader.jsx:218`) and summed by `refresh-readiness.mjs` into the 120 minutes
+    that closed §4.3's second clause. Measured at 200 wpm / 5.5 chars per word: **6 of 40 lessons
+    overstate by more than 15%** — worst is lesson 10 at **1.31x** (2 stated, ~2.6 actual), then
+    lessons 8 and 34 at ~1.24x. Lesson 1 is fine (3 stated, ~2.7 actual), so §3.0.5's "under four
+    minutes" clause holds.
+    > **Decide the model before touching a number.** 200 wpm and 5.5 chars/word are *my* assumptions,
+    > and the honest first half of this item is choosing a defensible reading rate for plain-language
+    > financial content and writing down why — a slower rate would flag more lessons, a faster one
+    > none. Changing 6 lesson `minutes` values also moves the 120-minute total that a §4.3 clause is
+    > currently reported as meeting, so this item can *reopen a closed gate*. That is the right
+    > outcome if the estimates are wrong, and it is exactly the kind of thing to state out loud in the
+    > run entry rather than discover afterwards.
+
+57. **[Content — P3. Small, bounded, and the measurement has a control.] §3.0.3's no-undefined-jargon
+    rule: 7 lessons use a glossary term in prose with no link to it.** §3.0.3 says a term "either gets
+    defined where it appears or links to the glossary." `src/content/lessonTerms.js` curates links for
+    **22 of 40** lessons. Of the 18 uncurated, **7 use a glossary term verbatim in their English body,
+    11 occurrences total**: lesson 39 (5 — Consumer Price Index, Purchasing Managers' Index,
+    Inflation, Recession), lessons 30/4/15 (Credit), 37 (Quantitative Easing), 5 (Diversification), 8
+    (Deductible). The other 11 uncurated lessons use no glossary term at all and need nothing.
+    > **The control matters here and is why this number is trustworthy.** The first run of this
+    > measurement returned **0** — glossary entries key the term name at `en.s`, not `term.en`, so the
+    > matcher was comparing objects and matching nothing. Caught by asserting a *linked* lesson shows
+    > hits (lesson 2 → Credit, Emergency Fund, Insurance Premium) before believing the zero. Re-run
+    > this control if you re-measure.
+
+58. **[Process — P4. The generalisation of the finding that closed item 49.] Read `LAUNCH_PLAN.md`
+    and `DECISIONS.md` end to end against the current tree, and record every claim that no longer
+    holds.** `README.md` carried a §10.2 violation in its opening sentence for sixteen days while the
+    register said "✅ Closed", because the check that certified it scanned `src/` and the v5 prototype
+    — the two places the rule was already obeyed. It was found sideways, by putting README under an
+    unrelated *path* check. Item 55 is the figures half of the same problem in `LAUNCH_PLAN.md`;
+    this is the rest: prose claims, status lines, and "shipped"/"done" annotations that no script can
+    check. §10.7 already asks for exactly this ("reconcile this file at each monthly audit"), and
+    §9.3's audit has never run. **Bounded deliverable:** a list of contradictions with file:line, in
+    the run entry — not a rewrite. Fixing them is a separate decision per item, some of them owner
+    calls.
+
+59. **[A11y — P5, and deliberately last. It guards something that is currently TRUE.] `theme.js` and
+    `index.css` both claim the palette's contrast is verified; nothing verifies it, and the note one
+    of them cites does not exist.** `src/theme.js` says "Contrast for both palettes is verified in
+    `index.css`"; `src/index.css:91` says "see the contrast note above" and there is no such note
+    above. §3.0.7 requires body text at WCAG AA. **Measured: 0 violations** — every ink×surface pair
+    and every ink-on-fill pair clears 4.5:1 in both the light and dark palettes. So this is not a bug
+    report; it is a claim with no instrument behind it, in the one part of the design system a future
+    palette edit is most likely to break silently.
+    - **Scope:** a `check-data.mjs` section that parses the two palette blocks in `index.css` and
+      asserts AA on the pairs the app actually renders, with a floor (it must find both palettes and
+      at least N pairs) so an empty parse cannot read as a pass — §20/§22's lesson. Fix the dangling
+      "contrast note above" reference or delete the sentence.
+    - **Do not oversell it.** A run that picks this is preventing a future regression, not fixing a
+      present defect, and the run entry should say so plainly.
+
 26. **[UX — owner-directed, entered as a backlog item by the 2026-08-16 weekly review] Quizlet/Vocabulary
     design-reference review.** The owner shared ~200 Mobbin-exported screenshots of the Quizlet and
     Vocabulary iOS apps in a 2026-08-15 interactive session and asked for transferable patterns to be
@@ -8824,3 +8925,83 @@ that is a legitimate run, and it is the honest one here. One concrete candidate 
 did **not** build: `LAUNCH_PLAN.md` and `DECISIONS.md` have never been read end-to-end against the
 current tree the way `README.md` just was, and README's sixteen-day §10.2 violation is the argument for
 doing it.
+
+### 2026-08-17 (owner-directed, interactive) — Backlog refill: read the plan end to end, measure every claim, file five (items 55–59)
+
+**W-2's standing rule invoked deliberately**: the previous entry found nothing both unblocked and
+worth picking, and W-2 says a run in that position should *refill the backlog* by re-reading the plan
+against the real tree rather than extending a note chain. Read `LAUNCH_PLAN.md` §0–§11 end to end and
+checked each clause against `src/`. **Every number in items 55–59 was measured, and where a
+measurement could silently return zero it has a control.**
+
+**Filed — five items, in value order.**
+- **55 (P1). `LAUNCH_PLAN.md`'s live figures are stale, and its curriculum table names abandoned lesson
+  ids.** §2.5 says money = `13-26 (14)` and economy = `1-12 (12)`; the tree says **money 1–28 (28),
+  economy 29–40 (12)** — pre-2026-08-14 ids, the items-33/36 defect sitting in the section that
+  *defines the curriculum*. §4.0 says "12 lessons, ~10,900 characters, ~12 minutes" against **40 /
+  136,031 / 120**, in a sentence that ends "count it again rather than trusting this line." And §4.3
+  says "the gate is not close: 12 minutes is not 2 hours" while `LAUNCH_READINESS.md` says both content
+  clauses are **met**. That last one is the reason this is P1: **two authoritative documents give
+  opposite answers about whether a Phase-0 gate is cleared.** Item 47's generator already computes every
+  figure involved.
+- **56 (P2). Nothing checks that a lesson's stated `minutes` is honest — and §4.3's content gate is the
+  sum of that field.** Shown to learners at `Learn.jsx:154` and `LessonReader.jsx:218`, summed by
+  `refresh-readiness.mjs` into the 120 that closed the clause. At 200 wpm, **6 of 40 overstate by >15%**
+  (worst: lesson 10 at 1.31x). Lesson 1 passes §3.0.5's four-minute rule. Filed with the warning that
+  the reading-rate model must be chosen and defended *before* any number is edited, because fixing the
+  estimates can reopen a gate currently reported as met.
+- **57 (P3). §3.0.3: 7 lessons use a glossary term in prose with no link** — 11 occurrences, against 22
+  of 40 lessons having curated links.
+- **58 (P4). Read `LAUNCH_PLAN.md` and `DECISIONS.md` end to end against the tree** — the prose half of
+  what item 55 does for figures, and the generalisation of the README §10.2 finding. Deliverable is a
+  list of contradictions with file:line, not a rewrite.
+- **59 (P5). The contrast claim has no instrument** — and is **true**: 0 violations, both palettes.
+  Filed last and marked as regression-prevention, not a defect.
+
+**Two candidates measured and deliberately NOT filed**, which is the half of a refill that keeps the
+backlog honest:
+- **§3.3's opt-in daily reminder** does not exist — but `useAppState.js:188` already says so and
+  correctly attributes it to the **held §2.1 platform decision**. Filing it would restate a comment.
+- **§3.0.7 contrast as a bug** — the claim is unverified but correct, so it went in as a guard (59) at
+  the bottom rather than as a defect near the top.
+
+**Verified.** `npm test` green (`check-backlog.mjs` included) and `npm run build` green. No source
+file changed — this run edits `AGENT_LOG.md` only.
+
+**Adversarial self-check.**
+1. **Blindspot register.** Nothing reintroduced; no user-facing copy, no `src/` change at all. One item
+   touches §10.3-adjacent ground only to say it stays owner-held. Item 56 is the one to watch on §10.1
+   and it is content-neutral (it edits time estimates, not claims about money).
+2. **`DECISIONS.md` conflict.** None. Nothing filed proposes JSON content, non-local state, a router,
+   or Expo; item 55 explicitly scopes *out* rewriting §4.1/§4.2's monetization reasoning, which is
+   owner judgment that happens to cite a number.
+3. **Already-done backlog item.** Checked all 36 live items and "Completed and pruned". 55 is not item
+   47 (that guarded `LAUNCH_READINESS.md`; this is a different document and includes a hand-fix 47
+   cannot generate), not items 33/36 (those fixed lesson *prose* and *quiz* references; this is the
+   plan's own table). 57 is not item 28, which built the linking *mechanism* — this is coverage
+   through it. 59 is not item 41/§22, which is chart descriptions, not colour.
+4. **My own verification claims — and this is where the check bit, hard.** The glossary measurement in
+   item 57 **first returned 0 unlinked terms**, which I nearly filed as "no gap here." It was wrong:
+   glossary entries key the term name at `en.s`, and my extractor read `term.en`, so it compared
+   objects and matched nothing. The control — assert a *linked* lesson shows hits — is what exposed it,
+   and the real answer is 7 lessons / 11 occurrences. This is the third time in two days that a
+   measurement taken with a blind instrument read as a clean result, and the first time the control was
+   run *before* the number was written down rather than after. The control is now recorded inside item
+   57 so a re-measurement repeats it.
+5. **Concurrent runs — HEAD moved twice during this session, and the numbering guard earned its
+   keep.** The scheduled dev-agent started mid-refill: `package.json` and `scripts/check-payload.mjs`
+   appeared in the tree, then landed as **`7ffa303`** ("Assert the payload property items 45 and 48
+   produced (item 50)"). I touched neither file. **We had both numbered an item 50** —
+   `check-backlog.mjs` failed the build naming both line numbers, exactly the collision it was written
+   for after the 34/34 incident. Applied its own rule (renumber the smaller blast radius): theirs is
+   committed and cited from `scripts/check-payload.mjs`, mine was uncommitted and cited nowhere, so
+   **mine became 55–59**, cross-references inside the block updated with them. Re-ran the guard: 36
+   items, no duplicates.
+
+**Item 18 remains the entire critical path to ending Phase 0** — an analytics provider account and key,
+an owner action. Unchanged by this run.
+
+**Next run should pick**: **item 55** — it is the only filed item that changes what a reader believes
+about a gate, and its mechanism already exists in `refresh-readiness.mjs`. Note for whoever takes it:
+item 50 (the other run's payload check) also landed today, so re-read the backlog rather than trusting
+this line's numbering.
