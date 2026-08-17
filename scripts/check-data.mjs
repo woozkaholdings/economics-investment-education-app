@@ -751,6 +751,34 @@ for (const [label, moduleExports] of Object.entries(CONTENT_MODULES)) {
     /quizFiredRef\.current\s*=\s*true;\s*\n\s*track\(EVENTS\.QUIZ_TAKEN/.test(reader));
 }
 
+// 13c. The policy simulator's own event. §9.2: "if you cannot name the event
+//      that would refute a feature, you do not yet understand the feature."
+//      PolicySim is the app's first interactive-in-that-sense feature and the
+//      thing CLAIMS.md A7 bets on, so the event is not decoration — it is
+//      A7's numerator. What this guards, in order of how easy each is to lose:
+//        1. that the event fires at all (it shipped with none);
+//        2. that it carries the three ids A7 needs to be read per lesson;
+//        3. that CLEARING a lever does not fire it. That third one is the
+//           subtle one: a toggle whose both edges fire still *looks*
+//           instrumented, and inflates exactly the number A7 reads. The guard
+//           is source-order — the early return must sit above the track call.
+{
+  const sim = readFileSync(new URL("../src/components/PolicySim.jsx", import.meta.url), "utf8");
+  const check = (label, ok) => { if (!ok) fail(`policy sim instrumentation: ${label}`); };
+
+  check("PolicySim must fire SIM_LEVER_CHOSEN (A7 has no numerator without it)",
+    /track\(EVENTS\.SIM_LEVER_CHOSEN/.test(sim));
+  const props = sim.match(/track\(EVENTS\.SIM_LEVER_CHOSEN,\s*\{([^}]*)\}/);
+  for (const key of ["lessonId", "scenarioId", "optionId"]) {
+    check(`SIM_LEVER_CHOSEN must carry ${key}`, Boolean(props) && new RegExp(`\\b${key}\\b`).test(props[1]));
+  }
+  check("clearing a lever must NOT fire SIM_LEVER_CHOSEN — the early return belongs above the track call",
+    /if\s*\(optionId === chosen\)\s*\{[\s\S]{0,120}?return;[\s\S]{0,200}?track\(EVENTS\.SIM_LEVER_CHOSEN/.test(sim));
+  check("SIM_LEVER_CHOSEN must be a distinct event name, not an alias of a §9.2 one",
+    EVENTS.SIM_LEVER_CHOSEN === "sim_lever_chosen" &&
+      Object.entries(EVENTS).filter(([, v]) => v === EVENTS.SIM_LEVER_CHOSEN).length === 1);
+}
+
 // 14. src/lib/marketData/adapters.js — the daily market-data job's provider
 //     interface. Only the three pure, network-free pieces are testable here
 //     (dailyCloses() itself calls fetch()): redactUrl(), which exists

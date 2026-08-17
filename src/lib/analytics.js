@@ -35,6 +35,19 @@ export const EVENTS = {
   // name is still worth keeping (it is what the Leitner queue's behaviour
   // would be analysed against), so it moved here rather than being dropped.
   QUIZ_ANSWERED: "quiz_answered",
+
+  // Also beyond the minimum, and here for the reason §9.2 itself gives: "if
+  // you cannot name the event that would refute a feature, you do not yet
+  // understand the feature." §3.0.4 claims interactive content — a mechanism
+  // the reader drives — is the differentiator a chat window cannot copy. The
+  // policy simulator (components/PolicySim.jsx) is the first thing in the app
+  // that is interactive in that sense, and until this event existed the claim
+  // had no measurement attached to it at all. It is now CLAIMS.md A7, whose
+  // denominator is `lesson_started` for the hosting lesson.
+  //
+  // Fires on *choosing* a lever, never on clearing one — see PolicySim for
+  // why, and check-data.mjs §13c, which fails the build if that order slips.
+  SIM_LEVER_CHOSEN: "sim_lever_chosen",
 };
 
 // ── §9.2 payload helpers ───────────────────────────────────────────────────

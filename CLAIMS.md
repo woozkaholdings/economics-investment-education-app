@@ -53,6 +53,7 @@ would have to change if the claim is refuted.
 | A4 | Parent-facing kids content costs us little engagement versus a child-facing build. (`screens/reference/`, §10.3.) | Kids-guide views under 2% of sessions once measurable. | 2026-09-05 | No — item 18 | Open, unmeasured. **Not a free choice** — §10.3 is a COPPA/store-classification decision reopened 2026-08-04 and owner-held; if this claim is refuted the response is an owner decision, not a unilateral UI change. |
 | A5 | The Leitner spaced-review queue earns its complexity. (`lib/review.js`, `screens/Practice.jsx`.) | Under 20% of users who finish ≥3 lessons open Review within a week. | 2026-09-05 | No — item 18 | Open, unmeasured |
 | A6 | The catalogue is now large enough for Phase 0. | §4.3's content clauses unmet: under 40 lessons or under ~2 hours. | 2026-10-03 | **Yes** | **Holding** — 40 lessons / 120 min, both clauses met (`LAUNCH_READINESS.md`) |
+| A7 | Interactive content — a mechanism the reader drives, not just watches — is the §3.0.4 differentiator a chat window cannot copy. (`components/PolicySim.jsx`, `content/policyScenarios.js`.) | Under 35% of sessions that open the hosting lesson fire at least one `sim_lever_chosen`; **or** learners who move a lever complete that lesson at no higher a rate than those who don't. | 2026-09-05 | No — item 18 | Open, unmeasured; the event exists as of 2026-08-16 |
 
 **A2 carries a measurement flaw worth stating rather than hiding:** the pre-split single-chain baseline
 was never captured, so this claim can only be checked forward against its own threshold, never as a
@@ -66,6 +67,23 @@ down from the 100% recorded when the P-4 decision was taken on 2026-08-11. Note 
 (es 0.72x, ko 0.36x, zh 0.23x, ja 0.31x of English) are **not** evidence either way — Chinese and
 Japanese encode the same content in far fewer characters, so a low ratio is expected and is not a
 quality signal. Do not cite those ratios as refutation.
+
+**A7 is the one claim here whose measurement was built before the claim was written down, and only
+just.** The simulator shipped 2026-08-16 with no instrumentation at all; `sim_lever_chosen` was added
+the same day, specifically because §9.2's test ("if you cannot name the event that would refute a
+feature, you do not yet understand the feature") had no answer for the app's only interactive feature.
+Three things about it should be read as stated, not softened later:
+- **The two clauses test different things on purpose.** The first asks whether anyone drives the model;
+  the second asks whether driving it mattered. A feature can pass the first and fail the second, and
+  that combination — people touch it, it changes nothing — is the one that would actually refute
+  §3.0.4, because it is what a decorative interaction looks like in data.
+- **35% is a first guess and is recorded as one.** It is set where it is because a lever is a single
+  tap directly under prose that invites it, so a rate far below a third would mean the invitation is
+  not landing. If it is missed, the honest move is a product change (or a documented reason the number
+  was wrong *before* the result was known) — not a lower threshold.
+- **The denominator is one lesson, not the app.** `PolicySim` renders for the lesson that hosts it and
+  `null` for the other 39, so A7 is measured against that lesson's `lesson_started`. A run that adds a
+  simulator elsewhere widens the denominator and must say so here.
 
 ---
 

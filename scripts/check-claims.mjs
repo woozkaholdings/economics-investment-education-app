@@ -114,6 +114,38 @@ for (const c of due) {
   );
 }
 
+// LAUNCH_PLAN.md §9.1 quotes this register's size in prose ("It holds all N
+// claims"). A figure in one file describing the contents of another is the
+// exact shape that went stale for five days in §10.4 (see check-data.mjs
+// §11b) — so it fails, not warns, and the message carries the replacement
+// text so the fix is a copy-paste. Deliberately NOT extended to the group
+// breakdown in the same sentence: that prose describes what the groups *are*,
+// which does not move when a claim is added to one of them.
+{
+  const PLAN = join(ROOT, "LAUNCH_PLAN.md");
+  let plan = "";
+  try {
+    plan = readFileSync(PLAN, "utf8");
+  } catch {
+    fail("LAUNCH_PLAN.md is missing — §9.1 is the section this register serves");
+  }
+  if (plan) {
+    const m = plan.match(/It holds all\s*\n?\s*(\d+)\s*claims/);
+    if (!m) {
+      fail(
+        `LAUNCH_PLAN.md §9.1 no longer contains its "It holds all N claims" sentence. ` +
+          `Restore it (N = ${claims.length}) rather than deleting the claim — a removed figure ` +
+          `satisfies a checker while losing the thing it was checking.`,
+      );
+    } else if (Number(m[1]) !== claims.length) {
+      fail(
+        `LAUNCH_PLAN.md §9.1 says "It holds all ${m[1]} claims" but CLAIMS.md has ${claims.length}. ` +
+          `Replace "${m[1]} claims" with "${claims.length} claims".`,
+      );
+    }
+  }
+}
+
 // Anchored to the START of the status cell, and case-sensitive on "REFUTED".
 // A loose /refuted/i substring test counts A4, whose status merely says what
 // *would* follow *if* it were refuted — the register discusses refutation

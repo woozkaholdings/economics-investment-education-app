@@ -118,6 +118,17 @@ Add a new entry when a run makes a choice future work should be able to look up 
 - **`quiz_answered` is beyond §9.2's minimum, deliberately.** §9.2 names a *minimum* set; keeping
   per-question granularity costs one extra event name and is what the Leitner queue's behaviour
   would have to be analysed against.
+- **`sim_lever_chosen` is the second such event, added 2026-08-16, and it exists to make a claim
+  falsifiable rather than to fill a gap.** The policy simulator (backlog item 34) shipped with no
+  instrumentation, which left §3.0.4's "interactive content is the differentiator" bet with no
+  measurement at all — the exact condition §9.2's own closing line names ("if you cannot name the
+  event that would refute a feature, you do not yet understand the feature"). It is now `CLAIMS.md`
+  **A7**, whose denominator is the hosting lesson's `lesson_started`. Two shape decisions: it carries
+  `{lessonId, scenarioId, optionId}` and no prose (both scenarios happen to share an `optionId` of
+  `hike`, so the scenario id is what disambiguates them, and the situation text is five-language
+  content rather than a measurement); and **it fires on choosing a lever, never on clearing one** —
+  a toggle that fires on both edges still looks instrumented while answering "how many clicks"
+  instead of A7's "did this learner drive the model". `check-data.mjs` §13c asserts both.
 - **Why `paywall_viewed`/`trial_started`/`subscribed`/`cancelled`/`ad_watched` are unfired:** none of
   those features exist in the app yet (no paywall/billing code — confirmed by
   `LAUNCH_READINESS.md`'s own grep). The event names exist so the provider swap-in doesn't also have

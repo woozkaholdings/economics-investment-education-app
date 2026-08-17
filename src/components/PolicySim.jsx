@@ -29,21 +29,46 @@
 //      happened. It sits immediately after the buttons in DOM order too, so
 //      linear reading lands on it next.
 //
+// Instrumented with `sim_lever_chosen` (§9.2's "name the event that would
+// refute the feature"), which is the measurement behind CLAIMS.md A7 — the
+// §3.0.4 bet that interactive content is what a chat window cannot copy. See
+// `choose()` below for what fires and, more importantly, what does not.
+//
 // The content, its §10.1/§2.3 reasoning and the no-numbered-references rule
 // all live in content/policyScenarios.js.
 // ═══════════════════════════════════════════════════════════════════════════
 
 import { useId, useState } from "react";
+import { EVENTS, track } from "../lib/analytics.js";
 import { scenariosForLesson } from "../content/policyScenarios.js";
 import Icon from "./Icon.jsx";
 import { Card, Stack, Text } from "./ui.jsx";
 import { ink, line, radius, space, surface } from "../theme.js";
 
-function Scenario({ scenario, t, lang }) {
+function Scenario({ scenario, lessonId, t, lang }) {
   const [chosen, setChosen] = useState(null);
   const panelId = useId();
 
   const option = scenario.options.find((o) => o.id === chosen) || null;
+
+  // Clearing a lever is undoing an interaction, not having one — so it must
+  // not fire. A7's threshold is "did this learner drive the model", and an
+  // event that fires on both edges of a toggle answers a different question
+  // (how many clicks) while looking like it answers that one. The early
+  // return is the guard, and check-data.mjs §13c asserts it stays above the
+  // track() call rather than below it.
+  //
+  // Only ids travel: the lesson, the scenario, and the lever picked. The
+  // scenario prose is five-language content, not a measurement, and nothing
+  // here identifies a person (see this module's own header in lib/analytics.js).
+  function choose(optionId) {
+    if (optionId === chosen) {
+      setChosen(null);
+      return;
+    }
+    setChosen(optionId);
+    track(EVENTS.SIM_LEVER_CHOSEN, { lessonId, scenarioId: scenario.id, optionId });
+  }
 
   return (
     <div>
@@ -66,7 +91,7 @@ function Scenario({ scenario, t, lang }) {
               type="button"
               aria-pressed={isChosen}
               aria-controls={panelId}
-              onClick={() => setChosen(isChosen ? null : o.id)}
+              onClick={() => choose(o.id)}
               style={{
                 display: "inline-flex", alignItems: "center", gap: space["1"],
                 padding: `${space["2"]}px ${space["4"]}px`,
@@ -135,7 +160,7 @@ export default function PolicySim({ lessonId, t, lang }) {
 
       <Stack gap={space["5"]}>
         {scenarios.map((scenario) => (
-          <Scenario key={scenario.id} scenario={scenario} t={t} lang={lang} />
+          <Scenario key={scenario.id} scenario={scenario} lessonId={lessonId} t={t} lang={lang} />
         ))}
       </Stack>
 

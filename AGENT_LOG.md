@@ -923,6 +923,12 @@ for the history. No open P1/P2 items.
     > file is now in `check-blindspot.mjs`'s §2.3 teaching-copy list. Verified in a live browser (both
     > themes, 375px, en + ko). See the run log entry of this date for the full writeup, including the
     > blind-pattern bug the §19 injection test caught in the check itself.
+    > **✅ Instrumented 2026-08-16 (later run this date), closing the one gap two entries had filed
+    > against this item.** It shipped with no analytics at all, which left §3.0.4's differentiator bet
+    > unmeasured — `sim_lever_chosen` now fires on choosing a lever (never on clearing one), carrying
+    > `{lessonId, scenarioId, optionId}`, guarded by `check-data.mjs` §13c, and the belief it measures
+    > is written down as `CLAIMS.md` **A7** with two refutation clauses. Not measurable until item 18
+    > lands; that is the point of shaping it now. See the run log and `DECISIONS.md`.
     > **Two design decisions are load-bearing and are protected only by file-header comments, so they
     > are restated here.** (a) **No score and no correct answer** — every lever returns a consequence,
     > including the ones a committee would rarely pick, because the hosting lesson's whole point is that
@@ -969,6 +975,22 @@ for the history. No open P1/P2 items.
       without consulting it. `HistoryTimeline` is the only other unshipped piece and it overlaps
       existing lesson content; it is **not** recommended. After this item, v6 holds no unique live idea.
 
+
+38. **[Process — small, filed 2026-08-16 rather than fixed in passing] `check-claims.mjs` computes
+    "today" in UTC.** `new Date().toISOString().slice(0,10)` gave `2026-08-17` while the machine's
+    local date was still `2026-08-16` (EDT), so a §9.1 past-due warning can fire up to a day early.
+    Cosmetic — the warning is a prompt to look, not a build break, and `CLAIMS_TODAY` already overrides
+    the value for testing. Worth doing correctly if a run is in the file anyway; not worth a run of its
+    own. **Do not "fix" it by hardcoding a date** (§2.3).
+
+39. **[Process — carried forward, still unowned] Nothing checks that a check and the document it
+    guards land in the same commit.** Filed two runs ago and restated here so it stops living only in a
+    note chain. Every guard this project has added (`check-data.mjs` §11b/§16/§17/§19/§20,
+    `check-claims.mjs`'s new count guard) protects a document figure or a call-site shape *after* the
+    fact; nothing prevents a commit that adds the claim and skips the check, which is how §10.4's
+    figure went stale for five days. **Scope it honestly before picking it** — this may not be
+    checkable in a script at all, in which case saying so and writing the reasoning down is the
+    valuable outcome, not a half-guard that reads as coverage.
 
 **HELD — owner decisions, do not act on these**
 
@@ -7328,3 +7350,120 @@ and **`ParentGuide`'s duplicate ordinal announcement**, which needs the WebKit b
 real iOS VoiceOver before it can be safely fixed — an owner or interactive session with a Mac/iPhone
 could settle it in minutes, and no automated run in this sandbox can. Also still open from two runs
 back: nothing in this repo checks that a *check* and the document it guards land in the same commit.
+
+### 2026-08-16 (scheduled dev-agent) — The policy simulator gets the event that could refute it, and §3.0.4 gets a claim (`CLAIMS.md` A7)
+
+**Why this, and not a backlog item.** The open field is genuinely thin by design right now: item 32's
+monthly audit is dated **2026-09-05 and must not be pulled forward**, item 26's bookmark-surfacing is
+correctly blocked on item 18, and item 27's remaining money visuals are gated behind their own bar
+("name the lesson where a diagram teaches what prose cannot"). What was left was the previous two
+entries' filed-but-not-done note: **`PolicySim` had no §9.2 instrumentation.** That is not a small
+tidy-up — the simulator is the app's only interactive feature and the thing §3.0.4's differentiator
+claim rests on, and it shipped with no measurement attached to it at all. §9.2's own closing line is
+the test it was failing: *"if you cannot name the event that would refute a feature, you do not yet
+understand the feature."*
+
+**What changed — five files, no user-visible change and no content strings.**
+- **`src/lib/analytics.js`** — `EVENTS.SIM_LEVER_CHOSEN` (`"sim_lever_chosen"`), in the existing
+  "beyond §9.2's minimum" block that `quiz_answered` already established.
+- **`src/components/PolicySim.jsx`** — the inline `setChosen(isChosen ? null : o.id)` became a named
+  `choose()` that fires `{lessonId, scenarioId, optionId}` **on selecting a lever and never on
+  clearing one**. The header comment now points at A7 rather than leaving the event unexplained.
+- **`scripts/check-data.mjs` §13c** — the guard (below).
+- **`CLAIMS.md`** — **A7**, the §3.0.4 bet, with two refutation clauses. 14 claims → 15.
+- **`LAUNCH_PLAN.md` §9.1 + `scripts/check-claims.mjs`** — the prose count ("It holds all N claims")
+  refreshed to 15, and now *enforced* rather than trusted.
+- **`DECISIONS.md`** — one bullet on the instrumentation entry recording the event and its two shape
+  decisions, so they are not protected by a file-header comment alone.
+
+**The deselect rule is the part worth reading.** A toggle whose *both* edges fire still greps as
+instrumented, and it inflates precisely the number A7 reads — "did this learner drive the model"
+quietly becomes "how many times did they click." So clearing a lever returns early, above the
+`track()` call, and §13c asserts that source order rather than merely asserting the event exists.
+This is item 29's `§13b` lesson applied one step earlier: *both events fired and neither carried its
+field* was the previous version of "looks done in a grep."
+
+**A7, and why it has two clauses.** *"Interactive content — a mechanism the reader drives, not just
+watches — is the §3.0.4 differentiator a chat window cannot copy."* Refuted if **under 35% of sessions
+that open the hosting lesson fire at least one `sim_lever_chosen`**, **or** if lever-movers complete
+that lesson at no higher a rate than non-movers. The first clause asks whether anyone drives it; the
+second asks whether driving it mattered — and *passing the first while failing the second* is exactly
+what a decorative interaction looks like in data, which is the outcome that would actually refute
+§3.0.4. Recorded honestly: 35% is a first guess and is written down as one, so a later run cannot
+lower it quietly; the denominator is **one lesson**, not the app, because `PolicySim` renders `null`
+for the other 39; and it is **not measurable today** — item 18, like ten of the other fourteen.
+
+**A second, smaller fix, made because this run moved the number.** `LAUNCH_PLAN.md` §9.1 says "It
+holds all N claims" about a file it does not own — the same shape as §10.4's translation figure, which
+went stale for five days (item 37). Updating it by hand and moving on would have left the next claim
+to re-stale it, so `check-claims.mjs` now **fails** when that figure disagrees with the register's real
+row count, printing the exact replacement string. Per §11b's precedent it also fails when the sentence
+is **deleted** — the hole a count check usually has, where removing the claim satisfies the checker.
+
+**Verification.**
+- `npm test` — `PASS: 0 failure(s), 1 warning(s)` (the standing translation-coverage warning,
+  unchanged), `check-blindspot` all six `ok`, `check-claims` `PASS` reporting **15 claims, 2 refuted,
+  0 past due**. `npm run build` clean, 875 ms; no chunk moved (`lessonContent.money` 499.27 kB,
+  unchanged — this run adds ~10 lines of runtime code and no content).
+- **Five injections, each reverted from a scratchpad copy — not `git checkout --`, per the last run's
+  own finding.** §13c caught: (a) `track()` hoisted above the early return, i.e. firing on deselect;
+  (b) `scenarioId` dropped from the payload; (c) the `track()` call deleted outright (5 failures).
+  The count guard caught: (d) the real historical bug, `15 claims` reverted to `14`, with the
+  copy-paste fix in the message; (e) the whole sentence rewritten to drop the number. Both files
+  verified byte-identical afterwards by `shasum`, and `npm test` green again.
+- **Live browser** (static build + `python3 -m http.server 8823`, `preview_start` with a plain `url`,
+  375×812). Seeded lessons 1–34 complete and opened `#/lesson/35` — **the app happened to be in
+  Japanese from a previous session's stored preference, so this doubles as a non-English check.** Six
+  lever buttons across two scenarios. Selecting one wrote exactly one
+  `{lessonId:35, scenarioId:"overheating", optionId:"hike"}`; **clicking the same lever again cleared
+  the panel and wrote nothing** (count stayed 1, every `aria-pressed` back to `false`); selecting a
+  lever in the second scenario wrote a second event reading `scenarioId:"contraction"`,
+  `optionId:"hike"` — **the same `optionId` as the first**, which is the concrete reason the scenario
+  id is in the payload. Lesson 1: zero lever buttons, zero sim events, `lesson_started` only. No
+  console errors; screenshot confirms the card renders unchanged (dark theme, 375px, selected lever
+  highlighted, outcome panel populated).
+
+**Adversarial self-check — one finding, about a measurement I nearly reported wrong.**
+1. **Blindspot register.** Nothing reintroduced. No content string is touched anywhere in the diff —
+   the `src/` change is one import, one event constant with its comment, and one handler. `grep -ric
+   dalio src/` is 0 (§10.2); `check-blindspot` passes all six including §10.1's five-language scan and
+   §2.3's date scan over `policyScenarios.js`; §10.3's `ParentGuide` surface is untouched. The dates
+   added (`2026-09-05` check date, "as of 2026-08-16") are register metadata and historical fact, not
+   live-looking figures in teaching copy — the class §2.3 actually covers.
+2. **`DECISIONS.md` conflict.** None, and the relevant entry was read rather than assumed. The
+   instrumentation entry already carries *"`quiz_answered` is beyond §9.2's minimum, deliberately"*,
+   so a second such event follows a recorded precedent instead of contradicting one; the entry was
+   extended in this commit rather than left to disagree with the code. No state, storage, content-shape
+   or dependency change, so localStorage-only, `.js`-not-JSON and Vite-not-Expo are all untouched.
+   Item 12's port-cost rule: `track()` is platform-neutral and a native shell keeps the call site
+   verbatim — this is the *opposite* of web-only surface.
+3. **Already-done backlog item.** No. Item 29 closed §9.2's two *payload* gaps on existing events;
+   this adds a new event for a feature that had none, on the explicit note the last two entries left
+   open. Item 34 is built and **not extended** — no third scenario, no scoring, no content change,
+   which its own closing text warns against.
+4. **My own verification claim — the finding.** My first overflow reading on lesson 1 came back
+   `horizOverflow: true`, and an independent reviewer re-running it would have seen the same. It was
+   **not a real bug**: `window.innerWidth` and `documentElement.clientWidth` were both **0**, the
+   `Viewport: 0x0` artifact the Environment note documents, so every element sat "outside" a
+   zero-width viewport. Re-measured after `resize_window` to 375×812: `scrollWidth === clientWidth ===
+   375`, no overflow. Recorded rather than dropped, because "I ran a check, it said fail, I decided it
+   was the tool" is exactly the reasoning that needs to be visible to be challenged — and because the
+   inverse of this artifact (a check that passes vacuously) is what items 33/36 cost this project two
+   days on.
+5. **One thing I did not do, deliberately.** `check-claims.mjs` computes "today" in **UTC**
+   (`new Date().toISOString()`), so it reported `as of 2026-08-17` while the machine's local date was
+   2026-08-16 — past-due warnings can fire up to a day early. It is real but cosmetic, it is not this
+   run's item, and `CLAIMS_TODAY` already overrides it; filed below rather than fixed in passing.
+
+**Item 18 remains the entire critical path to ending Phase 0** — an analytics provider account and key,
+an owner action. This run makes that more concrete, not less: A7 joins the ten other claims whose only
+blocker is that `sink()` writes to one device's `localStorage`. **Eleven of fifteen claims in the §9.1
+register are now unfalsifiable for that one reason.**
+
+**Next run should pick**: item 27's fourth money visual is the largest genuinely open item, but only
+against its own bar — name the lesson where a diagram teaches what prose cannot, before building.
+Otherwise the honest options are the two small filed items below (the UTC date basis; the
+`ParentGuide` ordinal, which needs a real iOS VoiceOver and **cannot** be settled in this sandbox), or
+— per W-2's standing rule — a run that **refills the backlog** by re-reading `LAUNCH_PLAN.md` §5/§8/§9
+against `src/`, which is a legitimate and currently valuable use of a run. **Item 32's monthly audit is
+dated 2026-09-05 and must still not be pulled forward.**
