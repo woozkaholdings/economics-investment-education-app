@@ -69,15 +69,32 @@ const v5Present = existsSync(v5Path);
 const allCheckedFiles = [...srcFiles, ...(v5Present ? [v5Path] : [])];
 
 // --- §10.2 Dalio dependency (closed 2026-08-01) ---
+//
+// README.md is scanned too, added 2026-08-17. It was not, and it carried the
+// violation the whole time: "inspired by the framework popularized by Ray
+// Dalio and other economists," in the first sentence of the project's
+// front-door document, for as long as the file has existed. §10.2 has been
+// reported closed since 2026-08-01 on the strength of a check that scanned
+// `src/` and the v5 prototype — the two places the rule was already obeyed.
+// LAUNCH_PLAN.md §38 even records replacing exactly this sentence pattern
+// elsewhere. Found by backlog item 49, which put README under a *different*
+// guard (check-data.mjs §26) and read the file properly for the first time.
+//
+// Only README joins the scan, not the other docs: LAUNCH_PLAN.md and
+// LAUNCH_READINESS.md name Dalio while *stating the rule* ("no name-brand
+// framing"), and a check that forbids describing its own rule is a check
+// nobody can write documentation around.
+const readmePath = join(ROOT, "README.md");
 {
-  const hits = grepFiles(allCheckedFiles, /dalio/i);
+  const dalioFiles = [...allCheckedFiles, readmePath];
+  const hits = grepFiles(dalioFiles, /dalio/i);
   if (hits.length) {
     fail(`§10.2 Dalio dependency reintroduced:\n  ${hits.join("\n  ")}`);
   } else {
     ok(
       v5Present
-        ? "§10.2 no Dalio references in src/ or economic-cycles-v5.jsx"
-        : "§10.2 no Dalio references in src/ (economic-cycles-v5.jsx not present — not scanned)",
+        ? "§10.2 no Dalio references in src/, README.md or economic-cycles-v5.jsx"
+        : "§10.2 no Dalio references in src/ or README.md (economic-cycles-v5.jsx not present — not scanned)",
     );
   }
 }

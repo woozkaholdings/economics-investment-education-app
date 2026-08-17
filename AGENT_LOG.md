@@ -1175,9 +1175,11 @@ for the history. No open P1/P2 items.
     > positives) stays ruled out; the reporting-line idea it left for the weekly reviewer is still
     > unbuilt and is a reviewer tool, not a `npm test` failure.
 
-49. **[Process — filed 2026-08-17 by item 46's implementation. Small; strictly less valuable than 47,
-    which should land first.] Widen §26's surface, one form at a time.** §26 checks backtick-quoted
-    paths in four documents. Three gaps, each a separate decision rather than one sweep:
+49. **[Process — ✅ DONE 2026-08-17 (owner-directed). Two of the three surfaces were REJECTED on the
+    measurement, the item's own ranking was backwards, and putting `README.md` under §26 turned up a
+    live §10.2 blindspot violation that had been in the repo's front-door document since it was
+    written. See the closing note.] Widen §26's surface, one form at a time.** §26 checked
+    backtick-quoted paths in four documents. Three gaps, each a separate decision rather than one sweep:
     - **Markdown link targets** (`[text](path)`) and un-backticked paths. Cheap and probably right —
       a link to a moved file is the same defect §26 exists for, and arguably a worse one because it
       renders as a working link.
@@ -1191,6 +1193,36 @@ for the history. No open P1/P2 items.
     > means something; each surface added is another exemption class to define first (a `reviews/`
     > sweep would need one per dated snapshot). Measure the dead-reference count for a surface before
     > deciding it is worth guarding — item 46's own filed measurement was wrong in four ways.
+    > **✅ CLOSED 2026-08-17. The instruction above was followed, and it paid: one surface added, two
+    > rejected on their numbers, and the item's own ranking was backwards.** Full numbers live in
+    > `check-data.mjs` §26's header, where the next person to widen it will actually read them.
+    > - **`README.md` — ADDED.** 31 backticked references, **3 dead** (`Home.jsx`, `Markets.jsx`,
+    >   `More.jsx`, gone in the 2026-08-04 rebuild). The only surface with live rot. Fixed rather than
+    >   exempted, along with a "What's here" section that described the pre-rebuild tree throughout.
+    > - **Markdown link targets — ADDED, with the honest caveat that they catch nothing today**: 3
+    >   references in the guarded docs, 0 dead. The item ranked this first as "cheap and probably
+    >   right"; the measurement says it is cheap and currently *empty*. It is in because coverage that
+    >   depends on a formatting choice is a hole — rewriting `` `foo.js` `` as `[foo.js](foo.js)` used
+    >   to walk a reference out of §26 — not because it found anything. The surface is too small for a
+    >   corpus floor to mean anything, so the pattern is self-tested against a fixed probe instead.
+    > - **Un-backticked bare paths — REJECTED.** 16 references, 8 dead, and all 8 are paths *already*
+    >   exempted in backticked form: +8 exemptions (11 → 19) for 0 new finds. It is also unsound —
+    >   the pattern matches `Node.js` in "Requires Node.js 18+", which is English, not a file.
+    > - **`reviews/*.md` — REJECTED, and the measurement proved itself mid-run.** 98 references / 6
+    >   dead on the first pass; **112 / 8** ninety minutes later, after the weekly reviewer appended a
+    >   section whose two new dead paths are it correctly describing files item 45 deleted. A dated
+    >   snapshot accrues dead paths *by doing its job* — `AGENT_LOG.md`'s own argument, so `reviews/`
+    >   belongs on the history side with it, owing a new exemption every Sunday.
+    > **The find this item did not predict**, and the reason adding a surface beat widening a pattern:
+    > reading `README.md` properly for the first time turned up **`inspired by the framework
+    > popularized by Ray Dalio and other economists` in its opening sentence** — a §10.2 violation in
+    > the project's front-door document. §10.2 has been reported closed since 2026-08-01 by a check
+    > that scans `src/` and the v5 prototype, i.e. the two places the rule was already obeyed.
+    > `LAUNCH_PLAN.md:38` even records replacing this exact sentence pattern elsewhere. Removed, and
+    > `check-blindspot.mjs`'s §10.2 scan now covers `README.md` (only README — `LAUNCH_PLAN.md` and
+    > `LAUNCH_READINESS.md` name Dalio while *stating* the rule, and a check that forbids describing
+    > its own rule is unusable). **Blindspot-register status is unchanged on paper and should not be:
+    > §10.2 is closed again, for the first time across the whole surface a reader sees.**
 
 41. **[A11y — ✅ DONE 2026-08-16. Fixed, guarded by a new §22 check — and the live verification of the
     fix found that the same figure was failing sighted readers too, which is the more interesting
@@ -8630,3 +8662,125 @@ are the cheapest and most defensible of its three gaps, and its own instruction 
 reference count for a surface before guarding it*, not to close all three). Items 39 and 47 are now both
 closed and should not be picked again. **Item 32's monthly audit is dated 2026-09-05 — do not pull it
 forward.**
+
+### 2026-08-17 (owner-directed, interactive) — Widen §26 by measuring first: one surface in, two out, and a §10.2 violation in the README (item 49)
+
+**Owner asked for item 49 next.** Its own standing instruction is the whole reason this entry is
+interesting: *"Do not treat this as a coverage gap to close on reflex… measure the dead-reference count
+for a surface before deciding it is worth guarding."* Measured all three (plus `AGENT_LOG.md` for
+contrast) with a throwaway script that reuses §26's resolution rules verbatim, so the counts are
+comparable to the ones it already prints. **The measurement rejected two of the three surfaces and
+reversed the item's own ranking.**
+
+| surface | references | dead | verdict |
+|---|---|---|---|
+| backticked, 4 tracked docs (existing) | 187 | 11 (all exempted) | — |
+| **`README.md`, backticked** | 31 | **3** | **ADDED** — the only live rot found |
+| **Markdown link targets** | 3 | **0** | **ADDED** on the format-hole argument, not on evidence |
+| un-backticked bare paths | 16 | 8 | **REJECTED** — all 8 already exempted in backticked form |
+| `reviews/*.md` | 98 → 112 | 6 → 8 | **REJECTED** — history, and it grew mid-run |
+
+**Why the two rejections are not laziness.** Bare paths would add **8 exemptions (11 → 19) to catch
+nothing new** — every dead one is a path already exempted in its backticked form — and the pattern is
+unsound at the token level: it matches `Node.js` in "Requires Node.js 18+", which is English, not a
+file. A guard whose false positives are English words gets switched off, which is §11b's lesson wearing
+a different hat. `reviews/` made its own case while I was measuring it: 98 references / 6 dead on the
+first pass, **112 / 8** ninety minutes later, because the weekly reviewer appended a section and its two
+new dead paths are that section correctly describing the files item 45 deleted. **A dated snapshot
+accrues dead paths by doing its job** — which is precisely `AGENT_LOG.md`'s exemption argument, so
+`reviews/` belongs on the history side with it, owing a new exemption every Sunday.
+
+**Why link targets are in anyway, stated plainly:** they catch **nothing today**. They close a hole in
+what §26 already covers — rewriting `` `foo.js` `` as `[foo.js](foo.js)` used to walk a reference out of
+the check, so coverage depended on a formatting choice. The surface is too small (3 references) for a
+corpus floor to be honest: "expect at least 1" would fire the day someone reformatted one, and a failure
+that means nothing is worse than no failure. **The pattern is self-tested against a fixed probe
+instead** — it must match the one repo path and skip the `https://` target — which is what a corpus
+floor was approximating anyway.
+
+**The find nobody predicted, and the reason "add a surface" beat "widen a pattern".** Putting
+`README.md` under the *path* check meant reading it properly for the first time. Its opening sentence
+was **"inspired by the framework popularized by Ray Dalio and other economists"** — a live §10.2
+violation in the project's front-door document, present for as long as the file has existed. §10.2 has
+been reported **closed since 2026-08-01**, and `LAUNCH_READINESS.md`'s register row has said "✅ Closed"
+every day since, on the strength of a `check-blindspot.mjs` scan covering `src/` and the v5 prototype —
+*the two places the rule was already obeyed*. `LAUNCH_PLAN.md:38` even records replacing this exact
+sentence pattern elsewhere. Removed; §10.2's scan now includes `README.md`; the register row now records
+the sixteen days it was wrong instead of quietly flipping back to green. **A green check is evidence
+about its own scope and nothing else.**
+
+**Also fixed, because the guard demanded it:** README's "What's here" section described the pre-rebuild
+tree in full — `Home.jsx`/`Markets.jsx`/`More.jsx` (deleted 2026-08-04), `economic-cycles-v5.jsx` as
+"the top-level `App` component" (it is gitignored reference material), and "the 12 sequential lessons"
+(there are 40). Rewritten against the real `src/` tree. One stale instruction §26 **cannot** catch was
+found by hand while in there: Testing said `t.someKey` references are checked in
+`economic-cycles-v5.jsx`/`src/components/*.jsx` when §6 walks all of `src/` — both paths resolve, so a
+path checker is blind to it. Worth stating as the limit of this whole class of guard.
+
+**Verified.** `npm test` and `npm run build` green. Six injections, all sources restored and confirmed
+byte-identical against a sha256 manifest:
+
+| injection | result |
+|---|---|
+| a backticked README path goes dead (`src/main.jsx` → `src/entry.jsx`) | named `README.md:15` — the new surface is live |
+| a link target goes dead (`](AGENT_LOG.md)` → `](docs/AGENT_LOG.md)`) | named `README.md:16` |
+| **the format hole**: a dead path written *only* as a link, never backticked | caught — this is the case that justified the link surface |
+| link pattern loses its scheme guard | self-test fired, printing both the repo path and the `https://` target it should have skipped |
+| link pattern made to match nothing | self-test fired on `[]`; summary line correctly showed `0 as Markdown links` |
+| Dalio framing re-added to README | `check-blindspot.mjs` §10.2 failed, naming `README.md:3` |
+
+Negative controls: an external `https://…/doc.md` link and the prose words `Node.js`/`package.json`
+appended to README changed nothing — reference count stayed at 242, no failures. §26 now reports **247
+references across 5 docs (7 as Markdown links), 11 exempted**; `EXPECTED_EXEMPTIONS` is unchanged at 11
+because README's three dead paths were fixed rather than excused. Floor raised 150 → 180 to track the
+larger corpus. No UI change, so W-1's live-browser rule does not apply.
+
+**Adversarial self-check.**
+1. **Blindspot register — this is the entry where it bit, and not as a regression.** The change
+   *removes* a §10.2 violation rather than reintroducing one, and extends the check that missed it. I
+   checked the others on the new README text specifically, since it is the file this run rewrote: no
+   advice-adjacent language (§10.1 — the new opening explicitly says educational content, not
+   investment advice), no child-facing kids framing (§10.3 — README does not describe the kids
+   section), no hardcoded date or live-looking figure. `check-blindspot.mjs` green on all 6 checks.
+2. **`DECISIONS.md` conflict.** None. No state, storage, routing, dependency or build-tool change. The
+   README rewrite *restates* two closed decisions rather than contradicting them (`.js`-not-JSON
+   content, Vite entry point), which is the point of a front-door document.
+3. **Already-done backlog item.** No. Item 49 was open and named by the previous run. It does not redo
+   item 46 (§26 itself) — it widens the surface 46 deliberately scoped small — and the `AGENT_LOG.md`
+   exclusion 46 argued for is preserved, along with the reasoning, now with `reviews/` alongside it.
+4. **My own verification claim — and this is where the check bit, twice.**
+   **(a) I destroyed my own work mid-verification.** After the first injection I ran `git checkout --
+   README.md` to restore it. README's rewrite was uncommitted, so that reverted the file to `HEAD` and
+   silently discarded it — **and injections 2 and 3 then ran against the old README**, "passing" by
+   reporting the three pre-existing dead paths rather than the ones I had injected. It reads exactly
+   like success. Caught by the line numbers not matching the file I thought I was testing. The rewrite
+   was restored and both injections re-run against the correct file; the results in the table are the
+   re-run ones. Two lessons, both mine to carry: `git checkout --` is a destructive command the task
+   rules already forbid on user files, and I used it on my own uncommitted work with the same result;
+   and **an injection that reports a failure is not thereby a passing test — the failure has to be the
+   one you injected.**
+   **(b) Two injections silently did nothing.** The first attempts at breaking the link regex used
+   `perl` substitutions whose escaping never matched, so the file was unchanged, the check passed, and
+   the absence of output looked momentarily like "the self-test didn't fire." Re-done — one with a
+   verified-changed substitution, one via `python3` with an `assert` that the target string was
+   actually found. **An injection harness needs its own proof that it injected**, which is the same
+   blind-instrument lesson items 33/36/43/44 recorded about measurements.
+5. **Concurrent runs — HEAD moved mid-session, fourth entry running.** `HEAD` was `1ee13dc` (this
+   session's item-47 commit) at the start of this work and was **`b143215`** by the time I re-checked —
+   the weekly reviewer appending section 6 to `reviews/2026-08-16-weekly-review.md`. Confirmed
+   `1ee13dc` is an ancestor, so nothing of mine was lost; the commit touches one file in `reviews/`,
+   which this run's decision explicitly leaves unguarded, and its arrival is cited above as evidence
+   for that decision. I re-measured `reviews/` at the new `HEAD` rather than reporting the pre-commit
+   number, which is how the 98→112 movement was noticed at all.
+
+**Item 18 remains the entire critical path to ending Phase 0** — a real analytics provider account and
+key, an owner action. Unchanged by this run.
+
+**Next run should pick**: nothing in the Open section is both unblocked and measured-worthwhile right
+now — 32 is dated 2026-09-05 and must not be pulled forward, 18/19/12 are owner-blocked, 26 is blocked
+on 18's analytics, and 17/24 are exhausted. Per W-2's standing rule, **a run that finds nothing to pick
+should refill the backlog** by re-reading `LAUNCH_PLAN.md` §4.3/§5/§9 against the real `src/` tree —
+that is a legitimate run, and it is the honest one here. One concrete candidate this run surfaced and
+did **not** build: `LAUNCH_PLAN.md` and `DECISIONS.md` have never been read end-to-end against the
+current tree the way `README.md` just was, and README's sixteen-day §10.2 violation is the argument for
+doing it.

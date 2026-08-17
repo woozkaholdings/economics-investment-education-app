@@ -2030,13 +2030,51 @@ if (keyedGroupsChecked < 4) {
 //     A path is the one part of a document a script can check without being
 //     told what the document means, so this is the part worth checking.
 //
-//     Scope: the four tracked docs below. `AGENT_LOG.md` is deliberately out —
+//     Scope: the five tracked docs below. `AGENT_LOG.md` is deliberately out —
 //     it is an append-only history whose old entries *should* name files that
 //     have since been deleted, and guarding it would mean marking every one.
 //
-//     What counts as a path reference: a backtick-quoted token ending in a
-//     source/data extension. Tokens containing whitespace are commands that
-//     happen to end in one (`grep -rn "posthog" src/ package.json`), not paths.
+//     What counts as a path reference: a backtick-quoted token, or a Markdown
+//     link target, ending in a source/data extension. Tokens containing
+//     whitespace are commands that happen to end in one (`grep -rn "posthog"
+//     src/ package.json`), not paths.
+//
+//     ── Surface, widened 2026-08-17 (backlog item 49) ──────────────────────
+//     Item 49 proposed three additions and told the run to *measure the dead-
+//     reference count for a surface before deciding it is worth guarding*.
+//     Measured against this tree; two of the three were rejected on the
+//     numbers, and the item's own ranking turned out to be backwards:
+//
+//     • `README.md` — ADDED. 31 backticked references, **3 dead**
+//       (`Home.jsx`, `Markets.jsx`, `More.jsx`, all gone in the 2026-08-04
+//       rebuild). The only surface measured with live rot, and the item's own
+//       argument for it holds: README is the one document a new reader runs
+//       commands from. Needed no exemption class — the three were fixed, not
+//       excused, along with the rest of a "What's here" section that still
+//       described the pre-rebuild tree.
+//     • Markdown link targets — ADDED, and honestly: **0 dead anywhere** (2
+//       references in the four docs, 1 in README). This catches nothing today.
+//       It is here because coverage that depends on a formatting choice is a
+//       hole: converting `` `foo.js` `` to `[foo.js](foo.js)` currently walks a
+//       reference out of this check, and a dead link is the worse defect
+//       because it renders as a working one.
+//     • Un-backticked bare paths — REJECTED. 16 references, 8 dead, and all 8
+//       are the *same* paths already exempted in backticked form: it would
+//       double the exemption list from 11 to 19 and catch nothing new. It is
+//       also unsound at the token level — the bare-path pattern matches
+//       `Node.js` in README's "Requires Node.js 18+", which is prose, not a
+//       file. A guard whose false positives are English words is off within a
+//       week, which is §11b's lesson in a different costume.
+//     • `reviews/*.md` — REJECTED, and the measurement made the case by
+//       moving while it was being taken. First pass: 98 references, 6 dead
+//       (a `dist/` chunk hash, the rejected JSON formats, the pre-rebuild
+//       component names). Re-measured ~90 minutes later, after the weekly
+//       reviewer appended a section: **112 references, 8 dead** — and both new
+//       dead ones are that fresh section correctly describing the two files
+//       item 45 deleted. A dated snapshot *accrues* dead paths by doing its
+//       job, which is `AGENT_LOG.md`'s argument exactly. `reviews/` belongs on
+//       the history side with it: 8 exemptions to write, 0 live instructions
+//       to protect, and a new exemption owed every Sunday.
 //
 //     Resolution is by suffix at a path-segment boundary, because docs name
 //     `Practice.jsx` far more often than `src/screens/Practice.jsx`. `-` is
@@ -2064,7 +2102,7 @@ if (keyedGroupsChecked < 4) {
 //     pinned, and a marker for a path that now resolves fails as stale, so an
 //     exemption cannot outlive the reason it was granted.
 {
-  const DOCS = ["LAUNCH_READINESS.md", "LAUNCH_PLAN.md", "DECISIONS.md", "CLAIMS.md"];
+  const DOCS = ["LAUNCH_READINESS.md", "LAUNCH_PLAN.md", "DECISIONS.md", "CLAIMS.md", "README.md"];
   // Counted per *reference*, not per marker: ten markers cover eleven
   // references, because `v6.jsx` is named twice in LAUNCH_PLAN.md. Counting
   // uses rather than declarations means a new mention of an already-exempted
@@ -2079,7 +2117,13 @@ if (keyedGroupsChecked < 4) {
     });
   const tree = walkAll(ROOT);
 
-  const REF = /`([^`\n]+?\.(?:js|jsx|mjs|json|md|sh))`/g;
+  const EXT = "js|jsx|mjs|json|md|sh";
+  const REF = new RegExp("`([^`\\n]+?\\.(?:" + EXT + "))`", "g");
+  // A Markdown inline link whose target is a repo path. `http(s):`/`mailto:`
+  // targets and bare `#anchor`s are not paths and are excluded by requiring an
+  // extension and rejecting a scheme; a trailing `#anchor` on a real path is
+  // allowed and dropped, since it addresses a heading inside the file.
+  const LINK = new RegExp("\\[[^\\]\\n]*\\]\\((?!\\w+:)([^)\\s#]+?\\.(?:" + EXT + "))(?:#[^)\\s]*)?\\)", "g");
   const MARKER = /<!--\s*path-ok:\s*([^\s]+)\s*(?:—|--)\s*([^>]*?)\s*-->/g;
   const isPattern = (p) => /[*<{]/.test(p);
 
@@ -2112,6 +2156,7 @@ if (keyedGroupsChecked < 4) {
 
   let occurrences = 0;
   let commandLike = 0;
+  let linkRefs = 0;
   let exemptionsUsed = 0;
   const declared = new Map(); // "doc\0path" -> { where, reason }
 
@@ -2141,13 +2186,18 @@ if (keyedGroupsChecked < 4) {
 
     const exempted = new Set();
     lines.forEach((line, i) => {
-      for (const m of line.matchAll(REF)) {
+      // Backticked tokens and link targets are counted the same way and share
+      // one exemption namespace: they are the same reference in two syntaxes,
+      // and `[`x.js`](x.js)` legitimately counts twice for the same reason a
+      // path named on two lines does — every mention has to be true.
+      for (const m of [...line.matchAll(REF), ...line.matchAll(LINK)]) {
         const ref = m[1].trim();
         if (/\s/.test(ref)) {
           commandLike += 1;
           continue;
         }
         occurrences += 1;
+        if (m[0].startsWith("[")) linkRefs += 1;
         if (resolves(ref)) continue;
         if (declared.has(`${doc}\0${ref}`)) {
           exemptionsUsed += 1;
@@ -2180,12 +2230,29 @@ if (keyedGroupsChecked < 4) {
   }
 
   // Floors, because for a mostly-absence check an empty scan reads as a pass.
-  if (occurrences < 150 || tree.length < 80) {
+  if (occurrences < 180 || tree.length < 80) {
     fail(
       `§26: scanned ${occurrences} path references across ${DOCS.length} docs against a ${tree.length}-file ` +
-        `tree (expected at least 150 and 80) — the scan is probably matching nothing rather than the ` +
+        `tree (expected at least 180 and 80) — the scan is probably matching nothing rather than the ` +
         `references having gone away.`,
     );
+  }
+
+  // The link surface is too small for a corpus floor to be honest: there are 3
+  // link targets in the guarded docs today, so "expected at least 1" would fire
+  // the day someone rewrote one as a backticked path — a failure that means
+  // nothing. The regex is self-tested instead, which is what a corpus floor was
+  // approximating anyway: does this pattern still match the thing it is for?
+  {
+    const probe = "see [the reader](src/screens/LessonReader.jsx) and [the plan](https://x.test/a.md)";
+    const got = [...probe.matchAll(LINK)].map((m) => m[1]);
+    if (got.length !== 1 || got[0] !== "src/screens/LessonReader.jsx") {
+      fail(
+        `§26: the Markdown-link pattern is broken — on a fixed probe it should match exactly the one ` +
+          `repo path and skip the http target, and it returned ${JSON.stringify(got)}. Without this ` +
+          `the link surface silently scans nothing, which for an absence check reads as a pass.`,
+      );
+    }
   }
   if (exemptionsUsed !== EXPECTED_EXEMPTIONS) {
     fail(
@@ -2197,8 +2264,8 @@ if (keyedGroupsChecked < 4) {
     );
   }
   console.log(
-    `  §26 doc paths: ${occurrences} references across ${DOCS.length} docs, ${exemptionsUsed} exempted, ` +
-      `${commandLike} command lines skipped.`,
+    `  §26 doc paths: ${occurrences} references across ${DOCS.length} docs (${linkRefs} as Markdown ` +
+      `links), ${exemptionsUsed} exempted, ${commandLike} command lines skipped.`,
   );
 }
 
