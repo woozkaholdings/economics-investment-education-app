@@ -1038,7 +1038,9 @@ for the history. No open P1/P2 items.
 
     See item 43 for what this run found on the way, which is the more valuable half.
 
-39. **[Process — carried forward, still unowned] Nothing checks that a check and the document it
+39. **[Process — ✅ CLOSED 2026-08-17, as its own scoping directed: both replacements (46, 47) have
+    landed. Do not pick this again; the un-buildable part is un-buildable for the reasons measured
+    below, and the one remaining idea is reviewer work, not a `npm test` gate.] Nothing checks that a check and the document it
     guards land in the same commit.** Filed two runs ago and restated here so it stops living only in a
     note chain. Every guard this project has added (`check-data.mjs` §11b/§16/§17/§19/§20,
     `check-claims.mjs`'s new count guard) protects a document figure or a call-site shape *after* the
@@ -1136,7 +1138,9 @@ for the history. No open P1/P2 items.
     > is the *same* item-45 rot in wildcard clothing. A check written to the item's numbers would
     > have skipped it.
 
-47. **[Process — filed 2026-08-17 by item 39's scoping. The one that kills the class.] Move
+47. **[Process — ✅ DONE 2026-08-17 (scheduled dev-agent). Shipped as `scripts/refresh-readiness.mjs`
+    with three modes; the two live figures are now generated, and `npm test` holds them. Item 39 is
+    closed with it — see the note at the end of this item.] Move
     `LAUNCH_READINESS.md`'s refresh snippets out of the document and compare their output to the
     figures the document states.** The snippets are *code stored in prose*: nothing imports them,
     nothing runs them, and they have now rotted twice while the numbers beside them stayed right.
@@ -1150,6 +1154,26 @@ for the history. No open P1/P2 items.
       exist. Both of this item's recorded failures die at once.
     - **Deliberately out of scope:** the other ~119 figures. Only the catalogue block and the coverage
       sentence are worth generating today; the rest are history, and history needs no guard.
+    > **✅ Built as scoped, 2026-08-17, with one addition the scope did not name and should have.**
+    > `scripts/refresh-readiness.mjs` has three modes on the `gofmt` shape: bare prints the figures
+    > (what the two deleted snippets did), `--check` compares them against `LAUNCH_READINESS.md` and is
+    > chained into `npm test`, and **`--write` rewrites them in place**. The third one is not a
+    > convenience — it is what makes the gate survivable, and it answers the objection §11b wrote down
+    > when it deliberately refused to guard character counts ("a build that fails over 19 characters
+    > would be turned off within a week"). That objection is right about a hand-maintained figure and
+    > does not carry to a generated one: the fix is now `npm run readiness -- --write`, so the guard
+    > costs a run one command instead of a re-derivation. §11b's coverage sentence was left alone — it
+    > already works, and folding it in would have been a rewrite rather than this item.
+    > **Guarded surface: exactly two sentences**, the §4.3 catalogue row and §10.4's `es…ko…zh…ja`
+    > character sentence — the document's only figures that must equal the content *today*. The doc's
+    > history figures (`112,387`, `100 minutes`, `dropped to 93%`, "by **exactly 19 characters**") were
+    > verified untouched by a `--write` that did change something; that negative control is the one
+    > that matters, since item 39's scoping showed live and historical figures share sentences and no
+    > parser separates them.
+    > **Item 39 is closed by this.** Its two buildable replacements — 46 (§26 dead-path check) and 47 —
+    > have both landed. What it correctly ruled out (a co-landing detector as a build gate, 57% false
+    > positives) stays ruled out; the reporting-line idea it left for the weekly reviewer is still
+    > unbuilt and is a reviewer tool, not a `npm test` failure.
 
 49. **[Process — filed 2026-08-17 by item 46's implementation. Small; strictly less valuable than 47,
     which should land first.] Widen §26's surface, one form at a time.** §26 checks backtick-quoted
@@ -8504,4 +8528,105 @@ an owner action. Unchanged by this run.
 paths inside those snippets; 47 removes the duplicated code entirely, and with 46 and 47 both landed,
 **item 39 should be closed** rather than picked again. Item 49 (widen §26's surface) is filed and small
 but strictly less valuable than 47. **Item 32's monthly audit is dated 2026-09-05 and must not be pulled
+forward.**
+
+### 2026-08-17 (scheduled dev-agent) — Delete the code stored in prose: `scripts/refresh-readiness.mjs` (item 47, closing item 39)
+
+**Picked from the backlog, not from a note**: item 47, named by the previous run and by item 39's own
+scoping as the one that kills the class rather than guarding it. Item 49 was the alternative and is
+explicitly "strictly less valuable than 47, which should land first." Item 32's monthly audit is dated
+2026-09-05 and was not pulled forward.
+
+**The defect.** `LAUNCH_READINESS.md`'s "How to refresh" section carried two `node -e '…'` snippets —
+code stored in prose. Nothing imported them, nothing ran them, and they rotted twice: for three days
+after item 25 split lesson content per track, and for the hours between item 45's per-language split and
+its correction. Both times they named a file that no longer existed and would have thrown
+`ERR_MODULE_NOT_FOUND`, while the figures printed *beside* them stayed correct. **The number was right
+and the method had rotted** — the shape this repo has now recorded five times (items 33, 36, 43, 44, 39).
+
+**What shipped.** `scripts/refresh-readiness.mjs`, three modes on the `gofmt` shape:
+- bare — prints the figures (what the two snippets did),
+- `--check` — compares them to what `LAUNCH_READINESS.md` states, exit 1 on disagreement; chained into
+  `npm test` after `check-backlog.mjs`,
+- `--write` — rewrites those figures in the document in place.
+
+`npm run readiness` added to `package.json`. The two snippets are gone from the document, replaced by a
+bullet that points at the script and states, in four sentences, why it stopped being a snippet.
+`README.md`'s Testing section — which still described `npm test` as running `check-data.mjs` alone,
+three checks out of date before this run touched it — now lists all five.
+
+**`--write` is the load-bearing part, and the scope did not ask for it.** `check-data.mjs` §11b
+deliberately refused to guard character counts, writing down its reason: "a build that fails over 19
+characters would be turned off within a week." That is correct about a hand-maintained figure and does
+not carry to a generated one. With `--write` the fix is one command, so the gate costs a run nothing to
+satisfy — which is the only honest way to guard a number that moves on every content edit. Without it I
+would have been shipping the exact failure §11b predicted.
+
+**Guarded surface: two sentences, deliberately.** The §4.3 catalogue row and §10.4's `es…ko…zh…ja`
+character sentence are the document's only figures that must equal the content *today*. The other ~119
+measurement-shaped numbers are history and must never change; item 39's scoping proved no parser
+separates the two, so the split is made by hand and kept small. Current values, unchanged by this run
+because they were already right: **40 lessons / 136,031 en chars / 120 min, money 28 + economy 12; es
+97,994 (0.720x), ko 48,469 (0.356x), zh 30,733 (0.226x), ja 42,555 (0.313x)**.
+
+**Verified.** `npm test` and `npm run build` green at `6f641c9`. Six injections; all sources restored,
+confirmed against a pre-injection sha256 manifest of the five touched files:
+
+| injection | result |
+|---|---|
+| doc says `41 lessons`, content says 40 | `--check` failed naming both strings; `--write` then restored the file **byte-identically** to the original |
+| **a real content edit** — one word added to lesson 2's English takeaway | both figures failed (136,031 → 136,036), and `npm test` as a whole went red |
+| the guarded §10.4 sentence deleted outright | failed with "not in the file at all", printing the text to restore |
+| the catalogue figure stated a second time | failed on the duplicate — a second copy of a derived figure is the defect this item removes |
+| **the generator breaks** (merged view yields `{}`) | floors fired first: `--write` **refused to touch the document** and reported the measurement as wrong |
+| negative control: `--write` after a real content edit | changed exactly the two live lines; `112,387`, `100 minutes`, `dropped to 93%` and "by **exactly 19 characters**" all intact |
+
+The fifth is the one worth stating plainly. A generate-and-diff guard is only as good as its generator:
+had the import silently yielded nothing, `--write` would have helpfully rewritten the scorecard to read
+"0 lessons / 0 English chars" and `--check` would have agreed with it forever. The floors (≥20 lessons,
+≥50k English chars, every language > 0, exactly 2 tracks) fail on the computation rather than the
+document. The sixth is the one item 39's scoping demanded: live and historical figures share sentences
+in this file, so a rewriter that cannot tell them apart is worse than no rewriter.
+
+No UI change — one new script, four documents/config files — so W-1's live-browser rule does not apply.
+
+**Adversarial self-check.**
+1. **Blindspot register.** Nothing reintroduced. Zero user-facing copy in the diff: no advice-adjacent
+   language (§10.1), no Dalio (§10.2), no kids framing (§10.3), and no hardcoded date or live-looking
+   figure — the script derives no date at all and reads no network. `check-blindspot.mjs` green, all 6
+   checks `ok`. The one adjacency worth naming: the script *prints* character counts, which look like
+   measurements of market-ish things but are catalogue metadata, never rendered to a learner.
+2. **`DECISIONS.md` conflict.** None. No state, storage, routing, dependency or build-tool change;
+   content stays `.js`-not-JSON, and the script reinforces that by importing the `.js` modules directly.
+   The merged-view import is the layout `DECISIONS.md` and `lessonContent.js`'s own header describe.
+3. **Already-done backlog item.** No. Item 47 was open, filed hours earlier by item 39's scoping and
+   named as this run's pick. The nearest existing work is §11b, which guards the *coverage* sentence —
+   checked, and deliberately left alone rather than folded in or re-implemented; §26 guards the *paths*
+   inside documents, including the ones in the snippets I deleted, and its count moved 184 → 187 with
+   all references resolving.
+4. **My own verification claim — and this is where the check bit.** The negative control's first run
+   reported `LOST: fell by exactly 19 characters`, which read as `--write` having eaten a history
+   figure. It had not: **my grep string was wrong** — the document writes it as `by **exactly 19
+   characters**` with the bold markers, and the `shasum -c` restore in the same run came back clean,
+   which is what exposed the contradiction. Re-ran with the literal string; intact. Worth recording
+   because the wrong version of that line would have gone into this entry as a real finding about the
+   tool, and the thing that caught it was a second measurement disagreeing with the first, not a
+   re-read. Every other number here comes from a command an independent reviewer can re-run: the
+   injections need no clock and no network, and the six of them reproduce on any machine.
+5. **What this does not cover, stated rather than implied.** Two sentences in one document. Not
+   covered: the ~119 other figures across the four docs, §11b's coverage sentence (already guarded, by
+   different code), and anything in `AGENT_LOG.md`. A run tempted to widen this should read item 49's
+   warning first — it applies here verbatim: measure the dead-figure count for a surface before
+   deciding it is worth guarding.
+6. **Concurrent runs.** `HEAD` was `6f641c9` at start and at finish; the tree was clean at start and
+   holds only my five files now. No other session landed during this run — the first clean pass in
+   three.
+
+**Item 18 remains the entire critical path to ending Phase 0** — a real analytics provider account and
+key, an owner action. Unchanged by this run.
+
+**Next run should pick**: **item 49** (widen §26's surface, one form at a time — Markdown link targets
+are the cheapest and most defensible of its three gaps, and its own instruction is to *measure the dead-
+reference count for a surface before guarding it*, not to close all three). Items 39 and 47 are now both
+closed and should not be picked again. **Item 32's monthly audit is dated 2026-09-05 — do not pull it
 forward.**
