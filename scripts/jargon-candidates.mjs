@@ -53,12 +53,25 @@ if (!["money", "economy", "all"].includes(track)) {
 const norm = (s) => s.toLowerCase().replace(/[^a-z0-9%()]+/g, " ").trim();
 
 // ── Glossary surface forms: the key, the key with camel humps split, and the
-//    English short name. Same two-form rule §17b's matcher uses.
+//    English short name — each also in the plural, because §17b's matcher is
+//    `name + "s?"` (check-data.mjs) and prose overwhelmingly uses the plural:
+//    lessons say "dividends", "index funds", "stocks". This header used to
+//    claim the "same two-form rule §17b's matcher uses" while omitting that
+//    optional plural, so a term WAS in the glossary and the report said it was
+//    not — caught when item 64 added `Dividend` and `dividends` stayed in the
+//    candidates list. A control that only ever re-found singulars could not
+//    see this; the control count moves when this is right.
 const glossaryForms = new Set();
 for (const [key, entry] of Object.entries(glossary)) {
-  glossaryForms.add(norm(key));
-  glossaryForms.add(norm(key.replace(/([a-z])([A-Z])/g, "$1 $2")));
-  if (entry.en?.s) glossaryForms.add(norm(entry.en.s));
+  const add = (s) => {
+    const n = norm(s);
+    if (!n) return;
+    glossaryForms.add(n);
+    glossaryForms.add(`${n}s`);
+  };
+  add(key);
+  add(key.replace(/([a-z])([A-Z])/g, "$1 $2"));
+  if (entry.en?.s) add(entry.en.s);
 }
 
 // ── Corpus: everything a reader of these lessons actually sees, in English.
@@ -117,13 +130,26 @@ for (const { id, text } of docs) {
   // Capitalised phrases NOT at sentence start — a mid-sentence capital is a
   // decent signal the author is naming a thing rather than starting a clause.
   for (const m of text.matchAll(/[a-z,;)]\s+((?:[A-Z][a-z]+(?:[- ][A-Z][a-z]+)+))/g)) record(m[1], id);
-  const words = text.split(/\s+/).map((w) => w.replace(/^[^A-Za-z0-9$%(]+|[^A-Za-z0-9%)]+$/g, ""));
+  const raw = text.split(/\s+/);
+  const words = raw.map((w) => w.replace(/^[^A-Za-z0-9$%(]+|[^A-Za-z0-9%)]+$/g, ""));
+  // Does the token END a clause? An n-gram may not span one: "stocks, bonds"
+  // and "stocks. Bonds" are two phrases each, never the two-word term
+  // "stocks bonds". This has to be read off the RAW token, which is the bug it
+  // fixes (backlog item 64's residual (b)): the span guard below tested the
+  // STRIPPED word for /[.,;:!?"]/, and the strip above deletes exactly those
+  // characters — so the guard could never fire and had been dead since this
+  // script was written. It reported `stocks Bonds` as a 4-lesson candidate,
+  // built from a full stop in money 5 and commas in 6/13/25.
+  // ")" is deliberately not a clause end: "401(k)" ends with one.
+  const endsClause = raw.map((w) => /[.,;:!?"][)"'’”]*$/.test(w));
   for (let i = 0; i < words.length; i++) {
     if (!HEADS.has(words[i].toLowerCase().replace(/[^a-z]/g, ""))) continue;
     for (const span of [3, 2, 1]) {
       if (i - span + 1 < 0) continue;
       const gram = words.slice(i - span + 1, i + 1);
-      if (gram.some((w) => !w || STOP.has(w.toLowerCase()) || /[.,;:!?"]/.test(w))) continue;
+      // Every token but the last: if it closed a clause, the phrase stops there.
+      if (endsClause.slice(i - span + 1, i).some(Boolean)) continue;
+      if (gram.some((w) => !w || STOP.has(w.toLowerCase()))) continue;
       if (span === 1 && !STANDALONE.test(gram[0])) continue;
       record(gram.join(" "), id);
     }
@@ -196,10 +222,22 @@ if (known.length < 5) {
 // actually happened — without asserting anything about the extractor's
 // vocabulary: a term the extractor never proposes belongs in neither bucket,
 // and that is correct, not a leak.
+// Plurals are rebuilt here too, and that is not redundant with the loop that
+// builds `glossaryForms`: this control was blind in exactly the same place the
+// thing it checks was. §17b matches `name + "s?"`, prose says "index funds",
+// and `independentForms` held only "index fund" — so `Index Fund`, a glossary
+// entry since item 35, sat in the CANDIDATES bucket being reported as missing
+// jargon, and this control passed on every run while it did. Both halves are
+// now spelled out separately on purpose: if the plural is dropped from the
+// builder above, this fires.
 const independentForms = new Set();
 for (const [key, e] of Object.entries(glossary)) {
   independentForms.add(norm(key));
-  if (e.en && typeof e.en.s === "string") independentForms.add(norm(e.en.s));
+  independentForms.add(`${norm(key)}s`);
+  if (e.en && typeof e.en.s === "string") {
+    independentForms.add(norm(e.en.s));
+    independentForms.add(`${norm(e.en.s)}s`);
+  }
 }
 // Every candidate, not just the ones above the display threshold: the term
 // this caught first ("insurance premium") is used once, so filtering on the
@@ -208,13 +246,44 @@ const leaked = candidates.filter((h) => independentForms.has(h.n));
 if (leaked.length) {
   problems.push(
     `CONTROL FAILED: ${leaked.length} candidate(s) are already glossary terms — ` +
-      `${leaked.map((h) => `"${h.display}"`).join(", ")}. The subtraction set is being built from the ` +
-      `wrong field (item 57's bug was reading entry.s for entry.en.s), so terms that ARE defined are ` +
-      `being reported as missing.`,
+      `${leaked.map((h) => `"${h.display}"`).join(", ")}. The subtraction set is missing a surface form, ` +
+      `so terms that ARE defined are being reported as missing. Two causes have actually happened here: ` +
+      `the wrong field (item 57 read entry.s for entry.en.s), and a missing plural (item 64 — §17b ` +
+      `matches name + "s?" and prose says "index funds").`,
   );
 }
 if (candidates.some((h) => glossaryForms.has(h.n))) {
   problems.push(`CONTROL FAILED: a candidate is also a glossary surface form — the two buckets leaked.`);
+}
+// No reported phrase may be one the prose never actually says. A multi-word
+// candidate has to appear with nothing but whitespace between its words
+// somewhere in the corpus; if it only "appears" across a comma or a full stop,
+// the extractor invented it. This is the control the dead clause-break guard
+// needed and did not have: `stocks Bonds` was reported as a 4-lesson candidate
+// — third by reach, above most real ones — assembled from "stocks. Bonds" in
+// money 5 and "stocks, bonds, or funds" in 6/13/25. A phantom is worse than
+// noise here, because reach is exactly the signal a run uses to pick content
+// work, and a phantom's reach is the sum of several unrelated sentences.
+const corpus = docs.map((d) => d.text).join("\n\n");
+const phantoms = reported.filter((h) => {
+  const words = h.n.split(" ");
+  if (words.length < 2) return false;
+  // Join on "any run of non-alphanumerics that is NOT clause punctuation":
+  // `norm` flattens a hyphen to a space, so "self-employment tax" must still
+  // match (joining on \s+ alone reported it as a phantom — a false positive
+  // this control hit on its first run), while a comma or full stop must not.
+  const re = new RegExp(
+    words.map((w) => w.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join(`[^A-Za-z0-9.,;:!?"]+`),
+    "i",
+  );
+  return !re.test(corpus);
+});
+if (phantoms.length) {
+  problems.push(
+    `CONTROL FAILED: ${phantoms.length} reported candidate(s) never occur as a contiguous phrase in the ` +
+      `lesson prose — ${phantoms.map((h) => `"${h.display}"`).join(", ")}. The n-gram builder is spanning ` +
+      `a clause boundary (a comma or a full stop), so these are artefacts, not vocabulary.`,
+  );
 }
 if (problems.length) {
   console.error(`\n${problems.map((p) => `✗ ${p}`).join("\n")}`);

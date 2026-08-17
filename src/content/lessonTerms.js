@@ -216,7 +216,7 @@ export const deliberatelyUnlinked = {
   34: { Deleveraging: "defined-here" },
   35: {
     "Fed Funds Rate": "defined-here",
-    Credit: "other-sense: 'the APR on your credit card'",
+    Credit: "other-sense: 'the annual rate — the APR — on your credit card'",
   },
   36: {
     "Yield Curve": "defined-here",

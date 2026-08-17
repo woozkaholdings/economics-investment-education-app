@@ -429,6 +429,30 @@ for the history. No open P1/P2 items.
     - **Honest priority: low.** Lower than item 63 was, because item 63 had a rendered failure and this
       does not.
 
+66. **[Content/Instrument — a learner-facing surface BOTH jargon instruments are blind to. Filed
+    2026-08-17 by the run that closed item 64's APR and phantom halves; found by accident, which is
+    the point.] Glossary definitions are prose that no undefined-jargon check reads.** `npm run
+    jargon` builds its corpus from lesson `heading`/`body`/`takeaway`/`thinkAbout`
+    (`jargon-candidates.mjs`); §17b's `mentionedIn` reads lesson `heading`+`body`
+    (`check-data.mjs`). **Neither ever opens `glossary.js`'s own `f` and `ex` strings** — so §3.0.3's
+    "no undefined jargon" is measured across lessons and nowhere else, while a reader who taps a chip
+    lands on exactly this text.
+    - **The one confirmed instance, measured not suspected:** `Brokerage Account`'s `en.f` says
+      "…**dividends** and realized gains are normally taxed in the year they occur…". `Dividend` is
+      not a glossary key (item 64, blocked), so a reader meeting the word here has no next step.
+      That single instance is why this is filed rather than assumed — **the rest of the file is
+      unmeasured**, and the first job is to measure it, not to fix anything.
+    - **Scope, and the trap.** Step 1 is a measurement: run the existing extractor over
+      `glossary.js`'s `f`/`ex` strings and see how large the residual actually is. Step 2 is a
+      decision that should be made *once*, with the number in hand — glossary text is written for a
+      reader who is already looking something up, so "define every term used in a definition" is
+      circular past a point. **Do not add keys to shorten a list** (the `READING THIS` note in
+      `jargon-candidates.mjs` says this, and it applies with more force here, since every new key
+      also obliges §17b chips across every lesson that uses it — item 64's Stock/Bond half was 15
+      lessons of chip decisions).
+    - **Cheap and self-limiting:** the corpus is ~32 entries × 2 strings, all in one file, and the
+      extractor already exists. This is a measurement run, not a content run.
+
 60. **✅ DONE 2026-08-17 (scheduled dev-agent). The residual now has an instrument (`npm run jargon`),
     and the one real gap it found is closed: Brokerage Account is a glossary entry, chipped on lesson 6.
     For the seventh item running the premise was partly wrong — and this time the wrong half was the
@@ -479,8 +503,9 @@ for the history. No open P1/P2 items.
 64. **[Content — the three candidates item 60's run measured and deliberately did NOT add, filed
     2026-08-17 by the run that closed it. Each is a decision, and the reason they are together is that
     "add a glossary entry" is the same decision three times, not that they should be batched.]**
-    Run `npm run jargon` to reproduce every figure below. **The Stock/Bond half — "the real item
-    here" — is ✅ DONE 2026-08-17 (scheduled dev-agent); Dividend and APR remain open below.**
+    Run `npm run jargon` to reproduce every figure below. **Status 2026-08-17: Stock/Bond ✅ DONE,
+    APR ✅ DONE, residual (b) ✅ DONE (all scheduled dev-agent runs). Dividend is the only piece
+    left and it is BLOCKED on an owner-dirty file — see its bullet.**
     - **✅ DONE 2026-08-17. Both keys added, 21 chips across 15 lessons, 2 exclusions on lesson 5,
       `0 unexplained` held. For the eighth item running the premise was wrong somewhere — and this
       time the wrong number was the one that had been used to defer the work: the SCOPE.** The item
@@ -513,14 +538,56 @@ for the history. No open P1/P2 items.
     > (4 lessons)** — an extractor artifact from the prose "stocks, bonds, or funds", whose two halves
     > are both glossary keys as of this run. The control (`buckets disjoint`) cannot catch it because
     > the pair matches neither key. Cosmetic, report-only, one script: a good small pick.
-    - **`Dividend`: 3 uses, lessons 3 and 6, never defined.** Lesson 3's use is nearly self-defining in
-      context ("automatically buying more of the same investment with any interest or dividends earned,
-      rather than paying it out as cash"); lesson 6's is not ("owes tax on the dividends and gains their
-      investments produce"). Borderline by reach, and it pairs naturally with Stock/Bond above.
-    - **`APR`: 1 use, economy lesson 35, acronym never expanded.** "…what your savings account pays
-      you, the APR on your credit card." The list frames it as a rate on a card, and the sentence teaches
-      Fed transmission, not APR. **Recommended disposition: expand the acronym in place** ("the annual
-      rate — the APR — on your credit card") rather than add a glossary key for one incidental use.
+    > **✅ DONE 2026-08-17 (scheduled dev-agent) — and it was not cosmetic.** The cause was a **dead
+    > guard**: the n-gram builder tested the *punctuation-stripped* word for `/[.,;:!?"]/`, one line
+    > after the strip that deletes exactly those characters, so the check that was supposed to stop a
+    > phrase spanning a clause had never once fired. `stocks Bonds` also spans a **full stop**, not
+    > only commas (money 5: "…many different stocks. Bonds don't sidestep…"), which is where its
+    > capital B came from. Fixing it removed **51 raw candidates (474 → 423)** and a second reported
+    > phantom, `interest taxes`. **A worse bug surfaced while fixing it:** the surface-form set omitted
+    > §17b's optional plural, so **`index funds` — `Index Fund`, a glossary entry since item 35 — was
+    > sitting in the CANDIDATES bucket being reported as undefined jargon**, i.e. the instrument was
+    > inviting a future run to add a duplicate entry. Control moved 11 → 12 known when fixed. Both
+    > bugs were invisible to the existing control, which rebuilt its independent form set with the
+    > same missing plural; **both now have controls** (a reported multi-word phrase must occur
+    > contiguously in the corpus; the independent set carries plurals), each proved by injection.
+    - **`Dividend`: 3 uses, lessons 3 and 6, never defined. ⛔ BLOCKED 2026-08-17 — WRITTEN AND
+      VERIFIED, NOT SHIPPABLE THIS RUN. Do not re-derive it; apply the saved work.** Both premises
+      above were re-measured and both hold exactly. A fourth use was found that item 64 did not
+      record and that **neither instrument can see**: the glossary's own `Brokerage Account`
+      definition says "dividends" in `en`. `npm run jargon` scans lesson text and §17b scans lesson
+      heading+body, so **glossary definition prose is a blind surface for both** — a reader who
+      opens one entry can meet an undefined word inside it. Filed separately as **item 66**.
+      **Why it is blocked, and this is a hard block, not a judgement call:** adding any glossary key
+      moves `LAUNCH_PLAN.md` §1's generated "**32** glossary terms" figure (line 65), which
+      `refresh-readiness.mjs` checks and `npm test` fails on — and `LAUNCH_PLAN.md` has uncommitted
+      owner edits, so it cannot be touched. This was proved, not assumed: the entry was written, both
+      chips added, `npm test` run, and the *only* remaining failure after the readiness refresh was
+      that one LAUNCH_PLAN line. Same shape as item 62's F6, which the previous run deferred for the
+      same file.
+      **The work is not lost.** The entry (5 languages, `{s,f,ex}`) plus both §17b chips are saved at
+      `scratchpad/glossary.with-dividend.js`, `scratchpad/lessonTerms.with-dividend.js` and
+      `scratchpad/dividend-glossary.patch` (session `48dad761`). With them applied, `npm test` passed
+      everything except the LAUNCH_PLAN line, and §17b read **104 uses / 68 chips / 0 unexplained**.
+      **The decisions already made, so the next run does not re-open them:** entry placed at the end
+      of the money-track block (money-track by measured use, but it leans on `Stock` and is not a
+      separate instrument); chips on lesson 3 §2 and lesson 6 §0 — **not** `defined-here` exclusions,
+      because both are uses rather than definitions.
+      **Next run: if `LAUNCH_PLAN.md` is clean, this is a copy-in plus `npm run readiness -- --write`
+      plus one AGENT_LOG entry.** If it is still dirty, do not attempt it — pick item 66 or 65.
+    - **`APR`: 1 use, economy lesson 35, acronym never expanded. ✅ DONE 2026-08-17 (scheduled
+      dev-agent), exactly as the recommended disposition said** — expanded in place to "the annual
+      rate — the APR — on your credit card", no glossary key added for one incidental use. Premise
+      confirmed before editing: `APR` appears **once** in all of `src/`, and **only in `en`** — the
+      other four locales carry abridged summaries of that section which never use the acronym, so
+      this was an en-only edit. Two consequences worth keeping, because neither was in the item:
+      **(a)** `lessonTerms.js`'s lesson-35 `Credit` exclusion quotes that sentence verbatim as its
+      reason, so the quote was updated in the same commit or it would have gone stale on arrival;
+      **(b)** editing English content marks that lesson's four translations **stale** in
+      `translation-review-ledger.json` (correct behaviour — the ledger hashes the English source),
+      which failed `npm test` on the §10.4 coverage figure. Resolved by actually re-reading lesson 35
+      in all five languages and re-marking via `translation-review.mjs mark ... ai` — see the run log
+      for why the abridged translations are unaffected by an acronym expansion.
       Note this one sits *below* `npm run jargon`'s reach threshold: it was found by hand while checking
       item 60's premise, which is the honest argument for reading the suppressed tail occasionally.
 
@@ -6874,3 +6941,139 @@ all**: prefer **item 64's APR line** (one acronym, expanded in place in content 
 **Item 65** (light `--graph-amber`) is filed but honestly low, and lower than 63 was, because 63 had a
 rendered failure and 65 does not. **Item 18 remains the entire critical path to ending Phase 0 and is
 blocked on an owner action: an analytics provider account and key.**
+
+### 2026-08-17 (scheduled dev-agent) — Item 64's APR line, and the instrument that was reporting a word it already had
+
+**The owner's redesign is still in flight, and that decided the pick.** `LAUNCH_PLAN.md`,
+`src/App.jsx`, `src/components/ui.jsx`, all five `src/locales/*.js`, `src/screens/{Learn,Practice,
+Reference}.jsx` and `scripts/check-blindspot.mjs` still carry the uncommitted owner edits the previous
+run found (mtimes 11:00–11:11; this run started 12:01, `HEAD` still `3c84155` and matching the log's
+latest entry), against the untracked `UIUX/` reference collection. **Live owner work, not a stalled
+agent run** — nothing of theirs was touched, stashed, or committed. The previous entry's first choice
+(item 62's F6) is a `LAUNCH_PLAN.md` edit and stays deferred; its stated fallback was **item 64's APR
+line or the `stocks Bonds` phantom**, and both were taken, plus the `Dividend` bullet — which turned
+out to be blocked by the same file, for a reason worth recording.
+
+**Both of item 64's remaining premises were re-measured before any edit, and — breaking a nine-item
+streak — both held exactly.** `APR`: one occurrence in all of `src/`, economy lesson 35, acronym never
+expanded. `Dividend`: 3 uses across money lessons 3 and 6, and `glossary.js:53`'s "dividends" is prose
+*inside* the `Brokerage Account` definition, not an entry.
+
+**Shipped 1 — the APR expansion.** "…what your savings account pays you, **the annual rate — the APR —
+on your credit card**." Two consequences the item did not mention, both handled in this commit:
+
+- **The exclusion that quotes the sentence.** `lessonTerms.js`'s lesson-35 `Credit` entry gives its
+  reason as the literal string `'the APR on your credit card'`. §17b only checks the *term* still
+  appears in the lesson, so the quote would have gone stale silently. Updated with the prose.
+- **English edits invalidate translation review, and that is the ledger working.** `npm test` failed on
+  §10.4: es/ko/zh/ja dropped 100% → 98% (1 stale each) because the ledger hashes the English source.
+  Resolved by **actually doing the review** — lesson 35 read end to end in all five languages — not by
+  re-stamping. The four translations are **abridged summaries** that already render this clause in
+  plain words ("모든 금리", "クレジットカードなど", "todas las demás tasas") and **none contains the
+  acronym at all**, so expanding it in English cannot invalidate them; if anything the English moved
+  closer to what they say. Re-marked with `translation-review.mjs mark 35 <lang> "Claude (Opus 5,
+  economics-app-dev-agent)" ai`, consistent with DECISIONS.md's closed "(Beta)" machine-translation
+  decision, whose `method` field exists precisely to keep AI review distinguishable. **Stated plainly
+  because it restores a number: a reviewer who disagrees can `unmark` all four.**
+
+**Shipped 2 — the phantom was a dead guard, and it was hiding a worse bug.** Item 64 filed
+`stocks Bonds` as "cosmetic, report-only". It was neither.
+
+- **The guard had never fired.** `jargon-candidates.mjs` strips punctuation off every token, then one
+  line later tests the *stripped* word for `/[.,;:!?"]/` to stop an n-gram spanning a clause. The strip
+  deletes exactly those characters, so the test was dead from the day it was written. Fixed by reading
+  the boundary off the **raw** token (`)` deliberately excluded — `401(k)` ends with one).
+- **It spans a full stop, not just commas.** Money 5's "…many different stocks. **Bonds** don't
+  sidestep…" is where the capital B came from — the item assumed "stocks, bonds, or funds" alone.
+- **Effect: 474 → 423 raw candidates**, and a second reported phantom (`interest taxes`) gone.
+- **The worse bug, found while fixing it.** The surface-form set omitted §17b's optional plural
+  (`name + "s?"`), while this file's own header claimed the "same two-form rule §17b's matcher uses".
+  Prose says "index funds" — so **`Index Fund`, a glossary entry since item 35, was sitting in the
+  CANDIDATES bucket being reported as undefined jargon.** The instrument was inviting a future run to
+  add a duplicate key. Control moved **11 → 12** known terms.
+
+**Both bugs were invisible to the existing control, and both now have one.** The control rebuilt its
+"independent" form set with the identical missing plural, which is why it passed on every run while
+`index funds` leaked. Added: (a) **plurals in the independent set**, spelled out separately from the
+builder on purpose, so dropping the plural above fails here; (b) **a contiguity control** — any
+reported multi-word phrase must occur in the corpus with only non-clause characters between its words.
+Its failure message now names **both** causes that have actually happened (wrong field, item 57;
+missing plural, item 64) rather than only the first.
+
+**Verification — two injections, each proved to land before its failure was believed** (standing rule;
+restored from `scratchpad/jargon.backup` and re-verified by `shasum e65523bd`, never `git checkout --`,
+which here would have destroyed owner work):
+
+1. Clause-break guard deleted (`grep -c` confirmed 0 occurrences remaining) → contiguity control failed
+   naming **`"stocks Bonds", "interest taxes"`**.
+2. Plural dropped from the builder → leak control failed naming **`"index funds"`** — independently
+   reproducing the pre-existing bug this run reports.
+
+**The contiguity control also failed on its own first run, on a false positive, and that is kept
+because it is the honest version.** It flagged `Self-Employment Tax`: `norm` flattens the hyphen to a
+space, so rejoining on `\s+` could not match hyphenated prose. Fixed by joining on "any run of
+non-alphanumerics that is *not* clause punctuation" — which still refuses a comma or full stop.
+
+**`npm test` exit 0** (translation coverage back to **100%** across all four languages, §17b **102
+uses / 66 chips / 0 unexplained**), **`npm run build` exit 0** (0.95 s), **`npm run jargon` exit 0**
+(`✓ control: 12 known glossary terms re-found, buckets disjoint`). Baseline `npm test` was captured on
+the dirty tree **before any edit** and was exit 0, so the owner's in-flight work was green on arrival
+and is green now. `LAUNCH_READINESS.md`'s two generated figures refreshed via
+`npm run readiness -- --write` (136,031 → 136,051 chars).
+
+**Live browser** (Environment note's technique: static `dist/`, `/usr/bin/python3 -m http.server 8881`,
+`preview_start` with a plain `url`, **mobile preset first** so measurements are real — `innerWidth`
+confirmed 375, not 0). Economy lesson 35 is gated behind track progress, so the `#/lesson/35` deep link
+bounced to `#/learn` until `ecycles_completed_lessons` was seeded — worth knowing before assuming a
+deep link is broken. Rendered text reads **"the annual rate — the APR — on your credit card"**;
+screenshot taken; **0 console errors**. `dist/` necessarily contains the owner's in-flight redesign
+(the screenshot shows their dark theme) — unavoidable, and **only the lesson prose and the console were
+read as this run's evidence**.
+
+**⛔ The `Dividend` entry was written, verified, and then could not ship.** Adding any glossary key
+moves `LAUNCH_PLAN.md` §1's generated "32 glossary terms" (line 65), which `npm test` gates — and that
+file has owner edits. **Proved rather than predicted:** the entry (5 languages) and both §17b chips
+were added, `npm test` run, and after the readiness refresh the *only* remaining failure was that one
+line (§17b read 104 uses / 68 chips / 0 unexplained with it in). Backed out with targeted edits and
+`glossary.js` confirmed **byte-identical to HEAD** — the scripted removal left one stray blank line,
+which is exactly why the diff was checked instead of trusted. `LAUNCH_PLAN.md`'s `shasum` was captured
+before `--write` and re-checked after: **unchanged, `670232898b…`**. Work saved to
+`scratchpad/{glossary.with-dividend.js,lessonTerms.with-dividend.js,dividend-glossary.patch}` and the
+decisions written into item 64 so the next run applies rather than re-derives.
+
+**New item 66 filed, found by accident while checking Dividend's premise: glossary definitions are a
+learner-facing surface neither jargon instrument reads.** `npm run jargon` scans lesson text; §17b
+scans lesson heading+body; **neither opens `glossary.js`'s own `f`/`ex` strings**. One confirmed
+instance (`Brokerage Account`'s definition uses "dividends"), rest unmeasured — filed as a measurement
+job, deliberately not fixed on the way past.
+
+**Adversarial self-check (step 5).** **Blindspot register:** nothing reintroduced, and checked rather
+than asserted — `check-blindspot.mjs` green on all seven checks; the diff contains no person's name
+(§10.2 grepped); the one learner-facing string added is a descriptive acronym expansion with no verb
+directed at the reader (§10.1), and the disclaimer surfaces are untouched; §10.3 kids content not
+touched; §2.3's live-date scan covers five content files, none of which this run edited — and the APR
+edit adds no date or figure. **DECISIONS.md conflict:** none. The one decision this run comes near is
+"Machine-translated lesson content", and the re-mark is the procedure that decision established, using
+its `ai` method value; no storage, routing, build or content-module-shape change. **Already-done
+backlog item:** no — APR and residual (b) were both explicitly open sub-items of 64, listed as *not*
+done by the run that closed its Stock/Bond half. **Own verification claims:** an independent reviewer
+re-running `npm test`, `npm run build`, `npm run jargon` and the two injections gets these results.
+Four caveats stated rather than buried: **(a)** the translation re-mark restores a coverage figure this
+run's own edit lowered — the review was real and is argued above, but it is self-reported, which is the
+same shape as the §10.1 half-done claim step 5 exists for; **(b)** `npm run jargon` is a report, not
+part of `npm test`, so its new controls only run when someone runs it — deliberate (the header's "WHY
+THIS IS NOT A CHECK"), but it means a regression here is silent until then; **(c)** the contiguity
+control proves a phrase occurs *somewhere* in the corpus, not that it occurs in the lessons its reach
+count names, so a subtler mis-attribution would still pass; **(d)** the `Dividend` entry's five
+translations are AI-written and, unlike lesson content, glossary entries sit outside the review ledger
+entirely (`glossary.js`'s own header records this) — so when the next run ships it, nothing will track
+that text's review status.
+
+**Next run: apply the saved `Dividend` work if `LAUNCH_PLAN.md` is clean** — it is a copy-in from
+scratchpad plus `npm run readiness -- --write` plus a log entry, with every judgement call already
+made and recorded in item 64. **If the owner's redesign is still in flight, do not queue anything that
+touches `LAUNCH_PLAN.md`** — prefer **item 66** (measure the glossary-definition residual; one file,
+the extractor already exists, and it is a measurement not a content change) over **item 65** (light
+`--graph-amber`, still honestly low — nothing renders below the bar). **Item 18 remains the entire
+critical path to ending Phase 0 and is blocked on an owner action: an analytics provider account and
+key.**
