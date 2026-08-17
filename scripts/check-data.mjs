@@ -29,6 +29,7 @@ import { computeCoverage } from "./translation-review.mjs";
 import * as storageLib from "../src/lib/storage.js";
 import { EVENTS, MAX_LOGGED_EVENTS, elapsedSeconds, monotonicNow, quizScore, track } from "../src/lib/analytics.js";
 import { redactUrl, getAdapter, fixture, ADAPTERS } from "../src/lib/marketData/adapters.js";
+import { FUTURE_TOLERANCE_DAYS, STALE_AFTER_DAYS, freshness } from "../src/lib/useMarketData.js";
 import { FRED_SERIES, fixtureEconomics } from "../src/lib/marketData/fred.js";
 
 // A minimal in-memory localStorage mock, installed as a global before
@@ -1920,6 +1921,98 @@ if (keyedGroupsChecked < 4) {
           `(\`\\0\`) instead; it is the same string to the parser and a text file to everything else.`,
       );
     }
+  }
+}
+
+// ───────────────────────────────────────────────────────────────────────────
+// 25. src/lib/useMarketData.js — the freshness rule (backlog item 44).
+//
+//     This is the §2.3 contract in one expression: whether the numbers on the
+//     Sector-performance screen may be shown at all. It was `ageDays >
+//     STALE_AFTER_DAYS`, a one-sided test, so every age below the window
+//     counted as fresh — including ages *below zero*, which do not mean "very
+//     recent" but "the writer's clock and the reader's clock disagree." A
+//     device whose date is set a week behind reads a five-day-old file as -2
+//     days old and shows it as current.
+//
+//     Same shape as the missing-`asOf` case, which the old test also passed:
+//     `null > 4` is false, so a file with no date at all was fresh. Both are
+//     the same mistake — treating "not known to be old" as "known to be new".
+//
+//     `freshness` was split out of the hook so this can be checked without a
+//     browser or a clock, the way sections 8, 9 and 12–15 check their own
+//     modules. The dates below are written out rather than derived from the
+//     constants on purpose: they encode where the two boundaries are *meant*
+//     to be, so moving a constant fails here and has to be argued for.
+{
+  const eq = (label, actual, expected) => {
+    if (JSON.stringify(actual) !== JSON.stringify(expected)) {
+      fail(`§25 freshness: ${label} — got ${JSON.stringify(actual)}, expected ${JSON.stringify(expected)}`);
+    }
+  };
+
+  eq("the table below is written for STALE_AFTER_DAYS = 4 (re-derive the cases if this changes)",
+    STALE_AFTER_DAYS, 4);
+  eq("the table below is written for FUTURE_TOLERANCE_DAYS = 1 (re-derive the cases if this changes)",
+    FUTURE_TOLERANCE_DAYS, 1);
+
+  const TODAY = "2026-08-17";
+  const cases = [
+    // [asOf, today, ageDays, isStale, what it stands for]
+    ["2026-08-17", TODAY, 0, false, "today's file is fresh"],
+    ["2026-08-13", TODAY, 4, false, "the last day inside the staleness window"],
+    ["2026-08-12", TODAY, 5, true, "one day past it"],
+    ["2026-08-18", TODAY, -1, false, "one day ahead: ordinary timezone skew, still fresh"],
+    ["2026-08-19", TODAY, -2, true, "two days ahead: further than a timezone explains — item 44's bug"],
+    ["2026-08-24", TODAY, -7, true, "a week ahead"],
+    // The case with teeth: a five-day-old file read by a device whose date is
+    // five days behind. Genuinely stale, negative age, and fresh under the old
+    // one-sided test.
+    ["2026-08-12", "2026-08-07", -5, true, "a stale file read by a device with a stale clock"],
+    // Month and year boundaries, since dayDiff composes calendar dates rather
+    // than subtracting milliseconds.
+    ["2026-02-26", "2026-03-02", 4, false, "four days across a month boundary"],
+    ["2025-12-30", "2026-01-03", 4, false, "four days across a year boundary"],
+    ["2025-12-29", "2026-01-03", 5, true, "five days across a year boundary"],
+    // No usable date. Not fresh: §2.3 wants a figure shown with its date or
+    // not shown, and these have no date to show.
+    [undefined, TODAY, null, true, "a file with no asOf field"],
+    [null, TODAY, null, true, "an explicitly null asOf"],
+    ["", TODAY, null, true, "an empty asOf"],
+    ["2026-8-1", TODAY, null, true, "an asOf in a shape this code cannot read"],
+    ["yesterday", TODAY, null, true, "a non-date asOf"],
+    [20260817, TODAY, null, true, "a non-string asOf"],
+  ];
+  for (const [asOf, today, ageDays, isStale, label] of cases) {
+    eq(`${label} (asOf=${JSON.stringify(asOf)}, today=${today})`, freshness(asOf, today), { ageDays, isStale });
+  }
+
+  // Positive half. The table above proves `freshness` is right; nothing in it
+  // proves the hook still asks `freshness`. Reintroducing the one-sided
+  // comparison inside `useMarketData` would leave every case above green — the
+  // exact shape of blind spot §23/§24 were written for.
+  const hookSrc = readFileSync(join(ROOT, "src/lib/useMarketData.js"), "utf8");
+  const hookBody = hookSrc.slice(hookSrc.indexOf("export function useMarketData"));
+  if (!/const\s*\{[^}]*\bisStale\b[^}]*\}\s*=\s*freshness\(/.test(hookBody)) {
+    fail(
+      `§25: useMarketData() no longer takes its \`isStale\` from freshness(). The rule has to live in ` +
+        `the one place the checks above can reach, or this section is testing code the app doesn't run.`,
+    );
+  }
+  if (/ageDays\s*[<>]/.test(hookBody)) {
+    fail(
+      `§25: useMarketData() compares \`ageDays\` directly. That comparison belongs inside freshness(), ` +
+        `where both of its boundaries are stated and checked — a bare \`ageDays > N\` is backlog item 44.`,
+    );
+  }
+
+  // And the consumer: Sectors.jsx must gate on the flag, not re-derive it.
+  const sectorsSrc = readFileSync(join(ROOT, "src/screens/reference/Sectors.jsx"), "utf8");
+  if (!/\bisStale\b/.test(sectorsSrc) || /\bageDays\s*[<>]/.test(sectorsSrc)) {
+    fail(
+      `§25: src/screens/reference/Sectors.jsx must gate its figures on useMarketData's \`isStale\` and ` +
+        `must not compare \`ageDays\` itself — one freshness rule, in one place.`,
+    );
   }
 }
 

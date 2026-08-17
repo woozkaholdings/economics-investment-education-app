@@ -26,7 +26,11 @@ const WINDOWS = [
 ];
 
 export default function Sectors({ t, lang }) {
-  const { status, data, ageDays, isStale, isSample } = useMarketData();
+  // `ageDays` is deliberately not read here (backlog item 44). This screen
+  // states the absolute date the figures were taken and never phrases it as
+  // "N days ago"; a relative age would be a second rendering of the same fact
+  // with its own way of being wrong. The freshness *decision* is `isStale`.
+  const { status, data, isStale, isSample } = useMarketData();
   const [window, setWindow] = useState("3m");
 
   if (status === "loading") {

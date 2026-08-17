@@ -1133,8 +1133,10 @@ for the history. No open P1/P2 items.
       minified single line. Whether that is worth a broader "every source file is greppable" assertion
       is a real question and an honest scoping job, not an obvious yes.
 
-44. **[Small — filed, not fixed] `useMarketData` treats a future `asOf` as fresh, and `Sectors.jsx`
-    destructures `ageDays` without using it.** With item 38's fix the job can no longer stamp tomorrow's
+44. **[Small — ✅ DONE 2026-08-17. Filed as small and "no §2.3 violation"; the second half of that
+    assessment was wrong, and finding out how was the run. See the closing note.] `useMarketData` treats
+    a future `asOf` as fresh, and `Sectors.jsx` destructures `ageDays` without using it.**
+    With item 38's fix the job can no longer stamp tomorrow's
     date, so the cause is closed — but `isStale` is `ageDays > STALE_AFTER_DAYS`, so any negative age
     still reads as fresh, and a user whose device date is behind the job machine's (a Hawaii evening
     against an Eastern job) sees exactly that. **No §2.3 violation**: the screen prints `asOf` outright
@@ -1142,6 +1144,25 @@ for the history. No open P1/P2 items.
     is filed small rather than fixed in passing. The unused `ageDays` binding at
     `src/screens/reference/Sectors.jsx:29` is the other half; a run in this file should decide whether
     the hook should clamp, whether the screen should show the age, or whether the binding should go.
+    > **Closing note, 2026-08-17.** Fixed as a two-sided rule in `useMarketData.freshness(asOf, today)`,
+    > guarded by `check-data.mjs` **§25**, and the three questions above answered: the hook does **not**
+    > clamp (a negative age is the evidence the clocks disagree — clamping hides the signal), the screen
+    > does **not** show the age (it already prints the absolute date; a relative one is a second rendering
+    > of the same fact with its own way of being wrong), and the binding **goes**, with a comment saying
+    > which of the three was chosen so the next reader doesn't re-open it.
+    > **The item's own "No §2.3 violation" was wrong, and only a rendered check could show it.** The
+    > filed defect is a one-sided test — `ageDays > STALE_AFTER_DAYS` reads as "old enough to hide" but
+    > means "everything else is current" — and a *missing* `asOf` fails it the same way a future one
+    > does: `null > 4` is false, so the file with no date at all was fresh. Served a `market.json` with
+    > `asOf` deleted, the pre-fix build rendered all eleven sectors under the heading **"As of
+    > undefined"** — figures presented with no date, by the code written to prevent exactly that. The
+    > filed reasoning ("the screen prints `asOf` outright") assumed there was always an `asOf` to print.
+    > **The negative-age half is real too, and worse than the timezone case that motivated it.** A
+    > device whose clock is set five days behind reads a five-day-old file as age −5 and shows it as
+    > current; the job's own stamp is no longer the only way to get there. One day ahead is still
+    > accepted (`FUTURE_TOLERANCE_DAYS = 1`) because a device west of the job machine legitimately sits
+    > on the previous date, and cutting those users off from good data is the worse error.
+    > Verified before/after in a live browser at both boundaries — see the run log.
 
 **HELD — owner decisions, do not act on these**
 
@@ -8013,3 +8034,100 @@ above, the future-`asOf`/unused-`ageDays` pair) is small and well-scoped. Item 4
 real open question — whether "every source file is greppable" is worth asserting beyond NUL — and that is
 a scoping job, not a coding one. **Item 32's monthly audit is dated 2026-09-05 and must not be pulled
 forward.**
+
+### 2026-08-17 (scheduled dev-agent) — Freshness decided in both directions, and the "As of undefined" screen (item 44)
+
+Picked **item 44** from the backlog, one of the two the previous run named. It was filed as small, with the
+explicit note **"No §2.3 violation"**. The fix is small. That note was wrong, and finding out how is the run.
+
+**The defect is a one-sided test, not a missing edge case.** `isStale` was `ageDays !== null && ageDays >
+STALE_AFTER_DAYS`. That reads as "old enough to hide" and *means* "everything else is current" — so every
+value below the window passed, including the two that are not freshness at all:
+
+1. **A negative age.** The filed case was a device date behind the job machine's. The sharper one is a
+   device clock that is simply wrong: set five days behind, it reads a genuinely five-day-old file as age
+   −5 and shows it as current. Item 38 closed the *job's* ability to stamp tomorrow; it did not close this,
+   because the reader's clock is the other half of the subtraction.
+2. **A null age — the one the item said didn't exist.** `null > 4` is false, so a `market.json` with no
+   `asOf` at all was fresh. Served exactly that to the pre-fix build and the Sector screen rendered all
+   eleven sectors under the heading **"As of undefined"**: figures presented with no date, by the code
+   written to prevent that. §2.3's rule is a figure appears with its date or does not appear.
+
+**The fix.** `useMarketData.freshness(asOf, today)` — pure, both dates as arguments, so it is testable
+without React or a clock. An age it cannot trust is not freshness: no readable `asOf` is stale, and more
+than `FUTURE_TOLERANCE_DAYS = 1` ahead of the device's own date is stale. **One day ahead stays fresh on
+purpose** — the job stamps its own local day, so a device west of it can legitimately still be on the
+previous date, and cutting those users off from good data is the worse error. `ageDays` is reported raw,
+negatives included: clamping was the other candidate fix and is rejected in a comment, because a negative
+age is the *evidence* the two clocks disagree and folding it into 0 hides the signal.
+
+**Item 44's three questions, all answered rather than left open**: the hook does not clamp (above); the
+screen does not show the age (`Sectors.jsx` already prints the absolute date — a relative "N days ago"
+would be a second rendering of the same fact with its own way of being wrong); the unused binding goes,
+with a comment naming which of the three was chosen so the next reader doesn't reopen it.
+
+**`check-data.mjs` §25**, following sections 12–15's shape. Sixteen cases over `freshness`, including both
+staleness boundaries (4 fresh / 5 stale), both future boundaries (−1 fresh / −2 stale), the wrong-device-
+clock case, month and year crossings, and five unusable-`asOf` shapes. The dates are written out rather
+than derived from the constants, and the section asserts the two constants are the values the table was
+written for — so moving a bound fails here and has to be argued for. **Plus a positive half, because the
+table alone proves nothing about the app**: `useMarketData` must still take `isStale` from `freshness()`
+and must not compare `ageDays` itself, and `Sectors.jsx` must gate on the flag rather than re-derive it.
+Reintroducing the one-sided comparison inside the hook would otherwise leave all sixteen cases green —
+the blind-spot shape §23/§24 were written for.
+
+**Verified.**
+- `npm test` and `npm run build` green.
+- **Four injections against §25, source restored byte-identical afterwards (sha256 `211f2488…` before and
+  after):** the one-sided `isStale` restored → 9 case failures, naming the future ages and the null-age
+  cases; the hook bypassing `freshness()` → both positive-half checks fired; `FUTURE_TOLERANCE_DAYS`
+  widened to 2 → the constant assertion fired *and* named the −2 case; `Sectors.jsx` re-deriving with
+  `ageDays > 4` → the consumer check fired.
+- **Live browser, before and after, four served files** (static `dist/` + `python3 -m http.server 8801`,
+  the Environment note's technique; `public/data/market.json` untouched throughout — `shasum` identical to
+  the served copy at the end, `git status public/` clean):
+  | served `asOf` | pre-fix build | post-fix build |
+  |---|---|---|
+  | `2026-08-14` (real, age 3) | figures | **figures** (no regression) |
+  | `2026-08-18` (age −1) | figures | **figures** (timezone tolerance holds) |
+  | `2026-08-19` (age −2) | figures, "As of 2026-08-19" | **"Market data isn't available right now. (As of 2026-08-19)"** |
+  | field deleted | figures, **"As of undefined"** | **"Market data isn't available right now."**, no date fragment |
+  No console errors on any load. `Sectors.jsx` is the only consumer of the hook (grepped, not assumed).
+- `DECISIONS.md`'s market-data entry gains the rule, since the §2.3 bullet directly above it is what the
+  old code was trying to implement.
+
+**Adversarial self-check.**
+1. **Blindspot register.** §2.3 is the live one and this moves toward it, not away: strictly fewer figures
+   are shown as current, and the one case that lost figures it used to show (a file with no date) is the
+   case §2.3 names. No hardcoded current date ships — §25's dates are both *sides* of a comparison, which
+   is what makes it clock-independent, the opposite of item 38's defect; no date is computed there at all.
+   No Dalio, no advice-adjacent language, no kids framing touched; `check-blindspot.mjs` green.
+2. **`DECISIONS.md` conflict.** None — the market-data entry's binding rule is the thing this enforces,
+   and it is extended there rather than contradicted. No storage, routing, content-format or dependency
+   change.
+3. **Already-done backlog item.** Item 44 was open, filed 2026-08-16 by the item-38 run and named as a
+   next pick. Nothing in "Completed and pruned" covers `useMarketData`; it had no test section at all,
+   which is why §25 is new rather than an extension.
+4. **My own verification claim — one part reproduces, one part is dated.** The `npm test` result and the
+   four injections reproduce for anyone on any day: §25 takes both dates as arguments. **The browser table
+   does not** — "age −2" means `asOf = 2026-08-19` only while today is 2026-08-17. To re-run it, pick
+   `today + 2`, not that literal date. Stating this because item 38's entry had the same shape and said so
+   too; a demonstration that only works this evening is not evidence a reader can check.
+5. **The half of the item I disproved rather than implemented.** Item 44 asserted "No §2.3 violation" and
+   I could have shipped the negative-age fix alone and left that standing. It came apart only when the
+   file was served with the field deleted and the *rendered* screen read back — reading the code would
+   have shown `null > 4` is false without showing what a user sees. Third time this repo has recorded the
+   same lesson (items 33, 36, 43): the instrument matters, and here the instrument was the browser.
+6. **Concurrent runs.** `HEAD` was `01d6d6d` at start and at commit; `git status` listed only my own four
+   files at every checkpoint.
+
+**Item 18 remains the entire critical path to ending Phase 0** — an analytics provider account and key, an
+owner action. Unchanged by this run.
+
+**Next run should pick**: **item 39** (nothing checks that a check and the document it guards land in the
+same commit) — still unowned, still needing the honest scoping it asks for, and this run is another data
+point for it (§25 and the code it guards landed together, by habit rather than by any mechanism). Item
+43's open question — whether "every source file is greppable" is worth asserting beyond NUL — remains a
+scoping job. **Item 32's monthly audit is dated 2026-09-05 and must not be pulled forward.** One small
+thing noticed and deliberately not done: `formatPercent` and `formatEconomicReading` in the same file
+still have no test coverage; §25 was kept to the freshness rule rather than growing into a file sweep.

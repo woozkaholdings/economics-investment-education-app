@@ -75,6 +75,18 @@ Add a new entry when a run makes a choice future work should be able to look up 
   never changed — fake freshness. A real `asOf` that updates daily is the opposite. The binding rule
   is that the UI never presents figures as current without showing when they were taken, and shows
   "unavailable" rather than stale numbers if the job has not run recently.
+- **Freshness is decided in both directions, not just "too old" (2026-08-17, backlog item 44).** The
+  rule above was implemented as `ageDays > STALE_AFTER_DAYS`, which reads as "old enough to hide" and
+  silently means "everything else is current" — so a *missing* `asOf` (age `null`) and a *future* one
+  (age negative) both counted as fresh. Both were live: with no `asOf` the Sector screen rendered
+  every figure under the heading "As of undefined", which is the §2.3 rule broken by the code meant to
+  enforce it. `useMarketData.freshness(asOf, today)` now decides it, and an age it cannot trust is not
+  freshness: no readable date is stale, and more than `FUTURE_TOLERANCE_DAYS` (1) ahead of the device's
+  own date is stale. One day ahead stays fresh on purpose — the job stamps its own local day, so a
+  device west of it can legitimately still be on the previous date, and cutting those users off from
+  good data would be a worse error than showing it. The bound is what stops a badly-wrong device clock
+  from turning a genuinely old file into a negative age that reads as new. Checked by `check-data.mjs`
+  §25, which also asserts the hook still asks `freshness` rather than re-deriving the comparison.
 - **Revisit when:** the proprietary RS formula is ready (swap the strategy, keep everything else); or
   a provider's terms change; or the product needs intraday data, which would reopen every point here.
 
