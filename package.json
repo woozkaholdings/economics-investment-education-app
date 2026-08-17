@@ -13,6 +13,7 @@
     "claims": "node scripts/check-claims.mjs",
     "check-backlog": "node scripts/check-backlog.mjs",
     "check-payload": "node scripts/check-payload.mjs",
+    "jargon": "node scripts/jargon-candidates.mjs",
     "review-status": "node scripts/translation-review.mjs report",
     "market": "node scripts/fetch-market-data.mjs"
   },

@@ -1410,11 +1410,18 @@ if (keyedGroupsChecked < 4) {
 //            two tables contradict each other and only one can be right.
 //
 //      SCOPE LIMIT, stated so it is not mistaken for more than it is: this
-//      sweeps the 29 keys in glossary.js and nothing else. A jargon word with
+//      sweeps the keys in glossary.js and nothing else (the count is printed
+//      below rather than written here, because it moves). A jargon word with
 //      no glossary entry cannot be seen by it, so "0 unexplained" means every
 //      GLOSSARY TERM is accounted for — not that §3.0.3 is fully satisfied.
 //      Closing that residual means growing the glossary, which is item 35's
-//      axis, not this one's.
+//      axis, not this one's. `npm run jargon` (scripts/jargon-candidates.mjs)
+//      is the instrument for the part this cannot see: it proposes candidate
+//      jargon with no glossary entry, ranked by how many lessons use it. It
+//      reports rather than fails, and deliberately is not wired into npm test
+//      — deciding which candidate is real jargon is judgement, and the only
+//      way to make it blocking would be an allowlist of every acceptable
+//      English phrase.
 //
 //      The matcher is §17's, deliberately: if the two disagree, one of them is
 //      wrong about what "the section mentions this term" means, and a shared

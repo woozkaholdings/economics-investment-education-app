@@ -393,7 +393,31 @@ for the history. No open P1/P2 items.
     - **Honest priority: low, and lower than item 60.** No text is affected, so §3.0.7 is untouched;
       this is a stricter reading of a rule the app volunteered.
 
-60. **[Content — the residual §17b cannot see, filed 2026-08-17 by the run that closed item 57 rather
+60. **✅ DONE 2026-08-17 (scheduled dev-agent). The residual now has an instrument (`npm run jargon`),
+    and the one real gap it found is closed: Brokerage Account is a glossary entry, chipped on lesson 6.
+    For the seventh item running the premise was partly wrong — and this time the wrong half was the
+    *scale*, not a number.** The item implies a body of undefined money-track jargon. There was one
+    occurrence. 43 candidates cleared the reach threshold; **42 are either defined inline where they
+    first appear or covered by curation rule 2** (the lesson whose subject *is* the term), and most of
+    the list is ordinary compositional English ("savings account", "monthly payment") that needs no
+    definition at all. The single genuine miss was a **forward reference**, a shape this item did not
+    predict: lesson 6 §0 contrasts "an ordinary brokerage account" with a 401(k) **seven lessons before
+    lesson 13 defines what a brokerage account is**, so that occurrence satisfied neither branch of
+    §3.0.3. Adding the glossary entry hands the whole class to §17b, which now sweeps 30 keys and holds
+    lesson 6's chip and lesson 13's rule-2 exclusion in place permanently. See the run log entry of
+    this date.
+    > **Two premise corrections worth not re-deriving.** (a) **APR is not money-track jargon** — it
+    > appears exactly once in all 40 lessons, in *economy* lesson 35's list of rates that follow the Fed
+    > ("the APR on your credit card"), where the sentence's job is the Fed transmission, not APR. Filed
+    > with its disposition in item 64. (b) **"beneficiary" is not a gap**: lesson 14 is titled "Wills
+    > and Beneficiary Designations" and rule 2 applies — its 9 uses are the lesson teaching the term.
+    > **And the residual is still a residual.** `0 unexplained` now covers 30 keys instead of 29, which
+    > is not the same as "no undefined jargon" — the instrument reports, it does not certify. Its
+    > threshold (≥2 lessons or ≥3 uses) suppressed 422 lower-reach candidates that were never
+    > individually read; APR is proof that the suppressed tail can hold a real one.
+    <details><summary>Original text of item 60, as filed 2026-08-17</summary>
+
+    **[Content — the residual §17b cannot see, filed 2026-08-17 by the run that closed item 57 rather
     than left implied.] §3.0.3 is now enforced for the 29 glossary terms and for nothing else.**
     `check-data.mjs` §17b proves every *glossary-term* use in all 40 lessons is either chipped or
     deliberately excluded (`0 unexplained`). It cannot see a jargon word that has **no glossary entry**,
@@ -414,6 +438,31 @@ for the history. No open P1/P2 items.
       check what already covers the surface — §17b, §17 and item 35's notes — before building anything.
     - **Honest priority: below item 58.** This is content growth on a clause whose measurable half is
       now green, and §4.3's content gates are both met. It is worth doing well, not doing soon.
+    </details>
+
+64. **[Content — the three candidates item 60's run measured and deliberately did NOT add, filed
+    2026-08-17 by the run that closed it. Each is a decision, and the reason they are together is that
+    "add a glossary entry" is the same decision three times, not that they should be batched.]**
+    Run `npm run jargon` to reproduce every figure below.
+    - **`Stock` and `Bond` have no glossary entry, and they are the highest-reach absence in the app:
+      stocks in **14 lessons / 47 uses**, bonds in **10 / 44**, defined only in money lesson 5 ("Stocks,
+      Bonds & Diversification").** Every use in lessons 6, 13, 25, 28 and across the economy track meets
+      a reader who may never have opened lesson 5 — tracks unlock independently, so an economy-first
+      reader reaches lesson 38's stocks-and-bonds discussion having been taught neither.
+      **Why item 60's run did not do it:** two new keys oblige a chip or a written exclusion in *every
+      one* of those 24 lessons under §17b, which is a content-review job of a different size than the
+      one-lesson fix it shipped, and doing it badly means 24 hasty exclusions that permanently grant
+      cover. **This is the real item here; the other two are small.**
+    - **`Dividend`: 3 uses, lessons 3 and 6, never defined.** Lesson 3's use is nearly self-defining in
+      context ("automatically buying more of the same investment with any interest or dividends earned,
+      rather than paying it out as cash"); lesson 6's is not ("owes tax on the dividends and gains their
+      investments produce"). Borderline by reach, and it pairs naturally with Stock/Bond above.
+    - **`APR`: 1 use, economy lesson 35, acronym never expanded.** "…what your savings account pays
+      you, the APR on your credit card." The list frames it as a rate on a card, and the sentence teaches
+      Fed transmission, not APR. **Recommended disposition: expand the acronym in place** ("the annual
+      rate — the APR — on your credit card") rather than add a glossary key for one incidental use.
+      Note this one sits *below* `npm run jargon`'s reach threshold: it was found by hand while checking
+      item 60's premise, which is the honest argument for reading the suppressed tail occasionally.
 
 61. **✅ DONE 2026-08-17 (scheduled dev-agent). All 9 mechanical corrections applied, plus both guards
     the item asked for — and for the fourth item running the premise was wrong in one place, which is
@@ -6419,3 +6468,128 @@ carries the control to run first) or, for a smaller pick, **item 62's F6** — n
 casualty rather than by tidiness, and the cheapest of the three remaining judgment findings. **Item 18
 remains the entire critical path to ending Phase 0 and is blocked on an owner action: an analytics
 provider account and key.**
+
+### 2026-08-17 (scheduled dev-agent) — Item 60: the residual gets an instrument, and the one real gap is a forward reference
+
+**Orient.** `git status` showed one untracked directory, `UIUX/` — the owner design-reference drop item
+26 records as "not committed, not opened, and not turned into backlog items by an agent guessing at
+intent." Left exactly that way. No tracked file had uncommitted edits. `git log --oneline -15` topped at
+`a7db5e2` (item 62's F4), matching the environment's reported HEAD, so no concurrent session had landed
+anything. The previous entry named **item 60** as the pick and **item 62's F6** as the smaller
+alternative; took 60, both because it is the larger genuinely-unblocked piece of content-side work and
+because the last eight runs have all been document/process work — the rendered product has not changed
+since 2026-08-16.
+
+**What the measurement found, and the premise was wrong about the scale rather than about a number.**
+Item 60 implies a body of undefined money-track jargon behind §17b's `0 unexplained`. The extractor
+(acronyms + mid-sentence capitalised phrases + an n-gram sweep on finance head nouns, over all 28 money
+lessons' English headings, bodies, takeaways and thinkAbouts) produced 490 raw candidates, 43 of which
+cleared a reach threshold of ≥2 lessons or ≥3 uses. Reading the first use of each:
+
+| Disposition | Count | Examples |
+|---|---|---|
+| Ordinary compositional English, needs no definition | ~28 | "savings account", "monthly payment", "lose value", "actual value" |
+| Defined inline where it first appears (§3.0.3 branch 1) | 9 | L9 "the number on the statement is the **nominal return**", L12 "builds **equity**, meaning a stake in the home", L20 "**FOMO**, the fear of missing out", L15 "a scoring model such as **FICO**", L12 "closing costs — fees for the loan, title search, inspection" |
+| Covered by curation rule 2 (the lesson's subject *is* the term) | 5 | credit score (L4, L15), tax brackets (L7), self-employment tax (L10), lifestyle inflation (L17), beneficiary (L14) |
+| **Genuine §3.0.3 miss** | **1** | **brokerage account** |
+
+**The one miss is a shape the item did not predict: a forward reference.** Lesson 6 §0 contrasts "an
+ordinary brokerage account" with a workplace 401(k) — and lesson **13** is the lesson that defines a
+brokerage account ("just a container — a place to hold investments, not an investment itself"), seven
+lessons later. The term is defined in the catalogue and undefined at the point a reader first meets it,
+so that occurrence satisfies neither branch of §3.0.3. Reach across lessons, not raw frequency, is what
+surfaces this class: a term used in one lesson is almost always defined by it, while a term used in two
+and defined in the later one is a gap by construction.
+
+**The fix, and why it is one entry and not a batch.** `glossary.js` gains **Brokerage Account** in all
+five languages (30 entries now), chipped on `lessonTerms[6][0]` and recorded in
+`deliberatelyUnlinked[13]` as `defined-here` under rule 2. The point of routing it through the glossary
+rather than editing lesson 6's prose is that **§17b then owns it forever**: the term is now one of the
+keys it sweeps, so a future content edit that moves either occurrence fails `npm test` instead of
+drifting. §17b: 79 uses / 45 chips on 22 lessons / 34 excluded / **0 unexplained**.
+
+**Also shipped: `scripts/jargon-candidates.mjs` (`npm run jargon`), the instrument for the residual.**
+Item 60 exists because §17b structurally cannot see jargon with no glossary entry, and the measurement
+above would otherwise have to be re-derived by hand next time — the failure item 39/47 named. It is
+**deliberately not wired into `npm test`**: ~85% of its output is ordinary English, so making it
+blocking would need an allowlist of every acceptable phrase, which is exactly the hand-maintained shape
+item 58's F10 finding was filed against. It reports; it exits non-zero only when its own control fails.
+
+**Three drafts of that control were thrown away, and the discarded ones are the useful part.** This is
+an absence report, so matching nothing produces the most reassuring possible output. Each draft was
+tested by injecting a bug into a scratchpad copy (never the repo file) and confirming the exit code:
+
+| Control draft | Real bug: `entry.s` for `entry.en.s` (item 57's actual bug) | Harmless edit: space-dropping normaliser | Broken corpus |
+|---|---|---|---|
+| `glossaryForms.has("index fund")` | passes — misses it | **fails — false alarm** | fails |
+| pin "Index Fund"/"Emergency Fund" on the bucket | passes — misses it (keys are already spaced display names, so those two subtract via the key alone) | passes | fails |
+| **shipped:** rebuild expected forms independently, assert no candidate is already a glossary term | **fails, exit 1** — names `"insurance premium"` | passes | fails, exit 1 |
+
+Two things that only came out by running them. **(a) A control that fires on a harmless edit is worse
+than none** — the space-dropping normaliser changes nothing here, because both sides normalise
+identically, and a probe that reddens on it teaches the next run to delete the probe. **(b) The first
+version of the shipped check filtered the *displayed* list**, and the term that catches the real bug
+("insurance premium", from key `Premium` whose `en.s` differs) is used once, below the display
+threshold — so it passed while looking like a working control. It now checks every candidate. The
+`en.s` path buys exactly the 9 keys whose short name differs from the key.
+
+**Verified in a live browser** (Environment note's technique: `npm run build`, `python3 -m http.server
+8834` on `dist/`, `preview_start` with a plain `url`, `mobile` preset before measuring):
+
+- **Lesson 6 §0 renders both chips** — `["Vesting", "Brokerage Account"]`. Clicking the new one flips
+  `aria-expanded` `false` → `true` and fills the shared panel (343x253 px) with the definition and the
+  example sentence, read back verbatim from the DOM.
+- **Lesson 13 renders no brokerage chip** — `["401(k)", "개인은퇴계좌(IRA)", "분산투자"]` — the rule-2
+  exclusion behaving as intended, checked in Korean so it doubles as the non-English render.
+- **Reference → Glossary, searching "증권"** returns the new entry alone, with its Korean definition and
+  example. This is what caught the one cosmetic defect found: the entry's Korean short name was
+  `증권계좌`, while lesson content uses the spaced `증권 계좌` **6 times and the unspaced form never**.
+  Fixed to match, then rebuilt and re-verified. Nothing checks Korean spacing consistency and nothing
+  proposed here would; it was found by looking at the screen.
+
+**Two rot sources removed rather than corrected** (item 55's cheapest-disposition rule). `check-data.mjs`
+§17b's scope note and `lessonTerms.js`'s inline note both hardcoded "the 29 keys in glossary.js" — this
+run's entry would have made both wrong, so they now say "the keys" and point at the printed figure.
+`lessonTerms.js`'s COVERAGE paragraph is **deleted**, not updated: it carried four generated figures
+directly above its own sentence saying §17b generates them, and had already gone stale twice in two days
+(item 57 fixed "21 links across 10 lessons"; its replacement "44 chips / 77 uses / 33 deliberate" lasted
+until this run added one chip and one exclusion).
+
+**Verification.** `npm test` — **PASS, exit 0**, 0 failures, 1 pre-existing unrelated warning
+(translation-review coverage), same as the previous run. It failed first, correctly and usefully:
+`refresh-readiness.mjs --check` caught `LAUNCH_PLAN.md` §1's asset sentence at "29 glossary terms" and
+named the fix, which is item 55's generator doing its job on the first content change since it landed;
+`npm run readiness -- --write` regenerated it to 30. `npm run build` — exit 0, 1.14 s. `npm run jargon`
+— exit 0 on all three tracks (`money`, `economy`, `all`), control re-finding 11 / 9 / 18 known glossary
+terms.
+
+**Adversarial self-check (step 5).** **Blindspot register:** §10.1 is the live one, since this adds
+learner-facing copy — the definition states what the account *is* and how its tax timing differs from a
+401(k)/IRA, with no recommendation; `check-blindspot.mjs` is green on all seven checks including the
+per-language advice patterns and the 7-surface disclaimer guard, and the live session observed the
+disclaimer rendering in the reader. §10.2: no person named. §10.3: kids content untouched, parent-facing
+framing intact. §2.3: no dates and no market figures in the new copy; it is not in the five files that
+check scans. **DECISIONS.md conflict:** none — content stays a `.js` module, no storage change (the
+`localStorage` writes in this run were browser-session seeding to unlock lesson 6 for verification, not
+code), no build-tool change; the new script is node-only and `check-payload.mjs` confirms no `src/`
+module imports a merged content view. **Already-done backlog item:** item 60 was explicitly open and was
+the previous entry's recommended pick. It shares an *axis* with item 35 (both add glossary entries), and
+the distinction is the one item 60 itself draws: item 35 grepped for words already in the glossary's
+neighbourhood, this ranked by cross-lesson reach and carried a control. **Own verification claim:** an
+independent reviewer re-running `npm test`, `npm run build` and `npm run jargon` gets these results, and
+the live checks reproduce via the Environment note. Four caveats stated rather than buried — (a) **the
+43→1 triage is judgment, not measurement**: another reviewer could defensibly call "down payment",
+"taxable income" or "Social Security" undefined, and the argument against each is that its sentence
+frames it ("A down payment plus closing costs — fees for the loan…", "payroll taxes withheld — funding
+programs like Social Security and Medicare"); (b) the threshold suppressed **422** lower-reach
+candidates that were not individually read, and APR proves that tail can hold a real one; (c) "0
+unexplained" now covers 30 keys, still not all jargon — the residual is narrowed, not closed; (d) the
+economy track was scanned only to size item 64's candidates, not triaged.
+
+**Next run should pick item 64's Stock/Bond half** — the highest-reach undefined vocabulary in the app
+(stocks 14 lessons / 47 uses, bonds 10 / 44, defined only in money lesson 5, and tracks unlock
+independently so an economy-first reader is taught neither), and now measured and scoped rather than
+suspected. It is genuinely bigger than this run's fix: two keys oblige a chip or a written exclusion in
+24 lessons. For a smaller pick, **item 62's F6** (the duplicate "Visual system" §-titles) or **item 64's
+APR line** (one acronym, expand in place). **Item 18 remains the entire critical path to ending Phase 0
+and is blocked on an owner action: an analytics provider account and key.**
