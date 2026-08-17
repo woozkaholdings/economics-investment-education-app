@@ -160,21 +160,87 @@ const STOP = new Set(["the", "a", "an", "your", "his", "her", "their", "this",
 // themselves.
 const STANDALONE = /^(deductible|premium|beneficiary|annuity|escrow|dividends?|equity|principal)$/i;
 
-const hits = new Map(); // normalised -> { display, lessons: Set, count }
-const record = (term, id) => {
+// ── Self-defining glosses (backlog item 68) ───────────────────────────────
+// The acronym rule matches a token and records it; until now it had no notion
+// of a gloss, so `National Bureau of Economic Research (NBER)` reported exactly
+// what a bare `NBER` did. That is not a cosmetic complaint: item 67 expanded
+// NBER in place, the reader's problem was solved, and the glossary report went
+// **UP** — 56 → 57, because the expansion also handed the capitalised-phrase
+// rule two new fragments (`National Bureau`, `Economic Research`) while the
+// acronym stayed listed. An instrument whose number rises when the text
+// improves is worse than a noisy one: it trains a run to distrust its own fix.
+//
+// A gloss is recognised only when the expansion **spells the acronym** — the
+// initials of its words, in order, allowing lowercase connectors ("of", "and")
+// between them — and sits **adjacent** to it, either side of the parenthesis.
+// Initial-matching is the whole precision story: it is what separates a real
+// expansion from any capitalised phrase that happens to precede a bracket.
+//
+// DELIBERATELY NOT DETECTED: item 64's apposition shape, `the annual rate —
+// the APR — on your credit card`. Measured, not assumed: `annual rate` spells
+// "ar", not "apr" (the full expansion is "annual percentage rate", which the
+// prose does not say), so no initial rule can verify it. Suppressing on the
+// em-dashes alone would suppress on punctuation rather than on evidence, and
+// would silently hide bare acronyms written in apposition. That instance is
+// also not in any report today — it occurs once, below the lesson corpus's
+// reach threshold — so the honest scope here is the verifiable half.
+//
+// Applies to the acronym and capitalised-phrase rules ONLY, not to the
+// head-noun n-gram sweep below: `Individual Retirement Account (IRA)` really
+// does use the phrase "retirement account", and that phrase's reach is real
+// vocabulary evidence, not an artefact of the gloss.
+const CONNECTORS = "of|and|for|the|in|on|at|to";
+const expansionSrc = (acr) =>
+  acr
+    .split("")
+    .map(
+      (ch, i) =>
+        (i ? `(?:\\s+(?:${CONNECTORS}))*\\s+` : "") + `[${ch}${ch.toLowerCase()}][A-Za-z]*`,
+    )
+    .join("");
+
+// Character ranges of every self-defining gloss in one doc. Both orders occur
+// in real copy: `Expanded Form (ACR)` and `ACR (Expanded Form)`.
+const glossSpans = (text) => {
+  const spans = [];
+  for (const acr of new Set([...text.matchAll(/\b[A-Z]{2,6}\b/g)].map((m) => m[0]))) {
+    const exp = expansionSrc(acr);
+    for (const src of [`\\b${exp}\\s*\\(${acr}\\)`, `\\b${acr}\\s*\\(${exp}\\)`]) {
+      for (const m of text.matchAll(new RegExp(src, "g"))) spans.push([m.index, m.index + m[0].length]);
+    }
+  }
+  return spans;
+};
+const inGloss = (spans, i) => spans.some(([a, b]) => i >= a && i < b);
+
+const hits = new Map(); // normalised -> { display, lessons: Set, count, glossed }
+const record = (term, id, glossed) => {
   const n = norm(term);
   if (!n || n.length < 3) return;
-  if (!hits.has(n)) hits.set(n, { display: term, lessons: new Set(), count: 0 });
+  if (!hits.has(n)) hits.set(n, { display: term, lessons: new Set(), count: 0, glossed: true });
   const h = hits.get(n);
   h.lessons.add(id);
   h.count += 1;
+  // A term is self-defining only if EVERY occurrence in the whole corpus sat
+  // inside a gloss. One bare use anywhere — another lesson, another entry —
+  // and it is reported, because that is a reader who never met the expansion.
+  if (!glossed) h.glossed = false;
 };
 
-for (const { id, text } of docs) {
-  for (const m of text.matchAll(/\b([A-Z]{2,6}|\d{3}\(k\))\b/g)) record(m[1], id);
+// One doc's extraction, factored out of the loop so the control at the bottom
+// can drive the REAL code path over a probe string instead of re-implementing
+// it. A control that re-implements what it checks passes when the shipped path
+// breaks — the failure this file has already had twice, in other clothes.
+const scanDoc = (text, emit) => {
+  const spans = glossSpans(text);
+  for (const m of text.matchAll(/\b([A-Z]{2,6}|\d{3}\(k\))\b/g)) emit(m[1], inGloss(spans, m.index));
   // Capitalised phrases NOT at sentence start — a mid-sentence capital is a
   // decent signal the author is naming a thing rather than starting a clause.
-  for (const m of text.matchAll(/[a-z,;)]\s+((?:[A-Z][a-z]+(?:[- ][A-Z][a-z]+)+))/g)) record(m[1], id);
+  // The match starts on the preceding character, so the group's own offset is
+  // where the phrase begins — that is what the gloss test needs.
+  for (const m of text.matchAll(/[a-z,;)]\s+((?:[A-Z][a-z]+(?:[- ][A-Z][a-z]+)+))/g)) {
+    emit(m[1], inGloss(spans, m.index + m[0].length - m[1].length));
+  }
   const raw = text.split(/\s+/);
   const words = raw.map((w) => w.replace(/^[^A-Za-z0-9$%(]+|[^A-Za-z0-9%)]+$/g, ""));
   // Does the token END a clause? An n-gram may not span one: "stocks, bonds"
@@ -196,10 +262,12 @@ for (const { id, text } of docs) {
       if (endsClause.slice(i - span + 1, i).some(Boolean)) continue;
       if (gram.some((w) => !w || STOP.has(w.toLowerCase()))) continue;
       if (span === 1 && !STANDALONE.test(gram[0])) continue;
-      record(gram.join(" "), id);
+      emit(gram.join(" "), false);
     }
   }
-}
+};
+
+for (const { id, text } of docs) scanDoc(text, (term, glossed) => record(term, id, glossed));
 
 // Doc ids are lesson numbers on the lesson corpus and glossary keys (strings)
 // on the glossary corpus, so the id sort has to be told which it is: `a - b` on
@@ -212,7 +280,13 @@ const byDocId = isGlossaryCorpus
 const known = [];
 const candidates = [];
 for (const [n, h] of hits) {
-  const row = { n, display: h.display, lessons: [...h.lessons].sort(byDocId), count: h.count };
+  const row = {
+    n,
+    display: h.display,
+    lessons: [...h.lessons].sort(byDocId),
+    count: h.count,
+    glossed: h.glossed,
+  };
   (glossaryForms.has(n) ? known : candidates).push(row);
 }
 const byReach = (a, b) => b.lessons.length - a.lessons.length || b.count - a.count;
@@ -234,7 +308,16 @@ for (const h of known) console.log(`  ${h.display.padEnd(24)} ${h.lessons.length
 // not read in order.
 const REACH = isGlossaryCorpus ? 1 : 2;
 const USES = isGlossaryCorpus ? 1 : 3;
-const reported = candidates.filter((h) => h.lessons.length >= REACH || h.count >= USES);
+// Self-defining terms are dropped from the CANDIDATES bucket only, never from
+// extraction — so the control count above is untouched by item 68's rule. That
+// is not incidental tidiness: `GDP`, `IRA`, `PMI`, `QE` and `QT` are all
+// glossed somewhere in this content AND are glossary terms, so suppressing at
+// extraction time would have quietly cut the control from 14 to fewer, i.e.
+// weakened the one check that proves the extractor still matches anything.
+const selfDefined = candidates.filter((h) => h.glossed);
+const reported = candidates.filter(
+  (h) => !h.glossed && (h.lessons.length >= REACH || h.count >= USES),
+);
 console.log(`\nCANDIDATES not in the glossary, used in >= ${REACH} ${UNIT} or >= ${USES}x (${reported.length}):`);
 const pad = isGlossaryCorpus ? 34 : 30;
 for (const h of reported) {
@@ -243,7 +326,17 @@ for (const h of reported) {
       `${UNIT} ${h.lessons.join(", ")}`,
   );
 }
-console.log(`\n  (${candidates.length - reported.length} lower-reach candidates suppressed; most are ordinary English)`);
+console.log(
+  `\n  (${candidates.length - reported.length - selfDefined.length} lower-reach candidates suppressed; most are ordinary English)`,
+);
+// Named, never just counted: a suppression rule that hides what it removed is
+// how a report starts lying quietly. These are short lists by construction.
+console.log(
+  selfDefined.length
+    ? `  (${selfDefined.length} self-defining suppressed — the text spells them out where it uses them: ` +
+        `${selfDefined.map((h) => `"${h.display}"`).join(", ")})`
+    : `  (0 self-defining suppressed — no acronym in this corpus is expanded next to itself)`,
+);
 console.log(
   isGlossaryCorpus
     ? `\nREADING THIS: reach is NOT the filter here — everything found is listed, because a reader\n` +
@@ -366,8 +459,54 @@ if (phantoms.length) {
       `a clause boundary (a comma or a full stop), so these are artefacts, not vocabulary.`,
   );
 }
+// ── Control for the gloss rule (item 68). A suppression rule is an absence
+// machine too, and it fails in BOTH directions: suppress nothing and the rule
+// is dead; suppress everything and the report is empty and reassuring. Neither
+// failure is visible in the corpus output, because the corpus is what changes.
+// So the rule is driven over a fixed probe through `scanDoc` — the real path,
+// not a copy of it — and both directions are asserted on every run. The probe
+// is deliberately NOT drawn from the content: content gets edited, and a
+// control that moves with the thing it checks is not a control.
+const PROBE =
+  "Filings go to the Securities and Exchange Commission (SEC) each quarter, and the " +
+  "Federal Reserve reads them before the FICO cutoff.";
+const probe = new Map();
+scanDoc(PROBE, (term, glossed) => {
+  const n = norm(term);
+  probe.set(n, probe.has(n) ? probe.get(n) && glossed : glossed);
+});
+// `sec` is the glossed acronym; `exchange commission` is a fragment of its own
+// expansion (the noise item 67's fix created); `fico` is a bare acronym and
+// `federal reserve` a capitalised phrase, both outside the gloss and both of
+// which MUST survive — they are the half that proves the rule is not a mute.
+for (const [n, wantGlossed] of [
+  ["sec", true],
+  ["exchange commission", true],
+  ["fico", false],
+  ["federal reserve", false],
+]) {
+  if (!probe.has(n)) {
+    problems.push(
+      `CONTROL FAILED: the gloss probe never extracted "${n}" at all. The extractor's own rules ` +
+        `changed shape, so the gloss suppression below is being asserted against nothing.`,
+    );
+  } else if (probe.get(n) !== wantGlossed) {
+    problems.push(
+      wantGlossed
+        ? `CONTROL FAILED: "${n}" sits inside "Securities and Exchange Commission (SEC)" and was NOT ` +
+            `treated as self-defining — the gloss rule (item 68) is dead, and expanding an acronym in ` +
+            `place will keep making the report longer instead of shorter.`
+        : `CONTROL FAILED: "${n}" is outside every gloss in the probe and WAS suppressed as ` +
+            `self-defining — the gloss rule is over-matching and is now hiding undefined jargon, ` +
+            `which is the exact thing this script exists to find.`,
+    );
+  }
+}
 if (problems.length) {
   console.error(`\n${problems.map((p) => `✗ ${p}`).join("\n")}`);
   process.exit(1);
 }
-console.log(`\n✓ control: ${known.length} known glossary terms re-found, buckets disjoint.`);
+console.log(
+  `\n✓ control: ${known.length} known glossary terms re-found, buckets disjoint; ` +
+    `gloss rule suppresses a glossed acronym and its expansion, not a bare one.`,
+);

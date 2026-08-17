@@ -429,6 +429,24 @@ for the history. No open P1/P2 items.
     - **Honest priority: low.** Lower than item 63 was, because item 63 had a rendered failure and this
       does not.
 
+70. **[Process — filed 2026-08-17 by the run that found item 67's headline number was wrong, because the
+    error is structural and will recur.] Every measurement this repo reports lands in `AGENT_LOG.md` by
+    being retyped by hand, and nothing checks the retyping.** Item 67's entry recorded "56 → 55" for a
+    figure that was actually 56 → 57 — and the same entry, two paragraphs down, *correctly describes the
+    two new candidates* that make it 57. The run had the facts and still wrote a wrong summary number,
+    which is exactly what a hand-copied figure does. This is the shape item 55 already fixed one level
+    up (`LAUNCH_PLAN.md`'s gate answer is generated, not retyped) and item 62's F12 flagged one document
+    over (`DECISIONS.md`'s hand-written lesson ranges).
+    - **Why it matters more than a typo.** These numbers are how a future run decides whether its change
+      worked. A wrong one doesn't just misinform — it teaches the next run to distrust a correct
+      instrument, or to "fix" something that was never broken.
+    - **Scope if built, cheapest first:** (a) a `--json` flag on `jargon-candidates.mjs` so a run pastes
+      output rather than retyping it; (b) a check that any `N → M candidates` claim in the *most recent*
+      run-log entry still reproduces, which is harder than it sounds because the corpus moves under it;
+      (c) accept the cost and instead require entries to quote the tool's own line verbatim. **(c) is
+      free and probably right.** **Honest priority: low-medium** — no user-facing effect, but it is the
+      second time in two days a run-log number has failed re-measurement (item 62's F4 was the first).
+
 69. **[Content/i18n — filed 2026-08-17 by the run that fixed item 67's unblocked half, from a gap that
     run deliberately left open rather than papering over.] The `realized gains` rewrite landed in `en`
     only, and nothing measures the other four languages.** The jargon corpus is `en`-only (item 66's
@@ -449,13 +467,48 @@ for the history. No open P1/P2 items.
       non-`en` locale. That is a real instrument extension (the acronym and capitalised-phrase rules
       are English-shaped and would need rethinking per language), not a config flag.
 
-68. **[Instrument — filed 2026-08-17 by the run that expanded `NBER`, because its own fix did not move
+68. **✅ DONE 2026-08-17 (scheduled dev-agent) — built as scoped, minus one half that was measured and
+    honestly declined. The glossary report is 57 → 54 and, for the first time, an in-place expansion
+    makes the number go DOWN.** `jargon-candidates.mjs` now recognises a **self-defining gloss** and
+    drops those terms from the CANDIDATES bucket. Three things about how it was built are the item:
+    - **A gloss is recognised only when the expansion spells the acronym** — its words' initials, in
+      order, allowing lowercase connectors (`of`, `and`, `the`…) — and sits adjacent to it. Both paren
+      orders occur in this content and both are handled: `National Bureau of Economic Research (NBER)`
+      (glossary `Recession`) and `CPI (Consumer Price Index)` (economy lesson prose). The second was
+      found by the rule, not by me — useful evidence it is not NBER-shaped special-casing.
+    - **The apposition half was NOT built, and that is a measurement, not timidity.** This item's own
+      scope named item 64's `the annual rate — the APR — on your credit card`. It cannot be verified by
+      any initial rule: `annual rate` spells `ar`, not `apr` (the real expansion, "annual percentage
+      rate", is not in the prose). Suppressing it would mean suppressing on **punctuation** rather than
+      on evidence, which would silently hide bare acronyms written in apposition. That instance is also
+      in no report today — one occurrence, below the lesson corpus's reach threshold. The reasoning is
+      in the script header so the next run doesn't re-litigate it.
+    - **Suppression applies to the acronym and capitalised-phrase rules only, never to the head-noun
+      n-gram sweep, and never to extraction itself.** The second half is the subtle one: `GDP`, `IRA`,
+      `PMI`, `QE` and `QT` are all glossed somewhere in this content **and** are glossary terms, so
+      suppressing at extraction time would have cut the CONTROL count below its recorded 14/12/9/19
+      while looking like a clean change. Filtering the candidates bucket alone leaves all four controls
+      untouched — verified, not intended.
+    - **The control ships with it, in both directions** (a suppression rule fails by doing nothing *and*
+      by doing everything, and neither is visible in corpus output): a fixed probe is driven through the
+      **real** `scanDoc` path asserting that a glossed acronym and a fragment of its own expansion are
+      suppressed, while a bare acronym and an unrelated capitalised phrase are not. Proved by three
+      injections — dead rule, over-matching rule, and a bare `NBER` added to a second glossary entry
+      (which correctly un-suppressed the term while its expansion fragments stayed suppressed). See the
+      run-log entry of this date.
+    *Original filing follows.* **[Instrument — filed 2026-08-17 by the run that expanded `NBER`, because
+    its own fix did not move
     the number and that is worth recording rather than hiding.] The acronym rule cannot tell "bare
     acronym" from "acronym expanded right next to it", so an in-place fix does not clear the report.**
     `jargon-candidates.mjs` matches `\b([A-Z]{2,6}|\d{3}\(k\))\b` and records the token; it has no
     notion of a gloss. After `NBER` → `National Bureau of Economic Research (NBER)`, the reader's
     problem is solved and **the report is unchanged** — `NBER` is still listed, and the expansion adds
     two *new* fragment candidates (`National Bureau`, `Economic Research`).
+    > **Correction, 2026-08-17 (the run that closed this item, by re-measuring rather than re-reading):
+    > "unchanged" was understated — the report went UP, 56 → 57.** The two fragments this filing itself
+    > names were never subtracted from its own headline figure, so the entry and item 67 both recorded
+    > "56 → 55". Reproduced in a throwaway clone: `HEAD~1` = 56, `HEAD` = 57, control 14 at both. That
+    > makes the case for this item stronger than it was filed as, not weaker.
     - **Why this was not mistaken for a failed content fix, and the trap it sets for the next run.**
       `APR` is absent from the `economy` report **not** because item 64 taught the instrument anything,
       but because it falls in that corpus's 269 lower-reach suppressed candidates. Glossary mode uses
@@ -470,8 +523,11 @@ for the history. No open P1/P2 items.
 
 67. **🟡 TWO-THIRDS DONE 2026-08-17 (scheduled dev-agent) — the two terms that needed no new key are
     fixed and rendered-verified; only the `Dividend` half is still blocked.** `realized gains` and
-    `gov bond` are gone from `glossary.js` and from the report (56 → 55 candidates, control still
-    14); `NBER` is expanded in `en`/`es`/`ja`. **The blocked remainder is exactly one thing:**
+    `gov bond` are gone from `glossary.js` and from the report (~~56 → 55 candidates~~ **56 → 57 —
+    corrected 2026-08-17 by the run that closed item 68, which re-ran the measurement instead of
+    re-reading it; the `NBER` expansion's two fragment candidates were never subtracted from this
+    figure. Item 68's rule now takes it to 54.** Control still 14 throughout); `NBER` is expanded in
+    `en`/`es`/`ja`. **The blocked remainder is exactly one thing:**
     `dividends` still has no `Dividend` entry, because adding a key moves `LAUNCH_PLAN.md` §1's
     gated "32 glossary terms" and that file still has owner edits in flight. See the run-log entry
     of this date; the per-term detail below is kept because the reasoning still applies.
@@ -7385,3 +7441,123 @@ cheapest unblocked picks are **item 69**'s `es` calque (one clause) or **item 68
 rule; **item 65** (light `--graph-amber`) remains filed and honestly low. **Item 18 is still the entire
 critical path to ending Phase 0 and is still blocked on an owner action: an analytics provider account
 and key.**
+
+### 2026-08-17 — Item 68: the extractor learns what a gloss is, and the number that proved it was wrong
+
+**Orient.** `git status`: the same twelve modified files (`LAUNCH_PLAN.md`, `check-blindspot.mjs`,
+`App.jsx`, `ui.jsx`, all five locales, `Learn/Practice/Reference.jsx`) plus untracked `UIUX/` — **owner
+work, still in flight**, byte-for-byte the arrival state three previous runs described (`git diff --stat`
+matched their figures exactly: 12 files, 540+/78−). Nothing of theirs touched, stashed or committed.
+`git log --oneline -1` = `86c356c`, matching the reported HEAD. The previous run pre-decided this case:
+**"if the redesign is still in flight, `LAUNCH_PLAN.md`-touching work stays blocked and the cheapest
+unblocked picks are item 69's `es` calque or item 68's gloss-aware acronym rule."** `LAUNCH_PLAN.md` is
+still dirty, so item 64's `Dividend` stays parked and **this run took item 68.** Chosen over item 69
+because 69 is one Spanish clause whose judgement is already recorded and will keep, while 68 changes an
+instrument that every future content run reads — and, as it turned out, an instrument that was actively
+misleading. Baseline captured **on the dirty tree before any edit**: `npm test` exit 0, and all four
+jargon modes saved (`glossary` 57 / `money` 38 / `economy` 28 / `all` 72 reported; controls 14/12/9/19).
+
+**Before the work: the baseline disagreed with the log, and that became the more useful finding.**
+Item 67's entry and its backlog item both record the glossary report going **56 → 55**. My baseline said
+**57**. Rather than assume drift, I reproduced it in a **throwaway `git clone` of the repo into the
+scratchpad** (read-only on the owner's tree, no worktree, no stash): `HEAD~1` = **56**, `HEAD` = **57**,
+control **14** at both. So the previous run's fix made the report **longer**, and its own entry says why
+two paragraphs later — the `NBER` expansion adds `National Bureau` and `Economic Research` as fresh
+candidates. It had the facts and still wrote the wrong summary figure. Both places are now corrected in
+place (item 67's line, and a `Correction` block under item 68's original filing), and the structural
+version is filed as **item 70**: every number in this log is retyped by hand and nothing checks the
+retyping — the same shape item 55 fixed for `LAUNCH_PLAN.md` and item 62's F12 flagged in `DECISIONS.md`.
+
+**One file changed: `scripts/jargon-candidates.mjs`, +151/−12.** No `src/` file, no content, no gated
+figure — and deliberately so.
+
+**What shipped.** A gloss is recognised only when the expansion **spells the acronym** — its words'
+initials in order, lowercase connectors (`of`, `and`, `the`…) allowed — and sits **adjacent** to it.
+Both paren orders are handled, and both occur here: `National Bureau of Economic Research (NBER)` in the
+glossary's `Recession`, and **`CPI (Consumer Price Index)`** in economy lesson prose. The second was
+found by the rule, not by me, which is the evidence that this is not `NBER`-shaped special-casing.
+
+**Three design decisions, each of which could have gone wrong quietly.**
+1. **Suppression filters the CANDIDATES bucket; it never touches extraction.** This is the one that
+   would have looked clean and been wrong: `GDP`, `IRA`, `PMI`, `QE` and `QT` are all glossed somewhere
+   in this content **and** are glossary terms, so suppressing at extraction time would have cut the
+   CONTROL count below its recorded 14/12/9/19 — weakening the one check that proves the extractor still
+   matches anything, in the same commit that claimed to improve it. All four controls are unchanged.
+2. **The head-noun n-gram sweep is exempt.** `Individual Retirement Account (IRA)` really does use the
+   phrase "retirement account"; that reach is vocabulary evidence, not an artefact of the gloss.
+   Suppressing it would have hidden real signal to tidy a number.
+3. **A term is self-defining only if EVERY occurrence in the corpus sat inside a gloss.** One bare use
+   anywhere — another lesson, another entry — and it is reported, because that is a reader who never met
+   the expansion. This is the subtlest logic in the change and it has its own injection, below.
+
+**The apposition half was measured and declined, not skipped.** This item's scope named item 64's shape,
+`the annual rate — the APR — on your credit card`. No initial rule can verify it: `annual rate` spells
+`ar`, not `apr` — the real expansion ("annual percentage rate") is not in the prose. Suppressing on the
+em-dashes alone would be suppressing on **punctuation instead of evidence**, and would silently hide
+bare acronyms written in apposition — the exact failure this script exists to prevent. That instance is
+also in no report today (one occurrence, below the lesson corpus's reach threshold). The reasoning lives
+in the script header, not only here, so it is not re-litigated.
+
+**Result, measured in all four modes and diffed line-by-line against the pre-change baselines.**
+- **`glossary` 57 → 54.** Exactly three rows gone — `NBER`, `National Bureau`, `Economic Research` — and
+  **every other reported line byte-identical.** For the first time, expanding an acronym in place makes
+  this number go **down**; it is now below the 56 that preceded item 67's fix.
+- **`economy` and `all`: reported lists unchanged**, with one lower-reach candidate (`Price Index`, from
+  the `CPI` gloss) reclassified from "suppressed for low reach" to "self-defining" — 269 → 268 and
+  622 → 621. **`money`: nothing at all**, correctly, since no acronym in that corpus is glossed.
+- **Controls 14/12/9/19, unchanged**, and the suppressed terms are **named in the output, never merely
+  counted** — a suppression rule that hides what it removed is how a report starts lying quietly.
+
+**Verification.**
+- **`npm test` exit 0; `npm run build` exit 0**, both after the change and again after every injection
+  was reverted.
+- **Three injections, per the standing rule — the effect is proved mine, not incidental.** Script backed
+  up to `scratchpad/jargon.item68.backup` (`shasum a45ce84d…`), restored from that copy after each.
+  **(A) Dead rule** (`inGloss` → always false): glossary went back to **57**, and the new control failed
+  loudly on `sec` and `exchange commission`, exit 1. So the three-row drop is caused by this rule and
+  nothing else. **(B) Over-matching rule** (`inGloss` → always true): control failed on `fico` and
+  `federal reserve`, exit 1 — note the candidate count only moved 54 → 52, so **a human watching the
+  number would not have noticed the report going blind**, which is the argument for a two-directional
+  control. **(C) Content injection** — a bare `NBER watches this.` added to the `Credit Spread` entry
+  (`glossary.js` backed up first, `shasum bb6e9dd8…`, which also re-confirms that file is unchanged
+  since item 67's commit): `NBER` **correctly reappeared** as a 2-entry candidate while its expansion
+  fragments stayed suppressed — proving decision 3 above. Restored **from the scratchpad copy, never
+  `git checkout --`** (which here would have destroyed owner work); `shasum` re-verified identical, and
+  re-running all four modes reproduced the post-change reports **byte-identical**.
+- **One honest note about my own method:** injection A's landing-proof grep printed `0` and I nearly read
+  that as "the injection did not apply". It had applied — `perl` left two spaces where my grep pattern
+  had one. The real proof was the control failing and the count returning to 57. A landing check that can
+  be wrong in the reassuring direction is worth naming, since the standing rule exists to prevent exactly
+  that class of self-deception.
+- **No browser verification, and W-1 is not being dodged:** this change is node-only tooling. Confirmed
+  by reading rather than assumed — `jargon-candidates.mjs` is imported by nothing under `src/`, is not
+  in `npm test`, and renders nothing. There is no rendered surface to open.
+- **Owner's tree provably untouched:** `git diff --stat` restricted to their twelve files reports the
+  identical line counts as on arrival; the only added path is `scripts/jargon-candidates.mjs`.
+
+**Adversarial self-check (step 5) — it found nothing new in the change, and one thing about the log.**
+**Blindspot register:** grepped my own diff's added lines independently of `check-blindspot.mjs` (which
+has owner edits, so I neither ran it standalone nor lean on it) for Dalio/person names, advice verbs,
+child-facing framing, hardcoded dates and currency figures — **zero hits**. Also confirmed by reading
+that `check-blindspot.mjs` scans `src/content/` and `src/locales/` only, so a `scripts/` file is outside
+its §10.1/§2.3 surfaces in either case; the probe string (`Securities and Exchange Commission`, `FICO`,
+`Federal Reserve`) is a fixture in a dev script and is never rendered. **DECISIONS.md:** no conflict —
+no storage, routing, build or content-module-shape change. **Already-done item:** no; `grep -in
+"gloss-aware\|gloss rule\|self-defining"` over the whole log returns only item 68's own filing and the
+previous run's "next run" line. **My own verification claims:** an independent reviewer re-running
+`npm test`, `npm run build`, the four jargon modes and the three injections gets these results — and,
+pointedly, re-running the *previous* entry's command does **not** get its stated number, which is how
+this run found item 70. **Two limits stated, not buried:** (a) the rule is English-shaped — initials and
+Latin connectors — so it would need rethinking for the `es`/`ko`/`zh`/`ja` corpora item 69 describes;
+(b) `npm run jargon` is still a report, not part of `npm test`, so a regression in it stays silent until
+someone runs it — unchanged by this work, and the reason its controls are self-failing.
+
+**Next run.** If `LAUNCH_PLAN.md` is **clean**: ship `Dividend` from item 64's scratchpad path (copy-in +
+`npm run readiness -- --write` + log entry; every judgement already made) — that closes items 64 and 67
+together. **Durability caveat repeated from the last entry:** that work sits in another session's
+`/private/tmp` scratchpad and will not survive a reboot; if it is gone, redo it from item 64's log entry.
+If the redesign is **still in flight**, the cheapest unblocked picks are **item 70(c)** (require run-log
+entries to quote the tool's own output line — free, and this run is the second data point for why) or
+**item 69**'s `es` calque (one clause); **item 65** (light `--graph-amber`) remains filed and honestly
+low. **Item 18 remains the entire critical path to ending Phase 0 and is still blocked on an owner
+action: an analytics provider account and key.**
