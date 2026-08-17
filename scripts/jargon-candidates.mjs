@@ -71,6 +71,10 @@
 // misses that glossary keys are spaced ("Index Fund", not "IndexFund").
 // ═══════════════════════════════════════════════════════════════════════════
 
+import { createHash } from "node:crypto";
+import { readFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
+
 import { glossary } from "../src/content/glossary.js";
 import { lessons } from "../src/content/lessons.js";
 import { lessonContent } from "../src/content/lessonContent.js";
@@ -509,4 +513,51 @@ if (problems.length) {
 console.log(
   `\n✓ control: ${known.length} known glossary terms re-found, buckets disjoint; ` +
     `gloss rule suppresses a glossed acronym and its expansion, not a bare one.`,
+);
+
+// ── The quotable line (backlog item 70) ───────────────────────────────────
+// Every number this repo reports reaches AGENT_LOG.md by being retyped, and
+// nothing checked the retyping. Item 67's entry recorded "56 → 55" for a figure
+// that was really 56 → 57 — and two paragraphs down that same entry correctly
+// describes the two new candidates that make it 57. The run had the facts and
+// still wrote a wrong summary number. That is what a hand-copied figure does,
+// and it is worse than a typo: these numbers are how the NEXT run decides
+// whether its change worked, so a wrong one teaches it to distrust a correct
+// instrument or to "fix" what was never broken.
+//
+// So the instrument emits one line meant to be pasted verbatim, and
+// `check-measurements.mjs` re-runs this script and holds the log to it.
+//
+// WHY THE FINGERPRINT, and why item 70(b) called this "harder than it sounds
+// because the corpus moves under it". A bare "54 candidates" is only checkable
+// while the thing measured is unchanged; add a lesson and it fails for a reason
+// that is not a mistake. The fingerprint is what makes a claim self-retiring —
+// it covers BOTH inputs that can move the numbers:
+//   * the corpus and the glossary subtraction set (content changes), and
+//   * this file's own bytes (instrument changes — item 68 moved glossary
+//     57 → 54 by changing the rule alone, with the content untouched).
+// A quoted claim is enforced only while its fingerprint still matches; once
+// either side moves it is reported as retired, never as a failure. Truncated to
+// 8 hex chars deliberately: this is a change detector, not a security boundary,
+// and a claim line has to stay readable enough that a run will actually paste
+// it.
+//
+// Emitted AFTER the control block above, which exits non-zero — so a broken
+// instrument never hands anyone a quotable number.
+const fingerprint = createHash("sha256")
+  .update(readFileSync(fileURLToPath(import.meta.url)))
+  .update("\0forms\0")
+  .update([...glossaryForms].sort().join("\0"))
+  .update("\0docs\0")
+  .update(docs.map((d) => `${d.id}\0${d.text}`).join(""))
+  .digest("hex")
+  .slice(0, 8);
+console.log(
+  `\nMEASURED jargon ${track}: ${reported.length} candidates, ${known.length} control, ` +
+    `${selfDefined.length} self-defining, ${candidates.length - reported.length - selfDefined.length} ` +
+    `low-reach  [fingerprint ${fingerprint}]`,
+);
+console.log(
+  `  (paste that line into the run-log entry verbatim — do not retype the numbers. ` +
+    `\`npm test\` re-runs this script and fails if a quoted line disagrees while its fingerprint holds.)`,
 );

@@ -446,6 +446,38 @@ for the history. No open P1/P2 items.
       (c) accept the cost and instead require entries to quote the tool's own line verbatim. **(c) is
       free and probably right.** **Honest priority: low-medium** — no user-facing effect, but it is the
       second time in two days a run-log number has failed re-measurement (item 62's F4 was the first).
+    - **✅ DONE 2026-08-17 (scheduled dev-agent) — built as (c) plus the half of (b) this item argued was
+      too hard, because a fingerprint makes it easy.** `jargon-candidates.mjs` now ends with one line
+      built to be pasted, and `scripts/check-measurements.mjs` (in `npm test`) re-runs the instrument and
+      holds the log to every such line. **The objection filed against (b) — "the corpus moves under it" —
+      is answered by stamping each line with a hash of everything that can move its numbers**: the
+      corpus, the glossary subtraction set, **and the instrument's own source** (item 68 moved glossary
+      57 → 54 by changing the rule alone, content untouched). A claim is enforced while its fingerprint
+      holds and **retired, not failed**, once either side moves — so old entries age out on their own and
+      the check never cries wolf on correct work. **(a) was not built and is not needed**: the pasted
+      line is the machine-readable form, and a second `--json` shape would be a second thing to keep in
+      sync. **What it still does not cover** is prose: "56 → 55" written in a sentence remains
+      unverifiable, and the fix for that is to paste the line instead of describing it. See item 71 for
+      the other instruments.
+
+71. **[Process — filed 2026-08-17 by the run that built item 70, from the boundary that item deliberately
+    did not cross.] `check-measurements.mjs` covers exactly one instrument, and the others are still
+    hand-retyped into this log.** Item 70 fixed `npm run jargon` because that report is the one that has
+    been wrong twice. But `npm run review-status`, `check-data.mjs`'s §28 contrast-pair counts and
+    `check-payload.mjs`'s chunk sizes are all read by eye and retyped into run-log entries the same way,
+    with the same nothing checking them.
+    - **The mechanism already exists and is generic**: emit a `MEASURED <tool> <mode>: …  [fingerprint
+      <hash>]` line, fingerprinted over the tool's inputs **and its own source**, and
+      `check-measurements.mjs`'s `CLAIM` pattern plus its per-mode re-run loop extend to it with the
+      tool name as a second key. The work is picking each tool's headline numbers and its fingerprint
+      inputs, not building anything new.
+    - **Do not do all three at once.** Each one is a judgement about which numbers are the headline
+      ones; batching them is how the fingerprint inputs get chosen carelessly and a claim ends up
+      permanently retired (always "outdated", never checked) without anyone noticing — the vacuous-pass
+      failure `check-measurements.mjs` prints its `0 enforced` note to make visible.
+    - **Honest priority: low.** Item 70 was earned by two real failures; this is the same shape
+      pre-emptively, and `check-payload.mjs`'s figures in particular already live in a file that asserts
+      them. Take it only when one of these numbers has actually been wrong once.
 
 69. **[Content/i18n — filed 2026-08-17 by the run that fixed item 67's unblocked half, from a gap that
     run deliberately left open rather than papering over.] The `realized gains` rewrite landed in `en`
@@ -7561,3 +7593,161 @@ entries to quote the tool's own output line — free, and this run is the second
 **item 69**'s `es` calque (one clause); **item 65** (light `--graph-amber`) remains filed and honestly
 low. **Item 18 remains the entire critical path to ending Phase 0 and is still blocked on an owner
 action: an analytics provider account and key.**
+
+### 2026-08-17 (scheduled dev-agent) — Item 70: the run log stops retyping its own numbers, and the "too hard" half turns out to be the easy half
+
+**Orient.** `git status`: the same twelve modified files (`LAUNCH_PLAN.md`, `check-blindspot.mjs`,
+`App.jsx`, `ui.jsx`, all five locales, `Learn/Practice/Reference.jsx`) plus untracked `UIUX/` — **owner
+work, still in flight**, and byte-for-byte the arrival state the last four runs described: `git diff
+--stat` reports **12 files, 540+/78−**, matching their figures exactly. Nothing of theirs touched,
+stashed or committed. `git log --oneline -1` = `3b2c483` (item 68), matching the previous entry's
+reported HEAD. `LAUNCH_PLAN.md` is **still dirty**, so item 64's `Dividend` stays parked exactly as the
+last two entries pre-decided, and this run took one of the two picks they named for that case: **item
+70** over item 69's `es` calque, because 69 is one clause whose judgement is already recorded and will
+keep, while 70 is the reason the previous run lost time — and it had just become the *second* failure in
+two days.
+
+**Baseline captured on the dirty tree before any edit.** `npm test` exit 0. All four jargon modes saved
+to the scratchpad: `glossary` 54 / `money` 38 / `economy` 28 / `all` 72, controls **14/12/9/19** — i.e.
+**the previous entry's numbers reproduce**, which is worth stating since finding that they didn't is how
+this item got filed.
+
+**Two files: `scripts/jargon-candidates.mjs` (+50) and the new `scripts/check-measurements.mjs` (+170),
+plus two lines of `package.json` wiring.** No `src/` file, no content, no gated figure — deliberately,
+because `LAUNCH_PLAN.md` cannot be written to while the owner holds it.
+
+**What shipped.** The instrument now ends with one line built to be pasted rather than read:
+
+MEASURED jargon glossary: 54 candidates, 14 control, 3 self-defining, 0 low-reach  [fingerprint 2567bf17]
+MEASURED jargon money: 38 candidates, 12 control, 0 self-defining, 373 low-reach  [fingerprint 9eed101e]
+MEASURED jargon economy: 28 candidates, 9 control, 1 self-defining, 268 low-reach  [fingerprint aa7de1a9]
+MEASURED jargon all: 72 candidates, 19 control, 1 self-defining, 621 low-reach  [fingerprint 836e71ac]
+
+Those four lines are this entry's measurement section, pasted verbatim from the tool, and they are also
+this change's first test data: `check-measurements.mjs` runs in `npm test`, finds them in this file,
+re-runs `node scripts/jargon-candidates.mjs <mode>` for each mode cited, and compares.
+
+**The design decision that matters, and it is the one the item filed against itself.** Item 70's scope
+called (b) — checking a quoted number — "harder than it sounds because the corpus moves under it", and
+that objection is correct as far as it goes: a bare "54 candidates" starts failing the moment someone
+adds a lesson, for a reason that is not a mistake, and a check that cries wolf on correct work gets
+deleted. **The fingerprint is the whole answer.** It hashes everything that can move the numbers:
+
+1. the corpus and the glossary subtraction set — content changes; and
+2. **`jargon-candidates.mjs`'s own bytes** — instrument changes. This half is not optional and is the
+   part that is easy to get wrong: **item 68 moved `glossary` 57 → 54 by changing the rule alone, with
+   the content untouched.** A fingerprint over inputs only would have hard-failed every older claim on
+   the day of a correct, intentional fix — precisely the false alarm that would have gotten this check
+   deleted within a run or two.
+
+So a claim is **enforced** while its fingerprint holds and **retired, not failed**, once either side
+moves. Old entries age out on their own; nobody prunes them, and no run is ever punished for improving
+the corpus. `--json` (scope (a)) was **not** built and is not needed — the pasted line already is the
+machine-readable form, and a second output shape is a second thing to keep in sync.
+
+**Three smaller decisions, each of which could have failed quietly.**
+1. **The checker re-runs the real command and parses its real output** rather than importing the
+   extraction logic. A checker that re-implemented it could agree with the log while both disagreed with
+   what `npm run jargon` actually prints.
+2. **The MEASURED line is emitted after the control block, which exits non-zero.** A broken instrument
+   never hands anyone a quotable number.
+3. **A claim naming a mode that doesn't exist is a hard failure, not a retirement.** It could never
+   match a fingerprint, so it would otherwise sit in the retired pile forever, looking checked.
+
+**The vacuous-pass problem is named in the output, not just avoided.** This check's reassuring answer
+and its empty answer look identical from outside — the same failure mode the jargon script's own CONTROL
+exists to prevent — so it always prints the counts including the zeroes, and adds an explicit `0
+enforced … that is expected after a content change, not a pass` note when every claim has retired.
+Confirmed in the bootstrap state before this entry existed: `ok: AGENT_LOG.md quotes no MEASURED lines
+yet — nothing to verify. This check only has teeth once a run pastes one.`
+
+**Verification.**
+- **`npm test` exit 0** (now including `check-measurements.mjs`) and **`npm run build` exit 0** (963 ms).
+- **The gated figure did not move**: `refresh-readiness.mjs --check` reports the same `40 lessons /
+  136,051 en chars / 144 min` as the baseline, so `--write` was correctly not run and **`LAUNCH_PLAN.md`
+  was never touched** — the proof that the owner-blocked constraint actually held.
+- **All four jargon controls at their recorded baselines**: 14/12/9/19, and all four candidate counts
+  unchanged (54/38/28/72). This change adds a line to the report; it does not touch the extraction.
+- **`npm test` caught a real defect in my own change, and it is worth recording rather than quietly
+  fixing.** The first full run failed on `check-data.mjs` **§24**: my fingerprint separators
+  (`.update(" forms ")` and friends) had been written as **literal NUL bytes** rather than spaces —
+  invisible in an editor, and §24 exists because a NUL makes `grep` treat the whole file as binary and
+  **skip it**, so every text-scanning check in this repo (including the §10.1/§10.2 blindspot scans)
+  would have silently passed the file without reading it. Fixed exactly as §24 prescribes — the escape
+  `\0`, same string to the parser, a text file to everything else — and re-verified `raw NUL bytes: 0`.
+  A check written for one hazard caught a different one, in a script whose whole purpose is to stop
+  quiet wrongness.
+- **Five injections, per the standing rule — each proves one path, and the effect is proved mine.**
+  Backups first: `jargon.item70.backup` (`shasum a2cb0361…`), `glossary.item70.backup` (`bb6e9dd8…`,
+  which also re-confirms that file unchanged since item 67), `AGENT_LOG.pass1.backup` (`b1209619…`).
+  Every restore was **from the scratchpad copy, never `git checkout --`** (which here would destroy
+  owner work), each `shasum`-verified identical afterwards.
+  - **(A) Mistyped number — item 67's exact error shape.** Changed a pasted `54 candidates` to `55`:
+    exit **1**, naming `AGENT_LOG.md:7621`, the disagreeing field, both values, and the fix. This is the
+    failure the item was filed for, and it is now caught.
+  - **(B) Instrument changes, numbers don't.** Appended a comment line to `jargon-candidates.mjs`: the
+    report was **byte-identical** (`54 candidates, 14 control, 3 self-defining, 0 low-reach`) but the
+    fingerprint moved `8e8cf29e → b18bf223`, so all four claims **retired, exit 0**, with the `0
+    enforced` note. This is the case that would have made a naive checker fail on item 68's correct fix.
+  - **(C) Content changes, instrument doesn't.** One glossary word (`Widely-used rule of thumb` →
+    `…practical rule of thumb`): fingerprint `8e8cf29e → 31d41499`, exit 0, and **selectively** — 1
+    retired, **3 still enforced**, because the other three modes read lesson prose, not glossary prose.
+  - **(D) The instrument itself breaks.** Forced its CONTROL to fail (`known.length < 500`): the
+    instrument exits 1 and the checker exits **1** with a per-mode message saying every claim about that
+    mode is now unverifiable — rather than skipping them and passing.
+  - **(E) A claim in a mode that doesn't exist.** Appended a `MEASURED jargon glosary:` line: exit **1**.
+    Without this it would have sat in the retired pile forever, looking checked.
+- **One honest note about my own method.** Two of the five injections did not land on the first attempt
+  (a `perl` pattern against a multibyte `═`, and a wrong glossary string), and in both cases my
+  `grep -c` landing check said so — but in three other runs that same `grep -c` printed **empty** for an
+  injection that *had* landed, which reads as "didn't land". The previous entry warned about a landing
+  check that can be wrong in the reassuring direction; this one was wrong in the alarming direction,
+  which is cheaper but the same defect. The proofs I actually relied on are the ones tied to the effect:
+  `tail -1` of the file, the `shasum` moving, the fingerprint changing, and the instrument's exit code.
+- **The claims committed here are enforced, not retired.** The §24 fix changed the instrument's bytes
+  after the entry was written, which correctly retired the first four pasted lines — so they were
+  **re-run and re-pasted** rather than hand-adjusted, and the committed `npm test` reports **4 enforced
+  and agreeing, 0 retired**. That round trip is the feature working on its own author.
+- **No browser verification, and W-1 is not being dodged.** This is node-only tooling: confirmed by
+  reading, not assumed — `check-measurements.mjs` and `jargon-candidates.mjs` are imported by nothing
+  under `src/`, render nothing, and the `package.json` edit adds a test step. There is no rendered
+  surface to open.
+- **Owner's tree provably untouched.** `git diff --stat` restricted to their twelve files reports the
+  identical counts as on arrival (12 files, 540+/78−); `UIUX/` is still untracked and unread beyond
+  `ls`. My paths are `scripts/jargon-candidates.mjs`, `scripts/check-measurements.mjs`, `package.json`
+  and `AGENT_LOG.md` — none of them owner-modified. `check-blindspot.mjs` **has** owner edits and was
+  not touched.
+
+**Adversarial self-check (step 5) — it found two things, and both are in the change rather than in a
+footnote.** **Blindspot register:** grepped my own diff's added lines independently of
+`check-blindspot.mjs` (which has owner edits, so I neither ran it standalone nor lean on it) for
+Dalio/person names, advice verbs, child-facing framing, hardcoded dates and currency figures — **zero
+hits**; both files are `scripts/`, outside that check's `src/content/` + `src/locales/` surfaces in any
+case, and nothing here is rendered. **DECISIONS.md:** no conflict — no storage, routing, build or
+content-module-shape change; `.js`-not-JSON, localStorage-only and Vite-not-Expo untouched.
+**Already-done item:** no — `grep -in "fingerprint\|check-measurements\|MEASURED"` over the log returns
+only item 70's filing and this entry. **My own verification claims:** an independent reviewer re-running
+`npm test`, `npm run build`, the four jargon modes and the five injections gets these results — and
+unlike two entries ago, the four headline numbers are no longer takeable on trust, because `npm test`
+re-derives them. **What the check actually caught:** (1) the summary line of my own checker read `N
+enforced against a re-run and agreeing` using the enforced count alone, so under injection A it
+**reported agreement in the same breath as a FAIL saying the opposite** — a summary figure that did not
+follow from the facts printed beside it, i.e. the precise defect this item is about, found by the
+injection and fixed with a `disagreeing` counter and a comment saying why it exists; (2) the NUL-byte
+defect above. **Three limits stated, not buried:** (a) **prose is still unchecked** — "56 → 55" written
+in a sentence remains exactly as unverifiable as it was, and the only fix is to paste the line instead
+of describing it; (b) this covers **one instrument** — `review-status`, §28's pair counts and
+`check-payload`'s chunk sizes are still hand-retyped, filed as **item 71** with an explicit "don't batch
+them"; (c) a claim whose fingerprint has retired is **never re-checked**, so a wrong number written
+today and retired tomorrow by an unrelated content change stays wrong in the log forever — the window is
+real but it is bounded by how fast this repo's content moves, and it is strictly better than the nothing
+that preceded it.
+
+**Next run.** If `LAUNCH_PLAN.md` is **clean**: ship `Dividend` from item 64's scratchpad path (copy-in +
+`npm run readiness -- --write` + log entry; every judgement already made) — that closes items 64 and 67
+together. **Durability caveat, now two entries old and worth acting on:** that work sits in another
+session's `/private/tmp` scratchpad and will not survive a reboot; if it is gone, redo it from item 64's
+log entry. If the redesign is **still in flight**, the cheapest unblocked pick is **item 69**'s `es`
+calque (one clause, judgement already recorded); **item 65** (light `--graph-amber`) and the new **item
+71** both remain filed and honestly low. **Item 18 is still the entire critical path to ending Phase 0
+and is still blocked on an owner action: an analytics provider account and key.**
