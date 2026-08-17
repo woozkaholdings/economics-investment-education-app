@@ -474,7 +474,14 @@ for the history. No open P1/P2 items.
     prose.] Each needs a decision, not an edit.** Full evidence with file:line is in item 58's run
     entry of 2026-08-17; F-numbers match it. **Do not batch these** — the reason 61 was cheap is that
     it excluded them.
-    - **F4 — decide this one first, and the recommendation is already on the table.** Three lines of
+    - **F4 — ✅ DONE 2026-08-17 (scheduled dev-agent). Decided as recommended: the plan now matches
+      the app.** All three lines say "progress bar", the generated shape pins the **noun** as well as
+      the figure (`progress bar at 1/40`), and the reasoning is in `DECISIONS.md` so it is not
+      re-derived. **The one correction to this item's own text: the third line is §3.3, not §3.4** —
+      §3.4 is one of the two sections F6 flags as duplicately-titled "Visual system", which is
+      probably how the miscite happened. The bar was measured live (309×6 px, 51.5:1, fill `2.5%` =
+      1/40, zero `<svg>`/`<circle>`/`stroke-dasharray`) rather than read off the code. See the run
+      log entry of this date. *Original text:* Three lines of
       `LAUNCH_PLAN.md` (§3.2 twice, §3.4 once) promise a **progress ring**; the app has only ever
       rendered a **bar** (`src/components/ui.jsx`'s `ProgressBar`, `role="progressbar"`). The sharp
       part: `scripts/refresh-readiness.mjs` *generates* the figure inside one of those sentences, so a
@@ -2006,6 +2013,17 @@ technique for visual verification instead of writing another "could not visually
 server is not persistent infrastructure — it's started fresh, points at whatever `dist/` was just built,
 and doesn't need to be torn down deliberately (it's a plain background process against a throwaway port,
 not something committed or relied on between runs).
+
+**If you measure geometry, resize the viewport first — `getBoundingClientRect()` returns zero-width
+boxes otherwise (2026-08-17).** The `Viewport: 0x0` condition described below is not only a `read_page`
+/screenshot problem: it makes **layout measurement silently meaningless** while everything else keeps
+working. On a fresh `preview_start`, `window.innerWidth` and `document.body`'s width both read **0**,
+so every `getBoundingClientRect().width` is 0 or near-0 — and nothing errors, so a run that measures an
+element's shape gets plausible-looking JSON that means nothing. Clicks, `innerText`, `aria-*` and
+`getComputedStyle` are all unaffected, which is exactly why this is easy to miss. **Fix: call the
+browser tool's resize action with the `mobile` preset (375x812) before measuring**; widths become real
+immediately (confirmed this run — the same element went from `w: 0` to `w: 309`). Sanity-check
+`window.innerWidth > 0` before believing any measurement.
 
 **Browser-tool click/screenshot unreliability, seen across multiple runs (2026-08-04 through 2026-08-07)
 — when this happens, stop trusting `computer` and drive the DOM directly.** Several runs have hit the
@@ -6292,3 +6310,112 @@ machine-generated around a wrong noun; the recommendation, make the plan match t
 written and unchanged by this run) or **item 60** (the §3.0.3 residual §17b cannot see) for a larger
 content-side piece. **Item 18 remains the entire critical path to ending Phase 0 and is blocked on an
 owner action: an analytics provider account and key.**
+
+### 2026-08-17 (scheduled dev-agent) — Item 62's F4: the plan gets the noun the app actually renders, and the guard now pins it
+
+**Orient.** `git status` showed one untracked directory, `UIUX/` — the owner design-reference drop item
+26 already records as "not committed, not opened, and not turned into backlog items by an agent guessing
+at intent." Left exactly that way: not read, not staged, not mentioned in any change. No tracked file had
+uncommitted edits, so nothing was blocked. `git log --oneline -15` topped at `e4647dd` (item 59's
+contrast instrument), matching the environment's reported HEAD — no concurrent session had landed
+anything. The previous entry's "Next run should pick" named **item 62's F4** first and **item 60** as the
+larger alternative; took F4, since it is a *decision* three separate items have now deferred (58 measured
+it, 61 explicitly excluded it, 62 filed it as "decide this one first") and deferring it a fourth time is
+the pattern this backlog keeps naming.
+
+**The finding, and for once the premise was right — but its citation was not.** Item 62 says three lines
+of `LAUNCH_PLAN.md` promise a progress ring, "§3.2 twice, §3.4 once". The count is right and the sections
+are not: the third is **§3.3 Habit mechanics** (`:280`), not §3.4. §3.4 is one of the two sections **F6**
+flags as both being titled "Visual system" — so the miscite is plausibly F6's hazard producing its first
+real casualty, in the item filed to fix it. Six items running have now had a wrong premise; this is the
+first where the error was a cross-reference rather than a number, which is the failure mode F6 predicts.
+
+**What the app actually renders — measured live, not read off the code.** This is the whole basis for
+"change the plan, not the app", so it was worth proving. Static build + `python3 -m http.server 8821` +
+`preview_start` with a plain `url`, per the Environment note. Drove the real first session through
+`javascript_tool`: first-open routing landed on `#/lesson/1` with the disclaimer modal, dismissed it,
+answered lesson 1's check, hit Mark Complete, then opened Learn. The progress element there is:
+
+| | |
+|---|---|
+| Box | **309 x 6 px**, aspect ratio **51.5:1**, `border-radius: 999px`, `overflow: hidden` |
+| Semantics | `role="progressbar"`, `aria-label="Progress: 1/40"`, `aria-valuenow=1`, `aria-valuemax=40` |
+| Fill child | `style.width: "2.5%"`, measured **7.7 px** — `0.025` exactly, i.e. **1/40** |
+| Ring evidence | `<svg>`: **0**. `<circle>`: **0**. `stroke-dasharray`: `none`. Square-ish: **no** |
+
+There is nothing ring-shaped in the app. The plan was wrong, not the code.
+
+**The measurement nearly came back meaningless, and the way it failed is worth not re-deriving.** The
+first geometry read returned `w: 0` for the bar — and `w: 0` for `document.body`, with
+`window.innerWidth === 0`. That is the `Viewport: 0x0` condition the Environment note already describes
+for `read_page`/screenshots, but the note frames it as a *clicking and screenshotting* problem. It is
+worse than that: **`getBoundingClientRect()` keeps returning well-formed, entirely fictional numbers**,
+while clicks, `innerText`, `aria-*` and `getComputedStyle` all keep working normally — so nothing errors
+and nothing looks wrong. A run measuring an element's shape would have reported "the bar is 0 px wide"
+in the same confident tone as everything else. Fixed by resizing the viewport to the `mobile` preset
+(375x812) before measuring, after which the same element read 309 px. **The Environment note has been
+extended with this**, since the existing text would not have warned anybody.
+
+**The rest of §3.2's status sentence was verified too, because the noun was not the only claim in it.**
+It asserts five shipped things; the item only questioned one, and an unexamined status line is how item
+58's whole sweep got started. All five hold: **first-open routing** (landed on lesson 1 unprompted),
+**celebration** (caught with a `MutationObserver` armed *before* the click, since the toast lives 1.7 s
+and a slow tool round-trip would miss it — `"Complete!"`, 144x40, running `ec-toast-in` then
+`ec-toast-out`, with the `@keyframes` confirmed present in a real stylesheet), **streak**
+(`ecycles_streak` -> `{count: 1, lastDate: "2026-08-17"}`), **continue-tomorrow prompt**
+(`ecycles_continue_pref.lastPromptDate` set), and the progress figure itself. Only the noun was wrong.
+
+**The fix, and why the noun is now inside the guarded shape.** Three lines changed to "progress bar"
+(`LAUNCH_PLAN.md:272`, `:275`, `:280`), plus `scripts/refresh-readiness.mjs`'s §3.2 guard.
+**The sharp part of F4 was never the wording — it was that a script was generating `1/40` *inside* a
+sentence whose noun was wrong, so `npm test` passed while the plan described UI that does not exist.**
+A guarded number was lending its credibility to unguarded prose beside it. The guard's `shape` now reads
+`/progress bar at 1\/\d+/`, so the **noun is pinned along with the figure**: rewording it back fails the
+check rather than passing quietly. **Confirmed in the intended order** — edited the document first, ran
+`refresh-readiness.mjs --check` against it, and got `FAIL ... the sentence this guard reads is not in the
+file at all`, then updated the generator. That is direct evidence the guard bites on this exact
+regression, not an assumption that it would.
+
+**Also written: a `DECISIONS.md` entry** (`Progress is a bar, not a ring`). F4 is a *decision*, and a
+decision recorded only as a struck-through backlog line is one a future run re-litigates — the entry
+carries the measurement, the reasoning, and the revisit condition (someone actually wants a ring, at
+which point `npm test` fails on this sentence and the plan gets updated in the same change).
+
+**Deliberately not folded in: F6, F11, F12.** Item 62 says not to batch them and it is right — each needs
+its own decision. F6 is now better motivated than when it was filed, since this run watched it cause a
+miscite; noted there for whoever takes it.
+
+**Verification.** `npm test` — **PASS, exit 0**, 0 failures, 1 pre-existing unrelated warning
+(translation-review coverage), identical to the previous run's. All 10 generated figures across both
+documents agree with the content. `npm run build` — exit 0, 963 ms, chunk sizes byte-identical to the
+pre-change build (no `src/` file changed). `check-backlog.mjs` resolves all citations including this
+run's.
+
+**Adversarial self-check (step 5).** **Blindspot register:** no learner-facing copy changed — this run
+touched two Markdown documents and one script comment/regex, and `src/` is untouched, so §10.1, §10.2,
+§10.3 and §2.3 are structurally unreachable from this diff; `check-blindspot.mjs` is green on all seven
+checks including the 7-surface disclaimer guard, and the live session independently *observed* the §10.1
+disclaimer rendering in the lesson reader. §10.2: no Dalio reference added (the new prose names no
+person). §10.3: kids content untouched, parent-facing framing intact. §2.3: the dates added are dated
+*decision records*, not live-looking market figures, and none are in the five content files that check
+scans. **DECISIONS.md conflict:** none — nothing here proposes a build step, a dependency, a storage
+change or a content-format change; the new entry is additive and no existing entry takes a position on
+progress-indicator shape. **Already-done backlog item:** F4 is explicitly open in item 62 and was
+explicitly *excluded* by item 61 ("do not fold in the 4 judgment findings"), so this is the queued next
+step, not a redo. **Own verification claim:** an independent reviewer re-running `npm test` and
+`npm run build` gets these results, and the live measurements reproduce via the Environment note's
+technique. Three caveats stated rather than buried — (a) the 309 px figure is viewport-dependent (375 px
+mobile preset); what is viewport-*independent*, and what the argument actually rests on, is the 51.5:1
+aspect ratio and the zero SVG/circle/dasharray count; (b) the guard pins the noun in **§3.2 only** —
+§3.3's "progress bar" is plain prose with no figure in it and remains unguarded, which is stated here
+rather than papered over, and a bespoke "no ring" grep was considered and rejected as guarding one word
+rather than a class; (c) "nothing ring-shaped exists" is scoped to the rendered Learn screen and a
+repo-wide grep for `dasharray`/`<circle>`/`circumference` (two hits, both chart data points in
+`charts.jsx`) — it is strong evidence, not exhaustive proof over every screen state.
+
+**Next run should pick item 60** (the §3.0.3 residual `check-data.mjs` §17b cannot see — jargon with no
+glossary entry; it is the largest genuinely unblocked piece of content-side work left, and its own text
+carries the control to run first) or, for a smaller pick, **item 62's F6** — now motivated by an observed
+casualty rather than by tidiness, and the cheapest of the three remaining judgment findings. **Item 18
+remains the entire critical path to ending Phase 0 and is blocked on an owner action: an analytics
+provider account and key.**

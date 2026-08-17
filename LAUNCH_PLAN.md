@@ -269,15 +269,17 @@ carry meaning. Per-lesson colour survives only as a thin accent, never as body t
 ### 3.2 The first five minutes
 
 Design the first session as the most important feature. No registration — drop the user straight
-into lesson 1. Lesson 1 ends in a small win: completion animation, progress ring at 1/40, and a
+into lesson 1. Lesson 1 ends in a small win: completion animation, progress bar at 1/40, and a
 one-tap "continue tomorrow" prompt. Ask for an account only when there is something worth saving.
 
-*Status: shipped as a local-only flow (progress ring, celebration, first-open routing, streak,
-continue-tomorrow prompt). The account half waits on a backend.*
+*Status: shipped as a local-only flow (progress bar, celebration, first-open routing, streak,
+continue-tomorrow prompt). The account half waits on a backend. The v1 plan said "ring" here and in
+§3.3; the app has only ever rendered a bar, and 2026-08-17 decided the plan should match the app —
+see `DECISIONS.md`.*
 
 ### 3.3 Habit mechanics
 
-Visible streak, progress ring, per-lesson minutes estimate, opt-in daily reminder worded as
+Visible streak, progress bar, per-lesson minutes estimate, opt-in daily reminder worded as
 curiosity ("Why do recessions actually start? Lesson 5 is ready") rather than nagging. Immediate,
 kind quiz feedback with explanations.
 

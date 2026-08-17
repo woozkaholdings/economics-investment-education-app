@@ -154,6 +154,30 @@ Add a new entry when a run makes a choice future work should be able to look up 
 
 ## Closed
 
+### Progress is a bar, not a ring — the plan was changed to match the app
+
+- **Status:** closed (dev-agent decision, 2026-08-17). `AGENT_LOG.md` backlog item 62's **F4**, filed
+  by item 58's plan/practice reconciliation sweep and left undecided by item 61 on purpose.
+- **The contradiction.** Three lines of `LAUNCH_PLAN.md` (§3.2 twice, §3.3 once) promised a **progress
+  ring**. The app has only ever rendered a **bar**: `ProgressBar` in `src/components/ui.jsx`, used on
+  `Learn.jsx` and `Practice.jsx`. Measured live rather than read off the code — on the Learn screen
+  after completing lesson 1 the element is **309×6 px** (aspect ratio 51.5:1), `role="progressbar"`,
+  `aria-valuenow=1` / `aria-valuemax=40`, with its fill child at `width: 2.5%` — exactly 1/40 — and
+  **zero** `<svg>`, `<circle>` or `stroke-dasharray` anywhere inside it. Nothing ring-shaped exists.
+- **What was decided: change the plan, not the app.** Nothing has asked for a ring; no §3.0 clause
+  needs one; a bar communicates 1/40 as well as a ring does and is already accessible and shipped.
+  Building a ring to satisfy a sentence is the tail wagging the dog — the same recommendation item 58
+  made when it found this and item 61 declined to act on unilaterally.
+- **Why this one was worth a decision entry at all.** `scripts/refresh-readiness.mjs` *generates* the
+  figure inside §3.2's sentence, so a script was keeping **1/40** true while the **noun** beside it
+  stayed wrong, and `npm test` passed. That is the sharpest form of this project's recurring failure:
+  a guarded number lending credibility to unguarded prose. The noun now sits **inside** the guarded
+  shape (`progress bar at 1/40`), so rewording it fails the check — confirmed by running it against
+  the reworded document before updating the generator.
+- **Revisit when:** someone actually wants a ring for the completion moment. That is a design request,
+  and it should arrive as one — at which point `npm test` will fail on this sentence and the plan gets
+  updated in the same change, which is the intended behaviour.
+
 ### How a lesson's `minutes` estimate is computed — 200 wpm over everything on screen
 
 - **Status:** closed (dev-agent decision, 2026-08-17, owner-directed pick). See `AGENT_LOG.md`

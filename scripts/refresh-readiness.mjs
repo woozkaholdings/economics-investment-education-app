@@ -228,8 +228,13 @@ const FIGURES = [
   {
     doc: PLAN,
     label: "§3.2 first-session progress figure",
-    shape: /progress ring at 1\/\d+(?:,\d{3})*/g,
-    expected: `progress ring at 1/${n(lessons.length)}`,
+    // "bar", not "ring": item 62's F4, decided 2026-08-17. The noun is inside
+    // the guarded shape on purpose — this sentence is the one place a *figure*
+    // kept a *noun* true-looking while it was wrong, so pinning both is the
+    // fix. If a progress ring is ever actually built, this check fails and the
+    // plan gets updated in the same change, which is the intended behaviour.
+    shape: /progress bar at 1\/\d+(?:,\d{3})*/g,
+    expected: `progress bar at 1/${n(lessons.length)}`,
   },
   {
     doc: PLAN,
