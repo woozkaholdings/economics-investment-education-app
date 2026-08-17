@@ -2594,5 +2594,221 @@ if (keyedGroupsChecked < 4) {
   }
 }
 
+// 28. src/index.css — WCAG AA contrast on every palette pair the app renders
+//     (backlog item 59, §3.0.7).
+//
+//     Read the item's premise correction first, because it is the reason this
+//     section is shaped the way it is. Item 59 was filed as "`theme.js` and
+//     `index.css` both claim the palette's contrast is verified; nothing
+//     verifies it, and the note one of them cites does not exist." The second
+//     half is false: the CONTRAST note has been in `index.css`'s header since
+//     the 2026-08-04 rebuild (`79d9507`), thirteen days before the item was
+//     filed. The first half was true, and is what this fixes.
+//
+//     So this is not a bug report. Every pair passed when measured — 0
+//     violations in both palettes — and this section exists to keep that true
+//     through a future palette edit, which is the one kind of change that can
+//     break contrast silently and invisibly to every other check in `npm test`.
+//
+//     THE PAIR SET IS DERIVED, NOT LISTED. Inks, surfaces and fills are read
+//     out of the parsed CSS by prefix, so a token added tomorrow is covered
+//     tomorrow. This is F10's lesson (a hand-maintained list that rots is not
+//     fixed by a better hand-maintained list) and it is affordable here only
+//     because the full cartesian product actually passes: all 7 inks clear AA
+//     on all 7 surfaces, in both palettes, so nothing has to be exempted and
+//     no judgment about "which pairs are real" has to be encoded and kept true.
+//
+//     Deliberately NOT checked, each for a stated reason:
+//     • `--ink-on-fill` is excluded from the ink list and paired only with the
+//       fills. It is #ffffff in light mode; on `--surface-canvas` that is
+//       1.0:1, and including it would manufacture a failure for a pair the app
+//       never renders.
+//     • `--line-*` is not text. • `--graph-*` is not text either — `theme.js`
+//       says "Graphics only ... where 3:1 is the bar. Never text." Measured
+//       anyway while here: light `--graph-neutral` is under 3:1 against 5 of 7
+//       surfaces (worst 2.30 on `--surface-accent-wash`). Whether that matters
+//       depends on whether those strokes are meaningful or decorative under
+//       WCAG 1.4.11, which is a judgment call, not an assertion. Filed as
+//       backlog item 63 rather than silently folded in here.
+// ─────────────────────────────────────────────────────────────────────────────
+{
+  const AA = 4.5;
+  const cssPath = join(ROOT, "src", "index.css");
+  const cssSrc = readFileSync(cssPath, "utf8");
+
+  // ── relative luminance / contrast, per WCAG 2.1 ──
+  const channel = (c) => {
+    const s = c / 255;
+    return s <= 0.03928 ? s / 12.92 : ((s + 0.055) / 1.055) ** 2.4;
+  };
+  const luminance = (hex) =>
+    0.2126 * channel(parseInt(hex.slice(1, 3), 16)) +
+    0.7152 * channel(parseInt(hex.slice(3, 5), 16)) +
+    0.0722 * channel(parseInt(hex.slice(5, 7), 16));
+  const contrast = (a, b) => {
+    const [hi, lo] = luminance(a) > luminance(b) ? [luminance(a), luminance(b)] : [luminance(b), luminance(a)];
+    return (hi + 0.05) / (lo + 0.05);
+  };
+
+  // SELF-TEST FIRST. This section asserts that numbers are large enough, so a
+  // broken luminance formula reads as a pass on every pair at once — the same
+  // trap §20/§22/§26 each had to guard, and the worst version of it, because
+  // there is no absence to notice. Three fixed probes with published answers.
+  const probes = [
+    ["#ffffff", "#000000", 21.0],
+    ["#2563eb", "#ffffff", 5.17], // blue-600 on white, a published reference pair
+    ["#16181d", "#16181d", 1.0],
+  ];
+  let probesOk = true;
+  for (const [a, b, expected] of probes) {
+    if (Math.abs(contrast(a, b) - expected) > 0.01) {
+      probesOk = false;
+      fail(
+        `§28: the contrast function failed its own self-test — ${a} on ${b} computed as ` +
+          `${contrast(a, b).toFixed(2)}:1, expected ${expected}:1. Every assertion below is a ` +
+          `lower bound, so a broken formula would have reported every pair as passing.`,
+      );
+    }
+  }
+
+  // ── parse the three palette blocks ──
+  const parseBlock = (label, re) => {
+    const m = cssSrc.match(re);
+    if (!m) {
+      fail(
+        `§28: could not find the ${label} palette block in src/index.css. The scan matches nothing ` +
+          `rather than the palette having gone away, and for a contrast check that reads as a pass.`,
+      );
+      return null;
+    }
+    const tokens = {};
+    for (const [, k, v] of m[1].matchAll(/(--[a-z-]+)\s*:\s*(#[0-9a-fA-F]{6})\s*;/g)) tokens[k] = v;
+    // Floor: the palette has carried 27 hex tokens since 2026-08-04. Far fewer
+    // means the token pattern broke, not that the design system shrank.
+    if (Object.keys(tokens).length < 20) {
+      fail(
+        `§28: parsed only ${Object.keys(tokens).length} colour tokens from the ${label} palette ` +
+          `(expected at least 20) — the token pattern is probably broken rather than the palette ` +
+          `having been emptied.`,
+      );
+      return null;
+    }
+    return tokens;
+  };
+
+  const light = parseBlock("light (`:root`)", /:root\s*\{([\s\S]*?)\n\}/);
+  const darkExplicit = parseBlock("explicit dark (`:root[data-theme=\"dark\"]`)", /:root\[data-theme="dark"\]\s*\{([\s\S]*?)\n\}/);
+  const darkMedia = parseBlock(
+    "system dark (`@media (prefers-color-scheme: dark)`)",
+    /@media \(prefers-color-scheme: dark\)\s*\{\s*:root:not\(\[data-theme="light"\]\)\s*\{([\s\S]*?)\n {2}\}/,
+  );
+
+  // The two dark palettes are duplicated source, and index.css's own comment
+  // says they are "kept in one place so the two can never drift apart" — which
+  // is the intent, not a mechanism. This is the mechanism.
+  if (darkExplicit && darkMedia) {
+    const drifted = [...new Set([...Object.keys(darkExplicit), ...Object.keys(darkMedia)])].filter(
+      (k) => darkExplicit[k] !== darkMedia[k],
+    );
+    if (drifted.length) {
+      fail(
+        `§28: the system-dark (@media) and explicit-dark ([data-theme="dark"]) palettes in ` +
+          `src/index.css disagree on ${drifted.length} token(s): ` +
+          drifted.map((k) => `${k} (${darkMedia[k] ?? "absent"} vs ${darkExplicit[k] ?? "absent"})`).join(", ") +
+          `. A user who picks "dark" explicitly would see different colours from one who inherits it ` +
+          `from the OS. The file's header comment promises these can never drift; keep them identical.`,
+      );
+    }
+  }
+
+  let pairsChecked = 0;
+  const worst = {};
+  for (const [label, palette] of [["light", light], ["dark", darkExplicit]]) {
+    if (!palette) continue;
+    // Derived by prefix — see the header note on why this is not a list.
+    const inks = Object.keys(palette).filter((k) => k.startsWith("--ink-") && k !== "--ink-on-fill");
+    const surfaces = Object.keys(palette).filter((k) => k.startsWith("--surface-"));
+    const fills = Object.keys(palette).filter((k) => k.startsWith("--fill-"));
+
+    const pairs = [];
+    for (const ink of inks) for (const surface of surfaces) pairs.push([ink, surface]);
+    for (const f of fills) pairs.push(["--ink-on-fill", f]);
+
+    // Floor: 7 inks x 7 surfaces + 5 fills = 54 since 2026-08-04. A prefix
+    // filter that silently matched nothing would otherwise pass 0 pairs.
+    if (pairs.length < 50) {
+      fail(
+        `§28: the ${label} palette yielded only ${pairs.length} text/background pairs (expected at ` +
+          `least 50, from ${inks.length} inks x ${surfaces.length} surfaces + ${fills.length} fills). ` +
+          `The prefix filters are probably broken rather than the design system having collapsed.`,
+      );
+      continue;
+    }
+
+    let low = { ratio: Infinity, pair: null };
+    for (const [fg, bg] of pairs) {
+      const r = contrast(palette[fg], palette[bg]);
+      pairsChecked++;
+      if (r < low.ratio) low = { ratio: r, pair: `${fg} on ${bg}` };
+      if (r < AA) {
+        fail(
+          `§28: ${label} palette fails WCAG AA — ${fg} (${palette[fg]}) on ${bg} (${palette[bg]}) is ` +
+            `${r.toFixed(2)}:1, below ${AA}:1. LAUNCH_PLAN.md §3.0.7 requires body text at AA.`,
+        );
+      }
+    }
+    worst[label] = low;
+  }
+
+  // The header note's own figures, asserted against what was just computed.
+  // This is the half that keeps the *prose* honest: item 59 exists because two
+  // files claimed a verification that nothing performed, and the claim that
+  // rotted worst was a number. Two of the note's three figures were wrong when
+  // measured on 2026-08-17 (light worst case stated 4.72, actual 4.62; the
+  // rejected white-on-dark-accent option stated 4.35, actual 2.16 — the
+  // direction was right but the number understated it by half).
+  if (probesOk && worst.light && worst.dark && darkExplicit) {
+    const claims = [
+      ["light worst case", /Light: worst case ([\d.]+):1/, worst.light.ratio],
+      ["dark worst case", /Dark: worst case ([\d.]+):1/, worst.dark.ratio],
+      [
+        "white on the dark accent fill (the rejected option)",
+        /white on --fill-accent would have been ([\d.]+):1/,
+        contrast("#ffffff", darkExplicit["--fill-accent"]),
+      ],
+    ];
+    // Matched against a whitespace-normalized copy: the note is a wrapped
+    // comment, so any of these sentences can break across lines mid-phrase
+    // (the white-on-fill one already does), and a pattern that only matched
+    // the current wrapping would fail on reflow rather than on drift.
+    const noteText = cssSrc.replace(/\s+/g, " ");
+    for (const [label, re, computed] of claims) {
+      const m = noteText.match(re);
+      if (!m) {
+        fail(
+          `§28: src/index.css's CONTRAST header note no longer states its ${label} figure in the ` +
+            `form this check reads (${re}). The note is machine-checked precisely so it cannot drift ` +
+            `from the palette; keep the sentence, or update this pattern in the same change.`,
+        );
+      } else if (Math.abs(Number(m[1]) - computed) >= 0.005) {
+        fail(
+          `§28: src/index.css's CONTRAST note states ${label} as ${m[1]}:1, but the palette now ` +
+            `computes ${computed.toFixed(2)}:1. Update the note in the change that moved the colour.`,
+        );
+      }
+    }
+  }
+
+  if (pairsChecked > 0) {
+    console.log(
+      `  §28 contrast: ${pairsChecked} pairs at AA >= ${AA}:1 across both palettes` +
+        (worst.light && worst.dark
+          ? ` (worst light ${worst.light.ratio.toFixed(2)}:1 ${worst.light.pair}; ` +
+            `worst dark ${worst.dark.ratio.toFixed(2)}:1 ${worst.dark.pair}).`
+          : "."),
+    );
+  }
+}
+
 console.log(`\n${failures === 0 ? "PASS" : "FAIL"}: ${failures} failure(s), ${warnings} warning(s).`);
 process.exit(failures === 0 ? 0 : 1);

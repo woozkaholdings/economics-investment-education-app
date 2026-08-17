@@ -11,10 +11,16 @@
      2. `prefers-color-scheme: dark`   → dark, unless the user forced light
      3. `[data-theme="dark"|"light"]`  → an explicit choice always wins
 
-   CONTRAST: both palettes were verified against every surface they pair with.
-   Light: worst case 4.72:1. Dark: worst case 5.93:1. Dark mode deliberately
-   puts *dark* ink on its bright accent fills (8.7:1+) rather than white, which
-   would have failed at 4.35:1.
+   CONTRAST: both palettes are checked against every surface they pair with —
+   54 pairs each, every ink on every surface plus text on every fill — by
+   `scripts/check-data.mjs` §28, which runs in `npm test` and also asserts that
+   the three figures below still match what it computes. Until 2026-08-17 this
+   note was the only "verification" there was, and two of its three figures had
+   drifted from the palette; that is why it is now machine-checked rather than
+   merely written down.
+   Light: worst case 4.62:1. Dark: worst case 5.93:1. Dark mode deliberately
+   puts *dark* ink on its bright accent fills rather than white: white on
+   --fill-accent would have been 2.16:1.
    ═══════════════════════════════════════════════════════════════════════════ */
 
 :root {
@@ -88,7 +94,9 @@
     --fill-ok: #54d6a0;
     --fill-bad: #ff9a9a;
     --fill-ink: #f3f5f9;
-    /* Dark ink on bright fills — see the contrast note above. */
+    /* Dark ink on bright fills — see the CONTRAST note in this file's header
+       comment. (Backlog item 59 read "above" as a dangling reference and filed
+       the note as missing; it is not, and naming it removes the ambiguity.) */
     --ink-on-fill: #0f1115;
 
     --graph-green: #54d6a0;

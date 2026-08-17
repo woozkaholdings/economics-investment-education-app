@@ -17,7 +17,11 @@
 // overridden by an explicit user choice — a JS constant cannot do either
 // without re-rendering the tree. These exports are `var()` references, so a
 // component reading `ink.strong` automatically gets the right value for the
-// active scheme. Contrast for both palettes is verified in `index.css`.
+// active scheme. Contrast for both palettes is *declared* in `index.css`'s
+// CONTRAST header note and *enforced* by `scripts/check-data.mjs` §28, which
+// asserts WCAG AA on all 54 ink×surface and text-on-fill pairs per palette
+// every `npm test`. Before 2026-08-17 this line said "is verified in
+// `index.css`" and nothing performed the verification (backlog item 59).
 //
 // Sizes are in `rem` so the in-app text-size control scales everything.
 // ═══════════════════════════════════════════════════════════════════════════

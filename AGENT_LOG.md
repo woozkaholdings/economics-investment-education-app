@@ -354,20 +354,44 @@ for the history. No open P1/P2 items.
     > figures are written before the day's work finishes. Grep for `measured 20` and `as of 20` in
     > `src/` and `scripts/`, not just in the Markdown docs.
 
-59. **[A11y — P5, and deliberately last. It guards something that is currently TRUE.] `theme.js` and
-    `index.css` both claim the palette's contrast is verified; nothing verifies it, and the note one
-    of them cites does not exist.** `src/theme.js` says "Contrast for both palettes is verified in
-    `index.css`"; `src/index.css:91` says "see the contrast note above" and there is no such note
-    above. §3.0.7 requires body text at WCAG AA. **Measured: 0 violations** — every ink×surface pair
-    and every ink-on-fill pair clears 4.5:1 in both the light and dark palettes. So this is not a bug
-    report; it is a claim with no instrument behind it, in the one part of the design system a future
-    palette edit is most likely to break silently.
-    - **Scope:** a `check-data.mjs` section that parses the two palette blocks in `index.css` and
-      asserts AA on the pairs the app actually renders, with a floor (it must find both palettes and
-      at least N pairs) so an empty parse cannot read as a pass — §20/§22's lesson. Fix the dangling
-      "contrast note above" reference or delete the sentence.
-    - **Do not oversell it.** A run that picks this is preventing a future regression, not fixing a
-      present defect, and the run entry should say so plainly.
+59. **✅ DONE 2026-08-17 (scheduled dev-agent). `check-data.mjs` §28 now asserts AA on 108 pairs
+    (54 per palette) every `npm test`, and the note's own figures are machine-checked. For the fifth
+    item running the premise was partly wrong, and this time it was the half that named a defect.**
+    **The "note that does not exist" exists**, and has since the 2026-08-04 rebuild (`79d9507`,
+    `src/index.css:14`–`17`) — thirteen days before the item was filed. What was true is the part the
+    item ranked as background: nothing performed the verification, and **two of the note's three
+    figures had drifted from the palette** — light worst case stated 4.72:1, actual **4.62:1**; the
+    rejected white-on-dark-accent option stated 4.35:1, actual **2.16:1**. Both were stale in the
+    optimistic direction, which is the direction a contrast note is least useful being wrong in.
+    Contrast itself was fine: **0 violations**, as the item said. See the run log entry of this date.
+    > **Two things worth not re-deriving.** (a) The pair set is **derived by prefix, not listed** —
+    > affordable only because the full cartesian product passes, so nothing needs exempting; if a
+    > future palette edit makes one pair fail, resist adding an exemption list, because that is the
+    > hand-maintained shape F10 was filed against. (b) `--ink-on-fill` must stay out of the ink list:
+    > it is `#ffffff` in light mode, so pairing it with `--surface-canvas` manufactures a 1.0:1
+    > failure for a pair the app never renders.
+
+63. **[A11y — the non-text half §28 deliberately did not decide, filed 2026-08-17 by the run that
+    closed item 59. Measured, not suspected.] `--graph-neutral` is under WCAG 1.4.11's 3:1 in the
+    light palette against 5 of 7 surfaces** — worst **2.30:1** on `--surface-accent-wash`, then 2.35
+    (bad-wash), 2.36 (sunken), 2.44 (ok-wash), 2.48 (warn-wash). Only `--graph-neutral` is affected;
+    every other graph colour clears 3:1 in both palettes, and the **dark palette has 0 pairs under
+    3:1** (worst 3.27).
+    - **Why §28 excluded it rather than folded it in.** 1.4.11 applies to graphical objects "required
+      to understand the content". A neutral gridline or axis is plausibly decorative and exempt; a
+      neutral *series* stroke that a reader must distinguish is not. `theme.js` asserts the 3:1 bar
+      for this token group, so the app already claims the stricter reading — but which rendered
+      strokes actually use `--graph-neutral` is a question about `src/components/charts.jsx`, not
+      about the palette, and answering it is judgment. Encoding a guess as an assertion is how a check
+      freezes a miscount (item 61's F7).
+    - **Scope:** find every `graph.neutral` use in `charts.jsx` and `LessonVisual.jsx`, classify each
+      as meaningful or decorative, then either darken the light token (it is `#9aa2b1`; reaching 3:1
+      on `--surface-accent-wash` needs roughly `#7c8494`) or record the decorative exemption in
+      `theme.js` next to the "3:1 is the bar" line that currently overclaims. **A palette change here
+      moves §28's numbers** — the CONTRAST note's figures are asserted, so update them in the same
+      change or `npm test` fails, which is the intended behaviour and not a bug.
+    - **Honest priority: low, and lower than item 60.** No text is affected, so §3.0.7 is untouched;
+      this is a stricter reading of a rule the app volunteered.
 
 60. **[Content — the residual §17b cannot see, filed 2026-08-17 by the run that closed item 57 rather
     than left implied.] §3.0.3 is now enforced for the 29 glossary terms and for nothing else.**
@@ -6142,3 +6166,129 @@ the first draft of the surface guard matched `<Disclaimer` and would have report
 machine-generated around a wrong noun; recommendation already written) or **item 59** (the contrast
 guard) if a smaller change is wanted. **Item 18 remains the entire critical path to ending Phase 0
 and is blocked on an owner action: an analytics provider account and key.**
+
+### 2026-08-17 (scheduled dev-agent) — Item 59: the contrast claim gets an instrument, and the note it was filed against turns out to exist
+
+**Item 59, and the fifth consecutive item whose premise was partly wrong — this time in the half that
+named the defect.** The item reads: "`theme.js` and `index.css` both claim the palette's contrast is
+verified; nothing verifies it, **and the note one of them cites does not exist**." The bolded half is
+false. `src/index.css:14`–`17` has carried a `CONTRAST:` note since the 2026-08-04 rebuild — `git
+blame` puts every one of those four lines in `79d9507`, **thirteen days before item 59 was filed**.
+What `index.css:91` said was "see the contrast note above", and the note is above it. Nothing was
+dangling.
+
+**What was true is the part the item ranked as background, and it was worse than the item thought.**
+Nothing performed the verification — and with nothing performing it, **two of the note's three figures
+had drifted from the palette**:
+
+| Note claimed | Actual | |
+|---|---|---|
+| Light: worst case **4.72:1** | **4.62:1** (`--ink-accent` on `--surface-accent-wash`) | ✗ optimistic |
+| Dark: worst case **5.93:1** | **5.93:1** (`--ink-muted` on `--surface-accent-wash`) | ✓ |
+| dark ink on bright accent fills **8.7:1+** | 8.76 / 10.80 | ✓ |
+| white would have failed at **4.35:1** | **2.16:1** | ✗ understates by half |
+
+Both wrong figures err in the **optimistic** direction, which is the direction a contrast note is
+least useful being wrong in: 4.72 reads as more headroom than exists, and 4.35 makes the rejected
+white-on-accent option look like a near-miss when it is nowhere close. Nothing in the current dark
+palette produces 4.35:1 against white; the nearest is `--graph-neutral` at 4.72, which is also,
+suspiciously, the light figure. Contrast itself was fine — **0 violations**, exactly as the item said.
+
+**`check-data.mjs` §28 — 108 pairs, and the pair set is derived, not listed.** Inks, surfaces and
+fills are read out of the parsed CSS **by prefix**, so a token added tomorrow is covered tomorrow.
+That is F10's lesson (the fix for a hand-maintained list that rots is not a better hand-maintained
+list), and it is affordable only because the **full cartesian product actually passes**: all 7 inks
+clear AA on all 7 surfaces in both palettes, so nothing needs exempting and no judgment about "which
+pairs are real" has to be encoded and then kept true. It asserts four things:
+1. **AA ≥ 4.5:1** on 54 pairs per palette (7×7 ink×surface + text on 5 fills).
+2. **The note's own three figures still equal what it computes** — the half that keeps the *prose*
+   honest, since a stale number is what item 59 was really about.
+3. **The two dark palettes are identical.** `index.css` duplicates its dark block for `@media
+   (prefers-color-scheme: dark)` and `[data-theme="dark"]`, and its comment says they are "kept in one
+   place so the two can never drift apart" — which was an intention, not a mechanism. Now it is one.
+4. **Floors everywhere** (§20/§22/§26's lesson): each block must be found and yield ≥20 tokens, each
+   palette ≥50 pairs, or it fails rather than passing on an empty parse.
+
+**The self-test matters more here than in any previous section, and it is not boilerplate.** Every
+assertion in §28 is a *lower bound*, so a broken luminance formula reads as a pass **on every pair at
+once** — there is no absence to notice, which is the failure mode §26 had to guard in a milder form.
+Three fixed probes with published answers run first (white/black = 21.00, `#2563eb` on white = 5.17,
+a colour against itself = 1.00).
+
+**Five injection tests, all restored from scratchpad copies — never `git checkout --`, and `cmp`
+against the backup confirmed byte-identical restoration after each** (`git diff` is useless as a
+restore check here, since the working tree legitimately carries this run's own edits):
+- Light `--ink-muted` → `#a8b0bd`: **7 AA failures** naming each surface, plus the note-figure
+  assertion firing separately.
+- One token changed in the `@media` dark block only: **caught**, naming the token and both values.
+- Note reverted to its pre-fix `4.72`: **caught** — direct proof §28 would have caught the exact
+  historical drift it was built for.
+- `[data-theme="dark"]` selector renamed: **caught** by the block-not-found floor.
+- Luminance linearization removed: **the self-test fired first and named itself** as the reason every
+  subsequent number was untrustworthy.
+
+**Live browser verification — not owed, and it found the one thing static parsing cannot.** This run
+changed no rendered pixel (comments only), so W-1 did not require it. But §28 makes a **scope** claim
+it cannot check itself: that every text/background pair the app actually renders is one of the 108.
+Static build + `python3 -m http.server 8817` + `preview_start` with a plain `url`, per the Environment
+note. A DOM walker computed each text element's effective foreground and its nearest opaque ancestor
+background, then tested membership in §28's exact pair set. **11 screen-audits** — Learn, lesson
+reader, Practice, Reference and all five sub-screens, in dark; Learn, lesson reader, Market Dashboard,
+Sector performance, Glossary and Kids in light. **0 pairs below AA, 0 pairs outside §28's checked
+set.** The observed light minimum was **4.62:1**, matching §28's computed light worst case — the
+corrected figure confirmed in a browser rather than recomputed from the same code that produced it.
+
+**The walk produced a false positive first, and the false positive was mine.** Light Market Dashboard
+reported `#c6cdd9` on white at **1.6:1** across 17 elements — the *dark* palette's `--ink-body`
+apparently rendering in light mode. It survived a clean reload, so it was not a transition artifact.
+It was still wrong: the elements are SVG `<text>`, which is painted by **`fill`**, not `color`, and
+their computed fill was `rgb(91,100,114)` — the correct *light* `--ink-muted`, at 5.03:1. The walker
+read the wrong property. Fixed to use `fill` inside the SVG namespace, the same screen returned 18
+pairs, minimum 5.00, zero failures. **Both controls were then re-run against the fixed walker** — an
+off-palette `<p>` and an off-palette SVG `<text>` — and both surfaced as below-AA *and* outside the
+checked set, clearing to 0/0 on removal. Without that second control the fill-aware fix could have
+silently stopped detecting SVG problems altogether, and every "0" above would have meant nothing.
+
+**Also fixed:** `theme.js`'s "Contrast for both palettes is verified in `index.css`" now says where
+the values are *declared* and where they are *enforced*; `index.css:91`'s "the contrast note above"
+now names the note, since one reader already misread it as dangling.
+
+**Filed, not folded in: item 63.** Measured while here — light `--graph-neutral` (`#9aa2b1`) is under
+WCAG 1.4.11's 3:1 against **5 of 7 surfaces**, worst **2.30:1**. No other graph colour fails, and the
+dark palette has none. §28 deliberately excludes it: 1.4.11 covers graphics "required to understand
+the content", and whether a neutral stroke is meaningful or decorative is a question about
+`charts.jsx`, not the palette. Encoding a guess as an assertion is how item 61's F7 froze a miscount.
+No text is affected, so §3.0.7 is untouched.
+
+**Verification.** `npm test` — **PASS, 0 failures**, 1 pre-existing unrelated warning (translation
+review coverage). `npm run build` passes, 965 ms, chunk sizes unchanged. `check-backlog.mjs` caught
+the §28 comment citing "item 63" before that item existed, which is the repo's own guard working on
+this run's diff.
+
+**Adversarial self-check (step 5).** **Blindspot register:** no learner-facing copy changed — this run
+touched two comments and added a check — so §10.1 (no advice-adjacent language; `check-blindspot.mjs`
+green, all 7 disclaimer surfaces still asserted), §10.2 (no Dalio reference), §10.3 (kids content
+untouched, parent-facing framing intact) and §2.3 (no date or market figure added) are unmoved. The
+live walk *rendered* the Kids and Market Dashboard screens and confirmed they still show the
+disclaimer surfaces §10.1 names. **DECISIONS.md conflicts:** none — §28 reads `index.css`, which is
+where the localStorage-only, Vite-not-Expo and CSS-custom-property decisions all say colour belongs;
+nothing here proposes a build step or a new dependency. **Already-done backlog item:** checked
+"Completed and pruned" — item 49 widened §26's *path* checks and item 61 added §27 and the §10.1
+surface guard; §28 is a different surface (rendered colour) and does not redo either. **Own
+verification claim:** an independent reviewer re-running `npm test`, `npm run build` and the five
+injections gets these results. Three caveats stated rather than buried — (a) the light worst case is
+**4.62:1**, which clears 4.5 by 0.12, so a small future darkening of `--surface-accent-wash` or
+lightening of `--ink-accent` will fail §28, and that is the intended behaviour, not a brittle test;
+(b) the live walk covers the screens listed, not every state (no quiz-answered state, no error
+states), so "0 outside the checked set" is strong evidence for the scope claim, not proof of it; and
+(c) §28 checks the palette *as declared in CSS*, so a component that ever hardcodes a hex outside the
+custom properties is invisible to it — the live walk is what would catch that, and it is not part of
+`npm test`. The check **caught a real error before it shipped**: the note's white-on-fill claim failed
+its own assertion because the sentence wraps mid-phrase, which is why claims are matched against a
+whitespace-normalized copy rather than a pattern tuned to the current line breaks.
+
+**Next run should pick item 62's F4** (the progress ring/bar decision — three doc lines, one of them
+machine-generated around a wrong noun; the recommendation, make the plan match the app, is already
+written and unchanged by this run) or **item 60** (the §3.0.3 residual §17b cannot see) for a larger
+content-side piece. **Item 18 remains the entire critical path to ending Phase 0 and is blocked on an
+owner action: an analytics provider account and key.**
