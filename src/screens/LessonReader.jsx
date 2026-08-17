@@ -23,13 +23,29 @@ import Question from "../components/Question.jsx";
 import { Button, Card, Disclaimer, EmptyState, Note, Stack, Text } from "../components/ui.jsx";
 import { fill, ink, line, radius, shadow, space, surface } from "../theme.js";
 
-// Each lesson's body text now lives in a per-track file (backlog item 25 —
-// content/lessonContent.js used to hold every lesson and was the single
-// biggest contributor to this screen's lazy chunk). Loading only the track
-// being read halves what a lesson-open has to download.
-const TRACK_CONTENT_LOADERS = {
-  economy: () => import("../content/lessonContent.economy.js"),
-  money: () => import("../content/lessonContent.money.js"),
+// Lesson body text is split two ways: by track (item 25, 2026-08-14) and by
+// language (item 45, 2026-08-17). This screen loads exactly one of the ten
+// resulting files — the open lesson's track, in the reader's language.
+//
+// The second axis was the bigger win. Per-track files still carried all five
+// languages, so lessonContent.money.js was 480 kB of body text of which any
+// one reader could read ~97 kB: en 97, es 90, ko 102, zh 79, ja 112. Four
+// fifths of the app's largest asset was text that device would never show.
+//
+// Vite needs literal specifiers to statically analyse a dynamic import, so
+// this is a flat map rather than a computed path — the ten entries are what
+// make ten separate chunks instead of one bundle of everything.
+const CONTENT_LOADERS = {
+  "economy:en": () => import("../content/lessonContent.economy.en.js"),
+  "economy:es": () => import("../content/lessonContent.economy.es.js"),
+  "economy:ko": () => import("../content/lessonContent.economy.ko.js"),
+  "economy:zh": () => import("../content/lessonContent.economy.zh.js"),
+  "economy:ja": () => import("../content/lessonContent.economy.ja.js"),
+  "money:en": () => import("../content/lessonContent.money.en.js"),
+  "money:es": () => import("../content/lessonContent.money.es.js"),
+  "money:ko": () => import("../content/lessonContent.money.ko.js"),
+  "money:zh": () => import("../content/lessonContent.money.zh.js"),
+  "money:ja": () => import("../content/lessonContent.money.ja.js"),
 };
 
 function Toast({ label }) {
@@ -73,17 +89,21 @@ export default function LessonReader({ t, lang, lessons, index, completedLessons
   // the Review tab drives, so a question missed here comes back tomorrow.
   const check = useMemo(() => questionsForLesson(quizData, lesson.id), [lesson.id]);
 
-  // Fetch just this lesson's track content — see TRACK_CONTENT_LOADERS above.
+  // Fetch just this lesson's track content, in this reader's language — see
+  // CONTENT_LOADERS above. `lang` is in the dependency list because switching
+  // language now changes which file holds the text, not just which field is
+  // read out of it: the picker has to trigger a fetch, where before it was a
+  // pure re-render.
   useEffect(() => {
     let cancelled = false;
     setContent(null);
-    TRACK_CONTENT_LOADERS[lesson.track]().then((mod) => {
+    CONTENT_LOADERS[`${lesson.track}:${lang}`]().then((mod) => {
       if (!cancelled) setContent(mod.lessonContent[lesson.id]);
     });
     return () => {
       cancelled = true;
     };
-  }, [lesson.id, lesson.track]);
+  }, [lesson.id, lesson.track, lang]);
 
   // Moving between lessons should feel like a new page: reset scroll and put
   // focus on the new title so screen-reader users hear where they landed.
@@ -178,13 +198,16 @@ export default function LessonReader({ t, lang, lessons, index, completedLessons
       {content ? (
         <>
           <Stack gap={space["5"]}>
+            {/* Keyed by index, not by heading text: the loaded module is now
+                language-specific, so a heading is no longer stable across a
+                language switch and keying on it would remount every section. */}
             {content.sections.map((section, sectionIndex) => (
-              <section key={section.heading.en}>
+              <section key={sectionIndex}>
                 <Text as="h2" variant="heading" color={ink.strong} style={{ marginBottom: space["2"] }}>
-                  {section.heading[lang]}
+                  {section.heading}
                 </Text>
                 <Text variant="body" style={{ whiteSpace: "pre-line" }}>
-                  {section.body[lang]}
+                  {section.body}
                 </Text>
                 {/* §3.0.3's "or links to the glossary" — the jargon this
                     section uses, definable without leaving the lesson. */}
@@ -204,8 +227,8 @@ export default function LessonReader({ t, lang, lessons, index, completedLessons
           <PolicySim lessonId={lesson.id} t={t} lang={lang} />
 
           <Stack gap={space["3"]} style={{ marginTop: space["5"] }}>
-            <Note tone="ok" label={t.keyTakeaway} icon="target">{content.takeaway[lang]}</Note>
-            <Note tone="accent" label={t.tryThinking} icon="info">{content.thinkAbout[lang]}</Note>
+            <Note tone="ok" label={t.keyTakeaway} icon="target">{content.takeaway}</Note>
+            <Note tone="accent" label={t.tryThinking} icon="info">{content.thinkAbout}</Note>
           </Stack>
         </>
       ) : (

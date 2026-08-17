@@ -1164,6 +1164,47 @@ for the history. No open P1/P2 items.
     > on the previous date, and cutting those users off from good data is the worse error.
     > Verified before/after in a live browser at both boundaries — see the run log.
 
+45. **[Perf — ✅ DONE 2026-08-17 (owner-requested). Lesson content split by language as well as by
+    track; the largest content chunk drops 499 kB → 117 kB.]** Split `lessonContent` per language.
+    > **Why this and not a bigger threshold, or a split down the middle.** `lessonContent.money.js`
+    > sat at **499.27 kB against Vite's 500 kB warning — under it by less than a kilobyte**, so the
+    > next content edit of any size would have crossed it. Measured before choosing (2026-08-16), the
+    > money chunk's 480 kB of body text broke down as **en 97 kB, es 90, ko 102, zh 79, ja 112** —
+    > meaning **~80% of the app's largest asset was text the reader's device would never display.**
+    > That reframed it: not a build-warning problem but a payload problem, and splitting the file in
+    > half would have bought headroom while shipping the same waste. Raising the limit was rejected on
+    > precedent — it was done once (2026-08-12, set to 600) and deliberately removed two days later as
+    > a symptom-silencer once item 25's real split landed. Same reasoning applies here.
+    > **What shipped.** Content is now split on both axes — track (item 25) × language — into ten
+    > files, `lessonContent.<track>.<lang>.js`. Fields are plain strings; the language is the file.
+    > `LessonReader.jsx` dynamically imports exactly one of the ten, keyed `"<track>:<lang>"` as a flat
+    > map of literal specifiers, because Vite can only split a dynamic import it can statically read.
+    > **Result: largest content chunk 499.27 kB → 116.84 kB** (money.ja; the English reader loads
+    > 102 kB). Ten chunks, none within 380 kB of the threshold. The threshold is no longer reachable
+    > by adding lessons — it would take roughly quadrupling the catalogue *in one language*.
+    > **`lessonContent.js` survives as a node-only merged view**, reassembling the language-map shape
+    > for the two consumers that genuinely need every language at once: `check-data.mjs`'s parity
+    > checks and `translation-review.mjs`'s coverage hashes. Nothing in the browser bundle imports it.
+    > It builds ids and section counts from the **union** across languages, not from English as a
+    > spine — taking English as the spine would hide the opposite failure, a lesson or section present
+    > in a translation but missing from English, by never looking at it.
+    > **Proven equivalent before anything was deleted**, which is the part that made this safe to do
+    > mechanically: the reassembled merged view is **`JSON.stringify`-identical** to the pre-split
+    > content across all 40 lessons, and **all 40 English source hashes are unchanged** — that second
+    > one matters because a moved hash would have marked every one of the 160 lesson/language pairs
+    > stale and silently destroyed the translation ledger's state.
+    > **One real behaviour change, not a pure refactor:** switching language in the picker now
+    > triggers a fetch while reading a lesson, where before it was a pure re-render — the text lives
+    > in a different file now, so `lang` joined the loader effect's dependencies. Verified live: the
+    > swap is imperceptible on localhost and each language's chunk arrives on first use. On a slow
+    > connection it is a brief content flash; if that ever reads badly, the fix is to keep the
+    > previous language's text on screen until the new module resolves, not to undo the split.
+    > **Not done, deliberately:** splitting `quizData.js` (140.88 kB, the largest remaining chunk that
+    > carries five languages) the same way. It is well under the threshold and nothing forced the
+    > question today — but the same 80%-waste argument applies to it, and a future run looking for a
+    > payload win should measure it before inventing something new.
+
+
 **HELD — owner decisions, do not act on these**
 
 12. **[HELD] Expo vs. Vite** (§2.1) — needs a human call; blocks store release, not the web launch. See

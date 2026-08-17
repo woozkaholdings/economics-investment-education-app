@@ -1,0 +1,226 @@
+// ═══════════════════════════════════════════════════════════════════════════
+// LESSON CONTENT — economy track, English (en)
+//
+// One track, one language. Split this way 2026-08-17 (backlog item 45): the
+// previous per-track files carried all five languages together, so
+// lessonContent.money.js shipped 480 kB of body text to every reader while
+// any one reader could read only their own ~97 kB of it. Four fifths of the
+// largest asset in the app was text nobody on that device would ever see,
+// and the chunk sat under Vite's 500 kB warning by less than a kilobyte.
+//
+// LessonReader.jsx dynamically import()s exactly one of these ten files —
+// the open lesson's track, in the reader's active language.
+//
+// Fields are plain strings here, not { en, es, ... } maps. The language is
+// the file. lessonContent.js re-assembles the language-map shape for the two
+// node-only consumers that need every language at once (check-data.mjs's
+// parity checks and translation-review.mjs's coverage hashes); nothing in
+// the browser bundle imports that merged view.
+//
+// Generated mechanically from the pre-split files, byte-for-byte — see that
+// commit for the equality proof. Edit this file directly from now on; it is
+// source, not a build artifact, and there is no generator to re-run.
+// ═══════════════════════════════════════════════════════════════════════════
+
+export const lessonContent = {
+  "29": {
+    "sections": [
+      {
+        "heading": "What is a Transaction?",
+        "body": "Picture the last coffee you bought. You handed over money — or tapped a card — and got a cup of coffee in return. That's a transaction: a buyer exchanging money or credit with a seller for something of value. Zoom out, and an entire economy is nothing more mysterious than millions of trades like that happening at once: someone buying groceries, a company buying office chairs, a city buying asphalt to repave a road.\n\nHere's the part that trips people up: you didn't need actual cash for that coffee. Tap a credit card instead, and you've still bought it — you just paid with credit instead of money, and the barista's employer got paid all the same. That's why credit spends exactly like money: Total Spending = Money Spent + Credit Spent.\n\nTotal spending is what drives the whole economy, and there's a simple, almost mechanical way prices come from it: divide the total amount spent on something by how much of it was sold. If shoppers spend $500 on 100 loaves of bread at the same bakery, the price per loaf is $5. That's it — that's a transaction, repeated billions of times a day, adding up to an entire economy."
+      },
+      {
+        "heading": "Markets and the Economy",
+        "body": "A market is just all the buyers and sellers trading the same thing — everyone buying and selling wheat forms the wheat market; everyone trading a company's stock forms the market for that stock. Put every market together — food, cars, houses, stocks, labor, everything — and you have the whole economy.\n\nHouseholds, businesses, and banks all take part, but the biggest buyer and seller of all is the government, which plays two very different roles:\n\n• Central Government — collects taxes and decides how to spend them, on things like roads, schools, and defense\n• Central Bank — doesn't tax or spend directly. Instead it controls money and credit, mainly by setting interest rates and, in extreme situations, by creating new money"
+      }
+    ],
+    "takeaway": "If you can understand a single transaction — one buyer, one seller, money or credit changing hands — you already hold the seed of the whole economy. Everything in this course is just that same idea, repeated at a bigger and bigger scale.",
+    "thinkAbout": "Think about the last thing you bought, even something small like a snack. You exchanged money or credit for it, and that payment became someone else's income — the cashier's wage, the store's revenue, the supplier who stocked the shelf. Can you trace where your money went next?"
+  },
+  "30": {
+    "sections": [
+      {
+        "heading": "How Credit Works",
+        "body": "Say you want to buy a $20,000 car but only have $5,000 saved. A lender — a bank, a credit union, or the dealership itself — offers you a loan: they hand you $15,000 now, and you promise to pay it back over time, plus interest as their fee for taking the risk.\n\nThe moment you sign that promise, and the lender believes you'll keep it, $15,000 of brand-new credit is created out of thin air — nobody had to save it first. You drive off with the car; the lender now holds an asset (you owe them money), and you hold a liability (you owe it).\n\nInterest rates decide how expensive that promise is. When rates are high → borrowing costs more → fewer people take out loans. When rates are low → borrowing is cheap → more people do. That's exactly the lever the Federal Reserve uses to speed up or slow down the whole economy (more on that in Lesson 35)."
+      },
+      {
+        "heading": "Credit vs Money",
+        "body": "Money settles a transaction on the spot. Hand a bartender $8 cash for a beer, and the deal is completely done — nobody owes anybody anything.\n\nCredit works differently. It's like running a tab at that same bar: you drink now and promise to pay when you close out later. The moment the bartender agrees to that tab, an asset and a liability were just created out of thin air — the bar is owed money, you owe the bar money — even though no cash changed hands yet.\n\nNow multiply that bar tab by every mortgage, car loan, credit card balance, and business loan in the country, and you reach a surprising reality: most of what people casually call \"money\" is actually credit. In the US, total credit outstanding is many times larger than the base money supply — a gap that has only widened over time as the economy has grown."
+      },
+      {
+        "heading": "The Spending Chain",
+        "body": "Why does credit matter so much? Because borrowing lets you spend more than your income alone would allow — and one person's spending is always someone else's income.\n\nSay a homeowner borrows to renovate a kitchen. That money becomes the contractor's income. The contractor, now earning more, looks more creditworthy to a lender and borrows to buy a new work truck. That purchase becomes the truck dealer's income — and the chain keeps going.\n\nMore spending → more income → more creditworthy borrowers → more borrowing → more spending, and so on. This self-reinforcing loop runs in both directions — it's exactly why economies move in booms and busts instead of growing in a straight line."
+      }
+    ],
+    "takeaway": "Credit creates a self-reinforcing loop in BOTH directions — one person's borrowing fuels another's income, which fuels more borrowing, all the way up in a boom and all the way down in a bust.",
+    "thinkAbout": "Imagine you borrow $10,000 to start a small business and spend it on equipment and a first month's rent. That money becomes the equipment seller's and the landlord's income — and now they can spend or borrow more too. Can you trace how that single loan ripples outward into growth for other people?"
+  },
+  "31": {
+    "sections": [
+      {
+        "heading": "Productivity vs Credit",
+        "body": "Think about a farmer who learns a better crop rotation, or a factory that adopts a machine that lets one worker do the work of three. Each small improvement in know-how and technology raises how much value people can create with the same time and effort. Multiply that across a whole economy over decades, and you get productivity growth — the slow, steady climb in living standards.\n\nProductivity matters most in the long run, but credit matters most in the short run. Here's why: productivity grows in a fairly straight, gentle line — a farmer doesn't get twice as skilled overnight. But borrowing swings wildly, because credit lets people consume MORE than they produce today (when they borrow) and LESS than they produce later (when they pay it back).\n\nWithout credit, the only way an economy grows is by becoming more productive — slow and steady. Add credit to the mix, and you get cycles: bursts of borrowing-fueled growth followed by periods of paying it back."
+      },
+      {
+        "heading": "Good Debt vs Bad Debt",
+        "body": "Credit isn't inherently good or bad — it depends entirely on what the money is used for.\n\nTake two people who each borrow $15,000. One spends it on a lavish vacation and a new television. It was fun for a while, but it created no new income — the debt has to be repaid entirely out of whatever they were already earning, now stretched thinner.\n\nThe other borrows the same amount for a tractor on their small farm. The tractor lets them harvest more crops, sell more at market, and earn more income — enough, over time, to pay back the loan AND come out ahead. Same size loan, opposite outcome.\n\nThe question to ask about any debt — a car loan, a business loan, a student loan — is always the same: will the borrowed money generate enough extra income to pay itself back? If yes, it's productive debt. If no, it's just borrowing from your future self for something that doesn't pay you back."
+      }
+    ],
+    "takeaway": "Borrowing is pulling spending forward from your future self — like the farmer's tractor loan repaid out of next season's harvest. Every time you borrow, you create a cycle, and that's true whether you're one household or an entire economy.",
+    "thinkAbout": "If you borrow from your future self to spend more today, there MUST come a time when you have less left over to spend — that's simple arithmetic. Now imagine millions of people and businesses all doing this on their own schedules. That's why credit creates cycles across an entire economy — up, then down."
+  },
+  "32": {
+    "sections": [
+      {
+        "heading": "Expansion Phase",
+        "body": "Imagine a town where a new factory opens and hires hundreds of workers. Those workers now have paychecks to spend — at restaurants, on cars, at the hardware store. Restaurant owners hire more staff to keep up; the car dealer orders more inventory. This is expansion: spending increases, and because credit can be created instantly (Lesson 30), people borrow to spend even more than their paychecks alone would allow.\n\nBut there's a limit to how many meals a town's restaurants can actually cook in a day. When spending and incomes grow faster than the town can really produce, businesses respond by raising prices instead of magically producing more — that's inflation.\n\nThe Central Bank doesn't want inflation running too hot, so it raises interest rates. Higher rates mean the factory worker's car loan gets pricier, fewer people take out new loans, and existing variable-rate debts cost more to service — all of which cools spending back down."
+      },
+      {
+        "heading": "Contraction & Recession",
+        "body": "Back in that same town, higher rates mean the factory worker skips the car loan and cuts back on eating out. The restaurant, seeing fewer customers, cuts a server's hours — and that server now has less to spend at the hardware store. Because one person's spending is another's income, this pullback ripples outward: incomes drop, and spending drops even further in response.\n\nWhen enough people across the economy spend less, businesses start cutting prices to attract customers — that's deflation — and overall economic activity shrinks. That's a recession.\n\nIf things get bad enough, the central bank reverses course and lowers interest rates again. Cheaper borrowing brings the factory worker back to the car lot, spending picks up, and a new expansion begins. This up-and-down cycle repeats roughly every 5-8 years, steered mostly by the central bank's interest-rate decisions."
+      },
+      {
+        "heading": "Why This Fix Has a Limit",
+        "body": "There's a hidden assumption behind the fix in the last section: the central bank has room to cut rates. Each time the short-term cycle turns down, cutting rates works because the previous expansion pushed rates up first — there's slack to give back. But look again at the question at the end of this lesson: if each cycle's peak carries more debt than the one before it, rates don't always return to where they started. Debt payments compete with new borrowing for a household's or a business's income, so lenders and central banks tend to keep rates a little lower on average, cycle after cycle, just to keep debt serviceable.\n\nRun that pattern across many 5-8 year cycles — decades, not years — and the room to cut keeps shrinking. Eventually rates approach zero, and the tool that ended every previous recession in this lesson (lower rates → cheaper borrowing → renewed spending) runs out of room to use. That's not hypothetical: it's the situation Lesson 37 describes, where central banks turned to buying bonds directly (quantitative easing) because cutting rates further wasn't possible.\n\nThis is the seam between the two debt cycles: the short-term cycle in this lesson resolves through nothing more than a rate cut, roughly every 5-8 years. The long-term cycle — the subject of the next lesson — is what happens when decades of these small cycles compound into a debt burden that a rate cut alone can no longer fix, and a different, harder kind of adjustment becomes necessary instead."
+      }
+    ],
+    "takeaway": "The economy works like a machine. When credit is easy → expansion. When credit tightens → recession. The central bank controls the cycle by raising and lowering rates.",
+    "thinkAbout": "Notice how each cycle's bottom and top finish with MORE growth and MORE debt than the previous one. People tend to borrow and spend more over time — it's human nature. What do you think happens when this accumulates over decades?"
+  },
+  "33": {
+    "sections": [
+      {
+        "heading": "How Debt Accumulates",
+        "body": "Picture a neighborhood where home prices have risen every year for a decade. A family buys a house not just to live in, but because they're confident it'll be worth more next year — so they stretch their budget and take out the biggest mortgage a bank will approve. Across many short-term cycles like the one in Lesson 32, this happens over and over: debts rise faster than incomes, because human nature favors borrowing and spending more today over paying down debt.\n\nLenders keep lending freely through all of this, because everyone can see the evidence with their own eyes — incomes are rising, home values are up, the stock market is roaring. Confidence feeds on itself.\n\nWhen enough people borrow heavily to buy an asset — houses, stocks, anything — purely because they expect the price to keep rising, that pushes prices higher still. That's a bubble.\n\nAs long as incomes keep rising too, the debt burden (the ratio of what's owed to what's earned) looks manageable. But nothing rises forever, and that's exactly the problem."
+      },
+      {
+        "heading": "The Peak & Deleveraging",
+        "body": "Eventually, the family from our example finds their mortgage payment eating up more of their paycheck every year, while their home's value stops climbing. They cut back on other spending to keep up. Multiply that family by millions, and incomes across the economy fall, people look less creditworthy to lenders, borrowing dries up, and the whole cycle reverses. This is the long-term debt peak.\n\nThis is the pattern behind some of history's most painful downturns: the US in 2008, Japan in 1989, and the US in 1929.\n\nIn a deleveraging, spending falls, credit disappears, asset prices — including that family's house — drop, banks get squeezed as borrowers can't repay, the stock market crashes, and social tensions rise.\n\nThe key difference from an ordinary recession: interest rates can't ride to the rescue, because by this point they're often already close to 0%."
+      },
+      {
+        "heading": "Why It's Hard to See From the Inside",
+        "body": "There's a reason short-term downturns feel familiar and long-term ones catch people by surprise: most adults alive today have lived through several short-term debt cycles — each one arrives every 5-8 years, so by adulthood most people have direct memory of at least two or three. The long-term cycle spans 75-100 years, roughly the length of a human lifetime. That means almost nobody alive personally remembers the last time it peaked.\n\nThe generation that lived through the 1929 crash and the Depression that followed carried a lasting caution about debt and leverage for the rest of their lives. But that generation is now gone, and what they learned firsthand was never fully transferable to people who only read about it in a textbook. Each new generation tends to relearn the pattern by living through it, not by remembering it — part of why 'this time is different' keeps getting said right before a peak, not because people are foolish, but because there's no living memory left to check the claim against.\n\nThis isn't a reason to expect a repeat on any particular timeline — nobody can time it — but it is a reason the long-term cycle is easy to miss even while the same warning signs (rising debt relative to income, borrowing to buy assets purely because prices are rising) sit in the data the whole time."
+      }
+    ],
+    "takeaway": "The long-term debt cycle builds over 75-100 years. When it peaks, normal rate cuts can't fix it. This is fundamentally different from a regular recession.",
+    "thinkAbout": "The US debt-to-GDP ratio has climbed well past 100% in recent decades. People feel wealthy because assets keep going up. Does this sound like the late stage of a long-term debt cycle to you?"
+  },
+  "34": {
+    "sections": [
+      {
+        "heading": "The 4 Ways to Reduce Debt Burden",
+        "body": "When a household — or an entire country — has taken on too much debt, there are really only four levers anyone can pull:\n\n1. CUT SPENDING (Austerity). Think of a city government facing a budget shortfall that lays off workers and cancels contracts to save money. It's painful, and it can backfire: when the city stops paying those workers, they spend less at local businesses, incomes fall citywide, and the debt burden relative to income can actually get WORSE, not better.\n\n2. REDUCE DEBTS (Defaults & Restructuring). Picture a bank calling in loans it knows won't be repaid, writing some of them off. Borrowers can't pay, banks get squeezed, and people rush to withdraw their savings before more banks fail. This is what a depression looks like.\n\n3. REDISTRIBUTE WEALTH. A government raises taxes on higher earners to fund support for everyone else. It can ease the burden, but it also tends to raise social tension between those paying more and those receiving more.\n\n4. PRINT MONEY. When rates are already near 0%, the central bank creates new money to buy government bonds and other financial assets — effectively refilling the well that austerity and defaults just drained. This is inflationary and stimulative, the opposite of the first three tools."
+      },
+      {
+        "heading": "Beautiful vs Ugly Deleveraging",
+        "body": "The key is BALANCE — like a chef adjusting seasoning: too much of the deflationary tools (cutting, defaulting, taxing) without enough of the inflationary one (printing money), and the result turns out bitter and depressive. Too much of the inflationary tool alone, and it turns into an inflated mess instead.\n\nGet the mix right, and you get a 'beautiful deleveraging': debts decline relative to income, growth stays positive, and inflation stays manageable. Many economists point to the US recovery from 2008 through roughly 2015 as an example of that balance working reasonably well.\n\nGet the mix wrong, and you get an 'ugly deleveraging.' Germany in the 1920s leaned almost entirely on printing money, and the result was hyperinflation so severe that people famously carried wheelbarrows of cash just to buy bread. The US in the 1930s leaned almost entirely on austerity, and the result was the Great Depression.\n\nEither way, recovery from a long-term debt peak tends to take roughly a decade — often called the 'lost decade.'"
+      },
+      {
+        "heading": "Why Tool #4 Isn't Available to Everyone",
+        "body": "All four tools assume one thing that isn't actually true everywhere: that the debt is owed in a currency the borrower's own central bank can create.\n\nWhen a country's debt is denominated in its own currency, printing money is a real option — painful and inflationary, but it converts an unpayable debt into a payable one, because the central bank can literally create the units needed to pay it. A country whose debt is denominated in a foreign currency it cannot print doesn't have that fourth lever at all. If the money runs out, there is no press to run — only tool 1 (austerity) and tool 2 (default) are actually on the table, however painful.\n\nThis single fact — whose currency the debt is in — is a big part of why debt crises hit very differently depending on where they happen. Countries that borrowed heavily in a foreign currency during the 1980s Latin American debt crisis had no printing option when foreign lenders pulled back, and mostly went through default and restructuring instead. Japan, by contrast, carries one of the highest government-debt-to-GDP ratios in the world, but because that debt is almost entirely yen-denominated and owed largely to its own citizens and institutions, its central bank has been able to lean on tool 4 for decades without a default.\n\nSo before asking whether a country's deleveraging will be 'beautiful' or 'ugly,' the more basic question is whether tool 4 is even on the menu."
+      }
+    ],
+    "takeaway": "Income needs to grow faster than debt. Print enough money to offset deflation, but not so much you cause hyperinflation. Balance is everything.",
+    "thinkAbout": "If printing money offsets falling credit, total spending stays the same. So printing money doesn't cause inflation IF credit is disappearing at the same rate. Does that change how you think about money printing?"
+  },
+  "35": {
+    "sections": [
+      {
+        "heading": "The Fed Funds Rate",
+        "body": "Think of the Federal Funds Rate as the master dial in the economy's control room. When the Fed turns it, nearly every other rate in your financial life follows — the rate on a new mortgage, what your savings account pays you, the APR on your credit card.\n\nRaise the dial → borrowing gets more expensive → the economy slows down.\nLower the dial → borrowing gets cheaper → the economy speeds up.\n\nThis is the Fed's primary tool for managing the short-term debt cycle from Lesson 32. But here's the catch: turning the dial doesn't change anything instantly. It typically takes 12-24 months for a rate change to fully work its way through mortgages, business loans, and hiring decisions — which is part of why the Fed sometimes turns the dial too far in one direction before the earlier turn has fully kicked in."
+      },
+      {
+        "heading": "How Rates Affect Everything",
+        "body": "Here's why that one dial reaches so far. Say the Fed raises rates. A young tech company that was borrowing cheaply to fund years of growth now faces a much higher cost of capital, and its stock — priced on years of future profits — tends to fall harder than a stable utility company's. Existing bonds paying a lower fixed rate become less attractive next to new bonds paying the higher current rate, so bond prices fall too. A family shopping for a house finds the mortgage payment on that same home is suddenly hundreds of dollars more per month, and home sales cool over the following 6-12 months. Meanwhile, a plain savings account or money-market fund starts paying a genuinely competitive yield again, and the US dollar tends to strengthen as savers worldwide chase that yield.\n\nCut rates, and the sequence tends to run in reverse: stocks rise, bond prices rise, real estate recovers, gold often rises, and the dollar tends to weaken.\n\nThe informal rule investors cite for all of this: \"Don't fight the Fed.\" Historically, Fed easing (rate cuts) has coincided with rising asset prices, while Fed tightening (rate hikes) has coincided with more cautious market conditions."
+      },
+      {
+        "heading": "The Fed's Dual Mandate: Two Goals That Can Conflict",
+        "body": "Turning the dial isn't a free choice made in a vacuum — Congress gave the Fed two legally required goals at once, known as its dual mandate: stable prices (in practice, roughly 2% inflation per year, the same target from Lesson 39's indicator dashboard) and maximum employment (as many people working as the economy can sustain without overheating).\n\nMost of the time these two goals point the same direction: a healthy, growing economy tends to keep prices stable and unemployment low together. The hard part is when they pull apart. Raising rates to cool inflation also cools hiring — businesses facing pricier loans expand less and hire less. Cutting rates to protect jobs can let inflation run hotter, since cheaper borrowing fuels more spending than the economy can supply without prices rising.\n\nThis tension is exactly why Fed decisions get debated so heavily rather than following a fixed formula: 2021-2023 is widely read as a case where the Fed judged inflation was overheating and leaned hard toward the price-stability half of the mandate, accepting some risk to the employment half. A Fed reading the data differently, or facing a different economic moment, could reasonably lean the other way. There's no equation that resolves the trade-off — it's a judgment call the Fed's policy committee makes meeting by meeting, weighing the same indicators from Lesson 39."
+      }
+    ],
+    "takeaway": "Rate changes are the Fed's primary tool for managing the short-term debt cycle. But when rates hit 0%, the Fed needs unconventional tools — that's where QE comes in.",
+    "thinkAbout": "The Fed raised rates to 5.25-5.50% in 2022-23 to fight inflation. Since policy takes 12-24 months to fully show up, look up today's Fed funds rate — how much of that move do you think has already rippled through the economy?"
+  },
+  "36": {
+    "sections": [
+      {
+        "heading": "What is the Yield Curve?",
+        "body": "Imagine lending money to a friend. If they'll pay you back next week, you might not even ask for interest. If they won't pay you back for 10 years, you'd want a lot more in return — more can go wrong over a longer stretch. That's the basic logic behind the yield curve: a graph of the interest rate the government pays to borrow money for different lengths of time (2 years, 10 years, 30 years).\n\nNORMAL (upward slope) — Longer loans pay higher rates than shorter ones, exactly like the friend example. This is the healthy, default shape.\n\nFLAT — Short and long rates converge. It's the bond market's way of shrugging: a warning that a slowdown may be coming.\n\nINVERTED (short rates above long rates) — This is strange enough to be a real warning sign: it means lenders are willing to accept LESS to lock in money for 10 years than for 2, which usually means they expect the economy to weaken and rates to fall substantially in the meantime. Historically one of the most reliable recession signals, with a typical lead time of 12-18 months. Every US recession since 1955 was preceded by an inversion — though not every inversion has been followed by a recession, so it's a strong signal, not a certainty.\n\nSTEEP — The gap widens back out, often seen after the Fed starts cutting short-term rates. A shape frequently associated with recovery."
+      },
+      {
+        "heading": "Why the Signal Works — and Where It Can Mislead",
+        "body": "The mechanism behind the signal is expectations, not magic. A long-term yield is, roughly, a market bet on where short-term rates will average out over that whole stretch of time. If the market expects the central bank to cut rates sharply because a slowdown is coming, that expectation pulls the 10-year yield down today — even while the 2-year yield still reflects today's higher short-term rate. That gap flipping negative is the market pricing in future weakness before it shows up in jobs or GDP data.\n\nThe specific spread economists cite most often is '2s10s' — the 2-year Treasury yield minus the 10-year. It inverted in mid-2022 and stayed inverted for roughly two years, the longest stretch on record, before turning positive again in 2024, well past the 'typical' 12-18 month lead time.\n\nThat gap between the signal and the outcome is the real limit to keep in mind: it says a slowdown is more likely, not when, and not how severe. The 1966 inversion preceded a sharp growth slowdown but no official recession. Reading the curve well means weighing it alongside employment, inflation, and credit data — one input, not a standalone forecast."
+      },
+      {
+        "heading": "The Term Premium: Why Yields Aren't Purely About Rate Expectations",
+        "body": "The previous section described a long-term yield as roughly a bet on where short-term rates will average out. That's most of the story, but not all of it — investors also want extra compensation just for tying their money up longer, separate from where they think rates will land. That extra compensation is called the term premium.\n\nHere's why it exists: locking money into a 10-year bond carries risks a 2-year bond doesn't — more years for unexpected inflation to erode the return, more years of price swings if the investor needs to sell before maturity, and less certainty overall. Investors demand a bit more yield to accept that, over and above pure rate expectations.\n\nSo a 10-year yield is really two things stacked together: the market's average rate expectation, plus the term premium. The Federal Reserve Bank of New York publishes one widely-cited estimate, but the term premium itself isn't directly observable in the data — it has to be estimated from a model, and different models disagree with each other.\n\nThis matters for reading the curve: the term premium has trended lower since the 1980s and has occasionally turned negative — meaning investors were willing to accept less for a 10-year bond than pure rate expectations alone would suggest, often during flights to safety. A falling or negative term premium can help push the curve toward inversion even without the market expecting a large rate-cutting cycle, which is one more reason the signal from the previous section isn't infallible: an inversion can reflect a shift in the term premium instead of, or in addition to, a real change in rate expectations."
+      }
+    ],
+    "takeaway": "When the yield curve inverts, pay attention. It's the bond market screaming that rate cuts are coming — and that means economic weakness ahead.",
+    "thinkAbout": "The yield curve inverted in 2022. Historical pattern says recession within 12-18 months. Some say 'this time is different.' What do you think?"
+  },
+  "37": {
+    "sections": [
+      {
+        "heading": "Quantitative Easing (QE)",
+        "body": "Normally the Fed's master dial (Lesson 35) is interest rates. But once that dial is already turned all the way down to 0%, it can't go any lower — and if the economy still needs help, the Fed reaches for a different tool entirely.\n\nQuantitative Easing works like this: the Fed creates new money electronically (no printing press involved, just entries in a ledger) and uses it to buy up government bonds and mortgage-backed securities from banks and investors — stepping into the bond market as an enormous buyer, competing for the same bonds everyone else wants.\n\nThat buying pressure pushes bond prices up (and yields, meaning the return on those bonds, down), makes borrowing cheaper across the economy, and — because bonds now pay less — nudges investors who want a decent return toward riskier assets like stocks instead.\n\nQE1 (2008): $1.75 trillion\nQE2 (2010): $600 billion\nQE3 (2012): $85B/month\nCOVID QE (2020): Unlimited\n\nThe scale of this tool shows up on the Fed's own balance sheet, which grew from roughly $900 billion before 2008 to a peak of about $9 trillion in 2022 — a stack of bonds nine times the size of the entire pre-2008 institution."
+      },
+      {
+        "heading": "Quantitative Tightening (QT)",
+        "body": "QT is the reverse of QE — instead of buying more bonds, the Fed simply lets the bonds it already owns mature and doesn't reinvest the proceeds into new ones. No dramatic selling, just letting existing holdings quietly run off.\n\nThis drains money from the financial system, pushes bond yields back UP, and tightens financial conditions overall — the mirror image of everything QE did.\n\nQT is like slowly letting air out of a balloon rather than popping it: quiet and gradual, but it can still cause turbulence if done too fast, since it removes some of the same buying support that had been propping up bond prices.\n\nThe Fed ran QT at $95 billion a month starting in 2022, slowing the pace in 2024 as the balance sheet worked its way down from its $9 trillion peak."
+      },
+      {
+        "heading": "From the Bond Market to Your Mortgage Rate",
+        "body": "Buying government bonds is a strange way to help a small business get a loan or a family buy a house — the Fed never lends to either one directly. The connection runs through a chain of linked prices. A 30-year mortgage rate is priced as a spread on top of the 10-year Treasury yield, so when QE's buying pushes that yield down, mortgage rates tend to fall with it. Corporate bonds work the same way, so cheaper government borrowing tends to cheapen business borrowing too, encouraging investment and hiring. There's a second channel: as bond yields fall, investors chasing a decent return keep rotating into stocks and other assets, which raises the value of what people already own — a \"wealth effect\" that can make people feel richer and spend more, even if they never bought a single bond. Both channels take time, and neither reaches everyone equally: cheaper borrowing helps most whoever is already creditworthy enough to qualify for a loan, and the wealth effect only reaches people who already own financial assets or a home."
+      }
+    ],
+    "takeaway": "QE injects money (inflationary, helps assets). QT drains money (deflationary, pressures assets). The Fed balance sheet is the scoreboard.",
+    "thinkAbout": "The Fed printed $2+ trillion in 2008 and unlimited in 2020. Who benefits most from QE? Those who own financial assets. Does this help explain growing wealth inequality?"
+  },
+  "38": {
+    "sections": [
+      {
+        "heading": "Expansion & Peak",
+        "body": "Picture the same factory town from Lesson 32, a few years into its boom. EXPANSION: credit flows freely, GDP rises, new jobs keep appearing, and confidence builds. People borrow more, spend more, and feel wealthier — the town adds a second restaurant, then a third. Historically, this phase has coincided with S&P 500 average returns of roughly +14-28%, and assets like growth stocks, cyclical stocks, and real estate have historically been favored in it.\n\nPEAK: the town's output is now about as high as it can go — every worker is employed, every restaurant full. Inflation is running at highs, and the Fed is raising rates to cool things down. Growth stalls, even though the mood hasn't caught up yet. This is where the seeds of the next contraction are quietly planted.\n\nHistorically favored in this phase: value stocks, commodities, and short-duration bonds."
+      },
+      {
+        "heading": "Contraction & Trough",
+        "body": "CONTRACTION: back in the town, credit contracts, spending falls, and the third restaurant lays off staff, then closes. Unemployment rises across the whole town, and the Fed starts cutting rates to try to stop the slide. Historically, this phase has coincided with S&P 500 average declines of roughly -22-35%, and assets like Treasury bonds, gold, defensive stocks (utilities, healthcare), and plain cash have historically held up better in it.\n\nTROUGH: this is the point of maximum pessimism — boarded-up storefronts, gloomy headlines, nobody wanting to be the one to buy. But historically, this is also where the strongest rebounds have started, precisely because prices have already fallen so far that even modest good news looks meaningful. S&P 500 average return in the first year after a bottom has historically been around +38-50%.\n\nHistorically favored in this phase: beaten-down quality stocks, high-yield bonds, and real estate at distressed prices."
+      },
+      {
+        "heading": "Why These Assets, in This Phase",
+        "body": "None of the asset patterns above are random — each one falls out of the same rate-transmission mechanism from Lesson 35. In Expansion, rates are still low to moderate and profits look likely to keep growing, so growth stocks — priced mostly on profits still years away — get a bigger lift from cheap money than a company already earning steady profits today; real estate and cyclical businesses ride the same wave of easy credit and rising incomes.\n\nAt the Peak, the Fed is actively raising rates to cool the boom, and that same mechanism now runs in reverse on the assets priced furthest into the future — growth stocks lose their edge first — while value stocks (companies profitable today, not counting on tomorrow) and short-duration bonds (less exposed than a 30-year bond to further hikes) tend to hold up better; commodities often keep climbing on the inflation the rate hikes are trying to tame.\n\nIn Contraction, rates are falling and investors grow less willing to hold anything that could default or keep falling in price — money moves toward Treasury bonds (the safest income there is), gold (no company behind it that can go bankrupt), and defensive stocks selling things people buy regardless of the economy, like medicine or electricity.\n\nBy the Trough, prices for the same beaten-down companies and high-yield bonds have already fallen so far that even a small improvement in the outlook makes them look cheap relative to what they still earn — the mechanical reason the strongest rebounds have historically started exactly when the headlines felt worst."
+      }
+    ],
+    "takeaway": "Every great fortune was made buying when others were panicking at the trough. The cycle ALWAYS turns. Understanding where you are in the cycle is the most valuable financial knowledge.",
+    "thinkAbout": "Warren Buffett says \"Be fearful when others are greedy, and greedy when others are fearful.\" How does this connect to what you've learned about cycles?"
+  },
+  "39": {
+    "sections": [
+      {
+        "heading": "Key Indicators",
+        "body": "Just like a doctor doesn't diagnose you from a single vital sign, economists watch a handful of indicators together to read the health of the whole economy. Think of these as dashboard gauges:\n\nGDP is the speedometer — the total value of everything the economy produced. Rising = expansion. A common rule of thumb calls two straight quarters of decline a recession — but in the US, recessions are officially dated by the NBER using broader criteria (employment, income, spending), not GDP alone.\n\nCPI (Consumer Price Index) is the fuel-price gauge — it tracks how fast the prices of everyday goods, like groceries and rent, are rising. The Fed targets roughly 2% inflation as healthy.\n\nPMI (Purchasing Managers' Index) is like an early-warning light — it surveys factory and service managers about their own orders and hiring plans before those show up in GDP. Above 50 = expansion expected. Below 50 = contraction expected. It's a LEADING indicator, meaning it tends to move before the broader economy does.\n\nVIX, nicknamed the 'Fear Gauge,' measures how much turbulence investors expect in the stock market over the next month. Below 15 = calm seas. Above 40 = extreme panic. Some contrarian investors specifically look to buy when the VIX spikes, on the theory that panic is often overdone.\n\nCredit Spreads are the difference between what a riskier company has to pay to borrow versus what the (safer) government pays. Narrow = lenders feel confident. Wide = lenders are demanding extra pay for extra fear."
+      },
+      {
+        "heading": "From Gauges to a Diagnosis: Matching Indicators to Phase",
+        "body": "Knowing what each gauge measures is only half the job — the other half is knowing what a normal reading looks like in each phase from Lesson 38, so an unusual one stands out.\n\nIn Expansion, the gauges tend to point the same direction: GDP rising steadily, CPI near the Fed's target, PMI above 50 and climbing, VIX low, and credit spreads narrow — lenders confident and growth broad-based.\n\nAt Peak, the gauges start to disagree, which is itself the signal: GDP growth is still positive but decelerating, CPI has drifted above target, PMI hovers near 50 and starts slipping, VIX ticks up from its lows, and credit spreads begin to widen even while headlines still sound upbeat.\n\nIn Contraction, the gauges realign in the other direction: GDP falling, CPI cooling as weaker demand pulls prices down, PMI below 50, VIX elevated or spiking, and credit spreads wide as lenders demand extra compensation for rising default risk.\n\nAt Trough, the gauges are still weak in level but starting to turn: GDP near its low point, CPI low, PMI below 50 but stabilizing or ticking up, VIX easing back from its extremes, and credit spreads beginning to narrow. The earliest signs of a turn tend to show up in the leading indicators (PMI, VIX, credit spreads) before GDP itself confirms it, since GDP only measures activity that already happened.\n\nThat lag is exactly why watching several gauges together, instead of waiting for GDP alone to confirm a turn, is what lets you read the cycle rather than just react to it after the fact."
+      }
+    ],
+    "takeaway": "No single indicator tells the whole story. Watch multiple indicators together to understand where you are in the cycle.",
+    "thinkAbout": "Imagine an economy where: GDP is growing but slowing, inflation is running above target, the central bank is divided on which way to move rates, and tariffs are pushing costs to a multi-generational high. What phase do you think it's in?"
+  },
+  "40": {
+    "sections": [
+      {
+        "heading": "The Three Rules",
+        "body": "RULE 1: Don't let debt rise faster than income. Remember the family from Lesson 33 whose mortgage payment kept eating a bigger share of their paycheck? That's Rule 1 being broken in slow motion — eventually the debt burden crushes you, whether you're a household or a country.\n\nRULE 2: Don't let income rise faster than productivity. If a factory worker's wage keeps climbing but they're not producing any more per hour than before, the factory eventually can't compete with one elsewhere that pays less for the same output — jobs move, or prices rise until customers walk away.\n\nRULE 3: Do everything you can to raise your own productivity — learn a new skill, adopt a better tool or process, like the farmer's tractor from Lesson 31. In the long run, this is what actually matters most, because it's the only one of the three that isn't just moving numbers around.\n\nThis is simple advice for you AND for policy makers alike. Most people — including most policy makers — don't pay nearly enough attention to it."
+      },
+      {
+        "heading": "Putting It All Together",
+        "body": "Now you have the whole template, built lesson by lesson: a slow, steady line of productivity growth (Lesson 31) running underneath everything; a 75-100 year long-term debt cycle (Lesson 33) rising and falling on top of that; and a faster 5-8 year short-term debt cycle (Lesson 32) bouncing on top of both. Layer all three together, and you get a map for understanding where an economy has been, where it is now, and where it's probably headed.\n\nThe economy isn't random noise — it's a machine driven by transactions (Lesson 29), credit (Lesson 30), and human nature repeating the same patterns generation after generation. Once you can see those patterns, whether you're an investor, a small business owner, or just someone trying to make sense of the news, you're equipped to make better decisions than someone reacting to headlines one at a time."
+      }
+    ],
+    "takeaway": "The economy is a machine. Transactions, credit, and human nature drive it. Once you see the patterns, you can make better decisions about your money, career, and life.",
+    "thinkAbout": "You now understand more about how the economy works than most people. How will you apply these three rules to your own financial decisions?"
+  }
+};
