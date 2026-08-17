@@ -162,6 +162,69 @@ const readmePath = join(ROOT, "README.md");
   }
 }
 
+// --- §10.1 the disclaimer renders on every surface LAUNCH_PLAN.md §10.1 names ---
+//
+// Why this exists (item 61/F7, 2026-08-17): §10.1 listed the render surfaces as
+// "Home, Learn, Markets and About". `Home.jsx` and `Markets.jsx` were deleted in
+// the 2026-08-04 rebuild, so for thirteen days a standing rule that the per-run
+// adversarial self-check names *by number* could not be checked as written. The
+// check above asserts the disclaimer *key* exists per locale; nothing asserted
+// the *surfaces*, which is exactly why this drifted unseen.
+//
+// It matches the rendered string `t.disclaimer`, deliberately NOT the
+// `<Disclaimer>` component: Sectors.jsx renders the same string through a plain
+// `<Text>`, so a component-shaped grep reports five surfaces where there are
+// six. Item 58's own measurement made that error, and this project has repeatedly
+// found that a measurement taken with the instrument that has the blind spot
+// cannot detect the blind spot.
+{
+  const EXPECTED_SURFACES = [
+    "src/App.jsx",                              // the first-launch modal
+    "src/screens/Learn.jsx",
+    "src/screens/LessonReader.jsx",
+    "src/screens/Practice.jsx",
+    "src/screens/reference/MarketSignals.jsx",
+    "src/screens/reference/Sectors.jsx",        // renders the string, not the component
+    "src/screens/reference/Settings.jsx",       // the About sub-screen
+  ];
+  const jsx = srcFiles.filter((f) => f.endsWith(".jsx"));
+  const found = new Set(
+    grepFiles(jsx, /\{\s*t\.disclaimer\s*\}|text=\{t\.disclaimer\}/)
+      .map((h) => h.slice(ROOT.length + 1).split(":")[0]),
+  );
+
+  // Self-test the pattern before trusting either direction of the diff. For an
+  // absence check a broken regex reads as "nothing renders it", and for the
+  // extra-surface half it reads as a pass — §26's lesson, applied here.
+  const probe = ["<Disclaimer text={t.disclaimer} />", "<Text>{t.disclaimer}</Text>", "seenDisclaimer: true"];
+  const probeHits = probe.filter((l) => /\{\s*t\.disclaimer\s*\}|text=\{t\.disclaimer\}/.test(l));
+  if (probeHits.length !== 2) {
+    fail(
+      `§10.1 the disclaimer-surface pattern is broken — on a fixed probe it should match the component ` +
+        `and the bare-string forms and skip the storage key, and it matched ${probeHits.length}. ` +
+        `Without this the surface scan silently matches nothing, which reads as a pass.`,
+    );
+  }
+
+  const missing = EXPECTED_SURFACES.filter((f) => !found.has(f));
+  const extra = [...found].filter((f) => !EXPECTED_SURFACES.includes(f));
+  if (missing.length) {
+    fail(
+      `§10.1 the disclaimer no longer renders on: ${missing.join(", ")}. LAUNCH_PLAN.md §10.1 lists ` +
+        `these as the surfaces it renders on. Either restore it or change §10.1 and this list together ` +
+        `— the register saying one thing and the app doing another is the drift this check exists for.`,
+    );
+  } else if (extra.length) {
+    fail(
+      `§10.1 the disclaimer renders on ${extra.join(", ")}, which LAUNCH_PLAN.md §10.1 does not list. ` +
+        `Adding a surface is fine and probably good; add it to §10.1's list and to EXPECTED_SURFACES ` +
+        `here, so the register keeps describing the app.`,
+    );
+  } else {
+    ok(`§10.1 disclaimer renders on all ${EXPECTED_SURFACES.length} surfaces §10.1 names`);
+  }
+}
+
 // --- §10.3 kids content stays parent-facing (closed 2026-08-01, reopened as a
 // question 2026-08-04 — this only guards the *current standing rule*, it does
 // not resolve the reopened question) ---

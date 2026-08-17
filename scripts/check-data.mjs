@@ -2376,7 +2376,12 @@ if (keyedGroupsChecked < 4) {
   // references, because `v6.jsx` is named twice in LAUNCH_PLAN.md. Counting
   // uses rather than declarations means a new mention of an already-exempted
   // path also has to be argued for, which is the stricter and cheaper choice.
-  const EXPECTED_EXEMPTIONS = 11;
+  // 11 → 12 on 2026-08-17 (item 61/F13): no new exempted *path*, but
+  // `lessonContent.money.js` is now named twice in DECISIONS.md — once by the
+  // per-track entry it supersedes and once by the new per-language entry, which
+  // records that this file's 499.27 kB against a 500 kB threshold is what forced
+  // the second split. Both mentions are the history the :326 marker exempts.
+  const EXPECTED_EXEMPTIONS = 12;
 
   const walkAll = (dir, base = "") =>
     readdirSync(dir, { withFileTypes: true }).flatMap((e) => {
@@ -2528,7 +2533,8 @@ if (keyedGroupsChecked < 4) {
       `§26: expected exactly ${EXPECTED_EXEMPTIONS} exempted path references, found ${exemptionsUsed}. ` +
         `Every one is a document naming a file that does not exist: three formats the project rejected ` +
         `(LAUNCH_PLAN.md), two prototype shorthands, two superseded content paths kept as history ` +
-        `(DECISIONS.md), a build-output chunk name, a brace contraction of the same two paths, and the ` +
+        `(DECISIONS.md — the money one named twice, by the entry it supersedes and by the entry that ` +
+        `supersedes it), a build-output chunk name, a brace contraction of the same two paths, and the ` +
         `dev-agent SKILL.md that lives outside the repo. A new one is a decision to review, not a default.`,
     );
   }
@@ -2536,6 +2542,56 @@ if (keyedGroupsChecked < 4) {
     `  §26 doc paths: ${occurrences} references across ${DOCS.length} docs (${linkRefs} as Markdown ` +
       `links), ${exemptionsUsed} exempted, ${commandLike} command lines skipped.`,
   );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 27. DECISIONS.md's localStorage entry names every key the app persists.
+//
+//     Why (item 61/F10, 2026-08-17): the entry opened "every piece of per-user
+//     state added so far" and then listed 5 of 12. Universally quantified, so it
+//     was false rather than merely out of date — and it is the reference for what
+//     the app persists, which §4.5's "state is local-only, no selling of learner
+//     data" leans on.
+//
+//     Generated rather than corrected, which is §17b's and §26's shape: the fix
+//     for a hand-maintained list that rots is not a better hand-maintained list.
+//     Direction is deliberately one-way — a key in code and missing from the doc
+//     fails; prose naming a key that no longer exists is §26's job, not this
+//     section's.
+// ─────────────────────────────────────────────────────────────────────────────
+{
+  const storageSrc = readFileSync(join(ROOT, "src", "lib", "storage.js"), "utf8");
+  const keysBlock = storageSrc.match(/export const KEYS = \{([\s\S]*?)\n\};/);
+  const decisions = readFileSync(join(ROOT, "DECISIONS.md"), "utf8");
+
+  if (!keysBlock) {
+    fail(
+      "§27: could not find the `export const KEYS = { ... }` block in src/lib/storage.js. The scan " +
+        "matches nothing rather than the keys having gone away, and for a coverage check that reads " +
+        "as a pass.",
+    );
+  } else {
+    const keys = [...keysBlock[1].matchAll(/"(ecycles_[a-z_]+)"/g)].map((m) => m[1]);
+    // Floor: the app has had at least 5 persisted keys since 2026-08-04, so a
+    // parse returning fewer means the regex broke, not that state was removed.
+    if (keys.length < 5) {
+      fail(
+        `§27: parsed only ${keys.length} keys out of KEYS (expected at least 5) — the key pattern is ` +
+          `probably broken rather than the app having stopped persisting state.`,
+      );
+    }
+    const undocumented = keys.filter((k) => !decisions.includes(`\`${k}\``));
+    if (undocumented.length) {
+      fail(
+        `§27: DECISIONS.md's "localStorage-only progress and personalization state" entry does not ` +
+          `name ${undocumented.length} key(s) the app persists: ${undocumented.join(", ")}. That entry ` +
+          `is the reference for what leaves nothing and stays on the device; add each new key to it in ` +
+          `the same change that adds the key.`,
+      );
+    } else {
+      console.log(`  §27 persisted state: all ${keys.length} KEYS members named in DECISIONS.md.`);
+    }
+  }
 }
 
 console.log(`\n${failures === 0 ? "PASS" : "FAIL"}: ${failures} failure(s), ${warnings} warning(s).`);

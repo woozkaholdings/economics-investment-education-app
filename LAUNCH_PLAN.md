@@ -93,7 +93,7 @@ web-only, no backend, all state in `localStorage`.
 | Content | `.js` modules in `src/content/`, `src/locales/` | Same; possibly server-hosted later | Closed decision. |
 | State | `localStorage` | Supabase accounts + sync | Closed as current approach; revisit with real accounts. |
 | Payments | none | Route depends on §4.3 phase and the §2.1 platform call | Not built. See §4 — the current phase has no payment code by design. |
-| Analytics | none | PostHog | Must land before launch, not after (§9.2). |
+| Analytics | local event sink (`src/lib/analytics.js`) | PostHog | Events are defined and fire; the log is capped and stays on the device. Wiring a provider is owner-blocked on an account and key (§9.2, backlog item 18). |
 | Hosting | static build | Vercel / EAS Hosting | $0 at launch scale. |
 
 ### 2.2 Code structure
@@ -176,8 +176,9 @@ inside Reference → Parent Guide as parent-facing "teach your kids" material.
 
 Two problems as originally assessed; the first is unchanged, the second is now partially closed:
 
-1. **It is still not lesson-shaped.** 21 blurbs against 40 adult lessons, still just three fields
-   per band (`lessons`/`activity`/`parentTip`). **Resolved 2026-08-16:** a kid-directed lesson UI
+1. **It is still not lesson-shaped.** 21 blurbs against 40 adult lessons; each band carries
+   `title`/`lessons`/`activity`/`parentTip`, and each blurb inside it carries `text` and `why`
+   (the `why` field added 2026-08-16, `DECISIONS.md`). **Resolved 2026-08-16:** a kid-directed lesson UI
    stays owner-only (§10.3/item 19, unchanged); richer parent-facing content structure is not
    blocked but isn't scoped either, and growing the blurb count by default is explicitly discouraged
    (it isn't gated by any §4.3-style clause). See `DECISIONS.md` ("Kids financial-literacy content:
@@ -244,7 +245,7 @@ The structure is three destinations, each named for what a beginner would call i
 |---|---|---|
 | **Learn** | The path: progress, then both tracks' lessons in order (§2.5). Opening one pushes a full-screen reader. | The spine of the product. One place to see where you are and continue. |
 | **Practice** | The quiz, with explanations. | Checking understanding is a distinct intent from reading, and it is how a learner finds out what did not land. |
-| **Reference** | Glossary · Market signals · For parents · About | Genuinely look-it-up material, grouped honestly rather than as "everything else". |
+| **Reference** | Glossary · Market signals · Sector performance · For parents · About | Genuinely look-it-up material, grouped honestly rather than as "everything else". |
 
 A lesson is a **pushed view, not a tab** — it has a back affordance and fills the screen, because
 reading is the one thing that deserves undivided attention.
@@ -283,7 +284,8 @@ kind quiz feedback with explanations.
 ### 3.4 Visual system
 
 One accent colour per lesson/phase, one neutral background system, **dark mode** (finance audiences
-skew dark — still open, §backlog). One typeface. Colour and type come from `theme.js`.
+skew dark — **shipped**: light/dark/system in `src/lib/useAppState.js`, picker in
+`src/screens/reference/Settings.jsx`). One typeface. Colour and type come from `theme.js`.
 
 ### 3.5 Accessibility and languages
 
@@ -490,7 +492,7 @@ release.
 |---|---|
 | Foundation | App authored in `src/` — screens, theme, content modules, runnable locally. *(done)* |
 | Core build | First-session flow, streaks, progress persistence, polished lessons 1–4, dark mode. *(done)* |
-| **Content depth** | **The §4.3 Phase 0 gate: ~40 lessons / ~2 hours. This is the blocker on every revenue path and is currently the highest-value work in the project.** |
+| **Content depth** | The §4.3 Phase 0 content gate: a catalogue deep enough to be a course rather than a demo. **§4.3 is the authority on whether it is met — do not restate its verdict here.** |
 | Platform decision | Resolve §2.1 (Expo vs. web-first). **Gates store release and the payment route.** |
 | Monetization + web | Analytics events (§9.2) *first*, then the one-time unlock (§4.3 Phase 1). No subscription until Phase 2's gate is met. Web deployed; 10 clips recorded. |
 | Web launch | Product Hunt + Show HN + Reddit. Watch funnels daily. |
@@ -565,9 +567,16 @@ it, build the smallest test this week. Never sit in ambiguity longer than a week
 ### Closed
 
 - **10.1 Financial-advice adjacency** — *closed 2026-08-02.* All per-phase "best investments / avoid"
-  language reworded to historical and descriptive framing; disclaimer renders on Home, Learn, Markets
-  and About plus a first-launch notice. **Standing rule:** general and historical, never personal.
-  A lawyer's hour before store launch (~$200–300) remains cheap insurance.
+  language reworded to historical and descriptive framing. **Standing rule:** general and historical,
+  never personal. A lawyer's hour before store launch (~$200–300) remains cheap insurance.
+  **Where the disclaimer renders — six screens plus the first-launch modal:** Learn, the lesson
+  reader, Practice, and Reference's Market signals, Sector performance and About sub-screens; the
+  modal is in `src/App.jsx`. This list is enforced by `scripts/check-blindspot.mjs`, not maintained by
+  hand — *the screen names it carried until 2026-08-17 were `Home` and `Markets`, deleted in the
+  2026-08-04 rebuild, so for thirteen days the standing rule the per-run self-check names by number
+  could not be checked as written.* Note that Sector performance renders the disclaimer string
+  directly rather than through the `Disclaimer` component; a guard that greps for the component and
+  not the string inherits exactly that blind spot, and one did.
 - **10.2 Dalio dependency** — *closed 2026-08-01.* No name-brand framing, no direct quotes, anywhere
   in the app or its marketing. Credit belongs in an acknowledgments line, not the product.
   *(v1's own §1 violated this; corrected in v2.)*

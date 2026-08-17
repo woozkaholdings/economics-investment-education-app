@@ -391,7 +391,21 @@ for the history. No open P1/P2 items.
     - **Honest priority: below item 58.** This is content growth on a clause whose measurable half is
       now green, and §4.3's content gates are both met. It is worth doing well, not doing soon.
 
-61. **[Process — P1 of what is left, and the cheapest real item on this list. Filed 2026-08-17 by the
+61. **✅ DONE 2026-08-17 (scheduled dev-agent). All 9 mechanical corrections applied, plus both guards
+    the item asked for — and for the fourth item running the premise was wrong in one place, which is
+    the part worth keeping.** **F7's "five render sites" was itself a miscount: there are six.**
+    `src/screens/reference/Sectors.jsx:178` renders `t.disclaimer` through a plain `<Text>` rather
+    than the `<Disclaimer>` component, so item 58's component-shaped grep could not see it — the same
+    instrument-blindness pattern items 33/36 recorded, committed *by the sweep that exists to catch
+    drift*. The §10.1 surface guard therefore matches the **string**, not the component, and all six
+    surfaces plus the first-launch modal were verified **rendering in a live browser** with Glossary as
+    a negative control. Also raised §26's `EXPECTED_EXEMPTIONS` 11 → 12 (no new exempted path;
+    `lessonContent.money.js` is now named twice in `DECISIONS.md`, by the entry it supersedes and the
+    entry that supersedes it). The 4 judgment findings were correctly left alone and are now item 62.
+    See the run log entry of this date.
+    <details><summary>Original text of item 61, as filed 2026-08-17</summary>
+
+    **[Process — P1 of what is left, and the cheapest real item on this list. Filed 2026-08-17 by the
     run that closed item 58; the measurement is already done, so this is execution, not discovery.]
     Apply the 9 mechanical corrections from item 58's sweep.** Each is "make the document match a tree
     fact that was measured, with the measurement in the run entry of 2026-08-17." Ordered by value,
@@ -429,6 +443,35 @@ for the history. No open P1/P2 items.
       **rejected** it — §4.3's "Analytics live" is in the *Ship* column, so it states a requirement,
       not a status. Before "fixing" anything not in the nine above, check which column or clause the
       sentence is actually making a claim in.
+    </details>
+
+62. **[Process — the 4 judgment findings item 58 measured and item 61 deliberately did not touch.
+    Filed 2026-08-17 by the run that closed 61, so they stop living only inside a closed item's
+    prose.] Each needs a decision, not an edit.** Full evidence with file:line is in item 58's run
+    entry of 2026-08-17; F-numbers match it. **Do not batch these** — the reason 61 was cheap is that
+    it excluded them.
+    - **F4 — decide this one first, and the recommendation is already on the table.** Three lines of
+      `LAUNCH_PLAN.md` (§3.2 twice, §3.4 once) promise a **progress ring**; the app has only ever
+      rendered a **bar** (`src/components/ui.jsx`'s `ProgressBar`, `role="progressbar"`). The sharp
+      part: `scripts/refresh-readiness.mjs` *generates* the figure inside one of those sentences, so a
+      script now keeps the number true while the noun stays wrong, and `npm test` passes. Item 58's
+      recommendation — **make the plan match the app** — stands: nothing has asked for a ring, §3.0
+      does not need one, and building one to satisfy a sentence is the tail wagging the dog.
+    - **F6.** `LAUNCH_PLAN.md` §3.1.1 and §3.4 are **both titled "Visual system"** and encode opposite
+      emphases on per-lesson colour (§3.1.1: one accent, colour never as a fill; §3.4: one accent *per
+      lesson/phase*). §3.4 reads as a v1 leftover §3.1.1 superseded. Duplicate §-titles are their own
+      hazard in a document whose section numbers are load-bearing cross-references.
+    - **F11.** `DECISIONS.md`'s localStorage entry has a *verification note* naming `isLessonUnlocked`
+      and `Home` — neither exists (the gate is `isUnlocked(index)`, `src/App.jsx`). **The disposition
+      differs from the rest:** it is a dated record of what was true on 2026-08-04, and correcting it
+      would falsify the record. The honest fix is a dating note, not a rewrite — the same call item 55
+      faced with §4.1/§4.2. *Note this entry's* other *half was rewritten by item 61 (F10); the
+      verification note below it was deliberately left.*
+    - **F12.** `DECISIONS.md`'s two-tracks entry carries pre-renumbering ids in its body (money 13-26,
+      economy 1-12; actual: money 1–28, economy 29–40), **corrected by its own "Update, 2026-08-14"**
+      at the bottom, so a reader who finishes it is not misled. The finding is the asymmetry: this is
+      the identical table `LAUNCH_PLAN.md` §2.5 carries, and §2.5's was *generated* by item 55
+      precisely because a hand-written range rots. One document over, the same table is unguarded.
 
 26. **[UX — owner-directed, entered as a backlog item by the 2026-08-16 weekly review] Quizlet/Vocabulary
     design-reference review.** The owner shared ~200 Mobbin-exported screenshots of the Quizlet and
@@ -5995,3 +6038,107 @@ are marked judgment for that reason. The check also **caught a real error before
 **Next run should pick item 61** (the mechanical half of this list — nine doc corrections, no
 judgment needed), or **item 59** if a smaller change is wanted. **Item 18 remains the entire critical
 path to ending Phase 0 and is blocked on an owner action: an analytics provider account and key.**
+
+### 2026-08-17 (scheduled dev-agent) — Item 61: nine doc corrections, two guards, and a sixth disclaimer surface the sweep could not see
+
+**Item 61 — execution, not discovery.** Item 58 measured 13 contradictions between the docs and the
+tree and deliberately shipped only the list; this run applied the **9 mechanical ones** and built the
+two guards the item named. Every one was re-verified against the working tree before editing, not
+taken on faith from the list — which is how the miscount below surfaced.
+
+**The finding: F7's "five render sites" was six.** `src/screens/reference/Sectors.jsx:178` renders
+`{t.disclaimer}` through a plain `<Text>`; the other five go through `<Disclaimer>`. Item 58 grepped
+for the component, so the sixth surface was invisible to it — **the same
+measured-with-the-instrument-that-has-the-blind-spot pattern items 33 and 36 recorded, committed by
+the reconciliation sweep whose entire purpose is catching drift.** This is not a criticism of item 58;
+it is the third consecutive filed item whose premise was partly wrong, and it is why the guard below
+matches the rendered **string** rather than the component. A component-shaped guard would have frozen
+the miscount into a check and reported "five surfaces, all present" forever.
+
+**The nine corrections.**
+
+- **F7** (`LAUNCH_PLAN.md` §10.1) — the standing rule's own text named **Home** and **Markets**,
+  deleted in the 2026-08-04 rebuild, so for thirteen days the rule the mandatory per-run self-check
+  names *by number* could not be checked as written. Now lists the six real screens plus the modal,
+  says the list is machine-enforced, and records the component-vs-string trap so the next reader does
+  not re-set it.
+- **F1** §8's roadmap row still called the §4.3 content gate "the blocker on every revenue path" while
+  §4.3 (generated, item 55) reports it met. Figures **deleted** rather than regenerated, per item 55's
+  cheapest-disposition rule — §8 is a roadmap, not a scoreboard — and it now points at §4.3 as the
+  authority instead of restating a verdict.
+- **F2** §2.1's stack table said analytics were "none"; `src/lib/analytics.js` exists and fires from
+  seven call sites. The **Current** column now describes the local sink and attributes the real
+  blocker (a provider account, item 18).
+- **F3** §3.1's Reference row listed four sub-screens; there are five (Sector performance, shipped
+  2026-08-04). **F5** §3.4 called dark mode "still open" — it shipped — and cited a `§backlog` that
+  does not exist. **F8** §2.6 said kids blurbs carry three fields; bands carry four and each blurb
+  carries `text`/`why`.
+- **F9** (`DECISIONS.md`) attributed "Expo from week 1" to §2.2/§8 of the **current** plan. All four
+  Expo mentions there record it as an open owner decision, and §0's table is what retired it. This one
+  actively misled: it is the entry a run reads to decide whether a web-only change is "against the
+  plan", and it said the plan demands React Native.
+- **F10** the localStorage entry claimed "every piece of per-user state added so far" and named **5 of
+  12**. Universally quantified, so false rather than stale — and §4.5's privacy claim leans on it.
+  Rewritten to all 12 **and generated-checked** (below), because the fix for a hand-maintained list
+  that rots is not a better hand-maintained list.
+- **F13** the chunk-split entry had declared for a day that this file owed an entry for item 45's
+  per-language split. Written, from `6f5c48c`'s measured record rather than from memory: 499.27 kB →
+  116.84 kB largest chunk, the 80%-of-payload-never-displayed reframing, the union-not-English-spine
+  merged view, and the `JSON.stringify`-identical + 40-unchanged-hashes equivalence proof.
+
+**Two guards, both proven to bite before being trusted.**
+
+- `check-blindspot.mjs` — **§10.1 disclaimer surfaces**. Asserts all 7 (6 screens + modal), fails in
+  both directions: a removed surface fails, an *added* one fails with "add it to §10.1's list", which
+  is what keeps the register describing the app. Self-tests its own pattern against a fixed probe
+  first, because for an absence check a broken regex reads as a pass (§26's lesson).
+- `check-data.mjs` **§27** — asserts `DECISIONS.md` names every `KEYS` member. One-way by design: a
+  key in code and missing from the doc fails; prose naming a dead key is §26's job.
+- **Injection tests** (restored from scratchpad copies, never `git checkout --`; `git diff` confirmed
+  empty after each): removing `{t.disclaimer}` from **Sectors.jsx** → FAIL naming Sectors (proves the
+  bare-string form is covered, i.e. the exact gap item 58 fell into); removing it from **Learn.jsx**
+  via the component form → FAIL naming Learn; adding an undocumented `ecycles_injected_probe` key →
+  §27 FAIL naming it.
+
+**§26 collateral, handled rather than suppressed.** The F13 entry names `lessonContent.money.js` — a
+deleted per-track file already exempted as history — so that path is now referenced twice and
+`EXPECTED_EXEMPTIONS` went 11 → 12. **No new exempted path**; the constant carries a comment saying
+exactly which second mention it is, so the next reader does not have to re-derive it.
+
+**Verification.** `npm test` — **PASS, 0 failures**, 1 pre-existing non-blocking warning (translation
+review coverage, unrelated). `npm run build` passes, 972 ms, chunk sizes unchanged. **Live browser
+verification (W-1), which this run did not strictly owe** — no rendered UI changed — **but which the
+§10.1 claim did**, since a claim about where something renders had so far been checked only by grep,
+and grep is what got it wrong. Static build + `python3 -m http.server 8801` + `preview_start` with a
+plain `url`, per the Environment note; `localStorage` cleared to reach a genuine first-run state
+(a prior session had left the app in Japanese, which would have made an English needle silently match
+nothing). All 7 surfaces confirmed rendering the real disclaimer text: first-launch modal, Learn,
+lesson reader (`#/lesson/1`, "LESSON 1 OF 40"), Review, Reference → Market Dashboard, → Sector
+performance, → About. **Negative control: Reference → Glossary does NOT render it** — without that,
+every "true" above would have been consistent with the needle matching a global footer, and the whole
+walk would have proven nothing.
+
+**Adversarial self-check (step 5).** **Blindspot register:** §10.1 is the rule this run touches most,
+and the change strengthens rather than regresses it — the disclaimer's six render surfaces are now
+machine-enforced where nothing enforced them before, and no advice-adjacent language was added
+(`check-blindspot.mjs` green). §10.2: no Dalio reference introduced; the guard scans the edited docs'
+neighbours and passes. §10.3: kids content untouched except F8's *field-count* correction, which
+changes no learner- or parent-facing copy and keeps the parent-facing framing. §2.3: no date or
+market figure added to teaching copy. **DECISIONS.md conflicts:** none — F9 *removes* a contradiction
+with the localStorage-only and Vite-not-Expo decisions rather than creating one, and the new
+per-language entry records a shipped decision rather than changing one. **Already-done backlog item:**
+checked "Completed and pruned" — item 55 generated `LAUNCH_PLAN.md`'s *figures*, and F1/F2/F3/F5/F8
+are prose it deliberately left, so this extends rather than redoes it; item 49's README/§26 work is
+adjacent but disjoint (paths vs. prose claims). **Own verification claim:** an independent reviewer
+re-running `npm test`, `npm run build` and the three injections gets these results. Two caveats stated
+rather than buried — (a) the live walk used `innerText` containment, so it proves the string is in the
+rendered DOM, not that it is visible after CSS, and (b) `EXPECTED_SURFACES` is a hand-maintained list,
+which is the very shape F10 was filed against; it is justified here only because the failure mode
+differs (a surface list has no `KEYS`-equivalent single declaration to generate from), and the
+add-direction failure is what keeps it honest. The check **caught a real error before it shipped**:
+the first draft of the surface guard matched `<Disclaimer` and would have reported five.
+
+**Next run should pick item 62's F4** (the progress ring/bar decision — three doc lines, one of them
+machine-generated around a wrong noun; recommendation already written) or **item 59** (the contrast
+guard) if a smaller change is wanted. **Item 18 remains the entire critical path to ending Phase 0
+and is blocked on an owner action: an analytics provider account and key.**

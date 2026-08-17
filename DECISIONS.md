@@ -12,9 +12,13 @@ Add a new entry when a run makes a choice future work should be able to look up 
 - **Status:** open — owner decision needed. See `AGENT_LOG.md` backlog item 12 (HELD).
 - **What was decided:** the 2026-08-01 scaffolding run built the runnable prototype on
   **Vite + React, web-only**.
-- **What the launch plan asks for:** §2.2/§8 specify **Expo (React Native)** from week 1, so
-  web/iOS/Android share one codebase and the web release (weeks 1–8) is not thrown away when
-  app-store builds start (weeks ~9–14).
+- **What the launch plan asked for:** **v1** of the plan specified **Expo (React Native)** from week 1,
+  so web/iOS/Android share one codebase and the web release (weeks 1–8) is not thrown away when
+  app-store builds start (weeks ~9–14). **The current plan does not ask for this** — §0's change table
+  is where v1's "build on Expo from week 1" was retired, and all four Expo mentions in
+  `LAUNCH_PLAN.md` now record the platform as an **open owner decision** (§8's row is "Resolve §2.1").
+  *Corrected 2026-08-17: this bullet cited §2.2/§8 of the current plan, which meant a run reading it to
+  decide whether a web-only change was "against the plan" was told the plan demands React Native.*
 - **Why Vite anyway:** at scaffolding time the goal was "make the existing prototype buildable and
   runnable at all" with minimal risk to `economic-cycles-v5.jsx`'s content. Vite is a smaller, faster
   loop for that first step than standing up Expo tooling cold.
@@ -329,12 +333,10 @@ Add a new entry when a run makes a choice future work should be able to look up 
 - **What was decided:** `src/content/lessonContent.js` (531 kB source, every lesson's full body text)
   is split into `lessonContent.economy.js` (12 lessons) and `lessonContent.money.js` (28 lessons).
   **Superseded on the file layout, not on the reasoning, 2026-08-17 (item 45):** those two files were
-  split again on a second axis, per language, into ten `lessonContent.<track>.<lang>.js`. The two
-  per-track paths named in this entry no longer exist; the full reasoning is in `AGENT_LOG.md`'s
-  backlog item 45 and its 2026-08-17 run entry, which is where it currently lives — this file has no
-  entry of its own for the second split yet. Kept as written
-  because the decision recorded here — load only the track being read — is what the second split
-  extends.
+  split again on a second axis, per language, into ten `lessonContent.<track>.<lang>.js` — **that
+  split now has its own entry directly below**, written 2026-08-17. The two per-track paths named in
+  this entry no longer exist; kept as written because the decision recorded here — load only the track
+  being read — is what the second split extends.
   `LessonReader.jsx` no longer statically imports the merged file — it dynamically `import()`s only
   the track (`lesson.track`) of the lesson being opened, with a brief `EmptyState` loading affordance
   (the same one `App.jsx`'s other lazy screens already use) while that resolves.
@@ -354,20 +356,58 @@ Add a new entry when a run makes a choice future work should be able to look up 
   alter any lesson's hashed English source text, only its file location); a static-build browser check
   opened both a money-track and an economy-track lesson and confirmed each fetched only its own
   content chunk and rendered its real English text.
-- **Revisit when:** the money-track chunk (currently 482.39 kB, closest to the 500 kB default) grows
-  enough from future lesson content to need its own further split — at that point split by something
-  finer than track (e.g. alphabetically or by id range within `money`) rather than raising the
-  threshold again.
+- **Revisit when:** ~~the money-track chunk grows enough to need its own further split~~ — this
+  happened on 2026-08-17, three days later. See the next entry.
+
+### Lesson content split again, per language: ten files, track × language (item 45)
+
+- **Status:** closed 2026-08-17 (dev-agent run, `6f5c48c`). Extends the per-track entry above rather
+  than replacing its reasoning. *Written 2026-08-17 as item 61/F13 — the entry above had declared for
+  a day that this file owed it, which is this document's stated purpose failing out loud.*
+- **What was decided:** the two per-track files became **ten**, `lessonContent.<track>.<lang>.js`.
+  Fields are plain strings and the language is the file. `LessonReader` imports exactly one of the
+  ten, keyed `"<track>:<lang>"` through a flat map of **literal** specifiers, because Vite can only
+  code-split an import it can statically read.
+- **Why, and why not the obvious fix:** `lessonContent.money.js` had reached 499.27 kB against Vite's
+  500 kB warning — under it by less than a kilobyte, so the next content edit would cross. Measuring
+  before choosing reframed it: of that file's 480 kB of body text, en was 97 kB, es 90, ko 102, zh 79,
+  ja 112. **About 80% of the app's largest asset was text the reader's device would never display.**
+  That makes it a payload problem, not a build-warning problem — halving the file would have bought
+  headroom while shipping the same waste, and raising the limit had already been tried and
+  deliberately reverted on 2026-08-14 as a symptom-silencer.
+- **Result:** largest content chunk **499.27 kB → 116.84 kB** (`money.ja`; English readers load
+  102 kB). Ten chunks, none within 380 kB of the threshold.
+- **What survived:** `content/lessonContent.js` remains as a node-only merged view for the two
+  consumers that need every language at once (`check-data.mjs` parity, `translation-review.mjs`
+  hashes). It builds ids and section counts from the **union across languages** rather than using
+  English as a spine, so a lesson present in a translation but missing from English still surfaces.
+- **Verified before deleting anything:** the reassembled merged view is `JSON.stringify`-identical to
+  the pre-split content across all 40 lessons, and all 40 English source hashes are unchanged — a
+  moved hash would have marked all 160 lesson/language pairs stale and destroyed the translation
+  ledger's state. Live browser check: opening money lesson 1 fetches only `lessonContent.money.en`;
+  switching to Korean then fetches only `money.ko`; opening economy lesson 36 fetches only
+  `economy.ko`.
+- **One real behaviour change:** switching language while reading now triggers a fetch rather than a
+  pure re-render, so `lang` joined the loader effect's dependencies.
+- **Same axis applied to quiz text 2026-08-17 (item 48)**, removing a 140.88 kB shared quiz chunk that
+  every reader downloaded regardless of language. Nothing forced it — it was well under the threshold;
+  item 45's closing note flagged it and item 48 is that note being acted on.
 
 ### localStorage-only progress and personalization state
 
 - **Status:** closed as the *current* approach; known gap flagged below.
-- **What was decided:** every piece of per-user state added so far — the disclaimer-seen flag
-  (`ecycles_seen_disclaimer`), the streak counter (`ecycles_streak`), the continue-tomorrow
-  opt-in (`ecycles_continue_pref`), `completedLessons` itself (`ecycles_completed_lessons`,
-  added 2026-08-04), and the text-size preference (`ecycles_font_scale`, added 2026-08-04) — is
-  stored client-side in `localStorage`, keyed by a fixed string, with no backend, no account
-  system, and no sync across devices.
+- **What was decided:** every piece of per-user state is stored client-side in `localStorage`, keyed
+  by a fixed string, with no backend, no account system, and no sync across devices. The keys, all
+  declared in one place (`KEYS` in `src/lib/storage.js`):
+  `ecycles_seen_disclaimer`, `ecycles_completed_lessons`, `ecycles_streak`, `ecycles_font_scale`,
+  `ecycles_continue_pref`, `ecycles_lang`, `ecycles_theme_mode`, `ecycles_review`,
+  `ecycles_analytics_log`, `ecycles_legacy_lesson_id_migrated`, `ecycles_seen_practice_coachmark`,
+  `ecycles_glossary_bookmarks`.
+  > **This list is checked against `KEYS`, not maintained by hand** — `check-data.mjs` §27 fails if a
+  > key exists in code and is missing here. *Corrected 2026-08-17: the sentence said "every piece of
+  > per-user state added so far" and then named 5 of 12. Because it is universally quantified it was
+  > false rather than merely out of date, and §4.5's "state is local-only, no selling of learner data"
+  > leans on this entry for what the app actually persists.*
 - **Why:** the launch plan's own stack (Supabase-backed accounts) doesn't land until later in the
   roadmap, and none of these features need cross-device sync to be useful — they're single-device
   "did you do something today" signals. Building them against `localStorage` now means zero backend
