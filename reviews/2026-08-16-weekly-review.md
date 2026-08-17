@@ -4,11 +4,16 @@ Reviewer: scheduled weekly-review task (quality control, not a dev run).
 Period: 2026-08-09 → 2026-08-16. Branch `main`, local only, nothing pushed.
 HEAD at review start and end of curation: `683a947`.
 
-> **Updated end of day 2026-08-16, HEAD `2836338`.** Sections 1–4 below are the review as written
-> that morning and are left as the record of the week. **Everything that happened after it — 28 more
-> commits in nine hours, all four priorities closed the same day, and a content bug that took five
-> passes to actually fix — is in [§5, the addendum](#5-addendum--the-rest-of-2026-08-16).** Where the
-> two disagree, §5 is current: in particular §2's build figures and §4's plan are superseded there.
+> **Updated twice since it was written. Sections 1–4 are the review as committed on the morning of
+> 2026-08-16 and are left as the record of the week.**
+> - **[§5](#5-addendum--the-rest-of-2026-08-16)** — the rest of 2026-08-16: 28 more commits in nine
+>   hours, all four priorities closed the same day, and a content bug that took five passes to fix.
+> - **[§6](#6-addendum--2026-08-16-evening-through-2026-08-17)** — 14 further commits through
+>   2026-08-17, dominated by payload work: the app's two largest assets were both carrying five
+>   languages to readers who read one.
+>
+> Where they disagree the later section is current: §2's build figures are superseded by §6.5, and
+> §4's plan by §5.7 and then §6.7. HEAD at the latest update: `1ee13dc`.
 
 **Grade: A−.** The strongest week the project has had. Every priority the 2026-08-09 review set
 was closed, the freeze it imposed did its job, and the agent broadened out of the content
@@ -400,3 +405,150 @@ the reason for the minus: throughput and craft are both excellent, and the thing
 an A is not effort or direction — it is that "done" has repeatedly been asserted through an
 instrument that was itself broken. The unrecognized-counter guard and `CLAIMS.md`'s D1/D2 are the
 first structural answers to that, and both landed today.
+
+---
+
+## 6. Addendum — 2026-08-16 evening through 2026-08-17
+
+Written at HEAD `1ee13dc`. Fourteen commits since §5 was committed. The through-line is payload: the
+two largest assets in the app were each shipping five languages to a reader who reads one, and
+removing that exposed a second problem — documentation that described how to regenerate itself using
+code paths that no longer existed.
+
+### 6.1 The payload work (items 45 and 48)
+
+| | Before | After |
+|---|---|---|
+| Largest lesson-content chunk | 499.27 kB | **116.84 kB** |
+| Shared quiz chunk | 140.88 kB | **gone** — largest is 31.81 kB, one fetched |
+| English reader's lesson body | 480 kB | **102 kB** |
+
+Both started as "the chunk is near the 500 kB warning," and in both cases **measuring first changed
+the fix.** Of `lessonContent.money.js`'s 480 kB: en 97 kB, es 90, ko 102, zh 79, ja 112 — ~80% was
+text the device would never display. That is a payload problem wearing a build-warning costume, and
+splitting the file in half would have bought headroom while shipping the same waste. Raising the
+limit was rejected on precedent: it was done once (2026-08-12, set to 600) and deliberately removed
+two days later as a symptom-silencer.
+
+`quizData.js` was the same shape one file over — 128 kB of questions in five languages, **statically**
+imported by both `Practice` and `LessonReader`, so it landed in a shared chunk every reader
+downloaded whether or not they ever opened Review.
+
+The quiz split had one hard constraint worth recording: **`review.js` keys every learner's Leitner
+state by a question's index in the array, and that state is in `localStorage`.** Reordering would
+silently re-point real review histories at different questions. So `quizMeta.js` holds the two
+language-independent fields (`lesson`, `answer`) once and in order, `quizText.<lang>.js` holds the
+words at matching indices, and scheduling reads only meta — the queue never depends on which module
+finished downloading. The answer key lives once rather than five times, which is the same
+"don't store a correctness-critical fact five ways" reasoning §5.3 arrived at the hard way.
+
+Both splits were proven equivalent before anything was deleted: the reassembled merged views are
+`JSON.stringify`-identical to the originals, all 40 English source hashes were unchanged (a moved
+hash would have marked all 160 translation pairs stale), and the quiz `answer`/`lesson` keys match
+index-for-index across 42 questions.
+
+### 6.2 Live verification caught two bugs the suite could not
+
+`npm test` was green through both of these; only a browser found them.
+
+1. **A mid-session language switch kept the old language's question.** `Practice` merged text into
+   session state at start, so the words froze while the chrome around them translated. Fixed by
+   storing meta-only in session and merging at render — the class, not the instance. The same
+   mistake had left the results recap reading `question.q[lang]` on what was now a plain string.
+2. **The fix then crashed the screen.** Blanking `quizText` during the swap left `question.opts`
+   undefined for one render of a live session — `TypeError` on `.map`, blank page. Fixed by not
+   blanking: the previous language holds until the new module resolves, removing the window and a
+   content flash together.
+
+This is now the second consecutive session where the browser check found what the tests could not,
+and it is the strongest argument for W-1 remaining a standing rule rather than a one-off correction.
+
+### 6.3 My own change broke the docs, and the agent found it (items 46, 47)
+
+Worth stating plainly because it is a consequence of this reviewer's work: **item 45's split turned
+`LAUNCH_READINESS.md`'s two "how to refresh this file" snippets into `ERR_MODULE_NOT_FOUND`** — they
+imported `content/lessonContent.economy.js`, which the split replaced with ten files. It was the
+second time those snippets had rotted (item 25's per-track split broke them once already), and both
+times **the figures printed beside them stayed correct while the method rotted** — the document was
+right about the numbers and wrong about how to get them.
+
+The agent's response went past the instance twice over:
+
+- **Item 46** added a check that every backticked file path in `LAUNCH_READINESS`/`LAUNCH_PLAN`/
+  `DECISIONS`/`CLAIMS` must resolve or carry an explicit `<!-- path-ok: … -->` waiver. A path is the
+  one part of a document a script can verify without understanding what the document means.
+- **Item 47** deleted the snippets entirely, replacing them with `scripts/refresh-readiness.mjs`
+  (`--check` chained into `npm test`, `--write` to update in place). The reasoning is the good part:
+  a check-only gate over hand-maintained figures "would be turned off within a week," and that
+  objection dissolves once the figure is generated rather than typed.
+
+### 6.4 Correctness finds by the dev agent
+
+- **Item 44 — a real user-facing bug, on a screen written to prevent exactly it.** `useMarketData`'s
+  staleness test was one-sided (`ageDays > STALE_AFTER_DAYS`), so a **null** age passed as fresh:
+  `null > 4` is false. The pre-fix build served the Sector screen rendering all eleven sectors under
+  the heading **"As of undefined"** — undated figures, from the code whose whole purpose is §2.3's
+  no-undated-figures rule. A negative age (wrong device clock) passed the same way.
+- **Item 38 — `new Date().toISOString().slice(0,10)` is not today, it is today in UTC**, which after
+  8pm Eastern is tomorrow. Three sites, including the `asOf` stamp that market-data staleness is
+  measured *from*. Filed as cosmetic and one file; was neither.
+- **Item 39 — scoped to "no," which was the valuable answer.** The proposed rule (a check and the
+  document it guards must land in the same commit) is unenforceable here, and the reason is worth
+  knowing: **this repo commits via `write-tree`/`commit-tree`/`update-ref` because `git commit`
+  porcelain hangs, and plumbing runs no hooks.** Verified in a throwaway repo. With no CI and no
+  usable remote, `npm test` is the only gate — and it runs against a working tree, before a commit
+  exists, so "same commit" is not a property it can observe.
+
+### 6.5 Health — green, and the shape of the bundle has changed
+
+```
+npm test   PASS check-data (1 warning) · PASS check-blindspot · PASS check-claims · PASS check-backlog
+           cross-references: en=64, es=43, ja=44, ko=44, zh=44
+           §9.1 claims register: 15 claims, 2 refuted, 0 past due
+           backlog: 30 items, 68 "backlog item N" citations, all resolve
+npm run build   ✓ 22 chunks, no warnings
+```
+
+**The largest asset in the app is now the app itself** (`index`, 232 kB) rather than content — the
+first time that has been true. Content chunks now top out at 116.84 kB and a reader fetches two of
+them. Translation coverage is back to **100%, 0 stale** in all four languages.
+
+`npm test` now chains four checks, up from one a week ago: data shape, blindspot register, claims
+register, backlog integrity — plus the readiness figures via `--check`.
+
+### 6.6 Concerns
+
+1. **Nothing is enforcing that a reader ever sees the small chunks.** Both splits are verified by
+   me opening the app and reading the network panel. There is no test asserting "opening a lesson
+   fetches one content file," so a future refactor that statically imports a merged view would
+   silently restore the 480 kB payload with every check still green. That is the same
+   shape as §5.3's lesson — a property nobody checks is a property that drifts.
+2. **`AGENT_LOG.md` is growing again**, and fast: the run log has taken on 14 substantial entries
+   since the 909 kB → 516 kB archive on 08-16. The archiving rule written into
+   `AGENT_LOG.archive.md` says to move entries older than the previous review boundary at each
+   Sunday review — which is due this coming Sunday and should not be skipped.
+3. **Two items were filed by a run while this reviewer held the same numbers in flight** (46, 47 vs.
+   my 48). The `check-backlog` guard caught it before it landed, which is the guard working — but it
+   is a symptom of two writers with no coordination beyond a file, and it will recur.
+
+### 6.7 Revised priorities — supersedes §5.7
+
+1. **Assert the payload property in a test.** Concern 1 above. Something as simple as failing if
+   `Practice.jsx`/`LessonReader.jsx` statically import a merged content module would hold the line.
+2. **Item 32 — the §9.3 monthly blindspot audit**, still never run; next first Saturday is
+   **2026-09-05**. `CLAIMS.md` now answers its question 4 ("which claim is past its check date"),
+   which was previously unanswerable.
+3. **Archive the run log again at the Sunday review**, per the rule already written down.
+4. **Do not start new content.** Both §4.3 content clauses remain met; items 17 and 24 remain
+   exhausted; item 27's own text says the scope it defined is built and needs re-scoping first.
+
+**For the owner, unchanged and now the only thing left: item 18, the analytics provider.**
+`CLAIMS.md` quantifies it — **10 of the project's 15 written-down beliefs are unfalsifiable until it
+exists**, and the ≥40%-lesson-1-completion clause is the sole remaining Phase-0 gate. The app name
+(§10.7) and item 12 (Expo vs. Vite) remain open owner decisions; item 19 (child-facing kids content)
+remains HELD and untouched.
+
+**Grade for the week: unchanged at A−.** Nothing since §5 changes the week's assessment. If anything
+it sharpens the same point: the two best pieces of work in this stretch — the payload splits and the
+readiness-figure generation — both came from measuring something that had been asserted, and the two
+worst bugs were both found by looking at the running app rather than at a green test.
