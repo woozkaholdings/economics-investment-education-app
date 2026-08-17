@@ -282,7 +282,22 @@ for the history. No open P1/P2 items.
     > outcome if the estimates are wrong, and it is exactly the kind of thing to state out loud in the
     > run entry rather than discover afterwards.
 
-57. **[Content — P3. Small, bounded, and the measurement has a control.] §3.0.3's no-undefined-jargon
+57. **✅ DONE 2026-08-17 (scheduled dev-agent). Pruned below as `former item 57` — but the premise was
+    wrong for the third item running, and how it was wrong is the part worth keeping.** All 11
+    occurrences this item named are **deliberate exclusions that `lessonTerms.js`'s header documents by
+    lesson id** (rule 2: the lesson *is* the definition, so §3.0.3's first branch holds; rule 1: "credit
+    card"/"credit score" is not the macro aggregate). The item also **could not see the real gap by
+    construction** — it scanned only the 18 *uncurated* lessons, and the one genuine unaccounted-for use
+    was inside a *curated* one: lesson 36 §1's "credit data", now chipped. Wider re-measurement found 77
+    glossary-term uses, 34 unlinked, 33 of them correct. The fix that matters is that curation rules 1
+    and 2 are now **data** (`deliberatelyUnlinked`, 33 entries) enforced by `check-data.mjs` **§17b**, so
+    "unlinked" can no longer be mistaken for "undefined". See the run log entry of this date.
+    > **Standing note for whoever measures this surface again.** §17b sweeps only the **29 keys in
+    > glossary.js**. "0 unexplained" therefore means every *glossary term* is accounted for, **not** that
+    > §3.0.3 is satisfied — jargon with no glossary entry is invisible to it. That residual is item 60.
+    <details><summary>Original text of item 57, as filed 2026-08-17</summary>
+
+    **[Content — P3. Small, bounded, and the measurement has a control.] §3.0.3's no-undefined-jargon
     rule: 7 lessons use a glossary term in prose with no link to it.** §3.0.3 says a term "either gets
     defined where it appears or links to the glossary." `src/content/lessonTerms.js` curates links for
     **22 of 40** lessons. Of the 18 uncurated, **7 use a glossary term verbatim in their English body,
@@ -294,6 +309,7 @@ for the history. No open P1/P2 items.
     > matcher was comparing objects and matching nothing. Caught by asserting a *linked* lesson shows
     > hits (lesson 2 → Credit, Emergency Fund, Insurance Premium) before believing the zero. Re-run
     > this control if you re-measure.
+    </details>
 
 58. **[Process — P4. The generalisation of the finding that closed item 49.] Read `LAUNCH_PLAN.md`
     and `DECISIONS.md` end to end against the current tree, and record every claim that no longer
@@ -316,6 +332,15 @@ for the history. No open P1/P2 items.
     >   still reasons about a single chain.
     > Item 55 also demonstrated the cheapest disposition for a third class: a stale count inside an
     > argument that doesn't need it should be **deleted**, not corrected and not guarded.
+    > **A fourth entry, and a pattern, from item 57 (2026-08-17).** `src/content/lessonTerms.js`'s
+    > header claimed "COVERAGE, measured 2026-08-16: 21 links across 10 lessons — 9 economy, 1 money"
+    > and then spent four lines explaining a lopsidedness that had already gone: the figure was written
+    > *earlier the same day* as the item-35 expansion listed directly beneath it, so it was stale on
+    > arrival. Fixed in that run (44 chips / 22 lessons, now pointing at §17b's generated output rather
+    > than restating it). **The transferable pattern for this item's sweep: a "measured `<date>`"
+    > annotation is least trustworthy when its date matches the change it sits above** — same-day
+    > figures are written before the day's work finishes. Grep for `measured 20` and `as of 20` in
+    > `src/` and `scripts/`, not just in the Markdown docs.
 
 59. **[A11y — P5, and deliberately last. It guards something that is currently TRUE.] `theme.js` and
     `index.css` both claim the palette's contrast is verified; nothing verifies it, and the note one
@@ -331,6 +356,28 @@ for the history. No open P1/P2 items.
       "contrast note above" reference or delete the sentence.
     - **Do not oversell it.** A run that picks this is preventing a future regression, not fixing a
       present defect, and the run entry should say so plainly.
+
+60. **[Content — the residual §17b cannot see, filed 2026-08-17 by the run that closed item 57 rather
+    than left implied.] §3.0.3 is now enforced for the 29 glossary terms and for nothing else.**
+    `check-data.mjs` §17b proves every *glossary-term* use in all 40 lessons is either chipped or
+    deliberately excluded (`0 unexplained`). It cannot see a jargon word that has **no glossary entry**,
+    so the honest reading of that zero is "the terms we have definitions for are all handled", not
+    "§3.0.3 holds". The gap is real: `lessonTerms.js`'s own header records that before item 35 the
+    glossary was 17 entries and all macroeconomic, and item 35 added money-track vocabulary by
+    *grepping the lesson bodies* — a method that finds words already in the glossary's neighbourhood,
+    not words the lessons use and never define.
+    - **Scope, and the measurement to do first:** extract the money-track lessons' distinctive nouns
+      (the §0 track, 28 lessons) and diff them against `glossary.js` — candidates the header already
+      names as absent include APR and beneficiary. Then decide per candidate: add a glossary entry
+      (making it chippable), or confirm the lesson defines it inline. **Do not batch-add entries to
+      make a number go up** — each one is learner-facing copy under §10.1, where a definition says what
+      a thing *is* and never what to do about it.
+    - **Carry a control, and expect the premise to be partly wrong.** Items 55, 56 and 57 were each
+      filed against a real clause with wrong numbers. Before believing any candidate list, assert that
+      the extractor finds a word that IS already in the glossary (the item-57 control's shape), and
+      check what already covers the surface — §17b, §17 and item 35's notes — before building anything.
+    - **Honest priority: below item 58.** This is content growth on a clause whose measurable half is
+      now green, and §4.3's content gates are both met. It is worth doing well, not doing soon.
 
 26. **[UX — owner-directed, entered as a backlog item by the 2026-08-16 weekly review] Quizlet/Vocabulary
     design-reference review.** The owner shared ~200 Mobbin-exported screenshots of the Quizlet and
@@ -1628,6 +1675,16 @@ for the history. No open P1/P2 items.
 
 **Completed and pruned**
 
+- **§3.0.3 coverage enforced in both directions, and item 57's own numbers corrected (former item
+  57)** — done 2026-08-17 (dev-agent run), see run log. §17 already guarded that the links which
+  *exist* are valid; new **§17b** guards the other direction, that every glossary-term use is either
+  linked or listed in the new `deliberatelyUnlinked` table with a reason (`defined-here` /
+  `other-sense: …`). 77 uses, 44 chips, 33 deliberate, **0 unexplained**. The item's own claim of "7
+  lessons, 11 occurrences" was wrong: all 11 were exclusions `lessonTerms.js` documents by lesson id,
+  and the single real gap (lesson 36 §1's "credit data") sat in a *curated* lesson the item's search
+  space excluded. Verified with five injections including a deliberately broken matcher, plus live
+  browser confirmation of the new chip. **Scope limit to carry forward: §17b sees only glossary keys —
+  see item 60.**
 - **The `minutes` reading model corrected to count the whole lesson (former item 56)** — done
   2026-08-17 (owner-directed pick), see run log and `DECISIONS.md` ("How a lesson's `minutes`
   estimate is computed"). The field was already derived and enforced; what was wrong was the
@@ -5608,3 +5665,114 @@ zero, because the first attempt at that measurement returned 0 for an instrument
 this run found, add one step to it**: before building anything, check what already covers the
 surface — item 56's premise survived a backlog refill and a run's own reading because nobody grepped
 for the existing guard.
+
+---
+
+### 2026-08-17 (scheduled dev-agent) — Item 57's 11 occurrences were all deliberate; the real gap was in a lesson it could not see (item 57)
+
+**Picked** item 57 (§3.0.3's no-undefined-jargon rule), the queued item, and did the extra step the
+previous run added to it: *before building anything, check what already covers the surface.* That step
+is the reason this entry says what it says.
+
+**What already covered it.** `check-data.mjs` **§17** has guarded `lessonTerms.js` since item 28. It
+checks four ways a curated link rots — dead lesson id, dead glossary key, a term repeated inside one
+lesson, and a link whose section no longer mentions the term. What it does **not** check is the other
+direction: a term used in prose with *no* link. So item 57's subject was genuinely unguarded, and the
+item survived this step — unlike item 56's premise, which did not.
+
+**But item 57's numbers were wrong, and wrong in an instructive way.** It reported "7 lessons use a
+glossary term in prose with no link, 11 occurrences." Re-measured with its own documented control
+(assert a *linked* lesson shows hits before believing any zero — control **passed**: lesson 2 → Credit,
+Emergency Fund, Premium), using §17's exact matcher:
+
+- **77** glossary-term uses across the 40 lessons, of which **34** carried no chip — not 11.
+- **All 11 of the occurrences item 57 named are deliberate exclusions that `lessonTerms.js`'s header
+  documents by lesson id.** Lesson 39 ("carries none at all" — it defines GDP/CPI/PMI/VIX/credit
+  spreads inline as its entire body), lesson 30's Credit, 37's QE, 5's Diversification, 8's Deductible
+  — all curation rule 2 (the lesson *is* the definition, so §3.0.3's **first** branch holds). Lessons
+  4 and 15's "Credit" — rule 1 (credit *score*, credit *report*; not the macro aggregate).
+- **The item could not see the real gap by construction.** It scanned only the **18 uncurated**
+  lessons, so a missing link inside a *curated* lesson was outside its search space — and that is
+  where the gap was.
+
+**The one genuine gap, found and fixed:** lesson **36 §1** ("Reading the curve well means weighing it
+alongside employment, inflation, and **credit** data") — the macro sense, in a lesson that already
+carries chips in that very section. Added `Credit` to `lessonTerms[36][1]`.
+
+Three other candidates the wider sweep raised were judged **correctly excluded** after reading the
+prose rather than the match: lesson 8 defines premium and deductible in so many words; lesson 35 §0's
+heading *is* "The Fed Funds Rate"; and lesson 36 §2 teaches the **term premium** — unrelated to an
+insurance premium, and a wrong-sense case the header's original rule-1 list had missed.
+
+**The durable half — why a fourth mismeasurement is now impossible.** Curation rules 1 and 2 lived
+only as prose, and a prose rule cannot be subtracted from a grep, so the grep kept winning. They are
+now data: `deliberatelyUnlinked` in `lessonTerms.js` — 33 entries, `{ lessonId: { term: reason } }`,
+reason being `defined-here` or `other-sense: <what the prose means instead>`. New **§17b** in
+`check-data.mjs` requires every glossary-term use to be either linked or listed, and fails on:
+(a) an unaccounted-for use — the §3.0.3 violation itself; (b) an exclusion whose term is no longer in
+that lesson's prose (mirrors §17's staleness check in the other direction — a stale exemption grants
+cover it was never asked for and hides the next real gap); (c) a lesson that both links and excludes
+the same term; (d) an unreviewed reason code, or an `other-sense` with no note.
+
+**Verified** (an independent reviewer re-running only these commands gets these results):
+
+- `npm test` — **PASS**, 0 failures. §17b prints `77 glossary-term uses across 40 lessons — 44 chips
+  on 22 lessons, 33 deliberately unlinked (24 defined-here, 9 other-sense), 0 unexplained.`
+- `npm run build` — **PASS** (959 ms). The table is **tree-shaken out of the client bundle**: 0
+  occurrences of `other-sense`/`defined-here` in `dist/assets/`, so item 17's chunk-size caution on
+  `lessonTerms.js` (which `LessonReader` does import) is respected.
+- **Five injections, each confirmed to bite**, restored from a scratchpad copy (never `git checkout
+  --`), with the injection's landing asserted in-script and the restore verified by **matching
+  sha256** on both touched files:
+  1. removed this run's own lesson-36 `Credit` chip → fails with the §3.0.3 message; counters moved
+     44→43 chips and 0→1 unexplained, proving the injection landed rather than the test just failing.
+  2. exclusion for `VIX` on lesson 5 (not in its prose) → fails (b).
+  3. lesson 29 both links and excludes `Credit` → fails (c).
+  4. reason `"skip"`, and an `"other-sense"` with no note → both fail (d).
+  5. **broke §17b's matcher so it matches nothing** → the corpus floor and the fixed-probe self-test
+     both fire. Worth recording what the broken run printed: `0 glossary-term uses … 0 unexplained`
+     — for an absence check, matching nothing is indistinguishable from a clean pass, which is why the
+     floor exists (§20/§22's lesson, and why item 57 carried a control in the first place).
+- **Live browser, per W-1** — built `dist/`, served it with `/usr/bin/python3 -m http.server 8791`,
+  `preview_start` with a plain `url`, unlocked through lesson 36 via `localStorage`
+  (`ecycles_seen_disclaimer`, `ecycles_completed_lessons`) and deep-linked to `#/lesson/36`.
+  Confirmed **in the rendered DOM**: exactly two chip rows on the lesson — `[Recession]` on §0 and
+  **`[Gross Domestic Product, Inflation, Credit]` on §1**, the section whose prose says "credit data";
+  clicking `Credit` sets `aria-expanded=true` and opens the shared disclosure panel with the **macro**
+  definition ("the most volatile part of the economy"), which is the sense the sentence needs; and
+  the Term Premium section (§2) renders **no** chip row, so the wrong-sense exclusion behaves as
+  designed. **Screenshots came back blank** — `computer` then errored with "The Browser pane is
+  currently hidden", which in an unattended run it is. Stating the specific failure rather than
+  asserting a capability limit from memory is what W-1 asks for; the DOM/text/interaction checks above
+  are the substantive verification and they are unaffected.
+
+**Adversarial self-check (step 5) — one real finding, fixed within the run.** Blindspot register: no
+Dalio reference, no advice-adjacent language (`check-blindspot.mjs` passes on all five languages), no
+child-facing kids framing, and the only date added is a "re-measured 2026-08-17" annotation in a code
+comment, not a §2.3 live-looking figure in a market-data content module. `DECISIONS.md`: nothing
+contradicted — the table is a `.js` content module, not JSON, and touches no state. Already-done items:
+§17b is a new direction, not a redo of 28 (which built the map) or 35 (which grew the glossary).
+**The finding was in my own wording**: a comment I wrote called lesson 36 "the only genuine §3.0.3 gap
+in all 40 lessons," which overstates — §17b can only see the **29 keys in glossary.js**, so jargon with
+no glossary entry is invisible to it. Reworded in both files, and the scope limit is now stated in
+§17b's header so "0 unexplained" cannot be read as "§3.0.3 is satisfied." That residual is filed as
+item 60 rather than left implied.
+
+**One stale claim fixed in passing (an entry for item 58's class).** `lessonTerms.js`'s header said
+"COVERAGE, measured 2026-08-16: 21 links across 10 lessons — 9 economy, 1 money", and then went on to
+explain a "lopsidedness" that no longer exists: the figure was written *earlier the same day* than the
+item-35 expansion listed directly beneath it, so it shipped already stale. Now 44 chips across 22
+lessons, and the sentence points at §17b's generated output instead of restating it. **The pattern is
+worth item 58's attention**: a "measured `<date>`" comment is *least* trustworthy when its date matches
+the change it sits above.
+
+**Item 18 remains the entire critical path to ending Phase 0** — unchanged by this run, and still
+blocked on the owner creating an analytics-provider account.
+
+**Next run should pick**: **item 58** (read `LAUNCH_PLAN.md` and `DECISIONS.md` end to end against the
+tree and list every claim that no longer holds, with file:line). It now has four concrete seed entries
+— the progress ring vs. bar, §3.1's single-chain IA, and this run's stale-coverage-comment pattern —
+and its bounded deliverable is a list, not a rewrite. The generalisable lesson from the last three runs
+should shape it: **items 55, 56 and 57 were each filed against a real §-clause and each got its
+numbers wrong**, because a measurement was taken without first subtracting what the code already says.
+Item 58 is a whole document of that risk, so measure a control on every claim before believing it.

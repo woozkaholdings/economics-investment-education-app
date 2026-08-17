@@ -13,7 +13,7 @@ import { lessons, TRACKS, lessonsByTrack } from "../src/content/lessons.js";
 import { lessonContent } from "../src/content/lessonContent.js";
 import { quizData } from "../src/content/quizData.js";
 import { glossary } from "../src/content/glossary.js";
-import { lessonTerms } from "../src/content/lessonTerms.js";
+import { deliberatelyUnlinked, lessonTerms } from "../src/content/lessonTerms.js";
 import { kidsContent } from "../src/content/kidsContent.js";
 import * as marketsContent from "../src/content/markets.js";
 import * as moneyVisualsContent from "../src/content/moneyVisuals.js";
@@ -1379,6 +1379,176 @@ if (keyedGroupsChecked < 4) {
   if (!/<GlossaryTerms[\s\S]{0,160}termsForSection\(/.test(reader)) {
     fail("LessonReader must render <GlossaryTerms> with termsForSection() (§3.0.3, backlog item 28)");
   }
+}
+
+// 17b. §3.0.3 COVERAGE — the other direction from §17 (backlog item 57).
+//
+//      §17 checks that the links that EXIST are still valid. It says nothing
+//      about a term used in prose with no link at all, which is the half
+//      §3.0.3 is actually about ("a term either gets defined where it appears
+//      or links to the glossary"). This section closes that.
+//
+//      Why it needs an exclusion table rather than just failing on a miss:
+//      most unlinked uses are CORRECT. Either the lesson defines the term
+//      itself (§3.0.3's first branch) or the prose means something else by the
+//      word — lesson 12's PMI is private mortgage insurance, lesson 36's
+//      "premium" is the term premium on long bonds. Those judgements lived in
+//      lessonTerms.js's header as prose, and that is exactly what failed:
+//      backlog item 57 was filed claiming 7 lessons and 11 occurrences of
+//      undefined jargon, and all 11 were exclusions the header named by
+//      lesson id. A grep cannot subtract a paragraph. So the paragraph became
+//      `deliberatelyUnlinked`, and this check requires every occurrence to be
+//      accounted for one way or the other:
+//
+//        (a) unaccounted-for use → FAIL. This is the §3.0.3 violation itself:
+//            a glossary term on screen with no chip and no written reason.
+//        (b) an exclusion whose term no longer appears in that lesson's
+//            English prose → FAIL. Mirrors §17's (d) in the other direction:
+//            a stale exemption silently grants cover it was never asked for,
+//            so the next real gap in that lesson reads as excluded.
+//        (c) an exclusion for a lesson that also LINKS the term → FAIL. The
+//            two tables contradict each other and only one can be right.
+//
+//      SCOPE LIMIT, stated so it is not mistaken for more than it is: this
+//      sweeps the 29 keys in glossary.js and nothing else. A jargon word with
+//      no glossary entry cannot be seen by it, so "0 unexplained" means every
+//      GLOSSARY TERM is accounted for — not that §3.0.3 is fully satisfied.
+//      Closing that residual means growing the glossary, which is item 35's
+//      axis, not this one's.
+//
+//      The matcher is §17's, deliberately: if the two disagree, one of them is
+//      wrong about what "the section mentions this term" means, and a shared
+//      one cannot drift. The corpus floor below is why an empty parse cannot
+//      read as a pass — for an absence check, matching nothing looks identical
+//      to having nothing to report (§20/§22's lesson, and the reason item 57's
+//      own measurement carried a control).
+{
+  const escapeRe = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const mentions = (haystack, name) =>
+    new RegExp(`(?<![A-Za-z0-9])${escapeRe(name)}s?(?![A-Za-z0-9])`, "i").test(haystack);
+  // A glossary key and its English short name are both acceptable surface
+  // forms, same as §17 ("QE" is spelled out as "quantitative easing").
+  const namesFor = (key) => [key, glossary[key].en.s].filter(Boolean);
+  const mentionedIn = (entry, key) =>
+    entry.sections.some((s) => {
+      const hay = `${s.heading.en}\n${s.body.en}`;
+      return namesFor(key).some((n) => mentions(hay, n));
+    });
+
+  let linkCount = 0;
+  for (const byIndex of Object.values(lessonTerms)) {
+    for (const terms of Object.values(byIndex)) linkCount += terms.length;
+  }
+
+  let occurrences = 0;
+  let unexplained = 0;
+  let excluded = 0;
+  const reasons = { "defined-here": 0, "other-sense": 0 };
+
+  // (b) and (c): the exclusion table itself must stay true.
+  for (const [idKey, byTerm] of Object.entries(deliberatelyUnlinked)) {
+    const id = Number(idKey);
+    const entry = lessonContent[id];
+    if (!entry) {
+      fail(`deliberatelyUnlinked[${id}]: no lesson with that id in lessonContent`);
+      continue;
+    }
+    const linkedHere = new Set(Object.values(lessonTerms[id] ?? {}).flat());
+    for (const [term, reason] of Object.entries(byTerm)) {
+      const path = `deliberatelyUnlinked[${id}]["${term}"]`;
+      if (!glossary[term]) {
+        fail(`${path}: "${term}" is not a key in glossary.js`);
+        continue;
+      }
+      const code = String(reason).split(":")[0].trim();
+      if (code !== "defined-here" && code !== "other-sense") {
+        fail(
+          `${path}: reason must start with "defined-here" or "other-sense" (got ${JSON.stringify(reason)}). ` +
+            `Those are §3.0.3's two legitimate grounds for no chip — anything else is an unreviewed skip.`,
+        );
+        continue;
+      }
+      if (code === "other-sense" && !String(reason).includes(":")) {
+        fail(
+          `${path}: an "other-sense" exclusion must say what the prose means instead ` +
+            `("other-sense: <meaning>") — it is a judgement call, and the note is the whole record of it.`,
+        );
+      }
+      reasons[code]++;
+      excluded++;
+      if (linkedHere.has(term)) {
+        fail(
+          `${path}: lesson ${id} both links "${term}" and excludes it — lessonTerms and ` +
+            `deliberatelyUnlinked contradict each other, and only one of them can be right.`,
+        );
+      }
+      if (!mentionedIn(entry, term)) {
+        fail(
+          `${path}: lesson ${id}'s English text no longer mentions "${term}" ` +
+            `(looked for ${namesFor(term).map((n) => `"${n}"`).join(" or ")}). The prose this exclusion was ` +
+            `written for is gone, so the exclusion now covers nothing and hides the next real gap here. ` +
+            `Delete the entry.`,
+        );
+      }
+    }
+  }
+
+  // (a) the coverage sweep: every glossary term used anywhere must be linked
+  //     in that lesson or excluded for it.
+  for (const lesson of lessons) {
+    const entry = lessonContent[lesson.id];
+    if (!entry) continue;
+    const linkedHere = new Set(Object.values(lessonTerms[lesson.id] ?? {}).flat());
+    const excusedHere = deliberatelyUnlinked[lesson.id] ?? {};
+    for (const term of Object.keys(glossary)) {
+      if (!mentionedIn(entry, term)) continue;
+      occurrences++;
+      if (linkedHere.has(term) || term in excusedHere) continue;
+      unexplained++;
+      fail(
+        `§3.0.3: lesson ${lesson.id} ("${lesson.title.en}") uses the glossary term "${term}" in its ` +
+          `English text with no glossary chip and no entry in deliberatelyUnlinked. Either link it in ` +
+          `lessonTerms[${lesson.id}] (the section where it is first used), or — if the lesson defines it ` +
+          `itself or means something else by the word — add it to deliberatelyUnlinked[${lesson.id}] with ` +
+          `a reason. See src/content/lessonTerms.js's curation rules.`,
+      );
+    }
+  }
+
+  // Corpus floor. Both tables are hand-maintained and the sweep is an absence
+  // check, so a matcher that silently stops matching reports "0 unexplained"
+  // — a pass. These bounds are the current corpus with room to move; they are
+  // meant to catch a broken instrument, not to pin the content.
+  if (occurrences < 40 || linkCount < 25 || excluded < 20) {
+    fail(
+      `§17b: scanned ${occurrences} glossary-term uses across ${lessons.length} lessons ` +
+        `(${linkCount} linked, ${excluded} excluded) — expected at least 40, 25 and 20. The matcher is ` +
+        `probably matching nothing rather than the terms having left the content, and for a coverage ` +
+        `check that reads as a clean pass.`,
+    );
+  }
+  // Self-test the shared matcher on a fixed probe, for the same reason §26
+  // does: the anchoring is the part that has actually been wrong before (a
+  // plain substring test accepted "Vesting" on six lessons that say
+  // "investing"), and a corpus floor would not notice.
+  if (
+    !mentions("weighing it alongside credit data", "Credit") ||
+    mentions("this lesson is about investing", "Vesting") ||
+    !mentions("low-cost index funds", "Index Fund")
+  ) {
+    fail(
+      `§17b: the term matcher is broken on its probe — it must match "credit" as a word, must NOT ` +
+        `match "Vesting" inside "investing", and must accept a trailing plural. Without this the ` +
+        `coverage sweep can match nothing and still pass.`,
+    );
+  }
+
+  console.log(
+    `  §17b §3.0.3 coverage: ${occurrences} glossary-term uses across ${lessons.length} lessons — ` +
+      `${linkCount} chips on ${Object.keys(lessonTerms).length} lessons, ${excluded} deliberately ` +
+      `unlinked (${reasons["defined-here"]} defined-here, ${reasons["other-sense"]} other-sense), ` +
+      `${unexplained} unexplained.`,
+  );
 }
 
 // 18. src/lib/deepLink.js — §5's "each lesson a shareable URL" (backlog item
