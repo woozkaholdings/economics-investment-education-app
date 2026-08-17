@@ -429,7 +429,55 @@ for the history. No open P1/P2 items.
     - **Honest priority: low.** Lower than item 63 was, because item 63 had a rendered failure and this
       does not.
 
-67. **[Content — the step-2 decision item 66 said to make once, with the number in hand. Filed
+69. **[Content/i18n — filed 2026-08-17 by the run that fixed item 67's unblocked half, from a gap that
+    run deliberately left open rather than papering over.] The `realized gains` rewrite landed in `en`
+    only, and nothing measures the other four languages.** The jargon corpus is `en`-only (item 66's
+    own caveat (c)), so `es`/`ko`/`zh`/`ja` glossary definitions are unmeasured by every instrument
+    this repo has — the same "unreachable, not merely unchecked" shape that made `realized gains` worth
+    finding.
+    - **What was actually looked at, so the next run doesn't redo it.** All four translations of the
+      `Brokerage Account` clause were read this run. They are **already more descriptive than the
+      English was**: `ko` `실현된 매매 차익` ("realized trading profit"), `zh` `已实现的收益`, `ja`
+      `実現した利益` are compositional descriptions rather than bare terms of art. **`es`
+      `ganancias realizadas` is the one direct calque** and is the strongest candidate for the same
+      rewrite treatment.
+    - **Why it wasn't just done.** Item 67's measured finding was in the `en` corpus; changing four
+      translations on my own reading would be an unmeasured judgement in four languages at once —
+      exactly the drift the "measure first, fix separately" rule exists to stop. **Honest priority:
+      low**, and lower than it looks: this is one clause, not a survey.
+    - **The bigger version of this item, if anyone wants it:** point `jargon-candidates.mjs` at a
+      non-`en` locale. That is a real instrument extension (the acronym and capitalised-phrase rules
+      are English-shaped and would need rethinking per language), not a config flag.
+
+68. **[Instrument — filed 2026-08-17 by the run that expanded `NBER`, because its own fix did not move
+    the number and that is worth recording rather than hiding.] The acronym rule cannot tell "bare
+    acronym" from "acronym expanded right next to it", so an in-place fix does not clear the report.**
+    `jargon-candidates.mjs` matches `\b([A-Z]{2,6}|\d{3}\(k\))\b` and records the token; it has no
+    notion of a gloss. After `NBER` → `National Bureau of Economic Research (NBER)`, the reader's
+    problem is solved and **the report is unchanged** — `NBER` is still listed, and the expansion adds
+    two *new* fragment candidates (`National Bureau`, `Economic Research`).
+    - **Why this was not mistaken for a failed content fix, and the trap it sets for the next run.**
+      `APR` is absent from the `economy` report **not** because item 64 taught the instrument anything,
+      but because it falls in that corpus's 269 lower-reach suppressed candidates. Glossary mode uses
+      threshold 1 by design (item 66), so nothing is suppressed there. **A future run that "fixes" an
+      acronym in the glossary and then checks the report will see no change and may conclude its edit
+      failed.** It did not.
+    - **Scope if built:** suppress an acronym whose expansion appears adjacent in the same doc — i.e.
+      treat `Expanded Form (ACR)` and `the expanded form — the ACR —` (item 64's shape) as
+      self-defining. Must ship with a control proving a *bare* acronym is still caught, per the
+      standing injection rule. **Honest priority: low.** It changes a report's noise floor, not a
+      rendered surface — and the noise is already the documented normal condition of this mode.
+
+67. **🟡 TWO-THIRDS DONE 2026-08-17 (scheduled dev-agent) — the two terms that needed no new key are
+    fixed and rendered-verified; only the `Dividend` half is still blocked.** `realized gains` and
+    `gov bond` are gone from `glossary.js` and from the report (56 → 55 candidates, control still
+    14); `NBER` is expanded in `en`/`es`/`ja`. **The blocked remainder is exactly one thing:**
+    `dividends` still has no `Dividend` entry, because adding a key moves `LAUNCH_PLAN.md` §1's
+    gated "32 glossary terms" and that file still has owner edits in flight. See the run-log entry
+    of this date; the per-term detail below is kept because the reasoning still applies.
+    <details><summary>Original filing (2026-08-17), with per-term status</summary>
+
+    **[Content — the step-2 decision item 66 said to make once, with the number in hand. Filed
     2026-08-17 by the run that measured it. BLOCKED the same way item 64's `Dividend` is.]
     Three of the 56 glossary-definition candidates are real; the rest is noise, and that is the
     finding.** The measurement (below, and reproducible via `npm run jargon -- glossary`) returned 56
@@ -446,13 +494,23 @@ for the history. No open P1/P2 items.
       **This one is the argument for the whole item:** it occurs in *no lesson at all* (proved — the
       lesson corpus returns 0 for it, the glossary corpus 1), so it was unreachable by every
       instrument the repo had until now. Not merely unchipped: unmeasurable.
+      **✅ FIXED 2026-08-17 by rewrite, not by an entry** — "dividends and **any profit made when an
+      investment is sold** are normally taxed in the year they occur." The clause no longer needs the
+      term, so no key was added and no gated figure moved. `en` only; see item 69 for the other four.
     - **`NBER`** (`Recession`.`en.f`) — an unexpanded acronym, the exact shape item 64 fixed for APR.
       Weaker than the other two: the sentence around it ("US recessions are dated by the NBER using
       broader criteria") does most of the work, so this may be a one-word expansion rather than an
       entry.
+      **✅ FIXED 2026-08-17 in place** — "dated by the **National Bureau of Economic Research (NBER)**".
+      Done in `en`, `es` and `ja`; **`ko` and `zh` already expanded it** (`NBER(전미경제연구소)`,
+      `NBER（美国国家经济研究局）`), so on this one point the Beta translations were **ahead of the
+      English**, which is worth not re-deriving. **The extractor still reports `NBER`** — expected, not
+      a failed fix: see item 68.
     - **Also worth one line, not an entry:** `gov bond` / `gov bond rates` (`Credit Spread`,
       `Yield Curve`) is an *abbreviation* — "gov" — in learner-facing copy, which is a plain-language
       question (the real product definition's bar), not an undefined-jargon one.
+      **✅ FIXED 2026-08-17** — both now read "government bond". Note both entries' `ex` strings already
+      said "government bonds" in full, so the abbreviation was inconsistent *within its own entry*.
     - **Why nothing was fixed in the same run, and it is not timidity.** Adding any glossary key moves
       `LAUNCH_PLAN.md` §1's generated "32 glossary terms", which `npm test` gates — and that file has
       owner edits in flight. This is the identical blocker that stopped item 64's `Dividend`, proved
@@ -462,6 +520,11 @@ for the history. No open P1/P2 items.
       (entry, or rewrite the clause to not need one — the cheaper option and probably the right one),
       and expand `NBER`/`gov` in place. **Honest priority: low-medium.** Three terms on a surface a
       reader reaches only by tapping a chip.
+      > **Resolved 2026-08-17:** the rewrite *was* the right call — it cost one clause and moved no
+      > gated figure, where an entry would have cost §17b chip decisions in every lesson using the
+      > term. **All that remains of this item is `Dividend`.**
+
+    </details>
 
 66. **✅ DONE 2026-08-17 (scheduled dev-agent) — measured, and the instrument is permanent.**
     `npm run jargon -- glossary` now points the existing extractor at `glossary.js`'s own `en.f`/`en.ex`
@@ -7228,3 +7291,97 @@ expansions**, which add no glossary key and so move no gated figure, or **item 6
 `--graph-amber`, still honestly low — nothing renders below the bar). **Item 18 remains the entire
 critical path to ending Phase 0 and is blocked on an owner action: an analytics provider account and
 key.**
+
+### 2026-08-17 — Item 67's unblocked two-thirds: three terms fixed without adding a key, and a report that correctly did not move
+
+**Orient.** `git status`: the same twelve modified files (`LAUNCH_PLAN.md`, `check-blindspot.mjs`,
+`App.jsx`, `ui.jsx`, all five locales, `Learn/Practice/Reference.jsx`) plus untracked `UIUX/` — **owner
+work, still in flight**, corroborated by `UIUX/`'s Mobbin/Duolingo captures dated 08-14→08-17 and by the
+two previous entries reaching the same conclusion. Nothing of theirs touched, stashed or committed.
+`git log --oneline -1` = `0c8317f`, matching the reported HEAD — no concurrent session had landed
+anything. The previous run pre-decided this exact case: **"if the redesign is still in flight, do not
+queue anything touching `LAUNCH_PLAN.md` — the cheapest unblocked work is item 67's `NBER`/`gov`
+expansions."** `LAUNCH_PLAN.md` is still dirty, so item 64's `Dividend` stays parked and **this run took
+item 67's unblocked half.** Baseline `npm test` captured **on the dirty tree before any edit**: exit 0.
+
+**One file changed: `src/content/glossary.js`, four lines.**
+
+**What shipped — three terms, zero new glossary keys.** The no-new-key constraint is the whole design of
+this run: adding a key moves `LAUNCH_PLAN.md` §1's generated "32 glossary terms", which `npm test` gates,
+and that file has owner edits.
+
+1. **`realized gains` → rewritten away** (`Brokerage Account`.`en.f`): "dividends and **any profit made
+   when an investment is sold** are normally taxed in the year they occur." Item 67 offered "entry, or
+   rewrite the clause" and guessed rewrite was right; it was — an entry would have obliged §17b chip
+   decisions in every lesson using the term (item 64's Stock/Bond half was 15 lessons of them), the
+   rewrite cost one clause.
+2. **`NBER` → expanded in place** (`Recession`): "dated by the **National Bureau of Economic Research
+   (NBER)**", in `en`, `es` and `ja`. **`ko` and `zh` already had the expansion** — on this one point the
+   Beta translations were ahead of the English.
+3. **`gov bond` → `government bond`** (`Yield Curve`, `Credit Spread`). Both entries' `ex` strings
+   already said "government bonds" in full, so the abbreviation contradicted its own entry.
+
+**The measurement moved the way it should, and one part of it deliberately did not.** `npm run jargon --
+glossary`: **56 → 55 reported**, `realized gains` and `gov bond` **gone**, control still **14 known terms
+re-found** (the recorded regression number, unchanged). `NBER` **is still reported, and that is expected**
+— the acronym rule matches the token and has no notion of a gloss, so an in-place expansion cannot clear
+it. **I checked the obvious wrong explanation rather than assuming:** `APR` is absent from the `economy`
+report not because item 64 taught the instrument anything, but because it sits among that corpus's 269
+lower-reach suppressed candidates, while glossary mode uses threshold 1 by design. Filed as **item 68**,
+including the trap it sets for a future run (fix an acronym, see no change, wrongly conclude the edit
+failed). The expansion also added two fragment candidates (`National Bureau`, `Economic Research`) and
+`gov bond` was replaced by `government bond` — noise-floor churn, the documented normal condition here.
+
+**Verification.**
+- **`npm test` exit 0; `npm run build` exit 0** (983 ms).
+- **The gated figure did not move**: `refresh-readiness.mjs --check` exit 0, still `40 lessons / 136,051
+  en chars / 144 min`, identical to baseline — so **`--write` was correctly not run and `LAUNCH_PLAN.md`
+  was never touched.** This is the proof that the no-new-key constraint actually held, not just an
+  intention.
+- **All four jargon controls at their recorded baselines**: glossary 14, money 12, economy 9, all 19.
+- **Injection, per the standing rule — the removal is proved mine, not incidental.** Backed up to
+  `scratchpad/glossary.item67.backup` (`shasum bb6e9dd8…`), restored the old `realized gains` wording via
+  `perl -i` (`grep -c` = 1, so the injection demonstrably landed), re-ran the extractor → it reported
+  **`realized gains  1 entries  1x  entries Brokerage Account`**. Restored **from the scratchpad copy,
+  never `git checkout --`** (which here would have destroyed owner work), `shasum` re-verified identical.
+- **Live browser, per priority-block W-1** — the technique from the Environment note, not an assumed
+  limit: `npm run build`, `python3 -m http.server 8799` on `dist/` (gitignored, so building the owner's
+  in-flight tree is safe), `preview_start` with a plain `url` → `navOk: true`. The app booted in Japanese
+  from prior session state; set `ecycles_lang=en`, opened Reference → Glossary, and asserted **seven
+  conditions in the live DOM**: all four new strings present, all three old strings absent. All seven
+  true, plus a screenshot of the rendered `Recession` entry showing the expansion.
+- **Owner's tree provably untouched:** `git diff --stat` went from 12 files/540+/78− on arrival to 13
+  files/544+/82− — a delta of **exactly +4/−4, my four lines in `glossary.js`**.
+
+**Adversarial self-check (step 5) — it found one thing, and it is recorded rather than quietly dropped.**
+**Blindspot register:** grepped my own diff's added lines independently of `check-blindspot.mjs` (which
+has owner edits, so I neither ran it standalone nor lean on it): no person's name or Dalio reference
+(§10.2), no advice verbs (§10.1 — the tax clause states mechanics and was already there; I replaced a
+term of art, added no claim), no hardcoded date or live figure (§2.3), no child-facing framing (§10.3).
+`npm test` does run the owner's edited copy of that script and passed, which is evidence about their
+tree, not mine — stated rather than borrowed. **DECISIONS.md:** no conflict — no storage, routing, build
+or content-module-shape change; `.js`-not-JSON, localStorage-only and Vite-not-Expo untouched.
+**Already-done item:** no — item 67 was filed yesterday and explicitly named as this run's pick under
+exactly this blocking condition; item 64's `Dividend` was left alone. **My own verification claims:** an
+independent reviewer re-running `npm test`, `npm run build`, `refresh-readiness.mjs --check`, the four
+jargon modes and the injection gets these results. **What the check actually caught:** my first reading
+of the still-reported `NBER` as a possible failed fix — chasing it down is what produced item 68 and the
+`APR` correction above. **Three limits stated, not buried:** (a) the rewrite is `en` only and the other
+four languages remain unmeasured by any instrument — filed as **item 69**, with the four translations
+already read so the next run needn't redo it (`es` `ganancias realizadas` is the one direct calque);
+(b) "55 of which most are noise" is still my judgement, not a measurement; (c) `npm run jargon` remains a
+report, not part of `npm test`, so a regression here is silent until someone runs it.
+
+**A durability risk worth one line.** Item 64's finished `Dividend` work is described in the backlog as
+sitting in `scratchpad/` — it does still exist, but in **another session's `/private/tmp` scratchpad**
+(`…/48dad761-…/scratchpad/`), which is not durable. Its patch touches only `glossary.js` and none of the
+four entries I edited, so **it still applies cleanly after this run** — but if `/private/tmp` is cleared
+before `LAUNCH_PLAN.md` goes clean, that work is gone and must be redone from the item-64 log entry.
+
+**Next run.** If `LAUNCH_PLAN.md` is **clean**: ship `Dividend` from the scratchpad path above (copy-in +
+`npm run readiness -- --write` + log entry; every judgement already made) — this closes items 64 and 67
+together. If the redesign is **still in flight**, `LAUNCH_PLAN.md`-touching work stays blocked and the
+cheapest unblocked picks are **item 69**'s `es` calque (one clause) or **item 68**'s gloss-aware acronym
+rule; **item 65** (light `--graph-amber`) remains filed and honestly low. **Item 18 is still the entire
+critical path to ending Phase 0 and is still blocked on an owner action: an analytics provider account
+and key.**
