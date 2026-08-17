@@ -443,9 +443,22 @@ for the history. No open P1/P2 items.
 64. **[Content — the three candidates item 60's run measured and deliberately did NOT add, filed
     2026-08-17 by the run that closed it. Each is a decision, and the reason they are together is that
     "add a glossary entry" is the same decision three times, not that they should be batched.]**
-    Run `npm run jargon` to reproduce every figure below.
-    - **`Stock` and `Bond` have no glossary entry, and they are the highest-reach absence in the app:
-      stocks in **14 lessons / 47 uses**, bonds in **10 / 44**, defined only in money lesson 5 ("Stocks,
+    Run `npm run jargon` to reproduce every figure below. **The Stock/Bond half — "the real item
+    here" — is ✅ DONE 2026-08-17 (scheduled dev-agent); Dividend and APR remain open below.**
+    - **✅ DONE 2026-08-17. Both keys added, 21 chips across 15 lessons, 2 exclusions on lesson 5,
+      `0 unexplained` held. For the eighth item running the premise was wrong somewhere — and this
+      time the wrong number was the one that had been used to defer the work: the SCOPE.** The item
+      says "every one of those 24 lessons", which is `14 + 10` — but **7 lessons use both words**, so
+      the real union is **16 lessons**, one of which (money 5) is the definition lesson. The job was
+      15 lessons of chip decisions, not 24 of them, and the estimate that made it look like "a
+      content-review job of a different size" was double-counting. The per-term figures are also
+      slightly off, for a reason worth keeping: **`npm run jargon` scans heading + body + takeaway +
+      thinkAbout, while §17b scans heading + body only** (`scripts/jargon-candidates.mjs:72-76` vs.
+      `check-data.mjs`'s `mentionedIn`), so the two instruments measure different surfaces —
+      §17b's are stocks **13 lessons / 43 uses**, bonds **10 / 41**. See the run log entry of this
+      date. *Original text:* **`Stock` and `Bond` have no glossary entry, and they are the
+      highest-reach absence in the app: stocks in **14 lessons / 47 uses**, bonds in **10 / 44**,
+      defined only in money lesson 5 ("Stocks,
       Bonds & Diversification").** Every use in lessons 6, 13, 25, 28 and across the economy track meets
       a reader who may never have opened lesson 5 — tracks unlock independently, so an economy-first
       reader reaches lesson 38's stocks-and-bonds discussion having been taught neither.
@@ -453,6 +466,17 @@ for the history. No open P1/P2 items.
       one* of those 24 lessons under §17b, which is a content-review job of a different size than the
       one-lesson fix it shipped, and doing it badly means 24 hasty exclusions that permanently grant
       cover. **This is the real item here; the other two are small.**
+    > **Two residuals this run measured and left, so they are not re-derived.**
+    > **(a) §17b cannot see a takeaway or a thinkAbout.** Chips render per *section*
+    > (`LessonReader.jsx` calls `termsForSection`), so a term used only in a lesson's closing lines has
+    > nowhere to hang one — and §17b, sharing that surface, neither obliges nor forbids anything there.
+    > Exactly one lesson is in that position today: **money 11's thinkAbout says "stock-picking skill"**
+    > and its body never says "stock". Measured, not suspected; disposition **no action** — the phrase
+    > points at Lesson 5 in the same sentence. Filed here as the honest statement of what "0
+    > unexplained" now covers. **(b) `npm run jargon` now reports a phantom candidate `stocks Bonds`
+    > (4 lessons)** — an extractor artifact from the prose "stocks, bonds, or funds", whose two halves
+    > are both glossary keys as of this run. The control (`buckets disjoint`) cannot catch it because
+    > the pair matches neither key. Cosmetic, report-only, one script: a good small pick.
     - **`Dividend`: 3 uses, lessons 3 and 6, never defined.** Lesson 3's use is nearly self-defining in
       context ("automatically buying more of the same investment with any interest or dividends earned,
       rather than paying it out as cash"); lesson 6's is not ("owes tax on the dividends and gains their
@@ -6593,3 +6617,106 @@ suspected. It is genuinely bigger than this run's fix: two keys oblige a chip or
 24 lessons. For a smaller pick, **item 62's F6** (the duplicate "Visual system" §-titles) or **item 64's
 APR line** (one acronym, expand in place). **Item 18 remains the entire critical path to ending Phase 0
 and is blocked on an owner action: an analytics provider account and key.**
+
+### 2026-08-17 (scheduled dev-agent) — Item 64's Stock/Bond half: the highest-reach undefined words in the app, and a scope estimate that was double-counting
+
+**Picked** the item the previous entry recommended, and the one item 60's run measured and deliberately
+deferred: **`Stock` and `Bond` had no glossary entry.** Both are defined in exactly one place in 40
+lessons — money lesson 5, "Stocks, Bonds & Diversification" — while the economy track uses them from
+lesson 32 onward. `src/content/lessons.js` unlocks the two tracks **independently**, so an economy-first
+reader reaches lesson 37's bond market and lesson 38's asset table having been taught neither word. That
+is the §3.0.3 violation, and it was the largest one left.
+
+**Shipped.** Two `glossary.js` keys in all five languages, and the §17b obligation they create,
+discharged in full:
+
+- **21 new chips across 15 lessons** — money 2, 3, 6, 13, 25, 28; economy 29, 32, 33, 34, 35, 36, 37,
+  38, 39. Lesson 37 and lesson 39 had no chip at all before this run; 39's is the one term its body uses
+  without defining, next to the eight it defines inline and excludes.
+- **2 exclusions on money 5** (`Stock`/`Bond`: `defined-here`), curation rule 2 — the lesson *is* their
+  definition, which is why it is the only place they were defined and therefore why they became entries.
+- `npm test` prints **`102 glossary-term uses across 40 lessons — 66 chips on 25 lessons, 36
+  deliberately unlinked (27 defined-here, 9 other-sense), 0 unexplained`** (was 79 / 45 / 34).
+
+**One curation decision worth stating, because the alternative was cheaper and wrong.** 8 of the 15
+chipped lessons are money-track lessons *after* lesson 5, where a sequential reader has already met the
+definition. A "defined-earlier" exclusion code would have covered them in two lines. It was rejected:
+that code grants cover from **unlock order**, and unlock order is precisely what does not hold here —
+lesson 5 is not behind an economy-track reader at all. The reasoning is in `lessonTerms.js` at the money
+block rather than only here.
+
+**Verified in a live browser** (Environment note's technique: `npm run build`, `python3 -m http.server
+8871` on `dist/`, `preview_start` with a plain `url`, `mobile` preset before measuring; `localStorage`
+seeded to unlock the economy track):
+
+- **Money lesson 6 §0 renders four chips** — `["Vesting", "Brokerage Account", "Stock", "Bond"]` — which
+  wrap to **2 rows** at 375 px (`77, 155, 65, 61` px), not a single overflowing line. Clicking `Stock`
+  flips `aria-expanded` `false` → `true` and fills the shared panel (343×253 px) with the definition and
+  the example sentence, read back verbatim from the DOM. Screenshot taken.
+- **Money lesson 5 renders no chips at all** while its text says "stock" — the exclusion behaving as
+  intended, checked on screen rather than inferred from the table.
+- **Economy lesson 37 §0 renders `["Stock", "Bond"]`** — the exact reader this item exists for: a lesson
+  that had never carried a chip, in the track that never taught either word.
+- **The same section in Korean renders `["주식", "채권"]`** and the panel returns the Korean definition
+  and example verbatim, so the non-English render is proven, not assumed.
+- **Reference → Glossary, searching "bond"** returns the new entry alone with its definition and example.
+- Console: **0 errors**.
+
+**Verification.** `npm test` — **PASS, exit 0**, 0 failures, 1 pre-existing unrelated warning
+(translation-review coverage), same as the previous run. It failed first, correctly:
+`refresh-readiness.mjs --check` caught `LAUNCH_PLAN.md` §1's asset sentence at "30 glossary terms" and
+named the fix; `npm run readiness -- --write` regenerated it to 32 — item 55's generator doing its job
+for the second content change in a row. `npm run build` — exit 0, 0.92 s. `npm run jargon` — exit 0,
+control re-finds 11 known glossary terms, buckets disjoint.
+
+**What the doing changed about the item's own numbers — and it is the number that had been used to defer
+the work.** Item 64 said the two keys "oblige a chip or a written exclusion in *every one of those 24
+lessons*". 24 is `14 + 10`. **Seven lessons use both words** (5, 6, 13, 25, 35, 37, 38), so the real
+union is **16 lessons**, one of which is the definition lesson — 15 lessons of chip decisions. The
+estimate that made this look like "a content-review job of a different size" was double-counting its own
+two bullets. The per-term counts differ too, for a reason that is not an error in either instrument:
+**`npm run jargon` scans heading + body + takeaway + thinkAbout; §17b scans heading + body only**
+(`jargon-candidates.mjs:72-76` vs. `check-data.mjs`'s `mentionedIn`). On §17b's surface the figures are
+stocks **13 lessons / 43 uses**, bonds **10 / 41**.
+
+**Two residuals measured and left**, written into item 64 so they are not re-derived: (a) a term used
+only in a **takeaway or thinkAbout** is invisible to §17b and has no section to hang a chip on — exactly
+one lesson is in that position (money 11's "stock-picking skill"), disposition no action; (b) `npm run
+jargon` now reports a phantom candidate **`stocks Bonds`**, an extractor artifact from "stocks, bonds,
+or funds" whose two halves are now both keys, which the `buckets disjoint` control cannot catch.
+
+**Adversarial self-check (step 5).** **Blindspot register:** §10.1 is the live one — this adds
+learner-facing copy defining two investment instruments, which is the most advice-adjacent surface in
+the app. Both definitions state what the instrument *is* and how it behaves (a shareholder is a
+part-owner whose claim ranks behind lenders; a bondholder is owed fixed payments and the price moves
+inversely to rates) and neither says which to hold, which is safer, or what to do — the same line lesson
+5 already draws ("Neither is inherently 'better'"). `check-blindspot.mjs` green on all seven checks
+including the per-language advice patterns and the 7-surface disclaimer guard. §10.2: no person named.
+§10.3: kids content untouched. §2.3: no dates and no market figures in the new copy. **DECISIONS.md
+conflict:** none — content stays a `.js` module, no storage/routing/build change, and the relevant entry
+("In-lesson glossary links are a curated map, not an automatic prose match") is what this run *followed*
+rather than contradicted: every one of the 21 chips is a hand-checked same-sense use, and the one
+judgement the automatic reading would have gotten wrong is money 5, which is excluded, not chipped. The
+minutes-model entry is also unaffected — it states that optional glossary chips are not counted, so 21
+new chips do not move the 144-minute figure. **Already-done backlog item:** item 64's Stock/Bond bullet
+was explicitly open and was the previous entry's recommended pick. It shares an axis with items 35 and
+60 (all three add glossary entries) and the distinction is the one item 60 itself drew: 35 grepped money
+lessons for jargon near the glossary's existing neighbourhood, 60 ranked by reach *within* the money
+track, and this is the cross-track pair 60 measured and deferred by name. **Own verification claims:**
+an independent reviewer re-running `npm test`, `npm run build` and `npm run jargon` gets these results,
+and the live checks reproduce via the Environment note. Three caveats stated rather than buried — (a)
+**which uses are "the same sense" is judgement**: lesson 33's "the stock market is roaring" and lesson
+39's "turbulence investors expect in the stock market" are the market rather than the instrument, and a
+reviewer could defensibly call those ordinary English and drop two chips; the argument for keeping them
+is that the market is named for the thing, and a chip is dismissible where a missing definition is not;
+(b) the five-language definitions are AI-written under the standing machine-translation decision and are
+outside `translation-review-ledger.json`, which tracks lesson content only — recorded, not assumed; (c)
+**"0 unexplained" still means every *glossary term* is accounted for, not that §3.0.3 is satisfied** —
+the two residuals above are the honest edge of it.
+
+**Next run should pick item 62's F6** — `LAUNCH_PLAN.md` §3.1.1 and §3.4 are both titled "Visual system"
+and encode opposite emphases on per-lesson colour, in a document whose section numbers are load-bearing
+cross-references; it needs a decision (which one is current), not an edit. Smaller alternatives: **item
+64's APR line** (one acronym, expand in place) or **this run's residual (b)**, the `stocks Bonds`
+phantom candidate in `jargon-candidates.mjs`. **Item 18 remains the entire critical path to ending Phase
+0 and is blocked on an owner action: an analytics provider account and key.**

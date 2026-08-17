@@ -39,9 +39,9 @@
 //      whole lesson is the definition, so §3.0.3's first branch already holds.
 //      That is why Credit carries no chip on lesson 30, Productivity Growth
 //      none on 31, Deleveraging none on 34, Yield Curve none on 36, QE/QT none
-//      on 37, Inflation none on money 9, and why lesson 39 (Reading Economic
-//      Indicators, which defines GDP/CPI/PMI/VIX/credit spreads inline as its
-//      entire body) carries none at all.
+//      on 37, Inflation none on money 9, Stock/Bond none on money 5, and why
+//      lesson 39 (Reading Economic Indicators, which defines GDP/CPI/PMI/VIX/
+//      credit spreads inline as its entire body) carries none at all.
 //   3. Once per lesson, on first use. A term is tagged in the earliest section
 //      that uses it, never repeated in later sections of the same lesson.
 //   4. Literally present. The term's English name must actually appear in that
@@ -78,34 +78,41 @@ export const lessonTerms = {
   // Compound Interest none on 3. Two of the twelve new terms (Expense Ratio,
   // Deductible) are glossary-only: the single lesson each appears in is the
   // lesson that defines it, so a chip there would be redundant.
-  2: { 2: ["Premium"] },
-  3: { 2: ["Index Fund"] },
+  // Stock/Bond chips (item 64, 2026-08-17) sit on every same-sense use outside
+  // lesson 5, INCLUDING the money lessons after 5 that a sequential reader has
+  // already been taught. The alternative — a "defined-earlier" exclusion —
+  // would grant cover from unlock order, and unlock order is exactly what does
+  // not hold here: the two tracks unlock independently, so lesson 5 is not
+  // behind an economy-track reader at all. See AGENT_LOG.md item 64.
+  2: { 1: ["Stock"], 2: ["Premium"] },
+  3: { 2: ["Index Fund", "Stock"] },
   // 6 §0 contrasts "an ordinary brokerage account" with a workplace 401(k)
   // seven lessons before 13 defines what a brokerage account is — the
   // forward-reference shape item 60 found, and the reason Brokerage Account
   // became a glossary entry rather than being left to lesson 13.
-  6: { 0: ["Vesting", "Brokerage Account"] },
+  6: { 0: ["Vesting", "Brokerage Account", "Stock", "Bond"] },
   7: { 1: ["401(k)", "IRA"] },
   9: { 0: ["Purchasing Power"] },
   11: { 0: ["Diversification", "Index Fund"] },
   12: { 1: ["Principal"] },
-  13: { 0: ["401(k)", "IRA"], 1: ["Diversification"] },
+  13: { 0: ["401(k)", "IRA", "Stock", "Bond"], 1: ["Diversification"] },
   14: { 1: ["401(k)", "IRA"] },
   17: { 1: ["Emergency Fund"] },
   18: { 0: ["Compound Interest"] },
   // 25 "Does This Money Need to Be There Tomorrow, or in Thirty Years?" uses
   // macro inflation as the reason a savings account loses ground over decades.
-  25: { 0: ["Inflation"], 1: ["Emergency Fund", "Purchasing Power"] },
+  25: { 0: ["Inflation", "Stock", "Bond"], 1: ["Emergency Fund", "Purchasing Power"] },
   26: { 1: ["Emergency Fund"] },
+  28: { 0: ["Stock"] },
 
   // ── Economy track ────────────────────────────────────────────────────────
   // 29 introduces credit a full lesson before 30 teaches it.
-  29: { 0: ["Credit"] },
+  29: { 0: ["Credit"], 1: ["Stock"] },
   31: { 0: ["Credit"] },
-  32: { 0: ["Inflation", "Credit"], 1: ["Deflation", "Recession"], 2: ["QE"] },
-  33: { 0: ["Bubble"], 1: ["Deleveraging", "Recession", "Credit"] },
-  34: { 1: ["Inflation"], 2: ["GDP", "Debt-to-GDP Ratio"] },
-  35: { 2: ["Inflation"] },
+  32: { 0: ["Inflation", "Credit"], 1: ["Deflation", "Recession"], 2: ["QE", "Bond"] },
+  33: { 0: ["Bubble", "Stock"], 1: ["Deleveraging", "Recession", "Credit"] },
+  34: { 0: ["Bond"], 1: ["Inflation"], 2: ["GDP", "Debt-to-GDP Ratio"] },
+  35: { 1: ["Stock", "Bond"], 2: ["Inflation"] },
   // 36 §1 "weighing it alongside employment, inflation, and credit data" is the
   // macro sense, and was the one unaccounted-for GLOSSARY-TERM use in all 40
   // lessons when item 57 swept them. Not "the only jargon gap": §17b can only
@@ -113,8 +120,13 @@ export const lessonTerms = {
   // invisible to it. That residual is a real limit, not a closed one — run
   // `npm run jargon` to see the candidates it cannot; item 60 used it to find
   // one (Brokerage Account, chipped on lesson 6 above).
-  36: { 0: ["Recession"], 1: ["GDP", "Inflation", "Credit"] },
-  38: { 0: ["GDP", "Inflation", "Credit"] },
+  36: { 0: ["Recession", "Bond"], 1: ["GDP", "Inflation", "Credit"] },
+  37: { 0: ["Stock", "Bond"] },
+  38: { 0: ["GDP", "Inflation", "Credit", "Stock", "Bond"] },
+  // 39 defines its eight indicators inline and carries no chip for any of them
+  // (see deliberatelyUnlinked below) — but it does not define "stock", which is
+  // why the one term it does chip is the one it merely uses in passing.
+  39: { 0: ["Stock"] },
   40: { 1: ["Credit", "Productivity Growth"] },
 };
 
@@ -165,7 +177,15 @@ export const deliberatelyUnlinked = {
     Credit: "other-sense: credit-card debt as the mirror of compounding",
   },
   4: { Credit: "other-sense: a credit score, not credit as a macro aggregate" },
-  5: { Diversification: "defined-here" },
+  5: {
+    Diversification: "defined-here",
+    // Rule 2, and the reason Stock/Bond became glossary entries at all: this
+    // lesson IS their definition ("sells small ownership slices to raise money
+    // — that's a stock", "A bond is closer to a loan"), and until item 64 it
+    // was the only place in 40 lessons that defined either word.
+    Stock: "defined-here",
+    Bond: "defined-here",
+  },
   6: { "401(k)": "defined-here", IRA: "defined-here" },
   8: {
     // Both are defined in so many words: "a relatively small amount — the
