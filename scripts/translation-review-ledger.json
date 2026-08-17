@@ -105,27 +105,27 @@
   },
   "5": {
     "es": {
-      "reviewedBy": "Claude (Sonnet 5, economics-app-dev-agent)",
-      "reviewedDate": "2026-08-14",
-      "sourceHash": "1ee62dfad0f9c2c7",
+      "reviewedBy": "Claude (Opus 5, economics-app-sunday-review)",
+      "reviewedDate": "2026-08-17",
+      "sourceHash": "4fe7fdf6aead2d45",
       "method": "ai"
     },
     "ja": {
-      "reviewedBy": "Claude (Sonnet 5, economics-app-dev-agent)",
-      "reviewedDate": "2026-08-14",
-      "sourceHash": "1ee62dfad0f9c2c7",
+      "reviewedBy": "Claude (Opus 5, economics-app-sunday-review)",
+      "reviewedDate": "2026-08-17",
+      "sourceHash": "4fe7fdf6aead2d45",
       "method": "ai"
     },
     "ko": {
-      "reviewedBy": "Claude (Sonnet 5, economics-app-dev-agent)",
-      "reviewedDate": "2026-08-14",
-      "sourceHash": "1ee62dfad0f9c2c7",
+      "reviewedBy": "Claude (Opus 5, economics-app-sunday-review)",
+      "reviewedDate": "2026-08-17",
+      "sourceHash": "4fe7fdf6aead2d45",
       "method": "ai"
     },
     "zh": {
-      "reviewedBy": "Claude (Sonnet 5, economics-app-dev-agent)",
-      "reviewedDate": "2026-08-14",
-      "sourceHash": "1ee62dfad0f9c2c7",
+      "reviewedBy": "Claude (Opus 5, economics-app-sunday-review)",
+      "reviewedDate": "2026-08-17",
+      "sourceHash": "4fe7fdf6aead2d45",
       "method": "ai"
     }
   },
@@ -677,53 +677,53 @@
   },
   "27": {
     "es": {
-      "reviewedBy": "Claude (Sonnet 5, economics-app-dev-agent)",
-      "reviewedDate": "2026-08-13",
-      "sourceHash": "415bd8a72ff00f85",
+      "reviewedBy": "Claude (Opus 5, economics-app-sunday-review)",
+      "reviewedDate": "2026-08-17",
+      "sourceHash": "86db26c43c754170",
       "method": "ai"
     },
     "ja": {
-      "reviewedBy": "Claude (Sonnet 5, economics-app-dev-agent)",
-      "reviewedDate": "2026-08-13",
-      "sourceHash": "415bd8a72ff00f85",
+      "reviewedBy": "Claude (Opus 5, economics-app-sunday-review)",
+      "reviewedDate": "2026-08-17",
+      "sourceHash": "86db26c43c754170",
       "method": "ai"
     },
     "ko": {
-      "reviewedBy": "Claude (Sonnet 5, economics-app-dev-agent)",
-      "reviewedDate": "2026-08-13",
-      "sourceHash": "415bd8a72ff00f85",
+      "reviewedBy": "Claude (Opus 5, economics-app-sunday-review)",
+      "reviewedDate": "2026-08-17",
+      "sourceHash": "86db26c43c754170",
       "method": "ai"
     },
     "zh": {
-      "reviewedBy": "Claude (Sonnet 5, economics-app-dev-agent)",
-      "reviewedDate": "2026-08-13",
-      "sourceHash": "415bd8a72ff00f85",
+      "reviewedBy": "Claude (Opus 5, economics-app-sunday-review)",
+      "reviewedDate": "2026-08-17",
+      "sourceHash": "86db26c43c754170",
       "method": "ai"
     }
   },
   "28": {
     "es": {
-      "reviewedBy": "Claude (Sonnet 5, economics-app-dev-agent)",
-      "reviewedDate": "2026-08-13",
-      "sourceHash": "e2b001513e980e34",
+      "reviewedBy": "Claude (Opus 5, economics-app-sunday-review)",
+      "reviewedDate": "2026-08-17",
+      "sourceHash": "e97bf62701647739",
       "method": "ai"
     },
     "ja": {
-      "reviewedBy": "Claude (Sonnet 5, economics-app-dev-agent)",
-      "reviewedDate": "2026-08-13",
-      "sourceHash": "e2b001513e980e34",
+      "reviewedBy": "Claude (Opus 5, economics-app-sunday-review)",
+      "reviewedDate": "2026-08-17",
+      "sourceHash": "e97bf62701647739",
       "method": "ai"
     },
     "ko": {
-      "reviewedBy": "Claude (Sonnet 5, economics-app-dev-agent)",
-      "reviewedDate": "2026-08-13",
-      "sourceHash": "e2b001513e980e34",
+      "reviewedBy": "Claude (Opus 5, economics-app-sunday-review)",
+      "reviewedDate": "2026-08-17",
+      "sourceHash": "e97bf62701647739",
       "method": "ai"
     },
     "zh": {
-      "reviewedBy": "Claude (Sonnet 5, economics-app-dev-agent)",
-      "reviewedDate": "2026-08-13",
-      "sourceHash": "e2b001513e980e34",
+      "reviewedBy": "Claude (Opus 5, economics-app-sunday-review)",
+      "reviewedDate": "2026-08-17",
+      "sourceHash": "e97bf62701647739",
       "method": "ai"
     }
   },
