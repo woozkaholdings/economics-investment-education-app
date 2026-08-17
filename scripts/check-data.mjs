@@ -2016,5 +2016,191 @@ if (keyedGroupsChecked < 4) {
   }
 }
 
+// ───────────────────────────────────────────────────────────────────────────
+// 26. Every repo path a tracked document names must exist (backlog item 46,
+//     the buildable half of item 39).
+//
+//     The failure this exists for, twice over, is not a stale number — it is a
+//     document whose *instructions* have rotted while its figures stayed
+//     right. `LAUNCH_READINESS.md`'s two "how to refresh this file" snippets
+//     imported `content/lessonContent.economy.js`, item 45 split that file ten
+//     ways, and the snippets became `ERR_MODULE_NOT_FOUND` — for the second
+//     time, in a paragraph whose own text says "run them, don't trust the
+//     text". Reading the doc showed nothing wrong. Running it failed instantly.
+//     A path is the one part of a document a script can check without being
+//     told what the document means, so this is the part worth checking.
+//
+//     Scope: the four tracked docs below. `AGENT_LOG.md` is deliberately out —
+//     it is an append-only history whose old entries *should* name files that
+//     have since been deleted, and guarding it would mean marking every one.
+//
+//     What counts as a path reference: a backtick-quoted token ending in a
+//     source/data extension. Tokens containing whitespace are commands that
+//     happen to end in one (`grep -rn "posthog" src/ package.json`), not paths.
+//
+//     Resolution is by suffix at a path-segment boundary, because docs name
+//     `Practice.jsx` far more often than `src/screens/Practice.jsx`. `-` is
+//     NOT a boundary: `v5.jsx` does not resolve to `economic-cycles-v5.jsx`,
+//     and it shouldn't — that file is gitignored and the reference is prose
+//     shorthand, which is a thing to declare rather than to resolve by accident.
+//
+//     `dist/` is excluded from the tree on purpose. Including it would make
+//     this check pass or fail depending on whether someone had run a build,
+//     which is the one property a guard must never have.
+//
+//     Globs and placeholders (`src/locales/*.js`, `lessonContent.<track>.<lang>.js`,
+//     `lessonContent.{economy,money}.js`) are expanded and required to match at
+//     least one real file, rather than skipped. Skipping them would have missed
+//     `DECISIONS.md`'s brace-contracted reference to the two files item 45
+//     deleted — the same rot, written in a form a naive check reads as a wildcard.
+//
+//     The exemption marker is §23's `utc-date-ok:` shape ported to Markdown:
+//     `<!-- path-ok: <path> — why -->`. It is scoped to the DOCUMENT and names
+//     the path, rather than being scoped to the line the way §23's is. That is
+//     a concession to Markdown, not a preference: five of the ten exemptions
+//     sit inside table rows, and an HTML comment on its own line between two
+//     rows ends the table. Naming the path is what keeps a document-scoped
+//     marker honest, and two counter-assertions do the rest — the total is
+//     pinned, and a marker for a path that now resolves fails as stale, so an
+//     exemption cannot outlive the reason it was granted.
+{
+  const DOCS = ["LAUNCH_READINESS.md", "LAUNCH_PLAN.md", "DECISIONS.md", "CLAIMS.md"];
+  // Counted per *reference*, not per marker: ten markers cover eleven
+  // references, because `v6.jsx` is named twice in LAUNCH_PLAN.md. Counting
+  // uses rather than declarations means a new mention of an already-exempted
+  // path also has to be argued for, which is the stricter and cheaper choice.
+  const EXPECTED_EXEMPTIONS = 11;
+
+  const walkAll = (dir, base = "") =>
+    readdirSync(dir, { withFileTypes: true }).flatMap((e) => {
+      if (e.name === "node_modules" || e.name === ".git" || e.name === "dist") return [];
+      const rel = base ? `${base}/${e.name}` : e.name;
+      return e.isDirectory() ? walkAll(join(dir, e.name), rel) : [rel];
+    });
+  const tree = walkAll(ROOT);
+
+  const REF = /`([^`\n]+?\.(?:js|jsx|mjs|json|md|sh))`/g;
+  const MARKER = /<!--\s*path-ok:\s*([^\s]+)\s*(?:—|--)\s*([^>]*?)\s*-->/g;
+  const isPattern = (p) => /[*<{]/.test(p);
+
+  // `*` and `<placeholder>` stand for one path segment's worth of name; a
+  // `{a,b}` contraction becomes an alternation. Anchored so a match is a whole
+  // filename, and allowed to start at any directory depth (same suffix rule).
+  const patternRe = (p) => {
+    const body = p
+      .split(/(\{[^}]*\}|\*|<[^>]*>)/)
+      .map((part) => {
+        if (part === "*") return "[^/]*";
+        if (/^<[^>]*>$/.test(part)) return "[^/.]+";
+        if (/^\{[^}]*\}$/.test(part)) {
+          return `(?:${part.slice(1, -1).split(",").map((a) => a.trim().replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|")})`;
+        }
+        return part.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      })
+      .join("");
+    return new RegExp(`^(?:.*/)?${body}$`);
+  };
+
+  const resolves = (p) => {
+    if (isPattern(p)) {
+      const re = patternRe(p);
+      return tree.some((f) => re.test(f));
+    }
+    const norm = p.replace(/^\.\//, "");
+    return tree.some((f) => f === norm || f.endsWith(`/${norm}`));
+  };
+
+  let occurrences = 0;
+  let commandLike = 0;
+  let exemptionsUsed = 0;
+  const declared = new Map(); // "doc\0path" -> { where, reason }
+
+  for (const doc of DOCS) {
+    let text;
+    try {
+      text = readFileSync(join(ROOT, doc), "utf8");
+    } catch {
+      fail(`§26: ${doc} is missing — it is one of the four tracked documents this section guards`);
+      continue;
+    }
+    const lines = text.split("\n");
+
+    lines.forEach((line, i) => {
+      for (const m of line.matchAll(MARKER)) {
+        const key = `${doc}\0${m[1]}`;
+        if (m[2].length < 10) {
+          fail(
+            `§26: ${doc}:${i + 1}: \`path-ok: ${m[1]}\` gives no reason. The marker exists so the ` +
+              `exemption is arguable where it is taken; write why the path is allowed not to exist.`,
+          );
+        }
+        if (declared.has(key)) fail(`§26: ${doc}:${i + 1}: duplicate \`path-ok: ${m[1]}\` marker`);
+        declared.set(key, { where: `${doc}:${i + 1}`, reason: m[2] });
+      }
+    });
+
+    const exempted = new Set();
+    lines.forEach((line, i) => {
+      for (const m of line.matchAll(REF)) {
+        const ref = m[1].trim();
+        if (/\s/.test(ref)) {
+          commandLike += 1;
+          continue;
+        }
+        occurrences += 1;
+        if (resolves(ref)) continue;
+        if (declared.has(`${doc}\0${ref}`)) {
+          exemptionsUsed += 1;
+          exempted.add(ref);
+          continue;
+        }
+        fail(
+          `§26: ${doc}:${i + 1}: names \`${ref}\`, which does not exist. Either the path moved and the ` +
+            `document was not updated with it (backlog item 46's whole reason — this is how ` +
+            `LAUNCH_READINESS.md's refresh snippets rotted twice), or the reference is deliberate ` +
+            `history, in which case add \`<!-- path-ok: ${ref} — why -->\` to ${doc} and raise ` +
+            `EXPECTED_EXEMPTIONS in check-data.mjs §26.`,
+        );
+      }
+    });
+
+    // A marker whose path now resolves is a granted exemption outliving its
+    // reason — the shape that makes a suppression list quietly become a lie.
+    for (const [key, { where }] of declared) {
+      if (!key.startsWith(`${doc}\0`)) continue;
+      const p = key.slice(doc.length + 1);
+      if (exempted.has(p)) continue;
+      fail(
+        resolves(p)
+          ? `§26: ${where}: \`path-ok: ${p}\` is stale — that path exists now. Delete the marker and ` +
+              `lower EXPECTED_EXEMPTIONS; an exemption that outlives its reason suppresses a real find later.`
+          : `§26: ${where}: \`path-ok: ${p}\` exempts a path ${doc} no longer mentions. Delete it.`,
+      );
+    }
+  }
+
+  // Floors, because for a mostly-absence check an empty scan reads as a pass.
+  if (occurrences < 150 || tree.length < 80) {
+    fail(
+      `§26: scanned ${occurrences} path references across ${DOCS.length} docs against a ${tree.length}-file ` +
+        `tree (expected at least 150 and 80) — the scan is probably matching nothing rather than the ` +
+        `references having gone away.`,
+    );
+  }
+  if (exemptionsUsed !== EXPECTED_EXEMPTIONS) {
+    fail(
+      `§26: expected exactly ${EXPECTED_EXEMPTIONS} exempted path references, found ${exemptionsUsed}. ` +
+        `Every one is a document naming a file that does not exist: three formats the project rejected ` +
+        `(LAUNCH_PLAN.md), two prototype shorthands, two superseded content paths kept as history ` +
+        `(DECISIONS.md), a build-output chunk name, a brace contraction of the same two paths, and the ` +
+        `dev-agent SKILL.md that lives outside the repo. A new one is a decision to review, not a default.`,
+    );
+  }
+  console.log(
+    `  §26 doc paths: ${occurrences} references across ${DOCS.length} docs, ${exemptionsUsed} exempted, ` +
+      `${commandLike} command lines skipped.`,
+  );
+}
+
 console.log(`\n${failures === 0 ? "PASS" : "FAIL"}: ${failures} failure(s), ${warnings} warning(s).`);
 process.exit(failures === 0 ? 0 : 1);

@@ -1105,7 +1105,10 @@ for the history. No open P1/P2 items.
     > figure without touching a guard" — it is cheap and possibly useful. That is a reviewer tool, not
     > a `npm test` failure, and it should never be described as coverage.
 
-46. **[Process — filed 2026-08-17 by item 39's scoping. Cheapest half, do this first.] Every repo path
+46. **[Process — ✅ DONE 2026-08-17 (scheduled dev-agent). Shipped as `check-data.mjs` §26, with the
+    exemption vocabulary the item asked for and one design change it did not anticipate — patterns are
+    expanded and checked rather than skipped, which is what catches `DECISIONS.md`'s brace-contracted
+    reference to two deleted files. Closing note at the end of this item.] Every repo path
     a tracked document names must exist.** A ~30-line check over `LAUNCH_READINESS.md`,
     `LAUNCH_PLAN.md`, `DECISIONS.md` and `CLAIMS.md`: every backtick-quoted `*.js/.jsx/.mjs/.json/.md`
     path resolves to a real file, or carries an inline exemption marker — the `utc-date-ok:` shape from
@@ -1118,6 +1121,20 @@ for the history. No open P1/P2 items.
       `v5.jsx`/`v6.jsx`/`market.json` are shorthand for paths that do exist elsewhere in the tree.
     - **Why it earns its place:** it would have failed within seconds of `6f5c48c` landing, and it is
       the only check proposed here that needs no annotation of existing content.
+    > **Closing note, 2026-08-17.** Built as `check-data.mjs` §26. Marker is `<!-- path-ok: <path> —
+    > why -->`, document-scoped rather than line-scoped: five of the ten exemptions sit inside table
+    > rows, and an HTML comment on its own line between two rows ends the table. Naming the path in
+    > the marker is what keeps document scope honest, plus two counter-assertions — the total is
+    > pinned at 11 references, and a marker for a path that now resolves fails as **stale**, so an
+    > exemption cannot outlive its reason.
+    > **The item's own measurement was wrong in a way worth recording**, and it is the same "read the
+    > code, don't run it" mistake this repo keeps logging. It said 93 references / 11 dead / seven
+    > false positives across two classes. Actual: **184 references, 70 distinct, 11 dead across four
+    > classes** — the hand count missed that `market.json` resolves fine (`public/data/market.json`,
+    > by the suffix rule any usable check needs), missed `SKILL.md` entirely (it lives outside the
+    > repo), and treated globs as a non-issue when one of them, `lessonContent.{economy,money}.js`,
+    > is the *same* item-45 rot in wildcard clothing. A check written to the item's numbers would
+    > have skipped it.
 
 47. **[Process — filed 2026-08-17 by item 39's scoping. The one that kills the class.] Move
     `LAUNCH_READINESS.md`'s refresh snippets out of the document and compare their output to the
@@ -1133,6 +1150,23 @@ for the history. No open P1/P2 items.
       exist. Both of this item's recorded failures die at once.
     - **Deliberately out of scope:** the other ~119 figures. Only the catalogue block and the coverage
       sentence are worth generating today; the rest are history, and history needs no guard.
+
+49. **[Process — filed 2026-08-17 by item 46's implementation. Small; strictly less valuable than 47,
+    which should land first.] Widen §26's surface, one form at a time.** §26 checks backtick-quoted
+    paths in four documents. Three gaps, each a separate decision rather than one sweep:
+    - **Markdown link targets** (`[text](path)`) and un-backticked paths. Cheap and probably right —
+      a link to a moved file is the same defect §26 exists for, and arguably a worse one because it
+      renders as a working link.
+    - **`README.md` and `reviews/*.md`.** `README.md` is the one document a new reader runs commands
+      from, so it has the strongest claim of the three. `reviews/` are dated snapshots and may belong
+      with `AGENT_LOG.md` on the history side.
+    - **`AGENT_LOG.md`: deliberately NOT proposed.** An append-only history *should* name files that
+      have since been deleted; guarding it would mean annotating every old entry, and the annotation
+      would outnumber the content. Recorded here so the next run does not re-derive it as an oversight.
+    > **Do not treat this as a coverage gap to close on reflex.** §26's whole value is that a failure
+    > means something; each surface added is another exemption class to define first (a `reviews/`
+    > sweep would need one per dated snapshot). Measure the dead-reference count for a surface before
+    > deciding it is worth guarding — item 46's own filed measurement was wrong in four ways.
 
 41. **[A11y — ✅ DONE 2026-08-16. Fixed, guarded by a new §22 check — and the live verification of the
     fix found that the same figure was failing sighted readers too, which is the more interesting
@@ -8372,3 +8406,102 @@ an owner action. Unchanged by this run.
 content, and would have caught today's breakage within seconds. Then **47**. Item 39 is now scoped and
 should not be picked again as an item; if 46 and 47 both land, close it. **Item 32's monthly audit is
 dated 2026-09-05 and must not be pulled forward.**
+
+### 2026-08-17 (scheduled dev-agent) — Every path the docs name must exist: `check-data.mjs` §26 (item 46)
+
+Picked **item 46**, the previous run's named next pick and the buildable half of item 39. The failure it
+guards is not a stale number — it is a document whose *instructions* rotted while its figures stayed
+right. `LAUNCH_READINESS.md`'s two "how to refresh this file" snippets imported
+`content/lessonContent.economy.js`; item 45 split that file ten ways; the snippets became
+`ERR_MODULE_NOT_FOUND`. **Twice**, in a paragraph whose own text says to run them rather than trust them.
+A path is the one part of a document a script can check without being told what the document means.
+
+**§26, over the four tracked docs.** A backtick-quoted token ending in `.js/.jsx/.mjs/.json/.md/.sh`
+must resolve, or carry `<!-- path-ok: <path> — why -->` in the same document. Resolution is by suffix at
+a **path-segment boundary**, because docs write `Practice.jsx` far more often than
+`src/screens/Practice.jsx`. `-` is deliberately not a boundary, so `v5.jsx` does **not** silently resolve
+to `economic-cycles-v5.jsx` — that file is gitignored and the reference is prose shorthand, which is a
+thing to declare, not to resolve by accident. Tokens containing whitespace are commands that happen to
+end in an extension (`grep -rn "posthog" src/ package.json`), not paths; there are 2 and they are
+counted in the summary line rather than silently dropped. **`dist/` is excluded from the tree on
+purpose**: including it would make the check pass or fail depending on whether someone had run a build,
+which is the one property a guard must never have.
+
+**The design change the item did not anticipate: globs are expanded, not skipped.** `*` and
+`<placeholder>` become one path segment; `{a,b}` becomes an alternation; the result must match at least
+one real file. Skipping patterns was the obvious reading of the item and it would have missed
+`DECISIONS.md:464`'s `lessonContent.{economy,money}.js` — the *same* item-45 rot, written in a form a
+naive check reads as a wildcard and waves through.
+
+**Eleven references, ten markers, four classes — and every one is deliberate history, not rot.** Item
+39's scoping already fixed the four live breakages, so what is left is: three formats the project
+**rejected** (`lessons.json`/`quizzes.json`/`glossary.json` — making these resolve would be undoing
+`DECISIONS.md`); two gitignored prototype shorthands (`v5.jsx`/`v6.jsx`, the latter named twice); two
+superseded content paths plus their brace contraction, kept because the entry's own text explains that
+they are gone; one `dist/` chunk name; and `SKILL.md`, which lives outside the repo. That distribution
+is the finding: **the class §26 catches is a *live* reference — an instruction — and the corpus has zero
+of those today only because a human went looking eight hours ago.**
+
+**Verified.**
+- `npm test` and `npm run build` green, at `95e60a5`.
+- **Eight injections, sources restored byte-identically afterwards** (sha256 of all four docs +
+  `check-data.mjs` diffed against a pre-injection manifest, clean):
+  | injection | result |
+  |---|---|
+  | re-break the item-39 rot (`content/lessonContent.js` → `.economy.js`) | named `LAUNCH_READINESS.md:24` |
+  | delete the `glossary.json` marker | dead-path failure **and** the count assertion |
+  | `path-ok:` for `quizData.js`, which resolves | **stale-exemption** failure |
+  | marker with a 3-character reason | "gives no reason" failure |
+  | `lessonContent.{economy,money}.js` → `locales/{en,es}.js`, marker removed | **no dead-path failure** — only the count moved |
+  | `src/locales/*.js` → `src/nowhere/*.js` | named `DECISIONS.md:267` |
+  | `content/lessonContent.<track>.<lang>.js` → a nonexistent family | named both call sites |
+  | one-character typo in `scripts/check-blindspot.mjs` | named `LAUNCH_READINESS.md:82` |
+
+  The fifth is the one that matters and is easy to skip: it proves brace expansion **resolves** when the
+  files exist, rather than patterns being vacuously always-dead. Without it, injections 6 and 7 prove
+  only that the check fails on patterns, which is indistinguishable from a broken expander.
+- Marker placement checked, not assumed: all ten sit in blank-line-delimited blocks outside any table.
+- No UI change, so W-1's live-browser rule does not apply — this run edits one script and adds ten
+  Markdown comments.
+
+**Adversarial self-check.**
+1. **Blindspot register.** Nothing user-facing. No advice language, no Dalio, no kids framing, no
+   hardcoded date (§26 derives no date at all). `check-blindspot.mjs` green. One thing worth naming
+   because it looks adjacent: the markers *preserve* two §10.2-relevant references (`v5.jsx`/`v6.jsx`)
+   rather than resolving them — `.gitignore` says both files stay on disk and out of the repo, and an
+   exemption is the only outcome consistent with that.
+2. **`DECISIONS.md` conflict.** None, and one exemption **enforces** a closed decision instead of
+   contradicting it: the `lessons.json`/`quizzes.json`/`glossary.json` markers say in writing that those
+   paths must never be made to resolve, which is the `.js`-not-JSON decision restated where a future
+   agent "fixing a dead path" would actually read it.
+3. **Already-done backlog item.** Item 46 was filed hours earlier by item 39's scoping and named as the
+   next pick. Nothing in "Completed and pruned" covers doc paths; §11b guards one coverage *sentence*
+   and `check-backlog.mjs` guards item *numbers* — both cited as precedent in §26's header rather than
+   reinvented.
+4. **My own verification claim.** All eight injections reproduce on any day and any machine — §26 reads
+   files and a directory tree, no clock, no network. The one caveat I will state rather than let a
+   reader discover: the **184/70/11 counts are tree-dependent**, so `EXPECTED_EXEMPTIONS = 11` and the
+   150/80 floors are facts about this repo today, and a reviewer re-running after a large content change
+   sees different totals in the summary line even with nothing wrong.
+5. **What §26 does not cover, stated because the previous four entries all learned this the hard way.**
+   Only backticked paths in four documents. **Not** covered: Markdown link targets (`[x](path)`),
+   un-backticked paths, `README.md`, `reviews/*.md`, and `AGENT_LOG.md` — the last deliberately, since
+   an append-only history *should* name deleted files and guarding it would mean annotating every old
+   entry. Filed as item 49 rather than quietly widened here.
+6. **Concurrent runs — HEAD moved mid-session again, third entry running.** `HEAD` was `73c25f6` at
+   start with four modified + six untracked files in the tree. Per the task's own rule I read those as
+   someone else's in-progress work (the log described nothing like them) and touched none of them; they
+   landed at 01:06 as **`95e60a5`**, the item-48 quiz split, by which point my work was confined to
+   `scripts/` and three docs. Re-ran the full suite at the new `HEAD` before writing this. **`95e60a5`
+   added backlog item 48 but no run-log entry** — the same omission `6f5c48c` and `9f24a0b` made, now
+   three for three. Flagged, not touched.
+
+**Item 18 remains the entire critical path to ending Phase 0** — an analytics provider account and key,
+an owner action. Unchanged by this run.
+
+**Next run should pick**: **item 47** (move `LAUNCH_READINESS.md`'s refresh snippets into
+`scripts/refresh-readiness.mjs` and diff their output against the doc's stated figures). §26 guards the
+paths inside those snippets; 47 removes the duplicated code entirely, and with 46 and 47 both landed,
+**item 39 should be closed** rather than picked again. Item 49 (widen §26's surface) is filed and small
+but strictly less valuable than 47. **Item 32's monthly audit is dated 2026-09-05 and must not be pulled
+forward.**

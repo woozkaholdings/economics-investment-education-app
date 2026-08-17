@@ -281,6 +281,11 @@ Add a new entry when a run makes a choice future work should be able to look up 
 
 ### `LessonReader` chunk split per track (real fix, supersedes the raised-threshold mitigation)
 
+<!-- path-ok: lessonContent.economy.js — deleted by item 45's per-language split; this entry deliberately keeps naming it, and says so in its own text, because the decision recorded here is what the second split extends -->
+<!-- path-ok: lessonContent.money.js — same; superseded on file layout, preserved as history -->
+<!-- path-ok: LessonReader-*.js — a Vite build-output chunk name under dist/, which §26 excludes from the tree on purpose so this check cannot depend on whether a build was run -->
+<!-- path-ok: lessonContent.{economy,money}.js — the same two deleted per-track files, written as a brace contraction in the 2026-08-14 renumbering entry below -->
+
 - **Status:** closed 2026-08-14 (dev-agent run). Supersedes the "chunk size warning threshold raised,
   not split" entry that used to be here — that mitigation is no longer needed and was removed rather
   than left stacked on top of the real fix.

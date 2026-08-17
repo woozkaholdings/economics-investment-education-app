@@ -40,6 +40,12 @@ decisions the project actually made.
 | The Markets tab hardcodes "February 2026" and needs fixing (§2.3) | Already fixed — the tab is dateless and figure-free by design (§2.3) | Shipped 2026-08-02. §2.3 now states the standing rule instead of the defect. |
 | Build on Expo (React Native) from week 1 (§2.1, §8) | **Open owner decision.** The runnable app is Vite + React (web-only) today (§2.1) | See `DECISIONS.md`, "Expo vs. Vite". Real cost either way; not an agent's call to make unilaterally. |
 
+<!-- path-ok: v5.jsx — prose shorthand for economic-cycles-v5.jsx, gitignored on disk (see .gitignore); the table above is history and must keep naming it the way v1 did -->
+<!-- path-ok: v6.jsx — prose shorthand for economic-cycles-v6.jsx, gitignored on disk; same reason -->
+<!-- path-ok: lessons.json — a format this project DELIBERATELY REJECTED (see DECISIONS.md, "Content as .js modules, not JSON"). It must never resolve; making it resolve would be undoing the decision -->
+<!-- path-ok: quizzes.json — same rejected-format row; never to be "fixed" into an existing path -->
+<!-- path-ok: glossary.json — same rejected-format row; never to be "fixed" into an existing path -->
+
 **Standing rule that replaces the migration instruction:**
 
 > `economic-cycles-v5.jsx` and `economic-cycles-v6.jsx` are **reference material, not source code.**

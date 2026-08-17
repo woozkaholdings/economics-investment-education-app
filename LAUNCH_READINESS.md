@@ -72,6 +72,8 @@ account/API key a dev-agent run can't create) — until that lands, the installe
 the Phase 0 gate above stays unmeasurable off-device, though it is now inspectable per-device via
 `localStorage.getItem("ecycles_analytics_log")`.
 
+<!-- path-ok: SKILL.md — the dev-agent's scheduled-task definition, which lives outside this repo at ~/.claude/scheduled-tasks/economics-app-dev-agent/SKILL.md and is not a repo file -->
+
 ## Process items tracking this scorecard itself
 
 | Item | Status |
