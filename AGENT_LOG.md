@@ -9558,3 +9558,72 @@ than either building it reflexively or forgetting it was considered. The dev ser
 (`scripts/dev-server.sh`, PID via the Bash tool, port 5173) was left running rather than torn down, since it
 is a plain background process against a throwaway local port, not something that needs cleanup between
 runs — same as the static-preview server the Environment note already treats this way.
+
+### 2026-08-18 (scheduled dev-agent, sixth run this date) — Deciding the fifth run's flagged aria-live question the right way: `Sectors.jsx`'s window-switch panel was missing `role="tabpanel"`
+
+Same 26-file owner-dirty tree as all five earlier runs this date (shortstat unchanged: **26 files, 1016
+insertions(+), 1441 deletions(-)**). The fifth run flagged, deliberately without building it, whether
+`Sectors.jsx`'s 1M/3M/6M window switch needs an `aria-live` announcement when it re-sorts the list. This
+run took that question up rather than re-deriving a fresh one, and the honest answer to the *specific*
+question asked turned out to be "no, but there's a real, smaller, precedented gap one step earlier."
+
+**What the premise re-check found (step 3.5).** `Segmented` (`src/components/ui.jsx:157`, owner-dirty,
+read-only this run) already implements the real ARIA Authoring-Practices tab pattern correctly:
+`role="tablist"`, each button `role="tab"` with `aria-selected`/`aria-controls={panelId}`. Under that
+pattern, a full-data `aria-live` blast is the wrong tool — it's what the pattern exists to avoid, since a
+screen-reader user who activates a tab and then reads the panel via the normal virtual-cursor/next-heading
+navigation already gets the update, the same way most financial-data UIs work. **But `Sectors.jsx`'s panel
+(the element `aria-controls="sector-list"` actually points at) had no `role="tabpanel"` at all** — just
+`role="list"` on the inner `<ol>`. Without `role="tabpanel"`, a screen reader following the tab convention
+has no formal, robust link from the active tab to its content (`aria-controls` support for this purpose is
+inconsistent across screen readers; `role="tabpanel"` + `aria-labelledby` is the documented, reliable half
+of the pattern). **This wasn't a judgment call or an invented gap**: `src/screens/reference/ParentGuide.jsx`
+uses the exact same `Segmented` component for its age-band switch and already wraps its panel in
+`<div id="age-band-panel" role="tabpanel" aria-labelledby={`age-band-${band}`}>` — confirmed by reading the
+file, not assumed. `Sectors.jsx` is the one `Segmented` consumer that never got that half of the pattern.
+
+**Fix — one file, `src/screens/reference/Sectors.jsx`, +48/−39 (mostly re-indentation of the wrapped
+block).** Wrapped the existing `<ol role="list">` in `<div role="tabpanel" id="sector-list"
+aria-labelledby={`sector-window-${window}`}>`, moving the `id` off the `<ol>` onto the new wrapper (the
+`<ol>` keeps its own `role="list"` unchanged, so `check-data.mjs` §20's "marker-less list needs
+`role="list"`" guard — read first to confirm it checks each tag's own attributes, not a wrapper — is
+unaffected). `aria-labelledby` is computed from the live `window` state rather than hardcoded, since one
+panel serves all three tabs (there's no separate content per tab, just a re-sort) — mirroring
+`ParentGuide.jsx`'s `band`-based equivalent exactly, deliberately not inventing a new pattern. No
+`tabIndex` added to the panel: `ParentGuide.jsx`'s established version doesn't carry one either, and
+matching precedent was chosen over independently applying ARIA APG's tabIndex-when-no-focusable-content
+guidance, which would have introduced a second, undiscussed deviation in the same commit.
+
+**Verified live, not just by reading the diff.** `npm run build` green. Started the real dev server
+(`scripts/dev-server.sh`, from the previous interactive turn's fix) via the Bash tool, `preview_start`
+pointed at its URL, mobile viewport. Read the live DOM: `document.getElementById('sector-list')` now
+reports `role="tabpanel"`, `aria-labelledby="sector-window-3m"` matching the default-selected "3M" tab
+(`aria-selected="true"` on exactly that tab, confirmed against the other two). Clicked the "6M" tab via
+`javascript_tool` and re-read: `aria-labelledby` updated to `"sector-window-6m"` and the panel's first row
+changed to Technology (the actual 6-month leader), confirming the association tracks live state, not a
+stale snapshot. No horizontal overflow (`scrollWidth` vs. `innerWidth`) introduced by the wrapper div.
+`node scripts/check-data.mjs` — §20 specifically — still passes with 0 failures, confirming the guard
+reads the `<ol>`'s own `role="list"` and doesn't care about the new wrapper. `check-blindspot` passes (0
+failures). Full `npm test` on a `git archive HEAD` control copy (sixth use of the technique this date's
+first run's Environment-note addition documents) exits **0**, all six checks `PASS`. Working tree stays red
+only on the pre-existing, unrelated `refresh-readiness.mjs` block (item 77).
+
+**Adversarial self-check (step 5).** **Blindspot register:** no regression — `check-blindspot` passes; no
+learner-facing copy changed, this is ARIA wiring only. **DECISIONS.md conflict:** none — read, not edited;
+no storage/routing/build-shape change. **Already-done item:** no — this is the specific gap the fifth run
+named and deliberately left open rather than building reflexively; nothing here undoes any earlier fix, and
+`ParentGuide.jsx`'s own correct version is untouched, used only as the reference for what "correct" looks
+like in this codebase. **My own verification claims:** every DOM attribute pasted above (`role`,
+`aria-labelledby`, `aria-selected`) is a direct `javascript_tool` read after the click, in a second
+round-trip per the Environment note's warning about checking a click's effect too early. **What the check
+caught:** the first version of this fix set `tabIndex={-1}` on the new panel, reasoning independently from
+ARIA APG about keyboard reachability; re-reading `ParentGuide.jsx`'s already-correct, already-shipped
+version showed it carries no `tabIndex` at all — removed before committing, so this fix changes exactly one
+thing (the missing role/label) rather than that plus an undiscussed second pattern choice.
+
+**Next run.** `LAUNCH_PLAN.md` still blocks items 35, 64's `Dividend`, 73 and 77 together; `Reference.jsx`
+carries the third run's already-diagnosed close-direction focus gap, still blocked on that file. The fifth
+run's flagged aria-live question is now answered and closed by this run's fix — no further action needed
+there. Five consecutive runs have now worked the clean code surface hard (numbered-backlog audit, one
+real focus bug, two dead-code trims, a rendered QA sweep, and this tabpanel fix); a future run picking up
+from here should treat another blind audit pass as low-expectation and check the owner's tree first.

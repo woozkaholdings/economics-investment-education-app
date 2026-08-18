@@ -87,46 +87,55 @@ export default function Sectors({ t, lang }) {
         panelId="sector-list"
       />
 
-      {/* Genuinely an <ol>: `ranked` is ordered by relative strength, and each
-          row states its own "rank N of M". `role="list"` per check-data.mjs §20. */}
-      <ol role="list" id="sector-list" style={{ listStyle: "none", margin: 0, padding: 0 }}>
-        {ranked.map((sector) => {
-          const row = bySymbol[sector.symbol];
-          const change = row?.change?.[window];
-          const rs = row?.relativeStrength;
-          const positive = Number.isFinite(change) && change >= 0;
+      {/* `Segmented`'s tabs point `aria-controls` at "sector-list" (ui.jsx),
+          so this needs role="tabpanel" the same way ParentGuide.jsx's
+          age-band panel already does — without it, a screen reader following
+          the tab pattern has no programmatic link from the active "1M"/"3M"/
+          "6M" tab to the content it controls. `aria-labelledby` points at
+          whichever tab is currently selected, since one panel serves all
+          three (there's no separate content per tab, just a re-sort). */}
+      <div role="tabpanel" id="sector-list" aria-labelledby={`sector-window-${window}`}>
+        {/* Genuinely an <ol>: `ranked` is ordered by relative strength, and each
+            row states its own "rank N of M". `role="list"` per check-data.mjs §20. */}
+        <ol role="list" style={{ listStyle: "none", margin: 0, padding: 0 }}>
+          {ranked.map((sector) => {
+            const row = bySymbol[sector.symbol];
+            const change = row?.change?.[window];
+            const rs = row?.relativeStrength;
+            const positive = Number.isFinite(change) && change >= 0;
 
-          return (
-            <li
-              key={sector.symbol}
-              style={{ display: "flex", alignItems: "flex-start", gap: space["3"], padding: `${space["3"]}px 0`, borderBottom: `1px solid ${line.hairline}` }}
-            >
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <Text variant="small" color={ink.strong} style={{ fontWeight: 600 }}>
-                  {sector.name[lang]}
-                </Text>
-                <Text variant="caption" color={ink.muted} style={{ marginTop: 2 }}>
-                  {sector.what[lang]}
-                </Text>
-                {rs && (
-                  <Text variant="caption" color={ink.muted} style={{ marginTop: space["1"] }}>
-                    {t.relativeStrengthLabel}: {t.rankTemplate.replace("{rank}", rs.rank).replace("{of}", rs.of)}
-                    {" · "}
-                    {t.vsBenchmark.replace("{name}", BENCHMARK.name)}
+            return (
+              <li
+                key={sector.symbol}
+                style={{ display: "flex", alignItems: "flex-start", gap: space["3"], padding: `${space["3"]}px 0`, borderBottom: `1px solid ${line.hairline}` }}
+              >
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <Text variant="small" color={ink.strong} style={{ fontWeight: 600 }}>
+                    {sector.name[lang]}
                   </Text>
-                )}
-              </div>
+                  <Text variant="caption" color={ink.muted} style={{ marginTop: 2 }}>
+                    {sector.what[lang]}
+                  </Text>
+                  {rs && (
+                    <Text variant="caption" color={ink.muted} style={{ marginTop: space["1"] }}>
+                      {t.relativeStrengthLabel}: {t.rankTemplate.replace("{rank}", rs.rank).replace("{of}", rs.of)}
+                      {" · "}
+                      {t.vsBenchmark.replace("{name}", BENCHMARK.name)}
+                    </Text>
+                  )}
+                </div>
 
-              <div style={{ display: "flex", alignItems: "center", gap: space["1"], flexShrink: 0, color: positive ? ink.ok : ink.bad }}>
-                <Icon name="chart" size="0.9em" />
-                <Text as="span" variant="small" color={positive ? ink.ok : ink.bad} style={{ fontWeight: 700, fontVariantNumeric: "tabular-nums" }}>
-                  {formatPercent(change)}
-                </Text>
-              </div>
-            </li>
-          );
-        })}
-      </ol>
+                <div style={{ display: "flex", alignItems: "center", gap: space["1"], flexShrink: 0, color: positive ? ink.ok : ink.bad }}>
+                  <Icon name="chart" size="0.9em" />
+                  <Text as="span" variant="small" color={positive ? ink.ok : ink.bad} style={{ fontWeight: 700, fontVariantNumeric: "tabular-nums" }}>
+                    {formatPercent(change)}
+                  </Text>
+                </div>
+              </li>
+            );
+          })}
+        </ol>
+      </div>
 
       {/* Says outright that the measure is a stand-in, so nobody reads the
           ranking as the product's real relative-strength calculation. */}
