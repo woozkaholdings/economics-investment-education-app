@@ -43,7 +43,55 @@ Runs `scripts/check-data.mjs`, a fast (~5s) structural check over `src/locales/`
 npm run build
 ```
 
-Output goes to `dist/`.
+Output goes to `dist/` — a plain folder of static files. There is no server side: no Node at
+runtime, no API key, no environment variable, and no database. Anything that can serve a
+directory over HTTP can host it.
+
+## Deploying
+
+**Nothing has ever been deployed.** As of 2026-08-17 there is no host, no URL, and no
+evidence that anyone outside this repo has opened the app — see `AGENT_LOG.md` backlog item
+72. The build is ready; choosing where to put it is an owner decision, so the steps below
+are written as clicks rather than as a script.
+
+### Fastest path to a live URL (a few minutes, no account needed to start)
+
+1. `npm run build` locally.
+2. Open <https://app.netlify.com/drop>.
+3. Drag the whole `dist/` folder onto the page.
+4. It returns a URL like `https://<random-words>.netlify.app` — that is the app, live.
+   Sign in and claim the site if you want to keep or rename that URL — an unclaimed drop is
+   meant for a quick look, not as an address to hand out. (These are Netlify's steps, checked
+   against their documented Drop flow, not run from this repo.)
+
+### Durable path (a real address, re-deployable)
+
+GitHub Pages, Cloudflare Pages or Netlify connected to the repo all work unchanged. On
+GitHub Pages a *project* site serves from `https://<user>.github.io/<repo>/` — one directory
+down from the domain root — which is exactly the case `vite.config.js`'s `base: "./"` exists
+to handle. Do not change that setting to make a path "look right"; it is what lets the same
+`dist/` work at a root and under a sub-path without being rebuilt.
+
+**No SPA rewrite rule is needed on any host.** Routing is hash-based (`src/lib/deepLink.js`),
+so every screen and every lesson deep link — `#/learn`, `#/lesson/12`, `#/reference` — is the
+one `index.html` the server already returns. The usual "redirect all paths to /index.html"
+configuration that static React deploys need does not apply here, which is why this repo has
+no `netlify.toml`, `vercel.json` or workflow file.
+
+<!-- path-ok: vercel.json — named in order to say this repo does NOT have it. Hash routing means no host needs an SPA rewrite rule, so there is nothing for a host config file to say; if this path ever resolves, the sentence above is what needs rewriting, not this marker -->
+
+### After it is up
+
+- **Market data freezes at build time.** `public/data/market.json` is written on this machine
+  by the `economics-app-market-data` scheduled job; a deployed copy is a snapshot. After
+  `STALE_AFTER_DAYS` (4 days, `src/lib/useMarketData.js`) the Sector-performance and
+  Market-signals figures stop being shown rather than being shown as current — by design
+  (`LAUNCH_PLAN.md` §2.3). Keeping them live means re-deploying after the job runs; a
+  deployment left alone simply degrades to the rest of the app, which is fully static.
+- **Nothing measures usage yet.** `src/lib/analytics.js` has call sites but no provider, so
+  `sink()` writes to `localStorage` on one device. Picking a provider and holding the key is
+  the other open owner action (`AGENT_LOG.md` item 18); until then, a URL tells you the app
+  loads, not whether anyone used it.
 
 ## Status
 

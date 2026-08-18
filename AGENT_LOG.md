@@ -408,9 +408,24 @@ for the history. No open P1/P2 items.
       this is a stricter reading of a rule the app volunteered.
     </details>
 
-72. **[Process/Distribution — filed 2026-08-17 by §9.3's first monthly audit, from its question 3.
-    This is the highest-value open item in this backlog and the first one in weeks that is not about
-    the repo's opinion of itself.] Nothing owns "get this in front of one person."** Item 18 (an
+72. **🟡 DEV-AGENT HALF DONE 2026-08-17 (scheduled dev-agent). The build is deployable and the
+    clicks are written down; the OWNER HALF — choose a host, drag the folder, hold the URL — is the
+    only thing left and it cannot be done from here. Keep flagging it in every run's output until it
+    moves, alongside item 18. Do not re-pick this item to "improve" the deploy docs; the refuting
+    number is a URL, and no amount of further writing produces one.**
+    - **What shipped:** `vite.config.js` gains `base: "./"`, so one `dist/` works at a domain root
+      *and* one directory down without being rebuilt; `README.md` gains a `## Deploying` section with
+      the two paths (Netlify Drop for a URL in minutes, GitHub/Cloudflare/Netlify-from-repo for a
+      durable one), the note that **no host needs an SPA rewrite rule** because routing is hash-based,
+      and the two things that stay open after a deploy (frozen market data → item 74; no analytics
+      provider → item 18). Verified against a real static server at both shapes — see the run-log entry.
+    - **The defect this closed was real and silent**, which is why it survived: served at `/app/`, the
+      pre-fix build returned **200 for the HTML and 404 for its entry script**, rendering an empty
+      `#root` **with no console error**, because a 404 on a `type="module"` script does not throw into
+      the page. `src/lib/useMarketData.js`'s own comment already said "relative to the deployed base so
+      it works under a sub-path too" — the app believed it was sub-path safe and the build was not.
+    - **Original filing, kept because its framing is the point.** Nothing owns "get this in front of
+      one person."** Item 18 (an
     analytics provider account and key) is named in every run's output as the entire critical path out
     of Phase 0, and that is correct — but **item 18 is downstream of a deploy, and no backlog item owns
     the deploy.** Measured, not assumed: no `.github/`, no `netlify.toml`, no `vercel.json`, no `CNAME`;
@@ -430,6 +445,24 @@ for the history. No open P1/P2 items.
       make the build deployable as a static artifact, write down exactly what the owner must click, and
       say so in the run output. Flag the owner half in every run until it moves, alongside item 18.
     - Also filed for §10 as **B-3** in `reviews/2026-08-17-monthly-audit.md`.
+
+74. **[Process/Distribution — filed 2026-08-17 by the run that made the build deployable (item 72),
+    from a consequence that item's own scope did not cover. Do not pick before a deploy exists — it is
+    a maintenance problem for a site nobody has yet.] A deployed copy's market data freezes at build
+    time, and the app is designed to notice.** `public/data/market.json` is written on the owner's
+    machine by the `economics-app-market-data` scheduled job and is baked into `dist/` at build time.
+    A deployment left alone therefore ages: after `STALE_AFTER_DAYS` (**4**, `src/lib/useMarketData.js`)
+    the Sector-performance and Market-signals figures **stop being shown** rather than being shown as
+    current — which is §2.3's rule working exactly as intended, not a bug.
+    - **The gap is that nothing owns the rebuild.** Keeping those two screens populated on a live site
+      means re-building and re-deploying after the daily job runs; no scheduled task, script or
+      document owns that step today.
+    - **Cheapest real answer is probably not a script.** Connecting the host to the repo (the README's
+      "durable path") makes a deploy follow a commit, at which point the existing job's commit is the
+      trigger and nothing new has to be built. Consider that before writing automation.
+    - **Honest scope note:** the rest of the app is fully static and unaffected — 40 lessons, the
+      glossary, review and the kids guide all keep working indefinitely on a stale deployment. This
+      item is about two screens, and filing it larger than that would misstate it.
 
 73. **[Process — filed 2026-08-17 by §9.3's first monthly audit, which deliberately proposed rather
     than applied these.] Apply the audit's three §10 blindspots and its proposed claim D3.** Both halves
@@ -8217,3 +8250,142 @@ owner's dirty files before picking anything** — that check has changed the ans
 four runs. **Item 18 remains the critical path to ending Phase 0 and is still blocked on an owner
 action (an analytics provider account and key) — and as of this audit it is also blocked behind a
 deploy that does not exist (item 72).**
+
+### 2026-08-17 (scheduled dev-agent) — Item 72: the build becomes deployable, and the blank page nobody would have debugged
+
+**Why this item.** The previous entry queued item 72 as "the highest-value open item and the first in
+weeks that is not about the repo's opinion of itself," and re-checking the owner's tree first — as that
+entry instructed — changed nothing this time: `git diff --shortstat` over their thirteen paths still
+reads **13 files, 603 insertions(+), 141 deletions(-)**, byte-identical to the last two runs, so the
+UIUX redesign is still in flight, `LAUNCH_PLAN.md` is still owner-dirty (blocking item 73's §10 half
+and item 62's F6), item 69 still lives in the five owner-dirty locale files, and `Dividend` (64/67) is
+still gated. Item 72's dev-agent half is the one substantive thing that is **not** owner-blocked.
+
+**The premise was re-measured with a control before anything was edited, and it was worse than filed.**
+Item 72 said "no deploy path"; what the measurement found is that the artifact itself was broken for a
+whole class of hosts. Built `dist/` unchanged, copied it to `serveroot/app/`, served the parent with
+`python3 -m http.server`, and probed:
+
+```
+--- baseline (vite default base) mounted at /app/ ---
+/app/                                   200
+/assets/index-52xvoXYo.js               404   <- what the HTML asks for
+/app/assets/index-52xvoXYo.js           200   <- where the file actually is
+```
+
+In a real browser at `http://127.0.0.1:8801/app/`: `{"rootHTML":0,"bodyText":""}` and
+**`read_console_messages` → "No console logs."** A blank page with no error, because a 404 on a
+`type="module"` script does not throw into the page. That is the failure mode a first deploy to a
+GitHub Pages *project* site (`user.github.io/<repo>/`) would have produced, and nothing in the repo
+would have explained it. `src/lib/useMarketData.js`'s fetch already carries the comment "Relative to
+the deployed base so it works under a sub-path too" — **the app believed it was sub-path safe and the
+build was not**, which is the gap a control catches and a re-read does not.
+
+**The fix is one line plus the reasoning that makes it stick.** `base: "./"` in `vite.config.js`
+(purely additive — `git diff` on that file is 20 insertions, 0 deletions), with a comment naming the
+three properties it depends on: no hardcoded leading-`/` URL anywhere in `src/`, the one runtime fetch
+resolving against `document.baseURI`, and hash routing. Re-measured at both shapes:
+
+```
+--- fixed build at /app/ (8801) ---      --- same build at / (8802) ---
+/app/                            200     /                            200
+/app/assets/index-D3BE7lVj.js    200     /assets/index-D3BE7lVj.js    200
+/app/data/market.json            200     /data/market.json            200
+```
+
+**Live, in the browser, at the sub-path that was blank ten minutes earlier** (viewport resized to the
+`mobile` preset first, per the Environment note, so measurements are real): `#root` **69,947 chars**,
+hash route resolved to `#/learn`, `Progress: 0/40`. Then the two things that specifically depend on
+base-relative resolution — a lazy chunk and the runtime fetch. `#/lesson/1` renders
+`LESSON 1 OF 40 · Budgeting: Know Where Your Money Goes` (a dynamic `import()` of
+`LessonReader-*.js` + `lessonContent.money.en-*.js`, resolved relative to the sub-path). Reference →
+Sector performance renders eleven ranked sectors, and `read_network_requests` reports the fetch itself:
+`GET http://127.0.0.1:8801/app/data/market.json → 200 OK`. Console errors on the sub-path: none.
+At the root deploy (8802, a fresh origin with empty `localStorage`) the first-launch disclaimer modal
+renders as it should — §10.1 intact.
+
+**`npm run dev` was tested, not assumed, because breaking it would be the expensive mistake.** A
+relative `base` is the kind of change that silently only matters in production. Vite normalises `"./"`
+to `"/"` in dev: `GET /` returns the HTML with `/@vite/client` and `/src/main.jsx`, the entry module
+returns **200**, and the browser renders it (`rootHTML: 19737`, disclaimer modal, `#/lesson/1` restored
+from the hash). The owner's daily workflow is unaffected.
+
+**The written half is in `README.md`, not a ninth root document.** The monthly audit's headline finding
+was process mass; answering "nothing owns the deploy" with a new `DEPLOY.md` would have been the same
+joke again. `## Building` now says what `dist/` actually is (no server, no key, no env var), and a new
+`## Deploying` gives the fastest path to a URL (Netlify Drop, four steps), the durable path, the fact
+that **no host needs an SPA rewrite rule** because routing is hash-based — which is why this repo
+correctly has no `netlify.toml`, `vercel.json` or workflow file — and the two things that stay open
+after a deploy: market data freezes at build time (filed as item 74) and nothing measures usage
+(item 18). One claim about Netlify's own flow is marked in the text as taken from their documentation
+rather than run from here, because it was not run from here.
+
+**An existing guard caught my own edit, on the first `npm test`.** `check-data.mjs` §26 requires every
+path a tracked document names to exist: `FAIL: README.md:79: names \`vercel.json\`, which does not
+exist.` The sentence's entire point is that the file does not exist, so this is the exemption case —
+`<!-- path-ok: vercel.json — ... -->` plus `EXPECTED_EXEMPTIONS` **12 → 13**. This is the first
+exemption granted for *an absence that is the point of the sentence* rather than for history or a
+rejected format, and the comment says so. **My first attempt at it was wrong and the guard said so
+too**: I also wrote a marker for `netlify.toml`, and got
+`\`path-ok: netlify.toml\` exempts a path README.md no longer mentions` — `toml` is outside §26's
+`EXT` list, so the check never sees that word. Marker removed, count corrected to 13, and the
+asymmetry recorded in `check-data.mjs` so a later reader does not read the missing marker as an
+oversight. **`EXT` was deliberately not widened**: pulling every future `.toml` mention into this check
+to cover one word of prose is the instrument-building item 72 explicitly warned against.
+
+**Verified.** `npm test` — **`PASS: 0 failure(s)`** on all six checks plus `refresh-readiness --check`,
+with only the standing translation AI-share warning (unrelated). `npm run build` — `✓ built in 996ms`.
+**Two injections against the new guard**, each restored from a scratchpad copy and never with
+`git checkout --`: (a) created a real `vercel.json` → `FAIL: ... \`path-ok: vercel.json\` is stale —
+that path exists now`, so the exemption cannot outlive its reason; (b) deleted the marker → `FAIL: ...
+names \`vercel.json\`, which does not exist`, so the claim cannot be satisfied by dropping the guard.
+`shasum` on both files after restore matched the pre-injection hashes exactly
+(`8beced88…` / `196f73af…`).
+
+**One limit, stated rather than buried: the `base: "./"` fix has no automated guard, on purpose.** No
+check in `npm test` would notice it being reverted; the only instrument that would catch it is a
+deploy, which is the owner action this item exists to unblock. Building a check that asserts a config
+value is exactly the "script that checks whether a deploy path exists" item 72 forbids, so the
+defence is the twenty lines of comment above the setting instead.
+
+**Owner's tree provably untouched.** `git diff --shortstat` over their thirteen paths reports the
+identical **13 files, 603 insertions(+), 141 deletions(-)** as on arrival. My own diff, from
+`git diff --numstat`: `README.md` **49+/1−**, `scripts/check-data.mjs` **15+/1−**, `vite.config.js`
+**20+/0−** — **3 files, 84 insertions, 2 deletions**, plus this log entry. `UIUX/` is still untracked
+and still unread beyond `ls` — item 26's standing instruction.
+
+**Adversarial self-check (step 5) — one real thing found, and it is a rot risk I am accepting.**
+**Blindspot register:** grepped my 84 added lines for Dalio/person branding, advice verbs
+(`buy|sell|invest in|you should|we recommend|allocate`), child-facing framing (`kid|child|children`),
+and currency/percentage figures — **0 hits on all four**. Done by hand as well as by `npm test`,
+because `check-blindspot.mjs` is owner-modified this run and its result is not mine to lean on; in any
+case its scope is `src/content/` + `src/locales/` and this run touched neither. **DECISIONS.md
+conflict:** none, and one active agreement — DECISIONS.md's routing entry already argues that a static
+host has no server-side rewrites and that hash routing needs none, which is the same claim the README
+now makes to the owner. Vite-not-Expo is reinforced, not contradicted; no storage, content-module or
+build-output-shape change. **Already-done item:** no — `grep` over `AGENT_LOG.md` for
+`vite.config|base:|netlify|vercel|github pages` returns item 72's own filing, the audit that filed it,
+and one superseded 2026-08-14 `chunkSizeWarningLimit` note; **no run has ever set `base`**.
+**My own verification claims:** every figure above is pasted from tool output; an independent reviewer
+re-running the two servers, `npm test`, `npm run build`, the dev-server probe and the two injections
+gets these lines. **What the check actually caught:** the README says
+"**As of 2026-08-17 there is no host, no URL**" — a hand-written claim that goes false the moment this
+item's owner half succeeds, i.e. the best possible reason for it to rot. Considered guarding it and
+**deliberately did not**: a check that asserts "no deploy exists" is the instrument item 72 forbids,
+and it would have to be deleted by the same commit that makes it fire. It is dated in the repo's
+convention, it sits in bold at the top of the section a deployer is reading, and the sentence
+immediately after it tells them what to do — that is the whole defence, and it is written here so the
+next run does not rediscover it as a finding.
+
+**Next run.** **The owner half of item 72 is now the entire critical path and it is four clicks:**
+`npm run build`, open <https://app.netlify.com/drop>, drag `dist/`, keep the URL — every run should
+say so in its output until it moves, because item 18 (analytics) is downstream of it and item 18 is
+downstream of nothing else. For the dev-agent's own next pick, **re-check the owner's dirty files
+first** — that check has changed the answer in four of the last five runs. If `LAUNCH_PLAN.md` has
+gone clean, **item 73's §10 half is free** (three blindspots written verbatim in
+`reviews/2026-08-17-monthly-audit.md` §6, ready to move) and `Dividend` (items 64/67) unblocks — its
+saved work is at session `48dad761`'s scratchpad and the durability caveat is now **six entries old**;
+if that scratchpad is gone, redo it from item 64's entry. If the plan is still dirty, **item 73's D3
+half is not blocked** and is a judgement call a run other than the audit's author should make. **Item
+74 (a deployed copy's market data freezes after 4 days) is filed but must not be picked before a
+deploy exists** — it is maintenance for a site nobody has yet.

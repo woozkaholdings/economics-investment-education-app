@@ -2388,7 +2388,21 @@ if (keyedGroupsChecked < 4) {
   // per-track entry it supersedes and once by the new per-language entry, which
   // records that this file's 499.27 kB against a 500 kB threshold is what forced
   // the second split. Both mentions are the history the :326 marker exempts.
-  const EXPECTED_EXEMPTIONS = 12;
+  // 12 → 13 on 2026-08-17 (item 72): README.md's new Deploying section names
+  // `vercel.json` in order to say the repo does not have one — hash routing
+  // means no host needs an SPA rewrite rule. This is the first exemption
+  // granted for an *absence that is the point of the sentence* rather than for
+  // history or a rejected format, and the stale-exemption rule is what makes
+  // that safe: the day the file appears, this fails and the claim gets re-read
+  // instead of quietly becoming false.
+  //
+  // The same sentence also names `netlify.toml`, which is NOT exempted and does
+  // not need to be: `toml` is outside `EXT` below, so §26 never sees it. Left
+  // that way on purpose — widening `EXT` to cover one word of prose would pull
+  // every future `.toml` mention into this check for no reason anyone has yet.
+  // The asymmetry is recorded here rather than papered over, so a later reader
+  // does not read the missing marker as an oversight.
+  const EXPECTED_EXEMPTIONS = 13;
 
   const walkAll = (dir, base = "") =>
     readdirSync(dir, { withFileTypes: true }).flatMap((e) => {
