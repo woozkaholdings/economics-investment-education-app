@@ -54,7 +54,13 @@
   --ink-on-fill: #ffffff;
 
   --graph-green: #059669;
-  --graph-amber: #d97706;
+  /* Darkened from #d97706 on 2026-08-17 (backlog item 65). Same hue (32°) and
+     saturation (95%), HSL lightness 43.7% -> 39.7%. The old value cleared 3:1
+     on only 4 of the 7 light surfaces (2.85 accent-wash, 2.91 bad-wash, 2.92
+     sunken) and cleared the other three by 0.02-0.19, which left it below the
+     *worst case* of every other graph token. Now 3.40:1 at worst and 3.80:1 on
+     card, so all five tokens sit in one band and §28b needs no exemptions. */
+  --graph-amber: #c56c05;
   --graph-red: #dc2626;
   --graph-blue: #2563eb;
   /* Darkened from #9aa2b1 on 2026-08-17 (backlog item 63). The old value was

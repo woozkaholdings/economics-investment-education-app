@@ -2863,50 +2863,39 @@ if (keyedGroupsChecked < 4) {
   // WHY THE ASSERTION IS WIDER THAN THE FINDING. Only graph x `--surface-card`
   // is rendered today. Asserting just that pair would encode "charts only ever
   // sit on card" as an invisible premise, which is F7's failure (a check that
-  // freezes a guess). So the full cartesian is asserted, the three pairs it
-  // cannot yet clear are exempted *by measured value*, and the premise that
-  // makes them safe to exempt is itself checked below. An exemption that
-  // records its own ratio cannot rot silently: move the colour and it fails.
+  // freezes a guess). So the full cartesian is asserted.
+  //
+  // It is asserted with NO exemptions as of 2026-08-17 (backlog item 65). Three
+  // light `--graph-amber` pairs used to be exempted, on the premise — asserted
+  // in code here — that every chart figure renders on `surface.card`. Item 65
+  // re-measured that premise's own figures and they did not reproduce: this
+  // comment claimed amber on card was 3.44:1 when it was 3.19:1, and canvas
+  // 3.24:1 when it was 3.08:1. The real margins were 0.19 and 0.08, not 0.44
+  // and 0.24, which is a different decision — amber's *best* case was below
+  // every other graph token's *worst* case. So amber moved (#d97706 ->
+  // #c56c05, see src/index.css) instead of the exemption being made permanent,
+  // all 35 light pairs now clear 3.36:1, and both the exemption list and the
+  // charts-on-card premise check went away with it. Note the shape: item 63's
+  // figures missed card and canvas, and item 65's mis-stated the same two.
   // ───────────────────────────────────────────────────────────────────────────
   const GRAPH_MIN = 3.0;
 
-  // Each exemption states the pair, the ratio measured on 2026-08-17, and why
-  // it is tolerable. Remove an entry the moment its pair clears the bar — the
-  // check below fails if an exempted pair starts passing, so a later palette
-  // fix cannot leave a stale exemption behind claiming a problem that is gone.
-  const GRAPH_EXEMPT = [
-    ["light", "--graph-amber", "--surface-sunken", 2.92],
-    ["light", "--graph-amber", "--surface-accent-wash", 2.85],
-    ["light", "--graph-amber", "--surface-bad-wash", 2.91],
-  ];
-  // The shared reason, asserted rather than trusted: every chart figure in
-  // charts.jsx paints itself `surface.card`, so no graph token is ever drawn
-  // on a wash or on sunken. `--graph-amber` on card is 3.44:1 and passes; its
-  // three sub-3:1 pairs are with surfaces charts do not use. Filed as backlog
-  // item 65 rather than fixed here — darkening a second palette colour is a
-  // visual-design change, not an accessibility fix for a rendered defect.
-  {
-    const chartsSrc = readFileSync(join(ROOT, "src", "components", "charts.jsx"), "utf8");
-    const figureSurfaces = [...chartsSrc.matchAll(/background:\s*surface\.([A-Za-z]+)/g)].map((m) => m[1]);
-    if (figureSurfaces.length < 5) {
-      fail(
-        `§28b: found only ${figureSurfaces.length} \`background: surface.*\` declarations in ` +
-          `src/components/charts.jsx (expected at least 5, one per chart figure). The scan is ` +
-          `probably broken — and it is the premise that makes §28b's exemptions safe, so a scan ` +
-          `that matches nothing must not read as a pass.`,
-      );
-    }
-    const offCard = [...new Set(figureSurfaces.filter((s) => s !== "card"))];
-    if (offCard.length) {
-      fail(
-        `§28b: a chart figure in src/components/charts.jsx now renders on surface.` +
-          `${offCard.join(", surface.")} rather than surface.card. §28b exempts three ` +
-          `\`--graph-amber\` pairs *because* no chart is drawn on a wash or on sunken — that ` +
-          `premise just stopped holding. Either revert the surface, or re-measure the graph ` +
-          `tokens against it and drop the exemption (backlog item 65).`,
-      );
-    }
-  }
+  // Empty, and that is the strongest state this list has: every pair below is
+  // held to GRAPH_MIN with nothing carved out. Kept as a list rather than
+  // deleted so the escape hatch has rules attached — an entry must state the
+  // pair, the ratio measured the day it was added, and why it is tolerable,
+  // and the loop below FAILS on an entry whose pair has started passing, so a
+  // later palette fix cannot leave a stale exemption behind.
+  const GRAPH_EXEMPT = [];
+  // The charts-on-card scan that used to live here was deleted with the
+  // exemptions it justified (backlog item 65). It asserted that every
+  // `background: surface.*` in charts.jsx was `surface.card` — the premise that
+  // made the three amber exemptions safe. With no exemptions, it guards
+  // nothing: a chart moved onto a wash is now covered by the cartesian below,
+  // which is a stronger check than the premise ever was. Left in place it would
+  // fail a build for moving a chart onto `surface.sunken`, which is a layout
+  // choice with no accessibility consequence now that all five tokens clear
+  // 3:1 on all seven surfaces.
 
   let graphPairs = 0;
   const graphWorst = {};
@@ -2951,10 +2940,10 @@ if (keyedGroupsChecked < 4) {
             fail(
               `§28b: ${label} palette fails WCAG 1.4.11 — ${g} (${palette[g]}) on ${s} ` +
                 `(${palette[s]}) is ${r.toFixed(2)}:1, below ${GRAPH_MIN}:1. theme.js says graph ` +
-                `tokens are "chart strokes and dots, where 3:1 is the bar"; charts render on ` +
-                `surface.card, and a series stroke that only colour distinguishes is a graphical ` +
-                `object required to understand the content. Darken the token, or — if this ` +
-                `particular use is decorative — say so in GRAPH_EXEMPT with its measured ratio.`,
+                `tokens are "chart strokes and dots, where 3:1 is the bar", and a series stroke ` +
+                `that only colour distinguishes is a graphical object required to understand the ` +
+                `content. Darken the token, or — if the uses this token has today are all ` +
+                `decorative — say so in GRAPH_EXEMPT with its measured ratio and its reason.`,
             );
           }
         }

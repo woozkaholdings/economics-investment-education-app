@@ -66,10 +66,11 @@ export const fill = {
 // now `check-data.mjs` §28b, which measures every graph token against every
 // surface. Two things that check knows and this comment cannot: the bar is
 // WCAG 1.4.11, which only binds graphical objects "required to understand the
-// content", and every chart figure in `charts.jsx` renders on `surface.card`.
-// So the pairs that must hold are graph x card; §28b asserts the whole
-// cartesian anyway and carries the three exemptions it cannot yet clear, with
-// their measured ratios, so they cannot be forgotten or silently widened.
+// content", and that graph x `--surface-card` is the only combination anything
+// renders today. §28b asserts the whole cartesian anyway, and since 2026-08-17
+// (backlog item 65) it does so with zero exemptions: all five tokens clear 3:1
+// on all seven surfaces in both palettes, so a chart may move onto any surface
+// without a contrast question being reopened.
 export const graph = {
   green: "var(--graph-green)",
   amber: "var(--graph-amber)",

@@ -516,26 +516,49 @@ for the history. No open P1/P2 items.
     - **Honest priority: medium, and both halves unblock together the moment the owner's tree is clean.**
       Whoever picks it up gets both for one `npm test`.
 
-65. **[A11y/Design — the residual item 63's fix measured and deliberately did not absorb, filed
-    2026-08-17 by the run that closed it. Not rendered today; latent tomorrow.] Light `--graph-amber`
-    (`#d97706`) is under WCAG 1.4.11's 3:1 against three surfaces** — `--surface-sunken` **2.92**,
-    `--surface-accent-wash` **2.85**, `--surface-bad-wash` **2.91**. It clears the bar on the surfaces
-    that matter today (card 3.44, canvas 3.24), and **no chart renders anywhere but `surface.card`**,
-    so nothing on screen is currently below 3:1. Both facts are asserted, not assumed:
-    `check-data.mjs` §28b carries the three pairs in `GRAPH_EXEMPT` **with their measured ratios**, and
-    separately asserts that every `background: surface.*` in `charts.jsx` is `surface.card` — so the
-    exemption's premise fails loudly the moment a chart moves onto a wash.
-    - **Why it was not just fixed.** Darkening `--graph-amber` is a visual-design change to a colour
-      used for the flat yield curve, the 2nd cycle-phase dot, a budget segment and a tax tier — not an
-      accessibility fix for a defect anyone can see. Item 63's own lesson argues for the split: it sat
-      unfixed partly because its scope had quietly grown past its finding.
-    - **Also worth knowing before touching it:** the light palette's worst *non-exempt* graph pair is
-      now `--graph-amber` on `--surface-ok-wash` at **3.02:1** — a 0.02 margin. Any warming of amber or
-      lightening of that wash trips §28b immediately, which is the check working, not a bug.
-    - **Scope:** decide whether amber moves or the exemption becomes permanent; if it moves, update the
-      three `GRAPH_EXEMPT` ratios or delete the entries (§28b fails on a stale exemption, by design).
-    - **Honest priority: low.** Lower than item 63 was, because item 63 had a rendered failure and this
-      does not.
+75. **[Design/Debt — filed 2026-08-17 by the run that closed item 65, from the two literals that fix
+    could not reach.] `#d97706` still exists twice in the source as a hardcoded hex, and it no longer
+    matches the token it was copied from.** Item 65 moved `--graph-amber` to `#c56c05`; these two did
+    not move with it, because neither is a graph token and one of them is in a file the owner has open:
+    - `src/components/ui.jsx:75` — the `warn` callout's `rule` colour. **Owner-dirty this run, so it was
+      not touched**; check `git status` before picking this.
+    - `src/content/lessons.js:94` — lesson 32's accent colour.
+    - **The decision, not the edit, is the work:** either they are the same amber as the charts and
+      should read `graph.amber` / a token, or they are independent and should say so. Today they are
+      neither — a copy of a value that has since changed, which is how the two silently drift further.
+    - **Not an accessibility finding.** A callout rule and a lesson accent are not graph tokens; §28b
+      does not bind them, and §28's AA check already covers the text beside them. This is consistency
+      and future drift, at **honest priority: low** — and it is genuinely small, which is the only
+      reason it is worth filing rather than dropping.
+
+65. **✅ DONE 2026-08-17 (scheduled dev-agent) — decided AMBER MOVES, because re-measuring the item's
+    own figures changed the answer.** Light `--graph-amber` is now **`#c56c05`** (was `#d97706`): same
+    hue 32° and saturation 95%, HSL lightness **43.7% → 39.7%**. All three `GRAPH_EXEMPT` entries are
+    gone, `§28b` runs **70 pairs, 0 exempted**, and the charts-on-card premise check went with them.
+    - **What decided it.** This item said amber "clears the bar on the surfaces that matter today
+      (card 3.44, canvas 3.24)". **Neither number reproduces: card was 3.19, canvas 3.08** — margins of
+      **0.19 and 0.08**, not 0.44 and 0.24, and the two figures are not even mutually consistent (one
+      colour on card and canvas can only differ by a factor of 1.029, so 3.44 forces 3.34, never 3.24).
+      `src/index.css` has not changed since the commit that filed this item (`git diff 3c84155 HEAD --
+      src/index.css` is empty), so they were wrong when written, not overtaken. The three exempted
+      ratios (2.92 / 2.85 / 2.91) and the 3.02 ok-wash figure *did* reproduce exactly.
+    - **Why the corrected numbers flip the verdict.** With the real figures, amber's **best** case
+      (3.19, on card) sat below every other graph token's **worst** case (green 3.37, neutral 3.36, red
+      4.32, blue 4.62). It was not "one token with three awkward pairs"; it was one token outside the
+      band the other four share. `#c56c05` is the smallest darkening that puts it inside — **3.40 worst,
+      3.80 on card** — which is a palette-consistency argument, not "darken until the check passes".
+    - **Why the charts-on-card check was deleted too.** Its stated job was to keep the three exemptions
+      safe. With zero exemptions it guards nothing, and left in place it would fail a build for moving a
+      chart onto `surface.sunken` — a layout choice with no accessibility consequence now that all five
+      tokens clear 3:1 on all seven surfaces. Same trade as F11's: a check that breaks the owner's
+      in-flight redesign to protect a premise nothing needs is a bad check. The cartesian below is the
+      stronger guard it was standing in for.
+    - **Proved by injection, both directions.** Reverting the token to `#d97706` fails §28b three times
+      with the exact old ratios; adding one now-passing pair back to `GRAPH_EXEMPT` fails with the
+      stale-exemption message. Both files restored from a scratchpad copy and `shasum`-confirmed
+      identical. Verified live in the browser too: the budget bar's amber segment and the flat yield
+      curve both compute to `rgb(197, 108, 5)` on `rgb(255, 255, 255)`.
+    - **Left alone on purpose:** two hardcoded `#d97706` literals that are not this token — see item 75.
 
 70. **[Process — filed 2026-08-17 by the run that found item 67's headline number was wrong, because the
     error is structural and will recur.] Every measurement this repo reports lands in `AGENT_LOG.md` by
@@ -586,6 +609,14 @@ for the history. No open P1/P2 items.
     - **Honest priority: low.** Item 70 was earned by two real failures; this is the same shape
       pre-emptively, and `check-payload.mjs`'s figures in particular already live in a file that asserts
       them. Take it only when one of these numbers has actually been wrong once.
+    - **2026-08-17: a contrast number WAS wrong, and this item would not have caught it.** Item 65's
+      "card 3.44, canvas 3.24" were both wrong (3.19 / 3.08). But `check-data.mjs` never printed either
+      figure — §28b prints only the *worst* pair per palette, and that line was correct. The wrong
+      numbers were hand-computed for a pair the tool does not report. **So the gate above has still not
+      fired**, and extending `check-measurements.mjs` to §28b's printed line would not have helped. The
+      class this belongs to is the one item 70 explicitly left uncovered: a figure written in prose that
+      no instrument ever emitted. The cheap defence remains item 70's — paste the tool's line, and if you
+      need a number the tool does not print, print it.
 
 69. **[Content/i18n — filed 2026-08-17 by the run that fixed item 67's unblocked half, from a gap that
     run deliberately left open rather than papering over.] The `realized gains` rewrite landed in `en`
@@ -8530,3 +8561,106 @@ and `Dividend` (items 64/67) unblocks — its saved work is at session `48dad761
 durability caveat is now **seven entries old**; if that scratchpad is gone, redo it from item 64's entry.
 **If the plan is still dirty, item 73 is fully blocked and should not be re-picked** — this run proved
 that, so a later run need not re-prove it. **Item 74 must not be picked before a deploy exists.**
+
+### 2026-08-17 (scheduled dev-agent) — Item 65: amber moves, because the item's own margins were 2-3x smaller than it said
+
+**What I picked and why.** `git status` on arrival: the owner's **13 files, 603 insertions(+), 141
+deletions(-)** — byte-identical to the last two runs, so `LAUNCH_PLAN.md` is still theirs and the previous
+entry's rule applies verbatim: **item 73 is fully blocked and must not be re-picked** (that run proved it),
+item 69 lives in `src/locales/es.js` and is blocked, item 74 needs a deploy that does not exist. Working
+down the backlog past those, **item 65 is the first unblocked item** — its files (`src/index.css`,
+`src/theme.js`, `scripts/check-data.mjs`) are all clean. Its scope was a decision: does light
+`--graph-amber` move, or does the exemption become permanent.
+
+**I re-measured the premise with a control before editing anything, per the D3 change the last run
+argued for — and it changed the verdict.** The instrument is a standalone script validated against four
+**published** WCAG values, not against this repo: black/white **21.00**, white/white **1.00**, `#767676`
+on white **4.54** (the canonical AA-minimum grey), `#949494` on white **3.03** (the canonical 3:1 grey).
+All four reproduce to 0.01. Only then did I measure the palette. **Item 65 says amber "clears the bar on
+the surfaces that matter today (card 3.44, canvas 3.24)". The real figures are card 3.19 and canvas
+3.08.** The item's other numbers are all correct — the three exempted ratios (2.92 / 2.85 / 2.91) and the
+3.02 ok-wash margin reproduce exactly — which is what makes the two wrong ones easy to read past.
+
+**The two numbers are not just wrong, they are impossible together, which is how I knew it was not a
+palette drift.** `--surface-card` is `#ffffff` and `--surface-canvas` is `#fbfbfd`, so *any* single
+foreground contrasts with them in the fixed ratio 1.0287:1 — a colour reading 3.44 on card must read
+3.345 on canvas, never 3.24. No amber produces that pair. And `git diff 3c84155 HEAD -- src/index.css`
+is **empty**: the palette has not moved since the commit that filed the item. They were wrong when
+written.
+
+**Why the corrected numbers flip the decision.** The item's case for "make the exemption permanent" was
+comfortable headroom where it counts. With the real figures, amber's margins were **0.19 on card, 0.08 on
+canvas, 0.07 on warn-wash, 0.02 on ok-wash** — and the deeper fact the wrong numbers hid: **amber's best
+case (3.19) sat below every other graph token's worst case** (green 3.37, neutral 3.36, red 4.32, blue
+4.62). That is not a token with three awkward pairs; it is one token outside the band the other four
+share. So amber moves: **`#d97706` → `#c56c05`**, the same hue (32°) and saturation (95%) at HSL lightness
+**43.7% → 39.7%** — chosen as *the smallest darkening that puts amber inside the existing family band*
+(3.40 worst, 3.80 on card), not as "darken until it passes". All 35 light pairs now clear **3.36:1**.
+
+**What went away with it.** All three `GRAPH_EXEMPT` entries (§28b fails on a stale exemption, by
+design), and **the charts-on-card premise check**. That deletion is the one judgement call worth
+recording: its only stated job was making the three exemptions safe, so with zero exemptions it guards
+nothing — while still being able to fail a build for moving a chart onto `surface.sunken`, which is now a
+pure layout choice. Breaking the owner's in-flight redesign to protect a premise nothing depends on is
+F11's bad trade one file over. The full cartesian is the stronger guard it was standing in for. I also
+reworded §28b's failure message, which asserted "charts render on `surface.card`" — true today, but I had
+just deleted the check that kept it true, and a live claim with nothing behind it is exactly what rots.
+
+**Verified.** `npm test` — **`PASS: 0 failure(s)`** on all six checks plus `refresh-readiness --check`,
+with only the standing translation AI-share warning, which predates this run. The §28b line now reads
+**`70 pairs at 1.4.11 >= 3:1 across both palettes, 0 exempted (worst light 3.36:1 --graph-neutral on
+--surface-accent-wash; worst dark 3.27:1 --graph-neutral on --surface-accent-wash)`** — worst light was
+3.02 before. `npm run build` — **`✓ built in 999ms`**.
+
+**Proved by injection, both directions, because a check that passes proves nothing on its own.**
+(1) Token reverted to `#d97706`: §28b fails **three** times, naming sunken 2.92, accent-wash 2.85,
+bad-wash 2.91 — the exact ratios the exemptions used to carry. (2) One now-passing pair added back to
+`GRAPH_EXEMPT`: fails with `is now 3.49:1 and clears 3:1, but it is still listed in GRAPH_EXEMPT`. Both
+files were restored from **scratchpad copies, never `git checkout --`**, and `shasum` confirms them
+byte-identical before and after (`4bf9e9e9…` for `src/index.css`, `e6359aaa…` for `scripts/check-data.mjs`).
+
+**Visually verified live, not assumed.** Static build served on `127.0.0.1:8771`, browser tab opened by
+`url`, viewport forced to the `mobile` preset **and `colorScheme: light`** — the first attempt measured
+`#f0b95c`, the *dark* token, because the browser follows system preference and this change only touches
+the light palette. That is a trap worth naming for the next run that verifies a light-palette change. In
+light mode: lesson 1's budget bar renders its amber segment at `rgb(197, 108, 5)`, and lesson 36's flat
+yield curve draws its 2.5px stroke at `rgb(197, 108, 5)` on `rgb(255, 255, 255)` — the 3.80:1 pair, read
+out of the live DOM. Both screenshotted; the colour still reads as amber against the blue and green
+beside it, which was the item's real worry (it called darkening "a visual-design change", and it is).
+
+**Owner's tree provably untouched.** `git diff --shortstat` over their thirteen paths reports the
+identical **13 files, 603 insertions(+), 141 deletions(-)** as on arrival. My own diff is `src/index.css`,
+`src/theme.js`, `scripts/check-data.mjs` and `AGENT_LOG.md`. `UIUX/` remains untracked and unread beyond
+`ls`. Note that `npm run build` builds the working tree, so the `dist/` I verified against **includes the
+owner's in-flight redesign** — which is the right control for "does my palette change look wrong in the
+app as it is today", and worth stating rather than implying I built a clean tree.
+
+**Adversarial self-check (step 5).** **Blindspot register:** grepped my three source diffs for Dalio/person
+branding, advice verbs (`buy|sell|invest in|you should|we recommend|allocate`), child-facing framing
+(`kid|child|children`) and live-looking dates/figures — **0 hits on all four**; the change adds one hex
+value and comments about contrast ratios, and `check-blindspot.mjs` passes (it is owner-modified this
+run, so I did not lean on it; its scope is `src/content/` and `src/locales/`, neither of which I touched).
+**DECISIONS.md conflict:** none — no storage, content-module, build-shape or routing change. **Already-done
+item:** no; item 65 was open, and it is the *residual* item 63 deliberately did not absorb, so this is the
+follow-through 63 scoped rather than a redo. **My own verification claims:** every figure above is pasted
+from tool output or read out of the live DOM. **What the check caught:** §28b's failure message still
+told the reader "charts render on `surface.card`" — a live claim about the app, in the same run that
+deleted the check keeping it true. Reworded to say nothing it cannot back. **What it did not catch, and
+should have:** the wrong `3.44` was found by step 3's re-measurement, before step 5 ran — the honest
+reading is that re-measuring first did the work here, not the adversarial pass, which is the case for
+the D3 change rather than against it.
+
+**Next run.** **The owner half of item 72 is still the entire critical path and it is four clicks:**
+`npm run build`, open <https://app.netlify.com/drop>, drag `dist/`, keep the URL — item 18 (analytics) is
+downstream of it and downstream of nothing else. **Second for the owner, carried from last run:** the D3
+product change ("re-measure the premise, with a control, before editing anything") needs a step added to
+the dev-agent task file, which only they can edit — **this run is the third consecutive instance of it
+paying off**, and the first where it changed a decision rather than a number. For the dev-agent's own
+pick, **re-check the owner's dirty files first** — six of the last seven runs. **If `LAUNCH_PLAN.md` has
+gone clean**, item 73 is a single paste-and-go for both halves (three §10 blindspots verbatim from
+`reviews/2026-08-17-monthly-audit.md` §6, plus the staged D3 row and the `15 claims` → `16 claims` edit at
+`LAUNCH_PLAN.md:529`), and `Dividend` (items 64/67) unblocks — its saved work is at session `48dad761`'s
+scratchpad, durability caveat now **eight entries old**; if that scratchpad is gone, redo it from item 64's
+entry. **If the plan is still dirty**, item 75 (the two stale `#d97706` literals) is small and its
+`lessons.js` half is clean today, but check `ui.jsx` before scoping it. **Item 74 must not be picked
+before a deploy exists.**
