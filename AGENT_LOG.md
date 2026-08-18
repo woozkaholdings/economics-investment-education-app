@@ -553,10 +553,11 @@ for the history. No open P1/P2 items.
       - `LAUNCH_PLAN.md` §2.5 wants a new row `` `essentials` | 1–15 (15) `` and its existing money
         row changed to `` `money` | 16–28 (13) ``
       Then `npm run readiness -- --write`. Nothing else moves.
-    - **⛔ BLOCKED on `LAUNCH_PLAN.md` being owner-clean — the same single file that blocks items 73
-      and 64's `Dividend`.** `LAUNCH_READINESS.md` is clean and could be done alone, but doing half
-      leaves the suite red anyway, so there is no partial win here. **All three items unblock
-      together on one `npm test`; whoever picks one should pick all three.**
+    - **⛔ BLOCKED on `LAUNCH_PLAN.md` being owner-clean — the same single file that blocks items 73,
+      64's `Dividend`, and (found 2026-08-18, re-measuring this item's own premise) 35's second
+      glossary batch.** `LAUNCH_READINESS.md` is clean and could be done alone, but doing half
+      leaves the suite red anyway, so there is no partial win here. **All four items unblock
+      together on one `npm test`; whoever picks one should pick all four.**
     - **Until then, `npm test` is red in the working tree and that is correct.** A run that needs a
       green suite to verify its own change should run the checks against a `git archive HEAD` copy —
       that is what this run did, and the technique is now in the Environment note.
@@ -1522,6 +1523,25 @@ for the history. No open P1/P2 items.
       Bracket, Withholding, Beneficiary, Risk Tolerance all appear in money lessons) but is **not
       queued** — re-read this item's own warning against count-shaped work before adding one. The bar
       is "a word money lessons use that a learner can't look up," not a term total.
+    - **⚠️ Re-measured 2026-08-18 (scheduled dev-agent) — this candidate list is stale, and the item is
+      now BLOCKED for the same reason as item 64's `Dividend`.** Two things changed since 2026-08-16:
+      **(a)** `Bond` shipped as part of item 64, so it is no longer a candidate here — `npm run jargon
+      -- money` (re-run this run, `MEASURED jargon money: 3 candidates, 2 control, 0 self-defining, 93
+      low-reach [fingerprint bbe1464e]`) finds only **`savings account`** (2 lessons, 4x), **`FOMO`**
+      (2 lessons, 4x) and **`lifestyle inflation`** (1 lesson, 4x) — none of the other six named terms
+      clear the reach bar against the *current* tree. **(b)** The owner's redesign shrank the `money`
+      track from 28 lessons to 13 (`16–28`, `essentials` now holds `1–15`), so this item's own reach
+      arithmetic no longer applies to the tree it was written against. **Neither of those is why it's
+      blocked.** Verified by injection, in a scratchpad copy (repo untouched): adding one probe term to
+      `glossary.js` — with the working tree's real 3-track shape held constant, so the essentials-track
+      guard from item 77 isn't the thing firing — independently fails `refresh-readiness.mjs`'s §1
+      asset sentence: `LAUNCH_PLAN.md` says "32 glossary terms," the tree now has 33, `npm test` fails.
+      **Any new glossary key is blocked on `LAUNCH_PLAN.md` being owner-clean, exactly like item 64's
+      `Dividend` and item 73** — this item's own text never named that block because it predates
+      `refresh-readiness.mjs` joining `LAUNCH_PLAN.md` (item 55, after this item was filed). **Do not
+      pick this item's second batch until `LAUNCH_PLAN.md` is clean — it unblocks together with 64, 73
+      and 77 on one `npm test`, and the reach numbers above will need re-measuring again at that point
+      since the tree will have moved again.**
     *(Original text below, retained for the measurement that motivated it.)*
     **The
     glossary is 17 terms and every one of them is macroeconomic. The money track — 28 of 40 lessons,
@@ -9266,3 +9286,69 @@ once.** Check the owner's 26 dirty paths first (ten of the last eleven runs) and
 the string the item actually edits. **Item 77's fix is written out verbatim and was verified by
 injection — apply it, do not re-derive it, and do not relax the track guard.** Item 74 must not be picked
 before a deploy exists; item 71's gate has still not fired; item 76 is genuinely blocked on a tokeniser.
+
+### 2026-08-18 (scheduled dev-agent, second run this date) — Item 35's "unblocked" second batch was not; found by re-measuring rather than picking it
+
+Arrived to the same 26-file owner-dirty tree as the previous run this date (shortstat unchanged: **26
+files, 1016 insertions(+), 1441 deletions(-)**), plus the untouched `UIUX/`, `drafts/` and five
+`lessonContent.essentials.*.js`. Scoped the backlog exhaustively before picking anything: every item that
+routes through one of those 26 files, or through `LAUNCH_PLAN.md`'s generated figures, is blocked, and a
+dedicated scoping pass over all 54 open/held items in AGENT_LOG.md's backlog confirmed there is currently
+**no item whose implementation avoids both** — the closest candidate was item 35's "second glossary
+batch," filed 2026-08-16 with a named list of seven terms and marked "not queued" rather than blocked.
+
+**Premise re-measured before touching anything (step 3.5), and it changed the disposition, not a
+figure — the pattern item 73 named for a D3 row.** Two things had moved since the item was filed:
+
+1. **The reach numbers are stale.** `npm run jargon -- money` (`MEASURED jargon money: 3 candidates, 2
+   control, 0 self-defining, 93 low-reach [fingerprint bbe1464e]`) finds only `savings account` (2
+   lessons, 4x), `FOMO` (2 lessons, 4x) and `lifestyle inflation` (1 lesson, 4x) against the *current*
+   tree — none of the item's seven named terms (Bond, Collateral, Credit Utilization, Tax Bracket,
+   Withholding, Beneficiary, Risk Tolerance) clear the bar, because `Bond` shipped under item 64 and the
+   `money` track itself shrank from 28 lessons to 13 when the owner's redesign carved out `essentials`.
+2. **The real finding: it is blocked, not merely stale, and for the same reason as item 64's
+   `Dividend`.** Verified by injection in a scratchpad copy (repo untouched, confirmed by `shasum -a 256
+   -c` before/after): with the working tree's real 3-track shape held constant — so item 77's
+   essentials-track guard isn't what fires — adding one probe glossary key independently fails
+   `refresh-readiness.mjs`'s §1 asset sentence: `LAUNCH_PLAN.md` states "32 glossary terms," any new key
+   makes it 33, `npm test` fails. **Any glossary addition right now is blocked on `LAUNCH_PLAN.md` being
+   owner-clean.** Item 35's own text never named this because it was filed 2026-08-16, and
+   `refresh-readiness.mjs` did not join `LAUNCH_PLAN.md` until item 55, afterward.
+
+**What shipped: the correction, written into item 35 and into item 77's blocked-list, not a glossary
+edit.** Backlog items 35 and 77 both now state that items **35, 64's `Dividend`, 73 and 77** unblock
+together the moment `LAUNCH_PLAN.md` is clean, and that item 35's reach numbers will need re-measuring
+again at that point since the tree will have moved again by then. No content, code, or count changed.
+
+**Verified.**
+- `npm run check-backlog` still reports **54 items, 99 citations resolving** — the edit added no new
+  numbered item and no new citation, only text inside two existing ones.
+- Full `npm test` on a `git archive HEAD` control copy (the technique the previous run's Environment-note
+  addition documents, `node_modules` symlinked and the two gitignored `economic-cycles-v*.jsx` copied in)
+  exits **0**, all six checks `PASS`. The working tree itself is still red on `refresh-readiness.mjs`,
+  correctly, for the reason item 77 already names — this run's edit doesn't touch that script.
+- The probe injection was in a scratchpad copy only; `shasum -a 256` on `src/content/glossary.js` and
+  `scripts/refresh-readiness.mjs` in the real repo matches before and after this run.
+- Owner's 26 paths: **unchanged shortstat**, `HEAD` unchanged at `df1b2d6` from start to commit.
+
+**Adversarial self-check (step 5).** **Blindspot register:** no regression — `npm run check-blindspot`
+passes (0 failures) on the working tree; `scripts/check-blindspot.mjs` is owner-dirty so I read their
+diff rather than trusting the green, and it only adds a disclaimer surface, unrelated. This run added no
+learner-facing copy at all — the only file touched is `AGENT_LOG.md`. **DECISIONS.md conflict:** none;
+`DECISIONS.md` is owner-dirty and I read it rather than edited it — no storage, routing, build or
+content-module-shape change. **Already-done item:** no — this doesn't undo item 35's shipped 12 terms or
+item 64's shipped Stock/Bond/APR; it corrects an *open* residual's status. **My own verification claims:**
+every figure pasted from tool output; the one a reviewer would most reasonably doubt — that a bare
+glossary addition fails independently of the essentials-track guard — was isolated by holding
+`FIGURE_TRACKS` at its 3-track probe value so only one variable moved. **What the check caught:** my
+first pass at this entry credited the finding to "re-running `npm run jargon`," which only explains why
+the *candidate list* is stale, not why the item is *blocked*. The block is a `LAUNCH_PLAN.md` fact,
+found by injection, not by rerunning an extractor — corrected above before this went in the log.
+
+**Next run.** **`LAUNCH_PLAN.md` now blocks four items — 35, 64's `Dividend`, 73, and 77 — and they
+unblock together on one `npm test`.** Item 77's own text has the exact two-line fix, verified by
+injection; apply it, then item 64's saved scratchpad glossary entry, then re-measure item 35's reach
+numbers fresh (the ones pasted above will already be stale by then) before deciding whether any of its
+three real candidates clear the bar. The owner's build-deploy (item 72's remaining owner-half, four
+clicks) is still the entire critical path for item 18. Check the owner's dirty paths first — now eleven
+of the last twelve runs — before picking anything content- or doc-shaped.
