@@ -1044,30 +1044,58 @@ for the history. No open P1/P2 items.
     > bugs were invisible to the existing control, which rebuilt its independent form set with the
     > same missing plural; **both now have controls** (a reported multi-word phrase must occur
     > contiguously in the corpus; the independent set carries plurals), each proved by injection.
-    - **`Dividend`: 3 uses, lessons 3 and 6, never defined. ⛔ BLOCKED 2026-08-17 — WRITTEN AND
-      VERIFIED, NOT SHIPPABLE THIS RUN. Do not re-derive it; apply the saved work.** Both premises
-      above were re-measured and both hold exactly. A fourth use was found that item 64 did not
-      record and that **neither instrument can see**: the glossary's own `Brokerage Account`
-      definition says "dividends" in `en`. `npm run jargon` scans lesson text and §17b scans lesson
-      heading+body, so **glossary definition prose is a blind surface for both** — a reader who
-      opens one entry can meet an undefined word inside it. Filed separately as **item 66**.
-      **Why it is blocked, and this is a hard block, not a judgement call:** adding any glossary key
-      moves `LAUNCH_PLAN.md` §1's generated "**32** glossary terms" figure (line 65), which
-      `refresh-readiness.mjs` checks and `npm test` fails on — and `LAUNCH_PLAN.md` has uncommitted
-      owner edits, so it cannot be touched. This was proved, not assumed: the entry was written, both
-      chips added, `npm test` run, and the *only* remaining failure after the readiness refresh was
-      that one LAUNCH_PLAN line. Same shape as item 62's F6, which the previous run deferred for the
-      same file.
-      **The work is not lost.** The entry (5 languages, `{s,f,ex}`) plus both §17b chips are saved at
-      `scratchpad/glossary.with-dividend.js`, `scratchpad/lessonTerms.with-dividend.js` and
-      `scratchpad/dividend-glossary.patch` (session `48dad761`). With them applied, `npm test` passed
-      everything except the LAUNCH_PLAN line, and §17b read **104 uses / 68 chips / 0 unexplained**.
+    - **`Dividend`: 3 uses, lessons 3 and 6, never defined. ⛔ STILL BLOCKED on `LAUNCH_PLAN.md`
+      being owner-clean — that half is unchanged and was re-verified 2026-08-18 (the file's worktree
+      sha1 `07313fd0` != its `HEAD` sha1 `967cee51`, so it is still owner-dirty).
+      🔴 **BUT THE SAVED WORK IS PARTLY POISONED, FOUND 2026-08-18. The previous instruction here —
+      "Do not re-derive it; apply the saved work", naming three artifacts as equals — would have
+      silently reverted two later runs' shipped content fixes. Read this before touching any of
+      them.** The artifacts were saved 2026-08-17 12:10; `src/content/glossary.js` has been committed
+      twice since, and one artifact is a *whole-file copy* that predates both.
+      - ❌ **`scratchpad/glossary.with-dividend.js` — DO NOT APPLY. It is a stale whole-file copy.**
+        Measured against `HEAD` (files written to disk and diffed, not piped — see the Environment
+        note): **4 changed line-pairs + 16 added lines**, where only 12 of those added lines are the
+        Dividend entry. The other 4 are older text for **`Yield Curve`, `Credit Spread`, `Recession`
+        and `Brokerage Account`**, and copying the file in reverts all four:
+        `86c356c` (2026-08-17 14:11, item 67) expanded `gov`->`government` in the first two, `NBER`->
+        `National Bureau of Economic Research (NBER)` in `Recession` (en/es/ja), and rewrote
+        `Brokerage Account` en `realized gains`->`any profit made when an investment is sold`;
+        `e346771` (2026-08-18 00:11, item 69) then rewrote that entry's **es** calque. **So the copy
+        would undo items 67 and 69 in one paste — the exact unmeasured multi-language drift item 69
+        exists to prevent — and it would do it invisibly, because the paste "succeeds".**
+      - ✅ **`scratchpad/dividend-glossary.patch` — THIS IS THE ARTIFACT TO USE.** It touches only
+        `src/content/glossary.js`, `git apply --check` exits **0** against the current tree, and
+        applied to an isolated copy of `HEAD`'s file it is **purely additive: 0 lines removed, 12
+        added.** It survived because a contextual patch's hunk sits below the four entries that
+        moved — which is the general lesson: **a saved whole-file copy rots silently, a patch fails
+        loudly. Save patches.**
+      - ✅ **`scratchpad/lessonTerms.with-dividend.js` — still exactly right**, re-diffed against
+        `HEAD` this run: the only changes are the two intended chips (lesson 3 §2 and lesson 6 §0)
+        plus their 3-line comment. Nothing else in that file moved.
+      - ⚠️ **All three live in an ephemeral session scratchpad** (`/private/tmp/claude-501/.../`
+        session `48dad761-ee6d-4adf-94a9-c298881d7dd2`) which is temp and will be cleaned — they were
+        still present 2026-08-18, but do not count on that. **The entry text is therefore inlined
+        here, so the content survives the directory:**
+
+      ```js
+  "Dividend": { en: { s: "Dividend", f: "A share of a company's profits paid out in cash to the people who own its stock. Not every company pays one — many put the profit back into the business instead — and a dividend is separate from any change in the stock's own price.", ex: "A company that earns a profit can keep it to grow the business or pay part of it out to its shareholders as a dividend." }, ko: { s: "배당금", f: "회사가 번 이익의 일부를 그 주식을 가진 사람들에게 현금으로 나눠 주는 것. 모든 회사가 배당금을 지급하지는 않으며(이익을 사업에 다시 투입하는 회사도 많습니다), 배당금은 주가 자체의 등락과는 별개입니다.", ex: "회사는 이익이 나면 사업을 키우는 데 쓸 수도 있고, 그중 일부를 배당금으로 주주에게 나눠 줄 수도 있습니다." }, es: { s: "Dividendo", f: "Una parte de las ganancias de una empresa que se reparte en efectivo entre quienes poseen sus acciones. No todas las empresas lo pagan — muchas reinvierten ese beneficio en el negocio — y el dividendo es independiente de lo que suba o baje el precio de la acción.", ex: "Una empresa que obtiene beneficios puede quedárselos para hacer crecer el negocio o repartir una parte entre sus accionistas como dividendo." }, zh: { s: "股息", f: "公司把利润的一部分以现金形式分给持有其股票的人。并非所有公司都派发股息——许多公司会把利润重新投入业务——而且股息与股价本身的涨跌是两回事。", ex: "公司赚到利润后，可以留下来扩大业务，也可以把其中一部分作为股息分给股东。" }, ja: { s: "配当", f: "会社が上げた利益の一部を、その株式を持つ人たちに現金で分配するもの。すべての会社が支払うわけではなく（利益を事業に再投資する会社も多くあります）、配当は株価自体の値動きとは別のものです。", ex: "会社は利益が出たとき、事業を大きくするために手元に残すことも、一部を配当として株主に分配することもできます。" } },
+      ```
+
+      The two `lessonTerms.js` edits are equally small: lesson `3: { 2: [...] }` gains `"Dividend"`
+      after `"Stock"`, and lesson `6: { 0: [...] }` gains `"Dividend"` after `"Stock"` — both as
+      chips, **not** `defined-here` exclusions, because both are uses rather than definitions.
       **The decisions already made, so the next run does not re-open them:** entry placed at the end
       of the money-track block (money-track by measured use, but it leans on `Stock` and is not a
-      separate instrument); chips on lesson 3 §2 and lesson 6 §0 — **not** `defined-here` exclusions,
-      because both are uses rather than definitions.
-      **Next run: if `LAUNCH_PLAN.md` is clean, this is a copy-in plus `npm run readiness -- --write`
-      plus one AGENT_LOG entry.** If it is still dirty, do not attempt it — pick item 66 or 65.
+      separate instrument). A fourth use that **neither instrument can see** — the glossary's own
+      `Brokerage Account` definition says "dividends" in `en` — is filed separately as **item 66**.
+      **Why the block is hard, not a judgement call:** adding any glossary key moves `LAUNCH_PLAN.md`
+      §1's generated "**32** glossary terms" figure (line 65), which `refresh-readiness.mjs` checks
+      and `npm test` fails on. This was proved in 2026-08-17's run, not assumed: with the entry and
+      both chips in, the *only* remaining failure was that one LAUNCH_PLAN line, and §17b read
+      **104 uses / 68 chips / 0 unexplained**.
+      **Next run: if `LAUNCH_PLAN.md` is clean**, apply the patch (or paste the entry above), make
+      the two `lessonTerms.js` edits, run `npm run readiness -- --write`, then `npm test`. **If it is
+      still dirty, do not attempt it.**
     - **`APR`: 1 use, economy lesson 35, acronym never expanded. ✅ DONE 2026-08-17 (scheduled
       dev-agent), exactly as the recommended disposition said** — expanded in place to "the annual
       rate — the APR — on your credit card", no glossary key added for one incidental use. Premise
@@ -2742,6 +2770,28 @@ suite to **exit 0**. That gives a two-sided answer: **red on the working tree an
 copy means the owner's dirt caused it; red on both means you did.** Used this run to prove
 `refresh-readiness.mjs`'s failure was the owner's new third lesson track and not a regression — see
 backlog item 77.
+
+**A piped `git show ... | wc -l` can silently lie here — write the blob to a file and measure the file
+(2026-08-18).** Several compound Bash commands this run died with **exit 138** partway through, and the
+damage is not that they failed: it is that they printed *plausible* partial output first. The same
+measurement, run twice, gave `glossary.js` at `HEAD` as **72 lines** and then **235**; a `for` loop over
+four commits reported 321/440/263/235 for a file that is 72 lines. Nothing errored, and each individual
+number looked like a real answer. **What is trustworthy:**
+
+```bash
+git rev-parse HEAD:src/content/glossary.js       # blob id — authoritative, no content streamed
+git diff --stat <revA> <revB> -- <path>          # empty output == identical, no pipe involved
+git cat-file blob HEAD:<path> > "$SCRATCH/f"     # then wc -l / diff the FILE, not a pipe
+```
+
+Two blob ids being equal settled in one command what four rounds of `git show | wc -l` had contradicted
+themselves about. **The reason this is in the Environment note and not just a run-log line is that it
+defeats step 3.5 exactly the way the dark-mode DOM scan did**: a truncated pipe returns a clean-looking
+number, so a run that "measured" something can be confidently wrong. It was caught only because the
+control (diff the saved copy against the commit it was taken from, expect *only* the known addition)
+came back with 438 unexplained lines instead of 0. **Carry the control; when it fails, suspect the
+instrument before the finding.**
+
 
 **Browser visual verification — now possible, use this instead of assuming it can't be done.**
 Every run-log entry since the JSX split began has a line like "did not visually verify — `preview_start`
@@ -9705,3 +9755,79 @@ audit, one real focus bug, two dead-code trims, a Reference-hub QA sweep, an ARI
 run's lesson-flow component sweep — without the owner's tree moving once. A future run picking up from
 here should genuinely expect the next real win to come from `LAUNCH_PLAN.md` going clean, not from a
 seventh audit angle on the same static tree.
+
+### 2026-08-18 (scheduled dev-agent, eighth run this date) — The queued Dividend work was partly poisoned: one saved artifact would have reverted items 67 and 69, and the instrument that found it had to be fixed first
+
+Same 26-file owner-dirty tree as all seven earlier runs this date (shortstat unchanged: **26 files, 1016
+insertions(+), 1441 deletions(-)**; `HEAD` still `c1d9641`). The sixth and seventh runs both closed saying
+the next real win would come from `LAUNCH_PLAN.md` going clean rather than an eighth audit angle. It is
+still dirty (worktree sha1 `07313fd0` != `HEAD` sha1 `967cee51`), so instead of auditing the same static
+tree again this run applied **step 3.5 to a queued item's premise rather than to a pickable item's** —
+item 64's `Dividend` bullet says, in bold, "Do not re-derive it; apply the saved work" and names three
+scratchpad artifacts. That instruction is what the *next* unblocked run is supposed to execute blind.
+Nobody had checked whether it was still true.
+
+**It was not. One of the three artifacts is a trap.** `scratchpad/glossary.with-dividend.js` is a
+**whole-file copy** of `src/content/glossary.js` taken 2026-08-17 12:10. The file has been committed
+**twice** since: `86c356c` (2026-08-17 14:11, item 67) and `e346771` (2026-08-18 00:11, item 69). Diffed
+against `HEAD`, the saved copy carries **4 changed line-pairs plus 16 added lines**, of which only 12 are
+the intended Dividend entry — the other four are *older* text for `Yield Curve`, `Credit Spread`,
+`Recession` and `Brokerage Account`. Pasting it in would have reverted `gov`->`government`, `NBER`->
+`National Bureau of Economic Research (NBER)` (en/es/ja), item 67's `Brokerage Account` en rewrite of
+"realized gains", and item 69's rewrite of that same entry's **es** calque. **That is items 67 and 69
+undone in one paste, silently, because the paste succeeds** — and it is precisely the unmeasured
+multi-language drift item 69 was filed to prevent.
+
+**The other two artifacts are fine, and the difference between them is the transferable lesson.**
+`dividend-glossary.patch` touches only `glossary.js`, `git apply --check` exits **0** against the current
+tree, and applied to an isolated copy of `HEAD`'s file it is **purely additive — 0 lines removed, 12
+added** (verified in the session scratchpad; no repo file was modified). `lessonTerms.with-dividend.js`
+re-diffs against `HEAD` to exactly the two intended chips and nothing else. A contextual patch survived
+because its hunk sits below the four entries that moved; **a whole-file copy rots silently while a patch
+fails loudly.** Item 64 now says so, ranks the three artifacts explicitly, and — because all three sit in
+an ephemeral `/private/tmp` session scratchpad that will be cleaned — **inlines the Dividend entry text
+into the backlog item itself** so the content outlives the directory. The `LAUNCH_PLAN.md` block is
+unchanged and still hard.
+
+**The instrument had to be fixed before any of the above could be believed, and that is the run's second
+finding.** Several compound Bash commands died with **exit 138** partway through, printing plausible
+partial output first. The same measurement gave `glossary.js` at `HEAD` as **72 lines**, then **235**; a
+loop over four commits returned 321/440/263/235 for a 72-line file. Nothing errored. This was caught only
+because the control — diff the saved copy against the commit it was taken from, expect *only* the known
+Dividend addition — came back with **438 unexplained lines instead of 0**, which is impossible if the copy
+is what the item says it is. Rather than reason around it, the instrument was replaced: `git rev-parse
+<rev>:<path>` proved `HEAD` and `e346771` are the **same blob** (`fa1d3fe`) in one command, after four
+rounds of `git show | wc -l` had contradicted themselves. All figures quoted above were then re-taken from
+**files written to disk and diffed as files**, never through a pipe. The technique and the failure mode are
+now in the Environment note.
+
+**Verification.** No source file changed — this run edits `AGENT_LOG.md` only, so `npm run build`/`npm test`
+were not re-run (and the suite is red on the working tree for item 77's owner-dirty reason, which is
+unrelated and unchanged). What *is* verified is every claim the entry makes: the patch's `git apply
+--check` exit 0 and its 0-removed/12-added result were produced by applying it to an isolated copy;
+the four reverted entries were attributed by `git show <commit> -- src/content/glossary.js` per commit;
+`AGENT_LOG.md` is confirmed **outside** `check-data.mjs` §26's `DOCS` list (`LAUNCH_READINESS.md`,
+`LAUNCH_PLAN.md`, `DECISIONS.md`, `CLAIMS.md`, `README.md`), so the temp paths this entry names cannot
+fail the path-existence guard, and no `MEASURED ... [fingerprint]` line was added, so
+`check-measurements.mjs` is unaffected.
+
+**Adversarial self-check (step 5).** **Blindspot register:** no regression — no learner-facing copy, no
+dates, no market figures, no kids framing; the change is backlog/process prose. **DECISIONS.md conflict:**
+none — nothing about storage, content-module format or build shape; `DECISIONS.md` was not touched (it is
+owner-dirty). **Already-done backlog item:** no — this does not redo item 64, it corrects the *instruction*
+item 64 leaves for whoever unblocks it, and explicitly preserves every decision that item already made.
+**My own verification claims:** the numbers above are the second, file-based measurements, not the piped
+ones that disagreed; a reviewer re-running `git rev-parse`, `git apply --check` and a file-to-file `diff`
+gets them. **What the check caught:** the first draft of the item-64 rewrite told the next run to "apply
+the saved work, but re-diff the glossary copy first" — which is the same trap with a warning label, and
+would still have put a stale 84-line file in front of someone. Replaced with a hard ❌ on that artifact and
+a named ✅ on the patch. It also caught that quoting `/private/tmp/...` paths in a *guarded* document would
+have been a §26 failure; `AGENT_LOG.md` being out of scope was checked in the script, not assumed.
+
+**Next run.** `LAUNCH_PLAN.md` is still the single file blocking items 35, 64's `Dividend`, 73 and 77, and
+they still unblock together on one `npm test` — but the Dividend half is now safe to execute, which it was
+not this morning. If that file is clean, take all four. If it is still dirty, note that **seven consecutive
+runs plus this one have now worked around the same static tree**; the honest highest-value work left is
+verifying the *other* queued instructions the same way this run verified item 64's, since the failure found
+here (a saved artifact silently rotting behind a confident "do not re-derive it") is structural and item 64
+is unlikely to be the only place it happened.
