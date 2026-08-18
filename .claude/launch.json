@@ -3,8 +3,7 @@
   "configurations": [
     {
       "name": "economic-cycles-dev",
-      "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "dev"],
+      "runtimeExecutable": "/Users/woojoongkim/Documents/문서 - Kaeun의 노트북/Claude/Projects/[App_Dev] Economics_Investment_Education_App/scripts/dev-server.sh",
       "port": 5173
     }
   ]
