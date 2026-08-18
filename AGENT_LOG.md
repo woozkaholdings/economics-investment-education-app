@@ -9429,3 +9429,67 @@ already-diagnosed fix, not a research item — a future run can grep this entry 
 fifth (`Reference.jsx`'s focus fix, blocked on the file itself rather than on generated figures — worth
 separating those two blocking reasons if a future run tracks this as a numbered item). Owner's build-
 deploy (item 72, four clicks) remains the entire critical path for item 18.
+
+### 2026-08-18 (scheduled dev-agent, fourth run this date) — Two verified dead-code trims; the wider untouched surface came back clean
+
+Same 26-file owner-dirty tree as all three earlier runs this date (shortstat unchanged: **26 files, 1016
+insertions(+), 1441 deletions(-)**). The first two runs exhausted the numbered backlog; the third found and
+fixed a real focus-management bug in the untouched code surface. This run went back to that surface for a
+fourth pass, deliberately over *different* files than the third run's fix (`Glossary.jsx`) and the second
+run's dead-import finding (`Sectors.jsx`, not yet fixed) — `src/components/PolicySim.jsx`, `LessonVisual.
+jsx`, `charts.jsx`, `GlossaryTerms.jsx`, `src/screens/reference/MarketSignals.jsx`, `Settings.jsx`,
+`ParentGuide.jsx`, `storage.js`, `lessonIdMigration.js`, and the clean `scripts/*` files.
+
+**Honest result: nothing behavioral turned up.** Traced roving-tabindex logic, disclosure panels, chart
+scaling math, and the clean scripts' guard rails closely; all correct. That is itself worth stating rather
+than stretching a non-finding into a report — the codebase's untouched surface is, on this evidence,
+genuinely tight. Worth recording as one data point, not a general claim: three passes over roughly two-
+thirds of the clean tree have found one real bug (the previous run's focus fix) and two dead-code items.
+
+**What shipped instead: the two dead-code items already on record, verified before touching either.**
+1. **`src/screens/reference/Sectors.jsx:20`** — `radius` and `surface` imported from `theme.js`, never
+   referenced anywhere else in the file (found by the second run this date, not yet fixed; re-confirmed
+   this run by direct grep with a control — `ink`/`line`/`space`, the file's other three token imports,
+   show real usage counts of 14/3/12, so the zero-hit grep for `radius`/`surface` isn't a broken
+   instrument). Trimmed to `import { ink, line, space } from "../../theme.js";`.
+2. **`src/components/Icon.jsx:30`** — the `text` entry in the `PATHS` map, never reached by any call
+   site. Verified by grepping every static `<Icon name="...">` across `src/` (12 distinct names, none
+   `text`) and every dynamic one back to its data source — `App.jsx`'s tab config (`icon: "book"/
+   "target"/"library"`), `Reference.jsx`'s hub list (`"users"`/`"info"`), `Practice.jsx`'s `iconRight=
+   "arrowRight"` — confirming those *are* reached (the control: a bare `grep -rn '"text"' src/` returns
+   nothing, while the same check for `"arrowRight"`/`"users"`/`"info"` returns their real call sites).
+   Removed the one line; `Icon` already no-ops on an unknown name, so this was always inert.
+
+**Verified.**
+- `npm run build` green on both files together.
+- **Verified live, not just by build success.** Served `dist/`, drove it through `javascript_tool`
+  (`preview_start` with a plain `url`, mobile viewport). Navigated Reference → Sector performance —
+  renders correctly (rows for Health Care, Financials, Industrials etc., each with the small bar-chart
+  glyph from `Icon name="chart"`, 16 `<svg>` elements on the page, 0 console errors) — proving the trimmed
+  import didn't silently break the one icon this file does use. Screenshot taken as visual confirmation.
+- `npm run check-blindspot` passes (0 failures) — no learner-facing copy touched, this is dead code only.
+- Full `npm test` on a `git archive HEAD` control copy (third use of the technique documented in this
+  date's first-run Environment-note addition) exits **0**, all six checks `PASS`. Working tree stays red
+  only on the pre-existing `refresh-readiness.mjs` block (item 77), unrelated to either file touched here.
+- Grepped `AGENT_LOG.md` for `Sectors.jsx`/`Icon.jsx` (18 + 5 hits) before writing this — none discuss an
+  unused import or a dead icon path; the one adjacent finding (`Sectors.jsx`'s `ageDays` destructure) is
+  explicitly commented `// deliberately not read here (backlog item 44)`, a different, intentional case,
+  confirmed still true by reading the current file rather than trusting the earlier agent's summary.
+
+**Adversarial self-check (step 5).** **Blindspot register:** no regression — `check-blindspot` passes;
+zero learner-facing text touched. **DECISIONS.md conflict:** none — read, not edited; no storage/routing/
+build-shape change, pure dead-code removal in two files with no other logic change. **Already-done item:**
+no — confirmed by the grep above; neither trim was previously flagged or attempted. **My own verification
+claims:** the "arrowRight"/"users"/"info" control grep and the live-browser render check are both pasted
+directly from tool output, not inferred. **What the check caught:** nothing this run — both findings were
+narrow enough (single-line removals, each independently grep-verified with a working control before being
+touched) that there was little room for the kind of premise error earlier runs this date caught. Saying so
+explicitly per the task file's instruction, rather than omitting the step.
+
+**Next run.** The remaining open items are unchanged from the third run's note: `src/screens/Reference.jsx`
+has the same close-direction focus-loss bug the third run fixed in `Glossary.jsx`, blocked until that file
+is owner-clean; `LAUNCH_PLAN.md` blocks items 35, 64's `Dividend`, 73 and 77 together. Given four
+consecutive runs have now covered most of the clean surface without a large finding, **a future run should
+check whether the owner's tree has gone clean before spending another pass re-scanning the same files** —
+the highest-value unblocked work from here on is likely to keep coming from `LAUNCH_PLAN.md` clearing, not
+from further code audits of an already-tight surface.

@@ -17,7 +17,7 @@ import { BENCHMARK, sectors } from "../../content/sectors.js";
 import { formatEconomicReading, formatPercent, useMarketData } from "../../lib/useMarketData.js";
 import Icon from "../../components/Icon.jsx";
 import { EmptyState, Note, Segmented, Text } from "../../components/ui.jsx";
-import { ink, line, radius, space, surface } from "../../theme.js";
+import { ink, line, space } from "../../theme.js";
 
 const WINDOWS = [
   { key: "1m", label: "1M" },
