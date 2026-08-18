@@ -528,6 +528,41 @@ for the history. No open P1/P2 items.
     - **Honest priority: medium, and both halves unblock together the moment the owner's tree is clean.**
       Whoever picks it up gets both for one `npm test`.
 
+77. **[Process/Docs — filed 2026-08-18 by the run that found `npm test` red in the owner's working
+    tree and traced it, rather than relaxing the guard that was reporting it.] The owner's redesign
+    added a third lesson track (`essentials`), and the catalogue figures in `LAUNCH_READINESS.md`
+    §4.3 and `LAUNCH_PLAN.md` §2.5 are two-track sentences that cannot describe it.** The guard is
+    doing its job; the documents are what have to move, and one of them is owner-dirty.
+    - **The state, measured this run and reproducible in one command.** `node
+      scripts/refresh-readiness.mjs --check` exits 1 on the working tree and exits **0** on a clean
+      `git archive HEAD` copy — so the red is the owner's in-flight work, **not** a regression in
+      `main`. The tree holds `essentials (15)`, `money (13)`, `economy (12)` = 40 lessons; the named
+      tracks cover **25**.
+    - **⚠️ DO NOT "fix" this by relaxing the track count. This was measured, not reasoned.** With the
+      old `Object.keys(tracks).length === 2` guard bumped to `=== 3` and nothing else changed,
+      `--check` did not go green — it proposed **"40 lessons … split across money (13) + economy
+      (12)"**, a sentence whose own halves sum to **25 of 40**, and `npm run readiness -- --write`
+      would have written it into `LAUNCH_READINESS.md`. A one-character fix here produces a false
+      published figure, which is the exact failure class §9.1 exists for.
+    - **The unblock, already derived — do not re-derive it. The tool prints it.** Add `"essentials"`
+      to `FIGURE_TRACKS` at the top of `scripts/refresh-readiness.mjs` (one list; the §4.3 shape and
+      the §2.5 rows are both generated from it as of this run), then run `--check` and paste what it
+      names. Verified by injection this run, in a scratchpad copy so no repo file moved:
+      - `LAUNCH_READINESS.md` §4.3 wants `**40 lessons / 136,051 English chars / 144 min** — split
+        across **essentials (15)** + **money (13)** + **economy (12)** tracks`
+      - `LAUNCH_PLAN.md` §2.5 wants a new row `` `essentials` | 1–15 (15) `` and its existing money
+        row changed to `` `money` | 16–28 (13) ``
+      Then `npm run readiness -- --write`. Nothing else moves.
+    - **⛔ BLOCKED on `LAUNCH_PLAN.md` being owner-clean — the same single file that blocks items 73
+      and 64's `Dividend`.** `LAUNCH_READINESS.md` is clean and could be done alone, but doing half
+      leaves the suite red anyway, so there is no partial win here. **All three items unblock
+      together on one `npm test`; whoever picks one should pick all three.**
+    - **Until then, `npm test` is red in the working tree and that is correct.** A run that needs a
+      green suite to verify its own change should run the checks against a `git archive HEAD` copy —
+      that is what this run did, and the technique is now in the Environment note.
+    - **Honest priority: high the moment the owner's tree is clean, because it gates every other
+      run's step-4 verification. Zero before that.**
+
 76. **[Content/Process — filed 2026-08-18 by the run that built item 69's instrument half, which is
     what turned this from an opinion into a blocked measurement.] `zh` and `ja` `Brokerage Account`
     are term-of-art shape, and nothing can currently measure whether that generalises.**
@@ -2663,6 +2698,30 @@ npm install && npm run build
 ```
 
 First run on a given machine downloads (~30s); every run after that reuses the cache instantly. Never installs anything system-wide, never touches the repo.
+
+**Measuring against a clean tree while the owner's is dirty — `git archive`, never `git checkout --`
+(2026-08-18).** `npm test` runs against the *working* tree, so while the owner has an in-flight redesign
+the suite can be red for reasons that have nothing to do with your change, and you cannot tell the two
+apart by reading the failure. The control is a pristine copy of `HEAD`, which is read-only with respect
+to the repo:
+
+```bash
+git archive HEAD | tar -x -C "$SCRATCH/head"
+ln -sfn "$PWD/node_modules" "$SCRATCH/head/node_modules"     # do NOT cp -R: slow enough to time out
+cp economic-cycles-v5.jsx economic-cycles-v6.jsx "$SCRATCH/head/"   # gitignored, so not in the archive
+cd "$SCRATCH/head" && npm test
+```
+
+**Both extra lines are load-bearing, and each was found by the control failing rather than by reading.**
+`check-data.mjs` reaches `src/lib/deepLink.js`, which imports `react`, so a copy with no `node_modules`
+dies with `ERR_MODULE_NOT_FOUND` — the scripts are *not* dependency-free, whatever their imports look
+like at the top. And `git archive` ships only tracked files, so the two gitignored `economic-cycles-v*.jsx`
+are missing and §26's doc-path check reports **7 failures** naming them — a control that fails for its own
+reasons, which is the exact trap step 3.5 warns about. With both lines, the `HEAD` copy runs the full
+suite to **exit 0**. That gives a two-sided answer: **red on the working tree and green on the `HEAD`
+copy means the owner's dirt caused it; red on both means you did.** Used this run to prove
+`refresh-readiness.mjs`'s failure was the owner's new third lesson track and not a regression — see
+backlog item 77.
 
 **Browser visual verification — now possible, use this instead of assuming it can't be done.**
 Every run-log entry since the JSX split began has a line like "did not visually verify — `preview_start`
@@ -9092,3 +9151,118 @@ session `48dad761`'s scratchpad, durability caveat now **eleven entries old**. I
 has gone clean, item 75's remaining half is paste-and-go. **Item 74 must not be picked before a deploy
 exists**, and **item 71's gate has still not fired.** The `zh`/`ja` content question is now **item 76**,
 and it is genuinely blocked on a tokeniser — do not answer it by reading the strings.
+
+### 2026-08-18 (scheduled dev-agent) — The red suite was the guard working, and the one-character fix would have published a false figure
+
+Arrived to a working tree with **27 dirty paths** (the owner's redesign has grown from the 13 files the
+last two runs saw to **26 files, 1016 insertions(+), 1441 deletions(-)**, plus five new untracked
+`lessonContent.essentials.*.js` and `UIUX/`) and — new since the last run — **`npm test` exiting 1**.
+Nearly every open backlog item is blocked on one of those 26 files: item 73 and item 64's `Dividend` on
+`LAUNCH_PLAN.md`, item 75's remaining half on `src/components/ui.jsx`, item 76 on a tokeniser. So the
+pick was the red suite itself, which is in a clean file (`scripts/refresh-readiness.mjs`) and which
+otherwise blocks every future run's step-4 verification.
+
+**Premise re-measured first (step 3.5), and the premise here was my own diagnosis rather than a filed
+item's — which turned out to be the thing worth checking.** The failure reads:
+
+```
+refresh-readiness: the measurement itself looks wrong, so nothing was compared or written:
+  - 3 tracks (expect 2)
+Check that src/content/{lessons,lessonContent,quizData,glossary}.js still export what this script reads
+```
+
+Two things in that are false, and both would have sent the next run the wrong way. **The measurement is
+not wrong** — the tree genuinely has three tracks now (`essentials (15)`, `money (13)`, `economy (12)`,
+totalling 40), because the owner's redesign added the `essentials` track their
+in-flight restructure calls for. And **the exports are fine**; the epilogue names the one
+cause that is not operating.
+
+**Control, and it is what made the rest trustworthy.** A pristine `git archive HEAD` copy in the
+scratchpad runs the *same* script to **exit 0, "11 generated figures … agree with the content"**. Red on
+the working tree, green on `HEAD`: the failure is the owner's in-flight work, not a regression in `main`.
+Without that control I could not have told "the owner broke it" from "a previous run broke it," and the
+two call for opposite responses.
+
+**The measurement that changed what I built.** The obvious fix is `=== 2` → `=== 3`. I ran it — in a byte
+copy of the script, with the repo file untouched — and it does **not** produce a green run. It produces:
+
+```
+FAIL LAUNCH_READINESS.md §4.3 catalogue row disagrees with the live content.
+  should be: **40 lessons / 136,051 English chars / 144 min** — split across **money (13)** + **economy (12)** tracks
+```
+
+**13 + 12 = 25, in a sentence that opens "40 lessons."** `npm run readiness -- --write` would have put
+that in the document, and `--check` would then have agreed with it forever. The guard was not obstructing
+the fix; it was the only thing standing between an in-flight content change and a false published figure.
+So the disposition changed from "relax the guard" to "make the guard state the real invariant, and make
+relaxing it insufficient."
+
+**What shipped — one file, +52/−18.**
+- **`FIGURE_TRACKS = ["money", "economy"]`**, one named list, documented as the single place a new track
+  is admitted.
+- **The count guard is now a *partition* guard**: every named track must exist **and** the named tracks
+  must cover every lesson. Its message names the tracks actually in the tree with their counts, states
+  the arithmetic (`= 40 lessons, of which the named tracks cover 25`), names the fix, and says in so many
+  words that relaxing it on its own writes a split that omits the unnamed track.
+- **§4.3's shape *and* its expected text, and §2.5's per-track rows, are now generated from
+  `FIGURE_TRACKS`** — the two hand-copied money/economy row entries became one `map`. This is what makes
+  the guard sufficient rather than advisory: admitting a track now also *demands* its §2.5 row, because a
+  missing shape is already a failure in this script rather than a pass.
+- **The error epilogue no longer misdiagnoses a shape failure as an export failure.** A volume floor and
+  a shape floor now get the sentence that is true for each.
+
+**Verified.**
+- **Behaviour-identical on a two-track tree**, which is the regression that mattered: on the `HEAD` copy
+  the new script exits **0** with the same **11 figures**, and its no-arg print output is **`diff`-clean
+  against the old script's** — not "looks the same," byte-identical.
+- **On the working tree it fails with the intended message**, naming `economy (12), essentials (15),
+  money (13) = 40 lessons, of which the named tracks cover 25`.
+- **Injection, in a scratchpad copy of the working tree — repo file proved unmoved afterwards by
+  `shasum -a 256 -c` (never `git checkout --`).** Adding `"essentials"` to `FIGURE_TRACKS` and changing
+  nothing else: the partition guard **passes** (so it is satisfiable, not a permanent block), and the run
+  then fails on exactly the two document edits that are actually owed — §4.3's three-track sentence
+  (`**essentials (15)** + **money (13)** + **economy (12)**`, which sums to 40) and a missing
+  `` `essentials` | 1–15 (15) `` row in §2.5. **The tool now prints its own unblock instructions**, which
+  is why backlog item 77 does not have to re-derive them.
+- `npm run build` green (`✓ built in 1.53s`).
+- **`npm test` is still red in the working tree, and I am not claiming otherwise.** It fails on this
+  script, by design, because `LAUNCH_PLAN.md` §2.5 is owner-dirty and cannot be given its `essentials`
+  row. On the `HEAD` control copy, with both of this run's changed files in place, the **full `npm test`
+  exits 0** (all six checks `PASS`, one pre-existing translation-coverage warning). **Stating that plainly
+  rather than reporting a pass is the point** — a run that needed this suite green could have gotten it by relaxing one
+  character, and the false figure above is what that would have cost.
+- **The owner's tree is provably untouched**: `git diff --shortstat` over their 26 paths reports
+  **26 files, 1016 insertions(+), 1441 deletions(-)**, the same as on arrival; `HEAD` was `6ae1208` at
+  start and at commit. My only source change is `scripts/refresh-readiness.mjs`.
+
+**Adversarial self-check (step 5).** **Blindspot register:** no regression — a dev-only script with no
+learner-facing copy; no Dalio (§10.2), no advice-adjacent language (§10.1), no kids framing (§10.3), and
+the only date I added is inside a code comment, which §2.3's check does not bind (it scans the five
+`src/content/` data modules). `npm run check-blindspot` passes with 0 failures; note that
+`scripts/check-blindspot.mjs` is **owner-dirty**, so I read their diff rather than trusting the green —
+their change adds a disclaimer surface and is unrelated. **DECISIONS.md conflict:** none — no storage,
+routing, build-shape or content-module-shape change, and `DECISIONS.md` is owner-dirty so I read their
+diff too rather than only the committed file. **Already-done item:** no — this script is item 47's, and
+item 55 extended it to `LAUNCH_PLAN.md`; neither is undone, and the §2.5 rows they added are preserved
+byte-for-byte (proved by the `diff`-clean print above). **My own verification claims:** every figure is
+pasted from tool output, and the two a reviewer would most reasonably doubt — the false "money (13) +
+economy (12)" proposal, and the claim that the new script is identical on a two-track tree — were each
+produced by running the old and new scripts side by side on the same tree. **What the check caught, twice.** (a) My
+first draft of this entry said the change "unbreaks `npm test`." It does not, and cannot; writing that
+would have been the §9.1 D2 failure shape — a run-log claim nobody could reproduce. Corrected above, and
+the correction is the reason item 77 leads with "the guard is doing its job." (b) **My own control was
+broken the first time I ran the full suite through it, and it failed in the reassuring direction's
+mirror image** — 7 spurious §26 doc-path failures, plus a `check-data.mjs` crash — because `git archive`
+omits the two gitignored `economic-cycles-v*.jsx` and because `check-data.mjs` transitively imports
+`react` and so needs `node_modules`. Had I stopped at the per-script loop that reported
+`check-data: FAIL`, I would have gone hunting for a regression I had not caused. The Environment note now
+carries both lines and says how each was found."
+
+**Next run.** **The owner half of item 72 remains the entire critical path and is four clicks:**
+`npm run build`, open <https://app.netlify.com/drop>, drag `dist/`, keep the URL — item 18 (analytics) is
+downstream of it and of nothing else. **`LAUNCH_PLAN.md` is now the single file blocking three items —
+73, 64's `Dividend`, and the new 77 — and they unblock together on one `npm test`; pick all three at
+once.** Check the owner's 26 dirty paths first (ten of the last eleven runs) and check by `grep`ing for
+the string the item actually edits. **Item 77's fix is written out verbatim and was verified by
+injection — apply it, do not re-derive it, and do not relax the track guard.** Item 74 must not be picked
+before a deploy exists; item 71's gate has still not fired; item 76 is genuinely blocked on a tokeniser.

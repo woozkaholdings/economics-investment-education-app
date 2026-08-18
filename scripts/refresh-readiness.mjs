@@ -71,6 +71,14 @@ const LANGS = ["en", "es", "ko", "zh", "ja"];
 const GATE_LESSONS = 40;
 const GATE_MINUTES = 120; // "~2 hours"
 
+// The tracks the documents' catalogue figures name. §4.3's row ("40 lessons —
+// split across money (28) + economy (12) tracks") and §2.5's table are
+// *partition* claims: they are only true while these tracks account for every
+// lesson. So this is the one place a new track is admitted, and the shape guard
+// below refuses to generate anything while the tree holds a track it omits.
+// See backlog item 77 for the essentials track, which is exactly that case.
+const FIGURE_TRACKS = ["money", "economy"];
+
 const mode = process.argv[2] ?? "";
 if (!["", "--check", "--write"].includes(mode)) {
   console.error(`usage: node scripts/refresh-readiness.mjs [--check|--write]`);
@@ -129,6 +137,7 @@ const glossaryTerms = Object.keys(glossary).length;
 // while the ids are contiguous. If a future lesson lands out of order the range
 // form silently starts lying, so it is checked below rather than assumed.
 const contiguous = (ids) => ids.every((id, i) => i === 0 || id === ids[i - 1] + 1);
+const namedLessons = FIGURE_TRACKS.reduce((sum, t) => sum + (tracks[t]?.length || 0), 0);
 const range = (track) => {
   const ids = tracks[track];
   return `${ids[0]}–${ids[ids.length - 1]} (${ids.length})`;
@@ -145,7 +154,23 @@ const floors = [
   [chars.en >= 50_000, `English chars ${chars.en} (expect ≥50,000)`],
   [words >= 8_000, `English words ${words} (expect ≥8,000)`],
   ...LANGS.slice(1).map((l) => [chars[l] > 0, `${l} chars ${chars[l]} (expect >0)`]),
-  [Object.keys(tracks).length === 2, `${Object.keys(tracks).length} tracks (expect 2)`],
+  // Not a floor on volume but on *shape*, like the contiguity check below. An
+  // unnamed track does not make the figures error — it makes them silently
+  // under-count, which is worse. Measured 2026-08-18 with this guard bumped to
+  // a bare `=== 3` while the essentials track stayed out of FIGURE_TRACKS:
+  // `--check` proposed "40 lessons ... split across money (13) + economy (12)",
+  // a sentence whose own halves sum to 25, and `--write` would have put it in
+  // the document. Admit the track above and give it a §2.5 row; do not relax
+  // the guard to make the run green.
+  [
+    FIGURE_TRACKS.every((t) => tracks[t]) && namedLessons === lessons.length,
+    `the tracks these figures name (${FIGURE_TRACKS.join(", ")}) do not account for the whole ` +
+      `catalogue: the tree holds ${Object.entries(tracks).map(([t, ids]) => `${t} (${ids.length})`).join(", ")}` +
+      ` = ${lessons.length} lessons, of which the named tracks cover ${namedLessons}. ${READINESS} §4.3 ` +
+      `and ${PLAN} §2.5 state the catalogue as a split across those tracks, which cannot describe this ` +
+      `tree. Add the track to this script's ${"`FIGURE_TRACKS`"} and give it a §2.5 row, rather than ` +
+      `relaxing this guard — relaxed on its own it writes a split that omits the unnamed track`,
+  ],
   [quizData.length >= 20, `quiz questions ${quizData.length} (expect ≥20)`],
   [glossaryTerms >= 10, `glossary terms ${glossaryTerms} (expect ≥10)`],
   // Not a floor on volume but on *shape*: §2.5's range form is unwritable if a
@@ -161,10 +186,13 @@ const floors = [
 const broken = floors.filter(([ok]) => !ok).map(([, why]) => why);
 if (broken.length) {
   console.error(
-    `refresh-readiness: the measurement itself looks wrong, so nothing was compared or written:\n` +
+    `refresh-readiness: nothing was compared or written, because these have to hold first:\n` +
       broken.map((b) => `  - ${b}`).join("\n") +
-      `\nCheck that src/content/{lessons,lessonContent,quizData,glossary}.js still export what this ` +
-      `script reads before touching ${READINESS} or ${PLAN}.`,
+      `\nA volume figure far below its floor usually means an import silently yielded nothing — check ` +
+      `that src/content/{lessons,lessonContent,quizData,glossary}.js still export what this script ` +
+      `reads. A *shape* failure (tracks, id ranges) is the opposite: the tree is fine and the figure ` +
+      `form cannot describe it, so make the change that line names before touching ${READINESS} or ` +
+      `${PLAN}.`,
   );
   process.exit(1);
 }
@@ -192,11 +220,19 @@ const FIGURES = [
   {
     doc: READINESS,
     label: "§4.3 catalogue row",
-    shape:
-      /\*\*\d+(?:,\d{3})* lessons \/ \d+(?:,\d{3})* English chars \/ \d+(?:,\d{3})* min\*\* — split across \*\*money \(\d+\)\*\* \+ \*\*economy \(\d+\)\*\* tracks/g,
+    // Both halves derive from FIGURE_TRACKS so the shape cannot drift from the
+    // text it is meant to locate. Track names are plain lowercase words, so no
+    // regex escaping is needed — the guard above rejects anything else by
+    // requiring every named track to exist in the tree.
+    shape: new RegExp(
+      String.raw`\*\*\d+(?:,\d{3})* lessons \/ \d+(?:,\d{3})* English chars \/ \d+(?:,\d{3})* min\*\* — split across ` +
+        FIGURE_TRACKS.map((t) => String.raw`\*\*${t} \(\d+\)\*\*`).join(String.raw` \+ `) +
+        String.raw` tracks`,
+      "g",
+    ),
     expected:
       `**${n(lessons.length)} lessons / ${n(chars.en)} English chars / ${n(minutes)} min** — ` +
-      `split across **money (${tracks.money.length})** + **economy (${tracks.economy.length})** tracks`,
+      `split across ${FIGURE_TRACKS.map((t) => `**${t} (${tracks[t].length})**`).join(" + ")} tracks`,
   },
   {
     doc: READINESS,
@@ -217,18 +253,16 @@ const FIGURES = [
       `**${n(lessons.length)} sequenced lessons, ${n(quizData.length)} quiz questions with ` +
       `explanations, ${n(glossaryTerms)} glossary terms**`,
   },
-  {
+  // One row per named track. Written as a map rather than as two hand-copied
+  // entries so that admitting a track to FIGURE_TRACKS also demands its §2.5
+  // row — a missing shape is a failure here, not a pass, so the omission
+  // surfaces the moment the guard is satisfied instead of the run after.
+  ...FIGURE_TRACKS.map((t) => ({
     doc: PLAN,
-    label: "§2.5 money-track row",
-    shape: /`money` \| \d+[–-]\d+ \(\d+\)/g,
-    expected: "`money` | " + range("money"),
-  },
-  {
-    doc: PLAN,
-    label: "§2.5 economy-track row",
-    shape: /`economy` \| \d+[–-]\d+ \(\d+\)/g,
-    expected: "`economy` | " + range("economy"),
-  },
+    label: `§2.5 ${t}-track row`,
+    shape: new RegExp(String.raw`\`${t}\` \| \d+[–-]\d+ \(\d+\)`, "g"),
+    expected: `\`${t}\` | ` + range(t),
+  })),
   {
     doc: PLAN,
     label: "§3.2 first-session progress figure",
