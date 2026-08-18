@@ -472,15 +472,49 @@ for the history. No open P1/P2 items.
       gap) are BLOCKED** on `LAUNCH_PLAN.md` being owner-clean — §10 lives there and the owner's UIUX
       redesign has it dirty. They are in §10's own register format in the audit's §6, each with a
       refuting number and a check date. **Move them across verbatim; the wording is the finding.**
-    - **D3 is NOT blocked — it was withheld on judgement.** *"A backlog item's premise can be trusted
-      well enough to implement without re-measuring"* — **refuted nine consecutive times** (items 55→63;
-      see item 32's entry), measurable today, and uncovered by D1/D2, which are both about *verification*
-      rather than *filing*. It was not added because an audit that edits the register it is auditing has
-      stopped being an audit. **A different run should decide it on the merits.** Per §9.1 the response
-      to a refuted claim is a product change, and the candidate already exists in the process: make
-      "re-measure the premise, with a control, before editing anything" an explicit step, the way the
-      adversarial self-check became one after D1.
-    - **Honest priority: medium for D3, and the §10 half is free once the plan is clean.**
+    - **D3 was decided on the merits 2026-08-17 by a run other than the audit's author, as this item
+      asked. The verdict is ADD IT — but "D3 is NOT blocked" was wrong, and D3 is BLOCKED on the same
+      owner-dirty file as the §10 half.** `scripts/check-claims.mjs` cross-checks the register's row
+      count against `LAUNCH_PLAN.md` §9.1's hand-written "It holds all 15 claims" (`LAUNCH_PLAN.md:528`
+      –`529`). Adding any sixteenth row fails `npm test` — proved by injection, not reasoned:
+      `FAIL: LAUNCH_PLAN.md §9.1 says "It holds all 15 claims" but CLAIMS.md has 16. Replace "15
+      claims" with "16 claims".` The fix the check demands is *in the owner's dirty file*, so the row
+      cannot land until the redesign is committed. **Both halves of this item are blocked, on one file,
+      for one reason.**
+    - **The unblock is two lines and needs no re-derivation.** (a) paste the staged row below into
+      `CLAIMS.md`'s §D table; (b) change `15 claims` → `16 claims` at `LAUNCH_PLAN.md:529`. Then
+      `npm test`. Nothing else moves.
+    - **Staged D3 row, verbatim — do not paraphrase, and note the status is stronger than the audit's:**
+      > `| D3 | A backlog item's premise can be trusted well enough to implement without re-measuring. |
+      > Any filed item's headline number is corrected on execution. | 2026-09-05 | **Yes** |
+      > **REFUTED — nine consecutive times (items 55→63), and three more times since the audit proposed
+      > this row: item 72 ("worse than filed"), item 62's F11 ("re-measuring found twice what F11
+      > filed"), and item 73 itself — whose own "D3 is NOT blocked" premise was false.** |`
+    - **The product change §9.1 forces, and it is not a new instrument.** The three most recent items
+      that re-measured *before* editing (64's APR half, F11, 72) all found their premise wrong and it
+      cost nothing — the error was caught while it was still free. So the change is not "file better
+      premises" (nine runs' evidence says nobody can); it is **re-measure the premise, with a control,
+      before editing anything** — an explicit step, the way the adversarial self-check became step 5
+      after D1. **Its enforcement home is the dev-agent task file, which is the owner's and outside this
+      repo**; flag it to them rather than assuming a rule written here is a rule that runs.
+    - **How to measure D3 on its 2026-09-05 check date — read this first, because the obvious method
+      under-counts.** The premise verdicts are **not** all in run-log entries: most of the nine streak
+      verdicts live in *backlog item text*. Grep this file for the phrase `item running` — the backlog
+      section carries the majority of the hits and the run log only one. A matcher scanning only the
+      `## Run log` section returns **7 of 19 entries**; this run wrote exactly that matcher first and it
+      under-counted, which is D2's failure shape one document over. **What it missed, and why, because
+      the near-misses are the instructive part:** items 55, 57 and 62's F4 all state the error in their
+      own entries in wording the pattern did not cover (*"also wrong in a way no number captures"*,
+      *"But item 57's numbers were wrong"*, and *"Six items running"* — plural, against a pattern
+      matching `item running`). Item 66 is different and worse: its run-log entry contains the word
+      "premise" **zero times**, and its verdict exists only in the backlog. Cited by phrase rather than by `file:line` on purpose — this run measured three line numbers,
+      pasted them, and then watched its own edit to this item move all three.
+      **Control, because a near-zero result here is more likely to be a broken matcher than a fixed
+      process:** any method must flag item 63's entry (*"wrong twice, for the ninth item running"*) as a
+      positive and item 64's APR entry (*"breaking a nine-item streak — both held exactly"*) as a
+      negative before its count is worth anything.
+    - **Honest priority: medium, and both halves unblock together the moment the owner's tree is clean.**
+      Whoever picks it up gets both for one `npm test`.
 
 65. **[A11y/Design — the residual item 63's fix measured and deliberately did not absorb, filed
     2026-08-17 by the run that closed it. Not rendered today; latent tomorrow.] Light `--graph-amber`
@@ -8389,3 +8423,110 @@ if that scratchpad is gone, redo it from item 64's entry. If the plan is still d
 half is not blocked** and is a judgement call a run other than the audit's author should make. **Item
 74 (a deployed copy's market data freezes after 4 days) is filed but must not be picked before a
 deploy exists** — it is maintenance for a site nobody has yet.
+
+### 2026-08-17 (scheduled dev-agent) — Item 73's D3 half: decided ADD IT, and then found the item's own "not blocked" was false
+
+**What I picked and why.** The previous entry's queue said to re-check the owner's dirty files first,
+then: if `LAUNCH_PLAN.md` is still dirty, item 73's §10 half stays blocked but **"D3 is not blocked"**
+and is a judgement a run other than the audit's author should make. `git status` on arrival: the owner's
+**13 files, 603 insertions(+), 141 deletions(-)** — byte-identical to what the item-72 run recorded, so
+the UIUX redesign is still mid-flight and `LAUNCH_PLAN.md` is still theirs. That makes item 73's D3 half
+the queued pick, and I am not the audit's author. Taken.
+
+**The verdict on the merits is ADD IT — and the item's own premise is false. D3 is blocked, on the same
+file as the §10 half.** `scripts/check-claims.mjs` cross-checks the register's row count against
+`LAUNCH_PLAN.md` §9.1's hand-written "It holds all 15 claims". A sixteenth row therefore cannot land
+while that file is the owner's. **Proved by injection rather than by reading the script:** added a
+placeholder D3 row, ran the check, got
+
+```
+FAIL: LAUNCH_PLAN.md §9.1 says "It holds all 15 claims" but CLAIMS.md has 16. Replace "15 claims" with "16 claims".
+```
+
+then restored `CLAIMS.md` from a scratchpad copy — never `git checkout --` — and confirmed
+`shasum` `682bb17b7571a8c86f264d535ee0a4ddd42a0c6f` before and after, with `check-claims` back to
+`15 claims, 2 refuted, 0 past due`. **Both halves of item 73 are blocked, on one file, for one reason,
+and the item said the opposite.** Item 73 is rewritten to say so, to carry the staged D3 row verbatim,
+and to state the two-line unblock (paste the row; change `15 claims` → `16 claims` at
+`LAUNCH_PLAN.md:529`) so the next run re-derives nothing.
+
+**Why the row is staged rather than softened.** The tempting move was to add D3 somewhere the guard
+cannot see it, or to trim the register elsewhere to keep the count at 15. Both are the soft restatement
+`CLAIMS.md`'s own header forbids — the claim would exist without the cross-file figure that makes it
+checkable. Blocked-and-staged is the honest state.
+
+**D3's status is stronger than the audit proposed, and I measured it rather than inheriting it.** The
+audit says "refuted nine consecutive times (55→63)". That reproduces. It has also been refuted **three
+more times since the audit wrote it**: item 72 ("the premise was re-measured with a control before
+anything was edited, and it was worse than filed"), item 62's F11 ("re-measuring found twice what F11
+filed"), and **item 73 itself**, whose "D3 is NOT blocked" is the twelfth instance and was refuted by
+this run's own re-measurement. A claim that gets refuted by the act of filing it is as strong as the
+evidence gets.
+
+**The measurement's control failed first, which is the part worth keeping.** My first instrument scanned
+only `## Run log` entries for premise-verdict wording and returned **7 of 19**. That number is wrong:
+items 55, 57 and 62's F4 all state the error in their own entries in wording the pattern did not cover
+(*"also wrong in a way no number captures"*, *"But item 57's numbers were wrong"*, and *"Six items
+running"* — plural, against a pattern matching `item running`), and item 66's entry contains the word
+"premise" **zero times** because its verdict lives in the backlog instead. I caught it only because
+item 57's backlog text says its premise was wrong while my matcher put it in the no-match column — a
+disagreement between two documents, not a hunch. **This is D2 one document over: a matcher that cannot
+see the failure it is looking for.** The re-measurement note now in item 73 tells the 2026-09-05 checker
+where the evidence actually lives and gives it a known positive and a known negative to calibrate
+against.
+
+**The product change §9.1 forces, and the one honest limit on it.** The three most recent items that
+re-measured *before* editing (64's APR half, F11, 72) each found their premise wrong at no cost — the
+error was caught while it was still free. So the change is **"re-measure the premise, with a control,
+before editing anything"** as an explicit step, not "file better premises," which nine runs' evidence
+says nobody can do. **Its enforcement home is the dev-agent task file, which is the owner's and outside
+this repo** — so this run did not pretend to install it. It is written where a run orienting will read
+it, and flagged to the owner below. A rule in a log is not a rule that runs, and saying otherwise would
+be exactly the self-report D1 refuted.
+
+**Deliberately not built: a checker for "is this backlog item blocked by an owner-dirty file?"** It
+would have saved this run twenty minutes, and it is precisely the instrument §9.3's audit named as the
+headline finding (B-1, process mass) and item 72 warned against. The cost this run paid was one grep of
+`git status` against one check script. That is not worth a script.
+
+**Verified.** `npm test` — **`PASS: 0 failure(s)`** across all six checks plus `refresh-readiness
+--check` (`51 backlog items, no duplicates`; `90 backlog-item citations resolve`; `4 measurement claims,
+4 enforced and agreeing`), with only the standing translation AI-share warning, which is unrelated and
+predates this run. `npm run build` — **`✓ built in 947ms`**. No `src/` file was touched, so no browser
+verification applies; nothing rendered changed.
+
+**Owner's tree provably untouched.** `git diff --shortstat` over their thirteen paths reports the
+identical **13 files, 603 insertions(+), 141 deletions(-)** as on arrival. My own diff is
+`AGENT_LOG.md` **43+/9−** and nothing else. `UIUX/` remains untracked and unread beyond `ls`.
+
+**Adversarial self-check (step 5) — it caught a real error in my own text, before the commit.** I wrote
+that the run-log-only matcher "misses items 57, 60 and 66"; re-reading my own tool output, **item 60 was
+a HIT**, and the real misses were 55, 57 and 62's F4. Corrected above and in item 73. That is the third
+number this run got wrong and fixed by re-measuring: the other two were three `file:line` citations
+(`:740`, `:792`, `:877`) that my own edit to item 73 invalidated between measuring and pasting them —
+which is why that note now cites a greppable phrase instead of a line. **Blindspot register:** grepped
+my added lines for Dalio/person branding, advice verbs (`buy|sell|invest in|you should|we recommend|
+allocate`), child-facing framing (`kid|child|children`) and currency/percentage figures. **The grep is
+self-referential and a reviewer must know that or my number will not reproduce:** run over the diff it
+returns **two matching lines, and they are this sentence**, which names the patterns in order to report
+them. Currency/percentage: **0**. Excluding these two lines, **0 hits on all four** — verified by
+reading every match, not by trusting the count; `check-blindspot.mjs` also passes, though it is owner-modified this run so I did not lean on
+it, and its scope (`src/content/`, `src/locales/`) excludes everything I touched. **DECISIONS.md
+conflict:** none — no storage, content-module, build-shape or routing change; this run edits one
+Markdown file. **Already-done item:** no — item 73's D3 half was open, and `grep` for `D3` across
+`CLAIMS.md` confirms no such row has ever existed. **My own verification claims:** every figure above is
+pasted from tool output; an independent reviewer re-running `npm test`, `npm run build`, the injection
+and the two `shasum`s gets these lines.
+
+**Next run.** **The owner half of item 72 is still the entire critical path and it is four clicks:**
+`npm run build`, open <https://app.netlify.com/drop>, drag `dist/`, keep the URL — item 18 (analytics) is
+downstream of it and downstream of nothing else, so keep saying it until it moves. **Second thing to put
+in front of the owner, new this run:** the D3 product change needs a step added to the dev-agent task
+file, which only they can edit. For the dev-agent's own pick, **re-check the owner's dirty files first** —
+it has now changed the answer in five of the last six runs. **If `LAUNCH_PLAN.md` has gone clean, item 73
+is now a single paste-and-go for both halves** (three §10 blindspots verbatim from
+`reviews/2026-08-17-monthly-audit.md` §6, plus the staged D3 row and the `15 claims` → `16 claims` edit),
+and `Dividend` (items 64/67) unblocks — its saved work is at session `48dad761`'s scratchpad and the
+durability caveat is now **seven entries old**; if that scratchpad is gone, redo it from item 64's entry.
+**If the plan is still dirty, item 73 is fully blocked and should not be re-picked** — this run proved
+that, so a later run need not re-prove it. **Item 74 must not be picked before a deploy exists.**
