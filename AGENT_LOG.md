@@ -9627,3 +9627,81 @@ run's flagged aria-live question is now answered and closed by this run's fix �
 there. Five consecutive runs have now worked the clean code surface hard (numbered-backlog audit, one
 real focus bug, two dead-code trims, a rendered QA sweep, and this tabpanel fix); a future run picking up
 from here should treat another blind audit pass as low-expectation and check the owner's tree first.
+
+### 2026-08-18 (scheduled dev-agent, seventh run this date) — Live-exercised the lesson-flow's clean interactive components; nothing to fix, two false positives caught and ruled out before they became findings
+
+Same 26-file owner-dirty tree as all six earlier runs this date (shortstat unchanged: **26 files, 1016
+insertions(+), 1441 deletions(-)**). The fifth and sixth runs both closed noting that the clean code
+surface had already had several passes and to expect diminishing returns from another blind audit. So
+this run picked a genuinely different angle instead of repeating one: **live-exercise the clean
+components that only render *inside* a lesson** (`PolicySim.jsx`, `GlossaryTerms.jsx`,
+`LessonVisual.jsx`'s chart set), which the fourth run's source-only trace covered by reading but this
+session's earlier runs never actually rendered — every prior live sweep stayed inside the Reference hub.
+`LessonReader.jsx` hosts them and is owner-dirty, but the components themselves are clean and fixable if
+something real turned up.
+
+**Reaching them needed the sequential-unlock gate open**, since a fresh browser has 0/40 lessons complete
+and a locked deep link falls back to the learn path by design (confirmed this is `deepLink.js`'s documented
+behavior, not a bug, before working around it) — set `ecycles_completed_lessons` directly in
+`localStorage` to reach lessons 7, 35 and 38 without actually completing 34 lessons by hand. Local-only
+browser state, gone the moment the tab closes, not persisted anywhere.
+
+**What was checked, live, against the real dev server (`scripts/dev-server.sh`, started via Bash, browser
+pointed at its URL — same pattern the fifth/sixth runs used, since `preview_start` still won't launch it
+by name from this session):**
+- **`PolicySim.jsx` (lesson 35, "Be the Fed Chair").** Clicked a lever: `aria-pressed` flips to `true` on
+  exactly the clicked button, the outcome panel's `id` matches the button's `aria-controls`, and the
+  `role="status"` panel updates with the real outcome text — the live-region + toggle-button design the
+  file's own header comment describes checks out in practice, not just on paper. `sim_lever_chosen` fired
+  once with the right `lessonId`/`scenarioId`/`optionId`.
+- **`GlossaryTerms.jsx` (lesson 35's in-prose "Stock"/"Bond"/"Inflation" chips).** Clicking "Stock" set
+  `aria-expanded="true"` and revealed the correct definition in the shared panel.
+- **`LessonVisual.jsx`'s `BracketStack` (lesson 7, tax brackets) and `CycleChart` (lesson 38, the 4-phase
+  cycle).** Both render with a real, descriptive `aria-label` on their `role="img"` container, no
+  horizontal overflow at mobile width (`scrollWidth` vs. `innerWidth` checked, plus the container's own
+  `getBoundingClientRect()`), and both look correct in a screenshot — stacked bars with a dashed "raise"
+  overlay and a `<dl>` summary for the tax chart, a labeled sine-like curve with phase markers for the
+  cycle chart.
+
+**Two things looked like bugs and were ruled out by checking further, not by explaining them away —
+worth recording as the actual discipline exercised this run.**
+1. **A duplicate `lesson_started` analytics event, timestamps 1ms apart.** Before concluding anything,
+   repeated the identical interaction against the current `dist/` **production build**, served on its own
+   throwaway port, with `localStorage` cleared first: **exactly one `lesson_started` event.** The
+   duplicate on the dev server is `React.StrictMode`'s documented dev-only double-invoke of effects
+   (`src/main.jsx:8`), stripped from production builds — not a real double-count a learner would ever see,
+   and not a `src/lib/analytics.js` bug.
+2. **Clicking the "Stock" glossary chip appeared to move focus to the lesson's `<h1>`.** Before writing
+   that up as a `GlossaryTerms.jsx` regression, checked what the click *actually* changed:
+   `aria-expanded` and the panel content updated correctly, and `document.activeElement` had been on the
+   `<h1>` since the page's own load-time focus effect (the same pattern `TermDetail.jsx` uses) — a
+   synthetic `element.click()` from `javascript_tool` fires the click handler but, unlike a real pointer
+   click, never moves browser focus itself. The apparent "focus bug" was an artifact of the test method,
+   not the component. `GlossaryTerms.jsx` was never designed to move focus on open (its own header
+   comment says the panel "follows its trigger in DOM order," deliberately not focus-jumping), so there
+   was nothing to fix even in principle.
+
+**No code changed this run.** `npm run build`/`npm test` were not re-run since no source file changed;
+the two ruled-out false positives above are the run's actual content, in the same spirit as the fifth
+run's clean QA sweep — a verified negative is a legitimate outcome, not a placeholder for "nothing
+happened."
+
+**Adversarial self-check (step 5).** **Blindspot register:** not applicable — no file changed.
+**DECISIONS.md conflict:** none — no code or content touched; `localStorage` was written to only in the
+browser tab's own session state, never to the repo. **Already-done item:** the fourth run's source-only
+trace of these same components ("nothing behavioral found on close reading") is corroborated, not
+redone — this run adds live-rendered evidence on top of that static read rather than repeating it.
+**My own verification claims:** every attribute/text pasted above (`aria-pressed`, `aria-expanded`,
+`aria-label`, the analytics log entries, the production-build comparison) is a direct `javascript_tool`
+read. **What the check caught:** both false positives above, explicitly — the analytics duplicate would
+have been reported as a real bug without the production-build control, and the focus observation would
+have been reported as a `GlossaryTerms.jsx` regression without checking `aria-expanded` state directly
+instead of trusting `document.activeElement` after a synthetic click.
+
+**Next run.** Unchanged from the sixth run's note: `LAUNCH_PLAN.md` still blocks items 35, 64's
+`Dividend`, 73 and 77 together; `Reference.jsx` carries the already-diagnosed close-direction focus gap,
+still blocked on that file. Six consecutive runs have now worked the code surface — numbered-backlog
+audit, one real focus bug, two dead-code trims, a Reference-hub QA sweep, an ARIA tabpanel fix, and this
+run's lesson-flow component sweep — without the owner's tree moving once. A future run picking up from
+here should genuinely expect the next real win to come from `LAUNCH_PLAN.md` going clean, not from a
+seventh audit angle on the same static tree.
