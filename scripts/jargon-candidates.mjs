@@ -4,6 +4,21 @@
 // `npm run jargon` (on demand; NOT part of `npm test`, and deliberately so —
 // see WHY THIS IS NOT A CHECK below).
 //
+//   npm run jargon -- [money|economy|all|glossary] [en|es|ko|zh|ja]
+//
+// The locale argument applies to the `glossary` corpus only and defaults to
+// `en`. **Every non-`en` locale currently exits 1 on a failed control, by
+// design and on measured evidence** — this extractor cannot read those scripts,
+// and THE SCRIPT CONTROL near the bottom of this file says exactly how that was
+// established. That is the honest answer to item 69's residual, not a bug to
+// route around: do not "fix" it by loosening the control.
+//
+// Interaction with `check-measurements.mjs`: its MODES list holds the corpus
+// names only, and no locale mode is registered there because none can emit a
+// MEASURED line — the control fails first, and the line is printed after the
+// control block precisely so a broken instrument never hands anyone a number.
+// If a future run builds a real per-language tokeniser, register the mode then.
+//
 // §17b proves every use of a *glossary term* in all 40 lessons is either
 // chipped or listed in `deliberatelyUnlinked`. Its own scope note says what
 // that zero does not mean: a jargon word with **no glossary entry** is
@@ -81,12 +96,36 @@ import { lessonContent } from "../src/content/lessonContent.js";
 
 const track = process.argv[2] ?? "money";
 if (!["money", "economy", "all", "glossary"].includes(track)) {
-  console.error(`usage: node scripts/jargon-candidates.mjs [money|economy|all|glossary]`);
+  console.error(
+    `usage: node scripts/jargon-candidates.mjs [money|economy|all|glossary] [en|es|ko|zh|ja]\n` +
+      `       (the locale argument applies to \`glossary\` only and defaults to en)`,
+  );
   process.exit(2);
 }
 // `glossary` scans glossary definitions instead of lesson prose (item 66).
 const isGlossaryCorpus = track === "glossary";
 const UNIT = isGlossaryCorpus ? "entries" : "lessons";
+
+// ── Locale (item 69's residual) ───────────────────────────────────────────
+// `npm run jargon -- glossary ko` points the same extractor at a translated
+// glossary. It exists so the "is this translation's prose as undefined as the
+// English was?" question is answered by measurement rather than by one run's
+// reading — and, as of 2026-08-18, its honest answer for every non-`en` locale
+// is "this instrument cannot tell you". See THE SCRIPT CONTROL below.
+const LOCALES = ["en", "es", "ko", "zh", "ja"];
+const locale = process.argv[3] ?? "en";
+if (!LOCALES.includes(locale)) {
+  console.error(`usage: node scripts/jargon-candidates.mjs glossary [${LOCALES.join("|")}]`);
+  process.exit(2);
+}
+if (locale !== "en" && !isGlossaryCorpus) {
+  console.error(
+    `locale "${locale}" is only supported on the \`glossary\` corpus. Lesson prose already has a ` +
+      `per-language instrument (\`npm run review-status\`, scripts/translation-review.mjs); this one ` +
+      `would duplicate its scope without sharing its ledger.`,
+  );
+  process.exit(2);
+}
 
 const norm = (s) => s.toLowerCase().replace(/[^a-z0-9%()]+/g, " ").trim();
 
@@ -110,6 +149,13 @@ for (const [key, entry] of Object.entries(glossary)) {
   add(key);
   add(key.replace(/([a-z])([A-Z])/g, "$1 $2"));
   if (entry.en?.s) add(entry.en.s);
+  // The localised short name, so a non-`en` run subtracts the terms that
+  // corpus actually uses. Measured 2026-08-18: on ko/zh/ja this changes
+  // nothing at all (5 control either way), because the extractor never emits
+  // a token in those scripts for it to subtract — the blindness is upstream,
+  // in extraction, not here. Kept anyway: it is correct, and its being inert
+  // is itself part of what THE SCRIPT CONTROL reports.
+  if (locale !== "en" && entry[locale]?.s) add(entry[locale].s);
 }
 
 // ── Corpus: everything a reader of this surface actually sees, in English.
@@ -118,8 +164,8 @@ const docs = [];
 if (isGlossaryCorpus) {
   for (const [key, entry] of Object.entries(glossary)) {
     const parts = [];
-    if (entry.en?.f) parts.push(entry.en.f);
-    if (entry.en?.ex) parts.push(entry.en.ex);
+    if (entry[locale]?.f) parts.push(entry[locale].f);
+    if (entry[locale]?.ex) parts.push(entry[locale].ex);
     if (!parts.length) continue;
     docs.push({ id: key, text: parts.join("\n\n") });
   }
@@ -361,6 +407,84 @@ console.log(
 
 // ── Control. The only failure mode this script has is matching nothing.
 const problems = [];
+
+// ── THE SCRIPT CONTROL (item 69's residual, measured 2026-08-18) ──────────
+// Why a non-`en` run needs a control the `en` run does not, and why the
+// existing `known.length < 5` one is worse than useless here.
+//
+// Pointed at ko/zh/ja, this extractor reports a PASSING control and a nearly
+// empty candidate list — the single most reassuring output an absence-measuring
+// instrument can produce, and it is false. Measured on all five locales:
+//
+//   locale   control   candidates   what the control bucket actually contained
+//   en          14         54       real English terms
+//   es           3 ✗FAIL  (n/a)     IRA, PMI, VIX
+//   ko           5 ✓PASS    1       GDP, IRA, CPI, PMI, VIX
+//   zh           5 ✓PASS    1       GDP, IRA, CPI, PMI, VIX
+//   ja           5 ✓PASS    2       GDP, IRA, CPI, PMI, VIX
+//
+// The ko/zh/ja control buckets are IDENTICAL and contain no Hangul or Han
+// character at all. Those five are Latin acronyms left untranslated inside the
+// translated prose, and they happen to be glossary keys — so the threshold
+// clears on Latin residue while the extractor reads not one word of the actual
+// language. Three independent layers make that so, any one of which is fatal:
+//   1. `norm()` strips everything outside [a-z0-9%()], so "경기침체" becomes ""
+//      and `record()`'s `length < 3` guard drops it. Nothing in these scripts
+//      can even be REPRESENTED downstream. (It also mangles Latin diacritics:
+//      "Recesión" -> "recesi n", "Interés Compuesto" -> "inter s compuesto".)
+//   2. The acronym and capitalised-phrase rules key on [A-Z]/[a-z]; ko/zh/ja
+//      have no letter case, so both rules are structurally inert.
+//   3. The n-gram sweep splits on /\s+/ and ends on an English HEADS noun; zh
+//      and ja do not put spaces between words at all.
+//
+// Note the direction: the control PASSES hardest where the instrument is most
+// blind (ko/zh/ja, zero real tokenisation) and FAILS on `es`, the one locale
+// where it does emit real words ("el capital") — because Spanish localises the
+// acronyms (PIB, IPC) and so drops the Latin residue below the threshold. The
+// old control is ANTI-CORRELATED with whether the instrument works.
+//
+// So the control below tests the thing that actually matters: did the extractor
+// emit anything written in the target language's own script? And it carries its
+// own positive control first, because "found nothing in Hangul" and "my Hangul
+// detector is broken" look identical from the outside — the exact failure this
+// file has already had twice in other clothes.
+const SCRIPT = {
+  es: { name: "Spanish (Latin with diacritics)", re: /[áéíóúñüÁÉÍÓÚÑÜ]/ },
+  ko: { name: "Hangul", re: /[가-힯ᄀ-ᇿ]/ },
+  zh: { name: "Han", re: /[一-鿿]/ },
+  ja: { name: "Kana/Han", re: /[぀-ゟ゠-ヿ一-鿿]/ },
+};
+if (locale !== "en") {
+  const { name, re } = SCRIPT[locale];
+  // Positive control: the glossary's OWN localised short names are known to be
+  // written in this script. If the detector cannot find it there, the detector
+  // is broken and the negative below means nothing.
+  const localised = Object.values(glossary)
+    .map((e) => e[locale]?.s)
+    .filter(Boolean);
+  const detectorHits = localised.filter((s) => re.test(s)).length;
+  if (detectorHits === 0) {
+    problems.push(
+      `CONTROL FAILED (detector): the ${name} pattern matched none of the ${localised.length} ` +
+        `localised glossary names for "${locale}". The detector itself is broken, so the extraction ` +
+        `result below is not evidence of anything. Fix this before reading the number.`,
+    );
+  } else {
+    const inScript = [...known, ...candidates].filter((r) => re.test(r.display));
+    if (inScript.length === 0) {
+      problems.push(
+        `CONTROL FAILED (extractor): ${detectorHits}/${localised.length} localised glossary names are ` +
+          `detectably ${name}, so the detector works — but of the ${known.length + candidates.length} ` +
+          `terms the extractor produced for "${locale}", ZERO contain a single ${name} character. ` +
+          `Every one is a Latin acronym left untranslated in the prose. This run measured nothing ` +
+          `about ${locale} jargon; the near-empty candidate list is blindness, not cleanliness. ` +
+          `See THE SCRIPT CONTROL above for the three causes — a per-language tokeniser is a real ` +
+          `piece of work, NOT a flag on this script.`,
+      );
+    }
+  }
+}
+
 if (known.length < 5) {
   problems.push(
     `CONTROL FAILED: the extractor re-found only ${known.length} of the ${Object.keys(glossary).length} ` +

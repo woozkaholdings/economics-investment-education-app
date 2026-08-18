@@ -528,6 +528,28 @@ for the history. No open P1/P2 items.
     - **Honest priority: medium, and both halves unblock together the moment the owner's tree is clean.**
       Whoever picks it up gets both for one `npm test`.
 
+76. **[Content/Process — filed 2026-08-18 by the run that built item 69's instrument half, which is
+    what turned this from an opinion into a blocked measurement.] `zh` and `ja` `Brokerage Account`
+    are term-of-art shape, and nothing can currently measure whether that generalises.**
+    - **The content question.** Item 67 rewrote `en`'s "realized gains" into a phrase that explains the
+      mechanism; item 69 did the same for `es`. `ko` (`실현된 매매 차익`) already explains it. **`zh`
+      `已实现的收益` and `ja` `実現した利益` do not** — they sit roughly where `en` was before item 67.
+    - **Why it is blocked, and blocked on something real.** `npm run jargon -- glossary zh` now exists
+      and **exits 1**: the extractor cannot represent a single Han character (see item 69's closing
+      bullet and the 2026-08-18 entry). So there is no instrument that can tell you whether these two
+      strings are a pattern across 32 entries × 4 languages or the only two instances. **Rewriting them
+      on one run's reading is exactly the unmeasured multi-language drift item 69 was filed to prevent
+      — do not do it, and do not treat "I read them and they look fine" as measurement.**
+    - **The unblocking work is a per-language tokeniser**, and it is genuinely a piece of work, not a
+      flag: `norm()` needs a Unicode-aware form, the acronym/capitalised-phrase rules need per-script
+      replacements, and zh/ja need real word segmentation (ko can lean on eojeol spacing but still
+      needs non-English head nouns). `DECISIONS.md:311` already accepted a related trade-off for the
+      same reason. **Scope it before building it, and check whether a dependency-free segmenter is even
+      available — item 12's port-cost rule applies to adding one.**
+    - **Honest priority: low.** Two known strings, both comprehensible to a native reader, in a beta-
+      labelled translation layer. The value is the instrument, not these two edits — and if the
+      instrument is ever built, run it before deciding anything.
+
 75. **🟡 HALF DONE 2026-08-17 (scheduled dev-agent) — and the half that was done turned out
     not to be the edit this item asked for, because the premise "a copy of the token" is FALSE for the
     `lessons.js` site.** The count reproduces exactly (two live literals, plus two correct historical
@@ -705,10 +727,26 @@ for the history. No open P1/P2 items.
       prose, and changing two translations on my own reading is exactly the unmeasured multi-language
       drift this item was filed to avoid. It is a real residual, not a closed question; it is the smaller
       half of the "bigger version" bullet below.
-    - **The bigger version of this item, if anyone wants it:** point `jargon-candidates.mjs` at a
-      non-`en` locale. That is a real instrument extension (the acronym and capitalised-phrase rules
-      are English-shaped and would need rethinking per language), not a config flag. **This is now the
-      only way the `zh`/`ja` question above gets answered by measurement rather than by opinion.**
+    - **The bigger version of this item ✅ BUILT 2026-08-18 — and its premise was wrong in both
+      directions.** Scope was: point `jargon-candidates.mjs` at a non-`en` locale. Shipped as
+      `npm run jargon -- glossary [en|es|ko|zh|ja]`, **but not as scoped.** Two corrections, both
+      measured (full table in the 2026-08-18 run-log entry):
+      - *"No instrument covers non-`en` glossary prose"* is **FALSE as written** —
+        `check-blindspot.mjs` scans all five locales in `src/content/` and the run directly above this
+        one proved it by injection. The true claim is narrower: none covers it **for jargon**.
+      - *"The rules are English-shaped"* is **TRUE and understated.** Pointed at ko/zh/ja the extractor
+        does not fail loudly — it returns a **PASSING control and ~1 candidate**, because the control
+        bucket fills with Latin acronyms (GDP, IRA, CPI, PMI, VIX) left untranslated in the prose. The
+        ko/zh/ja control buckets are identical and hold **zero** Hangul/Han characters. The old control
+        is **anti-correlated with instrument validity** — it passes where the tool is blindest and fails
+        on `es`, the one locale emitting real words. A flag built as filed would have answered the
+        `zh`/`ja` question with a false green.
+      - **So what shipped is a script-aware two-sided control** (detector, then extractor) that makes
+        every non-`en` locale exit 1 naming the three causes: `norm()` strips non-ASCII so a CJK token
+        cannot be represented at all, the acronym/capitalised rules need letter case, and the n-gram
+        sweep needs whitespace plus English head nouns. **Do not "fix" this by loosening the control.**
+    - **The `zh`/`ja` content question is now item 76 and is genuinely blocked.** It is NOT answerable
+      by reading the strings — that is the unmeasured multi-language drift this item exists to prevent.
 
 68. **✅ DONE 2026-08-17 (scheduled dev-agent) — built as scoped, minus one half that was measured and
     honestly declined. The glossary report is 57 → 54 and, for the first time, an in-place expansion
@@ -8945,3 +8983,112 @@ has gone clean, item 75's remaining half is paste-and-go (add `--fill-warn` to b
 `NOTE_TONES.warn.rule` at it, re-run §28). **Item 74 must not be picked before a deploy exists**, and
 **item 71's gate has still not fired.** The `zh`/`ja` residual above should NOT be picked as a content
 edit; its honest form is the instrument extension (point `jargon-candidates.mjs` at a non-`en` locale).
+
+### 2026-08-18 (scheduled dev-agent) — Item 69's residual: the locale flag that would have shipped a false green
+
+Picked **item 69's residual**, the only candidate the last run named that was not blocked by the owner's
+in-flight redesign (13 files, still dirty on arrival, `603 insertions(+), 141 deletions(-)` — unchanged at
+commit). Its scope: *"point `jargon-candidates.mjs` at a non-`en` locale."* Built — but not as scoped,
+because measuring first changed what the right build was.
+
+**The premise, re-measured (step 3.5). Twelfth consecutive item with something wrong in it, and the
+fourth where re-measuring changed the disposition rather than a figure.**
+
+1. **"No instrument covers non-`en` glossary prose" — FALSE as written.** `check-blindspot.mjs` scans
+   `src/content/` across `en/es/ko/zh/ja` and reaches `glossary.js`; the *previous run proved it by
+   injection*, in the entry directly above this one. What is true is narrower and should have been the
+   filing: no instrument covers non-`en` glossary prose **for undefined jargon**.
+2. **"The acronym and capitalised-phrase rules are English-shaped" — TRUE, and badly understated.** They
+   are not merely English-*shaped*; for ko/zh/ja the whole pipeline is structurally incapable, at three
+   independent layers, any one of which is fatal. `norm()` strips everything outside `[a-z0-9%()]`, so
+   `경기침체` → `""` and `record()`'s `length < 3` guard drops it — **nothing in these scripts can even be
+   represented downstream** (it also mangles Latin diacritics: `Recesión` → `recesi n`). The acronym and
+   capitalised-phrase rules key on `[A-Z]`/`[a-z]`, and ko/zh/ja have no letter case. The n-gram sweep
+   splits on `/\s+/` and ends on an English `HEADS` noun, and zh/ja do not space words at all.
+
+**The finding that changed the build, and the reason a flag was the wrong deliverable.** Pointed at a
+translated glossary, the extractor does not fail loudly — **it reports a PASSING control and a nearly
+empty candidate list**, which is the single most reassuring output an absence-measuring instrument can
+produce, and it is a lie. Measured on all five locales through the real code path (a byte copy of the
+script in the scratchpad, corpus field swapped, so no repo file was edited to measure):
+
+| locale | control | candidates | what the control bucket actually held |
+|---|---|---|---|
+| `en` | 14 ✓ | 54 | real English terms |
+| `es` | 3 ✗ FAIL | — | IRA, PMI, VIX |
+| `ko` | 5 ✓ PASS | 1 | GDP, IRA, CPI, PMI, VIX |
+| `zh` | 5 ✓ PASS | 1 | GDP, IRA, CPI, PMI, VIX |
+| `ja` | 5 ✓ PASS | 2 | GDP, IRA, CPI, PMI, VIX |
+
+The ko/zh/ja control buckets are **identical and contain not one Hangul or Han character**. Those five are
+Latin acronyms left untranslated inside the translated prose which happen to be glossary keys, so the
+`>= 5` threshold clears on **Latin residue** while the extractor reads not one word of the actual
+language. **The old control is anti-correlated with whether the instrument works**: it passes hardest
+where the instrument is most blind (ko/zh/ja, zero real tokenisation) and fails on `es`, the one locale
+where it does emit real words (`el capital`), because Spanish localises the acronyms (`PIB`, `IPC`) and so
+drops the residue below the threshold. **A `--locale` flag built as the item asked would have answered the
+`zh`/`ja` question with a green "1 candidate" — worse than not building it.**
+
+Two corroborating measurements. Adding the localised short name `entry[locale].s` to the subtraction set
+**changes nothing** (5 control either way) — the blindness is in extraction, not subtraction, so the
+obvious fix is inert. And in ko/zh the reported `NBER` candidate is a **false positive**: the prose glosses
+it in place (`NBER(전미경제연구소)`, `NBER（美国国家经济研究局）`), but item 68's gloss rule needs Latin
+initials to recognise an expansion.
+
+**What shipped.** `npm run jargon -- glossary [en|es|ko|zh|ja]`, locale defaulting to `en` — with a
+**script-aware control** that makes the instrument declare its own limits instead of handing over a
+meaningless number. It is two-sided on purpose, because "found nothing in Hangul" and "my Hangul detector
+is broken" look identical from outside: a **detector** control first (the locale's own localised glossary
+names must be detectably in that script — 31/32 ko, 31/32 zh, 30/32 ja, 14/32 es), then the **extractor**
+control (at least one extracted term must contain a character of that script). Every non-`en` locale now
+**exits 1** with a message naming the three causes and stating that a per-language tokeniser is real work,
+not a flag. The lesson corpus rejects a locale argument outright (exit 2), deferring to
+`translation-review.mjs`, which already owns per-language lesson prose and has the ledger.
+
+**Verified.**
+- `npm test` and `npm run build` green. The `en` path is unchanged where it counts: **54 candidates, 14
+  control**, same as before the change.
+- `MEASURED jargon glossary: 54 candidates, 14 control, 3 self-defining, 0 low-reach  [fingerprint 96f277e7]`
+- Exit codes, all five locales plus the reject paths: `en` 0, `es`/`ko`/`zh`/`ja` 1, unknown locale 2,
+  locale-on-lesson-corpus 2. Fingerprint stable across two consecutive runs.
+- **Two injections, source restored byte-identical afterwards** (sha256 `408da907…` before and after,
+  restored from a scratchpad copy — never `git checkout --`): (A) the Hangul pattern replaced with
+  `/ZZZZ/` → the **detector** branch fired and the extractor branch stayed silent, so the two are
+  genuinely discriminated, not one message with two labels; (B) `es`'s pattern pointed at `/[A-Z]/`,
+  something the extractor really does emit → the new extractor branch **went silent** and only the
+  pre-existing `known.length < 5` control fired. (B) is the one that matters: a control that always fails
+  is as useless as one that always passes, and this proves it can pass.
+
+**Cost paid, stated rather than buried.** This change moves the instrument's own bytes, which the
+fingerprint covers by design — so the **5 measurement claims in this log that were `enforced and
+agreeing` before the change are now `retired`**, and `check-measurements.mjs` prints its `0 enforced`
+vacuous-pass note. Verified in both directions by running the check against the pre-change script (5
+enforced, 0 retired) and the post-change one (0 enforced, 5 retired). The quoted line above is what
+restores enforcement; historical entries were deliberately **not** rewritten, since their fingerprints
+correctly record the instrument as it was when they were written.
+
+**Adversarial self-check (step 5).** **Blindspot register:** no regression — the change is a dev-only
+script with no learner-facing copy; `npm run check-blindspot` passes (0 failures), and the file contains 0
+occurrences of Dalio/Principles or advice-shaped phrasing. §2.3 does not bind a dated code comment (its
+check scans the five `src/content/` data modules, and passes). §10.3 untouched. **DECISIONS.md conflict:**
+none, and the relevant entry *supports* this — the in-lesson-glossary-links decision already records that
+matching per-language "would multiply the problem: five locales, five surface-form inflections"
+(`DECISIONS.md:311`). This run turns that closed judgement into a measured one. No storage, routing, build
+or content-module-shape change. **Already-done item:** no — item 66 added the glossary corpus and item 68
+added the gloss rule; this is item 69's explicitly-open residual, and it does not undo either. **My own
+verification claims:** every figure above is pasted from tool output, and the two that a reviewer would
+most reasonably doubt — the identical ko/zh/ja control buckets, and the enforced→retired swing — were each
+produced twice. **What the check caught:** my first probe reported "71/71 `en` tokens are non-ASCII",
+which is impossible for English; the awk instrument was mis-handling UTF-8. Re-run in Python with a
+two-way detector control, the real answer is that the only non-ASCII strings in any report are the
+report's own footer prose. Had I trusted the first number, the whole finding would have been inverted.
+
+**Next run.** **The owner half of item 72 remains the entire critical path and is four clicks:**
+`npm run build`, open <https://app.netlify.com/drop>, drag `dist/`, keep the URL — item 18 (analytics) is
+downstream of it and of nothing else. **Check the owner's 13 dirty files first — nine of the last ten runs
+— and check by `grep`ing for the string the item actually edits, not by trusting the block label.** If
+`LAUNCH_PLAN.md` has gone clean, item 73 and `Dividend` (items 64/67) unblock; Dividend's saved work is at
+session `48dad761`'s scratchpad, durability caveat now **eleven entries old**. If `src/components/ui.jsx`
+has gone clean, item 75's remaining half is paste-and-go. **Item 74 must not be picked before a deploy
+exists**, and **item 71's gate has still not fired.** The `zh`/`ja` content question is now **item 76**,
+and it is genuinely blocked on a tokeniser — do not answer it by reading the strings.
