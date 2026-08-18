@@ -516,8 +516,45 @@ for the history. No open P1/P2 items.
     - **Honest priority: medium, and both halves unblock together the moment the owner's tree is clean.**
       Whoever picks it up gets both for one `npm test`.
 
-75. **[Design/Debt — filed 2026-08-17 by the run that closed item 65, from the two literals that fix
-    could not reach.] `#d97706` still exists twice in the source as a hardcoded hex, and it no longer
+75. **🟡 HALF DONE 2026-08-17 (scheduled dev-agent) — and the half that was done turned out
+    not to be the edit this item asked for, because the premise "a copy of the token" is FALSE for the
+    `lessons.js` site.** The count reproduces exactly (two live literals, plus two correct historical
+    mentions in comments; control `#c56c05` found at `src/index.css:63` as expected), but what the two
+    literals *are* does not.
+    - **`src/content/lessons.js:94` — RESOLVED, no value change, and none should ever be made.**
+      Lesson 32's `color` is not a stale copy of `--graph-amber`. It is one of **36 distinct values
+      across all 40 lessons**, a per-lesson accent set drawn from the Tailwind palette — `#d97706` is
+      amber-600, the same ancestor the old token had, which is the whole of the resemblance. **And the
+      field is read by NOTHING**: no `.color` access in `src/` or `scripts/` at HEAD or in the working
+      tree, no dynamic `lesson[key]` access, no `check-data.mjs` rule — proved live in the built app on
+      the Learn screen with both track headings rendered, where **0 of the 36 accents paint any
+      element** while an injected probe carrying lesson 32's own value **was** found (so the scan
+      worked). The one accent hex that does render, `#2563eb`, is `--graph-blue`/`--ink-accent` — a
+      coincidental overlap, not this field. **Disposition: values kept** (40 coherent accents are
+      plausibly what the owner's in-flight redesign wants; deleting a dead field to tidy it is F11's
+      bad trade), **and the file header — which listed `color` among the fields "Learn/App need to
+      render the path" — now says all of this instead of that false claim.** Pointing it at
+      `graph.amber` would have coupled a decorative accent to an accessibility-constrained chart token
+      for no reason.
+    - **`src/components/ui.jsx:75` — STILL BLOCKED (owner-dirty), but now DECIDED, so the unblocking
+      run only has to apply it.** This one *is* a real token gap, and a sharper one than the item
+      guessed. `NOTE_TONES` gives every other tone's `rule` a token — `line.strong`, `fill.accent`,
+      `fill.ok`, `fill.bad` — and `warn` is a literal **because there is no `--fill-warn` token at all**
+      (confirmed: `theme.js`'s `fill` is accent/accentDeep/ok/bad/ink). So the fix is **add
+      `--fill-warn` to both palettes and point `NOTE_TONES.warn.rule` at `fill.warn`**, not rename the
+      literal.
+      **Measured, with the published-WCAG control (21.00 / 1.00 / 4.54 / 3.03, all reproducing to
+      0.01):** the warn rule on its own wash is **`#d97706` on `#fffbeb` = 3.07** — item 75's "not an
+      accessibility finding" is *technically* right (3:1 is met) but the margin is **0.07**, and every
+      other coloured tone clears by a mile (accent 4.62, ok 5.21, bad 5.91). **That is item 65's
+      finding again, one file over: not a token with a tight pair, a token outside the band its
+      siblings share.** `#c56c05` would read 3.67 and sit inside it; `ink.warn` (`#9a4a08`) reads 6.03.
+      (`neutral` is 1.32 and is not a violation — `line.strong` is a hairline conveying no state.)
+      **Not built this run on purpose:** adding a fill token whose only consumer is a blocked file
+      leaves dead code *and* perturbs §28's text-on-fill sweep, so it lands as one change or not at all.
+    <details><summary>Original filing (2026-08-17), premise now corrected above</summary>
+
+    **`#d97706` still exists twice in the source as a hardcoded hex, and it no longer
     matches the token it was copied from.** Item 65 moved `--graph-amber` to `#c56c05`; these two did
     not move with it, because neither is a graph token and one of them is in a file the owner has open:
     - `src/components/ui.jsx:75` — the `warn` callout's `rule` colour. **Owner-dirty this run, so it was
@@ -530,6 +567,8 @@ for the history. No open P1/P2 items.
       does not bind them, and §28's AA check already covers the text beside them. This is consistency
       and future drift, at **honest priority: low** — and it is genuinely small, which is the only
       reason it is worth filing rather than dropping.
+
+    </details>
 
 65. **✅ DONE 2026-08-17 (scheduled dev-agent) — decided AMBER MOVES, because re-measuring the item's
     own figures changed the answer.** Light `--graph-amber` is now **`#c56c05`** (was `#d97706`): same
@@ -8664,3 +8703,101 @@ scratchpad, durability caveat now **eight entries old**; if that scratchpad is g
 entry. **If the plan is still dirty**, item 75 (the two stale `#d97706` literals) is small and its
 `lessons.js` half is clean today, but check `ui.jsx` before scoping it. **Item 74 must not be picked
 before a deploy exists.**
+
+### 2026-08-17 (scheduled dev-agent) — Item 75: the literal that was never a copy, and the field nothing renders
+
+**Picked, and why.** `git status` on arrival: the owner's **13 files, 603 insertions(+), 141
+deletions(-)** — byte-identical to the last three runs — so the standing blocks hold verbatim: item 73
+blocked (`LAUNCH_PLAN.md`), item 69 blocked (`src/locales/es.js`), `Dividend` (items 64/67) blocked on
+the same plan file, items 74 and 18 downstream of a deploy that still does not exist, and item 72's
+remaining half is the owner's four clicks. The previous run's guidance names **item 75** as the pick if
+the plan is still dirty, with the instruction to check `ui.jsx` first — it is owner-dirty, so only the
+`lessons.js` half was reachable. Item 71 was deliberately not picked: its own 2026-08-17 note says its
+gate ("take it only when one of these numbers has actually been wrong once") **still has not fired**.
+
+**Re-measured the premise with a control before editing anything, per D3 — and it broke, for the tenth
+item running.** The *count* reproduced exactly: two live literals (`src/components/ui.jsx:75`,
+`src/content/lessons.js:94`) plus two historical mentions in comments (`src/index.css:57`,
+`scripts/check-data.mjs:2875`) that are correct as written; the control `#c56c05` turned up at
+`src/index.css:63` where it should be. **What did not reproduce is the item's characterisation.** It
+calls both literals "a copy of a value that has since changed". For `lessons.js` that is false twice
+over: lesson 32's `#d97706` is one of **36 distinct accent values across all 40 lessons**, a Tailwind
+palette spread in which amber-600 is simply one entry — and **the `color` field is read by nothing at
+all.**
+
+**"Nothing reads it" was proved, not asserted, because it is the load-bearing claim.** Statically: no
+`.color` property access anywhere in `src/` or `scripts/`, at HEAD (`git grep` over the committed tree)
+or in the working tree; no dynamic `lesson[key]` access; no rule in `check-data.mjs`. Live, in the built
+app served on `127.0.0.1:8779`, viewport forced to `mobile` **and `colorScheme: light`** — the first scan
+ran in dark mode and its control silently failed to fire, which is exactly the trap the previous run
+wrote down, and it is why the negative result was not believed the first time. With light forced and
+**both track headings rendered** (so lesson 32's own track is on screen), a walk of all 516 elements
+across nine colour properties found **0 of the 36 accents painting anything**, while a probe element
+injected with lesson 32's own `#d97706` **was** found — the scan works. The single accent hex that does
+render, `#2563eb` at 85 elements, resolves to `--graph-blue`/`--ink-accent`: a coincidental Tailwind
+overlap, not this field.
+
+**What was actually changed, and what deliberately was not.** The defect worth fixing is not the hex —
+it is that `lessons.js`'s header listed `color` among the fields "Learn/App need to render the path",
+a live false claim in the file that defines the catalogue. That sentence now drops `color` and a new
+paragraph records what was measured, that the values are **kept** (40 coherent accents are plausibly
+what the owner's in-flight redesign wants, and deleting a dead field to tidy it is F11's bad trade one
+file over), and the standing instruction **not** to "fix" a value here by pointing it at a graph token —
+which would couple a decorative accent to an accessibility-constrained chart token for no reason.
+**No hex was changed.** For a field nothing renders, changing the value is cosmetics; correcting the
+document that lies about it is the work.
+
+**The blocked half is now decided, so the unblocking run only applies it.** `NOTE_TONES` gives every
+other tone's `rule` a token (`line.strong`, `fill.accent`, `fill.ok`, `fill.bad`); `warn` is a literal
+**because no `--fill-warn` token exists** — so the fix is to add one to both palettes and point
+`NOTE_TONES.warn.rule` at it, not to rename the literal. Measured with a standalone instrument validated
+against four **published** WCAG values first (21.00 / 1.00 / 4.54 / 3.03, all to 0.01): the warn rule on
+its own wash is **3.07:1**, so the item's "not an accessibility finding" is technically right and
+**misleadingly comfortable** — the margin is 0.07 where accent, ok and bad clear at 4.62, 5.21 and 5.91.
+That is item 65's finding one file over: a token outside the band its siblings share. `#c56c05` would
+read 3.67. Not built this run because a fill token whose only consumer is a blocked file is dead code
+*and* perturbs §28's text-on-fill sweep — it lands as one change or not at all.
+
+**Verified.** `npm test` — **`PASS: 0 failure(s)`** on all six checks plus `refresh-readiness --check`,
+with only the standing translation AI-share warning, which predates this run. Incidentally confirming
+the edit: the backlog-citation check reports **93 citations resolve**, which now includes the
+`backlog item 75` reference this edit added. `npm run build` — **`✓ built in 1.16s`**, and the entry
+bundle is **`index-hGjrnFS8.js`, 240.16 kB — the identical filename hash as the pre-edit build**, which
+is a content hash and therefore a direct proof the change is comment-only.
+
+**Owner's tree provably untouched.** `git diff --shortstat` over their thirteen paths reports the same
+**13 files, 603 insertions(+), 141 deletions(-)** as on arrival; `HEAD` is still `f88d427`. My own diff
+is `src/content/lessons.js` (+21/−1) and `AGENT_LOG.md`. `UIUX/` remains untracked and unread beyond
+`ls`. As before, `npm run build` builds the working tree, so the `dist/` verified against **includes the
+owner's in-flight redesign** — the right control for "does this field render in the app as it is today".
+
+**Adversarial self-check (step 5).** **Blindspot register:** the diff adds a code comment about colour
+tokens and contrast; grepped it for Dalio/person branding, advice verbs
+(`buy|sell|invest in|you should|we recommend|allocate`), child-facing framing (`kid|child|children`) and
+live-looking dates or market figures — **0 hits on all four**. The one date it adds (`2026-08-17`) is a
+changelog date in a comment, the same shape as the existing item-65 and item-63 notes in `index.css`,
+not a rendered or live-looking figure. **DECISIONS.md conflict:** none — no storage, content-module,
+build-shape or routing change; `lessons.js` remains a `.js` content module. **Already-done item:** no —
+item 75 was open and this is its first pick. **My own verification claims:** every figure above is
+pasted from tool output or read out of the live DOM. **What the check caught:** the first draft of the
+header comment said the field is "unused", which would have justified deleting it; that is not what was
+measured, and it is not what should happen while the owner has a redesign open — reworded to *authored
+and read by nothing, kept deliberately*, with the reason. **What it did not catch, and should have:**
+the dark-mode control failure was found by re-running the scan with a control, not by step 5 — the same
+reading as the last three runs, that re-measuring first is doing the work.
+
+**Next run.** **The owner half of item 72 is still the entire critical path and it is four clicks:**
+`npm run build`, open <https://app.netlify.com/drop>, drag `dist/`, keep the URL — item 18 (analytics) is
+downstream of it and downstream of nothing else. **Second for the owner, carried for the fourth run
+running:** the D3 product change ("re-measure the premise, with a control, before editing anything")
+needs a step in the dev-agent task file, which only they can edit — **this run is the tenth consecutive
+item whose premise was wrong**, and the second where it changed the disposition rather than a number.
+For the dev-agent's own pick, **re-check the owner's dirty files first** — seven of the last eight runs.
+**If `src/components/ui.jsx` has gone clean**, item 75's remaining half is now paste-and-go: add
+`--fill-warn` to both palettes in `src/index.css`, add `warn` to `theme.js`'s `fill`, point
+`NOTE_TONES.warn.rule` at it, and re-run §28 (the new fill enters the text-on-fill sweep, so check
+`ink.onFill` against it before assuming it passes). **If `LAUNCH_PLAN.md` has gone clean**, item 73 and
+`Dividend` (items 64/67) both unblock and are the better picks — Dividend's saved work is at session
+`48dad761`'s scratchpad, durability caveat now **nine entries old**; if that scratchpad is gone, redo it
+from item 64's entry. **Item 74 must not be picked before a deploy exists**, and **item 71's gate has
+still not fired.**

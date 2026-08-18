@@ -57,11 +57,31 @@ export function lessonsByTrack(all = lessons) {
 //
 // Split out of this file on 2026-08-07 (backlog item 23, chunk-size
 // regression): this array now holds only what Learn/App need to render the
-// path — id, track, icon, color, title, subtitle, and a precomputed `minutes`
+// path — id, track, icon, title, subtitle, and a precomputed `minutes`
 // reading-time estimate. The actual lesson body (sections, takeaway,
 // thinkAbout — the bulk of the old ~260KB file) moved to
 // content/lessonContent.js, imported only by the lazy-loaded LessonReader
 // screen.
+//
+// `color` is authored on all 40 lessons and read by NOTHING. It was listed
+// in that sentence as a field "Learn/App need to render the path" until
+// 2026-08-17 (backlog item 75), and that was false. Measured rather than
+// inferred: no `.color` property access anywhere in `src/` or `scripts/`, at
+// HEAD or in the working tree; no dynamic `lesson[key]` access; no rule in
+// check-data.mjs. Confirmed live in the built app on the Learn screen with
+// both track headings rendered — zero of the 36 distinct accent values paint
+// any element, while a probe element injected with lesson 32's own value was
+// found, so the scan was working. Lesson rows draw their badge from
+// `ink.*`/`fill.*` tokens instead.
+//
+// Kept rather than deleted: 40 coherent per-lesson accents are plausibly what
+// an in-flight redesign wants, and removing them to tidy a field nothing reads
+// is the wrong trade. But do NOT "fix" a value here by pointing it at a graph
+// token — lesson 32's `#d97706` is not a stale copy of `--graph-amber` (item
+// 75 assumed it was); they share a Tailwind ancestor and nothing else, and
+// tying a decorative accent to an accessibility-constrained chart token would
+// couple them for real. If a redesign starts rendering this field, its
+// contrast is new work at that point, not a rename.
 //
 // `minutes` is **derived, not authored**: it must equal the reading time of
 // everything the lesson puts on screen — title, subtitle, section headings and
