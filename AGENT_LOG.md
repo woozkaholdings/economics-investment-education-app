@@ -497,6 +497,18 @@ for the history. No open P1/P2 items.
       before editing anything** — an explicit step, the way the adversarial self-check became step 5
       after D1. **Its enforcement home is the dev-agent task file, which is the owner's and outside this
       repo**; flag it to them rather than assuming a rule written here is a rule that runs.
+      > **✅ THE ENFORCEMENT HOME NOW EXISTS — 2026-08-17, owner-directed, done by the owner's own
+      > session.** The dev-agent task file has a new **step 3.5, "Re-measure the item's premise, with a
+      > control, before you edit anything — mandatory"**, sitting between "pick the item" (3) and
+      > "implement it" (4). It carries the ten-item streak, the two cases where re-measuring changed the
+      > *disposition* rather than a figure (65 and 75), the carry-a-control rule with the dark-mode DOM
+      > scan as its worked example, and the instruction to re-decide the item on corrected facts rather
+      > than treat a broken premise as a blocked run. **Numbered 3.5 deliberately, not by renumbering
+      > 4–7:** "step 5" means the adversarial self-check in dozens of entries below, and renumbering
+      > would have falsified every one of them. **This does NOT unblock the D3 claims-register row** —
+      > that is a different artifact, it still moves `LAUNCH_PLAN.md` §1's gated claim count, and
+      > `LAUNCH_PLAN.md` is still owner-dirty. The rule now runs; the claim that measures whether it
+      > works is still staged. **Stop flagging the task-file half to the owner in run output.**
     - **How to measure D3 on its 2026-09-05 check date — read this first, because the obvious method
       under-counts.** The premise verdicts are **not** all in run-log entries: most of the nine streak
       verdicts live in *backlog item text*. Grep this file for the phrase `item running` — the backlog
@@ -8801,3 +8813,13 @@ For the dev-agent's own pick, **re-check the owner's dirty files first** — sev
 `48dad761`'s scratchpad, durability caveat now **nine entries old**; if that scratchpad is gone, redo it
 from item 64's entry. **Item 74 must not be picked before a deploy exists**, and **item 71's gate has
 still not fired.**
+
+> **Correction to the entry above, same session (owner-directed).** Its "Next run" line asks the owner
+> to add the D3 re-measure step to the dev-agent task file, "carried for the fourth run running". The
+> owner then directed that it be done, and **it is done** — the task file now has a **step 3.5**; see
+> item 73's blockquote for what it says and why it is 3.5 rather than a renumbering. So that half of
+> the ask is closed and should not be repeated in run output. **The other half is not:** item 72's
+> deploy (`npm run build`, <https://app.netlify.com/drop>, drag `dist/`, keep the URL) is untouched and
+> is still the entire critical path, with item 18 downstream of it. The **D3 claims-register row also
+> remains blocked** on the owner-dirty `LAUNCH_PLAN.md` — a rule that runs is not the same artifact as
+> the claim that tests whether it works.
