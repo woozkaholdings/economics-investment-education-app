@@ -52,7 +52,7 @@ would have to change if the claim is refuted.
 | A3 | Five languages under "(Beta)" are worth their maintenance cost. (`locales/`, five-way parity enforced by `npm test`.) | Non-English sessions under 15% of total once measurable; **or** translation review debt grows for two consecutive months. | 2026-09-05 | Partly — debt half only | Open; debt half checkable now |
 | A4 | Parent-facing kids content costs us little engagement versus a child-facing build. (`screens/reference/`, §10.3.) | Kids-guide views under 2% of sessions once measurable. | 2026-09-05 | No — item 18 | Open, unmeasured. **Not a free choice** — §10.3 is a COPPA/store-classification decision reopened 2026-08-04 and owner-held; if this claim is refuted the response is an owner decision, not a unilateral UI change. |
 | A5 | The Leitner spaced-review queue earns its complexity. (`lib/review.js`, `screens/Practice.jsx`.) | Under 20% of users who finish ≥3 lessons open Review within a week. | 2026-09-05 | No — item 18 | Open, unmeasured |
-| A6 | The catalogue is now large enough for Phase 0. | §4.3's content clauses unmet: under 40 lessons or under ~2 hours. | 2026-10-03 | **Yes** | **Holding** — 40 lessons / 120 min, both clauses met (`LAUNCH_READINESS.md`) |
+| A6 | The catalogue is now large enough for Phase 0. | §4.3's content clauses unmet: under 40 lessons or under ~2 hours. | 2026-10-03 | **Yes** | **Holding** — 40 lessons / 144 min, both clauses met (`LAUNCH_READINESS.md`) |
 | A7 | Interactive content — a mechanism the reader drives, not just watches — is the §3.0.4 differentiator a chat window cannot copy. (`components/PolicySim.jsx`, `content/policyScenarios.js`.) | Under 35% of sessions that open the hosting lesson fire at least one `sim_lever_chosen`; **or** learners who move a lever complete that lesson at no higher a rate than those who don't. | 2026-09-05 | No — item 18 | Open, unmeasured; the event exists as of 2026-08-16 |
 
 **A2 carries a measurement flaw worth stating rather than hiding:** the pre-split single-chain baseline
@@ -60,13 +60,21 @@ was never captured, so this claim can only be checked forward against its own th
 before/after comparison. The split may well have been right — the argument in `DECISIONS.md` is a good
 one — but the evidence for it will always be weaker than it would have been had anyone measured first.
 
-**A3's two halves have different strengths.** The debt half is checkable today and is drifting the
-wrong way: translation review coverage is **93%, 0% human, 3 entries stale** (`npm run review-status`),
-down from the 100% recorded when the P-4 decision was taken on 2026-08-11. Note also that
-`LAUNCH_READINESS.md` still reports that 100% figure and is stale on this point. The volume ratios
-(es 0.72x, ko 0.36x, zh 0.23x, ja 0.31x of English) are **not** evidence either way — Chinese and
-Japanese encode the same content in far fewer characters, so a low ratio is expected and is not a
-quality signal. Do not cite those ratios as refutation.
+**A3's two halves have different strengths.** The debt half is checkable today, and the way to check
+it is to **run `npm run review-status`** — not to read a figure here. This paragraph used to quote one
+("93%, 0% human, 3 entries stale"); it was true when written on 2026-08-16, commit `9f24a0b`
+re-reviewed those very pairs the same day, and the number sat wrong until §9.3's first monthly audit
+found it on 2026-08-17. It is deleted rather than corrected, because a moving operational figure
+restated in a second file is a figure that will rot again. *(That sentence also accused
+`LAUNCH_READINESS.md` of being stale for reporting 100%. It was not; this file was. Recorded rather
+than silently dropped — see `reviews/2026-08-17-monthly-audit.md` §1.)*
+
+What is durable is the **shape**, which is what the figure was being cited for and which has not
+changed: coverage has run at or near 100% while **the human share has never left 0%** — every reviewed
+pair is `method: "ai"`, Claude reviewing Claude. That is the half of A3 worth arguing about. The
+translation **volume ratios** are **not** evidence either way and are deliberately not quoted here —
+Chinese and Japanese encode the same content in far fewer characters, so a low ratio is expected and
+is not a quality signal. Do not cite those ratios as refutation.
 
 **A7 is the one claim here whose measurement was built before the claim was written down, and only
 just.** The simulator shipped 2026-08-16 with no instrumentation at all; `sim_lever_chosen` was added

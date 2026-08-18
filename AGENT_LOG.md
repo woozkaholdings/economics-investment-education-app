@@ -408,6 +408,47 @@ for the history. No open P1/P2 items.
       this is a stricter reading of a rule the app volunteered.
     </details>
 
+72. **[Process/Distribution — filed 2026-08-17 by §9.3's first monthly audit, from its question 3.
+    This is the highest-value open item in this backlog and the first one in weeks that is not about
+    the repo's opinion of itself.] Nothing owns "get this in front of one person."** Item 18 (an
+    analytics provider account and key) is named in every run's output as the entire critical path out
+    of Phase 0, and that is correct — but **item 18 is downstream of a deploy, and no backlog item owns
+    the deploy.** Measured, not assumed: no `.github/`, no `netlify.toml`, no `vercel.json`, no `CNAME`;
+    `dist/` is gitignored (`.gitignore:2`); `src/lib/analytics.js`'s own header states there is no
+    provider or backend and `sink()` writes to `localStorage` on one device.
+    - **Why this is not a restatement of item 18.** Item 18 is owner-blocked (it needs an account and a
+      key). **A static build served at a URL is not owner-blocked** — §2.1's held Expo-vs-Vite decision
+      (item 12) blocks the *store*, not the web funnel, and `DECISIONS.md` already records Vite. `C2`
+      in `CLAIMS.md` says the build gap closed on 2026-08-16 (every lesson has a hash URL, no lesson
+      needs a signup); what is missing is somewhere to point at.
+    - **The honest refuting number is trivial and that is the point:** one reachable URL, or one person
+      who has opened the app. The project has 40 lessons, 5 languages, 8 check scripts and a claims
+      register, and **zero people have ever opened it**.
+    - **Scope, and the trap.** Do *not* let this become another instrument. The deliverable is a
+      deploy path and a URL, not a script that checks whether a deploy path exists. **Some of it is
+      genuinely an owner action** (choosing a host, holding the account) — so the dev-agent half is:
+      make the build deployable as a static artifact, write down exactly what the owner must click, and
+      say so in the run output. Flag the owner half in every run until it moves, alongside item 18.
+    - Also filed for §10 as **B-3** in `reviews/2026-08-17-monthly-audit.md`.
+
+73. **[Process — filed 2026-08-17 by §9.3's first monthly audit, which deliberately proposed rather
+    than applied these.] Apply the audit's three §10 blindspots and its proposed claim D3.** Both halves
+    are written out verbatim and ready to move; neither was applied, for two different reasons that
+    should not be collapsed:
+    - **The three §10 blindspots (B-1 process mass, B-2 the locales held by sunk cost, B-3 the deploy
+      gap) are BLOCKED** on `LAUNCH_PLAN.md` being owner-clean — §10 lives there and the owner's UIUX
+      redesign has it dirty. They are in §10's own register format in the audit's §6, each with a
+      refuting number and a check date. **Move them across verbatim; the wording is the finding.**
+    - **D3 is NOT blocked — it was withheld on judgement.** *"A backlog item's premise can be trusted
+      well enough to implement without re-measuring"* — **refuted nine consecutive times** (items 55→63;
+      see item 32's entry), measurable today, and uncovered by D1/D2, which are both about *verification*
+      rather than *filing*. It was not added because an audit that edits the register it is auditing has
+      stopped being an audit. **A different run should decide it on the merits.** Per §9.1 the response
+      to a refuted claim is a product change, and the candidate already exists in the process: make
+      "re-measure the premise, with a control, before editing anything" an explicit step, the way the
+      adversarial self-check became one after D1.
+    - **Honest priority: medium for D3, and the §10 half is free once the plan is clean.**
+
 65. **[A11y/Design — the residual item 63's fix measured and deliberately did not absorb, filed
     2026-08-17 by the run that closed it. Not rendered today; latent tomorrow.] Light `--graph-amber`
     (`#d97706`) is under WCAG 1.4.11's 3:1 against three surfaces** — `--surface-sunken` **2.92**,
@@ -1471,7 +1512,43 @@ for the history. No open P1/P2 items.
     claim **A3** in `CLAIMS.md` — the debt is currently drifting the wrong way, which is exactly what
     that claim's second refutation clause watches.
 
-32. **[Process] Run the §9.3 monthly blindspot audit — it has never been run.** §9.3 specifies one hour,
+32. **✅ DONE 2026-08-17 (scheduled dev-agent). Run as `reviews/2026-08-17-monthly-audit.md`, nineteen
+    days early and deliberately — four of the five questions were fully answerable from the repo today.
+    Question 4 was the trivial one (`0 past due`); questions 1, 2, 3 and 5 were not.** The three findings
+    worth not re-deriving, each measured rather than asserted:
+    - **Q1 — the ratio nobody had summed.** Over the eight days to 2026-08-17: `AGENT_LOG.md` churned
+      **20,061 lines** against **1,964 lines of application code** (`src/` minus content and locales) —
+      slightly over **10:1**. The run log alone out-churned the entire `src/` tree (16,802). The project
+      had been observing this locally for a week (W-3's 909 KB cut, three staleness flags, two
+      “actionable areas are thin” notes) and never multiplied it out. **Filed for §10 as B-1.**
+    - **Q3 — stronger than “I haven’t spoken to any users.”** There is no surface on which a user could
+      exist: no `.github/`, no `netlify.toml`/`vercel.json`/`CNAME`, `dist/` gitignored, and
+      `analytics.js`’s own header says there is no provider or backend. Item 18 is correctly named as the
+      critical path in every run’s output — but it is **downstream of a deploy that no backlog item
+      owns**. That gap is now **item 72**.
+    - **Q5(b) — a measured process failure with no claim covering it.** The log records, item by item in
+      its own words, a **nine-item consecutive streak of wrong-or-partly-wrong premises** (55, 56, 57,
+      then 58 “the fourth item running”, 59, 61/62, 60, 66, 63), broken by item 64. `CLAIMS.md`’s D1 and
+      D2 cover *verification*; nothing covers *filing*. Proposed as **D3**, deliberately **not** added —
+      an audit that quietly edits the register it is auditing is not auditing it. **Item 73.**
+    > **What the audit fixed on the spot, because finding a wrong number and leaving it is the defect.**
+    > `CLAIMS.md` had gone stale in two of its own rows within ~24 hours of being written — the file
+    > whose entire purpose is to stop beliefs going quietly stale. A6’s status cell said **120 min**
+    > (item 56 moved the catalogue to **144** the next day); A3’s paragraph said **93%, 0% human, 3
+    > stale** and called `LAUNCH_READINESS.md` stale for saying 100%, when `9f24a0b` had re-reviewed
+    > those pairs and **`LAUNCH_READINESS.md` was right**. A6’s figure is now **generated** by
+    > `refresh-readiness.mjs` (11 figures across 3 docs) and proven to bite on three injections — stale
+    > number, deleted sentence, softened verdict. **A3’s was deleted, not guarded**, on item 55’s rule
+    > and for a second reason worth stating: the audit’s headline finding is that this project builds
+    > too many instruments, and answering it with another instrument would be comic.
+    > **What was deliberately NOT done:** §9.3’s closing step (“update §10”) — §10 is in `LAUNCH_PLAN.md`,
+    > which the owner has uncommitted edits in. The three blindspots are written in §10’s own format in
+    > the audit’s §6, ready to move across verbatim. **Next run of the ritual: 2026-09-05**, the first
+    > Saturday, when question 4 stops being trivial — **nine claims come due on that exact date**, six of
+    > them unmeasurable and every one of those naming item 18.
+    <details><summary>Original text of item 32, as filed 2026-08-16</summary>
+
+    **[Process] Run the §9.3 monthly blindspot audit — it has never been run.** §9.3 specifies one hour,
     first Saturday, five standing questions (the number you avoided looking at; what survives only
     because removing it feels wasteful; what the last three users said, where "I haven't spoken to any"
     *is* the finding; which claim is past its check date; what a skeptical friend would call obviously
@@ -1481,6 +1558,7 @@ for the history. No open P1/P2 items.
     answerable from the repo, and question 3's honest answer today is "none, and that is the finding."
     Write the result as `reviews/YYYY-MM-DD-monthly-audit.md` and update §10 per the plan. Depends on
     item 30 for question 4 (there are no claims with check dates yet to be past).
+    </details>
 
 40. **[A11y — ✅ DONE 2026-08-16. Fixed as a pattern, not one line: the audit found the `<ol>`/`<ul>`
     question was the *smaller* of the two defects in these lists.]**
@@ -8026,3 +8104,116 @@ resolving unilaterally). **Item 65 should still wait for the redesign to land** 
 palette colour underneath it; **item 71** remains filed and honestly low. If everything is blocked,
 the honest report is that everything is blocked. **Item 18 is still the entire critical path to
 ending Phase 0 and is still blocked on an owner action: an analytics provider account and key.**
+
+### 2026-08-17 (scheduled dev-agent) — Run §9.3's monthly blindspot audit, for the first time (item 32)
+
+**Why this item, when the queue said something else.** The previous entry's "Next run" line queued
+`Dividend` (items 64/67) gated on `LAUNCH_PLAN.md` being clean, item 62's F6 in the same file, and
+item 65 with an explicit "wait for the redesign." Re-checked the owner's tree first, as that entry
+instructed: the redesign is **still in flight and has grown** — `git diff --stat` now reads **13 files,
+603+/141−**, up from the **12 files, 540+/78−** the last two runs saw, and the new file is
+`scripts/check-blindspot.mjs`. So `Dividend` and F6 are still blocked, 65 is still waiting, item 69
+lives in the five owner-dirty locale files, and 71 says in its own text to take it only once one of its
+numbers has been wrong. **Item 32 was the one open, unblocked, substantive item left** — and it had
+been sitting since 2026-08-16 with `LAUNCH_READINESS.md`'s §10.7 row already deferring to a ritual
+nobody had ever performed.
+
+**Run nineteen days early, on purpose, and the entry says so.** §9.3 is "first Saturday"; the next is
+2026-09-05. Item 32 authorised the preparation, and in the event **four of the five questions were
+fully answerable from the repo today** — only question 4 needed the calendar, and its answer today is
+the trivial `0 past due`. The audit is written as the audit of record for the period with an explicit
+instruction to re-run the ritual on 2026-09-05, when **nine claims come due on that exact date**.
+
+**What the five questions actually returned.** Full detail in
+[`reviews/2026-08-17-monthly-audit.md`](reviews/2026-08-17-monthly-audit.md); the three that matter:
+- **Q1, the number that had been avoided:** over the eight days to today, `AGENT_LOG.md` churned
+  **20,061 lines** against **1,964 lines of application code** — **10:1** — and out-churned the entire
+  `src/` tree (16,802). 115 commits, 66 touching `src/` at all. The `AGENT_LOG.archive.md` 8,055 is
+  excluded because it is W-3's *move*, not new prose, and counting it would overstate the case.
+- **Q3 is stronger than §9.3's own "I haven't spoken to any" framing:** there is no surface on which a
+  user could exist — no CI, no host config, `dist/` gitignored, no analytics backend. **Item 18 is
+  correctly the critical path, but it is downstream of a deploy nothing owns.** Filed as item 72.
+- **Q5(b), and it is measured, not rhetorical:** the log records a **nine-item consecutive streak of
+  wrong-or-partly-wrong premises** in its own words, item by item (55, 56, 57, then 58 "the fourth item
+  running", 59, 61/62, 60, 66, 63), broken by 64. `CLAIMS.md` has no claim covering it — D1 and D2 are
+  both about *verification*, not *filing*. Proposed as D3 and **deliberately not added**; see below.
+
+**The audit found a defect in its own subject and fixed it.** `CLAIMS.md` — the register whose entire
+purpose is to stop stated beliefs going quietly stale — **had gone stale in two of its own rows within
+about 24 hours of being written**, and has not been touched since `20f82e7` (2026-08-16):
+1. **A6's status cell said "40 lessons / 120 min."** Item 56 recalibrated every lesson's `minutes` the
+   next day and the catalogue is **144**. The claim was never in danger (144 clears the gate harder),
+   but the register was citing a stale number *as its evidence*.
+2. **A3's paragraph said "93%, 0% human, 3 entries stale ... drifting the wrong way"** and accused
+   `LAUNCH_READINESS.md` of being stale for reporting 100%. `9f24a0b` re-reviewed those 12 pairs the
+   same day; `npm run review-status` today reads **40/40 (100%), 0 stale, 0 unreviewed** in all four
+   languages. **`LAUNCH_READINESS.md` was right and `CLAIMS.md` was the stale one** — recorded in the
+   file rather than silently swapped, because which document was wrong is the interesting part.
+
+**Two deliberately different dispositions, which is the design call of this run.** A6's figure is now
+**generated** — one data entry in `refresh-readiness.mjs`'s existing `FIGURES` list, exactly the shape
+item 55 established ("the guarded-sentence list is data, and this is one more entry"), taking it to
+**11 generated figures across 3 documents**. The verdict word is inside the guarded shape for §4.3's
+reason: a status cell that keeps saying "Holding" while the numbers move is the softer-restatement
+failure `CLAIMS.md`'s own header forbids. **A3's figure was deleted, not guarded** — item 55's rule for
+a figure an argument doesn't need, plus a second reason this run had no choice about: *the audit's
+headline finding is that this project builds too many instruments, and answering it with another
+instrument would be comic.* A3 now points at `npm run review-status` and keeps only the durable shape
+(coverage near 100%, **human share never off 0%**).
+
+**Verified, and the guard was broken on purpose before being believed.** `npm test` — `PASS: 0
+failure(s)` on all six checks plus `refresh-readiness --check`, with the one standing translation
+AI-share warning, unrelated. `npm run build` — `✓ built in 946ms`. Counter-assertions pasted from the
+tools rather than retyped (item 70): `readiness figures: 40 lessons / 136,051 en chars / 144 min, 11
+generated figures across LAUNCH_READINESS.md + LAUNCH_PLAN.md + CLAIMS.md agree with the content.` and
+`§9.1 claims register: 15 claims, 2 refuted, 0 past due (as of 2026-08-17).` **Three injections against
+the new guard**, each restored from a scratchpad copy and never with `git checkout --`: (a) the real
+historical defect, `144` → `120` → `FAIL ... it says: 120 min / should be: 144 min`; (b) the sentence
+deleted outright → `FAIL ... the sentence this guard reads is not in the file at all`, so it cannot be
+satisfied by removal; (c) numbers moved while the verdict stayed "Holding" (`12 lessons / 12 min`) →
+FAIL. `shasum` on `CLAIMS.md` after restore matched the pre-injection hash (`682bb17b…`) exactly.
+**No browser check, and W-1 is not being dodged:** this run touched one Markdown report, one Markdown
+register and one Node script; it renders nothing and no `src/` file was opened for writing.
+
+**Owner's tree provably untouched.** `git diff --shortstat` over their thirteen paths reports the
+identical **13 files, 603 insertions(+), 141 deletions(-)** as on arrival. My own diff, from
+`git diff --numstat`: `CLAIMS.md` **16+/8−** and `scripts/refresh-readiness.mjs` **27+/3−** — **2
+files, 43 insertions, 11 deletions** — plus the new untracked audit and this log. `UIUX/` is still untracked and still unread
+beyond `ls` — item 26's standing instruction.
+
+**Adversarial self-check (step 5) — it caught one real regression, in my own change.**
+**Blindspot register:** grepped my added lines for Dalio and person names, advice verbs, child-facing
+framing, currency figures and hardcoded current dates — **0 hits**. Done by hand, since
+`check-blindspot.mjs` is owner-modified this run and I did not lean on its result; in any case its
+scope is `src/content/` + `src/locales/` and nothing here touches either. The dates I wrote are record
+dates and ISO check dates, which is both files' convention, not §2.3's live-date defect.
+**DECISIONS.md conflict:** none — no storage, routing, build or content-module-shape change;
+localStorage-only, `.js`-not-JSON and Vite-not-Expo untouched. **Already-done item:** no — item 32 has
+never been actioned; `grep` returns its filing and `LAUNCH_READINESS.md`'s deferral, never a closure.
+**My own verification claims:** an independent reviewer re-running `npm test`, `npm run build`,
+`npm run review-status` and the three injections gets these lines; every figure above is pasted from
+tool output, and the two arithmetic claims I made by hand were both re-derived by command before being
+written. **What the check actually caught, and it was mine:** `check-backlog.mjs` went **88 → 87**
+citations after my first edit. My comment rewrap had split `backlog item 47` across a line break, and
+the counter uses a single-line pattern — so I had *silently deleted a citation while adding text*,
+which is item 70's defect in a new costume. Rewrapped, now **90** (the two I added resolve), and I left
+a one-line note in the header telling the next editor why the phrase must not wrap. **A second thing
+the check caught, in the audit itself:** my first draft of question 4 wrote "seven are unmeasurable."
+Counting the rows by command says **six** (A1, A2, A4, A5, A7, C2; A3 is partly, D1/D2 are measurable
+and refuted). An audit whose headline finding is that hand-copied numbers rot, containing a hand-copied
+number that had rotted, is exactly the joke this project keeps telling — corrected before commit.
+**One limit, stated not buried:** the §10 half of §9.3 is **not done**, because `LAUNCH_PLAN.md` is
+owner-dirty. The audit does not pretend otherwise; the three blindspots are written in §10's format,
+ready to move verbatim, and filed as item 73.
+
+**Next run.** **Item 72 is the highest-value open item and the first in weeks that is not about the
+repo's opinion of itself** — nothing owns getting the app in front of one person, and the dev-agent
+half (make the static build deployable, write down exactly what the owner must click) is *not*
+owner-blocked, unlike item 18. Take it, and resist turning it into another instrument. If the owner's
+redesign has landed and `LAUNCH_PLAN.md` is clean, **item 73's §10 half is free** and `Dividend`
+(items 64/67) unblocks — its saved work is at session `48dad761`'s scratchpad and the durability caveat
+is now **five entries old**; if that scratchpad is gone, redo it from item 64's entry. **Re-check the
+owner's dirty files before picking anything** — that check has changed the answer in three of the last
+four runs. **Item 18 remains the critical path to ending Phase 0 and is still blocked on an owner
+action (an analytics provider account and key) — and as of this audit it is also blocked behind a
+deploy that does not exist (item 72).**

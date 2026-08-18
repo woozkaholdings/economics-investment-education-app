@@ -1,8 +1,11 @@
 #!/usr/bin/env node
 // ═══════════════════════════════════════════════════════════════════════════
-// refresh-readiness.mjs — the catalogue figures LAUNCH_READINESS.md and
-// LAUNCH_PLAN.md state, computed rather than copied (backlog item 47, filed by
-// item 39's scoping; extended to LAUNCH_PLAN.md by item 55).
+// refresh-readiness.mjs — the catalogue figures LAUNCH_READINESS.md,
+// LAUNCH_PLAN.md and CLAIMS.md state, computed rather than copied
+// (backlog item 47, filed by item 39's scoping; extended to LAUNCH_PLAN.md by
+// backlog item 55, and to CLAIMS.md by backlog item 32's monthly audit).
+// Keep each "backlog item N" on one line: check-backlog.mjs counts them with a
+// single-line pattern, so wrapping one mid-phrase silently drops a citation.
 //
 // WHY THIS EXISTS. LAUNCH_READINESS.md's "How to refresh" section used to
 // carry two `node -e '…'` snippets: code stored in prose. Nothing imported
@@ -59,6 +62,7 @@ import { fileURLToPath } from "node:url";
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const READINESS = "LAUNCH_READINESS.md";
 const PLAN = "LAUNCH_PLAN.md";
+const CLAIMS = "CLAIMS.md";
 const LANGS = ["en", "es", "ko", "zh", "ja"];
 
 // §4.3's Phase-0 content gate, as the plan's own table states it. Kept here so
@@ -256,6 +260,26 @@ const FIGURES = [
     label: "§4.0 asset-table lesson row",
     shape: /\| \d+(?:,\d{3})* lessons \+ quiz \+ glossary \|/g,
     expected: `| ${n(lessons.length)} lessons + quiz + glossary |`,
+  },
+  {
+    // Added 2026-08-17 by §9.3's first monthly audit, which found this cell
+    // reading "120 min" a day after item 56 recalibrated the catalogue to 144.
+    // The claim was never in danger — 144 clears the gate harder than 120 —
+    // but a register whose whole purpose is to stop beliefs going quietly
+    // stale was citing a stale number as its evidence, which is worse than a
+    // wrong figure in a document that makes no such promise.
+    //
+    // The verdict word is inside the guarded shape for the same reason §4.3's
+    // is: "Holding" is a claim about the gate, not decoration, and a status
+    // cell that keeps saying Holding while the numbers move is precisely the
+    // softer-restatement failure CLAIMS.md's own header forbids.
+    doc: CLAIMS,
+    label: "A6 catalogue-size status cell",
+    shape:
+      /\*\*(?:Holding|REFUTED)\*\* — \d+(?:,\d{3})* lessons \/ \d+(?:,\d{3})* min, (?:both clauses met|a clause is unmet)/g,
+    expected:
+      `**${gateMet ? "Holding" : "REFUTED"}** — ${n(lessons.length)} lessons / ${n(minutes)} min, ` +
+      `${gateMet ? "both clauses met" : "a clause is unmet"}`,
   },
   {
     // The figure that made this document worth guarding: on 2026-08-17 this
