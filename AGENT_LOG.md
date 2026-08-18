@@ -9352,3 +9352,80 @@ numbers fresh (the ones pasted above will already be stale by then) before decid
 three real candidates clear the bar. The owner's build-deploy (item 72's remaining owner-half, four
 clicks) is still the entire critical path for item 18. Check the owner's dirty paths first — now eleven
 of the last twelve runs — before picking anything content- or doc-shaped.
+
+### 2026-08-18 (scheduled dev-agent, third run this date) — Glossary → TermDetail lost keyboard focus to `<body>` on Back; fixed
+
+Arrived to the same 26-file owner-dirty tree as the previous two runs this date (shortstat unchanged:
+**26 files, 1016 insertions(+), 1441 deletions(-)**). The last two runs' scoping already established that
+every numbered backlog item routes through one of those 26 files or through `LAUNCH_PLAN.md`'s generated
+figures — repeating that scoping pass would just re-derive the same conclusion, so this run looked in the
+untouched code surface instead (`src/lib/*`, `src/screens/reference/*.jsx`, the clean `src/components/*`
+files), which the task file's step 3 explicitly allows ("fixing bugs... accessibility... not just the
+numbered backlog").
+
+**What was found, and it's real — checked end to end before touching anything (step 3.5).**
+`TermDetail.jsx` moves focus to its own `<h2>` on open (a `useEffect` keyed on `[term]`, confirmed
+correct by a prior run's a11y spot-check — "no gap found here," 2026-08-16 ninth run). Nothing handles
+the **close** direction. `Glossary.jsx`'s `onBack={() => setSelectedTerm(null)}` unmounts `TermDetail`,
+which unmounts the "Back" button that had focus — with nothing else claiming it, focus falls to
+`document.body`. A keyboard or screen-reader user who opened a term from a filtered/scrolled glossary
+list loses their place entirely on the way back. Grepped `AGENT_LOG.md` for every `TermDetail` mention
+(30+) before picking this — the only related work is the *open*-direction check above and a heading-level
+fix (`<h1>`→`<h2>`, 2026-08-16); neither touches `onBack`, so this isn't a re-fix of closed work.
+
+**Fix — one file, `src/screens/reference/Glossary.jsx`, +23/−2.** A `rowRefs` map (keyed by term, one
+`ref` callback per row) plus a `returnFocusTerm` state: `onBack` now records which term was open before
+clearing `selectedTerm`, and a `useEffect` fires post-commit to focus that row and clear the flag. No
+change to `TermDetail.jsx` — it only ever calls the `onBack` prop it's given, so the fix lives entirely in
+the parent that owns the mount/unmount. Scoped to this file on purpose: `Reference.jsx`'s hub↔section
+navigation has the identical gap one level up, but that file is one of the 26 owner-dirty ones.
+
+**Verified live in both directions, not just by reading code.** Built `dist/`, served on
+`127.0.0.1:8815`, resized to `mobile` (375×812, sanity-checked non-zero per the Environment note).
+Dismissed the launch modal → Reference → Glossary → focused-and-clicked the "Yield Curve" row →
+`document.activeElement` was the `<h2>` ("Yield Curve"), confirming the already-working open direction.
+Clicked "Back" → **`document.activeElement` is the `<div role="button" aria-label="Yield Curve">` row** —
+focus restored, not lost. **Negative control, to prove the bug was real and not imagined**: built the
+pre-fix `Glossary.jsx` (`git show bb6be57:...`) in a separate scratchpad tree, served on a second port,
+ran the identical click sequence — **`document.activeElement` is `BODY`** (`activeIsBody: true`) after
+Back, exactly the failure this run set out to fix. Both builds driven through `javascript_tool` per the
+Environment note (`computer`-tool clicks weren't needed or used here).
+`npm run build` green on both trees; `npm run check-blindspot` passes (0 failures) on the working tree —
+no learner-facing copy touched, this is pure interaction code.
+Full `npm test` on a `git archive HEAD` control copy (this run's second use of the technique the
+2026-08-18 first run's Environment-note addition documents) exits **0**, all six checks `PASS`. The
+working tree is still red on `refresh-readiness.mjs` only, correctly, for the reason item 77 already
+names — unrelated to this file.
+
+**Adversarial self-check (step 5).** **Blindspot register:** no regression — `check-blindspot` passes; no
+learner-facing text was added or changed, only a ref map, a state variable and one effect. §10.1/§10.2/
+§10.3 don't apply to interaction code. **DECISIONS.md conflict:** none — read (not edited) to confirm; no
+new persistence (the ref/state are in-memory, not `localStorage`), no routing or build-shape change, and
+the fix reuses the exact `useRef`+`useEffect` focus-management shape `DECISIONS.md`'s and this file's own
+precedent (`LessonReader.jsx`, `TermDetail.jsx`'s own open-direction effect) already establish. **Already-
+done item:** no — confirmed by grep above; the 2026-08-16 a11y spot-check explicitly checked and cleared
+`TermDetail.jsx`'s *open* direction and never examined `Glossary.jsx`'s `onBack`. **My own verification
+claims:** every DOM state pasted above is a direct `javascript_tool` read of `document.activeElement`, in
+both the positive and the negative-control build — not inferred from a click's return value. **What the
+check caught:** my first draft of the in-code comment claimed `LessonReader` and `Reference.jsx` "already
+handle their own open direction" as if that covered this case; re-reading it, that sentence would have
+implied the close-direction gap was already handled elsewhere, which is false — `Reference.jsx` has the
+identical gap (see below). Reworded before committing to state plainly that only the open direction was
+previously handled, anywhere in this app.
+
+**Not touched, and why.** `src/screens/Reference.jsx` has the same close-direction gap one level up (hub
+↔ section), corroborating this is a systemic "open handled, close isn't" pattern rather than a one-off —
+but that file is one of the owner's 26 dirty paths, so it is flagged below rather than fixed. `TermDetail.
+jsx` needed no change — confirmed the only two JSX consumers that actually render `<TermDetail .../>` are
+`Glossary.jsx` (fixed) and no others (`Reference.jsx`/`Practice.jsx`'s "TermDetail" hits are comments
+referencing the pattern by name, not `<TermDetail>` usages, checked by grep before concluding this).
+
+**Next run.** **New, small, unblocked item: `src/screens/Reference.jsx`'s hub↔section back navigation has
+the same focus-loss-to-`<body>` gap this run fixed in `Glossary.jsx`** — same shape, same fix (a returned-
+to ref + effect), but `Reference.jsx` is currently owner-dirty, so it is BLOCKED until that file is clean,
+same as items 35/64/73/77. Filing here rather than as a new numbered backlog item since it is a one-file,
+already-diagnosed fix, not a research item — a future run can grep this entry rather than re-deriving it.
+**`LAUNCH_PLAN.md` still blocks four items (35, 64's `Dividend`, 73, 77) together**, and now effectively a
+fifth (`Reference.jsx`'s focus fix, blocked on the file itself rather than on generated figures — worth
+separating those two blocking reasons if a future run tracks this as a numbered item). Owner's build-
+deploy (item 72, four clicks) remains the entire critical path for item 18.

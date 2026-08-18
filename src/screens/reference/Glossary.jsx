@@ -11,7 +11,7 @@
 // control. aria-describedby points back at them to restore that.
 // ═══════════════════════════════════════════════════════════════════════════
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { glossary } from "../../content/glossary.js";
 import Icon from "../../components/Icon.jsx";
 import { EmptyState, Text } from "../../components/ui.jsx";
@@ -23,6 +23,22 @@ export default function Glossary({ t, lang }) {
   const [query, setQuery] = useState("");
   const [selectedTerm, setSelectedTerm] = useState(null); // null | a glossary key
   const [bookmarks, setBookmarks] = useState(() => readArray(KEYS.glossaryBookmarks));
+
+  // TermDetail moves focus to its own heading on open (its useEffect), but
+  // closing it unmounts the row-list button that had focus, so the browser
+  // drops focus to <body> and a keyboard/screen-reader user loses their place
+  // in the list — the open direction is handled app-wide (LessonReader,
+  // TermDetail itself); the close direction wasn't. rowRefs + returnFocusTerm
+  // restore focus to the row that was activated.
+  const rowRefs = useRef({});
+  const [returnFocusTerm, setReturnFocusTerm] = useState(null);
+
+  useEffect(() => {
+    if (selectedTerm === null && returnFocusTerm) {
+      rowRefs.current[returnFocusTerm]?.focus();
+      setReturnFocusTerm(null);
+    }
+  }, [selectedTerm, returnFocusTerm]);
 
   const toggleBookmark = (term) => {
     setBookmarks((prev) => {
@@ -50,7 +66,10 @@ export default function Glossary({ t, lang }) {
         entry={entry}
         isBookmarked={bookmarks.includes(selectedTerm)}
         onToggleBookmark={() => toggleBookmark(selectedTerm)}
-        onBack={() => setSelectedTerm(null)}
+        onBack={() => {
+          setReturnFocusTerm(selectedTerm);
+          setSelectedTerm(null);
+        }}
       />
     );
   }
@@ -90,6 +109,7 @@ export default function Glossary({ t, lang }) {
             return (
             <div
               key={term}
+              ref={(el) => { rowRefs.current[term] = el; }}
               role="button"
               tabIndex={0}
               aria-label={isBookmarked ? `${entry.s || term}, ${t.bookmarkedLabel}` : entry.s || term}
