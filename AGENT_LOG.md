@@ -669,25 +669,46 @@ for the history. No open P1/P2 items.
       no instrument ever emitted. The cheap defence remains item 70's — paste the tool's line, and if you
       need a number the tool does not print, print it.
 
-69. **[Content/i18n — filed 2026-08-17 by the run that fixed item 67's unblocked half, from a gap that
-    run deliberately left open rather than papering over.] The `realized gains` rewrite landed in `en`
-    only, and nothing measures the other four languages.** The jargon corpus is `en`-only (item 66's
-    own caveat (c)), so `es`/`ko`/`zh`/`ja` glossary definitions are unmeasured by every instrument
-    this repo has — the same "unreachable, not merely unchecked" shape that made `realized gains` worth
-    finding.
-    - **What was actually looked at, so the next run doesn't redo it.** All four translations of the
-      `Brokerage Account` clause were read this run. They are **already more descriptive than the
-      English was**: `ko` `실현된 매매 차익` ("realized trading profit"), `zh` `已实现的收益`, `ja`
-      `実現した利益` are compositional descriptions rather than bare terms of art. **`es`
-      `ganancias realizadas` is the one direct calque** and is the strongest candidate for the same
-      rewrite treatment.
-    - **Why it wasn't just done.** Item 67's measured finding was in the `en` corpus; changing four
-      translations on my own reading would be an unmeasured judgement in four languages at once —
-      exactly the drift the "measure first, fix separately" rule exists to stop. **Honest priority:
-      low**, and lower than it looks: this is one clause, not a survey.
+69. **✅ DONE 2026-08-18 (scheduled dev-agent) — and the headline finding is that it was NEVER BLOCKED.**
+    The `es` calque is rewritten in `src/content/glossary.js` (`Brokerage Account`.`es.f`): "los dividendos
+    y **las ganancias realizadas**" → "los dividendos y **cualquier ganancia obtenida al vender una
+    inversión**" — the same treatment item 67 gave `en`, mirroring its "any profit made when an investment
+    is sold". One clause, one line, rendered-verified in Spanish in the live app.
+    **The correction worth keeping, because four consecutive runs paid for it.** Every "Next run" line
+    since 2026-08-17 listed this item as **blocked on `src/locales/es.js`**. That file has nothing to do
+    with it: it holds UI strings, and `grep` finds **0** occurrences of this glossary prose anywhere in it.
+    The text has always lived in `src/content/glossary.js`, which was **clean the entire time**. The block
+    was asserted once and copied forward four times without re-measurement — the same "queued pick was
+    already blocked" pattern item 62's blockquote named, but inverted: here the *block itself* was fiction.
+    **Eleventh consecutive item with a wrong premise, and the third where re-measuring changed the
+    disposition rather than a figure.** A queuing run must name the file it means and check it.
+    - **Measured before editing; every control fired.** `en` carries item 67's rewrite (`true`) and no
+      longer contains `realized gains` (`false`); `es.f` reads back a known phrase (`Cuenta que contiene
+      inversiones`, `true`) so the instrument was proven able to see the field before it was trusted for a
+      negative; the calque was present (`true`). `ganancias realizadas` occurs **exactly once in the whole
+      `es` glossary** — so the item's "one clause, not a survey" is correct, measured rather than assumed.
+    - **The `en`-only instrument must not move, and did not.** `npm run jargon -- glossary` reads **54
+      candidates / 14 control** before and after, unchanged, because the extractor hardcodes `entry.en?.f`
+      and `entry.en?.ex` (`scripts/jargon-candidates.mjs:121-122`). That is both the proof the edit was
+      `es`-only and a restatement of *why* this gap existed at all.
+    - **No gated figure moved, and the ledger does not apply.** Entry count stays **32**, so
+      `LAUNCH_PLAN.md` §1's generated "32 glossary terms" is untouched — which is why this was shippable
+      while `Dividend` (items 64/67) still is not: that one *adds a key*. The APR trap does not apply
+      either: `scripts/translation-review-ledger.json` is keyed by **lesson id** over `lessonContent` and
+      does not cover the glossary, and it hashes the **English** source, which this edit does not touch.
+    - **⚠️ ko/zh/ja are NOT closed by this run, and this item's own claim about them is partly wrong.**
+      The filing says all three are "already more descriptive than the English was". Re-read against the
+      actual strings, that holds for **`ko` only** — `실현된 매매 차익` ("realized *buy–sell* profit")
+      genuinely explains the mechanism. **`zh` `已实现的收益` and `ja` `実現した利益` are the local
+      term-of-art shape** ("realized gains" / "realized profit"): roughly where the English *was* before
+      item 67, not ahead of it. **Deliberately not rewritten** — no instrument covers non-`en` glossary
+      prose, and changing two translations on my own reading is exactly the unmeasured multi-language
+      drift this item was filed to avoid. It is a real residual, not a closed question; it is the smaller
+      half of the "bigger version" bullet below.
     - **The bigger version of this item, if anyone wants it:** point `jargon-candidates.mjs` at a
       non-`en` locale. That is a real instrument extension (the acronym and capitalised-phrase rules
-      are English-shaped and would need rethinking per language), not a config flag.
+      are English-shaped and would need rethinking per language), not a config flag. **This is now the
+      only way the `zh`/`ja` question above gets answered by measurement rather than by opinion.**
 
 68. **✅ DONE 2026-08-17 (scheduled dev-agent) — built as scoped, minus one half that was measured and
     honestly declined. The glossary report is 57 → 54 and, for the first time, an in-place expansion
@@ -8823,3 +8844,104 @@ still not fired.**
 > is still the entire critical path, with item 18 downstream of it. The **D3 claims-register row also
 > remains blocked** on the owner-dirty `LAUNCH_PLAN.md` — a rule that runs is not the same artifact as
 > the claim that tests whether it works.
+
+### 2026-08-18 (scheduled dev-agent) — Item 69: the block that was pointing at the wrong file for four runs
+
+**Picked, and why.** `git status` on arrival: the owner's **13 files, 603 insertions(+), 141
+deletions(-)** — byte-identical to the last four runs — plus untracked `UIUX/` (hand-collected
+Duolingo/Mobbin screen recordings, clearly theirs; read only via `ls`). So every standing block held on
+re-check: item 73 and `Dividend` (items 64/67) blocked on `LAUNCH_PLAN.md`, item 75's remaining half and
+item 62's F6 likewise blocked on `src/components/ui.jsx` and `LAUNCH_PLAN.md`, items 74 and 18 downstream
+of a deploy that still does not exist, item 71's gate still not fired. The previous run's guidance offered
+no unblocked pick — which under W-2 would have meant a backlog-refill run.
+
+**Instead the block itself turned out to be false, which is this run's actual finding.** Every "Next run"
+line since 2026-08-17 has listed item 69 as **blocked on `src/locales/es.js`**. Before accepting that for
+a fifth time, I checked *where the string actually lives*: `ganancias realizadas` is at
+**`src/content/glossary.js:53`**, and `src/locales/es.js` — the UI-strings file — contains **0**
+occurrences of that glossary prose. `src/content/glossary.js` is **clean, and has been the whole time.**
+The block was asserted once and copied forward four times without anyone re-measuring it. **That is the
+eleventh consecutive picked item whose premise was wrong somewhere, and the third where re-measuring
+changed the disposition rather than a number** — items 65 and 75 being the other two. It is also item
+62's blockquote pattern inverted: that one warned about *queuing an item already blocked*; this is
+queuing an item as blocked **when it never was**.
+
+**Re-measured the rest of the premise with controls, per D3, before editing.** Four controls, all fired:
+`en` carries item 67's rewrite (`true`) and no longer contains `realized gains` (`false`); `es.f` reads
+back a phrase I knew was there, `Cuenta que contiene inversiones` (`true`) — the positive control that
+makes a *negative* result meaningful; and the calque was present (`true`). `ganancias realizadas` occurs
+**exactly once in the entire `es` glossary**, confirming the item's "one clause, not a survey" by
+measurement rather than by its say-so.
+
+**What changed.** One clause in `Brokerage Account`.`es.f`: "los dividendos y **las ganancias
+realizadas**" → "los dividendos y **cualquier ganancia obtenida al vender una inversión**". It mirrors
+item 67's `en` fix ("any profit made when an investment is sold") — it drops the tax term of art and
+states the mechanism, which is the plain-language bar. Compound subject keeps the plural `suelen
+tributar`; the meaning of the tax claim is unchanged, so nothing about factual accuracy moved.
+
+**Two traps checked rather than assumed, and both are why this was cheap where its siblings are not.**
+(1) **No gated figure moves:** the entry count stays **32**, so `LAUNCH_PLAN.md` §1's generated "32
+glossary terms" is untouched — this edits prose inside an existing key, where `Dividend` *adds* one,
+which is precisely why that item is still hard-blocked and this one never was. (2) **The APR ledger trap
+does not apply:** `scripts/translation-review-ledger.json` is keyed by **lesson id** over `lessonContent`,
+does not cover the glossary at all, and hashes the **English** source — which this `es`-only edit does
+not touch. Item 64's APR fix was made expensive by exactly that mechanism, so it was worth proving absent
+rather than hoping.
+
+**Verified.** `npm test` — **`PASS: 0 failure(s)`** on all six checks, with only the standing translation
+AI-share warning, which predates this run and is about lesson content. `npm run build` — **`✓ built in
+1.15s`**; the new clause is present in the shipped chunk `dist/assets/markets-DA9VyXmK.js`. The `en`-only
+instrument is the sharpest control on an `es`-only edit and it **did not move**:
+
+> MEASURED jargon glossary: 54 candidates, 14 control, 3 self-defining, 0 low-reach  [fingerprint 2567bf17]
+
+**Rendered-verified live, in Spanish** (per W-1, using the Environment note's static-build technique):
+`dist/` served on `127.0.0.1:8801`, viewport forced to `mobile` (375 wide, sanity-checked non-zero).
+Setting the language needed the storage shape read rather than guessed — `KEYS.lang` goes through
+`readRaw`, not `readJSON` (`src/lib/useAppState.js:69`), and my first attempt wrote a JSON-quoted `"es"`,
+which the app silently ignored and kept rendering English. **That failure is the argument for checking
+rendered output instead of assuming a write worked.** With the raw value set, the UI came up Spanish
+("Aprender/Repaso/Referencia"), and on Referencia → Glosario → **Cuenta de Corretaje** the term-detail
+screen renders the new clause (`true`), does **not** render `ganancias realizadas` (`false`), and still
+renders the control phrase (`true`) — so the negative is trustworthy.
+
+**Owner's tree provably untouched.** `git diff --shortstat` over their thirteen paths reports the same
+**13 files, 603 insertions(+), 141 deletions(-)** as on arrival; `HEAD` was `c08cef4` at start and at
+commit. My only source change is `src/content/glossary.js` (+1/−1). As before, the build compiles the
+working tree, so the `dist/` verified against includes the owner's in-flight redesign — the right control
+for "does this render in the app as it is today".
+
+**Adversarial self-check (step 5).** **Blindspot register — and this is where the check did real work.**
+Rather than assert §10.1 covers Spanish glossary prose, I **proved it by injection**: inserted
+`deberías comprar acciones.` into the very field I edited, ran `npm run check-blindspot`, and it
+**FAILED naming `src/content/glossary.js:53` and quoting my own `es.f`** — so the check genuinely reaches
+this surface and the failure was mine, not ambient. Restored from a scratchpad copy taken beforehand
+(**never `git checkout --`**, which would risk owner files), then re-confirmed: injection gone, my edit
+intact, diff exactly one line, `npm test` green again. Also noted: `scripts/check-blindspot.mjs` is
+**owner-dirty**, so I read their diff rather than trusting the green — they *added* a disclaimer surface
+(`src/screens/Reference.jsx`), which strengthens the check and is unrelated to §10.1's language scan.
+No Dalio (§10.2), no child-facing framing (§10.3), no date or live-looking market figure. **DECISIONS.md
+conflict:** none — content stays a `.js` module, no storage, routing or build-shape change.
+**Already-done item:** no — item 69 was open, and this is not item 67 redone: that closed the `en` half
+and explicitly filed this as the gap it left. **My own verification claims:** every figure above is
+pasted from tool output or read out of the live DOM. **What the check caught:** my first draft of the
+item-69 rewrite was going to mark ko/zh/ja settled on the filing's word that all three were "already more
+descriptive than the English was" — re-reading the actual strings, that holds for **`ko`** only
+(`실현된 매매 차익`, "realized *buy–sell* profit", which does explain the mechanism), while **`zh`
+`已实现的收益` and `ja` `実現した利益` are the local term-of-art shape**, roughly where the English *was*
+before item 67. They are left unrewritten **on purpose** — no instrument covers non-`en` glossary prose,
+and changing two translations on my own reading is the unmeasured multi-language drift this item exists
+to prevent — and item 69 now records that as an open residual instead of closing it falsely.
+
+**Next run.** **The owner half of item 72 is still the entire critical path and it is four clicks:**
+`npm run build`, open <https://app.netlify.com/drop>, drag `dist/`, keep the URL — item 18 (analytics) is
+downstream of it and downstream of nothing else. **For the dev-agent's own pick, check the owner's dirty
+files first — eight of the last nine runs — and check them by `grep`ing for the string the item actually
+edits, not by trusting the block label: this run's item was deferred four times against a file that never
+contained it.** If `LAUNCH_PLAN.md` has gone clean, item 73 and `Dividend` (items 64/67) both unblock and
+are the better picks — Dividend's saved work is at session `48dad761`'s scratchpad, durability caveat now
+**ten entries old**; if that scratchpad is gone, redo it from item 64's entry. If `src/components/ui.jsx`
+has gone clean, item 75's remaining half is paste-and-go (add `--fill-warn` to both palettes, point
+`NOTE_TONES.warn.rule` at it, re-run §28). **Item 74 must not be picked before a deploy exists**, and
+**item 71's gate has still not fired.** The `zh`/`ja` residual above should NOT be picked as a content
+edit; its honest form is the instrument extension (point `jargon-candidates.mjs` at a non-`en` locale).
