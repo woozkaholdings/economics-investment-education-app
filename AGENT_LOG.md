@@ -2908,6 +2908,26 @@ even when the click worked. For a native `<select>`, plain `el.value = "x"` does
 `Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype, "value").set.call(el, "x")` followed by
 `el.dispatchEvent(new Event("change", {bubbles: true}))`.
 
+**The `computer` tool's `key` action (real Enter/Space keypresses) does not reliably activate elements in
+this sandbox — confirmed 2026-08-18, and this is a tooling gap, not an app bug. Check it this way before
+concluding either.** Sent a real `Return` keypress via `computer` at a focused `<div role="button"
+tabIndex={0}>` (a Glossary term row, whose `onClick`/`onKeyDown` are both explicit React handlers) and
+separately at a focused native `<button>` (TermDetail's "Back") — **neither activated**, confirmed by a
+screenshot showing the pre-press screen unchanged. Before concluding the app doesn't handle keyboard
+activation, dispatch a **fully-specified synthetic event** instead: `new KeyboardEvent("keydown", {key:
+"Enter", code: "Enter", keyCode: 13, which: 13, bubbles: true, cancelable: true})` via
+`element.dispatchEvent(...)` in `javascript_tool`. On the custom `role="button"` div this **did** fire
+the app's own `onKeyDown` handler (the state change showed up one round-trip later, same timing note as
+above) — proving the app's keyboard handling is correct and the gap is specifically in how `computer`'s
+key action reaches the page here. A native `<button>`'s Enter-activates-click is a browser default action
+tied to a *trusted* event, which no `dispatchEvent` call (synthetic, however fully-specified) can
+trigger — that one has no app-level logic to verify at all, so don't spend a round-trip trying to
+`dispatchEvent` an Enter into a native button; use `.click()` directly, which is equivalent for
+verification purposes since the app cannot observe the difference. **Net rule: for a custom interactive
+element's keyboard handling specifically, verify with a fully-specified `dispatchEvent`, not `computer`'s
+`key` action; for anything else, `javascript_tool`'s `.click()` remains the reliable path already
+documented above.**
+
 ## Run log
 
 > **Entries before 2026-08-16 live in [`AGENT_LOG.archive.md`](AGENT_LOG.archive.md)** — moved there
@@ -9943,3 +9963,79 @@ the only two backlog items of that shape found by a full-file search of "saved w
 "scratchpad" phrasing. A future run finding the tree still dirty should treat that search as already done
 rather than re-running it, and go back to checking whether the tree has gone clean before picking anything
 else.
+
+### 2026-08-18 (scheduled dev-agent, ninth run this date) — Real keyboard-Tab traversal of the Sectors screen; no trap, and a tooling gap diagnosed rather than misattributed
+
+Same 26-file owner-dirty tree as the eighth run (shortstat unchanged: 26 files, 1015 insertions(+), 1440
+deletions(-); `HEAD` unchanged at `739273e` from start to commit). The eighth run's own closing note said
+its method — checking every other "apply this verbatim" backlog instruction — was itself now exhausted
+after covering items 64 and 73, and that a future run finding the tree still dirty should check for a
+clean tree before picking anything else (still dirty, confirmed above) rather than manufacture an
+eleventh audit angle. This run picked a genuinely different check instead of repeating one: **a real
+keyboard-only `Tab`/`Shift+Tab` traversal**, using the `computer` tool's actual key-press action rather
+than any of this session's prior programmatic-click or synthetic-event checks, against the desktop-width
+dev server.
+
+**What was checked.** Focused the language `<select>`, then real `Tab` through the Sectors screen (the
+third and sixth runs' fixed screen): the 1M/3M/6M window tabs, then straight to the bottom nav's
+"Reference" tab — confirming the sector list and the "Economy right now" section, both non-interactive
+`<li>` rows, are correctly skipped rather than trapping a keyboard user inside them. `Shift+Tab` reversed
+symmetrically (6M → back). Every stop had a visible focus indicator (`outline: solid 2px`, read via
+`getComputedStyle`, not just eyeballed). No keyboard trap, no skipped-but-should-be-reachable control,
+no invisible focus anywhere checked.
+
+**The `<select>` didn't advance on the first two `Tab` presses — investigated rather than reported as a
+bug, and it wasn't one.** Switching the focus start point to a plain `<button>` immediately worked (3M →
+6M advanced correctly on the next `Tab`), isolating the stall to native `<select>` elements specifically
+in this automated context — a known category of quirk in CDP-driven browsers, not app code, and not
+pursued further since there is no app-level select-navigation logic to have gotten wrong.
+
+**The more significant finding: `computer`'s `key` action does not reliably activate elements here at
+all, for either a custom `role="button"` div or a native `<button>` — diagnosed as a tooling gap, not an
+app bug, before writing either up.** A real `Return` keypress at a focused Glossary term row (custom
+`onKeyDown` handler) and separately at TermDetail's native `Back` button both left the screen unchanged
+(confirmed by screenshot, not just a state read). Before concluding the app's keyboard handling was
+broken — which would have been a serious, high-priority accessibility bug if real — dispatched a
+**fully-specified** synthetic `KeyboardEvent` (`keyCode`/`which`/`code` all set, not just `key`) at the
+same row via `javascript_tool`: **it fired the app's own handler correctly**, opening the term one round-
+trip later. That isolates the gap to `computer`'s key dispatch in this sandbox, not the app's `onKeyDown`
+logic, which is correct. The native-button half of the test doesn't extend further: Enter-activates-click
+on a real `<button>` is a browser default action tied to a trusted event, which no `dispatchEvent` call
+can trigger regardless of how fully it's specified — there is no app code to verify there, so `.click()`
+is the right substitute rather than a place to keep chasing the same gap.
+
+**Re-verified the third run's Glossary→TermDetail focus-restore fix along the way, this time via the
+row's real `onKeyDown` path rather than only `.click()`.** Opened "Gross Domestic Product" by dispatching
+the fully-specified keydown event at the focused row (not a click), confirmed `document.activeElement`
+moved to the term's `<h2>`, clicked "Back", and confirmed focus returned to the same row —
+`aria-label="Gross Domestic Product"`, `isConnected: true`. Same result as the third run's original
+`.click()`-based test, now cross-checked via a different activation path.
+
+**What shipped: the tooling finding, written into the Environment note** (`computer`'s `key` action vs.
+`javascript_tool`'s fully-specified `dispatchEvent` for custom keyboard handlers, native buttons excepted)
+— so a future run hitting the same "keypress does nothing" symptom checks with a `dispatchEvent` before
+concluding the app is broken, the same discipline the fifth/seventh runs' false-positive catches already
+established for other symptoms this session. No application code changed.
+
+**Verified.** No `src/` file touched, so `npm run build`/`npm test` were not re-run; the tab-order and
+focus-restore checks above are themselves the verification, each confirmed by a DOM read or a screenshot
+rather than assumed from a click's return value. Owner's 26 paths unchanged (shortstat identical to
+arrival, `HEAD` unmoved).
+
+**Adversarial self-check (step 5).** **Blindspot register:** not applicable — no file changed besides the
+Environment note, which is process documentation, not learner-facing copy. **DECISIONS.md conflict:**
+none. **Already-done item:** the third run's fix is re-verified, not re-done. **My own verification
+claims:** every reading above (`outline` values, `activeElement` state, the screenshot showing an
+unchanged screen after the failed `computer` keypress) is a direct tool-output paste. **What the check
+caught:** the first draft of this entry was going to report "the Glossary row doesn't respond to
+keyboard Enter" as a finding against the app, based on the `computer`-tool keypress alone — the
+fully-specified `dispatchEvent` check, run before writing that sentence rather than after, is what
+turned it from a false accessibility bug report into a tooling note.
+
+**Next run.** Unchanged: `LAUNCH_PLAN.md` blocks items 35, 64's `Dividend`, 73 (both halves) and 77
+together. Nine consecutive runs have now worked around the same static, owner-dirty tree from every angle
+tried so far — numbered-backlog audit, real bug fixes, dead-code trims, ARIA pattern correction, Reference-
+hub and lesson-flow live QA, verbatim-instruction rot, and now real keyboard traversal. A future run should
+lead with checking whether the tree has gone clean, and treat inventing a twelfth audit angle on the same
+unchanged surface as a worse use of a run than clearly reporting the tree is still dirty and naming what
+unblocks together the moment it isn't.
