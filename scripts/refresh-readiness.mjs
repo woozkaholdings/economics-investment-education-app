@@ -348,6 +348,55 @@ if (mode === "") {
 }
 
 // ───────────────────────────────────────────────────────────────────────────
+// §2.5's Role cell, checked against the id range written beside it in the same
+// row (added 2026-08-19).
+//
+// WHY. This script owns each track row's `range` cell and nothing else, so a
+// row can end up disagreeing with itself and every existing guard still passes.
+// Measured, not hypothesised: with `essentials` admitted to FIGURE_TRACKS in a
+// throwaway copy of the owner's tree, `--write` reported success —
+//   updated LAUNCH_PLAN.md §2.5 money-track row: was `money` | 1–28 (28)
+//                                                now `money` | 16–28 (13)
+// — and left the Role cell in that same row reading "**Mechanics (1–15):**
+// budgeting, emergency funds, …", thirteen topics attributed to a range the
+// track no longer contains (1–15 is the essentials track now). The row states
+// two different curricula, in the section that *defines* the curriculum, and
+// the figure the generator owns is the correct half.
+//
+// This is item 77's own warning one level over. That item established that
+// relaxing the track *count* publishes a false split; the same edit publishes a
+// false *description* through prose the generator has no opinion about. Flag,
+// never rewrite: the topic lists are editorial, and a generator that reworded
+// them would be inventing curriculum rather than reporting it.
+const checkTrackRoleRanges = (doc) => {
+  let bad = 0;
+  for (const t of FIGURE_TRACKS) {
+    const row = doc.split("\n").find((l) => l.includes(`\`${t}\` |`));
+    if (!row) continue; // a missing row is already a FIGURES failure; don't double-report
+    const cells = row.split("|");
+    const at = cells.findIndex((c) => /^\s*\d+[–-]\d+ \(\d+\)\s*$/.test(c));
+    if (at === -1) continue;
+    const [lo, hi] = cells[at].match(/\d+/g).map(Number);
+    const role = cells.slice(at + 1).join("|");
+    for (const cited of role.matchAll(/\((\d+)\s*[–-]\s*(\d+)\)/g)) {
+      const [a, b] = [Number(cited[1]), Number(cited[2])];
+      if (a >= lo && b <= hi) continue;
+      bad++;
+      console.error(
+        `FAIL ${PLAN} §2.5 ${t}-track row contradicts itself: the row states the track as ` +
+          `${lo}–${hi}, but its Role cell attributes lessons ${a}–${b} to it.\n` +
+          `  cited: ${cited[0]}\n` +
+          `  This is prose beside a generated figure, so --write cannot fix it and deliberately ` +
+          `does not try — the range cell is the half that is derived from the content, and it is ` +
+          `right. Rewrite the Role cell's topic list to describe ${lo}–${hi} only, moving whatever ` +
+          `belongs to ${a}–${b} to the row that now owns those lessons.`,
+      );
+    }
+  }
+  return bad;
+};
+
+// ───────────────────────────────────────────────────────────────────────────
 // Compare, and for --write, replace. One pass per document, so a failure in
 // one never leaves another half-written.
 let failures = 0;
@@ -404,6 +453,11 @@ for (const name of DOCS) {
   }
 
   if (mode === "--write" && dirty) writeFileSync(path, doc);
+
+  // Runs against the FINAL text on purpose — after --write has already replaced
+  // the range cell — because that rewrite is precisely what creates the state
+  // this catches. See checkTrackRoleRanges for what it is and why.
+  if (name === PLAN) failures += checkTrackRoleRanges(doc);
 }
 
 if (mode === "--write") {

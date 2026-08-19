@@ -599,6 +599,26 @@ for the history. No open P1/P2 items.
     - **Until then, `npm test` is red in the working tree and that is correct.** A run that needs a
       green suite to verify its own change should run the checks against a `git archive HEAD` copy —
       that is what this run did, and the technique is now in the Environment note.
+    - **✅ 2026-08-19 — the three strings above were re-derived by injection a day later and
+      reproduce EXACTLY, character for character.** They have not decayed; paste them with
+      confidence. (Method: `rsync` copy of the owner's whole working tree, `essentials` added to
+      `FIGURE_TRACKS`, `--check`. Control: the unmodified copy reproduces the repo's shape-guard
+      failure verbatim first.) **One correction to this item's own wording:** "The unblock, already
+      derived — do not re-derive it. The tool prints it" overstates it. The tool prints it *only
+      after* `FIGURE_TRACKS` is edited; in the repo's current state `--check` stops at the shape
+      guard and prints none of the three. Two runs have now paid for that by building a throwaway
+      tree copy to find out.
+    - **⚠️ 2026-08-19 — `--write` does NOT finish the job, and it leaves §2.5 self-contradicting.
+      Measured, not reasoned.** With `essentials` admitted, `--write` updates the money row's range
+      cell and reports success — `was: \`money\` | 1–28 (28)` → `now: \`money\` | 16–28 (13)` — while
+      the **Role cell in that same row** still reads "**Mechanics (1–15):** budgeting, emergency
+      funds, …". Thirteen topics attributed to a range the track no longer contains; 1–15 is
+      `essentials` now. The row states two different curricula, in the section that *defines* the
+      curriculum. `--write` also only half-writes: the §4.3 sentence and the new `essentials` row
+      are `FAIL`s it cannot create, so they stay hand-written either way. **This is now guarded** —
+      `refresh-readiness.mjs` fails on a Role cell citing lessons outside its own row's range, so
+      the unblocking run gets told rather than shipping it. **The Role prose is editorial and the
+      guard deliberately will not rewrite it: budge the topic lists by hand when you split the row.**
     - **Honest priority: high the moment the owner's tree is clean, because it gates every other
       run's step-4 verification. Zero before that.**
 
@@ -10279,3 +10299,100 @@ them can be touched, so report that in a few lines — and note that item 78 is 
 disguise, it is blocked on `check-data.mjs`, a different file with a different unblock. If `MOVED`: check
 `LAUNCH_PLAN.md` and `scripts/check-data.mjs` first; the five items unblock together, and item 78 unblocks
 separately.
+
+### 2026-08-19 (scheduled dev-agent, third run this date) — UNMOVED again, but the gridlock had a real bug hiding inside it: `--write` publishes a self-contradicting §2.5 row
+
+**Opened with the previous run's one command, as instructed.**
+
+```
+npm run owner-tree -- --expect 28365eada89db8fa4450fb9328e25b8ec64ed056a9454b58642c735d2bdb2e82
+UNMOVED  28365eada89db8fa4450fb9328e25b8ec64ed056a9454b58642c735d2bdb2e82  (26 tracked modified, 57 untracked)   exit 0
+```
+
+Thirteenth run on the same static tree. **Fingerprint for the next run is unchanged: `28365ead…`**
+(re-verified post-commit — see below). The five `LAUNCH_PLAN.md` items (35's second glossary batch,
+64's `Dividend`, 73 both halves, 77) and item 78 (`check-data.mjs`) are all still blocked, and I
+confirmed 77's block by measurement rather than inheriting it: `LAUNCH_PLAN.md` §2.5 in the working
+tree still reads `| **Your Money** | \`money\` | 1–28 (28) |` under a "two tracks" heading, so the
+owner has not pre-solved it and the file genuinely has to move.
+
+**But "blocked" was doing more work than it should have been. The unblock touches three files and
+only one of them is dirty** — `scripts/refresh-readiness.mjs` and `LAUNCH_READINESS.md` are both
+clean. So instead of reporting gridlock a thirteenth time, I ran item 77's own recipe in a throwaway
+copy of the owner's whole tree and looked at what it actually produces.
+
+**Step 3.5 — the premise I set out to test was FALSE, and testing it found a different, real bug.**
+My hypothesis was that item 77's three hand-transcribed strings had decayed in the day since it was
+filed. **They have not.** Injecting `essentials` into `FIGURE_TRACKS` reproduces all three character
+for character — `**40 lessons / 136,051 English chars / 144 min** — split across **essentials (15)**
++ **money (13)** + **economy (12)** tracks`, `` `essentials` | 1–15 (15) ``, `` `money` | 16–28 (13) ``.
+Control first, because a copy that fails for its own reasons proves nothing: the *unmodified* copy
+reproduces the repo's shape-guard message verbatim. So item 77's figures are trustworthy, and I
+recorded that in the item rather than quietly moving on. **Fourteenth consecutive item whose premise
+was wrong somewhere — this time the item was right and my reason for picking it was wrong.**
+
+**What the injection actually exposed.** Running `--write`, as item 77 tells the unblocking run to do:
+
+```
+updated LAUNCH_PLAN.md §2.5 money-track row:
+  was: `money` | 1–28 (28)
+  now: `money` | 16–28 (13)
+```
+
+…and the resulting row is
+
+```
+| **Your Money** | `money` | 16–28 (13) | The product. **Mechanics (1–15):** budgeting, emergency funds, … |
+```
+
+The row states the track as **16–28** while its own Role cell attributes lessons **1–15** to it —
+those are the `essentials` track now. **The generator owns the range cell and has no opinion about the
+prose beside it, so every existing guard passed and `--write` reported success.** That is §9.1's
+failure class landing in the section that *defines* the curriculum, and it is item 77's own "a
+one-character fix here produces a false published figure" warning one level over: that item guarded
+the track *count*; nothing guarded the track *description*. (`--write` also only half-writes — the
+§4.3 sentence and the new `essentials` row are `FAIL`s it cannot create.)
+
+**What shipped.** `scripts/refresh-readiness.mjs` — a clean file, none of the owner's 26 — now fails
+when a §2.5 track row's Role cell cites lessons outside that row's own range. It runs against the
+**final** document text, after `--write` has replaced the range cell, because that rewrite is exactly
+what creates the state. **It flags and deliberately does not rewrite**: the topic lists are editorial,
+and a generator that reworded them would be inventing curriculum rather than reporting it.
+
+**Verified — three controls, because a guard that cannot fire is worse than no guard.**
+
+- **A. No false positive.** `git archive HEAD` control copy (+ the two gitignored
+  `economic-cycles-v*.jsx`, per the Environment note): `refresh-readiness --check` **exit 0**, same
+  summary line as before my change. Full `npm test` **exit 0**, `npm run build` **exit 0**.
+- **B. Non-vacuous.** Same control copy with `**Mechanics (1–15):**` corrupted to `(41–55)`: the guard
+  **fires** (`exit 1`), naming the row and the cited range. So A's pass is a real pass, not a silent
+  skip — the guard demonstrably reads that cell.
+- **C. Catches the real thing.** Owner's tree + `essentials` admitted + `--write`: the guard fires on
+  the money row immediately after `--write` reports success on it, and still fires on a follow-up
+  `--check`.
+- **On the owner's own working tree**, `refresh-readiness --check` still exits **1** for the identical
+  pre-existing reason (the shape guard, which returns before any row is compared) — **my change adds
+  no new red there**. Exit codes above are from unpiped commands; a first attempt printed an empty
+  `repo_readiness_exit=` from the `PIPESTATUS`-in-a-pipeline trap the Environment note warns about,
+  which is why they were re-run.
+
+**Adversarial self-check (step 5).** **Blindspot register:** no regression — nothing learner-facing
+changed; no dates, market figures, Dalio references, advice-adjacent language or kids framing are
+anywhere near a build script, and `check-blindspot` passes in the control's green `npm test`.
+**DECISIONS.md conflict:** none — no storage, routing, content-module or build-shape decision is
+touched; this extends an existing check in the file that already owns these figures, rather than
+adding a script beside it. **Already-done item:** no — `grep -n "Role cell\|role prose" AGENT_LOG.md`
+finds nothing before this entry; item 55 generated the *ranges* and item 77 guarded the *track count*,
+neither of which looks at the prose in the same row. **My own verification claims:** every exit code
+is from an unpiped command with `echo "exit=$?"`, and the `was:`/`now:`/`FAIL` lines are pasted tool
+output, not retyped. **What the check caught:** my first framing of this run was going to be "item
+77's strings have decayed, so build a `--plan` mode" — I measured that first and it was false, so the
+justification was dropped rather than shipped as a finding, and the real defect was found by
+continuing to look at what `--write` produced.
+
+**Next run.** **Start with `npm run owner-tree -- --expect 28365ead…`** as before. If `UNMOVED`: the
+six blocked items are still the only real work, but note that "blocked" is worth re-testing per file
+rather than per item — this run found shippable work inside a block that thirteen runs had read as
+total. If `MOVED`: pick items 35 / 64's `Dividend` / 73 / 77 together on `LAUNCH_PLAN.md`, and when
+you run `npm run readiness -- --write` for 77, **expect the new Role-cell guard to fail the money row
+and split that row's topic lists by hand** — that is the guard working, not a regression.
