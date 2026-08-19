@@ -602,6 +602,45 @@ for the history. No open P1/P2 items.
     - **Honest priority: high the moment the owner's tree is clean, because it gates every other
       run's step-4 verification. Zero before that.**
 
+78. **[Tests — filed 2026-08-19 by the twelfth run to arrive at the owner's static tree, which picked
+    "`src/lib` has no behavioural test coverage" as its item and had that premise break in its hands
+    at step 3.5, before it edited anything. Read the correction before picking: most of the gap does
+    not exist.] `src/utils/date.js` is the only pure logic module in the app with no direct test
+    section — and its test home is owner-dirty.**
+    - **The premise that broke, with the numbers, because the wrong version of this is an easy pick.**
+      `scripts/check-data.mjs` already unit-tests **nine** logic modules — `review.js` (§8),
+      `relativeStrength.js` (§9), `lessonIdMigration.js` (§10), `storage.js` (§12), `analytics.js`
+      (§13), `marketData/adapters.js` (§14), `marketData/fred.js` (§15), `deepLink.js` (§18) and
+      `useMarketData.js` (§25) — imported at `scripts/check-data.mjs:24-33`. A run that reads
+      `package.json`'s `test` script, sees seven `check-*.mjs` *consistency* checks and no test
+      runner will conclude the app's behaviour is untested. It is not. **Do not pick "add unit tests
+      for `src/lib`"; nine tenths of it has been done since 2026-08-08.**
+    - **What is actually uncovered, measured with a control.** Of the eleven non-JSX logic modules,
+      `useAppState.js` is a React hook (not plain-Node testable — the same reason the 2026-08-08 run
+      set `storage.js` aside before a `localStorage` mock existed, which §12 now has), and
+      **`src/utils/date.js` has no importing test**. Control, so the zero means something: the same
+      grep finds `utils/date.js` imported by `check-claims.mjs:31`, `fetch-market-data.mjs:29` and
+      `translation-review.mjs:59`, so the instrument can see this import shape and its zero for
+      `check-data.mjs` is a real zero, not a pattern that matches nothing.
+    - **It carries more than its two-function size suggests.** `todayStr()`/`dayDiff()` are the app's
+      single shared notion of "today", read by the streak counter (`useAppState.js`), the Leitner due
+      dates (`review.js`), the market-data staleness rule (`useMarketData.js`) and three scripts.
+      §23 guards the *idiom* (nothing may compute a calendar date as a UTC date) but never calls
+      either function, so no test would fail today if their arithmetic did.
+    - **⚠️ There is no bug here — this is regression cover, not a fix, and the run filing it says so
+      rather than leaving a future run to discover it.** Probed live in Node against 13 cases before
+      filing: same-day, ±1 day, month and year rollovers, the 2028 leap day, a non-leap February, a
+      negative span, a 2,422-day span, and both US DST boundaries (2026-03-07→03-09,
+      2026-10-31→11-02) — **all correct** — plus `todayStr()`'s `YYYY-MM-DD` shape in
+      `America/New_York`. Do not pick this expecting to find a defect.
+    - **⛔ BLOCKED on `scripts/check-data.mjs` being owner-clean.** The established home is a numbered
+      §-section in that file, and it is one of the owner's 26 modified paths. A separate
+      `check-dates.mjs` purely to route around the dirty file was considered and **rejected**: it
+      fragments a convention for the duration of one redesign and leaves the owner a merge to
+      untangle. **Honest priority: low** — the module is correct today, so this buys regression
+      protection, not a repair. It does **not** join the five items that unblock on `LAUNCH_PLAN.md`;
+      it is a different file and a separate unblock.
+
 76. **[Content/Process — filed 2026-08-18 by the run that built item 69's instrument half, which is
     what turned this from an opinion into a blocked measurement.] `zh` and `ja` `Brokerage Account`
     are term-of-art shape, and nothing can currently measure whether that generalises.**
@@ -10162,3 +10201,81 @@ rather than assuming, and fixed into a clear exit-2 message.
 and 77 together, all five unblocking on one `npm test` the moment it is owner-clean, and eleven runs of
 audit angles on this static surface are genuinely exhausted — report that in a few lines rather than
 inventing a twelfth. If `MOVED`: re-check the blocked five first, before anything else.
+
+### 2026-08-19 (scheduled dev-agent, second run this date) — The new instrument answers in one command: UNMOVED. Picked tests anyway, and step 3.5 killed the pick
+
+**Opened with the previous run's own instruction, and it worked exactly as designed.**
+
+```
+npm run owner-tree -- --expect 28365eada89db8fa4450fb9328e25b8ec64ed056a9454b58642c735d2bdb2e82
+UNMOVED  28365eada89db8fa4450fb9328e25b8ec64ed056a9454b58642c735d2bdb2e82  (26 tracked modified, 57 untracked)   exit 0
+```
+
+One command, one real answer, no shortstat. **Fingerprint for the next run to compare against is
+unchanged: `28365ead…`** (re-verified post-commit — see below). The gridlock is therefore unchanged:
+`LAUNCH_PLAN.md` still blocks items **35**, **64's `Dividend`**, **73** (both halves) and **77**
+together, all five unblocking on one `npm test` the moment it is owner-clean.
+
+**One thing was checked that no prior run has checked, and it is worth the two lines it takes.**
+`npm test` on the owner's working tree fails **only** on `refresh-readiness.mjs --check`; the other six
+checks — `check-data`, `check-blindspot`, `check-claims`, `check-backlog`, `check-payload`,
+`check-measurements` — all report `PASS: 0 failure(s)`. So the owner's in-flight three-track redesign is
+not breaking anything except the two-track catalogue sentences item 77 already diagnoses, and the one
+red is the one already written up. That is a fact about *their* work, not a twelfth audit angle on the
+same static surface, and it is the useful thing to tell them.
+
+**The pick, and why it died at step 3.5 rather than at review.** The task file names *tests* as a good
+candidate and `package.json`'s `test` script is seven `check-*.mjs` **consistency** checks with no test
+runner in sight, so "the app's behavioural logic is untested" looked like a real, unblocked gap in a
+clean directory (`src/lib/` and `src/utils/` are both fully clean). **The premise is false.**
+`scripts/check-data.mjs:24-33` imports and unit-tests **nine** logic modules — `review.js` (§8),
+`relativeStrength.js` (§9), `lessonIdMigration.js` (§10), `storage.js` (§12), `analytics.js` (§13),
+`marketData/adapters.js` (§14), `marketData/fred.js` (§15), `deepLink.js` (§18), `useMarketData.js`
+(§25). Found by grepping the archive before writing any code, not after. **Twelfth consecutive item
+whose premise was wrong somewhere; this one was wrong enough to cancel the work rather than adjust a
+figure.**
+
+**Re-decided on the corrected facts, which is what step 3.5 asks for, and the corrected version is
+also blocked.** Of the eleven non-JSX logic modules exactly one pure module has no importing test:
+**`src/utils/date.js`** — the app's shared notion of "today", read by the streak counter, the Leitner
+due dates, the staleness rule and three scripts. Control, because a zero from a grep is worthless
+without one: the same pattern *does* find `utils/date.js` imported by `check-claims.mjs:31`,
+`fetch-market-data.mjs:29` and `translation-review.mjs:59`, so the zero for `check-data.mjs` is real.
+Then probed the module live in Node across **13 cases** — same-day, ±1, month/year rollovers, the 2028
+leap day, a non-leap February, a negative span, a 2,422-day span, both US DST boundaries, and
+`todayStr()`'s shape in `America/New_York` — **all correct**. So there is no bug to fix, only cover to
+add, and the established home for that cover (a numbered §-section in `check-data.mjs`) is one of the
+owner's 26 dirty paths. A separate `check-dates.mjs` to route around the dirty file was **rejected**:
+fragmenting a convention for the duration of a redesign hands the owner a merge to untangle for a
+module that is currently correct. **Filed in full as item 78** — with the false premise, the control,
+the 13 probes and the rejected workaround written into it — so no future run re-derives any of it.
+
+**What shipped.** `AGENT_LOG.md` only: item 78, and this entry. No application, script or content file
+changed — deliberately, and stated plainly rather than dressed up as a finding.
+
+**Verified.** `npm test` on the working tree: 6 of 7 `PASS`, `refresh-readiness --check` red for item
+77's known reason (output pasted above in substance). No `src/` or `scripts/` file was touched, so no
+build re-run was warranted and none is claimed. The `date.js` probe script lives in the session
+scratchpad, not the repo. `npm run check-backlog` re-run after the edit — **55 items, 99 citations, no
+duplicate numbers** (54 → 55 is item 78; citation count unmoved because a backlog item is not a
+citation site).
+
+**Adversarial self-check (step 5).** **Blindspot register:** no regression — nothing learner-facing,
+no dates, market figures, Dalio references, advice-adjacent language or kids framing anywhere near a
+log entry; `check-blindspot` passes. **DECISIONS.md conflict:** none — nothing was decided; the one
+decision made (do *not* add `check-dates.mjs`) preserves an existing convention rather than contradicting
+one. **Already-done item:** this run's *original* pick was already done — that is the whole finding, and
+it was caught by grepping `AGENT_LOG.archive.md` before writing code rather than by this check
+afterwards. Item 78 as filed is not a redo: the nine covered modules are named in it precisely so the
+covered part is never re-picked. **My own verification claims:** the `UNMOVED` line, the exit codes and
+the `PASS`/`FAIL` lines are pasted from tool output; the 13 probe results were read off a script that
+prints `want` beside `got` and carries two controls whose answers I knew independently. **What the check
+caught:** the first draft of this entry claimed `src/lib/` had "no test coverage" in its opening
+sentence — the sentence that started the run — and would have shipped that as a finding.
+
+**Next run.** **Start with `npm run owner-tree -- --expect 28365ead…` again.** If `UNMOVED`: this is now
+twelve runs on one static tree; the five `LAUNCH_PLAN.md` items are the only real work left and none of
+them can be touched, so report that in a few lines — and note that item 78 is *not* a twelfth angle in
+disguise, it is blocked on `check-data.mjs`, a different file with a different unblock. If `MOVED`: check
+`LAUNCH_PLAN.md` and `scripts/check-data.mjs` first; the five items unblock together, and item 78 unblocks
+separately.
