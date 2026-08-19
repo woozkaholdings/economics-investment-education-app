@@ -475,8 +475,12 @@ for the history. No open P1/P2 items.
       `economics-app-market-data` job refuses to commit while other files are dirty, and the owner's
       standing instruction is that `market.json` is committed **alone, once the tree is otherwise
       clean**. Fourteen consecutive runs of a static dirty tree is why it has aged. The unblock is the
-      owner's tree landing, not a script. **Whoever commits next on a clean tree should commit
-      `market.json` in its own commit.**
+      owner's tree landing, not a script. — **✅ RESOLVED the same day: the owner directed that
+      `market.json` be committed immediately, overriding the wait-for-clean condition, and it landed
+      alone as `Refresh market data (asOf=2026-08-19)`.** `HEAD` now carries same-day data, so a build
+      from `HEAD` renders real figures again. **The underlying item is untouched** — the next weekday
+      the job runs, `HEAD` starts ageing again for exactly the same reason, and nothing yet owns the
+      rebuild-and-redeploy step. Treat the above as the worked example, not as the item closing.
 
 73. **[Process — filed 2026-08-17 by §9.3's first monthly audit, which deliberately proposed rather
     than applied these.] Apply the audit's three §10 blindspots and its proposed claim D3.** Both halves
@@ -2924,6 +2928,19 @@ the first, hand-rolled version of this check on 2026-08-19 piped `git status --p
 `sed 's/^?? //'`, which leaves git's quoting attached to the 50+ `UIUX/` paths that contain spaces, so
 **every** `shasum` failed on a nonexistent filename — and the pipeline still emitted a confident 64-hex
 digest, of an empty stream. Hence `-z` internally, and hence the hard failure.
+
+**⚠️ `MOVED` does not mean "the owner's redesign landed" — check WHICH file moved before deciding
+anything (2026-08-19).** The fingerprint covers the whole working-tree deviation, so anything the
+owner is *not* responsible for is inside it too. The live case: `public/data/market.json` is rewritten
+by the `economics-app-market-data` job **every weekday after close**, i.e. *underneath a running
+session*. This date's fourth run read `UNMOVED 28365ead…` at commit time and `MOVED fd6fd235…` an hour
+later, **with the same 26/57 file counts** — the only difference was `asOf: 2026-08-18 → 2026-08-19`
+and 62 lines of numbers. A run that takes `MOVED` at face value concludes the owner's tree landed and
+picks the five `LAUNCH_PLAN.md` items, which are still blocked. **On `MOVED`, run `git status --short`
+and diff the named files first**; a move confined to `market.json` is the daily job, not the owner.
+That particular instance is now closed — `market.json` was committed on its own the same day (see the
+run log), so it has left the deviation set — but the class has not: any file a sibling automated task
+touches will do this again.
 
 **A piped `git show ... | wc -l` can silently lie here — write the blob to a file and measure the file
 (2026-08-18).** Several compound Bash commands this run died with **exit 138** partway through, and the
@@ -10555,10 +10572,31 @@ own date, so §2.3 is satisfied for them — but they sit under `t.economyNowTit
 and showing month-old prints under that heading when the job has stopped is precisely what §2.3
 forbids. **Current behaviour is correct; leave it.**
 
-**Next run.** **Start with `npm run owner-tree -- --expect 28365ead…`.** If `UNMOVED`: the clean
-surface is still the productive place to look — this run found a live user-facing defect there after
-thirteen runs reported gridlock. Item **79** is the direct follow-on but is locale-blocked; item 78 and
-the five `LAUNCH_PLAN.md` items are unchanged. If `MOVED`: pick items 35 / 64's `Dividend` / 73 / 77
-together on `LAUNCH_PLAN.md`, expect the Role-cell guard to fail the money row, and **also commit
-`public/data/market.json` on its own** — the owner's instruction is that it lands alone once the tree
-is otherwise clean, and it is now five days stale in `HEAD`.
+**Next run.** **Start with `npm run owner-tree -- --expect b4d61d3a32635bcf06081b1e7154449b4e2697f791bcc0891d3dc84faf8322a7`
+— note this is a NEW fingerprint and the owner has NOT moved.** See the postscript below for why it
+changed. If `UNMOVED`: the clean surface is still the productive place to look — this run found a live
+user-facing defect there after thirteen runs reported gridlock. Item **79** is the direct follow-on but
+is locale-blocked; item 78 and the five `LAUNCH_PLAN.md` items are unchanged. If `MOVED`: **check
+`git status --short` before believing it** (Environment note), then pick items 35 / 64's `Dividend` /
+73 / 77 together on `LAUNCH_PLAN.md` and expect the Role-cell guard to fail the money row.
+
+---
+
+**Postscript, same run (owner-directed): `public/data/market.json` committed on its own.** The owner
+asked for it directly, overriding the standing "wait until the tree is otherwise clean" condition. Two
+things worth carrying forward:
+
+- **The daily job had re-run during this session.** At commit time of the fix above the tree read
+  `UNMOVED 28365ead…`; an hour later it read `MOVED fd6fd235…` **with identical 26/57 file counts**,
+  because `market.json` had gone `asOf: 2026-08-18 → 2026-08-19`. That is a false "the redesign
+  landed" signal, and it is now written into the Environment note rather than left to be rediscovered.
+- **Verified as generated data before committing**, not assumed: identical shape (same top-level keys,
+  same 11 sector symbols, same `economics` keys), `source` still `tiingo`, `relativeStrength.method`
+  still `wj-sector-comparison` with `provisional: false`, no non-finite values, 62 insertions / 62
+  deletions, and a filter over the diff for any changed line that is not `asOf`/a window key/a bare
+  number returned **nothing**. Committed alone as `Refresh market data (asOf=2026-08-19)` — no other
+  path in that commit.
+- **Consequences:** `HEAD` now carries same-day market data, so a build from `HEAD` renders the
+  Sector-performance screen with real figures again instead of the empty state described above (item
+  74's live condition is cleared for now). The owner's remaining deviation is **25 tracked modified,
+  57 untracked**, fingerprint **`b4d61d3a…`**.
