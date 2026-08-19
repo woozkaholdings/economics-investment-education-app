@@ -461,8 +461,22 @@ for the history. No open P1/P2 items.
       "durable path") makes a deploy follow a commit, at which point the existing job's commit is the
       trigger and nothing new has to be built. Consider that before writing automation.
     - **Honest scope note:** the rest of the app is fully static and unaffected — 40 lessons, the
-      glossary, review and the kids guide all keep working indefinitely on a stale deployment. This
-      item is about two screens, and filing it larger than that would misstate it.
+      glossary, review and the kids guide all keep working indefinitely on a stale deployment. ~~This
+      item is about two screens~~ — **one screen. Corrected 2026-08-19 by measurement, not reading:**
+      `grep -rn "useMarketData" src/` has exactly one consumer outside the hook, `Sectors.jsx:33`, and
+      the Market Dashboard screen was confirmed live to render `For teaching purposes — not live
+      market data` and never fetch `market.json`. Market signals is dateless teaching copy; it is not
+      affected by this item at all.
+    - **⚠️ "Do not pick before a deploy exists" understates this — the condition is ALREADY TRUE in the
+      repo (2026-08-19).** `HEAD`'s committed `public/data/market.json` is `asOf: 2026-08-14` against a
+      `STALE_AFTER_DAYS` of 4, so a build from `HEAD` today renders the whole Sector-performance screen
+      as `Market data isn't available right now. (As of 2026-08-14)` — verified in a live browser
+      against a real `HEAD` build. **This is still not dev-agent work**, and the reason matters: the
+      `economics-app-market-data` job refuses to commit while other files are dirty, and the owner's
+      standing instruction is that `market.json` is committed **alone, once the tree is otherwise
+      clean**. Fourteen consecutive runs of a static dirty tree is why it has aged. The unblock is the
+      owner's tree landing, not a script. **Whoever commits next on a clean tree should commit
+      `market.json` in its own commit.**
 
 73. **[Process — filed 2026-08-17 by §9.3's first monthly audit, which deliberately proposed rather
     than applied these.] Apply the audit's three §10 blindspots and its proposed claim D3.** Both halves
@@ -621,6 +635,28 @@ for the history. No open P1/P2 items.
       guard deliberately will not rewrite it: budge the topic lists by hand when you split the row.**
     - **Honest priority: high the moment the owner's tree is clean, because it gates every other
       run's step-4 verification. Zero before that.**
+
+79. **[UX/Content — filed 2026-08-19 by the run that fixed the missing-figure colour in `Sectors.jsx`,
+    from the half of that defect it could not reach. ⛔ BLOCKED on `src/locales/*.js` being owner-clean
+    — all five are among the owner's 26.] The Sector screen's two "no data" states are one sentence,
+    and its date attaches to the wrong noun.**
+    - **What it renders today**, pasted from the live `HEAD` build (`innerText`, 2026-08-19):
+      `Market data isn't available right now. (As of 2026-08-14)`.
+    - **Two problems, both needing copy that does not exist yet.** (a) `asOfTemplate` ("As of {date}")
+      is correct where it was designed to sit — a caption *labelling figures*. Glued onto "isn't
+      available right now" it reads as though the unavailability is as of that date, when the truth is
+      the opposite: the data is from that date, and *today* is why it is not shown. (b)
+      `status === "unavailable"` (no file at all — the job never ran on this deployment) and `isStale`
+      (a file that is present and too old) produce **the same headline sentence**, so neither a reader
+      nor an owner debugging a deploy can tell which happened. These are different problems with
+      different owners; item 74 is only the second.
+    - **Scope: one new locale key in five files, plus the branch in `Sectors.jsx:43-50`** — enough to
+      say "the newest reading we have is from {date}, which is too old to show" separately from "there
+      is no data here". Do **not** try to solve it by re-arranging the two existing strings; that was
+      considered and rejected, because neither key means "too old" and the result is still ambiguous.
+    - **Honest priority: medium, and it rises the moment a deploy exists.** This empty state is what
+      any deploy from `HEAD` currently shows on the whole screen (item 74) — so it is not a rare
+      corner, it is presently the *only* thing that screen says.
 
 78. **[Tests — filed 2026-08-19 by the twelfth run to arrive at the owner's static tree, which picked
     "`src/lib` has no behavioural test coverage" as its item and had that premise break in its hands
@@ -10396,3 +10432,133 @@ rather than per item — this run found shippable work inside a block that thirt
 total. If `MOVED`: pick items 35 / 64's `Dividend` / 73 / 77 together on `LAUNCH_PLAN.md`, and when
 you run `npm run readiness -- --write` for 77, **expect the new Role-cell guard to fail the money row
 and split that row's topic lists by hand** — that is the guard working, not a regression.
+
+### 2026-08-19 (scheduled dev-agent, fourth run this date) — A sector with no figure for the window was drawn as the worst performer of eleven: loss-red, trend icon, bottom of the list
+
+**Opened with the previous run's one command, as instructed.**
+
+```
+npm run owner-tree -- --expect 28365eada89db8fa4450fb9328e25b8ec64ed056a9454b58642c735d2bdb2e82
+UNMOVED  28365eada89db8fa4450fb9328e25b8ec64ed056a9454b58642c735d2bdb2e82  (26 tracked modified, 57 untracked)   exit 0
+```
+
+Fourteenth run on the same static tree. **Fingerprint for the next run is unchanged: `28365ead…`** —
+committing `Sectors.jsx` (a file the owner has not touched) moves it out of the untracked/modified set
+and into `HEAD`, so the owner's own deviation is the same before and after; re-verified post-commit
+below.
+
+**Took the previous run's advice — "blocked is worth re-testing per file, not per item" — and it paid
+off in a place no backlog item was pointing at.** The five `LAUNCH_PLAN.md` items and item 78 are still
+blocked. Instead of re-reporting that, I went at the clean surface directly. `src/screens/reference/`,
+`src/lib/`, `src/utils/` and six `src/content/` modules are all owner-clean.
+
+**Step 3.5 — what I set out to measure, and the two premises that broke.**
+
+*First, item 74's own scope is wrong.* It says "This item is about two screens", naming Sector
+performance **and** Market signals. Measured rather than read: `grep -rn "useMarketData" src/` returns
+exactly **one** consumer outside the hook itself — `Sectors.jsx:33`. Confirmed live: the Market
+Dashboard screen renders `For teaching purposes — not live market data` and never fetches
+`market.json`. **It is one screen, not two.** Corrected in the item.
+
+*Second, and this is the one worth not re-deriving:* **`HEAD`'s committed `public/data/market.json` is
+`asOf: 2026-08-14`, and today is 2026-08-19.** `STALE_AFTER_DAYS` is 4, so a build from `HEAD` — the
+deployable artifact item 72 shipped — currently renders the **entire Sector-performance screen as an
+empty state**. Verified in a live browser against a real `HEAD` build (`git archive` control copy,
+`dist/` on `127.0.0.1:8871`, the Environment note's technique):
+
+```
+Reference / Glossary / Market Dashboard / Sector performance / Kids / About
+Market data isn't available right now. (As of 2026-08-14)
+```
+
+This is **not** a bug and **not** dev-agent work: the `economics-app-market-data` job refuses to commit
+while other files are dirty, and the owner's standing instruction is that `market.json` gets committed
+**alone, once the tree is otherwise clean**. Fourteen runs of a static dirty tree is why it has aged.
+Recorded here because it means item 74's "do not pick before a deploy exists" understates it — the
+condition it is waiting for is already true in the repo.
+
+**Because the real-data path is unreachable from `HEAD` today, I served a fresh copy to exercise it —
+and that is how the actual defect surfaced.** With `asOf` set to today the screen renders normally. I
+then injected the one value the daily job is documented to produce and nothing had ever rendered:
+`scripts/fetch-market-data.mjs`'s `pctChange` **returns `null` when a symbol's history is shorter than
+the window** (`closes.length < days + 1`), so a sector can legitimately have 1M and 3M and no 6M.
+
+**The finding, pasted from `getComputedStyle`, not retyped** (6M window, `XLE.change["6m"] = null`):
+
+```
+Utilities             | -0.8% | rgb(255, 154, 154)
+Communication Services| -0.9% | rgb(255, 154, 154)
+Consumer Staples      | -2.3% | rgb(255, 154, 154)
+Energy                | —     | rgb(255, 154, 154)     <-- no figure, same loss-red
+```
+
+Three independent signals all said "worst of the eleven" about a number nobody has: the em-dash was
+drawn in **the identical loss-red as a real decline**, beside the same trend icon, and sorted **last**
+in a list ordered by performance (`(cb ?? -Infinity) - (ca ?? -Infinity)`). This is item 44's defect
+one level down — `DECISIONS.md:85` records the file-level version, where a missing `asOf` made the
+screen render as if it were current. Same class: *a value that does not exist presented as a reading.*
+
+**Control, because a colour readout that returns one value for everything proves nothing.** The other
+ten sectors in the same pass returned `rgb(84, 214, 160)` for gains and `rgb(255, 154, 154)` for
+losses — the instrument demonstrably discriminates, so the red on `—` is a real state, not a global
+readout artifact.
+
+**What shipped** — `src/screens/reference/Sectors.jsx`, one owner-clean file, **no copy changes at all**
+(the five `locales/` files are owner-dirty, so anything needing a new string was off the table — see
+item 79):
+
+- `positive ? ink.ok : ink.bad` becomes a **three-state** `tone`: `ink.muted` when the figure is not
+  finite, otherwise green/red by sign. It drives both the number and the icon, which inherits it.
+- The comparator now uses the **same `Number.isFinite` test the row renders by**. `??` and
+  `Number.isFinite` disagreed: `??` passes a `NaN` into the subtraction, so the comparator returns
+  `NaN` for that pair and the order is undefined, while the row still drew `—`. The observed case is
+  `null`; the `NaN` divergence is latent, and it is fixed for consistency rather than because it was
+  seen.
+
+**Verified — four checks, both palettes.**
+
+- **A. The fix, live.** Same injected `null`, rebuilt: `Energy | — | rgb(152, 161, 176)` (`--ink-muted`),
+  icon the same, while gains stay `rgb(84, 214, 160)` and losses stay `rgb(255, 154, 154)`.
+- **B. Light mode too**, since the first pass ran in dark and the Environment note warns exactly about
+  that: `Energy | — | rgb(91, 100, 114)` on `rgb(251, 251, 253)`, against losses at `rgb(185, 28, 28)`.
+  `--ink-muted` is already inside `check-data.mjs` §28's ink×surface sweep, so no new contrast risk.
+- **C. No regression on real data.** Restored the untouched payload (0 nulls, verified by script): all
+  eleven rows render exactly as before, Energy back at `+16.3%` in second place.
+- **D. Suite and build.** `HEAD` control copy + this fix: `npm test` **exit 0**, `npm run build`
+  **exit 0**. On the owner's working tree `npm test` is **exit 1** — and I proved it is not mine rather
+  than asserting it: ran the suite with the original file and with the fix and `diff`'d the two logs,
+  **byte-identical output**, both exit 1, failing on the same pre-existing item-77 `essentials`-track
+  shape guard. Exit codes are from unpiped commands with `echo "exit=$?"`.
+
+**Adversarial self-check (step 5).** **Blindspot register:** no regression — `git diff` of my change
+grepped for `dalio|principles|buy|sell|recommend|advice|2026-0` returns **nothing**; I added zero
+strings and zero dates, and `check-blindspot` passes inside the control's green `npm test`. If
+anything this moves *toward* §2.3, since it stops a non-existent figure from being drawn as a reading.
+**DECISIONS.md conflict:** none — storage, routing, content-module shape and the market-data pipeline
+are all untouched; this changes rendering only, and `DECISIONS.md:85`'s item-44 entry is the same
+family, not a contradiction. **Already-done item:** no — grepped `AGENT_LOG.md` for `Sectors.jsx`, 18+
+hits, none touching this ternary or the comparator; the 2026-08-18 sixth run's `role="tabpanel"` block
+and the dead-import trim (`cbb0bbd`) are both intact and untouched by this diff. **My own verification
+claims:** every colour above is pasted `getComputedStyle` output, "byte-identical" is a `diff` that
+exited 0, and the empty-state text is copied from `innerText`. **What the check caught:** my first
+draft of the comparator comment claimed the `NaN` path was part of the observed defect. It is not —
+the observed case is `null` — so the entry and the comment now separate the two.
+
+**Deliberately not done, with reasons.** (1) *The empty-state copy.* Stale renders as
+`Market data isn't available right now. (As of 2026-08-14)`, where the date attaches grammatically to
+the unavailability rather than to the data, and "no file at all" is indistinguishable from "file too
+old". Both need a new locale key and all five `locales/` files are owner-dirty. Filed as **79**.
+(2) *A guard for this.* Its home is `check-data.mjs`, owner-dirty — and item 72's "do not let this
+become another instrument" applies. The live reproduction above is the repeatable check for now.
+(3) *Un-suppressing the FRED block when only the sector data is stale.* The readings each carry their
+own date, so §2.3 is satisfied for them — but they sit under `t.economyNowTitle` ("the economy now"),
+and showing month-old prints under that heading when the job has stopped is precisely what §2.3
+forbids. **Current behaviour is correct; leave it.**
+
+**Next run.** **Start with `npm run owner-tree -- --expect 28365ead…`.** If `UNMOVED`: the clean
+surface is still the productive place to look — this run found a live user-facing defect there after
+thirteen runs reported gridlock. Item **79** is the direct follow-on but is locale-blocked; item 78 and
+the five `LAUNCH_PLAN.md` items are unchanged. If `MOVED`: pick items 35 / 64's `Dividend` / 73 / 77
+together on `LAUNCH_PLAN.md`, expect the Role-cell guard to fail the money row, and **also commit
+`public/data/market.json` on its own** — the owner's instruction is that it lands alone once the tree
+is otherwise clean, and it is now five days stale in `HEAD`.

@@ -50,11 +50,15 @@ export default function Sectors({ t, lang }) {
   }
 
   const bySymbol = Object.fromEntries(data.sectors.map((s) => [s.symbol, s]));
-  const ranked = [...sectors].sort((a, b) => {
-    const ca = bySymbol[a.symbol]?.change?.[window];
-    const cb = bySymbol[b.symbol]?.change?.[window];
-    return (cb ?? -Infinity) - (ca ?? -Infinity);
-  });
+  // A window with no figure cannot be ranked, so it sorts to the bottom — but
+  // it is sorted by the same `Number.isFinite` test the row below renders by,
+  // not by `?? -Infinity`. The two disagreed: `??` passes a NaN straight into
+  // the subtraction, which makes the comparator return NaN for that pair and
+  // leaves the order undefined, while the row still drew it as "—".
+  const rank = (v) => (Number.isFinite(v) ? v : -Infinity);
+  const ranked = [...sectors].sort(
+    (a, b) => rank(bySymbol[b.symbol]?.change?.[window]) - rank(bySymbol[a.symbol]?.change?.[window]),
+  );
 
   const benchChange = data.benchmark?.change?.[window];
 
@@ -102,7 +106,16 @@ export default function Sectors({ t, lang }) {
             const row = bySymbol[sector.symbol];
             const change = row?.change?.[window];
             const rs = row?.relativeStrength;
-            const positive = Number.isFinite(change) && change >= 0;
+            // Three states, not two. A missing figure is not a decline: the
+            // daily job's `pctChange` returns null when a symbol's history is
+            // shorter than the window (scripts/fetch-market-data.mjs), so a
+            // sector can legitimately have 1M/3M and no 6M, and `formatPercent`
+            // renders it "—". Under the old `positive ? ok : bad` that "—" was
+            // drawn in the same loss-red as a real fall, next to a trend icon,
+            // at the bottom of a list ordered by performance — three signals
+            // saying "worst of the eleven" about a number nobody has. Muted
+            // says what is true: no reading for this window.
+            const tone = !Number.isFinite(change) ? ink.muted : change >= 0 ? ink.ok : ink.bad;
 
             return (
               <li
@@ -125,9 +138,9 @@ export default function Sectors({ t, lang }) {
                   )}
                 </div>
 
-                <div style={{ display: "flex", alignItems: "center", gap: space["1"], flexShrink: 0, color: positive ? ink.ok : ink.bad }}>
+                <div style={{ display: "flex", alignItems: "center", gap: space["1"], flexShrink: 0, color: tone }}>
                   <Icon name="chart" size="0.9em" />
-                  <Text as="span" variant="small" color={positive ? ink.ok : ink.bad} style={{ fontWeight: 700, fontVariantNumeric: "tabular-nums" }}>
+                  <Text as="span" variant="small" color={tone} style={{ fontWeight: 700, fontVariantNumeric: "tabular-nums" }}>
                     {formatPercent(change)}
                   </Text>
                 </div>
