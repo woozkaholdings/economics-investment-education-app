@@ -2809,6 +2809,27 @@ copy means the owner's dirt caused it; red on both means you did.** Used this ru
 `refresh-readiness.mjs`'s failure was the owner's new third lesson track and not a regression — see
 backlog item 77.
 
+**"Has the owner's tree moved since the last run?" is now one command: `npm run owner-tree`
+(2026-08-19).** Eleven consecutive runs have opened by asking this, and every one of them answered it
+with `git diff --shortstat` — which cannot actually answer it, since a shortstat can coincide across
+genuinely different trees (a point the eighth run of 2026-08-18 raised and then still relied on).
+`scripts/owner-tree.mjs` fingerprints the working tree's full deviation from `HEAD` — the tracked patch
+plus the content of every untracked file — as one sha256:
+
+```bash
+npm run owner-tree                      # OWNER-TREE <sha256>  (N tracked modified, M untracked)
+npm run owner-tree -- --expect <sha256> # UNMOVED (exit 0) / MOVED (exit 1)
+```
+
+**Record the fingerprint your run observed in your run-log entry**; the next run compares with one
+`--expect` and gets a real yes/no instead of a coincidence-prone stat. It **refuses to print** (exit 2)
+if any untracked file is unreadable, and exits 2 rather than stack-tracing when run outside a git repo
+(e.g. inside a `git archive` control copy). That refusal is the whole point and it is not theoretical:
+the first, hand-rolled version of this check on 2026-08-19 piped `git status --porcelain` through
+`sed 's/^?? //'`, which leaves git's quoting attached to the 50+ `UIUX/` paths that contain spaces, so
+**every** `shasum` failed on a nonexistent filename — and the pipeline still emitted a confident 64-hex
+digest, of an empty stream. Hence `-z` internally, and hence the hard failure.
+
 **A piped `git show ... | wc -l` can silently lie here — write the blob to a file and measure the file
 (2026-08-18).** Several compound Bash commands this run died with **exit 138** partway through, and the
 damage is not that they failed: it is that they printed *plausible* partial output first. The same
@@ -10072,3 +10093,72 @@ real bug fixes, dead code, an ARIA pattern fix, three rounds of live QA (Referen
 components, real keyboard traversal), verbatim-instruction rot, and now bundle composition. A future run
 arriving to the same dirty tree should not read this as license to find an eleventh angle; it should
 report the same gridlock in a few lines, as this entry does, unless the tree has actually moved.
+
+### 2026-08-19 (scheduled dev-agent) — Make "has the owner's tree moved?" a real check instead of a shortstat; the gridlock itself is unchanged
+
+Same owner-dirty tree as all ten runs of 2026-08-18 (shortstat identical on arrival: 26 files, 1015
+insertions(+), 1440 deletions(-), plus 57 untracked files across `UIUX/`, `drafts/` and the five
+`lessonContent.essentials.*.js`; `HEAD` unmoved at `46ba831` from start to commit). The tenth run's
+closing note said a run arriving to the same dirty tree should report the gridlock in a few lines rather
+than manufacture an eleventh audit angle on the same surface. **This run did not add an audit angle. It
+fixed the one check every run has to make first and that none of them has been making correctly.**
+
+**The premise, re-measured (step 3.5), and it broke in my own hands.** Every prior run answered "has the
+owner's work moved?" with `git diff --shortstat`. That is not an answer — a shortstat can coincide across
+different trees, which the eighth run of 2026-08-18 pointed out and then still relied on. Building the
+exact version, the **first hand-rolled attempt silently produced a false result**: `git status
+--porcelain` quotes paths containing spaces, `sed 's/^?? //'` leaves the quotes attached, all 57
+`shasum` calls failed on filenames that do not exist — and the pipeline still printed a confident 64-hex
+digest, of an empty stream. That is the step-3.5 failure mode exactly, caught only because the per-file
+output was visible.
+
+**Controls, before trusting the replacement.** Positive: the instrument's digest for a real untracked
+file matches an independent `shasum -a 256` byte-for-byte. Sensitivity: appending one newline to a copy
+moves the digest. Behavioural, in a throwaway scratch repo: a clean tree returns the empty-string sha256
+with `tree is CLEAN`; a file whose name git quotes (`한글 name.txt`) is read correctly; the same file
+`chmod 000` makes the tool **refuse to print and exit 2** rather than hash around it. `--expect` returns
+`UNMOVED`/exit 0 on the right hash and `MOVED`/exit 1 on a wrong one.
+
+**What shipped.** `scripts/owner-tree.mjs` + an `owner-tree` entry in `package.json` (the only tracked
+file I touched that the owner has not — `package.json` is clean), and an Environment-note paragraph
+telling future runs to record the fingerprint in their entry and compare with `--expect`.
+
+**The owner's tree, fingerprinted — this is the value for the next run to compare against:**
+
+```
+npm run owner-tree -- --expect 28365eada89db8fa4450fb9328e25b8ec64ed056a9454b58642c735d2bdb2e82
+```
+
+`UNMOVED` means the gridlock below still stands and nothing here needs re-reading. `MOVED` means check
+whether `LAUNCH_PLAN.md` went clean and the five blocked items unblocked together. (Computed over the
+owner's paths only, before my own files entered the tree, and re-verified post-commit to reproduce
+exactly — see below.)
+
+**Verified.** Full `npm test` and `npm run build` on a `git archive HEAD` control copy **both exit 0**
+with my change applied. Isolation was three-way rather than one-shot, because the control initially came
+back red: **A** pure `HEAD` (no change of mine) = 7 §26 failures; **B** `HEAD` + the two gitignored
+`economic-cycles-v*.jsx` = 0; **C** B + my change = 0. B and C identical, so my change contributes
+nothing. **The 7 failures were not a discovery — the Environment note already documents this trap, the
+`cp economic-cycles-v5.jsx economic-cycles-v6.jsx` line that fixes it, and the number 7.** I hit it by
+building the control before reading the note; my figures independently reproduce what was already
+written, which is a confirmation of that note, not a new finding, and it is recorded that way on purpose.
+
+**Adversarial self-check (step 5).** **Blindspot register:** no regression — nothing learner-facing
+changed; no dates, market figures, Dalio references, advice-adjacent language or kids framing are
+anywhere near a build script. **DECISIONS.md conflict:** none — no storage, routing, content-module or
+build-shape decision is touched; this adds a script beside the existing `check-*.mjs` family, the
+established pattern. **Already-done item:** no — no prior run built a tree fingerprint (`grep -i
+"fingerprint"` over `AGENT_LOG.md` returns only item 76's *measurement*-claim fingerprints, a different
+mechanism for a different purpose). **My own verification claims:** every exit code above is from a
+`echo "exit=$?"` on an unpiped command, after a first attempt reported an empty `exit=` from a
+`PIPESTATUS` misuse inside a subshell — the pipeline-vs-exit-code trap the Environment note already
+warns about, hit and corrected in the same run. **What the check caught:** two things, both before they
+shipped. The false-hash-of-nothing above. And `npm run owner-tree` crashing with a raw
+`ERR_MODULE`-style stack trace inside the non-git control copy — found by actually running it there
+rather than assuming, and fixed into a clear exit-2 message.
+
+**Next run.** **Start with `npm run owner-tree -- --expect 28365ead…` — one command, real answer.** If
+`UNMOVED`: unchanged gridlock, `LAUNCH_PLAN.md` still blocks items 35, 64's `Dividend`, 73 (both halves)
+and 77 together, all five unblocking on one `npm test` the moment it is owner-clean, and eleven runs of
+audit angles on this static surface are genuinely exhausted — report that in a few lines rather than
+inventing a twelfth. If `MOVED`: re-check the blocked five first, before anything else.

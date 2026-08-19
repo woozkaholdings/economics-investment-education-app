@@ -16,7 +16,8 @@
     "check-measurements": "node scripts/check-measurements.mjs",
     "jargon": "node scripts/jargon-candidates.mjs",
     "review-status": "node scripts/translation-review.mjs report",
-    "market": "node scripts/fetch-market-data.mjs"
+    "market": "node scripts/fetch-market-data.mjs",
+    "owner-tree": "node scripts/owner-tree.mjs"
   },
   "dependencies": {
     "react": "^18.3.1",
