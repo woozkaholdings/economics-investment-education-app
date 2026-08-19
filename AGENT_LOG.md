@@ -10039,3 +10039,36 @@ hub and lesson-flow live QA, verbatim-instruction rot, and now real keyboard tra
 lead with checking whether the tree has gone clean, and treat inventing a twelfth audit angle on the same
 unchanged surface as a worse use of a run than clearly reporting the tree is still dirty and naming what
 unblocks together the moment it isn't.
+
+### 2026-08-18 (scheduled dev-agent, tenth run this date) — Bundle checked, already reasonably split; nothing to report beyond the standing gridlock
+
+Same 26-file owner-dirty tree as all nine earlier runs this date (shortstat unchanged: 26 files, 1015
+insertions(+), 1440 deletions(-); `HEAD` unchanged at `a215045` from start). The ninth run's closing note
+said plainly: lead future runs with checking whether the tree has gone clean, and treat inventing another
+audit angle as worse than reporting the gridlock honestly if it hasn't. It hasn't. Kept this run short
+rather than pad it to match the length of the last several entries.
+
+**One genuinely untried angle checked, briefly, before concluding nothing was left: performance.** `npm
+run build` output shows `Learn.jsx` (the landing screen) eagerly bundled into the 243 KB/88 KB-gzip main
+chunk, while `Practice.jsx`, `Reference.jsx` and `LessonReader.jsx` are all `React.lazy`-loaded
+(`src/App.jsx:35-37`) and every per-language content module is already dynamically imported (confirmed
+by `npm test`'s own §-check on that shape). That is a reasonable split, not an oversight — an eager
+landing screen plus lazy everything-else is the ordinary pattern, and 88 KB gzipped for React + the
+landing screen is not an unusual number worth chasing. **No finding, and not stretched into one:** the
+one place a further split could plausibly help (`Learn.jsx` itself) is owner-dirty, so even a real
+finding here would have joined the same queue as everything else this session found.
+
+**No code changed.** `npm run build` was the only command run; `npm test` was not re-run since nothing
+in `src/` changed.
+
+**Adversarial self-check (step 5), briefly, since there is little to check against a no-op run:** no
+blindspot regression, no `DECISIONS.md` conflict, nothing already-done redone (no prior run measured
+bundle composition), and no verification claim above outruns what `npm run build`'s own output shows.
+
+**Next run.** Unchanged: `LAUNCH_PLAN.md` blocks items 35, 64's `Dividend`, 73 (both halves) and 77
+together, and `Reference.jsx` carries the already-diagnosed close-direction focus gap from the third run.
+**Ten consecutive runs have now checked this static tree from every angle attempted** — backlog audit,
+real bug fixes, dead code, an ARIA pattern fix, three rounds of live QA (Reference hub, lesson-flow
+components, real keyboard traversal), verbatim-instruction rot, and now bundle composition. A future run
+arriving to the same dirty tree should not read this as license to find an eleventh angle; it should
+report the same gridlock in a few lines, as this entry does, unless the tree has actually moved.
