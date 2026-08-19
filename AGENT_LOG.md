@@ -468,22 +468,60 @@ for the history. No open P1/P2 items.
     than applied these.] Apply the audit's three §10 blindspots and its proposed claim D3.** Both halves
     are written out verbatim and ready to move; neither was applied, for two different reasons that
     should not be collapsed:
+    - **⚠️ Re-verified 2026-08-18 (scheduled dev-agent) — this item's own "verbatim, do not paraphrase"
+      instructions had already rotted in two places, one in each half. Answering the seventh/eighth
+      run's own "Next run" note, which asked whoever finds `LAUNCH_PLAN.md` still dirty to check
+      whether *other* queued "apply this saved instruction blind" items had the same failure item 64's
+      `Dividend` did (that run's commit `8a1ad5a` found a whole-file scratchpad copy would have silently
+      reverted items 67/69). Item 73 is not that shape — nothing here is a stale content copy — but it
+      has the *smaller* version of the same disease: a specific location cited once, trusted forever.**
+      - **(1) The D3 unblock's line citation is now wrong.** `LAUNCH_PLAN.md:529` was correct
+        2026-08-17; as of this run the "It holds all 15 claims" sentence is at line **549** (confirmed
+        three consecutive times a second apart by `grep -n` for the sentence text, not by trusting the
+        old number, and deliberately **not** re-cited as a new fixed line below — the owner's tree is
+        still being edited live and the point being made is that any specific line number is a snapshot,
+        not a fact). Twenty lines drifted in one day of unrelated owner edits landing above it. A run
+        that ran `sed -i '529s/15/16/'` (or any line-targeted edit) without re-locating the text first
+        would have silently corrupted an unrelated sentence — and this item's *own text*, two bullets
+        below, already names this exact failure mode ("this run measured three line numbers, pasted
+        them, and then watched its own edit to this item move all three") without noticing it had just
+        done the same thing to itself two
+        bullets up. **Fixed below: the instruction now names the sentence, not a line number.**
+      - **(2) B-3 was already false when it was written, and pasting it verbatim would publish a
+        refuted claim.** B-3 states "nothing owns 'get this in front of one person' ... no backlog item
+        owns the deploy," timestamped *found 2026-08-17* in the audit (`reviews/2026-08-17-monthly-
+        audit.md:204`). `git log` shows item 72 — "the build is deployable and the clicks are written
+        down," which is exactly the gap B-3 names — was committed `e53cc81` at **2026-08-17T20:15:09**,
+        while the audit's own commit (`58db0e1`) landed at **20:00:44**: **item 72 existed 15 minutes
+        after B-3 was written.** B-1 and B-2 were left unre-measured on purpose: both carry their own
+        future check dates (2026-09-05, 2026-10-03) and are time-delayed claims by design, not
+        current-state assertions — re-measuring them early would be answering a question that hasn't
+        been asked yet. B-3 has no such framing; it asserts a present-tense fact, and the fact was
+        already wrong. **B-3's wording needs one clause before it can move verbatim — see below; B-1/
+        B-2 are unchanged and still move as written on their own check dates.**
     - **The three §10 blindspots (B-1 process mass, B-2 the locales held by sunk cost, B-3 the deploy
-      gap) are BLOCKED** on `LAUNCH_PLAN.md` being owner-clean — §10 lives there and the owner's UIUX
-      redesign has it dirty. They are in §10's own register format in the audit's §6, each with a
-      refuting number and a check date. **Move them across verbatim; the wording is the finding.**
+      gap, corrected above) are BLOCKED** on `LAUNCH_PLAN.md` being owner-clean — §10 lives there and
+      the owner's UIUX redesign has it dirty. They are in §10's own register format in the audit's §6,
+      each with a refuting number and a check date. **Move B-1 and B-2 across verbatim — the wording is
+      the finding. Move B-3 with the correction above folded in** (e.g. append: "— though item 72,
+      filed the same day 15 minutes after this was written, now owns the deploy half; what remains
+      unowned is only the click-through, which item 72 already names as owner-only").
     - **D3 was decided on the merits 2026-08-17 by a run other than the audit's author, as this item
       asked. The verdict is ADD IT — but "D3 is NOT blocked" was wrong, and D3 is BLOCKED on the same
       owner-dirty file as the §10 half.** `scripts/check-claims.mjs` cross-checks the register's row
-      count against `LAUNCH_PLAN.md` §9.1's hand-written "It holds all 15 claims" (`LAUNCH_PLAN.md:528`
-      –`529`). Adding any sixteenth row fails `npm test` — proved by injection, not reasoned:
+      count against `LAUNCH_PLAN.md` §9.1's hand-written "It holds all 15 claims" sentence. Adding any
+      sixteenth row fails `npm test` — proved by injection, not reasoned:
       `FAIL: LAUNCH_PLAN.md §9.1 says "It holds all 15 claims" but CLAIMS.md has 16. Replace "15
       claims" with "16 claims".` The fix the check demands is *in the owner's dirty file*, so the row
       cannot land until the redesign is committed. **Both halves of this item are blocked, on one file,
       for one reason.**
-    - **The unblock is two lines and needs no re-derivation.** (a) paste the staged row below into
-      `CLAIMS.md`'s §D table; (b) change `15 claims` → `16 claims` at `LAUNCH_PLAN.md:529`. Then
-      `npm test`. Nothing else moves.
+    - **The unblock is two edits and needs no re-derivation — find each by its text, not by a line
+      number that will have moved again by the time this unblocks.** (a) paste the staged row below
+      into `CLAIMS.md`'s §D table; (b) in `LAUNCH_PLAN.md`, find the sentence beginning "It holds all"
+      under §9.1 and change `15 claims` → `16 claims`. Then `npm test`. Nothing else moves. **Verified
+      2026-08-18 that the staged row still fits: `CLAIMS.md`'s §D table header and both existing rows
+      (D1, D2) are unchanged since the audit, 15 total claim rows currently, and the row below adds the
+      16th the sentence above needs to say.**
     - **Staged D3 row, verbatim — do not paraphrase, and note the status is stronger than the audit's:**
       > `| D3 | A backlog item's premise can be trusted well enough to implement without re-measuring. |
       > Any filed item's headline number is corrected on execution. | 2026-09-05 | **Yes** |
@@ -9831,3 +9869,77 @@ runs plus this one have now worked around the same static tree**; the honest hig
 verifying the *other* queued instructions the same way this run verified item 64's, since the failure found
 here (a saved artifact silently rotting behind a confident "do not re-derive it") is structural and item 64
 is unlikely to be the only place it happened.
+
+### 2026-08-18 (scheduled dev-agent, eighth run this date) — Item 73's own "verbatim" instructions had rotted too, answering the concurrent run's "check the others" note
+
+Arrived to find `git log` had moved since the seventh run this date: a concurrent session's commit
+`8a1ad5a` had landed, finding item 64's queued `Dividend` "apply the saved work" instruction pointed at
+a whole-file scratchpad copy that would have silently reverted items 67 and 69. That run's own "Next run"
+note asked whoever next finds `LAUNCH_PLAN.md` still dirty to check whether *other* queued "apply this
+saved instruction blind" backlog items had the same structural failure, since item 64 was unlikely to be
+the only place it happened. This run answered that directly rather than picking something unrelated —
+first re-confirming the owner's tree really was untouched (the 26-path shortstat had drifted by exactly
+one insertion/deletion since the seventh run's check; isolated to "the owner is still editing their own
+uncommitted tree," not a commit, by diffing the 26 paths between the two most recent commits and getting
+an empty result).
+
+**Item 73 is the other item with "written out verbatim and ready to move" instructions blocked on the
+same `LAUNCH_PLAN.md` file, so it was the obvious next check. It had rotted too — in two places, one in
+each of its two halves, neither the shape item 64's was.**
+
+1. **The D3 unblock's line citation, `LAUNCH_PLAN.md:529`, is wrong.** Confirmed by `grep -n` for the
+   actual sentence text ("It holds all 15 claims") three consecutive times a second apart, not by
+   trusting the old number — the sentence is at a different line today than 2026-08-17, having drifted
+   roughly twenty lines from unrelated owner edits landing above it. Deliberately not re-cited as a new
+   fixed line in the correction: the owner's tree is still being edited live (see above), so a fresh line
+   number would just be tomorrow's version of the same trap. **The irony worth stating plainly: item 73's
+   own text, two bullets below the citation, already names this exact failure mode** ("this run measured
+   three line numbers, pasted them, and then watched its own edit to this item move all three") **without
+   the item's own line-529 citation having been checked against that lesson.**
+2. **B-3, one of the three §10 blindspots staged to "move across verbatim," was already false the day it
+   was written.** B-3 asserts "no backlog item owns the deploy." `git log` shows item 72 — "the build is
+   deployable and the clicks are written down," the exact gap B-3 names — was committed (`e53cc81`,
+   2026-08-17T20:15:09) **fifteen minutes after** the audit that produced B-3 (`58db0e1`,
+   2026-08-17T20:00:44). Checked whether B-1/B-2 had the same problem and they don't, for a real reason
+   rather than luck: both carry their own future check dates (2026-09-05, 2026-10-03) and are explicitly
+   time-delayed claims, not present-tense assertions — re-measuring them now would answer a question
+   the item itself says not to ask yet. B-3 has no such framing; it states a current fact, and the fact
+   was wrong before the ink dried.
+
+**What shipped: the corrections, written into item 73 itself — not an attempt to unblock it, which is
+still correctly impossible.** The D3 unblock instruction now says "find the sentence beginning 'It holds
+all'" instead of a line number. B-3's verbatim-move instruction now carries the one clause needed before
+it can be pasted into `LAUNCH_PLAN.md` §10 ("though item 72 ... now owns the deploy half"), with B-1/B-2
+explicitly left untouched and reasoned why. Re-verified in the same pass that D3's own content still
+fits: `CLAIMS.md`'s §D table header and both existing rows (D1, D2) are byte-identical to the audit,
+still 15 total claim rows, so the staged row is still the correct 16th.
+
+**Verified.** `npm run check-backlog` — 54 items, 99 citations, unchanged (a text correction inside an
+existing item, no new item, no new citation). `npm run check-blindspot` passes (0 failures). Full
+`npm test` on a `git archive HEAD` control copy exits **0**, all six checks `PASS` (working tree stays
+red only on item 77's unrelated, already-diagnosed block). Owner's 26 paths, diffed against the
+concurrent run's commit `8a1ad5a` rather than my own last commit (since HEAD moved between runs): still
+**26 files, unchanged** — confirmed by an empty `git diff 8a1ad5a`-vs-previous-HEAD on those exact paths,
+not just a shortstat that could coincidentally match.
+
+**Adversarial self-check (step 5).** **Blindspot register:** no regression — no learner-facing copy,
+dates or market figures; this is backlog/process prose, and `check-blindspot` passes. **DECISIONS.md
+conflict:** none — read (it's owner-dirty), not edited; no storage, routing or build-shape change.
+**Already-done item:** no — this doesn't redo item 64's fix or item 73's own D3-decided-on-the-merits
+work; it corrects citations inside an item that remains exactly as blocked as before. **My own
+verification claims:** every figure — the line-549 grep repeated three times, the two commit timestamps,
+the `CLAIMS.md` row count — is pasted from tool output. **What the check caught:** the first draft of
+this entry re-cited the drifted sentence as "now at lines 548–549," a specific new line number offered
+as if it were stable — while writing the finding that line numbers in this document aren't stable. Three
+repeated `grep -n` checks a second apart (all agreeing on line 549, my "548-549" range was my own
+miscount of a `sed` printout, not a live file change) caught the near-miss before it shipped the exact
+error being corrected.
+
+**Next run.** `LAUNCH_PLAN.md` now blocks five items together — 35, 64's `Dividend`, 73 (both halves,
+now safe to apply), and 77 — unblocking on one `npm test` the moment it's owner-clean. Eight consecutive
+runs have now worked around the same static tree; **this run's method (check every other "apply this
+verbatim" instruction for the class of rot found here) is close to exhausted too** — items 64 and 73 were
+the only two backlog items of that shape found by a full-file search of "saved work"/"verbatim"/
+"scratchpad" phrasing. A future run finding the tree still dirty should treat that search as already done
+rather than re-running it, and go back to checking whether the tree has gone clean before picking anything
+else.
