@@ -11308,3 +11308,83 @@ by `npm run review-status`. Remaining from the earlier sweep: the batch-pause in
 40-question session, and keyboard-only traversal of the reader's action row. **Item 18 remains the
 entire critical path to ending Phase 0**, still blocked on the owner creating an analytics-provider
 account.
+
+---
+
+## 2026-08-20 — two content corrections, and the last two uncovered QA areas closed
+
+**Owner-directed, interactive, continuing "do all in priority."** With 84/85/87 committed, this closes
+the two minor content inaccuracies recorded in the read-through and the two areas the `essentials` QA
+sweep had explicitly listed as not reached.
+
+### Content corrections (both were recorded as minor and both were real)
+
+- **`essentials` lesson 11's fee example said "roughly $76,000"; the arithmetic gives $75,063.**
+  Corrected to $75,000 in all five languages. The other figure in the same passage ($56,628 → "around
+  $57,000") and the headline ratio ("roughly a quarter", actual 24.6%) were already right.
+- **Lesson 12 stated selling costs "5%-6% in agent commissions" as though it were a fixed rate.** Since
+  the 2024 US rule changes those are explicitly negotiable, so the sentence now says so rather than
+  naming a date that would itself age. Applied to `en`/`es`/`zh`, which are the three that carry the
+  figure — `ko` and `ja` compress that passage and never state it. Lessons 11 and 12 re-marked in the
+  translation ledger for the four languages, readiness figures regenerated.
+
+### The batch-pause interstitial, under a real 42-question session
+
+Never exercised before. Ran "Practice all questions" and answered through three batch boundaries:
+
+- **Fires at exactly 10, 20 and 30** — `10 done — nice work / 2 of 10 correct`, then `20 done`, `30 done`.
+- **Focus management works as designed**: at the pause, `document.activeElement` is the `H2`
+  ("10 done — nice work") carrying `tabindex="-1"`, and `window.scrollY` is 0. A screen-reader user is
+  told the screen changed.
+- **"Keep going" resumes at the right question.** This is the one that needed care, because my first
+  reading said it skipped one: at the 10-boundary I recorded a resume at "12 / 42". **That was my own
+  instrument** — a compound tool call had clicked "Next" an extra time. Re-tested at the 20-boundary
+  with a single click and nothing else in the call: the pause read `20 done`, one click of "Keep going"
+  landed on **"21 / 42"**. No off-by-one. The code agrees (`setAtBatchPause(true); return;` does not
+  advance, so "Keep going" advances exactly once). **A false bug avoided by re-testing rather than
+  filing the first reading.**
+- **"Stop here for now" ends the session cleanly**: "Review complete / 7 of 30 correct", **30 result
+  rows**, focus on the `H2`, scrolled to top — which also exercised item 84's new labels at scale, all
+  30 rendering as e.g. `Lesson 1 · How the Economy Works`.
+
+### Keyboard traversal of the reader's action row — partly verifiable, and the limit is stated
+
+This mattered more than usual because item 80 changed which buttons that row contains. What holds:
+
+- **Tab order is correct**: last quiz option → `Previous` → `Mark Complete` → bottom nav.
+- The row is native `<button type="button">`, focusable, **no `tabindex` overrides**, and the document
+  contains **zero positive `tabindex`** values, so there is no tab trap or reordering hack.
+- **A visible focus indicator exists and nothing suppresses it**: `src/index.css:195` defines
+  `:focus-visible { outline: 2px solid var(--fill-accent); outline-offset: 2px; }`, and a grep for
+  `outline: none|0` across `src/` returns **nothing**.
+
+**What could NOT be verified, stated rather than glossed:** real Tab-key traversal. A `computer` Tab
+keypress at a focused element left `document.activeElement` unchanged — the same tooling gap the
+Environment note records for that action. Unlike a custom element's `onKeyDown`, tab movement is a
+**browser default action on a trusted event**, so no `dispatchEvent` can stand in for it either (the
+note makes the same point about Enter on a native button). So the app-side properties that determine
+keyboard behaviour are all verified; the keystroke itself is not reachable with these tools, and that
+is a tooling limit, not an app finding.
+
+### Adversarial self-check (step 5)
+
+**Blindspot register:** no regression — two numeric corrections and one negotiability clause; no
+advice-adjacent language (the commission clause describes market structure, it does not tell anyone
+what to do), and **no date added**, deliberately: "since the 2024 rule changes" was considered and
+rejected in favour of "negotiable rather than fixed", which cannot age. `check-blindspot` passes,
+including the §2.3 scan that now covers these very files. **DECISIONS.md conflict:** none.
+**Already-done item:** no — these are the two items the read-through recorded as "minor, not filed",
+now done. **My own verification claims:** the pause screens, focus targets and resume positions are
+pasted from live reads; $75,063 is computed output; the focus-indicator claim is a CSS line number plus
+a grep that returned empty. **What the check caught:** the "12 / 42" reading above, which I nearly
+reported as an off-by-one defect before re-running it cleanly.
+
+### Next run
+
+`npm run owner-tree -- --expect c2331799fd3ee413aca864fd82d247a35ea31b01a70a6c4e37b00f6aad9105b2`.
+**Everything the `essentials` sweep and the read-through raised is now closed** — 80, 81, 82, 83, 84,
+85, 86, 87 plus both minor corrections and both uncovered QA areas. The standing debt is the **7 stale
+translation lessons per language** created by the title rewrite (`npm run review-status` lists them),
+and the open backlog is back to the older items: 78, 76, 74, 73, 77, 62, 64, 70, 71, 26. **Item 18
+remains the entire critical path to ending Phase 0**, still blocked on the owner creating an
+analytics-provider account.
