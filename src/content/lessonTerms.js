@@ -85,12 +85,14 @@ export const lessonTerms = {
   // not hold here: the two tracks unlock independently, so lesson 5 is not
   // behind an economy-track reader at all. See AGENT_LOG.md item 64.
   2: { 1: ["Stock"], 2: ["Premium"] },
-  3: { 2: ["Index Fund", "Stock"] },
+  // 3 §2 says returns compound only if dividends and gains stay invested;
+  // it uses the word twice and defines it neither time (item 64).
+  3: { 2: ["Index Fund", "Stock", "Dividend"] },
   // 6 §0 contrasts "an ordinary brokerage account" with a workplace 401(k)
   // seven lessons before 13 defines what a brokerage account is — the
   // forward-reference shape item 60 found, and the reason Brokerage Account
   // became a glossary entry rather than being left to lesson 13.
-  6: { 0: ["Vesting", "Brokerage Account", "Stock", "Bond"] },
+  6: { 0: ["Vesting", "Brokerage Account", "Stock", "Bond", "Dividend"] },
   7: { 1: ["401(k)", "IRA"] },
   9: { 0: ["Purchasing Power"] },
   11: { 0: ["Diversification", "Index Fund"] },

@@ -1381,9 +1381,10 @@ for the history. No open P1/P2 items.
 64. **[Content — the three candidates item 60's run measured and deliberately did NOT add, filed
     2026-08-17 by the run that closed it. Each is a decision, and the reason they are together is that
     "add a glossary entry" is the same decision three times, not that they should be batched.]**
-    Run `npm run jargon` to reproduce every figure below. **Status 2026-08-17: Stock/Bond ✅ DONE,
-    APR ✅ DONE, residual (b) ✅ DONE (all scheduled dev-agent runs). Dividend is the only piece
-    left and it is BLOCKED on an owner-dirty file — see its bullet.**
+    Run `npm run jargon` to reproduce every figure below. **✅ ITEM FULLY DONE 2026-08-20
+    (scheduled dev-agent). Stock/Bond, APR and residual (b) closed 2026-08-17; `Dividend` — the last
+    piece, blocked since then on an owner-dirty `LAUNCH_PLAN.md` — landed 2026-08-20 the first run
+    after the block lifted. Nothing in this item is open.**
     - **✅ DONE 2026-08-17. Both keys added, 21 chips across 15 lessons, 2 exclusions on lesson 5,
       `0 unexplained` held. For the eighth item running the premise was wrong somewhere — and this
       time the wrong number was the one that had been used to defer the work: the SCOPE.** The item
@@ -1429,9 +1430,18 @@ for the history. No open P1/P2 items.
     > bugs were invisible to the existing control, which rebuilt its independent form set with the
     > same missing plural; **both now have controls** (a reported multi-word phrase must occur
     > contiguously in the corpus; the independent set carries plurals), each proved by injection.
-    - **`Dividend`: 3 uses, lessons 3 and 6, never defined. ⛔ STILL BLOCKED on `LAUNCH_PLAN.md`
-      being owner-clean — that half is unchanged and was re-verified 2026-08-18 (the file's worktree
-      sha1 `07313fd0` != its `HEAD` sha1 `967cee51`, so it is still owner-dirty).
+    - **`Dividend`: ✅ DONE 2026-08-20 (scheduled dev-agent). The block was gone — `LAUNCH_PLAN.md`'s
+      worktree sha1 and `HEAD` sha1 both read `6230d855`, and the whole tracked tree was clean. The
+      saved patch still applied (`git apply --check` exit 0, 12 added / 0 removed, exactly as this
+      item promised), so "save patches, not whole-file copies" is now proven over a 3-day gap and two
+      intervening commits to the same file. TWO PREMISE CORRECTIONS, both from the essentials split:
+      the uses are in the ESSENTIALS track, not money — the ids 3 and 6 did not move, so every saved
+      coordinate stayed valid and only the word "money" was wrong — and the count is 3 raw
+      occurrences but 2 tokens, because one is the hyphenated adjective "dividend-paying stocks",
+      which the extractor does not emit as a bare term. See the run log for the full accounting.
+      *Original text:* **`Dividend`: 3 uses, lessons 3 and 6, never defined. ⛔ BLOCKED on
+      `LAUNCH_PLAN.md` being owner-clean — re-verified 2026-08-18 (worktree
+      sha1 `07313fd0` != `HEAD` sha1 `967cee51`, so it was still owner-dirty).
       🔴 **BUT THE SAVED WORK IS PARTLY POISONED, FOUND 2026-08-18. The previous instruction here —
       "Do not re-derive it; apply the saved work", naming three artifacts as equals — would have
       silently reverted two later runs' shipped content fixes. Read this before touching any of
@@ -11794,3 +11804,148 @@ Still unblocked and unpicked: **64's `Dividend`**, **35's second glossary batch*
 critical path to ending Phase 0**, blocked on the owner creating an analytics-provider account, and
 **item 72's owner half — a deployed URL — is blindspot 10.10**, whose refuting number is one reachable
 URL.
+
+---
+
+## 2026-08-20 — `Dividend` lands the first run after its block lifted; the item was right about the patch and wrong about the track (item 64)
+
+**Item 64 is now fully closed.** Its last piece, the `Dividend` glossary entry, had been blocked since
+2026-08-17 on `LAUNCH_PLAN.md` being owner-dirty. This run opened, found the whole tracked tree clean,
+and shipped it.
+
+### Step 3.5 — the premise was wrong about the track and the count, and right about everything load-bearing
+
+Eleven consecutive picked items have had a premise wrong somewhere; this is twelve, but mildly, and the
+part the item staked itself on held up perfectly.
+
+- **The block really is gone, checked the way the item specified.** `LAUNCH_PLAN.md`'s worktree sha1 and
+  its `HEAD` sha1 both read `6230d855502bd6d7692ad80c3c4acad55437603a`; `git status --porcelain
+  LAUNCH_PLAN.md` is empty. `npm run owner-tree` read **UNMOVED
+  `c2331799fd3ee413aca864fd82d247a35ea31b01a70a6c4e37b00f6aad9105b2`** against the last run's
+  `--expect`, so the owner's tree had not moved at all since the previous entry.
+- **✅ The saved patch survived, and the "save patches, not whole-file copies" lesson is now proven over
+  distance.** `scratchpad/dividend-glossary.patch` (written 2026-08-17 12:10, an ephemeral session dir
+  that has now survived three days) still `git apply --check`s to **exit 0**, `--numstat` **12 added /
+  0 removed**, touching only `src/content/glossary.js`. Two commits landed on that file in between. The
+  whole-file copy the item flagged as poisoned would still have reverted items 67 and 69; the patch did
+  not need re-deriving. **This is the strongest evidence yet for the rule — a contextual patch outlived
+  two intervening commits to its own file.**
+- **❌ Wrong track. The item says "money lessons 3 and 6"; the uses are in the ESSENTIALS track.** The
+  2026-08-19 essentials split (`5633b79`) re-tracked lessons 1–15 out of money **without renumbering
+  them**, so ids 3 and 6 still point at exactly the lessons the item meant — "Compound Interest: Money
+  That Makes Money" and "Retirement Accounts: 401(k) and IRA Basics". **Every saved coordinate was
+  therefore still valid and nothing had to be re-derived; the only wrong thing was the word "money".**
+  Disposition unchanged, but the comment shipped inside the patch asserted "Money-track by measured
+  use", so applying it verbatim would have committed a false comment — the exact failure mode item 75
+  found and item 73's "move it verbatim" instruction caused. Rewritten before commit.
+- **❌ Wrong count, in a way worth keeping. "3 uses" and the instruments' "2" are both right.** There
+  are **3 raw occurrences** of dividend/dividends, but one is inside the hyphenated adjective
+  **"dividend-paying stocks"** (lesson 3 §2), which the extractor does not emit as a bare token. So
+  `npm run jargon` says `2 lessons, 2x` and §17b counts 2. A future run comparing "3" against an
+  instrument reading "2" should not conclude something regressed.
+
+### The measurement that looked exactly like a no-op, and the control that saved it
+
+After the change, §17b read **104 uses / 68 chips / 0 unexplained** — *character-for-character the
+figure this item recorded on 2026-08-17*. That looks precisely like "my chips did not register." The
+`git archive HEAD` control copy settled it: **HEAD reads 102 / 66**, so the change added exactly the 2
+uses and 2 chips intended. The identical figure is a coincidence across a corpus that has changed a
+great deal since (an essentials split and several content commits). **Without the control this run
+would have spent its time debugging a working change.**
+
+A second instrument failure, caught the same way. Comparing `npm run jargon essentials` before and
+after, `dividends` appeared to sit in the CONTROL ("already in the glossary") bucket **at HEAD** —
+impossible, since the key did not exist there. Cause: the grep used to read the output matched
+`CONTROL —` but not the `CANDIDATES` header, so a line printed further down was attributed to the
+wrong section. Re-run with an `awk` section-tracker, the real movement is clean and is what was
+wanted: **`dividends` CANDIDATES → CONTROL, candidates 34 → 33, control 13 → 14.**
+
+### What shipped
+
+- **`src/content/glossary.js`** — the `Dividend` entry, all five languages, applied from the saved
+  patch (+12/-0). Its comment corrected from "Money-track" to "Essentials-track", stating the split as
+  the reason the item said otherwise.
+- **Two stale block headers, corrected because the entry lands between them.** Both were falsified by
+  the essentials split, not by this change, and both were *measured* rather than assumed: the block
+  labelled **"Money track"** now has **9 of its 13 entries chipped only by essentials lessons, 2 only by
+  money, 2 unchipped** — relabelled *"Personal-finance vocabulary"*. The block labelled **"Both tracks"**
+  said Stock and Bond are "defined in money lesson 5"; lesson 5 is essentials now, and both terms are
+  chipped by **all three** tracks — relabelled *"Every track"*. Leaving a knowingly-false comment beside
+  a freshly-corrected one was not defensible.
+- **`src/content/lessonTerms.js`** — `Dividend` chips on lesson 3 §2 and lesson 6 §0, both as chips
+  rather than `defined-here` exclusions (both are uses, neither is a definition), plus a two-line note
+  on 3 §2 recording that it uses the word twice and defines it neither time.
+- **`LAUNCH_PLAN.md`** — the generated asset sentence, `32 → 33 glossary terms`, via
+  `npm run readiness -- --write`.
+
+### Verified
+
+- `npm test` — **0 failures** across all six checks, before and after. The single warning (7 stale
+  translation lessons per language) is standing debt and is present in the baseline run too.
+- §17b holds **0 unexplained** at the new 104/68.
+- `npm run build` — clean, 1.42s.
+- **Live browser (rule W-1), served from `dist/` via `/usr/bin/python3 -m http.server`.** On
+  `#/lesson/3` the section's chip row reads *Index Fund / Stock / Dividend*; clicking `Dividend`
+  expands the definition **in place** (matching `DECISIONS.md`'s curated-map decision — it does not
+  navigate to the Glossary tab) and renders the full entry plus its example sentence. Same on
+  `#/lesson/6`, whose row reads *Vesting / Brokerage Account / Stock / Bond / Dividend*. Console clean,
+  no errors.
+- **Korean verified too, after the first attempt's instrument was found broken.** Setting
+  `ecycles_lang` to `JSON.stringify("ko")` silently fell back to English — the key is read with
+  `readRaw`, so the quotes made the `hasOwnProperty(TR, …)` lookup miss. **The control caught it: the
+  pre-existing `Stock` chip was rendering in English too**, so the negative was the instrument, not the
+  feature. With a raw `ko`, the chip renders **배당금** and expands the Korean definition.
+- **What could NOT be verified, stated rather than glossed:** `computer{action:"screenshot"}` returned
+  a uniformly blank dark frame on every attempt, including after `tabs_select`, while the DOM was
+  demonstrably rendering content (text extraction, bounding rects and click handling all worked). No
+  error was raised — it simply returns an empty frame. All rendered-UI evidence above is therefore
+  DOM/text-level, which for a text chip is sufficient, but **this run has no visual proof and does not
+  claim any.**
+
+### Adversarial self-check (step 5)
+
+- **Blindspot register** — `node scripts/check-blindspot.mjs` passes on all four assertions. §10.1: the
+  definition states what a dividend IS and that not every company pays one; it never says whether to
+  seek one out — grep of the diff for advice phrasings and for `Dalio` returns **0**. §10.3 untouched.
+  **§2.3 needed a hand check and got one with a control**, because the date guard covers 26 teaching-copy
+  modules and `glossary.js` is *not* among them: the diff adds four `2026-…` dates, and all four are in
+  `//` comments — a scan of every rendered string across **33 entries × 5 languages** finds **0** dates,
+  with a probe string proving the scan can see one.
+- **`DECISIONS.md` conflict** — none. "In-lesson glossary links are a curated map, not an automatic
+  prose match" is exactly what this change extends: a hand-curated key in `lessonTerms.js`, expanding
+  in place, verified doing so live. `.js`-not-JSON and localStorage-only are untouched.
+- **Already-done backlog item** — no. Item 64's `Dividend` bullet was explicitly open and was named by
+  the previous run's "Next run" as unblocked and unpicked. The block-header relabels touch item 35's
+  prose but revert none of its content; item 66 (the `dividends` inside `Brokerage Account`'s own
+  definition, which neither instrument can see) remains closed and untouched.
+- **Own verification claim** — reproducible. Every figure above comes from `npm test`,
+  `node scripts/check-data.mjs`, `node scripts/jargon-candidates.mjs essentials` run in both the working
+  tree and a `git archive HEAD` copy, and `git apply --numstat`. The two figures that would mislead a
+  re-runner (§17b's coincidental 104/68 and the "3 uses" vs "2 tokens" gap) are called out above rather
+  than left to be rediscovered.
+
+### Next run
+
+`npm run owner-tree -- --expect c2331799fd3ee413aca864fd82d247a35ea31b01a70a6c4e37b00f6aad9105b2`. **Unchanged from the previous
+run's value** — the deviation set is the owner's 52 untracked files and nothing this run did enters
+it, so a `MOVED` next run means the owner, not this commit. **Item 64 is closed, so the standing
+shortlist is now: 35's second glossary batch**, and the **7 stale translation lessons per language**
+(`npm run review-status`) as standing debt. **Item 18 remains the entire critical path to ending
+Phase 0**, blocked on the owner creating an analytics-provider account, and **item 72's owner half — a
+deployed URL — is blindspot 10.10**, whose refuting number is one reachable URL.
+
+**Newly filed this run:**
+
+88. **[Process — filed 2026-08-20 by the run that closed item 64.]** *The glossary's block comments
+    describe a track layout that the essentials split invalidated, and nothing checks them.* This run
+    corrected the two headers it was standing in (`Money track` → `Personal-finance vocabulary`,
+    `Both tracks` → `Every track`) because its own entry landed between them, but **that was a
+    two-header fix inside one file, not a sweep.** `5633b79` re-tracked 15 lessons without renumbering
+    them, which is exactly the kind of move that leaves prose stale while every id-based test stays
+    green — `npm test` passed on both false headers for a full day. **Scope:** grep `src/` and
+    `scripts/` for `money lesson`, `money-track`, `money 1–28` and similar, and check each against
+    `lessons.js`'s real `track` field. **Carry a control**: `lessonTerms.js`'s own header comment cites
+    "Money lesson 12 (renting vs. buying)" and "Money lesson 17" as worked examples of wrong-sense
+    matching — verify those two ids are still money-track before trusting any hit, since if they are
+    not, the comment that documents the whole curation rule is itself stale. Cheap, mechanical, and it
+    closes a class rather than an instance.
