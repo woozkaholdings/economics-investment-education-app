@@ -482,7 +482,18 @@ for the history. No open P1/P2 items.
       the job runs, `HEAD` starts ageing again for exactly the same reason, and nothing yet owns the
       rebuild-and-redeploy step. Treat the above as the worked example, not as the item closing.
 
-73. **[Process — filed 2026-08-17 by §9.3's first monthly audit, which deliberately proposed rather
+73. **✅ DONE 2026-08-20 (scheduled dev-agent). Both halves landed in one commit the moment the
+    owner's tree went clean, exactly as this item predicted — and for the eleventh item running a
+    premise broke, this time inside a wording the item told the run to move VERBATIM.**
+    **B-1's refuting number was measured against the wrong denominator.** It read "5× `src/` churn";
+    the finding it encodes is against `src/` **application code**, the row the audit's own §1 table
+    separates from content and locales. Against all of `src/` the ratio is **1.25× in the audit's own
+    window and 1.08× today** — the tripwire would have read "not refuted" in the window that produced
+    the finding. Against application code it is 10.2× then and **7.56× now**. Moved with the sentences
+    verbatim and only the denominator clause corrected, annotated in place. B-2 verbatim, B-3 with the
+    item-72 clause folded in as instructed. Now `LAUNCH_PLAN.md` §10.8/10.9/10.10; D3 is `CLAIMS.md`
+    row 16 and §9.1 says "16 claims". See the run log entry of this date.
+    **[Process — filed 2026-08-17 by §9.3's first monthly audit, which deliberately proposed rather
     than applied these.] Apply the audit's three §10 blindspots and its proposed claim D3.** Both halves
     are written out verbatim and ready to move; neither was applied, for two different reasons that
     should not be collapsed:
@@ -584,7 +595,14 @@ for the history. No open P1/P2 items.
     - **Honest priority: medium, and both halves unblock together the moment the owner's tree is clean.**
       Whoever picks it up gets both for one `npm test`.
 
-77. **[Process/Docs — filed 2026-08-18 by the run that found `npm test` red in the owner's working
+77. **✅ DONE 2026-08-19/20 by the owner's own commit `5633b79` ("Split essentials track out of
+    money; register it in readiness figures"), NOT by a dev-agent run — which is why it was still
+    sitting here marked blocked. Confirmed by measurement this run, not by reading the commit
+    subject:** `§2.5` now carries all three track rows (`essentials` 1–15, `money` 16–28, `economy`
+    29–40) with Role prose matching each row's own range, `LAUNCH_READINESS.md` §4.3 reads "split
+    across **money (13)** + **economy (12)** + **essentials (15)** tracks", and `npm test` is green
+    including `refresh-readiness.mjs --check`. Marked closed here so no future run re-picks it.
+    **[Process/Docs — filed 2026-08-18 by the run that found `npm test` red in the owner's working
     tree and traced it, rather than relaxing the guard that was reporting it.] The owner's redesign
     added a third lesson track (`essentials`), and the catalogue figures in `LAUNCH_READINESS.md`
     §4.3 and `LAUNCH_PLAN.md` §2.5 are two-track sentences that cannot describe it.** The guard is
@@ -11388,3 +11406,131 @@ translation lessons per language** created by the title rewrite (`npm run review
 and the open backlog is back to the older items: 78, 76, 74, 73, 77, 62, 64, 70, 71, 26. **Item 18
 remains the entire critical path to ending Phase 0**, still blocked on the owner creating an
 analytics-provider account.
+
+---
+
+## 2026-08-20 — the audit's three blindspots and claim D3 land; one "move it verbatim" instruction was wrong (item 73)
+
+**Scheduled dev-agent.** `npm run owner-tree -- --expect c2331799…` came back **UNMOVED (0 tracked
+modified, 52 untracked)** and `npm test` **green on the working tree** — so the single blocker that has
+held items 73, 77, 78, 75's second half, 64's `Dividend` and 35's second glossary batch is gone. Picked
+item 73, the largest of them: it moves §9.3's first monthly audit from a review file into the two live
+documents it was written for, and it is the plan's own core discipline (§9.1) rather than a feature.
+
+### Step 3.5 — re-measuring an item whose instruction is "do not paraphrase"
+
+Item 73 stages exact text to paste. That makes the premise "this text is still correct", which is a
+different thing from a headline number, so each staged claim was checked separately.
+
+**Held, all four:**
+
+- **`LAUNCH_PLAN.md` is owner-clean.** `owner-tree` UNMOVED, `git status --short` shows only my own two
+  files and the owner's 52 untracked `UIUX/`+`drafts/` paths.
+- **`CLAIMS.md` §D is unchanged since the audit.** `git cat-file blob 58db0e1:CLAIMS.md` vs `HEAD:` —
+  D1 and D2 diff **empty**, 15 claim rows at both ends.
+- **The §9.1 sentence still exists, found by text and not by line.** `grep -n "It holds all"` → line
+  554, and the sentence wraps (`It holds all\n15 claims`), which `check-claims.mjs:142`'s regex handles
+  with `\s*\n?\s*`. Item 73's warning not to trust its old `:529` citation was right: it is now 554.
+- **The check bites, proved by injection in a `git archive HEAD` copy — and the failure string
+  reproduces character-for-character** with the one item 73 recorded a day earlier:
+  `FAIL: LAUNCH_PLAN.md §9.1 says "It holds all 15 claims" but CLAIMS.md has 16. Replace "15 claims"
+  with "16 claims".`
+
+**The control caught my own instrument first, which is the reason to carry one.** The first injected
+probe row (`| ZZPROBE | … |`) produced `16 claims`… no. It produced **`15 claims`, PASS, exit 0** — the
+row parser is `^\|\s*([A-D]\d+)\s*\|`, so an id that is not `A`–`D` plus digits is invisible to it. A
+run that had read that as "the check does not bite" would have concluded the opposite of the truth.
+Re-injected as a well-formed `D3` row: exit 1, message above.
+
+**Broke, and it is the one the item said to move verbatim.** B-1's **refuting number** reads *"over any
+7-day window, `AGENT_LOG.md` churn exceeding 5× `src/` churn."* The finding it encodes is not that ratio.
+The audit's §1 table lists `src/` **application code** (1,964) as a row separate from `src/content/`
+(14,749) and `src/locales/` (89), and its headline sentence is "slightly over ten lines for every line of
+application code" — 20,061/1,964 = 10.2×. Measured both ways, with the audit's own window as the control:
+
+| Window | `AGENT_LOG.md` | all `src/` | `src/` app code | log:src | log:appcode |
+|---|---|---|---|---|---|
+| audit's own, `--since=2026-08-10 --until=2026-08-18` | 21,084 | 16,843 | 1,981 | **1.25×** | **10.6×** |
+| live 7 days, 2026-08-13→20 | 22,856 | 21,085 | 3,023 | **1.08×** | **7.56×** |
+
+**The control validates the instrument**: over the audit's window it reproduces the audit's table within
+5% on every row — 21,084 vs 20,061, content 14,773 vs 14,749, scripts 6,739 vs 6,614, app code 1,981 vs
+1,964, locales **89 vs 89 exactly** — the gap being commits that landed after the audit's own commit but
+inside its window. My first attempt at this control summed *all* of `src/` and returned 16,703 against
+the audit's 1,964; that looked like the audit being wrong and was me using a different denominator, which
+is the same mistake B-1's threshold makes.
+
+So the threshold as written **would have read "not refuted" in the very window that produced the
+finding**, and would go on doing so indefinitely, because lesson content dominates `src/` churn. Per
+`CLAIMS.md`'s own header rule — *write down why the old number was wrong before you knew the result* — the
+denominator is wrong independently of today's ratio, provable from the audit's table alone. And the
+correction is against interest: it leaves the blindspot **open** (7.56× > 5×), where the uncorrected
+number would have quietly closed it.
+
+### What shipped
+
+- **`LAUNCH_PLAN.md` §10 Open gains 10.8, 10.9, 10.10** — the audit's B-1, B-2, B-3. Every sentence is
+  the audit's, with three deliberate departures, each named rather than smuggled:
+  1. **10.8's refuting number** carries the corrected denominator plus an in-place italic note giving
+     both readings, both figures and why the change was made.
+  2. **10.10 folds in B-3's item-72 clause**, as item 73 instructed — verified first: the audit committed
+     `58db0e1` at **20:00:44** and item 72 committed `e53cc81` at **20:15:09** the same evening, so B-3
+     was 15 minutes stale when written.
+  3. **The audit's internal `(§1)`/`(§2)`/`(§3)` are now `(audit §1)` etc.**, with 10.8 linking the review
+     file. Left verbatim they would have read as `LAUNCH_PLAN.md` §1–§3 — a citation that silently
+     retargets on relocation, which is item 87's defect one document over.
+- **`reviews/2026-08-17-monthly-audit.md` is NOT edited.** It is a dated snapshot of what was found that
+  day; the live register carries the correction and says where it diverges. Editing a review to match a
+  later measurement is how a record stops being one.
+- **`CLAIMS.md` gains D3**, the sixteenth row, and §9.1's sentence now says "16 claims". The Claim /
+  Refuted-if / Check / Measurable cells are the staged text verbatim; the **Status cell appends five
+  measured instances since the row was staged** — items 75, 78, 79, 82 and 84 (filed count wrong by 80%),
+  plus this run's B-1 finding. §D's intro moves "both of the below" → "all three", and the numbered
+  "product changes these forced" list gains **step 3.5** as entry 4.
+- **D3 stays REFUTED with step 3.5 in place, and the row says why that is the right reading**: the step
+  moved *when* the correction happens, not *whether*. Item 78's premise broke at step 3.5 before it
+  edited anything — which is the entire gain, and it is invisible if the claim is softened to match.
+- **Item 77 marked closed.** It was shipped by the owner's own commit `5633b79`, not by a run, so it sat
+  here marked "⛔ BLOCKED, high priority". Confirmed by measurement — §2.5 carries three track rows with
+  matching Role prose, §4.3 reads the three-track sentence, `refresh-readiness.mjs --check` green.
+
+### Verified
+
+`npm test` → **exit 0** (`§9.1 claims register: 16 claims, 3 refuted, 0 past due`; readiness's 12
+generated figures still agree). `npm run build` → **exit 0**, ✓ built in 1.11s. Both run in the
+foreground with Node 20.18.1 from `scripts/bootstrap-node.sh`. No rendered UI changed this run — the two
+edited files are documentation and neither is imported by `src/` — so browser verification would have
+proved nothing and was not done; that is a scope statement, not a capability claim.
+
+### Adversarial self-check (step 5)
+
+**Blindspot register:** no regression. No Dalio reference (§10.2), no advice-adjacent language (§10.1 —
+the new text is about churn ratios and process, and states no view about any asset), no child-facing
+kids framing (§10.3). Dates were added, but `check-blindspot`'s §2.3 scan covers the 26 teaching-copy
+modules under `src/content/`/`src/locales/`, not planning documents, and it passes — a check date in a
+falsifiable claim is the artifact §9.1 requires, and is the opposite of a stale figure. **DECISIONS.md
+conflict:** none; nothing architectural moved. **Already-done item:** no — D3 has never existed
+(15 rows at `58db0e1` and at `HEAD`), and §10 had no entry above 10.7. **My own verification claims:**
+every number above is a pasted command output; the churn table is reproducible with
+`git log --since=… --until=… --numstat --format='' -- <path>` summing `$1+$2`, with the app-code row
+excluding `src/content/` and `src/locales/` by `grep -v`. **What the check caught:** nothing further —
+but the run's own two near-misses are above rather than omitted: the `ZZPROBE` injection that passed
+because the parser could not see it, and the first churn control that appeared to refute the audit when
+it was my denominator that differed. **And the first draft of the table above carried a
+fabricated `19,140` for the audit window's all-`src/` cell** — a number I had not measured, sitting
+between two that I had. Caught by the arithmetic check that content 14,773 + locales 89 + app code
+1,981 = **16,843**, not 19,140; the ratio is 1.25×, not 1.10× (1.10× is the 2026-08-09→17 window,
+a third window I had measured earlier and then mixed in). The conclusion is unchanged — 1.25× is
+still nowhere near 5× — but a self-check that only re-reads its own prose would not have found it.
+
+### Next run
+
+`npm run owner-tree -- --expect c2331799fd3ee413aca864fd82d247a35ea31b01a70a6c4e37b00f6aad9105b2` — the
+same fingerprint as before this run, since only tracked files moved and they are now committed.
+**The owner's tree is clean and the whole blocked cluster is open**: 78 (`src/utils/date.js` regression
+cover, `check-data.mjs` §-section), 75's second half (`src/components/ui.jsx:75`, already decided —
+apply it), 64's `Dividend`, 35's second glossary batch. Standing debt: the **7 stale translation lessons
+per language** from the title rewrite (`npm run review-status`). **Item 18 remains the entire critical
+path to ending Phase 0**, still blocked on the owner creating an analytics-provider account — and
+**item 72's owner half (choose a host, drag `dist/`, hold the URL) is now also a numbered blindspot,
+10.10**, whose refuting number is one reachable URL.

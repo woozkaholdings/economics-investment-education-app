@@ -552,7 +552,7 @@ When a claim is refuted, the response is a change to the product — **not a sof
 claim.** That is what makes this self-refuting rather than self-justifying.
 
 **The live register is [`CLAIMS.md`](CLAIMS.md)** (created 2026-08-16, backlog item 30). It holds all
-15 claims — §4.6's four monetization ones, the product-shape bets this build had made in code without
+16 claims — §4.6's four monetization ones, the product-shape bets this build had made in code without
 ever writing down, distribution, and the process claims — each with a refuting number, an ISO check
 date, and an honest note on whether it is measurable at all today. `npm test` fails on a malformed row
 and warns on a past-due check date; §9.3's audit question 4 reads that output.
@@ -639,6 +639,34 @@ content should be checked against them.
   project had already outgrown, and to use JSON the project had already rejected. A plan nobody
   reconciles against reality quietly becomes wrong. Reconcile this file at each monthly audit and
   record contradictions in `DECISIONS.md`.
+
+- **10.8 (new) Process mass exceeds product mass.** *Open, found 2026-08-17 by §9.3's first audit
+  ([`reviews/2026-08-17-monthly-audit.md`](reviews/2026-08-17-monthly-audit.md) §1).* The run log
+  churned 20,061 lines in eight days against 1,964 lines of application code. No individual entry is
+  unjustified; the aggregate is. **Refuting number:** over any 7-day window, `AGENT_LOG.md` churn
+  exceeding 5× the churn of `src/` **application code** — `src/` excluding `src/content/` and
+  `src/locales/`. **Check:** 2026-09-05.
+  *The audit wrote that threshold against all of `src/`, and the denominator was a transcription
+  error between the finding and its tripwire — the audit's own §1 table lists application code as a row
+  separate from content and locales precisely because content is the bulk of `src/` churn, and its
+  headline sentence is "ten lines for every line of application code". Corrected 2026-08-20 when the
+  entry moved here, with both readings measured rather than argued. Against **all of `src/`**: 1.25× in
+  the audit's own window, 1.08× today — so the threshold as written would have read "not refuted" in the
+  very window that produced the finding. Against **application code**: 10.2× then (the audit's own
+  20,061/1,964; that window re-measures to 10.6× today because it now contains commits that landed after
+  the audit did) and **7.56× now** — 22,856 log lines against 3,023 over 2026-08-13→20. The correction
+  leaves this blindspot open, which is the answer the uncorrected number would have hidden.*
+- **10.9 (new) The four non-English locales are held by sunk cost, not by evidence.** *Open, found
+  2026-08-17.* 77% of content bytes, 0% human review, invisible to every instrument (audit §2). The
+  owner's P-4 decision stands; what is missing is a date on which it gets re-argued rather than
+  re-assumed. **Check:** 2026-10-03, and the check is "has anything made A3's session-share half
+  measurable yet?"
+- **10.10 (new) Nothing owns "get this in front of one person."** *Open, found 2026-08-17.* Item 18
+  (analytics) is correctly named as the critical path in every run's output, but it is downstream of a
+  deploy, and no backlog item owns the deploy (audit §3) — though item 72, filed the same day 15
+  minutes after this was written, now owns the deploy half; what remains unowned is only the
+  click-through, which item 72 already names as owner-only. **Refuting number:** the trivial one — one
+  reachable URL, or one person who has opened the app. **Check:** 2026-09-05.
 
 ### Held — owner decisions, do not start
 

@@ -126,15 +126,16 @@ date is therefore a date to review *whether the gate has moved*, not a date to r
 ## D. Process claims
 
 The claims this project has actually got wrong. They are here because §9.1's discipline applies to how
-the work is done, not only to the product — and because both of the below were refuted by evidence
+the work is done, not only to the product — and because all three of the below were refuted by evidence
 already sitting in `AGENT_LOG.md`.
 
 | ID | Claim | Refuted if | Check | Measurable today | Status |
 |---|---|---|---|---|---|
 | D1 | A scheduled run's self-reported verification can be trusted at face value. | Any run's claimed verification is later found false. | 2026-09-05 | **Yes** | **REFUTED — twice.** (1) A run reported §10.1 "closed" when it was roughly half done. (2) Item 33 reported "all 74 correct, 0 remain" on 2026-08-16; the item-36 run the same day found **67 stale references still there**, because the measurement had been taken with the same blind patterns that caused the bug. |
 | D2 | A green `npm test` means the content property it checks actually holds. | A check passes while the property it names is violated. | 2026-09-05 | **Yes** | **REFUTED.** §16's ko/ja patterns matched 1 of 44 and 1 of 31 real references; the check reported a clean pass over 67 stale ones. A check that silently matches nothing is indistinguishable from a check that passes. |
+| D3 | A backlog item's premise can be trusted well enough to implement without re-measuring. | Any filed item's headline number is corrected on execution. | 2026-09-05 | **Yes** | **REFUTED — nine consecutive times (items 55→63), and three more times since the audit proposed this row: item 72 ("worse than filed"), item 62's F11 ("re-measuring found twice what F11 filed"), and item 73 itself — whose own "D3 is NOT blocked" premise was false.** Five further instances since the row was staged, all of them *after* step 3.5 made re-measurement mandatory: items 75, 78, 79, 82 and 84 (whose filed count was wrong by 80%), plus this row's own landing run, which found blindspot 10.8's refuting number measured against the wrong denominator. Step 3.5 changed *when* the correction happens, not *whether* — item 78's premise broke before it edited anything, which is the whole of the gain. |
 
-**The product changes these two forced, per §9.1's rule — recorded so neither is softened later:**
+**The product changes these three forced, per §9.1's rule — recorded so none is softened later:**
 
 1. The **adversarial self-check** step, now mandatory in the dev-agent task before any commit, with an
    explicit "would an independent reviewer re-running only your commands get your result?" clause.
@@ -145,6 +146,12 @@ already sitting in `AGENT_LOG.md`.
 3. **This file**, and `scripts/check-claims.mjs`'s past-due warning — the generalisation of both. D1
    and D2 are the same failure at different altitudes: a claim checked with an instrument that cannot
    see the failure it is looking for.
+4. **Step 3.5 of the dev-agent task — "re-measure the item's premise, with a control, before you
+   edit anything"** — added 2026-08-17 by the owner, between "pick the item" and "implement it".
+   Added after D3, and numbered 3.5 rather than by renumbering 4–7 because "step 5" means the
+   adversarial self-check in dozens of run-log entries. D3 stays **REFUTED** with the step in place,
+   and that is the correct reading: the step does not make filed premises true, it moves the
+   correction to before the edit, where it is free.
 
 **The standing lesson, stated once so it need not be rediscovered:** *a measurement taken with the
 instrument that has the blind spot cannot detect the blind spot.* When a check comes back clean,
