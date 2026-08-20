@@ -46,6 +46,13 @@ const CONTENT_LOADERS = {
   "money:ko": () => import("../content/lessonContent.money.ko.js"),
   "money:zh": () => import("../content/lessonContent.money.zh.js"),
   "money:ja": () => import("../content/lessonContent.money.ja.js"),
+  // `essentials` (lessons 1-15) split out of `money` 2026-08-18 — fifteen
+  // entries a reader on the main path now never downloads.
+  "essentials:en": () => import("../content/lessonContent.essentials.en.js"),
+  "essentials:es": () => import("../content/lessonContent.essentials.es.js"),
+  "essentials:ko": () => import("../content/lessonContent.essentials.ko.js"),
+  "essentials:zh": () => import("../content/lessonContent.essentials.zh.js"),
+  "essentials:ja": () => import("../content/lessonContent.essentials.ja.js"),
 };
 
 // Quiz text is split per language too (item 48) and loaded alongside the
@@ -83,6 +90,10 @@ export default function LessonReader({ t, lang, lessons, index, completedLessons
   const [content, setContent] = useState(null);
   const [celebrating, setCelebrating] = useState(false);
   const [prompt, setPrompt] = useState(null); // null | "asking" | "confirmed"
+  // The pre-lesson hook's guess, as an option index, or null if not yet
+  // guessed. State rather than a ref because the end-of-lesson check renders
+  // it back to the reader — that recall is the whole point of asking early.
+  const [hookChoice, setHookChoice] = useState(null);
   const headingRef = useRef(null);
 
   // §9.2 payload state. Refs, not state, on purpose: none of this is rendered,
@@ -111,6 +122,24 @@ export default function LessonReader({ t, lang, lessons, index, completedLessons
         : [],
     [lesson.id, quizText],
   );
+
+  // ── The pre-lesson hook ───────────────────────────────────────────────────
+  // One question, asked BEFORE the body, drawn from the lesson's own check
+  // rather than from new content — every one of the 40 lessons already has at
+  // least one question, so this needs no authoring and no fifth-language
+  // translation to reach full coverage.
+  //
+  // Why the first question and not all of them: this is a hook, not a pre-test.
+  // Two lessons carry two questions; asking both here would front-load the
+  // lesson with a quiz and blunt the one thing a hook does, which is make the
+  // reader curious about a single specific claim.
+  //
+  // Why only when the lesson is unfinished: the effect this is built on (a
+  // guess before instruction improves later recall, even when the guess is
+  // wrong) is about first exposure. On a revisit the reader already knows the
+  // answer, so the hook would be a quiz question with the lesson printed
+  // underneath — noise, and a spoiler for the check below.
+  // (Derived below, next to `done`, which it depends on.)
 
   // Fetch just this lesson's track content, in this reader's language — see
   // CONTENT_LOADERS above. `lang` is in the dependency list because switching
@@ -144,6 +173,7 @@ export default function LessonReader({ t, lang, lessons, index, completedLessons
     startedAtRef.current = monotonicNow();
     checkAnswersRef.current = [];
     quizFiredRef.current = false;
+    setHookChoice(null);
     track(EVENTS.LESSON_STARTED, { lessonId: lesson.id });
   }, [index]);
 
@@ -154,6 +184,13 @@ export default function LessonReader({ t, lang, lessons, index, completedLessons
   }, [celebrating]);
 
   const done = completedLessons.includes(lesson.id);
+  const hook = !done && check.length > 0 ? check[0] : null;
+
+  // Derived from the same flat, track-ordered list the path renders, so the
+  // two can't disagree — rather than re-deriving from TRACKS here.
+  const trackLessons = lessons.filter((l) => l.track === lesson.track);
+  const trackPosition = trackLessons.findIndex((l) => l.id === lesson.id) + 1;
+  const trackTotal = trackLessons.length;
   const hasNext = index < lessons.length - 1;
 
   const handleComplete = () => {
@@ -197,8 +234,13 @@ export default function LessonReader({ t, lang, lessons, index, completedLessons
 
       {/* Title block — the lesson's own emoji is content, so it stays. */}
       <div style={{ padding: `${space["3"]}px 0 ${space["5"]}px`, borderBottom: `1px solid ${line.hairline}`, marginBottom: space["5"] }}>
+        {/* Position WITHIN the track, not the raw id. The catalogue is three
+            independent curricula, so a global "Lesson 29 of 40" numbered a
+            sequence nobody reads in that order — and after the 2026-08-18
+            reordering it would open the app on "Lesson 29 of 40". Ids stay
+            stable for storage and deep links; this is the display. */}
         <Text variant="caption" color={ink.accent} style={{ fontWeight: 700, letterSpacing: "0.05em", textTransform: "uppercase" }}>
-          {t.lessonLabel} {lesson.id} {t.ofLabel} {lessons.length}
+          {t.lessonLabel} {trackPosition} {t.ofLabel} {trackTotal}
         </Text>
         <h1
           ref={headingRef}
@@ -218,6 +260,40 @@ export default function LessonReader({ t, lang, lessons, index, completedLessons
           {t.estMinTemplate.replace("{n}", lesson.minutes)}
         </Text>
       </div>
+
+      {/* HOOK — the guess that comes before the reading. Deliberately withholds
+          the verdict (`reveal={false}`): the lesson is the answer, and the
+          check at the bottom is where it lands. Nothing here touches the
+          spaced-repetition schedule — see `recordReview`'s absence below. */}
+      {hook && (
+        <Card style={{ marginBottom: space["5"] }}>
+          <Text variant="caption" color={ink.accent} style={{ textTransform: "uppercase", letterSpacing: "0.05em", fontWeight: 700 }}>
+            {t.hookTitle}
+          </Text>
+          <Text variant="small" color={ink.muted} style={{ margin: `${space["1"]}px 0 ${space["4"]}px` }}>
+            {t.hookIntro}
+          </Text>
+          <Question
+            question={hook.question}
+            lang={lang}
+            t={t}
+            reveal={false}
+            onAnswered={(_wasCorrect, choiceIndex) => {
+              setHookChoice(choiceIndex);
+              // NOT recordReview: a guess made before the lesson is not
+              // retrieval, and feeding it to the Leitner schedule would push a
+              // question the reader has never been taught into "seen and
+              // failed" — scheduling review of material that was never
+              // presented. The check below is the graded attempt.
+              track(EVENTS.QUIZ_ANSWERED, {
+                lessonId: lesson.id,
+                source: "lesson_hook",
+                correct: _wasCorrect,
+              });
+            }}
+          />
+        </Card>
+      )}
 
       {/* Body — one idea per section. `content` is fetched per-track (see
           TRACK_CONTENT_LOADERS above) and briefly null right after opening a
@@ -273,8 +349,18 @@ export default function LessonReader({ t, lang, lessons, index, completedLessons
           </Text>
           <Stack gap={space["5"]}>
             {check.map(({ question, index: qIndex }) => (
+              <div key={qIndex}>
+                {/* Close the loop the hook opened: name the guess back to the
+                    reader before they answer for real, so the comparison is
+                    theirs to make. Only on the question the hook actually
+                    asked — the second question in a two-question lesson was
+                    never guessed at. */}
+                {hook?.index === qIndex && hookChoice !== null && (
+                  <Text variant="small" color={ink.accent} style={{ marginBottom: space["2"], fontWeight: 600 }}>
+                    {t.hookRecallTemplate.replace("{answer}", question.opts[hookChoice])}
+                  </Text>
+                )}
               <Question
-                key={qIndex}
                 question={question}
                 lang={lang}
                 t={t}
@@ -297,6 +383,7 @@ export default function LessonReader({ t, lang, lessons, index, completedLessons
                   }
                 }}
               />
+              </div>
             ))}
           </Stack>
         </Card>

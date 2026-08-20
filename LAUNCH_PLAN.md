@@ -12,6 +12,27 @@ ahead of topical coverage or feature count.
 > *vehicle*, not the product — owner-clarified 2026-08-04. How the economy works is taught in
 > service of someone understanding money. Judge every screen and every lesson by whether a
 > motivated beginner, or an older child, can follow it without re-reading.
+
+> **⚠️ SUPERSEDED IN PART, 2026-08-18 (owner-directed).** The "vehicle, not the product" framing
+> above is **no longer the ordering rule**, and is kept because the 2026-08-07 track split and the
+> 2026-08-14 renumbering were both built to implement it — deleting it would leave those changes
+> unexplained. What replaces it:
+>
+> - **The economic machine is now the main path.** `TRACKS` order is `economy` → `money` →
+>   `essentials`, and a new install opens on the economy track.
+> - **The money track teaches judgment, not procedure.** It is now lessons 16-28 only — what counts
+>   as an asset, why a raise disappears, sunk cost, present bias. The owner's framing: *wise money
+>   lessons, not practical information throwing* — the insight that financial literacy is not taught
+>   in school, and that income from labour behaves differently from income from assets or a business.
+> - **The mechanics became optional.** Lessons 1-15 (budgeting, credit scores, 401(k), insurance,
+>   taxes) are the new `essentials` track: kept in full, accurate, and reachable, but no longer the
+>   first thing a new learner meets. Fifteen how-to lessons in front of the door was the problem.
+>
+> **What did NOT change:** the clarity standard in §3.0 is still the primary success criterion, the
+> audience is still kids-through-adults, and §10.1's no-advice rule binds the new material *harder* —
+> a hierarchy of income types must be taught as how those incomes **behave** (does it continue when
+> you stop working? how is it taxed? what risk does it carry?), never as a recommendation about what
+> a reader should go and earn. See DECISIONS.md's 2026-08-18 Update for the mechanics of the split.
 >
 > This widened audience pulls against §10.3, which deliberately made the kids material
 > **parent-facing** to avoid COPPA's child-directed classification. That tension is real and is
@@ -133,21 +154,26 @@ data", and the teaching surfaces (yield-curve shapes, QE/QT) remain deliberately
 
 ---
 
-## 2.5 Curriculum structure — two tracks
+## 2.5 Curriculum structure — three tracks
 
-*Added 2026-08-07 (owner-directed). Implements §0's "the economics is the vehicle, not the product."*
+*Added 2026-08-07 (owner-directed). Implements §0's "the economics is the vehicle, not the product."
+Split into three 2026-08-18 (owner-directed, interactive) — see the note at the top of this document
+and DECISIONS.md's 2026-08-18 Update for why: the money track was two curricula under one label, and
+the split makes each independently gated.*
 
-The catalogue is **two independent curricula**, not one sequential path:
+The catalogue is **three independent curricula**, not one sequential path:
 
 | Track | Key | Lessons | Role |
 |---|---|---|---|
-| **Your Money** | `money` | 1–28 (28) | The product. **Mechanics (1–15):** budgeting, emergency funds, compound interest, credit, investing, retirement, taxes, insurance, inflation, fees, housing, brokerage mechanics, estate planning. **Judgment (16–28):** the spending and investing decisions those mechanics don't settle — sunk cost, herd behaviour, anchoring, present bias, mental accounting, loss aversion. |
-| **How the Economy Works** | `economy` | 29–40 (12) | Optional context. Transactions, credit, productivity, the debt cycles, deleveraging, rates, the yield curve, QE/QT, phases, indicators. |
+| **How the Economy Works** | `economy` | 29–40 (12) | The main path. A new install opens here. Transactions, credit, productivity, the debt cycles, deleveraging, rates, the yield curve, QE/QT, phases, indicators. |
+| **Your Money** | `money` | 16–28 (13) | The product — judgment, not procedure. The spending and investing decisions mechanics don't settle: opportunity cost, lifestyle inflation, hedonic adaptation, sunk cost, herd behaviour, anchoring, confirmation bias, present bias, needs vs. wants, time horizon, mental accounting, loss aversion, the hot-hand fallacy. |
+| **Essentials** | `essentials` | 1–15 (15) | Optional mechanics — kept in full and unchanged, but gates nothing and nothing gates it. Budgeting, emergency funds, compound interest, credit scores, stocks/bonds/diversification, 401(k)/IRA basics, taxes, insurance, inflation, W-2 vs. 1099, investment fees, renting vs. buying, brokerage accounts, estate planning, credit reports vs. scores. |
 
-Both tracks have their first lesson unlocked from install; lessons gate sequentially **within** a
-track only. **Your Money leads** — a new install opens into "Budgeting," not "Transactions."
+All three tracks have their first lesson unlocked from install; lessons gate sequentially **within** a
+track only. **How the Economy Works leads** — a new install opens into "Transactions," not
+"Budgeting."
 
-**The two id ranges above are generated** by `npm run readiness` and checked on every `npm test`
+**The three id ranges above are generated** by `npm run readiness` and checked on every `npm test`
 (backlog item 55). They are guarded because they failed: this table still read `money 13-26` and
 `economy 1-12` for three days after the 2026-08-14 renumbering — the stale-id defect items 33 and 36
 chased through four passes of lesson prose and quiz explanations, sitting untouched in the section
@@ -571,9 +597,12 @@ it, build the smallest test this week. Never sit in ambiguity longer than a week
 - **10.1 Financial-advice adjacency** — *closed 2026-08-02.* All per-phase "best investments / avoid"
   language reworded to historical and descriptive framing. **Standing rule:** general and historical,
   never personal. A lawyer's hour before store launch (~$200–300) remains cheap insurance.
-  **Where the disclaimer renders — six screens plus the first-launch modal:** Learn, the lesson
-  reader, Practice, and Reference's Market signals, Sector performance and About sub-screens; the
-  modal is in `src/App.jsx`. This list is enforced by `scripts/check-blindspot.mjs`, not maintained by
+  **Where the disclaimer renders — seven screens plus the first-launch modal:** Learn, the lesson
+  reader, Practice, the Reference hub, and Reference's Market signals, Sector performance and About
+  sub-screens; the modal is in `src/App.jsx`. *The Reference hub was added 2026-08-17 with the
+  UIUX redesign: the tab strip it replaced always opened a sub-screen, so whether this screen carried
+  the disclaimer depended on which sub-screen the strip defaulted to — and the default, Glossary,
+  does not render one.* This list is enforced by `scripts/check-blindspot.mjs`, not maintained by
   hand — *the screen names it carried until 2026-08-17 were `Home` and `Markets`, deleted in the
   2026-08-04 rebuild, so for thirteen days the standing rule the per-run self-check names by number
   could not be checked as written.* Note that Sector performance renders the disclaimer string

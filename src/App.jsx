@@ -98,7 +98,13 @@ function PracticeCoachMark({ t, onOpenPractice, onDismiss }) {
       role="status"
       style={{
         position: "fixed", zIndex: 150,
-        bottom: "calc(64px + env(safe-area-inset-bottom, 0px) + 10px)",
+        // Clears the floating nav pill: its own 12px offset + the pill, plus a
+        // 10px gap. The pill is 56px at the default text size and **73px at
+        // the 1.3x scale** (measured in a live browser, not estimated), so the
+        // figure below is the large one — at 56 the coach mark sat on top of
+        // the nav for anyone using the largest text setting, which is the
+        // reader least able to absorb an overlap.
+        bottom: "calc(env(safe-area-inset-bottom, 0px) + 12px + 76px + 10px)",
         left: "50%", transform: "translateX(-50%)",
         width: "calc(100% - 32px)", maxWidth: 320,
       }}
@@ -290,7 +296,10 @@ export default function App() {
         id={`panel-${tab}`}
         role="tabpanel"
         aria-labelledby={`tab-${tab}`}
-        style={{ flex: 1, padding: `${space["4"]}px ${space["4"]}px 96px` }}
+        // Bottom padding clears the floating nav (12px offset + up to 73px of
+        // pill at the 1.3x text scale) with room to spare, so the last row of
+        // a screen is never parked under it.
+        style={{ flex: 1, padding: `${space["4"]}px ${space["4"]}px 112px` }}
       >
         {tab === "learn" && reading === null && (
           <Learn
@@ -324,17 +333,34 @@ export default function App() {
         )}
       </main>
 
-      {/* Bottom navigation */}
+      {/* Bottom navigation — a floating pill, from UIUX/ (Quizlet iOS home).
+          Quizlet detaches the bar from the screen edge and rounds it, and puts
+          a filled pill behind the active item rather than relying on colour
+          alone. Two reasons that is worth taking here: the edge-to-edge bar
+          read as part of the page on a dark canvas (its only separator was one
+          hairline against a near-identical fill), and the active state was
+          accent colour on a muted row — a distinction a colour-blind user gets
+          only from the icon's stroke weight.
+
+          Adapted: Quizlet floats a 3-item pill *with* a partially visible page
+          behind it. This keeps the full width the app already reserves so the
+          three labels stay legible at the 1.3x font scale, and the safe-area
+          inset is now added to the offset rather than used as padding, so the
+          pill clears the home indicator instead of sitting on it. */}
       <nav
         role="tablist"
         aria-label={t.appTitle}
         style={{
-          position: "fixed", bottom: 0, left: "50%", transform: "translateX(-50%)",
-          width: "100%", maxWidth: APP_MAX_WIDTH,
+          position: "fixed",
+          bottom: "calc(env(safe-area-inset-bottom, 0px) + 12px)",
+          left: "50%", transform: "translateX(-50%)",
+          width: `calc(100% - ${space["4"] * 2}px)`, maxWidth: APP_MAX_WIDTH - space["4"] * 2,
           display: "flex", zIndex: 100,
           background: surface.card,
-          borderTop: `1px solid ${line.hairline}`,
-          paddingBottom: "env(safe-area-inset-bottom, 0px)",
+          border: `1px solid ${line.hairline}`,
+          borderRadius: radius.full,
+          boxShadow: shadow.overlay,
+          padding: space["1"],
         }}
       >
         {tabs.map((item, index) => {
@@ -352,13 +378,16 @@ export default function App() {
               onClick={() => goToTab(item.key)}
               onKeyDown={(e) => onTabKeyDown(e, index)}
               style={{
-                flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: space["1"],
-                padding: `${space["2"]}px 0 ${space["3"]}px`,
-                border: "none", background: "transparent", cursor: "pointer",
+                flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 2,
+                padding: `${space["2"]}px 0`,
+                border: "none", cursor: "pointer",
+                borderRadius: radius.full,
+                background: active ? surface.accentWash : "transparent",
                 color: active ? ink.accent : ink.muted,
+                fontFamily: "inherit",
               }}
             >
-              <Icon name={item.icon} size="1.4rem" strokeWidth={active ? 2.1 : 1.7} />
+              <Icon name={item.icon} size="1.35rem" strokeWidth={active ? 2.2 : 1.7} />
               <span style={{ fontSize: "0.6875rem", fontWeight: active ? 700 : 500 }}>{item.label}</span>
             </button>
           );

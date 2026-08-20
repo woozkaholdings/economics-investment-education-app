@@ -57,7 +57,7 @@ import { dirname, join } from "node:path";
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const LOG = join(ROOT, "AGENT_LOG.md");
 const INSTRUMENT = join(ROOT, "scripts", "jargon-candidates.mjs");
-const MODES = ["money", "economy", "all", "glossary"];
+const MODES = ["money", "economy", "essentials", "all", "glossary"];
 
 let failures = 0;
 const fail = (msg) => {

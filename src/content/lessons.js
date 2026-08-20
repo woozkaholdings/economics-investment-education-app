@@ -10,17 +10,42 @@
 // prototype; the money lessons were appended one per run chasing the §4.3
 // lesson-count gate), never a teaching decision.
 //
-// `money` leads because it is the product (LAUNCH_PLAN.md §0: "how the
-// economy works is the *vehicle*, not the product"). `economy` is optional
-// context. Lessons unlock sequentially WITHIN a track and not across them.
+// ── 2026-08-18 (owner-directed): three tracks, and `economy` now leads. ──
 //
-// Order here is display order. Every lesson must declare a `track` matching
-// one of these keys — `npm test` fails otherwise, so a future run adding a
-// lesson can't silently leave it out of both tracks.
+// This REVERSES the 2026-08-07 ordering and the §0 clarification it
+// implemented ("how the economy works is the *vehicle*, not the product",
+// owner-clarified 2026-08-04). The owner's current direction is the opposite:
+// the economic machine is the main path, and the money track is where
+// *judgment* is taught — not a how-to manual. LAUNCH_PLAN.md §0 and
+// DECISIONS.md have been updated to say so; if this comment and those
+// documents ever disagree again, the documents are the record and this
+// ordering is the thing to re-derive.
+//
+// The money track was split rather than reordered, because it was really two
+// curricula wearing one label:
+//   * `money`      — lessons 16-28, the judgment half. "Does it put money in
+//                    your pocket, or take it out?", lifestyle inflation, sunk
+//                    cost, present bias. This is the product.
+//   * `essentials` — lessons 1-15, the mechanics half. Budgeting, credit
+//                    scores, 401(k), insurance. Accurate and worth keeping,
+//                    but it is reference material, and putting fifteen
+//                    how-to lessons in front of a new learner was the
+//                    "practical information throwing" this split removes.
+//
+// Lessons unlock sequentially WITHIN a track and not across them, so making
+// `essentials` its own track is also what makes it genuinely optional: it no
+// longer gates anything, and nothing gates it.
+//
+// Order here is display order, and it is the ONLY thing that decides it —
+// lesson ids are deliberately not aligned to it (see `lessonsByTrack`).
+// Every lesson must declare a `track` matching one of these keys — `npm test`
+// fails otherwise, so a future run adding a lesson can't silently leave it
+// out of every track.
 // ═══════════════════════════════════════════════════════════════════════════
 export const TRACKS = [
-  { key: "money", labelKey: "trackMoney", blurbKey: "trackMoneyBlurb" },
   { key: "economy", labelKey: "trackEconomy", blurbKey: "trackEconomyBlurb" },
+  { key: "money", labelKey: "trackMoney", blurbKey: "trackMoneyBlurb" },
+  { key: "essentials", labelKey: "trackEssentials", blurbKey: "trackEssentialsBlurb" },
 ];
 
 /** Lessons belonging to `trackKey`, in id order. */
@@ -29,14 +54,29 @@ export function lessonsInTrack(trackKey, all = lessons) {
 }
 
 /**
- * Every lesson, reordered so whole tracks run in TRACKS order (money first).
- * The app uses this as its lesson list, so a lesson's position in it is also
- * its position on the Learn path.
+ * Every lesson, reordered so whole tracks run in TRACKS order (economy first
+ * since 2026-08-18). The app uses this as its lesson list, so a lesson's
+ * position in it is also its position on the Learn path.
  *
- * Ids were renumbered 2026-08-14 (backlog item 22) to match this order: money
- * is 1-28, economy is 29-40 — previously economy held 1-12 and money 13-40,
- * an artifact of build order (see the TRACKS comment above) that made a new
- * learner's first lesson display as "Lesson 13". The remap was scripted
+ * ── Ids no longer match display order, ON PURPOSE. ──
+ * Ids are stable identifiers: they key persisted progress
+ * (`ecycles_completed_lessons`), `lessonContent.*.js`, `quizMeta`'s `lesson`
+ * field, `LESSON_VISUALS`, the translation-review ledger, and every
+ * `#/lesson/N` deep link ever shared. Display order is a product decision that
+ * has now changed twice. Tying the two together is what made the 2026-08-14
+ * renumbering necessary, and it cost a scripted remap across seven surfaces
+ * plus a client-side migration for installed users.
+ *
+ * So the 2026-08-18 reordering did NOT renumber. The visible consequence is
+ * that a learner's first lesson has id 29 — which is exactly the "Lesson 13"
+ * complaint that drove the last renumber, and the reason the reader now shows
+ * a lesson's position WITHIN ITS TRACK ("Lesson 1 of 12") rather than its raw
+ * id. Two independent curricula never had a meaningful shared numbering; the
+ * global "Lesson 29 of 40" was wrong before this change too, just less
+ * visibly. Do not "fix" this by renumbering again.
+ *
+ * Historical note — the 2026-08-14 renumbering (backlog item 22) set money to
+ * 1-28 and economy to 29-40, replacing an earlier build-order layout. The remap was scripted
  * (`.renumber-id-map.json`-style old→new table, not hand-edited) and covers
  * every place an id is stored or cited: this file's `id` field, `quizData.js`'s
  * `lesson` field, both `lessonContent.*.js` files' top-level keys,
@@ -156,77 +196,77 @@ export const lessons = [
     subtitle: {"en":"A classic summary — simple but powerful","es":"Un resumen clásico — simple pero poderoso","ko":"고전적인 요약 — 간단하지만 강력합니다","zh":"经典总结——简单但强大","ja":"古典的な要約 — シンプルだが強力"},
   },
   {
-    id: 1, track: "money", icon: "💵", color: "#0891b2", minutes: 3,
+    id: 1, track: "essentials", icon: "💵", color: "#0891b2", minutes: 3,
     title: {"en":"Budgeting: Know Where Your Money Goes","es":"Presupuesto: Sabe A Dónde Va Tu Dinero","ko":"예산 관리: 돈이 어디로 가는지 알기","zh":"预算：知道钱花去了哪里","ja":"予算管理：お金の流れを知る"},
     subtitle: {"en":"The foundation everything else builds on","es":"La base sobre la que se construye todo lo demás","ko":"다른 모든 것의 토대가 되는 기초","zh":"一切的基础","ja":"他のすべての土台となるもの"},
   },
   {
-    id: 2, track: "money", icon: "🐷", color: "#ca8a04", minutes: 3,
+    id: 2, track: "essentials", icon: "🐷", color: "#ca8a04", minutes: 3,
     title: {"en":"Emergency Funds: Your Financial Shock Absorber","es":"Fondo de Emergencia: Tu Amortiguador Financiero","ko":"비상금: 재정적 충격 완화 장치","zh":"应急基金：你的财务缓冲垫","ja":"緊急資金：あなたの経済的ショック吸収装置"},
     subtitle: {"en":"Why 'save some money' isn't specific enough","es":"Por qué 'ahorra algo de dinero' no es suficientemente específico","ko":"'돈을 좀 모아라'가 왜 충분히 구체적이지 않은가","zh":"为什么“存点钱”这个建议还不够具体","ja":"「お金を貯めよう」だけでは不十分な理由"},
   },
   {
-    id: 3, track: "money", icon: "🌱", color: "#16a34a", minutes: 3,
+    id: 3, track: "essentials", icon: "🌱", color: "#16a34a", minutes: 3,
     title: {"en":"Compound Interest: Money That Makes Money","es":"Interés Compuesto: Dinero Que Genera Dinero","ko":"복리: 돈이 돈을 버는 원리","zh":"复利：让钱生钱","ja":"複利：お金がお金を生む仕組み"},
     subtitle: {"en":"Why starting early matters more than starting big","es":"Por qué empezar temprano importa más que empezar en grande","ko":"크게 시작하는 것보다 일찍 시작하는 것이 왜 더 중요한가","zh":"为什么早开始比多投入更重要","ja":"早く始めることが、大きく始めることより重要な理由"},
   },
   {
-    id: 4, track: "money", icon: "🪪", color: "#ea580c", minutes: 3,
+    id: 4, track: "essentials", icon: "🪪", color: "#ea580c", minutes: 3,
     title: {"en":"Credit Scores: Your Financial Reputation","es":"Puntaje de Crédito: Tu Reputación Financiera","ko":"신용점수: 당신의 금융 신용도","zh":"信用分数：你的财务信誉","ja":"クレジットスコア：あなたの金融上の信用"},
     subtitle: {"en":"A number that follows you into almost every big purchase","es":"Un número que te acompaña en casi cada compra grande","ko":"거의 모든 큰 구매를 따라다니는 숫자","zh":"几乎跟随你每一次大额购买的数字","ja":"ほぼすべての大きな買い物についてくる数字"},
   },
   {
-    id: 5, track: "money", icon: "🧺", color: "#6d28d9", minutes: 3,
+    id: 5, track: "essentials", icon: "🧺", color: "#6d28d9", minutes: 3,
     title: {"en":"Stocks, Bonds & Diversification","es":"Acciones, Bonos y Diversificación","ko":"주식, 채권, 그리고 분산투자","zh":"股票、债券与分散投资","ja":"株式・債券・分散投資"},
     subtitle: {"en":"The building blocks of a portfolio, in plain language","es":"Los bloques básicos de una cartera, en lenguaje sencillo","ko":"쉬운 말로 풀어본 포트폴리오의 기본 구성 요소","zh":"用简单的话讲清楚投资组合的基本构件","ja":"ポートフォリオの基本要素を、わかりやすく"},
   },
   {
-    id: 6, track: "money", icon: "🏖️", color: "#0d9488", minutes: 3,
+    id: 6, track: "essentials", icon: "🏖️", color: "#0d9488", minutes: 3,
     title: {"en":"Retirement Accounts: 401(k) and IRA Basics","es":"Cuentas de Jubilación: Fundamentos del 401(k) y el IRA","ko":"은퇴 계좌: 401(k)와 IRA 기초","zh":"退休账户：401(k)与IRA基础","ja":"退職口座：401(k)とIRAの基本"},
     subtitle: {"en":"Ordinary accounts with an unusual perk: the tax rules","es":"Cuentas comunes con una ventaja poco común: las reglas fiscales","ko":"특별한 혜택이 있는 평범한 계좌: 세금 규칙","zh":"普通账户里藏着不普通的福利：税收规则","ja":"普通の口座に隠された特典：税制優遇"},
   },
   {
-    id: 7, track: "money", icon: "🧾", color: "#57534e", minutes: 4,
+    id: 7, track: "essentials", icon: "🧾", color: "#57534e", minutes: 4,
     title: {"en":"Taxes: How Your Paycheck Is Actually Taxed","es":"Impuestos: Cómo Se Grava Realmente Tu Sueldo","ko":"세금: 급여가 실제로 과세되는 방식","zh":"税收：你的薪水究竟是怎么被征税的","ja":"税金：あなたの給料は実際どう課税されるか"},
     subtitle: {"en":"Why a raise can never shrink your take-home pay","es":"Por qué un aumento nunca puede reducir tu sueldo neto","ko":"왜 급여 인상이 실수령액을 줄일 수 없는가","zh":"为什么加薪永远不会让到手工资变少","ja":"昇給が手取りを減らすことは絶対にない理由"},
   },
   {
-    id: 8, track: "money", icon: "🛡️", color: "#0369a1", minutes: 4,
+    id: 8, track: "essentials", icon: "🛡️", color: "#0369a1", minutes: 4,
     title: {"en":"Insurance: Trading a Small Certain Cost for Protection from a Large Uncertain One","es":"Seguros: Cambiar un Costo Pequeño y Seguro por Protección Ante uno Grande e Incierto","ko":"보험: 작고 확실한 비용으로 크고 불확실한 손실을 막다","zh":"保险：用小额确定成本换取对大额不确定损失的保护","ja":"保険：小さく確実な費用で、大きく不確実な損失から身を守る"},
     subtitle: {"en":"Why paying a little every month can make sense even if you never file a claim","es":"Por qué pagar un poco cada mes puede tener sentido aunque nunca hagas un reclamo","ko":"한 번도 보험금을 청구하지 않아도 매달 조금씩 내는 것이 합리적인 이유","zh":"为什么即使从不理赔，每月支付一点钱也可能是合理的","ja":"一度も保険金を請求しなくても、毎月少し払う意味がある理由"},
   },
   {
-    id: 9, track: "money", icon: "🛒", color: "#a21caf", minutes: 3,
+    id: 9, track: "essentials", icon: "🛒", color: "#a21caf", minutes: 3,
     title: {"en":"Inflation and Your Money: Why a Growing Balance Isn't Always Growing Wealth","es":"La Inflación y Tu Dinero: Por Qué un Saldo Creciente No Siempre Es Más Riqueza","ko":"인플레이션과 내 돈: 잔고가 늘어도 부가 늘지 않을 수 있는 이유","zh":"通胀与你的钱：余额增长不一定等于财富增长","ja":"インフレとあなたのお金：残高が増えても富が増えるとは限らない理由"},
     subtitle: {"en":"The difference between the number in your account and what it can actually buy","es":"La diferencia entre el número en tu cuenta y lo que realmente puede comprar","ko":"계좌의 숫자와 그것이 실제로 살 수 있는 것의 차이","zh":"账户里的数字和它实际能买到的东西之间的差别","ja":"口座の数字と、それが実際に買えるものとの違い"},
   },
   {
-    id: 10, track: "money", icon: "📋", color: "#78350f", minutes: 3,
+    id: 10, track: "essentials", icon: "📋", color: "#78350f", minutes: 3,
     title: {"en":"W-2 vs. 1099: Why Your Tax Bill Changes With How You're Paid","es":"W-2 vs. 1099: Por Qué Tu Factura de Impuestos Cambia Según Cómo Te Pagan","ko":"W-2 vs. 1099: 받는 방식에 따라 세금 부담이 달라지는 이유","zh":"W-2与1099：为什么你的纳税方式取决于你如何被支付","ja":"W-2対1099：支払われ方によって税金が変わる理由"},
     subtitle: {"en":"The same income can owe very different taxes depending on whether you're an employee or a contractor","es":"El mismo ingreso puede deber impuestos muy distintos según seas empleado o contratista","ko":"같은 소득이라도 직원인지 계약자인지에 따라 세금 부담이 크게 달라질 수 있습니다","zh":"同样的收入，作为雇员和作为承包商所欠的税可能大不相同","ja":"同じ収入でも、従業員か契約者かによって税額は大きく変わり得る"},
   },
   {
-    id: 11, track: "money", icon: "💸", color: "#be123c", minutes: 3,
+    id: 11, track: "essentials", icon: "💸", color: "#be123c", minutes: 3,
     title: {"en":"Investment Fees: The Cost You Don't See on a Bill","es":"Comisiones de Inversión: El Costo Que No Ves en una Factura","ko":"투자 수수료: 청구서에 안 보이는 비용","zh":"投资费用：账单上看不到的成本","ja":"投資手数料：請求書に現れないコスト"},
     subtitle: {"en":"A 1% annual fee sounds tiny, but it compounds against you the same way interest compounds for you","es":"Una comisión anual del 1% suena pequeña, pero se compone en tu contra igual que el interés se compone a tu favor","ko":"연 1% 수수료는 작아 보이지만, 이자가 당신에게 유리하게 복리로 쌓이듯 수수료도 당신에게 불리하게 복리로 쌓입니다","zh":"年化1%的费用听起来很小，但它会像复利那样不利地累积，正如利息会像复利那样对你有利地累积","ja":"年1%の手数料は小さく聞こえますが、利息があなたに有利に複利で積み上がるのと同じように、手数料もあなたに不利に複利で積み上がります"},
   },
   {
-    id: 12, track: "money", icon: "🏠", color: "#334155", minutes: 4,
+    id: 12, track: "essentials", icon: "🏠", color: "#334155", minutes: 4,
     title: {"en":"Renting vs. Buying: The Real Trade-offs of a Home","es":"Alquilar vs. Comprar: Las Verdaderas Disyuntivas de una Vivienda","ko":"임대 vs. 매수: 주택의 진짜 트레이드오프","zh":"租房与购房：住房的真实权衡","ja":"賃貸か購入か：住宅の本当のトレードオフ"},
     subtitle: {"en":"A mortgage payment and a rent payment look similar, but they buy very different things","es":"Un pago de hipoteca y un pago de alquiler parecen similares, pero compran cosas muy distintas","ko":"주택담보대출 상환금과 월세는 비슷해 보이지만, 사는 것은 완전히 다릅니다","zh":"房贷月供和房租看起来相似，但它们买到的东西却大不相同","ja":"住宅ローンの返済と家賃の支払いは似ているようで、買っているものはまったく違います"},
   },
   {
-    id: 13, track: "money", icon: "💼", color: "#0e7490", minutes: 5,
+    id: 13, track: "essentials", icon: "💼", color: "#0e7490", minutes: 5,
     title: {"en":"Brokerage Accounts: How Investing Actually Works Mechanically","es":"Cuentas de Corretaje: Cómo Funciona Realmente Invertir","ko":"증권 계좌: 투자가 실제로 작동하는 방식","zh":"券商账户：投资到底是如何运作的","ja":"証券口座：投資は実際どう機能するのか"},
     subtitle: {"en":"A brokerage account is a container, not an investment by itself","es":"Una cuenta de corretaje es un contenedor, no una inversión en sí misma","ko":"증권 계좌는 그 자체로 투자가 아니라 담는 그릇일 뿐입니다","zh":"券商账户只是一个容器，本身并不是投资","ja":"証券口座はそれ自体が投資ではなく、あくまで入れ物です"},
   },
   {
-    id: 14, track: "money", icon: "📜", color: "#4c1d95", minutes: 3,
+    id: 14, track: "essentials", icon: "📜", color: "#4c1d95", minutes: 3,
     title: {"en":"Estate Planning Basics: Wills and Beneficiary Designations","es":"Fundamentos de Planificación Patrimonial: Testamentos y Designaciones de Beneficiario","ko":"상속 계획의 기초: 유언장과 수익자 지정","zh":"遗产规划基础：遗嘱与受益人指定","ja":"遺産計画の基本：遺言書と受取人指定"},
     subtitle: {"en":"A will decides less than most people think — beneficiary forms often decide more","es":"Un testamento decide menos de lo que la mayoría piensa — los formularios de beneficiario suelen decidir más","ko":"유언장이 결정하는 것은 생각보다 적고, 수익자 양식이 더 많이 결정합니다","zh":"遗嘱能决定的比大多数人想的要少——受益人表格往往决定得更多","ja":"遺言書が決めることは多くの人が思うより少なく、受取人フォームの方が決めることが多い"},
   },
   {
-    id: 15, track: "money", icon: "📇", color: "#7c2d12", minutes: 4,
+    id: 15, track: "essentials", icon: "📇", color: "#7c2d12", minutes: 4,
     title: {"en":"Credit Reports vs. Credit Scores: What's the Difference?","es":"Informes de Crédito vs. Puntajes de Crédito: ¿Cuál es la Diferencia?","ko":"신용 보고서와 신용 점수: 무엇이 다른가?","zh":"信用报告与信用评分：有什么区别？","ja":"信用報告書と信用スコア：その違いとは？"},
     subtitle: {"en":"A report is a record; a score is a number calculated from it — and that means everyone has more than one score","es":"Un informe es un registro; un puntaje es un número calculado a partir de él — lo que significa que todos tienen más de un puntaje","ko":"보고서는 기록이고 점수는 그것으로 계산된 숫자입니다 — 즉 누구나 하나 이상의 점수를 가집니다","zh":"报告是记录，评分是根据记录计算出的数字——这意味着每个人都不止一个信用评分","ja":"報告書は記録であり、スコアはそこから計算される数字です——つまり誰もが複数のスコアを持っています"},
   },

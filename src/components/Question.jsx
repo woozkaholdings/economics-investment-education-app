@@ -21,15 +21,21 @@ import Icon from "./Icon.jsx";
 import { Note, Text } from "./ui.jsx";
 import { fill, ink, line, radius, space, surface } from "../theme.js";
 
-export default function Question({ question, t, onAnswered, autoFocusHeading = false }) {
+export default function Question({ question, t, onAnswered, autoFocusHeading = false, reveal = true }) {
   const [choice, setChoice] = useState(null);
-  const revealed = choice !== null;
+  const answered = choice !== null;
+  // Answering and being told the answer are two different things. The
+  // pre-lesson hook (`reveal={false}`) takes a guess and deliberately withholds
+  // the verdict: disclosing it there would answer the question the lesson is
+  // about to answer, and would leave the end-of-lesson check re-asking
+  // something the reader was just told. See LessonReader's HOOK block.
+  const disclosed = answered && reveal;
   const correct = choice === question.answer;
 
   const choose = (i) => {
-    if (revealed) return;                 // one answer per question
+    if (answered) return;                 // one answer per question
     setChoice(i);
-    onAnswered?.(i === question.answer);
+    onAnswered?.(i === question.answer, i);
   };
 
   return (
@@ -49,10 +55,21 @@ export default function Question({ question, t, onAnswered, autoFocusHeading = f
           const isRight = i === question.answer;
           const picked = i === choice;
 
-          // Once revealed, mark the right answer and the learner's wrong pick;
-          // leave the others neutral so attention goes to the two that matter.
-          const border = !revealed ? line.strong : isRight ? fill.ok : picked ? fill.bad : line.hairline;
-          const bg = !revealed ? surface.card : isRight ? surface.okWash : picked ? surface.badWash : surface.card;
+          // Three states, not two. Unanswered: neutral. Answered-and-disclosed:
+          // mark the right answer and the learner's wrong pick, leaving the
+          // others neutral so attention goes to the two that matter.
+          // Answered-but-withheld (the hook): mark only what they picked, in
+          // accent rather than ok/bad — the colour must not leak a verdict.
+          const border = !answered
+            ? line.strong
+            : !disclosed
+              ? (picked ? fill.accent : line.hairline)
+              : isRight ? fill.ok : picked ? fill.bad : line.hairline;
+          const bg = !answered
+            ? surface.card
+            : !disclosed
+              ? (picked ? surface.accentWash : surface.card)
+              : isRight ? surface.okWash : picked ? surface.badWash : surface.card;
 
           return (
             <button
@@ -60,7 +77,7 @@ export default function Question({ question, t, onAnswered, autoFocusHeading = f
               type="button"
               role="radio"
               aria-checked={picked}
-              disabled={revealed}
+              disabled={answered}
               onClick={() => choose(i)}
               style={{
                 display: "flex", alignItems: "center", gap: space["3"],
@@ -72,12 +89,19 @@ export default function Question({ question, t, onAnswered, autoFocusHeading = f
                 background: bg,
                 color: ink.body,
                 fontSize: "1rem",
-                fontWeight: revealed && isRight ? 600 : 400,
-                cursor: revealed ? "default" : "pointer",
+                fontWeight: disclosed && isRight ? 600 : 400,
+                cursor: answered ? "default" : "pointer",
               }}
             >
               <span style={{ flex: 1 }}>{option}</span>
-              {revealed && isRight && (
+              {/* Withheld mode marks the pick without judging it, so the row
+                  still reads as "this is what you chose" to a screen reader. */}
+              {answered && !disclosed && picked && (
+                <span style={{ color: ink.accent, fontSize: "0.8125rem", fontWeight: 600 }}>
+                  {t.hookYourGuess}
+                </span>
+              )}
+              {disclosed && isRight && (
                 <span style={{ color: ink.ok, display: "flex" }}>
                   <Icon name="check" size="1.1em" strokeWidth={2.5} />
                 </span>
@@ -86,7 +110,7 @@ export default function Question({ question, t, onAnswered, autoFocusHeading = f
                   not just a colour shift — so "what I picked" and "what was
                   right" are both legible at a glance, not one marked and one
                   merely tinted. */}
-              {revealed && !isRight && picked && (
+              {disclosed && !isRight && picked && (
                 <span style={{ color: ink.bad, display: "flex" }}>
                   <Icon name="x" size="1.1em" strokeWidth={2.5} />
                 </span>
@@ -96,15 +120,23 @@ export default function Question({ question, t, onAnswered, autoFocusHeading = f
         })}
       </div>
 
-      {revealed && (
+      {answered && (
         <div aria-live="polite" style={{ marginTop: space["3"] }}>
-          <Note
-            tone={correct ? "ok" : "bad"}
-            label={correct ? t.quizCorrect : t.quizWrong}
-            icon={correct ? "check" : "info"}
-          >
-            {question.explain}
-          </Note>
+          {disclosed ? (
+            <Note
+              tone={correct ? "ok" : "bad"}
+              label={correct ? t.quizCorrect : t.quizWrong}
+              icon={correct ? "check" : "info"}
+            >
+              {question.explain}
+            </Note>
+          ) : (
+            // The curiosity gap, held open on purpose. No verdict, and
+            // explicitly no `question.explain` — that string names the answer.
+            <Note tone="accent" label={t.hookHeldLabel} icon="info">
+              {t.hookHeldBody}
+            </Note>
+          )}
         </div>
       )}
     </div>

@@ -3036,8 +3036,16 @@ if (keyedGroupsChecked < 4) {
       ["12-now-17", 1, "historical", "part of the `23→12-now-17` cross-reference audit, itself a pre-renumbering id"],
       ["13→26", 1, "historical", "the 'cosmetic seam' the renumbering removed — money as it then ran"],
       ["1→12", 1, "historical", "the same sentence's economy half"],
-      ["1-28", 1, "live", "money"],
-      ["29-40", 1, "live", "economy"],
+      // Reclassified 2026-08-18: the owner-directed three-track split moved
+      // money to its judgment half and gave the mechanics half its own key, so
+      // "1-28" stopped describing a live track and became the record of what
+      // money was between the 2026-08-14 renumbering and that split.
+      ["1-28", 1, "historical", "the money range between the 2026-08-14 renumbering and the 2026-08-18 three-track split"],
+      ["16-28", 1, "live", "money"],
+      ["1-15", 1, "live", "essentials"],
+      // Two mentions since 2026-08-18: the original track table, plus the new
+      // dated Update restating economy as the range that did NOT move.
+      ["29-40", 2, "live", "economy"],
       ["13-40", 1, "historical", "the money range immediately before the 2026-08-14 remap"],
       ["1-40", 1, "historical", "the remap table's domain, not a track — `bijective over 1-40`"],
     ];

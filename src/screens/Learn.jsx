@@ -9,8 +9,8 @@
 
 import { TRACKS } from "../content/lessons.js";
 import Icon from "../components/Icon.jsx";
-import { Button, Card, Disclaimer, ProgressBar, Text } from "../components/ui.jsx";
-import { fill, font, ink, line, radius, space, surface } from "../theme.js";
+import { Disclaimer, ResumeCard, Text } from "../components/ui.jsx";
+import { fill, font, ink, line, radius, shadow, space, surface } from "../theme.js";
 
 export default function Learn({ t, lang, lessons, completedLessons, isUnlocked, streak, openLesson }) {
   const done = completedLessons.length;
@@ -51,37 +51,43 @@ export default function Learn({ t, lang, lessons, completedLessons, isUnlocked, 
         </Text>
       </div>
 
-      <Card style={{ marginBottom: space["4"] }}>
-        <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", marginBottom: space["3"] }}>
-          <Text variant="caption" color={ink.muted} style={{ textTransform: "uppercase", letterSpacing: "0.05em", fontWeight: 700 }}>
-            {t.progressLabel}
-          </Text>
-          <Text variant="small" color={ink.strong} style={{ fontWeight: 700 }}>
-            {done} / {total}
+      {/* Streak reads as a chip rather than a line inside the progress card:
+          Quizlet gives the flame its own standing element, and inside the card
+          it competed with the thing the card is now for — naming the lesson. */}
+      {streak > 0 && (
+        <div
+          style={{
+            display: "inline-flex", alignItems: "center", gap: space["2"],
+            padding: `${space["1"]}px ${space["3"]}px`,
+            marginBottom: space["3"],
+            borderRadius: radius.full,
+            background: surface.warnWash,
+            color: ink.warn,
+          }}
+        >
+          <Icon name="flame" size="1em" />
+          <Text as="span" variant="caption" color={ink.warn} style={{ fontWeight: 700 }}>
+            {t.streakTemplate.replace("{n}", streak)}
           </Text>
         </div>
-        <ProgressBar value={done} max={total} label={`${t.progressLabel}: ${done}/${total}`} />
+      )}
 
-        {streak > 0 && (
-          <div style={{ display: "flex", alignItems: "center", gap: space["2"], marginTop: space["3"], color: ink.warn }}>
-            <Icon name="flame" size="1.1em" />
-            <Text variant="small" color={ink.warn} style={{ fontWeight: 600 }}>
-              {t.streakTemplate.replace("{n}", streak)}
-            </Text>
-          </div>
-        )}
-
-        {nextLesson && (
-          <Button
-            full
-            iconRight="arrowRight"
-            onClick={() => openLesson(nextIndex)}
-            style={{ marginTop: space["4"] }}
-          >
-            {started ? t.continueLesson : t.startLesson}
-          </Button>
-        )}
-      </Card>
+      {/* Quizlet's "Jump back in" card, adapted — see ui.jsx's ResumeCard. The
+          previous version of this card showed `4 / 40` and "Continue Learning"
+          and never said WHICH lesson, so the one question a returning learner
+          has was answered only by scrolling the path below it. */}
+      {nextLesson && (
+        <ResumeCard
+          eyebrow={started ? t.resumeLabel : t.startHereLabel}
+          title={nextLesson.title[lang]}
+          meta={`${t[TRACKS.find((tr) => tr.key === nextLesson.track)?.labelKey] ?? ""} · ${t.estMinTemplate.replace("{n}", nextLesson.minutes)}`}
+          progressValue={done}
+          progressMax={total}
+          progressLabel={`${t.progressLabel}: ${done}/${total}`}
+          action={started ? t.continueLesson : t.startLesson}
+          onAction={() => openLesson(nextIndex)}
+        />
+      )}
 
       {/* The path, one section per track. Two independent curricula rather
           than one chain — see the TRACKS comment in content/lessons.js. */}
@@ -112,11 +118,15 @@ export default function Learn({ t, lang, lessons, completedLessons, isUnlocked, 
                     <span aria-hidden="true" style={{ position: "absolute", left: 15, top: 30, bottom: 0, width: 2, background: isDone ? fill.ok : line.hairline }} />
                   )}
 
-                  {/* Step marker. Shows the lesson's own id, which is what
-                      LessonReader displays and what in-prose cross-references
-                      ("Lesson 15") cite. Ids were renumbered 2026-08-14 to
-                      match track order (money 1-28, economy 29-40) — see the
-                      lessonsByTrack() comment in content/lessons.js. */}
+                  {/* Step marker. Shows the lesson's position WITHIN this
+                      track, not its id — matching LessonReader's "Lesson N of
+                      M". Until 2026-08-18 this printed `lesson.id`, which was
+                      only ever right because ids happened to be renumbered to
+                      match display order; the three-track reorder broke that
+                      and the economy track's first node read "29". Ids are
+                      stable storage keys and are deliberately no longer
+                      aligned to display order — see lessonsByTrack() in
+                      content/lessons.js. */}
                   <span
                     aria-hidden="true"
                     style={{
@@ -129,33 +139,53 @@ export default function Learn({ t, lang, lessons, completedLessons, isUnlocked, 
                       fontSize: font.small, fontWeight: 700,
                     }}
                   >
-                    {isDone ? <Icon name="check" size="1.1em" strokeWidth={2.5} /> : unlocked ? lesson.id : <Icon name="lock" size="0.95em" />}
+                    {isDone ? <Icon name="check" size="1.1em" strokeWidth={2.5} /> : unlocked ? posInTrack + 1 : <Icon name="lock" size="0.95em" />}
                   </span>
 
+                  {/* The current lesson is the loudest thing on the path.
+                      Duolingo's whole path design turns on one node being
+                      unmistakably next; here every row had the same weight and
+                      only a green tick separated done from to-do, so the eye
+                      landed nowhere. Completed rows now recede instead.
+
+                      This also fixes a border that never rendered: the old
+                      value was `1px solid ${fill.accent}22`, and `fill.accent`
+                      is the string `var(--fill-accent)` — so the declaration
+                      read `var(--fill-accent)22`, which is invalid CSS and was
+                      dropped. An 8-digit hex suffix only works on a hex
+                      literal, and this design system has none by policy. */}
                   <button
                     type="button"
                     disabled={!unlocked}
                     onClick={() => openLesson(i)}
                     style={{
                       display: "flex", alignItems: "center", gap: space["3"], width: "100%", textAlign: "left",
-                      background: isNext ? surface.accentWash : "transparent",
-                      border: isNext ? `1px solid ${fill.accent}22` : "1px solid transparent",
+                      background: isNext ? surface.card : "transparent",
+                      border: `${isNext ? 2 : 1}px solid ${isNext ? fill.accent : "transparent"}`,
                       borderRadius: radius.md,
-                      padding: `${space["2"]}px ${space["3"]}px`,
+                      boxShadow: isNext ? shadow.raised : "none",
+                      padding: isNext ? `${space["3"]}px ${space["3"]}px` : `${space["2"]}px ${space["3"]}px`,
                       cursor: unlocked ? "pointer" : "default",
                       opacity: unlocked ? 1 : 0.55,
+                      fontFamily: "inherit",
                     }}
                   >
                     <span style={{ flex: 1, minWidth: 0 }}>
-                      <Text variant="small" color={isDone ? ink.muted : ink.strong} style={{ fontWeight: 600 }}>
+                      <Text
+                        variant="small"
+                        color={isNext ? ink.strong : isDone ? ink.muted : ink.body}
+                        style={{ fontWeight: isNext ? 700 : 600 }}
+                      >
                         {lesson.title[lang]}
                       </Text>
-                      <Text variant="caption" color={ink.muted} style={{ marginTop: 2 }}>
+                      <Text variant="caption" color={isNext ? ink.accent : ink.muted} style={{ marginTop: 2, fontWeight: isNext ? 700 : 400 }}>
                         {unlocked ? t.estMinTemplate.replace("{n}", lesson.minutes) : t.locked}
                       </Text>
                     </span>
                     {unlocked && (
-                      <span style={{ color: ink.muted }}><Icon name="chevronRight" size="1.1em" /></span>
+                      <span style={{ color: isNext ? ink.accent : ink.muted, display: "flex" }}>
+                        <Icon name="chevronRight" size="1.1em" strokeWidth={isNext ? 2.4 : 1.8} />
+                      </span>
                     )}
                   </button>
                 </li>

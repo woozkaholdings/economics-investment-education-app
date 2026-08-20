@@ -95,9 +95,9 @@ import { lessons } from "../src/content/lessons.js";
 import { lessonContent } from "../src/content/lessonContent.js";
 
 const track = process.argv[2] ?? "money";
-if (!["money", "economy", "all", "glossary"].includes(track)) {
+if (!["money", "economy", "essentials", "all", "glossary"].includes(track)) {
   console.error(
-    `usage: node scripts/jargon-candidates.mjs [money|economy|all|glossary] [en|es|ko|zh|ja]\n` +
+    `usage: node scripts/jargon-candidates.mjs [money|economy|essentials|all|glossary] [en|es|ko|zh|ja]\n` +
       `       (the locale argument applies to \`glossary\` only and defaults to en)`,
   );
   process.exit(2);
@@ -408,6 +408,43 @@ console.log(
 // ── Control. The only failure mode this script has is matching nothing.
 const problems = [];
 
+// ── Which corpus the control is entitled to be asked about ────────────────
+// `known.length < 5` below assumes every corpus is term-rich. That held while
+// `money` was 28 lessons of mechanics. The 2026-08-18 three-track split moved
+// the vocabulary out: `money` is now 13 *judgment* lessons (sunk cost, present
+// bias, lifestyle inflation) and re-finds **2** glossary terms, because those
+// lessons teach a way of deciding rather than a set of defined nouns. The
+// mechanics that carry the vocabulary are the `essentials` track.
+//
+// Two is a finding about that corpus, not evidence the extractor is broken —
+// and failing here would say the instrument is untrustworthy when it is
+// working correctly. But the threshold must not simply be lowered either: its
+// job is catching an extractor that matches nothing.
+//
+// So the instrument is validated where the question is meaningful — against
+// EVERY lesson, via the real `scanDoc` path — and the requested corpus's own
+// count is then reported rather than gated. A broken extractor still fails,
+// because it would find nothing across all 40 lessons either.
+const controlCorpus = (() => {
+  const forms = new Set();
+  for (const lesson of lessons) {
+    const c = lessonContent[lesson.id];
+    if (!c) continue;
+    const parts = [];
+    for (const s of c.sections ?? []) {
+      if (s.heading?.en) parts.push(s.heading.en);
+      if (s.body?.en) parts.push(s.body.en);
+    }
+    if (c.takeaway?.en) parts.push(c.takeaway.en);
+    if (c.thinkAbout?.en) parts.push(c.thinkAbout.en);
+    scanDoc(parts.join("\n\n"), (term) => {
+      const n = norm(term);
+      if (glossaryForms.has(n)) forms.add(n);
+    });
+  }
+  return forms;
+})();
+
 // ── THE SCRIPT CONTROL (item 69's residual, measured 2026-08-18) ──────────
 // Why a non-`en` run needs a control the `en` run does not, and why the
 // existing `known.length < 5` one is worse than useless here.
@@ -485,11 +522,20 @@ if (locale !== "en") {
   }
 }
 
-if (known.length < 5) {
+if (controlCorpus.size < 5) {
   problems.push(
-    `CONTROL FAILED: the extractor re-found only ${known.length} of the ${Object.keys(glossary).length} ` +
-      `glossary terms in lesson prose (expected >= 5). It is probably matching nothing, in which case ` +
-      `the candidate list above is meaningless rather than empty.`,
+    `CONTROL FAILED: across ALL ${lessons.length} lessons the extractor re-found only ` +
+      `${controlCorpus.size} of the ${Object.keys(glossary).length} glossary terms (expected >= 5). ` +
+      `That is the whole catalogue, not one track, so this is the extractor being broken rather than ` +
+      `a thin corpus — the candidate list above is meaningless rather than empty.`,
+  );
+} else if (known.length === 0 && docs.length > 0) {
+  // Still fatal for THIS corpus: zero is the "matched nothing" shape. A small
+  // non-zero count is reported and trusted (see controlCorpus above).
+  problems.push(
+    `CONTROL FAILED: the extractor works (${controlCorpus.size} terms re-found across all lessons) ` +
+      `but re-found ZERO of the ${Object.keys(glossary).length} glossary terms in the "${track}" ` +
+      `corpus of ${docs.length} doc(s). Zero is indistinguishable from a bad key path.`,
   );
 }
 // The `en.s` path, guarded as an invariant rather than by a pinned literal.
@@ -635,7 +681,7 @@ if (problems.length) {
   process.exit(1);
 }
 console.log(
-  `\n✓ control: ${known.length} known glossary terms re-found, buckets disjoint; ` +
+  `\n✓ control: extractor validated across all ${lessons.length} lessons (${controlCorpus.size} terms re-found); ${known.length} in the "${track}" corpus, buckets disjoint; ` +
     `gloss rule suppresses a glossed acronym and its expansion, not a bare one.`,
 );
 

@@ -606,3 +606,28 @@ Add a new entry when a run makes a choice future work should be able to look up 
   ids `[29..37]`, idempotent on reload); see `AGENT_LOG.md`'s run log for full detail. The Leitner
   review schedule (`ecycles_review`) needed no migration — it's keyed by a question's array index in
   `quizData`, never by lesson id.
+
+- **Update, 2026-08-18 (owner-directed, interactive). THREE tracks, `economy` now leads, and the
+  §0 product definition this reverses.** The owner's direction changed: the economic machine is the
+  main path, and the money track is where *judgment* is taught rather than how-to. `TRACKS` is now
+  **`economy` → `money` → `essentials`**, and the old money track was split rather than reordered,
+  because it was two curricula under one label:
+  - **`money` is now lessons 16-28** — the judgment half ("Does It Put Money In Your Pocket, or Take
+    It Out?", lifestyle inflation, sunk cost, present bias, loss aversion). This is the product.
+  - **`essentials` is lessons 1-15** (new track key) — the mechanics half (budgeting, credit scores,
+    401(k), insurance, taxes). Kept in full and unchanged, but optional: because unlocking is
+    per-track, `essentials` now gates nothing and nothing gates it.
+  - **`economy` is unchanged at 29-40** and is now what a new install opens on.
+  **This reverses `LAUNCH_PLAN.md` §0's "the economy is the *vehicle*, not the product"** (owner-
+  clarified 2026-08-04), which is what the 2026-08-07 split and the 2026-08-14 renumbering above were
+  built to implement. §0 has been updated in the same change rather than left contradicting the code —
+  that contradiction is the exact drift this project has already had three times.
+- **Ids were NOT renumbered this time, and must not be.** The 2026-08-14 Update above renumbered to
+  keep ids aligned with display order; that coupling is what made a seven-surface scripted remap plus
+  a client-side migration necessary, and display order has now changed twice. Ids are stable
+  identifiers (persisted progress, `lessonContent` keys, `quizMeta.lesson`, `LESSON_VISUALS`, the
+  translation-review ledger, and every `#/lesson/N` link ever shared); display order is a product
+  decision. The visible consequence — a first lesson with id 29 — is handled where it belongs, in the
+  view: `LessonReader` now shows a lesson's **position within its track** ("Lesson 1 of 12") instead
+  of its raw id. The global "Lesson 29 of 40" was already wrong for two independent curricula; it is
+  simply more visible now. **Do not repair this by renumbering again.**

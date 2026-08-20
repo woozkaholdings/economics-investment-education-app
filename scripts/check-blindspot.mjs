@@ -183,6 +183,7 @@ const readmePath = join(ROOT, "README.md");
     "src/screens/Learn.jsx",
     "src/screens/LessonReader.jsx",
     "src/screens/Practice.jsx",
+    "src/screens/Reference.jsx",                // the hub, added 2026-08-17
     "src/screens/reference/MarketSignals.jsx",
     "src/screens/reference/Sectors.jsx",        // renders the string, not the component
     "src/screens/reference/Settings.jsx",       // the About sub-screen

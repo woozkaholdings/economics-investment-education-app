@@ -76,8 +76,9 @@ const GATE_MINUTES = 120; // "~2 hours"
 // *partition* claims: they are only true while these tracks account for every
 // lesson. So this is the one place a new track is admitted, and the shape guard
 // below refuses to generate anything while the tree holds a track it omits.
-// See backlog item 77 for the essentials track, which is exactly that case.
-const FIGURE_TRACKS = ["money", "economy"];
+// Backlog item 77's essentials track admitted here 2026-08-19 (owner-directed,
+// interactive) — see DECISIONS.md's 2026-08-18 Update for why the track exists.
+const FIGURE_TRACKS = ["money", "economy", "essentials"];
 
 const mode = process.argv[2] ?? "";
 if (!["", "--check", "--write"].includes(mode)) {

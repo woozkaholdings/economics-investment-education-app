@@ -18,8 +18,8 @@ import { quizMeta } from "../content/quizMeta.js";
 import { dueQuestions, seenCount } from "../lib/review.js";
 import Icon from "../components/Icon.jsx";
 import Question from "../components/Question.jsx";
-import { Button, Card, Disclaimer, ProgressBar, Text } from "../components/ui.jsx";
-import { ink, line, space } from "../theme.js";
+import { Button, Card, Disclaimer, ProgressBar, Steps, Text } from "../components/ui.jsx";
+import { ink, line, radius, space, surface } from "../theme.js";
 
 // A straight-through 40-question "practice all" session has no natural stop.
 // Pausing every BATCH_SIZE questions with an explicit "keep going or stop
@@ -213,12 +213,33 @@ export default function Practice({ t, lang, review, recordReview }) {
 
     return (
       <div>
+        {/* Runner chrome from UIUX/ (Quizlet iOS Screens 4): a close control,
+            the position counter centred between it and the lesson tag, and the
+            progress bar directly under them. The close button is the part that
+            matters — before this there was no way out of a started session
+            except answering every remaining question or leaving the tab, which
+            is the opposite of the "small, exitable commitments" the batch
+            pause below was built for. */}
         <div style={{ marginBottom: space["4"] }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: space["2"] }}>
-            <Text as="span" variant="caption" color={ink.muted} style={{ fontWeight: 700 }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: space["3"], marginBottom: space["3"] }}>
+            <button
+              type="button"
+              onClick={exit}
+              aria-label={t.quizExit}
+              style={{
+                display: "inline-flex", alignItems: "center", justifyContent: "center",
+                width: 32, height: 32, flexShrink: 0,
+                borderRadius: radius.full,
+                background: surface.sunken, border: "none",
+                color: ink.muted, cursor: "pointer",
+              }}
+            >
+              <Icon name="x" size="1.1em" strokeWidth={2.2} />
+            </button>
+            <Text as="span" variant="caption" color={ink.strong} style={{ fontWeight: 700 }}>
               {position + 1} / {session.length}
             </Text>
-            <Text as="span" variant="caption" color={ink.muted}>
+            <Text as="span" variant="caption" color={ink.muted} style={{ flexShrink: 0 }}>
               {t.reviewFromLesson.replace("{n}", item.question.lesson)}
             </Text>
           </div>
@@ -299,6 +320,33 @@ export default function Practice({ t, lang, review, recordReview }) {
       >
         {t.practiceAll}
       </Button>
+
+      {/* HOW REVIEW WORKS — adapted from UIUX/ (Vocabulary iOS 187 and Quizlet
+          iOS "Choose your plan"), whose free-trial screens both explain what
+          will happen and when, on a vertical rail, BEFORE the user commits.
+          The pattern is worth more here than it is there: a paywall timeline
+          tells you when you get charged, and this tells you why a question you
+          answered today is going to reappear on Thursday — the single least
+          visible thing in the app. `lib/review.js`'s box intervals are the
+          source for the numbers in the copy (1, 2, 4, 8, 16 days).
+
+          Adapted: no dates, because there is nothing to bill and the schedule
+          is per-question rather than per-account. The first step marks itself
+          done once the learner has answered anything, which is Vocabulary's
+          struck-through "Install the app" step doing real work instead of
+          decorating. */}
+      <section style={{ marginTop: space["6"] }}>
+        <Text as="h2" variant="heading" color={ink.strong} style={{ marginBottom: space["4"] }}>
+          {t.howReviewTitle}
+        </Text>
+        <Steps
+          items={[
+            { icon: "book", title: t.howReviewStep1, body: t.howReviewStep1Body, done: seen > 0 },
+            { icon: "target", title: t.howReviewStep2, body: t.howReviewStep2Body },
+            { icon: "check", title: t.howReviewStep3, body: t.howReviewStep3Body },
+          ]}
+        />
+      </section>
 
       <Disclaimer text={t.disclaimer} />
     </div>

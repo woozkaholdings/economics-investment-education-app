@@ -38,13 +38,18 @@ import { lessonContent as moneyEs } from "./lessonContent.money.es.js";
 import { lessonContent as moneyKo } from "./lessonContent.money.ko.js";
 import { lessonContent as moneyZh } from "./lessonContent.money.zh.js";
 import { lessonContent as moneyJa } from "./lessonContent.money.ja.js";
+import { lessonContent as essentialsEn } from "./lessonContent.essentials.en.js";
+import { lessonContent as essentialsEs } from "./lessonContent.essentials.es.js";
+import { lessonContent as essentialsKo } from "./lessonContent.essentials.ko.js";
+import { lessonContent as essentialsZh } from "./lessonContent.essentials.zh.js";
+import { lessonContent as essentialsJa } from "./lessonContent.essentials.ja.js";
 
 const BY_LANG = {
-  en: { ...economyEn, ...moneyEn },
-  es: { ...economyEs, ...moneyEs },
-  ko: { ...economyKo, ...moneyKo },
-  zh: { ...economyZh, ...moneyZh },
-  ja: { ...economyJa, ...moneyJa },
+  en: { ...economyEn, ...moneyEn, ...essentialsEn },
+  es: { ...economyEs, ...moneyEs, ...essentialsEs },
+  ko: { ...economyKo, ...moneyKo, ...essentialsKo },
+  zh: { ...economyZh, ...moneyZh, ...essentialsZh },
+  ja: { ...economyJa, ...moneyJa, ...essentialsJa },
 };
 
 const LANGS = Object.keys(BY_LANG);
