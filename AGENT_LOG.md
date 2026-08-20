@@ -873,7 +873,25 @@ for the history. No open P1/P2 items.
       **no longer**: `market.json` was committed at `asOf: 2026-08-19` in `9b3f4f2`, so a build from
       `HEAD` renders real figures (confirmed live this run). The fix still matters — it is what the
       screen says whenever the daily job lapses more than four days — but it is no longer the default view.
-78. **[Tests — filed 2026-08-19 by the twelfth run to arrive at the owner's static tree, which picked
+78. **✅ DONE 2026-08-20 (owner-directed). `check-data.mjs` §30 covers `src/utils/date.js` — and for
+    the twelfth item running the premise was wrong, this time in BOTH directions at once, which is why
+    the section is not the one this item describes.** The item says "no test would fail today if their
+    arithmetic did". Measured by injection into a `git archive HEAD` copy, **four** regressions already
+    turned the suite red without any new code: `dayDiff` with swapped arguments, off by one, or with a
+    wrong month index (all caught by **§25**, which reaches `dayDiff` through `freshness` — so `dayDiff`
+    was never untested), and `todayStr()` returning an unpadded `2026-8-20` (caught by
+    **`check-claims.mjs`**'s `CLAIMS_TODAY` shape assertion). §23 catches a `toISOString().slice(0, 10)`
+    rewrite of `todayStr` *inside `date.js` itself*. **But the item also missed the two gaps that
+    matter, and both are consequential:** (1) `dayDiff` recomputed in local time with `Math.floor`
+    returns **1** for `dayDiff("2026-03-07", "2026-03-09")` in `America/New_York` — a whole day lost
+    across spring forward, the exact defect `date.js`'s header comment says `Date.UTC` exists to
+    prevent — and `npm test` stayed **green**; (2) `todayStr()` off by a day with the right shape
+    (`getDate() + 1`) passes every existing check and silently moves every streak and every Leitner due
+    date. §30 covers those two and deliberately does not restate the four. See the run log entry of
+    this date. **The item's own "no bug here" holds — `date.js` is still correct.**
+    <details><summary>Original text of item 78, as filed 2026-08-19</summary>
+
+    **[Tests — filed 2026-08-19 by the twelfth run to arrive at the owner's static tree, which picked
     "`src/lib` has no behavioural test coverage" as its item and had that premise break in its hands
     at step 3.5, before it edited anything. Read the correction before picking: most of the gap does
     not exist.] `src/utils/date.js` is the only pure logic module in the app with no direct test
@@ -911,6 +929,7 @@ for the history. No open P1/P2 items.
       untangle. **Honest priority: low** — the module is correct today, so this buys regression
       protection, not a repair. It does **not** join the five items that unblock on `LAUNCH_PLAN.md`;
       it is a different file and a separate unblock.
+    </details>
 
 76. **[Content/Process — filed 2026-08-18 by the run that built item 69's instrument half, which is
     what turned this from an opinion into a blocked measurement.] `zh` and `ja` `Brokerage Account`
@@ -11534,3 +11553,119 @@ per language** from the title rewrite (`npm run review-status`). **Item 18 remai
 path to ending Phase 0**, still blocked on the owner creating an analytics-provider account — and
 **item 72's owner half (choose a host, drag `dist/`, hold the URL) is now also a numbered blindspot,
 10.10**, whose refuting number is one reachable URL.
+
+---
+
+## 2026-08-20 — `src/utils/date.js` gets a test section, scoped to the two regressions nothing caught (item 78)
+
+**Owner-directed** ("do item 78 next"), immediately after item 73 landed. Item 78 was blocked on
+`scripts/check-data.mjs` being owner-clean; it is clean (`owner-tree` UNMOVED `c2331799…`, 0 tracked
+modified), so the block is gone.
+
+### Step 3.5 — the premise was wrong in both directions at once
+
+Item 78's framing is *"§23 guards the idiom but never calls either function, so no test would fail
+today if their arithmetic did."* Rather than trust that, every regression I intended to cover was
+**injected into `src/utils/date.js` in a `git archive HEAD` copy and run against the existing suite**
+first. Baseline: the pristine copy exits 0.
+
+| Injected regression | Existing suite | Caught by |
+|---|---|---|
+| `dayDiff` arguments swapped (sign flipped) | **fails** | §25, via `freshness` |
+| `dayDiff` off by one | **fails** | §25 |
+| `dayDiff` month index `m` for `m - 1` | **fails** | §25 |
+| `todayStr()` → `toISOString().slice(0, 10)` | **fails** | §23, scanning `date.js` itself |
+| `todayStr()` → unpadded `2026-8-20` | **fails** | `check-claims.mjs` (`CLAIMS_TODAY` shape) |
+| **`dayDiff` in local time + `Math.floor`** | **PASSES** | — |
+| **`todayStr()` off by a day, right shape** | **PASSES** | — |
+
+So the item **understated** coverage — `dayDiff` has never been untested, because `useMarketData`'s
+`freshness()` composes it and §25 exercises `freshness` sixteen ways — **and overstated the safety of
+what remains**. The two that pass green are the consequential ones:
+
+- **The DST class.** With `Date.UTC` composition replaced by `new Date(y, m - 1, d)` and `Math.floor`,
+  `dayDiff("2026-03-07", "2026-03-09")` returns **1** in `America/New_York`. A whole day vanishes across
+  spring forward — and this is precisely what `date.js`'s own header comment says the `Date.UTC` form
+  exists to prevent. §25's table crosses month and year boundaries but **no DST boundary**, so it cannot
+  see this.
+- **`todayStr()` wrong day, right shape.** `getDate() + 1` satisfies check-claims (the shape is still
+  `YYYY-MM-DD`) and §23 (no UTC idiom). It would move every streak and every Leitner due date.
+
+The item's substantive claim — **there is no bug in `date.js`** — was re-run and holds.
+
+### What shipped: `check-data.mjs` §30
+
+Written to cover the two gaps and **deliberately not to restate the five already covered**.
+
+- **A property, not a date list.** For each of six named zones it walks **every consecutive-day pair of
+  2026** and asserts `dayDiff` is exactly 1, plus `dayDiff("2026-01-01", "2027-01-01") === 365`. 2,190
+  pairs. No transition date is hardcoded, so the section cannot go stale against a tzdata update or
+  miss a transition I misremembered.
+- **The control comes first, because a walk that never meets a transition passes for the wrong reason.**
+  Each zone must be *shown* to contain the expected number of short and long local days in 2026 before
+  its `dayDiff` results count: `America/New_York`, `Europe/London`, `Australia/Sydney` (southern, so its
+  transitions run the other way round) and `America/Santiago` must each show exactly **one 23-hour and
+  one 25-hour day**; `Asia/Kolkata` (+05:30, a half-hour offset) and `Pacific/Kiritimati` (+14:00) must
+  show **none**. The failure message says the zone list is what to fix, not `dayDiff`.
+- **`todayStr()` cross-checked against a different instrument** — `Intl.DateTimeFormat("en-CA")` on the
+  same clock, in four zones. Re-deriving it with `getFullYear`/`getMonth`/`getDate` would only restate
+  the implementation and would agree with an off-by-one version of it. Shape is asserted separately,
+  with the reason in the message: `freshness()` rejects any other shape, so an unpadded date silently
+  suppresses every market figure.
+- **Nine landmark cases written out** (same day, ±1, month and year rollover, the 2028 leap day, a
+  non-leap February, 364 days, a 2,423-day multi-year span) — they record what the function is *meant*
+  to do, which a property loop does not say out loud.
+- **A positive half, in §25's sense.** §23 already requires the three *scripts* to import `todayStr`
+  from here; §30 requires the three *app* modules that must not roll their own — `review.js`,
+  `useAppState.js`, `useMarketData.js`.
+- `process.env.TZ` is set and restored inside the block (Node 20 re-reads it per `Date` operation, so no
+  child process is needed), and §30 sits last so nothing below it depends on the ambient zone.
+
+### Verified — by injection, and the section caught its own author first
+
+`npm test` **exit 0**, `npm run build` **exit 0**. §30 prints
+`2190 consecutive-day pairs across 6 zones (8 DST transitions covered), 9 landmark cases, todayStr
+cross-checked against Intl in 4 zones`. Cost: `check-data.mjs` goes from **0.51–0.53s** to
+**0.53–0.54s**.
+
+Then the part that matters — with §30 in place, re-run the two regressions it exists for, in the same
+scratchpad copy:
+
+- **DST injection → exit 1**, naming the date in each zone:
+  `§30: in America/New_York, dayDiff("2026-03-08", "2026-03-09") is 0, expected 1`, and the same for
+  `Europe/London` `2026-03-29` and `Australia/Sydney` `2026-10-04`.
+- **`todayStr` off-by-one injection → exit 1**:
+  `§30: todayStr() is "2026-08-21" in America/New_York but the same clock formats as "2026-08-20" via
+  Intl.`
+- **The control's own control:** the zone table edited to claim `Asia/Kolkata` has DST → exit 1 with
+  `§30 control: in 2026, Asia/Kolkata has 0 local day(s) shorter than 24h and 0 longer, expected 1 and
+  1 … Fix the zone list, not dayDiff.`
+- Restoring `date.js` and `check-data.mjs` returns the copy to **exit 0**, which is what makes the three
+  failures mine rather than drift.
+
+**§30 also failed on its own first run, correctly.** `process.env.TZ = ORIGINAL_TZ` stores the *string*
+`"undefined"` when `TZ` was never set, and the restore assertion I had written two lines earlier caught
+it. Fixed with a `restoreTZ()` that `delete`s instead, and the reason is in the comment.
+
+### Adversarial self-check (step 5)
+
+**Blindspot register:** no regression — this run touches one test script and no rendered content, so
+§10.1/§10.2/§10.3 have no surface here; `check-blindspot` passes including the §2.3 date scan. The dates
+in §30 are test fixtures in a script, the same shape as §25's `TODAY = "2026-08-17"`, not teaching copy —
+and pinning `YEAR = 2026` is deliberate: a fixed past year keeps the control's expected transition counts
+stable, where "the current year" would not. **DECISIONS.md conflict:** none. **Already-done item:** no —
+`check-data.mjs` did not import `src/utils/date.js` at all before this commit (control: the same grep
+finds the three script imports and the three `src/lib` imports, so its zero was a real zero).
+**My own verification claims:** every exit code and message above is pasted from a run, and the
+injections are reproducible from the `git archive HEAD` recipe in the Environment note. **What the check
+caught:** the temptation to write item 78's section as filed — thirteen assertions re-proving what §25
+already proves, which would have read as coverage while leaving both real gaps open.
+
+### Next run
+
+`npm run owner-tree -- --expect c2331799fd3ee413aca864fd82d247a35ea31b01a70a6c4e37b00f6aad9105b2`.
+Still unblocked and unpicked: **75's second half** (`src/components/ui.jsx:75` — already decided, just
+apply it), **64's `Dividend`**, **35's second glossary batch**. Standing debt: the **7 stale translation
+lessons per language** (`npm run review-status`). **Item 18 remains the entire critical path to ending
+Phase 0**, blocked on the owner creating an analytics-provider account, and **item 72's owner half — a
+deployed URL — is now blindspot 10.10**, whose refuting number is one reachable URL.

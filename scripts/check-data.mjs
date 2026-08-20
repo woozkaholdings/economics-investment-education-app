@@ -31,6 +31,7 @@ import { EVENTS, MAX_LOGGED_EVENTS, elapsedSeconds, monotonicNow, quizScore, tra
 import { redactUrl, getAdapter, fixture, ADAPTERS } from "../src/lib/marketData/adapters.js";
 import { FUTURE_TOLERANCE_DAYS, STALE_AFTER_DAYS, freshness } from "../src/lib/useMarketData.js";
 import { FRED_SERIES, fixtureEconomics } from "../src/lib/marketData/fred.js";
+import { dayDiff, todayStr } from "../src/utils/date.js";
 
 // A minimal in-memory localStorage mock, installed as a global before
 // storage.js's tests run below (node has no localStorage of its own).
@@ -3202,6 +3203,201 @@ if (keyedGroupsChecked < 4) {
       );
     }
   }
+}
+
+// ───────────────────────────────────────────────────────────────────────────
+// 30. src/utils/date.js — the app's single notion of "today" and of "how many
+//     days apart" (backlog item 78).
+//
+//     `todayStr()` and `dayDiff()` are read by the streak counter
+//     (`useAppState.js`), the Leitner due dates (`review.js`), the market-data
+//     staleness rule (`useMarketData.js`) and three scripts. There is no known
+//     bug: this is regression cover.
+//
+//     **What was already covered, measured by injection rather than assumed —
+//     because item 78 filed this as "no test would fail today if their
+//     arithmetic did", and that was wrong three times over.** Four regressions
+//     injected into `date.js` in a `git archive HEAD` copy already turn the
+//     suite red without this section: `dayDiff` with its arguments swapped,
+//     off by one, or with a wrong month index (all caught by §25, which
+//     reaches `dayDiff` through `freshness`); and `todayStr()` returning an
+//     unpadded `2026-8-20` (caught by check-claims.mjs's CLAIMS_TODAY shape
+//     assertion). A `todayStr()` rewritten to `toISOString().slice(0, 10)` is
+//     caught by §23 above. So this section deliberately does NOT restate those.
+//
+//     **The two regressions that passed green, which are what it is for:**
+//
+//     1. **`dayDiff` computed in local time.** Replacing the `Date.UTC`
+//        composition with `new Date(y, m - 1, d)` and `Math.floor` makes
+//        `dayDiff("2026-03-07", "2026-03-09")` return **1** in
+//        `America/New_York` — a whole day lost across spring forward — and
+//        `npm test` still exits 0. That is the exact defect the header comment
+//        in `date.js` says the `Date.UTC` composition exists to prevent, and
+//        nothing was checking it. §25's case table crosses month and year
+//        boundaries but no DST boundary.
+//     2. **`todayStr()` off by a day with the right shape.** `getDate() + 1`
+//        passes every existing check: the shape is still `YYYY-MM-DD`, so
+//        check-claims is satisfied, and §23 only greps for the UTC idiom. It
+//        would silently break the streak counter and every Leitner due date.
+//
+//     **Method, and why the control matters more than the assertions.** The
+//     DST cases walk every consecutive-day pair of a year in several named
+//     zones rather than hardcoding transition dates, so they cannot go stale
+//     against a tzdata update and cannot miss a transition I misremembered.
+//     But a walk that never meets a transition passes for the wrong reason and
+//     is indistinguishable from a walk that meets one and handles it — so each
+//     DST zone must first be *shown* to contain exactly one short and one long
+//     local day inside the scanned range, and each fixed-offset zone to contain
+//     none. If that control stops holding, the zone list is what is broken, not
+//     `dayDiff`.
+//
+//     `process.env.TZ` is set and restored inside this block. Node re-reads it
+//     per `Date` operation, so this needs no child process — but it does mean
+//     nothing below may depend on the ambient zone, hence the restore and
+//     hence this section sitting last.
+{
+  const ORIGINAL_TZ = process.env.TZ;
+  // `process.env.TZ = undefined` stores the *string* "undefined", which is not
+  // a zone and is not what was there before. Found by the restore assertion
+  // below firing on this section's own first run, which is the assertion
+  // earning its place.
+  const restoreTZ = () => {
+    if (ORIGINAL_TZ === undefined) delete process.env.TZ;
+    else process.env.TZ = ORIGINAL_TZ;
+  };
+  const YEAR = 2026;
+
+  // [zone, expected short (23h) days in YEAR, expected long (25h) days]
+  const ZONES = [
+    ["America/New_York", 1, 1],
+    ["Europe/London", 1, 1],
+    ["Australia/Sydney", 1, 1],   // southern hemisphere: transitions run the other way round
+    ["America/Santiago", 1, 1],
+    ["Asia/Kolkata", 0, 0],       // +05:30 — a half-hour offset, no DST
+    ["Pacific/Kiritimati", 0, 0], // +14:00 — the extreme east, no DST
+  ];
+
+  const iso = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+
+  let pairsChecked = 0;
+  let transitionsCovered = 0;
+
+  for (const [tz, wantShort, wantLong] of ZONES) {
+    process.env.TZ = tz;
+
+    // The control, first: does this walk actually meet the thing it is testing?
+    let short = 0;
+    let long = 0;
+    for (let i = 0; i < 365; i++) {
+      const hours = (new Date(YEAR, 0, 2 + i).getTime() - new Date(YEAR, 0, 1 + i).getTime()) / 3600000;
+      if (hours < 24) short++;
+      if (hours > 24) long++;
+    }
+    if (short !== wantShort || long !== wantLong) {
+      fail(
+        `§30 control: in ${YEAR}, ${tz} has ${short} local day(s) shorter than 24h and ${long} longer, ` +
+          `expected ${wantShort} and ${wantLong}. The dayDiff results below prove nothing until this ` +
+          `holds — a walk that never crosses a DST boundary passes for the wrong reason. Fix the zone ` +
+          `list (a tzdata change, or a zone that abolished DST), not dayDiff.`,
+      );
+      continue;
+    }
+    transitionsCovered += short + long;
+
+    // Every consecutive calendar day in the year is exactly one day apart, in
+    // every zone — including across whichever days the control just proved are
+    // 23 and 25 hours long.
+    let firstBad = null;
+    for (let i = 0; i < 365; i++) {
+      const a = iso(new Date(YEAR, 0, 1 + i));
+      const b = iso(new Date(YEAR, 0, 2 + i));
+      pairsChecked++;
+      const got = dayDiff(a, b);
+      if (got !== 1 && firstBad === null) firstBad = [a, b, got];
+    }
+    if (firstBad) {
+      const [a, b, got] = firstBad;
+      fail(
+        `§30: in ${tz}, dayDiff("${a}", "${b}") is ${got}, expected 1. Consecutive calendar days are ` +
+          `one day apart in every zone; if this fails on a DST date, dayDiff has stopped composing its ` +
+          `dates with Date.UTC and is subtracting local milliseconds — see the header comment in ` +
+          `src/utils/date.js.`,
+      );
+    }
+
+    // A whole year, in one call, across every transition the zone has.
+    const yearSpan = dayDiff(`${YEAR}-01-01`, `${YEAR + 1}-01-01`);
+    if (yearSpan !== 365) {
+      fail(`§30: in ${tz}, dayDiff("${YEAR}-01-01", "${YEAR + 1}-01-01") is ${yearSpan}, expected 365.`);
+    }
+  }
+
+  restoreTZ();
+  if (process.env.TZ !== ORIGINAL_TZ) fail("§30: failed to restore process.env.TZ");
+
+  // The landmark cases, written out rather than derived — they record what the
+  // function is *meant* to do, which a property loop does not say out loud.
+  const CASES = [
+    ["2026-08-20", "2026-08-20", 0, "same day"],
+    ["2026-08-20", "2026-08-21", 1, "one day forward"],
+    ["2026-08-21", "2026-08-20", -1, "one day back — the sign is part of the contract"],
+    ["2026-01-31", "2026-02-01", 1, "month rollover"],
+    ["2025-12-31", "2026-01-01", 1, "year rollover"],
+    ["2028-02-28", "2028-03-01", 2, "a leap year: February has 29 days"],
+    ["2026-02-28", "2026-03-01", 1, "a non-leap year: it does not"],
+    ["2026-01-01", "2026-12-31", 364, "most of a year"],
+    ["2020-01-01", "2026-08-20", 2423, "a multi-year span, leap days included"],
+  ];
+  for (const [a, b, want, label] of CASES) {
+    const got = dayDiff(a, b);
+    if (got !== want) fail(`§30: dayDiff("${a}", "${b}") is ${got}, expected ${want} (${label}).`);
+  }
+
+  // todayStr(), cross-checked against a different instrument. Intl derives the
+  // date from the same clock by a different route, so agreement is evidence;
+  // re-deriving it with getFullYear/getMonth/getDate would only restate the
+  // implementation and would agree with an off-by-one version of it.
+  for (const tz of ["America/New_York", "Pacific/Kiritimati", "Asia/Kolkata", "UTC"]) {
+    process.env.TZ = tz;
+    const got = todayStr();
+    const want = new Intl.DateTimeFormat("en-CA", {
+      timeZone: tz, year: "numeric", month: "2-digit", day: "2-digit",
+    }).format(new Date());
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(got)) {
+      fail(`§30: todayStr() returned "${got}" in ${tz}, which is not YYYY-MM-DD. Zero-padding is load-bearing — useMarketData's freshness() rejects any other shape, so every market figure would read as stale.`);
+    } else if (got !== want) {
+      fail(
+        `§30: todayStr() is "${got}" in ${tz} but the same clock formats as "${want}" via Intl. ` +
+          `The app's "today" is wrong by ${dayDiff(want, got)} day(s), which moves every streak and ` +
+          `every Leitner due date.`,
+      );
+    }
+    if (dayDiff(got, got) !== 0) fail(`§30: dayDiff(todayStr(), todayStr()) is not 0 in ${tz}.`);
+  }
+  restoreTZ();
+  if (process.env.TZ !== ORIGINAL_TZ) fail("§30: failed to restore process.env.TZ after the todayStr cases");
+
+  // Positive half, in §25's sense: the checks above test date.js, not the app's
+  // use of it. §23 already requires the three *scripts* to import todayStr from
+  // here; these are the three modules inside the app that must not roll their
+  // own. If one stops needing a date, remove it from this list in the same
+  // commit rather than keeping an unused import.
+  for (const rel of ["src/lib/review.js", "src/lib/useAppState.js", "src/lib/useMarketData.js"]) {
+    const src = readFileSync(join(ROOT, rel), "utf8");
+    if (!/from\s*["']\.\.\/utils\/date\.js["']/.test(src)) {
+      fail(
+        `§30: ${rel} no longer imports from src/utils/date.js. The streak counter, the Leitner due ` +
+          `dates and the market-staleness rule have to share one notion of "today" — that divergence ` +
+          `is backlog item 38, and these checks cannot see a hand-rolled copy.`,
+      );
+    }
+  }
+
+  console.log(
+    `  §30 src/utils/date.js: ${pairsChecked} consecutive-day pairs across ${ZONES.length} zones ` +
+      `(${transitionsCovered} DST transitions covered), ${CASES.length} landmark cases, ` +
+      `todayStr cross-checked against Intl in 4 zones.`,
+  );
 }
 
 console.log(`\n${failures === 0 ? "PASS" : "FAIL"}: ${failures} failure(s), ${warnings} warning(s).`);
