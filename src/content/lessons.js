@@ -275,7 +275,7 @@ export const lessons = [
     subtitle: {"en":"The same income can owe very different taxes depending on whether you're an employee or a contractor","es":"El mismo ingreso puede deber impuestos muy distintos según seas empleado o contratista","ko":"같은 소득이라도 직원인지 계약자인지에 따라 세금 부담이 크게 달라질 수 있습니다","zh":"同样的收入，作为雇员和作为承包商所欠的税可能大不相同","ja":"同じ収入でも、従業員か契約者かによって税額は大きく変わり得る"},
   },
   {
-    id: 11, track: "essentials", icon: "💸", color: "#be123c", minutes: 3,
+    id: 11, track: "essentials", icon: "💸", color: "#be123c", minutes: 4,
     title: {"en":"Investment Fees: The Cost You Don't See on a Bill","es":"Comisiones de Inversión: El Costo Que No Ves en una Factura","ko":"투자 수수료: 청구서에 안 보이는 비용","zh":"投资费用：账单上看不到的成本","ja":"投資手数料：請求書に現れないコスト"},
     subtitle: {"en":"A 1% annual fee sounds tiny, but it compounds against you the same way interest compounds for you","es":"Una comisión anual del 1% suena pequeña, pero se compone en tu contra igual que el interés se compone a tu favor","ko":"연 1% 수수료는 작아 보이지만, 이자가 당신에게 유리하게 복리로 쌓이듯 수수료도 당신에게 불리하게 복리로 쌓입니다","zh":"年化1%的费用听起来很小，但它会像复利那样不利地累积，正如利息会像复利那样对你有利地累积","ja":"年1%の手数料は小さく聞こえますが、利息があなたに有利に複利で積み上がるのと同じように、手数料もあなたに不利に複利で積み上がります"},
   },

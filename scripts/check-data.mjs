@@ -1206,6 +1206,39 @@ if (keyedGroupsChecked < 4) {
   console.log(
     `  cross-references matched per language: ${LANGS.map((l) => `${l}=${refTotals[l]}`).join(", ")}`,
   );
+
+  // CROSS-REFERENCES ARE BY TITLE, NOT BY NUMBER (backlog item 84,
+  // owner-directed 2026-08-20). Every check above this line validates that a
+  // translated reference points at the SAME lesson as the English it mirrors.
+  // None of them can catch the failure that actually shipped: a reference that
+  // is internally consistent across all five languages and still unusable,
+  // because the number it names is a lesson ID and the UI shows a lesson's
+  // position within its track. Track sizes are 12/13/15, so the largest number
+  // any screen displays is 15 — and 30 of the 58 English references cited
+  // something above that, pointing at a lesson number no reader could find.
+  //
+  // The fix was to name the lesson: “Compound Interest”, «Interés Compuesto»,
+  // 「복리」, 《复利》, 『複利』. A title survives a reorder and a renumbering;
+  // a number survives neither, and display order has now changed twice.
+  //
+  // So this asserts ABSENCE, which the consistency checks structurally cannot.
+  // If you are adding a cross-reference, write the lesson's title. If you are
+  // seeing this fire, something reintroduced "Lesson N" prose.
+  {
+    const offenders = LANGS.filter((l) => refTotals[l] > 0);
+    if (offenders.length) {
+      fail(
+        `§16b: numeric "Lesson N" cross-references are back in ${offenders
+          .map((l) => `${l} (${refTotals[l]})`)
+          .join(", ")}. Cross-references must name the lesson's TITLE, not its number — ` +
+          `a number is a lesson id, and the reader only ever sees a lesson's position within its track ` +
+          `(backlog item 84). Use the localized title from lessons.js.`,
+      );
+    } else {
+      console.log(`  §16b: no numeric "Lesson N" cross-references in any language — references are by title`);
+    }
+  }
+
   for (const lang of LANGS) {
     if (lang === "en") continue;
     if (refTotals[lang] < refTotals.en * 0.2) {
@@ -1436,9 +1469,32 @@ if (keyedGroupsChecked < 4) {
   // A glossary key and its English short name are both acceptable surface
   // forms, same as §17 ("QE" is spelled out as "quantitative easing").
   const namesFor = (key) => [key, glossary[key].en.s].filter(Boolean);
+
+  // A CROSS-REFERENCE IS NOT A TERM USE (backlog item 84). Cross-references in
+  // lesson prose name the lesson they point at — “Compound Interest”,
+  // “Stocks, Bonds & Diversification”, “QE & QT” — and several of those titles
+  // are also glossary keys. Left in the haystack they read as the lesson using
+  // the term, so this check demanded a glossary chip on a phrase that is a
+  // pointer to another lesson, not a concept the sentence is teaching. Linking
+  // it would send a reader to a definition when the text meant "go read that
+  // lesson", and excluding each one by hand would put ~10 identical entries in
+  // deliberatelyUnlinked.
+  //
+  // Only spans that match a real lesson title head are removed, not every
+  // quoted span, so this cannot silently swallow an ordinary quotation that
+  // happens to contain a glossary term.
+  const TITLE_SPANS = lessons
+    .map((l) => `“${l.title.en.split(":")[0]}”`)
+    .sort((a, b) => b.length - a.length);
+  const stripTitleRefs = (text) => {
+    let out = text;
+    for (const span of TITLE_SPANS) out = out.split(span).join(" ");
+    return out;
+  };
+
   const mentionedIn = (entry, key) =>
     entry.sections.some((s) => {
-      const hay = `${s.heading.en}\n${s.body.en}`;
+      const hay = stripTitleRefs(`${s.heading.en}\n${s.body.en}`);
       return namesFor(key).some((n) => mentions(hay, n));
     });
 

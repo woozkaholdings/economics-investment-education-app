@@ -263,7 +263,7 @@ export const quizText = [
       "El Fondo B rinde más automáticamente porque comisiones más altas financian mejor investigación",
       "La comisión solo aplica una vez, al comprar, así que no afecta los resultados a largo plazo"
     ],
-    "explain": "Como la comisión se deduce cada año — incluso sobre el crecimiento que ya se llevó en años anteriores — se compone en contra del saldo igual que el interés de la Lección 3 se compone a favor. Una diferencia de 1 punto porcentual, sostenida 30 años, consume aproximadamente una cuarta parte del saldo final."
+    "explain": "Como la comisión se deduce cada año — incluso sobre el crecimiento que ya se llevó en años anteriores — se compone en contra del saldo igual que el interés de la lección “Interés Compuesto” se compone a favor. Una diferencia de 1 punto porcentual, sostenida 30 años, consume aproximadamente una cuarta parte del saldo final."
   },
   {
     "q": "Un propietario lleva 3 años de una hipoteca a 30 años. ¿Qué describe mejor la división de su pago mensual entre capital e interés?",
@@ -273,7 +273,7 @@ export const quizText = [
       "Sobre todo interés, porque el interés se cobra sobre el gran saldo restante al inicio del préstamo",
       "Totalmente interés, ya que no se paga capital hasta refinanciar el préstamo"
     ],
-    "explain": "El interés se cobra sobre el saldo restante, que es mayor al inicio del préstamo, así que los primeros pagos son sobre todo interés — la misma matemática del interés compuesto de la Lección 3, funcionando en contra del prestatario. La parte de capital solo supera a la de interés alrededor de dos tercios del plazo de un préstamo típico a 30 años."
+    "explain": "El interés se cobra sobre el saldo restante, que es mayor al inicio del préstamo, así que los primeros pagos son sobre todo interés — la misma matemática del interés compuesto de la lección “Interés Compuesto”, funcionando en contra del prestatario. La parte de capital solo supera a la de interés alrededor de dos tercios del plazo de un préstamo típico a 30 años."
   },
   {
     "q": "Una cuenta de corretaje tiene $500 en efectivo sin invertir recién depositado. ¿Qué pasa generalmente con ese dinero si el dueño no hace nada más?",
@@ -293,7 +293,7 @@ export const quizText = [
       "El dinero se divide automáticamente en partes iguales entre el ex-cónyuge y el nuevo cónyuge",
       "El proveedor del 401(k) decide según quién contribuyó más"
     ],
-    "explain": "Un testamento no controla cuentas con su propia designación de beneficiario, como un 401(k) o un seguro de vida de las Lecciones 6 y 8. Quien esté nombrado en el formulario de beneficiario de esa cuenta la recibe directamente, sin importar lo que diga un testamento más reciente."
+    "explain": "Un testamento no controla cuentas con su propia designación de beneficiario, como un 401(k) o un seguro de vida de las lecciones “Cuentas de Jubilación” y “Seguros”. Quien esté nombrado en el formulario de beneficiario de esa cuenta la recibe directamente, sin importar lo que diga un testamento más reciente."
   },
   {
     "q": "Una persona ve un puntaje de crédito de 705 en una app y 680 en otra app distinta el mismo día. Según esta lección, ¿cuál es la explicación más probable?",
@@ -433,6 +433,6 @@ export const quizText = [
       "Sobreconfianza tras un resultado afortunado — atribuye la victoria a su propia habilidad en vez de considerar cuánta suerte hubo, y como resultado aumenta su toma de riesgos",
       "Aversión a la pérdida — está tratando de evitar el dolor de admitir una pérdida"
     ],
-    "explain": "Esto es sobreconfianza tras un resultado afortunado (sesgo de autoatribución): atribuir una victoria a la propia habilidad y aumentar la toma de riesgos como resultado, sin sopesar cuánto del resultado fue en realidad suerte. El FOMO (opción 1, lección 32) trata de copiar lo que hacen otras personas, que no es lo que está impulsando a María aquí — no se menciona el comportamiento de nadie más. El costo hundido (opción 0) trata de dejarse influir por dinero ya gastado, y la aversión a la pérdida (opción 3, lección 39) trata del dolor asimétrico de una pérdida — ninguna encaja con una historia sobre una sola victoria que impulsa más toma de riesgos."
+    "explain": "Esto es sobreconfianza tras un resultado afortunado (sesgo de autoatribución): atribuir una victoria a la propia habilidad y aumentar la toma de riesgos como resultado, sin sopesar cuánto del resultado fue en realidad suerte. El FOMO (opción 1, “Tanta Gente No Puede Estar Equivocada, ¿Verdad?”) trata de copiar lo que hacen otras personas, que no es lo que está impulsando a María aquí — no se menciona el comportamiento de nadie más. El costo hundido (opción 0) trata de dejarse influir por dinero ya gastado, y la aversión a la pérdida (opción 3, “¿Por Qué Perder $50 Duele Más Que Encontrar $50 se Siente Bien?”) trata del dolor asimétrico de una pérdida — ninguna encaja con una historia sobre una sola victoria que impulsa más toma de riesgos."
   }
 ];

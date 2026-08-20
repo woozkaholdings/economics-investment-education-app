@@ -263,7 +263,7 @@ export const quizText = [
       "Fund B automatically returns more because higher fees fund better research",
       "The fee only applies once, at the time of purchase, so long-term results are unaffected"
     ],
-    "explain": "Because a fee is deducted every year — including from growth the fee already took in prior years — it compounds against the balance just like Lesson 3's interest compounds for it. A 1-percentage-point difference, held for 30 years, is enough to consume roughly a quarter of the ending balance even though both funds hold identical investments."
+    "explain": "Because a fee is deducted every year — including from growth the fee already took in prior years — it compounds against the balance just like the interest in “Compound Interest” compounds for it. A 1-percentage-point difference, held for 30 years, is enough to consume roughly a quarter of the ending balance even though both funds hold identical investments."
   },
   {
     "q": "A homeowner is 3 years into a 30-year mortgage. Which best describes the split of their monthly payment between principal and interest?",
@@ -273,7 +273,7 @@ export const quizText = [
       "Mostly interest, since interest is charged on the large remaining balance early in the loan",
       "Entirely interest, since no principal is paid until the loan is refinanced"
     ],
-    "explain": "Interest is charged on the remaining balance, which is largest early in a loan, so early payments are mostly interest — the same compounding math from Lesson 3, working against the borrower. The principal share only overtakes the interest share around two-thirds of the way through a typical 30-year loan."
+    "explain": "Interest is charged on the remaining balance, which is largest early in a loan, so early payments are mostly interest — the same compounding math from “Compound Interest”, working against the borrower. The principal share only overtakes the interest share around two-thirds of the way through a typical 30-year loan."
   },
   {
     "q": "A brokerage account holds $500 in uninvested cash that was just deposited. What generally happens to it if the owner does nothing else?",
@@ -293,7 +293,7 @@ export const quizText = [
       "The money is split evenly between the ex-spouse and new spouse automatically",
       "The 401(k) provider decides based on which spouse contributed more"
     ],
-    "explain": "A will doesn't control accounts with their own beneficiary designation, like a 401(k) or life insurance policy from Lessons 6 and 8. Whoever is named on that account's beneficiary form receives it directly, regardless of what a more recent will says — which is why beneficiary forms need to be updated separately after major life changes."
+    "explain": "A will doesn't control accounts with their own beneficiary designation, like a 401(k) or life insurance policy from “Retirement Accounts” and “Insurance”. Whoever is named on that account's beneficiary form receives it directly, regardless of what a more recent will says — which is why beneficiary forms need to be updated separately after major life changes."
   },
   {
     "q": "A person sees a credit score of 705 in one app and 680 in a different app on the same day. Based on this lesson, what's the most likely explanation?",
@@ -433,6 +433,6 @@ export const quizText = [
       "Overconfidence after a lucky outcome — she's crediting the win to her own skill rather than considering how much luck was involved, and increasing her risk-taking as a result",
       "Loss aversion — she's trying to avoid the pain of admitting a loss"
     ],
-    "explain": "This is overconfidence after a lucky outcome (self-attribution bias): crediting a win to one's own skill and increasing risk-taking as a result, without weighing how much of the outcome was actually luck. FOMO (option 1, lesson 32) is about copying what other people are doing, which isn't what's driving Maria here — no one else's behavior is mentioned. Sunk cost (option 0) is about being influenced by money already spent, and loss aversion (option 3, lesson 39) is about the asymmetric pain of a loss — neither fits a story about a single win driving more risk-taking."
+    "explain": "This is overconfidence after a lucky outcome (self-attribution bias): crediting a win to one's own skill and increasing risk-taking as a result, without weighing how much of the outcome was actually luck. FOMO (option 1, “Everyone Can't Be Wrong — Can They?”) is about copying what other people are doing, which isn't what's driving Maria here — no one else's behavior is mentioned. Sunk cost (option 0) is about being influenced by money already spent, and loss aversion (option 3, “Why Does Losing $50 Hurt More Than Finding $50 Feels Good?”) is about the asymmetric pain of a loss — neither fits a story about a single win driving more risk-taking."
   }
 ];

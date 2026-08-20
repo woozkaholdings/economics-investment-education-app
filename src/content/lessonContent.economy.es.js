@@ -81,7 +81,7 @@ export const lessonContent = {
       },
       {
         "heading": "Por Qué Este Arreglo Tiene un Límite",
-        "body": "Este arreglo depende de que el banco central tenga margen para bajar tasas. Cada ciclo corto se resuelve con un recorte — pero si cada pico acumula más deuda que el anterior, ese margen se reduce con el tiempo.\n\nEventualmente las tasas se acercan a cero y el recorte ya no basta (como en la Lección 37, que llevó a la compra directa de bonos).\n\nEsta es la diferencia entre el ciclo corto — resuelto con un recorte de tasas cada 5-8 años — y el ciclo largo, que aparece cuando décadas de estos ciclos acumulan una deuda que un simple recorte ya no puede arreglar."
+        "body": "Este arreglo depende de que el banco central tenga margen para bajar tasas. Cada ciclo corto se resuelve con un recorte — pero si cada pico acumula más deuda que el anterior, ese margen se reduce con el tiempo.\n\nEventualmente las tasas se acercan a cero y el recorte ya no basta (como en la lección “QE y QT”, que llevó a la compra directa de bonos).\n\nEsta es la diferencia entre el ciclo corto — resuelto con un recorte de tasas cada 5-8 años — y el ciclo largo, que aparece cuando décadas de estos ciclos acumulan una deuda que un simple recorte ya no puede arreglar."
       }
     ],
     "takeaway": "La economía funciona como una máquina. Crédito fácil → expansión. Crédito restringido → recesión.",
@@ -135,7 +135,7 @@ export const lessonContent = {
       },
       {
         "heading": "El Doble Mandato del Fed: Dos Objetivos Que Pueden Chocar",
-        "body": "El Fed tiene un doble mandato: precios estables (~2% de inflación, el mismo objetivo de la Lección 39) y máximo empleo. Ambos objetivos suelen coincidir, pero a veces chocan — subir tasas frena la inflación pero también el empleo; bajar tasas protege empleos pero puede recalentar la inflación. No hay fórmula que resuelva esto: es una decisión de juicio que el comité de política del Fed toma reunión a reunión."
+        "body": "El Fed tiene un doble mandato: precios estables (~2% de inflación, el mismo objetivo de la lección “Leyendo Indicadores Económicos”) y máximo empleo. Ambos objetivos suelen coincidir, pero a veces chocan — subir tasas frena la inflación pero también el empleo; bajar tasas protege empleos pero puede recalentar la inflación. No hay fórmula que resuelva esto: es una decisión de juicio que el comité de política del Fed toma reunión a reunión."
       }
     ],
     "takeaway": "Los cambios de tasas son la herramienta principal del Fed. Cuando llegan a 0%, necesita herramientas no convencionales — QE.",
@@ -189,7 +189,7 @@ export const lessonContent = {
       },
       {
         "heading": "Por Qué Estos Activos, en Esta Fase",
-        "body": "Estos patrones no son aleatorios — vienen del mismo mecanismo de tasas de la Lección 35. En Expansión, el dinero barato impulsa más a las acciones de crecimiento. En el Pico, ese mecanismo se invierte: las acciones de valor y bonos de corto plazo resisten mejor. En Contracción, el dinero busca refugio en bonos del Tesoro y oro. En el Valle, los precios ya cayeron tanto que hasta una pequeña mejora los hace ver baratos."
+        "body": "Estos patrones no son aleatorios — vienen del mismo mecanismo de tasas de la lección “Tasas de Interés”. En Expansión, el dinero barato impulsa más a las acciones de crecimiento. En el Pico, ese mecanismo se invierte: las acciones de valor y bonos de corto plazo resisten mejor. En Contracción, el dinero busca refugio en bonos del Tesoro y oro. En el Valle, los precios ya cayeron tanto que hasta una pequeña mejora los hace ver baratos."
       }
     ],
     "takeaway": "Las grandes fortunas se hicieron comprando cuando otros entraban en pánico. El ciclo SIEMPRE gira.",

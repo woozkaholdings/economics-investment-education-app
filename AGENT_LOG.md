@@ -640,59 +640,75 @@ for the history. No open P1/P2 items.
     - **Honest priority: high the moment the owner's tree is clean, because it gates every other
       run's step-4 verification. Zero before that.**
 
-84. **[Content — filed 2026-08-20 by the read-through of the `essentials` bodies. THE APPROACH IS
-    DECIDED: cite lessons BY TITLE, not by number (owner-directed, same day). This is the largest
-    remaining instance of the id/display split that produced items 80 and 81.] 128 in-prose
-    "Lesson N" cross-references cite lesson IDs, which the UI no longer displays anywhere.**
-    - **The measurement, English, all three tracks.** 58 references. Track sizes are 12/13/15, so
-      **the highest lesson number the UI ever shows is 15**:
-      - **30 are DEAD** — they cite a number above 15 (e.g. `essentials` lesson 5 cites "Lesson 38"
-        three times, meaning `economy` position 10). No screen in the app displays that number.
-      - **5 are DECOYS, which is worse than dead** — a cross-track reference whose number also exists
-        in the reader's *own* track, pointing at an unrelated lesson. `money` position 2 cites
-        "Lesson 3" meaning `essentials` "Compound Interest", but a reader in the money track finds
-        "What Did That Really Cost You?" at their Lesson 3. The other four are listed in the run log.
-      - **23 are fine** — same-track, and the number matches because `essentials` ids 1-15 happen to
-        equal its positions.
-    - **⚠️ The repo's own scoping of this is WRONG, and it doubles the work.** `lessons.js`'s
-      `lessonsByTrack()` comment says the in-prose references are "English only — the other four
-      languages don't carry these references". Measured: **es 30, zh 38, ko 1, ja 1** — **128 total,
-      not 58.** Fix that comment in the same change.
-    - **Why titles rather than renumbering to positions.** Renumbering is what the 2026-08-14 pass did,
-      and display order has now changed twice; each change silently invalidates every number in the
-      prose, which is exactly how this defect arrived. A title survives any reorder and any future
-      renumbering, and `lessons.js` already carries every title in all five languages, so a
-      per-language implementation can read the correct localised title straight from the catalogue
-      rather than inventing one. **Do not "fix" this by renumbering.**
-    - **Scope, and do not start it without reading this line.** Every reference needs a per-language
-      rewrite that reads naturally in that language — this is 128 sentence edits, not a regex. Consider
-      doing it one track at a time and committing per track. Where the target is in another track, the
-      replacement should make that clear ("the budgeting lesson in Money Basics"), since the decoy
-      cases above are precisely the ones where a bare title could still leave a reader hunting.
-    - **Add a guard in the same change**, or this returns: a `check-data.mjs` §-section asserting that
-      no `/Lesson\s+\d+/`-shaped reference (and its four localised equivalents) survives in any
-      `lessonContent.*.js`. Without it nothing in the repo notices the next time.
+84. **✅ DONE 2026-08-20 (owner-directed, interactive) — shipped by title, and the item's own headline
+    count was WRONG BY 80%. Read the correction before trusting any figure filed here.**
+    - **Shipped: 237 cross-references converted from numbers to titles, across five languages** —
+      lesson bodies (en 58, es 37, ko 38, zh 38, ja 38 = 209) plus quiz explanations (en 5, es 5,
+      ko 6, zh 6, ja 6 = 28). Zero numeric references remain, verified with the guard's own patterns.
+    - **⚠️ THE CORRECTION.** This item filed the total as **128** (es 30, zh 38, ko 1, ja 1). The real
+      figure is **237**. The undercount was **my own instrument, not the content**: I scanned `ko` for
+      `레슨 N` and `ja` for `レッスン N`, but the prose overwhelmingly writes `N강` and `第N課` — and
+      `ja` also writes `第N講`. `check-data.mjs`'s `REF_PATTERNS` already knew all of this, with a
+      comment saying hand-enumerating surface forms "has now failed three times in a row." **It failed
+      a fourth time, in the item that was filed to fix it.** Use `REF_PATTERNS` as the detector; do not
+      write a new one.
+    - **The reference style, so a future run matches it.** Quoted title *head* (text before the colon):
+      `“Compound Interest”` en/es, `「복리」` ko, `《复利》` zh, `『複利』` ja. **Per-language quote marks
+      were chosen against existing usage, not by default** — `ja` already used 「」 for ordinary quotes
+      8 times, so titles take 『』; `zh` had 《》 free, which is its standard title mark; `ko` had no
+      bracket usage at all. Cross-track references append the track name (`(in How the Economy Works)`),
+      which is what the five decoy cases needed. Spanish keeps the noun — `la lección “Título”` — because
+      a bare quoted title after an article reads wrong.
+    - **Guarded, and the guard was proven by injection.** New `check-data.mjs` **§16b** fails on any
+      numeric `Lesson N` reference in any language. Every pre-existing check validates that translations
+      *mirror* English; none could catch a reference that is consistent across all five languages and
+      still unusable, which is exactly what shipped. Injected one `Lesson 3` into `essentials.en` → the
+      guard failed naming `en (1)`; restored from a scratchpad copy, `diff` byte-identical, guard green.
+    - **One side effect worth understanding before editing lesson prose again.** Inserting titles put
+      text into the body that *matches glossary keys* — "Compound Interest", "Stock", "Bond", "QT" are
+      lesson titles **and** glossary terms — so §3.0.3's coverage check demanded a glossary chip on what
+      is a pointer to another lesson, not a term the sentence teaches. Fixed in the checker rather than
+      by adding ~10 identical `deliberatelyUnlinked` entries: §17b now strips spans matching a real
+      lesson title head before scanning. **Control that it did not over-strip:** the coverage numbers
+      came back **102 uses / 66 chips / 36 unlinked / 0 unexplained**, identical to before the rewrite.
+    - **Also cost:** `essentials` lesson 11 crossed a reading-time boundary (3 → 4 min) and the readiness
+      figures moved (144 → 145 min); both regenerated rather than hand-edited.
 
-85. **[Process — filed 2026-08-20 by the same read-through. Latent, not live: measured clean today.]
-    §2.3's date guard does not cover `lessonContent.*.js`, so lesson bodies can carry dated or
-    live-looking figures with nothing to notice.**
-    - **The gap, precisely.** `check-blindspot.mjs`'s §2.3 check runs against an explicit five-file
-      list — `markets.js`, `economicSignals.js`, `sectors.js`, `moneyVisuals.js`,
-      `policyScenarios.js`. The lesson bodies are not in it. Note the contrast, which is what makes
-      this an oversight rather than a decision: the **§10.1** advice-adjacency scan in the same file
-      uses `walk(src/content)` and therefore *does* cover every lesson module.
-    - **Currently clean, and that is the reason to file it rather than rush it.** Scanned all 15
-      `essentials` bodies: **zero** four-digit years, **zero** "Month YYYY" dates. The content is
-      written to be durable on purpose — lesson 6 says a 401(k) match runs "up to a set limit" instead
-      of naming a figure, and lesson 10 says a 1099 arrives when a client paid "over a threshold"
-      instead of naming $600. **That is a deliberate style worth protecting**, and it is protected by
-      nothing but the authors' habit.
-    - **Why `essentials` is the track that makes this worth doing:** it is the one carrying tax
-      brackets, contribution limits, W-2/1099 thresholds and mortgage figures — the content most
-      likely to tempt a future run into writing a current-year number.
-    - **Scope:** add the `lessonContent.*.js` modules to the §2.3 file list. Expect to tune first —
-      run it before committing, since a lesson legitimately discussing a historical year would trip a
-      naive year regex, and the existing check targets "Month YYYY" shapes rather than bare years.
+87. **✅ DONE 2026-08-20 (owner-directed, interactive) — a wrong-target reference found only because
+    the title rewrite forced every reference to be resolved.** `quizText` item 41 pointed at two
+    lessons that have nothing to do with the concepts it names.
+    - **The defect.** Quiz item 41 belongs to `money` lesson 28 ("Does One Lucky Win Prove You Have a
+      System?"). Its explanation cited **"lesson 32"** for FOMO and **"lesson 39"** for loss aversion.
+      Those ids are `economy` lessons — "The Short-Term Debt Cycle" and "Reading Economic Indicators".
+      FOMO is `money` id **20**; loss aversion is `money` id **27**.
+    - **The same lesson's own body had it right**, citing 20 and 27 — so the quiz text and the lesson
+      text disagreed, in the same lesson. These are stale ids the 2026-08-14 renumbering remapped in
+      `lessonContent` and missed in `quizText`, and **all five languages mirrored the wrong pair**,
+      which is why the cross-language consistency check never noticed: it verifies translations match
+      English, and they did — English was wrong.
+    - **Fixed on the way through**: the conversion resolved 32 → "Everyone Can't Be Wrong — Can They?"
+      and 39 → "Why Does Losing $50 Hurt More Than Finding $50 Feels Good?" in all five languages.
+    - **The lesson for future runs, and it is the reason this is its own item:** a reference that is
+      *consistent* is not necessarily *correct*. Nothing in the repo checks that a cross-reference points
+      at a lesson that actually covers the thing being cited, and §16b does not close that gap either —
+      it only enforces the format. If a future run wants a real guard here, it would have to compare the
+      cited lesson's subject against the citing sentence, which is a judgment call, not a regex.
+
+
+85. **✅ DONE 2026-08-20 (owner-directed, interactive).** The lesson bodies and quiz text are now
+    inside §2.3's date guard.
+    - **Shipped:** `check-blindspot.mjs`'s §2.3 teaching-copy list stops being hand-maintained at five
+      entries and picks up every `lessonContent.*.js` and `quizText.*.js` module — **26 files** now
+      scanned, up from 5.
+    - **Proven by injection, not by the green tick.** Put `As of March 2026,` into an `essentials`
+      lesson body — a file the old list did not cover — and the check failed; restored from a
+      scratchpad copy, `diff` byte-identical, check green again. Measured clean on the way in: zero
+      "Month YYYY" dates across all 15 lessonContent and 5 quizText modules.
+    - **⚠️ KNOWN BOUNDARY, written into the code rather than left implied.** The pattern is English
+      month names, so a Spanish "marzo 2026" or a Japanese "2026年3月" still passes. Closing that needs
+      a per-language date vocabulary, which item 85 did not scope. What this covers is the English
+      source the translations are made from, which is where such a figure would enter the app.
+
 
 86. **✅ DONE 2026-08-20 (owner-directed, interactive) — a factual error found by reading the bodies,
     fixed in all five languages.** `essentials` lesson 6 and lesson 13 contradicted each other on when
@@ -11189,3 +11205,106 @@ it per-track, per-language, with the guard landing in the same change. Item 85 i
 it. Still uncovered from the original sweep: the batch-pause interstitial under a real 40-question
 session, and keyboard-only traversal of the reader's action row. **Item 18 remains the entire critical
 path to ending Phase 0**, still blocked on the owner creating an analytics-provider account.
+
+---
+
+## 2026-08-20 — cross-references converted to titles across five languages (items 84, 85, 87)
+
+**Owner-directed, interactive: "do all in priority."** Item 84 was the biggest open piece of work and
+its approach was already decided, so it went first, with 85 as its natural companion. 87 is a defect
+that only surfaced because converting a reference forces you to resolve it.
+
+### Item 84 — 237 references, and my own filed count was wrong by 80%
+
+**Shipped:** every numeric cross-reference in the app now names the lesson instead of numbering it —
+lesson bodies (en 58, es 37, ko 38, zh 38, ja 38) plus quiz explanations (28 more) = **237**, verified
+zero remaining with the guard's own detector.
+
+**The correction, and it is the same failure the file it lives in already warned about.** I filed this
+item saying **128** (es 30, zh 38, ko 1, ja 1). The real number is **237**. The undercount was my
+instrument: I scanned `ko` for `레슨 N` and `ja` for `レッスン N`, when the prose overwhelmingly writes
+`N강` and `第N課`, and `ja` also writes `第N講`. `check-data.mjs`'s `REF_PATTERNS` already encoded all
+three surface forms, above a comment reading "enumerating surface forms by hand has now failed three
+times in a row." **It failed a fourth time, in the item filed to fix it.** The correction is in the
+backlog item: use `REF_PATTERNS`, never a fresh regex.
+
+**Style, chosen against existing usage rather than by default.** Quoted title head — `“Compound
+Interest”` en/es, `「복리」` ko, `《复利》` zh, `『複利』` ja. `ja` already used 「」 for ordinary quotes
+eight times, so titles take 『』; `zh` had 《》 unused, which is its standard title mark; `ko` had no
+bracket usage at all. Cross-track references append the track name, which is what the five decoy cases
+needed. Spanish keeps the noun (`la lección “Título”`) because a bare quoted title after an article
+reads wrong. Verified live: `“The 4 Phases of Economic Cycles” (in How the Economy Works) showed how…`.
+
+**Guarded — `check-data.mjs` §16b**, which asserts *absence*. Every existing check validates that
+translations mirror English; none of them could catch a reference that is consistent across all five
+languages and still unusable, which is precisely what shipped. Proven by injecting one `Lesson 3` into
+`essentials.en` (guard failed, naming `en (1)`), then restoring byte-identically.
+
+**The side effect worth knowing before editing lesson prose again.** Titles inserted into body text
+*match glossary keys* — "Compound Interest", "Stock", "Bond", "QT" are lesson titles **and** glossary
+terms — so §3.0.3 began demanding a glossary chip on what is a pointer to another lesson rather than a
+concept the sentence teaches. Fixed in the checker (§17b strips spans matching a real lesson title head)
+instead of adding ten identical `deliberatelyUnlinked` entries. **Control that it did not over-strip:**
+coverage came back **102 uses / 66 chips / 36 unlinked / 0 unexplained** — identical to before the
+rewrite. Only exact title-head spans are stripped, so an ordinary quotation containing a glossary term
+still counts.
+
+### Item 87 — a reference that was consistent in five languages and pointed at the wrong lessons
+
+Quiz item 41 belongs to `money` lesson 28 ("Does One Lucky Win Prove You Have a System?"). Its
+explanation cited **lesson 32** for FOMO and **lesson 39** for loss aversion — both `economy` lessons
+("The Short-Term Debt Cycle", "Reading Economic Indicators"). FOMO is `money` **20**; loss aversion is
+`money` **27**, and **the same lesson's own body cited 20 and 27 correctly**. Stale ids the 2026-08-14
+renumbering fixed in `lessonContent` and missed in `quizText`, mirrored into all four translations —
+which is exactly why no check caught it: the cross-language check verifies translations match English,
+and they did. English was wrong. Corrected to the right titles in all five languages.
+
+**This is the gap §16b does not close**, and the item says so: a reference can be well-formed and
+consistent and still point somewhere wrong. Catching that means comparing a cited lesson's subject to
+the citing sentence, which is judgment, not a regex.
+
+### Item 85 — the lesson bodies join §2.3's date guard
+
+The teaching-copy list was hand-maintained at five files while the §10.1 scan beside it walks all of
+`src/content` — so the largest body of teaching copy, and the part most likely to name a current
+figure, was the part §2.3 did not watch. Now **26 files**. Injected `As of March 2026,` into an
+`essentials` body — previously invisible — and it failed; restored byte-identically. **Known boundary
+written into the code:** English month names only, so `marzo 2026` still passes; that needs a
+per-language date vocabulary and was not in scope.
+
+### Honest accounting of what this cost
+
+- **`essentials` lesson 11 crossed a reading-time boundary** (3 → 4 min) because titles are longer than
+  "Lesson 3"; readiness figures moved 144 → 145 min. Both regenerated with `--write`, not hand-edited.
+- **Translation review dropped from 100% to 83%, deliberately.** English changed in 26 lessons; each
+  translation changed in 19. I marked re-reviewed **only the 19 pairs per language I actually edited**,
+  because for those I read the translated sentence against the new English and rewrote it. The other
+  **7 lessons per language** have English that moved and a translation I did not re-read, so they are
+  correctly left **stale**. Marking all 26 would have been the easy way to keep a 100% and would have
+  been a false claim. `LAUNCH_READINESS.md` §10.4 now says 83% / 7 stale.
+
+### Adversarial self-check (step 5)
+
+**Blindspot register:** no regression — this edits cross-reference phrasing only; no advice-adjacent
+language, no dates, no figures added, and `check-blindspot` passes with its §10.1 multi-language
+patterns over all of `src/content` (which now includes the §2.3 scan too, so the change is checked by
+the very guard it extends). **DECISIONS.md conflict:** none, and this is the important one — the
+two-tracks entry says ids are stable and display order is a product decision, and warns "do not fix
+this by renumbering again." **I did not renumber.** The fix removes the app's dependence on numbers
+entirely, which is the same reasoning one step further. **Already-done item:** no — item 33 fixed
+translated references pointing at *different lessons than English*; that check still passes and is what
+forced this change to cover all five languages rather than English alone. **My own verification
+claims:** the counts come from `REF_PATTERNS` (the authoritative detector, after my own regex was shown
+wrong), both new guards were proven by injection with byte-identical restores, and the rendered example
+is pasted `innerText`. **What the check caught:** my §16b "pass" branch called `ok()`, which does not
+exist in `check-data.mjs` — the suite crashed rather than passing, and I only saw it because the run
+after the injection control came back non-zero.
+
+### Next run
+
+`npm run owner-tree -- --expect c2331799fd3ee413aca864fd82d247a35ea31b01a70a6c4e37b00f6aad9105b2`.
+**The 7 stale translation lessons per language are the honest debt this run created** — they are listed
+by `npm run review-status`. Remaining from the earlier sweep: the batch-pause interstitial under a real
+40-question session, and keyboard-only traversal of the reader's action row. **Item 18 remains the
+entire critical path to ending Phase 0**, still blocked on the owner creating an analytics-provider
+account.

@@ -264,6 +264,25 @@ const readmePath = join(ROOT, "README.md");
     // a month and year would read as a description of right now rather than
     // as the hypothetical it is.
     join(ROOT, "src", "content", "policyScenarios.js"),
+    // The lesson bodies and quiz text, added 2026-08-20 with backlog item 85.
+    // This list had been hand-maintained while the §10.1 scan above walks all
+    // of src/content — so the largest body of teaching copy in the app, and
+    // the part most likely to name a current figure, was the part §2.3 did not
+    // watch. The `essentials` track alone covers tax brackets, contribution
+    // limits, W-2/1099 thresholds and mortgage costs.
+    //
+    // Measured clean when this was added: zero "Month YYYY" dates across all
+    // 15 lessonContent modules and all 5 quizText modules. The content avoids
+    // dated figures deliberately — "up to a set limit" rather than a 401(k)
+    // number, "over a threshold" rather than $600 — and this is what keeps
+    // that a rule instead of a habit.
+    //
+    // KNOWN BOUNDARY, stated rather than implied: the pattern below is English
+    // month names, so a Spanish "marzo 2026" or a Japanese "2026年3月" would
+    // pass. Closing that means a per-language date vocabulary, which is real
+    // work and is not what item 85 scoped. This covers the English source the
+    // translations are made from, which is where such a figure would enter.
+    ...contentFiles.filter((f) => /lessonContent\.|quizText\./.test(f)),
   ].filter(existsSync);
   const monthYear =
     /\b(january|february|march|april|may|june|july|august|september|october|november|december)\s+20\d{2}\b/i;
@@ -271,7 +290,7 @@ const readmePath = join(ROOT, "README.md");
   if (hits.length) {
     fail(`§2.3 a "Month YYYY"-shaped date appears in teaching copy (reads as live/current):\n  ${hits.join("\n  ")}`);
   } else {
-    ok("§2.3 no live-looking dates in src/content/{markets,economicSignals,sectors,moneyVisuals,policyScenarios}.js");
+    ok(`§2.3 no live-looking dates in ${teachingFiles.length} teaching-copy modules (markets/economicSignals/sectors/moneyVisuals/policyScenarios + lessonContent + quizText)`);
   }
 }
 
