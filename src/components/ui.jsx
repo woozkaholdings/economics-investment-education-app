@@ -72,7 +72,7 @@ const NOTE_TONES = {
   neutral: { wash: surface.sunken, rule: line.strong, label: ink.muted },
   accent: { wash: surface.accentWash, rule: fill.accent, label: ink.accent },
   ok: { wash: surface.okWash, rule: fill.ok, label: ink.ok },
-  warn: { wash: surface.warnWash, rule: "#d97706", label: ink.warn },
+  warn: { wash: surface.warnWash, rule: fill.warn, label: ink.warn },
   bad: { wash: surface.badWash, rule: fill.bad, label: ink.bad },
 };
 

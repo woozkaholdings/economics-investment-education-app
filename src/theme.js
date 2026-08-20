@@ -19,7 +19,7 @@
 // component reading `ink.strong` automatically gets the right value for the
 // active scheme. Contrast for both palettes is *declared* in `index.css`'s
 // CONTRAST header note and *enforced* by `scripts/check-data.mjs` §28, which
-// asserts WCAG AA on all 54 ink×surface and text-on-fill pairs per palette
+// asserts WCAG AA on all 55 ink×surface and text-on-fill pairs per palette
 // every `npm test`. Before 2026-08-17 this line said "is verified in
 // `index.css`" and nothing performed the verification (backlog item 59).
 //
@@ -56,6 +56,7 @@ export const fill = {
   accent: "var(--fill-accent)",
   accentDeep: "var(--fill-accent-deep)",
   ok: "var(--fill-ok)",
+  warn: "var(--fill-warn)",
   bad: "var(--fill-bad)",
   ink: "var(--fill-ink)",
 };

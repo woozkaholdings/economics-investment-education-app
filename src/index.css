@@ -12,7 +12,7 @@
      3. `[data-theme="dark"|"light"]`  → an explicit choice always wins
 
    CONTRAST: both palettes are checked against every surface they pair with —
-   54 pairs each, every ink on every surface plus text on every fill — by
+   55 pairs each, every ink on every surface plus text on every fill — by
    `scripts/check-data.mjs` §28, which runs in `npm test` and also asserts that
    the three figures below still match what it computes. Until 2026-08-17 this
    note was the only "verification" there was, and two of its three figures had
@@ -48,6 +48,7 @@
   --fill-accent: #2563eb;
   --fill-accent-deep: #1d4ed8;
   --fill-ok: #047857;
+  --fill-warn: #9a4a08;
   --fill-bad: #b91c1c;
   --fill-ink: #16181d;
   /* Text placed on the fills above. */
@@ -103,6 +104,7 @@
     --fill-accent: #8ab0ff;
     --fill-accent-deep: #a8c4ff;
     --fill-ok: #54d6a0;
+    --fill-warn: #f0b95c;
     --fill-bad: #ff9a9a;
     --fill-ink: #f3f5f9;
     /* Dark ink on bright fills — see the CONTRAST note in this file's header
@@ -147,6 +149,7 @@
   --fill-accent: #8ab0ff;
   --fill-accent-deep: #a8c4ff;
   --fill-ok: #54d6a0;
+  --fill-warn: #f0b95c;
   --fill-bad: #ff9a9a;
   --fill-ink: #f3f5f9;
   --ink-on-fill: #0f1115;

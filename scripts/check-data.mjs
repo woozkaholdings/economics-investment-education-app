@@ -2813,7 +2813,8 @@ if (keyedGroupsChecked < 4) {
     for (const ink of inks) for (const surface of surfaces) pairs.push([ink, surface]);
     for (const f of fills) pairs.push(["--ink-on-fill", f]);
 
-    // Floor: 7 inks x 7 surfaces + 5 fills = 54 since 2026-08-04. A prefix
+    // Floor: 7 inks x 7 surfaces + 6 fills = 55 (5 fills / 54 until
+    // 2026-08-20, when --fill-warn landed with backlog item 75). A prefix
     // filter that silently matched nothing would otherwise pass 0 pairs.
     if (pairs.length < 50) {
       fail(

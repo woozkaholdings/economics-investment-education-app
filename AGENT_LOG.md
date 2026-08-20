@@ -953,7 +953,24 @@ for the history. No open P1/P2 items.
       labelled translation layer. The value is the instrument, not these two edits — and if the
       instrument is ever built, run it before deciding anything.
 
-75. **🟡 HALF DONE 2026-08-17 (scheduled dev-agent) — and the half that was done turned out
+75. **✅ DONE 2026-08-20 (owner-directed). `--fill-warn` exists in both palettes,
+    `NOTE_TONES.warn.rule` points at it, and no `.jsx` under `src/` holds a hex literal any more — and
+    for the thirteenth item running the premise broke, this time on the VALUE the item had already
+    decided.** Item 75 proposed `#c56c05` ("would read 3.67 and sit inside the band"). As a `--fill-*`
+    token that **fails `npm test`**: §28 pairs `--ink-on-fill` with every fill at AA 4.5:1, and white on
+    `#c56c05` is **3.80**. The item flagged that adding a fill "perturbs §28's text-on-fill sweep" but
+    never carried the number through, so its decided value was unusable. **The palette answered it
+    instead:** every existing `--fill-X` is byte-identical to its `--ink-X` (accent `#2563eb`, ok
+    `#047857`, bad `#b91c1c`, ink `#16181d`; and in dark `#8ab0ff`/`#54d6a0`/`#ff9a9a`/`#f3f5f9`), so
+    `--fill-warn` is `--ink-warn` — **`#9a4a08` light, `#f0b95c` dark**. Measured: white-on-fill 6.26
+    light and ink-on-fill 10.62 dark (both inside the sibling band), rule-on-its-own-wash 6.03 light and
+    8.99 dark. **Also: the item only ever measured the light palette, and the literal was theme-blind** —
+    one constant served both schemes while every sibling rule swapped. Confirmed live in both palettes.
+    See the run log entry of this date. The first half (`src/content/lessons.js`) stays resolved as
+    recorded below: no value change, and none should be made.
+    <details><summary>Status as at 2026-08-17, with the lessons.js half's full diagnosis</summary>
+
+    **🟡 HALF DONE 2026-08-17 (scheduled dev-agent) — and the half that was done turned out
     not to be the edit this item asked for, because the premise "a copy of the token" is FALSE for the
     `lessons.js` site.** The count reproduces exactly (two live literals, plus two correct historical
     mentions in comments; control `#c56c05` found at `src/index.css:63` as expected), but what the two
@@ -1005,6 +1022,7 @@ for the history. No open P1/P2 items.
       and future drift, at **honest priority: low** — and it is genuinely small, which is the only
       reason it is worth filing rather than dropping.
 
+    </details>
     </details>
 
 65. **✅ DONE 2026-08-17 (scheduled dev-agent) — decided AMBER MOVES, because re-measuring the item's
@@ -11669,3 +11687,110 @@ apply it), **64's `Dividend`**, **35's second glossary batch**. Standing debt: t
 lessons per language** (`npm run review-status`). **Item 18 remains the entire critical path to ending
 Phase 0**, blocked on the owner creating an analytics-provider account, and **item 72's owner half — a
 deployed URL — is now blindspot 10.10**, whose refuting number is one reachable URL.
+
+---
+
+## 2026-08-20 — the warn callout stops being a hex literal, and the value the item had decided turned out to fail the suite (item 75)
+
+**Owner-directed** ("do item 75 next"). Item 75's second half was blocked on `src/components/ui.jsx`
+being owner-dirty; the tree is clean (`owner-tree` UNMOVED `c2331799…`), so it is pickable, and the item
+says the unblocking run "only has to apply it." It did not.
+
+### Step 3.5 — the premise held on the diagnosis and broke on the prescription
+
+**What reproduced exactly.** `NOTE_TONES.warn.rule` is a literal `"#d97706"` at
+`src/components/ui.jsx:75`; every other tone's rule is a token (`line.strong`, `fill.accent`, `fill.ok`,
+`fill.bad`); `theme.js`'s `fill` is accent/accentDeep/ok/bad/ink, so **there is no `--fill-warn` at
+all** — the item's sharpened diagnosis, confirmed. Two live `#d97706` literals in `src/`, the other
+being `lessons.js:183` (item 75's own first half, resolved: leave it). Control: the same grep finds
+`#c56c05` at `src/index.css:63`, exactly where item 75 said it would be.
+
+**What broke — the value.** Item 75 decided `#c56c05` ("would read 3.67 and sit inside it"). **As a
+`--fill-*` token that turns `npm test` red**: §28 derives its pairs by prefix and pairs `--ink-on-fill`
+with *every* fill at **AA 4.5:1**, and white on `#c56c05` is **3.80**. The item saw the shape of this —
+it wrote that adding a fill "perturbs §28's text-on-fill sweep" — but did not carry the number through,
+so the thing it left "decided, just apply it" was not applicable.
+
+**What the palette says instead, and it is not a judgement call.** Every existing `--fill-X` is
+byte-identical to its `--ink-X`:
+
+| | accent | accent-deep | ok | bad | ink |
+|---|---|---|---|---|---|
+| light fill | `#2563eb` | `#1d4ed8` | `#047857` | `#b91c1c` | `#16181d` |
+| light ink | `#2563eb` (`--ink-accent`) | — | `#047857` | `#b91c1c` | `#16181d` (`--ink-strong`) |
+| dark fill | `#8ab0ff` | `#a8c4ff` | `#54d6a0` | `#ff9a9a` | `#f3f5f9` |
+| dark ink | `#8ab0ff` | — | `#54d6a0` | `#ff9a9a` | `#f3f5f9` |
+
+So `--fill-warn` is `--ink-warn`: **`#9a4a08` light, `#f0b95c` dark**. Measured against the
+published-WCAG control (21.00 / 5.17 / 1.00, all reproducing to 0.01):
+
+| | white-/ink-on-fill (§28 needs ≥ 4.5) | rule on its own wash |
+|---|---|---|
+| light `--fill-warn` `#9a4a08` | **6.26** (siblings 5.17–6.70) | **6.03** (siblings 4.62–5.99) |
+| dark `--fill-warn` `#f0b95c` | **10.62** (siblings 8.76–10.80) | **8.99** (siblings 7.17–8.84) |
+| item 75's `#c56c05` | **3.80 — fails** | 3.67 |
+| the literal `#d97706` | 3.19 | 3.07 light / 5.02 dark |
+
+**A second thing the item never measured: it only ever looked at the light palette, and the literal was
+theme-blind.** One constant served both schemes while every sibling rule swapped, so the warn rule was
+the outlier in *both* — 3.07 against light siblings' 4.62–5.99, and 5.02 against dark siblings' 7.17–8.74.
+Its dark reading of 5.02 does clear 1.4.11's 3:1, so this was never a violation; I predicted 1.79 before
+measuring and was wrong, which is why the table above is measured rather than reasoned.
+
+### What shipped
+
+- `src/index.css`: `--fill-warn` added to all three palette blocks (light `:root`, the
+  `prefers-color-scheme: dark` block, and `[data-theme="dark"]` — §28 already fails on any drift between
+  the last two). Header note "54 pairs each" → **55**.
+- `src/theme.js`: `fill.warn`, and its "all 54 … pairs per palette" comment → 55.
+- `src/components/ui.jsx:75`: `rule: "#d97706"` → `rule: fill.warn`.
+- `scripts/check-data.mjs` §28's floor comment: "5 fills = 54" → "6 fills = 55", dated.
+- **`--graph-amber` is untouched** (`#c56c05` light / `#f0b95c` dark) — item 65 is not undone, and
+  pointing a decorative callout rule at an accessibility-constrained chart token was the wrong fix for
+  the same reason the `lessons.js` half rejected it.
+
+### Verified — live, in both palettes, with the tone tokens as the control
+
+`npm test` **exit 0**; §28 now prints **110 pairs** (was 108) with the worst cases unmoved (light 4.62
+`--ink-accent` on `--surface-accent-wash`, dark 5.93 `--ink-muted` on the same), which is why the header
+note's asserted figures still match. `npm run build` **exit 0**.
+
+Live: `dist/` served on `:8899`, `preview_start` with a plain url, driven through `javascript_tool` to
+Reference → Market Dashboard, which renders `<Note tone="warn">`. **The browser was in system dark
+(`prefers-color-scheme: dark` matched, `data-theme` null)** — the exact condition the Environment note
+records as having silently voided an earlier colour scan, so both palettes were read explicitly:
+
+- **dark**: warn rule `rgb(240, 185, 92)` = `#f0b95c` on wash `rgb(42, 32, 16)` = `#2a2010`.
+- **light** (`data-theme="light"`): warn rule `rgb(154, 74, 8)` = `#9a4a08` on `rgb(255, 251, 235)`.
+- **Control, read in the same call on the same elements:** the `ok` and `bad` notes swap
+  `rgb(84,214,160)`↔`rgb(4,120,87)` and `rgb(255,154,154)`↔`rgb(185,28,28)`, and `neutral` swaps too.
+  Tones that already used tokens move, so the reader is seeing live theme-resolved values rather than a
+  cached snapshot — and the warn rule now moves with them, where a literal could not.
+- Screenshot taken in light mode: the callout renders a dark-amber rule on the pale wash.
+
+**`grep -rn "#[0-9a-fA-F]\{6\}" --include="*.jsx" src/` now returns nothing.** The App summary's
+"No inline hex anywhere else in the app" was false until this commit; it is true of every `.jsx` now.
+`src/content/lessons.js`'s 36 per-lesson accents remain, deliberately — item 75's first half proved that
+field is read by nothing and recorded why deleting it would be a bad trade.
+
+### Adversarial self-check (step 5)
+
+**Blindspot register:** no regression — a colour token and one style reference; no content, no
+advice-adjacent language, no Dalio, no kids framing, no date or market figure. `check-blindspot` passes.
+**DECISIONS.md conflict:** none — this restores the stated architecture (colour lives in `index.css` as
+custom properties) rather than contradicting it. **Already-done item:** no — and specifically **not** a
+partial undo of item 65: `--graph-amber` still reads `#c56c05` at `src/index.css:64`, checked after the
+edit. **My own verification claims:** the contrast table is computed output with the published control
+alongside it, and every `rgb()` above is pasted from a live `getComputedStyle` read. **What the check
+caught:** my own pre-measurement guess that the dark literal was ~1.79 and therefore a 1.4.11 violation.
+It is 5.02 and is not. The finding survives — the rule is the outlier in both palettes — but the
+accessibility framing did not, and the entry above says so rather than keeping the better story.
+
+### Next run
+
+`npm run owner-tree -- --expect c2331799fd3ee413aca864fd82d247a35ea31b01a70a6c4e37b00f6aad9105b2`.
+Still unblocked and unpicked: **64's `Dividend`**, **35's second glossary batch**. Standing debt: the
+**7 stale translation lessons per language** (`npm run review-status`). **Item 18 remains the entire
+critical path to ending Phase 0**, blocked on the owner creating an analytics-provider account, and
+**item 72's owner half — a deployed URL — is blindspot 10.10**, whose refuting number is one reachable
+URL.
