@@ -640,6 +640,77 @@ for the history. No open P1/P2 items.
     - **Honest priority: high the moment the owner's tree is clean, because it gates every other
       run's step-4 verification. Zero before that.**
 
+84. **[Content — filed 2026-08-20 by the read-through of the `essentials` bodies. THE APPROACH IS
+    DECIDED: cite lessons BY TITLE, not by number (owner-directed, same day). This is the largest
+    remaining instance of the id/display split that produced items 80 and 81.] 128 in-prose
+    "Lesson N" cross-references cite lesson IDs, which the UI no longer displays anywhere.**
+    - **The measurement, English, all three tracks.** 58 references. Track sizes are 12/13/15, so
+      **the highest lesson number the UI ever shows is 15**:
+      - **30 are DEAD** — they cite a number above 15 (e.g. `essentials` lesson 5 cites "Lesson 38"
+        three times, meaning `economy` position 10). No screen in the app displays that number.
+      - **5 are DECOYS, which is worse than dead** — a cross-track reference whose number also exists
+        in the reader's *own* track, pointing at an unrelated lesson. `money` position 2 cites
+        "Lesson 3" meaning `essentials` "Compound Interest", but a reader in the money track finds
+        "What Did That Really Cost You?" at their Lesson 3. The other four are listed in the run log.
+      - **23 are fine** — same-track, and the number matches because `essentials` ids 1-15 happen to
+        equal its positions.
+    - **⚠️ The repo's own scoping of this is WRONG, and it doubles the work.** `lessons.js`'s
+      `lessonsByTrack()` comment says the in-prose references are "English only — the other four
+      languages don't carry these references". Measured: **es 30, zh 38, ko 1, ja 1** — **128 total,
+      not 58.** Fix that comment in the same change.
+    - **Why titles rather than renumbering to positions.** Renumbering is what the 2026-08-14 pass did,
+      and display order has now changed twice; each change silently invalidates every number in the
+      prose, which is exactly how this defect arrived. A title survives any reorder and any future
+      renumbering, and `lessons.js` already carries every title in all five languages, so a
+      per-language implementation can read the correct localised title straight from the catalogue
+      rather than inventing one. **Do not "fix" this by renumbering.**
+    - **Scope, and do not start it without reading this line.** Every reference needs a per-language
+      rewrite that reads naturally in that language — this is 128 sentence edits, not a regex. Consider
+      doing it one track at a time and committing per track. Where the target is in another track, the
+      replacement should make that clear ("the budgeting lesson in Money Basics"), since the decoy
+      cases above are precisely the ones where a bare title could still leave a reader hunting.
+    - **Add a guard in the same change**, or this returns: a `check-data.mjs` §-section asserting that
+      no `/Lesson\s+\d+/`-shaped reference (and its four localised equivalents) survives in any
+      `lessonContent.*.js`. Without it nothing in the repo notices the next time.
+
+85. **[Process — filed 2026-08-20 by the same read-through. Latent, not live: measured clean today.]
+    §2.3's date guard does not cover `lessonContent.*.js`, so lesson bodies can carry dated or
+    live-looking figures with nothing to notice.**
+    - **The gap, precisely.** `check-blindspot.mjs`'s §2.3 check runs against an explicit five-file
+      list — `markets.js`, `economicSignals.js`, `sectors.js`, `moneyVisuals.js`,
+      `policyScenarios.js`. The lesson bodies are not in it. Note the contrast, which is what makes
+      this an oversight rather than a decision: the **§10.1** advice-adjacency scan in the same file
+      uses `walk(src/content)` and therefore *does* cover every lesson module.
+    - **Currently clean, and that is the reason to file it rather than rush it.** Scanned all 15
+      `essentials` bodies: **zero** four-digit years, **zero** "Month YYYY" dates. The content is
+      written to be durable on purpose — lesson 6 says a 401(k) match runs "up to a set limit" instead
+      of naming a figure, and lesson 10 says a 1099 arrives when a client paid "over a threshold"
+      instead of naming $600. **That is a deliberate style worth protecting**, and it is protected by
+      nothing but the authors' habit.
+    - **Why `essentials` is the track that makes this worth doing:** it is the one carrying tax
+      brackets, contribution limits, W-2/1099 thresholds and mortgage figures — the content most
+      likely to tempt a future run into writing a current-year number.
+    - **Scope:** add the `lessonContent.*.js` modules to the §2.3 file list. Expect to tune first —
+      run it before committing, since a lesson legitimately discussing a historical year would trip a
+      naive year regex, and the existing check targets "Month YYYY" shapes rather than bare years.
+
+86. **✅ DONE 2026-08-20 (owner-directed, interactive) — a factual error found by reading the bodies,
+    fixed in all five languages.** `essentials` lesson 6 and lesson 13 contradicted each other on when
+    a taxable brokerage account is taxed, and lesson 6 was the wrong one.
+    - **Lesson 6 said:** "Every year, the brokerage saver owes tax on the dividends and gains their
+      investments produce, even though they never touched the money." **Lesson 13 said:** "gains are
+      taxed as they're realized — when an investment is sold for a profit." Lesson 13 is correct;
+      unrealised appreciation is not taxed annually. Lesson 6's phrasing implied it is, in the lesson
+      whose whole subject is tax treatment.
+    - **All four translations carried the same error in compressed form** — `zh`
+      "每年都要缴税的普通券商账户", `ja` "毎年課税される通常の証券口座", `es` "que se grava cada
+      año", `ko` "일반 증권 계좌와 달리" — so this was never an English-only fix, and each language's
+      lesson 13 already said "realised" correctly, so each language contradicted itself.
+    - **Fixed** so every language now names both halves: dividends/interest taxed yearly, and the gain
+      taxed on sale. The lesson's teaching point is unharmed — annual tax drag on distributions is
+      real, and is still what the 401(k) comparison turns on.
+
+
 80. **✅ DONE 2026-08-20 (owner-directed, interactive) — found by the first live QA sweep of the
     `essentials` track. The reader's `Previous` button walked straight through locked lessons.**
     - **The defect.** `Previous` was gated on `index > 0` alone and stepped through the FLAT,
@@ -11012,3 +11083,109 @@ bodies (only 1-2 were read end to end), the batch-pause interstitial under a rea
 and keyboard-only traversal of the reader's action row — the last of which now matters slightly more,
 since this commit changed which buttons that row contains. **Item 18 remains the entire critical path
 to ending Phase 0**, still blocked on the owner creating an analytics-provider account.
+
+---
+
+## 2026-08-20 — read all 15 `essentials` lesson bodies: one factual error fixed, two items filed (84, 85, 86)
+
+**Owner-directed, interactive.** The sweep two entries above had read only lessons 1-2 end to end and
+listed the other thirteen as uncovered. This closes that gap. The content is **good** — the read found
+one factual error, not a pattern of them — but reading it surfaced the largest remaining instance of
+the id/display split behind items 80 and 81.
+
+### Item 86 — lessons 6 and 13 contradicted each other, and 6 was wrong (fixed)
+
+Lesson 6: *"Every year, the brokerage saver owes tax on the dividends and gains their investments
+produce, even though they never touched the money."* Lesson 13, correctly: *"gains are taxed as they're
+realized — when an investment is sold for a profit."* Unrealised appreciation is not taxed annually,
+and lesson 6 implied it is — in the lesson whose entire subject is tax treatment.
+
+**All four translations carried the same error in compressed form** (`zh` 每年都要缴税的普通券商账户,
+`ja` 毎年課税される通常の証券口座, `es` que se grava cada año, `ko` 일반 증권 계좌와 달리), and each
+language's lesson 13 already said "realised" correctly — so **every language contradicted itself**,
+not just English. Fixed in all five so both halves are named: dividends/interest taxed yearly, gain
+taxed on sale. The teaching point is unharmed; annual drag on distributions is real and is still what
+the 401(k) comparison turns on. Verified rendered live in `en` ("LESSON 6 OF 15") and `zh` ("课程 6 / 15").
+
+**Two follow-on effects, both handled rather than worked around.** (1) The translation-review ledger
+correctly flagged lesson 6 as **stale** in four languages the moment the English source hash changed —
+that is the ledger doing its job. I marked it re-reviewed via `translation-review.mjs mark 6 <lang>
+"Claude (Opus 5, interactive)" ai`, which is truthful: the script's own header names Claude as reviewer
+of record and `method: "ai"` exists precisely to keep that distinct from a human pass. Reviewer string
+says Opus 5 / interactive rather than copying the dev-agent's, because provenance is the field's whole
+purpose. (2) Char counts moved, so `refresh-readiness.mjs --check` failed on two generated figures;
+regenerated with `--write` (136,051 → 136,126 English chars).
+
+### Item 84 — 128 in-prose "Lesson N" references cite ids the UI never shows
+
+Track sizes are 12/13/15, so **the highest lesson number the app ever displays is 15**. Of the 58
+English references: **30 are dead** (cite a number above 15 — `essentials` lesson 5 cites "Lesson 38"
+three times), **5 are decoys** (cross-track, and the number also exists in the reader's own track
+pointing somewhere unrelated — `money` position 2 cites "Lesson 3" meaning `essentials`
+"Compound Interest", while that reader's own Lesson 3 is "What Did That Really Cost You?"), and 23 are
+fine only because `essentials` ids 1-15 happen to equal its positions.
+
+**`lessons.js` scopes this wrongly and it doubles the work:** its comment says the references are
+"English only — the other four languages don't carry these references." Measured: **es 30, zh 38,
+ko 1, ja 1 — 128 total.** Filed with that correction.
+
+**The approach is decided, owner-directed the same day: cite lessons BY TITLE, not by number.**
+Renumbering is what the 2026-08-14 pass did and display order has since changed twice; each change
+silently invalidates every number in the prose, which is how this defect arrived. Titles survive any
+reorder, and `lessons.js` already holds every title in five languages. The item also asks for a
+`check-data.mjs` guard against `/Lesson\s+\d+/` surviving in `lessonContent.*.js`, since nothing in
+the repo currently notices.
+
+### Item 85 — §2.3's date guard does not cover the lesson bodies
+
+`check-blindspot.mjs`'s §2.3 check runs against an explicit five-file list that excludes every
+`lessonContent.*.js`. The contrast that makes it an oversight rather than a decision: the **§10.1**
+scan in the same file uses `walk(src/content)` and does cover them. **Latent, not live** — I scanned
+all 15 `essentials` bodies and found zero four-digit years and zero "Month YYYY" dates.
+
+### What the read-through found that was RIGHT, because "no findings" is a result
+
+The track is written to be durable on purpose, and it is worth not undoing: lesson 6 says a 401(k)
+match runs "up to a set limit" rather than naming a figure; lesson 10 says a 1099 arrives when a client
+paid "over a threshold" rather than naming $600. That is why the staleness scan came back empty.
+§10.1 hedging is consistent and guard-backed — lesson 6 "not something this lesson can answer for any
+specific person", lesson 8 "not a rule this lesson can hand out", lesson 14 "explains what a will does
+rather than how to write one" — and `check-blindspot`'s §10.1 walk does cover these files, so that is
+enforced, not just observed.
+
+**Checkable numbers were recomputed rather than eyeballed**, in Node: Rule of 72 (72/6=12, 72/9=8) ✓;
+lesson 11's fee claim → $75,063 vs $56,628, a **24.6%** gap against "roughly a quarter" ✓; lesson 12's
+mortgage crossover → **67%** of the term at 7% against "often… roughly two-thirds" ✓ (it is 43% at 4%,
+which is what the "often" is doing); lesson 4's 6%-vs-14% car loan → **$4,722** against "well over
+$2,000" ✓. Lesson 13's "settle one business day after the trade" is current (T+1). Adverse selection /
+moral hazard (8), intestate succession and beneficiary-override (14), and the three-bureau /
+multi-model score explanation (15) are all accurate.
+
+**Minor, recorded but not filed:** lesson 12's "5%-6% in agent commissions" is drifting post-NAR-
+settlement; lesson 11's "roughly $76,000" is really $75,063; lessons 4 and 15 overlap on credit basics
+without cross-referencing each other.
+
+### Adversarial self-check (step 5)
+
+**Blindspot register:** no regression, and the §10.1 risk was real here since I edited investment-tax
+copy in five languages — `check-blindspot` passes, including its §10.1 multi-language patterns over
+`src/content`. No dates or figures added: the new sentence names no rate, limit or year, which is the
+same durability style item 85 exists to protect. **DECISIONS.md conflict:** none — the translation
+ledger entry follows the P-4 mitigation recorded there (AI review tracked and visible, `method` field
+preserving the human/AI gap) rather than working around it. **Already-done item:** no — grepped the log
+for prior work on `lessonContent.essentials`; the track landed with the owner's `5633b79` and no run
+has edited its bodies before. **My own verification claims:** the rendered sentences are pasted
+`innerText` from `en` and `zh`, the arithmetic is pasted Node output, and the reference counts come from
+a script that walks all three tracks in all five languages. **What the check caught:** my first instinct
+was to mark the ledger with the dev-agent's reviewer string, which would have misattributed this review
+to a scheduled run.
+
+### Next run
+
+`npm run owner-tree -- --expect c2331799fd3ee413aca864fd82d247a35ea31b01a70a6c4e37b00f6aad9105b2`
+(unchanged: 0 tracked modified, 52 untracked). **Item 84 is the biggest open piece of work in the
+backlog and its approach is already decided** — read its scope line before starting, and expect to do
+it per-track, per-language, with the guard landing in the same change. Item 85 is a small companion to
+it. Still uncovered from the original sweep: the batch-pause interstitial under a real 40-question
+session, and keyboard-only traversal of the reader's action row. **Item 18 remains the entire critical
+path to ending Phase 0**, still blocked on the owner creating an analytics-provider account.

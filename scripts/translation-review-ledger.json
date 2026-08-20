@@ -131,27 +131,27 @@
   },
   "6": {
     "es": {
-      "reviewedBy": "Claude (Sonnet 5, economics-app-dev-agent)",
-      "reviewedDate": "2026-08-14",
-      "sourceHash": "f07235816a847e4a",
+      "reviewedBy": "Claude (Opus 5, interactive)",
+      "reviewedDate": "2026-08-20",
+      "sourceHash": "5953e62dafdfc14f",
       "method": "ai"
     },
     "ja": {
-      "reviewedBy": "Claude (Sonnet 5, economics-app-dev-agent)",
-      "reviewedDate": "2026-08-14",
-      "sourceHash": "f07235816a847e4a",
+      "reviewedBy": "Claude (Opus 5, interactive)",
+      "reviewedDate": "2026-08-20",
+      "sourceHash": "5953e62dafdfc14f",
       "method": "ai"
     },
     "ko": {
-      "reviewedBy": "Claude (Sonnet 5, economics-app-dev-agent)",
-      "reviewedDate": "2026-08-14",
-      "sourceHash": "f07235816a847e4a",
+      "reviewedBy": "Claude (Opus 5, interactive)",
+      "reviewedDate": "2026-08-20",
+      "sourceHash": "5953e62dafdfc14f",
       "method": "ai"
     },
     "zh": {
-      "reviewedBy": "Claude (Sonnet 5, economics-app-dev-agent)",
-      "reviewedDate": "2026-08-14",
-      "sourceHash": "f07235816a847e4a",
+      "reviewedBy": "Claude (Opus 5, interactive)",
+      "reviewedDate": "2026-08-20",
+      "sourceHash": "5953e62dafdfc14f",
       "method": "ai"
     }
   },
