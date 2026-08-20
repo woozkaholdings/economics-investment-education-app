@@ -113,6 +113,7 @@ export default {
     asOfTemplate: "{date} 時点",
     sampleDataNotice: "レイアウト確認用のサンプルデータで、実際の市場の数値ではありません。",
     dataUnavailable: "現在、市場データを取得できません。",
+    dataStaleTemplate: "最新のデータは {date} 時点で、今日とかけ離れているため、現在の数値としては表示できません。",
     vsBenchmark: "{name} 比",
     provisionalNotice: "相対強度は現在、暫定的な計算方法を使用しています。",
     economyNowTitle: "いまの経済",

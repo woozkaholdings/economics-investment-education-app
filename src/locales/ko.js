@@ -113,6 +113,7 @@ export default {
     asOfTemplate: "{date} 기준",
     sampleDataNotice: "화면 구성 확인용 샘플 데이터이며 실제 시장 수치가 아닙니다.",
     dataUnavailable: "지금은 시장 데이터를 불러올 수 없습니다.",
+    dataStaleTemplate: "가장 최근 데이터는 {date} 기준이며, 오늘과 차이가 너무 커서 현재 수치로 표시할 수 없습니다.",
     vsBenchmark: "{name} 대비",
     provisionalNotice: "상대강도는 현재 임시 계산 방식을 사용합니다.",
     economyNowTitle: "지금의 경제",

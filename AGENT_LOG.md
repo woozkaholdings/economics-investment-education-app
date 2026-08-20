@@ -640,28 +640,31 @@ for the history. No open P1/P2 items.
     - **Honest priority: high the moment the owner's tree is clean, because it gates every other
       run's step-4 verification. Zero before that.**
 
-79. **[UX/Content — filed 2026-08-19 by the run that fixed the missing-figure colour in `Sectors.jsx`,
-    from the half of that defect it could not reach. ⛔ BLOCKED on `src/locales/*.js` being owner-clean
-    — all five are among the owner's 26.] The Sector screen's two "no data" states are one sentence,
-    and its date attaches to the wrong noun.**
-    - **What it renders today**, pasted from the live `HEAD` build (`innerText`, 2026-08-19):
-      `Market data isn't available right now. (As of 2026-08-14)`.
-    - **Two problems, both needing copy that does not exist yet.** (a) `asOfTemplate` ("As of {date}")
-      is correct where it was designed to sit — a caption *labelling figures*. Glued onto "isn't
-      available right now" it reads as though the unavailability is as of that date, when the truth is
-      the opposite: the data is from that date, and *today* is why it is not shown. (b)
-      `status === "unavailable"` (no file at all — the job never ran on this deployment) and `isStale`
-      (a file that is present and too old) produce **the same headline sentence**, so neither a reader
-      nor an owner debugging a deploy can tell which happened. These are different problems with
-      different owners; item 74 is only the second.
-    - **Scope: one new locale key in five files, plus the branch in `Sectors.jsx:43-50`** — enough to
-      say "the newest reading we have is from {date}, which is too old to show" separately from "there
-      is no data here". Do **not** try to solve it by re-arranging the two existing strings; that was
-      considered and rejected, because neither key means "too old" and the result is still ambiguous.
-    - **Honest priority: medium, and it rises the moment a deploy exists.** This empty state is what
-      any deploy from `HEAD` currently shows on the whole screen (item 74) — so it is not a rare
-      corner, it is presently the *only* thing that screen says.
-
+79. **✅ DONE 2026-08-20 (scheduled dev-agent) — built as scoped, and the item's own proposed wording
+    was measured to be FALSE in one of the states it has to cover.** Unblocked the moment the owner's
+    redesign landed in `5633b79`: all five `src/locales/*.js` went clean.
+    - **What shipped.** One new key `dataStaleTemplate` in all five locales, plus the branch at
+      `src/screens/reference/Sectors.jsx:40-63`. The two states now say different things:
+      no file → `Market data isn't available right now.`; a file too far from today →
+      `The newest reading we have is dated 2026-08-14 — too far from today to show as current.`
+    - **⚠️ THE CORRECTION, and it is the reason this item is worth reading rather than skimming.**
+      The item scoped the copy as "the newest reading we have is from {date}, **which is too old to
+      show**". That sentence is **false in a state `isStale` also covers**: `freshness()` returns stale
+      for a date more than `FUTURE_TOLERANCE_DAYS` (1) *ahead* of the device clock, which
+      `DECISIONS.md:82-91` established deliberately (item 44). Reproduced live before writing any copy —
+      `asOf: 2026-09-30` rendered `Market data isn't available right now. (As of 2026-09-30)`, a date
+      **41 days in the future**. So the shipped key says **"too far from today"**, which is true in both
+      directions, and it stays one key rather than two. Do not "improve" it back to "too old".
+    - **A third state the item did not name, now handled.** `isStale` is also true when `ageDays` is
+      `null` — `asOf` missing or malformed. The old expression tested only `isStale && data?.asOf`, so a
+      malformed-but-truthy date (`"2026-9-3"`) would have been printed as a real one, by construction of
+      the expression that was replaced. The branch now requires `Number.isFinite(ageDays)` before naming
+      a date, and falls back to "unavailable" — verified live, renders the no-date sentence.
+    - **Its stated priority rationale is now stale, on the good side.** The item said this empty state is
+      "presently the *only* thing that screen says" on a `HEAD` deploy. That was true when filed and is
+      **no longer**: `market.json` was committed at `asOf: 2026-08-19` in `9b3f4f2`, so a build from
+      `HEAD` renders real figures (confirmed live this run). The fix still matters — it is what the
+      screen says whenever the daily job lapses more than four days — but it is no longer the default view.
 78. **[Tests — filed 2026-08-19 by the twelfth run to arrive at the owner's static tree, which picked
     "`src/lib` has no behavioural test coverage" as its item and had that premise break in its hands
     at step 3.5, before it edited anything. Read the correction before picking: most of the gap does
@@ -10600,3 +10603,123 @@ things worth carrying forward:
   Sector-performance screen with real figures again instead of the empty state described above (item
   74's live condition is cleared for now). The owner's remaining deviation is **25 tracked modified,
   57 untracked**, fingerprint **`b4d61d3a…`**.
+
+---
+
+## 2026-08-20 — the Sector screen's two "no data" states stop sharing one sentence (item 79)
+
+**THE HEADLINE IS NOT MY CHANGE: the owner's redesign has LANDED. The fourteen-run gridlock is over.**
+`5633b79` ("Split essentials track out of money; register it in readiness figures") committed the whole
+in-flight tree — 32 files, +2331/-1392, including the five `lessonContent.essentials.*` modules, all
+five `locales/`, `check-data.mjs`, `Learn.jsx`, `LessonReader.jsx`, `Practice.jsx`, `Reference.jsx`,
+`ui.jsx` and `Question.jsx`. **`npm run owner-tree` reads `OWNER-TREE c2331799…  (0 tracked modified,
+52 untracked)`** — the 52 are the owner's `UIUX/` and `drafts/` reference folders, which have never been
+tracked. Every item parked on "⛔ BLOCKED on <path> being owner-clean" is now pickable, and the
+`git archive` control-copy dance the last several runs needed is no longer necessary: **the working tree
+IS `HEAD`** for every tracked file.
+
+**And the first thing to check after a landing like that was the suite, before picking anything.**
+`npm test` at `HEAD`: **exit 0**, 6 sections PASS, 1 pre-existing warning (translation-review human
+share). The item-77 `essentials`-shape failure that made the suite red on the owner's working tree for
+the last several runs is **resolved by the owner's own commit** — it was the redesign being half-applied,
+exactly as item 77 predicted. No recovery work was needed.
+
+**Item picked: 79**, which the previous run named as the direct follow-on and which was blocked only on
+the locale files.
+
+### Step 3.5 — the premise, re-measured live with a control, before editing
+
+Both of the item's claims reproduce **verbatim**. Built `dist/`, copied it to the scratchpad (so the
+served `market.json` could be mutated without touching the repo), served on `127.0.0.1:8901`, drove it
+with `javascript_tool`. All strings below are pasted `main.innerText`, not retyped.
+
+- **Control first**, because an empty-state readout that returns one string for everything proves
+  nothing. Healthy payload (`asOf: 2026-08-19`, one day old):
+  `Sector performance / As of 2026-08-19 / S&P 500 +5.1% / … Health Care … +19.8% …` — real figures, so
+  the instrument demonstrably discriminates between a rendered screen and an empty state.
+- **Claim (a), the date attaching to the wrong noun** — `asOf: 2026-08-14`:
+  `Market data isn't available right now. (As of 2026-08-14)` ✅ exact match to the item.
+- **Claim (b), the two states sharing a headline** — file removed (404):
+  `Market data isn't available right now.` ✅ Same sentence, differing only by a parenthetical.
+
+**Then the premise broke on a state the item never named, which changed the copy rather than a figure.**
+The item scoped the new string as "…is from {date}, **which is too old to show**". But `isStale` is true
+in *both* directions — `DECISIONS.md:82-91` (item 44) deliberately made a date more than
+`FUTURE_TOLERANCE_DAYS` ahead of the device clock stale too. Probed it rather than assuming:
+`asOf: 2026-09-30` → `Market data isn't available right now. (As of 2026-09-30)`, a date **41 days in
+the future**, in the same branch. Had I written the item's sentence, the app would state something
+**false** on that screen. The shipped key therefore says **"too far from today"**, true in both
+directions, and the scope stays at the one key the item budgeted.
+
+### What shipped
+
+- **`src/locales/{en,es,ko,zh,ja}.js`** — one new key, `dataStaleTemplate`. `dataUnavailable` keeps its
+  meaning (no file here at all) and is untouched; it has exactly one call site, so nothing else moves.
+- **`src/screens/reference/Sectors.jsx:40-63`** — the branch picks between the two strings instead of
+  concatenating a caption onto an outage sentence. A date is named **only** when
+  `Number.isFinite(ageDays)`, so a missing or malformed `asOf` falls back to "unavailable" rather than
+  printing a date the freshness rule could not parse. `ageDays` is now read but still **never rendered**
+  — the item-44 comment was amended to say "not rendered" rather than "not read", since the distinction
+  is now load-bearing.
+
+### Verified — five states live, both instruments controlled
+
+Rebuilt, re-served, each state produced by mutating the served copy's `asOf`. Pasted `innerText`:
+
+| state | rendered |
+|---|---|
+| healthy `2026-08-19` | `As of 2026-08-19 / S&P 500 +5.1% / … +19.8% …` (**unchanged** — no regression) |
+| stale `2026-08-14` | `The newest reading we have is dated 2026-08-14 — too far from today to show as current.` |
+| no file (404) | `Market data isn't available right now.` |
+| future `2026-09-30` | `The newest reading we have is dated 2026-09-30 — too far from today to show as current.` |
+| malformed `2026-9-3` | `Market data isn't available right now.` (the new `Number.isFinite` guard) |
+
+- **Korean too**, since I wrote copy in five languages and reading only `en` would prove one of them:
+  `가장 최근 데이터는 2026-08-14 기준이며, 오늘과 차이가 너무 커서 현재 수치로 표시할 수 없습니다.`
+- **The parity check is controlled, not just green.** `npm test` passing with a new key in five files
+  means nothing unless the check can fail. Removed `dataStaleTemplate` from `ja.js` only and re-ran:
+  `FAIL: TR.ja: missing key "dataStaleTemplate" (present in TR.en)`. Restored from a scratchpad copy
+  (never `git checkout --`), and confirmed the restore with `diff` against `HEAD`: **exactly one added
+  line**.
+- `npm test` **exit 0**, `npm run build` **exit 0**, both on the real tree (no control copy needed).
+
+### Adversarial self-check (step 5)
+
+**Blindspot register:** no regression. Grepped my added lines for
+`dalio|principles|buy|sell|recommend|advice|guarantee` → **no hits**; grepped added *locale* lines for a
+literal `20\d\d-\d\d-\d\d` → **no hits** (the two dates I added live in a `Sectors.jsx` comment
+documenting the live probe, and are not rendered). `check-blindspot.mjs` passes with the new strings in
+place, which is a real test of them: its §10.1 scan covers `src/locales/`. If anything this moves
+*toward* §2.3 — it stops the app from printing an unparseable date as if it were a reading.
+**DECISIONS.md conflict:** none, and I checked the specific entry rather than assuming.
+`DECISIONS.md:82-91` is the *source* of the two-directional staleness this change renders honestly, not
+a contradiction of it; storage, routing, content-module shape and the market-data pipeline are all
+untouched. **Already-done item:** no — `git log -S'dataUnavailable' -- src/screens/reference/Sectors.jsx`
+returns exactly one commit, `a939e37`, the one that created the screen. This branch has never been
+changed since. **My own verification claims:** every string in this entry is pasted `innerText` or
+pasted script output; "exit 0" is from unpiped commands; "exactly one added line" is a `diff`.
+**What the check caught:** my first draft of the entry said the malformed-date case "would have printed
+`(As of 2026-9-3)`" as though I had observed it on the old build. I had not — I overwrote that `dist/`.
+It is a reading of the boolean expression I replaced, and both the entry and the code comment now say
+"by construction" rather than implying an observation.
+
+### Next run
+
+- **Start with `npm run owner-tree -- --expect c2331799fd3ee413aca864fd82d247a35ea31b01a70a6c4e37b00f6aad9105b2`.**
+  This is the **post-landing** fingerprint: 0 tracked modified, 52 untracked. `UNMOVED` now means the
+  ordinary state, not gridlock. If it reports `MOVED`, run `git status --short` and check *which* file
+  before concluding anything — `public/data/market.json` is rewritten by the daily job underneath a
+  running session and has produced a false "the owner moved" signal before (Environment note).
+- **The blocked list is empty, so pick on merit for the first time in two weeks.** Freed by the landing:
+  **78** (`src/utils/date.js` regression cover — its home `check-data.mjs` is clean now; low priority and
+  **there is no bug there**, read the item before picking), **76** (zh/ja term-of-art, still needs the
+  per-language tokeniser, still low), and the five `LAUNCH_PLAN.md` items **35 / 64's `Dividend` / 73 /
+  77**. Note **77 may already be satisfied** by the owner's commit — it touched `LAUNCH_PLAN.md`,
+  `LAUNCH_READINESS.md`, `refresh-readiness.mjs` and `check-data.mjs`, and the suite is green, so
+  **re-measure 77's premise before picking it; it is a strong candidate for having closed itself.**
+- **The owner's redesign has never been reviewed or live-verified by any run.** It rewrote the shell,
+  the lesson path, the reader, Practice, Reference, `ui.jsx` and `Question.jsx`, and added a third
+  lesson track. A live QA sweep of the **essentials** track specifically — it is brand new and no run has
+  ever seen it render — is probably higher value than any item currently in the backlog.
+- **Item 18 remains the entire critical path to ending Phase 0** and is still blocked on the owner
+  creating an analytics-provider account. Flagging it again, as every run is asked to.

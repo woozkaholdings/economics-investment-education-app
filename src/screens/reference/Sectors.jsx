@@ -26,25 +26,44 @@ const WINDOWS = [
 ];
 
 export default function Sectors({ t, lang }) {
-  // `ageDays` is deliberately not read here (backlog item 44). This screen
-  // states the absolute date the figures were taken and never phrases it as
-  // "N days ago"; a relative age would be a second rendering of the same fact
-  // with its own way of being wrong. The freshness *decision* is `isStale`.
-  const { status, data, isStale, isSample } = useMarketData();
+  // `ageDays` is never *rendered* here (backlog item 44). This screen states
+  // the absolute date the figures were taken and never phrases it as "N days
+  // ago"; a relative age would be a second rendering of the same fact with its
+  // own way of being wrong. The freshness *decision* is `isStale`. It is read
+  // below purely as a predicate — "could the freshness rule parse this date at
+  // all?" — which is a different question from how old the date is.
+  const { status, data, ageDays, isStale, isSample } = useMarketData();
   const [window, setWindow] = useState("3m");
 
   if (status === "loading") {
     return <EmptyState icon="chart">…</EmptyState>;
   }
 
-  // A missing file or a job that stopped running both land here. Showing the
-  // last known numbers without saying how old they are is the one thing §2.3
-  // forbids.
+  // Two different failures used to share one sentence (backlog item 79): "no
+  // file on this deployment at all" and "a file whose date is too far from
+  // today to trust" both read as `Market data isn't available right now.`,
+  // separated only by a parenthetical date. Neither a reader nor an owner
+  // debugging a deploy could tell them apart, and the date attached
+  // grammatically to the unavailability — "isn't available right now (As of
+  // 2026-08-14)" says the outage is from that date, when the truth is the
+  // opposite: the *data* is from then, and today is why it is not shown.
+  //
+  // The stale sentence says "too far from today" rather than "too old" on
+  // purpose. `isStale` is true in BOTH directions — a file stamped more than
+  // FUTURE_TOLERANCE_DAYS ahead of the device's clock lands here too, and
+  // useMarketData.js explains why that is a real state rather than a nicety.
+  // Verified live at `asOf: 2026-09-30`, which rendered a date 41 days in the
+  // future; "too old" would have been a false statement on that screen.
+  //
+  // A date is only named when the freshness rule could actually read it.
+  // `ageDays` is null when `asOf` is missing or malformed, and a date we
+  // cannot parse is not one we can say anything true about — that case falls
+  // back to "unavailable", which is exactly what it is.
   if (status === "unavailable" || !data || isStale) {
+    const datedStale = isStale && Number.isFinite(ageDays) && data?.asOf;
     return (
       <EmptyState icon="chart">
-        {t.dataUnavailable}
-        {isStale && data?.asOf ? ` (${t.asOfTemplate.replace("{date}", data.asOf)})` : ""}
+        {datedStale ? t.dataStaleTemplate.replace("{date}", data.asOf) : t.dataUnavailable}
       </EmptyState>
     );
   }

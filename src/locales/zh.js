@@ -113,6 +113,7 @@ export default {
     asOfTemplate: "截至 {date}",
     sampleDataNotice: "仅用于布局的示例数据，并非真实市场数据。",
     dataUnavailable: "暂时无法获取市场数据。",
+    dataStaleTemplate: "我们最新的数据为 {date}，与今天相差太远，无法作为当前行情显示。",
     vsBenchmark: "相对 {name}",
     provisionalNotice: "相对强度目前使用的是临时算法。",
     economyNowTitle: "当前经济状况",

@@ -113,6 +113,7 @@ export default {
     asOfTemplate: "A {date}",
     sampleDataNotice: "Datos de muestra solo para el diseño; no es una lectura real del mercado.",
     dataUnavailable: "Los datos de mercado no están disponibles ahora.",
+    dataStaleTemplate: "La lectura más reciente que tenemos es del {date}: está demasiado lejos de hoy para mostrarla como actual.",
     vsBenchmark: "vs {name}",
     provisionalNotice: "La fuerza relativa usa por ahora una medida provisional.",
     economyNowTitle: "La economía ahora mismo",
