@@ -2,12 +2,18 @@
 // GLOSSARY
 //
 // Two vocabularies, one list. The original 17 entries are macroeconomic and
-// serve the economy track; the money-track entries added 2026-08-16 (backlog
-// item 35) cover the personal-finance jargon that money lessons 1–28 actually
-// use — measured by grepping the lesson bodies, not drafted from a generic
-// word list. Before item 35 the glossary had no money-track vocabulary at all,
-// so §3.0.3's "or links to the glossary" could not be satisfied on the 28
-// lessons that §0 calls the product.
+// serve the economy track; the personal-finance entries added 2026-08-16
+// (backlog item 35) cover the jargon those lessons actually use — measured by
+// grepping the lesson bodies, not drafted from a generic word list. Before
+// item 35 the glossary had no personal-finance vocabulary at all, so §3.0.3's
+// "or links to the glossary" could not be satisfied on the track §0 called
+// the product at the time.
+//
+// Those lessons were "money 1–28" when item 35 ran. They are not now: the
+// 2026-08-19 essentials split (5633b79) re-tracked 1-15 as `essentials` and
+// left `money` as 16-28, without renumbering anything. §31 in
+// scripts/check-data.mjs now fails on a comment that attributes a lesson id
+// to the wrong track, which is the guard this header lacked.
 //
 // §10.1 applies with full force here. A definition says what a thing IS and
 // how it works; it never says what a reader should do with it. "A higher
@@ -43,6 +49,7 @@ export const glossary = {
   "Debt-to-GDP Ratio": { en: { s: "Debt-to-GDP Ratio", f: "Total debt divided by a country's total economic output (GDP), used as a rough gauge of how large a debt burden is relative to the size of the economy.", ex: "Comparing a country's debt-to-GDP ratio over time shows whether its debt is growing faster than its economy." }, ko: { s: "GDP 대비 부채 비율", f: "총 부채를 국가의 총 경제 생산(GDP)으로 나눈 값. 부채 부담의 상대적 크기를 가늠하는 대략적인 지표.", ex: "한 국가의 GDP 대비 부채 비율을 시간에 따라 비교하면 부채가 경제보다 더 빠르게 늘고 있는지 알 수 있습니다." }, es: { s: "Ratio Deuda/PIB", f: "Deuda total dividida por la producción económica total (PIB) de un país. Mide cuán grande es la carga de deuda en relación al tamaño de la economía.", ex: "Comparar la ratio deuda/PIB de un país a lo largo del tiempo muestra si su deuda está creciendo más rápido que su economía." }, zh: { s: "债务与GDP比率", f: "总债务除以一个国家的总经济产出（GDP），用作衡量债务负担相对规模的粗略指标。", ex: "比较一个国家不同时期的债务与GDP比率，可以看出其债务增长是否快于经济增长。" }, ja: { s: "債務対GDP比率", f: "総債務を国の総経済生産（GDP）で割った値。債務負担が経済規模に対してどれほど大きいかを大まかに測る指標。", ex: "ある国の債務対GDP比率を時系列で比較すると、債務が経済成長よりも速く増えているかどうかがわかります。" } },
 
   // ── Personal-finance vocabulary (added 2026-08-16, backlog item 35) ──────
+  // track-ok: "then-" — the pre-split corpus item 35 actually measured.
   // Chosen by grepping the then-money lessons 1–28 for the jargon they use.
   // The header said "Money track" until 2026-08-20: the 2026-08-19 essentials
   // split (5633b79) re-tracked most of those lessons without renumbering, so
@@ -80,6 +87,7 @@ export const glossary = {
   // ── Every track (added 2026-08-17, backlog item 64) ──────────────────────
   // Stock and Bond are the only two entries chipped by all three tracks, and
   // that is why they were the highest-reach absence in the app: they are
+  // track-ok: quoting the label this lesson carried before 5633b79.
   // defined in lesson 5 and nowhere else — "money lesson 5" until the
   // 2026-08-19 essentials split (5633b79) re-tracked it — while economy uses
   // them from lesson 32 onward. Tracks unlock independently (lessons.js), so

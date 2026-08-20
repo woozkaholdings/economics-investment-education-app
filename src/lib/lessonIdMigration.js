@@ -3,7 +3,11 @@
 //
 // Lesson ids were renumbered to match track display order: economy held
 // 1-12 and money held 13-40 (an artifact of build order — see the TRACKS
-// comment in content/lessons.js); now money is 1-28 and economy is 29-40.
+// comment in content/lessons.js); this migration set money to 1-28 and economy
+// to 29-40. Those were the ranges *as of 2026-08-14*, which is all this
+// one-time migration needs to know — the live ranges have since changed (the
+// 2026-08-19 split made 1-15 `essentials` and left `money` as 16-28) and
+// lessons.js is the record of them.
 //
 // `ecycles_completed_lessons` persists raw lesson ids and gates unlocking
 // (App.jsx's isUnlocked checks `completedLessons.includes(prev.id)`), so an

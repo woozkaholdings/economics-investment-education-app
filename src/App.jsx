@@ -179,8 +179,11 @@ export default function App() {
   );
 
   // Where this load starts. A `#/lesson/12` or `#/practice` link wins; with no
-  // link, a first-time visitor still opens straight into the first lesson of
-  // the money track, which index 0 now is (LAUNCH_PLAN §3.2). Read once, from
+  // link, a first-time visitor opens straight into `lessons[0]` — which since
+  // the 2026-08-18 reordering is the ECONOMY track's first lesson (id 29,
+  // "Transactions: The Building Block"), not the money track's. This comment
+  // said "the money track, which index 0 now is" until 2026-08-20; that was
+  // true only before economy was moved to the front. Read once, from
   // a ref-stable initializer — after mount, `useDeepLink` owns the URL.
   const opening = useRef(null);
   if (opening.current === null) {

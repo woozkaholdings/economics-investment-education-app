@@ -32,12 +32,16 @@ import { graph, ink, space } from "../theme.js";
 // appear here — a chart bolted onto an unrelated lesson would be decoration,
 // and decoration is what §3.1.1 set out to remove.
 //
-// The money entries landed 2026-08-16 (backlog item 27). Before them every
-// diagram sat on the economy track, which meant the app's stated differentiator
-// (§3.0.4) was absent from the 28 lessons §0 calls the actual product — and
-// from lesson 1, the first screen a new install opens.
+// The personal-finance entries landed 2026-08-16 (backlog item 27). Before
+// them every diagram sat on the economy track, which meant the app's stated
+// differentiator (§3.0.4) was absent from the 28 lessons §0 called the actual
+// product at the time — and from lesson 1, which was then the first screen a
+// new install opened. Both framings have since moved: economy leads as of
+// 2026-08-18 (a new install now opens on lesson 29) and the 2026-08-19
+// essentials split re-tracked 1-15, so the four ids below are `essentials`
+// except 27, which is `money`.
 export const LESSON_VISUALS = {
-  // money
+  // essentials (1/3/7) and money (27) — personal finance either way
   1: "budgetSplit",    // Budgeting: Know Where Your Money Goes
   3: "compounding",    // Compound Interest: Money That Makes Money
   7: "taxBrackets",    // Taxes: How Your Paycheck Is Actually Taxed
@@ -52,7 +56,10 @@ export const LESSON_VISUALS = {
 
 const CURVE_TYPES = ["normal", "flat", "inverted", "steep"];
 
-// Which `kind`s are money-track figures — drives the figcaption note below.
+// Which `kind`s are personal-finance figures — drives the figcaption note
+// below. The constant keeps its MONEY_VISUALS name (it is referenced further
+// down and in §21's checks); the set spans `essentials` and `money` since the
+// 2026-08-19 split, so the name is a label, not a track claim.
 const MONEY_VISUALS = new Set(["budgetSplit", "compounding", "taxBrackets", "lossAsymmetry"]);
 
 // Figures are US dollars in every language — the lessons' own worked examples

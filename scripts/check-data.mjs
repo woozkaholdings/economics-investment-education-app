@@ -1311,7 +1311,7 @@ if (keyedGroupsChecked < 4) {
 
 // 17. src/content/lessonTerms.js — the §3.0.3 lesson→glossary links (backlog
 //     item 28). The map is hand-curated because an automatic prose match links
-//     the wrong sense (money lesson 12's "PMI" is private mortgage insurance,
+//     the wrong sense (essentials lesson 12's "PMI" is private mortgage insurance,
 //     not Purchasing Managers' Index; lesson 17's is *lifestyle* inflation).
 //     Curation is a judgement call and cannot be checked here — but the four
 //     ways a curated map rots mechanically can be, and are:
@@ -3398,6 +3398,129 @@ if (keyedGroupsChecked < 4) {
     `  §30 src/utils/date.js: ${pairsChecked} consecutive-day pairs across ${ZONES.length} zones ` +
       `(${transitionsCovered} DST transitions covered), ${CASES.length} landmark cases, ` +
       `todayStr cross-checked against Intl in 4 zones.`,
+  );
+}
+
+// 31. No source comment may attribute a lesson id to the wrong track (backlog
+//     item 88).
+//
+//     WHY THIS EXISTS. The 2026-08-19 essentials split (5633b79) re-tracked
+//     lessons 1-15 out of `money` **without renumbering them**. Every id-based
+//     test stayed green — the ids were still correct — while the prose around
+//     them quietly stopped being true, and `npm test` passed for a full day on
+//     two glossary.js block headers that named the wrong track. That is the
+//     signature of this class: a re-tracking is invisible to anything that
+//     checks ids, and visible only to a reader who happens to know better.
+//
+//     Scope is deliberately narrow: comments in src/ and scripts/ that name a
+//     track and a lesson id in the same breath — "essentials lessons 2/3/4",
+//     which is live and correct, or a stale "money lesson 12".   track-ok: illustrative
+//     That phrasing is specific enough to be a
+//     real claim about the id and rare enough not to collide with ordinary
+//     prose — §26's lesson is that a guard whose false positives are ordinary
+//     English gets switched off within a week. It does NOT try to police every
+//     stale track statement: "the money track — 28 of the 40 lessons" names no
+//     id and is not matched. A range ("money lessons 1-28") is matched as a  track-ok: illustrative
+//     range and compared against the track's real extent.
+//
+//     THE EXEMPTION, and why both directions are checked. A historical claim
+//     is legitimate and common in this repo — "money lesson 5 until the split"  track-ok: illustrative
+//     is *correct prose about the past*. Such a line may carry a
+//     `track-ok: <reason>` marker on it or the line above. As with §26's
+//     `path-ok` and §29's live/historical classification, the marker is
+//     checked in both directions: a `track-ok:` on a reference that is
+//     currently CORRECT fails too, because that means the exemption has
+//     outlived its reason and is now hiding a live claim.
+{
+  const walkSource = (dir) =>
+    readdirSync(dir, { withFileTypes: true }).flatMap((e) => {
+      const full = join(dir, e.name);
+      if (e.isDirectory()) return e.name === "node_modules" ? [] : walkSource(full);
+      return e.isFile() && /\.(js|jsx|mjs)$/.test(e.name) ? [full] : [];
+    });
+
+  const trackOf = new Map(lessons.map((l) => [l.id, l.track]));
+  const extent = {};
+  for (const l of lessons) {
+    const e = (extent[l.track] ??= { lo: l.id, hi: l.id });
+    e.lo = Math.min(e.lo, l.id);
+    e.hi = Math.max(e.hi, l.id);
+  }
+  const TRACK_NAMES = Object.keys(extent).join("|");
+
+  // "<track> lesson 12", "<track> lessons 2/3/4/15", "<track> lessons 1-28".
+  // The trailing group collects a `/`- or `,`-separated id list; RANGE catches
+  // the dash form (hyphen or en/em dash) so it is compared as an extent.
+  const REF = new RegExp(
+    String.raw`\b(${TRACK_NAMES})[ -]lessons?\s+#?(\d+)\s*(?:([-–—])\s*(\d+))?((?:\s*[\/,]\s*\d+)*)`,
+    "gi",
+  );
+  const MARKER = /track-ok:\s*(.*)$/;
+
+  let refsChecked = 0;
+  let exempted = 0;
+
+  for (const file of [...walkSource(join(ROOT, "src")), ...walkSource(join(ROOT, "scripts"))]) {
+    const rel = file.slice(ROOT.length + 1);
+    const lines = readFileSync(file, "utf8").split("\n");
+
+    lines.forEach((line, i) => {
+      // Comment text only. A string literal naming a track and an id is data,
+      // not a claim about the corpus, and this check has no business in it.
+      const comment = line.match(/\/\/(.*)$|\*(.*)$/);
+      if (!comment) return;
+      const text = comment[1] ?? comment[2] ?? "";
+
+      for (const m of text.matchAll(REF)) {
+        const track = m[1].toLowerCase();
+        const marker = MARKER.exec(text) ?? MARKER.exec(lines[i - 1] ?? "");
+        const reason = marker?.[1]?.trim();
+        let wrong;
+        let detail;
+
+        if (m[3]) {
+          // Range form: compare against the track's real extent.
+          const [lo, hi] = [+m[2], +m[4]];
+          const e = extent[track];
+          wrong = lo !== e.lo || hi !== e.hi;
+          detail = `"${m[0].trim()}" — \`${track}\` is ${e.lo}-${e.hi}`;
+        } else {
+          const ids = [
+            +m[2],
+            ...(m[5] || "").split(/[\/,]/).map((x) => +x.trim()).filter(Boolean),
+          ];
+          const bad = ids.filter((id) => (trackOf.get(id) ?? "no such lesson") !== track);
+          wrong = bad.length > 0;
+          detail =
+            `"${m[0].trim()}" — ` +
+            bad.map((id) => `lesson ${id} is \`${trackOf.get(id) ?? "not a lesson"}\``).join(", ");
+        }
+
+        refsChecked += 1;
+
+        if (wrong && !reason) {
+          fail(
+            `§31: ${rel}:${i + 1}: ${detail}. Lesson ids do not move when a track is re-cut, so a ` +
+              `comment naming both goes stale silently — that is backlog item 88. Correct the track ` +
+              `name, or if the sentence is deliberately about the past, add \`track-ok: <reason>\` ` +
+              `on this line or the one above saying which change made it historical.`,
+          );
+        } else if (wrong && reason) {
+          exempted += 1;
+        } else if (!wrong && reason) {
+          fail(
+            `§31: ${rel}:${i + 1}: \`track-ok\` on a reference that is CORRECT — ${m[0].trim()} ` +
+              `matches the live tracks. The marker has outlived its reason ("${reason}") and is now ` +
+              `hiding a live claim instead of excusing a historical one. Delete it.`,
+          );
+        }
+      }
+    });
+  }
+
+  console.log(
+    `  §31 track/lesson attributions: ${refsChecked} reference(s) in src/ + scripts/ checked ` +
+      `against lessons.js, ${exempted} exempted as historical via \`track-ok:\`.`,
   );
 }
 

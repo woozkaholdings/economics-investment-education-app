@@ -1,11 +1,20 @@
 // ═══════════════════════════════════════════════════════════════════════════
-// MONEY-TRACK LESSON VISUALS — labels and figures
+// PERSONAL-FINANCE LESSON VISUALS — labels and figures
 //
 // Backlog item 27. Until 2026-08-16 every diagram in the app sat on the
-// economy track (5 of 12 lessons); the money track — 28 of the 40 lessons,
-// and the thing LAUNCH_PLAN.md §0 calls the product rather than the vehicle —
-// had none at all. A new install opens on money lesson 1, so the first screen
-// a learner saw was the one arguing against §3.0.4's "show, don't only tell."
+// economy track (5 of 12 lessons); the then-28-lesson money track — which
+// LAUNCH_PLAN.md §0 called the product rather than the vehicle at the time —
+// had none at all, and a new install opened on its lesson 1, so the first
+// screen a learner saw argued against §3.0.4's "show, don't only tell."
+//
+// BOTH of those framings have since been overtaken, and the file name has not
+// caught up: the 2026-08-18 reordering made ECONOMY the lead track (a new
+// install now opens on lesson 29), and the 2026-08-19 essentials split
+// (5633b79) re-tracked lessons 1-15 without renumbering them. Of the four
+// lessons below, 1/3/7 are `essentials` today and only 27 is `money` — so
+// these are personal-finance figures, not one track's. The module keeps its
+// `moneyVisuals.js` filename because renaming it churns every import for a
+// comment's sake; the name is historical, the header is not.
 //
 // Four lessons get a diagram here, chosen on §3.0.4's own test — the visual
 // must *be* the explanation, not decorate it:

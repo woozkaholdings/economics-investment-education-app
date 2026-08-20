@@ -12,7 +12,7 @@
 // over prose. Lesson bodies are plain strings in five languages, and matching
 // them automatically is wrong in both directions:
 //
-//   • Wrong sense. Money lesson 12 (renting vs. buying) contains "PMI" —
+//   • Wrong sense. Essentials lesson 12 (renting vs. buying) contains "PMI" —
 //     private mortgage insurance, not the glossary's Purchasing Managers'
 //     Index. Money lesson 17 is about *lifestyle* inflation, not the
 //     macroeconomic kind. Lessons 2/3/4/15 say "credit card", "credit score",
@@ -62,15 +62,19 @@
 // above the sentence telling the reader that §17b generates them. A figure an
 // argument does not need is cheapest to delete, not to correct again.
 //
-// The money track was uncoverable before item 35 for a real reason worth
-// keeping: glossary.js held 17 entries and every one was macroeconomic, so
-// §3.0.3's "or links to the glossary" branch had nothing to point at on the 28
-// lessons §0 calls the product. See AGENT_LOG.md item 35.
+// The personal-finance lessons were uncoverable before item 35 for a real
+// reason worth keeping: glossary.js held 17 entries and every one was
+// macroeconomic, so §3.0.3's "or links to the glossary" branch had nothing to
+// point at on the 28 lessons §0 called the product at the time. See
+// AGENT_LOG.md item 35.
 // ═══════════════════════════════════════════════════════════════════════════
 
 export const lessonTerms = {
-  // ── Money track ──────────────────────────────────────────────────────────
-  // Expanded 2026-08-16 (item 35) once the glossary gained money-track terms.
+  // ── Personal finance (essentials 1-15 + money 16-28) ─────────────────────
+  // Labelled "Money track" until 2026-08-20; of the 14 lessons in this block,
+  // 9 are `essentials` and 5 are `money` since the 2026-08-19 split (5633b79)
+  // re-tracked ids 1-15 without renumbering them.
+  // Expanded 2026-08-16 (item 35) once the glossary gained these terms.
   // Each link was computed by matching the term against the section's English
   // text with word boundaries and an optional plural, then filtered by the
   // curation rules above — notably rule 2, which is why 401(k)/IRA carry no
@@ -169,7 +173,9 @@ export function termsForSection(lessonId, sectionIndex) {
 // ═══════════════════════════════════════════════════════════════════════════
 
 export const deliberatelyUnlinked = {
-  // ── Money track ──────────────────────────────────────────────────────────
+  // ── Personal finance (essentials 1-15 + money 16-28) ─────────────────────
+  // Same relabel as above (2026-08-20): 11 of the 12 lessons in this block are
+  // `essentials` today, 1 is `money`.
   2: {
     "Emergency Fund": "defined-here",
     Credit: "other-sense: a credit card, not credit as a macro aggregate",

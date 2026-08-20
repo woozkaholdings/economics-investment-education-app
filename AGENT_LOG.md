@@ -931,6 +931,44 @@ for the history. No open P1/P2 items.
       it is a different file and a separate unblock.
     </details>
 
+88. **✅ DONE 2026-08-20 (owner-directed, same day it was filed). Filed by the run that closed item
+    64, built by the next one. The premise held and the two-sided control fired exactly as scoped.**
+    *A re-tracking moves no ids, so every id-based test stays green while the prose around them
+    silently stops being true.* `5633b79` re-tracked lessons 1-15 out of `money` without renumbering
+    them, and `npm test` passed for a full day on two `glossary.js` block headers naming the wrong
+    track. **The control this item specified worked in both directions**: `lessonTerms.js`'s header
+    cites "Money lesson 12 (renting vs. buying)" and "Money lesson 17" as its worked examples of
+    wrong-sense matching — id 12 is `essentials` now (stale) and id 17 is still `money` (correct), so
+    a valid instrument had to flag the first and not the second. It did.
+    **Nine stale sites fixed**, the sharpest being `src/App.jsx`, whose comment said a first-time
+    visitor opens "the first lesson of the money track, which index 0 now is" — index 0 has been
+    `economy` since 2026-08-18, and a new install actually opens on lesson 29. Also: `moneyVisuals.js`
+    and `LessonVisual.jsx` (three of their four figures are `essentials` lessons now), `glossary.js`'s
+    top header, both `lessonTerms.js` section headers, `check-data.mjs` §17's prose, and
+    `lessonIdMigration.js`'s present-tense "now money is 1-28".
+    **Class closed by `check-data.mjs` §31**, which fails on any src/ or scripts/ comment attributing a
+    lesson id to the wrong track, with a `track-ok: <reason>` exemption for deliberate historical
+    prose that is checked in BOTH directions (a marker on a reference that is currently correct fails
+    too, so an exemption cannot outlive its reason). 9 references checked, 5 exempted. Proved by four
+    injections, one of which fired for real during development: the marker leaked onto the adjacent
+    line and wrongly exempted the live "essentials lessons 2/3/4" example in §31's own header.
+    **Deliberately NOT in scope, and left open as item 89:** the same class in `DECISIONS.md`.
+
+89. **[Process — filed 2026-08-20 by the run that built item 88's guard, from the boundary that item
+    deliberately drew.]** *`DECISIONS.md` has the same stale track attributions §31 now catches in
+    code, and §31 cannot see it.* Measured this run, not suspected — five hits:
+    `DECISIONS.md:306` "money lesson 12 (renting vs. buying)" and `:309` "money lessons 2/3/4/15" are
+    the same sentences §31 just fixed in `lessonTerms.js`, copied one document over; `:308` "money
+    lesson 17" is correct; `:411` "opening money lesson 1 fetches only `lessonContent.money.en`" is
+    now doubly wrong (lesson 1 is `essentials`, and its content lives in `lessonContent.essentials.*`);
+    `:587` "money is 1-28, economy is 29-40" sits inside a dated entry and is probably legitimate
+    history. **Why it is a separate item and not an oversight:** §29's design note is explicit that
+    `DECISIONS.md` states *dated* truth, so the repair is "append a new dated Update and reclassify
+    the old claim as historical", never an in-place rewrite — a different operation from the code
+    fixes, and one that needs the live/historical judgement §29 already models. **Extending §31 to
+    `.md` would be wrong for the same reason**; the check belongs beside §29's classification table
+    instead. Start by reading §29 and F11's reasoning before touching a line.
+
 76. **[Content/Process — filed 2026-08-18 by the run that built item 69's instrument half, which is
     what turned this from an opinion into a blocked measurement.] `zh` and `ja` `Brokerage Account`
     are term-of-art shape, and nothing can currently measure whether that generalises.**
@@ -11949,3 +11987,123 @@ deployed URL — is blindspot 10.10**, whose refuting number is one reachable UR
     matching — verify those two ids are still money-track before trusting any hit, since if they are
     not, the comment that documents the whole curation rule is itself stale. Cheap, mechanical, and it
     closes a class rather than an instance.
+
+---
+
+## 2026-08-20 — the re-tracking's stale prose, and a guard so ids-still-green stops meaning correct (item 88)
+
+Owner-directed: "do item 88 next", the item the previous run filed. Nine stale sites fixed and the
+class closed by a new `check-data.mjs` §31. **Item 89 is filed for the half deliberately left out.**
+
+### Step 3.5 — the premise held, and the control it specified was the good part
+
+Unusually, nothing in this item's premise was wrong. That is worth recording precisely because the last
+twelve entries all say the opposite: the item was filed one run earlier by the run that hit the problem,
+which is the shortest possible gap between observing something and writing it down.
+
+**The control fired in both directions, exactly as the item scoped it.** `lessonTerms.js`'s header cites
+two worked examples of wrong-sense matching — "Money lesson 12 (renting vs. buying)" and "Money lesson
+17". Measured against `lessons.js`: **id 12 is `essentials` now (stale), id 17 is still `money`
+(correct)**. A detector that flagged both would be over-matching; one that flagged neither would be
+dead. Mine flags the first and not the second, and that is the whole reason to trust the other seven
+hits. **This is why the item said to check those two ids before trusting any result.**
+
+The one thing re-measuring changed was **scope, in the safe direction**: a first pass by grep suggested
+~30 candidate sites, and classifying each against `lessons.js` cut it to 9 real ones. The rest are
+legitimately historical (`jargon-candidates.mjs`'s "money *was* 28 lessons of mechanics",
+`check-data.mjs` §29's table that already classifies "1-28" as `historical`, `lessons.js`'s explicit
+"Historical note") or simply accurate (`lessonContent.money.*.js` really does hold 16-28, verified by
+importing all three modules). **Fixing those would have made them wrong.**
+
+### What was stale, and the one that mattered
+
+The sharpest find is not a comment about content but a comment about **behaviour**:
+
+- **`src/App.jsx`** said a first-time visitor "opens straight into the first lesson of the money track,
+  **which index 0 now is**". Index 0 has been `economy` since the 2026-08-18 reordering. Verified
+  rather than reasoned: `TRACKS[0].key === "economy"` and `lessons[0]` is **id 29, "Transactions: The
+  Building Block"** — so the comment described the opposite of what the app does. The code was always
+  right; only the sentence explaining it had rotted.
+- **`moneyVisuals.js` / `LessonVisual.jsx`** — "MONEY-TRACK LESSON VISUALS", "the money track — 28 of
+  the 40 lessons", "a new install opens on money lesson 1". Of the four lessons carrying a diagram
+  (1, 3, 7, 27), **three are `essentials` today**. Both headers relabelled to "personal-finance";
+  `MONEY_VISUALS` keeps its identifier name (it is referenced further down and by §21) with a comment
+  saying the name is a label, not a track claim.
+- **`glossary.js`** top header ("money lessons 1–28 actually use"), **both `lessonTerms.js` section
+  headers** (measured: 9-of-14 and 11-of-12 of the lessons under them are `essentials`),
+  **`check-data.mjs` §17's prose**, and **`lessonIdMigration.js`**'s present-tense "now money is 1-28"
+  — reworded to date the claim to the 2026-08-14 migration it documents.
+
+### `check-data.mjs` §31 — the class, not the instances
+
+Nine references in `src/` + `scripts/` are now checked against `lessons.js` on every `npm test`.
+
+- **Scope is narrow on purpose.** It matches a track name and a lesson id *in the same breath*
+  ("money lesson 12", "essentials lessons 2/3/4", and the range form "money lessons 1-28", compared
+  against the track's real extent). It does **not** police every stale track sentence — "the money
+  track — 28 of the 40 lessons" names no id and is not matched. §26's lesson is that a guard whose
+  false positives are ordinary English is switched off within a week.
+- **`track-ok: <reason>` exempts deliberate historical prose, and is checked in BOTH directions** — a
+  marker sitting on a reference that is currently *correct* also fails, so an exemption cannot outlive
+  its reason. That mirrors §26's `path-ok` and §29's live/historical classification.
+- **String literals are excluded**; only comment text is read. A track name and an id inside a string
+  is data, not a claim about the corpus.
+
+### Verified — four injections, and the section caught its own author twice
+
+`npm test` **0 failures** (the single warning is the standing 7-stale-translations debt, unchanged);
+`npm run build` clean. §31 reports **9 references checked, 5 exempted**, and the arithmetic is
+auditable: 4 correct (`lessonTerms.js:15` and `:17`, `check-data.mjs:1314` and §31's own live example)
++ 5 historical (2 in `glossary.js`, 3 illustrative in §31's header).
+
+Injections, each proved to have landed before the result was read, each restored from a scratchpad copy
+with a matching `shasum` — never `git checkout --`:
+
+1. **Stale single reference** — reverted `lessonTerms.js:15` to "Money lesson 12" → §31 failed on that
+   exact line, suite `1 failure`.
+2. **Stale range** — added "economy lessons 1-12" (the pre-2026-08-14 layout) → caught, `economy is
+   29-40`.
+3. **Legitimate marker deleted** — removed the `track-ok:` above `glossary.js`'s historical quote →
+   caught, i.e. the exemption is load-bearing rather than decorative.
+4. **Marker on a correct reference** — *this one fired for real during development, not as a designed
+   injection.* The marker matches its own line or the one above, and it leaked onto the next line,
+   wrongly exempting the live "essentials lessons 2/3/4" example inside §31's own header. Restructured
+   so the marker covers only the stale example.
+
+**§31 also failed its own author twice before passing**: once on the three illustrative examples in its
+header comment, and once via the leak above. And a *different* existing guard caught a third mistake —
+`check-backlog.mjs` failed because §31 cited "backlog item 88" while 88 existed only inside the previous
+run-log entry, never in the `## Prioritized backlog` section the checker reads. **Filing an item in the
+run log is not filing it.** Both 88 and 89 are now real backlog entries.
+
+### Adversarial self-check (step 5)
+
+- **Blindspot register** — clean, and provable rather than asserted: **the diff adds zero non-comment
+  lines under `src/`**, and the build emits the **identical content hash** (`index-D69OBdYc.js`,
+  244.13 kB) before and after, so no rendered output changed. `check-blindspot.mjs` passes all four
+  assertions. §2.3 hand-checked again for `glossary.js` (still outside the date guard's 26 modules):
+  0 dates in any rendered string across 33 entries × 5 languages, probe control firing. No Dalio, no
+  advice phrasing, kids framing untouched.
+- **Rule W-1 (live browser)** — deliberately not invoked, with the reason stated: there is no rendered
+  change to verify. The identical bundle hash is the evidence, not an assumption.
+- **`DECISIONS.md` conflict** — none, and this is the interesting one. §29's design note says
+  `DECISIONS.md` records *dated* truth, so it must be repaired by appending a new dated Update rather
+  than rewritten in place. **That is exactly why §31 is scoped to `.js`/`.jsx`/`.mjs` and item 89 exists
+  as a separate item** — extending this check to Markdown would contradict a closed decision.
+- **Already-done backlog item** — no. §31 does not duplicate §29: §29 checks *ranges* inside one
+  DECISIONS.md section, §31 checks *track-attributed lesson ids* in source comments. Complementary
+  nets over different corpora. Item 88 was open and owner-directed.
+- **Own verification claim** — reproducible. Every figure comes from `npm test`,
+  `node scripts/check-data.mjs`, `node scripts/check-backlog.mjs`, `npm run build`, and the four
+  injections above. Item 89's five `DECISIONS.md` line numbers were each read and checked against
+  `lessons.js` before being written down, rather than carried over from the grep.
+
+### Next run
+
+`npm run owner-tree -- --expect c2331799fd3ee413aca864fd82d247a35ea31b01a70a6c4e37b00f6aad9105b2`
+(unchanged again — the deviation set is the owner's 52 untracked files, and this run added nothing to
+it). **Newly open: item 89** — the same stale-track class in `DECISIONS.md`, which must be repaired as
+dated Updates, not in place; read §29's design note first. Also still open: **35's second glossary
+batch** and the **7 stale translation lessons per language** (`npm run review-status`). **Item 18
+remains the entire critical path to ending Phase 0**, blocked on the owner creating an analytics
+provider account, and **item 72's owner half — a deployed URL — is blindspot 10.10**.
