@@ -92,6 +92,35 @@ export function lessonsByTrack(all = lessons) {
   return TRACKS.flatMap((tr) => lessonsInTrack(tr.key, all));
 }
 
+/**
+ * Where a lesson sits, looked up BY ID: its 1-based position within its own
+ * track, that track's size, and the track's label key.
+ *
+ * This exists because "which lesson is this?" has exactly one correct answer
+ * and three surfaces asking it. The Learn path and the reader each derived it
+ * inline and agreed; Practice did not — it printed `question.lesson`, which is
+ * the raw id, so a review question from the first economy lesson announced
+ * itself as "From lesson 29" while the reader called the same lesson
+ * "Lesson 1 of 12" (backlog item 81). Ids are storage keys and are
+ * deliberately not aligned to display order — see lessonsByTrack() above — so
+ * anything showing a learner a lesson NUMBER must come through here.
+ *
+ * Returns null for an id that is not in `all`, which is a real case: quiz
+ * metadata is keyed by lesson id and can outlive a lesson.
+ */
+export function lessonPlacement(id, all = lessons) {
+  const lesson = all.find((l) => l.id === id);
+  if (!lesson) return null;
+  const inTrack = lessonsInTrack(lesson.track, all);
+  return {
+    lesson,
+    track: lesson.track,
+    labelKey: TRACKS.find((tr) => tr.key === lesson.track)?.labelKey ?? null,
+    position: inTrack.findIndex((l) => l.id === id) + 1,
+    total: inTrack.length,
+  };
+}
+
 // ═══════════════════════════════════════════════════════════════════════════
 // LESSON METADATA
 //

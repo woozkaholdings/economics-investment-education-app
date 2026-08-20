@@ -103,7 +103,7 @@ export default {
     practiceAll: "练习全部题目",
     reviewCompleteTitle: "复习完成",
     reviewScoreTemplate: "{total}题中答对{correct}题",
-    reviewFromLesson: "来自第 {n} 课",
+    reviewFromLesson: "第 {n} 课 · {track}",
     doneLabel: "完成",
     reviewBatchTitle: "已完成 {n} 题 — 做得好",
     reviewKeepGoing: "继续",

@@ -14,6 +14,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { EVENTS, quizScore, track } from "../lib/analytics.js";
+import { lessonPlacement } from "../content/lessons.js";
 import { quizMeta } from "../content/quizMeta.js";
 import { dueQuestions, seenCount } from "../lib/review.js";
 import Icon from "../components/Icon.jsx";
@@ -27,6 +28,32 @@ import { ink, line, radius, space, surface } from "../theme.js";
 // the review's "low-pressure interstitial" idea — instead of one long queue
 // the learner has to either finish or abandon mid-question.
 const BATCH_SIZE = 10;
+
+// "Which lesson did this question come from?" — answered by the lesson's
+// position within its track plus the track's name, never by its raw id.
+//
+// `question.lesson` is a stable storage key and is deliberately NOT aligned to
+// display order (see lessonsByTrack() in content/lessons.js), so printing it
+// announced "From lesson 29" for the lesson the reader calls "Lesson 1 of 12"
+// and the path numbers "1" — backlog item 81. The Learn path and the reader
+// were both fixed for this when the third track landed; this screen was the
+// one that still showed the id.
+//
+// The track name is part of the label rather than a nicety: with three tracks
+// there are three "Lesson 1"s, and a review queue interleaves them freely, so
+// a bare position would be ambiguous in exactly the place the queue mixes.
+// The number leads so that it survives truncation on a narrow header.
+//
+// Returns null for a question whose lesson is no longer in the catalogue —
+// quiz metadata is keyed by id and can outlive a lesson. Rendering nothing
+// beats rendering a wrong number.
+function lessonSourceLabel(t, lessonId) {
+  const at = lessonPlacement(lessonId);
+  if (!at) return null;
+  return t.reviewFromLesson
+    .replace("{n}", at.position)
+    .replace("{track}", (at.labelKey && t[at.labelKey]) || "");
+}
 
 // Quiz text, one language per module (item 48). The schedule lives in
 // quizMeta and is always available synchronously; only the words are fetched.
@@ -181,26 +208,31 @@ export default function Practice({ t, lang, review, recordReview }) {
               rather than leading with a percentage. */}
           {results.length > 0 && (
             <Card style={{ marginTop: space["3"] }} padded={false}>
-              {results.map((r, i) => (
-                <div
-                  key={r.item.index}
-                  style={{
-                    display: "flex", alignItems: "flex-start", gap: space["3"],
-                    padding: `${space["3"]}px ${space["4"]}px`,
-                    borderBottom: i < results.length - 1 ? `1px solid ${line.hairline}` : "none",
-                  }}
-                >
-                  <span style={{ color: r.correct ? ink.ok : ink.bad, display: "flex", marginTop: 2, flexShrink: 0 }}>
-                    <Icon name={r.correct ? "check" : "x"} size="1.1em" strokeWidth={2.5} />
-                  </span>
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <Text variant="small" color={ink.body}>{withText(r.item).q}</Text>
-                    <Text variant="caption" color={ink.muted} style={{ marginTop: space["1"] }}>
-                      {t.reviewFromLesson.replace("{n}", r.item.question.lesson)}
-                    </Text>
+              {results.map((r, i) => {
+                const source = lessonSourceLabel(t, r.item.question.lesson);
+                return (
+                  <div
+                    key={r.item.index}
+                    style={{
+                      display: "flex", alignItems: "flex-start", gap: space["3"],
+                      padding: `${space["3"]}px ${space["4"]}px`,
+                      borderBottom: i < results.length - 1 ? `1px solid ${line.hairline}` : "none",
+                    }}
+                  >
+                    <span style={{ color: r.correct ? ink.ok : ink.bad, display: "flex", marginTop: 2, flexShrink: 0 }}>
+                      <Icon name={r.correct ? "check" : "x"} size="1.1em" strokeWidth={2.5} />
+                    </span>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <Text variant="small" color={ink.body}>{withText(r.item).q}</Text>
+                      {source && (
+                        <Text variant="caption" color={ink.muted} style={{ marginTop: space["1"] }}>
+                          {source}
+                        </Text>
+                      )}
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </Card>
           )}
 
@@ -236,11 +268,30 @@ export default function Practice({ t, lang, review, recordReview }) {
             >
               <Icon name="x" size="1.1em" strokeWidth={2.2} />
             </button>
-            <Text as="span" variant="caption" color={ink.strong} style={{ fontWeight: 700 }}>
+            {/* Never the thing that gives way. The source caption beside it is
+                now long enough to squeeze this, and at a 1.3x font scale that
+                wrapped "1 / 1" onto two lines and made the whole row two rows
+                tall. The caption truncates instead — it is the one with slack. */}
+            <Text
+              as="span"
+              variant="caption"
+              color={ink.strong}
+              style={{ fontWeight: 700, flexShrink: 0, whiteSpace: "nowrap" }}
+            >
               {position + 1} / {session.length}
             </Text>
-            <Text as="span" variant="caption" color={ink.muted} style={{ flexShrink: 0 }}>
-              {t.reviewFromLesson.replace("{n}", item.question.lesson)}
+            {/* Shrinkable, unlike the counter beside it: the label now carries
+                a track name and can be long in any language, and at a large
+                font scale a `flexShrink: 0` caption pushes this row wider than
+                the viewport. Truncating from the end is safe because the
+                lesson number leads. */}
+            <Text
+              as="span"
+              variant="caption"
+              color={ink.muted}
+              style={{ minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}
+            >
+              {lessonSourceLabel(t, item.question.lesson)}
             </Text>
           </div>
           <ProgressBar value={position} max={session.length} label={`${position + 1} / ${session.length}`} />

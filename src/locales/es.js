@@ -103,7 +103,7 @@ export default {
     practiceAll: "Practicar todas las preguntas",
     reviewCompleteTitle: "Repaso completado",
     reviewScoreTemplate: "{correct} de {total} correctas",
-    reviewFromLesson: "De la lección {n}",
+    reviewFromLesson: "Lección {n} · {track}",
     doneLabel: "Listo",
     reviewBatchTitle: "{n} completadas — bien hecho",
     reviewKeepGoing: "Seguir",

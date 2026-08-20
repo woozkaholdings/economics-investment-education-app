@@ -103,7 +103,7 @@ export default {
     practiceAll: "すべての問題を練習",
     reviewCompleteTitle: "復習完了",
     reviewScoreTemplate: "{total}問中{correct}問正解",
-    reviewFromLesson: "レッスン {n}",
+    reviewFromLesson: "レッスン {n} · {track}",
     doneLabel: "完了",
     reviewBatchTitle: "{n}問完了 — いい調子です",
     reviewKeepGoing: "続ける",

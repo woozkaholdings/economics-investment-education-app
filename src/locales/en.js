@@ -117,7 +117,7 @@ export default {
     practiceAll: "Practice all questions",
     reviewCompleteTitle: "Review complete",
     reviewScoreTemplate: "{correct} of {total} correct",
-    reviewFromLesson: "From lesson {n}",
+    reviewFromLesson: "Lesson {n} · {track}",
     doneLabel: "Done",
     reviewBatchTitle: "{n} done — nice work",
     reviewKeepGoing: "Keep going",

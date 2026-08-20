@@ -193,6 +193,27 @@ export default function LessonReader({ t, lang, lessons, index, completedLessons
   const trackTotal = trackLessons.length;
   const hasNext = index < lessons.length - 1;
 
+  // Previous stops at the track boundary, and that is a lock, not a nicety
+  // (backlog item 80). It used to be gated on `index > 0` alone and stepped
+  // through the FLAT, track-ordered list, so from the first lesson of a track
+  // it walked into the previous track's LAST lesson. Since every track's first
+  // lesson is unlocked from install, a brand-new user could open essentials
+  // lesson 1 and press Previous back through all thirteen money lessons into
+  // the final economy lesson, with nothing completed — reading the whole
+  // curriculum past a gate the Learn path (`disabled` rows) and the deep-link
+  // router (a locked `#/lesson/N` redirects to the path) both enforce.
+  //
+  // Within a track this is safe by construction and stays as it was: you can
+  // only be reading a lesson that is unlocked, and `App.isUnlocked` unlocks it
+  // only once the previous lesson IN THE SAME TRACK is complete — so the
+  // lesson behind it is always one you have finished.
+  //
+  // `hasNext` deliberately keeps no such test, because forward motion cannot
+  // reach a locked lesson: Next only renders once THIS lesson is `done`, and
+  // index+1 is then either the next lesson in this track (unlocked by that
+  // completion) or the first lesson of the next track (never gated).
+  const hasPrev = index > 0 && lessons[index - 1].track === lesson.track;
+
   const handleComplete = () => {
     completeLesson(lesson.id);
     // §9.2's "lesson completed (with duration)" — time on this lesson since it
@@ -412,7 +433,7 @@ export default function LessonReader({ t, lang, lessons, index, completedLessons
 
       {/* Actions */}
       <div style={{ display: "flex", gap: space["2"], marginTop: space["2"] }}>
-        {index > 0 && (
+        {hasPrev && (
           <Button variant="outline" iconLeft="arrowLeft" onClick={() => onNavigate(index - 1)} style={{ flex: 1 }}>
             {t.prevLesson}
           </Button>

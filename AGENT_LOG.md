@@ -640,6 +640,87 @@ for the history. No open P1/P2 items.
     - **Honest priority: high the moment the owner's tree is clean, because it gates every other
       run's step-4 verification. Zero before that.**
 
+80. **✅ DONE 2026-08-20 (owner-directed, interactive) — found by the first live QA sweep of the
+    `essentials` track. The reader's `Previous` button walked straight through locked lessons.**
+    - **The defect.** `Previous` was gated on `index > 0` alone and stepped through the FLAT,
+      track-ordered lesson list (economy 12 → money 13 → essentials 15). From the first lesson of a
+      track it therefore landed on the previous track's LAST lesson. Every track's first lesson is
+      unlocked from install, so this was reachable by a brand-new user immediately.
+    - **Reproduced from a fresh install** (`completedLessons = []`, pasted from the live DOM):
+      `#/lesson/1 "LESSON 1 OF 15"` → `#/lesson/28 "LESSON 13 OF 13"` → … all thirteen money
+      lessons … → `#/lesson/16 "LESSON 1 OF 13"` → `#/lesson/40 "LESSON 12 OF 12"`. The entire
+      40-lesson curriculum was readable without completing anything.
+    - **Why it was a defect and not a design choice, which is the part worth keeping.** The same
+      lessons are gated on every other surface: the Learn path renders 35 of 40 rows `disabled`, and
+      a deep link to a locked `#/lesson/40` redirects to `#/learn` — verified live, both directions.
+      `DECISIONS.md` deliberately hardened URLs so that "a URL does not unlock a lesson"; an internal
+      button was more permissive than the external entry point that was hardened.
+    - **The fix**: `hasPrev = index > 0 && lessons[index - 1].track === lesson.track`
+      (`src/screens/LessonReader.jsx`). Backward motion within a track is untouched and is safe by
+      construction — `App.isUnlocked` only unlocks a lesson once the previous lesson IN THE SAME
+      TRACK is complete, so the lesson behind the one you are reading is always one you finished.
+    - **`hasNext` deliberately got no equivalent test, and the reasoning is recorded so a later run
+      does not "fix" it too.** Next renders only when the current lesson is `done`, so `index + 1` is
+      either the next lesson in this track (unlocked by that completion) or the first lesson of the
+      next track (never gated). Forward motion cannot reach a locked lesson, so cross-track Next
+      stays — finishing a track and continuing into the next one is good behaviour, not a leak.
+
+81. **✅ DONE 2026-08-20 (owner-directed, interactive) — surfaced by the same sweep. Practice was the
+    one surface still printing a raw lesson id.**
+    - **The defect, live:** the review queue captioned a question **"From lesson 29"** for the lesson
+      the reader calls **"LESSON 1 OF 12"** and the Learn path numbers **"1"**. `Practice.jsx` rendered
+      `question.lesson`, which is the stable storage id, and ids are deliberately no longer aligned to
+      display order.
+    - **This is the same bug class `lessons.js` already records as fixed elsewhere** — its
+      `lessonsByTrack()` comment says "the reader now shows a lesson's position WITHIN ITS TRACK
+      ('Lesson 1 of 12') rather than its raw id", and the Learn path's step-marker comment says the
+      three-track reorder made "the economy track's first node read '29'". Both were fixed on
+      2026-08-18; Practice was missed. It affects economy (ids 29-40) and money (16-28); `essentials`
+      is the one track where it was *coincidentally* correct, since ids 1-15 equal its positions —
+      which is precisely why sweeping the new track is what exposed it.
+    - **The fix**: a shared `lessonPlacement(id)` in `src/content/lessons.js` returning position,
+      track total and track label key, used at both `Practice.jsx` label sites. It is a shared helper
+      rather than a third inline derivation **because this is now the third surface to ask the same
+      question and the second to get it wrong**.
+    - **The label gained the track name, and that was forced by the fix rather than optional.** With
+      three tracks there are three "Lesson 1"s and the review queue interleaves them freely, so a bare
+      position would have been ambiguous exactly where the queue mixes. `reviewFromLesson` is now
+      `"Lesson {n} · {track}"` in all five languages. The number leads so it survives truncation, and
+      the in-quiz header caption lost its `flexShrink: 0` (it now ellipsis-truncates) because a
+      track name at a 1.3x font scale would otherwise push that row wider than the viewport.
+    - **Unresolved on purpose:** a question whose lesson is no longer in the catalogue now renders no
+      source line at all rather than a wrong number. That case is not currently reachable, since
+      `quizMeta` and `lessons.js` agree; it is handled because quiz metadata is keyed by id and can
+      outlive a lesson.
+
+82. **[A11y — filed 2026-08-20 by the live `essentials` QA sweep. Small, well-scoped, genuinely minor.]
+    The three track sections on the Learn path are `<section>` elements with no accessible name.**
+    - **Measured, not asserted:** `document.querySelectorAll('main section')` returns 3, and every one
+      of them has `aria-labelledby` = null. Each already contains the `<h2>` that names it
+      ("How the Economy Works", "Thinking About Money", "Money Basics (Optional)").
+    - **Why it is minor and should be filed rather than rushed:** a `<section>` without an accessible
+      name is not exposed as a landmark region, so the three tracks do not appear in a screen reader's
+      region rotor. The heading hierarchy is already correct and gives the primary navigation route —
+      one `<h1>` ("Your learning path") and exactly three `<h2>`s, verified in the same pass — so this
+      buys a second, redundant navigation mechanism, not a missing one.
+    - **Scope:** give each `<h2>` an `id` and point the enclosing `<section>`'s `aria-labelledby` at
+      it, in `src/screens/Learn.jsx`. Check whether `ui.jsx` already has an id convention before
+      inventing one. **Verify against the live accessibility tree, not the JSX** — item 40's run log
+      records that reading the markup is what made the last `role`/label bug look fine when it was not.
+
+83. **[Docs — filed 2026-08-20 by the live `essentials` QA sweep. One comment, no behaviour.]
+    `src/screens/Learn.jsx`'s resume comment describes the pre-reversal product and is now backwards.**
+    - It reads: "`lessons` arrives money-track-first, so this resumes into practical money content
+      before optional economics rather than by raw lesson id." After the 2026-08-18 reversal `TRACKS`
+      is `economy, money, essentials`, so `lessons` arrives **economy-first**, and economy is the main
+      path — not "optional economics". The `nextIndex` code below it is correct; only the comment is.
+    - **Why file it rather than fix it in passing:** this project's recurring failure is stale prose
+      outliving the decision it described (the App-summary rewrite was flagged three times before
+      anyone did it). A comment that states the product's direction backwards is the exact thing the
+      next run reads to orient. **Cheap to fix; re-read `DECISIONS.md`'s two-tracks section first so
+      the replacement states the current intent rather than a second guess at it.**
+
+
 79. **✅ DONE 2026-08-20 (scheduled dev-agent) — built as scoped, and the item's own proposed wording
     was measured to be FALSE in one of the states it has to cover.** Unblocked the moment the owner's
     redesign landed in `5633b79`: all five `src/locales/*.js` went clean.
@@ -10723,3 +10804,112 @@ It is a reading of the boolean expression I replaced, and both the entry and the
   ever seen it render — is probably higher value than any item currently in the backlog.
 - **Item 18 remains the entire critical path to ending Phase 0** and is still blocked on the owner
   creating an analytics-provider account. Flagging it again, as every run is asked to.
+
+---
+
+## 2026-08-20 — first live QA sweep of the `essentials` track: two real defects, both fixed (items 80, 81)
+
+**Owner-directed, interactive.** The previous entry queued this: the owner's redesign added a third
+lesson track and no run had ever watched it render. The sweep found two user-facing defects — one of
+them a progression bypass reachable by any brand-new user — plus two minor items now filed as 82/83.
+
+### Item 80 — `Previous` walked straight through locked lessons
+
+**Reproduced from a fresh install**, `completedLessons = []`, hashes and headers pasted from the live
+DOM: `#/lesson/1 "LESSON 1 OF 15"` → `#/lesson/28 "LESSON 13 OF 13"` → … all thirteen money lessons …
+→ `#/lesson/16 "LESSON 1 OF 13"` → `#/lesson/40 "LESSON 12 OF 12"`. The whole 40-lesson curriculum was
+readable without completing anything. Cause: `Previous` was gated on `index > 0` alone and stepped
+through the flat, track-ordered list, so from the first lesson of a track it landed on the previous
+track's last lesson — and every track's first lesson is unlocked from install.
+
+**Why this was unambiguous rather than a judgement call, which is the part worth carrying forward.**
+The identical lessons are gated everywhere else, and I checked all three surfaces rather than assuming:
+the Learn path renders **35 of 40** rows with native `disabled`, and a deep link to a locked
+`#/lesson/40` **redirects to `#/learn`** — verified live, as a control that the lock mechanism exists
+and fires. `DECISIONS.md:275` records *why*: sequential unlocking is a product bet (`CLAIMS.md` A1) and
+"a permissive resolver would void it from outside the app… and nothing in the repo would notice." The
+reader was voiding it from **inside**.
+
+**Fix**: `hasPrev = index > 0 && lessons[index - 1].track === lesson.track`. **`hasNext` deliberately
+got no equivalent test**, and the reasoning is in the code so a later run does not "fix" it too: Next
+renders only once the current lesson is `done`, so `index + 1` is either the next lesson in this track
+(unlocked by that completion) or the first lesson of the next track (never gated) — forward motion
+cannot reach a locked lesson.
+
+### Item 81 — Practice was the last surface printing a raw lesson id
+
+Live: the review queue captioned a question **"From lesson 29"** for the lesson the reader calls
+**"LESSON 1 OF 12"**. `Practice.jsx` rendered `question.lesson`, the storage id. This is the same bug
+`lessons.js` already records as fixed on the reader and the Learn path when the third track landed —
+Practice was missed. It affected economy (ids 29-40) and money (16-28); **`essentials` is the one track
+where it was coincidentally right**, ids 1-15 being equal to its positions, which is exactly why
+sweeping the *new* track is what exposed a defect in the *old* ones.
+
+**Fix**: a shared `lessonPlacement(id)` in `content/lessons.js`, used at both `Practice.jsx` sites —
+a shared helper rather than a third inline derivation, because this is the third surface to ask the
+question and the second to get it wrong. **I did not renumber**; `lessonsByTrack()`'s comment says
+"Do not 'fix' this by renumbering again," and the fix is display-side, as that comment prescribes.
+
+**The label gained the track name, and the fix forced that rather than gold-plating it.** With three
+tracks there are three "Lesson 1"s and the review queue interleaves them, so a bare position would have
+been ambiguous precisely where the queue mixes. `reviewFromLesson` is now `"Lesson {n} · {track}"` in
+all five languages, number first so it survives truncation.
+
+### Verified — live, with controls, and one self-inflicted regression caught
+
+- **Item 80, both directions.** Essentials L1 (`#/lesson/1`): action buttons are now `["Back",
+  "Mark Complete"]` — **no Previous**. Money L1 (`#/lesson/16`, the other boundary): **no Previous**.
+  **Control that I did not simply delete the feature**: from essentials L2, Previous is present and
+  lands on `#/lesson/1 "LESSON 1 OF 15"` — in-track backward navigation still works. **Control that
+  cross-track Next still flows**: with all 12 economy lessons marked done, economy L12 shows Next and
+  it lands on `#/lesson/16 "LESSON 1 OF 13"`.
+- **Item 81.** In-quiz header: `Lesson 1 · How the Economy Works` (was "From lesson 29"). Results list
+  shows both rows distinguishably: `Lesson 1 · How the Economy Works` and
+  `Lesson 1 · Money Basics (Optional)` — the ambiguity the track name was added for, visible in one
+  screen.
+- **Layout stress, and it is where the real risk was.** Worst case is Spanish `essentials` at 1.3x font
+  scale: `Lección 1 · Fundamentos del dinero (opcional)`, intrinsic **332px** in a **343px** row.
+  Rendered 265px, **truncated with ellipsis, no page overflow** — the number survives because it leads.
+  The header caption's `flexShrink: 0` had to go for this; left alone it would have pushed the row past
+  a 375px viewport.
+- **A regression I introduced and then caught — from the screenshot, not the numbers.** My longer label
+  squeezed the neighbouring `1 / 1` counter into wrapping onto two lines (measured height 44px against
+  a 21.84px line-height), doubling the row. The JSON I had been reading said "no page overflow" and
+  looked fine. Fixed by giving the counter `flexShrink: 0` + `nowrap` so the caption is the piece that
+  gives way; re-measured at 22px — one line. **Worth noting the instrument lesson: `pageOverflow:
+  false` is not "the layout is fine."**
+- `npm test` **exit 0**, `npm run build` **exit 0**.
+- **The backlog guard did its job on me.** My first pass cited "backlog item 80" in three files before
+  the item existed; `check-backlog.mjs` failed the suite with all three paths named. Items were filed,
+  then two citations repointed to 81 — `lessons.js` and `Practice.jsx` describe the *Practice* defect,
+  not the navigation one.
+
+### Adversarial self-check (step 5)
+
+**Blindspot register:** no regression — added lines carry no Dalio reference, no advice-adjacent
+language, no kids-framing change and **no date or market figure**; the new locale strings are pure
+placeholders (`{n}`, `{track}`). `check-blindspot.mjs` passes, and its §10.1 scan covers
+`src/locales/`, so it is a real test of the new copy. **DECISIONS.md conflict:** none — and I read the
+relevant entry rather than assuming. `DECISIONS.md:275` is the *source* of the principle item 80
+restores, not a contradiction; storage, content-module shape and the market-data pipeline are
+untouched. **Already-done item:** no, and one near miss — item 22 was the 2026-08-14 renumbering, and
+`lessonsByTrack()` explicitly warns against renumbering again. Item 81 does **not** renumber; it fixes
+what is displayed. **My own verification claims:** every string above is pasted `innerText`, every
+width a `getBoundingClientRect()` taken after a `mobile` resize (`innerWidth` confirmed 375, per the
+Environment note's zero-width trap), and the "no Previous" results are button-list reads, not
+screenshots. **What the check caught:** I nearly reported the truncation test as passing on the strength
+of `pageOverflow: false` while the counter was visibly wrapping — see above.
+
+### Next run
+
+- **Start with `npm run owner-tree -- --expect c2331799fd3ee413aca864fd82d247a35ea31b01a70a6c4e37b00f6aad9105b2`.**
+  Unchanged by this commit: 0 tracked modified, 52 untracked (the owner's `UIUX/` and `drafts/`).
+- **82 and 83 are filed and both are small** — a missing `aria-labelledby` on the three Learn track
+  sections, and a `Learn.jsx` comment that describes the product ordering backwards. 83 in particular
+  should not sit: a comment stating the direction backwards is what the next run reads to orient.
+- **The sweep did not cover everything.** Not exercised: the remaining 13 essentials lessons' bodies
+  (only lessons 1-2 were read end to end), the batch-pause interstitial at `BATCH_SIZE` 10 with a real
+  40-question session, and keyboard-only traversal of the reader's action row. None showed a symptom;
+  they were simply not reached.
+- **Item 18 remains the entire critical path to ending Phase 0**, still blocked on the owner creating
+  an analytics-provider account.

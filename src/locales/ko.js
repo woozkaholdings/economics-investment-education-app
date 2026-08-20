@@ -103,7 +103,7 @@ export default {
     practiceAll: "전체 문제 풀기",
     reviewCompleteTitle: "복습 완료",
     reviewScoreTemplate: "{total}개 중 {correct}개 정답",
-    reviewFromLesson: "레슨 {n}",
+    reviewFromLesson: "레슨 {n} · {track}",
     doneLabel: "완료",
     reviewBatchTitle: "{n}개 완료 — 잘하고 있어요",
     reviewKeepGoing: "계속하기",
