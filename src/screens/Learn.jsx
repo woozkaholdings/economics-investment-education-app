@@ -18,8 +18,17 @@ export default function Learn({ t, lang, lessons, completedLessons, isUnlocked, 
 
   // Resume where the learner actually is: the first lesson they haven't
   // finished, rather than always lesson 1 or the last one they tapped.
-  // `lessons` arrives money-track-first, so this resumes into practical money
-  // content before optional economics rather than by raw lesson id.
+  //
+  // `lessons` is `lessonsByTrack()`, so it arrives ECONOMY-track-first
+  // (economy → money → essentials) after the 2026-08-18 reversal — see
+  // DECISIONS.md's two-tracks section, which is the record if this comment and
+  // that document ever disagree. A new install therefore resumes into the
+  // economy track, the main path. `essentials` is optional and gates nothing,
+  // so it sits last here exactly as it does on the page, and this pointer
+  // reaches it only once the other two tracks are finished.
+  //
+  // Index-based on purpose: ids are deliberately NOT aligned to display order,
+  // so "the next lesson" is a position in this list and never a lowest-id.
   const nextIndex = Math.max(0, lessons.findIndex((l) => !completedLessons.includes(l.id)));
   const nextLesson = lessons[nextIndex];
   const started = done > 0;
@@ -91,9 +100,24 @@ export default function Learn({ t, lang, lessons, completedLessons, isUnlocked, 
 
       {/* The path, one section per track. Two independent curricula rather
           than one chain — see the TRACKS comment in content/lessons.js. */}
+      {/* Each track is a NAMED region, not a bare <section> (backlog item 82).
+          Each already contained the <h2> that names it; `aria-labelledby`
+          points at that same heading rather than adding a second copy of the
+          label to keep in sync. Id shape follows the convention already in use
+          for `age-band-${band}` and `sector-window-${window}`: a literal
+          prefix plus a stable key.
+
+          Per HTML-AAM a <section> maps to `region` only once it has an
+          accessible name, so naming these is what makes them landmarks — but
+          note that the exact before/after is NOT observable with the
+          `read_page` tool available here, which prints every <section> as
+          `region` regardless and does not render `aria-labelledby` names at
+          all (see the Environment note in AGENT_LOG.md). Verify changes here
+          at the DOM level: attribute present, `getElementById` resolves, target
+          carries the expected text. */}
       {groupedTracks.map((tr) => (
-        <section key={tr.key}>
-          <Text as="h2" variant="heading" color={ink.strong} style={{ margin: `${space["5"]}px 0 ${space["1"]}px` }}>
+        <section key={tr.key} aria-labelledby={`track-${tr.key}-title`}>
+          <Text as="h2" id={`track-${tr.key}-title`} variant="heading" color={ink.strong} style={{ margin: `${space["5"]}px 0 ${space["1"]}px` }}>
             {t[tr.labelKey]}
           </Text>
           <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: space["3"], marginBottom: space["3"] }}>

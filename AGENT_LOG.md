@@ -693,32 +693,54 @@ for the history. No open P1/P2 items.
       `quizMeta` and `lessons.js` agree; it is handled because quiz metadata is keyed by id and can
       outlive a lesson.
 
-82. **[A11y — filed 2026-08-20 by the live `essentials` QA sweep. Small, well-scoped, genuinely minor.]
-    The three track sections on the Learn path are `<section>` elements with no accessible name.**
-    - **Measured, not asserted:** `document.querySelectorAll('main section')` returns 3, and every one
-      of them has `aria-labelledby` = null. Each already contains the `<h2>` that names it
-      ("How the Economy Works", "Thinking About Money", "Money Basics (Optional)").
-    - **Why it is minor and should be filed rather than rushed:** a `<section>` without an accessible
-      name is not exposed as a landmark region, so the three tracks do not appear in a screen reader's
-      region rotor. The heading hierarchy is already correct and gives the primary navigation route —
-      one `<h1>` ("Your learning path") and exactly three `<h2>`s, verified in the same pass — so this
-      buys a second, redundant navigation mechanism, not a missing one.
-    - **Scope:** give each `<h2>` an `id` and point the enclosing `<section>`'s `aria-labelledby` at
-      it, in `src/screens/Learn.jsx`. Check whether `ui.jsx` already has an id convention before
-      inventing one. **Verify against the live accessibility tree, not the JSX** — item 40's run log
-      records that reading the markup is what made the last `role`/label bug look fine when it was not.
+82. **✅ DONE 2026-08-20 (owner-directed, interactive) — built as scoped, and the item's own premise
+    turned out to be UNVERIFIABLE with the instrument available here. Read the instrument note.**
+    - **Shipped:** each of the three track `<section>`s on the Learn path now carries
+      `aria-labelledby={`track-${tr.key}-title`}`, pointing at the `<h2>` it already contained, which
+      gained the matching `id`. Id shape follows the convention already in the codebase
+      (`age-band-${band}`, `sector-window-${window}`, `tab-${tab}`): a literal prefix plus a stable
+      key. Verified live: all three resolve to the correct `H2` — `How the Economy Works`,
+      `Thinking About Money`, `Money Basics (Optional)` — with no duplicate ids and no stray
+      `aria-label`. `Text` forwards `id` because it spreads `...rest`, checked rather than assumed.
+    - **⚠️ THE PREMISE I COULD NOT PROVE, stated plainly because the item told the next run to verify
+      against the live accessibility tree and that instruction does not work as written.** This item
+      claimed "a `<section>` without an accessible name is not exposed as a landmark region". In the
+      `read_page` accessibility tree here, a **bare `<section>` with no name at all still renders as
+      `region`** — I stripped the attribute from all three in the live DOM and the tree was unchanged.
+      So the before/after difference this item was filed to produce is **not observable with this
+      tool**, and any future run that "verifies" a landmark fix by seeing `region` in `read_page` has
+      verified nothing.
+    - **The instrument was calibrated rather than guessed at, and the calibration is the durable
+      finding** — now also written into the Environment note. Injecting `aria-label="ZZPROBE-ECONOMY"`
+      onto one section produced `region "ZZPROBE-ECONOMY"`, so the tool **does** compute and print
+      accessible names; but the section named by `aria-labelledby` printed as a bare `region` with no
+      name. The independent check that this is the tool and not the app: `App.jsx`'s
+      `tabpanel aria-labelledby={`tab-${tab}`}`, which earlier runs verified as correct, **also**
+      prints unnamed in the same tree. **`read_page` surfaces `aria-label` names and not
+      `aria-labelledby` names.**
+    - **What this leaves the change resting on**, honestly: the DOM-level check that every reference
+      resolves to the right heading, and three existing `aria-labelledby` usages in this codebase that
+      earlier runs verified by other means. Naming a landmark is unambiguously correct either way — an
+      unnamed `region` is useless in a rotor even where one is exposed — so the fix is right; what is
+      unproven is the *size* of the improvement, not its direction.
 
-83. **[Docs — filed 2026-08-20 by the live `essentials` QA sweep. One comment, no behaviour.]
-    `src/screens/Learn.jsx`'s resume comment describes the pre-reversal product and is now backwards.**
-    - It reads: "`lessons` arrives money-track-first, so this resumes into practical money content
-      before optional economics rather than by raw lesson id." After the 2026-08-18 reversal `TRACKS`
-      is `economy, money, essentials`, so `lessons` arrives **economy-first**, and economy is the main
-      path — not "optional economics". The `nextIndex` code below it is correct; only the comment is.
-    - **Why file it rather than fix it in passing:** this project's recurring failure is stale prose
-      outliving the decision it described (the App-summary rewrite was flagged three times before
-      anyone did it). A comment that states the product's direction backwards is the exact thing the
-      next run reads to orient. **Cheap to fix; re-read `DECISIONS.md`'s two-tracks section first so
-      the replacement states the current intent rather than a second guess at it.**
+83. **✅ DONE 2026-08-20 (owner-directed, interactive).** `src/screens/Learn.jsx`'s resume comment no
+    longer describes the pre-reversal product.
+    - **Was:** "`lessons` arrives money-track-first, so this resumes into practical money content
+      before optional economics rather than by raw lesson id." Both halves were backwards after
+      2026-08-18: `lessons` arrives **economy**-first, and economy is the **main path**, not "optional
+      economics".
+    - **The replacement was written from `DECISIONS.md`'s two-tracks section** (its 2026-08-18 Update,
+      lines 610-624), as this item instructed, rather than from a second guess at current intent. It
+      states the order, points at that document as the record if the two ever disagree, notes that
+      `essentials` sits last here for the same reason it sits last on the page, and keeps the original
+      comment's still-true point that the lookup is index-based because ids are not aligned to display
+      order.
+    - **The behaviour the comment claims was re-verified rather than assumed** — the whole failure mode
+      of this item was prose drifting from code. Fresh install (`completedLessons = []`) → "START HERE
+      | Transactions: The Building Block | How the Economy Works". With all twelve economy lessons
+      complete → "NEXT UP | Does It Put Money In Your Pocket, or Take It Out? | Thinking About Money".
+      Flat, track-ordered advance, economy first, exactly as the new comment says.
 
 
 79. **✅ DONE 2026-08-20 (scheduled dev-agent) — built as scoped, and the item's own proposed wording
@@ -3097,6 +3119,26 @@ technique for visual verification instead of writing another "could not visually
 server is not persistent infrastructure — it's started fresh, points at whatever `dist/` was just built,
 and doesn't need to be torn down deliberately (it's a plain background process against a throwaway port,
 not something committed or relied on between runs).
+
+**`read_page`'s accessibility tree shows `aria-label` names but NOT `aria-labelledby` names — and
+every `<section>` prints as `region` whether or not it is named (2026-08-20).** Two separate traps in
+one instrument, both found while verifying backlog item 82, and both of the "returns a clean-looking
+answer that means nothing" family this section keeps warning about.
+
+- **A bare `<section>` still prints as `region`.** Stripping `aria-labelledby` from all three Learn
+  track sections in the live DOM left the tree **unchanged**. So `region` appearing in `read_page` is
+  no evidence that a landmark is named, and a run that "verifies" a landmark fix that way has verified
+  nothing.
+- **`aria-labelledby` names do not print.** Calibrated rather than assumed: injecting
+  `aria-label="ZZPROBE"` onto a section printed `region "ZZPROBE"`, so the tool does compute names —
+  but a section named via `aria-labelledby` printed as a bare `region`. The check that this is the
+  tool and not the app: `App.jsx`'s `tabpanel aria-labelledby={`tab-${tab}`}`, verified correct by
+  earlier runs, **also** prints unnamed.
+
+**So for any `aria-labelledby` work, verify at the DOM level** — that the attribute is present, that
+`document.getElementById(...)` resolves it, and that the target carries the expected text — and say in
+the run log that the a11y-tree instrument could not confirm it. Do not report "confirmed in the
+accessibility tree" for a name this tool cannot render.
 
 **If you measure geometry, resize the viewport first — `getBoundingClientRect()` returns zero-width
 boxes otherwise (2026-08-17).** The `Viewport: 0x0` condition described below is not only a `read_page`
@@ -10913,3 +10955,60 @@ of `pageOverflow: false` while the counter was visibly wrapping — see above.
   they were simply not reached.
 - **Item 18 remains the entire critical path to ending Phase 0**, still blocked on the owner creating
   an analytics-provider account.
+
+---
+
+## 2026-08-20 — items 82 and 83 closed; the a11y instrument turned out to be the interesting part
+
+**Owner-directed, interactive, immediately after the sweep that filed them.** Both were the small
+items: name the three Learn track landmarks, and fix a comment that described the product backwards.
+Both shipped. The finding worth carrying forward is not either fix — it is that **the instrument item
+82 told the next run to use cannot measure what item 82 was about.**
+
+**Item 82.** Each track `<section>` now carries `aria-labelledby` pointing at the `<h2>` it already
+contained. I checked for an existing convention before inventing one, as the item said to
+(`age-band-${band}`, `sector-window-${window}`, `tab-${tab}` → `track-${tr.key}-title`), and confirmed
+`Text` forwards `id` via `...rest` rather than assuming it. All three references resolve live to the
+right headings, no duplicate ids.
+
+**But the item's premise — "an unnamed `<section>` is not exposed as a landmark" — is not observable
+here, and I could not prove the change did what the item claimed.** Stripping the attribute from all
+three sections in the live DOM left `read_page`'s tree **identical**: a bare `<section>` still prints
+as `region`. The control did not fire, which under this section's own rule means the negative result
+was worthless — so I calibrated the instrument instead of shipping on it. `aria-label="ZZPROBE"`
+printed `region "ZZPROBE"`, proving the tool computes names; the `aria-labelledby`-named section
+printed as a bare `region`. Independent confirmation that this is the tool and not the app:
+`App.jsx`'s `tabpanel aria-labelledby={`tab-${tab}`}`, verified correct by earlier runs, prints
+unnamed in the same tree. **`read_page` renders `aria-label` names and not `aria-labelledby` names**,
+and that is now in the Environment note so the next a11y run does not report a false "confirmed in the
+accessibility tree". The fix rests on the DOM-level check plus three existing verified usages of the
+same pattern; its *direction* is not in doubt, only the size of the win.
+
+**Item 83.** The resume comment said `lessons` arrives "money-track-first" and called economy
+"optional" — both backwards since 2026-08-18. Replacement written from `DECISIONS.md:610-624` rather
+than from memory, as the item instructed, and it points at that document as the record. **The
+behaviour it claims was re-measured, because prose drifting from code is this item's entire failure
+mode:** fresh install → "START HERE | Transactions: The Building Block | How the Economy Works"; with
+all twelve economy lessons done → "NEXT UP | Does It Put Money In Your Pocket, or Take It Out? |
+Thinking About Money".
+
+**Adversarial self-check (step 5).** **Blindspot register:** no regression — this commit adds one HTML
+attribute, one `id`, and comment prose; no copy, no dates, no figures, no advice-adjacent language,
+and `check-blindspot` passes. **DECISIONS.md conflict:** none — item 83's replacement text is
+*derived* from `DECISIONS.md`'s two-tracks section rather than competing with it, and item 82 touches
+no recorded decision. **Already-done item:** no — item 40 fixed `<ol>`/`<ul>` semantics on this same
+screen and is untouched; the `role="list"` and the step markers are byte-identical in the diff.
+**My own verification claims:** the resolve-check output, the strip-control result and the ZZPROBE
+calibration are all pasted tool output, and where I could not verify — the a11y-tree naming — the
+entry and the backlog item both say so instead of implying otherwise. **What the check caught:** my
+first draft of item 82 read "verified in the live accessibility tree", which was exactly the false
+claim the calibration had just disproved.
+
+**Next run.** `npm run owner-tree -- --expect c2331799fd3ee413aca864fd82d247a35ea31b01a70a6c4e37b00f6aad9105b2`
+(unchanged: 0 tracked modified, 52 untracked). **All four items from the sweep are now closed**, so the
+open backlog is 78, 76, 74, 73, 77, 62, 64, 70, 71, 26 — pick on merit. **The sweep's own uncovered
+areas are still uncovered** and are the strongest candidates: the remaining 13 `essentials` lesson
+bodies (only 1-2 were read end to end), the batch-pause interstitial under a real 40-question session,
+and keyboard-only traversal of the reader's action row — the last of which now matters slightly more,
+since this commit changed which buttons that row contains. **Item 18 remains the entire critical path
+to ending Phase 0**, still blocked on the owner creating an analytics-provider account.
