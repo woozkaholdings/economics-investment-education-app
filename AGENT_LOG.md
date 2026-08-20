@@ -954,7 +954,30 @@ for the history. No open P1/P2 items.
     line and wrongly exempted the live "essentials lessons 2/3/4" example in §31's own header.
     **Deliberately NOT in scope, and left open as item 89:** the same class in `DECISIONS.md`.
 
-89. **[Process — filed 2026-08-20 by the run that built item 88's guard, from the boundary that item
+89. **✅ DONE 2026-08-20 (scheduled dev-agent). The three stale lines are repaired the §29 way —
+    dated Update appended, line marked historical — and §31 now reads `DECISIONS.md` too. Unusually,
+    the premise held on every hit it named — every line number and every verdict checked out. What it
+    got wrong was the disposition.** Three corrections worth not re-deriving. **(a) It named five
+    hits; two of them were already guarded.** `:587`'s "money is 1-28, economy is 29-40" and the `lessons
+    1-12` at `:561` both sit inside the two-tracks section that **§29 already classifies**, both as
+    `historical` — so the real repair surface was **three** lines, not five, and the item's "probably
+    legitimate history" was not just probable but already enforced. **(b) The substance under all
+    three was re-checked and is still true** — lesson 12 does contain "PMI", lesson 17 is about
+    lifestyle inflation, and "credit card"/"credit score"/"credit report"/"credit limit" do appear
+    across lessons 2/3/4/15. Only the track labels rotted, so no decision changed. **(c) "The check
+    belongs beside §29's classification table" was not followed, and the reason is measured.** §29's
+    mechanism is a hand-classified table of *ranges in one section*; single-id attributions are §31's
+    exact shape, and duplicating its regex into §29 would be two nets over one class. §31 was
+    extended instead — but only to `DECISIONS.md`, because running its net over every `.md` finds
+    **54 references, 39 stale, and 36 of those 39 are in `AGENT_LOG.md`/`AGENT_LOG.archive.md`**: the
+    run log, which must never be edited and would need 36 markers on immutable history to catch three
+    real defects. The item's own reasoning ("extending §31 to `.md` would be wrong") is right about
+    the conclusion for all Markdown *except* the one normative file, and the dated-truth objection is
+    answered by making §31's message for that file prescribe §29's repair rather than an in-place
+    rewrite. See the run log entry of this date.
+    <details><summary>Original text of item 89, as filed 2026-08-20</summary>
+
+    **[Process — filed 2026-08-20 by the run that built item 88's guard, from the boundary that item
     deliberately drew.]** *`DECISIONS.md` has the same stale track attributions §31 now catches in
     code, and §31 cannot see it.* Measured this run, not suspected — five hits:
     `DECISIONS.md:306` "money lesson 12 (renting vs. buying)" and `:309` "money lessons 2/3/4/15" are
@@ -968,6 +991,7 @@ for the history. No open P1/P2 items.
     fixes, and one that needs the live/historical judgement §29 already models. **Extending §31 to
     `.md` would be wrong for the same reason**; the check belongs beside §29's classification table
     instead. Start by reading §29 and F11's reasoning before touching a line.
+    </details>
 
 76. **[Content/Process — filed 2026-08-18 by the run that built item 69's instrument half, which is
     what turned this from an opinion into a blocked measurement.] `zh` and `ja` `Brokerage Account`
@@ -12107,3 +12131,133 @@ dated Updates, not in place; read §29's design note first. Also still open: **3
 batch** and the **7 stale translation lessons per language** (`npm run review-status`). **Item 18
 remains the entire critical path to ending Phase 0**, blocked on the owner creating an analytics
 provider account, and **item 72's owner half — a deployed URL — is blindspot 10.10**.
+
+## 2026-08-20 — `DECISIONS.md` joins §31's net; the item's five hits were really three (item 89)
+
+**Picked:** backlog item 89, filed by the previous run from the boundary item 88 deliberately drew —
+the same stale track attributions §31 catches in code, sitting one document over where §31 could not
+see them.
+
+### Step 3.5 — re-measuring the premise, with a control
+
+The instrument is a copy of §31's own `REF` regex run over `DECISIONS.md`, with `lessons.js` as the
+authority for each id's track. It was validated three ways before any figure was believed:
+
+- **Control on the tree read.** `lessons.js:168` says id 29 is `economy`; the loader had to agree, and
+  a nonexistent id 999 had to come back absent. The first version of the probe **failed this control** —
+  it imported `{ LESSONS }`, which does not exist (the export is `lessons`), and would have reported
+  "no lessons, therefore nothing stale". A negative result from that instrument would have meant
+  nothing.
+- **Control on the matcher.** `"money lesson 1"` must match and be flagged; `"money lesson 17"` must
+  match and be clean; `"the money track has 13 lessons"` must not match at all. All three behaved.
+- **Control on the substance**, since a track label being stale says nothing about whether the claim
+  under it still holds: lesson 12's body must contain `"rent"` and must not contain a nonsense token.
+
+**The premise held on every hit the item named** — unusual here, and worth recording — but the
+disposition was wrong in three ways:
+
+1. **Five hits were really three repairs.** `:587` ("money is 1-28, economy is 29-40") and `:561`
+   ("How the Economy Works, lessons 1-12") both sit inside the two-tracks section, where **§29 already
+   classifies every range as live or historical** and already has both marked `historical`. The item
+   guessed `:587` was "probably legitimate history"; it is that *and already enforced*. The real
+   surface was `:306`, `:309` and `:411`.
+2. **The substance under all three is still true**, re-checked against `lessonContent` this run:
+   lesson 12 contains "PMI" (12,702 chars of body scanned), lesson 17 is about lifestyle inflation,
+   and "credit card"/"credit score"/"credit report"/"credit limit" appear across lessons 2/3/4/15 —
+   the sentence never mapped them one-to-one, and read as a set it is correct. Only the labels rotted,
+   so **no decision changed and nothing needed re-deciding**.
+3. **`:411` is worse than the item said, in a way it did not name.** The entry's heading is "ten
+   files, track × language"; `LessonReader`'s map now holds **fifteen** literal specifiers (counted
+   this run), because the essentials split added five. The stale count is in the *title* of the
+   decision, not only in its body.
+
+### What shipped
+
+**`DECISIONS.md` — three lines repaired the §29 way, not rewritten.**
+Each stale line keeps its original wording and gains an inline `<!-- track-ok: … -->` marker, and each
+of the two affected entries gains a dated **Update, 2026-08-20** stating what the 2026-08-19
+`essentials` split changed: which lessons moved, that the evidence still holds, and — for the payload
+entry — that ten files are now fifteen and lesson 1 fetches `lessonContent.essentials.en`. Nothing a
+past run recorded as true on its date was edited.
+
+**`scripts/check-data.mjs` §31 — extended to `DECISIONS.md`, and to nothing else in Markdown.**
+- The file list gains `DECISIONS.md`; for it, every line is claim text (in source, comment text only).
+- The `track-ok:` marker is accepted as an HTML comment, with the trailing `-->` stripped from the
+  reason.
+- **The line-above marker fallback is disabled for Markdown**, and this was not a design guess — it
+  was a bug the check found in itself on its first run. The marker on the stale `money lesson 1` line
+  silently exempted the **correct** `economy lesson 36` that wrapped onto the next line of the same
+  sentence: a marker hiding a live claim, which is exactly what §31's both-directions rule exists to
+  prevent. Source comments need the fallback because a comment wraps across lines that are all
+  comment; a Markdown prose line has no such convention and an HTML comment can always sit inline.
+- **A floor** (`mdRefs < 4` fails), for the same reason §29 has one: five references is few enough
+  that a broken pattern would read as a clean pass.
+- The failure message **branches by file**: in source it says "correct the track name"; in
+  `DECISIONS.md` it says do *not* rewrite the line — append a dated Update and mark the line — because
+  §29's dated-truth rule governs there.
+
+**Why not "beside §29's classification table", as the item directed.** §29's mechanism is a
+hand-classified table of *ranges inside one section*; a single-id track attribution anywhere in the
+file is §31's exact shape, and copying its regex into §29 would be two nets maintained over one class.
+**Why `DECISIONS.md` only, and this is the measured part:** running §31's net over every `.md` at the
+repo root plus `reviews/` finds **54 references, 39 of them stale — and 36 of those 39 are in
+`AGENT_LOG.md` and `AGENT_LOG.archive.md`**. Those are run-log entries written on a date and never to
+be edited; guarding them would cost 36 markers on immutable history to catch three real defects, which
+is §26's documented failure mode (a check whose false positives are ordinary prose gets switched off
+within a week). `DECISIONS.md` alone is **5 references, 3 stale**, and it is the only normative
+Markdown file here.
+
+### Verification
+
+- `npm test` — 6/6 suites PASS (1 pre-existing translation-coverage warning, unchanged).
+- `npm run build` — clean, and the main bundle is **`index-D69OBdYc.js`, 244.13 kB**, byte-identical
+  to the hash the previous run recorded. Nothing rendered changed.
+- **Four injections, each restored from a scratchpad copy and each verified byte-identical afterwards
+  by `shasum -a 256` (never `git checkout --`):**
+  1. an unmarked stale claim appended to `DECISIONS.md` → FAIL, with the dated-Update message;
+  2. `track-ok:` on a **correct** reference → FAIL, "the marker has outlived its reason" — and the
+     reason printed as `("bogus")`, proving the `-->` strip;
+  3. a marker on the **line above** a stale Markdown claim → still FAIL, proving same-line-only;
+  4. every reference in the file neutralised → the **floor** fired at 0.
+  The restored file hashed to `1f52dbd4…5338` after each, and the suite went back to PASS.
+- `§31` now reports **14 references across `src/` + `scripts/` + `DECISIONS.md` (5 of them in
+  `DECISIONS.md`), 8 exempted as historical**.
+
+### Adversarial self-check (step 5)
+
+- **Blindspot register** — clean, and provable rather than asserted: **zero files under `src/` are
+  touched** (`git diff --name-only -- src/` is empty) and the build emits the identical content hash,
+  so no rendered output changed. `check-blindspot.mjs` passes all four assertions. No Dalio, no
+  advice-adjacent phrasing, no kids framing, no live-looking date — the only new prose is a checker
+  comment and two dated Updates in a decisions file.
+- **Rule W-1 (live browser)** — deliberately not invoked, with the reason stated: there is no rendered
+  change to verify, and the identical bundle hash is the evidence rather than an assumption.
+- **`DECISIONS.md` conflict** — this is the one that needed real thought, because the previous run
+  wrote that "extending this check to Markdown would contradict a closed decision." It would have, as
+  §31 then stood: its remedy was "correct the track name," which for a dated record falsifies it.
+  The conflict is removed rather than ignored — §31's `DECISIONS.md` branch **prescribes §29's repair
+  and forbids the rewrite**, and the three repairs done this run are that repair, performed. §29's
+  design note is honoured, not overridden.
+- **Already-done backlog item** — no. Item 88 scoped §31 to `src/` + `scripts/` and explicitly left
+  this corpus out; item 89 is that boundary, filed by the run that drew it. No overlap with §29:
+  ranges-in-one-section versus single-id attributions file-wide.
+- **Own verification claim** — reproducible by an independent reviewer running only what is listed
+  above. Every number in this entry came from a command, not from reading: the 54/39/36 split from the
+  net run over all `.md`; the 5/3 from the same net over `DECISIONS.md`; the fifteen specifiers from
+  `LessonReader.jsx`; the substance checks from `lessonContent`. The one claim that is *not*
+  independently re-runnable is the bundle-hash comparison, which relies on the previous entry having
+  recorded `index-D69OBdYc.js` — it did, verbatim.
+- **One thing this run did NOT do, on purpose.** The heading "ten files, track × language (item 45)"
+  still says ten. It is the title of a dated decision, so the same rule that stopped the body being
+  rewritten stops the heading being rewritten; the new Update says so explicitly. A future run that
+  finds this unsatisfying should change the *convention*, not that one line.
+
+### Next run
+
+`npm run owner-tree -- --expect c2331799fd3ee413aca864fd82d247a35ea31b01a70a6c4e37b00f6aad9105b2`
+(the deviation set is the owner's 52 untracked files; this run added nothing to it). **Open and
+unblocked:** item 62 (the 4 judgment findings from item 58's sweep), item 64's remaining glossary
+candidates, item 76 (blocked on a per-language tokeniser — read it before picking), and **35's second
+glossary batch** plus the **7 stale translation lessons per language** (`npm run review-status`).
+**Item 18 remains the entire critical path to ending Phase 0**, blocked on the owner creating an
+analytics provider account, and **item 72's owner half — a deployed URL — is blindspot 10.10**.

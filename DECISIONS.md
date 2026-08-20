@@ -303,10 +303,10 @@ Add a new entry when a run makes a choice future work should be able to look up 
 - **Why curated and not matched:** an automatic pass over lesson prose links the wrong sense, and this
   is measured, not hypothetical. Scanning all 40 lessons' English text for the 17 glossary terms
   produced 47 lesson-term hits, and the false positives were not edge cases:
-  - money lesson 12 (renting vs. buying) contains **"PMI" meaning private mortgage insurance**, which
+  - money lesson 12 (renting vs. buying) contains **"PMI" meaning private mortgage insurance**, which <!-- track-ok: pre-split track labels; see the 2026-08-20 Update at the end of this entry -->
     an auto-linker would define as the Purchasing Managers' Index;
   - money lesson 17 is about **"lifestyle inflation"**, not the macroeconomic kind;
-  - money lessons 2/3/4/15 say "credit card", "credit score", "credit report", "credit limit" — none
+  - money lessons 2/3/4/15 say "credit card", "credit score", "credit report", "credit limit" — none <!-- track-ok: pre-split track labels; see the 2026-08-20 Update at the end of this entry -->
     of which is the glossary's macro sense of **Credit**.
   Matching per-language would multiply the problem: five locales, five surface-form inflections, five
   separate false-positive profiles. Curation moves that judgement to authoring time, where it is
@@ -324,6 +324,16 @@ Add a new entry when a run makes a choice future work should be able to look up 
 - **Revisit when:** the glossary grows past roughly 40–50 terms, or lesson content starts changing
   faster than the map is maintained — at that point consider generating *candidates* automatically and
   keeping the human accept/reject step, rather than dropping curation entirely.
+- **Update, 2026-08-20 (dev-agent run, backlog item 89).** The three false-positive bullets above
+  name their lessons by the track those lessons were in *then*. The 2026-08-19 `essentials` split
+  (`5633b79`) re-tracked lessons 1–15 out of `money` **without renumbering them**, so lessons 2, 3, 4,
+  12 and 15 are `essentials` today and only lesson 17 is still `money`. **The evidence itself is
+  unchanged and was re-checked against `lessonContent` this run:** lesson 12 does contain "PMI",
+  lesson 17 is about lifestyle inflation, and "credit card"/"credit score"/"credit report"/"credit
+  limit" do all appear across lessons 2/3/4/15. Only the labels went stale, so **nothing about the
+  decision changes** — curation is still right for exactly the reason recorded above. The bullets are
+  left as written because this entry is a dated record; each carries a `track-ok:` marker so
+  `check-data.mjs` §31 reads it as history rather than as a live claim.
 
 ### Content as `.js` modules, not JSON
 
@@ -408,7 +418,7 @@ Add a new entry when a run makes a choice future work should be able to look up 
 - **Verified before deleting anything:** the reassembled merged view is `JSON.stringify`-identical to
   the pre-split content across all 40 lessons, and all 40 English source hashes are unchanged — a
   moved hash would have marked all 160 lesson/language pairs stale and destroyed the translation
-  ledger's state. Live browser check: opening money lesson 1 fetches only `lessonContent.money.en`;
+  ledger's state. Live browser check: opening money lesson 1 fetches only `lessonContent.money.en`; <!-- track-ok: pre-split track label; see the 2026-08-20 Update at the end of this entry -->
   switching to Korean then fetches only `money.ko`; opening economy lesson 36 fetches only
   `economy.ko`.
 - **One real behaviour change:** switching language while reading now triggers a fetch rather than a
@@ -416,6 +426,15 @@ Add a new entry when a run makes a choice future work should be able to look up 
 - **Same axis applied to quiz text 2026-08-17 (item 48)**, removing a 140.88 kB shared quiz chunk that
   every reader downloaded regardless of language. Nothing forced it — it was well under the threshold;
   item 45's closing note flagged it and item 48 is that note being acted on.
+- **Update, 2026-08-20 (dev-agent run, backlog item 89).** Ten files are now **fifteen**. The
+  2026-08-19 `essentials` split added `lessonContent.essentials.{en,es,ko,zh,ja}.js` and five more
+  literal specifiers to `LessonReader`'s map (15 entries, counted this run) — which is the design
+  above working as intended: a new track costs five files and five map entries and nothing else. The
+  heading's "ten files" is therefore the count as of item 45, not today's. The "Verified before
+  deleting anything" bullet's browser check is pre-split history for the same reason: **lesson 1 is
+  `essentials` now, so opening it fetches `lessonContent.essentials.en`, not `money.en`.** That
+  sentence is left as recorded and marked `track-ok:`; what it verified — one lesson fetching exactly
+  one track×language chunk — still holds, and the economy half of it (lesson 36) was never affected.
 
 ### localStorage-only progress and personalization state
 

@@ -3401,8 +3401,8 @@ if (keyedGroupsChecked < 4) {
   );
 }
 
-// 31. No source comment may attribute a lesson id to the wrong track (backlog
-//     item 88).
+// 31. No source comment — and no line of DECISIONS.md — may attribute a lesson
+//     id to the wrong track (backlog items 88 and 89).
 //
 //     WHY THIS EXISTS. The 2026-08-19 essentials split (5633b79) re-tracked
 //     lessons 1-15 out of `money` **without renumbering them**. Every id-based
@@ -3431,6 +3431,27 @@ if (keyedGroupsChecked < 4) {
 //     checked in both directions: a `track-ok:` on a reference that is
 //     currently CORRECT fails too, because that means the exemption has
 //     outlived its reason and is now hiding a live claim.
+//
+//     WHY DECISIONS.md IS IN SCOPE AND NO OTHER MARKDOWN IS (item 89, and the
+//     numbers are measured, not estimated). Running this net over every `.md`
+//     at the repo root plus `reviews/` finds **54 references, 39 of them
+//     stale** — but **36 of those 39 are in AGENT_LOG.md and
+//     AGENT_LOG.archive.md**, which are the run log: entries a past run wrote
+//     on a date, which must never be edited and would each need a marker. The
+//     guard would cost 36 annotations on immutable history to catch three real
+//     defects, which is §26's failure mode exactly — a check whose false
+//     positives are ordinary prose gets switched off within a week.
+//     **DECISIONS.md alone is 5 references, 3 stale**, and it is the one
+//     Markdown file here that is normative rather than narrative, so it is the
+//     only one worth the net.
+//
+//     Its repair is NOT this check's usual "correct the track name", because
+//     §29's design note governs there: DECISIONS.md states *dated* truth, so a
+//     claim that was true on its date is repaired by **appending a new dated
+//     Update and marking the old line `track-ok:`**, never by rewriting what a
+//     run recorded. In Markdown the marker is written as an HTML comment,
+//     `<!-- track-ok: <reason> -->`, so it is invisible in the rendered page;
+//     the trailing `-->` is stripped before the reason is read.
 {
   const walkSource = (dir) =>
     readdirSync(dir, { withFileTypes: true }).flatMap((e) => {
@@ -3455,25 +3476,48 @@ if (keyedGroupsChecked < 4) {
     String.raw`\b(${TRACK_NAMES})[ -]lessons?\s+#?(\d+)\s*(?:([-–—])\s*(\d+))?((?:\s*[\/,]\s*\d+)*)`,
     "gi",
   );
-  const MARKER = /track-ok:\s*(.*)$/;
+  // The reason may end at an HTML comment close when the claim lives in
+  // Markdown; `-->` is punctuation, never part of the reason.
+  const MARKER = /track-ok:\s*(.*?)\s*(?:-->)?\s*$/;
 
   let refsChecked = 0;
   let exempted = 0;
+  let mdRefs = 0;
 
-  for (const file of [...walkSource(join(ROOT, "src")), ...walkSource(join(ROOT, "scripts"))]) {
+  const DOC = join(ROOT, "DECISIONS.md");
+  for (const file of [
+    ...walkSource(join(ROOT, "src")),
+    ...walkSource(join(ROOT, "scripts")),
+    DOC,
+  ]) {
     const rel = file.slice(ROOT.length + 1);
+    const isDoc = file === DOC;
     const lines = readFileSync(file, "utf8").split("\n");
 
     lines.forEach((line, i) => {
-      // Comment text only. A string literal naming a track and an id is data,
-      // not a claim about the corpus, and this check has no business in it.
-      const comment = line.match(/\/\/(.*)$|\*(.*)$/);
-      if (!comment) return;
-      const text = comment[1] ?? comment[2] ?? "";
+      // In source, comment text only: a string literal naming a track and an id
+      // is data, not a claim about the corpus, and this check has no business
+      // in it. In DECISIONS.md every line is prose, so every line is a claim.
+      let text;
+      if (isDoc) {
+        text = line;
+      } else {
+        const comment = line.match(/\/\/(.*)$|\*(.*)$/);
+        if (!comment) return;
+        text = comment[1] ?? comment[2] ?? "";
+      }
 
       for (const m of text.matchAll(REF)) {
         const track = m[1].toLowerCase();
-        const marker = MARKER.exec(text) ?? MARKER.exec(lines[i - 1] ?? "");
+        // Same line only in Markdown. The line-above fallback exists because a
+        // source comment wraps across lines that are all comment; a Markdown
+        // prose line has no such convention, and an HTML comment can always sit
+        // inline on the exact line. Allowing the fallback here leaked a real
+        // exemption on this check's first run over DECISIONS.md: a marker
+        // excusing one stale line silently excused a CORRECT reference that had
+        // wrapped onto the next line of the same sentence — the marker hiding a
+        // live claim, which is the very thing both directions exist to prevent.
+        const marker = MARKER.exec(text) ?? (isDoc ? null : MARKER.exec(lines[i - 1] ?? ""));
         const reason = marker?.[1]?.trim();
         let wrong;
         let detail;
@@ -3497,13 +3541,20 @@ if (keyedGroupsChecked < 4) {
         }
 
         refsChecked += 1;
+        if (isDoc) mdRefs += 1;
 
         if (wrong && !reason) {
           fail(
             `§31: ${rel}:${i + 1}: ${detail}. Lesson ids do not move when a track is re-cut, so a ` +
-              `comment naming both goes stale silently — that is backlog item 88. Correct the track ` +
-              `name, or if the sentence is deliberately about the past, add \`track-ok: <reason>\` ` +
-              `on this line or the one above saying which change made it historical.`,
+              `${isDoc ? "sentence" : "comment"} naming both goes stale silently — that is backlog ` +
+              `item ${isDoc ? "89" : "88"}. ` +
+              (isDoc
+                ? `DECISIONS.md states dated truth (§29's design note), so do NOT rewrite the line: ` +
+                  `append a new dated Update to this entry saying what the re-tracking changed, and ` +
+                  `mark this line \`<!-- track-ok: <reason> -->\`.`
+                : `Correct the track name, or if the sentence is deliberately about the past, add ` +
+                  `\`track-ok: <reason>\` on this line or the one above saying which change made ` +
+                  `it historical.`),
           );
         } else if (wrong && reason) {
           exempted += 1;
@@ -3518,9 +3569,25 @@ if (keyedGroupsChecked < 4) {
     });
   }
 
+  // Floor, for the same reason §29 has one: DECISIONS.md's references are few
+  // enough that a broken net reads as a clean pass rather than as a failure.
+  // Five is what the file holds today: three marked historical (lessons 12,
+  // 2/3/4/15 and 1, all re-tracked by the essentials split) and two live
+  // (lesson 17 is still `money`, lesson 36 is still `economy`). Deleting a
+  // reference is fine — lower this and say so in the same change — but
+  // dropping to zero silently is what this catches.
+  if (mdRefs < 4) {
+    fail(
+      `§31: only ${mdRefs} track/lesson reference(s) found in DECISIONS.md (expected at least 4). ` +
+        `The pattern is more likely broken than the file emptied — a scan that matches nothing must ` +
+        `not read as a pass. If references really were removed, lower this floor in the same change.`,
+    );
+  }
+
   console.log(
-    `  §31 track/lesson attributions: ${refsChecked} reference(s) in src/ + scripts/ checked ` +
-      `against lessons.js, ${exempted} exempted as historical via \`track-ok:\`.`,
+    `  §31 track/lesson attributions: ${refsChecked} reference(s) in src/ + scripts/ + DECISIONS.md ` +
+      `(${mdRefs} of them in DECISIONS.md) checked against lessons.js, ${exempted} exempted as ` +
+      `historical via \`track-ok:\`.`,
   );
 }
 
