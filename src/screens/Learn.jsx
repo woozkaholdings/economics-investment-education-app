@@ -5,11 +5,33 @@
 // prototype showed it on two tabs, so "where do I continue?" had two answers;
 // here there is one. A lesson opens as a pushed reader (see LessonReader),
 // not as another tab.
+//
+// Redesigned 2026-08-21 against the owner's UIUX/ references. Three changes
+// worth naming, because two of them are corrections rather than styling:
+//
+//   1. LOCKED ROWS NO LONGER USE `opacity`. The old row set `opacity: 0.55`
+//      on the whole button, which composites the text against the canvas and
+//      drops it to **2.82:1 (ink.body) and 2.31:1 (ink.muted)** in the light
+//      palette, 4.27:1 and 2.98:1 in dark — all four below WCAG AA's 4.5:1
+//      for body text. check-data.mjs §28 asserts AA on every token PAIR and
+//      cannot see an opacity applied on top of one, so the suite passed while
+//      the rendered text failed. Locked rows now carry `ink.muted` at full
+//      strength (5.79:1 light / 7.25:1 dark) and read as locked through a
+//      dashed border and the lock marker instead.
+//   2. Completed markers stay `fill.ok`, NOT the accent. The redesign
+//      artboard drew them in blue; that contradicts theme.js's rule 2 (blue
+//      means "interactive or current", green means success), and the shipped
+//      code was right. Kept as-is deliberately.
+//   3. Tracks other than the one you are in collapse. Forty rows on one
+//      screen buried the current lesson; the active track opens by default
+//      and the rest are one summary row each, with a per-track progress bar
+//      that was previously only a "3 / 12" text pair.
 // ═══════════════════════════════════════════════════════════════════════════
 
+import { useState } from "react";
 import { TRACKS } from "../content/lessons.js";
 import Icon from "../components/Icon.jsx";
-import { Disclaimer, ResumeCard, Text } from "../components/ui.jsx";
+import { Disclaimer, ProgressBar, ResumeCard, Text } from "../components/ui.jsx";
 import { fill, font, ink, line, radius, shadow, space, surface } from "../theme.js";
 
 export default function Learn({ t, lang, lessons, completedLessons, isUnlocked, streak, openLesson }) {
@@ -45,6 +67,12 @@ export default function Learn({ t, lang, lessons, completedLessons, isUnlocked, 
       doneCount: items.filter(({ lesson }) => completedLessons.includes(lesson.id)).length,
     };
   }).filter((tr) => tr.items.length > 0);
+
+  // Only the track you are actually in is open on arrival. Deliberately seeded
+  // from `nextLesson` rather than defaulting to the first track: after the
+  // economy track is finished the learner's next lesson is in `money`, and
+  // opening `economy` would hide the one row they came back for.
+  const [openTrack, setOpenTrack] = useState(nextLesson?.track ?? groupedTracks[0]?.key);
 
   return (
     <div>
@@ -115,109 +143,162 @@ export default function Learn({ t, lang, lessons, completedLessons, isUnlocked, 
           all (see the Environment note in AGENT_LOG.md). Verify changes here
           at the DOM level: attribute present, `getElementById` resolves, target
           carries the expected text. */}
-      {groupedTracks.map((tr) => (
-        <section key={tr.key} aria-labelledby={`track-${tr.key}-title`}>
-          <Text as="h2" id={`track-${tr.key}-title`} variant="heading" color={ink.strong} style={{ margin: `${space["5"]}px 0 ${space["1"]}px` }}>
-            {t[tr.labelKey]}
-          </Text>
-          <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: space["3"], marginBottom: space["3"] }}>
-            <Text variant="caption" color={ink.muted}>{t[tr.blurbKey]}</Text>
-            <Text variant="caption" color={ink.muted} style={{ fontWeight: 700, whiteSpace: "nowrap" }}>
-              {tr.doneCount} / {tr.items.length}
+      {groupedTracks.map((tr) => {
+        const expanded = openTrack === tr.key;
+        const panelId = `track-${tr.key}-panel`;
+
+        return (
+          <section key={tr.key} aria-labelledby={`track-${tr.key}-title`} style={{ marginTop: space["5"] }}>
+            {/* ARIA APG accordion shape: the heading holds the button, so the
+                track name is both the landmark's accessible name and the
+                control's. No new locale key is needed for the toggle — the
+                label already exists and `aria-expanded` carries the state. */}
+            <Text as="h2" id={`track-${tr.key}-title`} variant="heading" color={ink.strong} style={{ margin: 0 }}>
+              <button
+                type="button"
+                aria-expanded={expanded}
+                aria-controls={panelId}
+                onClick={() => setOpenTrack(expanded ? null : tr.key)}
+                style={{
+                  display: "flex", alignItems: "center", gap: space["2"],
+                  width: "100%", minHeight: 44, padding: 0,
+                  background: "transparent", border: "none", cursor: "pointer",
+                  font: "inherit", color: "inherit", textAlign: "left",
+                }}
+              >
+                <span style={{ flex: 1, minWidth: 0 }}>{t[tr.labelKey]}</span>
+                <Text as="span" variant="caption" color={ink.muted} style={{ fontWeight: 700, whiteSpace: "nowrap" }}>
+                  {tr.doneCount} / {tr.items.length}
+                </Text>
+                <span
+                  aria-hidden="true"
+                  style={{
+                    display: "flex", color: ink.muted,
+                    transform: expanded ? "rotate(90deg)" : "none",
+                    transition: "transform 0.2s ease",
+                  }}
+                >
+                  <Icon name="chevronRight" size="1.1em" strokeWidth={2} />
+                </span>
+              </button>
             </Text>
-          </div>
 
-          {/* Genuinely an <ol>: lessons unlock in sequence, so the order is the
-              feature. `role="list"` per check-data.mjs §20. */}
-          <ol role="list" style={{ listStyle: "none", margin: 0, padding: 0 }}>
-            {tr.items.map(({ lesson, i }, posInTrack) => {
-              const isDone = completedLessons.includes(lesson.id);
-              const unlocked = isUnlocked(i);
-              const isNext = i === nextIndex && unlocked;
+            <Text variant="caption" color={ink.muted} style={{ marginBottom: space["2"] }}>
+              {t[tr.blurbKey]}
+            </Text>
 
-              return (
-                <li key={lesson.id} style={{ position: "relative", paddingLeft: 44, paddingBottom: space["3"] }}>
-                  {/* Connector line, stopping at the end of this track */}
-                  {posInTrack < tr.items.length - 1 && (
-                    <span aria-hidden="true" style={{ position: "absolute", left: 15, top: 30, bottom: 0, width: 2, background: isDone ? fill.ok : line.hairline }} />
-                  )}
+            {/* Per-track progress. The pair of numbers above says how many;
+                this says how far, which is the thing a path screen is for. */}
+            <div style={{ marginBottom: space["3"] }}>
+              <ProgressBar
+                value={tr.doneCount}
+                max={tr.items.length}
+                label={`${t[tr.labelKey]} — ${t.progressLabel}: ${tr.doneCount}/${tr.items.length}`}
+              />
+            </div>
 
-                  {/* Step marker. Shows the lesson's position WITHIN this
-                      track, not its id — matching LessonReader's "Lesson N of
-                      M". Until 2026-08-18 this printed `lesson.id`, which was
-                      only ever right because ids happened to be renumbered to
-                      match display order; the three-track reorder broke that
-                      and the economy track's first node read "29". Ids are
-                      stable storage keys and are deliberately no longer
-                      aligned to display order — see lessonsByTrack() in
-                      content/lessons.js. */}
-                  <span
-                    aria-hidden="true"
-                    style={{
-                      position: "absolute", left: 0, top: 4,
-                      width: 32, height: 32, borderRadius: radius.full,
-                      display: "flex", alignItems: "center", justifyContent: "center",
-                      background: isDone ? fill.ok : isNext ? fill.accent : surface.card,
-                      border: isDone || isNext ? "none" : `2px solid ${line.hairline}`,
-                      color: isDone || isNext ? ink.onFill : ink.muted,
-                      fontSize: font.small, fontWeight: 700,
-                    }}
-                  >
-                    {isDone ? <Icon name="check" size="1.1em" strokeWidth={2.5} /> : unlocked ? posInTrack + 1 : <Icon name="lock" size="0.95em" />}
-                  </span>
+            {/* Genuinely an <ol>: lessons unlock in sequence, so the order is the
+                feature. `role="list"` per check-data.mjs §20.
+                `hidden` rather than unmounting, so `aria-controls` always
+                resolves and the collapsed panel leaves the a11y tree. */}
+            <ol id={panelId} hidden={!expanded} role="list" style={{ listStyle: "none", margin: 0, padding: 0 }}>
+              {tr.items.map(({ lesson, i }, posInTrack) => {
+                const isDone = completedLessons.includes(lesson.id);
+                const unlocked = isUnlocked(i);
+                const isNext = i === nextIndex && unlocked;
 
-                  {/* The current lesson is the loudest thing on the path.
-                      Duolingo's whole path design turns on one node being
-                      unmistakably next; here every row had the same weight and
-                      only a green tick separated done from to-do, so the eye
-                      landed nowhere. Completed rows now recede instead.
-
-                      This also fixes a border that never rendered: the old
-                      value was `1px solid ${fill.accent}22`, and `fill.accent`
-                      is the string `var(--fill-accent)` — so the declaration
-                      read `var(--fill-accent)22`, which is invalid CSS and was
-                      dropped. An 8-digit hex suffix only works on a hex
-                      literal, and this design system has none by policy. */}
-                  <button
-                    type="button"
-                    disabled={!unlocked}
-                    onClick={() => openLesson(i)}
-                    style={{
-                      display: "flex", alignItems: "center", gap: space["3"], width: "100%", textAlign: "left",
-                      background: isNext ? surface.card : "transparent",
-                      border: `${isNext ? 2 : 1}px solid ${isNext ? fill.accent : "transparent"}`,
-                      borderRadius: radius.md,
-                      boxShadow: isNext ? shadow.raised : "none",
-                      padding: isNext ? `${space["3"]}px ${space["3"]}px` : `${space["2"]}px ${space["3"]}px`,
-                      cursor: unlocked ? "pointer" : "default",
-                      opacity: unlocked ? 1 : 0.55,
-                      fontFamily: "inherit",
-                    }}
-                  >
-                    <span style={{ flex: 1, minWidth: 0 }}>
-                      <Text
-                        variant="small"
-                        color={isNext ? ink.strong : isDone ? ink.muted : ink.body}
-                        style={{ fontWeight: isNext ? 700 : 600 }}
-                      >
-                        {lesson.title[lang]}
-                      </Text>
-                      <Text variant="caption" color={isNext ? ink.accent : ink.muted} style={{ marginTop: 2, fontWeight: isNext ? 700 : 400 }}>
-                        {unlocked ? t.estMinTemplate.replace("{n}", lesson.minutes) : t.locked}
-                      </Text>
-                    </span>
-                    {unlocked && (
-                      <span style={{ color: isNext ? ink.accent : ink.muted, display: "flex" }}>
-                        <Icon name="chevronRight" size="1.1em" strokeWidth={isNext ? 2.4 : 1.8} />
-                      </span>
+                return (
+                  <li key={lesson.id} style={{ position: "relative", paddingLeft: 48, paddingBottom: space["3"] }}>
+                    {/* Connector line, stopping at the end of this track */}
+                    {posInTrack < tr.items.length - 1 && (
+                      <span aria-hidden="true" style={{ position: "absolute", left: 17, top: 34, bottom: 0, width: 2, background: isDone ? fill.ok : line.hairline }} />
                     )}
-                  </button>
-                </li>
-              );
-            })}
-          </ol>
-        </section>
-      ))}
+
+                    {/* Step marker. Shows the lesson's position WITHIN this
+                        track, not its id — matching LessonReader's "Lesson N of
+                        M". Until 2026-08-18 this printed `lesson.id`, which was
+                        only ever right because ids happened to be renumbered to
+                        match display order; the three-track reorder broke that
+                        and the economy track's first node read "29". Ids are
+                        stable storage keys and are deliberately no longer
+                        aligned to display order — see lessonsByTrack() in
+                        content/lessons.js. */}
+                    <span
+                      aria-hidden="true"
+                      style={{
+                        position: "absolute", left: 0, top: 2,
+                        width: 36, height: 36, borderRadius: radius.full,
+                        display: "flex", alignItems: "center", justifyContent: "center",
+                        background: isDone ? fill.ok : isNext ? fill.accent : unlocked ? surface.card : surface.sunken,
+                        border: isDone || isNext ? "none" : `2px solid ${line.hairline}`,
+                        boxShadow: isNext ? shadow.lifted : "none",
+                        color: isDone || isNext ? ink.onFill : ink.muted,
+                        fontSize: font.small, fontWeight: 700,
+                      }}
+                    >
+                      {isDone ? <Icon name="check" size="1.15em" strokeWidth={2.5} /> : unlocked ? posInTrack + 1 : <Icon name="lock" size="1em" />}
+                    </span>
+
+                    {/* The current lesson is the loudest thing on the path.
+                        Duolingo's whole path design turns on one node being
+                        unmistakably next; here every row had the same weight and
+                        only a green tick separated done from to-do, so the eye
+                        landed nowhere. Completed rows now recede instead.
+
+                        This also fixes a border that never rendered: the old
+                        value was `1px solid ${fill.accent}22`, and `fill.accent`
+                        is the string `var(--fill-accent)` — so the declaration
+                        read `var(--fill-accent)22`, which is invalid CSS and was
+                        dropped. An 8-digit hex suffix only works on a hex
+                        literal, and this design system has none by policy.
+
+                        LOCKED rows carry a dashed hairline and full-strength
+                        `ink.muted` rather than `opacity: 0.55` — see this
+                        file's header for the four contrast ratios that change
+                        made, and why the suite could not catch the old one. */}
+                    <button
+                      type="button"
+                      disabled={!unlocked}
+                      onClick={() => openLesson(i)}
+                      style={{
+                        display: "flex", alignItems: "center", gap: space["3"], width: "100%", textAlign: "left",
+                        minHeight: 44,
+                        background: isNext ? surface.card : "transparent",
+                        border: unlocked
+                          ? `${isNext ? 2 : 1}px solid ${isNext ? fill.accent : "transparent"}`
+                          : `1px dashed ${line.hairline}`,
+                        borderRadius: radius.md,
+                        boxShadow: isNext ? shadow.raised : "none",
+                        padding: isNext ? `${space["3"]}px ${space["3"]}px` : `${space["2"]}px ${space["3"]}px`,
+                        cursor: unlocked ? "pointer" : "default",
+                        fontFamily: "inherit",
+                      }}
+                    >
+                      <span style={{ flex: 1, minWidth: 0 }}>
+                        <Text
+                          variant="small"
+                          color={!unlocked ? ink.muted : isNext ? ink.strong : isDone ? ink.muted : ink.body}
+                          style={{ fontWeight: isNext ? 700 : 600 }}
+                        >
+                          {lesson.title[lang]}
+                        </Text>
+                        <Text variant="caption" color={isNext ? ink.accent : ink.muted} style={{ marginTop: 2, fontWeight: isNext ? 700 : 400 }}>
+                          {unlocked ? t.estMinTemplate.replace("{n}", lesson.minutes) : t.locked}
+                        </Text>
+                      </span>
+                      {unlocked && (
+                        <span style={{ color: isNext ? ink.accent : ink.muted, display: "flex" }}>
+                          <Icon name="chevronRight" size="1.1em" strokeWidth={isNext ? 2.4 : 1.8} />
+                        </span>
+                      )}
+                    </button>
+                  </li>
+                );
+              })}
+            </ol>
+          </section>
+        );
+      })}
 
       <Disclaimer text={t.disclaimer} />
     </div>
