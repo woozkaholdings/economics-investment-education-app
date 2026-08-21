@@ -75,7 +75,7 @@ billing code."** No billing/paywall code exists in `src/` — confirmed by `grep
 | Minimum event set — app opened | ✅ Fires (`App.jsx`, once per load) |
 | Minimum event set — lesson started / completed **(with duration)** | ✅ Fires (`LessonReader.jsx`); `lesson_completed` carries `durationSec` since 2026-08-16 (item 29) — §9.2's duration clause, which the event did not satisfy before that date |
 | Minimum event set — quiz taken **(with score)** | ✅ Fires once per finished quiz with `{correct, total, scorePct}` since 2026-08-16 (item 29) — `LessonReader.jsx`'s lesson check (at its last answer) and `Practice.jsx`'s review session (at its complete screen), tagged `source`. The per-question signal it used to carry is preserved under `quiz_answered`. Before 2026-08-16 this row read "✅ fires per answered question", which met the event-name half of §9.2 but not its *with score* half |
-| Minimum event set — paywall viewed / trial started / subscribed / cancelled / ad watched | ❌ Not fired — no paywall/billing/ad feature exists yet to fire them from |
+| Minimum event set — paywall viewed / trial started / subscribed / canceled / ad watched | ❌ Not fired — no paywall/billing/ad feature exists yet to fire them from |
 | Real analytics provider (events actually collected off-device) | ❌ None — `track()` writes to a local `localStorage` rolling log only; `grep -rn "posthog" src/ package.json` returns zero matches. See `DECISIONS.md`. |
 
 This is backlog item 18 in `AGENT_LOG.md`. The call-site plumbing for every event the app can

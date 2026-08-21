@@ -100,7 +100,7 @@ Add a new entry when a run makes a choice future work should be able to look up 
   item 18.
 - **What was decided:** `src/lib/analytics.js` exports a single `track(event, props)` and an
   `EVENTS` map covering `LAUNCH_PLAN.md` §9.2's minimum set (app opened, lesson started/completed,
-  quiz taken, paywall viewed, trial started, subscribed, cancelled, ad watched). `track()` currently
+  quiz taken, paywall viewed, trial started, subscribed, canceled, ad watched). `track()` currently
   writes to a rolling `localStorage` log (`ecycles_analytics_log`, capped at 200 entries) rather than
   calling PostHog, which §9.2 names as the target provider.
 - **Why not PostHog now:** it needs a real account and a public API key, neither of which a dev-agent
@@ -145,12 +145,28 @@ Add a new entry when a run makes a choice future work should be able to look up 
   content rather than a measurement); and **it fires on choosing a lever, never on clearing one** —
   a toggle that fires on both edges still looks instrumented while answering "how many clicks"
   instead of A7's "did this learner drive the model". `check-data.mjs` §13c asserts both.
-- **Why `paywall_viewed`/`trial_started`/`subscribed`/`cancelled`/`ad_watched` are unfired:** none of
+- **Why `paywall_viewed`/`trial_started`/`subscribed`/`canceled`/`ad_watched` are unfired:** none of
   those features exist in the app yet (no paywall/billing code — confirmed by
   `LAUNCH_READINESS.md`'s own grep). The event names exist so the provider swap-in doesn't also have
   to invent names later, but firing them now would be fabricated data.
 - **Revisit when:** a PostHog (or other provider) account and key exist — swap `sink()`, keep every
   `track()` call site as-is.
+- **Update, 2026-08-21 (owner-directed): the event is `canceled`, not `cancelled`.** The house style
+  is US English (backlog items 91, 92), and this name was the last British spelling left in the repo.
+  Renamed in all six places at once — `EVENTS.CANCELED: "canceled"` in `src/lib/analytics.js`,
+  `check-data.mjs` §13's expected minimum set, `LAUNCH_PLAN.md` §9.2, `LAUNCH_READINESS.md`'s status
+  row, and both enumerations in this entry — so the wire name, the assertion and every document that
+  names it cannot drift apart.
+  **Why this was safe to rename rather than a contract break, measured rather than assumed:** the
+  event has **no call site** (`grep EVENTS.CANCELED src/` is empty, against a control that finds
+  `EVENTS.APP_OPENED` in `App.jsx`), no provider is wired (item 18), and nothing has ever fired it,
+  so no stored `ecycles_analytics_log` entry carries the old name. Nothing reads `EVENTS` by key
+  either — only `Object.values()` — so the constant's name is internal.
+  **A correction to the record while renaming it:** item 91's run left this name British and gave two
+  reasons, and only one of them was true. It *is* an identifier spanning code, a checker and three
+  documents, which is why it should move as one change. But that run also said two of the
+  enumerations sat "inside `DECISIONS.md` dated records" — they do not. Both bullets above are
+  standing prose with no date stamp, editable in place under the same rule that governed that sweep.
 
 ## Closed
 

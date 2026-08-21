@@ -26,7 +26,7 @@ export const EVENTS = {
   PAYWALL_VIEWED: "paywall_viewed",
   TRIAL_STARTED: "trial_started",
   SUBSCRIBED: "subscribed",
-  CANCELLED: "cancelled",
+  CANCELED: "canceled",
   AD_WATCHED: "ad_watched",
 
   // Beyond §9.2's minimum. `quiz_taken` is specified there as carrying a

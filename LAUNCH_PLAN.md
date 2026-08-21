@@ -578,7 +578,7 @@ and warns on a past-due check date; §9.3's audit question 4 reads that output.
 ### 9.2 Instrument before launch
 
 Minimum events: app opened, lesson started, lesson completed (with duration), quiz taken (with
-score), paywall viewed, trial started, subscribed, cancelled, ad watched. If you cannot name the
+score), paywall viewed, trial started, subscribed, canceled, ad watched. If you cannot name the
 event that would refute a feature, you do not yet understand the feature.
 
 ### 9.3 The monthly blindspot audit

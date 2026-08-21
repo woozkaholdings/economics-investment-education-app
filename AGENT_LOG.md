@@ -1027,6 +1027,14 @@ for the history. No open P1/P2 items.
     entry of this date: the Spanish `cheque` near-miss, the `cancelling` that had been missed in the
     learner-visible surface this agent had already declared clean at 0, and the `CANCELLED` event
     identifier that is deliberately still British. Nothing here is open.
+    > **⚠️ The `CANCELLED` exclusion was LIFTED the same day, owner-directed — and half the reason
+    > given for it was wrong.** The event is now `EVENTS.CANCELED: "canceled"`, renamed in all six
+    > places at once. This item's entry (and its commit message) said two of the three document
+    > enumerations sat "inside `DECISIONS.md` dated records"; **they do not** — both bullets are
+    > standing prose with no date stamp, verified with the same classifier that still reads `:472`
+    > and `:549` as dated. The *identifier* half of the argument was sound and is why the rename
+    > moved as one change; the *dated-record* half was an overstatement that made the work look
+    > blocked when it was not. See the run log entry of this date.
     **[Process/Content — filed 2026-08-21 by the run that applied the owner's "US English only"
     instruction to the learner-visible surface, from the residual it deliberately did NOT sweep.]
     ~69 British spellings remain outside learner-visible content, and one slice of them cannot be
@@ -12849,3 +12857,90 @@ which item 91's entry explains and which needs an owner decision, not a run. **O
 language per run); item 76 (blocked on a per-language tokenizer). **Item 18 remains the entire
 critical path to ending Phase 0**, blocked on the owner creating an analytics provider account, and
 **item 72's owner half — a deployed URL — is blindspot 10.10**.
+
+## 2026-08-21 — the `CANCELLED` event renamed; the reason it had been left was half wrong
+
+**Picked:** owner-directed — rename the last British spelling in the repo, the `CANCELLED` analytics
+event. The previous run had excluded it deliberately and written down why, so this run's first job was
+to test that reasoning rather than to route around it.
+
+### Step 3.5 — re-measuring the exclusion, which is my own claim from two commits ago
+
+Item 91 gave two reasons for leaving the name British. **One holds, one does not.**
+
+- **Holds: it is an identifier, not a spelling.** The name spans `src/lib/analytics.js`,
+  `check-data.mjs` §13's expected minimum set, and three documents. That is a real constraint — it
+  means the rename has to move as a single change — and it is why this run touched all six at once.
+- **Does not hold: "two of those enumerations are inside `DECISIONS.md` dated records."** They are
+  not. `DECISIONS.md:103` sits under `- **What was decided:**` and `:148` under `- **Why … are
+  unfired:**` — both standing prose, neither carrying a date stamp. Re-checked with the same
+  classifier item 91 used, and with its controls intact: `:472` ("Gap closed 2026-08-04") and `:549`
+  ("made explicit 2026-08-16") still come back DATED, so the instrument is sound and the earlier
+  reading was simply wrong. **That overstatement made the work look blocked on an owner decision when
+  the only real question was whether to rename an identifier.** Corrected in item 91's entry and in
+  `DECISIONS.md` itself rather than left in the record.
+
+**Three things measured before renaming, each with a control:**
+- **No call site.** `grep EVENTS.CANCELED src/` is empty — against a control that finds
+  `EVENTS.APP_OPENED` at `src/App.jsx:205`, so the grep works and the emptiness is real.
+- **Nothing reads `EVENTS` by key.** Only `Object.values()` is used, so the constant's name
+  (`CANCELLED` → `CANCELED`) is internal and cannot break a lookup.
+- **No stored data carries the old name.** The event has never fired, so no `ecycles_analytics_log`
+  entry contains it, and no provider is wired (item 18). This is a rename of dead code, not a
+  contract break.
+
+### What shipped
+
+**Six places, one change:** `EVENTS.CANCELED: "canceled"` in `src/lib/analytics.js`;
+`check-data.mjs` §13's expected `"canceled"`; `LAUNCH_PLAN.md` §9.2's prose list;
+`LAUNCH_READINESS.md`'s status row; and both enumerations in `DECISIONS.md`'s instrumentation entry.
+
+**A dated `Update, 2026-08-21` appended to that entry**, recording the new name, the safety
+measurements, and the correction to item 91's stated reasoning — so the next run finds the name and
+the reasoning together rather than re-deriving either.
+
+### Verification
+
+- `npm test` — 6/6 PASS, 1 warning (the pre-existing translation-coverage one).
+- **Injection, restored from a scratchpad copy and re-hashed** (`9d5157b3…8837` before and after):
+  reverting the *value* to `"cancelled"` while the checker expects `"canceled"` → **FAIL,
+  `analytics: EVENTS includes every §9.2 minimum event — got false`**. So §13 genuinely guards this
+  name; the rename is covered, not merely consistent today.
+- `npm run build` — clean, and **the bundle hash is unchanged at `index-Dr_Ik2iG.js`**. That needed
+  explaining rather than asserting, since source did change: **neither spelling appears anywhere in
+  `dist/`** (`cancelled: 0`, `canceled: 0`), because the bundler tree-shakes the unused `EVENTS`
+  members — against a control showing `app_opened`, which *is* referenced, present once. The identical
+  hash is therefore evidence the event is dead code, which is the same fact that made the rename safe.
+- `npm run check-blindspot` — 7/7.
+- **Final in-scope British-spelling scan returns 5 lines, all intended**: two verbatim quotations of
+  removed §3.4 text (`LAUNCH_PLAN.md:328`, `check-data.mjs:3600`), the two `DECISIONS.md` dated
+  records, and the new Update's own `not \`cancelled\`` — which names the old spelling on purpose,
+  because a rename note that cannot say what was renamed is useless.
+
+### Adversarial self-check (step 5)
+
+- **Blindspot register** — clean, 7/7. Nothing learner-visible changed; `dist/` is byte-identical.
+- **`DECISIONS.md` conflict** — this is the one to examine, since the previous run invoked §29's
+  dated-truth rule to justify not doing this. **No conflict, because the rule never applied**: the two
+  edited bullets are standing prose. The two genuinely dated lines in that file remain untouched, and
+  the change is *recorded* as a dated Update rather than silently applied — which is what §29 asks
+  for.
+- **Already-done backlog item** — no. This completes item 91's one deliberate exclusion; item 92's
+  diction fix is untouched.
+- **Own verification claim** — reproducible, and the one number that could have been taken on faith
+  (the unchanged bundle hash) was instead explained by grepping `dist/` with a control.
+- **Worth naming: this run's whole substance is correcting my own prior reasoning.** Item 91's
+  exclusion note read as settled and was cited in a commit message; it took an owner instruction to
+  re-examine it. The classifier that disproved it was the one that run had already written — the
+  check existed, it just was not pointed at the two lines in question.
+
+### Next run
+
+`npm run owner-tree -- --expect c2331799fd3ee413aca864fd82d247a35ea31b01a70a6c4e37b00f6aad9105b2`
+(`UNMOVED` at the start of this run). **The US-English stream is fully closed** — 91, 92 and this
+rename; what remains is two verbatim quotations and two dated records, all deliberate. **Open and
+unblocked:** **item 35's second glossary batch**, block lifted, re-measure with
+`npm run jargon -- money`; the **7 stale translation lessons per language** (`npm run review-status`,
+28 re-reviews — scope to one language per run); item 76 (blocked on a per-language tokenizer).
+**Item 18 remains the entire critical path to ending Phase 0**, blocked on the owner creating an
+analytics provider account, and **item 72's owner half — a deployed URL — is blindspot 10.10**.

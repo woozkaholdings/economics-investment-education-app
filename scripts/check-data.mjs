@@ -795,7 +795,7 @@ if (keyedGroupsChecked < 4) {
   eq("EVENTS has no duplicate event-name value", eventValues.length, new Set(eventValues).size);
   eq("EVENTS includes every §9.2 minimum event", [
     "app_opened", "lesson_started", "lesson_completed", "quiz_taken",
-    "paywall_viewed", "trial_started", "subscribed", "cancelled", "ad_watched",
+    "paywall_viewed", "trial_started", "subscribed", "canceled", "ad_watched",
   ].every((name) => eventValues.includes(name)), true);
 
   globalThis.localStorage = new FakeLocalStorage();
