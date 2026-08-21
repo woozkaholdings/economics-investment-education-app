@@ -1051,7 +1051,19 @@ for the history. No open P1/P2 items.
       zero** — the first version of that scan missed 40% of the text and reported 0 with all its
       controls passing.
 
-92. **[Content — filed 2026-08-21 by the sweep that fixed item 91's spellings and deliberately
+92. **✅ DONE 2026-08-21 (owner-directed, same day it was filed). One string changed — "Borrowing
+    gets dearer" → "gets more expensive" — and the item's premise held exactly: a two-pass sweep of
+    all 1,316 learner-visible English strings found ONE genuine instance, the one this item named.**
+    The value is in what the sweep ruled out, so it is not re-derived: **currency is already
+    US-denominated** (zero `£`/pence/quid anywhere in English content, checked by direct grep as well
+    as by corpus walk), and **10 of the 11 word-list hits are false positives that must not be
+    "fixed"** — "holiday gifts", "coffee shop", "fractional shares", inheritance "in preset shares",
+    and six uses of **"flat" meaning unchanging**, including the yield-curve label `curveFlat` and
+    lesson 36's `FLAT` heading, which is terminology. **No guard was added, and the number is the
+    reason:** a 10-in-11 false-positive rate is exactly §26's documented failure mode, where a check
+    whose false positives are ordinary English gets switched off within a week. See the run log entry
+    of this date. Nothing here is open.
+    **[Content — filed 2026-08-21 by the sweep that fixed item 91's spellings and deliberately
     stopped at the spelling/diction line. Small; read the boundary before picking.] British *diction*
     in learner-visible English copy, which the orthographic sweep does not reach.** One confirmed
     instance: `src/content/policyScenarios.js`'s first-option outcome says **"Borrowing gets
@@ -12732,3 +12744,108 @@ language** (`npm run review-status`, 28 re-reviews — scope to one language per
 blocked on a per-language tokenizer). **Item 18 remains the entire critical path to ending Phase 0**,
 blocked on the owner creating an analytics provider account, and **item 72's owner half — a deployed
 URL — is blindspot 10.10**.
+
+## 2026-08-21 — "dearer" is the only one (item 92); the finding is the 10 words that must NOT be changed
+
+**Picked:** item 92, owner-directed the same day the previous run filed it. It is the diction half of
+the US-English work — the part item 91's sweep deliberately could not do, because a spelling
+substitution is meaning-preserving by construction and a rewording is a content edit.
+
+### Step 3.5 — the premise held, and the sweep's job was to find out whether it was the tip of anything
+
+Item 92 named one instance and warned that a word-list "will miss phrasing". Two passes over the
+learner-visible English corpus:
+
+- **Pass 1 — 48 British diction patterns, finance-first** (`dearer`, `current account`, `turnover`,
+  `gearing`, `unit trust`, `redundancy`, `pension pot`, `National Insurance`, `HMRC`, `whilst`,
+  `amongst`, `fortnight`, `lorry`, `learnt`, `tyres`, `different to`, `towards`, …) over all **1,316**
+  strings: **11 hits**.
+- **Pass 2 — currency and idiom** (`£`, `pence`, `quid`, `in future`, `at university`, `high street`,
+  `straight away`, `wage packet`, `nil`, `reckon`, …): **1 hit, and it is a false positive** — lesson
+  36's "the market pricing **in future** weakness" is "pricing in" + "future weakness".
+
+**Ten of pass 1's eleven hits are also false positives**, and listing them is the durable half of this
+run because each one would be a *regression* if some future sweep "fixed" it:
+
+| hit | why it stays |
+|---|---|
+| lesson 2 "holiday gifts" | US usage — the holiday season, not a British vacation |
+| lesson 5 "coffee **shop**" | standard US English |
+| lesson 13 "fractional **shares**" | correct US finance term |
+| lesson 14 "in preset **shares**" | "shares" = portions, in an inheritance-splitting sentence |
+| lessons 3, 9, 17, 36 + `quizData[30]` + `locales.en.curveFlat` — six uses of "**flat**" | means *unchanging*, and two are yield-curve terminology (`FLAT — Short and long rates converge`, and the `Flat (Warning)` label) |
+
+**So the genuine count is 1, exactly what the item said** — the first item in a long run whose premise
+survived a widening sweep intact.
+
+**Controls, both passes.** The corpus had to contain the known instance before a low number meant
+anything (`strings.some(s => /dearer/i.test(s))` → true), and each net had to stay silent on plain US
+prose. Pass 2's control planted `"it cost £50 straight away"` and fired. **After the fix the first
+control correctly flipped to false**, which is the check that the edit actually landed in the corpus
+the scan reads, not just in the file.
+
+**One completeness gap found and closed rather than glossed.** Pass 2's corpus walked **1,012**
+strings, not 1,316 — it omitted the `lessons` and `lessonTerms` modules, whose titles and subtitles
+*are* learner-visible. Rather than re-run the walk, the currency and idiom patterns were re-checked by
+**direct grep over every English content source file**, which needs no corpus at all: zero hits, with
+a positive control (`$` appears 18 times in `lessonContent.essentials.en.js`) proving the grep worked.
+This is the same class of mistake as the previous run's 781-vs-1,316 miss, caught this time before it
+reached a claim.
+
+### What shipped
+
+**One string.** `src/content/policyScenarios.js:159`, the Fed-chair simulator's first tightening
+outcome: *"Borrowing gets **dearer** exactly when firms are already canceling projects"* → *"gets
+**more expensive** exactly when…"*. Meaning identical, so the four translations under it remain valid;
+`policyScenarios` is not in the translation-review ledger in any case (`scripts/translation-review.mjs`
+tracks lessons only, checked rather than assumed).
+
+**No guard, deliberately, and the number is the argument.** A diction check would ship with a
+**10-in-11 false-positive rate** on today's corpus — six of them the word "flat". §26's stated lesson
+is that a guard whose false positives are ordinary English gets switched off within a week, and this
+would be that guard. The table above is the durable artifact instead: cheaper than a check, and it
+cannot fire on a Tuesday and get deleted on a Wednesday.
+
+### Verification
+
+- `npm test` — 6/6 PASS, 1 warning (the pre-existing translation-coverage one). Worth naming: §2
+  recomputes every lesson's `minutes` from its rendered words, and "more expensive" is 8 characters
+  longer than "dearer", so a green §2 confirms the simulator's copy is not counted into a lesson's
+  reading-time estimate.
+- `npm run build` — clean, `index-Dr_Ik2iG.js`, 244.13 kB.
+- `npm run check-blindspot` — 7/7, including §2.3 across all 26 teaching-copy modules and §10.1's
+  advice-adjacency patterns, which is the one that matters when learner-visible wording changes.
+- `grep -rn "dearer"` across `src/`, `scripts/` and the documents — **none** outside the run log.
+
+### Adversarial self-check (step 5)
+
+- **Blindspot register** — clean. This edits learner-visible teaching copy, so §10.1 is the live
+  concern: "more expensive" is a factual statement about the cost of borrowing under tightening, the
+  same claim "dearer" made, with no recommendation added. `check-blindspot` passes all 7. No date, no
+  figure, no Dalio, no kids reframing.
+- **`DECISIONS.md` conflict** — none. No dated record is touched; the change is in a content module,
+  not a normative document.
+- **Already-done backlog item** — no. Item 91 was spelling and explicitly stopped at this boundary;
+  item 92 is the diction it deferred, and it was filed by that run for this purpose. The one thing
+  this run does NOT redo is item 91's `cancelling`→`canceling` fix, which sits in the same sentence —
+  it is carried through untouched.
+- **Own verification claim** — reproducible. 1,316 / 11 / 1 from pass 1, 1,012 / 1 from pass 2, zero
+  from the direct currency grep, all re-runnable. The classification table is judgment, stated per row
+  so a reviewer can disagree with a specific row rather than the conclusion.
+- **The honest limit of this run, stated rather than implied.** A word-list cannot certify that no
+  British *phrasing* remains — only that none of 71 patterns matches. What is certified is narrower
+  and worth having: **no British-specific finance vocabulary, no non-US currency, and no dictionary
+  Briticism from the tested set** survives in learner-visible English. A full read of 1,316 strings is
+  a different item and nobody has asked for one.
+
+### Next run
+
+`npm run owner-tree -- --expect c2331799fd3ee413aca864fd82d247a35ea31b01a70a6c4e37b00f6aad9105b2`
+(`UNMOVED` at the start of this run). **The US-English stream is now closed** — items 91 and 92 both
+done, and the only British spelling left in the repo is the `CANCELLED` analytics event identifier,
+which item 91's entry explains and which needs an owner decision, not a run. **Open and unblocked:**
+**item 35's second glossary batch**, block lifted, re-measure with `npm run jargon -- money`; the
+**7 stale translation lessons per language** (`npm run review-status`, 28 re-reviews — scope to one
+language per run); item 76 (blocked on a per-language tokenizer). **Item 18 remains the entire
+critical path to ending Phase 0**, blocked on the owner creating an analytics provider account, and
+**item 72's owner half — a deployed URL — is blindspot 10.10**.
