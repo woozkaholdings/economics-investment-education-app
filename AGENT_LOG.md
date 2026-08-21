@@ -12944,3 +12944,98 @@ unblocked:** **item 35's second glossary batch**, block lifted, re-measure with
 28 re-reviews — scope to one language per run); item 76 (blocked on a per-language tokenizer).
 **Item 18 remains the entire critical path to ending Phase 0**, blocked on the owner creating an
 analytics provider account, and **item 72's owner half — a deployed URL — is blindspot 10.10**.
+
+## 2026-08-21 — the UIUX/ redesign, implemented: one screen changed, four found already done, one real a11y bug
+
+**Picked:** owner-directed. A design canvas was drafted from the owner's `UIUX/` folder (35 Mobbin
+screenshots + 16 videos of Buddy, Duolingo, Quizlet, Vocabulary, Nibble), then implemented.
+
+### The headline finding: four of the five screens were already there
+
+The canvas mocked Learn, the lesson reader, the end-of-lesson check, Review and the glossary. On
+implementation, **only Learn had a substantive gap.** Evidence, gathered rather than assumed:
+
+- **`Practice.jsx` already cites this exact folder in its own comments** — "adapted from UIUX/
+  (Vocabulary iOS 187 and Quizlet iOS…)" and "Runner chrome from UIUX/ (Quizlet iOS Screens 4)". It
+  already has the due card, the session runner, the batch pause and the per-question results recap
+  the canvas drew.
+- **`Question.jsx` already implements the option states.** Verified live: selecting an option moves
+  its border from `rgb(211,215,222)` (`line.strong`) to `rgb(37,99,235)` (`fill.accent`), and the
+  ok/bad icons plus the explanation `Note` are already wired.
+- **The reader already states its position as text** — `LESSON 1 OF 12`, confirmed in the DOM.
+
+**So earlier runs had been building from these references for weeks.** The canvas mostly documented
+where the app already is. Worth recording so a future run does not re-derive a redesign that shipped.
+
+### What actually changed — `src/screens/Learn.jsx`
+
+**A real WCAG failure, found by measuring rather than by looking.** Locked lesson rows carried
+`opacity: 0.55` on the button, which composites the text against the canvas: **2.82:1 (`ink.body`)
+and 2.31:1 (`ink.muted`) light, 4.27:1 and 2.98:1 dark**, against AA's 4.5:1 for body text.
+**`check-data.mjs` §28 asserts AA on every token PAIR and cannot see an `opacity` layered on top of
+one** — so the suite passed while the rendered text failed, for as long as the row has existed. Now
+`ink.muted` at full strength plus a dashed border and the lock marker: **5.79:1 light, 7.25:1 dark**,
+measured in the live browser and agreeing with the offline prediction to two decimals.
+
+Also: tracks other than the learner's collapse (40 rows on one screen buried the current lesson), and
+each track gains a `ProgressBar` where it had only a `3 / 12` text pair. ARIA APG accordion shape;
+`hidden` rather than unmounting so `aria-controls` always resolves; **no new locale key**, because the
+track label already exists and `aria-expanded` carries the state.
+
+### Three things from the canvas deliberately NOT built
+
+1. **Completed markers stay `fill.ok`, not the accent.** The artboard drew them blue; that
+   contradicts `theme.js` rule 2 (blue = interactive/current, green = success) and **the shipped code
+   was right**. The design was wrong, not the app.
+2. **No reading-progress bar in the reader header.** The reader already prints `LESSON 1 OF 12`;
+   a bar for the same fact is decoration.
+3. **No Leitner box-distribution strip on Review.** It would need **five new locale keys × five
+   languages**, and "9 questions sit in the 4-day box" changes nothing a learner does — data slop
+   bought with translation debt. Offered back to the owner rather than shipped.
+
+### Verification
+
+- `npm test` 6/6 PASS (1 pre-existing translation-coverage warning); `npm run build` clean;
+  `check-blindspot` 7/7 with §10.1's disclaimer still on this surface.
+- **Live browser, per rule W-1**, and two instrument failures caught by controls on the way:
+  - The first DOM scan returned **all zeros including `section[aria-labelledby]`, which predates this
+    change** — the control said the instrument was wrong, and it was: the first-run flow had routed
+    to `#/lesson/29`, so the scan was on the reader, not Learn. §3.2 working as designed.
+  - The contrast scan first measured against `document.body`, giving an impossible **1.06:1** for a
+    title. `body` is not the painted backdrop — the app shell div is. Re-measured against the first
+    opaque ancestor, and only then did the numbers match theory.
+  - A third near-miss: the browser was in **dark** mode while I believed it light, exactly the trap
+    the Environment note records. Caught by asserting `isLight` rather than trusting the emulation.
+  - Verified after fixing the instruments: 3 track toggles with exactly one open, panels resolving
+    and hiding, 44px targets, four labelled progressbars, named regions intact as a control, and
+    clicking a second track closing the first.
+- **One suspicion measured and withdrawn:** `body` appeared to paint dark under a light theme. It was
+  my own `setAttribute` racing React's theme application — re-measured at rest, `body` and the shell
+  both read `rgb(251,251,253)`. Not a bug; not filed.
+- **One false alarm from a screenshot:** the accent looked violet rather than `#2563eb`. The computed
+  value is `rgb(37, 99, 235)` — the screenshot's color profile, not the app. Measurement beat the eye.
+
+### Adversarial self-check (step 5)
+
+- **Blindspot register** — clean, 7/7. `Learn.jsx` is one of the eight §10.1 surfaces and still
+  renders `<Disclaimer>`. No Dalio, no kids reframing, no date or market figure.
+- **`DECISIONS.md` conflict** — none. localStorage-only state, `.js` content modules and Vite are all
+  untouched; the accordion's open track is component state, deliberately not persisted.
+- **Already-done backlog item** — no, and this run's main finding is precisely that four screens were
+  already done. Nothing was re-implemented.
+- **Own verification claim** — every number came from a command or the live DOM; the contrast figures
+  are reproducible offline and in-browser, and both are recorded because they agree.
+- **Copyright** — the references are other companies' shipping apps. General learning-app patterns
+  were used; no branded element (mascot, palette, node art) was reproduced.
+
+### Next run
+
+The US-English stream and the redesign are both closed. **Open and unblocked:** **item 35's second
+glossary batch — re-measured this session and ready**: across all three tracks, reading first uses
+kills most candidates (FOMO, lifestyle inflation, nominal/real return are all defined where they first
+appear), leaving three that genuinely meet the bar — **savings account** (7 lessons, undefined at
+first use, while `Brokerage Account` *is* defined), **retirement account** (5 lessons, first used 11
+lessons before the lesson that defines it) and **interest rate** (12 lessons, the highest reach in the
+app). Note the essentials track now carries the vocabulary gap (33 candidates vs money's 5), which the
+item predates. Also open: the **7 stale translation lessons per language**; item 76 (blocked on a
+per-language tokenizer). **Item 18 remains the entire critical path to ending Phase 0.**
