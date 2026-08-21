@@ -13059,6 +13059,22 @@ app). Note the essentials track now carries the vocabulary gap (33 candidates vs
 item predates. Also open: the **7 stale translation lessons per language**; item 76 (blocked on a
 per-language tokenizer). **Item 18 remains the entire critical path to ending Phase 0.**
 
+> **⚠️ CORRECTION, appended 2026-08-21 the same day — this recommendation was overtaken AND was
+> wrong on its third term. Do not act on the paragraph above.** A scheduled dev-agent run committed
+> `458dda3` while this session was working (the HEAD-moves-mid-session case, this time observed
+> rather than suspected). It shipped **Interest Rate** and **Savings Account** — the two this entry
+> named — and **rejected `retirement account`, correctly.**
+> **Why the rejection is right and this entry's "5 lessons" was inflated:** three of the five hits
+> (essentials 7, 13, 14) are quoted cross-references to lesson 6's TITLE — `“Retirement Accounts”` —
+> not uses of the phrase as jargon, and §17b strips those. Verified this session by printing the
+> matching sentence at each hit. The real reach is **one** undefined use (essentials 2), against a
+> defining lesson four positions later, with 401(k) and IRA already carrying glossary entries. That
+> is below the bar this item sets.
+> **The lesson for whoever measures reach next: a lesson-title cross-reference looks exactly like a
+> term use to a word matcher.** Since item 84 converted 237 cross-references to titles, this repo has
+> a lot of them, and any reach count over lesson prose has to subtract quoted titles before it means
+> anything. Item 35 is now CLOSED; §17b reports 121 uses, 85 chips, 36 explained, 0 unexplained.
+
 ## 2026-08-21 (scheduled dev-agent) — Item 35's second glossary batch: two terms shipped, the third measured and rejected
 
 **Picked:** backlog item 35's second batch, the queued item from the previous run. Owner tree
