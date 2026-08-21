@@ -3671,5 +3671,69 @@ if (keyedGroupsChecked < 4) {
   );
 }
 
+// 32b. A numbered heading in LAUNCH_PLAN.md must be nested as deeply as its
+//      number says (backlog item 90).
+//
+//      WHY THIS EXISTS. §3.1.1 was a `###` — the same depth as §3.2, §3.4 and
+//      §3.5 — so every renderer drew it as a SIBLING of §3.1 while its number
+//      says it is a child of it. §2.5 was a `##`, drawing it as a peer of §2
+//      itself rather than one of its subsections. Both are invisible in the raw
+//      source, where the number is right there next to the wrong `#` count, and
+//      both mislead anyone reading the rendered outline or a generated table of
+//      contents — which is the form this document is usually skimmed in.
+//
+//      THE REPAIR IS ALWAYS THE `#` COUNT, NEVER THE NUMBER, and the failure
+//      message says so, because the tempting fix is the destructive one:
+//      §-numbers here are cited from source, from the dev-agent's blindspot
+//      rules, and from thousands of run-log lines, so renumbering a section to
+//      match its depth silently repoints every one of those references. §32's
+//      message carries the same warning for the same reason.
+//
+//      Unnumbered headings are skipped rather than guessed at: the document
+//      title and §10's `Closed`/`Open`/`Held` subheadings carry no number to
+//      check a depth against, and inferring one from position would be a rule
+//      about prose rather than about a stated number.
+{
+  const PLAN = join(ROOT, "LAUNCH_PLAN.md");
+  let numbered = 0;
+  let mismatched = 0;
+
+  readFileSync(PLAN, "utf8")
+    .split("\n")
+    .forEach((line, i) => {
+      const h = /^(#{1,6})\s+(\S.*)$/.exec(line);
+      if (!h) return;
+      const num = /^([0-9]+(?:\.[0-9]+)*)\.?\s/.exec(h[2]);
+      if (!num) return;
+      numbered += 1;
+
+      // "2" -> depth 2 (## under the `#` title); "2.1" -> 3; "3.1.1" -> 4.
+      const expected = num[1].split(".").length + 1;
+      if (h[1].length === expected) return;
+      mismatched += 1;
+      fail(
+        `§32b: LAUNCH_PLAN.md:${i + 1}: §${num[1]} is written as \`${h[1]}\` (depth ${h[1].length}) ` +
+          `but its number implies \`${"#".repeat(expected)}\` (depth ${expected}), so it renders at ` +
+          `the wrong level of the outline. Fix the \`#\` count — do NOT renumber the section to match ` +
+          `the depth: §-numbers in this file are cited from source, from the blindspot rules and from ` +
+          `the run log, and renumbering repoints all of them silently.`,
+      );
+    });
+
+  // Floor, for the same reason §32 has one: a heading regex that stopped
+  // matching would report no mismatches, which reads exactly like a pass.
+  if (numbered < 20) {
+    fail(
+      `§32b: only ${numbered} numbered heading(s) found in LAUNCH_PLAN.md (expected at least 20). ` +
+        `The pattern is more likely broken than the document emptied.`,
+    );
+  }
+
+  console.log(
+    `  §32b LAUNCH_PLAN.md heading depth: ${numbered} numbered heading(s), ` +
+      `${numbered - mismatched} at the depth their number implies, ${mismatched} not.`,
+  );
+}
+
 console.log(`\n${failures === 0 ? "PASS" : "FAIL"}: ${failures} failure(s), ${warnings} warning(s).`);
 process.exit(failures === 0 ? 0 : 1);

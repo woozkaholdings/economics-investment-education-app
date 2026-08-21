@@ -154,7 +154,7 @@ data", and the teaching surfaces (yield-curve shapes, QE/QT) remain deliberately
 
 ---
 
-## 2.5 Curriculum structure — three tracks
+### 2.5 Curriculum structure — three tracks
 
 *Added 2026-08-07 (owner-directed). Implements §0's "the economics is the vehicle, not the product."
 Split into three 2026-08-18 (owner-directed, interactive) — see the note at the top of this document
@@ -280,19 +280,19 @@ What carries over from the prototype is *content structure*, not layout: sequent
 per-lesson "Key Takeaway" and "Think About This", and age-banded parent material. Those are
 pedagogy, and they earned their place.
 
-### 3.1.1 Visual system
+#### 3.1.1 Visual system
 
 Authored, not inherited. The prototype's look — 10–13px type, saturated tinted boxes stacked on
-every screen, a different accent colour per lesson, emoji standing in for interface icons — worked
+every screen, a different accent color per lesson, emoji standing in for interface icons — worked
 against §3.0. Small dense text is the opposite of "easy to understand", and when everything is
-colour-coded, nothing reads as important.
+color-coded, nothing reads as important.
 
-The system instead is: **16px base type** with a clear hierarchy; **one accent colour** plus
+The system instead is: **16px base type** with a clear hierarchy; **one accent color** plus
 semantic success/caution/danger and a single neutral ramp; **generous whitespace** in place of
 borders and tints; **line icons** for interface chrome, with emoji reserved for content where they
 carry meaning.
 
-**Per-lesson colour is not rendered at all.** The ceiling this section set was "a thin accent, never
+**Per-lesson color is not rendered at all.** The ceiling this section set was "a thin accent, never
 body text or a fill"; the rebuilt app went further and paints none of it — lesson rows draw their
 badge from the shared `ink.*`/`fill.*` tokens. `src/content/lessons.js` still authors a `color` on
 all 40 lessons that **nothing reads** (measured under backlog item 75 on 2026-08-17, re-measured
@@ -320,7 +320,7 @@ kind quiz feedback with explanations.
 
 **§3.1.1 is the visual system**; this section is only the theming layer under it. One typeface.
 **Dark mode** (finance audiences skew dark) — **shipped**: light/dark/system in
-`src/lib/useAppState.js`, picker in `src/screens/reference/Settings.jsx`. Colour and type come from
+`src/lib/useAppState.js`, picker in `src/screens/reference/Settings.jsx`. Color and type come from
 `theme.js`, which carries a single accent in its `ink`/`fill`/`surface` variants and no per-lesson
 palette.
 

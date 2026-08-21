@@ -280,7 +280,7 @@ export const lossCaption = {
 };
 
 export const lossDescription = {
-  en: "Two bars from a centre line: the gain rises one step above it, the loss drops about twice as far below.",
+  en: "Two bars from a center line: the gain rises one step above it, the loss drops about twice as far below.",
   es: "Dos barras desde una línea central: la ganancia sube un paso por encima y la pérdida baja aproximadamente el doble.",
   ko: "중앙선을 기준으로 한 두 막대: 이득은 한 칸 위로 올라가고, 손실은 그 약 두 배만큼 아래로 내려갑니다.",
   zh: "以中线为基准的两根柱：收益向上一格，损失向下约两倍。",

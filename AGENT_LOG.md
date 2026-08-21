@@ -993,7 +993,14 @@ for the history. No open P1/P2 items.
     instead. Start by reading §29 and F11's reasoning before touching a line.
     </details>
 
-90. **[Process — filed 2026-08-21 by the run that closed item 62's F6, from a structural oddity it
+90. **✅ DONE 2026-08-21 (owner-directed, same day it was filed). Both mismatches fixed by the `#`
+    count, guarded by `check-data.mjs` §32b, and the file is now 36/36 consistent. The item's count
+    was right and complete — a whole-file sweep found exactly the two it named, no more.** The one
+    correction: the item said to check whether §26 parses by heading depth. It does not; the only
+    depth-sensitive parser in the repo is **§29, and it reads `DECISIONS.md`**, not this file. There
+    are also no anchor links into `LAUNCH_PLAN.md` sections, and Markdown anchors are text-derived
+    anyway, so the depth change broke nothing. See the run log entry of this date.
+    **[Process — filed 2026-08-21 by the run that closed item 62's F6, from a structural oddity it
     deliberately did not fix. Low value; a good small pick, and read the constraint before starting.]
     `LAUNCH_PLAN.md` §3.1.1 is a `###`, the same heading depth as §3.2/§3.4/§3.5, so the document
     renders it as a *sibling* of §3.1 when its number says it is a child.** Measured this run while
@@ -1009,6 +1016,30 @@ for the history. No open P1/P2 items.
     - **Check before assuming it is safe:** whether anything parses this file by heading depth.
       `check-data.mjs` §26 and §32 both read it; §32 is depth-agnostic by construction (it strips the
       number and compares titles), but §26 was not written with this in mind. Verify, do not assume.
+
+91. **[Process/Content — filed 2026-08-21 by the run that applied the owner's "US English only"
+    instruction to the learner-visible surface, from the residual it deliberately did NOT sweep.]
+    ~69 British spellings remain outside learner-visible content, and one slice of them cannot be
+    fixed by find-and-replace.** Every figure measured this run, not estimated:
+    - **`src/` — 34, and every one is a code comment.** The learner-visible surface is already clean:
+      a walk of all 12 content modules plus `locales.en` covering **1,316 English strings** returns
+      **0** after this run's two fixes. So nothing here is user-facing, and the value is consistency
+      for whoever reads the code, not correctness.
+    - **`scripts/` — 16. `LAUNCH_PLAN.md` — 11** (outside §3.1.1/§3.4, already converted).
+      **`CLAIMS.md` — 1. `LAUNCH_READINESS.md` — 2.** All mechanical.
+    - **⚠️ `DECISIONS.md` — 7, and this is the part that needs a decision rather than an edit.** Some
+      sit inside **dated entries**, which §29's rule and this repo's whole dated-truth discipline say
+      must not be rewritten in place — the same constraint that stopped item 89 correcting three
+      stale lines by hand. Respelling a word inside a record of what was written on a date is a
+      smaller falsification than changing a claim, but it is the same kind, and **it is the owner's
+      call whether house style outranks verbatimness for orthography.** Ask before sweeping.
+    - **Also excluded by design:** `AGENT_LOG.md` and `AGENT_LOG.archive.md`, for §31's reason — run
+      log entries are immutable history.
+    - **If a guard is wanted afterwards**, the honest scope is learner-visible strings only (where the
+      count is already 0 and a regression would be user-facing), not the comment corpus. Reuse this
+      run's corpus walk; **and assert a known British instance is inside the corpus before trusting a
+      zero** — the first version of that scan missed 40% of the text and reported 0 with all its
+      controls passing.
 
 76. **[Content/Process — filed 2026-08-18 by the run that built item 69's instrument half, which is
     what turned this from an opinion into a blocked measurement.] `zh` and `ja` `Brokerage Account`
@@ -12424,5 +12455,125 @@ run added nothing to it). **Open and unblocked:** **item 35's second glossary ba
 computed against; the **7 stale translation lessons per language** (`npm run review-status` — lessons
 1, 4, 30, 33, 37, 39, 40 × es/ko/zh/ja, 28 re-reviews, so scope it to one language per run); item 90
 (§3.1.1's heading depth); item 76 (still blocked on a per-language tokeniser — read it before picking).
+**Item 18 remains the entire critical path to ending Phase 0**, blocked on the owner creating an
+analytics provider account, and **item 72's owner half — a deployed URL — is blindspot 10.10**.
+
+## 2026-08-21 — heading depth matches heading number (item 90); and the owner set US English, which found two learner-visible spellings
+
+**Picked:** item 90, owner-directed ("fix §3.1.1's heading depth next") the same day the previous run
+filed it. Mid-run the owner added a second instruction — **"US English only"** — which is handled
+below as its own piece of work, not folded into the heading fix.
+
+### Step 3.5 — re-measuring, and widening from the two headings the item named
+
+The item named §3.1.1 (`###` where its number implies `####`) and §2.5 (`##` where it implies `###`).
+Rather than trust the pair, the whole file was swept: expected depth = one more than the number of
+dot-separated components (`2` → `##`, `2.1` → `###`, `3.1.1` → `####`). Result: **34 consistent, 2
+mismatched, and the 2 are exactly the ones the item named.** For once the premise was complete as
+well as correct — worth recording, given D3's run of refutations.
+
+**Control on the instrument, since "only 2" is the kind of number a half-working scan produces.**
+`### 2.1 The stack` — which I knew to be correct — was injected as `##### 2.1` and the sweep went to
+3 mismatched, naming it. Restored; back to 2.
+
+**The item's own open question, answered rather than assumed.** It warned that `check-data.mjs` §26
+"was not written with this in mind. Verify, do not assume." Verified: §26 reads doc *paths*, not
+headings. Grepping every heading-shaped regex in the four scripts that read this file returns two
+hits — **§29 at `:3061`, which is depth-sensitive but reads `DECISIONS.md`**, and §32, which is
+depth-agnostic by construction. There are also **no `LAUNCH_PLAN.md#anchor` links anywhere**, and
+Markdown anchors derive from heading *text* regardless of depth. Nothing could break, and that is
+measured rather than hoped.
+
+### What shipped
+
+**Both headings re-nested by `#` count, never by number** — `#### 3.1.1 Visual system` and
+`### 2.5 Curriculum structure — three tracks`. The file is now 36/36 consistent.
+
+**`check-data.mjs` §32b — a numbered heading must sit at the depth its number implies.** Placed
+beside §32 because it is the same document and the same class of defect. Unnumbered headings (the
+title, and §10's `Closed`/`Open`/`Held`) are skipped rather than guessed at. Carries a floor, for
+§32's reason. **Its failure message names the repair and forbids the tempting one** — fix the `#`
+count, do *not* renumber to match the depth — because renumbering silently repoints every §-citation
+in source, in the blindspot rules and in the run log.
+
+**A wording bug in §32b caught by its own injection test, not by review.** The summary line first read
+`36 numbered heading(s) match their number` and printed that unchanged while a heading was failing —
+the identical defect this agent had fixed in §32 one commit earlier, reintroduced by copying the
+shape. It now reports `36 numbered, 35 at the depth their number implies, 1 not`, and the failing
+case was re-run to confirm the count moves.
+
+### The owner's "US English only" instruction
+
+Treated as a house-style rule, and **measured before acting** rather than swept blindly.
+
+- **The learner-visible surface is what matters, and scanning it properly took two attempts.** The
+  first scan walked `lessonContent`, `quizData`, `glossary` and `locales.en` — **781 strings, 0
+  hits** — and both its controls passed, because they validated the *matcher* against a planted
+  string. That is a passing control on a corpus that was missing 40% of the text. Caught only because
+  a hit was already known independently (`moneyVisuals.js:283`, "centre line") and the scan did not
+  report it. **The rule this repeats: a control that proves the instrument works does not prove the
+  corpus is complete — assert a known instance is IN the corpus.**
+- With all 12 content modules walked, **1,316 English strings** yield **2** learner-visible British
+  spellings, both now fixed: `moneyVisuals.lossDescription.en` "centre line" → "center line", and
+  `policyScenarios[0].options[0].outcome.en` "still travelling through" → "still traveling through".
+  Both are US-financial-concept surfaces (a chart's text alternative, and the Fed-chair simulator),
+  so this is a real consistency fix, not pedantry. Neither changes meaning, so the four translations
+  under each remain valid and the review ledger is unaffected.
+- **In `LAUNCH_PLAN.md` only the two sections this agent authored this session were converted** (4
+  occurrences, §3.1.1 and §3.4). **One `colour` was deliberately left**: `opening "One accent colour
+  per lesson/phase"` is a verbatim quotation of the sentence the previous commit removed, and
+  respelling inside quotation marks would misquote the record.
+- **NOT swept, and flagged to the owner instead of decided unilaterally: ~69 further occurrences** —
+  34 in `src/` (all code comments; **zero** in any learner-visible string, per the scan above), 16 in
+  `scripts/`, 11 in `LAUNCH_PLAN.md` outside those two sections, 7 in `DECISIONS.md`, 1 in
+  `CLAIMS.md`, 2 in `LAUNCH_READINESS.md`. Some sit inside **dated records in `DECISIONS.md`** that
+  §29's rule says must not be rewritten in place, so a blanket sweep is a decision with a real edge
+  case in it, not a find-and-replace. Filed as item 91.
+
+### Verification
+
+- `npm test` — 6/6 suites PASS, 1 warning (the pre-existing translation-coverage one). §32 reports 40
+  headings / 40 distinct / 0 duplicated; §32b reports 36 numbered / 36 correct / 0 not.
+- `npm run build` — clean. The main bundle moved to **`index-smdDOR7P.js`, 244.13 kB** from
+  `index-D69OBdYc.js`. **The hash change is expected and explained**: unlike the previous commit, this
+  one edits two learner-visible content strings. The size is unchanged because both substitutions are
+  the same byte length.
+- **Four injections, each restored from a scratchpad copy — never `git checkout --` — and the file
+  verified byte-identical afterwards at `31d8cbb3…9232`:** §3.1.1 reverted to its real defect → FAIL
+  naming line 283 and both depths; §2.5 reverted → FAIL naming line 157; every heading neutralised →
+  floor fired at 0; and the summary-count re-run above.
+
+### Adversarial self-check (step 5)
+
+- **Blindspot register** — `npm run check-blindspot` passes all 7. This run *does* touch two
+  learner-visible content strings, so §2.3 (no live-looking dates in teaching copy) is the one that
+  could plausibly fire: it passes across all 26 modules, and neither edit adds a date, figure, or
+  anything advice-adjacent — "centre"→"center" and "travelling"→"traveling" are orthographic. No
+  Dalio, no kids-framing change.
+- **`DECISIONS.md` conflict** — none. Nothing here touches localStorage-only state, `.js`-not-JSON
+  content, or Vite-not-Expo. The one adjacent rule is §29's dated-truth discipline, which this run
+  **obeys twice**: by leaving the §3.4 quotation verbatim, and by refusing to sweep `DECISIONS.md`'s
+  spellings without an owner decision.
+- **Already-done backlog item** — no. §32b is new; §32 (duplicate titles) is a different property and
+  is untouched apart from the wording fix it prompted. Item 90 was filed by the previous run and is
+  being executed, not re-derived.
+- **Own verification claim** — every figure above came from a command: 34/2 then 36/0 from the depth
+  sweep, 781 vs 1,316 from the two scans, the ~69 residual from a per-file count, the bundle hash from
+  the build. An independent reviewer re-running them gets the same numbers. The one figure that
+  depends on a prior entry is the previous bundle hash, which the last entry recorded verbatim.
+- **The near-miss worth naming.** The first spelling scan would have let this run report "0
+  British-spelling hits in learner-visible content" — a clean, confident, wrong answer, produced by an
+  instrument whose controls all passed. Both learner-visible fixes in this commit exist only because
+  a known instance was checked for by name.
+
+### Next run
+
+`npm run owner-tree -- --expect c2331799fd3ee413aca864fd82d247a35ea31b01a70a6c4e37b00f6aad9105b2`
+(`UNMOVED` at the start of this run; the deviation set is the owner's 52 untracked files, unchanged).
+**Open and unblocked:** item 91 (the ~69 residual British spellings — needs the owner's call on the
+`DECISIONS.md` dated records before starting); **item 35's second glossary batch**, whose
+`LAUNCH_PLAN.md` block is lifted but whose reach numbers need re-measuring with `npm run jargon -- money`;
+the **7 stale translation lessons per language** (`npm run review-status` — 28 re-reviews, so scope to
+one language per run); item 76 (still blocked on a per-language tokeniser).
 **Item 18 remains the entire critical path to ending Phase 0**, blocked on the owner creating an
 analytics provider account, and **item 72's owner half — a deployed URL — is blindspot 10.10**.
