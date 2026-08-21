@@ -17,7 +17,8 @@
     "jargon": "node scripts/jargon-candidates.mjs",
     "review-status": "node scripts/translation-review.mjs report",
     "market": "node scripts/fetch-market-data.mjs",
-    "owner-tree": "node scripts/owner-tree.mjs"
+    "owner-tree": "node scripts/owner-tree.mjs",
+    "translation-completeness": "node scripts/translation-completeness.mjs"
   },
   "dependencies": {
     "react": "^18.3.1",

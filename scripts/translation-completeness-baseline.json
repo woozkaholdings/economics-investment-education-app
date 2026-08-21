@@ -1,0 +1,246 @@
+{
+  "note": "Recorded translated:English character ratio per lesson per language. Regenerate with `npm run translation-completeness -- --write` whenever a ratio legitimately moves, and say in the commit message which way it moved and why. check-data.mjs §33 fails if any pair drifts by more than `tolerance` in EITHER direction — a drop means English grew (or a translation shrank) without the translation keeping up, which is exactly how 20 lessons became abridged without any run noticing; a rise means someone did the work, and the baseline should record it so the debt is visibly paid down rather than silently forgotten.",
+  "tolerance": 0.03,
+  "ratios": {
+    "1": {
+      "es": 0.5,
+      "ko": 0.25,
+      "zh": 0.16,
+      "ja": 0.22
+    },
+    "2": {
+      "es": 0.56,
+      "ko": 0.29,
+      "zh": 0.2,
+      "ja": 0.26
+    },
+    "3": {
+      "es": 0.59,
+      "ko": 0.28,
+      "zh": 0.18,
+      "ja": 0.24
+    },
+    "4": {
+      "es": 0.68,
+      "ko": 0.33,
+      "zh": 0.23,
+      "ja": 0.31
+    },
+    "5": {
+      "es": 0.75,
+      "ko": 0.32,
+      "zh": 0.2,
+      "ja": 0.28
+    },
+    "6": {
+      "es": 0.43,
+      "ko": 0.21,
+      "zh": 0.13,
+      "ja": 0.17
+    },
+    "7": {
+      "es": 0.73,
+      "ko": 0.35,
+      "zh": 0.22,
+      "ja": 0.31
+    },
+    "8": {
+      "es": 0.66,
+      "ko": 0.32,
+      "zh": 0.2,
+      "ja": 0.27
+    },
+    "9": {
+      "es": 0.54,
+      "ko": 0.28,
+      "zh": 0.17,
+      "ja": 0.25
+    },
+    "10": {
+      "es": 0.57,
+      "ko": 0.27,
+      "zh": 0.16,
+      "ja": 0.24
+    },
+    "11": {
+      "es": 0.8,
+      "ko": 0.37,
+      "zh": 0.24,
+      "ja": 0.33
+    },
+    "12": {
+      "es": 1.14,
+      "ko": 0.49,
+      "zh": 0.32,
+      "ja": 0.44
+    },
+    "13": {
+      "es": 1.02,
+      "ko": 0.49,
+      "zh": 0.31,
+      "ja": 0.42
+    },
+    "14": {
+      "es": 0.83,
+      "ko": 0.37,
+      "zh": 0.24,
+      "ja": 0.33
+    },
+    "15": {
+      "es": 1.11,
+      "ko": 0.53,
+      "zh": 0.33,
+      "ja": 0.48
+    },
+    "16": {
+      "es": 0.86,
+      "ko": 0.45,
+      "zh": 0.29,
+      "ja": 0.38
+    },
+    "17": {
+      "es": 1.06,
+      "ko": 0.52,
+      "zh": 0.33,
+      "ja": 0.43
+    },
+    "18": {
+      "es": 1.09,
+      "ko": 0.54,
+      "zh": 0.36,
+      "ja": 0.48
+    },
+    "19": {
+      "es": 1.08,
+      "ko": 0.53,
+      "zh": 0.35,
+      "ja": 0.49
+    },
+    "20": {
+      "es": 1.11,
+      "ko": 0.56,
+      "zh": 0.33,
+      "ja": 0.49
+    },
+    "21": {
+      "es": 1.11,
+      "ko": 0.55,
+      "zh": 0.35,
+      "ja": 0.5
+    },
+    "22": {
+      "es": 1.09,
+      "ko": 0.54,
+      "zh": 0.33,
+      "ja": 0.49
+    },
+    "23": {
+      "es": 1.12,
+      "ko": 0.55,
+      "zh": 0.36,
+      "ja": 0.48
+    },
+    "24": {
+      "es": 1.05,
+      "ko": 0.6,
+      "zh": 0.35,
+      "ja": 0.53
+    },
+    "25": {
+      "es": 1.11,
+      "ko": 0.52,
+      "zh": 0.34,
+      "ja": 0.49
+    },
+    "26": {
+      "es": 1.12,
+      "ko": 0.53,
+      "zh": 0.35,
+      "ja": 0.5
+    },
+    "27": {
+      "es": 1.12,
+      "ko": 0.55,
+      "zh": 0.34,
+      "ja": 0.5
+    },
+    "28": {
+      "es": 1.15,
+      "ko": 0.55,
+      "zh": 0.35,
+      "ja": 0.5
+    },
+    "29": {
+      "es": 0.35,
+      "ko": 0.15,
+      "zh": 0.1,
+      "ja": 0.11
+    },
+    "30": {
+      "es": 0.34,
+      "ko": 0.19,
+      "zh": 0.12,
+      "ja": 0.14
+    },
+    "31": {
+      "es": 0.23,
+      "ko": 0.15,
+      "zh": 0.08,
+      "ja": 0.11
+    },
+    "32": {
+      "es": 0.31,
+      "ko": 0.17,
+      "zh": 0.11,
+      "ja": 0.14
+    },
+    "33": {
+      "es": 0.34,
+      "ko": 0.18,
+      "zh": 0.11,
+      "ja": 0.14
+    },
+    "34": {
+      "es": 0.24,
+      "ko": 0.15,
+      "zh": 0.09,
+      "ja": 0.13
+    },
+    "35": {
+      "es": 0.31,
+      "ko": 0.16,
+      "zh": 0.11,
+      "ja": 0.13
+    },
+    "36": {
+      "es": 0.35,
+      "ko": 0.17,
+      "zh": 0.12,
+      "ja": 0.15
+    },
+    "37": {
+      "es": 0.31,
+      "ko": 0.16,
+      "zh": 0.12,
+      "ja": 0.14
+    },
+    "38": {
+      "es": 0.29,
+      "ko": 0.14,
+      "zh": 0.09,
+      "ja": 0.11
+    },
+    "39": {
+      "es": 0.26,
+      "ko": 0.14,
+      "zh": 0.08,
+      "ja": 0.11
+    },
+    "40": {
+      "es": 0.25,
+      "ko": 0.14,
+      "zh": 0.08,
+      "ja": 0.11
+    }
+  }
+}

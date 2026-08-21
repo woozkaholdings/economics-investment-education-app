@@ -26,6 +26,12 @@ import { MIN_BARS, OUTPERFORM_THRESHOLD, WJ_PERIODS, wjSectorComparison } from "
 import { OLD_TO_NEW_LESSON_ID, migrateLegacyLessonIds } from "../src/lib/lessonIdMigration.js";
 import { ROUTED_TABS, initialRoute, parseRoute, resolveRoute, routeHash } from "../src/lib/deepLink.js";
 import { computeCoverage } from "./translation-review.mjs";
+import {
+  LANGS as COMPLETENESS_LANGS,
+  completeness,
+  drift as completenessDrift,
+  loadBaseline as loadCompletenessBaseline,
+} from "./translation-completeness.mjs";
 import * as storageLib from "../src/lib/storage.js";
 import { EVENTS, MAX_LOGGED_EVENTS, elapsedSeconds, monotonicNow, quizScore, track } from "../src/lib/analytics.js";
 import { redactUrl, getAdapter, fixture, ADAPTERS } from "../src/lib/marketData/adapters.js";
@@ -3733,6 +3739,96 @@ if (keyedGroupsChecked < 4) {
     `  §32b LAUNCH_PLAN.md heading depth: ${numbered} numbered heading(s), ` +
       `${numbered - mismatched} at the depth their number implies, ${mismatched} not.`,
   );
+}
+
+// ---------------------------------------------------------------------------
+// §33. Translation completeness: the es/ko/zh/ja bodies must not fall further
+// behind their English source than they already have.
+//
+// The gap this closes. Every other language check in this file asserts that a
+// translated field is PRESENT (§1's `checkLangSet`) or that it mirrors
+// English's structure (§16's cross-references). None of them can see a field
+// that exists, is well-formed, is consistent with English — and carries a
+// quarter of its content. That is the actual state of most of the catalogue:
+// economy lesson 40's Spanish carries three bare rule headings against four
+// explanatory English paragraphs. `npm run translation-completeness` measures
+// and lists it; AGENT_LOG.md item 93 tracks paying it down.
+//
+// Why a recorded baseline rather than a threshold. The debt accrued across
+// seventeen "Deepen lesson N" runs, each of which grew English and left the
+// four translations alone, and each of which left this suite green. A
+// threshold cannot catch that (the lessons were already below any threshold
+// worth setting); a per-pair record of where each lesson stood CAN, because
+// growing English alone moves that pair's ratio down. The check fires in both
+// directions on purpose — see the baseline file's own `note`.
+{
+  const baseline = loadCompletenessBaseline();
+  if (!baseline) {
+    fail(
+      "§33: scripts/translation-completeness-baseline.json is missing. Regenerate it with " +
+        "`npm run translation-completeness -- --write` — without it, nothing is watching whether " +
+        "the translations are keeping up with the English.",
+    );
+  } else {
+    for (const d of completenessDrift(lessonContent, baseline)) {
+      if (d.kind === "fell") {
+        fail(
+          `§33: lesson ${d.id} [${d.lang}] carries ${d.now} of its English by character, down from a ` +
+            `recorded ${d.was}. Either the English grew and the translation did not follow, or the ` +
+            `translation lost content. Translate the new material, or — if the move is legitimate — ` +
+            `re-record it with \`npm run translation-completeness -- --write\` and say why in the ` +
+            `commit message.`,
+        );
+      } else if (d.kind === "rose") {
+        fail(
+          `§33: lesson ${d.id} [${d.lang}] is now at ${d.now}, up from a recorded ${d.was} — the ` +
+            `translation gained content. That is the direction this project wants; re-record it with ` +
+            `\`npm run translation-completeness -- --write\` so the debt is visibly paid down.`,
+        );
+      } else {
+        fail(
+          `§33: lesson ${d.id} [${d.lang}] is ${d.kind} (recorded ${d.was}, now ${d.now}). The lesson ` +
+            `set and the baseline disagree; regenerate with ` +
+            `\`npm run translation-completeness -- --write\`.`,
+        );
+      }
+    }
+
+    const { rows, reference, abridged } = completeness(lessonContent);
+
+    // Floor, for the reason §32 and §32b have one: if `translatedChars` ever
+    // stopped finding text, every ratio would read 0, nothing would be
+    // classified against a p90 of 0, and "0 abridged" would print — which
+    // looks exactly like the day this debt is finally paid off.
+    const enTotal = rows.reduce((n, r) => n + r.chars.en, 0);
+    if (rows.length < 20 || enTotal < 50_000) {
+      fail(
+        `§33: only ${rows.length} lesson(s) and ${enTotal} English character(s) measured (expected at ` +
+          `least 20 and 50,000). The instrument is more likely broken than the catalogue emptied.`,
+      );
+    }
+
+    const perLang = COMPLETENESS_LANGS.map(
+      (l) => `${l}=${abridged.filter((a) => a.lang === l).length}`,
+    ).join(" ");
+    const lessonsAbridged = new Set(abridged.map((a) => a.id)).size;
+    console.log(
+      `  §33 translation completeness: ${rows.length} lessons x 4 languages against ` +
+        `${enTotal.toLocaleString()} English chars; abridged pairs ${perLang} ` +
+        `(${lessonsAbridged} lessons in at least one language); reference p90 ratio ` +
+        `${COMPLETENESS_LANGS.map((l) => `${l}=${reference[l].toFixed(2)}`).join(" ")}.`,
+    );
+    if (abridged.length > 0) {
+      warn(
+        `translation completeness — ${abridged.length} of ${rows.length * 4} lesson/language pairs ` +
+          `carry a condensed summary rather than a translation of the English body ` +
+          `(${lessonsAbridged} lessons affected). This is recorded debt, not a regression: see ` +
+          `AGENT_LOG.md backlog item 93 and run 'npm run translation-completeness' for the list. ` +
+          `Note the translation-review ledger can read 100% while this is true — it checks that a ` +
+          `reviewer saw the text, not that the text is all there.`,
+      );
+    }
+  }
 }
 
 console.log(`\n${failures === 0 ? "PASS" : "FAIL"}: ${failures} failure(s), ${warnings} warning(s).`);

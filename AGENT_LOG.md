@@ -1092,6 +1092,61 @@ for the history. No open P1/P2 items.
       same word is British English *and* ordinary Spanish, and a word-list run across all languages
       corrupts lesson content.
 
+93. **[Content — filed 2026-08-21 by the scheduled dev-agent, measured with a control, and the
+    largest open learner-visible gap in the app. P1 of the current Open set.] 94 of 160
+    lesson/language pairs ship a condensed *summary* of the English body rather than a translation of
+    it.**
+    - **What a learner gets.** Economy lesson 40 §1 in English is four explanatory paragraphs (the
+      indebted family, the factory worker, the farmer's tractor, the closing point). Its Spanish is
+      **three bare rule headings and nothing else** — `REGLA 1: No dejes que la deuda crezca más
+      rápido que los ingresos.` and two more like it. That is not a translation of the lesson; it is
+      a table of contents for it. Read both before picking this item.
+    - **The measurement, and it now runs on every `npm test`.** `npm run translation-completeness`
+      reports translated:English characters per lesson per language over exactly the field set the
+      review ledger fingerprints. Volume carried against 140,700 English characters: **es 73%, ko
+      36%, zh 23%, ja 32%** — against a full-translation reference (each language's own p90) of **es
+      112%, ko 55%, zh 35%, ja 50%**. So es carries about two-thirds of what it should, and the other
+      three about two-thirds each as well. **24 of 40 lessons** are abridged in at least one language:
+      **all 12 of the economy track (29-40)**, worst in the app at ratios of 0.23-0.35 against es's
+      1.12 reference, plus essentials 1-11 and 14. Money 12-28 are genuine full translations and are
+      the control group that makes the rest measurable.
+    - **Why no check saw it, which is the part worth not re-deriving.** Every language check in
+      `check-data.mjs` asserts *presence* (§1's `checkLangSet`) or *structural agreement with English*
+      (§16's cross-references). A field that exists, is well-formed, is consistent with English, and
+      carries a quarter of its content passes all of them. **`translation-review-ledger.json` reported
+      100%/0-stale for months over exactly this content** — it records that a reviewer saw the text,
+      not that the text is all there, and an AI review reading a faithful summary has no way to know
+      a summary is not what was wanted. **Do not treat a green ledger as evidence about this item.**
+    - **What was already visible, stated honestly — the first draft of this item overclaimed here and
+      the step-5 check caught it.** `LAUNCH_READINESS.md` §10.4 **has published the aggregate volume
+      ratios since 2026-08-09** (es 0.723x, ko 0.356x, zh 0.226x, ja 0.312x) and calls the surface
+      "real ongoing maintenance debt". So the *number* was not hidden. What was missing is what makes
+      the number mean anything: **a per-language reference for what a full translation weighs.**
+      Against nothing, es 0.723x reads like Spanish being slightly more compact than English; against
+      this corpus's own fully-translated lessons at **1.12x**, it means roughly a third of the content
+      is absent. §10.4 also reports one aggregate per language, so the fact that the shortfall is
+      **concentrated** — money 12-28 complete, economy 29-40 at 0.23-0.35 — is invisible in it, and
+      that concentration is what makes the work schedulable.
+    - **How it accrued:** seventeen consecutive "Deepen lesson N" runs in 2026-08 grew English and
+      left the four translations alone. Each left the suite green. Now guarded — `check-data.mjs`
+      **§33** records each pair's ratio in `scripts/translation-completeness-baseline.json` and fails
+      if it moves in either direction, so English can no longer quietly outgrow its translations, and
+      paying the debt down forces a visible re-record.
+    - **Scope it by track, not by count.** The economy track is both the worst and the one the
+      2026-08-18 reversal made the main path, so **economy 29-40 in one language is the first
+      pick** — probably `es`, which has the highest ratio to begin with and the least distance to
+      close. One lesson x one language is a reviewable unit; do not attempt a track x four languages
+      in one run.
+    - **Two things to settle before writing copy, and neither is the agent's call alone.**
+      **(a)** DECISIONS.md's machine-translation entry accepted AI translation under "(Beta)"
+      labeling; it never said "abridged", so filling these in is consistent with it — but the
+      *volume* being added is large enough that the owner should know it is happening.
+      **(b)** §10.1 applies to every added sentence in five languages, and `check-blindspot`'s
+      advice-adjacency patterns run over all of them, so write mechanism, not guidance.
+    - **The related bookkeeping this item supersedes.** `npm run review-status`'s 7 stale
+      lessons per language are a *symptom* — see the run log of 2026-08-21 for why re-marking them
+      would have asserted "reviewed" over bodies that are 24-35% of their English.
+
 76. **[Content/Process — filed 2026-08-18 by the run that built item 69's instrument half, which is
     what turned this from an opinion into a blocked measurement.] `zh` and `ja` `Brokerage Account`
     are term-of-art shape, and nothing can currently measure whether that generalises.**
@@ -13203,3 +13258,162 @@ money's 5) is real but needs a bar defined before it becomes count-shaped work. 
 a per-language tokenizer. **Item 18 remains the entire critical path to ending Phase 0**, blocked on the
 owner creating an analytics provider account, and **item 72's owner half — a deployed URL — is
 blindspot 10.10**.
+
+---
+
+## 2026-08-21 (scheduled dev-agent) — the queued item was a symptom: 94 of 160 translation pairs are summaries, not translations (item 93)
+
+**Picked:** the previous run's hand-off, "the 7 stale translation lessons per language (`npm run
+review-status`, 28 re-reviews — scope to one language per run)". Owner tree `OWNER-TREE
+c2331799fd3ee413aca864fd82d247a35ea31b01a70a6c4e37b00f6aad9105b2 (0 tracked modified, 52 untracked)`
+— **UNMOVED** against the fingerprint the last run recorded, so `UIUX/` and `drafts/` are the owner's
+and were not touched.
+
+**What this run did instead, and why:** the re-measurement showed the 7 stale lessons are the visible
+edge of a much larger gap, and that re-marking them — which is what the hand-off asked for — would
+have asserted "reviewed" over bodies carrying a quarter of their English. **Nothing was re-marked.**
+The ledger still reads 83% / 7 stale, correctly.
+
+### Step 3.5 — the premise held, but only after two of my own instruments turned out to be wrong
+
+**The item's own claim is true and reproduces:** `npm run review-status` reports 7 stale lessons in
+each of es/ko/zh/ja — lessons 1, 4, 30, 33, 37, 39, 40. **Control on the instrument before believing
+anything:** I recomputed `englishSourceHash` for all 40 lessons at `HEAD` and compared to the ledger
+— **33 agree, and exactly those 7 disagree**, so my copy of the fingerprint matches the shipped one.
+
+**Instrument failure 1 — a commit list that silently omitted the commit that mattered.** Tracing when
+each lesson drifted, I filtered `git log` by the three `lessonContent.*.en.js` paths. Those files were
+**renamed mid-history** (per-language split, item 45), so the filter could not see commits that touched
+their predecessors — including `e15e63d`, the **id renumbering**. Its 40 changed hashes were therefore
+attributed to the next commit in my list, which made a mechanical file split look like it had rewritten
+every lesson's English. Caught by carrying **lesson titles alongside hashes**: at the suspect commit
+lesson 1's title changed from "What is a Transaction?" to "Budgeting", which is an id remap, not an
+edit. Re-run over `git rev-list ... -- 'src/content/lessonContent*'` (23 commits) it resolves cleanly.
+
+**Instrument failure 2 — a "separator change" that never happened, hidden by an unprintable byte.**
+`git diff` showed `parts.join(" ")` becoming `parts.join("\0")` at `6f5c48c` and I concluded the hash
+algorithm had changed, invalidating all 160 ledger entries. It had not. `od -c` on both blobs:
+the "before" side is `" NUL "` — a **raw 0x00 byte inside the string literal**, which every terminal,
+`grep` and `git diff` renders as a space — and the "after" side is the two ASCII characters `\` and
+`0`. The commit replaced an embedded control character with its escape; the algorithm is byte-identical
+either side. **The tell was there and I read past it**: `git diff --stat` had called this `.mjs` file
+`Bin 10351 -> 10509 bytes`, which is git saying "this file contains a NUL". What actually settled it was
+running each commit's *own* `englishSourceHash` inside its own archive and finding it disagreed with my
+reimplementation of what its source appeared to say — the same-process A/B is the only reason this was
+caught rather than written up. **This belongs to the Environment note's family of measurements that
+return a clean-looking wrong number, next to the truncated-pipe and dark-mode-DOM cases.**
+
+**With both fixed, the drift history is unambiguous.** All 7 stale lessons drifted at exactly one
+commit, `7046854` (2026-08-20, "Name the lesson, don't number it"). Per-language hashes across that
+commit: **English changed in 26 lessons, es/ko/zh/ja in 19 each — and the 7 are precisely the
+difference.** That matches what that run's own entry says it did, and it said so honestly: it re-marked
+"only the 19 pairs per language I actually edited". So the ledger is behaving exactly as designed.
+
+### The finding: the stale 7 are a symptom of something the ledger cannot see
+
+Reading those lessons to plan the re-review, the translated fields were far shorter than their English.
+Measured across all 40 lessons x 4 languages, over exactly the field set the ledger fingerprints:
+
+- **Volume carried against 140,700 English characters: es 73%, ko 36%, zh 23%, ja 32%.**
+- Those are meaningless alone — a faithful `zh` translation *is* about a third the length. So each
+  language is compared to **its own p90 ratio across this corpus**, i.e. what a full translation of
+  these lessons weighs in that language: **es 1.12, ko 0.55, zh 0.35, ja 0.50**.
+- Against that reference, **94 of 160 lesson/language pairs are abridged** — **24 of 40 lessons** in at
+  least one language: **all 12 economy lessons (29-40)** at 0.23-0.35 against es's 1.12, plus
+  essentials 1-11 and 14. **Money 12-28 are genuine full translations** and are the control group that
+  makes the rest measurable — the classification is a comparison against real lessons in this repo, not
+  against a constant I chose.
+
+**Confirmed in the rendered app, not just in the data** (`dist/` served with `/usr/bin/python3 -m
+http.server`, catalogue unlocked via `localStorage`, language switched with the real `<select>`):
+lesson 40's Spanish §1 renders as **three bare rule sentences** — `REGLA 1: No dejes que la deuda
+crezca más rápido que los ingresos.` and two more — where English renders four explanatory paragraphs
+(the indebted family, the factory worker, the farmer's tractor, the closing point). **Whole-page
+`innerText`: en 3,199 chars, es 1,574.** The English control was captured from the same screen by
+flipping the picker, so the difference is the content and not the route.
+
+**Honest accounting of what was already known, because my first draft of item 93 overclaimed it.**
+This is not a discovery. `DECISIONS.md` calls them "the condensed es/ko/zh/ja bodies"; a 2026-08-17 run
+log says "the other four locales carry abridged summaries"; and **`LAUNCH_READINESS.md` §10.4 has
+published the aggregate ratios since 2026-08-09**. What was missing is the reference that makes the
+number mean something, and the per-lesson breakdown that shows the shortfall is **concentrated** rather
+than spread. §10.4's sentence is one of `refresh-readiness.mjs`'s 12 generated figures (`label: "§10.4
+translation-volume sentence"`), so it was **deliberately not hand-edited** — re-framing a generated
+line belongs in the generator, and that is a separate change.
+
+### What shipped
+
+- **`scripts/translation-completeness.mjs`** — `npm run translation-completeness` prints the per-lesson
+  table, the per-language reference, the abridged list and the volume summary; `--write` records the
+  baseline, `--check` compares.
+- **`scripts/translation-completeness-baseline.json`** — each pair's current ratio, with a `note`
+  explaining when to regenerate.
+- **`check-data.mjs` §33** — fails if any pair's ratio moves by more than 0.03 **in either direction**,
+  prints a one-line summary, and `warn()`s the standing debt. Both directions are deliberate: a *fall*
+  is English outgrowing its translation, which is precisely how this accrued across seventeen "Deepen
+  lesson N" runs that each left the suite green; a *rise* means someone did the work, and forcing a
+  re-record is what makes the debt visibly shrink instead of being quietly forgotten.
+- **Backlog item 93**, with the measurement, the concentration, the reason no existing check saw it,
+  and a scope rule (one track x one language per run; economy x es first).
+
+### Verification
+
+- `npm test` **6/6 PASS**, 0 failures, 2 warnings (the pre-existing translation-review warning, plus
+  §33's new standing-debt warning). `npm run build` clean. `npm run check-blindspot` **7/7**.
+- **§33 proven by injection in both directions, not merely present.** **(a)** Appending ~1,200 English
+  characters to lesson 40 — the exact shape of a deepening run — failed §33 for **es, ko and ja** with
+  "carries 0.16 …, down from a recorded 0.25". **(b)** Growing lesson 40's Spanish by ~900 characters
+  failed with "now at 0.64, up from a recorded 0.25 … re-record it". Both restored from scratchpad
+  copies and re-hashed: `economy.en` `0b606607e11bfbd2` and `economy.es` `71fca87756a6b2b3`, identical
+  before and after, and `git status src/content/` empty — so the restore is exact, not assumed.
+- **A third injection failed to land and the control caught it.** My first attempt inserted a duplicate
+  `thinkAbout` key before the existing one; JS object literals keep the *last* key, so the probe was
+  silently discarded — and the run printed "injected" while §33's character total stayed at exactly
+  140,700. **The unchanged total is the only reason this was noticed**; a run that had trusted the word
+  "injected" would have reported a guard as proven while testing nothing.
+- **§33 has a floor** (≥20 lessons and ≥50,000 English characters) for the same reason §32 does: if
+  `translatedChars` ever stopped finding text, every ratio would read 0 and "0 abridged" would print,
+  which looks exactly like the day this debt is finally paid off.
+- No `MEASURED` line was added: `check-measurements.mjs` parses only `MEASURED jargon <mode>` claims.
+  These figures are enforced more strongly than a pasted line anyway — §33 recomputes them on every
+  `npm test` and fails on disagreement.
+
+### Adversarial self-check (step 5)
+
+- **Blindspot register** — clean, 7/7. This run added **no learner-facing copy in any language**, so
+  §10.1/§10.2/§10.3 and the §2.3 date scan have no new surface to regress; the one place I could have
+  drifted is item 93's prose, which describes the gap without recommending any financial action.
+- **`DECISIONS.md` conflict** — none. No state, storage, module-format or build decision is touched.
+  Checked specifically against the machine-translation entry: it accepted AI translation under "(Beta)"
+  labeling and is **silent on abridgement**, so measuring the abridgement does not contradict it — and
+  item 93 flags the volume question as one the owner should see before anyone writes 90,000 characters
+  of new translated copy.
+- **Already-done backlog item** — no. Nothing in "Completed and pruned" measures translation *volume*;
+  the closest neighbours are the review **ledger** (former item 20 / P-4), which tracks whether a
+  reviewer saw the text, and item 45's per-language split, which moved files without reading them.
+- **Own verification claim** — reproducible. Every figure comes from a committed script an independent
+  reviewer can re-run (`npm run translation-completeness`), the guard is proven by injection with
+  byte-identical restores rather than by reading it, the live-browser evidence is pasted `innerText`
+  with an English control from the same screen, and **the three instrument failures are written up
+  above rather than quietly re-run**. The one claim I had to withdraw — "every status surface reads as
+  if the translations were complete" — was **false**, §10.4 publishes the ratios; it is corrected in
+  item 93 and in the script header rather than softened.
+- **Worth naming:** the run's most useful output is a refusal. The queued item said re-mark 28 pairs;
+  doing that would have restored a 100%/0-stale ledger over lesson bodies that are a quarter of their
+  English, which is the same class of false green the ledger was built to prevent.
+
+### Next run
+
+`npm run owner-tree -- --expect c2331799fd3ee413aca864fd82d247a35ea31b01a70a6c4e37b00f6aad9105b2`
+— **unchanged from the last two runs**, and re-read *after* committing rather than during the work.
+Mid-run this read `a497fade91c5920d808e4dd8ff03c919b8920f04efe9bf26a4734d040fc62687`, which was just
+this run's own five staged files inside the deviation set; the first draft of this entry pasted that
+value and would have handed the next run a guaranteed `MOVED`. **The fingerprint to record is the one
+taken after the commit, not the one taken while your own work is uncommitted.**
+**Item 93 is the top pick and the largest open learner-visible gap: economy lessons 29-40 in `es`,
+one or two lessons per run**, translating the English body rather than summarizing it, then
+`npm run translation-completeness -- --write` to record the ratio moving up and
+`translation-review.mjs mark ... ai` for the pairs actually read. **Do not re-mark the 7 stale pairs
+without doing the translation work** — see this entry for why. **Item 18 remains the entire critical
+path to ending Phase 0**, blocked on the owner creating an analytics-provider account, and **item 72's
+owner half — a deployed URL — is blindspot 10.10**.
