@@ -88,37 +88,39 @@ export const lessonTerms = {
   // would grant cover from unlock order, and unlock order is exactly what does
   // not hold here: the two tracks unlock independently, so lesson 5 is not
   // behind an economy-track reader at all. See AGENT_LOG.md item 64.
-  2: { 1: ["Stock"], 2: ["Premium"] },
+  2: { 0: ["Interest Rate"], 1: ["Stock", "Savings Account"], 2: ["Premium"] },
   // 3 §2 says returns compound only if dividends and gains stay invested;
   // it uses the word twice and defines it neither time (item 64).
-  3: { 2: ["Index Fund", "Stock", "Dividend"] },
+  3: { 1: ["Interest Rate"], 2: ["Index Fund", "Stock", "Dividend", "Savings Account"] },
   // 6 §0 contrasts "an ordinary brokerage account" with a workplace 401(k)
   // seven lessons before 13 defines what a brokerage account is — the
   // forward-reference shape item 60 found, and the reason Brokerage Account
   // became a glossary entry rather than being left to lesson 13.
   6: { 0: ["Vesting", "Brokerage Account", "Stock", "Bond", "Dividend"] },
   7: { 1: ["401(k)", "IRA"] },
-  9: { 0: ["Purchasing Power"] },
+  9: { 0: ["Purchasing Power", "Savings Account"] },
   11: { 0: ["Diversification", "Index Fund"] },
-  12: { 1: ["Principal"] },
-  13: { 0: ["401(k)", "IRA", "Stock", "Bond"], 1: ["Diversification"] },
+  12: { 1: ["Principal", "Interest Rate"] },
+  13: { 0: ["401(k)", "IRA", "Stock", "Bond", "Savings Account"], 1: ["Diversification"] },
   14: { 1: ["401(k)", "IRA"] },
   17: { 1: ["Emergency Fund"] },
+  16: { 0: ["Savings Account"] },
   18: { 0: ["Compound Interest"] },
   // 25 "Does This Money Need to Be There Tomorrow, or in Thirty Years?" uses
   // macro inflation as the reason a savings account loses ground over decades.
-  25: { 0: ["Inflation", "Stock", "Bond"], 1: ["Emergency Fund", "Purchasing Power"] },
+  25: { 0: ["Inflation", "Stock", "Bond", "Interest Rate", "Savings Account"], 1: ["Emergency Fund", "Purchasing Power"] },
   26: { 1: ["Emergency Fund"] },
   28: { 0: ["Stock"] },
 
   // ── Economy track ────────────────────────────────────────────────────────
   // 29 introduces credit a full lesson before 30 teaches it.
-  29: { 0: ["Credit"], 1: ["Stock"] },
+  29: { 0: ["Credit"], 1: ["Stock", "Interest Rate"] },
+  30: { 0: ["Interest Rate"] },
   31: { 0: ["Credit"] },
-  32: { 0: ["Inflation", "Credit"], 1: ["Deflation", "Recession"], 2: ["QE", "Bond"] },
-  33: { 0: ["Bubble", "Stock"], 1: ["Deleveraging", "Recession", "Credit"] },
+  32: { 0: ["Inflation", "Credit", "Interest Rate"], 1: ["Deflation", "Recession"], 2: ["QE", "Bond"] },
+  33: { 0: ["Bubble", "Stock"], 1: ["Deleveraging", "Recession", "Credit", "Interest Rate"] },
   34: { 0: ["Bond"], 1: ["Inflation"], 2: ["GDP", "Debt-to-GDP Ratio"] },
-  35: { 1: ["Stock", "Bond"], 2: ["Inflation"] },
+  35: { 0: ["Savings Account"], 1: ["Stock", "Bond"], 2: ["Inflation"] },
   // 36 §1 "weighing it alongside employment, inflation, and credit data" is the
   // macro sense, and was the one unaccounted-for GLOSSARY-TERM use in all 40
   // lessons when item 57 swept them. Not "the only jargon gap": §17b can only
@@ -126,8 +128,8 @@ export const lessonTerms = {
   // invisible to it. That residual is a real limit, not a closed one — run
   // `npm run jargon` to see the candidates it cannot; item 60 used it to find
   // one (Brokerage Account, chipped on lesson 6 above).
-  36: { 0: ["Recession", "Bond"], 1: ["GDP", "Inflation", "Credit"] },
-  37: { 0: ["Stock", "Bond"] },
+  36: { 0: ["Recession", "Bond", "Interest Rate"], 1: ["GDP", "Inflation", "Credit"] },
+  37: { 0: ["Stock", "Bond", "Interest Rate"] },
   38: { 0: ["GDP", "Inflation", "Credit", "Stock", "Bond"] },
   // 39 defines its eight indicators inline and carries no chip for any of them
   // (see deliberatelyUnlinked below) — but it does not define "stock", which is

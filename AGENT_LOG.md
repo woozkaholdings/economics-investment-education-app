@@ -2097,8 +2097,27 @@ for the history. No open P1/P2 items.
       the §9.2 fields (not just that the helpers can compute them) — the precise gap that existed
       before was that both events fired and neither carried its field, which greps as "done."
 
-35. **[Content — ✅ DONE 2026-08-16 (owner-directed pick, same date it was filed). 12 money-track terms
-    added; money-track links went 1 → 20, covering 13 lessons instead of 1.]**
+35. **[Content — ✅ FULLY DONE 2026-08-21. Both batches have shipped: 12 terms 2026-08-16, and the
+    second batch 2026-08-21 (2 terms, not the 3 that were queued). The glossary is 35 terms and this
+    item is EXHAUSTED as a reach-driven item — do not pick it for a third batch without first defining
+    a bar that is not a term count.]**
+    - **⚠️ The BLOCK recorded below is SPENT — do not re-derive it (corrected 2026-08-21).** The
+      `refresh-readiness.mjs` §1 asset-sentence failure is real and still fires on any new glossary key
+      (re-proved by injection this run), but it stopped being a *block* the moment `LAUNCH_PLAN.md`
+      became owner-clean: the plan now agrees with the tree, so a new key is one mechanical
+      `npm run readiness -- --write` away. In August the tree and the plan already disagreed for the
+      owner's reasons, which is what no agent edit could clear. **Items 64, 73 and 77 cite the same
+      block; it is spent for all of them.**
+    - **Second batch, 2026-08-21: `Interest Rate` and `Savings Account` added (+17 chips, 0 new
+      exclusions).** `retirement account` was queued as the third and was **REJECTED on measurement** —
+      lesson 6 defines it **4 path positions** after its first use, not the 11 the hand-off claimed
+      (11 = `13 − 2`, lesson 13 mistaken for the defining lesson); **3 of its 5 hits are
+      cross-references to that lesson's own title**, which §17b strips as non-uses; and `401(k)`/`IRA`
+      already cover it. Reach must be measured in **path order** (economy 29-40 → essentials 1-15 →
+      money 16-28), not lesson-id order, and with §17b's title-stripping matcher — a raw grep
+      overcounts every term whose name is also a lesson title.
+    *(Original 2026-08-16 first-batch record below.)*
+    **[12 money-track terms added; money-track links went 1 → 20, covering 13 lessons instead of 1.]**
     - **What shipped:** `glossary.js` grew from 17 to **29** terms. The 12 are Compound Interest,
       Emergency Fund, Diversification, Index Fund, Expense Ratio, 401(k), IRA, Principal, Deductible,
       Premium (insurance sense), Vesting, Purchasing Power — each chosen by grepping money lessons
@@ -13039,3 +13058,132 @@ lessons before the lesson that defines it) and **interest rate** (12 lessons, th
 app). Note the essentials track now carries the vocabulary gap (33 candidates vs money's 5), which the
 item predates. Also open: the **7 stale translation lessons per language**; item 76 (blocked on a
 per-language tokenizer). **Item 18 remains the entire critical path to ending Phase 0.**
+
+## 2026-08-21 (scheduled dev-agent) — Item 35's second glossary batch: two terms shipped, the third measured and rejected
+
+**Picked:** backlog item 35's second batch, the queued item from the previous run. Owner tree
+`OWNER-TREE c2331799fd3ee413aca864fd82d247a35ea31b01a70a6c4e37b00f6aad9105b2 (0 tracked modified,
+52 untracked)` — **UNMOVED** against the fingerprint the last run recorded, so `UIUX/` and `drafts/`
+are the owner's and were not touched.
+
+### Step 3.5 — the premise re-measured, and one of its three terms did not survive
+
+The previous run's hand-off named three terms "ready". Two reproduce exactly; the third does not.
+
+**The block first, because the item's own text says it is blocked.** Item 35 has read `BLOCKED` since
+2026-08-18 on `refresh-readiness.mjs`'s §1 asset sentence. **Re-tested by injection in a `git archive`
+`HEAD` copy** (repo untouched; the control copy ran green *before* the probe, so its failure is the
+probe's): adding one probe glossary key still fails that check — `it says: 33 glossary terms / should
+be: 34`. **But the disposition has changed, and the item's text is now wrong about why.** In August the
+tree and `LAUNCH_PLAN.md` *already disagreed* for the owner's reasons, so no agent edit could clear it.
+Today the plan is clean and agrees at 33, so the same check is no longer a block at all — it is one
+mechanical `npm run readiness -- --write`, which is a normal part of any content change. **Corrected in
+the item.** Items 64/73/77 cited the same block; it is spent for all of them.
+
+**Then the three terms, in path order — which is what a learner meets, and is not lesson-id order**
+(the path runs economy 29-40, then essentials 1-15, then money 16-28). Measured with §17b's own matcher
+and its title-ref stripping, carrying two controls: `Brokerage Account`, which must resolve to exactly
+lessons 6 and 13 (it does — matching the shipped chip on 6 and the `defined-here` exclusion on 13), and
+an absent probe, which must return zero (it does).
+
+| term | queued claim | measured | verdict |
+|---|---|---|---|
+| interest rate | "12 lessons, highest reach" | **10 lessons** under §17b's matcher; first bare use at **path position 2**, defined at **position 7** | **added** |
+| savings account | "7 lessons, undefined at first use" | **7 lessons**; **no lesson defines it anywhere** | **added** |
+| retirement account | "first used 11 lessons before the lesson that defines it" | **4 positions** (pos 14 → pos 18) | **rejected** |
+
+**`retirement account` fails the bar on three counts, not one.** The gap is 4 positions, not 11 — lesson
+6 ("Retirement Accounts: 401(k) and IRA Basics") defines it in so many words. **Three of its five hits
+are cross-references to that lesson's own title**, which §17b already strips as non-uses (item 84), so
+its real reach is two lessons, one of which is the definition. And `401(k)` and `IRA` are already
+glossary keys. Adding it would have been the count-shaped work this item's own text warns against.
+The "11" appears to be `13 − 2`, i.e. lesson 13 (Brokerage Accounts) mistaken for the defining lesson.
+
+**Two instrument failures were caught by controls before they became findings.** The first obligation
+scan returned **0 lessons for everything — including the `Brokerage Account` control, which ships two
+chips today**. The control said the instrument was wrong, and it was: the merged `lessonContent.js`
+stores `heading`/`body` as per-language objects, so the scan was matching against `[object Object]`.
+Second, the live glossary search returned nothing because my click selector used `^Glossary$` while
+the real button reads `Glossary\nEvery term, defined` — the `okGloss: false` flag caught it. **Neither
+negative result was reportable; both were re-run after the fix.**
+
+### What shipped
+
+- **`glossary.js` 33 → 35 terms**, five languages each. Definitions are mechanism-only per §10.1 — what
+  the thing IS, never what to do with it — and the savings-account entry says "insured by a federal
+  agency up to a limit set by law" rather than naming a dollar figure, which would be a §2.3
+  live-looking number.
+- **`lessonTerms.js` +17 chips** — 10 for Interest Rate, 7 for Savings Account, each on the lesson's
+  first mentioning section per curation rule 3. **No new `deliberatelyUnlinked` entries were needed**:
+  every obligated lesson takes a chip. Notably lesson 35 needs neither — it is titled "Interest Rates"
+  but its body never uses the bare phrase, so a rule-2 exclusion there would have been stale on arrival
+  and §17b's check (b) would have failed it.
+- **`LAUNCH_PLAN.md`** asset sentence regenerated 33 → 35 by `npm run readiness -- --write`.
+
+### Verification
+
+- `npm test` 6/6 PASS (1 pre-existing translation-coverage warning). **§17b: `121 glossary-term uses
+  across 40 lessons — 85 chips on 27 lessons, 36 deliberately unlinked (27 defined-here, 9 other-sense),
+  0 unexplained`** — 85 is 68 + exactly the 17 chips added.
+- `npm run build` clean. `npm run check-blindspot` **7/7**, including §10.1's advice-adjacency scan over
+  all five languages — which is the one that matters here, since this run wrote learner-facing copy in
+  five languages.
+- **Both directions of the §17/§17b contract proven by injection, restored from a scratchpad copy and
+  re-hashed** (`57798b0e53cebdea` before and after, so the restore is exact, not assumed):
+  **(a)** chipping Interest Rate on lesson 38, which mentions it only inside a stripped title-ref →
+  **FAIL**, "linked from a section whose English text never mentions it"; **(b)** deleting the lesson-30
+  chip → **FAIL**, "uses the glossary term … with no chip and no entry in deliberatelyUnlinked",
+  `1 unexplained`. So the new chips are guarded, not merely self-consistent today.
+- **Live browser, per rule W-1** (`dist/` served with `/usr/bin/python3 -m http.server`): the new
+  Interest Rate chip renders on lesson 29 **alongside the pre-existing Credit and Stock chips as
+  controls**; clicking it sets `aria-expanded="true"` and reveals the definition and example, with a
+  guard asserting that text was **absent before the click**. Both terms resolve on the Glossary screen,
+  and the search filters in both directions — the `brokerage` control finds the old term *and* makes the
+  new ones disappear, so it is genuinely filtering. **Korean spot-checked**: `예금 계좌` renders its own
+  copy with no English leak. The browser was in **dark** mode while the emulation suggested otherwise —
+  asserted rather than assumed, per the Environment note.
+- **Post-change re-measure**, pasted on its own line so `check-measurements.mjs` actually enforces it
+  (its regex anchors at the start of a line — a MEASURED line quoted mid-sentence is decorative, and
+  this run's first draft made exactly that mistake):
+
+  MEASURED jargon money: 4 candidates, 4 control, 0 self-defining, 105 low-reach  [fingerprint 0aa8425a]
+
+  Both new terms moved from the candidate bucket into the control bucket, which is the instrument
+  confirming the change landed rather than my asserting it. **Proven enforced, not just present**:
+  `check-measurements.mjs` exits 0 as written and exits 1 on an injected `4 → 9 candidates`
+  ("Disagrees on: candidates (log 9, actual 4)"), restored from a scratchpad copy to the same hash
+  `a1859d0904fcd2a6`. **A third instrument failure, caught here:** the first attempt to read that
+  injection used `grep -iE "FAIL"`, which matches the word "failure" inside every `PASS: 0 failure(s)`
+  line — so a genuine failure and a clean pass looked identical. Re-run on the exit code instead.
+
+### Adversarial self-check (step 5)
+
+- **Blindspot register** — clean, 7/7. No Dalio, no kids reframing, no hardcoded date or market figure;
+  the deliberate avoidance of a deposit-insurance dollar amount is the §2.3-shaped trap this content
+  could have walked into. §10.1's disclaimer still renders on all 8 surfaces.
+- **`DECISIONS.md` conflict** — none. `.js` content modules, localStorage-only state and Vite untouched;
+  the five-language glossary copy is AI-written under the existing "(Beta)" machine-translation decision,
+  and per item 35's own note these 10 new non-English fields sit **outside** the translation-review
+  ledger, which tracks lessons only. Recorded, not silently assumed.
+- **Already-done backlog item** — no. This is item 35's explicitly-deferred second batch, and it does not
+  redo the first: none of the 12 terms from 2026-08-16 is touched.
+- **Own verification claim** — reproducible. Every number came from a command or the live DOM, the two
+  headline claims that could have been taken on faith were instead proven by injection with a restored
+  hash, and the two measurements that *failed* are written up above rather than quietly re-run.
+- **Worth naming:** the run's most useful output is a rejection. Two of three queued terms shipped; the
+  third was queued on a figure that was off by 7 and would have added a redundant entry.
+
+### Next run
+
+`npm run owner-tree -- --expect c2331799fd3ee413aca864fd82d247a35ea31b01a70a6c4e37b00f6aad9105b2`
+(`UNMOVED` at the start of this run; this run touched only tracked files, so it should still hold).
+**Item 35 is now exhausted as a reach-driven item** — post-change `npm run jargon -- all` leaves no
+candidate that is both high-reach and genuinely undefined; the remaining money-track names are ordinary
+English or lesson titles. **The glossary-count block is spent** — it is a `readiness --write` step now,
+which also unblocks whatever remains of items 64/73/77 on the same basis. **Open and unblocked:** the
+**7 stale translation lessons per language** (`npm run review-status`, 28 re-reviews — scope to one
+language per run) is the clearest next pick; the **essentials track's vocabulary gap** (33 candidates vs
+money's 5) is real but needs a bar defined before it becomes count-shaped work. Item 76 stays blocked on
+a per-language tokenizer. **Item 18 remains the entire critical path to ending Phase 0**, blocked on the
+owner creating an analytics provider account, and **item 72's owner half — a deployed URL — is
+blindspot 10.10**.
