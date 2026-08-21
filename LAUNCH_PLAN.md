@@ -290,7 +290,14 @@ colour-coded, nothing reads as important.
 The system instead is: **16px base type** with a clear hierarchy; **one accent colour** plus
 semantic success/caution/danger and a single neutral ramp; **generous whitespace** in place of
 borders and tints; **line icons** for interface chrome, with emoji reserved for content where they
-carry meaning. Per-lesson colour survives only as a thin accent, never as body text or a fill.
+carry meaning.
+
+**Per-lesson colour is not rendered at all.** The ceiling this section set was "a thin accent, never
+body text or a fill"; the rebuilt app went further and paints none of it — lesson rows draw their
+badge from the shared `ink.*`/`fill.*` tokens. `src/content/lessons.js` still authors a `color` on
+all 40 lessons that **nothing reads** (measured under backlog item 75 on 2026-08-17, re-measured
+2026-08-21), kept deliberately in case a redesign wants it; that file's header states the one thing a
+redesign must not do with it. Painting it would owe it a contrast pass — new work, not a rename.
 
 ### 3.2 The first five minutes
 
@@ -309,11 +316,22 @@ Visible streak, progress bar, per-lesson minutes estimate, opt-in daily reminder
 curiosity ("Why do recessions actually start? Lesson 5 is ready") rather than nagging. Immediate,
 kind quiz feedback with explanations.
 
-### 3.4 Visual system
+### 3.4 Theming and typography
 
-One accent colour per lesson/phase, one neutral background system, **dark mode** (finance audiences
-skew dark — **shipped**: light/dark/system in `src/lib/useAppState.js`, picker in
-`src/screens/reference/Settings.jsx`). One typeface. Colour and type come from `theme.js`.
+**§3.1.1 is the visual system**; this section is only the theming layer under it. One typeface.
+**Dark mode** (finance audiences skew dark) — **shipped**: light/dark/system in
+`src/lib/useAppState.js`, picker in `src/screens/reference/Settings.jsx`. Colour and type come from
+`theme.js`, which carries a single accent in its `ink`/`fill`/`surface` variants and no per-lesson
+palette.
+
+*Retitled 2026-08-21 (backlog item 62's F6). Until then this was a second section also called "Visual
+system", opening "One accent colour per lesson/phase" — the v1 emphasis §3.1.1 supersedes, and one
+the app has never shipped. The duplicate title was the load-bearing defect, not the wording: §-numbers
+here are cited from source (`src/theme.js`, `src/components/LessonVisual.jsx`) and by the dev-agent's
+blindspot rules, so a reference by title had two possible targets that said opposite things.
+`scripts/check-data.mjs` §32 now enforces that no two headings in this file share a title. The number
+3.4 was kept rather than the section deleted, because renumbering §3.5 would break references in
+`working_files/build_doc.js` and throughout the run log.*
 
 ### 3.5 Accessibility and languages
 

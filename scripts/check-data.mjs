@@ -3591,5 +3591,85 @@ if (keyedGroupsChecked < 4) {
   );
 }
 
+// 32. No two headings in LAUNCH_PLAN.md may share a title (backlog item 62's
+//     F6).
+//
+//     WHY THIS EXISTS. §3.1.1 and §3.4 were both called "Visual system" for
+//     the whole life of the v2 plan, and they said opposite things about
+//     per-lesson colour: §3.1.1 "one accent colour ... never as body text or a
+//     fill", §3.4 "One accent colour per lesson/phase". The wording was the
+//     visible half; the load-bearing half is that this document's section
+//     numbers are cited from source (`src/theme.js`, `src/components/
+//     LessonVisual.jsx`) and from the dev-agent's own blindspot rules (§10.1,
+//     §10.2, §10.3), so a reference made by TITLE rather than by number had
+//     two possible targets that contradicted each other. A reader resolving
+//     "see the Visual system section" could land on either.
+//
+//     WHY LAUNCH_PLAN.md AND NO OTHER DOCUMENT, measured rather than assumed:
+//     over the five normative Markdown files here (LAUNCH_PLAN, DECISIONS,
+//     CLAIMS, README, LAUNCH_READINESS) the duplicate-title count today is
+//     1 / 0 / 0 / 0 / 0, and the one is this defect. Guarding the other four
+//     would protect a property nothing threatens, while LAUNCH_PLAN.md is the
+//     only file whose §-numbers are load-bearing cross-references. AGENT_LOG.md
+//     is deliberately out of scope for the reason §31 gives: run-log entries
+//     repeat headings by design and must never be edited.
+//
+//     The comparison is on the TITLE with any leading section number stripped,
+//     because "3.1.1 Visual system" and "3.4 Visual system" are the collision —
+//     identical numbers are impossible and identical full heading lines would
+//     miss the real case.
+{
+  const PLAN = join(ROOT, "LAUNCH_PLAN.md");
+  const headings = readFileSync(PLAN, "utf8")
+    .split("\n")
+    .map((line, i) => ({ line, n: i + 1 }))
+    .filter((h) => /^#{1,6}\s+\S/.test(h.line))
+    .map((h) => ({
+      ...h,
+      title: h.line
+        .replace(/^#{1,6}\s+/, "")
+        .replace(/^[0-9]+(?:\.[0-9]+)*\.?\s*/, "")
+        .trim()
+        .toLowerCase(),
+    }));
+
+  const byTitle = new Map();
+  for (const h of headings) {
+    if (!byTitle.has(h.title)) byTitle.set(h.title, []);
+    byTitle.get(h.title).push(h);
+  }
+
+  let duplicated = 0;
+  for (const [title, hits] of byTitle) {
+    if (hits.length < 2) continue;
+    duplicated += 1;
+    fail(
+      `§32: LAUNCH_PLAN.md has ${hits.length} headings titled "${title}" (lines ` +
+        `${hits.map((h) => h.n).join(", ")}). This document's §-numbers are cited from source and ` +
+        `from the blindspot rules, so a reference by title must resolve to exactly one section. ` +
+        `Retitle one of them — and if they say different things, decide which is current rather ` +
+        `than leaving both. Do NOT renumber to fix this: other sections' numbers are referenced ` +
+        `from working_files/build_doc.js and the run log.`,
+    );
+  }
+
+  // Floor, for the same reason §29 and §31 have one: a heading regex that stops
+  // matching would report "no duplicates" — indistinguishable from a clean pass.
+  // The file holds 40 headings today; the floor is well under that so ordinary
+  // editing does not trip it, and only a broken pattern can.
+  if (headings.length < 20) {
+    fail(
+      `§32: only ${headings.length} heading(s) found in LAUNCH_PLAN.md (expected at least 20). ` +
+        `The pattern is more likely broken than the document emptied — a scan that matches nothing ` +
+        `must not read as a pass.`,
+    );
+  }
+
+  console.log(
+    `  §32 LAUNCH_PLAN.md headings: ${headings.length} heading(s), ${byTitle.size} distinct ` +
+      `title(s), ${duplicated} duplicated.`,
+  );
+}
+
 console.log(`\n${failures === 0 ? "PASS" : "FAIL"}: ${failures} failure(s), ${warnings} warning(s).`);
 process.exit(failures === 0 ? 0 : 1);

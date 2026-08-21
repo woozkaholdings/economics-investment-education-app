@@ -993,6 +993,23 @@ for the history. No open P1/P2 items.
     instead. Start by reading §29 and F11's reasoning before touching a line.
     </details>
 
+90. **[Process — filed 2026-08-21 by the run that closed item 62's F6, from a structural oddity it
+    deliberately did not fix. Low value; a good small pick, and read the constraint before starting.]
+    `LAUNCH_PLAN.md` §3.1.1 is a `###`, the same heading depth as §3.2/§3.4/§3.5, so the document
+    renders it as a *sibling* of §3.1 when its number says it is a child.** Measured this run while
+    building §32's heading scan: the file has 40 headings, and the depth-vs-number mismatch is not
+    confined to this one — **§2.5 ("Curriculum structure") is a `##` while §2.6 is a `###`**, so §2.5
+    renders as a peer of §2 itself. Both are cosmetic in Markdown and both mislead a reader skimming
+    the outline.
+    - **The constraint that makes this an item rather than a two-minute fix, and the reason F6's run
+      left it:** the obvious tidy is to renumber, and renumbering is **forbidden** here — §32's own
+      failure message says so, `working_files/build_doc.js` (read-only reference material) names
+      sections by number, and the run log is full of `§3.5`/`§2.5` citations that would silently start
+      pointing at the wrong text. **The fix is the `#` count, never the number.**
+    - **Check before assuming it is safe:** whether anything parses this file by heading depth.
+      `check-data.mjs` §26 and §32 both read it; §32 is depth-agnostic by construction (it strips the
+      number and compares titles), but §26 was not written with this in mind. Verify, do not assume.
+
 76. **[Content/Process — filed 2026-08-18 by the run that built item 69's instrument half, which is
     what turned this from an opinion into a blocked measurement.] `zh` and `ja` `Brokerage Account`
     are term-of-art shape, and nothing can currently measure whether that generalises.**
@@ -1623,7 +1640,8 @@ for the history. No open P1/P2 items.
       sentence is actually making a claim in.
     </details>
 
-62. **[Process — the 4 judgment findings item 58 measured and item 61 deliberately did not touch.
+62. **✅ ITEM FULLY CLOSED 2026-08-21 — F4, F6, F11 and F12 are all done; nothing here is open.**
+    **[Process — the 4 judgment findings item 58 measured and item 61 deliberately did not touch.
     Filed 2026-08-17 by the run that closed 61, so they stop living only inside a closed item's
     prose.] Each needs a decision, not an edit.** Full evidence with file:line is in item 58's run
     entry of 2026-08-17; F-numbers match it. **Do not batch these** — the reason 61 was cheap is that
@@ -1642,7 +1660,23 @@ for the history. No open P1/P2 items.
       script now keeps the number true while the noun stays wrong, and `npm test` passes. Item 58's
       recommendation — **make the plan match the app** — stands: nothing has asked for a ring, §3.0
       does not need one, and building one to satisfy a sentence is the tail wagging the dog.
-    - **F6.** `LAUNCH_PLAN.md` §3.1.1 and §3.4 are **both titled "Visual system"** and encode opposite
+    - **F6. ✅ DONE 2026-08-21 (scheduled dev-agent) — and with it ITEM 62 IS FULLY CLOSED.** §3.4 is
+      retitled **"Theming and typography"**, keeps its number (renumbering §3.5 would break
+      `working_files/build_doc.js` and the run log), and its three surviving unique facts — one
+      typeface, dark mode shipped, colour and type come from `theme.js` — are kept; the contradictory
+      "One accent colour per lesson/phase" is gone, with a dated note saying what it was.
+      `check-data.mjs` **§32** now fails on any two headings in `LAUNCH_PLAN.md` that share a title.
+      **Two premise corrections, both from measuring instead of reading.** (1) F6 called the two
+      sections "opposite emphases", which reads as a live disagreement between equals — they are not
+      equals: **§3.1.1 is cited from `src/theme.js:5`, `src/components/LessonVisual.jsx:33` and
+      `LAUNCH_PLAN.md:58`; §3.4 is cited by nothing** outside this log. The disposition follows from
+      that, not from taste. (2) Neither section matched the tree. **`src/content/lessons.js` DOES
+      author a per-lesson `color` on all 40 lessons** — my first regex missed it because the field is
+      a bare `color:` — but nothing reads it (item 75's run had already established this in that
+      file's header), so §3.4's directive described dead data and §3.1.1's "survives only as a thin
+      accent" overstated a ceiling the app never approached. Both now say what is true. See the run
+      log entry of this date. *Original text:* `LAUNCH_PLAN.md` §3.1.1 and §3.4 are **both titled
+      "Visual system"** and encode opposite
       emphases on per-lesson colour (§3.1.1: one accent, colour never as a fill; §3.4: one accent *per
       lesson/phase*). §3.4 reads as a v1 leftover §3.1.1 superseded. Duplicate §-titles are their own
       hazard in a document whose section numbers are load-bearing cross-references.
@@ -12259,5 +12293,136 @@ Markdown file here.
 unblocked:** item 62 (the 4 judgment findings from item 58's sweep), item 64's remaining glossary
 candidates, item 76 (blocked on a per-language tokeniser — read it before picking), and **35's second
 glossary batch** plus the **7 stale translation lessons per language** (`npm run review-status`).
+**Item 18 remains the entire critical path to ending Phase 0**, blocked on the owner creating an
+analytics provider account, and **item 72's owner half — a deployed URL — is blindspot 10.10**.
+
+## 2026-08-21 — two sections stop sharing a name, and the tree agreed with neither of them (item 62's F6, item 62 closed)
+
+**Picked:** the last open finding of backlog item 62 — `LAUNCH_PLAN.md` §3.1.1 and §3.4 both titled
+"Visual system", saying opposite things about per-lesson colour. Chosen over item 35's second glossary
+batch and the 7×4 stale translation lessons because the owner has an in-flight redesign (52 untracked
+files, `UIUX/`) and this is the document that redesign will be read against; a design directive that
+gives two contradictory answers is worth more closed than a glossary term is worth added.
+
+### Step 3.5 — re-measuring the premise, with controls
+
+**The item's textual claim held exactly.** Both headings exist, at `:283` and `:312`, both read
+"Visual system", and their bodies do conflict: §3.1.1 "**one accent colour** … Per-lesson colour
+survives only as a thin accent, never as body text or a fill" against §3.4 "One accent colour per
+lesson/phase". That is the first premise in a while that survived contact unaltered.
+
+**Its disposition did not, in two ways, and both came from measuring the tree rather than the page.**
+
+1. **The two sections are not equals, so "which is current" is not a matter of taste.** Grepping the
+   repo for citations: **§3.1.1 is referenced from `src/theme.js:5`, `src/components/LessonVisual.jsx:33`
+   and `LAUNCH_PLAN.md:58`** — live code points at it. **§3.4 is referenced by nothing** outside this
+   run log. F6 framed them as two emphases pulling against each other; one has dependents and the
+   other has none.
+2. **Neither section describes the tree, and my own first instrument said so wrongly.** A regex for
+   per-lesson colour maps (`lessonColor`, `colorByLesson`, …) returned **no matches**, which would
+   have let me report "§3.4 describes something that does not exist". It does exist:
+   `src/content/lessons.js` authors a bare **`color:` on all 40 lessons**, which my pattern was not
+   shaped to catch. *Nothing reads it* — item 75's run established that in the file's own header and
+   this run re-confirmed the header is current — so §3.4's directive describes dead data, and
+   §3.1.1's "survives only as a thin accent" overstates a ceiling the app never approached: the
+   rendered app paints **zero** per-lesson colour.
+
+**Controls, because three of the four measurements above are negatives.**
+- `--ink-accent` had to be found in `src/index.css` before the "only one accent in `theme.js`" reading
+  was believed — found at `:43`, `:99`, `:144`.
+- The per-lesson-colour scan had to fire on something that *does* have per-lesson colour: the v5
+  prototype, which §3.1.1's own history paragraph says had "a different accent colour per lesson".
+  It did — and re-running the same idea against `lessons.js` is what surfaced the `color` field my
+  first pattern had missed. **This is the control catching the instrument, not the finding.**
+- The "no `DECISIONS.md` conflict" negative was controlled by grepping the same file for terms I knew
+  were in it: `localStorage` ×10, `progress bar` ×2. The instrument works; `accent`/`visual system`/
+  `typeface` genuinely return 0, so **`DECISIONS.md` records no visual-system decision** and there is
+  nothing here to contradict.
+
+### What shipped
+
+**`LAUNCH_PLAN.md` §3.4 — retitled "Theming and typography", not deleted.** Its three surviving unique
+facts are kept (one typeface; dark mode **shipped**, with the two file references a previous run's F5
+added; colour and type come from `theme.js`). The contradictory opener is gone, replaced by a pointer
+making §3.1.1 the visual system. **The number 3.4 is kept deliberately** — deleting the section would
+renumber §3.5, which is referenced from `working_files/build_doc.js:125` (read-only reference material
+this agent must not edit) and throughout the run log. A dated italic note records what the section used
+to be, so the change does not read as if §3.4 had always said this.
+
+**`LAUNCH_PLAN.md` §3.1.1 — the other half of the same contradiction.** Its history paragraph (what the
+prototype looked like) is untouched, being a record. Its directive now states what is true: per-lesson
+colour is not rendered at all, `lessons.js` still authors a `color` on all 40 lessons that nothing
+reads, it is kept for a possible redesign, and painting it would owe it a contrast pass. That last
+clause exists so a redesign does not rediscover item 75's trap by hand.
+
+**`scripts/check-data.mjs` §32 — no two headings in `LAUNCH_PLAN.md` may share a title.**
+- Compares the **title with any leading section number stripped**, because `3.1.1 Visual system` vs
+  `3.4 Visual system` is precisely the collision — identical numbers are impossible, and comparing
+  whole heading lines would have missed the real case.
+- **Scoped to `LAUNCH_PLAN.md` by measurement, not preference.** Duplicate-title counts across the five
+  normative Markdown files are **LAUNCH_PLAN 1 / DECISIONS 0 / CLAIMS 0 / README 0 / LAUNCH_READINESS 0**,
+  and the 1 is this defect. Guarding the other four protects a property nothing threatens; `LAUNCH_PLAN.md`
+  is the only file whose §-numbers are load-bearing. `AGENT_LOG.md` is out of scope for §31's reason —
+  run-log entries repeat headings by design and must never be edited.
+- **A floor** (`< 20 headings` fails), for the reason §29 and §31 have one: a heading regex that stopped
+  matching would report "no duplicates", which is indistinguishable from a pass.
+- The failure message names the repair **and forbids the wrong one**: retitle, decide which section is
+  current if they disagree, and do *not* renumber.
+
+### Verification
+
+- `npm test` — 6/6 suites PASS, 1 warning (the pre-existing translation-coverage one, unchanged).
+  §32 reports **40 headings, 40 distinct titles, 0 duplicated**.
+- `npm run build` — clean; main bundle **`index-D69OBdYc.js`, 244.13 kB**, the identical hash the last
+  two runs recorded. `git diff --name-only -- src/` is **empty**, so nothing rendered changed and the
+  hash is evidence rather than an assumption.
+- **Three injections, each restored from a scratchpad copy — never `git checkout --` — and each
+  verified byte-identical afterwards** (`d0808763…1233`):
+  1. **The real historical defect reinstated** (`### 3.4 Theming and typography` → `### 3.4 Visual
+     system`) → FAIL naming *lines 283, 319*. This is the injection that matters: the guard fires on
+     the actual bug it was built for, not only on a synthetic one.
+  2. Every heading neutralised → the **floor** fired at 0.
+  3. A duplicate at a **different heading depth and section number** (`## 12. Accessibility and
+     languages` vs `### 3.5 Accessibility and languages`) → FAIL, proving the number-stripping
+     comparison is what does the work.
+
+### Adversarial self-check (step 5)
+
+- **Blindspot register** — clean, and measured: `npm run check-blindspot` passes all 7 assertions, and
+  **zero files under `src/` are touched**. No Dalio, no advice-adjacent phrasing, no kids framing. The
+  one thing worth naming rather than waving past: this change **adds dates** (`2026-08-17`,
+  `2026-08-21`) to `LAUNCH_PLAN.md`. That is not the §2.3 blindspot — that rule is about live-looking
+  dates in *teaching copy*, which §2.3's check covers across 26 content modules and which still passes;
+  dated annotations in normative documents are this repo's §29 convention and the alternative
+  (undated edits to a plan) is the actual hazard.
+- **`DECISIONS.md` conflict** — none, and this is a *controlled* negative rather than a glance: the file
+  records no decision about the visual system, accents, or typography (0 hits, against controls that
+  fire at 10 and 2). Nothing here touches localStorage-only state, `.js`-not-JSON content, or
+  Vite-not-Expo.
+- **Already-done backlog item** — checked specifically for undoing a predecessor, because §3.4 has been
+  edited before. **F5 corrected §3.4's dark-mode claim from "still open" to "shipped"**; that correction
+  is carried forward verbatim in substance, file references included, not reverted. **F4** edited §3.2
+  and §3.3's progress-ring wording and did not touch either Visual-system section. **Item 75** wrote
+  `lessons.js`'s `color` header, which this run cites rather than rewrites.
+- **Own verification claim** — an independent reviewer re-running only the commands above gets these
+  numbers. Every figure here came from a command: the citation counts from `grep -rn`, the 1/0/0/0/0
+  duplicate spread from a script over the five docs, the heading totals from §32's own output. The one
+  claim not independently re-runnable is the bundle-hash comparison, which relies on the previous two
+  entries having recorded `index-D69OBdYc.js` — they did, verbatim.
+- **One thing deliberately NOT done.** §3.1.1 is numbered `###`, the same depth as §3.2/§3.4/§3.5, so it
+  reads as a sibling of §3.1 rather than a child. That is a real structural oddity, and fixing it means
+  renumbering — which is exactly what §32's failure message forbids and what `working_files/build_doc.js`
+  would contradict. Left alone on purpose; filed as item 90.
+
+### Next run
+
+`npm run owner-tree -- --expect c2331799fd3ee413aca864fd82d247a35ea31b01a70a6c4e37b00f6aad9105b2`
+(read `UNMOVED` at the start of this run; the deviation set is the owner's 52 untracked files, and this
+run added nothing to it). **Open and unblocked:** **item 35's second glossary batch — its
+`LAUNCH_PLAN.md` block is now LIFTED** (the tree is clean and `npm test` green), but re-measure with
+`npm run jargon -- money` first, since the essentials split moved the tree its reach numbers were
+computed against; the **7 stale translation lessons per language** (`npm run review-status` — lessons
+1, 4, 30, 33, 37, 39, 40 × es/ko/zh/ja, 28 re-reviews, so scope it to one language per run); item 90
+(§3.1.1's heading depth); item 76 (still blocked on a per-language tokeniser — read it before picking).
 **Item 18 remains the entire critical path to ending Phase 0**, blocked on the owner creating an
 analytics provider account, and **item 72's owner half — a deployed URL — is blindspot 10.10**.
