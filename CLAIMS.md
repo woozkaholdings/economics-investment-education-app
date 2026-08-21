@@ -11,7 +11,7 @@
 
 Created 2026-08-16 (backlog item 30). This is the artifact §9.1 asks for and the one §9.3's monthly
 audit question 4 ("which claim is past its check date?") reads. It is deliberately separate from its
-two neighbours, which answer different questions:
+two neighbors, which answer different questions:
 
 | File | Answers |
 |---|---|
@@ -52,7 +52,7 @@ would have to change if the claim is refuted.
 | A3 | Five languages under "(Beta)" are worth their maintenance cost. (`locales/`, five-way parity enforced by `npm test`.) | Non-English sessions under 15% of total once measurable; **or** translation review debt grows for two consecutive months. | 2026-09-05 | Partly — debt half only | Open; debt half checkable now |
 | A4 | Parent-facing kids content costs us little engagement versus a child-facing build. (`screens/reference/`, §10.3.) | Kids-guide views under 2% of sessions once measurable. | 2026-09-05 | No — item 18 | Open, unmeasured. **Not a free choice** — §10.3 is a COPPA/store-classification decision reopened 2026-08-04 and owner-held; if this claim is refuted the response is an owner decision, not a unilateral UI change. |
 | A5 | The Leitner spaced-review queue earns its complexity. (`lib/review.js`, `screens/Practice.jsx`.) | Under 20% of users who finish ≥3 lessons open Review within a week. | 2026-09-05 | No — item 18 | Open, unmeasured |
-| A6 | The catalogue is now large enough for Phase 0. | §4.3's content clauses unmet: under 40 lessons or under ~2 hours. | 2026-10-03 | **Yes** | **Holding** — 40 lessons / 145 min, both clauses met (`LAUNCH_READINESS.md`) |
+| A6 | The catalog is now large enough for Phase 0. | §4.3's content clauses unmet: under 40 lessons or under ~2 hours. | 2026-10-03 | **Yes** | **Holding** — 40 lessons / 145 min, both clauses met (`LAUNCH_READINESS.md`) |
 | A7 | Interactive content — a mechanism the reader drives, not just watches — is the §3.0.4 differentiator a chat window cannot copy. (`components/PolicySim.jsx`, `content/policyScenarios.js`.) | Under 35% of sessions that open the hosting lesson fire at least one `sim_lever_chosen`; **or** learners who move a lever complete that lesson at no higher a rate than those who don't. | 2026-09-05 | No — item 18 | Open, unmeasured; the event exists as of 2026-08-16 |
 
 **A2 carries a measurement flaw worth stating rather than hiding:** the pre-split single-chain baseline
@@ -143,7 +143,7 @@ already sitting in `AGENT_LOG.md`.
 2. The **§16 coverage tripwire** (`scripts/check-data.mjs`): per-language cross-reference match counts
    printed on every `npm test`, with a warning when a language falls below 20% of English's. Added
    after D2, and verified to fire on the historical blind spot.
-3. **This file**, and `scripts/check-claims.mjs`'s past-due warning — the generalisation of both. D1
+3. **This file**, and `scripts/check-claims.mjs`'s past-due warning — the generalization of both. D1
    and D2 are the same failure at different altitudes: a claim checked with an instrument that cannot
    see the failure it is looking for.
 4. **Step 3.5 of the dev-agent task — "re-measure the item's premise, with a control, before you

@@ -141,7 +141,7 @@ function checkNonEmptyString(value, path) {
 // lessons take *longer* than stated, which understates rather than overstates.
 //
 // WHAT WAS ACTUALLY WRONG is the thing the item told the run to decide, and it
-// is a modelling error, not a data error: the old count read section *bodies*
+// is a modeling error, not a data error: the old count read section *bodies*
 // plus takeaway and thinkAbout, and nothing else. It omitted the lesson title
 // and subtitle, every section heading, and **the entire end-of-lesson check** —
 // its question, its four options, and the explanation the reader is shown after
@@ -262,7 +262,7 @@ const estimateMinutes = (lesson, content) =>
   );
   if (totalWords < 8_000) {
     fail(
-      `§2 reading model: the whole catalogue counts ${totalWords} words (expect ≥8,000). The model, ` +
+      `§2 reading model: the whole catalog counts ${totalWords} words (expect ≥8,000). The model, ` +
         `not the content, is what looks broken — check that lessons.js/lessonContent.js/quizData.js ` +
         `still expose the fields lessonWords() reads before trusting any minutes figure.`,
     );
@@ -862,7 +862,7 @@ if (keyedGroupsChecked < 4) {
 //      screen sources. The helpers above prove the numbers are computed
 //      correctly; this proves the screens actually pass them — the exact gap
 //      that existed before (both events fired, neither carried its §9.2
-//      field). Source-text checks, not behavioural ones: these files render
+//      field). Source-text checks, not behavioral ones: these files render
 //      React and cannot be imported here.
 {
   const reader = readFileSync(new URL("../src/screens/LessonReader.jsx", import.meta.url), "utf8");
@@ -1672,7 +1672,7 @@ if (keyedGroupsChecked < 4) {
   for (const bad of ["", "#", "#/", "#/nope", `#/lesson/${maxId + 1}`, "#/lesson/abc", "#/lesson/1e2", "#/lesson/", "#/lesson/1/2", "#/glossary"]) {
     const back = resolveRoute(bad, lessonPath, () => true);
     if (back.tab !== "learn" || back.reading !== null) {
-      fail(`deepLink: unrecognised hash ${JSON.stringify(bad)} resolved to ${JSON.stringify(back)}, expected the lesson path`);
+      fail(`deepLink: unrecognized hash ${JSON.stringify(bad)} resolved to ${JSON.stringify(back)}, expected the lesson path`);
     }
   }
 
@@ -1985,7 +1985,7 @@ if (keyedGroupsChecked < 4) {
 // 22. Every chart primitive in src/components/charts.jsx exposes a text
 //     alternative, and every call site supplies one (backlog item 41).
 //
-//     The bug this generalises from: `Bar` was the one primitive that took no
+//     The bug this generalizes from: `Bar` was the one primitive that took no
 //     `description`, so lesson 37's Fed balance-sheet figure was a stack of
 //     unlabelled <div>s — the only lesson visual in the app with no text
 //     alternative. Six of seven primitives already had the property; nothing
@@ -2092,7 +2092,7 @@ if (keyedGroupsChecked < 4) {
               // descriptions existed for those curves, relying on the fallback
               // stopped being a design choice and became a silent downgrade to
               // a four-word name. The fallback stays in the component as a
-              // defence against an unlabelled figure; it is no longer a licence
+              // defense against an unlabelled figure; it is no longer a license
               // for a call site. Verified: dropping `description=` here passed
               // under the old rule.
               ? `its \`aria-label\` would fall back to ${viaFallback.map((p) => `\`${p}\``).join(" / ")}, which names the figure without describing it (backlog item 42)`
@@ -2766,7 +2766,7 @@ if (keyedGroupsChecked < 4) {
     // means the token pattern broke, not that the design system shrank.
     if (Object.keys(tokens).length < 20) {
       fail(
-        `§28: parsed only ${Object.keys(tokens).length} colour tokens from the ${label} palette ` +
+        `§28: parsed only ${Object.keys(tokens).length} color tokens from the ${label} palette ` +
           `(expected at least 20) — the token pattern is probably broken rather than the palette ` +
           `having been emptied.`,
       );
@@ -2794,7 +2794,7 @@ if (keyedGroupsChecked < 4) {
         `§28: the system-dark (@media) and explicit-dark ([data-theme="dark"]) palettes in ` +
           `src/index.css disagree on ${drifted.length} token(s): ` +
           drifted.map((k) => `${k} (${darkMedia[k] ?? "absent"} vs ${darkExplicit[k] ?? "absent"})`).join(", ") +
-          `. A user who picks "dark" explicitly would see different colours from one who inherits it ` +
+          `. A user who picks "dark" explicitly would see different colors from one who inherits it ` +
           `from the OS. The file's header comment promises these can never drift; keep them identical.`,
       );
     }
@@ -2873,7 +2873,7 @@ if (keyedGroupsChecked < 4) {
       } else if (Math.abs(Number(m[1]) - computed) >= 0.005) {
         fail(
           `§28: src/index.css's CONTRAST note states ${label} as ${m[1]}:1, but the palette now ` +
-            `computes ${computed.toFixed(2)}:1. Update the note in the change that moved the colour.`,
+            `computes ${computed.toFixed(2)}:1. Update the note in the change that moved the color.`,
         );
       }
     }
@@ -2896,7 +2896,7 @@ if (keyedGroupsChecked < 4) {
   // so item 63 correctly refused to assert anything until the uses were
   // classified. They now are — all four rendered uses of `graph.neutral`:
   //
-  //   MEANINGFUL (colour is the only thing distinguishing the object)
+  //   MEANINGFUL (color is the only thing distinguishing the object)
   //   • charts.jsx GrowthCurve via LessonVisual.jsx:107 — the compounding
   //     diagram's two series are both plain 2.5px polylines. Nothing but hue
   //     separates them, so the neutral stroke must be perceivable. This is the
@@ -2987,7 +2987,7 @@ if (keyedGroupsChecked < 4) {
             } else if (Math.abs(r - exempt[3]) >= 0.005) {
               fail(
                 `§28b: ${label} ${g} (${palette[g]}) on ${s} (${palette[s]}) is ${r.toFixed(2)}:1, but ` +
-                  `GRAPH_EXEMPT records it as ${exempt[3]}:1. The colour moved without the ` +
+                  `GRAPH_EXEMPT records it as ${exempt[3]}:1. The color moved without the ` +
                   `exemption being revisited; re-measure and update the entry, or fix the pair.`,
               );
             }
@@ -2999,7 +2999,7 @@ if (keyedGroupsChecked < 4) {
               `§28b: ${label} palette fails WCAG 1.4.11 — ${g} (${palette[g]}) on ${s} ` +
                 `(${palette[s]}) is ${r.toFixed(2)}:1, below ${GRAPH_MIN}:1. theme.js says graph ` +
                 `tokens are "chart strokes and dots, where 3:1 is the bar", and a series stroke ` +
-                `that only colour distinguishes is a graphical object required to understand the ` +
+                `that only color distinguishes is a graphical object required to understand the ` +
                 `content. Darken the token, or — if the uses this token has today are all ` +
                 `decorative — say so in GRAPH_EXEMPT with its measured ratio and its reason.`,
             );
@@ -3143,7 +3143,7 @@ if (keyedGroupsChecked < 4) {
           // skips lessons.
           fail(
             `§29: track "${key}" ids are not contiguous (${r.ids.join(", ")}), so "${r.lo}-${r.hi}" ` +
-              `is not a description of it. DECISIONS.md states each track as a range; a catalogue ` +
+              `is not a description of it. DECISIONS.md states each track as a range; a catalog ` +
               `with a hole in it needs the entry reworded to a list, and §29's CLAIMS table with it.`,
           );
         }
@@ -3596,7 +3596,7 @@ if (keyedGroupsChecked < 4) {
 //
 //     WHY THIS EXISTS. §3.1.1 and §3.4 were both called "Visual system" for
 //     the whole life of the v2 plan, and they said opposite things about
-//     per-lesson colour: §3.1.1 "one accent colour ... never as body text or a
+//     per-lesson color: §3.1.1 "one accent color ... never as body text or a
 //     fill", §3.4 "One accent colour per lesson/phase". The wording was the
 //     visible half; the load-bearing half is that this document's section
 //     numbers are cited from source (`src/theme.js`, `src/components/

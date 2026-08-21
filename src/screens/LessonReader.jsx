@@ -6,7 +6,7 @@
 //
 // Layout follows the clarity standard — one idea per section, generous
 // measure, and the takeaway and reflection prompt visually distinct from the
-// body without being another stack of coloured boxes.
+// body without being another stack of colored boxes.
 // ═══════════════════════════════════════════════════════════════════════════
 
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -32,7 +32,7 @@ import { fill, ink, line, radius, shadow, space, surface } from "../theme.js";
 // one reader could read ~97 kB: en 97, es 90, ko 102, zh 79, ja 112. Four
 // fifths of the app's largest asset was text that device would never show.
 //
-// Vite needs literal specifiers to statically analyse a dynamic import, so
+// Vite needs literal specifiers to statically analyze a dynamic import, so
 // this is a flat map rather than a computed path — the ten entries are what
 // make ten separate chunks instead of one bundle of everything.
 const CONTENT_LOADERS = {
@@ -147,17 +147,17 @@ export default function LessonReader({ t, lang, lessons, index, completedLessons
   // read out of it: the picker has to trigger a fetch, where before it was a
   // pure re-render.
   useEffect(() => {
-    let cancelled = false;
+    let canceled = false;
     setContent(null);
     setQuizText(null);
     CONTENT_LOADERS[`${lesson.track}:${lang}`]().then((mod) => {
-      if (!cancelled) setContent(mod.lessonContent[lesson.id]);
+      if (!canceled) setContent(mod.lessonContent[lesson.id]);
     });
     QUIZ_TEXT_LOADERS[lang]().then((mod) => {
-      if (!cancelled) setQuizText(mod.quizText);
+      if (!canceled) setQuizText(mod.quizText);
     });
     return () => {
-      cancelled = true;
+      canceled = true;
     };
   }, [lesson.id, lesson.track, lang]);
 
@@ -255,7 +255,7 @@ export default function LessonReader({ t, lang, lessons, index, completedLessons
 
       {/* Title block — the lesson's own emoji is content, so it stays. */}
       <div style={{ padding: `${space["3"]}px 0 ${space["5"]}px`, borderBottom: `1px solid ${line.hairline}`, marginBottom: space["5"] }}>
-        {/* Position WITHIN the track, not the raw id. The catalogue is three
+        {/* Position WITHIN the track, not the raw id. The catalog is three
             independent curricula, so a global "Lesson 29 of 40" numbered a
             sequence nobody reads in that order — and after the 2026-08-18
             reordering it would open the app on "Lesson 29 of 40". Ids stay

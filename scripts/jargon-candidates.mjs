@@ -17,7 +17,7 @@
 // names only, and no locale mode is registered there because none can emit a
 // MEASURED line — the control fails first, and the line is printed after the
 // control block precisely so a broken instrument never hands anyone a number.
-// If a future run builds a real per-language tokeniser, register the mode then.
+// If a future run builds a real per-language tokenizer, register the mode then.
 //
 // §17b proves every use of a *glossary term* in all 40 lessons is either
 // chipped or listed in `deliberatelyUnlinked`. Its own scope note says what
@@ -27,7 +27,7 @@
 // 60 is that residual. This script is the instrument for it.
 //
 // WHAT IT DOES. Extracts candidate terms from a track's English lesson text
-// three ways — acronyms, capitalised multi-word phrases used mid-sentence,
+// three ways — acronyms, capitalized multi-word phrases used mid-sentence,
 // and an n-gram sweep ending on a finance head noun — then subtracts every
 // surface form already in glossary.js and ranks what is left by how many
 // lessons use it. Reach across lessons is the signal that matters: a term used
@@ -149,7 +149,7 @@ for (const [key, entry] of Object.entries(glossary)) {
   add(key);
   add(key.replace(/([a-z])([A-Z])/g, "$1 $2"));
   if (entry.en?.s) add(entry.en.s);
-  // The localised short name, so a non-`en` run subtracts the terms that
+  // The localized short name, so a non-`en` run subtracts the terms that
   // corpus actually uses. Measured 2026-08-18: on ko/zh/ja this changes
   // nothing at all (5 control either way), because the extractor never emits
   // a token in those scripts for it to subtract — the blindness is upstream,
@@ -215,16 +215,16 @@ const STANDALONE = /^(deductible|premium|beneficiary|annuity|escrow|dividends?|e
 // of a gloss, so `National Bureau of Economic Research (NBER)` reported exactly
 // what a bare `NBER` did. That is not a cosmetic complaint: item 67 expanded
 // NBER in place, the reader's problem was solved, and the glossary report went
-// **UP** — 56 → 57, because the expansion also handed the capitalised-phrase
+// **UP** — 56 → 57, because the expansion also handed the capitalized-phrase
 // rule two new fragments (`National Bureau`, `Economic Research`) while the
 // acronym stayed listed. An instrument whose number rises when the text
 // improves is worse than a noisy one: it trains a run to distrust its own fix.
 //
-// A gloss is recognised only when the expansion **spells the acronym** — the
+// A gloss is recognized only when the expansion **spells the acronym** — the
 // initials of its words, in order, allowing lowercase connectors ("of", "and")
 // between them — and sits **adjacent** to it, either side of the parenthesis.
 // Initial-matching is the whole precision story: it is what separates a real
-// expansion from any capitalised phrase that happens to precede a bracket.
+// expansion from any capitalized phrase that happens to precede a bracket.
 //
 // DELIBERATELY NOT DETECTED: item 64's apposition shape, `the annual rate —
 // the APR — on your credit card`. Measured, not assumed: `annual rate` spells
@@ -235,7 +235,7 @@ const STANDALONE = /^(deductible|premium|beneficiary|annuity|escrow|dividends?|e
 // also not in any report today — it occurs once, below the lesson corpus's
 // reach threshold — so the honest scope here is the verifiable half.
 //
-// Applies to the acronym and capitalised-phrase rules ONLY, not to the
+// Applies to the acronym and capitalized-phrase rules ONLY, not to the
 // head-noun n-gram sweep below: `Individual Retirement Account (IRA)` really
 // does use the phrase "retirement account", and that phrase's reach is real
 // vocabulary evidence, not an artefact of the gloss.
@@ -263,7 +263,7 @@ const glossSpans = (text) => {
 };
 const inGloss = (spans, i) => spans.some(([a, b]) => i >= a && i < b);
 
-const hits = new Map(); // normalised -> { display, lessons: Set, count, glossed }
+const hits = new Map(); // normalized -> { display, lessons: Set, count, glossed }
 const record = (term, id, glossed) => {
   const n = norm(term);
   if (!n || n.length < 3) return;
@@ -469,14 +469,14 @@ const controlCorpus = (() => {
 //      and `record()`'s `length < 3` guard drops it. Nothing in these scripts
 //      can even be REPRESENTED downstream. (It also mangles Latin diacritics:
 //      "Recesión" -> "recesi n", "Interés Compuesto" -> "inter s compuesto".)
-//   2. The acronym and capitalised-phrase rules key on [A-Z]/[a-z]; ko/zh/ja
+//   2. The acronym and capitalized-phrase rules key on [A-Z]/[a-z]; ko/zh/ja
 //      have no letter case, so both rules are structurally inert.
 //   3. The n-gram sweep splits on /\s+/ and ends on an English HEADS noun; zh
 //      and ja do not put spaces between words at all.
 //
 // Note the direction: the control PASSES hardest where the instrument is most
-// blind (ko/zh/ja, zero real tokenisation) and FAILS on `es`, the one locale
-// where it does emit real words ("el capital") — because Spanish localises the
+// blind (ko/zh/ja, zero real tokenization) and FAILS on `es`, the one locale
+// where it does emit real words ("el capital") — because Spanish localizes the
 // acronyms (PIB, IPC) and so drops the Latin residue below the threshold. The
 // old control is ANTI-CORRELATED with whether the instrument works.
 //
@@ -493,29 +493,29 @@ const SCRIPT = {
 };
 if (locale !== "en") {
   const { name, re } = SCRIPT[locale];
-  // Positive control: the glossary's OWN localised short names are known to be
+  // Positive control: the glossary's OWN localized short names are known to be
   // written in this script. If the detector cannot find it there, the detector
   // is broken and the negative below means nothing.
-  const localised = Object.values(glossary)
+  const localized = Object.values(glossary)
     .map((e) => e[locale]?.s)
     .filter(Boolean);
-  const detectorHits = localised.filter((s) => re.test(s)).length;
+  const detectorHits = localized.filter((s) => re.test(s)).length;
   if (detectorHits === 0) {
     problems.push(
-      `CONTROL FAILED (detector): the ${name} pattern matched none of the ${localised.length} ` +
-        `localised glossary names for "${locale}". The detector itself is broken, so the extraction ` +
+      `CONTROL FAILED (detector): the ${name} pattern matched none of the ${localized.length} ` +
+        `localized glossary names for "${locale}". The detector itself is broken, so the extraction ` +
         `result below is not evidence of anything. Fix this before reading the number.`,
     );
   } else {
     const inScript = [...known, ...candidates].filter((r) => re.test(r.display));
     if (inScript.length === 0) {
       problems.push(
-        `CONTROL FAILED (extractor): ${detectorHits}/${localised.length} localised glossary names are ` +
+        `CONTROL FAILED (extractor): ${detectorHits}/${localized.length} localized glossary names are ` +
           `detectably ${name}, so the detector works — but of the ${known.length + candidates.length} ` +
           `terms the extractor produced for "${locale}", ZERO contain a single ${name} character. ` +
           `Every one is a Latin acronym left untranslated in the prose. This run measured nothing ` +
           `about ${locale} jargon; the near-empty candidate list is blindness, not cleanliness. ` +
-          `See THE SCRIPT CONTROL above for the three causes — a per-language tokeniser is a real ` +
+          `See THE SCRIPT CONTROL above for the three causes — a per-language tokenizer is a real ` +
           `piece of work, NOT a flag on this script.`,
       );
     }
@@ -526,7 +526,7 @@ if (controlCorpus.size < 5) {
   problems.push(
     `CONTROL FAILED: across ALL ${lessons.length} lessons the extractor re-found only ` +
       `${controlCorpus.size} of the ${Object.keys(glossary).length} glossary terms (expected >= 5). ` +
-      `That is the whole catalogue, not one track, so this is the extractor being broken rather than ` +
+      `That is the whole catalog, not one track, so this is the extractor being broken rather than ` +
       `a thin corpus — the candidate list above is meaningless rather than empty.`,
   );
 } else if (known.length === 0 && docs.length > 0) {
@@ -542,8 +542,8 @@ if (controlCorpus.size < 5) {
 //
 // Two earlier drafts of this control were thrown away, and both failures are
 // the point. (1) `glossaryForms.has("index fund")` fired when a space-dropping
-// normaliser was injected — but that edit is harmless here (both sides
-// normalise identically, so subtraction still works), and a control that fires
+// normalizer was injected — but that edit is harmless here (both sides
+// normalize identically, so subtraction still works), and a control that fires
 // on a harmless edit teaches a future run to delete it. (2) Pinning "Index
 // Fund"/"Emergency Fund" on the bucket did not fire on item 57's *real* bug
 // (`entry.s` for `entry.en.s`), because glossary keys are already spaced
@@ -651,7 +651,7 @@ scanDoc(PROBE, (term, glossed) => {
 });
 // `sec` is the glossed acronym; `exchange commission` is a fragment of its own
 // expansion (the noise item 67's fix created); `fico` is a bare acronym and
-// `federal reserve` a capitalised phrase, both outside the gloss and both of
+// `federal reserve` a capitalized phrase, both outside the gloss and both of
 // which MUST survive — they are the half that proves the rule is not a mute.
 for (const [n, wantGlossed] of [
   ["sec", true],

@@ -2,7 +2,7 @@
 // ICONS
 //
 // Line icons for interface chrome. The prototypes used emoji as UI controls,
-// which renders differently on every platform, cannot inherit colour, and
+// which renders differently on every platform, cannot inherit color, and
 // reads to a screen reader as whatever the vendor named that glyph.
 //
 // These inherit `currentColor` and size from the surrounding text, so an icon

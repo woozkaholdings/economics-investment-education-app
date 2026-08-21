@@ -67,7 +67,7 @@ export function Card({ padded = true, style, children, ...rest }) {
 
 // ── Note ──────────────────────────────────────────────────────────────────
 // A tinted aside. Deliberately restrained: a left rule and a wash, not a
-// fully-boxed colour block, so several in a row don't turn into stripes.
+// fully-boxed color block, so several in a row don't turn into stripes.
 const NOTE_TONES = {
   neutral: { wash: surface.sunken, rule: line.strong, label: ink.muted },
   accent: { wash: surface.accentWash, rule: fill.accent, label: ink.accent },
@@ -138,7 +138,7 @@ export const Button = forwardRef(function Button(
 });
 
 // ── PageTitle ─────────────────────────────────────────────────────────────
-// Screens open with a plain title, not a coloured banner.
+// Screens open with a plain title, not a colored banner.
 export function PageTitle({ title, subtitle, trailing }) {
   return (
     <div style={{ display: "flex", alignItems: "flex-start", gap: space["3"], marginBottom: space["4"] }}>
@@ -229,7 +229,7 @@ export function Disclaimer({ text, style }) {
 // branding. Each records which screen it came from and what had to change,
 // because "we copied Quizlet" is not a design rationale a later run can check.
 //
-// Nothing here introduces a colour. Every surface, ink and fill below is an
+// Nothing here introduces a color. Every surface, ink and fill below is an
 // existing token, so `check-data.mjs` §28's contrast assertions still cover
 // this code without needing new pairs.
 // ═══════════════════════════════════════════════════════════════════════════

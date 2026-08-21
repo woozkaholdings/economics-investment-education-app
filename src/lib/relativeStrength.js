@@ -3,7 +3,7 @@
 //
 // Implements the owner's own measure (`WJ_Sector_Comparison`, supplied
 // 2026-08-04 as a thinkScript study for daily candles). This replaced an
-// explicitly-labelled placeholder; see DECISIONS.md.
+// explicitly-labeled placeholder; see DECISIONS.md.
 //
 // THE MEASURE
 //   For each of three lookbacks — 10, 30 and 60 daily bars — take the asset's

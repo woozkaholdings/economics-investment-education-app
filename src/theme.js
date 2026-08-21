@@ -7,10 +7,10 @@
 //   1. TYPE IS BIG. Body copy is 1rem (16px), not 12px. An education app that
 //      is tiring to read has already failed, whatever else it does.
 //   2. ONE ACCENT. Blue means "interactive or current". Green/amber/red mean
-//      only success/caution/error. When everything is colour-coded, nothing
+//      only success/caution/error. When everything is color-coded, nothing
 //      reads as important.
 //   3. SPACE, NOT BORDERS. Separation comes from whitespace and one hairline,
-//      not from boxing every paragraph in a coloured card.
+//      not from boxing every paragraph in a colored card.
 //
 // COLOUR lives in `index.css` as custom properties, not as hex literals here.
 // That is what lets the app follow the system light/dark setting and still be
@@ -108,7 +108,7 @@ export const radius = { sm: 8, md: 12, lg: 16, xl: 20, full: 999 };
 
 export const APP_MAX_WIDTH = 460;
 
-// ── User-selectable colour scheme ─────────────────────────────────────────
+// ── User-selectable color scheme ─────────────────────────────────────────
 // "system" follows the OS; the other two override it. See `lib/useAppState.js`
 // for how the choice is applied, and `index.css` for how it resolves.
 export const THEME_MODES = ["system", "light", "dark"];

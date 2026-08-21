@@ -15,7 +15,7 @@ import { Card, Disclaimer, Text } from "../../components/ui.jsx";
 
 // A row of equal-width choices sharing radio semantics.
 //
-// Keyboard behaviour follows the ARIA APG radiogroup pattern: the whole group
+// Keyboard behavior follows the ARIA APG radiogroup pattern: the whole group
 // is ONE tab stop (roving tabindex — only the checked option is tabbable) and
 // the arrow keys move between options, selecting as they go. Plain focusable
 // buttons would instead make every option its own tab stop, so a keyboard user

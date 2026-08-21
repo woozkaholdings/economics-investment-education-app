@@ -132,8 +132,8 @@ Add a new entry when a run makes a choice future work should be able to look up 
   the call sites actually pass them — the previous gap was that both events fired but neither
   carried its §9.2 field, which reads as "done" in a grep and isn't.
 - **`quiz_answered` is beyond §9.2's minimum, deliberately.** §9.2 names a *minimum* set; keeping
-  per-question granularity costs one extra event name and is what the Leitner queue's behaviour
-  would have to be analysed against.
+  per-question granularity costs one extra event name and is what the Leitner queue's behavior
+  would have to be analyzed against.
 - **`sim_lever_chosen` is the second such event, added 2026-08-16, and it exists to make a claim
   falsifiable rather than to fill a gap.** The policy simulator (backlog item 34) shipped with no
   instrumentation, which left §3.0.4's "interactive content is the differentiator" bet with no
@@ -176,7 +176,7 @@ Add a new entry when a run makes a choice future work should be able to look up 
   the reworded document before updating the generator.
 - **Revisit when:** someone actually wants a ring for the completion moment. That is a design request,
   and it should arrive as one — at which point `npm test` will fail on this sentence and the plan gets
-  updated in the same change, which is the intended behaviour.
+  updated in the same change, which is the intended behavior.
 
 ### How a lesson's `minutes` estimate is computed — 200 wpm over everything on screen
 
@@ -188,7 +188,7 @@ Add a new entry when a run makes a choice future work should be able to look up 
   title, subtitle, each section heading and body, takeaway, thinkAbout, and — new as of this
   decision — the end-of-lesson check's question, all four options, and the explanation shown after
   answering. `check-data.mjs` §2 recomputes it on every `npm test` and fails on drift.
-- **Why the rate is 200 wpm.** Adult silent reading of English non-fiction centres around ~238 wpm
+- **Why the rate is 200 wpm.** Adult silent reading of English non-fiction centers around ~238 wpm
   in the meta-analytic literature (Brysbaert 2019, ~190 studies). 200 is deliberately below that:
   the material is unfamiliar to the reader by construction, and §0's audience spans kids to adults,
   so the median reader here is slower than the average adult. It is not as low as the 100–150 wpm
@@ -197,7 +197,7 @@ Add a new entry when a run makes a choice future work should be able to look up 
   the rate is applied to.
 - **Why the check counts.** It is rendered in the same pushed view as the lesson, with no separate
   navigation, and `LessonReader.jsx` calls it the thing that "makes the reading stick." Excluding it
-  was not a modelling choice, it was an oversight: with the headings and title it came to 5,807 of
+  was not a modeling choice, it was an oversight: with the headings and title it came to 5,807 of
   29,385 words, so **every estimate in the app was ~20% short**.
 - **What is deliberately not counted:** time spent *thinking* before answering a check question
   (reading it is counted; deliberating is not — that would be a second constant with no measurement
@@ -206,7 +206,7 @@ Add a new entry when a run makes a choice future work should be able to look up 
   is a floor on a curious reader's time rather than a promise about one.
 - **Why one number for five languages:** the field is a single integer shown in every locale, and
   whitespace word-counting is meaningless for zh/ja. English is the reference.
-- **What it cost:** 23 of 40 lessons moved, all upward, and the catalogue total went **120 → 144
+- **What it cost:** 23 of 40 lessons moved, all upward, and the catalog total went **120 → 144
   minutes**. That is a Phase-0 gate metric moving because the metadata behind it was corrected — §4.3
   is *further* clear, not reopened. The deeper point: because the field is now pinned to the content
   by a check, §4.3's content-duration clause is effectively measured from content volume rather than
@@ -421,7 +421,7 @@ Add a new entry when a run makes a choice future work should be able to look up 
   ledger's state. Live browser check: opening money lesson 1 fetches only `lessonContent.money.en`; <!-- track-ok: pre-split track label; see the 2026-08-20 Update at the end of this entry -->
   switching to Korean then fetches only `money.ko`; opening economy lesson 36 fetches only
   `economy.ko`.
-- **One real behaviour change:** switching language while reading now triggers a fetch rather than a
+- **One real behavior change:** switching language while reading now triggers a fetch rather than a
   pure re-render, so `lang` joined the loader effect's dependencies.
 - **Same axis applied to quiz text 2026-08-17 (item 48)**, removing a 140.88 kB shared quiz chunk that
   every reader downloaded regardless of language. Nothing forced it — it was well under the threshold;
@@ -487,10 +487,10 @@ Add a new entry when a run makes a choice future work should be able to look up 
   lesson content (three runs independently declined, citing unreviewed-LLM-translation risk in a
   language `check-blindspot.mjs` didn't scan) was reversed in practice — thirteen consecutive
   lesson-add runs each translated its own new lesson at authoring time, and by 2026-08-09 ~168,000
-  characters across es/ko/zh/ja had shipped as unreviewed machine translation, "(Beta)"-labelled, with
+  characters across es/ko/zh/ja had shipped as unreviewed machine translation, "(Beta)"-labeled, with
   no automated guard scanning the non-English text at all.
 - **What was decided:** option (a) of the three the weekly review laid out — accept the current state
-  and ship as-is under "(Beta)" labelling, rather than (b) commissioning native-speaker review before
+  and ship as-is under "(Beta)" labeling, rather than (b) commissioning native-speaker review before
   trusting it, or (c) cutting the four Beta languages from Phase 0.
 - **What ships alongside the decision, so "accept for now" doesn't repeat the same silent drift:**
   1. `scripts/check-blindspot.mjs`'s §10.1 advice-adjacency patterns were already extended to
@@ -574,7 +574,7 @@ Add a new entry when a run makes a choice future work should be able to look up 
      repair is a NEW dated Update plus a reclassification in §29, never an edit to what an earlier run
      recorded as true on its date. -->
 
-- **What was decided:** the lesson catalogue is two independent curricula, not one chain.
+- **What was decided:** the lesson catalog is two independent curricula, not one chain.
   `TRACKS` in `src/content/lessons.js` defines them in display order — **`money`** ("Your Money",
   lessons 13-26: budgeting, taxes, saving, insurance, investing) followed by **`economy`**
   ("How the Economy Works", lessons 1-12: transactions through the debt cycles, QE/QT, indicators).

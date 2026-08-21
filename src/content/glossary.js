@@ -24,7 +24,7 @@
 // advice" stays a judgement call.
 //
 // Translation status: es/ko/zh/ja here are AI-written under the "(Beta)"
-// labelling decision (DECISIONS.md, "Machine-translated lesson content").
+// labeling decision (DECISIONS.md, "Machine-translated lesson content").
 // scripts/translation-review-ledger.json tracks LESSON content only — glossary
 // entries are outside it, which is recorded rather than silently assumed.
 // ═══════════════════════════════════════════════════════════════════════════

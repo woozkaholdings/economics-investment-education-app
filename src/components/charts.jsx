@@ -5,9 +5,9 @@
 // (LAUNCH_PLAN §3.0.4): the point is that a reader *sees* a curve invert
 // rather than reading a description of one.
 //
-// Colour discipline: strokes, fills and dots use `graph` tokens (3:1 is enough
+// Color discipline: strokes, fills and dots use `graph` tokens (3:1 is enough
 // for non-text graphics); every label uses an `ink` token (4.5:1). Both resolve
-// through CSS custom properties, so the charts re-colour with the active light
+// through CSS custom properties, so the charts re-color with the active light
 // or dark scheme without any JS.
 // ═══════════════════════════════════════════════════════════════════════════
 

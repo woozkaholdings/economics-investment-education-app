@@ -28,7 +28,7 @@
 //   §2.3 — nothing may read as live market data. Every figure below is a
 //     teaching example lifted from its own lesson's body text, not a reading.
 //   §10.1 — no advice adjacency. These illustrate arithmetic and a documented
-//     behavioural finding. The 6% in lesson 3 is that lesson's own teaching
+//     behavioral finding. The 6% in lesson 3 is that lesson's own teaching
 //     rate for demonstrating how compounding differs from simple interest; it
 //     is not a return anyone should expect, which is what `illustrationNote`
 //     says under every one of these figures.
@@ -40,7 +40,7 @@
 // tax the first slice at a low rate," on purpose, because real brackets are
 // re-indexed every year and jurisdiction-specific. Copying real ones in would
 // put a figure in the app that silently goes stale — precisely the class §2.3
-// exists to stop. So lesson 7's bands below are round, obviously-stylised
+// exists to stop. So lesson 7's bands below are round, obviously-stylized
 // numbers (10/20/30% at $20k/$50k), the title says "example rates" in all five
 // languages, and `illustrationNote` renders beneath as it does for the others.
 // ═══════════════════════════════════════════════════════════════════════════
@@ -137,7 +137,7 @@ export const compoundDescription = {
 // spending three paragraphs on the misconception ("a raise can push you into a
 // higher bracket and leave you with less") that one picture settles.
 //
-// The rates and thresholds are stylised, not real — see the header for why.
+// The rates and thresholds are stylized, not real — see the header for why.
 // $44,000 sits inside the middle band and $54,000 crosses into the top one, so
 // the raise splits across two bands, which is the part prose handles worst:
 // only the slice that overflowed is taxed higher, not the whole raise and

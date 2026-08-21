@@ -165,7 +165,7 @@ async function main() {
   const payload = {
     asOf,
     // `source` is the honesty switch the UI keys off: anything built from
-    // fixtures is labelled as sample data rather than shown as a reading.
+    // fixtures is labeled as sample data rather than shown as a reading.
     source: useFixtures ? "fixture" : adapterName,
     benchmark: {
       symbol: BENCHMARK.symbol,

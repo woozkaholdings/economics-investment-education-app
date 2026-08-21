@@ -8,7 +8,7 @@
 // STANDING RULE (LAUNCH_PLAN §2.3): nothing here may carry a date, a current
 // rate, an index level, or any figure that reads as live market data. This tab
 // teaches shapes and relationships, not readings. The historical balance-sheet
-// figures below are explicitly labelled as history, which is why they are
+// figures below are explicitly labeled as history, which is why they are
 // allowed — a reader cannot mistake "2008" for "today".
 // ═══════════════════════════════════════════════════════════════════════════
 
@@ -129,7 +129,7 @@ export const rateEffects = [
 // which end of the curve sits higher — because that is what a sighted reader
 // takes from the drawing; the verdict word ("Healthy", "Danger") is already in
 // each figure's visible label, which stays in the figcaption beside it.
-// Deliberately carries no yield numbers: the paths are stylised shapes, not a
+// Deliberately carries no yield numbers: the paths are stylized shapes, not a
 // reading of any particular day's curve (§2.3).
 export const yieldCurveDescriptions = {
   normal: {
@@ -162,7 +162,7 @@ export const yieldCurveDescriptions = {
   },
 };
 
-// Historical US Federal Reserve balance sheet, in trillions of dollars. Labelled
+// Historical US Federal Reserve balance sheet, in trillions of dollars. Labeled
 // by era rather than by date so it reads unambiguously as history.
 export const balanceSheetHistory = [
   { key: "pre08", value: 0.9, label: { en: "Before\n2008", es: "Antes de\n2008", ko: "2008년\n이전", zh: "2008年\n之前", ja: "2008年\n以前" } },

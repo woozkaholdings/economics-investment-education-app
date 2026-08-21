@@ -1,9 +1,9 @@
 /* ═══════════════════════════════════════════════════════════════════════════
    GLOBAL BASE + COLOUR SCHEMES
 
-   Every colour in the app is a custom property declared here, and `theme.js`
+   Every color in the app is a custom property declared here, and `theme.js`
    exposes them to components as `var(--…)`. Colours live in CSS rather than JS
-   because the app must react to the *system* colour scheme, which JS constants
+   because the app must react to the *system* color scheme, which JS constants
    cannot do without re-rendering the whole tree on every change.
 
    Resolution order:
@@ -184,7 +184,7 @@ body {
   background: var(--surface-canvas);
   color: var(--ink-body);
   font-family: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
-  /* Colour-scheme changes shouldn't flash when toggled manually. */
+  /* Color-scheme changes shouldn't flash when toggled manually. */
   transition: background-color 0.2s ease, color 0.2s ease;
 }
 

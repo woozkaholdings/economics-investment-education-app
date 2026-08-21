@@ -71,7 +71,7 @@
 
 export const lessonTerms = {
   // ── Personal finance (essentials 1-15 + money 16-28) ─────────────────────
-  // Labelled "Money track" until 2026-08-20; of the 14 lessons in this block,
+  // Labeled "Money track" until 2026-08-20; of the 14 lessons in this block,
   // 9 are `essentials` and 5 are `money` since the 2026-08-19 split (5633b79)
   // re-tracked ids 1-15 without renumbering them.
   // Expanded 2026-08-16 (item 35) once the glossary gained these terms.

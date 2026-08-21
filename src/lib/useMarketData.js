@@ -57,7 +57,7 @@ export function useMarketData() {
   const [state, setState] = useState({ status: "loading", data: null });
 
   useEffect(() => {
-    let cancelled = false;
+    let canceled = false;
 
     // Relative to the deployed base so it works under a sub-path too.
     fetch(new URL("data/market.json", document.baseURI))
@@ -66,15 +66,15 @@ export function useMarketData() {
         return res.json();
       })
       .then((data) => {
-        if (!cancelled) setState({ status: "ready", data });
+        if (!canceled) setState({ status: "ready", data });
       })
       .catch(() => {
         // A missing or unreadable file is an expected state, not a crash: the
         // job may never have run on this deployment.
-        if (!cancelled) setState({ status: "unavailable", data: null });
+        if (!canceled) setState({ status: "unavailable", data: null });
       });
 
-    return () => { cancelled = true; };
+    return () => { canceled = true; };
   }, []);
 
   const { status, data } = state;

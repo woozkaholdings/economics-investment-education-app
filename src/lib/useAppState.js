@@ -70,7 +70,7 @@ function loadLang() {
   return Object.prototype.hasOwnProperty.call(TR, stored) ? stored : "en";
 }
 
-// ── colour scheme ─────────────────────────────────────────────────────────
+// ── color scheme ─────────────────────────────────────────────────────────
 
 function loadThemeMode() {
   const stored = readRaw(KEYS.themeMode, "");

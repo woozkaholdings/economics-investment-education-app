@@ -1017,7 +1017,17 @@ for the history. No open P1/P2 items.
       `check-data.mjs` §26 and §32 both read it; §32 is depth-agnostic by construction (it strips the
       number and compares titles), but §26 was not written with this in mind. Verify, do not assume.
 
-91. **[Process/Content — filed 2026-08-21 by the run that applied the owner's "US English only"
+91. **✅ DONE 2026-08-21 (owner-directed: "sweep everything except the dated records"). 123 lines
+    swept across 32 files; 10 lines deliberately kept, each with a recorded reason. The item's own
+    headline count was WRONG — it said ~69, the real figure is 123 — because the count behind it used
+    `analys[ei]s`, which flags "analysis" and "analyses", both correct US English, while missing the
+    whole `-ise`/`-ised`/`-isation`/`-iser` family (`capitalised`, `localised`, `tokeniser`,
+    `stylised`, `hypothesised`, `generalisation`, `normaliser`). Three passes were needed before the
+    scan stopped finding new forms.** The three findings worth not re-deriving are in the run log
+    entry of this date: the Spanish `cheque` near-miss, the `cancelling` that had been missed in the
+    learner-visible surface this agent had already declared clean at 0, and the `CANCELLED` event
+    identifier that is deliberately still British. Nothing here is open.
+    **[Process/Content — filed 2026-08-21 by the run that applied the owner's "US English only"
     instruction to the learner-visible surface, from the residual it deliberately did NOT sweep.]
     ~69 British spellings remain outside learner-visible content, and one slice of them cannot be
     fixed by find-and-replace.** Every figure measured this run, not estimated:
@@ -1040,6 +1050,27 @@ for the history. No open P1/P2 items.
       run's corpus walk; **and assert a known British instance is inside the corpus before trusting a
       zero** — the first version of that scan missed 40% of the text and reported 0 with all its
       controls passing.
+
+92. **[Content — filed 2026-08-21 by the sweep that fixed item 91's spellings and deliberately
+    stopped at the spelling/diction line. Small; read the boundary before picking.] British *diction*
+    in learner-visible English copy, which the orthographic sweep does not reach.** One confirmed
+    instance: `src/content/policyScenarios.js`'s first-option outcome says **"Borrowing gets
+    dearer"** — comprehensible, but not how a US reader would put it ("more expensive", "costlier").
+    - **Why it was not just fixed:** item 91's sweep was meaning-preserving by construction — every
+      change was one spelling for the same word — so it could be verified mechanically and needed no
+      content judgment. Rewording is a **content edit**: it touches a string four translations hang
+      off, and it is the kind of change §10.1 wants read for tone before it lands. Different class of
+      work, so a different item.
+    - **Do the measurement before the edits, and note the instrument does not exist yet.** Diction has
+      no regex — a word-list (`dearer`, `whilst`, `amongst`, `fortnight`, `queue` for "line", `maths`,
+      `petrol`, `flat` for "apartment", `holiday` for "vacation", `cheque`) run over the 1,316-string
+      English corpus item 91's run built is the cheap first pass, but it will miss phrasing.
+      **Carry item 91's control: assert a known instance ("dearer") is inside the corpus before
+      believing a zero** — that is the exact failure that let a `cancelling` sit in shipped copy while
+      an entry reported the surface clean.
+    - **Do NOT touch the non-English locales**, and re-read item 91's `cheque` near-miss first: the
+      same word is British English *and* ordinary Spanish, and a word-list run across all languages
+      corrupts lesson content.
 
 76. **[Content/Process — filed 2026-08-18 by the run that built item 69's instrument half, which is
     what turned this from an opinion into a blocked measurement.] `zh` and `ja` `Brokerage Account`
@@ -12577,3 +12608,127 @@ the **7 stale translation lessons per language** (`npm run review-status` — 28
 one language per run); item 76 (still blocked on a per-language tokeniser).
 **Item 18 remains the entire critical path to ending Phase 0**, blocked on the owner creating an
 analytics provider account, and **item 72's owner half — a deployed URL — is blindspot 10.10**.
+
+## 2026-08-21 — the US-English sweep, everything but the dated records (item 91); three things it was not allowed to touch
+
+**Picked:** item 91, owner-directed the same day it was filed — *"sweep everything except the dated
+records."* Filed by the previous run precisely because the `DECISIONS.md` slice needed an owner call;
+that call is now made, and this run executes it.
+
+### Step 3.5 — the item's own headline number was wrong, and it was MY number
+
+Item 91 said "~69 British spellings". A per-line re-count found **123**. The previous run's figure was
+produced by a `grep -o | wc -l` over a narrow pattern set, and it was wrong in both directions:
+
+- **It over-counted** by including `analys[ei]s`, which matches **"analysis"** and **"analyses"** —
+  both correct US English. Only the *verb* `analyse` is British.
+- **It under-counted** by omitting the entire `-ise`/`-ised`/`-isation`/`-iser` family. `capitalised`,
+  `localised`, `tokeniser`, `tokenisation`, `stylised`, `hypothesised`, `generalisation`,
+  `normaliser`, `unrecognised`, `practising` were all invisible to it. **Three successive scans were
+  needed before a pass stopped finding new forms**, each one widening the net after the previous
+  "clean" result — recorded here because "the sweep is done" was a claim this run nearly made twice
+  too early.
+
+**The correction that matters most is to a claim this agent made in the previous entry.** That entry
+reported the learner-visible surface clean at **0** after fixing two strings. It was not: the net had
+`/\bcancelled\b/` but no `cancelling`, and **`policyScenarios[0].options[0].outcome.en` contained
+"firms are already cancelling projects"** — a string a learner reads in the Fed-chair simulator. So
+the previous run's headline was wrong, and the instrument that produced it was the reason. Fixed this
+run; the surface is now genuinely 0 against a net whose controls include that exact word.
+
+### What was deliberately NOT swept, and why each one is a real hazard rather than caution
+
+Three classes, all found by reading the enumeration rather than by running the replace:
+
+1. **Spanish content, nearly corrupted.** `cheque` is a British spelling of "check" *and* the ordinary
+   Spanish word for a paycheck. `lessonContent.essentials.es.js` uses "cheque de pago" three times.
+   A blind sweep would have written "check de pago" into Spanish lesson bodies. **All non-English
+   content and locale files are excluded by path**, and the exclusion is verified by `git diff
+   --name-only` showing zero of them touched.
+2. **The `CANCELLED` analytics event name — an identifier, not prose.** `src/lib/analytics.js:29`
+   defines `CANCELLED: "cancelled"`; `check-data.mjs:798` asserts against it, and three documents
+   enumerate it as part of §9.2's minimum event set. **Two of those three enumerations are inside
+   `DECISIONS.md` dated records, which this run is forbidden to edit** — so renaming the event would
+   split one contract across the exact boundary the owner drew. Left British, on purpose, in all six
+   places at once so the contract stays internally consistent. This is the one thing in the repo that
+   is still spelled the British way in *code*, and it is flagged rather than buried.
+3. **Verbatim quotations of removed text.** `LAUNCH_PLAN.md:328` and `check-data.mjs:3600` both quote
+   the sentence the previous commit deleted from §3.4 — `"One accent colour per lesson/phase"`.
+   Respelling inside quotation marks misquotes the record. **The adjacent quotation on the same
+   comment line WAS updated**, and the distinction is the point: `check-data.mjs:3599` quotes §3.1.1,
+   a section that still exists and now reads "one accent color", so the quote was corrected to match
+   what it claims to quote. One quotation of live text, one of dead text, opposite treatment.
+4. **`DECISIONS.md` dated records** — `:472` ("Gap closed 2026-08-04") and `:549` ("made explicit
+   2026-08-16"). Classified by a stated rule rather than by feel: **a bullet is a dated record when
+   its own label carries a date stamp**, not merely when its prose mentions a date. By that rule
+   `- **Background:** … a 2026-08-05 decision …` is standing exposition and was swept, while
+   `- **Gap closed 2026-08-04:**` was not. Nine of `DECISIONS.md`'s hits are standing prose and were
+   swept; two are dated and were not.
+
+### What shipped
+
+**110 lines in the scripted pass + 13 in three follow-up passes = 123 lines across 32 files.**
+Prose, comments, and documents move to US spelling: `colour`→`color`, `behaviour`→`behavior`,
+`centre`→`center`, `catalogue`→`catalog`, `labelled`→`labeled`, `modelling`→`modeling`,
+`cancelling`→`canceling`, `analyse`→`analyze`, `capitalised`→`capitalized`, `localised`→`localized`,
+and the rest.
+
+**Three local variables renamed** (`cancelled` → `canceled` in `useMarketData.js`, `LessonReader.jsx`,
+`Practice.jsx`). Safe because each is a function-scoped cleanup flag with no export and no external
+consumer — unlike the event name in (2), which is why the two are treated differently.
+
+**`AGENT_LOG.md` and `AGENT_LOG.archive.md` are untouched**, for §31's reason: run-log entries are
+what a past run wrote on a date and must never be edited. Neither is `reviews/`.
+
+### Verification
+
+- `npm test` — 6/6 PASS, 1 warning (the pre-existing translation-coverage one). **The suite covering
+  `refresh-readiness.mjs --check` passing is the load-bearing result here**: `catalogue`→`catalog`
+  touched `LAUNCH_PLAN.md`, `LAUNCH_READINESS.md` and `CLAIMS.md`, all of which carry generated
+  sentences, and a green `--check` proves no generated shape was broken. Confirmed beforehand by
+  reading the generator: its only three `catalogue` uses are inside `fail()` messages, never in a
+  doc-facing pattern or replacement.
+- `npm run build` — clean, `index-Cq9uJlRr.js`, 244.13 kB.
+- `npm run check-blindspot` — 7/7, including §2.3 across all 26 teaching-copy modules.
+- **Learner-visible surface re-scanned: 1,316 English strings, 0 hits, four controls all passing** —
+  the net catches `cancelling` (the word the previous run's net missed), catches `centre line`, stays
+  silent on the US forms now in the tree, and stays silent on `analysis`/`analyses`.
+- **A control caught a broken pattern in the verifier itself.** The first version of the final check
+  used `/\bcolou?r(s|ed|ful|-coded)?\b(?<!\bcolor)/i`, whose lookbehind does not do what it looks like
+  it does — it matched US `colored`. CONTROL C failed and said so. The 0 was still trustworthy (a
+  false-positive pattern can only inflate a count, never hide one), but the net was fixed and re-run
+  rather than reported from a known-faulty instrument.
+- **Final whole-repo scan returns exactly the 10 intended exclusions and nothing else** — 6 event-name
+  lines, 2 verbatim quotations, 2 dated records.
+
+### Adversarial self-check (step 5)
+
+- **Blindspot register** — clean. §10.1 is the one to think about, since this run edits a
+  learner-visible string: "cancelling"→"canceling" inside the policy simulator changes orthography and
+  nothing else — no advice, no figure, no date. `check-blindspot` passes all 7. No Dalio, no kids
+  reframing.
+- **`DECISIONS.md` conflict** — this run's whole shape is deference to one: §29's dated-truth rule.
+  Two lines were excluded by it, and the classification rule used is written down above so the next
+  run does not re-derive it by feel.
+- **Already-done backlog item** — no. Item 91 was filed by the previous run for exactly this, and the
+  previous run's *partial* work (2 learner-visible strings) is extended rather than redone. The one
+  overlap is deliberate: this run **corrects** that run's "0 hits" claim rather than repeating it.
+- **Own verification claim** — reproducible. Every number came from a command: 123 from the per-line
+  enumeration, 110/10/32 from the scripted pass, 1,316/0 from the corpus walk, the exclusions from the
+  final scan. The one judgment that is not a number is the dated-record classification, and its rule
+  is stated so a reviewer can disagree with it specifically.
+- **Honest residual — one thing this run noticed and did NOT change.** `policyScenarios`' English
+  outcome text says "Borrowing gets **dearer**". That is British *diction*, not spelling, and
+  rewriting learner-visible wording is a content edit rather than an orthographic one. Flagged as
+  item 92 rather than done silently.
+
+### Next run
+
+`npm run owner-tree -- --expect c2331799fd3ee413aca864fd82d247a35ea31b01a70a6c4e37b00f6aad9105b2`
+(`UNMOVED` at the start of this run). **Open and unblocked:** item 92 ("dearer", and a wider read for
+British *diction* in learner-visible copy); **item 35's second glossary batch**, block lifted, reach
+numbers need re-measuring with `npm run jargon -- money`; the **7 stale translation lessons per
+language** (`npm run review-status`, 28 re-reviews — scope to one language per run); item 76 (still
+blocked on a per-language tokenizer). **Item 18 remains the entire critical path to ending Phase 0**,
+blocked on the owner creating an analytics provider account, and **item 72's owner half — a deployed
+URL — is blindspot 10.10**.

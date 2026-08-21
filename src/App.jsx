@@ -256,7 +256,7 @@ export default function App() {
         <PracticeCoachMark t={t} onOpenPractice={() => goToTab("practice")} onDismiss={dismissPracticeCoachMark} />
       )}
 
-      {/* Header — a quiet bar, not a coloured banner. */}
+      {/* Header — a quiet bar, not a colored banner. */}
       <header
         style={{
           position: "sticky", top: 0, zIndex: 100,
@@ -338,11 +338,11 @@ export default function App() {
 
       {/* Bottom navigation — a floating pill, from UIUX/ (Quizlet iOS home).
           Quizlet detaches the bar from the screen edge and rounds it, and puts
-          a filled pill behind the active item rather than relying on colour
+          a filled pill behind the active item rather than relying on color
           alone. Two reasons that is worth taking here: the edge-to-edge bar
           read as part of the page on a dark canvas (its only separator was one
           hairline against a near-identical fill), and the active state was
-          accent colour on a muted row — a distinction a colour-blind user gets
+          accent color on a muted row — a distinction a color-blind user gets
           only from the icon's stroke weight.
 
           Adapted: Quizlet floats a 3-item pill *with* a partially visible page

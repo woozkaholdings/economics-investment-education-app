@@ -59,7 +59,7 @@ export default function Question({ question, t, onAnswered, autoFocusHeading = f
           // mark the right answer and the learner's wrong pick, leaving the
           // others neutral so attention goes to the two that matter.
           // Answered-but-withheld (the hook): mark only what they picked, in
-          // accent rather than ok/bad — the colour must not leak a verdict.
+          // accent rather than ok/bad — the color must not leak a verdict.
           const border = !answered
             ? line.strong
             : !disclosed
@@ -107,7 +107,7 @@ export default function Question({ question, t, onAnswered, autoFocusHeading = f
                 </span>
               )}
               {/* The learner's own wrong pick gets an equally explicit marker,
-                  not just a colour shift — so "what I picked" and "what was
+                  not just a color shift — so "what I picked" and "what was
                   right" are both legible at a glance, not one marked and one
                   merely tinted. */}
               {disclosed && !isRight && picked && (

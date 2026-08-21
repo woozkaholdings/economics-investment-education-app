@@ -32,8 +32,8 @@ export const EVENTS = {
   // Beyond §9.2's minimum. `quiz_taken` is specified there as carrying a
   // score, which only exists once a whole quiz is done — so it fires once per
   // finished quiz. The per-question signal the app used to fire under that
-  // name is still worth keeping (it is what the Leitner queue's behaviour
-  // would be analysed against), so it moved here rather than being dropped.
+  // name is still worth keeping (it is what the Leitner queue's behavior
+  // would be analyzed against), so it moved here rather than being dropped.
   QUIZ_ANSWERED: "quiz_answered",
 
   // Also beyond the minimum, and here for the reason §9.2 itself gives: "if

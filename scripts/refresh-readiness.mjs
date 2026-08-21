@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // ═══════════════════════════════════════════════════════════════════════════
-// refresh-readiness.mjs — the catalogue figures LAUNCH_READINESS.md,
+// refresh-readiness.mjs — the catalog figures LAUNCH_READINESS.md,
 // LAUNCH_PLAN.md and CLAIMS.md state, computed rather than copied
 // (backlog item 47, filed by item 39's scoping; extended to LAUNCH_PLAN.md by
 // backlog item 55, and to CLAIMS.md by backlog item 32's monthly audit).
@@ -49,7 +49,7 @@
 // track table still named the lesson ids abandoned in the 2026-08-14
 // renumbering. The lesson is not "the plan needs proofreading" — it is that a
 // figure a human maintains rots in the exact place the project most needs it
-// true. So the plan's catalogue figures are generated too, and its *arguments*
+// true. So the plan's catalog figures are generated too, and its *arguments*
 // (§4.1/§4.2's reasoning about finite content) are deliberately left alone:
 // where those cited a count, the count was removed rather than guarded, since
 // the cheapest permanent fix for a figure nobody needs is to delete it.
@@ -66,12 +66,12 @@ const CLAIMS = "CLAIMS.md";
 const LANGS = ["en", "es", "ko", "zh", "ja"];
 
 // §4.3's Phase-0 content gate, as the plan's own table states it. Kept here so
-// the "is it met?" sentence in §4.3 is derived from the catalogue rather than
+// the "is it met?" sentence in §4.3 is derived from the catalog rather than
 // from whoever last read the table.
 const GATE_LESSONS = 40;
 const GATE_MINUTES = 120; // "~2 hours"
 
-// The tracks the documents' catalogue figures name. §4.3's row ("40 lessons —
+// The tracks the documents' catalog figures name. §4.3's row ("40 lessons —
 // split across money (28) + economy (12) tracks") and §2.5's table are
 // *partition* claims: they are only true while these tracks account for every
 // lesson. So this is the one place a new track is admitted, and the shape guard
@@ -166,9 +166,9 @@ const floors = [
   [
     FIGURE_TRACKS.every((t) => tracks[t]) && namedLessons === lessons.length,
     `the tracks these figures name (${FIGURE_TRACKS.join(", ")}) do not account for the whole ` +
-      `catalogue: the tree holds ${Object.entries(tracks).map(([t, ids]) => `${t} (${ids.length})`).join(", ")}` +
+      `catalog: the tree holds ${Object.entries(tracks).map(([t, ids]) => `${t} (${ids.length})`).join(", ")}` +
       ` = ${lessons.length} lessons, of which the named tracks cover ${namedLessons}. ${READINESS} §4.3 ` +
-      `and ${PLAN} §2.5 state the catalogue as a split across those tracks, which cannot describe this ` +
+      `and ${PLAN} §2.5 state the catalog as a split across those tracks, which cannot describe this ` +
       `tree. Add the track to this script's ${"`FIGURE_TRACKS`"} and give it a §2.5 row, rather than ` +
       `relaxing this guard — relaxed on its own it writes a split that omits the unnamed track`,
   ],
@@ -180,7 +180,7 @@ const floors = [
   ...Object.entries(tracks).map(([t, ids]) => [
     contiguous(ids),
     `track "${t}" ids are not contiguous (${ids.join(", ")}) — LAUNCH_PLAN.md §2.5 states each ` +
-      `track as a range, which cannot describe this catalogue. Change §2.5's table to a list and ` +
+      `track as a range, which cannot describe this catalog. Change §2.5's table to a list and ` +
       `this script's ${"`range()`"} with it, rather than letting the range round over the gap`,
   ]),
 ];
@@ -220,7 +220,7 @@ const gateMet = lessons.length >= GATE_LESSONS && minutes >= GATE_MINUTES;
 const FIGURES = [
   {
     doc: READINESS,
-    label: "§4.3 catalogue row",
+    label: "§4.3 catalog row",
     // Both halves derive from FIGURE_TRACKS so the shape cannot drift from the
     // text it is meant to locate. Track names are plain lowercase words, so no
     // regex escaping is needed — the guard above rejects anything else by
@@ -271,13 +271,13 @@ const FIGURES = [
     // the guarded shape on purpose — this sentence is the one place a *figure*
     // kept a *noun* true-looking while it was wrong, so pinning both is the
     // fix. If a progress ring is ever actually built, this check fails and the
-    // plan gets updated in the same change, which is the intended behaviour.
+    // plan gets updated in the same change, which is the intended behavior.
     shape: /progress bar at 1\/\d+(?:,\d{3})*/g,
     expected: `progress bar at 1/${n(lessons.length)}`,
   },
   {
     doc: PLAN,
-    label: "§4.0 catalogue-volume sentence",
+    label: "§4.0 catalog-volume sentence",
     shape:
       /\*\*\d+(?:,\d{3})* lessons, ~\d+(?:,\d{3})* characters of English body text, ~\d+(?:,\d{3})* minutes of reading end to end\*\*/g,
     expected:
@@ -298,7 +298,7 @@ const FIGURES = [
   },
   {
     // Added 2026-08-17 by §9.3's first monthly audit, which found this cell
-    // reading "120 min" a day after item 56 recalibrated the catalogue to 144.
+    // reading "120 min" a day after item 56 recalibrated the catalog to 144.
     // The claim was never in danger — 144 clears the gate harder than 120 —
     // but a register whose whole purpose is to stop beliefs going quietly
     // stale was citing a stale number as its evidence, which is worse than a
@@ -309,7 +309,7 @@ const FIGURES = [
     // cell that keeps saying Holding while the numbers move is precisely the
     // softer-restatement failure CLAIMS.md's own header forbids.
     doc: CLAIMS,
-    label: "A6 catalogue-size status cell",
+    label: "A6 catalog-size status cell",
     shape:
       /\*\*(?:Holding|REFUTED)\*\* — \d+(?:,\d{3})* lessons \/ \d+(?:,\d{3})* min, (?:both clauses met|a clause is unmet)/g,
     expected:
@@ -354,7 +354,7 @@ if (mode === "") {
 //
 // WHY. This script owns each track row's `range` cell and nothing else, so a
 // row can end up disagreeing with itself and every existing guard still passes.
-// Measured, not hypothesised: with `essentials` admitted to FIGURE_TRACKS in a
+// Measured, not hypothesized: with `essentials` admitted to FIGURE_TRACKS in a
 // throwaway copy of the owner's tree, `--write` reported success —
 //   updated LAUNCH_PLAN.md §2.5 money-track row: was `money` | 1–28 (28)
 //                                                now `money` | 16–28 (13)

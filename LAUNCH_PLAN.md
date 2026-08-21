@@ -55,7 +55,7 @@ decisions the project actually made.
 | v1 said | Corrected in v2 | Why |
 |---|---|---|
 | Migrate `economic-cycles-v5.jsx` file-by-file into the new structure (§2.2, §7.1, §8, §11) | **The app is authored fresh in `src/`. `v5.jsx`/`v6.jsx` are reference inputs only** (§2.1) | A prototype is a source of *requirements*, not a codebase to inherit. Patching it carried its accidents forward as if they were decisions. |
-| Keep the prototype's four-tab layout and visual style (§3.1) | **Navigation and visual system are designed from scratch** — three destinations, authored type and colour (§3.1, §3.1.1) | Same defect one level up: inheriting a sketch's *design* is no different from inheriting its code. The old layout duplicated the lesson list across two tabs and filed core tools under "More". |
+| Keep the prototype's four-tab layout and visual style (§3.1) | **Navigation and visual system are designed from scratch** — three destinations, authored type and color (§3.1, §3.1.1) | Same defect one level up: inheriting a sketch's *design* is no different from inheriting its code. The old layout duplicated the lesson list across two tabs and filed core tools under "More". |
 | Lessons "based on Ray Dalio's economic-machine framework"; the app credits and quotes him (§1) | All framing is "principles popularized by economists and investors"; no name-brand dependency, no quotes | v1 contradicted its own §10.2, which flags exactly this as legal/platform risk. §10.2 is closed; the plan text now matches. |
 | Content becomes `lessons.json`, `quizzes.json`, `glossary.json` (§2.2) | Content lives in `.js` modules under `src/content/` and `src/locales/` | Closed decision — see `DECISIONS.md`, "Content as `.js` modules, not JSON". `.js` imports natively, carries invariant comments, and stays diffable. |
 | The Markets tab hardcodes "February 2026" and needs fixing (§2.3) | Already fixed — the tab is dateless and figure-free by design (§2.3) | Shipped 2026-08-02. §2.3 now states the standing rule instead of the defect. |
@@ -124,7 +124,7 @@ The application is written fresh, not migrated. Target shape:
 ```
 src/
   App.jsx            app shell — tab routing, header, first-launch notice
-  theme.js           design tokens (colour, type, spacing) — no inline hex in components
+  theme.js           design tokens (color, type, spacing) — no inline hex in components
   lib/               storage + app state hooks; pure logic, no JSX
   components/        reusable pieces (ui primitives, charts)
   screens/           one file per screen; sub-screens nested
@@ -133,7 +133,7 @@ src/
 ```
 
 Rules: content files contain **no JSX**; screens contain **no hardcoded copy** that should be
-translatable; components read colour and type from `theme.js` rather than literal values.
+translatable; components read color and type from `theme.js` rather than literal values.
 
 ### 2.3 The Markets tab — standing rule
 
@@ -148,7 +148,7 @@ which is worse than showing none.
 is sharper than "no numbers". The distinction that matters is *fake freshness* versus *dated
 freshness*. v1's defect was a hardcoded date that never moved. What is permitted is a real `asOf`
 that updates, is shown before any figure, and suppresses itself: data older than four days renders
-"unavailable" rather than as a current reading, and fixture-built data is labelled as a sample. Any
+"unavailable" rather than as a current reading, and fixture-built data is labeled as a sample. Any
 figure without that machinery behind it still violates this section. See `DECISIONS.md`, "Market
 data", and the teaching surfaces (yield-curve shapes, QE/QT) remain deliberately dateless.
 
@@ -161,12 +161,12 @@ Split into three 2026-08-18 (owner-directed, interactive) — see the note at th
 and DECISIONS.md's 2026-08-18 Update for why: the money track was two curricula under one label, and
 the split makes each independently gated.*
 
-The catalogue is **three independent curricula**, not one sequential path:
+The catalog is **three independent curricula**, not one sequential path:
 
 | Track | Key | Lessons | Role |
 |---|---|---|---|
 | **How the Economy Works** | `economy` | 29–40 (12) | The main path. A new install opens here. Transactions, credit, productivity, the debt cycles, deleveraging, rates, the yield curve, QE/QT, phases, indicators. |
-| **Your Money** | `money` | 16–28 (13) | The product — judgment, not procedure. The spending and investing decisions mechanics don't settle: opportunity cost, lifestyle inflation, hedonic adaptation, sunk cost, herd behaviour, anchoring, confirmation bias, present bias, needs vs. wants, time horizon, mental accounting, loss aversion, the hot-hand fallacy. |
+| **Your Money** | `money` | 16–28 (13) | The product — judgment, not procedure. The spending and investing decisions mechanics don't settle: opportunity cost, lifestyle inflation, hedonic adaptation, sunk cost, herd behavior, anchoring, confirmation bias, present bias, needs vs. wants, time horizon, mental accounting, loss aversion, the hot-hand fallacy. |
 | **Essentials** | `essentials` | 1–15 (15) | Optional mechanics — kept in full and unchanged, but gates nothing and nothing gates it. Budgeting, emergency funds, compound interest, credit scores, stocks/bonds/diversification, 401(k)/IRA basics, taxes, insurance, inflation, W-2 vs. 1099, investment fees, renting vs. buying, brokerage accounts, estate planning, credit reports vs. scores. |
 
 All three tracks have their first lesson unlocked from install; lessons gate sequentially **within** a
@@ -351,10 +351,10 @@ increasingly check this and it widens the audience at near-zero cost.
 Measure before pricing. The lesson content today is
 **40 lessons, ~137,000 characters of English body text, ~145 minutes of reading end to end**.
 That is roughly **23,700 words** — a short book, not the long magazine article this line described
-when the catalogue held twelve lessons.
+when the catalog held twelve lessons.
 
 This sentence used to end "count it again rather than trusting this line," and for two weeks nobody
-did: it was still quoting twelve lessons and twelve minutes on 2026-08-17, when the catalogue held
+did: it was still quoting twelve lessons and twelve minutes on 2026-08-17, when the catalog held
 forty and a hundred and twenty. **So it is no longer typed.** Every figure in it, in §1, in §2.5's
 track table, in the asset table below and in §4.3's gate verdict is generated by
 `scripts/refresh-readiness.mjs`; `npm test` fails when the document disagrees with the content, and
@@ -362,7 +362,7 @@ track table, in the asset table below and in §4.3's gate verdict is generated b
 in §4.1 and §4.2 about what finite content can be sold for. That is judgment that happens to cite a
 number, and regenerating it would be a script rewriting an argument.
 
-The catalogue splits into two very different things, and conflating them is what produced v1's
+The catalog splits into two very different things, and conflating them is what produced v1's
 pricing:
 
 | Asset | Recurs? | Monetizable as |
@@ -407,13 +407,13 @@ contract can exceed a year of consumer subscriptions.
 but the numbers work at small scale in a way consumer freemium does not.
 
 **2. One-time unlock — the honest consumer offer for finite content.**
-A "full course" unlock at **$14.99–$19.99** matches what the catalogue actually is. No churn to
+A "full course" unlock at **$14.99–$19.99** matches what the catalog actually is. No churn to
 manage, no renewal question to answer, far higher conversion than a subscription at the same
 perceived value, and it can be sold today without pretending to depth that does not exist. Weaker
 LTV, but real revenue from a small audience.
 
 **3. Subscription — only once something genuinely recurs.**
-Defensible when the daily data and an expanding lesson catalogue carry it, not the finite course. Price
+Defensible when the daily data and an expanding lesson catalog carry it, not the finite course. Price
 lower than v1: **$3.99/mo or $24.99/yr**. What renews is the market data, the review queue, and new
 tracks — say so on the paywall instead of listing lessons.
 
@@ -426,7 +426,7 @@ Each phase has a gate. Do not skip a gate because the next phase is more excitin
 
 | Phase | Ship | Gate to leave it |
 |---|---|---|
-| **0 — Free, instrumented** *(now)* | No payment code. Analytics live (§9.2). Grow the catalogue. | ≥40 lessons / ~2 hours of content **and** ≥40% of installers finishing lesson 1 |
+| **0 — Free, instrumented** *(now)* | No payment code. Analytics live (§9.2). Grow the catalog. | ≥40 lessons / ~2 hours of content **and** ≥40% of installers finishing lesson 1 |
 | **1 — One-time unlock** | Free: lessons 1–4 + glossary + market signals. $14.99 unlocks everything. | ≥3% of active users purchasing, sustained a month |
 | **2 — Subscription alongside** | $3.99/mo · $24.99/yr for data + review + new tracks. Keep the one-time unlock. | Renewal at month 2 ≥60% |
 | **3 — Family & institutional** | Family plan (one purchase, several children's bands — parent-held, **no child accounts**). Begin credit-union / employer outreach. | — |
@@ -442,7 +442,7 @@ and key).
 > *This paragraph read "the gate is not close: 12 minutes is not 2 hours" until 2026-08-17, while
 > `LAUNCH_READINESS.md` — whose figures are generated — recorded both content clauses as met. Two
 > authoritative documents gave opposite answers to the only question this section exists to answer,
-> for two days. The verdict above is now generated from the catalogue too (backlog item 55): if a
+> for two days. The verdict above is now generated from the catalog too (backlog item 55): if a
 > lesson is deleted and the gate reopens, `npm test` fails until this sentence says so.*
 
 ### 4.4 Where the paywall sits
@@ -538,7 +538,7 @@ release.
 |---|---|
 | Foundation | App authored in `src/` — screens, theme, content modules, runnable locally. *(done)* |
 | Core build | First-session flow, streaks, progress persistence, polished lessons 1–4, dark mode. *(done)* |
-| **Content depth** | The §4.3 Phase 0 content gate: a catalogue deep enough to be a course rather than a demo. **§4.3 is the authority on whether it is met — do not restate its verdict here.** |
+| **Content depth** | The §4.3 Phase 0 content gate: a catalog deep enough to be a course rather than a demo. **§4.3 is the authority on whether it is met — do not restate its verdict here.** |
 | Platform decision | Resolve §2.1 (Expo vs. web-first). **Gates store release and the payment route.** |
 | Monetization + web | Analytics events (§9.2) *first*, then the one-time unlock (§4.3 Phase 1). No subscription until Phase 2's gate is met. Web deployed; 10 clips recorded. |
 | Web launch | Product Hunt + Show HN + Reddit. Watch funnels daily. |

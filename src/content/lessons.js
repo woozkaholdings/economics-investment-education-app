@@ -1,7 +1,7 @@
 // ═══════════════════════════════════════════════════════════════════════════
 // TRACKS
 //
-// The catalogue is two independent curricula, not one path. Until 2026-08-07
+// The catalog is two independent curricula, not one path. Until 2026-08-07
 // they were a single sequential chain, which meant someone who installed a
 // financial-literacy app to learn budgeting had to finish the long-term debt
 // cycle, deleveraging, the yield curve and QE/QT first — ~24 minutes of macro

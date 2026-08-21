@@ -106,7 +106,7 @@ const PER_LANGUAGE = [
 // This is the load-bearing one. The merged views exist for check-data.mjs and
 // translation-review.mjs, which need every language at once; they statically
 // import all ten content files, so any path from the browser bundle into one
-// of them drags the whole catalogue in.
+// of them drags the whole catalog in.
 {
   const offenders = [];
   for (const [file, { static: s, dynamic: d }] of imports) {

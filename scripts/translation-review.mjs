@@ -6,7 +6,7 @@
 // no one noticing until the weekly review caught the aggregate on 2026-08-09
 // (see AGENT_LOG.md's "Completed and pruned" section, former item 20). The
 // owner's call was to accept that state for now (ship under "(Beta)"
-// labelling, `check-blindspot.mjs`'s P-3 patterns as the mechanical guard)
+// labeling, `check-blindspot.mjs`'s P-3 patterns as the mechanical guard)
 // rather than commission review or cut the languages — but "accept for now"
 // only stays a deliberate choice, not a repeat of the same silent drift, if
 // review status is tracked and visible. That's what this ledger is for.

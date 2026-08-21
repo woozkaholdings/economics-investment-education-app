@@ -44,7 +44,7 @@ const BATCH_SIZE = 10;
 // a bare position would be ambiguous in exactly the place the queue mixes.
 // The number leads so that it survives truncation on a narrow header.
 //
-// Returns null for a question whose lesson is no longer in the catalogue —
+// Returns null for a question whose lesson is no longer in the catalog —
 // quiz metadata is keyed by id and can outlive a lesson. Rendering nothing
 // beats rendering a wrong number.
 function lessonSourceLabel(t, lessonId) {
@@ -87,17 +87,17 @@ export default function Practice({ t, lang, review, recordReview }) {
   // finished downloading.
   const [quizText, setQuizText] = useState(null);
   useEffect(() => {
-    let cancelled = false;
+    let canceled = false;
     // Deliberately NOT setQuizText(null) here. A review session renders from
     // this every frame, so blanking it mid-session left `question.opts`
     // undefined for one render and crashed the screen. Keeping the previous
     // language on screen until the new module resolves removes that window,
     // and removes a content flash on the way.
     QUIZ_TEXT_LOADERS[lang]().then((mod) => {
-      if (!cancelled) setQuizText(mod.quizText);
+      if (!canceled) setQuizText(mod.quizText);
     });
     return () => {
-      cancelled = true;
+      canceled = true;
     };
   }, [lang]);
 
@@ -246,7 +246,7 @@ export default function Practice({ t, lang, review, recordReview }) {
     return (
       <div>
         {/* Runner chrome from UIUX/ (Quizlet iOS Screens 4): a close control,
-            the position counter centred between it and the lesson tag, and the
+            the position counter centered between it and the lesson tag, and the
             progress bar directly under them. The close button is the part that
             matters — before this there was no way out of a started session
             except answering every remaining question or leaving the tab, which
@@ -361,7 +361,7 @@ export default function Practice({ t, lang, review, recordReview }) {
         </Card>
       )}
 
-      {/* Always available — practising more than the schedule asks is fine. */}
+      {/* Always available — practicing more than the schedule asks is fine. */}
       <Button
         full
         variant="outline"

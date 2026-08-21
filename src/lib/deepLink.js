@@ -40,7 +40,7 @@ export const ROUTED_TABS = ["learn", "practice", "reference"];
 
 /**
  * Parse a location hash into `{ tab, lessonId }`, or null when it names no
- * route we recognise. Syntax only — whether that lesson exists or is unlocked
+ * route we recognize. Syntax only — whether that lesson exists or is unlocked
  * is `resolveRoute`'s job.
  */
 export function parseRoute(hash) {
@@ -74,7 +74,7 @@ export function routeHash({ tab, reading, lessons }) {
 }
 
 /**
- * Resolve a hash against the real catalogue and unlock state, into the
+ * Resolve a hash against the real catalog and unlock state, into the
  * `{ tab, reading }` pair `App.jsx` holds. Always returns a usable
  * destination — an unparseable hash, a nonexistent lesson id, or a locked
  * lesson all land on the lesson path rather than on an error.
