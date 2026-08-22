@@ -1093,10 +1093,12 @@ for the history. No open P1/P2 items.
       corrupts lesson content.
 
 93. **[Content — filed 2026-08-21 by the scheduled dev-agent, measured with a control, and the
-    largest open learner-visible gap in the app. P1 of the current Open set.] 92 of 160
+    largest open learner-visible gap in the app. P1 of the current Open set.] 91 of 160
     lesson/language pairs ship a condensed *summary* of the English body rather than a translation of
-    it.** *(Was 94 at filing. **es 29 and es 30 were translated in full on 2026-08-22** — the first
-    two pairs paid down, `es` abridged count 22 -> 20. Remaining in the first tranche: **es 31-40**.)*
+    it.** *(Was 94 at filing. **es 29-32 have been translated in full** — 29/30 on 2026-08-22, 31/32
+    later the same day — so four pairs are paid down and `es` abridged count is 22 -> 19. Remaining in
+    the first tranche: **es 33-40**. Note the headline fell by 3, not 4, on those last two lessons: see
+    the moving-reference bullet below, which is a property of the metric and not a regression.)*
     - **What a learner gets.** Economy lesson 40 §1 in English is four explanatory paragraphs (the
       indebted family, the factory worker, the farmer's tractor, the closing point). Its Spanish is
       **three bare rule headings and nothing else** — `REGLA 1: No dejes que la deuda crezca más
@@ -1138,12 +1140,26 @@ for the history. No open P1/P2 items.
       pick** — probably `es`, which has the highest ratio to begin with and the least distance to
       close. One lesson x one language is a reviewable unit; do not attempt a track x four languages
       in one run.
-    - **✅ Two lessons done, and the unit size is now measured rather than guessed (2026-08-22).**
-      `es` 29 (0.35 -> **1.11**) and 30 (0.34 -> **1.18**) both cleared the 1.12 reference, at a cost
-      of **~4,270 added Spanish characters for two lessons**. At that rate the remaining `es` 31-40 is
-      roughly **20,000 characters**, and all four languages across economy 29-40 is roughly **90,000**
-      — which is the figure this item says the owner should see before it is spent. **Two lessons is a
+    - **✅ Four lessons done, and the unit size is now measured rather than guessed (2026-08-22).**
+      `es` 29 (0.35 -> **1.11**), 30 (0.34 -> **1.18**), 31 (0.23 -> **1.15**) and 32 (0.31 ->
+      **1.15**) all cleared their reference, at a cost of **~4,270 added Spanish characters for the
+      first two and ~5,430 for the second two**. At that rate the remaining `es` 33-40 is roughly
+      **20,000 characters**, and all four languages across economy 29-40 is roughly **85,000** — which
+      is the figure this item says the owner should see before it is spent. **Two lessons is a
       comfortable unit for one run; do not stretch it to a whole track.**
+    - **⚠️ The reference moves as you pay the debt down, so the headline count falls slower than the
+      pairs you fix (measured 2026-08-22, second run of the date).** `ABRIDGED_BELOW` is `0.7 x` each
+      language's **p90 ratio across this same corpus**, so every lesson you translate in full raises
+      the bar for all the others. Translating `es` 31 and 32 moved the `es` reference **1.1206 ->
+      1.1390**, which lifted the threshold **0.7844 -> 0.7973** and pushed **essentials lesson 11**
+      (`es` ratio **0.7954**, unchanged and untouched by that run) from "fine" to "abridged" by a
+      margin of **0.0019**. Net: two pairs fixed, one newly flagged, headline 92 -> 91.
+      **This is the metric working, not a regression** — the bar is "what a full translation of these
+      lessons weighs", and it should rise as the corpus gets better. Two consequences for whoever
+      picks this up: **(a)** do not go hunting for what "broke" lesson 11 — nothing did, and its
+      recorded ratio in the baseline is unchanged, which is why §33 stayed silent about it; **(b)**
+      expect a handful more borderline essentials lessons (14 is next at **0.8253**) to cross the line
+      as `es` 33-40 land, and do not read that as new debt appearing.
     - **The ledger does not move when you do this work, and that is correct.**
       `translation-review.mjs` fingerprints the *English* body, so rewriting a Spanish body neither
       clears nor creates staleness. `es` 30 stays on the stale list for an unrelated English edit.
@@ -13530,3 +13546,140 @@ English body, `npm run translation-completeness -- --write`, and let §33 prove 
 measured rate (~2,135 Spanish characters per lesson) the rest of `es` is ~20,000 characters, five more
 runs. **Item 18 remains the entire critical path to ending Phase 0**, blocked on the owner creating an
 analytics-provider account, and **item 72's owner half — a deployed URL — is blindspot 10.10**.
+
+## 2026-08-22 (scheduled dev-agent) — `es` economy 31-32 translated in full; the headline moved 3, not 4, and the reason is the metric
+
+**Picked:** item 93's queued tranche — "`es` economy 31-40, two lessons per run". Owner tree
+`OWNER-TREE c2331799fd3ee413aca864fd82d247a35ea31b01a70a6c4e37b00f6aad9105b2 (0 tracked modified,
+52 untracked)` — **UNMOVED** against the value the last two runs recorded, so `UIUX/` and `drafts/`
+are the owner's in-flight work and were not read, staged, or touched.
+
+### Step 3.5 — the premise held on both lessons, and the control was already in the instrument
+
+**Reproduced before editing.** `npm run translation-completeness` at `HEAD`: `es` 31 = **0.23**, 32 =
+**0.31**, against an `es` reference of **1.12**. Both are in the item's stated 0.23-0.35 band.
+
+**The control is structural rather than injected, which is stronger here.** This instrument cannot
+silently return "everything is fine": the same table shows money 12-28 at **1.02-1.15** and `es` 29/30
+— translated by the previous run — at **1.11/1.18**, so a run of fully-translated lessons in the same
+corpus reads high while the economy track reads low. A broken matcher would flatten *both* groups.
+
+**Read both bodies side by side rather than trusting the ratio**, because a low ratio could in
+principle be terse-but-complete prose. It is not. `es` 31 §1 was two sentences — "La productividad
+crece de forma estable. El crédito fluctúa salvajemente, creando ciclos." — against three explanatory
+English paragraphs (the crop rotation, the machine that does the work of three, why borrowing swings
+while productivity does not). §2 was **four words of scaffolding**: `MALO: Pedir prestado para un TV
+grande. / BUENO: Pedir prestado para un tractor...`, where English runs the two $15,000 borrowers as a
+full worked contrast. `es` 32 §1 was one sentence against three paragraphs; only its §3 was near-full,
+and it was kept and extended rather than rewritten.
+
+### What shipped
+
+- **`src/content/lessonContent.economy.es.js`** — lessons **31 and 32** rewritten from summary to full
+  translation. Section counts unchanged (2 and 3), headings unchanged, no section added or dropped.
+- **`scripts/translation-completeness-baseline.json`** — exactly two numbers: `31.es` 0.23 -> 1.15 and
+  `32.es` 0.31 -> 1.15. `git diff` on this file is 4 lines; nothing else moved.
+- **`LAUNCH_READINESS.md`** — the one generated §10.4 figure, `es 103,531 (0.754x)` ->
+  `es 108,965 (0.794x)`, written by `npm run readiness -- --write` rather than by hand.
+
+### Verification
+
+- `npm test` **6/6 PASS**, 0 failures, 2 warnings (both pre-existing: the translation-review warning
+  and §33's standing-debt warning). `npm run build` clean in 1.03s. `npm run check-blindspot` **7/7**.
+- **§33 confirmed the change independently and named only my two lessons.** Run *before* re-recording
+  the baseline, it failed with exactly two lines — "lesson 31 [es] is now at 1.15, up from a recorded
+  0.23" and the same for 32 — and no others. That is a stronger statement than the green that followed:
+  it proves the edit is contained to the two pairs I claim, since any collateral change to another
+  pair's ratio would have failed on its own line.
+- **`npm run translation-completeness` after the write**: `es` 31 = **1.15**, 32 = **1.15**, both
+  unstarred, against the `es` reference of **1.14**. `es` abridged pairs **20 -> 19**.
+- **Live browser, per rule W-1** (`dist/` served with `/usr/bin/python3 -m http.server`, catalogue
+  unlocked via `localStorage`, language switched with the real `<select>`). Lesson 31 whole-page
+  `innerText`: **en 3,082 chars, es 3,523** — the Spanish is now *longer* than the English, which is
+  what a real `es` translation of this corpus weighs, and it was a ~700-char stub. Lesson 32 renders
+  all three sections. The English control was captured from the same screen by flipping the picker,
+  so the comparison is content and not route.
+  - **An instrument slip worth recording, caught by its own control.** My first attempt set the
+    language by writing `localStorage.ecycles_lang` as JSON (`"es"` with quotes); the app stores it
+    raw, so the write was ignored and the reader came up **in English**. Had I been checking "does the
+    Spanish look right" rather than diffing against a captured control, an English render at
+    `#/lesson/31` would have looked like a plausible screen. The fix was to drive the real `<select>`,
+    which is also what the previous run did — and the failed attempt is where the English control came
+    from, so it cost nothing.
+  - Glossary chips render in Spanish on both lessons (`Crédito` on 31 §1; `Deflación`, `Recesión` on
+    32 §2). `lessonTerms.js` keys are language-independent and §17b reads only `*.en` fields, so
+    translating cannot disturb them — confirmed rendered rather than assumed.
+- **Both cross-references resolve, and I checked this by hand because nothing checks it for me.**
+  Lesson 32 cites two lessons; `es` mirrors English 2-for-2: `“Crédito”` -> lesson 30
+  (`Crédito: La Parte Más Importante`) and `“QE y QT”` -> lesson 37 (`QE y QT: Las Herramientas del
+  Fed`), both matching on the title head, which is this file's existing short-form convention.
+  **§16 does not cover this**: its output reads `cross-references matched per language: en=0, es=0,
+  ja=0, ko=0, zh=0` — it matches numeric "Lesson N" references, all of which were removed by item 87,
+  so it passes **vacuously** over quoted-title references. I would have been wrong to cite it as
+  verification.
+- **§10.1 grep over the changed lessons only** — `dalio`, `deberías (comprar|vender|invertir)`,
+  `te recomend`, `recomendamos`, `consejo financiero`, `garantiz`, `rendimiento asegurado`, and a
+  four-digit-year scan: **zero hits**. The new prose is mechanism throughout ("los prestamistas y los
+  bancos centrales tienden a mantener las tasas un poco más bajas en promedio... solo para que la
+  deuda siga siendo pagable" describes what lenders do, and recommends nothing). The "deuda
+  productiva" framing in 31 §2 is a faithful translation of English's existing "will the borrowed
+  money generate enough extra income to pay itself back?", not a new claim.
+- **Particulars audit, since "translation" is the claim and length alone cannot support it.** Every
+  concrete detail survives in order: the crop rotation, the machine that does the work of three, both
+  $15,000 borrowers with the television and the tractor, the three loan types, the town's factory /
+  restaurant / hardware store / car dealer chain, the cut server hours, deflation, recession, the 5-8
+  year cadence, rates approaching zero, quantitative easing and buying bonds directly.
+
+### The finding: the headline count fell by 3, not 4, and that is the metric working
+
+Two pairs were fixed, so the standing-debt warning should read 90. It reads **91**. The cause is that
+`ABRIDGED_BELOW` is `0.7 x` each language's **p90 ratio across this same corpus**, so translating
+lessons raises the bar for the rest. Measured unrounded: the `es` reference moved **1.1206 -> 1.1390**,
+the threshold **0.7844 -> 0.7973**, and **essentials lesson 11** — `es` ratio **0.7954**, untouched by
+this run — crossed from "fine" to "abridged" by **0.0019**.
+
+This is worth stating plainly rather than letting a next run rediscover it as a mystery regression:
+**nothing broke lesson 11.** Its recorded baseline ratio is unchanged, which is exactly why §33 stayed
+silent about it while failing loudly on 31 and 32 — §33 guards *recorded ratios*, and the abridged
+*classification* is derived at print time from a reference that moves. Both behaviours are right, and
+they are simply measuring different things. Written into item 93 with the next borderline lesson named
+(14, at **0.8253**) so the pattern is predicted rather than re-derived.
+
+### Adversarial self-check (step 5)
+
+- **Blindspot register** — clean, **7/7**, and this run ships learner-facing copy in a non-English
+  locale, which is where §10.1 actually bites. Beyond `check-blindspot`'s own five-language patterns I
+  ran the targeted greps above over the two changed lessons specifically. §10.2: no Dalio, and the
+  English source these translate carries none either. §2.3: no dates added — the only date-like
+  content in this file is pre-existing history in lessons 33/37, untouched by this diff. §10.3 has no
+  surface here (economy track, not kids content).
+- **`DECISIONS.md` conflict** — none. Content stays a per-language `.js` module in the item-45 layout;
+  no state, storage, module-format or build decision is touched. Checked specifically against the
+  machine-translation entry: it accepted AI translation under "(Beta)" and is **silent on
+  abridgement**, so filling two bodies in is consistent with it. The "(Beta)" caveat still stands and
+  nothing here upgrades it.
+- **Already-done backlog item** — no. Item 93 is open and this is its second tranche, moving the
+  number the item is keyed on. Nothing in "Completed and pruned" covers translation *volume*.
+- **Own verification claim** — reproducible, with one limit stated rather than implied. Every figure
+  above comes from a committed script an independent reviewer can re-run, and the two headline ratios
+  are enforced by §33 on every `npm test` rather than pasted. **Two claims I had to weaken rather than
+  soften:** §16 does *not* verify my cross-references (it matches 0 in every language, including
+  English) — so that check is hand-done and labelled as such; and I verified the Spanish is complete,
+  faithful in its particulars, and non-advisory, but **no fluent reviewer assessed register or idiom**,
+  which is precisely the "(Beta)" limit the owner accepted.
+- **The ledger was deliberately not touched**, for the third run running. `translation-review.mjs`
+  fingerprints the *English* body, so a Spanish rewrite cannot clear staleness; marking these would
+  assert an English-drift re-review that did not happen. It still reads 83% / 7 stale, correctly.
+
+### Next run
+
+`npm run owner-tree -- --expect <the fingerprint recorded in the commit that follows this entry>` —
+read **after** committing, per the 2026-08-21 correction. Mid-run this read
+`5aac6077…`, which was **entirely this run's own three staged files** inside the deviation set; the
+owner's 52 untracked files were unchanged in kind throughout.
+**Item 93 stays the top pick: `es` economy 33-40, two lessons per run**, same method — translate the
+English body, `npm run translation-completeness -- --write`, `npm run readiness -- --write`, and let
+§33 prove the ratio moved. Four more runs at this rate. **Expect the headline count to keep falling
+slower than the pairs you fix**, for the reason above. **Item 18 remains the entire critical path to
+ending Phase 0**, blocked on the owner creating an analytics-provider account, and **item 72's owner
+half — a deployed URL — is blindspot 10.10**.
