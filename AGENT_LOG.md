@@ -1093,9 +1093,10 @@ for the history. No open P1/P2 items.
       corrupts lesson content.
 
 93. **[Content — filed 2026-08-21 by the scheduled dev-agent, measured with a control, and the
-    largest open learner-visible gap in the app. P1 of the current Open set.] 94 of 160
+    largest open learner-visible gap in the app. P1 of the current Open set.] 92 of 160
     lesson/language pairs ship a condensed *summary* of the English body rather than a translation of
-    it.**
+    it.** *(Was 94 at filing. **es 29 and es 30 were translated in full on 2026-08-22** — the first
+    two pairs paid down, `es` abridged count 22 -> 20. Remaining in the first tranche: **es 31-40**.)*
     - **What a learner gets.** Economy lesson 40 §1 in English is four explanatory paragraphs (the
       indebted family, the factory worker, the farmer's tractor, the closing point). Its Spanish is
       **three bare rule headings and nothing else** — `REGLA 1: No dejes que la deuda crezca más
@@ -1137,6 +1138,17 @@ for the history. No open P1/P2 items.
       pick** — probably `es`, which has the highest ratio to begin with and the least distance to
       close. One lesson x one language is a reviewable unit; do not attempt a track x four languages
       in one run.
+    - **✅ Two lessons done, and the unit size is now measured rather than guessed (2026-08-22).**
+      `es` 29 (0.35 -> **1.11**) and 30 (0.34 -> **1.18**) both cleared the 1.12 reference, at a cost
+      of **~4,270 added Spanish characters for two lessons**. At that rate the remaining `es` 31-40 is
+      roughly **20,000 characters**, and all four languages across economy 29-40 is roughly **90,000**
+      — which is the figure this item says the owner should see before it is spent. **Two lessons is a
+      comfortable unit for one run; do not stretch it to a whole track.**
+    - **The ledger does not move when you do this work, and that is correct.**
+      `translation-review.mjs` fingerprints the *English* body, so rewriting a Spanish body neither
+      clears nor creates staleness. `es` 30 stays on the stale list for an unrelated English edit.
+      **Do not mark a pair reviewed just because you translated it** — that asserts the English-drift
+      re-review happened when it did not. Marking is a separate, honest act on separate evidence.
     - **Two things to settle before writing copy, and neither is the agent's call alone.**
       **(a)** DECISIONS.md's machine-translation entry accepted AI translation under "(Beta)"
       labeling; it never said "abridged", so filling these in is consistent with it — but the
@@ -13417,3 +13429,99 @@ one or two lessons per run**, translating the English body rather than summarizi
 without doing the translation work** — see this entry for why. **Item 18 remains the entire critical
 path to ending Phase 0**, blocked on the owner creating an analytics-provider account, and **item 72's
 owner half — a deployed URL — is blindspot 10.10**.
+
+## 2026-08-22 (scheduled dev-agent) — recovery commit: item 93's first two pairs, es economy 29-30
+
+**This run wrote no content.** It found the tree dirty with three tracked files that matched the
+previous run's queued item exactly, verified them, and committed them. Per the workflow's step 1, that
+is the whole of this run's work.
+
+### Establishing it was a stalled run and not the owner mid-work
+
+The queued item read: "economy lessons 29-40 in `es`, one or two lessons per run, translating the
+English body rather than summarizing it, then `npm run translation-completeness -- --write` to record
+the ratio moving up." The three modified files are precisely that and nothing else:
+
+- `src/content/lessonContent.economy.es.js` — lessons **29 and 30 only**, rewritten from summary to
+  full translation.
+- `scripts/translation-completeness-baseline.json` — **only** the `29.es` and `30.es` ratios, plus a
+  wording repair in the `note` ("20 lessons became abridged" -> "most of the catalogue became
+  abridged", which the previous run's own measurement had already made true).
+- `LAUNCH_READINESS.md` — one generated §10.4 figure, `es 99,265 (0.723x)` -> `es 103,531 (0.754x)`.
+
+**The tell is that two of the three are machine-written artifacts.** The baseline is emitted by
+`--write` and the §10.4 sentence is one of `refresh-readiness.mjs`'s 12 generated figures — neither is
+a file a human edits by hand, and the owner's own in-flight work is `UIUX/` and `drafts/` (52 untracked
+files, unchanged in kind). `npm run owner-tree` reads
+`ec8b0333cd612f7fad1e3a2156c5440d363b5631bc2c922b3d2f14fe541fcab1` — `MOVED` against the recorded
+`c2331799…`, which is the expected result and not a surprise: the deviation set now contains the
+stalled run's three files. **No owner file was touched, staged, or stashed.**
+
+### Verification
+
+- `npm test` **6/6 PASS**, 0 failures, 2 warnings (both pre-existing: the translation-review warning
+  and §33's standing-debt warning). `npm run build` clean in 1.50s. `npm run check-blindspot` **7/7**.
+- **§33 independently confirms the two pairs**, which is the load-bearing check here: it now reports
+  `abridged pairs es=20 ko=24 zh=24 ja=24` and the warning line reads **92 of 160**, down from the 94
+  the previous run measured. A `--write` baseline that did not match the content would have failed
+  §33 in *either* direction, so the recorded 1.11/1.18 are verified against the tree, not asserted.
+- **`npm run translation-completeness` shows 29 and 30 unstarred**: `es` 29 = **1.11**, 30 = **1.18**,
+  against the `es` reference of **1.12**. They were 0.35 and 0.34. Every other row is unchanged.
+- **The Spanish is a translation, not padding — checked against the English side by side.** Every
+  concrete particular survives in order: the coffee and the tapped card, $500 / 100 loaves / $5 a
+  loaf, the wheat market, both central-government and central-bank bullets, the $20,000 car with
+  $5,000 saved and a $15,000 loan, the $8 beer and the bar tab, the kitchen renovation -> contractor
+  -> work truck chain, and the $10,000 small business in `thinkAbout`. No section added, none dropped.
+- **The one cross-reference resolves.** The new body ends `(más sobre esto en “Tasas de Interés”)`,
+  mirroring English's `(more on that in “Interest Rates”)`. `src/content/lessons.js:199` gives the
+  `es` title as **"Tasas de Interés: La Señal Maestra"**, so the short form is right, and line 192 of
+  this same file already used that exact short form — the new text follows the file's own convention
+  rather than inventing one.
+
+### What I deliberately did NOT do
+
+The queued item also mentioned `translation-review.mjs mark ... ai`. **Leaving the ledger untouched is
+the correct outcome, not an omission.** The ledger fingerprints the *English* body, so a Spanish
+rewrite cannot clear staleness — and `es` 30 is on the stale list for an unrelated English edit dated
+2026-08-14. Marking it would assert that the English-drift re-review happened. This is the same false
+green the previous run refused, one step further along; it is now written into item 93 so it stops
+being re-derived.
+
+### Adversarial self-check (step 5)
+
+- **Blindspot register** — clean, 7/7, and this is the run where that matters most, since unlike the
+  previous one it *does* ship learner-facing copy in a non-English locale. §10.1's advice-adjacency
+  patterns run over `es` and pass; I also grepped the changed file directly for `dalio`, for
+  `deberías (comprar|vender|invertir)` / `te recomend` / `recomendamos` / `consejo financiero` /
+  `garantiz`, and for live-looking dates. **Zero hits in the changed lessons.** The new prose explains
+  mechanism throughout — "esa es exactamente la palanca que usa la Reserva Federal" describes what the
+  lever is, and recommends nothing. The only date hits in the file are pre-existing historical ones in
+  lessons 33 and 37 (2022/2024 yield-curve and QT history), untouched by this diff and already passing
+  §2.3.
+- **`DECISIONS.md` conflict** — none. Content stays a per-language `.js` module in the item-45 layout;
+  no state, storage, module-format or build decision is touched. Checked specifically against the
+  machine-translation entry: it accepted AI translation under "(Beta)" and is silent on abridgement,
+  so filling two bodies in is consistent with it.
+- **Already-done backlog item** — no. Item 93 was filed one day ago and is open; this is its first
+  tranche, and it moves the number the item is keyed on rather than redoing anything pruned.
+- **Own verification claim** — reproducible. Every figure above comes from a committed script an
+  independent reviewer can re-run (`npm test`, `npm run translation-completeness`,
+  `npm run check-blindspot`), and the two headline ratios are enforced by §33 on every `npm test`
+  rather than pasted. **One limit I should state rather than let the green imply otherwise:** I
+  verified the Spanish is complete, faithful in its particulars, and non-advisory. I did not have a
+  fluent reviewer assess register or idiom — that is exactly the "(Beta)" caveat the owner accepted,
+  and nothing here upgrades it.
+- **Worth naming:** the previous run's most useful output was a refusal, and this one inherits it. The
+  ledger still reads 100% over these lessons; it read 100% when they were a third of their English,
+  and it reads 100% now that two of them are whole. **That number did not detect the work being done
+  any more than it detected the work being missing** — §33 is what moved.
+
+### Next run
+
+`npm run owner-tree -- --expect <the value printed after this commit lands>` — recorded below from a
+post-commit reading, per the previous entry's own correction.
+**Item 93 stays the top pick: `es` economy 31-40, two lessons per run**, same method — translate the
+English body, `npm run translation-completeness -- --write`, and let §33 prove the ratio moved. At the
+measured rate (~2,135 Spanish characters per lesson) the rest of `es` is ~20,000 characters, five more
+runs. **Item 18 remains the entire critical path to ending Phase 0**, blocked on the owner creating an
+analytics-provider account, and **item 72's owner half — a deployed URL — is blindspot 10.10**.

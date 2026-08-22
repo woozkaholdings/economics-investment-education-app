@@ -27,33 +27,33 @@ export const lessonContent = {
     "sections": [
       {
         "heading": "¿Qué es una Transacción?",
-        "body": "Una economía es simplemente la suma de todas las transacciones. Cada transacción es un comprador intercambiando dinero o crédito con un vendedor por bienes, servicios o activos financieros.\n\nEl crédito se gasta igual que el dinero. Gasto Total = Dinero + Crédito.\n\nEl gasto total impulsa la economía."
+        "body": "Piensa en el último café que compraste. Entregaste dinero —o acercaste una tarjeta al lector— y recibiste una taza de café a cambio. Eso es una transacción: un comprador que intercambia dinero o crédito con un vendedor por algo de valor. Si te alejas y miras el conjunto, una economía entera no es nada más misterioso que millones de intercambios como ese ocurriendo a la vez: alguien comprando la despensa, una empresa comprando sillas de oficina, una ciudad comprando asfalto para repavimentar una calle.\n\nAquí está la parte que confunde a mucha gente: no necesitabas efectivo para ese café. Si pagas con tarjeta de crédito, lo compraste igual; simplemente pagaste con crédito en lugar de dinero, y el empleador del barista cobró exactamente igual. Por eso el crédito se gasta igual que el dinero: Gasto Total = Dinero Gastado + Crédito Gastado.\n\nEl gasto total es lo que impulsa toda la economía, y de él salen los precios de una forma sencilla, casi mecánica: divide la cantidad total gastada en algo entre la cantidad que se vendió. Si los compradores gastan $500 en 100 barras de pan en la misma panadería, el precio por barra es de $5. Eso es todo: eso es una transacción, repetida miles de millones de veces al día, hasta sumar una economía entera."
       },
       {
         "heading": "Mercados y la Economía",
-        "body": "Un mercado son todos los compradores y vendedores haciendo transacciones por lo mismo. Una economía consiste en todas las transacciones en todos los mercados.\n\nEl gobierno es el mayor comprador y vendedor, con dos partes:\n• Gobierno Central — recauda impuestos, gasta\n• Banco Central — controla dinero y crédito"
+        "body": "Un mercado es sencillamente el conjunto de todos los compradores y vendedores que negocian lo mismo: quienes compran y venden trigo forman el mercado del trigo; quienes negocian las acciones de una empresa forman el mercado de esa acción. Junta todos los mercados —alimentos, autos, viviendas, acciones, trabajo, todo— y tienes la economía completa.\n\nLos hogares, las empresas y los bancos participan en ella, pero el mayor comprador y vendedor de todos es el gobierno, que cumple dos papeles muy distintos:\n\n• Gobierno Central — recauda impuestos y decide cómo gastarlos, en cosas como carreteras, escuelas y defensa\n• Banco Central — no cobra impuestos ni gasta directamente. En cambio, controla el dinero y el crédito, sobre todo fijando las tasas de interés y, en situaciones extremas, creando dinero nuevo"
       }
     ],
-    "takeaway": "Si entendemos las transacciones, entendemos toda la economía.",
-    "thinkAbout": "Piensa en tu última compra. Intercambiaste dinero por algo. Esa transacción se convirtió en el ingreso de alguien más."
+    "takeaway": "Si logras entender una sola transacción —un comprador, un vendedor, dinero o crédito cambiando de manos— ya tienes la semilla de toda la economía. Todo lo que viene en este curso es esa misma idea, repetida a una escala cada vez mayor.",
+    "thinkAbout": "Piensa en lo último que compraste, aunque sea algo pequeño como un refrigerio. Intercambiaste dinero o crédito por ello, y ese pago se convirtió en el ingreso de otra persona: el sueldo del cajero, los ingresos de la tienda, el proveedor que surtió el estante. ¿Puedes seguir el rastro de a dónde fue tu dinero después?"
   },
   "30": {
     "sections": [
       {
         "heading": "Cómo Funciona el Crédito",
-        "body": "Los prestamistas quieren más dinero. Los prestatarios quieren comprar algo que no pueden pagar ahora.\n\nCuando los prestatarios prometen pagar y los prestamistas les creen, ¡el crédito se crea de la nada!\n\nTasas altas → menos préstamos\nTasas bajas → más préstamos"
+        "body": "Supongamos que quieres comprar un auto de $20,000 pero solo tienes $5,000 ahorrados. Un prestamista —un banco, una cooperativa de crédito o el propio concesionario— te ofrece un préstamo: te entrega $15,000 ahora, y tú prometes devolverlos con el tiempo, más los intereses como pago por el riesgo que asumen.\n\nEn el momento en que firmas esa promesa, y el prestamista cree que la vas a cumplir, se crean de la nada $15,000 de crédito totalmente nuevo: nadie tuvo que ahorrarlos antes. Tú te llevas el auto; el prestamista pasa a tener un activo (le debes dinero) y tú pasas a tener un pasivo (se lo debes).\n\nLas tasas de interés determinan qué tan cara es esa promesa. Cuando las tasas son altas → pedir prestado cuesta más → menos gente pide préstamos. Cuando las tasas son bajas → pedir prestado es barato → más gente lo hace. Esa es exactamente la palanca que usa la Reserva Federal para acelerar o frenar toda la economía (más sobre esto en “Tasas de Interés”)."
       },
       {
         "heading": "Crédito vs Dinero",
-        "body": "El dinero cierra transacciones inmediatamente. El crédito es como una cuenta de bar — prometes pagar después.\n\nLa realidad: la mayoría del \"dinero\" es crédito. En EE.UU., el crédito total supera muchas veces la oferta de dinero base, una brecha que ha crecido con el tiempo."
+        "body": "El dinero liquida una transacción en el acto. Le das $8 en efectivo al barman por una cerveza y el trato queda cerrado por completo: nadie le debe nada a nadie.\n\nEl crédito funciona distinto. Es como abrir una cuenta en ese mismo bar: bebes ahora y prometes pagar cuando cierres la cuenta más tarde. En el momento en que el barman acepta abrirte esa cuenta, acaban de crearse de la nada un activo y un pasivo —al bar le deben dinero, tú le debes dinero al bar— aunque todavía no haya cambiado de manos ni un billete.\n\nAhora multiplica esa cuenta del bar por cada hipoteca, cada préstamo de auto, cada saldo de tarjeta de crédito y cada préstamo empresarial del país, y llegas a una realidad sorprendente: la mayor parte de lo que la gente llama despreocupadamente \"dinero\" es en realidad crédito. En EE.UU., el crédito total pendiente es muchas veces mayor que la oferta de dinero base, una brecha que solo se ha ampliado con el tiempo a medida que la economía ha crecido."
       },
       {
         "heading": "La Cadena de Gasto",
-        "body": "¿Por qué importa el crédito? Porque cuando gastas más, alguien gana más.\n\nMás gasto → más ingreso → más crédito → más préstamos → más gasto. Este patrón auto-reforzante crea los ciclos económicos."
+        "body": "¿Por qué importa tanto el crédito? Porque pedir prestado permite gastar más de lo que el ingreso por sí solo permitiría, y el gasto de una persona siempre es el ingreso de otra.\n\nSupongamos que un propietario pide prestado para renovar su cocina. Ese dinero se convierte en el ingreso del contratista. El contratista, que ahora gana más, le parece más solvente a un prestamista y pide prestado para comprar una nueva camioneta de trabajo. Esa compra se convierte en el ingreso del vendedor de camionetas, y la cadena sigue.\n\nMás gasto → más ingreso → prestatarios más solventes → más préstamos → más gasto, y así sucesivamente. Este bucle que se refuerza a sí mismo funciona en ambas direcciones, y es exactamente por eso que las economías se mueven en auges y caídas en lugar de crecer en línea recta."
       }
     ],
-    "takeaway": "El crédito crea ciclos auto-reforzantes en AMBAS direcciones — auges Y caídas.",
-    "thinkAbout": "Si pides prestado $10,000 y los gastas, eso se convierte en ingreso de alguien. ¿Ves cómo el crédito crea crecimiento?"
+    "takeaway": "El crédito crea un bucle que se refuerza a sí mismo en AMBAS direcciones: lo que una persona pide prestado alimenta el ingreso de otra, que a su vez alimenta más préstamos, todo el camino hacia arriba en un auge y todo el camino hacia abajo en una caída.",
+    "thinkAbout": "Imagina que pides prestados $10,000 para abrir un pequeño negocio y los gastas en equipo y en el primer mes de alquiler. Ese dinero se convierte en el ingreso del vendedor de equipo y del arrendador, y ahora ellos también pueden gastar o pedir prestado más. ¿Puedes seguir cómo ese único préstamo se propaga hacia afuera y se convierte en crecimiento para otras personas?"
   },
   "31": {
     "sections": [

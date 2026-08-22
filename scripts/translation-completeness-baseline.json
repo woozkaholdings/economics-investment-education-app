@@ -1,5 +1,5 @@
 {
-  "note": "Recorded translated:English character ratio per lesson per language. Regenerate with `npm run translation-completeness -- --write` whenever a ratio legitimately moves, and say in the commit message which way it moved and why. check-data.mjs §33 fails if any pair drifts by more than `tolerance` in EITHER direction — a drop means English grew (or a translation shrank) without the translation keeping up, which is exactly how 20 lessons became abridged without any run noticing; a rise means someone did the work, and the baseline should record it so the debt is visibly paid down rather than silently forgotten.",
+  "note": "Recorded translated:English character ratio per lesson per language. Regenerate with `npm run translation-completeness -- --write` whenever a ratio legitimately moves, and say in the commit message which way it moved and why. check-data.mjs §33 fails if any pair drifts by more than `tolerance` in EITHER direction — a drop means English grew (or a translation shrank) without the translation keeping up, which is exactly how most of the catalogue became abridged without any run noticing; a rise means someone did the work, and the baseline should record it so the debt is visibly paid down rather than silently forgotten.",
   "tolerance": 0.03,
   "ratios": {
     "1": {
@@ -171,13 +171,13 @@
       "ja": 0.5
     },
     "29": {
-      "es": 0.35,
+      "es": 1.11,
       "ko": 0.15,
       "zh": 0.1,
       "ja": 0.11
     },
     "30": {
-      "es": 0.34,
+      "es": 1.18,
       "ko": 0.19,
       "zh": 0.12,
       "ja": 0.14
