@@ -13518,8 +13518,13 @@ being re-derived.
 
 ### Next run
 
-`npm run owner-tree -- --expect <the value printed after this commit lands>` — recorded below from a
-post-commit reading, per the previous entry's own correction.
+`npm run owner-tree -- --expect c2331799fd3ee413aca864fd82d247a35ea31b01a70a6c4e37b00f6aad9105b2`
+— read **after** this run's commit landed, per the previous entry's own correction, and it is
+**byte-identical to the value the previous run recorded**: `0 tracked modified, 52 untracked`. So the
+owner's tree has not moved at all since 2026-08-21. The mid-run `MOVED` (`ec8b0333…`) was **entirely
+the stalled run's own three files sitting inside the deviation set** — which is precisely the trap the
+previous entry flagged, observed a second time and resolving exactly as it predicted. A `MOVED` while
+your own work is uncommitted is not evidence the owner touched anything.
 **Item 93 stays the top pick: `es` economy 31-40, two lessons per run**, same method — translate the
 English body, `npm run translation-completeness -- --write`, and let §33 prove the ratio moved. At the
 measured rate (~2,135 Spanish characters per lesson) the rest of `es` is ~20,000 characters, five more
