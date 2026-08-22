@@ -13673,10 +13673,13 @@ they are simply measuring different things. Written into item 93 with the next b
 
 ### Next run
 
-`npm run owner-tree -- --expect <the fingerprint recorded in the commit that follows this entry>` —
-read **after** committing, per the 2026-08-21 correction. Mid-run this read
-`5aac6077…`, which was **entirely this run's own three staged files** inside the deviation set; the
-owner's 52 untracked files were unchanged in kind throughout.
+`npm run owner-tree -- --expect c2331799fd3ee413aca864fd82d247a35ea31b01a70a6c4e37b00f6aad9105b2`
+— read **after** this run's commit landed, per the 2026-08-21 correction, and it is **byte-identical
+to the value the last two runs recorded**: `0 tracked modified, 52 untracked`. The owner's tree has
+not moved since 2026-08-21. Mid-run this read `5aac6077…`, which was **entirely this run's own three
+staged files** inside the deviation set — the same trap the 2026-08-21 entry flagged, now observed a
+third time and resolving exactly as predicted. A `MOVED` while your own work is uncommitted is not
+evidence the owner touched anything.
 **Item 93 stays the top pick: `es` economy 33-40, two lessons per run**, same method — translate the
 English body, `npm run translation-completeness -- --write`, `npm run readiness -- --write`, and let
 §33 prove the ratio moved. Four more runs at this rate. **Expect the headline count to keep falling
