@@ -1093,12 +1093,13 @@ for the history. No open P1/P2 items.
       corrupts lesson content.
 
 93. **[Content — filed 2026-08-21 by the scheduled dev-agent, measured with a control, and the
-    largest open learner-visible gap in the app. P1 of the current Open set.] 87 of 160
+    largest open learner-visible gap in the app. P1 of the current Open set.] 85 of 160
     lesson/language pairs ship a condensed *summary* of the English body rather than a translation of
-    it.** *(Was 94 at filing. **es 29-36 have been translated in full**, all on 2026-08-22 — eight pairs
-    paid down, `es` abridged count 22 -> 15. Remaining in the first tranche: **es 37-40**, two runs.
-    The headline fell by 3 on lessons 31/32 but by a clean 2 on 33/34 and again on 35/36: see the
-    moving-reference bullet below, which is a property of the metric and not a regression.)*
+    it.** *(Was 94 at filing. **es 29-38 have been translated in full**, all on 2026-08-22 — ten pairs
+    paid down, `es` abridged count 22 -> 13. Remaining in the first tranche: **es 39-40**, one run,
+    which finishes the Spanish economy track. The headline fell by 3 on lessons 31/32 and by a clean 2
+    on each pair since: see the moving-reference bullet below, which is a property of the metric and
+    not a regression.)*
     - **What a learner gets.** Economy lesson 40 §1 in English is four explanatory paragraphs (the
       indebted family, the factory worker, the farmer's tractor, the closing point). Its Spanish is
       **three bare rule headings and nothing else** — `REGLA 1: No dejes que la deuda crezca más
@@ -1140,14 +1141,14 @@ for the history. No open P1/P2 items.
       pick** — probably `es`, which has the highest ratio to begin with and the least distance to
       close. One lesson x one language is a reviewable unit; do not attempt a track x four languages
       in one run.
-    - **✅ Eight lessons done, and the unit size is now measured rather than guessed (2026-08-22).**
+    - **✅ Ten lessons done, and the unit size is now measured rather than guessed (2026-08-22).**
       `es` 29 (0.35 -> **1.11**), 30 (0.34 -> **1.18**), 31 (0.23 -> **1.15**), 32 (0.31 -> **1.15**),
-      33 (0.34 -> **1.13**), 34 (0.24 -> **1.16**), 35 (0.31 -> **1.20**) and 36 (0.35 -> **1.20**) all
-      cleared their reference, at a cost of **~4,270 added Spanish characters for 29/30, ~5,430 for
-      31/32, ~6,680 for 33/34 and ~7,350 for 35/36** — the pairs get more expensive as the lessons get
-      longer, so budget by English character count, not by lesson. Remaining `es` 37-40 is roughly
-      **12,000 characters**, two more runs. **Two lessons is a comfortable unit for one run; do not
-      stretch it to a whole track.**
+      33 (0.34 -> **1.13**), 34 (0.24 -> **1.16**), 35 (0.31 -> **1.20**), 36 (0.35 -> **1.20**),
+      37 (0.31 -> **1.19**) and 38 (0.29 -> **1.17**) all cleared their reference, at a cost of
+      **~4,270 added Spanish characters for 29/30, ~5,430 for 31/32, ~6,680 for 33/34, ~7,350 for
+      35/36 and ~6,320 for 37/38** — budget by English character count, not by lesson. Remaining
+      `es` 39-40 is roughly **5,000 characters**, one run. **Two lessons is a comfortable unit for one
+      run; do not stretch it to a whole track.**
     - **A translated `es` lesson lands between 1.02 and 1.20, and that whole band is normal.** Across
       the 23 `es` lessons now at full volume the ratios run **min 1.022, median 1.119, max 1.204**.
       Lessons 35 and 36 came in at the top of it (1.204, 1.198), just above lesson 30's pre-existing
@@ -1168,13 +1169,16 @@ for the history. No open P1/P2 items.
       recorded ratio in the baseline is unchanged, which is why §33 stayed silent about it; **(b)**
       expect a handful more borderline essentials lessons (14 is next at **0.8253**) to cross the line
       as `es` 35-40 land, and do not read that as new debt appearing.
-      **Update after 33/34 and again after 35/36 (same date): the effect is intermittent, not per-run,
-      and it is decelerating.** 33/34 moved the `es` reference 1.1390 -> **1.1485**; 35/36 moved it
-      only to **1.1520**, lifting the threshold to **0.8064**. Lesson 14 (0.8253) stayed above it both
-      times, so the headline fell by a clean 2 on each (91 -> 89 -> 87). **Lesson 14's margin is now
-      0.0189 and shrinking slowly**; lesson 16 is behind it at 0.8607. The reference is a p90, so each
-      additional full translation moves it less than the last — expect the remaining `es` 37-40 to cost
-      little or no further threshold drift.
+      **Update after 33/34, 35/36 and 37/38 (same date): the effect is intermittent, and the
+      "decelerating" claim written here after 35/36 was WRONG — corrected on the next run's data.**
+      Reference moves: 33/34 pushed `es` 1.1390 -> **1.1485** (+0.0095), 35/36 only to **1.1520**
+      (+0.0035), and 37/38 to **1.1682** (+0.0162) — *larger than either*. The p90 does not decay
+      monotonically as translations land; it steps whenever a newly-converted lesson displaces the
+      element the 90th-percentile index points at, so the move depends on where the new ratios sort,
+      not on how many lessons are already done. **Do not predict the next step's size from the last
+      one.** Lesson 14 (0.8253) has stayed above the threshold on all three occasions (now 0.8177),
+      but its margin has fallen 0.0189 -> **0.0075**, so `es` 39/40 will very likely push it under and
+      the final headline should be expected to fall by 1, not 2. Lesson 16 is behind it at 0.8607.
     - **The ledger does not move when you do this work, and that is correct.**
       `translation-review.mjs` fingerprints the *English* body, so rewriting a Spanish body neither
       clears nor creates staleness. `es` 30 stays on the stale list for an unrelated English edit.
@@ -13922,3 +13926,109 @@ Then the decision this item has flagged since filing: **`ko`/`zh`/`ja` economy 2
 more characters, and the owner should see that number before it is spent.** **Item 18 remains the
 entire critical path to ending Phase 0**, blocked on the owner creating an analytics-provider account,
 and **item 72's owner half — a deployed URL — is blindspot 10.10**.
+
+## 2026-08-22 (owner-directed) — `es` economy 37-38; a prediction this log made last run turned out wrong, and the currency abbreviations were wrong in Spanish
+
+**Picked:** the owner asked for "es 37-38 next", item 93's queued tranche. Owner tree
+`OWNER-TREE c2331799fd3ee413aca864fd82d247a35ea31b01a70a6c4e37b00f6aad9105b2 (0 tracked modified,
+52 untracked)` — **UNMOVED**.
+
+### Step 3.5 — premise held on both
+
+`es` 37 = **0.31**, 38 = **0.29** at `HEAD` against an `es` reference of **1.15**. Control unchanged in
+kind and now 23 lessons wide (1.02-1.20 full-volume vs 0.25-0.35 untranslated).
+
+**Read both before believing the ratio.** Lesson 37 §1 had lost the QE program table entirely — English
+lists QE1 (2008) through COVID QE (2020) with sizes, and the Spanish had none of it, nor the mechanism
+paragraph explaining what QE buying actually does to bond prices and yields. Lesson 38 §1/§2 were
+reduced to telegraphic fragments (`EXPANSIÓN: El crédito fluye. PIB sube, empleo crece.`) that dropped
+the factory-town narrative and two of the three S&P 500 figures.
+
+### What shipped
+
+- **`src/content/lessonContent.economy.es.js`** — lessons **37 and 38** rewritten from summary to full
+  translation. Section counts (3 and 3) and headings unchanged.
+- **A numerals correction that is a real Spanish-language defect, not a style preference.** The `es`
+  side wrote Fed balance-sheet figures as `$900B`, `$9T`, `$95B`, `$2T` — English magnitude
+  abbreviations left in Spanish text. **In Spanish, `billón` is 10^12**, so `$900B` reads to a Spanish
+  reader as roughly a thousand times the intended amount. All five occurrences were inside lesson 37,
+  the lesson being rewritten, so the fix is contained: now `$900 mil millones`, `$9 billones`,
+  `$95 mil millones`, `$2 billones`, matching English's own spelled-out `$900 billion` / `$9 trillion`
+  and correct on the long scale. Verified 7-for-7 against the English figures.
+- **`scripts/translation-completeness-baseline.json`** — exactly two numbers (`37.es` 0.31 -> 1.19,
+  `38.es` 0.29 -> 1.17).
+- **`LAUNCH_READINESS.md`** — generated §10.4 figure, `es 122,996 (0.896x)` -> `es 129,320 (0.942x)`.
+
+### Verification
+
+- `npm test` **6/6 PASS**, 0 failures, 2 pre-existing warnings. `npm run build` clean in 1.09s.
+  `npm run check-blindspot` **0 failures**.
+- **§33 run before re-recording failed on exactly two lines**, lessons 37 [es] and 38 [es], no others.
+- **Paragraph-count parity** (the check adopted last run, now the primary structural test):
+  **37: en 5,4,1 / es 5,4,1** and **38: en 3,3,4 / es 3,3,4** — exact.
+- **All three cross-references resolve, matching English 1-for-1 and 2-for-2**: 37's
+  `“Tasas de Interés”` -> 35; 38's `“El Ciclo de Deuda a Corto Plazo”` -> 32 and `“Tasas de Interés”`
+  -> 35. Hand-checked against `lessons.js`; §16 still passes vacuously here.
+- **§10.1 got a stronger test than a grep this run, because lesson 38 is the most advice-adjacent
+  lesson in the app** — it names which assets have been favored in each cycle phase. The English
+  carries that entirely on hedges ("Historically, this phase has coincided with...", "have
+  historically been favored"), so a translation that dropped them would convert description into
+  recommendation without tripping any pattern. **Measured rather than eyeballed: English contains 9
+  `historical*` hedges in lesson 38 and the Spanish contains 9 `históricamente`.** The three S&P 500
+  figures match exactly (`+14-28%`, `-22-35%`, `+38-50%`), so no claim was rounded or strengthened.
+  The pattern grep (11 patterns incl. `deberías (comprar|vender|invertir)`, `te conviene`,
+  `lo mejor es comprar`, `compra ahora`) is **clean**.
+- **The Buffett quotation in 38's thinkAbout was left byte-identical** to the rendering already in the
+  file — quotations stay verbatim, so it was not re-translated even though the surrounding sentence
+  was completed.
+- **Live browser** (English control from the same screen each time): lesson 37 **es 4,995 chars vs
+  en 4,344**, with the QE table rendering as `QE1 (2008): $1.75 billones / QE2 (2010): $600 mil
+  millones / ...`; lesson 38 **es 5,506 vs en 4,781**.
+
+### The correction: last run's "decelerating" prediction was wrong
+
+The previous entry claimed the moving-reference effect was decelerating and that "the remaining `es`
+37-40 [would] cost little or no further threshold drift." **That was wrong, and this run's data
+refutes it.** Reference moves: 33/34 **+0.0095**, 35/36 **+0.0035**, 37/38 **+0.0162** — the largest of
+the three, immediately after the run that predicted the smallest.
+
+The reason is that the reference is a **p90 over all 40 `es` ratios**, and a percentile steps whenever
+a newly-converted lesson displaces the element the index points at. It does not decay smoothly with
+progress; the size of the move depends on where the two new ratios sort, which is not knowable in
+advance. The corrected guidance in item 93 is simply **do not predict the next step from the last
+one**, which is a weaker and more honest claim than the one it replaces.
+
+What *can* be said: lesson 14 has survived all three threshold rises but its margin has fallen
+**0.0189 -> 0.0075**, so `es` 39/40 will very likely push it under and the final headline should be
+expected to fall by **1, not 2**. Recorded as a prediction so the next run can check it — which is the
+same thing this run just did to its predecessor.
+
+### Adversarial self-check (step 5)
+
+- **Blindspot register** — clean. §10.1 is the live risk here and got the hedge-count and figure-parity
+  measurements above rather than a grep alone. §10.2: no Dalio — worth stating explicitly for lesson
+  38, whose four-phase asset framing is the most Dalio-adjacent *material* in the app; the English
+  attributes nothing to him and neither does the Spanish. §2.3: the dates are historical program dates
+  (2008/2010/2012/2020/2022/2024) that the English already carries. §10.3: no surface.
+- **`DECISIONS.md` conflict** — none.
+- **Already-done backlog item** — no; item 93's fifth tranche.
+- **Own verification claim** — reproducible. **The thing this run got wrong is a claim in the previous
+  run's log, not in the code**, and it is corrected in item 93 at the place a future run will read it
+  rather than only here. Standing limits unchanged: §16 does not cover the cross-references
+  (hand-checked), and **no fluent reviewer has assessed register or idiom** in any of these ten
+  lessons — the "(Beta)" caveat stands.
+- **Worth naming:** the currency fix is the kind of defect this whole item exists to surface. It was
+  not in the abridgement measurement, no check would ever have caught it, and it was only found
+  because translating the lesson meant reading every figure in it. There may be more of these in the
+  other three languages, which is an argument for reading `ko`/`zh`/`ja` rather than assuming the
+  gap there is purely one of volume.
+
+### Next run
+
+**Item 93: `es` economy 39-40** (~5,000 characters) **finishes the Spanish economy track** and takes
+`es` to 0 abridged economy lessons. Expect the headline to fall by 1 rather than 2 (see above).
+After that, the decision this item has flagged since filing: **`ko`/`zh`/`ja` economy 29-40 is roughly
+65,000 more characters, and the owner should see that number before it is spent** — and the currency
+finding above suggests those languages need *reading*, not just volume. **Item 18 remains the entire
+critical path to ending Phase 0**, blocked on the owner creating an analytics-provider account, and
+**item 72's owner half — a deployed URL — is blindspot 10.10**.
