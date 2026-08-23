@@ -10,7 +10,7 @@
 // ═══════════════════════════════════════════════════════════════════════════
 
 import { useRef } from "react";
-import { FONT_SCALE_STEPS, THEME_MODES, fill, ink, line, radius, space, surface } from "../../theme.js";
+import { FONT_SCALE_STEPS, THEME_MODES, fill, ink, line, MIN_TAP, radius, space, surface } from "../../theme.js";
 import { Card, Disclaimer, Text } from "../../components/ui.jsx";
 
 // A row of equal-width choices sharing radio semantics.
@@ -68,6 +68,9 @@ function ChoiceRow({ label, options, value, onChange }) {
               style={{
                 flex: 1,
                 padding: `${space["3"]}px ${space["2"]}px`,
+                // 43px — one pixel short, which is exactly the kind of miss a
+                // token catches and a hand-tuned padding does not.
+                minHeight: MIN_TAP,
                 borderRadius: radius.md,
                 border: `1.5px solid ${active ? fill.accent : line.strong}`,
                 background: active ? surface.accentWash : surface.card,

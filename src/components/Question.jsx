@@ -19,7 +19,7 @@
 import { useState } from "react";
 import Icon from "./Icon.jsx";
 import { Note, Text } from "./ui.jsx";
-import { fill, ink, line, radius, space, surface } from "../theme.js";
+import { fill, ink, line, MIN_TAP, radius, space, surface } from "../theme.js";
 
 export default function Question({ question, t, onAnswered, autoFocusHeading = false, reveal = true }) {
   const [choice, setChoice] = useState(null);
@@ -83,6 +83,10 @@ export default function Question({ question, t, onAnswered, autoFocusHeading = f
                 display: "flex", alignItems: "center", gap: space["3"],
                 width: "100%", textAlign: "left",
                 padding: `${space["3"]}px ${space["4"]}px`,
+                // Already cleared 44 on this padding alone. Stated rather than
+                // left to coincidence: a later padding change should not be
+                // able to drop the answer options under the floor in silence.
+                minHeight: MIN_TAP,
                 marginBottom: space["2"],
                 borderRadius: radius.md,
                 border: `1.5px solid ${border}`,

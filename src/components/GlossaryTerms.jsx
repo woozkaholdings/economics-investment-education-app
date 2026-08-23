@@ -23,7 +23,7 @@ import { useId, useState } from "react";
 import { glossary } from "../content/glossary.js";
 import Icon from "../components/Icon.jsx";
 import { Text } from "./ui.jsx";
-import { ink, line, radius, space, surface } from "../theme.js";
+import { ink, line, MIN_TAP, radius, space, surface } from "../theme.js";
 
 export default function GlossaryTerms({ terms, t, lang }) {
   const [openTerm, setOpenTerm] = useState(null);
@@ -60,7 +60,11 @@ export default function GlossaryTerms({ terms, t, lang }) {
               onClick={() => setOpenTerm(isOpen ? null : term)}
               style={{
                 display: "inline-flex", alignItems: "center", gap: space["1"],
-                padding: `${space["1"]}px ${space["3"]}px`,
+                // The horizontal padding rises with the height: a 44px-tall pill
+                // on 12px of side padding reads as a narrow capsule, and these
+                // wrap into rows where the proportion is what the eye reads.
+                padding: `${space["1"]}px ${space["4"]}px`,
+                minHeight: MIN_TAP,
                 borderRadius: radius.full,
                 border: `1px solid ${isOpen ? ink.accent : line.strong}`,
                 background: isOpen ? surface.accentWash : surface.card,

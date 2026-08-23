@@ -2392,6 +2392,20 @@ for the history. No open P1/P2 items.
     > **The owner's no-paywall instruction above still binds** — much of the `UIUX/` set is
     > subscription UI (Vocabulary's "Go Premium"/"Unlock all", its Settings "Manage subscription",
     > Duolingo's friends-invite), and none of it may be built from while §4.3's Phase-0 gate is open.
+    > **Fourth pass, 2026-08-23 (owner-directed mid-run, "proceed implementing UIUX"): the reference
+    > set's *touch targets*.** The first three passes took the folder's structures, its palette and
+    > three of its patterns; all of them are iOS apps built to a 44pt floor, and the app was not.
+    > **Measured with a control: eleven control classes rendered under 44x44 — the coach-mark dismiss
+    > at 20x20 and the Sector period tabs at 19x31, the latter under even WCAG 2.5.8's 24px AA
+    > floor.** Fixed against a new `MIN_TAP` token in `theme.js` and guarded by `check-data.mjs`
+    > **§34**. The previous run had filed only the mildest instance ("the primary button is 42px")
+    > and deferred it on the cost of its cheapest part — **a backlog note's characterization of the
+    > code is evidence, not fact, and this is the eleventh consecutive time step 3.5 has said so.**
+    > **STILL OPEN AND STILL THE OWNER'S CALL: the Leitner box-distribution strip.** It has now been
+    > offered back three times (2026-08-21, and twice on 2026-08-23). "Proceed implementing UIUX" was
+    > not read as an answer to it, because it is a translation-debt question (five locale keys x five
+    > languages) rather than a design one. **It is the only unbuilt item left from the canvas** — if
+    > the owner declines it, this stream is complete and item 26 can close.
 
 > **PRIORITY BLOCK — set by the weekly review 2026-08-09. SUPERSEDED 2026-08-16 (see above); all four
 > items below are closed. Retained for history.**
@@ -5499,3 +5513,148 @@ unreviewed machine translation — is a decision, not a task, and is still waiti
 **Next scheduled pick: `ja` economy 29-30**, resuming W-5.1 step 2's six-run block; the rate must be
 re-measured against `ja`'s own 0.50 reference rather than inherited from `ko` (0.379) or `zh`
 (0.226). **W-5.4 is now the cheapest non-93 item** and is fully scoped above.
+
+### 2026-08-23 (owner-directed, mid-run) — the UIUX/ set's *touch targets*: eleven control classes were under 44, the smallest at 20x20
+
+**Picked:** owner-directed. This run started as the scheduled `ja` economy 29-30 pick (W-5.1 step 2)
+and had completed step 3.5 on it when the owner interjected **"proceed implementing UIUX"**. Switched
+to the UIUX stream; the `ja` measurement is preserved at the bottom of this entry so the next run does
+not repeat it. `HEAD` `a7343d7` throughout; `UIUX/` and `drafts/` stayed untracked and unread.
+
+### Step 3.5 — the premise, re-measured, and it was understated by an order of magnitude
+
+The 2026-08-23 "last three UIUX/ patterns" entry filed this under **"Noted, not fixed"**: *"The primary
+button is 42px tall, not 44 … changing it moves every button in the app — out of scope."* Taken at face
+value that is a 2px shortfall on one component.
+
+**Measured live before touching anything, at a 375px mobile viewport: eleven control classes rendered
+under 44x44, and `Button` was the mildest of them.**
+
+| Control | Site | Before | After |
+|---|---|---|---|
+| Coach-mark dismiss ✕ | `App.jsx` | **20x20** | 44x44 |
+| Sector period tabs `1M/3M/6M` | `ui.jsx` `Segmented` | **19x31** | 44x44 |
+| Practice runner exit ✕ | `Practice.jsx` | 32x32 | 44x44 |
+| Kids age tabs | `ui.jsx` `Segmented` | 63x31 | 63x44 |
+| Language picker `select` | `App.jsx` | 121x27 | 121x44 |
+| Lesson term chips | `GlossaryTerms.jsx` | 68x27 | 76x44 |
+| Reference / TermDetail back | `Reference.jsx`, `TermDetail.jsx` | 90x33 | 90x44 |
+| PolicySim option chips | `PolicySim.jsx` | 109x35 | 44 floor |
+| Reader back chip | `LessonReader.jsx` | 40x40 | 44x44 |
+| Theme radios | `Settings.jsx` | 98x43 | 98x44 |
+| `Button`, every variant | `ui.jsx` | 293x42 | 293x44 |
+
+`1M` at **19px wide** fails not only WCAG 2.5.5's 44px (AAA) but **2.5.8's 24px AA floor**. The
+coach-mark ✕ at 20x20 is under a quarter of the required area, and it is the control that dismisses
+an overlay sitting on top of the lesson list.
+
+**The premise correction that matters for scoping:** the filed note's reason for deferring — "it moves
+every button in the app" — is true of `Button` and irrelevant to the other ten, which are hand-styled
+one-offs that no shared component was ever going to fix. The item was deferred on the cost of its
+cheapest part.
+
+**Controls carried, because a size scan that silently returns nothing looks exactly like a clean app.**
+(a) A probe of known size (`123x37`, later `61x29`) injected and read back exactly before each sweep.
+(b) Every "after" sweep kept a deliberately undersized `30x21` probe in the DOM — **it appears in every
+result list below**, so an empty-except-the-probe result means the scan ran and found nothing, not that
+the scan was blind. (c) The two controls unreachable in a browser — PolicySim's chips (behind 34
+lessons) and the runner exit — were measured by **replicating their exact inline-style block**, a
+technique validated by replicating the term chip first and getting **68x27, matching the live chip to
+the pixel**.
+
+### What shipped
+
+- **`theme.js` — a new `MIN_TAP = 44` token**, with the rule written where someone will find it: why 44
+  (Apple HIG, WCAG 2.5.5, and every app in `UIUX/` is an iOS app built to it), and **why `minHeight` and
+  never `height`** — the app has a user font scale to 1.3x, and a fixed height clips the label at the
+  large end. Icon-only controls that carry no text are the stated exception and pin both dimensions.
+- **Twelve call sites** moved onto the token, including `Learn.jsx`'s two **bare `44` literals** — it was
+  the one file already honoring the rule, in a form no other file could discover.
+- **The term chips' horizontal padding rose with their height** (`space[3]` -> `space[4]`): a 44px pill
+  on 12px of side padding reads as a narrow capsule, and these wrap into rows where proportion is what
+  the eye reads. This is the only *visual* judgment in the change; everything else is a floor.
+- **`Question.jsx` states the floor it was already meeting by padding coincidence**, so a later padding
+  edit cannot drop the answer options under it in silence.
+- **`check-data.mjs` §34**, a regression guard: every file under `src/` rendering a raw `<button>` or
+  `<select>` must reference `MIN_TAP`, and no bare `44` may appear as a `minHeight`/`minWidth`.
+
+### The guard is deliberately weak, and says so
+
+§34 **cannot measure a rendered height** — nothing static can, and its own output says "rendered sizes
+are verified in a browser, not here." What it catches is the failure mode that actually produced this
+defect: a screen written with hand-tuned padding by someone who did not know the rule existed. A file
+can still import `MIN_TAP` and misuse it.
+
+**All three of its arms were proven able to fail before being trusted**, each restored from a scratchpad
+copy rather than `git checkout --`:
+1. Stripped `MIN_TAP` from `GlossaryTerms.jsx` → `FAIL: §34: … renders a raw <button> … but never
+   references MIN_TAP`.
+2. Planted a bare `minHeight: 44` in `Learn.jsx` → `FAIL: §34: … writes a bare 44`.
+3. Blinded the regex to `<buttonXX` → the floor fired: `FAIL: §34: only 0 file(s) … matched (expected at
+   least 8)`, which is the arm that stops "found nothing" from reading as "nothing wrong".
+`git diff --stat` on the probed files afterwards showed only the intended edits.
+
+### Verification
+
+- `npm run build` clean. **`npm test` exit 0, 0 failures**, the same 2 pre-existing warnings
+  (translation review coverage; item 93's 60 abridged pairs). `check-blindspot` 0 failures.
+- **§28 contrast unchanged — 110 pairs at AA, worst light 5.61:1, worst dark 5.81:1; §28b 70 graph pairs,
+  0 exempted.** Expected, and checked rather than assumed: `git diff` contains **zero hex changes** and
+  touches no token color.
+- **Live browser, both schemes, 375x812.** Learn, the reader, Practice (home *and* a started runner),
+  Reference root and all five sub-screens: **nothing under 44x44 except the control probe.** Dark
+  asserted by reading the shell background — `rgb(20, 18, 15)`, the warm espresso `#14120f` — not by
+  trusting the emulation, which is the trap the Environment note records.
+- **The `minHeight`-not-`height` claim was tested, not just asserted.** At the 1.3x font scale
+  (root `20.8px`) the floors held *and* the controls grew past them: theme radios 44 -> **48**, text-size
+  buttons **55**, tab bar **63**, and a scan for any control whose content exceeds its box returned
+  **none**. The reader's icon-only back chip — where both dimensions are pinned — holds a 15x15 icon in
+  its 44x44 box with `scrollWidth/Height` 42x42, so pinning does not clip at the large end either.
+- **Screenshotted** the reader's term chip and the coach mark. The coach-mark message row was changed to
+  `display:flex` to center its new floor, so it was checked visually rather than by measurement alone:
+  two-line message, left-aligned, ✕ centered. No layout break.
+- **One instrument failure caught and fixed mid-run:** the first "after" sweep reported *identical*
+  numbers to the "before" sweep. The control probe fired correctly, so the instrument was fine — the
+  browser was serving the **cached bundle**. Confirmed by reading `script[src]` (`index-DAfMlhHh.js`,
+  the pre-build hash) and fixed with a cache-busting query. **Without the probe this would have read as
+  "the change did nothing."**
+
+### Adversarial self-check (step 5)
+
+- **Blindspot register** — clean, and structurally so: `git diff` touches **no file under
+  `src/content/` or `src/locales/`** and changes no rendered string, so §10.1/§10.2/§2.3 gain no new
+  surface. `check-blindspot` 0 failures. §10.3's Kids tile still reads "For grown-ups teaching kids".
+- **`DECISIONS.md` conflict** — none. No color moved, so `theme.js`'s one-accent rule is untouched;
+  localStorage-only state, `.js` content modules and Vite are all unaffected.
+- **`LAUNCH_PLAN.md` conflict** — checked explicitly this time, because the previous UIUX run found one
+  (§3.4's "one typeface"). `grep -niE "44 ?(px|pt)|touch target|tap target|hit area"` over
+  `LAUNCH_PLAN.md` and `DECISIONS.md` returns **nothing** — no spec is contradicted, and none existed to
+  guide this either, which is part of why it drifted.
+- **Already-done backlog item** — no. The only prior mention of "44px targets" in the log or archive is
+  the 2026-08-21 entry *verifying* them on Learn; that run established the standard on one screen and
+  this one extends it and removes its bare literal. No backlog item covers touch targets, which is
+  itself the finding: **eleven failing control classes had no item.**
+- **Own verification claim** — reproducible from the commands above, and every arm of the new guard was
+  demonstrated failing before being reported as passing. **What the check caught in my own work:** the
+  cached-bundle false negative described above, which I was one step from writing up as a clean result.
+
+### Noted, not fixed
+
+**The Leitner box-distribution strip on Review is still an open owner decision, not an oversight.** It
+was offered back to the owner on 2026-08-21 and again on 2026-08-23 (it costs five locale keys x five
+languages). "Proceed implementing UIUX" is not clearly an answer to that specific question, so it was
+not built unilaterally. **It is the one remaining unbuilt item from the UIUX canvas.**
+
+### Next
+
+**The scheduled `ja` pick is unchanged and its step 3.5 is already done — do not re-derive it.**
+Measured this run with the instrument's own numbers: `ja` reference **0.495189**, threshold
+**0.346633**, headline **60** abridged pairs (`es` 12, `ko` 12, `zh` 12, `ja` 24). **`ja` 29 is
+`en=2411 ja=274 ratio=0.1136`; `ja` 30 is `en=2900 ja=393 ratio=0.1355`.** The `ja` p90 index points at
+**lesson 27 (0.495189)**, and the money/essentials band `ja` should land in is **min 0.3784 / median
+0.4909 / max 0.5343**. Both stubs sit far below the p90 element, so per the 39/40 ceiling rule the two
+lessons are **independent and may be written in either order**. Nearest clear `ja` lesson is **16 at
+0.3784, margin 0.0318** — the one to watch for a collateral crossing. Gap model budget: roughly
+**(0.49 − 0.11) x 2411 + (0.49 − 0.14) x 2900 ≈ 1,930 Japanese characters** for the pair.
+**Unchanged and still the critical path, both owner-blocked:** **O-1** (a deployed URL) and **O-2**
+(item 18, an analytics account).

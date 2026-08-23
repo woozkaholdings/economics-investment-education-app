@@ -20,7 +20,7 @@ import { dueQuestions, seenCount } from "../lib/review.js";
 import Icon from "../components/Icon.jsx";
 import Question from "../components/Question.jsx";
 import { Button, Card, Disclaimer, ProgressBar, Steps, Text } from "../components/ui.jsx";
-import { ink, line, radius, space, surface } from "../theme.js";
+import { ink, line, MIN_TAP, radius, space, surface } from "../theme.js";
 
 // A straight-through 40-question "practice all" session has no natural stop.
 // Pausing every BATCH_SIZE questions with an explicit "keep going or stop
@@ -260,7 +260,10 @@ export default function Practice({ t, lang, review, recordReview }) {
               aria-label={t.quizExit}
               style={{
                 display: "inline-flex", alignItems: "center", justifyContent: "center",
-                width: 32, height: 32, flexShrink: 0,
+                // Icon-only. This is the only way out of a started session,
+                // which is the argument for it being a full-size target rather
+                // than the 32x32 disc it was.
+                width: MIN_TAP, height: MIN_TAP, flexShrink: 0,
                 borderRadius: radius.full,
                 background: surface.sunken, border: "none",
                 color: ink.muted, cursor: "pointer",

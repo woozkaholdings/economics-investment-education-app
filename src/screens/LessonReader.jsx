@@ -21,7 +21,7 @@ import LessonVisual from "../components/LessonVisual.jsx";
 import PolicySim from "../components/PolicySim.jsx";
 import Question from "../components/Question.jsx";
 import { Button, Card, Disclaimer, EmptyState, Note, Stack, Text } from "../components/ui.jsx";
-import { family, fill, ink, line, radius, shadow, space, surface } from "../theme.js";
+import { family, fill, ink, line, MIN_TAP, radius, shadow, space, surface } from "../theme.js";
 
 // Lesson body text is split two ways: by track (item 25, 2026-08-14) and by
 // language (item 45, 2026-08-17). This screen loads exactly one of the ten
@@ -248,7 +248,10 @@ export default function LessonReader({ t, lang, lessons, index, completedLessons
         title={t.backLabel}
         style={{
           display: "inline-flex", alignItems: "center", justifyContent: "center",
-          width: 40, height: 40, flexShrink: 0,
+          // Icon-only: no label to grow, so both dimensions pin to the floor.
+          // Was 40x40 — the 2026-08-23 chip change sized it to the visual disc
+          // rather than to the target.
+          width: MIN_TAP, height: MIN_TAP, flexShrink: 0,
           background: surface.card, border: `1px solid ${line.hairline}`,
           borderRadius: radius.full, boxShadow: shadow.raised,
           color: ink.body, cursor: "pointer",

@@ -43,7 +43,7 @@ import { EVENTS, track } from "../lib/analytics.js";
 import { scenariosForLesson } from "../content/policyScenarios.js";
 import Icon from "./Icon.jsx";
 import { Card, Stack, Text } from "./ui.jsx";
-import { ink, line, radius, space, surface } from "../theme.js";
+import { ink, line, MIN_TAP, radius, space, surface } from "../theme.js";
 
 function Scenario({ scenario, lessonId, t, lang }) {
   const [chosen, setChosen] = useState(null);
@@ -95,6 +95,7 @@ function Scenario({ scenario, lessonId, t, lang }) {
               style={{
                 display: "inline-flex", alignItems: "center", gap: space["1"],
                 padding: `${space["2"]}px ${space["4"]}px`,
+                minHeight: MIN_TAP,
                 borderRadius: radius.full,
                 border: `1px solid ${isChosen ? ink.accent : line.strong}`,
                 background: isChosen ? surface.accentWash : surface.card,

@@ -116,6 +116,31 @@ export const space = { "1": 4, "2": 8, "3": 12, "4": 16, "5": 24, "6": 32, "7": 
 
 export const radius = { sm: 8, md: 12, lg: 16, xl: 20, full: 999 };
 
+// ── Touch targets ─────────────────────────────────────────────────────────
+// THE FLOOR EVERY INTERACTIVE CONTROL HOLDS TO, in CSS px. Anything a finger
+// taps — button, chip, tab, radio, the language `select` — sets `minHeight`
+// (and `minWidth` when the label is short enough to fall under it) to this.
+//
+// WHY 44 AND NOT A SMALLER NUMBER. It is Apple's HIG minimum, it is WCAG
+// 2.5.5 (Target Size, AAA), and it is what every app in the owner's `UIUX/`
+// reference set does — Duolingo, Quizlet, Vocabulary and Buddy are all iOS
+// apps built to that floor, so adopting the set's *look* without its *target
+// size* took half the design.
+//
+// WHY `minHeight` AND NEVER `height`. The app has a user-facing font scale up
+// to 1.3x (see TEXT_SCALES). A fixed height clips the label at the large end;
+// a floor lets the control grow with its text and only ever guarantees the
+// minimum. Icon-only controls that carry no text are the one exception and
+// may pin both dimensions to this value.
+//
+// MEASURED 2026-08-23, BEFORE THIS TOKEN EXISTED: eleven control classes
+// rendered under 44 — the coach-mark dismiss at 20x20, the Sector period tabs
+// at 19x31, the lesson term chips at 27 tall, `Button` itself at 42. Only
+// `Learn.jsx` honored the rule, and it did so with a bare literal. Grep for
+// `MIN_TAP` to audit; a raw `44` in a control's style is the smell this
+// replaced.
+export const MIN_TAP = 44;
+
 export const APP_MAX_WIDTH = 460;
 
 // ── User-selectable color scheme ─────────────────────────────────────────

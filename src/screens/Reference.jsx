@@ -34,7 +34,7 @@
 import { useEffect, useRef, useState } from "react";
 import Icon from "../components/Icon.jsx";
 import { Disclaimer, Text, Tile, TileGrid } from "../components/ui.jsx";
-import { family, ink, space } from "../theme.js";
+import { family, ink, MIN_TAP, space } from "../theme.js";
 import Glossary from "./reference/Glossary.jsx";
 import MarketSignals from "./reference/MarketSignals.jsx";
 import ParentGuide from "./reference/ParentGuide.jsx";
@@ -92,6 +92,7 @@ export default function Reference({ t, lang, fontScale, setFontScale, themeMode,
           style={{
             display: "inline-flex", alignItems: "center", gap: space["2"],
             background: "none", border: "none", padding: `${space["2"]}px 0`,
+            minHeight: MIN_TAP,
             color: ink.muted, fontSize: "0.875rem", fontWeight: 500, cursor: "pointer",
             fontFamily: "inherit",
           }}

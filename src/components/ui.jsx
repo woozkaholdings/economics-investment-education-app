@@ -7,7 +7,7 @@
 // ═══════════════════════════════════════════════════════════════════════════
 
 import { forwardRef } from "react";
-import { fill, font, ink, line, radius, shadow, space, surface, type } from "../theme.js";
+import { fill, font, ink, line, MIN_TAP, radius, shadow, space, surface, type } from "../theme.js";
 import Icon from "./Icon.jsx";
 
 // ── Text ──────────────────────────────────────────────────────────────────
@@ -131,6 +131,9 @@ export const Button = forwardRef(function Button(
       style={{
         display: "inline-flex", alignItems: "center", justifyContent: "center", gap: space["2"],
         padding: `${space["3"]}px ${space["4"]}px`,
+        // The padding alone rendered 42px. `MIN_TAP` is a floor, not a height,
+        // so a scaled-up label still grows the button past it.
+        minHeight: MIN_TAP,
         borderRadius: radius.md,
         fontSize: font.body,
         fontWeight: 600,
@@ -185,6 +188,14 @@ export function Segmented({ items, value, onChange, ariaLabel, idPrefix, panelId
             onClick={() => onChange(item.key)}
             style={{
               appearance: "none", background: "none", border: "none",
+              // Flex-centered rather than relying on the button's default text
+              // baseline: `minHeight` makes the box taller than the label, and
+              // the label has to sit in the middle of it rather than at the top.
+              // `minWidth` matters here more than anywhere else in the app —
+              // the Sector screen's period tabs are "1M"/"3M"/"6M", which
+              // rendered 19px wide, under even WCAG 2.5.8's 24px AA floor.
+              display: "inline-flex", alignItems: "center", justifyContent: "center",
+              minHeight: MIN_TAP, minWidth: MIN_TAP,
               padding: `0 0 ${space["3"]}px`,
               marginBottom: -1,
               borderBottom: `2px solid ${active ? fill.accent : "transparent"}`,

@@ -6,7 +6,7 @@
 
 import { readFileSync, readdirSync } from "node:fs";
 import { fileURLToPath } from "node:url";
-import { dirname, join } from "node:path";
+import { dirname, join, relative } from "node:path";
 
 import { TR } from "../src/locales/index.js";
 import { lessons, TRACKS, lessonsByTrack } from "../src/content/lessons.js";
@@ -3829,6 +3829,83 @@ if (keyedGroupsChecked < 4) {
       );
     }
   }
+}
+
+// §34. Touch targets: every file that renders a raw interactive element must
+// import the `MIN_TAP` floor from theme.js.
+//
+// WHAT THIS CATCHES, AND WHAT IT HONESTLY CANNOT. It cannot measure a rendered
+// height — nothing in a static check can. What it catches is the failure mode
+// that actually produced this defect: a screen written with hand-tuned padding
+// by someone who did not know the rule existed. Measured 2026-08-23, before
+// `MIN_TAP` existed, ELEVEN control classes rendered under 44 CSS px — the
+// coach-mark dismiss at 20x20, the Sector period tabs at 19x31 (under even
+// WCAG 2.5.8's 24px AA floor), the lesson term chips at 27 tall, and `Button`
+// itself at 42. Exactly one file, `screens/Learn.jsx`, honored it, with a bare
+// `44` literal that no other file could discover.
+//
+// So the invariant is deliberately weak but discoverable: touch the import and
+// you will find the token's comment, which states the rule and why it is
+// `minHeight` rather than `height`. A file can still import `MIN_TAP` and
+// misuse it; that is what the live-browser sweep in the run log is for.
+{
+  const walkJsx = (dir) =>
+    readdirSync(dir, { withFileTypes: true }).flatMap((e) => {
+      const full = join(dir, e.name);
+      if (e.isDirectory()) return walkJsx(full);
+      return e.isFile() && e.name.endsWith(".jsx") ? [full] : [];
+    });
+
+  // A raw interactive element — one styled at the call site rather than through
+  // ui.jsx's `Button`, which carries the floor for everything that uses it.
+  const RAW_CONTROL = /<(button|select)\b/;
+  const files = walkJsx(join(ROOT, "src"));
+  let withControls = 0;
+  const missing = [];
+
+  for (const path of files) {
+    const src = readFileSync(path, "utf8");
+    if (!RAW_CONTROL.test(src)) continue;
+    withControls += 1;
+    if (!/\bMIN_TAP\b/.test(src)) missing.push(relative(ROOT, path));
+  }
+
+  for (const path of missing) {
+    fail(
+      `§34: ${path} renders a raw <button> or <select> but never references MIN_TAP. Every ` +
+        `control a finger taps sets minHeight (and minWidth when the label is short) to that ` +
+        `floor — see the token's comment in src/theme.js for why 44 and why it is a floor rather ` +
+        `than a fixed height.`,
+    );
+  }
+
+  // Floor, for the same reason §32 and §33 have one: if the regex above ever
+  // stops matching, "0 files missing the token" and "the scan found nothing"
+  // are the same green result.
+  if (withControls < 8) {
+    fail(
+      `§34: only ${withControls} file(s) under src/ matched the raw-control regex (expected at ` +
+        `least 8). The scan is not seeing the components it is supposed to police.`,
+    );
+  }
+
+  const bareLiteral = [];
+  for (const path of files) {
+    const src = readFileSync(path, "utf8");
+    if (/\b(?:minHeight|minWidth):\s*44\b/.test(src)) bareLiteral.push(relative(ROOT, path));
+  }
+  for (const path of bareLiteral) {
+    fail(
+      `§34: ${path} writes a bare 44 as a minHeight/minWidth. Use MIN_TAP from theme.js so the ` +
+        `floor is greppable and has one definition.`,
+    );
+  }
+
+  console.log(
+    `  §34 touch targets: ${withControls} file(s) under src/ render a raw control, ` +
+      `${withControls - missing.length} referencing MIN_TAP; ${bareLiteral.length} bare 44 ` +
+      `literal(s). (Static check — rendered sizes are verified in a browser, not here.)`,
+  );
 }
 
 console.log(`\n${failures === 0 ? "PASS" : "FAIL"}: ${failures} failure(s), ${warnings} warning(s).`);

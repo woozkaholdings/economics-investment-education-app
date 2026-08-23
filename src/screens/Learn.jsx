@@ -32,7 +32,7 @@ import { useState } from "react";
 import { TRACKS } from "../content/lessons.js";
 import Icon from "../components/Icon.jsx";
 import { Disclaimer, ProgressBar, ResumeCard, Text } from "../components/ui.jsx";
-import { fill, font, ink, line, radius, shadow, space, surface } from "../theme.js";
+import { fill, font, ink, line, MIN_TAP, radius, shadow, space, surface } from "../theme.js";
 
 export default function Learn({ t, lang, lessons, completedLessons, isUnlocked, streak, openLesson }) {
   const done = completedLessons.length;
@@ -161,7 +161,7 @@ export default function Learn({ t, lang, lessons, completedLessons, isUnlocked, 
                 onClick={() => setOpenTrack(expanded ? null : tr.key)}
                 style={{
                   display: "flex", alignItems: "center", gap: space["2"],
-                  width: "100%", minHeight: 44, padding: 0,
+                  width: "100%", minHeight: MIN_TAP, padding: 0,
                   background: "transparent", border: "none", cursor: "pointer",
                   font: "inherit", color: "inherit", textAlign: "left",
                 }}
@@ -262,7 +262,7 @@ export default function Learn({ t, lang, lessons, completedLessons, isUnlocked, 
                       onClick={() => openLesson(i)}
                       style={{
                         display: "flex", alignItems: "center", gap: space["3"], width: "100%", textAlign: "left",
-                        minHeight: 44,
+                        minHeight: MIN_TAP,
                         background: isNext ? surface.card : "transparent",
                         border: unlocked
                           ? `${isNext ? 2 : 1}px solid ${isNext ? fill.accent : "transparent"}`

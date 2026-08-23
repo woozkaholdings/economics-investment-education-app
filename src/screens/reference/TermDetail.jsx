@@ -15,7 +15,7 @@
 import { useEffect, useRef } from "react";
 import Icon from "../../components/Icon.jsx";
 import { Button, Card, Text } from "../../components/ui.jsx";
-import { ink, space, surface } from "../../theme.js";
+import { ink, MIN_TAP, space, surface } from "../../theme.js";
 
 export default function TermDetail({ t, term, entry, isBookmarked, onToggleBookmark, onBack }) {
   const headingRef = useRef(null);
@@ -35,6 +35,7 @@ export default function TermDetail({ t, term, entry, isBookmarked, onToggleBookm
         style={{
           display: "inline-flex", alignItems: "center", gap: space["2"],
           background: "none", border: "none", padding: `${space["2"]}px 0`,
+          minHeight: MIN_TAP,
           color: ink.muted, fontSize: "0.875rem", fontWeight: 500, cursor: "pointer",
         }}
       >

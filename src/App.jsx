@@ -17,7 +17,7 @@ import { initialRoute, useDeepLink } from "./lib/deepLink.js";
 import { useAppState } from "./lib/useAppState.js";
 import Icon from "./components/Icon.jsx";
 import { Button, Card, EmptyState, Text } from "./components/ui.jsx";
-import { APP_MAX_WIDTH, fill, ink, line, radius, shadow, space, surface } from "./theme.js";
+import { APP_MAX_WIDTH, fill, ink, line, MIN_TAP, radius, shadow, space, surface } from "./theme.js";
 import Learn from "./screens/Learn.jsx";
 
 // Practice and Reference (plus its five sub-screens and their content
@@ -120,7 +120,13 @@ function PracticeCoachMark({ t, onOpenPractice, onDismiss }) {
         <button
           type="button"
           onClick={onOpenPractice}
-          style={{ flex: 1, textAlign: "left", background: "none", border: "none", padding: 0, cursor: "pointer" }}
+          style={{
+            flex: 1, textAlign: "left", background: "none", border: "none",
+            padding: 0, cursor: "pointer",
+            // This whole line is the coach mark's primary action, so it is a
+            // target, not a caption. One line of `caption` text rendered ~20px.
+            display: "flex", alignItems: "center", minHeight: MIN_TAP,
+          }}
         >
           <Text variant="small" color={ink.body}>{t.coachMarkPractice}</Text>
         </button>
@@ -128,7 +134,14 @@ function PracticeCoachMark({ t, onOpenPractice, onDismiss }) {
           type="button"
           onClick={onDismiss}
           aria-label={t.coachMarkDismissLabel}
-          style={{ flexShrink: 0, background: "none", border: "none", padding: 2, cursor: "pointer", color: ink.muted, display: "flex" }}
+          style={{
+            flexShrink: 0, background: "none", border: "none", padding: 2,
+            cursor: "pointer", color: ink.muted,
+            // Was the smallest target in the app at 20x20 — a 1rem icon with
+            // 2px of padding. Icon-only and textless, so both dimensions pin.
+            display: "flex", alignItems: "center", justifyContent: "center",
+            width: MIN_TAP, height: MIN_TAP,
+          }}
         >
           <Icon name="x" size="1rem" />
         </button>
@@ -283,7 +296,14 @@ export default function App() {
             value={lang}
             onChange={(e) => setLang(e.target.value)}
             aria-label={t.langLabel}
-            style={{ background: surface.card, color: ink.body, border: `1px solid ${line.strong}`, borderRadius: radius.sm, padding: `4px ${space["2"]}px`, fontSize: "0.75rem", cursor: "pointer" }}
+            style={{
+              background: surface.card, color: ink.body,
+              border: `1px solid ${line.strong}`, borderRadius: radius.sm,
+              padding: `4px ${space["2"]}px`, fontSize: "0.75rem", cursor: "pointer",
+              // 27px before this. The one control on every screen in the app,
+              // and the only way to reach four of the five languages.
+              minHeight: MIN_TAP,
+            }}
           >
             {LANGUAGES.map((l) => (
               <option key={l.code} value={l.code}>
