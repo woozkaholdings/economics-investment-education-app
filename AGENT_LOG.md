@@ -1236,7 +1236,7 @@ for the history. No open P1/P2 items.
       corrupts lesson content.
 
 93. **[Content — filed 2026-08-21 by the scheduled dev-agent, measured with a control, and the
-    largest open learner-visible gap in the app. P1 of the current Open set.] 60 of 160
+    largest open learner-visible gap in the app. P1 of the current Open set.] 58 of 160
     lesson/language pairs ship a condensed *summary* of the English body rather than a translation of
     it.** *(Was 94 at filing. **THE SPANISH ECONOMY TRACK IS DONE: `es` 29-40 are all full
     translations**, twelve pairs paid down across six runs on 2026-08-22, `es` abridged count
@@ -1249,13 +1249,16 @@ for the history. No open P1/P2 items.
     `zh` 29-40 are all full translations**, twelve pairs across six runs on 2026-08-23, `zh`
     abridged count **24 -> 12**. **Three of the four languages have now ended in exactly the same
     shape — every remaining `es`, `ko` AND `zh` gap is in the `essentials` track (1-11 and 14).**
-    **`ja` is untouched at 24 abridged and is the entire remaining economy phase.** See the `ko`
-    bullets at the end for the rate and the two model corrections the `ko` track produced, and the
-    `zh` bullet after them for the budgeting correction the final `zh` tranche produced.)*
+    **`ja` is the entire remaining economy phase and IT HAS NOW STARTED: `ja` 29-30 landed 2026-08-23,
+    `ja` abridged 24 -> 22.** See the `ko`
+    bullets at the end for the rate and the two model corrections the `ko` track produced, the
+    `zh` bullet after them for the budgeting correction the final `zh` tranche produced, and the `ja`
+    bullet at the very end for why `ja` is the safest track to finish and the tightest to overshoot.)*
 
     > **⛔ STOP LINE, set by the weekly review 2026-08-23 (W-5.1 at the top of this backlog).** This
     > item does NOT run to 160/160. **✅ `zh` economy 39-40 landed 2026-08-23 — step 1 of the stop
-    > line is complete.** Remaining: **`ja` economy 29-40** (six runs), then **close the economy
+    > line is complete. ✅ `ja` economy 29-30 landed 2026-08-23 — step 2 is one-sixth done.**
+    > Remaining: **`ja` economy 31-40** (five runs), then **close the economy
     > phase and file the `essentials` remainder — 48 pairs — as a new, separately-prioritized item.**
     > Reason and the measured arithmetic are in W-5.1. **W-5.5 is also closed**: the headline count
     > above was stale at 68 and now reads the instrument's **60**, re-measured this run.
@@ -1482,6 +1485,28 @@ for the history. No open P1/P2 items.
       one is a 10x billion->亿 conversion. Lesson 38, which has no currency, IS an exact multiset.
       **So: run the multiset comparator, then account for every difference as a named scale
       conversion; do not weaken the comparator, and do not read a difference as automatic failure.**
+    - **`ja` ECONOMY IS UNDER WAY — 29 (0.1136 -> 0.4513) and 30 (0.1355 -> 0.4693), 2026-08-23.**
+      **1,782 added Japanese characters against 5,311 English = 0.336/char** — between `ko`'s 0.379
+      and `zh`'s 0.230, and it did NOT inherit either. **Remaining 31-40: 35,453 English characters,
+      about 11,900 Japanese characters over five runs.**
+      **⚠️ `ja` IS THE SAFEST TRACK TO FINISH AND THE TIGHTEST TO OVERSHOOT — both halves measured
+      2026-08-23.** *Safest:* simulating `ja` 31-40 at 0.44, 0.46, 0.48 AND the band median 0.4909
+      leaves the reference at **0.4952 in every case**, threshold **0.3466**, `ja` abridged **12**,
+      lesson 16 margin **0.0318** — the whole track can be completed without moving the reference
+      once, because the money track already occupies 0.38-0.53 and the p90 index points at lesson 27
+      at 0.4952, which ten conversions landing below it cannot displace. *Tightest:* the `ja` band
+      median (**0.4909**) sits only **0.0043** under that p90 element, where `zh`'s gap was
+      comfortable. **So target ~0.45-0.47 for `ja`, NOT the band median** — a lesson written to the
+      median is four thousandths from waking the reference the way `ko` 39 did.
+      **⚠️ `ja` 30 §1 was DIFFERENT CONTENT, not an abridgement — the `ko` 30 defect reproduced.**
+      Its Japanese read `貸し手はお金を増やしたい。借り手は今買えないものを買いたい。` (lender/borrower
+      motives) against English's $20,000-car worked example. That is now **two of four languages**,
+      not a `ko` one-off. **Read each `ja` §1 before translating it**; no ratio can see this.
+      **`ja` currency convention, measured:** the myriad scale and **no `$`** —
+      `2万ドル`, `1万5,000ドル`, `5,000ドル`, `8ドル`. So the figure multiset differs from English BY
+      DESIGN, exactly as the `zh` 亿 case does; account for each difference as a named scale
+      conversion or a Japanese counter rendering an English *word* (`1個あたり`, `2つの役割`,
+      `ビール1杯`), and do not weaken the comparator.
     - **✅ THE `zh` ECONOMY TRACK IS COMPLETE — 29-40, six runs, one date (2026-08-23).**
       `zh` **29 (0.0966 -> 0.3227)**, **30 (0.1203 -> 0.3359)**, **31 (0.0843 -> 0.3399)**,
       **32 (0.1056 -> 0.3254)**, **33 (0.1078 -> 0.3298)**, **34 (0.0941 -> 0.3161)**,
@@ -5656,5 +5681,162 @@ Measured this run with the instrument's own numbers: `ja` reference **0.495189**
 lessons are **independent and may be written in either order**. Nearest clear `ja` lesson is **16 at
 0.3784, margin 0.0318** — the one to watch for a collateral crossing. Gap model budget: roughly
 **(0.49 − 0.11) x 2411 + (0.49 − 0.14) x 2900 ≈ 1,930 Japanese characters** for the pair.
+**Unchanged and still the critical path, both owner-blocked:** **O-1** (a deployed URL) and **O-2**
+(item 18, an analytics account).
+
+### 2026-08-23 (scheduled dev-agent) — `ja` economy 29-30: the fourth language starts, and a track that can be finished without ever moving its own reference
+
+**Picked:** W-5.1 step 2, `ja` economy 29-40, first tranche (item 93). `HEAD` `ee570bf` at start and at
+commit; `UIUX/` and `drafts/` stayed untracked and unread. Owner-tree fingerprint observed this run:
+**`ad74c89a1ed7c6f3f1418f540b5fe87bb681d8ebd32110d5bc03dd479f5c5270`** (3 tracked modified — all mine —
+52 untracked).
+
+### Step 3.5 — the premise held to four decimals, and the instrument was proven able to move
+
+The previous run pre-computed this tranche's step 3.5 and asked that it not be re-derived. It was
+re-run anyway as a *check*, not a re-derivation, and **every figure reproduced exactly**: `ja`
+reference **0.495189**, threshold **0.346633**, headline **60** (`es` 12, `ko` 12, `zh` 12, `ja` 24),
+`ja` 29 `en=2411 ja=274 ratio=0.1136`, `ja` 30 `en=2900 ja=393 ratio=0.1355`, band **min 0.3784 /
+median 0.4909 / max 0.5343**, nearest clear `ja` lesson **16 at 0.3784, margin 0.0318**. The p90 index
+(35) points at **lesson 27 at 0.495189**.
+
+**Controls, because a ratio that does not move looks the same whether the content changed or the
+instrument is blind.** (a) A **100-character probe** injected into `ja` 29's takeaway moved the count
+`274 -> 374` and the ratio `0.1136 -> 0.1551`, **exactly +100**, while `ja` 30 stayed at 0.1355 —
+proving the instrument is per-lesson and not aggregating. (b) With the probe in place `npm test`
+**failed on §33** (`lesson 29 [ja] is now at 0.16, up from a recorded 0.11`), proving the drift guard
+sees this surface rather than passing it through. (c) The probe was reverted **from a scratchpad copy,
+never `git checkout --`**, and the restored file's `shasum` matched the pre-injection hash
+(`ff086a87…`) with `git status` clean before any real edit began.
+
+**A third control, on the edit method itself.** These files are `JSON.stringify(v, null, 2)` blocks
+under a hand-written header. Before editing, the *current* 29 and 30 values were re-serialized and
+checked to be **byte-present in the file** — both `true` — so the splice could not silently reformat
+neighboring lessons. `git diff --stat` afterwards touches only the two intended blocks.
+
+### The premise correction this tranche produced — `ja` 30 §1 is not an abridgement
+
+Item 93 records that **`ko` 30 §1 "was not an abridgement of the English at all but different
+content"** (lender/borrower motives, where English is the $20,000-car worked example) and warns that no
+ratio can detect this. **`ja` 30 §1 is the same defect, reproduced a second time**: its Japanese read
+`貸し手はお金を増やしたい。借り手は今買えないものを買いたい。` — lender and borrower motives — against
+English's worked example of a $20,000 car, $5,000 saved and a $15,000 loan. So this is now **two of
+four languages**, not a `ko` one-off, and it is the strongest evidence in the item that **these
+languages need reading, not measuring**. `ja` 29 by contrast was a true abridgement.
+
+### What shipped
+
+- **`ja` 29 (0.1136 -> 0.4513)** and **`ja` 30 (0.1355 -> 0.4693)** — full translations, **1,782 added
+  Japanese characters** against 5,311 English, i.e. **0.336 added characters per English character**.
+- **Structural parity is exact**, checked rather than eyeballed: sections en=ja on both lessons,
+  paragraph counts **29 §1 3/3, §2 3/3; 30 §1 3/3, §2 3/3, §3 3/3**, bullets **2/2** on 29 §2. The old
+  `ja` stubs collapsed §2 (and 30's §2/§3) to two paragraphs each; the bullet block is now its own
+  paragraph, matching English.
+- **Currency follows the file's own convention, which is the myriad scale and no `$`.** Measured before
+  writing: `lessonContent.money.ja.js` uses `5万ドル`, `45万ドル`, `2,000ドル`, and **neither `ja` file
+  contains a single `$`**. So `$20,000 -> 2万ドル`, `$15,000 -> 1万5,000ドル`, `$5,000 -> 5,000ドル`,
+  `$10,000 -> 1万ドル`, `$8 -> 8ドル`.
+- **The Fed and the cross-reference follow the siblings.** `FRB` is this file's established rendering
+  (12 existing uses, 0 of `連邦準備制度`), matching `es` `Reserva Federal` / `ko` `연준` / `zh` `美联储`;
+  the title reference renders as `「金利」`, the short form `ko` and `zh` both use. §16 is unaffected —
+  it counts *numbered* references, and this one is by title.
+
+### The figure multiset, accounted for rather than asserted
+
+Item 93's rule is to run the comparator and then **name every difference**, not to weaken it. Run:
+**`ja` 29 shows 2 differences, `ja` 30 shows 6.** Every one is accounted:
+- **Scale conversions (the Japanese analogue of the `zh` 亿 case):** `20,000 -> 2万` (contributes `2`),
+  `15,000 -> 1万5,000` x2 (contributes `1` x2 and `5,000` x2), `10,000 -> 1万` (contributes `1`).
+- **Counter artifacts rendering English *words*, not figures:** `1個あたり` ("per loaf"), `1日に`
+  ("a day"), `たった1つの` ("a single"), `1人の買い手、1人の売り手` ("one buyer, one seller"),
+  `2つの役割` ("two roles"), `ビール1杯` ("a beer"), `最初の1か月分` ("a first month's").
+**Zero English figures were dropped and zero were added** — `100`, `5`, `500` all present in 29; `8`
+and all four dollar amounts present in 30.
+
+### The projection, and the reason `ja` is the safest of the four tracks
+
+**All four predicted figures held.** Headline **60 -> 58**, exactly 2. Reference **0.495189 before and
+after**. Threshold **0.346633**. Lesson 16's margin **0.0318**, unchanged. This is the `zh` 29/30 case
+repeating, for the reason item 93 identified: both lessons landed *below* the p90 element.
+
+**Simulated the whole rest of the track, and the result is unusually strong.** With `ja` 31-40 all set
+to 0.44, 0.46, 0.48 **and** the band median 0.4909, the reference is **0.4952 in every case**, the
+threshold **0.3466**, `ja` abridged **12** (essentials 1-11 and 14), and lesson 16's margin **0.0318**.
+**So the entire `ja` economy track can be completed without moving the reference once**, because the
+already-complete money track occupies 0.38-0.53 and the p90 index points at lesson 27 at 0.4952 — an
+element that ten conversions landing below it cannot displace.
+**⚠️ The caveat is tighter here than in `ko` or `zh`, and it is the one thing to carry forward.** `ja`'s
+band median (**0.4909**) sits only **0.0043** under the p90 element (**0.4952**). In `zh` that gap was
+comfortable; here, a lesson written to the median is four thousandths from waking the reference the way
+`ko` 39 did at 0.5773. **Target ~0.45-0.47 for `ja`, not the band median** — this run deliberately did,
+landing at 0.4513 and 0.4693 with **105 and 75 characters** of ceiling headroom.
+
+**Budget note, honestly stated:** the gap model predicted **~1,930** characters *for a landing ratio of
+0.4909*; the actual was **1,782** because the target was deliberately set lower. Against the target
+actually chosen the model is exact to the character (814 predicted / 814 actual on 29; 968 / 968 on
+30). **The model was not falsified — the target was changed** — and next runs should budget from their
+own chosen target, not from this tranche's total.
+
+### Verification
+
+- **`npm test` exit 0, 0 failures**, the same 2 pre-existing warnings — and the completeness warning
+  now reads **58** where it read 60, which is the debt visibly paid down rather than a silent pass.
+- **`npm run build` clean** (886ms). `npm run check-blindspot` **0 failures**.
+- **`LAUNCH_READINESS.md` §10.4 was refreshed by its own guard, not by hand.** `npm test` failed first
+  with `ja 42,879 (0.312x)` disagreeing with the live content; `npm run readiness -- --write` moved it
+  to **`ja 44,661 (0.325x)`** and nothing else on the line changed. That guard firing is what stopped
+  this run from shipping a scorecard describing last week.
+- **The baseline moved exactly two pairs, both upward** — `29 ja 0.11 -> 0.45`, `30 ja 0.14 -> 0.47`,
+  `git diff --stat` reporting **2 insertions, 2 deletions** and nothing else.
+- **The review ledger correctly did NOT move** (`npm run review-status` unchanged, no ledger file in
+  `git status`). Per item 93 that is right: it fingerprints the *English* body, and **no pair was
+  marked reviewed just because it was translated.**
+- **Live browser, `dist/` served on 127.0.0.1:8801, 375x812 mobile.** Both lessons opened via
+  `#/lesson/29` and `#/lesson/30` (lesson 30 needed 29 in `completedLessons` first — a URL does not
+  unlock a lesson, exactly as `DECISIONS.md` says). **Both render in full**: every paragraph, both
+  bullets on 29 §2, the arrow chain, the `「金利」` reference, takeaway, thinkAbout, and the §10.1
+  disclaimer. Dark scheme asserted by **reading** the computed background — `rgb(20, 18, 15)` — not by
+  trusting the emulation. Screenshotted 30 §1.
+- **Not the cached-bundle trap the previous run hit:** the rendered Japanese is text that did not exist
+  anywhere before this run (`最後に買ったコーヒーを思い浮かべてください`), so a stale bundle could not
+  have produced it; the served `index-C1a5ONNM.js` also matches this build's output hash.
+
+### Adversarial self-check (step 5)
+
+- **Blindspot register — one hit investigated and cleared, which is why the grep is run over the diff
+  rather than assumed.** `git diff | grep -ic dalio` returned **1**. Localized per file and per side:
+  **0 on every added line in all three files.** The match is a *context* line — `LAUNCH_READINESS.md`'s
+  unchanged §10.2 row, which names Dalio while stating the rule and which that row itself documents as
+  deliberately not scanned. §10.1: 0 advice-adjacent matches on added lines and `check-blindspot` clean
+  across its per-language `ja` patterns. §2.3: 0 date or live-figure matches on added lines, and the
+  check passes over `lessonContent`. §10.3: untouched, no kids surface in the diff.
+- **`DECISIONS.md` conflict** — none. localStorage-only state, `.js` content modules and Vite are all
+  unaffected; the machine-translation entry's option (a) covers adding AI translation under "(Beta)",
+  which is what this is. **The O-3 flag applies and is repeated below rather than quietly omitted.**
+- **Already-done backlog item** — no. Item 93 records `ja` as **untouched at 24 abridged**; 29 and 30
+  have never carried a translation of the English body. Nothing was undone.
+- **Own verification claim** — reproducible from the commands above. **What the check caught in my own
+  work:** the Dalio hit, which read as a §10.2 regression until it was localized to a context line; and
+  the readiness failure, which I would otherwise have reported a green suite without.
+
+### O-3, restated because this run is exactly what it is about
+
+This run added **1,782 characters of unreviewed machine translation** in a "(Beta)"-labeled language.
+**No fluent Japanese reviewer has read either lesson.** Human review share is **0% in all four
+languages**. That is consistent with the owner's 2026-08-11 decision and it is still the thing the
+owner should either re-affirm or cap.
+
+### Next
+
+**`ja` economy 31-32**, the second of six tranches. Pre-measured this run so it need not be re-derived:
+`ja` **31 is `en=2445 ratio=0.1055`, ceiling 1,210 characters**; **32 is `en=3777 ratio=0.1374`,
+ceiling 1,870 characters** (both against the p90 element 0.495189). Both stubs sit far below that
+element, so **the two lessons are independent and may be written in either order**. Target **0.45-0.47,
+not the 0.4909 median** — see the 0.0043 caveat above. Gap-model budget at 0.46: roughly
+**(0.46 − 0.1055) x 2445 + (0.46 − 0.1374) x 3777 ≈ 2,085 Japanese characters**. Remaining after that:
+**35,453 English characters across `ja` 31-40**, about **11,900 Japanese characters over five runs** at
+this tranche's realized 0.336/char. **Read `ja` 31 and 32 §1 before translating** — two of four
+languages have now had a lesson-30-shaped "different content, not abridged" stub, and only reading
+finds it.
 **Unchanged and still the critical path, both owner-blocked:** **O-1** (a deployed URL) and **O-2**
 (item 18, an analytics account).
