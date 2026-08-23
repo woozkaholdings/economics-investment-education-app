@@ -76,6 +76,128 @@ for the history. No open P1/P2 items.
 
 **Open**
 
+> ## ⛔ OWNER ACTIONS — nothing in this repo can move these, and they are the whole critical path
+>
+> **Standing block, promoted to the top of the backlog by the weekly review 2026-08-23.** These two
+> items have been named in the closing line of **every run entry since 2026-08-20** — sixteen
+> consecutive runs — in the form "item 18 remains the entire critical path… item 72's owner half is
+> blindspot 10.10". That sentence is correct and it has moved nothing, which is evidence about the
+> *mechanism*, not about the runs. A closing line in a 15,000-line log is not an escalation. It lives
+> here now, and it is repeated at the top of every weekly report.
+>
+> **O-1. A URL. (Item 72's owner half.)** `dist/` builds and is path-agnostic (`base: "./"`, verified
+> at a domain root and one directory down); routing is hash-based so no host needs a rewrite rule;
+> `README.md` § Deploying has the clicks. **Netlify Drop is a drag of the `dist/` folder.** Open since
+> 2026-08-17.
+> **The refuting number, unchanged in six days: 40 lessons, 5 languages, 8 check scripts, a claims
+> register, 145 minutes of content — and zero people have ever opened this app.**
+>
+> **O-2. An analytics provider account and key. (Item 18.)** `src/lib/analytics.js` fires the §9.2
+> event set with the §9.2 payloads; `sink()` writes to one device's `localStorage`. §4.3's Phase-0
+> completion-rate gate (≥40% finish lesson 1) is scored **❌ Unmeasurable** on the readiness scorecard
+> and cannot be scored any other way. O-2 is downstream of O-1.
+>
+> **O-3 (new, decision not action). A large volume of unreviewed machine translation is now shipping
+> every day, and the "(Beta)" decision was made about a smaller, static surface.** `DECISIONS.md`
+> accepted option (a) on 2026-08-11 — ship the existing AI translations under "(Beta)" labeling — for
+> a corpus that was then sitting still. Since 2026-08-22 item 93 has added roughly **10,000–12,000
+> characters per day** of new `es`/`ko`/`zh` prose, and every run entry says so plainly: *"No fluent
+> Chinese reviewer has read either lesson."* Human review share is **0% in all four languages** and
+> falling as a proportion. Item 93 itself flags this ("the owner should know it is happening") and
+> that flag is the honest one. **Nothing here is wrong or blocked — this is a scale change the
+> original decision did not contemplate, and the owner should either re-affirm it or cap it.**
+
+> ## PRIORITY BLOCK W-5 — set by the weekly review 2026-08-23. Supersedes the 2026-08-16 block below, which is retained for history (W-1 through W-4 are all closed). Read this first.
+>
+> **The week was strong and the direction is right; this block is about a stop line, a ratio, and four
+> pieces of housekeeping.** Build ✅, `npm test` ✅ (0 failures, 2 expected warnings), ~130 commits, no
+> regressions found, content independently spot-checked and neutral. The one real risk is that a
+> single item is now consuming 100% of capacity with a tail long enough to eat the next two weeks.
+>
+> ### W-5.1 PRIORITY — item 93 gets a STOP LINE at "economy complete in five languages", not at 160/160 pairs.
+> **Measured, not asserted:** `npm run translation-completeness` reports **62 abridged pairs** —
+> `es` 12, `ko` 12, `zh` 14, `ja` 24. At the demonstrated and very consistent rate of **2 pairs per
+> run**, finishing all of them is **~31 runs ≈ 8 days of scheduled capacity**, on content in four
+> **"(Beta)"-labeled** languages, for an app that **no one has yet opened in any language** (O-1).
+> **The sequence, and then stop:**
+> 1. **`zh` economy 39-40** — one run. Completes the Chinese economy track. The next-run note at the
+>    end of the 2026-08-23 `zh` 37-38 entry has already scoped it, including the re-simulation step;
+>    follow it.
+> 2. **`ja` economy 29-40** — six runs. `ja` is untouched at 24 abridged and its economy half is the
+>    largest single remaining block. **Re-measure the rate before budgeting**: `ko` ran at 0.379
+>    added chars per English char and `zh` at 0.226, and item 93 already records that neither
+>    inherited the other's. `ja`'s reference is 0.50.
+> 3. **Then CLOSE the economy phase of item 93** and file the `essentials` remainder as a **new,
+>    separately-prioritized item** — `es` 1-11+14, `ko` 1-11+14, `zh` 1-11+14, `ja` 1-11+14, **48
+>    pairs**. Do not roll it into 93 and keep going.
+> **Why this is the right boundary and not an arbitrary one.** `economy` (29-40) is the **main path**
+> since the 2026-08-18 product reversal; `essentials` (1-15) is the *optional* track. Finishing
+> economy in all five languages is a statable, checkable milestone — "the main path is fully
+> translated" — and it costs seven runs. Finishing `essentials` costs another twenty-four, on the
+> optional track, before a single person has read a word of any of it.
+>
+> ### W-5.2 PRIORITY — reserve one run in four for work that is not item 93.
+> Twenty of the week's last twenty-four commits were item 93. That is defensible for a sprint and
+> corrosive as a habit: it is the W-2 note-chain failure in a new costume — direction stops coming
+> from the backlog and starts coming from "continue the tranche". **Every fourth scheduled run picks
+> from this list instead**, and says in its entry which one it took and why:
+> - **W-5.5 / W-5.6 / W-5.7 below** — cheap, and two of them are documentation-integrity defects.
+> - **Item 67's residual third** and **item 64's residual candidates** — both are small, both are
+>   English-facing, both have been open since 2026-08-17.
+> - **Item 26** (Quizlet/Vocabulary design review) and **item 27** (re-scope: the money track's
+>   visuals shipped, so the item as written no longer describes the gap).
+> - **Item 76** and **items 70/71** — process items filed by runs that could not finish them.
+> - A **backlog refill** is always a legitimate pick (W-2's standing rule, still in force).
+>
+> ### W-5.3 — the run log is 2.8× its post-archive size in six days; archiving becomes a standing rule with a trigger.
+> **Measured across four commits:** `269b6d0` (2026-08-17, immediately after W-3's second archive
+> pass) **479,585 bytes / 5,332 lines** → `3caa3c5` (08-21) 1,076,352 → `e455663` (08-21) 1,153,218 →
+> `1eeaba7` (08-23) **1,347,816 bytes / 15,878 lines**. W-3 freed 430 KB and six days re-consumed it
+> with 430 KB to spare. The run log is now **11,982 of 15,878 lines (75%)** of the file, at an average
+> of **~124 lines per run entry**, and the translation entries are the long ones.
+> **The rule, so this stops being a one-off someone has to notice:** when `AGENT_LOG.md` exceeds
+> **600 KB**, the next run moves every run-log entry older than **seven days** into
+> `AGENT_LOG.archive.md`, in one commit that touches nothing else. That is a legitimate whole run.
+> Backlog items, the App summary and the Environment note are **never** archived. (W-3's original
+> reasoning stands; what it lacked was a trigger, so it fired once and stopped.)
+>
+> ### W-5.4 — run-log entries have been at the wrong heading level since 2026-08-20.
+> **76 entries are `### 2026-08-…`; 37 are `## 2026-08-…`, every one of them since
+> `## 2026-08-20 — the Sector screen's two "no data" states…`.** At `##` they are siblings of
+> `## Run log`, `## Prioritized backlog` and `## Environment note` rather than children of the run
+> log, so the file no longer has a table of contents that means anything. **This is exactly the defect
+> class item 90 fixed in `LAUNCH_PLAN.md` two days later, in the same week.** Nothing breaks today —
+> no script bounds the run log — but `check-backlog.mjs` finds the backlog section by scanning to the
+> next `^## `, so a `##` entry that ever lands above the Environment note would silently truncate the
+> check. **Fix: demote the 37 to `###` in one mechanical commit** (and use
+> `s.replace(old, () => new)`, per the 2026-08-23 tooling note in this same file).
+>
+> ### W-5.5 — item 93's own headline is stale, and it is the number everyone reads first.
+> The item opens **"68 of 160"**; `npm run translation-completeness` reports **62**. The parenthetical
+> beneath it narrates the true state accurately, so nothing downstream is wrong — but a run scoping
+> the work reads the headline. **Whoever next touches item 93 updates the headline count in the same
+> commit**, and thereafter it is part of the tranche's own step 5.
+>
+> ### W-5.6 — `LAUNCH_READINESS.md` §10.4 does not carry item 93's finding, and §10.4 is the row the owner reads.
+> The scorecard header still says **"Last refreshed: 2026-08-16"** and §10.4 still frames the volume
+> ratios as "real ongoing maintenance debt" with no per-language reference. **That framing is what
+> item 93 disproved.** Against nothing, `zh` at 0.28× reads as Chinese being compact; against `zh`'s
+> own fully-translated reference of **0.35×** it means a fifth of the content is absent. §10.4 also
+> publishes one aggregate per language, which hides the fact that the shortfall is *concentrated* —
+> and the concentration is the entire reason the work is schedulable. **Add the per-language
+> reference ratios and the abridged-pair count to §10.4, and refresh the header.** Small, and it is
+> the difference between a scorecard that tracks the launch and one that describes last week.
+>
+> ### W-5.7 — note only, no action: four uncommitted US-English edits are in the owner's working tree, and two of them touch protected text.
+> `DECISIONS.md` and `LAUNCH_PLAN.md` each carry two unstaged one-word changes (`judgement`→`judgment`,
+> `catalogue`→`catalog`, `theatre`→`theater`, `colour`→`color`). **The reviewer did not touch them and
+> no run should.** Flagged because two of the four fall inside the exception item 91 deliberately
+> honored — quotations and dated records stay verbatim: the `catalogue` edit is inside a blockquoted
+> **dated verification note** whose own next sentence reads *"Deliberately not corrected: rewriting a
+> dated verification falsifies it"*, and the `colour` edit rewrites a **quotation** of the old §3.1.2's
+> opening line (`"One accent colour per lesson/phase"`), which makes the quotation no longer a
+> quotation. **Owner's call, and only the owner's.**
+
 > **PRIORITY BLOCK — set by the weekly review 2026-08-16. This supersedes the 2026-08-09 block below,
 > which is retained for history because its P-1/P-2/P-3/P-4 are all now closed. Read this first.**
 >
@@ -1105,6 +1227,14 @@ for the history. No open P1/P2 items.
     it plus the rest of `zh` are now the whole of this item. **`zh` economy is now underway: 29-30,
     31-32, 33-34 and 35-36 all landed 2026-08-23**, `zh` abridged **24 -> 16**, eight of twelve done. See the `ko` bullets at the end for the
     rate and the two model corrections the `ko` track produced, and the `zh` bullet after them.)*
+
+    > **⛔ STOP LINE, set by the weekly review 2026-08-23 (W-5.1 at the top of this backlog).** This
+    > item does NOT run to 160/160. Finish **`zh` economy 39-40** (one run), then **`ja` economy
+    > 29-40** (six runs), then **close the economy phase and file the `essentials` remainder — 48
+    > pairs — as a new, separately-prioritized item.** Reason and the measured arithmetic are in
+    > W-5.1. Also: **this item's own headline count below is stale** (it says 68; the instrument says
+    > 62) — fix it in the next tranche's commit, per W-5.5.
+
     - **What a learner gets — the example this item was filed on, now fixed in `es` and still true in
       the other three languages.** Economy lesson 40 §1 in English is four explanatory paragraphs (the
       indebted family, the factory worker, the farmer's tractor, the closing point). Its Spanish
