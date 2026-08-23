@@ -1093,14 +1093,14 @@ for the history. No open P1/P2 items.
       corrupts lesson content.
 
 93. **[Content — filed 2026-08-21 by the scheduled dev-agent, measured with a control, and the
-    largest open learner-visible gap in the app. P1 of the current Open set.] 76 of 160
+    largest open learner-visible gap in the app. P1 of the current Open set.] 74 of 160
     lesson/language pairs ship a condensed *summary* of the English body rather than a translation of
     it.** *(Was 94 at filing. **THE SPANISH ECONOMY TRACK IS DONE: `es` 29-40 are all full
     translations**, twelve pairs paid down across six runs on 2026-08-22, `es` abridged count
     **22 -> 12**. **Every remaining `es` gap is in the `essentials` track** (lessons 1-11 and 14) —
     a different, smaller body of work from the one this item was filed about. **The `ko` economy
-    track is two-thirds done: 29-36 landed 2026-08-22**, `ko` abridged count **24 -> 16**; `zh`
-    and `ja` are untouched. See the `ko` bullets at the end.)*
+    track is one tranche from done: 29-38 landed 2026-08-22**, `ko` abridged count **24 -> 14**,
+    only 39-40 left; `zh` and `ja` are untouched. See the `ko` bullets at the end.)*
     - **What a learner gets — the example this item was filed on, now fixed in `es` and still true in
       the other three languages.** Economy lesson 40 §1 in English is four explanatory paragraphs (the
       indebted family, the factory worker, the farmer's tractor, the closing point). Its Spanish
@@ -1207,15 +1207,16 @@ for the history. No open P1/P2 items.
       *volume* being added is large enough that the owner should know it is happening.
       **(b)** §10.1 applies to every added sentence in five languages, and `check-blindspot`'s
       advice-adjacency patterns run over all of them, so write mechanism, not guidance.
-    - **✅ THE `ko` ECONOMY TRACK IS TWO-THIRDS DONE — 29-36, four runs, 2026-08-22.** `ko` 29
-      (0.15 -> **0.52**), 30 (0.19 -> **0.55**), 31 (0.15 -> **0.54**), 32 (0.17 -> **0.53**),
-      33 (0.18 -> **0.54**), 34 (0.15 -> **0.53**), 35 (0.17 -> **0.55**) and 36 (0.17 -> **0.55**),
-      against a `ko` reference of **0.5510**.
-      `ko` abridged **24 -> 16**, headline **84 -> 76**, `ko` volume **0.356x -> 0.431x** of
-      English. Cost across the eight: **10,306 added Korean characters** against 27,828 English
-      characters, i.e. **0.370 added characters per English character** — the rate has held within
-      0.004 across all four runs. **Remaining `ko` economy 37-40: 5,264 Korean characters to add
-      against 12,936 English.** That rate is well under half the `es` rate of 0.85, because Korean
+    - **✅ THE `ko` ECONOMY TRACK IS ONE TRANCHE FROM DONE — 29-38, five runs, 2026-08-22.**
+      `ko` 29 (0.15 -> **0.52**), 30 (0.19 -> **0.55**), 31 (0.15 -> **0.54**), 32 (0.17 ->
+      **0.53**), 33 (0.18 -> **0.54**), 34 (0.15 -> **0.53**), 35 (0.17 -> **0.55**), 36 (0.17 ->
+      **0.55**), 37 (0.16 -> **0.54**) and 38 (0.14 -> **0.51**), against a `ko` reference of
+      **0.5510**.
+      `ko` abridged **24 -> 14**, headline **84 -> 74**, `ko` volume **0.356x -> 0.451x** of
+      English. Cost across the ten: **12,979 added Korean characters** against 35,005 English
+      characters, i.e. **0.371 added characters per English character** — the rate has held within
+      0.005 across all five runs. **Remaining `ko` economy 39-40: 2,378 Korean characters to add
+      against 5,759 English — one run.** That rate is well under half the `es` rate of 0.85, because Korean
       is genuinely more compact and because a full `ko` translation lands at ~0.55 rather than
       ~1.18. **So the "~65,000 characters for `ko`/`zh`/`ja` economy 29-40" estimate carried above
       was far too high for `ko`**: the whole `ko` economy track is landing at roughly **15,600
@@ -1238,12 +1239,15 @@ for the history. No open P1/P2 items.
       every predicted figure matched to four decimals. **✅ CHECKED A SECOND TIME AND HELD AGAIN
       (the 33/34 run):** reference **0.5510**, threshold **0.3857**, headline **80 -> 78**, lesson
       16 margin **0.0688** — identical figures. **✅ AND A THIRD TIME (the 35/36 run):** reference
-      **0.5510**, threshold **0.3857**, headline **78 -> 76**, lesson 16 margin **0.0688**. Three
-      for three, across six lessons; treat it as established for 37-40, but still check it rather
-      than assume it.
+      **0.5510**, threshold **0.3857**, headline **78 -> 76**, lesson 16 margin **0.0688**.
+      **✅ AND A FOURTH TIME (the 37/38 run):** same four figures again, headline **76 -> 74**.
+      Four for four across eight lessons; treat it as established for 39-40, but still check it.
     - **A translated `ko` lesson lands around 0.45-0.60**, the band the money track 12-28 already
-      occupies. 29-36 came in at 0.52, 0.55, 0.54, 0.53, 0.54, 0.53, 0.55 and 0.55 — a band of
-      0.03 across eight lessons, which is what a consistent translation standard looks like. Do not target the `es` band (1.02-1.20) — that is
+      occupies. 29-38 came in at 0.52, 0.55, 0.54, 0.53, 0.54, 0.53, 0.55, 0.55, 0.54 and 0.51 —
+      a band of 0.04 across ten lessons, which is what a consistent translation standard looks
+      like. Lesson 38 is the low end at 0.5069 and is still comfortably in band; its English is
+      unusually list-dense (three `Historically favored in this phase:` lines), which Korean
+      renders compactly. Do not target the `es` band (1.02-1.20) — that is
       a Spanish number and Korean cannot reach it without padding.
     - **The `es` currency defect does NOT generalise to the other languages — measured, do not
       re-derive.** The 2026-08-22 finding (English magnitude abbreviations `$900B`/`$9T` left in
@@ -14691,5 +14695,109 @@ characters) closes the `ko` economy track. Note **lesson 37 is where the `es` cu
 landed** — the `ko` side already writes `$9000억` / `$9조` / `$950억` / `$2조` correctly, verified
 2026-08-22, so that is not work, but the figures must survive the rewrite unchanged. `zh` and `ja`
 remain unmeasured on the added-character basis and must not inherit the `ko` rate.
+**Item 18 remains the entire critical path to ending Phase 0**, blocked on the owner creating an
+analytics-provider account, and **item 72's owner half — a deployed URL — is blindspot 10.10**.
+
+## 2026-08-22 (owner-directed) — `ko` economy 37-38: the QE table restored, and the app's most advice-adjacent lesson gets hedge parity
+
+**Picked:** the owner asked for "ko economy 37-38 next" — item 93's fifth Korean tranche. Owner tree
+`OWNER-TREE c2331799fd3ee413aca864fd82d247a35ea31b01a70a6c4e37b00f6aad9105b2 (0 tracked modified,
+52 untracked)` — **UNMOVED** across all five `ko` runs.
+
+### Step 3.5 — premise confirmed, projection reproduced a fourth time
+
+`ko` 37 = **0.1619**, 38 = **0.1375** at `HEAD`. **Control first**: 35 and 36 re-measured at
+**0.5451 / 0.5469**, matching the previous run. Characters-to-add **1,307 + 1,578 = 2,885** against
+the projected 2,886 (rounding). **Lesson 38 at 0.1375 was the lowest ratio left in the `ko` track.**
+
+**Read both.** Lesson 37 had lost the `“Interest Rates”` cross-reference and the 0%-floor framing,
+the QE mechanism paragraph (money created electronically, no printing press, the Fed as an enormous
+competing buyer), the transmission paragraph (bond prices up, yields down, investors nudged toward
+risk), **the entire QE program table**, and the balance sheet's "nine times the size" comparison; §2
+had lost the run-off nuance, the mirror-image paragraph and the balloon analogy. Lesson 38 — **the
+most advice-adjacent lesson in the app** — had lost the factory-town narrative on both ends, **all
+three S&P 500 figures except one**, the favored-asset lists for two of four phases entirely, and
+three of §3's four mechanism paragraphs.
+
+### What shipped
+
+- **`src/content/lessonContent.economy.ko.js`** — lessons **37 and 38** rewritten from summary to
+  full translation. Section counts (3 and 3) and headings unchanged. **Nine of ten fields changed;
+  lesson 37's `takeaway` was already a faithful translation and the patch left it byte-identical**
+  rather than rewriting it for the sake of it.
+- **`scripts/translation-completeness-baseline.json`** — exactly two numbers (`37.ko` 0.16 -> 0.54,
+  `38.ko` 0.14 -> 0.51).
+- **`LAUNCH_READINESS.md`** — generated §10.4 figure, `ko 59,198 (0.431x)` -> `ko 61,871 (0.451x)`.
+
+### Verification
+
+- `npm test` **PASS, 0 failures**, 2 pre-existing warnings. `npm run build` clean in 1.01s.
+  `npm run check-blindspot` **0 failures**.
+- **§33 run before re-recording failed on exactly two lines**, 37 [ko] and 38 [ko], no others.
+- **Paragraph-count parity: 37 en 5,4,1 / ko 5,4,1 and 38 en 3,3,4 / ko 3,3,4** — exact. They had
+  been 2,2,1 and 2,2,1.
+- **Lesson 37's figures had to be checked BY VALUE, not by token, and this is the one place in the
+  whole item where the usual containment check would have been meaningless.** Korean renders the
+  long scale (`$1.75조`, `$6000억`, `월 $850억`, `$9000억`, `$9조`, `$950억`, `$2조`) where English
+  writes `$1.75 trillion`, `$600 billion`, `$85B/month`, and so on — so *no* token matches and a
+  containment check would report seven missing figures on correct content. Parsed each Korean amount
+  through its unit (억 = 10^8, 조 = 10^12) and compared the resulting numbers: **all eight values
+  match exactly** — 8.5e10, 9.5e10, 6.0e11, 9.0e11, 1.75e12, 2.0e12, 9.0e12, 9.0e12. This is the
+  lesson the 2026-08-22 `es` currency finding landed in, and the `ko` side stays correct.
+- **Lesson 38's figures matched by containment with zero extras** (14, 28, 22, 35, 38, 50, 500).
+- **Hedge parity, the check that matters most here.** Lesson 38 carries its asset claims entirely on
+  "historically" — **en 9, ko 9, exact parity**, the same 9 the `es` run recorded. Lesson 37: en
+  `tends to` x2, ko x2. **A note on the instrument:** the first count reported ko 1 for lesson 37,
+  which was a *regex* artifact — the second hedge is conjugated `경향이 있고`, not the terminal
+  `경향이 있습니다`. **Future hedge counts should match `경향이 있`, not the polite terminal form**;
+  the previous run's 35/36 check had the same blind spot and happened not to hit it.
+- **§16 cross-references.** English 37 §1 carries “Interest Rates” and 38 §1 carries
+  “The Short-Term Debt Cycle”; the Korean lacked both and now has `「금리」` and
+  `「단기 부채 순환」`. 38 §3's existing `「금리」` is preserved.
+- **§10.1 — five Korean patterns on 3,758 characters of new text, all clean, with five controls**,
+  all firing. **§10.2 explicitly re-checked**: `/dalio/i` clean. The Warren Buffett quotation in
+  lesson 38's `thinkAbout` is **pre-existing in both English and Korean and was preserved, not
+  introduced** — §10.2's guard is Dalio-specific by design (read the check before assuming), and the
+  quote is an attributed aphorism, not framing the app around a person.
+- **Live browser** (rebuilt `dist/`, `http.server 8846`, language via the app's own `<select>`,
+  disclaimer dismissed). Both render in full, **each reading asserted single-language**: 37 **en
+  4,344 / ko 2,364 = 0.544**, 38 **en 5,208 / ko 2,612 = 0.502**. **All seven `$` figures render in
+  the restored QE table**, the Fed balance-sheet chart is intact, and lesson 38's three S&P figures
+  and its interactive cycle-phase widget all render. Server stopped, `localStorage` cleared.
+
+### The prediction holds a fourth time
+
+Reference **0.5510** before and after, threshold **0.3857**, headline **76 -> 74**, lesson 16
+**0.4545** / margin **0.0688**. Four for four across eight lessons.
+
+Cost rate across five runs: 0.366, 0.366, 0.368, 0.370, **0.371** — **12,979 added Korean characters
+against 35,005 English across 29-38**.
+
+### Adversarial self-check (step 5)
+
+- **Blindspot register** — clean. §10.2 checked directly rather than inferred, and the Buffett
+  question answered by reading the guard. §10.1: five patterns, five controls, plus the 9-for-9
+  hedge parity that is the real protection on lesson 38 — its asset claims are all past-tense
+  descriptions of what has coincided with a phase, never a suggestion to hold anything. §2.3: no
+  dates added; 2008, 2010, 2012, 2020, 2022, 2024 are all historical and all in the English.
+  §10.3: no surface.
+- **`DECISIONS.md` conflict** — none.
+- **Already-done backlog item** — no. Fifth `ko` tranche.
+- **Own verification claim** — reproducible, and **one claim I nearly made was wrong**: the hedge
+  count for 37 read as a 2-vs-1 mismatch and I would have "fixed" a hedge that was already there had
+  I not printed the surrounding text. The instrument was wrong, not the content. **One thing I did
+  NOT do:** the translation-review ledger is untouched for the eleventh run running — it fingerprints
+  the **English** body. **No fluent Korean reviewer has read any of these ten lessons**, and lesson
+  38 is where that matters most: it is the lesson whose register most affects whether the app reads
+  as education or as suggestion.
+
+### Next run
+
+**Item 93: `ko` economy 39-40 — the final tranche**, a measured **2,378 Korean characters** to add
+(5,759 English), headline expected **74 -> 72**, reference staying at 0.5510. That closes the `ko`
+economy track and leaves **every remaining `ko` gap in the `essentials` track** (1-11 and 14), the
+same shape `es` ended in. Note lesson 39 §1 is the six-gauge dashboard that was the worst single
+abridgement found in the `es` work, and lesson 40 is the lesson this whole item was filed on — expect
+both to be thin. `zh` and `ja` remain unmeasured on the added-character basis.
 **Item 18 remains the entire critical path to ending Phase 0**, blocked on the owner creating an
 analytics-provider account, and **item 72's owner half — a deployed URL — is blindspot 10.10**.
