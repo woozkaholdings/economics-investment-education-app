@@ -2347,12 +2347,30 @@ for the history. No open P1/P2 items.
     not on effort.** Do not extend this stream with new invented ideas; the owner's explicit instruction
     was that no paywall/subscription UI be built from the reference material while §4.3's Phase-0 gate is
     open, and that still binds.
-    > **New reference material appeared 2026-08-17, unread and uninterpreted.** An untracked `UIUX/`
-    > directory (~13 Mobbin-style "Buddy iOS" screenshots, file-dated 2026-08-14) was added to the repo
-    > root during that day's dev-agent run. It is owner material: not committed, not opened, and **not
-    > turned into backlog items by an agent guessing at intent** — the last design-reference drop came
-    > with a spoken brief, and this one has none yet. A run that finds it should leave it alone and say
-    > so; the owner naming what they want from it is what turns it into work.
+    > **~~New reference material appeared 2026-08-17, unread and uninterpreted.~~ ✅ READ AND
+    > IMPLEMENTED 2026-08-21; this note is superseded and is kept only so the sequence is legible.**
+    > The untracked `UIUX/` directory (now 35 screenshots + 16 videos of Buddy, Duolingo, Quizlet,
+    > Vocabulary and Nibble) was owner material with no brief, and the standing instruction was to
+    > leave it alone until the owner named what they wanted. **They did, on 2026-08-21.** A design
+    > canvas was drafted from the folder and implemented: the finding was that **four of the five
+    > mocked screens were already built to these references** and only `Learn.jsx` had a substantive
+    > gap — which turned out to hide a real WCAG failure (`opacity: 0.55` on locked rows, 2.31:1,
+    > invisible to §28 because it composites *on top of* a token pair). Five primitives derived from
+    > the folder live in `components/ui.jsx` under its own "PATTERNS ADAPTED FROM THE UIUX/ REFERENCE
+    > SET" header — `IconTile`, `Tile`, `TileGrid`, `Steps`, `ResumeCard` — and are wired into
+    > `Reference.jsx`, `Practice.jsx` and `Learn.jsx` respectively. **Do not re-derive that redesign.**
+    > **Second pass, 2026-08-23 (owner-directed, "apply the design"): the *visual language*, which the
+    > first pass did not touch.** The 2026-08-21 work adopted the reference set's *structures* while
+    > the palette stayed cool blue-on-near-black; the references are uniformly warm and editorial.
+    > `src/index.css` was repainted to a warm palette in both schemes and screen titles took a system
+    > serif. See `DECISIONS.md` and the 2026-08-23 run-log entry. **What is deliberately still NOT
+    > built, and why, is in the 2026-08-21 entry's "Three things from the canvas deliberately NOT
+    > built" section** — two because the design was wrong against `theme.js`'s rules, one (the Leitner
+    > box-distribution strip) because it costs five locale keys x five languages and changes nothing a
+    > learner does. **That third one is an open owner decision, not an oversight.**
+    > **The owner's no-paywall instruction above still binds** — much of the `UIUX/` set is
+    > subscription UI (Vocabulary's "Go Premium"/"Unlock all", its Settings "Manage subscription",
+    > Duolingo's friends-invite), and none of it may be built from while §4.3's Phase-0 gate is open.
 
 > **PRIORITY BLOCK — set by the weekly review 2026-08-09. SUPERSEDED 2026-08-16 (see above); all four
 > items below are closed. Retained for history.**
@@ -16237,3 +16255,113 @@ generated figure the test enforces. **W-5.3 (600 KB archive trigger) and W-5.4 (
 `##` instead of `###`) are also still open**; this entry is written at `###`.
 **Item 18 remains the entire critical path to ending Phase 0**, blocked on the owner creating an
 analytics-provider account, and **item 72's owner half — a deployed URL — is blindspot 10.10**.
+
+### 2026-08-23 (owner-directed, interactive) — the UIUX/ set's *visual language*, applied: a warm palette and an editorial serif
+
+**Picked:** owner-directed — "have you designed UIUX? implement it", then "apply the design when you
+finish". `HEAD` `ab0bb83` throughout; the owner's `UIUX/` and `drafts/` stayed untracked and unread
+beyond the images themselves.
+
+### The premise check corrected my own first answer
+
+I told the owner "no, nothing has been designed" on the strength of item 26's note, which says the
+`UIUX/` folder is "unread and uninterpreted" and instructs runs to leave it alone. **That note is
+stale and I was wrong.** Reading the code rather than the backlog: `components/ui.jsx` carries a
+whole section headed **"PATTERNS ADAPTED FROM THE UIUX/ REFERENCE SET (2026-08-17)"** with five
+primitives — `IconTile`, `Tile`, `TileGrid`, `Steps`, `ResumeCard` — and `git log -S` dates them to
+`5633b79`. They are wired into `Reference.jsx`, `Practice.jsx` and `Learn.jsx`, which I confirmed in
+the live browser: the Reference tab **is** Vocabulary's "Explore topics" tile grid, and Review's "How
+review works" **is** the Vocabulary/Quizlet trial-timeline rail. The 2026-08-21 entry records the
+whole thing, including its finding that four of five mocked screens were already built.
+**Item 26's note has been corrected in this commit** so the next run is not misled the way I was.
+
+### What was genuinely missing, and is what shipped
+
+The 2026-08-21 pass adopted the reference set's **structures** and left its **voice**: every app in
+`UIUX/` is warm and editorial (Vocabulary's cream + serif titles, Buddy's soft light cards), while
+this app was cool blue on near-black. That gap is the whole of this change.
+
+- **`src/index.css` — both palettes repainted warm.** Light is a cream canvas `#f8f5f0` over white
+  cards with warm greige sunken/hairlines and warm-black ink; dark is a warm espresso `#14120f`.
+  All three blocks (`:root`, the `@media` dark, the explicit `[data-theme="dark"]`) rewritten, the
+  last two identical as §28 requires.
+- **A system serif on the two largest type scales only** — `--font-display` in `index.css`,
+  `family` in `theme.js`, honored by `Text` in `ui.jsx`. Body copy is untouched sans. No webfont:
+  the app must work from a dragged-and-dropped `dist/`, so a font CDN is not acceptable.
+- **`src/App.jsx`** — the first-run modal scrim was an inline `rgba(9,11,15,0.6)`, a cool literal
+  that predates this change and now clashed. Warmed to `rgba(28,26,23,0.6)`, matching `--ink-strong`.
+  No *new* inline color was introduced anywhere.
+
+### What was deliberately NOT changed
+
+- **`theme.js`'s one-accent rule.** The accent stays blue-family (`#2f43c4` / `#a9b6ff`) rather than
+  taking Vocabulary's sage-teal, because green/amber/red are reserved for success/caution/error here.
+  A teal accent would collide with `fill.ok` — the same reason the 2026-08-21 run rejected an
+  artboard that drew completed markers in the accent.
+- **The 40 per-lesson accents in `content/lessons.js`.** Still a field nothing renders, and that file
+  warns in its own comment against "fixing" them (item 75 already made that mistake once). Untouched.
+- **Anything from the paywall screens.** A large share of `UIUX/` is subscription UI — Vocabulary's
+  "Go Premium"/"Unlock all" and its Settings "Manage subscription", Duolingo's friends-invite. Item
+  26 records a standing owner instruction that none of it may be built while §4.3's Phase-0 gate is
+  open, and the sign-in surfaces would contradict `DECISIONS.md`'s localStorage-only state anyway.
+- **The dated run-log entries that quote the old hexes.** `#2563eb` and `#fbfbfd` appear in
+  `AGENT_LOG.md` and `AGENT_LOG.archive.md`; those are dated verifications and rewriting one
+  falsifies it, which is this repo's own standing rule.
+
+### Verification
+
+- `npm test` **exit 0, 0 failures**, 2 pre-existing warnings. `npm run build` clean. `check-blindspot`
+  0 failures.
+- **The palette was solved offline BEFORE it was written**, against a contrast function validated on
+  two published WCAG values (`#000` on `#fff` = 21.00, `#767676` on `#fff` = 4.54). The real check
+  then reproduced the prediction **to two decimals**: §28 **110 pairs at AA**, worst light
+  **5.61:1** (`--ink-bad` on `--surface-sunken`), worst dark **5.81:1**; §28b **70 graph pairs at
+  1.4.11**, **0 exempted**, worst light 3.84:1, worst dark 3.95:1.
+- **The warm palette is more accessible than the one it replaces on the light worst case — 4.62:1
+  rising to 5.61:1.** Dark moves from 5.93:1 to 5.81:1, still far above the 4.5:1 bar.
+- §28's three machine-checked figures in the `index.css` CONTRAST header were updated in the same
+  change, including the rejected-option claim (white on the dark accent fill, now **1.94:1**).
+- **Live browser, both schemes** (`dist/` rebuilt, `/usr/bin/python3 -m http.server 8912`, mobile
+  viewport). Measured rather than eyeballed, with the two traps the 2026-08-21 entry records both
+  avoided: contrast taken against **the first opaque ancestor, not `body`**, and the theme
+  **asserted** (`data-theme="light"`) rather than assumed. A black-on-white probe injected as a
+  control read exactly **21.00**. Live readings — page title **15.97:1**, tile label **6.63:1**,
+  body copy **6.45:1** — **agree with the offline computation to two decimals on all three.**
+- **A third repetition of the screenshot-color trap, worth recording because it has now caught two
+  different runs.** The accent photographs as violet. `getComputedStyle` reads `rgb(47, 67, 196)`,
+  exactly `#2f43c4`. **Do not "fix" a color from a screenshot in this app.**
+
+### Adversarial self-check (step 5)
+
+- **Blindspot register** — clean. No content string changed anywhere in this commit, so §10.1/§10.2/
+  §2.3 have no new surface; `check-blindspot` passes 0/0 and the §10.1 disclaimer still renders on
+  Reference (confirmed in the live DOM, not assumed). §10.3's Kids tile still reads "For grown-ups
+  teaching kids" — parent-facing, unchanged.
+- **`DECISIONS.md` conflict** — none, and one was actively preserved: `theme.js`'s rule 2 (one
+  accent; green/amber/red mean only success/caution/error) is the reason the accent did not become
+  teal. localStorage-only, `.js` content modules and Vite are untouched.
+- **`LAUNCH_PLAN.md` conflict — FOUND ONE, and it is the real finding of this check.** §3.4 read
+  **"One typeface."** and the serif makes that false. Rather than ship a plan that contradicts the
+  code — the drift this project has already had three times — §3.4 was updated in the same commit,
+  with the reasoning that "one typeface" was aimed at the v1 chaos §3.1.1 describes (a different
+  accent per lesson, emoji for icons) and not at a disciplined two-family pairing with a fixed role
+  for each.
+- **Already-done backlog item** — this is the sharpest risk here, since a "UIUX redesign" shipped
+  2026-08-21. It is **not** a redo: that pass changed structure and explicitly left the palette
+  alone, and I verified each of its five primitives was already present and wired before writing
+  anything, rather than rebuilding them. This commit touches no component's markup except one
+  `fontFamily` line and one scrim literal.
+- **Own verification claim** — reproducible; the offline model was validated against published WCAG
+  constants before use, the live instrument against an injected 21:1 probe, and the two agree to two
+  decimals. **What this check caught in my own conduct: my first answer to the owner was wrong** —
+  I asserted no design existed on the strength of a backlog note instead of reading the code. The
+  note is now fixed, but the lesson is the one step 3.5 already states: a backlog item's
+  characterization of the code is evidence, not fact.
+
+### Next
+
+**§3.4's "one typeface" is now two — if the owner dislikes the serif, it is a one-line revert**
+(`family` in `theme.js`), and the palette is a three-block revert in `index.css`. Both are isolated
+to this commit. **Still open from the 2026-08-21 canvas and unchanged by this run:** the Leitner
+box-distribution strip on Review, which costs five locale keys x five languages and was offered back
+to the owner rather than shipped — **an open owner decision, not an oversight.**

@@ -318,11 +318,20 @@ kind quiz feedback with explanations.
 
 ### 3.4 Theming and typography
 
-**§3.1.1 is the visual system**; this section is only the theming layer under it. One typeface.
+**§3.1.1 is the visual system**; this section is only the theming layer under it. ~~One typeface.~~
+**Two, since 2026-08-23 (owner-directed), and the pairing is the rule rather than an exception:** a
+**system serif** on the two largest scales only (`display`, `title` in `theme.js`) and the sans stack
+everywhere else. Body copy — everything a learner reads at length — is unchanged. This is the
+editorial voice of the owner's `UIUX/` reference set, and it is a system stack, so it costs no
+webfont. **"One typeface" was aimed at the v1 chaos §3.1.1 describes** (a different accent per
+lesson, emoji for icons); a two-family pairing with a fixed role for each is not that, and the
+one-accent rule it sat beside is untouched. See `DECISIONS.md`.
 **Dark mode** (finance audiences skew dark) — **shipped**: light/dark/system in
 `src/lib/useAppState.js`, picker in `src/screens/reference/Settings.jsx`. Color and type come from
 `theme.js`, which carries a single accent in its `ink`/`fill`/`surface` variants and no per-lesson
-palette.
+palette. **The palette itself is warm as of 2026-08-23** — cream over white in light, warm espresso
+in dark — re-derived against `check-data.mjs` §28 rather than eyeballed: 110 text pairs at WCAG AA,
+70 graph pairs at 1.4.11, zero exemptions.
 
 *Retitled 2026-08-21 (backlog item 62's F6). Until then this was a second section also called "Visual
 system", opening "One accent colour per lesson/phase" — the v1 emphasis §3.1.1 supersedes, and one <!-- us-english:allow: verbatim quotation of the old §3.1.2 opening line; see AGENT_LOG.md:194-199 -->

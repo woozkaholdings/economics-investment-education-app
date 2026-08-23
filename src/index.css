@@ -18,62 +18,64 @@
    note was the only "verification" there was, and two of its three figures had
    drifted from the palette; that is why it is now machine-checked rather than
    merely written down.
-   Light: worst case 4.62:1. Dark: worst case 5.93:1. Dark mode deliberately
+   Light: worst case 5.61:1. Dark: worst case 5.81:1. Dark mode deliberately
    puts *dark* ink on its bright accent fills rather than white: white on
-   --fill-accent would have been 2.16:1.
+   --fill-accent would have been 1.94:1.
    ═══════════════════════════════════════════════════════════════════════════ */
 
 :root {
   color-scheme: light;
 
-  --surface-canvas: #fbfbfd;
+  --surface-canvas: #f8f5f0;
   --surface-card: #ffffff;
-  --surface-sunken: #f4f5f8;
-  --surface-accent-wash: #eef2ff;
-  --surface-ok-wash: #ecfdf5;
-  --surface-warn-wash: #fffbeb;
-  --surface-bad-wash: #fef2f2;
+  --surface-sunken: #efe9e0;
+  --surface-accent-wash: #ecedf9;
+  --surface-ok-wash: #e8f4ec;
+  --surface-warn-wash: #fbf1e0;
+  --surface-bad-wash: #fbeceb;
 
-  --line-hairline: #e6e8ec;
-  --line-strong: #d3d7de;
+  --line-hairline: #e4ddd2;
+  --line-strong: #cfc5b6;
 
-  --ink-strong: #16181d;
-  --ink-body: #3f4653;
-  --ink-muted: #5b6472;
-  --ink-accent: #2563eb;
-  --ink-ok: #047857;
-  --ink-warn: #9a4a08;
-  --ink-bad: #b91c1c;
+  --ink-strong: #1c1a17;
+  --ink-body: #45403a;
+  --ink-muted: #5f584f;
+  --ink-accent: #2f43c4;
+  --ink-ok: #1a6640;
+  --ink-warn: #8a4a08;
+  --ink-bad: #b0231c;
 
-  --fill-accent: #2563eb;
-  --fill-accent-deep: #1d4ed8;
-  --fill-ok: #047857;
-  --fill-warn: #9a4a08;
-  --fill-bad: #b91c1c;
-  --fill-ink: #16181d;
+  --fill-accent: #2f43c4;
+  --fill-accent-deep: #24339b;
+  --fill-ok: #1a6640;
+  --fill-warn: #8a4a08;
+  --fill-bad: #b0231c;
+  --fill-ink: #1c1a17;
   /* Text placed on the fills above. */
   --ink-on-fill: #ffffff;
 
-  --graph-green: #059669;
-  /* Darkened from #d97706 on 2026-08-17 (backlog item 65). Same hue (32°) and
-     saturation (95%), HSL lightness 43.7% -> 39.7%. The old value cleared 3:1
-     on only 4 of the 7 light surfaces (2.85 accent-wash, 2.91 bad-wash, 2.92
-     sunken) and cleared the other three by 0.02-0.19, which left it below the
-     *worst case* of every other graph token. Now 3.40:1 at worst and 3.80:1 on
-     card, so all five tokens sit in one band and §28b needs no exemptions. */
-  --graph-amber: #c56c05;
-  --graph-red: #dc2626;
-  --graph-blue: #2563eb;
-  /* Darkened from #9aa2b1 on 2026-08-17 (backlog item 63). The old value was
-     2.57:1 against --surface-card — the surface every chart figure actually
-     renders on — where WCAG 1.4.11 asks 3:1 for a meaningful graphical object,
-     and the compounding curve's second series is exactly that. Now 3.76:1 on
-     card, 3.36:1 at worst across all seven surfaces. Enforced by §28b. */
-  --graph-neutral: #7c8494;
+  --graph-green: #17724a;
+  /* Warm-palette amber (2026-08-23). Kept at the same role and re-measured
+     rather than carried over: 3.84:1 at worst across the seven warm surfaces,
+     so all five graph tokens still sit in one band and §28b needs no
+     exemptions. */
+  --graph-amber: #a86505;
+  --graph-red: #bd3228;
+  --graph-blue: #2f43c4;
+  /* 4.03:1 on --surface-card, 3.87:1 at worst across all seven surfaces —
+     WCAG 1.4.11's 3:1 for a meaningful graphical object, which the compounding
+     curve's second series is. Enforced by §28b. */
+  --graph-neutral: #736b61;
 
-  --shadow-raised: 0 1px 2px rgba(16, 24, 40, 0.04), 0 1px 3px rgba(16, 24, 40, 0.06);
-  --shadow-overlay: 0 12px 32px rgba(16, 24, 40, 0.18);
-  --shadow-lifted: 0 4px 16px rgba(37, 99, 235, 0.24);
+  /* Display family. The UIUX/ reference set's editorial voice (Vocabulary's
+     serif screen titles) without a webfont: this is a system stack, so it adds
+     no network request, no CLS and no licence question. Body copy stays sans —
+     the contrast between the two IS the effect. */
+  --font-display: ui-serif, Georgia, "Iowan Old Style", "Times New Roman", serif;
+
+  --shadow-raised: 0 1px 2px rgba(41, 33, 22, 0.05), 0 1px 3px rgba(41, 33, 22, 0.07);
+  --shadow-overlay: 0 12px 32px rgba(41, 33, 22, 0.20);
+  --shadow-lifted: 0 4px 16px rgba(47, 67, 196, 0.22);
 }
 
 /* Shared dark values. Applied both by system preference and by explicit
@@ -82,87 +84,90 @@
   :root:not([data-theme="light"]) {
     color-scheme: dark;
 
-    --surface-canvas: #0f1115;
-    --surface-card: #171b22;
-    --surface-sunken: #1e232c;
-    --surface-accent-wash: #18243d;
-    --surface-ok-wash: #0e2620;
-    --surface-warn-wash: #2a2010;
-    --surface-bad-wash: #2b1618;
+    --surface-canvas: #14120f;
+    --surface-card: #1d1a16;
+    --surface-sunken: #26221d;
+    --surface-accent-wash: #1e2340;
+    --surface-ok-wash: #12251a;
+    --surface-warn-wash: #2a2011;
+    --surface-bad-wash: #2b1917;
 
-    --line-hairline: #262c36;
-    --line-strong: #39414e;
+    --line-hairline: #2e2922;
+    --line-strong: #443d33;
 
-    --ink-strong: #f3f5f9;
-    --ink-body: #c6cdd9;
-    --ink-muted: #98a1b0;
-    --ink-accent: #8ab0ff;
-    --ink-ok: #54d6a0;
-    --ink-warn: #f0b95c;
-    --ink-bad: #ff9a9a;
+    --ink-strong: #f6f2ec;
+    --ink-body: #d4ccc0;
+    --ink-muted: #a89e90;
+    --ink-accent: #a9b6ff;
+    --ink-ok: #6ede9f;
+    --ink-warn: #f3bd63;
+    --ink-bad: #ffa19a;
 
-    --fill-accent: #8ab0ff;
-    --fill-accent-deep: #a8c4ff;
-    --fill-ok: #54d6a0;
-    --fill-warn: #f0b95c;
-    --fill-bad: #ff9a9a;
-    --fill-ink: #f3f5f9;
+    --fill-accent: #a9b6ff;
+    --fill-accent-deep: #c3ccff;
+    --fill-ok: #6ede9f;
+    --fill-warn: #f3bd63;
+    --fill-bad: #ffa19a;
+    --fill-ink: #f6f2ec;
     /* Dark ink on bright fills — see the CONTRAST note in this file's header
        comment. (Backlog item 59 read "above" as a dangling reference and filed
        the note as missing; it is not, and naming it removes the ambiguity.) */
-    --ink-on-fill: #0f1115;
+    --ink-on-fill: #14120f;
 
-    --graph-green: #54d6a0;
-    --graph-amber: #f0b95c;
-    --graph-red: #ff9a9a;
-    --graph-blue: #8ab0ff;
-    --graph-neutral: #6b7482;
+    --graph-green: #6ede9f;
+    --graph-amber: #f3bd63;
+    --graph-red: #ffa19a;
+    --graph-blue: #a9b6ff;
+    --graph-neutral: #8a8072;
 
     --shadow-raised: 0 1px 2px rgba(0, 0, 0, 0.4), 0 1px 3px rgba(0, 0, 0, 0.3);
     --shadow-overlay: 0 12px 32px rgba(0, 0, 0, 0.6);
-    --shadow-lifted: 0 4px 16px rgba(138, 176, 255, 0.2);
+    --shadow-lifted: 0 4px 16px rgba(169, 182, 255, 0.18);
   }
 }
 
 :root[data-theme="dark"] {
   color-scheme: dark;
 
-  --surface-canvas: #0f1115;
-  --surface-card: #171b22;
-  --surface-sunken: #1e232c;
-  --surface-accent-wash: #18243d;
-  --surface-ok-wash: #0e2620;
-  --surface-warn-wash: #2a2010;
-  --surface-bad-wash: #2b1618;
+  --surface-canvas: #14120f;
+  --surface-card: #1d1a16;
+  --surface-sunken: #26221d;
+  --surface-accent-wash: #1e2340;
+  --surface-ok-wash: #12251a;
+  --surface-warn-wash: #2a2011;
+  --surface-bad-wash: #2b1917;
 
-  --line-hairline: #262c36;
-  --line-strong: #39414e;
+  --line-hairline: #2e2922;
+  --line-strong: #443d33;
 
-  --ink-strong: #f3f5f9;
-  --ink-body: #c6cdd9;
-  --ink-muted: #98a1b0;
-  --ink-accent: #8ab0ff;
-  --ink-ok: #54d6a0;
-  --ink-warn: #f0b95c;
-  --ink-bad: #ff9a9a;
+  --ink-strong: #f6f2ec;
+  --ink-body: #d4ccc0;
+  --ink-muted: #a89e90;
+  --ink-accent: #a9b6ff;
+  --ink-ok: #6ede9f;
+  --ink-warn: #f3bd63;
+  --ink-bad: #ffa19a;
 
-  --fill-accent: #8ab0ff;
-  --fill-accent-deep: #a8c4ff;
-  --fill-ok: #54d6a0;
-  --fill-warn: #f0b95c;
-  --fill-bad: #ff9a9a;
-  --fill-ink: #f3f5f9;
-  --ink-on-fill: #0f1115;
+  --fill-accent: #a9b6ff;
+  --fill-accent-deep: #c3ccff;
+  --fill-ok: #6ede9f;
+  --fill-warn: #f3bd63;
+  --fill-bad: #ffa19a;
+  --fill-ink: #f6f2ec;
+  /* Dark ink on bright fills — see the CONTRAST note in this file's header
+     comment. (Backlog item 59 read "above" as a dangling reference and filed
+     the note as missing; it is not, and naming it removes the ambiguity.) */
+  --ink-on-fill: #14120f;
 
-  --graph-green: #54d6a0;
-  --graph-amber: #f0b95c;
-  --graph-red: #ff9a9a;
-  --graph-blue: #8ab0ff;
-  --graph-neutral: #6b7482;
+  --graph-green: #6ede9f;
+  --graph-amber: #f3bd63;
+  --graph-red: #ffa19a;
+  --graph-blue: #a9b6ff;
+  --graph-neutral: #8a8072;
 
   --shadow-raised: 0 1px 2px rgba(0, 0, 0, 0.4), 0 1px 3px rgba(0, 0, 0, 0.3);
   --shadow-overlay: 0 12px 32px rgba(0, 0, 0, 0.6);
-  --shadow-lifted: 0 4px 16px rgba(138, 176, 255, 0.2);
+  --shadow-lifted: 0 4px 16px rgba(169, 182, 255, 0.18);
 }
 
 /* ── base ───────────────────────────────────────────────────────────────── */

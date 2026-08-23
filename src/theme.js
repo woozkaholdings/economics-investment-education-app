@@ -87,9 +87,15 @@ export const shadow = {
 };
 
 // ── Type ──────────────────────────────────────────────────────────────────
+// `family` is set on the two largest scales only. Screen titles carry the
+// editorial serif from the UIUX/ reference set; everything a learner actually
+// reads at length stays in the sans stack, which is what keeps rule 1 (type is
+// big, reading is not tiring) intact. A scale without `family` inherits body.
+export const family = { display: "var(--font-display)" };
+
 export const type = {
-  display: { size: "1.75rem", weight: 700, height: 1.25, spacing: "-0.02em" },
-  title:   { size: "1.375rem", weight: 700, height: 1.3, spacing: "-0.01em" },
+  display: { size: "1.75rem", weight: 700, height: 1.25, spacing: "-0.02em", family: family.display },
+  title:   { size: "1.375rem", weight: 700, height: 1.3, spacing: "-0.01em", family: family.display },
   heading: { size: "1.125rem", weight: 650, height: 1.4 },
   body:    { size: "1rem", weight: 400, height: 1.65 },
   small:   { size: "0.875rem", weight: 400, height: 1.55 },

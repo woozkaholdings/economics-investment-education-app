@@ -666,3 +666,38 @@ Add a new entry when a run makes a choice future work should be able to look up 
   view: `LessonReader` now shows a lesson's **position within its track** ("Lesson 1 of 12") instead
   of its raw id. The global "Lesson 29 of 40" was already wrong for two independent curricula; it is
   simply more visible now. **Do not repair this by renumbering again.**
+
+## The app's palette is warm, and screen titles are a system serif (2026-08-23, owner-directed)
+
+- **Decision:** `src/index.css`'s two palettes are warm — a cream canvas (`#f8f5f0`) over white cards
+  in light, a warm espresso (`#14120f`) in dark — and the two largest type scales (`display`, `title`)
+  render in a **system serif stack**, while all body copy stays sans.
+- **Why:** the owner's `UIUX/` reference set (Buddy, Duolingo, Quizlet, Vocabulary, Nibble) is
+  uniformly warm and editorial. The 2026-08-21 redesign adopted its *structures* — `IconTile`,
+  `Tile`/`TileGrid`, `Steps`, `ResumeCard` — but left the palette cool blue-on-near-black, so the app
+  had the reference set's bones and none of its voice. The owner asked for the design to be applied;
+  this is the half that was missing.
+- **What did NOT change, deliberately:**
+  - **`theme.js`'s one-accent rule.** The accent stays in the blue family (`#2f43c4` light,
+    `#a9b6ff` dark) rather than moving to Vocabulary's sage-teal, because green/amber/red are
+    reserved for success/caution/error in this system. A teal accent would collide with `fill.ok`,
+    and the 2026-08-21 run already rejected an artboard for exactly that reason.
+  - **The 40 per-lesson accents in `content/lessons.js`.** Still a field nothing renders, and that
+    file's own comment warns against "fixing" them. Untouched.
+- **No webfont.** The display family is `ui-serif, Georgia, "Iowan Old Style", "Times New Roman",
+  serif` — a system stack, so it costs no network request, no layout shift and no licence question.
+  An app that must work from a dragged-and-dropped `dist/` folder should not depend on a font CDN.
+- **Contrast was re-derived, not assumed.** All 110 text pairs clear WCAG AA and all 70 graph pairs
+  clear 1.4.11's 3:1, with **zero exemptions** — `check-data.mjs` §28/§28b, whose figures were
+  predicted offline first and then reproduced by the check to two decimals. The warm palette is
+  *better* than the one it replaced on the light worst case (**4.62:1 rising to 5.61:1**); dark moves from
+  5.93:1 to 5.81:1, still far above the 4.5:1 bar. §28 also machine-checks the three figures written
+  into `index.css`'s CONTRAST header, and those were updated in the same change.
+- **Revisit when:** the owner wants a different accent hue. That is a one-token change in three
+  places (`:root`, the `@media` dark block, the explicit `[data-theme="dark"]` block, which §28
+  requires to stay identical) plus the two shadow rgba()s that tint with it — but re-run
+  `npm test` afterwards, because the accent participates in 16 of the 110 checked pairs.
+- **Note for whoever reads a screenshot of this app:** the accent photographs as violet and is not.
+  Two separate runs (2026-08-21 and 2026-08-23) have now "found" a wrong accent color by eye and
+  disproved it by reading `getComputedStyle` — `#2f43c4` is `rgb(47, 67, 196)` in the live DOM.
+  Measure before you fix.

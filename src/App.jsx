@@ -72,7 +72,7 @@ function FirstRunNotice({ t, onDismiss }) {
       role="dialog"
       aria-modal="true"
       aria-labelledby="first-run-title"
-      style={{ position: "fixed", inset: 0, background: "rgba(9,11,15,0.6)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 200, padding: space["5"] }}
+      style={{ position: "fixed", inset: 0, background: "rgba(28,26,23,0.6)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 200, padding: space["5"] }}
     >
       <Card style={{ maxWidth: 380, width: "100%", boxShadow: shadow.overlay }}>
         <Text as="h2" id="first-run-title" variant="heading" color={ink.strong}>
