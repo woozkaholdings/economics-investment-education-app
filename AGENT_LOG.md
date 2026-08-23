@@ -11,7 +11,7 @@ the repo root are both reference material only — neither is imported by anythi
 Current structure, under `src/`:
 
 - **`App.jsx`** — the shell. Three bottom tabs (**Learn**, **Review**, **Reference**) plus a pushed
-  lesson-reader view; a sticky header with the 5-language picker (en + Beta-labelled es/ko/zh/ja,
+  lesson-reader view; a sticky header with the 5-language picker (en + Beta-labeled es/ko/zh/ja,
   §10.4); a first-run disclaimer modal (§10.1) with a focus trap that must be dismissed before first use.
   Since 2026-08-16 the shell is also addressable: `#/learn`, `#/practice`, `#/reference` and
   `#/lesson/<id>` (§5, item 31), owned entirely by `lib/deepLink.js` — two call sites here and nothing
@@ -189,13 +189,13 @@ for the history. No open P1/P2 items.
 > the difference between a scorecard that tracks the launch and one that describes last week.
 >
 > ### W-5.7 — note only, no action: four uncommitted US-English edits are in the owner's working tree, and two of them touch protected text.
-> `DECISIONS.md` and `LAUNCH_PLAN.md` each carry two unstaged one-word changes (`judgement`→`judgment`,
-> `catalogue`→`catalog`, `theatre`→`theater`, `colour`→`color`). **The reviewer did not touch them and
+> `DECISIONS.md` and `LAUNCH_PLAN.md` each carry two unstaged one-word changes (`judgment`→`judgment`,
+> `catalog`→`catalog`, `theater`→`theater`, `color`→`color`). **The reviewer did not touch them and
 > no run should.** Flagged because two of the four fall inside the exception item 91 deliberately
-> honored — quotations and dated records stay verbatim: the `catalogue` edit is inside a blockquoted
+> honored — quotations and dated records stay verbatim: the `catalog` edit is inside a blockquoted
 > **dated verification note** whose own next sentence reads *"Deliberately not corrected: rewriting a
-> dated verification falsifies it"*, and the `colour` edit rewrites a **quotation** of the old §3.1.2's
-> opening line (`"One accent colour per lesson/phase"`), which makes the quotation no longer a
+> dated verification falsifies it"*, and the `color` edit rewrites a **quotation** of the old §3.1.2's
+> opening line (`"One accent colour per lesson/phase"`), which makes the quotation no longer a  <!-- us-english:allow: verbatim quote -->
 > quotation. **Owner's call, and only the owner's.**
 
 > **PRIORITY BLOCK — set by the weekly review 2026-08-16. This supersedes the 2026-08-09 block below,
@@ -340,7 +340,7 @@ for the history. No open P1/P2 items.
 
 55. **✅ DONE 2026-08-17 (scheduled dev-agent). Pruned to "Completed and pruned" below as
     `former item 55`; the diagnosis is kept here because three of its five findings are worth not
-    re-deriving.** `LAUNCH_PLAN.md`'s eight live catalogue figures are generated now, §4.3's gate
+    re-deriving.** `LAUNCH_PLAN.md`'s eight live catalog figures are generated now, §4.3's gate
     verdict included, and §2.5's ids are fixed. See the run log entry of this date. **[Process/Docs —
     was P1 of this refill. The same class item 47 killed, one document over, and this
     one changes what a reader believes about a gate.] `LAUNCH_PLAN.md`'s live figures are stale, and
@@ -361,7 +361,7 @@ for the history. No open P1/P2 items.
       answer to the only question the plan exists to answer.
     - Also stale, same cause: §3.1's "the twelve lessons in order", §3.2's "progress ring at 1/12",
       §4.0's asset table and §4.2's "not the 12 lessons".
-    - **Scope:** extend `scripts/refresh-readiness.mjs` to generate `LAUNCH_PLAN.md`'s catalogue
+    - **Scope:** extend `scripts/refresh-readiness.mjs` to generate `LAUNCH_PLAN.md`'s catalog
       figures as well (it already computes every one of them — the guarded-sentence list is data, and
       this is one more entry), and fix §2.5's ids by hand. **Do not** try to generate the prose
       arguments around the figures; §4.1/§4.2's reasoning about *finite content* is judgment that
@@ -386,7 +386,7 @@ for the history. No open P1/P2 items.
     than stated, which understates. **What was really wrong is what the item told the run to decide** —
     the model. It counted section bodies, takeaway and thinkAbout, and omitted the title, subtitle,
     section headings and **the entire end-of-lesson check**: 5,807 of 29,385 words, ~20% of what the
-    reader sees. Fixed, all 40 lessons recalibrated (23 moved, all up), catalogue 120 → 144 min. See
+    reader sees. Fixed, all 40 lessons recalibrated (23 moved, all up), catalog 120 → 144 min. See
     `DECISIONS.md` and the run log. **[Content/Process — was P2.] Nothing checks that a lesson's
     stated `minutes` is honest, and §4.3's content gate is
     computed by summing exactly that unvalidated field.** §3.0.5 requires "an honest minutes
@@ -445,7 +445,7 @@ for the history. No open P1/P2 items.
     to check against — names two screens deleted in the 2026-08-04 rebuild**, so the check cannot be
     performed as written. One candidate was measured and **rejected** (§4.3's "Analytics live" is in
     the table's *Ship* column, a requirement, not a status claim). See the run log entry of this date.
-    **[Process — was P4. The generalisation of the finding that closed item 49.] Read `LAUNCH_PLAN.md`
+    **[Process — was P4. The generalization of the finding that closed item 49.] Read `LAUNCH_PLAN.md`
     and `DECISIONS.md` end to end against the current tree, and record every claim that no longer
     holds.** `README.md` carried a §10.2 violation in its opening sentence for sixteen days while the
     register said "✅ Closed", because the check that certified it scanned `src/` and the v5 prototype
@@ -503,7 +503,7 @@ for the history. No open P1/P2 items.
     affected" is false**: light `--graph-amber` is also under 3:1 on three surfaces (sunken 2.92,
     accent-wash 2.85, bad-wash 2.91). That one is *not* rendered — no chart is drawn on a wash — so it
     is exempted with its measured ratios and filed as **item 65** rather than fixed by darkening a
-    second colour on the way past. The item's suggested `#7c8494` was checked and adopted: 3.76:1 on
+    second color on the way past. The item's suggested `#7c8494` was checked and adopted: 3.76:1 on
     card, 3.36:1 worst across all seven surfaces. See the run log entry of this date.
     <details><summary>Original text of item 63, as filed 2026-08-17</summary>
 
@@ -511,7 +511,7 @@ for the history. No open P1/P2 items.
     closed item 59. Measured, not suspected.] `--graph-neutral` is under WCAG 1.4.11's 3:1 in the
     light palette against 5 of 7 surfaces** — worst **2.30:1** on `--surface-accent-wash`, then 2.35
     (bad-wash), 2.36 (sunken), 2.44 (ok-wash), 2.48 (warn-wash). Only `--graph-neutral` is affected;
-    every other graph colour clears 3:1 in both palettes, and the **dark palette has 0 pairs under
+    every other graph color clears 3:1 in both palettes, and the **dark palette has 0 pairs under
     3:1** (worst 3.27).
     - **Why §28 excluded it rather than folded it in.** 1.4.11 applies to graphical objects "required
       to understand the content". A neutral gridline or axis is plausibly decorative and exempt; a
@@ -525,7 +525,7 @@ for the history. No open P1/P2 items.
       on `--surface-accent-wash` needs roughly `#7c8494`) or record the decorative exemption in
       `theme.js` next to the "3:1 is the bar" line that currently overclaims. **A palette change here
       moves §28's numbers** — the CONTRAST note's figures are asserted, so update them in the same
-      change or `npm test` fails, which is the intended behaviour and not a bug.
+      change or `npm test` fails, which is the intended behavior and not a bug.
     - **Honest priority: low, and lower than item 60.** No text is affected, so §3.0.7 is untouched;
       this is a stricter reading of a rule the app volunteered.
     </details>
@@ -601,7 +601,7 @@ for the history. No open P1/P2 items.
       `market.json` be committed immediately, overriding the wait-for-clean condition, and it landed
       alone as `Refresh market data (asOf=2026-08-19)`.** `HEAD` now carries same-day data, so a build
       from `HEAD` renders real figures again. **The underlying item is untouched** — the next weekday
-      the job runs, `HEAD` starts ageing again for exactly the same reason, and nothing yet owns the
+      the job runs, `HEAD` starts aging again for exactly the same reason, and nothing yet owns the
       rebuild-and-redeploy step. Treat the above as the worked example, not as the item closing.
 
 73. **✅ DONE 2026-08-20 (scheduled dev-agent). Both halves landed in one commit the moment the
@@ -726,7 +726,7 @@ for the history. No open P1/P2 items.
     including `refresh-readiness.mjs --check`. Marked closed here so no future run re-picks it.
     **[Process/Docs — filed 2026-08-18 by the run that found `npm test` red in the owner's working
     tree and traced it, rather than relaxing the guard that was reporting it.] The owner's redesign
-    added a third lesson track (`essentials`), and the catalogue figures in `LAUNCH_READINESS.md`
+    added a third lesson track (`essentials`), and the catalog figures in `LAUNCH_READINESS.md`
     §4.3 and `LAUNCH_PLAN.md` §2.5 are two-track sentences that cannot describe it.** The guard is
     doing its job; the documents are what have to move, and one of them is owner-dirty.
     - **The state, measured this run and reproducible in one command.** `node
@@ -861,7 +861,7 @@ for the history. No open P1/P2 items.
     - **All four translations carried the same error in compressed form** — `zh`
       "每年都要缴税的普通券商账户", `ja` "毎年課税される通常の証券口座", `es` "que se grava cada
       año", `ko` "일반 증권 계좌와 달리" — so this was never an English-only fix, and each language's
-      lesson 13 already said "realised" correctly, so each language contradicted itself.
+      lesson 13 already said "realised" correctly, so each language contradicted itself.  <!-- us-english:allow: verbatim quote -->
     - **Fixed** so every language now names both halves: dividends/interest taxed yearly, and the gain
       taxed on sale. The lesson's teaching point is unharmed — annual tax drag on distributions is
       real, and is still what the 401(k) comparison turns on.
@@ -890,7 +890,7 @@ for the history. No open P1/P2 items.
       does not "fix" it too.** Next renders only when the current lesson is `done`, so `index + 1` is
       either the next lesson in this track (unlocked by that completion) or the first lesson of the
       next track (never gated). Forward motion cannot reach a locked lesson, so cross-track Next
-      stays — finishing a track and continuing into the next one is good behaviour, not a leak.
+      stays — finishing a track and continuing into the next one is good behavior, not a leak.
 
 81. **✅ DONE 2026-08-20 (owner-directed, interactive) — surfaced by the same sweep. Practice was the
     one surface still printing a raw lesson id.**
@@ -915,7 +915,7 @@ for the history. No open P1/P2 items.
       `"Lesson {n} · {track}"` in all five languages. The number leads so it survives truncation, and
       the in-quiz header caption lost its `flexShrink: 0` (it now ellipsis-truncates) because a
       track name at a 1.3x font scale would otherwise push that row wider than the viewport.
-    - **Unresolved on purpose:** a question whose lesson is no longer in the catalogue now renders no
+    - **Unresolved on purpose:** a question whose lesson is no longer in the catalog now renders no
       source line at all rather than a wrong number. That case is not currently reachable, since
       `quizMeta` and `lessons.js` agree; it is handled because quiz metadata is keyed by id and can
       outlive a lesson.
@@ -963,7 +963,7 @@ for the history. No open P1/P2 items.
       `essentials` sits last here for the same reason it sits last on the page, and keeps the original
       comment's still-true point that the lookup is index-based because ids are not aligned to display
       order.
-    - **The behaviour the comment claims was re-verified rather than assumed** — the whole failure mode
+    - **The behavior the comment claims was re-verified rather than assumed** — the whole failure mode
       of this item was prose drifting from code. Fresh install (`completedLessons = []`) → "START HERE
       | Transactions: The Building Block | How the Economy Works". With all twelve economy lessons
       complete → "NEXT UP | Does It Put Money In Your Pocket, or Take It Out? | Thinking About Money".
@@ -1014,7 +1014,7 @@ for the history. No open P1/P2 items.
     <details><summary>Original text of item 78, as filed 2026-08-19</summary>
 
     **[Tests — filed 2026-08-19 by the twelfth run to arrive at the owner's static tree, which picked
-    "`src/lib` has no behavioural test coverage" as its item and had that premise break in its hands
+    "`src/lib` has no behavioural test coverage" as its item and had that premise break in its hands  <!-- us-english:allow: verbatim quote -->
     at step 3.5, before it edited anything. Read the correction before picking: most of the gap does
     not exist.] `src/utils/date.js` is the only pure logic module in the app with no direct test
     section — and its test home is owner-dirty.**
@@ -1024,7 +1024,7 @@ for the history. No open P1/P2 items.
       (§13), `marketData/adapters.js` (§14), `marketData/fred.js` (§15), `deepLink.js` (§18) and
       `useMarketData.js` (§25) — imported at `scripts/check-data.mjs:24-33`. A run that reads
       `package.json`'s `test` script, sees seven `check-*.mjs` *consistency* checks and no test
-      runner will conclude the app's behaviour is untested. It is not. **Do not pick "add unit tests
+      runner will conclude the app's behavior is untested. It is not. **Do not pick "add unit tests
       for `src/lib`"; nine tenths of it has been done since 2026-08-08.**
     - **What is actually uncovered, measured with a control.** Of the eleven non-JSX logic modules,
       `useAppState.js` is a React hook (not plain-Node testable — the same reason the 2026-08-08 run
@@ -1110,7 +1110,7 @@ for the history. No open P1/P2 items.
     history. **Why it is a separate item and not an oversight:** §29's design note is explicit that
     `DECISIONS.md` states *dated* truth, so the repair is "append a new dated Update and reclassify
     the old claim as historical", never an in-place rewrite — a different operation from the code
-    fixes, and one that needs the live/historical judgement §29 already models. **Extending §31 to
+    fixes, and one that needs the live/historical judgment §29 already models. **Extending §31 to
     `.md` would be wrong for the same reason**; the check belongs beside §29's classification table
     instead. Start by reading §29 and F11's reasoning before touching a line.
     </details>
@@ -1144,12 +1144,12 @@ for the history. No open P1/P2 items.
     headline count was WRONG — it said ~69, the real figure is 123 — because the count behind it used
     `analys[ei]s`, which flags "analysis" and "analyses", both correct US English, while missing the
     whole `-ise`/`-ised`/`-isation`/`-iser` family (`capitalised`, `localised`, `tokeniser`,
-    `stylised`, `hypothesised`, `generalisation`, `normaliser`). Three passes were needed before the
+    `stylised`, `hypothesised`, `generalization`, `normaliser`). Three passes were needed before the
     scan stopped finding new forms.** The three findings worth not re-deriving are in the run log
-    entry of this date: the Spanish `cheque` near-miss, the `cancelling` that had been missed in the
-    learner-visible surface this agent had already declared clean at 0, and the `CANCELLED` event
+    entry of this date: the Spanish `check` near-miss, the `canceling` that had been missed in the
+    learner-visible surface this agent had already declared clean at 0, and the `CANCELED` event
     identifier that is deliberately still British. Nothing here is open.
-    > **⚠️ The `CANCELLED` exclusion was LIFTED the same day, owner-directed — and half the reason
+    > **⚠️ The `CANCELED` exclusion was LIFTED the same day, owner-directed — and half the reason
     > given for it was wrong.** The event is now `EVENTS.CANCELED: "canceled"`, renamed in all six
     > places at once. This item's entry (and its commit message) said two of the three document
     > enumerations sat "inside `DECISIONS.md` dated records"; **they do not** — both bullets are
@@ -1204,13 +1204,13 @@ for the history. No open P1/P2 items.
       off, and it is the kind of change §10.1 wants read for tone before it lands. Different class of
       work, so a different item.
     - **Do the measurement before the edits, and note the instrument does not exist yet.** Diction has
-      no regex — a word-list (`dearer`, `whilst`, `amongst`, `fortnight`, `queue` for "line", `maths`,
-      `petrol`, `flat` for "apartment", `holiday` for "vacation", `cheque`) run over the 1,316-string
+      no regex — a word-list (`dearer`, `while`, `among`, `fortnight`, `queue` for "line", `math`,
+      `petrol`, `flat` for "apartment", `holiday` for "vacation", `check`) run over the 1,316-string
       English corpus item 91's run built is the cheap first pass, but it will miss phrasing.
       **Carry item 91's control: assert a known instance ("dearer") is inside the corpus before
-      believing a zero** — that is the exact failure that let a `cancelling` sit in shipped copy while
+      believing a zero** — that is the exact failure that let a `canceling` sit in shipped copy while
       an entry reported the surface clean.
-    - **Do NOT touch the non-English locales**, and re-read item 91's `cheque` near-miss first: the
+    - **Do NOT touch the non-English locales**, and re-read item 91's `check` near-miss first: the
       same word is British English *and* ordinary Spanish, and a word-list run across all languages
       corrupts lesson content.
 
@@ -1312,7 +1312,7 @@ for the history. No open P1/P2 items.
       1.18 — which is what happens when the English side is *terse* (35 §1 is two arrow lines that
       Spanish cannot render as compactly), not evidence of padding. **If a future pair lands above
       ~1.25, check it for added sentences before recording it**; below that, the band is the corpus's
-      own and needs no defence.
+      own and needs no defense.
     - **⚠️ The reference moves as you pay the debt down, so the headline count falls slower than the
       pairs you fix (measured 2026-08-22, second run of the date).** `ABRIDGED_BELOW` is `0.7 x` each
       language's **p90 ratio across this same corpus**, so every lesson you translate in full raises
@@ -1424,7 +1424,7 @@ for the history. No open P1/P2 items.
       the same "the English side is *terse*" mechanism this item already recorded for `es` 35/36 at
       the top of the Spanish band. **A `ko` lesson above ~0.60 should still be checked for added
       sentences; 0.55-0.58 on list-dense English is the corpus's own.**
-    - **The `es` currency defect does NOT generalise to the other languages — measured, do not
+    - **The `es` currency defect does NOT generalize to the other languages — measured, do not
       re-derive.** The 2026-08-22 finding (English magnitude abbreviations `$900B`/`$9T` left in
       Spanish, where `billón` is 10^12) was checked against every non-English content file this run.
       **`ko` writes the long scale correctly** — `$9000억`, `$9조`, `$950억`, `$2조`, all right — and
@@ -1513,7 +1513,7 @@ for the history. No open P1/P2 items.
       **0.2443**, headline **72 -> 70**, nearest un-abridged lesson 16 at **0.2853**, margin
       **0.0409** unchanged. That is because 29 and 30 landed *below* the p90 rather than above it —
       the exact condition the `ko` 39/40 run identified as what keeps the reference still. **The
-      rule that generalises: predict the headline always; predict the reference only when you are
+      rule that generalizes: predict the headline always; predict the reference only when you are
       confident the new ratios will land at or under the language's current p90.**
       **✅ CHECKED A SECOND TIME AND HELD ON ALL FOUR FIGURES (2026-08-23, the 31/32 run):**
       reference **0.3490 before and after**, threshold **0.2443**, headline **70 -> 68**, lesson 16's
@@ -1581,7 +1581,7 @@ for the history. No open P1/P2 items.
 
 76. **[Content/Process — filed 2026-08-18 by the run that built item 69's instrument half, which is
     what turned this from an opinion into a blocked measurement.] `zh` and `ja` `Brokerage Account`
-    are term-of-art shape, and nothing can currently measure whether that generalises.**
+    are term-of-art shape, and nothing can currently measure whether that generalizes.**
     - **The content question.** Item 67 rewrote `en`'s "realized gains" into a phrase that explains the
       mechanism; item 69 did the same for `es`. `ko` (`실현된 매매 차익`) already explains it. **`zh`
       `已实现的收益` and `ja` `実現した利益` do not** — they sit roughly where `en` was before item 67.
@@ -1598,7 +1598,7 @@ for the history. No open P1/P2 items.
       same reason. **Scope it before building it, and check whether a dependency-free segmenter is even
       available — item 12's port-cost rule applies to adding one.**
     - **Honest priority: low.** Two known strings, both comprehensible to a native reader, in a beta-
-      labelled translation layer. The value is the instrument, not these two edits — and if the
+      labeled translation layer. The value is the instrument, not these two edits — and if the
       instrument is ever built, run it before deciding anything.
 
 75. **✅ DONE 2026-08-20 (owner-directed). `--fill-warn` exists in both palettes,
@@ -1648,7 +1648,7 @@ for the history. No open P1/P2 items.
       **Measured, with the published-WCAG control (21.00 / 1.00 / 4.54 / 3.03, all reproducing to
       0.01):** the warn rule on its own wash is **`#d97706` on `#fffbeb` = 3.07** — item 75's "not an
       accessibility finding" is *technically* right (3:1 is met) but the margin is **0.07**, and every
-      other coloured tone clears by a mile (accent 4.62, ok 5.21, bad 5.91). **That is item 65's
+      other colored tone clears by a mile (accent 4.62, ok 5.21, bad 5.91). **That is item 65's
       finding again, one file over: not a token with a tight pair, a token outside the band its
       siblings share.** `#c56c05` would read 3.67 and sit inside it; `ink.warn` (`#9a4a08`) reads 6.03.
       (`neutral` is 1.32 and is not a violation — `line.strong` is a hairline conveying no state.)
@@ -1659,9 +1659,9 @@ for the history. No open P1/P2 items.
     **`#d97706` still exists twice in the source as a hardcoded hex, and it no longer
     matches the token it was copied from.** Item 65 moved `--graph-amber` to `#c56c05`; these two did
     not move with it, because neither is a graph token and one of them is in a file the owner has open:
-    - `src/components/ui.jsx:75` — the `warn` callout's `rule` colour. **Owner-dirty this run, so it was
+    - `src/components/ui.jsx:75` — the `warn` callout's `rule` color. **Owner-dirty this run, so it was
       not touched**; check `git status` before picking this.
-    - `src/content/lessons.js:94` — lesson 32's accent colour.
+    - `src/content/lessons.js:94` — lesson 32's accent color.
     - **The decision, not the edit, is the work:** either they are the same amber as the charts and
       should read `graph.amber` / a token, or they are independent and should say so. Today they are
       neither — a copy of a value that has since changed, which is how the two silently drift further.
@@ -1680,7 +1680,7 @@ for the history. No open P1/P2 items.
     - **What decided it.** This item said amber "clears the bar on the surfaces that matter today
       (card 3.44, canvas 3.24)". **Neither number reproduces: card was 3.19, canvas 3.08** — margins of
       **0.19 and 0.08**, not 0.44 and 0.24, and the two figures are not even mutually consistent (one
-      colour on card and canvas can only differ by a factor of 1.029, so 3.44 forces 3.34, never 3.24).
+      color on card and canvas can only differ by a factor of 1.029, so 3.44 forces 3.34, never 3.24).
       `src/index.css` has not changed since the commit that filed this item (`git diff 3c84155 HEAD --
       src/index.css` is empty), so they were wrong when written, not overtaken. The three exempted
       ratios (2.92 / 2.85 / 2.91) and the 3.02 ok-wash figure *did* reproduce exactly.
@@ -1744,7 +1744,7 @@ for the history. No open P1/P2 items.
       `check-measurements.mjs`'s `CLAIM` pattern plus its per-mode re-run loop extend to it with the
       tool name as a second key. The work is picking each tool's headline numbers and its fingerprint
       inputs, not building anything new.
-    - **Do not do all three at once.** Each one is a judgement about which numbers are the headline
+    - **Do not do all three at once.** Each one is a judgment about which numbers are the headline
       ones; batching them is how the fingerprint inputs get chosen carelessly and a claim ends up
       permanently retired (always "outdated", never checked) without anyone noticing — the vacuous-pass
       failure `check-measurements.mjs` prints its `0 enforced` note to make visible.
@@ -1757,7 +1757,7 @@ for the history. No open P1/P2 items.
       numbers were hand-computed for a pair the tool does not report. **So the gate above has still not
       fired**, and extending `check-measurements.mjs` to §28b's printed line would not have helped. The
       class this belongs to is the one item 70 explicitly left uncovered: a figure written in prose that
-      no instrument ever emitted. The cheap defence remains item 70's — paste the tool's line, and if you
+      no instrument ever emitted. The cheap defense remains item 70's — paste the tool's line, and if you
       need a number the tool does not print, print it.
 
 69. **✅ DONE 2026-08-18 (scheduled dev-agent) — and the headline finding is that it was NEVER BLOCKED.**
@@ -1819,9 +1819,9 @@ for the history. No open P1/P2 items.
 
 68. **✅ DONE 2026-08-17 (scheduled dev-agent) — built as scoped, minus one half that was measured and
     honestly declined. The glossary report is 57 → 54 and, for the first time, an in-place expansion
-    makes the number go DOWN.** `jargon-candidates.mjs` now recognises a **self-defining gloss** and
+    makes the number go DOWN.** `jargon-candidates.mjs` now recognizes a **self-defining gloss** and
     drops those terms from the CANDIDATES bucket. Three things about how it was built are the item:
-    - **A gloss is recognised only when the expansion spells the acronym** — its words' initials, in
+    - **A gloss is recognized only when the expansion spells the acronym** — its words' initials, in
       order, allowing lowercase connectors (`of`, `and`, `the`…) — and sits adjacent to it. Both paren
       orders occur in this content and both are handled: `National Bureau of Economic Research (NBER)`
       (glossary `Recession`) and `CPI (Consumer Price Index)` (economy lesson prose). The second was
@@ -2010,7 +2010,7 @@ for the history. No open P1/P2 items.
     so the honest reading of that zero is "the terms we have definitions for are all handled", not
     "§3.0.3 holds". The gap is real: `lessonTerms.js`'s own header records that before item 35 the
     glossary was 17 entries and all macroeconomic, and item 35 added money-track vocabulary by
-    *grepping the lesson bodies* — a method that finds words already in the glossary's neighbourhood,
+    *grepping the lesson bodies* — a method that finds words already in the glossary's neighborhood,
     not words the lessons use and never define.
     - **Scope, and the measurement to do first:** extract the money-track lessons' distinctive nouns
       (the §0 track, 28 lessons) and diff them against `glossary.js` — candidates the header already
@@ -2131,7 +2131,7 @@ for the history. No open P1/P2 items.
       of the money-track block (money-track by measured use, but it leans on `Stock` and is not a
       separate instrument). A fourth use that **neither instrument can see** — the glossary's own
       `Brokerage Account` definition says "dividends" in `en` — is filed separately as **item 66**.
-      **Why the block is hard, not a judgement call:** adding any glossary key moves `LAUNCH_PLAN.md`
+      **Why the block is hard, not a judgment call:** adding any glossary key moves `LAUNCH_PLAN.md`
       §1's generated "**32** glossary terms" figure (line 65), which `refresh-readiness.mjs` checks
       and `npm test` fails on. This was proved in 2026-08-17's run, not assumed: with the entry and
       both chips in, the *only* remaining failure was that one LAUNCH_PLAN line, and §17b read
@@ -2148,7 +2148,7 @@ for the history. No open P1/P2 items.
       **(a)** `lessonTerms.js`'s lesson-35 `Credit` exclusion quotes that sentence verbatim as its
       reason, so the quote was updated in the same commit or it would have gone stale on arrival;
       **(b)** editing English content marks that lesson's four translations **stale** in
-      `translation-review-ledger.json` (correct behaviour — the ledger hashes the English source),
+      `translation-review-ledger.json` (correct behavior — the ledger hashes the English source),
       which failed `npm test` on the §10.4 coverage figure. Resolved by actually re-reading lesson 35
       in all five languages and re-marking via `translation-review.mjs mark ... ai` — see the run log
       for why the abridged translations are unaffected by an acronym expansion.
@@ -2232,8 +2232,8 @@ for the history. No open P1/P2 items.
     - **F6. ✅ DONE 2026-08-21 (scheduled dev-agent) — and with it ITEM 62 IS FULLY CLOSED.** §3.4 is
       retitled **"Theming and typography"**, keeps its number (renumbering §3.5 would break
       `working_files/build_doc.js` and the run log), and its three surviving unique facts — one
-      typeface, dark mode shipped, colour and type come from `theme.js` — are kept; the contradictory
-      "One accent colour per lesson/phase" is gone, with a dated note saying what it was.
+      typeface, dark mode shipped, color and type come from `theme.js` — are kept; the contradictory
+      "One accent colour per lesson/phase" is gone, with a dated note saying what it was.  <!-- us-english:allow: verbatim quote -->
       `check-data.mjs` **§32** now fails on any two headings in `LAUNCH_PLAN.md` that share a title.
       **Two premise corrections, both from measuring instead of reading.** (1) F6 called the two
       sections "opposite emphases", which reads as a live disagreement between equals — they are not
@@ -2246,7 +2246,7 @@ for the history. No open P1/P2 items.
       accent" overstated a ceiling the app never approached. Both now say what is true. See the run
       log entry of this date. *Original text:* `LAUNCH_PLAN.md` §3.1.1 and §3.4 are **both titled
       "Visual system"** and encode opposite
-      emphases on per-lesson colour (§3.1.1: one accent, colour never as a fill; §3.4: one accent *per
+      emphases on per-lesson color (§3.1.1: one accent, color never as a fill; §3.4: one accent *per
       lesson/phase*). §3.4 reads as a v1 leftover §3.1.1 superseded. Duplicate §-titles are their own
       hazard in a document whose section numbers are load-bearing cross-references.
     - **F11. ✅ DONE 2026-08-17 (scheduled dev-agent) — dated, not rewritten, and not guarded either.**
@@ -2348,7 +2348,7 @@ for the history. No open P1/P2 items.
 >
 > **P-4. ✅ DONE 2026-08-11 (owner decision, interactive session).** Owner chose **option (a)**: accept
 > the current state (~40 lessons of unreviewed es/ko/zh/ja machine translation ships under "(Beta)"
-> labelling), rather than (b) commissioning native-speaker review or (c) cutting the four languages.
+> labeling), rather than (b) commissioning native-speaker review or (c) cutting the four languages.
 > Landed alongside the decision, not after it: `scripts/translation-review.mjs` +
 > `scripts/translation-review-ledger.json`, a review-tracking ledger (per lesson per language: reviewed
 > by whom, when, against what English-source hash; drift-detected if English is edited after review) so
@@ -2450,7 +2450,7 @@ for the history. No open P1/P2 items.
       distinct translated strings. **All 74 are now correct; 0 remain.**
     - **The mapping is exact and mechanical**, so this was a scripted fix, not a retranslation:
       **old money 13–40 → new = old − 12**, **old economy 1–12 → new = old + 28.** Every one of the 74
-      resolved under it — zero unresolved, zero needing judgement.
+      resolved under it — zero unresolved, zero needing judgment.
     - **The 3 non-English references that were already correct were left alone** (lesson 35's es/zh
       `Lección 39`/`第39课`, which match the English). The fix only rewrote a number when it was absent
       from that lesson's English reference set *and* its mapped value was present — so it could not
@@ -2775,7 +2775,7 @@ for the history. No open P1/P2 items.
     > well-phrased. They are imported as B1–B4 rather than reinvented, and §4.6 now points here.
     > **What shipped:** 14 claims in four groups — **A1–A6** the product-shape bets this build made in
     > code and never wrote down (sequential unlocking, the money-first two-track split, five languages,
-    > parent-facing kids content, the Leitner queue, catalogue size), **B1–B4** from §4.6, **C1–C2**
+    > parent-facing kids content, the Leitner queue, catalog size), **B1–B4** from §4.6, **C1–C2**
     > distribution, **D1–D2** process. Each carries a refuting number, an ISO check date, and an honest
     > measurability verdict.
     > **The register's most useful output is a concentration, not a claim:** 10 of 14 are unmeasurable
@@ -2904,7 +2904,7 @@ for the history. No open P1/P2 items.
     > **What the audit fixed on the spot, because finding a wrong number and leaving it is the defect.**
     > `CLAIMS.md` had gone stale in two of its own rows within ~24 hours of being written — the file
     > whose entire purpose is to stop beliefs going quietly stale. A6’s status cell said **120 min**
-    > (item 56 moved the catalogue to **144** the next day); A3’s paragraph said **93%, 0% human, 3
+    > (item 56 moved the catalog to **144** the next day); A3’s paragraph said **93%, 0% human, 3
     > stale** and called `LAUNCH_READINESS.md` stale for saying 100%, when `9f24a0b` had re-reviewed
     > those pairs and **`LAUNCH_READINESS.md` was right**. A6’s figure is now **generated** by
     > `refresh-readiness.mjs` (11 figures across 3 docs) and proven to bite on three injections — stale
@@ -2957,7 +2957,7 @@ for the history. No open P1/P2 items.
     > stays `<ol>` too, on a different ground: it renders a **visible ordinal** per row, so its semantics
     > already match what is on screen. That its ordinal is announced *as well as* the item's position is
     > redundant rather than wrong, and `aria-hidden`-ing it was deliberately **not** done — see the run
-    > log for why that would have made the ordinal depend on the WebKit behaviour below. The three
+    > log for why that would have made the ordinal depend on the WebKit behavior below. The three
     > `charts.jsx` legends were already `<ul>`.
     > **The bigger find, which this item did not anticipate:** every list in the app sets
     > `listStyle: "none"`, and **WebKit removes list semantics from exactly that** — so under VoiceOver
@@ -2965,9 +2965,9 @@ for the history. No open P1/P2 items.
     > `<ol>`/`<ul>` mixup affected one list; this affected all of them, on the platform the app targets.
     > All eight now carry an explicit `role="list"`.
     > **⚠️ Honest limit on that half, stated because this log's D1 claim exists:** the `<ol>`→`<ul>` fix
-    > and the `role="list"` attributes were verified live; **the WebKit behaviour itself was not**, because
+    > and the `role="list"` attributes were verified live; **the WebKit behavior itself was not**, because
     > the preview browser here is Chromium, where `role="list"` is a no-op. That half rests on documented
-    > WebKit behaviour, not on a measurement taken in this environment.
+    > WebKit behavior, not on a measurement taken in this environment.
     > **Guarded by `check-data.mjs` §20**, which fails if any `listStyle: "none"` list lacks
     > `role="list"`, and — per item 36's lesson — fails *itself* if its scan matches fewer than 8 lists,
     > so a dead pattern can't pass vacuously. Proven by three injections. §20's header also states what
@@ -3022,7 +3022,7 @@ for the history. No open P1/P2 items.
       real-estate advocacy is genuinely risky prescriptive advice; parts of the book are disputed as
       fictionalised). §10.1 forbids advice-adjacency and `check-blindspot.mjs` only catches literal
       phrases — it cannot catch "this reads like advice," which the script's own header says stays a
-      judgment call. **Take the genre's mental models and its behavioural insight; leave its
+      judgment call. **Take the genre's mental models and its behavioral insight; leave its
       prescriptions.** Teach the lens ("does this put money in or take it out?") and be honest that real
       purchases sit in between; never write "buy assets, not liabilities" as a directive, never name a
       product to buy, never imply a path to wealth. Do not cite or quote the book as an authority — it
@@ -3031,7 +3031,7 @@ for the history. No open P1/P2 items.
       re-scope this rather than keep extending the list ad hoc," and each then extended the list ad hoc
       anyway. It functioned as a perpetual lesson-generator.
 
-17. **[Content — EXHAUSTED, both §4.3 content clauses met] Grow the lesson catalogue.** Compressed
+17. **[Content — EXHAUSTED, both §4.3 content clauses met] Grow the lesson catalog.** Compressed
     2026-08-16 by the weekly review (W-3) from ~63 lines; the deepening-run chronology and the eighteen
     `LAUNCH_READINESS.md` refresh notes it carried are history and live in the run log (2026-08-12 →
     2026-08-15). Derived from `LAUNCH_PLAN.md` §4.3 — the plan's own explicit gate, not owner-assigned.
@@ -3056,7 +3056,7 @@ for the history. No open P1/P2 items.
       just under Vite's 500 kB warning threshold. A deepening pass on a *money*-track lesson must check
       the post-build chunk size before committing; economy-track content lands in a separate chunk.
     - **The failure mode this item created:** nine consecutive scheduled runs each picked "add one
-      lesson" and optimised the count while the direction drifted unexamined, until the owner corrected
+      lesson" and optimized the count while the direction drifted unexamined, until the owner corrected
       it (item 24). **Counting lessons is not the same as building the product.**
 
 21. **[Content] Kids financial literacy — content gap closed; content-depth structural change built (2026-08-16, eighth run).**
@@ -3105,7 +3105,7 @@ for the history. No open P1/P2 items.
 18. **[Process] Instrumentation (§9.2) — call sites done 2026-08-05, real provider still open.**
     `src/lib/analytics.js` (`track()`/`EVENTS`) fires `app_opened`, `lesson_started`,
     `lesson_completed`, and `quiz_taken` (see run log entry "Wire the §9.2 minimum analytics event set").
-    `paywall_viewed`/`trial_started`/`subscribed`/`cancelled`/`ad_watched` have names reserved but don't
+    `paywall_viewed`/`trial_started`/`subscribed`/`canceled`/`ad_watched` have names reserved but don't
     fire — no paywall/billing/ad feature exists yet to fire them from. Events currently land in a local
     `localStorage` rolling log, not a real provider (PostHog, per the plan) — that swap needs an account
     and API key a dev-agent run can't create; see `DECISIONS.md`. What's left: create that account
@@ -3318,15 +3318,15 @@ for the history. No open P1/P2 items.
     `LAUNCH_READINESS.md`'s refresh snippets out of the document and compare their output to the
     figures the document states.** The snippets are *code stored in prose*: nothing imports them,
     nothing runs them, and they have now rotted twice while the numbers beside them stayed right.
-    - **Scope:** a `scripts/refresh-readiness.mjs` that computes the catalogue figures (lesson count,
+    - **Scope:** a `scripts/refresh-readiness.mjs` that computes the catalog figures (lesson count,
       English chars, minutes, per-language chars and ratios) and prints them; the doc references the
       script instead of inlining a copy; `npm test` runs it and fails if the doc's stated figures
-      disagree — the generate-and-diff shape (`gofmt -l`), and a generalisation of what §11b already
+      disagree — the generate-and-diff shape (`gofmt -l`), and a generalization of what §11b already
       does for the one coverage sentence.
     - **Why this and not annotation:** it removes the duplicate rather than checking it. A figure that
       is derived cannot go stale, and a snippet that is executed cannot name a file that does not
       exist. Both of this item's recorded failures die at once.
-    - **Deliberately out of scope:** the other ~119 figures. Only the catalogue block and the coverage
+    - **Deliberately out of scope:** the other ~119 figures. Only the catalog block and the coverage
       sentence are worth generating today; the rest are history, and history needs no guard.
     > **✅ Built as scoped, 2026-08-17, with one addition the scope did not name and should have.**
     > `scripts/refresh-readiness.mjs` has three modes on the `gofmt` shape: bare prints the figures
@@ -3338,7 +3338,7 @@ for the history. No open P1/P2 items.
     > does not carry to a generated one: the fix is now `npm run readiness -- --write`, so the guard
     > costs a run one command instead of a re-derivation. §11b's coverage sentence was left alone — it
     > already works, and folding it in would have been a rewrite rather than this item.
-    > **Guarded surface: exactly two sentences**, the §4.3 catalogue row and §10.4's `es…ko…zh…ja`
+    > **Guarded surface: exactly two sentences**, the §4.3 catalog row and §10.4's `es…ko…zh…ja`
     > character sentence — the document's only figures that must equal the content *today*. The doc's
     > history figures (`112,387`, `100 minutes`, `dropped to 93%`, "by **exactly 19 characters**") were
     > verified untouched by a `--write` that did change something; that negative control is the one
@@ -3428,7 +3428,7 @@ for the history. No open P1/P2 items.
 
 42. **[A11y — ✅ DONE 2026-08-16 (owner-requested, same evening it was filed). Content shipped as scoped;
     two guard gaps found on the way, both closed — see the closing note and the run log.] The four `YieldCurve` figures
-    are labelled by `label`, not by a description — so their accessible name is "Normal (healthy)", which
+    are labeled by `label`, not by a description — so their accessible name is "Normal (healthy)", which
     names the curve without describing it.** §22 passes them legitimately: `YieldCurve` declares
     `aria-label={description || label}`, both call sites (`LessonVisual` lesson 36, `MarketSignals`'s 2×2
     grid) pass only `label`, and the fallback is deliberate. But a sighted reader sees *the shape* — short
@@ -3452,7 +3452,7 @@ for the history. No open P1/P2 items.
     >    `label` for `YieldCurve` because the `|| label` fallback made it a legitimate accessible name — true
     >    while no descriptions existed, false afterwards. Tightened: call sites must pass `description`
     >    outright, and the failure message names the fallback they would otherwise land on. The component
-    >    keeps its fallback as a defence against an unnamed figure; it is no longer a licence for a call site.
+    >    keeps its fallback as a defense against an unnamed figure; it is no longer a license for a call site.
     > **Verified in a live browser, both call sites, en + ko**: all four curves expose the shape description
     > as their accessible name while the verdict labels ("Inverted (Danger)" / "역전 (위험)") remain exposed
     > separately in their figcaptions, so nothing was traded away for the richer name.
@@ -3479,7 +3479,7 @@ for the history. No open P1/P2 items.
       Because the byte lives inside `englishSourceHash`, the change was verified by output rather than by
       inspection: all 40 hashes byte-identical across the edit, and the ledger still reports 100%
       coverage / 0 stale in all four languages.
-    - **Worth generalising, and deliberately not done in this run:** §24 checks NUL only. Other things
+    - **Worth generalizing, and deliberately not done in this run:** §24 checks NUL only. Other things
       make a file effectively unsearchable — invalid UTF-8, a `.gitattributes` binary marking, a
       minified single line. Whether that is worth a broader "every source file is greppable" assertion
       is a real question and an honest scoping job, not an obvious yes.
@@ -3532,7 +3532,7 @@ for the history. No open P1/P2 items.
     > map of literal specifiers, because Vite can only split a dynamic import it can statically read.
     > **Result: largest content chunk 499.27 kB → 116.84 kB** (money.ja; the English reader loads
     > 102 kB). Ten chunks, none within 380 kB of the threshold. The threshold is no longer reachable
-    > by adding lessons — it would take roughly quadrupling the catalogue *in one language*.
+    > by adding lessons — it would take roughly quadrupling the catalog *in one language*.
     > **`lessonContent.js` survives as a node-only merged view**, reassembling the language-map shape
     > for the two consumers that genuinely need every language at once: `check-data.mjs`'s parity
     > checks and `translation-review.mjs`'s coverage hashes. Nothing in the browser bundle imports it.
@@ -3544,7 +3544,7 @@ for the history. No open P1/P2 items.
     > content across all 40 lessons, and **all 40 English source hashes are unchanged** — that second
     > one matters because a moved hash would have marked every one of the 160 lesson/language pairs
     > stale and silently destroyed the translation ledger's state.
-    > **One real behaviour change, not a pure refactor:** switching language in the picker now
+    > **One real behavior change, not a pure refactor:** switching language in the picker now
     > triggers a fetch while reading a lesson, where before it was a pure re-render — the text lives
     > in a different file now, so `lang` joined the loader effect's dependencies. Verified live: the
     > swap is imperceptible on localhost and each language's chunk arrives on first use. On a slow
@@ -3620,7 +3620,7 @@ for the history. No open P1/P2 items.
     > 2. **No module under `src/` imports a merged view** (`lessonContent.js`, `quizData.js`),
     >    statically or dynamically. This is the load-bearing rule: those views exist for
     >    `check-data.mjs` and `translation-review.mjs`, they statically import every language, and any
-    >    path from the bundle into one drags the whole catalogue back.
+    >    path from the bundle into one drags the whole catalog back.
     > 3. Per-language modules are imported **only** dynamically from `src/` — a static import hoists
     >    that language into the importing chunk, which is rule 2's failure one language at a time.
     > 4. Every per-language module is named by some dynamic `import()` — the inverse. A module no
@@ -3658,7 +3658,7 @@ for the history. No open P1/P2 items.
   `DECISIONS.md`. Item 25's real chunk-split fix (see above) can now proceed without waiting on this.
 - **`economic-cycles-v6.jsx` (repo root, untracked) is reference/inspiration material only — do not treat it as a build fixture or merge from it directly.** Added 2026-08-04, owner-clarified. It's a much larger, differently-designed prototype (neon dark-mode `DS` design-system object, extra tabs for Sectors/Industries/Finance, a "Be the Fed Chair" simulator, flashcards) that appeared in the working tree with no git history and no download metadata — its actual origin is unknown. It also reintroduces two things the real app deliberately removed: direct "Ray Dalio" branding/quotes (§10.2, closed) and a hardcoded current date (`nowDate: "April 2026"`, plus an odd `"April 2026 • Late Cycle / Iran War Week 5"` line) — the exact stale/dated-content problem §2.3 fixed. Its dark-mode and sector-performance ideas (the two features it was once a candidate reference for) have both since shipped independently, built without consulting it, so there's no longer a live pointer to a specific future use — but its Dalio references and dated content must still never carry over, and it should not be added to git as-is.
   **RESOLVED 2026-08-16 (owner decision).** Both prototypes are now **gitignored and left on disk, untouched** — ignored, not deleted. `economic-cycles-v5.jsx` was tracked until this date and is now untracked (`git rm --cached`; working copy byte-identical, and its content stays in git history). `economic-cycles-v6.jsx` was never tracked. Neither appears in `git status` any more, which ends the twelve days of every run writing a "not touched, and why" note about v6. **Before this, v6 was audited** (see the run log for this date): it is imported by no code, and every feature in it — its charts, `SectorTable`, `Flashcards`/spaced repetition, `MiniQuiz`, `LearningPath`, `Onboarding`, dark mode — has shipped independently in `src/`. The single exception, its "Be the Fed Chair" policy simulator, is preserved as **backlog item 34** (concept only, explicitly not its code). `HistoryTimeline` overlaps existing lesson content and was assessed as not worth keeping. **So neither file holds a unique live idea any more.** Consequence worth knowing: a fresh clone will not contain v5, so `check-blindspot.mjs`'s §10.2 scan now reports explicitly whether it scanned v5 or found it absent, rather than asserting it scanned it either way. **Do not restore either file to the repo without asking the owner.**
-- **`main`'s reachable git history currently starts at commit `2dc0264` ("Split monolithic JSX step 4a").** Found 2026-08-04 while investigating unrelated work. Roughly a dozen earlier commits (initial scaffold, the original blindspot-register fixes, the Markets stale-date fix, `scripts/bootstrap-node.sh`'s addition, JSX-split steps 1–3, the language-Beta labelling, the data-shape harness) still exist as objects in the repo (`git cat-file -t <hash>` succeeds for e.g. `eda6dd0`, `ecdda70`, `5ab5c48`, `6feca25`, `76be081`, `053f8b2`) but aren't ancestors of the current `main` tip — something reset or rewrote history before this was noticed, likely an early run's plumbing-commit (`commit-tree`/`update-ref`, used because `git commit` hangs in this environment — see the memory note on this) picking up a stale parent hash instead of the true current `HEAD`. No content appears lost — the tree at `2dc0264` already contains everything those steps produced (locales, content modules, the bootstrap script) — but the historical commit-by-commit record for that early stretch is orphaned, not part of `main`. Not fixed; flagged for the owner to decide whether it's worth reattaching (the old commits are still around, not yet garbage-collected) or leaving as-is.
+- **`main`'s reachable git history currently starts at commit `2dc0264` ("Split monolithic JSX step 4a").** Found 2026-08-04 while investigating unrelated work. Roughly a dozen earlier commits (initial scaffold, the original blindspot-register fixes, the Markets stale-date fix, `scripts/bootstrap-node.sh`'s addition, JSX-split steps 1–3, the language-Beta labeling, the data-shape harness) still exist as objects in the repo (`git cat-file -t <hash>` succeeds for e.g. `eda6dd0`, `ecdda70`, `5ab5c48`, `6feca25`, `76be081`, `053f8b2`) but aren't ancestors of the current `main` tip — something reset or rewrote history before this was noticed, likely an early run's plumbing-commit (`commit-tree`/`update-ref`, used because `git commit` hangs in this environment — see the memory note on this) picking up a stale parent hash instead of the true current `HEAD`. No content appears lost — the tree at `2dc0264` already contains everything those steps produced (locales, content modules, the bootstrap script) — but the historical commit-by-commit record for that early stretch is orphaned, not part of `main`. Not fixed; flagged for the owner to decide whether it's worth reattaching (the old commits are still around, not yet garbage-collected) or leaving as-is.
 
 **Completed and pruned**
 
@@ -3677,14 +3677,14 @@ for the history. No open P1/P2 items.
   estimate is computed"). The field was already derived and enforced; what was wrong was the
   formula, which omitted the title, subtitle, section headings and the entire end-of-lesson check
   (~20% of the words on screen). `check-data.mjs` §2 now counts all of it at 200 wpm, with a
-  catalogue-wide floor so a blind count cannot read as a pass, plus a new assertion of §3.0.5's
-  "lesson 1 under four minutes". 23 of 40 estimates moved, all upward; the catalogue total went
+  catalog-wide floor so a blind count cannot read as a pass, plus a new assertion of §3.0.5's
+  "lesson 1 under four minutes". 23 of 40 estimates moved, all upward; the catalog total went
   **120 → 144 minutes**, so §4.3's content clause is further clear rather than reopened.
-- **`LAUNCH_PLAN.md`'s catalogue figures generated, and its Phase-0 gate verdict with them (former
+- **`LAUNCH_PLAN.md`'s catalog figures generated, and its Phase-0 gate verdict with them (former
   item 55)** — done 2026-08-17 (dev-agent run), see run log. `scripts/refresh-readiness.mjs` now owns
   **10 figures across two documents**: the two it already had in `LAUNCH_READINESS.md`, plus §1's
   asset sentence, §2.5's two track-id ranges, §3.2's progress figure, §4.0's volume/word-count/
-  asset-table figures, and **§4.3's "is the gate met?" verdict**, which is derived from the catalogue
+  asset-table figures, and **§4.3's "is the gate met?" verdict**, which is derived from the catalog
   rather than from whoever last read the table. That last one is why the item was P1: the plan said
   "the gate is not close: 12 minutes is not 2 hours" while the generated scorecard said both content
   clauses were met. Three stale counts inside §4.0/§4.2's *arguments* were deleted rather than
@@ -3712,7 +3712,7 @@ for the history. No open P1/P2 items.
   raised to 600, later removed once the real split (above) made it unnecessary; see `DECISIONS.md`.
 - **Machine-translation decision reversal, owner escalation (former item 20 / backlog P-4)** — resolved
   2026-08-11 (owner decision, interactive session): option (a), accept the current unreviewed
-  es/ko/zh/ja translation state under "(Beta)" labelling. See `DECISIONS.md`
+  es/ko/zh/ja translation state under "(Beta)" labeling. See `DECISIONS.md`
   ("Machine-translated lesson content...") for the full three-option writeup and the reasoning, and this
   run's log entry ("Translation review engine...") for what shipped alongside the decision —
   `scripts/translation-review.mjs` + a per-language review-status ledger with drift detection, so the
@@ -3747,7 +3747,7 @@ for the history. No open P1/P2 items.
 - **Sector performance and relative strength (former item 14)** — done 2026-08-04, see run log
   ("Sector performance + relative strength: data pipeline and UI"). Daily job
   (`scripts/fetch-market-data.mjs`) writes `public/data/market.json`; `Sectors.jsx` ranks eleven S&P
-  sectors against SPY with a placeholder relative-strength formula, plainly labelled as such. Now
+  sectors against SPY with a placeholder relative-strength formula, plainly labeled as such. Now
   scheduled (`economics-app-market-data`, weekdays after close).
 - **Mobile responsiveness check, second pass (P3 item 11 — now fully closed)** — done 2026-08-04,
   see run log. Swept 320px portrait (all four tabs plus quiz-answered, Kids age-selector, and the
@@ -3807,7 +3807,7 @@ for the history. No open P1/P2 items.
 - **JSX split, step 4a (`Home` tab → `src/components/Home.jsx`)** — done 2026-08-02, see run log. First of the four per-tab extractions; `economic-cycles-v5.jsx` down to 529 lines.
 - **Data-shape check harness (`npm test`)** — added 2026-08-02, see run log below. Checks locale/content modules structurally in ~5s; no browser or 2-minute build needed to catch a missing language field.
 - **JSX split, step 3 (`quizData`, `glossary`, `kidsContent` → `src/content/*.js`)** — done 2026-08-02, see run log. All content now lives in modules; `economic-cycles-v5.jsx` down to 591 lines.
-- **Language picker "Beta" labelling (§3.5/§10.4)** — done 2026-08-02, see run log. The es/ko/zh/ja options in the language `<select>` now read e.g. "🇰🇷 한국어 (Beta)"; English is unchanged. Translation-volume ratios measured 2026-08-02 (**es 0.41x, ko 0.24x, ja 0.18x, zh 0.15x** of English lesson-body chars) are noted here for reference if a future run wants to re-measure after content is added.
+- **Language picker "Beta" labeling (§3.5/§10.4)** — done 2026-08-02, see run log. The es/ko/zh/ja options in the language `<select>` now read e.g. "🇰🇷 한국어 (Beta)"; English is unchanged. Translation-volume ratios measured 2026-08-02 (**es 0.41x, ko 0.24x, ja 0.18x, zh 0.15x** of English lesson-body chars) are noted here for reference if a future run wants to re-measure after content is added.
 - **JSX split, step 1 (`TR` → `src/locales/*.js`)** and **step 2 (`lessons` → `src/content/lessons.js`)** — done 2026-08-02, see run log. Independently verified by the second weekly review: 12 lessons intact, 0 missing language fields, exact locale key parity, `economic-cycles-v5.jsx` down from 1,340 to 692 lines.
 - **Reproducible build environment** — `scripts/bootstrap-node.sh` added 2026-08-02, see run log below.
 - Blindspot register §10.2 (Dalio de-branding) and §10.3 (parent-facing Kids framing) — done 2026-08-01, verified by the weekly review.
@@ -4031,7 +4031,7 @@ documented above.**
 > scaffold and rebuild, the JSX split, the market-data pipeline, lessons 18–40, the §4.3 minutes
 > clause reaching 120/120, the per-track content split and the lesson-id renumbering. **You do not
 > need to read any of it to pick up work** — for that period `reviews/2026-08-16-weekly-review.md` is
-> both shorter and better organised than the entries it summarises.
+> both shorter and better organized than the entries it summarizes.
 >
 > The entries below start at the 2026-08-16 weekly-review boundary, i.e. the current review period.
 > When archiving again, follow the rule at the top of the archive file.
@@ -4388,7 +4388,7 @@ documented above.**
   re-measured translation volume from source (see Verified below) and replaced the 2026-08-09 figures
   (es 83,758/0.745x, ko 41,727/0.371x, zh 26,397/0.235x, ja 36,551/0.325x over 112,387 English chars)
   with current ones (es 98,013/0.721x, ko 48,488/0.356x, zh 30,752/0.226x, ja 42,574/0.313x over 136,031
-  English chars — the lesson catalogue grew via deepening runs between the two measurements, count
+  English chars — the lesson catalog grew via deepening runs between the two measurements, count
   unchanged at 40); replaced "P-4 (owner decision needed)" with "P-4 done 2026-08-11" and a pointer to
   the actual decision (option (a), tracked via the translation-review ledger) instead of describing it as
   still open. Left the row's genuinely-still-true point intact: five-language maintenance debt is real
@@ -5120,7 +5120,7 @@ documented above.**
      return to the Learn path (not the bottom-nav Review tab, which the code deliberately treats as
      "seen" — see below). Confirmed via `document.querySelector('[role="status"]').outerHTML` that the
      coach mark renders: `role="status"`, non-modal, text "Nice work! Come back here anytime to review
-     what you've learned.", with a labelled dismiss button — matches `App.jsx`'s `PracticeCoachMark`
+     what you've learned.", with a labeled dismiss button — matches `App.jsx`'s `PracticeCoachMark`
      exactly. A `computer` screenshot (after confirming a sane viewport) visually confirmed it sits above
      the tab bar pointing at Review, as designed. Clicked the dismiss (×) button via `javascript_tool`
      and confirmed both effects: `localStorage.getItem('ecycles_seen_practice_coachmark')` flipped from
@@ -5268,7 +5268,7 @@ documented above.**
   visible text.
 - **Verification of the fix** (same live-browser session, against a freshly rebuilt `dist/`): all 17 rows
   carry a resolving `aria-describedby`; 34 generated ids with **zero duplicates and zero broken
-  references**; each row's description resolves to *its own* text, not a neighbour's. Exercised the
+  references**; each row's description resolves to *its own* text, not a neighbor's. Exercised the
   search filter (`"credit"` → 2 rows), which re-indexes the list — ids stayed unique and each row still
   resolved to its own definition, which was the real risk of index-derived ids and the reason it was
   tested rather than assumed. Clicking a row still opens the term detail (no functional regression), and
@@ -5343,7 +5343,7 @@ documented above.**
   key events too. Had this run trusted the first reading it would have "fixed" a working implementation.
 - **Adversarial self-check**: (1) Blindspot register — no lesson, glossary, market, or kids copy touched;
   this is keyboard wiring in a settings control. `check-blindspot.mjs`'s §10.1/§10.2/§10.3/§2.3 checks all
-  pass. (2) `DECISIONS.md` — no entry covers Settings, ARIA patterns, or keyboard behaviour; nothing to
+  pass. (2) `DECISIONS.md` — no entry covers Settings, ARIA patterns, or keyboard behavior; nothing to
   conflict with. The change is consistent with the localStorage-only state decision (it routes through the
   existing `setThemeMode`/`setFontScale` props, adding no new persistence). (3) Already-done backlog item
   — this bullet was open before this run; the accessibility pass recorded in "Completed and pruned" (P3
@@ -5379,7 +5379,7 @@ documented above.**
 ### 2026-08-16 — Remove MarketSignals' dead `counterReset` (W-4's last item; the weekly block is now closed)
 
 - **What was done**: deleted `counterReset: "principle"` from the "Key Principles" `<ol>` in
-  `src/screens/reference/MarketSignals.jsx`. One line, no behaviour change — which was the thing to prove
+  `src/screens/reference/MarketSignals.jsx`. One line, no behavior change — which was the thing to prove
   rather than assume.
 - **Confirmed inert before deleting** (live browser, `dist/` on `127.0.0.1:8764` per the Environment note):
   the computed style on that element read `counterReset: "principle 0"` with `counterIncrement: "none"`,
@@ -5557,7 +5557,7 @@ so this is a backlog pick, not a note-chain extension.
 **Why `quiz_taken` moved from per-question to per-quiz.** §9.2 asks for "quiz taken (**with score**)".
 A score is a property of a finished quiz; there is no score to attach to a single answer. The
 per-question data was **not dropped** — it fires under `quiz_answered`, which is beyond §9.2's stated
-*minimum* and is what the Leitner queue's behaviour would be analysed against.
+*minimum* and is what the Leitner queue's behavior would be analyzed against.
 
 **Verification — live browser, per W-1** (`dist/` on `127.0.0.1:8815`, the Environment note's
 static-build + `python3 -m http.server` technique, `preview_start` with a plain `url`, `navOk: true`;
@@ -5744,7 +5744,7 @@ assumed.**
    weekly reviewer's W-2 refill.
 4. **Reproducibility of this entry's own claims** — the 47-hit figure and every false positive come
    from a scan script re-runnable against the content; the chunk table from two real builds, not from a
-   remembered number; the behaviour from live ARIA state; "the check works" from six injected faults
+   remembered number; the behavior from live ARIA state; "the check works" from six injected faults
    actually failing, with byte-identical restores confirmed by `diff`.
 
 **Concurrent session, handled.** `HEAD` moved mid-run (`9b496f4` → `543fd90`, another run fixing
@@ -5990,7 +5990,7 @@ quietly duplicating.
 **What shipped — `CLAIMS.md`, 14 claims in four groups:**
 - **A1–A6, the product-shape bets this build made in code and never wrote down** — sequential
   unlocking, the money-first two-track split, five languages under "(Beta)", parent-facing kids
-  content, the Leitner review queue, catalogue size. Each names the mechanism implementing it, so a
+  content, the Leitner review queue, catalog size. Each names the mechanism implementing it, so a
   refutation points at the thing that would have to change.
 - **B1–B4** from §4.6. **C1–C2** distribution. **D1–D2** process.
 - Each row: refuting number, ISO check date, honest measurability verdict, current status.
@@ -6042,7 +6042,7 @@ was always going to over-count. Now anchored to a status that opens with `REFUTE
    `check-blindspot.mjs` passes.
 2. **`DECISIONS.md` conflict** — none. No content-module, storage, routing or build-tool change; this
    adds a doc and a check. It *complements* `DECISIONS.md` rather than overlapping it, and the file
-   states the division of labour between the three docs so a later run doesn't merge them.
+   states the division of labor between the three docs so a later run doesn't merge them.
 3. **Already-done backlog item** — item 30 was open. The §4.6 overlap is the one real duplication risk
    and is handled by importing rather than restating, with a pointer added in the plan.
 4. **Own verification claims** — the "3 refuted" miscount is exactly this check biting: the number was
@@ -6136,7 +6136,7 @@ second gap the claim now exposes. Still unmeasurable — needs a deploy and item
   - `#/lesson/3` on a **fresh install** → opens **lesson 1**, URL normalized to `#/lesson/1`, first-run
     disclaimer showing (§10.1 unaffected).
   - Before the §3.2 refinement, the same case landed on the path with `#/learn` — recorded because it
-    is what prompted the change, and because it is the behaviour a **returning** visitor still gets.
+    is what prompted the change, and because it is the behavior a **returning** visitor still gets.
   - `#/practice` and `#/reference` open the right tab with the right `aria-selected`.
   - In-app navigation writes the hash; **Back walks it correctly**: reference → practice → learn →
     lesson 1, with the reader re-opening. Reader Next/Previous move `#/lesson/3` ↔ `#/lesson/4` and
@@ -6162,7 +6162,7 @@ second gap the claim now exposes. Still unmeasurable — needs a deploy and item
    independently re-verified before starting.
 4. **Own verification claims** — the §3.2 fallback is the honest test of this: the first version of this
    run's own summary would have said "a locked link lands on the path" and called that correct. The live
-   browser is what showed it was the wrong destination for the audience §5 targets. Both behaviours are
+   browser is what showed it was the wrong destination for the audience §5 targets. Both behaviors are
    reported above, including the one that was replaced, so a reviewer re-running these commands sees
    what this run saw rather than only its conclusion.
 
@@ -6266,7 +6266,7 @@ across two commits by accident, and only luck made the window short.
 
 ### 2026-08-16 (scheduled dev-agent) — "Be the Fed Chair": the policy simulator, built inside lesson 35 (backlog item 34, §3.0.4)
 
-**What changed.** Three files added or wired, one behaviour added:
+**What changed.** Three files added or wired, one behavior added:
 - **`src/content/policyScenarios.js`** (new) — two scenarios for lesson 35 (*Interest Rates: The Master
   Signal*), each with a situation, a question and three levers, in all five languages. Scenario 1 is an
   overheating economy (inflation near 7%, unemployment 3.5%); its levers are raise / cut / hold.
@@ -6457,7 +6457,7 @@ The mismatch this item was filed about affected one list; the missing `role` aff
      the DOM `tagName` read, not the a11y tree. Stated that way above.
    - **The WebKit half is not verified in this environment.** `role="list"` is a no-op in Chromium,
      which is the only browser available here, so I verified that the attributes are present and that
-     nothing regressed — *not* that they fix VoiceOver. That rests on documented WebKit behaviour. Given
+     nothing regressed — *not* that they fix VoiceOver. That rests on documented WebKit behavior. Given
      this log records D1 ("a run's self-reported verification can be trusted") as already REFUTED twice,
      writing "fixed for VoiceOver" would have been the third instance. It is written as what it is.
    - **A process finding, recorded because it nearly shipped wrong:** while reverting injection (a) I
@@ -6477,7 +6477,7 @@ lesson where a diagram teaches what prose cannot) and 26's deferred bookmark-sur
 18, correctly). Two smaller things this run leaves filed rather than done: **`PolicySim` has no §9.2
 instrumentation** (carried from the previous entry — a lever pick is the cheapest available test of
 whether interactive content holds attention, but it touches `analytics.js`'s minimum-event-set check),
-and **`ParentGuide`'s duplicate ordinal announcement**, which needs the WebKit behaviour confirmed on a
+and **`ParentGuide`'s duplicate ordinal announcement**, which needs the WebKit behavior confirmed on a
 real iOS VoiceOver before it can be safely fixed — an owner or interactive session with a Mac/iPhone
 could settle it in minutes, and no automated run in this sandbox can. Also still open from two runs
 back: nothing in this repo checks that a *check* and the document it guards land in the same commit.
@@ -6611,7 +6611,7 @@ dated 2026-09-05 and must still not be pulled forward.**
   built to fit it: section 1 opens *"Imagine income tax as a stack of buckets, each with its own rate, and
   money fills them from the bottom up."* The lesson was already asking the reader to picture a diagram,
   and then spending three paragraphs on the misconception it exists to correct — that a raise can push you
-  into a higher bracket and leave you with less. That is the case where prose demonstrably labours and one
+  into a higher bracket and leave you with less. That is the case where prose demonstrably labors and one
   picture settles it. **I did not add a fourth-and-fifth**: lessons 9 (inflation), 11 (fee drag) and 12
   (rent vs. buy) all have plausible diagrams, and "plausible" is exactly the count-shaped reasoning item
   27 warns about. Item 27's bar is left standing, not lowered.
@@ -6653,7 +6653,7 @@ dated 2026-09-05 and must still not be pulled forward.**
   and 349.7), which is the teaching claim confirmed in rendered pixels rather than asserted; the raise
   bands are 19.5px (20%) + 13px (30%) and the dashed outline is 32.6px, exactly their sum and exactly the
   height difference between the stacks. No console errors, no horizontal overflow (`scrollWidth` 375 =
-  `clientWidth`). Checked in **light theme and Korean** as well as dark/English — the band colours resolve
+  `clientWidth`). Checked in **light theme and Korean** as well as dark/English — the band colors resolve
   through the `graph` tokens to their light-scheme values (no inline hex anywhere), and the `<dl>`, legend
   and `aria-label` all read correctly in ko. Regression sweep across lessons 1/3/27/32/36 (each still
   renders its figure) and lesson 2 (correctly renders none).
@@ -6703,7 +6703,7 @@ dated 2026-09-05 and must still not be pulled forward.**
 owner action. Unchanged by this run.
 
 **Next run should pick**: **item 41** (the `Bar` text-alternative gap filed above) is the best-scoped open
-item — it is real, measured, small, and its check generalises to "every chart primitive exposes a text
+item — it is real, measured, small, and its check generalizes to "every chart primitive exposes a text
 alternative." **Item 38** is now better motivated than when it was filed, since this run reproduced its bug
 in a document. Item 39 remains unowned and still needs honest scoping before anyone picks it. Item 27's bar
 for a fifth money visual stands — do not add one without naming the lesson. **Item 32's monthly audit is
@@ -6763,16 +6763,16 @@ component, found by the same measurement.
 - **Live browser** (per W-1; `npm run build`, `dist/` served by `/usr/bin/python3 -m http.server 8847`,
   `preview_start` with a plain `url`, 375×812). Lesson 37 now returns **1** `[role="img"]` (was 0) with
   the full English label; Reference → Market signals returns the same figure with the **Korean** label,
-  bars proportional, colours resolving through the `graph` tokens to their light-scheme values under
+  bars proportional, colors resolving through the `graph` tokens to their light-scheme values under
   `data-theme="light"`, no horizontal overflow in either place. Regression sweep, lessons 1/3/7/27/32/36
   each still render their figure with an intact label, and lesson 2 correctly renders none.
 
 **Adversarial self-check — one thing filed, nothing reverted.**
 1. **Blindspot register.** Nothing reintroduced. §10.2: no Dalio (`check-blindspot` green). §10.1: the new
    description states five numbers and their order and stops — no advice verb in any of the five
-   languages, and it deliberately does **not** characterise the levels as high, excessive or worrying,
+   languages, and it deliberately does **not** characterize the levels as high, excessive or worrying,
    which is the easy line to cross when describing a chart of central-bank policy. §10.3: untouched.
-   §2.3: no dates and no live-looking figures — the values are labelled by era ("Before 2008", "After
+   §2.3: no dates and no live-looking figures — the values are labeled by era ("Before 2008", "After
    QE1–3"), which is why this data was written that way in the first place; `check-blindspot`'s §2.3 scan
    over `markets.js` passes.
 2. **`DECISIONS.md` conflict.** None. Content went into an existing `.js` module, not JSON; no state,
@@ -6836,7 +6836,7 @@ richer name costs nothing.
    label was the only accessible name available. It is wrong today, and the test showed it — dropping
    `description=` from the `MarketSignals` call site raised **nothing**, silently reverting all four
    figures to four-word names. Tightened: call sites must pass `description` outright; the failure message
-   names the fallback they would otherwise land on. The component keeps its fallback as a defence against
+   names the fallback they would otherwise land on. The component keeps its fallback as a defense against
    an unnamed figure, but it no longer excuses a call site. Re-ran the injection: caught, naming file,
    line, and the fallback.
 
@@ -6852,7 +6852,7 @@ checked against the render, not against the path data** — the rising, level, f
 curves match what each description claims.
 
 **Adversarial self-check.**
-1. **Blindspot register.** Nothing reintroduced. §10.1 is the live one: describing a curve labelled
+1. **Blindspot register.** Nothing reintroduced. §10.1 is the live one: describing a curve labeled
    "Danger" is an easy place to slide into advice, so the descriptions state geometry only — which end
    sits higher — and carry no verb about what a reader should do, in any of the five languages. §2.3: no
    yield numbers and no dates; the paths are stylised shapes, and the descriptions say nothing that could
@@ -6963,7 +6963,7 @@ coverage / 0 stale in all four languages.
 2. **`DECISIONS.md` conflict.** None. No storage, routing, content-module-format or dependency change;
    the market-data entry's binding rule is about what the UI shows, which is untouched.
 3. **Already-done backlog item.** Item 38 was open, filed hours earlier by the item-30 work and never
-   picked. Not in "Completed and pruned". §23/§24 duplicate no existing section — the nearest neighbours
+   picked. Not in "Completed and pruned". §23/§24 duplicate no existing section — the nearest neighbors
    (§13b call-site shapes, §20/§22 vacuity counters) are patterns reused deliberately, and this entry
    names them as borrowed rather than new.
 4. **My own verification claim — two places it needed qualifying.** First, the headline demonstration is
@@ -7132,7 +7132,7 @@ itself. That is the whole argument for item 47: guard the procedure, not the fig
 
 **Fixed in this commit** (small, and leaving them broken while writing about guards would be absurd):
 both snippets now import `content/lessonContent.js`, the node-only merged view item 45 kept for exactly
-this; §10.4's source description and the catalogue paragraph updated; `DECISIONS.md`'s item-25 entry
+this; §10.4's source description and the catalog paragraph updated; `DECISIONS.md`'s item-25 entry
 marked superseded on layout with a pointer to where item 45's reasoning actually lives. Snippet 1 was
 **run verbatim after editing** and returns `40 lessons, 136031 en chars, 120 minutes`, matching the
 document. No guard was built this run — 46 and 47 are the next run's work, and building one while
@@ -7291,7 +7291,7 @@ not carry to a generated one. With `--write` the fix is one command, so the gate
 satisfy — which is the only honest way to guard a number that moves on every content edit. Without it I
 would have been shipping the exact failure §11b predicted.
 
-**Guarded surface: two sentences, deliberately.** The §4.3 catalogue row and §10.4's `es…ko…zh…ja`
+**Guarded surface: two sentences, deliberately.** The §4.3 catalog row and §10.4's `es…ko…zh…ja`
 character sentence are the document's only figures that must equal the content *today*. The other ~119
 measurement-shaped numbers are history and must never change; item 39's scoping proved no parser
 separates the two, so the split is made by hand and kept small. Current values, unchanged by this run
@@ -7306,7 +7306,7 @@ confirmed against a pre-injection sha256 manifest of the five touched files:
 | doc says `41 lessons`, content says 40 | `--check` failed naming both strings; `--write` then restored the file **byte-identically** to the original |
 | **a real content edit** — one word added to lesson 2's English takeaway | both figures failed (136,031 → 136,036), and `npm test` as a whole went red |
 | the guarded §10.4 sentence deleted outright | failed with "not in the file at all", printing the text to restore |
-| the catalogue figure stated a second time | failed on the duplicate — a second copy of a derived figure is the defect this item removes |
+| the catalog figure stated a second time | failed on the duplicate — a second copy of a derived figure is the defect this item removes |
 | **the generator breaks** (merged view yields `{}`) | floors fired first: `--write` **refused to touch the document** and reported the measurement as wrong |
 | negative control: `--write` after a real content edit | changed exactly the two live lines; `112,387`, `100 minutes`, `dropped to 93%` and "by **exactly 19 characters**" all intact |
 
@@ -7324,7 +7324,7 @@ No UI change — one new script, four documents/config files — so W-1's live-b
    language (§10.1), no Dalio (§10.2), no kids framing (§10.3), and no hardcoded date or live-looking
    figure — the script derives no date at all and reads no network. `check-blindspot.mjs` green, all 6
    checks `ok`. The one adjacency worth naming: the script *prints* character counts, which look like
-   measurements of market-ish things but are catalogue metadata, never rendered to a learner.
+   measurements of market-ish things but are catalog metadata, never rendered to a learner.
 2. **`DECISIONS.md` conflict.** None. No state, storage, routing, dependency or build-tool change;
    content stays `.js`-not-JSON, and the script reinforces that by importing the `.js` modules directly.
    The merged-view import is the layout `DECISIONS.md` and `lessonContent.js`'s own header describe.
@@ -7509,7 +7509,7 @@ measurement could silently return zero it has a control.**
 - **57 (P3). §3.0.3: 7 lessons use a glossary term in prose with no link** — 11 occurrences, against 22
   of 40 lessons having curated links.
 - **58 (P4). Read `LAUNCH_PLAN.md` and `DECISIONS.md` end to end against the tree** — the prose half of
-  what item 55 does for figures, and the generalisation of the README §10.2 finding. Deliverable is a
+  what item 55 does for figures, and the generalization of the README §10.2 finding. Deliverable is a
   list of contradictions with file:line, not a rewrite.
 - **59 (P5). The contrast claim has no instrument** — and is **true**: 0 violations, both palettes.
   Filed last and marked as regression-prevention, not a defect.
@@ -7535,7 +7535,7 @@ file changed — this run edits `AGENT_LOG.md` only.
    47 (that guarded `LAUNCH_READINESS.md`; this is a different document and includes a hand-fix 47
    cannot generate), not items 33/36 (those fixed lesson *prose* and *quiz* references; this is the
    plan's own table). 57 is not item 28, which built the linking *mechanism* — this is coverage
-   through it. 59 is not item 41/§22, which is chart descriptions, not colour.
+   through it. 59 is not item 41/§22, which is chart descriptions, not color.
 4. **My own verification claims — and this is where the check bit, hard.** The glossary measurement in
    item 57 **first returned 0 unlinked terms**, which I nearly filed as "no gap here." It was wrong:
    glossary entries key the term name at `en.s`, and my extractor read `term.en`, so it compared
@@ -7716,12 +7716,12 @@ comment calls it the thing that "makes the reading stick."
   itself rather than by hand (the one-shot script refused to guess if a metadata line didn't match,
   then was deleted). `DECISIONS.md` gained the standing entry, with the reading-rate reasoning and
   its source.
-- **Two new guards, because the old check could pass while blind.** A catalogue-wide floor
+- **Two new guards, because the old check could pass while blind.** A catalog-wide floor
   (≥8,000 words) so a model that silently counts nothing fails on *itself* rather than quietly
   agreeing with whatever is in the file — §20/§22's lesson, and the same failure shape that bit
   `glossary.length` yesterday. And **§3.0.5's one hard number**, "lesson 1 under four minutes,"
   which nothing had ever asserted; lesson 1 computes to 3 and passes.
-- **The gate moved, and it moved the right way.** Catalogue total **120 → 144 minutes**. §4.3's
+- **The gate moved, and it moved the right way.** Catalog total **120 → 144 minutes**. §4.3's
   content clause is *further* clear, not reopened — the item warned this could reopen a closed gate,
   and it is worth saying plainly that it did not, because the estimates were too *low*, not too high.
   `npm run readiness -- --write` propagated 144 into all three generated figures. One hand-written
@@ -7769,7 +7769,7 @@ confirmation fell out of a mistake: seeding `[1..12]` unlocked the *economy* tra
 **Filed, not fixed:** the estimate ignores time spent *thinking* about a check question and time on
 the four diagrams and the policy simulator, so it is conservative by construction; and glossary chips
 are optional taps, so it is a floor rather than a promise. All three are recorded in `DECISIONS.md`
-rather than modelled, because each would be a second constant with no measurement behind it. The
+rather than modeled, because each would be a second constant with no measurement behind it. The
 first real evidence either way is item 18's analytics.
 
 **Item 18 remains the entire critical path to ending Phase 0.** Unchanged by this run, and now
@@ -7942,8 +7942,8 @@ plausibility.
   ARIA APG radiogroup pattern. Also "**§backlog**" is a dangling cross-reference: there is no
   §backlog. *Mechanical.*
 - **F6. Two sections share a title and pull opposite ways.** `LAUNCH_PLAN.md:256` (§3.1.1) and `:283`
-  (§3.4) are both "Visual system". §3.1.1: "**one accent colour** plus semantic …", "Per-lesson colour
-  survives only as a thin accent, never as body text or a fill." §3.4 opens "One accent colour **per
+  (§3.4) are both "Visual system". §3.1.1: "**one accent colour** plus semantic …", "Per-lesson colour  <!-- us-english:allow: verbatim quote -->
+  survives only as a thin accent, never as body text or a fill." §3.4 opens "One accent color **per
   lesson/phase**". Not a flat contradiction, but they encode opposite emphases, and duplicate §-titles
   in a document whose section numbers are load-bearing cross-references is its own hazard. §3.4 reads
   as a v1 leftover §3.1.1 superseded. *Judgment.*
@@ -7989,7 +7989,7 @@ plausibility.
   `DECISIONS.md:380`–`383`: "`Home`, `Learn`, and the header progress bar all just read the
   `completedLessons`/**`isLessonUnlocked`** props" and "Home still showed **1/12**". Measured: no
   `isLessonUnlocked` anywhere in `src/` — the current gate is `isUnlocked(index)` at
-  `src/App.jsx:165`–`173`; no `Home.jsx`; the catalogue is 40. **Disposition differs from the rest of
+  `src/App.jsx:165`–`173`; no `Home.jsx`; the catalog is 40. **Disposition differs from the rest of
   this list:** it is a *dated verification record* of what was true on 2026-08-04, and correcting it
   would falsify the record. The honest fix is a dating note, not a rewrite — the same call item 55
   faced with §4.1/§4.2. *Judgment.*
@@ -8028,7 +8028,7 @@ plausibility.
   Not filed. (It does mean this entry's file:line citations are unchecked by §26 — they were verified
   by hand instead.)
 - **Sound on measurement:** §2.5's unlock rule (`src/App.jsx:169` returns unlocked when the previous
-  lesson is in another track); §3.5's "(Beta)" labelling (`src/App.jsx:281`); the deep-link entry's
+  lesson is in another track); §3.5's "(Beta)" labeling (`src/App.jsx:281`); the deep-link entry's
   four routes in one module (`src/lib/deepLink.js:39,55`); the instrumentation entry's cap and call
   sites; and all **10 generated figures**, which `npm test` reports as agreeing with the content.
 
@@ -8146,7 +8146,7 @@ walk would have proven nothing.
 and the change strengthens rather than regresses it — the disclaimer's six render surfaces are now
 machine-enforced where nothing enforced them before, and no advice-adjacent language was added
 (`check-blindspot.mjs` green). §10.2: no Dalio reference introduced; the guard scans the edited docs'
-neighbours and passes. §10.3: kids content untouched except F8's *field-count* correction, which
+neighbors and passes. §10.3: kids content untouched except F8's *field-count* correction, which
 changes no learner- or parent-facing copy and keeps the parent-facing framing. §2.3: no date or
 market figure added to teaching copy. **DECISIONS.md conflicts:** none — F9 *removes* a contradiction
 with the localStorage-only and Vite-not-Expo decisions rather than creating one, and the new
@@ -8213,7 +8213,7 @@ pairs are real" has to be encoded and then kept true. It asserts four things:
 assertion in §28 is a *lower bound*, so a broken luminance formula reads as a pass **on every pair at
 once** — there is no absence to notice, which is the failure mode §26 had to guard in a milder form.
 Three fixed probes with published answers run first (white/black = 21.00, `#2563eb` on white = 5.17,
-a colour against itself = 1.00).
+a color against itself = 1.00).
 
 **Five injection tests, all restored from scratchpad copies — never `git checkout --`, and `cmp`
 against the backup confirmed byte-identical restoration after each** (`git diff` is useless as a
@@ -8254,7 +8254,7 @@ the values are *declared* and where they are *enforced*; `index.css:91`'s "the c
 now names the note, since one reader already misread it as dangling.
 
 **Filed, not folded in: item 63.** Measured while here — light `--graph-neutral` (`#9aa2b1`) is under
-WCAG 1.4.11's 3:1 against **5 of 7 surfaces**, worst **2.30:1**. No other graph colour fails, and the
+WCAG 1.4.11's 3:1 against **5 of 7 surfaces**, worst **2.30:1**. No other graph color fails, and the
 dark palette has none. §28 deliberately excludes it: 1.4.11 covers graphics "required to understand
 the content", and whether a neutral stroke is meaningful or decorative is a question about
 `charts.jsx`, not the palette. Encoding a guess as an assertion is how item 61's F7 froze a miscount.
@@ -8271,14 +8271,14 @@ green, all 7 disclaimer surfaces still asserted), §10.2 (no Dalio reference), �
 untouched, parent-facing framing intact) and §2.3 (no date or market figure added) are unmoved. The
 live walk *rendered* the Kids and Market Dashboard screens and confirmed they still show the
 disclaimer surfaces §10.1 names. **DECISIONS.md conflicts:** none — §28 reads `index.css`, which is
-where the localStorage-only, Vite-not-Expo and CSS-custom-property decisions all say colour belongs;
+where the localStorage-only, Vite-not-Expo and CSS-custom-property decisions all say color belongs;
 nothing here proposes a build step or a new dependency. **Already-done backlog item:** checked
 "Completed and pruned" — item 49 widened §26's *path* checks and item 61 added §27 and the §10.1
-surface guard; §28 is a different surface (rendered colour) and does not redo either. **Own
+surface guard; §28 is a different surface (rendered color) and does not redo either. **Own
 verification claim:** an independent reviewer re-running `npm test`, `npm run build` and the five
 injections gets these results. Three caveats stated rather than buried — (a) the light worst case is
 **4.62:1**, which clears 4.5 by 0.12, so a small future darkening of `--surface-accent-wash` or
-lightening of `--ink-accent` will fail §28, and that is the intended behaviour, not a brittle test;
+lightening of `--ink-accent` will fail §28, and that is the intended behavior, not a brittle test;
 (b) the live walk covers the screens listed, not every state (no quiz-answered state, no error
 states), so "0 outside the checked set" is strong evidence for the scope claim, not proof of it; and
 (c) §28 checks the palette *as declared in CSS*, so a component that ever hardcodes a hex outside the
@@ -8429,7 +8429,7 @@ cleared a reach threshold of ≥2 lessons or ≥3 uses. Reading the first use of
 **The one miss is a shape the item did not predict: a forward reference.** Lesson 6 §0 contrasts "an
 ordinary brokerage account" with a workplace 401(k) — and lesson **13** is the lesson that defines a
 brokerage account ("just a container — a place to hold investments, not an investment itself"), seven
-lessons later. The term is defined in the catalogue and undefined at the point a reader first meets it,
+lessons later. The term is defined in the catalog and undefined at the point a reader first meets it,
 so that occurrence satisfies neither branch of §3.0.3. Reach across lessons, not raw frequency, is what
 surfaces this class: a term used in one lesson is almost always defined by it, while a term used in two
 and defined in the later one is a gap by construction.
@@ -8459,7 +8459,7 @@ tested by injecting a bug into a scratchpad copy (never the repo file) and confi
 | **shipped:** rebuild expected forms independently, assert no candidate is already a glossary term | **fails, exit 1** — names `"insurance premium"` | passes | fails, exit 1 |
 
 Two things that only came out by running them. **(a) A control that fires on a harmless edit is worse
-than none** — the space-dropping normaliser changes nothing here, because both sides normalise
+than none** — the space-dropping normaliser changes nothing here, because both sides normalize
 identically, and a probe that reddens on it teaches the next run to delete the probe. **(b) The first
 version of the shipped check filtered the *displayed* list**, and the term that catches the real bug
 ("insurance premium", from key `Premium` whose `en.s` differs) is used once, below the display
@@ -8508,7 +8508,7 @@ code), no build-tool change; the new script is node-only and `check-payload.mjs`
 module imports a merged content view. **Already-done backlog item:** item 60 was explicitly open and was
 the previous entry's recommended pick. It shares an *axis* with item 35 (both add glossary entries), and
 the distinction is the one item 60 itself draws: item 35 grepped for words already in the glossary's
-neighbourhood, this ranked by cross-lesson reach and carried a control. **Own verification claim:** an
+neighborhood, this ranked by cross-lesson reach and carried a control. **Own verification claim:** an
 independent reviewer re-running `npm test`, `npm run build` and `npm run jargon` gets these results, and
 the live checks reproduce via the Environment note. Four caveats stated rather than buried — (a) **the
 43→1 triage is judgment, not measurement**: another reviewer could defensibly call "down payment",
@@ -8605,16 +8605,16 @@ including the per-language advice patterns and the 7-surface disclaimer guard. �
 conflict:** none — content stays a `.js` module, no storage/routing/build change, and the relevant entry
 ("In-lesson glossary links are a curated map, not an automatic prose match") is what this run *followed*
 rather than contradicted: every one of the 21 chips is a hand-checked same-sense use, and the one
-judgement the automatic reading would have gotten wrong is money 5, which is excluded, not chipped. The
+judgment the automatic reading would have gotten wrong is money 5, which is excluded, not chipped. The
 minutes-model entry is also unaffected — it states that optional glossary chips are not counted, so 21
 new chips do not move the 144-minute figure. **Already-done backlog item:** item 64's Stock/Bond bullet
 was explicitly open and was the previous entry's recommended pick. It shares an axis with items 35 and
 60 (all three add glossary entries) and the distinction is the one item 60 itself drew: 35 grepped money
-lessons for jargon near the glossary's existing neighbourhood, 60 ranked by reach *within* the money
+lessons for jargon near the glossary's existing neighborhood, 60 ranked by reach *within* the money
 track, and this is the cross-track pair 60 measured and deferred by name. **Own verification claims:**
 an independent reviewer re-running `npm test`, `npm run build` and `npm run jargon` gets these results,
 and the live checks reproduce via the Environment note. Three caveats stated rather than buried — (a)
-**which uses are "the same sense" is judgement**: lesson 33's "the stock market is roaring" and lesson
+**which uses are "the same sense" is judgment**: lesson 33's "the stock market is roaring" and lesson
 39's "turbulence investors expect in the stock market" are the market rather than the instrument, and a
 reviewer could defensibly call those ordinary English and drop two chips; the argument for keeping them
 is that the market is named for the thing, and a chip is dismissible where a missing definition is not;
@@ -8624,7 +8624,7 @@ outside `translation-review-ledger.json`, which tracks lesson content only — r
 the two residuals above are the honest edge of it.
 
 **Next run should pick item 62's F6** — `LAUNCH_PLAN.md` §3.1.1 and §3.4 are both titled "Visual system"
-and encode opposite emphases on per-lesson colour, in a document whose section numbers are load-bearing
+and encode opposite emphases on per-lesson color, in a document whose section numbers are load-bearing
 cross-references; it needs a decision (which one is current), not an edit. Smaller alternatives: **item
 64's APR line** (one acronym, expand in place) or **this run's residual (b)**, the `stocks Bonds`
 phantom candidate in `jargon-candidates.mjs`. **Item 18 remains the entire critical path to ending Phase
@@ -8658,7 +8658,7 @@ they made the item look more optional than it was.**
 - **"Only `--graph-neutral` is affected" is false.** Light `--graph-amber` is also under 3:1 on three
   surfaces (sunken 2.92, accent-wash 2.85, bad-wash 2.91). It is *not* rendered below the bar — amber on
   card is 3.44 — so it is exempted with its measured ratios and filed as **item 65**, not fixed on the
-  way past. Darkening a second palette colour is a visual-design change, and item 63's own history is
+  way past. Darkening a second palette color is a visual-design change, and item 63's own history is
   the argument for the split: it sat unfixed partly because its scope had quietly outgrown its finding.
 
 **The classification the item said to make, made.** All four rendered `graph.neutral` uses:
@@ -8704,7 +8704,7 @@ owner's in-flight redesign — unavoidable, and it changes nothing about the tok
   reads `rgb(124,132,148)` = `#7c8494`, and contrast computed **from the live DOM** is **3.76:1** (was
   2.57). Screenshot taken; the "Simple interest" line is plainly legible.
 - The same lesson in **dark** confirmed the classification empirically rather than by reading: both
-  polylines are `2.5px` and differ *only* in stroke colour, which is exactly what makes the neutral one
+  polylines are `2.5px` and differ *only* in stroke color, which is exactly what makes the neutral one
   a graphical object required to understand the content.
 - Reference → Market Dashboard: the "Fed Balance Sheet" bar chart's neutral bar also measures **3.76:1**
   against its white card — the second meaningful use, checked on screen.
@@ -8722,7 +8722,7 @@ learner-facing copy at all (one hex value, three comments, one check), so §10.1
 surface is untouched and the disclaimer guard is unmoved; §10.2 names no person; §10.3 kids content
 untouched; §2.3's live-date/market-figure scan covers `src/content/*` and this run edited none of it.
 `check-blindspot.mjs` green on all seven checks. **DECISIONS.md conflict:** none — and checked rather
-than assumed: `DECISIONS.md` contains **no** palette, colour or contrast decision, so there was nothing
+than assumed: `DECISIONS.md` contains **no** palette, color or contrast decision, so there was nothing
 to contradict; no storage, routing, build or content-module change here either. **Already-done backlog
 item:** no. Item 63 was open, and it is the exact half item 59 *deliberately excluded* from §28 (§28's
 own comment says so and files it as 63) — §28 is text at 4.5:1, §28b is graphics at 3:1, disjoint token
@@ -8876,7 +8876,7 @@ entirely (`glossary.js`'s own header records this) — so when the next run ship
 that text's review status.
 
 **Next run: apply the saved `Dividend` work if `LAUNCH_PLAN.md` is clean** — it is a copy-in from
-scratchpad plus `npm run readiness -- --write` plus a log entry, with every judgement call already
+scratchpad plus `npm run readiness -- --write` plus a log entry, with every judgment call already
 made and recorded in item 64. **If the owner's redesign is still in flight, do not queue anything that
 touches `LAUNCH_PLAN.md`** — prefer **item 66** (measure the glossary-definition residual; one file,
 the extractor already exists, and it is a measurement not a content change) over **item 65** (light
@@ -8962,7 +8962,7 @@ preferred pick. **Own verification claims:** an independent reviewer re-running 
 `npm run build`, the four `jargon` modes and the two injections gets these results. Four caveats stated
 rather than buried: **(a)** `npm run jargon` is still a report, not part of `npm test`, so this new mode
 runs only when someone runs it — deliberate (the header's "WHY THIS IS NOT A CHECK"), but a regression
-here is silent until then; **(b)** the "53 of 56 are noise" split is **my judgement**, not a
+here is silent until then; **(b)** the "53 of 56 are noise" split is **my judgment**, not a
 measurement — a reader who disagrees has the full list and can re-read it; **(c)** the corpus is `en`
 only, so the four Beta translations' definitions are still entirely unmeasured by anything, and this
 run did not change that; **(d)** the contiguity control proves a phrase occurs *somewhere* in the
@@ -8971,7 +8971,7 @@ from before.
 
 **Next run: the queue is unchanged and still gated on the owner's tree.** If `LAUNCH_PLAN.md` is clean,
 **ship the saved `Dividend` work** (item 64 — a copy-in from scratchpad plus `npm run readiness --
---write` plus a log entry, every judgement already made). **If the redesign is still in flight, do not
+--write` plus a log entry, every judgment already made). **If the redesign is still in flight, do not
 queue anything touching `LAUNCH_PLAN.md`** — the cheapest unblocked work is **item 67's `NBER`/`gov`
 expansions**, which add no glossary key and so move no gated figure, or **item 65** (light
 `--graph-amber`, still honestly low — nothing renders below the bar). **Item 18 remains the entire
@@ -9055,7 +9055,7 @@ of the still-reported `NBER` as a possible failed fix — chasing it down is wha
 `APR` correction above. **Three limits stated, not buried:** (a) the rewrite is `en` only and the other
 four languages remain unmeasured by any instrument — filed as **item 69**, with the four translations
 already read so the next run needn't redo it (`es` `ganancias realizadas` is the one direct calque);
-(b) "55 of which most are noise" is still my judgement, not a measurement; (c) `npm run jargon` remains a
+(b) "55 of which most are noise" is still my judgment, not a measurement; (c) `npm run jargon` remains a
 report, not part of `npm test`, so a regression here is silent until someone runs it.
 
 **A durability risk worth one line.** Item 64's finished `Dividend` work is described in the backlog as
@@ -9065,7 +9065,7 @@ four entries I edited, so **it still applies cleanly after this run** — but if
 before `LAUNCH_PLAN.md` goes clean, that work is gone and must be redone from the item-64 log entry.
 
 **Next run.** If `LAUNCH_PLAN.md` is **clean**: ship `Dividend` from the scratchpad path above (copy-in +
-`npm run readiness -- --write` + log entry; every judgement already made) — this closes items 64 and 67
+`npm run readiness -- --write` + log entry; every judgment already made) — this closes items 64 and 67
 together. If the redesign is **still in flight**, `LAUNCH_PLAN.md`-touching work stays blocked and the
 cheapest unblocked picks are **item 69**'s `es` calque (one clause) or **item 68**'s gloss-aware acronym
 rule; **item 65** (light `--graph-amber`) remains filed and honestly low. **Item 18 is still the entire
@@ -9082,7 +9082,7 @@ matched their figures exactly: 12 files, 540+/78−). Nothing of theirs touched,
 **"if the redesign is still in flight, `LAUNCH_PLAN.md`-touching work stays blocked and the cheapest
 unblocked picks are item 69's `es` calque or item 68's gloss-aware acronym rule."** `LAUNCH_PLAN.md` is
 still dirty, so item 64's `Dividend` stays parked and **this run took item 68.** Chosen over item 69
-because 69 is one Spanish clause whose judgement is already recorded and will keep, while 68 changes an
+because 69 is one Spanish clause whose judgment is already recorded and will keep, while 68 changes an
 instrument that every future content run reads — and, as it turned out, an instrument that was actively
 misleading. Baseline captured **on the dirty tree before any edit**: `npm test` exit 0, and all four
 jargon modes saved (`glossary` 57 / `money` 38 / `economy` 28 / `all` 72 reported; controls 14/12/9/19).
@@ -9101,7 +9101,7 @@ retyping — the same shape item 55 fixed for `LAUNCH_PLAN.md` and item 62's F12
 **One file changed: `scripts/jargon-candidates.mjs`, +151/−12.** No `src/` file, no content, no gated
 figure — and deliberately so.
 
-**What shipped.** A gloss is recognised only when the expansion **spells the acronym** — its words'
+**What shipped.** A gloss is recognized only when the expansion **spells the acronym** — its words'
 initials in order, lowercase connectors (`of`, `and`, `the`…) allowed — and sits **adjacent** to it.
 Both paren orders are handled, and both occur here: `National Bureau of Economic Research (NBER)` in the
 glossary's `Recession`, and **`CPI (Consumer Price Index)`** in economy lesson prose. The second was
@@ -9183,7 +9183,7 @@ Latin connectors — so it would need rethinking for the `es`/`ko`/`zh`/`ja` cor
 someone runs it — unchanged by this work, and the reason its controls are self-failing.
 
 **Next run.** If `LAUNCH_PLAN.md` is **clean**: ship `Dividend` from item 64's scratchpad path (copy-in +
-`npm run readiness -- --write` + log entry; every judgement already made) — that closes items 64 and 67
+`npm run readiness -- --write` + log entry; every judgment already made) — that closes items 64 and 67
 together. **Durability caveat repeated from the last entry:** that work sits in another session's
 `/private/tmp` scratchpad and will not survive a reboot; if it is gone, redo it from item 64's log entry.
 If the redesign is **still in flight**, the cheapest unblocked picks are **item 70(c)** (require run-log
@@ -9201,7 +9201,7 @@ work, still in flight**, and byte-for-byte the arrival state the last four runs 
 stashed or committed. `git log --oneline -1` = `3b2c483` (item 68), matching the previous entry's
 reported HEAD. `LAUNCH_PLAN.md` is **still dirty**, so item 64's `Dividend` stays parked exactly as the
 last two entries pre-decided, and this run took one of the two picks they named for that case: **item
-70** over item 69's `es` calque, because 69 is one clause whose judgement is already recorded and will
+70** over item 69's `es` calque, because 69 is one clause whose judgment is already recorded and will
 keep, while 70 is the reason the previous run lost time — and it had just become the *second* failure in
 two days.
 
@@ -9342,11 +9342,11 @@ real but it is bounded by how fast this repo's content moves, and it is strictly
 that preceded it.
 
 **Next run.** If `LAUNCH_PLAN.md` is **clean**: ship `Dividend` from item 64's scratchpad path (copy-in +
-`npm run readiness -- --write` + log entry; every judgement already made) — that closes items 64 and 67
+`npm run readiness -- --write` + log entry; every judgment already made) — that closes items 64 and 67
 together. **Durability caveat, now two entries old and worth acting on:** that work sits in another
 session's `/private/tmp` scratchpad and will not survive a reboot; if it is gone, redo it from item 64's
 log entry. If the redesign is **still in flight**, the cheapest unblocked pick is **item 69**'s `es`
-calque (one clause, judgement already recorded); **item 65** (light `--graph-amber`) and the new **item
+calque (one clause, judgment already recorded); **item 65** (light `--graph-amber`) and the new **item
 71** both remain filed and honestly low. **Item 18 is still the entire critical path to ending Phase 0
 and is still blocked on an owner action: an analytics provider account and key.**
 
@@ -9359,7 +9359,7 @@ described — but **item 69 is blocked too, and the previous entry did not notic
 `src/locales/es.js`, which is one of the owner's twelve modified files. The same is true of item 26's
 follow-ups (`src/screens/Reference.jsx`) and F6 (`LAUNCH_PLAN.md`). Of everything filed, exactly three
 items sit entirely outside the owner's tree: **62's F11 and F12** (`DECISIONS.md`) and **item 65**
-(theme + `check-data.mjs`). Item 65 is a visual-design change to a palette colour **while the owner is
+(theme + `check-data.mjs`). Item 65 is a visual-design change to a palette color **while the owner is
 mid-redesign of the UI**, which is the wrong week for it, and its own text rates it low with nothing
 rendered below the bar today. That leaves F12, which is the more valuable of the two `DECISIONS.md`
 findings — F11 is a one-line dating note. **Item 62 says do not batch these; F11 was left alone.**
@@ -9424,7 +9424,7 @@ every restore was from a scratchpad copy verified by `shasum` + empty `git diff`
   green while measuring nothing, which is the vacuous pass §20/§22 exist to make impossible.
 - **(G) A track stops being range-shaped.** Moved lesson 14 to `economy`, punching a hole in money:
   the contiguity guard fires for both tracks. **This guard was added because injection B exposed its
-  absence** — the first draft derived `lo`/`hi` without checking contiguity, so a catalogue with a gap
+  absence** — the first draft derived `lo`/`hi` without checking contiguity, so a catalog with a gap
   in it would still have produced a first/last pair and certified the document against a range that
   skips lessons. `refresh-readiness.mjs` makes exactly this argument for §2.5; §29 was missing it.
 
@@ -9480,12 +9480,12 @@ Update in the same change — it stops **silent** rot, which is the failure that
 **Next run.** `Dividend` (items 64/67) remains the highest-value queued item and is still gated on
 `LAUNCH_PLAN.md` being clean — the saved work is at session `48dad761`'s scratchpad and the
 **durability caveat is now three entries old**: if that scratchpad is gone, redo it from item 64's entry,
-which records every judgement. **Before picking anything, check which files the owner still has dirty** —
+which records every judgment. **Before picking anything, check which files the owner still has dirty** —
 this run found the previously-queued item was blocked by a file the queuing run hadn't checked. If the
 redesign is still in flight, **item 62's F11** (a dating note on `DECISIONS.md`'s localStorage
 verification note) is the cheapest remaining unblocked pick and is now the last of item 62's four
 findings but one; **item 65** and **item 71** remain filed and honestly low, and item 65 should wait
-until the redesign lands rather than move a palette colour underneath it. **Item 18 is still the entire
+until the redesign lands rather than move a palette color underneath it. **Item 18 is still the entire
 critical path to ending Phase 0 and is still blocked on an owner action: an analytics provider account
 and key.**
 
@@ -9518,7 +9518,7 @@ finding was a sample of the defect, not the extent of it.
 of — and then, **later the same day**, `79d9507` ("Rebuild app from scratch"). Confirmed by tree
 inspection: at `c7651a6` there is a real `src/components/Home.jsx` and `isLessonUnlocked` resolves; at
 `79d9507` the `src/screens/` layout exists, there is no `Home`, and `isUnlocked` has replaced it. The
-catalogue was **12** lessons at `c7651a6` and is **40** now, which is why "1/12" reads wrong. So the
+catalog was **12** lessons at `c7651a6` and is **40** now, which is why "1/12" reads wrong. So the
 note does not have to assert "these names are gone" as a bare claim — it can name the commit that
 removed them, and a commit hash does not rot.
 
@@ -9534,7 +9534,7 @@ removed them, and a commit hash does not rot.
    guard that is wrong. The asymmetry with F12 is real and deliberate: F12's ranges are claims about
    content the agent owns, F11's names are claims about UI structure the owner is actively rewriting.
 2. **The note itself states nothing that can rot.** This is the part the adversarial check earned.
-   Every fact in it is either a commit hash or explicitly dated — including the catalogue size, which
+   Every fact in it is either a commit hash or explicitly dated — including the catalog size, which
    is written as "it held 40 the day this note was written" rather than as a live figure. The note
    also deliberately does **not** say "the gate is now `isUnlocked`", which was my first instinct and
    is exactly the sentence that created F11 in the first place: naming a current internal inside a
@@ -9577,7 +9577,7 @@ re-running `npm test` gets these lines; all three figures above are pasted from 
 **What the check actually caught:** my first draft wrote "`loadCompletedLessons` is the one that
 survived" — present tense, a live claim about `src/lib/useAppState.js`, i.e. the precise defect F11
 describes, reintroduced inside the note fixing it. Reworded to "was the only one it left standing", a
-claim about what commit `79d9507` did, which is immutable. The catalogue figure got the same
+claim about what commit `79d9507` did, which is immutable. The catalog figure got the same
 treatment in the same pass. **One limit, stated not buried:** this note is unguarded prose by
 deliberate choice (call 1 above), so nothing stops a future run from "helpfully" correcting the four
 dead names — the note argues against that in its own text, and that is all it does. If the guard ever
@@ -9586,12 +9586,12 @@ becomes safe to add, the trigger is the redesign landing, not a change of mind a
 **Next run.** `Dividend` (items 64/67) remains the highest-value queued item and is **still gated on
 `LAUNCH_PLAN.md` being clean**; the saved work is at session `48dad761`'s scratchpad and the
 durability caveat is now **four entries old** — if that scratchpad is gone, redo it from item 64's
-entry, which records every judgement. **Re-check the owner's dirty files before picking anything**;
+entry, which records every judgment. **Re-check the owner's dirty files before picking anything**;
 that check has changed the answer in two of the last three runs. Item 62 is now down to **F6 alone**
 (`LAUNCH_PLAN.md`'s two sections both titled "Visual system" — owner-dirty file, and a redesign is
 precisely when that duplicate matters, so it may be worth raising with the owner rather than
 resolving unilaterally). **Item 65 should still wait for the redesign to land** rather than move a
-palette colour underneath it; **item 71** remains filed and honestly low. If everything is blocked,
+palette color underneath it; **item 71** remains filed and honestly low. If everything is blocked,
 the honest report is that everything is blocked. **Item 18 is still the entire critical path to
 ending Phase 0 and is still blocked on an owner action: an analytics provider account and key.**
 
@@ -9609,7 +9609,7 @@ been sitting since 2026-08-16 with `LAUNCH_READINESS.md`'s §10.7 row already de
 nobody had ever performed.
 
 **Run nineteen days early, on purpose, and the entry says so.** §9.3 is "first Saturday"; the next is
-2026-09-05. Item 32 authorised the preparation, and in the event **four of the five questions were
+2026-09-05. Item 32 authorized the preparation, and in the event **four of the five questions were
 fully answerable from the repo today** — only question 4 needed the calendar, and its answer today is
 the trivial `0 past due`. The audit is written as the audit of record for the period with an explicit
 instruction to re-run the ritual on 2026-09-05, when **nine claims come due on that exact date**.
@@ -9632,7 +9632,7 @@ instruction to re-run the ritual on 2026-09-05, when **nine claims come due on t
 purpose is to stop stated beliefs going quietly stale — **had gone stale in two of its own rows within
 about 24 hours of being written**, and has not been touched since `20f82e7` (2026-08-16):
 1. **A6's status cell said "40 lessons / 120 min."** Item 56 recalibrated every lesson's `minutes` the
-   next day and the catalogue is **144**. The claim was never in danger (144 clears the gate harder),
+   next day and the catalog is **144**. The claim was never in danger (144 clears the gate harder),
    but the register was citing a stale number *as its evidence*.
 2. **A3's paragraph said "93%, 0% human, 3 entries stale ... drifting the wrong way"** and accused
    `LAUNCH_READINESS.md` of being stale for reporting 100%. `9f24a0b` re-reviewed those 12 pairs the
@@ -9762,7 +9762,7 @@ At the root deploy (8802, a fresh origin with empty `localStorage`) the first-la
 renders as it should — §10.1 intact.
 
 **`npm run dev` was tested, not assumed, because breaking it would be the expensive mistake.** A
-relative `base` is the kind of change that silently only matters in production. Vite normalises `"./"`
+relative `base` is the kind of change that silently only matters in production. Vite normalizes `"./"`
 to `"/"` in dev: `GET /` returns the HTML with `/@vite/client` and `/src/main.jsx`, the entry module
 returns **200**, and the browser renders it (`rootHTML: 19737`, disclaimer modal, `#/lesson/1` restored
 from the hash). The owner's daily workflow is unaffected.
@@ -9803,7 +9803,7 @@ names \`vercel.json\`, which does not exist`, so the claim cannot be satisfied b
 check in `npm test` would notice it being reverted; the only instrument that would catch it is a
 deploy, which is the owner action this item exists to unblock. Building a check that asserts a config
 value is exactly the "script that checks whether a deploy path exists" item 72 forbids, so the
-defence is the twenty lines of comment above the setting instead.
+defense is the twenty lines of comment above the setting instead.
 
 **Owner's tree provably untouched.** `git diff --shortstat` over their thirteen paths reports the
 identical **13 files, 603 insertions(+), 141 deletions(-)** as on arrival. My own diff, from
@@ -9831,7 +9831,7 @@ item's owner half succeeds, i.e. the best possible reason for it to rot. Conside
 **deliberately did not**: a check that asserts "no deploy exists" is the instrument item 72 forbids,
 and it would have to be deleted by the same commit that makes it fire. It is dated in the repo's
 convention, it sits in bold at the top of the section a deployer is reading, and the sentence
-immediately after it tells them what to do — that is the whole defence, and it is written here so the
+immediately after it tells them what to do — that is the whole defense, and it is written here so the
 next run does not rediscover it as a finding.
 
 **Next run.** **The owner half of item 72 is now the entire critical path and it is four clicks:**
@@ -9843,7 +9843,7 @@ gone clean, **item 73's §10 half is free** (three blindspots written verbatim i
 `reviews/2026-08-17-monthly-audit.md` §6, ready to move) and `Dividend` (items 64/67) unblocks — its
 saved work is at session `48dad761`'s scratchpad and the durability caveat is now **six entries old**;
 if that scratchpad is gone, redo it from item 64's entry. If the plan is still dirty, **item 73's D3
-half is not blocked** and is a judgement call a run other than the audit's author should make. **Item
+half is not blocked** and is a judgment call a run other than the audit's author should make. **Item
 74 (a deployed copy's market data freezes after 4 days) is filed but must not be picked before a
 deploy exists** — it is maintenance for a site nobody has yet.
 
@@ -9851,7 +9851,7 @@ deploy exists** — it is maintenance for a site nobody has yet.
 
 **What I picked and why.** The previous entry's queue said to re-check the owner's dirty files first,
 then: if `LAUNCH_PLAN.md` is still dirty, item 73's §10 half stays blocked but **"D3 is not blocked"**
-and is a judgement a run other than the audit's author should make. `git status` on arrival: the owner's
+and is a judgment a run other than the audit's author should make. `git status` on arrival: the owner's
 **13 files, 603 insertions(+), 141 deletions(-)** — byte-identical to what the item-72 run recorded, so
 the UIUX redesign is still mid-flight and `LAUNCH_PLAN.md` is still theirs. That makes item 73's D3 half
 the queued pick, and I am not the audit's author. Taken.
@@ -9967,7 +9967,7 @@ down the backlog past those, **item 65 is the first unblocked item** — its fil
 **I re-measured the premise with a control before editing anything, per the D3 change the last run
 argued for — and it changed the verdict.** The instrument is a standalone script validated against four
 **published** WCAG values, not against this repo: black/white **21.00**, white/white **1.00**, `#767676`
-on white **4.54** (the canonical AA-minimum grey), `#949494` on white **3.03** (the canonical 3:1 grey).
+on white **4.54** (the canonical AA-minimum gray), `#949494` on white **3.03** (the canonical 3:1 gray).
 All four reproduce to 0.01. Only then did I measure the palette. **Item 65 says amber "clears the bar on
 the surfaces that matter today (card 3.44, canvas 3.24)". The real figures are card 3.19 and canvas
 3.08.** The item's other numbers are all correct — the three exempted ratios (2.92 / 2.85 / 2.91) and the
@@ -9975,7 +9975,7 @@ the surfaces that matter today (card 3.44, canvas 3.24)". The real figures are c
 
 **The two numbers are not just wrong, they are impossible together, which is how I knew it was not a
 palette drift.** `--surface-card` is `#ffffff` and `--surface-canvas` is `#fbfbfd`, so *any* single
-foreground contrasts with them in the fixed ratio 1.0287:1 — a colour reading 3.44 on card must read
+foreground contrasts with them in the fixed ratio 1.0287:1 — a color reading 3.44 on card must read
 3.345 on canvas, never 3.24. No amber produces that pair. And `git diff 3c84155 HEAD -- src/index.css`
 is **empty**: the palette has not moved since the commit that filed the item. They were wrong when
 written.
@@ -9990,7 +9990,7 @@ share. So amber moves: **`#d97706` → `#c56c05`**, the same hue (32°) and satu
 (3.40 worst, 3.80 on card), not as "darken until it passes". All 35 light pairs now clear **3.36:1**.
 
 **What went away with it.** All three `GRAPH_EXEMPT` entries (§28b fails on a stale exemption, by
-design), and **the charts-on-card premise check**. That deletion is the one judgement call worth
+design), and **the charts-on-card premise check**. That deletion is the one judgment call worth
 recording: its only stated job was making the three exemptions safe, so with zero exemptions it guards
 nothing — while still being able to fail a build for moving a chart onto `surface.sunken`, which is now a
 pure layout choice. Breaking the owner's in-flight redesign to protect a premise nothing depends on is
@@ -10017,7 +10017,7 @@ byte-identical before and after (`4bf9e9e9…` for `src/index.css`, `e6359aaa…
 the light palette. That is a trap worth naming for the next run that verifies a light-palette change. In
 light mode: lesson 1's budget bar renders its amber segment at `rgb(197, 108, 5)`, and lesson 36's flat
 yield curve draws its 2.5px stroke at `rgb(197, 108, 5)` on `rgb(255, 255, 255)` — the 3.80:1 pair, read
-out of the live DOM. Both screenshotted; the colour still reads as amber against the blue and green
+out of the live DOM. Both screenshotted; the color still reads as amber against the blue and green
 beside it, which was the item's real worry (it called darkening "a visual-design change", and it is).
 
 **Owner's tree provably untouched.** `git diff --shortstat` over their thirteen paths reports the
@@ -10072,7 +10072,7 @@ gate ("take it only when one of these numbers has actually been wrong once") **s
 item running.** The *count* reproduced exactly: two live literals (`src/components/ui.jsx:75`,
 `src/content/lessons.js:94`) plus two historical mentions in comments (`src/index.css:57`,
 `scripts/check-data.mjs:2875`) that are correct as written; the control `#c56c05` turned up at
-`src/index.css:63` where it should be. **What did not reproduce is the item's characterisation.** It
+`src/index.css:63` where it should be. **What did not reproduce is the item's characterization.** It
 calls both literals "a copy of a value that has since changed". For `lessons.js` that is false twice
 over: lesson 32's `#d97706` is one of **36 distinct accent values across all 40 lessons**, a Tailwind
 palette spread in which amber-600 is simply one entry — and **the `color` field is read by nothing at
@@ -10085,14 +10085,14 @@ app served on `127.0.0.1:8779`, viewport forced to `mobile` **and `colorScheme: 
 ran in dark mode and its control silently failed to fire, which is exactly the trap the previous run
 wrote down, and it is why the negative result was not believed the first time. With light forced and
 **both track headings rendered** (so lesson 32's own track is on screen), a walk of all 516 elements
-across nine colour properties found **0 of the 36 accents painting anything**, while a probe element
+across nine color properties found **0 of the 36 accents painting anything**, while a probe element
 injected with lesson 32's own `#d97706` **was** found — the scan works. The single accent hex that does
 render, `#2563eb` at 85 elements, resolves to `--graph-blue`/`--ink-accent`: a coincidental Tailwind
 overlap, not this field.
 
 **What was actually changed, and what deliberately was not.** The defect worth fixing is not the hex —
 it is that `lessons.js`'s header listed `color` among the fields "Learn/App need to render the path",
-a live false claim in the file that defines the catalogue. That sentence now drops `color` and a new
+a live false claim in the file that defines the catalog. That sentence now drops `color` and a new
 paragraph records what was measured, that the values are **kept** (40 coherent accents are plausibly
 what the owner's in-flight redesign wants, and deleting a dead field to tidy it is F11's bad trade one
 file over), and the standing instruction **not** to "fix" a value here by pointing it at a graph token —
@@ -10124,7 +10124,7 @@ is `src/content/lessons.js` (+21/−1) and `AGENT_LOG.md`. `UIUX/` remains untra
 `ls`. As before, `npm run build` builds the working tree, so the `dist/` verified against **includes the
 owner's in-flight redesign** — the right control for "does this field render in the app as it is today".
 
-**Adversarial self-check (step 5).** **Blindspot register:** the diff adds a code comment about colour
+**Adversarial self-check (step 5).** **Blindspot register:** the diff adds a code comment about color
 tokens and contrast; grepped it for Dalio/person branding, advice verbs
 (`buy|sell|invest in|you should|we recommend|allocate`), child-facing framing (`kid|child|children`) and
 live-looking dates or market figures — **0 hits on all four**. The one date it adds (`2026-08-17`) is a
@@ -10315,7 +10315,7 @@ Two corroborating measurements. Adding the localised short name `entry[locale].s
 **changes nothing** (5 control either way) — the blindness is in extraction, not subtraction, so the
 obvious fix is inert. And in ko/zh the reported `NBER` candidate is a **false positive**: the prose glosses
 it in place (`NBER(전미경제연구소)`, `NBER（美国国家经济研究局）`), but item 68's gloss rule needs Latin
-initials to recognise an expansion.
+initials to recognize an expansion.
 
 **What shipped.** `npm run jargon -- glossary [en|es|ko|zh|ja]`, locale defaulting to `en` — with a
 **script-aware control** that makes the instrument declare its own limits instead of handing over a
@@ -10355,7 +10355,7 @@ occurrences of Dalio/Principles or advice-shaped phrasing. §2.3 does not bind a
 check scans the five `src/content/` data modules, and passes). §10.3 untouched. **DECISIONS.md conflict:**
 none, and the relevant entry *supports* this — the in-lesson-glossary-links decision already records that
 matching per-language "would multiply the problem: five locales, five surface-form inflections"
-(`DECISIONS.md:311`). This run turns that closed judgement into a measured one. No storage, routing, build
+(`DECISIONS.md:311`). This run turns that closed judgment into a measured one. No storage, routing, build
 or content-module-shape change. **Already-done item:** no — item 66 added the glossary corpus and item 68
 added the gloss rule; this is item 69's explicitly-open residual, and it does not undo either. **My own
 verification claims:** every figure above is pasted from tool output, and the two that a reviewer would
@@ -10396,7 +10396,7 @@ Check that src/content/{lessons,lessonContent,quizData,glossary}.js still export
 
 Two things in that are false, and both would have sent the next run the wrong way. **The measurement is
 not wrong** — the tree genuinely has three tracks now (`essentials (15)`, `money (13)`, `economy (12)`,
-totalling 40), because the owner's redesign added the `essentials` track their
+totaling 40), because the owner's redesign added the `essentials` track their
 in-flight restructure calls for. And **the exports are fine**; the epilogue names the one
 cause that is not operating.
 
@@ -10410,7 +10410,7 @@ two call for opposite responses.
 copy of the script, with the repo file untouched — and it does **not** produce a green run. It produces:
 
 ```
-FAIL LAUNCH_READINESS.md §4.3 catalogue row disagrees with the live content.
+FAIL LAUNCH_READINESS.md §4.3 catalog row disagrees with the live content.
   should be: **40 lessons / 136,051 English chars / 144 min** — split across **money (13)** + **economy (12)** tracks
 ```
 
@@ -10435,7 +10435,7 @@ relaxing it insufficient."
   a shape floor now get the sentence that is true for each.
 
 **Verified.**
-- **Behaviour-identical on a two-track tree**, which is the regression that mattered: on the `HEAD` copy
+- **Behavior-identical on a two-track tree**, which is the regression that mattered: on the `HEAD` copy
   the new script exits **0** with the same **11 figures**, and its no-arg print output is **`diff`-clean
   against the old script's** — not "looks the same," byte-identical.
 - **On the working tree it fails with the intended message**, naming `economy (12), essentials (15),
@@ -10732,7 +10732,7 @@ the `chart` icon still visible (confirmed by inspecting the search input's compu
 `color` in dark mode, not just eyeballing a screenshot). No aria-live gap was pursued as a finding: the
 Sectors 1M/3M/6M window switch re-sorts the list without an `aria-live` announcement, which is a legitimate
 question worth naming (WCAG 4.1.3 territory) but not a clear violation — the change follows a direct,
-clearly-labelled user action, and a screen-reader user continuing to navigate the list encounters the
+clearly-labeled user action, and a screen-reader user continuing to navigate the list encounters the
 updated values normally, the same pattern most financial-data UIs use. Flagged below rather than built,
 since it's a judgment call this run isn't in a position to make unilaterally, and the `Segmented` control
 it would most naturally live in (`src/components/ui.jsx`) is owner-dirty regardless.
@@ -11188,7 +11188,7 @@ output was visible.
 
 **Controls, before trusting the replacement.** Positive: the instrument's digest for a real untracked
 file matches an independent `shasum -a 256` byte-for-byte. Sensitivity: appending one newline to a copy
-moves the digest. Behavioural, in a throwaway scratch repo: a clean tree returns the empty-string sha256
+moves the digest. Behavioral, in a throwaway scratch repo: a clean tree returns the empty-string sha256
 with `tree is CLEAN`; a file whose name git quotes (`한글 name.txt`) is read correctly; the same file
 `chmod 000` makes the tool **refuse to print and exit 2** rather than hash around it. `--expect` returns
 `UNMOVED`/exit 0 on the right hash and `MOVED`/exit 1 on a wrong one.
@@ -11255,13 +11255,13 @@ together, all five unblocking on one `npm test` the moment it is owner-clean.
 `npm test` on the owner's working tree fails **only** on `refresh-readiness.mjs --check`; the other six
 checks — `check-data`, `check-blindspot`, `check-claims`, `check-backlog`, `check-payload`,
 `check-measurements` — all report `PASS: 0 failure(s)`. So the owner's in-flight three-track redesign is
-not breaking anything except the two-track catalogue sentences item 77 already diagnoses, and the one
+not breaking anything except the two-track catalog sentences item 77 already diagnoses, and the one
 red is the one already written up. That is a fact about *their* work, not a twelfth audit angle on the
 same static surface, and it is the useful thing to tell them.
 
 **The pick, and why it died at step 3.5 rather than at review.** The task file names *tests* as a good
 candidate and `package.json`'s `test` script is seven `check-*.mjs` **consistency** checks with no test
-runner in sight, so "the app's behavioural logic is untested" looked like a real, unblocked gap in a
+runner in sight, so "the app's behavioural logic is untested" looked like a real, unblocked gap in a  <!-- us-english:allow: verbatim quote -->
 clean directory (`src/lib/` and `src/utils/` are both fully clean). **The premise is false.**
 `scripts/check-data.mjs:24-33` imports and unit-tests **nine** logic modules — `review.js` (§8),
 `relativeStrength.js` (§9), `lessonIdMigration.js` (§10), `storage.js` (§12), `analytics.js` (§13),
@@ -11477,7 +11477,7 @@ in a list ordered by performance (`(cb ?? -Infinity) - (ca ?? -Infinity)`). This
 one level down — `DECISIONS.md:85` records the file-level version, where a missing `asOf` made the
 screen render as if it were current. Same class: *a value that does not exist presented as a reading.*
 
-**Control, because a colour readout that returns one value for everything proves nothing.** The other
+**Control, because a color readout that returns one value for everything proves nothing.** The other
 ten sectors in the same pass returned `rgb(84, 214, 160)` for gains and `rgb(255, 154, 154)` for
 losses — the instrument demonstrably discriminates, so the red on `—` is a real state, not a global
 readout artifact.
@@ -11518,7 +11518,7 @@ are all untouched; this changes rendering only, and `DECISIONS.md:85`'s item-44 
 family, not a contradiction. **Already-done item:** no — grepped `AGENT_LOG.md` for `Sectors.jsx`, 18+
 hits, none touching this ternary or the comparator; the 2026-08-18 sixth run's `role="tabpanel"` block
 and the dead-import trim (`cbb0bbd`) are both intact and untouched by this diff. **My own verification
-claims:** every colour above is pasted `getComputedStyle` output, "byte-identical" is a `diff` that
+claims:** every color above is pasted `getComputedStyle` output, "byte-identical" is a `diff` that
 exited 0, and the empty-state text is copied from `innerText`. **What the check caught:** my first
 draft of the comparator comment claimed the `NaN` path was part of the observed defect. It is not —
 the observed case is `null` — so the entry and the comment now separate the two.
@@ -11532,7 +11532,7 @@ become another instrument" applies. The live reproduction above is the repeatabl
 (3) *Un-suppressing the FRED block when only the sector data is stale.* The readings each carry their
 own date, so §2.3 is satisfied for them — but they sit under `t.economyNowTitle` ("the economy now"),
 and showing month-old prints under that heading when the job has stopped is precisely what §2.3
-forbids. **Current behaviour is correct; leave it.**
+forbids. **Current behavior is correct; leave it.**
 
 **Next run.** **Start with `npm run owner-tree -- --expect b4d61d3a32635bcf06081b1e7154449b4e2697f791bcc0891d3dc84faf8322a7`
 — note this is a NEW fingerprint and the owner has NOT moved.** See the postscript below for why it
@@ -11700,7 +11700,7 @@ readable without completing anything. Cause: `Previous` was gated on `index > 0`
 through the flat, track-ordered list, so from the first lesson of a track it landed on the previous
 track's last lesson — and every track's first lesson is unlocked from install.
 
-**Why this was unambiguous rather than a judgement call, which is the part worth carrying forward.**
+**Why this was unambiguous rather than a judgment call, which is the part worth carrying forward.**
 The identical lessons are gated everywhere else, and I checked all three surfaces rather than assuming:
 the Learn path renders **35 of 40** rows with native `disabled`, and a deep link to a locked
 `#/lesson/40` **redirects to `#/learn`** — verified live, as a control that the lock mechanism exists
@@ -11751,7 +11751,7 @@ all five languages, number first so it survives truncation.
   The header caption's `flexShrink: 0` had to go for this; left alone it would have pushed the row past
   a 375px viewport.
 - **A regression I introduced and then caught — from the screenshot, not the numbers.** My longer label
-  squeezed the neighbouring `1 / 1` counter into wrapping onto two lines (measured height 44px against
+  squeezed the neighboring `1 / 1` counter into wrapping onto two lines (measured height 44px against
   a 21.84px line-height), doubling the row. The JSON I had been reading said "no page overflow" and
   looked fine. Fixed by giving the counter `flexShrink: 0` + `nowrap` so the caption is the piece that
   gives way; re-measured at 22px — one line. **Worth noting the instrument lesson: `pageOverflow:
@@ -11823,7 +11823,7 @@ same pattern; its *direction* is not in doubt, only the size of the win.
 **Item 83.** The resume comment said `lessons` arrives "money-track-first" and called economy
 "optional" — both backwards since 2026-08-18. Replacement written from `DECISIONS.md:610-624` rather
 than from memory, as the item instructed, and it points at that document as the record. **The
-behaviour it claims was re-measured, because prose drifting from code is this item's entire failure
+behavior it claims was re-measured, because prose drifting from code is this item's entire failure
 mode:** fresh install → "START HERE | Transactions: The Building Block | How the Economy Works"; with
 all twelve economy lessons done → "NEXT UP | Does It Put Money In Your Pocket, or Take It Out? |
 Thinking About Money".
@@ -11867,7 +11867,7 @@ and lesson 6 implied it is — in the lesson whose entire subject is tax treatme
 
 **All four translations carried the same error in compressed form** (`zh` 每年都要缴税的普通券商账户,
 `ja` 毎年課税される通常の証券口座, `es` que se grava cada año, `ko` 일반 증권 계좌와 달리), and each
-language's lesson 13 already said "realised" correctly — so **every language contradicted itself**,
+language's lesson 13 already said "realised" correctly — so **every language contradicted itself**,  <!-- us-english:allow: verbatim quote -->
 not just English. Fixed in all five so both halves are named: dividends/interest taxed yearly, gain
 taxed on sale. The teaching point is unharmed; annual drag on distributions is real and is still what
 the 401(k) comparison turns on. Verified rendered live in `en` ("LESSON 6 OF 15") and `zh` ("课程 6 / 15").
@@ -12112,7 +12112,7 @@ keypress at a focused element left `document.activeElement` unchanged — the sa
 Environment note records for that action. Unlike a custom element's `onKeyDown`, tab movement is a
 **browser default action on a trusted event**, so no `dispatchEvent` can stand in for it either (the
 note makes the same point about Enter on a native button). So the app-side properties that determine
-keyboard behaviour are all verified; the keystroke itself is not reachable with these tools, and that
+keyboard behavior are all verified; the keystroke itself is not reachable with these tools, and that
 is a tooling limit, not an app finding.
 
 ### Adversarial self-check (step 5)
@@ -12120,7 +12120,7 @@ is a tooling limit, not an app finding.
 **Blindspot register:** no regression — two numeric corrections and one negotiability clause; no
 advice-adjacent language (the commission clause describes market structure, it does not tell anyone
 what to do), and **no date added**, deliberately: "since the 2024 rule changes" was considered and
-rejected in favour of "negotiable rather than fixed", which cannot age. `check-blindspot` passes,
+rejected in favor of "negotiable rather than fixed", which cannot age. `check-blindspot` passes,
 including the §2.3 scan that now covers these very files. **DECISIONS.md conflict:** none.
 **Already-done item:** no — these are the two items the read-through recorded as "minor, not filed",
 now done. **My own verification claims:** the pause screens, focus targets and resume positions are
@@ -12405,7 +12405,7 @@ with *every* fill at **AA 4.5:1**, and white on `#c56c05` is **3.80**. The item 
 it wrote that adding a fill "perturbs §28's text-on-fill sweep" — but did not carry the number through,
 so the thing it left "decided, just apply it" was not applicable.
 
-**What the palette says instead, and it is not a judgement call.** Every existing `--fill-X` is
+**What the palette says instead, and it is not a judgment call.** Every existing `--fill-X` is
 byte-identical to its `--ink-X`:
 
 | | accent | accent-deep | ok | bad | ink |
@@ -12452,7 +12452,7 @@ note's asserted figures still match. `npm run build` **exit 0**.
 Live: `dist/` served on `:8899`, `preview_start` with a plain url, driven through `javascript_tool` to
 Reference → Market Dashboard, which renders `<Note tone="warn">`. **The browser was in system dark
 (`prefers-color-scheme: dark` matched, `data-theme` null)** — the exact condition the Environment note
-records as having silently voided an earlier colour scan, so both palettes were read explicitly:
+records as having silently voided an earlier color scan, so both palettes were read explicitly:
 
 - **dark**: warn rule `rgb(240, 185, 92)` = `#f0b95c` on wash `rgb(42, 32, 16)` = `#2a2010`.
 - **light** (`data-theme="light"`): warn rule `rgb(154, 74, 8)` = `#9a4a08` on `rgb(255, 251, 235)`.
@@ -12469,9 +12469,9 @@ field is read by nothing and recorded why deleting it would be a bad trade.
 
 ### Adversarial self-check (step 5)
 
-**Blindspot register:** no regression — a colour token and one style reference; no content, no
+**Blindspot register:** no regression — a color token and one style reference; no content, no
 advice-adjacent language, no Dalio, no kids framing, no date or market figure. `check-blindspot` passes.
-**DECISIONS.md conflict:** none — this restores the stated architecture (colour lives in `index.css` as
+**DECISIONS.md conflict:** none — this restores the stated architecture (color lives in `index.css` as
 custom properties) rather than contradicting it. **Already-done item:** no — and specifically **not** a
 partial undo of item 65: `--graph-amber` still reads `#c56c05` at `src/index.css:64`, checked after the
 edit. **My own verification claims:** the contrast table is computed output with the published control
@@ -12551,8 +12551,8 @@ wanted: **`dividends` CANDIDATES → CONTROL, candidates 34 → 33, control 13 �
   the reason the item said otherwise.
 - **Two stale block headers, corrected because the entry lands between them.** Both were falsified by
   the essentials split, not by this change, and both were *measured* rather than assumed: the block
-  labelled **"Money track"** now has **9 of its 13 entries chipped only by essentials lessons, 2 only by
-  money, 2 unchipped** — relabelled *"Personal-finance vocabulary"*. The block labelled **"Both tracks"**
+  labeled **"Money track"** now has **9 of its 13 entries chipped only by essentials lessons, 2 only by
+  money, 2 unchipped** — relabelled *"Personal-finance vocabulary"*. The block labeled **"Both tracks"**
   said Stock and Bond are "defined in money lesson 5"; lesson 5 is essentials now, and both terms are
   chipped by **all three** tracks — relabelled *"Every track"*. Leaving a knowingly-false comment beside
   a freshly-corrected one was not defensible.
@@ -12663,7 +12663,7 @@ importing all three modules). **Fixing those would have made them wrong.**
 
 ### What was stale, and the one that mattered
 
-The sharpest find is not a comment about content but a comment about **behaviour**:
+The sharpest find is not a comment about content but a comment about **behavior**:
 
 - **`src/App.jsx`** said a first-time visitor "opens straight into the first lesson of the money track,
   **which index 0 now is**". Index 0 has been `economy` since the 2026-08-18 reordering. Verified
@@ -12840,7 +12840,7 @@ Markdown file here.
   2. `track-ok:` on a **correct** reference → FAIL, "the marker has outlived its reason" — and the
      reason printed as `("bogus")`, proving the `-->` strip;
   3. a marker on the **line above** a stale Markdown claim → still FAIL, proving same-line-only;
-  4. every reference in the file neutralised → the **floor** fired at 0.
+  4. every reference in the file neutralized → the **floor** fired at 0.
   The restored file hashed to `1f52dbd4…5338` after each, and the suite went back to PASS.
 - `§31` now reports **14 references across `src/` + `scripts/` + `DECISIONS.md` (5 of them in
   `DECISIONS.md`), 8 exempted as historical**.
@@ -12859,7 +12859,7 @@ Markdown file here.
   §31 then stood: its remedy was "correct the track name," which for a dated record falsifies it.
   The conflict is removed rather than ignored — §31's `DECISIONS.md` branch **prescribes §29's repair
   and forbids the rewrite**, and the three repairs done this run are that repair, performed. §29's
-  design note is honoured, not overridden.
+  design note is honored, not overridden.
 - **Already-done backlog item** — no. Item 88 scoped §31 to `src/` + `scripts/` and explicitly left
   this corpus out; item 89 is that boundary, filed by the run that drew it. No overlap with §29:
   ranges-in-one-section versus single-id attributions file-wide.
@@ -12887,7 +12887,7 @@ analytics provider account, and **item 72's owner half — a deployed URL — is
 ## 2026-08-21 — two sections stop sharing a name, and the tree agreed with neither of them (item 62's F6, item 62 closed)
 
 **Picked:** the last open finding of backlog item 62 — `LAUNCH_PLAN.md` §3.1.1 and §3.4 both titled
-"Visual system", saying opposite things about per-lesson colour. Chosen over item 35's second glossary
+"Visual system", saying opposite things about per-lesson color. Chosen over item 35's second glossary
 batch and the 7×4 stale translation lessons because the owner has an in-flight redesign (52 untracked
 files, `UIUX/`) and this is the document that redesign will be read against; a design directive that
 gives two contradictory answers is worth more closed than a glossary term is worth added.
@@ -12895,8 +12895,8 @@ gives two contradictory answers is worth more closed than a glossary term is wor
 ### Step 3.5 — re-measuring the premise, with controls
 
 **The item's textual claim held exactly.** Both headings exist, at `:283` and `:312`, both read
-"Visual system", and their bodies do conflict: §3.1.1 "**one accent colour** … Per-lesson colour
-survives only as a thin accent, never as body text or a fill" against §3.4 "One accent colour per
+"Visual system", and their bodies do conflict: §3.1.1 "**one accent color** … Per-lesson color
+survives only as a thin accent, never as body text or a fill" against §3.4 "One accent color per
 lesson/phase". That is the first premise in a while that survived contact unaltered.
 
 **Its disposition did not, in two ways, and both came from measuring the tree rather than the page.**
@@ -12907,19 +12907,19 @@ lesson/phase". That is the first premise in a while that survived contact unalte
    run log. F6 framed them as two emphases pulling against each other; one has dependents and the
    other has none.
 2. **Neither section describes the tree, and my own first instrument said so wrongly.** A regex for
-   per-lesson colour maps (`lessonColor`, `colorByLesson`, …) returned **no matches**, which would
+   per-lesson color maps (`lessonColor`, `colorByLesson`, …) returned **no matches**, which would
    have let me report "§3.4 describes something that does not exist". It does exist:
    `src/content/lessons.js` authors a bare **`color:` on all 40 lessons**, which my pattern was not
    shaped to catch. *Nothing reads it* — item 75's run established that in the file's own header and
    this run re-confirmed the header is current — so §3.4's directive describes dead data, and
    §3.1.1's "survives only as a thin accent" overstates a ceiling the app never approached: the
-   rendered app paints **zero** per-lesson colour.
+   rendered app paints **zero** per-lesson color.
 
 **Controls, because three of the four measurements above are negatives.**
 - `--ink-accent` had to be found in `src/index.css` before the "only one accent in `theme.js`" reading
   was believed — found at `:43`, `:99`, `:144`.
-- The per-lesson-colour scan had to fire on something that *does* have per-lesson colour: the v5
-  prototype, which §3.1.1's own history paragraph says had "a different accent colour per lesson".
+- The per-lesson-color scan had to fire on something that *does* have per-lesson color: the v5
+  prototype, which §3.1.1's own history paragraph says had "a different accent colour per lesson".  <!-- us-english:allow: verbatim quote -->
   It did — and re-running the same idea against `lessons.js` is what surfaced the `color` field my
   first pattern had missed. **This is the control catching the instrument, not the finding.**
 - The "no `DECISIONS.md` conflict" negative was controlled by grepping the same file for terms I knew
@@ -12931,7 +12931,7 @@ lesson/phase". That is the first premise in a while that survived contact unalte
 
 **`LAUNCH_PLAN.md` §3.4 — retitled "Theming and typography", not deleted.** Its three surviving unique
 facts are kept (one typeface; dark mode **shipped**, with the two file references a previous run's F5
-added; colour and type come from `theme.js`). The contradictory opener is gone, replaced by a pointer
+added; color and type come from `theme.js`). The contradictory opener is gone, replaced by a pointer
 making §3.1.1 the visual system. **The number 3.4 is kept deliberately** — deleting the section would
 renumber §3.5, which is referenced from `working_files/build_doc.js:125` (read-only reference material
 this agent must not edit) and throughout the run log. A dated italic note records what the section used
@@ -12939,7 +12939,7 @@ to be, so the change does not read as if §3.4 had always said this.
 
 **`LAUNCH_PLAN.md` §3.1.1 — the other half of the same contradiction.** Its history paragraph (what the
 prototype looked like) is untouched, being a record. Its directive now states what is true: per-lesson
-colour is not rendered at all, `lessons.js` still authors a `color` on all 40 lessons that nothing
+color is not rendered at all, `lessons.js` still authors a `color` on all 40 lessons that nothing
 reads, it is kept for a possible redesign, and painting it would owe it a contrast pass. That last
 clause exists so a redesign does not rediscover item 75's trap by hand.
 
@@ -12969,7 +12969,7 @@ clause exists so a redesign does not rediscover item 75's trap by hand.
   1. **The real historical defect reinstated** (`### 3.4 Theming and typography` → `### 3.4 Visual
      system`) → FAIL naming *lines 283, 319*. This is the injection that matters: the guard fires on
      the actual bug it was built for, not only on a synthetic one.
-  2. Every heading neutralised → the **floor** fired at 0.
+  2. Every heading neutralized → the **floor** fired at 0.
   3. A duplicate at a **different heading depth and section number** (`## 12. Accessibility and
      languages` vs `### 3.5 Accessibility and languages`) → FAIL, proving the number-stripping
      comparison is what does the work.
@@ -13067,17 +13067,17 @@ Treated as a house-style rule, and **measured before acting** rather than swept 
   first scan walked `lessonContent`, `quizData`, `glossary` and `locales.en` — **781 strings, 0
   hits** — and both its controls passed, because they validated the *matcher* against a planted
   string. That is a passing control on a corpus that was missing 40% of the text. Caught only because
-  a hit was already known independently (`moneyVisuals.js:283`, "centre line") and the scan did not
+  a hit was already known independently (`moneyVisuals.js:283`, "centre line") and the scan did not  <!-- us-english:allow: verbatim quote -->
   report it. **The rule this repeats: a control that proves the instrument works does not prove the
   corpus is complete — assert a known instance is IN the corpus.**
 - With all 12 content modules walked, **1,316 English strings** yield **2** learner-visible British
-  spellings, both now fixed: `moneyVisuals.lossDescription.en` "centre line" → "center line", and
-  `policyScenarios[0].options[0].outcome.en` "still travelling through" → "still traveling through".
+  spellings, both now fixed: `moneyVisuals.lossDescription.en` "centre line" → "center line", and  <!-- us-english:allow: verbatim quote -->
+  `policyScenarios[0].options[0].outcome.en` "still travelling through" → "still traveling through".  <!-- us-english:allow: verbatim quote -->
   Both are US-financial-concept surfaces (a chart's text alternative, and the Fed-chair simulator),
   so this is a real consistency fix, not pedantry. Neither changes meaning, so the four translations
   under each remain valid and the review ledger is unaffected.
 - **In `LAUNCH_PLAN.md` only the two sections this agent authored this session were converted** (4
-  occurrences, §3.1.1 and §3.4). **One `colour` was deliberately left**: `opening "One accent colour
+  occurrences, §3.1.1 and §3.4). **One `color` was deliberately left**: `opening "One accent color
   per lesson/phase"` is a verbatim quotation of the sentence the previous commit removed, and
   respelling inside quotation marks would misquote the record.
 - **NOT swept, and flagged to the owner instead of decided unilaterally: ~69 further occurrences** —
@@ -13097,7 +13097,7 @@ Treated as a house-style rule, and **measured before acting** rather than swept 
   the same byte length.
 - **Four injections, each restored from a scratchpad copy — never `git checkout --` — and the file
   verified byte-identical afterwards at `31d8cbb3…9232`:** §3.1.1 reverted to its real defect → FAIL
-  naming line 283 and both depths; §2.5 reverted → FAIL naming line 157; every heading neutralised →
+  naming line 283 and both depths; §2.5 reverted → FAIL naming line 157; every heading neutralized →
   floor fired at 0; and the summary-count re-run above.
 
 ### Adversarial self-check (step 5)
@@ -13105,7 +13105,7 @@ Treated as a house-style rule, and **measured before acting** rather than swept 
 - **Blindspot register** — `npm run check-blindspot` passes all 7. This run *does* touch two
   learner-visible content strings, so §2.3 (no live-looking dates in teaching copy) is the one that
   could plausibly fire: it passes across all 26 modules, and neither edit adds a date, figure, or
-  anything advice-adjacent — "centre"→"center" and "travelling"→"traveling" are orthographic. No
+  anything advice-adjacent — "centre"→"center" and "travelling"→"traveling" are orthographic. No  <!-- us-english:allow: verbatim quote -->
   Dalio, no kids-framing change.
 - **`DECISIONS.md` conflict** — none. Nothing here touches localStorage-only state, `.js`-not-JSON
   content, or Vite-not-Expo. The one adjacent rule is §29's dated-truth discipline, which this run
@@ -13147,18 +13147,18 @@ Item 91 said "~69 British spellings". A per-line re-count found **123**. The pre
 produced by a `grep -o | wc -l` over a narrow pattern set, and it was wrong in both directions:
 
 - **It over-counted** by including `analys[ei]s`, which matches **"analysis"** and **"analyses"** —
-  both correct US English. Only the *verb* `analyse` is British.
+  both correct US English. Only the *verb* `analyze` is British.
 - **It under-counted** by omitting the entire `-ise`/`-ised`/`-isation`/`-iser` family. `capitalised`,
-  `localised`, `tokeniser`, `tokenisation`, `stylised`, `hypothesised`, `generalisation`,
-  `normaliser`, `unrecognised`, `practising` were all invisible to it. **Three successive scans were
+  `localised`, `tokeniser`, `tokenisation`, `stylised`, `hypothesised`, `generalization`,
+  `normaliser`, `unrecognised`, `practicing` were all invisible to it. **Three successive scans were
   needed before a pass stopped finding new forms**, each one widening the net after the previous
   "clean" result — recorded here because "the sweep is done" was a claim this run nearly made twice
   too early.
 
 **The correction that matters most is to a claim this agent made in the previous entry.** That entry
 reported the learner-visible surface clean at **0** after fixing two strings. It was not: the net had
-`/\bcancelled\b/` but no `cancelling`, and **`policyScenarios[0].options[0].outcome.en` contained
-"firms are already cancelling projects"** — a string a learner reads in the Fed-chair simulator. So
+`/\bcancelled\b/` but no `canceling`, and **`policyScenarios[0].options[0].outcome.en` contained
+"firms are already cancelling projects"** — a string a learner reads in the Fed-chair simulator. So  <!-- us-english:allow: verbatim quote -->
 the previous run's headline was wrong, and the instrument that produced it was the reason. Fixed this
 run; the surface is now genuinely 0 against a net whose controls include that exact word.
 
@@ -13166,20 +13166,20 @@ run; the surface is now genuinely 0 against a net whose controls include that ex
 
 Three classes, all found by reading the enumeration rather than by running the replace:
 
-1. **Spanish content, nearly corrupted.** `cheque` is a British spelling of "check" *and* the ordinary
-   Spanish word for a paycheck. `lessonContent.essentials.es.js` uses "cheque de pago" three times.
+1. **Spanish content, nearly corrupted.** `check` is a British spelling of "check" *and* the ordinary
+   Spanish word for a paycheck. `lessonContent.essentials.es.js` uses "cheque de pago" three times.  <!-- us-english:allow: verbatim quote -->
    A blind sweep would have written "check de pago" into Spanish lesson bodies. **All non-English
    content and locale files are excluded by path**, and the exclusion is verified by `git diff
    --name-only` showing zero of them touched.
-2. **The `CANCELLED` analytics event name — an identifier, not prose.** `src/lib/analytics.js:29`
-   defines `CANCELLED: "cancelled"`; `check-data.mjs:798` asserts against it, and three documents
+2. **The `CANCELED` analytics event name — an identifier, not prose.** `src/lib/analytics.js:29`
+   defines `CANCELLED: "cancelled"`; `check-data.mjs:798` asserts against it, and three documents  <!-- us-english:allow: verbatim quote -->
    enumerate it as part of §9.2's minimum event set. **Two of those three enumerations are inside
    `DECISIONS.md` dated records, which this run is forbidden to edit** — so renaming the event would
    split one contract across the exact boundary the owner drew. Left British, on purpose, in all six
    places at once so the contract stays internally consistent. This is the one thing in the repo that
    is still spelled the British way in *code*, and it is flagged rather than buried.
 3. **Verbatim quotations of removed text.** `LAUNCH_PLAN.md:328` and `check-data.mjs:3600` both quote
-   the sentence the previous commit deleted from §3.4 — `"One accent colour per lesson/phase"`.
+   the sentence the previous commit deleted from §3.4 — `"One accent colour per lesson/phase"`.  <!-- us-english:allow: verbatim quote -->
    Respelling inside quotation marks misquotes the record. **The adjacent quotation on the same
    comment line WAS updated**, and the distinction is the point: `check-data.mjs:3599` quotes §3.1.1,
    a section that still exists and now reads "one accent color", so the quote was corrected to match
@@ -13194,12 +13194,12 @@ Three classes, all found by reading the enumeration rather than by running the r
 ### What shipped
 
 **110 lines in the scripted pass + 13 in three follow-up passes = 123 lines across 32 files.**
-Prose, comments, and documents move to US spelling: `colour`→`color`, `behaviour`→`behavior`,
-`centre`→`center`, `catalogue`→`catalog`, `labelled`→`labeled`, `modelling`→`modeling`,
-`cancelling`→`canceling`, `analyse`→`analyze`, `capitalised`→`capitalized`, `localised`→`localized`,
+Prose, comments, and documents move to US spelling: `color`→`color`, `behavior`→`behavior`,
+`center`→`center`, `catalog`→`catalog`, `labeled`→`labeled`, `modeling`→`modeling`,
+`canceling`→`canceling`, `analyze`→`analyze`, `capitalised`→`capitalized`, `localised`→`localized`,
 and the rest.
 
-**Three local variables renamed** (`cancelled` → `canceled` in `useMarketData.js`, `LessonReader.jsx`,
+**Three local variables renamed** (`canceled` → `canceled` in `useMarketData.js`, `LessonReader.jsx`,
 `Practice.jsx`). Safe because each is a function-scoped cleanup flag with no export and no external
 consumer — unlike the event name in (2), which is why the two are treated differently.
 
@@ -13209,15 +13209,15 @@ what a past run wrote on a date and must never be edited. Neither is `reviews/`.
 ### Verification
 
 - `npm test` — 6/6 PASS, 1 warning (the pre-existing translation-coverage one). **The suite covering
-  `refresh-readiness.mjs --check` passing is the load-bearing result here**: `catalogue`→`catalog`
+  `refresh-readiness.mjs --check` passing is the load-bearing result here**: `catalog`→`catalog`
   touched `LAUNCH_PLAN.md`, `LAUNCH_READINESS.md` and `CLAIMS.md`, all of which carry generated
   sentences, and a green `--check` proves no generated shape was broken. Confirmed beforehand by
-  reading the generator: its only three `catalogue` uses are inside `fail()` messages, never in a
+  reading the generator: its only three `catalog` uses are inside `fail()` messages, never in a
   doc-facing pattern or replacement.
 - `npm run build` — clean, `index-Cq9uJlRr.js`, 244.13 kB.
 - `npm run check-blindspot` — 7/7, including §2.3 across all 26 teaching-copy modules.
 - **Learner-visible surface re-scanned: 1,316 English strings, 0 hits, four controls all passing** —
-  the net catches `cancelling` (the word the previous run's net missed), catches `centre line`, stays
+  the net catches `canceling` (the word the previous run's net missed), catches `center line`, stays
   silent on the US forms now in the tree, and stays silent on `analysis`/`analyses`.
 - **A control caught a broken pattern in the verifier itself.** The first version of the final check
   used `/\bcolou?r(s|ed|ful|-coded)?\b(?<!\bcolor)/i`, whose lookbehind does not do what it looks like
@@ -13230,7 +13230,7 @@ what a past run wrote on a date and must never be edited. Neither is `reviews/`.
 ### Adversarial self-check (step 5)
 
 - **Blindspot register** — clean. §10.1 is the one to think about, since this run edits a
-  learner-visible string: "cancelling"→"canceling" inside the policy simulator changes orthography and
+  learner-visible string: "cancelling"→"canceling" inside the policy simulator changes orthography and  <!-- us-english:allow: verbatim quote -->
   nothing else — no advice, no figure, no date. `check-blindspot` passes all 7. No Dalio, no kids
   reframing.
 - **`DECISIONS.md` conflict** — this run's whole shape is deference to one: §29's dated-truth rule.
@@ -13271,8 +13271,8 @@ Item 92 named one instance and warned that a word-list "will miss phrasing". Two
 learner-visible English corpus:
 
 - **Pass 1 — 48 British diction patterns, finance-first** (`dearer`, `current account`, `turnover`,
-  `gearing`, `unit trust`, `redundancy`, `pension pot`, `National Insurance`, `HMRC`, `whilst`,
-  `amongst`, `fortnight`, `lorry`, `learnt`, `tyres`, `different to`, `towards`, …) over all **1,316**
+  `gearing`, `unit trust`, `redundancy`, `pension pot`, `National Insurance`, `HMRC`, `while`,
+  `among`, `fortnight`, `lorry`, `learned`, `tyres`, `different to`, `towards`, …) over all **1,316**
   strings: **11 hits**.
 - **Pass 2 — currency and idiom** (`£`, `pence`, `quid`, `in future`, `at university`, `high street`,
   `straight away`, `wage packet`, `nil`, `reckon`, …): **1 hit, and it is a false positive** — lesson
@@ -13341,7 +13341,7 @@ cannot fire on a Tuesday and get deleted on a Wednesday.
   not a normative document.
 - **Already-done backlog item** — no. Item 91 was spelling and explicitly stopped at this boundary;
   item 92 is the diction it deferred, and it was filed by that run for this purpose. The one thing
-  this run does NOT redo is item 91's `cancelling`→`canceling` fix, which sits in the same sentence —
+  this run does NOT redo is item 91's `canceling`→`canceling` fix, which sits in the same sentence —
   it is carried through untouched.
 - **Own verification claim** — reproducible. 1,316 / 11 / 1 from pass 1, 1,012 / 1 from pass 2, zero
   from the direct currency grep, all re-runnable. The classification table is judgment, stated per row
@@ -13356,7 +13356,7 @@ cannot fire on a Tuesday and get deleted on a Wednesday.
 
 `npm run owner-tree -- --expect c2331799fd3ee413aca864fd82d247a35ea31b01a70a6c4e37b00f6aad9105b2`
 (`UNMOVED` at the start of this run). **The US-English stream is now closed** — items 91 and 92 both
-done, and the only British spelling left in the repo is the `CANCELLED` analytics event identifier,
+done, and the only British spelling left in the repo is the `CANCELED` analytics event identifier,
 which item 91's entry explains and which needs an owner decision, not a run. **Open and unblocked:**
 **item 35's second glossary batch**, block lifted, re-measure with `npm run jargon -- money`; the
 **7 stale translation lessons per language** (`npm run review-status`, 28 re-reviews — scope to one
@@ -13364,9 +13364,9 @@ language per run); item 76 (blocked on a per-language tokenizer). **Item 18 rema
 critical path to ending Phase 0**, blocked on the owner creating an analytics provider account, and
 **item 72's owner half — a deployed URL — is blindspot 10.10**.
 
-## 2026-08-21 — the `CANCELLED` event renamed; the reason it had been left was half wrong
+## 2026-08-21 — the `CANCELED` event renamed; the reason it had been left was half wrong
 
-**Picked:** owner-directed — rename the last British spelling in the repo, the `CANCELLED` analytics
+**Picked:** owner-directed — rename the last British spelling in the repo, the `CANCELED` analytics
 event. The previous run had excluded it deliberately and written down why, so this run's first job was
 to test that reasoning rather than to route around it.
 
@@ -13390,7 +13390,7 @@ Item 91 gave two reasons for leaving the name British. **One holds, one does not
 - **No call site.** `grep EVENTS.CANCELED src/` is empty — against a control that finds
   `EVENTS.APP_OPENED` at `src/App.jsx:205`, so the grep works and the emptiness is real.
 - **Nothing reads `EVENTS` by key.** Only `Object.values()` is used, so the constant's name
-  (`CANCELLED` → `CANCELED`) is internal and cannot break a lookup.
+  (`CANCELED` → `CANCELED`) is internal and cannot break a lookup.
 - **No stored data carries the old name.** The event has never fired, so no `ecycles_analytics_log`
   entry contains it, and no provider is wired (item 18). This is a rename of dead code, not a
   contract break.
@@ -13409,18 +13409,18 @@ the reasoning together rather than re-deriving either.
 
 - `npm test` — 6/6 PASS, 1 warning (the pre-existing translation-coverage one).
 - **Injection, restored from a scratchpad copy and re-hashed** (`9d5157b3…8837` before and after):
-  reverting the *value* to `"cancelled"` while the checker expects `"canceled"` → **FAIL,
+  reverting the *value* to `"cancelled"` while the checker expects `"canceled"` → **FAIL,  <!-- us-english:allow: verbatim quote -->
   `analytics: EVENTS includes every §9.2 minimum event — got false`**. So §13 genuinely guards this
   name; the rename is covered, not merely consistent today.
 - `npm run build` — clean, and **the bundle hash is unchanged at `index-Dr_Ik2iG.js`**. That needed
   explaining rather than asserting, since source did change: **neither spelling appears anywhere in
-  `dist/`** (`cancelled: 0`, `canceled: 0`), because the bundler tree-shakes the unused `EVENTS`
+  `dist/`** (`canceled: 0`, `canceled: 0`), because the bundler tree-shakes the unused `EVENTS`
   members — against a control showing `app_opened`, which *is* referenced, present once. The identical
   hash is therefore evidence the event is dead code, which is the same fact that made the rename safe.
 - `npm run check-blindspot` — 7/7.
 - **Final in-scope British-spelling scan returns 5 lines, all intended**: two verbatim quotations of
   removed §3.4 text (`LAUNCH_PLAN.md:328`, `check-data.mjs:3600`), the two `DECISIONS.md` dated
-  records, and the new Update's own `not \`cancelled\`` — which names the old spelling on purpose,
+  records, and the new Update's own `not \`canceled\`` — which names the old spelling on purpose,
   because a rename note that cannot say what was renamed is useless.
 
 ### Adversarial self-check (step 5)
@@ -13513,7 +13513,7 @@ track label already exists and `aria-expanded` carries the state.
   - A third near-miss: the browser was in **dark** mode while I believed it light, exactly the trap
     the Environment note records. Caught by asserting `isLight` rather than trusting the emulation.
   - Verified after fixing the instruments: 3 track toggles with exactly one open, panels resolving
-    and hiding, 44px targets, four labelled progressbars, named regions intact as a control, and
+    and hiding, 44px targets, four labeled progressbars, named regions intact as a control, and
     clicking a second track closing the first.
 - **One suspicion measured and withdrawn:** `body` appeared to paint dark under a light theme. It was
   my own `setAttribute` racing React's theme application — re-measured at rest, `body` and the shell
@@ -13757,7 +13757,7 @@ Measured across all 40 lessons x 4 languages, over exactly the field set the led
   against a constant I chose.
 
 **Confirmed in the rendered app, not just in the data** (`dist/` served with `/usr/bin/python3 -m
-http.server`, catalogue unlocked via `localStorage`, language switched with the real `<select>`):
+http.server`, catalog unlocked via `localStorage`, language switched with the real `<select>`):
 lesson 40's Spanish §1 renders as **three bare rule sentences** — `REGLA 1: No dejes que la deuda
 crezca más rápido que los ingresos.` and two more — where English renders four explanatory paragraphs
 (the indebted family, the factory worker, the farmer's tractor, the closing point). **Whole-page
@@ -13821,7 +13821,7 @@ line belongs in the generator, and that is a separate change.
   item 93 flags the volume question as one the owner should see before anyone writes 90,000 characters
   of new translated copy.
 - **Already-done backlog item** — no. Nothing in "Completed and pruned" measures translation *volume*;
-  the closest neighbours are the review **ledger** (former item 20 / P-4), which tracks whether a
+  the closest neighbors are the review **ledger** (former item 20 / P-4), which tracks whether a
   reviewer saw the text, and item 45's per-language split, which moved files without reading them.
 - **Own verification claim** — reproducible. Every figure comes from a committed script an independent
   reviewer can re-run (`npm run translation-completeness`), the guard is proven by injection with
@@ -13865,7 +13865,7 @@ the ratio moving up." The three modified files are precisely that and nothing el
 - `src/content/lessonContent.economy.es.js` — lessons **29 and 30 only**, rewritten from summary to
   full translation.
 - `scripts/translation-completeness-baseline.json` — **only** the `29.es` and `30.es` ratios, plus a
-  wording repair in the `note` ("20 lessons became abridged" -> "most of the catalogue became
+  wording repair in the `note` ("20 lessons became abridged" -> "most of the catalog became
   abridged", which the previous run's own measurement had already made true).
 - `LAUNCH_READINESS.md` — one generated §10.4 figure, `es 99,265 (0.723x)` -> `es 103,531 (0.754x)`.
 
@@ -13997,7 +13997,7 @@ and it was kept and extended rather than rewritten.
   pair's ratio would have failed on its own line.
 - **`npm run translation-completeness` after the write**: `es` 31 = **1.15**, 32 = **1.15**, both
   unstarred, against the `es` reference of **1.14**. `es` abridged pairs **20 -> 19**.
-- **Live browser, per rule W-1** (`dist/` served with `/usr/bin/python3 -m http.server`, catalogue
+- **Live browser, per rule W-1** (`dist/` served with `/usr/bin/python3 -m http.server`, catalog
   unlocked via `localStorage`, language switched with the real `<select>`). Lesson 31 whole-page
   `innerText`: **en 3,082 chars, es 3,523** — the Spanish is now *longer* than the English, which is
   what a real `es` translation of this corpus weighs, and it was a ~700-char stub. Lesson 32 renders
@@ -14045,7 +14045,7 @@ this run — crossed from "fine" to "abridged" by **0.0019**.
 This is worth stating plainly rather than letting a next run rediscover it as a mystery regression:
 **nothing broke lesson 11.** Its recorded baseline ratio is unchanged, which is exactly why §33 stayed
 silent about it while failing loudly on 31 and 32 — §33 guards *recorded ratios*, and the abridged
-*classification* is derived at print time from a reference that moves. Both behaviours are right, and
+*classification* is derived at print time from a reference that moves. Both behaviors are right, and
 they are simply measuring different things. Written into item 93 with the next borderline lesson named
 (14, at **0.8253**) so the pattern is predicted rather than re-derived.
 
@@ -14068,7 +14068,7 @@ they are simply measuring different things. Written into item 93 with the next b
   above comes from a committed script an independent reviewer can re-run, and the two headline ratios
   are enforced by §33 on every `npm test` rather than pasted. **Two claims I had to weaken rather than
   soften:** §16 does *not* verify my cross-references (it matches 0 in every language, including
-  English) — so that check is hand-done and labelled as such; and I verified the Spanish is complete,
+  English) — so that check is hand-done and labeled as such; and I verified the Spanish is complete,
   faithful in its particulars, and non-advisory, but **no fluent reviewer assessed register or idiom**,
   which is precisely the "(Beta)" limit the owner accepted.
 - **The ledger was deliberately not touched**, for the third run running. `translation-review.mjs`
@@ -14132,7 +14132,7 @@ extended rather than rewritten**, which is why 33 started at 0.34 rather than 0.
 - **§33 run before re-recording the baseline failed on exactly two lines**, lesson 33 [es] and 34 [es],
   and no others. As with the last run, that containment is the stronger claim: any collateral change to
   another pair's ratio would have failed on its own line.
-- **Live browser** (`dist/` on `/usr/bin/python3 -m http.server`, catalogue unlocked via
+- **Live browser** (`dist/` on `/usr/bin/python3 -m http.server`, catalog unlocked via
   `localStorage`, language flipped with the real `<select>`, English control captured from the same
   screen each time): lesson 33 **es 5,189 chars vs en 4,590**; lesson 34 **es 5,826 vs en 5,126**.
   All three sections render in both, the four numbered tools render with their worked examples, and
@@ -14186,7 +14186,7 @@ Item 93 now carries the corrected version with lesson 14's remaining margin name
 - **Own verification claim** — reproducible, with the same two limits stated rather than implied: §16
   does **not** verify the cross-reference (hand-checked instead), and **no fluent reviewer assessed
   register or idiom** — the "(Beta)" caveat the owner accepted still stands, and nothing here upgrades
-  it. One thing I would flag to a reviewer as a judgement call rather than a certainty: 34 §2's
+  it. One thing I would flag to a reviewer as a judgment call rather than a certainty: 34 §2's
   `un desastre inflado` for English's "an inflated mess" is a serviceable rendering of a deliberately
   informal phrase, and a fluent editor might improve it.
 - **The ledger was deliberately not touched**, for the fourth run running — it fingerprints the
@@ -14251,7 +14251,7 @@ was already near-full and was extended rather than rewritten.
   Lesson 36 has none in either language. **Hand-checked against `lessons.js`** — §16 still matches 0
   references in every language and passes vacuously over quoted-title refs, as recorded in the two
   previous entries.
-- **Live browser** (`dist/` served with `/usr/bin/python3 -m http.server`, catalogue unlocked via
+- **Live browser** (`dist/` served with `/usr/bin/python3 -m http.server`, catalog unlocked via
   `localStorage`, language flipped with the real `<select>`, English control from the same screen):
   lesson 35 **es 6,502 chars vs en 5,562**; lesson 36 **es 6,379 vs en 5,422**. All four curve shapes
   render in Spanish, and the corrected §1 heading renders.
@@ -14299,7 +14299,7 @@ tripwire above which a future pair should be checked for added sentences before 
 - **Already-done backlog item** — no. Item 93's fourth tranche.
 - **Own verification claim** — reproducible, same two standing limits: §16 does **not** cover the
   cross-references (hand-checked), and **no fluent reviewer assessed register or idiom**. One
-  judgement call to flag: I rendered "It's the bond market's way of shrugging" as
+  judgment call to flag: I rendered "It's the bond market's way of shrugging" as
   `la forma que tiene el mercado de bonos de encogerse de hombros`, which is literal; a fluent editor
   might prefer something idiomatic.
 - **The ledger was deliberately not touched**, fifth run running — it fingerprints the *English* body.
@@ -14690,7 +14690,7 @@ third paragraph (without credit an economy grows only by getting more productive
 get cycles). §2 was the sharper loss: **English is a worked example — two people each borrow $15,000,
 one on a vacation and a television, one on a tractor — and the Korean had replaced it with two bare
 labels**, `나쁨: 큰 TV를 사기 위한 대출` and `좋음: 트랙터를 사기 위한 대출`. The closing paragraph
-that generalises it ("will the borrowed money generate enough extra income to pay itself back?") was
+that generalizes it ("will the borrowed money generate enough extra income to pay itself back?") was
 gone entirely. Lesson 32 §1 and §2 had lost the whole factory-town narrative — the new factory, the
 restaurants and hardware store, the server whose hours get cut — leaving arrow diagrams
 (`높은 금리 → 차입 감소 → 지출 감소`) where English has a causal story, plus the `(“Credit”)`
@@ -15124,7 +15124,7 @@ analytics-provider account, and **item 72's owner half — a deployed URL — is
 `OWNER-TREE c2331799fd3ee413aca864fd82d247a35ea31b01a70a6c4e37b00f6aad9105b2 (0 tracked modified,
 52 untracked)` — **UNMOVED** across all six `ko` runs. `HEAD` still `3d7d900`.
 
-### Step 3.5 — premise confirmed to the character, and one characterisation corrected
+### Step 3.5 — premise confirmed to the character, and one characterization corrected
 
 `ko` 39 = **0.1396**, 40 = **0.1357** at `HEAD`. **Control first**: 37 and 38 re-measured at
 **0.5378 / 0.5069**, matching the previous run's recorded figures. Characters-to-add
@@ -15226,9 +15226,9 @@ against 40,764 English = 0.379/char.**
 - **Blindspot register** — clean, and checked rather than inferred: §10.1 five patterns with five
   firing controls plus the hedge parity, §10.2 `/dalio/i` run directly on the new text, §2.3 a
   year-scan returning empty, §10.3 no surface. The VIX and `조언` sentences are the two that needed a
-  judgement call and both mirror English without adding a directive.
+  judgment call and both mirror English without adding a directive.
 - **`DECISIONS.md` conflict** — none. Content stays in `.js` modules, no state or build change, and
-  the machine-translation entry explicitly accepts AI translation under "(Beta)" labelling.
+  the machine-translation entry explicitly accepts AI translation under "(Beta)" labeling.
 - **Already-done backlog item** — no. Sixth and final `ko` tranche; the previous five are recorded
   and this one does not touch them (37/38 re-measured identical, which is also the control).
 - **Own verification claim** — reproducible; every figure above came from a command re-run this run,
@@ -15346,7 +15346,7 @@ and `es`'s 0.85. **`zh` did not inherit the `ko` rate**, exactly as the item war
   firing controls, §10.2 run directly on the new text, §2.3 a year-scan returning empty, §10.3 no
   surface. No asset or allocation language exists in either lesson to get wrong.
 - **`DECISIONS.md` conflict** — none from my change. Content stays in `.js` modules, no state or
-  build change, and the machine-translation entry accepts AI translation under "(Beta)" labelling.
+  build change, and the machine-translation entry accepts AI translation under "(Beta)" labeling.
   *(`DECISIONS.md` is modified in the working tree by someone else — see below — but not by me.)*
 - **Already-done backlog item** — no. First `zh` tranche; `es` and `ko` economy are closed and
   untouched, and their ratios re-measured identical this run.
@@ -15362,7 +15362,7 @@ and `es`'s 0.85. **`zh` did not inherit the `ko` rate**, exactly as the item war
 
 Partway through this run, `DECISIONS.md` and `LAUNCH_PLAN.md` became modified without my touching
 them. `HEAD` did not move. The changes are **US-English spelling normalizations** —
-`judgement`->`judgment`, `catalogue`->`catalog`, `theatre`->`theater`, `colour`->`color`, 2 lines
+`judgment`->`judgment`, `catalog`->`catalog`, `theater`->`theater`, `color`->`color`, 2 lines
 each. Per the hard rules I **did not stage, revert or otherwise touch either file**, and this run's
 commit contains only its own four. Two things for whoever owns that sweep:
 **(a)** one of the four edits rewrites a word **inside a dated verification note in `DECISIONS.md`**

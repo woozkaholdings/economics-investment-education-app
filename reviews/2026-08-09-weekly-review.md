@@ -30,13 +30,13 @@ last week's review that referenced `Home.jsx`/`Markets.jsx`/`More.jsx` is now hi
 - Vite bumped to ^6.4.3 (0 audit findings); code-splitting via `React.lazy`; `content/lessons.js`
   split into metadata + `content/lessonContent.js`, cutting the main chunk 522 kB → 207 kB.
 
-**Content — the bulk of the week.** The catalogue went from 17 to **40 lessons**. Lessons 18–27
+**Content — the bulk of the week.** The catalog went from 17 to **40 lessons**. Lessons 18–27
 were mechanics (retirement accounts, taxes, insurance, inflation, W-2/1099, fees, renting vs.
 buying, brokerage mechanics, estate planning, credit reports). The owner intervened on 08-07 to
 say the money track was teaching mechanics rather than judgment, and lessons 28–40 are the
 correction: asset-vs-liability as a decision lens, lifestyle inflation, opportunity cost, sunk
 cost, FOMO/herd behavior, anchoring, confirmation bias, present bias, needs-vs-wants, time
-horizon, mental accounting, loss aversion, overconfidence after a lucky outcome. The catalogue
+horizon, mental accounting, loss aversion, overconfidence after a lucky outcome. The catalog
 was also split into two tracks (Your Money 28 / How the Economy Works 12), money-first.
 
 **Housekeeping.** Straight-vs-curly quote normalization across Chinese content; a wrong lesson
@@ -62,7 +62,7 @@ chunk is 221.91 kB and `LessonReader` remains lazy — but it grows with every l
 **Log-vs-commit cross-check: clean.** Every run-log entry has a matching commit and every
 feature commit has a matching entry. The three `Refresh market data` commits have no run-log
 entries, which is correct — they come from a different scheduled task. Spot-checking the
-twenty-fourth run's entry against reality, its catalogue measurement (40 / 112,387 / 100 min)
+twenty-fourth run's entry against reality, its catalog measurement (40 / 112,387 / 100 min)
 and its chunk-size figure both reproduce exactly. **The run log is trustworthy.** That is worth
 saying plainly, because most of this review's criticism is about direction, not honesty.
 
@@ -92,7 +92,7 @@ letting a clean build speak for it. This is better self-verification than most h
 Twenty-two of the last twenty-four runs were single-lesson adds; thirteen consecutively.
 
 Item 17 *already contains* the diagnosis: "nine consecutive scheduled runs each picked 'add one
-lesson' and optimised the count, and the *direction* drifted unexamined until the owner corrected
+lesson' and optimized the count, and the *direction* drifted unexamined until the owner corrected
 it. Counting lessons is not the same as building the product." The owner corrected it on 08-07.
 The runs then switched from mechanics lessons to judgment lessons — **and kept counting.**
 

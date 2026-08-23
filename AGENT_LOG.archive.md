@@ -102,7 +102,7 @@ picking the next item.
   done, and for the translation-parity gap going unnoticed.
 - **Course corrections now in the backlog above** — the two P0s (finish §10.1 including the
   first-launch/settings disclaimer; make the Node bootstrap reproducible), the
-  language-beta labelling, dark mode demoted below the monolith split, the previously
+  language-beta labeling, dark mode demoted below the monolith split, the previously
   absent first-session flow, and the Expo-vs-Vite question marked HELD for the owner.
 - **A note on self-verification**: run 3's first build *failed* (a JS syntax error from
   straight quotes nested inside a double-quoted Chinese string) and the agent caught and
@@ -228,7 +228,7 @@ before picking the next item** — the backlog above was rewritten wholesale by 
   recorded, including three glossary entries (item 6); `README.md` now misdescribes the
   repo on a public GitHub remote (item 9); `npm install` reports unexamined audit
   advisories (item 11).
-- **Course corrections**: language **Beta** labelling moved to the top of P1 after a week
+- **Course corrections**: language **Beta** labeling moved to the top of P1 after a week
   of being outranked; the three remaining content extractions collapsed into **one** run
   (the one-per-run rule was right for 244- and 484-line blocks, not for ~95 lines); the
   data-shape checks **promoted to P1 and made a precondition** for the `App` split; the
@@ -241,7 +241,7 @@ before picking the next item** — the backlog above was rewritten wholesale by 
   the same files is a real hazard. Worth reconciling the stated cadence with the real one.
 - No files were reverted or deleted by this review, and nothing was pushed to any remote.
 
-### 2026-08-02 — Language picker "Beta" labelling (launch plan §3.5 / §10.4)
+### 2026-08-02 — Language picker "Beta" labeling (launch plan §3.5 / §10.4)
 
 Picked the top of the P1 list as ranked by the second weekly review: mark the four
 non-English language options "Beta" in the language picker, since non-English lesson
@@ -464,7 +464,7 @@ dev agent's in-flight `Markets` extraction was untouched.
 - Shuffled the **stored** positions, not at render time, as the backlog item specified —
   `explain` text refers to option *content* (e.g. the "which is NOT one of the 4 tools"
   question), so render-time shuffling would have been safe for position but pointless for
-  memorisation, and stored order is what a reviewer can actually inspect.
+  memorization, and stored order is what a reviewer can actually inspect.
 - Added a header comment to `src/content/quizData.js` recording the invariant and how to
   keep it when adding or editing questions — the failure mode here is habit (writing the
   correct answer first), so the counter-measure belongs next to the data.
@@ -872,7 +872,7 @@ pointed here (with the intervening README run landing between them).
 - **Per-lesson time estimate**: added `estimateMinutes(lesson)` to `src/content/lessons.js` —
   sums English-language word counts across all of a lesson's `sections[].body`, `takeaway`,
   and `thinkAbout`, divides by 200 wpm, rounds, floors at 1 minute. **Deliberately always
-  reads the `en` text, regardless of the active UI language** — the Beta-labelling run's
+  reads the `en` text, regardless of the active UI language** — the Beta-labeling run's
   measured translation-volume ratios (es 0.41x, ko 0.24x, ja 0.18x, zh 0.15x of English
   length) mean a per-language word count would make the same lesson claim a different time in
   different locales; English is used as a fixed yardstick instead. Rendered as `t.estMinTemplate`
@@ -1804,7 +1804,7 @@ copy.
 Not a scheduled dev-agent run — an interactive session driven directly by the project owner, who
 gave three instructions in sequence: stop building on `economic-cycles-v5.jsx`, fix the master
 launch plan so it stops pointing runs back at the prototypes, and ditch the prototypes' design and
-structure too. A fourth followed mid-work: the colour theme must follow the system setting and also
+structure too. A fourth followed mid-work: the color theme must follow the system setting and also
 be user-selectable.
 
 - **Root cause found.** `src/main.jsx` still imported `../economic-cycles-v5.jsx` as the live `App`.
@@ -1812,7 +1812,7 @@ be user-selectable.
   the reason: v1 §2.2/§7.1/§8/§11 all instruct "migrate the v5 file", and runs had been following it
   faithfully. The plan also contradicted itself and the project's own decisions — its §1 credited
   Ray Dalio by name while its §10.2 says to remove exactly that, and §2.2 specified JSON content
-  after `DECISIONS.md` had closed that question in favour of `.js` modules.
+  after `DECISIONS.md` had closed that question in favor of `.js` modules.
 - **`LAUNCH_PLAN.md` added** as the authoritative plan (v2), superseding the `.docx`. The `.docx` is
   **not** modified — it stays as the historical original; it is a binary the owner cannot diff, so
   overwriting it would have destroyed the record rather than corrected it. v2 carries a §0 table of
@@ -1832,13 +1832,13 @@ be user-selectable.
   **Learn** (the path), **Practice** (quiz), **Reference** (glossary · market signals · parent guide
   · settings) — with a lesson as a *pushed full-screen reader*, not a tab.
 - **Visual system redesigned** (plan §3.1.1, new). 16px base type instead of 10–13px, one accent
-  colour instead of a per-lesson rainbow, whitespace instead of stacked tinted boxes, line icons
+  color instead of a per-lesson rainbow, whitespace instead of stacked tinted boxes, line icons
   instead of emoji-as-controls. Emoji remain only where they are content (a lesson's own symbol).
-- **Light/dark/system theming** (closes P3 item 9). Colour moved out of JS into CSS custom
+- **Light/dark/system theming** (closes P3 item 9). Color moved out of JS into CSS custom
   properties in `index.css`, because JS constants cannot respond to `prefers-color-scheme`. Resolution
   order is `:root` light → `@media (prefers-color-scheme: dark)` → explicit `[data-theme]` override,
   so "System" genuinely follows the OS and Light/Dark genuinely beat it. Persisted as
-  `ecycles_theme_mode`. Charts re-colour automatically because they read the same variables.
+  `ecycles_theme_mode`. Charts re-color automatically because they read the same variables.
 - **Two real bugs fixed in passing**, both found by the work rather than assumed: the old
   `#9ca3af` muted text measured **2.85:1** (failing AA) and is now `#5b6472`; and the Markets asset
   table and six rate principles were **English-only hardcoded JSX** — now translated into all five
@@ -1847,7 +1847,7 @@ be user-selectable.
 - **Adversarial self-check**: (1) *Blindspot register* — grepped for Dalio (zero hits); disclaimer
   renders on Learn, the reader, Practice, Market signals and Settings plus the first-run notice;
   kids material is parent-facing and now explicitly named "Parent guide"; no date or live-looking
-  figure was introduced (the balance-sheet bars are labelled by era, not year). (2) *DECISIONS.md* —
+  figure was introduced (the balance-sheet bars are labeled by era, not year). (2) *DECISIONS.md* —
   content stayed `.js`; state stayed localStorage-only; no Expo migration. (3) *Redoing done work* —
   this deliberately replaces earlier work, at the owner's explicit instruction, and the log says so
   rather than presenting it as new ground. (4) *Verification claims* — every number below is a
@@ -1907,7 +1907,7 @@ owner asked for all three.
   `advanceBtnAfterAnswer: ["Next"]`.
 - **Adversarial self-check**: (1) *Blindspot register* — no Dalio, no dates, no live-looking figures
   introduced (`LessonVisual` reuses the existing dateless charts, and the balance-sheet bars stay
-  labelled by era); the disclaimer still renders on Learn, the reader, Review and Reference; the new
+  labeled by era); the disclaimer still renders on Learn, the reader, Review and Reference; the new
   lesson-5 question is descriptive and historical, with no recommendation. (2) *DECISIONS.md* —
   review state is localStorage-only under `ecycles_review`, following the existing pattern; content
   stayed `.js`. (3) *Redoing done work* — the chart move reverses a regression from earlier today and
@@ -1920,7 +1920,7 @@ owner asked for all three.
   output: lesson 8 renders 4 in-lesson curve SVGs plus its check; answering wrong wrote
   `{"5":{"box":1,"due":"2026-08-05","seen":1,"wrong":1}}`; Review correctly showed "all caught up"
   while due-tomorrow, then "2 ready to review" after backdating, ordering the most-overdue item first
-  and labelling it "From lesson 6".
+  and labeling it "From lesson 6".
 - **Next run should pick**: two owner requests arrived at the end of this session and are **not**
   started — live market state / sector performance / relative strength (see the new DECISIONS.md
   entry; it unholds backlog items 13/14 but needs a real data source, and must not be faked), and
@@ -2017,7 +2017,7 @@ relative-strength formula will replace the default later**.
   FRED readings. Never raw OHLCV: caching a provider's series and serving it to users is
   redistribution, which several free tiers prohibit even where calling the API is fine.
 - **The RS formula is a swappable strategy** (`src/lib/relativeStrength.js`). The current
-  implementation is a plainly-labelled placeholder (simple excess return, `method:
+  implementation is a plainly-labeled placeholder (simple excess return, `method:
   "baseline-excess-return"`), the payload carries `relativeStrength.provisional: true`, and the UI
   prints "Relative strength currently uses a placeholder measure." Callers are forbidden from
   assuming the output's range, sign convention or cross-day comparability, so the proprietary formula
@@ -2036,7 +2036,7 @@ relative-strength formula will replace the default later**.
   action. (2) *DECISIONS.md* — a new entry was written *before* building, and the localStorage-only
   and `.js`-content decisions are untouched (this adds a build artefact, not user state).
   (3) *Redoing done work* — items 13/14 were HELD, not done; the hold is lifted by the owner and the
-  log says so. (4) *Verification claims* — every behaviour below was exercised in a browser against
+  log says so. (4) *Verification claims* — every behavior below was exercised in a browser against
   the built output, including the two failure paths, which is what a reviewer would re-run.
 - **Verified**: `npm test` → `PASS: 0 failure(s), 0 warning(s)`; `npm run build` → exit 0, 318.89 kB /
   120.07 kB gzip, with `dist/data/market.json` present and served (HTTP 200). Job runs clean:
@@ -2146,7 +2146,7 @@ would be a real secret-leak risk if ever committed), so per this file's own rule
   directly for the lessons to be expanded with real-life examples, made less textbook, easier to read.
   That request became this run's actual focus; the doc fixes below were finished first since they were
   already in flight and are low-risk:
-  - This file's App summary still said `relativeStrength.js` was "a plainly-labelled placeholder" and
+  - This file's App summary still said `relativeStrength.js` was "a plainly-labelled placeholder" and  <!-- us-english:allow: verbatim quote -->
     `lessons.js` had "12 lessons" — both stale since the four commits above. Corrected to reflect the real
     `WJ_Sector_Comparison` formula (`provisional: false`) and the real 17-lesson count, in two places
     (the `content/` bullet and the "Feature set" paragraph).
@@ -2178,7 +2178,7 @@ would be a real secret-leak risk if ever committed), so per this file's own rule
   (2) *DECISIONS.md conflict* — none: content stays in `.js` modules (untouched decision), no new
   state/storage format, and the DECISIONS.md edit above only corrects stale prose to match code that
   already shipped, it doesn't reverse a decision. (3) *Redoing done work* — this is not a repeat of
-  backlog item 17 (growing the catalogue, i.e. adding more lessons): item 17 is about breadth (12 → 17
+  backlog item 17 (growing the catalog, i.e. adding more lessons): item 17 is about breadth (12 → 17
   lessons via `c29bac3`), this run is about depth on the existing 17, a distinct axis the backlog didn't
   previously track. (4) *Verification claims* — every number below is a literal command output or a
   `javascript_tool`-read DOM property, not a summary from memory.
@@ -2197,7 +2197,7 @@ would be a real secret-leak risk if ever committed), so per this file's own rule
   standing reference file, per above) — `git status` after this run's edits still shows only those two
   plus this run's own changes, confirming nothing else was disturbed.
 - **Next run should pick**: new item 20 — translate the expanded real-life examples into es/ko/zh/ja, or
-  at minimum re-measure the Beta-labelling translation-volume ratios now that English grew ~1.7x while
+  at minimum re-measure the Beta-labeling translation-volume ratios now that English grew ~1.7x while
   translations stayed flat. After that, items 15/16/18 (launch-readiness scorecard, builder/critic loop,
   instrumentation) remain open and untouched by this run; monetization remains correctly gated behind
   §4.3's content/completion thresholds, which grew closer (17/~40 lessons, ~33/~120 minutes) but aren't
@@ -2211,7 +2211,7 @@ doesn't rest on a run's own word. Pure documentation — no code, content, or co
 
 - Added `LAUNCH_READINESS.md` at the repo root. Covers, each with the exact command whose output backs
   the status (not a narrative restated from `AGENT_LOG.md`): the blindspot register (10.1–10.7 plus the
-  §2.1 platform decision), the §4.3 Phase-0 monetization gate (lesson-catalogue size **and** installer
+  §2.1 platform decision), the §4.3 Phase-0 monetization gate (lesson-catalog size **and** installer
   lesson-1 completion — both must clear before Phase 1 billing work starts), §9.2 instrumentation, and
   the two process items (15 itself, 16 — the feedback-loop item, left open).
 - **Numbers verified directly, not carried forward**: imported `src/content/lessons.js` with the
@@ -2245,13 +2245,13 @@ doesn't rest on a run's own word. Pure documentation — no code, content, or co
   `economics-app-unexplained-files-not-fixtures` note) — both pre-existed this run untouched; `git
   status` before and after this run's own edits shows only those two plus `LAUNCH_READINESS.md`.
 - **Next run should pick**: item 20 (translate the expanded real-life examples into es/ko/zh/ja, or at
-  minimum re-measure the Beta-labelling ratios) is still the top content item. On the process side, item
+  minimum re-measure the Beta-labeling ratios) is still the top content item. On the process side, item
   16 (tighten the builder/critic feedback loop) is now the only open item in that category and a
   reasonable next pick once content work is caught up. **A human should also look at the
   `API_KEYS.template.txt` diff before it's committed by anyone** — if that real key value lands in git
   history via the template file, it's exposed permanently even after being removed in a later commit.
 
-### 2026-08-05 (evening) — Re-measure Beta-labelling translation ratios (backlog item 20)
+### 2026-08-05 (evening) — Re-measure Beta-labeling translation ratios (backlog item 20)
 
 Picked backlog item 20's "at minimum re-measure" fallback rather than the translation work itself: the
 previous run explicitly deferred translating the expanded English examples to avoid rushed, lower-quality
@@ -2266,7 +2266,7 @@ character-count re-measurement is a bounded, verifiable task that doesn't carry 
   0.15x/0.18x), which is the expected direction since only the `en` field grew ~1.7x on 2026-08-05
   morning and translations weren't touched.
 - Updated `LAUNCH_READINESS.md` row 10.4 with the new numbers and both old/new values side by side, and
-  added a copy-pasteable refresh command (mirroring the existing lesson-catalogue-size command's style)
+  added a copy-pasteable refresh command (mirroring the existing lesson-catalog-size command's style)
   so the next re-measurement doesn't need to reconstruct the script from scratch. Updated the stale
   "15-41%" range in `src/content/lessons.js`'s `estimateMinutes` comment to "12-37%" to match. Rewrote
   backlog item 20 above to reflect that the re-measurement is done and only the translation work itself
@@ -2306,7 +2306,7 @@ translator instead of deferring a third time.
 
 - **Added `src/lib/analytics.js`**: a single `track(event, props)` plus an `EVENTS` map covering every
   event `LAUNCH_PLAN.md` §9.2 names (app opened, lesson started/completed, quiz taken, paywall viewed,
-  trial started, subscribed, cancelled, ad watched). `track()` writes to a rolling `localStorage` log
+  trial started, subscribed, canceled, ad watched). `track()` writes to a rolling `localStorage` log
   (`ecycles_analytics_log`, capped at 200 entries via `KEYS.analyticsLog` in `storage.js`) rather than
   calling a real provider — there's no PostHog account or API key for this project, and a dev-agent run
   can't create one. This mirrors the swappable-sink shape `DECISIONS.md` already documents for the
@@ -2431,7 +2431,7 @@ manual adversarial self-check the dev-agent `SKILL.md` already mandates was itse
   likewise untouched (the latter was already clean at the start of this run, see above).
 - **Next run should pick**: item 20 (translation) now has an explicit recommendation rather than an open
   question — a future run should treat owner sign-off or a human translator as a precondition, not
-  attempt a fourth automated translation pass without one. Otherwise: item 17 (grow the lesson catalogue
+  attempt a fourth automated translation pass without one. Otherwise: item 17 (grow the lesson catalog
   toward the ~40-lesson/2-hour §4.3 gate — still the largest gap versus any Phase-0 threshold), or begin
   the real analytics-provider swap once a PostHog account/key exists (owner action).
 
@@ -2442,7 +2442,7 @@ reference-only prototype flagged by the last several runs and the
 `economics-app-unexplained-files-not-fixtures` memory note. No other uncommitted state; nothing to
 recover, nothing blocking normal work.
 
-Picked backlog item 17 (grow the lesson catalogue toward the §4.3 40-lesson/2-hour Phase-0 gate) —
+Picked backlog item 17 (grow the lesson catalog toward the §4.3 40-lesson/2-hour Phase-0 gate) —
 explicitly the "next run should pick" item from the last two entries, and per §4.3 verbatim the
 highest-value monetization work right now. Item 20 (translation) still correctly deferred — three prior
 runs' consistent "needs a human translator or owner sign-off" verdict stands; item 18's remaining half
@@ -2450,7 +2450,7 @@ runs' consistent "needs a human translator or owner sign-off" verdict stands; it
 
 - **Added lesson 18** to `src/content/lessons.js`: "Retirement Accounts: 401(k) and IRA Basics," the
   natural next step after lesson 17 (stocks/bonds/diversification) and lesson 15 (compound interest,
-  which this lesson explicitly cross-references) — a topic not yet covered anywhere in the catalogue.
+  which this lesson explicitly cross-references) — a topic not yet covered anywhere in the catalog.
   Two sections (why tax-advantaged accounts exist and employer matching; Traditional vs Roth) plus
   takeaway and think-about, all five languages, following the existing narrative-example-then-concept
   style. Deliberately **excluded specific dollar figures** (contribution limits, match caps) since those
@@ -2483,7 +2483,7 @@ runs' consistent "needs a human translator or owner sign-off" verdict stands; it
   just to dodge the grep patterns. (2) *DECISIONS.md conflict* — none; this run touches only content
   modules, no state/storage/platform/data-source decision. (3) *Redoing done work* — none; lesson 18 is
   new content, not a rewrite of any of the 17 existing lessons or a redo of the 2026-08-05 example-rewrite
-  or Beta-labelling work. (4) *Verification claim* — the click-through above (including the language
+  or Beta-labeling work. (4) *Verification claim* — the click-through above (including the language
   switch and the analytics-log inspection) was actually run this session against the actual build output,
   not inferred from code reading; an independent reviewer repeating the same steps against this commit
   should see the same "LESSON 18 OF 18," the same quiz result, and the same two analytics-log entries.
@@ -2491,7 +2491,7 @@ runs' consistent "needs a human translator or owner sign-off" verdict stands; it
   18's structure, language parity, and quiz linkage all validated automatically); `check-blindspot.mjs`:
   `PASS: 0 failure(s)`. `npm run build` → `vite v6.4.3`, `✓ 61 modules transformed`,
   `dist/assets/index-Djwk-OEU.js` 392.52 kB / 153.20 kB gzip, built in 799ms.
-- **Updated `LAUNCH_READINESS.md`**: Phase-0 lesson-catalogue row now reads 18 lessons / 41,324 English
+- **Updated `LAUNCH_READINESS.md`**: Phase-0 lesson-catalog row now reads 18 lessons / 41,324 English
   chars / ~37-40 min (~47% of the char/time target, ~45% of the lesson-count target), up from 17 /
   38,146 / ~33-35 min. Also re-measured the §10.4 translation-ratio row since this run touched every
   language field: es/ko/zh stayed at their prior ratios (0.37x/0.19x/0.12x) and ja ticked up slightly
@@ -2551,7 +2551,7 @@ more scoped lesson rather than folded hastily into this one to cover both topics
 - **Verified build and tests**: `npm test` → `check-data.mjs`: `PASS: 0 failure(s), 0 warning(s)`;
   `check-blindspot.mjs`: `PASS: 0 failure(s)`. `npm run build` → `vite v6.4.3`, `✓ 61 modules
   transformed`, `dist/assets/index-DuqQXdBQ.js` 404.22 kB / 158.26 kB gzip, built in 841ms.
-- **Updated `LAUNCH_READINESS.md`**: Phase-0 lesson-catalogue row now reads 19 lessons / 43,928 English
+- **Updated `LAUNCH_READINESS.md`**: Phase-0 lesson-catalog row now reads 19 lessons / 43,928 English
   chars / ~40 min (~50% of the char/time target, ~48% of the lesson-count target), up from 18 / 41,324 /
   ~37-40 min. Re-measured the §10.4 translation-ratio row again: es/ko/zh/ja all stayed essentially flat
   versus the lesson-18 measurement (0.38x/0.20x/0.13x/0.16x), consistent with translating each new lesson
@@ -2571,7 +2571,7 @@ reference-only prototype flagged by every prior run and the
 `economics-app-unexplained-files-not-fixtures` memory note. No other uncommitted state; nothing to
 recover, nothing blocking normal work.
 
-Picked backlog item 17 (grow the lesson catalogue) — explicitly the "next run should pick" item from
+Picked backlog item 17 (grow the lesson catalog) — explicitly the "next run should pick" item from
 the last run's entry, which named insurance basics as the natural next topic after taxes (lesson 19)
 deferred it. Item 20 (translation) remains correctly deferred per three-plus prior runs' consistent
 "needs a human translator or owner sign-off" verdict; item 18's remaining half (real analytics provider)
@@ -2626,7 +2626,7 @@ still needs an owner-created PostHog account.
 - **Verified build and tests**: `npm test` → `check-data.mjs`: `PASS: 0 failure(s), 0 warning(s)`;
   `check-blindspot.mjs`: `PASS: 0 failure(s)`. `npm run build` → `vite v6.4.3`, `✓ 61 modules
   transformed`, `dist/assets/index-C2aUwpRp.js` 418.45 kB / 164.30 kB gzip, built in 801ms.
-- **Updated `LAUNCH_READINESS.md`**: Phase-0 lesson-catalogue row now reads 20 lessons / 46,925 English
+- **Updated `LAUNCH_READINESS.md`**: Phase-0 lesson-catalog row now reads 20 lessons / 46,925 English
   chars / ~40 min (~53% of the char/time target, ~50% of the lesson-count target), up from 19 / 43,928 /
   ~40 min, using the file's own documented refresh commands (`estimateMinutes`-based char count, not a
   hand rewrite). Re-measured the §10.4 translation-ratio row: es/ko/zh/ja all stayed essentially flat
@@ -2638,7 +2638,7 @@ still needs an owner-created PostHog account.
   (candidates not yet covered: inflation's effect on savings/purchasing power, credit scores, or basic
   estate-planning concepts), or item 20's translation work if the owner has given sign-off, or the real
   analytics-provider swap once a PostHog account/key exists (owner action). At 20/40 lessons the
-  catalogue has now crossed the halfway point on lesson count (50%) though still trails on the char/time
+  catalog has now crossed the halfway point on lesson count (50%) though still trails on the char/time
   target (~53%), since later lessons have run a bit shorter than the earlier macro/cycle-theory ones.
 
 ### 2026-08-06 — Fix a wrong lesson cross-reference in lesson 20 (owner-directed follow-up)
@@ -2667,7 +2667,7 @@ cross-reference back would land on the wrong lesson.
   bundle.
 - **Not touched, and why**: `economic-cycles-v6.jsx` unchanged, as always. `LAUNCH_READINESS.md` and
   `AGENT_LOG.md`'s lesson-count/char numbers from the prior commit are still accurate (this fix didn't
-  change any lesson's length or the catalogue total) — no scorecard refresh needed for a same-length text
+  change any lesson's length or the catalog total) — no scorecard refresh needed for a same-length text
   correction.
 - **Next run should pick**: same as above — item 17 (more lessons, e.g. inflation/purchasing power,
   credit-score depth, estate-planning basics) or item 20's translation work pending owner sign-off.
@@ -2713,7 +2713,7 @@ lesson connecting it to personal savings and real vs. nominal returns.
 - **Verified build and tests**: `npm test` → `check-data.mjs`: `PASS: 0 failure(s), 0 warning(s)`;
   `check-blindspot.mjs`: `PASS: 0 failure(s)`. `npm run build` → `vite v6.4.3`, `✓ 61 modules
   transformed`, `dist/assets/index-DwoLg7A1.js` 431.32 kB / 169.58 kB gzip, built in 826ms.
-- **Updated `LAUNCH_READINESS.md`**: Phase-0 lesson-catalogue row now reads 21 lessons / 49,725 English
+- **Updated `LAUNCH_READINESS.md`**: Phase-0 lesson-catalog row now reads 21 lessons / 49,725 English
   chars / ~45 min (~56% of the char/time target, ~53% of the lesson-count target), up from 20 / 46,925 /
   ~40 min. Re-measured §10.4: es/ko/zh/ja stayed essentially flat (0.40x/0.21x/0.13x/0.17x) versus the
   lesson-20 measurement, consistent with translating each new lesson in step.
@@ -2722,7 +2722,7 @@ lesson connecting it to personal savings and real vs. nominal returns.
 - **Next run should pick**: item 17 again if more lessons are wanted (candidates not yet covered:
   estate-planning basics, understanding pay stubs/W-2 vs 1099, or basic real-estate/mortgage concepts),
   or item 20's translation work pending owner sign-off, or the real analytics-provider swap once a
-  PostHog account/key exists (owner action). At 21/40 lessons the catalogue is now past the halfway mark
+  PostHog account/key exists (owner action). At 21/40 lessons the catalog is now past the halfway mark
   on both thresholds (53% lesson count, 56% char/time).
 
 ### 2026-08-06 (fourth run) — Add lesson 22: "W-2 vs. 1099" (backlog item 17)
@@ -2774,7 +2774,7 @@ the employer is quietly paying half of it, which is exactly the gap a 1099 contr
 - **Verified build and tests**: `npm test` → `check-data.mjs`: `PASS: 0 failure(s), 0 warning(s)`;
   `check-blindspot.mjs`: `PASS: 0 failure(s)`. `npm run build` → `vite v6.4.3`, `✓ 61 modules
   transformed`, `dist/assets/index-DkSqshA2.js` 446.46 kB / 175.75 kB gzip, built in 863ms.
-- **Updated `LAUNCH_READINESS.md`**: Phase-0 lesson-catalogue row now reads 22 lessons / 53,020 English
+- **Updated `LAUNCH_READINESS.md`**: Phase-0 lesson-catalog row now reads 22 lessons / 53,020 English
   chars / ~44 min (~60% of the char/time target, ~55% of the lesson-count target), up from 21 / 49,725 /
   ~45 min. Re-measured §10.4: es/ko/zh/ja stayed essentially flat (0.41x/0.22x/0.14x/0.18x) versus the
   lesson-21 measurement, consistent with translating each new lesson in step.
@@ -2785,7 +2785,7 @@ the employer is quietly paying half of it, which is exactly the gap a 1099 contr
 - **Next run should pick**: item 17 again if more lessons are wanted (candidates not yet covered:
   estate-planning basics, basic real-estate/mortgage concepts, or understanding investment fees/expense
   ratios), or item 20's translation work pending owner sign-off, or the real analytics-provider swap once
-  a PostHog account/key exists (owner action). At 22/40 lessons the catalogue is at 55% of the
+  a PostHog account/key exists (owner action). At 22/40 lessons the catalog is at 55% of the
   lesson-count target and 60% of the char/time target.
 
 ### 2026-08-06 (fifth run) — Add lesson 23: "Investment Fees" (backlog item 17)
@@ -2806,7 +2806,7 @@ makes "why pay more for the same underlying holdings" a natural question once fe
   interest, just working against the balance — worked example: $10,000 at 7%/30 years, 0.05% fee →
   ~$76,000 vs. 1.05% fee → ~$57,000, a ~25% difference from a 1-point fee gap). Explicitly cross-
   references Lesson 15 (compounding mechanism) and Lesson 12 (diversification as what an index fund
-  already provides). The $10,000/7%/30-year figures are a labelled worked example for teaching the
+  already provides). The $10,000/7%/30-year figures are a labeled worked example for teaching the
   compounding mechanism, not a claimed current return or fee — same illustrative-numbers pattern as
   Lesson 15's own Rule-of-72 example and Lesson 21's inflation example, not the §2.3 problem (a live-
   looking *current* market figure). Deliberately included a caveat sentence that the cheapest fund isn't
@@ -2836,7 +2836,7 @@ makes "why pay more for the same underlying holdings" a natural question once fe
   without recommending a specific fund, and includes an explicit caveat against "cheapest is always
   best" framing; the standard disclaimer still renders on the lesson screen (confirmed in the
   click-through). No Dalio references. No live-looking dated figures — the $10,000/7%/30-year example is
-  a labelled illustrative calculation, not a claimed current rate or fee, reasoned through explicitly
+  a labeled illustrative calculation, not a claimed current rate or fee, reasoned through explicitly
   above rather than just trusted to the grep (which also passed). (2) *DECISIONS.md conflict* — none;
   content-only change to `.js` content modules, consistent with the `.js`-not-JSON decision; no
   localStorage/Vite/Expo changes. (3) *Redoing done work* — grepped `AGENT_LOG.md`'s "Completed and
@@ -2848,8 +2848,8 @@ makes "why pay more for the same underlying holdings" a natural question once fe
   output.
 - **Updated `LAUNCH_READINESS.md`**: refreshed using the file's own documented refresh commands (not
   hand-estimated) — re-imported `src/content/lessons.js` via the exact `node -e` snippets the file
-  prescribes for both the lesson-catalogue char count and the per-language translation-ratio measurement.
-  Phase-0 lesson-catalogue row now reads 23 lessons / 56,045 English chars / ~47 min (~63% of the
+  prescribes for both the lesson-catalog char count and the per-language translation-ratio measurement.
+  Phase-0 lesson-catalog row now reads 23 lessons / 56,045 English chars / ~47 min (~63% of the
   char/time target, ~58% of the lesson-count target), up from 22 / 53,020 / ~44 min. Cross-checked the
   new method's 22-lesson figure (44 min via `estimateMinutes`) against the prior run's reported ~44 min
   before trusting the 23-lesson number, since the two measurement methods (chars/5.5 at 200wpm vs. the
@@ -2864,7 +2864,7 @@ makes "why pay more for the same underlying holdings" a natural question once fe
   estate-planning basics, basic real-estate/mortgage concepts, understanding credit reports vs. credit
   scores in more depth, or homeownership/renting trade-offs), or item 20's translation work pending owner
   sign-off, or the real analytics-provider swap once a PostHog account/key exists (owner action). At
-  23/40 lessons the catalogue is at 58% of the lesson-count target and 63% of the char/time target.
+  23/40 lessons the catalog is at 58% of the lesson-count target and 63% of the char/time target.
 
 ### 2026-08-06 (sixth run) — Add lesson 24: "Renting vs. Buying" (backlog item 17)
 
@@ -2920,7 +2920,7 @@ costs beyond the sticker price.
   without recommending either option, and includes an explicit caveat against reading either choice as a
   "mistake." The standard disclaimer still renders on the lesson screen (confirmed in the click-through).
   No Dalio references. No live-looking dated figures — the "$1,800/month rent vs. $1,900/month mortgage"
-  `thinkAbout` scenario is a labelled hypothetical comparison for the reader to reason through, not a
+  `thinkAbout` scenario is a labeled hypothetical comparison for the reader to reason through, not a
   claimed current rent or mortgage rate, same illustrative-numbers pattern as lesson 23's $10,000 example
   and lesson 21's inflation example, not the §2.3 problem (a live-looking *current* market figure); no
   specific interest rate is stated anywhere in the lesson. (2) *DECISIONS.md conflict* — none;
@@ -2936,8 +2936,8 @@ costs beyond the sticker price.
   page itself kept working throughout, confirmed by `get_page_text` returning correct content
   immediately after each timeout.
 - **Updated `LAUNCH_READINESS.md`**: refreshed using the file's own documented refresh commands — the
-  exact `node -e` snippets it prescribes for both the lesson-catalogue char count and the per-language
-  translation-ratio measurement. Phase-0 lesson-catalogue row now reads 24 lessons / 59,862 English chars
+  exact `node -e` snippets it prescribes for both the lesson-catalog char count and the per-language
+  translation-ratio measurement. Phase-0 lesson-catalog row now reads 24 lessons / 59,862 English chars
   / ~54 min (~73% of the char/time target, ~60% of the lesson-count target), up from 23 / 56,045 / ~47
   min. Cross-checked the char-based estimate against the app's own `estimateMinutes` sum (50 min vs. 54
   min) — the two methods have drifted apart slightly more than at 22/23 lessons but are still close
@@ -2953,7 +2953,7 @@ costs beyond the sticker price.
   mechanics" lesson — how to actually open/fund a brokerage account, distinct from Lesson 17's
   stocks/bonds/diversification concepts), or item 20's translation work pending owner sign-off, or the
   real analytics-provider swap once a PostHog account/key exists (owner action). At 24/40 lessons the
-  catalogue is at 60% of the lesson-count target and 73% of the char/time target.
+  catalog is at 60% of the lesson-count target and 73% of the char/time target.
 
 ### 2026-08-06 (seventh run, owner-directed) — Add lesson 25: "Brokerage Accounts: How Investing Actually Works Mechanically" (backlog item 17)
 
@@ -2980,7 +2980,7 @@ executes, which neither lesson covers.
   certainty-of-price trade-off between them, plus fractional shares and T+1 settlement). Explicitly
   cross-references Lesson 17 (what actually gets bought inside the account) and Lesson 18 (the
   tax-advantaged account comparison). Deliberately named no specific broker, platform, or fee structure,
-  and used only clearly-labelled illustrative figures ($500 uninvested cash, $50 of a $500 stock, a 5%
+  and used only clearly-labeled illustrative figures ($500 uninvested cash, $50 of a $500 stock, a 5%
   limit-order gap) rather than any claimed current rate, fee, or market price, matching the illustrative-
   numbers pattern lessons 21/23/24 already established (not the §2.3 problem, which is about live-looking
   *current* market data). All five languages, same narrative-then-concept style as lessons 19-24.
@@ -3010,7 +3010,7 @@ executes, which neither lesson covers.
   found, the lesson explains account mechanics and order-type trade-offs without recommending any
   specific broker, order type, or investment, and the standard disclaimer still renders on the lesson
   screen (confirmed in the click-through). No Dalio references. No live-looking dated figures — the
-  $500/$50-of-$500/5% numbers are clearly-labelled illustrative examples for teaching the mechanism, not
+  $500/$50-of-$500/5% numbers are clearly-labeled illustrative examples for teaching the mechanism, not
   claimed current prices or fees, reasoned through explicitly above rather than just trusted to the grep
   (which also passed). (2) *DECISIONS.md conflict* — none; content-only change to `.js` content modules,
   consistent with the `.js`-not-JSON decision; no state/storage/platform changes. (3) *Redoing done
@@ -3027,7 +3027,7 @@ executes, which neither lesson covers.
   flagging for a future run since it will only grow as more lessons are added; no code-splitting exists
   yet for the lesson content.
 - **Updated `LAUNCH_READINESS.md`**: refreshed using the file's own documented refresh commands. Phase-0
-  lesson-catalogue row now reads 25 lessons / 62,938 English chars / ~57 min (~77% of the char/time
+  lesson-catalog row now reads 25 lessons / 62,938 English chars / ~57 min (~77% of the char/time
   target, ~63% of the lesson-count target), up from 24 / 59,862 / ~54 min. Cross-checked against the
   app's own `estimateMinutes` sum (52 min vs. 57 min) — drift is about the same as at 24 lessons, still
   close enough to trust both. Re-measured §10.4: es/ko/zh/ja stayed essentially flat-to-slightly-up
@@ -3043,7 +3043,7 @@ executes, which neither lesson covers.
   once a PostHog account/key exists (owner action). Also worth a future run's attention: the build now
   emits a >500 kB chunk-size warning (see above) — not urgent, but code-splitting (e.g. lazy-loading
   `LessonReader`/lesson content) will eventually be worth doing before this compounds further. At 25/40
-  lessons the catalogue is at 63% of the lesson-count target and 77% of the char/time target.
+  lessons the catalog is at 63% of the lesson-count target and 77% of the char/time target.
 
 ### 2026-08-06 (eighth run, owner-directed) — Add lesson 26: "Estate Planning Basics: Wills and Beneficiary Designations" (backlog item 17)
 
@@ -3121,7 +3121,7 @@ content to cover at all.
   run check-blindspot`: `PASS: 0 failure(s)` (all six checks). `npm run build` → succeeded; chunk-size
   warning present as noted above, unchanged in kind from lesson 25's entry.
 - **Updated `LAUNCH_READINESS.md`**: refreshed using the file's own documented refresh commands. Phase-0
-  lesson-catalogue row now reads 26 lessons / 66,289 English chars / ~60 min (~81% of the char/time
+  lesson-catalog row now reads 26 lessons / 66,289 English chars / ~60 min (~81% of the char/time
   target, ~65% of the lesson-count target), up from 25 / 62,938 / ~57 min. Cross-checked against the
   app's own `estimateMinutes` sum (55 min vs. 60 min) — drift is about the same as at 25 lessons, still
   close enough to trust both. Re-measured §10.4: es/ko/zh/ja stayed essentially flat-to-slightly-up
@@ -3138,7 +3138,7 @@ content to cover at all.
   the real analytics-provider swap once a PostHog account/key exists (owner action). The build's >500 kB
   chunk-size warning (noted in the last two entries) is still open and will keep growing with each new
   lesson; worth addressing via code-splitting before it becomes a real performance problem rather than
-  just a build-time notice. At 26/40 lessons the catalogue is at 65% of the lesson-count target and 81%
+  just a build-time notice. At 26/40 lessons the catalog is at 65% of the lesson-count target and 81%
   of the char/time target.
 
 ### 2026-08-07 (ninth run) — Code-split Practice and Reference behind React.lazy (build chunk-size warning)
@@ -3195,7 +3195,7 @@ further.
   `Learn`'s lesson list on first paint regardless, so splitting it further would need a real
   metadata/body split of the lessons data structure itself, a larger and riskier change than this run's
   scope; noted below as a follow-up rather than attempted here.
-- **Next run should pick**: item 17 (grow the lesson catalogue — credit-report-vs-credit-score, identity
+- **Next run should pick**: item 17 (grow the lesson catalog — credit-report-vs-credit-score, identity
   theft/fraud protection, or an end-to-end filing-taxes lesson are the open topic candidates) is still
   the plan's own explicit gate and the natural next pick. If the chunk-size line is revisited again: the
   next-largest lever would be splitting `lessons.js` into per-lesson metadata (id/title/icon, needed by
@@ -3204,7 +3204,7 @@ further.
   than folding into a future lesson-content run. Item 18 (real analytics provider) and item 20
   (translations) remain blocked on owner action as before.
 
-### 2026-08-07 (owner-directed, interactive session) — Split the catalogue into two tracks; fix the permanent-greeting bug and 7 wrong cross-references
+### 2026-08-07 (owner-directed, interactive session) — Split the catalog into two tracks; fix the permanent-greeting bug and 7 wrong cross-references
 
 Not a scheduled run. The owner raised three things: "Welcome to Economic Cycles" reads awkwardly, the
 app name is not Economic Cycles, and pure economics and real-life money lessons look bundled with no
@@ -3223,7 +3223,7 @@ been a false claim.
   *every* visit (`Learn.jsx:29`), so a learner 20 lessons in was still being welcomed to the app. A
   *separate* `firstLaunchTitle` key holds the identical string for the genuine first-run modal
   (`App.jsx:70`) — the greeting was duplicated and one copy was in the wrong place.
-- **"Economic Cycles" names 46% of the catalogue.** Lessons 13-26 (budgeting, taxes, insurance,
+- **"Economic Cycles" names 46% of the catalog.** Lessons 13-26 (budgeting, taxes, insurance,
   mortgages, estate planning) are not economic cycles. `LAUNCH_PLAN.md` §0 already said this on
   2026-08-04 ("the *vehicle*, not the product") and the app was never changed — textbook §10.7 drift,
   which `LAUNCH_READINESS.md` was still scoring "🟡 Reconciled well so far."
@@ -3233,7 +3233,7 @@ been a false claim.
   between them, and investing is scattered across 17/18/23/25.
 - **The unlock rule made it harmful.** Strict global chain, so budgeting sat behind ~24 min of macro
   theory — and lesson 1 for a money-seeking audience was "Transactions," working against §4.3's own
-  "≥40% of installers finish lesson 1" gate that these runs have been optimising the other half of.
+  "≥40% of installers finish lesson 1" gate that these runs have been optimizing the other half of.
 - **A content bug, found by extracting every cross-reference:** lesson 23 cited "Lesson 12" for
   diversification **7 times** (3 en + 1 each es/ko/zh/ja). Lesson 12 is "Three Rules of Thumb" and
   contains no mention of diversification or index funds; the diversification lesson is **17**. The run
@@ -3300,7 +3300,7 @@ another adult lesson would.
   bank account; **13-17** — checking your balance before you spend (paycheck/debit card), "pay yourself
   first." Every band went from 3 lessons to 5. Did **not** touch `activity`/`parentTip` (already
   reasonably money-skills-oriented — allowance jars, tracking grocery prices, a savings account), and did
-  **not** restructure the format into a lesson-shaped catalogue like the 26 adult lessons — item 21 itself
+  **not** restructure the format into a lesson-shaped catalog like the 26 adult lessons — item 21 itself
   separates that ("isn't lesson-shaped") from "safe work (do this)," and treats the format change as a
   bigger, undecided question; this run only did the explicitly-safe half.
 - **Verified with a real click-through**: `npm test` clean (`check-data.mjs` 0 failures/warnings —
@@ -3328,12 +3328,12 @@ another adult lesson would.
   (4) *Verification claim* — every check above (test, build, browser click-through in two languages
   across all three bands) was actually run this session against the real built output, not asserted.
 - **Not touched, and why**: `economic-cycles-v6.jsx`/`economic-cycles-v5.jsx` — unchanged, per the
-  standing note. Did not restructure `kidsContent.js` into a lesson-shaped catalogue (see above — that's
+  standing note. Did not restructure `kidsContent.js` into a lesson-shaped catalog (see above — that's
   the still-open, larger half of item 21). Did not add allowance/first-account content to the adult
   lessons — out of scope for a kids-guide change.
 - **Backlog changes**: item 21 narrowed — the money-skills *content* gap this run's entry describes is
-  addressed for all three bands; the *lesson-shaped-catalogue* structural question remains open below.
-- **Next run should pick**: item 17 (grow the adult lesson catalogue — credit-report-vs-credit-score,
+  addressed for all three bands; the *lesson-shaped-catalog* structural question remains open below.
+- **Next run should pick**: item 17 (grow the adult lesson catalog — credit-report-vs-credit-score,
   identity theft/fraud protection, or filing-taxes are the open topic candidates) is the natural next
   pick, having now waited two runs. If revisiting kids content instead: consider whether the parent guide
   should grow past 5 lessons/band or move toward the lesson-shaped format item 21 originally flagged —
@@ -3394,7 +3394,7 @@ candidate topics, having waited two runs.
 - **Next run should pick**: item 17 again (identity theft/fraud protection or filing-taxes are the
   remaining named candidates) or item 23 (the chunk-size regression, if a structural change is preferred
   over more content this time). Items 18/20/22 remain blocked on owner action or a dedicated scripted
-  change, as before. Item 21's structural (lesson-shaped-catalogue) question is also still open.
+  change, as before. Item 21's structural (lesson-shaped-catalog) question is also still open.
 
 ### 2026-08-07 (twelfth run, owner-directed) — Split lesson content out of the main bundle (backlog item 23)
 
@@ -3468,7 +3468,7 @@ entry exactly.
 - **Next run should pick**: item 17 (identity theft/fraud protection or filing-taxes are the remaining
   named candidates) — the natural next pick now that the chunk-size distraction is cleared. Items
   18/20/22 remain blocked on owner action or a dedicated scripted change, as before. Item 21's structural
-  (lesson-shaped-catalogue) question is also still open.
+  (lesson-shaped-catalog) question is also still open.
 
 ### 2026-08-07 (owner-directed, interactive session) — The money track was teaching mechanics, not judgment; lesson 28 starts the correction
 
@@ -3482,7 +3482,7 @@ PITI stands for, how a credit report differs from a score. Not one teaches *deci
 choose, how to notice you're about to choose badly, why someone who can explain all of the above still
 overspends. The lessons aren't wasted — mechanics are necessary — but on their own the track is a
 reference manual, which is not the product §0 describes. **The drift has a specific cause worth naming:
-nine consecutive scheduled runs each picked item 17 ("grow the catalogue"), optimised the lesson
+nine consecutive scheduled runs each picked item 17 ("grow the catalogue"), optimised the lesson  <!-- us-english:allow: verbatim quote -->
 *count*, and never re-examined the direction.** A backlog item phrased as a number will be satisfied as
 a number.
 
@@ -3505,7 +3505,7 @@ a number.
 - **The §10.1 tension, handled deliberately rather than ignored.** That genre is advice-heavy and parts
   of it are contested — Kiyosaki's "your house is not an asset" conflicts with standard accounting, and
   his leveraged real-estate advocacy is genuinely prescriptive risk-taking advice. I took the genre's
-  *mental models and behavioural insight* and left its *prescriptions*: the lesson teaches the lens and
+  *mental models and behavioral insight* and left its *prescriptions*: the lesson teaches the lens and
   is honest that real purchases sit in between, never says "buy assets, not liabilities" as a directive,
   names no product to buy, and promises no path to wealth. The savings/tools example was deliberately
   chosen over an investment product for the same reason. The book is not cited or quoted — it was a
@@ -3536,7 +3536,7 @@ a number.
   and the two-track structure was respected (`track: "money"` declared, so `check-data.mjs`'s track
   guard passes). Deliberately did *not* renumber ids — that's item 22's dedicated, scripted change.
   (3) *Redoing done work* — checked "Completed and pruned" and the last ten entries: no prior run has
-  written a judgment/behavioural lesson; all fifteen money lessons are mechanics, which is the finding
+  written a judgment/behavioral lesson; all fifteen money lessons are mechanics, which is the finding
   itself. (4) *Verification claim* — every result above was observed this session against the built
   output; the two claims I got wrong I caught and corrected rather than shipping, and both are recorded
   above rather than quietly fixed.
@@ -3618,7 +3618,7 @@ sequence rather than a one-off before the next scheduled run inherits it.
 - **Not touched, and why**: `economic-cycles-v6.jsx`/`economic-cycles-v5.jsx` unchanged. Did not
   retrofit the fifteen mechanics lessons — same reasoning as the previous entry.
 - **Next run should pick**: item 24 again — **delayed gratification / opportunity cost** is the
-  strongest remaining candidate (sunk cost and FOMO-and-herd-behaviour are the others), continuing the
+  strongest remaining candidate (sunk cost and FOMO-and-herd-behavior are the others), continuing the
   strand rather than reverting to item 17's mechanics list. Items 18/20/22 and item 21's structural
   question are unchanged. **App name still unresolved** — do not invent one.
 
@@ -3656,7 +3656,7 @@ the temptation isn't).
   replication complication (outcomes depend on factors outside a child's control) rather than presenting
   the original simple finding as settled fact, matching the app's existing standard for epistemic
   hedging (yield-curve, NBER-recession-definition, "actively managed funds rarely beat index funds"
-  framings elsewhere in the catalogue).
+  framings elsewhere in the catalog).
 - **What changed**: `lessons.js` — lesson 30, `id: 30, track: "money"`, icon ⚖️, color `#0f766e`
   (previously unused), `minutes: 4` (computed from the actual word count, 820 words ≈ 4.1 min at
   200 wpm, not guessed). `lessonContent.js` — two sections, takeaway, thinkAbout, all 5 languages.
@@ -3703,7 +3703,7 @@ the temptation isn't).
   2026-08-04; confirmed again this run that it's the same known reference-only file (byte-for-byte same
   mtime), not new user work, so left alone per standing guidance.
   `economic-cycles-v5.jsx` unchanged. Did not retrofit the eighteen existing mechanics lessons.
-- **Next run should pick**: item 24 again — **sunk cost** and **FOMO/herd behaviour in markets** are
+- **Next run should pick**: item 24 again — **sunk cost** and **FOMO/herd behavior in markets** are
   the two remaining candidates from the original shortlist; either is fair game, sunk cost pairs more
   naturally with this run's opportunity-cost lesson (same "how to evaluate a choice honestly" theme) if
   a future run wants to keep building a visible sequence. Items 18/20/21/22 unchanged. **App name still
@@ -3718,9 +3718,9 @@ a stalled run; left alone. Read this file's App summary, backlog, and the last t
 whose "next run should pick" note pointed straight at this run's topic.
 
 - **Picked up exactly where the previous entry left off.** Of the two remaining item-24 candidates —
-  sunk cost and FOMO/herd behaviour — sunk cost was the one the prior run flagged as pairing naturally
+  sunk cost and FOMO/herd behavior — sunk cost was the one the prior run flagged as pairing naturally
   with lesson 30's opportunity-cost lesson (same "evaluate a choice honestly" theme), so this run built
-  that one, leaving FOMO/herd behaviour as the sole remaining shortlist item for a future run.
+  that one, leaving FOMO/herd behavior as the sole remaining shortlist item for a future run.
 - **Checked for duplication before writing.** Grepped all 30 existing lessons plus `quizData.js` and
   every `src/locales/*.js` file for "sunk": zero hits — genuinely new ground. Confirmed the concept
   doesn't overlap lesson 30 (opportunity cost, which is about weighing what a choice gives up *going
@@ -3752,7 +3752,7 @@ whose "next run should pick" note pointed straight at this run's topic.
   three edited modules (`lessons.js`, `lessonContent.js`, `quizData.js`) via dynamic `import()` to catch
   a parse failure early — all three parsed clean on the first attempt. Ran a scripted scan (Python regex)
   for Latin-alphabet runs of 3+ characters and Cyrillic characters inside every ko/zh/ja string added
-  this run: zero hits, so none of the four leak types the lesson-29 entry catalogued (broken quoting,
+  this run: zero hits, so none of the four leak types the lesson-29 entry cataloged (broken quoting,
   English/Russian/English words leaking into non-English sentences) recurred here.
 - **What changed**: `lessons.js` — lesson 31, `id: 31, track: "money"`, icon 🕳️, color `#9f1239`
   (checked against every existing lesson color, not reused — a repo audit found several already-reused
@@ -3805,7 +3805,7 @@ whose "next run should pick" note pointed straight at this run's topic.
   the start of this run, left alone per standing guidance; `economic-cycles-v5.jsx` unchanged. Did not
   retrofit any of the nineteen mechanics-framed money lessons. `ParentGuide.jsx` / kids content untouched
   — item 19 remains HELD, owner decision only.
-- **Next run should pick**: item 24 one more time — **FOMO and herd behaviour in markets** is now the
+- **Next run should pick**: item 24 one more time — **FOMO and herd behavior in markets** is now the
   only item left on the original item-24 shortlist (assets-vs-liabilities, lifestyle inflation,
   opportunity cost/delayed gratification, and sunk cost are all now shipped as lessons 28-31); after that
   lesson lands, item 24's shortlist is exhausted and a future run should either propose new judgment-
@@ -3820,14 +3820,14 @@ American English, not British English.** `git status` at the start showed only t
 `economic-cycles-v6.jsx` (same mtime as every prior run), nothing else uncommitted; proceeded normally.
 
 - **American English requirement.** The backlog text itself (this file) had been using British spelling
-  ("behaviour") in item 24's own prose for several runs, and the app's actual EN lesson content was
+  ("behaviour") in item 24's own prose for several runs, and the app's actual EN lesson content was  <!-- us-english:allow: verbatim quote -->
   already consistently American (`npm test`/`check-blindspot` don't check spelling, so this was never
   enforced, just happened to be consistent). Wrote lesson 32 with American spelling throughout
-  ("behavior", not "behaviour") and ran a scripted check afterward for a list of common British-only
-  spellings (behaviour, colour, favour, organise, realise, analyse, modelling, travelled, centre,
-  defence, licence, programme, labelled, labour, recognise, criticise, emphasise, cancelled) across every
+  ("behavior", not "behaviour") and ran a scripted check afterward for a list of common British-only  <!-- us-english:allow: verbatim quote -->
+  spellings (behavior, color, favor, organize, realize, analyze, modeling, traveled, center,
+  defense, license, program, labeled, labor, recognize, criticize, emphasize, canceled) across every
   `"en"` string in `lessonContent.js` — zero hits. Also corrected item 24's own backlog prose in this
-  file from "behaviour" to "behavior" for consistency going forward, since the owner's instruction reads
+  file from "behaviour" to "behavior" for consistency going forward, since the owner's instruction reads  <!-- us-english:allow: verbatim quote -->
   as a standing preference for this project, not a one-off for this lesson only.
 - **Checked for duplication before writing.** Grepped `lessonContent.js`, `lessons.js`, `glossary.js`,
   and `markets.js` for "bubble", "herd", "FOMO", "crowd", "tulip", "dot-com", "mania": the only hit was
@@ -4367,7 +4367,7 @@ history is worth having inline.
 Covers the review period the 2026-08-16 weekly review assessed: **P-2/P-3/P-4 closing, the seventeen
 lesson-deepening runs that moved the §4.3 minutes clause 101 → 120/120, the per-track content split,
 the lesson-id renumbering, test coverage for five `lib/` modules, and the first half of the
-owner-directed Quizlet/Vocabulary design review.** The review that summarises all of it is
+owner-directed Quizlet/Vocabulary design review.** The review that summarizes all of it is
 `reviews/2026-08-16-weekly-review.md` §1–4, which is the better entry point than these entries.
 ### 2026-08-09 — Lesson 38: "Is 'Found' Money Worth Less Than Money You Earned?" (mental accounting, item 24 re-scoped rather than deferred again)
 
@@ -4397,7 +4397,7 @@ owner-directed Quizlet/Vocabulary design review.** The review that summarises al
   "too good to be true" pattern recognition) that a genuine re-scope would leave behind for future runs
   to draw from instead of searching from scratch each time — see "Next run should pick" below for a
   starter list so the next run doesn't have to repeat this search.
-- **Catalogue re-measured** (same method as prior entries: sum every lesson's `sections[].body.en` +
+- **Catalog re-measured** (same method as prior entries: sum every lesson's `sections[].body.en` +
   `takeaway.en` + `thinkAbout.en` from `lessonContent.js`, plus `minutes` from `lessons.js`): **38
   lessons / 105,758 English characters / ~19,229 words / 94 minutes** (26 money, 12 economy), up from
   37/104,937/18,093/91. Phase-0 gate (§4.3) is ≥40 lessons and ~2 hours (120 min): two lessons and ~26
@@ -4465,7 +4465,7 @@ owner-directed Quizlet/Vocabulary design review.** The review that summarises al
   long, staying in a bad subscription/apartment/deal, declining a favorably-balanced risk) are framed
   descriptively, never as "sell now" or "buy this instead." All fields carry parallel en/es/ko/zh/ja
   content, matching the format of lessons 28-38.
-- **Catalogue re-measured** (same method as prior entries): **39 lessons / 108,987 English characters /
+- **Catalog re-measured** (same method as prior entries): **39 lessons / 108,987 English characters /
   97 minutes** (27 money, 12 economy), up from 38/105,758/94. Word count is flagged separately in the
   updated item 17 above — a fresh count of the *unchanged* 38-lesson text no longer reproduces the
   previous entry's word figure even though chars and minutes both reproduce exactly, so word counts in
@@ -4492,7 +4492,7 @@ owner-directed Quizlet/Vocabulary design review.** The review that summarises al
   and pruned" list; not a duplicate. Specifically re-read lesson 31 (sunk cost) to confirm the
   distinction holds — sunk cost is about past spending already sunk, loss aversion is about the asymmetric
   *feeling* of a loss regardless of whether money has been spent — and wrote that distinction into the
-  lesson body itself, not just this log, so a future run auditing the catalogue can see it without
+  lesson body itself, not just this log, so a future run auditing the catalog can see it without
   re-deriving it. (4) *Verification claim* — the test/build output and the live bilingual + quiz-answer
   browser check above are exactly what an independent reviewer would reproduce running the same commands
   against this commit. **Caught and fixed during this check**: initially set `minutes: 3` by copying the
@@ -4504,7 +4504,7 @@ owner-directed Quizlet/Vocabulary design review.** The review that summarises al
 - **Not touched, and why**: `economic-cycles-v6.jsx` — confirmed untouched, long-standing untracked
   reference file. `economic-cycles-v5.jsx` unchanged. `ParentGuide.jsx`/kids content untouched — item 19
   remains HELD. Did not touch items 18/20/21/22 or `LAUNCH_READINESS.md` (last refreshed 2026-08-06 and
-  now further stale — its lesson-catalogue row still says "26 lessons"; flagging this explicitly rather
+  now further stale — its lesson-catalog row still says "26 lessons"; flagging this explicitly rather
   than silently leaving it, since no prior lesson-addition run appears to have refreshed it either,
   meaning it has been drifting for many runs, not just this one — a future run should decide whether to
   refresh it now or fold that refresh into whichever run actually closes the §4.3 gate).
@@ -4545,7 +4545,7 @@ owner-directed Quizlet/Vocabulary design review.** The review that summarises al
   Closes on a practical question ("would this same decision hold up if I made it a hundred times") rather
   than a directive — never tells the reader to trade more or less, only to separate outcome from process.
   All fields carry parallel en/es/ko/zh/ja content, matching the format of lessons 28-39.
-- **Catalogue re-measured** (same method as prior entries: sum every lesson's `sections[].body.en` +
+- **Catalog re-measured** (same method as prior entries: sum every lesson's `sections[].body.en` +
   `takeaway.en` + `thinkAbout.en` from `lessonContent.js`, plus `minutes` from `lessons.js`): **40
   lessons / 112,387 English characters / 100 minutes** (28 money, 12 economy), up from 39/108,987/97.
   **The §4.3 gate's lesson-count clause (≥40 lessons) is now met for the first time** — the minutes
@@ -4634,7 +4634,7 @@ direction is the problem.
   review (build was green, so the one permitted code change didn't apply).
 - **Log-vs-commit cross-check: clean.** Every run-log entry has a matching commit and vice versa; the
   three `Refresh market data` commits correctly have no entries (different scheduled task). The
-  twenty-fourth run's catalogue measurement and chunk-size figure both reproduced exactly. The run log
+  twenty-fourth run's catalog measurement and chunk-size figure both reproduced exactly. The run log
   is trustworthy — worth stating, since most of this review's criticism is about direction, not honesty.
 - **Primary concern — the lesson treadmill re-formed inside its own correction.** 22 of the last 24 runs
   were single-lesson adds, 13 consecutively. Item 17 already names this exact failure mode in its own
@@ -4677,7 +4677,7 @@ direction is the problem.
   judged against (translation ratio, lesson-count gate status).
 - **What changed**: `LAUNCH_READINESS.md` only — no `src/` changes, no lesson content, no code.
   - **Found and fixed a real bug in the scorecard's own documented refresh method, not just stale
-    numbers.** The "How to refresh this file" section's lesson-catalogue and translation-ratio scripts
+    numbers.** The "How to refresh this file" section's lesson-catalog and translation-ratio scripts
     read `content/lessons.js` alone. That was correct when written, but item 23 (2026-08-07) split lesson
     body text out into `content/lessonContent.js`, leaving `lessons.js` holding only metadata
     (id/track/icon/color/minutes/title/subtitle). Running the *documented* script today returns ~4,860
@@ -4812,7 +4812,7 @@ direction is the problem.
 - **Context**: this was an interactive session, not a scheduled dev-agent run — the owner was asked
   directly ("what does P-4 need from me") and given the three options item 20/P-4 laid out. Owner chose
   **option (a)**: accept the current unreviewed es/ko/zh/ja translation state, ship under "(Beta)"
-  labelling, and asked for a "review engine for each language" built alongside that choice — i.e. accept
+  labeling, and asked for a "review engine for each language" built alongside that choice — i.e. accept
   for now, but stop the acceptance from being another silent, untracked drift like the one that made P-4
   necessary in the first place.
 - **What was built**:
@@ -4963,7 +4963,7 @@ direction is the problem.
   lesson-count clause (already met, untouched by this run — no lesson 41 was added).
   Chose lesson 13 ("Budgeting: Know Where Your Money Goes") — the first lesson in the money track, only
   2 minutes / 2 sections, thinner than most of its neighbors despite being the most foundational money
-  lesson in the catalogue. Added a third section, "Make Saving Automatic, Not a Decision": continues the
+  lesson in the catalog. Added a third section, "Make Saving Automatic, Not a Decision": continues the
   lesson's existing Maria example, reframes her $600/month savings target as something that needs to be
   moved automatically the day her paycheck lands rather than left to "whatever's left over," and
   explicitly cross-references lesson 35 (present bias) for *why* willpower-dependent plans fail, rather
@@ -4971,7 +4971,7 @@ direction is the problem.
   practical mechanics lesson, not a duplicate of either. Written and translated (en/es/ko/zh/ja) in the
   same session, matching every other section in the file — no language was left for later. Updated
   `lessons.js`'s `minutes: 2` → `minutes: 3` for lesson 13 to match. Also refreshed the one
-  `LAUNCH_READINESS.md` row this change affects (lesson catalogue size: 112,387 chars/100 min →
+  `LAUNCH_READINESS.md` row this change affects (lesson catalog size: 112,387 chars/100 min →
   113,519 chars/101 min) and this file's own item-17 paragraph with the same figures, including removing
   a "LAUNCH_READINESS.md still says '26 lessons'" note in that paragraph that had itself gone stale (the
   file was actually correct since the 2026-08-09 P-2 refresh; the note just never got removed).
@@ -4988,7 +4988,7 @@ direction is the problem.
      ~4 kB from the pre-existing 513.09 kB, consistent with one new section's worth of text across 5
      languages; still under the 600 kB threshold set 2026-08-12 by the run immediately above this one),
      no chunk-size warning.
-  4. Recomputed catalogue-wide totals via the same bootstrapped-Node method `LAUNCH_READINESS.md`
+  4. Recomputed catalog-wide totals via the same bootstrapped-Node method `LAUNCH_READINESS.md`
      documents: 40 lessons / 113,519 English chars / 101 minutes (was 112,387 / 100). Confirms the
      `LAUNCH_READINESS.md` and item-17 edits above are accurate, not asserted.
 - **Adversarial self-check**:
@@ -5006,12 +5006,12 @@ direction is the problem.
     "Two lesson tracks" closed decisions and doesn't reopen the "machine-translated, accept for now"
     decision's scope. No conflict.
   - *Already-done backlog item*: checked "Completed and pruned" — nothing there resembles deepening
-    lesson 13 specifically, or an "automate savings" section anywhere in the catalogue (`grep -in
+    lesson 13 specifically, or an "automate savings" section anywhere in the catalog (`grep -in
     "automatic transfer\|automate" src/content/lessonContent.js` before writing found only lesson 35's
     unrelated present-bias discussion, which this new section deliberately cross-references rather than
     repeats). Not a duplicate.
   - *Own verification claim*: every number and command above is reproducible from the current tree —
-    the word-count script, `npm test`, `npm run build`, and the catalogue-totals script were all run
+    the word-count script, `npm test`, `npm run build`, and the catalog-totals script were all run
     against the tree as committed, not against an intermediate state.
 - **Not touched, and why**: `scripts/translation-review.mjs`, `economic-cycles-v6.jsx` — see Orient.
   Did not add a 41st lesson (item 17/24's lesson-count clause is already met; adding one would move
@@ -5043,7 +5043,7 @@ direction is the problem.
 - **What was done**: Per item 17's "depth in existing lessons" guidance (still the target — the
   content-duration clause was ~19 minutes short going into this run) and the second run's "next run
   should pick" note, picked **lesson 8** ("The Yield Curve: Crystal Ball") — 1 minute, the thinnest
-  lesson in the whole catalogue by the `minutes` field, an economy-track lesson so it's independent of
+  lesson in the whole catalog by the `minutes` field, an economy-track lesson so it's independent of
   item 24's money-track judgment-lesson scope entirely. Added a second section, "Why the Signal Works —
   and Where It Can Mislead": explains the mechanism (a long yield is a market bet on average future
   short rates, so an expected slowdown pulls the long end down before jobs/GDP data shows it), names the
@@ -5054,7 +5054,7 @@ direction is the problem.
   "more likely," not "when" or "how severe"). Purely explanatory/historical, no new prescriptive framing.
   Written and translated (en/es/ko/zh/ja) in the same pass, matching every other section in the file.
   Updated `lessons.js`'s `minutes: 1` → `minutes: 2` for lesson 8 to match. Refreshed the one
-  `LAUNCH_READINESS.md` row this change affects (lesson catalogue size: 113,519 chars/101 min →
+  `LAUNCH_READINESS.md` row this change affects (lesson catalog size: 113,519 chars/101 min →
   114,790 chars/102 min) and this file's own item-17 paragraph with the same figures.
 - **Verified**:
   1. Word-count math, via bootstrapped Node: lesson 8's `sections[].body.en` + `takeaway.en` +
@@ -5068,7 +5068,7 @@ direction is the problem.
      ~4 kB from the pre-lesson-13-deepening/pre-this-run baseline, consistent with one new section's
      worth of text across 5 languages; still comfortably under the 600 kB threshold set 2026-08-12), no
      chunk-size warning.
-  4. Recomputed catalogue-wide totals via the same bootstrapped-Node method `LAUNCH_READINESS.md`
+  4. Recomputed catalog-wide totals via the same bootstrapped-Node method `LAUNCH_READINESS.md`
      documents: 40 lessons / 114,790 English chars / 102 minutes (was 113,519 / 101). Confirms the
      `LAUNCH_READINESS.md` and item-17 edits above are accurate, not asserted.
   5. `git status --short` after build showed only the four intended files (`src/content/lessonContent.js`,
@@ -5080,7 +5080,7 @@ direction is the problem.
     LAUNCH_READINESS.md | grep -iE "dalio|you should (buy|sell|invest)|we recommend|be bullish|be
     cautious|child|kid.?mode|nowDate|April 2026"` returned one match — an unchanged context line (the
     pre-existing "Kids curriculum" row in `LAUNCH_READINESS.md`, shown because it's adjacent to the
-    edited lesson-catalogue-size row), not something this run added. `npm run check-blindspot` (part of
+    edited lesson-catalog-size row), not something this run added. `npm run check-blindspot` (part of
     `npm test` above) independently confirms no advice-adjacent phrasing anywhere in `src/content/`.
     No regression.
   - *DECISIONS.md conflict*: read the full file before editing (same read as the prior run this same
@@ -5088,10 +5088,10 @@ direction is the problem.
     `localStorage` state, and translations were written in the same pass as the English — consistent
     with the "Content as `.js` modules" and "Two lesson tracks" closed decisions. No conflict.
   - *Already-done backlog item*: checked "Completed and pruned" — nothing there resembles deepening
-    lesson 8 or a 2s10s/mechanism-of-the-signal section anywhere in the catalogue (`grep -in "2s10s\|
+    lesson 8 or a 2s10s/mechanism-of-the-signal section anywhere in the catalog (`grep -in "2s10s\|
     1966" src/content/lessonContent.js` before writing returned no matches). Not a duplicate.
   - *Own verification claim*: every number and command above is reproducible from the current tree —
-    the word-count script, `npm test`, `npm run build`, and the catalogue-totals script were all run
+    the word-count script, `npm test`, `npm run build`, and the catalog-totals script were all run
     against the tree as committed, not against an intermediate state.
 - **Not touched, and why**: `scripts/translation-review.mjs`, `economic-cycles-v6.jsx` — see Orient.
   Did not add a 41st lesson (same reasoning as the prior run this date — the lesson-count clause is
@@ -5123,12 +5123,12 @@ direction is the problem.
   tool for the latter, and closes on the discipline of refilling the emergency fund after it's drawn
   down rather than treating a single use as the end of the story. Continues the lesson's existing James
   example (car-repair scenario from section 1) rather than introducing a new one, and is a genuinely new
-  concept in the catalogue — `grep -in "sinking fund\|irregular expense\|refill\|replenish"
+  concept in the catalog — `grep -in "sinking fund\|irregular expense\|refill\|replenish"
   src/content/lessonContent.js` before writing returned no matches. Purely mechanics/planning content,
   consistent with item 24 being scoped to judgment lessons and this being a money-track *mechanics*
   lesson. Written and translated (en/es/ko/zh/ja) in the same pass, matching every other section in the
   file. Updated `lessons.js`'s `minutes: 1` → `minutes: 2` for lesson 14 to match. Refreshed the one
-  `LAUNCH_READINESS.md` row this change affects (lesson catalogue size: 114,790 chars/102 min →
+  `LAUNCH_READINESS.md` row this change affects (lesson catalog size: 114,790 chars/102 min →
   115,702 chars/103 min) and this file's own item-17 paragraph (both its lead figure and its
   `LAUNCH_READINESS.md`-refresh history line) with the same figures.
 - **Verified**:
@@ -5144,7 +5144,7 @@ direction is the problem.
      ~4.5 kB from the pre-this-run 521.07 kB baseline, consistent with one new section's worth of text
      across 5 languages; still comfortably under the 600 kB threshold set 2026-08-12), no chunk-size
      warning.
-  4. Recomputed catalogue-wide totals via the same bootstrapped-Node method `LAUNCH_READINESS.md`
+  4. Recomputed catalog-wide totals via the same bootstrapped-Node method `LAUNCH_READINESS.md`
      documents: 40 lessons / 115,702 English chars / 103 minutes (was 114,790 / 102; 28 money / 12
      economy, unchanged). Confirms the `LAUNCH_READINESS.md` and item-17 edits above are accurate, not
      asserted.
@@ -5158,7 +5158,7 @@ direction is the problem.
     recommend|be bullish|be cautious|child|kid.?mode|nowDate|April 2026"` returned no matches at all
     with zero diff context (a default 3-line-context `git diff` on the same range does surface one hit,
     the pre-existing "Kids curriculum" row in `LAUNCH_READINESS.md`, but only because it sits three
-    lines from the edited lesson-catalogue-size row — `--unified=0` confirms it's unchanged, not
+    lines from the edited lesson-catalog-size row — `--unified=0` confirms it's unchanged, not
     something this run touched). `npm run check-blindspot` (part of `npm test` above) independently
     confirms no advice-adjacent phrasing anywhere in `src/content/`. No regression.
   - *DECISIONS.md conflict*: read the full file before editing. The new section stayed inside the
@@ -5167,10 +5167,10 @@ direction is the problem.
     "Content as `.js` modules," "localStorage-only progress state," and "Machine-translated lesson
     content: accept for now" closed/open decisions. No conflict.
   - *Already-done backlog item*: checked "Completed and pruned" — nothing there resembles deepening
-    lesson 14 or a sinking-fund/irregular-expense section anywhere in the catalogue (confirmed by the
+    lesson 14 or a sinking-fund/irregular-expense section anywhere in the catalog (confirmed by the
     pre-write grep above). Not a duplicate.
   - *Own verification claim*: every number and command above is reproducible from the current tree —
-    the word-count script, `npm test`, `npm run build`, and the catalogue-totals script were all run
+    the word-count script, `npm test`, `npm run build`, and the catalog-totals script were all run
     against the tree as it stands, not against an intermediate state.
 - **Not touched, and why**: `scripts/translation-review.mjs`, `economic-cycles-v6.jsx` — see Orient, and
   every prior run's log entry this date for the fuller reasoning. Did not add a 41st lesson (the
@@ -5209,12 +5209,12 @@ direction is the problem.
   year's interest collapses compounding back to simple interest), then connects this to the practical
   "reinvest" setting on savings accounts, index funds, and dividend-paying stocks, closing on checking
   that the setting is actually on since some accounts default to paying interest out. A genuinely new
-  concept in the catalogue — `grep -in "reinvest\|compounding frequency\|dollar.cost averag" src/content/
+  concept in the catalog — `grep -in "reinvest\|compounding frequency\|dollar.cost averag" src/content/
   lessonContent.js` before writing returned only one unrelated QT-related hit (line 462, about the Fed
   not reinvesting bond proceeds), not a duplicate. Continues the lesson's existing Priya example from
   section 2 rather than introducing a new one. Written and translated (en/es/ko/zh/ja) in the same pass.
   Updated `lessons.js`'s `minutes: 2` → `minutes: 3` for lesson 15 to match. Refreshed
-  `LAUNCH_READINESS.md`'s lesson-catalogue row (116,820 chars/104 min, was 115,702/103) and this file's
+  `LAUNCH_READINESS.md`'s lesson-catalog row (116,820 chars/104 min, was 115,702/103) and this file's
   item-17 paragraph (lead figures, the `LAUNCH_READINESS.md`-refresh history line, and the "moved by"
   sentence) with the same figures.
 - **Verified**:
@@ -5234,7 +5234,7 @@ direction is the problem.
   3. `npm run build` — `✓ 63 modules transformed`, `LessonReader-*.js` 529.52 kB / gzip 224.89 kB (up
      ~3.9 kB from the pre-this-run 525.59 kB baseline, consistent with one new section's worth of text
      across 5 languages; still comfortably under the 600 kB threshold), no chunk-size warning.
-  4. Recomputed catalogue-wide totals via the same bootstrapped-Node method `LAUNCH_READINESS.md`
+  4. Recomputed catalog-wide totals via the same bootstrapped-Node method `LAUNCH_READINESS.md`
      documents: 40 lessons / 116,820 English chars / 104 minutes (was 115,702 / 103; 28 money / 12
      economy, unchanged). Confirms the `LAUNCH_READINESS.md` and item-17 edits above are accurate, not
      asserted.
@@ -5258,10 +5258,10 @@ direction is the problem.
     English — consistent with the "Content as `.js` modules," "localStorage-only progress state," and
     "Two lesson tracks" closed decisions. No conflict.
   - *Already-done backlog item*: checked "Completed and pruned" — nothing there resembles deepening
-    lesson 15 or a reinvestment-mechanics section anywhere in the catalogue (confirmed by the pre-write
+    lesson 15 or a reinvestment-mechanics section anywhere in the catalog (confirmed by the pre-write
     grep above). Not a duplicate.
   - *Own verification claim*: every number and command above is reproducible from the current tree — the
-    word-count script, `npm test`, `npm run build`, and the catalogue-totals script were all run against
+    word-count script, `npm test`, `npm run build`, and the catalog-totals script were all run against
     the tree as it stands, not against an intermediate state. Ran `git status --short` a third time
     immediately before writing this entry to confirm nothing drifted while writing it up.
 - **Not touched, and why**: `scripts/translation-review.mjs`, `economic-cycles-v6.jsx` — see Orient, and
@@ -5303,12 +5303,12 @@ direction is the problem.
   low utilization) as what matters afterward regardless of starting point. Deliberately descriptive
   throughout ("a secured card requires...", not "get a secured card" or naming any issuer) to stay clear
   of §10.1 advice-adjacency — see the adversarial self-check below. A genuinely new concept in the
-  catalogue — `grep -in "secured card|authorized user|credit-builder|credit builder|no credit history|
+  catalog — `grep -in "secured card|authorized user|credit-builder|credit builder|no credit history|
   soft inquiry|hard inquiry" src/content/lessonContent.js` before writing returned only one unrelated hit
   (lesson 27's passing "hard inquiry" mention inside its report-fields list, not an explanation of the
   soft/hard distinction or a starting-from-zero path), not a duplicate. Written and translated
   (en/es/ko/zh/ja) in the same pass. Updated `lessons.js`'s `minutes: 2` → `minutes: 3` for lesson 16 to
-  match. Refreshed `LAUNCH_READINESS.md`'s lesson-catalogue row (118,048 chars/105 min, was 116,820/104)
+  match. Refreshed `LAUNCH_READINESS.md`'s lesson-catalog row (118,048 chars/105 min, was 116,820/104)
   and this file's item-17 paragraph (lead figures, the `LAUNCH_READINESS.md`-refresh history line, and
   the "moved by" sentence) with the same figures.
 - **Verified**:
@@ -5325,7 +5325,7 @@ direction is the problem.
   3. `npm run build` — `✓ 63 modules transformed`, `LessonReader-*.js` 536.21 kB / gzip 227.76 kB (up
      ~6.7 kB from the pre-this-run 529.52 kB baseline, consistent with one new section's worth of text
      across 5 languages; still comfortably under the 600 kB threshold), no chunk-size warning.
-  4. Recomputed catalogue-wide totals via the same bootstrapped-Node method `LAUNCH_READINESS.md`
+  4. Recomputed catalog-wide totals via the same bootstrapped-Node method `LAUNCH_READINESS.md`
      documents: 40 lessons / 118,048 English chars / 105 minutes (was 116,820 / 104; 28 money / 12
      economy, unchanged). Confirms the `LAUNCH_READINESS.md` and item-17 edits above are accurate, not
      asserted.
@@ -5348,12 +5348,12 @@ direction is the problem.
     pass as the English — consistent with the "Content as `.js` modules," "localStorage-only progress
     state," and "Two lesson tracks" closed decisions. No conflict.
   - *Already-done backlog item*: checked "Completed and pruned" — nothing there resembles deepening
-    lesson 16 or a starting-from-zero credit-building section anywhere in the catalogue. Specifically
+    lesson 16 or a starting-from-zero credit-building section anywhere in the catalog. Specifically
     checked lesson 27 in full (not just grepped) since it's the other credit-related lesson and the most
     likely place for accidental duplication — confirmed no overlap (27 is report-vs-score and dispute
     rights; this section is how to get a first score at all). Not a duplicate.
   - *Own verification claim*: every number and command above is reproducible from the current tree — the
-    word-count script, `npm test`, `npm run build`, and the catalogue-totals script were all run against
+    word-count script, `npm test`, `npm run build`, and the catalog-totals script were all run against
     the tree as it stands, not against an intermediate state.
 - **Not touched, and why**: `scripts/translation-review.mjs`, `economic-cycles-v6.jsx` — see Orient, and
   every prior run's log entry since 2026-08-12 for the fuller reasoning. Did not add a 41st lesson — this
@@ -5389,13 +5389,13 @@ direction is the problem.
   back to why the lesson's own earlier section recommends holding stocks *and* bonds rather than just many
   different stocks — bonds don't eliminate market risk either, but they've historically responded to the
   same conditions differently, which diversifying within one asset class alone can't replicate. A genuinely
-  new concept in the catalogue — `grep -in "systematic risk|market-wide risk|diversifiable|company-specific
+  new concept in the catalog — `grep -in "systematic risk|market-wide risk|diversifiable|company-specific
   risk|unsystematic|market risk|idiosyncratic" src/content/lessonContent.js src/content/glossary.js` before
   writing returned zero hits, not a duplicate of lessons 10, 23, or 25 (which cover cycle phases, fee
   mechanics, and account mechanics respectively — none discuss the diversifiable/undiversifiable risk
   distinction). Written and translated (en/es/ko/zh/ja) in the same pass, following the same condensed
   (not literal) translation style the existing two sections already use. Updated `lessons.js`'s
-  `minutes: 2` → `minutes: 3` for lesson 17 to match. Refreshed `LAUNCH_READINESS.md`'s lesson-catalogue
+  `minutes: 2` → `minutes: 3` for lesson 17 to match. Refreshed `LAUNCH_READINESS.md`'s lesson-catalog
   row (119,387 chars/106 min, was 118,048/105) and this file's item-17 paragraph (lead figures, the
   `LAUNCH_READINESS.md`-refresh history line, and the "moved by" sentence) with the same figures.
 - **Verified**:
@@ -5410,7 +5410,7 @@ direction is the problem.
   3. `npm run build` — `✓ 63 modules transformed`, `LessonReader-*.js` 542.20 kB / gzip 230.23 kB (up
      ~6 kB from the pre-this-run 536.21 kB baseline, consistent with one new section's worth of text
      across 5 languages; still comfortably under the 600 kB threshold), no chunk-size warning.
-  4. Recomputed catalogue-wide totals via the same bootstrapped-Node method `LAUNCH_READINESS.md`
+  4. Recomputed catalog-wide totals via the same bootstrapped-Node method `LAUNCH_READINESS.md`
      documents: 40 lessons / 119,387 English chars / 106 minutes (was 118,048 / 105; 28 money / 12
      economy, unchanged). Confirms the `LAUNCH_READINESS.md` and item-17 edits above are accurate, not
      asserted.
@@ -5433,13 +5433,13 @@ direction is the problem.
     pass as the English — consistent with the "Content as `.js` modules," "localStorage-only progress
     state," and "Two lesson tracks" closed decisions. No conflict.
   - *Already-done backlog item*: checked "Completed and pruned" — nothing there resembles deepening
-    lesson 17 or a systematic-vs-company-specific-risk section anywhere in the catalogue. Specifically
+    lesson 17 or a systematic-vs-company-specific-risk section anywhere in the catalog. Specifically
     read lessons 23 (fees) and 25 (brokerage mechanics) in full, not just grepped, since they're the
     other stock/bond-adjacent lessons and the most likely place for accidental duplication — confirmed no
     overlap (23 is expense-ratio/fee mechanics, 25 is order-execution/account mechanics; this section is
     the diversifiable/undiversifiable risk distinction). Not a duplicate.
   - *Own verification claim*: every number and command above is reproducible from the current tree — the
-    word-count script, `npm test`, `npm run build`, and the catalogue-totals script were all run against
+    word-count script, `npm test`, `npm run build`, and the catalog-totals script were all run against
     the tree as it stands, not against an intermediate state.
 - **Not touched, and why**: `scripts/translation-review.mjs`, `economic-cycles-v6.jsx` — see Orient, and
   every prior run's log entry since 2026-08-12 for the fuller reasoning. Did not add a 41st lesson — this
@@ -5483,7 +5483,7 @@ direction is the problem.
   src/content/lessonContent.js` before writing returned zero hits outside lesson 19, confirming no
   duplication elsewhere. Written and translated (en/es/ko/zh/ja) in the same pass, following the same
   condensed (not literal) translation style the existing sections use. Updated `lessons.js`'s `minutes: 2`
-  → `minutes: 3` for lesson 19 to match. Refreshed `LAUNCH_READINESS.md`'s lesson-catalogue row (120,718
+  → `minutes: 3` for lesson 19 to match. Refreshed `LAUNCH_READINESS.md`'s lesson-catalog row (120,718
   chars/107 min, was 119,387/106) and this file's item-17 paragraph (lead figures, the
   `LAUNCH_READINESS.md`-refresh history line, and the "moved by"/"roughly N minutes short" sentences) with
   the same figures.
@@ -5504,7 +5504,7 @@ direction is the problem.
   3. `npm run build` — `✓ 63 modules transformed`, `LessonReader-*.js` 550.36 kB / gzip 234.12 kB (up
      ~8.2 kB from the pre-this-run 542.20 kB baseline, consistent with one new section's worth of text
      across 5 languages; still comfortably under the 600 kB threshold), no chunk-size warning.
-  4. Recomputed catalogue-wide totals via the same bootstrapped-Node method `LAUNCH_READINESS.md`
+  4. Recomputed catalog-wide totals via the same bootstrapped-Node method `LAUNCH_READINESS.md`
      documents: 40 lessons / 120,718 English chars / 107 minutes (was 119,387 / 106; 28 money / 12
      economy, unchanged). Confirms the `LAUNCH_READINESS.md` and item-17 edits above are accurate, not
      asserted.
@@ -5527,13 +5527,13 @@ direction is the problem.
     pass as the English — consistent with the "Content as `.js` modules," "localStorage-only progress
     state," and "Two lesson tracks" closed decisions. No conflict.
   - *Already-done backlog item*: checked "Completed and pruned" — nothing there resembles deepening
-    lesson 19 or a withholding-estimate/refund-mechanics section anywhere in the catalogue. Specifically
+    lesson 19 or a withholding-estimate/refund-mechanics section anywhere in the catalog. Specifically
     read lesson 38 in full (not just grepped), since it's the only other lesson that mentions tax refunds
     at all (as a mental-accounting example) and the most likely place for accidental duplication —
     confirmed no overlap (38 is about the psychology of spending "found" money loosely, this section is
     the mechanics of what withholding and a refund actually are). Not a duplicate.
   - *Own verification claim*: every number and command above is reproducible from the current tree — the
-    word-count script, `npm test`, `npm run build`, and the catalogue-totals script were all run against
+    word-count script, `npm test`, `npm run build`, and the catalog-totals script were all run against
     the tree as it stands, not against an intermediate state. The word-count mismatch found and fixed
     mid-run (see point 1 above) is disclosed rather than smoothed over, since a reviewer re-running the
     same word-count script against the committed tree should get 677, not the 724 the first draft would
@@ -5577,10 +5577,10 @@ direction is the problem.
   happened, ordinary wear and tear, damage entirely under the policyholder's own control) because none
   involve genuine pooled uncertainty. `grep -in "adverse selection\|moral hazard\|uninsurable"
   src/content/lessonContent.js src/content/lessons.js src/content/glossary.js` before writing returned
-  zero hits, confirming no duplication elsewhere in the catalogue. Written and translated (en/es/ko/zh/ja)
+  zero hits, confirming no duplication elsewhere in the catalog. Written and translated (en/es/ko/zh/ja)
   in the same pass, condensed (not literal) translation style matching the lesson's existing two sections.
   Updated `lessons.js`'s `minutes: 2` → `minutes: 3` for lesson 20 to match. Refreshed
-  `LAUNCH_READINESS.md`'s lesson-catalogue row (122,042 chars/108 min, was 120,718/107) and this file's
+  `LAUNCH_READINESS.md`'s lesson-catalog row (122,042 chars/108 min, was 120,718/107) and this file's
   item-17 paragraph (lead figures, the `LAUNCH_READINESS.md`-refresh history line, and the "moved
   by"/"roughly N minutes short" sentences) with the same figures.
 - **Verified**:
@@ -5598,7 +5598,7 @@ direction is the problem.
   3. `npm run build` — `✓ 63 modules transformed`, `LessonReader-*.js` 556.86 kB / gzip 236.88 kB (up
      ~6.5 kB from the pre-this-run 550.36 kB baseline, consistent with one new section's worth of text
      across 5 languages; still comfortably under the 600 kB threshold), no chunk-size warning.
-  4. Recomputed catalogue-wide totals via the same bootstrapped-Node method `LAUNCH_READINESS.md`
+  4. Recomputed catalog-wide totals via the same bootstrapped-Node method `LAUNCH_READINESS.md`
      documents: 40 lessons / 122,042 English chars / 108 minutes (was 120,718 / 107; 28 money / 12
      economy, unchanged). Confirms the `LAUNCH_READINESS.md` and item-17 edits above are accurate, not
      asserted.
@@ -5626,11 +5626,11 @@ direction is the problem.
     pass as the English — consistent with the "Content as `.js` modules," "localStorage-only progress
     state," and "Two lesson tracks" closed decisions. No conflict.
   - *Already-done backlog item*: checked "Completed and pruned" — nothing there resembles deepening
-    lesson 20 or an adverse-selection/moral-hazard section anywhere in the catalogue. Grepped the full
-    catalogue for "adverse selection", "moral hazard", and "uninsurable" (see above) — zero hits before
+    lesson 20 or an adverse-selection/moral-hazard section anywhere in the catalog. Grepped the full
+    catalog for "adverse selection", "moral hazard", and "uninsurable" (see above) — zero hits before
     this run's edit. Not a duplicate.
   - *Own verification claim*: every number and command above is reproducible from the current tree — the
-    word-count script, `npm test`, `npm run build`, and the catalogue-totals script were all run against
+    word-count script, `npm test`, `npm run build`, and the catalog-totals script were all run against
     the tree as it stands, not against an intermediate state. The word-count overshoot found and fixed
     mid-run (see point 1 above) is disclosed rather than smoothed over, and the failed browser-preview
     attempt (point 6) is reported as what it was — an environment restriction, not a skipped step —
@@ -5763,7 +5763,7 @@ direction is the problem.
   static `import { lessonContent } from "../content/lessonContent.js"`, added a
   `TRACK_CONTENT_LOADERS` map (`economy`/`money` → `() => import(...)`), and a `content` state
   populated by a `useEffect` keyed on `[lesson.id, lesson.track]` that calls the right loader and sets
-  `content` from the resolved module (with a `cancelled` guard against a stale response landing after
+  `content` from the resolved module (with a `canceled` guard against a stale response landing after
   the user has already navigated to a different lesson). Sections/visual/takeaway/thinkAbout — the
   parts that read `content.*` — now render inside `content ? (...) : <EmptyState icon="path">…</EmptyState>`,
   reusing the same loading affordance `App.jsx`'s other lazy screens and `Sectors.jsx` already use, so
@@ -5879,7 +5879,7 @@ direction is the problem.
   `thinkAbout` prompt's question and the body's own explanation, without answering the question itself
   or making any forward-looking claim about rates. `grep -in "wealth effect\|transmission mechanism\|
   mortgage rate" src/content/lessonContent.js src/content/lessons.js src/content/glossary.js` before
-  writing returned zero hits, confirming no duplication elsewhere in the catalogue. Written and
+  writing returned zero hits, confirming no duplication elsewhere in the catalog. Written and
   translated (en/es/ko/zh/ja) in the same pass, condensed (not literal) translation style matching the
   lesson's existing two sections. Updated `lessons.js`'s `minutes: 2` → `minutes: 3` for lesson 9.
   Marked all four newly-stale translations reviewed via `node scripts/translation-review.mjs mark 9
@@ -5888,7 +5888,7 @@ direction is the problem.
   stale for a later batch pass rather than marking them itself; since the reviewer of record for `ai`
   reviews is Claude writing the same-pass translations, marking immediately keeps the ledger's "0
   stale" state accurate without depending on a future session doing a batch catch-up. Refreshed
-  `LAUNCH_READINESS.md`'s lesson-catalogue row (123,075 chars/109 min, was 122,042/108) and this file's
+  `LAUNCH_READINESS.md`'s lesson-catalog row (123,075 chars/109 min, was 122,042/108) and this file's
   item-17 paragraph (lead figures, the `LAUNCH_READINESS.md`-refresh history line, and the "moved
   by"/"roughly N minutes short" sentences) with the same figures.
 - **Verified**:
@@ -5907,7 +5907,7 @@ direction is the problem.
      69.83 kB to 72.70 kB (33.24 kB gzip) — consistent with one new section's worth of text across 5
      languages; `lessonContent.money-*.js` untouched at 482.39 kB, confirming the edit stayed inside
      the economy-track chunk as expected.
-  4. Recomputed catalogue-wide totals via the same bootstrapped-Node method `LAUNCH_READINESS.md`
+  4. Recomputed catalog-wide totals via the same bootstrapped-Node method `LAUNCH_READINESS.md`
      documents: 40 lessons / 123,075 English chars / 109 minutes (was 122,042 / 108; 28 money / 12
      economy, unchanged). Confirms the `LAUNCH_READINESS.md` and item-17 edits above are accurate, not
      asserted.
@@ -5941,15 +5941,15 @@ direction is the problem.
     "localStorage-only progress state," and this item's own "`LessonReader` chunk split per track"
     closed decisions. No conflict.
   - *Already-done backlog item*: checked "Completed and pruned" — nothing there resembles deepening
-    lesson 9 or a QE-transmission-mechanism section anywhere in the catalogue. Grepped the full
-    catalogue for "wealth effect", "transmission mechanism", and "mortgage rate" (see above) — zero
+    lesson 9 or a QE-transmission-mechanism section anywhere in the catalog. Grepped the full
+    catalog for "wealth effect", "transmission mechanism", and "mortgage rate" (see above) — zero
     hits before this run's edit. Not a duplicate. Also confirmed this is item 17's first economy-track
     pick (all eight prior deepenings were money-track) — not a re-run of the item-24 money-track
     judgment-lesson pattern, since QE transmission is mechanics/economics content, squarely inside item
     17's economy-track lane, not item 24's frozen money-track judgment lane.
   - *Own verification claim*: every number and command above is reproducible from the current tree —
     the word-count script, `npm test` (both before and after marking), `npm run build`, and the
-    catalogue-totals script were all run against the tree as it stands, not against an intermediate
+    catalog-totals script were all run against the tree as it stands, not against an intermediate
     state. The live browser check (point 6) is disclosed with its actual method (a `localStorage`
     unlock write, since lesson 9 is gated behind completing lessons 1-8) rather than glossed over as an
     unqualified "verified in the browser."
@@ -5994,7 +5994,7 @@ direction is the problem.
   `lessons.js`'s `minutes: 2` → `minutes: 3` for lesson 11. Marked all four newly-stale translations
   reviewed via `node scripts/translation-review.mjs mark 11 <lang> "Claude (Sonnet 5,
   economics-app-dev-agent)" ai`, per the pattern the second run this date established (mark immediately
-  rather than leaving it for a batch pass). Refreshed `LAUNCH_READINESS.md`'s lesson-catalogue row
+  rather than leaving it for a batch pass). Refreshed `LAUNCH_READINESS.md`'s lesson-catalog row
   (124,591 chars/110 min, was 123,075/109) and this file's item-17 paragraph (lead figures, the
   `LAUNCH_READINESS.md`-refresh history line, and the "moved by"/"roughly N minutes short" sentences)
   with the same figures.
@@ -6012,7 +6012,7 @@ direction is the problem.
   3. `npm run build` — `✓ 64 modules transformed`, no chunk-size warning. `lessonContent.economy-*.js`
      grew from 72.70 kB to 76.34 kB (34.83 kB gzip); `lessonContent.money-*.js` untouched at 482.39 kB,
      confirming the edit stayed inside the economy-track chunk as expected.
-  4. Recomputed catalogue-wide totals via the same bootstrapped-Node method `LAUNCH_READINESS.md`
+  4. Recomputed catalog-wide totals via the same bootstrapped-Node method `LAUNCH_READINESS.md`
      documents: 40 lessons / 124,591 English chars / 110 minutes (was 123,075 / 109; 28 money / 12
      economy, unchanged). Confirms the `LAUNCH_READINESS.md` and item-17 edits above are accurate, not
      asserted.
@@ -6048,14 +6048,14 @@ direction is the problem.
     "Revisit when" note as closest to the 500 kB threshold) was untouched by this run, confirmed by
     verification point 3. No conflict.
   - *Already-done backlog item*: checked "Completed and pruned" — nothing there resembles deepening
-    lesson 11 or an indicator/phase-mapping section anywhere in the catalogue. The pre-run grep (see
+    lesson 11 or an indicator/phase-mapping section anywhere in the catalog. The pre-run grep (see
     "What was done" above) confirms no duplication elsewhere in `src/content/`. Not a duplicate. Also
     confirmed this is item 17's second economy-track pick (after lesson 9, this date's second run) —
     not a re-run of item 24's frozen money-track judgment-lesson pattern, since indicator/phase
     synthesis is mechanics/economics content, squarely inside item 17's economy-track lane.
   - *Own verification claim*: every number and command above is reproducible from the current tree —
     the word-count script, `npm test` (both before and after marking), `npm run build`, and the
-    catalogue-totals script were all run against the tree as it stands. The live browser check (point 6)
+    catalog-totals script were all run against the tree as it stands. The live browser check (point 6)
     discloses its actual method (a `localStorage` unlock write, since lesson 11 is gated behind
     completing lessons 1-10) rather than an unqualified "verified in the browser," and lists the specific
     `innerText` substrings checked rather than just asserting the section "renders correctly."
@@ -6105,7 +6105,7 @@ direction is the problem.
   Updated `lessons.js`'s `minutes: 2` → `minutes: 3` for lesson 10. Marked all four newly-stale
   translations reviewed via `node scripts/translation-review.mjs mark 10 <lang> "Claude (Sonnet 5,
   economics-app-dev-agent)" ai`, per the pattern the third run this date established. Refreshed
-  `LAUNCH_READINESS.md`'s lesson-catalogue row (126,159 chars/111 min, was 124,591/110) and this file's
+  `LAUNCH_READINESS.md`'s lesson-catalog row (126,159 chars/111 min, was 124,591/110) and this file's
   item-17 paragraph (lead figures, the `LAUNCH_READINESS.md`-refresh history line, and the "moved
   by"/"roughly N minutes short" sentences) with the same figures.
 - **Verified**:
@@ -6122,7 +6122,7 @@ direction is the problem.
   3. `npm run build` — `✓ 64 modules transformed`, no chunk-size warning. `lessonContent.economy-*.js`
      grew from 76.34 kB to 79.77 kB (36.22 kB gzip); `lessonContent.money-*.js` untouched at 482.39 kB,
      confirming the edit stayed inside the economy-track chunk as expected.
-  4. Recomputed catalogue-wide totals via the same bootstrapped-Node method `LAUNCH_READINESS.md`
+  4. Recomputed catalog-wide totals via the same bootstrapped-Node method `LAUNCH_READINESS.md`
      documents (full re-import of `lessons.js` + `lessonContent.js`, not an incremental delta from the
      previous entry): 40 lessons / 126,159 English chars / 111 minutes (was 124,591 chars/110 min).
      The new section's English body alone is 1,568 chars (`lessonContent.economy.js`, lesson 10's third
@@ -6162,14 +6162,14 @@ direction is the problem.
     chunk split per track" closed decisions. The money-track chunk (482.39 kB) was untouched by this run,
     confirmed by verification point 3. No conflict.
   - *Already-done backlog item*: checked "Completed and pruned" — nothing there resembles deepening
-    lesson 10 or an asset/mechanism section anywhere in the catalogue. The pre-run grep (see "What was
+    lesson 10 or an asset/mechanism section anywhere in the catalog. The pre-run grep (see "What was
     done" above) confirms no duplication elsewhere in `src/content/`. Not a duplicate. Also confirmed
     this is item 17's third economy-track pick (after lessons 9 and 11) — not a re-run of item 24's
     frozen money-track judgment-lesson pattern, since a rate-to-asset mechanism explanation is squarely
     economics/mechanics content, not decision-psychology.
   - *Own verification claim*: every number and command above is reproducible from the current tree —
     the word-count script, `npm test` (both before and after marking), `npm run build`, and the
-    catalogue-totals script were all run against the tree as it stands, and the catalogue char-count
+    catalog-totals script were all run against the tree as it stands, and the catalog char-count
     (126,159) was cross-checked against the previous figure (124,591) plus the new section's own
     measured char count (1,568), which reconcile exactly — not just asserted to match. The live
     browser check (point 6) discloses its actual method (a `localStorage` unlock write plus a
@@ -6220,7 +6220,7 @@ direction is the problem.
   Updated `lessons.js`'s `minutes: 2` → `minutes: 3` for lesson 4. Marked all four newly-stale
   translations reviewed via `node scripts/translation-review.mjs mark 4 <lang> "Claude (Sonnet 5,
   economics-app-dev-agent)" ai`, per the pattern the second run this date established. Refreshed
-  `LAUNCH_READINESS.md`'s lesson-catalogue row (127,651 chars/112 min, was 126,159/111) and this file's
+  `LAUNCH_READINESS.md`'s lesson-catalog row (127,651 chars/112 min, was 126,159/111) and this file's
   item-17 paragraph (lead figures, the `LAUNCH_READINESS.md`-refresh history line, and the "moved
   by"/"roughly N minutes short" sentences) with the same figures.
 - **Verified**:
@@ -6237,7 +6237,7 @@ direction is the problem.
   3. `npm run build` — `✓ 64 modules transformed`, no chunk-size warning. `lessonContent.economy-*.js`
      grew from 79.77 kB to 83.78 kB (37.78 kB gzip); `lessonContent.money-*.js` untouched at 482.39 kB,
      confirming the edit stayed inside the economy-track chunk as expected.
-  4. Recomputed catalogue-wide totals via the same bootstrapped-Node method `LAUNCH_READINESS.md`
+  4. Recomputed catalog-wide totals via the same bootstrapped-Node method `LAUNCH_READINESS.md`
      documents (full re-import of `lessons.js` + `lessonContent.js`, not an incremental delta from the
      previous entry): 40 lessons / 127,651 English chars / 112 minutes (was 126,159 chars/111 min). The
      new section's English body alone is 1,492 chars (`lessonContent.economy.js`, lesson 4's third
@@ -6275,14 +6275,14 @@ direction is the problem.
     chunk split per track" closed decisions. The money-track chunk (482.39 kB) was untouched by this run,
     confirmed by verification point 3. No conflict.
   - *Already-done backlog item*: checked "Completed and pruned" — nothing there resembles deepening
-    lesson 4 or a debt-cycle-limit section anywhere in the catalogue. The pre-run grep (see "What was
+    lesson 4 or a debt-cycle-limit section anywhere in the catalog. The pre-run grep (see "What was
     done" above) confirms no duplication elsewhere in `src/content/`. Not a duplicate. Also confirmed
     this is item 17's fourth economy-track pick (after lessons 9, 11, 10) — not a re-run of item 24's
     frozen money-track judgment-lesson pattern, since a rate-cut-limit/debt-cycle-transition explanation
     is squarely economics/mechanics content, not decision-psychology.
   - *Own verification claim*: every number and command above is reproducible from the current tree —
     the word-count script, `npm test` (both before and after marking), `npm run build`, and the
-    catalogue-totals script were all run against the tree as it stands, and the catalogue char-count
+    catalog-totals script were all run against the tree as it stands, and the catalog char-count
     (127,651) was cross-checked against the previous figure (126,159) plus the new section's own
     measured char count (1,492), which reconcile exactly — not just asserted to match. The live browser
     check (point 6) discloses its actual method (a `localStorage` unlock write plus `javascript_tool`
@@ -6504,12 +6504,12 @@ direction is the problem.
      `lessonContent.economy-*.js` grew from 83.81 kB to 87.36 kB (39.34 kB gzip);
      `lessonContent.money-*.js` untouched at 482.36 kB, confirming the edit stayed inside the
      economy-track chunk as expected.
-  4. Recomputed catalogue-wide totals via a full re-import of `lessons.js` +
+  4. Recomputed catalog-wide totals via a full re-import of `lessons.js` +
      `lessonContent.economy.js` + `lessonContent.money.js` (the current two-file split, not the old
      single `lessonContent.js` path some older run-log entries still reference): **40 lessons / 129,069
      English chars / 113 minutes** (was 127,651 chars / 112 min before this run — the new section's
      English body alone accounts for the difference). 28 money / 12 economy, unchanged. Refreshed both
-     `AGENT_LOG.md`'s item 17 and `LAUNCH_READINESS.md`'s lesson-catalogue row with these figures in
+     `AGENT_LOG.md`'s item 17 and `LAUNCH_READINESS.md`'s lesson-catalog row with these figures in
      this same commit.
   5. `git status --short` after the build showed exactly `src/content/lessonContent.economy.js`,
      `src/content/lessons.js`, `scripts/translation-review-ledger.json`, `LAUNCH_READINESS.md`, plus
@@ -6543,12 +6543,12 @@ direction is the problem.
     chunk split per track" closed decisions, and with the "Two lesson tracks" decision's current (post
     2026-08-14 renumbering) id scheme. No conflict.
   - *Already-done backlog item*: checked "Completed and pruned" — nothing there resembles deepening
-    lesson 34 or a debt-currency-denomination section anywhere in the catalogue. Also explicitly
+    lesson 34 or a debt-currency-denomination section anywhere in the catalog. Also explicitly
     confirmed by title (not id) that this lesson was never one of the twelve lessons deepened so far —
     see "Re-derived the candidate list" above. Not a duplicate.
   - *Own verification claim*: every number and command above is reproducible from the current tree —
     `npm test` was run both before and after the `lessons.js` edit specifically to show the check
-    catching the stale-minutes case rather than trusting the after-state alone; the catalogue-totals
+    catching the stale-minutes case rather than trusting the after-state alone; the catalog-totals
     recomputation used a fresh full re-import (not an incremental delta) of both content files, matching
     the current two-file split rather than an older single-file method some earlier run-log entries
     still describe. The live browser check discloses its exact method (a `localStorage` unlock write
@@ -6628,10 +6628,10 @@ direction is the problem.
      `lessonContent.money-*.js` grew from 482.36 kB to 489.75 kB (207.65 kB gzip);
      `lessonContent.economy-*.js` untouched at 87.36 kB, confirming the edit stayed inside the
      money-track chunk.
-  4. Recomputed catalogue-wide totals via a full re-import of `lessons.js` + `lessonContent.economy.js`
+  4. Recomputed catalog-wide totals via a full re-import of `lessons.js` + `lessonContent.economy.js`
      + `lessonContent.money.js`: **40 lessons / 130,217 English chars / 114 minutes** (was 129,069
      chars / 113 min before this run). 28 money / 12 economy, unchanged. Refreshed both `AGENT_LOG.md`'s
-     item 17 and `LAUNCH_READINESS.md`'s lesson-catalogue row with these figures in this same commit.
+     item 17 and `LAUNCH_READINESS.md`'s lesson-catalog row with these figures in this same commit.
   5. `git status --short` after the build showed exactly `src/content/lessonContent.money.js`,
      `src/content/lessons.js`, `scripts/translation-review-ledger.json`, `LAUNCH_READINESS.md`, plus
      this `AGENT_LOG.md` edit — `economic-cycles-v6.jsx`'s untracked status was unchanged, confirmed
@@ -6669,7 +6669,7 @@ direction is the problem.
     id scheme. Not a duplicate.
   - *Own verification claim*: every command and figure above is reproducible from the current tree —
     `npm test` was run both before and after the `lessons.js` edit specifically to show the check
-    catching the stale-minutes case; the catalogue-totals recomputation used a fresh full re-import of
+    catching the stale-minutes case; the catalog-totals recomputation used a fresh full re-import of
     both content files; the live browser check discloses its exact method (a `localStorage` unlock
     write plus a direct DOM `.click()`) and the specific section headings and body text confirmed
     present, rather than asserting the lesson "renders correctly."
@@ -6737,10 +6737,10 @@ direction is the problem.
   3. `npm run build` — `vite v6.4.3`, `✓ 65 modules transformed`, no chunk-size warning.
      `lessonContent.economy-*.js` grew from 87.36 kB to 91.00 kB; `lessonContent.money-*.js` unchanged at
      489.75 kB, confirming the edit stayed inside the economy-track chunk.
-  4. Recomputed catalogue-wide totals via a full re-import of `lessons.js` +
+  4. Recomputed catalog-wide totals via a full re-import of `lessons.js` +
      `lessonContent.economy.js` + `lessonContent.money.js`: **40 lessons / 131,667 English chars / 115
      minutes** (was 130,217 chars / 114 min before this run). 28 money / 12 economy, unchanged. Refreshed
-     both `AGENT_LOG.md`'s item 17 and `LAUNCH_READINESS.md`'s lesson-catalogue row with these figures in
+     both `AGENT_LOG.md`'s item 17 and `LAUNCH_READINESS.md`'s lesson-catalog row with these figures in
      this same commit.
   5. `git status --short` after the build showed exactly `src/content/lessonContent.economy.js`,
      `src/content/lessons.js`, `scripts/translation-review-ledger.json`, `LAUNCH_READINESS.md`, plus this
@@ -6779,7 +6779,7 @@ direction is the problem.
     duplicate.
   - *Own verification claim*: every command and figure above is reproducible from the current tree —
     `npm test` was run both before and after the `lessons.js` edit specifically to show the check
-    catching the stale-minutes case; the catalogue-totals recomputation used a fresh full re-import of
+    catching the stale-minutes case; the catalog-totals recomputation used a fresh full re-import of
     both content files; the live browser check discloses its exact method (a `localStorage` unlock write
     plus a direct DOM `.click()`) and the specific section headings and body text confirmed present,
     rather than asserting the lesson "renders correctly."
@@ -6814,7 +6814,7 @@ direction is the problem.
   "commission-free" brokerage's actual revenue comes from — a real financial-literacy gap distinct from
   Lesson 11's expense-ratio content (confirmed by reading lesson 11 first: it's about fund fees an
   *investor* pays, not how a *brokerage* itself earns money on a supposedly free trade). Also grepped the
-  full catalogue for "payment for order flow," "bid-ask," "market maker," and "expense ratio" before
+  full catalog for "payment for order flow," "bid-ask," "market maker," and "expense ratio" before
   writing anything, to confirm no existing lesson already covered this angle — only the (distinct)
   expense-ratio content in lesson 11 matched, and glossary.js had no relevant entry either.
 - **What was done**: added a third section, "If Trades Are Free, Who's Paying for This?"
@@ -6847,10 +6847,10 @@ direction is the problem.
      threshold, but close enough to flag for whoever deepens the next money-track lesson (noted in item
      17's backlog text above); `lessonContent.economy-*.js` unchanged at 91.00 kB, confirming the edit
      stayed inside the money-track chunk.
-  4. Recomputed catalogue-wide totals via a full re-import of `lessons.js` +
+  4. Recomputed catalog-wide totals via a full re-import of `lessons.js` +
      `lessonContent.economy.js` + `lessonContent.money.js`: **40 lessons / 133,022 English chars / 117
      minutes** (was 131,667 chars / 115 min before this run). 28 money / 12 economy, unchanged. Refreshed
-     both `AGENT_LOG.md`'s item 17 and `LAUNCH_READINESS.md`'s lesson-catalogue row with these figures in
+     both `AGENT_LOG.md`'s item 17 and `LAUNCH_READINESS.md`'s lesson-catalog row with these figures in
      this same commit.
   5. `git status --short` after the build showed exactly `src/content/lessonContent.money.js`,
      `src/content/lessons.js`, `scripts/translation-review-ledger.json`, `LAUNCH_READINESS.md`, plus this
@@ -6892,7 +6892,7 @@ direction is the problem.
     lesson's first deepening pass under any id scheme. Not a duplicate.
   - *Own verification claim*: every command and figure above is reproducible from the current tree —
     `npm test` was run both before and after the `lessons.js` edit specifically to show the check
-    catching the stale-minutes case; the catalogue-totals recomputation used a fresh full re-import of
+    catching the stale-minutes case; the catalog-totals recomputation used a fresh full re-import of
     both content files; the live browser check discloses its exact method (a `localStorage` unlock write
     plus a nested-`<button>` DOM `.click()`, noting where the outer `<li>` click didn't register) and the
     specific section headings and body text confirmed present, rather than asserting the lesson "renders
@@ -6933,7 +6933,7 @@ direction is the problem.
   Everything") walks through the transmission mechanism into stocks, bonds, real estate, and the dollar.
   Neither section explains *why* the Fed sets rates the way it does — the dual-mandate framework (price
   stability + maximum employment) that drives the "turn the dial" decisions §1/§2 describe the effects of.
-  Grepped the full catalogue for "dual mandate," "maximum employment," "price stability," "2% inflation,"
+  Grepped the full catalog for "dual mandate," "maximum employment," "price stability," "2% inflation,"
   and "inflation target" before writing anything: only a passing "Fed targets roughly 2% inflation as
   healthy" line in lesson 39's indicator dashboard (economy) matched — no lesson anywhere covers the
   employment half of the mandate or the tension between the two goals. Also checked money lesson 9
@@ -6966,10 +6966,10 @@ direction is the problem.
      `lessonContent.economy-*.js` grew from 91.00 kB to 94.53 kB; `lessonContent.money-*.js` unchanged at
      499.36 kB, confirming the edit stayed inside the economy-track chunk and didn't push the money chunk
      any closer to the 500 kB threshold.
-  4. Recomputed catalogue-wide totals via a full re-import of `lessons.js` + `lessonContent.economy.js` +
+  4. Recomputed catalog-wide totals via a full re-import of `lessons.js` + `lessonContent.economy.js` +
      `lessonContent.money.js`: **40 lessons / 134,398 English chars / 118 minutes** (was 133,022 chars /
      117 min before this run). 28 money / 12 economy, unchanged. Refreshed both `AGENT_LOG.md`'s item 17
-     and `LAUNCH_READINESS.md`'s lesson-catalogue row with these figures in this same commit.
+     and `LAUNCH_READINESS.md`'s lesson-catalog row with these figures in this same commit.
   5. `git status --short` after the build showed exactly `src/content/lessonContent.economy.js`,
      `src/content/lessons.js`, `scripts/translation-review-ledger.json`, `LAUNCH_READINESS.md`, plus this
      `AGENT_LOG.md` edit — `economic-cycles-v6.jsx`'s untracked status was unchanged, confirmed both before
@@ -7006,7 +7006,7 @@ direction is the problem.
     open candidate. This is lesson 35's first deepening pass. Not a duplicate.
   - *Own verification claim*: every command and figure above is reproducible from the current tree —
     `npm test` was run both before and after the `lessons.js` edit specifically to show the check catching
-    the stale-minutes case; the catalogue-totals recomputation used a fresh full re-import of both content
+    the stale-minutes case; the catalog-totals recomputation used a fresh full re-import of both content
     files; the live browser check discloses its exact method (a `localStorage` unlock write, a button
     `.click()` via `querySelectorAll` text matching, and the specific heading/body substrings confirmed
     present) rather than asserting the lesson "renders correctly."
@@ -7045,7 +7045,7 @@ direction is the problem.
   Neither section explains that a long-term yield is not *purely* a rate-expectations bet — it also
   contains a **term premium** (extra compensation for the risk of tying money up longer), and that this
   premium is itself a second, independent source of curve inversions distinct from the lead-time-variance
-  limit §2 already covers. Grepped the full catalogue for "term premium" and "expectations hypothesis"
+  limit §2 already covers. Grepped the full catalog for "term premium" and "expectations hypothesis"
   before writing anything — zero matches anywhere in `src/content/`, confirming this is a genuinely new
   concept, not a restatement of §2's existing "expectations" framing (§2 explains what the expectation
   *is a bet on*; the new section explains that the yield is expectations *plus* a separate premium on
@@ -7080,11 +7080,11 @@ direction is the problem.
   3. `npm run build` — `vite v6.4.3`, `✓ 65 modules transformed`, no chunk-size warning.
      `lessonContent.economy-*.js` grew from 94.53 kB to 98.47 kB; `lessonContent.money-*.js` unchanged at
      499.36 kB, confirming the edit stayed inside the economy-track chunk.
-  4. Recomputed catalogue-wide totals via a full re-import of `lessons.js` + `lessonContent.economy.js` +
+  4. Recomputed catalog-wide totals via a full re-import of `lessons.js` + `lessonContent.economy.js` +
      `lessonContent.money.js`: **40 lessons / 136,031 English chars / 120 minutes** (was 134,398 chars /
      118 min before this run). 28 money / 12 economy, unchanged. **This clears §4.3's minutes clause
      (120/120) for the first time — both content clauses of the Phase-0 gate (≥40 lessons, ~120 minutes)
-     are now met.** Refreshed both `AGENT_LOG.md`'s item 17 and `LAUNCH_READINESS.md`'s lesson-catalogue
+     are now met.** Refreshed both `AGENT_LOG.md`'s item 17 and `LAUNCH_READINESS.md`'s lesson-catalog
      row with these figures and the cleared-clause status in this same commit.
   5. `git status --short` after the build showed exactly `src/content/lessonContent.economy.js`,
      `src/content/lessons.js`, `scripts/translation-review-ledger.json`, `LAUNCH_READINESS.md`, plus this
@@ -7119,7 +7119,7 @@ direction is the problem.
     open candidate. This is lesson 36's first deepening pass. Not a duplicate.
   - *Own verification claim*: every command and figure above is reproducible from the current tree —
     `npm test` was run both before and after the `lessons.js` edit specifically to show the check catching
-    the stale-minutes case; the catalogue-totals recomputation used a fresh full re-import of both content
+    the stale-minutes case; the catalog-totals recomputation used a fresh full re-import of both content
     files; point 6 above explicitly discloses that this run skipped the live-browser check the two prior
     runs did, rather than implying an equivalent check happened.
 - **Not touched, and why**: `economic-cycles-v6.jsx` — unrelated, still reference-only, untouched. Did not
@@ -7960,7 +7960,7 @@ direction is the problem.
   own visual style (illustrations, gradients, confetti, hearts/lives — none of that fits here and none
   was brought over):
   1. **Dual right/wrong markers on quiz answers.** Quizlet's "Completing a quiz" flow marks the
-     learner's wrong pick with an explicit X, not just a colour shift, alongside the check on the
+     learner's wrong pick with an explicit X, not just a color shift, alongside the check on the
      correct answer — both marked, so what-you-picked and what-was-right are equally legible at a
      glance. This app's `Question.jsx` already recolours both (via `fill.ok`/`fill.bad`), but only ever
      iconed the *correct* answer; the learner's own wrong pick had no icon, just a border/wash tint.
@@ -7974,13 +7974,13 @@ direction is the problem.
   comment (a wrong answer teaches via its explanation, not via a grade) — so the recap leads with a
   plain "{correct} of {total}" line, not a percentage or letter grade, and reuses `ink.ok`/`ink.bad` and
   the existing hairline-row list pattern (`ParentGuide.jsx`/`Glossary.jsx` already use it) rather than
-  Quizlet's solid colour bands, which don't fit `theme.js`'s "space, not borders" rule.
+  Quizlet's solid color bands, which don't fit `theme.js`'s "space, not borders" rule.
 - **What was done**:
   1. `src/components/Icon.jsx` — added an `x` glyph (two crossing strokes, same viewBox/stroke
      conventions as every other icon here).
   2. `src/components/Question.jsx` — the learner's own wrong pick now also renders an `x` icon in
      `ink.bad`, mirroring the existing `check`-in-`ink.ok` treatment of the correct answer. No change to
-     the correct-answer branch, the colour logic, or any other file.
+     the correct-answer branch, the color logic, or any other file.
   3. `src/screens/Practice.jsx` — added a `results` state array (one `{item, correct}` entry per
      question answered this session, pushed from the existing `onAnswered` callback that already calls
      `recordReview`/`track`). The session-complete branch (`!item`) now renders, in addition to the
@@ -8032,7 +8032,7 @@ direction is the problem.
     design-reference-driven UI pass in the log. Not a duplicate.
   - *Own verification claim*: the `aria-checked`/icon-presence and `getComputedStyle(...).color` checks
     above are the evidence — not an assumption that the right CSS variable "should" resolve to the right
-    colour because the token name looked correct. Checking the *wrong*-answer path required deliberately
+    color because the token name looked correct. Checking the *wrong*-answer path required deliberately
     picking a wrong option and confirming the specific RGB value, not just confirming the page didn't
     error.
 - **Not touched, and why**: `economic-cycles-v6.jsx` — unrelated, untouched. No lesson content, glossary

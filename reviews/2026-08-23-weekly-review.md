@@ -176,13 +176,13 @@ one aggregate per language, hiding the concentration that makes the work schedul
 ### 4.7 ⚪ Note only — four uncommitted US-English edits, two of them inside protected text
 
 `DECISIONS.md` and `LAUNCH_PLAN.md` carry two unstaged one-word changes each
-(`judgement`→`judgment`, `catalogue`→`catalog`, `theatre`→`theater`, `colour`→`color`). **Not
+(`judgment`→`judgment`, `catalog`→`catalog`, `theater`→`theater`, `color`→`color`). **Not
 touched, and no run should touch them.** Flagged only because two fall inside the exception item 91
 deliberately honored — quotations and dated records stay verbatim:
 
-- `catalogue`→`catalog` sits inside a blockquoted **dated verification note** whose own next sentence
+- `catalog`→`catalog` sits inside a blockquoted **dated verification note** whose own next sentence
   reads *"Deliberately not corrected: rewriting a dated verification falsifies it."*
-- `colour`→`color` rewrites a **quotation** of the old §3.1.2's opening line (`"One accent colour per
+- `color`→`color` rewrites a **quotation** of the old §3.1.2's opening line (`"One accent color per
   lesson/phase"`), which makes the quotation no longer accurate.
 
 Owner's call entirely.

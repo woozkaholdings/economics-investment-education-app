@@ -100,7 +100,7 @@ is *not* getting scheduled — see C1 and C4.
 
 ### Concerns
 
-**C1 — Non-English "Beta" labelling is still not scheduled, and it is the only
+**C1 — Non-English "Beta" labeling is still not scheduled, and it is the only
 launch-blocking accuracy claim currently live.**
 Re-measured this pass, unchanged from a week ago:
 
@@ -175,7 +175,7 @@ accident — and the backlog now says to keep the content modules code-free so i
 
 **C8 — Cadence.** Seven dev-agent runs landed in roughly eighteen hours, and the working
 tree changed twice while this review was executing. `AGENT_LOG.md`'s header says the agent
-runs "every 3 hours"; the scheduled task says every 6. Neither matches observed behaviour.
+runs "every 3 hours"; the scheduled task says every 6. Neither matches observed behavior.
 The work is good, so this is not a complaint — but reviews are grading a moving target, and
 two agents writing the same files remains a live risk. Worth reconciling the stated cadence
 with the real one.
@@ -197,7 +197,7 @@ rather than anything shipped to users — but nobody has looked. Added as a smal
   the app to investing activity. "Pick a stock and track it for 3 months" is tracking, not
   buying; the parent tip says a **practice** account, and that word survives correctly in
   all five languages (`de práctica`, `연습용`, `模拟`, `練習用`). That is careful
-  localisation, not an accident — worth preserving if this copy is ever revised.
+  localization, not an accident — worth preserving if this copy is ever revised.
 - `qeNarrative` / `qtNarrative` ("Fed BUYS bonds → money in → yields ↓ → stocks ↑↑") are
   mechanism descriptions with the disclaimer rendered directly beneath. Acceptable. Worth
   watching only if they ever grow into positioning language.

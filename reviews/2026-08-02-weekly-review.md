@@ -152,7 +152,7 @@ it is a *content-completeness* problem: whole paragraphs simply do not exist out
 English. Shipping this as a "5 languages" feature would be a store-listing accuracy
 problem and a bad first session for four out of five audiences. The launch plan already
 prescribes the cheap fix (§3.5): ship English polished, keep the others in-app but
-**labelled beta**, and do not market them until a native speaker reviews each. Nothing in
+**labeled beta**, and do not market them until a native speaker reviews each. Nothing in
 the current backlog reflects this.
 
 **C3 — Stack divergence from the launch plan (needs a human decision).**

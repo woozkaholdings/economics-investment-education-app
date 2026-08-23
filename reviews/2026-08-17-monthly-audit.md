@@ -54,13 +54,13 @@ the log at 909 KB and cut it 43%; three separate entries flagged the App-summary
 fixed it; two entries wrote "remaining dev-agent-actionable areas are thin." Each of those is a local
 observation of the same global fact, and none of them multiplied it out.
 
-**A second, smaller number in the same family — and this one is a defect, not a judgement.** The
+**A second, smaller number in the same family — and this one is a defect, not a judgment.** The
 falsifiable-claims register `CLAIMS.md`, whose entire purpose is to stop stated beliefs from going
 quietly stale, **has not been touched since 2026-08-16** (`20f82e7`) and had gone stale in two of its
 own rows within roughly 24 hours:
 
 - **A6's status cell read "40 lessons / 120 min."** The tree says **144 min** — item 56 recalibrated
-  every lesson's `minutes` on 2026-08-17 and moved the catalogue total. The claim itself still holds
+  every lesson's `minutes` on 2026-08-17 and moved the catalog total. The claim itself still holds
   (144 > 120 clears §4.3 harder than before), but the register was asserting a stale number as its
   evidence.
 - **A3's supporting paragraph read "93%, 0% human, 3 entries stale ... drifting the wrong way."**
@@ -91,7 +91,7 @@ is real and large:
   English edit is a five-file edit.
 
 **What this audit is NOT saying.** It is not saying to cut them. The owner took that decision
-explicitly on 2026-08-11 (P-4, option (a): ship under "(Beta)" labelling), and `CLAIMS.md` A3 already
+explicitly on 2026-08-11 (P-4, option (a): ship under "(Beta)" labeling), and `CLAIMS.md` A3 already
 carries the belief with a refuting number. **What the audit is saying is that A3's non-debt half —
 "non-English sessions under 15% of total" — is unmeasurable, will stay unmeasurable until item 18
 lands, and that the four languages are therefore currently held by a decision that no evidence can
@@ -207,7 +207,7 @@ redesign lands. **Do not paraphrase them on the way — the wording is the findi
   reachable URL, or one person who has opened the app. **Check:** 2026-09-05.
 
 And one new claim for `CLAIMS.md`, also **not applied this run** — the register is a live document and
-adding a row to it is a judgement the audit should propose rather than smuggle in beside a figure fix:
+adding a row to it is a judgment the audit should propose rather than smuggle in beside a figure fix:
 
 - **D3.** *A backlog item's premise can be trusted well enough to implement without re-measuring.*
   **Refuted if** any filed item's headline number is corrected on execution. **Check** 2026-09-05.

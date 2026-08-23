@@ -151,7 +151,7 @@ Add a new entry when a run makes a choice future work should be able to look up 
   to invent names later, but firing them now would be fabricated data.
 - **Revisit when:** a PostHog (or other provider) account and key exist — swap `sink()`, keep every
   `track()` call site as-is.
-- **Update, 2026-08-21 (owner-directed): the event is `canceled`, not `cancelled`.** The house style
+- **Update, 2026-08-21 (owner-directed): the event is `canceled`, not `cancelled`.** The house style  <!-- us-english:allow: specimen: the rule names the wrong form deliberately -->
   is US English (backlog items 91, 92), and this name was the last British spelling left in the repo.
   Renamed in all six places at once — `EVENTS.CANCELED: "canceled"` in `src/lib/analytics.js`,
   `check-data.mjs` §13's expected minimum set, `LAUNCH_PLAN.md` §9.2, `LAUNCH_READINESS.md`'s status
@@ -325,7 +325,7 @@ Add a new entry when a run makes a choice future work should be able to look up 
   - money lessons 2/3/4/15 say "credit card", "credit score", "credit report", "credit limit" — none <!-- track-ok: pre-split track labels; see the 2026-08-20 Update at the end of this entry -->
     of which is the glossary's macro sense of **Credit**.
   Matching per-language would multiply the problem: five locales, five surface-form inflections, five
-  separate false-positive profiles. Curation moves that judgement to authoring time, where it is
+  separate false-positive profiles. Curation moves that judgment to authoring time, where it is
   reviewable in a diff, and keys are language-independent so the chip renders from `glossary.js` in
   the reader's own language without ever matching prose at runtime.
 - **Why in place rather than navigating to the Glossary tab:** the friction §3.0.3 exists to remove is
@@ -485,7 +485,7 @@ Add a new entry when a run makes a choice future work should be able to look up 
   > Later the *same day*, `79d9507` ("Rebuild app from scratch") replaced the component tree wholesale
   > and took four of those names with it — `Home`, `isLessonUnlocked`, `markLessonComplete` and
   > `saveCompletedLessons`; `loadCompletedLessons` was the only one it left standing. "1/12" was the
-  > true reading when the catalogue held 12 lessons — it held 40 the day this note was written.
+  > true reading when the catalogue held 12 lessons — it held 40 the day this note was written.  <!-- us-english:allow: dated verification note in an indented blockquote -->
   > **Deliberately not corrected: rewriting a dated verification falsifies
   > it** — the same rule the lesson-id ranges below carry,
   > where `check-data.mjs` §29's failure message says to append a *new* dated note rather than edit
@@ -562,7 +562,7 @@ Add a new entry when a run makes a choice future work should be able to look up 
   `locales/*.js` UI strings have never been in
   its coverage numbers. This surfaced when item 35 added 12 money-track glossary terms in all five
   languages: those 48 non-English fields are AI-written under this decision, ship under the same
-  "(Beta)" labelling, and are **not** counted by `npm run review-status`. The reported coverage figure
+  "(Beta)" labeling, and are **not** counted by `npm run review-status`. The reported coverage figure
   is therefore "lesson content reviewed," not "app content reviewed," and should not be read as the
   latter. Deliberately **not** fixed by widening the ledger in that run: the ledger's drift detection
   hashes an English *lesson* source and its shape assumes per-lesson records, so covering other content

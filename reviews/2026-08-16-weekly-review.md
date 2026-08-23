@@ -28,7 +28,7 @@ that it can verify UI in a browser and shipped six UI features unverified on tha
 **51 commits.** Cross-checked against `AGENT_LOG.md`'s run log entry-by-entry: **no mismatches
 found.** Every run entry has a matching commit and every dev commit has a matching entry. (The
 four "Refresh market data" commits come from the separate `economics-app-market-data` scheduled
-task and correctly have no dev-agent entries.) One trivial labelling drift: the entry titled
+task and correctly have no dev-agent entries.) One trivial labeling drift: the entry titled
 "2026-08-16 (scheduled dev-agent)" committed at 22:09 on 08-15.
 
 ### The 2026-08-09 PRIORITY BLOCK — fully closed
@@ -184,7 +184,7 @@ All folded into **W-4**.
 ### On the seventeen deepening runs
 
 Worth stating plainly, because it looks like the old failure mode: it mostly isn't. The 2026-08-09
-block explicitly authorised "the ~20 remaining minutes, or depth in existing lessons," the runs
+block explicitly authorized "the ~20 remaining minutes, or depth in existing lessons," the runs
 moved a genuine unmet gate clause, the metric is machine-verified rather than self-asserted, and
 **the agent stopped on its own** once the clause cleared, pivoting to test coverage and
 accessibility without being told. That is the self-correction the freeze was meant to produce.

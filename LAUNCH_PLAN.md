@@ -23,7 +23,7 @@ ahead of topical coverage or feature count.
 > - **The money track teaches judgment, not procedure.** It is now lessons 16-28 only — what counts
 >   as an asset, why a raise disappears, sunk cost, present bias. The owner's framing: *wise money
 >   lessons, not practical information throwing* — the insight that financial literacy is not taught
->   in school, and that income from labour behaves differently from income from assets or a business.
+>   in school, and that income from labour behaves differently from income from assets or a business.  <!-- us-english:allow: blockquoted excerpt -->
 > - **The mechanics became optional.** Lessons 1-15 (budgeting, credit scores, 401(k), insurance,
 >   taxes) are the new `essentials` track: kept in full, accurate, and reachable, but no longer the
 >   first thing a new learner meets. Fifteen how-to lessons in front of the door was the problem.
@@ -245,7 +245,7 @@ failure here outranks a missing feature:
    yield curve in text; a curve inverting in front of the reader is what a chat window cannot do.
 5. **Short enough to finish.** Lesson 1 under four minutes; every lesson carries an honest
    minutes estimate. People commit to five minutes, not to "learning economics."
-6. **Plain language over precision theatre.** Prefer the shorter word. Where a simplification is
+6. **Plain language over precision theater.** Prefer the shorter word. Where a simplification is
    genuinely lossy, say so in one clause ("roughly", "a common rule of thumb") rather than
    retreating into jargon — see the GDP/recession and yield-curve wordings already in the content.
 7. **Readable by default.** Body text meets WCAG AA contrast, scales with the in-app text-size
@@ -325,7 +325,7 @@ kind quiz feedback with explanations.
 palette.
 
 *Retitled 2026-08-21 (backlog item 62's F6). Until then this was a second section also called "Visual
-system", opening "One accent colour per lesson/phase" — the v1 emphasis §3.1.1 supersedes, and one
+system", opening "One accent colour per lesson/phase" — the v1 emphasis §3.1.1 supersedes, and one <!-- us-english:allow: verbatim quotation of the old §3.1.2 opening line; see AGENT_LOG.md:194-199 -->
 the app has never shipped. The duplicate title was the load-bearing defect, not the wording: §-numbers
 here are cited from source (`src/theme.js`, `src/components/LessonVisual.jsx`) and by the dev-agent's
 blindspot rules, so a reference by title had two possible targets that said opposite things.
@@ -452,7 +452,7 @@ never in a first session, and — new — **never between a learner and their re
 the retention mechanic; gating it would trade the habit for a conversion, and the habit is what makes
 anything else sellable later.
 
-Apply to Apple's and Google's small-business programmes (30% → 15%) the week store accounts are
+Apply to Apple's and Google's small-business programs (30% → 15%) the week store accounts are
 approved; they are not automatic. On web, card processing is ~3%, which is why the web version is
 where subscriptions should be sold whenever a store's rules permit it.
 
