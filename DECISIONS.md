@@ -701,3 +701,31 @@ Add a new entry when a run makes a choice future work should be able to look up 
   Two separate runs (2026-08-21 and 2026-08-23) have now "found" a wrong accent color by eye and
   disproved it by reading `getComputedStyle` — `#2f43c4` is `rgb(47, 67, 196)` in the live DOM.
   Measure before you fix.
+
+## Three UIUX/ patterns adopted, and the display serif reaches raw headings too (2026-08-23, owner-directed)
+
+- **Decision:** the last three patterns from the `UIUX/` reference set that the app had not taken are
+  now in: a **circular back chip** in the lesson reader, **one continuous rail** behind the Review
+  steps, and a **bevelled primary button**. Everything else in that folder was already built (see
+  `AGENT_LOG.md`'s 2026-08-21 entry and item 26).
+- **`shadow.bevel` is its own token and must not be collapsed into `fill.accentDeep`.** The design
+  first proposed reusing `accentDeep`, which is correct in light (`#24339b` under `#2f43c4`) and
+  **wrong in dark**, where the "deep" accent is *lighter* than the face (`#c3ccff` over `#a9b6ff`) —
+  a bevel lit from below. `--shadow-bevel` is darker than the face in both schemes, verified by
+  reading the rendered button's computed `boxShadow` and comparing relative luminance, not by eye.
+- **Why a `--shadow-` prefix and not a `--fill-` one:** `check-data.mjs` §28 pairs every `--fill-*`
+  with `--ink-on-fill` and demands WCAG AA. A bevel is a 3px edge nothing ever prints on, so a
+  `--fill-` name would have forced an accessibility answer to a question that does not exist.
+  `--shadow-*` is outside §28's prefix filters by design.
+- **The back chip's accessible name moved to `aria-label`.** The visible "Back" text is gone, so the
+  name has to live somewhere; `t.backLabel` now feeds `aria-label` and `title`. The target grew from
+  roughly 60×20 to **40×40**. Do not "tidy" that `aria-label` away.
+- **`family.display` must be applied by hand to headings that do not go through `<Text>`.** This is
+  the trap the run found: the 2026-08-23 serif change wired the family into `Text`'s scale lookup,
+  and **two display-scale headings render as raw `<h1>` with inline styles** — the lesson title in
+  `LessonReader.jsx` and the sub-screen title in `Reference.jsx`. Both silently stayed in Inter for
+  one commit; the reader's lesson title is the largest type in the app. Found by reading
+  `getComputedStyle(h1).fontFamily` in the live DOM, **after a screenshot had made it look correct**.
+  If a future run adds another raw display heading, set `fontFamily: family.display` on it.
+- **Revisit when:** someone wants the bevel gone — it is one line in `BUTTON_VARIANTS.primary`
+  plus the three `--shadow-bevel` declarations.

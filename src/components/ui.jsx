@@ -102,7 +102,17 @@ export function Note({ tone = "neutral", label, icon, children, style }) {
 
 // ── Button ────────────────────────────────────────────────────────────────
 const BUTTON_VARIANTS = {
-  primary: { background: fill.accent, color: ink.onFill, border: "none", boxShadow: shadow.lifted },
+  // The bevel is the UIUX/ set's one shared signature the app had not taken:
+  // Duolingo bevels the bottom edge, Vocabulary casts a hard offset shadow.
+  // A 3px inset bottom edge in `fill.accentDeep` is the restrained version —
+  // enough physicality to read as pressable in an adult finance-education app,
+  // and it spends a token the design system already declared and never used.
+  primary: {
+    background: fill.accent,
+    color: ink.onFill,
+    border: "none",
+    boxShadow: `${shadow.bevel}, ${shadow.raised}`,
+  },
   solid: { background: fill.ink, color: ink.onFill, border: "none" },
   outline: { background: surface.card, color: ink.body, border: `1px solid ${line.strong}` },
   quiet: { background: "transparent", color: ink.muted, border: "none" },
@@ -335,19 +345,22 @@ export function TileGrid({ children, style }) {
 // "Install the app" as already complete.
 export function Steps({ items, style }) {
   return (
-    <ol role="list" style={{ listStyle: "none", margin: 0, padding: 0, ...style }}>
+    // One continuous rail behind every step rather than a connector broken at
+    // each icon: the Vocabulary original (UIUX/ "Vocabulary iOS 187") runs a
+    // single rounded bar the whole height, which is what makes it read as ONE
+    // process instead of three unrelated rows. The tiles become bare glyphs on
+    // that rail — the wash moves from the tile to the rail, so no token changes.
+    <ol role="list" style={{ position: "relative", listStyle: "none", margin: 0, padding: 0, ...style }}>
+      <span
+        aria-hidden="true"
+        style={{ position: "absolute", left: 0, top: 4, bottom: 4, width: 32, borderRadius: radius.full, background: surface.accentWash }}
+      />
       {items.map((step, i) => {
         const last = i === items.length - 1;
         return (
           <li key={step.title} style={{ position: "relative", paddingLeft: 44, paddingBottom: last ? 0 : space["4"] }}>
-            {!last && (
-              <span
-                aria-hidden="true"
-                style={{ position: "absolute", left: 15, top: 34, bottom: 0, width: 2, background: line.hairline }}
-              />
-            )}
-            <span style={{ position: "absolute", left: 0, top: 0 }}>
-              <IconTile icon={step.icon} size={32} tone={step.done ? "ok" : "accent"} />
+            <span style={{ position: "absolute", left: 0, top: 0, display: "flex", width: 32, height: 32, alignItems: "center", justifyContent: "center", color: step.done ? ink.ok : ink.accent }}>
+              <Icon name={step.icon} size="16px" />
             </span>
             <Text
               variant="small"

@@ -21,7 +21,7 @@ import LessonVisual from "../components/LessonVisual.jsx";
 import PolicySim from "../components/PolicySim.jsx";
 import Question from "../components/Question.jsx";
 import { Button, Card, Disclaimer, EmptyState, Note, Stack, Text } from "../components/ui.jsx";
-import { fill, ink, line, radius, shadow, space, surface } from "../theme.js";
+import { family, fill, ink, line, radius, shadow, space, surface } from "../theme.js";
 
 // Lesson body text is split two ways: by track (item 25, 2026-08-14) and by
 // language (item 45, 2026-08-17). This screen loads exactly one of the ten
@@ -244,13 +244,17 @@ export default function LessonReader({ t, lang, lessons, index, completedLessons
       <button
         type="button"
         onClick={onBack}
+        aria-label={t.backLabel}
+        title={t.backLabel}
         style={{
-          display: "inline-flex", alignItems: "center", gap: space["2"],
-          background: "none", border: "none", padding: `${space["2"]}px 0`,
-          color: ink.muted, fontSize: "0.875rem", fontWeight: 500, cursor: "pointer",
+          display: "inline-flex", alignItems: "center", justifyContent: "center",
+          width: 40, height: 40, flexShrink: 0,
+          background: surface.card, border: `1px solid ${line.hairline}`,
+          borderRadius: radius.full, boxShadow: shadow.raised,
+          color: ink.body, cursor: "pointer",
         }}
       >
-        <Icon name="arrowLeft" size="1.1em" /> {t.backLabel}
+        <Icon name="arrowLeft" size="1.1em" />
       </button>
 
       {/* Title block — the lesson's own emoji is content, so it stays. */}
@@ -267,7 +271,7 @@ export default function LessonReader({ t, lang, lessons, index, completedLessons
           ref={headingRef}
           tabIndex={-1}
           style={{
-            margin: `${space["2"]}px 0 0`, fontSize: "1.75rem", fontWeight: 700,
+            margin: `${space["2"]}px 0 0`, fontFamily: family.display, fontSize: "1.75rem", fontWeight: 700,
             lineHeight: 1.25, letterSpacing: "-0.02em", color: ink.strong, outline: "none",
           }}
         >

@@ -73,6 +73,7 @@
      the contrast between the two IS the effect. */
   --font-display: ui-serif, Georgia, "Iowan Old Style", "Times New Roman", serif;
 
+  --shadow-bevel: inset 0 -3px 0 #24339b;
   --shadow-raised: 0 1px 2px rgba(41, 33, 22, 0.05), 0 1px 3px rgba(41, 33, 22, 0.07);
   --shadow-overlay: 0 12px 32px rgba(41, 33, 22, 0.20);
   --shadow-lifted: 0 4px 16px rgba(47, 67, 196, 0.22);
@@ -120,6 +121,7 @@
     --graph-blue: #a9b6ff;
     --graph-neutral: #8a8072;
 
+    --shadow-bevel: inset 0 -3px 0 #7c88cf;
     --shadow-raised: 0 1px 2px rgba(0, 0, 0, 0.4), 0 1px 3px rgba(0, 0, 0, 0.3);
     --shadow-overlay: 0 12px 32px rgba(0, 0, 0, 0.6);
     --shadow-lifted: 0 4px 16px rgba(169, 182, 255, 0.18);
@@ -165,6 +167,7 @@
   --graph-blue: #a9b6ff;
   --graph-neutral: #8a8072;
 
+  --shadow-bevel: inset 0 -3px 0 #7c88cf;
   --shadow-raised: 0 1px 2px rgba(0, 0, 0, 0.4), 0 1px 3px rgba(0, 0, 0, 0.3);
   --shadow-overlay: 0 12px 32px rgba(0, 0, 0, 0.6);
   --shadow-lifted: 0 4px 16px rgba(169, 182, 255, 0.18);

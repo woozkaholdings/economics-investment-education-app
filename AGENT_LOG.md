@@ -16365,3 +16365,98 @@ this app was cool blue on near-black. That gap is the whole of this change.
 to this commit. **Still open from the 2026-08-21 canvas and unchanged by this run:** the Leitner
 box-distribution strip on Review, which costs five locale keys x five languages and was offered back
 to the owner rather than shipped — **an open owner decision, not an oversight.**
+
+### 2026-08-23 (owner-directed, interactive) — the last three UIUX/ patterns, and a serif that had reached only half the headings
+
+**Picked:** owner-directed via `/design` — reference the `UIUX/` folder, design it, implement it. A
+design canvas was drafted and published first, then implemented. `HEAD` `cade971`; the owner's
+`UIUX/` and `drafts/` stayed untracked.
+
+### Step 3.5 — the premise, re-measured
+
+The premise this time was my own previous entry's claim that the structural half of the `UIUX/`
+redesign was complete. **Verified rather than assumed**, in the live browser: `Tile`/`TileGrid` render
+the Reference tab, `Steps` renders Review's "How review works", `ResumeCard` renders Learn's Next-up
+card. All present. So the remaining work really was three patterns, not a redesign — and the canvas
+says so on its face rather than proposing a rebuild of things that exist.
+
+### What shipped
+
+- **P1 — the reader's back control is a circular chip** (`LessonReader.jsx`). Every app in the folder
+  puts back/close in a round chip on a light disc. **The visible label is gone, so `t.backLabel` now
+  feeds `aria-label` and `title`** — the accessible name had to move, and dropping it would have been
+  a silent regression. Target grows from roughly 60×20 to **40×40**, confirmed by
+  `getBoundingClientRect`.
+- **P2 — the Review steps rail is one continuous bar** (`ui.jsx`'s `Steps`). The Vocabulary original
+  (`UIUX/Vocabulary iOS 187`, the screen `Practice.jsx` already cites) runs a single rounded rail the
+  full height; the shipped version broke the connector at every icon, reading as three unrelated
+  rows. The wash moved from the per-step tiles to the rail, so **no token changed**.
+- **P3 — the primary button is bevelled** (`ui.jsx`'s `BUTTON_VARIANTS.primary`). The one signature
+  shared by every app in the folder and missing here: Duolingo bevels the bottom edge, Vocabulary
+  casts a hard offset shadow. Shipped as the restrained version — a 3px inset bottom edge.
+- **P0 — a real defect in my own previous commit, found while implementing.** That commit wired the
+  display serif into `Text`'s scale lookup. **Two display-scale headings do not go through `Text`** —
+  the lesson title in `LessonReader.jsx:270` and the sub-screen title in `Reference.jsx:107`, both raw
+  `<h1>`s with inline styles — so they stayed in Inter. The reader's lesson title is the largest type
+  in the app. Both now carry `family.display`.
+
+### Two things the canvas said that the build disproved
+
+- **`fill.accentDeep` is the wrong token for the bevel, and only dark mode shows it.** The Decisions
+  artboard recommended reusing it: right in light (`#24339b` under `#2f43c4`), **wrong in dark**,
+  where the "deep" accent is *lighter* than the face (`#c3ccff` over `#a9b6ff`) — a bevel lit from
+  below. Shipped as **`--shadow-bevel`**, its own two-scheme token, darker than the face in both:
+  verified by reading the rendered button's computed `boxShadow` and comparing relative luminance
+  (light face 0.147 / bevel darker; dark face **0.491** / bevel **0.264**). **The canvas was corrected
+  to say so** rather than left describing a build that did not happen.
+- **It is a `--shadow-` token, not a `--fill-` one, on purpose.** §28 pairs every `--fill-*` with
+  `--ink-on-fill` and demands AA; a 3px edge nothing prints on would have been forced to answer an
+  accessibility question that does not exist. `--shadow-*` sits outside §28's prefix filters.
+
+### Verification
+
+- `npm test` **exit 0, 0 failures**, 2 pre-existing warnings. `npm run build` clean.
+  `check-blindspot` 0 failures. §28 still **110 pairs at AA** and §28b **70 graph pairs, 0 exempted**,
+  with the same worst cases as before — the bevel token deliberately does not enter that matrix.
+- **Live browser, both schemes.** Serif on the reader `h1` confirmed by `getComputedStyle` —
+  **`ui-serif, Georgia, …`, where the same read returned `Inter` before the fix**. Back chip: 40×40,
+  `border-radius: 999px`, `aria-label` "Back", **visible text empty** (so the name genuinely rests on
+  the label). Bevel: computed `boxShadow` inset colour read back as `rgb(36,51,155)` light and
+  `rgb(124,136,207)` dark, each darker than its face by luminance.
+- **The screenshot lied again and the measurement caught it — third time in three days.** The reader's
+  lesson title *looked* serif in a screenshot taken before the fix; `getComputedStyle` said `Inter`.
+  This is now the same trap as the violet-accent one, in a different property.
+
+### Adversarial self-check (step 5)
+
+- **Blindspot register** — clean. No content string changed; `check-blindspot` 0 failures, §10.1's
+  disclaimer still on every surface that requires it. §10.3: **Duolingo's winding path, mascot and
+  streak gamification were considered and deliberately not built** — the app ships parent-facing by
+  decision, and a mascot path reframes it at children, which is a legal/store-classification question
+  and not a UI one. That refusal is written onto the canvas itself so it is not re-proposed.
+- **`DECISIONS.md` conflict** — none. `theme.js`'s one-accent rule holds (the bevel is a shade of the
+  existing accent, not a new hue); localStorage-only, `.js` content modules and Vite untouched. The
+  paywall and sign-in screens that make up much of `UIUX/` were again left alone, per item 26's
+  standing owner instruction and the localStorage-only decision.
+- **Already-done backlog item** — no, and this was checked in the browser rather than assumed: the
+  five existing `UIUX/`-derived primitives were confirmed present and wired before anything was
+  designed, so none was rebuilt. `Steps` was modified, not re-created.
+- **Own verification claim** — reproducible; every figure is a computed-style read or a command.
+  **What the check caught: the canvas I had already published contained a recommendation that was
+  wrong in dark mode.** The honest move was to correct the published artboard, not to quietly ship
+  something else and leave the design saying otherwise.
+- **Copyright** — the references are other companies' shipping apps. General learning-app patterns
+  were adapted (a round back chip, a continuous step rail, a bevelled button); no branded element —
+  mascot, palette, node art, wordmark — was reproduced.
+
+### Noted, not fixed
+
+**The primary button is 42px tall, not 44.** Measured this run. Pre-existing, comes from `space["3"]`
+padding plus a 1rem label, and changing it moves every button in the app — out of scope for a run
+asked to apply three patterns. Filed here rather than silently widened.
+
+### Next
+
+**Unchanged and still the critical path:** item 18 (analytics account) and item 72's owner half (a
+deployed URL), both owner-blocked. **Item 93's `ja` phase** — `ja` economy 29-30 — is the next
+scheduled pick, per W-5.1 step 2 and this date's earlier entry.

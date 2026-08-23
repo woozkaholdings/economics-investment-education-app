@@ -81,6 +81,10 @@ export const graph = {
 };
 
 export const shadow = {
+  // The primary button's bottom edge. Darker than the accent in BOTH schemes —
+  // `fill.accentDeep` is not (it is lighter than the accent in dark), which is
+  // why this is its own token rather than a reuse.
+  bevel: "var(--shadow-bevel)",
   raised: "var(--shadow-raised)",
   overlay: "var(--shadow-overlay)",
   lifted: "var(--shadow-lifted)",
