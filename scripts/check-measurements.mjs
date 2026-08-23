@@ -26,7 +26,8 @@
 //
 //   MEASURED jargon glossary: 54 candidates, 14 control, 3 self-defining, 0 low-reach  [fingerprint 8e8cf29e]
 //
-// This script finds every such line anywhere in AGENT_LOG.md, re-runs the
+// This script finds every such line anywhere in AGENT_LOG.md or its archive,
+// re-runs the
 // instrument for each mode cited, and compares.
 //
 // THE FINGERPRINT IS THE WHOLE DESIGN, and it is the answer to the objection
@@ -55,7 +56,15 @@ import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
-const LOG = join(ROOT, "AGENT_LOG.md");
+// Both files, because archiving must not blind this check. Every MEASURED line
+// lives in a run-log entry, and run-log entries get moved to the archive once
+// they age out (AGENT_LOG.md's W-5.3 rule). On 2026-08-23 all 7 claims — and
+// the only ENFORCED one — sat in entries about to be moved, so a verbatim
+// archive would have left this script with nothing to check while still
+// passing green, via the `!claims.length` branch below that exists precisely to
+// make that state visible. Reading the archive too keeps a claim checkable for
+// as long as its fingerprint holds, wherever the entry quoting it now lives.
+const LOGS = [join(ROOT, "AGENT_LOG.md"), join(ROOT, "AGENT_LOG.archive.md")];
 const INSTRUMENT = join(ROOT, "scripts", "jargon-candidates.mjs");
 const MODES = ["money", "economy", "essentials", "all", "glossary"];
 
@@ -74,18 +83,28 @@ const CLAIM =
   /^[\s>`*_-]*MEASURED\s+jargon\s+(\w+):\s+(\d+)\s+candidates,\s+(\d+)\s+control,\s+(\d+)\s+self-defining,\s+(\d+)\s+low-reach\s+\[fingerprint\s+([0-9a-f]+)\]/;
 
 const claims = [];
-readFileSync(LOG, "utf8")
-  .split("\n")
-  .forEach((line, i) => {
+for (const log of LOGS) {
+  // The archive is optional: it does not exist until the first archiving pass.
+  let src;
+  try {
+    src = readFileSync(log, "utf8");
+  } catch (err) {
+    if (err.code === "ENOENT") continue;
+    throw err;
+  }
+  const where = log.slice(ROOT.length + 1);
+  src.split("\n").forEach((line, i) => {
     const m = CLAIM.exec(line);
     if (!m) return;
     claims.push({
+      file: where,
       line: i + 1,
       mode: m[1],
       numbers: { candidates: +m[2], control: +m[3], selfDefining: +m[4], lowReach: +m[5] },
       fingerprint: m[6],
     });
   });
+}
 
 // Re-run the instrument once per mode actually cited, and read its own line
 // back. Parsing the real command's real output is the point: a checker that
@@ -102,7 +121,7 @@ const measure = (mode) => {
     // already gone to stderr; this says why that lands in `npm test`.
     fail(
       `\`node scripts/jargon-candidates.mjs ${mode}\` exited ${err.status}. Its control failed, so ` +
-        `every measurement claim about "${mode}" in AGENT_LOG.md is now unverifiable — fix the ` +
+        `every measurement claim about "${mode}" in the run log is now unverifiable — fix the ` +
         `instrument before trusting any of them.`,
     );
     measured.set(mode, null);
@@ -111,7 +130,7 @@ const measure = (mode) => {
   const m = CLAIM.exec(out.split("\n").find((l) => CLAIM.test(l)) ?? "");
   if (!m) {
     fail(
-      `\`node scripts/jargon-candidates.mjs ${mode}\` printed no MEASURED line. AGENT_LOG.md quotes ` +
+      `\`node scripts/jargon-candidates.mjs ${mode}\` printed no MEASURED line. The run log quotes ` +
         `${claims.filter((c) => c.mode === mode).length} claim(s) for this mode that can no longer be ` +
         `checked against anything. If the line was renamed, update this script's CLAIM pattern in the ` +
         `same change.`,
@@ -141,7 +160,7 @@ for (const claim of claims) {
     // A claim naming a mode that does not exist could never match a fingerprint,
     // so it would live forever in the retired pile looking checked.
     fail(
-      `AGENT_LOG.md:${claim.line}: measurement claim names mode "${claim.mode}", which ` +
+      `${claim.file}:${claim.line}: measurement claim names mode "${claim.mode}", which ` +
         `\`npm run jargon\` does not accept (${MODES.join(", ")}). A claim in an unrunnable mode is ` +
         `never checkable — fix the mode name or delete the line.`,
     );
@@ -158,7 +177,7 @@ for (const claim of claims) {
   if (wrong.length) {
     disagreeing++;
     fail(
-      `AGENT_LOG.md:${claim.line}: this measurement claim does not reproduce, and its fingerprint ` +
+      `${claim.file}:${claim.line}: this measurement claim does not reproduce, and its fingerprint ` +
         `(${claim.fingerprint}) says neither the content nor the instrument has changed since it was ` +
         `written — so the number was mistyped, not outdated. Disagrees on: ` +
         `${wrong.map((k) => `${k} (log ${claim.numbers[k]}, actual ${current.numbers[k]})`).join("; ")}. ` +
@@ -173,12 +192,13 @@ for (const claim of claims) {
 // printed, including the zero.
 if (!claims.length) {
   ok(
-    `AGENT_LOG.md quotes no MEASURED lines yet — nothing to verify. This check only has teeth once a ` +
+    `Neither AGENT_LOG.md nor AGENT_LOG.archive.md quotes a MEASURED line — nothing to verify. This `+
+      `check only has teeth once a ` +
       `run pastes one (see \`npm run jargon\`'s last line).`,
   );
 } else {
   ok(
-    `${claims.length} measurement claim(s) in AGENT_LOG.md: ${enforced - disagreeing} enforced against ` +
+    `${claims.length} measurement claim(s) across AGENT_LOG.md + archive: ${enforced - disagreeing} enforced against ` +
       `a re-run and agreeing, ${disagreeing} enforced and DISAGREEING (see above), ${retired} retired ` +
       `(the corpus or the instrument moved since they were written).`,
   );
