@@ -1093,13 +1093,14 @@ for the history. No open P1/P2 items.
       corrupts lesson content.
 
 93. **[Content — filed 2026-08-21 by the scheduled dev-agent, measured with a control, and the
-    largest open learner-visible gap in the app. P1 of the current Open set.] 84 of 160
+    largest open learner-visible gap in the app. P1 of the current Open set.] 82 of 160
     lesson/language pairs ship a condensed *summary* of the English body rather than a translation of
     it.** *(Was 94 at filing. **THE SPANISH ECONOMY TRACK IS DONE: `es` 29-40 are all full
     translations**, twelve pairs paid down across six runs on 2026-08-22, `es` abridged count
     **22 -> 12**. **Every remaining `es` gap is in the `essentials` track** (lessons 1-11 and 14) —
-    a different, smaller body of work from the one this item was filed about. The whole remaining
-    debt in `ko`/`zh`/`ja` is untouched and is the real open question; see the closing bullets.)*
+    a different, smaller body of work from the one this item was filed about. **The `ko` economy
+    track is now started: 29 and 30 landed 2026-08-22**, `ko` abridged count **24 -> 22**; `zh` and
+    `ja` are untouched. See the `ko` bullets at the end.)*
     - **What a learner gets — the example this item was filed on, now fixed in `es` and still true in
       the other three languages.** Economy lesson 40 §1 in English is four explanatory paragraphs (the
       indebted family, the factory worker, the farmer's tractor, the closing point). Its Spanish
@@ -1206,6 +1207,41 @@ for the history. No open P1/P2 items.
       *volume* being added is large enough that the owner should know it is happening.
       **(b)** §10.1 applies to every added sentence in five languages, and `check-blindspot`'s
       advice-adjacency patterns run over all of them, so write mechanism, not guidance.
+    - **✅ THE `ko` ECONOMY TRACK IS STARTED — 29 and 30, 2026-08-22.** `ko` 29 (0.15 -> **0.52**)
+      and 30 (0.19 -> **0.55**), against a `ko` reference of **0.5510**. `ko` abridged **24 -> 22**,
+      headline **84 -> 82**, `ko` volume **0.356x -> 0.370x** of English. Cost: **~1,946 added Korean
+      characters for 2 lessons** against 5,311 English characters, i.e. roughly **0.37 added
+      characters per English character** — well under half the `es` rate of 0.85, because Korean is
+      genuinely more compact and because a full `ko` translation lands at ~0.55 rather than ~1.18.
+      **So the "~65,000 characters for `ko`/`zh`/`ja` economy 29-40" estimate carried above is too
+      high for `ko`**: on this measured rate the remaining ten `ko` economy lessons are about
+      **13,920 Korean characters**, not ~22,000. Re-measure `zh`/`ja` before trusting the estimate
+      for them either.
+    - **⚠️ The rising-reference drag that dominated the `es` runs DOES NOT APPLY to `ko`, and
+      expecting it will cause a false alarm.** In `es`, every completed lesson lifted the p90 and
+      eventually pushed untouched essentials lessons under the bar (lesson 14 crossed on 0.0010 with
+      no character changed). In `ko` the p90 **did not move at all**: 0.5510 before and after 29/30,
+      because the already-complete money track (12-28, ratios 0.45-0.60) *already occupies* the top
+      decile, so a newly-converted economy lesson lands **at** the reference rather than above it.
+      **Simulated the whole rest of the track** (economy 31-40 all set to 0.55): projected `ko`
+      reference **still 0.5510**, threshold **0.3857**, and the nearest un-abridged `ko` lesson —
+      16 at **0.4545** — stays clear by 0.0688. **Prediction, recorded to be falsified: each
+      remaining `ko` economy tranche should drop the headline by exactly 2, with no collateral
+      lesson crossing.** If a `ko` tranche ever drops it by 1, the model here is wrong — investigate
+      rather than assuming it is the `es` effect repeating.
+    - **A translated `ko` lesson lands around 0.45-0.60**, the band the money track 12-28 already
+      occupies. 29 came in at 0.52 and 30 at 0.55. Do not target the `es` band (1.02-1.20) — that is
+      a Spanish number and Korean cannot reach it without padding.
+    - **The `es` currency defect does NOT generalise to the other languages — measured, do not
+      re-derive.** The 2026-08-22 finding (English magnitude abbreviations `$900B`/`$9T` left in
+      Spanish, where `billón` is 10^12) was checked against every non-English content file this run.
+      **`ko` writes the long scale correctly** — `$9000억`, `$9조`, `$950억`, `$2조`, all right — and
+      **`zh`/`ja` contain no `$` at all**, because the figures were dropped with the rest of the
+      abridged content rather than mistranslated. So there is no cross-language sweep to do here, and
+      **no guard is warranted**: the defect class has exactly one instance, already fixed. What this
+      *does* confirm is the item's standing warning that these languages need **reading** — `ko` 30
+      §1 was not an abridgement of the English at all but **different content** (lender/borrower
+      motives, where English is the $20,000-car worked example), which no ratio can detect.
     - **The related bookkeeping this item supersedes.** `npm run review-status`'s 7 stale
       lessons per language are a *symptom* — see the run log of 2026-08-21 for why re-marking them
       would have asserted "reviewed" over bodies that are 24-35% of their English.
@@ -14158,5 +14194,143 @@ this run because no non-Spanish content was touched.
 magnitude abbreviations left in Spanish text, where `billón` is 10^12) argues those languages need
 **reading**, not just volume, since that class of defect is invisible to every check in the suite.
 A smaller, unblocked alternative is **`es` essentials 1-11 and 14**, the last 12 `es` pairs.
+**Item 18 remains the entire critical path to ending Phase 0**, blocked on the owner creating an
+analytics-provider account, and **item 72's owner half — a deployed URL — is blindspot 10.10**.
+
+## 2026-08-22 (scheduled dev-agent) — `ko` economy 29-30: the second language starts, and the `es` rising-reference effect turns out not to transfer
+
+**Picked:** item 93, the first `ko` tranche. Owner tree `OWNER-TREE
+c2331799fd3ee413aca864fd82d247a35ea31b01a70a6c4e37b00f6aad9105b2 (0 tracked modified, 52 untracked)`
+— **UNMOVED** from the previous six runs of this date.
+
+The previous entry left two candidates: `ko`/`zh`/`ja` economy 29-40, and `es` essentials 1-11/14.
+Took the former, one tranche at a time, because the 2026-08-18 reversal makes economy the main path
+and essentials the optional track — and because a two-lesson tranche does not commit the owner to
+the whole ~65,000-character estimate, which this run has now measured down anyway (see below).
+
+### Step 3.5 — one candidate REFUTED before it was started, then the real premise confirmed
+
+**The candidate I opened the run with was the previous entry's own suggestion — that the `es`
+currency defect (English `$900B`/`$9T` abbreviations left in Spanish, where `billón` is 10^12)
+probably repeats in `ko`/`zh`/`ja` and deserves a guard. It does not, and no guard is warranted.**
+Scanned every non-English content file for `$`-prefixed magnitudes:
+- **`ko` is correct.** `$9000억`, `$9조`, `$950억`, `$2조` — 억 is 10^8 and 조 is 10^12, so those are
+  $900 billion, $9 trillion, $95 billion and $2 trillion, matching English exactly.
+- **`zh` and `ja` contain no `$` anywhere in lesson or quiz content.** Not because they localised the
+  figures but because the figures were **dropped** along with the rest of the abridged prose.
+So the defect class has exactly one instance, already fixed, and a check for it would guard nothing.
+**Recorded in item 93 so the next run does not re-derive it.**
+
+**Then the real premise, confirmed with the instrument rather than from the item's text:**
+`ko` 29 = **0.15**, 30 = **0.19** at `HEAD`, against a `ko` full-translation reference of **0.55** —
+proportionally worse than `es` economy ever was (0.23-0.35 against 1.18).
+
+**Read both against English, which is where the sharper finding is.** Lesson 29 lost the coffee
+opener, the credit-card tap, the entire `$500 / 100 loaves / $5` price arithmetic, and the
+wheat-market and stock-market examples; its §2 government bullets were reduced to four words each.
+But **lesson 30 §1 was not an abridgement at all — it was different content.** English is a worked
+example ($20,000 car, $5,000 saved, a $15,000 loan, the asset/liability pair it creates). The Korean
+said "대출자는 돈을 더 많은 돈으로 만들고 싶어합니다. 차입자는 지금 살 수 없는 것을 사고 싶어합니다" —
+lender and borrower *motives*, a sentence with no counterpart in the English at all. **A ratio cannot
+see that**, which is the concrete case for the item's standing "these languages need reading, not
+just volume" warning.
+
+### What shipped
+
+- **`src/content/lessonContent.economy.ko.js`** — lessons **29 and 30** rewritten from summary to
+  full translation. Section counts (2 and 3) and headings unchanged.
+- **`scripts/translation-completeness-baseline.json`** — exactly two numbers (`29.ko` 0.15 -> 0.52,
+  `30.ko` 0.19 -> 0.55).
+- **`LAUNCH_READINESS.md`** — generated §10.4 figure, `ko 48,892 (0.356x)` -> `ko 50,838 (0.370x)`,
+  written by `npm run readiness -- --write` rather than by hand.
+
+### Verification
+
+- `npm test` **PASS, 0 failures**, 2 pre-existing warnings (the review-ledger 83%/7-stale warning and
+  §33's own recorded-debt warning). `npm run build` clean in 1.07s. `npm run check-blindspot`
+  **0 failures**.
+- **§33 run before re-recording failed on exactly two lines**, lessons 29 [ko] and 30 [ko], no others.
+- **Paragraph-count parity: 29 en 3,3 / ko 3,3 and 30 en 3,3,3 / ko 3,3,3** — exact. Both had been
+  short a paragraph (29 §2 was 2, 30 §2 and §3 were 2 each).
+- **Every numeric figure matches English exactly**, compared as sorted multisets rather than by eye:
+  29 `$5 $500 100` both sides; 30 `$10,000 $15,000 $15,000 $20,000 $5,000 $8` both sides.
+- **§16 cross-references.** English 30 §1 carries one (“Interest Rates”); the Korean had none. Added
+  as `「금리」`, following the corner-bracket convention already used in this file (`「QE & QT」`,
+  `「경제 지표 읽기」`, `「금리」`) and the abbreviated-title form those use. §16b's ban on numeric
+  references is respected — the reference is by title.
+- **§10.1 checked by applying `check-blindspot`'s five Korean patterns directly to the 2,879
+  characters of new text**, not by trusting the whole-repo green: all five clean. **With a control** —
+  injecting `지금 주식을 사야 합니다` into the same string fires pattern 4, so a clean result means
+  clean text and not a dead regex.
+- **Live browser** (built `dist/`, `/usr/bin/python3 -m http.server 8842`, driven via
+  `javascript_tool`). Language switched through the app's own `<select>`, not by writing
+  `localStorage`. Lesson 29: all three §1 paragraphs, the bakery arithmetic, both §2 bullets on
+  separate lines, and the per-section glossary links (신용 / 주식 / 금리) all render. Lesson 30 —
+  reached by completing 29, since it is gated — renders all nine paragraphs, the `「금리」` reference,
+  and its glossary link. **English control from the same screen: lesson 30 renders en 3,856 chars vs
+  ko 2,091**, a 0.54 rendered ratio that agrees with the 0.555 measured on the file, so the
+  instrument and the DOM tell the same story. Server stopped and `localStorage` cleared afterward.
+
+### The `es` rising-reference effect does not transfer to `ko` — measured, and stated as a prediction
+
+Six `es` runs were dominated by the p90 reference climbing as lessons were fixed, which eventually
+pushed *untouched* essentials lessons under the bar (lesson 14 crossed by 0.0010 with not one
+character changed). **The natural expectation is that `ko` does the same. It does not.** The `ko`
+reference was **0.5510 before and 0.5510 after** this run, because the money track (12-28, already at
+0.45-0.60) *already* occupies the top decile — a newly-converted economy lesson lands **at** the
+reference rather than above it. Simulating the rest of the track (economy 31-40 all at 0.55) leaves
+the projected reference at **0.5510** and the threshold at **0.3857**, with the nearest un-abridged
+`ko` lesson (16, at 0.4545) clear by **0.0688**.
+
+**Recorded as a falsifiable prediction in item 93: every remaining `ko` economy tranche should drop
+the headline by exactly 2, with no collateral lesson crossing.** If one ever drops it by 1, the model
+is wrong and that is worth investigating rather than filing as the `es` effect repeating.
+
+**A note on the instrument, because it failed silently first.** The projection above was computed
+twice. The first version passed the per-language content modules to `translatedChars`, which reads
+`section.heading?.[lang]` — a shape those files do not have (the 2026-08-17 split made the fields
+plain strings, one language per file). It returned **0 for every lesson** and would have produced a
+confident "0 characters to add". **The control caught it**: re-deriving this run's own known figures
+(1,946 added / 5,311 English) came back `-919 / 0` instead of matching. Fixed by reading the merged
+`src/content/lessonContent.js` view, after which the control reproduced both numbers exactly. This is
+the third recorded instance in this repo of a text-walking measurement returning a clean zero because
+it was pointed at the wrong shape — the standing step-3.5 rule about carrying a control is not
+theoretical.
+
+**The cost estimate also moves, downward.** ~1,946 added Korean characters for 2 lessons against
+5,311 English characters is **~0.37 added characters per English character**, against `es`'s measured
+0.85. So the "~65,000 characters for `ko`/`zh`/`ja` economy" figure this item has carried since
+filing is **too high for `ko`**: the remaining ten lessons are **13,920 Korean characters**, against
+35,453 English characters in them.
+`zh`/`ja` have not been measured on this basis and should not inherit the number.
+
+### Adversarial self-check (step 5)
+
+- **Blindspot register** — clean, checked at pattern level with a control rather than by whole-repo
+  green. §10.2: no Dalio, no person named; lesson 30's credit material is Dalio-derived and is
+  attributed to nobody, same as the English. §10.1: five Korean patterns clean; the new text is all
+  mechanism ("interest rates decide how expensive that promise is"), with no imperative and no
+  second-person recommendation. §2.3: no dates added — neither lesson contains one. §10.3: no
+  child-facing surface touched.
+- **`DECISIONS.md` conflict** — none. Consistent with the machine-translation entry's "(Beta)"
+  labeling, which the app still renders (한국어 (Beta) in the picker, seen live this run).
+- **Already-done backlog item** — no. This is item 93's first `ko` tranche; the six prior tranches on
+  this date were all `es` and are listed as complete.
+- **Own verification claim** — reproducible from the commands above. **One correction to the record
+  I am making rather than burying:** the previous entry proposed the currency sweep as likely work
+  for this run, and it was wrong — checking it cost a few minutes and produced a "no guard needed"
+  answer, which is a result, not a blocked run. **One thing I did NOT do:** the translation-review
+  ledger was left alone for the seventh run running. It fingerprints the **English** body, so a
+  Korean rewrite neither clears nor creates staleness there, and marking these pairs reviewed would
+  assert an English-drift re-review that did not happen. The "(Beta)" limit stands: **no fluent
+  Korean reviewer has read these two lessons for register or idiom.**
+
+### Next run
+
+**Item 93: `ko` economy 31-32**, a measured **2,405 Korean characters** to add (6,222 English), and the
+headline should fall 82 -> 80 exactly. The `ko` track is now the cheapest remaining tranche in the
+app and has no rising-reference drag. `zh` and `ja` economy remain unmeasured on the added-character
+basis and their share of the old ~65,000 estimate should be re-derived, not inherited. A smaller
+unblocked alternative is still **`es` essentials 1-11 and 14**, the last 12 `es` pairs.
 **Item 18 remains the entire critical path to ending Phase 0**, blocked on the owner creating an
 analytics-provider account, and **item 72's owner half — a deployed URL — is blindspot 10.10**.
