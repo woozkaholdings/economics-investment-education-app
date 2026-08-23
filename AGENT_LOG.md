@@ -1304,23 +1304,38 @@ for the history. No open P1/P2 items.
       *does* confirm is the item's standing warning that these languages need **reading** — `ko` 30
       §1 was not an abridgement of the English at all but **different content** (lender/borrower
       motives, where English is the $20,000-car worked example), which no ratio can detect.
-    - **🟡 `zh` ECONOMY IS EIGHT OF TWELVE — 29-36 landed 2026-08-23, four lessons left.**
+      **⚠️ UPDATE 2026-08-23 (the 37/38 run): `zh` now carries currency magnitudes, and it writes
+      them in the long scale WITHOUT a `$`.** Lesson 37 is the first `zh` economy lesson to restore
+      them — `1.75万亿美元`, `6000亿美元`, `每月850亿美元`, `约9000亿美元`, `9万亿美元`, `每月950亿美元`
+      for English's `$1.75 trillion`, `$600 billion`, `$85B/month`, `$900 billion`, `$9 trillion`,
+      `$95 billion a month`. The `zh` economy file still contains **zero `$` characters**, so the
+      claim above holds as written; what changed is the reason (rendered as 美元, not dropped).
+      **The consequence for the acceptance test matters more than the fact: a sorted-multiset
+      comparison of figures CANNOT be the pass/fail criterion on a lesson with currency in it.**
+      Chinese 亿 is 10^8, so `$600 billion` correctly becomes `6000亿` and the multiset differs by
+      design — lesson 37 reports eight differences (85/850, 95/950, 600/6000, 900/9000) and every
+      one is a 10x billion->亿 conversion. Lesson 38, which has no currency, IS an exact multiset.
+      **So: run the multiset comparator, then account for every difference as a named scale
+      conversion; do not weaken the comparator, and do not read a difference as automatic failure.**
+    - **🟡 `zh` ECONOMY IS TEN OF TWELVE — 29-38 landed 2026-08-23, TWO lessons left (39-40).**
       `zh` **29 (0.0966 -> 0.3227)**, **30 (0.1203 -> 0.3359)**, **31 (0.0843 -> 0.3399)**,
       **32 (0.1056 -> 0.3254)**, **33 (0.1078 -> 0.3298)**, **34 (0.0941 -> 0.3161)**,
-      **35 (0.1072 -> 0.3294)** and **36 (0.1190 -> 0.3385)**, against a
-      `zh` reference of **0.3490**. `zh` abridged **24 -> 16**, headline **72 -> 64**, `zh` volume
-      **0.226x -> 0.271x** of English.
+      **35 (0.1072 -> 0.3294)**, **36 (0.1190 -> 0.3385)**, **37 (0.1158 -> 0.3429)** and
+      **38 (0.0872 -> 0.3267)**, against a
+      `zh` reference of **0.3490**. `zh` abridged **24 -> 14**, headline **72 -> 62**, `zh` volume
+      **0.226x -> 0.283x** of English.
       **The measured `zh` rate, which did NOT inherit `ko`'s:** 1,170 added Chinese characters
       against 5,311 English on 29/30 = **0.220/char**; **1,455 against 6,222 English on 31/32 =
       0.234/char**; **1,736 against 7,821 English on 33/34 = 0.222/char**; **1,871 against 8,474
-      English on 35/36 = 0.221/char**; **6,232 against 27,828
-      English across all eight = 0.224/char**, against `ko`'s 0.379 and `es`'s 0.85. Chinese is the
+      English on 35/36 = 0.221/char**; **1,677 against 7,177 English on 37/38 = 0.234/char**;
+      **7,909 against 35,005
+      English across all ten = 0.226/char**, against `ko`'s 0.379 and `es`'s 0.85. Chinese is the
       most compact of the four and starts from the thinnest stubs. **The rate has now held within
-      0.014 across four tranches — budget the rest at ~0.224/char.**
-      **Remaining `zh` economy 37-40: 12,936 English characters at this rate ≈ 2,900 Chinese
-      characters to add, i.e. two more two-lesson runs** (37+38 = 7,177 English; 39+40 = 5,759).
+      0.014 across five tranches — budget the rest at ~0.226/char.**
+      **Remaining `zh` economy 39-40: 5,759 English characters at this rate ≈ 1,300 Chinese
+      characters to add, i.e. ONE more two-lesson run**, and the `zh` economy track is complete.
       Budget each tranche from its own English character count — **the heaviest lesson in the track,
-      36 at 4,546 English, is now done**, and nothing left exceeds 3,817.
+      36 at 4,546 English, is done**, and nothing left exceeds 3,475.
     - **A translated `zh` lesson lands around 0.285-0.357**, the band the `money` track 16-28 already
       occupies (min 0.2853, median 0.3460, max 0.3568). 29 and 30 came in at **0.3227 and 0.3359**,
       31 and 32 at **0.3399 and 0.3254**, 33 and 34 at **0.3298 and 0.3161**, just under that
@@ -1355,6 +1370,14 @@ for the history. No open P1/P2 items.
       pulling apart), so the lesson as a whole behaves like 33/34. In `es` 35 the arrow lines *were*
       the section. **Weigh the terse spans against the lesson's total before predicting an
       overshoot.**
+      **37 and 38 landed at 0.3429 and 0.3267 — and 37 shows the density rule does not run in
+      reverse (2026-08-23).** 37's English has no terse span at all and its first draft still came in
+      at 0.3515, over the p90; 38's English is the list-dense one (two `Historically favored in this
+      phase:` lines, the shape `ko` 38 rendered at the bottom of its band) and it landed *low*, at
+      0.3267, exactly as the `ko` 38 entry predicted. So the rule earns its keep on the list-dense
+      side and predicts nothing on the narrative side: **a lesson with no terse passage can still
+      overshoot, so measure every draft before recording it.** 37 was brought to 0.3429 by 23
+      function-word compressions (29 characters) with paragraph counts and the figure set unchanged.
     - **✅ The headline projection held on all four figures for `zh` (2026-08-23), and this is the
       case the `ko` 39 falsification predicted.** Reference **0.3490 before and after**, threshold
       **0.2443**, headline **72 -> 70**, nearest un-abridged lesson 16 at **0.2853**, margin
@@ -1387,6 +1410,27 @@ for the history. No open P1/P2 items.
       only when a newly-converted lesson displaces the element the index points at, and 35/36 at
       0.3294/0.3385 sorted below it. The operational instruction is unchanged (**re-simulate every
       tranche**) but the reason is "you cannot predict which way it steps", not "it always tightens".
+      **✅ CHECKED A FIFTH TIME AND HELD ON ALL FOUR FIGURES (2026-08-23, the 37/38 run):**
+      reference **0.3490 before and after**, threshold **0.2443**, headline **64 -> 62**, lesson
+      16's margin **0.0409** unchanged. Five for five across ten lessons. The boundary measured
+      **0.35 for the third consecutive tranche** — 0.34 safe, 0.35 moves the reference to 0.3500 —
+      and the same boundary holds in the simulation for 39/40.
+      **⚠️ But the ceiling is not really a ratio, it is a CHARACTER COUNT, and this is the first
+      tranche that had to sit against it.** With 38 already recorded at 0.3267, re-simulating 37
+      *alone* put the boundary at exactly **1,176 Chinese characters** against its 3,360 English;
+      37's first draft came in at **1,181** — five characters over — and moved the reference to
+      0.3503 by itself. **Simulate the pair first, then re-simulate the second lesson alone against
+      the first one's actual landed ratio.** A pair-simulation assumes both lessons land at the same
+      target, which hides the case where one has all the headroom and the other has none.
+      **⚠️ AND 37's FIRST DRAFT OVERSHOT, WHICH THE TERSE-ENGLISH RULE DID NOT PREDICT.** Lesson 37's
+      English is narrative throughout — no arrow chains, no aphorisms, and a §3 that is one
+      1,033-character explanatory paragraph. It overshot anyway, at 0.3515. So **the density rule
+      predicts overshoot but its converse does not hold: narrative English is not a guarantee of
+      landing low.** Do not skip the post-draft measurement because the English "reads like 33/34".
+      The fix was 23 function-word compressions worth **29 characters** (`仍然需要` -> `仍需`,
+      `创造出` -> `创造`, `已经持有的东西` -> `已持有的东西`, `从金融体系中抽走` -> `从金融体系抽走`),
+      **with paragraph counts and the figure set identical before and after** — no clause dropped,
+      the same discipline the 31 run recorded.
     - **`zh` lesson 30 §1 was different content, not an abridgement — the second language in which
       that exact lesson was.** The English is the $20,000-car worked example; the Chinese was
       "lenders want money to make more money / borrowers want to buy what they can't afford now",
@@ -15637,5 +15681,198 @@ Note item 93's standing warning for 39: its English §1 is a **six-paragraph, fi
 and both `es` and `ko` shipped a single line of acronyms there. **`ja` is still entirely unmeasured on
 the added-character basis, and `ja` 30 has still not been checked for the lender/borrower
 substitution `ko` 30 and `zh` 30 both had.**
+**Item 18 remains the entire critical path to ending Phase 0**, blocked on the owner creating an
+analytics-provider account, and **item 72's owner half — a deployed URL — is blindspot 10.10**.
+
+## 2026-08-23 (scheduled dev-agent) — `zh` economy 37-38: ten of twelve, and the first tranche that had to sit against the ceiling
+
+**Picked:** the previous run's queued item — item 93's fifth Chinese tranche. Owner tree
+`npm run owner-tree -- --expect aa5eba4e…` read **`UNMOVED aa5eba4e446801d284251bb4a963cd54447ab401fa5d9d5618cd7b8098b4565a (2 tracked modified, 52 untracked)`** — the same two files (`DECISIONS.md`,
+`LAUNCH_PLAN.md`) still carrying the owner's US-English spelling sweep, untouched again here. `HEAD`
+`18ffa15` at the start of the run and unchanged at commit time. This run's commit contains only its
+own three files.
+
+### Step 3.5 — every number reproduced, and the controls fired
+
+| Claim in item 93's queued note | Re-measured | Verdict |
+|---|---|---|
+| `zh` reference 0.3490, threshold 0.2443 | 0.3490 / 0.2443 | holds |
+| English side 3,360 + 3,817 = 7,177 characters | 3,360 + 3,817 = **7,177** | holds |
+| `zh` 37 and 38 are at 0.12 / 0.09 | **0.1158** and **0.0872** | holds |
+| headline 64, `zh` abridged 16 | 64, 16 | holds |
+| lesson 16 nearest un-abridged, margin 0.0409 | 16 at 0.2853, margin **0.0409** | holds |
+| 37 is the QE/QT lesson, 38 the four-phases lesson | read off `lessons.js` | holds |
+| 38's English is list-dense | two `Historically favored in this phase:` lines | holds |
+| the 0.35 boundary still holds for 37/38 | 0.34 safe, **0.35** moves the reference to 0.3500 | holds |
+
+**Controls, all fired.** `translatedChars` run against a hand-built probe with known field lengths
+(expected en 15 / zh 6, got 15 / 6); the multiset comparator validated on two deliberately
+mismatched pairs — `5,7` vs `5,8` **and** `[10,10]` vs `[10]`, the containment blindspot the previous
+run identified — and it reported both as unequal; and an injected probe string carrying one of every
+hunted form (`第3课`, `《测试课》`, `1966年`, `12-18个月`, `dalio`/`达利欧`, `2026年8月`/`今年`,
+`应该买入`, `最佳投资：`, `我们建议`, `$900B`) fired **all nine** extractors before any of them was
+allowed to return a clean empty result.
+
+**Both lessons read before scoping, and both are faithful-but-skeletal abridgements** — no content
+substitution of the `ko`/`zh` 30 kind. `zh` 37 §1 was **two paragraphs against five** (67 characters
+against 1,164 English), keeping only "when rates hit 0% the central bank prints electronically" and
+the balance-sheet figures, and dropping the master-dial framing, the ledger-entries-not-a-printing-press
+aside, the Fed-as-enormous-buyer image, the whole price/yield/rotate-into-risk chain, the entire
+QE1/QE2/QE3/COVID list and the "nine times the size of the pre-2008 institution" comparison; §2 was
+two paragraphs against four, missing the balloon analogy and the drains-money/yields-UP paragraph
+outright. `zh` 38 was worse: §3 was **one paragraph against four**, compressing all four phase
+mechanisms into one clause each, and §1/§2 dropped the factory-town callback, both `Historically
+favored in this phase:` lines, the S&P figures for expansion (+14-28%) and contraction (-22-35%),
+and the defensive-asset list (Treasuries, gold, utilities/healthcare, cash). 38's `takeaway` was also
+missing its third sentence. Nothing had to be un-said.
+
+### What shipped
+
+- **`src/content/lessonContent.economy.zh.js`** — lessons **37 and 38** rewritten from summary to
+  full translation. Section counts (3 and 3) and headings unchanged. Six of six section bodies
+  changed, plus 38's `takeaway`; **37's `takeaway` and `thinkAbout` and 38's `thinkAbout` were
+  already complete translations of the English and were deliberately left byte-identical.**
+  Exactly 7 lines of the file differ.
+- **`scripts/translation-completeness-baseline.json`** — exactly two numbers (`37.zh` 0.12 -> 0.34,
+  `38.zh` 0.09 -> 0.33).
+- **`LAUNCH_READINESS.md`** — generated §10.4 figure, `zh 37,225 (0.271x)` -> `zh 38,902 (0.283x)`.
+
+### Verification
+
+- `npm test` **exit 0, 0 failures**, 2 pre-existing warnings (review-ledger staleness; the
+  completeness warning, now reading **62** pairs). `npm run build` clean in 983ms.
+  `check-blindspot` all `ok`. Node 20.18.1 via `scripts/bootstrap-node.sh`, foreground.
+- **§33 run before re-recording failed on exactly two lines**, 37 [zh] and 38 [zh], no others.
+- **Paragraph-count parity now exact on all six sections: 37 en 5,4,1 / zh 5,4,1 and 38 en 3,3,4 /
+  zh 3,3,4.** They had been 2,2,1 and 2,2,1 — so this run restored **eight paragraphs** the Chinese
+  had dropped outright.
+- **Figures: lesson 38 is an exact sorted MULTISET** (n=10 either side, zero differences).
+  **Lesson 37 is deliberately NOT, and this is the run's one substantive instrument finding.**
+  It reports eight differences, and **all eight are long-scale currency conversions**, audited
+  pair by pair: `$85B/month`->`每月850亿美元`, `$95 billion a month`->`每月950亿美元`,
+  `$600 billion`->`6000亿美元`, `$900 billion`->`约9000亿美元` — each a 10x billion->亿 step —
+  with `$1.75 trillion`->`1.75万亿美元` and `$9 trillion`->`9万亿美元` numerically unchanged.
+  So the previous run's "multiset equality is the acceptance test" does not survive contact with a
+  lesson that has currency in it. **The rule written into item 93 is: run the comparator, then
+  account for every difference as a NAMED scale conversion — do not weaken the comparator, and do
+  not read a difference as automatic failure.** Checked against the `es` currency defect this item
+  already records: the `zh` economy file still contains **zero `$` characters**, and every magnitude
+  is written 亿/万亿, so the Spanish `billón` bug has no `zh` analogue here.
+- **Cross-reference parity 1:1, and two were added:** 37 §1 gained **`《利率》`** (English's §1 names
+  "Interest Rates", lesson 35, and the Chinese carried nothing) and 38 §1 gained
+  **`《短期债务周期》`** (lesson 32; English opens "Picture the same factory town from…"), joining
+  38 §3's existing `《利率》`. So 1 English reference and 1 Chinese in 37, 2 and 2 in 38.
+  **Zero `第N课` constructions in either lesson**, so §16's numeric guard has nothing to adjudicate.
+- **The `Historically favored in this phase:` lines were checked against the other languages before
+  being written**, not just against §10.1's regex: `es` writes `Históricamente favorecidos en esta
+  fase:` and `ko` writes `이 국면에서 역사적으로 선호된 자산:`, so `历史上在这个阶段受到青睐的资产：`
+  is the same descriptive shape all four languages use — historical coincidence, not a
+  recommendation, and not the `最佳投资：` form the check forbids.
+- **§10.1 — five Chinese advice patterns over both lessons, all clean, with five controls, all
+  firing.** §10.2 `/dalio|达利欧/i` run directly: clean. §2.3: a current-date scan
+  (`202[5-9]年\d*月?|今年|本月|本周`) clean against a firing control; every year present
+  (2008/2010/2012/2020/2022/2024) is in the English. §10.3: no surface. The place advice adjacency
+  was a live risk is 38's two favored-asset lines and §3's four phase paragraphs, and every one of
+  them is rendered as what has historically coincided with what — `历史上，这个阶段与标普500约
+  +14-28%的平均回报同时出现` — stating no view about any asset today.
+- **Live browser** (rebuilt `dist/`, `/usr/bin/python3 -m http.server 8897`, language switched
+  through the app's own `<select>` with a real `change` event, `ecycles_seen_disclaimer` and all 40
+  lessons seeded into **`ecycles_completed_lessons`** and then reloaded). Lesson 37: **all 42 named
+  probes present**, 893 Han glyphs, the `《利率》` reference rendered, and the QE1-COVID block
+  rendering as four separate lines. Lesson 38: **all 47 named probes present**, 1,045 Han glyphs,
+  including the factory town, both favored-asset lines, all four phase mechanisms and the restored
+  third takeaway sentence. **Each reading asserted single-language: zero Latin words of 4+ characters
+  on either page.** **English re-checked as a control** — switched back through the same `<select>`,
+  lesson 38 renders its English intact (4,781 characters, all 14 English probes present, 5 Han glyphs
+  and all 5 are the picker's `中文`/`日本語`). Console clean (`onlyErrors` returned nothing),
+  `localStorage` cleared, server stopped and confirmed unreachable.
+
+### The projection held a fifth time — and the ceiling turned out to be a character count
+
+Reference **0.3490 before and after**, threshold **0.2443**, headline **64 -> 62**, lesson 16's
+margin **0.0409** unchanged. Five for five across ten lessons.
+
+**The queued note's other two predictions split.** "38's English is list-dense, expect it low in the
+band rather than high" was **right** — 38 landed at 0.3267, the second-lowest of the ten. "37 carries
+`《QE与QT》`-adjacent vocabulary from lesson 32's cross-reference, check its stub for terminology that
+must stay consistent" was **checkable but empty**: 32's `zh` does carry `《QE与QT》`, and 37's own stub
+already used 量化宽松/量化紧缩/资产负债表 consistently with it, so there was nothing to reconcile.
+
+**What this tranche adds that the previous four could not, because none of them was tight:**
+37's first draft landed at **0.3515** and moved the reference to 0.3503 on its own. The pair
+simulation run before writing said 0.34 was safe and 0.35 was not — but a *pair* simulation assumes
+both lessons land at the same target. Re-simulating 37 alone against 38's actual 0.3267 put the real
+boundary at **1,176 characters** against 3,360 English; the draft was **1,181**, five over.
+**The ceiling is a character count, not a ratio, and it belongs to whichever lesson is written
+second.** 37 was brought to **0.3429** by 23 function-word compressions worth 29 characters
+(`仍然需要`->`仍需`, `创造出`->`创造`, `已经持有的东西`->`已持有的东西`, `从金融体系中抽走`->`从金融体系抽走`),
+paragraph counts and figure set identical before and after, no clause dropped.
+
+**And 37 falsifies the converse of the density rule.** 37's English is narrative throughout — no
+arrow chains, no aphorisms, a §3 that is one 1,033-character explanatory paragraph — the shape item
+93 records as landing comfortably. It overshot anyway. **The rule predicts overshoot from terse
+English; it does not predict safety from narrative English.** Both corrections are written into item
+93 rather than left here.
+
+Cost: **1,677 added Chinese characters against 7,177 English = 0.234/char**, against 0.220, 0.234,
+0.222 and 0.221 on the first four tranches. Five-tranche `zh` total **7,909 against 35,005 =
+0.226/char**. `zh` volume **0.271x -> 0.283x**.
+
+### Adversarial self-check (step 5)
+
+- **Blindspot register** — clean, and checked rather than inferred: §10.1 five patterns with five
+  firing controls plus `npm run check-blindspot`'s own per-language pass, §10.2 run directly on the
+  new text, §2.3 a current-date scan returning empty next to a probe that fires, §10.3 no surface.
+  The one new surface this run creates — restored currency magnitudes in `zh` — was checked against
+  the `es` `billón` defect class specifically, and the file carries zero `$`.
+- **`DECISIONS.md` conflict** — none from my change. Content stays in `.js` modules, no state or
+  build change, and the machine-translation entry accepts AI translation under "(Beta)" labeling.
+  *(`DECISIONS.md` is modified in the working tree by the owner's US-English sweep — not by me, not
+  staged.)*
+- **Already-done backlog item** — no; fifth `zh` tranche. **29-36 re-measured identical to four
+  decimals against the values the previous four runs recorded** (0.3227, 0.3359, 0.3399, 0.3254,
+  0.3298, 0.3161, 0.3294, 0.3385), which is simultaneously the proof this run disturbed none of them.
+- **Own verification claim** — reproducible; every figure above is a pasted command output.
+  **What the check caught: the previous run's own strengthened instrument — sorted-multiset figure
+  equality — would have FAILED this tranche's lesson 37 for a correct translation.** Taken as a
+  pass/fail gate it says eight figures are wrong; read properly it says four currency magnitudes were
+  converted to the Chinese long scale, which is exactly what the `es` currency bullet asks for. That
+  is the second consecutive run in which the instrument, not the content, was the thing that needed
+  correcting — and it is worth noticing that the correction runs the *opposite* direction from last
+  run's (containment was too weak; strict multiset is too strong). Both are recorded in item 93.
+  **One thing I did NOT do:** the translation-review ledger is untouched — it fingerprints the
+  **English** body. **No fluent Chinese reviewer has read either lesson.**
+
+### A tooling note, recorded because it will happen again
+
+Editing this file with a Node script that calls `String.prototype.replace(old, newString)` **silently
+corrupted it mid-run**: the replacement text contained a backtick immediately after a dollar sign
+(from a markdown code span wrapped around a dollar sign), and a dollar sign followed by a backtick
+is JS's substitution pattern for
+"everything in the subject string BEFORE the match". It spliced 4,000 lines of this file into itself
+and reported success. **Caught by `git diff --numstat` reading 4131 insertions against an edit that
+should have been ~250**, not by the script, which had per-edit occurrence-count guards and passed all
+of them — the guards check the *needle*, and the bug was in the *replacement*.
+**Fix, and the rule for any future run editing this file programmatically: pass a FUNCTION,
+`s.replace(old, () => replacement)`, which makes every `$`-sequence inert.** Recovery was
+`git show HEAD:AGENT_LOG.md > AGENT_LOG.md` after copying the corrupt version and the already-written
+run-log entry to the session scratchpad — no `checkout --`, and nothing else in the tree was touched.
+
+### Next run
+
+**Item 93: `zh` economy 39-40 — the final Chinese tranche.** English **3,475 + 2,284 = 5,759
+characters**, current `zh` **293 (0.0843)** and **179 (0.0784)**, projected **~1,300 added Chinese
+characters** at the five-tranche rate of 0.226/char, headline expected **62 -> 60**, and **the
+reference should stay 0.3490** — simulated this run at the 39/40 position: 0.28 through 0.34 all
+leave it there, **0.35 is the boundary** for the third tranche running. **Re-simulate anyway, and
+this time re-simulate the second lesson alone against the first's landed ratio** — that is the step
+this run had to add. Note item 93's standing warning for 39: its English §1 is a **six-paragraph,
+five-gauge dashboard** (GDP, CPI, PMI, VIX, credit spreads) and both `es` and `ko` shipped a single
+line of acronyms there; `zh` 39 at 293 characters against 3,475 English is the same shape. Lesson 40
+is the three-rules lesson whose `es` stub was three bare rule headings — the example item 93 was
+filed on — so **read `zh` 40 before scoping it**. After 39-40 the `zh` economy track is complete and
+**`ja` becomes the whole of item 93's economy work: still entirely unmeasured on the added-character
+basis, and `ja` 30 has still not been checked for the lender/borrower substitution `ko` 30 and
+`zh` 30 both had.**
 **Item 18 remains the entire critical path to ending Phase 0**, blocked on the owner creating an
 analytics-provider account, and **item 72's owner half — a deployed URL — is blindspot 10.10**.
