@@ -1093,7 +1093,7 @@ for the history. No open P1/P2 items.
       corrupts lesson content.
 
 93. **[Content — filed 2026-08-21 by the scheduled dev-agent, measured with a control, and the
-    largest open learner-visible gap in the app. P1 of the current Open set.] 72 of 160
+    largest open learner-visible gap in the app. P1 of the current Open set.] 70 of 160
     lesson/language pairs ship a condensed *summary* of the English body rather than a translation of
     it.** *(Was 94 at filing. **THE SPANISH ECONOMY TRACK IS DONE: `es` 29-40 are all full
     translations**, twelve pairs paid down across six runs on 2026-08-22, `es` abridged count
@@ -1102,8 +1102,9 @@ for the history. No open P1/P2 items.
     remaining `es` AND `ko` gap is now in the `essentials` track** (lessons 1-11 and 14) — a
     different, smaller body of work from the one this item was filed about, and the two languages
     have ended in exactly the same shape. **`zh` and `ja` are untouched at 24 abridged each**, and
-    between them they are now the whole of this item. See the `ko` bullets at the end for the rate
-    and the two model corrections the `ko` track produced.)*
+    between them they are now the whole of this item. **`zh` economy is now underway: 29-30 landed
+    2026-08-23**, `zh` abridged **24 -> 22**. See the `ko` bullets at the end for the rate and the
+    two model corrections the `ko` track produced, and the `zh` bullet after them.)*
     - **What a learner gets — the example this item was filed on, now fixed in `es` and still true in
       the other three languages.** Economy lesson 40 §1 in English is four explanatory paragraphs (the
       indebted family, the factory worker, the farmer's tractor, the closing point). Its Spanish
@@ -1127,8 +1128,16 @@ for the history. No open P1/P2 items.
       112%, ko 55%, zh 35%, ja 50%**. So es carries about two-thirds of what it should, and the other
       three about two-thirds each as well. **24 of 40 lessons** are abridged in at least one language:
       **all 12 of the economy track (29-40)**, worst in the app at ratios of 0.23-0.35 against es's
-      1.12 reference, plus essentials 1-11 and 14. Money 12-28 are genuine full translations and are
-      the control group that makes the rest measurable.
+      1.12 reference, plus essentials 1-11 and 14. The fully-translated control group that makes the
+      rest measurable is **money 16-28 plus essentials 12, 13 and 15**.
+      **⚠️ TRACK-BOUNDARY CORRECTION (2026-08-23, by the `zh` 29-30 run's step 3.5).** This item said
+      "money 12-28" here and in three other places. **The real tracks are `essentials` 1-15,
+      `money` 16-28, `economy` 29-40** — read straight off `lessons.js`'s `track` field. Lessons 12,
+      13 and 15 are `essentials` lessons that happen to be fully translated, and **lesson 14 is
+      `essentials` too**, which is why this item's own "essentials 1-11 and 14" contradicted its
+      "money 12-28" and nobody noticed for two days. Nothing measured is wrong — every ratio, count
+      and reference in this item stands — but **do not use "12-28" to scope work**; the `essentials`
+      remainder is 1-11 and 14, and it sits inside a 15-lesson track, not a 17-lesson one.
     - **Why no check saw it, which is the part worth not re-deriving.** Every language check in
       `check-data.mjs` asserts *presence* (§1's `checkLangSet`) or *structural agreement with English*
       (§16's cross-references). A field that exists, is well-formed, is consistent with English, and
@@ -1144,7 +1153,7 @@ for the history. No open P1/P2 items.
       Against nothing, es 0.723x reads like Spanish being slightly more compact than English; against
       this corpus's own fully-translated lessons at **1.12x**, it means roughly a third of the content
       is absent. §10.4 also reports one aggregate per language, so the fact that the shortfall is
-      **concentrated** — money 12-28 complete, economy 29-40 at 0.23-0.35 — is invisible in it, and
+      **concentrated** — money 16-28 complete, economy 29-40 at 0.23-0.35 — is invisible in it, and
       that concentration is what makes the work schedulable.
     - **How it accrued:** seventeen consecutive "Deepen lesson N" runs in 2026-08 grew English and
       left the four translations alone. Each left the suite green. Now guarded — `check-data.mjs`
@@ -1239,7 +1248,7 @@ for the history. No open P1/P2 items.
       expecting it will cause a false alarm.** In `es`, every completed lesson lifted the p90 and
       eventually pushed untouched essentials lessons under the bar (lesson 14 crossed on 0.0010 with
       no character changed). In `ko` the p90 **did not move at all**: 0.5510 before and after 29/30,
-      because the already-complete money track (12-28, ratios 0.45-0.60) *already occupies* the top
+      because the already-complete money track (16-28, ratios 0.45-0.60) *already occupies* the top
       decile, so a newly-converted economy lesson lands **at** the reference rather than above it.
       **Simulated the whole rest of the track** (economy 31-40 all set to 0.55): projected `ko`
       reference **still 0.5510**, threshold **0.3857**, and the nearest un-abridged `ko` lesson —
@@ -1267,7 +1276,7 @@ for the history. No open P1/P2 items.
       band**, and it wakes up the moment one lands above it. **For `zh`/`ja`, predict the headline
       move, not the reference**: the headline move is robust to this and the reference is not.
       The margin is still 0.0679, so nothing is near crossing either way.
-    - **A translated `ko` lesson lands around 0.45-0.60**, the band the money track 12-28 already
+    - **A translated `ko` lesson lands around 0.45-0.60**, the band the money track 16-28 already
       occupies. 29-38 came in at 0.52, 0.55, 0.54, 0.53, 0.54, 0.53, 0.55, 0.55, 0.54 and 0.51 —
       a band of 0.04 across ten lessons, which is what a consistent translation standard looks
       like. Lesson 38 is the low end at 0.5069 and is still comfortably in band; its English is
@@ -1295,6 +1304,42 @@ for the history. No open P1/P2 items.
       *does* confirm is the item's standing warning that these languages need **reading** — `ko` 30
       §1 was not an abridgement of the English at all but **different content** (lender/borrower
       motives, where English is the $20,000-car worked example), which no ratio can detect.
+    - **🟡 THE `zh` ECONOMY TRACK IS UNDERWAY — 29-30 landed 2026-08-23, ten lessons left.**
+      `zh` **29 (0.0966 -> 0.3227)** and **30 (0.1203 -> 0.3359)**, against a `zh` reference of
+      **0.3490**. `zh` abridged **24 -> 22**, headline **72 -> 70**, `zh` volume **0.226x ->
+      0.234x** of English.
+      **The measured `zh` rate, which did NOT inherit `ko`'s:** 1,170 added Chinese characters
+      against 5,311 English = **0.220 added characters per English character**, against `ko`'s 0.379
+      and `es`'s 0.85. Chinese is the most compact of the four and starts from the thinnest stubs.
+      **Remaining `zh` economy 31-40: roughly 8,200 characters of English-side work at this rate,
+      i.e. about five more two-lesson runs.** Budget each tranche from its own English character
+      count — 34 and 36 are the heavy ones (4,167 and 4,546 English).
+    - **A translated `zh` lesson lands around 0.285-0.357**, the band the `money` track 16-28 already
+      occupies (min 0.2853, median 0.3460, max 0.3568). 29 and 30 came in at **0.3227 and 0.3359**,
+      just under that median — deliberately, because the threshold is only 0.2443 and there is no
+      reason to crowd the top of the band. **Do not target `ko`'s 0.45-0.60 or `es`'s 1.02-1.20**;
+      those are language numbers and Chinese cannot reach them without padding.
+    - **✅ The headline projection held on all four figures for `zh` (2026-08-23), and this is the
+      case the `ko` 39 falsification predicted.** Reference **0.3490 before and after**, threshold
+      **0.2443**, headline **72 -> 70**, nearest un-abridged lesson 16 at **0.2853**, margin
+      **0.0409** unchanged. That is because 29 and 30 landed *below* the p90 rather than above it —
+      the exact condition the `ko` 39/40 run identified as what keeps the reference still. **The
+      rule that generalises: predict the headline always; predict the reference only when you are
+      confident the new ratios will land at or under the language's current p90.**
+    - **`zh` lesson 30 §1 was different content, not an abridgement — the second language in which
+      that exact lesson was.** The English is the $20,000-car worked example; the Chinese was
+      "lenders want money to make more money / borrowers want to buy what they can't afford now",
+      i.e. the lender/borrower motives framing — **the same substitution item 93 already recorded for
+      `ko` 30**. Two of four languages made the same swap in the same lesson, which suggests it came
+      from a shared drafting pass rather than a per-language slip. **Check `ja` 30 for it before
+      assuming it is a translation.** No ratio can detect this; it needs reading.
+    - **`《》` in Chinese content is NOT exclusively a lesson cross-reference marker.** Lesson 22's
+      `zh` carries `《为什么分析师看好》` and `《投资者正在忽视的三个风险》`, which look like lesson
+      references and are not — they are the **article headlines inside that lesson's
+      confirmation-bias story**, matching English's `"Why analysts are bullish,"` and `"Three risks
+      investors are ignoring"`. Chinese marks article titles with `《》` and that is correct
+      typography. Checked 2026-08-23 rather than filed as a defect. **Any future guard that treats
+      `《》` as a lesson-reference surface form will false-positive on lesson 22.**
     - **The related bookkeeping this item supersedes.** `npm run review-status`'s 7 stale
       lessons per language are a *symptom* — see the run log of 2026-08-21 for why re-marking them
       would have asserted "reviewed" over bodies that are 24-35% of their English.
@@ -14972,5 +15017,133 @@ at a 0.35 reference against `ko`'s 0.55, and `zh` 29-40 currently sit at 0.08-0.
 move**, per the falsification above. Note also that `zh` and `ja` contain **no `$` figures at all**
 in the economy track — the numbers were dropped with the rest of the abridged content, so they must
 be *added*, not preserved, and lesson 37's QE table is where that will bite.
+**Item 18 remains the entire critical path to ending Phase 0**, blocked on the owner creating an
+analytics-provider account, and **item 72's owner half — a deployed URL — is blindspot 10.10**.
+
+## 2026-08-23 (owner-directed) — `zh` economy 29-30: the third language starts, and the item's track boundaries were wrong
+
+**Picked:** the owner asked for "zh economy 29-30 next" — item 93's first Chinese tranche. Owner tree
+`OWNER-TREE c2331799fd3ee413aca864fd82d247a35ea31b01a70a6c4e37b00f6aad9105b2 (0 tracked modified,
+52 untracked)` at the start of the run — **UNMOVED**. `HEAD` `b93b97b`.
+**⚠️ It did not stay unmoved — see "A concurrent editor" at the end. Nothing was committed from it.**
+
+### Step 3.5 — numbers confirmed, and the item's track boundaries falsified
+
+`zh` 29 = **0.0966**, 30 = **0.1203** at `HEAD`; `zh` reference **0.3490**, threshold **0.2443**, 24
+abridged. The item's "`zh` runs at a 0.35 reference" and "`zh` 29-40 sit at 0.08-0.12" both reproduce
+exactly (measured range **0.0784-0.1203**).
+
+**The control did the work this run.** Measuring the "already-complete money track 12-28" as the
+band to aim for returned **min 0.2439** — *below* the 0.2443 threshold, i.e. a supposedly-complete
+lesson reading as abridged. That is the shape of a broken instrument, so I checked the track field
+instead of the id range: **the real tracks are `essentials` 1-15, `money` 16-28, `economy` 29-40.**
+The 0.2439 was lesson 14, which is `essentials` and legitimately abridged. **Item 93 said "money
+12-28" in four places while also listing "essentials 1-11 and 14"** — the two statements contradict
+each other and had for two days. Nothing measured was wrong; every ratio and count in the item
+stands. All four occurrences are corrected, with a note so the `essentials` remainder is not scoped
+off a 17-lesson track that does not exist.
+
+**A second control was mis-specified and caught.** My cross-reference control asserted lesson 37's
+`zh` carries `《QE与QT》`; it returned empty. The regex was fine — **`《QE与QT》` is in lesson 32** —
+and re-running the control there fired. Had I trusted the empty result as "the instrument works, the
+content is clean", every negative cross-reference result this run would have been worthless.
+
+**Read both.** Lesson 29 §1 was **84 Chinese characters against 1,120 English** — three bare
+assertions, with the coffee purchase, the credit-card tap, the barista's employer and the
+$500/100-loaves price arithmetic all absent. §2 had lost the wheat/stock market examples and
+compressed the two government roles to six words each. **Lesson 30 §1 was not an abridgement at
+all** — the English is the $20,000-car worked example; the Chinese was "lenders want money to make
+more money / borrowers want to buy what they can't afford now". **That is the same substitution item
+93 already recorded for `ko` 30**, in the same lesson, in a second language.
+
+### What shipped
+
+- **`src/content/lessonContent.economy.zh.js`** — lessons **29 and 30** rewritten from summary to
+  full translation. Section counts (2 and 3) and headings unchanged. **Nine of nine body/takeaway/
+  thinkAbout fields changed**; exactly 9 lines of the file differ.
+- **`scripts/translation-completeness-baseline.json`** — exactly two numbers (`29.zh` 0.10 -> 0.32,
+  `30.zh` 0.12 -> 0.34).
+- **`LAUNCH_READINESS.md`** — generated §10.4 figure, `zh 30,993 (0.226x)` -> `zh 32,163 (0.234x)`.
+
+### Verification
+
+- `npm test` **exit 0, 0 failures**, 2 pre-existing warnings. `npm run build` clean in 1.05s.
+  `npm run check-blindspot` **0 failures**.
+- **§33 run before re-recording failed on exactly two lines**, 29 [zh] and 30 [zh], no others.
+- **Paragraph-count parity exact on all five sections: 29 en 3,3 / zh 3,3 and 30 en 3,3,3 / zh
+  3,3,3.** They had been 3,2 and 3,2,2 — so this run added paragraphs the Chinese had dropped
+  entirely, not just text inside existing ones.
+- **Figures matched by containment with zero extras, both directions, with both controls firing:**
+  29 `[500, 100, 5]` and 30 `[20000, 5000, 15000, 8, 10000]` identical in en and zh after
+  comma-stripping. **No value-based parse was needed** (unlike `ko` 37): Chinese writes these as
+  `20,000美元`, digits unchanged, so token containment is meaningful here.
+- **Cross-reference parity 1:1** — 30 §1's `“Interest Rates”` -> `《利率》`, resolving to lesson 35's
+  `zh` title head. Lesson 29 has none in English and none in Chinese. **List markers preserved: en 2
+  bullets / zh 2** in lesson 29 §2 (§20's check).
+- **§10.1 — five Chinese patterns over 1,765 Chinese characters, all clean, with five controls, all
+  firing.** §10.2 `/dalio/i` run directly: clean. §2.3: **zero 4-digit years**. §10.3: no surface.
+  Nothing in either lesson is advice-adjacent by construction — they teach what a transaction and a
+  credit contract *are*, with no asset claims at all, which makes this the lowest-risk pair in the
+  track on that axis.
+- **Live browser** (rebuilt `dist/`, `/usr/bin/python3 -m http.server 8852`, language switched
+  through the app's own `<select>` with a real `change` event, disclaimer dismissed, progress seeded
+  before the reload because **a URL does not unlock a lesson**). Both render in full: **29 zh 1,044
+  characters, 30 zh 1,268**, every named paragraph present, both bullets, `《利率》`, and all eight
+  figures on screen. **Each reading asserted single-language: zero Latin words of 4+ characters in
+  either lesson** once the language-picker options are stripped. **English re-checked as a control**
+  — lesson 30's English body unchanged and intact at 3,654 characters. Console clean, `localStorage`
+  cleared, server stopped.
+
+### The projection held on all four figures, and it is the case `ko` 39 predicted
+
+Reference **0.3490 before and after**, threshold **0.2443**, headline **72 -> 70**, lesson 16's
+margin **0.0409** unchanged. The previous run falsified the "reference stays put" half of this model
+when `ko` 39 landed *above* the p90 and displaced it; `zh` 29 and 30 landed *below* it, which is the
+condition under which the reference is still. The rule now recorded in item 93 is: **predict the
+headline always, the reference only when the new ratios will land at or under the current p90.**
+
+Cost: **1,170 added Chinese characters against 5,311 English = 0.220/char** — against `ko`'s 0.379
+and `es`'s 0.85. **`zh` did not inherit the `ko` rate**, exactly as the item warned.
+
+### Adversarial self-check (step 5)
+
+- **Blindspot register** — clean, and checked rather than inferred: §10.1 five patterns with five
+  firing controls, §10.2 run directly on the new text, §2.3 a year-scan returning empty, §10.3 no
+  surface. No asset or allocation language exists in either lesson to get wrong.
+- **`DECISIONS.md` conflict** — none from my change. Content stays in `.js` modules, no state or
+  build change, and the machine-translation entry accepts AI translation under "(Beta)" labelling.
+  *(`DECISIONS.md` is modified in the working tree by someone else — see below — but not by me.)*
+- **Already-done backlog item** — no. First `zh` tranche; `es` and `ko` economy are closed and
+  untouched, and their ratios re-measured identical this run.
+- **Own verification claim** — reproducible. **The claim I nearly made wrongly was the control
+  itself**: an empty cross-reference result on lesson 37 looked like a clean instrument reporting
+  clean content, and it was neither — the reference lives in lesson 32. I also nearly filed lesson
+  22's two `《》` spans as stray cross-references; they are article headlines inside its
+  confirmation-bias story and match the English. Both are written into item 93. **One thing I did
+  NOT do:** the translation-review ledger is untouched — it fingerprints the **English** body.
+  **No fluent Chinese reviewer has read either lesson.**
+
+### A concurrent editor is active in the working tree — nothing of it was committed
+
+Partway through this run, `DECISIONS.md` and `LAUNCH_PLAN.md` became modified without my touching
+them. `HEAD` did not move. The changes are **US-English spelling normalizations** —
+`judgement`->`judgment`, `catalogue`->`catalog`, `theatre`->`theater`, `colour`->`color`, 2 lines
+each. Per the hard rules I **did not stage, revert or otherwise touch either file**, and this run's
+commit contains only its own four. Two things for whoever owns that sweep:
+**(a)** one of the four edits rewrites a word **inside a dated verification note in `DECISIONS.md`**
+whose own text says *"Deliberately not corrected: rewriting a dated verification falsifies it"* —
+the house rule as recorded is that quotations and dated records stay verbatim, so that one may want
+reverting. **(b)** the sweep did **not** touch `AGENT_LOG.md`, so there was no conflict with this
+entry.
+
+### Next run
+
+**Item 93: `zh` economy 31-32**, a projected **~1,370 added Chinese characters** (6,222 English at
+the measured 0.220/char), headline expected **70 -> 68**, and **the reference should stay 0.3490**
+provided both land under it — target the 0.29-0.36 band, not `ko`'s. Lesson 32 carries **two**
+English cross-references (`“Credit”`, `“QE & QT”`) and the `zh` currently has only `《QE与QT》`, so
+`《信贷》` needs adding. After that, 33-40 in four more tranches; **34 and 36 are the heavy ones.**
+**`ja` remains entirely unmeasured on the added-character basis, and `ja` 30 should be checked for
+the same lender/borrower substitution `ko` and `zh` both had.**
 **Item 18 remains the entire critical path to ending Phase 0**, blocked on the owner creating an
 analytics-provider account, and **item 72's owner half — a deployed URL — is blindspot 10.10**.
