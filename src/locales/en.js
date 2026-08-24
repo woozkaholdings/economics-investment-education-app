@@ -26,6 +26,13 @@ export default {
     // Learn
     lessonLabel: "Lesson", ofLabel: "of", completeLabel: "Complete!",
     nextLesson: "Next Lesson", prevLesson: "Previous", markComplete: "Mark Complete",
+    // Load failure (item 96). "Reload" and not "Try again" on purpose: once a
+    // dynamic import rejects, the specifier stays errored in the document's
+    // module map, so only a fresh document can recover.
+    loadingLabel: "Loading…",
+    loadFailedTitle: "Didn't load",
+    loadFailedBody: "This content couldn't be downloaded. Check your connection, then reload the page.",
+    loadFailedRetry: "Reload",
     keyTakeaway: "Key Takeaway", tryThinking: "Think About This",
     locked: "Complete previous lessons first",
     // Markets

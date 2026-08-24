@@ -16,7 +16,8 @@ import { EVENTS, track } from "./lib/analytics.js";
 import { initialRoute, useDeepLink } from "./lib/deepLink.js";
 import { useAppState } from "./lib/useAppState.js";
 import Icon from "./components/Icon.jsx";
-import { Button, Card, EmptyState, Text } from "./components/ui.jsx";
+import { Button, Card, EmptyState, LoadFailure, Text } from "./components/ui.jsx";
+import ErrorBoundary from "./components/ErrorBoundary.jsx";
 import { APP_MAX_WIDTH, fill, ink, line, MIN_TAP, radius, shadow, space, surface } from "./theme.js";
 import Learn from "./screens/Learn.jsx";
 
@@ -39,8 +40,21 @@ const LessonReader = lazy(() => import("./screens/LessonReader.jsx"));
 // Same loading affordance `Sectors.jsx` already uses for its own async
 // content, so a lazy-chunk fetch doesn't look different from data the app
 // was already used to waiting on.
-function ScreenFallback() {
-  return <EmptyState icon="path">…</EmptyState>;
+function ScreenFallback({ t }) {
+  return <EmptyState icon="path">{t.loadingLabel}</EmptyState>;
+}
+
+// Suspense catches a PENDING lazy() chunk; a REJECTED one re-throws during
+// render and, with nothing above it, takes the whole tree down to a blank
+// page (backlog item 96). Every lazy screen therefore gets both. The pairing
+// is a component rather than four hand-written wrappers so a fifth screen
+// cannot be added with only half of it.
+function AsyncScreen({ t, children }) {
+  return (
+    <ErrorBoundary fallback={<LoadFailure t={t} />}>
+      <Suspense fallback={<ScreenFallback t={t} />}>{children}</Suspense>
+    </ErrorBoundary>
+  );
 }
 
 const LANGUAGES = [
@@ -331,28 +345,28 @@ export default function App() {
           />
         )}
         {tab === "learn" && reading !== null && (
-          <Suspense fallback={<ScreenFallback />}>
+          <AsyncScreen t={t}>
             <LessonReader
               t={t} lang={lang} lessons={lessons} index={reading}
               completedLessons={completedLessons} completeLesson={completeLesson}
               recordReview={recordReview}
               onBack={closeLesson} onNavigate={setReading}
             />
-          </Suspense>
+          </AsyncScreen>
         )}
         {tab === "practice" && (
-          <Suspense fallback={<ScreenFallback />}>
+          <AsyncScreen t={t}>
             <Practice t={t} lang={lang} review={review} recordReview={recordReview} />
-          </Suspense>
+          </AsyncScreen>
         )}
         {tab === "reference" && (
-          <Suspense fallback={<ScreenFallback />}>
+          <AsyncScreen t={t}>
             <Reference
               t={t} lang={lang}
               fontScale={fontScale} setFontScale={setFontScale}
               themeMode={themeMode} setThemeMode={setThemeMode}
             />
-          </Suspense>
+          </AsyncScreen>
         )}
       </main>
 

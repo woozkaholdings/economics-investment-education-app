@@ -440,3 +440,30 @@ export function EmptyState({ icon, children }) {
     </div>
   );
 }
+
+// ── LoadFailure ───────────────────────────────────────────────────────────
+// The one place the app admits a chunk did not arrive (backlog item 96).
+// Shared by the lesson reader, the review queue and the ErrorBoundary
+// fallback so the three cannot drift apart in wording or in what they offer.
+//
+// The action is a document reload, not an in-place retry, and that is forced
+// rather than chosen: a rejected dynamic import stays errored in the module
+// map for the life of the document, so re-calling the same loader fails
+// again without touching the network (measured 2026-08-24). `role="alert"`
+// because this replaces content the reader was already waiting on.
+export function LoadFailure({ t, style }) {
+  return (
+    <div role="alert" style={{ marginTop: space["4"], ...style }}>
+      <Note tone="warn" label={t.loadFailedTitle} icon="info">
+        {t.loadFailedBody}
+      </Note>
+      <Button
+        variant="outline"
+        onClick={() => window.location.reload()}
+        style={{ marginTop: space["3"] }}
+      >
+        {t.loadFailedRetry}
+      </Button>
+    </div>
+  );
+}

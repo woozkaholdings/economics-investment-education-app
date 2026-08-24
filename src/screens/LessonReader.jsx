@@ -20,7 +20,7 @@ import Icon from "../components/Icon.jsx";
 import LessonVisual from "../components/LessonVisual.jsx";
 import PolicySim from "../components/PolicySim.jsx";
 import Question from "../components/Question.jsx";
-import { Button, Card, Disclaimer, EmptyState, Note, Stack, Text } from "../components/ui.jsx";
+import { Button, Card, Disclaimer, EmptyState, LoadFailure, Note, Stack, Text } from "../components/ui.jsx";
 import { family, fill, ink, line, MIN_TAP, radius, shadow, space, surface } from "../theme.js";
 
 // Lesson body text is split two ways: by track (item 25, 2026-08-14) and by
@@ -88,6 +88,11 @@ function Toast({ label }) {
 export default function LessonReader({ t, lang, lessons, index, completedLessons, completeLesson, recordReview, onBack, onNavigate }) {
   const lesson = lessons[index];
   const [content, setContent] = useState(null);
+  // `content === null` used to mean two different things — still downloading,
+  // and will never arrive — and the screen rendered the same "…" for both
+  // (item 96). This separates them, because only one of them may keep the
+  // Mark Complete button on screen.
+  const [loadFailed, setLoadFailed] = useState(false);
   const [celebrating, setCelebrating] = useState(false);
   const [prompt, setPrompt] = useState(null); // null | "asking" | "confirmed"
   // The pre-lesson hook's guess, as an option index, or null if not yet
@@ -146,16 +151,32 @@ export default function LessonReader({ t, lang, lessons, index, completedLessons
   // language now changes which file holds the text, not just which field is
   // read out of it: the picker has to trigger a fetch, where before it was a
   // pure re-render.
+  //
+  // Both loaders carry a `.catch`. Without one, a 404 on a content chunk —
+  // the ordinary consequence of a redeploy while a tab is open, since `dist/`
+  // ships content-hashed chunks — left the promise rejected, `content` null
+  // forever, and the reader showing a lesson with no body and a working Mark
+  // Complete button (item 96, measured at a 77% content loss).
   useEffect(() => {
     let canceled = false;
     setContent(null);
     setQuizText(null);
-    CONTENT_LOADERS[`${lesson.track}:${lang}`]().then((mod) => {
-      if (!canceled) setContent(mod.lessonContent[lesson.id]);
-    });
-    QUIZ_TEXT_LOADERS[lang]().then((mod) => {
-      if (!canceled) setQuizText(mod.quizText);
-    });
+    setLoadFailed(false);
+    const fail = (error) => {
+      if (canceled) return;
+      console.error("[LessonReader] content load failed", error);
+      setLoadFailed(true);
+    };
+    CONTENT_LOADERS[`${lesson.track}:${lang}`]()
+      .then((mod) => {
+        if (!canceled) setContent(mod.lessonContent[lesson.id]);
+      })
+      .catch(fail);
+    QUIZ_TEXT_LOADERS[lang]()
+      .then((mod) => {
+        if (!canceled) setQuizText(mod.quizText);
+      })
+      .catch(fail);
     return () => {
       canceled = true;
     };
@@ -184,7 +205,10 @@ export default function LessonReader({ t, lang, lessons, index, completedLessons
   }, [celebrating]);
 
   const done = completedLessons.includes(lesson.id);
-  const hook = !done && check.length > 0 ? check[0] : null;
+  // `!loadFailed` is not belt-and-braces: the two loaders are independent, so
+  // the body can 404 while the quiz text arrives — which would ask for a guess
+  // about a lesson the reader is about to be shown none of.
+  const hook = !done && !loadFailed && check.length > 0 ? check[0] : null;
 
   // Derived from the same flat, track-ordered list the path renders, so the
   // two can't disagree — rather than re-deriving from TRACKS here.
@@ -362,12 +386,17 @@ export default function LessonReader({ t, lang, lessons, index, completedLessons
             <Note tone="accent" label={t.tryThinking} icon="info">{content.thinkAbout}</Note>
           </Stack>
         </>
+      ) : loadFailed ? (
+        <LoadFailure t={t} />
       ) : (
-        <EmptyState icon="path">…</EmptyState>
+        <EmptyState icon="path">{t.loadingLabel}</EmptyState>
       )}
 
-      {/* Retrieval check — answering is what makes the reading stick. */}
-      {check.length > 0 && (
+      {/* Retrieval check — answering is what makes the reading stick. It is
+          withheld on a load failure for the same reason the hook is: it
+          feeds the Leitner schedule, and grading recall of a body that never
+          rendered would put a never-taught question into the review queue. */}
+      {!loadFailed && check.length > 0 && (
         <Card style={{ marginTop: space["5"] }}>
           <Text variant="caption" color={ink.muted} style={{ textTransform: "uppercase", letterSpacing: "0.05em", fontWeight: 700 }}>
             {t.checkTitle}
@@ -445,7 +474,10 @@ export default function LessonReader({ t, lang, lessons, index, completedLessons
             {t.prevLesson}
           </Button>
         )}
-        {!done && (
+        {/* The whole point of item 96: a lesson whose body did not arrive must
+            not be completable. Completion feeds the streak AND the spaced-review
+            queue, so a stray tap here fabricates both. */}
+        {!done && !loadFailed && (
           <Button iconLeft="check" onClick={handleComplete} style={{ flex: 2 }}>
             {t.markComplete}
           </Button>

@@ -36,7 +36,7 @@ export default function Sectors({ t, lang }) {
   const [window, setWindow] = useState("3m");
 
   if (status === "loading") {
-    return <EmptyState icon="chart">…</EmptyState>;
+    return <EmptyState icon="chart">{t.loadingLabel}</EmptyState>;
   }
 
   // Two different failures used to share one sentence (backlog item 79): "no

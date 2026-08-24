@@ -19,7 +19,7 @@ import { quizMeta } from "../content/quizMeta.js";
 import { dueQuestions, seenCount } from "../lib/review.js";
 import Icon from "../components/Icon.jsx";
 import Question from "../components/Question.jsx";
-import { Button, Card, Disclaimer, ProgressBar, Steps, Text } from "../components/ui.jsx";
+import { Button, Card, Disclaimer, LoadFailure, ProgressBar, Steps, Text } from "../components/ui.jsx";
 import { ink, line, MIN_TAP, radius, space, surface } from "../theme.js";
 
 // A straight-through 40-question "practice all" session has no natural stop.
@@ -86,6 +86,10 @@ export default function Practice({ t, lang, review, recordReview }) {
   // instead would make a learner's review order depend on which module had
   // finished downloading.
   const [quizText, setQuizText] = useState(null);
+  // Both review buttons are already `disabled={!quizText}`, so a rejected
+  // fetch did not crash this screen — it left two dead buttons and no
+  // explanation, forever (backlog item 96's milder sibling).
+  const [loadFailed, setLoadFailed] = useState(false);
   useEffect(() => {
     let canceled = false;
     // Deliberately NOT setQuizText(null) here. A review session renders from
@@ -93,9 +97,16 @@ export default function Practice({ t, lang, review, recordReview }) {
     // undefined for one render and crashed the screen. Keeping the previous
     // language on screen until the new module resolves removes that window,
     // and removes a content flash on the way.
-    QUIZ_TEXT_LOADERS[lang]().then((mod) => {
-      if (!canceled) setQuizText(mod.quizText);
-    });
+    setLoadFailed(false);
+    QUIZ_TEXT_LOADERS[lang]()
+      .then((mod) => {
+        if (!canceled) setQuizText(mod.quizText);
+      })
+      .catch((error) => {
+        if (canceled) return;
+        console.error("[Practice] quiz text load failed", error);
+        setLoadFailed(true);
+      });
     return () => {
       canceled = true;
     };
@@ -374,6 +385,8 @@ export default function Practice({ t, lang, review, recordReview }) {
       >
         {t.practiceAll}
       </Button>
+
+      {loadFailed && <LoadFailure t={t} />}
 
       {/* HOW REVIEW WORKS — adapted from UIUX/ (Vocabulary iOS 187 and Quizlet
           iOS "Choose your plan"), whose free-trial screens both explain what

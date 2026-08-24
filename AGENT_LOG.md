@@ -1880,9 +1880,37 @@ for the history. No open P1/P2 items.
       would add ~48 pairs of it to the optional track. **The owner should be asked before this starts,
       not after** — see O-3 at the top of this backlog.
 
-96. **[Bug/UX — filed 2026-08-24 by the scheduled dev-agent, proved in a live browser with a control.
-    HIGH VALUE, and it gets worse the moment O-1 lands.] A lesson whose content chunk fails to load
-    renders as an empty lesson with a working "Mark Complete" button — silently, with no error state.**
+96. **✅ DONE 2026-08-24 (scheduled dev-agent), same day it was filed. The premise re-measured
+    exactly — 772 vs 3,294 characters, to the character — and the item's own scope contained one
+    impossible instruction; see the premise correction below. [Bug/UX — filed 2026-08-24 by the
+    scheduled dev-agent, proved in a live browser with a control. HIGH VALUE, and it gets worse the
+    moment O-1 lands.] A lesson whose content chunk fails to load renders as an empty lesson with a
+    working "Mark Complete" button — silently, with no error state.**
+
+    > **PREMISE CORRECTION 2026-08-24 — the item said "try again", and an in-place retry is
+    > impossible here, not merely worse.** Measured live, with the 404'd file restored to 200 in
+    > between: re-importing the **same specifier** still fails **without a network request**, because a
+    > rejected dynamic import stays errored in the document's module map for the life of the document;
+    > only a **cache-busted specifier** refetches, and Vite needs literal specifiers to split chunks at
+    > all. A "Try again" button that re-invoked the loader **would have failed every time it was
+    > pressed** — a fix with the same shape as the bug. **The action shipped is a document reload, and
+    > the button says `Reload`.** Everything else in the item was correct as written.
+    >
+    > **What shipped:** `src/components/ErrorBoundary.jsx` (the app's first) paired with `Suspense` by
+    > `App.jsx`'s new `AsyncScreen` around all three `lazy()` screens; `.catch` on both loaders in
+    > `LessonReader.jsx` and on `Practice.jsx`'s; a `loadFailed` state separating *still downloading*
+    > from *will never arrive*; **`Mark Complete`, the pre-lesson hook and the end-of-lesson check all
+    > withheld on failure** (the latter two because they feed the Leitner schedule); a shared
+    > `LoadFailure` in `ui.jsx` with `role="alert"`; and all three bare `…` placeholders replaced with a
+    > real `t.loadingLabel` (`grep -rn '>…<' src/` now returns none). Four new locale keys in five
+    > languages, **all five rendered in a live browser**, not merely key-parity checked.
+    >
+    > **Measured before/after, each against a control** (full table in the run log): content-chunk 404
+    > went from *772 chars + enabled Mark Complete* to *an alert, no Mark Complete, and a working
+    > `Reload`*; a **screen**-chunk 404 went from a **total white screen** (`#root` 0 children, 0 bytes,
+    > proven on a pristine `git archive HEAD` build) to the shell surviving with nav intact; and
+    > pressing `Reload` recovered fully with `#/lesson/29` preserved. The healthy control was
+    > **byte-identical** before and after.
     - **Measured, not reasoned about.** `dist/` was served over HTTP, one content chunk
       (`lessonContent.economy.en-*.js`) was moved aside so it returned **404**, and economy lesson 1
       was opened from a **fresh origin** (a second port, so no HTTP cache could mask it — the first
@@ -1933,6 +1961,29 @@ for the history. No open P1/P2 items.
     - Also fix `index.html`'s `<title>` hardcoding English while the app ships five languages, and its
       `lang="en"` — which is now the correct *initial* value, since `useAppState` overwrites it at
       mount (this date).
+
+99. **[Bug/Tooling — filed 2026-08-24 by the run that closed item 96, as its stated residual rather
+    than smuggled into the same commit (the boundary W-5.4 drew before item 95, and item 97 before
+    this).] Item 96's boundary covers the three `lazy()` screens; `Learn.jsx` is statically imported
+    and is not behind one, and nothing stops the next screen from being added without it.**
+    - **The gap, measured.** `AsyncScreen` (`App.jsx`) wraps `LessonReader`, `Practice` and
+      `Reference`. `Learn.jsx` is a **static** import — it is in the entry chunk, so it cannot 404 —
+      but a **render** error inside it still has no boundary above it and still takes the whole tree
+      to a blank page, which is exactly what item 96 measured for the lazy screens
+      (`#root` 0 children, 0 bytes).
+    - **Why it was not just folded into item 96's commit.** `LoadFailure`'s wording is *"This content
+      couldn't be downloaded"*, which is **wrong for a render bug**. A top-level boundary needs its own
+      message ("something went wrong on this screen"), which is new copy in five languages — a
+      different change from the one item 96 scoped, and it should be reviewed as one.
+    - **The guard half, and it is the more valuable half.** Two things silently regress today: a new
+      `lazy()` screen added straight into a bare `<Suspense>`, and a `.catch` dropped from one of the
+      four dynamic-import call sites in `LessonReader.jsx`/`Practice.jsx`. A `check-data.mjs` section
+      asserting that **every `lazy(` in `App.jsx` renders inside `AsyncScreen`** and that **every
+      `import(` call site under `src/screens/` carries a `.catch`** would hold both, and it is a source
+      scan of the same shape as §35. **Note the floor-control lesson from §35 and item 97: a scan that
+      matches nothing must fail loudly, not pass** — assert the expected call-site count is non-zero.
+    - **Honest priority: below item 97, above item 94.** The reachable half of this defect class was
+      just fixed; what is left is a smaller blast radius plus regression-proofing.
 
 76. **[Content/Process — filed 2026-08-18 by the run that built item 69's instrument half, which is
     what turned this from an opinion into a blocked measurement.] `zh` and `ja` `Brokerage Account`
@@ -7461,3 +7512,119 @@ open tab.
 **Unchanged and still the entire critical path, both owner-blocked: O-1** (a deployed URL) and **O-2**
 (item 18, an analytics account). Zero people have opened this app — and item 96 is a reminder that the
 first real deploy is also the first time a whole class of failure becomes reachable.
+
+### 2026-08-24 (scheduled dev-agent) — item 96: a lesson you can complete without being shown it, and a "Try again" button that could never have worked
+
+Picked **item 96**, the strongest thing on the board and a genuine user-facing bug: a content chunk that
+404s renders an empty lesson with a working **Mark Complete**. Non-item-93 work, so **W-5.2's ratio is
+respected** (four consecutive non-93 runs now); item 94 was deliberately **not** picked, per its own box.
+
+#### Step 3.5 — premise re-measured with controls, and it held exactly
+
+Item 96 is the first item in a long while whose premise survived intact. Both halves reproduced:
+
+- **Code claim.** `componentDidCatch` / `getDerivedStateFromError` / `ErrorBoundary` → **0 matches**
+  under `src/`. **Control:** the same grep shape finds `Suspense` **7** and `lazy(` **3**, so the zero is
+  real and not a broken instrument.
+- **Runtime claim, re-run from scratch.** Built `dist/`, copied it twice into the scratchpad, removed
+  `lessonContent.economy.en-*.js` from one copy only, and served the two on **separate ports** — the
+  fresh origin is what defeats the HTTP cache that masked this on the filing run.
+  **Instrument control:** the same URL returned **200 on :8611** and **404 on :8612**.
+  Result on the broken origin: **772 characters against the control's 3,294** — the item's figures to
+  the character — **0 `<h2>` sections**, the body replaced by a bare `…`, and `Mark Complete`
+  **present and enabled**. Console carried an **uncaught (in promise)** rejection.
+
+#### The finding that changed the fix: an in-place retry is impossible, not merely inferior
+
+The item's scope said *"try again"*. I was about to build a retry button that re-invoked the loader —
+and measured it first. **Once a dynamic import rejects, that specifier stays errored in the document's
+module map for the life of the document.** Proven live, with the file restored to 200 in between:
+
+| Re-import, after the file is back at **200** | Result |
+|---|---|
+| same specifier | **still fails** — no network request |
+| `?retry=1` appended | **succeeds** |
+
+Vite needs **literal** specifiers to split chunks at all (that is what `CONTENT_LOADERS` is), so there
+is no cache-busted specifier to offer. **A "Try again" button would have failed every single time it
+was pressed** — a fix that looks like a fix and lies exactly the way the bug does. The action is
+therefore a **document reload**, and the button says `Reload`, not `Try again`.
+
+#### What shipped
+
+- **`src/components/ErrorBoundary.jsx`** (new) — the app's first. `App.jsx`'s `AsyncScreen` now pairs
+  it with `Suspense` around all three `lazy()` screens; the pairing is a component so a fourth screen
+  cannot be added with only half of it.
+- **`LessonReader.jsx`** — `.catch` on **both** loaders, a `loadFailed` state that separates *still
+  downloading* from *will never arrive*, and — the point of the item — **`Mark Complete` withheld**,
+  along with the pre-lesson hook and the end-of-lesson check. Those two are withheld for a specific
+  reason: they feed the **Leitner schedule**, so grading recall of a body that never rendered puts a
+  never-taught question into the review queue.
+- **`Practice.jsx`** — same `.catch`. Its buttons were already `disabled={!quizText}`, so a rejection
+  never crashed it; it just left two dead buttons and no explanation, forever.
+- **`ui.jsx` — `LoadFailure`**, shared by all three surfaces plus the boundary fallback so they cannot
+  drift in wording, with `role="alert"`.
+- **The bare `…` placeholders** — item 96 asked for these to be checked "at the same time". All three
+  (`App.ScreenFallback`, `LessonReader`, `Sectors`) now render a real `t.loadingLabel`. `grep -rn '>…<' src/`
+  returns **none**. Fixing `Sectors` also made `App.jsx`'s comment claiming parity with it true again.
+- **Four new locale keys in all five languages** (`loadingLabel`, `loadFailedTitle`, `loadFailedBody`,
+  `loadFailedRetry`).
+
+#### Verification — live browser, four cases, each against a control (W-1)
+
+Built, copied `dist/` per case, removed exactly one chunk per copy, served each on its own port.
+**Instrument control first:** content chunk / screen chunk returned `200 200` on the healthy origin,
+`404 200` on the content-broken one, `200 404` on the screen-broken one.
+
+| Case | Before | After |
+|---|---|---|
+| **Healthy** (control) | 3,294 chars, check present, Mark Complete | **identical — 3,294 chars, check present, Mark Complete**; 0 console errors; all 4 routes render |
+| **Content chunk 404** | 772 chars, `…`, **Mark Complete enabled** | 459 chars, `role="alert"`, **no Mark Complete**, check withheld, `Reload` offered |
+| **Screen chunk 404** | **total white screen** — `#root` **0 children, 0 bytes**, app gone | shell survives — **5,922 bytes**, nav intact, alert shown |
+| **`Reload` pressed** after the chunk returns | — | **full recovery: 3,294 chars, Mark Complete back, `#/lesson/29` preserved, no first-run modal** |
+
+The white-screen row is measured, not asserted: the "before" was produced by building a **pristine
+`git archive HEAD` copy** (Environment note's recipe) and breaking the same chunk in it.
+
+**All five languages rendered**, not just checked for key parity — the picker was driven through
+`en`/`es`/`ko`/`zh`/`ja` against an origin with all five economy chunks removed, and every one showed
+its own translated title, body and `Reload`, with **Mark Complete absent in all five**. The five
+`loadingLabel` strings are present in the shipped bundle (control: an invented string returns 0).
+
+Console on the failure paths now carries **only labeled, caught errors** (`[LessonReader] content load
+failed`) — the uncaught rejection is gone. `npm run build` **✓ 962ms**; `npm test` **0 failures**, the
+same **2 pre-existing warnings** (item 94's translation debt, the 0% human review share).
+
+#### Adversarial self-check (step 5)
+
+- **Blindspot register** — `npm run check-blindspot` **passes all six**, run rather than reasoned about.
+  This adds user-facing prose in five languages, so §10.1 is the live risk: the new strings are a load
+  error, carry no advice language, and the **disclaimer still renders on the failure state** (visible in
+  the screenshot), so §10.1's 8-surface requirement holds. No dates, no Dalio, no child-facing framing.
+- **`DECISIONS.md` conflict** — none. No new persisted key, no routing change, no content-module change,
+  no build change. `DECISIONS.md` records nothing about error handling or reload behavior.
+- **Already-done backlog item** — no. `ErrorBoundary`, `componentDidCatch`, `LoadFailure` and
+  `loadFailed` return **0 matches** across `AGENT_LOG.md`, the archive, `DECISIONS.md` and
+  `LAUNCH_PLAN.md` except inside item 96's own text and the entry that filed it — all four hits read.
+  **Control:** the same grep finds `chunk` **289**, `Suspense` **5**, so the zeros are real.
+- **Own verification claim** — reproducible by re-running only what is listed: build, copy `dist/`,
+  `mv` one chunk aside, serve on a fresh port, drive the page. Every number above came from that loop,
+  and the two "before" figures came from a `HEAD` build, not from memory.
+- **Residual, stated rather than discovered later.** `Learn.jsx` is **statically** imported, so it is
+  not inside an `AsyncScreen` and a render error there still takes the tree down. Not widened into this
+  commit — `LoadFailure`'s wording ("couldn't be downloaded") would be wrong for a render bug. Filed as
+  **item 99** with the guard half.
+
+#### Next
+
+- **Item 97** (a `check-data.mjs` guard for the `<html lang>` sync) is small and still open.
+- **Item 99** (a top-level boundary for the non-lazy screens, plus a guard that a new `lazy()` screen
+  cannot skip `AsyncScreen` and a loader cannot lose its `.catch`) is this run's own residual.
+- **Item 98** (link-preview metadata) serves §5 and is cheap.
+- **Do NOT pick item 94** — optional track, four "(Beta)" languages, parked behind O-1 by its own box.
+
+**Unchanged and still the entire critical path, both owner-blocked: O-1** (a deployed URL) and **O-2**
+(item 18, an analytics account). Item 96 was worth doing precisely because it is **unreachable until
+O-1 lands and reachable the moment it does** — the first redeploy under an open tab is the first time
+a hashed chunk 404s at a real reader. Owner-tree fingerprint observed this run:
+`cfc738474b654a4be905ece137da8855a670441857b84f73cddb27d5fb929cf2` (0 tracked modified, 52 untracked).
