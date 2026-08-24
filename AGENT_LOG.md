@@ -114,7 +114,17 @@ for the history. No open P1/P2 items.
 > regressions found, content independently spot-checked and neutral. The one real risk is that a
 > single item is now consuming 100% of capacity with a tail long enough to eat the next two weeks.
 >
-> ### W-5.1 PRIORITY — item 93 gets a STOP LINE at "economy complete in five languages", not at 160/160 pairs.
+> ### W-5.1 — ✅ **FULLY DONE 2026-08-24** (scheduled dev-agent). All three steps landed; the stop line held.
+> **Outcome:** `zh` economy 39-40 (step 1, 08-23), `ja` economy 29-40 (step 2, six runs 08-23/24), and
+> the economy phase **closed** with the `essentials` remainder filed as **new item 94** (step 3, 08-24).
+> `npm run translation-completeness` reports **48 abridged pairs — es 12 / ko 12 / zh 12 / ja 12** and
+> **0 abridged pairs anywhere in lessons 12-40**. The milestone is statable and checkable: **the main
+> path is fully translated in all five languages.** Total cost: **seven runs**, which is what W-5.1
+> budgeted. **The stop line is the reason this stopped here instead of running 24 more runs into the
+> optional track** — item 94 exists precisely so that continuing is a decision someone makes rather
+> than a tranche that keeps going. Leave the original text below; it is the reasoning, and W-5.2's
+> ratio rule still binds on item 94.
+> ### W-5.1 (original text, retained)
 > **Measured, not asserted:** `npm run translation-completeness` reports **62 abridged pairs** —
 > `es` 12, `ko` 12, `zh` 14, `ja` 24. At the demonstrated and very consistent rate of **2 pairs per
 > run**, finishing all of them is **~31 runs ≈ 8 days of scheduled capacity**, on content in four
@@ -1260,10 +1270,10 @@ for the history. No open P1/P2 items.
       same word is British English *and* ordinary Spanish, and a word-list run across all languages
       corrupts lesson content.
 
-93. **[Content — filed 2026-08-21 by the scheduled dev-agent, measured with a control, and the
-    largest open learner-visible gap in the app. P1 of the current Open set.] 50 of 160
-    lesson/language pairs ship a condensed *summary* of the English body rather than a translation of
-    it.** *(Was 94 at filing. **THE SPANISH ECONOMY TRACK IS DONE: `es` 29-40 are all full
+93. **[Content — filed 2026-08-21 by the scheduled dev-agent, measured with a control. ✅ ECONOMY
+    PHASE CLOSED 2026-08-24 — see the stop-line box. The remainder is now tracked as new item 94.]
+    48 of 160 lesson/language pairs ship a condensed *summary* of the English body rather than a
+    translation of it.** *(Was 94 at filing. **THE SPANISH ECONOMY TRACK IS DONE: `es` 29-40 are all full
     translations**, twelve pairs paid down across six runs on 2026-08-22, `es` abridged count
     **22 -> 12**. **THE KOREAN ECONOMY TRACK IS DONE TOO: `ko` 29-40 are all full translations**,
     twelve pairs across six runs on 2026-08-22/23, `ko` abridged count **24 -> 12**. **Every
@@ -1274,21 +1284,31 @@ for the history. No open P1/P2 items.
     `zh` 29-40 are all full translations**, twelve pairs across six runs on 2026-08-23, `zh`
     abridged count **24 -> 12**. **Three of the four languages have now ended in exactly the same
     shape — every remaining `es`, `ko` AND `zh` gap is in the `essentials` track (1-11 and 14).**
-    **`ja` is the entire remaining economy phase and IT IS ALL BUT DONE: `ja` 29-38 landed
-    2026-08-23/24 across five runs, `ja` abridged 24 -> 14 — only 39-40 remain.** See the `ko`
+    **THE JAPANESE ECONOMY TRACK IS DONE, AND WITH IT THE WHOLE ECONOMY PHASE: `ja` 29-40 are all
+    full translations**, twelve pairs across six runs on 2026-08-23/24, `ja` abridged count
+    **24 -> 12**. **All four languages have now ended in exactly the same shape — the abridged set is
+    IDENTICAL in `es`, `ko`, `zh` and `ja`: lessons 1-11 and 14, the `essentials` track, 12 pairs
+    each.** Both main-path tracks (`money` 16-28 and `economy` 29-40) are fully translated in all
+    five languages. See the `ko`
     bullets at the end for the rate and the two model corrections the `ko` track produced, the
     `zh` bullet after them for the budgeting correction the final `zh` tranche produced, and the `ja`
     bullet at the very end for why `ja` is the safest track to finish and the tightest to overshoot.)*
 
-    > **⛔ STOP LINE, set by the weekly review 2026-08-23 (W-5.1 at the top of this backlog).** This
-    > item does NOT run to 160/160. **✅ `zh` economy 39-40 landed 2026-08-23 — step 1 of the stop
-    > line is complete. ✅ `ja` economy 29-30, 31-32, 33-34, 35-36 AND 37-38 landed 2026-08-23/24 —
-    > step 2 is five-sixths done.** Remaining: **`ja` economy 39-40** (one run), then **close the economy
-    > phase and file the `essentials` remainder — 48 pairs — as a new, separately-prioritized item.**
+    > **⛔ STOP LINE, set by the weekly review 2026-08-23 (W-5.1 at the top of this backlog). ✅ ALL
+    > THREE STEPS ARE NOW COMPLETE — 2026-08-24. THIS ITEM IS CLOSED AND SHOULD NOT BE PICKED AGAIN.**
+    > This item did NOT run to 160/160, by design. **✅ Step 1 — `zh` economy 39-40, landed 2026-08-23.
+    > ✅ Step 2 — `ja` economy 29-40, landed 2026-08-23/24 across six runs. ✅ Step 3 — the economy
+    > phase is closed here and the `essentials` remainder (48 pairs) is filed as **new item 94** below,
+    > separately prioritized, exactly as W-5.1 required. Do not roll 94 back into this item.**
+    > **The milestone the stop line was set to reach, stated so it is checkable:** *the main path is
+    > fully translated in all five languages.* `npm run translation-completeness` reports **0 abridged
+    > pairs across lessons 12-40 in every language**; the abridged set is **{1-11, 14} in all four**.
     > Reason and the measured arithmetic are in W-5.1. **W-5.5 is closed and now has a standing
     > rule**: the headline count above is re-read off `npm run translation-completeness` by whoever
-    > touches this item, in the same commit. It read a stale 68, then 60, then 56, then 54; it is **50** as of
-    > 2026-08-24 (measured directly, `es 12 / ko 12 / zh 12 / ja 14`). *(The "60" written into this box
+    > touches this item, in the same commit. It read a stale 68, then 60, then 56, then 54, then 50;
+    > it is **48** as of 2026-08-24 (measured directly, `es 12 / ko 12 / zh 12 / ja 12`). **The rule now
+    > covers THREE places** — this box, the headline above, and `LAUNCH_READINESS.md` §10.4's prose —
+    > because the 2026-08-24 `ja` 37-38 run found §10.4 stale for exactly this reason. *(The "60" written into this box
     > on 2026-08-23 was itself stale within one run — the box and the headline are two places, and only
     > the headline is the one people read. Update both or neither. **This fired a second time:** the box
     > sat at "56" while the headline correctly read 54, and a non-item-93 run doing W-5.6 had to
@@ -1302,9 +1322,9 @@ for the history. No open P1/P2 items.
       contents for it. **`es` 40 was completed 2026-08-22 (0.25 -> 1.16) and now carries all four
       paragraphs.** **`ko` was completed 2026-08-23 and `zh` on the same date (0.0784 -> 0.3306,
       the four paragraphs restored against a stub that was three bare rule headings — the `es`
-      defect reproduced exactly in a third language).** **Only `ja` still ships the stub** — read
-      `ja` 40 before picking up the next phase of this item, because it is the clearest single
-      illustration of what the ratio is measuring.
+      defect reproduced exactly in a third language).** **`ja` 40 was the last surviving instance of the stub and it was
+      completed 2026-08-24 (0.1051 -> 0.4584), all four paragraphs restored.** The defect this whole
+      item was filed on now exists in no language, on the main path, anywhere in the corpus.
     - **The worst case found while doing the `es` track was not lesson 40 but lesson 39 §1**, whose
       English is a dashboard of **five** gauges — GDP, CPI, PMI, VIX, credit spreads, each with a
       paragraph and its threshold values, under a one-paragraph intro, so **six paragraphs, not six
@@ -1795,6 +1815,46 @@ for the history. No open P1/P2 items.
     - **The related bookkeeping this item supersedes.** `npm run review-status`'s 7 stale
       lessons per language are a *symptom* — see the run log of 2026-08-21 for why re-marking them
       would have asserted "reviewed" over bodies that are 24-35% of their English.
+
+94. **[Content — filed 2026-08-24 by the scheduled dev-agent as W-5.1 step 3, when item 93's economy
+    phase closed. This is the `essentials` remainder, deliberately filed as a SEPARATE item rather
+    than rolled into 93, because it is a different body of work with a different priority.] 48 of 160
+    lesson/language pairs — the whole of the `essentials` track — ship a condensed *summary* rather
+    than a translation. `es` 12, `ko` 12, `zh` 12, `ja` 12: lessons 1-11 and 14, identical in all
+    four languages.**
+
+    > **⚠️ READ THIS BEFORE PICKING IT UP. This item is NOT a continuation of item 93, and the case
+    > for doing it is materially weaker than the case for the work that just finished.** Item 93 was
+    > P1 because it was on the **main path** — the track the 2026-08-18 product reversal made the
+    > product. `essentials` (1-15) is the **optional** track. At the demonstrated and very consistent
+    > rate of **2 pairs per run**, 48 pairs is **~24 runs ≈ 6 days of scheduled capacity**, in four
+    > **"(Beta)"-labeled** languages, for an app that **no one has yet opened in any language (O-1)**.
+    > **The weekly review's W-5.2 rule still binds** — at most one run in four on translation work —
+    > and on this item that ratio should if anything be more conservative, not less.
+    > **Recommendation from the run that filed it: do not start this until O-1 is resolved.** A
+    > deployed URL would tell us whether anyone reads the optional track at all, which is exactly the
+    > evidence needed to decide whether these 48 pairs are worth six days. Filing it here so the work
+    > is *scoped and schedulable*, not so it is *scheduled*.
+
+    - **Why it is cheap to resume when the time comes: everything item 93 learned transfers.** The
+      per-language density predictors, the ceiling arithmetic, the paragraph-parity check, the strict
+      figure multiset, the control-before-negative-result discipline and the three named defect shapes
+      (**bare list**, **partial enumeration**, **whole-list omission**) are all recorded in item 93
+      and its run-log entries. Read item 93's bullets first; do not re-derive them.
+    - **One thing that does NOT transfer, measured 2026-08-24.** Item 93's density bands were fitted
+      on `economy` lessons only. `essentials` lessons are shorter and more list-shaped than `economy`
+      lessons, and item 93 already records that the ja:ko predictor loses all precision on short
+      fields. **Re-fit the band on `essentials` lessons 12, 13 and 15 — the three that are already
+      fully translated — before budgeting anything here.** Those three are the only in-track
+      reference points that exist.
+    - **The abridged set being identical across all four languages is new, and it is an opportunity.**
+      Every previous phase of this work was per-language. Here the same 12 lessons are abridged in
+      every language, so a single English-side read of a lesson scopes the defect for all four at
+      once. **Read once, translate four times** is available on this item and was not available on 93.
+    - **O-3 applies to this item with more force than it did to 93.** Human review share is 0% in all
+      four languages. 93 at least added unreviewed prose on the path the product is about; this item
+      would add ~48 pairs of it to the optional track. **The owner should be asked before this starts,
+      not after** — see O-3 at the top of this backlog.
 
 76. **[Content/Process — filed 2026-08-18 by the run that built item 69's instrument half, which is
     what turned this from an opinion into a blocked measurement.] `zh` and `ja` `Brokerage Account`
@@ -6716,3 +6776,198 @@ entries to demote to `###` (6 live + 31 archived). This entry is written at `###
 (item 18, an analytics account).
 Owner-tree fingerprint observed this run: `f4e4f1dbe22649410d1db7c7bade2c9e14501ee8a6e589de98dea1b44b51197b`
 (3 tracked modified — all mine — 52 untracked).
+
+### 2026-08-24 (scheduled dev-agent) — `ja` economy 39-40: the economy phase closes in all five languages, and the ceiling that mattered for nine tranches turns out to be consequence-free
+
+**Why this item.** W-5.1 step 2's sixth and final tranche, then step 3. W-5.2 reserves one run in
+four for non-item-93 work; `2aba2a5` (W-5.6) was that run and two tranches have landed since, so the
+tranche was free to continue — and this is the run that ends it rather than extending it.
+
+**Step 3.5 — all eight queued figures reproduced to the character, and both controls fired.**
+
+- `npm run translation-completeness`: headline **50** (`es 12 / ko 12 / zh 12 / ja 14`) — matches the
+  item headline and its stop-line box.
+- **39 `en=3475 ko=2006 ja=383 ratio=0.1102`, ceiling 1,720** and **40 `en=2284 ko=1245 ja=240
+  ratio=0.1051`, ceiling 1,131** — all eight reproduced exactly. "Ceiling" confirmed as
+  `en x reference` (3475 x 0.4951894 = 1720.8; 2284 x 0.4951894 = 1130.9), and the *floor* (the
+  abridged threshold, `en x 0.7 x reference`) computed alongside it at **1,204.5** and **791.7**.
+- **CONTROL on the completeness instrument, and it fired:** injecting 1,300/800 filler characters
+  moved the ratios **0.1102 -> 0.4858** and **0.1051 -> 0.4553**, cleared both abridged flags, and
+  dropped `ja` **14 -> 12** by exactly 2. Restored from a scratchpad copy (never `git checkout --`)
+  and verified byte-identical by `shasum` (`d23097db…`) before any real edit.
+- **CONTROL on the figure comparator, and it fired:** injecting `9999年` surfaced `9999` in the
+  JA-only list for lesson 39.
+- **Both lessons read against the English before a word was written.** Neither carries the lesson-30
+  substitution defect. **Final tally: 1 of 12** `ja` economy lessons carried substitution.
+
+**A premise correction that sharpens the queued warning rather than breaking it.** The queued note
+warned that **39 is the first lesson in the track whose predicted band crosses its own ceiling — top
+of band 18 characters above 1,720**. That figure is correct *for the pre-33 density band
+(0.8459-0.8662)* it was computed from. **Re-fitted on all ten completed `ja` economy lessons (29-38),
+the band is 0.8401-0.8871**, which predicts 39 at **1,685-1,780** — the top is **60** characters above
+the ceiling, not 18 — and the **aggregate predictor (0.8607) lands at 1,727, itself 7 above the
+ceiling.** So it was not merely the band's tail that crossed; the central estimate crossed too.
+
+**And then the correction that actually matters: the ceiling is consequence-free, and has been all
+along.** Nine tranches have budgeted carefully against the ceiling on the theory that a moving
+reference raises the abridged threshold for every other lesson and could drag one under. **Simulated
+this run across the entire band — 1,685 / 1,727 / 1,780, plus the bare floor at 1,210 — the outcome
+is identical in every case:** headline **50 -> 48**, `ja` **14 -> 12**, abridged set exactly
+`{1-11, 14}`, and **zero collateral crossings anywhere**. When the reference does move it goes
+**0.4951894 -> 0.4968597**, lifting the threshold **0.346633 -> 0.347802** — and the nearest
+non-abridged `ja` lesson (16, at 0.38) is nowhere near it. **Operationally: translate for clause
+parity and stop budgeting against the ceiling.** The reference's move is bounded by wherever the next
+p90 element sorts, which on a corpus this far along is a rounding error.
+
+**An instrument that lied, caught by a control, and worth recording because the shell caused it.**
+The first simulator run reported a confident `MOVED`, a full abridged list and a headline for **four
+different inputs, all identical** — because `for n in "1685 1046"; do node sim.mjs "$PWD" $n` does
+**not** word-split in zsh, so both arguments arrived as `NaN`, and `NaN` ratios sort into the p90
+without erroring. It printed a plausible answer from no input at all. **The instrument now refuses to
+print on non-finite args (exit 2), and its control is that it reproduces today's real state exactly
+from the real inputs (383/240 -> reference UNMOVED, threshold 0.346633, 14 abridged, headline 50).**
+This is the `git show | wc -l` failure class in a new costume: plausible output, no error, wrong.
+
+**The defects these two carried.** `ja` 39 §1 was **46 characters against 1,523 English** — a single
+line of five acronyms, the *bare-list* defect in its purest form (every gauge named, every
+explanation and every threshold value stripped, plus the doctor analogy absent). §2 was **208 against
+1,596**, one paragraph against six, mixing *partial enumeration* (CPI dropped from both the Expansion
+and Peak gauge lists — a reader would learn the wrong number of gauges) with *whole-list omission*
+(Contraction's five-gauge list absent entirely, rendered as "all indicators align downward") and a
+missing closing paragraph and cross-reference. **`ja` 40 §1 was the last surviving instance of the
+three-bare-rule-headings stub this whole item was filed on** — 82 characters against 1,056, three
+rule statements with all four explanatory paragraphs and both cross-references gone; §2 was 65
+against 922, dropping the second paragraph and every figure.
+
+**What shipped.** `ja` 39 **383 -> 1,674 (0.1102 -> 0.4817)** and `ja` 40 **240 -> 1,047 (0.1051 ->
+0.4584)**; **2,098 added Japanese characters against 5,759 English = 0.364/char**. Headline
+**50 -> 48**, `ja` abridged **14 -> 12**, `ja` volume **0.396x -> 0.412x** of English. Paragraph
+counts match English **exactly on all four sections** (39: 6/6, 40: 4/2), verified rendered.
+Cross-references written `『経済サイクルの4つの局面』`, `『長期債務サイクル』`, `『生産性成長』`,
+`『短期債務サイクル』`, `『取引』`, `『信用』` — the file's `『』` convention for lessons, with `「」`
+reserved for terms, so `「恐怖指数」` (Fear Gauge) is quoted the other way on purpose.
+
+**39 landed 9 characters below the band and was NOT padded — the clause check settles it.** All twelve
+paragraphs were checked line by line against the English before being accepted: §1's six gauges carry
+every threshold (`2％`, `50超`/`50未満`, `15未満`, `40超`) and the NBER qualifier; §2's four phases each
+carry all five gauges, and the closing lag paragraph is present. Sections-only density came out
+**0.8336 against a band of 0.8432-0.8887** — a 1.2% shortfall on a lesson that is unusually
+list-dense, where Korean's inter-word spaces inflate the denominator. **Full clause parity plus a
+below-band ratio means the band is wrong for this lesson, not that content is missing**, and the item
+forbids padding to reach a band. The one field that *was* wrong went the other way: 39's first-draft
+`takeaway` sat at density **0.909**, above even the wide short-field maximum (0.8925), and re-reading
+found genuine verbosity rather than an added clause — compressed to **0.879** with all clauses intact.
+
+**The figure multiset — the English side is now completely covered in both lessons.** **EN-only is
+empty for 39 and for 40.** Lesson 39's two JA-only tokens are both English words rendered as digits
+(`two straight quarters` -> `2四半期`, `over the next month` -> `1か月`), the documented pattern.
+Lesson 40's `3x2` is **unchanged from before this edit** — English writes "The Three Rules" and "these
+three rules" as words where Japanese uses `3つのルール` — and I deliberately wrote `三つの中で` and
+`この三つを` as words rather than digits so the edit added **zero** new figure differences to that
+lesson. Also avoided `1時間当たり` in favor of `時間当たり` for the same reason.
+
+**Verification.** `npm test` — **PASS, 0 failures, 2 expected warnings**. §33 first **failed on both
+lessons** ("is now at 0.48/0.46, up from a recorded 0.11 … re-record it"), which is the guard working;
+re-recorded with `npm run translation-completeness -- --write`. `refresh-readiness.mjs --check` then
+failed on §10.4's character sentence and was refreshed with `npm run readiness -- --write` — **`ja`
+54,409 -> 56,507, a delta of exactly 2,098**, independently corroborating the added-character count
+from a second instrument that was never given the number. `npm run build` ✅ (906 ms).
+`npm run check-blindspot` ✅. `npm run check-backlog` ✅ (71 items, no duplicate numbers).
+**Proved the edit is surgical by object comparison against `git cat-file blob HEAD:`** — lesson-id set
+identical (12 ids), **only 39 and 40 differ, the other 10 byte-identical**, and the comparator's
+control (an injected change to lesson 29) was detected. Also proved the file can be regenerated from
+its own parsed object **byte-identically** (`shasum` match) before editing, so the re-emit could not
+reformat the other ten lessons.
+**Live browser verification (W-1), served from `dist/` via `python3 -m http.server`:** language `ja`,
+lessons opened at `#/lesson/39` and `#/lesson/40`. **Control on every assertion — the English string
+was confirmed *absent* before the Japanese was confirmed present**, ruling out a stale or English
+render. All 8 `EN_absent_*` probes returned false and all 39 Japanese probes true. Rendered paragraph
+blocks measured off `white-space: pre-line` elements: **39 = 6/6 and 40 = 4/2, matching English
+exactly**. No console errors. Screenshotted.
+
+**Also updated, because this run is what made them stale.** `LAUNCH_READINESS.md` §10.4's **prose**
+now reads **48 pairs, `ja` 12, 12 of 40 lessons**, and its main-path clause records that **both
+`money` and `economy` are fully translated in all five languages** rather than naming `ja` 39-40 as
+the last gap. The header's "Last refreshed" moved 2026-08-23 -> 2026-08-24. **A third figure in that
+row was stale from two runs earlier and is now fixed:** the two-instrument note still read
+`ja 0.359 vs 0.361` when `ja` had moved twice since — now **`0.412 vs 0.412`** (both recomputed
+directly; the headings gap is still exactly **3,451** en chars). That is the W-5.5 defect class in its
+third location, which is why the rule in item 93's box now names all three places explicitly.
+
+**W-5.1 step 3 — the economy phase is CLOSED and the remainder is filed as new item 94.**
+Item 93 is marked closed and should not be picked again. **New item 94** carries the `essentials`
+remainder — 48 pairs, `es`/`ko`/`zh`/`ja` 12 each, lessons 1-11 and 14 — as a separately-prioritized
+item, with an explicit recommendation **not to start it until O-1 is resolved**: 24 runs ≈ 6 days of
+capacity on the *optional* track, in four "(Beta)" languages, for an app no one has opened. Three
+things were written into 94 that this run measured and that do not carry over from 93: the density
+bands were fitted on `economy` and must be **re-fitted on essentials 12/13/15** (the only fully
+translated in-track references); the abridged set is now **identical across all four languages**, so
+one English-side read scopes the defect for all four at once ("read once, translate four times", not
+available on 93); and **O-3 applies with more force here** than it did on the main path.
+
+**The milestone, stated so it is checkable rather than announced.** `npm run translation-completeness`
+reports **0 abridged pairs across lessons 12-40 in every language** and an abridged set of
+`{1-11, 14}` **identical in all four**. The main path — `money` 16-28 and `economy` 29-40, the product
+since the 2026-08-18 reversal — is fully translated in all five languages. Cost: **seven runs**,
+which is exactly what W-5.1 budgeted.
+
+**Step 5 — adversarial self-check.**
+- **Blindspot register** — no regression, checked rather than assumed: `npm run check-blindspot`
+  passes with **§10.2 no Dalio references** (these two lessons are the most Dalio-shaped content in
+  the app — the three rules and the layered-template summary — and carry no attribution, matching the
+  English), **§10.1 no advice-adjacent language in en/es/ko/zh/ja**, **§10.3** intact, and **§2.3 no
+  live-looking dates in 26 teaching-copy modules** — easy here, since the added text contains no dates
+  at all, only structural thresholds (`2％`, `50`, `15`, `40`) and cycle lengths (`75〜100年`, `5〜8年`).
+  **§10.1 deserves the specific note and I probed it rather than trusting the pass:** scanned the
+  2,696 added characters for `べきです`/`推奨`/`おすすめ`/`保証`/`儲か` and imperative buy-sell forms —
+  **zero hits, with the scan's control proven able to fire.** The two `買` occurrences are `購買担当者`
+  (PMI) and the contrarian-VIX sentence, which is third-person descriptive (`〜人もいます`, "there are
+  also people who") and tracks the English clause for clause. `40`'s `単純な助言です` renders English's
+  "This is simple advice" and is about debt, income and productivity — not markets.
+- **`DECISIONS.md` conflict** — none. No state, routing or build change; the `.js` content module is
+  unchanged in *form*, proven by the byte-identical round-trip above. The 2026-08-11 "(Beta)"
+  machine-translation decision is honored, and the volume added is exactly what **O-3** asks the owner
+  to re-affirm or cap — now escalated into item 94's own text rather than only restated here.
+- **Already-done backlog item** — no. `ja` 39-40 was the queued step; 29-38 were proven untouched by
+  object comparison against `HEAD`, not by reading the diff. Filing 94 rather than extending 93 is
+  W-5.1 step 3 as written, and 94's box says explicitly that it is not a continuation.
+- **Own verification claim** — reproducible from the pasted output of `npm test`, `npm run build`,
+  `npm run translation-completeness`, `npm run readiness`, `npm run check-blindspot` and
+  `npm run check-backlog`. The figures no existing script prints — the density band, the per-section
+  budget, the short-field spread and the four simulated outcomes — come from scratchpad scripts whose
+  controls are described above, including the one that caught the zsh word-splitting failure. The
+  2,098 delta is corroborated by `readiness`, a second instrument.
+
+### O-3, restated — and this is the last item-93 run that will restate it
+
+This run added **2,098 characters of unreviewed machine-translated Japanese**, closing the economy
+phase. Human review share remains **0% in all four languages**; `npm test`'s own warning reports
+**83% (0% human)** for each. Remaining: **48 pairs, all on the optional `essentials` track**, now
+item 94 — which recommends the owner be asked *before* that work starts. Unchanged: the owner should
+either re-affirm the 2026-08-11 decision or cap it. **The stop line means this is a natural place for
+that decision to be made, rather than one more day of tranches.**
+
+### Next
+
+**Item 93 is closed. Do NOT pick item 94 next** — it is the optional track, it is 24 runs, and its own
+box recommends waiting for O-1. **W-5.2's list is the right place to pick from, and it is now the
+whole of the actionable backlog:**
+- **W-5.4 is the only unclaimed item in the W-5 housekeeping set and is the natural next pick** — 37
+  run entries at the wrong heading level (6 live + 31 archived) to demote to `###`, one mechanical
+  commit across two files, proven with a line-count-identical + entry-count-identical check (a
+  sorted-line diff cannot be used when the lines themselves are what changed). Use
+  `s.replace(old, () => new)` per the 2026-08-23 tooling note. **This entry is written at `###`.**
+- **Item 67's residual third** and **item 64's residual candidates** — small, English-facing, open
+  since 2026-08-17.
+- **Item 26** (Quizlet/Vocabulary design review) and **item 27** (needs re-scoping: the money track's
+  visuals shipped, so the item as written no longer describes the gap).
+- **Items 76, 70/71** — process items filed by runs that could not finish them.
+- A **backlog refill** is always a legitimate pick (W-2's standing rule, still in force). With 93
+  closed and 94 parked, this is worth considering seriously: the Open set is now thin in a way it has
+  not been for a week, and that is a symptom to act on rather than a reason to start 94 early.
+**Unchanged and still the critical path, both owner-blocked:** **O-1** (a deployed URL) and **O-2**
+(item 18, an analytics account). **O-1 is now also the gate on item 94**, so it blocks more than it
+did yesterday.
+Owner-tree fingerprint observed this run: `ce0d0a9cf73b035415eb5b1e502f8b360ebb6471416e4762dede93933a115c4b`
+(4 tracked modified — all mine — 52 untracked). Previous run's `f4e4f1db…` differed only because its
+own three files were still uncommitted when it measured.
