@@ -2056,7 +2056,36 @@ for the history. No open P1/P2 items.
       `<App` inside an `ErrorBoundary`; and every loader invocation carries a `.catch`. Three floors,
       per §35/§36's lesson, plus an unbalanced-tag check that fired on its own during the battery.
 
-100. **[UX/Copy — filed 2026-08-24 by the run that closed item 99, as its stated residual rather than
+100. **✅ DONE 2026-08-24 (scheduled dev-agent). Shipped as `src/lib/chunkError.js` (call-site
+    tagging), a function-form `ErrorBoundary` fallback, and `check-data.mjs` §39. Read the premise
+    correction first — the defect was real and reproduced live, but "one line of code" was wrong.**
+    - **The defect held, and it was proved rather than argued.** A throw injected into `Practice`,
+      confirmed present in the built chunk, rendered *"This content couldn't be downloaded. Check your
+      connection"* — while the console showed the probe itself executing, so the chunk had plainly
+      downloaded. Both directions are now proved live: render throw → "Something went wrong",
+      404'd chunk → "Didn't load", clean control → neither.
+    - **"The gap is one line of code" was false, and the reason is structural.** `ErrorBoundary`
+      discarded the caught error entirely — `getDerivedStateFromError()` took no parameter and
+      state held only `{ failed }` — so no fallback could see *what* failed no matter how it was
+      written. The real shape is three edits: capture the error, allow a function fallback, tag the
+      rejection at the `lazy()` call site.
+    - **The method chosen, per this item's own instruction to scope it first: tagging, not matching.**
+      `chunk()` wraps the loader thunk, so an `import()` rejection is the only thing that can produce
+      a `ChunkLoadError`, and the predicate is an `instanceof`. The "cheap and honest fallback" this
+      item offered (widen `loadFailedBody` to cover both) was **not** needed — it would have
+      discarded the network hint in the one case where the hint is true.
+    - **The default is the safe direction, which is why a gap here degrades rather than lies.**
+      Anything untagged takes `AppError`, whose copy is true of both events; `LoadFailure` makes a
+      claim about the network that can be false.
+    - **A residual measured and deliberately NOT filed as an item.** A module that downloads and then
+      throws while *evaluating* also rejects `import()`, so it gets the download wording. Narrowing it
+      means asking whether the rejection is a `TypeError` (what the HTML spec rejects a failed module
+      fetch with) — which would trade the known-real case, a content-hashed chunk 404ing after a
+      redeploy, against a case the build and `npm test` import on every run. The reasoning is written
+      into `chunkError.js` so a later run does not "fix" it back.
+    <details><summary>Original text of item 100, as filed 2026-08-24</summary>
+
+    **[UX/Copy — filed 2026-08-24 by the run that closed item 99, as its stated residual rather than
     smuggled into the same commit.] `AsyncScreen` answers a render bug with a message about the
     network, and now that the right words exist the gap is one line of code.**
     - **The defect.** `AsyncScreen`'s fallback is `LoadFailure`, whose body reads *"This content
@@ -2074,6 +2103,7 @@ for the history. No open P1/P2 items.
       all five languages, so the alternative costs no new translation either way.
     - **Honest priority: low.** Nobody sees either message until O-1, and both end in the same reload.
       It is a wrong-words bug, not a broken-behavior one.
+    </details>
 
 76. **[Content/Process — filed 2026-08-18 by the run that built item 69's instrument half, which is
     what turned this from an opinion into a blocked measurement.] `zh` and `ja` `Brokerage Account`
@@ -8112,3 +8142,145 @@ warnings** (item 94's translation debt, the 0% human review share).
 (item 18, an analytics account). Item 98 is the sharpest illustration yet of the O-1 shape: this run
 built the preview card for **every shareable URL in the product**, and not one of those URLs exists.
 The work is real and it is inert until someone drags `dist/` onto Netlify Drop.
+
+### 2026-08-24 (scheduled dev-agent) — item 100: the boundary could not have chosen its words, because it never saw the error
+
+Picked **item 100**, named first in the previous run's "Next" and the top of the board. Non-item-93
+work, so **W-5.2's ratio holds** — eight consecutive non-93 runs.
+
+#### Step 3.5 — premise re-measured with controls; the defect is real, and the item's estimate of the fix was wrong
+
+- **"`AsyncScreen`'s fallback is `LoadFailure`"** — CONFIRMED at `src/App.jsx:57`, and confirmed to be
+  the *innermost* boundary around the three lazy screens, so it wins over `ScreenBoundary` for
+  anything thrown inside them.
+- **"a render error inside a lazy screen gets the download wording"** — **CONFIRMED LIVE, not read.**
+  A `throw` injected at the top of `Practice`, **proved present in the built chunk** (`grep` of
+  `dist/assets/Practice-*.js`) before the result was read, rendered:
+  *"DIDN'T LOAD — This content couldn't be downloaded. Check your connection, then reload the page."*
+  The console carried the probe error itself, which is the proof the chunk **downloaded and ran**.
+  **Control:** the same build with the probe removed renders Practice normally, 0 `[role=alert]`.
+- **"`AppError`'s copy already exists in all five languages"** — CONFIRMED; `appErrorTitle` and
+  `appErrorBody` are present in all five locale files, so the fix cost no new translation.
+- **PREMISE CORRECTION — "the gap is one line of code" is false, and the reason changed the design.**
+  `ErrorBoundary` **discarded the caught error**: `static getDerivedStateFromError()` took no
+  parameter and state was `{ failed: false }`. No fallback could have discriminated no matter how it
+  was written, because nothing above it ever carried the error. The real shape is three edits, and
+  the boundary change is the load-bearing one.
+
+#### The discrimination method, scoped before it was written (as the item asked)
+
+**Tagging at the `lazy()` call site, never matching the error text.** `chunk()` wraps the loader
+thunk, so an `import()` rejection is the only thing that can produce a `ChunkLoadError`, and the
+predicate is an `instanceof`. The rejected alternative — matching *"Failed to fetch dynamically
+imported module"* — is a string owned by the browser and the bundler, differing across engines and
+breaking silently on a React or Vite upgrade, with the symptom appearing only on a reader's device.
+
+**The default is deliberately the safe direction.** Anything untagged reads as a render error, because
+`AppError`'s copy ("hit an unexpected error", reload) is true of *both* events while `LoadFailure`
+makes a claim about the network that can be a lie. A gap in the tagging therefore degrades to a vaguer
+message, never to a wrong one. The item's offered fallback — widen `loadFailedBody` to cover both —
+was **not** taken: it discards the network hint in the one case where the hint is true.
+
+#### What shipped
+
+- **`src/lib/chunkError.js`** — `ChunkLoadError`, `chunk()`, `isChunkLoadError()`. The `cause` is
+  preserved, so the underlying `TypeError` is still in the console for a bug report; the tag adds a
+  fact rather than replacing one.
+- **`ErrorBoundary`** captures the error and accepts a **function** `fallback`. Node fallbacks still
+  work, so `main.jsx`'s root boundary and `ScreenBoundary` are untouched.
+- **`AsyncScreen`** picks `LoadFailure` for a tagged chunk failure and `AppError` otherwise.
+- **`check-data.mjs` §39**, and **§37's "what is deliberately not checked" note**, which named this
+  exact residual as its own and is no longer true.
+
+#### The defect this run found in its own work
+
+**§39's summary line asserted the very thing it had just failed.** With message-matching injected, the
+line still printed *"AsyncScreen picks LoadFailure vs AppError by tag, not by message"* beside three
+failures saying otherwise — the **same shape as §38's constant-count bug two runs ago**, in a section
+written by the run that had read that entry. The words are now derived from the behavioural result and
+the text scan, and the same injection reads
+*"BY SOMETHING OTHER THAN THE TAG — see the failures above; 1 false positive(s) … 1 error-text read(s)"*.
+
+#### Verification
+
+Live, against a served `dist/` (the Environment note's technique, per W-1) — all three states, because
+one direction proves nothing:
+
+| State | Rendered |
+|---|---|
+| render throw in a lazy screen | **"Something went wrong … your saved progress is not affected"** |
+| its chunk moved aside (a real 404) | **"Didn't load … couldn't be downloaded. Check your connection"** |
+| clean build, chunk restored | Practice renders, **0 alerts** |
+| **`ja`, render throw in `Reference`** | **問題が発生しました** + the ja body; nav 学習/復習/資料, `<html lang>` `ja`, title 経済サイクル |
+| header + bottom nav in every failure state | **survive** — the reader can still reach another tab |
+
+The 404 state also re-confirmed the module-map behaviour `ErrorBoundary` documents: a same-document
+reload could **not** recover after the chunk was restored, only a fresh document could. That is why
+the button says "Reload".
+
+**Code splitting survived the wrapper** — `dist/` still emits separate `Practice-*`, `Reference-*` and
+`LessonReader-*` chunks, checked because Vite needs a literal specifier and `chunk()` sits around the
+arrow that holds it.
+
+§39's battery — **12 injections plus 2 controls**, each **proved to have landed** before its result
+was read (an edit that matched nothing threw rather than reporting a pass), each restored from a
+scratchpad copy, **never `git checkout --`**:
+
+| # | Injection | Result |
+|---|---|---|
+| 0 | control, unmodified | **PASS** |
+| 1 | a lazy screen loses its `chunk()` wrapper | **FAIL**, names the screen |
+| 2 | `AsyncScreen` reverts to one fallback | **FAIL** |
+| 3 | predicate kept, but both branches are `LoadFailure` | **FAIL** |
+| 4 | `ErrorBoundary` stops capturing the error | **FAIL** |
+| 5 | `ErrorBoundary` reverts to a node-only fallback | **FAIL** |
+| 6 | the predicate goes back to matching the message | **FAIL — by three independent rules**, one of them behavioural |
+| 7 | `chunk()` drops the `cause` | **FAIL** |
+| 8 | `chunk()` stops tagging | **FAIL** |
+| 9 | `chunk()` mutates the *resolved* module | **FAIL** |
+| 10 | `en`'s crash copy drifts back to connection wording | **FAIL** |
+| 11 | `ja` copies its load copy into its crash copy | **FAIL** |
+| 12 | `App.jsx` stops importing `chunk()` | **FAIL** |
+| 13 | control, after every restore | **PASS** |
+
+Injection 6 is the one that matters: it is caught **behaviourally** (a `TypeError` carrying the
+browser's real module-fetch message must not be recognised) as well as textually. A text scan alone
+would have been satisfied by a cleverer regex.
+
+`npm run build` **✓ 919ms, exit 0**; `npm test` **exit 0**, 0 failures, the same **2 pre-existing
+warnings** (item 94's translation debt, the 0% human review share).
+
+#### Adversarial self-check (step 5)
+
+- **Blindspot register** — `npm run check-blindspot` **passes all seven**, run rather than reasoned
+  about. This change adds **no user-facing string at all** — it reuses copy that already shipped in
+  five languages — so §10.1's surface is unchanged. Greps on the three touched files plus the new one:
+  `dalio` **0**, advice verbs **0**, child-facing terms **0**. Four `20\d\d-\d\d-\d\d` hits, checked
+  rather than waved through: all are dated source comments, the repo's own convention, and §2.3's
+  scan is over teaching-copy modules, none of which this run touches. **Control:** the same grep
+  returns 2 for a file I knew carried dates.
+- **`DECISIONS.md` conflict** — none, and the nearest entries were read rather than recalled. Item
+  12's port-cost rule: **no dependency added** (`package.json` and `vite.config.js` are byte-identical
+  this run), and `chunkError.js` is dependency-free ES module code that a React Native port keeps
+  verbatim. The `LessonReader` chunk-split entry depends on Vite seeing literal specifiers — checked
+  live, the split is intact. localStorage-only and `.js`-not-JSON are untouched.
+- **Already-done backlog item** — no. `chunkError`, `isChunkLoadError` and `ChunkLoadError` return
+  **0** hits across `AGENT_LOG.md` and the archive; **control:** `ErrorBoundary` returns 7. This
+  *completes* items 96 and 99 rather than redoing either — §37's own comment had filed this residual
+  under "what is deliberately not checked", and that note is corrected in the same commit.
+- **Own verification claim** — reproducible from the commands listed. The claim easiest to fake is
+  "the render throw was really a render throw", which is why the proof is the probe's own console
+  error plus its presence in the built chunk, not the absence of a network error.
+
+#### Next
+
+- **Item 101** — `og:url` and `og:image`. **Blocked on O-1**, which is the point of it; do not pick it
+  before there is an origin.
+- With 96/97/98/99/100 all closed, the board's unblocked items are thin. A **backlog refill** (W-2's
+  standing rule) is a legitimate and probably correct pick for the next run — re-read `LAUNCH_PLAN.md`
+  against the real `src/` tree rather than extending this note chain.
+- **Do NOT pick item 94** — optional track, four "(Beta)" languages, parked behind O-1 by its own box.
+
+**Unchanged and still the entire critical path, both owner-blocked: O-1** (a deployed URL) and **O-2**
+(item 18, an analytics account). This run fixed the sentence a reader sees when a screen breaks. **No
+reader has ever seen either sentence, right or wrong**, because the app has no URL.

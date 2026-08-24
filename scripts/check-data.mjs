@@ -4214,9 +4214,11 @@ if (keyedGroupsChecked < 4) {
 // one line, since the chain is always multi-line.
 //
 // WHAT IS DELIBERATELY NOT CHECKED. Not that a boundary's fallback is the
-// *right* copy — `AsyncScreen` says "couldn't be downloaded" and a render bug
-// inside a lazy screen still gets that wording, a known residual recorded in
-// the run log. Not the rendered result: the live proof is in the run log.
+// *right* copy — that residual was this section's, it was closed by item 100
+// on 2026-08-24, and §39 owns it now: `AsyncScreen` picks the download copy
+// only for a tagged chunk failure and the render-crash copy otherwise. This
+// section still asserts only that a boundary EXISTS. Not the rendered result:
+// the live proof is in the run log.
 {
   const appSrc = readFileSync(join(ROOT, "src/App.jsx"), "utf8");
 
@@ -4585,6 +4587,191 @@ if (keyedGroupsChecked < 4) {
       `${themeColors.length} theme-color(s), ${descriptions.length} description tag(s) in agreement, icon ${iconHref ? iconHref[1] : "—"}, ` +
       `title pinned to en appTitle/appSub, ${titleAssigns.length} runtime title assignment(s) under src/. ` +
       `(Static check — a rendered unfurl needs a public URL, which is owner action O-1.)`,
+  );
+}
+
+// §39. A chunk that never arrived and a chunk that arrived and threw get
+// different copy, and they are told apart by a tag rather than by a string.
+//
+// WHY THIS EXISTS. §37 shipped with this exact gap named in its own "what is
+// deliberately not checked": `AsyncScreen` had one fallback, `LoadFailure`, so
+// a render bug inside a lazy screen told the reader "This content couldn't be
+// downloaded. Check your connection." Reproduced live 2026-08-24 with a throw
+// injected into `Practice`: the probe executed — so the chunk had plainly
+// downloaded — and the connection message appeared anyway.
+//
+// WHAT IS CHECKED, AND WHY EACH PART.
+//   (a) BEHAVIOURAL. `chunkError.js` is pure JS, so the predicate can be run
+//       here instead of being read. The load-bearing case is a `TypeError`
+//       carrying the browser's real "Failed to fetch dynamically imported
+//       module" text: it must NOT be recognised, because recognising it would
+//       mean someone had reintroduced message matching, which is the method
+//       this item rejected. A textual check alone cannot see that.
+//   (b) every `lazy()` in App.jsx routes its loader through `chunk()`. An
+//       untagged screen degrades to the render-crash copy — safe, but wrong
+//       for the redeploy-404 case item 96 built `LoadFailure` for, and silent.
+//   (c) `AsyncScreen` still chooses between the two. A fallback that names
+//       only one of them is the original defect returning.
+//   (d) `ErrorBoundary` still hands the caught error to a function fallback.
+//       Reverting it to a bare node is a one-line change that makes (c) a
+//       no-op while leaving every string in place.
+//   (e) the two bodies stay distinct in all five languages. If a translation
+//       ever copies one into the other, the discrimination still runs and
+//       still shows the wrong sentence.
+//
+// WHAT IS DELIBERATELY NOT CHECKED. Not the rendered result — the two-sided
+// live proof (render throw → "Something went wrong", 404'd chunk → "Didn't
+// load", clean control → neither) is in the run log for 2026-08-24. Not
+// whether a non-English body *means* the right thing; that needs a reader,
+// not a script, and item 94 already tracks the review share.
+{
+  const { ChunkLoadError, chunk, isChunkLoadError } = await import("../src/lib/chunkError.js");
+
+  // (a) Behavioural.
+  const tagged = await chunk(() => Promise.reject(new TypeError("Failed to fetch dynamically imported module: /assets/Practice-abc123.js")))()
+    .then(() => null, (e) => e);
+  const tagRecognised = isChunkLoadError(tagged);
+  if (!tagRecognised) {
+    fail(`§39: chunk() did not tag a rejected loader — isChunkLoadError() returned false for what it produced.`);
+  }
+  if (!(tagged instanceof ChunkLoadError) || tagged?.cause === undefined) {
+    fail(
+      `§39: chunk()'s error drops its \`cause\`. The underlying failure is what a bug report needs; ` +
+        `the tag is meant to add a fact, not replace one.`,
+    );
+  }
+  const passthrough = await chunk(() => Promise.resolve({ default: "screen" }))();
+  if (passthrough?.default !== "screen") {
+    fail(`§39: chunk() altered a RESOLVED module. It must be transparent on the success path.`);
+  }
+  const mustNotMatch = [
+    ["a plain Error", new Error("boom")],
+    ["the browser's own module-fetch TypeError", new TypeError("Failed to fetch dynamically imported module: /assets/Practice-abc123.js")],
+    ["an Error whose message names a chunk", new Error("ChunkLoadError: Loading chunk 3 failed.")],
+    ["a thrown string", "Failed to fetch dynamically imported module"],
+    ["null", null],
+    ["undefined", undefined],
+  ];
+  let falsePositives = 0;
+  for (const [label, value] of mustNotMatch) {
+    if (isChunkLoadError(value)) {
+      falsePositives += 1;
+      fail(
+        `§39: isChunkLoadError() returned true for ${label}. Only chunk()'s own tag may match — a ` +
+          `predicate that reads error text is the brittle method this check exists to forbid.`,
+      );
+    }
+  }
+
+  const chunkSrc = readFileSync(join(ROOT, "src/lib/chunkError.js"), "utf8");
+  const messageReads = chunkSrc
+    .split("\n")
+    .filter((l) => !l.trim().startsWith("//"))
+    .filter((l) => /\.message\b|\.test\(|\.includes\(|\.match\(/.test(l));
+  for (const line of messageReads) {
+    fail(
+      `§39: src/lib/chunkError.js inspects error text — \`${line.trim()}\`. Those strings belong to ` +
+        `the browser and the bundler and change without notice; the tag exists so this file never has ` +
+        `to read one.`,
+    );
+  }
+
+  // (b)–(c) App.jsx wiring.
+  const appSrc39 = readFileSync(join(ROOT, "src/App.jsx"), "utf8");
+  const lazyCalls = [...appSrc39.matchAll(/const\s+(\w+)\s*=\s*lazy\(([^\n]*)/g)];
+  if (lazyCalls.length < 3) {
+    fail(
+      `§39: found ${lazyCalls.length} lazy() screen(s) in src/App.jsx (expected at least 3), so ` +
+        `"every lazy screen is tagged" and "the matcher sees no lazy screens" report the same green.`,
+    );
+  }
+  let taggedLazy = 0;
+  for (const [, name, rest] of lazyCalls) {
+    if (/\bchunk\(/.test(rest)) taggedLazy += 1;
+    if (!/\bchunk\(/.test(rest)) {
+      fail(
+        `§39: src/App.jsx loads \`${name}\` with a bare lazy() — \`${rest.trim()}\`. Without chunk(), ` +
+          `a 404 on its chunk after a redeploy is indistinguishable from a render bug and falls back ` +
+          `to the generic crash copy instead of the download one (items 96, 100).`,
+      );
+    }
+  }
+  if (!/import\s*\{[^}]*\bchunk\b[^}]*\}\s*from\s*"\.\/lib\/chunkError\.js"/.test(appSrc39)) {
+    fail(`§39: src/App.jsx does not import chunk() from ./lib/chunkError.js.`);
+  }
+
+  const asyncStart = appSrc39.indexOf("function AsyncScreen(");
+  const asyncEnd = asyncStart === -1 ? -1 : appSrc39.indexOf("\n}", asyncStart);
+  if (asyncStart === -1 || asyncEnd === -1) {
+    fail(`§39: could not find AsyncScreen's body in src/App.jsx. This check is pointed at the wrong shape.`);
+  } else {
+    const body = appSrc39.slice(asyncStart, asyncEnd);
+    for (const needle of ["isChunkLoadError", "LoadFailure", "AppError"]) {
+      if (!body.includes(needle)) {
+        fail(
+          `§39: AsyncScreen's fallback does not reference \`${needle}\`. It has to pick between the ` +
+            `download message and the render-crash message, which means naming both and the predicate ` +
+            `that separates them — one fallback for both events is the item-100 defect.`,
+        );
+      }
+    }
+  }
+
+  // (d) The boundary has to hand the error over for (c) to mean anything.
+  const ebSrc = readFileSync(join(ROOT, "src/components/ErrorBoundary.jsx"), "utf8");
+  if (!/static\s+getDerivedStateFromError\s*\(\s*error\s*\)/.test(ebSrc) || !/\{\s*failed:\s*true,\s*error\s*\}/.test(ebSrc)) {
+    fail(
+      `§39: ErrorBoundary no longer captures the caught error into state, so a fallback cannot see ` +
+        `what failed and AsyncScreen's discrimination silently picks one branch forever.`,
+    );
+  }
+  if (!/typeof\s+fallback\s*===\s*"function"/.test(ebSrc)) {
+    fail(
+      `§39: ErrorBoundary does not support a function \`fallback\`. Reverting it to a bare node leaves ` +
+        `every string in place and makes AsyncScreen's two-message logic dead code.`,
+    );
+  }
+
+  // (e) The two bodies must stay different sentences in every language.
+  let distinctPairs = 0;
+  for (const lang of Object.keys(TR)) {
+    const load = TR[lang]?.loadFailedBody;
+    const crash = TR[lang]?.appErrorBody;
+    if (!load || !crash) {
+      fail(`§39: TR.${lang} is missing loadFailedBody or appErrorBody; the two-message split needs both.`);
+      continue;
+    }
+    if (load.trim() === crash.trim()) {
+      fail(
+        `§39: TR.${lang}'s loadFailedBody and appErrorBody are the same sentence. Telling the two ` +
+          `failures apart is pointless if they say the same thing.`,
+      );
+      continue;
+    }
+    distinctPairs += 1;
+  }
+  if (/\bdownload|\bconnection/i.test(TR.en.appErrorBody)) {
+    fail(
+      `§39: TR.en.appErrorBody talks about a download or a connection — \`${TR.en.appErrorBody}\`. ` +
+        `That is the render-crash copy; the code downloaded fine and then threw.`,
+    );
+  }
+
+  // Every figure below is counted, never asserted. §38 shipped a summary that
+  // printed "9 required present" from a constant and so read as green beside
+  // its own failure; the words "by tag" here are derived from the behavioural
+  // result and the text scan, so this line cannot say the check held when it
+  // did not.
+  const method =
+    tagRecognised && falsePositives === 0 && messageReads.length === 0
+      ? "by tag, not by message"
+      : "BY SOMETHING OTHER THAN THE TAG — see the failures above";
+  console.log(
+    `  §39 failure copy: ${taggedLazy}/${lazyCalls.length} lazy screen(s) tagged via chunk(); AsyncScreen picks ` +
+      `LoadFailure vs AppError ${method}; ${falsePositives} false positive(s) across ${mustNotMatch.length} untagged ` +
+      `error shape(s), ${messageReads.length} error-text read(s) in chunkError.js; ` +
+      `${distinctPairs}/${Object.keys(TR).length} language(s) with two distinct bodies. ` +
+      `(Static + behavioural — the rendered two-sided proof is in the run log.)`,
   );
 }
 

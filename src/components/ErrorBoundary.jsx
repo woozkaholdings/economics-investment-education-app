@@ -26,11 +26,11 @@ import { Component } from "react";
 export default class ErrorBoundary extends Component {
   constructor(props) {
     super(props);
-    this.state = { failed: false };
+    this.state = { failed: false, error: null };
   }
 
-  static getDerivedStateFromError() {
-    return { failed: true };
+  static getDerivedStateFromError(error) {
+    return { failed: true, error };
   }
 
   componentDidCatch(error) {
@@ -40,8 +40,16 @@ export default class ErrorBoundary extends Component {
     console.error("[ErrorBoundary]", error);
   }
 
+  // `fallback` may be a node or a function of the caught error. The function
+  // form exists so a boundary can choose its copy from what actually failed —
+  // `AsyncScreen` shows a download message only for a tagged ChunkLoadError
+  // and the render-crash message otherwise (see lib/chunkError.js). Boundaries
+  // with one honest message for every failure keep passing a node.
   render() {
-    if (this.state.failed) return this.props.fallback;
+    if (this.state.failed) {
+      const { fallback } = this.props;
+      return typeof fallback === "function" ? fallback(this.state.error) : fallback;
+    }
     return this.props.children;
   }
 }

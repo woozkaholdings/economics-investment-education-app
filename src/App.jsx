@@ -13,6 +13,7 @@
 import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { lessonsByTrack } from "./content/lessons.js";
 import { EVENTS, track } from "./lib/analytics.js";
+import { chunk, isChunkLoadError } from "./lib/chunkError.js";
 import { initialRoute, useDeepLink } from "./lib/deepLink.js";
 import { useAppState } from "./lib/useAppState.js";
 import Icon from "./components/Icon.jsx";
@@ -33,9 +34,9 @@ import Learn from "./screens/Learn.jsx";
 // lesson's own text when they open it. Even a first-time visitor, who is
 // routed straight into Lesson 1 (see `reading` below), sees the same brief
 // ScreenFallback a Practice/Reference tap already produces.
-const Practice = lazy(() => import("./screens/Practice.jsx"));
-const Reference = lazy(() => import("./screens/Reference.jsx"));
-const LessonReader = lazy(() => import("./screens/LessonReader.jsx"));
+const Practice = lazy(chunk(() => import("./screens/Practice.jsx")));
+const Reference = lazy(chunk(() => import("./screens/Reference.jsx")));
+const LessonReader = lazy(chunk(() => import("./screens/LessonReader.jsx")));
 
 // Same loading affordance `Sectors.jsx` already uses for its own async
 // content, so a lazy-chunk fetch doesn't look different from data the app
@@ -50,18 +51,26 @@ function ScreenFallback({ t }) {
 // is a component rather than four hand-written wrappers so a fifth screen
 // cannot be added with only half of it.
 //
-// This one is deliberately narrow: its message is about a download. A screen
-// that arrived and then threw is caught by ScreenBoundary below instead.
+// One boundary, two messages, because this boundary catches two different
+// events. A chunk that never arrived is a download problem; a chunk that
+// arrived and threw while rendering is a bug, and telling that reader to
+// check their connection is a lie about a connection that is fine (item 100,
+// reproduced live 2026-08-24). The two are told apart by a tag applied at the
+// `lazy()` call site above, never by matching the error text — see
+// `lib/chunkError.js` for why that method and not the other one, and for why
+// an unrecognised error takes the render-crash copy rather than this one.
 function AsyncScreen({ t, children }) {
   return (
-    <ErrorBoundary fallback={<LoadFailure t={t} />}>
+    <ErrorBoundary fallback={(error) => (isChunkLoadError(error) ? <LoadFailure t={t} /> : <AppError t={t} />)}>
       <Suspense fallback={<ScreenFallback t={t} />}>{children}</Suspense>
     </ErrorBoundary>
   );
 }
 
-// The boundary for a screen that loaded and then threw while rendering
-// (backlog item 99). AsyncScreen only ever covered the three lazy screens;
+// The boundary for a STATIC screen that threw while rendering (backlog item
+// 99). A lazy screen keeps its own AsyncScreen, which since item 100 shows
+// this same render-crash copy for a throw and the download copy only for a
+// chunk that never arrived. AsyncScreen only ever covered the three lazy screens;
 // `Learn` is a static import, so it cannot 404 — but a render bug inside it
 // still took the whole tree to a blank page, measured 2026-08-24 at `#root`
 // 0 children / 0 bytes, the same signature item 96 found for a rejected chunk.
