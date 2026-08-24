@@ -70,6 +70,12 @@ function loadLang() {
   return Object.prototype.hasOwnProperty.call(TR, stored) ? stored : "en";
 }
 
+// The BCP-47 tag that goes on <html lang>. Identity for four of the five; `zh`
+// is tagged Hans because this app's Chinese content is Simplified throughout
+// (measured 2026-08-24: zero Traditional-only forms against 4,534 Simplified
+// ones), and a bare `zh` leaves a screen reader or font stack to guess.
+const HTML_LANG = { en: "en", es: "es", ko: "ko", ja: "ja", zh: "zh-Hans" };
+
 // ── color scheme ─────────────────────────────────────────────────────────
 
 function loadThemeMode() {
@@ -122,6 +128,14 @@ export function useAppState() {
     if (themeMode === "system") delete root.dataset.theme;
     else root.dataset.theme = themeMode;
   }, [themeMode]);
+
+  // Screen readers pick their voice — and browsers their font — from the
+  // document's language, so the root element has to follow the picker the same
+  // way font size and theme above do. index.html ships a hardcoded lang="en",
+  // so without this the four non-English locales are announced in English.
+  useEffect(() => {
+    document.documentElement.lang = HTML_LANG[lang] ?? lang;
+  }, [lang]);
 
   const setLang = useCallback((next) => {
     setLangState(next);

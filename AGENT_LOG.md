@@ -152,8 +152,16 @@ for the history. No open P1/P2 items.
 > from the backlog and starts coming from "continue the tranche". **Every fourth scheduled run picks
 > from this list instead**, and says in its entry which one it took and why:
 > - **W-5.5 / W-5.6 / W-5.7 below** — cheap, and two of them are documentation-integrity defects.
-> - **Item 67's residual third** and **item 64's residual candidates** — both are small, both are
->   English-facing, both have been open since 2026-08-17.
+> - ~~**Item 67's residual third** and **item 64's residual candidates**~~ — **BOTH CLOSED; struck
+>   2026-08-24 by the run that checked them before picking.** This line had survived on the pick list
+>   for seven days after the work was done, and three later run entries copied it forward verbatim.
+>   Item 64 reads "✅ ITEM FULLY DONE 2026-08-20 … Nothing in this item is open"; item 67's own text
+>   says "**All that remains of this item is `Dividend`**", and `Dividend` shipped that same day —
+>   verified this run by reading `src/content/glossary.js`, where the key is present in all five
+>   languages. **The lesson is about pick lists, not these two items:** a list of candidates is a
+>   claim about current state and goes stale exactly like a figure does, so re-check a candidate's own
+>   item before picking it. (Only this live line is corrected — the three run-log entries that repeat
+>   it are dated records and stay verbatim, per §31.)
 > - **Item 26** (Quizlet/Vocabulary design review) and **item 27** (re-scope: the money track's
 >   visuals shipped, so the item as written no longer describes the gap).
 > - **Item 76** and **items 70/71** — process items filed by runs that could not finish them.
@@ -1871,6 +1879,60 @@ for the history. No open P1/P2 items.
       four languages. 93 at least added unreviewed prose on the path the product is about; this item
       would add ~48 pairs of it to the optional track. **The owner should be asked before this starts,
       not after** — see O-3 at the top of this backlog.
+
+96. **[Bug/UX — filed 2026-08-24 by the scheduled dev-agent, proved in a live browser with a control.
+    HIGH VALUE, and it gets worse the moment O-1 lands.] A lesson whose content chunk fails to load
+    renders as an empty lesson with a working "Mark Complete" button — silently, with no error state.**
+    - **Measured, not reasoned about.** `dist/` was served over HTTP, one content chunk
+      (`lessonContent.economy.en-*.js`) was moved aside so it returned **404**, and economy lesson 1
+      was opened from a **fresh origin** (a second port, so no HTTP cache could mask it — the first
+      attempt on the warm origin *did* mask it, `transferSize` 300 with full text rendering, which is
+      how the cache was caught). Result: the lesson body collapses from **3,294 characters to 772** —
+      a **77% content loss** — and what stands in for the entire body is **a single `…`**.
+    - **What still renders, and this is the problem.** Title, subtitle, "≈2 min", the BEFORE-YOU-READ
+      prequiz, the end-of-lesson check, the disclaimer, and an **enabled `Mark Complete`**. So a
+      learner can complete a lesson they were shown no content of — which then feeds the streak and
+      the Leitner review queue. It does not white-screen; it lies quietly, which is worse.
+    - **Cause:** there is **no error boundary anywhere in `src/`** (`componentDidCatch` /
+      `getDerivedStateFromError` / `ErrorBoundary` all return zero matches). `App.jsx` wraps its three
+      `lazy()` screens in `<Suspense fallback={<ScreenFallback />}>`, and **Suspense handles *pending*,
+      not *rejected***. The 20 per-language content modules (`DECISIONS.md`: `.js`-not-JSON, split per
+      language by item 45) are `import()`ed from `LessonReader.jsx`/`Practice.jsx` with no `.catch`.
+    - **Why the priority is real rather than theoretical:** `dist/` ships **27 content-hashed chunks**,
+      and a 404 on one is the ordinary consequence of **a redeploy while someone has the app open** —
+      i.e. this becomes reachable on the day O-1 gives the app a URL, not before. Today no one can hit
+      it because no one can reach the app.
+    - **Scope when picked:** an error boundary plus a rejected-import path that says *this lesson
+      didn't load, try again* and — the part that matters — **does not offer `Mark Complete`**. Check
+      the empty-body placeholder (`…`) at the same time: it is indistinguishable from real content.
+
+97. **[A11y/Tooling — filed 2026-08-24 by the run that fixed the defect, deliberately not smuggled into
+    the same commit.] Nothing stops `<html lang>` from drifting out of sync with the picker again.**
+    This run added the `useAppState.js` effect that syncs `document.documentElement.lang` (and the
+    `HTML_LANG` map that tags `zh` as `zh-Hans`). It is four lines and has no guard: a future refactor
+    of that hook drops it silently, because **no rendered check and no script asserts it**, and the
+    symptom is invisible to a sighted reviewer. A `check-data.mjs` section asserting that `useAppState`
+    still writes `documentElement.lang` and that `HTML_LANG` covers every key in `TR` would hold it —
+    cheap, and the same shape as §35. **Note the floor-control lesson from §35's filing:** a scan that
+    matches nothing must fail loudly, not pass.
+
+98. **[Feature/Distribution — filed 2026-08-24 by the scheduled dev-agent, measured. Serves
+    `LAUNCH_PLAN.md` §5's web funnel, and is downstream of O-1.] `index.html` has no link-preview
+    metadata, so every shareable lesson URL shares as a bare link.**
+    - **Measured:** `index.html` is 11 lines and carries `charset`, `viewport` and `<title>` — and
+      **no `meta name="description"`, no `og:*`, no `twitter:*`, no favicon, no `theme-color`.**
+    - **Why it belongs to §5 specifically.** Item 31 shipped hash routing so that "each lesson is a
+      shareable URL" — that clause exists to make sharing a *funnel*. A URL that unfurls as a naked
+      `localhost`-shaped link in a message does not do that job, so the routing work is currently
+      only half-collected.
+    - **One thing to decide rather than assume:** routes are **hash-based**, so every lesson URL is
+      the same document to a crawler or unfurler — `#/lesson/29` is not sent to the server. Per-lesson
+      previews therefore are **not** available without prerendering or a real path router, and item 31
+      chose hash routing deliberately (see `DECISIONS.md`). **Scope this as one good site-level
+      preview, not per-lesson**, unless the owner wants to reopen that decision.
+    - Also fix `index.html`'s `<title>` hardcoding English while the app ships five languages, and its
+      `lang="en"` — which is now the correct *initial* value, since `useAppState` overwrites it at
+      mount (this date).
 
 76. **[Content/Process — filed 2026-08-18 by the run that built item 69's instrument half, which is
     what turned this from an opinion into a blocked measurement.] `zh` and `ja` `Brokerage Account`
@@ -7276,3 +7338,126 @@ The pick list is unchanged and thin, which is itself the signal:
 **Unchanged and still the entire critical path, both owner-blocked: O-1** (a deployed URL — `dist/`
 builds, routing is hash-based, Netlify Drop is a drag of the folder) and **O-2** (item 18, an analytics
 account, which §4.3's Phase-0 completion gate cannot be scored without). Zero people have opened this app.
+
+
+### 2026-08-24 (scheduled dev-agent) — `<html lang>` never followed the language picker, and the pick list had been recommending two closed items for seven days
+
+**Picked:** a W-5.2 pick (not item 93). The previous entry named a **backlog refill** as the strongest
+remaining candidate and listed four fallbacks. Checking those fallbacks *before* picking one is what
+produced this run's work — two of them are closed, and looking for a replacement surfaced a real
+rendered defect that no item had ever named.
+
+#### The pick list itself was the first thing that failed re-measurement (step 3.5)
+
+W-5.2's list and the last three run entries all offer **"item 67's residual third and item 64's
+residual candidates — small, English-facing, open since 2026-08-17."** Both are closed:
+
+- **Item 64** reads `✅ ITEM FULLY DONE 2026-08-20 … Nothing in this item is open`.
+- **Item 67**'s own closing line reads *"All that remains of this item is `Dividend`"* — and `Dividend`
+  shipped 2026-08-20, **verified by reading the source rather than the log**: the key is present in
+  `src/content/glossary.js` with `en`/`ko`/`es`/`zh`/`ja` all populated.
+
+**The finding is about pick lists, not about these two items.** A list of candidates is a claim about
+current state and goes stale exactly the way a figure does — W-5.5 established that rule for *numbers*,
+and this is the same defect in a different shape. The live W-5.2 line is struck and annotated; **the
+three run-log entries that repeat it were left verbatim**, because §31 says a dated record is not edited.
+
+#### The defect this run fixed, measured in a live browser before a line was written
+
+`src/lib/useAppState.js` owns `lang` and has two sibling effects that push state onto the root element —
+`style.fontSize` for the text-size control, `dataset.theme` for the color scheme. **There was no third
+one for `lang`**, and `index.html` ships a hardcoded `lang="en"`. So every non-English locale rendered
+its content inside a document still declaring itself English.
+
+Measured on the built app (`dist/` served over HTTP, `preview_start` with a plain `url` — the
+Environment note's technique, per W-1):
+
+| Step | `document.documentElement.lang` | Evidence it is a real observation |
+|---|---|---|
+| Fresh load | `en` | — |
+| Switch picker to 한국어 | **`en` (unchanged)** | Page text became Korean (`경제 순환`, `레슨 1 / 12`) and `localStorage.ecycles_lang` became `ko` |
+
+**Controls, because a negative reading and a broken instrument look identical.**
+- **Control A (the switch really happened):** the body text and the stored key both moved to Korean, so
+  "`lang` unchanged" is not the trivial truth that nothing changed.
+- **Control B (the instrument can see this attribute change):** setting `documentElement.lang` to
+  `PROBE-XX` read back as `PROBE-XX`, then restored. The read path works; `en` was real.
+- **Control C (the sibling pattern does fire):** `documentElement.style.fontSize` was `100%` — an
+  untouched root has `""` — so the hook's effect-to-root pattern works and `lang` was simply absent
+  from it.
+
+#### The fix, and the one judgment call in it
+
+Four lines in `useAppState.js`, next to the two effects it mirrors, plus an `HTML_LANG` map. Identity
+for four locales; **`zh` is tagged `zh-Hans`**, and that was measured rather than assumed: scanning the
+four `zh` content modules found **0 Traditional-only forms against 4,534 Simplified counterparts**. The
+scanner was controlled by running it over the `ja` modules, where it found **1,046** — so its zero on
+`zh` is a result, not a silent miss. `HTML_LANG[lang] ?? lang` degrades to the bare code if a sixth
+locale is ever added without touching the map.
+
+#### Verification — rendered, per W-1
+
+Rebuilt, then driven through the real `<select>` on the served build:
+
+| Picked | `<html lang>` |
+|---|---|
+| es / ko / ja / en | `es` / `ko` / `ja` / `en` |
+| zh | **`zh-Hans`** |
+
+- **Cold-load persistence:** `ecycles_lang=zh` + `#/lesson/29`, full reload → `lang="zh-Hans"` on load,
+  so the tag is restored from storage and not merely reactive to the picker.
+- **Console:** no errors.
+- `npm test` — **PASS, 0 failures**, the same 2 pre-existing warnings as before the change (item 94's
+  translation debt; the review ledger's 0% human share). `npm run build` — **✓ built in 902ms**.
+
+#### A second defect found while testing, filed as item 96 rather than fixed here
+
+Probing what happens when a content chunk fails to load turned up something worth more than this run's
+own fix. With one content chunk returning **404**, economy lesson 1 does **not** white-screen — it
+renders **772 characters instead of 3,294 (a 77% loss)**, with the entire lesson body replaced by a
+single `…`, and with the title, both quizzes, the disclaimer and an **enabled `Mark Complete`** all
+intact. A learner can complete a lesson they were shown nothing of, and it feeds the streak and the
+review queue. Cause: **no error boundary exists anywhere in `src/`**, and `Suspense` catches *pending*,
+not *rejected*.
+
+**The cache nearly hid this.** The first attempt reported full text with `transferSize: 300`; re-running
+from a **fresh origin** (a second port) is what exposed it. Filed as **item 96** with the method, since
+it becomes reachable the day O-1 gives the app a URL and a redeploy invalidates a hashed chunk under an
+open tab.
+
+#### Adversarial self-check (step 5)
+
+- **Blindspot register** — run, not reasoned about: `npm run check-blindspot` passes all six (§10.2 no
+  Dalio, §10.1 advice language + disclaimer on all 8 surfaces, §10.3 parent-facing, §2.3 no live-looking
+  dates). This change adds **no prose to any user-facing surface** — it writes one DOM attribute.
+- **`DECISIONS.md` conflict** — none. No new persisted key (it reads the existing `lang` state), no
+  routing change, no content-module change, no build change; the localStorage-only and `.js`-content
+  decisions are untouched. `DECISIONS.md` records nothing about document language.
+- **Already-done backlog item** — no, and this was checked with controls rather than by memory:
+  `documentElement.lang`, `<html lang`, "lang attribute" and `zh-Hans` return **zero matches** across
+  `AGENT_LOG.md`, `AGENT_LOG.archive.md`, `DECISIONS.md`, `LAUNCH_PLAN.md` and `scripts/`. The same
+  grep shape finds `documentElement` (10), `translation-completeness` (34) and `a11y` (32), so the zero
+  is real. All 10 `documentElement` mentions were read: every one is `scrollWidth`, `style.fontSize` or
+  `clientWidth`. **No conflicting `lang` attribute in JSX either** — the 10 `lang=` hits under `src/`
+  are React props passed between components, never an attribute on a DOM node.
+- **Own verification claim** — reproducible by anyone re-running only what is listed: build, serve
+  `dist/`, drive the `<select>`, read `document.documentElement.lang`. The `zh-Hans` justification is
+  reproducible by re-running the Traditional/Simplified scan with its `ja` control.
+- **Second-order risk, stated rather than discovered later** — the fix has **no guard**, so a future
+  refactor of `useAppState` drops it silently and no sighted reviewer would notice. Filed as **item 97**
+  instead of smuggled into this commit, which is the same boundary W-5.4 drew before item 95.
+
+#### Next
+
+- **Item 96** (the silent empty-lesson defect) is the strongest pick on the board — it is a rendered
+  user-facing bug with a measured 77% content loss and a reproduction recipe already written down.
+- **Item 97** (a guard for this run's fix) is small and pairs naturally with 96, since both live in the
+  render path.
+- **A backlog refill** remains legitimate (W-2), and is now partly discharged: this run filed **96, 97,
+  98** from measurement rather than from notes, and struck two closed candidates off the pick list.
+- **Do NOT pick item 94** (the `essentials` remainder — optional track, four "(Beta)" languages, parked
+  behind O-1 by its own box).
+
+**Unchanged and still the entire critical path, both owner-blocked: O-1** (a deployed URL) and **O-2**
+(item 18, an analytics account). Zero people have opened this app — and item 96 is a reminder that the
+first real deploy is also the first time a whole class of failure becomes reachable.
