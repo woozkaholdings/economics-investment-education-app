@@ -15590,7 +15590,7 @@ things worth carrying forward:
 
 ---
 
-## 2026-08-20 — the Sector screen's two "no data" states stop sharing one sentence (item 79)
+### 2026-08-20 — the Sector screen's two "no data" states stop sharing one sentence (item 79)
 
 **THE HEADLINE IS NOT MY CHANGE: the owner's redesign has LANDED. The fourteen-run gridlock is over.**
 `5633b79` ("Split essentials track out of money; register it in readiness figures") committed the whole
@@ -15611,7 +15611,7 @@ exactly as item 77 predicted. No recovery work was needed.
 **Item picked: 79**, which the previous run named as the direct follow-on and which was blocked only on
 the locale files.
 
-### Step 3.5 — the premise, re-measured live with a control, before editing
+#### Step 3.5 — the premise, re-measured live with a control, before editing
 
 Both of the item's claims reproduce **verbatim**. Built `dist/`, copied it to the scratchpad (so the
 served `market.json` could be mutated without touching the repo), served on `127.0.0.1:8901`, drove it
@@ -15635,7 +15635,7 @@ the future**, in the same branch. Had I written the item's sentence, the app wou
 **false** on that screen. The shipped key therefore says **"too far from today"**, true in both
 directions, and the scope stays at the one key the item budgeted.
 
-### What shipped
+#### What shipped
 
 - **`src/locales/{en,es,ko,zh,ja}.js`** — one new key, `dataStaleTemplate`. `dataUnavailable` keeps its
   meaning (no file here at all) and is untouched; it has exactly one call site, so nothing else moves.
@@ -15646,7 +15646,7 @@ directions, and the scope stays at the one key the item budgeted.
   — the item-44 comment was amended to say "not rendered" rather than "not read", since the distinction
   is now load-bearing.
 
-### Verified — five states live, both instruments controlled
+#### Verified — five states live, both instruments controlled
 
 Rebuilt, re-served, each state produced by mutating the served copy's `asOf`. Pasted `innerText`:
 
@@ -15667,7 +15667,7 @@ Rebuilt, re-served, each state produced by mutating the served copy's `asOf`. Pa
   line**.
 - `npm test` **exit 0**, `npm run build` **exit 0**, both on the real tree (no control copy needed).
 
-### Adversarial self-check (step 5)
+#### Adversarial self-check (step 5)
 
 **Blindspot register:** no regression. Grepped my added lines for
 `dalio|principles|buy|sell|recommend|advice|guarantee` → **no hits**; grepped added *locale* lines for a
@@ -15687,7 +15687,7 @@ pasted script output; "exit 0" is from unpiped commands; "exactly one added line
 It is a reading of the boolean expression I replaced, and both the entry and the code comment now say
 "by construction" rather than implying an observation.
 
-### Next run
+#### Next run
 
 - **Start with `npm run owner-tree -- --expect c2331799fd3ee413aca864fd82d247a35ea31b01a70a6c4e37b00f6aad9105b2`.**
   This is the **post-landing** fingerprint: 0 tracked modified, 52 untracked. `UNMOVED` now means the
@@ -15710,13 +15710,13 @@ It is a reading of the boolean expression I replaced, and both the entry and the
 
 ---
 
-## 2026-08-20 — first live QA sweep of the `essentials` track: two real defects, both fixed (items 80, 81)
+### 2026-08-20 — first live QA sweep of the `essentials` track: two real defects, both fixed (items 80, 81)
 
 **Owner-directed, interactive.** The previous entry queued this: the owner's redesign added a third
 lesson track and no run had ever watched it render. The sweep found two user-facing defects — one of
 them a progression bypass reachable by any brand-new user — plus two minor items now filed as 82/83.
 
-### Item 80 — `Previous` walked straight through locked lessons
+#### Item 80 — `Previous` walked straight through locked lessons
 
 **Reproduced from a fresh install**, `completedLessons = []`, hashes and headers pasted from the live
 DOM: `#/lesson/1 "LESSON 1 OF 15"` → `#/lesson/28 "LESSON 13 OF 13"` → … all thirteen money lessons …
@@ -15739,7 +15739,7 @@ renders only once the current lesson is `done`, so `index + 1` is either the nex
 (unlocked by that completion) or the first lesson of the next track (never gated) — forward motion
 cannot reach a locked lesson.
 
-### Item 81 — Practice was the last surface printing a raw lesson id
+#### Item 81 — Practice was the last surface printing a raw lesson id
 
 Live: the review queue captioned a question **"From lesson 29"** for the lesson the reader calls
 **"LESSON 1 OF 12"**. `Practice.jsx` rendered `question.lesson`, the storage id. This is the same bug
@@ -15758,7 +15758,7 @@ tracks there are three "Lesson 1"s and the review queue interleaves them, so a b
 been ambiguous precisely where the queue mixes. `reviewFromLesson` is now `"Lesson {n} · {track}"` in
 all five languages, number first so it survives truncation.
 
-### Verified — live, with controls, and one self-inflicted regression caught
+#### Verified — live, with controls, and one self-inflicted regression caught
 
 - **Item 80, both directions.** Essentials L1 (`#/lesson/1`): action buttons are now `["Back",
   "Mark Complete"]` — **no Previous**. Money L1 (`#/lesson/16`, the other boundary): **no Previous**.
@@ -15787,7 +15787,7 @@ all five languages, number first so it survives truncation.
   then two citations repointed to 81 — `lessons.js` and `Practice.jsx` describe the *Practice* defect,
   not the navigation one.
 
-### Adversarial self-check (step 5)
+#### Adversarial self-check (step 5)
 
 **Blindspot register:** no regression — added lines carry no Dalio reference, no advice-adjacent
 language, no kids-framing change and **no date or market figure**; the new locale strings are pure
@@ -15803,7 +15803,7 @@ Environment note's zero-width trap), and the "no Previous" results are button-li
 screenshots. **What the check caught:** I nearly reported the truncation test as passing on the strength
 of `pageOverflow: false` while the counter was visibly wrapping — see above.
 
-### Next run
+#### Next run
 
 - **Start with `npm run owner-tree -- --expect c2331799fd3ee413aca864fd82d247a35ea31b01a70a6c4e37b00f6aad9105b2`.**
   Unchanged by this commit: 0 tracked modified, 52 untracked (the owner's `UIUX/` and `drafts/`).
@@ -15819,7 +15819,7 @@ of `pageOverflow: false` while the counter was visibly wrapping — see above.
 
 ---
 
-## 2026-08-20 — items 82 and 83 closed; the a11y instrument turned out to be the interesting part
+### 2026-08-20 — items 82 and 83 closed; the a11y instrument turned out to be the interesting part
 
 **Owner-directed, interactive, immediately after the sweep that filed them.** Both were the small
 items: name the three Learn track landmarks, and fix a comment that described the product backwards.
@@ -15876,14 +15876,14 @@ to ending Phase 0**, still blocked on the owner creating an analytics-provider a
 
 ---
 
-## 2026-08-20 — read all 15 `essentials` lesson bodies: one factual error fixed, two items filed (84, 85, 86)
+### 2026-08-20 — read all 15 `essentials` lesson bodies: one factual error fixed, two items filed (84, 85, 86)
 
 **Owner-directed, interactive.** The sweep two entries above had read only lessons 1-2 end to end and
 listed the other thirteen as uncovered. This closes that gap. The content is **good** — the read found
 one factual error, not a pattern of them — but reading it surfaced the largest remaining instance of
 the id/display split behind items 80 and 81.
 
-### Item 86 — lessons 6 and 13 contradicted each other, and 6 was wrong (fixed)
+#### Item 86 — lessons 6 and 13 contradicted each other, and 6 was wrong (fixed)
 
 Lesson 6: *"Every year, the brokerage saver owes tax on the dividends and gains their investments
 produce, even though they never touched the money."* Lesson 13, correctly: *"gains are taxed as they're
@@ -15906,7 +15906,7 @@ says Opus 5 / interactive rather than copying the dev-agent's, because provenanc
 purpose. (2) Char counts moved, so `refresh-readiness.mjs --check` failed on two generated figures;
 regenerated with `--write` (136,051 → 136,126 English chars).
 
-### Item 84 — 128 in-prose "Lesson N" references cite ids the UI never shows
+#### Item 84 — 128 in-prose "Lesson N" references cite ids the UI never shows
 
 Track sizes are 12/13/15, so **the highest lesson number the app ever displays is 15**. Of the 58
 English references: **30 are dead** (cite a number above 15 — `essentials` lesson 5 cites "Lesson 38"
@@ -15926,14 +15926,14 @@ reorder, and `lessons.js` already holds every title in five languages. The item 
 `check-data.mjs` guard against `/Lesson\s+\d+/` surviving in `lessonContent.*.js`, since nothing in
 the repo currently notices.
 
-### Item 85 — §2.3's date guard does not cover the lesson bodies
+#### Item 85 — §2.3's date guard does not cover the lesson bodies
 
 `check-blindspot.mjs`'s §2.3 check runs against an explicit five-file list that excludes every
 `lessonContent.*.js`. The contrast that makes it an oversight rather than a decision: the **§10.1**
 scan in the same file uses `walk(src/content)` and does cover them. **Latent, not live** — I scanned
 all 15 `essentials` bodies and found zero four-digit years and zero "Month YYYY" dates.
 
-### What the read-through found that was RIGHT, because "no findings" is a result
+#### What the read-through found that was RIGHT, because "no findings" is a result
 
 The track is written to be durable on purpose, and it is worth not undoing: lesson 6 says a 401(k)
 match runs "up to a set limit" rather than naming a figure; lesson 10 says a 1099 arrives when a client
@@ -15955,7 +15955,7 @@ multi-model score explanation (15) are all accurate.
 settlement; lesson 11's "roughly $76,000" is really $75,063; lessons 4 and 15 overlap on credit basics
 without cross-referencing each other.
 
-### Adversarial self-check (step 5)
+#### Adversarial self-check (step 5)
 
 **Blindspot register:** no regression, and the §10.1 risk was real here since I edited investment-tax
 copy in five languages — `check-blindspot` passes, including its §10.1 multi-language patterns over
@@ -15970,7 +15970,7 @@ a script that walks all three tracks in all five languages. **What the check cau
 was to mark the ledger with the dev-agent's reviewer string, which would have misattributed this review
 to a scheduled run.
 
-### Next run
+#### Next run
 
 `npm run owner-tree -- --expect c2331799fd3ee413aca864fd82d247a35ea31b01a70a6c4e37b00f6aad9105b2`
 (unchanged: 0 tracked modified, 52 untracked). **Item 84 is the biggest open piece of work in the
@@ -15982,13 +15982,13 @@ path to ending Phase 0**, still blocked on the owner creating an analytics-provi
 
 ---
 
-## 2026-08-20 — cross-references converted to titles across five languages (items 84, 85, 87)
+### 2026-08-20 — cross-references converted to titles across five languages (items 84, 85, 87)
 
 **Owner-directed, interactive: "do all in priority."** Item 84 was the biggest open piece of work and
 its approach was already decided, so it went first, with 85 as its natural companion. 87 is a defect
 that only surfaced because converting a reference forces you to resolve it.
 
-### Item 84 — 237 references, and my own filed count was wrong by 80%
+#### Item 84 — 237 references, and my own filed count was wrong by 80%
 
 **Shipped:** every numeric cross-reference in the app now names the lesson instead of numbering it —
 lesson bodies (en 58, es 37, ko 38, zh 38, ja 38) plus quiz explanations (28 more) = **237**, verified
@@ -16023,7 +16023,7 @@ coverage came back **102 uses / 66 chips / 36 unlinked / 0 unexplained** — ide
 rewrite. Only exact title-head spans are stripped, so an ordinary quotation containing a glossary term
 still counts.
 
-### Item 87 — a reference that was consistent in five languages and pointed at the wrong lessons
+#### Item 87 — a reference that was consistent in five languages and pointed at the wrong lessons
 
 Quiz item 41 belongs to `money` lesson 28 ("Does One Lucky Win Prove You Have a System?"). Its
 explanation cited **lesson 32** for FOMO and **lesson 39** for loss aversion — both `economy` lessons
@@ -16037,7 +16037,7 @@ and they did. English was wrong. Corrected to the right titles in all five langu
 consistent and still point somewhere wrong. Catching that means comparing a cited lesson's subject to
 the citing sentence, which is judgment, not a regex.
 
-### Item 85 — the lesson bodies join §2.3's date guard
+#### Item 85 — the lesson bodies join §2.3's date guard
 
 The teaching-copy list was hand-maintained at five files while the §10.1 scan beside it walks all of
 `src/content` — so the largest body of teaching copy, and the part most likely to name a current
@@ -16046,7 +16046,7 @@ figure, was the part §2.3 did not watch. Now **26 files**. Injected `As of Marc
 written into the code:** English month names only, so `marzo 2026` still passes; that needs a
 per-language date vocabulary and was not in scope.
 
-### Honest accounting of what this cost
+#### Honest accounting of what this cost
 
 - **`essentials` lesson 11 crossed a reading-time boundary** (3 → 4 min) because titles are longer than
   "Lesson 3"; readiness figures moved 144 → 145 min. Both regenerated with `--write`, not hand-edited.
@@ -16057,7 +16057,7 @@ per-language date vocabulary and was not in scope.
   correctly left **stale**. Marking all 26 would have been the easy way to keep a 100% and would have
   been a false claim. `LAUNCH_READINESS.md` §10.4 now says 83% / 7 stale.
 
-### Adversarial self-check (step 5)
+#### Adversarial self-check (step 5)
 
 **Blindspot register:** no regression — this edits cross-reference phrasing only; no advice-adjacent
 language, no dates, no figures added, and `check-blindspot` passes with its §10.1 multi-language
@@ -16074,7 +16074,7 @@ is pasted `innerText`. **What the check caught:** my §16b "pass" branch called 
 exist in `check-data.mjs` — the suite crashed rather than passing, and I only saw it because the run
 after the injection control came back non-zero.
 
-### Next run
+#### Next run
 
 `npm run owner-tree -- --expect c2331799fd3ee413aca864fd82d247a35ea31b01a70a6c4e37b00f6aad9105b2`.
 **The 7 stale translation lessons per language are the honest debt this run created** — they are listed
@@ -16085,13 +16085,13 @@ account.
 
 ---
 
-## 2026-08-20 — two content corrections, and the last two uncovered QA areas closed
+### 2026-08-20 — two content corrections, and the last two uncovered QA areas closed
 
 **Owner-directed, interactive, continuing "do all in priority."** With 84/85/87 committed, this closes
 the two minor content inaccuracies recorded in the read-through and the two areas the `essentials` QA
 sweep had explicitly listed as not reached.
 
-### Content corrections (both were recorded as minor and both were real)
+#### Content corrections (both were recorded as minor and both were real)
 
 - **`essentials` lesson 11's fee example said "roughly $76,000"; the arithmetic gives $75,063.**
   Corrected to $75,000 in all five languages. The other figure in the same passage ($56,628 → "around
@@ -16102,7 +16102,7 @@ sweep had explicitly listed as not reached.
   figure — `ko` and `ja` compress that passage and never state it. Lessons 11 and 12 re-marked in the
   translation ledger for the four languages, readiness figures regenerated.
 
-### The batch-pause interstitial, under a real 42-question session
+#### The batch-pause interstitial, under a real 42-question session
 
 Never exercised before. Ran "Practice all questions" and answered through three batch boundaries:
 
@@ -16121,7 +16121,7 @@ Never exercised before. Ran "Practice all questions" and answered through three 
   rows**, focus on the `H2`, scrolled to top — which also exercised item 84's new labels at scale, all
   30 rendering as e.g. `Lesson 1 · How the Economy Works`.
 
-### Keyboard traversal of the reader's action row — partly verifiable, and the limit is stated
+#### Keyboard traversal of the reader's action row — partly verifiable, and the limit is stated
 
 This mattered more than usual because item 80 changed which buttons that row contains. What holds:
 
@@ -16140,7 +16140,7 @@ note makes the same point about Enter on a native button). So the app-side prope
 keyboard behavior are all verified; the keystroke itself is not reachable with these tools, and that
 is a tooling limit, not an app finding.
 
-### Adversarial self-check (step 5)
+#### Adversarial self-check (step 5)
 
 **Blindspot register:** no regression — two numeric corrections and one negotiability clause; no
 advice-adjacent language (the commission clause describes market structure, it does not tell anyone
@@ -16153,7 +16153,7 @@ pasted from live reads; $75,063 is computed output; the focus-indicator claim is
 a grep that returned empty. **What the check caught:** the "12 / 42" reading above, which I nearly
 reported as an off-by-one defect before re-running it cleanly.
 
-### Next run
+#### Next run
 
 `npm run owner-tree -- --expect c2331799fd3ee413aca864fd82d247a35ea31b01a70a6c4e37b00f6aad9105b2`.
 **Everything the `essentials` sweep and the read-through raised is now closed** — 80, 81, 82, 83, 84,
@@ -16165,7 +16165,7 @@ analytics-provider account.
 
 ---
 
-## 2026-08-20 — the audit's three blindspots and claim D3 land; one "move it verbatim" instruction was wrong (item 73)
+### 2026-08-20 — the audit's three blindspots and claim D3 land; one "move it verbatim" instruction was wrong (item 73)
 
 **Scheduled dev-agent.** `npm run owner-tree -- --expect c2331799…` came back **UNMOVED (0 tracked
 modified, 52 untracked)** and `npm test` **green on the working tree** — so the single blocker that has
@@ -16173,7 +16173,7 @@ held items 73, 77, 78, 75's second half, 64's `Dividend` and 35's second glossar
 item 73, the largest of them: it moves §9.3's first monthly audit from a review file into the two live
 documents it was written for, and it is the plan's own core discipline (§9.1) rather than a feature.
 
-### Step 3.5 — re-measuring an item whose instruction is "do not paraphrase"
+#### Step 3.5 — re-measuring an item whose instruction is "do not paraphrase"
 
 Item 73 stages exact text to paste. That makes the premise "this text is still correct", which is a
 different thing from a headline number, so each staged claim was checked separately.
@@ -16223,7 +16223,7 @@ denominator is wrong independently of today's ratio, provable from the audit's t
 correction is against interest: it leaves the blindspot **open** (7.56× > 5×), where the uncorrected
 number would have quietly closed it.
 
-### What shipped
+#### What shipped
 
 - **`LAUNCH_PLAN.md` §10 Open gains 10.8, 10.9, 10.10** — the audit's B-1, B-2, B-3. Every sentence is
   the audit's, with three deliberate departures, each named rather than smuggled:
@@ -16250,7 +16250,7 @@ number would have quietly closed it.
   here marked "⛔ BLOCKED, high priority". Confirmed by measurement — §2.5 carries three track rows with
   matching Role prose, §4.3 reads the three-track sentence, `refresh-readiness.mjs --check` green.
 
-### Verified
+#### Verified
 
 `npm test` → **exit 0** (`§9.1 claims register: 16 claims, 3 refuted, 0 past due`; readiness's 12
 generated figures still agree). `npm run build` → **exit 0**, ✓ built in 1.11s. Both run in the
@@ -16258,7 +16258,7 @@ foreground with Node 20.18.1 from `scripts/bootstrap-node.sh`. No rendered UI ch
 edited files are documentation and neither is imported by `src/` — so browser verification would have
 proved nothing and was not done; that is a scope statement, not a capability claim.
 
-### Adversarial self-check (step 5)
+#### Adversarial self-check (step 5)
 
 **Blindspot register:** no regression. No Dalio reference (§10.2), no advice-adjacent language (§10.1 —
 the new text is about churn ratios and process, and states no view about any asset), no child-facing
@@ -16279,7 +16279,7 @@ between two that I had. Caught by the arithmetic check that content 14,773 + loc
 a third window I had measured earlier and then mixed in). The conclusion is unchanged — 1.25× is
 still nowhere near 5× — but a self-check that only re-reads its own prose would not have found it.
 
-### Next run
+#### Next run
 
 `npm run owner-tree -- --expect c2331799fd3ee413aca864fd82d247a35ea31b01a70a6c4e37b00f6aad9105b2` — the
 same fingerprint as before this run, since only tracked files moved and they are now committed.
@@ -16293,13 +16293,13 @@ path to ending Phase 0**, still blocked on the owner creating an analytics-provi
 
 ---
 
-## 2026-08-20 — `src/utils/date.js` gets a test section, scoped to the two regressions nothing caught (item 78)
+### 2026-08-20 — `src/utils/date.js` gets a test section, scoped to the two regressions nothing caught (item 78)
 
 **Owner-directed** ("do item 78 next"), immediately after item 73 landed. Item 78 was blocked on
 `scripts/check-data.mjs` being owner-clean; it is clean (`owner-tree` UNMOVED `c2331799…`, 0 tracked
 modified), so the block is gone.
 
-### Step 3.5 — the premise was wrong in both directions at once
+#### Step 3.5 — the premise was wrong in both directions at once
 
 Item 78's framing is *"§23 guards the idiom but never calls either function, so no test would fail
 today if their arithmetic did."* Rather than trust that, every regression I intended to cover was
@@ -16330,7 +16330,7 @@ what remains**. The two that pass green are the consequential ones:
 
 The item's substantive claim — **there is no bug in `date.js`** — was re-run and holds.
 
-### What shipped: `check-data.mjs` §30
+#### What shipped: `check-data.mjs` §30
 
 Written to cover the two gaps and **deliberately not to restate the five already covered**.
 
@@ -16358,7 +16358,7 @@ Written to cover the two gaps and **deliberately not to restate the five already
 - `process.env.TZ` is set and restored inside the block (Node 20 re-reads it per `Date` operation, so no
   child process is needed), and §30 sits last so nothing below it depends on the ambient zone.
 
-### Verified — by injection, and the section caught its own author first
+#### Verified — by injection, and the section caught its own author first
 
 `npm test` **exit 0**, `npm run build` **exit 0**. §30 prints
 `2190 consecutive-day pairs across 6 zones (8 DST transitions covered), 9 landmark cases, todayStr
@@ -16384,7 +16384,7 @@ scratchpad copy:
 `"undefined"` when `TZ` was never set, and the restore assertion I had written two lines earlier caught
 it. Fixed with a `restoreTZ()` that `delete`s instead, and the reason is in the comment.
 
-### Adversarial self-check (step 5)
+#### Adversarial self-check (step 5)
 
 **Blindspot register:** no regression — this run touches one test script and no rendered content, so
 §10.1/§10.2/§10.3 have no surface here; `check-blindspot` passes including the §2.3 date scan. The dates
@@ -16398,7 +16398,7 @@ injections are reproducible from the `git archive HEAD` recipe in the Environmen
 caught:** the temptation to write item 78's section as filed — thirteen assertions re-proving what §25
 already proves, which would have read as coverage while leaving both real gaps open.
 
-### Next run
+#### Next run
 
 `npm run owner-tree -- --expect c2331799fd3ee413aca864fd82d247a35ea31b01a70a6c4e37b00f6aad9105b2`.
 Still unblocked and unpicked: **75's second half** (`src/components/ui.jsx:75` — already decided, just
@@ -16409,13 +16409,13 @@ deployed URL — is now blindspot 10.10**, whose refuting number is one reachabl
 
 ---
 
-## 2026-08-20 — the warn callout stops being a hex literal, and the value the item had decided turned out to fail the suite (item 75)
+### 2026-08-20 — the warn callout stops being a hex literal, and the value the item had decided turned out to fail the suite (item 75)
 
 **Owner-directed** ("do item 75 next"). Item 75's second half was blocked on `src/components/ui.jsx`
 being owner-dirty; the tree is clean (`owner-tree` UNMOVED `c2331799…`), so it is pickable, and the item
 says the unblocking run "only has to apply it." It did not.
 
-### Step 3.5 — the premise held on the diagnosis and broke on the prescription
+#### Step 3.5 — the premise held on the diagnosis and broke on the prescription
 
 **What reproduced exactly.** `NOTE_TONES.warn.rule` is a literal `"#d97706"` at
 `src/components/ui.jsx:75`; every other tone's rule is a token (`line.strong`, `fill.accent`, `fill.ok`,
@@ -16456,7 +16456,7 @@ the outlier in *both* — 3.07 against light siblings' 4.62–5.99, and 5.02 aga
 Its dark reading of 5.02 does clear 1.4.11's 3:1, so this was never a violation; I predicted 1.79 before
 measuring and was wrong, which is why the table above is measured rather than reasoned.
 
-### What shipped
+#### What shipped
 
 - `src/index.css`: `--fill-warn` added to all three palette blocks (light `:root`, the
   `prefers-color-scheme: dark` block, and `[data-theme="dark"]` — §28 already fails on any drift between
@@ -16468,7 +16468,7 @@ measuring and was wrong, which is why the table above is measured rather than re
   pointing a decorative callout rule at an accessibility-constrained chart token was the wrong fix for
   the same reason the `lessons.js` half rejected it.
 
-### Verified — live, in both palettes, with the tone tokens as the control
+#### Verified — live, in both palettes, with the tone tokens as the control
 
 `npm test` **exit 0**; §28 now prints **110 pairs** (was 108) with the worst cases unmoved (light 4.62
 `--ink-accent` on `--surface-accent-wash`, dark 5.93 `--ink-muted` on the same), which is why the header
@@ -16492,7 +16492,7 @@ records as having silently voided an earlier color scan, so both palettes were r
 `src/content/lessons.js`'s 36 per-lesson accents remain, deliberately — item 75's first half proved that
 field is read by nothing and recorded why deleting it would be a bad trade.
 
-### Adversarial self-check (step 5)
+#### Adversarial self-check (step 5)
 
 **Blindspot register:** no regression — a color token and one style reference; no content, no
 advice-adjacent language, no Dalio, no kids framing, no date or market figure. `check-blindspot` passes.
@@ -16505,7 +16505,7 @@ caught:** my own pre-measurement guess that the dark literal was ~1.79 and there
 It is 5.02 and is not. The finding survives — the rule is the outlier in both palettes — but the
 accessibility framing did not, and the entry above says so rather than keeping the better story.
 
-### Next run
+#### Next run
 
 `npm run owner-tree -- --expect c2331799fd3ee413aca864fd82d247a35ea31b01a70a6c4e37b00f6aad9105b2`.
 Still unblocked and unpicked: **64's `Dividend`**, **35's second glossary batch**. Standing debt: the
@@ -16516,13 +16516,13 @@ URL.
 
 ---
 
-## 2026-08-20 — `Dividend` lands the first run after its block lifted; the item was right about the patch and wrong about the track (item 64)
+### 2026-08-20 — `Dividend` lands the first run after its block lifted; the item was right about the patch and wrong about the track (item 64)
 
 **Item 64 is now fully closed.** Its last piece, the `Dividend` glossary entry, had been blocked since
 2026-08-17 on `LAUNCH_PLAN.md` being owner-dirty. This run opened, found the whole tracked tree clean,
 and shipped it.
 
-### Step 3.5 — the premise was wrong about the track and the count, and right about everything load-bearing
+#### Step 3.5 — the premise was wrong about the track and the count, and right about everything load-bearing
 
 Eleven consecutive picked items have had a premise wrong somewhere; this is twelve, but mildly, and the
 part the item staked itself on held up perfectly.
@@ -16553,7 +16553,7 @@ part the item staked itself on held up perfectly.
   `npm run jargon` says `2 lessons, 2x` and §17b counts 2. A future run comparing "3" against an
   instrument reading "2" should not conclude something regressed.
 
-### The measurement that looked exactly like a no-op, and the control that saved it
+#### The measurement that looked exactly like a no-op, and the control that saved it
 
 After the change, §17b read **104 uses / 68 chips / 0 unexplained** — *character-for-character the
 figure this item recorded on 2026-08-17*. That looks precisely like "my chips did not register." The
@@ -16569,7 +16569,7 @@ impossible, since the key did not exist there. Cause: the grep used to read the 
 wrong section. Re-run with an `awk` section-tracker, the real movement is clean and is what was
 wanted: **`dividends` CANDIDATES → CONTROL, candidates 34 → 33, control 13 → 14.**
 
-### What shipped
+#### What shipped
 
 - **`src/content/glossary.js`** — the `Dividend` entry, all five languages, applied from the saved
   patch (+12/-0). Its comment corrected from "Money-track" to "Essentials-track", stating the split as
@@ -16587,7 +16587,7 @@ wanted: **`dividends` CANDIDATES → CONTROL, candidates 34 → 33, control 13 �
 - **`LAUNCH_PLAN.md`** — the generated asset sentence, `32 → 33 glossary terms`, via
   `npm run readiness -- --write`.
 
-### Verified
+#### Verified
 
 - `npm test` — **0 failures** across all six checks, before and after. The single warning (7 stale
   translation lessons per language) is standing debt and is present in the baseline run too.
@@ -16611,7 +16611,7 @@ wanted: **`dividends` CANDIDATES → CONTROL, candidates 34 → 33, control 13 �
   DOM/text-level, which for a text chip is sufficient, but **this run has no visual proof and does not
   claim any.**
 
-### Adversarial self-check (step 5)
+#### Adversarial self-check (step 5)
 
 - **Blindspot register** — `node scripts/check-blindspot.mjs` passes on all four assertions. §10.1: the
   definition states what a dividend IS and that not every company pays one; it never says whether to
@@ -16633,7 +16633,7 @@ wanted: **`dividends` CANDIDATES → CONTROL, candidates 34 → 33, control 13 �
   re-runner (§17b's coincidental 104/68 and the "3 uses" vs "2 tokens" gap) are called out above rather
   than left to be rediscovered.
 
-### Next run
+#### Next run
 
 `npm run owner-tree -- --expect c2331799fd3ee413aca864fd82d247a35ea31b01a70a6c4e37b00f6aad9105b2`. **Unchanged from the previous
 run's value** — the deviation set is the owner's 52 untracked files and nothing this run did enters
@@ -16661,12 +16661,12 @@ deployed URL — is blindspot 10.10**, whose refuting number is one reachable UR
 
 ---
 
-## 2026-08-20 — the re-tracking's stale prose, and a guard so ids-still-green stops meaning correct (item 88)
+### 2026-08-20 — the re-tracking's stale prose, and a guard so ids-still-green stops meaning correct (item 88)
 
 Owner-directed: "do item 88 next", the item the previous run filed. Nine stale sites fixed and the
 class closed by a new `check-data.mjs` §31. **Item 89 is filed for the half deliberately left out.**
 
-### Step 3.5 — the premise held, and the control it specified was the good part
+#### Step 3.5 — the premise held, and the control it specified was the good part
 
 Unusually, nothing in this item's premise was wrong. That is worth recording precisely because the last
 twelve entries all say the opposite: the item was filed one run earlier by the run that hit the problem,
@@ -16686,7 +16686,7 @@ legitimately historical (`jargon-candidates.mjs`'s "money *was* 28 lessons of me
 "Historical note") or simply accurate (`lessonContent.money.*.js` really does hold 16-28, verified by
 importing all three modules). **Fixing those would have made them wrong.**
 
-### What was stale, and the one that mattered
+#### What was stale, and the one that mattered
 
 The sharpest find is not a comment about content but a comment about **behavior**:
 
@@ -16705,7 +16705,7 @@ The sharpest find is not a comment about content but a comment about **behavior*
   **`check-data.mjs` §17's prose**, and **`lessonIdMigration.js`**'s present-tense "now money is 1-28"
   — reworded to date the claim to the 2026-08-14 migration it documents.
 
-### `check-data.mjs` §31 — the class, not the instances
+#### `check-data.mjs` §31 — the class, not the instances
 
 Nine references in `src/` + `scripts/` are now checked against `lessons.js` on every `npm test`.
 
@@ -16720,7 +16720,7 @@ Nine references in `src/` + `scripts/` are now checked against `lessons.js` on e
 - **String literals are excluded**; only comment text is read. A track name and an id inside a string
   is data, not a claim about the corpus.
 
-### Verified — four injections, and the section caught its own author twice
+#### Verified — four injections, and the section caught its own author twice
 
 `npm test` **0 failures** (the single warning is the standing 7-stale-translations debt, unchanged);
 `npm run build` clean. §31 reports **9 references checked, 5 exempted**, and the arithmetic is
@@ -16747,7 +16747,7 @@ header comment, and once via the leak above. And a *different* existing guard ca
 run-log entry, never in the `## Prioritized backlog` section the checker reads. **Filing an item in the
 run log is not filing it.** Both 88 and 89 are now real backlog entries.
 
-### Adversarial self-check (step 5)
+#### Adversarial self-check (step 5)
 
 - **Blindspot register** — clean, and provable rather than asserted: **the diff adds zero non-comment
   lines under `src/`**, and the build emits the **identical content hash** (`index-D69OBdYc.js`,
@@ -16769,7 +16769,7 @@ run log is not filing it.** Both 88 and 89 are now real backlog entries.
   injections above. Item 89's five `DECISIONS.md` line numbers were each read and checked against
   `lessons.js` before being written down, rather than carried over from the grep.
 
-### Next run
+#### Next run
 
 `npm run owner-tree -- --expect c2331799fd3ee413aca864fd82d247a35ea31b01a70a6c4e37b00f6aad9105b2`
 (unchanged again — the deviation set is the owner's 52 untracked files, and this run added nothing to
@@ -16779,13 +16779,13 @@ batch** and the **7 stale translation lessons per language** (`npm run review-st
 remains the entire critical path to ending Phase 0**, blocked on the owner creating an analytics
 provider account, and **item 72's owner half — a deployed URL — is blindspot 10.10**.
 
-## 2026-08-20 — `DECISIONS.md` joins §31's net; the item's five hits were really three (item 89)
+### 2026-08-20 — `DECISIONS.md` joins §31's net; the item's five hits were really three (item 89)
 
 **Picked:** backlog item 89, filed by the previous run from the boundary item 88 deliberately drew —
 the same stale track attributions §31 catches in code, sitting one document over where §31 could not
 see them.
 
-### Step 3.5 — re-measuring the premise, with a control
+#### Step 3.5 — re-measuring the premise, with a control
 
 The instrument is a copy of §31's own `REF` regex run over `DECISIONS.md`, with `lessons.js` as the
 authority for each id's track. It was validated three ways before any figure was believed:
@@ -16818,7 +16818,7 @@ disposition was wrong in three ways:
    this run), because the essentials split added five. The stale count is in the *title* of the
    decision, not only in its body.
 
-### What shipped
+#### What shipped
 
 **`DECISIONS.md` — three lines repaired the §29 way, not rewritten.**
 Each stale line keeps its original wording and gains an inline `<!-- track-ok: … -->` marker, and each
@@ -16854,7 +16854,7 @@ is §26's documented failure mode (a check whose false positives are ordinary pr
 within a week). `DECISIONS.md` alone is **5 references, 3 stale**, and it is the only normative
 Markdown file here.
 
-### Verification
+#### Verification
 
 - `npm test` — 6/6 suites PASS (1 pre-existing translation-coverage warning, unchanged).
 - `npm run build` — clean, and the main bundle is **`index-D69OBdYc.js`, 244.13 kB**, byte-identical
@@ -16870,7 +16870,7 @@ Markdown file here.
 - `§31` now reports **14 references across `src/` + `scripts/` + `DECISIONS.md` (5 of them in
   `DECISIONS.md`), 8 exempted as historical**.
 
-### Adversarial self-check (step 5)
+#### Adversarial self-check (step 5)
 
 - **Blindspot register** — clean, and provable rather than asserted: **zero files under `src/` are
   touched** (`git diff --name-only -- src/` is empty) and the build emits the identical content hash,
@@ -16899,7 +16899,7 @@ Markdown file here.
   rewritten stops the heading being rewritten; the new Update says so explicitly. A future run that
   finds this unsatisfying should change the *convention*, not that one line.
 
-### Next run
+#### Next run
 
 `npm run owner-tree -- --expect c2331799fd3ee413aca864fd82d247a35ea31b01a70a6c4e37b00f6aad9105b2`
 (the deviation set is the owner's 52 untracked files; this run added nothing to it). **Open and
@@ -16909,7 +16909,7 @@ glossary batch** plus the **7 stale translation lessons per language** (`npm run
 **Item 18 remains the entire critical path to ending Phase 0**, blocked on the owner creating an
 analytics provider account, and **item 72's owner half — a deployed URL — is blindspot 10.10**.
 
-## 2026-08-21 — two sections stop sharing a name, and the tree agreed with neither of them (item 62's F6, item 62 closed)
+### 2026-08-21 — two sections stop sharing a name, and the tree agreed with neither of them (item 62's F6, item 62 closed)
 
 **Picked:** the last open finding of backlog item 62 — `LAUNCH_PLAN.md` §3.1.1 and §3.4 both titled
 "Visual system", saying opposite things about per-lesson color. Chosen over item 35's second glossary
@@ -16917,7 +16917,7 @@ batch and the 7×4 stale translation lessons because the owner has an in-flight 
 files, `UIUX/`) and this is the document that redesign will be read against; a design directive that
 gives two contradictory answers is worth more closed than a glossary term is worth added.
 
-### Step 3.5 — re-measuring the premise, with controls
+#### Step 3.5 — re-measuring the premise, with controls
 
 **The item's textual claim held exactly.** Both headings exist, at `:283` and `:312`, both read
 "Visual system", and their bodies do conflict: §3.1.1 "**one accent color** … Per-lesson color
@@ -16952,7 +16952,7 @@ lesson/phase". That is the first premise in a while that survived contact unalte
   `typeface` genuinely return 0, so **`DECISIONS.md` records no visual-system decision** and there is
   nothing here to contradict.
 
-### What shipped
+#### What shipped
 
 **`LAUNCH_PLAN.md` §3.4 — retitled "Theming and typography", not deleted.** Its three surviving unique
 facts are kept (one typeface; dark mode **shipped**, with the two file references a previous run's F5
@@ -16982,7 +16982,7 @@ clause exists so a redesign does not rediscover item 75's trap by hand.
 - The failure message names the repair **and forbids the wrong one**: retitle, decide which section is
   current if they disagree, and do *not* renumber.
 
-### Verification
+#### Verification
 
 - `npm test` — 6/6 suites PASS, 1 warning (the pre-existing translation-coverage one, unchanged).
   §32 reports **40 headings, 40 distinct titles, 0 duplicated**.
@@ -16999,7 +16999,7 @@ clause exists so a redesign does not rediscover item 75's trap by hand.
      languages` vs `### 3.5 Accessibility and languages`) → FAIL, proving the number-stripping
      comparison is what does the work.
 
-### Adversarial self-check (step 5)
+#### Adversarial self-check (step 5)
 
 - **Blindspot register** — clean, and measured: `npm run check-blindspot` passes all 7 assertions, and
   **zero files under `src/` are touched**. No Dalio, no advice-adjacent phrasing, no kids framing. The
@@ -17027,7 +17027,7 @@ clause exists so a redesign does not rediscover item 75's trap by hand.
   renumbering — which is exactly what §32's failure message forbids and what `working_files/build_doc.js`
   would contradict. Left alone on purpose; filed as item 90.
 
-### Next run
+#### Next run
 
 `npm run owner-tree -- --expect c2331799fd3ee413aca864fd82d247a35ea31b01a70a6c4e37b00f6aad9105b2`
 (read `UNMOVED` at the start of this run; the deviation set is the owner's 52 untracked files, and this
@@ -17040,13 +17040,13 @@ computed against; the **7 stale translation lessons per language** (`npm run rev
 **Item 18 remains the entire critical path to ending Phase 0**, blocked on the owner creating an
 analytics provider account, and **item 72's owner half — a deployed URL — is blindspot 10.10**.
 
-## 2026-08-21 — heading depth matches heading number (item 90); and the owner set US English, which found two learner-visible spellings
+### 2026-08-21 — heading depth matches heading number (item 90); and the owner set US English, which found two learner-visible spellings
 
 **Picked:** item 90, owner-directed ("fix §3.1.1's heading depth next") the same day the previous run
 filed it. Mid-run the owner added a second instruction — **"US English only"** — which is handled
 below as its own piece of work, not folded into the heading fix.
 
-### Step 3.5 — re-measuring, and widening from the two headings the item named
+#### Step 3.5 — re-measuring, and widening from the two headings the item named
 
 The item named §3.1.1 (`###` where its number implies `####`) and §2.5 (`##` where it implies `###`).
 Rather than trust the pair, the whole file was swept: expected depth = one more than the number of
@@ -17066,7 +17066,7 @@ depth-agnostic by construction. There are also **no `LAUNCH_PLAN.md#anchor` link
 Markdown anchors derive from heading *text* regardless of depth. Nothing could break, and that is
 measured rather than hoped.
 
-### What shipped
+#### What shipped
 
 **Both headings re-nested by `#` count, never by number** — `#### 3.1.1 Visual system` and
 `### 2.5 Curriculum structure — three tracks`. The file is now 36/36 consistent.
@@ -17084,7 +17084,7 @@ the identical defect this agent had fixed in §32 one commit earlier, reintroduc
 shape. It now reports `36 numbered, 35 at the depth their number implies, 1 not`, and the failing
 case was re-run to confirm the count moves.
 
-### The owner's "US English only" instruction
+#### The owner's "US English only" instruction
 
 Treated as a house-style rule, and **measured before acting** rather than swept blindly.
 
@@ -17112,7 +17112,7 @@ Treated as a house-style rule, and **measured before acting** rather than swept 
   §29's rule says must not be rewritten in place, so a blanket sweep is a decision with a real edge
   case in it, not a find-and-replace. Filed as item 91.
 
-### Verification
+#### Verification
 
 - `npm test` — 6/6 suites PASS, 1 warning (the pre-existing translation-coverage one). §32 reports 40
   headings / 40 distinct / 0 duplicated; §32b reports 36 numbered / 36 correct / 0 not.
@@ -17125,7 +17125,7 @@ Treated as a house-style rule, and **measured before acting** rather than swept 
   naming line 283 and both depths; §2.5 reverted → FAIL naming line 157; every heading neutralized →
   floor fired at 0; and the summary-count re-run above.
 
-### Adversarial self-check (step 5)
+#### Adversarial self-check (step 5)
 
 - **Blindspot register** — `npm run check-blindspot` passes all 7. This run *does* touch two
   learner-visible content strings, so §2.3 (no live-looking dates in teaching copy) is the one that
@@ -17148,7 +17148,7 @@ Treated as a house-style rule, and **measured before acting** rather than swept 
   instrument whose controls all passed. Both learner-visible fixes in this commit exist only because
   a known instance was checked for by name.
 
-### Next run
+#### Next run
 
 `npm run owner-tree -- --expect c2331799fd3ee413aca864fd82d247a35ea31b01a70a6c4e37b00f6aad9105b2`
 (`UNMOVED` at the start of this run; the deviation set is the owner's 52 untracked files, unchanged).
@@ -17160,13 +17160,13 @@ one language per run); item 76 (still blocked on a per-language tokeniser).
 **Item 18 remains the entire critical path to ending Phase 0**, blocked on the owner creating an
 analytics provider account, and **item 72's owner half — a deployed URL — is blindspot 10.10**.
 
-## 2026-08-21 — the US-English sweep, everything but the dated records (item 91); three things it was not allowed to touch
+### 2026-08-21 — the US-English sweep, everything but the dated records (item 91); three things it was not allowed to touch
 
 **Picked:** item 91, owner-directed the same day it was filed — *"sweep everything except the dated
 records."* Filed by the previous run precisely because the `DECISIONS.md` slice needed an owner call;
 that call is now made, and this run executes it.
 
-### Step 3.5 — the item's own headline number was wrong, and it was MY number
+#### Step 3.5 — the item's own headline number was wrong, and it was MY number
 
 Item 91 said "~69 British spellings". A per-line re-count found **123**. The previous run's figure was
 produced by a `grep -o | wc -l` over a narrow pattern set, and it was wrong in both directions:
@@ -17187,7 +17187,7 @@ reported the learner-visible surface clean at **0** after fixing two strings. It
 the previous run's headline was wrong, and the instrument that produced it was the reason. Fixed this
 run; the surface is now genuinely 0 against a net whose controls include that exact word.
 
-### What was deliberately NOT swept, and why each one is a real hazard rather than caution
+#### What was deliberately NOT swept, and why each one is a real hazard rather than caution
 
 Three classes, all found by reading the enumeration rather than by running the replace:
 
@@ -17216,7 +17216,7 @@ Three classes, all found by reading the enumeration rather than by running the r
    `- **Gap closed 2026-08-04:**` was not. Nine of `DECISIONS.md`'s hits are standing prose and were
    swept; two are dated and were not.
 
-### What shipped
+#### What shipped
 
 **110 lines in the scripted pass + 13 in three follow-up passes = 123 lines across 32 files.**
 Prose, comments, and documents move to US spelling: `color`→`color`, `behavior`→`behavior`,
@@ -17231,7 +17231,7 @@ consumer — unlike the event name in (2), which is why the two are treated diff
 **`AGENT_LOG.md` and `AGENT_LOG.archive.md` are untouched**, for §31's reason: run-log entries are
 what a past run wrote on a date and must never be edited. Neither is `reviews/`.
 
-### Verification
+#### Verification
 
 - `npm test` — 6/6 PASS, 1 warning (the pre-existing translation-coverage one). **The suite covering
   `refresh-readiness.mjs --check` passing is the load-bearing result here**: `catalog`→`catalog`
@@ -17252,7 +17252,7 @@ what a past run wrote on a date and must never be edited. Neither is `reviews/`.
 - **Final whole-repo scan returns exactly the 10 intended exclusions and nothing else** — 6 event-name
   lines, 2 verbatim quotations, 2 dated records.
 
-### Adversarial self-check (step 5)
+#### Adversarial self-check (step 5)
 
 - **Blindspot register** — clean. §10.1 is the one to think about, since this run edits a
   learner-visible string: "cancelling"→"canceling" inside the policy simulator changes orthography and  <!-- us-english:allow: verbatim quote -->
@@ -17273,7 +17273,7 @@ what a past run wrote on a date and must never be edited. Neither is `reviews/`.
   rewriting learner-visible wording is a content edit rather than an orthographic one. Flagged as
   item 92 rather than done silently.
 
-### Next run
+#### Next run
 
 `npm run owner-tree -- --expect c2331799fd3ee413aca864fd82d247a35ea31b01a70a6c4e37b00f6aad9105b2`
 (`UNMOVED` at the start of this run). **Open and unblocked:** item 92 ("dearer", and a wider read for
@@ -17284,13 +17284,13 @@ blocked on a per-language tokenizer). **Item 18 remains the entire critical path
 blocked on the owner creating an analytics provider account, and **item 72's owner half — a deployed
 URL — is blindspot 10.10**.
 
-## 2026-08-21 — "dearer" is the only one (item 92); the finding is the 10 words that must NOT be changed
+### 2026-08-21 — "dearer" is the only one (item 92); the finding is the 10 words that must NOT be changed
 
 **Picked:** item 92, owner-directed the same day the previous run filed it. It is the diction half of
 the US-English work — the part item 91's sweep deliberately could not do, because a spelling
 substitution is meaning-preserving by construction and a rewording is a content edit.
 
-### Step 3.5 — the premise held, and the sweep's job was to find out whether it was the tip of anything
+#### Step 3.5 — the premise held, and the sweep's job was to find out whether it was the tip of anything
 
 Item 92 named one instance and warned that a word-list "will miss phrasing". Two passes over the
 learner-visible English corpus:
@@ -17331,7 +17331,7 @@ a positive control (`$` appears 18 times in `lessonContent.essentials.en.js`) pr
 This is the same class of mistake as the previous run's 781-vs-1,316 miss, caught this time before it
 reached a claim.
 
-### What shipped
+#### What shipped
 
 **One string.** `src/content/policyScenarios.js:159`, the Fed-chair simulator's first tightening
 outcome: *"Borrowing gets **dearer** exactly when firms are already canceling projects"* → *"gets
@@ -17345,7 +17345,7 @@ is that a guard whose false positives are ordinary English gets switched off wit
 would be that guard. The table above is the durable artifact instead: cheaper than a check, and it
 cannot fire on a Tuesday and get deleted on a Wednesday.
 
-### Verification
+#### Verification
 
 - `npm test` — 6/6 PASS, 1 warning (the pre-existing translation-coverage one). Worth naming: §2
   recomputes every lesson's `minutes` from its rendered words, and "more expensive" is 8 characters
@@ -17356,7 +17356,7 @@ cannot fire on a Tuesday and get deleted on a Wednesday.
   advice-adjacency patterns, which is the one that matters when learner-visible wording changes.
 - `grep -rn "dearer"` across `src/`, `scripts/` and the documents — **none** outside the run log.
 
-### Adversarial self-check (step 5)
+#### Adversarial self-check (step 5)
 
 - **Blindspot register** — clean. This edits learner-visible teaching copy, so §10.1 is the live
   concern: "more expensive" is a factual statement about the cost of borrowing under tightening, the
@@ -17377,7 +17377,7 @@ cannot fire on a Tuesday and get deleted on a Wednesday.
   Briticism from the tested set** survives in learner-visible English. A full read of 1,316 strings is
   a different item and nobody has asked for one.
 
-### Next run
+#### Next run
 
 `npm run owner-tree -- --expect c2331799fd3ee413aca864fd82d247a35ea31b01a70a6c4e37b00f6aad9105b2`
 (`UNMOVED` at the start of this run). **The US-English stream is now closed** — items 91 and 92 both
@@ -17389,13 +17389,13 @@ language per run); item 76 (blocked on a per-language tokenizer). **Item 18 rema
 critical path to ending Phase 0**, blocked on the owner creating an analytics provider account, and
 **item 72's owner half — a deployed URL — is blindspot 10.10**.
 
-## 2026-08-21 — the `CANCELED` event renamed; the reason it had been left was half wrong
+### 2026-08-21 — the `CANCELED` event renamed; the reason it had been left was half wrong
 
 **Picked:** owner-directed — rename the last British spelling in the repo, the `CANCELED` analytics
 event. The previous run had excluded it deliberately and written down why, so this run's first job was
 to test that reasoning rather than to route around it.
 
-### Step 3.5 — re-measuring the exclusion, which is my own claim from two commits ago
+#### Step 3.5 — re-measuring the exclusion, which is my own claim from two commits ago
 
 Item 91 gave two reasons for leaving the name British. **One holds, one does not.**
 
@@ -17420,7 +17420,7 @@ Item 91 gave two reasons for leaving the name British. **One holds, one does not
   entry contains it, and no provider is wired (item 18). This is a rename of dead code, not a
   contract break.
 
-### What shipped
+#### What shipped
 
 **Six places, one change:** `EVENTS.CANCELED: "canceled"` in `src/lib/analytics.js`;
 `check-data.mjs` §13's expected `"canceled"`; `LAUNCH_PLAN.md` §9.2's prose list;
@@ -17430,7 +17430,7 @@ Item 91 gave two reasons for leaving the name British. **One holds, one does not
 measurements, and the correction to item 91's stated reasoning — so the next run finds the name and
 the reasoning together rather than re-deriving either.
 
-### Verification
+#### Verification
 
 - `npm test` — 6/6 PASS, 1 warning (the pre-existing translation-coverage one).
 - **Injection, restored from a scratchpad copy and re-hashed** (`9d5157b3…8837` before and after):
@@ -17448,7 +17448,7 @@ the reasoning together rather than re-deriving either.
   records, and the new Update's own `not \`canceled\`` — which names the old spelling on purpose,
   because a rename note that cannot say what was renamed is useless.
 
-### Adversarial self-check (step 5)
+#### Adversarial self-check (step 5)
 
 - **Blindspot register** — clean, 7/7. Nothing learner-visible changed; `dist/` is byte-identical.
 - **`DECISIONS.md` conflict** — this is the one to examine, since the previous run invoked §29's
@@ -17465,7 +17465,7 @@ the reasoning together rather than re-deriving either.
   re-examine it. The classifier that disproved it was the one that run had already written — the
   check existed, it just was not pointed at the two lines in question.
 
-### Next run
+#### Next run
 
 `npm run owner-tree -- --expect c2331799fd3ee413aca864fd82d247a35ea31b01a70a6c4e37b00f6aad9105b2`
 (`UNMOVED` at the start of this run). **The US-English stream is fully closed** — 91, 92 and this
@@ -17476,12 +17476,12 @@ unblocked:** **item 35's second glossary batch**, block lifted, re-measure with
 **Item 18 remains the entire critical path to ending Phase 0**, blocked on the owner creating an
 analytics provider account, and **item 72's owner half — a deployed URL — is blindspot 10.10**.
 
-## 2026-08-21 — the UIUX/ redesign, implemented: one screen changed, four found already done, one real a11y bug
+### 2026-08-21 — the UIUX/ redesign, implemented: one screen changed, four found already done, one real a11y bug
 
 **Picked:** owner-directed. A design canvas was drafted from the owner's `UIUX/` folder (35 Mobbin
 screenshots + 16 videos of Buddy, Duolingo, Quizlet, Vocabulary, Nibble), then implemented.
 
-### The headline finding: four of the five screens were already there
+#### The headline finding: four of the five screens were already there
 
 The canvas mocked Learn, the lesson reader, the end-of-lesson check, Review and the glossary. On
 implementation, **only Learn had a substantive gap.** Evidence, gathered rather than assumed:
@@ -17498,7 +17498,7 @@ implementation, **only Learn had a substantive gap.** Evidence, gathered rather 
 **So earlier runs had been building from these references for weeks.** The canvas mostly documented
 where the app already is. Worth recording so a future run does not re-derive a redesign that shipped.
 
-### What actually changed — `src/screens/Learn.jsx`
+#### What actually changed — `src/screens/Learn.jsx`
 
 **A real WCAG failure, found by measuring rather than by looking.** Locked lesson rows carried
 `opacity: 0.55` on the button, which composites the text against the canvas: **2.82:1 (`ink.body`)
@@ -17513,7 +17513,7 @@ each track gains a `ProgressBar` where it had only a `3 / 12` text pair. ARIA AP
 `hidden` rather than unmounting so `aria-controls` always resolves; **no new locale key**, because the
 track label already exists and `aria-expanded` carries the state.
 
-### Three things from the canvas deliberately NOT built
+#### Three things from the canvas deliberately NOT built
 
 1. **Completed markers stay `fill.ok`, not the accent.** The artboard drew them blue; that
    contradicts `theme.js` rule 2 (blue = interactive/current, green = success) and **the shipped code
@@ -17524,7 +17524,7 @@ track label already exists and `aria-expanded` carries the state.
    languages**, and "9 questions sit in the 4-day box" changes nothing a learner does — data slop
    bought with translation debt. Offered back to the owner rather than shipped.
 
-### Verification
+#### Verification
 
 - `npm test` 6/6 PASS (1 pre-existing translation-coverage warning); `npm run build` clean;
   `check-blindspot` 7/7 with §10.1's disclaimer still on this surface.
@@ -17546,7 +17546,7 @@ track label already exists and `aria-expanded` carries the state.
 - **One false alarm from a screenshot:** the accent looked violet rather than `#2563eb`. The computed
   value is `rgb(37, 99, 235)` — the screenshot's color profile, not the app. Measurement beat the eye.
 
-### Adversarial self-check (step 5)
+#### Adversarial self-check (step 5)
 
 - **Blindspot register** — clean, 7/7. `Learn.jsx` is one of the eight §10.1 surfaces and still
   renders `<Disclaimer>`. No Dalio, no kids reframing, no date or market figure.
@@ -17559,7 +17559,7 @@ track label already exists and `aria-expanded` carries the state.
 - **Copyright** — the references are other companies' shipping apps. General learning-app patterns
   were used; no branded element (mascot, palette, node art) was reproduced.
 
-### Next run
+#### Next run
 
 The US-English stream and the redesign are both closed. **Open and unblocked:** **item 35's second
 glossary batch — re-measured this session and ready**: across all three tracks, reading first uses
@@ -17587,14 +17587,14 @@ per-language tokenizer). **Item 18 remains the entire critical path to ending Ph
 > a lot of them, and any reach count over lesson prose has to subtract quoted titles before it means
 > anything. Item 35 is now CLOSED; §17b reports 121 uses, 85 chips, 36 explained, 0 unexplained.
 
-## 2026-08-21 (scheduled dev-agent) — Item 35's second glossary batch: two terms shipped, the third measured and rejected
+### 2026-08-21 (scheduled dev-agent) — Item 35's second glossary batch: two terms shipped, the third measured and rejected
 
 **Picked:** backlog item 35's second batch, the queued item from the previous run. Owner tree
 `OWNER-TREE c2331799fd3ee413aca864fd82d247a35ea31b01a70a6c4e37b00f6aad9105b2 (0 tracked modified,
 52 untracked)` — **UNMOVED** against the fingerprint the last run recorded, so `UIUX/` and `drafts/`
 are the owner's and were not touched.
 
-### Step 3.5 — the premise re-measured, and one of its three terms did not survive
+#### Step 3.5 — the premise re-measured, and one of its three terms did not survive
 
 The previous run's hand-off named three terms "ready". Two reproduce exactly; the third does not.
 
@@ -17635,7 +17635,7 @@ Second, the live glossary search returned nothing because my click selector used
 the real button reads `Glossary\nEvery term, defined` — the `okGloss: false` flag caught it. **Neither
 negative result was reportable; both were re-run after the fix.**
 
-### What shipped
+#### What shipped
 
 - **`glossary.js` 33 → 35 terms**, five languages each. Definitions are mechanism-only per §10.1 — what
   the thing IS, never what to do with it — and the savings-account entry says "insured by a federal
@@ -17648,7 +17648,7 @@ negative result was reportable; both were re-run after the fix.**
   and §17b's check (b) would have failed it.
 - **`LAUNCH_PLAN.md`** asset sentence regenerated 33 → 35 by `npm run readiness -- --write`.
 
-### Verification
+#### Verification
 
 - `npm test` 6/6 PASS (1 pre-existing translation-coverage warning). **§17b: `121 glossary-term uses
   across 40 lessons — 85 chips on 27 lessons, 36 deliberately unlinked (27 defined-here, 9 other-sense),
@@ -17684,7 +17684,7 @@ negative result was reportable; both were re-run after the fix.**
   injection used `grep -iE "FAIL"`, which matches the word "failure" inside every `PASS: 0 failure(s)`
   line — so a genuine failure and a clean pass looked identical. Re-run on the exit code instead.
 
-### Adversarial self-check (step 5)
+#### Adversarial self-check (step 5)
 
 - **Blindspot register** — clean, 7/7. No Dalio, no kids reframing, no hardcoded date or market figure;
   the deliberate avoidance of a deposit-insurance dollar amount is the §2.3-shaped trap this content
@@ -17701,7 +17701,7 @@ negative result was reportable; both were re-run after the fix.**
 - **Worth naming:** the run's most useful output is a rejection. Two of three queued terms shipped; the
   third was queued on a figure that was off by 7 and would have added a redundant entry.
 
-### Next run
+#### Next run
 
 `npm run owner-tree -- --expect c2331799fd3ee413aca864fd82d247a35ea31b01a70a6c4e37b00f6aad9105b2`
 (`UNMOVED` at the start of this run; this run touched only tracked files, so it should still hold).
@@ -17718,7 +17718,7 @@ blindspot 10.10**.
 
 ---
 
-## 2026-08-21 (scheduled dev-agent) — the queued item was a symptom: 94 of 160 translation pairs are summaries, not translations (item 93)
+### 2026-08-21 (scheduled dev-agent) — the queued item was a symptom: 94 of 160 translation pairs are summaries, not translations (item 93)
 
 **Picked:** the previous run's hand-off, "the 7 stale translation lessons per language (`npm run
 review-status`, 28 re-reviews — scope to one language per run)". Owner tree `OWNER-TREE
@@ -17731,7 +17731,7 @@ edge of a much larger gap, and that re-marking them — which is what the hand-o
 have asserted "reviewed" over bodies carrying a quarter of their English. **Nothing was re-marked.**
 The ledger still reads 83% / 7 stale, correctly.
 
-### Step 3.5 — the premise held, but only after two of my own instruments turned out to be wrong
+#### Step 3.5 — the premise held, but only after two of my own instruments turned out to be wrong
 
 **The item's own claim is true and reproduces:** `npm run review-status` reports 7 stale lessons in
 each of es/ko/zh/ja — lessons 1, 4, 30, 33, 37, 39, 40. **Control on the instrument before believing
@@ -17766,7 +17766,7 @@ commit: **English changed in 26 lessons, es/ko/zh/ja in 19 each — and the 7 ar
 difference.** That matches what that run's own entry says it did, and it said so honestly: it re-marked
 "only the 19 pairs per language I actually edited". So the ledger is behaving exactly as designed.
 
-### The finding: the stale 7 are a symptom of something the ledger cannot see
+#### The finding: the stale 7 are a symptom of something the ledger cannot see
 
 Reading those lessons to plan the re-review, the translated fields were far shorter than their English.
 Measured across all 40 lessons x 4 languages, over exactly the field set the ledger fingerprints:
@@ -17798,7 +17798,7 @@ than spread. §10.4's sentence is one of `refresh-readiness.mjs`'s 12 generated 
 translation-volume sentence"`), so it was **deliberately not hand-edited** — re-framing a generated
 line belongs in the generator, and that is a separate change.
 
-### What shipped
+#### What shipped
 
 - **`scripts/translation-completeness.mjs`** — `npm run translation-completeness` prints the per-lesson
   table, the per-language reference, the abridged list and the volume summary; `--write` records the
@@ -17813,7 +17813,7 @@ line belongs in the generator, and that is a separate change.
 - **Backlog item 93**, with the measurement, the concentration, the reason no existing check saw it,
   and a scope rule (one track x one language per run; economy x es first).
 
-### Verification
+#### Verification
 
 - `npm test` **6/6 PASS**, 0 failures, 2 warnings (the pre-existing translation-review warning, plus
   §33's new standing-debt warning). `npm run build` clean. `npm run check-blindspot` **7/7**.
@@ -17835,7 +17835,7 @@ line belongs in the generator, and that is a separate change.
   These figures are enforced more strongly than a pasted line anyway — §33 recomputes them on every
   `npm test` and fails on disagreement.
 
-### Adversarial self-check (step 5)
+#### Adversarial self-check (step 5)
 
 - **Blindspot register** — clean, 7/7. This run added **no learner-facing copy in any language**, so
   §10.1/§10.2/§10.3 and the §2.3 date scan have no new surface to regress; the one place I could have
@@ -17859,7 +17859,7 @@ line belongs in the generator, and that is a separate change.
   doing that would have restored a 100%/0-stale ledger over lesson bodies that are a quarter of their
   English, which is the same class of false green the ledger was built to prevent.
 
-### Next run
+#### Next run
 
 `npm run owner-tree -- --expect c2331799fd3ee413aca864fd82d247a35ea31b01a70a6c4e37b00f6aad9105b2`
 — **unchanged from the last two runs**, and re-read *after* committing rather than during the work.
@@ -17875,13 +17875,13 @@ without doing the translation work** — see this entry for why. **Item 18 remai
 path to ending Phase 0**, blocked on the owner creating an analytics-provider account, and **item 72's
 owner half — a deployed URL — is blindspot 10.10**.
 
-## 2026-08-22 (scheduled dev-agent) — recovery commit: item 93's first two pairs, es economy 29-30
+### 2026-08-22 (scheduled dev-agent) — recovery commit: item 93's first two pairs, es economy 29-30
 
 **This run wrote no content.** It found the tree dirty with three tracked files that matched the
 previous run's queued item exactly, verified them, and committed them. Per the workflow's step 1, that
 is the whole of this run's work.
 
-### Establishing it was a stalled run and not the owner mid-work
+#### Establishing it was a stalled run and not the owner mid-work
 
 The queued item read: "economy lessons 29-40 in `es`, one or two lessons per run, translating the
 English body rather than summarizing it, then `npm run translation-completeness -- --write` to record
@@ -17902,7 +17902,7 @@ files, unchanged in kind). `npm run owner-tree` reads
 `c2331799…`, which is the expected result and not a surprise: the deviation set now contains the
 stalled run's three files. **No owner file was touched, staged, or stashed.**
 
-### Verification
+#### Verification
 
 - `npm test` **6/6 PASS**, 0 failures, 2 warnings (both pre-existing: the translation-review warning
   and §33's standing-debt warning). `npm run build` clean in 1.50s. `npm run check-blindspot` **7/7**.
@@ -17923,7 +17923,7 @@ stalled run's three files. **No owner file was touched, staged, or stashed.**
   this same file already used that exact short form — the new text follows the file's own convention
   rather than inventing one.
 
-### What I deliberately did NOT do
+#### What I deliberately did NOT do
 
 The queued item also mentioned `translation-review.mjs mark ... ai`. **Leaving the ledger untouched is
 the correct outcome, not an omission.** The ledger fingerprints the *English* body, so a Spanish
@@ -17932,7 +17932,7 @@ rewrite cannot clear staleness — and `es` 30 is on the stale list for an unrel
 green the previous run refused, one step further along; it is now written into item 93 so it stops
 being re-derived.
 
-### Adversarial self-check (step 5)
+#### Adversarial self-check (step 5)
 
 - **Blindspot register** — clean, 7/7, and this is the run where that matters most, since unlike the
   previous one it *does* ship learner-facing copy in a non-English locale. §10.1's advice-adjacency
@@ -17961,7 +17961,7 @@ being re-derived.
   and it reads 100% now that two of them are whole. **That number did not detect the work being done
   any more than it detected the work being missing** — §33 is what moved.
 
-### Next run
+#### Next run
 
 `npm run owner-tree -- --expect c2331799fd3ee413aca864fd82d247a35ea31b01a70a6c4e37b00f6aad9105b2`
 — read **after** this run's commit landed, per the previous entry's own correction, and it is
@@ -17976,14 +17976,14 @@ measured rate (~2,135 Spanish characters per lesson) the rest of `es` is ~20,000
 runs. **Item 18 remains the entire critical path to ending Phase 0**, blocked on the owner creating an
 analytics-provider account, and **item 72's owner half — a deployed URL — is blindspot 10.10**.
 
-## 2026-08-22 (scheduled dev-agent) — `es` economy 31-32 translated in full; the headline moved 3, not 4, and the reason is the metric
+### 2026-08-22 (scheduled dev-agent) — `es` economy 31-32 translated in full; the headline moved 3, not 4, and the reason is the metric
 
 **Picked:** item 93's queued tranche — "`es` economy 31-40, two lessons per run". Owner tree
 `OWNER-TREE c2331799fd3ee413aca864fd82d247a35ea31b01a70a6c4e37b00f6aad9105b2 (0 tracked modified,
 52 untracked)` — **UNMOVED** against the value the last two runs recorded, so `UIUX/` and `drafts/`
 are the owner's in-flight work and were not read, staged, or touched.
 
-### Step 3.5 — the premise held on both lessons, and the control was already in the instrument
+#### Step 3.5 — the premise held on both lessons, and the control was already in the instrument
 
 **Reproduced before editing.** `npm run translation-completeness` at `HEAD`: `es` 31 = **0.23**, 32 =
 **0.31**, against an `es` reference of **1.12**. Both are in the item's stated 0.23-0.35 band.
@@ -18002,7 +18002,7 @@ grande. / BUENO: Pedir prestado para un tractor...`, where English runs the two 
 full worked contrast. `es` 32 §1 was one sentence against three paragraphs; only its §3 was near-full,
 and it was kept and extended rather than rewritten.
 
-### What shipped
+#### What shipped
 
 - **`src/content/lessonContent.economy.es.js`** — lessons **31 and 32** rewritten from summary to full
   translation. Section counts unchanged (2 and 3), headings unchanged, no section added or dropped.
@@ -18011,7 +18011,7 @@ and it was kept and extended rather than rewritten.
 - **`LAUNCH_READINESS.md`** — the one generated §10.4 figure, `es 103,531 (0.754x)` ->
   `es 108,965 (0.794x)`, written by `npm run readiness -- --write` rather than by hand.
 
-### Verification
+#### Verification
 
 - `npm test` **6/6 PASS**, 0 failures, 2 warnings (both pre-existing: the translation-review warning
   and §33's standing-debt warning). `npm run build` clean in 1.03s. `npm run check-blindspot` **7/7**.
@@ -18059,7 +18059,7 @@ and it was kept and extended rather than rewritten.
   restaurant / hardware store / car dealer chain, the cut server hours, deflation, recession, the 5-8
   year cadence, rates approaching zero, quantitative easing and buying bonds directly.
 
-### The finding: the headline count fell by 3, not 4, and that is the metric working
+#### The finding: the headline count fell by 3, not 4, and that is the metric working
 
 Two pairs were fixed, so the standing-debt warning should read 90. It reads **91**. The cause is that
 `ABRIDGED_BELOW` is `0.7 x` each language's **p90 ratio across this same corpus**, so translating
@@ -18074,7 +18074,7 @@ silent about it while failing loudly on 31 and 32 — §33 guards *recorded rati
 they are simply measuring different things. Written into item 93 with the next borderline lesson named
 (14, at **0.8253**) so the pattern is predicted rather than re-derived.
 
-### Adversarial self-check (step 5)
+#### Adversarial self-check (step 5)
 
 - **Blindspot register** — clean, **7/7**, and this run ships learner-facing copy in a non-English
   locale, which is where §10.1 actually bites. Beyond `check-blindspot`'s own five-language patterns I
@@ -18100,7 +18100,7 @@ they are simply measuring different things. Written into item 93 with the next b
   fingerprints the *English* body, so a Spanish rewrite cannot clear staleness; marking these would
   assert an English-drift re-review that did not happen. It still reads 83% / 7 stale, correctly.
 
-### Next run
+#### Next run
 
 `npm run owner-tree -- --expect c2331799fd3ee413aca864fd82d247a35ea31b01a70a6c4e37b00f6aad9105b2`
 — read **after** this run's commit landed, per the 2026-08-21 correction, and it is **byte-identical
@@ -18116,13 +18116,13 @@ slower than the pairs you fix**, for the reason above. **Item 18 remains the ent
 ending Phase 0**, blocked on the owner creating an analytics-provider account, and **item 72's owner
 half — a deployed URL — is blindspot 10.10**.
 
-## 2026-08-22 (owner-directed) — `es` economy 33-34 translated in full; the moving reference turns out to be intermittent
+### 2026-08-22 (owner-directed) — `es` economy 33-34 translated in full; the moving reference turns out to be intermittent
 
 **Picked:** the owner asked for "es 33-34 next", which is item 93's queued tranche. Owner tree
 `OWNER-TREE c2331799fd3ee413aca864fd82d247a35ea31b01a70a6c4e37b00f6aad9105b2 (0 tracked modified,
 52 untracked)` — **UNMOVED**, so `UIUX/` and `drafts/` were not read, staged, or touched.
 
-### Step 3.5 — premise held on both, and the control group is now large enough to be the instrument's own proof
+#### Step 3.5 — premise held on both, and the control group is now large enough to be the instrument's own proof
 
 `es` 33 = **0.34**, 34 = **0.24** at `HEAD`, against an `es` reference of **1.14** — both inside the
 item's stated band. The control is structural: the same table shows `es` 29-32 (translated earlier this
@@ -18138,7 +18138,7 @@ transfer tension, the central bank refilling the well). That is a table of conte
 Lesson 33 §1/§2 were similarly cut; **§3 of both lessons was already near-full and was kept and
 extended rather than rewritten**, which is why 33 started at 0.34 rather than 0.24.
 
-### What shipped
+#### What shipped
 
 - **`src/content/lessonContent.economy.es.js`** — lessons **33 and 34** rewritten from summary to full
   translation. Section counts (3 and 3), headings and structure unchanged.
@@ -18150,7 +18150,7 @@ extended rather than rewritten**, which is why 33 started at 0.34 rather than 0.
 - **`LAUNCH_READINESS.md`** — the generated §10.4 figure, `es 108,965 (0.794x)` -> `es 115,647
   (0.843x)`, written by `npm run readiness -- --write`.
 
-### Verification
+#### Verification
 
 - `npm test` **6/6 PASS**, 0 failures, 2 warnings (both pre-existing). `npm run build` clean in 925ms.
   `npm run check-blindspot` **7/7**.
@@ -18184,7 +18184,7 @@ extended rather than rewritten**, which is why 33 started at 0.34 rather than 0.
     content was right and the instrument was wrong, which is the ordinary direction of this failure and
     worth logging as such rather than quietly fixing.
 
-### The finding: the moving-reference effect is intermittent, not a per-run tax
+#### The finding: the moving-reference effect is intermittent, not a per-run tax
 
 The previous run found the headline count falling slower than the pairs fixed, because
 `ABRIDGED_BELOW` is `0.7 x` the corpus's own p90 — translating lessons raises the bar for the rest.
@@ -18197,7 +18197,7 @@ while lessons cross it in discrete jumps, and whether a given run pays that tax 
 nearest borderline lesson happens to sit. Both this run and the last are the metric behaving correctly.
 Item 93 now carries the corrected version with lesson 14's remaining margin named.
 
-### Adversarial self-check (step 5)
+#### Adversarial self-check (step 5)
 
 - **Blindspot register** — clean, **7/7**. This ships learner-facing copy in a non-English locale, so
   §10.1 is the live risk and got the targeted grep above on top of `check-blindspot`'s five-language
@@ -18217,7 +18217,7 @@ Item 93 now carries the corrected version with lesson 14's remaining margin name
 - **The ledger was deliberately not touched**, for the fourth run running — it fingerprints the
   *English* body, so a Spanish rewrite can neither clear nor create staleness.
 
-### Next run
+#### Next run
 
 **Item 93 continues: `es` economy 35-40, two lessons per run** (~19,000 characters, three runs), same
 method. Then the open question this item has been flagging since it was filed: **`ko`/`zh`/`ja` economy
@@ -18225,13 +18225,13 @@ method. Then the open question this item has been flagging since it was filed: *
 **Item 18 remains the entire critical path to ending Phase 0**, blocked on the owner creating an
 analytics-provider account, and **item 72's owner half — a deployed URL — is blindspot 10.10**.
 
-## 2026-08-22 (owner-directed) — `es` economy 35-36 translated in full; paragraph-count parity replaces the particulars audit as the structural check
+### 2026-08-22 (owner-directed) — `es` economy 35-36 translated in full; paragraph-count parity replaces the particulars audit as the structural check
 
 **Picked:** the owner asked for "es 35-36 next", item 93's queued tranche. Owner tree
 `OWNER-TREE c2331799fd3ee413aca864fd82d247a35ea31b01a70a6c4e37b00f6aad9105b2 (0 tracked modified,
 52 untracked)` — **UNMOVED**, so `UIUX/` and `drafts/` were untouched.
 
-### Step 3.5 — premise held; the instrument's control group is now 23 lessons wide
+#### Step 3.5 — premise held; the instrument's control group is now 23 lessons wide
 
 `es` 35 = **0.31**, 36 = **0.35** at `HEAD` against an `es` reference of **1.15**, both inside the
 item's band. The control is structural and now unusually strong: 23 `es` lessons sit at full volume
@@ -18245,7 +18245,7 @@ one-line definition plus "Normal = saludable. Invertida = peligro" — so **thre
 were simply absent from the Spanish app**. Lesson 35 §1/§2 were cut the same way; §3 of both lessons
 was already near-full and was extended rather than rewritten.
 
-### What shipped
+#### What shipped
 
 - **`src/content/lessonContent.economy.es.js`** — lessons **35 and 36** rewritten from summary to full
   translation. Section counts (3 and 3) unchanged.
@@ -18259,7 +18259,7 @@ was already near-full and was extended rather than rewritten.
 - **`LAUNCH_READINESS.md`** — the generated §10.4 figure, `es 115,647 (0.843x)` -> `es 122,996
   (0.896x)`.
 
-### Verification
+#### Verification
 
 - `npm test` **6/6 PASS**, 0 failures, 2 pre-existing warnings. `npm run build` clean in 1.20s.
   `npm run check-blindspot` **0 failures**.
@@ -18295,7 +18295,7 @@ was already near-full and was extended rather than rewritten.
   mandate and 2%, the friend analogy, all four shape names, 2s10s, the 1966 non-recession, the term
   premium and the New York Fed, flights to safety. All present.
 
-### The finding: the moving-reference effect is decelerating, and the healthy band is now known
+#### The finding: the moving-reference effect is decelerating, and the healthy band is now known
 
 Two runs ago the headline fell by 3 instead of 4; the last two runs it fell by a clean 2 each
 (91 -> 89 -> 87). The reason is that the reference is a **p90**, so each additional full translation
@@ -18310,7 +18310,7 @@ band, which I checked rather than assumed — the cause is that English 35 §1 i
 that Spanish cannot render as compactly, not padding. Item 93 now carries the band and a **1.25**
 tripwire above which a future pair should be checked for added sentences before being recorded.
 
-### Adversarial self-check (step 5)
+#### Adversarial self-check (step 5)
 
 - **Blindspot register** — clean. §10.1 got the targeted grep plus the two named sentences above, on
   top of `check-blindspot`'s five-language patterns. §10.2: no Dalio. §2.3: no new live-looking dates.
@@ -18329,7 +18329,7 @@ tripwire above which a future pair should be checked for added sentences before 
   might prefer something idiomatic.
 - **The ledger was deliberately not touched**, fifth run running — it fingerprints the *English* body.
 
-### Next run
+#### Next run
 
 **Item 93: `es` economy 37-40** (~12,000 characters, two runs) finishes the Spanish economy track.
 Then the decision this item has flagged since filing: **`ko`/`zh`/`ja` economy 29-40 is roughly 65,000
@@ -18337,13 +18337,13 @@ more characters, and the owner should see that number before it is spent.** **It
 entire critical path to ending Phase 0**, blocked on the owner creating an analytics-provider account,
 and **item 72's owner half — a deployed URL — is blindspot 10.10**.
 
-## 2026-08-22 (owner-directed) — `es` economy 37-38; a prediction this log made last run turned out wrong, and the currency abbreviations were wrong in Spanish
+### 2026-08-22 (owner-directed) — `es` economy 37-38; a prediction this log made last run turned out wrong, and the currency abbreviations were wrong in Spanish
 
 **Picked:** the owner asked for "es 37-38 next", item 93's queued tranche. Owner tree
 `OWNER-TREE c2331799fd3ee413aca864fd82d247a35ea31b01a70a6c4e37b00f6aad9105b2 (0 tracked modified,
 52 untracked)` — **UNMOVED**.
 
-### Step 3.5 — premise held on both
+#### Step 3.5 — premise held on both
 
 `es` 37 = **0.31**, 38 = **0.29** at `HEAD` against an `es` reference of **1.15**. Control unchanged in
 kind and now 23 lessons wide (1.02-1.20 full-volume vs 0.25-0.35 untranslated).
@@ -18354,7 +18354,7 @@ paragraph explaining what QE buying actually does to bond prices and yields. Les
 reduced to telegraphic fragments (`EXPANSIÓN: El crédito fluye. PIB sube, empleo crece.`) that dropped
 the factory-town narrative and two of the three S&P 500 figures.
 
-### What shipped
+#### What shipped
 
 - **`src/content/lessonContent.economy.es.js`** — lessons **37 and 38** rewritten from summary to full
   translation. Section counts (3 and 3) and headings unchanged.
@@ -18369,7 +18369,7 @@ the factory-town narrative and two of the three S&P 500 figures.
   `38.es` 0.29 -> 1.17).
 - **`LAUNCH_READINESS.md`** — generated §10.4 figure, `es 122,996 (0.896x)` -> `es 129,320 (0.942x)`.
 
-### Verification
+#### Verification
 
 - `npm test` **6/6 PASS**, 0 failures, 2 pre-existing warnings. `npm run build` clean in 1.09s.
   `npm run check-blindspot` **0 failures**.
@@ -18395,7 +18395,7 @@ the factory-town narrative and two of the three S&P 500 figures.
   en 4,344**, with the QE table rendering as `QE1 (2008): $1.75 billones / QE2 (2010): $600 mil
   millones / ...`; lesson 38 **es 5,506 vs en 4,781**.
 
-### The correction: last run's "decelerating" prediction was wrong
+#### The correction: last run's "decelerating" prediction was wrong
 
 The previous entry claimed the moving-reference effect was decelerating and that "the remaining `es`
 37-40 [would] cost little or no further threshold drift." **That was wrong, and this run's data
@@ -18413,7 +18413,7 @@ What *can* be said: lesson 14 has survived all three threshold rises but its mar
 expected to fall by **1, not 2**. Recorded as a prediction so the next run can check it — which is the
 same thing this run just did to its predecessor.
 
-### Adversarial self-check (step 5)
+#### Adversarial self-check (step 5)
 
 - **Blindspot register** — clean. §10.1 is the live risk here and got the hedge-count and figure-parity
   measurements above rather than a grep alone. §10.2: no Dalio — worth stating explicitly for lesson
@@ -18433,7 +18433,7 @@ same thing this run just did to its predecessor.
   other three languages, which is an argument for reading `ko`/`zh`/`ja` rather than assuming the
   gap there is purely one of volume.
 
-### Next run
+#### Next run
 
 **Item 93: `es` economy 39-40** (~5,000 characters) **finishes the Spanish economy track** and takes
 `es` to 0 abridged economy lessons. Expect the headline to fall by 1 rather than 2 (see above).
@@ -18443,13 +18443,13 @@ finding above suggests those languages need *reading*, not just volume. **Item 1
 critical path to ending Phase 0**, blocked on the owner creating an analytics-provider account, and
 **item 72's owner half — a deployed URL — is blindspot 10.10**.
 
-## 2026-08-22 (owner-directed) — `es` economy 39-40: the Spanish economy track is complete, and last run's prediction held to 0.001
+### 2026-08-22 (owner-directed) — `es` economy 39-40: the Spanish economy track is complete, and last run's prediction held to 0.001
 
 **Picked:** the owner asked for "es 39-40 next" — the final tranche of item 93's `es` economy work.
 Owner tree `OWNER-TREE c2331799fd3ee413aca864fd82d247a35ea31b01a70a6c4e37b00f6aad9105b2 (0 tracked
 modified, 52 untracked)` — **UNMOVED** across all six runs of this date.
 
-### Step 3.5 — premise held; these were the two worst pairs in the track
+#### Step 3.5 — premise held; these were the two worst pairs in the track
 
 `es` 39 = **0.26**, 40 = **0.25** at `HEAD` — the two lowest ratios in the economy track, against a
 reference of **1.17**.
@@ -18461,7 +18461,7 @@ and the Spanish was **a single line listing the acronyms**: `PIB, IPC, PMI, VIX,
 los indicadores clave para leer el estado de la economía.` Lesson 40 §1 is **the example item 93 was
 filed on**: three bare `REGLA n:` sentences against English's four paragraphs.
 
-### What shipped
+#### What shipped
 
 - **`src/content/lessonContent.economy.es.js`** — lessons **39 and 40** rewritten from summary to full
   translation. Section counts (2 and 2) and headings unchanged. **This completes `es` 29-40.**
@@ -18469,7 +18469,7 @@ filed on**: three bare `REGLA n:` sentences against English's four paragraphs.
   `40.es` 0.25 -> 1.16).
 - **`LAUNCH_READINESS.md`** — generated §10.4 figure, `es 129,320 (0.942x)` -> `es 134,697 (0.981x)`.
 
-### Verification
+#### Verification
 
 - `npm test` **6/6 PASS**, 0 failures, 2 pre-existing warnings. `npm run build` clean in 1.10s.
   `npm run check-blindspot` **0 failures**.
@@ -18498,7 +18498,7 @@ filed on**: three bare `REGLA n:` sentences against English's four paragraphs.
   with all six gauges rendering; lesson 40 **es 3,368 vs en 2,937**, with all three rules and the
   family callback rendering.
 
-### The prediction from last run held to 0.001
+#### The prediction from last run held to 0.001
 
 The previous entry predicted: lesson 14 would cross the rising threshold when 39/40 landed, and **the
 headline would fall by 1 rather than 2**. Both held. 39/40 lifted the `es` reference **1.1682 ->
@@ -18511,7 +18511,7 @@ under a bar that rose beneath it. Anyone auditing the `es` essentials track shou
 borderline artifact rather than as evidence its translation degraded — recorded in item 93 next to the
 now-corrected "decelerating" claim from two runs ago.
 
-### The track is done; what that does and does not mean
+#### The track is done; what that does and does not mean
 
 `npm run translation-completeness` now reports **0 abridged `es` lessons in 29-40**, and §10.4 reads
 `es 134,697 chars (0.981x of English's 137,249)`. **Every remaining `es` gap is in the `essentials`
@@ -18524,7 +18524,7 @@ roughly **0.85 added characters per English character**, once existing stubs are
 `ko`/`zh`/`ja` economy 29-40 a **~65,000-character** job on the same basis, and it is unchanged by
 this run because no non-Spanish content was touched.
 
-### Adversarial self-check (step 5)
+#### Adversarial self-check (step 5)
 
 - **Blindspot register** — clean, and checked at pattern level rather than by whole-repo green.
   §10.2: no Dalio; worth noting that lesson 40's three rules and the three-cycle template are the most
@@ -18545,7 +18545,7 @@ this run because no non-Spanish content was touched.
   were both caught by the next measurement rather than by re-reading, which is the argument for
   writing predictions down in a falsifiable form in the first place.
 
-### Next run
+#### Next run
 
 **Item 93's `es` half is closed.** The open question is now the owner's: **`ko`/`zh`/`ja` economy
 29-40, ~65,000 characters on the measured rate above** — and the 2026-08-22 currency finding (English
@@ -18555,7 +18555,7 @@ A smaller, unblocked alternative is **`es` essentials 1-11 and 14**, the last 12
 **Item 18 remains the entire critical path to ending Phase 0**, blocked on the owner creating an
 analytics-provider account, and **item 72's owner half — a deployed URL — is blindspot 10.10**.
 
-## 2026-08-22 (scheduled dev-agent) — `ko` economy 29-30: the second language starts, and the `es` rising-reference effect turns out not to transfer
+### 2026-08-22 (scheduled dev-agent) — `ko` economy 29-30: the second language starts, and the `es` rising-reference effect turns out not to transfer
 
 **Picked:** item 93, the first `ko` tranche. Owner tree `OWNER-TREE
 c2331799fd3ee413aca864fd82d247a35ea31b01a70a6c4e37b00f6aad9105b2 (0 tracked modified, 52 untracked)`
@@ -18566,7 +18566,7 @@ Took the former, one tranche at a time, because the 2026-08-18 reversal makes ec
 and essentials the optional track — and because a two-lesson tranche does not commit the owner to
 the whole ~65,000-character estimate, which this run has now measured down anyway (see below).
 
-### Step 3.5 — one candidate REFUTED before it was started, then the real premise confirmed
+#### Step 3.5 — one candidate REFUTED before it was started, then the real premise confirmed
 
 **The candidate I opened the run with was the previous entry's own suggestion — that the `es`
 currency defect (English `$900B`/`$9T` abbreviations left in Spanish, where `billón` is 10^12)
@@ -18593,7 +18593,7 @@ lender and borrower *motives*, a sentence with no counterpart in the English at 
 see that**, which is the concrete case for the item's standing "these languages need reading, not
 just volume" warning.
 
-### What shipped
+#### What shipped
 
 - **`src/content/lessonContent.economy.ko.js`** — lessons **29 and 30** rewritten from summary to
   full translation. Section counts (2 and 3) and headings unchanged.
@@ -18602,7 +18602,7 @@ just volume" warning.
 - **`LAUNCH_READINESS.md`** — generated §10.4 figure, `ko 48,892 (0.356x)` -> `ko 50,838 (0.370x)`,
   written by `npm run readiness -- --write` rather than by hand.
 
-### Verification
+#### Verification
 
 - `npm test` **PASS, 0 failures**, 2 pre-existing warnings (the review-ledger 83%/7-stale warning and
   §33's own recorded-debt warning). `npm run build` clean in 1.07s. `npm run check-blindspot`
@@ -18629,7 +18629,7 @@ just volume" warning.
   ko 2,091**, a 0.54 rendered ratio that agrees with the 0.555 measured on the file, so the
   instrument and the DOM tell the same story. Server stopped and `localStorage` cleared afterward.
 
-### The `es` rising-reference effect does not transfer to `ko` — measured, and stated as a prediction
+#### The `es` rising-reference effect does not transfer to `ko` — measured, and stated as a prediction
 
 Six `es` runs were dominated by the p90 reference climbing as lessons were fixed, which eventually
 pushed *untouched* essentials lessons under the bar (lesson 14 crossed by 0.0010 with not one
@@ -18662,7 +18662,7 @@ filing is **too high for `ko`**: the remaining ten lessons are **13,920 Korean c
 35,453 English characters in them.
 `zh`/`ja` have not been measured on this basis and should not inherit the number.
 
-### Adversarial self-check (step 5)
+#### Adversarial self-check (step 5)
 
 - **Blindspot register** — clean, checked at pattern level with a control rather than by whole-repo
   green. §10.2: no Dalio, no person named; lesson 30's credit material is Dalio-derived and is
@@ -18683,7 +18683,7 @@ filing is **too high for `ko`**: the remaining ten lessons are **13,920 Korean c
   assert an English-drift re-review that did not happen. The "(Beta)" limit stands: **no fluent
   Korean reviewer has read these two lessons for register or idiom.**
 
-### Next run
+#### Next run
 
 **Item 93: `ko` economy 31-32**, a measured **2,405 Korean characters** to add (6,222 English), and the
 headline should fall 82 -> 80 exactly. The `ko` track is now the cheapest remaining tranche in the
@@ -18693,14 +18693,14 @@ unblocked alternative is still **`es` essentials 1-11 and 14**, the last 12 `es`
 **Item 18 remains the entire critical path to ending Phase 0**, blocked on the owner creating an
 analytics-provider account, and **item 72's owner half — a deployed URL — is blindspot 10.10**.
 
-## 2026-08-22 (owner-directed) — `ko` economy 31-32, and the previous run's prediction held to four decimals
+### 2026-08-22 (owner-directed) — `ko` economy 31-32, and the previous run's prediction held to four decimals
 
 **Picked:** the owner asked for "ko economy 31-32 next" — item 93's second Korean tranche, and the
 one the previous entry queued. Owner tree `OWNER-TREE
 c2331799fd3ee413aca864fd82d247a35ea31b01a70a6c4e37b00f6aad9105b2 (0 tracked modified, 52 untracked)`
 — **UNMOVED**.
 
-### Step 3.5 — premise confirmed, and the previous run's projection reproduced exactly
+#### Step 3.5 — premise confirmed, and the previous run's projection reproduced exactly
 
 `ko` 31 = **0.1509**, 32 = **0.1732** at `HEAD`, both abridged against a `ko` reference of 0.5510.
 **Carried a control**: re-measured 29 and 30 first and got **0.5209 / 0.5548**, matching what the
@@ -18721,7 +18721,7 @@ restaurants and hardware store, the server whose hours get cut — leaving arrow
 (`높은 금리 → 차입 감소 → 지출 감소`) where English has a causal story, plus the `(“Credit”)`
 cross-reference and the naming of deflation. §3 was already close to complete and needed the least.
 
-### What shipped
+#### What shipped
 
 - **`src/content/lessonContent.economy.ko.js`** — lessons **31 and 32** rewritten from summary to
   full translation. Section counts (2 and 3) and headings unchanged.
@@ -18730,7 +18730,7 @@ cross-reference and the naming of deflation. §3 was already close to complete a
 - **`LAUNCH_READINESS.md`** — generated §10.4 figure, `ko 50,838 (0.370x)` -> `ko 53,117 (0.387x)`,
   written by `npm run readiness -- --write`.
 
-### Verification
+#### Verification
 
 - `npm test` **PASS, 0 failures**, 2 pre-existing warnings. `npm run build` clean in 1.12s.
   `npm run check-blindspot` **0 failures**.
@@ -18773,7 +18773,7 @@ language bodies are in the DOM at once**. Re-measured after settle: 2,527, with
 prove exactly one language was present. **Assert single-language before trusting any rendered
 character count taken after a language switch.**
 
-### The prediction from the previous run held to four decimals
+#### The prediction from the previous run held to four decimals
 
 The previous entry predicted, on a simulation, that `ko` differs from `es`: the reference would not
 move, the headline would fall by exactly 2, and no untouched lesson would cross. **All three held.**
@@ -18782,7 +18782,7 @@ nearest un-abridged `ko` lesson, still at **0.4545** with its margin **0.0688 un
 the first `ko` tranche to test it, and one confirmation is not proof — but it is now a checked model
 rather than an asserted one, and it stands for 33/34 onward.
 
-### Adversarial self-check (step 5)
+#### Adversarial self-check (step 5)
 
 - **Blindspot register** — clean, checked at pattern level with controls rather than by whole-repo
   green. §10.2: no Dalio and no person named; lesson 32's short-term-debt-cycle machinery and lesson
@@ -18801,7 +18801,7 @@ rather than an asserted one, and it stands for 33/34 onward.
   reviewed would assert an English-drift re-review that did not happen. **No fluent Korean reviewer
   has read these four lessons for register or idiom**; the "(Beta)" limit is doing real work here.
 
-### Next run
+#### Next run
 
 **Item 93: `ko` economy 33-34.** English is 3,654 + 4,167 = 7,821 characters, and the
 instrument puts the gap at **3,024 Korean characters** to add (not the ~2,900 a flat 0.37 rate
@@ -18812,14 +18812,14 @@ the `ko` rate — `zh` runs at a 0.35 reference and `ja` 0.50, so both need thei
 **Item 18 remains the entire critical path to ending Phase 0**, blocked on the owner creating an
 analytics-provider account, and **item 72's owner half — a deployed URL — is blindspot 10.10**.
 
-## 2026-08-22 (owner-directed) — `ko` economy 33-34: the track is half done, and the prediction holds a second time
+### 2026-08-22 (owner-directed) — `ko` economy 33-34: the track is half done, and the prediction holds a second time
 
 **Picked:** the owner asked for "ko economy 33-34 next" — item 93's third Korean tranche, the one the
 previous entry queued. Owner tree `OWNER-TREE
 c2331799fd3ee413aca864fd82d247a35ea31b01a70a6c4e37b00f6aad9105b2 (0 tracked modified, 52 untracked)`
 — **UNMOVED** across all three `ko` runs.
 
-### Step 3.5 — premise confirmed, and the previous run's projection reproduced to the digit
+#### Step 3.5 — premise confirmed, and the previous run's projection reproduced to the digit
 
 `ko` 33 = **0.1787**, 34 = **0.1517** at `HEAD`, both abridged. **Control first**: re-measured 31 and
 32 and got **0.5395 / 0.5250**, exactly what the previous run recorded. Characters-to-add came out at
@@ -18847,7 +18847,7 @@ therefore removed the caveat and kept the leading question**, which is a worse �
 English. Restoring the paragraph fixes it. No check would have flagged this: nothing was added, and
 `check-blindspot`'s patterns look for advice phrasing, not for a missing hedge.
 
-### What shipped
+#### What shipped
 
 - **`src/content/lessonContent.economy.ko.js`** — lessons **33 and 34** rewritten from summary to
   full translation. Section counts (3 and 3) and headings unchanged.
@@ -18855,7 +18855,7 @@ English. Restoring the paragraph fixes it. No check would have flagged this: not
   `34.ko` 0.15 -> 0.53).
 - **`LAUNCH_READINESS.md`** — generated §10.4 figure, `ko 53,117 (0.387x)` -> `ko 56,014 (0.408x)`.
 
-### Verification
+#### Verification
 
 - `npm test` **PASS, 0 failures**, 2 pre-existing warnings. `npm run build` clean in 1.08s.
   `npm run check-blindspot` **0 failures**.
@@ -18884,7 +18884,7 @@ English. Restoring the paragraph fixes it. No check would have flagged this: not
   reference renders, and lesson 33's cycle diagram is untouched and still drawing. Server stopped and
   `localStorage` cleared afterward.
 
-### The prediction holds a second time, and the cost rate is now stable
+#### The prediction holds a second time, and the cost rate is now stable
 
 Reference **0.5510 before and after**, threshold **0.3857**, headline **80 -> 78**, lesson 16 still
 at **0.4545** with margin **0.0688 unchanged** — every figure identical to the previous run's. Two
@@ -18897,7 +18897,7 @@ is **8,490 characters against 21,410 English**, so the whole `ko` economy track 
 **15,600 characters** — against the ~22,000 a naive read of the original ~65,000 three-language
 estimate implied.
 
-### Adversarial self-check (step 5)
+#### Adversarial self-check (step 5)
 
 - **Blindspot register** — clean, checked at pattern level with three controls. §10.2: lesson 33's
   long-term-debt-cycle framing and lesson 34's four-levers/beautiful-vs-ugly-deleveraging material
@@ -18916,7 +18916,7 @@ estimate implied.
   limit is load-bearing, and lesson 34's hyperinflation and default material is the place where a
   register error would matter most.
 
-### Next run
+#### Next run
 
 **Item 93: `ko` economy 35-36**, a measured **3,226 Korean characters** to add (8,474 English), with
 the headline expected to fall **78 -> 76** and the reference to stay at 0.5510. Four `ko` economy
@@ -18925,13 +18925,13 @@ lessons would remain after that (37-40, ~5,264 characters), so the track closes 
 **Item 18 remains the entire critical path to ending Phase 0**, blocked on the owner creating an
 analytics-provider account, and **item 72's owner half — a deployed URL — is blindspot 10.10**.
 
-## 2026-08-22 (owner-directed) — `ko` economy 35-36, and a hedge-parity check that found a real gap
+### 2026-08-22 (owner-directed) — `ko` economy 35-36, and a hedge-parity check that found a real gap
 
 **Picked:** the owner asked for "ko economy 35-36 next" — item 93's fourth Korean tranche. Owner tree
 `OWNER-TREE c2331799fd3ee413aca864fd82d247a35ea31b01a70a6c4e37b00f6aad9105b2 (0 tracked modified,
 52 untracked)` — **UNMOVED** across all four `ko` runs.
 
-### Step 3.5 — premise confirmed, projection reproduced a third time
+#### Step 3.5 — premise confirmed, projection reproduced a third time
 
 `ko` 35 = **0.1650**, 36 = **0.1749** at `HEAD`, both abridged. **Control first**: 33 and 34
 re-measured at **0.5359 / 0.5337**, matching the previous run exactly. Characters-to-add came out at
@@ -18950,7 +18950,7 @@ Lesson 36 was worse structurally: **§1 carried two of English's five paragraphs
 four yield-curve shapes were simply absent* — FLAT and STEEP entirely, and the friend-lending opener
 with the 2/10/30-year maturities. §2 and §3 were each one merged paragraph against three and four.
 
-### What shipped
+#### What shipped
 
 - **`src/content/lessonContent.economy.ko.js`** — lessons **35 and 36** rewritten from summary to
   full translation. Section counts (3 and 3) and headings unchanged.
@@ -18958,7 +18958,7 @@ with the 2/10/30-year maturities. §2 and §3 were each one merged paragraph aga
   `36.ko` 0.17 -> 0.55).
 - **`LAUNCH_READINESS.md`** — generated §10.4 figure, `ko 56,014 (0.408x)` -> `ko 59,198 (0.431x)`.
 
-### Verification
+#### Verification
 
 - `npm test` **PASS, 0 failures**, 2 pre-existing warnings. `npm run build` clean in 1.25s.
   `npm run check-blindspot` **0 failures**.
@@ -19000,7 +19000,7 @@ this one; on ordinary explanatory prose it would be noise.
   not disturb the one lesson in the track with an interactive component. Server stopped and
   `localStorage` cleared afterward.
 
-### The prediction holds a third time; the rate is stable to 0.004
+#### The prediction holds a third time; the rate is stable to 0.004
 
 Reference **0.5510** before and after, threshold **0.3857**, headline **78 -> 76**, lesson 16 still
 **0.4545** with margin **0.0688**. Three for three across six lessons.
@@ -19009,7 +19009,7 @@ Cost rate across four runs: 0.366, 0.366, 0.368, **0.370** — **10,306 added Ko
 27,828 English across 29-36**. Remaining `ko` economy 37-40 is **5,264 characters against 12,936
 English**, so the track closes in two more runs.
 
-### Adversarial self-check (step 5)
+#### Adversarial self-check (step 5)
 
 - **Blindspot register** — clean, checked at pattern level with four controls plus the hedge count
   above. §10.2: no Dalio, no person named. §10.1: lesson 35 §2 is the sharpest surface in the track
@@ -19028,7 +19028,7 @@ English**, so the track closes in two more runs.
   term-premium section is the most technical prose in the track and the place where a register or
   terminology error would be least visible to me.
 
-### Next run
+#### Next run
 
 **Item 93: `ko` economy 37-38**, a measured **2,886 Korean characters** to add (7,177 English), with
 the headline expected to fall **76 -> 74** and the reference to stay at 0.5510. Then 39-40 (~2,378
@@ -19039,13 +19039,13 @@ remain unmeasured on the added-character basis and must not inherit the `ko` rat
 **Item 18 remains the entire critical path to ending Phase 0**, blocked on the owner creating an
 analytics-provider account, and **item 72's owner half — a deployed URL — is blindspot 10.10**.
 
-## 2026-08-22 (owner-directed) — `ko` economy 37-38: the QE table restored, and the app's most advice-adjacent lesson gets hedge parity
+### 2026-08-22 (owner-directed) — `ko` economy 37-38: the QE table restored, and the app's most advice-adjacent lesson gets hedge parity
 
 **Picked:** the owner asked for "ko economy 37-38 next" — item 93's fifth Korean tranche. Owner tree
 `OWNER-TREE c2331799fd3ee413aca864fd82d247a35ea31b01a70a6c4e37b00f6aad9105b2 (0 tracked modified,
 52 untracked)` — **UNMOVED** across all five `ko` runs.
 
-### Step 3.5 — premise confirmed, projection reproduced a fourth time
+#### Step 3.5 — premise confirmed, projection reproduced a fourth time
 
 `ko` 37 = **0.1619**, 38 = **0.1375** at `HEAD`. **Control first**: 35 and 36 re-measured at
 **0.5451 / 0.5469**, matching the previous run. Characters-to-add **1,307 + 1,578 = 2,885** against
@@ -19060,7 +19060,7 @@ most advice-adjacent lesson in the app** — had lost the factory-town narrative
 three S&P 500 figures except one**, the favored-asset lists for two of four phases entirely, and
 three of §3's four mechanism paragraphs.
 
-### What shipped
+#### What shipped
 
 - **`src/content/lessonContent.economy.ko.js`** — lessons **37 and 38** rewritten from summary to
   full translation. Section counts (3 and 3) and headings unchanged. **Nine of ten fields changed;
@@ -19070,7 +19070,7 @@ three of §3's four mechanism paragraphs.
   `38.ko` 0.14 -> 0.51).
 - **`LAUNCH_READINESS.md`** — generated §10.4 figure, `ko 59,198 (0.431x)` -> `ko 61,871 (0.451x)`.
 
-### Verification
+#### Verification
 
 - `npm test` **PASS, 0 failures**, 2 pre-existing warnings. `npm run build` clean in 1.01s.
   `npm run check-blindspot` **0 failures**.
@@ -19106,7 +19106,7 @@ three of §3's four mechanism paragraphs.
   the restored QE table**, the Fed balance-sheet chart is intact, and lesson 38's three S&P figures
   and its interactive cycle-phase widget all render. Server stopped, `localStorage` cleared.
 
-### The prediction holds a fourth time
+#### The prediction holds a fourth time
 
 Reference **0.5510** before and after, threshold **0.3857**, headline **76 -> 74**, lesson 16
 **0.4545** / margin **0.0688**. Four for four across eight lessons.
@@ -19114,7 +19114,7 @@ Reference **0.5510** before and after, threshold **0.3857**, headline **76 -> 74
 Cost rate across five runs: 0.366, 0.366, 0.368, 0.370, **0.371** — **12,979 added Korean characters
 against 35,005 English across 29-38**.
 
-### Adversarial self-check (step 5)
+#### Adversarial self-check (step 5)
 
 - **Blindspot register** — clean. §10.2 checked directly rather than inferred, and the Buffett
   question answered by reading the guard. §10.1: five patterns, five controls, plus the 9-for-9
@@ -19132,7 +19132,7 @@ against 35,005 English across 29-38**.
   38 is where that matters most: it is the lesson whose register most affects whether the app reads
   as education or as suggestion.
 
-### Next run
+#### Next run
 
 **Item 93: `ko` economy 39-40 — the final tranche**, a measured **2,378 Korean characters** to add
 (5,759 English), headline expected **74 -> 72**, reference staying at 0.5510. That closes the `ko`

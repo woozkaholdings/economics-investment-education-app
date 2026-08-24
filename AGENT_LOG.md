@@ -182,7 +182,7 @@ for the history. No open P1/P2 items.
 > Backlog items, the App summary and the Environment note are **never** archived. (W-3's original
 > reasoning stands; what it lacked was a trigger, so it fired once and stopped.)
 >
-> ### W-5.4 — run-log entries at the wrong heading level. **RE-SCOPED 2026-08-23: the counts below are stale and it now spans two files.**
+> ### W-5.4 — ✅ **DONE 2026-08-24** (scheduled dev-agent). 37 `##` run entries demoted to `###` across both files — and their **276 subsections demoted to `####`**, which the item as written did not ask for. **See the premise correction below; the fix as scoped was incomplete and would have made 36 entries worse.**
 > **Post-archive, measured this run:** `AGENT_LOG.md` holds **6 `##` + 3 `###`** run entries (all 9 dated
 > 08-23) and `AGENT_LOG.archive.md` holds **31 `##` + 189 `###`**. The archive move was deliberately
 > verbatim — that is what its integrity proof rests on — so it relocated the defect rather than creating or
@@ -192,6 +192,22 @@ for the history. No open P1/P2 items.
 > the reason to fix it. **Do both files in one mechanical commit** (37 headings total), and prove it with a
 > line-count-identical + entry-count-identical check, since a sorted-line diff cannot be used when the
 > lines themselves are what changed.
+>
+> **PREMISE CORRECTION 2026-08-24 — measured before editing, and it changed the fix.** The counts were
+> exact (6 + 31 = 37 `##`; the live `###` count had grown 3 → 12 as nine more runs landed, which is a
+> stale snapshot, not a wrong claim). What the item got wrong is what the *target shape* is. Measuring
+> each entry's **children** rather than only its own level showed two different conventions in the file:
+> the 37 `##` entries were **correctly nested internally** (`## entry` > `### subsections`, 36 of 37),
+> while the newer `###` entries recent runs wrote were **flat** (`### entry` > `### subsections`, all 12
+> live ones). Demoting only the entry line, as the item said, would have converted 36 correctly-nested
+> entries into flat ones — trading a top-level defect for a same-level one. **The fix therefore demoted
+> the 37 entries AND every heading inside a dated entry in both files** (276 of them), so the whole run
+> log is now uniformly `## Run log` > `### entry` > `#### subsection`. The 189 archived `###` entries
+> were silent on the convention because 188 of them carry no subsections at all.
+> **Method note for the next structural pass:** measure the *shape* (entry level **and** child levels),
+> not just the level of the line the item names. A per-entry child-level tally is what exposed this;
+> counting `^## ` alone cannot. Fence-awareness was checked too (0 headings inside code fences, fences
+> balanced in both files) since the log is full of pasted output.
 > ### W-5.4 (original text)
 > **76 entries are `### 2026-08-…`; 37 are `## 2026-08-…`, every one of them since
 > `## 2026-08-20 — the Sector screen's two "no data" states…`.** At `##` they are siblings of
@@ -4349,13 +4365,13 @@ documented above.**
 > now lives in the backlog's W-5.3 (600 KB), so a dev-agent run may legitimately do this, not only
 > the weekly reviewer.
 
-## 2026-08-23 (scheduled dev-agent) — `ko` economy 39-40: the Korean economy track closes, and the prediction breaks on its last check
+### 2026-08-23 (scheduled dev-agent) — `ko` economy 39-40: the Korean economy track closes, and the prediction breaks on its last check
 
 **Picked:** item 93's sixth and final Korean tranche — the one the previous run queued. Owner tree
 `OWNER-TREE c2331799fd3ee413aca864fd82d247a35ea31b01a70a6c4e37b00f6aad9105b2 (0 tracked modified,
 52 untracked)` — **UNMOVED** across all six `ko` runs. `HEAD` still `3d7d900`.
 
-### Step 3.5 — premise confirmed to the character, and one characterization corrected
+#### Step 3.5 — premise confirmed to the character, and one characterization corrected
 
 `ko` 39 = **0.1396**, 40 = **0.1357** at `HEAD`. **Control first**: 37 and 38 re-measured at
 **0.5378 / 0.5069**, matching the previous run's recorded figures. Characters-to-add
@@ -4376,7 +4392,7 @@ the Korean twin of the Spanish `REGLA 1:` stub, with the indebted family, the fa
 farmer's tractor and the policy-maker closing all absent; §2 was one sentence against two paragraphs,
 missing the 75-100 year and 5-8 year cycle lengths and the entire "not random noise" paragraph.
 
-### What shipped
+#### What shipped
 
 - **`src/content/lessonContent.economy.ko.js`** — lessons **39 and 40** rewritten from summary to
   full translation. Section counts (2 and 2) and headings unchanged. **Seven of ten fields changed;
@@ -4386,7 +4402,7 @@ missing the 75-100 year and 5-8 year cycle lengths and the entire "not random no
   `40.ko` 0.14 -> 0.55).
 - **`LAUNCH_READINESS.md`** — generated §10.4 figure, `ko 61,871 (0.451x)` -> `ko 64,327 (0.469x)`.
 
-### Verification
+#### Verification
 
 - `npm test` **PASS, exit 0, 0 failures**, 2 pre-existing warnings. `npm run build` clean in 1.03s.
   `npm run check-blindspot` **0 failures**.
@@ -4435,7 +4451,7 @@ missing the 75-100 year and 5-8 year cycle lengths and the entire "not random no
   *(Tooling note, matching the 2026-08-18 ninth run: `read_page` returns an empty 0x0 tree against
   this app; `javascript_tool` and `screenshot` both work. Not a regression in the app.)*
 
-### The prediction held on the half that matters and broke on the other
+#### The prediction held on the half that matters and broke on the other
 
 Recorded prediction: headline **-2 exactly, no collateral crossing, reference staying 0.5510**.
 
@@ -4452,7 +4468,7 @@ Recorded prediction: headline **-2 exactly, no collateral crossing, reference st
 39's 0.5773, not because the rate drifted. **Whole `ko` economy track: 15,435 added characters
 against 40,764 English = 0.379/char.**
 
-### Adversarial self-check (step 5)
+#### Adversarial self-check (step 5)
 
 - **Blindspot register** — clean, and checked rather than inferred: §10.1 five patterns with five
   firing controls plus the hedge parity, §10.2 `/dalio/i` run directly on the new text, §2.3 a
@@ -4473,7 +4489,7 @@ against 40,764 English = 0.379/char.**
   twelve lessons.** Lesson 40 is the app's closing lesson and the one a learner is most likely to
   quote back; its register is unverified by anyone who speaks the language.
 
-### Next run
+#### Next run
 
 **Item 93 has no `ko` or `es` economy work left.** What remains is **`zh` and `ja`, 24 abridged
 pairs each**, and **`es`/`ko` `essentials` (1-11 and 14), 12 each**. The natural next pick is
@@ -4486,14 +4502,14 @@ be *added*, not preserved, and lesson 37's QE table is where that will bite.
 **Item 18 remains the entire critical path to ending Phase 0**, blocked on the owner creating an
 analytics-provider account, and **item 72's owner half — a deployed URL — is blindspot 10.10**.
 
-## 2026-08-23 (owner-directed) — `zh` economy 29-30: the third language starts, and the item's track boundaries were wrong
+### 2026-08-23 (owner-directed) — `zh` economy 29-30: the third language starts, and the item's track boundaries were wrong
 
 **Picked:** the owner asked for "zh economy 29-30 next" — item 93's first Chinese tranche. Owner tree
 `OWNER-TREE c2331799fd3ee413aca864fd82d247a35ea31b01a70a6c4e37b00f6aad9105b2 (0 tracked modified,
 52 untracked)` at the start of the run — **UNMOVED**. `HEAD` `b93b97b`.
 **⚠️ It did not stay unmoved — see "A concurrent editor" at the end. Nothing was committed from it.**
 
-### Step 3.5 — numbers confirmed, and the item's track boundaries falsified
+#### Step 3.5 — numbers confirmed, and the item's track boundaries falsified
 
 `zh` 29 = **0.0966**, 30 = **0.1203** at `HEAD`; `zh` reference **0.3490**, threshold **0.2443**, 24
 abridged. The item's "`zh` runs at a 0.35 reference" and "`zh` 29-40 sit at 0.08-0.12" both reproduce
@@ -4522,7 +4538,7 @@ all** — the English is the $20,000-car worked example; the Chinese was "lender
 more money / borrowers want to buy what they can't afford now". **That is the same substitution item
 93 already recorded for `ko` 30**, in the same lesson, in a second language.
 
-### What shipped
+#### What shipped
 
 - **`src/content/lessonContent.economy.zh.js`** — lessons **29 and 30** rewritten from summary to
   full translation. Section counts (2 and 3) and headings unchanged. **Nine of nine body/takeaway/
@@ -4531,7 +4547,7 @@ more money / borrowers want to buy what they can't afford now". **That is the sa
   `30.zh` 0.12 -> 0.34).
 - **`LAUNCH_READINESS.md`** — generated §10.4 figure, `zh 30,993 (0.226x)` -> `zh 32,163 (0.234x)`.
 
-### Verification
+#### Verification
 
 - `npm test` **exit 0, 0 failures**, 2 pre-existing warnings. `npm run build` clean in 1.05s.
   `npm run check-blindspot` **0 failures**.
@@ -4560,7 +4576,7 @@ more money / borrowers want to buy what they can't afford now". **That is the sa
   — lesson 30's English body unchanged and intact at 3,654 characters. Console clean, `localStorage`
   cleared, server stopped.
 
-### The projection held on all four figures, and it is the case `ko` 39 predicted
+#### The projection held on all four figures, and it is the case `ko` 39 predicted
 
 Reference **0.3490 before and after**, threshold **0.2443**, headline **72 -> 70**, lesson 16's
 margin **0.0409** unchanged. The previous run falsified the "reference stays put" half of this model
@@ -4571,7 +4587,7 @@ headline always, the reference only when the new ratios will land at or under th
 Cost: **1,170 added Chinese characters against 5,311 English = 0.220/char** — against `ko`'s 0.379
 and `es`'s 0.85. **`zh` did not inherit the `ko` rate**, exactly as the item warned.
 
-### Adversarial self-check (step 5)
+#### Adversarial self-check (step 5)
 
 - **Blindspot register** — clean, and checked rather than inferred: §10.1 five patterns with five
   firing controls, §10.2 run directly on the new text, §2.3 a year-scan returning empty, §10.3 no
@@ -4589,7 +4605,7 @@ and `es`'s 0.85. **`zh` did not inherit the `ko` rate**, exactly as the item war
   NOT do:** the translation-review ledger is untouched — it fingerprints the **English** body.
   **No fluent Chinese reviewer has read either lesson.**
 
-### A concurrent editor is active in the working tree — nothing of it was committed
+#### A concurrent editor is active in the working tree — nothing of it was committed
 
 Partway through this run, `DECISIONS.md` and `LAUNCH_PLAN.md` became modified without my touching
 them. `HEAD` did not move. The changes are **US-English spelling normalizations** —
@@ -4602,7 +4618,7 @@ the house rule as recorded is that quotations and dated records stay verbatim, s
 reverting. **(b)** the sweep did **not** touch `AGENT_LOG.md`, so there was no conflict with this
 entry.
 
-### Next run
+#### Next run
 
 **Item 93: `zh` economy 31-32**, a projected **~1,370 added Chinese characters** (6,222 English at
 the measured 0.220/char), headline expected **70 -> 68**, and **the reference should stay 0.3490**
@@ -4614,7 +4630,7 @@ the same lender/borrower substitution `ko` and `zh` both had.**
 **Item 18 remains the entire critical path to ending Phase 0**, blocked on the owner creating an
 analytics-provider account, and **item 72's owner half — a deployed URL — is blindspot 10.10**.
 
-## 2026-08-23 (scheduled dev-agent) — `zh` economy 31-32, and the run where the *translator* nearly moved the reference
+### 2026-08-23 (scheduled dev-agent) — `zh` economy 31-32, and the run where the *translator* nearly moved the reference
 
 **Picked:** the previous run's queued item — item 93's second Chinese tranche. Owner tree
 `OWNER-TREE aa5eba4e446801d284251bb4a963cd54447ab401fa5d9d5618cd7b8098b4565a (2 tracked modified,
@@ -4624,7 +4640,7 @@ analytics-provider account, and **item 72's owner half — a deployed URL — is
 run documented and did not touch. Not the owner's redesign, not `market.json`. Untouched again here;
 this run's commit contains only its own three files. `HEAD` `ba26324`.
 
-### Step 3.5 — every number in the item reproduced, and the controls did fire
+#### Step 3.5 — every number in the item reproduced, and the controls did fire
 
 | Claim in item 93 | Re-measured | Verdict |
 |---|---|---|
@@ -4651,7 +4667,7 @@ pay itself back?" test. `zh` 32 §1 was three assertions where English is the fa
 §2 was two arrow chains. **Neither was a content substitution** — unlike `ko`/`zh` 30, both were
 faithful-but-skeletal abridgements, so nothing had to be un-said, only said.
 
-### What shipped
+#### What shipped
 
 - **`src/content/lessonContent.economy.zh.js`** — lessons **31 and 32** rewritten from summary to
   full translation. Section counts (2 and 3) and headings unchanged. **Nine of nine body/takeaway/
@@ -4660,7 +4676,7 @@ faithful-but-skeletal abridgements, so nothing had to be un-said, only said.
   `32.zh` 0.11 -> 0.33).
 - **`LAUNCH_READINESS.md`** — generated §10.4 figure, `zh 32,163 (0.234x)` -> `zh 33,618 (0.245x)`.
 
-### Verification
+#### Verification
 
 - `npm test` **exit 0, 0 failures**, 2 pre-existing warnings (review-ledger staleness; the
   completeness warning, now reading **68** pairs). `npm run build` clean in 963ms.
@@ -4697,7 +4713,7 @@ faithful-but-skeletal abridgements, so nothing had to be un-said, only said.
   page text) with `“Credit”` and `“QE & QT”` present. Console clean (`onlyErrors` returned nothing),
   `localStorage` cleared, server stopped and confirmed unreachable.
 
-### The projection held on all four figures — and this time it was engineered, not observed
+#### The projection held on all four figures — and this time it was engineered, not observed
 
 Reference **0.3490 before and after**, threshold **0.2443**, headline **70 -> 68**, lesson 16's
 margin **0.0409** unchanged. The difference from the previous run is that the target ratio was
@@ -4709,7 +4725,7 @@ picking the target, and item 93 now says so.
 Cost: **1,455 added Chinese characters against 6,222 English = 0.234/char**, against 29/30's 0.220.
 Two-tranche `zh` total **2,625 against 11,533 = 0.228/char**. `zh` volume **0.234x -> 0.245x**.
 
-### Adversarial self-check (step 5)
+#### Adversarial self-check (step 5)
 
 - **Blindspot register** — clean, and checked rather than inferred: §10.1 five patterns with five
   firing controls, §10.2 run directly on the new text, §2.3 a year-scan returning empty next to a
@@ -4735,7 +4751,7 @@ Two-tranche `zh` total **2,625 against 11,533 = 0.228/char**. `zh` volume **0.23
   NOT do:** the translation-review ledger is untouched — it fingerprints the **English** body.
   **No fluent Chinese reviewer has read either lesson.**
 
-### Next run
+#### Next run
 
 **Item 93: `zh` economy 33-34**, English **3,654 + 4,167 = 7,821 characters**, projected
 **~1,800 added Chinese characters** at the two-tranche rate of 0.228/char, headline expected
@@ -4748,14 +4764,14 @@ added-character basis, and `ja` 30 has still not been checked for the lender/bor
 **Item 18 remains the entire critical path to ending Phase 0**, blocked on the owner creating an
 analytics-provider account, and **item 72's owner half — a deployed URL — is blindspot 10.10**.
 
-## 2026-08-23 (scheduled dev-agent) — `zh` economy 33-34: the Chinese track is half done, and a guard I did not know about caught the one figure that was wrong
+### 2026-08-23 (scheduled dev-agent) — `zh` economy 33-34: the Chinese track is half done, and a guard I did not know about caught the one figure that was wrong
 
 **Picked:** the previous run's queued item — item 93's third Chinese tranche. Owner tree
 `npm run owner-tree -- --expect aa5eba4e…` read **`UNMOVED aa5eba4e446801d284251bb4a963cd54447ab401fa5d9d5618cd7b8098b4565a (2 tracked modified, 52 untracked)`** — the same two files (`DECISIONS.md`, `LAUNCH_PLAN.md`) still carrying the owner's
 US-English spelling sweep, untouched again here. `HEAD` `7d061fe` at the start of the run and
 unchanged at commit time. This run's commit contains only its own three files.
 
-### Step 3.5 — every number reproduced, and the controls fired
+#### Step 3.5 — every number reproduced, and the controls fired
 
 | Claim in item 93's queued note | Re-measured | Verdict |
 |---|---|---|
@@ -4782,7 +4798,7 @@ list** where English gives an intro plus four worked examples (the city governme
 workers, the bank calling in loans, the tax redistribution, the central bank refilling the well).
 Nothing had to be un-said, only said.
 
-### What shipped
+#### What shipped
 
 - **`src/content/lessonContent.economy.zh.js`** — lessons **33 and 34** rewritten from summary to
   full translation. Section counts (3 and 3) and headings unchanged. **Nine of ten body/takeaway/
@@ -4792,7 +4808,7 @@ Nothing had to be un-said, only said.
   `34.zh` 0.09 -> 0.32).
 - **`LAUNCH_READINESS.md`** — generated §10.4 figure, `zh 33,618 (0.245x)` -> `zh 35,354 (0.258x)`.
 
-### Verification
+#### Verification
 
 - `npm test` **exit 0, 0 failures**, 2 pre-existing warnings (review-ledger staleness; the
   completeness warning, now reading **66** pairs). `npm run build` clean in 957ms.
@@ -4830,7 +4846,7 @@ Nothing had to be un-said, only said.
   picker's `中文`). Console clean (`onlyErrors` returned nothing), `localStorage` cleared, server
   stopped and confirmed unreachable.
 
-### The projection held on all four figures for the third time — but the headroom shrank
+#### The projection held on all four figures for the third time — but the headroom shrank
 
 Reference **0.3490 before and after**, threshold **0.2443**, headline **68 -> 66**, lesson 16's
 margin **0.0409** unchanged. Simulated before writing, as the previous run established: 0.28, 0.30,
@@ -4844,7 +4860,7 @@ on the first two tranches. Three-tranche `zh` total **4,361 against 19,354 = 0.2
 volume **0.245x -> 0.258x**. **Neither draft needed compressing** — both landed in band first time,
 which is what happens when the English side is narrative rather than terse.
 
-### Adversarial self-check (step 5)
+#### Adversarial self-check (step 5)
 
 - **Blindspot register** — clean, and checked rather than inferred: §10.1 five patterns with five
   firing controls, §10.2 run directly on the new text, §2.3 a current-date scan returning empty next
@@ -4873,7 +4889,7 @@ which is what happens when the English side is narrative rather than terse.
   part to distrust.** **One thing I did NOT do:** the translation-review ledger is untouched — it
   fingerprints the **English** body. **No fluent Chinese reviewer has read either lesson.**
 
-### Next run
+#### Next run
 
 **Item 93: `zh` economy 35-36**, English **3,928 + 4,546 = 8,474 characters**, projected
 **~1,900 added Chinese characters** at the three-tranche rate of 0.225/char, headline expected
@@ -4888,7 +4904,7 @@ both had.**
 **Item 18 remains the entire critical path to ending Phase 0**, blocked on the owner creating an
 analytics-provider account, and **item 72's owner half — a deployed URL — is blindspot 10.10**.
 
-## 2026-08-23 (scheduled dev-agent) — `zh` economy 35-36: eight of twelve, and the tranche that falsified two of its own queued predictions
+### 2026-08-23 (scheduled dev-agent) — `zh` economy 35-36: eight of twelve, and the tranche that falsified two of its own queued predictions
 
 **Picked:** the previous run's queued item — item 93's fourth Chinese tranche. Owner tree
 `npm run owner-tree -- --expect aa5eba4e…` read **`UNMOVED aa5eba4e446801d284251bb4a963cd54447ab401fa5d9d5618cd7b8098b4565a (2 tracked modified, 52 untracked)`** — the same two files (`DECISIONS.md`,
@@ -4896,7 +4912,7 @@ analytics-provider account, and **item 72's owner half — a deployed URL — is
 `33fc23b` at the start of the run and unchanged at commit time. This run's commit contains only its
 own three files.
 
-### Step 3.5 — every number reproduced, and the controls fired
+#### Step 3.5 — every number reproduced, and the controls fired
 
 | Claim in item 93's queued note | Re-measured | Verdict |
 |---|---|---|
@@ -4926,7 +4942,7 @@ analogy, FLAT and STEEP all missing outright, and the INVERTED paragraph reduced
 1955 fact; §3 was one paragraph against four, with the New York Fed estimate and the
 "estimated from a model, and different models disagree" caveat gone. Nothing had to be un-said.
 
-### What shipped
+#### What shipped
 
 - **`src/content/lessonContent.economy.zh.js`** — lessons **35 and 36** rewritten from summary to
   full translation. Section counts (3 and 3) and headings unchanged. **Nine of ten body/takeaway/
@@ -4936,7 +4952,7 @@ analogy, FLAT and STEEP all missing outright, and the INVERTED paragraph reduced
   `36.zh` 0.12 -> 0.34).
 - **`LAUNCH_READINESS.md`** — generated §10.4 figure, `zh 35,354 (0.258x)` -> `zh 37,225 (0.271x)`.
 
-### Verification
+#### Verification
 
 - `npm test` **exit 0, 0 failures**, 2 pre-existing warnings (review-ledger staleness; the
   completeness warning, now reading **64** pairs). `npm run build` clean in 1.09s.
@@ -4977,7 +4993,7 @@ analogy, FLAT and STEEP all missing outright, and the INVERTED paragraph reduced
   5 Han glyphs and all 5 are the picker's `中文`/`日本語`). Console clean (`onlyErrors` returned
   nothing), `localStorage` cleared, server stopped and confirmed unreachable.
 
-### The projection held a fourth time — and two of the queued note's other predictions did not
+#### The projection held a fourth time — and two of the queued note's other predictions did not
 
 Reference **0.3490 before and after**, threshold **0.2443**, headline **66 -> 64**, lesson 16's
 margin **0.0409** unchanged. Four for four across eight lessons. Simulated before writing, as
@@ -5001,7 +5017,7 @@ Cost: **1,871 added Chinese characters against 8,474 English = 0.221/char**, aga
 0.222 on the first three tranches. Four-tranche `zh` total **6,232 against 27,828 = 0.224/char**.
 `zh` volume **0.258x -> 0.271x**.
 
-### Adversarial self-check (step 5)
+#### Adversarial self-check (step 5)
 
 - **Blindspot register** — clean, and checked rather than inferred: §10.1 five patterns with five
   firing controls plus `npm run check-blindspot`'s own per-language pass, §10.2 run directly on the
@@ -5026,7 +5042,7 @@ Cost: **1,871 added Chinese characters against 8,474 English = 0.221/char**, aga
   than "identical". **One thing I did NOT do:** the translation-review ledger is untouched — it
   fingerprints the **English** body. **No fluent Chinese reviewer has read either lesson.**
 
-### Next run
+#### Next run
 
 **Item 93: `zh` economy 37-38**, English **3,360 + 3,817 = 7,177 characters**, projected
 **~1,600 added Chinese characters** at the four-tranche rate of 0.224/char, headline expected
@@ -5045,7 +5061,7 @@ substitution `ko` 30 and `zh` 30 both had.**
 **Item 18 remains the entire critical path to ending Phase 0**, blocked on the owner creating an
 analytics-provider account, and **item 72's owner half — a deployed URL — is blindspot 10.10**.
 
-## 2026-08-23 (scheduled dev-agent) — `zh` economy 37-38: ten of twelve, and the first tranche that had to sit against the ceiling
+### 2026-08-23 (scheduled dev-agent) — `zh` economy 37-38: ten of twelve, and the first tranche that had to sit against the ceiling
 
 **Picked:** the previous run's queued item — item 93's fifth Chinese tranche. Owner tree
 `npm run owner-tree -- --expect aa5eba4e…` read **`UNMOVED aa5eba4e446801d284251bb4a963cd54447ab401fa5d9d5618cd7b8098b4565a (2 tracked modified, 52 untracked)`** — the same two files (`DECISIONS.md`,
@@ -5053,7 +5069,7 @@ analytics-provider account, and **item 72's owner half — a deployed URL — is
 `18ffa15` at the start of the run and unchanged at commit time. This run's commit contains only its
 own three files.
 
-### Step 3.5 — every number reproduced, and the controls fired
+#### Step 3.5 — every number reproduced, and the controls fired
 
 | Claim in item 93's queued note | Re-measured | Verdict |
 |---|---|---|
@@ -5087,7 +5103,7 @@ favored in this phase:` lines, the S&P figures for expansion (+14-28%) and contr
 and the defensive-asset list (Treasuries, gold, utilities/healthcare, cash). 38's `takeaway` was also
 missing its third sentence. Nothing had to be un-said.
 
-### What shipped
+#### What shipped
 
 - **`src/content/lessonContent.economy.zh.js`** — lessons **37 and 38** rewritten from summary to
   full translation. Section counts (3 and 3) and headings unchanged. Six of six section bodies
@@ -5098,7 +5114,7 @@ missing its third sentence. Nothing had to be un-said.
   `38.zh` 0.09 -> 0.33).
 - **`LAUNCH_READINESS.md`** — generated §10.4 figure, `zh 37,225 (0.271x)` -> `zh 38,902 (0.283x)`.
 
-### Verification
+#### Verification
 
 - `npm test` **exit 0, 0 failures**, 2 pre-existing warnings (review-ledger staleness; the
   completeness warning, now reading **62** pairs). `npm run build` clean in 983ms.
@@ -5148,7 +5164,7 @@ missing its third sentence. Nothing had to be un-said.
   and all 5 are the picker's `中文`/`日本語`). Console clean (`onlyErrors` returned nothing),
   `localStorage` cleared, server stopped and confirmed unreachable.
 
-### The projection held a fifth time — and the ceiling turned out to be a character count
+#### The projection held a fifth time — and the ceiling turned out to be a character count
 
 Reference **0.3490 before and after**, threshold **0.2443**, headline **64 -> 62**, lesson 16's
 margin **0.0409** unchanged. Five for five across ten lessons.
@@ -5179,7 +5195,7 @@ Cost: **1,677 added Chinese characters against 7,177 English = 0.234/char**, aga
 0.222 and 0.221 on the first four tranches. Five-tranche `zh` total **7,909 against 35,005 =
 0.226/char**. `zh` volume **0.271x -> 0.283x**.
 
-### Adversarial self-check (step 5)
+#### Adversarial self-check (step 5)
 
 - **Blindspot register** — clean, and checked rather than inferred: §10.1 five patterns with five
   firing controls plus `npm run check-blindspot`'s own per-language pass, §10.2 run directly on the
@@ -5204,7 +5220,7 @@ Cost: **1,677 added Chinese characters against 7,177 English = 0.234/char**, aga
   **One thing I did NOT do:** the translation-review ledger is untouched — it fingerprints the
   **English** body. **No fluent Chinese reviewer has read either lesson.**
 
-### A tooling note, recorded because it will happen again
+#### A tooling note, recorded because it will happen again
 
 Editing this file with a Node script that calls `String.prototype.replace(old, newString)` **silently
 corrupted it mid-run**: the replacement text contained a backtick immediately after a dollar sign
@@ -5219,7 +5235,7 @@ of them — the guards check the *needle*, and the bug was in the *replacement*.
 `git show HEAD:AGENT_LOG.md > AGENT_LOG.md` after copying the corrupt version and the already-written
 run-log entry to the session scratchpad — no `checkout --`, and nothing else in the tree was touched.
 
-### Next run
+#### Next run
 
 **Item 93: `zh` economy 39-40 — the final Chinese tranche.** English **3,475 + 2,284 = 5,759
 characters**, current `zh` **293 (0.0843)** and **179 (0.0784)**, projected **~1,300 added Chinese
@@ -5253,7 +5269,7 @@ dated verification note and the `colour` inside the quotation of the old §3.1.2
 closed by the owner.** New baseline for the next run: **`d5ccab8e67fc757febcdbe7885ca48403d44c5784de100812c5b3b7527ad2c67` (3 tracked modified — all
 three are mine — 52 untracked).** `HEAD` `45cb9b0` at the start of the run and unchanged at commit time.
 
-### Step 3.5 — every number reproduced, and the controls fired
+#### Step 3.5 — every number reproduced, and the controls fired
 
 | Claim in item 93's queued note | Re-measured | Verdict |
 |---|---|---|
@@ -5291,7 +5307,7 @@ factory worker, the farmer's tractor, the closing point); §2 was one sentence a
 be un-said. **39's `thinkAbout` and 40's `thinkAbout` were already complete translations and were left
 byte-identical.**
 
-### What shipped
+#### What shipped
 
 - **`src/content/lessonContent.economy.zh.js`** — lessons **39 and 40** rewritten from summary to full
   translation, plus 40's truncated `takeaway` restored. Section counts (2 and 2) and headings unchanged.
@@ -5300,7 +5316,7 @@ byte-identical.**
   `40.zh` 0.08 -> 0.33).
 - **`LAUNCH_READINESS.md`** — generated §10.4 figure, `zh 38,902 (0.283x)` -> `zh 40,386 (0.294x)`.
 
-### Verification
+#### Verification
 
 - `npm test` **exit 0, 0 failures**, 2 pre-existing warnings (review-ledger staleness; the completeness
   warning, now reading **60** pairs). `npm run build` clean in 885ms. Node v26.7.0, foreground.
@@ -5342,7 +5358,7 @@ byte-identical.**
   `中文`/`日本語`). Console clean (`onlyErrors` returned nothing), `localStorage` cleared, server stopped
   and confirmed unreachable.
 
-### The projection held a sixth time — and the tranche falsified its own budget
+#### The projection held a sixth time — and the tranche falsified its own budget
 
 Reference **0.3490 before and after**, threshold **0.2443**, headline **62 -> 60**, lesson 16's margin
 **0.0409** unchanged. **Six for six across twelve lessons.** `zh` abridged **14 -> 12**; every remaining
@@ -5384,7 +5400,7 @@ Cost: **1,484 added Chinese characters against 5,759 English = 0.258/char**, aga
 characters against 40,764 English = 0.230/char**, against `ko`'s 0.379 and `es`'s 0.85. `zh` volume
 **0.283x -> 0.294x**.
 
-### Adversarial self-check (step 5)
+#### Adversarial self-check (step 5)
 
 - **Blindspot register** — clean, and checked rather than inferred: nine §10.1/§10.2/§2.3/§10.3 patterns
   run directly over the new Chinese with a probe control for each, plus `npm run check-blindspot`'s own
@@ -5407,7 +5423,7 @@ characters against 40,764 English = 0.230/char**, against `ko`'s 0.379 and `es`'
   **One thing I did NOT do:** the translation-review ledger is untouched — it fingerprints the **English**
   body. **No fluent Chinese reviewer has read either lesson, and none has read any of the twelve.**
 
-### Next run
+#### Next run
 
 **Item 93 enters its `ja` phase: `ja` economy 29-30**, the first of six runs, per W-5.1 step 2. English
 **2,411 + 2,900 = 5,311 characters**, current `ja` **274 (0.1136)** and **393 (0.1355)**, `ja` reference
@@ -5432,7 +5448,7 @@ analytics-provider account, and **item 72's owner half — a deployed URL — is
 finish". `HEAD` `ab0bb83` throughout; the owner's `UIUX/` and `drafts/` stayed untracked and unread
 beyond the images themselves.
 
-### The premise check corrected my own first answer
+#### The premise check corrected my own first answer
 
 I told the owner "no, nothing has been designed" on the strength of item 26's note, which says the
 `UIUX/` folder is "unread and uninterpreted" and instructs runs to leave it alone. **That note is
@@ -5445,7 +5461,7 @@ review works" **is** the Vocabulary/Quizlet trial-timeline rail. The 2026-08-21 
 whole thing, including its finding that four of five mocked screens were already built.
 **Item 26's note has been corrected in this commit** so the next run is not misled the way I was.
 
-### What was genuinely missing, and is what shipped
+#### What was genuinely missing, and is what shipped
 
 The 2026-08-21 pass adopted the reference set's **structures** and left its **voice**: every app in
 `UIUX/` is warm and editorial (Vocabulary's cream + serif titles, Buddy's soft light cards), while
@@ -5462,7 +5478,7 @@ this app was cool blue on near-black. That gap is the whole of this change.
   that predates this change and now clashed. Warmed to `rgba(28,26,23,0.6)`, matching `--ink-strong`.
   No *new* inline color was introduced anywhere.
 
-### What was deliberately NOT changed
+#### What was deliberately NOT changed
 
 - **`theme.js`'s one-accent rule.** The accent stays blue-family (`#2f43c4` / `#a9b6ff`) rather than
   taking Vocabulary's sage-teal, because green/amber/red are reserved for success/caution/error here.
@@ -5478,7 +5494,7 @@ this app was cool blue on near-black. That gap is the whole of this change.
   `AGENT_LOG.md` and `AGENT_LOG.archive.md`; those are dated verifications and rewriting one
   falsifies it, which is this repo's own standing rule.
 
-### Verification
+#### Verification
 
 - `npm test` **exit 0, 0 failures**, 2 pre-existing warnings. `npm run build` clean. `check-blindspot`
   0 failures.
@@ -5501,7 +5517,7 @@ this app was cool blue on near-black. That gap is the whole of this change.
   different runs.** The accent photographs as violet. `getComputedStyle` reads `rgb(47, 67, 196)`,
   exactly `#2f43c4`. **Do not "fix" a color from a screenshot in this app.**
 
-### Adversarial self-check (step 5)
+#### Adversarial self-check (step 5)
 
 - **Blindspot register** — clean. No content string changed anywhere in this commit, so §10.1/§10.2/
   §2.3 have no new surface; `check-blindspot` passes 0/0 and the §10.1 disclaimer still renders on
@@ -5528,7 +5544,7 @@ this app was cool blue on near-black. That gap is the whole of this change.
   note is now fixed, but the lesson is the one step 3.5 already states: a backlog item's
   characterization of the code is evidence, not fact.
 
-### Next
+#### Next
 
 **§3.4's "one typeface" is now two — if the owner dislikes the serif, it is a one-line revert**
 (`family` in `theme.js`), and the palette is a three-block revert in `index.css`. Both are isolated
@@ -5542,7 +5558,7 @@ to the owner rather than shipped — **an open owner decision, not an oversight.
 design canvas was drafted and published first, then implemented. `HEAD` `cade971`; the owner's
 `UIUX/` and `drafts/` stayed untracked.
 
-### Step 3.5 — the premise, re-measured
+#### Step 3.5 — the premise, re-measured
 
 The premise this time was my own previous entry's claim that the structural half of the `UIUX/`
 redesign was complete. **Verified rather than assumed**, in the live browser: `Tile`/`TileGrid` render
@@ -5550,7 +5566,7 @@ the Reference tab, `Steps` renders Review's "How review works", `ResumeCard` ren
 card. All present. So the remaining work really was three patterns, not a redesign — and the canvas
 says so on its face rather than proposing a rebuild of things that exist.
 
-### What shipped
+#### What shipped
 
 - **P1 — the reader's back control is a circular chip** (`LessonReader.jsx`). Every app in the folder
   puts back/close in a round chip on a light disc. **The visible label is gone, so `t.backLabel` now
@@ -5570,7 +5586,7 @@ says so on its face rather than proposing a rebuild of things that exist.
   `<h1>`s with inline styles — so they stayed in Inter. The reader's lesson title is the largest type
   in the app. Both now carry `family.display`.
 
-### Two things the canvas said that the build disproved
+#### Two things the canvas said that the build disproved
 
 - **`fill.accentDeep` is the wrong token for the bevel, and only dark mode shows it.** The Decisions
   artboard recommended reusing it: right in light (`#24339b` under `#2f43c4`), **wrong in dark**,
@@ -5583,7 +5599,7 @@ says so on its face rather than proposing a rebuild of things that exist.
   `--ink-on-fill` and demands AA; a 3px edge nothing prints on would have been forced to answer an
   accessibility question that does not exist. `--shadow-*` sits outside §28's prefix filters.
 
-### Verification
+#### Verification
 
 - `npm test` **exit 0, 0 failures**, 2 pre-existing warnings. `npm run build` clean.
   `check-blindspot` 0 failures. §28 still **110 pairs at AA** and §28b **70 graph pairs, 0 exempted**,
@@ -5597,7 +5613,7 @@ says so on its face rather than proposing a rebuild of things that exist.
   lesson title *looked* serif in a screenshot taken before the fix; `getComputedStyle` said `Inter`.
   This is now the same trap as the violet-accent one, in a different property.
 
-### Adversarial self-check (step 5)
+#### Adversarial self-check (step 5)
 
 - **Blindspot register** — clean. No content string changed; `check-blindspot` 0 failures, §10.1's
   disclaimer still on every surface that requires it. §10.3: **Duolingo's winding path, mascot and
@@ -5619,13 +5635,13 @@ says so on its face rather than proposing a rebuild of things that exist.
   were adapted (a round back chip, a continuous step rail, a bevelled button); no branded element —
   mascot, palette, node art, wordmark — was reproduced.
 
-### Noted, not fixed
+#### Noted, not fixed
 
 **The primary button is 42px tall, not 44.** Measured this run. Pre-existing, comes from `space["3"]`
 padding plus a 1rem label, and changing it moves every button in the app — out of scope for a run
 asked to apply three patterns. Filed here rather than silently widened.
 
-### Next
+#### Next
 
 **Unchanged and still the critical path:** item 18 (analytics account) and item 72's owner half (a
 deployed URL), both owner-blocked. **Item 93's `ja` phase** — `ja` economy 29-30 — is the next
@@ -5640,7 +5656,7 @@ and W-5.1's next step (`ja` economy 29-30) is explicitly a six-run block, so tak
 structural item first costs that block nothing. `HEAD` `4b4a6b1`; the owner's `UIUX/` and `drafts/`
 stayed untracked and untouched.
 
-### Step 3.5 — the premise, re-measured, and it broke in two places
+#### Step 3.5 — the premise, re-measured, and it broke in two places
 
 - **The size claim held.** W-5.3 said the run log was 75% of the file; measured per-date it is
   **1,013,969 of 1,396,464 bytes = 72.6%**. Close enough to act on, and reported as measured.
@@ -5660,7 +5676,7 @@ stayed untracked and untouched.
   branch exists precisely to make that state visible; archiving would have reached it by accident,
   and `npm test` would have stayed 0 failures throughout.
 
-### What shipped — two commits, in this order so no window exists where the check is vacuous
+#### What shipped — two commits, in this order so no window exists where the check is vacuous
 
 1. **`26b5488` — `check-measurements.mjs` reads `AGENT_LOG.md` *and* `AGENT_LOG.archive.md`** (the
    archive optional via `ENOENT`), and every message now names the file it found a claim in instead
@@ -5670,7 +5686,7 @@ stayed untracked and untouched.
    under a new `## Archived 2026-08-16 → 2026-08-22` heading. `AGENT_LOG.md` **1,396,464 → 483,876
    bytes (−65%)**; archive 739,227 → 1,652,981.
 
-### Verification
+#### Verification
 
 - **Commit 1 is behaviour-neutral today, and provably so, not by reading the diff:** the archive
   contained **0** `MEASURED` lines, and the check reported the same **7 claims / 1 enforced / 6
@@ -5692,7 +5708,7 @@ stayed untracked and untouched.
   reports 7 claims / 1 enforced — now sourced from the archive, which is the entire point of
   commit 1.
 
-### Adversarial self-check (step 5)
+#### Adversarial self-check (step 5)
 
 - **Blindspot register** — clean, and structurally so: no file under `src/` or `src/content/` was
   touched, no rendered string changed, no date or market figure introduced. `check-blindspot` 0
@@ -5713,12 +5729,12 @@ stayed untracked and untouched.
   than leaving it describing the pre-archive file. Fixing it here would have changed the very lines
   the integrity proof compares, so it was deliberately left to its own commit.
 
-### Noted, not fixed
+#### Noted, not fixed
 
 **This entry is written at `###` while the 9 live entries above it are `##`** — `###` is the level
 W-5.4 says is correct, so it is written forward-correct rather than consistent with a defect.
 
-### Next
+#### Next
 
 **Unchanged and still the critical path, both owner-blocked:** **O-1** (a deployed URL — Netlify
 Drop is a drag of `dist/`) and **O-2** (item 18, an analytics account). **O-3** — the volume of
@@ -5734,7 +5750,7 @@ and had completed step 3.5 on it when the owner interjected **"proceed implement
 to the UIUX stream; the `ja` measurement is preserved at the bottom of this entry so the next run does
 not repeat it. `HEAD` `a7343d7` throughout; `UIUX/` and `drafts/` stayed untracked and unread.
 
-### Step 3.5 — the premise, re-measured, and it was understated by an order of magnitude
+#### Step 3.5 — the premise, re-measured, and it was understated by an order of magnitude
 
 The 2026-08-23 "last three UIUX/ patterns" entry filed this under **"Noted, not fixed"**: *"The primary
 button is 42px tall, not 44 … changing it moves every button in the app — out of scope."* Taken at face
@@ -5775,7 +5791,7 @@ lessons) and the runner exit — were measured by **replicating their exact inli
 technique validated by replicating the term chip first and getting **68x27, matching the live chip to
 the pixel**.
 
-### What shipped
+#### What shipped
 
 - **`theme.js` — a new `MIN_TAP = 44` token**, with the rule written where someone will find it: why 44
   (Apple HIG, WCAG 2.5.5, and every app in `UIUX/` is an iOS app built to it), and **why `minHeight` and
@@ -5791,7 +5807,7 @@ the pixel**.
 - **`check-data.mjs` §34**, a regression guard: every file under `src/` rendering a raw `<button>` or
   `<select>` must reference `MIN_TAP`, and no bare `44` may appear as a `minHeight`/`minWidth`.
 
-### The guard is deliberately weak, and says so
+#### The guard is deliberately weak, and says so
 
 §34 **cannot measure a rendered height** — nothing static can, and its own output says "rendered sizes
 are verified in a browser, not here." What it catches is the failure mode that actually produced this
@@ -5807,7 +5823,7 @@ copy rather than `git checkout --`:
    least 8)`, which is the arm that stops "found nothing" from reading as "nothing wrong".
 `git diff --stat` on the probed files afterwards showed only the intended edits.
 
-### Verification
+#### Verification
 
 - `npm run build` clean. **`npm test` exit 0, 0 failures**, the same 2 pre-existing warnings
   (translation review coverage; item 93's 60 abridged pairs). `check-blindspot` 0 failures.
@@ -5832,7 +5848,7 @@ copy rather than `git checkout --`:
   the pre-build hash) and fixed with a cache-busting query. **Without the probe this would have read as
   "the change did nothing."**
 
-### Adversarial self-check (step 5)
+#### Adversarial self-check (step 5)
 
 - **Blindspot register** — clean, and structurally so: `git diff` touches **no file under
   `src/content/` or `src/locales/`** and changes no rendered string, so §10.1/§10.2/§2.3 gain no new
@@ -5851,14 +5867,14 @@ copy rather than `git checkout --`:
   demonstrated failing before being reported as passing. **What the check caught in my own work:** the
   cached-bundle false negative described above, which I was one step from writing up as a clean result.
 
-### Noted, not fixed
+#### Noted, not fixed
 
 **The Leitner box-distribution strip on Review is still an open owner decision, not an oversight.** It
 was offered back to the owner on 2026-08-21 and again on 2026-08-23 (it costs five locale keys x five
 languages). "Proceed implementing UIUX" is not clearly an answer to that specific question, so it was
 not built unilaterally. **It is the one remaining unbuilt item from the UIUX canvas.**
 
-### Next
+#### Next
 
 **The scheduled `ja` pick is unchanged and its step 3.5 is already done — do not re-derive it.**
 Measured this run with the instrument's own numbers: `ja` reference **0.495189**, threshold
@@ -5879,7 +5895,7 @@ commit; `UIUX/` and `drafts/` stayed untracked and unread. Owner-tree fingerprin
 **`ad74c89a1ed7c6f3f1418f540b5fe87bb681d8ebd32110d5bc03dd479f5c5270`** (3 tracked modified — all mine —
 52 untracked).
 
-### Step 3.5 — the premise held to four decimals, and the instrument was proven able to move
+#### Step 3.5 — the premise held to four decimals, and the instrument was proven able to move
 
 The previous run pre-computed this tranche's step 3.5 and asked that it not be re-derived. It was
 re-run anyway as a *check*, not a re-derivation, and **every figure reproduced exactly**: `ja`
@@ -5902,7 +5918,7 @@ under a hand-written header. Before editing, the *current* 29 and 30 values were
 checked to be **byte-present in the file** — both `true` — so the splice could not silently reformat
 neighboring lessons. `git diff --stat` afterwards touches only the two intended blocks.
 
-### The premise correction this tranche produced — `ja` 30 §1 is not an abridgement
+#### The premise correction this tranche produced — `ja` 30 §1 is not an abridgement
 
 Item 93 records that **`ko` 30 §1 "was not an abridgement of the English at all but different
 content"** (lender/borrower motives, where English is the $20,000-car worked example) and warns that no
@@ -5912,7 +5928,7 @@ English's worked example of a $20,000 car, $5,000 saved and a $15,000 loan. So t
 four languages**, not a `ko` one-off, and it is the strongest evidence in the item that **these
 languages need reading, not measuring**. `ja` 29 by contrast was a true abridgement.
 
-### What shipped
+#### What shipped
 
 - **`ja` 29 (0.1136 -> 0.4513)** and **`ja` 30 (0.1355 -> 0.4693)** — full translations, **1,782 added
   Japanese characters** against 5,311 English, i.e. **0.336 added characters per English character**.
@@ -5929,7 +5945,7 @@ languages need reading, not measuring**. `ja` 29 by contrast was a true abridgem
   the title reference renders as `「金利」`, the short form `ko` and `zh` both use. §16 is unaffected —
   it counts *numbered* references, and this one is by title.
 
-### The figure multiset, accounted for rather than asserted
+#### The figure multiset, accounted for rather than asserted
 
 Item 93's rule is to run the comparator and then **name every difference**, not to weaken it. Run:
 **`ja` 29 shows 2 differences, `ja` 30 shows 6.** Every one is accounted:
@@ -5941,7 +5957,7 @@ Item 93's rule is to run the comparator and then **name every difference**, not 
 **Zero English figures were dropped and zero were added** — `100`, `5`, `500` all present in 29; `8`
 and all four dollar amounts present in 30.
 
-### The projection, and the reason `ja` is the safest of the four tracks
+#### The projection, and the reason `ja` is the safest of the four tracks
 
 **All four predicted figures held.** Headline **60 -> 58**, exactly 2. Reference **0.495189 before and
 after**. Threshold **0.346633**. Lesson 16's margin **0.0318**, unchanged. This is the `zh` 29/30 case
@@ -5965,7 +5981,7 @@ actually chosen the model is exact to the character (814 predicted / 814 actual 
 30). **The model was not falsified — the target was changed** — and next runs should budget from their
 own chosen target, not from this tranche's total.
 
-### Verification
+#### Verification
 
 - **`npm test` exit 0, 0 failures**, the same 2 pre-existing warnings — and the completeness warning
   now reads **58** where it read 60, which is the debt visibly paid down rather than a silent pass.
@@ -5989,7 +6005,7 @@ own chosen target, not from this tranche's total.
   anywhere before this run (`最後に買ったコーヒーを思い浮かべてください`), so a stale bundle could not
   have produced it; the served `index-C1a5ONNM.js` also matches this build's output hash.
 
-### Adversarial self-check (step 5)
+#### Adversarial self-check (step 5)
 
 - **Blindspot register — one hit investigated and cleared, which is why the grep is run over the diff
   rather than assumed.** `git diff | grep -ic dalio` returned **1**. Localized per file and per side:
@@ -6007,14 +6023,14 @@ own chosen target, not from this tranche's total.
   work:** the Dalio hit, which read as a §10.2 regression until it was localized to a context line; and
   the readiness failure, which I would otherwise have reported a green suite without.
 
-### O-3, restated because this run is exactly what it is about
+#### O-3, restated because this run is exactly what it is about
 
 This run added **1,782 characters of unreviewed machine translation** in a "(Beta)"-labeled language.
 **No fluent Japanese reviewer has read either lesson.** Human review share is **0% in all four
 languages**. That is consistent with the owner's 2026-08-11 decision and it is still the thing the
 owner should either re-affirm or cap.
 
-### Next
+#### Next
 
 **`ja` economy 31-32**, the second of six tranches. Pre-measured this run so it need not be re-derived:
 `ja` **31 is `en=2445 ratio=0.1055`, ceiling 1,210 characters**; **32 is `en=3777 ratio=0.1374`,
@@ -6039,7 +6055,7 @@ the backlog's own instruction rather than a note chain. `HEAD` `6e08bd0` at star
 **`c2331799fd3ee413aca864fd82d247a35ea31b01a70a6c4e37b00f6aad9105b2`** (0 tracked modified, 52
 untracked).
 
-### Step 3.5 — the premise reproduced exactly, and one figure in it had already drifted
+#### Step 3.5 — the premise reproduced exactly, and one figure in it had already drifted
 
 The previous run pre-computed this tranche. **Every figure it queued reproduced to six decimals**:
 `ja` reference **0.495189**, threshold **0.346633**, headline **58** (`es` 12, `ko` 12, `zh` 12,
@@ -6065,7 +6081,7 @@ covered the *edit method*: these files are `JSON.stringify(v, null, 2)` under a 
 so a full parse-and-reserialize round-trip was checked to be **byte-identical to the file** before
 any splice, and `git diff --stat` afterwards reported **9 insertions, 9 deletions in one file**.
 
-### The defect the previous run warned about is NOT in these two lessons, and that is worth recording
+#### The defect the previous run warned about is NOT in these two lessons, and that is worth recording
 
 Item 93 records that `ko` 30 §1 and `ja` 30 §1 were **different content, not abridgements** — a
 defect no ratio can see — and told this run to read 31 and 32 §1 before scoping. **Read, and both are
@@ -6075,7 +6091,7 @@ paragraph and nothing else; §2 carried the good-debt/bad-debt shape with the `$
 fourth paragraph gone. **Reporting the negative is the point** — a check that is only written up when
 it fires looks, in the log, like a check that always fires.
 
-### What shipped
+#### What shipped
 
 - **`ja` 31 (0.1055 -> 0.4585)** and **`ja` 32 (0.1374 -> 0.4451)** — full translations, **2,025
   added Japanese characters** against 6,222 English, i.e. **0.325 added characters per English
@@ -6090,7 +6106,7 @@ it fires looks, in the log, like a check that always fires.
   references rather than the one off-convention `「金利」` lesson 30 introduced. `『QE & QT』` in 32 §3
   was already correct and is preserved.
 
-### The figure multiset, every difference named
+#### The figure multiset, every difference named
 
 **`ja` 31 shows 3 differences, `ja` 32 shows 1.** All accounted:
 - **31:** `15,000 -> 1万5,000` — a myriad-scale conversion, which removes `15,000` and contributes
@@ -6098,7 +6114,7 @@ it fires looks, in the log, like a check that always fires.
 - **32:** one extra `1`, from `1日に` ("a day") — a Japanese counter rendering an English *word*, not
   a figure. English's `5` and `8` each appear **three times on both sides** (`5-8年` x3).
 
-### The projection held a seventh time
+#### The projection held a seventh time
 
 Headline **58 -> 56**, exactly 2. Reference **0.495189 before and after**. Threshold **0.346633**.
 Lesson 16's margin **0.0318**, unchanged. Both lessons landed below the p90 element, which is the
@@ -6106,7 +6122,7 @@ mechanism item 93 already identifies. Simulating the remaining `ja` 33-40 at 0.4
 reference at **0.495189**, the threshold at **0.346633** and `ja` abridged at **12** — so the
 track-completion simulation still holds with two more real data points in it.
 
-### The correction this tranche produced: budget from a density predictor, not from a chosen target
+#### The correction this tranche produced: budget from a density predictor, not from a chosen target
 
 29/30 picked a target ratio of 0.45-0.47 **by hand**, and its budget note honestly said the gap model
 was "exact against the target actually chosen" — which is exact only in the sense that it re-derives
@@ -6125,7 +6141,7 @@ those two sections idiomatically, **adding no content**, closed the gap. **A rat
 a prompt to re-read for terseness; it is never a licence to pad**, and the two are distinguishable
 only by clause-level comparison, which is what was done.
 
-### Verification
+#### Verification
 
 - **`npm test` exit 0, 0 failures**, the same 2 pre-existing warnings — and the completeness warning
   now reads **56** where it read 58.
@@ -6159,7 +6175,7 @@ only by clause-level comparison, which is what was done.
   page contains **no `’` at all**. Neither was a content defect, and neither would have been
   distinguishable from one without a control that names what it expects to see.
 
-### Adversarial self-check (step 5)
+#### Adversarial self-check (step 5)
 
 - **Blindspot register — one hit investigated and cleared.** §10.2: `dalio|principles` on added lines
   **0** (with a probe control proving the grep fires). §10.1: 0 advice-adjacent matches on added
@@ -6180,14 +6196,14 @@ only by clause-level comparison, which is what was done.
   localized per file and per diff side; and the band-median figure, which I nearly carried forward
   from the item's text (0.4909) instead of re-measuring it (0.4878).
 
-### O-3, restated because this run is exactly what it is about
+#### O-3, restated because this run is exactly what it is about
 
 This run added **2,025 characters of unreviewed machine translation** in a "(Beta)"-labeled language.
 **No fluent Japanese reviewer has read either lesson, and none has read any of the four `ja` economy
 lessons now translated.** Human review share is **0% in all four languages**. That is consistent with
 the owner's 2026-08-11 decision and it is still the thing the owner should either re-affirm or cap.
 
-### Next
+#### Next
 
 **`ja` economy 33-34**, the third of six tranches. Pre-measured this run: **33 is `en=3654
 ratio=0.1412`, ceiling 1,809 characters**; **34 is `en=4167 ratio=0.1260`, ceiling 2,063**. Both
@@ -6215,7 +6231,7 @@ before this one, **three were not item 93**. `HEAD` `eac087a` at start and at co
 `drafts/` stayed untracked and unread. Owner-tree at start:
 **`c2331799fd3ee413aca864fd82d247a35ea31b01a70a6c4e37b00f6aad9105b2`** (0 tracked modified).
 
-### Step 3.5 — every queued figure reproduced
+#### Step 3.5 — every queued figure reproduced
 
 Reference **0.495189**, threshold **0.346633**, headline **56** (`es` 12, `ko` 12, `zh` 12, `ja` 20),
 **33 `en=3654 ja=516 ratio=0.141215`**, **34 `en=4167 ja=525 ratio=0.125990`**, ceilings **1,809** and
@@ -6229,7 +6245,7 @@ on §33** (`lesson 34 [ja] is now at 0.16, up from a recorded 0.13`). (c) Restor
 copy, never `git checkout --`**, `shasum` matching `e6eceb45…` with `git status` clean before any real
 edit. (d) The parse-and-reserialize round-trip was asserted **byte-identical** before the splice.
 
-### Both lessons read before scoping, and the defect they carry is the one this item was filed on
+#### Both lessons read before scoping, and the defect they carry is the one this item was filed on
 
 Item 93's substitution defect (`ko` 30 / `ja` 30: different content, not an abridgement) is **not**
 present in 33 or 34 — both are true abridgements in English's own order. **Running tally: 1 of 6 `ja`
@@ -6243,7 +6259,7 @@ austerity just drained). The Japanese was **four bare headings on four lines in 
 characters against 1,257 English, a ratio of 0.069**. Not a translation of the lesson; a table of
 contents for it. `ja` 33 §3 and 34 §3 were each **one paragraph against three and four**.
 
-### What shipped
+#### What shipped
 
 - **`ja` 33 (0.1412 -> 0.4753)** and **`ja` 34 (0.1260 -> 0.4600)** — full translations, **2,613
   added Japanese characters** against 7,821 English = **0.334/char**, against 0.336 (29/30) and
@@ -6254,7 +6270,7 @@ contents for it. `ja` 33 §3 and 34 §3 were each **one paragraph against three 
 - **Cross-reference `『短期債務サイクル』`** in 33 §1, following the file's `『』` title convention;
   `「失われた10年」` in 34 §2 stays in `「」`, correctly — it is a quoted term, not a lesson title.
 
-### The figure multiset, and a tokenizer artifact caught by re-running it
+#### The figure multiset, and a tokenizer artifact caught by re-running it
 
 First pass reported **5 differences on 33** — including `2008,` vs `2008` and `1989,` vs `1989`. Those
 are **my regex capturing English's trailing commas**, not content. Re-run with a comma-aware tokenizer:
@@ -6264,12 +6280,12 @@ rendering English *words* — `for a decade` (33 §1), `roughly a decade` and `t
 33 `1929/1989/2008`, 34 `1920/1930/1980/2008/2015`. 34 gained `1920` and `1930` because the stub had
 dropped the Weimar/Depression paragraph entirely. **No current-looking date; no `2026` anywhere.**
 
-### The projection held an eighth time
+#### The projection held an eighth time
 
 Headline **56 -> 54**, exactly 2. Reference **0.495189 before and after**. Threshold **0.346633**.
 Lesson 16 margin **0.0318**, unchanged.
 
-### Where the density predictor breaks — the correction this tranche produced
+#### Where the density predictor breaks — the correction this tranche produced
 
 The predictor (ja:ko character density on already-translated `ja` lessons, applied to `ko`'s full
 translation) was **0.8459-0.8662, mean 0.8524** on four data points. It called **34 at 1,881-1,927**
@@ -6291,7 +6307,7 @@ close to be safe — **not to make the predictor look right**. Compressing to hi
 would be the same defect class as validating a model on its own output, which the `zh` 39-40 run
 already had to correct once.
 
-### Verification
+#### Verification
 
 - **`npm test` exit 0, 0 failures**, same 2 pre-existing warnings; the completeness warning now reads
   **54** where it read 56. **`npm run build` clean** (910ms). **`check-blindspot` 0 failures.**
@@ -6316,7 +6332,7 @@ already had to correct once.
   element. Confirmed by reading the computed style and counting **4 blank-line separations → 5
   blocks**, and by the screenshot, which shows the four levers as four separate explained paragraphs.
 
-### Adversarial self-check (step 5)
+#### Adversarial self-check (step 5)
 
 - **Blindspot register — clean, with probe controls proving each grep fires.** §10.2 `dalio|principles`
   on added content lines **0**. §10.1 **0** advice-adjacent matches across Japanese and English
@@ -6336,14 +6352,14 @@ already had to correct once.
   use. **All three were caught by controls or by cross-checking, and all three would have produced a
   confident wrong sentence in this entry.**
 
-### O-3, restated
+#### O-3, restated
 
 This run added **2,613 characters of unreviewed machine translation** in a "(Beta)"-labeled language.
 **No fluent Japanese reviewer has read either lesson, nor any of the six `ja` economy lessons now
 translated.** Human review share is **0% in all four languages**. Consistent with the owner's
 2026-08-11 decision, and still the thing to either re-affirm or cap.
 
-### Next
+#### Next
 
 **`ja` economy 35-36**, the fourth of six tranches. Pre-measured: **35 is `en=3928 ratio=0.1329`,
 ceiling 1,945**; **36 is `en=4546 ratio=0.1542`, ceiling 2,251**. Both stubs sit far below the p90
@@ -6444,14 +6460,14 @@ it lands in `UNKNOWN`, so the 48/6 split rests on an instrument shown able to fa
   `npm run readiness`, `npm run translation-completeness`). The one figure not printed by an existing
   script — the 48/6 track split — is computed by a scratchpad script whose control is described above.
 
-### O-3, restated
+#### O-3, restated
 
 This run added **no translation**. It did measure the thing O-3 asks the owner to decide about, and the
 measurement is now in the document the decision would be made from: **human review share remains 0% in
 all four languages**, and the remaining machine-translated backlog is **54 pairs, 48 of them on the
 optional track**. Unchanged: the owner should either re-affirm the 2026-08-11 decision or cap it.
 
-### Next
+#### Next
 
 **`ja` economy 35-36** — resume item 93; the `ja` 33-34 entry above pre-measured both lessons (35 is
 `en=3928 ratio=0.1329`, ceiling 1,945; 36 is `en=4546 ratio=0.1542`, ceiling 2,251) and warns to budget
@@ -6573,14 +6589,14 @@ present; `ja` 35 §1 renders as **3 paragraphs** with the arrow lines intact and
   prints — the density band and the per-section budget — come from scratchpad scripts whose controls
   are described above, and the 2,771 delta is corroborated by `readiness`, a second instrument.
 
-### O-3, restated because this run is exactly what it is about
+#### O-3, restated because this run is exactly what it is about
 
 This run added **2,771 characters of unreviewed machine-translated Japanese**. Human review share
 remains **0% in all four languages**; `npm test`'s own warning reports **83% (0% human)** for each.
 Remaining after this run: **52 pairs, 48 of them on the optional `essentials` track**. Unchanged: the
 owner should either re-affirm the 2026-08-11 decision or cap it.
 
-### Next
+#### Next
 
 **`ja` economy 37-38**, the fifth of six tranches. Pre-measured this run: **37 is `en=3360 ko=1807
 ja=462 ratio=0.1375`, ceiling 1,664, predicted 1,528-1,565**; **38 is `en=3817 ko=1935 ja=411
@@ -6735,14 +6751,14 @@ W-5.5 defect class in a third location:** the same count lives in the item headl
   spread — come from scratchpad scripts whose controls are described above, and the 2,339 delta is
   corroborated by `readiness`, a second instrument.
 
-### O-3, restated because this run is exactly what it is about
+#### O-3, restated because this run is exactly what it is about
 
 This run added **2,339 characters of unreviewed machine-translated Japanese**. Human review share
 remains **0% in all four languages**; `npm test`'s own warning reports **83% (0% human)** for each.
 Remaining after this run: **50 pairs, 48 of them on the optional `essentials` track**. Unchanged: the
 owner should either re-affirm the 2026-08-11 decision or cap it.
 
-### Next
+#### Next
 
 **`ja` economy 39-40 — the last tranche of item 93's economy phase.** Pre-measured this run:
 **39 is `en=3475 ko=2006 ja=383 ratio=0.1102`, ceiling 1,720, predicted 1,697-1,738**; **40 is
@@ -6938,7 +6954,7 @@ which is exactly what W-5.1 budgeted.
   controls are described above, including the one that caught the zsh word-splitting failure. The
   2,098 delta is corroborated by `readiness`, a second instrument.
 
-### O-3, restated — and this is the last item-93 run that will restate it
+#### O-3, restated — and this is the last item-93 run that will restate it
 
 This run added **2,098 characters of unreviewed machine-translated Japanese**, closing the economy
 phase. Human review share remains **0% in all four languages**; `npm test`'s own warning reports
@@ -6947,7 +6963,7 @@ item 94 — which recommends the owner be asked *before* that work starts. Uncha
 either re-affirm the 2026-08-11 decision or cap it. **The stop line means this is a natural place for
 that decision to be made, rather than one more day of tranches.**
 
-### Next
+#### Next
 
 **Item 93 is closed. Do NOT pick item 94 next** — it is the optional track, it is 24 runs, and its own
 box recommends waiting for O-1. **W-5.2's list is the right place to pick from, and it is now the
@@ -6971,3 +6987,138 @@ did yesterday.
 Owner-tree fingerprint observed this run: `ce0d0a9cf73b035415eb5b1e502f8b360ebb6471416e4762dede93933a115c4b`
 (4 tracked modified — all mine — 52 untracked). Previous run's `f4e4f1db…` differed only because its
 own three files were still uncommitted when it measured.
+
+### 2026-08-24 (scheduled dev-agent) — W-5.4: the run log gets one heading hierarchy, and the item's own fix would have made 36 entries worse
+
+#### Step 3.5 — the counts reproduced exactly, and the *fix* was still wrong
+
+Both headline figures are exact: **6 `##` dated entries in `AGENT_LOG.md` + 31 in `AGENT_LOG.archive.md`
+= 37**, matching the item's re-scoped text to the unit. The only stale number is the live `###` count,
+which the item recorded as **3** and is now **12** — nine more runs landed since, all writing at `###`.
+That is a snapshot aging, not a wrong claim, and it is recorded rather than "corrected".
+
+**The second claim also reproduced.** `scripts/check-backlog.mjs:45` really does bound the backlog with
+`lines.findIndex((l, i) => i > start && /^## /.test(l))`, so a `##` entry landing above `## Environment
+note` would silently truncate the check. Today the first `^## ` after the backlog heading is
+`## Environment note`, so nothing is broken — exactly as the item says. No other script keys on run-entry
+heading level: `check-measurements.mjs` scans both logs for MEASURED lines regardless of depth, and
+`check-data.mjs`'s heading-collision check is scoped to `LAUNCH_PLAN.md` only.
+
+**Controls, and both fired.** (a) A probe entry `## 2026-01-01 (PROBE)` appended to a scratchpad copy
+took the count 6 → 7, so the counter can see what it is looking for. (b) A level census over both files
+returned **37 `##` + 201 `###` dated headings and zero at any other depth**, so the two-level assumption
+is measured, not assumed. (c) Fence-awareness: **0 headings sit inside code fences** and fences are
+**balanced in both files** — worth checking in a log this full of pasted output, since a `## ` inside a
+fence is text and demoting it would corrupt a transcript.
+
+**Where the premise broke — and it changed the fix, not just a figure.** The item scopes the work as
+"demote the 37 to `###`". Measuring each entry's *children* rather than only its own level shows the run
+log has been written in **two different conventions**:
+
+| entry level | children | count | shape |
+|---|---|---|---|
+| `##` | `###` | 36 | correctly nested |
+| `##` | none | 1 | n/a |
+| `###` | `###` | 12 (all live) | **flat** |
+| `###` | none | 189 (archived) | silent on the convention |
+
+The 37 entries the item calls defective were **correctly nested internally**; the newer `###` entries
+recent runs wrote — the ones treated as the model — are **flat**, with each entry's own subsections as
+its siblings. Demoting only the entry line would have converted **36 correctly-nested entries into flat
+ones**, trading a top-level defect for a same-level one and calling it done. The archived 189 could not
+arbitrate because **188 of them carry no subsections at all**.
+
+**Re-decided on the corrected facts:** demote the 37 entries **and** every heading inside a dated entry,
+in both files, so the run log is uniformly `## Run log` > `### entry` > `#### subsection`. That subsumes
+the item as written instead of contradicting it, and it also repairs the 12 live `###` entries the item
+never mentioned.
+
+#### What shipped
+
+One mechanical pass over `AGENT_LOG.md` and `AGENT_LOG.archive.md`:
+
+- **37 dated run entries `##` → `###`** (6 live, 31 archived).
+- **276 subsection headings `###` → `####`** (107 live, 169 archived) — every heading inside a dated
+  entry span.
+- **Nothing else.** The 7 structural `##` headings survive untouched: `## App summary`,
+  `## Prioritized backlog`, `## Environment note`, `## Run log`, and the three `## Archived <range>`
+  boundaries. Blockquoted backlog headings (`> ### W-5.x`) were never in scope — they do not start with
+  `#`, and the guard in my edit script caught me assuming otherwise on the first attempt.
+
+The transform walks lines with a fence toggle, treats any non-dated heading at depth ≤ 2 as a structural
+boundary that ends the current entry, and demotes with `line.replace(/^###/, () => "####")` per this
+file's 2026-08-23 tooling note about `$&` in replacement strings.
+
+#### Verification
+
+- **Line counts identical**: `AGENT_LOG.md` 6,973 → 6,973; `AGENT_LOG.archive.md` 19,144 → 19,144
+  (measured before the run-log entry and backlog edit were appended).
+- **Entry counts identical**: dated entries were 37 `##` + 201 `###`; they are now **0 `##` + 238 `###`**
+  in the two files combined (18 live + 220 archived). 37 + 201 = 238.
+- **Text byte-identical**: `diff <(sed -E 's/^#+ //' BEFORE) <(sed -E 's/^#+ //' AFTER)` is empty for both
+  files — every line is unchanged once the heading marker is stripped. This is the check the item asked
+  for in place of a sorted-line diff.
+- **Only heading lines changed**: 226 changed lines in the live file and 400 in the archive, of which
+  **0** fail `^[<>] #{2,4} `. Both totals are exactly 2 × (entries + children): 2 × 113 and 2 × 200.
+- **Shape re-measured after the edit**: every dated entry is `###` and every child is `####`. The two
+  entries still reporting `##` children are the instrument's own known limitation — a `## Archived`
+  boundary attributed to the preceding entry — not defects; both were inspected by line number.
+- `npm test` — **PASS, 0 failures**, 2 pre-existing warnings (the item-94 translation debt and the §34
+  static touch-target note). `check-backlog` still locates the section and reports **71 items / 118
+  citations resolved**, which is the direct proof the demotion did not disturb the scan it protects.
+  `check-measurements` still finds its **7 claims across both logs**.
+- `npm run build` — **✓ built in 908ms**.
+
+#### Adversarial self-check (step 5)
+
+- **Blindspot register** — no regression, and run rather than assumed: `npm run check-blindspot` passes
+  with §10.2 (no Dalio), §10.1 (no advice-adjacent language in any of the five locales; disclaimer key
+  present and rendering on all 8 surfaces), §10.3 (parent-facing kids framing intact) and §2.3 (no
+  live-looking dates in 26 teaching-copy modules). This change cannot plausibly touch them — it edits no
+  file under `src/`, adds no prose to any entry, and changes no character other than `#` — but the
+  register is checked by running the script, not by reasoning that it is safe.
+- **`DECISIONS.md` conflict** — none. No state, routing, content-module or build change; `DECISIONS.md`
+  records nothing about run-log heading structure.
+- **Already-done backlog item** — no. W-5.4 has never been marked done in either file, and it was the
+  explicitly recommended next pick in the previous entry's "Next" section.
+- **The tension worth naming**: `check-data.mjs`'s §31 comment says run-log entries "must never be
+  edited". That rule is about an entry's *record* — its claims and figures, which are history. W-5.4 is
+  an explicitly filed, deliberately re-scoped item authorizing exactly these headings in exactly these
+  two files, and the byte-identical stripped-text diff above proves no entry's record moved. Flagging it
+  because a future run reading only the §31 comment could reasonably think this commit broke it.
+- **Own verification claim** — reproducible by re-running `npm test` and `npm run build`, and by
+  re-deriving the counts with `grep -cE '^## 20[0-9]{2}-'` / `'^### 20[0-9]{2}-'` on both files against
+  `git show HEAD~1:AGENT_LOG.md`. The before/after copies the diff checks used were taken in the
+  scratchpad, and the same comparison reruns from `git show`.
+
+#### What this closes, and what it does not
+
+W-5.4's stated risk was **latent** — a `##` entry that "ever lands above the Environment note". It is now
+**structurally impossible**: there are zero `##` dated entries, and the convention that produces them is
+gone from both files. The file also has a table of contents that means something for the first time since
+2026-08-20. What it does **not** do is add a guard: nothing stops a future run from writing `## 2026-…`
+again. That is filed below as a new item rather than smuggled into this commit.
+
+#### Next
+
+**W-5.4 is closed; the W-5 housekeeping set is now fully claimed.** New item filed by this run:
+
+- **NEW — a guard so the heading convention cannot drift back.** This run fixed 37 entries by hand-rolled
+  script; nothing prevents the 38th. A ~15-line check in `scripts/check-data.mjs` asserting that in both
+  logs every `^#{1,6} 20\d{2}-\d{2}-\d{2}` heading is exactly `###` and every heading inside a dated entry
+  span is `####` would make this permanent. **Cheap, and it is the reason this class of item keeps
+  recurring** — item 90 fixed the same defect in `LAUNCH_PLAN.md`, W-5.4 fixed it here, and neither left
+  anything behind to hold it. Fence-aware, and it must skip blockquoted `> ###` backlog headings.
+
+Otherwise the pick list is unchanged from the previous entry and is now thin enough to be worth acting on:
+- **Item 67's residual third** and **item 64's residual candidates** — small, English-facing, open since
+  2026-08-17.
+- **Item 26** (Quizlet/Vocabulary design review); **item 27** needs re-scoping before it can be picked.
+- **Items 76, 70/71** — process items filed by runs that could not finish them.
+- **A backlog refill** (W-2's standing rule) is a legitimate and increasingly justified pick: with 93
+  closed and 94 parked behind O-1, the Open set is thin.
+- **Do NOT pick item 94** (the `essentials` translation remainder, 24 runs on the optional track in four
+  "(Beta)" languages). Its own box recommends waiting for O-1.
+
+**Unchanged and still the critical path, both owner-blocked:** **O-1** (a deployed URL) and **O-2**
+(item 18, an analytics account). O-1 also gates item 94.
