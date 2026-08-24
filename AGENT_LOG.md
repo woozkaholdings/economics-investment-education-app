@@ -193,13 +193,38 @@ for the history. No open P1/P2 items.
 > check. **Fix: demote the 37 to `###` in one mechanical commit** (and use
 > `s.replace(old, () => new)`, per the 2026-08-23 tooling note in this same file).
 >
-> ### W-5.5 — item 93's own headline is stale, and it is the number everyone reads first.
-> The item opens **"68 of 160"**; `npm run translation-completeness` reports **62**. The parenthetical
-> beneath it narrates the true state accurately, so nothing downstream is wrong — but a run scoping
-> the work reads the headline. **Whoever next touches item 93 updates the headline count in the same
-> commit**, and thereafter it is part of the tranche's own step 5.
+> ### W-5.5 — ✅ **DONE** (headline), by the item-93 runs. **The standing rule below is STANDING; leave it here.**
+> Original: the item opened **"68 of 160"** against a measured **62**. Item 93's own runs adopted the rule
+> and the headline now reads **54**, which is exactly what `npm run translation-completeness` reports.
+> **Premise correction, 2026-08-23 (the W-5.6 run):** W-5.5 was still listed as open when this run picked
+> its work, and it is not — but the *stop-line box* inside item 93 had drifted to **56** while the headline
+> was correct at 54. The rule says "update the headline in the same commit"; the box is a second place and
+> was not covered. **The rule now reads: re-read the count off the script and update BOTH the headline and
+> the stop-line box.** See item 93's box for the note.
 >
-> ### W-5.6 — `LAUNCH_READINESS.md` §10.4 does not carry item 93's finding, and §10.4 is the row the owner reads.
+> ### W-5.6 — ✅ **DONE 2026-08-23** (scheduled dev-agent). `LAUNCH_READINESS.md` §10.4 now carries item 93's finding.
+> **What shipped:** §10.4's closing clause no longer frames the five-language surface as "real ongoing
+> maintenance debt … just a cost to keep tracking". It now carries the **per-language reference ratios**
+> (p90 across all 40 lessons — `es 1.18, ko 0.55, zh 0.35, ja 0.50`), the **abridged-pair count**
+> (**54** — es 12, ko 12, zh 12, ja 18, across 18 of 40 lessons), and the **concentration**, which is the
+> part that makes the work schedulable: **48 of 54 pairs are on the optional `essentials` track**, `money`
+> is **fully translated in all four languages**, and the only remaining `economy` main-path gap is
+> **`ja` 35-40, six pairs**. The header's "Last refreshed" moved 2026-08-16 → 2026-08-23.
+> **Premise correction that came out of re-measuring, and it is worth keeping:** this file's "How to
+> refresh" section says the build fails if §10.4's character sentence disagrees with live content, and
+> `check-data.mjs` §11b says character counts are *deliberately not guarded*. **Both are true and they are
+> different guards** — `refresh-readiness.mjs --check` owns the character sentence, `check-data.mjs` §11b
+> owns the coverage percentages and explicitly excludes char counts. Nothing is broken; the two comments
+> read as contradictory only out of context.
+> **Second correction, now recorded in §10.4 itself:** `refresh-readiness.mjs` and
+> `translation-completeness.mjs` report **different English corpora — 137,249 vs 140,700 characters.** The
+> gap is **exactly the section headings (3,451 en chars, proven by direct computation with a control)**:
+> refresh-readiness counts bodies + takeaway + thinkAbout, completeness also counts headings. **The ratios
+> survive it** (es 0.981 vs 0.985, ko 0.469 vs 0.470, zh 0.294 vs 0.295, ja 0.359 vs 0.361), so the two can
+> be quoted in one row — but only because that was checked, and §10.4 now says so.
+>
+> ### W-5.6 (original text, retained)
+> `LAUNCH_READINESS.md` §10.4 does not carry item 93's finding, and §10.4 is the row the owner reads.
 > The scorecard header still says **"Last refreshed: 2026-08-16"** and §10.4 still frames the volume
 > ratios as "real ongoing maintenance debt" with no per-language reference. **That framing is what
 > item 93 disproved.** Against nothing, `zh` at 0.28× reads as Chinese being compact; against `zh`'s
@@ -1249,8 +1274,8 @@ for the history. No open P1/P2 items.
     `zh` 29-40 are all full translations**, twelve pairs across six runs on 2026-08-23, `zh`
     abridged count **24 -> 12**. **Three of the four languages have now ended in exactly the same
     shape — every remaining `es`, `ko` AND `zh` gap is in the `essentials` track (1-11 and 14).**
-    **`ja` is the entire remaining economy phase and IT HAS NOW STARTED: `ja` 29-30 landed 2026-08-23,
-    `ja` abridged 24 -> 22.** See the `ko`
+    **`ja` is the entire remaining economy phase and IT HAS NOW STARTED: `ja` 29-34 landed 2026-08-23
+    across three runs, `ja` abridged 24 -> 18.** See the `ko`
     bullets at the end for the rate and the two model corrections the `ko` track produced, the
     `zh` bullet after them for the budgeting correction the final `zh` tranche produced, and the `ja`
     bullet at the very end for why `ja` is the safest track to finish and the tightest to overshoot.)*
@@ -1262,10 +1287,12 @@ for the history. No open P1/P2 items.
     > phase and file the `essentials` remainder — 48 pairs — as a new, separately-prioritized item.**
     > Reason and the measured arithmetic are in W-5.1. **W-5.5 is closed and now has a standing
     > rule**: the headline count above is re-read off `npm run translation-completeness` by whoever
-    > touches this item, in the same commit. It read a stale 68, then 60; it is **56** as of the
-    > `ja` 33-34 run. *(The "60" written into this box on 2026-08-23 was itself stale within one
-    > run — the box and the headline are two places, and only the headline is the one people read.
-    > Update both or neither.)*
+    > touches this item, in the same commit. It read a stale 68, then 60, then 56; it is **54** as of
+    > 2026-08-23 (measured directly, `es 12 / ko 12 / zh 12 / ja 18`). *(The "60" written into this box
+    > on 2026-08-23 was itself stale within one run — the box and the headline are two places, and only
+    > the headline is the one people read. Update both or neither. **This fired a second time:** the box
+    > sat at "56" while the headline correctly read 54, and a non-item-93 run doing W-5.6 had to
+    > reconcile them on 2026-08-23. The rule works only if "in the same commit" includes this box.)*
 
     - **What a learner gets — the example this item was filed on, now fixed in `es` and still true in
       the other three languages.** Economy lesson 40 §1 in English is four explanatory paragraphs (the
@@ -6232,5 +6259,107 @@ within 50 characters of its ceiling, compress before recording** — 33 needed e
 `『経済指標を読む』` references — preserve them; they are correct as they stand.
 **W-5.6 remains open and unclaimed** (§10.4's *narrative*, not the generated figure this run
 refreshed). **W-5.4** is also still open; this entry is written at `###`.
+**Unchanged and still the critical path, both owner-blocked:** **O-1** (a deployed URL) and **O-2**
+(item 18, an analytics account).
+
+### 2026-08-23 (scheduled dev-agent) — W-5.6: §10.4 stops calling the translation gap "maintenance debt", and the two instruments turn out to measure different corpora
+
+**Why this item and not `ja` 35-36.** W-5.2 reserves **one run in four** for work that is not item 93.
+The last non-93 run was the touch-targets commit (`ee570bf`); since then `ja` 29-30, 31-32 and 33-34 ran
+back to back. This is the fourth, so it took from W-5.2's list. Between the two documentation-integrity
+defects on that list, **W-5.6 over W-5.4**: W-5.4's stated risk is latent — I confirmed only
+`check-backlog.mjs` bounds a section with `^## ` (`scripts/check-backlog.mjs:44-45`) and it is currently
+bounded correctly by `## Environment note`, so nothing is broken today. W-5.6 changes a row the owner
+actually reads, and it is the row they would read to decide **O-3**.
+
+**Step 3.5 — premise re-measured, with controls. Three corrections, one of which killed part of the item.**
+
+- **W-5.6's own premise: HOLDS.** Header read `Last refreshed: 2026-08-16`; §10.4's closing clause read
+  *"still real ongoing maintenance debt … not a decision left to make, just a cost to keep tracking."*
+  Both confirmed verbatim before editing.
+- **Correction 1 — W-5.5 was already done, and is still listed as open.** The item-93 headline reads
+  **"54 of 160"**, which is exactly what `npm run translation-completeness` reports. But item 93's
+  **stop-line box** had drifted to **56** while the headline was right — the box's own warning
+  (*"the box and the headline are two places … update both or neither"*) firing a second time, against
+  the rule written to prevent it. Fixed both, and widened the standing rule to name the box explicitly.
+  Also corrected the parenthetical's `ja` state (`29-30 landed, 24 -> 22`) to the true `29-34 landed,
+  24 -> 18`.
+- **Correction 2 — the "the build guards this" comments look contradictory and both are true.**
+  `LAUNCH_READINESS.md`'s "How to refresh" says the build fails if §10.4's character sentence disagrees
+  with content; `check-data.mjs:693` says character counts are **deliberately not guarded** ("a build
+  that fails over 19 characters would be turned off within a week"). **Different guards:**
+  `refresh-readiness.mjs --check` owns the character sentence, `check-data.mjs` §11b owns the coverage
+  percentages. I nearly wrote this up as a defect. It is not one.
+- **Correction 3, the substantive one — the two translation instruments report different English
+  corpora.** `npm run readiness` says **137,249** English characters; `npm run translation-completeness`
+  says **140,700**. Same content, 3,451 apart. **Cause, computed rather than guessed:**
+  `refresh-readiness.mjs:114-117` counts `section.body` + `takeaway` + `thinkAbout`;
+  `translation-completeness.mjs:82-86` also counts `section.heading`. Direct computation over
+  `lessonContent.js` with **three controls, all PASS**: bodies-only en = **137,249** (matches
+  refresh-readiness exactly), bodies+headings en = **140,700** (matches completeness exactly), and the
+  difference = **3,451 = the heading total exactly**. **The ratios survive the difference** — es 0.981 vs
+  0.985, ko 0.469 vs 0.470, zh 0.294 vs 0.295, ja 0.359 vs 0.361 — which is *why* the two can be quoted in
+  one row, and §10.4 now says so instead of leaving a reader to trip over two English totals.
+
+**What shipped.** §10.4's closing clause now carries the three things that make its aggregate ratios
+readable: the **per-language reference ratios** (each language's p90 across all 40 lessons — *what a full
+translation looks like in this corpus* — `es 1.18, ko 0.55, zh 0.35, ja 0.50`, abridged below 0.7x its
+own reference), the **abridged-pair count** (**54**: es 12, ko 12, zh 12, ja 18, across 18 of 40 lessons),
+and the **concentration**, measured by joining the abridged pairs to `lessons.js` tracks:
+
+- **48 of the 54 pairs are on the optional `essentials` track** (lessons 1-11, 14).
+- **`money` is fully translated in all four languages — 0 abridged pairs.**
+- **The only remaining `economy` main-path gap is `ja` 35-40 — six pairs.**
+
+That last line is W-5.1's stop line restated as a measurement, which is the useful form for O-3: *the main
+path is one language and six lessons from complete; the optional track is about four-fifths absent in
+every language.* Header moved 2026-08-16 → 2026-08-23, scoped to say this pass changed one row's
+narrative and no generated figure.
+
+**Verification.** `npm test` — **0 failures, 2 expected warnings**; its own translation warning
+independently reports **"54 of 160 … (18 lessons affected)"**, matching the numbers I published without
+my having supplied them. `npm run build` ✅ (952 ms). `check-backlog.mjs` still parses the backlog after
+my edits inside it ("no duplicate backlog item numbers (70 items)", "all 118 citations resolve"), and
+refresh-readiness reports "12 generated figures … agree with the content" — i.e. I did not hand-edit a
+generated sentence. §10.4 verified to still be a **single table row** (one line, 4,608 chars, closing `|`).
+**Control for that last claim, because "I didn't touch the guarded sentence" is exactly the kind of thing
+that is asserted rather than shown:** I corrupted `es 134,697` → `134,698` in place; the guard **failed
+with the exact replacement string**; restoring from a scratchpad copy (not `git checkout --`) returned the
+file **byte-identical, 20,576 = 20,576**, and the guard passed again. **A control that came back WEAK and
+was redesigned:** my first sensitivity probe for the track join tested a numeric-vs-string key lookup that
+succeeds either way, proving nothing; the replacement injects a nonexistent lesson id **999** and confirms
+it lands in `UNKNOWN`, so the 48/6 split rests on an instrument shown able to fail.
+
+**Step 5 — adversarial self-check.**
+- **Blindspot register** — no regression. No Dalio reference, no advice-adjacent language (the added prose
+  is about character counts and track membership, not markets), no child-facing kids framing. The dates I
+  added are in **documentation**, which §2.3 is not about — its rule covers teaching-copy modules, and
+  `check-blindspot` confirms "§2.3 no live-looking dates in 26 teaching-copy modules" still passes.
+- **`DECISIONS.md` conflict** — none. No state, routing, build or content-format change. The 2026-08-11
+  machine-translation decision is untouched; this run supplies the measurement the owner would use to
+  re-affirm or cap it, which is O-3's ask, not a reversal of it.
+- **Already-done backlog item** — **this check fired for real.** W-5.5 was on my candidate list and is
+  already complete; I recorded that and fixed the residual box drift instead of redoing the headline.
+- **Own verification claim** — reproducible from pasted command output (`npm test`, `npm run build`,
+  `npm run readiness`, `npm run translation-completeness`). The one figure not printed by an existing
+  script — the 48/6 track split — is computed by a scratchpad script whose control is described above.
+
+### O-3, restated
+
+This run added **no translation**. It did measure the thing O-3 asks the owner to decide about, and the
+measurement is now in the document the decision would be made from: **human review share remains 0% in
+all four languages**, and the remaining machine-translated backlog is **54 pairs, 48 of them on the
+optional track**. Unchanged: the owner should either re-affirm the 2026-08-11 decision or cap it.
+
+### Next
+
+**`ja` economy 35-36** — resume item 93; the `ja` 33-34 entry above pre-measured both lessons (35 is
+`en=3928 ratio=0.1329`, ceiling 1,945; 36 is `en=4546 ratio=0.1542`, ceiling 2,251) and warns to budget
+with the **pre-33 density band (0.8459-0.8662)**, not the six-lesson one. That note stands unchanged; read
+it before starting. **Per the rule widened this run, that tranche updates BOTH item 93's headline and its
+stop-line box** from `npm run translation-completeness`.
+**W-5.4 remains open and is now the only unclaimed item in the W-5 housekeeping set** — 37 `##` run
+entries to demote to `###` (6 live + 31 in the archive; re-measured this run and the count is exact,
+189 `###` already correct in the archive). This entry is written at `###`.
 **Unchanged and still the critical path, both owner-blocked:** **O-1** (a deployed URL) and **O-2**
 (item 18, an analytics account).
