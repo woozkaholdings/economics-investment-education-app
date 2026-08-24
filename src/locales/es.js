@@ -23,6 +23,8 @@ export default {
     loadFailedTitle: "No se cargó",
     loadFailedBody: "No se pudo descargar este contenido. Revisa tu conexión y vuelve a cargar la página.",
     loadFailedRetry: "Volver a cargar",
+    appErrorTitle: "Algo salió mal",
+    appErrorBody: "Esta pantalla encontró un error inesperado. Volver a cargar la página suele solucionarlo, y tu progreso guardado no se ve afectado.",
     keyTakeaway: "Punto Clave", tryThinking: "Piensa en Esto",
     locked: "Completa las lecciones anteriores primero",
     marketsTitle: "Panel de Mercados", currentState: "Escenario Ilustrativo",

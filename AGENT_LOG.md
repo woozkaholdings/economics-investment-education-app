@@ -1967,28 +1967,59 @@ for the history. No open P1/P2 items.
       `lang="en"` — which is now the correct *initial* value, since `useAppState` overwrites it at
       mount (this date).
 
-99. **[Bug/Tooling — filed 2026-08-24 by the run that closed item 96, as its stated residual rather
-    than smuggled into the same commit (the boundary W-5.4 drew before item 95, and item 97 before
-    this).] Item 96's boundary covers the three `lazy()` screens; `Learn.jsx` is statically imported
-    and is not behind one, and nothing stops the next screen from being added without it.**
-    - **The gap, measured.** `AsyncScreen` (`App.jsx`) wraps `LessonReader`, `Practice` and
-      `Reference`. `Learn.jsx` is a **static** import — it is in the entry chunk, so it cannot 404 —
-      but a **render** error inside it still has no boundary above it and still takes the whole tree
-      to a blank page, which is exactly what item 96 measured for the lazy screens
-      (`#root` 0 children, 0 bytes).
-    - **Why it was not just folded into item 96's commit.** `LoadFailure`'s wording is *"This content
-      couldn't be downloaded"*, which is **wrong for a render bug**. A top-level boundary needs its own
-      message ("something went wrong on this screen"), which is new copy in five languages — a
-      different change from the one item 96 scoped, and it should be reviewed as one.
-    - **The guard half, and it is the more valuable half.** Two things silently regress today: a new
-      `lazy()` screen added straight into a bare `<Suspense>`, and a `.catch` dropped from one of the
-      four dynamic-import call sites in `LessonReader.jsx`/`Practice.jsx`. A `check-data.mjs` section
-      asserting that **every `lazy(` in `App.jsx` renders inside `AsyncScreen`** and that **every
-      `import(` call site under `src/screens/` carries a `.catch`** would hold both, and it is a source
-      scan of the same shape as §35. **Note the floor-control lesson from §35 and item 97: a scan that
-      matches nothing must fail loudly, not pass** — assert the expected call-site count is non-zero.
-    - **Honest priority: below item 97, above item 94.** The reachable half of this defect class was
-      just fixed; what is left is a smaller blast radius plus regression-proofing.
+99. **✅ DONE 2026-08-24 (scheduled dev-agent) — both halves, the fix and the guard, in one commit.
+    `Learn` and the app shell now sit behind error boundaries, and `check-data.mjs` §37 holds the
+    invariant.** [Bug/Tooling — filed 2026-08-24 by the run that closed item 96, as its stated
+    residual rather than smuggled into the same commit (the boundary W-5.4 drew before item 95, and
+    item 97 before this).] Item 96's boundary covered the three `lazy()` screens; `Learn.jsx` is
+    statically imported and was not behind one, and nothing stopped the next screen from being added
+    without it.
+    - **The headline claim was measured live before anything was edited, and it reproduced exactly:**
+      a render throw injected into `Learn` left `#root` at **0 children / 0 bytes** — the same
+      signature item 96 measured for a rejected chunk. **Control:** restoring the file and rebuilding
+      brought the same page back at **75,317 bytes**, so the blankness was the injection and not the
+      instrument. (Getting there needed one correction of its own: on a first visit the app routes
+      straight into lesson 1, so `Learn` never renders and the first measurement was reading the
+      first-run modal. Byte-identical output before and after the injection is what exposed it.)
+    - **What shipped:** `AppError` (`ui.jsx`) with its own copy in five languages — deliberately not
+      `LoadFailure`'s, which says the content "couldn't be downloaded" and is a lie about code that
+      downloaded fine and then threw; `ScreenBoundary` around App's `<main>`, keyed on `tab` so the
+      header and nav survive **and switching tabs is a real recovery** (verified live: Learn crashed,
+      tapping Review rendered the queue and cleared the alert); and a **root boundary in `main.jsx`**,
+      because `ScreenBoundary` is rendered *by* App and so cannot catch App's own render. The root
+      one reads its language from `localStorage` via `loadLang` — verified by crashing the shell with
+      `ecycles_lang=ja` and getting Japanese copy from a tree where App never rendered.
+    - **PREMISE CORRECTION — the guard half as filed would have failed a correct tree.** This item
+      asked §37 to assert that "every `import(` call site under `src/screens/` carries a `.catch`".
+      Measured first: there are **25 `import(` lines under `src/screens/` and zero carry a `.catch`**,
+      and none should — they are `() => import(...)` thunks in a loader table, and the `.catch`
+      belongs to whoever calls the thunk. The unit is the **invocation** (`SOME_LOADERS[key]()`), of
+      which there are **three**, not the four this item claimed. §37 asserts on the whole statement,
+      since the chain is always multi-line.
+    - **§37 asserts three things**, each proven by injection (eight, listed in the run log): every
+      screen `App.jsx` imports from `./screens/` is rendered inside a boundary — `AsyncScreen` for the
+      lazy ones, which also need the Suspense half, `ScreenBoundary` for any; `main.jsx` renders
+      `<App` inside an `ErrorBoundary`; and every loader invocation carries a `.catch`. Three floors,
+      per §35/§36's lesson, plus an unbalanced-tag check that fired on its own during the battery.
+
+100. **[UX/Copy — filed 2026-08-24 by the run that closed item 99, as its stated residual rather than
+    smuggled into the same commit.] `AsyncScreen` answers a render bug with a message about the
+    network, and now that the right words exist the gap is one line of code.**
+    - **The defect.** `AsyncScreen`'s fallback is `LoadFailure`, whose body reads *"This content
+      couldn't be downloaded. Check your connection, then reload the page."* That is correct for the
+      case it was built for (item 96: a content-hashed chunk that 404s after a redeploy) and **wrong
+      for a render error inside a lazy screen**, which is now the more likely of the two — the chunk
+      arrived, the code threw. A reader is told to check a connection that is fine.
+    - **Why it was not folded into item 99's commit.** Telling the two apart needs a decision, not
+      just an edit: React hands the boundary one `error` either way, so distinguishing them means
+      either tagging the rejection at the `lazy()` call site or matching on the error, and matching on
+      an error message is exactly the kind of thing that breaks silently across a React or Vite
+      upgrade. **Scope the discrimination method before writing it.**
+    - **Cheap and honest fallback if that turns out to be brittle:** widen `loadFailedBody` to cover
+      both ("this screen didn't load"), losing the network hint. `AppError`'s copy already exists in
+      all five languages, so the alternative costs no new translation either way.
+    - **Honest priority: low.** Nobody sees either message until O-1, and both end in the same reload.
+      It is a wrong-words bug, not a broken-behavior one.
 
 76. **[Content/Process — filed 2026-08-18 by the run that built item 69's instrument half, which is
     what turned this from an opinion into a blocked measurement.] `zh` and `ja` `Brokerage Account`
@@ -7758,3 +7789,124 @@ warnings** (item 94's translation debt, the 0% human review share). §36 reports
 is read by assistive technology and by nobody else in this repo, so it is precisely the kind of defect
 that can regress for weeks unnoticed and is only ever discovered by the first screen-reader user — who
 does not exist until O-1 lands.
+
+### 2026-08-24 (scheduled dev-agent) — item 99: the blank page had one more door, and the guard as filed would have failed a correct tree
+
+Picked **item 99**, named first in the previous run's "Next" and the top of the board with item 97
+closed. Non-item-93 work, so **W-5.2's ratio is respected** — six consecutive non-93 runs.
+
+#### Step 3.5 — premise re-measured with controls, and one claim of three was wrong
+
+- **"`Learn` has no boundary above it"** — reproduced by reading `App.jsx`: `AsyncScreen` wraps the
+  three `lazy()` screens; `<Learn>` sits bare in `<main>`. **Control:** the three lazy screens are
+  inside it, so the absence is specific to `Learn` and not a failure to find the wrapper.
+- **"a render error blanks the page"** — reproduced **live**, not reasoned about. Injected a throw
+  into `Learn`, rebuilt, served `dist/`, and read `#root`: **0 children, 0 bytes**. **Control:**
+  restore + rebuild returned the same page at **75,317 bytes**.
+  **The instrument needed a correction first, and it is the reason to always carry a control.** The
+  first reading came back *byte-identical to the unmodified app* (21,021 bytes both times), which
+  looks like "the injection did nothing". It was not: on a first visit the app routes straight into
+  lesson 1, so `Learn` never renders at all and I was measuring the first-run modal. Only after
+  dismissing first-run and going to `#/learn` did the blank page appear. **A pair of identical
+  numbers is what exposed it** — had they differed slightly I would have believed the first result.
+- **"every `import(` call site under `src/screens/` carries a `.catch`"** — **FALSE**, and this
+  changed the guard rather than a figure. There are **25 `import(` lines under `src/screens/` and
+  zero carry a `.catch`**. They are `() => import(...)` thunks in a loader table; the `.catch`
+  belongs to the **invocation**, of which there are **three** (`CONTENT_LOADERS` and
+  `QUIZ_TEXT_LOADERS` in `LessonReader.jsx`, `QUIZ_TEXT_LOADERS` in `Practice.jsx`) — not the four
+  the item claimed. **Written as filed, §37 would have failed a correct tree on 25 counts.**
+
+#### What shipped
+
+- **`AppError`** (`components/ui.jsx`) — a sibling of `LoadFailure`, same reload action, different
+  words. `LoadFailure` says the content *"couldn't be downloaded"*, which is a lie about code that
+  downloaded fine and then threw. New copy in **five languages** (`appErrorTitle`, `appErrorBody`);
+  `loadFailedRetry` is reused rather than duplicated because the action really is identical.
+- **`ScreenBoundary`** around App's `<main>`, **keyed on `tab`**. It wraps the screen area rather
+  than the app so the header and bottom nav survive — and the key is what makes that offer real: a
+  boundary that has caught stays caught, so without remounting per tab the nav would be visible and
+  useless. **Switching tabs is therefore also the recovery.**
+- **A root boundary in `main.jsx`**, which is the half that is easy to miss: `ScreenBoundary` is
+  rendered *by* `App`, so it cannot catch `App`'s own render — a throw in the header, the nav, the
+  first-run modal or `useAppState` unmounts the tree above it. Its copy comes from `localStorage`
+  through `loadLang` (now exported, one comment saying why), since App may never have rendered.
+- **`scripts/check-data.mjs` §37**, asserting three invariants with three floors and an
+  unbalanced-tag integrity check. Reports `4 screen(s) in App.jsx (3 lazy / 1 static) inside 4
+  boundary region(s), root boundary in main.jsx, 3 loader invocation(s) across 4 screen file(s)`.
+  Those numbers were derived by independent grep **before** the section existed and agree with it,
+  which is what makes them trustworthy rather than self-confirming.
+
+#### Verification — three live browser proofs, then eight injections against §37
+
+Live, against a served `dist/`:
+
+| # | Injection | Before this run | After |
+|---|---|---|---|
+| A | throw in `Learn` | `#root` **0 children / 0 bytes**, blank | **5,964 bytes**: message + header + nav |
+| B | tap Review while Learn is crashing | — | Review queue renders, alert gone (`key={tab}`) |
+| C | throw in `App` itself, `ecycles_lang=ja` | blank | **Japanese** `AppError` from a tree App never rendered |
+
+**A corroboration I did not design.** The console history spans both sides of the fix, and the
+pre-fix chunk logs the identical error as **`Uncaught`** while the post-fix chunks log it through
+**`[ErrorBoundary]`** and never as uncaught. Independent of anything I asserted.
+
+§37's battery — each a `perl`/`python` substitution against a named string, each restored from a
+scratchpad copy, **never `git checkout --`**. Controls first and last: the unmodified tree **PASSes**
+on both sides, and `git status` after it showed only the intended files modified.
+
+| # | Injection | Result |
+|---|---|---|
+| 0 | control, unmodified | **PASS** |
+| 1 | `ScreenBoundary` removed, `Learn` left bare | **FAIL**, named at `App.jsx:360` + region floor |
+| 2 | `AsyncScreen` tags left unbalanced | **FAIL** — the integrity check fired first, refusing to report on a scan it cannot trust |
+| 3 | `Practice` moved into `ScreenBoundary` (balanced, but no Suspense) | **FAIL** — the lazy-only rule holds |
+| 4 | a new screen imported and rendered bare | **FAIL** — *this is the regression §37 exists to stop* |
+| 5 | root boundary removed from `main.jsx` | **FAIL**, named |
+| 6 | `.catch` dropped from `LessonReader`'s content loader | **FAIL**, named at the invocation line |
+| 7 | **floor**: loader tables renamed `*_MAP` | **FAIL** — "0 invocation(s) … this scan has gone blind" |
+| 8 | control, after all restores | **PASS** |
+
+`npm run build` **✓ 932ms, exit 0**; `npm test` **exit 0**, 0 failures, the same **2 pre-existing
+warnings** (item 94's translation debt, the 0% human review share). Final live read of the shipped
+tree: 75,317 bytes, **0 alerts**, `<html lang>` `en` — the boundaries are inert when nothing throws.
+
+#### Adversarial self-check (step 5)
+
+- **Blindspot register** — `npm run check-blindspot` **passes all six**, run rather than reasoned
+  about. This change does add user-facing prose, so §10.1 is live surface here: the new copy names no
+  asset, no market, no action, and makes no forward-looking claim — it says a screen broke and to
+  reload. No dates, no Dalio, no child-facing framing, no market figures.
+- **`DECISIONS.md` conflict** — none. No persisted key added (the root boundary *reads* `ecycles_lang`
+  through the existing reader), no routing change, no build change, and the new copy lives in
+  `src/locales/*.js`, which is the `.js`-not-JSON decision's own shape.
+- **Already-done backlog item** — no. `§37` returns **0 hits** across `AGENT_LOG.md`, the archive,
+  `DECISIONS.md`, `LAUNCH_PLAN.md` and `scripts/` outside the section just written. **Control:** the
+  same grep for `§36` returns `AGENT_LOG.md` and `check-data.mjs`. Item 96 is adjacent and its work is
+  **not** redone — it owns the lazy screens and the `.catch`es, both of which §37 now *guards* rather
+  than reimplements.
+- **Own verification claim** — reproducible from the commands listed; every figure above came from
+  that loop, and the two byte counts that matter (0 and 75,317) were each read twice.
+- **A real conflict this check caught, and it was fixed inside the run rather than reported after.**
+  The first §37 draft treated `ScreenBoundary` as sufficient for **every** screen. That passes a tree
+  where a `lazy()` screen has a boundary but no `<Suspense>` — a state that renders nothing while the
+  chunk is in flight. Injection 3 exists because of that; the lazy rule now requires `AsyncScreen`
+  specifically.
+- **Residual, stated rather than discovered later.** A render bug inside a *lazy* screen is still
+  caught by `AsyncScreen` and still answered with `LoadFailure`'s wrong "couldn't be downloaded"
+  wording. Now that `AppError` exists this is one line of code plus a decision about how to tell the
+  two errors apart — **filed as item 100**, deliberately not smuggled into this commit.
+
+#### Next
+
+- **Item 98** (link-preview metadata) is the top of the list and is cheap; it serves §5's web funnel
+  and its `<title>`-hardcodes-English clause is already measured rather than asserted (the previous
+  run corroborated it while driving the picker).
+- **Item 100** is the residual above — low priority, and read its "scope the discrimination method
+  before writing it" bullet first.
+- **Do NOT pick item 94** — optional track, four "(Beta)" languages, parked behind O-1 by its own box.
+
+**Unchanged and still the entire critical path, both owner-blocked: O-1** (a deployed URL) and **O-2**
+(item 18, an analytics account). Item 99 is worth its run against O-1 for the same reason item 97 was:
+the blank page it removes is not reachable in development at all — it needs a real deploy, a real
+redeploy under an open tab, or a real device — so it is a defect that can only ever be found by the
+first user, who does not exist until O-1 lands.

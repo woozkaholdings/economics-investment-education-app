@@ -4180,5 +4180,178 @@ if (keyedGroupsChecked < 4) {
   );
 }
 
+// §37. Every screen renders inside an error boundary, and every content
+// loader carries a `.catch`.
+//
+// WHY THIS EXISTS. Item 96 gave the three `lazy()` screens a boundary; item 99
+// found `Learn` outside one, because it is a *static* import and so was never
+// part of "the lazy screens". Measured live 2026-08-24: a render throw inside
+// `Learn` left `#root` at 0 children and 0 bytes — a blank page, the same
+// signature a rejected chunk produced before item 96. Nothing static asserted
+// either half, so the next screen added to `App.jsx` regresses it silently and
+// the symptom only ever appears on a user's device.
+//
+// WHAT IS CHECKED, AND WHY EACH PART. Three invariants, all textual, because a
+// React tree cannot be rendered here:
+//   (a) every component `App.jsx` imports from `./screens/` is used ONLY
+//       inside a boundary region — `AsyncScreen` for the lazy ones (which also
+//       need the Suspense half) or `ScreenBoundary` for any screen. This is
+//       the one that catches a new screen dropped into `<main>` bare.
+//   (b) `main.jsx` renders `<App` inside an `ErrorBoundary`. `ScreenBoundary`
+//       is rendered BY App, so it cannot catch App's own render — a throw in
+//       the header, the nav, the first-run modal or `useAppState` needs an
+//       ancestor that App did not create.
+//   (c) every loader-table invocation under `src/screens/` ends in a `.catch`.
+//
+// PREMISE CORRECTION, and it changed the check. Item 99 filed (c) as "every
+// `import(` call site under src/screens/ carries a `.catch`". Measured before
+// writing this: there are 25 `import(` lines under `src/screens/` and **none**
+// of them carries a `.catch`, nor should they — they are `() => import(...)`
+// thunks sitting in a loader table, and the `.catch` belongs to whoever calls
+// the thunk. Written as filed, this section would have failed a correct tree.
+// The unit is therefore the INVOCATION (`SOME_LOADERS[key]()`), of which there
+// are three, and the assertion runs over the whole statement rather than the
+// one line, since the chain is always multi-line.
+//
+// WHAT IS DELIBERATELY NOT CHECKED. Not that a boundary's fallback is the
+// *right* copy — `AsyncScreen` says "couldn't be downloaded" and a render bug
+// inside a lazy screen still gets that wording, a known residual recorded in
+// the run log. Not the rendered result: the live proof is in the run log.
+{
+  const appSrc = readFileSync(join(ROOT, "src/App.jsx"), "utf8");
+
+  // Boundary regions, by tag. Neither tag nests inside itself, so a sequential
+  // pairing is exact; an unbalanced count means the scan can no longer be
+  // trusted and is reported rather than silently producing short regions.
+  const regionsFor = (tag) => {
+    const opens = [...appSrc.matchAll(new RegExp(`<${tag}[\\s>]`, "g"))].map((m) => m.index);
+    const closes = [...appSrc.matchAll(new RegExp(`</${tag}>`, "g"))].map((m) => m.index);
+    if (opens.length !== closes.length) {
+      fail(
+        `§37: <${tag}> opens ${opens.length} time(s) and closes ${closes.length} time(s) in ` +
+          `src/App.jsx. Self-closing or unbalanced boundary tags break this scan, so the result ` +
+          `below cannot be trusted — fix the markup rather than this check.`,
+      );
+      return [];
+    }
+    return opens.map((start, i) => [start, closes[i]]);
+  };
+
+  const asyncRegions = regionsFor("AsyncScreen");
+  const screenRegions = regionsFor("ScreenBoundary");
+  const anyRegions = [...asyncRegions, ...screenRegions];
+  const inside = (index, regions) => regions.some(([a, b]) => index > a && index < b);
+
+  // Screens, by how they are imported. `lazy()` screens carry the extra
+  // requirement of the Suspense half; static ones only need a boundary.
+  const lazyScreens = [...appSrc.matchAll(/const\s+(\w+)\s*=\s*lazy\(/g)].map((m) => m[1]);
+  const staticScreens = [...appSrc.matchAll(/^import\s+(\w+)\s+from\s+"\.\/screens\//gm)].map((m) => m[1]);
+  const allScreens = [...lazyScreens, ...staticScreens];
+
+  for (const name of allScreens) {
+    const uses = [...appSrc.matchAll(new RegExp(`<${name}[\\s/>]`, "g"))].map((m) => m.index);
+    if (uses.length === 0) {
+      fail(
+        `§37: \`${name}\` is imported as a screen in src/App.jsx but never rendered there. Either ` +
+          `it is dead, or this scan's JSX matcher has stopped seeing usages — both need a look.`,
+      );
+      continue;
+    }
+    const required = lazyScreens.includes(name) ? asyncRegions : anyRegions;
+    const label = lazyScreens.includes(name) ? "<AsyncScreen>" : "a boundary (<AsyncScreen> or <ScreenBoundary>)";
+    for (const at of uses) {
+      if (!inside(at, required)) {
+        const line = appSrc.slice(0, at).split("\n").length;
+        fail(
+          `§37: src/App.jsx:${line} renders <${name}> outside ${label}. A throw inside it — a ` +
+            `render bug, or for a lazy screen a chunk that 404s after a redeploy — unmounts the ` +
+            `whole tree and leaves a blank page with no message (items 96, 99).`,
+        );
+      }
+    }
+  }
+
+  // (b) The outermost boundary, which App cannot provide for itself.
+  const mainSrc = readFileSync(join(ROOT, "src/main.jsx"), "utf8");
+  const rootOpen = mainSrc.indexOf("<ErrorBoundary");
+  const rootClose = mainSrc.indexOf("</ErrorBoundary>");
+  const appUse = mainSrc.search(/<App[\s/>]/);
+  if (appUse === -1) {
+    fail(`§37: src/main.jsx does not render <App />. This scan is pointed at the wrong file.`);
+  } else if (rootOpen === -1 || rootClose === -1 || !(appUse > rootOpen && appUse < rootClose)) {
+    fail(
+      `§37: src/main.jsx renders <App /> outside an ErrorBoundary. ScreenBoundary inside App ` +
+        `cannot catch App's own render, so a throw in the header, the bottom nav, the first-run ` +
+        `modal or useAppState goes back to being a blank page (item 99).`,
+    );
+  }
+
+  // (c) Loader-table invocations. See the premise correction above for why the
+  // unit is the invocation and not the `import(` line.
+  const screensDir = join(ROOT, "src/screens");
+  const screenFiles = readdirSync(screensDir, { withFileTypes: true })
+    .filter((e) => e.isFile() && /\.jsx?$/.test(e.name))
+    .map((e) => join(screensDir, e.name));
+
+  let invocations = 0;
+  for (const path of screenFiles) {
+    const src = readFileSync(path, "utf8");
+    for (const m of src.matchAll(/\b[A-Z][A-Z0-9_]*_LOADERS\s*\[/g)) {
+      // Walk to the end of the statement, tracking nesting, so the whole
+      // promise chain is examined rather than the invocation's own line.
+      let depth = 0;
+      let end = m.index;
+      for (; end < src.length; end++) {
+        const c = src[end];
+        if (c === "(" || c === "[" || c === "{") depth++;
+        else if (c === ")" || c === "]" || c === "}") depth--;
+        else if (c === ";" && depth <= 0) break;
+      }
+      const statement = src.slice(m.index, end);
+      // The table's own declaration has no `(` after the key, so it is not a
+      // call and is not this check's business.
+      if (!/\]\s*\(/.test(statement.slice(0, statement.indexOf("\n") + 1) || statement)) continue;
+      invocations++;
+      if (!/\.catch\s*\(/.test(statement)) {
+        const line = src.slice(0, m.index).split("\n").length;
+        fail(
+          `§37: ${relative(ROOT, path)}:${line} calls a content loader with no \`.catch\` in the ` +
+            `chain. A rejected content chunk then leaves the promise unhandled and the screen ` +
+            `waiting forever — item 96 measured that as a lesson with no body and a working Mark ` +
+            `Complete button, at a 77% content loss.`,
+        );
+      }
+    }
+  }
+
+  // Floors, for the reason §32/§33/§34/§35/§36 have them: a scan that matches
+  // nothing and a codebase with nothing wrong are the same green result.
+  if (allScreens.length < 4) {
+    fail(
+      `§37: found only ${allScreens.length} screen import(s) in src/App.jsx (expected at least 4). ` +
+        `The import matcher is not seeing the code it is supposed to police.`,
+    );
+  }
+  if (anyRegions.length < 4) {
+    fail(
+      `§37: found only ${anyRegions.length} boundary region(s) in src/App.jsx (expected at least 4).`,
+    );
+  }
+  if (invocations < 3) {
+    fail(
+      `§37: found only ${invocations} content-loader invocation(s) under src/screens/ (expected at ` +
+        `least 3). The loader tables were renamed, or this scan has gone blind.`,
+    );
+  }
+
+  console.log(
+    `  §37 screen boundaries: ${allScreens.length} screen(s) in App.jsx ` +
+      `(${lazyScreens.length} lazy / ${staticScreens.length} static) inside ${anyRegions.length} ` +
+      `boundary region(s), root boundary in main.jsx, ${invocations} loader invocation(s) ` +
+      `across ${screenFiles.length} screen file(s) all carrying .catch. ` +
+      `(Static check — the live blank-page proof is in the run log.)`,
+  );
+}
+
 console.log(`\n${failures === 0 ? "PASS" : "FAIL"}: ${failures} failure(s), ${warnings} warning(s).`);
 process.exit(failures === 0 ? 0 : 1);

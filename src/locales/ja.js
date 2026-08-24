@@ -23,6 +23,8 @@ export default {
     loadFailedTitle: "読み込めませんでした",
     loadFailedBody: "このコンテンツをダウンロードできませんでした。接続を確認してから、ページを再読み込みしてください。",
     loadFailedRetry: "再読み込み",
+    appErrorTitle: "問題が発生しました",
+    appErrorBody: "この画面で予期しないエラーが発生しました。ページを再読み込みするとほとんどの場合は解決し、保存された学習の進捗には影響ありません。",
     keyTakeaway: "重要ポイント", tryThinking: "考えてみよう",
     locked: "前のレッスンを先に完了してください",
     marketsTitle: "マーケットダッシュボード", currentState: "例示シナリオ",

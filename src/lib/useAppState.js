@@ -65,7 +65,10 @@ function loadFontScale() {
 
 // ── language ──────────────────────────────────────────────────────────────
 
-function loadLang() {
+// Exported so `main.jsx`'s root error boundary can pick its copy without a
+// second definition of "which language is persisted" — the boundary renders
+// outside App, so it cannot read the hook's state (item 99).
+export function loadLang() {
   const stored = readRaw(KEYS.lang, "");
   return Object.prototype.hasOwnProperty.call(TR, stored) ? stored : "en";
 }

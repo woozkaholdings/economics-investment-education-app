@@ -23,6 +23,8 @@ export default {
     loadFailedTitle: "불러오지 못했습니다",
     loadFailedBody: "이 콘텐츠를 내려받지 못했습니다. 연결 상태를 확인한 뒤 페이지를 새로고침하세요.",
     loadFailedRetry: "새로고침",
+    appErrorTitle: "문제가 발생했습니다",
+    appErrorBody: "이 화면에서 예기치 않은 오류가 발생했습니다. 페이지를 새로고침하면 대개 해결되며, 저장된 학습 기록은 그대로 유지됩니다.",
     keyTakeaway: "핵심 포인트", tryThinking: "생각해보세요",
     locked: "이전 레슨을 먼저 완료하세요",
     marketsTitle: "시장 대시보드", currentState: "예시 시나리오",

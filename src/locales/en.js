@@ -33,6 +33,12 @@ export default {
     loadFailedTitle: "Didn't load",
     loadFailedBody: "This content couldn't be downloaded. Check your connection, then reload the page.",
     loadFailedRetry: "Reload",
+    // Render crash (item 99). Deliberately NOT loadFailedBody: that copy
+    // says the content "couldn't be downloaded", which is a lie about a bug
+    // in code that downloaded fine. The reload action is the same, so
+    // `loadFailedRetry` is reused rather than duplicated.
+    appErrorTitle: "Something went wrong",
+    appErrorBody: "This screen hit an unexpected error. Reloading the page usually fixes it, and your saved progress is not affected.",
     keyTakeaway: "Key Takeaway", tryThinking: "Think About This",
     locked: "Complete previous lessons first",
     // Markets

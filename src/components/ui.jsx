@@ -467,3 +467,30 @@ export function LoadFailure({ t, style }) {
     </div>
   );
 }
+
+// ── AppError ──────────────────────────────────────────────────────────────
+// The fallback for a RENDER crash, as opposed to a chunk that never arrived
+// (backlog item 99). Both end in a reload, but they are not the same event and
+// must not share wording: `LoadFailure` tells the reader their connection
+// dropped, which is actively misleading when the code downloaded perfectly and
+// then threw. Same reload action, so `loadFailedRetry` is reused.
+//
+// Shown by the two ErrorBoundary fallbacks that have no more specific message
+// to offer — the root one in `main.jsx` and the per-tab one around App's
+// `<main>`. `role="alert"` because it replaces a screen the reader was on.
+export function AppError({ t, style }) {
+  return (
+    <div role="alert" style={{ marginTop: space["4"], ...style }}>
+      <Note tone="warn" label={t.appErrorTitle} icon="info">
+        {t.appErrorBody}
+      </Note>
+      <Button
+        variant="outline"
+        onClick={() => window.location.reload()}
+        style={{ marginTop: space["3"] }}
+      >
+        {t.loadFailedRetry}
+      </Button>
+    </div>
+  );
+}

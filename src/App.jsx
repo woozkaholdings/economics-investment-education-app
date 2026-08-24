@@ -16,7 +16,7 @@ import { EVENTS, track } from "./lib/analytics.js";
 import { initialRoute, useDeepLink } from "./lib/deepLink.js";
 import { useAppState } from "./lib/useAppState.js";
 import Icon from "./components/Icon.jsx";
-import { Button, Card, EmptyState, LoadFailure, Text } from "./components/ui.jsx";
+import { AppError, Button, Card, EmptyState, LoadFailure, Text } from "./components/ui.jsx";
 import ErrorBoundary from "./components/ErrorBoundary.jsx";
 import { APP_MAX_WIDTH, fill, ink, line, MIN_TAP, radius, shadow, space, surface } from "./theme.js";
 import Learn from "./screens/Learn.jsx";
@@ -49,12 +49,30 @@ function ScreenFallback({ t }) {
 // page (backlog item 96). Every lazy screen therefore gets both. The pairing
 // is a component rather than four hand-written wrappers so a fifth screen
 // cannot be added with only half of it.
+//
+// This one is deliberately narrow: its message is about a download. A screen
+// that arrived and then threw is caught by ScreenBoundary below instead.
 function AsyncScreen({ t, children }) {
   return (
     <ErrorBoundary fallback={<LoadFailure t={t} />}>
       <Suspense fallback={<ScreenFallback t={t} />}>{children}</Suspense>
     </ErrorBoundary>
   );
+}
+
+// The boundary for a screen that loaded and then threw while rendering
+// (backlog item 99). AsyncScreen only ever covered the three lazy screens;
+// `Learn` is a static import, so it cannot 404 — but a render bug inside it
+// still took the whole tree to a blank page, measured 2026-08-24 at `#root`
+// 0 children / 0 bytes, the same signature item 96 found for a rejected chunk.
+//
+// It wraps the screen area rather than the whole app on purpose: the header
+// and the bottom nav survive, so a reader whose Learn path crashed can still
+// reach Practice. `key={tab}` is what makes that offer real — a boundary that
+// has caught stays caught, so without remounting it per tab the nav would be
+// visible and useless. Switching tabs is therefore also the recovery.
+function ScreenBoundary({ t, children }) {
+  return <ErrorBoundary fallback={<AppError t={t} />}>{children}</ErrorBoundary>;
 }
 
 const LANGUAGES = [
@@ -338,36 +356,38 @@ export default function App() {
         // a screen is never parked under it.
         style={{ flex: 1, padding: `${space["4"]}px ${space["4"]}px 112px` }}
       >
-        {tab === "learn" && reading === null && (
-          <Learn
-            t={t} lang={lang} lessons={lessons} completedLessons={completedLessons}
-            isUnlocked={isUnlocked} streak={streak} openLesson={openLesson}
-          />
-        )}
-        {tab === "learn" && reading !== null && (
-          <AsyncScreen t={t}>
-            <LessonReader
-              t={t} lang={lang} lessons={lessons} index={reading}
-              completedLessons={completedLessons} completeLesson={completeLesson}
-              recordReview={recordReview}
-              onBack={closeLesson} onNavigate={setReading}
+        <ScreenBoundary t={t} key={tab}>
+          {tab === "learn" && reading === null && (
+            <Learn
+              t={t} lang={lang} lessons={lessons} completedLessons={completedLessons}
+              isUnlocked={isUnlocked} streak={streak} openLesson={openLesson}
             />
-          </AsyncScreen>
-        )}
-        {tab === "practice" && (
-          <AsyncScreen t={t}>
-            <Practice t={t} lang={lang} review={review} recordReview={recordReview} />
-          </AsyncScreen>
-        )}
-        {tab === "reference" && (
-          <AsyncScreen t={t}>
-            <Reference
-              t={t} lang={lang}
-              fontScale={fontScale} setFontScale={setFontScale}
-              themeMode={themeMode} setThemeMode={setThemeMode}
-            />
-          </AsyncScreen>
-        )}
+          )}
+          {tab === "learn" && reading !== null && (
+            <AsyncScreen t={t}>
+              <LessonReader
+                t={t} lang={lang} lessons={lessons} index={reading}
+                completedLessons={completedLessons} completeLesson={completeLesson}
+                recordReview={recordReview}
+                onBack={closeLesson} onNavigate={setReading}
+              />
+            </AsyncScreen>
+          )}
+          {tab === "practice" && (
+            <AsyncScreen t={t}>
+              <Practice t={t} lang={lang} review={review} recordReview={recordReview} />
+            </AsyncScreen>
+          )}
+          {tab === "reference" && (
+            <AsyncScreen t={t}>
+              <Reference
+                t={t} lang={lang}
+                fontScale={fontScale} setFontScale={setFontScale}
+                themeMode={themeMode} setThemeMode={setThemeMode}
+              />
+            </AsyncScreen>
+          )}
+        </ScreenBoundary>
       </main>
 
       {/* Bottom navigation — a floating pill, from UIUX/ (Quizlet iOS home).

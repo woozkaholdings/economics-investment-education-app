@@ -23,6 +23,8 @@ export default {
     loadFailedTitle: "加载失败",
     loadFailedBody: "无法下载此内容。请检查网络连接，然后重新加载页面。",
     loadFailedRetry: "重新加载",
+    appErrorTitle: "出现了问题",
+    appErrorBody: "此页面遇到意外错误。重新加载页面通常可以解决，您保存的学习进度不会受到影响。",
     keyTakeaway: "关键要点", tryThinking: "想一想",
     locked: "请先完成之前的课程",
     marketsTitle: "市场仪表板", currentState: "示例场景",
