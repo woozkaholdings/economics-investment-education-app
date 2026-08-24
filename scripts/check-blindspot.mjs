@@ -139,11 +139,20 @@ const readmePath = join(ROOT, "README.md");
     /(買う|売る|投資する)べきです/,
     /推奨します|お勧めします/,
   ];
-  const hits = patterns.flatMap((p) => grepFiles([...contentFiles, ...localeFiles], p));
+  // index.html joins the scan 2026-08-24 (backlog item 98), for the same
+  // reason README.md joined §10.2 above: a rule only covers the files it
+  // reads. That run put a `description`, an `og:description` and a
+  // `twitter:description` into the <head> — user-facing copy that is the
+  // first and sometimes only sentence anyone reads about this product, since
+  // hash routing makes it the preview for every shared lesson URL — and it
+  // sat outside every §10.1 pattern because those scanned src/content and
+  // src/locales only. No violation was found there; the gap was the point.
+  const adviceFiles = [...contentFiles, ...localeFiles, join(ROOT, "index.html")];
+  const hits = patterns.flatMap((p) => grepFiles(adviceFiles, p));
   if (hits.length) {
     fail(`§10.1 investment-advice-adjacent language reintroduced:\n  ${hits.join("\n  ")}`);
   } else {
-    ok("§10.1 no advice-adjacent language (en/es/ko/zh/ja) in src/content/ or src/locales/");
+    ok(`§10.1 no advice-adjacent language (en/es/ko/zh/ja) across ${adviceFiles.length} file(s) in src/content/, src/locales/ and index.html`);
   }
 }
 

@@ -1949,9 +1949,63 @@ for the history. No open P1/P2 items.
     cheap, and the same shape as §35. **Note the floor-control lesson from §35's filing:** a scan that
     matches nothing must fail loudly, not pass.
 
-98. **[Feature/Distribution — filed 2026-08-24 by the scheduled dev-agent, measured. Serves
-    `LAUNCH_PLAN.md` §5's web funnel, and is downstream of O-1.] `index.html` has no link-preview
-    metadata, so every shareable lesson URL shares as a bare link.**
+98. **✅ DONE 2026-08-24 (scheduled dev-agent) — the metadata, the multilingual tab title, the
+    guard (`check-data.mjs` §38) and one extension to `check-blindspot.mjs`, in one commit.
+    Premise re-measured and it held; two facts the item did not have narrowed the scope, and the run
+    found two defects in its own work. See the run-log entry.** [Feature/Distribution — filed
+    2026-08-24 by the scheduled dev-agent, measured. Serves `LAUNCH_PLAN.md` §5's web funnel, and is
+    downstream of O-1.] `index.html` had no link-preview metadata, so every shareable lesson URL
+    shared as a bare link.
+    - **What shipped:** `description` + the `og:*` and `twitter:*` sets + two per-palette
+      `theme-color` tags + an SVG icon in `index.html`; `public/icon.svg`; and one line in
+      `useAppState`'s existing lang effect so the **tab title follows the picker in all five
+      languages**, composed from `appTitle`/`appSub` so the app's name has one definition. Verified
+      live in all five, including a picker change with **no reload** (the effect re-runs, not just
+      mounts).
+    - **SCOPE CORRECTION, measured — two tags are deliberately absent and should stay absent until
+      O-1.** `og:url` and `og:image` are specified as **absolute** URLs and this app has no origin.
+      `base: "./"` exists so the build is path-agnostic and `vite.config.js` forbids hardcoding a
+      leading `/`, so a guessed domain would break the property the build is built around. Filed as
+      **item 101**. `twitter:card` is `summary` and not `summary_large_image` for a related measured
+      reason: the repo contains **no shippable image asset** at all.
+    - **The lesson worth carrying, and it is about instruments, not icons.** The first `public/icon.svg`
+      served `200 image/svg+xml` **and rendered nothing** — a `--` inside an XML comment (it named the
+      CSS property `--fill-accent`) makes the document unparseable. The HTTP check that a run would
+      naturally reach for said "fine", and an icon has no console error and no layout to disturb, so
+      **nothing would ever have reported it.** §38 therefore parses the SVG rather than checking the
+      file exists. **Open the asset, do not just fetch it.**
+    - **§38 also pins the two one-definition rules**, both proved by injection: `index.html`'s static
+      `<title>` against `en`'s `appTitle`/`appSub` (they are the shared-link name and the in-app name
+      for one product), and the three description tags against each other (three consumers, no
+      reliable fallback between them, so drift shows different previews in different apps silently).
+    - **`check-blindspot.mjs`'s §10.1 file set now includes `index.html`**, for the same reason
+      `README.md` joined §10.2: a rule only covers the files it reads. The `description` is the first
+      and sometimes only sentence anyone reads about this product, and it sat outside every §10.1
+      pattern. Proved with a real before/after — the pre-change script **passes** an injected
+      violation, the new one names all three lines.
+
+101. **[Feature/Distribution — filed 2026-08-24 by the run that closed item 98, as its stated residual
+    rather than smuggled into the same commit. Serves `LAUNCH_PLAN.md` §5. **Genuinely blocked on
+    O-1**, not merely downstream of it.] `og:url` and `og:image` are the two preview tags item 98
+    could not ship, and both need an origin that does not exist yet.**
+    - **Why they were left out rather than guessed.** Both are specified as **absolute** URLs. This
+      build is path-agnostic on purpose (`base: "./"`), and `vite.config.js` states that nothing here
+      may hardcode a leading `/` — writing a domain into `index.html` now would ship a preview
+      pointing at a page that does not exist and break the property the whole build rests on.
+    - **`og:image` needs a second thing besides a URL: an image.** Measured 2026-08-24 — the repo has
+      **no shippable raster asset**; the only images anywhere are the read-only launch-plan page scans
+      in `working_files/`, and `public/` holds only `data/market.json` and now `icon.svg`. A preview
+      card image is roughly 1200×630 and wants the product name set in type, which this repo cannot
+      author without adding a raster toolchain (**item 12's port-cost rule applies** — scope it before
+      adding anything). `twitter:card` should move `summary` → `summary_large_image` in the same
+      change, and not before.
+    - **When picked, do it in the same session as the deploy**, so the URL is a fact rather than a
+      guess, and extend §38 to require both tags at that point — the section is written to be silent
+      about them today and says so in its own comment.
+    - **Honest priority: low until O-1, then immediate.** Everything here is inert without a URL, and
+      the moment there is one it is the difference between a link that sells the app and a bare one.
+
+    ORIGINAL TEXT (retained — it is what was measured):
     - **Measured:** `index.html` is 11 lines and carries `charset`, `viewport` and `<title>` — and
       **no `meta name="description"`, no `og:*`, no `twitter:*`, no favicon, no `theme-color`.**
     - **Why it belongs to §5 specifically.** Item 31 shipped hash routing so that "each lesson is a
@@ -7910,3 +7964,151 @@ tree: 75,317 bytes, **0 alerts**, `<html lang>` `en` — the boundaries are iner
 the blank page it removes is not reachable in development at all — it needs a real deploy, a real
 redeploy under an open tab, or a real device — so it is a defect that can only ever be found by the
 first user, who does not exist until O-1 lands.
+
+### 2026-08-24 (scheduled dev-agent) — item 98: the whole product's link preview, and an icon that returned HTTP 200 while rendering nothing
+
+Picked **item 98**, named first in the previous run's "Next" and the top of the board with item 99
+closed. Non-item-93 work, so **W-5.2's ratio holds** — seven consecutive non-93 runs.
+
+#### Step 3.5 — premise re-measured with controls; the claims held, and two facts the item did not have changed the scope
+
+- **"`index.html` carries `charset`, `viewport` and `<title>` and nothing else"** — **CONFIRMED
+  exactly.** A tag extractor over the file returned those three and no others: no `description`, no
+  `og:*`, no `twitter:*`, no icon, no `theme-color`. **Control:** the same extractor found the three
+  tags I already knew were there, so an empty `og:*` result is a real absence and not a dead regex.
+  (The item said **11 lines**; the file is **12**. Trivial, recorded because a figure is a figure.)
+- **"the `<title>` hardcodes English"** — **CONFIRMED, and the instrument was controlled.**
+  `document.title` has **0 hits** across `src/`, while the control `documentElement.lang` has **1**
+  (the §36 effect) — so the grep works and nothing has ever set the title.
+- **"routes are hash-based, so per-lesson previews are not available"** — CONFIRMED in
+  `lib/deepLink.js` and in `vite.config.js`'s own note. Scoped site-level, as the item asked.
+- **NEW, and it removed two tags from the scope.** `og:url` and `og:image` are specified as
+  **absolute** URLs, and this app **has no origin until O-1**. Worse, `base: "./"` exists precisely so
+  the build is path-agnostic, and `vite.config.js` says in as many words that nothing here may
+  hardcode a leading `/`. Shipping a guessed domain would break the one property the build is built
+  around, so both tags are deliberately absent with the reason written into the file.
+- **NEW.** The repo contains **no shippable image asset** — `public/` held only `data/market.json`,
+  and the only images anywhere are the read-only launch-plan page scans in `working_files/`. So
+  `twitter:card` is `summary`, not `summary_large_image`: there is no image to put in a large card.
+
+#### What shipped
+
+- **`index.html`** — `description`, `og:type`/`site_name`/`title`/`description`/`locale`,
+  `twitter:card`/`title`/`description`, an SVG icon, and **two `theme-color` tags** (one per palette,
+  matched to `--surface-canvas`, because the app follows the system scheme by default). The
+  description carries the app's own disclaimer sentence rather than a marketing claim.
+- **`public/icon.svg`** — one cycle drawn in a single stroke on the accent fill. SVG because it is the
+  only icon format this repo can author without adding a raster toolchain (item 12's port-cost rule).
+- **The tab title follows the picker.** One line added to the same `useAppState` effect that owns
+  `<html lang>`, composed from `appTitle`/`appSub` rather than a sixth locale key — so the app's name
+  keeps **one** definition.
+- **`check-data.mjs` §38**, and **`check-blindspot.mjs`'s §10.1 file set now includes `index.html`.**
+
+#### The two defects this run found in its own work, both by refusing to trust a green result
+
+**1. The icon returned HTTP 200, the right content type — and rendered nothing.** `curl` said
+`200 image/svg+xml`, which is the check a run naturally reaches for and which was **worthless**.
+Opening the file in a real browser showed an **XML parse-error page**: my comment named the CSS
+custom property `--fill-accent`, and a `--` inside `<!-- -->` terminates the comment and invalidates
+the document. An icon has no console error and no layout to disturb, so **nothing else would ever have
+reported this** — it would have shipped as a permanently blank favicon. Fixed, and **§38 now parses
+the SVG** rather than only checking the file exists; the comment in the file explains why the property
+name cannot be written there.
+
+**2. My own report line lied under the exact condition it existed for.** §38 printed
+`9 required <meta> present` from `REQUIRED.length` — a constant. Injection 1 removed `og:description`
+and the line still read **"9 required present"** beside its own failure. Now `presentRequired` is
+counted, and the same injection reads **8/9**.
+
+#### Verification — a live five-language browser sweep, then twenty injections
+
+Live, against a served `dist/` (the Environment note's technique, per W-1):
+
+| Check | Result |
+|---|---|
+| `<title>` in all five languages | `en` Economic Cycles — Master the Economy · `ko` 경제 순환 — 경제를 마스터하세요 · `zh` 经济周期 — 掌握经济运行 · `ja` 経済サイクル — 経済をマスターしよう · `es` Ciclos Económicos — Domina la Economía |
+| the picker, **without a reload** | es → ko flipped title *and* `<html lang>` live, so the effect re-runs rather than only mounting |
+| `<html lang>` unregressed (§36) | `zh` still `zh-Hans`, each other locale itself |
+| icon | `200 image/svg+xml`, **and rendered** — screenshotted after the fix |
+| shipped tree | `#root` 78,004 bytes, 1 child, **0 alerts**, 0 console errors |
+
+**`en` alone proves nothing here** — the static and runtime titles are identical in English, so the
+four non-English locales are the whole test. That is why the sweep is five rows and not one.
+
+§38's battery — each injection **proved to have landed** before its result was read, each restored
+from a scratchpad copy, **never `git checkout --`**. Controls at both ends.
+
+| # | Injection | Result |
+|---|---|---|
+| 0 | control, unmodified | **PASS** |
+| 1 | `og:description` removed | **FAIL**, named (and exposed the constant-count bug above) |
+| 2 | `description` emptied | **FAIL** — "empty unfurls the same as absent" |
+| 3 | `<title>` renamed | **FAIL** — named against en's `appTitle`/`appSub` |
+| 4 | `og:title` drifts from the app name | **FAIL**, named |
+| 5 | icon file deleted | **FAIL** — "links an icon it does not serve" |
+| 6 | one `theme-color` dropped | **FAIL** — palette count |
+| 7 | `theme-color` loses its media query | **FAIL**, named |
+| 8 | `document.title` set from a literal | **FAIL** — "a second definition of the app's name" |
+| 9 | the title assignment removed | **FAIL** — "nothing under src/ assigns document.title" |
+| 10 | **floor**: head stripped to two tags | **FAIL** — the floor fires *by name*, not only the gaps |
+| 14 | **the real bug**: `--` inside the SVG comment | **FAIL**, named |
+| 15 | `</svg>` removed | **FAIL** — 1 unclosed element |
+| 16 | `xmlns` dropped | **FAIL**, named |
+| 17 | unterminated comment | **FAIL** — twice, by two independent rules |
+| 19 | `og:description` drifts from `description` | **FAIL** — all three quoted side by side |
+| 20 | control, after all restores | **PASS** |
+
+**Injection 8 failed to land the first time and I nearly recorded it as a passing check.** The source
+held `\u2014`, not a literal em-dash, so the substitution matched nothing while the test *looked*
+clean — a silent no-op is indistinguishable from a guard that caught nothing. Every injection above is
+now asserted to have landed before its result is read, and the escape is a literal em-dash, matching
+the rest of the repo.
+
+**The §10.1 extension was proved by a genuine before/after**, and the first attempt at that was also
+worthless: running the pre-change script from the scratchpad **crashed** on `ROOT` resolution and
+printed nothing, which reads exactly like "scanned it and found nothing". Re-run from inside
+`scripts/` so `ROOT` resolves: advice-adjacent prose injected into all three description tags is
+**PASSed by the old script** (blind) and **FAILed by the new one**, which names all three lines.
+**Control A:** the old script PASSes the clean tree, proving it runs at all.
+
+`npm run build` **✓ 971ms, exit 0**; `npm test` **exit 0**, 0 failures, the same **2 pre-existing
+warnings** (item 94's translation debt, the 0% human review share).
+
+#### Adversarial self-check (step 5)
+
+- **Blindspot register** — `npm run check-blindspot` **passes all six**, run rather than reasoned
+  about. This change adds user-facing prose, so §10.1 is live surface: the description names no asset,
+  no market and no action, and it **carries the disclaimer sentence itself**. Explicit greps on the
+  two new files: `dalio` **0**, market figures **0**, child-facing terms **0**. One `20\d\d` hit,
+  checked rather than waved through — it is the SVG namespace URL `www.w3.org/2000/svg`, not a date.
+- **`DECISIONS.md` conflict** — none, and the nearest decision was read rather than recalled. The hash
+  routing entry's reasoning is item 12's port-cost rule; this change adds **no dependency, no path
+  router, no prerendering and no server rewrite**, and is scoped site-level *because* of that entry.
+  A `<head>` is web-only, but an Expo port discards `index.html` wholesale, so the added port cost is
+  zero. `public/` already ships a static asset (`data/market.json`), so the icon needs no new shape.
+- **Already-done backlog item** — no. `favicon` and `theme-color` each return **exactly one** hit
+  across `AGENT_LOG.md`, the archive and `LAUNCH_PLAN.md`: **item 98's own filing text**.
+  `twitter:card` and `open graph` return **zero**. The four `og:` hits are substrings of `backlog:`.
+  **Control:** `hash routing` returns 5 and 5 in the two logs, so the greps see the files.
+- **Own verification claim** — reproducible from the commands listed. The two claims that would be
+  easiest to fake are the ones with controls attached: the five-language sweep (because `en` is not
+  evidence) and the §10.1 before/after (because a crashed script prints the same nothing as a clean one).
+- **A real conflict this check caught, fixed inside the run.** The description is written **three
+  times** because the three consumers do not reliably fall back to one another — three copies of one
+  sentence, each read by a different client, so an edit to one changes the preview in some apps and
+  not others with nothing reporting it. That is the same one-definition problem I had just fixed for
+  the title and had not applied here. §38 now pins all three together (injection 19).
+
+#### Next
+
+- **Item 100** (`AsyncScreen` answers a render bug with a message about the network) is the top of the
+  list. Read its "scope the discrimination method before writing it" bullet first — the item is
+  explicit that matching on an error message is the brittle option.
+- **Item 101** (filed below) is item 98's stated residual: `og:url` and `og:image`, both of which need
+  the origin O-1 has not produced.
+- **Do NOT pick item 94** — optional track, four "(Beta)" languages, parked behind O-1 by its own box.
+
+**Unchanged and still the entire critical path, both owner-blocked: O-1** (a deployed URL) and **O-2**
+(item 18, an analytics account). Item 98 is the sharpest illustration yet of the O-1 shape: this run
+built the preview card for **every shareable URL in the product**, and not one of those URLs exists.
+The work is real and it is inert until someone drags `dist/` onto Netlify Drop.

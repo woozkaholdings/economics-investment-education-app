@@ -143,6 +143,14 @@ export function useAppState() {
   // so without this the four non-English locales are announced in English.
   useEffect(() => {
     document.documentElement.lang = HTML_LANG[lang] ?? lang;
+    // The tab title follows the picker for the same reason, and it is the one
+    // string index.html cannot get right on its own: the document ships an
+    // English <title> because that is all a crawler or a link unfurler will
+    // ever see (neither runs this code), so a reader in Korean was left with
+    // an English tab for the whole session. Composed from `appTitle`/`appSub`
+    // rather than a sixth locale key, so the name has one definition —
+    // check-data.mjs §38 asserts index.html's static title matches en's.
+    document.title = `${TR[lang].appTitle} — ${TR[lang].appSub}`;
   }, [lang]);
 
   const setLang = useCallback((next) => {

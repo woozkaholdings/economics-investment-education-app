@@ -3,7 +3,49 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- The pre-mount title, and the only one a crawler or a link unfurler ever
+         sees: neither runs the app's JS. `useAppState` rewrites it to the
+         picked language at mount, the same way it rewrites <html lang> (§36).
+         Keep this string equal to en's `appTitle — appSub`; check-data.mjs §38
+         asserts it, so the app's name has one definition and not two. -->
     <title>Economic Cycles — Master the Economy</title>
+
+    <!-- Link-preview metadata (backlog item 98, serves LAUNCH_PLAN.md §5's web
+         funnel). Routing is hash-based, so `#/lesson/29` is never sent to a
+         server and every lesson URL is *this* document to an unfurler. These
+         are therefore deliberately site-level, not per-lesson; per-lesson
+         previews would mean prerendering or a path router, which item 31 chose
+         against on purpose (DECISIONS.md).
+
+         Deliberately absent until the app has an origin (owner action O-1):
+         `og:url` and `og:image` are specified as absolute URLs, and this build
+         is path-agnostic by design (`base: "./"` — vite.config.js explains why
+         nothing here may hardcode a leading "/"). Guessing a domain now would
+         ship a preview pointing at a page that does not exist and break the one
+         property the build is built around. `twitter:card` is `summary` rather
+         than `summary_large_image` for the same reason: there is no image. -->
+    <meta name="description" content="A self-paced course on how the economy works: booms and busts, interest rates, and the judgment behind everyday money decisions. Educational content only — not personalized investment, legal, or tax advice." />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Economic Cycles" />
+    <meta property="og:title" content="Economic Cycles — Master the Economy" />
+    <meta property="og:description" content="A self-paced course on how the economy works: booms and busts, interest rates, and the judgment behind everyday money decisions. Educational content only — not personalized investment, legal, or tax advice." />
+    <meta property="og:locale" content="en" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Economic Cycles — Master the Economy" />
+    <meta name="twitter:description" content="A self-paced course on how the economy works: booms and busts, interest rates, and the judgment behind everyday money decisions. Educational content only — not personalized investment, legal, or tax advice." />
+
+    <!-- SVG rather than .ico: it is one text file, it scales, and it is the
+         only icon format this repo can author without adding a raster
+         toolchain. Its two colors are copies of --fill-accent and
+         --surface-canvas; see the note inside the file. -->
+    <link rel="icon" type="image/svg+xml" href="/icon.svg" />
+
+    <!-- The browser chrome around the app, matched to --surface-canvas in each
+         palette (src/index.css). Two tags, not one, because the app follows the
+         system scheme by default. -->
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#f8f5f0" />
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#14120f" />
   </head>
   <body>
     <div id="root"></div>

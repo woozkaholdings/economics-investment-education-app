@@ -4,7 +4,7 @@
 // check can't: a missing language field, an out-of-range quiz answer, or a
 // dangling `t.someKey` reference — without needing a browser.
 
-import { readFileSync, readdirSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, join, relative } from "node:path";
 
@@ -4350,6 +4350,241 @@ if (keyedGroupsChecked < 4) {
       `boundary region(s), root boundary in main.jsx, ${invocations} loader invocation(s) ` +
       `across ${screenFiles.length} screen file(s) all carrying .catch. ` +
       `(Static check — the live blank-page proof is in the run log.)`,
+  );
+}
+
+// §38. index.html carries link-preview metadata, and the app's name has one
+// definition.
+//
+// WHY THIS EXISTS. Routing is hash-based (`lib/deepLink.js`), so `#/lesson/29`
+// is never sent to a server and every shareable lesson URL is *this one*
+// document to a crawler or a link unfurler. That makes index.html's <head> the
+// entire preview surface for the whole product — §5's web funnel rests on about
+// a dozen lines that nothing imports, nothing renders, and no test touched
+// before this section. Measured 2026-08-24 (backlog item 98) on the file as it
+// then stood: `charset`, `viewport` and `<title>` and nothing else — no
+// description, no og:*, no twitter:*, no icon, no theme-color.
+//
+// THE HALF THAT IS ACTUALLY SUBTLE. Neither a crawler nor an unfurler runs the
+// app's JS, so the static <title> is the only name they see, while a reader in
+// the app sees the one `useAppState` writes from `appTitle`/`appSub`. Those are
+// two independent strings for one name, and drift between them is invisible in
+// both directions: renaming the app in the locales leaves the shared preview
+// saying the old name, and editing index.html leaves the tab saying it. This
+// section pins them to each other rather than to a literal, so there is still
+// exactly one place to make the change.
+//
+// WHAT IS DELIBERATELY NOT CHECKED. Not `og:url` or `og:image`: both are
+// specified as absolute URLs and this app has no origin until owner action O-1
+// lands, and `base: "./"` (vite.config.js) means nothing here may hardcode a
+// path. Requiring them would force a guessed domain into the file. Not the
+// rendered preview — that needs a live unfurler against a real URL, which is
+// O-1 again. Not the description's prose: check-blindspot.mjs owns §10.1 and
+// now scans this file for it (added the same day, for the same reason README
+// was added to §10.2 — a rule only covers the files it reads).
+{
+  const html = readFileSync(join(ROOT, "index.html"), "utf8");
+
+  // Attribute order is not fixed by anything, so match on the tag and read the
+  // pair out of it rather than assuming `name` precedes `content`.
+  const metas = [...html.matchAll(/<meta\b[^>]*>/gi)].map((m) => m[0]);
+  const metaValue = (key) => {
+    for (const tag of metas) {
+      const k = tag.match(/\b(?:name|property)="([^"]*)"/i);
+      if (!k || k[1].toLowerCase() !== key.toLowerCase()) continue;
+      const v = tag.match(/\bcontent="([^"]*)"/i);
+      if (v) return v[1];
+    }
+    return null;
+  };
+
+  const REQUIRED = [
+    ["description", "the body of every unfurled link and search result"],
+    ["og:type", "without it an unfurler may not treat the page as a page at all"],
+    ["og:site_name", "the product's name, shown above the title in most clients"],
+    ["og:title", "the headline of the preview card"],
+    ["og:description", "the body of the preview card"],
+    ["og:locale", "the language the preview copy is written in"],
+    ["twitter:card", "chooses the card shape; without it the link stays bare"],
+    ["twitter:title", "not every client falls back to og:*"],
+    ["twitter:description", "not every client falls back to og:*"],
+  ];
+  let presentRequired = 0;
+  for (const [key, why] of REQUIRED) {
+    const value = metaValue(key);
+    if (value !== null && value.trim()) presentRequired++;
+    if (value === null) {
+      fail(
+        `§38: index.html has no <meta> for \`${key}\` — ${why}. Hash routing makes this document ` +
+          `the preview for every lesson URL in the app, so a gap here is a gap for all of them.`,
+      );
+    } else if (!value.trim()) {
+      fail(`§38: index.html's \`${key}\` is empty, which unfurls the same as absent.`);
+    }
+  }
+
+  // An icon, and it has to be one this repo actually ships — a <link> pointing
+  // at a file that was deleted is worse than none, because it looks handled.
+  const iconHref = (html.match(/<link\b[^>]*\brel="icon"[^>]*>/i) ?? [""])[0].match(/\bhref="([^"]*)"/i);
+  if (!iconHref) {
+    fail(`§38: index.html declares no <link rel="icon">, so the tab and every bookmark fall back to a blank page glyph.`);
+  } else {
+    const rel = iconHref[1].replace(/^\.?\//, "");
+    const iconPath = join(ROOT, "public", rel);
+    if (!existsSync(iconPath)) {
+      fail(
+        `§38: index.html's icon href is \`${iconHref[1]}\` but public/${rel} does not exist, so the ` +
+          `built site links an icon it does not serve.`,
+      );
+    } else if (rel.endsWith(".svg")) {
+      // Existence is not enough, and this is not a hypothetical: the first
+      // version of public/icon.svg shipped a CSS custom-property name inside
+      // an XML comment, which is a `--` inside `<!-- -->` and therefore a
+      // parse error. It served with HTTP 200 and the right content type, and
+      // rendered as a browser XML error page — so the network-level check that
+      // a run would naturally reach for said "fine". An icon has no console
+      // error and no layout to disturb, so nothing else would ever report it.
+      const svg = readFileSync(iconPath, "utf8");
+      const body = svg.replace(/<!--[\s\S]*?-->/g, "");
+      const problems = [];
+      for (const c of svg.matchAll(/<!--([\s\S]*?)-->/g)) {
+        if (c[1].includes("--")) problems.push(`a comment contains "--", which ends it early and makes the file unparseable`);
+      }
+      const opens = (svg.match(/<!--/g) ?? []).length;
+      const closes = (svg.match(/-->/g) ?? []).length;
+      if (opens !== closes) problems.push(`${opens} "<!--" against ${closes} "-->" — an unterminated comment`);
+      if (!/^\s*<svg\b/.test(body)) problems.push(`the document does not start with an <svg> element`);
+      if (!/\bxmlns="http:\/\/www\.w3\.org\/2000\/svg"/.test(body)) problems.push(`no xmlns — a standalone SVG document needs it`);
+      const tags = [...body.matchAll(/<(\/?)([a-zA-Z][\w:-]*)[^>]*?(\/?)>/g)];
+      const stack = [];
+      for (const [, close, name, selfClose] of tags) {
+        if (close) {
+          if (stack.pop() !== name) { problems.push(`</${name}> does not close the element it follows`); break; }
+        } else if (!selfClose) stack.push(name);
+      }
+      if (stack.length) problems.push(`${stack.length} unclosed element(s): ${stack.join(", ")}`);
+      for (const problem of problems) {
+        fail(
+          `§38: public/${rel} is not well-formed XML — ${problem}. A malformed SVG still serves with ` +
+            `HTTP 200 and the right content type, and renders as nothing.`,
+        );
+      }
+    }
+  }
+
+  // theme-color is per-palette here because the app follows the system scheme
+  // by default; one unqualified tag would paint the wrong chrome in one of them.
+  const themeColors = metas.filter((t) => /\bname="theme-color"/i.test(t));
+  if (themeColors.length < 2) {
+    fail(
+      `§38: index.html has ${themeColors.length} <meta name="theme-color"> tag(s); expected one per ` +
+        `palette, each with a prefers-color-scheme media attribute. The app ships light and dark.`,
+    );
+  }
+  for (const tag of themeColors) {
+    if (!/\bmedia="\(prefers-color-scheme:\s*(?:light|dark)\)"/i.test(tag)) {
+      fail(`§38: a theme-color tag carries no prefers-color-scheme media query: \`${tag}\`.`);
+    }
+  }
+
+  // The one-name rule. `en` is the reference because it is the language the
+  // static <head> is written in (og:locale says so, and is checked against it).
+  const expectedTitle = `${TR.en.appTitle} — ${TR.en.appSub}`;
+  const staticTitle = (html.match(/<title>([\s\S]*?)<\/title>/i) ?? [])[1];
+  if (staticTitle === undefined) {
+    fail(`§38: index.html has no <title>. It is the name every unfurler and every crawler reads.`);
+  } else if (staticTitle.trim() !== expectedTitle) {
+    fail(
+      `§38: index.html's <title> is \`${staticTitle.trim()}\` but en's appTitle/appSub compose to ` +
+        `\`${expectedTitle}\`. These are the shared-link name and the in-app name for one product; ` +
+        `change them together, in src/locales/en.js and index.html.`,
+    );
+  }
+  for (const key of ["og:title", "twitter:title"]) {
+    const value = metaValue(key);
+    if (value !== null && value !== expectedTitle) {
+      fail(`§38: index.html's \`${key}\` is \`${value}\`, which is not the app's name (\`${expectedTitle}\`).`);
+    }
+  }
+  // Same rule for the description, which is written three times because the
+  // three consumers do not reliably fall back to one another. Three copies of
+  // one sentence is a drift surface, and the drift is invisible: each client
+  // reads only its own tag, so an edit to one of them changes the preview in
+  // some apps and not others, with nothing anywhere reporting a difference.
+  const descriptions = ["description", "og:description", "twitter:description"]
+    .map((key) => [key, metaValue(key)])
+    .filter(([, value]) => value !== null);
+  const distinct = [...new Set(descriptions.map(([, value]) => value))];
+  if (distinct.length > 1) {
+    fail(
+      `§38: index.html's description tags disagree — ` +
+        descriptions.map(([key, value]) => `${key}: "${value.slice(0, 40)}…"`).join(" / ") +
+        `. They are one sentence for one product; each client reads only its own, so a drift here ` +
+        `shows a different preview in different apps and nothing reports it.`,
+    );
+  }
+
+  const ogLocale = metaValue("og:locale");
+  if (ogLocale !== null && ogLocale.split(/[-_]/)[0] !== "en") {
+    fail(
+      `§38: index.html declares og:locale \`${ogLocale}\` while its title and description are en. ` +
+        `The static head is English on purpose — an unfurler never runs the language picker.`,
+    );
+  }
+
+  // The source half: something under src/ still has to rewrite the title after
+  // mount, or four of the five languages get an English tab for the session.
+  // Matched per LINE and required to read a locale key, per §36's injection
+  // lesson — a file merely *mentioning* `TR` satisfies far too much.
+  const walkModules = (dir) =>
+    readdirSync(dir, { withFileTypes: true }).flatMap((e) => {
+      const full = join(dir, e.name);
+      if (e.isDirectory()) return walkModules(full);
+      return e.isFile() && /\.(js|jsx)$/.test(e.name) ? [full] : [];
+    });
+  const srcModules = walkModules(join(ROOT, "src"));
+  const titleAssigns = [];
+  for (const path of srcModules) {
+    const src = readFileSync(path, "utf8");
+    for (const line of src.split("\n")) {
+      if (/\bdocument\.title\s*=[^=]/.test(line)) titleAssigns.push({ path: relative(ROOT, path), line });
+    }
+  }
+  if (titleAssigns.length === 0) {
+    fail(
+      `§38: nothing under src/ assigns document.title, so index.html's English title is the tab for ` +
+        `all five languages. Restore the assignment in src/lib/useAppState.js's lang effect.`,
+    );
+  }
+  for (const { path, line } of titleAssigns) {
+    if (!/\bappTitle\b/.test(line) || !/\bappSub\b/.test(line)) {
+      fail(
+        `§38: ${path} sets document.title without composing it from appTitle and appSub: ` +
+          `\`${line.trim()}\`. A literal here is a second definition of the app's name and drifts ` +
+          `from index.html silently.`,
+      );
+    }
+  }
+
+  // Floors, for the reason §32/§33/§34/§35/§36/§37 have them.
+  if (srcModules.length < 20) {
+    fail(
+      `§38: the src/ walk found only ${srcModules.length} module(s) (expected at least 20), so ` +
+        `"nothing sets document.title" and "the scan saw no files" report the same green result.`,
+    );
+  }
+  if (metas.length < 8) {
+    fail(
+      `§38: found only ${metas.length} <meta> tag(s) in index.html (expected at least 8). The tag ` +
+        `matcher is not seeing the head it is supposed to police.`,
+    );
+  }
+
+  console.log(
+    `  §38 link preview: ${presentRequired}/${REQUIRED.length} required <meta> present, ${metas.length} <meta> total in index.html, ` +
+      `${themeColors.length} theme-color(s), ${descriptions.length} description tag(s) in agreement, icon ${iconHref ? iconHref[1] : "—"}, ` +
+      `title pinned to en appTitle/appSub, ${titleAssigns.length} runtime title assignment(s) under src/. ` +
+      `(Static check — a rendered unfurl needs a public URL, which is owner action O-1.)`,
   );
 }
 
