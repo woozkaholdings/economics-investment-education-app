@@ -74,7 +74,12 @@ function loadLang() {
 // is tagged Hans because this app's Chinese content is Simplified throughout
 // (measured 2026-08-24: zero Traditional-only forms against 4,534 Simplified
 // ones), and a bare `zh` leaves a screen reader or font stack to guess.
-const HTML_LANG = { en: "en", es: "es", ko: "ko", ja: "ja", zh: "zh-Hans" };
+//
+// Exported only so check-data.mjs §36 can assert it covers every key in `TR`.
+// The `?? lang` fallback below means a missing entry degrades to a bare tag
+// instead of throwing — correct at runtime, and precisely why the drift needs
+// a check rather than a crash to surface it.
+export const HTML_LANG = { en: "en", es: "es", ko: "ko", ja: "ja", zh: "zh-Hans" };
 
 // ── color scheme ─────────────────────────────────────────────────────────
 

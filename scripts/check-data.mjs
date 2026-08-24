@@ -24,6 +24,7 @@ import { sectors } from "../src/content/sectors.js";
 import { MAX_BOX, dueQuestions, recordAnswer } from "../src/lib/review.js";
 import { MIN_BARS, OUTPERFORM_THRESHOLD, WJ_PERIODS, wjSectorComparison } from "../src/lib/relativeStrength.js";
 import { OLD_TO_NEW_LESSON_ID, migrateLegacyLessonIds } from "../src/lib/lessonIdMigration.js";
+import { HTML_LANG } from "../src/lib/useAppState.js";
 import { ROUTED_TABS, initialRoute, parseRoute, resolveRoute, routeHash } from "../src/lib/deepLink.js";
 import { computeCoverage } from "./translation-review.mjs";
 import {
@@ -4029,6 +4030,153 @@ if (keyedGroupsChecked < 4) {
   console.log(
     `  §35 run-log heading depth: ${datedSeen} dated entr(ies) and ${childrenSeen} heading(s) ` +
       `inside them across ${LOGS.length} log file(s), ${wrongDepth} at the wrong depth.`,
+  );
+}
+
+// ---------------------------------------------------------------------------
+// §36. `<html lang>` follows the language picker.
+//
+// WHY THIS EXISTS. A screen reader picks its voice, and a browser its font
+// stack, from the document's language. `index.html` ships a hardcoded
+// `lang="en"`, so the four non-English locales are announced in English unless
+// something rewrites the attribute after mount — which `useAppState` does, in
+// a four-line effect, added 2026-08-24. Nothing asserted it (measured the same
+// day this section was written: `documentElement.lang` and `HTML_LANG` had
+// exactly two hits in the whole repo, both inside the hook itself), and the
+// symptom is inaudible to a sighted reviewer, so a refactor that drops the
+// effect regresses silently and indefinitely.
+//
+// WHAT IS CHECKED, AND WHY EACH PART. The coverage half is exact rather than
+// textual because `HTML_LANG` is imported: adding a sixth language to `TR`
+// without a tag for it is the drift this catches, and the hook's `?? lang`
+// fallback is what makes that drift silent instead of loud. The source half
+// has to be a scan — a React effect cannot be run here — so it asserts the two
+// things a refactor would break: that some file under src/ still assigns
+// `documentElement.lang`, and that whatever file does reads the tag from
+// `HTML_LANG` rather than hardcoding one.
+//
+// WHAT IS DELIBERATELY NOT CHECKED. Not the rendered attribute — that needs a
+// browser, and the run log carries the live five-language sweep. Not the
+// effect's dependency array: matching `}, [lang]);` textually would break on
+// reformatting while catching nothing a reader would ever get wrong.
+{
+  const trKeys = Object.keys(TR).sort();
+  const tagKeys = Object.keys(HTML_LANG).sort();
+
+  for (const key of trKeys) {
+    if (!Object.prototype.hasOwnProperty.call(HTML_LANG, key)) {
+      fail(
+        `§36: locale \`${key}\` exists in TR but has no HTML_LANG entry, so <html lang> would fall ` +
+          `back to the bare code. Add a BCP-47 tag for it in src/lib/useAppState.js — see zh's ` +
+          `comment there for when a bare code is not good enough.`,
+      );
+    }
+  }
+  for (const key of tagKeys) {
+    if (!Object.prototype.hasOwnProperty.call(TR, key)) {
+      fail(
+        `§36: HTML_LANG carries \`${key}\`, which is not a language in TR. The map is meant to be ` +
+          `one tag per shipped locale, no more.`,
+      );
+    }
+  }
+
+  // A tag has to be well-formed, and its primary subtag has to be the locale it
+  // is filed under — that is the half that catches a transposed entry, which a
+  // shape-only regex would wave through.
+  const TAG = /^[a-z]{2,3}(?:-[A-Z][a-z]{3})?(?:-(?:[A-Z]{2}|\d{3}))?$/;
+  for (const [key, tag] of Object.entries(HTML_LANG)) {
+    if (!TAG.test(tag)) {
+      fail(
+        `§36: HTML_LANG.${key} is \`${tag}\`, which is not a well-formed BCP-47 tag ` +
+          `(language, optional Script in Titlecase, optional REGION).`,
+      );
+    } else if (tag.split("-")[0] !== key) {
+      fail(
+        `§36: HTML_LANG.${key} is \`${tag}\`, whose primary subtag is \`${tag.split("-")[0]}\`. ` +
+          `A locale must be tagged as itself; this announces ${key} content as ${tag.split("-")[0]}.`,
+      );
+    }
+  }
+
+  // index.html's value is the pre-mount one, correct only until the effect
+  // runs. It still has to be a tag this app actually ships.
+  const indexHtml = readFileSync(join(ROOT, "index.html"), "utf8");
+  const initial = indexHtml.match(/<html\b[^>]*\blang="([^"]*)"/);
+  if (!initial) {
+    fail(
+      `§36: index.html's <html> element has no lang attribute. It is the language of the document ` +
+        `until React mounts, and assistive tech reads it in that window.`,
+    );
+  } else if (!Object.values(HTML_LANG).includes(initial[1])) {
+    fail(
+      `§36: index.html ships <html lang="${initial[1]}">, which is not one of the tags in ` +
+        `HTML_LANG (${Object.values(HTML_LANG).join(", ")}).`,
+    );
+  }
+
+  // The source half.
+  const walkSrc = (dir) =>
+    readdirSync(dir, { withFileTypes: true }).flatMap((e) => {
+      const full = join(dir, e.name);
+      if (e.isDirectory()) return walkSrc(full);
+      return e.isFile() && /\.(js|jsx)$/.test(e.name) ? [full] : [];
+    });
+  const sources = walkSrc(join(ROOT, "src"));
+
+  // Deliberately not `documentElement.lang =`: the theme effect two lines above
+  // this one in useAppState.js already writes through a `const root =
+  // document.documentElement` alias, so the narrow form would miss the obvious
+  // refactor. Any `.lang =` assignment in a file that reaches for
+  // `documentElement` is the site.
+  //
+  // The match is per LINE, not per file, and that distinction is load-bearing:
+  // an earlier draft of this section asked only whether the file mentioned
+  // `HTML_LANG` anywhere, which the *declaration* satisfies — so rewriting the
+  // effect to `root.lang = lang` passed it. Proven by injection, not reasoned
+  // about. A multi-line assignment will trip this; that is the safe direction.
+  const assigns = [];
+  for (const path of sources) {
+    const src = readFileSync(path, "utf8");
+    if (!/\bdocumentElement\b/.test(src)) continue;
+    const lines = src.split("\n").filter((l) => /\.lang\s*=[^=]/.test(l));
+    if (lines.length) assigns.push({ path: relative(ROOT, path), lines });
+  }
+
+  if (assigns.length === 0) {
+    fail(
+      `§36: nothing under src/ assigns documentElement.lang. index.html's hardcoded lang="en" is ` +
+        `then the document's language forever, and the four non-English locales are announced in ` +
+        `English. Restore the effect in src/lib/useAppState.js.`,
+    );
+  }
+  for (const { path, lines } of assigns) {
+    for (const line of lines) {
+      if (!/\bHTML_LANG\b/.test(line)) {
+        fail(
+          `§36: ${path} assigns a lang attribute without reading HTML_LANG on the same line: ` +
+            `\`${line.trim()}\`. The tag has one definition so zh stays zh-Hans — assigning the ` +
+            `raw locale key instead re-introduces the bare \`zh\` this map exists to avoid.`,
+        );
+      }
+    }
+  }
+
+  // Floor, for the same reason §32/§33/§34/§35 have one: if the walk or the
+  // regex above ever stops matching, "nothing hardcodes a tag" and "the scan
+  // saw no files at all" are the same green result.
+  if (sources.length < 20) {
+    fail(
+      `§36: the src/ walk found only ${sources.length} module(s) (expected at least 20). The scan ` +
+        `is not seeing the code it is supposed to police.`,
+    );
+  }
+
+  console.log(
+    `  §36 <html lang>: ${tagKeys.length} tag(s) for ${trKeys.length} locale(s), ` +
+      `${assigns.reduce((n, a) => n + a.lines.length, 0)} assignment line(s) across ${sources.length} module(s) under src/, ` +
+      `index.html starting at \`${initial ? initial[1] : "—"}\`. ` +
+      `(Static check — the rendered attribute is verified in a browser, not here.)`,
   );
 }
 

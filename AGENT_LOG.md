@@ -1934,7 +1934,12 @@ for the history. No open P1/P2 items.
       didn't load, try again* and — the part that matters — **does not offer `Mark Complete`**. Check
       the empty-body placeholder (`…`) at the same time: it is indistinguishable from real content.
 
-97. **[A11y/Tooling — filed 2026-08-24 by the run that fixed the defect, deliberately not smuggled into
+97. **✅ DONE 2026-08-24 (scheduled dev-agent). Shipped as `check-data.mjs` §36, plus an `export`
+    on `HTML_LANG` so the coverage half is an exact map comparison rather than a regex. Premise
+    re-measured and it held exactly — `documentElement.lang` and `HTML_LANG` had two hits in the whole
+    repo, both inside the hook. Scope grew by one assertion the item did not ask for and one the
+    item asked for that turned out to be the weak half; see the run-log entry. [A11y/Tooling — filed
+    2026-08-24 by the run that fixed the defect, deliberately not smuggled into
     the same commit.] Nothing stops `<html lang>` from drifting out of sync with the picker again.**
     This run added the `useAppState.js` effect that syncs `document.documentElement.lang` (and the
     `HTML_LANG` map that tags `zh` as `zh-Hans`). It is four lines and has no guard: a future refactor
@@ -7628,3 +7633,128 @@ same **2 pre-existing warnings** (item 94's translation debt, the 0% human revie
 O-1 lands and reachable the moment it does** — the first redeploy under an open tab is the first time
 a hashed chunk 404s at a real reader. Owner-tree fingerprint observed this run:
 `cfc738474b654a4be905ece137da8855a670441857b84f73cddb27d5fb929cf2` (0 tracked modified, 52 untracked).
+
+### 2026-08-24 (scheduled dev-agent) — item 97: a guard for `<html lang>`, and the half of it I wrote first would have passed the exact refactor it exists to catch
+
+Picked **item 97**, named first in the previous run's "Next" and the highest thing on the board by the
+log's own stated order (97 → 99 → 98, with item 94 explicitly parked). Non-item-93 work, so **W-5.2's
+ratio is respected** — five consecutive non-93 runs now.
+
+#### Step 3.5 — premise re-measured with a control, and it held
+
+Item 97 claims the four-line `<html lang>` sync effect has **no guard at all**. Both halves reproduced:
+
+- **`grep -rn "documentElement.lang\|HTML_LANG" scripts/ src/`** → **2 hits**, both inside
+  `src/lib/useAppState.js` itself (the map on line 77, the effect on line 137). Nothing in
+  `scripts/`, so no script asserts it, and `npm test`'s seven scripts are the whole test surface —
+  there is no unit-test directory to have missed.
+  **Control:** the same grep shape for `MIN_TAP` (known to be guarded, by §34) returns **10+ files
+  including `scripts/check-data.mjs`**. The zero is real, not a broken instrument.
+- **The silent-drift path is `?? lang`**, and reading it confirmed the item's reasoning: a sixth
+  locale added to `TR` with no `HTML_LANG` entry does not throw — it emits a bare tag. Silent by
+  construction, and inaudible to a sighted reviewer, which is why "no guard" is worse here than
+  elsewhere.
+
+#### The finding that changed the change: a file-level reference check is not a check
+
+The item scoped two assertions — the hook still writes `documentElement.lang`, and `HTML_LANG` covers
+every key in `TR`. I wrote a third of my own accord: that whatever assigns the attribute reads its
+value from `HTML_LANG` rather than hardcoding a tag. My first version asked whether the **file**
+mentioned `HTML_LANG` anywhere. Then I injected the obvious refactor — rewriting the effect to use the
+`const root = document.documentElement` alias the theme effect two lines above already uses:
+
+| Injection | First version | After the fix |
+|---|---|---|
+| `const r = document.documentElement; r.lang = lang;` | **PASS** — the map's own declaration satisfied the file-level match | **FAIL**, named and located |
+
+The declaration counted as a reference to itself. The check is now **per line**: the assignment line
+must read `HTML_LANG`. This is the whole reason step 3.5 asks for injections rather than a re-read — I
+would have committed a guard that passed the single most likely way this regresses, and it would have
+looked exactly like a working guard from the outside.
+
+#### What shipped
+
+- **`scripts/check-data.mjs` §36** (~140 lines with its reasoning header), asserting five things:
+  `HTML_LANG` and `TR` have **identical key sets** (both directions — an orphan tag is drift too);
+  every tag is **well-formed BCP-47** *and* its **primary subtag equals the locale key**, so a
+  transposed entry cannot pass a shape-only regex; `index.html`'s pre-mount `lang` **exists** and is
+  one of the shipped tags; some file under `src/` **still assigns** the attribute; and every
+  assignment **line** reads `HTML_LANG`. Plus a **floor** (`sources.length < 20`), per §35's lesson.
+- **`src/lib/useAppState.js`** — `HTML_LANG` is now exported, with a comment saying it is exported
+  for §36 and why the `?? lang` fallback is correct at runtime yet exactly what makes the drift
+  silent. **No behavior change**: an `export` keyword and two comment blocks.
+- Worth noting against `DECISIONS.md:576`, which observes that the locale-parity checks "catch a
+  **missing** language, never a wrong one" — §36's primary-subtag assertion is a *wrong-one* check,
+  for this one attribute. It does not generalize to content, and does not claim to.
+
+#### Verification — nine injections, each restored from a scratchpad copy, never `git checkout --`
+
+Controls first and last: the unmodified tree **PASSes** on both sides of the battery, and `git status`
+after it showed only the two intended files modified (`index.html` and `src/locales/index.js` were
+each mutated during the run and are back at `HEAD`).
+
+| # | Injection | Result |
+|---|---|---|
+| 1 | effect deleted (the item's headline mode) | **FAIL**, named |
+| 2 | `export` removed from `HTML_LANG` | **hard crash at ESM link time** — loud, but see the residual |
+| 3 | aliased write `r.lang = lang` | **FAIL** — *this is the one the first draft passed* |
+| 4 | sixth locale `pt` added to `TR`, no tag | **FAIL**, named |
+| 5 | transposed tag (`ko: "ja"`) | **FAIL** — "announces ko content as ja" |
+| 6 | malformed tag (`zh_HANS`) | **FAIL**, named |
+| 7 | `lang` attribute removed from `index.html` | **FAIL**, named |
+| 8 | `index.html` ships `lang="fr"` | **FAIL**, lists the five real tags |
+| 9 | orphan key in `HTML_LANG` not in `TR` | **FAIL**, named |
+| 10 | **floor**: the `src/` walk truncated to 3 modules | **FAIL** — "the scan is not seeing the code it is supposed to police" |
+
+**The invariant itself re-verified live**, because a guard is worth exactly what the thing it guards is
+worth: served the built `dist/` and drove the real picker through all five languages, reading
+`document.documentElement.lang` after each. **es→`es`, ko→`ko`, zh→`zh-Hans`, ja→`ja`, en→`en`.**
+**Instrument control:** a no-op read taken first held at `en`, so the reader is not merely echoing the
+last write. Zero console errors.
+
+`npm run build` **✓ 924ms, exit 0**; `npm test` **exit 0**, 0 failures, the same **2 pre-existing
+warnings** (item 94's translation debt, the 0% human review share). §36 reports:
+`5 tag(s) for 5 locale(s), 1 assignment line(s) across 70 module(s) under src/, index.html starting at "en"`.
+
+#### Adversarial self-check (step 5)
+
+- **Blindspot register** — `npm run check-blindspot` **passes all six**, run rather than reasoned
+  about. This change adds **no user-facing prose at all** (an `export` keyword, comments, and a test
+  section), so §10.1/§10.2/§10.3 and the stale-date fix have no surface here. No dates, no Dalio, no
+  child-facing framing, no market figures.
+- **`DECISIONS.md` conflict** — none. No persisted key, no routing change, no content-module change,
+  no build change. The `.js`-not-JSON decision covers `src/locales/*` and `src/content/*`; `HTML_LANG`
+  lives in `src/lib/` and was already a `.js` export in all but the keyword. Read `DECISIONS.md:354`
+  and `:570` in full rather than grepping past them.
+- **Already-done backlog item** — no. **`§36` returns 0 hits** across `AGENT_LOG.md`, the archive,
+  `DECISIONS.md`, `LAUNCH_PLAN.md` and `scripts/` outside the section I just wrote, so the number is
+  free and this duplicates no earlier section. **Control:** the same grep for `§35` returns
+  `AGENT_LOG.md` and `check-data.mjs`. `HTML_LANG` appears only in item 97's own text and the entry
+  that filed it — both read.
+- **Own verification claim** — reproducible from the commands listed: the injections are single
+  `perl -0pi -e` substitutions against named strings, each followed by `node scripts/check-data.mjs`
+  and a restore from the scratchpad copy. Every figure above came from that loop.
+- **Residual, stated rather than discovered later.** Injection 2 (the `export` removed) fails as an
+  **unmessaged ESM SyntaxError**, not a `§36:` line. That is inherent — a static `import` cannot
+  survive its own export vanishing in order to report on it. It is loud and it exits non-zero, so it
+  cannot pass silently; it just reads as a stack trace instead of a sentence. Not worth a dynamic
+  import to soften.
+
+#### Next
+
+- **Item 99** (a top-level boundary for the statically-imported `Learn.jsx`, plus the guard half:
+  every `lazy(` in `App.jsx` inside `AsyncScreen`, every `import(` under `src/screens/` carrying a
+  `.catch`) is now the top of the list — item 97 was above it and is closed. Its guard half is the
+  same shape as §36 and §35, and **§36's lesson transfers directly: assert on the call-site line, not
+  on the file**, or a `.catch` moved one line away will pass.
+- **Item 98** (link-preview metadata) is cheap and serves §5. **Corroborated this run by accident:**
+  driving the picker through all five languages, `document.title` stayed
+  `"Economic Cycles — Master the Economy"` in every one — the item's "`<title>` hardcodes English"
+  clause is now measured, not asserted.
+- **Do NOT pick item 94** — optional track, four "(Beta)" languages, parked behind O-1 by its own box.
+
+**Unchanged and still the entire critical path, both owner-blocked: O-1** (a deployed URL) and **O-2**
+(item 18, an analytics account). Item 97 is worth its run for a reason specific to O-1: `<html lang>`
+is read by assistive technology and by nobody else in this repo, so it is precisely the kind of defect
+that can regress for weeks unnoticed and is only ever discovered by the first screen-reader user — who
+does not exist until O-1 lands.
