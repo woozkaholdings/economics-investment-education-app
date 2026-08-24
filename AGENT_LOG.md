@@ -1894,6 +1894,29 @@ for the history. No open P1/P2 items.
       labeled translation layer. The value is the instrument, not these two edits — and if the
       instrument is ever built, run it before deciding anything.
 
+95. **✅ DONE 2026-08-24 (scheduled dev-agent), same run it was filed. [Process/Tooling — filed by
+    the W-5.4 run's own closing note: "nothing stops a future run from writing `## 2026-…` again."]
+    `check-data.mjs` §35 now asserts the run-log heading convention in both `AGENT_LOG.md` and
+    `AGENT_LOG.archive.md`: every dated entry heading is `###`, every heading inside an entry is
+    `####`.** This is the third appearance of one defect class and the first time anything was left
+    behind to hold it — item 90 fixed it in `LAUNCH_PLAN.md` (guarded by §32b), W-5.4 fixed 37 entries
+    and 276 subsections here (guarded by nothing until now).
+    - **Premise re-measured before writing, with an independent instrument**: 239 dated entries across
+      the two files, **all `###`**; 282 headings inside them, **all `####`**; 13 blockquoted `> ###`
+      headings in the W-5 priority block, which must be and are skipped; 0 headings inside code fences,
+      fences balanced in both files. §35 reports the same 239/282, which is the agreement that makes
+      the number trustworthy rather than self-confirming.
+    - **Both halves are asserted, not just the entry line** — that is W-5.4's own correction encoded:
+      a rule pinning only the entry's level would have permitted the flat `### entry > ### children`
+      shape it removed.
+    - **Four controls fired correctly** (see the run log entry of this date): a `##` dated probe and a
+      `#####` child probe both failed at their injected line numbers; a fenced dated heading and a
+      blockquoted one were both ignored; and breaking the dated pattern tripped both floors instead of
+      passing silently.
+    - **What it deliberately does not do.** It checks depth, never titles (§32 explains why the logs
+      are out of scope there — entries repeat headings by design) and never content, so §31's rule
+      that an entry's record must not be edited is untouched: a `#` count is not a claim.
+
 75. **✅ DONE 2026-08-20 (owner-directed). `--fill-warn` exists in both palettes,
     `NOTE_TONES.warn.rule` points at it, and no `.jsx` under `src/` holds a hex literal any more — and
     for the thirteenth item running the premise broke, this time on the VALUE the item had already
@@ -7122,3 +7145,134 @@ Otherwise the pick list is unchanged from the previous entry and is now thin eno
 
 **Unchanged and still the critical path, both owner-blocked:** **O-1** (a deployed URL) and **O-2**
 (item 18, an analytics account). O-1 also gates item 94.
+
+### 2026-08-24 (scheduled dev-agent) — a guard for the run-log heading convention, and a control that proves a fenced heading is not a heading
+
+**Picked:** the item the previous run filed in its own closing note — *"nothing stops a future run from
+writing `## 2026-…` again."* W-5.4 repaired 37 dated entries and 276 subsections by hand-rolled script
+and left nothing behind to hold the result. This run adds `scripts/check-data.mjs` **§35**, filed as
+backlog **item 95** and closed in the same commit.
+
+**This is a W-5.2 pick** (work that is not item 93), and it is the correct one on the merits rather than
+only by rotation: item 93's economy phase closed last run, item 94 is explicitly parked behind O-1, and
+the previous entry named this guard as the single new item it had filed.
+
+#### Premise re-measured first, with an independent instrument (step 3.5)
+
+The item's claim is about *what the files currently are*, so it was measured before a line was written —
+with a scratchpad script written independently of §35, not by reading §35's own output:
+
+- **239 dated entries** across `AGENT_LOG.md` (19) + `AGENT_LOG.archive.md` (220) — **all `###`**, zero
+  at any other depth.
+- **282 headings inside those entries** (113 live + 169 archived) — **all `####`**, zero otherwise.
+- **13 blockquoted `> ###` headings**, all in the live file's W-5 priority block. These are prose inside
+  a blockquote, not outline, and must be skipped; the `^` anchor does that without a special case.
+- **0 headings inside code fences**, fences balanced in both files (5 opens live, 14 archived). The log
+  is full of pasted shell output, so this was checked rather than assumed.
+
+§35 independently reports **239 / 282 / 0 wrong**. The agreement between two separately-written
+instruments is the reason the number is worth anything — §35 confirming its own arithmetic would not be.
+
+**One premise refinement, and it is why the previous entry's count differs from this one.** W-5.4
+reported "two entries still reporting `##` children — the instrument's own known limitation, a
+`## Archived` boundary attributed to the preceding entry". That artifact is gone here because both
+instruments close an entry's span on **any heading of depth ≤ 2**, so `## Archived 2026-08-16 →
+2026-08-22` ends the entry above it instead of being counted as its child. Not a defect that was fixed —
+a measurement artifact that this instrument does not have.
+
+#### What §35 asserts, and what it deliberately does not
+
+Both halves of the shape, not just the entry line: **entry `###`** *and* **children `####`**. That is
+W-5.4's own correction encoded — its premise check found that a rule pinning only the entry's level
+would have converted 36 correctly-nested entries into the flat `### entry > ### children` shape it was
+removing. Checking one level without the other is how that trade happens silently.
+
+The failure message names the real consequence rather than the aesthetic one: at `##` a dated entry is a
+sibling of `## Run log`, `## Prioritized backlog` and `## Environment note`, and **`check-backlog.mjs`
+finds the backlog section by scanning forward to the next `^## `** — so one `##` entry landing above the
+Environment note truncates that scan into a silent pass. It also says *change the `#` count, do not edit
+the entry's text*, for the same reason §32b's message says *fix the depth, never renumber*: the tempting
+repair is the destructive one.
+
+Deliberately out of scope: **titles** (§32 already records why the logs are excluded from duplicate-title
+detection — run-log entries repeat headings by design) and **content**. §31's rule that an entry's record
+must never be edited is untouched, because a `#` count is not a claim.
+
+#### Controls — four of them, and each one had to be able to fail
+
+Probes were injected into `AGENT_LOG.md`, which was restored from a **scratchpad copy** afterward
+(`git checkout --` is never used on this repo's files); the pre-injection `md5` `3970e5ca…` was recorded
+before and re-verified after, and `scripts/check-data.mjs` likewise returned to `38f0b626…`.
+
+| Probe | Expected | Result |
+|---|---|---|
+| `## 2026-01-01 (PROBE A)` — a dated entry at depth 2 | **fail** | ✅ failed, citing `AGENT_LOG.md:7126` — the injected line |
+| `##### PROBE B` — a child at depth 5 inside that entry | **fail** | ✅ failed, citing line 7128 and naming its parent entry |
+| `### 2026-01-02 (PROBE C)` + `#### …` inside a code fence | **ignored** | ✅ ignored |
+| `> ## 2026-01-03 (PROBE D)` — blockquoted | **ignored** | ✅ ignored |
+
+The counts are the proof for the two negative controls, which is the half that is easy to fake: totals
+moved **239 → 240** and **282 → 283**, i.e. by exactly the two probes that were supposed to count. Had
+fence-awareness or the `^` anchor failed, the fenced pair and the blockquoted line would have shown up in
+those totals whether or not they raised a failure.
+
+**Fifth control, on the instrument itself.** Both floors were proven able to fire: changing `20\d{2}` to
+`19\d{2}` in §35's dated pattern made it match nothing, and it reported **two failures** ("only 0 dated
+entries … expected at least 100" and the child equivalent) rather than "0 at the wrong depth, PASS". This
+is the §32/§32b floor pattern and it exists because a scan that matches nothing is byte-identical to a
+clean result. Restored immediately after.
+
+#### Verification
+
+- `npm test` — **PASS, 0 failures**, 2 pre-existing warnings (item 94's translation debt; the review
+  ledger's 0% human share). Measured *before* this entry was appended: `§35 run-log heading depth: 239
+  dated entr(ies) and 282 heading(s) inside them across 2 log file(s), 0 at the wrong depth.` **After
+  this entry and item 95 land it reads 240 / 288 / 0** — the entry adds itself and its six `####`
+  subsections, which is the check watching the commit that introduced it.
+- `npm run build` — **✓ built in 922ms**.
+- `check-backlog` — **71 items → 72** with item 95 added, **118 citations resolved**, no duplicate
+  numbers. The backlog scan still terminates correctly, which is the property §35 exists to protect.
+
+#### Adversarial self-check (step 5)
+
+- **Blindspot register** — no regression, and run rather than reasoned about: `npm run check-blindspot`
+  passes on §10.2 (no Dalio), §10.1 (no advice-adjacent language in any of the five locales, disclaimer
+  present and rendering on all 8 surfaces), §10.3 (parent-facing kids framing) and §2.3 (no live-looking
+  dates in 26 teaching-copy modules). This change adds no prose to any user-facing surface and edits
+  nothing under `src/`, but the register is checked by running the script.
+- **`DECISIONS.md` conflict** — none. No state, routing, content-module or build change; `DECISIONS.md`
+  records nothing about log structure or about `check-data.mjs`'s section set.
+- **Already-done backlog item** — no. This is the first guard for this property in these files; W-5.4
+  fixed the instances and explicitly declined to add the guard in the same commit ("filed below as a new
+  item rather than smuggled into this commit"). §32b guards the same defect class in a different file
+  and shares none of this code path.
+- **The tension worth naming, again** — §31's comment says run-log entries "must never be edited". §35
+  never edits; it only reads. But it does something §31 should be read alongside: it makes a *future*
+  hand-edit of a heading mandatory when a run writes the wrong depth. That is the same authorization
+  W-5.4 already carried, narrowed to one character on one line.
+- **A second-order risk, stated rather than discovered later** — §35 now makes `npm test` fail on a
+  malformed heading, which means a run that writes `## 2026-…` cannot commit until it fixes it. That is
+  the intent, but it also means the **weekly archive pass must keep both files scannable**: moving
+  entries across cannot drop either file below the floors. The floors (100 and 100, against 239 and 282)
+  leave that headroom deliberately, and the archive move is verbatim, so it cannot change a depth.
+- **Own verification claim** — reproducible by re-running `npm test` and `npm run build`, and by
+  re-deriving 239 / 282 with any independent scan that resets its entry span on `^#{1,2} `. The probe
+  runs are reproducible by re-injecting the four lines above and re-running `node scripts/check-data.mjs`.
+
+#### Next
+
+The pick list is unchanged and thin, which is itself the signal:
+
+- **A backlog refill** (W-2's standing rule) is now the strongest pick. Item 93 is closed, 94 is parked
+  behind O-1, and the W-5 housekeeping set is fully claimed — the Open set is down to residuals.
+- **Item 67's residual third** and **item 64's residual candidates** — small, English-facing, open since
+  2026-08-17.
+- **Item 26** (Quizlet/Vocabulary design review); **item 27** still needs re-scoping before it is
+  pickable.
+- **Items 76, 70/71** — process items filed by runs that could not finish them.
+- **Do NOT pick item 94** (the `essentials` remainder — 24 runs on the optional track, four "(Beta)"
+  languages, behind O-1 by its own box).
+
+**Unchanged and still the entire critical path, both owner-blocked: O-1** (a deployed URL — `dist/`
+builds, routing is hash-based, Netlify Drop is a drag of the folder) and **O-2** (item 18, an analytics
+account, which §4.3's Phase-0 completion gate cannot be scored without). Zero people have opened this app.

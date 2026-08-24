@@ -3908,5 +3908,129 @@ if (keyedGroupsChecked < 4) {
   );
 }
 
+// ---------------------------------------------------------------------------
+// §35. Run-log heading depth: in AGENT_LOG.md and AGENT_LOG.archive.md every
+//      dated entry heading must be `###`, and every heading inside an entry
+//      must be `####`.
+//
+//      WHY THIS EXISTS. The convention has now been repaired twice by hand and
+//      nothing was left behind to hold it. Item 90 fixed the same defect class
+//      one document over (LAUNCH_PLAN.md, guarded by §32b); W-5.4 fixed it here
+//      on 2026-08-24, demoting 37 dated entries that had been written as `##`
+//      and the 276 subsections underneath them. At `##` a dated entry is a
+//      SIBLING of `## Run log`, `## Prioritized backlog` and `## Environment
+//      note` rather than a child of the run log, so the file's outline stops
+//      meaning anything — and `check-backlog.mjs` finds the backlog section by
+//      scanning forward to the next `^## `, so one `##` entry landing above the
+//      Environment note would silently truncate that scan into a pass.
+//      W-5.4's own closing note is what this section answers: "nothing stops a
+//      future run from writing `## 2026-…` again."
+//
+//      THE SHAPE, NOT JUST THE LEVEL. W-5.4's premise check found two live
+//      conventions — correctly-nested `## entry > ### children` and flat
+//      `### entry > ### children` — so a rule that only pinned the entry line
+//      would have converted 36 correctly-nested entries into flat ones. Both
+//      halves are therefore asserted: the entry's own level AND its children's.
+//
+//      WHAT IS DELIBERATELY NOT CHECKED. Not titles: §32 explains why the logs
+//      are out of scope for duplicate-title detection (entries repeat headings
+//      by design), and this is a different property — depth, which has exactly
+//      one correct answer. Not content: §31's rule that a run-log entry's
+//      record must never be edited is untouched, because a `#` count is not a
+//      claim. Blockquoted headings are skipped by the `^` anchor rather than by
+//      a special case — the backlog's W-5 priority block writes its subsections
+//      as `> ###` inside a blockquote, and those are prose, not outline. Fenced
+//      lines are skipped explicitly: the log is full of pasted shell output and
+//      a `#` comment inside a fence is not a heading.
+{
+  const LOGS = ["AGENT_LOG.md", "AGENT_LOG.archive.md"];
+  // A dated heading is the entry marker; `## Archived <range>` and the other
+  // top-level sections are boundaries that end an entry's span.
+  const DATED = /^(#{1,6})\s+(20\d{2}-\d{2}-\d{2})/;
+  let datedSeen = 0;
+  let childrenSeen = 0;
+  let wrongDepth = 0;
+
+  for (const name of LOGS) {
+    const lines = readFileSync(join(ROOT, name), "utf8").split("\n");
+    let fence = null;
+    let entry = null;
+
+    lines.forEach((line, i) => {
+      const f = /^\s{0,3}(`{3,}|~{3,})/.exec(line);
+      if (f) {
+        if (fence === null) fence = f[1][0];
+        else if (f[1][0] === fence) fence = null;
+        return;
+      }
+      if (fence !== null) return;
+
+      const h = /^(#{1,6})\s+(\S.*)$/.exec(line);
+      if (!h) return;
+      const depth = h[1].length;
+      const dated = DATED.exec(line);
+
+      if (dated) {
+        datedSeen += 1;
+        entry = { n: i + 1, title: h[2] };
+        if (depth === 3) return;
+        wrongDepth += 1;
+        fail(
+          `§35: ${name}:${i + 1}: the dated entry "${h[2].slice(0, 60)}" is written as ` +
+            `\`${h[1]}\` (depth ${depth}) but every run-log entry is \`###\`, a child of ` +
+            `\`## Run log\`. At \`##\` it becomes a sibling of the backlog and Environment ` +
+            `sections, and check-backlog.mjs — which finds the backlog by scanning to the next ` +
+            `\`^## \` — would silently truncate. Change the \`#\` count on this line and on the ` +
+            `headings inside the entry (those are \`####\`); do not edit the entry's text.`,
+        );
+        return;
+      }
+
+      // A `##`-or-shallower heading is a document section, so it closes the
+      // entry span rather than being counted as one of its children.
+      if (depth <= 2) {
+        entry = null;
+        return;
+      }
+      if (!entry) return;
+      childrenSeen += 1;
+      if (depth === 4) return;
+      wrongDepth += 1;
+      fail(
+        `§35: ${name}:${i + 1}: "${h[2].slice(0, 60)}" sits inside the run-log entry at ` +
+          `${name}:${entry.n} but is written as \`${h[1]}\` (depth ${depth}); headings inside an ` +
+          `entry are \`####\`. Any other depth breaks the entry's outline — at \`###\` it renders ` +
+          `as a sibling of the entry rather than a section of it, which is the flat shape W-5.4 ` +
+          `removed, and anything deeper nests under a \`####\` that may not exist.`,
+      );
+    });
+  }
+
+  // Floor, for the same reason §32 and §32b have one: if either regex stopped
+  // matching, the loop would report no wrong depths — indistinguishable from a
+  // clean pass. 239 entries and 282 children exist today across the two files;
+  // the floors sit far below that, so ordinary appending never trips them and
+  // only a broken pattern can. They are also a guard on the archive itself:
+  // moving entries across must not make either file unreadable to this scan.
+  if (datedSeen < 100) {
+    fail(
+      `§35: only ${datedSeen} dated run-log entr(ies) found across ${LOGS.join(" + ")} ` +
+        `(expected at least 100). The pattern is more likely broken than the log emptied — a scan ` +
+        `that matches nothing must not read as a pass.`,
+    );
+  }
+  if (childrenSeen < 100) {
+    fail(
+      `§35: only ${childrenSeen} heading(s) found inside run-log entries (expected at least 100). ` +
+        `Same reason as the entry floor: a child scan that matches nothing reads exactly like a pass.`,
+    );
+  }
+
+  console.log(
+    `  §35 run-log heading depth: ${datedSeen} dated entr(ies) and ${childrenSeen} heading(s) ` +
+      `inside them across ${LOGS.length} log file(s), ${wrongDepth} at the wrong depth.`,
+  );
+}
+
 console.log(`\n${failures === 0 ? "PASS" : "FAIL"}: ${failures} failure(s), ${warnings} warning(s).`);
 process.exit(failures === 0 ? 0 : 1);
