@@ -319,7 +319,18 @@ export default function LessonReader({ t, lang, lessons, index, completedLessons
           spaced-repetition schedule — see `recordReview`'s absence below. */}
       {hook && (
         <Card style={{ marginBottom: space["5"] }}>
-          <Text variant="caption" color={ink.accent} style={{ textTransform: "uppercase", letterSpacing: "0.05em", fontWeight: 700 }}>
+          {/* An <h2>, not a styled <p> — and the fix for item 106's h1 -> h3 skip.
+              This label was always the hook block's title; it just was not marked
+              up as one, so the only heading between the lesson <h1> and the first
+              body <h2> was the QUESTION's <h3> inside <Question>. Promoting the
+              question instead would have made a pre-quiz item a sibling of the
+              body sections, which is a worse description of the document; naming
+              the block it already belongs to fixes the order AND gives the block
+              a rotor entry it never had. Nothing moves visually: <Text> sets
+              margin:0 plus explicit font metrics, so the UA's h2 defaults are all
+              overridden and this renders pixel-identically to the <p> it replaces
+              (verified live, computed styles compared before and after). */}
+          <Text as="h2" variant="caption" color={ink.accent} style={{ textTransform: "uppercase", letterSpacing: "0.05em", fontWeight: 700 }}>
             {t.hookTitle}
           </Text>
           <Text variant="small" color={ink.muted} style={{ margin: `${space["1"]}px 0 ${space["4"]}px` }}>
@@ -408,7 +419,12 @@ export default function LessonReader({ t, lang, lessons, index, completedLessons
           rendered would put a never-taught question into the review queue. */}
       {!loadFailed && check.length > 0 && (
         <Card style={{ marginTop: space["5"] }}>
-          <Text variant="caption" color={ink.muted} style={{ textTransform: "uppercase", letterSpacing: "0.05em", fontWeight: 700 }}>
+          {/* An <h2> for the same reason as the hook's, above. The check card's
+              questions are <h3>s too, so without this the last body section's
+              <h2> was silently acting as their parent — legal, but it named the
+              wrong thing: a reader arriving by heading heard the final section's
+              title where the retrieval check begins. */}
+          <Text as="h2" variant="caption" color={ink.muted} style={{ textTransform: "uppercase", letterSpacing: "0.05em", fontWeight: 700 }}>
             {t.checkTitle}
           </Text>
           <Text variant="small" color={ink.muted} style={{ margin: `${space["1"]}px 0 ${space["4"]}px` }}>

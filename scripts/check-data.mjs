@@ -5341,5 +5341,73 @@ if (keyedGroupsChecked < 4) {
 }
 
 
+// §45. The lesson reader's hook and check blocks are titled by a real <h2>.
+//
+// WHY THIS IS A CHECK AND NOT A STYLE PREFERENCE. <Question> renders its
+// question text as an <h3> (src/components/Question.jsx). In the lesson reader
+// the first <Question> is the pre-lesson hook, which sits ABOVE the first body
+// <h2> — so with the hook's own label rendered as a styled <p>, the document
+// went <h1> straight to <h3> and skipped a level (WCAG 1.3.1; item 106,
+// measured live on all 40 lessons on 2026-08-25). The fix was not to promote
+// the question — that would make a pre-quiz item a sibling of the body sections
+// — but to mark up the label the block already had. This section keeps it
+// marked up: the convention now costs a failing test to break.
+//
+// WHY THE SKIP IS INVISIBLE TO A COMPLETED-LESSON SWEEP, which is the trap here.
+// The hook renders only while the lesson is UNFINISHED. Seed localStorage with
+// every lesson complete — the obvious way to unlock all 40 for a sweep — and
+// every hook disappears, so the reader measures clean on precisely the state
+// that carries the defect. Unlock by completing the PREVIOUS lesson only.
+//
+// WHAT THIS CANNOT SEE: it checks the two labels, not the rendered order. A
+// third <Question> added above the body with no <h2> of its own would reproduce
+// the defect and pass here. scripts/a11y-sweep.js's `headingOrder` probe is the
+// instrument for that, and it has to be pointed at an unfinished lesson.
+{
+  const file = "src/screens/LessonReader.jsx";
+  const src = readFileSync(file, "utf8")
+    .replace(/\/\*[\s\S]*?\*\//g, "")          // comments first: this section's own
+    .replace(/^\s*\/\/.*$/gm, "");             // prose names both tokens
+
+  // (a) Each label must be rendered by a <Text> whose opening tag says as="h2".
+  //     Searching BACKWARDS from the token to the nearest "<Text" is what makes
+  //     this robust to attribute order and reformatting; the span cap is what
+  //     stops it from silently binding to some unrelated <Text> far above if the
+  //     markup is restructured.
+  const SPAN_CAP = 400;
+  let missing = [], unbound = [], seen = 0;
+  for (const token of ["{t.hookTitle}", "{t.checkTitle}"]) {
+    const at = src.indexOf(token);
+    if (at === -1) continue;
+    seen++;
+    const open = src.lastIndexOf("<Text", at);
+    if (open === -1 || at - open > SPAN_CAP) { unbound.push(token); continue; }
+    if (!/\bas=("h2"|{"h2"})/.test(src.slice(open, at))) missing.push(token);
+  }
+
+  // (b) Vacuity guard, the §44 shape — and here it is load-bearing twice over.
+  //     Zero labels means the scanner is pointed at markup that no longer
+  //     exists. And if <Question> ever stops rendering an <h3>, this section is
+  //     guarding a level relationship that no longer exists either: say so
+  //     rather than staying green on a premise that has moved.
+  const questionSrc = readFileSync("src/components/Question.jsx", "utf8");
+  const questionIsH3 = /\bas=("h3"|{"h3"})/.test(questionSrc);
+
+  if (seen === 0) {
+    fail("§45: found neither {t.hookTitle} nor {t.checkTitle} in " + file + ". This check is pointed at markup that no longer exists — repoint it rather than leaving it green.");
+  } else if (seen < 2) {
+    fail(`§45: found only ${seen} of the 2 expected lesson-reader block labels in ${file}. One of the hook/check blocks has been renamed or removed; repoint this check rather than leaving it half-green.`);
+  } else if (unbound.length > 0) {
+    fail(`§45: ${unbound.join(", ")} is not inside a <Text> opening tag within ${SPAN_CAP} chars. The markup was restructured — re-read this section's reasoning and repoint it; do not widen the cap to make it pass.`);
+  } else if (missing.length > 0) {
+    fail(`§45: ${missing.join(", ")} is rendered without as="h2". <Question> renders an <h3>, so an untitled hook block makes the lesson read <h1> -> <h3> and skip a level (WCAG 1.3.1, item 106). Add as="h2" to the <Text> that renders the label — <Text> sets margin:0 and explicit font metrics, so it costs nothing visually.`);
+  } else if (!questionIsH3) {
+    fail('§45: src/components/Question.jsx no longer renders its question as an <h3>. This section exists to give that <h3> a parent heading, so its premise has moved — re-derive the reader\'s heading order and update this check rather than leaving it green.');
+  } else {
+    console.log(`  §45 lesson-reader heading order: both block labels ({t.hookTitle}, {t.checkTitle}) render as <h2>, above <Question>'s <h3>. (Static — it checks the labels, not the rendered order; a11y-sweep.js's headingOrder probe on an UNFINISHED lesson is the instrument for that.)`);
+  }
+}
+
+
 console.log(`\n${failures === 0 ? "PASS" : "FAIL"}: ${failures} failure(s), ${warnings} warning(s).`);
 process.exit(failures === 0 ? 0 : 1);

@@ -2179,6 +2179,31 @@ for the history. No open P1/P2 items.
       may also be the correct reading of a pre-quiz as subordinate to the lesson title. Measure the
       other 39 lessons before deciding anything.
 
+109. **[A11y/Tooling — filed 2026-08-25 by the run that closed item 106, as its stated residual
+    rather than smuggled into the same commit.] The Practice screen has only ever been swept in its
+    LANDING state, and the state that carries item 106's defect shape is the one behind the "Start
+    Quiz" button.**
+    - **Measured this run:** `#/practice` reports `headingOrder` sequence **`12`**, 0 findings — one
+      `<h1>` and one `<h2>`, with the quiz not started. Every a11y sweep in the log has read Practice
+      this way.
+    - **Why that is not enough.** Practice renders the same `<Question>` component the lesson reader
+      does (`src/screens/Practice.jsx:315`), so it renders `<h3>`s once a quiz is running — and item
+      106 is precisely the case where a `<h3>` appeared with no `<h2>` parent nearby. Practice does
+      have an `as="h2"` at `Practice.jsx:408` (`how-review-title`), but **that is the "how review
+      works" panel, not necessarily the question container**, and nothing has checked the rendered
+      order mid-quiz. `check-data.mjs` §45 explicitly does **not** cover this: it checks the lesson
+      reader's two labels, not Practice, and says so.
+    - **This is the same trap shape as item 106's, which is why it is worth a run and not a glance.**
+      The interesting state is the one a convenient sweep does not reach: there, an all-complete
+      `localStorage` seed hid the hook; here, not clicking a button hides the questions. Drive it
+      with `javascript_tool` — find the start control by text and `.click()` it, confirm from
+      `main`'s own text that the quiz is actually running **before** recording any number, then run
+      `headingOrder`. The review queue must be non-empty, so seed `ecycles_review` or complete a
+      lesson first; a sweep of an empty-queue Practice screen is the vacuous reading, not a clean one.
+    - **Honest priority: medium.** Cheap, it uses instruments that already exist, and it either finds
+      a real second instance of a defect just fixed or retires the question. But Practice is a less
+      trafficked screen than the lesson reader, and nobody has opened the app (O-1).
+
 108. **[Tooling/Measurement — filed 2026-08-25 by the run that shipped item 107, as its stated
     residual rather than smuggled into the same commit.] `scripts/a11y-sweep.js`’s header records
     that `document.hasFocus()` is *permanently false* in this preview pane. On 2026-08-25 it was
@@ -2245,7 +2270,38 @@ for the history. No open P1/P2 items.
       instrument the last three a11y runs have leaned on. But it guards a class that §44 now also
       guards from the other side, so it is not urgent.
 
-106. **[A11y — filed 2026-08-25 by the run that built item 105's sweep, as its stated residual rather
+106. **✅ DONE 2026-08-25 (scheduled dev-agent). Fixed by marking up the two block labels the
+    lesson reader already had — `as="h2"` on `{t.hookTitle}` and `{t.checkTitle}` — and guarded by
+    `check-data.mjs` §45, which was proved able to fail in three modes.**
+    - **PREMISE CONFIRMED to the character, and the DISPOSITION still changed.** Both recorded
+      sequences reproduced exactly (lesson 1 `132223`, lesson 29 `13223`). What the item got wrong is
+      the *fix*: it offered promote-the-`h3`, reorder, or leave-it, and called the choice "still a
+      judgment". It is not, once you see that **the block already had a title nobody marked up**. The
+      `h3` was not too deep — its parent was missing. Marking up the existing label adds **no new
+      string in any of the five languages** (both keys already exist in en/es/ko/zh/ja) and gives the
+      hook and check blocks a rotor entry they never had. Nothing moves visually: `<Text>` sets
+      `margin: 0` plus explicit font metrics, so the UA's `h2` defaults never apply — measured, not
+      assumed (identical computed styles AND identical bounding boxes before/after, including the
+      check label at `y = 3528px`).
+    - **THE SAMPLING TRAP, and it is the reusable part.** The obvious way to sample all 40 — seed
+      `ecycles_completed_lessons` with every id so nothing is locked — **suppresses the defect**: the
+      hook renders only while a lesson is UNFINISHED, and the hook's `<h3>` *is* the skip. That sweep
+      returns **40/40 clean** and would have closed this item as unreproducible. Unlock by completing
+      the **predecessor** only: seed all-but-a-non-consecutive-set and sweep that set; two
+      complementary passes (21 + 19) cover the catalog. Seeding `localStorage` on an already-booted
+      app does nothing at all (`isUnlocked` reads React state) — lessons redirect to `#/learn` and
+      the sweep reports the Learn screen as clean under the lesson's name.
+    - **What the survey actually found, which is bigger than the item's headline.** Not "the lesson
+      reader skips a level" but **21 of 21 lessons measured in the first-read state skip, and 0 of 40
+      do in the revisit state** — i.e. it is every lesson in the catalog, on the only pass through it
+      every reader necessarily makes. After the fix: **40/40 lessons in the first-read state, 0
+      skips**, each row's screen identity asserted against the catalog title and `hookPresent`
+      computed from document order.
+    - **Lesson 35, which this item recorded as unsamplable, was sampled** in both states
+      (`1322223` / `122223`). The "only 2 of 40 sampled" gap is closed.
+
+    ORIGINAL TEXT (retained — it is what was measured):
+    **[A11y — filed 2026-08-25 by the run that built item 105's sweep, as its stated residual rather
     than smuggled into the same commit. This is the finding item 105 explicitly declined to file
     ("it is arguable and needs a judgment"), and it now has independent measurement behind it.]
     The lesson reader's heading order skips a level: `h1 → h3`, because the "BEFORE YOU READ"
@@ -9545,3 +9601,192 @@ File restored byte-identical: `86a37f8f…` before and after.
 **Unchanged and still the entire critical path, both owner-blocked: O-1** (a deployed URL) and
 **O-2** (item 18, an analytics account). The sweep can now see an unnamed region on any screen it is
 pointed at. **It has still only ever been pointed at a page no user has opened.**
+
+### 2026-08-25 (scheduled dev-agent) — item 106: the skipped heading level is on every lesson, but only for readers who have not finished it — and the sweep that unlocks all 40 is blind to exactly that
+
+**Picked item 106**, the lesson reader's `h1 -> h3` heading skip. It was filed 2026-08-25 by item 105's
+run as an explicit judgment call with only **2 of 40** lessons sampled, and its own text said the
+sampling — "completing lessons or seeding `localStorage`" — is what makes it a whole run rather than a
+five-minute fix. **W-5.2 note:** a non-item-93 pick; item 94 stays parked behind O-1 by its own box.
+Chosen over item 108 because this one is app-facing: it is a WCAG 1.3.1 defect on the single
+most-used screen, and item 108 changes no shipped finding by its own admission.
+
+Owner tree at start `OWNER-TREE c2331799fd3ee413aca864fd82d247a35ea31b01a70a6c4e37b00f6aad9105b2
+(0 tracked modified, 52 untracked)` — **UNMOVED**, byte-identical to the fingerprint the last six runs
+recorded. `HEAD` `1feac83` throughout.
+
+#### Step 3.5 — premise re-measured live on all 40 lessons, and the item's framing of the fix was wrong
+
+**CONFIRMED to the character on both headline figures, and the disposition changed anyway.**
+
+*The two recorded sequences reproduced exactly.* Lesson 1 = **`132223`**, lesson 29 = **`13223`**, both
+from `A11ySweep.run()` on the built `dist/` at `127.0.0.1:8821`, selftest **PASS 9/9** first and the
+sweep's SHA-256 read back **inside the browser** as `86a37f8f…`, byte-identical to the checked-in
+`scripts/a11y-sweep.js`.
+
+**⚠️ THE INSTRUMENT LIED FIRST, and this is the finding worth keeping.** The obvious way to sample all
+40 — seed `ecycles_completed_lessons` with every id so nothing is locked — **suppresses the defect it
+is looking for.** The hook renders only while a lesson is UNFINISHED (`LessonReader.jsx`'s "Why only
+when the lesson is unfinished" comment), and the hook's `<h3>` *is* the skip. A full-catalog sweep in
+that state returns **40/40 clean** and would have closed this item as unreproducible.
+
+**And it lied a second, dumber way before that.** Seeding `localStorage` on an already-booted app
+changes nothing: `isUnlocked` reads React state, so lessons 30 and 31 **redirected to `#/learn`** and
+the sweep dutifully reported `1222`, `0 findings` — for the Learn screen, under the heading "lesson
+30". Caught only because each row asserts its own screen identity; the `h1` came back
+`"Your learning path"`. **Both failures produce a clean report, which is the shape step 3.5 exists for.**
+
+*The instrument's own control failed too, and was fixed before any number was trusted.* The identity
+matcher `h1.replace(/^\S*\s*/, '')` — meant to strip the lesson's leading emoji — is greedy across the
+emoji AND the first word, because `🔄Transactions:` contains no space: it turned
+`"🔄Transactions: The Building Block"` into `"The Building Block"`, so **every** row would have failed
+identity. Proved rather than reasoned: the old form returns `false` and the new `indexOf` form `true`
+on that exact string, with `"Your learning path"` as the negative control returning `false`.
+
+**How all 40 were actually reached.** A lesson is unlocked by its PREDECESSOR being complete, and shows
+its hook when IT is not — so seed *all-but-a-non-consecutive-set* and sweep that set. Two complementary
+passes (21 + 19, offsets even then odd within each track) cover the catalog with every swept lesson
+unlocked and unfinished. **Lesson 35, which item 106 recorded as unsamplable, was sampled in both
+states** (`1322223` with hook, `122223` without).
+
+**PREMISE CORRECTION — the item offered three fixes and the right one was not among them.** It framed
+the choice as: promote the `h3` to `h2`, leave it and reorder, or leave it alone; and it called the
+question "still a judgment". It is not, once you notice that **the block already has a title nobody
+marked up.** `t.hookTitle` ("Before you read") and `t.checkTitle` ("Check what you learned") were
+rendered as styled `<p>` captions — visually headings, semantically nothing. The `h3` was not too deep;
+its parent was missing. Promoting the question, as the item leaned toward rejecting, would indeed have
+made a pre-quiz item a sibling of the body sections; **marking up the label costs no new string in any
+of the five languages** (both keys already exist in `en`/`es`/`ko`/`zh`/`ja`) and adds two rotor entries
+the reader never had.
+
+#### What the survey found — 40/40, both reader states, before the fix
+
+| state | lessons measured | hook present | `h1 -> h3` skip |
+|---|---|---|---|
+| **completed / revisit** (all 40 seeded complete) | **40** | 0 | **0** |
+| **unfinished / first read** (two complementary passes) | **21** | 21 | **21 of 21** |
+
+**So it is not "one skipped level on the lesson reader" — it is one skipped level on every lesson in
+the catalog, on the only pass through it that every reader necessarily makes.** The revisit row is why
+it stayed invisible: sweep the app the convenient way and the defect is 0/40. The 21-lesson row is a
+complete before/after set; the remaining 19 were measured after the fix only (see below), and their
+pre-fix state is the same template rather than an independent measurement — said plainly rather than
+implied.
+
+#### What shipped
+
+- **`src/screens/LessonReader.jsx`** — `as="h2"` on the two block labels, plus the reasoning in
+  comments so the next edit does not "simplify" them back to `<p>`. No new strings, no locale change,
+  no logic change.
+- **`scripts/check-data.mjs` §45** — the convention now costs a failing test to break. It checks that
+  both labels render through a `<Text>` carrying `as="h2"` (searching backwards from the token to the
+  nearest `<Text`, with a 400-char span cap so a restructure fails loudly instead of binding to an
+  unrelated tag), and it carries the §44-shaped vacuity guard **twice**: zero labels found, and
+  `Question.jsx` no longer rendering an `<h3>` — because this section exists to give that `<h3>` a
+  parent, so if the `<h3>` goes, the premise has moved and staying green would be a lie. The comment
+  records the seeded-`localStorage` trap above, since that is the thing a future run will hit.
+- `git diff -- package.json package-lock.json vite.config.js` is **empty** — item 12's port-cost rule
+  respected. `src/components/Question.jsx` is **untouched** (`git diff --stat` empty).
+
+#### Verification
+
+`npm run build` clean. `npm test` **0 failures, 2 warnings** — the two expected translation warnings
+(review coverage, 48 abridged pairs), matching the documented baseline.
+
+**§45 proved able to fail, in all three modes**, each injection asserting it landed (the injector exits
+9 on a no-op replace) and each file restored from a **scratchpad copy, never `git checkout`**:
+
+| injected | §45 says |
+|---|---|
+| drop `as="h2"` from the hook label | `{t.hookTitle} is rendered without as="h2"…` ✅ |
+| `Question.jsx` `as="h3"` → `as="h4"` | `…no longer renders its question as an <h3>… its premise has moved` ✅ |
+| rename `{t.hookTitle}` → `{t.hookHeadline}` | `found only 1 of the 2 expected … labels … do not leave it half-green` ✅ |
+
+Both files restored **byte-identical** (`8beb5e2b…` LessonReader, `56c2ce0e…` Question, before and
+after), and the suite returns to `PASS: 0 failure(s)`.
+
+**Live, against the rebuilt `dist/`.** Bundle read back in the browser as **`index-Df4HLG_J.js`**,
+different from the pre-fix **`index-DWEDKkdc.js`** the "before" numbers came from — so the two halves
+of the comparison provably ran against different builds (yesterday's stale-bundle near-miss,
+Environment-note lying-zero mode 4). Sweep SHA `86a37f8f…` and selftest **PASS 9/9** on every boot.
+
+**After the fix — 40/40 lessons in the FIRST-READ state, the state that carried the defect:**
+
+| pass | lessons | hook present | skips | identity failures |
+|---|---|---|---|---|
+| B1 (21) | 1,3,…,15 / 16,18,…,28 / 29,31,…,39 | **21** | **0** | 0 |
+| B2 (19) | 2,4,…,14 / 17,19,…,27 / 30,32,…,40 | **19** | **0** | 0 |
+
+Lesson 1 went **`132223` → `12322223`**; lesson 29 **`13223` → `1232223`**; lesson 30, the
+two-question lesson, **`122233` → `123222233`**, both check `h3`s now under the check `h2`. Every row
+asserted its own `h1` against the catalog title **before** its number was recorded, and `hookPresent`
+was computed from document order (`compareDocumentPosition` against the first `<section>`), not assumed
+— so "no skip" cannot be an artifact of a hook that quietly stopped rendering. **`noHook` is empty on
+all 40 rows**, which is that control firing.
+
+**"Nothing moves visually" is measured, not asserted.** Computed styles and geometry for both labels
+on `#/lesson/1`, at a real viewport (`innerWidth` **375**, not 0 — Environment-note geometry trap):
+
+| | before | after |
+|---|---|---|
+| tag | `P` | **`H2`** |
+| fontSize / weight / lineHeight / letterSpacing | 12px / 700 / 16.8px / 0.6px | **identical** |
+| color (hook / check) | `rgb(169,182,255)` / `rgb(168,158,144)` | **identical** |
+| textTransform / margin / display | uppercase / `0px` / block | **identical** |
+| box (hook) | `x33 y400 w309 h17` | **identical** |
+| box (check) | `x33 y3528 w309 h17` | **identical** |
+
+The check label's `y` matching at **3528px** is the strong one: everything laid out above it is
+unchanged to the pixel. `<Text>` sets `margin: 0` plus explicit font metrics, so the UA's `h2` defaults
+never apply — which is *why* this fix is free, and it is now written in the code.
+
+**Regression sweep, non-lesson screens, each identity asserted from `main`'s own text first:**
+`#/learn` `1222` **0 findings**, `#/practice` `12` **0**, `#/reference` `1` **0** — every total matching
+the previous run's table exactly.
+
+#### Step 5 — adversarial self-check
+
+- **Blindspot register** — no regression. Across the diff's 86 added lines: Dalio/`principles` **0**,
+  advice-adjacent verbs (`buy `/`sell `/`recommend`/`should invest`/`guarantee`) **0**, child-facing
+  framing **0**. **Control**: `aria|h2` on the same lines returns **14**, so the grep reaches them.
+  **One date match, checked rather than waved past**: `2026-08-25` on a `//` comment line in
+  `scripts/check-data.mjs`. `git diff -- src/` contains **no** date string at all, and nothing under
+  `src/` imports from `scripts/` (`grep -rnE "^\s*import .*(scripts/|check-data)" src/` → **0**;
+  `grep -rl check-data dist/assets/` → **0**), so it never reaches a bundle and the Markets-tab
+  stale-data fix is untouched by construction. **A first pass at this grep gave a confident, wrong
+  "38 files import check-data"** — it was `grep -rc | grep -v :0 | wc -l`, which counts files, not
+  imports; the 38 are prose references in comments. Re-measured with `grep -rl` and the import-shaped
+  grep above. Recorded because it is the zsh/pipe class the Environment note keeps warning about.
+- **`DECISIONS.md` conflict** — none. Zero dependency/config diff; no `localStorage` in any added
+  line of code (the one `localStorage` hit is inside §45's explanatory comment); no content module,
+  no Vite surface, no routing touched.
+- **Already-done backlog item** — no. This is item 106's own first implementation. `git log --all
+  -S'as="h2" variant="caption"'` → **0** commits; `-S'§45'` → **0**. **Control**: `-S'as="h3"'` → **1**
+  (`Question.jsx`'s own introduction), so the pickaxe reaches this shape. It does not undo item 82 or
+  §44 — those name `<section>` regions via `aria-labelledby` and are untouched; §44 still reports its
+  3 sections, all named.
+- **Own verification claim** — reproducible by anyone who rebuilds, serves `dist/`, seeds the
+  all-but-a-non-consecutive-set `localStorage`, and pastes the sweep. The claim easiest to fake is
+  "40/40, no skips", which is why every row carries an asserted identity and a `hookPresent` computed
+  from document order: a sweep of the Learn screen, or of a lesson whose hook silently vanished, would
+  report exactly the clean result being claimed — and both of those failures actually happened in this
+  run before being caught. `git status` shows exactly two modified files; the owner's `UIUX/` and
+  `drafts/` are untouched (untracked count **52**, unchanged). Owner tree at commit time:
+  **`OWNER-TREE 73a2e67e5202688509dd5d80cc010d364066c15c232287c8c5205765ad215969` (2 tracked modified,
+  52 untracked)** — the two tracked modifications are this run's own files.
+- **One thing noticed and not chased**: the `#/practice` screen reads `12` — a single `h2` for a
+  screen with a quiz flow behind it. That is not a skip and not a defect, but Practice renders the same
+  `<Question>` `h3`s once a quiz starts, and this run only measured its landing state. Filed as **item
+  109** rather than smuggled in.
+
+#### Next
+
+- **Item 109** (filed this run): sweep Practice *mid-quiz*, not just its landing state. Same
+  instrument, same trap shape — the interesting state is the one a convenient sweep does not reach.
+- **Item 108** (the harness's focus capability vs. the sweep header's claim) is unchanged and cheap.
+- **Item 26 / item 27** both still need a re-scope before picking; **W-5.2's pick list** remains.
+- **Do NOT pick item 94** — optional track, four "(Beta)" languages, parked behind O-1 by its own box.
+
+**Unchanged and still the entire critical path, both owner-blocked: O-1** (a deployed URL) and **O-2**
+(item 18, an analytics account). Every lesson in the catalog now reads in a correct heading order on
+first open. **No screen reader has ever been pointed at it, because no one has ever opened the app.**
