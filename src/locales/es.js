@@ -1,6 +1,7 @@
 export default {
     appTitle: "Ciclos Económicos", appSub: "Domina la Economía",
     langLabel: "Idioma",
+    skipToNav: "Saltar a la navegación",
     tabHome: "Inicio", tabLearn: "Aprender", tabMarkets: "Mercados", tabMore: "Más",
     welcomeTitle: "Bienvenido a Ciclos Económicos",
     welcomeSub: "Aprende cómo funciona la economía — paso a paso",

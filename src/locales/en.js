@@ -1,6 +1,7 @@
 export default {
     appTitle: "Economic Cycles", appSub: "Master the Economy",
     langLabel: "Language",
+    skipToNav: "Skip to navigation",
     // Bottom tabs
     tabHome: "Home", tabLearn: "Learn", tabMarkets: "Markets", tabMore: "More",
     // Home

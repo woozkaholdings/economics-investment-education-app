@@ -1,6 +1,7 @@
 export default {
     appTitle: "经济周期", appSub: "掌握经济运行",
     langLabel: "语言",
+    skipToNav: "跳到导航",
     tabHome: "首页", tabLearn: "学习", tabMarkets: "市场", tabMore: "更多",
     welcomeTitle: "欢迎来到经济周期",
     welcomeSub: "一步步学习经济如何运作",

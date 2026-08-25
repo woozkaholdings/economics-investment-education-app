@@ -2007,8 +2007,41 @@ for the history. No open P1/P2 items.
     - **Cost: zero new locale keys.** `t.appTitle` moved from `<nav>` to the inner tablist; no
       translation debt in any of the five languages.
 
-103. **[A11y — filed 2026-08-25 by the run that shipped item 102, as the keyboard half of the same
-    fix. Small.] There is no skip link, and until item 102 there was nothing for one to point at.**
+103. **✅ DONE 2026-08-25 (scheduled dev-agent). Shipped — but as a skip-to-NAVIGATION link, not
+    the skip-to-content link this item asked for. Three of the item's premises were wrong, and the
+    third one changed the disposition. Read the correction before re-deriving any of this.**
+    - **PREMISE CORRECTION 1 — the header has ONE tab stop, not two.** The item says a keyboard user
+      tabs "the app title, then the 5-option language `<select>`". The app title is a plain `<span>`;
+      it has never been focusable. Measured live on all four screens: `header: 1` focusable, every
+      time.
+    - **PREMISE CORRECTION 2 — "on every screen, including each of the 40 lessons" is false.** Focus
+      is already managed on route change: opening a lesson moves focus to the lesson `<h1>` (measured
+      — `beforeOpen: BUTTON:Start Learning` → `afterOpenLesson: H1:Transactions…`), and a tab switch
+      leaves focus on the nav button. A reader passes the header once per page load, not per lesson.
+    - **PREMISE CORRECTION 3 — and this is the one that changed the fix.** Taken together, 1 and 2
+      mean a skip-to-content link would **bypass exactly one tab stop while adding one**: net zero
+      keypresses, on a screen where `<main>` already comes first and where item 102's landmarks
+      already satisfy WCAG 2.4.1 (technique ARIA11) for AT users. **The real distance runs the other
+      way.** `<nav>` is the LAST element in the DOM, so reaching the app's primary navigation costs
+      **38 tab stops on the Glossary**, 14 inside a lesson, 6 on Learn — measured, tabbable-only
+      (the roving tabindex means the nav itself is 1 stop, not 3). So the link ships as
+      **"Skip to navigation"**, targeting the active tab button.
+    - **PREMISE CORRECTION 4 — `theme.js` does NOT own the focus-ring tokens.** `grep -in
+      "focus\|outline" src/theme.js` returns **0** (control: `accent` returns hits). The ring is one
+      global `:focus-visible` rule in `src/index.css:206-208`, `outline: 2px solid var(--fill-accent)`
+      — which the skip link inherits for free. Good news, not a blocker.
+    - **THE TRAP THE ITEM DID NOT MENTION, and it is the reason this is a `<button>`.** `lib/deepLink.js`
+      owns `location.hash`. The textbook `<a href="#nav">` fires `hashchange` → `resolveRoute` → no
+      match → fallback. **Proved live before writing the fix**: an injected `<a href="#probe-nav">`
+      clicked from lesson 29 moved the hash `#/lesson/29` → `#/learn` and the `<h1>` from
+      "Transactions" to "Welcome to Economic Cycles", with focus left on `BODY`. Control (a click not
+      touching the hash): route unchanged.
+    - **Guarded by `check-data.mjs` §41** (fragment-href ban + the control's position before
+      `<header>`); the five translations are covered by §1's existing key-set parity, proved by
+      injection rather than assumed.
+
+    ORIGINAL TEXT (retained — it is what was measured, and three of its numbers were wrong):
+    **There is no skip link, and until item 102 there was nothing for one to point at.**
     `grep -rn "skip to" src/ index.html` returns **0**. A screen-reader user can now jump to the `main`
     landmark via the rotor, but a **sighted keyboard user** still tabs through the header — the app
     title, then the 5-option language `<select>` — on every screen, including each of the 40 lessons.
@@ -2057,6 +2090,13 @@ for the history. No open P1/P2 items.
       is **item 12's port-cost rule** territory — scope it before reaching for one.
     - **Honest priority: medium.** It found a real defect on its first use, in the app's most-used
       control, that forty static sections had missed.
+    - **ADDED 2026-08-25 by the item-103 run, and it is a precondition the script must assert rather
+      than an aside.** A hidden Browser pane makes the instrument lie *silently*: `document.hasFocus()`
+      goes `false`, **no focus events fire at all** (a native probe listener recorded zero while
+      `document.activeElement` was correct), and timer-based waits hang because the pane is throttled.
+      Several interim "the reveal does not fire" readings that run were the harness, not the app.
+      **The script must refuse to report a zero unless `document.hasFocus() && document.visibilityState
+      === "visible"`** — the §40-style floor, applied to a live instrument instead of a static one.
     - **One finding it returned that is NOT yet an item**, because it is arguable and needs a judgment:
       the lesson reader's heading order runs `H1 → H3 → H2 → H2 → H3`, the `H3` being the "BEFORE YOU
       READ" pre-quiz that sits above the first body `H2`. A skipped level is a WCAG 1.3.1 concern; it
@@ -8518,3 +8558,150 @@ warnings** (item 94's translation debt, the 0% human review share).
 **Unchanged and still the entire critical path, both owner-blocked: O-1** (a deployed URL) and **O-2**
 (item 18, an analytics account). This run gave the app two landmarks it never had. **No screen reader
 has ever reached this app**, because it has no URL.
+
+### 2026-08-25 (scheduled dev-agent) — item 103: the skip link points at the navigation, because the thing it was supposed to skip turned out to be one tab stop
+
+Picked **item 103** on the previous run's recommendation — the skip link, "now cheap for the first
+time" because item 102 restored the `main` landmark it needed as a target. Non-item-93 work, so
+**W-5.2's ratio holds** — ten consecutive non-93 runs. Owner tree at start:
+`OWNER-TREE c2331799fd3ee413aca864fd82d247a35ea31b01a70a6c4e37b00f6aad9105b2` (**0** tracked modified,
+52 untracked, all under the owner's `UIUX/` and `drafts/`). HEAD `89256af` at start and at commit.
+
+#### Step 3.5 — four of the item's premises were wrong, and the fourth changed what got built
+
+The item is one of my own, filed yesterday by the run that shipped 102, which is exactly the kind of
+item that gets trusted instead of measured. All four claims were re-measured against the live app.
+
+| Item's claim | Measured | Effect |
+|---|---|---|
+| `grep -rn "skip to" src/ index.html` → 0 | **0** (control: `tabpanel` returns 3 hits in App.jsx) | confirmed |
+| header = title + `<select>` (2 stops) | **1** — the title is a plain `<span>` | figure |
+| reader re-tabs the header "on each of the 40 lessons" | **false** — focus already moves to the lesson `<h1>` on open | figure |
+| `theme.js` owns the focus-ring tokens | **0 hits** for `focus`/`outline` in `theme.js`; the ring is one global `:focus-visible` rule in `index.css:206` (control: `accent` hits) | simplification |
+
+**Together the middle two changed the disposition.** A skip-to-content link here would bypass **one**
+tab stop while **adding one** — net zero — on a shell where `<main>` already precedes everything and
+where item 102's landmarks already satisfy WCAG 2.4.1 via ARIA11. So I measured the other direction,
+which the item never looks at: **`<nav>` is the last element in the DOM.** Tabbable stops from the top
+of the document to the bottom nav — **Glossary 38, lesson reader 14, Learn 6, Practice 2**. That is the
+block a sighted keyboard user actually cannot bypass (a screen-reader user has had the `navigation`
+landmark since yesterday). **The link ships as "Skip to navigation."**
+
+#### The trap the item did not contain, proved before a line was written
+
+`lib/deepLink.js` owns `location.hash`. So the textbook `<a href="#nav">` does not merely fail here —
+**it navigates.** Injected into the live app and clicked from lesson 29:
+
+| | hash | lesson `<h1>` | focus |
+|---|---|---|---|
+| **control** — a click that does not touch the hash | `#/lesson/29` → `#/lesson/29` | Transactions → Transactions | — |
+| **`<a href="#probe-nav">`** | `#/lesson/29` → **`#/learn`** | Transactions → **"Welcome to Economic Cycles"** | **`BODY`** — never reached the nav |
+| **the shipped `<button>`** | `#/lesson/29` → `#/lesson/29` | Transactions → Transactions | **nav tab**, `role="tab"`, `aria-selected="true"` |
+
+Two-sided, and the middle row is the pre-fix state of the obvious implementation.
+
+#### What shipped
+
+- **`src/App.jsx`** — a `<button>` (not an anchor) as the first element of the shell, before
+  `<header>`; off-screen at `-9999px` until focused, revealed at `top/left: space[2]` with
+  `minHeight: MIN_TAP`. `onClick` focuses **the active tab button** via the existing `tabRefs`, not
+  the `<nav>` box — so the roving tabindex's arrow keys work immediately instead of costing one more
+  Tab to get off a `tabindex=-1` wrapper.
+- **One locale key in five languages** — `skipToNav`, inserted after `langLabel` in each file.
+- **`check-data.mjs` §41**, written as a general rule: (a) **no** `<a>` anywhere under `src/` may carry
+  a bare-fragment `href` — the collision is with the router, so it applies to every in-page anchor
+  anyone adds later, not just to this one control; (b) the shell still renders `t.skipToNav` and still
+  renders it **before** `<header>` (nothing here sets `tabindex`, so source order is tab order); (c) a
+  file-count floor. §41 deliberately does **not** re-check the five translations — §1 already enforces
+  en's full key set, proved below rather than assumed.
+
+#### Verification — live, against a served `dist/`
+
+**The instrument was dead for a stretch of this run, and the run log should say so**, because a
+negative from it looks exactly like a clean result. Several "the reveal does not fire" readings were
+**my harness, not the app**: with the Browser pane hidden, `document.hasFocus()` is `false` and
+**no focus events fire at all** — a native `focus` listener I attached as a probe recorded **zero**
+events while `document.activeElement` was correctly the button. Timer-based waits hang for the same
+reason (throttled). Every result below was taken with the pane visible and `hasFocus: true`.
+
+- **First Tab press on a cold load lands on the skip link** — real keypress, not `.focus()`, in **`es`
+  at the 1.3x font scale** (the app's stress case): revealed at 8/8, **139×44 en / 180×44 ja / 198×44
+  es**, inside a 375px viewport, focus ring `rgb(169,182,255) solid 2px`. Screenshot in this run.
+- **MIN_TAP** 44 ✓ (item's own §34 ask). **Blur re-hides** it (`top` back to `-9999px`).
+- **No horizontal overflow** — `scrollWidth === clientWidth === 375` with the link both hidden and
+  revealed; `-9999px` adds no scroll.
+- **Arrow keys work straight after skipping** — ArrowRight from the skipped-to tab moves Learn →
+  Review, so the roving tabindex survived.
+- **`ja` renders** ナビゲーションへスキップ with `<html lang>` `ja`.
+- **A control caught one thing I nearly reported as a bug:** the `computer` tool's Enter key does not
+  reach the page — pressed on the skip link, nothing happened. Before calling that a defect I pressed
+  Enter on a **known-good** button ("Empezar"): also nothing. Dead instrument, not my control.
+  Activation is proved instead by the `.click()` row in the table above.
+
+§41's battery — **6 injections plus 2 controls**, each **proved to have landed** (an edit matching
+zero or >1 sites raises rather than reporting a pass — this fired twice during authoring and caught a
+non-unique pattern), each restored from a scratchpad copy, **never `git checkout --`**:
+
+| # | Injection | Result |
+|---|---|---|
+| 0 | control, unmodified | **PASS** |
+| 1 | the skip link becomes `<a href="#nav">` | **FAIL** §41 |
+| 2 | the control is relocated **after** `<header>` | **FAIL** §41 |
+| 3 | `t.skipToNav` is dropped from the shell | **FAIL** §41 |
+| 4 | a **different file** (`Learn.jsx`) adds a fragment anchor | **FAIL** §41 — the rule is general |
+| 5 | §41 stops stripping comments | **FAIL** §41 — on its own documentation |
+| 6 | `ko` loses `skipToNav` | **FAIL**, and for the right reason: `TR.ko: missing key "skipToNav" (present in TR.en)` — §1 covers it, so §41 correctly does not |
+| 7 | control, after every restore | **PASS** |
+
+Injection 5 matters for the same reason it did in §40: App.jsx's comment for this control **spells out
+`<a href="#id">` as the thing not to do**, so a scan that reads comments flags the documentation of the
+fix as the bug. **A note on the table's own honesty:** my filter also reported `§16b` on every row
+*including both passing controls* — it is an informational line, not a failure, and §1's real failure
+message carries no `§`-prefix at all, which is why row 6 shows no section. Row 0 and row 7 exiting 0 is
+what makes the rest of the column mean anything.
+
+`npm run build` **✓ 986ms, exit 0**; `npm test` **exit 0**, 0 failures, the same **2 pre-existing
+warnings** (item 94's translation debt, the 0% human review share) — unchanged from the previous run.
+
+#### Adversarial self-check (step 5)
+
+- **Blindspot register** — `npm run check-blindspot` **passes all seven**, run rather than reasoned
+  about. The only user-facing strings added are five navigational labels ("Skip to navigation" and its
+  translations) — no advice adjacency, no Dalio, no kids framing, nothing dated. Two `2026-08-25` hits
+  in added lines, both in §41's comment header in `scripts/check-data.mjs`: the repo's convention for
+  dated source comments, and §2.3's scan is over teaching-copy modules, which `scripts/` is not.
+  **Control:** the same grep returns `2026-08-24` from `public/data/market.json`, so it fires.
+- **`DECISIONS.md` conflict** — none. **Item 12's port-cost rule** was the one to check hardest, since
+  this is a keyboard affordance on a web build: `git diff --stat HEAD -- package.json package-lock.json
+  vite.config.js` is **empty**, and the control touches no `window`, no DOM API and nothing in
+  `deepLink.js` — it is a `<button>` with an `onClick` that calls `.focus()` on an existing ref, so a
+  native port carries it over unchanged. localStorage-only, `.js`-not-JSON and Vite-not-Expo untouched.
+- **Already-done backlog item** — no. `"skip link"` returns **2** hits in `AGENT_LOG.md` and **0** in
+  the archive; read rather than counted, they are item 103's own text and the previous run's "Next"
+  line. **Control:** `"landmark"` returns 23.
+- **Own verification claim** — reproducible from the commands listed, with one caveat stated plainly
+  above rather than buried: a hidden Browser pane silently disables focus events, and several interim
+  "failures" this run were that, not the app. The claim easiest to fake is "it is the first tab stop",
+  which is why the proof is a **real Tab keypress on a cold load** plus a screenshot, not a
+  `.focus()` call. No injection residue: `git status` shows exactly the 7 files I meant to change, and
+  `Learn.jsx` — mutated by injection 4 — is not among them.
+
+#### Next
+
+- **Item 104** (Sector ranks render out of order) is a **confirmed** rendering bug and the most
+  valuable unblocked item on the board, but it carries a product judgment about the 1M/3M/6M control
+  — its own text says option (b) is smallest, (a) most coherent. A run picking it should record the
+  choice explicitly in its entry.
+- **Item 105** (make the live DOM sweep a checked-in, repeatable script) gained evidence this run:
+  the sweep found item 103's real premises, and **the pane-hidden failure mode above is exactly the
+  kind of thing that script needs to assert before trusting a zero** (`document.hasFocus()` as a
+  precondition). Worth adding to the item.
+- **Deliberately NOT filed:** I saw `window.scrollY === 286` right after opening a lesson, which would
+  mean the reader lands mid-page — but I read it while the pane was hidden, and this run is a long
+  argument for not trusting that instrument. It needs re-measuring with the pane visible before it is
+  a claim, let alone an item.
+- **Do NOT pick item 94** — optional track, four "(Beta)" languages, parked behind O-1 by its own box.
+
+**Unchanged and still the entire critical path, both owner-blocked: O-1** (a deployed URL) and **O-2**
+(item 18, an analytics account). This run made the app's primary navigation reachable in two keypresses
+instead of thirty-eight. **No keyboard user has ever reached this app**, because it has no URL.

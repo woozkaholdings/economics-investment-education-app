@@ -1,6 +1,7 @@
 export default {
     appTitle: "経済サイクル", appSub: "経済をマスターしよう",
     langLabel: "言語",
+    skipToNav: "ナビゲーションへスキップ",
     tabHome: "ホーム", tabLearn: "学習", tabMarkets: "市場", tabMore: "その他",
     welcomeTitle: "経済サイクルへようこそ",
     welcomeSub: "経済の仕組みをステップバイステップで学ぼう",

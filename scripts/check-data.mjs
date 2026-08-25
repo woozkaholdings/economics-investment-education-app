@@ -4939,5 +4939,128 @@ if (keyedGroupsChecked < 4) {
   );
 }
 
+// §41. The skip link stays a skip link — first in the tab order, and never an
+// <a href="#…">.
+//
+// WHY THIS EXISTS. Added 2026-08-25 with the skip link itself (backlog item
+// 103). Two things about it are one edit away from silently breaking, and
+// neither shows up as an error anywhere.
+//
+//   (1) THE HREF TRAP, and it is this repo's own shape rather than a general
+//       worry. `lib/deepLink.js` owns `location.hash` — it listens for
+//       `hashchange`, hands the hash to `resolveRoute`, and anything outside
+//       the four-route grammar (#/learn, #/practice, #/reference, #/lesson/N)
+//       falls back to the lesson path. So the TEXTBOOK skip link,
+//       `<a href="#nav">`, is not merely inert here: it navigates. Measured in
+//       the live app before the fix was written — an injected `<a href=
+//       "#probe-nav">` clicked from lesson 29 moved the hash to `#/learn` and
+//       swapped the reader's <h1> from "Transactions" to "Welcome to Economic
+//       Cycles", while focus never reached the nav at all. The control was the
+//       same click with the hash untouched: route unchanged. Hence a <button>
+//       that focuses the target directly.
+//
+//   (2) THE POSITION. A skip link that is not the FIRST focusable thing in the
+//       document is decoration — the reader has already tabbed past whatever
+//       it was going to save them. In this shell "first" is a source-order
+//       fact: the control is rendered before <header>, with no tabindex
+//       anywhere to reorder things, so DOM order is tab order.
+//
+// WHY IT SKIPS TO THE NAV RATHER THAN TO THE CONTENT, since that is the part a
+// future reader will think is a mistake: measured live, the header holds
+// exactly ONE tab stop (the language <select>; the title is a plain <span>),
+// and focus is already moved into <main> on every route change — so
+// "skip to main content" would add a tab stop to save one. The distance is all
+// in the other direction, because <nav> is last in the DOM: 38 tab stops from
+// the top of the Glossary to the bottom nav, 14 inside a lesson, 6 on Learn.
+//
+// WHAT IS DELIBERATELY NOT CHECKED. Not the five translations — §1 already
+// enforces that every locale carries en's full key set, so `skipToNav` is
+// covered there and duplicating it here would rot in two places. Not the
+// rendered tab order: that needs a browser, and the live proof (first Tab press
+// on a cold load lands on the link, in es at the 1.3x font scale) is in the run
+// log for 2026-08-25.
+{
+  const SHELL = "src/App.jsx";
+  const shellSrc = readFileSync(join(ROOT, SHELL), "utf8");
+
+  // Same reason as §40, and the same trap: App.jsx's comment for this control
+  // spells out `<a href="#id">` as the thing NOT to do, so a scan that reads
+  // comments flags the documentation of the fix as the bug.
+  const stripComments = (s) =>
+    s.replace(/\{\/\*[\s\S]*?\*\/\}/g, "").replace(/\/\*[\s\S]*?\*\//g, "").replace(/^[ \t]*\/\/.*$/gm, "");
+
+  const jsxFiles = [];
+  const walkJsx = (dir) => {
+    for (const e of readdirSync(dir, { withFileTypes: true })) {
+      const full = join(dir, e.name);
+      if (e.isDirectory()) walkJsx(full);
+      else if (e.name.endsWith(".jsx")) jsxFiles.push(full);
+    }
+  };
+  walkJsx(join(ROOT, "src"));
+
+  // (a) GENERAL: no anchor anywhere under src/ may carry a bare-fragment href.
+  // The rule is not "the skip link must not be an anchor" — the collision is
+  // with the router, so it applies to every in-page anchor anyone adds later.
+  let anchorsScanned = 0;
+  const fragmentAnchors = [];
+  for (const file of jsxFiles) {
+    const code = stripComments(readFileSync(file, "utf8"));
+    for (const m of code.matchAll(/<a(\s[^>]*?)?>/g)) {
+      anchorsScanned += 1;
+      const attrs = m[1] ?? "";
+      const href = attrs.match(/\bhref\s*=\s*(?:"([^"]*)"|\{`([^`]*)`\}|\{"([^"]*)"\})/);
+      const value = href ? (href[1] ?? href[2] ?? href[3] ?? "") : null;
+      if (value !== null && value.startsWith("#")) {
+        fragmentAnchors.push({ file: relative(ROOT, file), href: value });
+      }
+    }
+  }
+  for (const a of fragmentAnchors) {
+    fail(
+      `§41: ${a.file} has \`<a href="${a.href}">\`. lib/deepLink.js owns location.hash — a fragment ` +
+        `link fires hashchange, resolveRoute does not recognize it, and the reader is navigated off ` +
+        `the screen they were on. Use a <button> that focuses the target instead.`,
+    );
+  }
+
+  // (b) The skip control still exists, and still comes before the header.
+  const shellNoComments = stripComments(shellSrc);
+  const skipAt = shellNoComments.indexOf("t.skipToNav");
+  const headerAt = shellNoComments.search(/<header[\s>]/);
+  if (skipAt === -1) {
+    fail(
+      `§41: ${SHELL} no longer renders \`t.skipToNav\`. The skip link is the only way a sighted ` +
+        `keyboard user reaches the bottom nav without tabbing the whole screen (38 stops on the ` +
+        `Glossary).`,
+    );
+  } else if (headerAt === -1) {
+    fail(`§41: could not find a <header> in ${SHELL}. This check is pointed at the wrong shape.`);
+  } else if (skipAt > headerAt) {
+    fail(
+      `§41: ${SHELL} renders \`t.skipToNav\` AFTER <header>. Nothing in this shell sets tabindex, so ` +
+        `DOM order is tab order — a skip link the reader reaches second has already been skipped ` +
+        `past by the control it exists to bypass.`,
+    );
+  }
+
+  // (c) Floor. With no anchors found at all, (a) passes by finding nothing —
+  // the vacuous green §40(d) exists to prevent, one section over.
+  if (jsxFiles.length < 5) {
+    fail(
+      `§41: the src/ walk found only ${jsxFiles.length} .jsx file(s) (expected at least 5). The scan ` +
+        `is not reaching the markup, so (a) proves nothing.`,
+    );
+  }
+
+  const anchorVerdict = fragmentAnchors.length === 0 ? "0 fragment href(s)" : `${fragmentAnchors.length} FRAGMENT HREF(S) — see failures above`;
+  console.log(
+    `  §41 skip link: ${anchorsScanned} anchor(s) scanned across ${jsxFiles.length} .jsx file(s), ` +
+      `${anchorVerdict}; ${SHELL} renders t.skipToNav before <header>. ` +
+      `(Static — the rendered tab-order proof is in the run log.)`,
+  );
+}
+
+
 console.log(`\n${failures === 0 ? "PASS" : "FAIL"}: ${failures} failure(s), ${warnings} warning(s).`);
 process.exit(failures === 0 ? 0 : 1);

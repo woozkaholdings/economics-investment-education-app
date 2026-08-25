@@ -1,6 +1,7 @@
 export default {
     appTitle: "경제 순환", appSub: "경제를 마스터하세요",
     langLabel: "언어",
+    skipToNav: "탐색 메뉴로 건너뛰기",
     tabHome: "홈", tabLearn: "학습", tabMarkets: "시장", tabMore: "더보기",
     welcomeTitle: "경제 순환에 오신 것을 환영합니다",
     welcomeSub: "경제가 실제로 어떻게 작동하는지 단계별로 배우세요",

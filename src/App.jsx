@@ -291,6 +291,11 @@ export default function App() {
   // active tab is Tab-stoppable; the rest are reached via arrow keys once the
   // tablist has focus, matching how a native OS tab strip behaves.
   const tabRefs = useRef([]);
+  // Drives the skip link's reveal. State rather than a `:focus` CSS rule
+  // because every style in this shell is an inline token object — there is no
+  // class layer here to hang a `:focus` selector on. The focus RING is free:
+  // `index.css` has one global `:focus-visible` rule.
+  const [skipFocused, setSkipFocused] = useState(false);
   const onTabKeyDown = useCallback((e, currentIndex) => {
     let nextIndex = null;
     if (e.key === "ArrowRight") nextIndex = (currentIndex + 1) % tabs.length;
@@ -305,6 +310,48 @@ export default function App() {
 
   return (
     <div style={{ maxWidth: APP_MAX_WIDTH, margin: "0 auto", minHeight: "100vh", background: surface.canvas, display: "flex", flexDirection: "column" }}>
+      {/* Skip link — and it skips to the NAV, not to the content.
+          "Skip to main content" is the reflex, and it would be worth almost
+          nothing here: measured live, the header holds exactly ONE tab stop
+          (the language <select>; the title is a plain <span>), and focus is
+          already moved into <main> on every route change, so a reader never
+          re-tabs the header per lesson. Saving one keypress by adding one is
+          not a fix. The real distance is the other way: <nav> is the LAST
+          thing in the DOM, so reaching the app's primary navigation costs 38
+          tab presses on the Glossary, 14 in a lesson, 6 on Learn.
+
+          A <button>, not an <a href="#id">, because this app owns the hash.
+          The textbook anchor was tried in the live app first: it set the hash
+          to `#app-nav`, `useDeepLink`'s hashchange listener handed that to
+          `resolveRoute`, which does not recognize it and falls back — so the
+          link threw the reader out of lesson 29 back to `#/learn`, and focus
+          never arrived at the nav at all. A link that navigates is a link
+          that must speak this app's four-route grammar; this is an action.
+
+          Target is the ACTIVE tab button rather than the <nav> box, so arrow
+          keys work immediately (roving tabindex) instead of costing one more
+          Tab to get off a `tabindex=-1` wrapper. */}
+      <button
+        type="button"
+        onClick={() => tabRefs.current[tabs.findIndex((x) => x.key === tab)]?.focus()}
+        onFocus={() => setSkipFocused(true)}
+        onBlur={() => setSkipFocused(false)}
+        style={{
+          position: "absolute", zIndex: 200,
+          // Off-screen rather than `display:none`/`visibility:hidden`, which
+          // would make it unfocusable and defeat the entire point.
+          top: skipFocused ? space["2"] : -9999,
+          left: skipFocused ? space["2"] : -9999,
+          minHeight: MIN_TAP, padding: `0 ${space["3"]}px`,
+          background: surface.card, color: ink.accent,
+          border: `1px solid ${line.strong}`, borderRadius: radius.sm,
+          fontFamily: "inherit", fontSize: "0.8125rem", fontWeight: 600,
+          cursor: "pointer",
+        }}
+      >
+        {t.skipToNav}
+      </button>
+
       {showDisclaimer && <FirstRunNotice t={t} onDismiss={dismissDisclaimer} />}
       {!showDisclaimer && showPracticeCoachMark && tab === "learn" && reading === null && (
         <PracticeCoachMark t={t} onOpenPractice={() => goToTab("practice")} onDismiss={dismissPracticeCoachMark} />
