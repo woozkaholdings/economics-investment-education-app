@@ -1984,6 +1984,85 @@ for the history. No open P1/P2 items.
       pattern. Proved with a real before/after — the pre-change script **passes** an injected
       violation, the new one names all three lines.
 
+102. **✅ DONE 2026-08-25 (scheduled dev-agent), same run it was filed. [A11y — found by a live DOM
+    sweep of the built app, not by reading code.] `<main role="tabpanel">` and `<nav role="tablist">`
+    exposed NO `main` and NO `navigation` landmark, and two of the three bottom tabs pointed
+    `aria-controls` at ids that did not exist.** One cause for both: an explicit `role` **replaces** an
+    element's implicit role rather than adding to it. Shipped as two nested wrappers (the roles moved
+    onto inner `<div>`s, so landmark and tab pattern coexist) plus `aria-controls={active ? … :
+    undefined}`, guarded by **`check-data.mjs` §40**.
+    - **What makes this worth reading later.** The archived 2026-08-1x accessibility run that added the
+      roving-tabindex keyboard pattern to this very nav **inspected this exact markup and wrote that it
+      was "already wired correctly, not something to fix"** — naming `role="tablist"` on the `<nav>`,
+      `aria-controls` on each button and `role="tabpanel"` on `<main>` as correct plumbing. Every one of
+      those attributes *is* individually correct. The composition is what was broken, and **you cannot
+      see it by reading attributes — only by reading the resulting accessibility tree.** That entry is a
+      dated record and stays verbatim (§31); this item is where the correction lives.
+    - **Why the app's usual answer did not apply.** Five other tablists here (`Learn.jsx`,
+      `GlossaryTerms.jsx`, `PolicySim.jsx`, `Sectors.jsx`, `ParentGuide.jsx`) each carry a comment
+      about keeping the panel rendered and `hidden` so `aria-controls` always resolves. The shell
+      cannot: its three screens are separate lazy chunks, so mounting all three would download all
+      three on open. Scoping the reference to the selected tab is the truthful alternative —
+      activation follows focus, so a tab can never be focused while inactive.
+    - **Cost: zero new locale keys.** `t.appTitle` moved from `<nav>` to the inner tablist; no
+      translation debt in any of the five languages.
+
+103. **[A11y — filed 2026-08-25 by the run that shipped item 102, as the keyboard half of the same
+    fix. Small.] There is no skip link, and until item 102 there was nothing for one to point at.**
+    `grep -rn "skip to" src/ index.html` returns **0**. A screen-reader user can now jump to the `main`
+    landmark via the rotor, but a **sighted keyboard user** still tabs through the header — the app
+    title, then the 5-option language `<select>` — on every screen, including each of the 40 lessons.
+    - **Now cheap, and it was not before**: `<main>` is a real landmark again, so the link has a target.
+      Needs one new locale key in five languages (the visible link text) and the usual
+      visually-hidden-until-focused styling; `theme.js` already owns the focus-ring tokens.
+    - **Check `MIN_TAP` and the focus ring** when it becomes visible, per §34.
+
+104. **[Bug/Content — filed 2026-08-25 by the run that shipped item 102, measured during the same
+    sweep and CONFIRMED in both the code and the rendered screen. Not fixed there: which of the two
+    halves is wrong is a product judgment, not a mechanical fix.] The Sector screen sorts by raw
+    return but labels every row with a *relative-strength* rank, so the rank badges render out of
+    order — and the code comment claims the opposite of what the code does.**
+    - **Measured, live, 1M window:** Health Care `#1` +17.1%, Financials `#3` +12.5%, Materials `#4`
+      +6.9%, Energy `#2` +6.8%, Industrials `#7` +4.5%, Consumer Staples `#5`. A reader looking at a
+      list captioned "Eleven sectors, ranked" sees 1, 3, 4, 2, 7, 5.
+    - **The cause, in the source.** `Sectors.jsx:78` sorts by `bySymbol[…].change[window]` — the raw
+      percentage for the selected window. The badge at line 153 renders `rs.rank`, which comes from
+      `wjSectorComparison` (the owner's multi-period `WJ_Sector_Comparison` formula, `provisional:
+      false`, see `DECISIONS.md`). **Two different orderings, one list.**
+    - **There is also a false comment**, the item-75 shape: lines 121-122 say "`ranked` is ordered by
+      relative strength, and each row states its own 'rank N of M'". `ranked` is not ordered by
+      relative strength. Whichever way the product question is decided, that sentence is wrong today.
+    - **Do not just re-sort.** The 1M/3M/6M segmented control re-sorts by window (line 119 says "no
+      separate content per tab, just a re-sort"), while the WJ rank is computed across `WJ_PERIODS`
+      and does not vary by window — so sorting by rank would make the three tabs identical and the
+      control pointless. The honest options are (a) sort by rank and re-scope or remove the window
+      control, (b) keep the sort and label the row with the window's own position, or (c) show both,
+      labeled. **(b) is the smallest and keeps the owner's formula visible; (a) is the most coherent.**
+      Owner-facing enough to be worth one line in a weekly report rather than a silent pick.
+
+105. **[Process/Tooling — filed 2026-08-25 by the run that shipped item 102, from how that defect was
+    found.] Nothing in `npm test` can see the rendered accessibility tree, and item 102 was invisible
+    to every static check in the repo.** §40 now guards the specific shape, and `check-data.mjs` is up
+    to forty sections — but all of them read source text. Item 102 was a **composition** defect: every
+    attribute was individually correct and the browser's computed tree was wrong.
+    - **What the sweep that found it actually was**: ~30 lines of `javascript_tool` in the live app —
+      duplicate ids, buttons with no accessible name, `aria-controls`/`aria-labelledby`/`aria-describedby`
+      that resolve to nothing, heading order, sub-44px hit targets, horizontal overflow. On this run it
+      returned **0** for every category except the dangling references (item 102) and one heading-order
+      note (below), which is a useful signal about the app's real state, not just about the instrument.
+    - **Scope before building.** It cannot join `npm test` — it needs a browser, and the Environment
+      note's `dist/` + `python3 -m http.server` + `preview_start` technique is a run-time procedure,
+      not a script. The realistic form is **a checked-in script the Environment note tells a run to
+      paste**, plus a run-log convention for reporting its counts. Adding a headless-browser dependency
+      is **item 12's port-cost rule** territory — scope it before reaching for one.
+    - **Honest priority: medium.** It found a real defect on its first use, in the app's most-used
+      control, that forty static sections had missed.
+    - **One finding it returned that is NOT yet an item**, because it is arguable and needs a judgment:
+      the lesson reader's heading order runs `H1 → H3 → H2 → H2 → H3`, the `H3` being the "BEFORE YOU
+      READ" pre-quiz that sits above the first body `H2`. A skipped level is a WCAG 1.3.1 concern; it
+      may also be the correct reading of a pre-quiz as subordinate to the lesson title. Measure the
+      other 39 lessons before deciding anything.
+
 101. **[Feature/Distribution — filed 2026-08-24 by the run that closed item 98, as its stated residual
     rather than smuggled into the same commit. Serves `LAUNCH_PLAN.md` §5. **Genuinely blocked on
     O-1**, not merely downstream of it.] `og:url` and `og:image` are the two preview tags item 98
@@ -8284,3 +8363,158 @@ warnings** (item 94's translation debt, the 0% human review share).
 **Unchanged and still the entire critical path, both owner-blocked: O-1** (a deployed URL) and **O-2**
 (item 18, an analytics account). This run fixed the sentence a reader sees when a screen breaks. **No
 reader has ever seen either sentence, right or wrong**, because the app has no URL.
+
+### 2026-08-25 (scheduled dev-agent) — item 102: two landmarks the app never had, and the run that had already checked this markup and called it correct
+
+The board's unblocked items were thin and the previous run's "Next" said so, naming a **backlog refill**
+(W-2's standing rule) as the probable pick. Took that, but grounded it the way W-2 asks — *"checked
+against the actual `src/` tree, not proposed from a note"* — by running a **live DOM sweep of the built
+app** and filing what it found. It found a real defect in the app's most-used control, so the run
+shipped that and filed the rest. Non-item-93 work, so **W-5.2's ratio holds** — nine consecutive
+non-93 runs. Owner tree at start: `OWNER-TREE a2d919f5662300aa11d96c799a15ba19c2498fc52254832fc2d4ed1578637afa` (2 tracked
+modified — both mine — and 52 untracked, all under the owner's `UIUX/` and `drafts/`).
+
+#### Step 3.5 — the premise here was "the board is thin", and it was re-measured against each item, not read off the summary
+
+W-5.2's own lesson from 2026-08-24 is that **a pick list is a claim about current state and goes stale
+exactly like a figure does**, so every candidate was checked against its own item text before the sweep
+started: **64** and **67** closed (struck 08-24); **70** closed ("✅ DONE 2026-08-17"); **71** carries an
+explicit gate — *"take it only when one of these numbers has actually been wrong once"* — that has not
+fired; **74** is by its own text not dev-agent work; **76** is blocked on a per-language tokeniser;
+**101** is genuinely blocked on O-1; **94** is parked behind O-1 by its own box. That is the whole
+unblocked board, and the conclusion held.
+
+#### What the sweep is, and the control that makes its zeros mean something
+
+~30 lines of `javascript_tool` against a served `dist/`, run on Learn, Review, Reference, the Sector
+screen and the lesson reader: duplicate ids, buttons with no accessible name, `aria-controls` /
+`aria-labelledby` / `aria-describedby` that resolve to nothing, heading order, sub-44px hit targets,
+horizontal overflow. **Every category returned 0 except two** — which is only meaningful because the
+instrument was shown to fire: the same scan that reported `panel-practice` and `panel-reference` as
+unresolvable reported `panel-learn` as resolvable **in the same call**, so a positive and a negative
+came out of one measurement. Sub-44px targets returned 0 across all five screens, independently
+re-confirming the 2026-08-23 touch-target work.
+
+#### The defect, and why forty static checks could not see it
+
+**An explicit `role` REPLACES an element's implicit role.** So `<main role="tabpanel">` exposed **no
+`main` landmark** and `<nav role="tablist">` exposed **no `navigation` landmark** — on every screen,
+including each of the 40 lessons. Landmark jumping (VoiceOver's rotor, NVDA's `D`) is the normal way a
+screen-reader user skips a sticky header, and there was nothing to jump to.
+
+Riding on the same element: `<main>`'s id is `panel-${tab}`, so only the **active** tab's panel exists,
+yet all three tabs carried `aria-controls={`panel-${item.key}`}` unconditionally. Two of three tabs
+pointed at ids no element had — a dangling IDREF (axe's `aria-valid-attr-value`), on every screen.
+
+**PREMISE CORRECTION, and it is the reason this item exists at all.** The archived accessibility run
+that added the roving-tabindex keyboard pattern to *this very nav* inspected *this very markup* and
+recorded that it was **"already wired correctly, not something to fix"** — naming `role="tablist"` on
+the `<nav>`, `aria-controls` on each button, and `role="tabpanel"` on `<main>`. Every one of those
+attributes **is** individually correct; the **composition** is what was broken. That run verified by
+reading attribute wiring against the APG pattern, which cannot see this, and no static check since has
+been able to either. The entry is a dated record and stays verbatim (§31); item 102 carries the
+correction.
+
+#### What shipped
+
+- **`src/App.jsx`** — `role="tabpanel"` moved off `<main>` onto an inner `<div>`, `role="tablist"` off
+  `<nav>` onto an inner `<div>`; both landmarks restored, both patterns intact.
+- **`aria-controls={active ? `panel-${item.key}` : undefined}`.** The five other tablists in this app
+  each carry a comment about keeping the panel rendered and `hidden` so the reference always resolves;
+  **that answer is unavailable in the shell**, because the three screens are separate lazy chunks and
+  mounting all three would download all three on open. Scoping to the selected tab is truthful:
+  activation follows focus in `onTabKeyDown`, so a tab can never be focused while inactive.
+- **`check-data.mjs` §40**, written as a **general rule rather than a patch** — no element with an
+  implicit landmark role (`main`/`nav`/`header`/`footer`/`aside`) may carry an explicit `role`
+  *anywhere* under `src/`. `<section>` and `<form>` are deliberately excluded: their landmark roles are
+  conditional on an accessible name, so a bare `role` on them is not automatically a loss.
+- **Zero new locale keys.** `t.appTitle` moved from `<nav>` to the inner tablist — no translation debt
+  in any of the five languages.
+
+#### The trap inside the check, caught by its own control
+
+§40 bans the string `<main role="tabpanel">` — and `App.jsx`'s new comments **spell that string out as
+the thing not to do**. A scan that reads comments flags the documentation of the fix as the bug. Hence
+`stripComments()`, and hence injection 7 below, which exists to prove that line is load-bearing rather
+than tidy: with stripping disabled, §40 fires **2 false positives on its own documentation**.
+
+#### Verification
+
+Live, against a served `dist/` (the Environment note's technique, per W-1). The rendered
+**accessibility tree**, not the DOM, because the DOM is what the earlier run read:
+
+| State | `read_page` tree |
+|---|---|
+| after the fix | `main` › `tabpanel`, `navigation` › `tablist "Economic Cycles"` |
+| **control: the two roles re-injected into the live DOM** | `main` and `navigation` **gone** — collapse to `tabpanel` / `tablist` |
+| after reload | both landmarks back |
+
+That middle row is the proof the tree instrument can show the failure, and it reproduces the pre-fix
+state exactly. Also checked live: **0 dangling references on all three tabs** (active tab resolves,
+inactive tabs carry no attribute); **ArrowRight from Learn** moves focus to Review *and* switches the
+panel, so the roving tabindex survived the restructure; **`ja`** renders landmarks intact with the
+tablist labeled 経済サイクル and `<html lang>` `ja`; layout unchanged at 375x812 by screenshot, `scrollWidth === clientWidth === 375`
+on every screen. **Code splitting survived** — `dist/` still emits separate `Practice-*`, `Reference-*`
+and `LessonReader-*` chunks.
+
+§40's battery — **7 injections plus 2 controls**, each **proved to have landed** before its result was
+read (an edit matching nothing throws rather than reporting a pass), each restored from a scratchpad
+copy, **never `git checkout --`**:
+
+| # | Injection | Result |
+|---|---|---|
+| 0 | control, unmodified | **PASS** |
+| 1 | `<main>` takes `role="tabpanel"` back | **FAIL**, names the element and the lost landmark |
+| 2 | `<nav>` takes `role="tablist"` back | **FAIL** |
+| 3 | the inner `tabpanel` role is deleted | **FAIL** |
+| 4 | the inner `tablist` role is deleted | **FAIL** |
+| 5 | `aria-controls` goes unconditional again | **FAIL** |
+| 6 | a **different file** overrides a landmark (`Learn.jsx`) | **FAIL** — the rule is general, not App.jsx-only |
+| 7 | the check stops stripping comments | **FAIL ×2**, on its own documentation |
+| 8 | control, after every restore | **PASS** |
+
+**A correction to my own first reading of that table:** the battery initially reported "other=1" beside
+every injection, which looked like a second section failing. It was not — my filter was counting the
+suite's own `FAIL: N failure(s)` summary line. Re-run with the summary excluded, **§40 is the only
+section that fires** in all seven. Worth writing down because an unexplained second failure is exactly
+the kind of thing that gets waved through.
+
+`npm run build` **✓ 1.06s, exit 0**; `npm test` **exit 0**, 0 failures, the same **2 pre-existing
+warnings** (item 94's translation debt, the 0% human review share).
+
+#### Adversarial self-check (step 5)
+
+- **Blindspot register** — `npm run check-blindspot` **passes all seven**, run rather than reasoned
+  about. This change adds **no user-facing string at all**: the only non-comment additions are two
+  wrapper `<div>`s, one `style` change and the conditional attribute, verified by reading the filtered
+  diff. Two `2026-08-25` hits in added lines, checked rather than waved through — both are in §40's
+  own comment header, the repo's convention for dated source comments, and §2.3's scan is over
+  teaching-copy modules, which `scripts/check-data.mjs` is not. **Control:** the same date grep returns
+  `2026-08-24` from `public/data/market.json`, so the instrument fires.
+- **`DECISIONS.md` conflict** — none. Item 12's port-cost rule: **no dependency added**;
+  `package.json` and `vite.config.js` are byte-identical (`git diff --stat` empty). localStorage-only,
+  `.js`-not-JSON and Vite-not-Expo are all untouched.
+- **Already-done backlog item** — no, and this was the axis worth checking hardest, since the nav's
+  ARIA has been worked on before. `"main landmark"` and `"navigation landmark"` return **0** across
+  `AGENT_LOG.md` **and** the archive; **control:** `ErrorBoundary` returns 15. The 12 archived
+  `aria-controls` hits were read, not counted: they are the *other* tablists (Learn tracks, glossary,
+  policy sim, sectors, parent guide), each already solved by keeping its panel rendered. This run
+  **corrects** the one entry that touched this markup rather than redoing it.
+- **Own verification claim** — reproducible from the commands listed. The claim easiest to fake is
+  "the landmarks are really there", which is why the proof is a tree reading with a two-sided control
+  (inject the roles → landmarks vanish; reload → they return) rather than a single green screenshot.
+  The injection battery left no residue: `git status` shows exactly two modified files, and
+  `Learn.jsx` — mutated by injection 6 — is not among them.
+
+#### Next
+
+- **Item 103** (skip link) is the natural follow-on and is now cheap for the first time: it needs a
+  `main` landmark to point at, which is what this run created. One new locale key in five languages.
+- **Item 104** is a confirmed rendering bug (Sector ranks out of order) but carries a **product
+  judgment** about the 1M/3M/6M control — worth the owner's eye, or an explicit choice recorded in the
+  entry that picks it. **Item 105** proposes making this run's sweep a checked-in, repeatable thing.
+- **Do NOT pick item 94** — optional track, four "(Beta)" languages, parked behind O-1 by its own box.
+
+**Unchanged and still the entire critical path, both owner-blocked: O-1** (a deployed URL) and **O-2**
+(item 18, an analytics account). This run gave the app two landmarks it never had. **No screen reader
+has ever reached this app**, because it has no URL.

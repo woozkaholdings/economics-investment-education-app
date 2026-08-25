@@ -4775,5 +4775,169 @@ if (keyedGroupsChecked < 4) {
   );
 }
 
+// §40. The shell keeps its landmarks, and no tab points at a panel that is not
+// there.
+//
+// WHY THIS EXISTS. Found 2026-08-25 by a live DOM sweep of the built app, in
+// the one control a reader touches on every screen. Two defects, one cause —
+// an explicit `role` REPLACES an element's implicit role rather than adding to
+// it, so:
+//   * `<main role="tabpanel">`  exposed NO `main` landmark, and
+//   * `<nav role="tablist">`    exposed NO `navigation` landmark.
+// Landmark jumping (VoiceOver's rotor, NVDA's `D`) is how a screen-reader user
+// skips the sticky header, and there was nothing to jump to on any of the 40
+// lessons. Proved in the accessibility tree, not reasoned about: re-applying
+// the two roles to the live DOM collapsed `main` + `navigation` back to
+// `tabpanel` + `tablist`, and removing them restored both.
+//
+// The second defect rode on the same element. `<main>`'s id is `panel-${tab}`,
+// so only the ACTIVE tab's panel exists — but all three tabs carried
+// `aria-controls={`panel-${item.key}`}` unconditionally, leaving the two
+// inactive tabs pointing at ids no element had. A dangling IDREF is an
+// authoring error (axe's `aria-valid-attr-value`), and it is the exact shape
+// five other tablists in this app carry a comment about avoiding. Their answer
+// — render the panel and `hidden` it — is unavailable in the shell, because
+// these three screens are separate lazy chunks and mounting all three would
+// download all three on open. So the reference is scoped to the selected tab
+// instead, which is truthful: activation follows focus, so a tab can never be
+// focused while inactive.
+//
+// WHAT IS CHECKED, AND WHY EACH PART.
+//   (a) GENERAL, and the reason this is a rule rather than a patch: no element
+//       with an implicit landmark role carries an explicit `role` anywhere
+//       under src/. The specific fix is one file; the mistake is available in
+//       every file.
+//   (b) the shell still forms real tabs — a `tabpanel` inside <main> and a
+//       `tablist` inside <nav>. Without this, (a) passes by deleting the tab
+//       pattern outright.
+//   (c) no `aria-controls` in App.jsx's tab row is unconditional. This is the
+//       dangling-IDREF regression, and it is one character to reintroduce.
+//   (d) floors under (a) and (c), so a rename cannot turn this section into a
+//       silent no-op — the failure mode §32-§39 all print a count to avoid.
+//
+// WHAT IS DELIBERATELY NOT CHECKED. Not the rendered accessibility tree: that
+// needs a browser, and the two-sided live proof (landmarks present, then absent
+// under an injected role, then present again) is in the run log for 2026-08-25.
+// Not whether OTHER dangling IDREFs exist elsewhere in src/ — the ids that
+// matter here are produced by template literals a static scan cannot resolve,
+// and claiming that coverage would be the vacuous pass (d) exists to prevent.
+{
+  const SHELL = "src/App.jsx";
+  const shellSrc = readFileSync(join(ROOT, SHELL), "utf8");
+
+  // Comments first, and this is load-bearing rather than tidy: App.jsx's own
+  // JSX comments spell out `<main role="tabpanel">` as the thing NOT to do, so
+  // a scan that reads comments flags the documentation of the fix as the bug.
+  const stripComments = (s) =>
+    s.replace(/\{\/\*[\s\S]*?\*\/\}/g, "").replace(/\/\*[\s\S]*?\*\//g, "").replace(/^[ \t]*\/\/.*$/gm, "");
+
+  // The five HTML elements whose implicit role IS a landmark. <section> and
+  // <form> are deliberately absent: theirs are conditional on an accessible
+  // name, so a bare `role` on them is not automatically a loss.
+  const LANDMARK_ELEMENTS = ["main", "nav", "header", "footer", "aside"];
+
+  const jsxFiles = [];
+  const walkJsx = (dir) => {
+    for (const e of readdirSync(dir, { withFileTypes: true })) {
+      const full = join(dir, e.name);
+      if (e.isDirectory()) walkJsx(full);
+      else if (e.name.endsWith(".jsx")) jsxFiles.push(full);
+    }
+  };
+  walkJsx(join(ROOT, "src"));
+
+  // (a) An explicit role on a landmark element, anywhere under src/.
+  let landmarkTagsScanned = 0;
+  const overridden = [];
+  for (const file of jsxFiles) {
+    const code = stripComments(readFileSync(file, "utf8"));
+    for (const el of LANDMARK_ELEMENTS) {
+      // Opening tag through its first `>`; App.jsx's are multi-line, so `[^>]`
+      // has to cross newlines, and a self-closing tag is fine to include.
+      const re = new RegExp(`<${el}(\\s[^>]*?)?>`, "g");
+      for (const m of code.matchAll(re)) {
+        landmarkTagsScanned += 1;
+        const attrs = m[1] ?? "";
+        const role = attrs.match(/\brole\s*=\s*(?:"([^"]*)"|\{([^}]*)\})/);
+        if (role) {
+          overridden.push({ file: relative(ROOT, file), el, role: (role[1] ?? role[2] ?? "").trim() });
+        }
+      }
+    }
+  }
+  for (const o of overridden) {
+    fail(
+      `§40: ${o.file} has \`<${o.el} role="${o.role}">\`. An explicit role REPLACES the implicit one, ` +
+        `so this element no longer exposes its \`${o.el === "nav" ? "navigation" : o.el === "header" ? "banner" : o.el === "footer" ? "contentinfo" : o.el === "aside" ? "complementary" : "main"}\` landmark ` +
+        `and landmark navigation has nothing to jump to. Put the role on a child element instead.`,
+    );
+  }
+
+  // (b) The tab pattern still exists, nested inside the two landmarks.
+  const shellNoComments = stripComments(shellSrc);
+  const mainBlock = shellNoComments.match(/<main(?:\s[^>]*?)?>([\s\S]*?)<\/main>/);
+  const navBlock = shellNoComments.match(/<nav(?:\s[^>]*?)?>([\s\S]*?)<\/nav>/);
+  if (!mainBlock) {
+    fail(`§40: could not find a <main>…</main> in ${SHELL}. This check is pointed at the wrong shape.`);
+  } else if (!/role="tabpanel"/.test(mainBlock[1])) {
+    fail(
+      `§40: ${SHELL}'s <main> contains no \`role="tabpanel"\`. The panel has to stay inside the main ` +
+        `landmark — moving the role back onto <main> is what §40 exists to stop, and deleting it ` +
+        `severs the bottom nav's tabs from the screen they switch.`,
+    );
+  }
+  if (!navBlock) {
+    fail(`§40: could not find a <nav>…</nav> in ${SHELL}. This check is pointed at the wrong shape.`);
+  } else if (!/role="tablist"/.test(navBlock[1])) {
+    fail(
+      `§40: ${SHELL}'s <nav> contains no \`role="tablist"\`. Same rule as <main>: the tablist belongs ` +
+        `on a child, so the navigation landmark and the tab pattern can coexist.`,
+    );
+  }
+
+  // (c) No unconditional `aria-controls` in the shell. The panel id is built
+  // from the ACTIVE tab, so an unguarded reference is dangling for every tab
+  // that is not selected — which is two of the three, on every screen.
+  const controlsAttrs = [...shellNoComments.matchAll(/aria-controls=\{([^}]*(?:\{[^}]*\}[^}]*)*)\}/g)].map((m) => m[1]);
+  const unguarded = controlsAttrs.filter((expr) => !/\?/.test(expr));
+  for (const expr of unguarded) {
+    fail(
+      `§40: ${SHELL} has an unconditional \`aria-controls={${expr.trim()}}\`. Only the selected tab's ` +
+        `panel is rendered, so every other tab's reference resolves to nothing. Guard it on the ` +
+        `active tab (\`active ? … : undefined\`).`,
+    );
+  }
+  const tabButtons = (shellNoComments.match(/role="tab"/g) ?? []).length;
+
+  // (d) Floors. Each of these numbers going to zero would make a section above
+  // pass by finding nothing, which is the one result a check must never report
+  // as green.
+  if (landmarkTagsScanned < 3) {
+    fail(
+      `§40: the src/ walk found only ${landmarkTagsScanned} landmark element(s) across ${jsxFiles.length} ` +
+        `.jsx file(s) (expected at least 3 — the shell alone has <header>, <main> and <nav>). The scan ` +
+        `is not reaching the markup, so (a) proves nothing.`,
+    );
+  }
+  if (controlsAttrs.length < 1 || tabButtons < 1) {
+    fail(
+      `§40: found ${controlsAttrs.length} aria-controls and ${tabButtons} role="tab" in ${SHELL} ` +
+        `(expected at least one of each). With neither present, (c) is vacuous.`,
+    );
+  }
+
+  // Derived from the scan, never asserted — §38 printed a green summary from a
+  // constant while its own checks were failing, and §39 was written to avoid
+  // repeating it.
+  const landmarkVerdict = overridden.length === 0 ? "0 overridden" : `${overridden.length} OVERRIDDEN — see failures above`;
+  const controlsVerdict = unguarded.length === 0 ? "all guarded" : `${unguarded.length} UNGUARDED — see failures above`;
+  console.log(
+    `  §40 shell landmarks: ${landmarkTagsScanned} landmark element(s) scanned across ${jsxFiles.length} .jsx file(s), ` +
+      `${landmarkVerdict}; ${SHELL} nests tabpanel in <main> and tablist in <nav>; ` +
+      `${controlsAttrs.length} aria-controls in the shell, ${controlsVerdict} (${tabButtons} role="tab"). ` +
+      `(Static — the rendered landmark proof is in the run log.)`,
+  );
+}
+
 console.log(`\n${failures === 0 ? "PASS" : "FAIL"}: ${failures} failure(s), ${warnings} warning(s).`);
 process.exit(failures === 0 ? 0 : 1);

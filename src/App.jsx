@@ -355,16 +355,26 @@ export default function App() {
         </div>
       </header>
 
-      {/* Screen */}
+      {/* Screen.
+
+          `role="tabpanel"` lives on the inner div, NOT on <main>. An explicit
+          role REPLACES the implicit one, so `<main role="tabpanel">` exposed no
+          `main` landmark at all — and landmark jumping (VoiceOver's rotor,
+          NVDA's D key) is how a screen-reader user skips the header on every
+          one of the 40 lessons. Nesting keeps both: the landmark for getting
+          here, the tabpanel for the relationship to the bottom nav. */}
       <main
-        id={`panel-${tab}`}
-        role="tabpanel"
-        aria-labelledby={`tab-${tab}`}
         // Bottom padding clears the floating nav (12px offset + up to 73px of
         // pill at the 1.3x text scale) with room to spare, so the last row of
         // a screen is never parked under it.
-        style={{ flex: 1, padding: `${space["4"]}px ${space["4"]}px 112px` }}
+        style={{ flex: 1, display: "flex", padding: `${space["4"]}px ${space["4"]}px 112px` }}
       >
+        <div
+          id={`panel-${tab}`}
+          role="tabpanel"
+          aria-labelledby={`tab-${tab}`}
+          style={{ flex: 1, minWidth: 0 }}
+        >
         <ScreenBoundary t={t} key={tab}>
           {tab === "learn" && reading === null && (
             <Learn
@@ -397,6 +407,7 @@ export default function App() {
             </AsyncScreen>
           )}
         </ScreenBoundary>
+        </div>
       </main>
 
       {/* Bottom navigation — a floating pill, from UIUX/ (Quizlet iOS home).
@@ -414,8 +425,6 @@ export default function App() {
           inset is now added to the offset rather than used as padding, so the
           pill clears the home indicator instead of sitting on it. */}
       <nav
-        role="tablist"
-        aria-label={t.appTitle}
         style={{
           position: "fixed",
           bottom: "calc(env(safe-area-inset-bottom, 0px) + 12px)",
@@ -429,6 +438,10 @@ export default function App() {
           padding: space["1"],
         }}
       >
+        {/* Same override rule as <main> above: `<nav role="tablist">` exposed
+            no `navigation` landmark. The tablist is the inner element, so the
+            nav landmark and the tab pattern coexist. */}
+        <div role="tablist" aria-label={t.appTitle} style={{ display: "flex", flex: 1 }}>
         {tabs.map((item, index) => {
           const active = tab === item.key;
           return (
@@ -439,7 +452,18 @@ export default function App() {
               role="tab"
               id={`tab-${item.key}`}
               aria-selected={active}
-              aria-controls={`panel-${item.key}`}
+              // Only the selected tab's panel is in the DOM, so only the
+              // selected tab may claim one. Unconditionally, the two inactive
+              // tabs pointed at `panel-practice`/`panel-reference`, which no
+              // element had — a dangling IDREF, not a relationship, and the
+              // shape five other tablists in this app carry a comment about
+              // avoiding. Their answer (`hidden` instead of unmounting) is not
+              // available here: these three screens are separate lazy chunks,
+              // so mounting all of them would download all of them on open.
+              // Activation follows focus in `onTabKeyDown`, so a tab can never
+              // be focused while inactive — nothing loses a reference it could
+              // have used.
+              aria-controls={active ? `panel-${item.key}` : undefined}
               tabIndex={active ? 0 : -1}
               onClick={() => goToTab(item.key)}
               onKeyDown={(e) => onTabKeyDown(e, index)}
@@ -458,6 +482,7 @@ export default function App() {
             </button>
           );
         })}
+        </div>
       </nav>
     </div>
   );
