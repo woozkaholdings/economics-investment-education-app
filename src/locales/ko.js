@@ -125,4 +125,5 @@ export default {
     provisionalNotice: "상대강도는 현재 임시 계산 방식을 사용합니다.",
     economyNowTitle: "지금의 경제",
     rankTemplate: "{of}개 중 {rank}위",
+    sectorsSortNote: "{name} 대비 상대강도 순으로 정렬했습니다. 오른쪽 수치는 각 섹터의 {window} 수익률입니다.",
 };

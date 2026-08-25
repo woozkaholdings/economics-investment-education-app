@@ -125,4 +125,5 @@ export default {
     provisionalNotice: "相对强度目前使用的是临时算法。",
     economyNowTitle: "当前经济状况",
     rankTemplate: "{of} 中第 {rank}",
+    sectorsSortNote: "按相对于 {name} 的相对强度排序。右侧数字为各板块的 {window} 回报率。",
 };

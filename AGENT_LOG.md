@@ -2050,7 +2050,43 @@ for the history. No open P1/P2 items.
       visually-hidden-until-focused styling; `theme.js` already owns the focus-ring tokens.
     - **Check `MIN_TAP` and the focus ring** when it becomes visible, per §34.
 
-104. **[Bug/Content — filed 2026-08-25 by the run that shipped item 102, measured during the same
+104. **✅ DONE 2026-08-25 (scheduled dev-agent), the day after it was filed. DECIDED (a): the list
+    now sorts by `relativeStrength.rank`, and the 1M/3M/6M control was NOT removed — because the
+    item's argument for removing it was measurably wrong. Guarded by `check-data.mjs` §42.**
+    - **The choice, stated because the item asked for it to be stated.** (a) — one ordering, and it
+      is the one every row prints. The screen's own header comment says relative strength "is shown
+      as a rank … because a rank is something a first-time reader can actually act on", and
+      `DECISIONS.md` says the WJ measure combines three lookbacks precisely so no single window can
+      carry it. A ranking whose order is owned by whichever tab is selected contradicts both.
+    - **PREMISE CORRECTION 1 — the item's own reason for preferring (b) does not hold, and it is
+      what made (a) affordable.** The item says "sorting by rank would make the three tabs identical
+      and the control pointless." **The tabs are not identical.** The percentage each row reports is
+      still `change[window]`, and those differ sharply: Technology reads **-0.1% on 3M and +30.3% on
+      6M**, Health Care **+7.5% / +17.1% / +11.1%** across 1M/3M/6M. Only the *order* stops moving —
+      and the order was never the window's to own. Verified live on all three tabs after the fix.
+    - **PREMISE CORRECTION 2 — the item's measured figures are the 3M tab, not the 1M tab.** The
+      numbers it quotes (Health Care +17.1%, Financials +12.5%, Materials +6.9%, Energy +6.8%,
+      Industrials +4.5%) are the **3M** column of `public/data/market.json` (asOf 2026-08-24); 1M
+      reads +7.5 / +3.4 / +4.5 / +5.9 / -2.0. The mislabel does not weaken the item — 3M is the
+      **default** window (`useState("3m")`), so the defect was worse than filed: it was what every
+      reader saw on arrival, not what they had to click to find.
+    - **The defect was also worse on 6M than anywhere: that tab OPENED on `#10 of 11`.** Recomputed
+      across all three windows before editing; badges came out `1,3,4,2,7,5,6,10,8,9,11` (3M),
+      `8,1,2,9,4,5,3,10,6,7,11` (1M) and `10,2,3,1,6,8,7,4,5,9,11` (6M) — none ascending.
+    - **The false comment is fixed and is now enforced rather than merely corrected.** It had also
+      **propagated**: `AGENT_LOG.archive.md:10419` (item 40's `<ol>`/`<ul>` audit, 2026-08-16) cites
+      the false sentence back as its *evidence* that the list is genuinely an `<ol>` — "`ranked` is
+      ordered by relative strength and each row…". The `<ol>` was the right element for a reason
+      that was not true at the time. It is true now.
+    - **One new string, `sectorsSortNote`, in all five languages.** Fixing the comparator removes the
+      contradiction but leaves a fair question — "why is +16.0% below +11.1%?" — so the list states
+      its own sort key and what the percentage is. es/ko/zh/ja are AI translations like the rest of
+      the "(Beta)" surface (§10.4, O-3).
+    - **Residual, deliberately not done:** the item's option (c) — showing the window's own position
+      *as well* — is still available and was rejected as two ranks per row on a beginner screen.
+
+    ORIGINAL TEXT (retained — it is what was measured):
+    **[Bug/Content — filed 2026-08-25 by the run that shipped item 102, measured during the same
     sweep and CONFIRMED in both the code and the rendered screen. Not fixed there: which of the two
     halves is wrong is a product judgment, not a mechanical fix.] The Sector screen sorts by raw
     return but labels every row with a *relative-strength* rank, so the rank badges render out of
@@ -8705,3 +8741,142 @@ warnings** (item 94's translation debt, the 0% human review share) — unchanged
 **Unchanged and still the entire critical path, both owner-blocked: O-1** (a deployed URL) and **O-2**
 (item 18, an analytics account). This run made the app's primary navigation reachable in two keypresses
 instead of thirty-eight. **No keyboard user has ever reached this app**, because it has no URL.
+
+
+### 2026-08-25 (scheduled dev-agent) — item 104: eleven rows, two numbers, one order — and the tab control survived because the argument for killing it was wrong
+
+**Picked** item 104: the Sector screen sorted by the selected window's raw return while labeling every
+row with the window-independent WJ relative-strength rank, so a list captioned "Eleven sectors, ranked"
+rendered its own badges out of order. It was the highest-value unblocked item on the board and the
+previous run named it as such; its one open question was a product judgment, which this entry records.
+
+#### Step 3.5 — re-measured with a control, and the premise moved twice
+
+Recomputed the rendered order directly from the shipped `public/data/market.json` (asOf 2026-08-24) by
+replaying `Sectors.jsx`'s own comparator in Node, for all three windows:
+
+| window | badge sequence as rendered | ascending? |
+|---|---|---|
+| 1M | 8, 1, 2, 9, 4, 5, 3, 10, 6, 7, 11 | no |
+| **3M (default)** | **1, 3, 4, 2, 7, 5, 6, 10, 8, 9, 11** | no |
+| 6M | **10**, 2, 3, 1, 6, 8, 7, 4, 5, 9, 11 | no |
+
+**Control:** the same ascending predicate returns `true` on `[1,2,3]` and `false` on `[1,3,2]`, so a
+"no" here is a reading rather than a silence. The defect confirmed, and two corrections to the item:
+
+1. **Its quoted figures are the 3M column, not 1M** (Health Care +17.1% is 3M; 1M is +7.5%). That makes
+   the defect **worse** than filed rather than smaller — 3M is the default window, so this was the
+   arrival screen, not something a reader had to click to reach.
+2. **Its argument against option (a) is false.** The item says sorting by rank "would make the three
+   tabs identical and the control pointless." Only the *order* would be identical; the percentage each
+   row reports is `change[window]` and genuinely differs — Technology is **-0.1% on 3M and +30.3% on
+   6M**. That correction is the whole reason (a) was affordable, and it is written into the item.
+
+#### Decided (a), and why
+
+One list, one ordering, and it is the one the list prints. The file's own header comment says relative
+strength is shown as a rank "because a rank is something a first-time reader can actually act on", and
+`DECISIONS.md` records that the WJ measure sums three lookbacks (10/30/60 bars) precisely so that no
+single window can carry a sector — an ordering owned by the selected tab contradicts both. The
+segmented control keeps its job: it chooses which return you read, not who is ahead.
+
+#### What shipped
+
+- **`src/screens/reference/Sectors.jsx`** — the comparator sorts on `relativeStrength.rank`. Unranked
+  sectors go last on `+Infinity`: `computeRelativeStrength` drops any symbol with fewer than
+  `MIN_BARS` (61) bars and numbers only the survivors, so `of` is the count of **ranked** sectors, not
+  always eleven — the old sort's "unrankable goes last" rule, kept on purpose rather than inherited.
+- **The false comment**, fixed. It had *propagated*: `AGENT_LOG.archive.md:10419` — item 40's
+  `<ol>`/`<ul>` audit, 2026-08-16 — quotes the false sentence back as its **evidence** that the list is
+  genuinely an `<ol>`. The element was right for a reason that was not true. It is true now. Two other
+  comments that described the old ordering (the tabpanel's "just a re-sort", and the missing-figure
+  tone note's "at the bottom of a list ordered by performance") are corrected in place, the latter
+  marked as history rather than rewritten.
+- **`t.sectorsSortNote`, five languages** — the list states its sort key and what the number on the
+  right is. Fixing the comparator removes the contradiction; this answers what is left ("why is +16.0%
+  below +11.1%?"). es/ko/zh/ja are AI translations, same "(Beta)" surface as the rest (§10.4, O-3).
+- **`scripts/check-data.mjs` §42** — guards the *relationship*, not either half: (a) the comparator
+  reads `relativeStrength`, (b) it does not read `change[…]`, (c) the row still renders `rs.rank`, so
+  the section fails loudly instead of going vacuous if the badge is ever dropped.
+
+#### Verification
+
+**§42 can fail — seven injections, each restored from a scratchpad copy (never `git checkout --`):**
+
+| # | injection | result |
+|---|---|---|
+| 0 | control, unmodified | **PASS**, exit 0 |
+| 1 | comparator reverted to `change?.[window]` | **FAIL** §42(b) |
+| 2 | comparator sorts alphabetically instead | **FAIL** §42(a) |
+| 3 | `rs.rank` dropped from the row | **FAIL** §42(c) — the anti-vacuous floor |
+| 4 | `[...sectors]` rewritten as `sectors.slice()` | **FAIL** §42 "pointed at a shape that no longer exists" |
+| 5 | §42 stops stripping comments | **FAIL** §42(b) — on its own documentation |
+| 6 | `ko` loses `sectorsSortNote` | **FAIL**, and by the right section: `TR.ko: missing key "sectorsSortNote" (present in TR.en)` — §1 owns it, so §42 correctly does not |
+| 7 | control, after every restore | **PASS**, exit 0 |
+
+Row 4 is the honest weak spot and is stated rather than hidden: a legitimate refactor of the same logic
+trips §42. It fails **loudly, with instructions** ("repoint it or remove it, but do not leave it passing
+vacuously") rather than silently, which is the trade this repo's §40/§41 already make.
+
+**Live browser** (W-1), `dist/` + `python3 -m http.server 8731` + `preview_start`, per the Environment
+note. All three tabs, after the fix: badges **1..11 ascending on every one**, captions tracking the tab
+("…each sector's 1M/3M/6M return"), `aria-labelledby` following the selected tab, and the percentages
+**differing per tab** — which is the direct refutation of the item's "identical tabs" claim. Rendered
+and screenshotted in **`ko`** as well, where the caption and `11개 중 1위` badges read correctly.
+
+**Instrument control, because a DOM scan that returns nothing looks exactly like a clean result:** with
+the rows physically reversed in the DOM, the same scan reported `ascending: false`. It fires.
+
+**Two instrument failures found and worth carrying forward.** (1) The pane was hidden the whole run, and
+a `setTimeout(400)` took **20,368 ms** — item 105's throttling warning, reproduced with a number. The
+fix was to stop using in-page timers and put the click and the read in **separate tool calls**, so React
+commits in the gap; an earlier single-call scan reported all three tabs identical purely because it read
+the DOM before React re-rendered, and that reading was wrong. (2) My first §2.3 control **did not fire**
+— I injected an ISO `2026-08-25` and §2.3 matches **`Month YYYY`, English month names only**. The probe
+was wrong, not the instrument: re-run with `"August 2026"` it failed correctly and passed again after
+restore.
+
+`npm run build` **✓ exit 0**; `npm test` **exit 0**, 0 failures, the same **2 pre-existing warnings**
+(item 94's translation debt, the 0% human review share) — unchanged from the previous run.
+
+#### Adversarial self-check (step 5)
+
+- **Blindspot register** — `npm run check-blindspot` passes all seven, run rather than reasoned about,
+  **and §2.3 proven able to fail** (see above; the first control was a bad probe and is reported as
+  such). The only user-facing string added is `sectorsSortNote`, which is descriptive — it names a sort
+  key and a return, recommends nothing, and §10.1's scan covers `src/locales/` and passed. No Dalio, no
+  kids framing, no date in any rendered string. The `2026-08-25` in my source comments is in
+  `src/screens/` and `scripts/`, neither of which §2.3 scans, and is ISO rather than the shape it
+  guards.
+- **`DECISIONS.md` conflict** — none, and this is the closest thing to a *confirmation* I have found:
+  DECISIONS.md's WJ entry says combining three lookbacks is "the point — a sector only scores well by
+  leading across short, medium and longer windows at once", which is an argument for exactly the
+  ordering this change adopts. Item 12's port-cost rule: `git diff --stat HEAD -- package.json
+  package-lock.json vite.config.js` is **empty**; no new dependency, no DOM API, no `window` object.
+  localStorage-only, `.js`-not-JSON and Vite-not-Expo untouched.
+- **Already-done backlog item** — no. The phrases return **3** hits total: item 104's own text (×2) and
+  the archived item-40 audit line that repeated the false comment. **Control:** `"relative strength"`
+  returns 8 across both files, so the grep reaches. Nothing here redoes a "Completed and pruned" item.
+- **Own verification claim** — reproducible from the commands listed. The claim easiest to fake is
+  "badges 1..11 ascending", which is why the proof is a **rendered `innerText` scan of the live app on
+  all three tabs plus a reversed-DOM control**, not a re-read of the source I just wrote. No injection
+  residue: `git status` shows exactly the 7 files I meant to change, and `src/content/sectors.js` —
+  mutated twice by the §2.3 controls — is byte-identical to its backup and is not among them.
+
+#### Next
+
+- **Item 105** (make the live DOM sweep a checked-in script) gained its **second** piece of hard
+  evidence this run: the 400 ms → 20,368 ms measurement, and a concrete second precondition beyond
+  `document.hasFocus()` — **never read the DOM in the same call that clicked**, because React's commit
+  is asynchronous and a same-call read returns the previous render. That is a footgun the script must
+  encode, not a fact a run should have to rediscover. It is the strongest unblocked item now.
+- **Item 26 / item 27** (both need a re-scope before they can be picked) and **W-5.2's pick list** are
+  the alternatives; item 27 in particular is flagged in its own text as no longer describing the gap.
+- **Deliberately NOT filed as an item:** the lesson reader's `H1 → H3 → H2` heading order, raised by the
+  item-105 text. It still needs the other 39 lessons measured before it is a claim, and that
+  measurement is a whole run.
+- **Do NOT pick item 94** — optional track, four "(Beta)" languages, parked behind O-1 by its own box.
+
+**Unchanged and still the entire critical path, both owner-blocked: O-1** (a deployed URL) and **O-2**
+(item 18, an analytics account). This run fixed a list of eleven numbered rows that did not count in
+order. **Nobody has ever seen it in either state**, because the app has no URL.

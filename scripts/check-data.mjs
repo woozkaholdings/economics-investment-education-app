@@ -5062,5 +5062,90 @@ if (keyedGroupsChecked < 4) {
 }
 
 
+// §42. The Sector list is ordered by the number it prints.
+//
+// WHY THIS EXISTS. Added 2026-08-25 with the fix (backlog item 104). The screen
+// renders eleven rows, each carrying TWO numbers: a relative-strength rank
+// ("#3 of 11", from the owner's WJ_Sector_Comparison measure) and a raw return
+// for the selected 1M/3M/6M tab. From the day the screen shipped it sorted by
+// the RETURN and labeled by the RANK, so the badges came out of order — measured
+// against the shipped public/data/market.json (asOf 2026-08-24), the default 3M
+// tab read 1, 3, 4, 2, 7, 5, 6, 10, 8, 9, 11 and the 6M tab opened on #10.
+//
+// Nothing failed. Every value was individually correct, `npm test` was green,
+// and the only artifact was a list of numbers that did not count. That is why a
+// check is worth the lines: this defect has no error state to catch it, and its
+// two halves live 70 lines apart in one file, so either can be edited alone.
+//
+// WHAT IS CHECKED, and it is deliberately the RELATIONSHIP rather than either
+// half. (a) the comparator sorts on `relativeStrength`, (b) it does NOT sort on
+// `change[...]`, (c) the row still renders `rs.rank` — because a future edit
+// that drops the badge makes (a) pointless rather than wrong, and this section
+// would otherwise stay green while the thing it protects was gone.
+//
+// WHAT IS DELIBERATELY NOT CHECKED. Not the rendered order — that needs a
+// browser and the live proof is in the run log for 2026-08-25. Not
+// `t.sectorsSortNote`'s five translations: §1 already enforces en's full key set
+// across every locale, and duplicating it here would rot in two places.
+{
+  const SCREEN = "src/screens/reference/Sectors.jsx";
+  const src = readFileSync(join(ROOT, SCREEN), "utf8");
+
+  // Same trap as §40 and §41, and here it is sharper than in either: the
+  // comments in this file QUOTE the old broken comparator (`change[window]`)
+  // as the thing not to do, so a scan that reads comments flags the
+  // documentation of the fix as the bug.
+  const code = src
+    .replace(/\{\/\*[\s\S]*?\*\/\}/g, "")
+    .replace(/\/\*[\s\S]*?\*\//g, "")
+    .replace(/^[ \t]*\/\/.*$/gm, "");
+
+  const sortMatch = code.match(/const\s+ranked\s*=\s*\[\s*\.\.\.sectors\s*\][\s\S]*?\.sort\(([\s\S]*?)\);/);
+  if (!sortMatch) {
+    fail(
+      `§42: could not find the \`const ranked = [...sectors].sort(…)\` comparator in ${SCREEN}. ` +
+        `This check is pointed at a shape that no longer exists — repoint it or remove it, but do ` +
+        `not leave it passing vacuously.`,
+    );
+  } else {
+    const comparator = sortMatch[1];
+    // (a) it sorts on the rank. The helper may be hoisted above the .sort(),
+    // so the window is the comparator plus everything from `const ranked`
+    // back to the start of the render body.
+    const sortRegion = code.slice(Math.max(0, code.indexOf("const bySymbol")), sortMatch.index + sortMatch[0].length);
+    if (!/relativeStrength/.test(sortRegion)) {
+      fail(
+        `§42: ${SCREEN} sorts \`ranked\` without reading \`relativeStrength\`. Every row prints ` +
+          `"#N of M" from that measure, so a list ordered by anything else renders its own badges ` +
+          `out of order (item 104).`,
+      );
+    }
+    // (b) and not on the window's return, which is the specific regression.
+    if (/\bchange\s*\??\.?\s*\[/.test(sortRegion)) {
+      fail(
+        `§42: ${SCREEN} sorts \`ranked\` on \`change[…]\` — the raw return for the selected ` +
+          `1M/3M/6M tab. That is exactly the item-104 defect: the WJ rank is computed across ` +
+          `WJ_PERIODS and has no window, so the two orderings disagree and the badges come out ` +
+          `1, 3, 4, 2, 7, 5.`,
+      );
+    }
+    // (c) floor. (a) and (b) protect a badge; if the badge goes, they are
+    // guarding nothing and must say so rather than stay green.
+    if (!/\brs\s*\??\.\s*rank\b/.test(code)) {
+      fail(
+        `§42: ${SCREEN} no longer renders \`rs.rank\`. (a) and (b) exist to keep the list's order ` +
+          `and its printed rank in agreement — with no printed rank there is nothing to agree with, ` +
+          `so this section is now vacuous. Re-scope it deliberately.`,
+      );
+    }
+    console.log(
+      `  §42 sector ordering: comparator found (${comparator.trim().split("\n")[0].slice(0, 48)}…), ` +
+        `sorts on relativeStrength, does not sort on change[window], row renders rs.rank. ` +
+        `(Static — the rendered-order proof is in the run log.)`,
+    );
+  }
+}
+
+
 console.log(`\n${failures === 0 ? "PASS" : "FAIL"}: ${failures} failure(s), ${warnings} warning(s).`);
 process.exit(failures === 0 ? 0 : 1);

@@ -69,15 +69,33 @@ export default function Sectors({ t, lang }) {
   }
 
   const bySymbol = Object.fromEntries(data.sectors.map((s) => [s.symbol, s]));
-  // A window with no figure cannot be ranked, so it sorts to the bottom — but
-  // it is sorted by the same `Number.isFinite` test the row below renders by,
-  // not by `?? -Infinity`. The two disagreed: `??` passes a NaN straight into
-  // the subtraction, which makes the comparator return NaN for that pair and
-  // leaves the order undefined, while the row still drew it as "—".
-  const rank = (v) => (Number.isFinite(v) ? v : -Infinity);
-  const ranked = [...sectors].sort(
-    (a, b) => rank(bySymbol[b.symbol]?.change?.[window]) - rank(bySymbol[a.symbol]?.change?.[window]),
-  );
+  // Sorted by the SAME number each row prints on its badge —
+  // `relativeStrength.rank` — because until 2026-08-25 it was not (backlog
+  // item 104). The list sorted by `change[window]`, the raw return for the
+  // selected tab, while every row was labeled "#N of 11" from the
+  // window-independent WJ measure. Measured against the shipped
+  // `public/data/market.json` (asOf 2026-08-24): the default 3M tab rendered
+  // badges 1, 3, 4, 2, 7, 5, 6, 10, 8, 9, 11 and the 6M tab OPENED on #10.
+  // A list may have one ordering, and it has to be the one it prints.
+  //
+  // Sorting by rank does NOT make the three tabs identical, which is the
+  // reason this was the affordable fix rather than the expensive one: the
+  // percentage each row reports is still `change[window]`, so 1M/3M/6M keep
+  // showing genuinely different numbers. Only the order stops moving — and
+  // the order was never the window's to own, since the WJ score is computed
+  // across WJ_PERIODS (10/30/60 bars) and has no window.
+  //
+  // A sector with no rank cannot be placed in a ranking. `computeRelativeStrength`
+  // drops any symbol with less than MIN_BARS of history and numbers only what
+  // survives — so `of` is the count of RANKED sectors, not always eleven, and
+  // an unranked row has no `rank` at all. Those sort to the bottom on
+  // +Infinity: the same "unrankable goes last" rule the old return-based sort
+  // applied, kept on purpose rather than inherited by accident.
+  const rankOf = (sector) => {
+    const r = bySymbol[sector.symbol]?.relativeStrength?.rank;
+    return Number.isFinite(r) ? r : Infinity;
+  };
+  const ranked = [...sectors].sort((a, b) => rankOf(a) - rankOf(b));
 
   const benchChange = data.benchmark?.change?.[window];
 
@@ -116,10 +134,26 @@ export default function Sectors({ t, lang }) {
           the tab pattern has no programmatic link from the active "1M"/"3M"/
           "6M" tab to the content it controls. `aria-labelledby` points at
           whichever tab is currently selected, since one panel serves all
-          three (there's no separate content per tab, just a re-sort). */}
+          three. What the tab changes is the RETURN each row reports, not the
+          order — the order is the relative-strength rank and is the same on
+          all three (item 104). */}
       <div role="tabpanel" id="sector-list" aria-labelledby={`sector-window-${window}`}>
+        {/* The sort key, said out loud. Every row carries two numbers — a rank
+            and a return — and a reader who is not told which one ordered the
+            list will infer it from whichever column happens to look sorted.
+            Fixing the comparator (item 104) removes the contradiction; this
+            line is what stops the remaining question ("why is +16% below
+            +11%?") from being a mystery. */}
+        <Text variant="caption" color={ink.muted} style={{ margin: `${space["3"]}px 0 0` }}>
+          {t.sectorsSortNote
+            .replace("{name}", BENCHMARK.name)
+            .replace("{window}", WINDOWS.find((w) => w.key === window).label)}
+        </Text>
         {/* Genuinely an <ol>: `ranked` is ordered by relative strength, and each
-            row states its own "rank N of M". `role="list"` per check-data.mjs §20. */}
+            row states its own "rank N of M". `role="list"` per check-data.mjs §20.
+            This sentence was FALSE from the day the screen shipped until
+            2026-08-25 — `ranked` was ordered by return — which is why
+            check-data.mjs §42 now holds the comparator to it. */}
         <ol role="list" style={{ listStyle: "none", margin: 0, padding: 0 }}>
           {ranked.map((sector) => {
             const row = bySymbol[sector.symbol];
@@ -134,6 +168,10 @@ export default function Sectors({ t, lang }) {
             // at the bottom of a list ordered by performance — three signals
             // saying "worst of the eleven" about a number nobody has. Muted
             // says what is true: no reading for this window.
+            // (That third signal is history as of 2026-08-25: the list is
+            // ordered by rank now, not by return, so a "—" row lands wherever
+            // its relative strength puts it. The red and the trend icon were
+            // the other two, and muting is still what answers them.)
             const tone = !Number.isFinite(change) ? ink.muted : change >= 0 ? ink.ok : ink.bad;
 
             return (

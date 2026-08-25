@@ -146,4 +146,5 @@ export default {
     provisionalNotice: "Relative strength currently uses a placeholder measure.",
     economyNowTitle: "The economy right now",
     rankTemplate: "#{rank} of {of}",
+    sectorsSortNote: "Ranked by relative strength vs {name}. The figure on the right is each sector's {window} return.",
 };

@@ -125,4 +125,5 @@ export default {
     provisionalNotice: "La fuerza relativa usa por ahora una medida provisional.",
     economyNowTitle: "La economía ahora mismo",
     rankTemplate: "#{rank} de {of}",
+    sectorsSortNote: "Clasificados por fuerza relativa frente a {name}. La cifra de la derecha es el rendimiento de cada sector a {window}.",
 };

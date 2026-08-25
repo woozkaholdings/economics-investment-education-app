@@ -125,4 +125,5 @@ export default {
     provisionalNotice: "相対強度は現在、暫定的な計算方法を使用しています。",
     economyNowTitle: "いまの経済",
     rankTemplate: "{of} 中 {rank} 位",
+    sectorsSortNote: "{name} に対する相対強度の順に並べています。右側の数値は各セクターの {window} リターンです。",
 };
