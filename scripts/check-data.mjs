@@ -5390,8 +5390,18 @@ if (keyedGroupsChecked < 4) {
   //     exists. And if <Question> ever stops rendering an <h3>, this section is
   //     guarding a level relationship that no longer exists either: say so
   //     rather than staying green on a premise that has moved.
+  //     Since item 109 (2026-08-25) the level is a PROP — <Question> renders
+  //     as={headingLevel}, defaulting to "h3" — because the review runner needs
+  //     the same component at <h1>. So the premise this section depends on is no
+  //     longer "the file contains as=\"h3\"" but the conjunction below: the
+  //     default is still h3, AND the lesson reader still takes that default
+  //     rather than overriding it. Either half alone can go green while the
+  //     reader's outline is wrong.
   const questionSrc = readFileSync("src/components/Question.jsx", "utf8");
-  const questionIsH3 = /\bas=("h3"|{"h3"})/.test(questionSrc);
+  const questionDefaultsToH3 = /headingLevel\s*=\s*"h3"/.test(questionSrc) &&
+    /\bas={headingLevel}/.test(questionSrc);
+  const readerOverrides = /<Question\b[^>]*\bheadingLevel=/.test(src);
+  const questionIsH3 = questionDefaultsToH3 && !readerOverrides;
 
   if (seen === 0) {
     fail("§45: found neither {t.hookTitle} nor {t.checkTitle} in " + file + ". This check is pointed at markup that no longer exists — repoint it rather than leaving it green.");
@@ -5402,9 +5412,59 @@ if (keyedGroupsChecked < 4) {
   } else if (missing.length > 0) {
     fail(`§45: ${missing.join(", ")} is rendered without as="h2". <Question> renders an <h3>, so an untitled hook block makes the lesson read <h1> -> <h3> and skip a level (WCAG 1.3.1, item 106). Add as="h2" to the <Text> that renders the label — <Text> sets margin:0 and explicit font metrics, so it costs nothing visually.`);
   } else if (!questionIsH3) {
-    fail('§45: src/components/Question.jsx no longer renders its question as an <h3>. This section exists to give that <h3> a parent heading, so its premise has moved — re-derive the reader\'s heading order and update this check rather than leaving it green.');
+    fail('§45: <Question> no longer resolves to an <h3> in the lesson reader — either src/components/Question.jsx stopped defaulting headingLevel to "h3" (or stopped passing it to as=), or ' + file + ' now overrides headingLevel on a <Question>. This section exists to give that <h3> a parent heading, so its premise has moved — re-derive the reader\'s heading order and update this check rather than leaving it green.');
   } else {
     console.log(`  §45 lesson-reader heading order: both block labels ({t.hookTitle}, {t.checkTitle}) render as <h2>, above <Question>'s <h3>. (Static — it checks the labels, not the rendered order; a11y-sweep.js's headingOrder probe on an UNFINISHED lesson is the instrument for that.)`);
+  }
+}
+
+// §46. The review runner's question is the screen's <h1>.
+//
+// WHY. Practice has four rendering branches. Three of them (queue overview,
+// batch pause, session complete) open with {t.reviewTitle} as an <h1> and read
+// "12". The fourth — the running quiz — deliberately has no title: the design
+// is a close control, a counter, a progress bar, then the question. So before
+// item 109 the entire screen's heading outline was ONE <h3>, with no <h1>
+// anywhere on the page (WCAG 1.3.1 / 2.4.6; measured live 2026-08-25 in both
+// the unanswered and answered runner states, both reading sequence "3").
+//
+// WHY IT IS A CHECK. The fix is one prop, and one prop is exactly what a later
+// refactor drops without noticing — <Question> still renders, the screen still
+// looks identical, and the only symptom is invisible to everyone who is not
+// using a screen reader. It also cannot be fixed the "obvious" way (adding a
+// visible "Review" <h1>), so a future run that deletes the prop is unlikely to
+// replace it with anything.
+//
+// WHAT THIS CANNOT SEE: it reads source, so it cannot prove the RENDERED order.
+// a11y-sweep.js's headingOrder probe is that instrument — and note that until
+// this same commit it could not have caught this defect either: it compared each
+// heading only with its predecessor, so a page starting at <h3> scored "ok".
+{
+  const file = "src/screens/Practice.jsx";
+  const src = readFileSync(file, "utf8")
+    .replace(/\/\*[\s\S]*?\*\//g, "")          // this section's own reasoning is quoted
+    .replace(/^\s*\/\/.*$/gm, "")              // in Practice.jsx's comments
+    .replace(/\{\/\*[\s\S]*?\*\/\}/g, "");     // JSX comments name the prop too
+
+  const tags = src.match(/<Question\b[\s\S]*?\/>/g) || [];
+  const atH1 = tags.filter((tag) => /\bheadingLevel="h1"/.test(tag));
+
+  // Vacuity guards, the §44/§45 shape. Zero <Question> tags means this is
+  // pointed at markup that no longer exists; and if <Question> stopped taking a
+  // headingLevel prop at all, the mechanism this section guards is gone rather
+  // than satisfied.
+  const questionSrc = readFileSync("src/components/Question.jsx", "utf8");
+  const propExists = /headingLevel\s*=\s*"h3"/.test(questionSrc) &&
+    /\bas={headingLevel}/.test(questionSrc);
+
+  if (tags.length === 0) {
+    fail(`§46: found no <Question ... /> in ${file}. This check is pointed at markup that no longer exists — repoint it rather than leaving it green.`);
+  } else if (!propExists) {
+    fail('§46: src/components/Question.jsx no longer takes a headingLevel prop defaulting to "h3" and passing it to as=. The runner cannot raise its question to <h1> through a prop that is gone, so this section is guarding a mechanism that has moved — re-derive it rather than leaving it green.');
+  } else if (atH1.length !== 1) {
+    fail(`§46: expected exactly 1 <Question> carrying headingLevel="h1" in ${file}, found ${atH1.length} of ${tags.length} total. The review runner's question is the only heading on that screen, so without it the page has no <h1> at all and its outline starts at <h3> (WCAG 1.3.1, item 109). Do not fix this by adding a visible "Review" <h1> above the counter — that is the title the runner design removes on purpose.`);
+  } else {
+    console.log(`  §46 review-runner heading order: the running quiz's <Question> carries headingLevel="h1" (${tags.length} <Question> tag(s) in ${file}). (Static — a11y-sweep.js's headingOrder probe, pointed at a STARTED session, is the instrument for the rendered order.)`);
   }
 }
 

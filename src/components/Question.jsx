@@ -21,7 +21,15 @@ import Icon from "./Icon.jsx";
 import { Note, Text } from "./ui.jsx";
 import { fill, ink, line, MIN_TAP, radius, space, surface } from "../theme.js";
 
-export default function Question({ question, t, onAnswered, autoFocusHeading = false, reveal = true }) {
+// `headingLevel` exists because the correct level is a property of where the
+// question SITS, not of the question. In the lesson reader it hangs under the
+// block label's <h2> ("Before you read" / "Check what you learned"), which is
+// itself under the lesson's <h1> — so <h3> is right, and it is the default so
+// that call site keeps working untouched. In the review runner the question is
+// the whole screen: no lesson title, no block label, nothing above it, so an
+// <h3> there left the page with a single heading three levels deep and no <h1>
+// at all (item 109, measured live 2026-08-25). See Practice.jsx's runner.
+export default function Question({ question, t, onAnswered, autoFocusHeading = false, reveal = true, headingLevel = "h3" }) {
   const [choice, setChoice] = useState(null);
   const answered = choice !== null;
   // Answering and being told the answer are two different things. The
@@ -41,7 +49,7 @@ export default function Question({ question, t, onAnswered, autoFocusHeading = f
   return (
     <div>
       <Text
-        as="h3"
+        as={headingLevel}
         variant="heading"
         color={ink.strong}
         tabIndex={autoFocusHeading ? -1 : undefined}

@@ -311,10 +311,28 @@ export default function Practice({ t, lang, review, recordReview }) {
           <ProgressBar value={position} max={session.length} label={`${position + 1} / ${session.length}`} />
         </div>
 
-        {/* Keyed so each question remounts with fresh state. */}
+        {/* Keyed so each question remounts with fresh state.
+
+            `headingLevel="h1"` because this branch is the ONLY one of Practice's
+            four that does not render {t.reviewTitle} as an <h1> — the runner is
+            deliberately immersive (close control, counter, progress bar, then
+            the question), so the question IS this screen's title, at every font
+            scale and in every language. Before this the screen's entire heading
+            outline was one <h3>: no <h1>, nothing above it. Measured live on
+            2026-08-25 (item 109) in both runner states — unanswered and
+            answered — as sequence "3", while the landing, batch-pause and
+            complete branches all read "12".
+
+            Do NOT "fix" this by adding a visible "Review" <h1> above the
+            counter: that is the title this design removed on purpose. And do
+            not assume a sweep would have caught it — headingOrder only compared
+            each heading with the PREVIOUS one, so a document whose first
+            heading is an <h3> scored 0 findings and status "ok". That blindness
+            is fixed in the same commit; see a11y-sweep.js. */}
         <Question
           key={item.index}
           question={withText(item)}
+          headingLevel="h1"
           lang={lang}
           t={t}
           onAnswered={(wasCorrect) => {

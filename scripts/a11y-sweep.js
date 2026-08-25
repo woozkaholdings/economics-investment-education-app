@@ -190,6 +190,18 @@
         var lvl = el.getAttribute("aria-level")
           ? parseInt(el.getAttribute("aria-level"), 10)
           : parseInt(el.tagName.slice(1), 10);
+        // The ENTRY point, not just the steps between headings. `prev` starts at
+        // 0, so the original loop compared every heading with its predecessor and
+        // therefore never examined the FIRST one at all — a page whose outline
+        // began at <h3> returned 0 findings and status "ok". That is not a
+        // hypothetical: Practice mid-quiz read sequence "3" (one <h3>, no <h1>
+        // anywhere) and every sweep in the log called it clean, because each
+        // sweep had only ever looked at Practice's landing state, which reads
+        // "12". Item 109, 2026-08-25. A skip from nothing is still a skip.
+        if (!prev && lvl > 1) {
+          out.push("document's first heading is h" + lvl + ", not h1 — the outline " +
+                   "starts " + (lvl - 1) + " level(s) deep with nothing above it, at " + where(el));
+        }
         if (prev && lvl > prev + 1) {
           out.push("h" + prev + " -> h" + lvl + " skips a level, at " + where(el));
         }
@@ -356,12 +368,27 @@
     wide.style.cssText = "position:absolute;left:0;top:0;height:1px;width:" +
       (document.documentElement.clientWidth + 500) + "px;";
     document.body.appendChild(wide);
+    // The first-heading control has to be planted at the TOP of the document,
+    // not in `box` above: what it tests is document ORDER, and a plant appended
+    // after the app's own <h1> would sit second and prove nothing. Hence a
+    // separate node and insertBefore. <h4> rather than <h3> so the message it
+    // produces cannot be confused with the app's real item-109 defect shape.
+    var first = document.createElement("div");
+    first.setAttribute(SKIP_ATTR, "1");
+    first.style.cssText = "position:fixed;left:-99999px;top:0;width:300px;height:40px;";
+    first.innerHTML = "<h4>planted first heading</h4>";
+    document.body.insertBefore(first, document.body.firstChild);
 
     var expect = {
       duplicateIds: /a11y-selftest-dup/,
       namelessControls: /no accessible name/,
       danglingRefs: /a11y-selftest-missing/,
-      headingOrder: /skips a level/,
+      // TWO regexes, both required: this probe has two independent failure modes
+      // and for its whole first day it silently had only one of them. A single
+      // /skips a level/ control passed just as happily while the first-heading
+      // check did not exist at all — which is exactly how the item-109 defect
+      // survived every sweep in the log. An array means BOTH must fire.
+      headingOrder: [/skips a level/, /first heading is h4, not h1/],
       // NOT /10x10/: the planted button renders 16x10, because a UA stylesheet's padding and
       // min-content width win over the declared width. A control whose expectation depends on
       // exact rendered geometry fails for its OWN reasons — which is the trap step 3.5 warns
@@ -379,13 +406,17 @@
     Object.keys(expect).forEach(function (name) {
       if (!caps[PROBES[name].needs]) { results[name] = "UNAVAILABLE"; failed.push(name); return; }
       var joined = PROBES[name].run().findings.join(" | ");
-      var hit = expect[name].test(joined);
+      var want = expect[name];
+      var hit = Array.isArray(want)
+        ? want.every(function (re) { return re.test(joined); })
+        : want.test(joined);
       results[name] = hit ? "control fired" : "CONTROL DID NOT FIRE";
       if (!hit) failed.push(name);
     });
 
     box.remove();
     wide.remove();
+    first.remove();
 
     // The control must also come back DOWN once the plants are gone, or it is not measuring them.
     // Distinguish the two things a post-cleanup finding can be, because conflating them is how a

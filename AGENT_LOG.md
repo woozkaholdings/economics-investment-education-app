@@ -2179,7 +2179,45 @@ for the history. No open P1/P2 items.
       may also be the correct reading of a pre-quiz as subordinate to the lesson title. Measure the
       other 39 lessons before deciding anything.
 
-109. **[A11y/Tooling — filed 2026-08-25 by the run that closed item 106, as its stated residual
+110. **[A11y/Tooling — filed 2026-08-25 by the run that closed item 109, as its stated residual
+    rather than smuggled into the same commit.] Item 109 was not really about Practice. Every screen
+    in this app has only ever been swept in the state a sweep arrives in — and that is now a
+    measured generalization, not a worry.**
+    - **The evidence.** Practice's landing state read `12` and was called clean by every sweep in
+      the log; one button away, the same screen read `3` with no `<h1>`. Item 106's was the same
+      shape one layer down (the lesson-reader defect was invisible in the completed state, visible
+      only unfinished). **Two for two: the defect was in the state the convenient sweep does not
+      reach.**
+    - **What has never been swept in a non-landing state**, all reachable and none measured:
+      the Reference sub-screens past their first tab (Glossary term-detail, Market signals, Sector
+      performance, Parent guide), the first-run disclaimer modal (which is a focus trap over the
+      whole app), `LessonReader` in its COMPLETED state (item 106 measured that one — it is the
+      exception), and the Learn screen with a track collapsed. The Practice runner reached through
+      **"Practice all questions"** rather than "Start Quiz" is the cheapest of all: it renders the
+      identical branch, so it is covered by construction, but it was not measured on 2026-08-25 and
+      that is stated rather than implied.
+    - **Do not just re-run the sweep on more URLs** — that is precisely the move that missed this
+      twice. The unit of work is *a state*, not a route: list the states each screen can be in, then
+      ask which are unreachable by loading a URL and taking a screenshot.
+    - **Honest priority: medium-high.** It is the highest-yield a11y work left because the yield is
+      already demonstrated twice, and every instance is cheap now that `headingOrder` can see a
+      first-heading defect at all. But nobody has opened the app (O-1), so no screen reader has ever
+      been pointed at any of these states.
+
+109. **✅ DONE 2026-08-25 (scheduled dev-agent), the same day it was filed. The suspicion was right
+    and the defect was worse than the item guessed: mid-quiz the page had NO `<h1>` at all — its
+    entire outline was one `<h3>`. Fixed by making the question the runner's `<h1>` (`headingLevel`
+    prop on `<Question>`, default `"h3"` so the lesson reader is untouched), guarded by
+    `check-data.mjs` §46 — and the `headingOrder` probe, which called this screen "ok" every time it
+    ever ran, was fixed in the same commit. See the run log.**
+    - **The instrument was the reason it survived.** `headingOrder` compared each heading only with
+      its PREDECESSOR (`if (prev && lvl > prev + 1)`), so the first heading on a page was never
+      examined: a document starting at `<h3>` scored **0 findings, status `ok`**. Measured both
+      ways this run — the pre-fix markup returns a finding under the new check and returned none
+      under the old one, on the same DOM.
+    - **Residual filed as item 110** (other screens' non-landing states), not rolled in here.
+    - **Original text, retained** — its reasoning is what made the pick correct:
+    - **[A11y/Tooling — filed 2026-08-25 by the run that closed item 106, as its stated residual
     rather than smuggled into the same commit.] The Practice screen has only ever been swept in its
     LANDING state, and the state that carries item 106's defect shape is the one behind the "Start
     Quiz" button.**
@@ -9790,3 +9828,183 @@ the previous run's table exactly.
 **Unchanged and still the entire critical path, both owner-blocked: O-1** (a deployed URL) and **O-2**
 (item 18, an analytics account). Every lesson in the catalog now reads in a correct heading order on
 first open. **No screen reader has ever been pointed at it, because no one has ever opened the app.**
+
+### 2026-08-25 (scheduled dev-agent) — item 109: the review runner had no `<h1>` at all, and the probe that had called it clean could not see a first heading
+
+**Picked item 109**, filed hours earlier by item 106's run as its stated residual: sweep Practice
+*mid-quiz*, not just its landing state. **W-5.2 note:** a non-item-93 pick; item 94 stays parked
+behind O-1 by its own box. Chosen over item 108 because 108 changes no shipped finding by its own
+admission, while this one either finds a second instance of a just-fixed defect class or retires the
+question — and it found one.
+
+Owner tree at start `OWNER-TREE c2331799fd3ee413aca864fd82d247a35ea31b01a70a6c4e37b00f6aad9105b2
+(0 tracked modified, 52 untracked)` — **UNMOVED**, byte-identical to the fingerprint the last seven
+runs recorded. `HEAD` `f86ca17` at start and at commit time.
+
+#### Step 3.5 — premise re-measured live, and the defect is bigger than the item's headline
+
+**Every figure in the item CONFIRMED, and the disposition changed anyway.** `#/practice` landing
+reads sequence **`12`**, 0 findings, `h1` = "Review" — exactly as recorded. `Practice.jsx:315`
+renders `<Question>`; `Practice.jsx:408` carries the `as="h2"` on `how-review-title`; §45 covers the
+lesson reader only. All four source claims hold to the line number.
+
+**What the item got wrong is the shape of the defect.** It predicted an `<h3>` appearing "with no
+`<h2>` parent nearby" — a skip, like item 106's. The truth is worse and simpler: **mid-quiz the page
+has no `<h1>` anywhere.** Practice has four rendering branches, and the running quiz is the only one
+that does not render `{t.reviewTitle}` as an `<h1>` — deliberately, because the runner is immersive
+(close control, counter, progress bar, question). So the screen's entire heading outline was **one
+`<h3>`**. Measured live, quiz confirmed running from the DOM (`1 / 6` counter, `[role=progressbar]`,
+4 `[role=radio]`) **before** any number was recorded:
+
+| Practice state | sequence | headings present | sweep verdict |
+|---|---|---|---|
+| landing (queue overview) | `12` | h1 Review, h2 How review works | 0 findings — genuinely clean |
+| **runner, unanswered** | **`3`** | **h3 question only, no h1** | **0 findings, `ok` — LYING ZERO** |
+| **runner, answered** | **`3`** | **h3 question only, no h1** | **0 findings, `ok` — LYING ZERO** |
+| batch pause (10 of 14) | `12` | h1 Review, h2 "10 done — nice work" | 0 findings — genuinely clean |
+| session complete | `12` | h1 Review, h2 Review complete | 0 findings — genuinely clean |
+
+**⚠️ THE INSTRUMENT WAS THE REASON THIS SURVIVED, and that is the finding worth keeping.**
+`headingOrder` ran `if (prev && lvl > prev + 1)` with `prev` starting at 0 — so it compared each
+heading with its predecessor and **never examined the first one at all**. A page whose outline starts
+at `<h3>` produced `findings: []` and `status: "ok"`. Every sweep in this log has read Practice's
+landing state, which is clean, so the probe's blindness and the screen's defect never met. **A
+probe with a passing control can still have an entire failure mode that does not exist yet:**
+`headingOrder`'s selftest control (`/skips a level/`) fired correctly all day while the first-heading
+check was simply absent.
+
+**Two dumber traps, both hit and both caught.** Writing `ecycles_review` directly while the app is
+running does nothing — `useAppState` holds review state in React and saves over it, so a seeded queue
+silently reverts (caught by the session length reading `3` when 1 was seeded; re-done with the
+`setItem` and the reload in the *same* call). And `setTimeout`-driven click loops time out in this
+pane because hidden-tab timer throttling stretches a 2-second loop past 30s — fronting the tab does
+not fix it. Neither corrupted a number, because each state assertion was read back from `main`'s own
+text rather than assumed.
+
+#### What shipped
+
+- **`src/components/Question.jsx`** — new `headingLevel` prop, default `"h3"`, passed to `as=`. The
+  level is a property of where the question SITS, not of the question; the default means the lesson
+  reader's call sites are untouched.
+- **`src/screens/Practice.jsx`** — the runner's `<Question>` carries `headingLevel="h1"`. The comment
+  records why the obvious alternative (a visible "Review" `<h1>` above the counter) is wrong: that is
+  the title this design removes on purpose.
+- **`scripts/a11y-sweep.js`** — `headingOrder` now reports a document whose first heading is not
+  `<h1>`, and its selftest plants that case **at the top of the document** (a plant appended after the
+  app's own `<h1>` would sit second and prove nothing). The control is now **two regexes, both
+  required**, because one of them passing is exactly how the missing half stayed invisible.
+- **`scripts/check-data.mjs` §46** — the runner's `headingLevel="h1"` costs a failing test to break,
+  with the §44/§45 vacuity guards: zero `<Question>` tags, or `<Question>` no longer taking the prop,
+  fail loudly rather than staying green on a moved premise.
+- **§45 updated, not broken.** Its premise check was `/\bas=("h3")/` against `Question.jsx` — which my
+  change would have turned red. Found by reading §45 *before* editing, not by the suite. It now checks
+  the conjunction that actually matters: the default is still `"h3"` **and** the lesson reader does not
+  override it. Either half alone can be green while the reader's outline is wrong.
+- `git diff --stat -- package.json package-lock.json vite.config.js` is **empty** — item 12's
+  port-cost rule respected. `src/screens/LessonReader.jsx` **untouched** (`git diff --stat` empty).
+
+#### Verification
+
+`npm run build` clean. `npm test` **0 failures, 2 warnings** — the two expected translation warnings
+(review coverage 83%/0% human; 48 abridged pairs), matching the documented baseline exactly.
+
+**§45 and §46 proved able to fail**, each injection asserting it landed (the injector exits 9 on a
+no-op replace) and each file restored from a **scratchpad copy, never `git checkout`**:
+
+| injected | says |
+|---|---|
+| drop `headingLevel="h1"` from the runner | §46 `expected exactly 1 … found 0 of 1 total` ✅ |
+| `Question.jsx` `as={headingLevel}` → `as="h3"` | §46 `no longer takes a headingLevel prop` **and** §45 `no longer resolves to an <h3>` ✅ |
+| `LessonReader.jsx` overrides `headingLevel="h2"` | §45 `…or LessonReader.jsx now overrides headingLevel` ✅ |
+
+Both source files restored **byte-identical** to their pre-injection state (`cmp` clean), and the
+suite returns to `PASS: 0 failure(s), 2 warning(s)`.
+
+**Live, against the rebuilt `dist/`.** Bundle read back in the browser as **`index-CiJ_rY7r.js`**,
+different from the pre-fix **`index-Df4HLG_J.js`** the "before" numbers came from — so the two halves
+of the comparison provably ran against different builds (Environment-note lying-zero mode 4). Sweep
+SHA read back **inside the browser** as `e1b748f0…`, byte-identical to the checked-in file; selftest
+**PASS 9/9, plantsRemoved true**, with `headingOrder` firing on **both** required regexes.
+
+**The two-sided proof, on the same DOM.** With the fix in place the runner reads `1`, 0 findings. The
+pre-fix markup was then recreated live (`main h1` → `h3`) and the probe reported:
+
+> `document's first heading is h3, not h1 — the outline starts 2 level(s) deep with nothing above it,
+> at h3#itm109-probe "What is the Fed Funds Rate?"`
+
+**That is the same markup the old probe scored `0 findings, status "ok"` earlier in this run.** The
+DOM was restored and re-verified clean (`1`, 0 findings). So both halves are demonstrated: the check
+catches the defect, and the fix is what makes the screen pass it.
+
+**After the fix — both runner states, quiz confirmed running from the DOM each time:**
+
+| state | sequence | headings | findings |
+|---|---|---|---|
+| runner, unanswered | **`1`** | `H1: "What is the Fed Funds Rate?"` | 0 |
+| runner, answered (explanation revealed) | **`1`** | same | 0 |
+
+**"Nothing moves visually" is measured, not asserted.** The same element rendered as `h3` and as `h1`,
+at a real viewport (`innerWidth` **375**, not 0 — Environment-note geometry trap):
+
+| | as `h3` (before) | as `h1` (after) |
+|---|---|---|
+| fontSize / weight / lineHeight / letterSpacing | 18px / 650 / 25.2px / normal | **identical** |
+| color / margin / display | `rgb(246,242,236)` / `0px 12px` / block | **identical** |
+| box | `x16 y163 w343 h25` | **identical** |
+
+`differing` came back an **empty array** across all eight properties. `<Text>` sets `margin: 0` plus
+explicit font metrics, so the UA's `h1` defaults never apply — which is *why* this fix is free.
+
+**Regression sweep, every previously-swept screen, each identity asserted from its own `h1` first:**
+`#/learn` `1222` **0 findings**, `#/reference` `1` **0**, `#/practice` landing `12` **0**, and
+`#/lesson/1` **unfinished with the hook present** `12322223` **0** — every total matching the previous
+run's table exactly, and the lesson-reader value confirming item 106's fix is intact and that the new
+`headingLevel` default did not disturb it.
+
+#### Step 5 — adversarial self-check
+
+- **Blindspot register** — no regression. Across the diff's 124 added lines: Dalio/`principles` **0**,
+  advice-adjacent verbs (`buy `/`sell `/`recommend`/`should invest`/`guarantee`) **0**, child-facing
+  framing **0**. **Control**: `heading|aria|h1` on the same lines returns **43**, so the grep reaches
+  them. **Five date matches, checked rather than waved past** — and unlike the previous run's, **two
+  of them are under `src/`**, so the previous entry's "no date string in any `src/` change" reasoning
+  could NOT be inherited. Both are inside comments (a `//` in `Question.jsx`, a `{/* */}` in
+  `Practice.jsx`). Verified against the artifact rather than by asserting that comments are stripped:
+  `grep -rc "2026-08-25" dist/assets/` → **0 files**, `item 109` → **0 files**, with **control**
+  `grep -rl "Fed Funds Rate" dist/assets/` → **4 files**, so the grep genuinely reaches bundle
+  content. The Markets-tab stale-data fix is untouched.
+- **`DECISIONS.md` conflict** — none. Zero dependency/config diff; **0** `localStorage` occurrences in
+  added code lines (comments excluded); no content module, no Vite surface, no routing touched.
+- **Already-done backlog item** — no. `git log --all -S'headingLevel'` → **0** commits; `-S'§46'` →
+  **0**. **Control**: `-S'§45'` → **1** (its own introduction yesterday), so the pickaxe reaches this
+  shape. It does not undo item 106: that fix marked up the lesson reader's two block labels as `<h2>`
+  above `<Question>`'s `<h3>`, and `#/lesson/1` still measures `12322223` after this change.
+- **The backlog guard caught me.** Writing item 109's completion as a second `109.` line tripped
+  `check-backlog.mjs` — "backlog item 109 is defined 2 times". Merged into one numbered item with the
+  original text retained beneath. Worth recording because it is a guard from an earlier run doing
+  exactly its job on the run that was writing the log.
+- **Own verification claim** — reproducible by anyone who rebuilds, serves `dist/`, opens
+  `#/practice`, clicks Start Quiz and pastes the sweep. The claim easiest to fake is "the runner is
+  clean now", which is why the pre-fix markup was re-planted in the live DOM and shown to produce a
+  finding on the same page: a fix that did nothing, or a probe that cannot see this class, would both
+  report the clean result being claimed — and the second of those was literally true this morning.
+  `git status` shows exactly four modified files; the owner's `UIUX/` and `drafts/` are untouched
+  (untracked count **52**, unchanged). Owner tree at commit time: **`OWNER-TREE
+  f9b2c355e84db035d860bb1b37499843f716aeb2873b06fdd527fa721a4b5a20` (4 tracked modified, 52
+  untracked)** — the four tracked modifications are this run's own files.
+- **One thing noticed and not chased**: the runner reached via **"Practice all questions"** rather
+  than "Start Quiz" renders the identical branch, so it is fixed by construction — but it was not
+  measured live this run, and that is stated rather than implied. It is part of **item 110**.
+
+#### Next
+
+- **Item 110** (filed this run): the generalization — every screen has only ever been swept in the
+  state a sweep arrives in, and that has now produced two defects out of two attempts. The unit of
+  work is a *state*, not a route.
+- **Item 108** (the harness's focus capability vs. the sweep header's claim) is unchanged and cheap.
+- **Item 26 / item 27** both still need a re-scope before picking; **W-5.2's pick list** remains.
+- **Do NOT pick item 94** — optional track, four "(Beta)" languages, parked behind O-1 by its own box.
+
+**Unchanged and still the entire critical path, both owner-blocked: O-1** (a deployed URL) and **O-2**
+(item 18, an analytics account). The review runner now has a top-level heading in all five languages.
+**No screen reader has ever been pointed at it, because no one has ever opened the app.**
