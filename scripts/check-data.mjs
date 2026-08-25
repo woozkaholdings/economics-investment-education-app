@@ -5147,5 +5147,88 @@ if (keyedGroupsChecked < 4) {
 }
 
 
+// §43. The live accessibility sweep keeps the properties that make it an
+// instrument rather than a script that prints zeros.
+//
+// WHY THIS EXISTS. Added 2026-08-25 with scripts/a11y-sweep.js (backlog item
+// 105). Every other section in this file reads source text, and that is exactly
+// the gap the sweep fills: items 102 and 103 were COMPOSITION defects, where
+// each attribute was individually correct and the browser's computed tree was
+// still wrong. Nothing here can see a computed tree.
+//
+// The sweep cannot join `npm test` — it needs a browser, and adding a headless
+// one is item 12's port-cost rule territory. So it is a file a run pastes into
+// the preview tool. That makes it exactly the kind of artifact that rots
+// unnoticed: nothing runs it on a schedule, and a well-meaning edit that drops
+// its capability gate would leave a script that still returns clean-looking JSON
+// while measuring nothing. This section guards the THREE properties that make
+// its zeros mean something, and nothing about its findings.
+//
+// (a) it parses — a syntax error in a pasted script surfaces as a confusing
+//     harness error rather than a test failure, and no run would look here;
+// (b) the hard layout gate and the VACUOUS accounting are both still present —
+//     these are what stop a lying zero, and they are the whole design;
+// (c) selftest() still plants a control for every probe it claims to cover, so
+//     the probe list and the expectation list cannot drift apart.
+//
+// WHAT IS DELIBERATELY NOT CHECKED. Not whether the app passes the sweep: that
+// needs a browser and belongs in the run log, where the counts convention lives.
+// Not focus behavior — focus events provably do not fire in this harness, which
+// is why the sweep marks that probe UNAVAILABLE instead of green.
+{
+  const SWEEP = "scripts/a11y-sweep.js";
+  const src = readFileSync(join(ROOT, SWEEP), "utf8");
+
+  // (a) It parses. `new Function` compiles without executing, which is what we
+  // want — the file's body touches `window` and `document` and would throw here.
+  try {
+    new Function(src);
+  } catch (err) {
+    fail(`§43: ${SWEEP} does not parse (${err.message}). It is pasted into a browser verbatim, so a syntax error here is only ever found by a run that has already wasted its verification budget.`);
+  }
+
+  // (b) The gate and the vacuous accounting.
+  // `sectionOk` exists because the first run of this section printed its
+  // reassuring summary line even while its own gate check was FAILING one line
+  // above — the exact vacuous-green shape §40(d) and §42(c) were written to
+  // prevent, reproduced inside the section that guards against it. Caught
+  // 2026-08-25 by deliberately breaking the gate to prove this check could fail.
+  let sectionOk = true;
+  for (const [needle, why] of [
+    ["layout: window.innerWidth > 0", "the hard layout gate — without it every geometry probe returns zero findings on a pane whose layout is not live yet, which reads exactly like a clean result"],
+    ['"REFUSED', "the refusal branch — the gate is only worth having if failing it stops the report"],
+    ['"VACUOUS"', "the vacuous accounting — a probe that scanned nothing must not be counted as a pass"],
+    ['"UNAVAILABLE"', "the per-capability opt-out — focus events do not fire in this harness and must report unavailable rather than clean"],
+  ]) {
+    if (!src.includes(needle)) {
+      sectionOk = false;
+      fail(`§43: ${SWEEP} no longer contains \`${needle}\` — ${why}.`);
+    }
+  }
+
+  // (c) Every probe the sweep advertises is either covered by a planted control
+  // in selftest(), or is explicitly gated on a capability this harness lacks.
+  // A probe in neither set is one whose zeros nobody has ever proven meaningful.
+  const probeNames = [...src.matchAll(/^\s{4}(\w+):\s*\{\s*needs:\s*"(\w+)"/gm)].map((m) => ({ name: m[1], needs: m[2] }));
+  const selftestBlock = src.slice(src.indexOf("var expect = {"), src.indexOf("var caps = capabilities(), results"));
+  if (probeNames.length === 0 || !selftestBlock) {
+    fail(`§43: could not find the probe table or the selftest expectation block in ${SWEEP}. This check is pointed at a shape that no longer exists — repoint it rather than leaving it green.`);
+  } else {
+    const uncovered = probeNames.filter((p) => p.needs === "layout" && !new RegExp(`\\b${p.name}\\s*:`).test(selftestBlock));
+    if (uncovered.length > 0) {
+      sectionOk = false;
+      fail(`§43: ${SWEEP} declares probe(s) ${uncovered.map((p) => p.name).join(", ")} with no planted control in selftest(). Every layout-capable probe must prove it can FAIL before its zero is worth reading — that is the one property separating this file from a script that prints reassuring numbers.`);
+    }
+    console.log(
+      sectionOk
+        ? `  §43 a11y sweep: ${SWEEP} parses, layout gate + REFUSED/VACUOUS/UNAVAILABLE accounting present, ` +
+          `${probeNames.length} probe(s) declared (${probeNames.filter((p) => p.needs === "layout").length} layout-gated, all with planted controls). ` +
+          `(Static — the sweep's own live counts belong in the run log.)`
+        : `  §43 a11y sweep: FAILED above — the summary is withheld deliberately rather than printed alongside its own failure.`,
+    );
+  }
+}
+
+
 console.log(`\n${failures === 0 ? "PASS" : "FAIL"}: ${failures} failure(s), ${warnings} warning(s).`);
 process.exit(failures === 0 ? 0 : 1);

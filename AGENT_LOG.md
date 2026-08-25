@@ -2109,8 +2109,48 @@ for the history. No open P1/P2 items.
       labeled. **(b) is the smallest and keeps the owner's formula visible; (a) is the most coherent.**
       Owner-facing enough to be worth one line in a weekly report rather than a silent pick.
 
-105. **[Process/Tooling — filed 2026-08-25 by the run that shipped item 102, from how that defect was
-    found.] Nothing in `npm test` can see the rendered accessibility tree, and item 102 was invisible
+105. **✅ DONE 2026-08-25 (scheduled dev-agent), the same day it was filed. Shipped as
+    `scripts/a11y-sweep.js` (9 probes, a self-planting control per probe) plus `check-data.mjs` §43
+    and an Environment-note procedure. THE ITEM'S OWN PRESCRIBED GATE WAS WRONG AND WAS REPLACED —
+    read the correction below before touching the file.**
+    - **Premise re-measured and CONFIRMED**: no check script has any DOM capability. `package.json`
+      has no `jsdom`/`puppeteer`/`playwright`/`happy-dom`, and `check-data.mjs` reads source text
+      through 46 `readFileSync` calls. **Control**: the same grep returns 2 on `check-payload.mjs`,
+      so the instrument reaches these files. One figure was stale in the item's favor and is
+      corrected: "**forty sections**" is now **43**, having grown by two (§41, §42) between filing
+      and pick — a stale snapshot, not a wrong claim.
+    - **⛔ PREMISE CORRECTION, and it changed the design rather than a number.** The item specified
+      that the script "**must refuse to report a zero unless `document.hasFocus() &&
+      document.visibilityState === 'visible'`**". **Measured: both are permanently false in this
+      preview pane even when the tab is fronted and the page is demonstrably rendering** — buttons
+      measured 139×44, the document 2944px tall, the screenshot correct. That gate would have
+      refused to report **anything, ever**: the exact silent-zero failure it was written to prevent,
+      wearing the costume of a safety check. **Implemented instead: a per-capability gate.** Hard-gate
+      on *live layout* (achievable, provable, and the thing the geometry probes actually need);
+      mark only focus-EVENT-dependent probes `UNAVAILABLE`; report `VACUOUS` — never `ok` — for a
+      probe that scanned nothing.
+    - **The item's underlying observation was right, though, and sharper than it knew.** With a native
+      listener as the control, a real `focus` listener on a real button recorded **zero** events
+      across separate calls while `document.activeElement` was correct throughout. So the true rule
+      is not "focus is unreliable here" but **"`activeElement` is trustworthy; focus/blur EVENTS are
+      not"** — which is a usable distinction rather than a blanket refusal.
+    - **What the instrument found on its first real use**, all with the selftest passing 8/8
+      beforehand: `#/learn` **0 findings**, `#/practice` **0**, `#/reference` **0**, and lessons
+      **1** and **29** each **1 finding** — the `h1 → h3` heading skip the item flagged. Landmarks
+      read `main: 1, nav: 1` on every screen, so items 102/103 have a live regression net now.
+      `imagesWithoutAlt` reported **VACUOUS** on all five screens (the app uses inline SVG, so the
+      probe matched nothing) — which is the design working: a naive check prints a green zero there.
+    - **It caught two defects in itself on day one**, which is the whole argument for the selftest:
+      its own `smallTargets` control keyed on `/10x10/` when the planted button renders **16×10** (UA
+      padding and min-content width beat a declared `width:10px`), and deliberately breaking the
+      layout gate revealed that **§43 printed its reassuring summary line alongside its own
+      failure** — the vacuous-green shape §40(d) and §42(c) exist to prevent, reproduced inside the
+      section guarding against it. Both fixed in the same commit.
+    - **Residual, filed rather than smuggled in: the heading-order finding is now item 106.**
+
+    ORIGINAL TEXT (retained — it is what was measured, and its gate clause is the correction above):
+
+    **Nothing in `npm test` can see the rendered accessibility tree, and item 102 was invisible
     to every static check in the repo.** §40 now guards the specific shape, and `check-data.mjs` is up
     to forty sections — but all of them read source text. Item 102 was a **composition** defect: every
     attribute was individually correct and the browser's computed tree was wrong.
@@ -2138,6 +2178,29 @@ for the history. No open P1/P2 items.
       READ" pre-quiz that sits above the first body `H2`. A skipped level is a WCAG 1.3.1 concern; it
       may also be the correct reading of a pre-quiz as subordinate to the lesson title. Measure the
       other 39 lessons before deciding anything.
+
+106. **[A11y — filed 2026-08-25 by the run that built item 105's sweep, as its stated residual rather
+    than smuggled into the same commit. This is the finding item 105 explicitly declined to file
+    ("it is arguable and needs a judgment"), and it now has independent measurement behind it.]
+    The lesson reader's heading order skips a level: `h1 → h3`, because the "BEFORE YOU READ"
+    pre-quiz is an `h3` sitting above the first body `h2`.**
+    - **Measured 2026-08-25 by `scripts/a11y-sweep.js`, selftest passing 8/8 first:** lesson 1 reads
+      `132223` and lesson 29 reads `13223`. **Two of two lessons sampled**, from different tracks
+      (`essentials` and `economy`), so it is the reader's template rather than one lesson's content.
+    - **Why it is still a judgment and not an obvious bug.** A skipped level is a WCAG 1.3.1 concern.
+      But `h3` may also be the *correct* semantic reading of a pre-quiz as subordinate to the lesson
+      title — the alternative, promoting it to `h2`, makes the pre-quiz a sibling of the body
+      sections, which is arguably a worse description of the document. A third option is to leave
+      the level and reorder, which changes the reading experience and is out of scope for an a11y fix.
+    - **What is NOT yet measured, and it is the reason this is not just fixed:** only 2 of 40 lessons
+      were sampled. Lesson 35 could not be sampled at all — it is locked, and a URL does not unlock
+      (`DECISIONS.md`), so the sweep landed on `#/learn` instead. **Sampling the rest means completing
+      lessons or seeding `localStorage`**, which is what makes this a whole run rather than a
+      five-minute fix. Do that first; the instrument makes it mechanical now.
+    - **Honest priority: low-medium.** Real, standards-backed, reproducible on demand — and it affects
+      screen-reader navigation of the app's single most-used screen. But it is one skipped level on a
+      page whose landmarks, control names and hit targets are all clean, and nobody has opened the app
+      (O-1). Do not let it jump the queue ahead of unblocked structural work.
 
 101. **[Feature/Distribution — filed 2026-08-24 by the run that closed item 98, as its stated residual
     rather than smuggled into the same commit. Serves `LAUNCH_PLAN.md` §5. **Genuinely blocked on
@@ -4758,6 +4821,57 @@ verification purposes since the app cannot observe the difference. **Net rule: f
 element's keyboard handling specifically, verify with a fully-specified `dispatchEvent`, not `computer`'s
 `key` action; for anything else, `javascript_tool`'s `.click()` remains the reliable path already
 documented above.**
+
+**The live accessibility sweep is a checked-in file now — `scripts/a11y-sweep.js` (2026-08-25, item
+105). Do not re-derive it, and do not hand-roll a one-off DOM scan.** Every section of
+`check-data.mjs` reads source text, so the whole class of *composition* defects — where every
+attribute is individually correct and the browser's computed tree is still wrong — is invisible to
+`npm test`. That class is not hypothetical: it is what items 102 and 103 were. Load it the way it was
+verified, which also proves the checked-in file is the thing that ran rather than a retyped copy:
+
+```bash
+cp scripts/a11y-sweep.js dist/            # dist/ is gitignored; the static server already serves it
+```
+```js
+// then, in javascript_tool, one call each:
+fetch('/a11y-sweep.js').then(r => r.text()).then(src => eval(src))
+A11ySweep.selftest()   // RUN THIS FIRST — see below
+A11ySweep.run()
+```
+
+**`A11ySweep.selftest()` is not optional, and it is the reason this file exists rather than a snippet
+in a run-log entry.** It plants one known defect per probe, asserts each probe *finds* its plant, then
+removes the plants and confirms they are gone. A sweep whose selftest has not passed **this session**
+proves nothing — step 3.5's "carry a control", encoded into the instrument instead of left to the
+operator to remember. It has already earned this twice on its first day: it caught a broken
+expectation in its own `smallTargets` control (a planted `10px` button renders **16x10**, because UA
+padding and min-content width beat the declared width — so a control keyed to exact geometry fails for
+its *own* reasons), and breaking the layout gate on purpose exposed that `check-data.mjs` §43 printed
+its reassuring summary line **alongside its own failure**.
+
+**The three ways this harness produces a lying zero — all measured, and the sweep encodes all three:**
+1. **Layout is not live.** On a fresh `preview_start`, `innerWidth` and every `getBoundingClientRect()`
+   read **0**, so geometry probes return zero findings because nothing has a size. **Taking a
+   screenshot forces layout** — that is the fix, and the sweep hard-gates on it and prints `REFUSED`
+   rather than a clean-looking report.
+2. **Focus events never fire.** `document.hasFocus()` is `false` and `visibilityState` is `"hidden"` in
+   this pane **even when the tab is fronted and the page is demonstrably rendering**. Measured with a
+   native listener as the control: a real `focus` listener on a real button recorded **zero** events
+   across separate calls while `document.activeElement` was correct throughout. **So
+   `activeElement` assertions are trustworthy here and anything built on focus/blur EVENTS is not.**
+3. **Reading in the same call that clicked.** React commits asynchronously; a same-call read returns
+   the previous render. Click in one call, read in the next.
+
+**A correction worth carrying, because item 105 specified the opposite.** The item asked for the gate
+`document.hasFocus() && document.visibilityState === "visible"`. Both are permanently false in this
+pane (see 2 above), so that gate would have **refused to report anything, forever** — the same
+silent-zero failure wearing the costume of a safety check. The implemented gate is **per-capability**:
+hard-gate on live layout, which is achievable and provable, and mark only the focus-event-dependent
+probe `UNAVAILABLE`. A probe that scanned nothing reports `VACUOUS`, never `ok`.
+
+**Reporting convention for run-log entries.** Quote the verdict line plus the two numbers that make a
+zero meaningful: `selftest PASS (8/8 controls fired, plantsRemoved true)` and, per screen, `N
+finding(s); V vacuous; U unavailable`. A bare "no accessibility issues found" is not a result.
 
 ## Run log
 
@@ -8880,3 +8994,136 @@ restore.
 **Unchanged and still the entire critical path, both owner-blocked: O-1** (a deployed URL) and **O-2**
 (item 18, an analytics account). This run fixed a list of eleven numbered rows that did not count in
 order. **Nobody has ever seen it in either state**, because the app has no URL.
+
+### 2026-08-25 (scheduled dev-agent) — item 105: the app gets an eye that can see rendered defects, and the gate the item specified would have blinded it
+
+**Picked** item 105, named by the previous run as "the strongest unblocked item" and carrying two
+independent pieces of evidence from the runs that shipped items 102, 103 and 104. Shipped
+`scripts/a11y-sweep.js`, `check-data.mjs` §43, and an Environment-note procedure. **W-5.2 note:** this
+is a non-item-93 pick; item 93's economy phase is closed and item 94 is parked behind O-1 by its own box.
+
+#### Step 3.5 — premise re-measured with controls, and one clause of it was wrong
+
+**CONFIRMED — the gap is real.** No check script has any DOM capability: `package.json` contains no
+`jsdom`/`puppeteer`/`playwright`/`happy-dom`/`linkedom`, and `check-data.mjs` reads source text through
+**46** `readFileSync` calls. **Control:** the same grep returns **2** against `check-payload.mjs`, so
+the instrument reaches these files and the zero above is a real zero.
+
+**STALE, in the item's favor, corrected in place:** the item says `check-data.mjs` is "up to forty
+sections". It is **43** — §41 and §42 landed between filing and pick. A stale snapshot, not a wrong claim.
+
+**⛔ WRONG, and it changed the design rather than a figure.** Item 105 specified that the script "**must
+refuse to report a zero unless `document.hasFocus() && document.visibilityState === 'visible'`**".
+Measured in the live pane: **`hasFocus: false`, `visibilityState: "hidden"` — permanently, even with the
+tab fronted and the page demonstrably rendering** (buttons measured 139×44, document 2944px tall, the
+screenshot correct). **That gate would have refused to report anything, forever** — the identical
+silent-zero failure it was written to prevent, wearing the costume of a safety check.
+
+The item's underlying observation was right and is now sharper. With a **native `focus` listener as the
+control**, a real listener on a real button recorded **zero events across separate calls**, while
+`document.activeElement` was **correct throughout** (and even updated synchronously). So the usable rule
+is not "focus is unreliable here" but **"`activeElement` is trustworthy; focus/blur EVENTS are not."**
+Implemented gate is therefore **per-capability**: hard-gate on *live layout* (achievable and provable —
+a screenshot forces it), mark only the focus-event probe `UNAVAILABLE`, and report `VACUOUS` — never
+`ok` — for any probe that scanned nothing.
+
+#### What shipped
+
+- **`scripts/a11y-sweep.js`** — 9 probes, zero dependencies, pasted into `javascript_tool` rather than
+  run by Node: `danglingRefs` (item 102's exact shape), `duplicateIds`, `namelessControls`,
+  `headingOrder`, `smallTargets`, `horizontalOverflow`, `imagesWithoutAlt`, `landmarks` (the live
+  regression net for items 102/103), and `focusVisibleOnTab` (declared, permanently `UNAVAILABLE` here,
+  and never silently green).
+- **`A11ySweep.selftest()`** — the reason this is a file and not a snippet. It **plants one known defect
+  per probe, asserts each probe finds its plant, removes the plants, and confirms they are gone**. Step
+  3.5's "carry a control", encoded into the instrument instead of left to the operator to remember.
+- **`check-data.mjs` §43** — guards the three properties that make its zeros mean something: it parses,
+  the layout gate and `REFUSED`/`VACUOUS`/`UNAVAILABLE` accounting are present, and every layout-gated
+  probe still has a planted control. Deliberately guards **none** of its findings.
+- **Environment note** — the load-and-run procedure, the three lying-zero modes, and a reporting convention.
+
+#### Verification
+
+Built `dist/`, served it with `/usr/bin/python3 -m http.server 8811`, opened it with `preview_start`.
+**The sweep was loaded by `fetch('/a11y-sweep.js').then(...eval)` from a copy of the checked-in file** —
+so what ran is the committed artifact, byte-identical (`sha256 f99a0c61…` at first load), not a retyped copy.
+
+**`A11ySweep.selftest()` → PASS: 8/8 controls fired, `plantsRemoved: true`.** Then, per screen:
+
+| screen | findings | vacuous | unavailable | landmarks | headings |
+|---|---|---|---|---|---|
+| `#/learn` | **0** | 1 | 1 | main 1, nav 1 | `1222` |
+| `#/practice` | **0** | 1 | 1 | main 1, nav 1 | `12` |
+| `#/reference` | **0** | 1 | 1 | main 1, nav 1 | `1` |
+| `#/lesson/1` | **1** | 1 | 1 | main 1, nav 1 | `132223` |
+| `#/lesson/29` | **1** | 1 | 1 | main 1, nav 1 | `13223` |
+
+The one finding on both lessons is the `h1 → h3` skip — **filed as item 106, not fixed here**, because
+only 2 of 40 lessons could be sampled. `#/lesson/35` **could not be sampled at all**: it is locked and a
+URL does not unlock (`DECISIONS.md`), so the sweep landed on `#/learn` — which is the rule working, and
+is exactly why sampling the rest is a whole run. `imagesWithoutAlt` read **VACUOUS on all five screens**
+(the app uses inline SVG, so it matched nothing): a naive check prints a green zero there, and that
+distinction is the design.
+
+**§43 proved able to fail — four controls, each restored from a scratchpad backup, never `git checkout`:**
+(1) layout gate removed → caught; (2) `"VACUOUS"` accounting removed → caught; (3) a probe stripped of its
+planted control → caught by name; (4) syntax error injected → caught. Each injection asserted its own
+landing (`assert s.count(old)==1`) so a silent no-op could not masquerade as a pass. After all four,
+`scripts/a11y-sweep.js` is **byte-identical to the pre-control backup** (`diff -q`, `sha256 2f6c852c…`).
+
+`npm test` **0 failures, 2 expected warnings**; `npm run build` clean.
+
+#### The instrument caught two defects in itself on day one — which is the whole argument for the selftest
+
+1. **Its own `smallTargets` control did not fire.** The expectation was keyed to `/10x10/`; the planted
+   `width:10px;height:10px` button actually renders **16×10**, because UA padding (`1px 6px`) and
+   min-content width beat the declared width. **The probe was right and the control was wrong** — a
+   control keyed to exact rendered geometry fails for its *own* reasons, which is precisely the trap
+   step 3.5 warns about. Fixed to match the finding's *shape* (`/< 44x44/`), with the reason in a comment.
+2. **§43 printed its reassuring summary line alongside its own failure.** Breaking the layout gate on
+   purpose produced `FAIL: §43: … no longer contains the hard layout gate` and, one line later,
+   `§43 a11y sweep: … layout gate present`. That is the **vacuous-green shape §40(d) and §42(c) were
+   written to prevent, reproduced inside the section that guards against it.** Fixed with a `sectionOk`
+   flag that withholds the summary; re-proved by re-running all four controls.
+
+#### Step 5 — adversarial self-check
+
+- **Blindspot register** — no regression. Greps for Dalio/`principles`, advice-adjacent verbs
+  (`buy `/`sell `/`recommend`/`should invest`/`guarantee`), child-facing framing and live-figure shapes
+  return **0** across `scripts/a11y-sweep.js`; **control**: `accessibility` returns 1 in the same file,
+  so the grep reaches it. More decisively, **the sweep is not shipped to users at all** — nothing under
+  `src/`, `index.html` or `vite.config.js` references it, so it cannot reach a bundle. The dates in its
+  comments are dated-record convention (every `check-data.mjs` section carries one), not a rendered date.
+- **`DECISIONS.md` conflict** — none. **Item 12's port-cost rule was the live risk here and was
+  respected**: `git diff --stat HEAD -- package.json package-lock.json vite.config.js` is **empty**. No
+  headless browser, no dependency; the file has 0 imports and touches no `localStorage`. The item itself
+  flagged that adding a headless browser is port-cost territory, and this deliberately does not.
+- **Already-done backlog item** — no. `git log --all -- scripts/a11y-sweep.js` is empty (new file) and
+  `a11y-sweep` returns **0** in `AGENT_LOG.archive.md`; **control**: `check-data` returns **218** there,
+  so the archive grep reaches. Nothing here redoes a pruned item.
+- **Own verification claim** — reproducible from the commands listed. The claim easiest to fake is
+  "8/8 controls fired", which is why the proof is that the selftest **failed first** (`smallTargets`,
+  verdict `FAIL — do not trust a zero from: smallTargets`) and only passed after a fix — a control that
+  has been *seen to fail* is worth more than one that was green on the first try. `git status` shows
+  exactly the 3 files intended (`AGENT_LOG.md`, `scripts/check-data.mjs`, new `scripts/a11y-sweep.js`);
+  the owner's `UIUX/` and `drafts/` are untouched. Owner tree at commit time:
+  **`OWNER-TREE 0cf08b31c8853dccd00390cc865de176a2861093c05cd99976403a49dd45c57b` (2 tracked modified,
+  53 untracked)**.
+
+#### Next
+
+- **Item 106** (the `h1 → h3` heading order) is now the natural follow-on and the sweep makes it
+  mechanical — but it needs the other 38 lessons sampled first, which means seeding `localStorage` to
+  unlock them, and then a judgment about whether the pre-quiz should be `h2` or stay `h3`.
+- **A cheaper, higher-value use of the new instrument first:** sweep the **Reference sub-screens**
+  (Glossary, Market signals, Sector performance, Parent guide, About) and the **lesson-reader
+  interactive states** (quiz answered, review interstitial), none of which were reached this run. That
+  is where composition defects like item 102 have historically lived, and it is one run.
+- **Item 26 / item 27** (both need a re-scope before picking) and **W-5.2's pick list** remain the
+  alternatives.
+- **Do NOT pick item 94** — optional track, four "(Beta)" languages, parked behind O-1 by its own box.
+
+**Unchanged and still the entire critical path, both owner-blocked: O-1** (a deployed URL) and **O-2**
+(item 18, an analytics account). This run built the first instrument in this repo that can see what a
+browser actually computes, and it came back **clean on three of five screens**. **Nobody has ever seen
+any of those screens**, because the app has no URL.
