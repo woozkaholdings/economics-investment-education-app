@@ -106,6 +106,27 @@
     return "";
   }
 
+  /* A LANDMARK's name is NOT accName(). This is a separate function on purpose, and the reason is
+   * the whole difficulty of the unnamedRegions probe: accName() falls back to textContent, and a
+   * <section> always has contents, so reusing it would have made that probe permanently green —
+   * a lying zero that no control based on a planted BARE section could ever catch, because the
+   * plant would be "named" by its own paragraph. Per HTML-AAM a region's name comes only from
+   * aria-labelledby, aria-label or title; content never names a landmark. Measured 2026-08-25:
+   * accName() returns the full body text for all three of the lesson reader's sections. */
+  function landmarkName(el) {
+    var lb = el.getAttribute("aria-labelledby");
+    if (lb) {
+      var t = lb.split(/\s+/).map(function (id) {
+        var n = document.getElementById(id);
+        return n ? n.textContent.trim() : "";
+      }).join(" ").trim();
+      if (t) return t; // an aria-labelledby that resolves to nothing leaves the region UNNAMED
+    }
+    var al = (el.getAttribute("aria-label") || "").trim();
+    if (al) return al;
+    return (el.getAttribute("title") || "").trim();
+  }
+
   function where(el) {
     var d = el.tagName.toLowerCase();
     if (el.id) d += "#" + el.id;
@@ -236,6 +257,37 @@
                counts: { main: mains.length, nav: navs.length } };
     } },
 
+    /* Backlog item 107. The `landmarks` probe above counts <main> and <nav> and has no notion of a
+     * region, so on 2026-08-25 it reported the lesson reader `clean` while that screen carried three
+     * bare <section> elements — the defect that same run then went on to fix, found by reading the
+     * tree by hand. Measured before this probe was written, with a control: a bare <section> planted
+     * into `main` moved totalFindings not at all, while a planted second <main> fired the landmarks
+     * probe immediately, so the instrument was live and simply blind to this class.
+     *
+     * This does NOT duplicate check-data.mjs §44. That section reads <section> tags written in src/;
+     * it cannot see a region composed at runtime, one a library introduces, or a role set from a
+     * variable. Source text and the computed tree are different things — which is why this file
+     * exists at all. The two checks overlap deliberately and neither subsumes the other.
+     *
+     * VACUOUS is the correct report on a screen with no regions (the Glossary uses <dl>/<dt>/<dd>,
+     * and several Reference sub-screens carry no <section> at all). A zero there proves nothing
+     * about region naming because nothing was named or unnamed — which is exactly what the vacuous
+     * accounting is for. Do not pad `scanned` to make those screens read green. */
+    unnamedRegions: { needs: "layout", run: function () {
+      var out = [], scanned = 0;
+      [].forEach.call(document.querySelectorAll('section, [role="region"]'), function (el) {
+        if (!visible(el) || !exposed(el)) return;
+        scanned++;
+        if (landmarkName(el)) return;
+        // Worded apart because the two failures differ: an unnamed <section> is not a landmark at
+        // all (it vanishes from the rotor), while an unnamed role="region" IS one, anonymously.
+        out.push(el.hasAttribute("role")
+          ? 'role="region" with no accessible name — an anonymous landmark: ' + where(el)
+          : "<section> with no accessible name is not a landmark (HTML-AAM): " + where(el));
+      });
+      return { findings: out, scanned: scanned };
+    } },
+
     /* Declared, gated OFF, and never silently green: focus EVENTS do not fire in this pane.
      * activeElement-based assertions are fine and belong in a run's own ad-hoc checks. */
     focusVisibleOnTab: { needs: "focusEvents", run: function () {
@@ -292,7 +344,11 @@
       '<button style="width:60px;height:60px" aria-controls="a11y-selftest-missing">x</button>' +
       '<button style="width:10px;height:10px">s</button>' +
       '<img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">' +
-      '<h1>plant</h1><h5>plant</h5><main></main>';
+      '<h1>plant</h1><h5>plant</h5><main></main>' +
+      // The paragraph is not filler: it is what makes this a real control. A bare <section> with
+      // contents is precisely the case a content-fallback name computation would call "named",
+      // so an empty plant would pass even against the wrong implementation.
+      '<section id="a11y-selftest-region"><p>planted unnamed region</p></section>';
     document.body.appendChild(box);
     // Overflow is planted separately: it must actually widen the document to be a real control.
     var wide = document.createElement("div");
@@ -313,7 +369,11 @@
       smallTargets: /< 44x44/,
       imagesWithoutAlt: /no alt attribute/,
       horizontalOverflow: /scrolls horizontally/,
-      landmarks: /<main> landmarks/
+      landmarks: /<main> landmarks/,
+      // Matches the plant's own id, not the shape: the app's own sections are all named as of
+      // item 82 + the 2026-08-25 lesson-reader fix, so a shape match would pass off a REAL
+      // regression as a fired control the moment one of them lost its label.
+      unnamedRegions: /a11y-selftest-region/
     };
     var caps = capabilities(), results = {}, failed = [];
     Object.keys(expect).forEach(function (name) {

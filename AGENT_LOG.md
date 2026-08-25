@@ -2179,7 +2179,50 @@ for the history. No open P1/P2 items.
       may also be the correct reading of a pre-quiz as subordinate to the lesson title. Measure the
       other 39 lessons before deciding anything.
 
-107. **[A11y/Tooling — filed 2026-08-25 by the run that shipped the named-region fix, as its stated
+108. **[Tooling/Measurement — filed 2026-08-25 by the run that shipped item 107, as its stated
+    residual rather than smuggled into the same commit.] `scripts/a11y-sweep.js`’s header records
+    that `document.hasFocus()` is *permanently false* in this preview pane. On 2026-08-25 it was
+    TRUE for an entire session, and that disagreement is unexplained.**
+    - **Measured:** across five screen sweeps this run, `focusVisibleOnTab` reported **`VACUOUS`**
+      (it ran, and scanned 0) rather than **`UNAVAILABLE`** (its capability was missing) — which
+      only happens when `caps.focusEvents`, i.e. `document.hasFocus()`, is true. The header’s
+      lying-zero note 2, dated the same day, says the opposite and cites a native listener recording
+      zero `focus` events as its evidence.
+    - **Why both can be true, and why that is the interesting part:** `hasFocus()` and whether
+      focus/blur *events* fire are different things, and the header conflates them into one
+      capability. If they can diverge, `needs: "focusEvents"` is gated on the wrong signal — it
+      would mark a probe available on exactly the sessions where the events still do not arrive.
+    - **What to do:** re-run the native-listener control (a real `focus` listener on a real button,
+      asserting event count) in a session where `hasFocus()` is true. Two outcomes, both cheap and
+      both useful: events fire, so a whole probe class (focus-visible, focus order, the tab trap) is
+      recoverable and the header’s note 2 needs narrowing; or they do not, and the capability must
+      be detected by an actual planted event rather than by `hasFocus()`.
+    - **Honest priority: medium.** It does not affect any shipped finding — no probe currently
+      depends on focus events, which is why this was not chased inside item 107’s run. But it is a
+      documented measurement that the instrument itself now contradicts, and a stale capability note
+      is how a probe gets marked green on a session where it is blind.
+
+107. **✅ DONE 2026-08-25 (scheduled dev-agent), the day after it was filed. Shipped as the
+    `unnamedRegions` probe in `scripts/a11y-sweep.js`, with a planted control in `selftest()`
+    (§43(c) proved able to fail on it) and a five-variant discrimination matrix measured live.**
+    - **PREMISE CORRECTION, and it changed the implementation rather than a figure.** The item
+      specified the probe as "whose accessible name is empty", which reads as "reuse `accName()`".
+      That would have produced a probe that **can never fire**: `accName()` falls back to
+      `textContent`, and every `<section>` has contents — measured, the lesson reader’s three real
+      sections carry 943 / 685 / 1228 characters each, and a planted bare section names itself
+      "body text". **The planted control would have passed against the broken implementation.** A
+      landmark’s name never comes from its contents (HTML-AAM), so the probe uses a separate
+      `landmarkName()` — `aria-labelledby` (resolved), `aria-label`, `title`, no content fallback.
+      Recorded here because the same trap waits for any future name-based probe.
+    - **Everything else in the item was exact** and is left below as filed. The blindness was
+      re-confirmed live before editing: a bare `<section>` planted into `main` moved `totalFindings`
+      not at all, while a planted second `<main>` fired `landmarks` immediately.
+    - **Known and deliberate:** the probe reports `VACUOUS` on a screen with no regions (e.g. the
+      `#/reference` hub, independently confirmed at 0 matching elements). That is the vacuous
+      accounting working. **Do not pad `scanned` to make those screens read green.**
+
+    ORIGINAL TEXT (retained — it is what was measured):
+    **[A11y/Tooling — filed 2026-08-25 by the run that shipped the named-region fix, as its stated
     residual rather than smuggled into the same commit. The instrument could not see the defect the
     run was fixing, which is the most useful thing a new instrument can tell you on day two.]
     `scripts/a11y-sweep.js` has no probe for an UNNAMED landmark region, so it reported the lesson
@@ -9345,3 +9388,160 @@ lesson 29; `How review works` on Practice — with **0 duplicate ids** and **0 s
 **Unchanged and still the entire critical path, both owner-blocked: O-1** (a deployed URL) and
 **O-2** (item 18, an analytics account). Every body section of all 40 lessons is now a named landmark
 in five languages. **No screen reader has ever reached one**, because the app has no URL.
+
+### 2026-08-25 (scheduled dev-agent) — item 107: the sweep learns to see a region, and the name computation it would have inherited would have made it permanently green
+
+**Picked item 107**, the previous run's stated top recommendation and its own filed residual: the
+sweep had no probe for an unnamed landmark region, so it reported `#/lesson/1` `clean` on precisely
+the defect that run then fixed by hand. **W-5.2 note:** a non-item-93 pick; item 93's economy phase
+is closed and item 94 stays parked behind O-1 by its own box. Cheap, and it closes a hole in the
+instrument the last four a11y runs have leaned on.
+
+#### Step 3.5 — premise re-measured, statically and live, with a control
+
+**CONFIRMED on both halves, and the live half is the one worth having.**
+
+*Statically:* the `landmarks` probe queries `main, [role='main']` and `nav, [role='navigation']` and
+nothing else; `scanned` is literally `mains.length + navs.length`. There is no `region` anywhere in
+the file. Item 107 said this and it is exact.
+
+*Live, on the built `dist/` at `127.0.0.1:8814`, `A11ySweep.selftest()` PASS 8/8 first:* planted a
+bare `<section>` into `main` on `#/lesson/1` and re-ran the sweep. `totalFindings` **1 → 1**,
+`landmarks.scanned` **2 → 2** — completely blind. **Control, because a sweep that had silently
+stopped running would produce the identical reading:** planted a second `<main>` alongside it;
+`landmarks` fired at once (`"2 <main> landmarks; exactly one is expected"`, `scanned` 2 → 3,
+`totalFindings` 1 → 2). Removing both plants returned the page to 1. So the instrument was live
+throughout and the blindness is specific to this class, not an artifact of a dead probe.
+
+**⚠️ What the item did NOT say, and it is the whole design problem.** Item 107 specified the probe as
+"every `section, [role=region]` whose accessible name is empty". The obvious implementation reuses
+this file's existing `accName()` — and that would have produced a probe that **can never fire**.
+`accName()` falls back to `textContent`, and every `<section>` has contents. Measured rather than
+asserted: the bare plant's fallback name computes to `"body text"`, and the lesson reader's three
+real sections carry **943 / 685 / 1228** characters of text apiece. A control built on a planted bare
+section would have passed against the wrong implementation, because the plant names itself with its
+own paragraph. Per HTML-AAM a landmark's name comes only from `aria-labelledby`, `aria-label` or
+`title`; **content never names a landmark.** Hence a separate `landmarkName()`, with the reason in a
+comment so the next edit does not "simplify" it back.
+
+#### What shipped
+
+- **`scripts/a11y-sweep.js` — `landmarkName(el)`**: `aria-labelledby` (resolved through
+  `getElementById`), then `aria-label`, then `title`. No content fallback, deliberately. An
+  `aria-labelledby` that resolves to nothing leaves the region **unnamed**, which is item 107's
+  third case.
+- **`unnamedRegions` probe** (`needs: "layout"`), scanning `section, [role="region"]`, skipping
+  invisible and `aria-hidden` nodes like every other probe. The two failures are **worded apart**
+  because they differ: an unnamed `<section>` is not a landmark at all, while an unnamed
+  `role="region"` is one, anonymously.
+- **A planted control in `selftest()`** — `<section id="a11y-selftest-region"><p>planted unnamed
+  region</p></section>`. The paragraph is load-bearing, per the premise correction above. The
+  expectation matches the **plant's own id**, not the finding's shape: the app's sections are all
+  named as of item 82 plus yesterday's lesson-reader fix, so a shape match would let a real
+  regression masquerade as a fired control.
+- No new dependency, no config change: `git diff -- package.json package-lock.json vite.config.js`
+  is **empty**, so item 12's port-cost rule is respected. `git diff -- src/` is **empty** — this run
+  touches the instrument only.
+
+**Why this does not duplicate `check-data.mjs` §44** (shipped yesterday, and the reason to check):
+§44 reads `<section>` tags **written in `src/`**. It cannot see a region composed at runtime, one a
+library introduces, or a role set from a variable. The two overlap on purpose and neither subsumes
+the other — which is the same argument that justifies this file existing at all.
+
+#### Verification
+
+`npm test` **0 failures, 2 expected warnings**; §43 now reports **10 probes declared (9 layout-gated,
+all with planted controls)**, up from 9/8. `npm run build` clean.
+
+**Live, against the built `dist/` on `127.0.0.1:8814`.** The sweep was fetched into the page and its
+SHA-256 read back **inside the browser**: `86a37f8f8a0a298122bcbbe16bcaaf724b66a91bcc8a9437dec259d596ea68e3`,
+byte-identical to the checked-in `scripts/a11y-sweep.js` — so the thing that ran is the thing that is
+committed. Bundle name read back as `index-DWEDKkdc.js`, matching the fresh build (yesterday's
+stale-bundle near-miss, Environment-note lying-zero mode 4). `A11ySweep.selftest()` → **PASS, 9/9
+controls fired, `plantsRemoved: true`**.
+
+**The discrimination matrix — five planted variants, because "it fires" is only half the claim and
+a probe that fires on everything is worse than none:**
+
+| planted into `main` | probe fires? | wanted |
+|---|---|---|
+| bare `<section>` with text | **yes** — `<section> with no accessible name is not a landmark (HTML-AAM)` | ✅ |
+| `<section aria-labelledby="pv-nope">` (dangling) | **yes** — same message | ✅ the resolve check works |
+| `<section aria-label="…">` | no | ✅ no false positive |
+| `<section aria-labelledby>` → a real `<h2>` | no | ✅ the app's own convention stays silent |
+| `<div role="region">` unnamed | **yes** — `an anonymous landmark` | ✅ distinct wording |
+
+Every case was planted, measured and removed individually; `totalFindings` returned to its baseline
+of 1 afterwards and `unnamedRegions` back to `scanned: 3, findings: []`.
+
+**Screen sweep after the change** — each row's screen identity asserted separately (first 70-90 chars
+of `main`) **before** its number was recorded, since a sweep of the wrong screen returns a clean
+report:
+
+| screen | total findings | `unnamedRegions` |
+|---|---|---|
+| `#/lesson/1` | 1 (pre-existing, item 106) | `ok` — **3 scanned, 0 unnamed** |
+| `#/lesson/29` (economy track) | 1 (pre-existing, item 106) | `ok` — **2 scanned, 0 unnamed** |
+| `#/practice` | **0** | `ok` — 1 scanned, 0 unnamed |
+| `#/learn` (regression, item 82's regions) | **0** | `ok` — 3 scanned, 0 unnamed |
+| `#/reference` hub | **0** | **`VACUOUS` — 0 scanned** |
+
+Every total matches yesterday's table exactly, so the new probe adds **zero** false positives to the
+screens already swept. The single finding on both lessons is item 106's unchanged `h1 → h3` skip.
+
+**The `VACUOUS` row is the designed behavior, not a defect.** `#/reference` carries no `<section>`
+and no `role="region"` — verified independently in the same call with
+`document.querySelectorAll('section, [role="region"]').length` → **0**, so the zero is genuinely
+nothing-to-scan rather than something-missed. A zero there proves nothing about region naming, which
+is exactly what the vacuous accounting exists to say. A comment in the probe tells the next run **not
+to pad `scanned`** to make those screens read green.
+
+**§43(c) proved able to fail on this specific probe**, restored from a scratchpad copy — never
+`git checkout`: deleting the `unnamedRegions` expectation line from `selftest()` produced
+`FAIL: §43: … declares probe(s) unnamedRegions with no planted control in selftest()`, and the
+injection asserted it landed (the script exits 9 if the replace is a no-op) before the check was run.
+File restored byte-identical: `86a37f8f…` before and after.
+
+#### Step 5 — adversarial self-check
+
+- **Blindspot register** — no regression. On the diff's added lines, Dalio/`principles` → **0**,
+  advice-adjacent verbs (`buy `/`sell `/`recommend`/`should invest`/`guarantee`) → **0**,
+  child-facing framing → **0**; **control**: `aria-label` on the same lines → **4**, so the grep
+  reaches them. **Three date matches, checked rather than waved past**: all three are `/* */` or `//`
+  comments inside `scripts/a11y-sweep.js`, which **no module under `src/` imports** (`grep -rn
+  a11y-sweep src/` → **0**) and which therefore never reaches a bundle. `git diff -- src/` is
+  **empty**, so the Markets-tab stale-data fix is untouched by construction.
+- **`DECISIONS.md` conflict** — none. Zero dependency/config diff, zero `localStorage` in the added
+  lines, no content-module or Vite surface touched.
+- **Already-done backlog item** — no. `git log --all -S'unnamedRegions'` returns **1** commit, and
+  reading it shows the hit is `AGENT_LOG.md` alone — **item 107's own filing text**, naming the probe
+  it was asking for; `git show HEAD:scripts/a11y-sweep.js | grep -c unnamedRegions` → **0**.
+  `landmarkName` → **0** commits. **Control**: `-S'landmarks: { needs:'` → **1**, `acc8ad8`, item
+  105's commit that created the sweep — so the pickaxe reaches this file's probe table. The archive
+  returns **0** for `unnamedRegions`; **control**: `aria-label` returns **59** there.
+- **Own verification claim** — reproducible from the commands above by anyone who rebuilds, serves
+  `dist/` and pastes the file. The claim easiest to fake is "no false positives", which is why the
+  matrix has two negative rows and not only positive ones, and why the in-browser SHA-256 is recorded:
+  a run that pasted a locally-edited sweep could report anything. `git status` shows exactly one
+  modified file; the owner's `UIUX/` and `drafts/` are untouched. Owner tree at commit time:
+  **`OWNER-TREE 464210f499ed489170fff9165f7133ae58f902bdc5ac9c79c87f3c9312228ef4` (1 tracked
+  modified, 52 untracked)** — the one tracked modification is this run's own file.
+- **One thing this run noticed and did not chase**: `focusVisibleOnTab` reported `VACUOUS` rather
+  than `UNAVAILABLE` on every screen this session, because `document.hasFocus()` was **true** in this
+  pane — the opposite of what the file's header records from 2026-08-25. That is a real and
+  interesting disagreement with a documented measurement, it changes nothing about this change, and
+  it is filed as **item 108** rather than smuggled in here.
+
+#### Next
+
+- **Item 108** (filed this run): the harness's focus capability is not the constant the sweep's
+  header says it is. Cheap to measure, and it decides whether a whole probe class is recoverable.
+- **Item 106** (`h1 → h3`) is unchanged and still wants the other 38 lessons sampled, which means
+  seeding `localStorage` — a locked lesson's URL redirects to `#/learn`.
+- **Item 26 / item 27** (both need a re-scope before picking) and **W-5.2's pick list** remain the
+  alternatives.
+- **Do NOT pick item 94** — optional track, four "(Beta)" languages, parked behind O-1 by its own box.
+
+**Unchanged and still the entire critical path, both owner-blocked: O-1** (a deployed URL) and
+**O-2** (item 18, an analytics account). The sweep can now see an unnamed region on any screen it is
+pointed at. **It has still only ever been pointed at a page no user has opened.**
