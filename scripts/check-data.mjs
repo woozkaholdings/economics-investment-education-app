@@ -5230,5 +5230,116 @@ if (keyedGroupsChecked < 4) {
 }
 
 
+// §44. Every <section> in src/ is a NAMED region.
+//
+// WHY THIS IS A CHECK AND NOT A STYLE PREFERENCE. Per HTML-AAM a <section> maps
+// to the `region` landmark only once it has an accessible name; unnamed, it is
+// either not a landmark at all or an anonymous "region" in a rotor, and neither
+// helps anyone. Item 82 set the convention on the Learn path — point
+// aria-labelledby at the <h2> the section already contains, rather than
+// duplicating the label into an aria-label that then has to be kept in sync —
+// and 2026-08-25 found the lesson body and Practice still bare, five days and
+// ~130 commits later, because nothing enforced it. That is what this section is
+// for: the convention now costs a failing test to break.
+//
+// WHY IT CANNOT BE VERIFIED IN A BROWSER, which is the trap here. The `read_page`
+// accessibility tree available to runs prints EVERY <section> as `region`
+// whether it is named or not, and does not surface aria-labelledby names at all
+// (calibrated in item 82; re-confirmed 2026-08-25 by planting a named and an
+// unnamed <section> side by side — the aria-LABEL plant printed its name, the
+// unnamed one printed a bare `region` indistinguishable from the app's). So a
+// run that "verifies" this by seeing `region` in that tree has verified nothing.
+// Verify live at the DOM level instead: attribute present, getElementById
+// resolves, and the target is the section's own heading.
+{
+  const walkJsx = (dir) =>
+    readdirSync(dir, { withFileTypes: true }).flatMap((e) => {
+      const full = join(dir, e.name);
+      if (e.isDirectory()) return walkJsx(full);
+      return e.isFile() && e.name.endsWith(".jsx") ? [full] : [];
+    });
+
+  // Comments first, or the check reads the PROSE about <section> in Learn.jsx's
+  // own convention comment as three more unnamed tags. JSX `{/* */}` and plain
+  // `/* */` reduce to the same block form.
+  const stripComments = (s) => s.replace(/\/\*[\s\S]*?\*\//g, "").replace(/^\s*\/\/.*$/gm, "");
+
+  // A regex cannot read these attributes: the values are template literals
+  // containing `${...}`, so `[^}\s]+` stops at the first `}` and silently
+  // captures half an expression. Scan with brace depth instead. (Written after
+  // the regex version did exactly that on `lesson-section-${sectionIndex}-title`.)
+  const attrValueAt = (s, i) => {
+    if (s[i] === '"' || s[i] === "'") {
+      const end = s.indexOf(s[i], i + 1);
+      return end === -1 ? null : s.slice(i + 1, end);
+    }
+    if (s[i] === "{") {
+      let depth = 0;
+      for (let j = i; j < s.length; j++) {
+        if (s[j] === "{") depth++;
+        else if (s[j] === "}" && --depth === 0) return s.slice(i + 1, j);
+      }
+    }
+    return null;
+  };
+  // The end of an opening tag is the first `>` at brace depth 0 — a `>` inside
+  // an expression (`{a > b && ...}`) does not close the tag.
+  const tagEnd = (s, from) => {
+    let depth = 0;
+    for (let j = from; j < s.length; j++) {
+      if (s[j] === "{") depth++;
+      else if (s[j] === "}") depth--;
+      else if (s[j] === ">" && depth === 0) return j;
+    }
+    return -1;
+  };
+
+  let sectionsSeen = 0;
+  const unnamed = [];
+  const dangling = [];
+
+  for (const jsxPath of walkJsx(join(ROOT, "src"))) {
+    const rel = jsxPath.slice(ROOT.length + 1);
+    const src = stripComments(readFileSync(jsxPath, "utf8"));
+
+    // Every id this file defines, read with the same scanner, so the two sides
+    // are compared on equal terms.
+    const idsHere = new Set();
+    for (const m of src.matchAll(/\bid=/g)) {
+      const v = attrValueAt(src, m.index + m[0].length);
+      if (v !== null) idsHere.add(v.trim());
+    }
+
+    for (const m of src.matchAll(/<section(?=[\s>])/g)) {
+      const end = tagEnd(src, m.index);
+      if (end === -1) continue;
+      sectionsSeen++;
+      const tag = src.slice(m.index, end);
+      const at = tag.indexOf("aria-labelledby=");
+      if (at === -1) {
+        unnamed.push(rel);
+        continue;
+      }
+      const ref = attrValueAt(tag, at + "aria-labelledby=".length);
+      if (ref === null || !idsHere.has(ref.trim())) {
+        dangling.push(`${rel} -> ${ref === null ? "(unparseable)" : ref.trim()}`);
+      }
+    }
+  }
+
+  // Vacuity guard, the §40(d)/§42(c) shape: zero sections means the scanner is
+  // pointed at markup that no longer exists, not that the app is clean.
+  if (sectionsSeen === 0) {
+    fail("§44: found no <section> tags anywhere in src/. This check is pointed at a shape that no longer exists — repoint it rather than leaving it green.");
+  } else if (unnamed.length > 0) {
+    fail(`§44: ${unnamed.length} bare <section> tag(s) with no aria-labelledby, in ${[...new Set(unnamed)].join(", ")}. An unnamed <section> is not a landmark (HTML-AAM) — point aria-labelledby at the heading the section already contains, per the convention in src/screens/Learn.jsx.`);
+  } else if (dangling.length > 0) {
+    fail(`§44: ${dangling.length} <section aria-labelledby> reference(s) with no matching id= in the same file: ${dangling.join(", ")}. A landmark named by a reference that resolves to nothing is worse than an unnamed one — it reviews as correct. This is item 102's shape.`);
+  } else {
+    console.log(`  §44 named regions: ${sectionsSeen} <section> tag(s) across src/, all named by an aria-labelledby that resolves to an id defined in the same file. (Static — read_page cannot see this difference; verify live at the DOM level.)`);
+  }
+}
+
+
 console.log(`\n${failures === 0 ? "PASS" : "FAIL"}: ${failures} failure(s), ${warnings} warning(s).`);
 process.exit(failures === 0 ? 0 : 1);

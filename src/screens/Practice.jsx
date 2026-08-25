@@ -402,8 +402,10 @@ export default function Practice({ t, lang, review, recordReview }) {
           done once the learner has answered anything, which is Vocabulary's
           struck-through "Install the app" step doing real work instead of
           decorating. */}
-      <section style={{ marginTop: space["6"] }}>
-        <Text as="h2" variant="heading" color={ink.strong} style={{ marginBottom: space["4"] }}>
+      {/* NAMED region, same convention as the Learn path (item 82) and the
+          lesson body: the <h2> this section already carried is what names it. */}
+      <section aria-labelledby="how-review-title" style={{ marginTop: space["6"] }}>
+        <Text as="h2" id="how-review-title" variant="heading" color={ink.strong} style={{ marginBottom: space["4"] }}>
           {t.howReviewTitle}
         </Text>
         <Steps

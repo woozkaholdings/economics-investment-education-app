@@ -356,9 +356,19 @@ export default function LessonReader({ t, lang, lessons, index, completedLessons
             {/* Keyed by index, not by heading text: the loaded module is now
                 language-specific, so a heading is no longer stable across a
                 language switch and keying on it would remount every section. */}
+            {/* A NAMED region, per the convention item 82 set on the Learn path:
+                the <section> already contained the <h2> that names it, so
+                aria-labelledby points at that same heading rather than adding a
+                second copy of the label to keep in sync. Id shape is the one
+                already in use here — a literal prefix plus a stable key — and
+                sectionIndex is that key for the same reason it is the React key.
+                Verify at the DOM level (attribute present, getElementById
+                resolves, target carries the heading text): read_page surfaces
+                aria-label names but NOT aria-labelledby names, so seeing
+                `region` in its tree proves nothing either way. */}
             {content.sections.map((section, sectionIndex) => (
-              <section key={sectionIndex}>
-                <Text as="h2" variant="heading" color={ink.strong} style={{ marginBottom: space["2"] }}>
+              <section key={sectionIndex} aria-labelledby={`lesson-section-${sectionIndex}-title`}>
+                <Text as="h2" id={`lesson-section-${sectionIndex}-title`} variant="heading" color={ink.strong} style={{ marginBottom: space["2"] }}>
                   {section.heading}
                 </Text>
                 <Text variant="body" style={{ whiteSpace: "pre-line" }}>

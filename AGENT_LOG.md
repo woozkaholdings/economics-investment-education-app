@@ -2179,6 +2179,29 @@ for the history. No open P1/P2 items.
       may also be the correct reading of a pre-quiz as subordinate to the lesson title. Measure the
       other 39 lessons before deciding anything.
 
+107. **[A11y/Tooling — filed 2026-08-25 by the run that shipped the named-region fix, as its stated
+    residual rather than smuggled into the same commit. The instrument could not see the defect the
+    run was fixing, which is the most useful thing a new instrument can tell you on day two.]
+    `scripts/a11y-sweep.js` has no probe for an UNNAMED landmark region, so it reported the lesson
+    reader `clean` on exactly the defect that run went on to fix.**
+    - **Measured 2026-08-25, selftest passing 8/8 first:** `#/lesson/1` returned `0 finding(s)` from
+      the `landmarks` probe while carrying three bare `<section>` elements. Reading the probe
+      (`scripts/a11y-sweep.js`, the `landmarks` entry) shows why and it is not a bug: it counts
+      `main` and `nav` only — `mains.length + navs.length` is its whole `scanned` figure — and has
+      no notion of `region` at all. The defect was found by reading the `read_page` tree by hand.
+    - **What to add:** an `unnamedRegions` probe — every `section, [role=region]` whose accessible
+      name is empty (no `aria-label`, no `aria-labelledby`, or an `aria-labelledby` that does not
+      resolve). **It must ship with a planted control in `selftest()` like every other layout-gated
+      probe**, or `check-data.mjs` §43(c) will fail it, which is §43 doing its job.
+    - **Why the static guard is not enough on its own, even though it shipped first.**
+      `check-data.mjs` §44 covers `<section>` tags **written in `src/`**. It cannot see a region
+      composed at runtime, one introduced by a library, or a `role="region"` set from a variable —
+      and the whole reason `a11y-sweep.js` exists is that source text and the computed tree are
+      different things. The two checks overlap deliberately; neither subsumes the other.
+    - **Honest priority: medium.** Cheap (one probe plus one plant), and it closes a hole in the
+      instrument the last three a11y runs have leaned on. But it guards a class that §44 now also
+      guards from the other side, so it is not urgent.
+
 106. **[A11y — filed 2026-08-25 by the run that built item 105's sweep, as its stated residual rather
     than smuggled into the same commit. This is the finding item 105 explicitly declined to file
     ("it is arguable and needs a judgment"), and it now has independent measurement behind it.]
@@ -4849,7 +4872,8 @@ padding and min-content width beat the declared width — so a control keyed to 
 its *own* reasons), and breaking the layout gate on purpose exposed that `check-data.mjs` §43 printed
 its reassuring summary line **alongside its own failure**.
 
-**The three ways this harness produces a lying zero — all measured, and the sweep encodes all three:**
+**The four ways this harness produces a lying zero — all measured. The sweep itself encodes 1-3;
+4 is the operator's and no script can catch it, which is why it is written out here:**
 1. **Layout is not live.** On a fresh `preview_start`, `innerWidth` and every `getBoundingClientRect()`
    read **0**, so geometry probes return zero findings because nothing has a size. **Taking a
    screenshot forces layout** — that is the fix, and the sweep hard-gates on it and prints `REFUSED`
@@ -4861,6 +4885,14 @@ its reassuring summary line **alongside its own failure**.
    `activeElement` assertions are trustworthy here and anything built on focus/blur EVENTS is not.**
 3. **Reading in the same call that clicked.** React commits asynchronously; a same-call read returns
    the previous render. Click in one call, read in the next.
+4. **The browser is running the PREVIOUS build.** Added 2026-08-25 after it produced one false
+   negative. `python3 -m http.server` serves `index.html` with a `Last-Modified` the browser is happy
+   to reuse, so a rebuild changes the hashed asset name while the page keeps loading the old one — a
+   post-change check then measures pre-change markup and reports the fix missing (or, worse, reports
+   a pre-existing defect absent). Navigating with `force: true` does **not** clear it; `?cb=N` on
+   `index.html` does. **Read the bundle name back before trusting any live result:**
+   `[...document.querySelectorAll("script[src]")].map(s => s.src)` must match the filename `npm run
+   build` just printed.
 
 **A correction worth carrying, because item 105 specified the opposite.** The item asked for the gate
 `document.hasFocus() && document.visibilityState === "visible"`. Both are permanently false in this
@@ -9127,3 +9159,189 @@ landing (`assert s.count(old)==1`) so a silent no-op could not masquerade as a p
 (item 18, an analytics account). This run built the first instrument in this repo that can see what a
 browser actually computes, and it came back **clean on three of five screens**. **Nobody has ever seen
 any of those screens**, because the app has no URL.
+
+### 2026-08-25 (scheduled dev-agent) — the sweep came back clean on seven un-swept screens, and the defect it missed was the one the app had already written the rule for
+
+**Picked** the previous run's own top recommendation: point item 105's new sweep at the surfaces it
+had not reached — the five **Reference sub-screens** and the **lesson-reader interactive states**.
+**W-5.2 note:** a non-item-93 pick; item 93's economy phase is closed and item 94 is parked behind
+O-1 by its own box. What shipped is a fix plus its guard, not a survey.
+
+#### Step 3.5 — premise re-measured with controls; the sweep target was right, the expectation was not
+
+**CONFIRMED — the screens really were un-swept, and structurally could not have been.**
+`src/screens/Reference.jsx:45-46` holds the sub-screen in `useState(null)` — "null = the hub itself.
+Every other value is a pushed section" — so `#/reference` reaches the hub and nothing else. The five
+sections are reachable only by clicking. Item 105's table sampled `#/reference`, so its clean row
+covered the hub alone.
+
+**⛔ REFUTED, and this is the useful half. The previous run predicted these screens were "where
+composition defects like item 102 have historically lived." They are not.** Seven screens swept —
+Glossary, Market Dashboard, Sector performance, Kids, About, plus the pre-quiz-answered and
+main-quiz-answered reader states — and the nine probes returned **zero new findings on all seven**.
+The one real defect this run found was on a screen item 105 had *already* sampled and called clean.
+
+**Three candidate findings measured and killed before filing**, which is most of what this run
+actually did:
+1. **"The picked pre-quiz answer is conveyed by color alone" (WCAG 1.4.1).** Computed styles said
+   yes — border `rgb(169,182,255)` vs `rgb(46,41,34)`, identical text, identical font weight.
+   **Refuted by reading the markup instead of the colors:** the picked option carries a literal
+   `your guess` label, and it lands in the accessible name. Measuring color and stopping there is
+   exactly how you file a wrong finding with a real number attached.
+2. **Same claim for the main quiz** — refuted harder: the chosen and correct options carry ✗/✓ SVGs
+   (`--ink-bad` / `--ink-ok`), and **all 8 `svg` in `main` are `aria-hidden="true" focusable="false"`**,
+   with the verdict also in an `aria-live="polite"` region. Redundant cue, correctly hidden.
+3. **"The `role="radio"` options never report `aria-checked`."** This came from the `read_page` tree
+   printing all 8 as bare `radio` with no name and no state. **Refuted at the DOM level:
+   `aria-checked` is present and correct on all 8** (`true` on exactly the two options this run had
+   clicked). `read_page` simply does not render name/state for role-overridden elements — the same
+   instrument limitation item 82 calibrated, in a new costume. **A `read_page` omission is not an
+   app defect**, and that now has two independent demonstrations.
+
+#### The finding, and why it is not a judgment call
+
+`#/lesson/1` renders **three bare `<section>`s**; `#/practice` renders one. Per HTML-AAM a
+`<section>` is a `region` landmark only once it has an accessible name — unnamed it is either not a
+landmark or an anonymous one in a rotor.
+
+**What makes this cheap to decide: the app had already settled it.** `src/screens/Learn.jsx:130-144`
+carries the convention in a comment — "Each track is a NAMED region, not a bare `<section>` (backlog
+item 82)… `aria-labelledby` points at that same heading rather than adding a second copy of the label
+to keep in sync." Item 82 shipped it on the Learn path (commit `f20a2da`, "Name the three Learn track
+landmarks") and scoped itself there. **The lesson reader and Practice were never covered, and stayed
+bare for five days and ~130 commits, because nothing enforced the rule.** So this is not a new
+opinion about markup; it is the app's own closed decision, applied to the two sites it missed.
+
+**Control for the "unnamed vs named" claim, since item 82 warns the live tool cannot see it.**
+Planted two `<section>`s side by side in the live DOM: the unnamed one printed `region [ref_84]`,
+indistinguishable from the app's three; the `aria-label`ed one printed `region "PLANTED NAMED
+REGION"`. Independently reproduces item 82's calibration — **`read_page` surfaces `aria-label` names
+but not `aria-labelledby` names** — which is why the verification below is at the DOM level and the
+guard is static.
+
+#### What shipped
+
+- **`src/screens/LessonReader.jsx`** — each body `<section>` gains
+  `aria-labelledby={`lesson-section-${sectionIndex}-title`}`, pointing at the `<h2>` it already
+  contained, which gains the matching `id`. Keyed on `sectionIndex` for the same reason it is the
+  React key. This names **every body section of all 40 lessons in all 5 languages**, the app's
+  most-used screen.
+- **`src/screens/Practice.jsx`** — the "How review works" `<section>` gains
+  `aria-labelledby="how-review-title"` against its existing `<h2>`.
+- **`scripts/check-data.mjs` §44** — every `<section>` in `src/` must carry an `aria-labelledby`
+  resolving to an `id` defined in the same file. This is the half item 82 lacked: the convention now
+  costs a failing test to break. **Purely additive** (`diff` vs. the pre-change file: 111 `>` lines,
+  **0** `<` lines).
+- No new dependency, no config change: `git diff --stat HEAD -- package.json package-lock.json
+  vite.config.js` is **empty**, so item 12's port-cost rule is respected.
+
+#### Verification
+
+`npm test` **0 failures, 2 expected warnings**; `npm run build` clean. §44 reports **3 `<section>`
+tags across `src/`, all named** — which agrees with an independent `grep -rn '<section' src` run
+before any edit (1 named + 2 bare), so the two counts were derived separately and match.
+
+**Live, against the built `dist/` served on `127.0.0.1:8813`, sweep loaded by
+`fetch('/a11y-sweep.js')` from a copy of the checked-in file (`sha256 2f6c852c…`, byte-identical to
+`scripts/a11y-sweep.js`). `A11ySweep.selftest()` → PASS: 8/8 controls fired, `plantsRemoved: true`,
+re-run after the change.**
+
+| screen | findings | vacuous | headings | `<section>`s, all named? |
+|---|---|---|---|---|
+| `#/reference` → Glossary | 0 | 1 | `1` | — (uses `<dl>/<dt>/<dd>`, correct as-is) |
+| `#/reference` → Market Dashboard | **0, 0 vacuous** | 0 | `1222` | — |
+| `#/reference` → Sector performance | 0 | 1 | `12` | — |
+| `#/reference` → Kids | 0 | 1 | `12` | — |
+| `#/reference` → About | 0 | 1 | `1` | — |
+| `#/lesson/1` pre-quiz answered | 1 (pre-existing) | 1 | `132223` | — |
+| `#/lesson/1` main quiz answered | 1 (pre-existing) | 1 | `132223` | — |
+| `#/lesson/1` **after** | 1 (pre-existing) | 1 | `132223` | **3/3**, 0 dup ids |
+| `#/lesson/29` **after** (economy track) | 1 (pre-existing) | 1 | `13223` | **2/2**, 0 dup ids |
+| `#/practice` **after** | **0** | 1 | `12` | **1/1** |
+| `#/learn` **after** (regression) | **0** | 1 | `1222` | **3/3** — item 82's intact |
+
+The single finding on both lessons is item 106's pre-existing `h1 → h3` skip, unchanged before and
+after — so this change introduced nothing. Each row's screen identity was asserted separately
+(`h1` text + first 90 chars of `main`) **before** its zero was recorded: a sweep of the wrong screen
+returns a clean report, and that is the failure mode this table would otherwise hide.
+
+**A stale-bundle near-miss worth writing down.** The first post-change DOM check reported
+`allNamed: false` — every attribute missing. The cause was the served `index.html` being cached:
+`script[src]` read `index-BKxupnVX.js` while the new build was `index-DWEDKkdc.js`. A run that had
+only checked the sweep's `0 findings` would have concluded "clean" from a **pre-change bundle**.
+`?cb=N` on `index.html` fixes it. **Always read the bundle filename back before trusting a live
+result** — added to the Environment note's lying-zero list as mode 4.
+
+**DOM-level proof of the fix** (the method `Learn.jsx`'s comment prescribes, since `read_page`
+cannot see it): every `<section>`'s `aria-labelledby` resolves via `getElementById`, and the target
+**is the section's own heading** — `Income vs. Expenses`, `Tracking Before Trimming`, `Make Saving
+Automatic, Not a Decision` on lesson 1; `What is a Transaction?`, `Markets and the Economy` on
+lesson 29; `How review works` on Practice — with **0 duplicate ids** and **0 stray `aria-label`s**.
+**The checker was proven able to fail three ways** before its pass was believed: attribute stripped
+→ `allNamed:false`; reference repointed to a dangling id → `allNamed:false`; id duplicated →
+`dupes:["lesson-section-0-title"]`. Restored by reloading the page, so nothing was left mutated.
+
+**§44 proved able to fail — four controls, each restored from a scratchpad copy, never
+`git checkout`, each injection asserting it landed exactly once:**
+1. `aria-labelledby` stripped from the lesson body → caught, named the file.
+2. Reference repointed to `…-heading` while the `id` stayed `…-title` → caught as a dangling
+   reference. **This is the control that justifies the parser**: the value is a template literal, and
+   the regex version written first captured `` `lesson-section-${sectionIndex `` — it stops at the
+   `}` inside `${…}`. A brace-depth scanner replaced it, and the reason is in a comment.
+3. All `<section>` tags neutralised → the vacuity guard fired (**"found no `<section>` tags anywhere
+   in src/"**) rather than printing a green zero — the §40(d)/§42(c) shape.
+4. **`stripComments` disabled** → **4 false positives**, because `Learn.jsx`'s own convention comment
+   discusses `<section>` in prose. So the comment handling is load-bearing and now proven so, not
+   assumed. After all four, the three `src/` files are byte-identical to their pre-control hashes
+   (`c6cbb400…`, `ae1a0ec8…`, `a93e14d6…`).
+
+#### Step 5 — adversarial self-check
+
+- **Blindspot register** — no regression. On the diff's added lines, Dalio/`principles`,
+  advice-adjacent verbs (`buy `/`sell `/`recommend`/`should invest`/`guarantee`) and child-facing
+  framing return **0**; **control**: `aria-labelledby` returns **11** on the same lines, so the grep
+  reaches them. Two date matches, checked rather than waved past: both are `//` comments in
+  `scripts/check-data.mjs`, which never reaches a bundle, and follow the dated-record convention §43
+  already uses one line over. **`src/` gains zero dates** (`git diff -- src/ | grep -c` date shape =
+  **0**), so the Markets-tab stale-data fix is untouched.
+- **`DECISIONS.md` conflict** — none. No dependency, config or `localStorage` change
+  (`git diff -- src/ | grep -c localStorage` = **0**); state model, content-module and Vite decisions
+  all untouched.
+- **Already-done backlog item** — no, and this one needed care because item 82 is adjacent and closed.
+  `git log --all -S` finds **0** commits for `lesson-section-${sectionIndex}-title` and **0** for
+  `how-review-title`; **control**: the same pickaxe on `track-${tr.key}-title` returns **2**,
+  including `f20a2da` — item 82's own commit, whose subject ("Name the three Learn **track**
+  landmarks") is itself the evidence that item 82 scoped only Learn. `AGENT_LOG.archive.md` returns
+  **0** for both new ids; **control**: `aria-labelledby` returns **22** and `item 82` returns **3**
+  there, so the archive grep reaches. This extends a closed item's convention to sites it excluded;
+  it does not redo it.
+  **A control that did not fire, and the correction:** the first pickaxe control used the string
+  `track-economy-title` and returned 0 — which would have made the target's 0 meaningless. The
+  instrument was fine; **the control was wrong**, because that id is composed at runtime from
+  `track-${tr.key}-title` and appears nowhere in source. Re-run with a real source string, it fired.
+- **Own verification claim** — reproducible from the commands above. The claim easiest to fake is
+  "clean on seven screens", which is why every row carries its screen-identity assertion and its
+  vacuous count, and why the stale-bundle near-miss is written up rather than quietly fixed: this run
+  *did* produce a false clean-looking reading once, and caught it only by reading the bundle name.
+  `git status` shows exactly the intended files; the owner's `UIUX/` and `drafts/` are untouched.
+  Owner tree at commit time: **`OWNER-TREE b19b57c69fdd307ae6180067c151c887b434478e9aa7889acf667413b6bb6cce`
+  (3 tracked modified, 52 untracked)**.
+
+#### Next
+
+- **Item 107** (filed this run): the sweep has no probe for an unnamed region, so it reported
+  `#/lesson/1` clean on precisely this defect. One probe plus one planted control; it must ship with
+  the plant or §43(c) fails it.
+- **Item 106** (`h1 → h3`) is unchanged and still needs the other 38 lessons sampled — which means
+  seeding `localStorage`, since a locked lesson's URL redirects to `#/learn`.
+- **Three things this run looked at and deliberately did not file**, so the next run does not
+  re-derive them: the Glossary's `<dl>/<dt>/<dd>` is correct semantics and wants no headings; the
+  welcome dialog already has initial focus, `Escape` to dismiss and a `Tab` trap
+  (`src/App.jsx:102-105`); and the quiz `svg`s are already `aria-hidden`.
+- **Item 26 / item 27** (both need a re-scope before picking) and **W-5.2's pick list** remain the
+  alternatives.
+- **Do NOT pick item 94** — optional track, four "(Beta)" languages, parked behind O-1 by its own box.
+
+**Unchanged and still the entire critical path, both owner-blocked: O-1** (a deployed URL) and
+**O-2** (item 18, an analytics account). Every body section of all 40 lessons is now a named landmark
+in five languages. **No screen reader has ever reached one**, because the app has no URL.
