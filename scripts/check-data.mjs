@@ -5218,10 +5218,21 @@ if (keyedGroupsChecked < 4) {
 // (c) selftest() still plants a control for every probe it claims to cover, so
 //     the probe list and the expectation list cannot drift apart.
 //
+// (d) the focus capability is MEASURED, not inferred from `document.hasFocus()`
+//     — added 2026-08-26 with backlog item 108, which is the defect this
+//     guards against recurring. The sweep used to gate its focus probe on
+//     hasFocus(), a proxy; on 2026-08-25 the proxy read true on a session
+//     where a native listener recorded zero focus events, which flips the
+//     probe from UNAVAILABLE to VACUOUS and would mark a blind probe
+//     available. A proxy signal fails green and a planted control fails
+//     loud, so the proxy must not come back as a gate.
+//
 // WHAT IS DELIBERATELY NOT CHECKED. Not whether the app passes the sweep: that
 // needs a browser and belongs in the run log, where the counts convention lives.
-// Not focus behavior — focus events provably do not fire in this harness, which
-// is why the sweep marks that probe UNAVAILABLE instead of green.
+// Not focus behavior itself — whether focus events fire and whether :focus
+// matches are properties of the harness, measured live by the sweep every run
+// (three separate signals; see its header note 2). This section checks only
+// that the sweep still measures them rather than assuming them.
 {
   const SWEEP = "scripts/a11y-sweep.js";
   const src = readFileSync(join(ROOT, SWEEP), "utf8");
@@ -5246,10 +5257,23 @@ if (keyedGroupsChecked < 4) {
     ['"REFUSED', "the refusal branch — the gate is only worth having if failing it stops the report"],
     ['"VACUOUS"', "the vacuous accounting — a probe that scanned nothing must not be counted as a pass"],
     ['"UNAVAILABLE"', "the per-capability opt-out — focus events do not fire in this harness and must report unavailable rather than clean"],
+    ["function measureFocus()", "the planted focus control (item 108) — without it the focus capability goes back to being inferred from a proxy, and a proxy is what marked a blind probe available on 2026-08-25"],
+    ["focusSelectors: f.focusSelectors", "the second focus capability — `:focus` matching fails independently of focus events, and it is the one a :focus-visible probe actually needs"],
   ]) {
     if (!src.includes(needle)) {
       sectionOk = false;
       fail(`§43: ${SWEEP} no longer contains \`${needle}\` — ${why}.`);
+    }
+  }
+
+  // (d) The proxy must not creep back. `hasFocus()` is fine as recorded evidence
+  // — the sweep still reports it, and that is how a future divergence becomes
+  // visible — but it must not be what a capability is assigned FROM.
+  for (const m of src.matchAll(/(focusEvents|focusSelectors)\s*:\s*([^,\n]+)/g)) {
+    const rhs = m[2].trim();
+    if (/hasFocus\s*\(/.test(rhs) || /visibilityState/.test(rhs)) {
+      sectionOk = false;
+      fail(`§43(d): ${SWEEP} assigns capability \`${m[1]}\` from \`${rhs}\` — that is the item-108 proxy returning. document.hasFocus() is a PROXY for "do focus events fire", and on 2026-08-25 it read true on a session where a native listener recorded zero. Measure the capability with a planted control (measureFocus()) and keep hasFocus() as evidence only.`);
     }
   }
 

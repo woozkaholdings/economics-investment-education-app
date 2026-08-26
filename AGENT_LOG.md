@@ -2480,7 +2480,59 @@ for the history. No open P1/P2 items.
       a real second instance of a defect just fixed or retires the question. But Practice is a less
       trafficked screen than the lesson reader, and nobody has opened the app (O-1).
 
-108. **[Tooling/Measurement — filed 2026-08-25 by the run that shipped item 107, as its stated
+116. **[A11y/Tooling — filed 2026-08-26 by the run that closed item 108, as its stated residual
+    rather than smuggled into the same commit.] The focus-dependent probe class is still
+    UNWRITTEN, and item 108 removed the last excuse for that being invisible.**
+    - **State:** `focusVisibleOnTab` is a **stub** — `run()` returns `{findings: [], scanned: 0}` and
+      always has. It is now correctly gated on a *measured* `focusSelectors` rather than a proxy, so
+      it reports `UNAVAILABLE` honestly instead of `VACUOUS` misleadingly. **But honest silence is
+      still silence**: nothing in this repo has ever checked focus-visible styling, focus order, or
+      the first-run dialog's focus trap on a rendered tree.
+    - **What blocks it is the harness, and that is now measured rather than assumed:** in this
+      preview pane `:focus` matches nothing and focus events do not fire (2026-08-26, four isolation
+      controls — see the run log). A probe written today would report `UNAVAILABLE` on every run.
+    - **So the real question is not "write the probe" but "can any harness here focus a document?"**
+      Cheap first step, and it is a *measurement*, not a build: find out whether any available
+      browser surface reports `document.hasFocus() === true`. The sweep now prints `hasFocus()` and
+      the measured capabilities side by side in `focusEvidence`, so **any future run that pastes it
+      is already collecting the data** — a run that sees them disagree should say so, since that is
+      the unreproduced 2026-08-25 divergence recurring.
+    - **Honest priority: low-medium, and it is genuinely blocked, not deferred.** The focus trap
+      (`§47`) and heading order already have *static* guards in `check-data.mjs`; this would be the
+      rendered-tree half. Do not write the probe until a harness exists to run it — a probe that is
+      structurally `UNAVAILABLE` is a fifth thing to maintain and a zero nobody can read.
+
+108. **✅ DONE 2026-08-26 (scheduled dev-agent). The focus capability is now MEASURED by a planted
+    control (`measureFocus()`) instead of inferred from `document.hasFocus()`, and
+    `check-data.mjs` §43(d) fails if the proxy ever returns. Residual filed as item 116.**
+    - **PREMISE CONFIRMED in its reasoning, EXTENDED in its facts, and the extension changed the
+      implementation.** The item framed this as two signals that might diverge — `hasFocus()` vs.
+      focus *events*. Measured live, there are **three**, and they fail independently: (a)
+      `document.activeElement` is correct, (b) focus events do not fire, (c) **the focused element
+      does not match `:focus`/`:focus-visible`** — (c) being new, unmentioned by the header, and the
+      one a probe named `focusVisibleOnTab` actually depends on. The probe was gated on (b) and now
+      declares `needs: "focusSelectors"`. **Gating it on events would have marked it available on a
+      session where the selector matches nothing** — the same lying-green shape one level up.
+    - **The item’s prescribed experiment could NOT be run, and the fix did not need it.** It asked
+      for the native-listener control "in a session where `hasFocus()` is true". `hasFocus()` read
+      **false** on every attempt this run, including after fronting the tab and calling
+      `window.focus()`. **The 2026-08-25 divergence was not reproduced and its direction is still
+      unknown.** Direct measurement is correct under either answer, which is why the item resolved
+      anyway — and the sweep now emits `hasFocus()` alongside the measured capabilities, so the next
+      occurrence documents itself instead of costing another run.
+    - **Isolation controls, since a bare "0 events" has boring explanations:** `click` delivers (1),
+      a synthetic `FocusEvent` reaches the same listener (1), `button:enabled` matches 19. One
+      mechanism covers all three observations — the document has no focused area, so per spec no
+      focus event fires and nothing matches `:focus`, while `activeElement` still names the element
+      that *would* be focused.
+    - **A control fired for its own reasons here too.** Measuring the native count and the synthetic
+      control on the *same* plant let the synthetic dispatch inflate the native counter to 1, a
+      fabricated "events work". Hence **two plants**. Caught only by expecting a zero.
+    - **Generalized rule, worth more than this item: a proxy signal fails green, a planted control
+      fails loud.** A capability that *can* be measured directly must never be inferred.
+
+    ORIGINAL TEXT (retained — it is what was measured):
+    **[Tooling/Measurement — filed 2026-08-25 by the run that shipped item 107, as its stated
     residual rather than smuggled into the same commit.] `scripts/a11y-sweep.js`’s header records
     that `document.hasFocus()` is *permanently false* in this preview pane. On 2026-08-25 it was
     TRUE for an entire session, and that disagreement is unexplained.**
@@ -5490,6 +5542,109 @@ producing a plausible-looking file.
 - **Item 115** is now the top process item, and it is an **owner decision**, not a pick.
 - **Item 114** (small): "base money supply" → "monetary base" in five languages.
 - **Item 108**: `focusVisibleOnTab` is `UNAVAILABLE` on 13 of 13 states, so it has never run.
+- **Do NOT pick item 94** — optional track, four "(Beta)" languages, parked behind O-1.
+
+**Unchanged and still the entire critical path, both owner-blocked: O-1** (a deployed URL) and **O-2**
+(item 18, an analytics account).
+
+### 2026-08-26 (scheduled dev-agent) — the focus capability was a proxy, and a proxy fails green (item 108)
+
+**Picked item 108**, filed 2026-08-25 by the item-107 run as its stated residual. Working tree was clean
+apart from the owner's untracked `UIUX/` and `drafts/`, neither touched. `OWNER-TREE
+c2331799fd3ee413aca864fd82d247a35ea31b01a70a6c4e37b00f6aad9105b2 (0 tracked modified, 52 untracked)` at
+open; `8fb27692…` at commit, the delta being only this run's two files. HEAD `d5fac15` throughout.
+
+#### Step 3.5 — the premise re-measured, and it added a third signal the item did not know about
+
+Built `dist/`, served it on `:8837`, `preview_start` with a plain URL, `mobile` preset before measuring
+(the `Viewport: 0x0` rule). **The item's reasoning was exact and its conclusion was incomplete.**
+
+- **Confirmed by reading the code path:** `VACUOUS` from `focusVisibleOnTab` is reachable *only* when
+  `caps.focusEvents` is true — the probe is a stub returning `scanned: 0`, so if it runs at all it is
+  vacuous. The item's inference from the 08-25 sweep output holds.
+- **Could NOT reproduce the 08-25 session.** `document.hasFocus()` read **false** on every attempt this
+  run, including after `tabs_select` fronted the tab and after an explicit `window.focus()`.
+  `visibilityState` stayed `"hidden"`. So the divergence the item wants explained did not recur, and
+  **this run cannot say which way it breaks.** That is recorded as a limit, not papered over.
+- **The native-listener control ran anyway, and it is three signals, not two.** With a real button and a
+  real listener: native focus events **0**, `activeElement` **correct**, and — new — the focused element
+  **does not match `:focus`** and `querySelectorAll(":focus-visible")` returns **0**. The header's note 2
+  named only the first two. **This changed the implementation**: a probe called `focusVisibleOnTab` reads
+  the *selector*, so gating it on *events* is gating it on the wrong one of two independently-failing
+  signals. It now declares `needs: "focusSelectors"`.
+- **Four isolation controls, because "returns 0" needs an alternative explanation ruled out:** `click`
+  events deliver (1), a **synthetic** `FocusEvent` reaches the same listener (1), the selector engine
+  handles pseudo-classes (`button:enabled` = **19**, `:disabled` = 0), and `:focus-visible` does not
+  throw. Events are not broken, focus listeners are not broken, the selector engine is not broken. One
+  mechanism explains all three observations: the document has no focused area, so per spec no focus event
+  fires and nothing matches `:focus`, while `activeElement` still names the element that *would* be focused.
+- **A control fired for its own reasons and was caught by expecting a zero.** The first attempt measured
+  the native count and the synthetic control on the *same* button, so the synthetic dispatch incremented
+  the native counter to 1 — a fabricated "events work". `measureFocus()` therefore uses **two plants**,
+  and the comment says why.
+
+#### What shipped
+
+`scripts/a11y-sweep.js` — **`measureFocus()`**, which plants a button and a listener and reads the answer
+instead of inferring it. `focusEvents` is now "a real `.focus()` actually delivered an event"; **new
+`focusSelectors`** is "the focused element actually matches `:focus`". `hasFocus()` is retained as
+**recorded evidence**, not as a gate, so a future session where the two disagree prints the divergence in
+the sweep's own output rather than requiring another run to notice it. The detector carries its own
+control — a synthetic dispatch at the second plant — because a detector answering `false` because it is
+broken is indistinguishable from one answering `false` about a blind harness, and it fails in the
+direction that silently disables probes forever. Header note 2 and the item-105 premise correction are
+rewritten to match. `check-data.mjs` §43 gains **(d)**, which fails if either capability is ever assigned
+from `hasFocus()`/`visibilityState` again, plus two needles.
+
+**The general rule this is an instance of, and the reason the change is worth more than the probe it
+fixes: a proxy signal fails green, a planted control fails loud.**
+
+#### Verification
+
+- `npm test` — **0 failures, 2 warnings** (the standing translation-coverage and completeness warnings).
+  §43 reports 10 probes declared, 9 layout-gated, all with planted controls.
+- **§43(d) proved able to fail, both modes**, each restored from a scratchpad copy (never
+  `git checkout --`) with the sha256 verified identical afterwards (`c9ca89aa…` before and after):
+  re-injecting `focusEvents: document.hasFocus()` fails §43(d) by name; renaming `measureFocus` fails the
+  needle. The injection was confirmed present in the file before each run.
+- **Live, in the built app at `#/learn`:** `A11ySweep.selftest()` → **PASS, 9/9 controls fired,
+  `plantsRemoved: true`** — which independently proves `measureFocus()`'s plant does not leak, since the
+  cleanup assertion scans for exactly its `data-a11y-selftest` marker. `A11ySweep.run()` → `0 finding(s);
+  2 vacuous; 1 unavailable`, with `focusVisibleOnTab` now **UNAVAILABLE** and carrying
+  `focusEvidence: "nativeFocusEvents=0 matches(:focus)=false activeElementCorrect=true
+  syntheticControl=fired hasFocus()=false visibilityState=hidden"`.
+- **The instrument caught this run's own contamination**, which is the best evidence it works: the first
+  `run()` reported one finding, `smallTargets: 52x22 < 44x44: button#zz-focus-btn`, which was the ad-hoc
+  plant from the step-3.5 measurement — still present because the earlier `navigate` was a **hash-only**
+  change and therefore never reloaded the DOM. Removed it; the finding went to 0.
+- **Discrimination test, because "always false" and "correctly false" look identical.** Ran
+  `measureFocus()`'s exact core under a temporarily patched `HTMLElement.prototype.focus` that dispatches
+  a real `FocusEvent` — i.e. a harness where focus works. It returned **`focusEvents: true`**, and
+  returned to `false` once the patch was reverted. The new signal is not a dead one.
+
+#### Step 5 — adversarial self-check
+
+- **Blindspot register** — no `src/` file, no content module, no rendered UI touched; this is one browser
+  script and one check script. No Dalio reference, no advice-adjacent language, no kids framing. The dates
+  added are dates *of measurements inside comments*, not a hardcoded current date on a user-facing
+  surface, which is what the Markets-tab fix closed.
+- **`DECISIONS.md` conflict** — none; no architectural surface (not state, not content format, not build).
+- **Already-done backlog item** — item 108 is open and unclaimed. This modifies the instrument items 105
+  and 107 shipped without undoing either: 105's per-capability gating design is *kept* and made stricter,
+  and 107's `unnamedRegions` probe still fires its control (verified above, not assumed).
+- **Own verification claim** — the one a reviewer could not reproduce is the live block, because its
+  values depend on the harness's focus state. Stated plainly: **on a session where `hasFocus()` is true
+  the capability values may differ, and that is the point of the change.** What *is* reproducible from the
+  commands above is `npm test`, both injection failures, and the discrimination test.
+- **The honest gap** — the 08-25 divergence was not reproduced and its direction is still unknown. The fix
+  does not depend on knowing: direct measurement is correct under either answer, and the sweep now reports
+  both signals so the next occurrence documents itself.
+
+#### Next
+
+- **Item 115** remains the top process item and is an **owner decision**, not a pick.
+- **Item 114** (small): "base money supply" → "monetary base" in five languages.
+- **Item 116** (new, filed by this run): the focus-dependent probe class is still unwritten.
 - **Do NOT pick item 94** — optional track, four "(Beta)" languages, parked behind O-1.
 
 **Unchanged and still the entire critical path, both owner-blocked: O-1** (a deployed URL) and **O-2**

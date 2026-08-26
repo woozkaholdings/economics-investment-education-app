@@ -22,12 +22,22 @@
  *      getBoundingClientRect() read 0. Geometry probes (hit targets, overflow) then return zero
  *      findings because nothing has a size, not because everything is fine. Taking a screenshot
  *      forces layout; this script HARD-GATES on it and refuses to report at all without it.
- *   2. FOCUS EVENTS NEVER FIRE. Measured 2026-08-25 with a native listener as the control:
- *      `document.hasFocus()` is false and `visibilityState` is "hidden" in this pane EVEN WHEN
- *      FRONTED, and a real `focus` listener on a real button recorded ZERO events across separate
- *      calls — while `document.activeElement` was correct the whole time. So: activeElement
- *      assertions are TRUSTWORTHY here; anything built on focus/blur EVENTS is not, and must
- *      report UNAVAILABLE rather than 0.
+ *   2. THE FOCUS STATE MACHINE IS DEAD, AND IT IS THREE SIGNALS, NOT ONE. Re-measured
+ *      2026-08-26 (item 108) with four controls, because the original note conflated things
+ *      that fail separately and gated a probe on the wrong one. In this pane, with
+ *      `document.hasFocus()` false and `visibilityState` "hidden" EVEN WHEN FRONTED:
+ *        (a) `document.activeElement` is CORRECT after .focus()            → TRUSTWORTHY
+ *        (b) a real `focus` listener on a real button gets ZERO events     → UNAVAILABLE
+ *        (c) the focused element does NOT match `:focus`/`:focus-visible`  → UNAVAILABLE
+ *      (c) is new and is the one that matters for a probe named focusVisibleOnTab, which had
+ *      been gated on events. The isolation controls rule out the boring explanations: `click`
+ *      events deliver fine (1), a SYNTHETIC FocusEvent reaches the same listener fine (1), and
+ *      the selector engine handles pseudo-classes fine (`button:enabled` = 19). Events and
+ *      selectors are not broken — the document simply has no focused area, so per spec no focus
+ *      event is fired and nothing matches :focus, while activeElement still names the element
+ *      that WOULD be focused. That single mechanism explains (a), (b) and (c) at once.
+ *      NOTE: (b) and (c) are no longer asserted from this comment — capabilities() plants a
+ *      button and measures both every run, so a session where they differ reports itself.
  *   3. READING IN THE SAME CALL THAT CLICKED. React commits asynchronously, so a same-call read
  *      returns the PREVIOUS render. Always click in one javascript_tool call and read in the next.
  *
@@ -38,12 +48,88 @@
  * measured 139x44, document 2944px tall, screenshot correct). That gate would disable the entire
  * instrument forever and report nothing — the same silent-zero failure in a new costume. The gate
  * implemented here is per-capability instead: hard-gate on the thing the probes actually need
- * (live layout, which IS achievable), and mark only the focus-EVENT-dependent probes unavailable.
+ * (live layout, which IS achievable), and mark only the focus-dependent probes unavailable.
+ *
+ * SECOND CORRECTION, 2026-08-26 (item 108), and it is the same mistake one level up. Rejecting
+ * `hasFocus()` as a REFUSAL gate was right; keeping it as the CAPABILITY signal was not. It is a
+ * proxy, and on 2026-08-25 it disagreed with the thing it stands for — reading true while a
+ * native listener saw no events, which flipped focusVisibleOnTab from UNAVAILABLE to VACUOUS and
+ * would mark a blind probe available. A capability that CAN be measured directly must never be
+ * inferred: capabilities() now plants a button and a listener and reads the answer. The general
+ * rule, worth more than this instance: a proxy signal fails green, a planted control fails loud.
  */
 (function () {
   "use strict";
 
   var SKIP_ATTR = "data-a11y-selftest";
+
+  /* ── focus capability, MEASURED rather than inferred ───────────────────────────────────────
+   * Backlog item 108, 2026-08-26. Until this run the focus capability was `document.hasFocus()`
+   * — a PROXY for "do focus events fire", and the two have provably disagreed. On 2026-08-25
+   * five sweeps reported `focusVisibleOnTab` VACUOUS rather than UNAVAILABLE, which happens only
+   * when hasFocus() is true, while this file's header records a native listener seeing ZERO
+   * events on the same day. A proxy that can read "available" on a session where the probe is
+   * blind is precisely how a probe gets marked green while measuring nothing — the lying zero
+   * this whole file exists to prevent, one level up in the instrument.
+   *
+   * So plant a real button and a real listener and look. Two capabilities come back, because
+   * they fail SEPARATELY and the header only ever named the first:
+   *   focusEvents    — a real .focus() actually DELIVERED a focus event to a real listener
+   *   focusSelectors — the focused element actually MATCHES :focus
+   * Measured in this pane 2026-08-26: `document.activeElement` is correct, and BOTH of these are
+   * false. A probe named `focusVisibleOnTab` needs the SECOND one, which nothing had checked.
+   *
+   * THE DETECTOR CARRIES ITS OWN CONTROL. A detector that answers `false` because it is broken
+   * is indistinguishable from one answering `false` about a blind harness — and it fails safe
+   * in the direction that silently disables probes forever. So a synthetic FocusEvent is
+   * dispatched at a SECOND plant: if that does not arrive, listeners are broken here and the
+   * native `false` means nothing. It is reported alongside the answer, never folded into it.
+   * Two plants and not one on purpose: measuring both on the same element lets the synthetic
+   * dispatch inflate the native counter, which is exactly what it did on the first attempt at
+   * this measurement — a control firing for its own reasons, caught only by expecting 0. */
+  function measureFocus() {
+    var host = document.createElement("div");
+    host.setAttribute(SKIP_ATTR, "focus-capability");
+    host.style.cssText = "position:fixed;left:-9999px;top:0;width:1px;height:1px;";
+    var native = document.createElement("button");   // plant 1: the real question
+    var synth = document.createElement("button");    // plant 2: the detector's own control
+    host.appendChild(native);
+    host.appendChild(synth);
+    document.body.appendChild(host);
+
+    var nativeSeen = 0, synthSeen = 0;
+    native.addEventListener("focus", function () { nativeSeen++; });
+    synth.addEventListener("focus", function () { synthSeen++; });
+
+    var prev = document.activeElement;
+    var matched = false, active = false;
+    try {
+      native.focus();
+      active = document.activeElement === native;   // trustworthy here even when events are not
+      matched = native.matches(":focus");
+    } catch (e) { /* fall through as unavailable */ }
+    var nativeDelivered = nativeSeen;               // FREEZE before the synthetic dispatch
+
+    try { synth.dispatchEvent(new FocusEvent("focus")); } catch (e) { /* detector broken */ }
+    var detectorOk = synthSeen > 0;
+
+    host.remove();
+    // Put focus back where it was; on a harness where focus events DO fire, silently stealing
+    // focus from the app is the instrument changing what it measures.
+    if (prev && prev !== document.body && typeof prev.focus === "function") {
+      try { prev.focus(); } catch (e) { /* ignore */ }
+    }
+
+    return {
+      focusEvents: nativeDelivered > 0,
+      focusSelectors: matched,
+      detectorOk: detectorOk,
+      evidence: "nativeFocusEvents=" + nativeDelivered + " matches(:focus)=" + matched +
+        " activeElementCorrect=" + active + " syntheticControl=" +
+        (detectorOk ? "fired" : "DID NOT FIRE — this detector is broken, its false means nothing") +
+        " hasFocus()=" + document.hasFocus() + " visibilityState=" + document.visibilityState
+    };
+  }
 
   /* ── capability detection ──────────────────────────────────────────────────────────────────
    * Not decoration. Each probe declares what it needs; a probe whose capability is missing
@@ -54,11 +140,17 @@
       var r = sample[i].getBoundingClientRect();
       if (r.width > 0 && r.height > 0) sized++;
     }
+    var f = measureFocus();
     return {
       layout: window.innerWidth > 0 && window.innerHeight > 0 && sized > 0,
       layoutEvidence: "innerWidth=" + window.innerWidth + " sizedSample=" + sized + "/" +
         Math.min(sample.length, 40),
-      focusEvents: document.hasFocus(),
+      focusEvents: f.focusEvents,
+      focusSelectors: f.focusSelectors,
+      focusEvidence: f.evidence,
+      // Kept as RECORDED EVIDENCE, not as a gate. It is the signal the capability used to be
+      // inferred from, so a future session where it disagrees with focusEvidence above is the
+      // item-108 divergence reproducing, and the sweep's own output will show it.
       hasFocus: document.hasFocus(),
       visibilityState: document.visibilityState
     };
@@ -300,11 +392,15 @@
       return { findings: out, scanned: scanned };
     } },
 
-    /* Declared, gated OFF, and never silently green: focus EVENTS do not fire in this pane.
-     * activeElement-based assertions are fine and belong in a run's own ad-hoc checks. */
-    focusVisibleOnTab: { needs: "focusEvents", run: function () {
+    /* Declared, gated OFF, and never silently green. `needs` is `focusSelectors` and not
+     * `focusEvents` deliberately: a :focus-visible probe reads the SELECTOR, and 2026-08-26
+     * measured the selector failing here independently of the events (item 108). Gating it on
+     * events would have marked it available on a session where :focus matches nothing — a zero
+     * that looks like "no focus-visible defects" and means "the instrument is blind". Both
+     * capabilities are now measured directly rather than inferred; see measureFocus(). */
+    focusVisibleOnTab: { needs: "focusSelectors", run: function () {
       return { findings: [], scanned: 0,
-               note: "focus/blur events do not fire in this harness; see the header." };
+               note: "gated on measured :focus matching, not on document.hasFocus(); see the header." };
     } }
   };
 
