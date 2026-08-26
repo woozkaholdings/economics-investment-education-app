@@ -300,6 +300,26 @@ export const lessons = [
     subtitle: {"en":"A report is a record; a score is a number calculated from it — and that means everyone has more than one score","es":"Un informe es un registro; un puntaje es un número calculado a partir de él — lo que significa que todos tienen más de un puntaje","ko":"보고서는 기록이고 점수는 그것으로 계산된 숫자입니다 — 즉 누구나 하나 이상의 점수를 가집니다","zh":"报告是记录，评分是根据记录计算出的数字——这意味着每个人都不止一个信用评分","ja":"報告書は記録であり、スコアはそこから計算される数字です——つまり誰もが複数のスコアを持っています"},
   },
   {
+    id: 41, track: "money", icon: "🎓", color: "#0e7490", minutes: 3,
+    title: {"en":"The Subject That Wasn't on the Timetable","es":"La Materia Que No Estaba en el Horario","ko":"시간표에 없던 과목","zh":"课程表上没有的那门课","ja":"時間割になかった科目"},
+    subtitle: {"en":"You were taught to earn money, not to understand it","es":"Te enseñaron a ganar dinero, no a entenderlo","ko":"당신은 돈을 버는 법은 배웠지만, 이해하는 법은 배우지 못했습니다","zh":"你被教会了如何赚钱，却没人教你如何理解它","ja":"お金の稼ぎ方は教わったが、理解の仕方は教わらなかった"},
+  },
+  {
+    id: 42, track: "money", icon: "🧾", color: "#7c3aed", minutes: 4,
+    title: {"en":"Four Ways Money Arrives","es":"Cuatro Formas en que Llega el Dinero","ko":"돈이 들어오는 네 가지 방식","zh":"钱抵达的四种方式","ja":"お金が届く4つの方法"},
+    subtitle: {"en":"The same $1,000 can reach you in very different ways","es":"Los mismos $1,000 pueden llegarte de maneras muy distintas","ko":"같은 $1,000도 아주 다른 방식으로 들어올 수 있습니다","zh":"同样的1000美元，抵达你手中的方式可能截然不同","ja":"同じ1,000ドルでも、届き方はまったく異なることがある"},
+  },
+  {
+    id: 43, track: "money", icon: "⏸️", color: "#be123c", minutes: 4,
+    title: {"en":"Does It Stop When You Stop?","es":"¿Se Detiene Cuando Tú Te Detienes?","ko":"당신이 멈추면, 그것도 멈추는가?","zh":"你停下来，它也会停下来吗？","ja":"あなたが止まれば、それも止まるのか？"},
+    subtitle: {"en":"One question separates the four more sharply than their names do","es":"Una sola pregunta separa a los cuatro con más claridad que sus nombres","ko":"이름보다 이 질문 하나가 네 가지를 더 명확하게 구분합니다","zh":"一个问题比这四个名称本身更能把它们区分开","ja":"名前よりも、この一つの問いの方がこの4つをはっきり分ける"},
+  },
+  {
+    id: 44, track: "money", icon: "🪜", color: "#4d7c0f", minutes: 4,
+    title: {"en":"The Part the Word “Passive” Leaves Out","es":"Lo Que la Palabra “Pasivo” Deja Fuera","ko":"‘수동적’이라는 말이 빠뜨리는 부분","zh":"“被动”这个词遗漏的部分","ja":"「不労」という言葉が省略している部分"},
+    subtitle: {"en":"Every income that doesn't need your hours needed something else first","es":"Todo ingreso que no necesita tus horas necesitó otra cosa primero","ko":"당신의 시간이 필요 없는 소득은 모두 먼저 다른 무언가를 필요로 했습니다","zh":"不需要你时间的收入，都需要先付出别的东西","ja":"あなたの時間を必要としない収入は、すべて先に何か別のものを必要とした"},
+  },
+  {
     id: 16, track: "money", icon: "🧭", color: "#15803d", minutes: 5,
     title: {"en":"Does It Put Money In Your Pocket, or Take It Out?","es":"¿Te Mete Dinero en el Bolsillo, o Te lo Saca?","ko":"내 주머니에 돈을 넣어주는가, 빼가는가?","zh":"它是把钱放进你的口袋，还是拿走？","ja":"それは財布にお金を入れるのか、持ち出すのか？"},
     subtitle: {"en":"Two purchases can feel identical at the register and turn out to be opposites years later","es":"Dos compras pueden sentirse idénticas al pagar y ser opuestas años después","ko":"계산대에서는 똑같이 느껴진 두 소비가 몇 년 뒤에는 정반대일 수 있습니다","zh":"两笔在收银台感觉完全一样的消费，几年后可能截然相反","ja":"レジでは同じに感じた2つの買い物が、数年後には正反対になることがあります"},

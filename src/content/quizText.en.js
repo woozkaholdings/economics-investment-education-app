@@ -434,5 +434,45 @@ export const quizText = [
       "Loss aversion — she's trying to avoid the pain of admitting a loss"
     ],
     "explain": "This is overconfidence after a lucky outcome (self-attribution bias): crediting a win to one's own skill and increasing risk-taking as a result, without weighing how much of the outcome was actually luck. FOMO (option 1, “Everyone Can't Be Wrong — Can They?”) is about copying what other people are doing, which isn't what's driving Maria here — no one else's behavior is mentioned. Sunk cost (option 0) is about being influenced by money already spent, and loss aversion (option 3, “Why Does Losing $50 Hurt More Than Finding $50 Feels Good?”) is about the asymmetric pain of a loss — neither fits a story about a single win driving more risk-taking."
+  },
+  {
+    "q": "Why is personal finance largely absent from most school curricula?",
+    "opts": [
+      "There is nothing useful that could be taught about it",
+      "Curricula favour examinable subjects, and money rules are local and change often",
+      "It is deliberately withheld to keep people in debt",
+      "Every country already teaches it thoroughly"
+    ],
+    "explain": "Curricula are built around examinable, standardizable subjects, and money rules differ by country and change every few years — so the topic is awkward to standardize and goes stale quickly. It fell between subjects rather than being withheld on purpose. The effect on you is the same either way, which is why it's worth naming."
+  },
+  {
+    "q": "Priya works extra shifts; Tom collects rent on an apartment he owns. Both receive about $1,000. What is the most accurate thing to say about the two?",
+    "opts": [
+      "Tom's $1,000 is worth more than Priya's",
+      "They are identical, since the amounts match",
+      "They arrived by different mechanisms, which differ in what they demand and what can go wrong",
+      "Only Priya's counts as real income"
+    ],
+    "explain": "The amounts are the same and neither is worth more per pound. What differs is the mechanism: Priya's is paid for hours she worked, Tom's is produced by an asset he had to buy first, and each carries its own demands and its own ways of failing — an empty apartment pays nothing, while a shift always pays."
+  },
+  {
+    "q": "Alina owns a small cleaning company with one employee and works in it herself. If she stopped working for three months, what would most likely happen to her business income?",
+    "opts": [
+      "It would stay exactly the same, since she owns the business",
+      "It would fall to zero immediately, like a wage",
+      "It would shrink roughly in proportion to how much the business depended on her personally",
+      "It would increase, because she stopped taking pay"
+    ],
+    "explain": "Business income sits between a wage and a passive source. The parts that run without her — her employee's work, existing customers — carry on; the parts that were really her own labour stop. In a two-person company that personal share is large, so the income shrinks substantially without disappearing."
+  },
+  {
+    "q": "What does the phrase 'passive income' tend to leave out?",
+    "opts": [
+      "That it is always larger than a wage",
+      "The capital, time, skill or risk required up front — and that it lacks a wage's protections",
+      "That it is available to anyone immediately at no cost",
+      "That it is taxed identically to wages everywhere"
+    ],
+    "explain": "'Passive' describes only the final stage, once something is already built or bought. Getting there takes capital, years, skill or risk, and the result gives up protections a wage has — legal minimums, notice periods, and being paid regardless of how the business did. It isn't a better rung on a ladder; it's a different trade."
   }
 ];

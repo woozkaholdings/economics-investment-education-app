@@ -434,5 +434,45 @@ export const quizText = [
       "Aversión a la pérdida — está tratando de evitar el dolor de admitir una pérdida"
     ],
     "explain": "Esto es sobreconfianza tras un resultado afortunado (sesgo de autoatribución): atribuir una victoria a la propia habilidad y aumentar la toma de riesgos como resultado, sin sopesar cuánto del resultado fue en realidad suerte. El FOMO (opción 1, “Tanta Gente No Puede Estar Equivocada, ¿Verdad?”) trata de copiar lo que hacen otras personas, que no es lo que está impulsando a María aquí — no se menciona el comportamiento de nadie más. El costo hundido (opción 0) trata de dejarse influir por dinero ya gastado, y la aversión a la pérdida (opción 3, “¿Por Qué Perder $50 Duele Más Que Encontrar $50 se Siente Bien?”) trata del dolor asimétrico de una pérdida — ninguna encaja con una historia sobre una sola victoria que impulsa más toma de riesgos."
+  },
+  {
+    "q": "¿Por qué las finanzas personales están en gran parte ausentes de la mayoría de los planes de estudio escolares?",
+    "opts": [
+      "No hay nada útil que se pudiera enseñar al respecto",
+      "Los planes de estudio favorecen las materias evaluables, y las reglas del dinero son locales y cambian con frecuencia",
+      "Se oculta deliberadamente para mantener a la gente endeudada",
+      "Todos los países ya la enseñan a fondo"
+    ],
+    "explain": "Los planes de estudio se construyen alrededor de materias evaluables y estandarizables, y las reglas del dinero varían según el país y cambian cada pocos años — así que el tema es difícil de estandarizar y queda obsoleto rápido. Cayó entre las materias en vez de ser ocultado a propósito. El efecto sobre ti es el mismo de cualquier forma, por eso vale la pena nombrarlo."
+  },
+  {
+    "q": "Priya trabaja turnos extra; Tom cobra el alquiler de un departamento que posee. Ambos reciben unos $1,000. ¿Cuál es la afirmación más precisa sobre los dos?",
+    "opts": [
+      "Los $1,000 de Tom valen más que los de Priya",
+      "Son idénticos, ya que las cantidades coinciden",
+      "Llegaron por mecanismos distintos, que difieren en lo que exigen y en lo que puede salir mal",
+      "Solo el de Priya cuenta como ingreso real"
+    ],
+    "explain": "Las cantidades son iguales y ninguna vale más por dólar. Lo que difiere es el mecanismo: el de Priya se paga por las horas que trabajó, el de Tom lo produce un activo que tuvo que comprar primero, y cada uno tiene sus propias exigencias y sus propias formas de fallar — un departamento vacío no paga nada, mientras que un turno siempre paga."
+  },
+  {
+    "q": "Alina es dueña de una pequeña empresa de limpieza con una empleada y también trabaja en ella. Si dejara de trabajar durante tres meses, ¿qué le pasaría más probablemente a su ingreso empresarial?",
+    "opts": [
+      "Se mantendría exactamente igual, ya que ella es dueña del negocio",
+      "Caería a cero de inmediato, como un sueldo",
+      "Se reduciría más o menos en proporción a cuánto dependía el negocio de ella personalmente",
+      "Aumentaría, porque ella dejó de cobrar"
+    ],
+    "explain": "El ingreso empresarial está a medio camino entre un sueldo y una fuente pasiva. Las partes que funcionan sin ella — el trabajo de su empleada, los clientes existentes — continúan; las partes que en realidad eran su propio trabajo se detienen. En una empresa de dos personas, esa porción personal es grande, así que el ingreso se reduce sustancialmente sin desaparecer."
+  },
+  {
+    "q": "¿Qué suele dejar fuera la frase 'ingreso pasivo'?",
+    "opts": [
+      "Que siempre es mayor que un sueldo",
+      "El capital, tiempo, habilidad o riesgo requeridos por adelantado — y que carece de las protecciones de un sueldo",
+      "Que está disponible para cualquiera de inmediato y sin costo",
+      "Que se grava de forma idéntica a los sueldos en todas partes"
+    ],
+    "explain": "'Pasivo' describe solo la etapa final, una vez que algo ya está construido o comprado. Llegar hasta ahí requiere capital, años, habilidad o riesgo, y el resultado renuncia a protecciones que sí tiene un sueldo — mínimos legales, períodos de preaviso, y cobrar sin importar cómo le fue al negocio. No es un peldaño mejor en una escalera; es un intercambio diferente."
   }
 ];

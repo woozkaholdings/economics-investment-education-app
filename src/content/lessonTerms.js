@@ -111,6 +111,11 @@ export const lessonTerms = {
   25: { 0: ["Inflation", "Stock", "Bond", "Interest Rate", "Savings Account"], 1: ["Emergency Fund", "Purchasing Power"] },
   26: { 1: ["Emergency Fund"] },
   28: { 0: ["Stock"] },
+  // 42/43/44 (the four-ways-money-arrives arc) each mention Ben's dividend;
+  // chipped at its first mention in each lesson.
+  42: { 0: ["Dividend"] },
+  43: { 0: ["Dividend"], 1: ["Emergency Fund"] },
+  44: { 0: ["Dividend"] },
 
   // ── Economy track ────────────────────────────────────────────────────────
   // 29 introduces credit a full lesson before 30 teaches it.
@@ -219,6 +224,7 @@ export const deliberatelyUnlinked = {
   },
   15: { Credit: "other-sense: credit reports and scores, not the macro aggregate" },
   17: { Inflation: "other-sense: lifestyle inflation, not the macroeconomic kind" },
+  41: { Credit: "other-sense: credit reporting rules, not credit as a macro aggregate" },
 
   // ── Economy track ────────────────────────────────────────────────────────
   30: { Credit: "defined-here" },

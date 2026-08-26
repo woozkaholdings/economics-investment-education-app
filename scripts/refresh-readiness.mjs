@@ -134,14 +134,31 @@ for (const ids of Object.values(tracks)) ids.sort((a, b) => a - b);
 // different measurement, which is why the floors are here and not decoration.
 const glossaryTerms = Object.keys(glossary).length;
 
-// §2.5 states each track as an id *range* ("1–28 (28)"), which is only honest
-// while the ids are contiguous. If a future lesson lands out of order the range
-// form silently starts lying, so it is checked below rather than assumed.
-const contiguous = (ids) => ids.every((id, i) => i === 0 || id === ids[i - 1] + 1);
+// §2.5 states each track as an id *range* ("1–28 (28)") — honest only while the
+// ids are one contiguous block. Money stopped being that 2026-08-25 (lessons
+// 41-44 joined 16-28 without a renumbering — see DECISIONS.md's 2026-08-25
+// Update), so `range()` below renders each contiguous RUN of a track's ids
+// separately and joins them with a comma ("16–28, 41–44 (17)"), collapsing to
+// the old single-range form whenever a track happens to be one run — which is
+// still every track but money today.
 const namedLessons = FIGURE_TRACKS.reduce((sum, t) => sum + (tracks[t]?.length || 0), 0);
+const runs = (ids) => {
+  const out = [];
+  let start = ids[0];
+  let prev = ids[0];
+  for (let i = 1; i <= ids.length; i++) {
+    const id = ids[i];
+    if (id !== prev + 1) {
+      out.push(start === prev ? `${start}` : `${start}–${prev}`);
+      start = id;
+    }
+    prev = id;
+  }
+  return out;
+};
 const range = (track) => {
   const ids = tracks[track];
-  return `${ids[0]}–${ids[ids.length - 1]} (${ids.length})`;
+  return `${runs(ids).join(", ")} (${ids.length})`;
 };
 
 // Floors, before anything is printed or written. A generate-and-diff guard is
@@ -174,15 +191,6 @@ const floors = [
   ],
   [quizData.length >= 20, `quiz questions ${quizData.length} (expect ≥20)`],
   [glossaryTerms >= 10, `glossary terms ${glossaryTerms} (expect ≥10)`],
-  // Not a floor on volume but on *shape*: §2.5's range form is unwritable if a
-  // track's ids have a hole in them, and writing "1–28 (27)" would be worse
-  // than writing nothing.
-  ...Object.entries(tracks).map(([t, ids]) => [
-    contiguous(ids),
-    `track "${t}" ids are not contiguous (${ids.join(", ")}) — LAUNCH_PLAN.md §2.5 states each ` +
-      `track as a range, which cannot describe this catalog. Change §2.5's table to a list and ` +
-      `this script's ${"`range()`"} with it, rather than letting the range round over the gap`,
-  ]),
 ];
 const broken = floors.filter(([ok]) => !ok).map(([, why]) => why);
 if (broken.length) {
@@ -261,7 +269,9 @@ const FIGURES = [
   ...FIGURE_TRACKS.map((t) => ({
     doc: PLAN,
     label: `§2.5 ${t}-track row`,
-    shape: new RegExp(String.raw`\`${t}\` \| \d+[–-]\d+ \(\d+\)`, "g"),
+    // A track's ids render as one or more contiguous RUNS joined by ", " —
+    // "29–40 (12)" for a single block, "16–28, 41–44 (17)" for a split one.
+    shape: new RegExp(String.raw`\`${t}\` \| \d+(?:[–-]\d+)?(?:, \d+(?:[–-]\d+)?)* \(\d+\)`, "g"),
     expected: `\`${t}\` | ` + range(t),
   })),
   {

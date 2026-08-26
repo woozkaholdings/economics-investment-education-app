@@ -190,5 +190,21 @@ export const quizMeta = [
   {
     "lesson": 28,
     "answer": 2
+  },
+  {
+    "lesson": 41,
+    "answer": 1
+  },
+  {
+    "lesson": 42,
+    "answer": 2
+  },
+  {
+    "lesson": 43,
+    "answer": 2
+  },
+  {
+    "lesson": 44,
+    "answer": 1
   }
 ];

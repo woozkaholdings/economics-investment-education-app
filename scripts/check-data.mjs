@@ -3106,7 +3106,17 @@ if (keyedGroupsChecked < 4) {
       // "1-28" stopped describing a live track and became the record of what
       // money was between the 2026-08-14 renumbering and that split.
       ["1-28", 1, "historical", "the money range between the 2026-08-14 renumbering and the 2026-08-18 three-track split"],
-      ["16-28", 1, "live", "money"],
+      // Reclassified 2026-08-25: lessons 41-44 were inserted at the FRONT of
+      // money's display order without renumbering (this repo's ids are never
+      // renumbered for a display-order change — see the 2026-08-18 Update
+      // below), so money's id set is now two disjoint blocks rather than one
+      // range. "16-28" alone stopped being a complete description of money the
+      // moment 41-44 joined it; it now stands alongside a second live claim,
+      // and both are required (see "live claims are a UNION, not a range"
+      // below). Two mentions: the 2026-08-18 Update, and the 2026-08-25 one
+      // that restates it alongside 41-44.
+      ["16-28", 2, "live", "money"],
+      ["41-44", 1, "live", "money"],
       ["1-15", 1, "live", "essentials"],
       // Two mentions since 2026-08-18: the original track table, plus the new
       // dated Update restating economy as the range that did NOT move.
@@ -3142,19 +3152,20 @@ if (keyedGroupsChecked < 4) {
       for (const [key, r] of Object.entries(current)) {
         if (!Number.isInteger(r.lo) || !Number.isInteger(r.hi)) {
           fail(`§29: track "${key}" yielded no lesson ids, so its range cannot be derived — the tree read is broken, not the document.`);
-        } else if (!r.contiguous) {
-          // Same argument refresh-readiness.mjs makes for §2.5: a range is only
-          // an honest description of a contiguous set. Without this, a track
-          // with a hole in it still produces a first/last pair, and DECISIONS.md
-          // could be certified as "matching the tree" against a range that
-          // skips lessons.
-          fail(
-            `§29: track "${key}" ids are not contiguous (${r.ids.join(", ")}), so "${r.lo}-${r.hi}" ` +
-              `is not a description of it. DECISIONS.md states each track as a range; a catalog ` +
-              `with a hole in it needs the entry reworded to a list, and §29's CLAIMS table with it.`,
-          );
         }
       }
+      // A single (lo, hi) pair can only describe a CONTIGUOUS id set, and this
+      // repo's ids are deliberately never renumbered to keep a track's ids
+      // contiguous after a display-order change (see the 2026-08-18 and
+      // 2026-08-25 Updates) — so a track can legitimately end up as two or
+      // more disjoint blocks. `trackFor` below is exact-bounds matching, used
+      // only for the historical-collision check (a dated claim's bounds
+      // coincidentally matching a CURRENT track's overall span); live claims
+      // are validated separately, below, by reconstructing each track's full
+      // id SET from every live claim naming it and comparing sets, not bounds.
+      // That subsumes the old single-range "is this track contiguous" gate:
+      // a track described by exactly the wrong ranges still fails, just via
+      // set mismatch instead of a contiguity flag.
       const trackFor = (r) =>
         Object.keys(current).find((t) => current[t].lo === r.lo && current[t].hi === r.hi);
 
@@ -3171,24 +3182,59 @@ if (keyedGroupsChecked < 4) {
           );
           continue;
         }
-        const [lo, hi] = text.split(/[-–—]|→|-now-/).map(Number);
-        const matches = trackFor({ lo, hi });
-        if (status === "live" && matches !== why) {
-          fail(
-            `§29: DECISIONS.md states the ${why} track as "${text}", but ${why} is now ` +
-              `${current[why].lo}-${current[why].hi} in src/content/lessons.js. ` +
-              `**Do not edit the 2026-08-14 Update to say the new numbers** — it is a dated record ` +
-              `of what was true then, and rewriting it falsifies the record (backlog item 62's F11). ` +
-              `Append a NEW dated Update stating the current ranges, then move "${text}" to ` +
-              `historical in §29's CLAIMS table and add the new range as live.`,
-          );
+        if (status === "historical") {
+          const [lo, hi] = text.split(/[-–—]|→|-now-/).map(Number);
+          const matches = trackFor({ lo, hi });
+          if (matches) {
+            fail(
+              `§29: "${text}" is classified historical, but it is now the ${matches} track's actual ` +
+                `range. Either the classification is wrong, or a renumbering has landed back on an old ` +
+                `range — read the sentence before deciding which. A historical claim that has become ` +
+                `true again is not an exemption worth keeping.`,
+            );
+          }
         }
-        if (status === "historical" && matches) {
+      }
+
+      // Live claims are a UNION, not a range: every claim classified `live`
+      // for a track is expanded to the integers it spans and pooled with every
+      // other live claim for that SAME track, and the pooled set must exactly
+      // equal the track's real ids — no id claimed that the track doesn't
+      // have, none of the track's real ids left unclaimed. For a track with
+      // one contiguous block (essentials, economy today) this is exactly the
+      // old lo/hi check with extra paranoia; for a track split across
+      // disjoint blocks (money, since 2026-08-25) it is the only check that
+      // can be honest about it at all.
+      const liveByTrack = {};
+      for (const [text, , status, why] of CLAIMS) {
+        if (status === "live") (liveByTrack[why] ??= []).push(text);
+      }
+      for (const [key, r] of Object.entries(current)) {
+        if (!Number.isInteger(r.lo) || !Number.isInteger(r.hi)) continue; // already failed above
+        const claims = liveByTrack[key] ?? [];
+        if (claims.length === 0) {
+          fail(`§29: track "${key}" has no live range claim in DECISIONS.md's CLAIMS table — add one describing its current ids.`);
+          continue;
+        }
+        const claimedIds = new Set();
+        for (const text of claims) {
+          const [lo, hi] = text.split(/[-–—]|→|-now-/).map(Number);
+          for (let i = lo; i <= hi; i++) claimedIds.add(i);
+        }
+        const actualIds = new Set(r.ids);
+        const extra = [...claimedIds].filter((id) => !actualIds.has(id)).sort((a, b) => a - b);
+        const missing = [...actualIds].filter((id) => !claimedIds.has(id)).sort((a, b) => a - b);
+        if (extra.length || missing.length) {
           fail(
-            `§29: "${text}" is classified historical, but it is now the ${matches} track's actual ` +
-              `range. Either the classification is wrong, or a renumbering has landed back on an old ` +
-              `range — read the sentence before deciding which. A historical claim that has become ` +
-              `true again is not an exemption worth keeping.`,
+            `§29: DECISIONS.md's live claim(s) for "${key}" (${claims.join(", ")}) describe ids ` +
+              `${[...claimedIds].sort((a, b) => a - b).join(",")}, but ${key} is actually ` +
+              `${r.ids.join(",")} in src/content/lessons.js` +
+              (extra.length ? ` — claims ${extra.join(",")}, which ${key} doesn't have` : "") +
+              (missing.length ? ` — missing ${missing.join(",")}` : "") +
+              `. **Do not edit an already-dated Update to say the new numbers** — it is a dated ` +
+              `record of what was true then, and rewriting it falsifies the record (backlog item ` +
+              `62's F11). Append a NEW dated Update stating the current ranges, then update this ` +
+              `entry's classification (and §29's CLAIMS table) to match.`,
           );
         }
       }
@@ -3203,10 +3249,11 @@ if (keyedGroupsChecked < 4) {
         );
       }
 
+      const rangeDesc = (r) => (r.contiguous ? `${r.lo}-${r.hi}` : r.ids.join(","));
       console.log(
         `  §29 DECISIONS.md lesson ranges: ${found.length} claims in the two-tracks section, ` +
           `${CLAIMS.filter(([, , s]) => s === "live").length} live and checked against the tree ` +
-          `(money ${current.money.lo}-${current.money.hi}, economy ${current.economy.lo}-${current.economy.hi}), ` +
+          `(${Object.entries(current).map(([k, r]) => `${k} ${rangeDesc(r)}`).join(", ")}), ` +
           `${CLAIMS.filter(([, , s]) => s === "historical").reduce((n, [, c]) => n + c, 0)} dated and required not to match.`,
       );
     }

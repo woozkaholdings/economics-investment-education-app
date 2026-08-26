@@ -666,6 +666,26 @@ Add a new entry when a run makes a choice future work should be able to look up 
   view: `LessonReader` now shows a lesson's **position within its track** ("Lesson 1 of 12") instead
   of its raw id. The global "Lesson 29 of 40" was already wrong for two independent curricula; it is
   simply more visible now. **Do not repair this by renumbering again.**
+- **Update, 2026-08-25 (approved from a drafted proposal, `drafts/income-hierarchy.en.md`). Four new
+  lessons open the money track; money's id set is now two disjoint blocks, not one range.** New
+  lessons — "The Subject That Wasn't on the Timetable," "Four Ways Money Arrives," "Does It Stop
+  When You Stop?," "The Part the Word 'Passive' Leaves Out" (the labour/investment/business/passive
+  income frame) — were inserted at the FRONT of money's display order in `lessons.js`, ahead of
+  lesson 16, because they are the frame the other thirteen judgment lessons hang on. Per the
+  no-renumbering rule directly above, their ids were not taken from a contiguous extension of
+  money's existing block (there isn't one — the ids immediately after it already belong to
+  `economy`) but from the next unused ids in the global space. **Money is now 16-28 and 41-44 — two
+  blocks, not one range.** `scripts/check-data.mjs` §29 was updated in the same change to validate a
+  track's live ids by reconstructing the full set from every `live`-classified claim naming it,
+  rather than assuming one contiguous (lo, hi) pair; the old contiguity assumption held for every
+  track until this change and does not generalize past it. Content: English drafted and reviewed
+  against this repo's two closed blindspots (§10.1 no prescriptive advice, §10.2 no guru/book
+  branding); es/ko/zh/ja translated (method `ai`, marked in `scripts/translation-review-ledger.json`)
+  rather than left as condensed summaries. Wiring touched `lessons.js`
+  (id/track/icon/color/minutes/title/subtitle), all five `lessonContent.money.*.js` files,
+  `quizMeta.js` and all five `quizText.*.js` files (appended, per those files' append-only order
+  rule), and `lessonTerms.js` (linked "Dividend" on the three lessons that mention it, excused
+  "Credit" as other-sense on the first — a credit-reporting mention, not the macro aggregate).
 
 ## The app's palette is warm, and screen titles are a system serif (2026-08-23, owner-directed)
 
