@@ -5654,5 +5654,114 @@ if (keyedGroupsChecked < 4) {
   }
 }
 
+// §49. No recipe in the a11y state matrix selects or asserts on hardcoded English (item 113).
+//
+// WHY THIS IS A CHECK AND NOT A STYLE NOTE. scripts/a11y-states.js is swept in five languages.
+// Its first version matched every control and every assertion by its ENGLISH display text —
+// "Glossary", "Market Dashboard", "Kids", "About", "Practice all questions" — and item 112
+// measured what that costs the moment the language axis is switched on: 12 of 13 states became
+// unreachable in `es`, and the same 12 in `ko`. Nothing errored. A text-matched recipe is a
+// monolingual recipe, and the four non-English rows of a sweep are exactly where nobody is
+// looking when the numbers come back clean.
+//
+// The states were rescued only because each carries an arrival assertion, which turned 48 wrong
+// sweeps into 48 honest MISSEDs instead of "5 languages, 65 states, all clean". That is a second
+// line of defence, not a first: a state added tomorrow WITHOUT an assertion (which §48 catches)
+// and WITH an English selector (which nothing catches) reports a clean zero for a screen it never
+// reached. This section is the first line — it catches the English string at commit time rather
+// than at sweep time.
+//
+// THE LEGITIMATE SELECTORS, and this is the whole list: element ids (`clickId`, getElementById),
+// structural position (`menuItem`, `firstButton`, `lastButton`, `termRow`, `radio`), ARIA roles
+// and states, numerals (`aria-label="130%"` — digits do not translate), and labels READ FROM THE
+// APP at runtime (`h1IsLastLabel`, `headingIsLastLabel`, which compare the sub-screen's <h1>
+// against the row's own text, so both sides are in whatever language is loaded). `dismissDialog`
+// takes no label at all. What is banned is a literal string of DISPLAY TEXT.
+//
+// WHAT IS DELIBERATELY NOT BANNED: `name`, `note` and `says` are English prose in every state and
+// must stay that way — they are what a human reads in the run log, and none of them is fed to a
+// selector. So this section cannot be "no English in the matrix"; it is pointed at the call sites
+// where a string becomes a SELECTOR.
+//
+// WHAT THIS CANNOT SEE: it reads source. It cannot tell whether a recipe still ARRIVES — only
+// A11yStates.runAll()'s `missed` count can — and it cannot see a label built at runtime out of
+// English fragments. It catches the shape that actually shipped and had to be fixed.
+{
+  const file = "scripts/a11y-states.js";
+  const raw = readFileSync(file, "utf8");
+  const src = raw
+    .replace(/\/\*[\s\S]*?\*\//g, "")          // the header and this section's own reasoning
+    .replace(/^\s*\/\/.*$/gm, "");             // quote English control names on purpose
+
+  // The three ways a string can become a selector in this file. Each carries a SAMPLE it must
+  // match — see the fixture control below.
+  const DETECTORS = [
+    {
+      what: "a text-matching step",
+      re: /\b(click|clickExact|clickIfPresent)\s*:\s*(["'])((?:\\.|(?!\2).)*)\2/g,
+      sample: 'steps: [{ click: "Glossary" }]',
+    },
+    {
+      what: "a text-matching assertion",
+      re: /\b(hasHeading|byText)\s*\(\s*(["'])((?:\\.|(?!\2).)*)\2/g,
+      sample: 'is: function () { return hasHeading("Market Dashboard"); }',
+    },
+    {
+      what: "a comparison against rendered text",
+      re: /(mainText\(\)|innerText|textContent)\s*(?:\.\s*(?:indexOf|includes|search|match|startsWith|endsWith)\s*\(\s*|[!=]==?\s*)(["'])((?:\\.|(?!\2).)*)\2/g,
+      sample: 'return mainText().indexOf("Start Quiz") !== -1;',
+    },
+  ];
+
+  // Digits, percent signs and separators are language-independent — `clickExact: "130%"` is a
+  // legitimate selector and the font-scale controls are labelled exactly that way.
+  const isNumeric = (s) => /^[\d\s.,%/:-]+$/.test(s);
+
+  // A hit is exempt when it belongs to one of the two `__selftest_*` states, which reference
+  // strings that exist in no language on purpose (they prove the MISSED path fires). Ownership is
+  // the nearest preceding `name:` — the same local rule §48 uses to slice this file.
+  const ownerOf = (i) => {
+    const j = src.lastIndexOf("name:", i);
+    if (j === -1) return null;
+    const m = src.slice(j, j + 120).match(/name:\s*"([^"]*)"/);
+    return m ? m[1] : null;
+  };
+
+  const scan = (re, text) => [...text.matchAll(new RegExp(re.source, re.flags))];
+
+  // Fixture control, the §44 shape: a detector whose regex an edit has quietly broken finds
+  // nothing and reports a clean file. Each one must first fire on its own sample.
+  const blind = DETECTORS.filter((d) => scan(d.re, d.sample).length === 0).map((d) => d.what);
+
+  const offenders = [];
+  let exempted = 0;
+  for (const d of DETECTORS) {
+    for (const m of scan(d.re, src)) {
+      const literal = m[3];
+      const owner = ownerOf(m.index);
+      if (owner && owner.startsWith("__selftest_")) { exempted += 1; continue; }
+      if (isNumeric(literal)) continue;
+      offenders.push(`${d.what} ${JSON.stringify(literal)} in state "${owner || "(outside any state)"}"`);
+    }
+  }
+
+  const hasStates = /var STATES = \[\s*\{/.test(src);
+  const hasSweepLangs = /\bsweepLangs\s*:/.test(src);
+
+  if (!hasStates) {
+    fail(`§49: could not find a populated \`var STATES = [\` array in ${file}. This section is pointed at a structure that no longer exists — repoint it rather than leaving it green.`);
+  } else if (!hasSweepLangs) {
+    fail(`§49: ${file} no longer exposes \`sweepLangs\`, so nothing sweeps the matrix in more than one language. This section exists to protect the four non-English rows of that sweep; with the language axis gone it is guarding nothing, and a green result here would say the opposite. Re-derive it rather than leaving it green.`);
+  } else if (blind.length > 0) {
+    fail(`§49: ${blind.length} of ${DETECTORS.length} detector(s) did not match their own sample — ${blind.join("; ")}. The regex has been broken by an edit, so a clean result from this section means nothing. Fix the detector before trusting the zero.`);
+  } else if (exempted < 2) {
+    fail(`§49: found ${exempted} exempt hit(s) in the \`__selftest_*\` states, expected 2 (\`__selftest_badstep\`'s { click: "ZZ_NO_SUCH_CONTROL_ZZ" } and \`__selftest_unreachable\`'s hasHeading("ZZ_NO_SUCH_HEADING_ZZ")). Those two are this section's live control: they are the only text-matching call sites the file is allowed to contain, and if the scan cannot see them it cannot see a real one either. Either the selftest was changed — in which case update this count and say why — or the scan is not reaching the file.`);
+  } else if (offenders.length > 0) {
+    fail(`§49: ${offenders.length} recipe(s) in ${file} select or assert on hardcoded display text — ${offenders.join("; ")}. A text-matched recipe is a monolingual recipe: item 112 measured this exact shape making 12 of 13 states unreachable in \`es\` and again in \`ko\`, and only the arrival assertions kept it from reporting 48 false cleans. Select by id, position, ARIA, numerals, or a label read from the app at runtime (h1IsLastLabel / headingIsLastLabel) instead.`);
+  } else {
+    console.log(`  §49 a11y recipes are language-independent: ${DETECTORS.length} detectors, each proven against its own sample, find 0 hardcoded-text selectors in ${file} outside the ${exempted} deliberate \`__selftest_*\` ones. (Static — it reads the call sites, not the sweep; only A11yStates.sweepLangs()'s per-language \`missed\` count can say a recipe still arrives in every language.)`);
+  }
+}
+
 console.log(`\n${failures === 0 ? "PASS" : "FAIL"}: ${failures} failure(s), ${warnings} warning(s).`);
 process.exit(failures === 0 ? 0 : 1);

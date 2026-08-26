@@ -2202,10 +2202,28 @@ for the history. No open P1/P2 items.
       search from the Glossary and taught on the Market Dashboard. It buys one chip on one lesson.
       And nobody has opened the app (O-1).
 
-113. **[Tooling/Guard — filed 2026-08-25 by the run that closed item 112, as its stated residual.
-    DEFERRED, not forgotten: the file it belongs in had uncommitted work by another session for
-    the whole run.] A `check-data.mjs` section asserting that no recipe in `a11y-states.js`
-    selects or asserts on hardcoded English.**
+113. **✅ DONE 2026-08-26 (scheduled dev-agent). Shipped as `check-data.mjs` §49 — three
+    detectors, each proven against its own sample, plus the two `__selftest_*` call sites as a
+    live control. One premise correction below. See the run log.** [Tooling/Guard — filed
+    2026-08-25 by the run that closed item 112, as its stated residual. DEFERRED, not forgotten:
+    the file it belongs in had uncommitted work by another session for the whole run.] A
+    `check-data.mjs` section asserting that no recipe in `a11y-states.js` selects or asserts on
+    hardcoded English.
+    > **PREMISE CORRECTION 2026-08-26, measured before editing.** The item's characterization of
+    > the code was right — 0 hardcoded-text selectors in the 19-state matrix — but **one of its two
+    > exemptions was stale and the other was mislocated.** `clickIfPresent` is described as "only
+    > ever used for the first-run dialog and being replaced by `dismissDialog`"; that replacement
+    > has **already fully happened** (0 recipes call it — it is now unreferenced machinery), so no
+    > exemption was needed and none was written. And the two `__selftest_*` states are **not
+    > inside `var STATES = [`** — they are built inline in `selftest()` — so a check scoped to
+    > "the STATES array and the axis helpers", as the item says, would have seen neither of the two
+    > call sites it was told to exempt. The scan is therefore whole-file. **That relocation turned
+    > the exemption into the control**: those two are the only text-matching call sites the file is
+    > allowed to contain, so requiring exactly 2 of them is what proves the scan reaches the file.
+    > **A third detector the item did not name:** it listed `click`/`clickExact`/`hasHeading`,
+    > which are the shapes item 112 actually shipped, but an `arrived.is` can equally compare
+    > `mainText()`/`innerText` against a literal and never touch a named helper. §49 detects that
+    > too.
     - **Why it is worth a section.** Item 112 measured the failure mode rather than imagining it:
       matching controls by English display text made **12 of 13 states unreachable in `es`, and
       the same 12 in `ko`**. Nothing errored. The states were rescued only because each carries an
@@ -10840,3 +10858,108 @@ the change), and its arrival assertion still holds in every language.
   run opened.
 - **Unchanged and still the entire critical path, both owner-blocked: O-1** (a deployed URL) and
   **O-2** (item 18, an analytics account).
+
+### 2026-08-26 (scheduled dev-agent) — the English string a recipe can still smuggle in, caught at commit time instead of at sweep time (item 113)
+
+**Picked item 113**, the residual the 2026-08-25 item-112 run filed and could not do: `check-data.mjs`
+was mid-refactor by another session for that entire run. It is free as of `1416559`, and the working
+tree was clean this run apart from the owner's untracked `UIUX/` and `drafts/`, which were not touched.
+
+#### Step 3.5 — the premise re-measured, and it moved the fix in three places
+
+The item's headline claim about the code was **correct**: a whole-file scan of `scripts/a11y-states.js`
+found **0 hardcoded-text selectors** across the 19-state matrix. Recipes select by id, position, ARIA,
+numerals, and labels read from the app at runtime, exactly as item 112 left them. What was wrong was
+the *shape of the check the item specified*:
+
+1. **One exemption was already stale.** The item says `clickIfPresent` "is only ever used for the
+   first-run dialog and is being replaced by `dismissDialog`". That replacement has **already fully
+   happened** — `grep` finds the definition and **zero call sites**. It is unreferenced machinery, so
+   it needed no exemption and got none.
+2. **The other exemption was in the wrong place, and that is the load-bearing correction.** The two
+   `__selftest_*` states are **not inside `var STATES = [`** — they are built inline inside
+   `selftest()`, ~280 lines further down. A check scoped as the item wrote it ("inside the `STATES`
+   array and the axis helpers") would have seen **neither of the two call sites it was told to
+   exempt**, and would have reported a clean file while being structurally unable to see the only
+   text-matching code in it. The scan is therefore whole-file — **and the exemption becomes the
+   control.** Those two are the only text-matching call sites the file is permitted to contain, so
+   "exactly 2 exempt hits" is the assertion that proves the scan reaches live code.
+3. **A third detector the item did not name.** It listed `click` / `clickExact` / `hasHeading` — the
+   shapes item 112 actually shipped. But an `arrived.is` can compare `mainText()` / `innerText` /
+   `textContent` against a literal without touching a named helper, and that is the same defect with
+   no helper to grep for. §49 detects it too.
+
+The axis helpers were checked separately and are clean by construction: `setLang` selects
+`"header select"` (structural), `setFontScale` builds `[aria-label="130%"]` from an interpolated
+numeral — and its own comment records that its first version matched the English word "About" and
+broke the moment the language axis it exists to serve was switched on.
+
+#### What shipped
+
+**`scripts/check-data.mjs` §49** (109 lines, the only file this run touched). Three detectors over the
+comment-stripped source; a hit fails unless it is (a) owned by a `__selftest_*` state or (b) a numeric
+literal, since `clickExact: "130%"` is a legitimate language-independent selector. Failure messages
+name the offending state and say what to use instead.
+
+**Deliberately not banned:** `name`, `note` and `says` are English prose in every state and must stay
+that way — they are what a human reads in a run log, and none is fed to a selector. So §49 could not
+be "no English in the matrix"; it is pointed at the call sites where a string becomes a *selector*.
+
+#### Verification — three injections and four controls, each proving its own landing
+
+Both files were copied to the scratchpad first and restored from those copies, never with
+`git checkout --`. Every patch asserts its anchor exists and re-reads the file to prove the edit
+landed; **one of them did not** — control D's first attempt lost its backslashes to shell escaping, the
+anchor assertion threw, and the check printed **PASS** immediately afterwards. That PASS was
+meaningless and the anchor guard is the only reason it was not read as one. Re-run from a file, it
+failed correctly.
+
+| # | Injection | Result |
+|---|---|---|
+| 1 | `{ click: "Glossary" }` into the real `reference` state | **FAIL** — names `"Glossary"` in state `"reference"` |
+| 2 | `hasHeading("Market Dashboard")` into `reference-markets`' `arrived.is` | **FAIL** — names the state |
+| 3 | `mainText().indexOf("Start Quiz")` as `practice-landing`'s assertion | **FAIL** — names the state |
+| A | `clickExact: "130%"` (a *legitimate* numeric selector) | **PASS** — no false positive |
+| B | `sweepLangs` renamed away | **FAIL** — the language axis is gone, so the section guards nothing |
+| C | one `__selftest_*` call site removed | **FAIL** — "found 1 exempt hit, expected 2" |
+| D | detector 3's regex broken inside `check-data.mjs` | **FAIL** — "1 of 3 detectors did not match their own sample" |
+
+`npm test` **0 failures, 2 warnings** (the documented translation baseline), `npm run build` clean.
+Both files restored bit-for-bit — `shasum` re-checked after every injection.
+
+**No live-browser verification, and this is not the W-1 exemption being claimed loosely:** this run
+changes no rendered UI and no `src/` file at all. `scripts/` is not bundled.
+
+#### Step 5 — adversarial self-check
+
+- **Blindspot register** — no regression. Across 109 added lines: Dalio/`principles of` **0**,
+  advice-adjacent verbs **0**, dates **0**. **Control**: `selector|language|recipe` returns **19**, so
+  the grep reaches the added text. Two `kids?|child` hits, both inspected and neither is §10.3
+  framing: one is the string `"Kids"` quoted as an example of an **old English selector** item 112
+  deleted, the other is my own grep matching "kid" inside the identifier `clickId`.
+- **`DECISIONS.md` conflict** — none. No `src/` change, no dependency, config, storage or content-format
+  change; §49 reads source text and asserts, exactly as §44–§48 do.
+- **Already-done backlog item** — no. `git log --all -S'§49' -- scripts/check-data.mjs` → **0**.
+  **Control**: `-S'sweepLangs'` → **1**, item 112's commit, so the pickaxe reaches this shape.
+- **Own verification claim** — the claim easiest to fake is "the guard works", since a guard that
+  matches nothing prints the same green line as a guard that matches nothing *wrong*. Three things
+  make it checkable by re-running only what is above: each detector must fire on a sample carried in
+  the source, so a broken regex fails loudly rather than passing (control D proves the mechanism);
+  the two `__selftest_*` hits are a live control on the scan reaching the file (control C); and each
+  of the three injections names the specific state it found, which a regex matching by accident
+  would not.
+
+#### Next
+
+- **`AGENT_LOG.md` is 894 KB, well past W-5.3's 600 KB trigger** — and W-5.3 says that archive pass is
+  "a legitimate whole run". It is the largest cost every run pays, since every run reads this file.
+- **Item 114** (small): reword the credit lesson's "base money supply" to "monetary base" in five
+  languages so the §3.0.3 glossary chip becomes legitimate.
+- **Item 108** (focus capability vs. the sweep header) — `focusVisibleOnTab` is `UNAVAILABLE` on 13 of
+  13 states, so it has never once run.
+- **Item 26 / item 27** both still need a re-scope before picking; **W-5.2's pick list** remains.
+- **Do NOT pick item 94** — optional track, four "(Beta)" languages, parked behind O-1 by its own box.
+
+**Unchanged and still the entire critical path, both owner-blocked: O-1** (a deployed URL) and **O-2**
+(item 18, an analytics account). The state matrix can now be trusted not to quietly become monolingual
+again — on an app that no one has ever opened, in any of the five languages.
