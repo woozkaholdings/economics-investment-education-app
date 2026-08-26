@@ -2510,6 +2510,36 @@ for the history. No open P1/P2 items.
       a real second instance of a defect just fixed or retires the question. But Practice is a less
       trafficked screen than the lesson reader, and nobody has opened the app (O-1).
 
+118. **[Process/QA — filed 2026-08-26 by the run that fixed item 117(a)'s false card, as the
+    generalization of it rather than a second fix smuggled into the same commit.] Every screen in
+    this app has only ever been verified WARM. The cold-start state is a different screen, and
+    nothing has ever looked at it systematically.**
+    - **The defect that motivates it, and it is a measured one, not a worry.** The Review landing
+      told a brand-new learner "You're all caught up" under a green check for four weeks. It
+      survived a live QA pass because the one prior live check of that card
+      (`AGENT_LOG.archive.md:1921`) **seeded a review entry first** and then correctly reported the
+      string it saw. The fixture and the bug were the same shape, so the fixture hid it.
+    - **The defect CLASS, stated so it is checkable:** copy that is conditional in one place and
+      unconditional in another. On that card `seen` branched the body and not the title or icon —
+      a half-conditional card, where the un-branched half is the one nobody re-reads.
+    - **The instrument is trivial and already proven**, which is the argument for doing this: open a
+      route from `localStorage.clear()` instead of from a seed, and read the copy. It needs no new
+      script and no new dependency. `a11y-states.js` already knows how to `clear`/`seed` and
+      reload, so the states are cheap to express there — but note it checks **structure**, not
+      whether a sentence is TRUE, so this is a reading task with a mechanical setup, not a probe.
+    - **Where to look, in priority order:** **Learn** (a path where 41 of 44 rows are locked — what
+      does the streak counter and any resume affordance say at zero?), **Reference → Sector
+      performance / Market signals** (both have "no data" states that item-80-era runs touched, but
+      cold rather than stale is a different axis), and the **streak counter** specifically, since a
+      streak of 0 is exactly the kind of value a template renders as "0 day streak".
+    - **Do NOT turn this into a sweep of all 13 states.** One run, three or four screens, reading
+      copy against `review = null` / `completed = []`. If it finds nothing, that is a real and
+      publishable answer and the item closes.
+    - **Honest priority: medium — the highest of the currently unclaimed items**, because it is the
+      only one with a demonstrated hit rate (1 for 1) and because cold start is, by definition, the
+      state **every** first user is in. Still downstream of O-1 in the sense that nobody has opened
+      the app; **not** downstream of it in the sense that the fix is free and the defect ships today.
+
 117. **[UX/Product — filed 2026-08-26 by the run that scoped "Practice all questions" to the
     questions the learner has reached, as its stated residual rather than smuggled into the same
     commit.] Two things that run decided by judgment and that the owner can cheaply reverse.**
@@ -2520,6 +2550,19 @@ for the history. No open P1/P2 items.
       against shipping a disabled button with no explanation. **The argument against is that an
       empty screen teaches nothing about what the button would have done.** A third option nobody
       priced: keep it visible and route it to Learn.
+
+      **PREMISE CORRECTED 2026-08-26 by the run that picked this item, and the correction changed
+      what (a) is about.** Measured from cleared storage: the screen is **not empty** — it carries
+      the card, the three-step rail and the disclaimer. It was **false**. The card showed a green
+      check and *"You're all caught up"* over *"A quick question before you move on."*
+      (`t.checkIntro`, whose only other call site is LessonReader's end-of-lesson check) to a
+      learner with `review = null`. `seen` already branched the **body** and never branched the
+      **title or icon**, so the half that never branched was the false half. **That is fixed** —
+      `reviewNotStartedTitle` / `reviewNotStartedBody` in all five languages, plus a `book` icon
+      at `ink.muted`. **(a) itself is still open and still a judgment call**, but its "argument
+      against" is retired: the screen now explains itself in one sentence, so hiding the button no
+      longer costs the learner the explanation. Whoever picks this is choosing between *a sentence*
+      and *a sentence plus a route to Learn* — not between a button and a void.
     - **(b) "Reached" means completed-or-already-answered, not unlocked.** An unlocked lesson is one
       the learner MAY open, not one they have read, so including it would be the same defect one
       lesson later — but it is a *product* line, and `CLAIMS.md` A1 is the bet it serves. If the
@@ -5930,6 +5973,148 @@ No new locale key, no new storage key, no new dependency.
   write the probe until one exists.
 - **Items 70/71/76 and 101** are the remaining unclaimed candidates; 101 is blocked on O-1.
 - **Do NOT pick item 94** — optional track, four "(Beta)" languages, parked behind O-1.
+
+**Unchanged and still the entire critical path, both owner-blocked: O-1** (a deployed URL) and **O-2**
+(item 18, an analytics account). Nothing in this run moved either, and nothing in this repo can.
+
+### 2026-08-26 (scheduled dev-agent) — the Review tab congratulated a learner who had done nothing, and every previous check of that card had seeded storage first (item 117a)
+
+**Picked from item 117**, filed by the previous run as the residual of scoping "Practice all questions".
+The item asks the owner to decide between *hidden* and *disabled* for the empty Review landing. **Both
+branches were wrong about what is on that screen**, and re-measuring is what showed it — so this run
+fixed the defect neither branch had noticed instead of implementing either. Owner tree at open:
+`OWNER-TREE c2331799fd3ee413aca864fd82d247a35ea31b01a70a6c4e37b00f6aad9105b2 (0 tracked modified, 52
+untracked)` — **UNMOVED** from the fingerprint the last entry recorded. `HEAD` = `34c4abe`, unmoved at
+commit time.
+
+#### Step 3.5 — the premise re-measured, with a control, and it changed the disposition
+
+Item 117(a)'s argument-against reads: *"an empty screen teaches nothing about what the button would
+have done."* Measured live from `localStorage.clear()` on a build whose bundle hash was confirmed to
+match the build just made (Environment note), `#/practice`, first-run dialog dismissed:
+
+```
+completed = "[]" , review = null , buttons in <main> = []
+"Review / You're all caught up / A quick question before you move on."
+  + the three-step How-review-works rail + the disclaimer
+```
+
+**The screen is not empty — it is false.** A learner who has never opened a lesson is shown a **green
+check icon** and **"You're all caught up"**: a congratulation, under an icon that means *done*, for
+work never done. Beneath it sits **`t.checkIntro`** — *"A quick question before you move on."* — whose
+**only other call site is `LessonReader.jsx:431`**, where it introduces the end-of-lesson check. On
+this screen there is no question and nothing to move on from. So item 117(a) is asking whether to
+restore a button to a screen whose real defect is that its one card states two untrue things.
+
+**The control, and it fired twice over.** A scan that reads a string cannot prove that string is
+*conditional*, so the same scan was run in the `seen > 0` state in the same session — open `#/lesson/1`
+(first of its track, always unlocked), answer its check, return to `#/practice`:
+
+- The **body changed** to `reviewEmptyBody` ("Questions come back here a day or two after you answer
+  them…"). So the instrument does read this card and does see it vary — the earlier reading of
+  `checkIntro` was a measurement, not a blind zero.
+- The **title did not change.** "You're all caught up" is byte-identical in both states.
+
+That second half is the finding. `seen` **already discriminated the two states** — the ternary on line
+424 branched the *body* on it — so the card was half-conditional, and **the half that never branched
+was the false half.** The icon never branched either.
+
+**Why this survived four weeks and a live QA pass.** Grepping both log files for prior work on this
+card returns one hit: `AGENT_LOG.archive.md:1921`, a run that seeded
+`{"5":{"box":1,"due":"2026-08-05",...}}` and recorded *"Review correctly showed 'all caught up'"*. That
+is correct — **in the state it seeded.** Every previous live check of this card wrote a review entry
+first, which is precisely the state where the copy is true. **The defect hid behind the fixture**, and
+the only way to meet it is to look at cleared storage, which is what item 117(a) made this run do.
+
+#### What shipped
+
+- **`src/screens/Practice.jsx`** — the nothing-due card branches **title, body and icon** on `seen`,
+  not just the body. `seen > 0` is unchanged in every respect (check icon, `ink.ok`, "You're all caught
+  up", `reviewEmptyBody`) — *caught up* is a real achievement and still earns the check. `seen === 0`
+  gets the new copy, a **`book`** icon and `ink.muted`.
+- **`src/locales/{en,es,ko,zh,ja}.js`** — two new keys, `reviewNotStartedTitle` /
+  `reviewNotStartedBody`. en: *"Nothing to review yet"* / *"Finish a lesson and its check question
+  starts showing up here."*
+- **`src/screens/Practice.jsx` file header** — found by the self-check, not by the item. Its opening
+  comment still promised *"the full question set is still available"* when nothing is due. **The
+  previous run made that false** and documented the change only at `practicePool`, 140 lines below;
+  the header is what a reader meets first. Corrected to "everything the learner has REACHED", with the
+  date and the reason.
+
+`t.checkIntro` keeps its one legitimate call site in `LessonReader`. No new storage key, no new
+dependency, no change to any behavior — this run changes what the screen *says*, not what it does.
+
+#### Verification
+
+- `npm run build` clean (`✓ built in 1.47s`); **`npm test` — 0 failures across all six suites**, 2
+  warnings, both the standing ones (translation review coverage; 48 abridged pairs / item 93) and
+  neither touched by this change. `npm run check-payload` — 0 failures.
+- **Live on the served `dist/`** (`:8851`, bundle `index-76c8EQ4Z.js` confirmed against the build just
+  made), **two-sided on all three states**:
+  - `review = null` → **"Nothing to review yet" / "Finish a lesson and its check question starts
+    showing up here."**, 0 buttons in `<main>`.
+  - answered one check → **"You're all caught up" / `reviewEmptyBody`**, "Practice all questions"
+    present. Unchanged from before this commit.
+  - seeded past-due (`due: "2026-08-01"`) → **"1 ready to review" / "Start Quiz"** + "Practice all
+    questions". The `due > 0` branch is untouched.
+- **The icon swap proven at the DOM level rather than assumed**, since it is the part no text scan can
+  see: never-started renders the book glyph `M4 5.5A2.5 2.5 0 0 1 6.5 3H19v14…` at
+  `rgb(168, 158, 144)`; caught-up renders the check glyph `m5 12.5 4.5 4.5L19 7.5` at
+  `rgb(110, 222, 159)`. Two different paths, two different colors.
+- **All five languages render the new keys**, read off the live DOM after switching the picker:
+  en *"Nothing to review yet"*, es *"Aún no hay nada que repasar"*, ko *"아직 복습할 내용이 없습니다"*,
+  zh *"还没有可复习的内容"*, ja *"まだ復習する内容はありません"* — each with `htmlLang` stamped
+  `en/es/ko/zh-Hans/ja` and 0 buttons in `<main>`.
+  **One instrument artifact, recorded because it looked exactly like a finding:** `ko` first came back
+  with an **empty** card array. The cause was my own splitter — I split `innerText` on a regex
+  containing `복습`, which is the Korean word for "review" and appears *in the Korean title itself*, so
+  the split landed at index 0. Re-read without the splitter, `ko` renders correctly. **The app was
+  never wrong; the measurement was.**
+- **`A11ySweep.selftest()` — PASS**, all 9 probes found their planted defect and the plants were
+  removed, so this session's zeros are meaningful. **`A11yStates.selftest()` — PASS.**
+  **`A11yStates.runAll()` — 13 reached, 13 clean, 0 findings, 0 MISSED**, matching the previous run's
+  baseline exactly. **`A11yStates.sweepLangs()` — all 5 languages, every state reached, 0 findings.**
+- **Restore path**: `Practice.jsx` and all five locales copied to the session scratchpad before
+  editing; never `git checkout --`.
+
+#### Step 5 — adversarial self-check
+
+- **Blindspot register — no regression, and `npm test` is the evidence rather than my reading.** §10.2
+  (no Dalio) ok; §10.1 both halves ok — "no advice-adjacent language (en/es/ko/zh/ja) across 38 files"
+  and "disclaimer renders on all 8 surfaces", `Practice`'s `<Disclaimer>` untouched and still rendering
+  in the live DOM above; §10.3 (kids framing) untouched; §2.3 ok — the two dates I added
+  (`2026-08-26`) are in **source comments**, not user-facing copy, which is the distinction the
+  Markets-tab fix drew, and the new locale strings contain no date, figure or number at all.
+- **`DECISIONS.md` conflict — none.** Grepped it for `empty state` / `caught up` / `invitation` /
+  `locked door` / `practice all`: **zero hits**, so nothing here is a recorded decision. localStorage-only
+  state, `.js`-not-JSON content and Vite-not-Expo are all untouched.
+- **Already-done backlog item — no**, and the one near-hit is load-bearing evidence rather than a
+  duplication risk: the single prior mention (archive:1921) verified the *opposite* branch, under a
+  seeded fixture. Nothing had ever scoped this card's never-started state.
+- **The honest boundary.** Item 117(a) asked a hidden-vs-disabled question and **this run did not
+  answer it** — it removed the reason the question looked urgent. The landing still shows zero buttons
+  to a brand-new learner; it now explains why in one sentence instead of claiming they are done. That
+  is a defensible resting point and it is **not** the same as deciding (a), so **117(a) stays open**,
+  re-scoped on the corrected facts. 117(b) and the ` (N)` label are untouched and still open.
+- **Own verification claim — reproducible** by `npm run build`, `npm test`, then serving `dist/` and
+  re-running the three storage states plus `runAll()`/`selftest()`/`sweepLangs()` per the Environment
+  note. **One limit, stated rather than papered over:** screenshots come back blank in this harness
+  (Environment note 1), so every claim above rests on DOM, `getComputedStyle` and `localStorage` reads
+  — including the icon claim, which is why it is quoted as path data and computed color rather than
+  described as "looks right".
+
+#### Next
+
+- **Item 117** is now down to (b) the `reached` predicate, the ` (N)` count on the label, and (a)
+  re-scoped — all low, all cheap, all still owner-preference rather than defect.
+- **Item 115** remains the top process item and is an **owner decision**, not a pick.
+- **Item 116** is genuinely blocked on a harness that can focus a document.
+- **Items 70/71/76 and 101** remain the unclaimed candidates; 101 is blocked on O-1.
+- **Do NOT pick item 94** — optional track, four "(Beta)" languages, parked behind O-1.
+- **A pattern worth one future run, filed as item 118:** this defect's shape is *copy that is
+  conditional in one place and unconditional in another*. The instrument that found it is trivial —
+  open a screen from cleared storage instead of from a fixture — and it has never been applied
+  systematically. Learn, Reference and the streak counter have all only ever been checked warm.
 
 **Unchanged and still the entire critical path, both owner-blocked: O-1** (a deployed URL) and **O-2**
 (item 18, an analytics account). Nothing in this run moved either, and nothing in this repo can.

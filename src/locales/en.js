@@ -127,6 +127,8 @@ export default {
     coachMarkPractice: "Nice work! Come back here anytime to review what you've learned.",
     coachMarkDismissLabel: "Dismiss tip",
     reviewDueTemplate: "{n} ready to review",
+    reviewNotStartedTitle: "Nothing to review yet",
+    reviewNotStartedBody: "Finish a lesson and its check question starts showing up here.",
     reviewEmptyTitle: "You're all caught up",
     reviewEmptyBody: "Questions come back here a day or two after you answer them, so they stick.",
     practiceAll: "Practice all questions",

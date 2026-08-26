@@ -106,6 +106,8 @@ export default {
     coachMarkPractice: "¡Buen trabajo! Vuelve aquí cuando quieras para repasar lo que aprendiste.",
     coachMarkDismissLabel: "Cerrar consejo",
     reviewDueTemplate: "{n} para repasar",
+    reviewNotStartedTitle: "Aún no hay nada que repasar",
+    reviewNotStartedBody: "Termina una lección y su pregunta de repaso empezará a aparecer aquí.",
     reviewEmptyTitle: "Estás al día",
     reviewEmptyBody: "Las preguntas vuelven aquí uno o dos días después de responderlas, para que se fijen.",
     practiceAll: "Practicar todas las preguntas",

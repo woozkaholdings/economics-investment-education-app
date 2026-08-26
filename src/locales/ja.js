@@ -106,6 +106,8 @@ export default {
     coachMarkPractice: "よくできました！学んだことはいつでもここで復習できます。",
     coachMarkDismissLabel: "ヒントを閉じる",
     reviewDueTemplate: "復習する問題 {n} 問",
+    reviewNotStartedTitle: "まだ復習する内容はありません",
+    reviewNotStartedBody: "レッスンを終えると、その確認問題がここに出てくるようになります。",
     reviewEmptyTitle: "すべて復習済みです",
     reviewEmptyBody: "問題は回答から1〜2日後にまた出てきて、記憶に定着させます。",
     practiceAll: "すべての問題を練習",

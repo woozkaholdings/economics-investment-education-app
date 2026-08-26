@@ -106,6 +106,8 @@ export default {
     coachMarkPractice: "잘했어요! 배운 내용을 복습하려면 언제든 여기로 돌아오세요.",
     coachMarkDismissLabel: "팁 닫기",
     reviewDueTemplate: "복습할 문제 {n}개",
+    reviewNotStartedTitle: "아직 복습할 내용이 없습니다",
+    reviewNotStartedBody: "레슨을 완료하면 확인 문제가 여기에 나타나기 시작합니다.",
     reviewEmptyTitle: "모두 복습했습니다",
     reviewEmptyBody: "문제는 답한 뒤 하루이틀 지나 다시 나타나 기억에 남도록 도와줍니다.",
     practiceAll: "전체 문제 풀기",

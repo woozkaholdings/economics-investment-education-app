@@ -7,9 +7,15 @@
 //
 // Now the default is a review queue driven by `lib/review.js`. Questions you
 // have answered return on a widening schedule, soonest-and-shakiest first; a
-// miss drops back to the shortest interval. When nothing is due, the full
-// question set is still available on purpose — "come back tomorrow" should be
-// an invitation, not a locked door.
+// miss drops back to the shortest interval. When nothing is due, everything the
+// learner has REACHED is still available on purpose — "come back tomorrow"
+// should be an invitation, not a locked door.
+//
+// That used to read "the full question set", which stopped being true on
+// 2026-08-26 when `practicePool` below scoped the button to reached material;
+// the invitation survived the change, its scope did not. And the invitation has
+// a floor: a learner who has reached nothing gets neither a queue nor a door,
+// so the card below must say that instead of congratulating them.
 // ═══════════════════════════════════════════════════════════════════════════
 
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -415,13 +421,38 @@ export default function Practice({ t, lang, completedLessons, review, recordRevi
           <Button full disabled={!quizText} onClick={() => start(due)} iconRight="arrowRight">{t.quizStart}</Button>
         </Card>
       ) : (
+        // Nothing due is TWO states, not one, and until 2026-08-26 this card
+        // told the same story for both. Measured live from cleared storage: a
+        // learner who had opened nothing was shown a green check, "You're all
+        // caught up", and "A quick question before you move on." — a
+        // congratulation for work never done, under an icon that means done,
+        // over a sentence borrowed from LessonReader's pre-question line
+        // (`checkIntro`, still its only other call site) where there is no
+        // question and nothing to move on from. It was the first thing a brand
+        // new learner saw on one of three tabs.
+        //
+        // `seen` already discriminated the two — the body branched on it and
+        // the title and icon did not, so the false half of the card was the
+        // half that never branched. All three branch now.
+        //
+        // "Caught up" is kept for what it actually describes: answered
+        // everything, next repetition not due yet. That is a real achievement
+        // and still earns the check.
         <Card style={{ marginTop: space["5"], textAlign: "center" }}>
-          <div style={{ display: "flex", justifyContent: "center", color: ink.ok, marginBottom: space["3"] }}>
-            <Icon name="check" size="2rem" strokeWidth={2.2} />
+          <div
+            style={{
+              display: "flex", justifyContent: "center",
+              color: seen > 0 ? ink.ok : ink.muted,
+              marginBottom: space["3"],
+            }}
+          >
+            <Icon name={seen > 0 ? "check" : "book"} size="2rem" strokeWidth={2.2} />
           </div>
-          <Text variant="heading" color={ink.strong}>{t.reviewEmptyTitle}</Text>
+          <Text variant="heading" color={ink.strong}>
+            {seen > 0 ? t.reviewEmptyTitle : t.reviewNotStartedTitle}
+          </Text>
           <Text variant="small" color={ink.muted} style={{ marginTop: space["2"] }}>
-            {seen > 0 ? t.reviewEmptyBody : t.checkIntro}
+            {seen > 0 ? t.reviewEmptyBody : t.reviewNotStartedBody}
           </Text>
         </Card>
       )}

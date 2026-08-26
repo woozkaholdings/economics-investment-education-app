@@ -106,6 +106,8 @@ export default {
     coachMarkPractice: "做得好！随时回到这里复习你学过的内容。",
     coachMarkDismissLabel: "关闭提示",
     reviewDueTemplate: "{n} 题待复习",
+    reviewNotStartedTitle: "还没有可复习的内容",
+    reviewNotStartedBody: "完成一节课后，它的检查题就会开始出现在这里。",
     reviewEmptyTitle: "已全部复习完",
     reviewEmptyBody: "题目会在你作答一两天后再次出现，帮助你记牢。",
     practiceAll: "练习全部题目",
