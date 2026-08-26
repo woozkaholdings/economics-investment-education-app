@@ -33,7 +33,7 @@ export const quizText = [
       "Government",
       "Technology"
     ],
-    "explain": "Credit is the most important and most volatile part of the economy. Total credit outstanding in the US is many times larger than the base money supply."
+    "explain": "Credit is the most important and most volatile part of the economy. Total credit outstanding in the US is many times larger than the monetary base (M0)."
   },
   {
     "q": "How long is the short-term debt cycle?",

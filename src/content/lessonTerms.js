@@ -120,7 +120,10 @@ export const lessonTerms = {
   // ── Economy track ────────────────────────────────────────────────────────
   // 29 introduces credit a full lesson before 30 teaches it.
   29: { 0: ["Credit"], 1: ["Stock", "Interest Rate"] },
-  30: { 0: ["Interest Rate"] },
+  // 30 §1 names the monetary base only to say credit dwarfs it, so the chip is
+  // the only place a reader learns what it is (rule 2 leaves Credit itself
+  // unchipped here — this lesson IS its definition).
+  30: { 0: ["Interest Rate"], 1: ["M0"] },
   31: { 0: ["Credit"] },
   32: { 0: ["Inflation", "Credit", "Interest Rate"], 1: ["Deflation", "Recession"], 2: ["QE", "Bond"] },
   33: { 0: ["Bubble", "Stock"], 1: ["Deleveraging", "Recession", "Credit", "Interest Rate"] },

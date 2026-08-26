@@ -253,6 +253,14 @@ export const ratePrinciples = [
 // central bank and has been redefined over time; that caveat is in the copy
 // rather than in this comment, because a reader comparing a long historical
 // chart needs it and will never read this file.
+//
+// 2026-08-26: those three places no longer say "the base money supply" — they
+// say "monetary base (M0)" and the matching term in each language, and the
+// lesson now carries a §3.0.3 glossary chip to the M0 entry. The paragraph
+// above is left as written because it is the record of why this block exists;
+// this note is what makes it read correctly today. Two of the five languages
+// (ko 본원통화, zh 基础货币) were already using the standard term and only
+// gained the "(M0)" tag; es and ja were not (see AGENT_LOG.md item 114).
 export const moneyAggregates = [
   {
     key: "m0",

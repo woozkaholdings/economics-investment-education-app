@@ -2236,10 +2236,40 @@ for the history. No open P1/P2 items.
     - **Honest priority: medium.** It is pure process cost — but it is a cost every single run pays
       before it does anything, and it is now growing from the half nobody is pruning.
 
-114. **[Content — filed 2026-08-25 by the run that added the M0/M1/M2 glossary entries and the
+114. **✅ DONE 2026-08-26 (scheduled dev-agent). Lesson 30 §1 now says "monetary base (M0)" —
+    and the matching standard term in each language — and carries a §3.0.3 chip to the `M0`
+    glossary entry. THREE premise corrections below, one of which changed the fix. See the run log.**
+    [Content — filed 2026-08-25 by the run that added the M0/M1/M2 glossary entries and the
     Market Dashboard money-supply section, as its stated residual.] Reword the credit lesson's
     "base money supply" to "monetary base" in five languages, so the §3.0.3 glossary chip becomes
     legitimate.**
+    > **PREMISE CORRECTION 1 — the prescribed wording would have FAILED the build, and this is the
+    > one that changed the implementation.** §17 accepts a section as "mentioning" a term only if
+    > the English text contains the glossary **key** (`"M0"`) or its `en.s` (`"Monetary Base
+    > (M0)"`) — matched with lookarounds on both sides. The bare words **"monetary base" match
+    > neither**. Had this item been implemented as literally written, adding the `lessonTerms`
+    > entry would have failed §17 by name. Measured with a five-case probe carrying two positive
+    > controls and one negative control, then **proved by injection**: the item's exact wording was
+    > injected into the shipped file and `npm test` failed with
+    > `lessonTerms[30][1]: "M0" is linked from a section whose English text never mentions it`.
+    > **The shipped prose therefore carries the parenthetical: "monetary base (M0)".**
+    > **PREMISE CORRECTION 2 — the site inventory was wrong in both directions, and the change is
+    > about half the size the item implies.** The item says the phrase is in the lesson body, the
+    > quiz `explain` and the `Credit` glossary entry, "in five languages" — which reads as 15
+    > edits. Measured: the lesson body carries it in **all 5** languages, but the quiz `explain`
+    > and `Credit.f` carry the comparison clause in **English only** — the es/ko/zh/ja versions of
+    > both are abridged and stop at "the most volatile part of the economy", so they never contained
+    > the phrase. **7 prose edits, not 15.** And there is a **fourth site the item does not name**:
+    > `markets.js`'s money-supply comment, which states in the present tense that the app "referred
+    > to 'the base money supply' in three places" — true when written, false the moment this item
+    > lands.
+    > **PREMISE CORRECTION 3 — two of the five languages were already correct.** The item frames all
+    > five as needing the same rewording. Measured, `ko` already said **본원통화** and `zh`
+    > already said **基础货币** — the standard terms, matching their own glossary entries; they
+    > lacked only the `(M0)` tag. Only `es` ("oferta de dinero base") and `ja`
+    > ("基礎マネーサプライ", not a standard Japanese term) carried genuinely non-standard renderings.
+    > The item's "low priority, buys one chip" framing therefore **undersold it**: it also fixed two
+    > real terminology defects in the Beta languages.
     - **Why it is not already done.** `lessonTerms.js` links a lesson section to a glossary key,
       and `check-data.mjs` §17 requires the section's English text to mention that key or its
       `en.s`. The credit lesson says *"total credit outstanding is many times larger than the base
@@ -5649,3 +5679,98 @@ fixes: a proxy signal fails green, a planted control fails loud.**
 
 **Unchanged and still the entire critical path, both owner-blocked: O-1** (a deployed URL) and **O-2**
 (item 18, an analytics account).
+
+### 2026-08-26 (scheduled dev-agent) — the chip the prose could not legitimize, and the wording that would have failed the build (item 114)
+
+**Picked item 114**, filed 2026-08-25 as the M0-glossary run's stated residual, and taken partly for
+variety: items 104-113 were all tooling/a11y, and this is the first content pick in ten runs. Working
+tree clean apart from the owner's untracked `UIUX/` and `drafts/`, neither touched (`0 tracked
+modified, 2 untracked`, porcelain sha256 `ff722a3d…`). HEAD `089183f` at open and at commit.
+
+#### Step 3.5 — the premise re-measured, and it broke in three places
+
+The item's *goal* was right and its *prescription* was not. All three corrections are in the backlog
+item; the one that changed the implementation:
+
+- **§17 does not accept "monetary base".** It accepts the glossary key `"M0"` or its `en.s`
+  `"Monetary Base (M0)"`, anchored with lookarounds. A five-case probe — two positive controls
+  (exact `en.s`, bare key), one negative control (unrelated prose), and the item's wording — returned
+  `true/true/false/false`, so the instrument discriminates and the item's wording fails. **Shipped
+  prose is "monetary base (M0)"**, which the probe's fifth case confirmed matches.
+- **7 prose edits, not the 15 the item implies.** The quiz `explain` and `Credit.f` carry the clause
+  in English only; es/ko/zh/ja are abridged and never had it.
+- **`ko` and `zh` were already using the standard term** (본원통화, 基础货币) and needed only the
+  `(M0)` tag; `es` and `ja` carried non-standard renderings. The item's "buys one chip" framing
+  undersold it — it also fixed two real terminology defects.
+- **A fourth site the item does not name:** `markets.js`'s money-supply comment asserts in the present
+  tense that the app says "the base money supply" in three places. This item falsifies that sentence.
+
+#### What shipped
+
+Lesson 30 §1 ("Credit vs Money") now reads **"monetary base (M0)"** / **"base monetaria (M0)"** /
+**"본원통화(M0)"** / **"基础货币（M0）"** / **"マネタリーベース（M0）"**, matching each language's own
+`M0` glossary entry; the English quiz `explain` and `Credit.f` follow. `lessonTerms.js` gains
+`30: { …, 1: ["M0"] }` — legitimate under curation rule 2 (lesson 30's subject is *Credit*, which stays
+deliberately unchipped as `defined-here`; M0 is a different term) and rule 3 (M0 is linked nowhere else
+in lesson 30). The `markets.js` comment gets a **dated note appended rather than a rewrite**, because
+the paragraph is the record of why that block exists and rewriting a dated rationale falsifies it — the
+note is what makes it read correctly today.
+
+**§2.3 held, and it is the reason the phrase existed at all:** the 2026-08-02 run put "base money
+supply" there specifically to *replace* dated `~$50T vs ~$3T` figures. A phrase was swapped for a
+phrase. `(M0)` is a name, not a figure, and §2.3's check passed across all 26 teaching-copy modules.
+
+#### Verification
+
+- `npm test` — **0 failures, 2 warnings** (the standing translation-coverage and completeness ones).
+  §17b now reports **90 chips on 30 lessons, 0 unexplained** (was 89).
+- `npm run build` — clean, `✓ built in 1.28s`.
+- **§17 proved able to fail on exactly this chip.** Item 114's literal wording ("monetary base", no
+  parenthetical) was injected into the shipped file, the injection confirmed present, and `npm test`
+  failed with `lessonTerms[30][1]: "M0" is linked from a section whose English text never mentions it`.
+  Restored from a scratchpad copy (never `git checkout --`); sha256 `a0130eda…` identical before and
+  after.
+- `npm run readiness -- --write` — the char-count guard caught the **+1 English character** and was
+  refreshed rather than edited by hand (§4.3 and §10.4 rows).
+- **Live, in the built app** (`dist/` served on `:8841`; bundle hash `index-DSu4W8bW` confirmed to
+  match the build just made, per Environment note 4): at `#/lesson/30` the prose reads
+  "…larger than the monetary base (M0) —", the old phrase is **absent** (control), and a
+  **`Monetary Base (M0)` chip renders**. Clicking it expands the M0 definition in place
+  ("cash in circulation plus the reserves…"), with a control confirming a *different* entry's
+  definition is not what appeared. Switched to `ja` through the app's own picker: chip renders as
+  **マネタリーベース（M0）** from `glossary.js`, prose shows the new term, **基礎マネーサプライ is
+  gone** — which is the language-independent-key decision in `DECISIONS.md` working end to end.
+- **One limit, stated rather than papered over:** screenshots came back blank/misplaced — Environment
+  note 1's "layout is not live" limitation, not a page defect. The DOM reads above are the instrument
+  that works here, and they are what the claims rest on.
+- **A self-inflicted false negative, recorded because it cost a cycle:** writing `ecycles_lang` as
+  `'"ja"'` (JSON) left the app in English and the first `ja` read returned all-false. The stored format
+  is the raw string `ja`. Driving the app's own picker instead of writing the key is what fixed it —
+  and is the more honest test anyway.
+
+#### Step 5 — adversarial self-check
+
+- **Blindspot register** — §10.2 (no Dalio), §10.1 (advice-adjacency across all five languages and the
+  disclaimer's 8 surfaces), §10.3 (kids framing untouched) and §2.3 (no live-looking date or figure)
+  all pass their checks on the modified tree. The one date added, `2026-08-26`, is inside a **source
+  comment**, not user-facing copy — the distinction the Markets-tab fix drew.
+- **`DECISIONS.md` conflict** — none, and this is an *instance* of a recorded decision rather than a
+  brush with one: "In-lesson glossary links are a curated map, not an automatic prose match" specifies
+  a hand-curated `{lessonId: {sectionIndex: [keys]}}` map with language-independent keys rendering from
+  `glossary.js`. That is exactly what shipped, and the `ja` chip proved the language-independence live.
+- **Already-done backlog item** — item 114 was open and unclaimed. It builds on the 2026-08-25 M0 work
+  rather than redoing it, and does not undo the 2026-08-02 de-dating that put the phrase there.
+- **Own verification claim** — `npm test`, `npm run build`, the injection failure and the restore hash
+  are all reproducible from the commands above. The live block depends on a served `dist/` and is
+  reproducible by the documented technique; the screenshots are not, and are reported as failed.
+
+#### Next
+
+- **Item 115** remains the top process item and is an **owner decision**, not a pick.
+- **Item 116** (focus-dependent probes) is genuinely blocked on a harness that can focus a document —
+  its own text says do not write the probe until one exists.
+- **Item 101 / items 70/71/76** are the unclaimed non-tooling candidates.
+- **Do NOT pick item 94** — optional track, four "(Beta)" languages, parked behind O-1.
+
+**Unchanged and still the entire critical path, both owner-blocked: O-1** (a deployed URL) and **O-2**
+(item 18, an analytics account). Nothing in this run moved either, and nothing in this repo can.
