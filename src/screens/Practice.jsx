@@ -65,7 +65,7 @@ const QUIZ_TEXT_LOADERS = {
   ja: () => import("../content/quizText.ja.js"),
 };
 
-export default function Practice({ t, lang, review, recordReview }) {
+export default function Practice({ t, lang, completedLessons, review, recordReview }) {
   // Frozen when a session starts: answering mutates `review`, and a live queue
   // would drop the current question out from under the learner mid-answer.
   const [session, setSession] = useState(null);
@@ -120,6 +120,39 @@ export default function Practice({ t, lang, review, recordReview }) {
 
   const due = useMemo(() => dueQuestions(review, quizMeta), [review]);
   const seen = seenCount(review);
+
+  // What "Practice all questions" is allowed to ask about. Until 2026-08-26 it
+  // was `quizMeta` entire, and that made this button a door around the whole
+  // unlock model: measured live from cleared storage, a learner who had opened
+  // nothing got a 46-question session that began at "Lesson 1", "Lesson 2",
+  // "Lesson 3" of a path where 41 of 44 lessons render disabled with "Complete
+  // previous lessons first" — and every answer wrote a Leitner entry, so
+  // material they had never read then came back in the review queue the next
+  // day. The Steps rail eight lines below says "Questions you have never seen
+  // stay out of review"; review.js's `dueQuestions` enforces exactly that and
+  // says why. This screen was the one place contradicting both.
+  //
+  // "Reached" is deliberately NOT "unlocked". An unlocked lesson is one the
+  // learner MAY open, not one they have read, and asking about it is the same
+  // defect one lesson later. It is two things instead:
+  //   - the lesson is complete, or
+  //   - the question is already in `review` — which is not redundant, because
+  //     a lesson's check records answers as they are given while
+  //     `completeLesson` only fires on the completion control (LessonReader),
+  //     so a learner can genuinely have seen a question in a lesson they never
+  //     marked done.
+  // The invitation the header comment describes is unchanged; it is now an
+  // invitation to practice more of what you have read, rather than a preview
+  // of the syllabus.
+  const practicePool = useMemo(
+    () =>
+      quizMeta
+        .map((question, index) => ({ question, index }))
+        .filter(({ question, index }) =>
+          completedLessons.includes(question.lesson) || Boolean(review[String(index)])
+        ),
+    [completedLessons, review]
+  );
   const item = session ? session[position] : null;
 
   const start = (items) => { setSession(items); setPosition(0); setAnswered(false); setResults([]); setAtBatchPause(false); };
@@ -393,16 +426,23 @@ export default function Practice({ t, lang, review, recordReview }) {
         </Card>
       )}
 
-      {/* Always available — practicing more than the schedule asks is fine. */}
-      <Button
-        full
-        variant="outline"
-        disabled={!quizText}
-        onClick={() => start(quizMeta.map((question, index) => ({ question, index })))}
-        style={{ marginTop: space["3"] }}
-      >
-        {t.practiceAll}
-      </Button>
+      {/* Practicing more than the schedule asks is fine — practicing what you
+          have not read is not, which is what `practicePool` above decides.
+          Hidden rather than disabled when the pool is empty: a brand-new
+          learner has nothing to practice yet, and the only honest label for a
+          dead control here is the Steps rail directly below, which already
+          says a check question joins the queue when you finish a lesson. */}
+      {practicePool.length > 0 && (
+        <Button
+          full
+          variant="outline"
+          disabled={!quizText}
+          onClick={() => start(practicePool)}
+          style={{ marginTop: space["3"] }}
+        >
+          {t.practiceAll}
+        </Button>
+      )}
 
       {loadFailed && <LoadFailure t={t} />}
 

@@ -2510,6 +2510,28 @@ for the history. No open P1/P2 items.
       a real second instance of a defect just fixed or retires the question. But Practice is a less
       trafficked screen than the lesson reader, and nobody has opened the app (O-1).
 
+117. **[UX/Product — filed 2026-08-26 by the run that scoped "Practice all questions" to the
+    questions the learner has reached, as its stated residual rather than smuggled into the same
+    commit.] Two things that run decided by judgment and that the owner can cheaply reverse.**
+    - **(a) Hidden, not disabled, when the pool is empty.** A brand-new learner now sees a Review
+      landing with **zero buttons** (measured). The argument for hiding is that the only honest
+      label for a dead control is the Steps rail directly beneath it, which already says a check
+      question joins the queue when you finish a lesson — and item 96's sibling is the precedent
+      against shipping a disabled button with no explanation. **The argument against is that an
+      empty screen teaches nothing about what the button would have done.** A third option nobody
+      priced: keep it visible and route it to Learn.
+    - **(b) "Reached" means completed-or-already-answered, not unlocked.** An unlocked lesson is one
+      the learner MAY open, not one they have read, so including it would be the same defect one
+      lesson later — but it is a *product* line, and `CLAIMS.md` A1 is the bet it serves. If the
+      owner wants "practice anything you could open", it is a one-line predicate change.
+    - **A cheap improvement neither branch needs a decision for:** the label still reads "Practice
+      all questions" while the session may now be 2 questions long. Appending ` (N)` costs **zero
+      locale keys** (digits are language-independent) and explains the number the learner gets. Not
+      done here because it was outside the fix and item 93/94 make five-language label churn a real
+      cost; do it as a one-liner if it is ever picked.
+    - **Honest priority: low.** The defect is fixed; these are the seams around it. **All of it is
+      downstream of O-1** — nobody has opened the app, so no learner has met either branch.
+
 116. **[A11y/Tooling — filed 2026-08-26 by the run that closed item 108, as its stated residual
     rather than smuggled into the same commit.] The focus-dependent probe class is still
     UNWRITTEN, and item 108 removed the last excuse for that being invisible.**
@@ -5770,6 +5792,143 @@ phrase. `(M0)` is a name, not a figure, and §2.3's check passed across all 26 t
 - **Item 116** (focus-dependent probes) is genuinely blocked on a harness that can focus a document —
   its own text says do not write the probe until one exists.
 - **Item 101 / items 70/71/76** are the unclaimed non-tooling candidates.
+- **Do NOT pick item 94** — optional track, four "(Beta)" languages, parked behind O-1.
+
+**Unchanged and still the entire critical path, both owner-blocked: O-1** (a deployed URL) and **O-2**
+(item 18, an analytics account). Nothing in this run moved either, and nothing in this repo can.
+
+### 2026-08-26 (scheduled dev-agent) — the button that walked around the unlock model, and the recipe that was resting on it
+
+**Picked as a W-5.2 non-item-93 run.** The last entry's `Next` listed item 101 (blocked on O-1),
+items 70/71/76 (low, and 71's own gate has never fired) and item 115 (an owner decision) — so this
+run took W-2's standing alternative, a **product-level QA pass on the core loop**, and found a real
+defect in it. Owner tree at open: `OWNER-TREE c2331799fd3ee413aca864fd82d247a35ea31b01a70a6c4e37b00f6aad9105b2 (0 tracked modified, 52 untracked)`; `HEAD` = `ef0665a`, unmoved at commit time.
+
+#### The defect, measured before it was described
+
+`Practice.jsx`'s **"Practice all questions"** started a session over `quizMeta` *entire*. Measured
+live from cleared `localStorage` on a build whose bundle hash was confirmed to match the build just
+made (Environment note 4):
+
+- The Learn path renders **41 of 44 lessons `disabled: true`** with "Complete previous lessons
+  first" — only the three track-openers are open. **That is the control**, taken in the same
+  session and the same storage state as everything below.
+- The Review landing nonetheless offered an enabled button that started **`1 / 46`**, stepping
+  "Lesson 1", "Lesson 2", "Lesson 3" straight down a path 41 of whose rows are locked.
+- Answering wrote `ecycles_review = {"0":{"box":1,"due":"2026-08-27",...}}` while
+  `ecycles_completed_lessons` stayed `[]` — so material the learner has never read **comes back in
+  the review queue the next day**.
+
+**The app contradicted itself on one screen.** Eight lines below that button, its own Steps rail
+reads *"Questions you have never seen stay out of review."* `review.js`'s `dueQuestions` enforces
+exactly that and says why in a comment. This button was the only thing in the app doing the
+opposite — and it is the same thing `DECISIONS.md`'s closed deep-link decision forbids the URL
+resolver from doing: *"A permissive resolver would void [sequential unlocking] from outside the app,
+with no decision recorded anywhere, and nothing in the repo would notice."* It was being voided from
+**inside** the app instead. `CLAIMS.md` **A1** is the bet that surface was undercutting.
+
+#### Step 3.5 — the premise re-measured, and it changed the fix twice
+
+There was no backlog item to re-measure, so the discipline applied to my own reading of the code:
+
+1. **"Restrict it to completed lessons" would have been wrong, and measurement is what showed it.**
+   `LessonReader` calls `recordReview` as each check question is answered, while `completeLesson`
+   fires only on the completion control — so a learner can genuinely have *seen* a question in a
+   lesson they never marked done. Proven live: answering lesson 1's check left
+   `review = {"14":{...}}` with `completed = []`. The predicate is therefore
+   **completed-lesson OR already-in-review**, and the second clause is not redundant.
+2. **The a11y state matrix was resting on this button being unconditional, and its comment said so
+   in as many words.** `a11y-states.js`'s `lastButton` step carried *"Practice.jsx renders it
+   unconditionally"*, and `practice-all-questions` was `[{ hash: "#/practice" }, { lastButton }]`
+   with **no `clear`/`seed`** — so in `runAll()` (one page session, no reload, nothing else answers
+   anything) the recipe would now find **0 buttons in `<main>`** and throw. Caught before shipping,
+   not after.
+3. **A prior entry's two clauses had quietly grown incompatible.** The 2026-08-04 rebuild entry
+   (archive) wrote both *"Never-answered questions are deliberately excluded from the due queue"*
+   and *"Nothing-due is an invitation, not a locked door: 'practice all' stays available"* in one
+   bullet. Both were true of a **13-question** app. At **46 questions across three independently
+   unlocking tracks** the second clause had eaten the first. This run is not undoing that work — it
+   is resolving a tension the catalog grew into.
+
+#### What shipped
+
+- **`src/screens/Practice.jsx`** — a `practicePool` memo (completed-lesson **or** already-in-review),
+  used by the button instead of `quizMeta`; the button renders only when that pool is non-empty.
+- **`src/App.jsx`** — passes `completedLessons` to `Practice`, which it never received before.
+- **`scripts/a11y-states.js`** — the false `lastButton` comment corrected, and
+  `practice-all-questions` rewritten to **earn** its entrance:
+  `[{ hash: "#/lesson/1" }, { radio: 4 }, { hash: "#/practice" }, { lastButton: true }]`. Lesson 1
+  is first of its track so it is always unlocked; `radio: 4` is the check question's first option.
+  This also makes the state **deterministic for the first time** — it carried no `clear`/`seed`, so
+  it used to sweep whatever storage the page happened to load with.
+
+No new locale key, no new storage key, no new dependency.
+
+#### Verification
+
+- `npm run build` — clean, `✓ built in 1.39s`. `npm test` — **0 failures, 2 warnings** (the standing
+  translation-coverage and completeness ones), §48 still `19 state(s)`, §49 still `0 hardcoded-text
+  selectors`.
+- **Live, two-sided, on the served `dist/`** (`:8847`, bundle `index-4U3Hea9n.js` confirmed to match
+  the build just made):
+  - **Fresh user** (`localStorage.clear()`, `#/practice`): **0 buttons in `<main>`**. The 46-question
+    door is gone.
+  - **Control — the same scan must be able to SEE the button**, or that zero means nothing. Opened
+    `#/lesson/1`, answered its check, returned to `#/practice`: the scan found
+    `["Practice all questions"]`, and clicking it started **`1 / 1`** on the lesson just read.
+  - **Both clauses of the predicate proven separately.** With `completed = [29]` seeded and question
+    14 in review from a lesson never marked complete, the session was **`1 / 2`** — one question from
+    each clause, which is the arithmetic the predicate predicts and neither clause alone produces.
+- **`A11yStates.runAll()` — 13 reached, 13 clean, 0 findings, 0 MISSED**, including
+  `practice-all-questions` under the new recipe **from cleared storage**.
+- **`A11yStates.selftest()` — PASS**, run this session, so that `missed: 0` is a meaningful zero and
+  not a blind instrument. (Its `axisAssertion` correctly *refused* while the first-run dialog was up:
+  the header is inert behind the modal, so there is no language `<select>` to confirm a switch
+  against. The control working, not a failure.)
+- **`A11yStates.sweepLangs()` — all 5 languages × 13 states, 0 missed, 0 findings**, `htmlLang`
+  stamped `en/es/ko/zh-Hans/ja`. The new recipe selects by route and position only, so it survives
+  the language axis item 112 exists to cover.
+- **The old recipe proven to FAIL on the new build**, rather than assumed to: from cleared storage at
+  `#/practice`, `document.querySelectorAll('main button').length === 0`, which is exactly the
+  condition `lastButton` throws on. Two-sided, so the recipe change is justified by measurement.
+- **Restore path**: originals copied to the session scratchpad before editing; never `git checkout --`.
+
+#### Step 5 — adversarial self-check
+
+- **Blindspot register** — §10.2 (no Dalio), §10.1 (advice-adjacency in five languages **and** the
+  disclaimer's 8 surfaces — `Practice`'s `<Disclaimer>` is untouched and still renders), §10.3 (kids
+  framing untouched) and §2.3 (no live-looking date or figure) all pass on the modified tree. The one
+  date added, `2026-08-26`, is in **source comments**, not user-facing copy — the distinction the
+  Markets-tab fix drew.
+- **`DECISIONS.md` conflict — none, and this is the opposite of a conflict.** The closed deep-link
+  decision says a URL must not unlock a lesson because sequential unlocking is a recorded bet that
+  "nothing in the repo would notice" being voided. This change brings a **second** surface into line
+  with that decision rather than making a new one. localStorage-only state, `.js`-not-JSON content
+  and Vite-not-Expo are all untouched.
+- **The honest boundary, stated rather than buried:** two judgment calls here are mine — *hidden* vs.
+  disabled when the pool is empty, and *reached* meaning completed-or-answered rather than unlocked.
+  Both are cheaply reversible and both are filed as **item 117** so the owner can overrule either
+  without re-deriving the reasoning.
+- **Already-done backlog item** — no. Grepped both log files: every prior mention of "Practice all
+  questions" is either an a11y *recipe* using it as a cheap entrance or the 2026-08-04 bullet
+  analyzed in step 3.5 above. Nothing had scoped this button before.
+- **Own verification claim** — reproducible: `npm run build`, `npm test`, then serve `dist/` and
+  re-run `runAll()` / `selftest()` / `sweepLangs()` by the Environment note's documented technique.
+  **One cost this run added and should not hide:** item 111's text calls the "Practice all questions"
+  entrance "the cheapest of all" because it needed no setup. It now needs two setup steps. That is a
+  real, small increase in the recipe's cost, paid for determinism it did not previously have.
+- **One limit, stated rather than papered over:** screenshots come back blank here (Environment
+  note 1 — layout is not live), so every claim above rests on DOM and `localStorage` reads, which are
+  the instruments that do work in this harness.
+
+#### Next
+
+- **Item 117** (this run's residual) is the cheapest real pick, and part of it is an owner preference
+  rather than work.
+- **Item 115** remains the top process item and is an **owner decision**, not a pick.
+- **Item 116** is genuinely blocked on a harness that can focus a document; its own text says do not
+  write the probe until one exists.
+- **Items 70/71/76 and 101** are the remaining unclaimed candidates; 101 is blocked on O-1.
 - **Do NOT pick item 94** — optional track, four "(Beta)" languages, parked behind O-1.
 
 **Unchanged and still the entire critical path, both owner-blocked: O-1** (a deployed URL) and **O-2**

@@ -264,9 +264,12 @@
         document.getElementById(id).click(); return settle().then(quiesce);
       });
     },
-    // "Practice all questions" is always the LAST button on the Review landing (Practice.jsx
-    // renders it unconditionally, after the conditional "Start Quiz"); "Start Quiz" is the first,
-    // and exists only when something is due. Position, not text.
+    // "Practice all questions" is the LAST button on the Review landing, after the conditional
+    // "Start Quiz"; "Start Quiz" is the first, and exists only when something is due. Position,
+    // not text. It is NOT unconditional — this comment said it was until 2026-08-26, when the
+    // button was scoped to the questions the learner has actually reached and now does not render
+    // at all from cleared storage. A recipe that clicks the last button therefore has to EARN one
+    // first; see the practice-all-questions state.
     lastButton: function () {
       return waitUntil(function () { return mainButtons().length > 0; }).then(function (found) {
         if (!found) throw new Error("no buttons in <main>");
@@ -557,8 +560,17 @@
       arrived: { says: 'the Review landing shows its #how-review-title panel',
         is: function () { return !!document.getElementById("how-review-title"); } } },
 
+    // The first two steps are what EARNS the entrance rather than assuming it. `#/lesson/1` is the
+    // first lesson of its track and so is always unlocked; `radio: 4` is the check question's
+    // first option (indices 0-3 belong to the hook), and answering it is what puts one question
+    // into the review state. Before 2026-08-26 this state was `[{ hash }, { lastButton }]` and
+    // relied on "Practice all questions" rendering unconditionally — which it no longer does, and
+    // in runAll() (one page session, no reload, nothing else answers anything) that recipe would
+    // now report MISSED. Earning the question also makes the state DETERMINISTIC, which it never
+    // was: it carries no `clear`/`seed`, so it used to sweep whatever storage the page happened
+    // to load with.
     { name: "practice-all-questions",
-      steps: [{ hash: "#/practice" }, { lastButton: true }],
+      steps: [{ hash: "#/lesson/1" }, { radio: 4 }, { hash: "#/practice" }, { lastButton: true }],
       note: "item 109's open question — this entrance renders the same runner branch as Start Quiz",
       arrived: { says: 'a quiz is running: counter, progress bar and four options',
         is: function () { return !!counter() && document.querySelectorAll('[role="progressbar"]').length === 1 &&

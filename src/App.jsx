@@ -466,7 +466,10 @@ export default function App() {
           )}
           {tab === "practice" && (
             <AsyncScreen t={t}>
-              <Practice t={t} lang={lang} review={review} recordReview={recordReview} />
+              <Practice
+                t={t} lang={lang} completedLessons={completedLessons}
+                review={review} recordReview={recordReview}
+              />
             </AsyncScreen>
           )}
           {tab === "reference" && (
