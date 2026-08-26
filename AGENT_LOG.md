@@ -2179,7 +2179,60 @@ for the history. No open P1/P2 items.
       may also be the correct reading of a pre-quiz as subordinate to the lesson title. Measure the
       other 39 lessons before deciding anything.
 
-111. **[A11y/Tooling — filed 2026-08-25 by the run that closed item 110, as its stated residual
+112. **[A11y/Tooling — filed 2026-08-25 by the run that retired item 111, as its stated residual
+    rather than smuggled into the same commit.] The state matrix exists now; point it at the two
+    axes it does not cover — probes beyond `headingOrder`, and the four languages nobody has ever
+    swept in any state.**
+    - **Language is the bigger of the two, and it is untouched.** All 19 states in
+      `scripts/a11y-states.js` were measured in **`en` only**. The four "(Beta)" languages re-render
+      every string in the app, and text length drives the two probes most likely to fire:
+      `horizontalOverflow` and `smallTargets`. `de`-style long compounds are not the risk here —
+      `ja`/`zh` line-breaking and `ko` particle-driven length are. A `lang` axis on the matrix is
+      cheap: the picker is a native `<select>`, and the Environment note already records how to
+      drive one (`Object.getOwnPropertyDescriptor(...).set.call(el, v)` + a `change` event).
+    - **The second axis is the probe set.** Every sweep in this log has been read for
+      `headingOrder`, because that is where the last four defects were. `smallTargets`,
+      `horizontalOverflow` and `namelessControls` have been running the whole time and their zeros
+      have never been the *subject* of a run — worth one deliberate read across all 19 states,
+      especially at the **1.3x font scale**, which no state currently sets.
+    - **A third, cheaper axis noticed and not chased:** `imagesWithoutAlt` reports `VACUOUS`
+      (scanned 0) on most screens and `unnamedRegions` on several. Vacuous is honest, not clean —
+      but a probe that is vacuous *everywhere* is a probe that is not earning its place, and that
+      is worth knowing either way.
+    - **Do not add states without an `arrived` assertion.** `check-data.mjs` §48 fails on it, and
+      the reason is measured: 9 of the file's first 13 recipes reached the wrong screen.
+    - **Honest priority: medium.** The instrument is built and the marginal cost per state is now
+      seconds, so this is the cheapest a11y work available. But item 111 came back clean across
+      nine states, so the prior on finding more `headingOrder` defects is now genuinely lower than
+      it was — the language axis is where the remaining probability actually sits. And nobody has
+      opened the app (O-1).
+
+111. **✅ RETIRED 2026-08-25 (owner-directed) — no defect. All nine of its states measured clean, so
+    the yield stopped at three-for-three. The run shipped `scripts/a11y-states.js` (19 states, each
+    with an arrival assertion) + `check-data.mjs` §48 instead, so that a clean answer is
+    reproducible in ~1.6s rather than an afternoon of hand-driving. Residual filed as item 112.
+    See the run log.**
+    - **⛔ TWO PREMISE CORRECTIONS, both to text I wrote myself this morning.**
+      **(a)** There is no `Kids.jsx` — the age selector lives in
+      `src/screens/reference/ParentGuide.jsx`.
+      **(b) The claim that item 109 read the batch-pause and session-complete states "on an
+      *unseeded* queue" was simply false**, and item 109's own table says so: it records
+      `batch pause (10 of 14)`, i.e. a seeded fourteen-question queue. I had misread item 109's
+      seeding-trap paragraph, which is about a seed that silently *reverted*, not an absent one.
+      Re-measured on a properly seeded queue: both states reproduce `12` exactly.
+    - **Clean, all of it:** ParentGuide's 9-12 and 13-17 panels `12` (each with a correct roving
+      `aria-selected` and an `aria-labelledby` that follows the band), Practice batch-pause and
+      session-complete `12`, lesson reader mid-quiz and both-answered `12322223`, after Mark
+      Complete `122223`.
+    - **The zeros were made to mean something** rather than asserted: a hand-planted `<h4>` in one
+      of the measured states produced `1422223`, 1 finding, and removing it returned `122223`, 0.
+    - **The real finding was about the tooling, not the app.** On its first run the new file
+      reported **MISSED for 9 of 13 recipes** — setting `location.hash` to the value it already
+      holds fires no `hashchange`, so seven Reference states never left the screen they were on.
+      Each of those would have been a false clean. See the run log for the four harness facts this
+      produced.
+    - **Original text, retained** — its reasoning is what made the pick correct:
+    - **[A11y/Tooling — filed 2026-08-25 by the run that closed item 110, as its stated residual
     rather than smuggled into the same commit.] The state families item 110 did not reach. Its
     thesis is now three-for-three, but the remaining states are progressively less trafficked.**
     - **What item 110 measured and left clean** (11 states, one defect): Learn landing and
@@ -10244,3 +10297,202 @@ item 106's fix is intact.
 (item 18, an analytics account). The first screen of this app now isolates its dialog and starts its
 outline at `<h1>`, in all five languages. **No screen reader has ever been pointed at it, because no
 one has ever opened the app.**
+
+### 2026-08-25 (owner-directed) — item 111: the states came back clean, so the run shipped the thing that makes a clean answer reproducible
+
+**Picked item 111** at the owner's explicit request ("do item 111 now"), filed hours earlier by item
+110's run as its stated residual. It is the first item in a while whose honest outcome was **no
+defect** — so the deliverable is not a fix, it is the instrument that makes today's nine measurements
+re-runnable in 1.6 seconds instead of an afternoon of hand-driving.
+
+`HEAD` `1f79954` at start and at commit time. Owner tree at start `OWNER-TREE
+c2331799fd3ee413aca864fd82d247a35ea31b01a70a6c4e37b00f6aad9105b2 (0 tracked modified, 52 untracked)`
+— **UNMOVED**. It did **not** stay that way; see "The tree moved under me" below.
+
+#### Step 3.5 — two premise corrections, one of them mine from this morning
+
+**(a) The "Kids age-selector" is `src/screens/reference/ParentGuide.jsx`.** There is no `Kids.jsx`.
+Item 111's own wording (I wrote it) named a file that does not exist. Corrected in the item.
+
+**(b) ⛔ Item 111 claimed item 109 read the batch-pause and session-complete states "on an *unseeded*
+queue". That is false, and item 109's own run-log table says so** — it records `batch pause (10 of
+14)`, which is a fourteen-question queue and therefore seeded. I filed that bullet this morning by
+misremembering item 109's seeding-trap paragraph (which is about a seed that *silently reverted*, not
+about an absent one). **Re-measured on a properly seeded 14-question queue: batch pause `12`,
+session complete `12` — reproducing item 109's numbers exactly.** So that half of item 111 was never
+open work. Corrected in the item rather than left for the next run to re-derive.
+
+**What was genuinely unswept, and all of it came back clean:**
+
+| state | sequence | findings |
+|---|---|---|
+| ParentGuide — Ages 9-12 panel | `12` | 0 |
+| ParentGuide — Ages 13-17 panel | `12` | 0 |
+| ParentGuide — default (5-8) panel | `12` | 0 |
+| Practice batch pause (10 of 14, **seeded**) | `12` | 0 |
+| Practice session complete (14 of 14, **seeded**) | `12` | 0 |
+| Practice landing on a **seeded** queue | `12` | 0 |
+| Lesson reader **mid-quiz** (check answered) | `12322223` | 0 |
+| Lesson reader, hook **and** check answered | `12322223` | 0 |
+| Lesson reader after **Mark Complete** | `122223` | 0 |
+
+Both non-default age panels also carry a correct roving `aria-selected` and an `aria-labelledby` that
+**follows the band** (`age-band-9-12`, `age-band-13-17`, each resolving to its own label text) — a
+stale panel label would have been a real defect and was specifically checked, not assumed.
+
+**⚠️ Nine zeros are worth nothing unless the instrument can still fire, so it was made to.** A
+hand-planted `<h4>` after the lesson reader's `<h1>` — in that exact state, not a synthetic page —
+produced `1422223`, **1 finding**: `h1 -> h4 skips a level, at h4#itm111-probe`. Removing it returned
+`122223`, **0**. `A11ySweep.selftest()` **PASS, 9/9 controls fired, plantsRemoved true** alongside.
+
+**So item 111 retires rather than closes with a fix. The yield stopped at three-for-three.**
+
+#### What shipped, and why it is not the fix the item asked for
+
+Every measurement above was made by hand: seed `localStorage`, reload, dismiss a modal, click through
+ten questions. **None of it is repeatable**, and item 110's entire lesson is that the states nobody
+re-checks are where defects live. The three defects this line of work found were each found by a
+person driving the app exactly once.
+
+- **`scripts/a11y-states.js` (new, 424 lines, zero dependencies)** — the state matrix as a checked-in
+  instrument, the companion `a11y-sweep.js` has been missing. **19 states**, each a recipe (seed,
+  hash, steps) plus — the load-bearing half — an **arrival assertion**. `runAll()` sweeps the 13
+  states that need no reload **in one call, in 1.6 seconds**; the 6 that seed `localStorage` are an
+  explicit `begin()`/`finish()` pair, because the app only reads storage at mount.
+- **`scripts/check-data.mjs` §48** — guards the matrix's contract: every state keeps an `arrived`
+  assertion, the three states that are the *only* live coverage of a shipped fix (items 106/109/110)
+  keep existing, and `practice-batch-pause`'s question count still equals `Practice.jsx`'s
+  `BATCH_SIZE`.
+
+**`MISSED` is the whole design, and it justified itself immediately.** A recipe whose click silently
+misses does not throw — it sweeps whatever screen it is actually on, finds it clean, and reports a
+zero. So no state may report a sweep unless it first proves from the DOM that it arrived; a state
+that cannot reports `MISSED` with `findings: null`, and `runAll()` counts missed **separately** from
+clean. **On the first run of the file, 9 of 13 recipes reported MISSED. Every one of those would
+otherwise have been a false clean in this log.**
+
+#### Four harness facts this run measured, two of which correct existing documentation
+
+1. **A MessageChannel round-trip flushes React in this hidden pane; `setTimeout` is what is
+   throttled.** `a11y-sweep.js`'s header precondition 3 says "always click in one `javascript_tool`
+   call and read in the next". The observation is right and the conclusion is too strong — a full
+   14-question review session now drives end-to-end **inside a single call**. Without this a state
+   matrix costs one round-trip per click and nobody re-runs it. **The sweep's header is now corrected
+   in `a11y-states.js`'s own header rather than edited in place**, so the original stays readable.
+2. **Setting `location.hash` to the value it already has fires no `hashchange`.** The app never
+   re-routes, and anything pushed on top (Reference's five sub-screens, a glossary term) stays open
+   under a recipe that believes it navigated. **This is what produced 7 of the 9 first-run misses.**
+3. **A route change is not finished when `location.hash` matches and React has committed once.** A
+   click into that window starts a session that a *later* remount silently discards — the control is
+   found, the click throws nothing, and two ticks later the screen is back on its landing.
+   `practice-all-questions` did this reproducibly while the identical click by hand worked every
+   time. Fixed with `quiesce()`: wait until `<main>`'s text is unchanged across two consecutive
+   real-time yields. **An observation, not a magic number of settles.**
+4. **The `setTimeout` fallback blew the 30-second `javascript_tool` timeout and returned nothing.**
+   Throttled timers turn a bounded wait into an unbounded one. Replaced with a **same-origin `HEAD`
+   fetch** — not a timer, not throttled, ~1ms against the local static server, and still a long
+   enough yield for a pending dynamic `import()` to settle. That is the only reason this file can
+   wait for a lazy chunk at all.
+
+#### Two guards caught me — one of them mine, one from an earlier run
+
+- **§23 (an earlier run's guard) rejected my `new Date(...).toISOString().slice(0,10)`** for the
+  seeded due-date: "tomorrow's date every evening east of UTC". §23 allows **exactly one**
+  `utc-date-ok:` exemption in the repo and says a second is "a decision to review, not a default" —
+  so rather than spend it, the computation is gone: `LONG_PAST_DUE = "2000-01-01"`. The seed only
+  needs a date no timezone can drag into the future.
+- **My own injection test caught §48 failing for the *wrong reason*.** Renaming a regression state to
+  `practice-runnerX` made my `name:\s*"([a-z0-9-]+)"` match nothing for that entry, so the check
+  reported a **missing `arrived` assertion** for a file whose assertions were all intact. It failed —
+  and it would have sent the next reader to the wrong place. Regex widened to `[^"]+`; re-injected
+  and it now names the deleted regression state. Recorded because "the check fired" is not the same
+  claim as "the check was right".
+
+#### Verification
+
+**The tree moved under me, and the suite went red for reasons that are not mine.** Mid-run a
+concurrent session began adding money-track lessons 41-43; `git status` went from 0 to **13 modified
+`src/content/` files**, and `npm test` failed with `lessonContent[41] … language keys are [en]`.
+`HEAD` never moved. Per the Environment note this was settled with a control copy rather than by
+reading the failure:
+
+| tree | result |
+|---|---|
+| pristine `HEAD` (`git archive`, node_modules symlinked, gitignored `v5`/`v6` copied in) | **PASS 0 failures, 2 warnings** |
+| `HEAD` + **only my two files** | **PASS 0 failures, 2 warnings**, §48 reporting 19 states |
+| the live working tree | FAIL — untranslated lessons 41-43, **not this run's work** |
+
+`npm run build` in the control copy: clean, emitting **`index-DuywLYkx.js`** — the same bundle hash
+the live verification ran against, which is itself the proof the served app is exactly `HEAD`'s
+source. Confirmed independently: `grep -rl "Subject That Wasn't on the Timetable" dist/` → **0**,
+with **control** `grep -rl "Budgeting" dist/assets/` → **1**, so `dist/` predates the other session's
+edits and the grep genuinely reaches bundle content.
+
+**§48 proved able to fail**, five injections, each asserting it landed (the injector exits 9 on a
+no-op replace) and each restored from a **scratchpad copy, never `git checkout`**:
+
+| injected | says |
+|---|---|
+| rename the item-109 regression state | `no longer defines the state(s) "practice-runner" — item 109 …` ✅ |
+| `practice-batch-pause` answers 7 | `answers 7 … but BATCH_SIZE = 10` ✅ |
+| a state loses its `arrived` | `19 state(s) but only 18 arrived assertion(s)` ✅ |
+| **`BATCH_SIZE` moves in `Practice.jsx`** (the other side of the premise) | `answers 10 … but BATCH_SIZE = 12` ✅ |
+| the `STATES` array is renamed away | `could not find a populated \`var STATES = [\`` ✅ |
+
+All restores **byte-identical** (`cmp` clean), `src/screens/Practice.jsx` back to unmodified.
+
+**Live, against the final checked-in files.** The states file's sha256 was read back **inside the
+browser** as `30d4cba4314b000e…`, byte-identical to `scripts/a11y-states.js`; bundle
+`index-DuywLYkx.js`. `A11ySweep.selftest()` **PASS 9/9, plantsRemoved true** and
+`A11yStates.selftest()` **PASS** — the latter proving the `MISSED` path fires **both** when an
+assertion fails and when a step throws, with `findings: null` in both cases.
+
+**All 19 states, every one reached (`missed: 0`) and swept (`0 findings`)**: `runAll()` covered 13 in
+**1,348 ms**; the six reload-gated states were each run via `begin()`/`finish()` **against these final
+files**, with the destination confirmed from the DOM each time —
+`first-run-modal` `1` (4 inert siblings, item 110's fix), `lesson-unfinished` `12322223` (item 106's
+recorded sequence), `lesson-midquiz` `12322223` (answer checked, Mark Complete present),
+`practice-runner` `1` (counter `1 / 14`, 4 radios, item 109's fix), `practice-batch-pause` `12`
+("10 done — nice work", ten questions driven in **64 ms**), `practice-complete` `12` ("Review
+complete", 3 of 14). **Every value matches what items 106/109/110 recorded by hand.**
+
+#### Step 5 — adversarial self-check
+
+- **Blindspot register** — no regression. Across my 585 changed/added lines: Dalio/`principles`
+  **0**, child-facing framing **0**. **Control**: `a11y|state|heading` returns **118**, so the grep
+  reaches them. **One advice-verb hit, checked rather than waved past**: "the only *guarantee* that
+  the hook is rendered" — a code comment about test scaffolding, not investment language. **Three
+  date strings**, all checked: two `2026-08-25` in comments and `LONG_PAST_DUE = "2000-01-01"`.
+  Verified against the artifact rather than asserted — `grep -rl` in `dist/assets/` for
+  `LONG_PAST_DUE`, `A11yStates` and `2000-01-01` returns **0, 0, 0**, with **control**
+  `Welcome to Economic Cycles` → **1 file**. `scripts/` is not bundled; `dist/` is gitignored
+  (`git check-ignore` confirms), so the copies served to the browser are never committed.
+- **`DECISIONS.md` conflict** — none. Zero dependency/config diff; no `src/` change at all. The file
+  writes `localStorage` to seed, which *uses* the localStorage-only decision rather than contradicting
+  it, and only ever under `A11yStates.begin()`.
+- **Already-done backlog item** — no. `git log --all -S'A11yStates'` → **0**; `--oneline --
+  scripts/a11y-states.js` → **0** commits; `-S'§48'` → **0**. **Control**: `-S'§47'` → **1** (item
+  110's commit earlier today), so the pickaxe reaches this shape.
+- **Own verification claim** — the claim easiest to fake here is "nine states, all clean", because a
+  clean result and a broken instrument are the same output. Three things make it checkable: the sweep
+  selftest passed in every session, a defect hand-planted **in one of the measured states** produced
+  a finding, and the new file's own selftest proves it can tell "not reached" from "reached and
+  clean". The second-easiest claim to fake is "the suite passes" while the tree is red — stated
+  plainly above, with the control copy that separates my change from the other session's lessons.
+- **Committed exactly three paths**, verified against `git status` before and after: the other
+  session's **13 modified `src/content/` files are untouched**, as are the owner's `UIUX/` and
+  `drafts/`.
+
+#### Next
+
+- **Item 112** (filed this run): put the matrix to work — extend `a11y-states.js` past `headingOrder`
+  and past English. Every state above was swept in `en`; the four "(Beta)" languages re-render every
+  string and have never been swept in any state.
+- **Item 108** (the harness's focus capability vs. the sweep header's claim) is unchanged and cheap.
+- **Item 26 / item 27** both still need a re-scope before picking; **W-5.2's pick list** remains.
+- **Do NOT pick item 94** — optional track, four "(Beta)" languages, parked behind O-1 by its own box.
+
+**Unchanged and still the entire critical path, both owner-blocked: O-1** (a deployed URL) and **O-2**
+(item 18, an analytics account). Nineteen states of this app can now be swept for accessibility in
+under two seconds, and every one of them is clean. **No screen reader has ever been pointed at any of
+them, because no one has ever opened the app.**

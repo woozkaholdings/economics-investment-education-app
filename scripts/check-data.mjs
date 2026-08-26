@@ -5534,5 +5534,78 @@ if (keyedGroupsChecked < 4) {
   }
 }
 
+// §48. The a11y state matrix keeps its contract, and its one cross-file premise.
+//
+// WHY. scripts/a11y-states.js drives the app into each state a sweep cannot reach by loading a
+// URL. Three shipped fixes (items 106, 109, 110) live ONLY in such states — the lesson reader
+// while unfinished, the review runner mid-quiz, the first-run dialog from cleared storage — and
+// before that file existed, each was found by a human driving the app by hand exactly once.
+//
+// WHAT CAN GO WRONG SILENTLY, which is the only reason this is a check:
+//
+//   (a) A state loses its `arrived` assertion. That assertion is the file's whole anti-lying-zero
+//       contract: without it a recipe whose click missed sweeps whatever screen it is actually on,
+//       finds it clean, and reports a zero. On this file's FIRST run, nine of thirteen recipes
+//       were reaching the wrong screen — every one of those would have been a false clean.
+//   (b) A regression state is deleted. Nothing else in the repo re-checks items 106/109/110 in
+//       the rendered DOM, so dropping one of these names silently retires a shipped fix's only
+//       live coverage. check-data.mjs §45/§46/§47 guard the SOURCE of those fixes; this guards
+//       that someone still looks at the rendered result.
+//   (c) BATCH_SIZE moves. `practice-batch-pause` answers a fixed number of questions to reach the
+//       pause. If Practice.jsx's BATCH_SIZE changes, the recipe sails past (or never reaches) the
+//       pause. That failure is at least honest — the arrival assertion reports MISSED rather than
+//       a clean sweep of the wrong screen — but a static check is cheaper than discovering it live.
+//
+// WHAT THIS CANNOT SEE: it reads source. It cannot tell whether a recipe still ARRIVES — only the
+// file's own `A11yStates.runAll()`, whose `missed` count is reported separately from `clean`, can.
+{
+  const file = "scripts/a11y-states.js";
+  const raw = readFileSync(file, "utf8");
+  const src = raw
+    .replace(/\/\*[\s\S]*?\*\//g, "")          // this section's reasoning is quoted in that
+    .replace(/^\s*\/\/.*$/gm, "");             // file's header and its per-state comments
+
+  const start = src.indexOf("var STATES = [");
+  const matrix = start === -1 ? "" : src.slice(start, src.indexOf("\n  ];", start));
+
+  // `[^"]+`, not `[a-z0-9-]+`. The narrow class was written first and an injection test caught it:
+  // renaming a state to `practice-runnerX` made the regex match NOTHING for that entry, so the
+  // count fell to 18 and this section reported a MISSING ASSERTION for a file whose assertions
+  // were all intact. The check still failed — but for the wrong reason, which sends the next
+  // reader to the wrong place. A name is whatever is between the quotes.
+  const names = (matrix.match(/name:\s*"([^"]+)"/g) || [])
+    .map((m) => m.replace(/name:\s*"/, "").replace(/"$/, ""));
+  const arrivedCount = (matrix.match(/arrived:\s*\{/g) || []).length;
+
+  // The states that are the only live coverage of a shipped fix.
+  const REGRESSION_STATES = {
+    "first-run-modal": "item 110 (the dialog isolates the app behind it)",
+    "lesson-unfinished": "item 106 (the hook block's heading level)",
+    "practice-runner": "item 109 (the runner's question is the screen's <h1>)"
+  };
+  const missingStates = Object.keys(REGRESSION_STATES).filter((n) => names.indexOf(n) === -1);
+
+  // (c) the cross-file premise.
+  const practiceSrc = readFileSync("src/screens/Practice.jsx", "utf8");
+  const batchMatch = practiceSrc.match(/const BATCH_SIZE\s*=\s*(\d+)/);
+  const pauseMatch = matrix.match(/name:\s*"practice-batch-pause"[\s\S]*?\{\s*answer:\s*(\d+)\s*\}/);
+
+  if (!matrix || names.length === 0) {
+    fail(`§48: could not find a populated \`var STATES = [\` array in ${file}. This section is pointed at a structure that no longer exists — repoint it rather than leaving it green.`);
+  } else if (arrivedCount !== names.length) {
+    fail(`§48: ${file} defines ${names.length} state(s) but only ${arrivedCount} \`arrived\` assertion(s). A state without one sweeps whatever screen it happens to land on and reports that as a clean result — the exact lying zero this file exists to prevent.`);
+  } else if (missingStates.length > 0) {
+    fail(`§48: ${file} no longer defines the state(s) ${missingStates.map((n) => `"${n}" — ${REGRESSION_STATES[n]}`).join("; ")}. That state is the only place a shipped a11y fix is checked in the RENDERED DOM; §45/§46/§47 only check its source. Removing it retires live coverage silently.`);
+  } else if (!batchMatch) {
+    fail("§48: could not read BATCH_SIZE from src/screens/Practice.jsx, so the practice-batch-pause recipe's question count cannot be checked against it. Repoint this check rather than leaving it green.");
+  } else if (!pauseMatch) {
+    fail(`§48: the "practice-batch-pause" state in ${file} no longer carries an { answer: N } step, so nothing drives it to the pause. Re-derive the recipe rather than leaving this green.`);
+  } else if (pauseMatch[1] !== batchMatch[1]) {
+    fail(`§48: "practice-batch-pause" answers ${pauseMatch[1]} question(s) but src/screens/Practice.jsx sets BATCH_SIZE = ${batchMatch[1]}. The recipe will miss the pause it exists to reach — it reports MISSED rather than a false clean, but fix the number.`);
+  } else {
+    console.log(`  §48 a11y state matrix: ${names.length} state(s), each with an \`arrived\` assertion; the ${Object.keys(REGRESSION_STATES).length} regression states are present and practice-batch-pause answers ${pauseMatch[1]} to Practice.jsx's BATCH_SIZE = ${batchMatch[1]}. (Static — only A11yStates.runAll()'s \`missed\` count can say whether a recipe still arrives.)`);
+  }
+}
+
 console.log(`\n${failures === 0 ? "PASS" : "FAIL"}: ${failures} failure(s), ${warnings} warning(s).`);
 process.exit(failures === 0 ? 0 : 1);
