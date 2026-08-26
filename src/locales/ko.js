@@ -47,6 +47,7 @@ export default {
     glossNoResults: "검색과 일치하는 용어가 없습니다.",
     balanceSheet: "연준 대차대조표",
     qeLabel: "양적완화 (QE)", qtLabel: "양적긴축 (QT)",
+    moneySupply: "통화량 (M0, M1, M2)",
     ratePrinciples: "핵심 원칙",
     kidsTabLabel: "키즈", quizTabLabel: "퀴즈", questionsLabel: "문항",
     viewAllLessonsTemplate: "{n}개 레슨 모두 보기 →",

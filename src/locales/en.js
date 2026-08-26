@@ -63,6 +63,7 @@ export default {
     glossNoResults: "No terms match your search.",
     balanceSheet: "Fed Balance Sheet",
     qeLabel: "Quantitative Easing (QE)", qtLabel: "Quantitative Tightening (QT)",
+    moneySupply: "Money Supply (M0, M1, M2)",
     ratePrinciples: "Key Principles",
     kidsTabLabel: "Kids", quizTabLabel: "Quiz", questionsLabel: "questions",
     viewAllLessonsTemplate: "View all {n} lessons →",

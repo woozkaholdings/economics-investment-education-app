@@ -239,3 +239,86 @@ export const ratePrinciples = [
     ja: "引き締めがどこで止まるかが、減速の穏やかさ・厳しさを左右します。",
   },
 ];
+
+// ── Money supply ───────────────────────────────────────────────────────────
+// Added 2026-08-25. The app referred to "the base money supply" in three
+// places (glossary "Credit", the economy-track credit lesson, and its quiz
+// explanation) without ever defining it — the phrase was doing work no screen
+// had taught. These three tiers are the definition, placed next to QE/QT
+// because that is the mechanism that moves the narrowest one.
+//
+// §2.3 applies: no level, no growth rate, no date. The aggregates are taught
+// as *composition* — what is inside each measure and who creates it — which
+// is the part that does not go stale. The exact composition is set by each
+// central bank and has been redefined over time; that caveat is in the copy
+// rather than in this comment, because a reader comparing a long historical
+// chart needs it and will never read this file.
+export const moneyAggregates = [
+  {
+    key: "m0",
+    name: { en: "M0 — Monetary base", es: "M0 — Base monetaria", ko: "M0 — 본원통화", zh: "M0 — 基础货币", ja: "M0 — マネタリーベース" },
+    contains: {
+      en: "Cash in circulation + reserves banks hold at the central bank",
+      es: "Efectivo en circulación + reservas de los bancos en el banco central",
+      ko: "유통 중인 현금 + 은행이 중앙은행에 맡긴 지급준비금",
+      zh: "流通中的现金 + 银行存放在央行的准备金",
+      ja: "流通している現金 ＋ 銀行が中央銀行に預ける準備預金",
+    },
+    note: {
+      en: "The only tier a central bank sets directly. QE expands it, QT shrinks it.",
+      es: "El único nivel que el banco central fija directamente. La QE lo expande; la QT lo reduce.",
+      ko: "중앙은행이 직접 조절하는 유일한 단계. 양적완화는 늘리고 양적긴축은 줄입니다.",
+      zh: "唯一由央行直接决定的层级。量化宽松使其扩大，量化紧缩使其收缩。",
+      ja: "中央銀行が直接決められる唯一の層。量的緩和で拡大し、量的引き締めで縮小します。",
+    },
+  },
+  {
+    key: "m1",
+    name: { en: "M1 — Spendable today", es: "M1 — Gastable hoy", ko: "M1 — 오늘 쓸 수 있는 돈", zh: "M1 — 今天就能花的钱", ja: "M1 — 今日使えるお金" },
+    contains: {
+      en: "Cash held by the public + deposits available on demand",
+      es: "Efectivo en manos del público + depósitos disponibles a la vista",
+      ko: "민간이 보유한 현금 + 언제든 찾을 수 있는 예금",
+      zh: "公众持有的现金 + 可随时支取的存款",
+      ja: "民間が保有する現金 ＋ いつでも引き出せる預金",
+    },
+    note: {
+      en: "Reserves are excluded — they cannot be spent in the real economy.",
+      es: "Las reservas quedan excluidas: no pueden gastarse en la economía real.",
+      ko: "지급준비금은 제외됩니다 — 실물 경제에서 쓸 수 없기 때문입니다.",
+      zh: "不含准备金——它们无法在实体经济中支出。",
+      ja: "準備預金は含みません——実体経済で使えないためです。",
+    },
+  },
+  {
+    key: "m2",
+    name: { en: "M2 — M1 + near money", es: "M2 — M1 + cuasidinero", ko: "M2 — M1 + 준통화", zh: "M2 — M1 + 准货币", ja: "M2 — M1 ＋ 準通貨" },
+    contains: {
+      en: "M1 + small time deposits + retail money-market funds",
+      es: "M1 + depósitos a plazo pequeños + fondos monetarios minoristas",
+      ko: "M1 + 소액 정기예금 + 개인용 머니마켓펀드",
+      zh: "M1 + 小额定期存款 + 零售货币市场基金",
+      ja: "M1 ＋ 小口の定期預金 ＋ 個人向けMMF",
+    },
+    note: {
+      en: "Mostly created when banks lend, not by the central bank.",
+      es: "Se crea sobre todo cuando los bancos prestan, no por el banco central.",
+      ko: "대부분 중앙은행이 아니라 은행이 대출할 때 만들어집니다.",
+      zh: "其中大部分是银行放贷时创造的，而非央行创造。",
+      ja: "その大部分は中央銀行ではなく、銀行が融資するときに生まれます。",
+    },
+  },
+];
+
+// The nesting is the part readers get wrong, so it is stated rather than
+// implied by the layout: M1 sits inside M2, but the base does NOT sit inside
+// either. Both contain physical cash; reserves belong only to the base. That
+// asymmetry is why a central bank can expand the base a great deal without
+// spendable money rising in step.
+export const moneySupplyCaption = {
+  en: "M1 sits inside M2. The base does not sit inside either — they share physical cash, but reserves count only in the base, which is why expanding it does not automatically add spendable money. Each central bank sets its own composition and has redefined it over time, so long historical comparisons need care.",
+  es: "M1 está dentro de M2. La base no está dentro de ninguno de los dos: comparten el efectivo físico, pero las reservas solo cuentan en la base, y por eso expandirla no añade automáticamente dinero gastable. Cada banco central fija su propia composición y la ha redefinido con el tiempo, así que las comparaciones históricas largas requieren cuidado.",
+  ko: "M1은 M2 안에 포함됩니다. 그러나 본원통화는 둘 중 어디에도 포함되지 않습니다 — 현금은 공유하지만 지급준비금은 본원통화에만 잡히기 때문입니다. 본원통화를 늘려도 쓸 수 있는 돈이 그만큼 늘지 않는 이유가 여기에 있습니다. 구성 항목은 중앙은행마다 다르고 시간이 지나며 재정의되어 왔으므로, 장기 비교에는 주의가 필요합니다.",
+  zh: "M1包含在M2之内。基础货币则不属于两者中的任何一个——它们共有流通现金，但准备金只计入基础货币，这正是扩大基础货币并不会自动增加可花费货币的原因。各国央行对构成的界定不同，并随时间多次调整，因此长期历史比较需要谨慎。",
+  ja: "M1はM2の中に含まれます。一方、マネタリーベースはそのどちらにも含まれません——現金は共通ですが、準備預金はベースにしか計上されないからです。ベースを拡大しても使えるお金が同じだけ増えるとは限らないのは、このためです。構成は中央銀行ごとに異なり、時代とともに再定義されてきたため、長期の比較には注意が必要です。",
+};

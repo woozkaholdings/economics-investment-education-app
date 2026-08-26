@@ -47,6 +47,7 @@ export default {
     glossNoResults: "没有与您的搜索匹配的术语。",
     balanceSheet: "美联储资产负债表",
     qeLabel: "量化宽松（QE）", qtLabel: "量化紧缩（QT）",
+    moneySupply: "货币供应量（M0、M1、M2）",
     ratePrinciples: "核心原则",
     kidsTabLabel: "儿童", quizTabLabel: "测验", questionsLabel: "题",
     viewAllLessonsTemplate: "查看全部{n}节课 →",

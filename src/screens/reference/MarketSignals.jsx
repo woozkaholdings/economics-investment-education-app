@@ -13,8 +13,8 @@ import { Bar, CycleChart, YieldCurve } from "../../components/charts.jsx";
 import { Disclaimer, Note, Stack, Text } from "../../components/ui.jsx";
 import {
   balanceSheetCaption, balanceSheetDescription, balanceSheetHistory,
-  cycleChartDescription, phaseNames, rateEffects, ratePrinciples, scenario,
-  trendLabel, yieldCurveDescriptions,
+  cycleChartDescription, moneyAggregates, moneySupplyCaption, phaseNames,
+  rateEffects, ratePrinciples, scenario, trendLabel, yieldCurveDescriptions,
 } from "../../content/markets.js";
 import { graph, ink, line, radius, space, surface } from "../../theme.js";
 
@@ -91,6 +91,37 @@ export default function MarketSignals({ t, lang }) {
         description={balanceSheetDescription[lang]}
         caption={balanceSheetCaption[lang]}
       />
+
+      {/* Money supply — placed directly after QE/QT because that is the
+          mechanism which moves the narrowest tier, and a reader who has just
+          seen the balance sheet grow is exactly the reader asking "so is there
+          more money now?". The caption answers that: not necessarily.
+
+          An <ol>, not a <ul>: unlike the principles below, these three DO have
+          an order — each tier is defined in terms of the one before it, and
+          reading M2 before M1 does not work. `role="list"` for the same reason
+          as every other list here (check-data.mjs §20: WebKit drops list
+          semantics when `list-style: none` is set). */}
+      <Text as="h2" variant="heading" color={ink.strong} style={{ margin: `${space["5"]}px 0 ${space["3"]}px` }}>
+        {t.moneySupply}
+      </Text>
+      <ol role="list" style={{ margin: 0, padding: 0, listStyle: "none" }}>
+        {moneyAggregates.map((tier) => (
+          <li
+            key={tier.key}
+            style={{ background: surface.card, border: `1px solid ${line.hairline}`, borderRadius: radius.md, padding: space["3"], marginBottom: space["2"] }}
+          >
+            <Text variant="caption" color={ink.strong} style={{ fontWeight: 700, marginBottom: space["1"] }}>
+              {tier.name[lang]}
+            </Text>
+            <Text variant="small" color={ink.body}>{tier.contains[lang]}</Text>
+            <Text variant="caption" color={ink.muted} style={{ marginTop: space["2"] }}>
+              {tier.note[lang]}
+            </Text>
+          </li>
+        ))}
+      </ol>
+      <Note tone="neutral" style={{ marginTop: space["3"] }}>{moneySupplyCaption[lang]}</Note>
 
       {/* Durable principles */}
       <Text as="h2" variant="heading" color={ink.strong} style={{ margin: `${space["5"]}px 0 ${space["3"]}px` }}>
