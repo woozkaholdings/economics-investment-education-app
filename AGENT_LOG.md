@@ -2179,7 +2179,56 @@ for the history. No open P1/P2 items.
       may also be the correct reading of a pre-quiz as subordinate to the lesson title. Measure the
       other 39 lessons before deciding anything.
 
-112. **[A11y/Tooling — filed 2026-08-25 by the run that retired item 111, as its stated residual
+113. **[Tooling/Guard — filed 2026-08-25 by the run that closed item 112, as its stated residual.
+    DEFERRED, not forgotten: the file it belongs in had uncommitted work by another session for
+    the whole run.] A `check-data.mjs` section asserting that no recipe in `a11y-states.js`
+    selects or asserts on hardcoded English.**
+    - **Why it is worth a section.** Item 112 measured the failure mode rather than imagining it:
+      matching controls by English display text made **12 of 13 states unreachable in `es`, and
+      the same 12 in `ko`**. Nothing errored. The states were rescued only because each carries an
+      arrival assertion — without one, that run would have printed "65 sweeps, all clean" over 48
+      sweeps of the Reference menu.
+    - **What the check should look for**, inside the `STATES` array and the axis helpers:
+      `{ click: "..." }` / `{ clickExact: "..." }` with a non-numeric literal, and `hasHeading("...")`
+      in an `arrived.is`. The legitimate selectors are ids (`clickId`, `getElementById`), position
+      (`menuItem`, `firstButton`, `lastButton`, `termRow`), ARIA roles/states, numerals
+      (`aria-label="130%"`), and labels **read from the app at runtime** (`h1IsLastLabel`,
+      `headingIsLastLabel`). `dismissDialog` is fine — it takes no label at all.
+    - **Two exemptions the check must allow**, or it will fail on correct code: `clickIfPresent`
+      is only ever used for the first-run dialog and is being replaced by `dismissDialog`; and the
+      two `__selftest_*` states deliberately reference strings that exist in no language.
+    - **Vacuity guard, the §44/§45/§46/§47/§48 shape:** zero recipes found, or an `A11yStates`
+      that no longer exposes `sweepLangs`, must fail loudly rather than pass.
+    - **Honest priority: medium-low.** `A11yStates.selftest()`'s axis control already fails loudly
+      if `setLang` stops asserting, so the worst case is covered from inside the file. This section
+      would catch the *next* English string at commit time instead of at sweep time. And nobody has
+      opened the app (O-1).
+
+112. **✅ DONE 2026-08-25 (owner-directed). Both axes shipped — 5 languages × 2 font scales — and
+    the app came back clean in all 130 sweeps. The defects were all in the instrument: 12 states
+    per language were unreachable because every recipe matched ENGLISH display text. Recipes now
+    select by id, position, ARIA, numerals, and labels read from the app at runtime. Residual (a
+    static guard) deferred to item 113 because `check-data.mjs` was mid-refactor by another
+    session. See the run log.**
+    - **The number that matters:** without the arrival assertions item 111 added, this run would
+      have reported *"5 languages × 13 states = 65 sweeps, all clean"* — and **48 of those would
+      have been the Reference menu measured repeatedly under five different names.**
+    - **Three more instrument defects, each caught by an assertion, none by re-reading code:**
+      `<html lang>` for `zh` is `zh-Hans` and the app was right (`useAppState.js:85`); the
+      `setFontScale` helper itself matched "About" in English; and the scale seed was written as a
+      percent while the app stores a fraction, so a "130%" sweep was rendering at **100%** until
+      `finish()` reported `AXES-NOT-APPLIED`.
+    - **The third axis, now a number instead of an impression:** across 13 states,
+      `imagesWithoutAlt` is `ok` on **1** and VACUOUS on **12**; `unnamedRegions` `ok` on **3**,
+      VACUOUS on **10**; `focusVisibleOnTab` UNAVAILABLE on **13** (item 108 — it has never run).
+      The other seven probes are `ok` on all 13.
+    - **A control that was itself a defect:** asking for a bogus language `xx` drove the app into
+      its error boundary (a native `<select>` rejects unknown values to `""`, which the app then
+      stored). Not a shipped defect — `loadLang()` validates on the next load and a plain reload
+      recovered fully, and item 99's boundary offered a Reload that worked — but a bad control.
+      It now detaches the `<select>` instead.
+    - **Original text, retained** — its reasoning is what made the pick correct:
+    - **[A11y/Tooling — filed 2026-08-25 by the run that retired item 111, as its stated residual
     rather than smuggled into the same commit.] The state matrix exists now; point it at the two
     axes it does not cover — probes beyond `headingOrder`, and the four languages nobody has ever
     swept in any state.**
@@ -10496,3 +10545,183 @@ complete", 3 of 14). **Every value matches what items 106/109/110 recorded by ha
 (item 18, an analytics account). Nineteen states of this app can now be swept for accessibility in
 under two seconds, and every one of them is clean. **No screen reader has ever been pointed at any of
 them, because no one has ever opened the app.**
+
+### 2026-08-25 (owner-directed) — item 112: the language axis found no app defect and twelve instrument defects, which is the same lesson twice
+
+**Picked item 112** at the owner's explicit request ("do item 112 now"), filed hours earlier by item
+111's run. Two axes: the four "(Beta)" languages, and the 1.3x font scale. **No defect in the app.
+Thirteen defects in my own instrument**, every one caught by the arrival assertion rather than by
+reading the code — and the headline is what that assertion prevented, not what it found.
+
+`HEAD` `6a697a1` at start and at commit time. **The owner's tree moved continuously throughout**; see
+"Working around a live session" below.
+
+#### Step 3.5 — premises confirmed, one item-112 wording corrected
+
+All four checked before writing anything: the picker is a native `<select>` (`App.jsx:407`), font
+scale is `documentElement.style.fontSize = fontScale * 100%` (`useAppState.js:129`) with steps
+`0.9 / 1 / 1.15 / 1.3`, and `a11y-states.js` set **neither** key — English at 100%, confirmed by
+`grep -c 'ecycles_lang\|ecycles_font_scale'` → **0**. Item 112's "`de`-style long compounds are not
+the risk" aside was idle: nothing in this app renders German. Dropped rather than carried forward.
+
+#### ⚠️ The finding: a text-matched recipe is a monolingual recipe
+
+Switching the axis on for the first time produced this, in `es` and then identically in `ko`:
+
+| | states reached | states swept clean |
+|---|---|---|
+| `en` | 13 / 13 | 13 |
+| **`es`** | **1 / 13** | **1** |
+| **`ko`** | **1 / 13** | **1** |
+
+Twelve MISSED per language, every one `no control containing "Glossary" / "Market Dashboard" /
+"Kids" / "About" / "Practice all questions"`. **I had written every recipe against English display
+text.** Item 111's file matched controls by what they say, which works exactly as long as nobody
+changes what they say.
+
+**What the assertion prevented is the whole point.** Without it this run would have reported *"5
+languages × 13 states = 65 sweeps, all clean"* — and **48 of those would have been the Reference
+menu, measured over and over, reported as five different sub-screens in four different languages.**
+That is the largest lying zero this log has come close to printing, and it was stopped by a
+mechanism built one run earlier for a different reason.
+
+#### The fix: selection by handles that do not translate
+
+- **Element ids where they exist** — `track-*-title` (Learn), `age-band-9-12` / `age-band-panel`
+  (the age selector), `sector-list`, `how-review-title`, `lesson-section-0-title`.
+- **Position + label confirmation for Reference's five sub-screens, which have no ids.** The row is
+  clicked by index, and the state asserts the resulting `<h1>` equals **the row's own recorded
+  text** — both render the same locale string, so it holds in every language. Verified in `ko`:
+  clicked `시장 대시보드`, resulting `<h1>` `시장 대시보드`, match `true`. If the menu is ever
+  reordered the assertion fails loudly instead of sweeping the wrong sub-screen.
+- **A glossary row's `aria-label` IS the term**, in whatever language is loaded — recorded, then
+  matched against the detail heading.
+- **Structure for the runner.** The continue control is "Next", except on the last question where it
+  is "See Results" — both English. In the runner the close control carries an `aria-label` and the
+  four options carry `role="radio"`, so the *sole plain button* is the one to press. Measured in
+  `ko`: exactly one candidate, `다음`. Batch-pause and session-complete are told apart the same way
+  — two plain buttons versus one — not by their words.
+- **Numerals.** The font-scale controls are labelled `90%`…`130%`, which do not translate.
+
+**Result: `es` 1/13 → 13/13, and all five languages reach every state.**
+
+#### Three more instrument defects, each caught by an assertion rather than by reading
+
+1. **`zh` is `zh-Hans`, and the app was right.** `setLang` asserted `<html lang> === code` and fired
+   on `zh`. `useAppState.js:85` maps `zh → "zh-Hans"` — the correct BCP-47 subtag. The check was
+   wrong, not the app. Mirrored the app's `HTML_LANG` table rather than relaxing the assertion to
+   "whatever the DOM says", because that is not an assertion.
+2. **`setFontScale` matched "About" in English** — the very helper written to support the language
+   axis threw the moment that axis was switched on. Same bug, same fix (`menuItem(4)`).
+3. **The scale seed was a percent; the app stores a fraction.** `begin(..., {fontScale: 130})` wrote
+   `"130"`, `loadFontScale()` found it absent from `FONT_SCALE_STEPS` and silently fell back to `1`,
+   and the page rendered at **100% while the run believed it was at 130%**. Caught by `finish()`'s
+   axis assertion reporting **`AXES-NOT-APPLIED`** with `root font-size is 16px, expected ~20.8`.
+   **This is the axis lying zero in its purest form** and no amount of re-reading the recipe would
+   have surfaced it. Now seeds `fontScale / 100`.
+
+**Honesty note on (3):** `AXES-NOT-APPLIED` fired **twice**. The first was that real bug. The second
+did not reproduce after re-copying the file to `dist/` and is most consistent with a stale served
+copy (Environment-note lying-zero mode 4). I could not prove which, and say so rather than tidy it
+into one story — the load-bearing fact is that **both times the run refused to report a clean 130%
+result that was actually 100%.**
+
+#### The third axis: which probes are actually running
+
+Nobody had ever looked. `probeTally` now reports per-probe status across a sweep, and the answer,
+identical in `en` and `ja` across 13 states:
+
+| probe | ok | VACUOUS | UNAVAILABLE |
+|---|---|---|---|
+| danglingRefs, duplicateIds, namelessControls, headingOrder, smallTargets, horizontalOverflow, landmarks | **13** | 0 | 0 |
+| **imagesWithoutAlt** | **1** | **12** | 0 |
+| **unnamedRegions** | **3** | **10** | 0 |
+| **focusVisibleOnTab** | 0 | 0 | **13** (item 108) |
+
+`imagesWithoutAlt` scans something on **one screen in thirteen**. That is not a passing probe, it is
+a nearly-idle one — recorded as a number for the first time rather than as an impression.
+
+#### Verification
+
+**130 sweeps: 13 states × 5 languages × 2 font scales. Every state reached (`missed: 0`), 0
+findings.** Every row carries its OBSERVED `env` — `htmlLang` and `rootFontSizePx` — so no row can be
+read as covering an axis it was not in (`zh` rows correctly read `zh-Hans @20.8px`).
+
+**Plus the six reload-gated states, which `sweepLangs` structurally cannot reach** (it switches
+language in place; these states are gone the moment the page reloads). `begin(name, {lang, fontScale})`
+now seeds both axes, and all three **regression states** were re-verified in **`ja` at 130%**, each
+env-asserted: `first-run-modal` `1` / 0 findings with **4 inert siblings** (item 110's fix intact),
+`lesson-unfinished` `12322223` / 0 (item 106's sequence), `practice-runner` `1` / 0 with counter
+`1 / 14` and 4 radios (item 109's fix).
+
+**The zeros were made to mean something, at the scale and language they were claimed in.**
+`A11ySweep.selftest()` **PASS 9/9, plantsRemoved true** in every session, and — because 130 zeros is
+exactly the shape a broken instrument produces — a **2000px-wide element was planted into the live
+`ja` runner at 130%**: findings went **0 → 4** (`smallTargets: 34x206 < 44x44: button "政府支出のみ"`)
+and back to **0** on removal. `A11yStates.selftest()` **PASS**, now including an **axis control**
+that detaches the `<select>` and confirms `setLang` *refuses* rather than returns.
+
+**A control that was itself a defect, recorded because it misled me first.** The axis control
+originally asked for a bogus language `xx`. A native `<select>` rejects an unknown value by going to
+`""`, the app stored that, and **the entire screen dropped into its error boundary** — after which
+`sweepLangs` reported `LANG-SWITCH-FAILED` for all five languages, which looked like a catastrophic
+finding and was my own doing. Two things came out of chasing it, both reassuring and neither a
+defect: `loadLang()` validates on the next load and falls back to `en` (a plain reload fully
+recovered), and item 99's error boundary caught the crash and offered a Reload that worked. **The
+control now detaches the `<select>` instead — a control must not put the subject in a state the UI
+cannot reach.**
+
+**Suite, against a `git archive` control copy** (the working tree is red for reasons that are not
+mine — see below): pristine `HEAD` **PASS 0 failures, 2 warnings**; `HEAD` + my one file **PASS 0
+failures, 2 warnings**, with **§48 still green at 19 states / 3 regression states / BATCH_SIZE 10** —
+worth stating explicitly, because §48 is the guard on the very array this run rewrote wholesale.
+File sha read back **inside the browser** as `6724073661e2d49c…`, byte-identical to the checked-in
+file; bundle `index-DuywLYkx.js`.
+
+#### Working around a live session, and a guard I did not write
+
+The other automated session ran for this entire run, growing from 13 to **20+ modified files** —
+`src/content/*` (lessons 41-44), `DECISIONS.md`, `LAUNCH_PLAN.md`, `CLAIMS.md`, and **`scripts/check-data.mjs`**,
+where it is mid-refactor of §29's track-range validation.
+
+**So this run added no `check-data.mjs` section, deliberately.** The natural guard for the axes —
+a §49 asserting every recipe is free of hardcoded English — would have meant editing a file with
+uncommitted work in it, which the hard rules forbid and which would have been a merge problem for
+them. **Filed as item 113 instead.** The gap is partly covered meanwhile: `A11yStates.selftest()`'s
+axis control lives in the file this run owns, and it fails loudly if `setLang` stops asserting.
+
+#### Step 5 — adversarial self-check
+
+- **Blindspot register** — no regression. Across 402 added lines: Dalio/`principles` **0**,
+  advice-adjacent verbs **0**, child-facing framing **0**. **Control**: `lang|state|probe` returns
+  **87**, so the grep reaches them. **One date string**, in a comment. Verified against the artifact:
+  `grep -rl` in the built `dist/assets/` for `sweepLangs` → **0** and `2026-08-25` → **0**, with
+  **control** `Welcome to Economic Cycles` → **1 file**. `scripts/` is not bundled.
+- **`DECISIONS.md` conflict** — none, and checked against `HEAD`'s copy rather than the working
+  tree's, since the other session is actively editing that file. No `src/` change, no dependency or
+  config diff. The file writes `localStorage` only to seed, under `begin()`.
+- **Already-done backlog item** — no. `git log --all -S'sweepLangs'` → **0**. **Control**:
+  `-S'A11yStates'` → **1** and `--oneline -- scripts/a11y-states.js` → **1**, both item 111's commit
+  from earlier today, so the pickaxe reaches this shape.
+- **Own verification claim** — the claim easiest to fake is "130 sweeps, all clean", since that is
+  precisely what a broken driver prints. Three things make it checkable: every row carries the
+  observed `htmlLang` and `rootFontSizePx` rather than the requested ones; a real defect planted in
+  the live `ja` runner at 130% moved findings 0 → 4 → 0; and the run's own history is the argument —
+  this instrument reported **12 missed states per language** before it reported any zeros, and
+  refused a 130% result twice.
+- **Committed exactly two paths.** The other session's 20+ files are untouched, as are `UIUX/` and
+  `drafts/`.
+
+#### Next
+
+- **Item 113** (filed this run): the deferred guard — a `check-data.mjs` section asserting no recipe
+  in `a11y-states.js` selects or asserts on hardcoded English. Blocked only on that file being free.
+- **Item 108** (focus capability vs. the sweep header) — now quantified: `focusVisibleOnTab` is
+  `UNAVAILABLE` on **13 of 13** states, so it has never once run.
+- **Item 26 / item 27** both still need a re-scope before picking; **W-5.2's pick list** remains.
+- **Do NOT pick item 94** — optional track, four "(Beta)" languages, parked behind O-1 by its own box.
+
+**Unchanged and still the entire critical path, both owner-blocked: O-1** (a deployed URL) and **O-2**
+(item 18, an analytics account). This app is now sweepable for accessibility in five languages at two
+font scales, and all 130 of those sweeps are clean. **No screen reader has ever been pointed at any of
+them, in any language, because no one has ever opened the app.**

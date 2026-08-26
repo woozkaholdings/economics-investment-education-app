@@ -59,6 +59,7 @@
   "use strict";
 
   var PENDING_KEY = "__a11ystates_pending";
+  var PENDING_AXES = "__a11ystates_axes";
 
   /* ── the yield ──────────────────────────────────────────────────────────────────────────── */
   function tick() {
@@ -168,6 +169,45 @@
     return headingTags().some(function (h) { return (h.innerText || "").indexOf(text) !== -1; });
   }
 
+  /* ── LANGUAGE-INDEPENDENT SELECTION (item 112) ──────────────────────────────────────────────
+   * The first version of this file matched every control and every assertion by its ENGLISH
+   * text — "Glossary", "Market Dashboard", "Kids", "About", "Practice all questions". The moment
+   * the language axis was switched on, 12 of 13 states reported MISSED in `es` and again in `ko`.
+   *
+   * That is the arrival assertion doing its job, and it is worth being precise about what it
+   * prevented: without it this run would have reported "5 languages, 65 states, all clean", and
+   * 48 of those sweeps would have been the Reference menu measured over and over while claiming
+   * to be five different sub-screens. A text-matched recipe is a monolingual recipe.
+   *
+   * So selection now uses handles that do not translate: element ids, ARIA roles, structural
+   * position, and numerals. Where a label must be involved, it is READ FROM THE APP rather than
+   * hardcoded — `menuItem` records the row's own text and the assertion checks the sub-screen's
+   * <h1> against it, which holds in every language because both render the same locale string. */
+
+  var lastLabel = null;   // set by menuItem/termRow, asserted by h1IsLastLabel/headingIsLastLabel
+
+  function firstLine(el) { return ((el && el.innerText) || "").split("\n")[0].trim(); }
+  function mainButtons() {
+    return Array.prototype.slice.call(document.querySelectorAll("main button"));
+  }
+  // The runner's continue control ("Next" / "See Results" / "Done") in any language: the close
+  // control carries an aria-label and the four options carry role="radio", so the plain button is
+  // the only one left. Measured in ko: exactly one candidate, "다음".
+  function plainButtons() {
+    return mainButtons().filter(function (b) {
+      return !b.getAttribute("role") && !b.getAttribute("aria-label");
+    });
+  }
+  function h1IsLastLabel() {
+    var h = document.querySelector("main h1");
+    return !!h && !!lastLabel && (h.innerText || "").trim() === lastLabel;
+  }
+  function headingIsLastLabel() {
+    return !!lastLabel && headingTags().some(function (h) {
+      return (h.innerText || "").trim() === lastLabel;
+    });
+  }
+
   /* ── step verbs ─────────────────────────────────────────────────────────────────────────── */
   var STEPS = {
     // Setting location.hash to the value it ALREADY has fires no hashchange, so the app never
@@ -193,6 +233,59 @@
         if (!found) throw new Error('no control containing "' + v + '" appeared within the wait cap');
         byText(v, false).click(); return settle();
       });
+    },
+    // Reference's five sub-screens have no ids, so they are selected by POSITION and confirmed by
+    // LABEL: the row's own text is recorded here and the state's assertion checks the resulting
+    // <h1> against it. If the menu is ever reordered, the assertion fails loudly (MISSED) instead
+    // of silently sweeping the wrong sub-screen — which is the property that matters.
+    menuItem: function (n) {
+      return waitUntil(function () { return mainButtons().length > n; }).then(function (found) {
+        if (!found) throw new Error("no <main> button at index " + n + " (found " + mainButtons().length + ")");
+        var b = mainButtons()[n];
+        lastLabel = firstLine(b);
+        b.click(); return settle().then(quiesce);
+      });
+    },
+    // A glossary row's accessible name IS the term, in whatever language is loaded.
+    termRow: function (n) {
+      var rows = function () {
+        return Array.prototype.slice.call(document.querySelectorAll('main [role="button"][aria-label]'));
+      };
+      return waitUntil(function () { return rows().length > n; }).then(function (found) {
+        if (!found) throw new Error("no glossary row at index " + n + " (found " + rows().length + ")");
+        var r = rows()[n];
+        lastLabel = (r.getAttribute("aria-label") || "").trim();
+        r.click(); return settle().then(quiesce);
+      });
+    },
+    clickId: function (id) {
+      return waitUntil(function () { return !!document.getElementById(id); }).then(function (found) {
+        if (!found) throw new Error("no element with id " + id + " appeared within the wait cap");
+        document.getElementById(id).click(); return settle().then(quiesce);
+      });
+    },
+    // "Practice all questions" is always the LAST button on the Review landing (Practice.jsx
+    // renders it unconditionally, after the conditional "Start Quiz"); "Start Quiz" is the first,
+    // and exists only when something is due. Position, not text.
+    lastButton: function () {
+      return waitUntil(function () { return mainButtons().length > 0; }).then(function (found) {
+        if (!found) throw new Error("no buttons in <main>");
+        var b = mainButtons(); b[b.length - 1].click(); return settle().then(quiesce);
+      });
+    },
+    firstButton: function () {
+      return waitUntil(function () { return mainButtons().length > 0; }).then(function (found) {
+        if (!found) throw new Error("no buttons in <main>");
+        mainButtons()[0].click(); return settle().then(quiesce);
+      });
+    },
+    // The first-run dialog has exactly one control, so it needs no label to dismiss.
+    dismissDialog: function () {
+      var d = document.querySelector('[role="dialog"]');
+      if (!d) return Promise.resolve();
+      var b = d.querySelector("button");
+      if (!b) return Promise.resolve();
+      b.click(); return settle().then(quiesce);
     },
     // Tolerant by design: the first-run dialog is up only when storage was cleared, and a
     // recipe that hard-fails on its ABSENCE would report MISSED for a state it actually reached.
@@ -221,15 +314,20 @@
       return chain;
     },
     // Answer-and-advance through the review runner. Bounded by a hard step cap rather than by
-    // trust: a runner that stops advancing must end the loop, not spin. The continue control is
-    // "Next" for every question except the last, where it is "See Results" — found the hard way.
+    // trust: a runner that stops advancing must end the loop, not spin.
+    //
+    // The continue control is found STRUCTURALLY, not by its words. It is labelled "Next" for
+    // every question except the last, where it becomes "See Results" — and both of those are
+    // English. In the runner the close control carries an aria-label and the four options carry
+    // role="radio", so the sole plain button is the one to press, in any language (measured in
+    // ko: exactly one candidate, "다음").
     answer: function (n) {
       var done = 0, guard = 0;
       function step() {
         if (done >= n || guard++ > n * 4) return Promise.resolve();
         if (!counter()) return Promise.resolve();          // left the runner (pause/complete)
-        var next = byText("Next", true) || byText("See Results", true);
-        if (next) { next.click(); done++; return settle().then(step); }
+        var cont = plainButtons();
+        if (cont.length === 1) { cont[0].click(); done++; return settle().then(step); }
         var r = radios();
         if (!r.length) return Promise.resolve();
         r[0].click(); return settle().then(step);
@@ -248,6 +346,107 @@
       });
     });
     return chain;
+  }
+
+
+  /* ── THE TWO AXES: language and font scale ──────────────────────────────────────────────────
+   * Every state in the matrix above was measured in `en` at 100% until 2026-08-25 (item 112).
+   * That is not a small gap: the four "(Beta)" languages re-render every string in the app, and
+   * text length is what drives the two probes most likely to fire on a mobile viewport —
+   * `horizontalOverflow` and `smallTargets`.
+   *
+   * ⚠️ THE AXIS ITSELF IS A LYING-ZERO RISK, and it is the worst one in this file. If a language
+   * switch silently fails, every subsequent state reports CLEAN — and it is a clean result in
+   * English, dressed as a clean result in Japanese. Nothing errors. So both setters ASSERT, and
+   * every result carries the OBSERVED environment (`env`) rather than the requested one: a reader
+   * checking whether `ja` was really swept looks at what the DOM said, not at what was asked for.
+   */
+
+  // Drives the app's OWN language control, not localStorage. A user switches language with this
+  // <select>, and the app re-renders in place — no reload, which is what makes the axis affordable.
+  // A native <select> needs the value SETTER plus a dispatched change event; `el.value = x` alone
+  // does not notify React (a standing note in AGENT_LOG.md's Environment section).
+  // The app does not put the picker's value straight into <html lang>: it maps through
+  // useAppState.js's HTML_LANG, where `zh` becomes the correct BCP-47 subtag `zh-Hans`. Mirrored
+  // here rather than relaxed to "any value", because "whatever the DOM says" is not an assertion.
+  // Found by this check firing on zh and being WRONG — the app was right; see the run log.
+  var HTML_LANG = { en: "en", es: "es", ko: "ko", ja: "ja", zh: "zh-Hans" };
+
+  function setLang(code) {
+    var sel = document.querySelector("header select");
+    if (!sel) return Promise.reject(new Error("no language <select> in the header — the picker moved"));
+    Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype, "value").set.call(sel, code);
+    sel.dispatchEvent(new Event("change", { bubbles: true }));
+    return settle().then(quiesce).then(function () {
+      // Two independent confirmations. <html lang> is the one that matters to a screen reader and
+      // is set by a different code path (item 97) than the <select>'s own value, so agreeing is
+      // meaningfully stronger than either alone.
+      var wantHtml = HTML_LANG[code] || code;
+      if (sel.value !== code || document.documentElement.lang !== wantHtml) {
+        throw new Error('language did not switch to "' + code + '": select=' + sel.value +
+          ', <html lang>=' + document.documentElement.lang + ' (expected ' + wantHtml + ')');
+      }
+      return code;
+    });
+  }
+
+  // Drives the app's own font-scale control on Reference > About, rather than writing
+  // documentElement.style.fontSize by hand. Setting the style directly replicates what
+  // useAppState's effect does, but it leaves React's fontScale state at 1 — so the next time that
+  // effect runs it silently reverts, and the sweep after that measures 100% while reporting 130%.
+  // Clicking the real radio moves the state, so the scale survives everything the matrix does.
+  function setFontScale(pct) {
+    var before = parseFloat(getComputedStyle(document.documentElement).fontSize);
+    // menuItem(4), not click("About") — About is the fifth Reference row, and its LABEL is
+    // translated. The first version of this helper matched the English word and threw the moment
+    // the language axis it exists to support was actually switched on. Same bug, same fix.
+    return STEPS.hash("#/reference")
+      .then(function () { return STEPS.menuItem(4); })
+      .then(function () {
+        var radio = document.querySelector('main [role="radio"][aria-label="' + pct + '%"]');
+        if (!radio) throw new Error("no font-scale control labelled " + pct + "% on Reference > About");
+        radio.click();
+        return settle().then(quiesce);
+      })
+      .then(function () {
+        var radio = document.querySelector('main [role="radio"][aria-label="' + pct + '%"]');
+        var after = parseFloat(getComputedStyle(document.documentElement).fontSize);
+        var want = 16 * (pct / 100);
+        // Assert BOTH the control's state and the rendered result. The control could report
+        // checked while the effect that resizes the root has not run; the root could be resized
+        // by something else entirely. Neither alone proves the app is at this scale.
+        if (!radio || radio.getAttribute("aria-checked") !== "true") {
+          throw new Error("font-scale " + pct + "% did not become the checked option");
+        }
+        if (Math.abs(after - want) > 0.5) {
+          throw new Error("root font-size is " + after + "px, expected ~" + want + "px for " + pct + "%");
+        }
+        return { pct: pct, rootFontSizeBefore: before, rootFontSizePx: after };
+      });
+  }
+
+  // The OBSERVED axis values. Stamped onto every result so a clean sweep can never be read as
+  // covering a language or a scale it was not actually in.
+  function env() {
+    return {
+      htmlLang: document.documentElement.lang || null,
+      selectLang: (document.querySelector("header select") || {}).value || null,
+      rootFontSizePx: parseFloat(getComputedStyle(document.documentElement).fontSize),
+      viewportWidth: window.innerWidth
+    };
+  }
+
+  // Per-probe tally across a set of results. item 112's third axis: a probe that is VACUOUS on
+  // every screen is not passing, it is not running — and until this existed, nobody was looking.
+  function probeTally(results) {
+    var tally = {};
+    results.forEach(function (r) {
+      Object.keys(r.probeStatus || {}).forEach(function (k) {
+        tally[k] = tally[k] || { ok: 0, FINDINGS: 0, VACUOUS: 0, UNAVAILABLE: 0 };
+        if (tally[k][r.probeStatus[k]] !== undefined) tally[k][r.probeStatus[k]]++;
+      });
+    });
+    return tally;
   }
 
   /* ── the state matrix ───────────────────────────────────────────────────────────────────────
@@ -272,9 +471,12 @@
       arrived: { says: 'a [role=dialog] is present and owns the only heading',
         is: function () { return !!document.querySelector('[role="dialog"][aria-modal="true"]') && headingTags().length === 1; } } },
 
-    { name: "learn", steps: [{ clickIfPresent: "Got it" }, { hash: "#/learn" }],
-      arrived: { says: 'Learn shows its three track headings',
-        is: function () { return hasHeading("How the Economy Works") && hasHeading("Thinking About Money"); } } },
+    // The three track headings carry ids (`track-<key>-title`), so this holds in any language.
+    { name: "learn", steps: [{ dismissDialog: true }, { hash: "#/learn" }],
+      arrived: { says: 'Learn shows all three track sections (by id, not by label)',
+        is: function () { return !!document.getElementById("track-economy-title") &&
+                                 !!document.getElementById("track-money-title") &&
+                                 !!document.getElementById("track-essentials-title"); } } },
 
     { name: "learn-collapsed", steps: [{ hash: "#/learn" }, { collapseTracks: true }],
       arrived: { says: 'no track section reports aria-expanded="true"',
@@ -282,110 +484,106 @@
                                  document.querySelectorAll('[aria-expanded="false"]').length > 0; } } },
 
     { name: "reference", steps: [{ hash: "#/reference" }],
-      arrived: { says: 'the Reference menu lists its five sub-screens',
-        is: function () { return !!byText("Market Dashboard") && !!byText("Sector performance"); } } },
+      arrived: { says: 'the Reference menu is showing its five sub-screen rows',
+        is: function () { return mainButtons().length === 5 && !document.querySelector("main h1[id]"); } } },
 
-    { name: "reference-glossary", steps: [{ hash: "#/reference" }, { click: "Glossary" }],
-      arrived: { says: 'the glossary term list is rendered',
-        is: function () { return document.querySelectorAll('[role="button"][aria-label]').length > 10; } } },
+    // Sub-screens: selected by POSITION, confirmed by the row's own LABEL against the <h1>.
+    // Both render the same locale string, so the check is language-independent by construction.
+    { name: "reference-glossary", steps: [{ hash: "#/reference" }, { menuItem: 0 }],
+      arrived: { says: "the sub-screen <h1> matches the menu row that opened it, and term rows are rendered",
+        is: function () { return h1IsLastLabel() &&
+          document.querySelectorAll('main [role="button"][aria-label]').length > 10; } } },
 
     { name: "reference-glossary-term",
-      steps: [{ hash: "#/reference" }, { click: "Glossary" }, { click: "Gross Domestic Product" }],
-      arrived: { says: 'a term detail is open (Back crumb + the term as a heading)',
-        is: function () { return hasHeading("Gross Domestic Product") && !!byText("Reference", true); } } },
+      steps: [{ hash: "#/reference" }, { menuItem: 0 }, { termRow: 0 }],
+      arrived: { says: "a heading now carries the term name taken from the row's own aria-label",
+        is: function () { return headingIsLastLabel(); } } },
 
-    { name: "reference-markets", steps: [{ hash: "#/reference" }, { click: "Market Dashboard" }],
-      arrived: { says: 'the yield-curve teaching section is present',
-        is: function () { return hasHeading("Yield Curve Shapes"); } } },
+    { name: "reference-markets", steps: [{ hash: "#/reference" }, { menuItem: 1 }],
+      arrived: { says: "the sub-screen <h1> matches the menu row that opened it",
+        is: function () { return h1IsLastLabel(); } } },
 
-    // The assertion is the SCREEN, not its data. An earlier version required the "The economy
-    // right now" panel and reported MISSED on a screen it had plainly reached — that panel is
-    // data-dependent, and §2.3's standing rule is that figures older than 4 days are SUPPRESSED
-    // rather than shown. Asserting on suppressible data makes a correct screen look unreachable.
-    { name: "reference-sectors", steps: [{ hash: "#/reference" }, { click: "Sector performance" }],
-      arrived: { says: 'the Sector performance sub-screen is open (its own <h1>, not the menu row)',
-        is: function () { var h = headingTags()[0];
-          return !!h && h.tagName === "H1" && (h.innerText || "").indexOf("Sector performance") !== -1; } } },
+    { name: "reference-sectors", steps: [{ hash: "#/reference" }, { menuItem: 2 }],
+      note: "the assertion is the SCREEN (#sector-list), never its data — §2.3 suppresses stale figures",
+      arrived: { says: "the <h1> matches its menu row AND #sector-list is present",
+        is: function () { return h1IsLastLabel() && !!document.getElementById("sector-list"); } } },
 
-    { name: "reference-kids", steps: [{ hash: "#/reference" }, { click: "Kids" }],
-      arrived: { says: 'the 5-8 band is the selected tab',
-        is: function () { var t = byText("Ages 5-8"); return !!t && t.getAttribute("aria-selected") === "true"; } } },
+    { name: "reference-kids", steps: [{ hash: "#/reference" }, { menuItem: 3 }],
+      arrived: { says: 'the age-band panel is present and labelled by the 5-8 band',
+        is: function () { var p = document.getElementById("age-band-panel");
+          return !!p && p.getAttribute("aria-labelledby") === "age-band-5-8"; } } },
 
+    // Band tabs carry ids, so no label text is involved at all.
     { name: "reference-kids-9-12",
-      steps: [{ hash: "#/reference" }, { click: "Kids" }, { clickExact: "Ages 9-12" }],
+      steps: [{ hash: "#/reference" }, { menuItem: 3 }, { clickId: "age-band-9-12" }],
       note: "item 111 — the age selector swaps panels with no route change",
       arrived: { says: 'the 9-12 band is selected AND the panel label followed it',
-        is: function () {
-          var t = byText("Ages 9-12"), p = document.getElementById("age-band-panel");
+        is: function () { var t = document.getElementById("age-band-9-12"),
+                              p = document.getElementById("age-band-panel");
           return !!t && t.getAttribute("aria-selected") === "true" &&
-                 !!p && p.getAttribute("aria-labelledby") === "age-band-9-12";
-        } } },
+                 !!p && p.getAttribute("aria-labelledby") === "age-band-9-12"; } } },
 
     { name: "reference-kids-13-17",
-      steps: [{ hash: "#/reference" }, { click: "Kids" }, { clickExact: "Ages 13-17" }],
+      steps: [{ hash: "#/reference" }, { menuItem: 3 }, { clickId: "age-band-13-17" }],
       arrived: { says: 'the 13-17 band is selected AND the panel label followed it',
-        is: function () {
-          var t = byText("Ages 13-17"), p = document.getElementById("age-band-panel");
+        is: function () { var t = document.getElementById("age-band-13-17"),
+                              p = document.getElementById("age-band-panel");
           return !!t && t.getAttribute("aria-selected") === "true" &&
-                 !!p && p.getAttribute("aria-labelledby") === "age-band-13-17";
-        } } },
+                 !!p && p.getAttribute("aria-labelledby") === "age-band-13-17"; } } },
 
-    { name: "reference-about", steps: [{ hash: "#/reference" }, { click: "About" }],
-      arrived: { says: 'the About screen is open',
-        is: function () { return hasHeading("About") && mainText().indexOf("Reference") !== -1; } } },
+    // The font-scale controls are labelled with NUMERALS ("90%", "130%"), which do not translate.
+    { name: "reference-about", steps: [{ hash: "#/reference" }, { menuItem: 4 }],
+      arrived: { says: "the <h1> matches its menu row AND the font-scale radios are present",
+        is: function () { return h1IsLastLabel() &&
+          !!document.querySelector('main [role="radio"][aria-label="130%"]'); } } },
 
-    // The lesson reader. item 106's defect lived in the UNFINISHED state only, so "the hook is
-    // present" is the assertion that matters — a completed lesson does not render it.
     // reload+clear, not a bare hash: "unfinished" is a property of STORAGE, not of the URL. The
-    // first run of this file drove here on a session where lesson 1 had already been completed,
-    // and the recipe reported MISSED rather than sweeping a completed lesson and calling the
-    // unfinished state clean. Clearing is the only guarantee that the hook is rendered at all.
+    // unfinished reader renders EIGHT radios (four for the hook, four for the check); a completed
+    // one renders four. That count is the language-independent signature of the hook's presence.
     { name: "lesson-unfinished", reload: true, clear: true, hash: "#/lesson/1",
-      steps: [{ clickIfPresent: "Got it" }],
+      steps: [{ dismissDialog: true }],
       note: "item 106 — the hook block only exists before the lesson is completed",
-      arrived: { says: 'the BEFORE YOU READ hook is rendered (i.e. lesson not yet complete)',
-        is: function () { return headingTags().some(function (h) {
-          return (h.innerText || "").toUpperCase().indexOf("BEFORE YOU READ") !== -1; }); } } },
+      arrived: { says: 'the reader shows 8 radios (hook + check), i.e. the lesson is unfinished',
+        is: function () { return radios().length === 8 && !!document.getElementById("lesson-section-0-title"); } } },
 
-    // radio index 4 is the check question's first option: the unfinished reader renders EIGHT
-    // radios (four for the BEFORE YOU READ hook, four for the check). On a completed lesson the
-    // hook is gone, there are only four, and the step throws rather than answering the hook by
-    // mistake — which is why this state carries the same clear as lesson-unfinished.
     { name: "lesson-midquiz", reload: true, clear: true, hash: "#/lesson/1",
-      steps: [{ clickIfPresent: "Got it" }, { radio: 4 }],
+      steps: [{ dismissDialog: true }, { radio: 4 }],
       note: "item 111 — the end-of-lesson check answered, explanation revealed",
-      arrived: { says: 'the check question has a chosen answer and Mark Complete has appeared',
+      arrived: { says: 'an answer is chosen and the completion control has appeared',
         is: function () { return radios().some(function (r) { return r.getAttribute("aria-checked") === "true"; }) &&
-                                 !!byText("Mark Complete"); } } },
+                                 plainButtons().length >= 1; } } },
 
     { name: "practice-landing", steps: [{ hash: "#/practice" }],
-      arrived: { says: 'the Review landing shows its "how review works" panel',
-        is: function () { return hasHeading("How review works"); } } },
+      arrived: { says: 'the Review landing shows its #how-review-title panel',
+        is: function () { return !!document.getElementById("how-review-title"); } } },
 
     { name: "practice-all-questions",
-      steps: [{ hash: "#/practice" }, { click: "Practice all questions" }],
+      steps: [{ hash: "#/practice" }, { lastButton: true }],
       note: "item 109's open question — this entrance renders the same runner branch as Start Quiz",
       arrived: { says: 'a quiz is running: counter, progress bar and four options',
         is: function () { return !!counter() && document.querySelectorAll('[role="progressbar"]').length === 1 &&
                                  radios().length === 4; } } },
 
     { name: "practice-runner", reload: true, clear: true, seed: { ecycles_review: seededReview(14) },
-      hash: "#/practice", steps: [{ clickIfPresent: "Got it" }, { click: "Start Quiz" }],
+      hash: "#/practice", steps: [{ dismissDialog: true }, { firstButton: true }],
       arrived: { says: 'a seeded session is running at question 1 of 14',
         is: function () { var c = counter(); return !!c && c.at === 1 && c.of === 14 && radios().length === 4; } } },
 
+    // Batch pause and session complete are told apart STRUCTURALLY, not by their words: the pause
+    // offers two plain buttons (keep going / stop here), the complete screen offers one (done).
     { name: "practice-batch-pause", reload: true, clear: true, seed: { ecycles_review: seededReview(14) },
-      hash: "#/practice", steps: [{ clickIfPresent: "Got it" }, { click: "Start Quiz" }, { answer: 10 }],
+      hash: "#/practice", steps: [{ dismissDialog: true }, { firstButton: true }, { answer: 10 }],
       note: "BATCH_SIZE is 10, so a 14-question queue is the smallest that reaches a pause",
-      arrived: { says: 'the batch pause offers "Keep going" and the counter is gone',
-        is: function () { return !counter() && !!byText("Keep going") && !!byText("Stop here"); } } },
+      arrived: { says: 'no counter and exactly two plain buttons (keep going / stop here)',
+        is: function () { return !counter() && plainButtons().length === 2; } } },
 
     { name: "practice-complete", reload: true, clear: true, seed: { ecycles_review: seededReview(14) },
       hash: "#/practice",
-      steps: [{ clickIfPresent: "Got it" }, { click: "Start Quiz" }, { answer: 10 }, { click: "Keep going" }, { answer: 4 }],
-      arrived: { says: 'the session-complete card is shown with a score line',
-        is: function () { return !counter() && !!byText("Done") &&
-                                 /\d+\s+of\s+\d+/.test(mainText()); } } }
+      // firstButton at the pause is "keep going"; the outline "stop here" is second (Practice.jsx).
+      steps: [{ dismissDialog: true }, { firstButton: true }, { answer: 10 }, { firstButton: true }, { answer: 4 }],
+      arrived: { says: 'no counter, one plain button (done), and a results recap is rendered',
+        is: function () { return !counter() && plainButtons().length === 1 &&
+                                 headingTags().length >= 2; } } }
   ];
 
   function find(name) {
@@ -410,7 +608,12 @@
       scanned: probes.headingOrder ? probes.headingOrder.scanned : null,
       detail: Object.keys(probes).filter(function (k) { return probes[k].status === "FINDINGS"; })
         .map(function (k) { return { probe: k, findings: probes[k].findings }; }),
-      vacuous: rep.vacuous, unavailable: rep.unavailable, verdict: rep.verdict
+      // The FULL probe status set, not just the ones that fired. Until item 112 every sweep in
+      // AGENT_LOG.md was read for headingOrder alone, so a probe that had quietly been VACUOUS
+      // on every screen for weeks would have looked exactly like a probe that kept passing.
+      probeStatus: Object.keys(probes).reduce(function (acc, k) { acc[k] = probes[k].status; return acc; }, {}),
+      vacuous: rep.vacuous, unavailable: rep.unavailable, verdict: rep.verdict,
+      env: env()
     };
   }
 
@@ -474,6 +677,8 @@
         var missed = out.filter(function (r) { return r.status === "MISSED"; });
         var findings = out.filter(function (r) { return r.status === "FINDINGS"; });
         return JSON.stringify({
+          env: env(),
+          probeTally: probeTally(out),
           swept: out.length,
           clean: out.filter(function (r) { return r.status === "ok"; }).length,
           withFindings: findings.length,
@@ -488,23 +693,54 @@
     },
 
     // Seeded states: localStorage is only read at mount, so this reloads the page.
-    begin: function (name) {
+    // opts: { lang, fontScale } — the axes, for states that must be reached through a reload.
+    // sweepLangs() cannot cover these (it switches language in place, and these states are gone
+    // the moment the page reloads), so without this the six reload-gated states would be stuck in
+    // `en` at 100% forever — which is exactly the coverage gap item 112 exists to close.
+    // Seeded through the same localStorage keys the app reads at mount, then ASSERTED by finish()
+    // via the env stamp on the result, so a seed that did not take is visible rather than assumed.
+    begin: function (name, opts) {
       var s = find(name);
       if (!s) return JSON.stringify({ error: "unknown state: " + name });
       if (!s.reload) return JSON.stringify({ error: name + " needs no reload — call run('" + name + "')." });
       applySeed(s);
+      if (opts && opts.lang) localStorage.setItem("ecycles_lang", opts.lang);
+      // fontScale is given as a PERCENT here (130), to match setFontScale(130) and the control's
+      // own "130%" aria-label — but the app stores a FRACTION: theme.js's FONT_SCALE_STEPS are
+      // 0.9 / 1 / 1.15 / 1.3, and loadFontScale() silently falls back to 1 for anything not in
+      // that list. Seeding "130" therefore produced a 100% page that a naive runner would have
+      // reported as a 130% sweep. Caught by finish()'s axis assertion, not by reading the code.
+      if (opts && opts.fontScale) localStorage.setItem("ecycles_font_scale", String(opts.fontScale / 100));
+      if (opts && (opts.lang || opts.fontScale)) sessionStorage.setItem(PENDING_AXES, JSON.stringify(opts));
       sessionStorage.setItem(PENDING_KEY, name);
       location.replace(location.pathname + "?a11ystates=" + encodeURIComponent(name) + (s.hash || ""));
-      return JSON.stringify({ seeded: name, reloading: true, then: "re-eval both files, then await A11yStates.finish()" });
+      return JSON.stringify({ seeded: name, axes: (opts || null), reloading: true, then: "re-eval both files, then await A11yStates.finish()" });
     },
 
     finish: function () {
       var name = sessionStorage.getItem(PENDING_KEY);
       if (!name) return Promise.resolve(JSON.stringify({ error: "no pending state — call begin(<name>) first." }));
       var s = find(name);
+      var axes = null;
+      try { axes = JSON.parse(sessionStorage.getItem(PENDING_AXES) || "null"); } catch (e) { axes = null; }
       sessionStorage.removeItem(PENDING_KEY);
+      sessionStorage.removeItem(PENDING_AXES);
       if (!s) return Promise.resolve(JSON.stringify({ error: "pending state no longer defined: " + name }));
-      return drive(s).then(function (r) { return JSON.stringify(r, null, 2); });
+      return drive(s).then(function (r) {
+        // Assert the requested axes actually took. A seed that silently failed would otherwise
+        // hand back a clean `en` result wearing a `ja` label — the axis lying zero, one reload
+        // further along than the one setLang() guards.
+        if (axes) {
+          r.axesRequested = axes;
+          var wantLang = axes.lang ? (HTML_LANG[axes.lang] || axes.lang) : null;
+          var wantPx = axes.fontScale ? 16 * (axes.fontScale / 100) : null;
+          var bad = [];
+          if (wantLang && r.env && r.env.htmlLang !== wantLang) bad.push("lang is " + (r.env && r.env.htmlLang) + ", expected " + wantLang);
+          if (wantPx && r.env && Math.abs(r.env.rootFontSizePx - wantPx) > 0.5) bad.push("root font-size is " + (r.env && r.env.rootFontSizePx) + "px, expected ~" + wantPx);
+          if (bad.length) { r.status = "AXES-NOT-APPLIED"; r.findings = null; r.axesProblem = bad; }
+        }
+        return JSON.stringify(r, null, 2);
+      });
     },
 
     // Proves the MISSED path works. A driver that cannot detect its own miss turns every recipe
@@ -522,18 +758,98 @@
         steps: [{ click: "ZZ_NO_SUCH_CONTROL_ZZ" }],
         arrived: { says: "unreachable", is: function () { return true; } }
       };
+      // The AXIS control (item 112). A language switch that fails silently is the worst lying
+      // zero available here — every state afterwards reports clean, in the previous language,
+      // labelled as the requested one. This proves setLang() refuses rather than returns.
+      //
+      // It works by detaching the <select> and restoring it, NOT by asking for a bogus language.
+      // Asking for one was tried first and is a bad control: a native <select> rejects an unknown
+      // value by going to "", the app stores that empty string, and the whole screen drops into
+      // its error boundary. (Recoverable — loadLang() validates on the next load and falls back
+      // to `en` — but a control must not put the subject in a state the UI cannot reach.)
+      function axisControl() {
+        var sel = document.querySelector("header select");
+        if (!sel) return Promise.resolve({ ran: false, why: "no <select> to detach" });
+        var parent = sel.parentNode, next = sel.nextSibling;
+        sel.remove();
+        return setLang("ja")
+          .then(function () { return { ran: true, rejected: false }; })
+          .catch(function (e) { return { ran: true, rejected: true, threw: String(e && e.message || e) }; })
+          .then(function (r) { parent.insertBefore(sel, next); return r; });
+      }
+
       return drive(bogus).then(function (a) {
         return drive(badVerb).then(function (b) {
-          var ok = a.status === "MISSED" && b.status === "MISSED" && !!b.threw &&
-                   a.findings === null && b.findings === null;
-          return JSON.stringify({
-            unreachableAssertion: { status: a.status, findingsIsNull: a.findings === null },
-            failingStep: { status: b.status, threw: b.threw, findingsIsNull: b.findings === null },
-            verdict: ok
-              ? "PASS — a state that is not reached reports MISSED with null findings, both when the assertion fails and when a step throws. Zeros from run()/runAll() are meaningful this session."
-              : "FAIL — the MISSED path did not fire; every recipe in this file is an unverified zero until this passes."
-          }, null, 2);
+          return axisControl().then(function (c) {
+            var ok = a.status === "MISSED" && b.status === "MISSED" && !!b.threw &&
+                     a.findings === null && b.findings === null &&
+                     (c.ran ? c.rejected === true : true);
+            return JSON.stringify({
+              unreachableAssertion: { status: a.status, findingsIsNull: a.findings === null },
+              failingStep: { status: b.status, threw: b.threw, findingsIsNull: b.findings === null },
+              axisAssertion: c,
+              verdict: ok
+                ? "PASS — a state that is not reached reports MISSED with null findings (assertion failure AND step throw), and setLang refuses when it cannot confirm the switch. Zeros from run()/runAll()/sweepLangs() are meaningful this session."
+                : "FAIL — a control did not fire; every recipe and every language row in this file is an unverified zero until this passes."
+            }, null, 2);
+          });
         });
+      });
+    },
+
+    // ── the axes ──────────────────────────────────────────────────────────────────────────
+    setLang: function (code) { return setLang(code).then(function (c) { return JSON.stringify({ lang: c, env: env() }); }); },
+    setFontScale: function (pct) { return setFontScale(pct).then(function (r) { return JSON.stringify({ fontScale: r, env: env() }); }); },
+    env: function () { return JSON.stringify(env(), null, 2); },
+
+    // Run every no-reload state in each language, in ONE call. The language is switched through
+    // the app's own <select> and re-asserted per language, so a switch that fails aborts that
+    // language loudly instead of quietly re-measuring the previous one.
+    //
+    // Font scale is NOT looped here: it is a separate call (setFontScale) because it navigates.
+    // Set it first, then call this; every row carries the observed root font size, so the pairing
+    // is visible in the output rather than remembered by the operator.
+    sweepLangs: function (opts) {
+      var langs = (opts && opts.langs) || ["en", "es", "ko", "zh", "ja"];
+      var byLang = [], chain = Promise.resolve();
+      langs.forEach(function (L) {
+        chain = chain.then(function () {
+          return setLang(L).then(function () {
+            var out = [], inner = Promise.resolve();
+            STATES.filter(function (s) { return !s.reload; }).forEach(function (s) {
+              inner = inner.then(function () { return drive(s); }).then(function (r) { out.push(r); });
+            });
+            return inner.then(function () {
+              byLang.push({
+                lang: L, env: env(),
+                swept: out.length,
+                clean: out.filter(function (r) { return r.status === "ok"; }).length,
+                missed: out.filter(function (r) { return r.status === "MISSED"; }).length,
+                withFindings: out.filter(function (r) { return r.status === "FINDINGS"; }).length,
+                probeTally: probeTally(out),
+                findings: out.filter(function (r) { return r.status === "FINDINGS"; })
+                  .map(function (r) { return { state: r.state, detail: r.detail }; }),
+                missedStates: out.filter(function (r) { return r.status === "MISSED"; })
+                  .map(function (r) { return { state: r.state, expected: r.expected, threw: r.threw }; })
+              });
+            });
+          });
+        }).catch(function (e) {
+          // A failed language is recorded as a failed language, never skipped: an absent row and
+          // a clean row are the same thing to a reader skimming for zeros.
+          byLang.push({ lang: L, status: "LANG-SWITCH-FAILED", threw: String(e && e.message || e), env: env() });
+        });
+      });
+      return chain.then(function () {
+        var bad = byLang.filter(function (r) { return r.status === "LANG-SWITCH-FAILED" || r.missed || r.withFindings; });
+        return JSON.stringify({
+          langsRequested: langs,
+          langsMeasured: byLang.filter(function (r) { return r.status !== "LANG-SWITCH-FAILED"; }).map(function (r) { return r.env.htmlLang; }),
+          verdict: bad.length === 0
+            ? "all " + langs.length + " language(s) swept, every state reached, 0 findings"
+            : bad.length + " language(s) with a finding, a missed state, or a failed switch — see rows",
+          byLang: byLang
+        }, null, 2);
       });
     },
 
