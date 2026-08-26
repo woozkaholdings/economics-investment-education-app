@@ -5683,6 +5683,45 @@ if (keyedGroupsChecked < 4) {
     .filter((s) => mutatingVerb.test(s.body) && !/reload:\s*true/.test(s.body))
     .map((s) => s.name);
 
+  // (e) the storage audit's fixture still covers the app's whole persisted surface
+  //     (item 119, added 2026-08-26).
+  //
+  //     A11yStates.auditBegin/auditFinish decide which states need a `requires` declaration by
+  //     diffing each screen cold against a WARM_FIXTURE. That verdict is only as wide as the
+  //     fixture: a key the app persists but the fixture never sets is a key no state can be
+  //     measured against, so every screen that reads it comes back "provably storage-independent"
+  //     — the same lying zero one level up, and this time in the instrument that exists to find
+  //     lying zeros. `requires` is opt-in, so nothing else would ever notice.
+  //
+  //     This cannot check that a screen VARIES — only a browser can, which is what the audit is
+  //     for. It checks the strictly weaker and entirely static thing: every key in
+  //     src/lib/storage.js's KEYS is either IN the fixture or NAMED in FIXTURE_EXCLUDES. Adding a
+  //     key to the app therefore forces a decision about it here, rather than silently narrowing
+  //     the next audit. Excluding is allowed — the three presentation preferences (lang, theme,
+  //     font scale) restyle every screen and are swept as their own axes — but it is explicit.
+  const storageSrc = readFileSync("src/lib/storage.js", "utf8");
+  const keysBlock = storageSrc.slice(storageSrc.indexOf("export const KEYS = {"));
+  const appKeys = (keysBlock.slice(0, keysBlock.indexOf("};")).match(/"(ecycles_[a-z_]+)"/g) || [])
+    .map((m) => m.replace(/"/g, ""));
+  // Read from `raw`, not `src`: the fixture's keys sit in an object literal, but FIXTURE_EXCLUDES
+  // is a short array whose entries the comment-stripper leaves alone either way. Using raw keeps
+  // this independent of how that stripping evolves.
+  const fixtureBlock = raw.slice(raw.indexOf("var WARM_FIXTURE = {"), raw.indexOf("var FIXTURE_EXCLUDES"));
+  // Bounded at the array's own `];`, NOT by a fixed character window. A 300-char window was
+  // written first and miscounted: it ran past the array into the `fixtureHolds` function below,
+  // which names ecycles_analytics_log, so a key the fixture SETS was reported as excluded. The
+  // total was still 12 and the check still passed — the split, 8/4 instead of 9/3, was the only
+  // thing that said so. A summary line that adds up is not a summary line that is right.
+  const excludesStart = raw.indexOf("var FIXTURE_EXCLUDES");
+  const excludesBlock = raw.slice(excludesStart, raw.indexOf("];", excludesStart));
+  const covered = new Set([
+    ...(fixtureBlock.match(/ecycles_[a-z_]+/g) || []),
+    ...(excludesBlock.match(/ecycles_[a-z_]+/g) || [])
+  ]);
+  const uncoveredKeys = appKeys.filter((k) => !covered.has(k));
+  const excludedSet = new Set(excludesBlock.match(/ecycles_[a-z_]+/g) || []);
+  const excludedCount = appKeys.filter((k) => excludedSet.has(k)).length;
+
   if (!matrix || names.length === 0) {
     fail(`§48: could not find a populated \`var STATES = [\` array in ${file}. This section is pointed at a structure that no longer exists — repoint it rather than leaving it green.`);
   } else if (arrivedCount !== names.length) {
@@ -5697,8 +5736,12 @@ if (keyedGroupsChecked < 4) {
     fail(`§48: "practice-batch-pause" answers ${pauseMatch[1]} question(s) but src/screens/Practice.jsx sets BATCH_SIZE = ${batchMatch[1]}. The recipe will miss the pause it exists to reach — it reports MISSED rather than a false clean, but fix the number.`);
   } else if (leakyStates.length > 0) {
     fail(`§48: the no-reload state(s) ${leakyStates.map((n) => `"${n}"`).join(", ")} answer a question ({ answer: N } or { radio: N }), which writes ecycles_review. runAll() and sweepLangs() run the no-reload set in ONE page session — sweepLangs runs it once per language — so this changes the screen every LATER state sweeps, and the same state in every later language, while every row still reports "ok". Mark it \`reload: true\` (with \`clear\`) so it runs behind begin()/finish() instead of in the shared session.`);
+  } else if (appKeys.length === 0 || covered.size === 0) {
+    fail("§48(e): could not read src/lib/storage.js's KEYS or a11y-states.js's WARM_FIXTURE/FIXTURE_EXCLUDES. This check is pointed at a structure that no longer exists — repoint it rather than leaving it green.");
+  } else if (uncoveredKeys.length > 0) {
+    fail(`§48(e): src/lib/storage.js persists ${uncoveredKeys.join(", ")}, which A11yStates' WARM_FIXTURE does not set and FIXTURE_EXCLUDES does not name. The storage audit decides which states need a \`requires\` declaration by diffing each screen cold against that fixture, so a key it never sets is a key no screen is measured against — every screen reading it comes back "provably storage-independent". Add it to WARM_FIXTURE (with a shape its reader in storage.js actually accepts), or name it in FIXTURE_EXCLUDES with why.`);
   } else {
-    console.log(`  §48 a11y state matrix: ${names.length} state(s), each with an \`arrived\` assertion; the ${Object.keys(REGRESSION_STATES).length} regression states are present, practice-batch-pause answers ${pauseMatch[1]} to Practice.jsx's BATCH_SIZE = ${batchMatch[1]}, and ${entrySplit.length - leakyStates.length} of ${entrySplit.length} state(s) keep the no-reload set side-effect-free. (Static — only A11yStates.runAll()'s \`missed\` and \`preconditionFailed\` counts can say whether a recipe still arrives, in the storage it declares.)`);
+    console.log(`  §48 a11y state matrix: ${names.length} state(s), each with an \`arrived\` assertion; the ${Object.keys(REGRESSION_STATES).length} regression states are present, practice-batch-pause answers ${pauseMatch[1]} to Practice.jsx's BATCH_SIZE = ${batchMatch[1]}, ${entrySplit.length - leakyStates.length} of ${entrySplit.length} state(s) keep the no-reload set side-effect-free, and all ${appKeys.length} persisted key(s) are covered by the storage audit's fixture (${appKeys.length - excludedCount} set, ${excludedCount} explicitly excluded). (Static — only A11yStates.runAll()'s \`missed\`/\`preconditionFailed\` counts and auditFinish()'s \`gaps\` can say whether a recipe still arrives, in the storage it declares.)`);
   }
 }
 

@@ -69,6 +69,21 @@
  * `requires`/COLD below) and will report PRECONDITION rather than a zero if the page was loaded
  * warm. `localStorage.clear()` then reload, then re-eval both files.
  *
+ * ── AUDITING THE DECLARATIONS THEMSELVES (item 119) ───────────────────────────────────────────
+ * `requires` is OPT-IN, so a state that SHOULD declare storage and does not simply keeps
+ * reporting `ok`. The audit turns "this screen does not vary" from a reading into a measurement:
+ *
+ *   ...from a COLD page, both files eval'd...
+ *   await A11yStates.auditBegin()    // snapshots every no-reload state COLD, twice, then reloads warm
+ *   ...re-eval both files after the reload...
+ *   await A11yStates.auditFinish()   // snapshots them WARM and diffs; names GAP / OVER-DECLARED states
+ *
+ * Both controls are built in and both must fire: cold-vs-cold must be byte-identical (or a diff
+ * is noise, not a finding), and every already-declared state must vary (or the fixture is not
+ * reaching the app). Run it after adding a state, or after any change that makes a screen read a
+ * new localStorage key. RESULT 2026-08-26: 12 states, 4 vary, 8 provably independent, 1 gap
+ * (`reference-glossary`, now declaring NO_BOOKMARKS), 0 over-declared.
+ *
  * States marked `reload: true` seed localStorage, which the app only reads at mount. Writing
  * ecycles_review while the app is running does nothing — useAppState holds review state in React
  * and saves over it (item 109 lost a reading to exactly this). Those states are therefore a
@@ -86,6 +101,7 @@
 
   var PENDING_KEY = "__a11ystates_pending";
   var PENDING_AXES = "__a11ystates_axes";
+  var AUDIT_KEY = "__a11ystates_audit_cold";
 
   /* ── the yield ──────────────────────────────────────────────────────────────────────────── */
   function tick() {
@@ -505,6 +521,25 @@
     }
   };
 
+  // A SECOND precondition, and the reason it is not just COLD is the whole point of declaring
+  // storage precisely. COLD is about lesson/review PROGRESS; the Glossary is not a function of
+  // progress at all. It is a function of `ecycles_glossary_bookmarks`, which COLD does not read —
+  // so `requires: COLD` here would pass on a page that has bookmarks and no completed lessons,
+  // which is exactly the screen it needs to refuse.
+  //
+  // MEASURED 2026-08-26 by storageAudit (item 119), not reasoned: with one bookmark seeded, the
+  // bookmarked row's aria-label becomes `"Inflation, Saved"` instead of `"Inflation"` and gains a
+  // bookmark icon (Glossary.jsx:115,130). The state's arrival assertion — "more than 10 labelled
+  // term rows" — is satisfied by BOTH variants, and the sweep reported `ok` over the bookmarked
+  // one while naming the plain list. Same lying zero as item 118, one screen along.
+  //
+  // Over-declaring is its own error: a state that names storage it does not depend on reports
+  // PRECONDITION for a screen it would have swept correctly. So this names one key, not nine.
+  var NO_BOOKMARKS = {
+    says: "no glossary bookmarks — every term row carries its bare term as its aria-label",
+    is: function () { return emptyKey(storageNow().bookmarks); }
+  };
+
   var STATES = [
     { name: "first-run-modal", reload: true, clear: true, hash: "#/learn",
       note: "item 110 — the only screen with 100% reach; the dialog must isolate the app behind it",
@@ -536,7 +571,9 @@
 
     // Sub-screens: selected by POSITION, confirmed by the row's own LABEL against the <h1>.
     // Both render the same locale string, so the check is language-independent by construction.
-    { name: "reference-glossary", steps: [{ hash: "#/reference" }, { menuItem: 0 }],
+    { name: "reference-glossary", requires: NO_BOOKMARKS,
+      steps: [{ hash: "#/reference" }, { menuItem: 0 }],
+      note: "item 119 — the only Reference state measured to vary with storage; a bookmarked row relabels",
       arrived: { says: "the sub-screen <h1> matches the menu row that opened it, and term rows are rendered",
         is: function () { return h1IsLastLabel() &&
           document.querySelectorAll('main [role="button"][aria-label]').length > 10; } } },
@@ -700,7 +737,11 @@
     return {
       completed: localStorage.getItem("ecycles_completed_lessons"),
       review: localStorage.getItem("ecycles_review"),
-      streak: localStorage.getItem("ecycles_streak")
+      streak: localStorage.getItem("ecycles_streak"),
+      // Added 2026-08-26 (item 119). A PRECONDITION report quotes this object, so a key that a
+      // state declares and this omits produces a failure report that does not contain the reason
+      // for the failure — the operator reads three empty-looking values and no cause.
+      bookmarks: localStorage.getItem("ecycles_glossary_bookmarks")
     };
   }
 
@@ -771,6 +812,110 @@
   function applySeed(state) {
     if (state.clear) localStorage.clear();
     Object.keys(state.seed || {}).forEach(function (k) { localStorage.setItem(k, state.seed[k]); });
+  }
+
+  /* ── the storage-dependence audit (item 119) ───────────────────────────────────────────────
+   * `requires` is OPT-IN, so a state that SHOULD declare COLD and does not just keeps reporting
+   * `ok`. Three states declare it; the other nine were judged storage-independent by READING
+   * them. This converts those nine judgments into nine measurements: drive every no-reload state
+   * cold, snapshot <main>, then do it again from a warm store and diff. A state whose DOM is
+   * byte-identical across the two is provably not a function of learner storage; the rest need
+   * `requires`.
+   *
+   * WHY THE FIXTURE IS NINE KEYS AND NOT TWELVE — a correction to the item as filed. Item 119
+   * says "with every declared key populated". Taken literally that includes `ecycles_lang`,
+   * `ecycles_theme_mode` and `ecycles_font_scale`, which restyle or re-translate EVERY screen —
+   * so every state would differ and the audit would return an all-positive result that
+   * distinguishes nothing. Those three are presentation preferences, already swept as explicit
+   * axes (sweepLangs' language axis and setFontScale, item 112). The nine below are the
+   * LEARNER-STATE keys, which is the class `requires` exists to pin down.
+   *
+   * EVERY VALUE HERE HAS TO BE A SHAPE THE APP ACTUALLY READS, not merely a non-empty string.
+   * `storage.js`'s readers all take a fallback and swallow a parse failure, so a malformed
+   * fixture value does not throw — it silently degrades to the COLD default, and the state it
+   * was supposed to warm then reports "provably storage-independent". A junk fixture and a
+   * genuinely independent screen produce the same row. Shapes checked against their readers:
+   * `loadStreak` destructures `{ count, lastDate }` (storage.js:25), `continuePref` is
+   * `{ optedIn, lastPromptDate }` (useAppState.js:222), `completedLessons` is an id array and
+   * ids 1-3 exist (the `essentials` track), glossary bookmarks are glossary KEYS.
+   *
+   * `lastDate` is TODAY, computed the way src/utils/date.js computes it — local getFullYear/
+   * getMonth/getDate, never `toISOString().slice(0,10)`, which is check-data.mjs §23's banned
+   * idiom. It has to be today because `loadStreak` reports 0 for a gap of more than one day, so
+   * seeding LONG_PAST_DUE here would warm the key and still render no chip. */
+  function todayLocal() {
+    var d = new Date();
+    return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+  }
+  var WARM_FIXTURE = {
+    ecycles_seen_disclaimer: "true",
+    ecycles_completed_lessons: JSON.stringify([1, 2, 3]),
+    ecycles_streak: JSON.stringify({ count: 4, lastDate: todayLocal() }),
+    ecycles_continue_pref: JSON.stringify({ optedIn: true, lastPromptDate: todayLocal() }),
+    // LONG_PAST_DUE, so these are DUE — the "N ready to review" card rather than "all caught up".
+    ecycles_review: seededReview(3),
+    ecycles_analytics_log: JSON.stringify([{ event: "audit_fixture", ts: LONG_PAST_DUE }]),
+    ecycles_legacy_lesson_id_migrated: "true",
+    ecycles_seen_practice_coachmark: "true",
+    // The live candidate item 119 names: a bookmarked row renders a second aria-label form
+    // (`${term}, ${t.bookmarkedLabel}`) plus a bookmark icon. Must be a term the list renders.
+    ecycles_glossary_bookmarks: JSON.stringify(["Inflation"])
+  };
+  // Deliberately NOT in the fixture, and named so the exclusion is reviewable rather than an
+  // oversight. If one of these ever stops being a pure presentation preference, it belongs above.
+  var FIXTURE_EXCLUDES = ["ecycles_lang", "ecycles_theme_mode", "ecycles_font_scale"];
+
+  // Did the fixture survive the reload? Byte-equality for eight of the nine — but NOT for
+  // `ecycles_analytics_log`, and the exception is a measurement rather than a concession.
+  // MEASURED 2026-08-26: the first auditFinish() reported FIXTURE-NOT-APPLIED naming exactly that
+  // key, because `analytics.js` appends an `app_opened` event on every mount. So the log is
+  // append-only and its post-reload value is NEVER the value written before the reload; asserting
+  // equality there would fail this audit forever, for a reason that has nothing to do with the
+  // audit. The honest assertion for an append-only key is that the seeded entry is still IN it.
+  function fixtureHolds(key) {
+    var got = localStorage.getItem(key);
+    if (got === null) return false;
+    if (key === "ecycles_analytics_log") return got.indexOf("audit_fixture") >= 0;
+    return got === WARM_FIXTURE[key];
+  }
+
+  // The snapshot. <main> is the screen; the header (language <select>) and the tab bar sit
+  // outside it and are not what a state names. Normalized only for whitespace — anything more
+  // aggressive would be the instrument deciding in advance which differences do not count.
+  function snapshotMain() {
+    var m = document.querySelector("main") || document.getElementById("root");
+    return m ? m.outerHTML.replace(/\s+/g, " ").trim() : "";
+  }
+
+  // Drive every no-reload state, ignoring `requires` — the audit is measuring the very side of
+  // the precondition that drive() is built to refuse, so it has to step around it. The bypass is
+  // a shallow copy with `requires` dropped, never a mutation of the state itself.
+  function auditPass() {
+    var out = [], chain = Promise.resolve();
+    STATES.filter(function (s) { return !s.reload; }).forEach(function (s) {
+      var bare = {};
+      Object.keys(s).forEach(function (k) { if (k !== "requires") bare[k] = s[k]; });
+      chain = chain.then(function () { return drive(bare); }).then(function (r) {
+        out.push({ state: s.name, declares: s.requires ? s.requires.says : null,
+                   reached: r.status !== "MISSED", status: r.status, dom: snapshotMain() });
+      });
+    });
+    return chain.then(function () { return out; });
+  }
+
+  function byName(pass) {
+    var m = {}; pass.forEach(function (r) { m[r.state] = r; }); return m;
+  }
+
+  // Where two snapshots first diverge, with a little context each side. A boolean "differs" is
+  // not enough to act on: the point of the audit is to write a `requires` declaration, and that
+  // needs to name WHAT varies.
+  function firstDelta(a, b) {
+    if (a === b) return null;
+    var i = 0, min = Math.min(a.length, b.length);
+    while (i < min && a[i] === b[i]) i++;
+    return { atChar: i, lenCold: a.length, lenWarm: b.length,
+             cold: a.slice(Math.max(0, i - 40), i + 90), warm: b.slice(Math.max(0, i - 40), i + 90) };
   }
 
   /* ── public surface ─────────────────────────────────────────────────────────────────────── */
@@ -870,6 +1015,124 @@
           if (bad.length) { r.status = "AXES-NOT-APPLIED"; r.findings = null; r.axesProblem = bad; }
         }
         return JSON.stringify(r, null, 2);
+      });
+    },
+
+    // ── the storage-dependence audit (item 119) ─────────────────────────────────────────────
+    // Two calls, because localStorage is read at mount: auditBegin() from a COLD page, then
+    // re-eval both files after the reload and call auditFinish().
+    //
+    // auditBegin() takes the cold snapshot TWICE and requires the two to be byte-identical
+    // before it will go on. That is the negative control, and it is the one this audit cannot
+    // do without: the measurement is a byte diff, so any incidental instability in the DOM
+    // (a timestamp, a random id, an unsettled render) would report every state as
+    // storage-dependent and look exactly like a thorough result.
+    auditBegin: function () {
+      if (!COLD.is()) {
+        return Promise.resolve(JSON.stringify({
+          error: "auditBegin needs a COLD page — the cold half is the baseline",
+          storage: storageNow(), fix: "localStorage.clear(), reload, re-eval both files, retry"
+        }, null, 2));
+      }
+      return auditPass().then(function (a) {
+        return auditPass().then(function (b) {
+          var mb = byName(b);
+          var unstable = a.filter(function (r) { return mb[r.state] && mb[r.state].dom !== r.dom; })
+                          .map(function (r) { return r.state; });
+          var missed = a.filter(function (r) { return !r.reached; }).map(function (r) { return r.state; });
+          if (unstable.length || missed.length) {
+            return JSON.stringify({
+              status: "INSTRUMENT-NOT-USABLE",
+              stabilityControl: "FAIL",
+              unstableStates: unstable, missedStates: missed,
+              verdict: "cold-vs-cold was not byte-identical (or a state was not reached), so a cold-vs-warm diff would be noise. Fix before reading any result.",
+              sample: unstable.length ? firstDelta(byName(a)[unstable[0]].dom, mb[unstable[0]].dom) : null
+            }, null, 2);
+          }
+          var stored = true;
+          try {
+            sessionStorage.setItem(AUDIT_KEY, JSON.stringify(a.map(function (r) {
+              return { state: r.state, declares: r.declares, dom: r.dom };
+            })));
+          } catch (e) {
+            stored = false;
+            sessionStorage.setItem(AUDIT_KEY, JSON.stringify(a.map(function (r) {
+              return { state: r.state, declares: r.declares, domLen: r.dom.length, dom: null };
+            })));
+          }
+          Object.keys(WARM_FIXTURE).forEach(function (k) { localStorage.setItem(k, WARM_FIXTURE[k]); });
+          location.replace(location.pathname);
+          return JSON.stringify({
+            status: "COLD-CAPTURED",
+            stabilityControl: "PASS — " + a.length + " state(s), cold vs cold byte-identical",
+            captured: a.length, fullSnapshotsStored: stored,
+            warmFixtureKeys: Object.keys(WARM_FIXTURE), excludedKeys: FIXTURE_EXCLUDES,
+            reloading: true, then: "re-eval both files, then await A11yStates.auditFinish()"
+          }, null, 2);
+        });
+      });
+    },
+
+    auditFinish: function () {
+      var raw = sessionStorage.getItem(AUDIT_KEY);
+      if (!raw) return Promise.resolve(JSON.stringify({ error: "no cold baseline — call auditBegin() from a cold page first." }));
+      var cold;
+      try { cold = JSON.parse(raw); } catch (e) { return Promise.resolve(JSON.stringify({ error: "cold baseline unreadable: " + e.message })); }
+      // The warm half has to prove it is warm, for the same reason the cold half does. A fixture
+      // that silently failed to apply would make every state look storage-independent — the
+      // exact lying zero this audit exists to close, one level up.
+      var applied = Object.keys(WARM_FIXTURE).filter(fixtureHolds);
+      if (applied.length !== Object.keys(WARM_FIXTURE).length) {
+        return Promise.resolve(JSON.stringify({
+          status: "FIXTURE-NOT-APPLIED", applied: applied,
+          missing: Object.keys(WARM_FIXTURE).filter(function (k) { return applied.indexOf(k) < 0; }),
+          verdict: "the warm store is not the fixture, so every 'identical' below would be meaningless"
+        }, null, 2));
+      }
+      sessionStorage.removeItem(AUDIT_KEY);
+      return auditPass().then(function (warm) {
+        var mw = byName(warm);
+        var rows = cold.map(function (c) {
+          var w = mw[c.state];
+          var same = w && (c.dom === null ? null : c.dom === w.dom);
+          return {
+            state: c.state,
+            declaresRequires: !!c.declares,
+            reachedWarm: !!(w && w.reached),
+            dependsOnStorage: same === null ? "UNKNOWN (baseline truncated)" : !same,
+            // The two cases that matter, named rather than left to the reader:
+            // an undeclared state that varies is a GAP; a declared one that does not is DEAD.
+            verdict: same === null ? "unknown"
+              : (!same && !c.declares) ? "GAP — varies with learner storage and declares nothing"
+              : (same && c.declares) ? "OVER-DECLARED — declares COLD but does not vary"
+              : (!same && c.declares) ? "correctly declared"
+              : "provably storage-independent",
+            delta: (same === false && c.dom !== null) ? firstDelta(c.dom, w.dom) : null
+          };
+        });
+        var gaps = rows.filter(function (r) { return r.verdict.indexOf("GAP") === 0; });
+        var over = rows.filter(function (r) { return r.verdict.indexOf("OVER") === 0; });
+        var varies = rows.filter(function (r) { return r.dependsOnStorage === true; });
+        return JSON.stringify({
+          status: "AUDITED",
+          fixtureApplied: applied.length + "/" + Object.keys(WARM_FIXTURE).length,
+          excludedKeys: FIXTURE_EXCLUDES,
+          audited: rows.length,
+          varyWithStorage: varies.length,
+          provablyIndependent: rows.length - varies.length,
+          // The POSITIVE control. The three states that already declare COLD were measured to
+          // branch (item 118). If none of them varies here, the fixture is not reaching the app
+          // and every "provably independent" row is a lying zero.
+          positiveControl: rows.filter(function (r) { return r.declaresRequires; }).every(function (r) { return r.dependsOnStorage === true; })
+            ? "PASS — every already-declared state varies under the fixture"
+            : "FAIL — a state known to branch on storage did not vary; the fixture is not reaching the app",
+          gaps: gaps.map(function (r) { return { state: r.state, delta: r.delta }; }),
+          overDeclared: over.map(function (r) { return r.state; }),
+          verdict: gaps.length
+            ? gaps.length + " state(s) vary with learner storage and declare nothing — they need `requires`"
+            : "every undeclared state is provably storage-independent under the fixture",
+          rows: rows
+        }, null, 2);
       });
     },
 

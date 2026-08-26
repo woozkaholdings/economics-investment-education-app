@@ -2510,26 +2510,53 @@ for the history. No open P1/P2 items.
       a real second instance of a defect just fixed or retires the question. But Practice is a less
       trafficked screen than the lesson reader, and nobody has opened the app (O-1).
 
-119. **[Process/QA — filed 2026-08-26 by the run that closed item 118, as its stated residual
-    rather than smuggled into the same commit.] Only three states declare the storage they need.
-    That the other nine do not need to is a judgment made by READING, not by a check.**
-    - **State:** `scripts/a11y-states.js` gained a `requires` precondition (item 118). `COLD` is
-      declared on `learn`, `learn-collapsed` and `practice-landing` — the three whose rendered copy
-      was measured to branch on storage. The remaining nine no-reload states (the Reference family)
-      were judged storage-independent by reading their screens cold and warm in one session.
-    - **Why that is thinner than it looks.** It is exactly the reasoning item 118 disproved one
-      level down: "this screen does not vary" is a claim about current code, and a screen that
-      gains a storage-dependent element later gets no warning — `requires` is opt-in, so a state
-      that *should* declare COLD and does not simply keeps reporting `ok`. The Glossary is the
-      live candidate: it already reads `ecycles_glossary_bookmarks`, and a bookmarked row renders a
-      different `aria-label`. Nothing in the sweep is a function of that today; one feature is.
-    - **The cheap version, and it is a measurement not a build:** for each no-reload state, sweep
-      it cold and again with every declared key populated, and diff the two DOMs. States whose DOM
-      is byte-identical are provably storage-independent; the rest need `requires`. That converts
-      nine judgments into nine measurements and needs no new instrument.
-    - **Honest priority: low-medium.** The guard that matters (no mutating step in the no-reload
-      set) is checked-in and proven able to fail, so the contamination class is closed. This is
-      about the *completeness* of the declarations, and it is downstream of O-1 like everything else.
+120. **[Process/QA — filed 2026-08-26 by the run that closed item 119, as its stated residual
+    rather than smuggled into the same commit.] The storage audit tests ONE point in
+    storage-space, so a `requires` that is too COARSE still passes it.**
+    - **State:** `A11yStates.auditBegin/auditFinish` diffs each no-reload state cold against a
+      single `WARM_FIXTURE` value per key. Every current `requires` predicate is an *emptiness*
+      assertion — `COLD` (no completed lessons, no review history) and `NO_BOOKMARKS`.
+    - **What that cannot see.** The audit answers "does this screen vary between empty and
+      non-empty?". It does not answer "does it vary between two non-empty values?" — 1 bookmark
+      vs 20, `completed = [1]` vs all 44, a review queue of 3 vs one of 40. A state whose
+      declaration is satisfied by both still sweeps two different screens and reports `ok` for
+      both, which is item 118's defect with a narrower mouth. Nothing in the file can currently
+      express "this state needs SPECIFIC storage", only "this state needs storage to be empty".
+    - **The cheap version:** give the audit a second warm fixture (different magnitudes, same
+      keys) and diff warm-A against warm-B. States that differ there need a declaration finer
+      than emptiness, or a recipe that pins the magnitude. Reuses the whole existing mechanism —
+      the two controls, the snapshot, the delta — and adds one fixture.
+    - **Honest priority: low.** No shipped defect is known to live here; this is the next
+      question the instrument cannot answer, written down so it is not rediscovered. Downstream
+      of O-1 like everything else. **Do not pick this over content or over an owner-facing item.**
+
+119. **✅ DONE 2026-08-26 (scheduled dev-agent). Nine judgments became nine measurements: eight
+    screens are provably storage-independent and one — the Glossary, exactly the candidate this
+    item named — was silently sweeping the wrong variant.** `A11yStates.auditBegin()`/
+    `auditFinish()` ship as a re-runnable audit; `reference-glossary` now declares
+    `NO_BOOKMARKS`; `check-data.mjs` §48(e) keeps the audit's fixture as wide as the app's
+    persisted surface. Full detail in the run log.
+    - **Result:** 12 no-reload states audited — **4 vary with learner storage, 8 provably
+      independent, 1 GAP, 0 over-declared.** The gap was `reference-glossary`: with one bookmark
+      seeded, the row's `aria-label` becomes `"Inflation, Saved"` instead of `"Inflation"`
+      (`Glossary.jsx:115`), the arrival assertion is satisfied by both variants, and the sweep
+      reported `ok` over the bookmarked one while naming the plain list.
+    - **PREMISE CORRECTION 1, and it changed the fixture.** This item's cheap version said
+      "populate every declared key". Taken literally that includes `ecycles_lang`,
+      `ecycles_theme_mode` and `ecycles_font_scale`, which re-translate or restyle EVERY screen —
+      so every state would have differed and the audit would have returned an all-positive result
+      distinguishing nothing. Those three are presentation preferences already swept as their own
+      axes (item 112); the fixture is the **nine learner-state keys**, and the exclusion is named
+      in `FIXTURE_EXCLUDES` rather than left implicit.
+    - **PREMISE CORRECTION 2, and it changed the FIX rather than a figure.** This item assumed
+      the gap would be closed by declaring `COLD`. It would not have been: `COLD` reads
+      `completed` and `review` and never reads the bookmark key, so on a page with bookmarks and
+      no lesson progress `COLD` is **satisfied** and the glossary would still have swept the
+      relabeled screen and called it clean. Measured, not argued — that exact storage was built
+      and `coldWouldHavePassed` came back `true`. Hence a separate `NO_BOOKMARKS` predicate that
+      names one key. **Over-declaring is its own error** (a state that names storage it does not
+      depend on reports PRECONDITION for a screen it would have swept correctly), which is why
+      the audit reports `OVER-DECLARED` as well as `GAP`.
 
 118. **✅ DONE 2026-08-26 (scheduled dev-agent). The cold sweep came back clean; the instrument did
     not.** The reading task ran — Learn, Reference landing, Glossary, About, Sectors, Market
@@ -6312,6 +6339,157 @@ caught-up card**. Both rows said `ok`.
 - **Item 115** remains the top process item and is an **owner decision**, not a pick.
 - **Item 116** is still genuinely blocked on a harness that can focus a document.
 - **Items 70/71/76 and 101** remain unclaimed; 101 is blocked on O-1. **Do NOT pick item 94.**
+
+**Unchanged and still the entire critical path, both owner-blocked: O-1** (a deployed URL) and **O-2**
+(item 18, an analytics account). Nothing in this run moved either, and nothing in this repo can.
+
+### 2026-08-26 (scheduled dev-agent) — nine judgments became nine measurements, and the Glossary had been sweeping the wrong screen (item 119)
+
+**Picked item 119**, the previous run's stated next item and the top unclaimed one. It asked for a
+measurement: the other nine no-reload states were judged storage-independent by *reading* them, and
+`requires` is opt-in, so a state that should declare and does not just keeps reporting `ok`. The
+measurement now exists as a re-runnable audit, and it found the one gap the item predicted.
+Owner tree at open: `OWNER-TREE c2331799…` — **UNMOVED**; 52 untracked, all the owner's. `HEAD` =
+`009512f`, unmoved at commit time. **No file under `src/` changed this run.**
+
+#### Step 3.5 — the premise re-measured, with a control
+
+Both halves of the item's premise **held**, and both were checked rather than accepted:
+
+- **12 no-reload states; 3 declare `COLD`; 9 declare nothing.** Read off the matrix, not the item.
+- **The named candidate is real.** `Glossary.jsx:115` renders `` `${entry.s || term}, ${t.bookmarkedLabel}` ``
+  for a bookmarked row and the bare term otherwise, plus a bookmark icon at `:130`.
+
+**The instrument was validated against a stale-state trap before anything was measured.** The
+browser opened the app in **Japanese** — a leftover `ecycles_lang` from an earlier session. That is
+the same class of error as the dark-mode scan this log already records: had the audit run there, the
+"cold" baseline would have been a `ja` page. Cleared and re-asserted (`htmlLang: en`) first.
+
+#### The two premise corrections, one of which changed the fix
+
+1. **The fixture is nine keys, not twelve.** The item's cheap version said "every declared key".
+   That includes `lang` / `theme_mode` / `font_scale`, which restyle or re-translate every screen —
+   every state would have differed and the result would have distinguished nothing. Those three are
+   presentation preferences with their own axes (item 112) and are now named in `FIXTURE_EXCLUDES`
+   so the exclusion is reviewable rather than silent.
+2. **`requires: COLD` would NOT have fixed the gap.** `COLD` reads `completed` and `review`; it
+   never reads the bookmark key. **Measured:** on a page with one bookmark and no lesson progress,
+   `coldWouldHavePassed: true` — so the glossary would have swept the relabeled screen and reported
+   clean. The fix is a separate `NO_BOOKMARKS` predicate naming one key. Declaring *more* would
+   have been the opposite error, which is why `auditFinish()` reports `OVER-DECLARED` too (it found
+   none).
+
+#### The measurement
+
+`A11yStates.auditBegin()` → reload → `auditFinish()`. **12 audited: 4 vary with learner storage, 8
+provably storage-independent, 1 GAP, 0 over-declared.** The gap's own delta, quoted by the tool:
+
+| | at char 15157 |
+| --- | --- |
+| cold | `aria-label="Inflation"` (len 41,189) |
+| warm | `aria-label="Inflation, Saved"` (len 41,520) |
+
+`reference-glossary-term` came back **independent** — the seeded bookmark is on `Inflation` and that
+state opens term 0, so its DOM genuinely does not move. A measurement, not an oversight.
+
+#### Both controls fired, and both are two-sided
+
+- **Negative (does the instrument cry wolf?)** — cold-vs-cold, all 12 states **byte-identical**, in
+  two separate sessions. Then **injected**: a `setInterval` stamping a changing attribute on
+  `<main>`. `auditBegin` returned **`INSTRUMENT-NOT-USABLE`, 12 unstable, and refused both to reload
+  and to stash a baseline.** Residue removed; the same call returns PASS on the untouched page.
+  Without this control a byte diff would report noise as findings.
+- **Positive (is the fixture reaching the app?)** — every one of the 3 already-declared states
+  varied under the fixture. If none had, every "provably independent" row would be a lying zero.
+- **The fixture assertion caught a real bug on its first run.** `auditFinish` reported
+  **`FIXTURE-NOT-APPLIED`** naming `ecycles_analytics_log`: `analytics.js` appends an `app_opened`
+  event on every mount, so an append-only key's post-reload value is *never* the pre-reload value.
+  Byte-equality was the wrong assertion there and would have failed this audit forever for a reason
+  unrelated to it; it now asserts the seeded entry is still *in* the log. Fixing the assertion
+  rather than loosening it is the point.
+
+#### What shipped (two files, both under `scripts/` — the app is untouched)
+
+- **`scripts/a11y-states.js`** — `auditBegin()` / `auditFinish()`, `WARM_FIXTURE` (+ the named
+  `FIXTURE_EXCLUDES`), `NO_BOOKMARKS`, `requires: NO_BOOKMARKS` on `reference-glossary`, and
+  `storageNow()` now reports `bookmarks` (a PRECONDITION report that omits the offending key shows
+  the operator three empty-looking values and no cause). Fixture shapes are checked against their
+  readers — `{ count, lastDate }` for the streak, `{ optedIn, lastPromptDate }` for continuePref —
+  because `storage.js` swallows a parse failure and falls back to the cold default, so a malformed
+  fixture and a genuinely independent screen produce the same row.
+- **`scripts/check-data.mjs` §48(e)** — every key in `storage.js`'s `KEYS` must be either set by
+  `WARM_FIXTURE` or named in `FIXTURE_EXCLUDES`. It cannot check that a screen *varies* (only a
+  browser can), but it closes the one silent failure that is static: a new persisted key the
+  fixture never sets is a key no screen is measured against, and every screen reading it comes back
+  "provably storage-independent".
+
+#### Verification
+
+- `npm run build` clean (`✓ built in 1.33s`); **`npm test` — 0 failures across all six suites**, 2
+  warnings, both standing (translation review coverage; 48 abridged pairs / item 93).
+  `npm run check-payload` 0 failures. `node --check` on both scripts.
+- **The new `requires`, proven two-sided on the real states:** cold → **12 swept, 12 clean, 0
+  precondition**; warm fixture → **8 clean, 4 PRECONDITION** (`learn`, `learn-collapsed`,
+  `practice-landing`, and now `reference-glossary`, each quoting the bookmark value it found).
+  **Before this change that warm run reported 3.**
+- **The discriminating case, which is the one that matters:** bookmarks seeded, no lesson/review
+  progress → **11 clean, 1 PRECONDITION (`reference-glossary` alone)**, with `coldWouldHavePassed`
+  measured as `true` in the same call. Precise, not blanket.
+- `A11ySweep.selftest()` PASS (plants found and removed); `A11yStates.selftest()` PASS,
+  `bothSidesDiffer: true`. `sweepLangs()` from cold — **5 languages × 12 states, 12 clean each, 0
+  precondition, 0 findings**, `htmlLang` stamped `en/es/ko/zh-Hans/ja`.
+- **The audit re-run after the fix**: 0 gaps, 0 over-declared, `reference-glossary` now
+  `correctly declared`. Reproducible end-to-end.
+- **§48(e) proven able to fail**: injected `ecycles_injected_probe` into `storage.js`'s `KEYS` →
+  **fired naming exactly that key**. §27 (new keys must be documented in `DECISIONS.md`) fired too —
+  a pre-existing, *complementary* guard, not collateral: §27 checks documentation, §48(e) checks
+  measurement coverage. Restored from a **scratchpad copy verified by sha256** (`9d57e1e8…`,
+  byte-identical), never `git checkout --`.
+- **The served copy was proven identical to source** (`sha256 9748037e…` on both `scripts/` and
+  `dist/`) — worth doing, because `npm run build` wipes `dist/` and silently removed the
+  instrument copies mid-session once.
+
+#### Step 5 — adversarial self-check
+
+- **Blindspot register — no regression, and the one adjacency was tested rather than assumed.** No
+  file under `src/` changed, so §10.1 / §10.2 / §10.3 have no surface here; `npm test` re-proves
+  both §10.1 halves and §2.3 anyway. The adjacency is **§23**: I added a `new Date()` to
+  `a11y-states.js` for the streak fixture's `lastDate`. It uses the local `getFullYear/getMonth/
+  getDate` idiom `src/utils/date.js` uses, never `toISOString().slice(0,10)` — and rather than
+  trust that §23's pass covered the file, **I injected the banned idiom into it and confirmed §23
+  fails, naming `scripts/a11y-states.js:847`.** The pass is meaningful, not vacuous. Restored by
+  sha256 (`9748037e…`). The date is scaffolding and is never rendered, so §2.3 is not in play.
+- **`DECISIONS.md` conflict — none.** localStorage-only is respected: this run **adds no persisted
+  key** (§27 passes), and the instrument reads and seeds declared keys from a browser console only.
+- **Already-done backlog item — no; this is item 118's own stated residual, completed.** Item 118
+  added the `requires` mechanism and declared it on three states; this run measures the other nine
+  instead of leaving them at a reading. Nothing item 118 shipped is undone — its three declarations
+  all survive and are the positive control here.
+- **The honest boundary.** The audit tests **one point in storage-space**: empty vs one warm value.
+  It cannot see a state whose screen varies between two *non-empty* values (1 bookmark vs 20,
+  `completed = [1]` vs all 44), because every predicate the file can currently express is an
+  emptiness assertion. **Filed as item 120** rather than left implied. Also unproven: the positive
+  control's failing side is argued, not injected — I did not construct a fixture that applies and
+  still fails to move a declared screen.
+- **Own verification claim — reproducible** by `npm run build`, `npm test`, serving `dist/`, copying
+  both scripts in *after* the build, then: cold reload → both selftests → `runAll()` → `sweepLangs()`;
+  cold reload → `auditBegin()` → reload → `auditFinish()`. The load-bearing numbers are the
+  `PRECONDITION` counts (3 → 4) and the audit's `gaps` (1 → 0), and both are two-sided by
+  construction.
+
+#### Next
+
+- **Item 119 closes on its stated terms**: nine judgments are nine measurements, the one gap it
+  predicted was real and is fixed, and the fixture can no longer silently narrow (§48(e)).
+- **Item 120** (filed above) is the instrument's next blind spot — **low priority, and explicitly
+  not to be picked over content or an owner-facing item.** Three consecutive runs have now gone to
+  the a11y instrument; W-5.2's ratio rule is about item 93 by its letter, but its reasoning —
+  direction coming from "continue the tranche" rather than from the backlog — applies here, and the
+  next run should take content or a W-5.2 pick.
+- **Item 117** is unchanged: (a) re-scoped, (b) the `reached` predicate, the ` (N)` label — all low,
+  all owner-preference rather than defect. **Item 115** remains the top process item and is an
+  **owner decision**. **Item 116** is still blocked on a harness that can focus a document. Items
+  70/71/76 and 101 remain unclaimed; 101 is blocked on O-1. **Do NOT pick item 94.**
 
 **Unchanged and still the entire critical path, both owner-blocked: O-1** (a deployed URL) and **O-2**
 (item 18, an analytics account). Nothing in this run moved either, and nothing in this repo can.
