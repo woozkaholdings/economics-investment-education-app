@@ -2179,7 +2179,45 @@ for the history. No open P1/P2 items.
       may also be the correct reading of a pre-quiz as subordinate to the lesson title. Measure the
       other 39 lessons before deciding anything.
 
-110. **[A11y/Tooling — filed 2026-08-25 by the run that closed item 109, as its stated residual
+111. **[A11y/Tooling — filed 2026-08-25 by the run that closed item 110, as its stated residual
+    rather than smuggled into the same commit.] The state families item 110 did not reach. Its
+    thesis is now three-for-three, but the remaining states are progressively less trafficked.**
+    - **What item 110 measured and left clean** (11 states, one defect): Learn landing and
+      all-tracks-collapsed, Reference landing, Glossary list and term-detail, Market Dashboard,
+      Sector performance, Kids, About, and the Practice runner reached via "Practice all questions"
+      (which settles item 109's open question — that entrance renders the identical branch, now
+      measured rather than inferred: sequence `1`, 0 findings, quiz confirmed running from the DOM).
+    - **What is still unswept**, in descending order of traffic: the **Kids age-selector's non-default
+      panels** (it swaps panels without a route change — the same "a state, not a route" shape, and
+      the cheapest of these); the Practice **batch-pause** and **session-complete** states against a
+      *seeded* queue (item 109 read them on an unseeded one); and the **lesson reader mid-quiz**,
+      after the end-of-lesson check is answered.
+    - **The seeding trap is already documented and cost item 109 a reading** — writing `ecycles_review`
+      while the app is running does nothing, because `useAppState` holds review state in React and
+      saves over it. Do the `setItem` and the reload in the same call.
+    - **Honest priority: medium.** The yield is real and demonstrated, and every instance is cheap now
+      that `headingOrder` sees first-heading defects. But item 110 took the single highest-reach
+      screen in the app (the first-run modal, 100% of users); what is left is the tail. And nobody has
+      opened the app (O-1).
+
+110. **✅ DONE 2026-08-25 (scheduled dev-agent), the same day it was filed. Thesis confirmed a third
+    time — and the defect was on the one screen with 100% reach. Eleven states swept; the first-run
+    disclaimer modal was the only one with a finding. Fixed in two halves (the background is now
+    `inert` + `aria-hidden`, and the dialog title is the `<h1>`), guarded by `check-data.mjs` §47.
+    Residual filed as item 111. See the run log.**
+    - **`aria-modal="true"` was a promise nothing in the DOM kept.** All four background headings
+      (Learn's `<h1>` and three track `<h2>`s) measured `ariaHiddenAncestor: false`,
+      `inertAncestor: false` — so the first screen anyone ever sees read as a five-heading document
+      starting at `<h2>`, sequence `21222`.
+    - **Why both halves were needed: fixing the isolation ALONE makes the heading defect worse.**
+      With the background correctly hidden, an `<h2>`-first outline stops being an ordering quirk and
+      becomes the entire document. §47 fails on either half, and on a removed Tab trap — which is the
+      only reason pairing `aria-hidden` with `inert` is safe here.
+    - **A mechanism claim walked back mid-run:** `inert` does **not** block a programmatic
+      `element.click()`, only user interaction. The honest test for pointer-unreachability is
+      `elementFromPoint`, which returns the dialog overlay.
+    - **Original text, retained** — its reasoning is what made the pick correct:
+    - **[A11y/Tooling — filed 2026-08-25 by the run that closed item 109, as its stated residual
     rather than smuggled into the same commit.] Item 109 was not really about Practice. Every screen
     in this app has only ever been swept in the state a sweep arrives in — and that is now a
     measured generalization, not a worry.**
@@ -10008,3 +10046,201 @@ run's table exactly, and the lesson-reader value confirming item 106's fix is in
 **Unchanged and still the entire critical path, both owner-blocked: O-1** (a deployed URL) and **O-2**
 (item 18, an analytics account). The review runner now has a top-level heading in all five languages.
 **No screen reader has ever been pointed at it, because no one has ever opened the app.**
+
+### 2026-08-25 (scheduled dev-agent) — item 110: eleven states swept, one defect — and it is on the one screen with 100% reach
+
+**Picked item 110**, filed hours earlier by item 109's run as its stated residual: sweep *states*, not
+routes. **W-5.2 note:** a non-item-93 pick; item 94 stays parked behind O-1 by its own box. Chosen
+over item 108 (which changes no shipped finding by its own admission) because item 110's yield was
+already demonstrated twice — and this run makes it three for three.
+
+Owner tree at start `OWNER-TREE c2331799fd3ee413aca864fd82d247a35ea31b01a70a6c4e37b00f6aad9105b2
+(0 tracked modified, 52 untracked)` — **UNMOVED**, byte-identical to the fingerprint the last eight
+runs recorded. `HEAD` `8e8719d` at start and at commit time.
+
+#### Step 3.5 — premise re-measured, with the instrument controlled first
+
+**The item's premise CONFIRMED, and its own priority guess was too low.** Item 110 called the
+"Practice all questions" path "covered by construction, but not measured" and listed four other
+never-swept state families. All of it held. What it did not predict is *which* state carried the
+defect: **the first-run disclaimer modal — the screen every single user sees before anything else.**
+
+**Instrument controlled before any number was recorded.** `A11ySweep.selftest()` → **PASS, 9/9
+controls fired, `plantsRemoved` true**, and the sweep file's sha256 read `e1b748f0…`, byte-identical
+to the checked-in `scripts/a11y-sweep.js`. The landing states then reproduced the previously recorded
+numbers exactly (`#/learn` `1222`, `#/reference` `1`, `#/practice` `12`) — so the instrument agrees
+with the log's history before it is asked anything new.
+
+**Eleven states swept. `innerWidth` 375 throughout (geometry live, not the zero-width trap).**
+
+| state | sequence | findings |
+|---|---|---|
+| **first-run disclaimer modal** | **`21222`** | **1 — first heading is `h2`** |
+| Learn landing | `1222` | 0 |
+| Learn, all three tracks collapsed | `1222` | 0 |
+| Reference landing | `1` | 0 |
+| Reference › Glossary list | `1` | 0 |
+| Glossary › term detail | `12` | 0 |
+| Reference › Market Dashboard | `1222` | 0 |
+| Reference › Sector performance | `12` | 0 |
+| Reference › Kids | `12` | 0 |
+| Reference › About | `1` | 0 |
+| Practice runner via **"Practice all questions"** | `1` | 0 |
+
+The last row settles item 110's open question with a measurement rather than an inference: quiz
+confirmed running from the DOM (counter `1 / 42`, `[role=progressbar]`, 4 `[role=radio]`) before the
+number was recorded. Item 109's fix does cover that entrance.
+
+#### The defect, and why it is two defects
+
+`aria-modal="true"` **only promises** assistive tech that everything outside the dialog is
+unavailable. **Nothing in the DOM made that promise true.** Measured on the live first-run screen:
+all four background headings — the Learn `<h1>` and three track `<h2>`s — had
+`ariaHiddenAncestor: false` and `inertAncestor: false`. So the sweep walked straight past the overlay
+and read a five-heading document starting at `<h2>`.
+
+Both readings of that state are bad, which is why the fix has two halves:
+
+- **A reader that honors `aria-modal`** gets a document whose only heading is an `<h2>` — no `<h1>`
+  anywhere. The item 109 shape exactly.
+- **A reader that does not** browses the entire Learn screen behind a dialog it cannot leave, and
+  hears the dialog title `<h2>` followed by an `<h1>` with *the same text*.
+
+**Fixing only the isolation would have made the heading defect worse, not better** — with the
+background correctly hidden, the `<h2>`-first outline stops being a cosmetic ordering quirk and
+becomes the whole document. §47 fails on either half for that reason.
+
+#### What shipped
+
+- **`src/App.jsx`** — `const behindDialog = showDisclaimer ? { inert: "", "aria-hidden": "true" } : null;`
+  spread onto the dialog's four shell siblings (`<button>` skip link, `<header>`, `<main>`, `<nav>`).
+  The comment records why pairing the two attributes is safe *here specifically*: FirstRunNotice traps
+  Tab, so aria-hidden content is never keyboard-reachable — the failure mode this pairing would
+  otherwise **create**, and it is worse than the one being fixed.
+- **`src/App.jsx`** — the dialog title `<Text as="h2" id="first-run-title">` → **`as="h1"`**.
+- **`scripts/check-data.mjs` §47** — guards both halves, with the §44/§45/§46 vacuity shape: no
+  `role="dialog"`, no Tab trap, or a `behindDialog` that has stopped carrying both attributes each
+  fail loudly rather than staying green on a moved premise. The four shell tags are an **explicit
+  list, not a count** — "4 spreads somewhere" would stay green if one moved off `<nav>` onto an
+  element already covered.
+- `git diff --stat -- package.json package-lock.json vite.config.js src/content/ src/locales/` is
+  **empty** — item 12's port-cost rule respected, no content or locale surface touched.
+
+#### Verification
+
+`npm run build` clean. `npm test` **0 failures, 2 warnings** — the two expected translation warnings
+(review coverage 83%/0% human; 48 abridged pairs), matching the documented baseline exactly.
+
+**§47 proved able to fail**, four injections, each asserting it landed (the injector exits 9 on a
+no-op replace) and each restored from a **scratchpad copy, never `git checkout`**:
+
+| injected | says |
+|---|---|
+| title back to `as="h2"` | `…is not <Text as="h1" id="first-run-title">` ✅ |
+| drop `{...behindDialog}` from `<nav>` | `<nav> … does not carry {...behindDialog} (found 3 … expected 4)` ✅ |
+| `behindDialog` loses `aria-hidden` | `no longer defines behindDialog as … carrying BOTH` ✅ |
+| remove the Tab focus trap | `no longer traps Tab … worse than the defect being fixed` ✅ |
+
+All four restores **byte-identical** (`cmp` clean); the suite returns to `PASS: 0 failure(s), 2
+warning(s)` and the rebuild returns the same bundle hash, which is itself the restore check.
+
+**Live, against the rebuilt `dist/`.** Bundle read back **inside the browser** as
+**`index-DuywLYkx.js`**, different from the pre-fix **`index-CiJ_rY7r.js`** the "before" numbers came
+from (Environment-note lying-zero mode 4). Selftest re-run on the new build: **PASS, plantsRemoved
+true**, and `appFindingsAfterCleanup` went **1 → 0** on the identical state.
+
+**The two-sided proof, on the same DOM and the same build.** With the fix in place the modal state
+reads sequence **`1`**, scanned **1**, 0 findings. The pre-fix markup was then recreated live — title
+element replaced with an `<h2>`, `inert`/`aria-hidden` stripped from all four siblings — and the probe
+reported:
+
+> `document's first heading is h2, not h1 — the outline starts 1 level(s) deep with nothing above it,
+> at h2#first-run-title "Welcome to Economic Cycles"`
+
+sequence back to **`21222`**, scanned back to **5**. Same page, same build, both directions.
+
+**The isolation verified at the DOM level, not from the a11y tree** (the Environment note's standing
+rule — `read_page` cannot render this difference):
+
+| check | result |
+|---|---|
+| four shell siblings carry `inert` + `aria-hidden` | `BUTTON`, `HEADER`, `MAIN`, `NAV` — all four ✅ |
+| the dialog itself carries neither | ✅ (`DIV` bare) |
+| background headings excluded from the sweep | scanned **5 → 1** ✅ |
+| `.focus()` on a background tab button | **refused** — `activeElement` stays `"Got it, let's start"` ✅ |
+| real pointer at that button's centre (`elementFromPoint`) | hits `DIV[dialog]`, not the button ✅ |
+
+**A claim I had to walk back mid-run, recorded because the first version was wrong.** A scripted
+`bgBtn.click()` on an inert background button **did** fire its handler, and `inert` never blocks a
+programmatic `.click()` — only user interaction. Reporting "inert blocks clicks" from that test would
+have been a false claim about the mechanism. The honest test is `elementFromPoint`, above.
+
+**And the attributes come off again — the regression that would matter most.** After dismissing the
+dialog: `document.querySelectorAll('[inert]').length` → **0**, all four siblings bare, the nav button
+focusable again, dialog gone, Learn back to `1222` / 0 findings.
+
+**"Nothing moves visually" is measured, not asserted** (`innerWidth` **375**). The same element
+rendered as `h1` and as an `h2` carrying identical inline styles:
+
+| | value |
+|---|---|
+| fontSize / weight / lineHeight / letterSpacing | 18px / 650 / 25.2px / normal |
+| fontFamily / color / marginTop / marginBottom / display | Inter… / `rgb(246,242,236)` / 0px / 0px / block |
+| box | `x41 y301 w293 h25`, identical x/w/h |
+
+`differing` came back an **empty array** across all nine properties. `<Text>` sets `margin: 0` plus
+explicit font metrics, so the UA's `h1` defaults never apply — the same reason item 109's fix was free.
+Screenshots before and after are indistinguishable.
+
+**Regression sweep, every previously-swept screen, on the new build:** `#/learn` `1222` **0**,
+`#/reference` `1` **0**, `#/practice` landing `12` **0**, `#/lesson/1` **unfinished** `12322223`
+**0** — every total matching the previous run's table exactly, the lesson-reader value confirming
+item 106's fix is intact.
+
+#### Step 5 — adversarial self-check
+
+- **Blindspot register** — no regression. Across the diff's 92 added lines: Dalio/`principles` **0**,
+  advice-adjacent verbs (`buy `/`sell `/`recommend`/`should invest`/`guarantee`) **0**, child-facing
+  framing **0**. **Control**: `heading|aria|h1` on the same lines returns **30**, so the grep reaches
+  them. §10.1 is *structurally* touched — this is the disclaimer modal — so it was checked rather than
+  reasoned about: the disclaimer text is unchanged (`git diff` shows no locale or content edit), and
+  `npm test`'s three §10.1 sections pass, including "disclaimer renders on all 8 surfaces". **One date
+  string** in the diff, in a `scripts/check-data.mjs` comment; **zero in any `src/` added line**.
+  Verified against the artifact rather than asserted: `grep -rl "2026-08-25" dist/assets/` → **0**,
+  `item 110` → **0**, with **control** `grep -rl "Welcome to Economic Cycles" dist/assets/` → **1
+  file**, so the grep genuinely reaches bundle content. Markets-tab stale-data fix untouched.
+- **`DECISIONS.md` conflict** — none. Zero dependency/config diff; the two `localStorage` mentions in
+  added lines are both **prose** (a comment and a `console.log` string), not an API call; no content
+  module, no Vite surface, no routing touched.
+- **Already-done backlog item** — no. `git log --all -S'behindDialog'` → **0** commits; `-S'§47'` →
+  **0**. **Control**: `-S'§46'` → **1** (its introduction yesterday), so the pickaxe reaches this
+  shape. It does not undo item 109 or 106: `#/practice` runner and `#/lesson/1` both re-measured
+  above, unchanged.
+- **Own verification claim** — reproducible by anyone who rebuilds, serves `dist/`, clears
+  `localStorage`, reloads and pastes the sweep. The claim easiest to fake is "the modal state is clean
+  now", which is why the pre-fix markup was re-planted on the same DOM and shown to produce the
+  finding again — a fix that did nothing, and a probe blind to this class, would both report the clean
+  result being claimed. The second of those was literally true until yesterday's commit.
+  `git status` shows exactly two modified files; the owner's `UIUX/` and `drafts/` are untouched
+  (untracked count **52**, unchanged). Owner tree at commit time: **`OWNER-TREE
+  52c619bab6d9f7afb619fabb9137faa695d3f371044a605ea6776c2abc98d4b7` (2 tracked modified, 52
+  untracked)** — the two tracked modifications are this run's own files.
+- **One thing noticed and not chased**: the Kids screen has an age-selector that swaps panels, and
+  only its default panel was swept. Same "a state, not a route" shape. Filed in **item 111** rather
+  than rolled in here.
+
+#### Next
+
+- **Item 111** (filed this run): the residual state families — the Kids age-selector's other panels,
+  the Practice batch-pause and session-complete states on a *seeded* queue, and lesson-reader
+  mid-quiz. Item 110's yield is now **three defects in three attempts**, so this is still the
+  highest-yield a11y work — but the remaining states are progressively less trafficked, and this run
+  swept the single highest-reach one in the app.
+- **Item 108** (the harness's focus capability vs. the sweep header's claim) is unchanged and cheap.
+- **Item 26 / item 27** both still need a re-scope before picking; **W-5.2's pick list** remains.
+- **Do NOT pick item 94** — optional track, four "(Beta)" languages, parked behind O-1 by its own box.
+
+**Unchanged and still the entire critical path, both owner-blocked: O-1** (a deployed URL) and **O-2**
+(item 18, an analytics account). The first screen of this app now isolates its dialog and starts its
+outline at `<h1>`, in all five languages. **No screen reader has ever been pointed at it, because no
+one has ever opened the app.**

@@ -116,7 +116,14 @@ function FirstRunNotice({ t, onDismiss }) {
       style={{ position: "fixed", inset: 0, background: "rgba(28,26,23,0.6)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 200, padding: space["5"] }}
     >
       <Card style={{ maxWidth: 380, width: "100%", boxShadow: shadow.overlay }}>
-        <Text as="h2" id="first-run-title" variant="heading" color={ink.strong}>
+        {/* h1, not h2. `aria-modal` above plus the `inert` on everything
+            behind this dialog mean that while it is open, this dialog IS the
+            document — so its title is that document's top-level heading. As an
+            h2 it left the first screen anyone ever sees with an outline
+            starting one level deep and no h1 reachable at all (item 110).
+            Visually free: <Text> sets its own font metrics and margin, so the
+            UA's h1 defaults never apply — measured, not assumed. */}
+        <Text as="h1" id="first-run-title" variant="heading" color={ink.strong}>
           {t.firstLaunchTitle}
         </Text>
         <Text variant="small" color={ink.muted} style={{ margin: `${space["3"]}px 0 ${space["4"]}px` }}>
@@ -308,6 +315,21 @@ export default function App() {
     tabRefs.current[nextIndex]?.focus();
   }, [goToTab, tabs]);
 
+  // While the first-run dialog is open, it IS the document.
+  //
+  // `aria-modal="true"` on the dialog only PROMISES assistive tech that
+  // everything outside it is unavailable; nothing in the DOM made that true.
+  // Measured on the first screen anyone ever sees: the sweep walked straight
+  // past the overlay into the Learn screen behind it and read its <h1> and
+  // three track <h2>s as part of the same document (item 110). `inert` makes
+  // the promise real — unfocusable and out of the accessibility tree — and
+  // `aria-hidden` covers anything that honors one attribute but not the other.
+  //
+  // Pairing them is only safe because FirstRunNotice traps Tab regardless:
+  // aria-hidden content that is still reachable by keyboard is the failure
+  // mode this would otherwise CREATE, and it is worse than the one it fixes.
+  const behindDialog = showDisclaimer ? { inert: "", "aria-hidden": "true" } : null;
+
   return (
     <div style={{ maxWidth: APP_MAX_WIDTH, margin: "0 auto", minHeight: "100vh", background: surface.canvas, display: "flex", flexDirection: "column" }}>
       {/* Skip link — and it skips to the NAV, not to the content.
@@ -332,6 +354,7 @@ export default function App() {
           keys work immediately (roving tabindex) instead of costing one more
           Tab to get off a `tabindex=-1` wrapper. */}
       <button
+        {...behindDialog}
         type="button"
         onClick={() => tabRefs.current[tabs.findIndex((x) => x.key === tab)]?.focus()}
         onFocus={() => setSkipFocused(true)}
@@ -359,6 +382,7 @@ export default function App() {
 
       {/* Header — a quiet bar, not a colored banner. */}
       <header
+        {...behindDialog}
         style={{
           position: "sticky", top: 0, zIndex: 100,
           display: "flex", alignItems: "center", justifyContent: "space-between", gap: space["3"],
@@ -411,6 +435,7 @@ export default function App() {
           one of the 40 lessons. Nesting keeps both: the landmark for getting
           here, the tabpanel for the relationship to the bottom nav. */}
       <main
+        {...behindDialog}
         // Bottom padding clears the floating nav (12px offset + up to 73px of
         // pill at the 1.3x text scale) with room to spare, so the last row of
         // a screen is never parked under it.
@@ -472,6 +497,7 @@ export default function App() {
           inset is now added to the offset rather than used as padding, so the
           pill clears the home indicator instead of sitting on it. */}
       <nav
+        {...behindDialog}
         style={{
           position: "fixed",
           bottom: "calc(env(safe-area-inset-bottom, 0px) + 12px)",

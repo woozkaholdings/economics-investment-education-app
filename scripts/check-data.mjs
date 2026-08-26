@@ -5469,5 +5469,70 @@ if (keyedGroupsChecked < 4) {
 }
 
 
+// §47. While the first-run dialog is open, the dialog IS the document.
+//
+// WHY. `aria-modal="true"` on FirstRunNotice only PROMISES assistive tech that
+// everything outside the dialog is unavailable. Nothing in the DOM made that
+// promise true, so on the first screen anyone ever sees — the one screen with
+// 100% reach — the real state was: an <h2> dialog title first in document
+// order, then the whole Learn screen still exposed behind it (its <h1> and
+// three track <h2>s), sequence "21222", first heading h2 (WCAG 1.3.1 / 2.4.6).
+// Measured live 2026-08-25 (item 110), and measured again with the pre-fix
+// markup recreated on the fixed build to prove the reading was the markup's.
+//
+// TWO HALVES, AND EITHER ONE ALONE STILL LEAVES A DEFECT — which is why this
+// section fails on either:
+//   (a) the background is inert + aria-hidden, so the promise is real; without
+//       it, a reader that ignores aria-modal browses a screen it cannot reach.
+//   (b) the dialog title is the <h1>; without it, the now-correctly-isolated
+//       document's outline starts at <h2> with no <h1> anywhere — exactly the
+//       item 109 shape. Fixing (a) alone makes (b) MORE severe, not less.
+//
+// The pairing of inert with aria-hidden is only safe because FirstRunNotice
+// traps Tab. aria-hidden content that is still keyboard-reachable is a worse
+// defect than the one being fixed, so if that trap is ever removed, this
+// section's premise is gone — hence the focus-trap vacuity guard below.
+//
+// WHAT THIS CANNOT SEE: it reads source, so it cannot prove the RENDERED
+// result. a11y-sweep.js's headingOrder probe, pointed at a cleared
+// localStorage so the dialog is actually up, is that instrument.
+{
+  const file = "src/App.jsx";
+  const src = readFileSync(file, "utf8")
+    .replace(/\/\*[\s\S]*?\*\//g, "")          // this section's reasoning is quoted
+    .replace(/^\s*\/\/.*$/gm, "")              // in App.jsx's own comments, which
+    .replace(/\{\/\*[\s\S]*?\*\/\}/g, "");     // name every string matched here
+
+  // Vacuity guards first: is the mechanism this section describes still there?
+  const hasDialog = /role="dialog"/.test(src) && /aria-modal="true"/.test(src);
+  const hasTrap = /e\.key === "Tab"/.test(src) && /preventDefault\(\)/.test(src);
+  const defined = /const behindDialog = showDisclaimer\s*\?\s*\{[^}]*\binert:/.test(src) &&
+    /const behindDialog = showDisclaimer\s*\?\s*\{[^}]*"aria-hidden":/.test(src);
+
+  // (b) the dialog's own title element.
+  const titleIsH1 = /<Text as="h1" id="first-run-title"/.test(src);
+
+  // (a) every sibling of the dialog inside the shell carries the spread. The
+  // list is explicit rather than counted, because "4 spreads somewhere" would
+  // stay green if one moved off <nav> and onto something already covered.
+  const SHELL = ["button", "header", "main", "nav"];
+  const missing = SHELL.filter((tag) => !new RegExp(`<${tag}\\s*\\n\\s*\\{\\.\\.\\.behindDialog\\}`).test(src));
+  const spreads = (src.match(/\{\.\.\.behindDialog\}/g) || []).length;
+
+  if (!hasDialog) {
+    fail(`§47: found no role="dialog" with aria-modal="true" in ${file}. The first-run notice this section guards is gone or restructured — re-derive it rather than leaving this green.`);
+  } else if (!hasTrap) {
+    fail(`§47: FirstRunNotice in ${file} no longer traps Tab. This section's whole safety argument for pairing aria-hidden with inert on the background was that focus cannot get there anyway — without the trap, aria-hidden background content becomes keyboard-reachable-but-unannounced, which is worse than the defect being fixed.`);
+  } else if (!defined) {
+    fail(`§47: ${file} no longer defines \`behindDialog\` as a showDisclaimer-gated object carrying BOTH inert and aria-hidden. The mechanism has moved rather than been satisfied — re-derive it.`);
+  } else if (!titleIsH1) {
+    fail(`§47: the first-run dialog's title in ${file} is not <Text as="h1" id="first-run-title">. With the background inert, this dialog is the entire document, so an <h2> title leaves the first screen anyone ever sees with no <h1> at all and an outline starting one level deep (WCAG 1.3.1, item 110).`);
+  } else if (missing.length > 0) {
+    fail(`§47: <${missing.join(">, <")}> in ${file} ${missing.length === 1 ? "does" : "do"} not carry {...behindDialog} (found ${spreads} spread(s) across the shell, expected ${SHELL.length}). Anything behind the dialog that is not inert stays focusable and in the accessibility tree, so aria-modal's promise is false for exactly that element.`);
+  } else {
+    console.log(`  §47 first-run dialog isolation: title is <h1> and all ${SHELL.length} shell siblings (<${SHELL.join(">, <")}>) carry {...behindDialog} = inert + aria-hidden. (Static — a11y-sweep.js's headingOrder probe against a CLEARED localStorage is the instrument for the rendered outline.)`);
+  }
+}
+
 console.log(`\n${failures === 0 ? "PASS" : "FAIL"}: ${failures} failure(s), ${warnings} warning(s).`);
 process.exit(failures === 0 ? 0 : 1);
