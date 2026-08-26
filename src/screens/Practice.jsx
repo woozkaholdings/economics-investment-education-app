@@ -448,7 +448,12 @@ export default function Practice({ t, lang, completedLessons, review, recordRevi
           >
             <Icon name={seen > 0 ? "check" : "book"} size="2rem" strokeWidth={2.2} />
           </div>
-          <Text variant="heading" color={ink.strong}>
+          {/* The id is a test hook and is deliberately NOT tied to which of the
+              two strings renders: it names the card, so the state matrix can
+              assert "the nothing-due card is on screen" in any language
+              (scripts/a11y-states.js, item 118). Same convention as
+              `how-review-title` below and `track-<key>-title` on Learn. */}
+          <Text id="review-empty-title" variant="heading" color={ink.strong}>
             {seen > 0 ? t.reviewEmptyTitle : t.reviewNotStartedTitle}
           </Text>
           <Text variant="small" color={ink.muted} style={{ marginTop: space["2"] }}>

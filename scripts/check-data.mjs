@@ -5661,6 +5661,28 @@ if (keyedGroupsChecked < 4) {
   const batchMatch = practiceSrc.match(/const BATCH_SIZE\s*=\s*(\d+)/);
   const pauseMatch = matrix.match(/name:\s*"practice-batch-pause"[\s\S]*?\{\s*answer:\s*(\d+)\s*\}/);
 
+  // (d) the no-reload set stays SIDE-EFFECT-FREE (item 118, added 2026-08-26).
+  //
+  // runAll() and sweepLangs() run every no-reload state in ONE page session, in order, and
+  // sweepLangs runs the whole set once per language. So a no-reload recipe that writes persistent
+  // learner state does not just affect itself — it changes the screen every state after it sweeps,
+  // including the same state in the next language. MEASURED before this guard existed: from
+  // cleared storage `practice-landing` shows the never-started card; after `practice-all-questions`
+  // answered one check question (`{ radio: 4 }` → recordReview → ecycles_review), the identical
+  // recipe showed the caught-up card. Both reported `ok, findings: 0`, so the five-language row
+  // "every state reached, 0 findings" was comparing en's card against four languages' other card.
+  //
+  // `answer` and `radio` are the two verbs that commit an answer. A state that needs them must
+  // carry `reload: true` (with `clear`/`seed`), which puts it behind begin()/finish() and out of
+  // the shared session — that is what makes the `requires: COLD` preconditions hold for a whole
+  // sweep instead of only until the first mutating recipe runs.
+  const mutatingVerb = /\{\s*(?:answer|radio)\s*:/;
+  const entrySplit = matrix.split(/\n\s*\{\s*name:\s*"/).slice(1);
+  const leakyStates = entrySplit
+    .map((chunk) => ({ name: chunk.slice(0, chunk.indexOf('"')), body: chunk }))
+    .filter((s) => mutatingVerb.test(s.body) && !/reload:\s*true/.test(s.body))
+    .map((s) => s.name);
+
   if (!matrix || names.length === 0) {
     fail(`§48: could not find a populated \`var STATES = [\` array in ${file}. This section is pointed at a structure that no longer exists — repoint it rather than leaving it green.`);
   } else if (arrivedCount !== names.length) {
@@ -5673,8 +5695,10 @@ if (keyedGroupsChecked < 4) {
     fail(`§48: the "practice-batch-pause" state in ${file} no longer carries an { answer: N } step, so nothing drives it to the pause. Re-derive the recipe rather than leaving this green.`);
   } else if (pauseMatch[1] !== batchMatch[1]) {
     fail(`§48: "practice-batch-pause" answers ${pauseMatch[1]} question(s) but src/screens/Practice.jsx sets BATCH_SIZE = ${batchMatch[1]}. The recipe will miss the pause it exists to reach — it reports MISSED rather than a false clean, but fix the number.`);
+  } else if (leakyStates.length > 0) {
+    fail(`§48: the no-reload state(s) ${leakyStates.map((n) => `"${n}"`).join(", ")} answer a question ({ answer: N } or { radio: N }), which writes ecycles_review. runAll() and sweepLangs() run the no-reload set in ONE page session — sweepLangs runs it once per language — so this changes the screen every LATER state sweeps, and the same state in every later language, while every row still reports "ok". Mark it \`reload: true\` (with \`clear\`) so it runs behind begin()/finish() instead of in the shared session.`);
   } else {
-    console.log(`  §48 a11y state matrix: ${names.length} state(s), each with an \`arrived\` assertion; the ${Object.keys(REGRESSION_STATES).length} regression states are present and practice-batch-pause answers ${pauseMatch[1]} to Practice.jsx's BATCH_SIZE = ${batchMatch[1]}. (Static — only A11yStates.runAll()'s \`missed\` count can say whether a recipe still arrives.)`);
+    console.log(`  §48 a11y state matrix: ${names.length} state(s), each with an \`arrived\` assertion; the ${Object.keys(REGRESSION_STATES).length} regression states are present, practice-batch-pause answers ${pauseMatch[1]} to Practice.jsx's BATCH_SIZE = ${batchMatch[1]}, and ${entrySplit.length - leakyStates.length} of ${entrySplit.length} state(s) keep the no-reload set side-effect-free. (Static — only A11yStates.runAll()'s \`missed\` and \`preconditionFailed\` counts can say whether a recipe still arrives, in the storage it declares.)`);
   }
 }
 

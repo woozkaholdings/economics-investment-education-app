@@ -13,7 +13,29 @@
  *             on the one screen with 100% reach, reachable only from cleared storage.
  *
  * The unit of work is a STATE, not a route. This file makes that unit first-class: each state is a
- * recipe (seed, hash, steps) plus — and this is the load-bearing half — an ARRIVAL ASSERTION.
+ * recipe (seed, hash, steps) plus — and this is the load-bearing half — an ARRIVAL ASSERTION,
+ * plus, since 2026-08-26, an optional STORAGE PRECONDITION (`requires`).
+ *
+ * ── WHY A PRECONDITION, AND NOT JUST AN ASSERTION (item 118) ──────────────────────────────────
+ * A recipe plus an arrival assertion identifies a ROUTE. Several screens here are functions of
+ * localStorage as well, and drive() never touches storage — `clear`/`seed` are honored only by
+ * begin(), the reload path — so for the no-reload states storage was simply whatever the page
+ * loaded with, and nothing in the report said which. Measured: `practice-landing` renders three
+ * different cards ("Nothing to review yet" / "You're all caught up" / "1 ready to review"), all
+ * three satisfy `#how-review-title exists`, and all three reported `ok, findings: 0`.
+ *
+ * That is a lying zero of a new kind. Not "the sweep missed the screen" — the sweep found a
+ * screen, swept it correctly, and the report named a different one. It is also the exact
+ * mechanism that hid item 117a for four weeks: the one prior live check of that card seeded a
+ * review entry first and truthfully reported the string it saw, so the false never-started copy
+ * was never on screen to be read.
+ *
+ * A state therefore DECLARES the storage its screen is a function of, and drive() ASSERTS it
+ * before running a single step — reporting `PRECONDITION` (findings `null`) rather than a clean
+ * zero. It never SETS storage: the app reads localStorage at mount only, so a mid-session write
+ * changes the store and not the screen. The corollary is that the no-reload set must be
+ * side-effect-free, which is why `practice-all-questions` — the one recipe that answered a
+ * question and so wrote `ecycles_review` — is reload-gated as of the same date.
  *
  * ── WHY THE ASSERTION IS THE POINT ────────────────────────────────────────────────────────────
  * A recipe whose click silently misses does not error. It sweeps whatever screen it is actually
@@ -40,8 +62,12 @@
  *   fetch('/a11y-sweep.js').then(r=>r.text()).then(s=>eval(s))     // required — this file uses it
  *   fetch('/a11y-states.js').then(r=>r.text()).then(s=>eval(s))
  *   A11ySweep.selftest()        // FIRST. Its zeros are meaningless until this passes.
- *   A11yStates.selftest()       // proves a MISSED state is actually detected as MISSED
+ *   A11yStates.selftest()       // proves MISSED is detected, and that `requires` refuses two-sidedly
  *   await A11yStates.runAll()   // every state that needs no reload, one call
+ *
+ * runAll() and sweepLangs() expect CLEARED STORAGE at page load — several states declare it (see
+ * `requires`/COLD below) and will report PRECONDITION rather than a zero if the page was loaded
+ * warm. `localStorage.clear()` then reload, then re-eval both files.
  *
  * States marked `reload: true` seed localStorage, which the app only reads at mount. Writing
  * ecycles_review while the app is running does nothing — useAppState holds review state in React
@@ -468,6 +494,17 @@
     return JSON.stringify(o);
   }
 
+  // The cold precondition: nothing completed, nothing ever reviewed. It is the state EVERY first
+  // user is in, and — until this run — the one state the no-reload matrix could not promise it
+  // was in. Named once so the states below read as a declaration rather than a repeated snippet.
+  var COLD = {
+    says: "cleared storage — no completed lessons and no review history",
+    is: function () {
+      var s = storageNow();
+      return emptyKey(s.completed) && emptyKey(s.review);
+    }
+  };
+
   var STATES = [
     { name: "first-run-modal", reload: true, clear: true, hash: "#/learn",
       note: "item 110 — the only screen with 100% reach; the dialog must isolate the app behind it",
@@ -475,13 +512,20 @@
         is: function () { return !!document.querySelector('[role="dialog"][aria-modal="true"]') && headingTags().length === 1; } } },
 
     // The three track headings carry ids (`track-<key>-title`), so this holds in any language.
-    { name: "learn", steps: [{ dismissDialog: true }, { hash: "#/learn" }],
+    //
+    // `requires` cold, because this screen is FOUR strings deep in storage: the <h1> is
+    // welcomeTitle vs returningTitle, the sub is welcomeSub vs returningSub, the resume eyebrow
+    // is startHereLabel vs resumeLabel, the action is startLesson vs continueLesson — and the
+    // streak chip exists at all only when `streak > 0`. Measured cold vs warm this run: every one
+    // of the five flipped. A sweep that does not say which side it read is reporting on a screen
+    // it has not named.
+    { name: "learn", requires: COLD, steps: [{ dismissDialog: true }, { hash: "#/learn" }],
       arrived: { says: 'Learn shows all three track sections (by id, not by label)',
         is: function () { return !!document.getElementById("track-economy-title") &&
                                  !!document.getElementById("track-money-title") &&
                                  !!document.getElementById("track-essentials-title"); } } },
 
-    { name: "learn-collapsed", steps: [{ hash: "#/learn" }, { collapseTracks: true }],
+    { name: "learn-collapsed", requires: COLD, steps: [{ hash: "#/learn" }, { collapseTracks: true }],
       arrived: { says: 'no track section reports aria-expanded="true"',
         is: function () { return document.querySelectorAll('[aria-expanded="true"]').length === 0 &&
                                  document.querySelectorAll('[aria-expanded="false"]').length > 0; } } },
@@ -556,9 +600,17 @@
         is: function () { return radios().some(function (r) { return r.getAttribute("aria-checked") === "true"; }) &&
                                  plainButtons().length >= 1; } } },
 
-    { name: "practice-landing", steps: [{ hash: "#/practice" }],
-      arrived: { says: 'the Review landing shows its #how-review-title panel',
-        is: function () { return !!document.getElementById("how-review-title"); } } },
+    // `requires` COLD and the assertion now names the CARD, not just the rail. The rail is
+    // present in all three variants, so `#how-review-title` alone proved only that Review had
+    // rendered — see drive()'s precondition note for the three cards it could not tell apart.
+    // `#review-empty-title` is the never-started/caught-up card's own heading; pairing it with
+    // COLD pins this state to the never-started one.
+    { name: "practice-landing", requires: COLD, steps: [{ hash: "#/practice" }],
+      note: "item 118 — the never-started Review card, the variant item 117a's false copy lived in",
+      arrived: { says: 'the Review landing shows the nothing-due card AND its #how-review-title panel',
+        is: function () { return !!document.getElementById("how-review-title") &&
+                                 !!document.getElementById("review-empty-title") &&
+                                 !document.querySelector('[role="progressbar"]'); } } },
 
     // The first two steps are what EARNS the entrance rather than assuming it. `#/lesson/1` is the
     // first lesson of its track and so is always unlocked; `radio: 4` is the check question's
@@ -569,8 +621,20 @@
     // now report MISSED. Earning the question also makes the state DETERMINISTIC, which it never
     // was: it carries no `clear`/`seed`, so it used to sweep whatever storage the page happened
     // to load with.
-    { name: "practice-all-questions",
-      steps: [{ hash: "#/lesson/1" }, { radio: 4 }, { hash: "#/practice" }, { lastButton: true }],
+    //
+    // RELOAD-GATED 2026-08-26 (item 118), and the reason is the sweep AFTER it, not this one.
+    // `{ radio: 4 }` answers a check question, which calls recordReview and writes
+    // `ecycles_review` — the only recipe in this file that mutates persistent learner state
+    // mid-sweep. In runAll() it runs last, so nothing follows it; in sweepLangs(), which runs the
+    // whole no-reload set once PER LANGUAGE in one page session, it warms storage for every
+    // language after the first. MEASURED this run: from cleared storage `practice-landing` shows
+    // "Nothing to review yet"; immediately after this state runs, the same recipe shows "You're
+    // all caught up" — and both reported `ok`. So the 2026-08-26 sweepLangs line "all 5 languages,
+    // every state reached, 0 findings" was comparing en's never-started card against four
+    // languages' caught-up card. Moving this behind begin()/finish() makes the no-reload set
+    // side-effect-free, which is what lets `requires: COLD` above hold for a whole sweepLangs run.
+    { name: "practice-all-questions", reload: true, clear: true, hash: "#/lesson/1",
+      steps: [{ dismissDialog: true }, { radio: 4 }, { hash: "#/practice" }, { lastButton: true }],
       note: "item 109's open question — this entrance renders the same runner branch as Start Quiz",
       arrived: { says: 'a quiz is running: counter, progress bar and four options',
         is: function () { return !!counter() && document.querySelectorAll('[role="progressbar"]').length === 1 &&
@@ -629,7 +693,54 @@
     };
   }
 
+  // The storage a state's screen is a function of, read straight from localStorage. Reported
+  // verbatim on a precondition failure so the operator sees WHAT was ambient, not just that
+  // something was.
+  function storageNow() {
+    return {
+      completed: localStorage.getItem("ecycles_completed_lessons"),
+      review: localStorage.getItem("ecycles_review"),
+      streak: localStorage.getItem("ecycles_streak")
+    };
+  }
+
+  // A key is "empty" when absent, or present as an empty array/object. useAppState writes `[]`
+  // for completedLessons on first mount (measured), so `null` alone is not the cold signature.
+  function emptyKey(raw) {
+    if (raw === null || raw === "") return true;
+    try { var v = JSON.parse(raw); return !v || (Array.isArray(v) ? v.length === 0 : Object.keys(v).length === 0); }
+    catch (e) { return false; }
+  }
+
   function drive(state) {
+    // ── PRECONDITION, checked before a single step runs (2026-08-26, item 118) ────────────────
+    // A recipe plus an arrival assertion identifies a ROUTE. It does not identify a SCREEN,
+    // because several screens here are functions of localStorage, and `drive()` never touches
+    // storage — `clear`/`seed` are honored only by begin(), the reload path. So for the 13
+    // no-reload states, storage was whatever the page happened to load with, and nothing said so.
+    //
+    // MEASURED, not reasoned: `practice-landing` renders three different cards — "Nothing to
+    // review yet" (review absent), "You're all caught up" (seen, none due), "1 ready to review"
+    // + Start Quiz (due) — and its arrival assertion (`#how-review-title` exists) is satisfied by
+    // ALL THREE. Each reported `status: "ok", findings: 0`. That is the same lying zero this
+    // file's header catalogues: not "the sweep missed the screen" but "the sweep found a screen
+    // and the report named a different one".
+    //
+    // This is also the mechanism that hid item 117a for four weeks. The one prior live check of
+    // that card (AGENT_LOG.archive.md:1921) seeded a review entry first and truthfully reported
+    // the string it saw; the false never-started copy was never on screen. The fixture and the
+    // bug were the same shape.
+    //
+    // So storage is declared, and asserted — never set. Setting it would be a lie of a different
+    // kind: the app reads localStorage at mount only, and useAppState holds review state in React
+    // afterwards, so a mid-session write changes the store and not the screen.
+    if (state.requires && !state.requires.is()) {
+      return Promise.resolve({
+        state: state.name, status: "PRECONDITION", findings: null,
+        needed: state.requires.says, storage: storageNow(),
+        fix: "reload the page from cleared storage, then re-eval both files and re-run"
+      });
+    }
     return runSteps(state.steps)
       .then(function () {
         // One last bounded wait before declaring a miss: the steps are done, but the render they
@@ -688,6 +799,10 @@
       return chain.then(function () {
         var missed = out.filter(function (r) { return r.status === "MISSED"; });
         var findings = out.filter(function (r) { return r.status === "FINDINGS"; });
+        // Counted apart from both clean and missed. A precondition failure is not "we could not
+        // get there" — the screen rendered fine. It is "the screen that rendered is not the one
+        // this state names", which a reader skimming for zeros cannot tell from a pass.
+        var precon = out.filter(function (r) { return r.status === "PRECONDITION"; });
         return JSON.stringify({
           env: env(),
           probeTally: probeTally(out),
@@ -695,7 +810,10 @@
           clean: out.filter(function (r) { return r.status === "ok"; }).length,
           withFindings: findings.length,
           missed: missed.length,
-          verdict: missed.length
+          preconditionFailed: precon.length,
+          verdict: precon.length
+            ? precon.length + " state(s) had the WRONG STORAGE — reload from cleared storage and re-run; these zeros describe a different screen"
+            : missed.length
             ? missed.length + " state(s) NOT REACHED — their zeros do not exist, fix the recipes first"
             : findings.length + " state(s) with findings, " + out.length + " reached and swept",
           skippedNeedingReload: STATES.filter(function (s) { return s.reload; }).map(function (s) { return s.name; }),
@@ -790,20 +908,53 @@
           .then(function (r) { parent.insertBefore(sel, next); return r; });
       }
 
+      // The PRECONDITION control (item 118), and it is deliberately TWO-SIDED. A gate that always
+      // fires and a gate that never fires are both lying results, and only one of the two is
+      // caught by asking "did it fire?". So: one state whose storage requirement cannot hold, one
+      // whose requirement cannot fail, and the pair has to come back different.
+      //
+      // The failing one carries a step that THROWS. If it still reports PRECONDITION rather than
+      // MISSED, that proves the gate ran BEFORE the recipe — which is the whole point of it:
+      // a state in the wrong storage must not touch the page at all, because its steps are what
+      // would mutate storage for the states after it.
+      var preconFails = {
+        name: "__selftest_precondition_fails",
+        requires: { says: "a condition that cannot hold", is: function () { return false; } },
+        steps: [{ click: "ZZ_NO_SUCH_CONTROL_ZZ" }],
+        arrived: { says: "unreachable", is: function () { return true; } }
+      };
+      var preconHolds = {
+        name: "__selftest_precondition_holds",
+        requires: { says: "a condition that cannot fail", is: function () { return true; } },
+        steps: [{ hash: "#/reference" }],
+        arrived: { says: "the Reference menu rendered",
+          is: function () { return mainButtons().length === 5; } }
+      };
+
       return drive(bogus).then(function (a) {
         return drive(badVerb).then(function (b) {
-          return axisControl().then(function (c) {
-            var ok = a.status === "MISSED" && b.status === "MISSED" && !!b.threw &&
-                     a.findings === null && b.findings === null &&
-                     (c.ran ? c.rejected === true : true);
-            return JSON.stringify({
-              unreachableAssertion: { status: a.status, findingsIsNull: a.findings === null },
-              failingStep: { status: b.status, threw: b.threw, findingsIsNull: b.findings === null },
-              axisAssertion: c,
-              verdict: ok
-                ? "PASS — a state that is not reached reports MISSED with null findings (assertion failure AND step throw), and setLang refuses when it cannot confirm the switch. Zeros from run()/runAll()/sweepLangs() are meaningful this session."
-                : "FAIL — a control did not fire; every recipe and every language row in this file is an unverified zero until this passes."
-            }, null, 2);
+          return drive(preconFails).then(function (d) {
+            return drive(preconHolds).then(function (e) {
+              return axisControl().then(function (c) {
+                var preconOk = d.status === "PRECONDITION" && d.findings === null && !d.threw &&
+                               e.status !== "PRECONDITION";
+                var ok = a.status === "MISSED" && b.status === "MISSED" && !!b.threw &&
+                         a.findings === null && b.findings === null && preconOk &&
+                         (c.ran ? c.rejected === true : true);
+                return JSON.stringify({
+                  unreachableAssertion: { status: a.status, findingsIsNull: a.findings === null },
+                  failingStep: { status: b.status, threw: b.threw, findingsIsNull: b.findings === null },
+                  preconditionRefuses: { status: d.status, needed: d.needed, findingsIsNull: d.findings === null,
+                    ranStepsAnyway: !!d.threw, storage: d.storage },
+                  preconditionAllows: { status: e.status },
+                  bothSidesDiffer: preconOk,
+                  axisAssertion: c,
+                  verdict: ok
+                    ? "PASS — a state that is not reached reports MISSED with null findings (assertion failure AND step throw), a state in the wrong storage reports PRECONDITION without running its steps while a satisfiable one does not, and setLang refuses when it cannot confirm the switch. Zeros from run()/runAll()/sweepLangs() are meaningful this session."
+                    : "FAIL — a control did not fire; every recipe and every language row in this file is an unverified zero until this passes."
+                }, null, 2);
+              });
+            });
           });
         });
       });
@@ -837,6 +988,7 @@
                 swept: out.length,
                 clean: out.filter(function (r) { return r.status === "ok"; }).length,
                 missed: out.filter(function (r) { return r.status === "MISSED"; }).length,
+                preconditionFailed: out.filter(function (r) { return r.status === "PRECONDITION"; }).length,
                 withFindings: out.filter(function (r) { return r.status === "FINDINGS"; }).length,
                 probeTally: probeTally(out),
                 findings: out.filter(function (r) { return r.status === "FINDINGS"; })
@@ -853,13 +1005,13 @@
         });
       });
       return chain.then(function () {
-        var bad = byLang.filter(function (r) { return r.status === "LANG-SWITCH-FAILED" || r.missed || r.withFindings; });
+        var bad = byLang.filter(function (r) { return r.status === "LANG-SWITCH-FAILED" || r.missed || r.preconditionFailed || r.withFindings; });
         return JSON.stringify({
           langsRequested: langs,
           langsMeasured: byLang.filter(function (r) { return r.status !== "LANG-SWITCH-FAILED"; }).map(function (r) { return r.env.htmlLang; }),
           verdict: bad.length === 0
-            ? "all " + langs.length + " language(s) swept, every state reached, 0 findings"
-            : bad.length + " language(s) with a finding, a missed state, or a failed switch — see rows",
+            ? "all " + langs.length + " language(s) swept, every state reached in the storage it declares, 0 findings"
+            : bad.length + " language(s) with a finding, a missed state, wrong storage, or a failed switch — see rows",
           byLang: byLang
         }, null, 2);
       });

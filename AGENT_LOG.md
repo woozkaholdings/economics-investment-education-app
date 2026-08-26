@@ -2510,7 +2510,43 @@ for the history. No open P1/P2 items.
       a real second instance of a defect just fixed or retires the question. But Practice is a less
       trafficked screen than the lesson reader, and nobody has opened the app (O-1).
 
-118. **[Process/QA — filed 2026-08-26 by the run that fixed item 117(a)'s false card, as the
+119. **[Process/QA — filed 2026-08-26 by the run that closed item 118, as its stated residual
+    rather than smuggled into the same commit.] Only three states declare the storage they need.
+    That the other nine do not need to is a judgment made by READING, not by a check.**
+    - **State:** `scripts/a11y-states.js` gained a `requires` precondition (item 118). `COLD` is
+      declared on `learn`, `learn-collapsed` and `practice-landing` — the three whose rendered copy
+      was measured to branch on storage. The remaining nine no-reload states (the Reference family)
+      were judged storage-independent by reading their screens cold and warm in one session.
+    - **Why that is thinner than it looks.** It is exactly the reasoning item 118 disproved one
+      level down: "this screen does not vary" is a claim about current code, and a screen that
+      gains a storage-dependent element later gets no warning — `requires` is opt-in, so a state
+      that *should* declare COLD and does not simply keeps reporting `ok`. The Glossary is the
+      live candidate: it already reads `ecycles_glossary_bookmarks`, and a bookmarked row renders a
+      different `aria-label`. Nothing in the sweep is a function of that today; one feature is.
+    - **The cheap version, and it is a measurement not a build:** for each no-reload state, sweep
+      it cold and again with every declared key populated, and diff the two DOMs. States whose DOM
+      is byte-identical are provably storage-independent; the rest need `requires`. That converts
+      nine judgments into nine measurements and needs no new instrument.
+    - **Honest priority: low-medium.** The guard that matters (no mutating step in the no-reload
+      set) is checked-in and proven able to fail, so the contamination class is closed. This is
+      about the *completeness* of the declarations, and it is downstream of O-1 like everything else.
+
+118. **✅ DONE 2026-08-26 (scheduled dev-agent). The cold sweep came back clean; the instrument did
+    not.** The reading task ran — Learn, Reference landing, Glossary, About, Sectors, Market
+    Dashboard, LessonReader, all from cleared storage, plus a systematic pass over every
+    achievement-flavored locale key and its guard. **No second instance of item 117a exists**, which
+    is this item's own stated success condition. Both named candidates were negatives: the streak
+    chip is gated on `streak > 0` and renders nothing at zero, and the Reference data screens are
+    not functions of learner storage. **What the run found instead** is that `drive()` never touches
+    storage (`clear`/`seed` are honored only by `begin()`), so a named state did not name a screen:
+    `practice-landing`'s three cards all satisfied its arrival assertion and all reported `ok, 0
+    findings` — and `practice-all-questions` was warming storage for every language after the first
+    in `sweepLangs()`. Fixed: a declared-and-asserted `requires` precondition with a two-sided
+    selftest control, `practice-all-questions` reload-gated, and `check-data.mjs` §48(d) guarding
+    that the no-reload set stays side-effect-free (proven able to fail by injection). Residual filed
+    as **item 119**. Original text retained below — the reasoning is what made the run look here.
+
+    **[Process/QA — filed 2026-08-26 by the run that fixed item 117(a)'s false card, as the
     generalization of it rather than a second fix smuggled into the same commit.] Every screen in
     this app has only ever been verified WARM. The cold-start state is a different screen, and
     nothing has ever looked at it systematically.**
@@ -6115,6 +6151,167 @@ dependency, no change to any behavior — this run changes what the screen *says
   conditional in one place and unconditional in another*. The instrument that found it is trivial —
   open a screen from cleared storage instead of from a fixture — and it has never been applied
   systematically. Learn, Reference and the streak counter have all only ever been checked warm.
+
+**Unchanged and still the entire critical path, both owner-blocked: O-1** (a deployed URL) and **O-2**
+(item 18, an analytics account). Nothing in this run moved either, and nothing in this repo can.
+
+### 2026-08-26 (scheduled dev-agent) — the cold-start sweep found no false copy, and found that the instrument could not tell which screen it had swept (item 118)
+
+**Picked item 118**, the previous run's stated next item and the top unclaimed one. The item asks for
+a reading task: open three or four screens from cleared storage and read the copy. That was done and
+it came back **clean**. What it turned up instead is that the checked-in state matrix **could not say
+which variant of a screen it had swept** — so this run fixed the instrument rather than reporting a
+zero from it. Owner tree at open: `OWNER-TREE
+c2331799fd3ee413aca864fd82d247a35ea31b01a70a6c4e37b00f6aad9105b2 (0 tracked modified, 52 untracked)`
+— **UNMOVED** from the fingerprint the last entry recorded. `HEAD` = `09973fc`, unmoved at commit time.
+
+#### Step 3.5 — the premise re-measured, with a control
+
+Item 118's premise ("every screen has only ever been verified WARM") held, and its two named
+candidates were both **negatives, measured rather than assumed**:
+
+- **The streak counter at zero.** `Learn.jsx:94` gates the chip on `streak > 0`, and the cold DOM
+  carries no chip at all. The item's guess — that a template would render "0 day streak" — is wrong.
+- **Reference → Sector performance / Market signals.** Neither is a function of learner storage;
+  both render identically cold and warm.
+
+Read cold (`localStorage.clear()`, bundle hash confirmed against the build just made, `375x812`):
+**Learn**, **Reference** landing, **Glossary**, **About**, **Sector performance**, **Market
+Dashboard**, **LessonReader**. Every progress-conditional string is correctly gated. Checked the
+class systematically instead of screen-by-screen by grepping the locale for achievement-flavored
+keys and reading each call site's guard: `coachMarkPractice` ("Nice work!") is gated on
+`completedLessons.length > 0` (`useAppState.js:211`), the continue-tomorrow prompt only fires from
+`handleComplete`, and the Steps rail's `done` flag is set on step 1 only. **No second instance of
+item 117a exists.**
+
+**One near-miss worth recording, because it looked like a finding for two round-trips.** The cold
+lesson reader renders the *same question twice* — once under "Before you read" and once under
+"Check what you learned". That is deliberate: `hook = check[0]` is a pre-guess, and the check card
+names the guess back via `hookRecallTemplate`. Reading the source before reporting is what stopped
+it becoming a false finding.
+
+**The control fired.** A cold reading that returns "nothing wrong" is indistinguishable from an
+instrument that cannot see the variation, so the same screen was read warm in the same session
+(complete lesson 1, return to `#/learn`). **All five branches flipped**: `Welcome to Economic
+Cycles` → `Your learning path`, `Learn how the economy really works` → `Pick up where you left off`,
+`START HERE` → `NEXT UP`, `Start Learning` → `Continue Learning`, `Progress: 0/44` → `1/44`, plus the
+streak chip appearing. The instrument reads this class.
+
+#### The finding: a named state did not name a screen
+
+`drive()` never touches storage — `clear`/`seed` are honored **only** by `begin()`, the reload path
+(`applySeed` has exactly one caller). So for the no-reload states, storage was whatever the page
+loaded with, and nothing in the report said which. Measured, three runs of the *same recipe*:
+
+| storage | card | status |
+| --- | --- | --- |
+| `review = null` | "Nothing to review yet" | `ok`, 0 findings |
+| `review` seeded, none due | "You're all caught up" | `ok`, 0 findings |
+| `review` seeded, past due | "1 ready to review" + Start Quiz | `ok`, 0 findings |
+
+All three satisfy `practice-landing`'s arrival assertion (`#how-review-title` exists). **This is a
+lying zero of a new kind**: not "the sweep missed the screen" but "the sweep found a screen, swept it
+correctly, and the report named a different one" — and it is the same fixture mechanism that hid item
+117a for four weeks.
+
+**It was also actively contaminating the five-language sweep.** `practice-all-questions` answers a
+check question (`{ radio: 4 }` → `recordReview` → writes `ecycles_review`), and `sweepLangs()` runs
+the whole no-reload set **once per language in one page session**. Measured: from cleared storage
+`practice-landing` reads "Nothing to review yet"; immediately after that state runs, the identical
+recipe reads "You're all caught up". So the previous entry's *"sweepLangs — all 5 languages, every
+state reached, 0 findings"* was comparing **en's never-started card against four languages'
+caught-up card**. Both rows said `ok`.
+
+#### What shipped
+
+- **`scripts/a11y-states.js`** — states may declare a storage **precondition** (`requires`), asserted
+  by `drive()` **before any step runs**, reporting `PRECONDITION` with findings `null` and the
+  observed storage quoted. It never *sets* storage: the app reads `localStorage` at mount only, so a
+  mid-session write changes the store and not the screen. `COLD` is declared on the three states
+  whose rendered copy is storage-dependent — `learn`, `learn-collapsed`, `practice-landing`.
+- **`practice-all-questions` is now reload-gated** (`reload: true, clear: true`), which makes the
+  no-reload set side-effect-free and is what lets `COLD` hold for a whole `sweepLangs()` run. Its
+  earning steps are kept exactly as the previous run wrote them; `clear` + reload makes them
+  deterministic. It still sweeps clean via `begin()`/`finish()`.
+- **`practice-landing`'s assertion tightened** to name the card (`#review-empty-title`, and no
+  progressbar), not just the rail — the rail is present in all three variants.
+- **`src/screens/Practice.jsx`** — the nothing-due card's title gets `id="review-empty-title"`. A
+  test hook, deliberately **not** tied to which of the two strings renders, so the assertion is
+  language-independent. Same convention as `how-review-title` and `track-<key>-title`.
+- **`scripts/check-data.mjs` §48(d)** — a static guard that no **no-reload** state carries an
+  `{ answer: N }` / `{ radio: N }` step, since that is the verb that writes `ecycles_review`. Without
+  it, the next run can re-add a mutating step and silently restore the contamination.
+- **`runAll()` / `sweepLangs()`** count `preconditionFailed` separately from `clean` and from
+  `missed`, and the verdict line says which.
+
+#### Verification
+
+- `npm run build` clean (`✓ built in 1.31s`); **`npm test` — 0 failures across all six suites**, 2
+  warnings, both standing (translation review coverage; 48 abridged pairs / item 93). `node --check`
+  on the instrument. `npm run check-payload` — 0 failures.
+- **`A11ySweep.selftest()` PASS** (plants found, `plantsRemoved: true`). **`A11yStates.selftest()`
+  PASS**, including the new **two-sided** control: the unsatisfiable-`requires` state reports
+  `PRECONDITION` with `ranStepsAnyway: false` — proving the gate runs *before* the recipe, which is
+  the whole point, since a wrong-storage state's steps are what would mutate storage for the states
+  after it — while the satisfiable one reports `ok`. `bothSidesDiffer: true`. A gate that always
+  fires and a gate that never fires are both lying results and only one is caught by asking "did it
+  fire?".
+- **The gate proven on the REAL states, two-sided, not just the synthetic control:**
+  - cold → **12 swept, 12 clean, 0 missed, 0 preconditionFailed**.
+  - warm (`completed = [1,2]`, a seeded review entry) → **9 clean, 3 PRECONDITION** — exactly
+    `learn`, `learn-collapsed`, `practice-landing`, each quoting the ambient storage it found, while
+    the 9 storage-independent Reference states still passed. **Before this change that same warm run
+    reported 12 clean.**
+- **`sweepLangs()` from cold — all 5 languages, 12 states each, 12 clean, 0 precondition failures**,
+  `htmlLang` stamped `en/es/ko/zh-Hans/ja`. Every language now reads the same card variant, which is
+  what the previous report only appeared to say.
+- **Reload states re-verified after the move**: `practice-all-questions` (`ok`, arrival satisfied,
+  `htmlLang: en`), plus `practice-runner` and `first-run-modal` untouched and still `ok`.
+- **The §48(d) guard proven able to fail**: removed `reload: true` from `practice-all-questions`,
+  re-ran — **exactly 1 failure**, naming that state and no other, so the failure is the injected one
+  rather than collateral. Restored from a **scratchpad copy verified by sha256**
+  (`d4bee62a…`, byte-identical), never `git checkout --`.
+- **Screenshots work in this harness today** — a cold `375x812` capture of Learn renders correctly
+  (Welcome / START HERE / no streak chip). Worth recording because the previous entry reported blank
+  frames as a standing limit; it did not reproduce this session.
+
+#### Step 5 — adversarial self-check
+
+- **Blindspot register — no regression.** §10.2 (no Dalio) — grepped the diff, zero hits. §10.1 — no
+  user-facing copy changed at all; the only app edit is an `id` attribute. `npm test` re-proves both
+  halves ("no advice-adjacent language across 38 files"; "disclaimer renders on all 8 surfaces").
+  §10.3 untouched. §2.3 — the `2026-08-26` dates I added are in **source comments**, not user-facing
+  copy, and the new locale-free `id` carries no date or figure; §2.3's test passes.
+- **`DECISIONS.md` conflict — none.** Grepped for `precondition` / `state matrix` / `a11y` /
+  `test hook`: zero hits. The localStorage-only entry is respected — this run **reads** three
+  declared keys from a browser instrument and adds, renames and persists nothing.
+- **Already-done backlog item — no, and the one adjacency is a completion rather than an undo.** The
+  previous run rewrote `practice-all-questions` to *earn* its question instead of relying on ambient
+  storage, and its comment already named the general problem ("it carries no `clear`/`seed`, so it
+  used to sweep whatever storage the page happened to load with"). That fix was applied to one state
+  and the class left standing — which is the same shape as item 117a itself, fixed in one place and
+  unconditional in another. This run keeps those steps verbatim and generalizes them.
+- **The honest boundary.** Item 118 asked "is there a second instance of 117a's false copy?" The
+  answer is **no**, and that is the item's own stated success condition. It does **not** follow that
+  the cold path is fully verified: this run read *copy*, and `A11ySweep` checks *structure*. Nothing
+  here proves a sentence true — that remains a reading task, now with a mechanical setup and a
+  guarantee about which screen was read.
+- **Own verification claim — reproducible** by `npm run build`, `npm test`, serving `dist/`, copying
+  both scripts in, then: cold reload → both selftests → `runAll()`; warm reload → `runAll()`;
+  cold reload → `sweepLangs()`. The `PRECONDITION` counts are the load-bearing numbers and they are
+  two-sided by construction.
+
+#### Next
+
+- **Item 118 closes on its stated terms** — the sweep found no false copy, and the fixture mechanism
+  that hid the original is now guarded. **Filed as item 119:** the remaining `requires`-worthy states
+  are unaudited — only three declare storage today, and the judgment that the other nine are
+  storage-independent was made by reading, not by a check.
+- **Item 117** is unchanged: (a) re-scoped, (b) the `reached` predicate, and the ` (N)` label — all
+  low, all owner-preference rather than defect.
+- **Item 115** remains the top process item and is an **owner decision**, not a pick.
+- **Item 116** is still genuinely blocked on a harness that can focus a document.
+- **Items 70/71/76 and 101** remain unclaimed; 101 is blocked on O-1. **Do NOT pick item 94.**
 
 **Unchanged and still the entire critical path, both owner-blocked: O-1** (a deployed URL) and **O-2**
 (item 18, an analytics account). Nothing in this run moved either, and nothing in this repo can.
