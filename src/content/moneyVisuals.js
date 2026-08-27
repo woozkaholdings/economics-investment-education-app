@@ -10,17 +10,19 @@
 // BOTH of those framings have since been overtaken, and the file name has not
 // caught up: the 2026-08-18 reordering made ECONOMY the lead track (a new
 // install now opens on lesson 29), and the 2026-08-19 essentials split
-// (5633b79) re-tracked lessons 1-15 without renumbering them. Of the four
-// lessons below, 1/3/7 are `essentials` today and only 27 is `money` — so
+// (5633b79) re-tracked lessons 1-15 without renumbering them. Of the six
+// lessons below, 1/3/7 are `essentials` today and 17/23/27 are `money` — so
 // these are personal-finance figures, not one track's. The module keeps its
 // `moneyVisuals.js` filename because renaming it churns every import for a
 // comment's sake; the name is historical, the header is not.
 //
-// Four lessons get a diagram here, chosen on §3.0.4's own test — the visual
+// Six lessons get a diagram here, chosen on §3.0.4's own test — the visual
 // must *be* the explanation, not decorate it:
 //   1  Budgeting        — a plan is a division of one number; show the division.
 //   3  Compound Interest— the concept is literally the shape of the curve.
 //   7  Marginal Tax     — the prose already asks the reader to picture a stack.
+//   17 Lifestyle Infl.  — two gaps the prose can only assert are equal.
+//   23 Present Bias     — a reversal; prose cannot draw a crossing.
 //   27 Loss Aversion    — the asymmetry is the lesson, and prose labours at it.
 // Anything else stays prose until it passes the same test.
 //
@@ -400,4 +402,87 @@ export const flipDescription = {
   ko: "한 그래프 위의 두 상승 곡선. 구간 대부분에서 $65 곡선이 $50 곡선보다 조금 위에 있고, 그 뒤 배경은 $65을 기다리는 구간임을 나타내는 색으로 칠해져 있습니다. 오른쪽 끝 가까이에서 $50 곡선이 가파르게 솟아 $65 곡선 위로 교차한 뒤 훨씬 높은 곳에서 끝나며, 그 마지막 구간의 배경은 다른 색이고 점선 세로선이 교차 지점을 표시합니다.",
   zh: "同一张图上的两条上升曲线。在大部分区间里，$65 的曲线略高于 $50 的曲线，其后的底色标示出这是等待 $65 的区段。接近右端时，$50 的曲线急剧上扬，越过 $65 的曲线，并在明显更高处结束；最后这一段的底色不同，一条竖直虚线标出交叉点。",
   ja: "1つのグラフ上の2本の上昇曲線。大半の区間では$65の曲線が$50の曲線をわずかに上回り、その背景はここが$65を待つ区間であることを示す色で塗られています。右端近くで$50の曲線が急に立ち上がって$65の曲線を越え、はるかに高い位置で終わります。その最後の区間の背景は別の色で、破線の縦線が交差点を示します。",
+};
+
+// ── Lesson 17: Lifestyle Inflation ────────────────────────────────────────
+// The sixth figure, added 2026-08-27 (backlog item 27). The item named this
+// lesson as "where the gap between two rising lines is the lesson", and that
+// framing does not survive contact with the text: the lesson gives Priya's
+// income at both ends ($50,000 six years ago, $75,000 today) but never states
+// her SPENDING or her gap at either end, and puts the four upgrades "at
+// various points". Two lines over six years would therefore have had to invent
+// the starting gap — which is the one quantity the whole claim is about.
+//
+// What the lesson does state, exactly and in all five languages, is the gap at
+// LEVELS, in its second section: $50,000 earned against $45,000 spent is a gap
+// of $5,000, and $120,000 against $115,000 is also a gap of $5,000. Six
+// numbers, all verbatim, carrying the lesson's own flagged counterintuitive
+// result — "the second person has a materially nicer life, and is exactly as
+// far from every goal the gap funds."
+//
+// That is what the prose cannot do. It states the two gaps are equal and asks
+// the reader to subtract twice and take the result on trust; on one shared
+// scale the equality is *seen*, at the same moment as the 2.4x difference in
+// height that makes it surprising. Both comparisons at once is the figure.
+//
+// WHY THE GAP SITS AT THE BOTTOM OF EACH COLUMN and not on top, which is the
+// conventional order: two segments of equal length at different vertical
+// offsets are the one thing a stacked bar cannot be read for, and equality is
+// this figure's entire claim. On a shared baseline the two bands are directly
+// comparable, and the rule drawn across their tops turns the claim into one
+// straight line. Ordering it the conventional way would have drawn the right
+// answer in the one arrangement that hides it.
+export const gapEarners = [
+  { key: "modest", earns: 50000, spends: 45000 },
+  { key: "high", earns: 120000, spends: 115000 },
+];
+
+export const gapOf = (e) => e.earns - e.spends;
+
+export const gapTitle = {
+  en: "Two very different incomes, the same gap",
+  es: "Dos ingresos muy distintos, la misma brecha",
+  ko: "아주 다른 두 소득, 똑같은 격차",
+  zh: "两份差距悬殊的收入，同样的差额",
+  ja: "大きく異なる2つの収入、同じ差",
+};
+
+export const gapSegmentLabels = {
+  en: ["Spent", "The gap"],
+  es: ["Gastado", "La brecha"],
+  ko: ["쓴 돈", "격차"],
+  zh: ["花掉的", "差额"],
+  ja: ["使った分", "差"],
+};
+
+export const gapRuleLabel = {
+  en: "The same gap either way",
+  es: "La misma brecha en ambos casos",
+  ko: "어느 쪽이든 격차는 같습니다",
+  zh: "两边的差额一样",
+  ja: "どちらも同じ差",
+};
+
+export const gapAxisLabel = {
+  en: "Annual income — both columns on one scale",
+  es: "Ingreso anual — ambas columnas en la misma escala",
+  ko: "연 소득 — 두 기둥 모두 같은 척도",
+  zh: "年收入——两根柱使用同一刻度",
+  ja: "年収 — 2本の柱は同じ目盛り",
+};
+
+export const gapCaption = {
+  en: "The right-hand column earns more than twice as much and lives a materially nicer life. The band at the base of each column — the gap — is what funds an emergency fund, money invested early, eventually the option to work less. It is exactly the same height in both. The distance to every one of those goals is measured in that band, not in the column above it.",
+  es: "La columna de la derecha gana más del doble y lleva una vida materialmente mejor. La franja en la base de cada columna — la brecha — es lo que financia un fondo de emergencia, el dinero invertido pronto y, con el tiempo, la opción de trabajar menos. Tiene exactamente la misma altura en las dos. La distancia hasta cada una de esas metas se mide en esa franja, no en la columna que tiene encima.",
+  ko: "오른쪽 기둥은 두 배 넘게 벌고 물질적으로 더 나은 생활을 합니다. 각 기둥 맨 아래의 띠 — 격차 — 가 비상금과 일찍 투자한 돈, 나아가 덜 일할 선택지를 만들어 주는 부분이며, 두 기둥에서 높이가 정확히 같습니다. 그 목표들까지의 거리는 위에 쌓인 기둥이 아니라 바로 이 띠로 잽니다.",
+  zh: "右边这根柱赚的钱是左边的两倍多，生活也确实更宽裕。每根柱底部的那一条——差额——才是应急金、早早投出去的钱，乃至日后少工作一些的选择所依靠的部分，而它在两根柱上的高度完全一样。到这些目标的距离，量的是这一条，不是它上面的柱身。",
+  ja: "右の柱は2倍以上稼ぎ、実際に物質的に豊かな暮らしをしています。それぞれの柱の底にある帯 — 差 — こそが、緊急資金や早めに投じたお金、やがては働く量を減らす選択肢を支える部分で、その高さは2本でまったく同じです。それらの目標までの距離を測るのはこの帯であって、その上に積まれた柱ではありません。",
+};
+
+export const gapDescription = {
+  en: "Two columns on one shared dollar scale. The right-hand column is well over twice the height of the left. At the base of each sits a thin band marking the gap between earning and spending, and a horizontal line runs across both columns at the top of those bands, at the same height on each.",
+  es: "Dos columnas en una única escala de dólares. La columna de la derecha mide bastante más del doble que la de la izquierda. En la base de cada una hay una franja fina que marca la brecha entre lo que se gana y lo que se gasta, y una línea horizontal cruza ambas columnas por encima de esas franjas, a la misma altura en las dos.",
+  ko: "하나의 달러 척도를 함께 쓰는 두 기둥. 오른쪽 기둥은 왼쪽 기둥의 두 배를 훌쩍 넘는 높이입니다. 각 기둥의 맨 아래에는 버는 것과 쓰는 것의 격차를 나타내는 얇은 띠가 있고, 그 띠 위쪽을 가로지르는 수평선이 두 기둥에 같은 높이로 그어져 있습니다.",
+  zh: "两根柱共用同一个美元刻度。右边那根的高度远超左边的两倍。每根柱的底部都有一条细带，标示赚与花之间的差额，一条水平线横跨两根柱，落在这两条细带的顶端，在两根柱上高度相同。",
+  ja: "同じドル目盛りを共有する2本の柱。右の柱は左の2倍をかなり超える高さです。それぞれの柱の底には稼ぎと支出の差を示す細い帯があり、水平線が2本の柱を横切って、その帯の上端に同じ高さで引かれています。",
 };

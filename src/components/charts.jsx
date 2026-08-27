@@ -450,6 +450,84 @@ export function BracketStack({ title, columns, tierColors, tierLabels, raiseLabe
   );
 }
 
+// ── GapColumns ────────────────────────────────────────────────────────────
+// Two incomes on ONE shared scale, for lesson 17 (lifestyle inflation). Every
+// other figure in this file compares quantities that differ; this one is drawn
+// to show two quantities that are IDENTICAL while everything around them is
+// not — the lesson's own counterintuitive result, that $50,000 earned against
+// $45,000 spent and $120,000 against $115,000 are the same distance from every
+// goal the gap funds.
+//
+// Three things make that undrawable by the obvious arrangement, and all three
+// are why this is its own component rather than a `Bar` call:
+//
+//   1. The scale must be SHARED. Two separately-scaled columns would render
+//      the two gaps at different pixel heights while both are $5,000, which is
+//      the exact opposite of the claim.
+//   2. The gap sits at the BOTTOM of each column. Equal-length segments at
+//      different vertical offsets are the one comparison a stacked bar cannot
+//      support; on a shared baseline the two bands line up directly.
+//   3. The gaps are thin by construction — $5,000 against a $120,000 ceiling
+//      is about 4% of the plot — so the reader is not asked to measure them.
+//      The rule drawn across both columns at the top of the bands carries the
+//      equality; the bands only have to be visible, not measurable.
+//
+// `graph.neutral` for that rule, for the reason AsymmetryChart's comment sets
+// out: it is a reference line the data is read against, so it owes 3:1 under
+// WCAG 1.4.11 and no `--line-*` token clears that on any surface in either
+// palette. It is checked on every surface by §28b.
+export function GapColumns({ title, columns, segmentLabels, ruleLabel, axisLabel, colors, labelInks, formatValue, description, caption }) {
+  const max = Math.max(...columns.map((c) => c.total));
+  const gapFrac = columns[0].gap / max;
+  return (
+    <figure style={{ background: surface.card, border: `1px solid ${line.hairline}`, borderRadius: radius.lg, padding: space["4"], margin: 0 }}>
+      {title && (
+        <figcaption style={{ marginBottom: space["3"] }}>
+          <Text as="span" variant="caption" color={ink.muted} style={{ textTransform: "uppercase", letterSpacing: "0.05em", fontWeight: 700 }}>
+            {title}
+          </Text>
+        </figcaption>
+      )}
+      <div role="img" aria-label={description} style={{ position: "relative", display: "flex", gap: space["5"], height: 170, alignItems: "flex-end" }}>
+        {columns.map((c) => (
+          <div key={c.label} style={{ flex: 1, height: `${(c.total / max) * 100}%`, display: "flex", flexDirection: "column", justifyContent: "flex-end" }}>
+            <div style={{ flex: 1, background: colors[0], borderRadius: `${radius.sm}px ${radius.sm}px 0 0`, transition: "height 0.5s" }} />
+            <div style={{ height: `${(c.gap / c.total) * 100}%`, background: colors[1], minHeight: 4 }} />
+          </div>
+        ))}
+        {/*
+          Drawn last and positioned against the plot box, not against either
+          column, so it is one line at one height rather than two marks that
+          happen to agree. That is the assertion the figure is making.
+        */}
+        <div aria-hidden="true" style={{ position: "absolute", left: 0, right: 0, bottom: `${gapFrac * 100}%`, borderTop: `1px solid ${graph.neutral}` }} />
+      </div>
+      <ul role="list" style={{ listStyle: "none", margin: `${space["2"]}px 0 0`, padding: 0, display: "flex", gap: space["5"] }}>
+        {columns.map((c) => (
+          <li key={c.label} style={{ flex: 1, textAlign: "center" }}>
+            <Text as="span" variant="caption" color={ink.strong} style={{ fontWeight: 700 }}>{c.label}</Text>
+          </li>
+        ))}
+      </ul>
+      <Text variant="caption" color={ink.muted} style={{ marginTop: space["1"], textAlign: "center" }}>
+        {ruleLabel} · {formatValue(columns[0].gap)}
+      </Text>
+      <ul role="list" style={{ listStyle: "none", margin: `${space["3"]}px 0 0`, padding: 0, display: "flex", flexWrap: "wrap", gap: `${space["1"]}px ${space["4"]}px`, justifyContent: "center" }}>
+        {segmentLabels.map((label, i) => (
+          <li key={label} style={{ display: "flex", alignItems: "baseline", gap: space["2"] }}>
+            <span aria-hidden="true" style={{ width: 10, height: 10, borderRadius: 3, background: colors[i], flexShrink: 0, alignSelf: "center" }} />
+            <Text as="span" variant="caption" color={labelInks[i]} style={{ fontWeight: 700 }}>{label}</Text>
+          </li>
+        ))}
+      </ul>
+      {axisLabel && (
+        <Text variant="caption" color={ink.muted} style={{ marginTop: space["2"], textAlign: "center" }}>{axisLabel}</Text>
+      )}
+      {caption && <Text variant="caption" color={ink.muted} style={{ marginTop: space["3"], lineHeight: 1.5 }}>{caption}</Text>}
+    </figure>
+  );
+}
+
 // ── CycleChart ────────────────────────────────────────────────────────────
 const PHASE_DOT = [graph.green, graph.amber, graph.red, graph.blue];
 const PHASE_INK = [ink.ok, ink.warn, ink.bad, ink.accent];

@@ -6480,5 +6480,129 @@ if (keyedGroupsChecked < 4) {
   }
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// 53. src/content/moneyVisuals.js — lesson 17's earnings-gap figure (backlog
+//     item 27, added 2026-08-27). Like §21 and §50, this checks the CLAIM THE
+//     DIAGRAM MAKES, not that the numbers parse.
+//
+//     WHAT MAKES THIS ONE FAIL SILENTLY, and why it needs its own section.
+//     Every other figure in this app draws a DIFFERENCE, so a broken one draws
+//     the wrong difference and something on screen looks off. This one draws an
+//     IDENTITY — the whole lesson is that a $50,000/$45,000 earner and a
+//     $120,000/$115,000 earner have the same $5,000 gap — and a broken identity
+//     renders as two bands of slightly different height under a rule and a
+//     caption that both still say "exactly the same". At 4% of the plot height
+//     the difference between $5,000 and $5,400 is under a pixel. Nothing on
+//     screen would say so, and the figure would then be arguing the reader's
+//     misconception rather than the lesson's correction.
+//
+//     THE SECOND SILENT FAILURE IS GEOMETRIC. `GapColumns` positions the rule
+//     against the plot box at `gap / max`, while each band is sized inside its
+//     own column and floored at `minHeight: 4`. Those two agree only while the
+//     floor does not bind. Shrink the gap far enough and the bands stop moving
+//     while the rule keeps falling — the figure's one assertion, drawn as a
+//     line through empty space. (d) is what keeps the floor slack.
+{
+  const mv = moneyVisualsContent;
+  const need = [
+    "gapEarners", "gapOf", "gapTitle", "gapSegmentLabels", "gapRuleLabel",
+    "gapAxisLabel", "gapCaption", "gapDescription",
+  ];
+  const missing = need.filter((k) => mv[k] === undefined);
+  if (missing.length > 0) {
+    fail(`§53: src/content/moneyVisuals.js no longer exports ${missing.join(", ")}. This section is pointed at a structure that no longer exists — repoint it rather than leaving it green.`);
+  } else {
+    const earners = mv.gapEarners;
+    const gapOf = mv.gapOf;
+
+    // (a) Two columns, because the figure is a comparison and `GapColumns`
+    //     reads the rule's height off `columns[0]`. A third column would be
+    //     drawn but silently excluded from the one line that carries the claim.
+    if (!Array.isArray(earners) || earners.length !== 2) {
+      fail(`§53: gapEarners holds ${Array.isArray(earners) ? earners.length : "not an array"}; the figure draws two columns and takes the shared rule's height from the first of them, so a third would be drawn under a line that does not describe it.`);
+    } else {
+      const [lo, hi] = earners;
+
+      // (b) Both gaps positive, or the column has a band below its own baseline.
+      for (const e of earners) {
+        if (!(e.spends < e.earns)) {
+          fail(`§53: the "${e.key}" earner spends ${e.spends} against ${e.earns}. Both columns must have a positive gap — lesson 17's figure is about how large the gap is, and a zero or negative one has no band to draw.`);
+        }
+      }
+
+      // (c) THE CLAIM. The two gaps are the same number. Everything else in the
+      //     figure — the shared scale, the bottom-anchored bands, the rule
+      //     across both columns, the caption's "exactly the same height" — is
+      //     built to show this one equality, and none of it degrades visibly if
+      //     it stops being true.
+      if (gapOf(lo) !== gapOf(hi)) {
+        fail(`§53: the two gaps are ${gapOf(lo)} and ${gapOf(hi)}. Lesson 17's second section states both as the same figure, and the figure draws ONE rule across both columns to say so — unequal gaps would put that line above one band and below the other, under a caption claiming they match.`);
+      }
+
+      // (d) The gap must be thin enough to be the lesson's point and thick
+      //     enough to draw. The floor is `minHeight: 4` over the 170px plot in
+      //     GapColumns; below it the bands stop tracking the rule (see above).
+      const max = Math.max(...earners.map((e) => e.earns));
+      const frac = gapOf(lo) / max;
+      if (!(frac >= 4 / 170)) {
+        fail(`§53: the gap is ${(frac * 100).toFixed(2)}% of the taller column, below the ${((4 / 170) * 100).toFixed(2)}% at which GapColumns' minHeight:4 floor starts holding the bands up while the shared rule keeps dropping. The line would no longer sit on top of either band.`);
+      }
+      if (!(frac <= 0.25)) {
+        fail(`§53: the gap is ${(frac * 100).toFixed(2)}% of the taller column. Above about a quarter the figure stops being surprising — the lesson's point is that the quantity that decides everything is a sliver next to the one people watch.`);
+      }
+
+      // (e) The incomes must be far enough apart that the equal gaps read as a
+      //     result rather than a coincidence. Lesson 17 says "more than twice
+      //     as much" in all five languages.
+      if (!(hi.earns >= 2 * lo.earns)) {
+        fail(`§53: the two incomes are ${lo.earns} and ${hi.earns}, a ratio of ${(hi.earns / lo.earns).toFixed(2)}. Lesson 17's prose says the second earner makes "more than twice as much"; below 2x the two columns look similar and the equal gaps are no longer counterintuitive.`);
+      }
+
+      // (f) THE FIGURES ARE THE LESSON'S OWN, checked against the lesson's own
+      //     body text rather than against this file. This is the check that
+      //     catches the figure and the prose drifting apart — the failure mode
+      //     the header of moneyVisuals.js warns about and that §21 already had
+      //     to guard once on lesson 7.
+      //
+      //     CONTROL, and it is not decorative: this scan looks for `en`
+      //     thousands-separated numerals in one lesson's body, and a lesson
+      //     whose text moved would return "not found" for every figure —
+      //     indistinguishable from the figures being wrong. So a numeral known
+      //     to be in the text must be found, and one known NOT to be must not.
+      const body17 = (lessonContent["17"]?.sections ?? []).map((s) => s.body?.en ?? "").join("\n");
+      const usd = (n) => n.toLocaleString("en-US");
+      const CONTROL_PRESENT = 1450;   // Priya's after-tax monthly raise
+      const CONTROL_ABSENT = 987654;  // a numeral no lesson body contains
+      if (!body17.includes(usd(CONTROL_PRESENT)) || body17.includes(usd(CONTROL_ABSENT))) {
+        fail(`§53: the lesson-17 body scan failed its own control — $${usd(CONTROL_PRESENT)} ${body17.includes(usd(CONTROL_PRESENT)) ? "found" : "NOT FOUND"} (must be found), $${usd(CONTROL_ABSENT)} ${body17.includes(usd(CONTROL_ABSENT)) ? "FOUND" : "not found"} (must not be). It is reading the wrong text or no text, so a clean result below would mean nothing.`);
+      } else {
+        for (const e of earners) {
+          for (const [what, n] of [["earns", e.earns], ["spends", e.spends], ["gap", gapOf(e)]]) {
+            if (!body17.includes(usd(n))) {
+              fail(`§53: the figure's "${e.key}" earner ${what} $${usd(n)}, which lesson 17's own body never states. Every number in this figure is the lesson's — a reader who reads one set and sees another has been given two lessons. Change the lesson and the figure together or not at all.`);
+            }
+          }
+        }
+      }
+
+      // (g) Five-language parity for every label the figure renders, including
+      //     the text alternative — the `role="img"` container makes
+      //     `gapDescription` the only thing a screen-reader user gets (§22).
+      for (const key of ["gapTitle", "gapSegmentLabels", "gapRuleLabel", "gapAxisLabel", "gapCaption", "gapDescription"]) {
+        for (const lang of LANGS) {
+          const v = mv[key][lang];
+          const empty = v === undefined || v === null
+            || (Array.isArray(v) ? v.length !== 2 || v.some((x) => !String(x).trim()) : !String(v).trim());
+          if (empty) fail(`§53: ${key}.${lang} is missing or incomplete. Every one of these renders on screen in that language, and gapDescription is the figure's only text alternative.`);
+        }
+      }
+
+      if (failures === 0) {
+        console.log(`  §53 lesson 17's earnings gap holds: $${usd(lo.earns)}/$${usd(lo.spends)} and $${usd(hi.earns)}/$${usd(hi.spends)} — both gaps exactly $${usd(gapOf(lo))} at ${(frac * 100).toFixed(2)}% of the taller column (${(hi.earns / lo.earns).toFixed(1)}x the income), every one of the six figures found in the lesson's own body, control proven both directions.`);
+      }
+    }
+  }
+}
+
 console.log(`\n${failures === 0 ? "PASS" : "FAIL"}: ${failures} failure(s), ${warnings} warning(s).`);
 process.exit(failures === 0 ? 0 : 1);

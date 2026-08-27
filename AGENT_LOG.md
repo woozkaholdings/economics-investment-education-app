@@ -826,6 +826,25 @@ for the history. No open P1/P2 items.
     > cosmetic — injection 5 removed the boundary and a dated entry's injected probe value
     > immediately failed the build.
 
+127. **[Process/Content — filed 2026-08-27 by the run that added lesson 17's figure (item 27), as
+    its stated residual rather than smuggled into the same commit.] §53 checks the figure's six
+    numbers against the `en` lesson body only, so a translated numeral can drift unseen.**
+    - **State:** `check-data.mjs` §53(f) asserts every number in `gapEarners` appears in
+      `lessonContent["17"].sections[*].body.en`, with a two-sided control. The other four languages
+      get parity checks on the figure's *labels* (§53g) and nothing at all on the lesson's *numerals*.
+      A `ko` body that said 4만 where the figure says \$50,000 would pass every check in the repo.
+    - **Measured this run, so the item is a guard and not a defect report:** all five languages state
+      all six figures today.
+    - ⚠️ **The instrument is the hard part, and this run already fell into it once.** CJK uses myriad
+      grouping — `4만 5천`, `4万5千`, `4.5万` — so an `en`-style thousands-separator regex returns
+      **zero hits on ko/zh/ja and looks exactly like the figures being missing**. That false negative
+      cost a real detour here before the raw text was read. Any check written for this item needs a
+      per-language numeral normalizer **and a control per language**, or it will report a confident
+      clean over three scripts it cannot read.
+    - **Honest priority: low.** It generalizes past lesson 17 — the same blind spot applies to §21's
+      and §50's figure-vs-prose checks — which is an argument for doing it once, properly, rather than
+      urgently. Downstream of O-1 like everything else.
+
 126. **[Docs/Integrity — filed 2026-08-27 by the run that closed item 125, as its stated residual
     rather than smuggled into the same commit.] §52 only sees a hex that shares a line with the
     token it misattributes.**
@@ -1426,9 +1445,24 @@ for the history. No open P1/P2 items.
     > bound they imply — **not** the stylized constant. See the run log for the three defects verifying
     > it surfaced, one of which (a wrong closed form putting the marker at month 6.667 instead of
     > 9.667) would have drawn a confident marker where nothing happens.
-    > **THE BAR FOR A SIXTH IS UNCHANGED AND STILL BINDS.** Named-but-deliberately-not-built:
-    > **lesson 17** ("Where Did the Raise Go?"), where the gap between two rising lines is the lesson.
-    > It is a candidate, not a queue — "plausible" is the count-shaped reasoning this item warns about.
+    > **Sixth visual added 2026-08-27: lesson 17 (lifestyle inflation), as `GapColumns`.** Money is
+    > **3/17**; economy 5/12 and essentials 3/15 are unchanged. Re-measured with the same parser
+    > control — do not quote a coverage count from this item, re-run the parse.
+    > **⛔ THE "TWO RISING LINES" FRAMING BELOW WAS WRONG, and the correction is the useful part.**
+    > That line said lesson 17 is "where the gap between two rising lines is the lesson". Reading the
+    > lesson refutes it: it gives Priya's income at both ends (\$50,000 six years ago, \$75,000 today)
+    > but **never states her spending or her gap at either end**, and places the four upgrades "at
+    > various points". Two lines over six years would have had to invent the starting gap — the one
+    > quantity the entire claim is about. **A backlog item naming a chart shape is a hypothesis about
+    > the prose, and this one had never been checked against it.**
+    > **What the lesson does state exactly, in all five languages, is the gap at LEVELS**, in its second
+    > section: \$50,000 earned against \$45,000 spent is a gap of \$5,000, and \$120,000 against
+    > \$115,000 is also \$5,000. Six verbatim numbers carrying the lesson's own flagged counterintuitive
+    > result. That is what shipped, and §53 asserts all six against the lesson's own body text.
+    > **THE BAR FOR A SEVENTH IS UNCHANGED AND STILL BINDS**, and there is now **no named candidate** —
+    > deliberately, because a named candidate is how this item became count-shaped twice before. A run
+    > that wants one must read a lesson's prose first and name what the prose cannot do, the way this
+    > run did. **Do not pick a lesson because a diagram is "plausible" there.**
     **Status check, 2026-08-16 (item-29 run):** `LESSON_VISUALS` in `src/components/LessonVisual.jsx`
     now maps money lessons **1 (`budgetSplit`), 3 (`compounding`) and 27 (`lossAsymmetry`)**, plus the
     five economy ones — i.e. money is **3/28, not 0/28**, and the three lessons this item's own "Scope
@@ -3940,5 +3974,139 @@ hex, which is the shape that actually shipped in two `charts.jsx` comments yeste
 - **Item 27's bar still binds for a sixth visual**; lesson 17 remains the named candidate, again not
   built, because one run should add one. **Items 124, 120, 116, 117** all remain low-priority and all
   are downstream of O-1.
+- **Unchanged and still the entire critical path, both owner-blocked: O-1** (a deployed URL) and
+  **O-2** (item 18, an analytics account). Nobody has opened this app.
+
+### 2026-08-27 (scheduled dev-agent) — lesson 17's diagram was specified as two rising lines the prose cannot support, and the lesson's real figure is an identity (item 27)
+
+**Picked item 27**, the sixth money-track visual. W-5.2-legal: item 27 is named on that block's pick
+list, and the last five picks (121, 122, 27, 123, 125) contain no item 93, so the one-in-four reserve
+is not in deficit. Item 94 was considered and declined on its own instruction — it is explicitly gated
+on O-1. Owner tree at open: clean but for the untracked `UIUX/` and `drafts/`, neither touched. HEAD
+re-checked before writing this entry and unmoved at `20f45e3`.
+
+#### Step 3.5 — the coverage premise held; the premise about the *chart* did not
+
+- **✅ True as filed.** Re-parsed `LESSON_VISUALS` out of `LessonVisual.jsx` and joined it against
+  `lessons.js`'s `track`, with the parser control item 27 records (three ids it must find — 1, 27, 32
+  — and three it must not — 17, 9, 40; both halves PASS). Coverage was **economy 5/12, essentials
+  3/15, money 2/17**, and lesson 17 is `money` with no visual. The item's own status text still says
+  "money is 4/28" and is still stale; the `LessonVisual.jsx` comment now tells the next run to re-run
+  the parse rather than quote a count from the backlog.
+- **⛔ REFUTED as filed: "lesson 17, where the gap between two rising lines is the lesson."** The
+  lesson gives Priya's income at both ends (\$50,000 six years ago, \$75,000 today) and **never states
+  her spending or her gap at either end**, and puts the four upgrades "at various points". Two lines
+  over six years would have had to **invent the starting gap — the single quantity the whole claim is
+  about**, under a caption asserting how that gap moved. The item had named a chart *shape* without
+  ever checking it against the prose.
+- **The re-decision, on the corrected facts.** Section 2 states the gap at **levels**, exactly, and
+  the same in all five languages: \$50,000 against \$45,000 is a gap of \$5,000; \$120,000 against
+  \$115,000 is **also** \$5,000. Six verbatim numbers, carrying the lesson's own flagged result — "the
+  second person has a materially nicer life, and is exactly as far from every goal the gap funds."
+  That clears item 27's bar on the lesson's own prose rather than on an argument built for it: the
+  prose can only *assert* the two gaps are equal and ask the reader to subtract twice, while one
+  shared scale shows the equality **and** the 2.4x difference in height that makes it surprising, at
+  the same moment.
+- **A measurement instrument failed first here too.** A regex sweep for the figures in `ko`/`zh`/`ja`
+  returned **0 hits for every large number**, which reads exactly like the translations having dropped
+  section 2 — item 93's "partial enumeration" defect shape. It was the instrument: CJK uses myriad
+  grouping, and the regex was splitting `4만 5천` / `4万5千` into two tokens. Reading the raw text
+  showed all five languages carry all six figures. **A negative result from a regex written for one
+  script's numerals means nothing about the others.**
+
+#### What shipped
+
+- **`GapColumns` in `charts.jsx`** (~55 lines). Two columns on one shared scale.
+  **The gap band sits at the BOTTOM of each column, not the top**, and that is the load-bearing design
+  choice rather than a style one: two equal-length segments at different vertical offsets are the one
+  comparison a stacked bar cannot support, and equality is this figure's entire claim. On a shared
+  baseline they line up directly, and one rule drawn across the plot at their tops turns the claim
+  into a single straight line. **The conventional ordering would have drawn the right answer in the
+  one arrangement that hides it.** The rule is `graph.neutral`, for the reason `AsymmetryChart`'s
+  comment sets out (a reference line the data is read against owes 3:1, and no `--line-*` token
+  clears it on any surface in either palette — §28b/§51).
+- **`moneyVisuals.js`** — `gapEarners` + five-language title, segment labels, rule label, axis label,
+  caption and description. Column labels are **not typed**: they are `usd(e.earns)`, read off the same
+  constant that sizes the column, because a hand-typed "\$120,000" beside a column sized from a
+  separate number is how a figure comes to disagree with itself — the shape §21 already had to guard
+  once on lesson 7.
+- **`check-data.mjs` §53**, guarding the claim rather than the parse. **Why this figure needs its own
+  section:** every other diagram in the app draws a *difference*, so a broken one draws the wrong
+  difference and something looks off. This one draws an **identity**, and a broken identity renders as
+  two bands under a rule and a caption that both still say "exactly the same" — at 4% of the plot
+  height the difference between \$5,000 and \$5,400 is under a pixel. §53 also checks the *geometry*:
+  `GapColumns` positions the rule against the plot box while each band is sized inside its own column
+  and floored at `minHeight: 4`, and those agree only while the floor stays slack.
+- **Two stale counts corrected in passing** (item 58's rule — a count inside an argument that does not
+  need it): `moneyVisuals.js`'s header said "Four lessons get a diagram here" when it was five, and
+  `LessonVisual.jsx`'s measured-coverage comment was a run old.
+
+#### Verification
+
+- **`npm test` 0 failures, 2 warnings** (the documented translation baseline, unchanged),
+  **`npm run build` clean**, `check-payload.mjs` and `check-blindspot.mjs` both green.
+- **§53 proved able to fail, seven ways.** Each injection asserts its anchor exists *and* re-reads the
+  file to prove the edit landed, exiting non-zero otherwise; both files were restored from scratchpad
+  copies with **SHA-256 verified equal**, never `git checkout --`.
+
+  | # | Injection | Result |
+  |---|---|---|
+  | 1 | one gap moved \$400 (the sub-pixel failure) | **FAIL** — names both gaps, and (f) names the two figures the lesson never states |
+  | 2 | both gaps shrunk, still **equal** | **FAIL** — 1.67% is below the 2.35% at which `minHeight:4` starts holding the bands up while the rule keeps dropping |
+  | 3 | incomes brought to 1.8x | **FAIL** — the equality stops being counterintuitive |
+  | 4 | `gapRuleLabel.zh` blanked | **FAIL** — names the key and the language |
+  | 5 | a third column added | **FAIL** — the rule's height comes from `columns[0]`, so a third would be drawn under a line that does not describe it |
+  | A | body scan pointed at a non-existent lesson | **CONTROL FIRES** — "reading the wrong text or no text, so a clean result below would mean nothing" |
+  | B | the control's absent-probe set to a numeral that IS present | **CONTROL FIRES** — both halves of the control are live, not just the present half |
+- **Live browser verification (W-1), and the `name` form is genuinely unavailable to this run.**
+  `preview_start` with `{name: "economic-cycles-dev"}` returned, verbatim: *"Dev servers can't be
+  started from unattended sessions (scheduled-task runs and remote-dispatched trees) — nobody is
+  present to approve the command."* The Environment note's documented workaround — build, serve
+  `dist/` with `/usr/bin/python3 -m http.server`, then `preview_start` with a plain `url` — **worked
+  first try** (`navOk: true`). That is the third confirmation; do not re-derive it as impossible, and
+  note that it is specifically the `url` form that survives.
+- **The claim is measured, not eyeballed.** With the layout-live control from the Environment note
+  satisfied (plot 170x309, not the documented 0-width trap), `getBoundingClientRect` gives both gap
+  bands **7.08px**, bottom **3685.92** and top **3678.84** — *identical to the hundredth of a pixel* —
+  and the rule's bottom edge at **3678.84**, exactly their shared top, spanning the full 309px plot.
+  Column heights are 70.83 and 170.00 against the predicted 50000/120000x170 = 70.83 and 170.
+- **Four axes swept, not one:** `en` light, `ko` dark at 1.3x font scale, and `es` at 1.3x — the
+  longest strings in the set. In every one the two bands stay pixel-identical, nothing inside the
+  figure exceeds its width, and `document.scrollWidth` never exceeds the 375px viewport.
+
+#### Step 5 — adversarial self-check
+
+- **Blindspot register** — no regression. `check-blindspot.mjs` green on all 7. Over the 323 added
+  lines: Dalio/`principles of` **0**, advice-adjacent verbs **0**. **Control**: `gap` returns **80**,
+  so the grep reaches the added text. Four date matches, all four inspected and all four `//` comments
+  dating the change in the way the surrounding files already do — none reaches rendered UI, and §2.3's
+  own check over the teaching-copy modules (which includes `moneyVisuals.js`) is green. The one
+  §10.1 call worth stating: the caption says the gap "is what funds an emergency fund, money invested
+  early, eventually the option to work less" — that is the lesson's own sentence, descriptive rather
+  than normative, it names no rate or product, the lesson itself adds "that's arithmetic, not a rule
+  about how much anyone ought to save", and `illustrationNote` renders beneath the figure.
+- **`DECISIONS.md` conflict** — none. No storage, no dependency, no config change; the strings are a
+  `.js` content module like the other five figures, and `check-payload.mjs` is green, so the
+  per-language split (items 45/48/50) is not undercut.
+- **Already-done backlog item** — no. `git log --all -S` returns **0** for `GapColumns`, `earningsGap`
+  and `gapEarners`. **Control**: `-S'PreferenceFlip'` returns **2**, so the pickaxe reaches this shape.
+- **Own verification claim** — the claim easiest to overstate is "the two bands render identically",
+  because a figure that is *nearly* right looks exactly like one that is right at 7px. It is a live
+  `getBoundingClientRect` reading with the Environment note's layout-live control satisfied, and it is
+  reproducible by re-running the same snippet. The second easiest is "§53 works": seven injections,
+  each proven to land before its result was read, with both halves of the body-scan control shown
+  firing. **What is NOT proven:** `zh` and `ja` were checked for parity and for arrival, not looked at
+  — `ko` is the CJK proxy and `es` the long-string proxy. And §53 checks the figures against lesson
+  17's **`en`** body only; a translation could drift its numerals and §53 would stay green.
+
+#### Next
+
+- **Item 127** (new, small): §53 reads only the `en` body, so a translated numeral could drift
+  unseen. The four other languages state the same six figures today (measured this run, once the
+  myriad-grouping instrument was fixed) — a per-language numeral check is the residual, and it needs
+  the CJK grouping handled, which is exactly what fooled this run's first sweep.
+- **Item 27 has no named candidate for a seventh, deliberately.** The named-candidate habit is how
+  this item went count-shaped twice; a run that wants one must read the prose first, as this one did.
+- **Items 126, 124, 120, 117, 116** all remain low-priority and all are downstream of O-1.
 - **Unchanged and still the entire critical path, both owner-blocked: O-1** (a deployed URL) and
   **O-2** (item 18, an analytics account). Nobody has opened this app.

@@ -13,7 +13,7 @@
 // (look something up again later), which is not the duplication §3.1 removed.
 // ═══════════════════════════════════════════════════════════════════════════
 
-import { AsymmetryChart, Bar, BracketStack, CycleChart, GrowthCurve, PreferenceFlip, ProportionBar, YieldCurve } from "./charts.jsx";
+import { AsymmetryChart, Bar, BracketStack, CycleChart, GapColumns, GrowthCurve, PreferenceFlip, ProportionBar, YieldCurve } from "./charts.jsx";
 import { Text } from "./ui.jsx";
 import {
   balanceSheetCaption, balanceSheetDescription, balanceSheetHistory,
@@ -26,6 +26,8 @@ import {
   compoundCaption, compoundDescription, compoundLabels, compoundSeries, compoundTitle, compoundYears,
   flipAxisLabels, flipCaption, flipCrossing, flipDescription, flipMarkerLabel, flipMonths,
   flipSeries, flipSeriesLabels, flipTitle, flipZoneLabels,
+  gapAxisLabel, gapCaption, gapDescription, gapEarners, gapOf, gapRuleLabel, gapSegmentLabels,
+  gapTitle,
   lossAxisLabel, lossCaption, lossDescription, lossFelt, lossLabels, lossTitle,
 } from "../content/moneyVisuals.js";
 import { graph, ink, space, surface } from "../theme.js";
@@ -43,17 +45,18 @@ import { graph, ink, space, surface } from "../theme.js";
 // essentials split re-tracked 1-15, so of the five personal-finance ids below
 // 1/3/7 are `essentials` and 23/27 are `money`.
 //
-// Measured 2026-08-27 with a parser control, because backlog item 27's own
-// status line still reads "money is 4/28" and that stopped being true at the
-// track split: coverage is economy 5/12, essentials 3/15, money 2/17. Lesson
-// 23 is the fifth personal-finance figure and the second on the `money` track
-// — the track LAUNCH_PLAN.md §0 has called the product since the 2026-08-18
-// reversal, and the one that had a single diagram across seventeen lessons.
+// Re-measured 2026-08-27 with the same parser control after lesson 17 was
+// added: coverage is economy 5/12, essentials 3/15, money 3/17. Lesson 17 is
+// the sixth personal-finance figure and the third on the `money` track — the
+// track LAUNCH_PLAN.md §0 has called the product since the 2026-08-18
+// reversal, which had a single diagram across seventeen lessons until 23.
+// Do not quote a coverage count from backlog item 27; re-run the parse.
 export const LESSON_VISUALS = {
   // essentials (1/3/7) and money (23/27) — personal finance either way
   1: "budgetSplit",    // Budgeting: Know Where Your Money Goes
   3: "compounding",    // Compound Interest: Money That Makes Money
   7: "taxBrackets",    // Taxes: How Your Paycheck Is Actually Taxed
+  17: "earningsGap",   // Where Did the Raise Go?
   23: "preferenceFlip",// Why 'Later' Never Feels as Real as 'Now'
   27: "lossAsymmetry", // Why Does Losing $50 Hurt More Than Finding $50 Feels Good?
   // economy
@@ -70,7 +73,7 @@ const CURVE_TYPES = ["normal", "flat", "inverted", "steep"];
 // below. The constant keeps its MONEY_VISUALS name (it is referenced further
 // down and in §21's checks); the set spans `essentials` and `money` since the
 // 2026-08-19 split, so the name is a label, not a track claim.
-const MONEY_VISUALS = new Set(["budgetSplit", "compounding", "taxBrackets", "preferenceFlip", "lossAsymmetry"]);
+const MONEY_VISUALS = new Set(["budgetSplit", "compounding", "taxBrackets", "earningsGap", "preferenceFlip", "lossAsymmetry"]);
 
 // Figures are US dollars in every language — the lessons' own worked examples
 // are written that way, and converting them per locale would make the chart
@@ -186,6 +189,28 @@ export default function LessonVisual({ lessonId, t, lang }) {
           axisLabels={flipAxisLabels[lang]}
           description={flipDescription[lang]}
           caption={flipCaption[lang]}
+        />
+      )}
+
+      {/*
+        Both columns are read off `gapEarners` — including the column labels,
+        which are the earnings themselves formatted by `usd`. Typing
+        "$120,000" as a label beside a column sized from a separate constant is
+        how a figure comes to disagree with itself, and §21 already had to guard
+        that shape once on lesson 7.
+      */}
+      {kind === "earningsGap" && (
+        <GapColumns
+          title={gapTitle[lang]}
+          columns={gapEarners.map((e) => ({ label: usd(e.earns), total: e.earns, gap: gapOf(e) }))}
+          segmentLabels={gapSegmentLabels[lang]}
+          ruleLabel={gapRuleLabel[lang]}
+          axisLabel={gapAxisLabel[lang]}
+          colors={[graph.blue, graph.green]}
+          labelInks={[ink.accent, ink.ok]}
+          formatValue={usd}
+          description={gapDescription[lang]}
+          caption={gapCaption[lang]}
         />
       )}
 
