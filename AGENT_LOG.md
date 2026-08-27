@@ -726,6 +726,29 @@ for the history. No open P1/P2 items.
       `headingOrder`. The review queue must be non-empty, so seed `ecycles_review` or complete a
       lesson first; a sweep of an empty-queue Practice screen is the vacuous reading, not a clean one.
 
+123. **[A11y/Tooling — filed 2026-08-27 by the run that added lesson 23's figure (item 27), as its
+    stated residual rather than smuggled into the same commit.] `--line-*` tokens are checked by
+    NEITHER contrast section, so a line used as a meaningful graphic is unmeasured.**
+    - **Measured, not suspected.** `check-data.mjs` §28 filters `--ink-*` and `--fill-*` against
+      `--surface-*`; §28b filters `--graph-*` against `--surface-*`. Both prefix filters exclude
+      `--line-*`, on the stated grounds at line ~2711 that a line "is not text" — which is true and is
+      not the same as "is not a graphic".
+    - **It has already produced one real instance.** Lesson 23's crossing marker was drafted as
+      `line.strong` and measures **1.51:1** against the two zone washes. It is a meaningful graphic
+      under WCAG 1.4.11 (3:1) and it is **not** redundant, because the two washes it separates are
+      **1.01:1 against each other in both schemes** — hue-only, no luminance step. It was caught by a
+      live measurement in that run and moved to `ink.muted` (6.20/6.26 light, 6.10/6.06 dark). Nothing
+      in the suite would have caught it, and `DECISIONS.md` advertises "zero exemptions" over a set
+      that never included it.
+    - **Why this is a real piece of work and not a one-line filter change.** Most `line.hairline` uses
+      genuinely ARE decorative (card borders, list separators), and 1.4.11 exempts those — so widening
+      the cartesian to `--line-*` would fail the build on pairs that are correct. The honest scope is
+      to classify the call sites: which `line.*` uses carry meaning (axis baselines, the crossing
+      marker, anything a caption refers to) versus which are decoration, then check only the first
+      group — the same shape as §28b's own `GRAPH_EXEMPT` classification.
+    - **Honest priority: low-medium.** One known instance and it is already fixed. The value is that
+      the class is currently invisible. Downstream of O-1 like everything else.
+
 122. **✅ DONE 2026-08-27 (owner-directed: "compress the backlog to bring the floor under budget").
     The never-archived floor is 218,895 → 191,956 bytes; the backlog section 192,933 → 165,994. Every
     item number survives and all 17 open items are byte-identical.** See the run log for the method.
@@ -1283,6 +1306,27 @@ for the history. No open P1/P2 items.
 
 27. **[Content/UX — the scope this item defines is now BUILT (2026-08-16); re-scope before picking it
     again.] Lesson visuals for the money track.**
+    > **⛔ PREMISE CORRECTED 2026-08-27 by the run that added the fifth visual. The "money is 4/28"
+    > line below, and every count in this item's older text, stopped being true at the 2026-08-19
+    > `essentials` split — do not quote them.** Measured that day by parsing `LESSON_VISUALS` out of
+    > `LessonVisual.jsx` and joining it against `lessons.js`'s `track` field, with a parser control
+    > (three ids it must find, three it must not): **economy 5/12, essentials 3/15, money 1/17** before
+    > that run, **money 2/17** after it. The four earlier personal-finance figures are not one track's
+    > — 1/3/7 are `essentials`, 27 is `money`.
+    > **The corrected number is the stronger argument.** Since the 2026-08-18 reversal `money` is the
+    > judgment track §0 calls the product, and it carried **one** diagram across seventeen lessons
+    > while the *vehicle* carried five across twelve.
+    > **Fifth visual added 2026-08-27: lesson 23 (present bias), as `PreferenceFlip`.** It cleared the
+    > bar below on the stated ground that a preference *reversal* is a crossing: the lesson's own
+    > heading is "The Preference That Flips When 'Later' Becomes 'Now'", its body gives the flip as two
+    > disconnected snapshots, and prose can neither draw a crossing nor say *when* the answer changes.
+    > Guarded by `check-data.mjs` §50, which asserts the lesson's two stated choices and the discount
+    > bound they imply — **not** the stylized constant. See the run log for the three defects verifying
+    > it surfaced, one of which (a wrong closed form putting the marker at month 6.667 instead of
+    > 9.667) would have drawn a confident marker where nothing happens.
+    > **THE BAR FOR A SIXTH IS UNCHANGED AND STILL BINDS.** Named-but-deliberately-not-built:
+    > **lesson 17** ("Where Did the Raise Go?"), where the gap between two rising lines is the lesson.
+    > It is a candidate, not a queue — "plausible" is the count-shaped reasoning this item warns about.
     **Status check, 2026-08-16 (item-29 run):** `LESSON_VISUALS` in `src/components/LessonVisual.jsx`
     now maps money lessons **1 (`budgetSplit`), 3 (`compounding`) and 27 (`lossAsymmetry`)**, plus the
     five economy ones — i.e. money is **3/28, not 0/28**, and the three lessons this item's own "Scope
@@ -3416,3 +3460,142 @@ at it and says do not re-derive its content.
 
 **Unchanged and still the entire critical path, both owner-blocked: O-1** (a deployed URL) and **O-2**
 (item 18, an analytics account).
+
+### 2026-08-27 (scheduled dev-agent) — the money track had one diagram across seventeen lessons, and lesson 23's concept is a crossing (item 27)
+
+**Picked item 27** (lesson visuals). It is one of the W-5.2 pick-list items, and it carries its own bar:
+a run adding a visual *"must first name the specific lesson where a diagram teaches something the prose
+cannot"* — otherwise it becomes the count-shaped item that 17, 21 and 24 each turned into.
+
+#### Step 3.5 — the premise, re-measured with a control, and it was stale in the way that mattered
+
+- **⛔ Item 27's live status line says "money is 4/28". That has been wrong since the 2026-08-19
+  essentials split.** Measured today by parsing `LESSON_VISUALS` out of `LessonVisual.jsx` and joining
+  it against `lessons.js`'s `track` field: **economy 5/12, essentials 3/15, money 1/17**. The four
+  personal-finance figures are not one track's — 1/3/7 are `essentials` and only 27 is `money`.
+  Corrected in the item below so it is not re-derived.
+- **The corrected number is a stronger argument than the stale one, not a weaker one.** Since the
+  2026-08-18 reversal `money` is the judgment track `LAUNCH_PLAN.md` §0 calls the product, and it
+  carried **one diagram across seventeen lessons** while the vehicle carried five across twelve.
+- **The instrument was made to fail before it was believed.** The parser asserts three ids it must find
+  (32, 27, 1) and three it must not (23, 17, 9999) and exits non-zero on either; without that a regex
+  broken by an edit returns "no visuals anywhere" and reads exactly like a real answer.
+- **What the code says was checked separately from what the item says.** `moneyVisuals.js`'s header is
+  *more* current than the backlog — it already records the re-tracking. What nobody had stated is the
+  ratio, which is the part that decides priority.
+
+#### Why lesson 23, stated against item 27's bar rather than around it
+
+Lesson 23's own section heading is **"The Preference That Flips When 'Later' Becomes 'Now'"**, and its
+body gives the flip as two disconnected snapshots: $50 today beats $65 in a month, but $50 in twelve
+months loses to $65 in thirteen. **A preference reversal is a crossing**, and prose cannot draw one — it
+can only assert the two endpoints and then claim, in a separate sentence, that the extra month is
+identical in both. It also cannot say **when** the answer changes, which is the question the two
+snapshots raise and the lesson never answers. That is the thing the diagram does.
+
+Precedent followed deliberately: lesson 7's `BracketStack` was accepted because the prose was already
+asking the reader to picture a stack. This is the same shape of argument, not an argument constructed
+for a fifth visual.
+
+#### What shipped
+
+- **`PreferenceFlip`** in `charts.jsx` — two perceived-value curves that cross, a dashed marker at the
+  crossing, and two tinted decision bands.
+- **`flip*` in `moneyVisuals.js`** — the lesson's own $50/$65 one month apart, the discount function,
+  and six label sets in five languages.
+- **Lesson 23 wired into `LESSON_VISUALS`** (and into `MONEY_VISUALS`, so it carries `illustrationNote`
+  — the §10.1 note — rather than the §2.3 market-data one). Money is now **2/17**.
+- **`check-data.mjs` §50**, which asserts the claim rather than the shape.
+
+**Two design decisions that were measurements, not taste.**
+1. **The bands, not the lines, carry the decision.** For four fifths of the span the two curves are
+   near-coincident — that is the honest shape of hyperbolic discounting, and it is itself the point
+   (seen from far enough away the options are close and the bigger number simply wins). A figure whose
+   message lived only in the line order would be unreadable there, so the message lives in the tinted
+   region behind them, which survives any line separation.
+2. **`k` is bounded by the lesson, not chosen for the picture.** Preferring $50-now over $65-in-a-month
+   requires `k > 0.3`; below that the curves never cross and the lesson's opening paragraph describes
+   something the chart says cannot happen. Any `k` above 0.3 reproduces **both** of the lesson's stated
+   choices, so the text under-determines it and 1.0 is picked inside that range for legibility. §50
+   asserts the **bound and the two preferences** — the part the lesson actually claims — not the
+   constant.
+
+#### Three defects found by verifying, two of them mine and one of them pre-existing
+
+1. **The closed form for the crossing shipped wrong and nothing on screen would have said so.** It put
+   the marker at month **6.667**; sampling the curves brackets the reversal between months 9 and 10
+   (true value **9.667**). The figure would have drawn a confident dashed line, a band boundary and the
+   words "the answer flips" at a point where nothing happens. Caught by checking the solved value
+   against the sampled curves — an independent path to the same number — which is now §50(e).
+2. **The zone key contradicted the bands.** The swatch borders were indexed by *series* order while the
+   zones run left-to-right, and here those orders are opposite: the green band's key entry had an amber
+   dot. Found in the first render, not in review. Fixed with an explicit `zoneEdges`.
+3. **The dashed marker was `line.strong` at 1.51:1 on the washes — and it is not redundant, because the
+   band boundary is 1.01:1.** The two zone washes differ in hue and essentially not at all in luminance
+   (**1.01:1 in both schemes**, measured), so the boundary between them is invisible to anyone not
+   separating those hues, which makes the marker the only thing locating the crossing by luminance.
+   Moved to `ink.muted`: **6.20/6.26 light, 6.10/6.06 dark.**
+   > **⛔ The pre-existing gap this exposed, filed as item 123.** `--line-*` tokens are checked by
+   > **neither** §28 (inks/fills on surfaces) **nor** §28b (graphs on surfaces) — both prefix filters
+   > exclude them, on the stated grounds that a line "is not text". So a `line.*` token used as a
+   > *meaningful* graphic is unmeasured, and this one would have shipped at 1.51:1 under a suite
+   > reporting "zero exemptions".
+
+Also dropped: the end-of-curve value in the series legend. It renders a *perceived* value, so
+"$65, a month later — $32.50" reads as a claim that the $65 is really $32.50.
+
+#### Verification
+
+- **`npm test` exit 0** — 0 failures, the 2 documented translation warnings. `npm run build` clean.
+- **§50 proved able to fail, four ways, each injection proven to land before its result was read** and
+  the file restored from a scratchpad copy (SHA-256 equal before and after, not `git checkout --`):
+  `k = 0.25` → 6 failures including "the curves change order 0 time(s)"; **the real algebra bug
+  re-injected** → "flipCrossing() returns month 6.667, but sampling puts the reversal at 9.675";
+  amounts drifted to 50/70 → "lesson 23's body works through $50 and $65"; `flipDescription.zh`
+  emptied → the parity failure.
+- **Rendered live** against a served `dist/` (bundle name read back off the page each time — the
+  trap-4 check), at 375x812, in **both schemes** and **all five languages**. No label overflows the
+  viewBox, no axis-label collision, in any of the five.
+  > **One predicate in that sweep is vacuous and is reported as vacuous, not as a pass.**
+  > `markerOverlapsDash` can never fire: the marker text is `text-anchor="end"`, so lengthening it
+  > extends it leftward and its right edge is pinned by construction. The control caught it — two of
+  > three predicates fired on planted strings. The overflow predicate *is* sound and was proven able to
+  > fire on **all three** text elements individually.
+- **Contrast measured live with a control that was checked against known values** (black-on-white 21:1,
+  same-colour 1:1). Curves on washes: **4.10–5.30 light, 9.34–9.66 dark**, all clearing 1.4.11's 3:1.
+  The curve pair is 1.28:1 against each other — **better separated than the shipped precedent**
+  (`GrowthCurve`'s green-vs-neutral is 1.13:1), and position plus legend disambiguate them.
+- **§28b already covered the new graph-on-wash adjacencies** — it is a full cartesian, and its own
+  comment anticipated this exact move ("a chart moved onto a wash is now covered by the cartesian
+  below"). Checked rather than assumed, because `DECISIONS.md` states a "70 graph pairs, zero
+  exemptions" claim that a new adjacency could have quietly falsified.
+
+#### Step 5 — adversarial self-check
+
+- **Blindspot register** — `check-blindspot.mjs` green on all four assertions. No Dalio/advice string in
+  the diff (grepped); **no hex literal added** (grepped — tokens only); the only dates added are two
+  **comment** lines, zero non-comment (grepped), and §2.3's guard passes on `moneyVisuals.js`
+  specifically. §10.3 untouched. The figure carries `illustrationNote`, verified rendered.
+- **`DECISIONS.md` conflict** — none. State is untouched, the content went into a `.js` module, no Expo,
+  no inline hex. The one live claim it makes that this change could have broken (the graph-pair
+  coverage) was checked above and holds.
+- **Already-done backlog item** — item 27 is open and explicitly sets the bar for adding a visual; this
+  does not touch 1/3/7/27's figures. Not in "Completed and pruned".
+- **Own verification claim** — the two easiest things to overstate here are "renders correctly in five
+  languages" and "the figure is accurate". The first is a geometric measurement with a control, and
+  its one dead predicate is named above rather than counted as a pass. The second is asserted by §50
+  against the lesson's own text and proven able to fail. **What is still not proven: no fluent reviewer
+  has read the four non-English label sets** — six new five-language string sets land in the file
+  `DECISIONS.md` excludes from the review ledger, which is O-3's concern exactly, and chart labels are
+  where an unreviewed translation hides best because a wrong label still renders a correct-looking
+  chart.
+
+#### Next
+
+- **Item 27's bar is unchanged and still binds for a sixth visual.** Lesson 17 ("Where Did the Raise
+  Go?") is the strongest remaining candidate — the gap between two rising lines *is* that lesson — but
+  it was not built here, because "plausible" is the reasoning this item warns about and one run should
+  add one.
+- **New item 123** (the `--line-*` contrast gap) is cheap and was found by measurement, not opinion.
+- **Unchanged and still the entire critical path, both owner-blocked: O-1** (a deployed URL) and **O-2**
+  (item 18, an analytics account). Nobody has opened this app.

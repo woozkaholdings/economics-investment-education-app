@@ -238,6 +238,116 @@ export function AsymmetryChart({ title, axisLabel, bars, colors, labelInks, desc
   );
 }
 
+// ── PreferenceFlip ────────────────────────────────────────────────────────
+// Two perceived-value curves that CROSS, for lesson 23 (present bias). Every
+// other figure in this file compares two things; this one plots a reversal,
+// which is why it is drawn rather than described: the lesson's prose states the
+// flip as two disconnected snapshots ("$50 today beats $65 in a month" / "$50
+// in twelve months loses to $65 in thirteen") and has no way to say *when* the
+// answer changes in between. The crossing is the lesson.
+//
+// The reversal is carried by two things, and only one of them is the lines.
+// For most of the span the curves are nearly coincident — that is the honest
+// shape of hyperbolic discounting, not a drafting failure, and it is itself the
+// point: seen from far enough away the two options are close and the bigger
+// number simply wins. So the *decision* is carried by the tinted panel behind
+// them, which stays readable at any line separation, and the lines carry the
+// mechanism (the nearer reward climbing faster as it approaches).
+//
+// `crossing` arrives already solved by the caller; deriving it from the sampled
+// points here would put the marker wherever the sampling happened to be dense.
+const FLIP_W = 300;
+const FLIP_H = 140;
+const FLIP_PAD = { left: 6, right: 6, top: 18, bottom: 22 };
+
+export function PreferenceFlip({ title, xValues, series, crossing, colors, labelInks, zones, zoneColors, zoneEdges, markerLabel, axisLabels, description, caption }) {
+  const max = Math.max(...series.flatMap((s) => s.values));
+  const lastX = xValues[xValues.length - 1];
+  const plotW = FLIP_W - FLIP_PAD.left - FLIP_PAD.right;
+  const plotH = FLIP_H - FLIP_PAD.top - FLIP_PAD.bottom;
+  const px = (x) => FLIP_PAD.left + (x / lastX) * plotW;
+  const py = (v) => FLIP_PAD.top + plotH - (v / max) * plotH;
+  const flipX = px(crossing);
+
+  return (
+    <figure style={{ background: surface.card, border: `1px solid ${line.hairline}`, borderRadius: radius.lg, padding: space["4"], margin: 0 }}>
+      {title && (
+        <figcaption style={{ marginBottom: space["3"] }}>
+          <Text as="span" variant="caption" color={ink.muted} style={{ textTransform: "uppercase", letterSpacing: "0.05em", fontWeight: 700 }}>
+            {title}
+          </Text>
+        </figcaption>
+      )}
+      <svg viewBox={`0 0 ${FLIP_W} ${FLIP_H}`} style={{ width: "100%", height: 150 }} role="img" aria-label={description}>
+        {/* The two decision regions, drawn first so everything else sits on top. */}
+        <rect x={FLIP_PAD.left} y={FLIP_PAD.top} width={flipX - FLIP_PAD.left} height={plotH} fill={zoneColors[0]} />
+        <rect x={flipX} y={FLIP_PAD.top} width={FLIP_W - FLIP_PAD.right - flipX} height={plotH} fill={zoneColors[1]} />
+        <line x1={FLIP_PAD.left} y1={py(0)} x2={FLIP_W - FLIP_PAD.right} y2={py(0)} stroke={line.hairline} strokeWidth="1" />
+        {/*
+          `ink.muted`, not one of the `line` tokens, and the reason is measured.
+          The two zone washes measure 1.01:1 against EACH OTHER in BOTH schemes
+          — they differ in hue and essentially not at all in luminance,
+          so the boundary between them is invisible to anyone not separating
+          those hues. That makes this marker the only thing that locates the
+          crossing by luminance rather than color, which is exactly the case
+          WCAG 1.4.11 is about; `line.strong` measured 1.51:1 on the washes and
+          would have been a marker you cannot see on a band you cannot see.
+          `ink.muted` measures 6.20/6.26 in light and 6.10/6.06 in dark.
+        */}
+        <line x1={flipX} y1={FLIP_PAD.top} x2={flipX} y2={py(0)} stroke={ink.muted} strokeWidth="1" strokeDasharray="3 2" />
+        <text x={flipX - 4} y={FLIP_PAD.top - 6} textAnchor="end" fill={ink.muted} fontSize="9">{markerLabel}</text>
+        {series.map((s, i) => (
+          <polyline
+            key={s.label}
+            points={s.values.map((v, j) => `${px(xValues[j])},${py(v)}`).join(" ")}
+            fill="none"
+            stroke={colors[i]}
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        ))}
+        {series.map((s, i) => (
+          <circle key={s.label} cx={px(lastX)} cy={py(s.values[s.values.length - 1])} r="3.5" fill={colors[i]} />
+        ))}
+        <text x={FLIP_PAD.left} y={FLIP_H - 6} fill={ink.muted} fontSize="9">{axisLabels[0]}</text>
+        <text x={FLIP_W - FLIP_PAD.right} y={FLIP_H - 6} textAnchor="end" fill={ink.muted} fontSize="9">{axisLabels[1]}</text>
+      </svg>
+      <ul role="list" style={{ listStyle: "none", margin: `${space["2"]}px 0 0`, padding: 0, display: "flex", flexWrap: "wrap", gap: `${space["1"]}px ${space["4"]}px` }}>
+        {series.map((s, i) => (
+          <li key={s.label} style={{ display: "flex", alignItems: "center", gap: space["2"] }}>
+            <span aria-hidden="true" style={{ width: 14, height: 3, borderRadius: 2, background: colors[i], flexShrink: 0 }} />
+            <Text as="span" variant="caption" color={labelInks[i]} style={{ fontWeight: 700 }}>{s.label}</Text>
+          </li>
+        ))}
+      </ul>
+      {/*
+        No end-of-curve value is printed beside these labels, unlike GrowthCurve.
+        There the last point is money; here it is a *perceived* value, and
+        rendering it as "$65, a month later — $32.50" reads as a claim that the
+        $65 is really $32.50. The y-axis is deliberately unlabeled for the same
+        reason: the quantity is "how much it feels worth", which the caption
+        says in words and a dollar figure would over-state.
+
+        The zone key is a separate list rather than text inside the bands: the
+        right-hand band is under a fifth of the width at every scale the figure
+        is drawn at, so a label placed in it would be clipped in all five
+        languages. The swatches carry a border because the fills are washes —
+        a bare wash square is nearly invisible against the card.
+      */}
+      <ul role="list" style={{ listStyle: "none", margin: `${space["2"]}px 0 0`, padding: 0, display: "grid", gap: space["1"] }}>
+        {zones.map((z, i) => (
+          <li key={z} style={{ display: "flex", alignItems: "center", gap: space["2"] }}>
+            <span aria-hidden="true" style={{ width: 12, height: 12, borderRadius: radius.sm, background: zoneColors[i], border: `1px solid ${zoneEdges[i]}`, flexShrink: 0 }} />
+            <Text as="span" variant="caption" color={ink.muted}>{z}</Text>
+          </li>
+        ))}
+      </ul>
+      {caption && <Text variant="caption" color={ink.muted} style={{ marginTop: space["3"], lineHeight: 1.5 }}>{caption}</Text>}
+    </figure>
+  );
+}
+
 // ── BracketStack ──────────────────────────────────────────────────────────
 // Income sliced into rate layers and filled bottom-up, drawn twice: before a
 // raise and after it. For lesson 7, whose own first sentence is "imagine income

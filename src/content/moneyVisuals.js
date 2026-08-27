@@ -286,3 +286,118 @@ export const lossDescription = {
   zh: "以中线为基准的两根柱：收益向上一格，损失向下约两倍。",
   ja: "中心線から伸びる2本の棒：利益は1目盛り上に、損失はその約2倍下に伸びます。",
 };
+
+// ── Lesson 23: Present Bias ───────────────────────────────────────────────
+// The one figure here that plots a *reversal* rather than a comparison, which
+// is the whole reason it earned a slot (backlog item 27's bar: name the thing
+// the prose cannot do). Lesson 23's own heading is "The Preference That Flips
+// When 'Later' Becomes 'Now'", and its body states the flip as two separate
+// snapshots — $50 today beats $65 in a month, but $50 in twelve months loses to
+// $65 in thirteen. Prose has to assert that the gap is identical in both; two
+// curves that cross show *when* the answer changes, which the lesson never says
+// because prose has no way to say it.
+//
+// Both rewards are the lesson's own and are FIXED in time: the $50 lands at
+// month 12, the $65 at month 13. What moves along the x-axis is the vantage
+// point — the left edge is the lesson's second scenario (both rewards a year
+// out), the right edge is its first (the $50 available today). So the two ends
+// of this chart are literally the two paragraphs above it.
+//
+// Hyperbolic discounting: perceived value = amount / (1 + k * months of wait).
+//
+// WHERE k COMES FROM, because a stylized constant in a teaching figure needs a
+// reason. It is not picked to make the picture pretty — the lesson's own two
+// choices bound it. Preferring $50-now over $65-in-a-month requires
+// 50 > 65/(1+k), i.e. k > 0.3; below that the curves never cross and the
+// lesson's first scenario cannot happen. Any k above 0.3 reproduces BOTH of the
+// lesson's stated preferences, so the value is under-determined by the text and
+// 1.0 is chosen inside that range for legibility (a smaller k puts the crossing
+// so close to the right edge that it cannot be drawn). §50 asserts the bound
+// and the two preferences rather than the constant, which is the part the
+// lesson actually claims.
+export const flipRewards = {
+  sooner: { amount: 50, month: 12 },
+  later: { amount: 65, month: 13 },
+};
+export const flipDiscountK = 1.0;
+export const flipMonths = [0, 2, 4, 6, 8, 9, 10, 11, 12];
+
+// Perceived value of `amount`, due at `month`, seen from month `now`.
+export const flipValue = (amount, month, now) =>
+  amount / (1 + flipDiscountK * (month - now));
+
+export const flipSeries = () =>
+  [flipRewards.sooner, flipRewards.later].map((r) => ({
+    values: flipMonths.map((m) => flipValue(r.amount, r.month, m)),
+  }));
+
+// The vantage point where the two perceived values are equal. Solved rather
+// than eyeballed off the sampled points: with s/l the amounts and ds/dl their
+// waits from `now`, equality gives the closed form below. Returned in months
+// from the left edge so the chart and the checks share one number.
+export function flipCrossing() {
+  const { sooner: s, later: l } = flipRewards;
+  const k = flipDiscountK;
+  // Equality of the two perceived values, solved for the sooner reward's
+  // remaining wait `w`:
+  //   s/(1+k*w) = l/(1+k*(w+gap))  →  w = (s + s*k*gap - l) / (k*(l - s))
+  const gap = l.month - s.month;
+  const wait = (s.amount + s.amount * k * gap - l.amount) / (k * (l.amount - s.amount));
+  return s.month - wait;
+}
+
+export const flipTitle = {
+  en: "What each option feels worth, as the $50 gets closer",
+  es: "Cuánto parece valer cada opción a medida que se acercan los $50",
+  ko: "$50이 가까워질수록 각 선택지가 얼마나 가치 있게 느껴지는가",
+  zh: "随着这 $50 越来越近，两个选项各自感觉值多少",
+  ja: "$50が近づくにつれて、それぞれの選択肢がどれだけの価値に感じられるか",
+};
+
+export const flipSeriesLabels = {
+  en: ["$50, sooner", "$65, a month later"],
+  es: ["$50, antes", "$65, un mes después"],
+  ko: ["$50, 더 이른 쪽", "$65, 한 달 뒤"],
+  zh: ["$50，更早", "$65，晚一个月"],
+  ja: ["$50（早いほう）", "$65（1か月後）"],
+};
+
+export const flipAxisLabels = {
+  en: ["Both a year away", "The $50 is available today"],
+  es: ["Ambos a un año vista", "Los $50 están disponibles hoy"],
+  ko: ["둘 다 1년 뒤", "$50을 오늘 받을 수 있음"],
+  zh: ["两者都在一年后", "这 $50 今天就能拿到"],
+  ja: ["どちらも1年先", "$50は今日受け取れる"],
+};
+
+export const flipZoneLabels = {
+  en: ["Here, most people wait for the $65", "Here, most people take the $50"],
+  es: ["Aquí, la mayoría espera los $65", "Aquí, la mayoría toma los $50"],
+  ko: ["이 구간에서는 대부분 $65을 기다립니다", "이 구간에서는 대부분 $50을 택합니다"],
+  zh: ["在这一段，多数人会等那 $65", "在这一段，多数人会拿走这 $50"],
+  ja: ["この区間では、多くの人が$65を待ちます", "この区間では、多くの人が$50を選びます"],
+};
+
+export const flipMarkerLabel = {
+  en: "the answer flips",
+  es: "la respuesta cambia",
+  ko: "답이 뒤집히는 지점",
+  zh: "答案在此翻转",
+  ja: "答えが逆転する点",
+};
+
+export const flipCaption = {
+  en: "Neither reward changes, and the extra month of waiting is the same extra month at every point on this line. Only the vantage point moves. For most of the year the $65 is simply the better deal — then the $50 comes close enough that the pull of 'now' overtakes it, and the same person answers the opposite way.",
+  es: "Ninguna recompensa cambia, y el mes extra de espera es el mismo mes extra en cada punto de la línea. Lo único que se mueve es el punto de vista. Durante casi todo el año los $65 son sencillamente la mejor opción; luego los $50 se acercan lo suficiente como para que el tirón del «ahora» los supere, y la misma persona responde al revés.",
+  ko: "두 보상은 그대로이고, 한 달을 더 기다린다는 조건도 이 선 위의 모든 지점에서 똑같습니다. 움직이는 것은 바라보는 시점뿐입니다. 한 해의 대부분 동안은 $65이 그냥 더 나은 조건이지만, $50이 충분히 가까워지면 '지금'의 끌어당김이 그것을 앞지르고, 같은 사람이 반대로 답하게 됩니다.",
+  zh: "两笔钱都没有变，多等的那一个月在这条线的每一点上也都是同样的一个月。变的只是观察的时点。一年里的大部分时间，$65 就是更划算的选择；等到这 $50 靠得够近，「现在」的拉力就会盖过它，同一个人便给出相反的答案。",
+  ja: "どちらの報酬も変わらず、1か月余分に待つという条件もこの線上のどの点でも同じです。動くのは見ている時点だけです。1年の大半は$65が単純に有利ですが、$50が十分に近づくと「今」の引力がそれを追い越し、同じ人が逆の答えを出します。",
+};
+
+export const flipDescription = {
+  en: "Two rising curves on one chart. For most of the span the $65 curve sits slightly above the $50 curve, and the panel behind them is tinted to mark that as the wait-for-the-$65 stretch. Near the right-hand end the $50 curve turns sharply upward, crosses above the $65 curve, and finishes well above it; the panel behind that last stretch is tinted differently and a dashed vertical line marks the crossing.",
+  es: "Dos curvas ascendentes en un mismo gráfico. Durante casi todo el recorrido la curva de $65 queda algo por encima de la de $50, y el fondo de ese tramo está tintado para señalar que ahí se espera a los $65. Cerca del extremo derecho la curva de $50 se dispara hacia arriba, cruza por encima de la de $65 y termina muy por encima; ese último tramo tiene otro tinte y una línea vertical discontinua marca el cruce.",
+  ko: "한 그래프 위의 두 상승 곡선. 구간 대부분에서 $65 곡선이 $50 곡선보다 조금 위에 있고, 그 뒤 배경은 $65을 기다리는 구간임을 나타내는 색으로 칠해져 있습니다. 오른쪽 끝 가까이에서 $50 곡선이 가파르게 솟아 $65 곡선 위로 교차한 뒤 훨씬 높은 곳에서 끝나며, 그 마지막 구간의 배경은 다른 색이고 점선 세로선이 교차 지점을 표시합니다.",
+  zh: "同一张图上的两条上升曲线。在大部分区间里，$65 的曲线略高于 $50 的曲线，其后的底色标示出这是等待 $65 的区段。接近右端时，$50 的曲线急剧上扬，越过 $65 的曲线，并在明显更高处结束；最后这一段的底色不同，一条竖直虚线标出交叉点。",
+  ja: "1つのグラフ上の2本の上昇曲線。大半の区間では$65の曲線が$50の曲線をわずかに上回り、その背景はここが$65を待つ区間であることを示す色で塗られています。右端近くで$50の曲線が急に立ち上がって$65の曲線を越え、はるかに高い位置で終わります。その最後の区間の背景は別の色で、破線の縦線が交差点を示します。",
+};

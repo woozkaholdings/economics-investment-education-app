@@ -5854,5 +5854,161 @@ if (keyedGroupsChecked < 4) {
   }
 }
 
+// 50. src/content/moneyVisuals.js — lesson 23's preference-flip figure
+//     (backlog item 27, added 2026-08-27). Like §21 above, this checks the
+//     CLAIM THE DIAGRAM MAKES, not that the numbers parse.
+//
+//     What makes this figure different from the other four, and why it needs
+//     its own section: the others compare two quantities, and a broken one
+//     draws a wrong comparison. This one plots a REVERSAL, so a broken one
+//     draws no reversal at all — two curves that never cross, under a caption
+//     and a dashed marker that both still say "the answer flips". That failure
+//     is invisible by inspection at the sizes this renders at, because the
+//     curves are near-coincident for four fifths of the span by construction.
+//
+//     The crossing is also SOLVED in closed form rather than read off the
+//     sampled points, and the first version of that algebra shipped wrong in
+//     the same session — it put the marker at month 6.67 when the sampled
+//     values bracket the reversal between months 9 and 10. Nothing on screen
+//     would have said so. So the solved value is checked against the sampled
+//     curves here, which is a genuinely independent path to the same number.
+{
+  const mv = moneyVisualsContent;
+  const need = [
+    "flipRewards", "flipDiscountK", "flipMonths", "flipValue", "flipSeries", "flipCrossing",
+    "flipTitle", "flipSeriesLabels", "flipAxisLabels", "flipZoneLabels", "flipMarkerLabel",
+    "flipCaption", "flipDescription",
+  ];
+  const missing = need.filter((k) => mv[k] === undefined);
+  if (missing.length > 0) {
+    fail(`§50: src/content/moneyVisuals.js no longer exports ${missing.join(", ")}. This section is pointed at a structure that no longer exists — repoint it rather than leaving it green.`);
+  } else {
+    const { sooner: s, later: l } = mv.flipRewards;
+    const k = mv.flipDiscountK;
+    const gap = l.month - s.month;
+    const V = mv.flipValue;
+
+    // (a) The figure must still be the lesson's own worked example. Lesson 23
+    //     states $50-vs-$65 one month apart; a figure with different numbers
+    //     gives the reader a second lesson to reconcile (the rule the whole
+    //     file's header sets out).
+    if (s.amount !== 50 || l.amount !== 65) {
+      fail(`§50: flipRewards is ${s.amount}/${l.amount}; lesson 23's body works through $50 and $65. Change the lesson and the figure together or not at all.`);
+    }
+    if (gap !== 1) {
+      fail(`§50: the two rewards are ${gap} month(s) apart; lesson 23's entire point is that the SAME one extra month of waiting gets two different answers.`);
+    }
+    if (!(l.amount > s.amount && l.month > s.month)) {
+      fail(`§50: the "later" reward must be both larger and later (${l.amount} at month ${l.month} vs ${s.amount} at month ${s.month}) — otherwise there is no trade-off to reverse.`);
+    }
+
+    // (b) The discount rate must clear the bound the lesson's OWN first
+    //     scenario implies. Preferring $50 now over $65 in a month means
+    //     50 > 65/(1+k*gap), i.e. k > (65-50)/(50*gap) = 0.3. Below it the
+    //     curves never cross and the lesson's opening paragraph describes
+    //     something this chart says cannot happen.
+    const kMin = (l.amount - s.amount) / (s.amount * gap);
+    if (!(k > kMin)) {
+      fail(`§50: flipDiscountK is ${k}, at or below the ${kMin} that lesson 23's first scenario requires. At this rate the preference never reverses, so the figure's marker, its two tinted zones and its caption would all be describing a crossing that is not in the data.`);
+    }
+
+    // (c) Both of the lesson's stated preferences, read straight off the curve
+    //     the chart draws. These are the two paragraphs of the lesson, and they
+    //     are the two ends of the x-axis.
+    const farS = V(s.amount, s.month, 0);
+    const farL = V(l.amount, l.month, 0);
+    if (!(farL > farS)) {
+      fail(`§50: at the left edge (both rewards a year out) the figure makes the $${s.amount} feel worth ${farS.toFixed(2)} against the $${l.amount}'s ${farL.toFixed(2)}. Lesson 23 says people pick the $${l.amount} here.`);
+    }
+    const nearS = V(s.amount, s.month, s.month);
+    const nearL = V(l.amount, l.month, s.month);
+    if (!(nearS > nearL)) {
+      fail(`§50: at the right edge (the $${s.amount} available today) the figure makes it feel worth ${nearS.toFixed(2)} against the $${l.amount}'s ${nearL.toFixed(2)}. Lesson 23 says people pick the $${s.amount} here.`);
+    }
+
+    // (d) EXACTLY ONE reversal across the span. Two crossings would put the
+    //     single dashed marker on one of them and silently disown the other.
+    const STEPS = 480;
+    let sign = null;
+    let flips = 0;
+    let sampledCrossing = null;
+    for (let i = 0; i <= STEPS; i += 1) {
+      const t = (i / STEPS) * s.month;
+      const d = V(l.amount, l.month, t) - V(s.amount, s.month, t);
+      const cur = Math.sign(d);
+      if (cur === 0) continue;
+      if (sign !== null && cur !== sign) { flips += 1; sampledCrossing = t; }
+      sign = cur;
+    }
+    if (flips !== 1) {
+      fail(`§50: the two perceived-value curves change order ${flips} time(s) across the plotted span, not once. The figure draws one dashed marker and two tinted zones, which can only describe a single reversal.`);
+    }
+
+    // (e) The SOLVED crossing agrees with the SAMPLED one, and the two
+    //     perceived values really are equal there. This is the check that would
+    //     have caught the wrong closed form: the sampling never touches
+    //     flipCrossing()'s algebra, so agreeing to within one sample step is
+    //     independent evidence and not a restatement.
+    const solved = mv.flipCrossing();
+    const tol = s.month / STEPS;
+    if (sampledCrossing === null || Math.abs(solved - sampledCrossing) > tol * 2) {
+      fail(`§50: flipCrossing() returns month ${Number(solved).toFixed(3)}, but sampling the curves puts the reversal at month ${sampledCrossing === null ? "(none found)" : sampledCrossing.toFixed(3)}. The dashed marker and the boundary between the two tinted zones are both drawn from the solved value, so they would sit where nothing happens.`);
+    }
+    const eqS = V(s.amount, s.month, solved);
+    const eqL = V(l.amount, l.month, solved);
+    if (Math.abs(eqS - eqL) > 1e-9) {
+      fail(`§50: at the solved crossing (month ${Number(solved).toFixed(3)}) the two options are worth ${eqS.toFixed(6)} and ${eqL.toFixed(6)}. The crossing is defined as the point where they are equal.`);
+    }
+
+    // (f) The crossing has to be DRAWABLE. It is late by construction — these
+    //     amounts cap it at gap*l.amount/(l.amount-s.amount) months before the
+    //     sooner reward, about 4.3 here — but if an edit pushes it against
+    //     either edge the marker label collides with the axis label and one
+    //     tinted zone becomes a sliver the zone key still names.
+    const frac = solved / s.month;
+    if (!(frac > 0.05 && frac < 0.95)) {
+      fail(`§50: the crossing sits ${(frac * 100).toFixed(1)}% along the x-axis. Below 5% or above 95% the dashed marker and one of the two tinted zones cannot be read at the width this renders at.`);
+    }
+
+    // (g) The sampled polylines must visibly cross — the reversal has to fall
+    //     between two plotted months, not between the last point and the edge.
+    const months = mv.flipMonths;
+    if (months[0] !== 0 || months[months.length - 1] !== s.month) {
+      fail(`§50: flipMonths runs ${months[0]}..${months[months.length - 1]}; it must run 0..${s.month} so the two ends of the axis are lesson 23's two scenarios.`);
+    }
+    if (!months.every((m, i) => i === 0 || m > months[i - 1])) {
+      fail(`§50: flipMonths must ascend — the polyline is drawn in array order and would fold back on itself.`);
+    }
+    const series = mv.flipSeries();
+    const before = months.findIndex((m) => m > solved);
+    if (before <= 0) {
+      fail(`§50: no sampled month sits after the crossing at ${Number(solved).toFixed(3)}, so the drawn polylines cannot show the reversal the marker points at.`);
+    } else {
+      const iLo = before - 1;
+      const iHi = before;
+      const lowerOk = series[1].values[iLo] > series[0].values[iLo];
+      const upperOk = series[0].values[iHi] > series[1].values[iHi];
+      if (!lowerOk || !upperOk) {
+        fail(`§50: the sampled months bracketing the crossing (${months[iLo]} and ${months[iHi]}) do not show the $${l.amount} curve on top and then the $${s.amount} curve on top. Whatever the marker says, the drawn lines do not cross there.`);
+      }
+    }
+
+    // (h) Five-language parity for every label the figure renders, including
+    //     the text alternative — the `role="img"` container makes `description`
+    //     the only thing a screen-reader user gets (§22's rule).
+    for (const key of ["flipTitle", "flipSeriesLabels", "flipAxisLabels", "flipZoneLabels", "flipMarkerLabel", "flipCaption", "flipDescription"]) {
+      for (const lang of LANGS) {
+        const v = mv[key][lang];
+        const empty = v === undefined || v === null || (Array.isArray(v) ? v.length !== 2 || v.some((x) => !String(x).trim()) : !String(v).trim());
+        if (empty) fail(`§50: ${key}.${lang} is missing or incomplete. Every one of these renders on screen in that language, and flipDescription is the figure's only text alternative.`);
+      }
+    }
+
+    if (failures === 0) {
+      console.log(`  §50 lesson 23's preference flip holds: $${s.amount}@${s.month}mo vs $${l.amount}@${l.month}mo at k=${k} (> the ${kMin} the lesson requires) reverses exactly once, at month ${Number(solved).toFixed(3)} — solved and sampled agree, both options worth $${eqS.toFixed(2)} there — and both of the lesson's stated choices fall out of the curve.`);
+    }
+  }
+}
+
 console.log(`\n${failures === 0 ? "PASS" : "FAIL"}: ${failures} failure(s), ${warnings} warning(s).`);
 process.exit(failures === 0 ? 0 : 1);
