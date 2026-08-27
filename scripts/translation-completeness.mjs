@@ -4,7 +4,7 @@
 //
 // WHY THIS EXISTS. `check-data.mjs`'s five-language parity checks assert that
 // every translated field is *present and non-empty*. Nothing asserted that a
-// field carries the same content. It doesn't: most of the catalogue ships
+// field carries the same content. It doesn't: most of the catalog ships
 // es/ko/zh/ja bodies that are condensed summaries of the English rather than
 // translations of it — economy lesson 40's Spanish §1 is three bare rule
 // headings against four explanatory English paragraphs, and its ratio is 0.24
@@ -152,7 +152,7 @@ export function buildBaseline(lessonContent) {
       "in the commit message which way it moved and why. check-data.mjs §33 fails if any pair " +
       "drifts by more than `tolerance` in EITHER direction — a drop means English grew (or a " +
       "translation shrank) without the translation keeping up, which is exactly how most of the " +
-      "catalogue became abridged without any run noticing; a rise means someone did the work, and the " +
+      "catalog became abridged without any run noticing; a rise means someone did the work, and the " +
       "baseline should record it so the debt is visibly paid down rather than silently forgotten.",
     tolerance: TOLERANCE,
     ratios,

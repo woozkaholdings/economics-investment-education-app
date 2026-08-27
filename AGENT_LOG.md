@@ -475,6 +475,16 @@ for the history. No open P1/P2 items.
     > **`AGENT_LOG.md` and `AGENT_LOG.archive.md` are excluded by design, per §31** — run-log entries
     > are dated records. So are quotations. That exception is why two of the owner's own US-English
     > edits were flagged and left alone (W-5.7).
+    > ⛔ **CORRECTION 2026-08-27 (item 128's run): this item's closing claim — "the final whole-repo
+    > scan returns exactly the 10 intended exclusions and nothing else" — was FALSE on the day it was
+    > written, and the run log's entry for it is a dated record that stays verbatim, so the correction
+    > lives here.** Measured against the tree at this item's own commit (`git archive 9232cd0`):
+    > **nine British spellings in `src/` and seven in `scripts/` sat outside the exclusion list**,
+    > all in code comments, including a `colour` — a form this item's entry lists as one it fixed.
+    > The 123-line result and the 1,316-string learner-visible result are both sound; only the
+    > whole-repo sentence overstated its instrument, which walked values and not comments.
+    > **The advice at the top of this item was right and has now been taken**: the guard exists as
+    > `check-data.mjs` §55, scoped to learner-visible strings. See items 128 and 130.
 
 92. **✅ DONE 2026-08-21 (owner-directed, same day it was filed). One string changed — "Borrowing
     gets dearer" → "gets more expensive" — and the item's premise held exactly: a two-pass sweep of
@@ -855,23 +865,70 @@ for the history. No open P1/P2 items.
       and §50's figure-vs-prose checks — which is an argument for doing it once, properly, rather than
       urgently. Downstream of O-1 like everything else.
 
-128. **[Content/Style — filed 2026-08-27 by the run that added lesson 44's figure (item 27), as its
-    stated residual rather than smuggled into the same commit.] The `en` lesson content is
-    internally inconsistent about British vs. US spelling, and item 91's house style says US.**
-    - **Measured:** `lessonContent.money.en.js` writes **"Labour income"** (8 occurrences, including
-      the term lesson 42 *defines*), while `lessonContent.economy.en.js` has **"labor"**. Both ship.
-    - **Why the figure did NOT fix it, and why that was right.** `check-data.mjs` §54(e) requires the
-      legend to use the lesson's own term, so changing the label alone would make the figure use a
-      word its lesson does not — the check would fail, correctly. The fix has to be the *content*,
-      in `en` and in nothing else, and it is a content-wide pass rather than a figure's business.
-    - **What makes this more than a spelling nit:** "labour income" is a defined term in this track,
-      introduced in lesson 42 and reused in 43 and 44. Renaming it touches the lesson bodies, the
-      figure's five `tradeKindLabels`, and §54's own control surface — **all three in one commit, or
-      the check will catch the half that moved.** Re-run §54 as the proof.
-    - **Do not touch the other four languages**, which have no stake in this, and do not touch
-      quotations or dated records (item 91's own exception).
-    - **Honest priority: low.** Nothing is broken and nobody has read either spelling. Downstream of
-      O-1 like everything else.
+128. **✅ DONE 2026-08-27 (scheduled dev-agent), the same day it was filed — but read the premise
+    correction, because the item's headline was three times too small, its file list was missing a
+    rendered surface, and the real finding is about item 91 rather than about a word.** See the run log.
+    > **The item said "8 occurrences in one file, honest priority: low." Measured: 11 occurrences
+    > across 8 lines, plus a fourth coupled surface the item's own fix-list omitted
+    > (`quizText.en.js`, a rendered quiz explanation), plus `specialised` in the same lesson body and
+    > `favour` in a rendered answer option — 36 British spellings across 11 files in total.**
+    > ⛔ **The correction that matters is to item 91's closing claim, and it is the reason this stopped
+    > being a spelling nit.** Item 91 (2026-08-21) closed with *"the final whole-repo scan returns
+    > exactly the 10 intended exclusions and nothing else"*. Re-measured by extracting the tree at item
+    > 91's own commit (`git archive 9232cd0`, read-only) and re-running the scan: **nine British
+    > spellings sat in `src/` outside that exclusion list on the day it was written**, plus seven more
+    > in `scripts/` — and `colour` is a form item 91's entry lists as one it fixed. Its trustworthy
+    > number came from walking 1,316 **learner-visible strings**, a corpus with no comments in it;
+    > the "whole-repo" sentence claimed a scope its instrument never had.
+    > **The transferable lesson, and the reason the fix was a guard and not a rename: a style rule
+    > with no instrument is a claim, not a property.** Six days after item 91, lessons 42-44 shipped
+    > "Labour income" — the term lesson 42 *defines* — into lesson prose, a legend label, a caption
+    > and a screen-reader description, and nothing noticed. Closed by `check-data.mjs` **§55**, scoped
+    > exactly as item 91's own closing advice recommended (learner-visible strings only).
+    > ⚠️ **Two traps this run hit, both worth not re-deriving.** (1) A blanket `labelled`→`labeled`
+    > replace rewrites **`aria-labelledby`**, a real ARIA attribute name (17 occurrences repo-wide);
+    > it broke §44 inside this very run. (2) A sweep instrument whose extension list omits **`.mjs`**
+    > reports "0 occurrences across 0 files" for `scripts/`, which reads exactly like clean.
+
+129. **[Content/Process — filed 2026-08-27 by the run that closed item 128, as its stated and
+    self-inflicted residual.] Re-review the 12 translation pairs that item 128's rename marked stale.**
+    - **What happened, stated plainly:** the review ledger stores a hash of the English source, so the
+      `labour`→`labor` edit to lessons 42, 43 and 44 marked their `es`/`ko`/`zh`/`ja` translations
+      stale. Coverage fell **84% → 77%** in all four languages (7 → 10 stale lessons) and
+      `LAUNCH_READINESS.md` §10.4 was updated to the true figure.
+    - **Why it was NOT cleared by re-marking.** The change was orthographic only and the four
+      translations never contained the word — but the ledger cannot tell an orthographic edit from a
+      semantic one, and `mark` asserts that a reviewer read the text. Re-stamping without reading is
+      the exact dishonesty the ledger exists to prevent. **This has a precedent that went the other
+      way and is worth matching:** on 2026-08-16 three lessons went stale from cross-reference fixes
+      and the run **did the re-review** rather than re-stamping, confirming the English change was
+      references-only. Do that.
+    - **Scope:** 3 lessons x 4 languages = 12 pairs, `npm run review-status` for the list, method
+      `ai` per the reviewer-of-record note in `scripts/translation-review.mjs`'s header. Self-contained,
+      one run, and it restores a published figure rather than moving one.
+    - **Honest priority: medium.** Nothing is broken; a published readiness number is lower than the
+      content warrants. Downstream of O-1 like everything else.
+
+130. **[Process/Tooling — filed 2026-08-27 by the run that built §55, as its stated blind spot.]
+    §55 cannot see comments, dev scripts, or Markdown — and that is 21 of the 36 spellings it was
+    built in response to.**
+    - **State:** `check-data.mjs` §55 guards **string values under an `en` key** across the twelve
+      content and locale modules — 1,145 learner-visible strings, 16 pattern families, three controls.
+      Comments in `src/` and `scripts/`, the check scripts' own prose, and the five normative Markdown
+      files are all outside it. They were swept **by hand** in this run and nothing keeps them swept.
+    - **Why the scope is narrow on purpose, not by omission.** Item 91's own closing advice was
+      "learner-visible strings only", and reading source text rather than values is what drags in the
+      three false-positive classes §55's header enumerates: `aria-labelledby`, non-English content, and
+      verbatim quotations of deleted text — the last of which is a **live, correct** British spelling
+      in `check-data.mjs`, now carrying a `us-english:allow` marker.
+    - **The shape that could work:** a source-text net over comments with an honored `us-english:allow`
+      marker. **The marker convention already exists and nothing reads it** — 21 occurrences across
+      `AGENT_LOG.md`, `AGENT_LOG.archive.md`, `DECISIONS.md` and `LAUNCH_PLAN.md`, placed by earlier
+      runs in anticipation of a checker. Making them load-bearing is most of the work.
+    - **Do not build it until the hand-swept surface has drifted again.** One regrowth is what
+      justified §55; a second, in comments specifically, is what would justify this. **One defect is
+      not a class** (item 125 proved that, and item 126 is filed on the same reasoning).
+    - **Honest priority: low.** Zero live instances as of this entry. Downstream of O-1.
 
 126. **[Docs/Integrity — filed 2026-08-27 by the run that closed item 125, as its stated residual
     rather than smuggled into the same commit.] §52 only sees a hex that shares a line with the
@@ -4325,3 +4382,188 @@ HEAD re-checked before writing this entry and unmoved at `a7fdf8c`.
   for parity, for term-agreement against their own lesson 42, and for arrival — but not *looked at*;
   `ko` is the CJK proxy and `es` the long-string proxy. And §54(f)/(g) read lesson 43's and 44's `en`
   bodies only — deliberately, for the reason given above, with (e) covering the other four languages.
+
+### 2026-08-27 (scheduled dev-agent) — a style rule with no instrument is a claim, not a property: item 91's sweep had been quietly regrowing for six days (item 128)
+
+**Picked item 128**, the US-English inconsistency filed as a residual by the previous run and marked
+"honest priority: low". W-5.2 legal, and deliberately not item 27: the last three picks were all item
+27, which is the "direction comes from continuing the tranche" shape W-5.2 exists to interrupt, even
+though the one-in-four reserve is not in deficit (no item 93 in the last seven picks). The rest of the
+open backlog was re-read rather than assumed, per W-5.2's staleness warning: **116** blocked on a
+harness that does not exist here, **101** and **94** blocked on O-1, **26** blocked on O-2, **117** an
+owner judgment call, **120/124/126/127** low-priority guards with zero known live instances. Owner tree
+at open: clean but for the untracked `UIUX/` and `drafts/`, neither touched. HEAD re-checked before
+writing this entry and unmoved at `cb837b4`. Post-commit fingerprint recorded at the end.
+
+#### Step 3.5 — the premise was true, three times too small, and pointed at the wrong conclusion
+
+Item 128 said: `lessonContent.money.en.js` writes "Labour income" in **8 occurrences**, `economy.en.js`
+has "labor", priority low. Re-measured:
+
+- **The count was lines, not occurrences.** 11 occurrences across 8 lines in that file. Both figures
+  are reproducible; the item quoted the smaller one as if it were the larger.
+- **The item's file list was incomplete, and the gap matters because it names the fix's scope.** The
+  item said the fix touches "the lesson bodies, the figure's five `tradeKindLabels`, and §54's own
+  control surface — all three in one commit". There is a fourth surface: **`quizText.en.js:466`**, a
+  rendered quiz explanation. A commit scoped to the item's own three would have shipped half.
+- **"Labour" was not the only British spelling, and the item's framing as a one-word nit is what a
+  wider sweep refutes.** A 25-pattern scan of English-facing files found **36 real British spellings
+  across 11 files** — `specialised` in the same lesson body as the labours, `favour` in a rendered quiz
+  answer option, plus `judgement`, `neighbouring`, `theatre`, `honoured`, `honours`, `COLOUR`,
+  `Colours`, `licence` and `labours` in code comments.
+- **⛔ THE PREMISE CORRECTION THAT CHANGED THE DISPOSITION, and it is about item 91 rather than item
+  128.** Item 91 (2026-08-21, owner-directed) swept 123 lines and closed with *"the final whole-repo
+  scan returns exactly the 10 intended exclusions and nothing else"* — 6 event-name lines, 2 verbatim
+  quotations, 2 dated records. **That claim was not true on the day it was written.** Measured by
+  extracting the tree at item 91's own commit (`git archive 9232cd0`, read-only) and running the same
+  scan against it: **nine British spellings sat in `src/` outside its exclusion list right then**
+  (`theatre`, `COLOUR`x2, `Colours`, `honoured`, `honours`, `judgement`x2, `labours`) plus **seven more
+  `judgement` in `scripts/`** — and `colour` is a form item 91's own entry lists as one it fixed. The
+  likely mechanism is visible in item 91's entry: its trustworthy final number came from walking
+  **1,316 learner-visible strings**, a corpus that contains no comments, while the "whole-repo scan"
+  sentence claimed a wider scope than the instrument behind it had.
+- **So the honest disposition is not "rename a word".** The class has been regrowing for six days with
+  nothing watching it, and the regrowth is the point: lessons 42-44 shipped "Labour income" — the term
+  lesson 42 *defines* — into lesson prose, a legend label, a caption and a screen-reader description,
+  and no check noticed. **Item 91's own closing advice was "if a guard is ever wanted, the honest scope
+  is learner-visible strings only."** This run does the rename AND builds that guard.
+- **Instrument control, run before trusting any negative result.** A probe line carrying `organised`,
+  `colour` and `licence` was appended to `src/content/sectors.js`, the scan reported all three on the
+  right line, and the file was restored from a scratchpad copy with **SHA-256 verified equal**.
+- **⚠️ The control also caught the instrument reading nothing.** The first scan's extension list was
+  `.js/.jsx/.css/.html` — **`.mjs` was missing, so every check script was silently unscanned** and
+  `scripts/` reported "0 occurrences across 0 files", which reads exactly like clean. Fixed and re-run;
+  that is where the 7 `judgement` and the rest came from.
+
+#### What shipped
+
+- **The rename, atomically across all four coupled surfaces** — lesson bodies (42/43/44), the quiz
+  explanation, the figure's `en` legend label / caption / `aria-label`, the `incomeKinds` key, and
+  `check-data.mjs` §54's `EXPECTED_KEYS` and `RANK_CLAUSES[0]`. §54 asserts the legend term appears in
+  lesson 42's own body and that lesson 43 still says "Labor income is the most tightly coupled", so a
+  half-move fails the build — which is exactly what item 128 predicted and it held.
+- **`specialised`→`specialized` and `favour`→`favor`**, plus the §54 failure message that quotes lesson
+  44's "specialised skill" — once the lesson moves, the quotation moves with it or stops being one.
+- **The 21 remaining British spellings in code comments**, in `src/` and `scripts/`. **One was left
+  deliberately**: `check-data.mjs`'s quotation of the *deleted* §3.4 line "One accent colour per
+  lesson/phase", which sits one line below a quotation of the *live* §3.1.1 that correctly reads
+  "color". Item 91 drew that distinction; this run marks it in place with a `us-english:allow` note
+  so the next sweep does not re-derive it.
+- **`check-data.mjs` §55** — the guard, ~110 lines. Scope is string **values** reachable under an `en`
+  key across the twelve content and locale modules: **1,145 learner-visible English strings**, 16
+  pattern families. It deliberately does not read source text, which is what keeps `aria-labelledby`
+  (17 occurrences repo-wide), non-English content, and verbatim quotations structurally unreachable
+  rather than exempted by a register.
+- **`LAUNCH_READINESS.md`** regenerated: the catalog and volume rows moved **150,179 → 150,168 English
+  chars**, which is exactly the eleven `labour`→`labor` edits in lesson bodies and nothing else.
+
+#### The three corrections the guard produced on its way in
+
+1. **CONTROL C failed on my own net, first run: it flagged "analyses".** `analys(e|ed|es|ing)` catches
+   the correct US plural noun as well as the British verb — they are spelled identically and cannot be
+   told apart without reading the sentence. The two unambiguous forms are flagged and `es` is
+   deliberately absent, stated in the code. **This is item 91's own predecessor's bug**, which
+   over-counted by flagging "analysis"/"analyses"; the control caught it before it could ship again.
+2. **§44 failed, and it was a real regression I had just introduced.** The blanket `labelled`→`labeled`
+   replace rewrote **`aria-labelledby`** — a real ARIA attribute name — in 8 places in `check-data.mjs`
+   and 3 in `a11y-states.js`, which broke §44's `<section>`-naming check into reporting 3 false bare
+   sections. Restored. This is the exact false-positive class §55's value-only scope is designed around,
+   and it demonstrated itself inside the same run that wrote the comment describing it.
+3. **§55's scan was gated on the global `failures` counter**, so any unrelated earlier failure silently
+   skipped the entire style sweep — a check that disappears precisely when the build is already unhappy.
+   Now gated on a local baseline taken at section entry.
+
+#### An honest consequence worth stating rather than burying
+
+**Translation review coverage fell from 84% to 77% in all four languages (7 → 10 stale lessons), and
+that is this run's doing.** The ledger stores a hash of the English source, so any English edit to a
+reviewed lesson marks its four translations stale. Lessons 42-44's change was **orthographic only** and
+the four translations do not contain the word at all — but the ledger cannot distinguish an
+orthographic edit from a semantic one, and **re-marking them would assert a review that nobody
+performed**. The published figure was updated to the true value instead. Clearing it takes a re-review
+of 12 pairs, which is a run of its own; filed as **item 129**.
+
+#### Verification
+
+- **`npm test` 0 failures, 2 warnings** (the two documented baselines — translation review coverage,
+  now reading 77%, and translation completeness, unchanged at 48 abridged pairs). **`npm run build`
+  clean**, `check-blindspot` 7/7 green including §2.3 over all 26 teaching-copy modules.
+- **§55 proved able to fail, and proved able to stay silent where it must.** Every injection asserted
+  its anchor was unique, re-read the file to prove the edit landed, and both touched files were restored
+  from scratchpad copies with **SHA-256 verified equal** — never `git checkout --`.
+
+  | # | Injection | Result |
+  |---|---|---|
+  | 1 | "Labor income" → "Labour income" in lesson 42's body | **FAIL** — names `lessonContent.42.sections[0].body.en` |
+  | 2 | "centre-aligned" into the figure's screen-reader `aria-label` | **FAIL** — names `moneyVisuals.tradeDescription.en` |
+  | 3 | 5 British words planted in **Spanish** lesson content | **SILENT** — scope proof; item 91's near-miss is unreachable |
+  | A | `KNOWN_PRESENT` pointed at an absent phrase | **CONTROL A FIRES** — corpus not reading lesson bodies |
+  | B | the `judgement` pattern family deleted | **CONTROL B FIRES** — names the form it can no longer see |
+  | C | the `-ise` stem list widened to a suffix rule | **CONTROL C FIRES** — names exercise/compromise/expertise/otherwise/surprise/franchise |
+
+- **Live browser verification (W-1).** `preview_start` with a plain `url` over `/usr/bin/python3 -m
+  http.server` against `dist/` — the Environment note's documented workaround — worked first try
+  (`navOk: true`). **Bundle name read back** (`index-DW1eKeSv.js`) and matched what `npm run build` had
+  just printed, per the note's rule 4.
+- **The live scanner was validated in three directions before any of its results were believed**, since
+  an empty `britishHits` array is indistinguishable from a broken regex: 13/13 British specimens
+  flagged, **0** false positives across 18 US forms including `analysis`/`analyses`/`exercise`/
+  `otherwise`, and — the load-bearing one — **a British word appended to the live DOM was found by the
+  scan and disappeared when the node was removed**, proving the scan reads the rendered page.
+- **Rendered, not inferred.** Lessons 42, 43 and 44 each render with **0 British spellings**; lesson 44
+  shows `labor` x6 and `specialized` x1; **`labour` appears 0 times in the entire `documentElement`
+  outerHTML**. The figure's three surfaces all read correctly live: legend `"1 | Labor income | 2 |
+  Business income | 3 | Passive income | 4 | Investment income"`, the caption's "Only labor income sits
+  on the line", and the 486-character `role="img"` `aria-label`. Lesson 43 still renders §54(f)'s exact
+  clause "Labor income is the most tightly coupled". Lesson 42's end-of-lesson check was **answered**
+  (a real click, read back in a separate call per the Environment note's rule 3) so the revealed
+  explanation was scanned too.
+- **⚠️ What was NOT done, and why.** An exhaustive live walk of all 44 lessons was attempted and
+  **abandoned**: an async navigation loop exceeds the 30s tool timeout and leaves an orphan loop
+  mutating `location.hash`, which corrupted a partial result before it was noticed. The page was
+  reloaded to clear it. The exhaustive claim rests on §55's static walk of 1,145 strings with its three
+  controls; the live pass covers the three changed lessons and the figure. Those are different
+  guarantees and they are not being conflated here.
+
+#### Step 5 — adversarial self-check
+
+- **Blindspot register** — no regression. `check-blindspot` green on all 7. Over the 263 added lines:
+  advice-adjacent verbs **0**, child-facing framing **0**. The one `dalio` hit is a **context line, not
+  an added one** — `LAUNCH_READINESS.md`'s §10.2 row, which names Dalio while stating the rule and is
+  deliberately unscanned. **Control**: `labor` returns 32 on the same diff, so the greps reach the text.
+  Every date on an added line is inside the two regenerated `LAUNCH_READINESS.md` rows or a `//` comment
+  dating this change; **none reaches rendered UI**, and §2.3's own check over the teaching-copy modules
+  (which includes `moneyVisuals.js` and `quizText.en.js`) is green.
+- **`DECISIONS.md` conflict** — none. No `localStorage`, `fetch(`, `.json`, `new Date(` or `Date.now`
+  added; content stays `.js` modules; `check-payload.mjs` green, so the per-language split (items
+  45/48/50) is not undercut. The one adjacent decision is `DECISIONS.md:154`, which records the
+  analytics event as `canceled` and carries its own `us-english:allow` marker as a **specimen** — §55
+  reads no Markdown and no identifiers, so it cannot reach it. `src/lib/analytics.js` is untouched.
+- **Already-done backlog item** — **yes, partially, and deliberately.** This overlaps item 91. It is not
+  a redo: item 91's *learner-visible* result was true and this run does not repeat it, while item 91's
+  *whole-repo* claim was false and this run corrects it with the measurement above and builds the
+  instrument item 91's own closing line recommended. That is the same shape item 91 took toward its own
+  predecessor's "0 hits" claim.
+- **US-English house style (item 91) applied to my own added prose** — checked by hand, because §55
+  deliberately cannot see comments. It produced one correction: my §55 header said the scope excludes
+  "Spanish and French content" and **this app has no French** — five languages, en/es/ko/zh/ja. Fixed.
+  Every other British spelling on an added line is either a pattern definition, a control specimen, or
+  a quoted defect being named.
+- **Own verification claim** — the one easiest to overstate is "`src/` and `scripts/` are now clean of
+  British spellings". Precisely: clean against a **25-pattern net over 15 English-facing files**, with
+  one deliberate exclusion (the marked verbatim quotation) and `aria-labelledby` excluded as an ARIA
+  attribute name. It is **not** a claim that no British spelling of any kind survives — the net is a
+  stem list, and extending it is how the next instance gets found. **What is genuinely exhaustive** is
+  §55's 1,145-string learner-visible corpus, and only because control A proves it reaches lesson bodies
+  and controls B and C prove the net both fires and does not over-fire. The 9-spellings-at-`9232cd0`
+  figure is reproducible by anyone: `git archive 9232cd0 src | tar -x` somewhere read-only and re-run
+  the scan.
+
+#### Next run
+
+`npm run owner-tree -- --expect 7f8a0a81ee4d7cc4843c8b2fddf4cd20738abf8dc977457ab8d3d23c75df7716`.
+**Open and unblocked:** **item 129** (re-review the 12 stale translation pairs this run created — a
+clean, self-contained run); **item 130** (§55's comment/script blind spot, filed low); **item 27**
+(more lesson figures — but three of the last four picks were item 27, so W-5.2's spirit says let it
+rest a run). **O-1 remains the entire critical path** — 44 lessons, 5 languages, 160 minutes of content,
+and zero people have ever opened this app — and **O-2 is downstream of it**.

@@ -439,7 +439,7 @@ export const quizText = [
     "q": "Why is personal finance largely absent from most school curricula?",
     "opts": [
       "There is nothing useful that could be taught about it",
-      "Curricula favour examinable subjects, and money rules are local and change often",
+      "Curricula favor examinable subjects, and money rules are local and change often",
       "It is deliberately withheld to keep people in debt",
       "Every country already teaches it thoroughly"
     ],
@@ -463,7 +463,7 @@ export const quizText = [
       "It would shrink roughly in proportion to how much the business depended on her personally",
       "It would increase, because she stopped taking pay"
     ],
-    "explain": "Business income sits between a wage and a passive source. The parts that run without her — her employee's work, existing customers — carry on; the parts that were really her own labour stop. In a two-person company that personal share is large, so the income shrinks substantially without disappearing."
+    "explain": "Business income sits between a wage and a passive source. The parts that run without her — her employee's work, existing customers — carry on; the parts that were really her own labor stop. In a two-person company that personal share is large, so the income shrinks substantially without disappearing."
   },
   {
     "q": "What does the phrase 'passive income' tend to leave out?",

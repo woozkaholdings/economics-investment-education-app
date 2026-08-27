@@ -176,7 +176,7 @@ export function termsForSection(lessonId, sectionIndex) {
 // gain. §17b does check the term is still SOMEWHERE in the lesson's English
 // text, so an exclusion cannot outlive the prose it was written for.
 //
-// "other-sense" entries are the judgement calls and each says what the prose
+// "other-sense" entries are the judgment calls and each says what the prose
 // actually means. They are the reason this file is hand-curated at all: an
 // automatic matcher links every one of them to a definition that does not
 // apply, which is worse for a learner than no chip.

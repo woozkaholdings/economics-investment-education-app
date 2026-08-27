@@ -1021,7 +1021,7 @@ if (keyedGroupsChecked < 4) {
 //     references than English (several are condensed and legitimately drop
 //     one), but every number it does carry must appear in that lesson's
 //     English reference set. That is the property a renumbering breaks, and
-//     it needs no per-language translation judgement to verify.
+//     it needs no per-language translation judgment to verify.
 //
 //     Covers lesson prose AND quizData.js `explain` fields. The quiz half was
 //     added 2026-08-16 after this check's first version missed seven stale
@@ -1320,7 +1320,7 @@ if (keyedGroupsChecked < 4) {
 //     item 28). The map is hand-curated because an automatic prose match links
 //     the wrong sense (essentials lesson 12's "PMI" is private mortgage insurance,
 //     not Purchasing Managers' Index; lesson 17's is *lifestyle* inflation).
-//     Curation is a judgement call and cannot be checked here — but the four
+//     Curation is a judgment call and cannot be checked here — but the four
 //     ways a curated map rots mechanically can be, and are:
 //
 //       (a) it names a lesson or section that no longer exists,
@@ -1408,7 +1408,7 @@ if (keyedGroupsChecked < 4) {
   }
 
   // Every locale must carry the chip row's label, or four of the five
-  // languages render an unlabelled row of buttons.
+  // languages render an unlabeled row of buttons.
   for (const lang of LANGS) {
     checkNonEmptyString(TR[lang]?.lessonTermsLabel, `TR.${lang}.lessonTermsLabel`);
   }
@@ -1433,7 +1433,7 @@ if (keyedGroupsChecked < 4) {
 //      most unlinked uses are CORRECT. Either the lesson defines the term
 //      itself (§3.0.3's first branch) or the prose means something else by the
 //      word — lesson 12's PMI is private mortgage insurance, lesson 36's
-//      "premium" is the term premium on long bonds. Those judgements lived in
+//      "premium" is the term premium on long bonds. Those judgments lived in
 //      lessonTerms.js's header as prose, and that is exactly what failed:
 //      backlog item 57 was filed claiming 7 lessons and 11 occurrences of
 //      undefined jargon, and all 11 were exclusions the header named by
@@ -1460,7 +1460,7 @@ if (keyedGroupsChecked < 4) {
 //      is the instrument for the part this cannot see: it proposes candidate
 //      jargon with no glossary entry, ranked by how many lessons use it. It
 //      reports rather than fails, and deliberately is not wired into npm test
-//      — deciding which candidate is real jargon is judgement, and the only
+//      — deciding which candidate is real jargon is judgment, and the only
 //      way to make it blocking would be an allowlist of every acceptable
 //      English phrase.
 //
@@ -1542,7 +1542,7 @@ if (keyedGroupsChecked < 4) {
       if (code === "other-sense" && !String(reason).includes(":")) {
         fail(
           `${path}: an "other-sense" exclusion must say what the prose means instead ` +
-            `("other-sense: <meaning>") — it is a judgement call, and the note is the whole record of it.`,
+            `("other-sense: <meaning>") — it is a judgment call, and the note is the whole record of it.`,
         );
       }
       reasons[code]++;
@@ -1994,7 +1994,7 @@ if (keyedGroupsChecked < 4) {
 //
 //     The bug this generalizes from: `Bar` was the one primitive that took no
 //     `description`, so lesson 37's Fed balance-sheet figure was a stack of
-//     unlabelled <div>s — the only lesson visual in the app with no text
+//     unlabeled <div>s — the only lesson visual in the app with no text
 //     alternative. Six of seven primitives already had the property; nothing
 //     asserted it, so the seventh could be written without it and nothing said
 //     so for as long as the figure existed.
@@ -2099,7 +2099,7 @@ if (keyedGroupsChecked < 4) {
               // descriptions existed for those curves, relying on the fallback
               // stopped being a design choice and became a silent downgrade to
               // a four-word name. The fallback stays in the component as a
-              // defense against an unlabelled figure; it is no longer a license
+              // defense against an unlabeled figure; it is no longer a license
               // for a call site. Verified: dropping `description=` here passed
               // under the old rule.
               ? `its \`aria-label\` would fall back to ${viaFallback.map((p) => `\`${p}\``).join(" / ")}, which names the figure without describing it (backlog item 42)`
@@ -3076,7 +3076,7 @@ if (keyedGroupsChecked < 4) {
 //
 //     Every range the net finds must be classified below. `live` means it must
 //     equal a track's current range; `historical` means it must equal none of
-//     them (a historical claim that starts matching again is either mislabelled
+//     them (a historical claim that starts matching again is either mislabeled
 //     or a coincidence worth looking at). Both directions are checked, so a
 //     classification cannot outlive its reason — the same property §26's
 //     `path-ok` markers and §28b's `GRAPH_EXEMPT` ratios have.
@@ -3675,6 +3675,12 @@ if (keyedGroupsChecked < 4) {
 //     two possible targets that contradicted each other. A reader resolving
 //     "see the Visual system section" could land on either.
 //
+//     us-english:allow — that "colour" is a VERBATIM QUOTATION of the §3.4
+//     line the plan has since deleted, and the "color" one line above is a
+//     quotation of §3.1.1, which still exists and now reads "color". One
+//     quotation of live text, one of dead text, opposite treatment: item 91
+//     drew that line and §55 below is scoped so it can never reach here.
+//
 //     WHY LAUNCH_PLAN.md AND NO OTHER DOCUMENT, measured rather than assumed:
 //     over the five normative Markdown files here (LAUNCH_PLAN, DECISIONS,
 //     CLAIMS, README, LAUNCH_READINESS) the duplicate-title count today is
@@ -3813,7 +3819,7 @@ if (keyedGroupsChecked < 4) {
 // translated field is PRESENT (§1's `checkLangSet`) or that it mirrors
 // English's structure (§16's cross-references). None of them can see a field
 // that exists, is well-formed, is consistent with English — and carries a
-// quarter of its content. That is the actual state of most of the catalogue:
+// quarter of its content. That is the actual state of most of the catalog:
 // economy lesson 40's Spanish carries three bare rule headings against four
 // explanatory English paragraphs. `npm run translation-completeness` measures
 // and lists it; AGENT_LOG.md item 93 tracks paying it down.
@@ -3868,7 +3874,7 @@ if (keyedGroupsChecked < 4) {
     if (rows.length < 20 || enTotal < 50_000) {
       fail(
         `§33: only ${rows.length} lesson(s) and ${enTotal} English character(s) measured (expected at ` +
-          `least 20 and 50,000). The instrument is more likely broken than the catalogue emptied.`,
+          `least 20 and 50,000). The instrument is more likely broken than the catalog emptied.`,
       );
     }
 
@@ -4664,10 +4670,10 @@ if (keyedGroupsChecked < 4) {
 // downloaded — and the connection message appeared anyway.
 //
 // WHAT IS CHECKED, AND WHY EACH PART.
-//   (a) BEHAVIOURAL. `chunkError.js` is pure JS, so the predicate can be run
+//   (a) BEHAVIORAL. `chunkError.js` is pure JS, so the predicate can be run
 //       here instead of being read. The load-bearing case is a `TypeError`
 //       carrying the browser's real "Failed to fetch dynamically imported
-//       module" text: it must NOT be recognised, because recognising it would
+//       module" text: it must NOT be recognized, because recognizing it would
 //       mean someone had reintroduced message matching, which is the method
 //       this item rejected. A textual check alone cannot see that.
 //   (b) every `lazy()` in App.jsx routes its loader through `chunk()`. An
@@ -4690,7 +4696,7 @@ if (keyedGroupsChecked < 4) {
 {
   const { ChunkLoadError, chunk, isChunkLoadError } = await import("../src/lib/chunkError.js");
 
-  // (a) Behavioural.
+  // (a) Behavioral.
   const tagged = await chunk(() => Promise.reject(new TypeError("Failed to fetch dynamically imported module: /assets/Practice-abc123.js")))()
     .then(() => null, (e) => e);
   const tagRecognised = isChunkLoadError(tagged);
@@ -4822,7 +4828,7 @@ if (keyedGroupsChecked < 4) {
 
   // Every figure below is counted, never asserted. §38 shipped a summary that
   // printed "9 required present" from a constant and so read as green beside
-  // its own failure; the words "by tag" here are derived from the behavioural
+  // its own failure; the words "by tag" here are derived from the behavioral
   // result and the text scan, so this line cannot say the check held when it
   // did not.
   const method =
@@ -4834,7 +4840,7 @@ if (keyedGroupsChecked < 4) {
       `LoadFailure vs AppError ${method}; ${falsePositives} false positive(s) across ${mustNotMatch.length} untagged ` +
       `error shape(s), ${messageReads.length} error-text read(s) in chunkError.js; ` +
       `${distinctPairs}/${Object.keys(TR).length} language(s) with two distinct bodies. ` +
-      `(Static + behavioural — the rendered two-sided proof is in the run log.)`,
+      `(Static + behavioral — the rendered two-sided proof is in the run log.)`,
   );
 }
 
@@ -5773,7 +5779,7 @@ if (keyedGroupsChecked < 4) {
 //
 // The states were rescued only because each carries an arrival assertion, which turned 48 wrong
 // sweeps into 48 honest MISSEDs instead of "5 languages, 65 states, all clean". That is a second
-// line of defence, not a first: a state added tomorrow WITHOUT an assertion (which §48 catches)
+// line of defense, not a first: a state added tomorrow WITHOUT an assertion (which §48 catches)
 // and WITH an English selector (which nothing catches) reports a clean zero for a screen it never
 // reached. This section is the first line — it catches the English string at commit time rather
 // than at sweep time.
@@ -5821,7 +5827,7 @@ if (keyedGroupsChecked < 4) {
   ];
 
   // Digits, percent signs and separators are language-independent — `clickExact: "130%"` is a
-  // legitimate selector and the font-scale controls are labelled exactly that way.
+  // legitimate selector and the font-scale controls are labeled exactly that way.
   const isNumeric = (s) => /^[\d\s.,%/:-]+$/.test(s);
 
   // A hit is exempt when it belongs to one of the two `__selftest_*` states, which reference
@@ -6613,7 +6619,7 @@ if (keyedGroupsChecked < 4) {
 //     WHY THAT NEEDS ITS OWN SECTION. Every other figure in this app is drawn
 //     from numbers its lesson states, so §53's question — "is this number in
 //     the body?" — is answerable. Lesson 44 states no numbers at all. It states
-//     an ORDER ("Labour income is the most tightly coupled ... Investment
+//     an ORDER ("Labor income is the most tightly coupled ... Investment
 //     income is barely coupled to your time at all"), a TENDENCY ("as income
 //     gets less coupled to your hours, it generally demands more of something
 //     else up front"), and exactly one absolute claim about one item ("the only
@@ -6638,7 +6644,7 @@ if (keyedGroupsChecked < 4) {
     fail(`§54: src/content/moneyVisuals.js no longer exports ${missing.join(", ")}. This section is pointed at a structure that no longer exists — repoint it rather than leaving it green.`);
   } else {
     const kinds = mv.incomeKinds;
-    const EXPECTED_KEYS = ["labour", "business", "passive", "investment"];
+    const EXPECTED_KEYS = ["labor", "business", "passive", "investment"];
 
     // (a) Four items in the order lesson 43 ranks them. `LessonVisual.jsx`
     //     hands this array to the plot positionally, so ARRAY ORDER IS THE
@@ -6660,7 +6666,7 @@ if (keyedGroupsChecked < 4) {
       }
 
       // (c) THE ORDINAL AXIS. Three assertions, each tied to a sentence:
-      //       • labour is exactly 0 — lesson 44 says it is "the only one of the
+      //       • labor is exactly 0 — lesson 44 says it is "the only one of the
       //         four you can begin with nothing but yourself", and 0 is what
       //         puts its dot ON the rail. Any positive value silently draws the
       //         lesson's one absolute claim as false.
@@ -6671,13 +6677,13 @@ if (keyedGroupsChecked < 4) {
       //         a business against a rental against shares. A strict assertion
       //         here would be this section enforcing a claim the lesson does not
       //         make, which is the same defect as drawing it.
-      const labour = kinds[0];
-      if (labour.upfront !== 0) {
-        fail(`§54: incomeKinds[0] ("labour") has upfront=${labour.upfront}, not 0. Lesson 44's one absolute claim on this axis is that labour income is "the only one of the four you can begin with nothing but yourself"; 0 is what seats its dot on the rail, and any other value draws that sentence as false while the caption still asserts it.`);
+      const labor = kinds[0];
+      if (labor.upfront !== 0) {
+        fail(`§54: incomeKinds[0] ("labor") has upfront=${labor.upfront}, not 0. Lesson 44's one absolute claim on this axis is that labor income is "the only one of the four you can begin with nothing but yourself"; 0 is what seats its dot on the rail, and any other value draws that sentence as false while the caption still asserts it.`);
       }
       for (const k of kinds.slice(1)) {
-        if (!(k.upfront > labour.upfront)) {
-          fail(`§54: "${k.key}" has upfront=${k.upfront}, not above labour's ${labour.upfront}. Lesson 44 says every one of the other three demands something first — capital, years, specialised skill, or a tolerance for it not working — so a dot level with labour on the rail contradicts the section it is drawn from.`);
+        if (!(k.upfront > labor.upfront)) {
+          fail(`§54: "${k.key}" has upfront=${k.upfront}, not above labor's ${labor.upfront}. Lesson 44 says every one of the other three demands something first — capital, years, specialized skill, or a tolerance for it not working — so a dot level with labor on the rail contradicts the section it is drawn from.`);
         }
       }
       for (let i = 1; i < kinds.length; i += 1) {
@@ -6688,17 +6694,17 @@ if (keyedGroupsChecked < 4) {
 
       // (d) GEOMETRY, and it is the silent one. `TradeoffPlot` seats a dot of
       //     radius 5 at `railY - (upfront / max) * plotH`. The figure's whole
-      //     left-hand claim is that labour's dot is ON the rail and the others
+      //     left-hand claim is that labor's dot is ON the rail and the others
       //     are OFF it — so if the smallest lift is under a dot diameter, the
       //     second dot overlaps the rail and reads as sitting on it too. The
-      //     plot still renders, the caption still says "only labour income sits
+      //     plot still renders, the caption still says "only labor income sits
       //     on the line", and nothing fails.
       const TRADE_PLOT_H = 150 - 26 - 30;  // TRADE_H − pad.top − pad.bottom
       const TRADE_DOT_R = 5;
       const maxUpfront = Math.max(...kinds.map((k) => k.upfront));
       const smallestLift = (Math.min(...kinds.slice(1).map((k) => k.upfront)) / maxUpfront) * TRADE_PLOT_H;
       if (smallestLift <= TRADE_DOT_R * 2) {
-        fail(`§54: the lowest lifted dot clears the rail by ${smallestLift.toFixed(1)} plot units, no more than one ${TRADE_DOT_R * 2}-unit dot diameter. It would touch or overlap the rail and read as sitting on it, which is exactly the distinction the figure exists to draw. Widen the gap between labour's 0 and the next value, or re-check TRADE_H/TRADE_PAD in charts.jsx if the plot box changed.`);
+        fail(`§54: the lowest lifted dot clears the rail by ${smallestLift.toFixed(1)} plot units, no more than one ${TRADE_DOT_R * 2}-unit dot diameter. It would touch or overlap the rail and read as sitting on it, which is exactly the distinction the figure exists to draw. Widen the gap between labor's 0 and the next value, or re-check TRADE_H/TRADE_PAD in charts.jsx if the plot box changed.`);
       }
 
       // (e) FIVE-LANGUAGE PROSE ANCHOR — the legend uses each language's own
@@ -6748,7 +6754,7 @@ if (keyedGroupsChecked < 4) {
       //     (e) is what covers the other four languages.
       const body43en = (lessonContent["43"]?.sections ?? []).map((s) => s.body?.en ?? "").join("\n");
       const RANK_CLAUSES = [
-        "Labour income is the most tightly coupled",
+        "Labor income is the most tightly coupled",
         "Business income is partly coupled",
         "Rent and royalties are loosely coupled",
         "Investment income is barely coupled",
@@ -6768,7 +6774,7 @@ if (keyedGroupsChecked < 4) {
       const CLAIMS_44 = [
         ["the second axis", "second axis running the other way"],
         ["the tendency", "generally demands more of something else up front"],
-        ["labour's uniqueness", "the only one of the four you can begin with nothing but yourself"],
+        ["labor's uniqueness", "the only one of the four you can begin with nothing but yourself"],
         ["the conclusion", "stops being a ladder and becomes a set of trades"],
       ];
       for (const [what, phrase] of CLAIMS_44) {
@@ -6799,9 +6805,189 @@ if (keyedGroupsChecked < 4) {
       if (failures === 0) {
         console.log(
           `  §54 lesson 44's income trade-off holds: 4 categories in lesson 43's stated coupling order, ` +
-            `upfront ranks ${kinds.map((k) => k.upfront).join("/")} (labour alone on the rail, non-decreasing, no scale drawn), ` +
+            `upfront ranks ${kinds.map((k) => k.upfront).join("/")} (labor alone on the rail, non-decreasing, no scale drawn), ` +
             `smallest lift ${smallestLift.toFixed(1)}u against a ${TRADE_DOT_R * 2}u dot; all 4 legend terms found in lesson 42's own body ` +
             `in all ${LANGS.length} languages (control both directions per language), 4 rank clauses in order in lesson 43 and 4 claims present in lesson 44.`,
+        );
+      }
+    }
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// §55. US-ENGLISH HOUSE STYLE, over learner-visible English strings only.
+//
+//   WHY THIS EXISTS. The owner set US English as the house style on
+//   2026-08-21 (item 91), and that sweep fixed 123 lines across 32 files —
+//   but it shipped as a one-off pass with no instrument behind it, and its
+//   own closing claim ("the final whole-repo scan returns exactly the 10
+//   intended exclusions and nothing else") was not true even on the day it
+//   was written. Re-measured 2026-08-27 against the tree at item 91's own
+//   commit: nine British spellings sat outside its exclusion list right
+//   then, including a `colour` in a file the item lists as swept. By
+//   2026-08-27 the count had grown to 36, because lessons 42-44 shipped
+//   "Labour income" — the term lesson 42 DEFINES — into learner-visible
+//   prose, a legend label, a caption and a screen-reader description.
+//
+//   A style rule with no instrument is a claim, not a property. This makes
+//   it a property.
+//
+//   SCOPE, and why it is narrow ON PURPOSE. Item 91's own closing advice was
+//   "if a guard is ever wanted, the honest scope is learner-visible strings
+//   only", and that is exactly this scope: string VALUES reachable under an
+//   `en` key in the content and locale modules. It deliberately does NOT
+//   read source text, which is what keeps three whole classes of false
+//   positive out of it:
+//     * `aria-labelledby`, a real ARIA attribute name, appears 12 times in
+//       src/ and 5 more in scripts/. A source-text net flags every one.
+//     * Non-English content. "cheque de pago" is correct Spanish and
+//       item 91 nearly wrote "check de pago" into a lesson body with a blind
+//       replace; walking only `en`-keyed values makes that unreachable.
+//     * Verbatim quotations of deleted text, which MUST keep their original
+//       spelling — see the us-english:allow note at §31's duplicate-title
+//       check above, where a quoted "colour" is correct and load-bearing.
+//   Comments and dev scripts are therefore NOT guarded. They were swept by
+//   hand in this run; keeping them swept is a residual, not a check.
+//
+//   EXTENDING THE NET. Add stems, not suffixes. A generic `-ise` rule flags
+//   "exercise", "compromise", "expertise" and "otherwise"; a generic `-re`
+//   rule flags "genre" and "mediocre"; `analys[ei]s` flags the correct US
+//   nouns "analysis" and "analyses", which is precisely how item 91's own
+//   headline count came out wrong in both directions. Every entry below is
+//   an explicit stem, and CONTROL C exists to catch the day someone
+//   forgets that.
+{
+  // §55's own controls gate §55's scan, NOT the global failure count. The
+  // first draft gated on `failures === 0`, which meant any unrelated failure
+  // earlier in this file silently skipped the whole style sweep — a check
+  // that disappears exactly when the build is already unhappy.
+  const before55 = failures;
+  const BRITISH = [
+    [/\b(labour|colour|behaviour|favour|honour|neighbour|rumour|humour|endeavour|flavour|savour|harbour|vapour|armour|valour|odour|parlour|splendour)\w*/gi, "drop the u (labour → labor)"],
+    [/\b(organis|realis|recognis|specialis|minimis|maximis|prioritis|normalis|summaris|apologis|criticis|utilis|capitalis|localis|stylis|tokenis|standardis|memoris|categoris|penalis|sterilis)\w*/gi, "-ise/-isation → -ize/-ization"],
+    // "analyses" is deliberately ABSENT: it is the correct US plural of
+    // "analysis" AND the British third-person verb, spelled identically. It
+    // cannot be classified without reading the sentence, and CONTROL C below
+    // failed on exactly this when the pattern was first written with `es` in
+    // it. Flagging the two unambiguous verb forms is the honest coverage.
+    [/\banalys(e|ed|ing)\b/gi, "analyse → analyze (the nouns analysis/analyses are correct US; \"analyses\" is ambiguous and is deliberately not flagged)"],
+    [/\bemphasis(e|ed|es|ing)\b/gi, "emphasise → emphasize (the noun emphasis is correct US)"],
+    [/\b(centre|calibre|spectre|lustre|sombre|meagre|theatre)s?\b/gi, "-re → -er"],
+    [/\b\w*(metre|litre|fibre)s?\b/gi, "-re → -er (metre → meter, and the same for kilometre etc.)"],
+    [/\b(defence|offence|licence|pretence)s?\b/gi, "-ce → -se"],
+    [/\bpractis(e|ed|es|ing)\b/gi, "practise → practice (US uses practice for both noun and verb)"],
+    [/\b(travell|cancell|modell|labell|fuell|signall|marvell|counsell|jewell|levell)\w*/gi, "single the l (cancelled → canceled)"],
+    [/\bprogramme\b/gi, "programme → program"],
+    [/\bcheques?\b/gi, "cheque → check"],
+    [/\b(whilst|amongst)\b/gi, "whilst → while, amongst → among"],
+    [/\b(enrol|instalment|skilful|fulfil)(?!l)\w*/gi, "double the l (enrol → enroll, fulfil → fulfill)"],
+    [/\bjudgement\w*/gi, "judgement → judgment"],
+    [/\bcatalogue\w*/gi, "catalogue → catalog"],
+    [/\b(ageing|storey|sceptic\w*|moustache|aluminium|sulphur|kerb|tyres?)\b/gi, "assorted British forms"],
+  ];
+
+  // The corpus: every string VALUE sitting under a key named `en`, across the
+  // modules that render text. Path-based rather than module-based, so a new
+  // five-language key is covered the day it is added and a translation never is.
+  const EN_SOURCES = [
+    ["locales", TR], ["lessons", lessons], ["lessonContent", lessonContent],
+    ["quizData", quizData], ["glossary", glossary], ["lessonTerms", lessonTerms],
+    ["kidsContent", kidsContent], ["markets", marketsContent],
+    ["moneyVisuals", moneyVisualsContent], ["economicSignals", economicSignals],
+    ["policyScenarios", policyScenarios], ["sectors", sectors],
+  ];
+
+  const corpus = [];
+  function collectEn(node, path, underEn) {
+    if (typeof node === "string") {
+      if (underEn) corpus.push({ path, text: node });
+      return;
+    }
+    if (Array.isArray(node)) {
+      node.forEach((v, i) => collectEn(v, `${path}[${i}]`, underEn));
+      return;
+    }
+    if (node && typeof node === "object") {
+      for (const [k, v] of Object.entries(node)) {
+        collectEn(v, `${path}.${k}`, underEn || k === "en");
+      }
+    }
+  }
+  for (const [name, mod] of EN_SOURCES) collectEn(mod, name, false);
+
+  function scan(text) {
+    const found = [];
+    for (const [re, advice] of BRITISH) {
+      re.lastIndex = 0;
+      const m = text.match(re);
+      if (m) found.push({ words: [...new Set(m)], advice });
+    }
+    return found;
+  }
+
+  // ── CONTROLS, all three mandatory. A style net that silently reads nothing
+  //    looks exactly like a style net over clean content.
+  //
+  //    (A) THE CORPUS IS REAL. A floor plus a known sentence. The floor is
+  //        well under the live count so ordinary content edits never trip it;
+  //        it exists to catch the corpus collapsing to a handful of keys,
+  //        which is what a renamed `en` key or a changed module shape does.
+  const KNOWN_PRESENT = "money paid for your time and skill";
+  if (corpus.length < 800) {
+    fail(`§55: the English corpus collected only ${corpus.length} strings. Item 91 counted 1,316 in 2026-08 and this check is scoped the same way, so a number this low means the walk is reading the wrong shape — every clean result below would be meaningless. Check that the content modules still key English under \`en\`.`);
+  } else if (!corpus.some((c) => c.text.includes(KNOWN_PRESENT))) {
+    fail(`§55: the corpus does not contain lesson 42's phrase "${KNOWN_PRESENT}", so it is not reading lesson bodies even though it collected ${corpus.length} strings. A clean result would be about the wrong text.`);
+  } else {
+    //  (B) THE NET FIRES. Every pattern is exercised against a form it must
+    //      catch. This is per-pattern rather than one specimen sentence: item
+    //      91 lost three passes to a net that was clean only because it had
+    //      no rule for the family it was missing.
+    const MUST_CATCH = [
+      "labour", "colour", "behaviour", "favour", "honoured", "neighbouring",
+      "organised", "capitalisation", "specialised", "analyse", "emphasised",
+      "centre", "theatre", "kilometre", "fibre", "defence", "licence",
+      "practising", "cancelled", "labelled", "programme", "cheque", "whilst",
+      "enrol", "fulfil", "judgement", "catalogue", "ageing", "sceptical",
+    ];
+    const missed = MUST_CATCH.filter((w) => scan(w).length === 0);
+    if (missed.length) {
+      fail(`§55 CONTROL B: the net does not flag ${missed.map((w) => `"${w}"`).join(", ")}. Every one is a British form this repo has actually shipped or is one keystroke from shipping, so a clean sweep proves nothing while any of them is invisible.`);
+    }
+
+    //  (C) THE NET IS SILENT ON CORRECT US FORMS. The expensive half. Item 91
+    //      shipped a net whose lookbehind matched US "colored", and item 91's
+    //      predecessor over-counted by flagging "analysis" and "analyses".
+    //      Both would have been caught here.
+    const MUST_NOT_CATCH = [
+      "labor", "color", "colored", "behavior", "favor", "honored", "neighboring",
+      "organized", "analysis", "analyses", "emphasis", "center", "theater",
+      "meter", "fiber", "defense", "license", "practice", "practices",
+      "canceled", "labeled", "program", "check", "while", "among", "enroll",
+      "fulfill", "judgment", "catalog", "aging", "skeptical", "exercise",
+      "compromise", "expertise", "otherwise", "surprise", "franchise",
+      "genre", "mediocre", "acre", "four", "hour", "your", "flour",
+    ];
+    const falsePositives = MUST_NOT_CATCH.filter((w) => scan(w).length > 0);
+    if (falsePositives.length) {
+      fail(`§55 CONTROL C: the net flags the correct US spellings ${falsePositives.map((w) => `"${w}"`).join(", ")}. A pattern was widened into a suffix rule — add explicit stems instead. Every failure §55 reports is untrustworthy until this passes.`);
+    }
+
+    if (failures === before55) {
+      const hits = [];
+      for (const { path, text } of corpus) {
+        for (const { words, advice } of scan(text)) hits.push({ path, words, advice });
+      }
+      for (const h of hits.slice(0, 12)) {
+        fail(`§55: ${h.path} uses the British spelling ${h.words.map((w) => `"${w}"`).join(", ")} — ${h.advice}. The owner set US English as the house style on 2026-08-21 (item 91); this string is learner-visible. If it is a verbatim quotation, it does not belong in shipped content — reword it.`);
+      }
+      if (hits.length > 12) {
+        fail(`§55: ${hits.length - 12} further British spelling(s) not listed above.`);
+      }
+      if (hits.length === 0) {
+        console.log(
+          `  §55 US-English house style holds across ${corpus.length} learner-visible English strings ` +
+            `(${BRITISH.length} pattern families; control A the corpus reaches lesson bodies, ` +
+            `control B all ${MUST_CATCH.length} British specimens flagged, control C all ${MUST_NOT_CATCH.length} US forms silent).`,
         );
       }
     }

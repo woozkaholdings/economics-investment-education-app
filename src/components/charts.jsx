@@ -546,13 +546,13 @@ export function GapColumns({ title, columns, segmentLabels, ruleLabel, axisLabel
 // lying, so it is spelled out in three places (here, `moneyVisuals.js`'s
 // `incomeKinds`, and the visible caption) and asserted by `check-data.mjs` §54:
 //   • The horizontal order is stated exactly, and completely, by lesson 43:
-//     labour most tightly coupled to your hours, then business, then rent and
+//     labor most tightly coupled to your hours, then business, then rent and
 //     royalties, then investment "barely coupled to your time at all".
 //   • The vertical order is stated by lesson 44 as a TENDENCY — "as income gets
 //     less coupled to your hours, it generally demands more of something else
-//     up front" — plus one exact claim about a single item, that labour is
+//     up front" — plus one exact claim about a single item, that labor is
 //     "the only one of the four you can begin with nothing but yourself".
-//     So labour's dot sits ON the rail and the other three are lifted off it;
+//     So labor's dot sits ON the rail and the other three are lifted off it;
 //     the rise across those three is the lesson's word "generally" and NOT a
 //     ranking of business against rent against shares, which the lesson
 //     declines to give. No tick, gridline or number appears on that axis,

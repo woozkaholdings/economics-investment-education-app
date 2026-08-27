@@ -61,7 +61,7 @@
 //     measurement and is why the item that filed this said measure first and
 //     decide once, with the number in hand.
 //
-// The judgement call in WHY THIS IS NOT A CHECK applies here with MORE force,
+// The judgment call in WHY THIS IS NOT A CHECK applies here with MORE force,
 // not less: glossary prose is written for a reader who is already looking
 // something up, so "define every term used in a definition" is circular past a
 // point. Do not add keys to shorten this list.
@@ -69,7 +69,7 @@
 // WHY THIS IS NOT A CHECK, and must not be turned into one. Its output is a
 // *candidate* list, ~85% of which is ordinary compositional English ("savings
 // account", "monthly payment", "lose value") that needs no definition at all.
-// Deciding which candidate is real jargon is judgement, and the only way to
+// Deciding which candidate is real jargon is judgment, and the only way to
 // make this blocking would be an allowlist of every acceptable phrase — the
 // hand-maintained shape item 58's F10 finding was filed against. So it reports,
 // and a human or a run reads it. It exits non-zero for exactly one reason: its

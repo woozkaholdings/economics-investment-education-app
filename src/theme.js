@@ -12,7 +12,7 @@
 //   3. SPACE, NOT BORDERS. Separation comes from whitespace and one hairline,
 //      not from boxing every paragraph in a colored card.
 //
-// COLOUR lives in `index.css` as custom properties, not as hex literals here.
+// COLOR lives in `index.css` as custom properties, not as hex literals here.
 // That is what lets the app follow the system light/dark setting and still be
 // overridden by an explicit user choice — a JS constant cannot do either
 // without re-rendering the tree. These exports are `var()` references, so a

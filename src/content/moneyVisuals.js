@@ -23,7 +23,7 @@
 //   7  Marginal Tax     — the prose already asks the reader to picture a stack.
 //   17 Lifestyle Infl.  — two gaps the prose can only assert are equal.
 //   23 Present Bias     — a reversal; prose cannot draw a crossing.
-//   27 Loss Aversion    — the asymmetry is the lesson, and prose labours at it.
+//   27 Loss Aversion    — the asymmetry is the lesson, and prose labors at it.
 //   44 Passive Income   — the lesson's own claim is that the picture has a
 //                         SECOND axis, and prose cannot hold two at once.
 // Anything else stays prose until it passes the same test.
@@ -498,7 +498,7 @@ export const gapDescription = {
 // sentences rather than against any quantity.
 //
 //   `detach` — how loosely the income is coupled to your hours. Lesson 43
-//   states this ordering exactly and completely: labour "is the only one of
+//   states this ordering exactly and completely: labor "is the only one of
 //   the four that reliably becomes zero when you stop", business "is partly
 //   coupled, in a ratio you can actually estimate", rent and royalties are
 //   "loosely coupled", and investment income is "barely coupled to your time
@@ -507,8 +507,8 @@ export const gapDescription = {
 //
 //   `upfront` — what it demands before it pays anything. Lesson 44 gives ONE
 //   exact claim and ONE tendency, and the numbers below encode exactly that
-//   much. The exact claim is about a single item: labour is "the only one of
-//   the four you can begin with nothing but yourself", which is why labour is
+//   much. The exact claim is about a single item: labor is "the only one of
+//   the four you can begin with nothing but yourself", which is why labor is
 //   0 and sits on the rail while the other three are lifted clear of it in one
 //   step. The tendency is "as income gets less coupled to your hours, it
 //   generally demands more of something else up front" — the word is
@@ -520,7 +520,7 @@ export const gapDescription = {
 //   requirements — that would be a different figure making a claim lesson 44
 //   deliberately does not make.
 export const incomeKinds = [
-  { key: "labour", detach: 0, upfront: 0 },
+  { key: "labor", detach: 0, upfront: 0 },
   { key: "business", detach: 1, upfront: 2 },
   { key: "passive", detach: 2, upfront: 3 },
   { key: "investment", detach: 3, upfront: 4 },
@@ -536,7 +536,7 @@ export const tradeTitle = {
 
 // The four names lesson 42 defines, in the order lesson 43 ranks them.
 export const tradeKindLabels = {
-  en: ["Labour income", "Business income", "Passive income", "Investment income"],
+  en: ["Labor income", "Business income", "Passive income", "Investment income"],
   es: ["Ingreso laboral", "Ingreso empresarial", "Ingreso pasivo", "Ingreso de inversión"],
   ko: ["노동소득", "사업소득", "수동소득", "투자소득"],
   zh: ["劳动收入", "经营收入", "被动收入", "投资收入"],
@@ -561,7 +561,7 @@ export const tradeUpfrontLabel = {
 };
 
 export const tradeCaption = {
-  en: "Read the bottom line on its own and the four look like rungs — which is the ladder people reach for. The height is what each step to the right asks for first: years of saved wages, a deposit and a mortgage, a stretch of unpaid work with no guarantee. Only labour income sits on the line, because it is the one you can start with nothing but yourself. Positions show the order the lessons state, not measured amounts, and neither end of the line is the smart one to be at.",
+  en: "Read the bottom line on its own and the four look like rungs — which is the ladder people reach for. The height is what each step to the right asks for first: years of saved wages, a deposit and a mortgage, a stretch of unpaid work with no guarantee. Only labor income sits on the line, because it is the one you can start with nothing but yourself. Positions show the order the lessons state, not measured amounts, and neither end of the line is the smart one to be at.",
   es: "Lee solo la línea inferior y los cuatro parecen peldaños: esa es la escalera a la que la gente recurre. La altura es lo que pide primero cada paso hacia la derecha: años de sueldo ahorrado, una entrada y una hipoteca, una temporada de trabajo sin cobrar y sin garantías. Solo el ingreso laboral se apoya en la línea, porque es el único que puedes empezar sin más que tú mismo. Las posiciones muestran el orden que enuncian las lecciones, no cantidades medidas, y ningún extremo de la línea es el lugar inteligente donde estar.",
   ko: "아래 선만 따로 읽으면 넷은 사다리의 가로대처럼 보입니다 — 사람들이 흔히 떠올리는 그 사다리입니다. 높이는 오른쪽으로 한 칸 갈 때마다 먼저 요구되는 것입니다. 몇 년치 모은 임금, 보증금과 대출, 아무 보장 없이 일해야 하는 기간 같은 것들이죠. 선 위에 놓인 것은 노동소득뿐인데, 오직 자기 자신만 가지고 시작할 수 있는 유일한 것이기 때문입니다. 위치는 수업이 말한 순서를 나타낼 뿐 측정된 양이 아니며, 선의 어느 쪽 끝도 더 똑똑한 자리가 아닙니다.",
   zh: "单看底下那条线，这四种就像梯子的四级横档——这正是人们习惯想到的那架梯子。高度是每向右一步，它先要你付出的东西：攒了好几年的工资、一笔首付和一笔房贷、一段没有任何保证的无薪投入。只有劳动收入落在线上，因为它是唯一一种仅凭你自己就能开始的收入。这些位置表示的是课程讲到的先后次序，不是量出来的数值；而且这条线的两端，没有哪一端是更聪明的位置。",
@@ -569,7 +569,7 @@ export const tradeCaption = {
 };
 
 export const tradeDescription = {
-  en: "A plot with four dots. Left to right they are labour income, business income, passive income and investment income — the order in which the lessons rank how tightly each is tied to your hours. A horizontal line runs along the bottom. The labour income dot sits directly on that line; the other three are lifted above it by dashed stems that get taller from left to right, showing what each asks for before it pays anything. Height marks rank, not an amount, and the axis carries no scale.",
+  en: "A plot with four dots. Left to right they are labor income, business income, passive income and investment income — the order in which the lessons rank how tightly each is tied to your hours. A horizontal line runs along the bottom. The labor income dot sits directly on that line; the other three are lifted above it by dashed stems that get taller from left to right, showing what each asks for before it pays anything. Height marks rank, not an amount, and the axis carries no scale.",
   es: "Un gráfico con cuatro puntos. De izquierda a derecha son ingreso laboral, ingreso empresarial, ingreso pasivo e ingreso de inversión: el orden en que las lecciones clasifican lo atados que están a tus horas. Una línea horizontal recorre la base. El punto del ingreso laboral se apoya justo en esa línea; los otros tres se elevan sobre ella mediante tallos discontinuos cada vez más altos hacia la derecha, que muestran lo que cada uno pide antes de devolver nada. La altura marca un orden, no una cantidad, y el eje no lleva escala.",
   ko: "점 네 개가 찍힌 그림입니다. 왼쪽에서 오른쪽으로 노동소득, 사업소득, 수동소득, 투자소득이며, 각각이 당신의 근무 시간에 얼마나 단단히 묶여 있는지를 수업이 매긴 순서입니다. 아래쪽에는 수평선이 그어져 있습니다. 노동소득 점은 그 선 위에 바로 놓여 있고, 나머지 셋은 점선 줄기에 의해 선 위로 들려 있으며 그 줄기는 오른쪽으로 갈수록 길어져 각각이 돌려주기 전에 먼저 요구하는 것을 나타냅니다. 높이는 양이 아니라 순서를 나타내며, 축에는 눈금이 없습니다.",
   zh: "一幅有四个圆点的图。从左到右依次是劳动收入、经营收入、被动收入和投资收入，这是课程按照各自与你工时绑定紧密程度排出的次序。底部有一条水平线。劳动收入的点正好落在这条线上；另外三个由虚线支柱托起在线的上方，支柱自左向右越来越高，表示每一种在回报你之前先要你付出的东西。高度表示的是次序而非数量，这条轴上没有刻度。",

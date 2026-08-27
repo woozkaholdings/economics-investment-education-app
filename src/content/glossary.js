@@ -21,7 +21,7 @@
 // higher deductible to save money" would be advice, and does not belong in
 // this file — see LAUNCH_PLAN.md §10.1 and scripts/check-blindspot.mjs, whose
 // header notes that it catches literal phrases only and that "this reads like
-// advice" stays a judgement call.
+// advice" stays a judgment call.
 //
 // Translation status: es/ko/zh/ja here are AI-written under the "(Beta)"
 // labeling decision (DECISIONS.md, "Machine-translated lesson content").
@@ -107,7 +107,7 @@ export const glossary = {
   // the app (10 lessons under §17b's matcher) and is used from lesson 30 —
   // position 2 in the path — five positions before lesson 35 defines it;
   // "savings account" reaches 7 lessons and no lesson defines it anywhere,
-  // while the neighbouring Brokerage Account both has a glossary entry and its
+  // while the neighboring Brokerage Account both has a glossary entry and its
   // own lesson. A third candidate, "retirement account", was measured and
   // REJECTED: lesson 6 defines it four positions after its first use, three of
   // its five hits are cross-references to that lesson's title (which §17b

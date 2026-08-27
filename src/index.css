@@ -1,8 +1,8 @@
 /* ═══════════════════════════════════════════════════════════════════════════
-   GLOBAL BASE + COLOUR SCHEMES
+   GLOBAL BASE + COLOR SCHEMES
 
    Every color in the app is a custom property declared here, and `theme.js`
-   exposes them to components as `var(--…)`. Colours live in CSS rather than JS
+   exposes them to components as `var(--…)`. Colors live in CSS rather than JS
    because the app must react to the *system* color scheme, which JS constants
    cannot do without re-rendering the whole tree on every change.
 
@@ -69,7 +69,7 @@
 
   /* Display family. The UIUX/ reference set's editorial voice (Vocabulary's
      serif screen titles) without a webfont: this is a system stack, so it adds
-     no network request, no CLS and no licence question. Body copy stays sans —
+     no network request, no CLS and no license question. Body copy stays sans —
      the contrast between the two IS the effect. */
   --font-display: ui-serif, Georgia, "Iowan Old Style", "Times New Roman", serif;
 

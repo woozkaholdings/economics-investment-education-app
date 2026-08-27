@@ -40,7 +40,7 @@
  * ── WHY THE ASSERTION IS THE POINT ────────────────────────────────────────────────────────────
  * A recipe whose click silently misses does not error. It sweeps whatever screen it is actually
  * on, finds it clean, and reports a zero — the exact lying-zero shape a11y-sweep.js's header
- * catalogues, wearing a new costume. So no state here is allowed to report a sweep result unless
+ * catalogs, wearing a new costume. So no state here is allowed to report a sweep result unless
  * it can first prove, from the DOM, that it is where it claims to be. A state that cannot reports
  * status "MISSED" and its findings are `null`, never `[]`. `runAll()` counts MISSED separately
  * from clean, because "0 findings" and "never got there" must not look the same in a run log.
@@ -361,7 +361,7 @@
     // Answer-and-advance through the review runner. Bounded by a hard step cap rather than by
     // trust: a runner that stops advancing must end the loop, not spin.
     //
-    // The continue control is found STRUCTURALLY, not by its words. It is labelled "Next" for
+    // The continue control is found STRUCTURALLY, not by its words. It is labeled "Next" for
     // every question except the last, where it becomes "See Results" — and both of those are
     // English. In the runner the close control carries an aria-label and the four options carry
     // role="radio", so the sole plain button is the one to press, in any language (measured in
@@ -449,7 +449,7 @@
       .then(function () { return STEPS.menuItem(4); })
       .then(function () {
         var radio = document.querySelector('main [role="radio"][aria-label="' + pct + '%"]');
-        if (!radio) throw new Error("no font-scale control labelled " + pct + "% on Reference > About");
+        if (!radio) throw new Error("no font-scale control labeled " + pct + "% on Reference > About");
         radio.click();
         return settle().then(quiesce);
       })
@@ -529,7 +529,7 @@
   //
   // MEASURED 2026-08-26 by storageAudit (item 119), not reasoned: with one bookmark seeded, the
   // bookmarked row's aria-label becomes `"Inflation, Saved"` instead of `"Inflation"` and gains a
-  // bookmark icon (Glossary.jsx:115,130). The state's arrival assertion — "more than 10 labelled
+  // bookmark icon (Glossary.jsx:115,130). The state's arrival assertion — "more than 10 labeled
   // term rows" — is satisfied by BOTH variants, and the sweep reported `ok` over the bookmarked
   // one while naming the plain list. Same lying zero as item 118, one screen along.
   //
@@ -593,7 +593,7 @@
         is: function () { return h1IsLastLabel() && !!document.getElementById("sector-list"); } } },
 
     { name: "reference-kids", steps: [{ hash: "#/reference" }, { menuItem: 3 }],
-      arrived: { says: 'the age-band panel is present and labelled by the 5-8 band',
+      arrived: { says: 'the age-band panel is present and labeled by the 5-8 band',
         is: function () { var p = document.getElementById("age-band-panel");
           return !!p && p.getAttribute("aria-labelledby") === "age-band-5-8"; } } },
 
@@ -615,7 +615,7 @@
           return !!t && t.getAttribute("aria-selected") === "true" &&
                  !!p && p.getAttribute("aria-labelledby") === "age-band-13-17"; } } },
 
-    // The font-scale controls are labelled with NUMERALS ("90%", "130%"), which do not translate.
+    // The font-scale controls are labeled with NUMERALS ("90%", "130%"), which do not translate.
     { name: "reference-about", steps: [{ hash: "#/reference" }, { menuItem: 4 }],
       arrived: { says: "the <h1> matches its menu row AND the font-scale radios are present",
         is: function () { return h1IsLastLabel() &&
@@ -764,7 +764,7 @@
     // review yet" (review absent), "You're all caught up" (seen, none due), "1 ready to review"
     // + Start Quiz (due) — and its arrival assertion (`#how-review-title` exists) is satisfied by
     // ALL THREE. Each reported `status: "ok", findings: 0`. That is the same lying zero this
-    // file's header catalogues: not "the sweep missed the screen" but "the sweep found a screen
+    // file's header catalogs: not "the sweep missed the screen" but "the sweep found a screen
     // and the report named a different one".
     //
     // This is also the mechanism that hid item 117a for four weeks. The one prior live check of
@@ -1153,7 +1153,7 @@
       };
       // The AXIS control (item 112). A language switch that fails silently is the worst lying
       // zero available here — every state afterwards reports clean, in the previous language,
-      // labelled as the requested one. This proves setLang() refuses rather than returns.
+      // labeled as the requested one. This proves setLang() refuses rather than returns.
       //
       // It works by detaching the <select> and restoring it, NOT by asking for a bogus language.
       // Asking for one was tried first and is a bad control: a native <select> rejects an unknown

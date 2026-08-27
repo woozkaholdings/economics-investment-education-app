@@ -111,7 +111,7 @@ export function resolveRoute(hash, lessons, isUnlocked) {
  * outcome §3.2 calls the app's most important thing to avoid — and they
  * demonstrably wanted a lesson, they clicked one. A working `#/practice` or
  * `#/reference` link still wins; this only catches the link that couldn't be
- * honoured.
+ * honored.
  */
 export function initialRoute(hash, lessons, isUnlocked, isFirstVisit) {
   const route = parseRoute(hash);

@@ -103,7 +103,7 @@ export const tiingo = {
 // Alternative free tier with EOD history. Free key:
 // https://twelvedata.com/pricing  (the free plan is enough — 12 calls/day)
 // NOTE: returns newest-first, so the series is reversed to match the
-// oldest-first contract every other adapter honours.
+// oldest-first contract every other adapter honors.
 export const twelveData = {
   name: "twelvedata",
   needsKey: true,

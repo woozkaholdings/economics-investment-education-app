@@ -22,7 +22,7 @@
 //     rather than mimicked — a lock badge over free content would be a lie.
 //   • Its search pill floats over the grid, searching every topic. Search here
 //     belongs to the glossary (Glossary.jsx owns it) and searching a five-item
-//     menu would be theatre, so the pill is not carried over.
+//     menu would be theater, so the pill is not carried over.
 //
 // A11y note: the old strip was a real `role="tablist"`/`tabpanel` pair. A hub
 // that pushes a detail view is not a tab set, so that wiring is gone rather
