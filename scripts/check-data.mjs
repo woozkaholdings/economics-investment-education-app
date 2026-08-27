@@ -6604,5 +6604,209 @@ if (keyedGroupsChecked < 4) {
   }
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// 54. src/content/moneyVisuals.js — lesson 44's income trade-off plot (backlog
+//     item 27, added 2026-08-27). Like §21, §50 and §53 this checks the CLAIM
+//     THE DIAGRAM MAKES. What is different here, and what shapes every
+//     assertion below, is that this figure plots RANKS rather than quantities.
+//
+//     WHY THAT NEEDS ITS OWN SECTION. Every other figure in this app is drawn
+//     from numbers its lesson states, so §53's question — "is this number in
+//     the body?" — is answerable. Lesson 44 states no numbers at all. It states
+//     an ORDER ("Labour income is the most tightly coupled ... Investment
+//     income is barely coupled to your time at all"), a TENDENCY ("as income
+//     gets less coupled to your hours, it generally demands more of something
+//     else up front"), and exactly one absolute claim about one item ("the only
+//     one of the four you can begin with nothing but yourself"). The figure is
+//     allowed to draw precisely those three things and nothing more.
+//
+//     SO THE FAILURE THIS SECTION EXISTS TO CATCH IS A WELL-MEANING ONE: a
+//     future run sourcing real capital requirements and "improving" the
+//     vertical axis into a measured one. That would render beautifully and
+//     would be a different figure, making a claim lesson 44 explicitly declines
+//     to make — the lesson's own conclusion is "Neither column is the smart
+//     one." (d) is what keeps the axis ordinal, and (f)/(g) are what keep the
+//     order tied to the sentences it was read off.
+{
+  const mv = moneyVisualsContent;
+  const need = [
+    "incomeKinds", "tradeTitle", "tradeKindLabels", "tradeEndLabels",
+    "tradeUpfrontLabel", "tradeCaption", "tradeDescription",
+  ];
+  const missing = need.filter((k) => mv[k] === undefined);
+  if (missing.length > 0) {
+    fail(`§54: src/content/moneyVisuals.js no longer exports ${missing.join(", ")}. This section is pointed at a structure that no longer exists — repoint it rather than leaving it green.`);
+  } else {
+    const kinds = mv.incomeKinds;
+    const EXPECTED_KEYS = ["labour", "business", "passive", "investment"];
+
+    // (a) Four items in the order lesson 43 ranks them. `LessonVisual.jsx`
+    //     hands this array to the plot positionally, so ARRAY ORDER IS THE
+    //     HORIZONTAL AXIS: reordering it here silently redraws the lesson's
+    //     ranking, and reordering it without also reordering `tradeKindLabels`
+    //     would put every label on the wrong dot.
+    if (!Array.isArray(kinds) || kinds.length !== EXPECTED_KEYS.length
+        || kinds.some((k, i) => k.key !== EXPECTED_KEYS[i])) {
+      fail(`§54: incomeKinds is [${(kinds ?? []).map((k) => k?.key).join(", ")}]; the figure is lesson 43's four categories in its stated coupling order [${EXPECTED_KEYS.join(", ")}]. The array's order is the plot's horizontal axis and the index into tradeKindLabels, so this is two claims at once.`);
+    } else {
+      // (b) `detach` must agree with array position. It is the same fact twice
+      //     on purpose — the array carries the order and `detach` names it —
+      //     so a partial edit that moves one and not the other is caught here
+      //     rather than rendering a plot that disagrees with its own data.
+      for (const [i, k] of kinds.entries()) {
+        if (k.detach !== i) {
+          fail(`§54: incomeKinds[${i}] ("${k.key}") has detach=${k.detach}. detach must equal the array index — it is the horizontal rank, and the plot reads position from the index, so a disagreement means one of the two is wrong and nothing on screen would say which.`);
+        }
+      }
+
+      // (c) THE ORDINAL AXIS. Three assertions, each tied to a sentence:
+      //       • labour is exactly 0 — lesson 44 says it is "the only one of the
+      //         four you can begin with nothing but yourself", and 0 is what
+      //         puts its dot ON the rail. Any positive value silently draws the
+      //         lesson's one absolute claim as false.
+      //       • every other item is strictly above it — the same sentence, in
+      //         its "only one" half.
+      //       • the sequence is NON-DECREASING, never asserted as strictly
+      //         increasing. The lesson's word is "generally", and it never ranks
+      //         a business against a rental against shares. A strict assertion
+      //         here would be this section enforcing a claim the lesson does not
+      //         make, which is the same defect as drawing it.
+      const labour = kinds[0];
+      if (labour.upfront !== 0) {
+        fail(`§54: incomeKinds[0] ("labour") has upfront=${labour.upfront}, not 0. Lesson 44's one absolute claim on this axis is that labour income is "the only one of the four you can begin with nothing but yourself"; 0 is what seats its dot on the rail, and any other value draws that sentence as false while the caption still asserts it.`);
+      }
+      for (const k of kinds.slice(1)) {
+        if (!(k.upfront > labour.upfront)) {
+          fail(`§54: "${k.key}" has upfront=${k.upfront}, not above labour's ${labour.upfront}. Lesson 44 says every one of the other three demands something first — capital, years, specialised skill, or a tolerance for it not working — so a dot level with labour on the rail contradicts the section it is drawn from.`);
+        }
+      }
+      for (let i = 1; i < kinds.length; i += 1) {
+        if (kinds[i].upfront < kinds[i - 1].upfront) {
+          fail(`§54: upfront falls from ${kinds[i - 1].upfront} ("${kinds[i - 1].key}") to ${kinds[i].upfront} ("${kinds[i].key}"). Lesson 44's tendency runs the other way — "as income gets less coupled to your hours, it generally demands more of something else up front" — and a dip draws the opposite of the sentence.`);
+        }
+      }
+
+      // (d) GEOMETRY, and it is the silent one. `TradeoffPlot` seats a dot of
+      //     radius 5 at `railY - (upfront / max) * plotH`. The figure's whole
+      //     left-hand claim is that labour's dot is ON the rail and the others
+      //     are OFF it — so if the smallest lift is under a dot diameter, the
+      //     second dot overlaps the rail and reads as sitting on it too. The
+      //     plot still renders, the caption still says "only labour income sits
+      //     on the line", and nothing fails.
+      const TRADE_PLOT_H = 150 - 26 - 30;  // TRADE_H − pad.top − pad.bottom
+      const TRADE_DOT_R = 5;
+      const maxUpfront = Math.max(...kinds.map((k) => k.upfront));
+      const smallestLift = (Math.min(...kinds.slice(1).map((k) => k.upfront)) / maxUpfront) * TRADE_PLOT_H;
+      if (smallestLift <= TRADE_DOT_R * 2) {
+        fail(`§54: the lowest lifted dot clears the rail by ${smallestLift.toFixed(1)} plot units, no more than one ${TRADE_DOT_R * 2}-unit dot diameter. It would touch or overlap the rail and read as sitting on it, which is exactly the distinction the figure exists to draw. Widen the gap between labour's 0 and the next value, or re-check TRADE_H/TRADE_PAD in charts.jsx if the plot box changed.`);
+      }
+
+      // (e) FIVE-LANGUAGE PROSE ANCHOR — the legend uses each language's own
+      //     word for each category, checked against lesson 42, which is where
+      //     all four names are defined ("Roughly, the four are these...").
+      //
+      //     THIS IS DELIBERATELY NOT en-ONLY, and that is the point of doing it
+      //     this way. Backlog item 127 filed the opposite shape as a residual:
+      //     §53 checks lesson 17's figures against the `en` body alone, so a
+      //     translated numeral could drift unseen. Here the check runs per
+      //     language against that language's own body, so a translation that
+      //     renames a category is caught in the language it happened in. It
+      //     also sidesteps item 127's instrument trap entirely — these are
+      //     words, not numerals, so no CJK myriad-grouping normalizer is
+      //     needed. It cost two real corrections on the way in: `es` and `zh`
+      //     labels were first written as plausible translations rather than
+      //     the lessons' own terms ("ingresos del trabajo" for the prose's
+      //     "ingreso laboral", "事业收入" for "经营收入") and this check is
+      //     what found them.
+      //
+      //     CONTROL, per language and both directions: a body that failed to
+      //     load returns "not found" for all four labels, which is
+      //     indistinguishable from four renamed categories.
+      const CONTROL_ABSENT = "qzx-no-lesson-says-this";
+      for (const lang of LANGS) {
+        const body42 = (lessonContent["42"]?.sections ?? []).map((s) => s.body?.[lang] ?? "").join("\n").toLowerCase();
+        if (body42.trim().length === 0 || body42.includes(CONTROL_ABSENT)) {
+          fail(`§54: the lesson-42 body scan failed its control in "${lang}" — ${body42.trim().length === 0 ? "the body is empty" : "an absent probe was found"}. It is reading the wrong text or no text, so a clean result for this language would mean nothing.`);
+          continue;
+        }
+        const labels = mv.tradeKindLabels[lang] ?? [];
+        for (const [i, label] of labels.entries()) {
+          if (!body42.includes(String(label).toLowerCase())) {
+            fail(`§54: the legend calls incomeKinds[${i}] "${label}" in "${lang}", but lesson 42 — the lesson that defines all four names — never uses that term in that language. The figure would label a dot with a word its own lesson does not use. Take the label from the lesson's prose rather than translating the English label.`);
+          }
+        }
+      }
+
+      // (f) THE ORDERING SENTENCE, in `en` only and openly so. Lesson 43 states
+      //     the full four-way rank in four clauses; this asserts they are all
+      //     present AND still in that relative order, because the order is the
+      //     figure's horizontal axis. There is no five-language version of this
+      //     one: the translations render the rank in their own syntax (`es` and
+      //     `zh` do not even use the legend's noun for every category in lesson
+      //     43 — it says "rent and royalties" there, not "passive income"),
+      //     so a clause match would report a confident failure about grammar.
+      //     (e) is what covers the other four languages.
+      const body43en = (lessonContent["43"]?.sections ?? []).map((s) => s.body?.en ?? "").join("\n");
+      const RANK_CLAUSES = [
+        "Labour income is the most tightly coupled",
+        "Business income is partly coupled",
+        "Rent and royalties are loosely coupled",
+        "Investment income is barely coupled",
+      ];
+      const at = RANK_CLAUSES.map((c) => body43en.indexOf(c));
+      if (at.some((i) => i < 0)) {
+        fail(`§54: lesson 43's en body no longer contains ${RANK_CLAUSES.filter((_, i) => at[i] < 0).map((c) => `"${c}"`).join(" and ")}. That sentence IS the figure's horizontal axis — incomeKinds' order was read off it. If the lesson was reworded, re-read the new ranking and re-derive the order rather than repointing this string.`);
+      } else if (at.some((v, i) => i > 0 && v < at[i - 1])) {
+        fail(`§54: lesson 43's en body states the four coupling ranks in a different order than incomeKinds draws them (found at ${at.join(", ")}). The plot's left-to-right order would contradict the lesson it sits two screens after.`);
+      }
+
+      // (g) THE TWO SENTENCES THE FIGURE IS AN ANSWER TO. The tendency and the
+      //     ladder/trade conclusion are the reason this diagram exists at all
+      //     (see charts.jsx's TradeoffPlot header). If either leaves lesson 44,
+      //     the figure is answering a question the lesson stopped asking.
+      const body44en = (lessonContent["44"]?.sections ?? []).map((s) => s.body?.en ?? "").join("\n");
+      const CLAIMS_44 = [
+        ["the second axis", "second axis running the other way"],
+        ["the tendency", "generally demands more of something else up front"],
+        ["labour's uniqueness", "the only one of the four you can begin with nothing but yourself"],
+        ["the conclusion", "stops being a ladder and becomes a set of trades"],
+      ];
+      for (const [what, phrase] of CLAIMS_44) {
+        if (!body44en.includes(phrase)) {
+          fail(`§54: lesson 44's en body no longer says "${phrase}" (${what}). The figure draws exactly that claim and its caption restates it; if the lesson moved, the figure has to move with it or come out.`);
+        }
+      }
+
+      // (h) Five-language parity for everything the figure renders, including
+      //     the text alternative — the plot is a single `role="img"`, so
+      //     `tradeDescription` is all a screen-reader user gets of it (§22).
+      for (const key of ["tradeTitle", "tradeUpfrontLabel", "tradeCaption", "tradeDescription"]) {
+        for (const lang of LANGS) {
+          if (!String(mv[key][lang] ?? "").trim()) {
+            fail(`§54: ${key}.${lang} is missing or empty. Every one of these renders on screen in that language, and tradeDescription is the figure's only text alternative.`);
+          }
+        }
+      }
+      for (const [key, len] of [["tradeKindLabels", 4], ["tradeEndLabels", 2]]) {
+        for (const lang of LANGS) {
+          const v = mv[key][lang];
+          if (!Array.isArray(v) || v.length !== len || v.some((x) => !String(x ?? "").trim())) {
+            fail(`§54: ${key}.${lang} must be ${len} non-empty strings; got ${Array.isArray(v) ? `${v.length} entries` : typeof v}. The plot indexes it positionally against incomeKinds, so a short array renders an unlabeled dot rather than throwing.`);
+          }
+        }
+      }
+
+      if (failures === 0) {
+        console.log(
+          `  §54 lesson 44's income trade-off holds: 4 categories in lesson 43's stated coupling order, ` +
+            `upfront ranks ${kinds.map((k) => k.upfront).join("/")} (labour alone on the rail, non-decreasing, no scale drawn), ` +
+            `smallest lift ${smallestLift.toFixed(1)}u against a ${TRADE_DOT_R * 2}u dot; all 4 legend terms found in lesson 42's own body ` +
+            `in all ${LANGS.length} languages (control both directions per language), 4 rank clauses in order in lesson 43 and 4 claims present in lesson 44.`,
+        );
+      }
+    }
+  }
+}
+
 console.log(`\n${failures === 0 ? "PASS" : "FAIL"}: ${failures} failure(s), ${warnings} warning(s).`);
 process.exit(failures === 0 ? 0 : 1);

@@ -13,7 +13,7 @@
 // (look something up again later), which is not the duplication §3.1 removed.
 // ═══════════════════════════════════════════════════════════════════════════
 
-import { AsymmetryChart, Bar, BracketStack, CycleChart, GapColumns, GrowthCurve, PreferenceFlip, ProportionBar, YieldCurve } from "./charts.jsx";
+import { AsymmetryChart, Bar, BracketStack, CycleChart, GapColumns, GrowthCurve, PreferenceFlip, ProportionBar, TradeoffPlot, YieldCurve } from "./charts.jsx";
 import { Text } from "./ui.jsx";
 import {
   balanceSheetCaption, balanceSheetDescription, balanceSheetHistory,
@@ -28,7 +28,9 @@ import {
   flipSeries, flipSeriesLabels, flipTitle, flipZoneLabels,
   gapAxisLabel, gapCaption, gapDescription, gapEarners, gapOf, gapRuleLabel, gapSegmentLabels,
   gapTitle,
+  incomeKinds,
   lossAxisLabel, lossCaption, lossDescription, lossFelt, lossLabels, lossTitle,
+  tradeCaption, tradeDescription, tradeEndLabels, tradeKindLabels, tradeTitle, tradeUpfrontLabel,
 } from "../content/moneyVisuals.js";
 import { graph, ink, space, surface } from "../theme.js";
 
@@ -45,10 +47,10 @@ import { graph, ink, space, surface } from "../theme.js";
 // essentials split re-tracked 1-15, so of the five personal-finance ids below
 // 1/3/7 are `essentials` and 23/27 are `money`.
 //
-// Re-measured 2026-08-27 with the same parser control after lesson 17 was
-// added: coverage is economy 5/12, essentials 3/15, money 3/17. Lesson 17 is
-// the sixth personal-finance figure and the third on the `money` track — the
-// track LAUNCH_PLAN.md §0 has called the product since the 2026-08-18
+// Re-measured 2026-08-27 with the same parser control after lesson 44 was
+// added: coverage is economy 5/12, essentials 3/15, money 4/17. Lesson 44 is
+// the seventh personal-finance figure and the fourth on the `money` track —
+// the track LAUNCH_PLAN.md §0 has called the product since the 2026-08-18
 // reversal, which had a single diagram across seventeen lessons until 23.
 // Do not quote a coverage count from backlog item 27; re-run the parse.
 export const LESSON_VISUALS = {
@@ -59,6 +61,7 @@ export const LESSON_VISUALS = {
   17: "earningsGap",   // Where Did the Raise Go?
   23: "preferenceFlip",// Why 'Later' Never Feels as Real as 'Now'
   27: "lossAsymmetry", // Why Does Losing $50 Hurt More Than Finding $50 Feels Good?
+  44: "incomeTradeoff",// The Part the Word "Passive" Leaves Out
   // economy
   32: "cycle",         // The Short-Term Debt Cycle
   33: "cycle",         // The Long-Term Debt Cycle
@@ -73,7 +76,7 @@ const CURVE_TYPES = ["normal", "flat", "inverted", "steep"];
 // below. The constant keeps its MONEY_VISUALS name (it is referenced further
 // down and in §21's checks); the set spans `essentials` and `money` since the
 // 2026-08-19 split, so the name is a label, not a track claim.
-const MONEY_VISUALS = new Set(["budgetSplit", "compounding", "taxBrackets", "earningsGap", "preferenceFlip", "lossAsymmetry"]);
+const MONEY_VISUALS = new Set(["budgetSplit", "compounding", "taxBrackets", "earningsGap", "preferenceFlip", "lossAsymmetry", "incomeTradeoff"]);
 
 // Figures are US dollars in every language — the lessons' own worked examples
 // are written that way, and converting them per locale would make the chart
@@ -211,6 +214,24 @@ export default function LessonVisual({ lessonId, t, lang }) {
           formatValue={usd}
           description={gapDescription[lang]}
           caption={gapCaption[lang]}
+        />
+      )}
+
+      {/*
+        The only figure here whose dots are ORDINAL. `incomeKinds` carries the
+        ranks and the two prose sentences they come from; the plot is handed
+        them in array order, so the horizontal ordering is the data's own and
+        cannot drift away from `moneyVisuals.js` by an edit here.
+      */}
+      {kind === "incomeTradeoff" && (
+        <TradeoffPlot
+          title={tradeTitle[lang]}
+          points={incomeKinds.map((k, i) => ({ key: k.key, label: tradeKindLabels[lang][i], upfront: k.upfront }))}
+          endLabels={tradeEndLabels[lang]}
+          upfrontLabel={tradeUpfrontLabel[lang]}
+          colors={{ rail: graph.neutral, dot: graph.blue }}
+          description={tradeDescription[lang]}
+          caption={tradeCaption[lang]}
         />
       )}
 

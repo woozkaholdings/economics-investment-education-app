@@ -528,6 +528,126 @@ export function GapColumns({ title, columns, segmentLabels, ruleLabel, axisLabel
   );
 }
 
+// ── TradeoffPlot ──────────────────────────────────────────────────────────
+// Four kinds of income on TWO axes, for lesson 44 ("The Part the Word
+// 'Passive' Leaves Out"). This is the only figure in the file whose subject is
+// the *dimensionality* of a claim rather than a quantity, and that is exactly
+// why it is drawn: the lesson's own closing sentence is "Hold both halves at
+// once and the picture stops being a ladder and becomes a set of trades", and
+// prose physically cannot hold two halves at once. It gives the first axis in
+// lesson 43 ("That's the real axis"), the second one lesson later ("the honest
+// version of the spectrum has a second axis running the other way"), and then
+// asks the reader to superimpose them from memory. One plot is the
+// superposition. A ladder is one-dimensional; a trade is not, and the whole
+// difference between them is a picture.
+//
+// ⚠️ BOTH AXES ARE ORDINAL — ranks read off the lessons' prose, never measured
+// magnitudes. This is the point on which the figure could most easily start
+// lying, so it is spelled out in three places (here, `moneyVisuals.js`'s
+// `incomeKinds`, and the visible caption) and asserted by `check-data.mjs` §54:
+//   • The horizontal order is stated exactly, and completely, by lesson 43:
+//     labour most tightly coupled to your hours, then business, then rent and
+//     royalties, then investment "barely coupled to your time at all".
+//   • The vertical order is stated by lesson 44 as a TENDENCY — "as income gets
+//     less coupled to your hours, it generally demands more of something else
+//     up front" — plus one exact claim about a single item, that labour is
+//     "the only one of the four you can begin with nothing but yourself".
+//     So labour's dot sits ON the rail and the other three are lifted off it;
+//     the rise across those three is the lesson's word "generally" and NOT a
+//     ranking of business against rent against shares, which the lesson
+//     declines to give. No tick, gridline or number appears on that axis,
+//     because any of them would promise a precision the prose does not have.
+//
+// The stems are load-bearing rather than decorative. The rail alone is the
+// ladder people already reach for; each stem is what that rung costs before it
+// pays anything, so the figure shows the ladder AND the reason it is not one,
+// in the same marks.
+//
+// One color for all four dots, deliberately. The lesson's own conclusion is
+// "Neither column is the smart one", and `graph.green`/`graph.red` would
+// editorialise a lesson whose entire argument is a refusal to rank — a §10.1
+// problem drawn rather than written. `graph.neutral` for the rail and stems
+// for the reason `AsymmetryChart`'s comment sets out: they are reference
+// geometry the dots are read against, so they owe 3:1 under WCAG 1.4.11, and
+// no `--line-*` token clears that on any surface in either palette (§28b/§51).
+const TRADE_W = 300;
+const TRADE_H = 150;
+const TRADE_PAD = { left: 20, right: 20, top: 26, bottom: 30 };
+
+export function TradeoffPlot({ title, points, endLabels, upfrontLabel, colors, description, caption }) {
+  const maxUpfront = Math.max(...points.map((p) => p.upfront));
+  const plotW = TRADE_W - TRADE_PAD.left - TRADE_PAD.right;
+  const plotH = TRADE_H - TRADE_PAD.top - TRADE_PAD.bottom;
+  const railY = TRADE_PAD.top + plotH;
+  const px = (i) => TRADE_PAD.left + (i / (points.length - 1)) * plotW;
+  const py = (u) => railY - (u / maxUpfront) * plotH;
+
+  return (
+    <figure style={{ background: surface.card, border: `1px solid ${line.hairline}`, borderRadius: radius.lg, padding: space["4"], margin: 0 }}>
+      {title && (
+        <figcaption style={{ marginBottom: space["3"] }}>
+          <Text as="span" variant="caption" color={ink.muted} style={{ textTransform: "uppercase", letterSpacing: "0.05em", fontWeight: 700 }}>
+            {title}
+          </Text>
+        </figcaption>
+      )}
+      <svg viewBox={`0 0 ${TRADE_W} ${TRADE_H}`} style={{ width: "100%", height: 160 }} role="img" aria-label={description}>
+        {/* The ladder: the one axis the lesson says people already read. */}
+        <line x1={TRADE_PAD.left} y1={railY} x2={TRADE_W - TRADE_PAD.right} y2={railY} stroke={colors.rail} strokeWidth="1" />
+        {points.map((p, i) => (
+          <line key={`stem-${p.key}`} x1={px(i)} y1={railY} x2={px(i)} y2={py(p.upfront)} stroke={colors.rail} strokeWidth="1" strokeDasharray="2 2" />
+        ))}
+        {points.map((p, i) => (
+          <circle key={`dot-${p.key}`} cx={px(i)} cy={py(p.upfront)} r="5" fill={colors.dot} />
+        ))}
+        {/*
+          The index sits BESIDE each dot, never inside it. `graph.blue` is a
+          3:1 graphics token and theme.js says of the whole group "Never text",
+          so a numeral printed on a dot would be the one place in this file
+          where label contrast is decided by a token that was never measured
+          for it. Beside the dot it is `ink.muted`, which §28 holds at 4.5:1.
+        */}
+        {points.map((p, i) => (
+          <text key={`n-${p.key}`} x={px(i)} y={py(p.upfront) - 9} textAnchor="middle" fill={ink.muted} fontSize="10" fontWeight="700">
+            {i + 1}
+          </text>
+        ))}
+      </svg>
+      {/*
+        The two ends of the horizontal axis are the lessons' own words for it
+        ("it is the only one of the four that reliably becomes zero when you
+        stop" / "Ben's dividend doesn't notice"), and they live in HTML rather
+        than in the SVG because they are the longest strings in the figure:
+        at `fontSize="9"` the Spanish pair overruns 300 units and would be
+        clipped, while here they wrap and scale with the text-size control.
+      */}
+      <div style={{ display: "flex", gap: space["3"], marginTop: space["1"] }}>
+        <Text as="span" variant="caption" color={ink.muted} style={{ flex: 1 }}>{endLabels[0]}</Text>
+        <Text as="span" variant="caption" color={ink.muted} style={{ flex: 1, textAlign: "right" }}>{endLabels[1]}</Text>
+      </div>
+      <Text variant="caption" color={ink.muted} style={{ marginTop: space["2"], textAlign: "center" }}>{upfrontLabel}</Text>
+      {/*
+        An <ol>, not the <ul> the other legends use: the order IS the
+        horizontal axis, so it is content rather than presentation. `role="list"`
+        is not redundant here — WebKit drops list semantics from any list styled
+        `listStyle: none`, which is backlog item 34 and is checked by §24. The
+        index is `aria-hidden` because it is a visual key to dots that live
+        inside a `role="img"`, so nothing announces it on the plot side; the
+        list's own position announcement carries the order instead.
+      */}
+      <ol role="list" style={{ margin: `${space["3"]}px 0 0`, padding: 0, listStyle: "none", display: "grid", gap: space["1"] }}>
+        {points.map((p, i) => (
+          <li key={p.key} style={{ display: "flex", alignItems: "baseline", gap: space["2"] }}>
+            <Text as="span" aria-hidden="true" variant="caption" color={ink.muted} style={{ fontWeight: 700, minWidth: "1.2em" }}>{i + 1}</Text>
+            <Text as="span" variant="caption" color={ink.strong} style={{ fontWeight: 700 }}>{p.label}</Text>
+          </li>
+        ))}
+      </ol>
+      {caption && <Text variant="caption" color={ink.muted} style={{ marginTop: space["3"], lineHeight: 1.5 }}>{caption}</Text>}
+    </figure>
+  );
+}
+
 // ── CycleChart ────────────────────────────────────────────────────────────
 const PHASE_DOT = [graph.green, graph.amber, graph.red, graph.blue];
 const PHASE_INK = [ink.ok, ink.warn, ink.bad, ink.accent];

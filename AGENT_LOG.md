@@ -841,9 +841,37 @@ for the history. No open P1/P2 items.
       cost a real detour here before the raw text was read. Any check written for this item needs a
       per-language numeral normalizer **and a control per language**, or it will report a confident
       clean over three scripts it cannot read.
+    - **✅ A WORKED PRECEDENT NOW EXISTS — read it before writing anything (added 2026-08-27).**
+      `check-data.mjs` **§54(e)** does per-language prose anchoring for lesson 44's figure: for each
+      language it checks that language's legend term against that language's own lesson 42 body, with
+      a two-directional control per language. **It found two real defects on the way in** (`es` and
+      `zh` labels written as plausible translations rather than the lessons' own terms), which is the
+      evidence that the shape works. **It also sidesteps this item's instrument trap entirely by
+      matching WORDS rather than NUMERALS** — no myriad-grouping normalizer is needed. §53's residual
+      is genuinely harder because lesson 17's figures *are* numerals; the open question is whether a
+      per-language numeral normalizer is worth building, or whether §53 should instead anchor on the
+      *labels* the way §54 does and leave numerals to `en`. **Decide that before coding.**
     - **Honest priority: low.** It generalizes past lesson 17 — the same blind spot applies to §21's
       and §50's figure-vs-prose checks — which is an argument for doing it once, properly, rather than
       urgently. Downstream of O-1 like everything else.
+
+128. **[Content/Style — filed 2026-08-27 by the run that added lesson 44's figure (item 27), as its
+    stated residual rather than smuggled into the same commit.] The `en` lesson content is
+    internally inconsistent about British vs. US spelling, and item 91's house style says US.**
+    - **Measured:** `lessonContent.money.en.js` writes **"Labour income"** (8 occurrences, including
+      the term lesson 42 *defines*), while `lessonContent.economy.en.js` has **"labor"**. Both ship.
+    - **Why the figure did NOT fix it, and why that was right.** `check-data.mjs` §54(e) requires the
+      legend to use the lesson's own term, so changing the label alone would make the figure use a
+      word its lesson does not — the check would fail, correctly. The fix has to be the *content*,
+      in `en` and in nothing else, and it is a content-wide pass rather than a figure's business.
+    - **What makes this more than a spelling nit:** "labour income" is a defined term in this track,
+      introduced in lesson 42 and reused in 43 and 44. Renaming it touches the lesson bodies, the
+      figure's five `tradeKindLabels`, and §54's own control surface — **all three in one commit, or
+      the check will catch the half that moved.** Re-run §54 as the proof.
+    - **Do not touch the other four languages**, which have no stake in this, and do not touch
+      quotations or dated records (item 91's own exception).
+    - **Honest priority: low.** Nothing is broken and nobody has read either spelling. Downstream of
+      O-1 like everything else.
 
 126. **[Docs/Integrity — filed 2026-08-27 by the run that closed item 125, as its stated residual
     rather than smuggled into the same commit.] §52 only sees a hex that shares a line with the
@@ -1459,7 +1487,32 @@ for the history. No open P1/P2 items.
     > section: \$50,000 earned against \$45,000 spent is a gap of \$5,000, and \$120,000 against
     > \$115,000 is also \$5,000. Six verbatim numbers carrying the lesson's own flagged counterintuitive
     > result. That is what shipped, and §53 asserts all six against the lesson's own body text.
-    > **THE BAR FOR A SEVENTH IS UNCHANGED AND STILL BINDS**, and there is now **no named candidate** —
+    > **Seventh visual added 2026-08-27: lesson 44 (what "passive" leaves out), as `TradeoffPlot`.**
+    > Money is **4/17**; economy 5/12 and essentials 3/15 are unchanged. Re-measured with the same
+    > parser control — do not quote a coverage count from this item, re-run the parse.
+    > **It cleared the bar on the lesson's own closing sentence**: *"Hold both halves at once and the
+    > picture stops being a ladder and becomes a set of trades."* Lesson 43 states one axis, lesson 44
+    > states "a second axis running the other way", and prose is sequential — it delivers them a
+    > lesson apart and asks the reader to superimpose them from memory. **A ladder is
+    > one-dimensional and a trade is not, and that difference is a shape.** First figure here whose
+    > subject is the *dimensionality* of a claim rather than a quantity. Guarded by `check-data.mjs`
+    > §54, which asserts sentences rather than values — including, per language, that each legend term
+    > is the one that language's own lesson 42 uses.
+    > **⚠️ BOTH ITS AXES ARE ORDINAL and must stay that way.** Lesson 44 states no numbers: an order,
+    > a *tendency* ("generally demands more of something else up front"), and one absolute claim about
+    > one item. No tick or number is drawn on the vertical axis. **A future run must not "improve"
+    > this by sourcing real capital requirements** — it would render beautifully and would make a
+    > claim the lesson explicitly declines to make ("Neither column is the smart one").
+    > **⛔ THE TEST THAT REFUTED THE OTHER STRONG CANDIDATE, and it generalizes lesson 17's
+    > correction into a rule.** Lesson 16 (asset vs. liability) looked ideal — its own stated test is
+    > "which direction the money flows after you buy", and direction-over-time is undrawable in prose.
+    > But it quantifies **only Maya's side** (\$300/month, \$10,800 over three years) while Dan's
+    > tools "paid for themselves in the first few months", with no rate and no horizon. Two diverging
+    > lines would have had to invent Dan's slope. **The rule, now first in line for any candidate:
+    > does the prose state every quantity the shape needs, or only the ones that make it sound
+    > plausible?**
+    > **THE BAR FOR AN EIGHTH IS UNCHANGED AND STILL BINDS**, and there is again **no named
+    > candidate** —
     > deliberately, because a named candidate is how this item became count-shaped twice before. A run
     > that wants one must read a lesson's prose first and name what the prose cannot do, the way this
     > run did. **Do not pick a lesson because a diagram is "plausible" there.**
@@ -4110,3 +4163,165 @@ re-checked before writing this entry and unmoved at `20f45e3`.
 - **Items 126, 124, 120, 117, 116** all remain low-priority and all are downstream of O-1.
 - **Unchanged and still the entire critical path, both owner-blocked: O-1** (a deployed URL) and
   **O-2** (item 18, an analytics account). Nobody has opened this app.
+
+### 2026-08-27 (scheduled dev-agent) — lesson 44 states that its own picture has a second axis, and prose cannot hold two axes at once (item 27)
+
+**Picked item 27**, the seventh personal-finance visual and the fourth on the `money` track. W-5.2
+legal: item 27 is named on that block's pick list, and the last six picks (121, 122, 27, 123, 125, 27)
+contain no item 93, so the one-in-four reserve is not in deficit. The rest of the open backlog was
+re-read rather than assumed, per W-5.2's staleness warning: **116** is blocked on a harness that does
+not exist here, **101** is blocked on O-1, **26** is blocked on O-2's analytics, **94** is gated on
+O-1 by its own instruction, **117** is an owner judgment call, and **120/124/126/127** are all
+low-priority guards with zero known live instances — **120's own text says "do not pick this over
+content."** Owner tree at open: clean but for the untracked `UIUX/` and `drafts/`, neither touched.
+HEAD re-checked before writing this entry and unmoved at `a7fdf8c`.
+
+#### Step 3.5 — the coverage premise held; one candidate was refuted the way lesson 17 was
+
+- **✅ True as filed.** Re-parsed `LESSON_VISUALS` out of `LessonVisual.jsx` and joined it against
+  `lessons.js`'s `track`, with the parser control item 27 records (three ids it must find — 1, 27, 32
+  — and three it must not — 9, 40, 5; both halves PASS). Coverage was **economy 5/12, essentials
+  3/15, money 3/17**, matching the figures the previous run left. Now **money 4/17**.
+- **Item 27 left no named candidate, deliberately, so the money track's prose was read** — lessons
+  16, 18-22, 24-26, 28 and 41-44 end to end.
+- **⛔ ONE STRONG CANDIDATE REFUTED, and it failed for exactly the reason lesson 17's original framing
+  did.** Lesson 16 (asset vs. liability) looked ideal: its own stated test is *"which direction the
+  money flows after you buy"*, and direction-over-time is the thing prose cannot draw. But the lesson
+  quantifies **only Maya's side** — a \$300 monthly payment, \$10,800 over three years — while Dan's
+  tools "paid for themselves in the first few months and have been adding to his income ever since",
+  with **no rate and no horizon**. Drawing two diverging cumulative lines would have had to invent
+  Dan's slope, which is the same defect the previous run corrected on lesson 17. **The lesson-17
+  correction generalizes, and it is now the first test applied to any candidate: does the prose state
+  every quantity the shape needs, or only the ones that make it sound plausible?**
+- **The lesson that passed states its figure explicitly.** Lesson 43 gives one axis ("That's the real
+  axis"), lesson 44 gives the other ("the honest version of the spectrum has a **second axis running
+  the other way**"), and lesson 44 closes with *"Hold both halves at once and the picture stops being
+  a ladder and becomes a set of trades."* Prose is sequential and **physically cannot hold two axes at
+  once** — it delivers them one lesson apart and asks the reader to superimpose them from memory. A
+  ladder is one-dimensional and a trade is not, and that difference is a *shape*, which is the one
+  thing only a picture carries. This is the first figure in the app whose subject is the
+  **dimensionality** of a claim rather than a quantity.
+- **All five languages carry both halves, verified by READING the text, not sweeping it** — the
+  explicit precaution item 127 filed. ko *"반대 방향으로 흐르는 또 하나의 축"* / *"더 이상 사다리가
+  아니라 일련의 거래"*, zh *"第二条方向相反的轴线"* / *"不再是一架梯子，而变成了一组各不相同的取舍"*,
+  ja *"逆方向に走るもう一つの軸"* / *"もう梯子ではなく、一連のトレードオフ"*.
+
+#### What shipped
+
+- **`TradeoffPlot` in `charts.jsx`** (~70 lines). A rail with four dots: horizontal position is
+  lesson 43's coupling rank, height is what each demands up front. **Labour's dot sits ON the rail**
+  and the other three are lifted off it by dashed stems — that placement is the lesson's one absolute
+  claim on the vertical axis (*"the only one of the four you can begin with nothing but yourself"*),
+  not a styling choice. The stems are the load-bearing mark: the rail alone **is** the ladder people
+  already reach for, so the figure draws the ladder and the reason it is not one in the same strokes.
+- **⚠️ BOTH AXES ARE ORDINAL, and that is the constraint the whole design is built around.** Lesson 44
+  states no numbers at all. It states an order (lesson 43, complete and four-way), a **tendency**
+  ("*generally* demands more of something else up front"), and one absolute claim about one item. The
+  figure draws exactly those three things: **no tick, gridline or number appears on the vertical
+  axis**, because the lesson never ranks a business against a rental against shares and neither may
+  the picture. The risk here is not a wrong number, it is a *well-meant* one — a future run sourcing
+  real capital requirements would render beautifully and would make a claim lesson 44 explicitly
+  declines to make. That is written into `charts.jsx`, `moneyVisuals.js` and §54's header.
+- **One color for all four dots, deliberately — a §10.1 call made in the drawing rather than the
+  prose.** `graph.green`/`graph.red` would editorialize a lesson whose conclusion is *"Neither column
+  is the smart one"*; the caption says the same in words ("neither end of the line is the smart one to
+  be at"). `graph.neutral` for rail and stems, per `AsymmetryChart`'s rule: reference geometry the
+  data is read against owes 3:1, and no `--line-*` token clears it on any surface in either palette.
+- **`check-data.mjs` §54**, guarding the claim rather than the parse — eight assertions, each tied to
+  a sentence rather than to a value.
+
+#### The two corrections that came out of writing the guard
+
+- **The five-language prose anchor is real, and it caught two of my own strings.** §54(e) checks each
+  language's legend term against **that language's own lesson 42**, the lesson that defines all four
+  names. `es` and `zh` were first written as plausible translations of the English labels rather than
+  the lessons' own terms — *"Ingresos del trabajo"* where the Spanish prose says *"ingreso laboral"*,
+  *"事业收入"* where the Chinese says *"经营收入"*. Both were wrong in the language they were wrong in,
+  and **only a per-language check could have found them.** Fixed, along with the four caption and
+  description sentences that inherited the same terms.
+- **This is deliberately the shape item 127 asked for, one section early.** Item 127 filed §53's
+  `en`-only figure check as a residual. §54 does not fix §53, but it demonstrates the fix works and
+  **sidesteps 127's instrument trap entirely: these are words, not numerals, so no CJK
+  myriad-grouping normalizer is needed.** Item 127 is updated below to point at it as a worked
+  precedent rather than an idea.
+- **The ordering assertion is `en`-only and says so in its own comment.** Lesson 43 renders the rank
+  in each language's own syntax and does not even use the legend's noun for every category (`en`
+  says "Rent and royalties" there, not "Passive income"), so a clause match in five languages would
+  report confident failures about grammar. (e) is what covers the other four.
+
+#### Verification
+
+- **`npm test` 0 failures, 2 warnings** (the documented translation baseline, unchanged),
+  **`npm run build` clean**, `check-payload.mjs` and `check-blindspot.mjs` both green (7/7).
+- **§54 proved able to fail, nine ways.** Each injection asserts its anchor is unique, re-reads the
+  file to prove the edit landed, and both files were restored from scratchpad copies with **SHA-256
+  verified equal** — never `git checkout --`.
+
+  | # | Injection | Result |
+  |---|---|---|
+  | 1 | labour lifted off the rail (`upfront` 0 → 1) | **FAIL** — names the sentence the 0 encodes |
+  | 2 | array reordered, `tradeKindLabels` left alone | **FAIL** — names it as two claims at once |
+  | 3 | the tendency dips (passive 3 → 1) | **FAIL** — quotes the sentence running the other way |
+  | 4 | `es` label back to a plausible translation | **FAIL** — names the index AND the language |
+  | 5 | `zh` label back to a plausible translation | **FAIL** — same, in `zh` |
+  | 6 | `ja` end labels truncated to one | **FAIL** — a short array renders an unlabeled dot, not a throw |
+  | 7 | second dot within a dot-diameter of the rail | **FAIL** — 9.4u against a 10u dot |
+  | A | lesson-42 scan pointed at a lesson that does not exist | **CONTROL FIRES**, per language |
+  | B | the absent-probe set to a string that IS present | **CONTROL FIRES** — both halves live |
+
+- **Live browser verification (W-1).** `preview_start` with a plain `url` over
+  `/usr/bin/python3 -m http.server` against `dist/` — the Environment note's documented workaround —
+  worked first try (`navOk: true`). **Bundle name read back** (`index-B8ToOmlv.js`) and matched what
+  `npm run build` had just printed, per the note's rule 4; the earlier build was not being served.
+- **The claim is measured, not eyeballed.** With the layout-live control satisfied (rail width > 0,
+  not the documented 0-width trap), `getBoundingClientRect` gives labour's dot a lift of **exactly
+  0.00px** — on the rail, which is the lesson's absolute claim — and the other three at **48.41 /
+  72.62 / 96.82px**, strictly rising, the smallest **4.7x the 10.30px dot diameter**, so none can be
+  misread as sitting on the rail. Horizontal spacing 89.27 / 89.26 / 89.27px: an ordinal axis, evenly
+  stepped, as intended.
+- **Three axes swept:** `en` dark, `es` **light at 1.3x font scale** (the longest strings in the set),
+  and `ko` **dark at 1.3x** (the CJK proxy). In every one the lifts are byte-identical, **0 elements
+  overflow the figure box**, and `document.scrollWidth` stays at the 375px viewport. The two end
+  labels wrap to two lines in `es` and `ko` without colliding — which is why they are HTML and not
+  SVG `<text>`, where they would have been clipped.
+- **A11y confirmed live, not inferred:** the plot is a single `role="img"` with a 258-character
+  `aria-label`; its four SVG numerals sit inside that container so nothing announces them separately;
+  the legend's numerals carry `aria-hidden="true"` while the names do not; the `<ol>` carries
+  `role="list"`; and §10.1's `illustrationNote` renders beneath the figure in `ko`.
+- **§24 caught a real defect in my own code before I did** — the legend `<ol>` set `listStyle: "none"`
+  with no `role="list"`, which is backlog item 34's WebKit failure. Fixed in the same run.
+
+#### Step 5 — adversarial self-check
+
+- **Blindspot register** — no regression. `check-blindspot.mjs` green on all 7. Over the 443 added
+  lines: Dalio/`principles of` **0**, advice-adjacent verbs **0**. **Control**: `income` returns
+  **36**, so the grep reaches the added text. Three date matches, all three inspected and all three
+  `//` comments dating the change in the way the surrounding files already do — none reaches rendered
+  UI, and §2.3's own check over the teaching-copy modules (which includes `moneyVisuals.js`) is green.
+  **The §10.1 call worth stating** is that this figure *ranks* income types, which is the closest any
+  diagram here has come to reading as a recommendation. Three things hold it back and all three are
+  deliberate: one color for all four dots, a caption that ends "neither end of the line is the smart
+  one to be at", and the lesson's own refusal quoted directly above it.
+- **`DECISIONS.md` conflict** — none. **Measured, not asserted**: the diff adds **0** occurrences of
+  `localStorage`, `fetch(`, `.json`, `new Date(` or `Date.now`. Strings are a `.js` content module
+  like the other six figures, and `check-payload.mjs` is green, so the per-language split (items
+  45/48/50) is not undercut.
+- **Already-done backlog item** — no. `git log --all -S` returns **0** for `TradeoffPlot`,
+  `incomeTradeoff`, `incomeKinds` and `tradeKindLabels`. **Control**: `-S'GapColumns'` returns **1**,
+  so the pickaxe reaches this shape.
+- **US-English house style (item 91)** — checked, and it produced a finding rather than a change.
+  My own comment prose said "One colour"; corrected to "color". **"Labour income" is retained
+  deliberately**: `lessonContent.money.en.js` says "Labour income" in 8 places, and §54(e) requires
+  the legend to use the lesson's own term — "correcting" the label alone would make the figure use a
+  word its lesson does not. The `en` content is genuinely inconsistent (`economy.en.js` has "labor"),
+  which is a content-wide question and **filed as item 128** rather than smuggled into a figure
+  commit. "specialised" in a §54 failure message is inside a quotation of lesson 44 and stays
+  verbatim, per item 91's own exception.
+- **Own verification claim** — the claim easiest to overstate is "labour's dot sits on the rail",
+  because a dot 2px off looks identical at this size. It is a live `getBoundingClientRect` reading of
+  **exactly 0.00px** with the layout-live control satisfied, reproducible by re-running the snippet.
+  The second easiest is "§54 works": nine injections, each proven to land before its result was read,
+  with both halves of the control shown firing. **What is NOT proven:** `zh` and `ja` were checked
+  for parity, for term-agreement against their own lesson 42, and for arrival — but not *looked at*;
+  `ko` is the CJK proxy and `es` the long-string proxy. And §54(f)/(g) read lesson 43's and 44's `en`
+  bodies only — deliberately, for the reason given above, with (e) covering the other four languages.
