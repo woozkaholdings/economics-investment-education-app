@@ -827,6 +827,13 @@ for the history. No open P1/P2 items.
     > archiving rule can therefore do its job again — but its date-based action clause is still
     > mismatched to its byte-based trigger, and **that half of item 115 was NOT fixed here.** Option
     > (b) remains available and is now cheap; see W-5.3.
+    > **Update 2026-08-27 — the residual is now MEASURED but still not FIXED, and option (b) is not
+    > the fix.** Item 121 wires `scripts/check-log-size.mjs` into `npm test`: it splits this file
+    > into the archivable run log and the never-archived floor, budgets each separately, and prints
+    > the whole-day cut plan. Working (b) against the real numbers showed it does not help — it
+    > moves the trigger while the *action clause* stays date-based, so it would fire and still
+    > select zero entries. **A corrected option must make the action clause byte-driven; that is a
+    > rule change and remains the owner's call.** The numbers to decide on now print every test run.
 
     <details><summary>Original text of item 115, as filed 2026-08-26</summary>
 
@@ -931,6 +938,29 @@ for the history. No open P1/P2 items.
       `headingOrder`. The review queue must be non-empty, so seed `ecycles_review` or complete a
       lesson first; a sweep of an empty-queue Practice screen is the vacuous reading, not a clean one.
 
+121. **✅ DONE 2026-08-27 (scheduled dev-agent, recovering a stalled run). `AGENT_LOG.md`'s size is
+    now a MEASUREMENT on every `npm test`, split into the two budgets W-5.3 conflated — and the
+    script that does it was sitting uncommitted and unwired.** See the run log.
+    > **What it does NOT do, deliberately, and this is the part to read before picking it up.**
+    > This is **not** item 115's option (b), and it does **not** close W-5.3's defect. The script's
+    > own header argues (b) would not have worked: (b) re-points the *trigger* at a run-log byte
+    > count, but the mismatch is between the trigger and the *action clause*, so a run-log trigger
+    > would fire and "archive entries before the most recent review boundary" would still select
+    > zero. A real fix makes the action clause byte-driven too — **that is a rule change, and item
+    > 115 says a dev-agent implements whichever the owner names and must not choose.** So the
+    > script COMPUTES the whole-day cut plan and prints it; it never archives.
+    > **The two budgets, and why splitting them is the point.** `run log` is archivable; `floor`
+    > (App summary + backlog + Environment note) is never archived, so **archiving cannot move the
+    > floor by one byte** — only a backlog-compression pass can. On 2026-08-26 the file was 915 KB
+    > with a ~485 KB floor: emptying the run log entirely still could not reach 600 KB, and the
+    > rule had no way to say so. Each budget now names the remedy that can actually move it.
+    > **Baseline measured 2026-08-27, all green:** file 295,551 b, run log 79,527 b (32% of its
+    > 250 KB warn budget), floor 216,024 b (86% of its 250 KB budget, backlog 88% of that). **The
+    > floor is the one to watch** — it is at 86% and archiving is powerless against it.
+    > ⚠️ **Do not add a fingerprint to its `MEASURED log-size:` line.** Every commit here changes
+    > `AGENT_LOG.md`, so the fingerprint would be stale before the next run read it and
+    > `check-measurements.mjs` would report RETIRED forever — the vacuous green item 116 warns
+    > about. It re-measures live instead; there is no retyped number to guard.
 120. **[Process/QA — filed 2026-08-26 by the run that closed item 119, as its stated residual
     rather than smuggled into the same commit.] The storage audit tests ONE point in
     storage-space, so a `requires` that is too COARSE still passes it.**
@@ -3487,6 +3517,98 @@ warning. A later pass may tighten those; this one deliberately did not.
   at a run-log byte count so the clause stops being a no-op on the day it fires. Twice now.
 - **Item 116 / 117 / 120** are the open residuals from today's scheduled runs.
 - **Item 94** stays parked behind O-1 by its own box.
+
+**Unchanged and still the entire critical path, both owner-blocked: O-1** (a deployed URL) and **O-2**
+(item 18, an analytics account).
+
+### 2026-08-27 (scheduled dev-agent) — the log-size measurement, recovered from a stalled run, plus the control it was missing (item 121)
+
+**Recovery run.** `git status` showed `scripts/check-log-size.mjs` untracked, written 2026-08-26 21:07
+— after the last commit (`d411961`, 18:51) — and matching the previous entry's stated Next item
+exactly. Nothing else of mine was uncommitted: `package.json` was untouched, so **the script was not
+wired into anything**, despite its own header saying "Run via `npm test`". `UIUX/` and `drafts/` are
+the owner's untracked reference material (dated 08-14→08-17) and were left alone.
+
+#### Step 3.5 — re-measuring the premise, with controls
+
+The premise here is the instrument itself, so the check is whether its numbers are real and whether
+its controls fire.
+
+- **Both headline numbers reproduce by a completely independent path.** `wc -c AGENT_LOG.md` →
+  **295,551 b**, identical to the script's file figure; an `awk` section walk over `## Run log` →
+  **79,527 b**, identical to its run-log figure. Not a re-run of the same code — a different tool.
+- **Attribution probes, run in an isolated fake root** (`scratchpad/probe/` with its own
+  `scripts/` + `AGENT_LOG.md`, so the real log was never modified — `git status` confirmed unchanged
+  throughout). Injecting **+1000 b** at EOF moved file and run log by exactly +1000 with the floor
+  fixed; injecting **+500 b** into the backlog moved floor and backlog by exactly +500 with the run
+  log fixed. The two budgets attribute in both directions.
+- **Controls proven to FAIL, not just to print `ok`.** Renaming `## Run log` → `## Journal` made
+  control 2 fail and exit 1. Breaking all nine dated entry headings made control 3 fail.
+
+#### The injection that did not land, recorded because the green was meaningless
+
+The first control-2 probe reported a clean `PASS` — and that was **not** evidence the control was
+broken. A `replace(..., 1)` hit the **first** occurrence of the literal `## Run log`, which is a
+prose mention inside a backlog blockquote on **line 252**, not the real heading on line 2405. The
+file changed; the heading did not. Re-run with an `assert` pinning line 2405, the control failed as
+it should. **A probe whose landing is not proven produces a green that means nothing** — the same
+class as this project's two previous quoting failures. It also incidentally confirms the splitter
+correctly ignores `## `-looking text inside a blockquote.
+
+#### What the probing found that reading would not have
+
+**A single malformed entry heading is silent.** Breaking one of nine headings left `days.size` at 1,
+so control 3's zero-days test never fired, while that entry's **7,668 b** dropped out of the day
+attribution — the ratio moved **98.0% → 88.4%** and nothing said so. Fixed by budgeting the
+**un-attributed remainder** instead: the run log's own heading and archive pointer are **1,599 b**
+and structurally flat, so `UNATTRIBUTED_MAX = 5,000 b` catches a dropped entry (smallest real one is
+~7.7 KB, clearing the threshold by 1.5x) without tripping on normal growth. Verified in both
+directions: silent at baseline (1,599 b), **WARN** on one broken heading (9,264 b).
+
+It is a **warn, not a fail, and the direction is the reason**: the budget verdicts read the section's
+own byte count, which a broken heading cannot touch. Only the cut plan consumes the day map, and
+under-counting a day makes it propose *more* days than needed or cry "impossible" too early. It errs
+toward alarm, never toward a false all-clear.
+
+#### Verification
+
+- `npm test` — **exit 0, 0 failures, 2 warnings** (the documented translation baseline, unchanged).
+- `npm run build` — **✓ built in 1.28s.**
+- `check-backlog.mjs` — **98 items, no duplicates, all 131 code citations resolve.**
+- `MEASURED log-size: file 295551 b, run log 79527 b, floor 216024 b (backlog 190062 b), archive
+  2077529 b, 1 live day(s)` — 2026-08-27, measured **before** this entry and item 121 were written.
+  After them: **file 304,586 b, run log 85,691 b, floor 218,895 b, 2 live day(s).** Both are quoted
+  because a later run re-running the check will match neither, and that is not a defect — every
+  commit here changes this file, which is exactly why the script carries no fingerprint.
+  **The floor is at 88% of its budget and archiving cannot move it**; that is the number that will
+  bite first, and only a backlog-compression pass can.
+
+#### Step 5 — adversarial self-check
+
+- **Blindspot register** — no `src/`, no content, no rendered UI; nothing user-facing changed. The
+  dates in the new comments are dated records of when something was measured, not a hardcoded
+  current date in a shipped surface. `check-blindspot.mjs` passes.
+- **`DECISIONS.md` conflict** — none. Adding a checker to the `npm test` chain is the established
+  pattern (`check-data`, `check-payload`, `check-measurements`); nothing here touches
+  localStorage-only state, the `.js`-not-JSON content modules, or Vite-vs-Expo.
+- **Already-done backlog item** — not a redo. Item 115 option (a) compressed the backlog; this
+  measures the file and explicitly declines to change W-5.3's rule.
+- **`MEASURED` line collision** — checked before wiring: `check-measurements.mjs` matches only
+  `MEASURED jargon <mode>: …` with a fingerprint, so `MEASURED log-size:` cannot be picked up by it.
+- **Own verification claim** — the claim easiest to fake is "the controls work", since a control that
+  never fires prints exactly what a working one prints. Every control here was made to fail on
+  purpose with its injection proven to land, and the one probe that silently did not land is written
+  up above rather than quietly re-run. **What this does not prove:** that the thresholds are the
+  right thresholds. 250 KB/250 KB is W-5.3's 600 KB partitioned, not a measured optimum; the
+  un-attributed 5,000 b is derived from one observed floor and one observed entry size.
+
+#### Next
+
+- **W-5.3's action clause is still date-based** and still a no-op when it fires. Item 121's box
+  explains why option (b) does not fix it and why a dev-agent must not pick the replacement. **The
+  owner now has live numbers to decide on.**
+- **The floor at 88%** is the next thing to cross a budget, and archiving is powerless against it.
+- **Items 116 / 117 / 120** remain the open residuals from 2026-08-26.
 
 **Unchanged and still the entire critical path, both owner-blocked: O-1** (a deployed URL) and **O-2**
 (item 18, an analytics account).
