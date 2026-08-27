@@ -6254,5 +6254,231 @@ if (keyedGroupsChecked < 4) {
     );
   }
 }
+// ─────────────────────────────────────────────────────────────────────────────
+// §52. A palette hex quoted in LIVING text must match the token it names.
+//
+// Filed as item 125. On 2026-08-27 a run computed its predicted contrast
+// figures from `#7c8494`, taken from backlog item 63's headline rather than
+// from src/index.css, and wrote them into two shipped charts.jsx comments. The
+// palette was right all along; the 2026-08-23 warm repaint had moved the
+// token four days earlier and nobody re-read the headline. A live DOM
+// measurement caught it. This section is so the next one is caught by
+// `npm test` instead of by luck. (The current value is deliberately not
+// quoted here either — that is the whole point. Read src/index.css.)
+//
+// THE RULE: a hex quoted in this repo's living prose is a dated observation,
+// not the palette. Where the prose also names the token, the two must agree.
+//
+// WHAT "LIVING" MEANS, and why the run log is deliberately out of scope.
+// AGENT_LOG.md's run log and AGENT_LOG.archive.md are dated records; §31 and
+// item 91 both hold that rewriting a dated record falsifies it, and an entry
+// that says "measured 3.76:1 at #7c8494" was *true when written*. Those are
+// history. What this section guards is the text a future run READS TO ORIENT
+// — the App summary, the backlog, the Environment note, the standing docs,
+// and every comment in src/. Item 125's defect was in a backlog headline,
+// which is exactly the half that has to be current.
+//
+// scripts/ IS ALSO OUT OF SCOPE, and this is a judgment worth stating. The
+// only palette attributions there live in THIS file, and they are probe data
+// and failure-message templates rather than claims about the palette — the
+// positive control below must literally contain the stale hex to prove the
+// scanner fires. Policing them would take four or five register entries for a
+// file that is the checker. Measured before deciding: extending the scan to
+// scripts/ finds exactly two other lines, both the "other side of the pair"
+// false positive already registered below. THE COST OF THIS BOUNDARY: a stale
+// attribution written into a scripts/ comment is invisible. This section's own
+// first draft did exactly that, and the step-5 self-check caught it; the fix
+// was to stop quoting the value, not to widen the net.
+//
+// SCOPE HONESTY: this catches a hex that shares a LINE with the token it
+// misattributes. A hex whose token is named a paragraph away, or referred to
+// only as "the amber", is invisible to it. That is a narrower net than item
+// 125 imagined and it is stated rather than implied — the sweep that filed
+// this section found exactly ONE real defect across all of living text (and
+// three false positives, of which two are registered below and the third was
+// item 125's own text, since rewritten). The register is small because the
+// corpus is clean, not because the net is loose. Residual: item 126.
+// ─────────────────────────────────────────────────────────────────────────────
+{
+  const cssSrc = readFileSync(join(ROOT, "src", "index.css"), "utf8");
+
+  // Same slicing as §51 rather than a mode-tracking regex. This is not a style
+  // preference: the dark block's selector is `:root:not([data-theme="light"])`,
+  // so a scanner that flips mode on `[data-theme="light"]` reads the dark
+  // values into the light palette and every downstream comparison is wrong
+  // while looking completely normal. That happened while this section was
+  // being written; §52a below is the assertion that would have caught it.
+  const sliceBlock = (start, end) => cssSrc.slice(start, end);
+  const lightBlock = sliceBlock(cssSrc.indexOf(":root {"), cssSrc.indexOf("@media (prefers-color-scheme: dark)"));
+  const darkStart = cssSrc.indexOf(':root[data-theme="dark"]');
+  const darkBlock = sliceBlock(darkStart, cssSrc.indexOf("}", cssSrc.indexOf("--shadow-lifted", darkStart)));
+  const parseAll = (block) => {
+    const out = new Map();
+    for (const m of block.matchAll(/^\s*(--[a-z0-9-]+):\s*(#[0-9a-fA-F]{6})\s*;/gm)) out.set(m[1], m[2].toLowerCase());
+    return out;
+  };
+  const lightPalette = parseAll(lightBlock);
+  const darkPalette = parseAll(darkBlock);
+
+  // §52a — THE PARSE CONTROL. Everything below is a comparison against these
+  // two maps, so a mis-sliced palette makes every result meaningless in a way
+  // that reads as a clean pass. Two independent assertions: the maps are the
+  // expected size, and they are DIFFERENT from each other. The second is the
+  // one that matters — the real failure mode was light silently holding the
+  // dark values, which a size check passes with flying colors.
+  const MIN_TOKENS = 20;
+  let identical = 0;
+  for (const [t, v] of lightPalette) if (darkPalette.get(t) === v) identical++;
+  if (lightPalette.size < MIN_TOKENS || darkPalette.size < MIN_TOKENS) {
+    fail(
+      `§52a: parsed ${lightPalette.size} light and ${darkPalette.size} dark token(s) from src/index.css ` +
+        `(expected at least ${MIN_TOKENS} each). The palette slicing matched almost nothing, so every ` +
+        `attribution checked below is being compared against an empty map and would pass regardless.`,
+    );
+  } else if (identical > 2) {
+    fail(
+      `§52a: ${identical} token(s) hold the SAME value in the light and dark palettes. The two blocks are a ` +
+        `light/dark pair; this means the slicing read one block twice — almost certainly the dark block into ` +
+        `both, since its selector is \`:root:not([data-theme="light"])\`. Fix the slicing before trusting §52b.`,
+    );
+  }
+
+  // The complete register of token x hex co-occurrences in living text that
+  // are CORRECT despite not matching. Anchored by text, never by line number
+  // (item 73's standing method: LAUNCH_PLAN.md:529 was line 549 a day later).
+  // An entry is [file, anchor substring, reason].
+  const HEX_ATTRIBUTION_OK = [
+    [
+      "AGENT_LOG.md",
+      "manufactures a 1.0:1",
+      "The hex belongs to `--ink-on-fill` (named on the line above); `--surface-canvas` is the OTHER " +
+        "side of the pair being argued about. `--ink-on-fill` really is #ffffff in light mode.",
+    ],
+    [
+      "src/content/lessons.js",
+      "is not a stale copy of",
+      "The comment exists to argue that lesson 32's decorative accent is NOT this token — item 75 " +
+        "assumed it was. It is flagged precisely because it says the two differ, which is its point.",
+    ],
+  ];
+
+  const logLines = readFileSync(join(ROOT, "AGENT_LOG.md"), "utf8").split("\n");
+  const runLogAt = logLines.findIndex((l) => /^## Run log\s*$/.test(l));
+  if (runLogAt === -1) {
+    fail(
+      `§52b: could not find the "## Run log" heading in AGENT_LOG.md. That heading is what separates the ` +
+        `living backlog from the dated entries; without it this section would either scan nothing or scan ` +
+        `the entire history. Restore the heading rather than loosening the match.`,
+    );
+  }
+
+  const livingDocs = [
+    ["AGENT_LOG.md", (n) => runLogAt === -1 || n <= runLogAt],
+    ["DECISIONS.md", null],
+    ["LAUNCH_PLAN.md", null],
+    ["LAUNCH_READINESS.md", null],
+    ["CLAIMS.md", null],
+    ["README.md", null],
+  ].filter(([f]) => existsSync(join(ROOT, f)));
+
+  const srcFiles = [];
+  (function walk(dir) {
+    for (const e of readdirSync(dir, { withFileTypes: true })) {
+      const p = join(dir, e.name);
+      if (e.isDirectory()) walk(p);
+      else if (/\.(jsx?|css)$/.test(e.name)) srcFiles.push([relative(ROOT, p), null]);
+    }
+  })(join(ROOT, "src"));
+
+  const TOKEN_RE = /--[a-z0-9-]+/g;
+  const HEX_RE = /#[0-9a-fA-F]{6}\b/g;
+
+  // Scanning one line: returns a misattribution or null. Kept as a function so
+  // the two controls below run through the IDENTICAL code path as the corpus —
+  // a control that exercises a copy of the logic proves nothing about the copy
+  // that runs.
+  const misattribution = (rel, text) => {
+    if (rel === "src/index.css" && /^\s*--[a-z0-9-]+:\s*#/.test(text)) return null; // the definitions ARE the truth
+    const tokens = [...new Set([...text.matchAll(TOKEN_RE)].map((m) => m[0]))];
+    const hexes = [...new Set([...text.matchAll(HEX_RE)].map((m) => m[0].toLowerCase()))];
+    if (!tokens.length || !hexes.length) return null;
+    for (const t of tokens) {
+      if (!lightPalette.has(t)) continue;
+      const l = lightPalette.get(t);
+      const d = darkPalette.get(t);
+      if (hexes.some((h) => h === l || h === d)) continue;
+      return { token: t, light: l, dark: d, quoted: hexes };
+    }
+    return null;
+  };
+
+  // §52b CONTROLS. The corpus yields very few pairs, so a count floor would be
+  // a weak guard. Instead both directions are proven on synthetic lines fed
+  // through `misattribution` itself: one that MUST fire and one that MUST NOT.
+  // A scanner broken to match nothing fails the first; one broken to flag
+  // everything fails the second.
+  const probeToken = "--graph-neutral";
+  const probeLive = lightPalette.get(probeToken);
+  const positiveProbe = misattribution("probe.md", `light \`${probeToken}\` is \`#7c8494\``);
+  const negativeProbe = misattribution("probe.md", `light \`${probeToken}\` is \`${probeLive}\``);
+  if (!positiveProbe) {
+    fail(
+      `§52b: the scanner did not flag a known-wrong attribution ("${probeToken} is #7c8494", the exact ` +
+        `defect item 125 was filed for). It is blind — a zero result from the real corpus below would mean ` +
+        `nothing. Fix the scanner before reading its output.`,
+    );
+  }
+  if (negativeProbe) {
+    fail(
+      `§52b: the scanner flagged a CORRECT attribution ("${probeToken} is ${probeLive}", read straight out ` +
+        `of src/index.css). It flags everything, so its findings carry no information.`,
+    );
+  }
+
+  const usedAnchors = new Set();
+  let scanned = 0;
+  for (const [rel, filter] of [...livingDocs, ...srcFiles]) {
+    const lines = readFileSync(join(ROOT, rel), "utf8").split("\n");
+    lines.forEach((text, i) => {
+      const lineNo = i + 1;
+      if (filter && !filter(lineNo)) return;
+      scanned++;
+      const m = misattribution(rel, text);
+      if (!m) return;
+      const idx = HEX_ATTRIBUTION_OK.findIndex(([f, anchor]) => f === rel && text.includes(anchor));
+      if (idx !== -1) {
+        usedAnchors.add(idx);
+        return;
+      }
+      fail(
+        `§52b: ${rel}:${lineNo} says \`${m.token}\` alongside ${m.quoted.join(", ")}, but that token is ` +
+          `${m.light} (light) / ${m.dark} (dark) in src/index.css. A hex quoted in prose is a dated ` +
+          `observation, not the palette (item 125). Either correct the figure — reading it out of ` +
+          `src/index.css, not out of another entry in this log — or, if the mismatch is deliberate, add ` +
+          `it to HEX_ATTRIBUTION_OK with the reason it is correct.\n      | ${text.trim().slice(0, 160)}`,
+      );
+    });
+  }
+
+  for (let i = 0; i < HEX_ATTRIBUTION_OK.length; i++) {
+    if (usedAnchors.has(i)) continue;
+    const [file, anchor] = HEX_ATTRIBUTION_OK[i];
+    fail(
+      `§52b: HEX_ATTRIBUTION_OK entry ${i} (${file}, "${anchor}") matches nothing that the scan flagged. ` +
+        `Either the text moved, or the mismatch it excused was fixed. Delete the entry or repoint it — a ` +
+        `stale exemption makes the next real misattribution look accounted for.`,
+    );
+  }
+
+  if (failures === 0) {
+    console.log(
+      `  §52 palette figures in living text: ${scanned} line(s) across ${livingDocs.length} doc(s) and ` +
+        `${srcFiles.length} source file(s) scanned against ${lightPalette.size} light / ${darkPalette.size} ` +
+        `dark tokens; ${HEX_ATTRIBUTION_OK.length} deliberate mismatch(es) registered, both scanner ` +
+        `directions proven live`,
+    );
+  }
+}
+
 console.log(`\n${failures === 0 ? "PASS" : "FAIL"}: ${failures} failure(s), ${warnings} warning(s).`);
 process.exit(failures === 0 ? 0 : 1);

@@ -315,10 +315,15 @@ for the history. No open P1/P2 items.
     > it is `#ffffff` in light mode, so pairing it with `--surface-canvas` manufactures a 1.0:1
     > failure for a pair the app never renders.
 
-63. **✅ DONE 2026-08-17 (scheduled dev-agent). Light `--graph-neutral` is `#7c8494`, the four uses are
-    classified, and `check-data.mjs` §28b enforces 3:1 on 70 graph×surface pairs. For the ninth item
+63. **✅ DONE 2026-08-17 (scheduled dev-agent). Light `--graph-neutral` was given a value, the four uses
+    are classified, and `check-data.mjs` §28b enforces 3:1 on 70 graph×surface pairs. For the ninth item
     running the premise was partly wrong — and this time BOTH of its headline numbers were, in the
     direction that had made the item look optional.** See the run log.
+    > **The hex this headline used to quote was stale for four days and cost two wrong figures in
+    > shipped code comments (item 125).** It said `#7c8494`, the value this run set; the 2026-08-23
+    > warm repaint moved the token and nobody re-read the headline. **The value is deliberately not
+    > restated here** — restating it just re-arms the trap. `src/index.css` is the palette; read it
+    > there. Enforced by `check-data.mjs` §52.
 
 72. **🟡 DEV-AGENT HALF DONE 2026-08-17 (scheduled dev-agent). The build is deployable and the
     clicks are written down; the OWNER HALF — choose a host, drag the folder, hold the URL — is the
@@ -794,23 +799,57 @@ for the history. No open P1/P2 items.
       half permanently. This is the class, written down so the next one is not found by luck.
       Downstream of O-1 like everything else.
 
-125. **[Docs/Integrity — filed 2026-08-27 by the run that closed item 123, from a stale figure that
-    briefly propagated into shipped code comments before a live measurement caught it.] Item 63's
-    "light `--graph-neutral` is `#7c8494`" has been wrong since the 2026-08-23 warm repaint; it is
-    `#736b61`.**
-    - **How it surfaced, which is the transferable part.** This run computed its predicted contrast
-      figures offline using `#7c8494` **taken from item 63's headline** rather than from
-      `src/index.css`, and wrote them into two `charts.jsx` comments. The live DOM then returned
-      **5.24:1** where the prediction said 3.76:1. The prose was the stale input; the palette was
-      right all along. Corrected in the code before commit.
-    - **Why it is worth an item rather than a one-line edit.** The figure sits in a **closed** item's
-      headline, which is exactly where nobody re-measures — and W-3 already recorded that closed
-      items' quoted specifics rot (item 24's lesson ids). A sweep for palette hex quoted anywhere in
-      `AGENT_LOG.md` against the live `index.css` would find whatever else moved in the same repaint.
-    - **Standing rule this earns, and it cost a wrong figure in two shipped comments to learn:**
-      **a hex quoted in this log is a dated observation, not the palette.** Read the token out of
-      `src/index.css` every time, including when a closed item states it confidently.
-    - **Honest priority: low**, and cheap.
+125. **✅ DONE 2026-08-27 (scheduled dev-agent). The one stale figure is gone, the standing rule is
+    now enforced by `check-data.mjs` §52 — and the item's own hypothesis was REFUTED: nothing else
+    moved in that repaint.** See the run log.
+    > **The premise correction, and it is the reason to keep this item rather than prune it.** The
+    > item predicted a sweep "would find whatever else moved in the same repaint." It was run across
+    > all of living text — the backlog, the App summary, the Environment note, the five standing
+    > docs, and all 72 files under `src/` — and found **exactly one real defect, item 63's headline**.
+    > Three other hits were false positives — two are registered, and the third was this item's own
+    > original text, which no longer quotes the hex — and all three are instructive: two name a token while
+    > quoting the *other* side of a pair, and `lessons.js`'s comment is flagged **because it exists to
+    > argue that lesson 32's decorative accent is not `--graph-amber`**. **This was a defect, not a class.**
+    > **Standing rule, unchanged and now enforced: a hex quoted in this log is a dated observation,
+    > not the palette.** Read the token out of `src/index.css` every time, including when a closed
+    > item states it confidently.
+    > **Disposition of item 63's headline, per item 58's rule (a stale figure inside an argument that
+    > does not need it is deleted, not corrected).** The hex is **not restated** with a fresh value —
+    > restating re-arms the trap four days later. The headline now says the run gave the token a
+    > value and points at `src/index.css`.
+    > ⚠️ **§52's scope is narrower than this item imagined, and that is stated in the code rather
+    > than implied: it catches a hex sharing a LINE with the token it misattributes.** A hex whose
+    > token is named a paragraph away, or referred to only as "the amber", is invisible to it. The
+    > small register is a measured result, not an omission. Residual filed as **item 126**.
+    > **The run log and `AGENT_LOG.archive.md` are deliberately OUT of scope** (§31 / item 91: an
+    > entry that recorded "3.76:1 at `#7c8494`" was true when written). That exclusion is not
+    > cosmetic — injection 5 removed the boundary and a dated entry's injected probe value
+    > immediately failed the build.
+
+126. **[Docs/Integrity — filed 2026-08-27 by the run that closed item 125, as its stated residual
+    rather than smuggled into the same commit.] §52 only sees a hex that shares a line with the
+    token it misattributes.**
+    - **State:** `check-data.mjs` §52b scans living text for `--token` + `#hex` co-occurrence **on one
+      line** and requires agreement with `src/index.css`, with a 2-entry register of deliberate
+      mismatches. §52a guards the palette parse itself.
+    - **What it cannot see.** A hex introduced in one sentence and attributed in the next
+      ("the neutral we picked. It is `#7c8494`"); a figure quoted with no token named at all ("the
+      amber is 3.2:1 on white"); and a **derived** number — a contrast ratio computed from a stale
+      hex — which is the shape that actually shipped in two `charts.jsx` comments. §52 would have
+      caught the hex in those comments; it would not catch the ratio if the hex were dropped.
+    - **`scripts/` is out of scope too, by a measured decision rather than an oversight.** The only
+      palette attributions there are inside `check-data.mjs` itself, where they are probe data and
+      failure-message templates — §52's positive control must literally contain `#7c8494` to prove
+      the scanner fires. Extending the scan there was measured: it finds **exactly two** other lines,
+      both the "other side of the pair" false positive already registered. Four or five register
+      entries to police the checker was the wrong trade. **The cost is real and is written into the
+      code:** §52's own first draft quoted a live value in a `scripts/` comment, which nothing would
+      have caught. The step-5 self-check found it and the fix was to stop quoting the value.
+    - **The shape that could work:** treat a hex within N lines of a token mention as an attribution
+      candidate and require an explicit register decision. That trades a bigger register for a wider
+      net, and the register is the maintenance cost — do not build it until there is a second real
+      instance to justify the cost. **One defect is not a class** (this item's parent proved that).
+    - **Honest priority: low.** Zero known live instances. Downstream of O-1 like everything else.
 
 122. **✅ DONE 2026-08-27 (owner-directed: "compress the backlog to bring the floor under budget").
     The never-archived floor is 218,895 → 191,956 bytes; the backlog section 192,933 → 165,994. Every
@@ -3795,5 +3834,111 @@ number without doing the same to it.
   by measurement rather than opinion.
 - **Item 27's bar still binds for a sixth visual**; lesson 17 remains the named candidate and was
   again not built, because one run should add one.
+- **Unchanged and still the entire critical path, both owner-blocked: O-1** (a deployed URL) and
+  **O-2** (item 18, an analytics account). Nobody has opened this app.
+
+### 2026-08-27 (scheduled dev-agent) — the stale hex was a defect and not a class, and the check written to prove it committed the same defect in its own header (item 125)
+
+**Picked item 125**, filed yesterday by the run that closed item 123. W-5.2-legal: a filed backlog
+item, not a note-chain extension, and the last four picks (121, 122, 27, 123) contain no item 93, so
+the one-in-four reserve is not in deficit. Owner tree at open: clean but for the untracked `UIUX/` and
+`drafts/`, neither touched.
+
+#### Step 3.5 — the premise, re-measured with controls, and the item's own hypothesis was refuted
+
+- **✅ True as filed:** item 63's headline said light `--graph-neutral` is `#7c8494`; `src/index.css`
+  says `#736b61`. The token moved in the 2026-08-23 warm repaint and the headline was never re-read.
+- **⛔ REFUTED as filed: "a sweep … would find whatever else moved in the same repaint."** The sweep
+  ran across all of living text — backlog, App summary, Environment note, five standing docs, and all
+  72 files under `src/` — and found **exactly one real defect**. Three other hits were false
+  positives, and the shape of them is the finding: two name a token while quoting the *other* side of
+  a pair being argued about, and `lessons.js:149` is flagged **because its comment exists to argue
+  that lesson 32's accent is not `--graph-amber`** (item 75 had assumed it was). **This was a defect,
+  not a class**, and the item is closed saying so.
+- **The instrument failed its own control first, which is why there is a control.** The first parser
+  tracked light/dark mode by regex and reported light `--graph-neutral` as `#8a8072` — the *dark*
+  value — because the dark block's selector is `:root:not([data-theme="light"])` and the mode-flip
+  regex matched the `:not(...)`. Every downstream comparison would have been wrong while looking
+  entirely normal. **Caught by a control that asserted light ≠ dark**, not by reading the output. The
+  parser was replaced with §51's index-slicing approach and re-validated against four token pairs read
+  straight out of `index.css`.
+
+#### What shipped
+
+- **Item 63's headline no longer quotes the hex at all.** Per item 58's standing rule — a stale figure
+  inside an argument that does not need it is *deleted*, not corrected — it is **not** restated with a
+  fresh value, because restating re-arms the trap four days later. It now says the run gave the token
+  a value, carries a note on what the stale figure cost, and points at `src/index.css`. **The dated
+  claim is preserved**: rewriting `#7c8494` → `#736b61` would have made a 2026-08-17 entry assert
+  something that run did not do.
+- **`check-data.mjs` §52**, in two halves:
+  - **§52a — the parse control.** The light and dark maps must each hold ≥20 tokens **and must differ
+    from each other**. The second assertion is the one that matters and it exists because the failure
+    above passes a size check with flying colors.
+  - **§52b — the rule.** Every `--token` + `#hex` co-occurrence on one line of *living* text must
+    agree with `src/index.css`, or appear in `HEX_ATTRIBUTION_OK` with a stated reason. 2 entries,
+    both anchored **by text, never by line number** (item 73's standing method).
+- **The run log and `AGENT_LOG.archive.md` are deliberately out of scope**, per §31 / item 91: an
+  entry recording "3.76:1 at `#7c8494`" was true when written. **That exclusion is load-bearing, not
+  cosmetic** — injection 5 removed the boundary and a dated entry's injected probe value immediately
+  failed the build.
+
+#### Verification
+
+- **`npm test` exit 0** (0 failures, the 2 documented translation warnings), **`npm run build` clean.**
+- **§52 proved able to fail, five ways**, each injection asserted to have landed before its result was
+  read, each file restored from a scratchpad copy with **SHA-256 verified equal** (never
+  `git checkout --`):
+  1. a one-digit-wrong hex in a `src/` comment (`#2f43c9` for `--ink-accent`) → §52b names file, line,
+     both live values and the remedy — this is also what proves `src/` is really in scope;
+  2. **the palette mis-sliced so light holds the dark values — the real bug** → §52a fails with
+     "28 tokens hold the SAME value", naming the `:not([data-theme="light"])` cause;
+  3. the scanner blinded (hex regex mutated to match nothing) → the **positive control** fires:
+     *"It is blind — a zero result from the real corpus below would mean nothing."*;
+  4. a register anchor drifted by one character → **both** halves fire, the use reporting unflagged
+     and the entry reporting stale;
+  5. the `## Run log` boundary heading lost → the boundary assertion fires, plus the incidental proof
+     in the bullet above.
+- **Both scanner directions are proven on every run, not just under injection.** The corpus yields
+  very few pairs, so a count floor would be weak; instead §52b feeds a known-wrong line and a
+  known-right line through the *same* `misattribution()` the corpus uses. A scanner broken to match
+  nothing fails the first; one broken to flag everything fails the second.
+- **No browser verification, and W-1 is not being skipped silently:** this change renders nothing.
+  The diff is `AGENT_LOG.md` prose and one check-script section; `git diff --stat` touches no file
+  under `src/`, and the two `src/` files used as injection targets are byte-identical to their
+  pre-run SHA-256.
+
+#### Step 5 — the self-check found a real defect, and it was this section's own
+
+**§52's first draft wrote `light --graph-neutral has been #736b61` into its own header comment — a
+live attribution in `scripts/`, which §52 does not scan.** The section written to stop stale hexes
+being quoted in prose had, in its first draft, quoted one in a place nothing could check.
+**Disposition, and it was measured rather than assumed:** extending the scan to `scripts/` was tried
+and finds **exactly two** other lines, both the already-registered "other side of the pair" shape —
+so widening would have cost four or five register entries to police the checker's own probe data and
+message templates. **The value was removed instead of the net widened**, and the boundary plus its
+cost is now written into §52's header and into item 126.
+
+The rest of the check: **blindspot register** — `check-blindspot.mjs` green on all 6; grepped the
+added lines for Dalio/advice/recommendation strings (0 hits) and no live-looking market figure or
+hardcoded current date reaches `src/`; §10.3 untouched. The only hexes added are `#7c8494` (the stale
+value under discussion, and the literal the positive control requires) and one `#ffffff` inside a
+register *reason* string. **`DECISIONS.md`** — nothing contradicted; the closest call is §31's
+verbatim rule, and §52 is built *around* it rather than against it (the run log is excluded, and item
+63's edit deliberately removes a figure rather than rewriting one). **Already-done item** — 125 was
+open and filed yesterday; §52 does not redo §28/§28b/§51, which check *contrast ratios of live
+tokens* where §52 checks *prose agreement with the palette*. **Own verification claim** — the thing
+easiest to overstate is "§52 works", and it is five injections each proven to land plus two
+always-on controls. **What is NOT proven, and is item 126:** §52 cannot see a cross-line attribution,
+an untokened figure ("the amber is 3.2:1"), or a *derived* number — a ratio computed from a stale
+hex, which is the shape that actually shipped in two `charts.jsx` comments yesterday.
+
+#### Next
+
+- **Item 126** is the honest residual and is explicitly marked *do not build until a second real
+  instance justifies the register cost* — one defect is not a class, which is this run's own finding.
+- **Item 27's bar still binds for a sixth visual**; lesson 17 remains the named candidate, again not
+  built, because one run should add one. **Items 124, 120, 116, 117** all remain low-priority and all
+  are downstream of O-1.
 - **Unchanged and still the entire critical path, both owner-blocked: O-1** (a deployed URL) and
   **O-2** (item 18, an analytics account). Nobody has opened this app.
