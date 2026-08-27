@@ -4561,7 +4561,8 @@ of 12 pairs, which is a run of its own; filed as **item 129**.
 
 #### Next run
 
-`npm run owner-tree -- --expect 7f8a0a81ee4d7cc4843c8b2fddf4cd20738abf8dc977457ab8d3d23c75df7716`.
+`npm run owner-tree -- --expect c2331799fd3ee413aca864fd82d247a35ea31b01a70a6c4e37b00f6aad9105b2`
+(read **post-commit**, 0 tracked modified / 52 untracked — the `7f8a0a81…` this entry first recorded was the mid-run value with this run's own edits still uncommitted, which is not what the next run should compare against).
 **Open and unblocked:** **item 129** (re-review the 12 stale translation pairs this run created — a
 clean, self-contained run); **item 130** (§55's comment/script blind spot, filed low); **item 27**
 (more lesson figures — but three of the last four picks were item 27, so W-5.2's spirit says let it
