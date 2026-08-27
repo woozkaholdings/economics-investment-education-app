@@ -2901,25 +2901,41 @@ if (keyedGroupsChecked < 4) {
   //
   // 1.4.11 binds only graphical objects "required to understand the content",
   // so item 63 correctly refused to assert anything until the uses were
-  // classified. They now are — all four rendered uses of `graph.neutral`:
+  // classified. They now are — all six rendered uses of `graph.neutral`.
+  //
+  // ⚠️ CITED BY COMPONENT, NOT BY LINE, and deliberately. This list carried
+  // four `file:line` references and by 2026-08-27 all four had rotted — it
+  // said charts.jsx:286 for a BracketStack outline that was by then at :396,
+  // and two LessonVisual.jsx lines that had moved when lesson 23's figure
+  // landed. Nothing checks these, they drift on every insertion above them,
+  // and a component name is both stable and greppable. Do not reintroduce
+  // line numbers here.
   //
   //   MEANINGFUL (color is the only thing distinguishing the object)
-  //   • charts.jsx GrowthCurve via LessonVisual.jsx:107 — the compounding
-  //     diagram's two series are both plain 2.5px polylines. Nothing but hue
-  //     separates them, so the neutral stroke must be perceivable. This is the
-  //     case that decides the item.
-  //   • charts.jsx Bar via LessonVisual.jsx:169 and MarketSignals.jsx:89 — the
-  //     bar's *height* carries the comparison (see Bar's own comment: at
-  //     height={90} a ten-fold expansion once drew as four equal bars), so the
-  //     bar has to be distinguishable from the card it sits on.
+  //   • charts.jsx GrowthCurve, via LessonVisual — the compounding diagram's
+  //     two series are both plain 2.5px polylines. Nothing but hue separates
+  //     them, so the neutral stroke must be perceivable. This is the case that
+  //     decides the item.
+  //   • charts.jsx Bar, via LessonVisual and MarketSignals — the bar's
+  //     *height* carries the comparison (see Bar's own comment: at height={90}
+  //     a ten-fold expansion once drew as four equal bars), so the bar has to
+  //     be distinguishable from the card it sits on.
+  //   • charts.jsx AsymmetryChart's shared zero line (added 2026-08-27, backlog
+  //     item 123). The two bars ARE their distance from it and they run in
+  //     opposite directions, so it is the reference the whole figure is read
+  //     against. Was `line.strong` at 1.71:1 light / 1.62:1 dark — see §51,
+  //     which is the section that found it.
+  //   • charts.jsx CycleChart's long-run trend line (added 2026-08-27, item
+  //     123). `trendLabel` is drawn beneath it and names it, so a caption
+  //     refers to this line. Same origin, same measurement.
   //
   //   DECORATIVE (exempt, and not relied on)
-  //   • charts.jsx:286 BracketStack's dashed "raise" outline. It is
-  //     `aria-hidden`, non-interactive, and BracketStack's header comment says
-  //     it "only names what the height difference already shows" — and a bold
-  //     `raiseLabel` in `ink.body` sits directly above it. Redundant twice.
+  //   • charts.jsx BracketStack's dashed "raise" outline. It is `aria-hidden`,
+  //     non-interactive, and BracketStack's header comment says it "only names
+  //     what the height difference already shows" — and a bold `raiseLabel` in
+  //     `ink.body` sits directly above it. Redundant twice.
   //
-  // Three meaningful uses, so the token must clear 3:1 — and the old #9aa2b1
+  // Five meaningful uses, so the token must clear 3:1 — and the old #9aa2b1
   // did not, at 2.57:1 against `--surface-card`. Item 63's own figures missed
   // that pair: it reported "5 of 7 surfaces" and listed only the washes and
   // sunken, omitting card and canvas, so the surface every chart renders on
@@ -6010,5 +6026,233 @@ if (keyedGroupsChecked < 4) {
   }
 }
 
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 51. `--line-*` USED AS A GRAPHIC — the class §28 and §28b both exclude.
+//
+//     Backlog item 123. §28 pairs `--ink-*`/`--fill-*` against the surfaces;
+//     §28b pairs `--graph-*` against them at 1.4.11's 3:1. Both filter by
+//     prefix, so `--line-*` is checked by NEITHER, on the stated grounds that
+//     a line "is not text" — which is true, and is not the same as "is not a
+//     graphic". A line that carries meaning owes 3:1 exactly as a chart series
+//     does, and until this section existed nothing in `npm test` would have
+//     said so, while `DECISIONS.md` advertised "zero exemptions" over a set
+//     that never included it.
+//
+//     TWO REAL INSTANCES WERE SHIPPING when this was written, both found by
+//     measurement rather than suspicion, both fixed in the same commit:
+//     `AsymmetryChart`'s shared zero line (the bars ARE their distance from
+//     it) and `CycleChart`'s long-run trend line (`trendLabel` is drawn
+//     beneath it and names it). Both were `line.strong` — 1.71:1 light,
+//     1.62:1 dark on `surface.card` — and both are now `graph.neutral`.
+//     A third, lesson 23's crossing marker, was caught live a run earlier.
+//
+//     51a is the PREMISE and 51b is the RULE, and 51a exists so the rule
+//     cannot outlive its own justification: no `--line-*` token clears 3:1
+//     against ANY surface in either palette today, so a meaningful use is a
+//     defect BY CONSTRUCTION and no shade of the token could fix it. If a
+//     future palette edit darkens them, 51a fails and tells whoever did it to
+//     re-decide 51b rather than leaving a prohibition nobody can re-derive.
+//
+//     ⛔ WHAT 51b CANNOT SEE, stated because a guard's blind spot is exactly
+//     what the next run will assume it covers. It matches SVG paint attributes
+//     (`stroke={line.x}` / `fill={line.x}`). `AsymmetryChart`'s zero line was
+//     NOT one of those — it is a `borderTop` on a positioned `<div>`, which is
+//     lexically identical to the card borders that are correctly decorative.
+//     That instance was found by reading the file, and a future one drawn the
+//     same way would be found the same way. Distinguishing "a border that
+//     frames a box" from "a border that IS the plot's datum line" needs layout
+//     context this scanner does not have; widening the pattern to `border*`
+//     would fail on ~50 correct card and separator borders. The register below
+//     is therefore complete for painted SVG only.
+// ─────────────────────────────────────────────────────────────────────────────
+{
+  const cssPath = join(ROOT, "src", "index.css");
+  const cssSrc = readFileSync(cssPath, "utf8");
+  const GRAPHIC_MIN = 3;
+
+  const channel = (c) => {
+    const s = c / 255;
+    return s <= 0.03928 ? s / 12.92 : ((s + 0.055) / 1.055) ** 2.4;
+  };
+  const luminance = (hex) =>
+    0.2126 * channel(parseInt(hex.slice(1, 3), 16)) +
+    0.7152 * channel(parseInt(hex.slice(3, 5), 16)) +
+    0.0722 * channel(parseInt(hex.slice(5, 7), 16));
+  const contrast = (a, b) => {
+    const [hi, lo] = luminance(a) > luminance(b) ? [luminance(a), luminance(b)] : [luminance(b), luminance(a)];
+    return (hi + 0.05) / (lo + 0.05);
+  };
+
+  // SELF-TEST. 51a asserts that numbers are SMALL, which is the opposite
+  // direction from §28/§28b — so a broken luminance formula that collapses
+  // everything toward 1:1 would read as a pass on every pair at once here,
+  // just as one that inflated everything would there. Both bounds are pinned.
+  const selfTests = [
+    ["#000000", "#ffffff", 21],
+    ["#777777", "#ffffff", 4.48],
+    ["#ffffff", "#ffffff", 1],
+  ];
+  for (const [a, b, expected] of selfTests) {
+    const got = contrast(a, b);
+    if (Math.abs(got - expected) > 0.02) {
+      fail(
+        `§51: the contrast function failed its own self-test — ${a} on ${b} computed as ` +
+          `${got.toFixed(2)}:1, but WCAG 2.1 puts it at ${expected}:1. Every figure below is wrong; fix ` +
+          `the formula before reading any of them.`,
+      );
+    }
+  }
+
+  const parsePalette = (block) => {
+    const out = {};
+    for (const m of block.matchAll(/(--(?:line|surface)-[a-z-]+):\s*(#[0-9a-fA-F]{6})/g)) out[m[1]] = m[2].toLowerCase();
+    return out;
+  };
+  const lightBlock = cssSrc.slice(cssSrc.indexOf(":root {"), cssSrc.indexOf("@media (prefers-color-scheme: dark)"));
+  const darkStart = cssSrc.indexOf(':root[data-theme="dark"]');
+  const darkBlock = cssSrc.slice(darkStart, cssSrc.indexOf("}", cssSrc.indexOf("--shadow-lifted", darkStart)));
+
+  let premisePairs = 0;
+  let worstLine = { ratio: 0 };
+  for (const [label, block] of [["light", lightBlock], ["dark", darkBlock]]) {
+    const palette = parsePalette(block);
+    const lines = Object.keys(palette).filter((k) => k.startsWith("--line-"));
+    const surfaces = Object.keys(palette).filter((k) => k.startsWith("--surface-"));
+
+    // The scan must be proven to have found something. A regex broken by a
+    // palette edit yields zero pairs, and "no line token clears 3:1" is
+    // trivially true of the empty set — the exact shape of silent pass this
+    // repo has been bitten by before.
+    if (lines.length < 2 || surfaces.length < 7) {
+      fail(
+        `§51a: parsed only ${lines.length} line token(s) and ${surfaces.length} surface(s) from the ` +
+          `${label} palette in src/index.css (expected at least 2 and 7). The scan matched almost ` +
+          `nothing, so its "all below ${GRAPHIC_MIN}:1" result is about the empty set, not about the palette.`,
+      );
+      continue;
+    }
+
+    for (const l of lines) {
+      for (const s of surfaces) {
+        const r = contrast(palette[l], palette[s]);
+        premisePairs++;
+        if (r > worstLine.ratio) worstLine = { ratio: r, label, l, s };
+        if (r >= GRAPHIC_MIN) {
+          fail(
+            `§51a: ${label} ${l} (${palette[l]}) on ${s} (${palette[s]}) is now ${r.toFixed(2)}:1 and ` +
+              `clears WCAG 1.4.11's ${GRAPHIC_MIN}:1. That is not a failure of the palette — it invalidates ` +
+              `the PREMISE of §51b, which forbids painting a meaningful graphic with a line token on the ` +
+              `grounds that no shade of one can ever be visible enough. Re-decide the rule (a line token ` +
+              `that clears 3:1 may legitimately draw a datum line) and update this section's header, ` +
+              `rather than deleting the check.`,
+          );
+        }
+      }
+    }
+  }
+
+  // ── 51b: the call-site register ──
+  // Every SVG paint of a `line.*` token in src/ must appear here with a reason
+  // it is decorative under 1.4.11. This is a COMPLETE enumeration, not an
+  // exemption list: an unregistered use fails, so adding a line to a chart is
+  // a deliberate act rather than a default. `anchor` is matched as a substring
+  // of the source line, and an entry matching nothing fails as stale — the
+  // same staleness contract §28b's GRAPH_EXEMPT carries.
+  const LINE_SVG_DECORATIVE = [
+    [
+      "src/components/charts.jsx",
+      'x1="10" y1="70" x2="130" y2="70"',
+      "YieldCurve's x-axis. The figure plots no scale — the message is the curve's SHAPE, and the three maturities are given as text (2Y/10Y/30Y). Removing the rule loses nothing readable.",
+    ],
+    [
+      "src/components/charts.jsx",
+      'x1="10" y1="5" x2="10" y2="70"',
+      "YieldCurve's y-axis. Same figure, same argument: no value scale is drawn against it, so it frames the plot rather than measuring it.",
+    ],
+    [
+      "src/components/charts.jsx",
+      "x1={CURVE_PAD.left} y1={py(0)}",
+      "GrowthCurve's baseline. What the figure claims is that one curve pulls away from the OTHER; the comparison is series-to-series and the two endpoint values are printed as text. The curves never approach the baseline, so it is a frame, not the reference being read.",
+    ],
+    [
+      "src/components/charts.jsx",
+      'strokeWidth="0.5" strokeDasharray="3"',
+      "GrowthCurve's interior gridlines. Supporting rules behind the data; every value they would help estimate is either an endpoint dot or printed as text.",
+    ],
+    [
+      "src/components/charts.jsx",
+      "x1={FLIP_PAD.left} y1={py(0)}",
+      "PreferenceFlip's baseline. The figure's message is the CROSSING, which is carried by the ink.muted marker and the two zone bands — deliberately not by this line. See the measured note at that marker.",
+    ],
+  ];
+
+  const svgPaintRe = /(?:stroke|fill)=\{line\.[a-zA-Z]+\}/;
+  const scanRoots = [join(ROOT, "src")];
+  const jsxFiles = [];
+  const walk = (dir) => {
+    for (const e of readdirSync(dir, { withFileTypes: true })) {
+      const p = join(dir, e.name);
+      if (e.isDirectory()) walk(p);
+      else if (e.name.endsWith(".jsx") || e.name.endsWith(".js")) jsxFiles.push(p);
+    }
+  };
+  for (const r of scanRoots) walk(r);
+
+  // Control: the scanner must be able to see the uses that ARE there. If the
+  // regex stops matching, `found` is empty, every register entry reads as
+  // stale AND no unregistered use is reported — a double-negative that looks
+  // like a clean sweep. Assert a floor derived from the register itself.
+  const found = [];
+  for (const f of jsxFiles) {
+    const rel = f.slice(ROOT.length + 1);
+    readFileSync(f, "utf8").split("\n").forEach((text, i) => {
+      if (svgPaintRe.test(text)) found.push({ rel, lineNo: i + 1, text });
+    });
+  }
+  if (found.length < LINE_SVG_DECORATIVE.length) {
+    fail(
+      `§51b: the scanner found ${found.length} SVG paint(s) of a line token across ${jsxFiles.length} ` +
+        `file(s), fewer than the ${LINE_SVG_DECORATIVE.length} the register already accounts for. Either the ` +
+        `regex no longer matches the code, or entries were removed without deleting them here. A zero ` +
+        `here is not a clean result — it is a blind scanner.`,
+    );
+  }
+
+  const usedEntries = new Set();
+  for (const use of found) {
+    const idx = LINE_SVG_DECORATIVE.findIndex(([file, anchor]) => file === use.rel && use.text.includes(anchor));
+    if (idx === -1) {
+      fail(
+        `§51b: ${use.rel}:${use.lineNo} paints an SVG element with a \`line.*\` token and is not in ` +
+          `LINE_SVG_DECORATIVE. No line token clears ${GRAPHIC_MIN}:1 against any surface (worst case ` +
+          `${worstLine.ratio.toFixed(2)}:1, §51a), so if this line carries meaning — a datum, a reference the ` +
+          `caption names, anything the reader has to FIND — it fails WCAG 1.4.11 and no shade of the token ` +
+          `fixes it; use \`graph.*\`, which §28b holds to 3:1. If it is genuinely decoration, add it here ` +
+          `with the reason.\n      ${use.text.trim()}`,
+      );
+    } else {
+      usedEntries.add(idx);
+    }
+  }
+  for (let i = 0; i < LINE_SVG_DECORATIVE.length; i++) {
+    if (!usedEntries.has(i)) {
+      const [file, anchor] = LINE_SVG_DECORATIVE[i];
+      fail(
+        `§51b: LINE_SVG_DECORATIVE entry ${i} (${file}, "${anchor}") matches nothing in the tree. The code ` +
+          `moved and the classification did not. Delete the entry or repoint it — a stale register makes the ` +
+          `next real use look accounted for.`,
+      );
+    }
+  }
+
+  if (failures === 0) {
+    console.log(
+      `  §51 line-token graphics: ${premisePairs} line x surface pairs all below ${GRAPHIC_MIN}:1 ` +
+        `(worst ${worstLine.ratio.toFixed(2)}:1, ${worstLine.label} ${worstLine.l} on ${worstLine.s}), so ` +
+        `${found.length} SVG line-token paint(s) are each classified decorative in LINE_SVG_DECORATIVE`,
+    );
+  }
+}
 console.log(`\n${failures === 0 ? "PASS" : "FAIL"}: ${failures} failure(s), ${warnings} warning(s).`);
 process.exit(failures === 0 ? 0 : 1);

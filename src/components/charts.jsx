@@ -205,9 +205,23 @@ export function AsymmetryChart({ title, axisLabel, bars, colors, labelInks, desc
         The zero line is drawn once across the whole plot rather than per
         column: it is a shared axis, and rendering it per bar made it read as
         two unrelated baselines instead of one line the bars are measured from.
+
+        `graph.neutral`, not `line.strong`, and the reason is measured. This
+        line is the reference the two bars are read against — the lesson's
+        whole finding is that one runs twice as far from it — so it is a
+        graphic "required to understand the content" under WCAG 1.4.11 and
+        owes 3:1. `line.strong` measures 1.71:1 light / 1.62:1 dark on
+        `surface.card`; no `--line-*` token clears 3:1 against any surface in
+        either palette, which is why the fix is a different token and not a
+        different shade. `graph.neutral` measures 5.24:1 light / 4.47:1 dark
+        and is checked on every surface by §28b. `ink.muted` would also clear
+        it, at 7.01:1 — and would then out-weigh the data bars it exists to
+        measure: rendered, the bars sit at 5.93:1 and 5.75:1, so the line
+        wants to be lighter than that, which `graph.neutral` is and
+        `ink.muted` is not.
       */}
       <div role="img" aria-label={description} style={{ position: "relative", display: "flex", gap: space["4"], height: 150 }}>
-        <div aria-hidden="true" style={{ position: "absolute", left: 0, right: 0, top: "50%", borderTop: `1px solid ${line.strong}` }} />
+        <div aria-hidden="true" style={{ position: "absolute", left: 0, right: 0, top: "50%", borderTop: `1px solid ${graph.neutral}` }} />
         {bars.map((b, i) => {
           const up = b.felt > 0;
           const frac = (Math.abs(b.felt) / max) * 50;
@@ -445,8 +459,16 @@ export function CycleChart({ phaseNames, trendLabel, description }) {
   return (
     <figure style={{ background: surface.card, border: `1px solid ${line.hairline}`, borderRadius: radius.lg, padding: space["4"], margin: `0 0 ${space["4"]}px` }}>
       <svg viewBox="0 0 300 100" style={{ width: "100%", height: 88 }} role="img" aria-label={description}>
-        {/* The long-run trend the cycle oscillates around. */}
-        <line x1="0" y1="50" x2="300" y2="50" stroke={line.strong} strokeDasharray="4" />
+        {/*
+          The long-run trend the cycle oscillates around. `graph.neutral`, not
+          `line.strong`: `trendLabel` is drawn directly beneath it and names
+          it, so a caption refers to this line and the reader has to be able to
+          find the thing the caption is about. 1.4.11 applies — `line.strong`
+          was 1.71:1 light / 1.62:1 dark on `surface.card`, `graph.neutral` is
+          5.24:1 / 4.47:1. Kept lighter than the cycle path itself (`graph.blue`)
+          so the oscillation still reads as the subject and the trend as datum.
+        */}
+        <line x1="0" y1="50" x2="300" y2="50" stroke={graph.neutral} strokeDasharray="4" />
         <text x="150" y="98" textAnchor="middle" fill={ink.muted} fontSize="8">{trendLabel}</text>
         <path d="M0,50 Q37,50 75,15 Q112,50 150,50 Q187,50 225,85 Q262,50 300,50" fill="none" stroke={graph.blue} strokeWidth="2" opacity="0.25" />
         <path d="M0,50 Q37,45 75,20 T150,50 Q187,55 225,80 T300,50" fill="none" stroke={graph.blue} strokeWidth="2.5" strokeLinecap="round" />

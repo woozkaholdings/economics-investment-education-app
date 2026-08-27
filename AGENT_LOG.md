@@ -726,7 +726,29 @@ for the history. No open P1/P2 items.
       `headingOrder`. The review queue must be non-empty, so seed `ecycles_review` or complete a
       lesson first; a sweep of an empty-queue Practice screen is the vacuous reading, not a clean one.
 
-123. **[A11y/Tooling — filed 2026-08-27 by the run that added lesson 23's figure (item 27), as its
+123. **✅ DONE 2026-08-27 (scheduled dev-agent), the day after it was filed. Shipped as
+    `check-data.mjs` §51 — and the item's headline premise was WRONG in the direction that had made
+    it look optional: it said "one known instance and it is already fixed", and there were TWO MORE
+    STILL SHIPPING.** See the run log.
+    > **The correction, kept because it is the reason the item was worth picking.** The item priced
+    > itself "low-medium" on the grounds that the class was invisible but empty. Reading the call
+    > sites found `AsymmetryChart`'s shared zero line (the two bars ARE their distance from it, and
+    > they run in opposite directions) and `CycleChart`'s long-run trend line (`trendLabel` is drawn
+    > beneath it and names it, so a caption refers to it). Both were `line.strong`, both measured
+    > **1.71:1 light / 1.62:1 dark** on `surface.card` — live, in the rendered DOM, not just from the
+    > palette — and both are now `graph.neutral` at **5.24:1 / 4.47:1**.
+    > **The generalizable half: no `--line-*` token clears 3:1 against ANY surface in either palette
+    > (28 pairs, worst 1.75:1).** So a meaningful line-token graphic is a defect *by construction* and
+    > no shade of the token fixes it — which is why §51 is a call-site rule, not a color threshold.
+    > §51a machine-checks that premise so the rule cannot outlive its own justification.
+    > ⛔ **What §51 does NOT cover, stated so the next run does not assume it does.** It matches SVG
+    > paint attributes. `AsymmetryChart`'s zero line was a `borderTop` on a positioned `<div>` —
+    > lexically identical to the ~50 correct card borders — and was found by *reading the file*, not
+    > by the scanner. That residual is **item 124**.
+
+    <details><summary>Original item text as filed (2026-08-27), kept verbatim</summary>
+
+    **[A11y/Tooling — filed 2026-08-27 by the run that added lesson 23's figure (item 27), as its
     stated residual rather than smuggled into the same commit.] `--line-*` tokens are checked by
     NEITHER contrast section, so a line used as a meaningful graphic is unmeasured.**
     - **Measured, not suspected.** `check-data.mjs` §28 filters `--ink-*` and `--fill-*` against
@@ -748,6 +770,47 @@ for the history. No open P1/P2 items.
       group — the same shape as §28b's own `GRAPH_EXEMPT` classification.
     - **Honest priority: low-medium.** One known instance and it is already fixed. The value is that
       the class is currently invisible. Downstream of O-1 like everything else.
+
+    </details>
+
+124. **[A11y/Tooling — filed 2026-08-27 by the run that closed item 123, as its stated residual
+    rather than smuggled into the same commit.] A datum line drawn as a CSS `border` is invisible to
+    §51, and that is how the worse of item 123's two defects was actually drawn.**
+    - **State:** §51b matches SVG paint attributes (`stroke={line.x}` / `fill={line.x}`) and holds
+      all 5 current ones in a complete register. `AsymmetryChart`'s zero line was **not** one of
+      those — it is `borderTop: 1px solid ...` on an absolutely-positioned `<div>` inside the plot,
+      which is lexically identical to the ~50 card and separator borders that are correctly
+      decorative. It was found by reading the file.
+    - **Why the obvious widening does not work.** Extending the pattern to `border*` fails the build
+      on every card in the app. Telling "a border that frames a box" from "a border that IS the
+      plot's datum" needs layout context a source scanner does not have.
+    - **The shape that could work, and it is a measurement rather than a parser:** the a11y sweep
+      already renders the app. A probe could walk each `role="img"` subtree in the *live* DOM, read
+      the computed border color of every descendant, and flag any that resolves to a `--line-*`
+      value — position and containment are free there, and the "is it inside a plot" question that
+      defeats the static scanner is answered by the DOM. That also generalizes past `line.*` to any
+      under-contrast border inside a figure.
+    - **Honest priority: low.** Zero known live instances — both are fixed, and §51 covers the SVG
+      half permanently. This is the class, written down so the next one is not found by luck.
+      Downstream of O-1 like everything else.
+
+125. **[Docs/Integrity — filed 2026-08-27 by the run that closed item 123, from a stale figure that
+    briefly propagated into shipped code comments before a live measurement caught it.] Item 63's
+    "light `--graph-neutral` is `#7c8494`" has been wrong since the 2026-08-23 warm repaint; it is
+    `#736b61`.**
+    - **How it surfaced, which is the transferable part.** This run computed its predicted contrast
+      figures offline using `#7c8494` **taken from item 63's headline** rather than from
+      `src/index.css`, and wrote them into two `charts.jsx` comments. The live DOM then returned
+      **5.24:1** where the prediction said 3.76:1. The prose was the stale input; the palette was
+      right all along. Corrected in the code before commit.
+    - **Why it is worth an item rather than a one-line edit.** The figure sits in a **closed** item's
+      headline, which is exactly where nobody re-measures — and W-3 already recorded that closed
+      items' quoted specifics rot (item 24's lesson ids). A sweep for palette hex quoted anywhere in
+      `AGENT_LOG.md` against the live `index.css` would find whatever else moved in the same repaint.
+    - **Standing rule this earns, and it cost a wrong figure in two shipped comments to learn:**
+      **a hex quoted in this log is a dated observation, not the palette.** Read the token out of
+      `src/index.css` every time, including when a closed item states it confidently.
+    - **Honest priority: low**, and cheap.
 
 122. **✅ DONE 2026-08-27 (owner-directed: "compress the backlog to bring the floor under budget").
     The never-archived floor is 218,895 → 191,956 bytes; the backlog section 192,933 → 165,994. Every
@@ -3599,3 +3662,138 @@ Also dropped: the end-of-curve value in the series legend. It renders a *perceiv
 - **New item 123** (the `--line-*` contrast gap) is cheap and was found by measurement, not opinion.
 - **Unchanged and still the entire critical path, both owner-blocked: O-1** (a deployed URL) and **O-2**
   (item 18, an analytics account). Nobody has opened this app.
+
+### 2026-08-27 (scheduled dev-agent) — a line token can never clear 3:1, so two datum lines had been invisible by construction (item 123)
+
+**Picked item 123**, filed yesterday by the run that shipped lesson 23's figure. It is a W-5.2-legal
+pick (the previous run took item 27 off that list; this one is a filed backlog item, not a note-chain
+extension). Owner tree at open: `OWNER-TREE 7eac41a5212d273526454699b88eccf45df9683e7273a52ecdcfc25903bcbf36 (2 tracked modified, 52 untracked)` — the 2 tracked were this run's own files; `UIUX/` and `drafts/` untouched.
+
+#### Step 3.5 — the premise, re-measured with a control, and it was wrong in the direction that made the item look optional
+
+- **✅ True as filed:** §28 filters `--ink-*`/`--fill-*` against `--surface-*`, §28b filters
+  `--graph-*`, and both prefix filters exclude `--line-*` — verified at `check-data.mjs:2711`, which
+  states the "a line is not text" reasoning in as many words.
+- **⛔ FALSE as filed: "One known instance and it is already fixed."** Reading the call sites found
+  **two more, both shipping at HEAD**:
+  1. **`AsymmetryChart`'s shared zero line** — the two bars run in *opposite* directions from it, so
+     the figure's entire claim ("the loss registers about twice as strongly") is a comparison of two
+     distances measured from that line. Its own code comment already called it "a shared axis".
+  2. **`CycleChart`'s long-run trend line** — `trendLabel` is drawn directly beneath it and names it.
+     A caption refers to this line, which is item 123's own stated criterion for meaningful.
+  Both were `line.strong`. **The item priced itself "low-medium" on the belief that the class was
+  invisible but empty; it was invisible and occupied.**
+- **The instrument was validated six ways before any result was read**, three against published WCAG
+  values (21.00 / 4.48 / 1.00) and three against figures a *different* implementation already
+  asserts: `index.css`'s "white on `--fill-accent` would have been 1.94:1", and §28's own
+  machine-checked worst cases, **reproduced exactly at 5.61 light and 5.81 dark over 55 pairs each**.
+  > **A fourth "control" was my own invented expectation (8.28:1 for `--ink-accent` on white) and it
+  > failed.** The formula was right and the expected value was fabricated. Worth recording because a
+  > made-up control fails *identically* to a broken instrument, and the only thing separating them is
+  > whether the number came from somewhere independent. It was replaced with the three above.
+- **The finding that decides the shape of the fix: `--line-*` maxes out at 1.75:1 against any
+  surface, in either palette — 0 of 28 pairs clear 3:1.** So this is not "these two lines are too
+  light"; it is that a line token can *never* carry meaning, and no shade of one could fix it.
+
+#### What shipped
+
+- **Both defects fixed** — `AsymmetryChart`'s zero line and `CycleChart`'s trend line move to
+  `graph.neutral`, the token whose documented job is graphics at 3:1 and which §28b already holds to
+  that on all 7 surfaces (`npm test` reports the new adjacencies covered: 70 pairs, 0 exempted).
+  Each carries a comment with its measured before/after.
+- **`check-data.mjs` §51**, in two halves that do different jobs:
+  - **§51a — the premise.** All 28 `--line-*` × `--surface-*` pairs must stay *below* 3:1. This
+    exists so the rule cannot outlive its justification: if a future repaint darkens the tokens, §51a
+    fails and says "re-decide §51b", instead of leaving a prohibition nobody can re-derive.
+  - **§51b — the rule.** Every SVG paint of a `line.*` token in `src/` must appear in
+    `LINE_SVG_DECORATIVE` with a stated reason. It is a **complete enumeration, not an exemption
+    list** — an unregistered use fails, so adding a line to a chart is a deliberate act. All 5
+    current ones are classified (both `YieldCurve` axes, `GrowthCurve`'s baseline and gridlines,
+    `PreferenceFlip`'s baseline), each with the argument for why it is decoration.
+- **§28b's classification list updated in the same commit** — it claimed "all four rendered uses of
+  `graph.neutral`" and this change makes six. Found by the step-5 self-check, not by the tests.
+
+**Why `graph.neutral` and not `ink.muted`, which is the precedent lesson 23 set.** Measured, not
+taste: rendered, the two data bars sit at **5.93:1 and 5.75:1**. `ink.muted` is **7.01:1** — it would
+make the datum line heavier than the data it exists to measure. `graph.neutral` at **5.24:1** clears
+1.4.11 and stays lighter than both bars. Lesson 23's marker is a different case and correctly went
+the other way: there the marker *is* the message.
+
+#### Verification
+
+- **`npm test` exit 0** — 0 failures, the 2 documented translation warnings. `npm run build` clean.
+- **§51 proved able to fail, four ways, each injection proven to land before its result was read**,
+  and every file restored from a scratchpad copy with **SHA-256 verified equal before and after**
+  (never `git checkout --`):
+  1. an unregistered `stroke={line.strong}` added to a chart → §51b names the file, line and source
+     text, and says which token to use instead;
+  2. a register anchor drifted by one character → **both** halves fire — the use reports unregistered
+     *and* the entry reports stale;
+  3. light `--line-strong` darkened to `#6b6155` → §51a fails on all 7 surfaces with "this
+     invalidates the PREMISE of §51b… re-decide the rule rather than deleting the check";
+  4. **the scanner blinded** (regex mutated to match nothing) → the floor assertion fires: *"A zero
+     here is not a clean result — it is a blind scanner."* This is the control that matters, because
+     3 of the 4 injections would otherwise be indistinguishable from a passing sweep.
+- **Rendered live** against a served `dist/`, bundle name read back off the page (`index-ImTvambK.js`,
+  the trap-4 check), in **both schemes**, on lesson 27 and lesson 32.
+  > **The verification did not merely confirm the fix — it caught a live probe both ways.** For each
+  > chart the shipped line was measured, then repainted with `var(--line-strong)` in the live DOM,
+  > re-measured, and restored, asserting that the probe actually moved the color and that the restore
+  > returned the original. Result: **shipped 5.24:1 light / 4.47:1 dark; the old token 1.71:1 /
+  > 1.62:1.** The defect was real on screen and the fix is real on screen, both proven in the DOM
+  > rather than inferred from the palette.
+  > ⚠️ **The browser opened in DARK by default.** Every scheme figure above was taken under an
+  > explicit `data-theme`, because "measured live" under one silent scheme is the exact trap this log
+  > already records once.
+- **`preview_start` with a `name` is now refused for scheduled runs** — *"Dev servers can't be
+  started from unattended sessions"*. Reporting the actual error per W-1 rather than a memory claim.
+  **The Environment note's documented technique still works and is the one to use**: `python3 -m
+  http.server` over `dist/`, then `preview_start` with a plain `url` (`navOk: true`). W-1's rule is
+  unaffected; only the `name` form is gone.
+
+#### A premise correction found by the browser and not by the code
+
+The offline prediction said `graph.neutral` would be **3.76:1** in light; the live DOM returned
+**5.24:1**. The palette was not wrong — **the prediction used `#7c8494`, taken from backlog item 63's
+headline, and light `--graph-neutral` has been `#736b61` since the 2026-08-23 warm repaint.** The
+stale figure had already been written into two shipped code comments before the live measurement
+contradicted it; both were corrected before commit. **Filed as item 125 with the rule it earns: a hex
+quoted in this log is a dated observation, not the palette — read the token out of `index.css` every
+time, including from a closed item that states it confidently.** This is step 3.5's own lesson
+recurring one level up: I re-measured the *item's* claims and then trusted a *different* item's
+number without doing the same to it.
+
+#### Step 5 — adversarial self-check
+
+- **Blindspot register** — `check-blindspot.mjs` green on all 6 assertions. No Dalio or advice string
+  in the diff (grepped); no date added (grepped); §10.3 untouched. The only hex literals added are
+  `#000000`/`#777777`/`#ffffff` in §51's WCAG self-test — published reference values in a check
+  script, the identical pattern §28 already uses, not app color. §2.3 untouched: no content module
+  changed.
+- **`DECISIONS.md` conflict — checked, and one claim came close.** Line 711 says all 70 graph pairs
+  clear 3:1 "with **zero exemptions**". Still literally true: §28 and §28b's counts are unchanged
+  (110 and 70, 0 exempted) and §51 is a third section with its own register. **Deliberately not
+  edited** — it sits inside a dated 2026-08-23 decision record, and rewriting a dated record to
+  mention work done four days later falsifies it (§31 / item 91). The new coverage is recorded in
+  §51's header and here instead.
+- **Already-done backlog item** — item 123 was open and filed yesterday; not in "Completed and
+  pruned". This does not redo item 63: 63 classified `graph.neutral`'s *uses* and set the token's
+  value, and this run **extends** that list rather than reopening it — which is precisely the
+  claim ("all four rendered uses") that had to be updated in the same commit.
+- **Own verification claim** — the two easiest things to overstate are "§51 works" and "the two lines
+  were really defects". The first is four injections with a blinding control, each proven to land.
+  The second is a live DOM probe that measured the old and new values on the same element in the same
+  render. **What is NOT proven, and is now item 124: §51 would not have caught `AsymmetryChart`'s
+  zero line.** It is a CSS `borderTop`, not an SVG stroke; a human reading the file found it, and a
+  future one drawn that way would need the same. Saying "§51 closes the line-token gap" would be
+  false — it closes the SVG half.
+
+#### Next
+
+- **Item 124** (the border-drawn datum line, via a live-DOM probe rather than a parser) and **item
+  125** (sweep this log's quoted palette hex against `index.css`) are both cheap and both were found
+  by measurement rather than opinion.
+- **Item 27's bar still binds for a sixth visual**; lesson 17 remains the named candidate and was
+  again not built, because one run should add one.
+- **Unchanged and still the entire critical path, both owner-blocked: O-1** (a deployed URL) and
+  **O-2** (item 18, an analytics account). Nobody has opened this app.
