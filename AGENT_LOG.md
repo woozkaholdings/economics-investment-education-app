@@ -1298,6 +1298,31 @@ for the history. No open P1/P2 items.
     - **Honest priority: low-medium.** Zero live instances *now*, but unlike items 126/130 this one
       has a closed, dated instance behind it. Downstream of O-1 like everything else.
 
+139. **[A11y/Tooling — filed 2026-08-28 by the run that built `focusVisibleOnTab` (item 116), as
+    its stated residual rather than smuggled into the same commit.] The probe asks whether the
+    focus indicator CHANGES, not whether anyone can SEE it.**
+    - **State:** `focusVisibleOnTab` compares eight computed properties focused vs. unfocused and
+      reports an element whose signature is byte-identical. Measured 2026-08-28: **the shipped
+      probe scanned 40 controls over 4 screens and a control-verified hand run of the same method
+      scanned 124 over 9 screens — 0 findings in both.** Every control carries `index.css`'s
+      global `:focus-visible` ring (`outline: 2px solid var(--fill-accent)`), so the entire
+      result rests on **one rule and one token**.
+    - **What it cannot see.** WCAG **2.4.11** (focus appearance) and **1.4.11** (non-text
+      contrast) want the indicator to have adequate area and ≥3:1 contrast against **both** the
+      adjacent unfocused colors and what it covers. A ring rendered in a token that happens to
+      sit at 1.4:1 on its surface would pass this probe and fail a user. The pieces already
+      exist: `check-data.mjs` **§28b** enforces 3:1 on 70 graph×surface pairs and knows how to
+      compute a ratio — this is `--fill-accent` × every surface a focusable control sits on.
+    - ⚠️ **The instrument trap, named in advance because it is the same one twice.** `--fill-accent`
+      resolves per palette, and item 118's dark-mode miss is exactly this shape: a live scan that
+      reads one theme and reports for both. **Measure in light AND dark, with a control per
+      theme** — a planted low-contrast ring the check must catch.
+    - **The cheaper 80%: this is a STATIC question.** One global rule, one token, a knowable set of
+      surfaces. `check-data.mjs` can answer it every `npm test` without a browser — which is worth
+      more than a browser probe nobody runs on a schedule. **Prefer that shape.**
+    - **Honest priority: low.** Zero known live instances; the ring is one token and it currently
+      clears AA everywhere §28 already measures it. Downstream of O-1 like everything else.
+
 130. **[Process/Tooling — filed 2026-08-27 by the run that built §55, as its stated blind spot.]
     §55 cannot see comments, dev scripts, or Markdown — and that is 21 of the 36 spellings it was
     built in response to.**
@@ -1521,27 +1546,34 @@ for the history. No open P1/P2 items.
     - **Honest priority: low.** The defect is fixed; these are the seams around it. **All of it is
       downstream of O-1** — nobody has opened the app, so no learner has met either branch.
 
-116. **[A11y/Tooling — filed 2026-08-26 by the run that closed item 108, as its stated residual
-    rather than smuggled into the same commit.] The focus-dependent probe class is still
-    UNWRITTEN, and item 108 removed the last excuse for that being invisible.**
-    - **State:** `focusVisibleOnTab` is a **stub** — `run()` returns `{findings: [], scanned: 0}` and
-      always has. It is now correctly gated on a *measured* `focusSelectors` rather than a proxy, so
-      it reports `UNAVAILABLE` honestly instead of `VACUOUS` misleadingly. **But honest silence is
-      still silence**: nothing in this repo has ever checked focus-visible styling, focus order, or
-      the first-run dialog's focus trap on a rendered tree.
-    - **What blocks it is the harness, and that is now measured rather than assumed:** in this
-      preview pane `:focus` matches nothing and focus events do not fire (2026-08-26, four isolation
-      controls — see the run log). A probe written today would report `UNAVAILABLE` on every run.
-    - **So the real question is not "write the probe" but "can any harness here focus a document?"**
-      Cheap first step, and it is a *measurement*, not a build: find out whether any available
-      browser surface reports `document.hasFocus() === true`. The sweep now prints `hasFocus()` and
-      the measured capabilities side by side in `focusEvidence`, so **any future run that pastes it
-      is already collecting the data** — a run that sees them disagree should say so, since that is
-      the unreproduced 2026-08-25 divergence recurring.
-    - **Honest priority: low-medium, and it is genuinely blocked, not deferred.** The focus trap
-      (`§47`) and heading order already have *static* guards in `check-data.mjs`; this would be the
-      rendered-tree half. Do not write the probe until a harness exists to run it — a probe that is
-      structurally `UNAVAILABLE` is a fifth thing to maintain and a zero nobody can read.
+116. **✅ DONE 2026-08-28 (scheduled dev-agent). `focusVisibleOnTab` is a real probe; the sweep
+    reports `0 unavailable` for the first time. The item's central premise — that the harness
+    cannot focus a document — was FALSE, and it is the reason the probe sat stubbed for two
+    days.** See the run log.
+    > ⛔ **PREMISE CORRECTION, and it is the durable half of this item.** "What blocks it is the
+    > harness" was wrong. Every 2026-08-26 measurement reproduces exactly **at page load**, and
+    > the word that did not belong was *permanent*: the document simply has **no focused area
+    > until a real input event reaches the pane**. Send one `computer{action:"key", text:"Tab"}`
+    > and on the next call `hasFocus()` is true, focus events fire, `:focus` and `:focus-visible`
+    > both match, and a later programmatic `.focus()` **inherits** focus-visible — which is what
+    > lets one probe cover a whole screen without a Tab press per element. `visibilityState`
+    > stays `"hidden"` throughout, so it was never the signal to read.
+    > **⚠️ Seed with Tab, NOT with a click.** A click gives `:focus` without `:focus-visible`
+    > (the spec's pointer-vs-keyboard heuristic). Since `index.css`'s `:focus-visible` rule is
+    > the app's *only* focus styling, a click-seeded sweep finds every control ringless and
+    > reports the whole app broken. This is why `focusVisibleSelectors` is measured as its own
+    > third capability rather than inferred from `focusSelectors` — the item-108 proxy mistake
+    > has now been available to make three times, once per pseudo-class.
+    > **⚠️ `hasFocus()` also lies about KEYBOARD DELIVERY, which is a second proxy failure and
+    > cost a wrong conclusion inside this very run.** With the first-run dialog open it read
+    > `true` across sixteen key presses of which a capturing `document` keydown listener received
+    > **zero** — while a synthetic dispatch to that same listener fired, proving the listener was
+    > alive. Eight of those presses had already been read as *"the focus trap holds"*. **If a
+    > measurement depends on a key press landing, plant a keydown listener and count trusted
+    > events.** Redone that way the trap does hold: 16 trusted keydowns, focus entered the dialog
+    > and never left — §47's static guard now has its rendered-tree half.
+    > **Residual, filed as item 139:** the probe answers *"does anything change on focus"*, not
+    > *"is the change perceivable"* — WCAG 2.4.11/1.4.11 contrast of the indicator is uncovered.
 
 108. **✅ DONE 2026-08-26 (scheduled dev-agent). The focus capability is now MEASURED by a planted
     control (`measureFocus()`) instead of inferred from `document.hasFocus()`, and
@@ -2930,6 +2962,124 @@ finding(s); V vacuous; U unavailable`. A bare "no accessibility issues found" is
 > have moved nothing while the file sat at **915 KB**, 1.5x its own trigger. The boundary used here
 > is therefore the byte target, taken on whole days. **The deeper reason is in W-5.3's note:** the
 > run log is no longer what makes this file big.
+### 2026-08-28 (scheduled dev-agent) — the harness could focus a document all along; nobody had pressed Tab (item 116)
+
+**Pick.** Item 116, from the backlog rather than from the previous run's next-run line. Its own
+"cheap first step" is a *measurement*, not a build — *"can any harness here focus a document?"* —
+and W-1 makes browser verification a standing capability of scheduled runs, so it was answerable
+now rather than deferrable.
+
+#### Step 3.5 — four premises tested. Two held, one broke, and the one that broke was the item's thesis.
+
+- **✅ `focusVisibleOnTab` is a stub.** Source-read: `run()` returned `{findings: [], scanned: 0}`.
+- **✅ The sweep prints `hasFocus()` beside the measured capabilities.** Source-read, `focusEvidence`.
+- **✅ The 2026-08-26 measurements reproduce exactly — at page load.** Fresh build served, fresh
+  pane: `focusEvents=false`, `matches(:focus)=false`, `matches(:focus-visible)=false`,
+  `activeElementCorrect=true`, `hasFocus()=false`, `visibilityState="hidden"`. **All four controls
+  fired**: the synthetic-FocusEvent detector delivered (1), a click listener delivered (1), the
+  selector engine answered `button:enabled` = 13, and the bundle read back as `index-C3F1ZUMc.js`,
+  matching the build just run (Environment note rule 4).
+- **❌ "What blocks it is the harness… a probe written today would report `UNAVAILABLE` on every
+  run." FALSE, and this is the run's headline.** The word that did not belong was *permanent*.
+  The document has **no focused area until a real input event reaches the pane**. One
+  `computer{action:"key", text:"Tab"}` and, on the very next call: `hasFocus()` **true**, focus
+  events **fire**, `:focus` **matches**, `:focus-visible` **matches**, computed
+  `outline: solid 2px rgb(169,182,255)` on the skip link. `visibilityState` stays `"hidden"`
+  throughout — it was never the signal to read.
+
+⛔ **A click is not enough, and the difference is the probe's whole subject.** A seeding
+`left_click` gives `:focus` **without** `:focus-visible` — correct per the spec's
+pointer-vs-keyboard heuristic. `index.css`'s `:focus-visible` rule is the app's *only* focus
+styling, so a click-seeded sweep finds every control ringless and reports the whole app broken.
+Hence a **third** capability, `focusVisibleSelectors`, measured on its own plant. Gating one
+pseudo-class on its neighbour is the item-108 proxy mistake a third time — once per pseudo-class.
+
+⛔ **`hasFocus()` lies about KEYBOARD DELIVERY too, and it produced a wrong conclusion inside this
+run before the control caught it.** With the first-run dialog open, `hasFocus()` read `true` across
+**sixteen key presses of which a capturing `document` keydown listener received exactly zero** — a
+synthetic dispatch to that same listener fired, proving the listener was alive and the keys were
+going elsewhere. **Eight of those presses had already been read as "the focus trap holds". They
+proved nothing.** Redone with delivery counted rather than assumed — seed with a real click, then
+Tab — the trap **does** hold: **16 trusted keydowns, focus entered the dialog on the first Tab and
+never left across 14 more Tab/shift+Tab presses.** The mechanism is `App.jsx:331`'s
+`inert` + `aria-hidden` on everything behind the dialog (4 inert nodes measured), not a JS handler.
+**§47's static focus-trap guard now has its rendered-tree half** — for the first time.
+
+#### What shipped (`scripts/a11y-sweep.js` only — no `src/` change, no headless browser)
+
+1. **`focusVisibleOnTab` implemented.** Park focus on a planted offscreen button, snapshot the
+   element's computed style, focus it, snapshot again; identical signature ⇒ no visible indicator.
+   Elements where `activeElement !== el` after `.focus()` are skipped rather than counted as
+   findings — the Learn path renders 11 disabled locked-lesson buttons.
+2. **`focusVisibleSelectors` added to `measureFocus()`/`capabilities()`** as a separately measured
+   third signal, and `focusEvidence` now names the one-gesture fix when it is false.
+3. **A selftest plant** (`#a11y-selftest-noring`, a `!important` override of the global rule) and
+   its `expect` entry, matching the plant's **id** rather than the finding's shape — unnamedRegions'
+   reason: a shape match would pass off a real regression as a fired control.
+4. **Header note 2 and the HOW TO RUN block rewritten** to the corrected facts and the Tab gesture.
+
+⚠️ **The control found a defect in the probe, which is the whole reason it is there.** The first
+version's signature included `outlineOffset`, and the plant did **not** fire: the global rule sets
+`outline`, `outline-offset` **and** `border-radius` together, so an element suppressing only the
+outline still shows `0px → 2px` of offset — **a difference with no visual consequence, since an
+offset on a `none` outline paints nothing.** The probe would have read a ringless control as ringed.
+`outlineOffset` and `borderRadius` are now excluded, and **the plant is the guard**: put either
+property back and the control stops firing and the selftest fails.
+
+#### Verification
+
+- **`npm test` exit 0**, 0 failures, same 2 documented warnings + the 2 standing log-size warnings.
+  **§43 now reads `11 probe(s) declared (10 layout-gated, all with planted controls)`**, up from
+  10/9. **`npm run build` clean; `check-blindspot` PASS.**
+- **Live, reproducible in this order:** build → serve `dist/` on `127.0.0.1:8813` → `preview_start`
+  → screenshot (forces layout) → **one `computer key Tab`** → load the sweep → `selftest()` → `run()`.
+- **The refusal was verified before the pass, which is the half worth stating.** Run *without* the
+  Tab, `focusVisibleOnTab` reports **`UNAVAILABLE`** and the verdict names the one-gesture fix — it
+  does **not** report a clean zero. With the Tab: **11 of 11 controls fired, `plantsRemoved: true`,
+  `appFindingsAfterCleanup: 0`, verdict PASS.**
+- **Sweep result: `clean on 11 probe(s); 0 unavailable`** — the first fully-available sweep in this
+  file's history. `focusVisibleOnTab` `status: "ok"` with **scanned 10 / 5 / 10 / 15** on
+  `#/learn`, `#/practice`, `#/reference`, `#/lesson/1`. A control-verified hand run of the same
+  method beforehand covered **9 screens and 124 focusable controls — 0 findings**, its own control
+  (a planted `outline:none` button) firing on each pass.
+
+#### Step 5 — adversarial self-check
+
+- **Blindspot register** — no regression. Over the 154 added lines: Dalio/`principles of` **0**,
+  advice-adjacent verbs **0**, child-facing framing **0**; **control**: `focus` returns 93 on the
+  same diff, so the greps reach the added text. `check-blindspot` PASS. The change touches no
+  learner-visible string, no locale, no rendered UI — the built bundle name is **unchanged**
+  (`index-C3F1ZUMc.js`), which is itself the evidence that nothing shipped to users.
+  The dated comments I added are dev-script prose, the house convention in this file; §2.3's
+  live-date check covers teaching-copy modules and passed.
+- **`DECISIONS.md` conflict** — none; no decision governs the sweep. The one adjacent constraint is
+  the file's own rule that a headless browser is item 12's port-cost territory. **I did not add
+  one** — this is still a script a run pastes into the pane.
+- **Already-done backlog item** — no. `focusVisibleOnTab` has been a stub since it was declared;
+  no run has ever built it (`grep` over the log finds only stub/UNAVAILABLE references). Item 108
+  built `measureFocus()`; this extends it and leaves §43(d)'s proxy prohibition intact — no
+  capability is assigned from `hasFocus()` or `visibilityState`.
+- **Own verification claim** — the command sequence above reproduces it. **What I am NOT claiming:**
+  (1) that the app has *good* focus indicators — the probe answers "does anything change", not "is
+  the change perceivable", and WCAG 2.4.11/1.4.11 contrast of the ring is uncovered (**item 139**);
+  (2) that 0 findings covers the app — it covers the screens actually visited, in the storage state
+  they were visited in, like every probe here; (3) that the trap is proven beyond the first-run
+  dialog — that is the only modal in the app, and it is the only one measured.
+
+#### Next run
+
+`npm run owner-tree` — record the post-commit fingerprint. **Open and unblocked:** **item 139**
+(the focus-ring contrast half, and its cheaper static shape is spelled out); **item 127** (the
+per-language numeral guard — its "decide before coding" question is still undecided); **item 136**'s
+remainder and **item 130**, both still honestly low with zero live instances. **Item 116 is closed.**
+**For the owner, unchanged by this run:** both log-size warnings are live — run log **304,296 b**
+against a 250,000 b warn budget, and the **non-archivable floor at 256,017 b, also over** (both
+measured *after* this entry was written, not before it); archiving
+clears only the first and **item 115's two options for the second remain the owner's.**
+**O-1 is still the entire critical path: 44 lessons, five languages, 160 minutes of content, and
+zero people have ever opened this app.** **O-3** unchanged — this run added no translated prose;
+human review share is still 0% in all four languages.
+
 ### 2026-08-28 (owner-directed: "do item 138 next") — the check that would have caught the eight days, and the two guards that looked like they already covered it (item 138)
 
 **Pick.** Owner-directed. Item 138 was filed by the previous run as its own stated residual: the

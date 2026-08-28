@@ -11,8 +11,11 @@
  *
  * HOW TO RUN IT — see AGENT_LOG.md's Environment note for the build+serve half. In short:
  *   npm run build && (cd dist && python3 -m http.server 8811 --bind 127.0.0.1 &)
- *   ...open the preview at that URL, then paste this whole file into javascript_tool.
+ *   ...open the preview at that URL, take a SCREENSHOT (forces layout — note 1),
+ *   send ONE `computer{action:"key", text:"Tab"}` (seeds the focused area — note 2),
+ *   then paste this whole file into javascript_tool.
  * It returns a JSON string. Paste `A11ySweep.selftest()` FIRST — see below.
+ * Skip the Tab and everything still runs, minus focusVisibleOnTab, which says so in its verdict.
  *
  * ── THE POINT OF THE PRECONDITIONS ────────────────────────────────────────────────────────────
  * A live DOM instrument fails SILENTLY, and a silent failure is indistinguishable from a clean
@@ -22,22 +25,48 @@
  *      getBoundingClientRect() read 0. Geometry probes (hit targets, overflow) then return zero
  *      findings because nothing has a size, not because everything is fine. Taking a screenshot
  *      forces layout; this script HARD-GATES on it and refuses to report at all without it.
- *   2. THE FOCUS STATE MACHINE IS DEAD, AND IT IS THREE SIGNALS, NOT ONE. Re-measured
- *      2026-08-26 (item 108) with four controls, because the original note conflated things
- *      that fail separately and gated a probe on the wrong one. In this pane, with
- *      `document.hasFocus()` false and `visibilityState` "hidden" EVEN WHEN FRONTED:
+ *   2. THE FOCUS STATE MACHINE IS ASLEEP, NOT DEAD — AND ONE Tab WAKES IT. Rewritten
+ *      2026-08-28 (item 116). Everything the 2026-08-26 version measured is reproducible and
+ *      still true; what was wrong was the word "unavailable", and it cost this file a stubbed
+ *      probe for two days on the belief that no harness here can ever focus a document.
+ *
+ *      AT PAGE LOAD, before any input reaches the pane, all of this reproduces exactly:
  *        (a) `document.activeElement` is CORRECT after .focus()            → TRUSTWORTHY
- *        (b) a real `focus` listener on a real button gets ZERO events     → UNAVAILABLE
- *        (c) the focused element does NOT match `:focus`/`:focus-visible`  → UNAVAILABLE
- *      (c) is new and is the one that matters for a probe named focusVisibleOnTab, which had
- *      been gated on events. The isolation controls rule out the boring explanations: `click`
- *      events deliver fine (1), a SYNTHETIC FocusEvent reaches the same listener fine (1), and
- *      the selector engine handles pseudo-classes fine (`button:enabled` = 19). Events and
- *      selectors are not broken — the document simply has no focused area, so per spec no focus
- *      event is fired and nothing matches :focus, while activeElement still names the element
- *      that WOULD be focused. That single mechanism explains (a), (b) and (c) at once.
- *      NOTE: (b) and (c) are no longer asserted from this comment — capabilities() plants a
- *      button and measures both every run, so a session where they differ reports itself.
+ *        (b) a real `focus` listener on a real button gets ZERO events     → asleep
+ *        (c) the focused element does NOT match `:focus`/`:focus-visible`  → asleep
+ *      with `hasFocus()` false and `visibilityState` "hidden" EVEN WHEN FRONTED. The isolation
+ *      controls rule out the boring explanations: `click` events deliver fine, a SYNTHETIC
+ *      FocusEvent reaches the same listener fine, and the selector engine handles pseudo-classes
+ *      fine. One mechanism explains (a), (b) and (c) at once: the document has no focused AREA,
+ *      so per spec no focus event fires and nothing matches :focus, while activeElement still
+ *      names the element that WOULD be focused.
+ *
+ *      THE PART THAT WAS MISSING: a focused area is something you can just go and create.
+ *      Send ONE real input event to the pane — `computer{action:"key", text:"Tab"}` — and on the
+ *      very next call `hasFocus()` is true, focus events fire, `:focus` matches, `:focus-visible`
+ *      matches, and a subsequent programmatic `.focus()` INHERITS focus-visible, which is what
+ *      lets a probe iterate over a whole screen without pressing Tab once per element. Measured
+ *      2026-08-28 over 100+ controls across eight screens. `visibilityState` stays "hidden"
+ *      throughout, so it was never the signal to read.
+ *
+ *      ⚠️ A CLICK IS NOT ENOUGH, AND THE DIFFERENCE IS THE PROBE'S WHOLE SUBJECT. A seeding
+ *      `left_click` gives `:focus` but NOT `:focus-visible` — correctly, per the spec's
+ *      pointer-vs-keyboard heuristic. Since the app's only focus styling is index.css's
+ *      `:focus-visible` rule, a click-seeded sweep would find every control ringless and report
+ *      the entire app broken. Seed with Tab. capabilities() measures the two pseudo-classes
+ *      separately for exactly this reason.
+ *
+ *      ⚠️ `hasFocus()` LIES ABOUT KEYBOARD DELIVERY TOO — the item-108 proxy failure, one level
+ *      over. Measured 2026-08-28 while the first-run dialog was open: `hasFocus()` read true
+ *      across sixteen key presses of which a capturing `document` keydown listener received
+ *      EXACTLY ZERO, while a synthetic dispatch to the same listener fired — so the listener was
+ *      alive and the keys were going elsewhere. Eight of those presses had been read as "the
+ *      focus trap holds". They proved nothing. **If a measurement depends on a key press being
+ *      delivered, plant a keydown listener and count trusted events; never infer delivery from
+ *      hasFocus().** (Redone that way, the trap does hold — 16 trusted keydowns, focus entered
+ *      the dialog and never left.)
+ *      NOTE: (b) and (c) are not asserted from this comment — capabilities() plants a button and
+ *      measures all three signals every run, so a session where they differ reports itself.
  *   3. READING IN THE SAME CALL THAT CLICKED. React commits asynchronously, so a same-call read
  *      returns the PREVIOUS render. Always click in one javascript_tool call and read in the next.
  *
@@ -62,6 +91,14 @@
   "use strict";
 
   var SKIP_ATTR = "data-a11y-selftest";
+
+  /* Sequentially-focusable elements. `[tabindex]:not([tabindex="-1"])` is deliberate — tabindex
+   * -1 is programmatically focusable but not reachable by Tab, and a probe named ...OnTab must
+   * not report a ring missing on something no Tab press can ever reach. Disabled controls match
+   * this selector too and are filtered later, by measurement rather than by attribute: `disabled`
+   * is not the only way an element refuses focus (an `inert` ancestor is another, and the app
+   * uses one on the first-run dialog). */
+  var FOCUSABLE = 'button, a[href], select, input, textarea, [tabindex]:not([tabindex="-1"])';
 
   /* ── focus capability, MEASURED rather than inferred ───────────────────────────────────────
    * Backlog item 108, 2026-08-26. Until this run the focus capability was `document.hasFocus()`
@@ -102,11 +139,17 @@
     synth.addEventListener("focus", function () { synthSeen++; });
 
     var prev = document.activeElement;
-    var matched = false, active = false;
+    var matched = false, active = false, matchedVisible = false;
     try {
       native.focus();
       active = document.activeElement === native;   // trustworthy here even when events are not
       matched = native.matches(":focus");
+      // The THIRD signal, added 2026-08-28 (item 116). `:focus` and `:focus-visible` are not the
+      // same question and this app styles only the second (`index.css`'s `:focus-visible` rule is
+      // the ONLY focus styling in the repo), so a probe gated on `:focus` would scan a document
+      // where nothing it is looking for can appear. Measured: after a seeding CLICK this is
+      // false while `matched` is true; after a seeding TAB both are true. See header note 2.
+      matchedVisible = native.matches(":focus-visible");
     } catch (e) { /* fall through as unavailable */ }
     var nativeDelivered = nativeSeen;               // FREEZE before the synthetic dispatch
 
@@ -123,11 +166,15 @@
     return {
       focusEvents: nativeDelivered > 0,
       focusSelectors: matched,
+      focusVisibleSelectors: matchedVisible,
       detectorOk: detectorOk,
       evidence: "nativeFocusEvents=" + nativeDelivered + " matches(:focus)=" + matched +
+        " matches(:focus-visible)=" + matchedVisible +
         " activeElementCorrect=" + active + " syntheticControl=" +
         (detectorOk ? "fired" : "DID NOT FIRE — this detector is broken, its false means nothing") +
-        " hasFocus()=" + document.hasFocus() + " visibilityState=" + document.visibilityState
+        " hasFocus()=" + document.hasFocus() + " visibilityState=" + document.visibilityState +
+        (matchedVisible ? "" : "  ⟵ NOT a permanent harness limit: send one `computer key Tab` " +
+          "to the pane and re-run. See header note 2.")
     };
   }
 
@@ -147,6 +194,7 @@
         Math.min(sample.length, 40),
       focusEvents: f.focusEvents,
       focusSelectors: f.focusSelectors,
+      focusVisibleSelectors: f.focusVisibleSelectors,
       focusEvidence: f.evidence,
       // Kept as RECORDED EVIDENCE, not as a gate. It is the signal the capability used to be
       // inferred from, so a future session where it disagrees with focusEvidence above is the
@@ -614,15 +662,68 @@
       return { findings: out, scanned: scanned };
     } },
 
-    /* Declared, gated OFF, and never silently green. `needs` is `focusSelectors` and not
-     * `focusEvents` deliberately: a :focus-visible probe reads the SELECTOR, and 2026-08-26
-     * measured the selector failing here independently of the events (item 108). Gating it on
-     * events would have marked it available on a session where :focus matches nothing — a zero
-     * that looks like "no focus-visible defects" and means "the instrument is blind". Both
-     * capabilities are now measured directly rather than inferred; see measureFocus(). */
-    focusVisibleOnTab: { needs: "focusSelectors", run: function () {
-      return { findings: [], scanned: 0,
-               note: "gated on measured :focus matching, not on document.hasFocus(); see the header." };
+    /* IMPLEMENTED 2026-08-28 (item 116). It was a stub for two days on the belief that this
+     * harness can never focus a document; that belief was wrong — see header note 2 — and the
+     * stub is what the belief cost.
+     *
+     * `needs` is `focusVisibleSelectors`, the THIRD capability, not `focusSelectors`. The app's
+     * only focus styling is `index.css`'s `:focus-visible` rule, so on a session seeded by a
+     * CLICK (`:focus` matches, `:focus-visible` does not) this probe would find every control
+     * ringless and report the whole app as broken. Gating one pseudo-class on its neighbour is
+     * the item-108 proxy mistake a third time; each pseudo-class is now measured on its own.
+     *
+     * METHOD, and why it is a comparison rather than a rule lookup: park focus on a planted
+     * offscreen button, snapshot the element's computed style, focus it, snapshot again. An
+     * element whose computed outline / box-shadow / border / background are byte-identical in
+     * both states has no visible focus indicator, whatever CSS claims. This reads the RESULT,
+     * which is the whole reason this file exists — items 102/103 were composition defects where
+     * every rule was individually right and the computed tree was still wrong.
+     *
+     * `document.activeElement !== el` after .focus() means the element is not really focusable
+     * (a disabled button — the Learn path renders 11 of them for locked lessons). Those are
+     * skipped rather than counted, so `scanned` stays the number of elements actually measured. */
+    focusVisibleOnTab: { needs: "focusVisibleSelectors", run: function () {
+      var park = document.createElement("button");
+      park.setAttribute(SKIP_ATTR, "focus-park");
+      park.style.cssText = "position:fixed;left:-9999px;top:0;width:1px;height:1px;";
+      document.body.appendChild(park);
+      var prev = document.activeElement, out = [], scanned = 0;
+
+      /* ⚠️ `outlineOffset` and `borderRadius` are DELIBERATELY ABSENT, and the selftest plant is
+       * what proves it. index.css's `:focus-visible` rule sets outline, outline-offset AND
+       * border-radius together, so an element that suppresses only the outline still shows an
+       * offset moving 0px → 2px on focus — a difference with no visual consequence whatsoever,
+       * since an offset on a `none` outline paints nothing. Including it made this probe read a
+       * ringless control as ringed: the first version of this code shipped that way and the
+       * plant caught it in one run. The plant still overrides only outline and box-shadow, so
+       * if a later edit puts either property back into the signature the control stops firing
+       * and the selftest fails — the guard is the plant, not a comment. */
+      function sig(el) {
+        var s = getComputedStyle(el);
+        return [s.outlineStyle, s.outlineWidth, s.outlineColor,
+                s.boxShadow, s.border, s.backgroundColor, s.color].join("|");
+      }
+
+      [].forEach.call(document.querySelectorAll(FOCUSABLE), function (el) {
+        if (el === park) return;
+        if (!visible(el) || !exposed(el)) return;
+        park.focus();                       // guarantee `el` is unfocused for the first read
+        var before = sig(el);
+        el.focus();
+        if (document.activeElement !== el) return;   // not actually focusable — not a finding
+        scanned++;
+        if (sig(el) !== before) return;
+        out.push("no visible focus indicator — computed outline/box-shadow/border/background are " +
+                 "identical focused and unfocused: " + where(el));
+      });
+
+      park.remove();
+      // Same courtesy measureFocus() extends: an instrument that leaves focus somewhere else has
+      // changed the page it was measuring, and the next probe reads the changed page.
+      if (prev && prev !== document.body && typeof prev.focus === "function") {
+        try { prev.focus(); } catch (e) { /* ignore */ }
+      }
+      return { findings: out, scanned: scanned };
     } }
   };
 
@@ -716,7 +817,17 @@
         '<polyline data-figure-part="series" data-figure-index="1" fill="none" stroke="#000" ' +
           'stroke-width="7" points="10,97 150,87 290,60"></polyline>' +
         '<line data-figure-part="marker" x1="30" y1="10" x2="30" y2="130" stroke="#000"></line>' +
-      '</svg>';
+      '</svg>' +
+      /* focusVisibleOnTab's control. The `!important` is load-bearing rather than lazy: it has
+       * to beat index.css's global `:focus-visible` rule, which is precisely the rule whose
+       * absence this probe hunts for, so a plant that did NOT beat it would inherit a ring and
+       * quietly never fire. Styled inline via a <style> the box owns, because the probe reads
+       * COMPUTED style — an inline `style="outline:none"` on the element would suppress the ring
+       * in both states and the before/after comparison would see no difference for the wrong
+       * reason, which is a control firing on its own account (the trap step 3.5 names). */
+      '<style>#a11y-selftest-noring:focus, #a11y-selftest-noring:focus-visible ' +
+        '{ outline: none !important; box-shadow: none !important; }</style>' +
+      '<button id="a11y-selftest-noring" style="width:60px;height:60px">ring</button>';
     document.body.appendChild(box);
     // Overflow is planted separately: it must actually widen the document to be a real control.
     var wide = document.createElement("div");
@@ -764,7 +875,11 @@
       /* FOUR regexes now, one per independently-rottable half of this probe: the two from the
        * outcomeGrid plant, plus the two from the preferenceFlip plant added for item 136. */
       figureClaims: [/the four cells are not equal/, /--line-hairline/,
-                     /swap order between x=-\d/, /each stroke is 7\.\d\dpx wide/]
+                     /swap order between x=-\d/, /each stroke is 7\.\d\dpx wide/],
+      /* Matches the plant's own id rather than the shape, for unnamedRegions' reason: every
+       * control in the app carries the global `:focus-visible` ring today, so a shape match
+       * would pass off a REAL regression as a fired control the moment one of them lost it. */
+      focusVisibleOnTab: /a11y-selftest-noring/
     };
     var caps = capabilities(), results = {}, failed = [];
     Object.keys(expect).forEach(function (name) {
@@ -799,7 +914,15 @@
         ? "PASS — every probe found its planted defect and the plants are gone. Zeros from " +
           "runProbes() are meaningful this session. (appFindingsAfterCleanup counts REAL findings " +
           "in the page, not residue — see plantsRemoved for the residue answer.)"
-        : "FAIL — do not trust a zero from: " + failed.join(", ") + ". Fix the instrument first."
+        : "FAIL — do not trust a zero from: " + failed.join(", ") + ". Fix the instrument first." +
+          // The one failure with a one-gesture fix, so it says so instead of reading like the
+          // others. Before item 116 this probe was a stub and never appeared here at all.
+          (results.focusVisibleOnTab === "UNAVAILABLE"
+            ? "  ⟵ focusVisibleOnTab is UNAVAILABLE because this document has no focused area " +
+              "yet, which is an OPERATOR step and not a harness limit: send one `computer key " +
+              "Tab` to the pane, then re-run selftest(). A seeding CLICK is not enough — it " +
+              "gives :focus without :focus-visible. See header note 2."
+            : "")
     }, null, 2);
   }
 
