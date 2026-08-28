@@ -910,9 +910,10 @@ for the history. No open P1/P2 items.
     > a native-speaker pass, and the correlated-blind-spot caveat applies. **Human review share is
     > still 0% in all four languages** — that is O-3, and it is the owner's.
 
-131. **🟡 PARTLY DONE 2026-08-27 (scheduled dev-agent) — 8 of the 28 pairs closed. Read the premise
-    correction before picking up the rest: the staleness flag was UNDERSTATING this item by roughly a
-    factor of ten, and the item's own "scope it to one language per run" is the wrong axis.**
+131. **🟡 20 of 28 PAIRS DONE (8 on 2026-08-27, 12 more 2026-08-27 owner-directed: "do lessons 33,
+    37, 39 next"). Only lessons 1 and 4 remain, and they are item 132's, not staleness's. Read the
+    premise correction — the staleness flag was UNDERSTATING this item, and its own "scope it to one
+    language per run" was the wrong axis.**
     > **What the English drift actually is, measured with a two-sided control rather than assumed.**
     > All seven lessons share **one** reviewed-English state — commit `e43dded` (2026-08-20), *not* the
     > 2026-08-14/15 the ledger's `reviewedDate` shows; the English never moved between the review and
@@ -922,28 +923,72 @@ for the history. No open P1/P2 items.
     > semantic edit** — very nearly the item-129 shape this item said it was not.
     > ⛔ **But the English is the wrong thing to size this by, and that is the correction that matters.**
     > Staleness is computed from an English hash, so it truthfully reported "the English moved a
-    > little". Measured on the *translations* instead, lessons **30/33/37/39/40 grew 2.5x–4.5x in every
-    > language** since that reviewed state (lesson 30 `es` 1,082→3,556 chars; lesson 39 `ja`
-    > 1,092→4,767). Those five are `economy`, and **item 93's economy tranche landed after 2026-08-20**
-    > — so the 2026-08-14 review saw the *abridged* translation, and what stands today is roughly
-    > **55,000 characters of never-reviewed machine translation**. The flag says "re-review"; the work
-    > is a **first** review. **A hash over the source language cannot see drift in the target.**
+    > little". Measured on the *translations* instead, lessons **30/33/37/39/40 grew 2.8x–4.7x in every
+    > language** since that reviewed state (lesson 30 `es` 987→3,421 chars; lesson 39 `ja` 383→1,674),
+    > **10,855 → 39,627 characters across the twenty pairs**. Those five are `economy`, and **item 93's
+    > economy tranche landed after 2026-08-20** — so the 2026-08-14 review saw the *abridged*
+    > translation and what stands today is ~**29,000 characters of new, never-reviewed machine
+    > translation**. The flag says "re-review"; the work is a **first** review. **A hash over the
+    > source language cannot see drift in the target.**
+    > ⛔ **FIGURE CORRECTION 2026-08-27, and it is a correction to this item's own first version.** That
+    > version said *2.5x–4.5x* and *"~55,000 characters"*, and the 12-pair line below said
+    > *"~40,000-character"*. Those were **byte counts read as characters**: `wc -m` counts bytes when
+    > no UTF-8 locale is set (verified — three Han characters report 9), which inflates `ko`/`zh`/`ja`
+    > roughly threefold and leaves `es` near-correct. The **ratios survived** because both sides were
+    > measured the same way; the absolute figures did not. Re-measured over Unicode code points, the
+    > real numbers are the ones above and **26,568** for the twelve. **Count code points, not `wc -m`,
+    > on any CJK corpus.** (Only this live item is corrected; the 2026-08-27 run-log entry that quotes
+    > the old figures is a dated record and stays verbatim, per §31.)
     > **Lessons 1 and 4 are the exact opposite case.** Their translations are **byte-identical** to the
     > reviewed state in all four languages; what changed is that the *English* gained a cross-reference
     > sentence with **no counterpart in any translation**, because both are `essentials` and abridged
     > (0.50x and 0.68x against `es`'s 1.18 reference). Verified pre-existing, not a regression from
     > `7046854`. That gap is **item 132**, and it belongs to item 94's track, not to staleness.
-    - **DONE this run: lessons 30 and 40 x es/ko/zh/ja (8 pairs)**, each read in full in all five
-      languages; one real defect found and fixed (see the run log). Coverage **84% → 89%**, 7 stale → 5.
-    - **OPEN — lessons 33, 37, 39 x 4 = 12 pairs.** This is the ~40,000-character never-reviewed block
-      above. **Scope it one LESSON per run, not one language**: the unit of unreviewed text is the
-      lesson, and the per-language split was advice inherited from a run whose pairs were four
-      orthographic hunks. Budget it like a first review, because it is one.
-    - **OPEN — lessons 1 and 4 x 4 = 8 pairs.** Cheap and low-yield: the text is unchanged and was
-      reviewed once already, so marking them is closer to a re-stamp than a read. Do it *after* the
-      twelve, and only together with item 132.
-    - **Honest priority: medium.** It moves a published readiness figure, and unlike most of this
-      backlog the open half is content nobody has ever checked. Downstream of O-1 like everything else.
+    - **✅ DONE — lessons 30 and 40 x es/ko/zh/ja (8 pairs)**, each read in full in all five languages;
+      one real defect found and fixed (`ja` lesson 30's title brackets). Coverage **84% → 89%**.
+    - **✅ DONE — lessons 33, 37, 39 x es/ko/zh/ja (12 pairs)**, the 26,568-character never-reviewed
+      block, all read in full. Coverage **89% → 95%**, 7 stale → 2. **All twelve are complete and
+      faithful**: every section, takeaway and thinkAbout present, and every figure converts correctly
+      into each language's own number scale — which was the live risk here and is worth stating,
+      because lesson 37 is nothing but large dollar figures (`es` correctly splits *billones* from
+      *mil millones*, `ko` 조/억, `zh` 万亿/亿, `ja` 兆/億). One real defect found and fixed (`zh`
+      lesson 37's ASCII quotes; see **item 134**).
+    - **OPEN — lessons 1 and 4 x 4 = 8 pairs**, and **this is the whole remainder.** Cheap and
+      low-yield: the text is unchanged and was reviewed once already, so marking them is closer to a
+      re-stamp than a read. **Do them only together with item 132**, which is the thing actually worth
+      deciding about those two lessons.
+    - **Honest priority: low now** — the half that was content nobody had checked is checked. What is
+      left is a bookkeeping tail. Downstream of O-1 like everything else.
+
+134. **[Process/Tooling — filed 2026-08-27 by the run that reviewed lessons 33/37/39, as the guard
+    its own fix has no instrument for.] Each language's quotation convention is a property of the
+    corpus that nothing checks, and it has already drifted twice.**
+    - **The measurement that makes this an item rather than an opinion.** Classifying every quoted
+      span in lesson content by *role* (lesson title vs ordinary quotation) gives a clean per-language
+      convention: **`en` curly “ ” for titles 55/55 and ASCII " " for inline terms 28/28**; **`es`
+      the same, 49/49 and 23/23**; **`zh` 《》 for titles and full-width “ ” for inline terms**;
+      **`ja` 『』 for titles and 「」 for ordinary quotation**; **`ko` 「」 for titles**. These are
+      not style preferences — in `zh` and `ja` the halfwidth/fullwidth distinction is typographic
+      correctness, and the title/quotation distinction is what tells a reader whether a phrase names
+      another lesson.
+    - **Two drifts have now been found by hand, one per run.** 2026-08-27: `ja` lesson 30 wrote a
+      lesson title in 「」 where 75 others used 『』. Same day: `zh` lessons 3 and 37 wrote inline
+      terms in **ASCII U+0022** where 120 others used U+201C/U+201D. **Both were found by a review
+      that happened to be looking; neither would have been caught by anything in `npm test`.**
+    - **The shape that would work**, and it is close to `check-data.mjs` §55's: walk learner-visible
+      strings per language, classify each quoted span as title-or-not by joining against `lessons.js`,
+      and assert the per-language convention above. §55 already proves the walk; this adds the
+      classification. **The title/non-title join is the load-bearing part** — a naive "no ASCII quotes
+      in CJK" rule would be simpler and would miss the `ja` case entirely.
+    - ⚠️ **Do not write the `ja` rule as "『』 means title".** Measured: `ja` also uses 『』 for six
+      **coined labels and slogans** (『今回は違う』 in lessons 33 and 36, 『美しい/醜いデレバレッジング』
+      in lesson 34). That is a coherent Japanese convention, not drift, and a checker that flags it
+      would be turned off. The rule that holds is the *converse*: **a lesson title must never appear
+      in 「」**.
+    - **Honest priority: low-medium.** Zero live instances as of this entry, which by item 130's
+      standing reasoning argues for waiting — but unlike item 130's case this one has **regrown twice
+      in two runs**, which is the condition item 130 itself names as what would justify building.
+      Downstream of O-1.
 
 132. **[Content — filed 2026-08-27 by the run that corrected item 131, as the gap that correction
     exposed rather than smuggled into the same commit.] Lessons 1 and 4 point the reader at another
@@ -2514,6 +2559,133 @@ finding(s); V vacuous; U unavailable`. A bare "no accessibility issues found" is
 > have moved nothing while the file sat at **915 KB**, 1.5x its own trigger. The boundary used here
 > is therefore the byte target, taken on whole days. **The deeper reason is in W-5.3's note:** the
 > run log is no longer what makes this file big.
+### 2026-08-27 (owner-directed: "do lessons 33, 37, 39 next") — the 26,568 characters nobody had read, and my own headline figure was bytes wearing a character's label (item 131)
+
+**Picked item 131's open half** on the owner's explicit pick. Working tree clean apart from the
+owner's untracked `UIUX/` and `drafts/`; `owner-tree --expect c2331799…` **UNMOVED** before any edit.
+
+#### Step 3.5 — the premise held, gained commit-level proof, and then broke on a figure that was mine
+
+- **The claim, upgraded from inference to evidence.** Last run I *inferred* these translations were
+  never reviewed, from volume growth plus item 93's timeline. This run the instrument names the
+  commits: each of the 12 pairs was rewritten **exactly once**, by a **single identified item-93
+  commit** dated 2026-08-22→08-24 — `b202aeb`/`71e4c37`/`440f211` (es), `85c4f2a`/`3d7d900`/`b93b97b`
+  (ko), `33fc23b`/`1eeaba7`/`ab0bb83` (zh), `ecd3b54`/`712f3f7`/`9de64f9` (ja) — every one of them
+  **after** the 2026-08-14/15 reviews, and none touched since.
+- **Its control is the commit subjects, and it is two-sided.** Each subject names the exact lessons
+  *and language* it moved ("Translate ko economy 39-40"), and the instrument reports that pair moving
+  at that commit **and no other language moving there**. Independent evidence agreeing in both
+  directions.
+- ⛔ **THE PREMISE THAT BROKE WAS MY OWN, AND IT WAS IN THE FIGURE I PUBLISHED YESTERDAY.** Item 131
+  said *"~55,000 characters"* and *"~40,000-character never-reviewed block"*, and *2.5x–4.5x*. Those
+  were **byte counts labeled as characters.** `wc -m` counts **bytes** when no UTF-8 locale is set —
+  verified directly: three Han characters report **9** under the session's empty `LANG`, **3** under
+  `LC_ALL=en_US.UTF-8`. That inflates `ko`/`zh`/`ja` about threefold and leaves `es` near-correct.
+  **The ratios survived** (both sides were measured the same way); the absolute numbers did not.
+  Re-measured over Unicode code points: the five economy lessons went **10,855 → 39,627** characters
+  (**2.8x–4.7x**), and lessons 33/37/39 are **26,568**, not ~40,000. Item 131 is corrected; yesterday's
+  entry stays verbatim as a dated record, per §31.
+  **The transferable rule: on a CJK corpus, count code points. `wc -m` is not a character count unless
+  the locale says so, and it fails by inflating — the direction that makes a claim sound bigger.**
+
+#### The review: 12 pairs, all read in full
+
+**All twelve are complete and faithful** — every section, takeaway and thinkAbout present, no §10.1
+drift, no Dalio attribution introduced into lesson 33 (the most Dalio-adjacent content in the app).
+
+- **The live risk in this block was numbers, and they are right.** Lesson 37 is almost entirely large
+  dollar figures across two number scales. Every one converts correctly: `es` splits *billones* (10¹²)
+  from *mil millones* (10⁹) throughout — $1.75 billones, $600 mil millones, $9 billones — which is
+  what `71e4c37`'s own subject claimed to fix and it did; `ko` 조/억 ($1.75조, $6000억, 월 $950억);
+  `zh` 万亿/亿; `ja` 兆/億 (1兆7500億ドル). **Checked digit by digit rather than trusted.**
+- **Domain terms land as terms of art in all four**: deleveraging → *desapalancamiento* / 디레버리징 /
+  去杠杆 / デレバレッジング; wealth effect → *efecto riqueza* / 부의 효과 / 财富效应 / 資産効果 (the
+  standard Japanese term, not a calque); credit spread → 신용 스프레드 / 信用利差 / クレジットスプレッド.
+- **The §10.1-sensitive sentences survive translation**, including lesson 33's refusal to time the
+  cycle — `es` *"nadie puede anticipar el momento"*, `ko` *"그 시점을 맞힐 수 있는 사람은 없습니다"*,
+  `zh` *"没有人能算准时点"*, `ja` *"時期を当てられる人はいません"*.
+
+#### ⛔ The defect: 120 full-width quotes and two ASCII ones
+
+Classifying every quoted span by role across the corpus: **`zh` uses full-width “ ” for inline terms
+**120 times** and ASCII `"` exactly **twice** — lesson 37's `"财富效应"` and lesson 3's `"再投资"`.
+Confirmed at the code-point level with a control: the two outliers are **U+0022**, a known-good
+instance in lesson 33 is **U+201C/U+201D**. ASCII quotes are halfwidth glyphs in a fullwidth context;
+they are a typographic error in Chinese, not a preference.
+
+**Both were fixed, not just the in-scope one.** The measurement was corpus-wide, so repairing only the
+half that fell inside the owner's three lessons would have been arbitrary; lesson 3's English is
+untouched, so nothing goes stale. `zh` is now **122/122 full-width, 0 ASCII**. The guard this has no
+instrument for is filed as **item 134**.
+
+#### A finding that refuted my own fix from the previous run
+
+Yesterday I fixed `ja` lesson 30's `「金利」` → `『金利』` and wrote that `『』` marks a work title while
+`「」` is the primary quotation mark. **Reading lesson 33 turned up `『今回は違う』` — a slogan, not a
+title — and the tally says that is not an outlier:** `ja` uses `『』` for **six** non-title spans
+(`今回は違う` in lessons 33 and 36, `美しい/醜いデレバレッジング` and `美しい`/`醜い` in lesson 34).
+That is a coherent Japanese convention for coined labels and quoted sayings. **Left unchanged**, and
+yesterday's framing narrowed accordingly: the rule that actually holds is the converse — a lesson
+title must never appear in `「」` (0 instances now), not that `『』` always means a title. Item 134
+carries the correction so a future checker is not written to the wrong rule.
+
+#### Two observations recorded and deliberately NOT changed
+
+- **`ko`/`zh`/`ja` all soften "a multi-generational high" to "several decades"** (수십 년 / 几十年 /
+  数十年); `es` renders it exactly (*"un máximo de varias generaciones"*). It sits inside lesson 39's
+  hypothetical THINKABOUT ("Imagine an economy where…"), so it carries no claim about the world and
+  no figure moves. Three languages agreeing is a translation-register pattern, not drift.
+- **`ko` `대출자` for *lender*** recurs in lessons 33 and 39 exactly as **item 133** describes. This
+  run adds instances, not information; left for item 76's instrument.
+
+#### Verification
+
+- **Coverage 89% → 95% in all four languages, 5 stale → 2.** The 2 remaining are lessons 1 and 4 —
+  item 132's, and the only thing left in item 131.
+- **Ledger diff is exactly the 12 intended pairs**, verified key-by-key against a pre-run copy;
+  **176 pairs before and after**.
+- **`npm test` 0 failures, 2 warnings** (the two documented baselines); **`npm run build` clean**;
+  `check-blindspot` **7/7 ok**.
+- **`LAUNCH_READINESS.md` §10.4 moved to a value the build computed**, and failed the build until it
+  did. The character-volume sentence did **not** move, correctly: U+0022 → U+201C is one code point
+  for one code point.
+- **Live browser verification (W-1).** Fresh `dist/` over `/usr/bin/python3 -m http.server`,
+  `preview_start` with a plain `url`, **bundle name read back and matched to the build just run** per
+  the Environment note's rule 4, `?cb=` to defeat the stale-`index.html` trap. `zh` lesson 37 renders
+  the fixed `“财富效应”` with **0 ASCII quotes present**.
+
+#### Step 5 — adversarial self-check
+
+- **Blindspot register** — no regression. `check-blindspot` **7/7**. Over the content diff:
+  Dalio / `principles of` / advice-adjacent verbs **0**; **control**: the same pipeline returns **2**
+  for `效应` on the same diff, so it reaches the changed text. Lesson 33 is the Dalio-adjacent lesson
+  and was read in all five languages specifically for attribution creep — none. No date, no market
+  figure touched.
+- **`DECISIONS.md` conflict** — none. All marks are `method: "ai"`, which is P-4 option (a).
+- **Already-done backlog item** — no, and the sharper version of this check fired: **this run
+  contradicted its own predecessor's generalization** about `ja` bracket semantics, and the fix from
+  that run still stands while the *reason* given for it was too broad. Narrowed in item 134 rather
+  than left to be inherited.
+- **Own verification claim** — reproducible: the commit-level attribution and its two-sided control,
+  the code-point recount and the `wc -m` demonstration, the ledger key-diff, the 122/122 quote tally,
+  the live render. **The judgment half must not be overstated.** Per `translation-review.mjs`'s
+  reviewer-of-record note this is Claude reading same-family LLM output — real content review, **not**
+  a native-speaker pass, and the correlated-blind-spot caveat applies in full. The honest claim: **12
+  pairs were read by a careful non-native reader who found one real error and verified every numeric
+  conversion**, not that they are natively verified. **Human review share remains 0% in all four
+  languages** — **O-3**, and it is the owner's.
+
+#### Next run
+
+`npm run owner-tree -- --expect c2331799fd3ee413aca864fd82d247a35ea31b01a70a6c4e37b00f6aad9105b2`
+(post-commit, tree clean — unchanged; this run touched only tracked files). **Open and unblocked:**
+**item 134** (the quotation-convention guard, now the strongest tooling candidate — it has regrown
+twice in two runs, which is exactly the bar item 130 sets); **item 27** (an eighth lesson figure, its
+bar unchanged); **items 131+132 together** (the last 8 pairs, only worth doing as one decision).
+**O-1 remains the entire critical path.** **O-3 now has its real number**: ~29,000 characters of
+machine translation entered the main path after its last review, and as of this run **all of it has
+been read once, by an LLM** — which is the fact the owner's decision should rest on.
+
 ### 2026-08-27 (scheduled dev-agent) — a hash over the source language cannot see drift in the target, and the Japanese corpus contradicted itself once in seventy-six places (item 131)
 
 **Picked item 131**, the residual the item-129 run filed: the 7 remaining stale lesson/language pairs
