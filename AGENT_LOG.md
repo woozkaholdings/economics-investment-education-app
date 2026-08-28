@@ -1287,6 +1287,19 @@ for the history. No open P1/P2 items.
     > four parts (preamble 18,337 + numbered items 180,053 + Notes 4,304 + Completed 18,864) sum
     > byte-exactly to the backlog's 221,562 b. **The same artifact bit twice in one day** — the run
     > that wrote this correction hit it first and caught it only by reading item 19 itself.
+    > ⛔ **LEVER TAKEN 2026-08-28, and it yielded 10,652 b, not 23,169 b. Both halves of the sentence
+    > above — "closed history" and "hold no owner scope" — are wrong in the same direction.** The two
+    > sections compressed 23,170 → 12,518 b; **the 12.5 KB that stayed is load-bearing, not padding.**
+    > (a) `check-backlog.mjs` builds its valid-item-number set from every `former item N` string in
+    > this file, and **items 22 and 23 are cited from four source files with no other accounting
+    > anywhere** — proven by injection, replacing `former item 22` fails `npm test` with 4 errors.
+    > (b) The third "Note" is **an open owner decision** (a dozen orphaned commits off `main`), not
+    > closed history. (c) The rest is standing rules — v6 is contaminated with §10.2 and §2.3 content,
+    > the pre-renumbering lesson-id warning, the palette-hex trap of item 63. **The transferable part:
+    > a byte count over a section of closed items measures what CAN be read, not what can be deleted,
+    > and only opening it distinguishes the two.** Two stale pointers surfaced while opening it — the
+    > quiz answer-key invariant had moved to `quizMeta.js`, and two `former item` labels were
+    > line-wrapped and so had never registered with the matcher at all.
 
 121. **✅ DONE 2026-08-27 (scheduled dev-agent, recovering a stalled run); EXTENDED 2026-08-28 from
     levels to RATES. `AGENT_LOG.md`'s size is now a MEASUREMENT on every `npm test`, split into the
@@ -2359,167 +2372,144 @@ for the history. No open P1/P2 items.
 **Notes for future runs (informational — not actionable backlog items)**
 
 - **RESOLVED 2026-08-13.** `scripts/translation-review.mjs`'s ai/human `method` field — uncommitted in
-  the working tree since 2026-08-11/12 and flagged by roughly a dozen scheduled runs as an unresolved
-  in-progress feature not to touch — was finished, committed, and actually used (160/160 lesson/
-  language pairs marked `method: "ai"`) in a 2026-08-13 interactive session; see P-4's update above and
-  `DECISIONS.md`. Item 25's real chunk-split fix (see above) can now proceed without waiting on this.
-- **`economic-cycles-v6.jsx` (repo root, untracked) is reference/inspiration material only — do not treat it as a build fixture or merge from it directly.** Added 2026-08-04, owner-clarified. It's a much larger, differently-designed prototype (neon dark-mode `DS` design-system object, extra tabs for Sectors/Industries/Finance, a "Be the Fed Chair" simulator, flashcards) that appeared in the working tree with no git history and no download metadata — its actual origin is unknown. It also reintroduces two things the real app deliberately removed: direct "Ray Dalio" branding/quotes (§10.2, closed) and a hardcoded current date (`nowDate: "April 2026"`, plus an odd `"April 2026 • Late Cycle / Iran War Week 5"` line) — the exact stale/dated-content problem §2.3 fixed. Its dark-mode and sector-performance ideas (the two features it was once a candidate reference for) have both since shipped independently, built without consulting it, so there's no longer a live pointer to a specific future use — but its Dalio references and dated content must still never carry over, and it should not be added to git as-is.
-  **RESOLVED 2026-08-16 (owner decision).** Both prototypes are now **gitignored and left on disk, untouched** — ignored, not deleted. `economic-cycles-v5.jsx` was tracked until this date and is now untracked (`git rm --cached`; working copy byte-identical, and its content stays in git history). `economic-cycles-v6.jsx` was never tracked. Neither appears in `git status` any more, which ends the twelve days of every run writing a "not touched, and why" note about v6. **Before this, v6 was audited** (see the run log for this date): it is imported by no code, and every feature in it — its charts, `SectorTable`, `Flashcards`/spaced repetition, `MiniQuiz`, `LearningPath`, `Onboarding`, dark mode — has shipped independently in `src/`. The single exception, its "Be the Fed Chair" policy simulator, is preserved as **backlog item 34** (concept only, explicitly not its code). `HistoryTimeline` overlaps existing lesson content and was assessed as not worth keeping. **So neither file holds a unique live idea any more.** Consequence worth knowing: a fresh clone will not contain v5, so `check-blindspot.mjs`'s §10.2 scan now reports explicitly whether it scanned v5 or found it absent, rather than asserting it scanned it either way. **Do not restore either file to the repo without asking the owner.**
-- **`main`'s reachable git history currently starts at commit `2dc0264` ("Split monolithic JSX step 4a").** Found 2026-08-04 while investigating unrelated work. Roughly a dozen earlier commits (initial scaffold, the original blindspot-register fixes, the Markets stale-date fix, `scripts/bootstrap-node.sh`'s addition, JSX-split steps 1–3, the language-Beta labeling, the data-shape harness) still exist as objects in the repo (`git cat-file -t <hash>` succeeds for e.g. `eda6dd0`, `ecdda70`, `5ab5c48`, `6feca25`, `76be081`, `053f8b2`) but aren't ancestors of the current `main` tip — something reset or rewrote history before this was noticed, likely an early run's plumbing-commit (`commit-tree`/`update-ref`, used because `git commit` hangs in this environment — see the memory note on this) picking up a stale parent hash instead of the true current `HEAD`. No content appears lost — the tree at `2dc0264` already contains everything those steps produced (locales, content modules, the bootstrap script) — but the historical commit-by-commit record for that early stretch is orphaned, not part of `main`. Not fixed; flagged for the owner to decide whether it's worth reattaching (the old commits are still around, not yet garbage-collected) or leaving as-is.
+  the working tree for two days and flagged by roughly a dozen runs as an in-progress feature not to
+  touch — was finished, committed, and actually used (160/160 lesson/language pairs marked
+  `method: "ai"`) in an interactive session. See `DECISIONS.md` and the run log.
+- **RESOLVED 2026-08-16 (owner decision).** `economic-cycles-v5.jsx` and `economic-cycles-v6.jsx` are
+  **gitignored and left on disk, untouched** — ignored, not deleted; v5's content stays in git history.
+  Neither is imported by anything, and every feature in v6 has since shipped independently in `src/`;
+  its one unique idea survives as **item 34**, concept only and explicitly not its code. ⛔ **Two
+  standing rules outlive the resolution, because v6 is contaminated:** it carries direct Ray Dalio
+  branding and quotes (§10.2, closed) and a hardcoded current date (§2.3, fixed) — **never carry
+  anything over from it**, and **do not restore either file to the repo without asking the owner.**
+  Consequence worth knowing: a fresh clone has no v5, so `check-blindspot.mjs`'s §10.2 scan reports
+  whether it scanned v5 or found it absent rather than asserting either way.
+- **OPEN — an owner decision, and the one note here that is not closed.** `main`'s reachable history
+  starts at commit `2dc0264` ("Split monolithic JSX step 4a"). Roughly a dozen earlier commits (the
+  initial scaffold, the original blindspot-register fixes, the Markets stale-date fix,
+  `scripts/bootstrap-node.sh`, JSX-split steps 1–3, the language-Beta labeling, the data-shape
+  harness) still exist as objects — `git cat-file -t` succeeds for `eda6dd0`, `ecdda70`, `5ab5c48`,
+  `6feca25`, `76be081`, `053f8b2` — but are **not ancestors of `main`**. Most likely an early run's
+  plumbing commit (`commit-tree`/`update-ref`, used because `git commit` hangs in this environment)
+  picked up a stale parent hash. **No content is lost**: `2dc0264`'s tree already contains everything
+  those steps produced. The owner's call is whether to reattach the orphans before they are
+  garbage-collected, or leave them. Found 2026-08-04, unchanged since.
 
 **Completed and pruned**
 
-- **§3.0.3 coverage enforced in both directions, and item 57's own numbers corrected (former item
-  57)** — done 2026-08-17 (dev-agent run), see run log. §17 already guarded that the links which
-  *exist* are valid; new **§17b** guards the other direction, that every glossary-term use is either
-  linked or listed in the new `deliberatelyUnlinked` table with a reason (`defined-here` /
-  `other-sense: …`). 77 uses, 44 chips, 33 deliberate, **0 unexplained**. The item's own claim of "7
-  lessons, 11 occurrences" was wrong: all 11 were exclusions `lessonTerms.js` documents by lesson id,
-  and the single real gap (lesson 36 §1's "credit data") sat in a *curated* lesson the item's search
-  space excluded. Verified with five injections including a deliberately broken matcher, plus live
-  browser confirmation of the new chip. **Scope limit to carry forward: §17b sees only glossary keys —
-  see item 60.**
-- **The `minutes` reading model corrected to count the whole lesson (former item 56)** — done
-  2026-08-17 (owner-directed pick), see run log and `DECISIONS.md` ("How a lesson's `minutes`
-  estimate is computed"). The field was already derived and enforced; what was wrong was the
-  formula, which omitted the title, subtitle, section headings and the entire end-of-lesson check
-  (~20% of the words on screen). `check-data.mjs` §2 now counts all of it at 200 wpm, with a
-  catalog-wide floor so a blind count cannot read as a pass, plus a new assertion of §3.0.5's
-  "lesson 1 under four minutes". 23 of 40 estimates moved, all upward; the catalog total went
-  **120 → 144 minutes**, so §4.3's content clause is further clear rather than reopened.
-- **`LAUNCH_PLAN.md`'s catalog figures generated, and its Phase-0 gate verdict with them (former
-  item 55)** — done 2026-08-17 (dev-agent run), see run log. `scripts/refresh-readiness.mjs` now owns
-  **10 figures across two documents**: the two it already had in `LAUNCH_READINESS.md`, plus §1's
-  asset sentence, §2.5's two track-id ranges, §3.2's progress figure, §4.0's volume/word-count/
-  asset-table figures, and **§4.3's "is the gate met?" verdict**, which is derived from the catalog
-  rather than from whoever last read the table. That last one is why the item was P1: the plan said
-  "the gate is not close: 12 minutes is not 2 hours" while the generated scorecard said both content
-  clauses were met. Three stale counts inside §4.0/§4.2's *arguments* were deleted rather than
-  guarded; §4.1/§4.2's reasoning was left alone, as the item required.
-- **Renumber lesson ids to match track order (former item 22)** — done 2026-08-14 (dev-agent run,
-  owner-directed pick), see run log entry "Renumber lesson ids to match track order" and
-  `DECISIONS.md`'s "Two lesson tracks" entry's 2026-08-14 update for full detail. Ids now match track
-  display order: money is 1-28, economy is 29-40 (was money 13-40, economy 1-12) — a new learner's
-  first lesson now displays as "Lesson 1," not "Lesson 13." Scripted (regex-based, verified id→id
-  table), not hand-edited; covered every id-bearing surface (`lessons.js`, `quizData.js`, both
-  `lessonContent.*.js` files, `LessonVisual.jsx`'s `LESSON_VISUALS` map, all in-prose "Lesson N"
-  cross-references, `scripts/translation-review-ledger.json`) plus a new one-time client-side
-  migration (`src/lib/lessonIdMigration.js`) for already-installed users' persisted
-  `ecycles_completed_lessons`.
-- **`lessonContent.js` split per track, the real fix (former item 25)** — done 2026-08-14 (dev-agent
-  run), see run log and `DECISIONS.md` ("`LessonReader` chunk split per track"). Split the 531 kB
-  `src/content/lessonContent.js` into `lessonContent.economy.js`/`lessonContent.money.js`;
-  `LessonReader.jsx` now dynamically `import()`s only the track being read. `LessonReader-*.js` code
-  chunk dropped from 557.70 kB to 5.92 kB; the two content chunks (69.83 kB / 482.39 kB) are both under
-  Vite's default 500 kB warning threshold, which was restored (the 600 kB override this superseded is
-  removed). This closes the actual "chunk is heavy" problem, not just the build-warning symptom the
-  2026-08-12 mitigation (below) had quieted.
-- **`LessonReader` 500 kB chunk-size warning (2026-08-09 backlog item 25) — mitigated 2026-08-12,
-  superseded by the real fix above (2026-08-14).** `vite.config.js`'s `build.chunkSizeWarningLimit`
-  raised to 600, later removed once the real split (above) made it unnecessary; see `DECISIONS.md`.
-- **Machine-translation decision reversal, owner escalation (former item 20 / backlog P-4)** — resolved
-  2026-08-11 (owner decision, interactive session): option (a), accept the current unreviewed
-  es/ko/zh/ja translation state under "(Beta)" labeling. See `DECISIONS.md`
-  ("Machine-translated lesson content...") for the full three-option writeup and the reasoning, and this
-  run's log entry ("Translation review engine...") for what shipped alongside the decision —
-  `scripts/translation-review.mjs` + a per-language review-status ledger with drift detection, so the
-  0%-reviewed state is now tracked and visible (via `npm run review-status` and a non-blocking `npm test`
-  summary line) instead of able to drift unnoticed the way it did between 2026-08-05 and 2026-08-09.
-- **Main JS chunk back over the 500 kB warning threshold (former item 23)** — done 2026-08-07 (twelfth
-  run, owner-directed), see run log ("Split lesson content out of the main bundle"). `content/lessons.js`
-  split into lightweight metadata (kept at the same path) and a new `content/lessonContent.js` holding
-  the heavy per-lesson body; `LessonReader` (which needs the body, plus `quizData.js`) is now lazy-loaded
-  like `Practice`/`Reference` already were. Main chunk: 522.40 kB → 207.01 kB, no warning. See
-  `scripts/check-data.mjs`'s new drift check, which keeps the two files from silently diverging.
-- **Tighten the builder/critic feedback loop, first piece (former item 16)** — done 2026-08-05 (night),
-  see run log ("Automate the blindspot-register regression checks"). New `scripts/check-blindspot.mjs`,
-  wired into `npm test` and callable alone via `npm run check-blindspot`, codifies the grep commands
-  every run's manual adversarial self-check (and `LAUNCH_READINESS.md`) had been retyping by hand:
-  §10.2 Dalio references, §10.1 advice-adjacent language + disclaimer-key presence, §10.3 parent-facing
-  kids framing signal, §2.3 live-looking dates in teaching copy. Not a full replacement for the
-  judgment-based half of the self-check (framing calls, "does this read like advice" calls still need a
-  human or an agent reading the diff) — see the run log for what's still manual.
-- **Launch-readiness scorecard (former item 15)** — done 2026-08-05, see run log ("Launch-readiness
-  scorecard"). New `LAUNCH_READINESS.md` at repo root tracks the plan's actual gates in one place:
-  blindspot register (§10.1–10.7 + §2.1), the §4.3 Phase-0 monetization gate, and §9.2 instrumentation —
-  each with the exact command that produced its status, not a narrative claim. Refresh instructions
-  included so future runs (or the weekly reviewer) can update it in seconds.
-- **FRED economic readings surfaced in Reference → Sector performance (former item 13)** — done
-  2026-08-04, see run log ("Surface the FRED economic readings the daily job already fetches"). The
-  daily job had fetched Fed funds rate, 2y/10y yields, the curve spread, CPI and unemployment since the
-  sector-performance run earlier that day, but no screen displayed them — a dangling `economyNowTitle`
-  translation key was the tell. Closed by adding a section to `Sectors.jsx`, each reading dated
-  individually rather than sharing the payload's `asOf` (CPI/unemployment update monthly; the Treasury
-  yields update daily).
-- **Sector performance and relative strength (former item 14)** — done 2026-08-04, see run log
-  ("Sector performance + relative strength: data pipeline and UI"). Daily job
+> ⛔ **The `former item N` labels below are load-bearing — never drop one to save bytes.**
+> `check-backlog.mjs` builds its set of valid item numbers from every `former item N` string in this
+> file, and **items 22 and 23 are cited from `src/` and `scripts/` with no other accounting anywhere in
+> it** (proven by injection 2026-08-28: replacing `former item 22` fails `npm test` with 4
+> dangling-citation errors). ⚠️ **A label must sit on ONE line** — the matcher requires a literal
+> space, so a label wrapped as `former item` / newline / `55` does not register at all; two of them
+> were wrapped that way and had been contributing nothing. Full detail for every line below is in the
+> run log at the date given; this section is pointers, not history.
+
+- **§3.0.3 glossary coverage enforced in both directions (former item 57)** — 2026-08-17.
+  `check-data.mjs` §17b: every glossary-term use is either linked or listed in `deliberatelyUnlinked`
+  with a reason. Its scope limit, and the control that first made it return a false zero, are on live
+  item 57 above and are deliberately not duplicated here.
+- **The `minutes` reading model corrected to count the whole lesson (former item 56)** — 2026-08-17.
+  The field was already derived and enforced; the *formula* was wrong, omitting the title, subtitle,
+  section headings and the entire end-of-lesson check — about 20% of the words on screen. §2 now
+  counts all of it at 200 wpm with a catalog-wide floor, so a blind count cannot read as a pass.
+  Catalog total went 120 → 144 minutes, moving §4.3's content clause further clear rather than
+  reopening it. See `DECISIONS.md`.
+- **`LAUNCH_PLAN.md`'s catalog figures generated, and its Phase-0 gate verdict with them (former item 55)**
+  — 2026-08-17. `scripts/refresh-readiness.mjs` owns 10 figures across two documents, including §4.3's
+  "is the gate met?" verdict. That verdict is why the item was P1: the plan read "the gate is not
+  close" while the generated scorecard said both content clauses were already met.
+- **Lesson ids renumbered to match track order (former item 22)** — 2026-08-14. money is 1-28, economy
+  29-40 (was money 13-40, economy 1-12), so a new learner's first lesson displays as "Lesson 1". Done
+  by script against a verified id→id table across every id-bearing surface, plus a one-time
+  client-side migration (`src/lib/lessonIdMigration.js`) for already-installed users' persisted
+  progress. ⚠️ **Lesson ids quoted in pre-2026-08-14 run-log entries are stale;
+  `src/content/lessons.js` is the source of truth.**
+- **`lessonContent.js` split per track (former item 25)** — 2026-08-14. `LessonReader-*.js` fell
+  557.70 kB → 5.92 kB. This superseded the 2026-08-12 mitigation, which had only raised Vite's
+  `chunkSizeWarningLimit` to quiet the warning (that override is since removed). Later split per
+  language as well — live item 45. See `DECISIONS.md`.
+- **Machine-translation decision reversal, owner escalation (former item 20 / backlog P-4)** —
+  2026-08-11 owner decision: option (a), accept the unreviewed es/ko/zh/ja state under "(Beta)"
+  labeling. `DECISIONS.md` holds the three-option writeup and the reasoning;
+  `scripts/translation-review.mjs` plus its ledger make the 0%-reviewed share visible instead of
+  able to drift unnoticed. ⚠️ **`translation-review.mjs` cites this entry by name in two places
+  (lines 7 and 159) — the phrase "former item 20" must stay findable here.** The decision itself is
+  being reopened as a question by **O-3** at the top of this backlog: it was made about a static
+  corpus, and the corpus is no longer static.
+- **Lesson content split out of the main bundle (former item 23)** — 2026-08-07. `lessons.js` became
+  lightweight metadata plus a lazy-loaded body module; the main chunk fell 522.40 kB → 207.01 kB.
+- **Blindspot-register regression checks automated (former item 16)** — 2026-08-05.
+  `scripts/check-blindspot.mjs` codifies the §10.2 / §10.1 / §10.3 / §2.3 greps that every run's step 5
+  had been retyping by hand. **It is not a replacement for the judgment half of step 5** — "does this
+  read like advice" still needs someone reading the diff.
+- **Launch-readiness scorecard (former item 15)** — 2026-08-05. `LAUNCH_READINESS.md`, where every
+  gate carries the exact command that produced its status rather than a narrative claim.
+- **FRED economic readings surfaced on Sector performance (former item 13)** — 2026-08-04. Each
+  reading is dated individually rather than sharing the payload's `asOf`, because CPI and unemployment
+  update monthly while the Treasury yields update daily.
+- **Sector performance and relative strength (former item 14)** — 2026-08-04. The daily job
   (`scripts/fetch-market-data.mjs`) writes `public/data/market.json`; `Sectors.jsx` ranks eleven S&P
-  sectors against SPY with a placeholder relative-strength formula, plainly labeled as such. Now
-  scheduled (`economics-app-market-data`, weekdays after close).
-- **Mobile responsiveness check, second pass (P3 item 11 — now fully closed)** — done 2026-08-04,
-  see run log. Swept 320px portrait (all four tabs plus quiz-answered, Kids age-selector, and the
-  first-launch modal states), 320px combined with the max font-scale step from item 10 (130%, to
-  check the two features don't compound badly), and 568×320 landscape (including the first-launch
-  modal at a short viewport height, a common fixed-modal failure mode). No horizontal overflow or
-  clipping found anywhere (`scrollWidth === innerWidth` at every check) — a clean result, not a
-  skipped check; see the adversarial self-check in the run log for how that claim was verified.
-- **`npm audit` vulnerabilities fixed (P3 item 8)** — done 2026-08-04, see run log. `vite` bumped
-  `^5.4.11` → `^6.4.3` via `npm audit fix --force`, run in isolation with a full build/test/browser
-  reverify before committing. `npm audit` now reports 0 vulnerabilities (previously 1 moderate,
-  1 high, all dev-server-only). `@vitejs/plugin-react` and React versions untouched.
-- **Mobile responsiveness check at 375px (P3 item 11, first pass)** — done 2026-08-04, see run log.
-  Added a global `box-sizing: border-box` reset (`src/index.css`, imported from `src/main.jsx`) —
-  the app had no global stylesheet before, so every `width: "100%"` element with its own padding
-  (the first-launch modal's OK button, the Home CTA/skip buttons, quiz option buttons, chart SVGs)
-  was sized in the default `content-box` model, meaning padding added to the box's width instead of
-  being subtracted from it. Not visibly broken at the viewport widths spot-checked so far, but a
-  real latent overflow risk this fix removes outright. Verified with a live 375×812 browser check
-  (`document.documentElement.scrollWidth === window.innerWidth`, i.e. no horizontal scroll) across
-  Home, Learn (tab list + Lesson 1), Markets, More/Quiz, and More/Glossary.
-- **Dynamic font-size support (P3 item 10, last sub-part — the whole accessibility-pass item is
-  now closed)** — done 2026-08-04, see run log. Every inline `fontSize` in the app (103 spots
-  across `economic-cycles-v5.jsx` and all 5 `src/components/*.jsx` files) converted from a fixed
-  px number to an equivalent `rem` string; a new 4-step "Aa" text-size control in More → About
-  scales the root element's font-size (persisted to `localStorage` as `ecycles_font_scale`),
-  which scales every `rem`-based size in the app proportionally.
-- **`completedLessons` persistence (P2 item 6)** — done 2026-08-04, see run log. `App`'s core
-  `completedLessons` state now lazy-loads from and writes to `localStorage`
-  (`ecycles_completed_lessons`), following the same pattern as the streak counter and
-  continue-tomorrow opt-in. `Home`, `Learn`, and the header progress bar needed no changes — they
-  already just read the prop `App` passes down.
-- **Phase-color contrast check (plan §3.5)** — done 2026-08-04, see run log. Measured WCAG contrast
-  ratios for the app's green/amber/red/blue phase-indicator palette; green (`#059669`, ~3.8:1) and
-  amber (`#d97706`, ~3.2:1) failed the 4.5:1 AA threshold for small text on white. Swapped those two
-  to darker `-700` shades (`#047857`, `#b45309`) everywhere they're used as *text* color; left them
-  unchanged as borders/backgrounds/graphical fills, which only need 3:1 and already clear it.
-- **`DECISIONS.md` added** — done 2026-08-03, see run log. Three entries: Expo-vs-Vite (open,
-  owner decision), `.js`-not-JSON content modules (closed), localStorage-only progress/personalization
-  state (closed, with the `completedLessons` persistence gap cross-referenced from item 6).
-- **Unused translation keys deleted** — done 2026-08-03, see run log. `indicators`, `bestInvest`,
-  `avoidInvest`, `psychology`, `why`, `expansion`, `peak`, `contraction`, `trough`, `expDesc`,
-  `peakDesc`, `contDesc`, `troughDesc` had zero `t.` call sites in `economic-cycles-v5.jsx` or any
-  `src/components/*.jsx` file; removed from all 5 `src/locales/*.js` files rather than building the
-  feature, since it would reopen the already-closed §10.1 investment-advice-adjacency question.
-- **First-session flow, step 6e (continue-tomorrow prompt) — the entire 6a–6e first-session-flow item is now closed.** Done 2026-08-03, see run log. A one-tap, localStorage-only prompt (`ecycles_continue_pref`) shown at most once per day, the first time a lesson is marked complete that day; records the user's opt-in/opt-out locally for a future reminder feature, does not schedule real notifications.
-- **First-session flow, step 6d (streak counter)** — done 2026-08-03, see run log. localStorage-backed daily streak (`ecycles_streak`), incremented once per calendar day a lesson is completed; shown as a 🔥 badge on Home when > 0.
-- **First-session flow, step 6c (first-open routing)** — done 2026-08-03, see run log. New users with no saved progress now land in Learn/lesson 1 on first open instead of Home.
-- **First-session flow, step 6b (lesson-completion celebration)** — done 2026-08-03, see run log. A toast animation on "Mark Complete" (Learn.jsx) and an animate-in effect on the Home progress ring.
-- **`README.md` refreshed to match the current split structure** — done 2026-08-02, see run log. Replaced the stale "one 1,340-line file" description with the actual `src/locales/` / `src/content/` / `src/components/` layout, added a Testing section for `npm test`, and mentioned `scripts/bootstrap-node.sh`.
-- **`scripts/check-data.mjs` `t.key` scan broadened to `src/components/*.jsx`** — done 2026-08-02, see run log. Was only reading `economic-cycles-v5.jsx`, silently covering less of the translation-key surface with each JSX-split extraction. Now reads the main file plus every component file; verified with an injected-then-reverted dangling-key test.
-- **Stale/dated factual figures reworded** — done 2026-08-02, see run log. The `~$50T total credit vs ~$3T actual money` figures (lesson body, quiz `explain`, `Credit` glossary entry) were replaced with figure-free "many times larger than the base money supply" framing; the `2+ quarters of falling GDP = recession` line (lesson body, `GDP` and `Recession` glossary entries) is now framed as a rule of thumb with an NBER note; the yield-curve "has predicted EVERY US recession since 1955" claim (lesson subtitle+body, quiz `explain`) now acknowledges inversions have preceded every recession since 1955 but not every inversion is followed by one.
-- **JSX split, step 4d (`More` tab → `src/components/More.jsx`) — the `App` split is now fully done.** Done 2026-08-02, see run log. Fourth and last of the four per-tab extractions. Unlike `Home`/`Markets`/`Learn`, `More`'s local state (`moreSection`, quiz `qIdx`/`qStarted`/`qAnswer`/`qScore`/`qDone`, `kidsAge`, `glossSearch`) moved *into* the component rather than staying lifted in `App`, since nothing outside `More` read any of it. `quizData`/`glossary`/`kidsContent` are now imported directly in `More.jsx` rather than passed as props, matching the precedent `Markets.jsx` set for `charts.jsx`. `economic-cycles-v5.jsx` down to 135 lines — now just tab-switching/header/first-launch-modal glue.
-- **JSX split, step 4c (`Learn` tab → `src/components/Learn.jsx`)** — done 2026-08-02, see run log. Third of the four per-tab extractions; `economic-cycles-v5.jsx` down to 294 lines.
-- **JSX split, step 4b (`Markets` tab → `src/components/Markets.jsx`, chart helpers → `src/components/charts.jsx`)** — done 2026-08-02, see run log. Second of the four per-tab extractions; `economic-cycles-v5.jsx` down to 380 lines.
-- **Quiz answer key de-skewed** — done 2026-08-02 (by the weekly reviewer, at the owner's request, out of normal priority order). Correct-answer positions now spread `2,0,3,1,3,2,0,3,1,2,0,1,2` (counts by index `{0:3, 1:3, 2:4, 3:3}`, max share 31%) instead of 12 of 13 on index 0. `npm test` reports 0 warnings. **`src/content/quizData.js` now carries a header comment explaining the invariant — read it before adding or editing a question.**
-- **JSX split, step 4a (`Home` tab → `src/components/Home.jsx`)** — done 2026-08-02, see run log. First of the four per-tab extractions; `economic-cycles-v5.jsx` down to 529 lines.
-- **Data-shape check harness (`npm test`)** — added 2026-08-02, see run log below. Checks locale/content modules structurally in ~5s; no browser or 2-minute build needed to catch a missing language field.
-- **JSX split, step 3 (`quizData`, `glossary`, `kidsContent` → `src/content/*.js`)** — done 2026-08-02, see run log. All content now lives in modules; `economic-cycles-v5.jsx` down to 591 lines.
-- **Language picker "Beta" labeling (§3.5/§10.4)** — done 2026-08-02, see run log. The es/ko/zh/ja options in the language `<select>` now read e.g. "🇰🇷 한국어 (Beta)"; English is unchanged. Translation-volume ratios measured 2026-08-02 (**es 0.41x, ko 0.24x, ja 0.18x, zh 0.15x** of English lesson-body chars) are noted here for reference if a future run wants to re-measure after content is added.
-- **JSX split, step 1 (`TR` → `src/locales/*.js`)** and **step 2 (`lessons` → `src/content/lessons.js`)** — done 2026-08-02, see run log. Independently verified by the second weekly review: 12 lessons intact, 0 missing language fields, exact locale key parity, `economic-cycles-v5.jsx` down from 1,340 to 692 lines.
-- **Reproducible build environment** — `scripts/bootstrap-node.sh` added 2026-08-02, see run log below.
-- Blindspot register §10.2 (Dalio de-branding) and §10.3 (parent-facing Kids framing) — done 2026-08-01, verified by the weekly review.
-- Markets tab stale date (§2.3) — done 2026-08-02.
-- **§10.1 (investment-advice adjacency) — fully closed 2026-08-02.** All three gaps the weekly review flagged are resolved: (1) the "be bullish when cutting / be cautious when hiking" directive sentence and, more significantly, a previously-unnoticed set of rendered "Best investments: growth stocks / value stocks / ..." per-phase lines in lesson 10 (all 5 languages) were reworded to historical/descriptive framing ("historically favored in this phase..."); (2) the `disclaimer` key now also renders on the Learn tab (below "Think About This") and in a new About sub-section, so it appears on Home, Learn, Markets, and About; (3) a one-time first-launch modal (localStorage-backed, key `ecycles_seen_disclaimer`) shows the disclaimer before first use, and a permanent About sub-section was added to the More tab for ongoing access. See the run-log entry below for details.
+  sectors against SPY. The placeholder formula it shipped with was replaced by the owner's own on
+  2026-08-04 — see the App summary.
+- **The accessibility pass: dynamic font scaling, both mobile-responsiveness sweeps, `npm audit`** —
+  2026-08-04. 103 inline `fontSize` values converted to `rem` behind a 4-step "Aa" control
+  (`ecycles_font_scale`); a global `box-sizing: border-box` reset added, the app having had no
+  stylesheet before, so every `width: 100%` element with its own padding was sized in `content-box`;
+  swept at 375px, at 320px portrait, at 320px combined with the 130% font step to check the two
+  features do not compound, and at 568×320 landscape including the first-launch modal —
+  `scrollWidth === innerWidth` everywhere, a clean result rather than a skipped check. `vite` was
+  bumped `^5.4.11` → `^6.4.3`, taking `npm audit` to 0 vulnerabilities.
+- **Phase-color contrast (plan §3.5)** — 2026-08-04. Green and amber failed 4.5:1 as small text and
+  moved to darker shades, left unchanged as borders and fills, which need only 3:1. ⚠️ **The hexes
+  this entry used to quote are deliberately not restated** — the palette has moved twice since, and
+  live item 63 records what a stale hex quoted here cost. `src/index.css` is the palette; read it
+  there. The property is now machine-enforced on every `npm test` by §28 (AA on 108 pairs) and §28b
+  (3:1 on 70 graph pairs).
+- **`completedLessons` persisted, and the whole first-session flow, steps 6a–6e** — 2026-08-03/04.
+  localStorage keys `ecycles_completed_lessons`, `ecycles_streak` and `ecycles_continue_pref`;
+  first-open routing straight into lesson 1, a completion toast and progress-ring animation, and a
+  once-a-day continue-tomorrow opt-in that records a preference and **schedules no real notification**
+  — see `src/lib/useAppState.js:188` for why that is the held §2.1 platform decision and not an
+  oversight.
+- **The JSX split, steps 1–4d: `economic-cycles-v5.jsx` from 1,340 lines to 135** — 2026-08-02.
+  Locales, then content modules, then the four per-tab components, each verified independently by the
+  weekly review. Superseded wholesale by the 2026-08-04 rebuild onto `src/App.jsx`.
+- **Data-shape check harness (`npm test`) and `scripts/bootstrap-node.sh`** — 2026-08-02. The harness
+  catches a missing language field in about 5 seconds, with no browser and no two-minute build.
+- **Quiz answer key de-skewed** — 2026-08-02 (weekly reviewer, owner-requested, out of priority
+  order). Correct answers had been 12 of 13 on index 0 — tap-the-first scored 92% — and are now spread
+  roughly 3/3/4/3 across the four positions. ⚠️ **Pointer corrected 2026-08-28: the header comment
+  explaining the invariant lives in `src/content/quizMeta.js`, not `quizData.js`.** The answer key
+  moved there in item 48's per-language split, and `quizData.js` is now a node-only merged view the
+  app never imports. Read it before adding or editing a question; `npm test` warns if any one index
+  ever holds more than half the answers again.
+- **Stale and dated factual figures reworded** — 2026-08-02. The `~$50T credit vs ~$3T money` figures
+  became figure-free "many times larger than the base money supply"; the "2+ quarters of falling GDP =
+  recession" line became a rule of thumb with an NBER note; and the yield curve "has predicted EVERY
+  US recession since 1955" became the correct and weaker claim — inversions have preceded every
+  recession since 1955, but not every inversion is followed by one. All three across lesson bodies,
+  quiz explanations and glossary entries.
+- **Unused translation keys deleted** — 2026-08-03. 13 keys with zero call sites, removed from all
+  five locales rather than built out, because building them would have reopened §10.1.
+- **`DECISIONS.md` created** — 2026-08-03, with Expo-vs-Vite (open, owner), `.js`-not-JSON content
+  modules, and localStorage-only state.
+- **`README.md` refreshed to the split structure, and `check-data.mjs`'s `t.key` scan broadened to
+  every component file** — 2026-08-02. The scan had been reading only `economic-cycles-v5.jsx`, so it
+  covered less of the translation-key surface with every extraction.
+- **Language picker "(Beta)" labeling (§3.5/§10.4)** — 2026-08-02. ⚠️ **The 2026-08-02 per-language
+  volume ratios this entry used to quote are deleted rather than corrected** — they were four weeks
+  stale, and a ratio without its reference is not a measurement (W-5.6). `LAUNCH_READINESS.md` §10.4
+  publishes the live ones with their references.
+- **Blindspot register: §10.2 Dalio de-branding and §10.3 parent-facing kids framing** — 2026-08-01,
+  verified by the weekly review. **§2.3 Markets-tab stale date** — 2026-08-02. **§10.1
+  investment-advice adjacency, fully closed 2026-08-02**: the "be bullish when cutting / be cautious
+  when hiking" directive and lesson 10's rendered per-phase "Best investments: growth stocks / value
+  stocks / …" lines were reworded to historical, descriptive framing in all five languages; the
+  `disclaimer` key now renders on Home, Learn, Markets and About; and a one-time first-launch modal
+  (`ecycles_seen_disclaimer`) shows it before first use. ⛔ **All of these are standing rules, not
+  settled history** — check any content change against them.
 
 ## Environment note
 
@@ -2829,6 +2819,125 @@ finding(s); V vacuous; U unavailable`. A bare "no accessibility issues found" is
 > have moved nothing while the file sat at **915 KB**, 1.5x its own trigger. The boundary used here
 > is therefore the byte target, taken on whole days. **The deeper reason is in W-5.3's note:** the
 > run log is no longer what makes this file big.
+### 2026-08-28 (scheduled dev-agent) — the 23 KB lever was 10.7 KB: a byte count over closed items measures what can be read, not what can be deleted (items 121/122)
+
+**Pick.** The remedy the previous run's own warning named and unblocked: compress **"Notes for future
+runs" + "Completed and pruned"**, the ~23 KB the 2026-08-27 pass mis-filed as owner-held scope under
+item 19. It was the live condition at pick time — baseline `npm test` reported **both** budgets over,
+floor 252,390 b and run log 252,069 b against 250,000 b each — and archiving cannot touch the floor by
+construction. It is also W-5.2-compliant: not item 27, and a backlog/housekeeping pick is a standing
+legitimate one (W-2).
+
+#### Step 3.5 — the premise, re-measured with a control
+
+**The headline figures reproduce, byte-exactly.** Notes **4,305 b** + Completed **18,865 b** =
+**23,170 b**, 10.3% of the backlog. (Item 122 records 4,304 + 18,864 = 23,169 — a one-byte
+per-section boundary convention, immaterial.) **Control:** the section split was reconstructed against
+`statSync().size`, 504,459 = 504,459, so the slicer was not silently returning a short read.
+
+⛔ **The characterization is where it breaks, and in the direction that made the item look free.** Item
+122 calls both sections *"closed history, not backlog items, and hold no owner scope."* Neither clause
+survives contact:
+
+- **`check-backlog.mjs` builds its set of valid item numbers from every `former item N` string in this
+  file** — and **items 22 and 23 are cited from five source files between them** (`lessons.js`,
+  `lessonIdMigration.js`, `useAppState.js`, `check-data.mjs`, `App.jsx`) **with no other accounting
+  anywhere in the log.** These sections are not inert prose; part of them is a build dependency.
+  **Proven by injection, not argued:** replacing `former item 22` fails `npm test` with **4
+  dangling-citation errors**, naming all four files. Restored from a scratchpad copy — never
+  `git checkout --` — and back to PASS with a clean tree.
+- **The third "Note" is an open owner decision**, not closed history: roughly a dozen early commits
+  are orphaned off `main` (`2dc0264` is the reachable root), still exist as objects, and the owner has
+  never ruled on reattaching them before they are garbage-collected.
+- The rest is standing rules that only look like chronology: **v6 is contaminated with §10.2 Dalio
+  branding and a §2.3 hardcoded date** and must never be merged from; lesson ids in pre-2026-08-14
+  entries are stale; item 63's palette-hex trap.
+
+**So the disposition changed rather than a figure.** The lever is real but roughly **half** of what
+was filed, and the item is a compression job, not a deletion.
+
+#### What shipped
+
+**23,170 → 12,518 b, a 10,652 b cut**, with every load-bearing pointer preserved and all nine
+`former item N` labels intact. Method is W-3's, unchanged: keep status, standing guidance and
+reproducible method; drop accreted chronology, which is not lost because it is in the run log. The two
+sections now open with a warning saying *why* the labels cannot be dropped, so the next compression
+pass does not have to re-derive it by breaking the build.
+
+**Three stale things surfaced only because someone opened the sections — which is the argument for
+opening rather than counting:**
+
+- ⚠️ **A pointer that would send a future run to the wrong file.** "`src/content/quizData.js` carries a
+  header comment explaining the [answer-key] invariant — read it before adding or editing a question."
+  The invariant **moved to `src/content/quizMeta.js`** in item 48's per-language split; `quizData.js`
+  is now a node-only merged view **the app never imports** (`check-payload.mjs` forbids importing it).
+  Pointer corrected in place.
+- ⚠️ **Two `former item N` labels were line-wrapped** (`former item` / newline / `55`, and the same for
+  57) and therefore **never registered with the matcher at all** — it requires a literal space. Both
+  happen to be live numbered items too, so nothing broke; the failure mode is silent and general, and
+  is now written down. Rewritten unwrapped: the section went from 9 registering numbers to 11.
+- **Two stale figure sets deleted rather than corrected**, per item 58's cheapest-disposition rule:
+  the 2026-08-04 phase-color hexes (the palette has moved twice; item 63 records what re-quoting one
+  cost) and the 2026-08-02 per-language volume ratios (four weeks stale, and `LAUNCH_READINESS.md`
+  §10.4 publishes the live ones **with their references** — W-5.6's point that a ratio without its
+  reference is not a measurement).
+
+Item 122's live text carries the correction, per W-5.5's both-places rule and step 3.5.
+
+#### Verification
+
+`npm test` **PASS, 0 failures** across all eight checks; `npm run build` clean (`✓ built in 1.37s`,
+`index` 254.47 kB, byte-identical to the previous run's). The three warnings are the two pre-existing
+translation ones and the run-log budget. **The floor warning is cleared** — 252,390 → **243,032 b**,
+under the 250,000 b budget, where at pick time it was over. ⚠️ **The post-commit headroom is
+deliberately not retyped here** — this entry adds to the run log while it is being written, so a figure
+quoted inside it goes stale against itself; read it off the live `MEASURED log-size:` line, which is
+item 121's own reasoning for why that script carries no fingerprint. `check-backlog.mjs` still resolves **all 148** `backlog item N` citations.
+
+⛔ **The run-log budget is still over and this entry makes it worse; that is deliberate and is not
+this run's item.** Archiving is the only remedy for it, W-5.3's trigger (600 KB whole-file; the file
+is 494 KB) has not fired, and **its action clause has a known defect that item 115 reserves to the
+owner.** One run, one commit, and the rule change is not mine to make.
+
+#### Step 5 — adversarial self-check
+
+- **Blindspot register** — no regression; `check-blindspot` **PASS, 0 failures**. Documentation only:
+  `git diff --name-only` is exactly `AGENT_LOG.md`, no `src/`, no learner-visible copy in any
+  language, no build output. Added lines carry **2** "Dalio" mentions against **3** in the removed
+  lines — a net reduction, and both survivors *state the rule* (§10.2's closed status, and the warning
+  never to carry v6's branding over) rather than brand anything; `check-blindspot`'s §10.2 scan
+  deliberately covers README + `src/` + v5, not this file, for exactly that reason. Advice-adjacent
+  verbs in added lines: **0**. **Control**: the same grep pipeline returns 16 hits for `former item`
+  and 10 for `lesson` on the same input, so it reaches the text.
+- **W-1 browser verification** — not applicable and not skipped: nothing rendered changed, and the
+  build output is byte-identical.
+- **`DECISIONS.md` conflict** — none. No decision covers this file's sections; no state, content-module
+  or build change.
+- **Already-done backlog item** — no. Items 115 and 122 compressed the **numbered** items and both
+  left these two sections untouched; this is the remainder they left, and item 122 named it.
+  **What I deliberately did not do:** change W-5.3's rule, either budget value, or the archiving
+  trigger. All are byte-identical, per item 115.
+- **Own verification claim** — reproducible from `npm test`, `npm run build` and
+  `node scripts/check-log-size.mjs`; the injection is one `perl -pi -e` substitution. **What I am NOT
+  claiming**: that the floor is fixed. At **+3,418 b/commit** this bought about 3 runs, and the
+  previous run's finding stands — the growth is continuous and every remedy so far is one-off.
+
+#### Next run
+
+The closed-item tier is now genuinely tight and **item 122's own note applies to what is left**: open
+items are the binding constraint at ~47% of the backlog, and compressing those risks dropping live
+scope. **Do not expect another compression pass to find much.** Open and unblocked: **item 136**'s
+remainder, **items 131+132** (the last 8 review pairs, only worth doing as one decision), **item 130**
+(low), and **item 26** / **item 27** — item 27 has taken four of the last six substantive runs, so
+W-5.2's ratio rule binds before another.
+
+**For the owner, two decisions and neither is an action any run can take.** (1) **The run-log budget
+is over and the rule that would clear it does not fire** — item 115's two options, unchanged. (2) At
+**+3,418 b/commit** the floor is crossed roughly every 3 runs regardless of compression; this pass
+bought 3 runs, the previous one bought 7.3. **O-1 remains the entire critical path: 44 lessons, five
+languages, 160 minutes of content, and zero people have ever opened this app.** **O-3** is unchanged —
+human review share is 0% in all four languages; this run added no translated prose.
+
 ### 2026-08-28 (scheduled dev-agent) — compression is a bailing bucket: the log's size becomes a RATE, and the "largest lever left" was an artifact of how the bytes were counted (item 121, correcting item 122)
 
 **Pick.** Not item 27 and not the figure cluster: the last four substantive runs were all figures or
