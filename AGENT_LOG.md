@@ -910,18 +910,73 @@ for the history. No open P1/P2 items.
     > a native-speaker pass, and the correlated-blind-spot caveat applies. **Human review share is
     > still 0% in all four languages** — that is O-3, and it is the owner's.
 
-131. **[Content/Process — filed 2026-08-27 by the run that closed item 129, as the residual its own
-    scope deliberately excluded.] Re-review the 7 remaining stale lesson/language pairs per language.**
-    - **State:** after item 129, staleness is down to **7 lessons x 4 languages = 28 pairs**, and these
-      are the *only* stale entries left. Lessons **1, 4, 30, 33, 37, 39, 40**, last reviewed
-      **2026-08-14/15** — they predate item 128 entirely and were left alone rather than swept in.
-    - **These are NOT the item 129 shape and must not be assumed to be.** Item 129's pairs were stale
-      from a proved orthographic-only edit. **Nothing has established what changed in these seven.**
-      Run the same controlled word-level diff against each lesson's reviewed state *first*; if a
-      lesson's English drifted semantically, it is a fresh translation review, not a confirmation.
-    - **Scope it to one language per run** (7 pairs), the standing advice from the 2026-08-21 entry.
-    - **Honest priority: medium-low.** It moves a published readiness figure from 84% toward 100% and
-      nothing is broken. Downstream of O-1 like everything else.
+131. **🟡 PARTLY DONE 2026-08-27 (scheduled dev-agent) — 8 of the 28 pairs closed. Read the premise
+    correction before picking up the rest: the staleness flag was UNDERSTATING this item by roughly a
+    factor of ten, and the item's own "scope it to one language per run" is the wrong axis.**
+    > **What the English drift actually is, measured with a two-sided control rather than assumed.**
+    > All seven lessons share **one** reviewed-English state — commit `e43dded` (2026-08-20), *not* the
+    > 2026-08-14/15 the ledger's `reviewedDate` shows; the English never moved between the review and
+    > that date. Exactly two commits then moved it: **`7046854`** (2026-08-20, item 84's "name the
+    > lesson, don't number it") touching all seven, and **`ef0665a`** (2026-08-26, item 114's monetary
+    > base) touching lesson 30 alone. So the English drift is **six cross-reference renames plus one
+    > semantic edit** — very nearly the item-129 shape this item said it was not.
+    > ⛔ **But the English is the wrong thing to size this by, and that is the correction that matters.**
+    > Staleness is computed from an English hash, so it truthfully reported "the English moved a
+    > little". Measured on the *translations* instead, lessons **30/33/37/39/40 grew 2.5x–4.5x in every
+    > language** since that reviewed state (lesson 30 `es` 1,082→3,556 chars; lesson 39 `ja`
+    > 1,092→4,767). Those five are `economy`, and **item 93's economy tranche landed after 2026-08-20**
+    > — so the 2026-08-14 review saw the *abridged* translation, and what stands today is roughly
+    > **55,000 characters of never-reviewed machine translation**. The flag says "re-review"; the work
+    > is a **first** review. **A hash over the source language cannot see drift in the target.**
+    > **Lessons 1 and 4 are the exact opposite case.** Their translations are **byte-identical** to the
+    > reviewed state in all four languages; what changed is that the *English* gained a cross-reference
+    > sentence with **no counterpart in any translation**, because both are `essentials` and abridged
+    > (0.50x and 0.68x against `es`'s 1.18 reference). Verified pre-existing, not a regression from
+    > `7046854`. That gap is **item 132**, and it belongs to item 94's track, not to staleness.
+    - **DONE this run: lessons 30 and 40 x es/ko/zh/ja (8 pairs)**, each read in full in all five
+      languages; one real defect found and fixed (see the run log). Coverage **84% → 89%**, 7 stale → 5.
+    - **OPEN — lessons 33, 37, 39 x 4 = 12 pairs.** This is the ~40,000-character never-reviewed block
+      above. **Scope it one LESSON per run, not one language**: the unit of unreviewed text is the
+      lesson, and the per-language split was advice inherited from a run whose pairs were four
+      orthographic hunks. Budget it like a first review, because it is one.
+    - **OPEN — lessons 1 and 4 x 4 = 8 pairs.** Cheap and low-yield: the text is unchanged and was
+      reviewed once already, so marking them is closer to a re-stamp than a read. Do it *after* the
+      twelve, and only together with item 132.
+    - **Honest priority: medium.** It moves a published readiness figure, and unlike most of this
+      backlog the open half is content nobody has ever checked. Downstream of O-1 like everything else.
+
+132. **[Content — filed 2026-08-27 by the run that corrected item 131, as the gap that correction
+    exposed rather than smuggled into the same commit.] Lessons 1 and 4 point the reader at another
+    lesson in English and at nothing in any other language.**
+    - **State:** item 84 gave lesson 1 a pointer to "Why 'Later' Never Feels as Real as 'Now'" and
+      lesson 4 one to "Productivity Growth". Both sentences are **absent from all four translations**
+      — the translated section simply ends a paragraph early. Measured, and confirmed pre-existing:
+      those eight translations are byte-identical to their 2026-08-20 state.
+    - **It is item 94's shape, not a bug.** Both lessons are `essentials` and abridged; the missing
+      sentence is one of many. **Do not fix it in isolation** — translating one sentence into four
+      languages inside an otherwise-abridged lesson makes the corpus less coherent, not more, and
+      item 94 exists precisely so continuing the essentials tranche is a decision someone makes.
+    - **Why it is worth its own number anyway:** these are *cross-track* pointers (money→essentials,
+      essentials→economy), the only two in the corpus, and they are the mechanism §3.0.3 uses to make
+      the tracks feel like one product. A non-English reader gets no such thread. **Worth naming when
+      item 94 is priced, not before.**
+    - **Honest priority: low**, and blocked behind an owner decision, not behind effort.
+
+133. **[Content/Translation — filed 2026-08-27 by the run that reviewed lessons 30 and 40, recorded
+    rather than acted on, per item 129's "over-editing a language whose only check is this review is
+    the larger risk".] `ko` uses `대출자` for *lender*, which reads at least as naturally as
+    *borrower*.**
+    - **Measured across the whole `ko` lesson corpus: `대출자` 13, `차입자` 4, `대출 기관` 8.** So the
+      corpus already carries an unambiguous alternative (`대출 기관`) and uses it eight times, while
+      `대출자` — literally "one who lends out", but in ordinary Korean financial usage frequently the
+      person *taking* the loan — carries the same role thirteen times.
+    - **Not changed, deliberately.** Inside lesson 30 the role is disambiguated by its own apposition
+      ("은행, 신용협동조합, 또는 딜러") and by `차입자` being used for the borrower two paragraphs
+      later, so nothing there misleads. This is a corpus-wide term-consistency question across 21
+      instances, and rewriting it on one run's reading is the unmeasured multi-language drift items 69
+      and 76 exist to prevent.
+    - **The instrument this needs is item 76's** — a per-language tokenizer that can decide whether
+      one term is a pattern or two instances. **Honest priority: low.** Downstream of O-1.
 
 130. **[Process/Tooling — filed 2026-08-27 by the run that built §55, as its stated blind spot.]
     §55 cannot see comments, dev scripts, or Markdown — and that is 21 of the 36 spellings it was
@@ -2459,6 +2514,134 @@ finding(s); V vacuous; U unavailable`. A bare "no accessibility issues found" is
 > have moved nothing while the file sat at **915 KB**, 1.5x its own trigger. The boundary used here
 > is therefore the byte target, taken on whole days. **The deeper reason is in W-5.3's note:** the
 > run log is no longer what makes this file big.
+### 2026-08-27 (scheduled dev-agent) — a hash over the source language cannot see drift in the target, and the Japanese corpus contradicted itself once in seventy-six places (item 131)
+
+**Picked item 131**, the residual the item-129 run filed: the 7 remaining stale lesson/language pairs
+(lessons 1, 4, 30, 33, 37, 39, 40 x es/ko/zh/ja = 28 pairs). Working tree was clean apart from the
+owner's untracked `UIUX/` and `drafts/`, which were not touched;
+`npm run owner-tree -- --expect c2331799…` reported **UNMOVED** before any edit.
+
+#### Step 3.5 — the premise re-measured, and it changed the item's disposition rather than a figure
+
+The item's own instruction was to establish what changed in these seven *before* treating them as
+item 129's shape. Doing that broke the item's framing in two directions at once.
+
+- **The instrument, with a two-sided control.** `englishSourceHash` recomputed over `src/content` at
+  each of the 80 commits touching it since 2026-08-13 (`git archive` per commit, read-only). **Control
+  at HEAD: 0 of the 7 stale lessons' stored hashes match now (expect 0), and 37 of 37 non-stale ones
+  do (expect all)** — the instrument reproduces the live report exactly in both directions.
+- **The ledger's `reviewedDate` is not the reviewed state.** All seven lessons last matched at **one**
+  commit, `e43dded` (2026-08-20) — the English had not moved since the 2026-08-14/15 reviews. Exactly
+  two commits then moved it: **`7046854`** (item 84, "name the lesson, don't number it") on all seven,
+  and **`ef0665a`** (item 114, monetary base) on lesson 30 alone. Word-level diff, with its own
+  controls (self-compare 0 hunks; a planted `RULE 1`→`RULE ONE` reported 1): **six cross-reference
+  renames plus one semantic edit.** Nearly the item-129 shape the item said it was not.
+- ⛔ **And then the correction that actually matters: the English was the wrong thing to size this by.**
+  Staleness is computed from an English hash, so it truthfully said "the English moved a little".
+  Measured on the **translations** instead, lessons 30/33/37/39/40 grew **2.5x–4.5x in every language**
+  since that same state (lesson 30 `es` 1,082→3,556 chars; lesson 39 `ja` 1,092→4,767). Those five are
+  `economy`, and **item 93's economy tranche landed after 2026-08-20** — so the 2026-08-14 review saw
+  the *abridged* translation and what stands today is ~**55,000 characters of never-reviewed machine
+  translation**. The flag said "re-review"; the work is a **first** review, and the item's "one
+  language per run" was sized against four orthographic hunks.
+- **Lessons 1 and 4 are the opposite case and are not this item's.** Their translations are
+  **byte-identical** to the reviewed state in all four languages; the English *gained* a
+  cross-reference sentence that has no counterpart in any translation, because both are `essentials`
+  and abridged (0.50x / 0.68x against `es`'s 1.18 reference). **Confirmed pre-existing**, not a
+  regression from `7046854`, by dumping both trees. Filed as **item 132**.
+- **A refuted worry, recorded because it looked like a real one.** The 2026-08-14 renumbering
+  (`e15e63d`) landed inside the review window and the ledger is keyed by lesson id — but that commit
+  **remapped the ledger in the same commit** (480 lines changed there), so the ids are sound.
+
+#### The scope this run took, and why it is 8 pairs rather than 28
+
+Reviewing 28 pairs would have meant vouching for ~55,000 characters at skim depth. **Reviewed and
+marked: lessons 30 and 40 x es/ko/zh/ja (8 pairs)**, each read in full in all five languages — lesson
+30 because it carries the only semantic edit, lesson 40 because it carries five of the six renamed
+references. Lessons 33/37/39 (12 pairs) are left open in item 131 as what they actually are.
+
+#### ⛔ The defect: 75 of 76 Japanese title references use `『』`, and one used `「」`
+
+Measured across all 44 lessons by joining every lesson title against every language's prose and
+tallying the bracket pair around each hit: **`ko` 「」x76, `zh` 《》x76, `ja` 『』x75 + 「」x1.** The
+single outlier is lesson 30's reference to lesson 35, and **the corpus contradicted itself** the same
+way item 129's `要す` did — 75 of its own instances name the convention.
+
+**It is not only typography, and that is why it was worth fixing.** In Japanese `「」` is the primary
+quotation mark and `『』` marks a work title. Inside `ja` lesson 30 `「」` appears **exactly twice** —
+once as the title reference `「金利」` and once as an ordinary scare-quote `「お金」` ("money") — so the
+same brackets were doing two different jobs one paragraph apart. Fixed to `『金利』`; re-measured
+**`ja` 『』x76, 「」x0**.
+
+#### What the reading found, and what it deliberately left
+
+- **Item 114's `monetary base (M0)` edit propagated correctly to all four**: `es` *la base monetaria
+  (M0)*, `ko` *본원통화(M0)*, `zh` *基础货币（M0）*, `ja` *マネタリーベース（M0）*. All four are the
+  standard term; `ko`'s `본원통화` is the right one over `기초통화`.
+- **All six renamed cross-references name the right lesson in each language's own title**, verified
+  programmatically (20/20 across the five `economy` lessons) and then read in context. Lesson 40's
+  five references — 生産性成長 / 長期債務サイクル / 短期債務サイクル / 取引 / 信用 and their `es`,
+  `ko`, `zh` equivalents — are all correct and consistently bracketed.
+- **Lessons 30 and 40 are complete in all four languages**: every section heading, body, takeaway and
+  thinkAbout present, no §10.1 drift, no advice-adjacent phrasing added to lesson 40's three rules.
+- **One observation recorded and NOT changed** (item 129's precedent — over-editing a language whose
+  only check is this review is the larger risk): `ko` uses **`대출자` for *lender*** 13 times, where
+  the corpus also carries the unambiguous `대출 기관` 8 times and `대출자` reads at least as naturally
+  as *borrower*. Inside lesson 30 nothing misleads — the role is fixed by its own apposition and by
+  `차입자` appearing for the borrower two paragraphs later. Filed as **item 133** for item 76's
+  instrument to settle, not for a run's reading to.
+
+#### Verification
+
+- **Coverage 84% → 89% in all four languages, 7 stale → 5.**
+- **The ledger diff is exactly the 8 intended pairs and nothing else**, verified key-by-key against a
+  pre-run copy: 8 changed (30/40 x es/ko/zh/ja), **176 pairs before and after**.
+- **`npm test` 0 failures, 2 warnings** (the two documented baselines), **`npm run build` clean**,
+  `check-blindspot` **7/7 ok**.
+- **`LAUNCH_READINESS.md` §10.4 moved to a value the build computed**, and it failed the build until it
+  did — `refresh-readiness.mjs --write` reported "nothing to write" because §10.4's coverage sentence
+  is `check-data.mjs` §11's, not the readiness script's (W-5.6 recorded exactly this split).
+- **`§16`'s tripwire prints `en=0` for numeric cross-references. That is correct, not the blind spot
+  its own header warns about** — §16b passes ("references are by title"), and `en=0` was already true
+  at HEAD, checked by re-running the script against a clean `git archive HEAD` tree.
+- **Live browser verification (W-1).** Fresh `dist/` over `/usr/bin/python3 -m http.server`,
+  `preview_start` with a plain `url` (`navOk: true`), **bundle read back (`index-DxNVvetx.js`) and
+  matched against the build just run**, per the Environment note's rule 4. With `ecycles_lang` seeded
+  to `ja` and lesson 30 unlocked, the rendered lesson contains **exactly two corner-bracket spans —
+  `『金利』` and `「お金」`** — which is the two-sided proof: the target changed and the adjacent
+  scare-quote did not.
+
+#### Step 5 — adversarial self-check
+
+- **Blindspot register** — no regression. `check-blindspot` **7/7 ok**. Over the content diff:
+  Dalio / advice-adjacent verbs **0**. **Control**: the same grep pipeline returns **2** for `金利` on
+  the same diff, so it reaches the changed text. The only rendered change in the app is one bracket
+  pair; no date and no market figure is touched.
+- **`DECISIONS.md` conflict** — none. Every mark is `method: "ai"`, which is P-4 option (a) working as
+  designed rather than a departure from it, and the reviewer string follows the existing convention.
+- **Already-done backlog item** — no. Item 131 was filed by the previous run for exactly this scope;
+  the lessons are disjoint from item 129's (5, 27, 28, 42-44). **The stronger check is the opposite
+  one:** this run's finding is that item 131 as written would have led a future run to *under-budget*
+  the remaining 12 pairs, so the item was rewritten rather than merely ticked.
+- **Own verification claim** — the reproducible half is fully reproducible: the hash walk and both its
+  controls, the ledger key-diff, the 76/76 bracket tally, and the live render. **The half that is
+  judgment must not be overstated.** Per `scripts/translation-review.mjs`'s reviewer-of-record note
+  this is Claude reading same-family LLM output — real content review, **not** a native-speaker pass,
+  and the correlated-blind-spot caveat applies in full. The honest claim is that **8 pairs were read
+  by a careful non-native reader who found one real error**, not that they are natively verified.
+  **Human review share remains 0% in all four languages** — that is **O-3**, and it is the owner's.
+
+#### Next run
+
+`npm run owner-tree -- --expect <post-commit fingerprint>`. **Open and unblocked:** **item 131's
+remaining 12 pairs** (lessons 33, 37, 39 — now correctly scoped as one *lesson* per run, and correctly
+described as a first review of ~40,000 never-reviewed characters); **item 132** (the two cross-track
+pointers that exist only in English, low, and item 94's to price); **item 133** (`ko` `대출자`, low);
+**item 27** (an eighth lesson figure, and its bar still binds). **O-1 remains the entire critical
+path**, and **O-3** — now with a measured number attached to it, ~55,000 characters of machine
+translation that entered the main path after its last review and that this run reviewed one fifth of —
+is the owner decision this run's own caveat points back at.
+
 ### 2026-08-26 (scheduled dev-agent) — the English string a recipe can still smuggle in, caught at commit time instead of at sweep time (item 113)
 
 **Picked item 113**, the residual the 2026-08-25 item-112 run filed and could not do: `check-data.mjs`
