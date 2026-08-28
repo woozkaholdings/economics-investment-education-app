@@ -1067,79 +1067,79 @@
   },
   "42": {
     "es": {
-      "reviewedBy": "Claude (Sonnet 5, interactive)",
-      "reviewedDate": "2026-08-25",
-      "sourceHash": "e849c8e60770438d",
+      "reviewedBy": "Claude (Opus 5, interactive)",
+      "reviewedDate": "2026-08-27",
+      "sourceHash": "6be914a49fab28ca",
       "method": "ai"
     },
     "ja": {
-      "reviewedBy": "Claude (Sonnet 5, interactive)",
-      "reviewedDate": "2026-08-25",
-      "sourceHash": "e849c8e60770438d",
+      "reviewedBy": "Claude (Opus 5, interactive)",
+      "reviewedDate": "2026-08-27",
+      "sourceHash": "6be914a49fab28ca",
       "method": "ai"
     },
     "ko": {
-      "reviewedBy": "Claude (Sonnet 5, interactive)",
-      "reviewedDate": "2026-08-25",
-      "sourceHash": "e849c8e60770438d",
+      "reviewedBy": "Claude (Opus 5, interactive)",
+      "reviewedDate": "2026-08-27",
+      "sourceHash": "6be914a49fab28ca",
       "method": "ai"
     },
     "zh": {
-      "reviewedBy": "Claude (Sonnet 5, interactive)",
-      "reviewedDate": "2026-08-25",
-      "sourceHash": "e849c8e60770438d",
+      "reviewedBy": "Claude (Opus 5, interactive)",
+      "reviewedDate": "2026-08-27",
+      "sourceHash": "6be914a49fab28ca",
       "method": "ai"
     }
   },
   "43": {
     "es": {
-      "reviewedBy": "Claude (Sonnet 5, interactive)",
-      "reviewedDate": "2026-08-25",
-      "sourceHash": "567bf20d7aca9d95",
+      "reviewedBy": "Claude (Opus 5, interactive)",
+      "reviewedDate": "2026-08-27",
+      "sourceHash": "2a88c198d8b8e95b",
       "method": "ai"
     },
     "ja": {
-      "reviewedBy": "Claude (Sonnet 5, interactive)",
-      "reviewedDate": "2026-08-25",
-      "sourceHash": "567bf20d7aca9d95",
+      "reviewedBy": "Claude (Opus 5, interactive)",
+      "reviewedDate": "2026-08-27",
+      "sourceHash": "2a88c198d8b8e95b",
       "method": "ai"
     },
     "ko": {
-      "reviewedBy": "Claude (Sonnet 5, interactive)",
-      "reviewedDate": "2026-08-25",
-      "sourceHash": "567bf20d7aca9d95",
+      "reviewedBy": "Claude (Opus 5, interactive)",
+      "reviewedDate": "2026-08-27",
+      "sourceHash": "2a88c198d8b8e95b",
       "method": "ai"
     },
     "zh": {
-      "reviewedBy": "Claude (Sonnet 5, interactive)",
-      "reviewedDate": "2026-08-25",
-      "sourceHash": "567bf20d7aca9d95",
+      "reviewedBy": "Claude (Opus 5, interactive)",
+      "reviewedDate": "2026-08-27",
+      "sourceHash": "2a88c198d8b8e95b",
       "method": "ai"
     }
   },
   "44": {
     "es": {
-      "reviewedBy": "Claude (Sonnet 5, interactive)",
-      "reviewedDate": "2026-08-25",
-      "sourceHash": "1e0ca0b20c82d80a",
+      "reviewedBy": "Claude (Opus 5, interactive)",
+      "reviewedDate": "2026-08-27",
+      "sourceHash": "1cf765376352854f",
       "method": "ai"
     },
     "ja": {
-      "reviewedBy": "Claude (Sonnet 5, interactive)",
-      "reviewedDate": "2026-08-25",
-      "sourceHash": "1e0ca0b20c82d80a",
+      "reviewedBy": "Claude (Opus 5, interactive)",
+      "reviewedDate": "2026-08-27",
+      "sourceHash": "1cf765376352854f",
       "method": "ai"
     },
     "ko": {
-      "reviewedBy": "Claude (Sonnet 5, interactive)",
-      "reviewedDate": "2026-08-25",
-      "sourceHash": "1e0ca0b20c82d80a",
+      "reviewedBy": "Claude (Opus 5, interactive)",
+      "reviewedDate": "2026-08-27",
+      "sourceHash": "1cf765376352854f",
       "method": "ai"
     },
     "zh": {
-      "reviewedBy": "Claude (Sonnet 5, interactive)",
-      "reviewedDate": "2026-08-25",
-      "sourceHash": "1e0ca0b20c82d80a",
+      "reviewedBy": "Claude (Opus 5, interactive)",
+      "reviewedDate": "2026-08-27",
+      "sourceHash": "1cf765376352854f",
       "method": "ai"
     }
   }

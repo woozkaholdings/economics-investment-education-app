@@ -890,24 +890,38 @@ for the history. No open P1/P2 items.
     > it broke §44 inside this very run. (2) A sweep instrument whose extension list omits **`.mjs`**
     > reports "0 occurrences across 0 files" for `scripts/`, which reads exactly like clean.
 
-129. **[Content/Process — filed 2026-08-27 by the run that closed item 128, as its stated and
-    self-inflicted residual.] Re-review the 12 translation pairs that item 128's rename marked stale.**
-    - **What happened, stated plainly:** the review ledger stores a hash of the English source, so the
-      `labour`→`labor` edit to lessons 42, 43 and 44 marked their `es`/`ko`/`zh`/`ja` translations
-      stale. Coverage fell **84% → 77%** in all four languages (7 → 10 stale lessons) and
-      `LAUNCH_READINESS.md` §10.4 was updated to the true figure.
-    - **Why it was NOT cleared by re-marking.** The change was orthographic only and the four
-      translations never contained the word — but the ledger cannot tell an orthographic edit from a
-      semantic one, and `mark` asserts that a reviewer read the text. Re-stamping without reading is
-      the exact dishonesty the ledger exists to prevent. **This has a precedent that went the other
-      way and is worth matching:** on 2026-08-16 three lessons went stale from cross-reference fixes
-      and the run **did the re-review** rather than re-stamping, confirming the English change was
-      references-only. Do that.
-    - **Scope:** 3 lessons x 4 languages = 12 pairs, `npm run review-status` for the list, method
-      `ai` per the reviewer-of-record note in `scripts/translation-review.mjs`'s header. Self-contained,
-      one run, and it restores a published figure rather than moving one.
-    - **Honest priority: medium.** Nothing is broken; a published readiness number is lower than the
-      content warrants. Downstream of O-1 like everything else.
+129. **✅ DONE 2026-08-27 (owner-directed: "do item 129 next"), the same day it was filed. Coverage
+    restored 77% → 84% in all four languages. The premise held — and the reading found a defect the
+    rename had nothing to do with, which is the case for reading over re-stamping.** See the run log.
+    > **The premise was proved, not assumed:** the English delta since the reviewed state is exactly
+    > **12 word-level hunks, 11 `labour`→`labor` + 1 `specialised`→`specialized`**, measured with a
+    > controlled differ (a planted prose change reported 2 hunks; a self-compare reported 0).
+    > ⛔ **The finding: `ja` lesson 43 wrote 「急を要すもの」, the archaic `要す` where modern Japanese
+    > takes the attributive `要する`** — unrelated to the rename, and **a re-stamp would have vouched
+    > for it**. Confirmed against the app's own Japanese rather than from memory:
+    > `lessonContent.essentials.ja.js` conjugates the same position correctly, so the corpus
+    > contradicted itself. Fixed.
+    > **Two deviations were recorded and deliberately left** (`ko` 42's rendering of "the four
+    > thousand dollars" as the per-person $1,000; `zh` 44's "far more than people usually realize"
+    > for "unusually well protected"). Neither misstates a figure or breaches §10.1. **Over-editing a
+    > language whose only check is this review is the larger risk** — that judgment is the reusable part.
+    > ⚠️ **What this does NOT establish.** Every mark is `method: "ai"`. Per
+    > `scripts/translation-review.mjs`'s reviewer-of-record note this is real content review but **not**
+    > a native-speaker pass, and the correlated-blind-spot caveat applies. **Human review share is
+    > still 0% in all four languages** — that is O-3, and it is the owner's.
+
+131. **[Content/Process — filed 2026-08-27 by the run that closed item 129, as the residual its own
+    scope deliberately excluded.] Re-review the 7 remaining stale lesson/language pairs per language.**
+    - **State:** after item 129, staleness is down to **7 lessons x 4 languages = 28 pairs**, and these
+      are the *only* stale entries left. Lessons **1, 4, 30, 33, 37, 39, 40**, last reviewed
+      **2026-08-14/15** — they predate item 128 entirely and were left alone rather than swept in.
+    - **These are NOT the item 129 shape and must not be assumed to be.** Item 129's pairs were stale
+      from a proved orthographic-only edit. **Nothing has established what changed in these seven.**
+      Run the same controlled word-level diff against each lesson's reviewed state *first*; if a
+      lesson's English drifted semantically, it is a fresh translation review, not a confirmation.
+    - **Scope it to one language per run** (7 pairs), the standing advice from the 2026-08-21 entry.
+    - **Honest priority: medium-low.** It moves a published readiness figure from 84% toward 100% and
+      nothing is broken. Downstream of O-1 like everything else.
 
 130. **[Process/Tooling — filed 2026-08-27 by the run that built §55, as its stated blind spot.]
     §55 cannot see comments, dev scripts, or Markdown — and that is 21 of the 36 spellings it was
@@ -4568,3 +4582,114 @@ clean, self-contained run); **item 130** (§55's comment/script blind spot, file
 (more lesson figures — but three of the last four picks were item 27, so W-5.2's spirit says let it
 rest a run). **O-1 remains the entire critical path** — 44 lessons, 5 languages, 160 minutes of content,
 and zero people have ever opened this app — and **O-2 is downstream of it**.
+
+### 2026-08-27 (owner-directed: "do item 129 next") — the 12 pairs re-read rather than re-stamped, and the reading found something the rename had nothing to do with (item 129)
+
+**Picked item 129**, owner-directed, the same day the previous run filed it — the self-inflicted
+residual of item 128. HEAD had moved to `d4fb0d3` (**the market-data cron committed while this session
+was idle**, the documented sibling-task class in the Environment note); tree otherwise clean but for
+the untracked `UIUX/` and `drafts/`, neither touched.
+
+#### Step 3.5 — the premise held, and this time it was worth proving rather than assuming
+
+Item 129 asserts the English change was "orthographic only". That is the entire basis for the work
+being a confirmation rather than a fresh translation review, so it was measured, not taken:
+
+- **The English delta since the reviewed state is exactly 12 word-level hunks: 11 `labour`→`labor`
+  and 1 `specialised`→`specialized`.** Nothing else — no prose, no numbers, no cross-references.
+  Measured with a word-level `SequenceMatcher` over `93fa06e^` vs `HEAD` of
+  `lessonContent.money.en.js`, both extracted read-only with `git show`.
+- **Only two commits have touched that file since the 2026-08-24 boundary** — `b6c9bc9` (which *added*
+  lessons 41-44, dated 2026-08-25, i.e. the reviewed state itself) and `93fa06e` (item 128). So there
+  is no third edit hiding behind the rename.
+- **The differ carries controls both directions**, because "12 hunks, all orthographic" is exactly the
+  shape a broken differ also produces: a planted **prose** change (`"money paid for your time and
+  skill"` → `"...time, skill and patience"`) was reported as 2 hunks, and a self-compare reported 0.
+
+#### What was actually done — read, not re-stamped
+
+Item 129's own instruction, and the 2026-08-16 precedent it cites, is that a stale pair is cleared by
+**reading** it. All 12 pairs were read end to end against the English: both sections, heading, body,
+`takeaway` and `thinkAbout`, in `es`, `ko`, `zh` and `ja` for lessons 42, 43 and 44.
+
+- **11 of 12 clean** on all three axes the reviewer-of-record note names — faithfulness, fluency, and
+  blindspot safety. §10.1 in particular survives translation everywhere it matters: lesson 43's
+  *"Nothing here says one is better"* lands as `es` *"Nada de esto dice que uno sea mejor"*, `ko`
+  *"어느 하나가 더 낫다는 이야기는 없습니다"*, `zh` *"没有哪一项在说某种收入更好"*, `ja`
+  *"どれかが優れているということではありません"*; and lesson 44's refusal — *"nothing in this track
+  will tell you which to pursue"* — is intact in all four.
+- **The four legend terms still match each language's own lesson 42**, which is `check-data.mjs`
+  §54(e)'s requirement and the thing an English rename could plausibly have desynchronized: `es`
+  *ingreso laboral*, `ko` *노동소득*, `zh` *劳动收入*, `ja` *労働所得*. The rename could not touch them,
+  and now that has been confirmed by reading rather than inferred from the check being green.
+- **⛔ ONE REAL DEFECT FOUND, and it has nothing to do with the rename** — which is the argument for
+  reading over re-stamping, made concrete. `ja` lesson 43 wrote **「急を要すもの」**, using the archaic
+  `要す` where modern Japanese takes the attributive `要する`. **Confirmed against the app's own
+  Japanese rather than from memory**: `lessonContent.essentials.ja.js` writes 「勤続年数を要する
+  ベスティング条件」 — the same attributive position, conjugated correctly — so the corpus contradicted
+  itself and the money-track instance was the outlier. Fixed to 「急を要するものに感じられる」.
+  **A re-stamp would have vouched for it.**
+
+#### Two observations recorded and deliberately NOT changed
+
+Recorded because a review that silently edits to taste is not reviewable, and because both are
+judgment calls a later reader may take differently:
+
+- **`ko` lesson 42 renders "the four thousand dollars" as 「이 1,000달러는」** (this $1,000) rather than
+  the aggregate. `zh` resolves the same sentence as 「这四笔各自1,000美元的钱」 and `ja` as
+  「この合計4,000ドル」. The Korean is arguably *more* precise — each person's $1,000 arrived by one
+  mechanism, the four together by four — and no figure is misstated. Left.
+- **`zh` lesson 44 renders "A wage is unusually well protected" as 「工资受到的保护，比人们通常意识到
+  的要多得多」** ("far more than people usually realize"). That is a mild drift: the English compares a
+  wage to the other three, the Chinese makes a claim about the reader's awareness. It carries no
+  economic claim the lesson does not make and is §10.1-safe. Left, because rewriting it is a register
+  preference rather than a correction, and over-editing a language whose only check is this review is
+  the larger risk.
+
+#### Verification
+
+- **Coverage restored: 77% → 84% in all four languages, 10 stale → 7.** The remaining 7 (lessons 1, 4,
+  30, 33, 37, 39, 40) are **pre-existing and outside item 129's scope** — they were stale before item
+  128 ran, dating to reviews on 2026-08-14/15.
+- **The ledger diff is exactly the 12 intended entries and nothing else**, verified by diffing the
+  parsed JSON key-by-key against a pre-run copy: 12 changed, 44 lessons before and after.
+- **`npm test` 0 failures, 2 warnings** (the two documented baselines), **`npm run build` clean**,
+  `check-blindspot` 7/7.
+- **`LAUNCH_READINESS.md` moved twice, both times to a value the build computed**: the coverage
+  sentence to 84%/7-stale, and the volume sentence **`ja 63,352 → 63,353`** — exactly the one character
+  the 要する fix added, which is its own confirmation that nothing else in the Japanese corpus moved.
+- **Live browser verification (W-1).** Fresh `dist/` served over `/usr/bin/python3 -m http.server`,
+  `preview_start` with a plain `url` (`navOk: true`), **bundle name read back (`index-CmxfuKK8.js`)**
+  and matched the build just run, per the Environment note's rule 4. With `ecycles_lang` seeded to
+  `ja`, lesson 43 renders under `<html lang="ja">` with **「急を要するもの」 present and the old
+  「急を要すもの」 absent**.
+
+#### Step 5 — adversarial self-check
+
+- **Blindspot register** — no regression. `check-blindspot` green on all 7. Over the 38 added lines:
+  Dalio/`principles of` **0**, advice-adjacent verbs **0**, child-facing framing **0**. **Control**:
+  `reviewedDate` returns 12 on the same diff, so the greps reach the added text. No date reaches
+  rendered UI — the only rendered change is one Japanese character.
+- **`DECISIONS.md` conflict** — none, and this run is an instance of a decision rather than a
+  departure from one. P-4 option (a) is the ledger; every mark is `method: "ai"`, which is the field
+  `translation-review.mjs`'s header says exists precisely so an eventual human or professional pass
+  can still supersede these entries rather than find them looking already-done.
+- **Already-done backlog item** — no. Item 129 was filed by the previous run for exactly this scope,
+  and the 7 remaining stale lessons were deliberately left rather than swept in.
+- **Own verification claim** — the reproducible half is fully reproducible: the 12-hunk orthographic
+  proof, the ledger key-diff, the character-count movement, and the live render. **The half that is
+  judgment is the review itself, and it must not be overstated.** Per the reviewer-of-record note in
+  `scripts/translation-review.mjs`, this is Claude reading same-family LLM output — real content
+  review, but **not** equivalent to a native-speaker or professional pass, and the correlated-blind-spot
+  caveat in that header applies in full. **The honest claim is that these 12 pairs were read by a
+  careful non-native reader who found one real error in them, not that they are now natively verified.**
+  Human review share remains **0% in all four languages**, which is O-3's standing question for the owner.
+
+#### Next run
+
+`npm run owner-tree -- --expect c2331799fd3ee413aca864fd82d247a35ea31b01a70a6c4e37b00f6aad9105b2`
+(post-commit, tree clean). **Open and unblocked:** the **7 remaining stale lessons** (1, 4, 30, 33, 37,
+39, 40) — now the only staleness left and a natural one-language-per-run block, filed as **item 131**;
+**item 130** (§55's comment blind spot, low); **item 27** (more lesson figures). **O-1 remains the
+entire critical path** and **O-3** — a large volume of unreviewed machine translation, human share 0%
+and this run did not change that — is the owner decision this run's own caveat points back at.
