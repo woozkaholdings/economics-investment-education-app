@@ -648,6 +648,164 @@ export function TradeoffPlot({ title, points, endLabels, upfrontLabel, colors, d
   );
 }
 
+// ── OutcomeGrid ───────────────────────────────────────────────────────────
+// Lesson 28 ("Does One Lucky Win Prove You Have a System?"), backlog item 27.
+//
+// The third KIND of figure in this file, and the difference is worth naming
+// because it decides what may be drawn. `GrowthCurve`/`GapColumns`/
+// `AsymmetryChart` plot arithmetic their lesson states. `TradeoffPlot` plots
+// ranks read off two sentences. This one plots a PARTITION — two binary axes
+// crossed — and carries no magnitude at all.
+//
+// WHY A PICTURE. Lesson 28's sentence is "outcome and process are two
+// different things — a good decision can still lose ... and a bad or lucky
+// decision can still win". Two different things means two axes, and the claim
+// the lesson actually needs is that ONE COLUMN CONTAINS BOTH ROWS: a win tells
+// you which column you are in and nothing about which cell. Prose can assert
+// that twice; it cannot show a column with two cells in it, because a column
+// with two cells in it is a shape. The bracket is what turns the grid from a
+// table into that argument — it spans the won column and stops there.
+//
+// ⚠️ EQUAL CELLS ARE LOAD-BEARING, not a layout default. The lesson says all
+// four cases occur and says NOTHING about their frequencies ("very weak
+// evidence", never "usually luck"). So the cells are the same size, carry the
+// same mark, and no area, count or probability appears anywhere. Weighting
+// them would answer a question lesson 28 leaves open and would edge into
+// telling a reader how much to trust a result — §10.1 drawn rather than
+// written. `check-data.mjs` §57 (e) holds the four cells equal.
+//
+// COLOR. `graph.neutral` for the cell rules and the bracket, not
+// `line.hairline`: these are datum geometry rather than decoration — the
+// partition IS the content — so WCAG 1.4.11 applies at 3:1 and no `line-*`
+// token clears that on any surface in either palette (§28b/§51). This is
+// backlog item 124's case exactly, and it is the reason that item is worth
+// keeping: the bracket is drawn with CSS borders, which §51's source scan
+// cannot see, so the token choice here is a decision rather than something a
+// check would have caught. `graph.blue` marks Maria's cell and `graph.neutral`
+// the other three — never `green`/`red`, which would rank cells in a lesson
+// whose whole point is that the outcome does not rank the decision.
+const GRID_DOT = 7;
+// The cell box is a FIXED height, not a minimum, and that is only safe because
+// a cell holds one `GRID_DOT` and no text (see the cell's own comment and
+// `check-data.mjs` §57 (e2)). CSS grid stretches a row to its tallest item, so
+// with `minHeight` the row whose LABEL wraps to more lines drew taller cells
+// than the other — measured live at 65px against 52px, from "A bad or lucky
+// decision" wrapping where "A good decision" did not. The label still wraps
+// freely; the cell no longer follows it.
+const GRID_CELL_H = 52;
+
+export function OutcomeGrid({ title, columnLabels, rowLabels, cells, spanLabel, hereLabel, description, caption, colors }) {
+  const cellAt = (row, col) => cells.find((c) => c.row === row && c.col === col);
+
+  return (
+    <figure style={{ background: surface.card, border: `1px solid ${line.hairline}`, borderRadius: radius.lg, padding: space["4"], margin: 0 }}>
+      {title && (
+        <figcaption style={{ marginBottom: space["3"] }}>
+          <Text as="span" variant="caption" color={ink.muted} style={{ textTransform: "uppercase", letterSpacing: "0.05em", fontWeight: 700 }}>
+            {title}
+          </Text>
+        </figcaption>
+      )}
+      {/*
+        HTML rather than SVG, deliberately, and the reason is the same one
+        `TradeoffPlot`'s end labels are in HTML: these strings are long and
+        five-language. "Una decisión mala o afortunada" cannot be laid out in a
+        150-unit SVG cell at any readable size, and SVG does not wrap — it
+        would clip silently in exactly the languages nobody re-reads. Here the
+        cells wrap and grow with the app's own font-scale control. `Bar` is the
+        precedent for a `role="img"` that is a div rather than an svg.
+      */}
+      <div role="img" aria-label={description} style={{ display: "grid", gridTemplateColumns: "minmax(0, 1.15fr) minmax(0, 1fr) minmax(0, 1fr)", gap: space["1"], alignItems: "stretch" }}>
+        {/*
+          Row 0 — the bracket. It spans the won column only; that IS the
+          figure's claim, so it sits above the column labels where it reads as
+          covering them. `borderBottom` on a full-width box under the label
+          gives the bracket's crossbar, and the two side ticks are the short
+          verticals that make it a bracket rather than an underline.
+        */}
+        <div />
+        <div />
+        <div style={{ textAlign: "center" }}>
+          <Text as="span" variant="caption" color={ink.muted}>{spanLabel}</Text>
+          <div style={{ height: 6, marginTop: 2, borderLeft: `1px solid ${colors.rule}`, borderRight: `1px solid ${colors.rule}`, borderBottom: `1px solid ${colors.rule}` }} />
+        </div>
+
+        {/* Row 1 — the column headings (the outcome, the visible half). */}
+        <div />
+        {columnLabels.map((label) => (
+          <div key={label} style={{ textAlign: "center", paddingBottom: space["1"] }}>
+            <Text as="span" variant="caption" color={ink.strong} style={{ fontWeight: 700 }}>{label}</Text>
+          </div>
+        ))}
+
+        {/* Rows 2-3 — the row heading (the decision, the invisible half) and its two cells. */}
+        {rowLabels.map((rowLabel, row) => [
+          <div key={`h-${rowLabel}`} style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", textAlign: "right", paddingRight: space["2"] }}>
+            <Text as="span" variant="caption" color={ink.body}>{rowLabel}</Text>
+          </div>,
+          ...columnLabels.map((_, col) => {
+            const cell = cellAt(row, col);
+            return (
+              <div
+                key={`c-${row}-${col}`}
+                style={{
+                  border: `1px solid ${colors.rule}`,
+                  borderRadius: radius.sm,
+                  height: GRID_CELL_H,
+                  alignSelf: "center",
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: space["1"],
+                  padding: space["1"],
+                }}
+              >
+                {/*
+                  ⚠️ A CELL CONTAINS A DOT AND NOTHING ELSE, and that is a
+                  layout invariant rather than a style choice. CSS grid sizes a
+                  row to its tallest item, so ANY text in one cell grows the
+                  whole row — and the first version of this figure put Maria's
+                  label inside her cell and rendered the bottom row at 82px
+                  against the top row's 52px. Measured in a live browser; the
+                  static check passed throughout, because `minHeight` and the
+                  column fractions were all still correct and the inequality
+                  arrived through content. That is the weighting this figure
+                  must not draw (see the header), reached by accident. The
+                  label is a key below the grid instead, where it can wrap and
+                  translate freely without touching a single cell.
+                */}
+                <span
+                  style={{
+                    width: GRID_DOT,
+                    height: GRID_DOT,
+                    borderRadius: "50%",
+                    background: cell?.here ? colors.here : colors.dot,
+                    flex: "none",
+                  }}
+                />
+              </div>
+            );
+          }),
+        ])}
+      </div>
+      {/*
+        The key for the one marked cell. `aria-hidden` on the swatch because it
+        is a visual pointer into a `role="img"` whose own description already
+        names the cell; the text beside it is `ink.muted` (4.5:1 under §28)
+        rather than a `graph` token, which theme.js marks "Never text".
+      */}
+      {hereLabel && (
+        <div style={{ display: "flex", alignItems: "center", gap: space["2"], marginTop: space["2"] }}>
+          <span aria-hidden="true" style={{ width: GRID_DOT, height: GRID_DOT, borderRadius: "50%", background: colors.here, flex: "none" }} />
+          <Text as="span" variant="caption" color={ink.muted}>{hereLabel}</Text>
+        </div>
+      )}
+      {caption && <Text variant="caption" color={ink.muted} style={{ marginTop: space["3"], lineHeight: 1.5 }}>{caption}</Text>}
+    </figure>
+  );
+}
+
 // ── CycleChart ────────────────────────────────────────────────────────────
 const PHASE_DOT = [graph.green, graph.amber, graph.red, graph.blue];
 const PHASE_INK = [ink.ok, ink.warn, ink.bad, ink.accent];

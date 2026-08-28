@@ -575,3 +575,105 @@ export const tradeDescription = {
   zh: "一幅有四个圆点的图。从左到右依次是劳动收入、经营收入、被动收入和投资收入，这是课程按照各自与你工时绑定紧密程度排出的次序。底部有一条水平线。劳动收入的点正好落在这条线上；另外三个由虚线支柱托起在线的上方，支柱自左向右越来越高，表示每一种在回报你之前先要你付出的东西。高度表示的是次序而非数量，这条轴上没有刻度。",
   ja: "点が4つある図です。左から右へ、労働所得、事業所得、不労所得、投資所得——各回が、それぞれをあなたの労働時間にどれだけ強く結びついているかで並べた順序です。下部には水平線が引かれています。労働所得の点はその線の上に直接乗っており、他の3つは破線の支柱によって線の上に持ち上げられ、その支柱は右へ行くほど高くなって、それぞれが何かを返す前に求めてくるものを表しています。高さは量ではなく順序を示し、この軸に目盛りはありません。",
 };
+
+// ── Lesson 28: the two axes a win collapses into one ───────────────────────
+//
+// ⚠️ CATEGORICAL, NOT ORDINAL AND NOT MEASURED — a third kind of figure for
+// this file, and the distinction is what keeps it honest. §21/§50/§53 plot
+// arithmetic their lessons state; §54 plots ranks read off two sentences.
+// This one plots neither. It is a PARTITION: two binary axes lesson 28 names
+// in one sentence — "the result and the process are two different things" —
+// crossed to give four cells, all four of which the lesson says occur.
+//
+// WHY IT EARNS A DIAGRAM (backlog item 27's bar, and the reason is geometric
+// rather than aesthetic). The lesson's claim is that knowing the outcome
+// locates you in a COLUMN, not in a CELL. Prose is sequential: it delivers
+// "a good decision can still lose" and "a bad or lucky decision can still win"
+// as two clauses of one sentence and then asks the reader to hold the
+// cross-product in memory and notice that one column contains both of them.
+// The grid is that cross-product, already built. A column containing two cells
+// is a shape, and prose cannot draw it — it can only assert it twice and hope.
+//
+// WHAT THIS FIGURE DELIBERATELY DOES NOT DRAW, because the lesson does not
+// state it: any frequency, probability, base rate or area. The cells are the
+// same size and carry the same mark. Lesson 28 says all four happen and says
+// nothing whatever about how often — "one win ... is very weak evidence", not
+// "a win is usually luck". A future run must not "improve" this by weighting
+// the cells or resizing them: that would answer the question the lesson leaves
+// open, and it would read as advice about how much to trust a result, which is
+// §10.1's line. `check-data.mjs` §57 (e) is what holds the four cells equal.
+//
+// The two labeled axes are the lesson's own words in each language, taken from
+// its body rather than translated from the English label — §54 (e) is the
+// precedent, and it caught two real defects on the way in.
+export const outcomeCells = [
+  { key: "goodLost", row: 0, col: 0 },
+  { key: "goodWon", row: 0, col: 1 },
+  { key: "luckyLost", row: 1, col: 0 },
+  { key: "luckyWon", row: 1, col: 1, here: true },
+];
+
+export const outcomeTitle = {
+  en: "What a win narrows down, and what it doesn't",
+  es: "Lo que una victoria acota, y lo que no",
+  ko: "승리가 좁혀주는 것과 좁혀주지 못하는 것",
+  zh: "一次成功能缩小什么，又缩小不了什么",
+  ja: "勝利が絞り込めるもの、絞り込めないもの",
+};
+
+// The columns: the outcome, which is the half you can see. Lesson 28's own
+// verbs for it — `zh` says 亏钱/赚钱 and `ja` 負けた/勝った in the body.
+export const outcomeColumnLabels = {
+  en: ["It lost", "It won"],
+  es: ["Perdió", "Ganó"],
+  ko: ["졌다", "이겼다"],
+  zh: ["亏钱了", "赚钱了"],
+  ja: ["負けた", "勝った"],
+};
+
+// The rows: the decision behind it, which is the half you cannot see from the
+// outcome. Each is lifted verbatim from the lesson's "two different things"
+// sentence in that language.
+export const outcomeRowLabels = {
+  en: ["A good decision", "A bad or lucky decision"],
+  es: ["Una buena decisión", "Una decisión mala o afortunada"],
+  ko: ["좋은 결정", "나쁘거나 운이 좋았던 결정"],
+  zh: ["好的决策", "糟糕的或纯属侥幸的决策"],
+  ja: ["良い決断", "悪い、あるいは運が良かっただけの決断"],
+};
+
+// The bracket over the right-hand column. This is the figure's whole argument
+// in four words, so it is the string most worth getting right per language.
+export const outcomeSpanLabel = {
+  en: "All a win tells you",
+  es: "Todo lo que te dice una victoria",
+  ko: "승리가 말해주는 전부",
+  zh: "一次成功能告诉你的全部",
+  ja: "勝利が教えてくれるすべて",
+};
+
+// Maria's case, from the lesson's opening paragraph. The 40% is the lesson's
+// own figure and §57 (f) asserts it is still in the body.
+export const outcomeHereLabel = {
+  en: "Maria's hunch — up 40%",
+  es: "La corazonada de María: subió un 40%",
+  ko: "마리아의 직감 — 40% 상승",
+  zh: "玛丽亚的直觉——上涨40%",
+  ja: "マリアの直感——40%上昇",
+};
+
+export const outcomeCaption = {
+  en: "The outcome is the column; the decision behind it is the row. A win puts you somewhere in the right-hand column and stops there, because both of its cells are real — a good decision can still lose, and a bad or lucky decision can still win. Maria read a row off a column: the price moved, so she filed her hunch under the top one. The grid says nothing about how often each cell happens, because the lesson doesn't either.",
+  es: "El resultado es la columna; la decisión que hay detrás es la fila. Una victoria te sitúa en algún punto de la columna derecha y ahí se detiene, porque sus dos celdas son reales: una buena decisión puede aun así perder, y una decisión mala o afortunada puede aun así ganar. María leyó una fila a partir de una columna: el precio se movió, así que archivó su corazonada en la de arriba. La cuadrícula no dice nada sobre con qué frecuencia ocurre cada celda, porque la lección tampoco lo dice.",
+  ko: "결과는 열이고, 그 뒤에 있는 결정은 행입니다. 승리는 당신을 오른쪽 열 어딘가에 놓아둘 뿐 거기서 멈춥니다. 그 열의 두 칸이 모두 실재하기 때문입니다 — 좋은 결정도 질 수 있고, 나쁘거나 운이 좋았던 결정도 이길 수 있습니다. 마리아는 열을 보고 행을 읽어냈습니다. 가격이 올랐으니 자신의 직감을 위쪽 칸에 넣어버린 것입니다. 이 표는 각 칸이 얼마나 자주 일어나는지에 대해서는 아무 말도 하지 않는데, 수업도 그렇게 하지 않기 때문입니다.",
+  zh: "结果是列，结果背后的决策是行。一次成功只把你放在右边这一列的某个位置，然后就到此为止了，因为这一列的两个格子都是真实存在的——一个好的决策仍然可能亏钱，一个糟糕的或纯属侥幸的决策也仍然可能赚钱。玛丽亚是从一列反推出一行的：价格涨了，于是她就把自己的直觉归进了上面那一格。这张表完全没有说每个格子发生得有多频繁，因为这一课本身也没有说。",
+  ja: "結果は列であり、その背後にある決断は行です。勝利はあなたを右の列のどこかに置くだけで、そこで止まります。その列の2つのマスはどちらも現実に起こるからです——良い決断でも負けることはあり、悪い、あるいは運が良かっただけの決断でも勝つことはあります。マリアは列から行を読み取りました。価格が動いたので、自分の直感を上のマスに分類したのです。この図は、それぞれのマスがどのくらいの頻度で起こるかについては何も述べていません。この回自体が述べていないからです。",
+};
+
+export const outcomeDescription = {
+  en: "A two-by-two grid. The columns are the outcome: it lost on the left, it won on the right. The rows are the decision behind it: a good decision on top, a bad or lucky decision below. All four cells are the same size and carry the same mark, because the lesson says all four happen and says nothing about how often. A bracket spans the right-hand column and is labeled as everything a win tells you — it narrows the answer to that column of two cells and no further. A highlighted mark sits in the lower right cell, Maria's hunch that rose 40 percent.",
+  es: "Una cuadrícula de dos por dos. Las columnas son el resultado: perdió a la izquierda, ganó a la derecha. Las filas son la decisión que hay detrás: una buena decisión arriba, una decisión mala o afortunada abajo. Las cuatro celdas tienen el mismo tamaño y llevan la misma marca, porque la lección dice que las cuatro ocurren y no dice nada sobre con qué frecuencia. Un corchete abarca la columna derecha y está etiquetado como todo lo que te dice una victoria: acota la respuesta a esa columna de dos celdas y no más. Una marca destacada se sitúa en la celda inferior derecha, la corazonada de María que subió un 40 por ciento.",
+  ko: "가로 2칸, 세로 2칸의 표입니다. 열은 결과로, 왼쪽이 졌다, 오른쪽이 이겼다입니다. 행은 그 뒤에 있는 결정으로, 위가 좋은 결정, 아래가 나쁘거나 운이 좋았던 결정입니다. 네 칸은 모두 같은 크기이고 같은 표시를 달고 있는데, 수업이 네 경우 모두 일어난다고 말할 뿐 얼마나 자주인지는 말하지 않기 때문입니다. 오른쪽 열 위에는 괄호가 걸쳐져 있고 승리가 말해주는 전부라고 적혀 있습니다. 그것은 답을 두 칸짜리 그 열까지만 좁혀줄 뿐 그 이상은 좁혀주지 못합니다. 오른쪽 아래 칸에는 강조된 표시가 있는데, 40퍼센트 오른 마리아의 직감입니다.",
+  zh: "一张二乘二的表格。列表示结果：左边是亏钱了，右边是赚钱了。行表示背后的决策：上面是好的决策，下面是糟糕的或纯属侥幸的决策。四个格子大小相同、标记相同，因为这一课只说这四种情况都会发生，并没有说各自有多频繁。右边这一列上方有一个括号，标注为一次成功能告诉你的全部——它只能把答案缩小到这个包含两个格子的列，再往下就缩不动了。右下角的格子里有一个突出显示的标记，那是玛丽亚上涨了40%的直觉。",
+  ja: "2行2列の図です。列は結果を表し、左が負けた、右が勝ったです。行はその背後にある決断を表し、上が良い決断、下が悪い、あるいは運が良かっただけの決断です。4つのマスはすべて同じ大きさで同じ印がついています。この回は4つとも起こると述べるだけで、どのくらいの頻度かについては何も述べていないからです。右の列の上には括弧がかかっており、勝利が教えてくれるすべて、と記されています。それは答えを2マスからなるその列までしか絞り込めません。右下のマスには強調された印があり、40%上昇したマリアの直感です。",
+};

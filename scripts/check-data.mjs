@@ -7181,5 +7181,260 @@ if (keyedGroupsChecked < 4) {
   }
 }
 
+// ═══════════════════════════════════════════════════════════════════════════
+// §57. src/content/moneyVisuals.js — lesson 28's outcome/process grid (backlog
+//      item 27, added 2026-08-28). The third KIND of figure this file guards,
+//      and the kind decides the assertions:
+//
+//        §21/§50/§53 — the figure plots arithmetic its lesson states. The
+//          question is "is this number in the body?".
+//        §54        — the figure plots RANKS read off two sentences. The
+//          question is "is this order still what the sentence says?".
+//        §57 (here) — the figure plots a PARTITION and carries no magnitude at
+//          all. There is no number to check, so the question becomes "are the
+//          two axes still the two things the lesson crosses, and has anyone
+//          started drawing a quantity that the lesson does not have?".
+//
+//      THE FAILURE THIS SECTION EXISTS TO CATCH IS THE WELL-MEANING ONE, and
+//      it is a different well-meaning edit from §54's. §54 guards against a
+//      future run sourcing real capital requirements to "improve" an ordinal
+//      axis. Here the tempting improvement is WEIGHTING THE CELLS — making the
+//      lucky-win cell bigger, or shading it, or adding a base rate, because a
+//      2x2 of four equal boxes looks like it is missing information. It is not
+//      missing information; the absence IS the lesson. Lesson 28 says all four
+//      cases occur and says nothing whatever about how often ("very weak
+//      evidence", never "usually luck"), and its own conclusion refuses to
+//      rank: the useful question is whether the decision "would hold up if I
+//      made it a hundred times", which is exactly the quantity nobody has. A
+//      weighted grid would answer that question on the lesson's behalf and
+//      would read as guidance about how far to trust a result — §10.1 drawn
+//      rather than written. (e) is what keeps the cells equal, and it checks
+//      the RENDERED geometry, not the data, because the data has no sizes in
+//      it to get wrong.
+{
+  const mv = moneyVisualsContent;
+  const before57 = failures;
+  const need = [
+    "outcomeCells", "outcomeTitle", "outcomeColumnLabels", "outcomeRowLabels",
+    "outcomeSpanLabel", "outcomeHereLabel", "outcomeCaption", "outcomeDescription",
+  ];
+  const missing = need.filter((k) => mv[k] === undefined);
+  if (missing.length > 0) {
+    fail(`§57: src/content/moneyVisuals.js no longer exports ${missing.join(", ")}. This section is pointed at a structure that no longer exists — repoint it rather than leaving it green.`);
+  } else {
+    const cells = mv.outcomeCells;
+
+    // (a) THE PARTITION IS COMPLETE. Four cells, one per (row, col) of a 2x2,
+    //     no duplicates and no gaps. This is the figure's entire claim as data:
+    //     a missing cell would render an empty box that reads as "this cannot
+    //     happen", which is the opposite of what the lesson says, and the grid
+    //     would still lay out perfectly.
+    const seen = new Set();
+    let shapeOk = Array.isArray(cells) && cells.length === 4;
+    if (shapeOk) {
+      for (const c of cells) {
+        if (![0, 1].includes(c.row) || ![0, 1].includes(c.col)) shapeOk = false;
+        else seen.add(`${c.row},${c.col}`);
+      }
+      if (seen.size !== 4) shapeOk = false;
+    }
+    if (!shapeOk) {
+      fail(`§57: outcomeCells must be the complete 2x2 partition — four cells covering (0,0) (0,1) (1,0) (1,1) exactly once. Got ${Array.isArray(cells) ? `${cells.length} cell(s) at ${cells.map((c) => `(${c.row},${c.col})`).join(" ")}` : typeof cells}. A missing cell renders an empty box, which draws "this cannot happen" — the opposite of the lesson's claim that all four occur; a duplicated one leaves a different cell missing and reads the same way on screen.`);
+    } else {
+      // (b) EXACTLY ONE marked cell, and it is the lucky win. Maria's case is
+      //     the lesson's own opening: a hunch (bad-or-lucky decision, row 1)
+      //     that rose 40% (it won, col 1). Marking a second cell, or moving
+      //     this one, would put the lesson's worked example somewhere the
+      //     lesson does not put it — and the caption names her cell in prose,
+      //     so the two would silently disagree.
+      const here = cells.filter((c) => c.here);
+      if (here.length !== 1) {
+        fail(`§57: ${here.length} cell(s) carry \`here\`. Exactly one does — Maria's case, which the figure's caption and description both name in prose, so a second mark or none makes the picture and its own caption disagree.`);
+      } else if (here[0].row !== 1 || here[0].col !== 1) {
+        fail(`§57: the marked cell is at (${here[0].row},${here[0].col}); Maria's case is the bad-or-lucky decision (row 1) that won (col 1). Lesson 28 opens with a hunch that rose 40% and the whole figure turns on her sitting in the row she did not think she was in.`);
+      }
+
+      // (c) FIVE-LANGUAGE PROSE ANCHOR for the ROW labels — the axis the
+      //     reader cannot see from the outcome, and the one worth checking in
+      //     every language rather than `en` alone (backlog item 127's residual,
+      //     answered here the way §54 (e) answers it). Each row label is lifted
+      //     from that language's own "two different things" sentence, so a
+      //     translation that reworded the lesson would leave the figure
+      //     labelled with a phrase its own lesson never uses.
+      //
+      //     CONTROL, per language and both directions: a body that failed to
+      //     load returns "not found" for both labels, which is
+      //     indistinguishable from two renamed rows.
+      const CONTROL_ABSENT = "qzx-no-lesson-says-this";
+      for (const lang of LANGS) {
+        const body28 = (lessonContent["28"]?.sections ?? []).map((s) => s.body?.[lang] ?? "").join("\n").toLowerCase();
+        if (body28.trim().length === 0 || body28.includes(CONTROL_ABSENT)) {
+          fail(`§57: the lesson-28 body scan failed its control in "${lang}" — ${body28.trim().length === 0 ? "the body is empty" : "an absent probe was found"}. It is reading the wrong text or no text, so a clean result for this language would mean nothing.`);
+          continue;
+        }
+        const labels = mv.outcomeRowLabels[lang] ?? [];
+        for (const [i, label] of labels.entries()) {
+          if (!body28.includes(String(label).toLowerCase())) {
+            fail(`§57: the grid's row ${i} reads "${label}" in "${lang}", but lesson 28 never uses that phrase in that language. Both rows are lifted from the lesson's own "outcome and process are two different things" sentence — take the label from the prose rather than translating the English one.`);
+          }
+        }
+      }
+
+      // (d) THE TWO CLAUSES THE FIGURE IS A PICTURE OF, in `en` and openly so.
+      //     These are the two cells of the won/lost columns that the lesson
+      //     states outright, and they are the reason the grid is a grid. There
+      //     is no five-language version for the same reason §54 (f) has none:
+      //     the translations render the pair in their own syntax, so a clause
+      //     match would report a confident failure about grammar. (c) is what
+      //     covers the other four languages.
+      const body28en = (lessonContent["28"]?.sections ?? []).map((s) => s.body?.en ?? "").join("\n");
+      const CLAIMS_28 = [
+        ["the two axes", "outcome and process are two different things"],
+        ["the good-decision cell", "a good decision can still lose"],
+        ["the lucky-win cell", "a bad or lucky decision can still win"],
+      ];
+      for (const [what, phrase] of CLAIMS_28) {
+        if (!body28en.includes(phrase)) {
+          fail(`§57: lesson 28's en body no longer says "${phrase}" (${what}). The grid draws exactly that crossing and its caption restates it; if the lesson moved, the figure has to move with it or come out.`);
+        }
+      }
+
+      // (e) THE CELLS ARE EQUAL, checked on the RENDERED grid rather than on
+      //     the data — this is the silent one, and it is why this assertion
+      //     reads charts.jsx instead of moneyVisuals.js. `outcomeCells` has no
+      //     size field, so nothing in the data could ever encode a weighting;
+      //     the weighting would arrive as CSS. `OutcomeGrid` lays the columns
+      //     out with `gridTemplateColumns` and gives every cell one shared
+      //     `minHeight` and one shared dot size, so equality is currently a
+      //     property of three literals. If a future edit gives the columns
+      //     different fractions, or the marked cell its own height or dot,
+      //     the figure starts asserting a frequency the lesson does not have
+      //     and every other assertion here still passes.
+      const chartsSrc = readFileSync(join(ROOT, "src/components/charts.jsx"), "utf8");
+      const gridStart = chartsSrc.indexOf("export function OutcomeGrid(");
+      if (gridStart < 0) {
+        fail("§57: charts.jsx no longer exports OutcomeGrid. The figure's geometry is asserted by reading that function, so this check is pointed at nothing.");
+      } else {
+        const nextExport = chartsSrc.indexOf("\nexport function ", gridStart + 1);
+        const gridSrc = chartsSrc.slice(gridStart, nextExport === -1 ? chartsSrc.length : nextExport);
+
+        // CONTROL: the slice must actually contain the grid's own layout, or
+        // an empty slice would pass every assertion below by matching nothing.
+        if (!gridSrc.includes("gridTemplateColumns") || !gridSrc.includes("minHeight")) {
+          fail("§57 CONTROL: the OutcomeGrid slice does not contain `gridTemplateColumns` and `minHeight`, so it is not the layout this section thinks it is reading. Every geometry result below would be vacuous.");
+        } else {
+          const tmpl = gridSrc.match(/gridTemplateColumns:\s*"([^"]*)"/);
+          const fractions = [...(tmpl?.[1] ?? "").matchAll(/([\d.]+)fr/g)].map((m) => Number(m[1]));
+          // The label gutter is column 1 and is allowed to differ; the two
+          // DATA columns are 2 and 3 and must be equal, or one outcome would
+          // be drawn as the wider possibility.
+          if (fractions.length !== 3) {
+            fail(`§57 (e): OutcomeGrid's gridTemplateColumns is "${tmpl?.[1] ?? "(unreadable)"}" — this section expects three fr-based tracks (a label gutter and the two outcome columns) so it can compare the data columns. Re-derive the check if the layout genuinely changed shape.`);
+          } else if (fractions[1] !== fractions[2]) {
+            fail(`§57 (e): the two outcome columns are ${fractions[1]}fr and ${fractions[2]}fr. They must be equal — lesson 28 says all four cases occur and says nothing about how often, so a wider column draws a frequency the lesson does not state and edges into telling the reader how much to trust a result (§10.1).`);
+          }
+          // The cell box is one FIXED height shared by all four, taken from a
+          // named constant. `minHeight` is not good enough and this assertion
+          // says so on purpose: with a minimum, CSS grid still stretches the
+          // row whose ROW LABEL wraps to more lines, which drew the bottom row
+          // at 65px against the top row's 52px — measured live, with every
+          // style literal in the file still correct. A fixed height is safe
+          // here only because (e2) below keeps the cell free of text.
+          const cellH = [...gridSrc.matchAll(/\bheight:\s*GRID_CELL_H\b/g)].length;
+          const minH = [...gridSrc.matchAll(/\bminHeight:/g)].length;
+          if (cellH !== 1 || minH !== 0) {
+            fail(`§57 (e): the cell box declares ${cellH} \`height: GRID_CELL_H\` and ${minH} \`minHeight\`; it must be exactly one fixed shared height and no minimum. A minimum lets the row whose label wraps to more lines stretch its cells taller than the other row's, which draws one row as the larger case — measured live at 65px against 52px before this was pinned.`);
+          }
+          // Every dot in the figure — the four cell marks and the key's swatch
+          // — takes both dimensions from the one shared constant. No literal
+          // size anywhere is what keeps the marked cell from being drawn as
+          // the larger case.
+          //
+          // ⚠️ THE FIRST VERSION OF THIS ASSERTION WAS A FALSE POSITIVE and it
+          // failed the build on correct code, which is worth leaving written
+          // down: it also grepped the dot's JSX for `r=` on the theory that an
+          // SVG radius would mean someone had reintroduced a per-dot size.
+          // `r=` matches inside `variant="caption"`. A substring is not a
+          // token, and a check that fires on correct prose is worse than no
+          // check — the same class as item 134's title/non-title join.
+          const dotW = [...gridSrc.matchAll(/\bwidth:\s*GRID_DOT\b/g)].length;
+          const dotH = [...gridSrc.matchAll(/\bheight:\s*GRID_DOT\b/g)].length;
+          if (dotW < 1 || dotW !== dotH) {
+            fail(`§57 (e): the figure declares ${dotW} width and ${dotH} height reference(s) to the shared GRID_DOT constant; every dot must take both dimensions from it. A literal size on either axis is a per-cell dot waiting to happen.`);
+          }
+
+          // ⚠️ (e2) THE CELL IS A DOT AND NOTHING ELSE — the invariant that
+          //     actually holds the four cells equal, and the one this section
+          //     did NOT have when it was first written.
+          //
+          //     WHY IT IS HERE. The checks above guard the two places a
+          //     weighting could be *declared*: unequal column fractions and a
+          //     per-cell height. The first version of this figure had neither
+          //     defect and still rendered the bottom row half again as tall as
+          //     the top one — 82px against 52px, measured in a live browser —
+          //     because Maria's label sat inside her cell and CSS grid sizes a
+          //     row to its tallest item. Nothing was declared unequal; the
+          //     inequality arrived through CONTENT, which a source check
+          //     reading style literals cannot see. That is the composition
+          //     class §43 exists for, in a figure whose whole argument is that
+          //     the four cells are the same.
+          //
+          //     So the invariant is structural rather than stylistic: text
+          //     goes in the key below the grid, never in a cell. Assert it on
+          //     the cell's own JSX rather than on the whole component, or the
+          //     key's label would satisfy it.
+          const cellStart = gridSrc.indexOf("const cell = cellAt(row, col);");
+          const cellEnd = gridSrc.indexOf("          }),", cellStart);
+          if (cellStart < 0 || cellEnd < 0) {
+            fail("§57 CONTROL (e2): the per-cell JSX could not be located in OutcomeGrid, so the no-text-in-a-cell assertion below would pass by matching nothing.");
+          } else {
+            const cellJsx = gridSrc.slice(cellStart, cellEnd);
+            const textInCell = [...cellJsx.matchAll(/<Text\b/g)].length;
+            if (textInCell > 0) {
+              fail(`§57 (e2): a cell renders ${textInCell} <Text> element(s). A cell must contain the dot and nothing else — CSS grid sizes a row to its tallest item, so text in one cell grows that whole row and draws it as the larger case, which is exactly the weighting this figure must not assert. Put the label in the key below the grid, where it can wrap and translate without touching a cell. (This is not hypothetical: it is how the first version of this figure rendered, at 82px against 52px.)`);
+            }
+          }
+        }
+      }
+
+      // (f) Maria's figure is the lesson's own. The label prints "40%" and
+      //     lesson 28's opening is where that comes from; §2.3's standing rule
+      //     is that every number on screen is the lesson's teaching example
+      //     rather than a reading of anything.
+      if (!body28en.includes("up 40%")) {
+        fail('§57 (f): lesson 28\'s en body no longer contains "up 40%", but the figure prints 40% as Maria\'s result. Re-read the lesson and take the figure\'s number from it rather than leaving a figure that quotes a number its lesson stopped stating.');
+      }
+
+      // (g) Five-language parity for everything the figure renders, including
+      //     the text alternative — the grid is a single `role="img"`, so
+      //     `outcomeDescription` is all a screen-reader user gets of it (§22).
+      for (const key of ["outcomeTitle", "outcomeSpanLabel", "outcomeHereLabel", "outcomeCaption", "outcomeDescription"]) {
+        for (const lang of LANGS) {
+          if (!String(mv[key][lang] ?? "").trim()) {
+            fail(`§57: ${key}.${lang} is missing or empty. Every one of these renders on screen in that language, and outcomeDescription is the figure's only text alternative.`);
+          }
+        }
+      }
+      for (const key of ["outcomeColumnLabels", "outcomeRowLabels"]) {
+        for (const lang of LANGS) {
+          const v = mv[key][lang];
+          if (!Array.isArray(v) || v.length !== 2 || v.some((x) => !String(x ?? "").trim())) {
+            fail(`§57: ${key}.${lang} must be 2 non-empty strings; got ${Array.isArray(v) ? `${v.length} entries` : typeof v}. The grid indexes it positionally, so a short array renders an unlabeled axis rather than throwing.`);
+          }
+        }
+      }
+    }
+
+    if (failures === before57) {
+      console.log(
+        `  §57 lesson 28's outcome grid holds: the 2x2 partition is complete with one marked cell at (1,1), ` +
+          `both row labels found in lesson 28's own body in all ${LANGS.length} languages (control both directions per language), ` +
+          `3 claim clauses and the 40% present in the en body, and the rendered geometry carries no weighting ` +
+          `(equal outcome columns, one shared fixed cell height and no minimum, one shared dot size, and no text inside any cell).`,
+      );
+    }
+  }
+}
+
 console.log(`\n${failures === 0 ? "PASS" : "FAIL"}: ${failures} failure(s), ${warnings} warning(s).`);
 process.exit(failures === 0 ? 0 : 1);

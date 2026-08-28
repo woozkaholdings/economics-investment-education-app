@@ -1017,6 +1017,38 @@ for the history. No open P1/P2 items.
       true of `lessonContent` and false of the corpus. **A scope stated in prose is not a scope the
       measurement had** — the same shape as item 128's finding about item 91's "whole-repo scan".
 
+135. **[Process/Tooling — filed 2026-08-28 by the run that added lesson 28's figure (item 27), as
+    the class its own defect belongs to.] Every figure check in this repo reads SOURCE, so the
+    proportions a figure actually renders are unguarded — and that is where this run's real defect
+    was.**
+    - **The instance, measured twice.** `OutcomeGrid`'s whole argument is that its four cells are
+      equal. It shipped its first version with the bottom row at **82px against the top row's 52px**,
+      and its second at **65 against 52**. Both times `check-data.mjs` §57 passed and every style
+      literal in the file was correct: the inequality arrived through **content** — first a label
+      inside a cell, then a row heading wrapping to more lines — because CSS grid sizes a row to its
+      tallest item. Found by measuring `getBoundingClientRect()` in a live browser, with a control
+      proving the measurement could see a difference at all.
+    - **Why §57 (e2) is not the fix for the class.** It pins *this* figure structurally (no text in a
+      cell, one fixed shared height) and it is proven by injection. But it is one figure's invariant
+      hand-written by the run that got caught. The other seven figures have no equivalent, and
+      nothing would catch the next one — `GapColumns` asserts two gaps are equal, `AsymmetryChart`
+      asserts one bar is taller than another, and both of those are **rendered** claims checked
+      against **source** numbers.
+    - **The shape that could work, and it already half exists:** `scripts/a11y-sweep.js` renders the
+      app and walks `role="img"` subtrees. A probe could read the computed box of every element in a
+      figure and assert the relations that figure's caption claims — equal cells, a taller bar, a dot
+      clear of a rail (§54 (d) computes that one in source arithmetic today, which is the same gap).
+      **This is item 124's probe, from the other side**: that item wants the live DOM for *border
+      colors inside a figure*, this one for *box geometry inside a figure*. They are one probe and
+      should be built as one.
+    - **Do not build it as a generic "figures look right" check** — that is unfalsifiable. Each
+      figure would declare the relation it claims, which is the same discipline §50/§53/§54 already
+      use, moved from the data to the render.
+    - **Honest priority: low-medium.** Zero known live instances — this run's was found and fixed,
+      and no other figure is known to be wrong. But it is the only defect class in this file's
+      history that shipped *through* a green check written specifically to stop it. Downstream of
+      O-1 like everything else.
+
 132. **[Content — filed 2026-08-27 by the run that corrected item 131, as the gap that correction
     exposed rather than smuggled into the same commit.] Lessons 1 and 4 point the reader at another
     lesson in English and at nothing in any other language.**
@@ -1709,11 +1741,46 @@ for the history. No open P1/P2 items.
     > lines would have had to invent Dan's slope. **The rule, now first in line for any candidate:
     > does the prose state every quantity the shape needs, or only the ones that make it sound
     > plausible?**
-    > **THE BAR FOR AN EIGHTH IS UNCHANGED AND STILL BINDS**, and there is again **no named
+    > **Eighth visual added 2026-08-28: lesson 28 (outcome vs. process), as `OutcomeGrid`.** Money is
+    > **5/17**; economy 5/12 and essentials 3/15 are unchanged. Re-measured with the same parser
+    > control — do not quote a coverage count from this item, re-run the parse.
+    > **It cleared the bar on the lesson's own sentence**: *"outcome and process are two different
+    > things — a good decision can still lose ... and a bad or lucky decision can still win."* Two
+    > different things is two axes, and the claim the lesson actually needs is that **one column holds
+    > both rows**: a win tells you which column you are in and nothing about which cell. Prose can
+    > assert that twice; it cannot show a column with two cells in it. First figure here that is a
+    > **partition** rather than a quantity or a rank — it carries no magnitude at all, which is what
+    > `check-data.mjs` §57 is shaped around.
+    > ⚠️ **ITS FOUR CELLS ARE EQUAL AND UNWEIGHTED, and that must stay true.** Lesson 28 says all four
+    > cases occur and says **nothing** about how often ("very weak evidence", never "usually luck").
+    > A future run must not "improve" this by weighting, shading or resizing a cell, or by adding a
+    > base rate: that answers a question the lesson leaves open and reads as guidance about how far to
+    > trust a result (§10.1). §57 (e)/(e2) hold it.
+    > ⛔ **THE THREE CANDIDATES THIS RUN MEASURED AND REJECTED, all on the rule below — worth keeping,
+    > because each looked ideal until the prose was read.** **Lesson 18** (opportunity cost) states
+    > Jordan's \$2,000 and Alex's \$3,580 but gives Jordan's home theater only "maybe a couple hundred
+    > dollars now" with **no depreciation path** — two diverging lines would have had to invent his
+    > slope, which is lesson 16's rejection exactly. **Lesson 21** (anchoring) gives \$220 and \$89 but
+    > **deliberately withholds the third number**, what the jacket is independently worth; a figure
+    > would have had to invent the one quantity the lesson says nobody checked. **Lesson 25**
+    > (save vs. invest) closes on *"not a formula with one right numeric answer"* and states no rate,
+    > horizon or amount to plot. **The rule held in all three, and it is still first in line for any
+    > candidate: does the prose state every quantity the shape needs, or only the ones that make it
+    > sound plausible?**
+    > **THE BAR FOR A NINTH IS UNCHANGED AND STILL BINDS**, and there is again **no named
     > candidate** —
     > deliberately, because a named candidate is how this item became count-shaped twice before. A run
     > that wants one must read a lesson's prose first and name what the prose cannot do, the way this
     > run did. **Do not pick a lesson because a diagram is "plausible" there.**
+    > ⛔ **NEW, AND IT GENERALIZES PAST THIS ITEM: a figure's geometry is a RENDERED property, and a
+    > source check cannot see it.** This run's figure shipped its intended claim ("the four cells are
+    > equal") while rendering the bottom row **82px against the top row's 52px**, then **65 against
+    > 52** after the first fix. Both times every style literal in the file was correct and §57 passed:
+    > the inequality arrived through **content** — a label inside a cell, then a row heading that
+    > wrapped to more lines — because CSS grid sizes a row to its tallest item. It was found only by
+    > measuring the live DOM. **Measure a figure's boxes in a browser before claiming anything about
+    > its proportions**, and prefer invariants that are structural (no text in a cell; a fixed shared
+    > height) over ones that are stylistic. The general instrument is **item 135**.
     **Status check, 2026-08-16 (item-29 run):** `LESSON_VISUALS` in `src/components/LessonVisual.jsx`
     now maps money lessons **1 (`budgetSplit`), 3 (`compounding`) and 27 (`lossAsymmetry`)**, plus the
     five economy ones — i.e. money is **3/28, not 0/28**, and the three lessons this item's own "Scope
@@ -2586,6 +2653,147 @@ finding(s); V vacuous; U unavailable`. A bare "no accessibility issues found" is
 > have moved nothing while the file sat at **915 KB**, 1.5x its own trigger. The boundary used here
 > is therefore the byte target, taken on whole days. **The deeper reason is in W-5.3's note:** the
 > run log is no longer what makes this file big.
+### 2026-08-28 (scheduled dev-agent) — the figure that shipped its own refutation: a grid arguing all four cells are equal, rendering one row half again as tall (item 27)
+
+**Picked item 27**, the eighth lesson figure — the top open, unblocked candidate named by the previous
+run, and the first content-facing pick after three runs of translation review and tooling (items 129,
+131, 134). Tree clean apart from the owner's untracked `UIUX/` and `drafts/`; `owner-tree --expect
+c2331799…` **UNMOVED** before any edit.
+
+#### Step 3.5 — the premise held on the numbers, and the work was finding a candidate that survives
+
+- **Coverage re-measured with item 27's mandated parser control** (three ids the parse must find,
+  three it must not; plus a join control against three lesson ids whose track I knew independently):
+  **economy 5/12, essentials 3/15, money 4/17** — item 27's stated counts, exactly. First premise in
+  a while that held as written.
+- **Two instrument failures on the way, both caught by controls rather than by reading.** The first
+  join returned **0 lessons parsed** and reported all 12 visual ids as missing from `lessons.js` —
+  impossible on its face; the record regex assumed one object per `{}` and `title` objects contain
+  braces. The second: seven anchor phrases I knew were in lesson 28 all came back MISS, because
+  `lessonContent.money.en.js` stores `body` as a plain string while the merged `lessonContent.js`
+  keys it by language. **Both would have returned a confident, clean-looking number.**
+- **The item's real bar is not a number, it is a candidate**, and three strong-looking ones were
+  measured and **rejected** before lesson 28 was picked — lesson 18 (no depreciation slope for
+  Jordan), lesson 21 (the independent value is deliberately withheld), lesson 25 (states no rate,
+  horizon or amount, and closes by refusing a numeric answer). All three fail item 27's own rule:
+  *does the prose state every quantity the shape needs, or only the ones that make it sound
+  plausible?* Written into item 27 so they are not re-derived.
+
+#### What shipped
+
+**Lesson 28 ("Does One Lucky Win Prove You Have a System?") gets `OutcomeGrid`** — a 2x2 of outcome
+(column: it lost / it won) against the decision behind it (row: a good decision / a bad or lucky
+decision), with a bracket over the won column labeled *"All a win tells you"* and one marked cell for
+Maria's hunch that rose 40%.
+
+**Why it cleared the bar.** The lesson's sentence is *"outcome and process are two different things —
+a good decision can still lose ... and a bad or lucky decision can still win."* Two different things
+is two axes, and the claim the lesson needs is that **one column holds both rows**: a win locates you
+in a column, not a cell. Prose can assert that twice; it cannot draw a column with two cells in it.
+It is the first **partition** figure in the app — it carries no magnitude at all, which is what the
+new `check-data.mjs` §57 is shaped around (§21/§50/§53 check arithmetic, §54 checks ranks, §57 checks
+that nobody has started drawing a quantity the lesson does not have).
+
+- `src/content/moneyVisuals.js` — the cell data plus title, both axis label pairs, bracket label,
+  marker label, caption and text alternative, in all five languages. **Row labels are lifted from
+  each language's own lesson-28 body**, not translated from the English, per §54 (e)'s precedent.
+- `src/components/charts.jsx` — `OutcomeGrid`, HTML rather than SVG because "Una decisión mala o
+  afortunada" cannot be laid out in a 150-unit SVG cell and SVG does not wrap; `Bar` is the precedent
+  for a `role="img"` div. `graph.neutral` for the cell rules and the bracket — **datum geometry, not
+  decoration**, so 1.4.11 applies at 3:1 and no `line-*` token clears it. That is **item 124's case
+  applied deliberately**: the bracket is a CSS border, which §51's source scan cannot see.
+- `scripts/check-data.mjs` — **§57**, seven assertions (see below).
+
+#### ⛔ The finding: the figure shipped its own refutation, twice, through a green check
+
+`OutcomeGrid`'s entire argument is that the four cells are equal — lesson 28 says all four cases occur
+and says **nothing** about how often, so a weighted cell would answer a question the lesson leaves
+open and read as guidance about how far to trust a result (§10.1 drawn rather than written). §57 (e)
+was written specifically to hold that.
+
+**It rendered the bottom row at 82px against the top row's 52px.** Measured with
+`getBoundingClientRect()` in the live browser; §57 passed throughout. Maria's label sat inside her
+cell, and CSS grid sizes a row to its tallest item — so the row containing the label grew, and the
+figure drew "bad or lucky decision" as the larger case. **Nothing was declared unequal.** The column
+fractions were equal and the shared `minHeight` was a single literal, which is all a source check can
+see; the inequality arrived through **content**.
+
+Fixed by moving the label to a key below the grid, so a cell holds one dot and no text. **It then
+rendered 65 against 52** — the same failure a second time, now from the row *heading*: "A bad or
+lucky decision" wraps to three lines where "A good decision" wraps to two. Fixed by pinning the cell
+to a fixed shared height (`GRID_CELL_H`) with `alignSelf: center`, which is safe **only because** the
+cell is now text-free. Final measurement: **all four cells 96x52**, in `en` and in `ja` (the longest
+labels), light and dark, with a control proving the measurement could see a height difference at all.
+
+Both fixes are now structural invariants rather than style values, and both are asserted: §57 (e)
+requires one fixed shared height and **zero** `minHeight`, and §57 (e2) requires the cell JSX to
+contain no `<Text>`. Filed as **item 135** — the class is that every figure check here reads source
+while the claims are about the render, and it is **item 124's probe from the other side**.
+
+#### Verification
+
+- **`npm test` 0 failures, 2 warnings** (the two documented baselines), **`npm run build` clean**,
+  `check-blindspot` 7/7, `refresh-readiness --check` green (12 generated figures still agree).
+- **§57 proven by injection, seven times, each restored from a scratchpad copy and re-diffed to
+  byte-identical** — never `git checkout --`: a dropped cell **(a)**, a duplicated cell **(a)**, the
+  marker moved to (0,1) **(b)**, a plausible `ko` row-label retranslation `좋은 결정 → 좋은 판단`
+  **(c)**, a widened won column `1fr → 1.4fr` **(e)**, a per-cell conditional height **(e)**, the
+  label put back inside the cell **(e2)**, and the component renamed **(control)**. Every one fired
+  with the message it should.
+- **§57's first draft was itself a false positive that failed the build on correct code**: it grepped
+  the dot's JSX for `r=` to detect a reintroduced SVG radius, and `r=` matches inside
+  `variant="caption"`. **A substring is not a token** — the same class as item 134's title/non-title
+  join. Rewritten and the reasoning left in the code.
+- **The existing guards were proven to REACH the new strings rather than assumed to**: planting
+  `behaviour` in `outcomeColumnLabels.en` fired §55 by name, and planting ASCII quotes in
+  `outcomeColumnLabels.zh` fired §56 by name. Without this their green would have been vacuous for
+  this change.
+- **Live browser verification (W-1).** Fresh `dist/` over `/usr/bin/python3 -m http.server`,
+  `preview_start` with a plain `url`, viewport resized to mobile **before** measuring geometry, and
+  the **bundle name read back and matched to the build just run** at every step
+  (`index-Bwm2tGIf` → `index-10Rssgyd` → `index-Ajml9TNn`) per the Environment note's rule 4 — which
+  is what made the two geometry regressions visible instead of cached away. Verified in `en` and
+  `ja`, light and dark: cells 96x52 in all four combinations, no horizontal overflow of the figure or
+  the body, cell rules and bracket resolving to `--graph-neutral` (`#736b61` light / `#8a8072` dark)
+  and the marked dot to `--graph-blue`, both already inside §28b's 70-pair 3:1 sweep.
+
+#### Step 5 — adversarial self-check
+
+- **Blindspot register** — no regression. `check-blindspot` green on all 7. Over the 538 added lines:
+  Dalio/`principles of` **0**, advice-adjacent verbs **0**, child-facing framing **0**. **Controls**:
+  `lesson` returns 52 and `40%` returns 14 on the same diff, so the greps reach the added text. Two
+  date matches, both in source comments (a check header and a JSX comment); **zero in any rendered
+  string**, and §2.3's own check confirms no live-looking date in `moneyVisuals.js`.
+- **`DECISIONS.md` conflict** — none. `.js`-not-JSON content, localStorage-only state and
+  Vite-not-Expo are all untouched. This run is an *instance* of the machine-translation decision
+  rather than a departure: it adds **8 new five-language string sets to `moneyVisuals.js`**, which
+  that entry explicitly records as outside `review-status`'s coverage and shipping under "(Beta)".
+  Its own amendment applies word for word — *"chart labels are the content type where an unreviewed
+  translation is least visible, because a wrong label still renders as a correctly-shaped chart."*
+  Mitigated as far as this run can: every row label is the lesson's own phrase in that language and
+  §57 (c) fails the build if it stops being. **The caption and description are not mitigated that
+  way and are AI translations**, which is **O-3**'s standing question for the owner.
+- **Already-done backlog item** — no. Item 27 is open and asks for exactly this, and the item's
+  guard against becoming count-shaped was honored: a candidate was found by reading prose, and three
+  were rejected on the record.
+- **Own verification claim** — reproducible end to end: the coverage parse with its control, the
+  seven injections with landing proof and byte-identical restores, the two reach-controls for
+  §55/§56, and the live measurements with the bundle read back each time. **The thing I am NOT
+  claiming**: that §57 makes figure geometry a solved property. It pins *this* figure, structurally
+  and by injection. The other seven figures still have their rendered claims checked against source
+  numbers, which is item 135 and is written into §57's header where the next run will read it.
+
+#### Next run
+
+`npm run owner-tree -- --expect c2331799fd3ee413aca864fd82d247a35ea31b01a70a6c4e37b00f6aad9105b2`
+(post-commit, tree clean — this run touched only tracked files). **Open and unblocked:** **item 135**
+(the rendered-geometry probe — build it together with **item 124**, which wants the same live-DOM
+probe for border colors inside a figure; they are one probe read from two sides); **item 27** (a
+ninth figure, bar unchanged and no named candidate); **items 131+132** (the last 8 review pairs,
+only worth doing as one decision). **O-1 remains the entire critical path** — 44
+lessons, 5 languages, 8 figures, 9 check scripts, and still zero people have opened this app — and
+**O-3** is the owner decision this run's own step-5 caveat points back at.
+
 ### 2026-08-27 (owner-directed: "do item 134 next") — the join I called load-bearing was the false-positive source, and "zero live instances" was wrong by 33 (item 134)
 
 **Picked item 134**, filed by the previous run, on the owner's explicit pick. Tree clean apart from the
