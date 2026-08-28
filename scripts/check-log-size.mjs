@@ -60,6 +60,28 @@
 // green that item 116 warns is worse than no probe at all. This script instead
 // re-measures live on every `npm test`, so there is no retyped number to guard.
 //
+// WHY A LEVEL IS NOT ENOUGH, added 2026-08-28. Everything above measures where
+// the file IS. That is what both remedies are priced against, and it is not the
+// quantity that decides whether either remedy works. Measured over the sixteen
+// commits after item 122’s compression pass: the floor grew by a mean of
+// +3,705 b per commit, only ONE of fifteen intervals was net-negative, and the
+// pass itself bought 26,939 b — about 7.3 runs. A remedy that buys seven runs
+// against a leak of one run per run is a bailing bucket, and no LEVEL reading can
+// say so: "floor at 99.6% of budget" reads as *nearly there*, while the same
+// state expressed as rate reads as *the next commit crosses it*. So this script
+// also measures the RATE, and divides the headroom by it. That number — runs of
+// headroom — is the one a run can act on.
+//
+// The rate is read from git history, which introduces the one failure mode this
+// block is shaped around: if the git read fails, a naive implementation reports a
+// delta of ZERO, which is indistinguishable from a run that spent nothing. That
+// is item 108’s "a proxy fails green" exactly. Every git read here is therefore
+// controlled — the sample must be non-empty, each historical parse must satisfy
+// the same byte-accounting control 1 applies to the live file, and the sampled
+// floors must not be all-identical (a constant would render as flawless
+// discipline). If any control does not hold, the block reports UNAVAILABLE and
+// says which one, rather than printing a comfortable number.
+//
 // THRESHOLDS, derived rather than chosen. FILE_CEILING keeps W-5.3's original
 // 600 KB, which was never the part that was wrong. The two budgets partition
 // it: RUN_LOG_HARD = FILE_CEILING - FLOOR_MAX, so while both budgets hold the
@@ -68,6 +90,7 @@
 // ═══════════════════════════════════════════════════════════════════════════
 
 import { readFileSync, existsSync } from "node:fs";
+import { execFileSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 
@@ -84,6 +107,11 @@ const RUN_LOG_MAX = 250_000; // warn — remedy is an archiving pass
 // 5,000 b leaves room for that pointer to grow while still catching a single dropped entry
 // (the smallest real entry seen is ~7.7 KB, which clears this by 1.5x).
 const UNATTRIBUTED_MAX = 5_000;
+// Commits touching AGENT_LOG.md to sample for the growth rate. 16 spans roughly
+// two days at the 2026-08 cadence — long enough that one unusually large or
+// small entry cannot set the mean, short enough that it reflects how runs write
+// NOW rather than how they wrote before the last compression pass.
+const HISTORY_SAMPLE = 16;
 
 let failures = 0;
 let warnings = 0;
@@ -121,6 +149,25 @@ const splitSections = (text) => {
     out.push({ title: lines[h].replace(/^##\s+/, ""), bytes: Buffer.byteLength(body), start: h, end });
   });
   return out;
+};
+
+// Reduce a whole AGENT_LOG.md to the numbers the budgets are about. Shared by
+// the live file and by every historical revision the rate block reads, so a
+// change to the sectioning convention can never make "then" and "now" mean two
+// different things — which is the failure that would make a rate silently wrong
+// rather than loudly absent.
+const measureText = (text) => {
+  const bytes = Buffer.byteLength(text);
+  const secs = splitSections(text);
+  const rl = secs.find((s) => /^Run log/.test(s.title));
+  const bl = secs.find((s) => /^Prioritized backlog/.test(s.title));
+  return {
+    bytes,
+    exact: secs.reduce((a, s) => a + s.bytes, 0) === bytes,
+    runLog: rl ? rl.bytes : null,
+    backlog: bl ? bl.bytes : null,
+    floor: rl ? bytes - rl.bytes : null,
+  };
 };
 
 const raw = readFileSync(LOG, "utf8");
@@ -306,6 +353,135 @@ if (floor > FLOOR_MAX) {
       `backlog ${kb(backlogSection.bytes)} is ${pct(backlogSection.bytes, floor)} of the floor)`,
   );
 }
+
+// ── The RATE, and the headroom expressed in runs. ─────────────────────────
+// Read from git history rather than from anything retyped into the log, for the
+// same reason this script has no fingerprint: a rate written down is stale one
+// commit later.
+const git = (args) =>
+  execFileSync("git", args, {
+    cwd: ROOT,
+    encoding: "utf8",
+    maxBuffer: 256 * 1024 * 1024,
+    stdio: ["ignore", "pipe", "ignore"],
+  });
+
+const rate = (() => {
+  let revs;
+  try {
+    revs = git(["log", "--format=%H", `-${HISTORY_SAMPLE}`, "--", "AGENT_LOG.md"]).trim().split("\n").filter(Boolean);
+  } catch {
+    return { ok: false, why: "`git log` failed — not a git checkout, or git is unavailable here" };
+  }
+  // CONTROL A: a sample of one yields no interval, and an empty sample yields a
+  // mean of zero — which prints as "this log is not growing", the most
+  // comfortable possible wrong answer.
+  if (revs.length < 3) {
+    return { ok: false, why: `only ${revs.length} commit(s) touch AGENT_LOG.md; 3+ are needed before a rate means anything` };
+  }
+  const samples = [];
+  for (const rev of revs) {
+    let blob;
+    try {
+      blob = git(["show", `${rev}:AGENT_LOG.md`]);
+    } catch {
+      return { ok: false, why: `\`git show ${rev.slice(0, 7)}:AGENT_LOG.md\` failed` };
+    }
+    const m = measureText(blob);
+    // CONTROL B: control 1's byte-accounting property, applied to every
+    // historical revision. A revision whose sections do not sum to its own file
+    // has been mis-parsed, and a mis-parsed "then" produces a confident delta.
+    if (!m.exact) return { ok: false, why: `byte accounting does not hold at ${rev.slice(0, 7)} — that revision is mis-parsed` };
+    if (m.runLog === null || m.backlog === null) {
+      return { ok: false, why: `'## Run log' or '## Prioritized backlog' is absent at ${rev.slice(0, 7)}, so its floor is not comparable` };
+    }
+    samples.push({ rev, ...m });
+  }
+  samples.reverse(); // oldest first
+  // CONTROL C: identical floors across every revision would render as perfect
+  // discipline. In practice it means the history read returned the same blob
+  // each time — a broken read that fails green.
+  if (new Set(samples.map((s) => s.floor)).size === 1) {
+    return { ok: false, why: "every sampled revision reports an identical floor — the history read is not varying, and 'no growth' here would be an artifact" };
+  }
+  const deltas = { floor: [], runLog: [] };
+  for (let i = 1; i < samples.length; i++) {
+    deltas.floor.push(samples[i].floor - samples[i - 1].floor);
+    deltas.runLog.push(samples[i].runLog - samples[i - 1].runLog);
+  }
+  const mean = (a) => a.reduce((x, y) => x + y, 0) / a.length;
+  const head = samples[samples.length - 1];
+  return {
+    ok: true,
+    n: deltas.floor.length,
+    oldest: samples[0].rev.slice(0, 7),
+    floorMean: mean(deltas.floor),
+    floorMin: Math.min(...deltas.floor),
+    floorMax: Math.max(...deltas.floor),
+    floorNeg: deltas.floor.filter((d) => d < 0).length,
+    runLogMean: mean(deltas.runLog),
+    // What the working tree has added on top of the newest commit: this run's
+    // own spend, which is the only part the run reading this can still change.
+    uncommittedFloor: floor - head.floor,
+    uncommittedRunLog: runLog - head.runLog,
+  };
+})();
+
+console.log("");
+if (!rate.ok) {
+  // Reported, not silently skipped — see the header. An absent rate is a known
+  // unknown; a zero would be a false all-clear.
+  console.log(`  growth rate: UNAVAILABLE — ${rate.why}.`);
+  console.log(`  (The budget verdicts above are unaffected; they measure levels, which need no history.)`);
+} else {
+  const runsLeft = (headroom, perRun) => (perRun <= 0 ? Infinity : headroom / perRun);
+  const floorRuns = runsLeft(FLOOR_MAX - floor, rate.floorMean);
+  const runLogRuns = runsLeft(RUN_LOG_MAX - runLog, rate.runLogMean);
+  const sgn = (n) => `${n >= 0 ? "+" : "-"}${Math.abs(Math.round(n)).toLocaleString("en-US")}`;
+  // Two decimals below 2 runs: rounding 0.96 to "1.0" directly under a warning
+  // that says "less than ONE run" reads as a contradiction in the instrument.
+  const show = (r) => (r === Infinity ? "no growth at the sampled rate" : `${r.toFixed(r < 2 ? 2 : 1)} run(s)`);
+  console.log(`  growth rate over the last ${rate.n} interval(s) (from ${rate.oldest}):`);
+  console.log(
+    `    floor    ${sgn(rate.floorMean)} b/commit mean ` +
+      `(min ${sgn(rate.floorMin)}, max ${sgn(rate.floorMax)}; ${rate.floorNeg} of ${rate.n} net-negative)`,
+  );
+  console.log(
+    `    run log  ${sgn(rate.runLogMean)} b/commit mean`,
+  );
+  // Over budget, "headroom 0 b = -0.67 run(s)" is incoherent — a clamped numerator
+  // beside an unclamped ratio. Past the line the useful quantity is the overage and
+  // how much writing has to come back out, so say that instead.
+  const headroomPhrase = (left, budget, level, runs) =>
+    level > budget
+      ? `OVER by ${kb(level - budget)} (${show(-runs)} of writing to come back out)`
+      : `${kb(left)} = ${show(runs)}`;
+  console.log(
+    `    headroom floor ${headroomPhrase(FLOOR_MAX - floor, FLOOR_MAX, floor, floorRuns)}; ` +
+      `run log ${headroomPhrase(RUN_LOG_MAX - runLog, RUN_LOG_MAX, runLog, runLogRuns)}`,
+  );
+  console.log(
+    `    this working tree, on top of HEAD: floor ${sgn(rate.uncommittedFloor)} b, run log ${sgn(rate.uncommittedRunLog)} b`,
+  );
+
+  // The signal a LEVEL cannot give: crossing is one commit away. This warns
+  // BEFORE the budget verdict above does, which is the entire reason the rate is
+  // measured. It clears the moment a compression or archiving pass lands, so it
+  // is a condition to act on rather than a permanent decoration.
+  for (const [name, left, over, remedy] of [
+    ["floor", floorRuns, floor > FLOOR_MAX, "a backlog compression pass (archiving cannot move the floor)"],
+    ["run log", runLogRuns, runLog > RUN_LOG_MAX, "an archiving pass"],
+  ]) {
+    if (!over && left < 1) {
+      warn(
+        `the ${name} is under its budget by less than ONE run's worth of writing (${show(left)} left at ` +
+          `${sgn(name === "floor" ? rate.floorMean : rate.runLogMean)} b/commit). ` +
+          `The level above still reads green and will not once this run commits. Remedy: ${remedy}.`,
+      );
+    }
+  }
+}
+
 
 const archiveBytes = existsSync(ARCHIVE) ? Buffer.byteLength(readFileSync(ARCHIVE, "utf8")) : 0;
 console.log(

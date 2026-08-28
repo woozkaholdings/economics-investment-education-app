@@ -1272,15 +1272,49 @@ for the history. No open P1/P2 items.
     > corrections), O-1/O-2/O-3 verbatim, and every `⚠️`/`⛔` warning. **What was dropped:** superseded
     > chronology and retained original text, all of which is in the run log and the archive.
     > ⛔ **All 17 open items were left byte-identical, deliberately** — asserted, not eyeballed. **That
-    > is now the binding constraint: open items are 76,643 b, 47% of the backlog**, and **item 19
-    > (23,478 b, HELD) plus item 26 (11,557 b) are 35 KB of it — the largest single lever left.**
-    > Compressing a HELD item risks dropping scope the item still needs, so **that is an owner
-    > decision, not a run's.** The closed-item tier below the top ten is now genuinely tight (81 items,
-    > 68,475 b, ~845 b each); do not expect another pass to find much there.
+    > is now the binding constraint: open items are 76,643 b, 47% of the backlog**, and item 26 is
+    > 11,556 b of it. The closed-item tier below the top ten is genuinely tight (81 items, 68,475 b,
+    > ~845 b each); do not expect another pass to find much there.
+    > ⛔ **FIGURE CORRECTED 2026-08-28, and the correction moves a 23 KB lever from "owner decision"
+    > to "any run may take it".** This item said *"item 19 (23,478 b, HELD) … the largest single lever
+    > left"* and concluded *"compressing a HELD item risks dropping scope … that is an owner decision,
+    > not a run's."* **Item 19's own body is 307 b — three lines.** The 23,478 came from a per-item
+    > split that bounds the LAST item at the end of the section instead of at the next section header,
+    > so it absorbed everything below it: **"Notes for future runs" (4,304 b) + "Completed and pruned"
+    > (18,864 b) = 23,169 b**, which are closed history, not backlog items, and hold no owner scope —
+    > two of the three "Notes" are themselves marked RESOLVED (2026-08-13, 2026-08-16). **So the
+    > largest remaining lever is real, is 23 KB, and nothing gates it.** Measured with a control: the
+    > four parts (preamble 18,337 + numbered items 180,053 + Notes 4,304 + Completed 18,864) sum
+    > byte-exactly to the backlog's 221,562 b. **The same artifact bit twice in one day** — the run
+    > that wrote this correction hit it first and caught it only by reading item 19 itself.
 
-121. **✅ DONE 2026-08-27 (scheduled dev-agent, recovering a stalled run). `AGENT_LOG.md`'s size is
-    now a MEASUREMENT on every `npm test`, split into the two budgets W-5.3 conflated — and the
-    script that does it was sitting uncommitted and unwired.** See the run log.
+121. **✅ DONE 2026-08-27 (scheduled dev-agent, recovering a stalled run); EXTENDED 2026-08-28 from
+    levels to RATES. `AGENT_LOG.md`'s size is now a MEASUREMENT on every `npm test`, split into the
+    two budgets W-5.3 conflated — and the script that does it was sitting uncommitted and unwired.**
+    See the run log.
+    > **EXTENDED 2026-08-28 (scheduled dev-agent): the script measures the RATE as well as the level,
+    > and warns when a budget is less than one run's writing away.** A level says *where the file is*;
+    > it cannot say whether a remedy works. Measured over the 15 intervals since item 122's
+    > compression pass: floor **+3,541 b/commit** mean (min -748, max +8,506, **1 of 15**
+    > net-negative), run log **+9,170 b/commit**. Item 122 bought **26,939 b ≈ 7.3 runs** against a
+    > leak of one run per run. **Headroom when this was written: floor 894 b = 0.25 runs.**
+    > ⛔ **That reframes items 115/121/122 and W-5.3, and it is the durable part.** All four treat the
+    > problem as a LEVEL with two remedies (archive / compress). Both remedies are one-off, the growth
+    > is continuous, and no level reading can show that: **"floor at 99.6% of budget" reads as *nearly
+    > there*, while the identical state read as a rate says *the next commit crosses it*.** A
+    > compression pass is not a fix, it is a **bailing bucket that buys ~7 runs**.
+    > **Every git read is controlled, because a failed history read would report a delta of ZERO** —
+    > item 108's "a proxy fails green" exactly. Four controls, all proven by injection in throwaway
+    > repos rather than argued: a planted **+1,000 b/commit** growth reports **+1,000 exactly**; and a
+    > revision missing `## Run log`, an all-identical floor, and an absent git checkout each report
+    > **UNAVAILABLE** naming the control that failed. **None of them can print a zero.**
+    > ⚠️ **The new warn is CLEARABLE, not decoration** — it goes quiet as soon as a compression or
+    > archiving pass lands, which is why it is a warn and not a permanent banner. **If it ever becomes
+    > permanent, that is the evidence that the BUDGET is wrong rather than the writing**, and moving a
+    > budget is the owner's call under item 115's rule, not a run's.
+    > ⚠️ **Do not read the mean as a per-RUN figure without checking.** It is per *commit touching
+    > `AGENT_LOG.md`*, and bookkeeping commits (the owner-tree fingerprint ones) contribute a real
+    > +0 that pulls it down. The hand figure over substantive runs only was +3,705 b.
     > **What it does NOT do, deliberately, and this is the part to read before picking it up.**
     > This is **not** item 115's option (b), and it does **not** close W-5.3's defect. The script's
     > own header argues (b) would not have worked: (b) re-points the *trigger* at a run-log byte
@@ -2795,6 +2829,154 @@ finding(s); V vacuous; U unavailable`. A bare "no accessibility issues found" is
 > have moved nothing while the file sat at **915 KB**, 1.5x its own trigger. The boundary used here
 > is therefore the byte target, taken on whole days. **The deeper reason is in W-5.3's note:** the
 > run log is no longer what makes this file big.
+### 2026-08-28 (scheduled dev-agent) — compression is a bailing bucket: the log's size becomes a RATE, and the "largest lever left" was an artifact of how the bytes were counted (item 121, correcting item 122)
+
+**Pick.** Not item 27 and not the figure cluster: the last four substantive runs were all figures or
+figure tooling (items 27, 135+124, 136, 137), which is W-5.2's "direction stops coming from the
+backlog and starts coming from continuing the tranche" in a new costume. The pick came instead from
+a live signal in this run's own baseline `npm test`: **the floor stood at 249,106 b of a 250,000 b
+budget — 894 b of headroom** — and the previous run's closing line had already said "the next item
+filed should still expect to trim". That is a condition, not a backlog entry, and it was about to
+bind on this run's own commit.
+
+#### Step 3.5 — the premise, re-measured with a control
+
+**The instrument failed on its first run, and the failure looked like data.** A loop over
+`git show $c:AGENT_LOG.md` returned `backlog=0 file=0` for every commit. Cause: **zsh read `$c:A` as
+a history modifier** (`:A` = absolute path), so the path became `<abs>GENT_LOG.md`. `${c}` fixed it.
+Sixteen zeroes are exactly what a genuinely empty section looks like — **the control is the only
+reason that was caught**: a working-tree measurement taken alongside had to equal HEAD's, and
+`221,562 = 221,562` is what said the second run was real.
+
+**What the measurement then showed, over the 16 commits since item 122's compression pass:**
+
+| | |
+|---|---|
+| floor growth | **+3,541 b/commit** mean (script, all intervals); **+3,705 b** over substantive runs only |
+| net-negative intervals | **1 of 15** |
+| what item 122's pass bought | **26,939 b ≈ 7.3 runs** |
+| headroom at pick time | **894 b = 0.25 runs** |
+
+⛔ **So the premise behind items 115, 121, 122 and W-5.3 is incomplete in the same way, and that is
+the finding.** All four treat log size as a **level** with two one-off remedies (archive, compress).
+The growth is **continuous**, both remedies are **one-off**, and a level cannot express the mismatch:
+*"floor at 99.6% of budget"* reads as **nearly there**, while the identical state read as a rate says
+**the next commit crosses it**. Two compression passes have run (items 115, 122) and the rate after
+each is indistinguishable from the rate before.
+
+#### What shipped — `scripts/check-log-size.mjs` measures the rate, not just the level
+
+Levels, budgets and the cut plan are untouched. Added: a git-history block reporting per-commit floor
+and run-log growth, the working tree's own spend on top of HEAD, and **the headroom divided by the
+rate — "runs of headroom"**, which is the number a run can act on. It **warns when either budget is
+under one run's writing away**, i.e. before the level verdict goes red.
+
+⚠️ **A failed history read would report a delta of ZERO — indistinguishable from a disciplined run.**
+That is item 108's *"a proxy fails green"* exactly, so every git read is controlled and the block
+reports **UNAVAILABLE** naming the failed control rather than a comfortable number.
+
+**All four controls proven by injection in throwaway git repos, not argued:**
+
+- **Positive** — a planted floor growth of exactly **+1,000 b/commit** reports `+1,000 b/commit mean
+  (min +1,000, max +1,000)`, and a deliberately constant run log reports `no growth at the sampled
+  rate`. The arithmetic is proven, not just the failure paths.
+- **A revision missing `## Run log`** → `UNAVAILABLE — '## Run log' or '## Prioritized backlog' is
+  absent at b6a1a4c`.
+- **Every sampled floor identical** → `UNAVAILABLE — the history read is not varying, and 'no growth'
+  here would be an artifact`. (First attempt at this control **did not fire** — the 16-commit window
+  still spanned older, varying commits. Re-run against a repo where every sampled revision matched.)
+- **No git checkout at all** → `UNAVAILABLE — git log failed`.
+
+**None of the four can print a zero.** Two legibility defects in my own output were caught and fixed
+before commit: `1.0 run(s)` printed directly under a warning saying *less than ONE run* (now 2
+decimals below 2 runs), and a hardcoded `+` that would have rendered a negative max as `+-748`.
+
+#### The second finding: item 122's "largest single lever left" was a counting artifact
+
+Item 122 recorded **"item 19 (23,478 b, HELD) … the largest single lever left"** and concluded
+**"compressing a HELD item risks dropping scope … that is an owner decision, not a run's."**
+
+**Item 19's own body is 307 b — three lines.** The 23,478 came from a per-item split that bounds the
+*last* item at the end of the section rather than at the next section header, so it absorbed
+everything below it: **"Notes for future runs" (4,304 b) + "Completed and pruned" (18,864 b) =
+23,169 b**. Those are closed history, not backlog items, and carry no owner-held scope — two of the
+three "Notes" are themselves marked `RESOLVED` (2026-08-13, 2026-08-16).
+
+**Consequence: the largest remaining compression lever is real, is ~23 KB, and nothing gates it** —
+it was filed as owner-blocked on the strength of a phantom. Measured with a control: preamble 18,337
++ numbered items 180,053 + Notes 4,304 + Completed 18,864 **sum byte-exactly** to the backlog's
+221,562 b. **The same artifact bit twice in one day** — this run hit it first, and caught it only by
+opening item 19 and finding three lines where 23 KB was supposed to be.
+
+#### Verification
+
+`npm test` **PASS, 0 failures**, and `npm run build` clean (`✓ built in 1.85s`, `index` 254.47 kB).
+The two pre-existing translation warnings are unchanged. Injection rigs were built in the session
+scratchpad and deleted; `AGENT_LOG.md` and the script were backed up there first, so nothing was
+restored with `git checkout --`.
+
+⛔ **This entry pushed BOTH budgets over, and the instrument predicted it before it happened — which
+is the cleanest proof available that it works.** Before this commit the rate block read *floor 0.25
+run(s), run log 0.95 run(s) left*, and warned that the level *"still reads green and will not once
+this run commits"*. It then measured this run's actual spend at **floor +3,284 b, run log +9,035 b**
+— both within a few hundred bytes of the predicted means (+3,541 / +9,170). Post-commit **both
+budgets are over**, so `npm test` now carries the two *level* warnings in place of the two *rate*
+warnings. **All four are warnings, not failures; the hard fail line is 350 KB and the run log is
+nowhere near it.** Clearing them is the next run's work, and the lever is named below.
+⚠️ **The exact post-commit bytes are deliberately not retyped here.** Writing them down inside the
+entry that produces them is circular — each correction to the figure moves the figure, and one draft
+of this paragraph did exactly that and went stale between two `npm test` runs. Read them off the live
+`MEASURED log-size:` line, which is re-measured on every run; that is the same reasoning item 121
+records for why this script carries no fingerprint.
+
+**Stated plainly rather than buried: I could have stayed under budget by writing less here, and
+chose not to.** The two findings — the rate reframing and item 122's artifact — are what the next
+run needs in order to act, and trimming them to protect a number this same entry argues is the wrong
+number to optimize would have been the wrong trade. **A third legibility defect was caught by this
+very state**: over budget the block printed `headroom 0 b = -0.67 run(s)`, a clamped numerator beside
+an unclamped ratio. It now reads `OVER by 2,390 b (0.67 run(s) of writing to come back out)`. The
+under-budget path was re-checked against the +1,000 b/commit rig afterward and is unchanged.
+
+#### Step 5 — adversarial self-check
+
+- **Blindspot register** — no regression. `check-blindspot` **PASS, 0 failures**. The change adds
+  **no learner-visible copy in any language** and touches nothing under `src/`: Dalio **0**,
+  advice-adjacent verbs **0**, kids/child framing **0**. The one `2026-08-28` date string added to
+  the script is a source comment and reaches no bundle (`grep` finds it in **0** files under
+  `dist/assets/`), so the Markets-tab hardcoded-date class is untouched. **Control**: "growth rate"
+  returns hits on the same added lines, so the greps do reach the text.
+- **`DECISIONS.md` conflict** — none. No decision covers log measurement; state stays
+  localStorage-only, no build or content-module change, nothing about Vite.
+- **Already-done backlog item** — no. This *extends* item 121 (which owns the script) rather than
+  redoing it: item 121 shipped the two budgets and explicitly reported levels only. It does **not**
+  implement item 115's option (b), and it performs no archiving and no compression — those remain
+  the owner's rule change and a separate run's work respectively.
+- **The rule I did NOT change, deliberately.** W-5.3's archiving rule, its date-based action clause,
+  and both budget values are byte-identical. The finding argues the 250 KB floor budget may be
+  unreachable at the current writing rate — **that is an argument for the owner, not a value for me
+  to move**, and item 115's rule says so.
+- **Own verification claim** — reproducible by re-running `node scripts/check-log-size.mjs`, and the
+  four injections are rebuildable from the commands in this entry. **What I am NOT claiming**: that
+  the rate is a per-*run* figure. It is per *commit touching `AGENT_LOG.md`*, and the two owner-tree
+  bookkeeping commits contribute a real +0 that pulls the mean below the substantive-run figure
+  (+3,541 vs +3,705). Both numbers are stated rather than the flattering one.
+
+#### Next run
+
+**The remedy this run's own warning names is now unblocked and is a legitimate whole run: compress
+"Notes for future runs" + "Completed and pruned" (~23 KB), the lever item 122 mis-filed as an owner
+decision.** Doing it clears both new warnings. Also open and unblocked: **item 136**'s remainder
+(weak candidates that should probably stay uncovered), **items 131+132** (the last 8 review pairs,
+only worth doing as one decision), **item 130** (low). **Item 27 remains available but has now taken
+four consecutive runs — W-5.2's ratio rule should bind before a fifth.**
+
+**For the owner, and it is a decision rather than an action:** at **+3,541 b/commit** the 250 KB
+floor budget is crossed roughly every seven runs no matter how many compression passes are run.
+Either the budget moves or the amount each run writes into the backlog does. **O-1 remains the entire
+critical path** — the log now measures its own growth precisely, and zero people have opened the app.
+**O-3** is unchanged: human review share is still 0% in all four languages, and this run added no
+translated prose.
+
 ### 2026-08-28 (scheduled dev-agent) — the fix the previous run priced as a five-language rewrite cost zero content strings, and lesson 23's two curves are now two curves (item 137)
 
 **Picked item 137**, the top open, unblocked candidate named by the previous run and the only *live*,
