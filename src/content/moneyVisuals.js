@@ -394,7 +394,7 @@ export const flipCaption = {
   en: "Neither reward changes, and the extra month of waiting is the same extra month at every point on this line. Only the vantage point moves. For most of the year the $65 is simply the better deal — then the $50 comes close enough that the pull of 'now' overtakes it, and the same person answers the opposite way.",
   es: "Ninguna recompensa cambia, y el mes extra de espera es el mismo mes extra en cada punto de la línea. Lo único que se mueve es el punto de vista. Durante casi todo el año los $65 son sencillamente la mejor opción; luego los $50 se acercan lo suficiente como para que el tirón del «ahora» los supere, y la misma persona responde al revés.",
   ko: "두 보상은 그대로이고, 한 달을 더 기다린다는 조건도 이 선 위의 모든 지점에서 똑같습니다. 움직이는 것은 바라보는 시점뿐입니다. 한 해의 대부분 동안은 $65이 그냥 더 나은 조건이지만, $50이 충분히 가까워지면 '지금'의 끌어당김이 그것을 앞지르고, 같은 사람이 반대로 답하게 됩니다.",
-  zh: "两笔钱都没有变，多等的那一个月在这条线的每一点上也都是同样的一个月。变的只是观察的时点。一年里的大部分时间，$65 就是更划算的选择；等到这 $50 靠得够近，「现在」的拉力就会盖过它，同一个人便给出相反的答案。",
+  zh: "两笔钱都没有变，多等的那一个月在这条线的每一点上也都是同样的一个月。变的只是观察的时点。一年里的大部分时间，$65 就是更划算的选择；等到这 $50 靠得够近，“现在”的拉力就会盖过它，同一个人便给出相反的答案。",
   ja: "どちらの報酬も変わらず、1か月余分に待つという条件もこの線上のどの点でも同じです。動くのは見ている時点だけです。1年の大半は$65が単純に有利ですが、$50が十分に近づくと「今」の引力がそれを追い越し、同じ人が逆の答えを出します。",
 };
 

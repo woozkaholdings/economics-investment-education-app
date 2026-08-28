@@ -960,7 +960,31 @@ for the history. No open P1/P2 items.
     - **Honest priority: low now** — the half that was content nobody had checked is checked. What is
       left is a bookkeeping tail. Downstream of O-1 like everything else.
 
-134. **[Process/Tooling — filed 2026-08-27 by the run that reviewed lessons 33/37/39, as the guard
+134. **✅ DONE 2026-08-27 (owner-directed: "do item 134 next"), the same day it was filed — shipped
+    as `check-data.mjs` §56, with 33 live repairs. Read the premise correction: this item was wrong
+    about the size of the problem AND wrong about the design, and the design error was the one that
+    would have shipped a check that fails on correct prose.**
+    > ⛔ **"Zero live instances as of this entry" was wrong by 33.** The item measured `lessonContent`
+    > only. Re-measured across the twelve modules §55 walks, in all five languages: **`zh` carried 8
+    > corner-bracket spans and 25 ASCII-single-quote spans — 33 in 15 strings across 5 modules** —
+    > against its own 152 full-width quotations. `en`, `es`, `ko` and `ja` were clean. **The hand
+    > review that found 2 of these missed 33 of the same family, because it was only looking where it
+    > was reading.**
+    > ⛔ **"The title/non-title join is the load-bearing part" was exactly backwards — it is the main
+    > FALSE-POSITIVE source, and building it would have failed the build on correct copy.** Several
+    > lesson-title heads are ordinary common nouns. `locales.ja.heroInsight` writes 「取引」 quoting the
+    > concept — the English at that spot is a plain *"transactions"*, no lesson reference — and the
+    > join would have flagged it as a mis-bracketed title. Lesson 44's own title
+    > (`The Part the Word “Passive” Leaves Out`) would have been flagged too, for containing quotes.
+    > **§56 therefore reads REPERTOIRE, not role**: which marks each language may use at all, decidable
+    > from the character, no sentence understanding, no false-positive class.
+    > **The honest cost, stated in §56's header rather than hidden: it does NOT catch the `ja` title
+    > drift** that this item was half-filed for. Telling a title reference from an ordinary quotation
+    > needs context; that stays with review. It does catch the `zh` drift, and it caught 33 more.
+    > **Also corrected: `ja` uses `『』` for SEVEN coined labels, not six** — the sixth-vs-seventh is
+    > `moneyVisuals`, outside `lessonContent`, which is the same scope error as the headline.
+    (Original text below, kept because the reasoning it records is what the correction acts on.)
+    **[Process/Tooling — filed 2026-08-27 by the run that reviewed lessons 33/37/39, as the guard
     its own fix has no instrument for.] Each language's quotation convention is a property of the
     corpus that nothing checks, and it has already drifted twice.**
     - **The measurement that makes this an item rather than an opinion.** Classifying every quoted
@@ -989,6 +1013,9 @@ for the history. No open P1/P2 items.
       standing reasoning argues for waiting — but unlike item 130's case this one has **regrown twice
       in two runs**, which is the condition item 130 itself names as what would justify building.
       Downstream of O-1.
+    - **⛔ The "zero live instances" clause above is the sentence the correction overturns.** It was
+      true of `lessonContent` and false of the corpus. **A scope stated in prose is not a scope the
+      measurement had** — the same shape as item 128's finding about item 91's "whole-repo scan".
 
 132. **[Content — filed 2026-08-27 by the run that corrected item 131, as the gap that correction
     exposed rather than smuggled into the same commit.] Lessons 1 and 4 point the reader at another
@@ -2559,6 +2586,117 @@ finding(s); V vacuous; U unavailable`. A bare "no accessibility issues found" is
 > have moved nothing while the file sat at **915 KB**, 1.5x its own trigger. The boundary used here
 > is therefore the byte target, taken on whole days. **The deeper reason is in W-5.3's note:** the
 > run log is no longer what makes this file big.
+### 2026-08-27 (owner-directed: "do item 134 next") — the join I called load-bearing was the false-positive source, and "zero live instances" was wrong by 33 (item 134)
+
+**Picked item 134**, filed by the previous run, on the owner's explicit pick. Tree clean apart from the
+owner's untracked `UIUX/` and `drafts/`; `owner-tree --expect c2331799…` **UNMOVED** before any edit.
+
+#### Step 3.5 — the premise broke twice, and both breaks were mine from one run earlier
+
+- **Break 1 — the scope. "Zero live instances as of this entry" was wrong by 33.** The item's numbers
+  came from `lessonContent` alone. Re-measured over the twelve content and locale modules `§55`
+  walks, in all five languages: **`zh` carried 8 corner-bracket spans and 25 ASCII-single-quote spans
+  — 33 spans in 15 strings across 5 modules** (`lessonContent` essentials/money/economy, `quizText`,
+  `kidsContent`, `markets`, `moneyVisuals`), against its own **152** full-width quotations. `en`,
+  `es`, `ko`, `ja`: **0**. **The hand review that found 2 instances missed 33 of the same family,
+  because it was only looking where it was reading** — which is the argument for the instrument,
+  made by the instrument.
+  **This is item 128's finding recurring in my own text**: item 91 claimed a "whole-repo scan" its
+  instrument never had; item 134 claimed a corpus its measurement never covered. **A scope stated in
+  prose is not a scope the measurement had.**
+- **Break 2 — the design, and this is the one that mattered.** Item 134 specified classifying each
+  quoted span as lesson-title-or-not by joining against `lessons.js`, and called that join **"the
+  load-bearing part"**. It is the main **false-positive** source. Several lesson-title heads are
+  ordinary common nouns: `locales.ja.heroInsight` writes **「取引」** quoting the concept — the English
+  at that spot is a plain *"transactions"*, no lesson reference — and the join flags it as a
+  mis-bracketed title. Lesson 44's own title, `The Part the Word “Passive” Leaves Out`, would have
+  been flagged for containing quotes at all. **Two pieces of correct copy, and the check as specified
+  would have failed the build on both.**
+- **What replaced it.** §56 reads **repertoire, not role**: which quotation marks each language may
+  use at all. Decidable from the character, no sentence understanding, no false-positive class.
+- **The sets are measured, not imposed** — each is what that language's own corpus already uses
+  consistently: `en`/`es` ASCII + curly (curly reserved for item 84's title references, 64/57);
+  `ko` ASCII (48) + 「」 for titles (59); `zh` “ ” (152) + 《》 (64); `ja` 「」 (191) + 『』 (66).
+  **`zh` was the only language contradicting itself.**
+
+#### What shipped
+
+**`check-data.mjs` §56**, plus the 33 repairs it demands — the guard and the sweep in one commit,
+because a guard that ships red is not a guard.
+
+- **The header states the cost rather than hiding it: §56 does NOT catch the `ja` title drift** that
+  item 134 was half-filed for. Distinguishing a title reference from an ordinary quotation needs
+  context; that stays with human review. It catches the `zh` drift and the 33 others.
+- **`ja` 『』 is deliberately NOT constrained to titles**, with the reason inline: `ja` uses it for
+  **seven** coined labels and slogans (`『今回は違う』` lessons 33/36, `『美しい/醜いデレバレッジング』`
+  lesson 34). A checker that flagged those would be turned off within a week. (Seven, not the six the
+  item said — the seventh is in `moneyVisuals`, the same scope error as the headline.)
+- **The 33 repairs are provably glyph-only.** A differ that strips exactly the quote characters and
+  compares the rest reports **0 lines differing beyond quote glyphs** across 21 changed lines, with
+  both controls firing (a genuine text change is still detected; a quote-only change compares equal).
+  Character counts are unchanged — every substitution is one code point for one — so
+  `LAUNCH_READINESS.md`'s volume sentence correctly did not move.
+- **The replacement was targeted, not file-wide, and that mattered:** `kidsContent.js` holds all five
+  languages on one line and carries **19** corner brackets of which only 4 are `zh` — a blanket
+  replace would have corrupted the Japanese.
+
+#### Verification — four injections, each proving it landed, each restored from a scratchpad copy
+
+§56 passed on first run, which proves nothing about a check its author just wrote. Each injection was
+confirmed present in the file **before** running the check, and restored from a pre-injection copy in
+the scratchpad (never `git checkout --`):
+
+| injection | landed | §56 verdict |
+|---|---|---|
+| `zh` `“财富效应”` → ASCII (yesterday's real defect) | ✓ | FAIL, names `lessonContent.37.sections[2].body.zh` |
+| `ja` `『金利』` → `“金利”` | ✓ | FAIL, names `lessonContent.30.sections[0].body.ja` |
+| `zh` `“再投资”` → `「再投资」` | ✓ | FAIL, names `lessonContent.3.sections[2].body.zh` |
+| `en` glossary → `「money supply」` | ✓ | FAIL, names `glossary.M2.en.f` |
+
+After every restore, **§56 failures back to 0**.
+
+- **§56's own three controls**, all mandatory and all firing: **A** every language's corpus reaches
+  rendered copy (≥800 strings *and* that language's own `heroInsight` opening present — a per-language
+  known sentence, so a collapsed walk cannot look clean); **B** a planted out-of-repertoire mark is
+  flagged in all 5 languages; **C** each language's sanctioned set is silent on correct copy,
+  including the two that look wrong to a neighbor — `ja` 『』 around a coined label and `zh` 《》
+  around a work name that is not a lesson.
+- **`npm test` 0 failures, 2 warnings** (the documented baselines); **`npm run build` clean**;
+  `check-blindspot` **7/7**; `check-backlog` 111 items, 140 citations resolve.
+- **Live browser verification (W-1).** Fresh `dist/` over `/usr/bin/python3 -m http.server`,
+  `preview_start` with a plain `url`, **bundle read back (`index-BviiblXe.js`) and matched to the
+  build just run**, `?cb=` against the stale-`index.html` trap. `zh` lesson 18 — six repaired spans —
+  renders under `lang="zh-Hans"` with **0 ASCII quotes, 0 corner brackets, 16 full-width quotes**:
+  `“现在的2,000美元”`, `“以后”`, `“现在”`. Two-sided — the wrong marks are gone *and* the right ones
+  are present where they belong.
+
+#### Step 5 — adversarial self-check
+
+- **Blindspot register** — no regression. `check-blindspot` **7/7**. The content diff is 21 lines of
+  quote glyphs, proven above to contain no other change, so no §10.1/§10.2/§10.3 surface can have
+  moved; no date, no market figure.
+- **`DECISIONS.md` conflict** — none. §56 adds no dependency, reads the same `.js` content modules
+  §55 does, and stores nothing.
+- **Already-done backlog item** — no, but the sharper form fired hard: **this run refuted the item it
+  was implementing, in two places, and both errors were written by me one run earlier.** The item's
+  own numbers and its named "load-bearing part" were both wrong. Recorded in item 134 rather than
+  quietly built around, because the next run reading that item would otherwise inherit the design.
+- **Own verification claim** — reproducible end to end: the repertoire scan, the four injections with
+  landing proof and restore, the glyph-only differ with both controls, §56's three internal controls,
+  and the live render. **The one thing I am NOT claiming**: that §56 makes quotation typography a
+  solved property. It makes *repertoire* a property. Role — is this quoted phrase a lesson title? —
+  remains unchecked and uncheckable without context, and §56's header says so where a future run
+  will read it.
+
+#### Next run
+
+`npm run owner-tree -- --expect c2331799fd3ee413aca864fd82d247a35ea31b01a70a6c4e37b00f6aad9105b2`
+(post-commit, tree clean — unchanged; this run touched only tracked files). **Open and unblocked:**
+**item 27** (an eighth lesson figure, its bar unchanged and still no named candidate); **items 131+132
+together** (the last 8 review pairs, only worth doing as one decision); **item 130** (§55's comment
+blind spot — note its "wait until it drifts again" bar is exactly the reasoning §56 just satisfied for
+the quotation case, so it is closer than it looks). **O-1 remains the entire critical path.**
+
 ### 2026-08-27 (owner-directed: "do lessons 33, 37, 39 next") — the 26,568 characters nobody had read, and my own headline figure was bytes wearing a character's label (item 131)
 
 **Picked item 131's open half** on the owner's explicit pick. Working tree clean apart from the

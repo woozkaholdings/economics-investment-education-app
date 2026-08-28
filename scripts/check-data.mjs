@@ -6994,5 +6994,192 @@ if (keyedGroupsChecked < 4) {
   }
 }
 
+// §56. QUOTATION-MARK REPERTOIRE, per language, over learner-visible strings.
+//
+//   WHY THIS EXISTS. Two typographic drifts were found by hand on two
+//   consecutive days in 2026-08-27, both by a translation review that
+//   happened to be reading that lesson, and neither visible to anything in
+//   `npm test`: `ja` lesson 30 wrote a lesson title in 「」 where 75 other
+//   references used 『』, and `zh` lessons 3 and 37 quoted inline terms with
+//   ASCII U+0022 where 120 others used U+201C/U+201D. Item 128's lesson
+//   applies unchanged — a style rule with no instrument is a claim, not a
+//   property — and item 130's bar for building one ("wait until the
+//   hand-swept surface has drifted again") had been met twice over.
+//
+//   ⛔ WHAT THE FIRST DESIGN GOT WRONG, because it is the interesting part
+//   and a future run must not re-derive it. Backlog item 134 specified a
+//   check that classifies each quoted span as lesson-title-or-not by joining
+//   against `lessons.js`, and called that join "the load-bearing part". It is
+//   not: it is the main FALSE-POSITIVE source. Several lesson-title heads are
+//   ordinary common nouns, so `locales.ja.heroInsight` — 「取引」, quoting the
+//   concept the way the English says a plain "transactions" — would have been
+//   flagged as a mis-bracketed title reference. Lesson 44's own title
+//   (`The Part the Word “Passive” Leaves Out`) would have been flagged too,
+//   for containing quotes inside a title. Both are correct prose.
+//
+//   SO THIS CHECK DELIBERATELY DOES NOT READ ROLE, ONLY REPERTOIRE: which
+//   quotation marks each language is allowed to use at all. That is decidable
+//   from the character alone, needs no sentence understanding, and has no
+//   false-positive class. The honest cost is stated plainly: it would NOT
+//   have caught the `ja` title drift, which needs context to distinguish a
+//   title reference from an ordinary quotation and is therefore left to
+//   review. It WOULD have caught the `zh` one, and it caught 33 more spans of
+//   the same family that the hand review missed because it was only looking
+//   where it was reading.
+//
+//   THE SETS ARE MEASURED, NOT IMPOSED. Each language's allowed set is the
+//   one its own corpus already uses consistently (counts taken 2026-08-27
+//   over all five languages of the twelve modules below):
+//     en / es  ASCII " and ', plus curly “ ” for the lesson-title references
+//              item 84 introduced. 64/57 title references, 0 CJK marks.
+//     ko       ASCII " and ' for inline quotation (48 spans) and 「」 for
+//              lesson titles (59). Korean takes both; the corpus is
+//              internally consistent, so ASCII is NOT flagged here.
+//     zh       “ ” for quotation (152 spans) and 《》 for titles and work
+//              names (64). NOT 「」 (a Traditional/Japanese mark — the app
+//              ships lang="zh-Hans") and NOT ASCII quotes.
+//     ja       「」 for quotation (191) and 『』 for titles and coined labels
+//              (66). No Western quotes anywhere in the Japanese corpus.
+//   `zh` was the only language that contradicted its own convention, in 33
+//   spans across 15 strings and 5 modules; all 33 were repaired in the same
+//   commit that added this check.
+//
+//   ⚠️ DO NOT tighten `ja` to "『』 means title". Measured: `ja` also uses
+//   『』 for seven coined labels and slogans (『今回は違う』 in lessons 33 and
+//   36, 『美しい/醜いデレバレッジング』 in lesson 34). That is a coherent
+//   Japanese convention, not drift, and a checker that flagged it would be
+//   turned off within a week.
+//
+//   SCOPE is §55's, for §55's reasons: string VALUES under a language key in
+//   the twelve content and locale modules. Source text, comments and dev
+//   scripts are out, which is what keeps `aria-labelledby` and quoted
+//   verbatim prose from reaching it.
+{
+  const before56 = failures;
+
+  const QUOTE_MARKS = "\"'“”‘’「」『』《》〈〉";
+  const ALLOWED = {
+    en: "\"'“”‘’",
+    es: "\"'“”‘’",
+    ko: "\"'“”‘’「」『』",
+    zh: "“”‘’《》〈〉",
+    ja: "「」『』",
+  };
+  const NAME = {
+    '"': "ASCII double quote U+0022", "'": "ASCII apostrophe U+0027",
+    "“": "U+201C", "”": "U+201D", "‘": "U+2018", "’": "U+2019",
+    "「": "「 corner bracket", "」": "」 corner bracket",
+    "『": "『 white corner bracket", "』": "』 white corner bracket",
+    "《": "《 double angle bracket", "》": "》 double angle bracket",
+    "〈": "〈 angle bracket", "〉": "〉 angle bracket",
+  };
+  const ADVICE = {
+    zh: "the Chinese corpus quotes with “ ” and names works with 《 》; ASCII quotes are halfwidth glyphs in a fullwidth context and 「 」 is a Traditional/Japanese mark, while this app ships lang=\"zh-Hans\"",
+    ja: "the Japanese corpus quotes with 「 」 and marks titles and coined labels with 『 』; Western quotes do not appear in it",
+    en: "English strings quote with ASCII marks; the curly pair is reserved for the lesson-title references item 84 introduced, and CJK brackets do not belong in English",
+    es: "Spanish strings follow the English convention here; CJK brackets do not belong in Spanish",
+    ko: "the Korean corpus quotes with ASCII marks and names lessons with 「 」",
+  };
+
+  // The same twelve modules §55 walks, listed again rather than shared: §55's
+  // copy is block-scoped, and a check that silently inherited another check's
+  // scope would change meaning the day that one was re-scoped.
+  const QUOTE_SOURCES = [
+    ["locales", TR], ["lessons", lessons], ["lessonContent", lessonContent],
+    ["quizData", quizData], ["glossary", glossary], ["lessonTerms", lessonTerms],
+    ["kidsContent", kidsContent], ["markets", marketsContent],
+    ["moneyVisuals", moneyVisualsContent], ["economicSignals", economicSignals],
+    ["policyScenarios", policyScenarios], ["sectors", sectors],
+  ];
+
+  const quoteCorpus = {};
+  for (const lang of LANGS) {
+    const out = [];
+    const walk = (node, path, under) => {
+      if (typeof node === "string") { if (under) out.push({ path, text: node }); return; }
+      if (Array.isArray(node)) { node.forEach((v, i) => walk(v, `${path}[${i}]`, under)); return; }
+      if (node && typeof node === "object")
+        for (const [k, v] of Object.entries(node)) walk(v, `${path}.${k}`, under || k === lang);
+    };
+    for (const [name, mod] of QUOTE_SOURCES) walk(mod, name, false);
+    quoteCorpus[lang] = out;
+  }
+
+  const offenders = (text, lang) =>
+    [...new Set([...text].filter((c) => QUOTE_MARKS.includes(c) && !ALLOWED[lang].includes(c)))];
+
+  // ── CONTROLS. A repertoire net that reads nothing looks exactly like a
+  //    repertoire net over clean content, and this one is a pure absence
+  //    assertion — the shape most able to pass by reading the wrong thing.
+  //
+  //    (A) THE CORPORA ARE REAL, in every language, with a known sentence per
+  //        language so a collapsed walk cannot look clean.
+  const KNOWN = {
+    en: "Think of the economy as a machine",
+    es: "Piensa en la economía como una máquina",
+    ko: "경제를 몇 가지 단순한 부분으로",
+    zh: "把经济想象成由几个简单部分",
+    ja: "経済を、いくつかの単純な部品",
+  };
+  for (const lang of LANGS) {
+    const n = quoteCorpus[lang].length;
+    if (n < 800) {
+      fail(`§56 CONTROL A: the "${lang}" corpus collected only ${n} strings. §55 counts ~1,145 per language over the same modules, so a number this low means the walk is reading the wrong shape and every clean result below would be meaningless.`);
+    } else if (!quoteCorpus[lang].some((c) => c.text.includes(KNOWN[lang]))) {
+      fail(`§56 CONTROL A: the "${lang}" corpus does not contain that language's own heroInsight opening, so it is not reading rendered copy even though it collected ${n} strings.`);
+    }
+  }
+
+  //    (B) THE NET FIRES. One planted specimen per language, each a mark that
+  //        language genuinely must not use. Without this, an ALLOWED set
+  //        widened by accident to every mark reports a clean sweep forever.
+  const MUST_CATCH = {
+    en: "the 「取引」 case", es: "el caso 「取引」",
+    ko: "《사례》 검토", zh: "这是\"财富效应\"的例子",
+    ja: "これは“金利”の例",
+  };
+  const missed = LANGS.filter((lang) => offenders(MUST_CATCH[lang], lang).length === 0);
+  if (missed.length) {
+    fail(`§56 CONTROL B: the net does not flag a planted out-of-repertoire mark in ${missed.map((l) => `"${l}"`).join(", ")}. Every clean result below is meaningless while any language's net is inert.`);
+  }
+
+  //    (C) THE NET IS SILENT ON CORRECT COPY. Each language's own sanctioned
+  //        marks, including the two that look wrong to a neighbouring
+  //        language: `ja` 『』 around a coined label, and `zh` 《》 around a
+  //        work name that is not a lesson.
+  const MUST_NOT_CATCH = {
+    en: "the word “Passive” and a plain 'later' and a \"quote\"",
+    es: "la palabra “Pasivo” y un 'luego' y una \"cita\"",
+    ko: "「금리」와 '부의 효과'와 \"인용\"",
+    zh: "《利率》和“财富效应”和《经济周期》",
+    ja: "『金利』と「お金」と『今回は違う』",
+  };
+  const falsePositives = LANGS.filter((lang) => offenders(MUST_NOT_CATCH[lang], lang).length > 0);
+  if (falsePositives.length) {
+    fail(`§56 CONTROL C: the net flags correct copy in ${falsePositives.map((l) => `"${l}"`).join(", ")} — an ALLOWED set has lost a mark that language legitimately uses. Every §56 failure is untrustworthy until this passes.`);
+  }
+
+  if (failures === before56) {
+    const hits = [];
+    for (const lang of LANGS) {
+      for (const { path, text } of quoteCorpus[lang]) {
+        const bad = offenders(text, lang);
+        if (bad.length) hits.push({ lang, path, bad });
+      }
+    }
+    for (const h of hits.slice(0, 12)) {
+      fail(`§56: ${h.path} uses ${h.bad.map((c) => NAME[c] ?? c).join(", ")}, which is outside the "${h.lang}" quotation repertoire — ${ADVICE[h.lang]}.`);
+    }
+    if (hits.length > 12) fail(`§56: ${hits.length - 12} further out-of-repertoire string(s) not listed above.`);
+    if (hits.length === 0) {
+      console.log(
+        `  §56 quotation repertoire holds across ${LANGS.map((l) => `${l}=${quoteCorpus[l].length}`).join(", ")} learner-visible strings ` +
+          `(control A every language's corpus reaches rendered copy, control B all ${LANGS.length} planted marks flagged, control C all ${LANGS.length} sanctioned sets silent). ` +
+          `Repertoire only — it cannot tell a title reference from an ordinary quotation; see the header.`,
+      );
+    }
+  }
+}
+
 console.log(`\n${failures === 0 ? "PASS" : "FAIL"}: ${failures} failure(s), ${warnings} warning(s).`);
 process.exit(failures === 0 ? 0 : 1);
