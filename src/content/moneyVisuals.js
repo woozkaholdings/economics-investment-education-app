@@ -335,6 +335,58 @@ export const flipSeries = () =>
     values: flipMonths.map((m) => flipValue(r.amount, r.month, m)),
   }));
 
+// WHERE THE Y-AXIS COMES FROM, and why it is logarithmic (backlog item 137,
+// 2026-08-28). This axis was linear and anchored at 0 until it was measured in
+// rendered pixels: the right-hand spike sets the top of the scale (the $50 is
+// worth its full 50 the moment it is available, against a maximum of 32.5 for
+// the $65), so the left three quarters of the plot were squeezed into the
+// bottom sixth. At the left edge — which is the lesson's own second scenario,
+// named on the axis as "Both a year away" — the two curves came out 1.64px
+// apart under a 2.58px stroke. The two strokes overlapped, so the figure
+// rendered as ONE line exactly where the caption says "the $65 is simply the
+// better deal". The claim was true in the arithmetic and absent from the
+// picture.
+//
+// Geometry cannot fix that and neither can `k`. Separation and stroke both
+// scale with the viewBox, so a taller chart moves neither; raising `k` pushes
+// both curves toward zero, and lowering it walks the crossing into the right
+// edge that the `k = 1.0` note above exists to avoid. The y-scale is the only
+// lever, and a monotone one changes nothing the figure asserts: the ordering at
+// every vantage point, the single reversal, and the month it happens in are all
+// preserved exactly, which is why the crossing marker and §50 are untouched.
+//
+// WHAT IT COSTS, stated because it is a real cost. The late upturn of the $50
+// is the figure's visual punch, and a log axis mutes it: measured in rendered
+// px/month, the last segment was 9.68x the mean of the earlier ones and is now
+// 3.48x. (The left edge goes the other way: 1.64px apart becomes 7.00px, which
+// is 2.72x the stroke instead of 0.64x.) The upturn survives — it is still by far the steepest stretch, still
+// crosses, and still finishes 15.6% of the plot height clear (was 35.0%) — so
+// every clause of `flipDescription` ("turns sharply upward, crosses above ...,
+// and finishes well above it") stays true in all five languages and none of
+// them needed rewriting. That was checked clause by clause, not assumed.
+//
+// The absolute scale carries no information to spend: there is no axis label,
+// no gridline and no printed value, deliberately (see the comment in
+// `PreferenceFlip` — the quantity is "how much it feels worth", and a dollar
+// figure would overstate it). What the reader can read off this axis is order
+// and shape, and a log transform preserves the first exactly and the second in
+// the direction that matters.
+//
+// Returns a 0..1 position, 0 at the plot floor and 1 at the plot top, so the
+// component owns the pixels and `check-data.mjs` §50 can assert the separation
+// without knowing any of them. `FLIP_Y_FLOOR_MARGIN` keeps the lowest point off
+// the baseline rule; without it the $50-at-a-year-out sits exactly on the axis
+// and reads as zero, which is the one thing this quantity is never.
+export const FLIP_Y_FLOOR_MARGIN = 0.08;
+
+export function flipYNorm(v) {
+  const all = flipSeries().flatMap((s) => s.values);
+  const hi = Math.log(Math.max(...all));
+  const span = hi - Math.log(Math.min(...all));
+  const lo = hi - span * (1 + FLIP_Y_FLOOR_MARGIN);
+  return (Math.log(v) - lo) / (hi - lo);
+}
+
 // The vantage point where the two perceived values are equal. Solved rather
 // than eyeballed off the sampled points: with s/l the amounts and ds/dl their
 // waits from `now`, equality gives the closed form below. Returned in months

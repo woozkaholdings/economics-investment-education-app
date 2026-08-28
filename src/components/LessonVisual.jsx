@@ -25,7 +25,7 @@ import {
   budgetCaption, budgetDescription, budgetLabels, budgetSegments, budgetTitle,
   compoundCaption, compoundDescription, compoundLabels, compoundSeries, compoundTitle, compoundYears,
   flipAxisLabels, flipCaption, flipCrossing, flipDescription, flipMarkerLabel, flipMonths,
-  flipSeries, flipSeriesLabels, flipTitle, flipZoneLabels,
+  flipSeries, flipSeriesLabels, flipTitle, flipYNorm, flipZoneLabels,
   gapAxisLabel, gapCaption, gapDescription, gapEarners, gapOf, gapRuleLabel, gapSegmentLabels,
   gapTitle,
   incomeKinds,
@@ -186,6 +186,7 @@ export default function LessonVisual({ lessonId, t, lang }) {
           xValues={flipMonths}
           series={flipSeries().map((s, i) => ({ label: flipSeriesLabels[lang][i], values: s.values }))}
           crossing={flipCrossing()}
+          yNorm={flipYNorm}
           colors={[graph.amber, graph.green]}
           labelInks={[ink.warn, ink.ok]}
           zones={flipZoneLabels[lang]}

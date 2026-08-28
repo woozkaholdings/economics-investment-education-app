@@ -1077,42 +1077,34 @@ for the history. No open P1/P2 items.
     > **`PreferenceFlip` should be built, and the reason is stronger than the one filed here** —
     > it is not "zero known live instances". It is **item 137**.
 
-137. **[Content/Figure — filed 2026-08-28 by the run that built item 136's `preferenceFlip` claim,
-    as the live defect that claim found on its first run.] Lesson 23 draws its two curves 1.64px
-    apart with a 2.58px stroke, so for three quarters of the span the reader sees one line, not
-    two — and "the $65 is simply the better deal" is the half of the lesson that is invisible.**
-    - **Measured in client pixels** (`getScreenCTM()` + the live `SVGPointList`), lesson 23, mobile
-      375px, English: vertical separation at the nine sampled months is
-      **1.64 / 1.79 / 1.95 / 2.02 / 1.72 / 1.03 / -0.86 / -6.87 / -36.05 px** against a computed
-      stroke width of **2.58px**. The strokes therefore **overlap at six of the nine samples** —
-      every one before the crossing. Confirmed visually: the left three quarters of the figure
-      render as a single green line with an amber fringe.
-    - **Nothing in source can see this and §50 is not wrong.** §50 (g) asserts the ORDER at the
-      samples bracketing the crossing, and the order is correct; the figure's own text alternative
-      says the $65 curve "sits **slightly** above". Whether a reader can *see* an ordering is a
-      question about stroke width against separation, which only the render answers. This is
-      item 135's defect class with an actual instance in it.
-    - **Geometry cannot fix it.** Separation and stroke both scale with the viewBox, so a taller
-      chart changes neither ratio, and thinning the stroke to 1.5 user units buys 1.64px against
-      1.55px. **Only the y-scale can**: a linear axis anchored at 0 with `max` = the right-hand
-      spike (50) crushes the left three quarters into the bottom tenth, so the two options' real
-      **21%** difference at the left edge (3.846 vs 4.643) is 1.59 of 100 plot units.
-    - **`k` is not the lever either.** The crossing sits at `w = (50k - 15) / 15k` months before
-      the sooner reward: raising `k` pushes both curves toward zero and worsens the separation;
-      lowering it walks the crossing into the right edge, the legibility problem
-      `moneyVisuals.js`'s own comment says `k = 1.0` was chosen to avoid.
-    - **The option that works, with its cost stated because it is a real cost.** A **log y-scale**
-      puts the left-edge separation at **7.35% of plot height (~7.6px)** and leaves the curves
-      converging near the crossing, where they should — computed over the nine samples, the
-      crossing stays between months 9 and 10, agreeing with the solved 9.667. **What it spends is
-      the hockey stick**: the sharp late upturn of the $50 is the lesson's visual punch, and a log
-      axis flattens it. That is a pedagogy trade, not a bug fix, which is why this is filed rather
-      than shipped — and `flipDescription` ("turns sharply upward") would have to be rewritten in
-      **five languages** to stay true, plus §50 (f)'s drawability clause re-derived on the new
-      scale.
-    - **Honest priority: medium, the highest in the figure family** — the first *live* instance
-      `figureClaims` has found, shipping in five languages today, and the only one of that family
-      a reader actually experiences. Downstream of O-1 like everything else.
+137. **✅ DONE 2026-08-28 (scheduled dev-agent). Lesson 23's y-axis is logarithmic; the left edge
+    went from 1.64px apart under a 2.58px stroke (0.64x) to 7.00px (2.72x), and `figureClaims`
+    reports the figure clean in a live render. Read the premise correction — BOTH of this item's
+    stated blockers were larger on paper than in measurement, which is why it had been filed
+    rather than shipped.**
+    > ⛔ **"`flipDescription` would have to be rewritten in five languages" — FALSE, measured.**
+    > A log axis mutes the hockey stick but does not spend it: the $50's last-segment slope goes
+    > from **9.68x** the mean of the earlier segments to **3.48x**, still by far the steepest
+    > stretch, and it still crosses and still finishes **15.6%** of the plot height clear (was
+    > 35.0%). Every clause of the text alternative — "turns sharply upward, crosses above ..., and
+    > finishes well above it" — was checked against the rendered geometry and holds. **No content
+    > string in any language was touched.**
+    > ⛔ **"§50 (f)'s drawability clause would need re-deriving" — FALSE.** That clause tests where
+    > the crossing sits **along the x-axis** (5%–95%). A y-scale cannot move it, and the live
+    > marker/bracket check confirms it did not.
+    > **The trade that IS real, stated so the owner can reverse it in one line** (`flipYNorm` in
+    > `moneyVisuals.js`): the late upturn is less dramatic than it was. It was shipped because the
+    > alternative is a figure whose caption says "the $65 is simply the better deal" over a
+    > picture that draws one line — and because this axis carries no label, gridline or printed
+    > value, so a monotone transform spends nothing a reader could have read off it.
+    > **Now a property, not a claim:** `check-data.mjs` §50 (i) asserts ≥5% of plot height at both
+    > edges (the stroke is exactly 2.5% of plot height at every scale, so that is two stroke
+    > widths) **and** that the scale never reorders the curves. Both halves were proven by
+    > injection — the old linear scale reports 1.59%, a non-monotone scale reports the reorder.
+    > ⚠️ **Deliberately NOT changed: `GrowthCurve` keeps its linear axis.** The same argument does
+    > not transfer — that figure **prints its endpoint values as text**, so its axis is readable
+    > and a log transform there would misstate numbers a reader can check. A log axis is safe here
+    > *because* this one is deliberately unlabeled.
 
 135. **✅ DONE 2026-08-28 (owner-directed: "do item 135 next"), the same day it was filed — shipped
     together with item 124 as `a11y-sweep.js`'s `figureClaims` probe, because they were one probe
@@ -2803,6 +2795,138 @@ finding(s); V vacuous; U unavailable`. A bare "no accessibility issues found" is
 > have moved nothing while the file sat at **915 KB**, 1.5x its own trigger. The boundary used here
 > is therefore the byte target, taken on whole days. **The deeper reason is in W-5.3's note:** the
 > run log is no longer what makes this file big.
+### 2026-08-28 (scheduled dev-agent) — the fix the previous run priced as a five-language rewrite cost zero content strings, and lesson 23's two curves are now two curves (item 137)
+
+**Picked item 137**, the top open, unblocked candidate named by the previous run and the only *live*,
+reader-facing defect in the figure family — it ships in five languages today. HEAD at `98f2714`;
+`npm run owner-tree` read **UNMOVED `c2331799…`** against the expected fingerprint (0 tracked
+modified, 52 untracked), so the owner's `UIUX/` and `drafts/` were untouched and nothing of theirs
+is in this commit.
+
+The previous run filed this rather than shipping it, and said it "needs a pedagogy call on the log
+scale, so it may be worth the owner's eye". **That deferral was priced off two costs, and step 3.5
+found both of them smaller than filed** — which is the whole reason this became a one-run item.
+
+#### Step 3.5 — the arithmetic held exactly; both of the item's BLOCKERS did not
+
+- **The headline numbers reproduce, independently and to the digit.** Re-derived from source with
+  the component's own geometry (viewBox 300x140, pad 6/6/18/22, `preserveAspectRatio` meet), then
+  measured again in the live DOM: separation at the nine sampled months
+  **1.64 / 1.79 / 1.95 / 2.02 / 1.72 / 1.03 / -0.86 / -6.87 / -36.05 px** against a computed stroke
+  of **2.58px**, in a 309x150 box at mobile 375. Source model and live render agree on every digit.
+  **The control fired**: a planted polyline pair with a known 20-user-unit gap measured **20.60px**
+  = 20 x the live `ctm.d` of 1.03, so the instrument can see a gap it is given.
+- **One count in the item is off by one, in the harmless direction.** It says the strokes overlap at
+  "six of the nine samples — every one before the crossing". Six is the count of *pre-crossing*
+  overlaps; the total is **seven** (month 10, just past the crossing at 9.667, is -0.86px). The
+  sentence as written is true and the extra one is a sample where the curves are *supposed* to be
+  converging, so nothing follows from it. Recorded rather than corrected in place.
+- ⛔ **BLOCKER 1 WAS FALSE: "`flipDescription` would have to be rewritten in five languages."** The
+  item priced a log axis as spending the hockey stick. Measured in rendered px/month, it mutes it
+  and does not spend it: the $50's last-segment slope drops from **9.68x** the mean of the earlier
+  segments to **3.48x** — still by far the steepest stretch — and the curve still crosses and still
+  finishes **15.6%** of the plot height clear of the $65 (was 35.0%). The text alternative's three
+  clauses ("turns sharply upward", "crosses above", "finishes well above it") were checked one at a
+  time against that geometry and all three hold. **Zero content strings were touched, in any
+  language** — verified by grepping the diff for added `en:`/`es:`/`ko:`/`zh:`/`ja:` lines: **0**.
+- ⛔ **BLOCKER 2 WAS FALSE: "§50 (f)'s drawability clause would need re-deriving on the new scale."**
+  §50 (f) tests where the crossing sits **along the x-axis** (it must be between 5% and 95%). A
+  y-scale cannot move an x-position. Confirmed in the live render rather than argued: the drawn
+  curves still swap order exactly once, between x=261.7px and x=286.4px, with the dashed marker at
+  **x=278.1px** — the same bracket and the same marker the previous run measured.
+- **The component's own comment had to be corrected too, and it was the interesting part.**
+  `charts.jsx` asserted the near-coincidence was "the honest shape of hyperbolic discounting, not a
+  drafting failure", and that the tinted panel alone carried the decision. The curves being *close*
+  is indeed the honest shape — but at 1.64px under a 2.58px stroke they did not render as two close
+  lines, they rendered as **one line**, and no amount of panel tinting says which option is higher.
+  That comment is why the defect survived being looked at; it is rewritten in this commit.
+
+#### What shipped
+
+- **`moneyVisuals.js` exports `flipYNorm`** — a log y-scale returning a 0..1 position, with an 8%
+  floor margin so the lowest point does not rest on the baseline rule (it sits 7.63px above it, vs
+  7.92px before, so that changed essentially nothing). The scale lives with the data because it is a
+  claim about the data; `charts.jsx` holds no numbers and now takes it as a `yNorm` prop.
+- **`PreferenceFlip`'s baseline and crossing marker stop being computed from `py(0)`**, which is
+  undefined on a log scale. Both are drawn at the plot floor — **the same pixel as before** — and
+  the line is a frame, not a zero reference, which it was never labeled as anyway.
+- **`check-data.mjs` §50 (i)**, so this is a property and not a claim: at **both edges** — lesson
+  23's own two scenarios, named on the axis — the y-scale must separate the curves by **≥5% of plot
+  height**. `PreferenceFlip` draws a 100-unit plot with a 2.5-unit stroke, so the stroke is exactly
+  **2.5% of plot height at every scale the figure is ever drawn at**, and 5% is two stroke widths;
+  the live probe's one-stroke-width rule cannot fail while this passes. Nothing is asserted near the
+  crossing, where the curves must converge. A second half asserts the scale never **reorders** the
+  curves at any sampled month.
+- **§51b caught my own edit and I repointed it**, which is worth recording because it is the
+  register working: `LINE_SVG_DECORATIVE` keys the baseline by its source text `y1={py(0)}`, so the
+  build went red the moment that moved. The classification still holds — more strongly, since the
+  rule is now explicitly not a zero line.
+
+#### Verification
+
+- **`npm test` exit 0**, with the same 2 pre-existing warnings as the pre-change baseline
+  (translation review coverage, translation completeness) and no new ones.
+- **Both halves of §50 (i) proven by injection, then restored from a scratchpad copy** (never
+  `git checkout --`): the linear scale this figure shipped with reports **1.59% against the 5%
+  floor**, and a non-monotone scale that separates both edges reports the reorder at months 8 and 9.
+  A check that has never failed has not been tested.
+- **Live, in a real browser** (`npm run build`, `python3 -m http.server`, `preview_start` with a
+  plain `url`): left edge **7.00px against a 2.58px stroke = 2.72x** (was 0.64x), right edge
+  16.02px, **overlapping samples down from 7 of 9 to 2 of 9** — both of them adjacent to the
+  crossing, where overlap is correct. Confirmed visually in a screenshot: two distinct curves, green
+  above amber across the left three quarters, converging into the marker.
+- **`a11y-sweep.js` run from the checked-in file, `selftest()` first**: all ten controls fired
+  including `figureClaims`, then `run()` on lesson 23 returned **`figureClaims` clean, 0 findings**.
+  The one live finding the previous run's probe reported is gone, measured by that same probe.
+- **Dark mode and a non-English language, because both are traps this repo has hit**: `ja` + dark
+  (`--line-hairline` = `#2e2922`) gives **identical numbers** — 7.00px, 2.72x, 2 overlapping. **Not
+  a mobile artifact either**: at a 1100px viewport the box is 394px and the ratio is **2.72x**
+  again, since separation and stroke scale together.
+- **My own comment carried a stale figure and the audit caught it.** "finishes 16.8% clear" was
+  computed against a draft `flipYNorm` written *before* the floor margin existed; against the
+  function actually shipped it is **15.6%**. Corrected in the source comment and in item 137. This
+  is item 58's rule firing on me — a same-day measured figure is least trustworthy when its date
+  matches the change it sits above — so every number in this entry was re-run against the shipped
+  function, with a control (`flipYNorm(max)` = exactly 1.000000).
+
+#### Step 5 — adversarial self-check
+
+- **Blindspot register** — no regression. `check-blindspot` **PASS, 0 failures**. Over the **130
+  added lines** in `src/` + `scripts/`: Dalio **0**, advice-adjacent verbs **0**, kids/child framing
+  **0**, and **no learner-visible copy at all** — 0 added content strings in any of the five
+  languages. **Control**: "plot height" returns **4** on the same added lines, so the greps reach
+  the text. The two `2026-08-28` date strings are both in source comments and **reach no bundle** —
+  `grep` finds the date in **0** files under `dist/assets/`, so the Markets-tab hardcoded-date class
+  is not touched.
+- **`DECISIONS.md` conflict** — none. No decision there covers figure geometry or chart scales;
+  state stays localStorage-only, the scale ships as a function in a **`.js` content module** (which
+  is the `.js`-not-JSON decision being used rather than contradicted), and nothing about the build
+  changed.
+- **Already-done backlog item** — no. Item 137 was open and named exactly this work; item 136 built
+  the probe that found it and explicitly left the repair unfixed ("this run bought the *instrument*
+  and the *diagnosis*, not the repair").
+- **Own verification claim** — reproducible: the source re-derivation, the two check-data
+  injections, the live before/after with its planted-gap control, the `selftest()`-then-`run()`
+  sweep, and the dark/`ja` and 1100px re-runs. **What I am NOT claiming**: that the log axis is
+  costless. It mutes the upturn from 9.68x to 3.48x, and that is a judgment I made rather than one
+  the owner made — the previous run flagged it as possibly theirs. I shipped it because the
+  alternative is a caption that says "the $65 is simply the better deal" over a picture drawing one
+  line, and because this axis carries no label, gridline or printed value to spend. **It reverses in
+  one line** (`flipYNorm` in `moneyVisuals.js`), and §50 (i) is what would go red if it did.
+
+#### Next run
+
+`npm run owner-tree -- --expect c2331799fd3ee413aca864fd82d247a35ea31b01a70a6c4e37b00f6aad9105b2`
+(post-commit, tree clean — this run touched only tracked files, so the deviation is the owner's 52
+untracked paths and nothing else). **Open and unblocked:** **item 136**'s remainder (`GrowthCurve`,
+`BracketStack`, `YieldCurve`, `CycleChart`, `Bar` — all weak candidates that should probably stay
+uncovered; `ProportionBar` is ruled out); **items 131+132** (the last 8 review pairs, only worth
+doing as one decision); **item 130** (§55's comment blind spot, low). Item 137 closing freed **748 b**
+of backlog, so the floor is off 99.9% — but not by much, and the next item filed should still expect
+to trim. **O-1 remains the entire critical path**: lesson 23's figure now shows what its caption says,
+and zero people have opened the app. **O-3** is unchanged — human review share is still 0% in all
+four languages, and this run added no translated prose.
+
 ### 2026-08-28 (scheduled dev-agent) — the figure whose claim is true in the data and invisible in the pixels: two curves 1.64px apart under a 2.58px stroke (item 136 → new item 137)
 
 **Picked item 136**, the top open, unblocked candidate named by the previous run, and built the half

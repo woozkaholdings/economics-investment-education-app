@@ -260,13 +260,20 @@ export function AsymmetryChart({ title, axisLabel, bars, colors, labelInks, desc
 // in twelve months loses to $65 in thirteen") and has no way to say *when* the
 // answer changes in between. The crossing is the lesson.
 //
-// The reversal is carried by two things, and only one of them is the lines.
-// For most of the span the curves are nearly coincident — that is the honest
-// shape of hyperbolic discounting, not a drafting failure, and it is itself the
-// point: seen from far enough away the two options are close and the bigger
-// number simply wins. So the *decision* is carried by the tinted panel behind
-// them, which stays readable at any line separation, and the lines carry the
-// mechanism (the nearer reward climbing faster as it approaches).
+// The reversal is carried by two things: the tinted panel behind the curves,
+// which stays readable at any line separation, and the curves themselves.
+//
+// ⚠️ This comment used to say the near-coincidence of the two curves was "the
+// honest shape of hyperbolic discounting, not a drafting failure", and that the
+// panel alone carried the decision. Measured in rendered pixels (backlog item
+// 137), that was too generous to the drawing: on a linear axis the curves came
+// out 1.64px apart under a 2.58px stroke, so they did not render as two nearly
+// coincident lines — they rendered as ONE line, over the whole left three
+// quarters, which is precisely the stretch the caption calls "the $65 is simply
+// the better deal". The curves being CLOSE is the honest shape; the reader
+// being unable to tell which one is on top is not, and no amount of panel
+// tinting says which option is higher. The `yNorm` prop is where that was
+// fixed — see `flipYNorm` in `moneyVisuals.js` for the scale and its cost.
 //
 // `crossing` arrives already solved by the caller; deriving it from the sampled
 // points here would put the marker wherever the sampling happened to be dense.
@@ -274,13 +281,16 @@ const FLIP_W = 300;
 const FLIP_H = 140;
 const FLIP_PAD = { left: 6, right: 6, top: 18, bottom: 22 };
 
-export function PreferenceFlip({ title, xValues, series, crossing, colors, labelInks, zones, zoneColors, zoneEdges, markerLabel, axisLabels, description, caption }) {
-  const max = Math.max(...series.flatMap((s) => s.values));
+export function PreferenceFlip({ title, xValues, series, crossing, yNorm, colors, labelInks, zones, zoneColors, zoneEdges, markerLabel, axisLabels, description, caption }) {
   const lastX = xValues[xValues.length - 1];
   const plotW = FLIP_W - FLIP_PAD.left - FLIP_PAD.right;
   const plotH = FLIP_H - FLIP_PAD.top - FLIP_PAD.bottom;
+  const floorY = FLIP_PAD.top + plotH;
   const px = (x) => FLIP_PAD.left + (x / lastX) * plotW;
-  const py = (v) => FLIP_PAD.top + plotH - (v / max) * plotH;
+  // `yNorm` returns a 0..1 position and belongs to the content module, because
+  // the scale is a claim about the data and this file holds no data. The rule
+  // it must satisfy is stated and enforced in `check-data.mjs` §50.
+  const py = (v) => floorY - yNorm(v) * plotH;
   const flipX = px(crossing);
 
   return (
@@ -296,7 +306,9 @@ export function PreferenceFlip({ title, xValues, series, crossing, colors, label
         {/* The two decision regions, drawn first so everything else sits on top. */}
         <rect x={FLIP_PAD.left} y={FLIP_PAD.top} width={flipX - FLIP_PAD.left} height={plotH} fill={zoneColors[0]} />
         <rect x={flipX} y={FLIP_PAD.top} width={FLIP_W - FLIP_PAD.right - flipX} height={plotH} fill={zoneColors[1]} />
-        <line x1={FLIP_PAD.left} y1={py(0)} x2={FLIP_W - FLIP_PAD.right} y2={py(0)} stroke={line.hairline} strokeWidth="1" />
+        {/* The plot floor, not a zero line: `py(0)` is undefined on this scale and
+            was never labeled as zero anyway. Same pixel it has always been drawn at. */}
+        <line x1={FLIP_PAD.left} y1={floorY} x2={FLIP_W - FLIP_PAD.right} y2={floorY} stroke={line.hairline} strokeWidth="1" />
         {/*
           `ink.muted`, not one of the `line` tokens, and the reason is measured.
           The two zone washes measure 1.01:1 against EACH OTHER in BOTH schemes
@@ -308,7 +320,7 @@ export function PreferenceFlip({ title, xValues, series, crossing, colors, label
           would have been a marker you cannot see on a band you cannot see.
           `ink.muted` measures 6.20/6.26 in light and 6.10/6.06 in dark.
         */}
-        <line data-figure-part="marker" x1={flipX} y1={FLIP_PAD.top} x2={flipX} y2={py(0)} stroke={ink.muted} strokeWidth="1" strokeDasharray="3 2" />
+        <line data-figure-part="marker" x1={flipX} y1={FLIP_PAD.top} x2={flipX} y2={floorY} stroke={ink.muted} strokeWidth="1" strokeDasharray="3 2" />
         <text x={flipX - 4} y={FLIP_PAD.top - 6} textAnchor="end" fill={ink.muted} fontSize="9">{markerLabel}</text>
         {series.map((s, i) => (
           <polyline

@@ -5899,7 +5899,7 @@ if (keyedGroupsChecked < 4) {
   const need = [
     "flipRewards", "flipDiscountK", "flipMonths", "flipValue", "flipSeries", "flipCrossing",
     "flipTitle", "flipSeriesLabels", "flipAxisLabels", "flipZoneLabels", "flipMarkerLabel",
-    "flipCaption", "flipDescription",
+    "flipCaption", "flipDescription", "flipYNorm",
   ];
   const missing = need.filter((k) => mv[k] === undefined);
   if (missing.length > 0) {
@@ -6012,6 +6012,55 @@ if (keyedGroupsChecked < 4) {
       const upperOk = series[0].values[iHi] > series[1].values[iHi];
       if (!lowerOk || !upperOk) {
         fail(`§50: the sampled months bracketing the crossing (${months[iLo]} and ${months[iHi]}) do not show the $${l.amount} curve on top and then the $${s.amount} curve on top. Whatever the marker says, the drawn lines do not cross there.`);
+      }
+    }
+
+    // (i) THE Y-SCALE HAS TO SEPARATE THE TWO CURVES WHERE THE CAPTION SPEAKS.
+    //     (g) above proves the ORDER at the samples bracketing the crossing.
+    //     That is not the same question as whether a reader can SEE the order,
+    //     and for four days it did not: on the linear axis this figure shipped
+    //     with, the left edge put the curves 1.64px apart under a 2.58px
+    //     stroke, so the two strokes overlapped and the picture showed one
+    //     line across the whole stretch the caption calls "the $65 is simply
+    //     the better deal" (backlog item 137, found by `a11y-sweep.js`'s
+    //     `preferenceFlip` claim in a live render).
+    //
+    //     What is asserted, and why in these units. `flipYNorm` returns a 0..1
+    //     position within the plot, so the separation below is a FRACTION OF
+    //     PLOT HEIGHT and this check needs none of the component's pixels.
+    //     `PreferenceFlip` draws a plot 100 user units tall with a 2.5-unit
+    //     stroke, i.e. the stroke is exactly 2.5% of plot height at every
+    //     scale the figure is ever drawn at — both scale with the viewBox — so
+    //     the 5% floor here is two stroke widths, and the live probe's own
+    //     one-stroke-width rule cannot fail while this passes.
+    //
+    //     ONLY THE TWO EDGES, deliberately. They are lesson 23's own two
+    //     scenarios, named on the axis, and they are where the caption's claim
+    //     is strongest. Nothing is asserted near the crossing, where the
+    //     curves MUST converge — a blanket "always separated" rule would
+    //     contradict the figure's entire point.
+    const MIN_EDGE_SEP = 0.05;
+    if (typeof mv.flipYNorm !== "function") {
+      fail(`§50: flipYNorm is not a function. The component maps values to pixels through it, so without it the figure has no y-scale.`);
+    } else {
+      const seriesY = mv.flipSeries();
+      const edges = [[0, "left", "both rewards a year out", 1], [months.length - 1, "right", "the $" + s.amount + " available today", 0]];
+      for (const [idx, side, scenario, higher] of edges) {
+        const sep = Math.abs(mv.flipYNorm(seriesY[0].values[idx]) - mv.flipYNorm(seriesY[1].values[idx]));
+        if (!(sep >= MIN_EDGE_SEP)) {
+          fail(`§50: at the ${side} edge (${scenario}) the y-scale puts the two curves ${(sep * 100).toFixed(2)}% of the plot height apart, under the ${(MIN_EDGE_SEP * 100).toFixed(0)}% floor. The stroke is 2.5% of plot height, so at this separation the two strokes overlap and the figure draws one line where the caption says the $${higher === 1 ? l.amount : s.amount} is the better deal.`);
+        }
+      }
+      // The scale must not reorder anything (g) proved: a y-scale is allowed to
+      // stretch this figure, never to change which curve is on top. Checked at
+      // every sampled month rather than at the edges, because a non-monotone
+      // transform can invert in the middle and leave both ends correct.
+      for (let i = 0; i < months.length; i++) {
+        const rawOrder = Math.sign(seriesY[1].values[i] - seriesY[0].values[i]);
+        const drawnOrder = Math.sign(mv.flipYNorm(seriesY[1].values[i]) - mv.flipYNorm(seriesY[0].values[i]));
+        if (rawOrder !== drawnOrder) {
+          fail(`§50: at month ${months[i]} the y-scale draws the two curves in the opposite order to the arithmetic. A y-scale may stretch this figure; it may not decide which option is worth more.`);
+        }
       }
     }
 
@@ -6188,8 +6237,8 @@ if (keyedGroupsChecked < 4) {
     ],
     [
       "src/components/charts.jsx",
-      "x1={FLIP_PAD.left} y1={py(0)}",
-      "PreferenceFlip's baseline. The figure's message is the CROSSING, which is carried by the ink.muted marker and the two zone bands — deliberately not by this line. See the measured note at that marker.",
+      "x1={FLIP_PAD.left} y1={floorY}",
+      "PreferenceFlip's baseline. The figure's message is the CROSSING, which is carried by the ink.muted marker and the two zone bands — deliberately not by this line. See the measured note at that marker. (Repointed 2026-08-28 with item 137's log y-scale: the line is drawn at the same pixel, but `py(0)` is undefined on that scale, so it is now the plot floor by name. This entry catching the move is what it is for.)",
     ],
   ];
 
