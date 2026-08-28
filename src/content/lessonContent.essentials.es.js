@@ -31,7 +31,7 @@ export const lessonContent = {
     "sections": [
       {
         "heading": "Ingresos vs. Gastos",
-        "body": "Un presupuesto es un plan para tu dinero: cuánto entra (ingresos) y cuánto sale (gastos).\n\nLos gastos fijos (alquiler, teléfono) se mantienen similares cada mes. Los variables (comida, ocio) cambian.\n\nUna división simple que muchos usan: 50% necesidades, 30% deseos, 20% ahorro o deudas. Es una guía, no una regla."
+        "body": "María acaba de empezar su primer trabajo y gana $3,000 al mes después de impuestos. Un presupuesto es simplemente su plan para ese dinero: cuánto entra (ingresos) y cuánto sale (gastos).\n\nLos gastos fijos (alquiler, teléfono) se mantienen similares cada mes. Los variables (comida, ocio) cambian.\n\nUna división simple que muchos usan: 50% necesidades, 30% deseos, 20% ahorro o deudas. Es una guía, no una regla."
       },
       {
         "heading": "Registrar Antes de Recortar",
@@ -39,7 +39,7 @@ export const lessonContent = {
       },
       {
         "heading": "Automatiza el Ahorro, No Lo Decidas",
-        "body": "El presupuesto de Maria destina $600 al mes al ahorro — pero solo funciona si ese dinero se aparta de verdad, en vez de quedar disuelto en lo que sobre en la cuenta a fin de mes.\n\nLa solución es invertir el orden: una transferencia automática mueve los $600 a ahorros el mismo día que llega el sueldo, antes de que haya oportunidad de gastarlos. El presupuesto no cambia, pero el ahorro ya no depende de la disciplina de Maria en la tercera semana del mes.\n\nEsto funciona por la misma razón que un hábito es más fácil de mantener que una decisión: elimina el momento en que se necesita fuerza de voluntad."
+        "body": "El presupuesto de María destina $600 al mes al ahorro — pero solo funciona si ese dinero se aparta de verdad, en vez de quedar disuelto en lo que sobre en la cuenta a fin de mes.\n\nLa solución es invertir el orden: una transferencia automática mueve los $600 a ahorros el mismo día que llega el sueldo, antes de que haya oportunidad de gastarlos. El presupuesto no cambia, pero el ahorro ya no depende de la disciplina de María en la tercera semana del mes.\n\nEsto funciona por la misma razón que un hábito es más fácil de mantener que una decisión: elimina el momento en que se necesita fuerza de voluntad. “Por Qué 'Luego' Nunca Se Siente Tan Real Como 'Ahora'” (en Pensar sobre el dinero) explica por qué ese momento se pierde con tanta facilidad incluso en quienes de verdad piensan ahorrar — y la solución práctica aquí es sencillamente no programar ese momento."
       }
     ],
     "takeaway": "Un presupuesto no es restricción — es saber a dónde va tu dinero para decidir, a propósito, a dónde debería ir.",
@@ -85,7 +85,7 @@ export const lessonContent = {
     "sections": [
       {
         "heading": "Qué Compone el Puntaje",
-        "body": "El puntaje de crédito es un número — en EE.UU. suele ir de 300 a 850 — que resume qué tan confiablemente has pagado tus deudas, usado por prestamistas para evaluar el riesgo.\n\nLos factores más grandes suelen ser el historial de pagos y el uso del crédito disponible. La duración del historial, los tipos de crédito y las solicitudes recientes también importan, pero menos."
+        "body": "El puntaje de crédito es un número — en EE.UU. suele ir de 300 a 850 — que resume qué tan confiablemente has pagado tus deudas, usado por prestamistas para evaluar el riesgo.\n\nLos factores más grandes suelen ser el historial de pagos y el uso del crédito disponible. La duración del historial, los tipos de crédito y las solicitudes recientes también importan, pero menos.\n\n“Crecimiento de Productividad” (en Cómo funciona la economía) habló de la deuda buena frente a la mala para la economía; un puntaje de crédito hace una pregunta parecida sobre ti: ¿puedes con lo que has pedido prestado?"
       },
       {
         "heading": "Por Qué Te Acompaña",

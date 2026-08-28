@@ -1,12 +1,12 @@
 {
-  "note": "Recorded translated:English character ratio per lesson per language. Regenerate with `npm run translation-completeness -- --write` whenever a ratio legitimately moves, and say in the commit message which way it moved and why. check-data.mjs §33 fails if any pair drifts by more than `tolerance` in EITHER direction — a drop means English grew (or a translation shrank) without the translation keeping up, which is exactly how most of the catalogue became abridged without any run noticing; a rise means someone did the work, and the baseline should record it so the debt is visibly paid down rather than silently forgotten.",
+  "note": "Recorded translated:English character ratio per lesson per language. Regenerate with `npm run translation-completeness -- --write` whenever a ratio legitimately moves, and say in the commit message which way it moved and why. check-data.mjs §33 fails if any pair drifts by more than `tolerance` in EITHER direction — a drop means English grew (or a translation shrank) without the translation keeping up, which is exactly how most of the catalog became abridged without any run noticing; a rise means someone did the work, and the baseline should record it so the debt is visibly paid down rather than silently forgotten.",
   "tolerance": 0.03,
   "ratios": {
     "1": {
-      "es": 0.5,
-      "ko": 0.25,
-      "zh": 0.16,
-      "ja": 0.22
+      "es": 0.61,
+      "ko": 0.3,
+      "zh": 0.2,
+      "ja": 0.26
     },
     "2": {
       "es": 0.56,
@@ -21,10 +21,10 @@
       "ja": 0.24
     },
     "4": {
-      "es": 0.68,
-      "ko": 0.33,
-      "zh": 0.23,
-      "ja": 0.31
+      "es": 0.75,
+      "ko": 0.37,
+      "zh": 0.25,
+      "ja": 0.34
     },
     "5": {
       "es": 0.75,
@@ -178,7 +178,7 @@
     },
     "30": {
       "es": 1.18,
-      "ko": 0.55,
+      "ko": 0.56,
       "zh": 0.34,
       "ja": 0.47
     },
@@ -249,7 +249,7 @@
       "ja": 0.55
     },
     "42": {
-      "es": 1.11,
+      "es": 1.12,
       "ko": 0.57,
       "zh": 0.37,
       "ja": 0.51

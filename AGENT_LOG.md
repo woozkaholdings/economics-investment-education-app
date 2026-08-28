@@ -933,10 +933,27 @@ for the history. No open P1/P2 items.
     > a native-speaker pass, and the correlated-blind-spot caveat applies. **Human review share is
     > still 0% in all four languages** — that is O-3, and it is the owner's.
 
-131. **🟡 20 of 28 PAIRS DONE (8 on 2026-08-27, 12 more 2026-08-27 owner-directed: "do lessons 33,
-    37, 39 next"). Only lessons 1 and 4 remain, and they are item 132's, not staleness's. Read the
-    premise correction — the staleness flag was UNDERSTATING this item, and its own "scope it to one
-    language per run" was the wrong axis.**
+131. **✅ DONE 2026-08-28 (owner-directed: "do items 131 and 132 next") — 28 of 28 pairs.
+    Coverage 95% → 100% in all four languages, 7 stale → 0.** The last 8 pairs (lessons 1 and 4 x
+    es/ko/zh/ja) were read in full, not re-stamped, and the reading found a defect no consistency
+    check could ever have seen — see the run log and the box below. Read the premise correction
+    kept underneath: the staleness flag was UNDERSTATING this item, and its own "scope it to one
+    language per run" was the wrong axis.
+    > ⛔ **The defect the final 8 pairs produced, and it is item 33's lesson recurring: lesson 1
+    > named María in §1 and §2 while ALL FOUR translations had dropped her introduction from §0.**
+    > Measured: `es`/`ko`/`zh`/`ja` each had **0** mentions in §0 and first named her in §1, against
+    > English's 4 in §0. **Because all four agreed with each other, no consistency check could see
+    > it** — §16 verifies translations against English, not English against sense, and this was a
+    > uniform omission. Fixed in all four. **The transferable part: a uniform omission is invisible
+    > to every cross-language check in this repo, and reading is the only instrument for it.**
+    > ⚠️ **And one the source read could not see at all.** The `es` lesson spelled the name both
+    > `María` (§1) and `Maria` (§2). Normalizing on that file's majority was **wrong** — the live
+    > page then showed two more `María` from `moneyVisuals.js`'s figure, a different module. Every
+    > Spanish surface outside that one body writes `María` (moneyVisuals 5/0, quizText.es 2/0,
+    > lessonContent.money.es 1/0), so it was reversed. **"The majority in this file" is a sample,
+    > not a convention** — item 128's scope error, one module over. **A lesson's rendered surface
+    > spans `lessonContent` AND `moneyVisuals`; a review that reads only the first has read part of
+    > the screen.**
     > **What the English drift actually is, measured with a two-sided control rather than assumed.**
     > All seven lessons share **one** reviewed-English state — commit `e43dded` (2026-08-20), *not* the
     > 2026-08-14/15 the ledger's `reviewedDate` shows; the English never moved between the review and
@@ -976,12 +993,13 @@ for the history. No open P1/P2 items.
       because lesson 37 is nothing but large dollar figures (`es` correctly splits *billones* from
       *mil millones*, `ko` 조/억, `zh` 万亿/亿, `ja` 兆/億). One real defect found and fixed (`zh`
       lesson 37's ASCII quotes; see **item 134**).
-    - **OPEN — lessons 1 and 4 x 4 = 8 pairs**, and **this is the whole remainder.** Cheap and
-      low-yield: the text is unchanged and was reviewed once already, so marking them is closer to a
-      re-stamp than a read. **Do them only together with item 132**, which is the thing actually worth
-      deciding about those two lessons.
-    - **Honest priority: low now** — the half that was content nobody had checked is checked. What is
-      left is a bookkeeping tail. Downstream of O-1 like everything else.
+    - **✅ DONE — lessons 1 and 4 x es/ko/zh/ja (8 pairs)**, 2026-08-28, together with item 132 as
+      this bullet instructed. **The "closer to a re-stamp than a read" prediction was wrong**, and
+      usefully so: the text being unchanged said nothing about whether it was *right*. The read found
+      the dangling-María defect in all four languages plus a two-way name spelling, and item 132's
+      eight missing pointer sentences landed in the same commit. **A pair whose source has not moved
+      is not thereby correct** — that is the reason this bullet's own cost estimate was wrong.
+    - **Closed. Every figure above is superseded by the 28/28, 100%-coverage state.**
 
 134. **✅ DONE 2026-08-27 (owner-directed: "do item 134 next"), the same day it was filed — shipped
     as `check-data.mjs` §56, with 33 live repairs. Read the premise correction: this item was wrong
@@ -1172,7 +1190,28 @@ for the history. No open P1/P2 items.
       history that shipped *through* a green check written specifically to stop it. Downstream of
       O-1 like everything else.
 
-132. **[Content — filed 2026-08-27 by the run that corrected item 131, as the gap that correction
+132. **✅ DONE 2026-08-28 (owner-directed) — 8 sentences added, cross-track references now 40/40.
+    Read the premise correction first: this item's central claim was wrong by 8 and its
+    recommendation was the opposite of what the corpus does.**
+    > ⛔ **"These are the only two cross-track pointers in the corpus" — there are TEN.** Measured by
+    > resolving every quoted title head in every English lesson body against `lessons.js`'s `track`:
+    > **44 quoted-title references, 10 cross-track**, in four directions, not the two this item names.
+    > **Eight of the ten were already translated in all four languages**; lessons 1 and 4 were the
+    > only gap, 8 instances of 40.
+    > ⛔ **Which reverses this item's recommendation.** It said *"do not fix it in isolation —
+    > translating one sentence into four languages inside an otherwise-abridged lesson makes the
+    > corpus less coherent, not more."* But **lessons 5 and 9 are also `essentials`, also abridged,
+    > and their cross-track pointers ARE translated** — lesson 9 (`es` 0.539 / `zh` 0.173) is *more*
+    > abridged than lesson 4 (0.684 / 0.227). Keeping the pointer is the corpus's established
+    > practice in half the cases, so fixing these two made it **more** consistent. **The item priced
+    > the fix against a rule the corpus does not follow.**
+    > ⚠️ **Instrument trap, worth not re-deriving: the first measurement said 15 missing and was
+    > wrong.** `head()` split titles on an **ASCII** colon, so every `zh`/`ja` head became the whole
+    > title and five correctly-translated references read as absent. Caught only because the control
+    > was re-keyed to `zh`/`ja` text read by eye. **A split character is a locale, not a delimiter** —
+    > item 127's myriad-grouping trap in a new costume.
+    (Original text below, kept because the reasoning it records is what the correction acts on.)
+    **[Content — filed 2026-08-27 by the run that corrected item 131, as the gap that correction
     exposed rather than smuggled into the same commit.] Lessons 1 and 4 point the reader at another
     lesson in English and at nothing in any other language.**
     - **State:** item 84 gave lesson 1 a pointer to "Why 'Later' Never Feels as Real as 'Now'" and
@@ -1204,6 +1243,30 @@ for the history. No open P1/P2 items.
       and 76 exist to prevent.
     - **The instrument this needs is item 76's** — a per-language tokenizer that can decide whether
       one term is a pattern or two instances. **Honest priority: low.** Downstream of O-1.
+
+138. **[Process/Tooling — filed 2026-08-28 by the run that closed items 131+132, as its stated
+    residual rather than smuggled into the same commit.] The corpus's cross-track pointers are now
+    40/40 and nothing in `npm test` can tell if that changes.**
+    - **State:** 10 cross-track references (essentials→money, essentials→economy, money→essentials,
+      money→economy) out of 44 quoted-title references overall. All 40 language instances resolve as
+      of this commit. The measurement lives in a scratchpad script; **the repo has no guard.**
+    - **Why this clears the bar items 126 and 130 set, which the "one defect is not a class" rule
+      would otherwise fail it on.** This is not a hypothetical: the state was **32/40 for eight days**
+      (item 84 added the two English pointers on 2026-08-20; nothing carried them into any
+      translation) and no check noticed. §16b guards that references are *by title rather than by
+      number*; it does not check that a translation carries the reference **at all**. That is a real,
+      dated, eight-day live instance.
+    - **The shape that would work, and the trap it must avoid.** For each English lesson, resolve
+      quoted title heads to lesson ids; for each other language, assert that language's own title head
+      for the same target appears in the same lesson. ⚠️ **Split the title on `[:：]`, not `:`** — an
+      ASCII-only split makes every `zh`/`ja` head the full title and reports five correct references
+      as missing, which is how this run's first measurement got 15 instead of 8. **Any check written
+      here needs a per-language positive control keyed to text somebody has actually read.**
+    - **Honest scope note:** the same-track references (34 of 44) are the larger set and are already
+      correct; a check should cover all 44 rather than only the cross-track subset, since nothing
+      makes cross-track special except that it is where the failure happened.
+    - **Honest priority: low-medium.** Zero live instances *now*, but unlike items 126/130 this one
+      has a closed, dated instance behind it. Downstream of O-1 like everything else.
 
 130. **[Process/Tooling — filed 2026-08-27 by the run that built §55, as its stated blind spot.]
     §55 cannot see comments, dev scripts, or Markdown — and that is 21 of the 36 spellings it was
@@ -2837,6 +2900,159 @@ finding(s); V vacuous; U unavailable`. A bare "no accessibility issues found" is
 > have moved nothing while the file sat at **915 KB**, 1.5x its own trigger. The boundary used here
 > is therefore the byte target, taken on whole days. **The deeper reason is in W-5.3's note:** the
 > run log is no longer what makes this file big.
+### 2026-08-28 (owner-directed: "do items 131 and 132 next") — item 132 said these were the only two cross-track pointers in the corpus; there are ten, and the eight that work are the argument for fixing these two (items 131 + 132)
+
+**Pick.** Owner-directed, and it matches item 131's own instruction — *"Do them only together with item
+132, which is the thing actually worth deciding about those two lessons."* Item 131's remainder was 8
+pairs (lessons 1 and 4 x es/ko/zh/ja); item 132 was the content gap inside them.
+
+#### Step 3.5 — the premise re-measured. One claim held exactly, one was wrong by 8, and the wrong one reversed the item's disposition.
+
+**Held, to the character.** Lesson 1 §2's closing English sentence points at
+`Why 'Later' Never Feels as Real as 'Now'` and lesson 4 §0's third paragraph points at
+`Productivity Growth`; **both are absent from all four translations** — read directly, not inferred.
+Item 131's abridgement figures held too: lesson 1 `es` **0.499**, lesson 4 `es` **0.684** against the
+item's "0.50x and 0.68x".
+
+⛔ **Wrong, and it is the finding: item 132 says these are "the only two [cross-track pointers] in the
+corpus". There are TEN.** Measured by resolving every quoted title head in every English lesson body
+against `lessons.js`'s `track` field: **44 quoted-title references, 10 of them cross-track.** Item
+132's parenthetical is also incomplete — it names "money→essentials, essentials→economy", and the real
+set is essentials→money, essentials→economy, money→essentials and money→economy.
+
+⚠️ **The first measurement was wrong and the control is what caught it — this is the myriad-grouping
+trap of item 127 in a new costume.** My `head()` split the title on an **ASCII** colon, so every
+`zh`/`ja` title head (which use full-width `：`) came back as the *whole* title, and five real,
+correctly-translated references read as **missing**. The instrument reported 15 missing instances; the
+truth is 8. Caught by reading the `zh`/`ja` prose directly and finding 《租房与购房》 and 『複利』 sitting
+there — after which the control was rewritten to be **keyed to text read by eye** in both directions.
+**A split character is a locale, not a delimiter.**
+
+**Corrected picture, all controls firing:**
+
+| | |
+|---|---|
+| cross-track pointers | **10** |
+| translated in all four languages | **8** |
+| missing in all four languages | **2 — lessons 1 and 4** (8 instances of 40) |
+
+⛔ **That reverses item 132's disposition, and the reversal is the whole value of this run.** The item
+argued *"It is item 94's shape, not a bug… Do not fix it in isolation — translating one sentence into
+four languages inside an otherwise-abridged lesson makes the corpus less coherent, not more."* The
+corpus refutes it: **lessons 5 and 9 are also `essentials`, also abridged, and their cross-track
+pointers ARE translated in all four languages.** Measured ratios — lesson 9 (`es` 0.539, `zh` 0.173) is
+**more** abridged than lesson 4 (0.684 / 0.227) and about level with lesson 1 (0.499 / 0.165). So
+keeping the pointer in an abridged essentials lesson is this corpus's **established practice in half
+the cases**, and lessons 1 and 4 were the exception. Fixing them makes the corpus *more* consistent,
+which is the opposite of what the item predicted. **Control on that ratio instrument:** a
+fully-translated economy lesson scores `es` 1.11 / `ko` 0.52 / `zh` 0.32 / `ja` 0.45, at the item-93
+reference and nowhere near the ~0.2 the abridged ones score.
+
+#### What shipped
+
+1. **Item 132 — the two missing cross-track pointers, in es/ko/zh/ja (8 sentences).** Each written to
+   the form lessons 5 and 9 already use in that language, with that language's own title for the
+   target lesson and its own `trackMoney`/`trackEconomy` label: `es` `“…” (en Pensar sobre el dinero)`,
+   `ko` `「…」 (돈에 대해 생각하기)`, `zh` `《…》（关于金钱的思考）`, `ja` `『…』（お金について考える）`.
+   Quote marks follow §56's per-language repertoire (`zh` 《》, `ja` 『』, `ko` 「」) and §56 passes.
+   **All 40 cross-track reference instances now resolve; the count went 32/40 → 40/40.**
+2. **Item 131 — all 8 pairs read in full in all five languages, and one real defect fixed.**
+   ⛔ **Lesson 1 named María in §1 and §2 while every translation had dropped her introduction from
+   §0.** English opens *"Meet Maria, who just started her first job making $3,000 a month after
+   taxes"*; measured, `es`/`ko`/`zh`/`ja` all had **0** mentions in §0 and first named her in §1 — a
+   character referred to before she exists, **identically in all four languages**, which is exactly
+   item 33's lesson: all four agreed with each other, so no consistency check could ever see it, and
+   only reading found it. Her introduction is restored in all four. It also restores the `$3,000`
+   that makes §2's `$600` legible as the 20% the same section describes.
+   **Lesson 4 needed no such fix** — its translations drop the Elena/David example from §0 *and* §1
+   consistently, and its §2 back-reference to "the two factors from the first section" resolves.
+3. **A spelling split found only in the live browser, and my first fix went the wrong way.** The
+   `es` lesson spelled the name **both ways** — `María` in §1, `Maria` twice in §2. I normalized to
+   `Maria` on the strength of that one file's majority. **The rendered page then showed `María` twice
+   more, from `moneyVisuals.js`'s figure — a surface the source read never touched.** Re-measured
+   across `src/content`: every Spanish surface outside that one lesson body writes **`María`** —
+   `moneyVisuals` es lines **5/0**, `quizText.es` **2/0**, `lessonContent.money.es` **1/0**. So the
+   normalization was reversed: `es` lesson content is now `María` **4/0**, and the split is clean by
+   language (Spanish `María` 12, English `Maria` 18). **"The majority in this file" is not a
+   convention; it is a sample** — the same scope error item 128 found in item 91's "whole-repo scan".
+4. **Ledger + generated figures.** 8 pairs marked reviewed (`method: "ai"`). Coverage
+   **95% → 100% in all four languages, 7 stale → 0.** Item 131 is now **28 of 28 pairs done.**
+   `translation-completeness --write` and `refresh-readiness --write` re-recorded the ratios and
+   §10.4's character sentence; §10.4's coverage sentence was hand-edited because `check-data.mjs` §11
+   owns it (W-5.6's split).
+
+#### What this deliberately did NOT do
+
+**The abridgement itself is untouched, and that is item 94's, which is owner-gated.**
+`npm run translation-completeness` still reports **48 abridged pairs — es 12 / ko 12 / zh 12 / ja 12
+across 12 lessons** — unchanged by this run, so §10.4's "48 abridged pairs" sentence remains true.
+Lessons 1 and 4 are still abridged; they now merely stop pointing a non-English reader at nothing.
+
+#### Verification
+
+- **`npm test`: 7 scripts, `PASS: 0 failure(s)` on each.** `npm run build` ✓. `check-blindspot`
+  **PASS, 0 failures** — including §10.1's advice-adjacency scan across all five languages and 38
+  files, which covers every string added here.
+- **Three generated-figure guards fired on the way through and were satisfied, not bypassed:** §33
+  failed on 7 of 8 ratio pairs (lesson 4 `zh` moved under its 0.03 tolerance) and was cleared with
+  `--write`; `refresh-readiness --check` failed on the §10.4 character sentence and was cleared with
+  `--write`; §11 then failed on §10.4's *coverage* figure, which `refresh-readiness` does not own.
+- **English is byte-unchanged** (`git diff` touches no `.en.` module and no English field), so the
+  ledger's `englishSourceHash` did not move. The stale flags were cleared by **reading**, not by the
+  source shifting under them.
+- **W-1 live browser**, static build + `python3 -m http.server` + `preview_start` with a plain `url`:
+  - `zh` lesson 1 — intro and pointer both present in the rendered text; `ja` lesson 4 — the new third
+    paragraph `『生産性成長』（経済のしくみ）` present; `ko` lesson 1 — intro, pointer, and the title in
+    「」 present; `es` lesson 1 — intro and pointer present.
+  - **Two-sided control on every probe**: a pre-existing sentence in that language must also be found
+    (it was, on all four) and `ZZQQNOTPRESENT` must not (it was not).
+  - **Name check in the DOM, not `innerText`**: 5 nodes match `Mar[íi]a`, **0 unaccented**. `innerText`
+    alone reported the figure as absent — it is SVG text; the tree walker settles it. The Environment
+    note's stale-bundle trap does not apply here (the loaded bundle is `index-C3F1ZUMc.js`, the one
+    just built, and every positive probe matched a string that did not exist before this run, which a
+    cached bundle could not have produced).
+
+#### Step 5 — adversarial self-check
+
+- **Blindspot register** — no regression, measured: `check-blindspot` **PASS, 0 failures**. The added
+  prose is lesson copy about budgeting and credit scores; **0** advice-adjacent phrases in any of the
+  five per-language pattern sets, no Dalio reference, no kids framing, no date or market figure.
+- **`DECISIONS.md` conflict** — none, and the governing entry is directly on point: the 2026-08-11
+  machine-translation decision (option (a), ship under "(Beta)") covers exactly this, and the ledger
+  marks are `method: "ai"` per its reviewer-of-record note. Content stays in `.js` modules; no state
+  or build decision touched.
+- **Already-done backlog item** — no. Items 131 and 132 were both open; this closes them. It does not
+  touch item 94's abridgement, which the "What this deliberately did NOT do" section above states with
+  the unchanged 48-pair count as evidence rather than assertion.
+- **Own verification claim** — reproducible from `npm test`, `npm run build`, `npm run check-blindspot`,
+  `npm run review-status`, `npm run translation-completeness`, and the browser sequence. **What I am
+  NOT claiming:** (1) that any of this is native-speaker review — every mark is `method: "ai"`, human
+  review share is **0%** in all four languages, and this run *added* ~1,300 characters of unreviewed
+  translation to that surface (**O-3**); (2) that lessons 1 and 4 are now fully translated — they are
+  not, they are still abridged, and that is item 94; (3) that the cross-track instrument is now
+  guarded — it is a scratchpad measurement, not a check in `npm test`. See the new item 138.
+
+#### Next run
+
+**New item 138** (filed below): the 40/40 cross-track state has **no instrument** — it was 32/40 for
+eight days and nothing in `npm test` could see it. That is the natural follow-on and it now has a real
+instance behind it, which is the bar items 126/130 set.
+Otherwise open and unblocked: **item 136**'s `preferenceFlip` remainder and **item 130** (both low).
+**Item 27** is still ratio-blocked under W-5.2; **item 26**'s stream is complete but for one standing
+owner decision.
+**For the owner:** **O-1** is unchanged and is still the entire critical path — 44 lessons, five
+languages, 160 minutes, and zero people have ever opened this app. **O-3** now has a slightly larger
+surface: translation-review coverage reads **100% in all four languages and 0% human**, and this run is
+part of why the first number moved.
+**⚠️ The log-size picture got worse this run, and one half of it is new.** Quoting the tool rather
+than retyping it (item 70's rule): `MEASURED log-size: file 526525 b, run log 283674 b, floor 250513 b
+(backlog 222969 b), archive 2077529 b, 4 live day(s)`. The run log at **284 KB** over its 250 KB warn
+budget is the familiar one. **The floor is now ALSO over budget — 250,513 b against 250,000 — and this
+run's own backlog writing is what crossed it.** That is the failure mode W-5.3's note names: archiving
+cannot move the floor, only a backlog compression pass can, and **item 115's two options are still the
+owner's to choose between.** The archiver would clear the run-log half in one pass (`move 1 day —
+2026-08-26, 78 KB, leaving 206 KB`) and would not touch the floor at all.
+
 ### 2026-08-28 (scheduled dev-agent) — "all" was a different number for 44 different learners, and the cheapest way to say which one would have been wrong in four languages (item 117)
 
 **Pick.** Not item 27, not the figure cluster, and not another log-compression pass — the previous
