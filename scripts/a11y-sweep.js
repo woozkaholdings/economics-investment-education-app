@@ -219,6 +219,25 @@
     return (el.getAttribute("title") || "").trim();
   }
 
+  /* Colors have to be compared across two notations: a CSS custom property holds `#e4ddd2` while
+   * getComputedStyle always hands back `rgb(228, 221, 210)`. Comparing the strings would make the
+   * item-124 border check permanently silent — a lying zero of exactly the kind this file is
+   * about — so both sides are normalised to "r,g,b" first. Returns "" for anything it cannot
+   * parse (`transparent`, `currentColor`, a gradient), and "" never matches a token, so an
+   * unparseable color is reported as no finding rather than as a false one. */
+  function norm(c) {
+    if (!c) return "";
+    var m = String(c).trim().match(/^#([0-9a-f]{3}|[0-9a-f]{6})$/i);
+    if (m) {
+      var h = m[1];
+      if (h.length === 3) h = h[0] + h[0] + h[1] + h[1] + h[2] + h[2];
+      return parseInt(h.slice(0, 2), 16) + "," + parseInt(h.slice(2, 4), 16) + "," + parseInt(h.slice(4, 6), 16);
+    }
+    m = String(c).match(/^rgba?\(\s*([\d.]+)[,\s]+([\d.]+)[,\s]+([\d.]+)/i);
+    if (m) return Math.round(+m[1]) + "," + Math.round(+m[2]) + "," + Math.round(+m[3]);
+    return "";
+  }
+
   function where(el) {
     var d = el.tagName.toLowerCase();
     if (el.id) d += "#" + el.id;
@@ -334,17 +353,155 @@
       return { findings: out, scanned: 1 };
     } },
 
+    /* ⚠️ THE SELECTOR WAS `img, svg[role='img']` UNTIL 2026-08-28 AND THAT WAS A HOLE, measured
+     * rather than reasoned: `role="img"` is an ARIA role and any element may carry it, and
+     * **6 of this file's 11 chart primitives render `<div role="img">`** — `Bar`,
+     * `ProportionBar`, `AsymmetryChart`, `BracketStack`, `GapColumns` and `OutcomeGrid` — because
+     * their labels are long, five-language and must wrap, which SVG cannot do. So the probe was
+     * blind to the MAJORITY of the app's figures, not to an exception.
+     *
+     * Measured, not reasoned, and the count was corrected once on the way: on lesson 28 the page
+     * holds 1 `[role="img"]` and this probe matched 0, with the control firing on lesson 44's
+     * `<svg role="img">` so the selector was proven working rather than broken generally. The
+     * first version of this note said "two of eight" from reading the two figures I happened to
+     * have open; parsing every `role="img"` against its owning component says six of eleven.
+     * **The hand count was wrong in the same direction as item 134's: it counted where it was
+     * looking.** Any of the six could have lost its accessible name and this probe would have
+     * stayed green. §22 of check-data.mjs catches it at the call site, so nothing shipped
+     * unnamed — but the probe's own claim was broader than what it did, which is the lying zero
+     * this file exists to prevent, in the file itself. */
     imagesWithoutAlt: { needs: "layout", run: function () {
-      var out = [], imgs = document.querySelectorAll("img, svg[role='img']"), scanned = 0;
+      var out = [], imgs = document.querySelectorAll("img, [role='img']"), scanned = 0;
       [].forEach.call(imgs, function (el) {
         if (!visible(el) || !exposed(el)) return;
         scanned++;
         if (el.tagName === "IMG" && el.getAttribute("alt") === null) {
           out.push("<img> with no alt attribute at all: " + where(el));
         }
-        if (el.tagName === "svg" && !accName(el) && !el.querySelector("title")) {
-          out.push("svg[role=img] with no accessible name: " + where(el));
+        /* An <img> is named by alt and handled above; every other role="img" — svg or div — is
+         * named by aria-label/labelledby, or by a <title> child in the SVG case. */
+        if (el.tagName !== "IMG" && !accName(el) && !el.querySelector("title")) {
+          out.push("[role=img] with no accessible name: " + where(el));
         }
+      });
+      return { findings: out, scanned: scanned };
+    } },
+
+    /* ── figureClaims ─────────────────────────────────────────────────────────────────────────
+     * Backlog items 135 and 124, built together because they are one probe read from two sides.
+     *
+     * WHY IT EXISTS. Every figure check in check-data.mjs (§21, §50, §53, §54, §57) reads SOURCE:
+     * it asserts the numbers a figure is built from, or the style literals it is laid out with.
+     * The claims the figures actually make are about the RENDER — "both gaps are the same",
+     * "losing weighs heavier", "only labor sits on the rail", "all four cells are equal" — and a
+     * source check cannot see one. That is not hypothetical. On 2026-08-28 `OutcomeGrid` shipped
+     * twice with unequal rows (82px vs 52px, then 65 vs 52) while §57 passed and every style
+     * literal in the file was correct: the inequality arrived through CONTENT, because CSS grid
+     * sizes a row to its tallest item. It was found by measuring the live DOM, which is this.
+     *
+     * DESIGN, and the part that keeps it falsifiable: there is no generic "does this figure look
+     * right" test. Each figure DECLARES the relation its own caption states, keyed by a
+     * `data-figure` attribute that is language-independent, and the probe checks that relation
+     * and nothing else. Same discipline as §50/§53/§54, moved from the data to the render.
+     *
+     * THE BORDER HALF IS ITEM 124. A datum line drawn as a CSS `border` is invisible to §51's
+     * source scan — it is lexically identical to the ~50 decorative card and separator borders —
+     * and that is how the worse of item 123's two defects was drawn. In the live DOM the question
+     * answers itself: anything inside a `role="img"` subtree is part of the picture, so a border
+     * there that resolves to a `--line-*` value is under-contrast datum geometry (§28b/§51: no
+     * line token clears 3:1 on any surface in either palette). Position and containment, which
+     * defeat a source scanner, are free here. */
+    figureClaims: { needs: "layout", run: function () {
+      var out = [], scanned = 0;
+      var cs = getComputedStyle(document.documentElement);
+      var lineTokens = {};
+      ["--line-hairline", "--line-strong"].forEach(function (t) {
+        var v = cs.getPropertyValue(t).trim();
+        if (v) lineTokens[norm(v)] = t;
+      });
+
+      function boxes(fig, part) {
+        return [].slice.call(fig.querySelectorAll('[data-figure-part="' + part + '"]'))
+          .map(function (el) { return el.getBoundingClientRect(); });
+      }
+      /* Sub-pixel layout is real: 95.5625 vs 95.5469 is one box, not two. Everything below
+       * compares at 1px, which is coarser than any defect this has caught (the smallest was 13px)
+       * and immune to fractional-fr rounding. */
+      function same(a, b) { return Math.abs(a - b) <= 1; }
+
+      var CLAIMS = {
+        /* Lesson 28. The caption says the grid "says nothing about how often each cell happens",
+         * so any inequality between cells is the figure asserting a frequency the lesson refuses
+         * to state. check-data.mjs §57 (e)/(e2) pin the two ways it got there; this measures it. */
+        outcomeGrid: function (fig) {
+          var r = boxes(fig, "cell"), i;
+          if (r.length !== 4) return ["expected 4 cells, measured " + r.length];
+          var bad = [];
+          for (i = 1; i < 4; i++) {
+            if (!same(r[i].width, r[0].width)) bad.push("cell " + i + " is " + Math.round(r[i].width) + "px wide against cell 0's " + Math.round(r[0].width));
+            if (!same(r[i].height, r[0].height)) bad.push("cell " + i + " is " + Math.round(r[i].height) + "px tall against cell 0's " + Math.round(r[0].height));
+          }
+          return bad.length ? ["the four cells are not equal, so the grid draws one case as likelier than another: " + bad.join("; ")] : [];
+        },
+        /* Lesson 17. The lesson's own flagged counterintuitive result is that the two gaps are the
+         * SAME $5,000 at very different incomes. §53 asserts the six numbers; this asserts that
+         * the two segments actually render at one height. */
+        earningsGap: function (fig) {
+          var r = boxes(fig, "gap");
+          if (r.length !== 2) return ["expected 2 gap segments, measured " + r.length];
+          return same(r[0].height, r[1].height) ? []
+            : ["the two gap segments render at " + Math.round(r[0].height) + "px and " + Math.round(r[1].height) + "px. The lesson's whole point is that both gaps are the same $5,000, and the caption says so — a reader sees two different gaps."];
+        },
+        /* Lesson 27. Loss aversion IS the asymmetry; a figure where the two bars match, or where
+         * the gain bar is the taller one, draws the opposite of the lesson. */
+        lossAsymmetry: function (fig) {
+          var els = [].slice.call(fig.querySelectorAll('[data-figure-part="bar"]'));
+          if (els.length !== 2) return ["expected 2 bars, measured " + els.length];
+          els.sort(function (a, b) { return (+a.getAttribute("data-figure-index")) - (+b.getAttribute("data-figure-index")); });
+          var gain = els[0].getBoundingClientRect().height, loss = els[1].getBoundingClientRect().height;
+          return loss > gain + 1 ? []
+            : ["the loss bar renders " + Math.round(loss) + "px against the gain bar's " + Math.round(gain) + "px. Lesson 27 is that losing weighs heavier, so a figure that does not draw the loss bar taller states the opposite of its own caption."];
+        },
+        /* Lesson 44. The figure's left-hand claim is that labor income sits ON the rail and the
+         * other three are lifted clear of it. §54 (d) computes the clearance from source constants
+         * — the exact "rendered claim checked in source arithmetic" item 135 names. Here it is
+         * measured off the boxes the browser actually laid out. */
+        incomeTradeoff: function (fig) {
+          var rail = fig.querySelector('[data-figure-part="rail"]');
+          var els = [].slice.call(fig.querySelectorAll('[data-figure-part="dot"]'));
+          if (!rail || els.length !== 4) return ["expected a rail and 4 dots, measured " + (rail ? 1 : 0) + " and " + els.length];
+          els.sort(function (a, b) { return (+a.getAttribute("data-figure-index")) - (+b.getAttribute("data-figure-index")); });
+          var railY = rail.getBoundingClientRect().top;
+          var r0 = els[0].getBoundingClientRect(), dia = r0.height, bad = [];
+          if (Math.abs(r0.top + r0.height / 2 - railY) > dia / 2) {
+            bad.push("labor's dot centre is " + Math.round(r0.top + r0.height / 2 - railY) + "px off the rail, but the caption says it is the one that sits on the line");
+          }
+          els.slice(1).forEach(function (el, i) {
+            var r = el.getBoundingClientRect(), lift = railY - (r.top + r.height / 2);
+            if (lift <= dia) bad.push("dot " + (i + 1) + " clears the rail by " + Math.round(lift) + "px, no more than one " + Math.round(dia) + "px dot diameter, so it reads as sitting on the line too");
+          });
+          return bad;
+        }
+      };
+
+      [].forEach.call(document.querySelectorAll('[role="img"]'), function (fig) {
+        if (fig.getAttribute(SKIP_ATTR) || !visible(fig)) return;
+        scanned++;
+        var key = fig.getAttribute("data-figure");
+        if (key && CLAIMS[key]) {
+          CLAIMS[key](fig).forEach(function (m) { out.push(key + ": " + m); });
+        }
+        /* Item 124's half, over EVERY figure — it needs no per-figure declaration, because
+         * "inside the picture" is the whole predicate. */
+        [].forEach.call(fig.querySelectorAll("*"), function (el) {
+          var st = getComputedStyle(el);
+          ["Top", "Right", "Bottom", "Left"].forEach(function (side) {
+            if (parseFloat(st["border" + side + "Width"]) > 0) {
+              var tok = lineTokens[norm(st["border" + side + "Color"])];
+              if (tok) out.push((key || "[role=img]") + ": a border inside the figure paints " + tok + " (" + st["border" + side + "Color"] + "), which never clears 3:1 on any surface in either palette. Geometry inside a picture is datum, not decoration — use a graph token.");
+            }
+          });
+        });
       });
       return { findings: out, scanned: scanned };
     } },
@@ -456,7 +613,26 @@
       // The paragraph is not filler: it is what makes this a real control. A bare <section> with
       // contents is precisely the case a content-fallback name computation would call "named",
       // so an empty plant would pass even against the wrong implementation.
-      '<section id="a11y-selftest-region"><p>planted unnamed region</p></section>';
+      '<section id="a11y-selftest-region"><p>planted unnamed region</p></section>' +
+      /* figureClaims plants BOTH of its halves at once, because they fail separately.
+       *  • four `outcomeGrid` cells of which one is deliberately short — the geometry half.
+       *  • a border painted with the LIVE value of --line-hairline — the item-124 half. The
+       *    value is read from the document rather than hardcoded, so the plant cannot rot into
+       *    a control that fires for the wrong reason after a palette edit.
+       * The plant carries SKIP_ATTR on its outer box, and the probe skips figures under it — so
+       * this control must be the one thing the probe still reaches: it is planted as its own
+       * role="img" INSIDE the skipped box, and the probe's skip test looks at the figure's own
+       * attribute, not an ancestor's. That asymmetry is deliberate and is why the plant works
+       * while the app's real figures stay the only other thing scanned. */
+      '<div role="img" data-figure="outcomeGrid" aria-label="planted figure">' +
+        '<div data-figure-part="cell" style="width:40px;height:40px"></div>' +
+        '<div data-figure-part="cell" style="width:40px;height:40px"></div>' +
+        '<div data-figure-part="cell" style="width:40px;height:40px"></div>' +
+        '<div data-figure-part="cell" style="width:40px;height:12px"></div>' +
+        '<div style="border-top:1px solid ' +
+          (getComputedStyle(document.documentElement).getPropertyValue("--line-hairline").trim() || "#e4ddd2") +
+          '"></div>' +
+      '</div>';
     document.body.appendChild(box);
     // Overflow is planted separately: it must actually widen the document to be a real control.
     var wide = document.createElement("div");
@@ -496,7 +672,12 @@
       // Matches the plant's own id, not the shape: the app's own sections are all named as of
       // item 82 + the 2026-08-25 lesson-reader fix, so a shape match would pass off a REAL
       // regression as a fired control the moment one of them lost its label.
-      unnamedRegions: /a11y-selftest-region/
+      unnamedRegions: /a11y-selftest-region/,
+      /* TWO regexes, both required, for the same reason headingOrder needs two: this probe has
+       * two independent halves and a single control would let either rot silently green. The
+       * geometry half must report the short cell; the item-124 half must report the planted
+       * line-token border. */
+      figureClaims: [/the four cells are not equal/, /--line-hairline/]
     };
     var caps = capabilities(), results = {}, failed = [];
     Object.keys(expect).forEach(function (name) {

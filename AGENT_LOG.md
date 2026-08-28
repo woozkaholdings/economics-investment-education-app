@@ -788,7 +788,30 @@ for the history. No open P1/P2 items.
 
     </details>
 
-124. **[A11y/Tooling — filed 2026-08-27 by the run that closed item 123, as its stated residual
+124. **✅ DONE 2026-08-28 (owner-directed, as one half of item 135). Built exactly as this item's
+    "shape that could work" specified — a live-DOM probe rather than a widened source pattern —
+    and proven firing on a REAL figure, not only on a plant.**
+    > **Why it shipped with item 135 rather than on its own.** This item wants the live DOM for
+    > *border colors inside a figure*; item 135 wants it for *box geometry inside a figure*. Same
+    > walk, same `role="img"` boundary, same controls — building them separately would have meant
+    > two probes walking the same subtrees.
+    > **What it does:** for every `[role="img"]`, every descendant with a non-zero border width is
+    > checked against the live values of `--line-hairline`/`--line-strong`, read from the document
+    > at run time. **Anything inside a picture is datum, not decoration** — so a line token there
+    > is under-contrast by construction (§28b/§51: no line token clears 3:1 on any surface in
+    > either palette). Position and containment, the two things that defeat a source scanner, are
+    > free in the DOM.
+    > **Proven in light AND in dark, which is the trap this repo has hit before.** The token values
+    > are read at run time, not hardcoded: the control fires with `#e4ddd2` in light and `#2e2922`
+    > in dark. A hardcoded light value would have gone silently blind in dark — the exact failure
+    > the Environment note records.
+    > **Color normalisation was load-bearing, not plumbing:** a custom property holds `#e4ddd2`
+    > while `getComputedStyle` always returns `rgb(228, 221, 210)`, so a string comparison would
+    > have made this check permanently silent.
+    > **Live result: 0 findings across all figures on 12 lessons** — this item's "zero known live
+    > instances" is now measured rather than asserted.
+    (Original text below.)
+    **[A11y/Tooling — filed 2026-08-27 by the run that closed item 123, as its stated residual
     rather than smuggled into the same commit.] A datum line drawn as a CSS `border` is invisible to
     §51, and that is how the worse of item 123's two defects was actually drawn.**
     - **State:** §51b matches SVG paint attributes (`stroke={line.x}` / `fill={line.x}`) and holds
@@ -1017,7 +1040,65 @@ for the history. No open P1/P2 items.
       true of `lessonContent` and false of the corpus. **A scope stated in prose is not a scope the
       measurement had** — the same shape as item 128's finding about item 91's "whole-repo scan".
 
-135. **[Process/Tooling — filed 2026-08-28 by the run that added lesson 28's figure (item 27), as
+136. **[Process/Tooling — filed 2026-08-28 by the run that built `figureClaims` (items 135+124),
+    as its stated residual rather than smuggled into the same commit.] Seven of the eleven chart
+    primitives still have no declared claim, and for most of them that is correct.**
+    - **State:** `figureClaims` covers `outcomeGrid`, `earningsGap`, `lossAsymmetry` and
+      `incomeTradeoff` — the four whose captions state a relation that is checkable off the boxes.
+      Uncovered: `ProportionBar`, `GrowthCurve`, `BracketStack`, `YieldCurve`, `CycleChart`, `Bar`,
+      `PreferenceFlip`.
+    - **Why this is not simply "finish the other seven".** A claim is only worth writing where the
+      caption asserts something a box can falsify. Two look genuinely worth doing:
+      **`ProportionBar`** (lesson 1) — the segments are a division of one number, so their widths
+      should be in the stated 1500/900/600 ratio, and that is a real arithmetic claim about the
+      render; and **`PreferenceFlip`** (lesson 23) — the whole figure is a CROSSING, and "the two
+      series actually cross, exactly once, at the marked month" is checkable from the rendered
+      path. §50 asserts that crossing in source arithmetic today, which is the same gap item 135
+      was filed about.
+    - **The others are weaker candidates and should probably stay uncovered:** `CycleChart` and
+      `YieldCurve` draw stylized shapes with no stated quantity; `Bar` and `BracketStack` render
+      values whose only relation is "proportional to the number beside them", which §21 already
+      asserts and which no reader could check against a caption.
+    - **Do not turn this into a coverage count.** That is exactly how item 27 became count-shaped
+      three times. The bar is the same one item 135 set: name the sentence in the caption that the
+      figure could contradict, or leave it alone.
+    - **Honest priority: low.** Zero known live instances. Downstream of O-1 like everything else.
+
+135. **✅ DONE 2026-08-28 (owner-directed: "do item 135 next"), the same day it was filed — shipped
+    together with item 124 as `a11y-sweep.js`'s `figureClaims` probe, because they were one probe
+    read from two sides. Read the premise correction: the capability BOTH items said "already
+    exists" did not, and finding that out fixed a live hole in a different probe.**
+    > ⛔ **"The a11y sweep already renders the app and walks each `role="img"` subtree" was false,
+    > and it is the sentence both items were built on.** `imagesWithoutAlt` selected
+    > `img, svg[role='img']` — an ARIA role on an element the selector could not match. Measured:
+    > on lesson 28 the page holds **1** `[role="img"]` and the probe matched **0**, with the
+    > control firing on lesson 44's `<svg role="img">` so the selector was proven working rather
+    > than broken generally.
+    > ⛔ **AND THE SCOPE OF THAT HOLE WAS WRONG TWICE — the second time mine, in the fix's own
+    > comment.** I first wrote "two of eight figures are divs", from the two I happened to have
+    > open. Parsing every `role="img"` against its owning component says **6 of 11 primitives**
+    > are `<div role="img">` — `Bar`, `ProportionBar`, `AsymmetryChart`, `BracketStack`,
+    > `GapColumns`, `OutcomeGrid` — i.e. the probe was blind to the **majority** of the app's
+    > figures, not to an exception. **The hand count was wrong in the same direction as item
+    > 134's: it counted where it was looking.** Nothing shipped unnamed (§22 guards it at the call
+    > site), but the probe's claim was broader than its behavior — the lying zero that file exists
+    > to prevent, in the file itself. Fixed to `img, [role='img']` in the same commit.
+    > **What shipped:** four figures now DECLARE the relation their own caption states, keyed by a
+    > language-independent `data-figure` attribute, and the probe checks that and nothing else —
+    > `outcomeGrid` (four cells equal), `earningsGap` (the two gap segments equal), `lossAsymmetry`
+    > (the loss bar taller), `incomeTradeoff` (labor's dot on the rail, the others clear of it by
+    > more than a dot diameter). Deliberately **not** a generic "does this figure look right"
+    > check, which would be unfalsifiable.
+    > **The measurements are non-trivial, which is the point** — lesson 17's two gap segments render
+    > at **7.08px each while their columns are 70.8px and 170px** (and both are above the
+    > `minHeight: 4` floor, so the equality is not an artifact of it); lesson 27's bars are
+    > **37.5px vs 75px**, the 2x the lesson states; lesson 44's labor dot lifts **0.0px** off the
+    > rail against the other three at **48.4 / 72.6 / 96.8** with a 10.3px diameter.
+    > **Residual — 7 of 11 primitives still have no declared claim. That is item 136**, and it is
+    > deliberate rather than unfinished: a claim is only worth writing where the caption states a
+    > checkable relation.
+    (Original text below, kept because the reasoning it records is what the correction acts on.)
+    **[Process/Tooling — filed 2026-08-28 by the run that added lesson 28's figure (item 27), as
     the class its own defect belongs to.] Every figure check in this repo reads SOURCE, so the
     proportions a figure actually renders are unguarded — and that is where this run's real defect
     was.**
@@ -2573,6 +2654,25 @@ element's keyboard handling specifically, verify with a fully-specified `dispatc
 `key` action; for anything else, `javascript_tool`'s `.click()` remains the reliable path already
 documented above.**
 
+**Two harness facts about driving the sweep, both learned the expensive way 2026-08-28 (items
+135/124).**
+
+- **FRONT THE TAB BEFORE ANY TIMED LOOP — a hidden preview pane throttles `setTimeout` to ~1s.** A
+  loop over 13 lessons with a 320ms wait between them timed out at 30s, twice, and the tool reported
+  "the Browser pane is currently hidden... the pane may be stuck". It was not stuck: the page was
+  alive and had reached lesson 37. Background tabs clamp timers, so every 250-320ms wait silently
+  became a second. `tabs_select` on the tab first, then batch 4-5 navigations per call, and the same
+  loop finishes well inside the limit. **A timeout here reads exactly like a hang and is not one.**
+- **You cannot plant a defect by writing an inline style onto a REAL React component's element — it
+  reverts, and it reverts silently.** Setting `bar.style.height` (even with `!important`) on
+  `AsymmetryChart`'s bar read back unchanged one call later, because React owns `element.style` and
+  rewrites it on the next commit. Worse, *clearing* one — `el.style.height = ""` — does not restore
+  the app's value, it removes React's own, so the "restore" leaves a different defect behind. **Two
+  consequences:** plant into a SYNTHETIC element carrying the same hooks (the selftest's own
+  technique) rather than into a live component, and **restore by reloading the page**, never by
+  clearing the property. A live-DOM plant that you cannot cleanly undo is a plant you must not leave
+  the session holding — reload and re-measure zero before reporting anything clean.
+
 **The live accessibility sweep is a checked-in file now — `scripts/a11y-sweep.js` (2026-08-25, item
 105). Do not re-derive it, and do not hand-roll a one-off DOM scan.** Every section of
 `check-data.mjs` reads source text, so the whole class of *composition* defects — where every
@@ -2653,6 +2753,122 @@ finding(s); V vacuous; U unavailable`. A bare "no accessibility issues found" is
 > have moved nothing while the file sat at **915 KB**, 1.5x its own trigger. The boundary used here
 > is therefore the byte target, taken on whole days. **The deeper reason is in W-5.3's note:** the
 > run log is no longer what makes this file big.
+### 2026-08-28 (owner-directed: "do item 135 next") — the capability both items called "already there" did not exist, and finding that out fixed a hole in a third probe (items 135 + 124)
+
+**Picked item 135** on the owner's explicit pick, and built **item 124** with it — item 135's own
+filing says they are one probe read from two sides, and re-reading both confirmed it. Tree clean
+apart from the owner's untracked `UIUX/` and `drafts/`; `owner-tree --expect c2331799…` **UNMOVED**
+before any edit.
+
+#### Step 3.5 — the shared premise broke, and the break was the run's most useful finding
+
+Both items rest on one sentence: *"the a11y sweep already renders the app and walks each
+`role="img"` subtree."* **It does not.** `imagesWithoutAlt` selected `img, svg[role='img']`, and
+`role="img"` is an ARIA role any element may carry.
+
+- **Measured, with a two-sided control.** On lesson 28 the page holds **1** `[role="img"]` and the
+  probe matched **0**. The control fired on lesson 44's `<svg role="img">` — so the selector was
+  proven *working*, not broken generally, and the zero was specific to `div`.
+- **Then my own correction was wrong, in the same direction.** The fix's first comment said "two of
+  eight figures are divs", written from the two I had open. Parsing every `role="img"` against its
+  owning component says **6 of 11 primitives** — `Bar`, `ProportionBar`, `AsymmetryChart`,
+  `BracketStack`, `GapColumns`, `OutcomeGrid`. The probe was blind to the **majority** of the app's
+  figures. **It counted where it was looking, which is item 134's error exactly**, one run later,
+  by me. Corrected in the file with the parse that produced it.
+- **Nothing shipped unnamed** — §22 guards the accessible name at the call site — but a probe whose
+  claim is broader than its behavior is the lying zero that file exists to prevent, in the file
+  itself. Fixed to `img, [role='img']`; `imagesWithoutAlt` now scans 1 on lesson 28 where it
+  scanned 0.
+- **Item 124's own premises held**: §51b's SVG-paint register is intact, and `AsymmetryChart`'s zero
+  line is still `borderTop: 1px solid graph.neutral` on an absolutely-positioned div — correct
+  today, and still lexically identical to the ~50 decorative card borders, which is why a source
+  scan cannot tell them apart.
+
+#### What shipped — one probe, `figureClaims`, with both halves
+
+**Item 135's half — the render is checked against the claim.** Four figures now DECLARE the relation
+their own caption states, keyed by a language-independent `data-figure` attribute:
+`outcomeGrid` (the four cells are equal), `earningsGap` (the two gap segments are equal),
+`lossAsymmetry` (the loss bar is taller), `incomeTradeoff` (labor's dot sits on the rail, the other
+three clear it by more than a dot diameter). **Deliberately not a generic "does this figure look
+right" check** — that is unfalsifiable. Same discipline as §50/§53/§54, moved from the data to the
+render.
+
+**Item 124's half — a border inside a picture is datum.** For every `[role="img"]`, every descendant
+with a non-zero border width is checked against the live values of `--line-hairline`/`--line-strong`.
+No per-figure declaration is needed because "inside the picture" is the whole predicate, and
+position and containment — the two things that defeat a source scanner — are free in the DOM.
+**Color normalisation was load-bearing:** a custom property holds `#e4ddd2` while
+`getComputedStyle` always returns `rgb(228, 221, 210)`, so a string comparison would have made this
+check permanently silent.
+
+#### Verification
+
+- **`npm test` 0 failures, 2 warnings** (the documented baselines), **`npm run build` clean**.
+  §43 now reports **11 probes (10 layout-gated), all with planted controls** — it derives that
+  itself, and it is what forced the new probe to carry a control.
+- **`selftest PASS (10/10 controls fired, plantsRemoved true)`.** `figureClaims` required **two**
+  regexes, like `headingOrder`, because its halves fail separately: the plant carries both a short
+  cell (geometry) and a border painted with the **live** value of `--line-hairline` (item 124), so
+  the control cannot rot after a palette edit.
+- **Both halves proven on REAL figures, not only on plants.** Injecting into the live DOM on lesson
+  17 turned the equal-gaps claim into
+  *"the two gap segments render at 7px and 40px"*; a planted `--line-hairline` border inside lesson
+  27's real `lossAsymmetry` figure produced *"a border inside the figure paints --line-hairline"*.
+  The other two claims were proven against synthetic figures carrying the same hooks — see the
+  Environment note for why a live React component cannot hold an injected inline style.
+- **Live sweep across 12 lessons (1, 3, 7, 17, 23, 27, 28, 32, 36, 37, 38, 44): `figureClaims` 0
+  findings, 15 figure instances scanned; whole sweep `clean on 10 probe(s); 1 unavailable`, 0 findings,
+  0 vacuous.** Item 124's "zero known live instances" is now measured rather than asserted.
+- **The claims are non-trivial, which is what stops them being decorative green.** Lesson 17's two
+  gap segments render at **7.08px each while their columns are 70.8px and 170px**, both above the
+  `minHeight: 4` floor, so the equality is neither trivial nor a floor artifact. Lesson 27's bars
+  are **37.5 vs 75px** — the 2x the lesson states. Lesson 44's labor dot lifts **0.0px** off the
+  rail against **48.4 / 72.6 / 96.8** for the other three, at a 10.3px diameter; §54 (d) computes
+  that clearance from source constants, and this is the first time it has been read off the render.
+- **Dark mode checked, because that is a trap this repo has hit.** The token values are read at run
+  time: the item-124 control fires with `#e4ddd2` in light and `#2e2922` in dark. A hardcoded light
+  value would have gone silently blind in dark.
+- **The app was restored and re-measured before anything was called clean** — the live-DOM plants
+  were undone by reloading, not by clearing properties (see the Environment note), and the final
+  reading is 0 findings with lesson 28's cells at 96x52 on `--graph-neutral`.
+
+#### Step 5 — adversarial self-check
+
+- **Blindspot register** — no regression. `check-blindspot` 7/7. The diff adds no learner-visible
+  copy at all: it is one script, one probe, and the `data-*` hooks. Over the **196 added lines in
+  `scripts/` and `src/`**: Dalio **0**, advice-adjacent verbs **0**, child-facing framing **0**, and
+  no date or figure reaches a rendered string. **Control**: `data-figure` returns **23** on that
+  same diff, so the greps reach the added text.
+  ⚠️ **Scoping the grep to the code was not cosmetic, and the next run will hit this too.** Run over
+  the WHOLE diff the Dalio pattern returns **1** — matching this very bullet, which contains the
+  word while reporting zero. **A blindspot grep over a diff that includes `AGENT_LOG.md` matches the
+  self-check's own prose**, so it must be scoped to the files that actually ship, or it reports a
+  finding against itself every time.
+- **`DECISIONS.md` conflict** — none. No state, storage, content-module or build decision is
+  touched. The sweep remains a pasted file rather than part of `npm test`, which is the standing
+  call (item 12's port-cost rule — a headless browser is the thing that would change it).
+- **Already-done backlog item** — no. Items 135 and 124 were both open and both name this exact
+  build; 124's "shape that could work" is what shipped, not a re-derivation.
+- **Own verification claim** — reproducible: the selector measurement with its two-sided control,
+  the component parse behind the 6-of-11 count, the selftest, the two live-figure injections, and
+  the 12-lesson sweep. **What I am NOT claiming**: that figure geometry is now a solved property.
+  Four figures declare a claim and seven do not — that is **item 136**, and most of those seven
+  should stay uncovered, because a claim is only worth writing where a caption asserts something a
+  box can falsify. Nor does any of this run on `npm test`; it is still a file a run must paste,
+  which is the standing cost §43 exists to contain.
+
+#### Next run
+
+`npm run owner-tree -- --expect c2331799fd3ee413aca864fd82d247a35ea31b01a70a6c4e37b00f6aad9105b2`
+(post-commit, tree clean — this run touched only tracked files). **Open and unblocked:**
+**item 136** (`ProportionBar`'s ratio and `PreferenceFlip`'s crossing are the two worth declaring;
+the other five probably should not be); **item 27** (a ninth figure, bar unchanged and still no
+named candidate); **items 131+132** (the last 8 review pairs, only worth doing as one decision);
+**item 130** (§55's comment blind spot). **O-1 remains the entire critical path** — four of the
+app's figures now have their claims checked against the pixels a browser actually drew, and still
+zero people have opened any of them.
+
 ### 2026-08-28 (scheduled dev-agent) — the figure that shipped its own refutation: a grid arguing all four cells are equal, rendering one row half again as tall (item 27)
 
 **Picked item 27**, the eighth lesson figure — the top open, unblocked candidate named by the previous

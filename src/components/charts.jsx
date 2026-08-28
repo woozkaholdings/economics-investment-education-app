@@ -220,7 +220,7 @@ export function AsymmetryChart({ title, axisLabel, bars, colors, labelInks, desc
         wants to be lighter than that, which `graph.neutral` is and
         `ink.muted` is not.
       */}
-      <div role="img" aria-label={description} style={{ position: "relative", display: "flex", gap: space["4"], height: 150 }}>
+      <div role="img" data-figure="lossAsymmetry" aria-label={description} style={{ position: "relative", display: "flex", gap: space["4"], height: 150 }}>
         <div aria-hidden="true" style={{ position: "absolute", left: 0, right: 0, top: "50%", borderTop: `1px solid ${graph.neutral}` }} />
         {bars.map((b, i) => {
           const up = b.felt > 0;
@@ -228,10 +228,10 @@ export function AsymmetryChart({ title, axisLabel, bars, colors, labelInks, desc
           return (
             <div key={b.label} style={{ flex: 1, display: "flex", flexDirection: "column" }}>
               <div style={{ flex: 1, display: "flex", alignItems: "flex-end", justifyContent: "center" }}>
-                {up && <div style={{ width: "60%", height: `${frac * 2}%`, background: colors[i], borderRadius: `${radius.sm}px ${radius.sm}px 0 0`, transition: "height 0.5s" }} />}
+                {up && <div data-figure-part="bar" data-figure-index={i} style={{ width: "60%", height: `${frac * 2}%`, background: colors[i], borderRadius: `${radius.sm}px ${radius.sm}px 0 0`, transition: "height 0.5s" }} />}
               </div>
               <div style={{ flex: 1, display: "flex", alignItems: "flex-start", justifyContent: "center" }}>
-                {!up && <div style={{ width: "60%", height: `${frac * 2}%`, background: colors[i], borderRadius: `0 0 ${radius.sm}px ${radius.sm}px`, transition: "height 0.5s" }} />}
+                {!up && <div data-figure-part="bar" data-figure-index={i} style={{ width: "60%", height: `${frac * 2}%`, background: colors[i], borderRadius: `0 0 ${radius.sm}px ${radius.sm}px`, transition: "height 0.5s" }} />}
               </div>
             </div>
           );
@@ -488,11 +488,11 @@ export function GapColumns({ title, columns, segmentLabels, ruleLabel, axisLabel
           </Text>
         </figcaption>
       )}
-      <div role="img" aria-label={description} style={{ position: "relative", display: "flex", gap: space["5"], height: 170, alignItems: "flex-end" }}>
+      <div role="img" data-figure="earningsGap" aria-label={description} style={{ position: "relative", display: "flex", gap: space["5"], height: 170, alignItems: "flex-end" }}>
         {columns.map((c) => (
           <div key={c.label} style={{ flex: 1, height: `${(c.total / max) * 100}%`, display: "flex", flexDirection: "column", justifyContent: "flex-end" }}>
             <div style={{ flex: 1, background: colors[0], borderRadius: `${radius.sm}px ${radius.sm}px 0 0`, transition: "height 0.5s" }} />
-            <div style={{ height: `${(c.gap / c.total) * 100}%`, background: colors[1], minHeight: 4 }} />
+            <div data-figure-part="gap" style={{ height: `${(c.gap / c.total) * 100}%`, background: colors[1], minHeight: 4 }} />
           </div>
         ))}
         {/*
@@ -591,14 +591,14 @@ export function TradeoffPlot({ title, points, endLabels, upfrontLabel, colors, d
           </Text>
         </figcaption>
       )}
-      <svg viewBox={`0 0 ${TRADE_W} ${TRADE_H}`} style={{ width: "100%", height: 160 }} role="img" aria-label={description}>
+      <svg viewBox={`0 0 ${TRADE_W} ${TRADE_H}`} style={{ width: "100%", height: 160 }} role="img" data-figure="incomeTradeoff" aria-label={description}>
         {/* The ladder: the one axis the lesson says people already read. */}
-        <line x1={TRADE_PAD.left} y1={railY} x2={TRADE_W - TRADE_PAD.right} y2={railY} stroke={colors.rail} strokeWidth="1" />
+        <line data-figure-part="rail" x1={TRADE_PAD.left} y1={railY} x2={TRADE_W - TRADE_PAD.right} y2={railY} stroke={colors.rail} strokeWidth="1" />
         {points.map((p, i) => (
           <line key={`stem-${p.key}`} x1={px(i)} y1={railY} x2={px(i)} y2={py(p.upfront)} stroke={colors.rail} strokeWidth="1" strokeDasharray="2 2" />
         ))}
         {points.map((p, i) => (
-          <circle key={`dot-${p.key}`} cx={px(i)} cy={py(p.upfront)} r="5" fill={colors.dot} />
+          <circle key={`dot-${p.key}`} data-figure-part="dot" data-figure-index={i} cx={px(i)} cy={py(p.upfront)} r="5" fill={colors.dot} />
         ))}
         {/*
           The index sits BESIDE each dot, never inside it. `graph.blue` is a
@@ -715,7 +715,7 @@ export function OutcomeGrid({ title, columnLabels, rowLabels, cells, spanLabel, 
         cells wrap and grow with the app's own font-scale control. `Bar` is the
         precedent for a `role="img"` that is a div rather than an svg.
       */}
-      <div role="img" aria-label={description} style={{ display: "grid", gridTemplateColumns: "minmax(0, 1.15fr) minmax(0, 1fr) minmax(0, 1fr)", gap: space["1"], alignItems: "stretch" }}>
+      <div role="img" data-figure="outcomeGrid" aria-label={description} style={{ display: "grid", gridTemplateColumns: "minmax(0, 1.15fr) minmax(0, 1fr) minmax(0, 1fr)", gap: space["1"], alignItems: "stretch" }}>
         {/*
           Row 0 — the bracket. It spans the won column only; that IS the
           figure's claim, so it sits above the column labels where it reads as
@@ -748,6 +748,7 @@ export function OutcomeGrid({ title, columnLabels, rowLabels, cells, spanLabel, 
             return (
               <div
                 key={`c-${row}-${col}`}
+                data-figure-part="cell"
                 style={{
                   border: `1px solid ${colors.rule}`,
                   borderRadius: radius.sm,
