@@ -1063,6 +1063,56 @@ for the history. No open P1/P2 items.
       three times. The bar is the same one item 135 set: name the sentence in the caption that the
       figure could contradict, or leave it alone.
     - **Honest priority: low.** Zero known live instances. Downstream of O-1 like everything else.
+    > ⛔ **PREMISE CORRECTION 2026-08-28, from the run that built the `preferenceFlip` half. Both
+    > of this item's two recommendations were wrong, in opposite directions, and the measurements
+    > are below so nobody re-derives them.**
+    > **`ProportionBar` should NOT be built; "a real arithmetic claim about the render" is the false
+    > part.** Lesson 1's three segments render **154.5 / 92.688 / 61.797 px of 309** — exactly
+    > 50/30/20 — and stayed 50/30/20 under every perturbation: a **`gap`** on the container
+    > (flex-shrink is proportional to the bases), **padding** on a segment (`box-sizing:
+    > border-box`), and **28 characters of unbreakable content** in one (`flex-grow: 0` with bases
+    > summing to 100% leaves no free space, so `min-width: auto` never binds). **The control
+    > fired** — forcing `min-width: 150px` gave **32/19/49** — so the measurement can see a break.
+    > The rendered ratio is the value ratio *by construction*: the bar this item sets, failed.
+    > **`PreferenceFlip` should be built, and the reason is stronger than the one filed here** —
+    > it is not "zero known live instances". It is **item 137**.
+
+137. **[Content/Figure — filed 2026-08-28 by the run that built item 136's `preferenceFlip` claim,
+    as the live defect that claim found on its first run.] Lesson 23 draws its two curves 1.64px
+    apart with a 2.58px stroke, so for three quarters of the span the reader sees one line, not
+    two — and "the $65 is simply the better deal" is the half of the lesson that is invisible.**
+    - **Measured in client pixels** (`getScreenCTM()` + the live `SVGPointList`), lesson 23, mobile
+      375px, English: vertical separation at the nine sampled months is
+      **1.64 / 1.79 / 1.95 / 2.02 / 1.72 / 1.03 / -0.86 / -6.87 / -36.05 px** against a computed
+      stroke width of **2.58px**. The strokes therefore **overlap at six of the nine samples** —
+      every one before the crossing. Confirmed visually: the left three quarters of the figure
+      render as a single green line with an amber fringe.
+    - **Nothing in source can see this and §50 is not wrong.** §50 (g) asserts the ORDER at the
+      samples bracketing the crossing, and the order is correct; the figure's own text alternative
+      says the $65 curve "sits **slightly** above". Whether a reader can *see* an ordering is a
+      question about stroke width against separation, which only the render answers. This is
+      item 135's defect class with an actual instance in it.
+    - **Geometry cannot fix it.** Separation and stroke both scale with the viewBox, so a taller
+      chart changes neither ratio, and thinning the stroke to 1.5 user units buys 1.64px against
+      1.55px. **Only the y-scale can**: a linear axis anchored at 0 with `max` = the right-hand
+      spike (50) crushes the left three quarters into the bottom tenth, so the two options' real
+      **21%** difference at the left edge (3.846 vs 4.643) is 1.59 of 100 plot units.
+    - **`k` is not the lever either.** The crossing sits at `w = (50k - 15) / 15k` months before
+      the sooner reward: raising `k` pushes both curves toward zero and worsens the separation;
+      lowering it walks the crossing into the right edge, the legibility problem
+      `moneyVisuals.js`'s own comment says `k = 1.0` was chosen to avoid.
+    - **The option that works, with its cost stated because it is a real cost.** A **log y-scale**
+      puts the left-edge separation at **7.35% of plot height (~7.6px)** and leaves the curves
+      converging near the crossing, where they should — computed over the nine samples, the
+      crossing stays between months 9 and 10, agreeing with the solved 9.667. **What it spends is
+      the hockey stick**: the sharp late upturn of the $50 is the lesson's visual punch, and a log
+      axis flattens it. That is a pedagogy trade, not a bug fix, which is why this is filed rather
+      than shipped — and `flipDescription` ("turns sharply upward") would have to be rewritten in
+      **five languages** to stay true, plus §50 (f)'s drawability clause re-derived on the new
+      scale.
+    - **Honest priority: medium, the highest in the figure family** — the first *live* instance
+      `figureClaims` has found, shipping in five languages today, and the only one of that family
+      a reader actually experiences. Downstream of O-1 like everything else.
 
 135. **✅ DONE 2026-08-28 (owner-directed: "do item 135 next"), the same day it was filed — shipped
     together with item 124 as `a11y-sweep.js`'s `figureClaims` probe, because they were one probe
@@ -2753,6 +2803,129 @@ finding(s); V vacuous; U unavailable`. A bare "no accessibility issues found" is
 > have moved nothing while the file sat at **915 KB**, 1.5x its own trigger. The boundary used here
 > is therefore the byte target, taken on whole days. **The deeper reason is in W-5.3's note:** the
 > run log is no longer what makes this file big.
+### 2026-08-28 (scheduled dev-agent) — the figure whose claim is true in the data and invisible in the pixels: two curves 1.64px apart under a 2.58px stroke (item 136 → new item 137)
+
+**Picked item 136**, the top open, unblocked candidate named by the previous run, and built the half
+of it that survived re-measurement. Tree clean apart from the owner's untracked `UIUX/` and
+`drafts/`; `owner-tree --expect c2331799…` **UNMOVED** before any edit, HEAD still `d35218d`.
+
+#### Step 3.5 — the item recommended two figures; the measurements reversed one and strengthened the other
+
+The item's structural premise **held**: 11 chart primitives carry `role="img"`, 4 declare a
+`data-figure`, and the 7 it lists as uncovered are exactly the 7 that are.
+
+- ⛔ **`ProportionBar` should not be built, and the item's reason for it is the false part.** Lesson
+  1's segments render **154.5 / 92.688 / 61.797 px of 309** — exactly the 50/30/20 the caption
+  states. Then perturbed, because a claim that cannot fail is decorative green: **a `gap` on the
+  container**, **padding on a segment**, and **28 characters of unbreakable content inside one** all
+  left it at **50/30/20**. `flex-grow: 0` with bases summing to exactly 100% leaves no free space,
+  so `min-width: auto` never binds and content cannot widen a segment — the rendered ratio is the
+  value ratio *by construction*. This is **not** the `OutcomeGrid` class it was filed as.
+  **The control fired**: forcing `min-width: 150px` on the third segment moved the reading to
+  **32/19/49**, so the instrument can see a broken ratio. Correction written into item 136 itself.
+- ⚠️ **And the control caught me destroying the thing I was measuring.** The first perturbation pass
+  called `fig.lastChild.remove()` to undo an injected text node — but the text node was inside the
+  third segment, so `lastChild` was **the segment**. All four readings in that call were taken
+  against a two-segment bar and every one of them was garbage that looked like data (`62.5 / 37.5`,
+  stable across three conditions, which is exactly what a real result looks like). Caught by the
+  child count, not by reading the numbers. **Reloaded and redid it; `n: 3` is asserted in the
+  corrected call.** This is the Environment note's "restore by reloading, never by clearing" rule
+  arriving one level up: the plant I could not cleanly undo was a *node*, not a style.
+- ✅ **`PreferenceFlip` should be built, and for a stronger reason than the one filed** — "zero known
+  live instances" was wrong. It has one, and it is the finding below.
+
+#### What shipped — `figureClaims` learns lesson 23, and lesson 23 fails it
+
+`PreferenceFlip` now declares `data-figure="preferenceFlip"` with `series`/`marker` parts, and the
+claim asserts the three sentences its own text alternative makes: **exactly one order change**, **the
+dashed marker standing where the curves actually swap**, and **the two ENDS separated by more than
+one stroke width**. Nothing is asserted near the crossing, where the curves *must* converge — a
+blanket "always separated" rule would contradict the figure's own point. The ends are chosen because
+they are lesson 23's two named scenarios ("Both a year away" / "The $50 is available today").
+
+**Everything is read in client pixels** through `getScreenCTM()` and the live `SVGPointList`, never
+off the `points` string. That distinction is the whole reason this is a probe and not a §50 clause: a
+transform, a CSS `stroke-width` override, a viewBox edit and `vector-effect: non-scaling-stroke` all
+change what is drawn without changing any source number.
+
+**The live finding, and it is a real reader-visible defect in shipped content:**
+
+> `preferenceFlip: at the left edge the two curves are 1.64px apart while each stroke is 2.58px
+> wide, so the two strokes overlap and no reader can see which option is on top.`
+
+Separation across the nine sampled months is **1.64 / 1.79 / 1.95 / 2.02 / 1.72 / 1.03 / -0.86 /
+-6.87 / -36.05 px** against a computed **2.58px** stroke — **overlapping at six of nine samples**,
+every one of them before the crossing. The caption says *"For most of the year the $65 is simply the
+better deal"*; the screenshot shows one green line with an amber fringe. **§50 is not wrong** — it
+asserts the *order* at the bracketing samples and the order is correct. Whether a reader can *see*
+an ordering is stroke width against separation, which only the render answers. **Filed as item 137**
+with the fix analysis (geometry cannot fix it — separation and stroke both scale with the viewBox;
+`k` cannot either, in either direction; a log y-scale gives **7.35%** of plot height at the left edge
+but spends the late hockey stick and needs `flipDescription` rewritten in five languages). **Filed
+rather than shipped on purpose:** that is a pedagogy trade on a teaching figure, not a bug fix.
+
+#### Verification
+
+- **`npm test` 0 failures, 2 warnings** (the documented translation baselines), **`npm run build`
+  clean**. §43 still reports **11 probes (10 layout-gated), all with planted controls** — this run
+  added a claim, not a probe.
+- **`selftest PASS (10/10 controls fired, plantsRemoved true)`**, with `figureClaims` now carrying
+  **four** required regexes, one per independently-rottable half. The two new ones are keyed to what
+  the app **cannot** produce — a 7px stroke, and a negative client x that only an off-screen plant
+  has — **because lesson 23 fails this check for real today**, so a shape match would have reported
+  the control as fired while it was actually measuring the live defect.
+- **Live sweep, 12 lessons** (1, 3, 7, 17, 23, 27, 28, 32, 36, 37, 38, 44): **1 finding, 0 vacuous,
+  15 figure instances scanned**. The finding is lesson 23's and the other 11 lessons are clean, so
+  the probe is discriminating rather than blanket-failing. The other two halves of the new claim
+  (single crossing; marker inside the swap bracket at x=278.14px between 261.66 and 286.38) **pass**.
+- **Dark mode and a non-English language, because both are traps this repo has hit.** `--line-hairline`
+  reading `#2e2922` (the dark value) with `lang="ja"`: **identical finding, identical numbers** —
+  confirming the claim is geometry-only and language-independent, which was the point of keying it to
+  `data-figure` rather than to copy.
+- **Not a mobile artifact**: at a 1100px viewport the figure is 394px wide and reports **1.71px against
+  2.68px** — the same ratio, since separation and stroke scale together. The defect is scale-invariant.
+- **The build guard did its job on me**: the first `npm test` **failed** because the probe's comment
+  cited "backlog item 137" before that item existed. Filed it, then green.
+- **The floor budget caught my own backlog addition**, which is worth recording because it is the
+  W-5.3 failure mode firing correctly: item 137 pushed the never-archived floor to **250,302 b**,
+  302 b over budget, and archiving cannot move that number. Trimmed **448 b** of my own prose —
+  no measurement dropped — to **249,854 b** (99.9% of budget). **The floor is effectively full; the
+  next backlog addition of any size will warn.**
+
+#### Step 5 — adversarial self-check
+
+- **Blindspot register** — no regression. `check-blindspot` **PASS, 0 failures**. Over the **95 added
+  lines in `src/` + `scripts/`**: Dalio **0**, advice-adjacent verbs **0**, kids/child framing **0**,
+  and the diff adds **no learner-visible copy at all** — only `data-*` attributes and probe code.
+  **Control**: `data-figure-part` returns **7** on the same added lines, so the greps reach the text.
+  Scoped to shipping files, per the previous run's warning that a whole-diff grep matches this
+  bullet's own prose.
+- **`DECISIONS.md` conflict** — none. The two keyword hits in the diff are `Expo` inside
+  `export function PreferenceFlip` in hunk headers. No state, storage, content-module or build
+  decision is touched, and **the sweep still ships to nobody**: `grep` finds `preferenceFlip:
+  function` in **0** files under `dist/assets/`, so it remains a pasted-file instrument with the same
+  standing cost item 12's port-cost rule accepted.
+- **Already-done backlog item** — no. Item 136 was open and named this exact work; item 135 built the
+  machinery and explicitly left these seven as the residual.
+- **Own verification claim** — reproducible: the perturbation table with its fired `min-width`
+  control, the selftest, the 12-lesson sweep, the dark/`ja` re-run and the 1100px re-run. **What I am
+  NOT claiming**: that lesson 23 is fixed. It is not — the app ships this defect today in five
+  languages, and this run bought the *instrument* and the *diagnosis*, not the repair. Nor is
+  `figureClaims` now green: it reports one finding, which is the honest state.
+
+#### Next run
+
+`npm run owner-tree -- --expect c2331799fd3ee413aca864fd82d247a35ea31b01a70a6c4e37b00f6aad9105b2`
+(post-commit, tree clean — this run touched only tracked files). **Open and unblocked:** **item 137**
+(lesson 23's y-scale — the highest-value item in the figure family, and the only one a reader
+experiences; it needs a pedagogy call on the log scale, so it may be worth the owner's eye);
+**item 136**'s remainder (only `ProportionBar` was ruled out — `GrowthCurve`, `BracketStack`,
+`YieldCurve`, `CycleChart`, `Bar` are still weak candidates and should probably stay uncovered);
+**items 131+132** (the last 8 review pairs, only worth doing as one decision); **item 130** (§55's
+comment blind spot). ⚠️ **The backlog floor is at 99.9% of budget** — the next run that files an item
+should expect to trim, or pick the compression pass (item 115). **O-1 remains the entire critical
+path** — the app now has a probe that can prove a figure lies, and still zero people have opened it.
+
 ### 2026-08-28 (owner-directed: "do item 135 next") — the capability both items called "already there" did not exist, and finding that out fixed a hole in a third probe (items 135 + 124)
 
 **Picked item 135** on the owner's explicit pick, and built **item 124** with it — item 135's own

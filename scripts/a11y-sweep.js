@@ -481,6 +481,71 @@
             if (lift <= dia) bad.push("dot " + (i + 1) + " clears the rail by " + Math.round(lift) + "px, no more than one " + Math.round(dia) + "px dot diameter, so it reads as sitting on the line too");
           });
           return bad;
+        },
+        /* Lesson 23, backlog item 136. Three sentences in this figure's own text alternative are
+         * claims about the RENDER, and §50 asserts all three in source arithmetic: the two curves
+         * cross exactly once, the dashed marker sits at that crossing, and "for most of the span
+         * the $65 curve sits slightly above the $50 curve".
+         *
+         * The third is the one worth measuring here, and it is why this claim was written. §50 (g)
+         * proves the ORDERING at the samples bracketing the crossing — which is true and is not
+         * the same question as whether a reader can SEE it. Two 2.5-unit strokes whose centre
+         * lines are 1.6 units apart are one thick line on screen. So the separation is compared
+         * against the stroke width the browser actually computed, at the two ENDS specifically:
+         * those are the lesson's own two scenarios, named on the axis ("Both a year away" / "The
+         * $50 is available today"), and they are where the caption's claim is strongest and
+         * furthest from the crossing. Nothing is asserted near the crossing, where the curves MUST
+         * converge — a blanket "always separated" rule would contradict the figure's whole point.
+         *
+         * Everything is read in CLIENT pixels through getScreenCTM() and the live SVGPointList,
+         * not off the `points` string: the viewBox->CSS mapping, a transform, a CSS stroke-width
+         * override and `vector-effect: non-scaling-stroke` all change what is drawn without
+         * changing any source number, and reading the attribute would be a source check wearing a
+         * probe's costume. */
+        preferenceFlip: function (fig) {
+          var els = [].slice.call(fig.querySelectorAll('[data-figure-part="series"]'));
+          var marker = fig.querySelector('[data-figure-part="marker"]');
+          if (els.length !== 2 || !marker) return ["expected 2 series and a crossing marker, measured " + els.length + " and " + (marker ? 1 : 0)];
+          els.sort(function (a, b) { return (+a.getAttribute("data-figure-index")) - (+b.getAttribute("data-figure-index")); });
+          var ctm = fig.getScreenCTM();
+          if (!ctm) return ["the figure has no screen CTM, so nothing about its geometry can be measured"];
+          var cx = function (x) { return ctm.a * x + ctm.e; };
+          var cy = function (y) { return ctm.d * y + ctm.f; };
+          var stroke = parseFloat(getComputedStyle(els[0]).strokeWidth) * ctm.d;
+          var a = els[0].points, b = els[1].points, n = a.numberOfItems, bad = [], j;
+          if (n < 2 || b.numberOfItems !== n) return ["the two series carry " + n + " and " + b.numberOfItems + " points; they are drawn from one x-axis and must be sampled together"];
+          var xs = [], gap = [];
+          for (j = 0; j < n; j++) {
+            var pa = a.getItem(j), pb = b.getItem(j);
+            if (Math.abs(cx(pa.x) - cx(pb.x)) > 1) return ["the two series are sampled at different x positions, so no vertical comparison between them means anything"];
+            xs.push(cx(pa.x));
+            /* Screen y grows downward, so a POSITIVE gap means series 1 is drawn higher up —
+             * i.e. the $65 is the one that feels worth more. */
+            gap.push(cy(pa.y) - cy(pb.y));
+          }
+          var sign = null, flips = [];
+          for (j = 0; j < n; j++) {
+            var cur = Math.sign(gap[j]);
+            if (cur === 0) continue;
+            if (sign !== null && cur !== sign) flips.push(j);
+            sign = cur;
+          }
+          if (flips.length !== 1) {
+            bad.push("the two curves change order " + flips.length + " time(s) as drawn, not once. The figure draws one dashed marker and two tinted zones, which can only describe a single reversal.");
+          } else {
+            var lo = xs[flips[0] - 1], hi = xs[flips[0]];
+            var mb = marker.getBoundingClientRect(), mx = mb.left + mb.width / 2;
+            if (mx < lo - 1 || mx > hi + 1) {
+              bad.push("the drawn curves swap order between x=" + Math.round(lo) + "px and x=" + Math.round(hi) + "px, but the dashed marker stands at x=" + Math.round(mx) + "px. The marker names the moment the answer flips, so it has to stand where the lines actually cross.");
+            }
+          }
+          [[0, "left"], [n - 1, "right"]].forEach(function (end) {
+            var d = Math.abs(gap[end[0]]);
+            if (d <= stroke) {
+              bad.push("at the " + end[1] + " edge the two curves are " + d.toFixed(2) + "px apart while each stroke is " + stroke.toFixed(2) + "px wide, so the two strokes overlap and no reader can see which option is on top. That edge is one of lesson 23's two scenarios and the caption states which way it goes.");
+            }
+          });
+          return bad;
         }
       };
 
@@ -632,7 +697,26 @@
         '<div style="border-top:1px solid ' +
           (getComputedStyle(document.documentElement).getPropertyValue("--line-hairline").trim() || "#e4ddd2") +
           '"></div>' +
-      '</div>';
+      '</div>' +
+      /* The `preferenceFlip` plant is a SECOND role="img", not more parts inside the first: this
+       * claim's two checks are per-figure and could not both be expressed in one node.
+       * viewBox and width/height are equal on purpose, so getScreenCTM() is the identity and the
+       * numbers below are the numbers the probe reports.
+       *  • gaps 3 / 3 / -40 against a 7px stroke -> the ENDS check fires on the left edge.
+       *  • exactly one order change, between x=150 and x=290, with the marker parked at x=30 ->
+       *    the MARKER check fires.
+       * Both expectations below are keyed to something the real app cannot produce (a 7px stroke;
+       * a negative client x, which only an off-screen plant has), rather than to the shape of the
+       * message. Lesson 23's real figure fails the left-edge check TODAY — backlog item 137 — so
+       * a shape match would report this control as fired while measuring the app's live defect. */
+      '<svg role="img" data-figure="preferenceFlip" aria-label="planted flip" ' +
+           'viewBox="0 0 300 140" width="300" height="140">' +
+        '<polyline data-figure-part="series" data-figure-index="0" fill="none" stroke="#000" ' +
+          'stroke-width="7" points="10,100 150,90 290,20"></polyline>' +
+        '<polyline data-figure-part="series" data-figure-index="1" fill="none" stroke="#000" ' +
+          'stroke-width="7" points="10,97 150,87 290,60"></polyline>' +
+        '<line data-figure-part="marker" x1="30" y1="10" x2="30" y2="130" stroke="#000"></line>' +
+      '</svg>';
     document.body.appendChild(box);
     // Overflow is planted separately: it must actually widen the document to be a real control.
     var wide = document.createElement("div");
@@ -677,7 +761,10 @@
        * two independent halves and a single control would let either rot silently green. The
        * geometry half must report the short cell; the item-124 half must report the planted
        * line-token border. */
-      figureClaims: [/the four cells are not equal/, /--line-hairline/]
+      /* FOUR regexes now, one per independently-rottable half of this probe: the two from the
+       * outcomeGrid plant, plus the two from the preferenceFlip plant added for item 136. */
+      figureClaims: [/the four cells are not equal/, /--line-hairline/,
+                     /swap order between x=-\d/, /each stroke is 7\.\d\dpx wide/]
     };
     var caps = capabilities(), results = {}, failed = [];
     Object.keys(expect).forEach(function (name) {

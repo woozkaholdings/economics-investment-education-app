@@ -292,7 +292,7 @@ export function PreferenceFlip({ title, xValues, series, crossing, colors, label
           </Text>
         </figcaption>
       )}
-      <svg viewBox={`0 0 ${FLIP_W} ${FLIP_H}`} style={{ width: "100%", height: 150 }} role="img" aria-label={description}>
+      <svg viewBox={`0 0 ${FLIP_W} ${FLIP_H}`} style={{ width: "100%", height: 150 }} role="img" data-figure="preferenceFlip" aria-label={description}>
         {/* The two decision regions, drawn first so everything else sits on top. */}
         <rect x={FLIP_PAD.left} y={FLIP_PAD.top} width={flipX - FLIP_PAD.left} height={plotH} fill={zoneColors[0]} />
         <rect x={flipX} y={FLIP_PAD.top} width={FLIP_W - FLIP_PAD.right - flipX} height={plotH} fill={zoneColors[1]} />
@@ -308,10 +308,12 @@ export function PreferenceFlip({ title, xValues, series, crossing, colors, label
           would have been a marker you cannot see on a band you cannot see.
           `ink.muted` measures 6.20/6.26 in light and 6.10/6.06 in dark.
         */}
-        <line x1={flipX} y1={FLIP_PAD.top} x2={flipX} y2={py(0)} stroke={ink.muted} strokeWidth="1" strokeDasharray="3 2" />
+        <line data-figure-part="marker" x1={flipX} y1={FLIP_PAD.top} x2={flipX} y2={py(0)} stroke={ink.muted} strokeWidth="1" strokeDasharray="3 2" />
         <text x={flipX - 4} y={FLIP_PAD.top - 6} textAnchor="end" fill={ink.muted} fontSize="9">{markerLabel}</text>
         {series.map((s, i) => (
           <polyline
+            data-figure-part="series"
+            data-figure-index={i}
             key={s.label}
             points={s.values.map((v, j) => `${px(xValues[j])},${py(v)}`).join(" ")}
             fill="none"
