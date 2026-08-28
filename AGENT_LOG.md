@@ -2633,7 +2633,8 @@ same brackets were doing two different jobs one paragraph apart. Fixed to `『�
 
 #### Next run
 
-`npm run owner-tree -- --expect <post-commit fingerprint>`. **Open and unblocked:** **item 131's
+`npm run owner-tree -- --expect c2331799fd3ee413aca864fd82d247a35ea31b01a70a6c4e37b00f6aad9105b2`
+(post-commit, tree clean — unchanged, as expected: this run touched only tracked files). **Open and unblocked:** **item 131's
 remaining 12 pairs** (lessons 33, 37, 39 — now correctly scoped as one *lesson* per run, and correctly
 described as a first review of ~40,000 never-reviewed characters); **item 132** (the two cross-track
 pointers that exist only in English, low, and item 94's to price); **item 133** (`ko` `대출자`, low);
