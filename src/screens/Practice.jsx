@@ -467,7 +467,32 @@ export default function Practice({ t, lang, completedLessons, review, recordRevi
           Hidden rather than disabled when the pool is empty: a brand-new
           learner has nothing to practice yet, and the only honest label for a
           dead control here is the Steps rail directly below, which already
-          says a check question joins the queue when you finish a lesson. */}
+          says a check question joins the queue when you finish a lesson.
+
+          "All" is a different number for almost every learner, so the label
+          says which one. Measured: 46 questions over 44 lessons (42 lessons
+          own one, 2 own two), so the pool is 1 the moment the first lesson is
+          completed and takes 44 distinct values along the path. The due card
+          above has always stated its size (`reviewDueTemplate`); this button
+          was the one review control that did not.
+
+          The count is a per-language TEMPLATE and not a ` (N)` appended here,
+          which is the cheaper thing and would have been wrong in four of five
+          languages. Two reasons, both measured rather than assumed:
+            - Plural agreement. `en` and `es` break at n = 1 if the number sits
+              inside the noun phrase ("Practice all 1 questions"), and n = 1 is
+              the FIRST state a learner reaches. Both therefore park the count
+              outside it, in parentheses. `ko`/`zh`/`ja` have no plural
+              agreement and read better with the number inline, exactly as
+              their own `viewAllLessonsTemplate` and `reviewDueTemplate`
+              already write it.
+            - Spacing is language-specific too, and this file cannot know it:
+              `zh` writes "{n} 题待复习" with spaces and "查看全部{n}节课"
+              without. Appending here would impose the English shape on all
+              five.
+          Every other count in a SENTENCE in this app is a locale template (14
+          keys); the only counts built in JSX are bare numeric ratios
+          ("3 / 12"). This is a sentence. */}
       {practicePool.length > 0 && (
         <Button
           full
@@ -476,7 +501,7 @@ export default function Practice({ t, lang, completedLessons, review, recordRevi
           onClick={() => start(practicePool)}
           style={{ marginTop: space["3"] }}
         >
-          {t.practiceAll}
+          {t.practiceAllTemplate.replace("{n}", practicePool.length)}
         </Button>
       )}
 

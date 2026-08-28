@@ -110,7 +110,7 @@ export default {
     reviewNotStartedBody: "레슨을 완료하면 확인 문제가 여기에 나타나기 시작합니다.",
     reviewEmptyTitle: "모두 복습했습니다",
     reviewEmptyBody: "문제는 답한 뒤 하루이틀 지나 다시 나타나 기억에 남도록 도와줍니다.",
-    practiceAll: "전체 문제 풀기",
+    practiceAllTemplate: "문제 {n}개 모두 풀기",
     reviewCompleteTitle: "복습 완료",
     reviewScoreTemplate: "{total}개 중 {correct}개 정답",
     reviewFromLesson: "레슨 {n} · {track}",

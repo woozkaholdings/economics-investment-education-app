@@ -1402,11 +1402,29 @@ for the history. No open P1/P2 items.
       the learner MAY open, not one they have read, so including it would be the same defect one
       lesson later — but it is a *product* line, and `CLAIMS.md` A1 is the bet it serves. If the
       owner wants "practice anything you could open", it is a one-line predicate change.
-    - **A cheap improvement neither branch needs a decision for:** the label still reads "Practice
+    - ~~**A cheap improvement neither branch needs a decision for:** the label still reads "Practice
       all questions" while the session may now be 2 questions long. Appending ` (N)` costs **zero
-      locale keys** (digits are language-independent) and explains the number the learner gets. Not
-      done here because it was outside the fix and item 93/94 make five-language label churn a real
-      cost; do it as a one-liner if it is ever picked.
+      locale keys** (digits are language-independent) and explains the number the learner gets.~~
+      **✅ DONE 2026-08-28 (scheduled dev-agent) — but NOT as this bullet specified, and the
+      difference is the part worth keeping.** Shipped as a per-language template
+      (`practiceAllTemplate`, five keys) rendering e.g. `Practice all questions (6)`, verified live in
+      all five languages at n = 1, 14 and 0.
+      > ⛔ **"Zero locale keys" was arithmetically true and wrong as a design claim.** Two
+      > measurements killed it. **(1) Plural agreement breaks at the first state a learner reaches.**
+      > Measured: **46 questions over 44 lessons** (42 own one, 2 own two), so the pool is **1** after
+      > one completed lesson and takes **44 distinct values** along the path — and `en`/`es` render
+      > *"Practice all 1 questions"* if the count sits inside the noun phrase. `ko`/`zh`/`ja` have no
+      > plural agreement and read better with it inline, so **no single JSX append is right for all
+      > five languages**. **(2) Spacing is language-specific and the call site cannot know it** — `zh`
+      > writes `"{n} 题待复习"` with spaces and `"查看全部{n}节课"` without.
+      > **The house convention, measured:** every count in a **sentence** is a locale template (14
+      > keys before this change); the only counts built in JSX are bare numeric ratios (`3 / 12`).
+      > **Transferable: "costs zero locale keys" prices the change in the one currency that does not
+      > capture what makes it wrong.**
+      > Residual filed as nothing — but note the change created the 15th templated key and nothing
+      > checked any of them, so `check-data.mjs` **§1b** (placeholder parity across languages, proved
+      > able to fail three ways) landed with it. It catches a *structurally* wrong translation, never
+      > a semantically wrong one.
     - **Honest priority: low.** The defect is fixed; these are the seams around it. **All of it is
       downstream of O-1** — nobody has opened the app, so no learner has met either branch.
 
@@ -2819,6 +2837,149 @@ finding(s); V vacuous; U unavailable`. A bare "no accessibility issues found" is
 > have moved nothing while the file sat at **915 KB**, 1.5x its own trigger. The boundary used here
 > is therefore the byte target, taken on whole days. **The deeper reason is in W-5.3's note:** the
 > run log is no longer what makes this file big.
+### 2026-08-28 (scheduled dev-agent) — "all" was a different number for 44 different learners, and the cheapest way to say which one would have been wrong in four languages (item 117)
+
+**Pick.** Not item 27, not the figure cluster, and not another log-compression pass — the previous
+entry's own closing note says the closed-item tier is tight and "do not expect another compression
+pass to find much", and W-5.2's ratio rule binds against a fifth consecutive figure/tooling run.
+Taken instead from **item 117**, whose third bullet is the only *learner-facing* thing on the open
+list that is neither owner-blocked (items 94, 132, 101, O-1/O-2/O-3) nor a guard over a property with
+zero live instances (items 126, 130, 136, 120). Item 117(a) and (b) are explicitly the owner's
+judgment calls and are untouched; the bullet picked is the one the item itself marks as needing no
+decision.
+
+**W-5.2 accounting, since the rule asks a run to say which candidate it took and why:** item 26's
+remainder is blocked on item 18's analytics and on one standing owner decision (the Leitner strip);
+items 70/71 are closed or explicitly gated on a failure that has not happened; item 76 is blocked on
+a tokenizer nobody has scoped. Item 117 is the pick-list-adjacent item that is actually unblocked.
+
+#### Step 3.5 — the premise re-measured, with controls. It held, and it was UNDERSTATING the item.
+
+Item 117 says: *"the label still reads 'Practice all questions' while the session may now be 2
+questions long. Appending ` (N)` costs **zero locale keys** (digits are language-independent)."*
+
+**The first half is true and too small.** Measured by parsing `quizMeta` against `lessons.js`:
+**46 questions over 44 lessons — 42 lessons own one, 2 own two.** So the pool is **1** the moment the
+first lesson is completed, and takes **44 distinct values** along the path. "All" is not occasionally
+a surprising number; it is a different number for nearly every learner state that exists.
+Controls, because a join that silently matches nothing looks exactly like a clean answer: a lesson id
+taken from `quizMeta[0]` **must** be found (true), `99999` **must not** be (false), and every lesson
+owning a question **must** appear in `lessons.js`'s order (0 missing).
+
+⛔ **The second half is arithmetically true and wrong as a design claim, and that is this run's
+correction.** ` (N)` costs zero keys because it is built in JSX — and that is exactly the problem.
+Two measurements say so:
+
+- **Plural agreement, and it breaks at the FIRST state a learner reaches.** Put the count inside the
+  noun phrase the way the nearest existing sibling does (`viewAllLessonsTemplate: "View all {n}
+  lessons →"`) and `en` renders **"Practice all 1 questions"** at n = 1 — measured above to be the
+  pool size after one completed lesson. `es` breaks identically ("las 1 preguntas"). `ko`, `zh` and
+  `ja` have no plural agreement and read *better* with the number inline. **The five languages do not
+  want the count in the same place**, so no single JSX append is right for all of them.
+- **Spacing is language-specific too, and `Practice.jsx` cannot know it.** `zh` already writes
+  `"{n} 题待复习"` with spaces and `"查看全部{n}节课"` without; `ja` writes `"復習する問題 {n} 問"`.
+  Appending `" (N)"` at the call site imposes the English shape on all five.
+
+**The house convention, measured rather than recalled:** every count that appears **in a sentence** in
+this app is a per-language locale template — **14 keys** before this change. The only counts built in
+JSX are bare numeric ratios (`Learn.jsx:171` `{doneCount} / {items.length}`, `Practice.jsx:334`).
+A button label is a sentence. So the item's "zero keys" option is not the cheap version of the right
+answer; it is a third shape that exists nowhere in this app.
+
+#### What shipped
+
+1. **`practiceAll` → `practiceAllTemplate` in all five locales**, each language placing the count
+   where its own existing templates place it:
+   `en` `"Practice all questions ({n})"` · `es` `"Practicar todas las preguntas ({n})"` ·
+   `ko` `"문제 {n}개 모두 풀기"` · `zh` `"练习全部 {n} 道题"` · `ja` `"全 {n} 問を練習"`.
+   The two plural-agreement languages park the count in parentheses; the three without it take the
+   count inline, mirroring `viewAllLessonsTemplate` / `reviewDueTemplate` in each file. `check-data.mjs`
+   §1's two-directional key-set parity forces the rename to be complete — a half-done rename fails the
+   build rather than falling back to English.
+2. **`Practice.jsx` renders `t.practiceAllTemplate.replace("{n}", practicePool.length)`**, with the
+   reasoning above written into the comment block that already explains the pool, so the next run does
+   not re-derive the four-language argument from scratch.
+3. **`check-data.mjs` §1b — placeholder parity across languages**, filed because this change made the
+   **15th** key of this shape and nothing checked any of them. A locale value is interpolated by a
+   literal `String.replace("{n}", …)`, so a translation that drops or mistypes its token does not
+   throw and does not fall back — **it renders the braces to the learner, in that language only**, on
+   a screen nobody sweeping English would look at. Compares the *set* of tokens, deliberately not
+   their order or count, because `lessonProgressTemplate` legitimately reorders `{done}`/`{total}`
+   per language.
+
+#### Verification
+
+- **`npm test`: 7 scripts, `PASS: 0 failure(s)` on every one** (2 + 0 + 0 + 0 + 0 + 0 + 1 warnings;
+  the warnings are the pre-existing run-log-size one and `check-payload`'s, neither touched here).
+  `npm run build` ✓ built in 1.45s. `npm run check-blindspot`: `PASS: 0 failure(s)`.
+- **§1b proved able to fail, three ways, each restored from a scratchpad copy — never
+  `git checkout --`:** (a) dropping `{n}` from `ko.practiceAllTemplate` → fails naming the language,
+  the key and the string that would reach the learner; (b) adding a stray `{n}` to `ja.quizStart`,
+  where `en` has none → fails on the converse rule; (c) breaking the tokenizer's own regex so it
+  matches nothing → the vacuous-pass control fires (`only 0 keys were seen to carry placeholders`)
+  instead of reporting a clean sweep. `git diff` confirmed byte-clean after each restore.
+- **§1b's success line is gated on its own failure count.** The first draft printed
+  *"all agree across 5 languages"* three lines under its own `FAIL` — a false statement in the output
+  that run entries quote. Fixed and re-proved: under injection (a) the line is now absent.
+- **W-1 live browser verification.** `preview_start` with `{name}` was refused —
+  *"Dev servers can't be started from unattended sessions"* — so the Environment note's documented
+  technique was used instead: `npm run build`, `python3 -m http.server 8842` against `dist/`,
+  `preview_start` with a plain `url` (`navOk: true`). Driven through `javascript_tool`, seeding
+  `localStorage` and reloading (item 106's trap: seeding a booted app does nothing):
+  - **n = 1** (one completed lesson) → **`Practice all questions (1)`**. This is the exact state the
+    inline form would have rendered as *"Practice all 1 questions"*, confirmed in the rendered DOM
+    rather than argued.
+  - **n = 14** (12 completed lessons) → `Practice all questions (14)`, which **matches the static
+    trace independently measured before any edit** (`1,3,4,5,6,8,9,10,11,12,13,14`).
+  - **All five languages at n = 14**, read off the live DOM with `documentElement.lang`:
+    `Practicar todas las preguntas (14)` / `문제 14개 모두 풀기` / `练习全部 14 道题` / `全 14 問を練習`.
+    The button carries **no `aria-label`**, checked rather than assumed, so its accessible name is the
+    text — screen-reader users get the count too.
+  - **Boundary held: n = 0 still HIDES the button** (item 117(a)'s decision, which this must not
+    quietly reverse into a `(0)`). Buttons present: `Skip to navigation`, `Learn`, `Review`,
+    `Reference` — no practice control, no `(0)` anywhere. **Control**: the same probe read
+    `#review-empty-title` as `"Nothing to review yet"`, so it was on the right screen and the absence
+    is real.
+
+#### Step 5 — adversarial self-check
+
+- **Blindspot register** — no regression, and checked rather than asserted: `npm run check-blindspot`
+  **PASS, 0 failures**, including §10.1's disclaimer on all 8 surfaces and §2.3's no-live-looking-dates
+  sweep. The five changed strings are UI labels about practising questions: **0** advice-adjacent
+  verbs, no Dalio reference, no kids framing, no date or market figure.
+- **`DECISIONS.md` conflict** — none, and one entry is directly on point rather than merely
+  compatible. The 2026-08-11 machine-translation decision records that **`locales/*.js` UI strings
+  have never been in the review ledger's coverage numbers** and ship under the same "(Beta)" labeling.
+  The four new non-English strings here are exactly that category, so `npm run review-status` is
+  unaffected and its percentages did not move. No state, content-module or build decision is touched.
+- **Already-done backlog item** — no. `practiceAll` appears **0 times** in `AGENT_LOG.md` and 0 in
+  `AGENT_LOG.archive.md`, so no previous run has been near this string; item 117 filed the bullet as
+  an explicit residual and marked it "do it as a one-liner if it is ever picked".
+- **Own verification claim** — reproducible from `npm test`, `npm run build`,
+  `npm run check-blindspot`, the three injections, and the browser sequence above. **What I am NOT
+  claiming:** (1) that §1b catches a *wrong* translation — `DECISIONS.md` already states the
+  locale-parity checks catch a missing language, never a wrong one, and §1b narrows that only to
+  *structurally* wrong (a dropped or unknown interpolation token), not semantically wrong;
+  (2) that the four new non-English strings have been read by a fluent speaker — they have not, which
+  is O-3, and they are modeled on each file's own existing templates precisely to keep that risk as
+  small as a four-word label allows.
+
+#### Next run
+
+**Item 117's remaining two bullets are the owner's**, not a run's: (a) whether an empty practice pool
+should hide the button, keep it disabled, or route to Learn, and (b) whether "practice anything you
+could open" replaces "practice what you have read" — a one-line predicate either way. Both are now
+cheaper to decide than before, because the screen states its own size.
+Open and unblocked otherwise: **items 131+132** (the last 8 review pairs, only worth doing as one
+decision and mostly a re-stamp), **item 136**'s `preferenceFlip` remainder, **item 130** (low), and
+**item 26**'s stream, which is complete but for one standing owner decision. **Do not pick item 27
+next** — W-5.2's ratio still binds.
+**The log-size warning is live again and unchanged by this run**: the run log is 261 KB against a
+250 KB warn budget, and W-5.3's rule still does not fire (item 115's two options are the owner's).
+**O-1 remains the entire critical path: 44 lessons, five languages, 160 minutes of content, and zero
+people have ever opened this app.** **O-3** is unchanged — human review share is 0% in all four
+languages; this run added four short UI strings to that unreviewed surface.
+
 ### 2026-08-28 (scheduled dev-agent) — the 23 KB lever was 10.7 KB: a byte count over closed items measures what can be read, not what can be deleted (items 121/122)
 
 **Pick.** The remedy the previous run's own warning named and unblocked: compress **"Notes for future

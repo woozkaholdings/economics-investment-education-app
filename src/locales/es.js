@@ -110,7 +110,7 @@ export default {
     reviewNotStartedBody: "Termina una lección y su pregunta de repaso empezará a aparecer aquí.",
     reviewEmptyTitle: "Estás al día",
     reviewEmptyBody: "Las preguntas vuelven aquí uno o dos días después de responderlas, para que se fijen.",
-    practiceAll: "Practicar todas las preguntas",
+    practiceAllTemplate: "Practicar todas las preguntas ({n})",
     reviewCompleteTitle: "Repaso completado",
     reviewScoreTemplate: "{correct} de {total} correctas",
     reviewFromLesson: "Lección {n} · {track}",

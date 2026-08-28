@@ -126,6 +126,72 @@ function checkNonEmptyString(value, path) {
   }
 }
 
+// 1b. Placeholder parity across languages (filed with item 117's counted
+//     "Practice all questions ({n})" button, which made this the 15th key of
+//     this shape). A locale value like "{n} ready to review" is interpolated
+//     by `String.replace("{n}", …)` at the call site, so a translation that
+//     drops or mistypes its token does not throw and does not fall back — it
+//     RENDERS THE BRACES to the learner, in that language only, on a screen
+//     nobody sweeping English would look at.
+//
+//     Measured before writing this: 14 keys carried placeholders and all 14
+//     agreed across all five languages, so this guards a property that holds
+//     today rather than repairing one. It is here because the property has no
+//     other instrument and because §1 above already walks exactly this data —
+//     not because a defect was found. (Item 130's "one defect is not a class"
+//     argues against building a NET for a hypothetical; this is ten lines
+//     inside a loop that is already running, which is the other side of that
+//     trade.)
+//
+//     The comparison is deliberately the SET of tokens, not their order or
+//     count: `lessonProgressTemplate` legitimately reorders {done}/{total} per
+//     language, and a language may repeat a token.
+{
+  if (checkLangSet(TR, "TR")) {
+    const tokens = (v) => [...new Set(String(v).match(/\{[a-zA-Z]+\}/g) ?? [])].sort().join(",");
+    const before = failures;
+    let templated = 0;
+    for (const k of Object.keys(TR.en)) {
+      const en = tokens(TR.en[k]);
+      if (!en) {
+        // The converse also has to hold, or a stray token in one language is invisible.
+        for (const lang of LANGS) {
+          if (lang !== "en" && tokens(TR[lang][k])) {
+            fail(`§1b: TR.${lang}.${k} contains the placeholder(s) ${tokens(TR[lang][k])} but TR.en.${k} contains none — nothing interpolates it, so those braces render literally.`);
+          }
+        }
+        continue;
+      }
+      templated++;
+      for (const lang of LANGS) {
+        const got = tokens(TR[lang][k]);
+        if (got !== en) {
+          fail(`§1b: TR.${lang}.${k} has placeholders [${got || "none"}] where TR.en.${k} has [${en}]. These are interpolated by a literal String.replace at the call site, so a missing token renders as-is and an unknown one is never substituted — "${TR[lang][k]}" would reach the learner verbatim.`);
+        }
+      }
+    }
+    // CONTROL, both directions: the comparison must reject a dropped token and
+    // accept a legitimate reordering. Without this a bug in `tokens()` (say, a
+    // regex that matches nothing) passes every key silently.
+    const t = (v) => [...new Set(String(v).match(/\{[a-zA-Z]+\}/g) ?? [])].sort().join(",");
+    if (t("{n} ready to review") === t("ready to review")) {
+      fail("§1b CONTROL: the placeholder comparison cannot tell a template from the same string with its token removed, so every result above is meaningless.");
+    }
+    if (t("{done} of {total}") !== t("{total}: {done}")) {
+      fail("§1b CONTROL: the placeholder comparison is order-sensitive, which would fail lessonProgressTemplate's legitimate per-language reordering.");
+    }
+    if (templated < 10) {
+      fail(`§1b CONTROL: only ${templated} keys were seen to carry placeholders; 14 did when this check was written, so a number this low means the walk or the pattern is broken and the clean result above says nothing.`);
+    }
+    // Gated on this section's own failure count: an "all agree" line printed
+    // three lines under its own FAIL is a false statement in the output, and
+    // the log is what run entries quote.
+    if (failures === before) {
+      console.log(`  §1b: ${templated} locale keys carry {placeholders}; all agree across ${LANGS.length} languages (a dropped token renders its braces to the learner).`);
+    }
+  }
+}
+
 // ───────────────────────────────────────────────────────────────────────────
 // READING_MODEL — what "≈N min" on a lesson means (backlog item 56).
 //

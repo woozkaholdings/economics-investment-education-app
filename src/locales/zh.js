@@ -110,7 +110,7 @@ export default {
     reviewNotStartedBody: "完成一节课后，它的检查题就会开始出现在这里。",
     reviewEmptyTitle: "已全部复习完",
     reviewEmptyBody: "题目会在你作答一两天后再次出现，帮助你记牢。",
-    practiceAll: "练习全部题目",
+    practiceAllTemplate: "练习全部 {n} 道题",
     reviewCompleteTitle: "复习完成",
     reviewScoreTemplate: "{total}题中答对{correct}题",
     reviewFromLesson: "第 {n} 课 · {track}",

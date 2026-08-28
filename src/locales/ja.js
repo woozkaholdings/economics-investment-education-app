@@ -110,7 +110,7 @@ export default {
     reviewNotStartedBody: "レッスンを終えると、その確認問題がここに出てくるようになります。",
     reviewEmptyTitle: "すべて復習済みです",
     reviewEmptyBody: "問題は回答から1〜2日後にまた出てきて、記憶に定着させます。",
-    practiceAll: "すべての問題を練習",
+    practiceAllTemplate: "全 {n} 問を練習",
     reviewCompleteTitle: "復習完了",
     reviewScoreTemplate: "{total}問中{correct}問正解",
     reviewFromLesson: "レッスン {n} · {track}",

@@ -131,7 +131,7 @@ export default {
     reviewNotStartedBody: "Finish a lesson and its check question starts showing up here.",
     reviewEmptyTitle: "You're all caught up",
     reviewEmptyBody: "Questions come back here a day or two after you answer them, so they stick.",
-    practiceAll: "Practice all questions",
+    practiceAllTemplate: "Practice all questions ({n})",
     reviewCompleteTitle: "Review complete",
     reviewScoreTemplate: "{correct} of {total} correct",
     reviewFromLesson: "Lesson {n} · {track}",
