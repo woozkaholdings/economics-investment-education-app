@@ -1244,7 +1244,37 @@ for the history. No open P1/P2 items.
     - **The instrument this needs is item 76's** — a per-language tokenizer that can decide whether
       one term is a pattern or two instances. **Honest priority: low.** Downstream of O-1.
 
-138. **[Process/Tooling — filed 2026-08-28 by the run that closed items 131+132, as its stated
+138. **✅ DONE 2026-08-28 (owner-directed: "do item 138 next"), the same day it was filed. Shipped
+    as `check-data.mjs` §58, proved able to fail four ways — including by replaying the real
+    eight-day defect. Read the two corrections: this item specified the wrong detector, and one of
+    its own numbers was a guess.**
+    > ⛔ **"Key on the `(in <Track>)` suffix" would have covered 23% of the surface.** Measured: only
+    > **10 of 44** references carry that suffix, and they are exactly the 10 cross-track ones — the
+    > suffix names the *other track*, so it appears only when the reference crosses one. The 34
+    > same-track references are bare quoted titles.
+    > ⛔ **"The same-track references are already correct" was UNVERIFIED when this item was filed** —
+    > the filing run measured per-language presence for the 10 cross-track references only and
+    > generalized to all 44. Re-measured: **176 instances, 0 missing**, so the claim was true. It was
+    > still a guess wearing a number, and it was my own entry's.
+    > **The design that replaced it, and it is the transferable part: require the target to be marked
+    > as a TITLE, not merely mentioned.** Fourteen lesson heads are ordinary common nouns (`Credit`,
+    > `Taxes`, `Insurance`, `Transactions`, `Budgeting`), so a substring test accepts the ordinary
+    > word and calls a dropped reference present. §58 requires each language's own title marks (§56's
+    > repertoire), which **closes the gap §56's header records as out of its reach** — §56 reads
+    > repertoire and cannot tell a title reference from an ordinary quotation; §58 knows which spans
+    > are references because English says so.
+    > ⚠️ **Prefix hazard, found by probing rather than by it firing: `Credit` is a prefix of `Credit
+    > Scores` and of `Credit Reports vs. Credit Scores`.** Match extracted spans for **equality**;
+    > never `includes(mark + head)`. Both give 44 today; only equality stays right.
+    > ⚠️ **§33 looked like it should have caught the original defect and could not**, and the reason
+    > generalizes: §33 and its baseline **did not exist on 2026-08-20** (the baseline file was added
+    > 2026-08-21 by `e455663`), so it recorded the already-degraded ratio as the norm. **A baseline
+    > taken after a defect makes the defect the baseline.**
+    > **Scope shipped wider than this item asked:** lesson prose **and** `quizData.explain` — §16's
+    > two surfaces, so the title era does not cover less than the numeric era did. **50 references
+    > (44 prose, 6 quiz), 200 instances, 0 dropped, 0 unmarked.**
+    (Original text below, kept because the reasoning it records is what the corrections act on.)
+    **[Process/Tooling — filed 2026-08-28 by the run that closed items 131+132, as its stated
     residual rather than smuggled into the same commit.] The corpus's cross-track pointers are now
     40/40 and nothing in `npm test` can tell if that changes.**
     - **State:** 10 cross-track references (essentials→money, essentials→economy, money→essentials,
@@ -2900,6 +2930,144 @@ finding(s); V vacuous; U unavailable`. A bare "no accessibility issues found" is
 > have moved nothing while the file sat at **915 KB**, 1.5x its own trigger. The boundary used here
 > is therefore the byte target, taken on whole days. **The deeper reason is in W-5.3's note:** the
 > run log is no longer what makes this file big.
+### 2026-08-28 (owner-directed: "do item 138 next") — the check that would have caught the eight days, and the two guards that looked like they already covered it (item 138)
+
+**Pick.** Owner-directed. Item 138 was filed by the previous run as its own stated residual: the
+corpus's cross-references had just gone 32/40 → 40/40 and **nothing in `npm test` could see the
+difference**.
+
+#### Step 3.5 — three premises tested. Two held, and the one I wrote myself last run was unverified.
+
+- **✅ The eight-day claim, proved from history rather than remembered.** `git archive 7046854`
+  (2026-08-20, item 84's rename): the English carried **both** new pointers and **all four
+  translations carried neither target title**. **Control**: the same grep finds titles that *were*
+  there that day (`Las 4 Fases del Ciclo Económico`, `경제 순환의 4단계`, `经济周期的4个阶段`,
+  `経済サイクルの4つの局面`), so the blanks are absence, not a broken grep.
+- **⚠️ "The same-track references (34 of 44) are already correct" — I wrote that last run without
+  measuring it.** Last run computed per-language presence for the 10 cross-track references only and
+  then generalized to all 44. Measured now: **176 instances, 0 missing.** The claim was true. It was
+  also, until this moment, a guess wearing a number — which is the shape step 3.5 exists to catch,
+  and it is worse coming from my own entry than from an old one.
+- **✅ §16b cannot see it.** §16b asserts the **absence** of numeric `Lesson N` prose; it succeeds by
+  finding nothing and succeeds equally when a translation contains no reference at all. §16's
+  per-reference consistency checks run over the numeric form, so since item 84 they count zero and
+  are vacuous by construction.
+
+⛔ **A third guard looked like it should have caught this and did not, and the reason is worth more
+than the check.** Adding an English sentence without translating it lowers that pair's ratio — which
+is exactly what **§33** watches. But §33 and `translation-completeness-baseline.json` **did not exist
+on 2026-08-20**: the baseline file was first added **2026-08-21** by `e455663`, one day later, and it
+recorded the already-degraded ratio as the norm. **A baseline taken after a defect makes the defect the
+baseline.** (Confirmed by `git log --diff-filter=A`, not inferred.)
+
+#### Two design decisions, both changed by measurement rather than taken from the item
+
+**(1) Item 138 specified keying on the `(in <Track>)` suffix as the reference form. Measured: only 10
+of the 44 references carry it — and they are exactly the 10 cross-track ones.** The suffix names the
+*other track*, so it appears precisely when the reference crosses tracks; the 34 same-track references
+are bare quoted titles. Keying on it would have covered **23%** of the surface.
+
+**(2) The bigger change: require the target to be marked as a TITLE, not merely mentioned.** Fourteen
+lesson heads are ordinary common nouns — `Credit`, `Taxes`, `Insurance`, `Transactions`, `Budgeting` —
+so a substring test would accept the ordinary word and call a dropped reference present. Requiring
+each language's own title marks (§56's repertoire: `en`/`es` “”, `ko` 「」, `zh` 《》, `ja` 『』) is
+what makes the assertion mean anything. **Verified against the four riskiest short-head references by
+reading them** (lesson 10→7 `Taxes`, 32→30 `Credit`, 40→29 `Transactions`, 12→8 `Insurance`): all four
+are genuine references and every translation already wraps the target in its own title marks.
+**This also closes a gap §56's own header records as out of its reach** — §56 reads *repertoire* and
+"cannot tell a title reference from an ordinary quotation". §58 knows which spans are references
+because English says so, so it can require the target be marked as a title, which §56 has no context
+to do. The two failure modes are reported separately because they have different fixes: **MISSING**
+(the reference was dropped — item 138's defect) and **UNMARKED** (present as bare prose — §56's
+title-drift class).
+
+**A third hazard, found by probing rather than by it firing: `Credit` is a prefix of both `Credit
+Scores` and `Credit Reports vs. Credit Scores`.** A `includes("“" + head)` test would count a
+quotation of the longer title as a reference to the shorter lesson. §58 extracts spans and compares
+heads for **equality**, which removes the class rather than ordering around it. (Both approaches
+happen to return 44 today; the exact one is the one that stays right.)
+
+#### What shipped
+
+**`check-data.mjs` §58 — every cross-reference survives translation.** 200 lines, additive, no
+production code touched. Derives the reference set from English title-quoted spans whose head exactly
+matches a lesson title head, then asserts every other language carries that target's own title head
+inside that language's title marks. **Scope is lesson prose AND `quizData`'s `explain` fields** — the
+same two surfaces §16 covered in the numeric era, so the title era does not silently cover less; quiz
+references are scoped per item, not pooled per lesson, for the reason §16's header already gives.
+Current state: **50 English title references (44 lesson prose, 6 quiz), 200 translated instances, 0
+dropped, 0 present-but-unmarked.** The 6 quiz references were independently counted off the five
+`quizText.<lang>.js` modules and agree exactly with the `quizData` merged view — two instruments, same
+number.
+
+**Why a hard failure rather than a warning**, given §16's own header says translations "legitimately
+condense and drop references": that was written about a **count tripwire over the numeric forms**, and
+it does not describe this corpus's title references. Measured — **lesson 6's `zh` keeps its reference
+at a 0.125x ratio**, dropping seven eighths of the English and the reference anyway; lesson 10 `zh`
+0.164x and lesson 9 `zh` 0.173x likewise. Dropping a title reference is not something this corpus does
+when it condenses. **And a warning is what the eight days already amounted to.**
+
+#### Verification
+
+- **`npm test`: 7 scripts, `PASS: 0 failure(s)` on each.** `npm run build` ✓. `check-blindspot`
+  **PASS, 0 failures**.
+- **§58 proved able to fail, four ways, each restored from a scratchpad copy — never
+  `git checkout --`:**
+  1. **UNMARKED** — `《税收》` → bare `税收` in `zh` lesson 10: fails naming lesson, language, target
+     and the marks to use.
+  2. **MISSING, replaying the actual defect** — reverting lesson 1's `es` pointer reproduces the
+     2026-08-20 state exactly, and §58 fails on it. **This is the eight days, caught.**
+  3. **Quiz scope** — dropping `《复利》` from quiz item 24 (`zh`): fails, and correctly classifies it
+     UNMARKED rather than MISSING, because the word survives elsewhere in that explanation.
+  4. **Vacuous pass** — breaking the span extractor's English marks: **CONTROL A** fires
+     (`only 0 title cross-references were extracted`) instead of reporting a clean sweep.
+  ⚠️ **Injection 1 did not fire on the first attempt, and the check was right.** Removing one
+  `《税收》` left lesson 10's *second* one standing — §58 asserts one marked carrier per
+  (lesson, target, language), which is correct, since English itself writes several references twice
+  (58 occurrences over 44 distinct pairs). **The insufficient injection was mine, not a hole in the
+  check** — worth recording, because a first-try green injection reads exactly like a check that
+  cannot fail.
+- **Controls B and C are literals, so they fire even against an empty corpus**: a marked title must be
+  found, a bare mention must be rejected, and `ja`'s marks must not be accepted as `zh`'s.
+- **W-1 browser verification — not applicable, and proven rather than asserted.** This run changes one
+  check script and no production code; `git diff` is exactly `scripts/check-data.mjs`, and the built
+  bundle is **byte-identical** (`index-C3F1ZUMc.js` before and after).
+
+#### Step 5 — adversarial self-check
+
+- **Blindspot register** — no regression: `check-blindspot` **PASS, 0 failures**. No learner-visible
+  string changed in any language; no Dalio reference, no advice-adjacent verb, no kids framing, no
+  date or market figure. The only new prose is a check's header comment and its failure messages.
+- **`DECISIONS.md` conflict** — none. No decision governs check sections; no state, content-module or
+  build decision is touched.
+- **Already-done backlog item** — no, and this was the check worth making explicitly rather than
+  assuming. §58 could plausibly duplicate §16, §16b or §56; it duplicates none of them, and §58's
+  header states which failure each of the three cannot see, with §33 added as the fourth.
+- **The tension I went looking for and found**: §16's header says translations legitimately drop
+  references, which reads as a direct contradiction of a hard-failing §58. Resolved on measurement
+  (the 0.125x lesson above), and the resolution is written into §58's header rather than left for a
+  future run to rediscover as a conflict.
+- **Own verification claim** — reproducible from `npm test`, `npm run build`, `npm run check-blindspot`
+  and the four injections. **What I am NOT claiming:** (1) that §58 can tell a *correct* translated
+  reference from a wrong one — it checks that the target lesson's title is present and marked, not
+  that the surrounding sentence says something true; (2) that it covers every surface — `glossary.js`,
+  `kidsContent.js` and `moneyVisuals.js` are outside it, and a title reference has never appeared in
+  them, which is why it is scoped to §16's two surfaces rather than to everything.
+
+#### Next run
+
+**Item 138 is closed.** Open and unblocked: **item 136**'s `preferenceFlip` remainder and **item 130**,
+both low and both honestly marked as guards over properties with no live instance — which is a
+different case from item 138, and the difference (a dated, eight-day live instance) is exactly what
+justified building this one. **Item 27** remains ratio-blocked under W-5.2; **item 26**'s stream is
+complete but for one standing owner decision.
+**For the owner, and unchanged by this run:** the log-size warnings are both live — run log
+**284,333 b** against a 250,000 b warn budget, and the **non-archivable floor at 250,513 b, also over**.
+Archiving clears only the first; **item 115's two options for the second remain the owner's**.
+**O-1 is still the entire critical path: 44 lessons, five languages, 160 minutes of content, and zero
+people have ever opened this app.** **O-3** unchanged — this run added no translated prose at all;
+human review share is still 0% in all four languages.
+
 ### 2026-08-28 (owner-directed: "do items 131 and 132 next") — item 132 said these were the only two cross-track pointers in the corpus; there are ten, and the eight that work are the argument for fixing these two (items 131 + 132)
 
 **Pick.** Owner-directed, and it matches item 131's own instruction — *"Do them only together with item

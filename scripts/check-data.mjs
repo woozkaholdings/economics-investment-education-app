@@ -7551,5 +7551,205 @@ if (keyedGroupsChecked < 4) {
   }
 }
 
+// ───────────────────────────────────────────────────────────────────────────
+// §58. EVERY CROSS-REFERENCE SURVIVES TRANSLATION (backlog item 138).
+//
+// THE FAILURE THIS EXISTS FOR, with a date on it. Item 84 (2026-08-20,
+// `7046854`) converted every cross-reference from a number to a lesson TITLE
+// and, in the same commit, gave lessons 1 and 4 a new pointer each. Neither
+// pointer was carried into any translation. That state — 32 of 40 cross-track
+// reference instances present — stood for EIGHT DAYS and `npm test` was green
+// the whole time, because nothing in this file checked that a translation
+// carries a reference AT ALL. Verified from history rather than remembered:
+// `git archive 7046854` shows both English sentences present and all four
+// translations missing both target titles, with a control proving the same
+// grep finds titles that WERE there on that date.
+//
+// §33 DID NOT COVER IT EITHER, and the reason is worth keeping. Adding an
+// English sentence without translating it lowers that pair's ratio, which is
+// exactly what §33 watches — so §33 looks like it should have caught this. It
+// could not: §33 and `translation-completeness-baseline.json` did not exist on
+// 2026-08-20 (verified — the baseline file was first added 2026-08-21 by
+// `e455663`). It arrived one day AFTER the defect and recorded the already-
+// degraded ratio as the norm, so it had nothing to fail against. A baseline
+// taken after a defect makes the defect the baseline.
+//
+// WHY §16b CANNOT SEE IT, which is the whole reason this is a separate check.
+// §16b asserts the ABSENCE of numeric "Lesson N" prose. It succeeds by finding
+// nothing, and it succeeds just as loudly when a translation contains no
+// reference of any kind. §16's per-reference consistency checks run over the
+// numeric form too, so after item 84 they count zero and are vacuous by
+// construction. Absence checks cannot detect absence of the thing that
+// replaced what they removed.
+//
+// WHAT IS ASSERTED. The reference set is derived from ENGLISH: every span
+// wrapped in English's title marks whose head exactly matches a lesson title
+// head. For each such reference, every other language must carry that target
+// lesson's own title head, wrapped in THAT language's title marks.
+//
+// SCOPE is lesson prose AND quizData's `explain` fields — the same two
+// surfaces §16 covered in the numeric era, so the title era does not silently
+// cover less. An `explain` field is scoped per quiz item, not pooled per
+// lesson, for the reason §16's header already gives: an explain has no sibling
+// field a translation could legitimately move the reference into, so pooling
+// would re-open the hole.
+//
+// WHY A HARD FAILURE RATHER THAN A WARNING, given that §16's own header says
+// "translations legitimately condense and drop references, so a lower count
+// than English is normal". That was written about a COUNT tripwire over the
+// numeric forms, and it does not describe this corpus's title references.
+// Measured: every one of the 176 instances survives, including in the most
+// heavily abridged translations in the catalog — lesson 6's `zh` keeps its
+// reference at a 0.125x ratio, dropping seven eighths of the English and the
+// reference anyway; lesson 10 `zh` 0.164x and lesson 9 `zh` 0.173x likewise.
+// Dropping a title reference is not something this corpus does when it
+// condenses, so a warning would only be ignored — and a warning is what the
+// eight days above already amounted to.
+//
+// TWO DESIGN DECISIONS, both measured rather than assumed:
+//
+// (a) MATCH THE SPAN EXACTLY; NEVER `includes("<opening mark><head>")`.
+//     "Credit" is a prefix of both "Credit Scores" and "Credit Reports vs.
+//     Credit Scores" (the check prints this probe), so a prefix match would
+//     silently count a quotation of the longer title as a reference to the
+//     shorter lesson. Extracting spans and comparing heads for equality
+//     removes that class instead of ordering around it.
+//
+// (b) REQUIRE THE TARGET TO BE MARKED AS A TITLE, not merely mentioned.
+//     Fourteen lesson heads are ordinary common nouns — "Credit", "Taxes",
+//     "Insurance", "Transactions", "Budgeting" — so a bare substring test
+//     would accept the ordinary word and call a dropped reference present.
+//     Requiring the per-language title marks (§56's repertoire: en/es “”,
+//     ko 「」, zh 《》, ja 『』) is what makes the assertion mean something.
+//     It also closes the gap §56's own header records as out of its reach:
+//     §56 reads REPERTOIRE and "cannot tell a title reference from an
+//     ordinary quotation". This check knows which spans are title references,
+//     because English says so — so it can require the target be marked as a
+//     title, which §56 has no context to do.
+//
+// The two failure modes are reported separately on purpose: MISSING (the
+// translation dropped the reference — the item-138 defect) and UNMARKED (the
+// title is there as bare prose — the §56 title-drift class). They have
+// different fixes.
+{
+  const before58 = failures;
+  // §56's per-language TITLE marks. Note the head split accepts BOTH colons:
+  // an ASCII-only split makes every zh/ja head the entire title and reports
+  // correct references as missing — that error produced a wrong count of 15
+  // against a true 8 while item 138 was being written.
+  const TITLE_MARKS = { en: ["“", "”"], es: ["“", "”"], ko: ["「", "」"], zh: ["《", "》"], ja: ["『", "』"] };
+  const refHead = (t) => String(t).split(/[:：]/)[0].trim();
+  const titleSpans = (txt, lang) => {
+    const [open, close] = TITLE_MARKS[lang];
+    const out = [];
+    let i = 0;
+    while ((i = txt.indexOf(open, i)) !== -1) {
+      const j = txt.indexOf(close, i + open.length);
+      if (j === -1) break;
+      out.push(txt.slice(i + open.length, j));
+      i = j + close.length;
+    }
+    return out;
+  };
+  const proseOf = (entry, lang) =>
+    [...entry.sections.map((sec) => sec.body), ...entry.sections.map((sec) => sec.heading), entry.takeaway, entry.thinkAbout]
+      .filter(Boolean)
+      .map((f) => f?.[lang] ?? "")
+      .join("\n");
+
+  const byLessonId = new Map(lessons.map((l) => [l.id, l]));
+  const enHeadToId = new Map(lessons.map((l) => [refHead(l.title.en), l.id]));
+
+  // Derive the references from English, over both surfaces. A lesson-prose
+  // reference is keyed by (lesson, target) — one carrier per lesson is enough,
+  // and English itself writes several of them twice. A quiz reference is keyed
+  // by (item index, target), per the scope note above.
+  const references = new Map();
+  const addRef = (scope, key, label, texts, targetOf) => {
+    for (const span of titleSpans(texts.en, "en")) {
+      const targetId = enHeadToId.get(refHead(span));
+      if (targetId == null || targetId === targetOf) continue;
+      references.set(`${scope}:${key}->${targetId}`, { scope, key, label, texts, to: targetId });
+    }
+  };
+  for (const l of lessons) {
+    const entry = lessonContent[String(l.id)];
+    if (!entry) continue;
+    const texts = Object.fromEntries(LANGS.map((lang) => [lang, proseOf(entry, lang)]));
+    addRef("lesson", l.id, `lesson ${l.id}`, texts, l.id);
+  }
+  quizData.forEach((item, index) => {
+    if (!item.explain) return;
+    const texts = Object.fromEntries(LANGS.map((lang) => [lang, item.explain[lang] ?? ""]));
+    addRef("quiz", index, `quiz item ${index} (lesson ${item.lesson})`, texts, item.lesson);
+  });
+  const refs = [...references.values()];
+  const lessonRefs = refs.filter((r) => r.scope === "lesson").length;
+
+  // CONTROL A — coverage tripwire. A pattern that matches nothing presents as
+  // a clean pass, which is the failure mode this file has shipped twice (§16's
+  // dead surface-form patterns, §55's missing .mjs extension). 44 references
+  // stood when this was written; anything near zero means the extractor broke.
+  if (refs.length < 30) {
+    fail(
+      `§58 CONTROL A: only ${refs.length} title cross-references were extracted from English; 44 stood when this check was written. ` +
+        `A count this low means the span extractor or the head match is broken, and every clean result below is meaningless.`,
+    );
+  }
+
+  // CONTROL B/C — the matcher must accept a real marked title and reject both
+  // a bare mention and the wrong language's marks. Specimens are literals, so
+  // these fire even if the corpus is empty.
+  const marked = (txt, head, lang) => titleSpans(txt, lang).some((sp) => refHead(sp) === head);
+  if (!marked("《税收》解释过", "税收", "zh")) {
+    fail("§58 CONTROL B: the matcher cannot find a zh title inside zh's own title marks, so every 'present' verdict below is unreliable.");
+  }
+  if (marked("税收上升", "税收", "zh")) {
+    fail("§58 CONTROL C1: the matcher counts a BARE mention as a marked title, which is exactly the common-noun false positive it exists to avoid.");
+  }
+  if (marked("『税收』", "税收", "zh")) {
+    fail("§58 CONTROL C2: the matcher accepts ja's title marks as zh's, so it cannot detect a per-language marking error.");
+  }
+
+  let missing = 0;
+  let unmarked = 0;
+  for (const ref of refs) {
+    const targetTitle = byLessonId.get(ref.to).title;
+    for (const lang of LANGS) {
+      if (lang === "en") continue;
+      const head = refHead(targetTitle[lang]);
+      const prose = ref.texts[lang] ?? "";
+      if (marked(prose, head, lang)) continue;
+      const [open, close] = TITLE_MARKS[lang];
+      if (prose.includes(head)) {
+        unmarked++;
+        fail(
+          `§58: ${ref.label} [${lang}] mentions "${head}" but not as a title — English refers to lesson ${ref.to} ` +
+            `("${refHead(targetTitle.en)}") as a quoted title there. Wrap it in ${lang}'s title marks ${open}${close} (§56's repertoire), ` +
+            `so a reader can tell the reference from an ordinary use of the words.`,
+        );
+      } else {
+        missing++;
+        fail(
+          `§58: ${ref.label} [${lang}] does not reference lesson ${ref.to} ("${refHead(targetTitle[lang])}") at all, ` +
+            `but the English does, as a quoted title. This is the item-138 defect: a translation that silently drops a ` +
+            `cross-reference leaves a non-English reader with no thread to the lesson the English points them at. ` +
+            `Add the reference using that lesson's own ${lang} title from lessons.js.`,
+        );
+      }
+    }
+  }
+
+  if (failures === before58) {
+    console.log(
+      `  §58 cross-references survive translation: ${refs.length} English title references ` +
+        `(${lessonRefs} in lesson prose, ${refs.length - lessonRefs} in quiz explanations), ` +
+        `${refs.length * (LANGS.length - 1)} translated instances, 0 dropped and 0 present-but-unmarked ` +
+        `(control A ${refs.length} refs extracted, control B a marked title is found, control C a bare mention and ` +
+        `the wrong language's marks are both rejected). Matches spans exactly, so "Credit" cannot match "Credit Scores".`,
+    );
+  }
+}
+
 console.log(`\n${failures === 0 ? "PASS" : "FAIL"}: ${failures} failure(s), ${warnings} warning(s).`);
 process.exit(failures === 0 ? 0 : 1);
