@@ -1440,29 +1440,58 @@ for the history. No open P1/P2 items.
       write one, and the net must still flag its British spelling.
     - **Honest priority: low.** Zero live instances after the fix above, measured.
 
-145. **[Process/Tooling — filed 2026-08-29 by the run that built §60 (item 133), as the instrument
-    trap that made its own first measurement wrong.] A `\b`-anchored regex over the RAW
-    `src/content/*.js` files is blind to every paragraph-initial word, and the miss looks like a
-    clean count.**
-    - **What happened, measured 2026-08-29.** In those files a paragraph break is the literal
-      two-character escape `\n`, so the character preceding a paragraph-initial word is the letter
-      `n`. There is no word boundary at `nLenders`, and `/\blenders?\b/gi` over
-      `lessonContent.economy.en.js` returns **12** of the corpus's **13** "lender" occurrences —
-      silently dropping *"Lenders keep lending freely"*, which follows `\n\n`. The same scan over
-      **imported** prose returns 13. The gap was found only because a substring scan and a
-      word-boundary scan of the same file disagreed.
-    - **No shipped instrument is affected, and that was verified rather than assumed.** Every script
-      that reads lesson prose — `check-data.mjs`, `translation-completeness.mjs`,
-      `jargon-candidates.mjs`, `translation-review.mjs` — **imports** the content modules, where the
-      escapes are already real newlines. `check-data.mjs`'s three `\b` uses are over JSX source and
-      prop strings, not prose. **Zero live defects; this is a hazard for ad-hoc measurement**, which
-      is exactly what a run does when investigating a content item.
-    - **The rule, and it is one line:** to measure this corpus, **import it — never grep the file**.
-      §60's header carries this note at its own call site. If a raw scan is unavoidable, normalize
-      `\\n` to a real newline first, and **carry a control**: count the same term with and without
-      `\b` and require the two to agree.
-    - **Honest priority: low as a defect (zero live), high as a warning** — it produces a confident
-      wrong number rather than an error, in the one file family every content item touches.
+145. **✅ DONE 2026-08-29 (owner-directed: "do item 145 next"), the day after it was filed — and the
+    item's central claim was FALSE. Two safety-relevant checks were live-defective the whole time.**
+    - **What the item said, and what was wrong with it.** It said: *"No shipped instrument is
+      affected, and that was verified rather than assumed."* **It was assumed.** The run that filed it
+      checked which scripts *import* the content modules, found that every script it thought of as a
+      "prose reader" imports, and generalized. It never considered a script that **greps the raw files
+      without reading prose semantically** — which is exactly what `check-blindspot.mjs` does.
+    - **THE LIVE DEFECT, proven by injection in both directions 2026-08-29.** `check-blindspot.mjs`
+      reads `src/content/*.js` raw and applies **seven patterns that open with `\b`**: six §10.1
+      advice patterns (en + es) and the §2.3 month-year date pattern. Lesson bodies are stored one
+      physical line each with paragraph breaks as the literal escape `\n`, so the character before a
+      paragraph-initial word is the letter `n` and **no word boundary exists**.
+      **Measured, same phrase, same file, two positions:** `"We recommend buying now."` injected at a
+      paragraph start → §10.1 reports **clean, build passes**; injected mid-paragraph → **build
+      fails**. Identically for `"January 2026 was the turning point."` against §2.3.
+      **So the two checks that exist to keep investment-advice language (§10.1) and live-looking dates
+      (§2.3) away from learners were blind to the most likely position for a new sentence** — the
+      start of a paragraph.
+    - **The fix, and why it is an expansion rather than a split.** `grepFiles` now routes every line
+      through `matchesLine()`, which expands the literal `\n` to a real newline before matching. A
+      newline is a non-word character, which is precisely the boundary the leading `\b` needs.
+      Splitting on the expanded newlines was rejected: it would renumber every hit, and the `file:line`
+      in a failure message is how the owner finds the string. **Only `\n` needed expanding** — the
+      corpus's other escapes (`\"`, `\\`) already put a non-word character before the next word, the
+      CJK patterns never had boundaries to lose, and the unanchored patterns
+      (`you should (buy|sell|invest)`) were never affected.
+    - **The control that keeps it fixed, and it is executable rather than a comment.** A new
+      end-of-file control plants the banned phrases in the corpus's real `\n`-escaped storage shape
+      and requires they be caught; it also runs the **pre-fix matcher** on the same line and reports
+      that it still misses — so the expansion is demonstrated to be load-bearing rather than asserted.
+      It uses **the real pattern objects** (captured into module-level holders), not a second copy —
+      item 141's lesson. Three further branches report distinct causes: patterns never captured,
+      patterns broken outright, and a false positive on descriptive prose (`"were bullish"` must stay
+      clean, so a widened net is caught as well as a narrowed one).
+    - **The rest of the sweep, done properly this time and with a reason per script.** SAFE, verified
+      individually: `check-data.mjs` §55 (walks **imported objects** — `TR`, `lessonContent`,
+      `glossary` — so newlines are real), §59 (comment prose and Markdown, both real newlines), and
+      its three `\b` uses (JSX source and prop strings, not content); `refresh-readiness.mjs`
+      (dynamic `import()` in a `Promise.all` — my previous grep shape missed it and would have
+      misfiled it as "no content access"); `translation-completeness`, `jargon-candidates`,
+      `translation-review`, `check-payload`, `fetch-market-data` (all import). `check-measurements`,
+      `check-claims`, `check-backlog`, `check-log-size`, `owner-tree` touch no content file and hold
+      no leading-`\b` regex.
+    > ⚠️ **THE STANDING LESSON, and it is not about escapes.** The false claim was not a guess — it
+    > carried the words *"verified rather than assumed"* and named the scripts it checked. What made
+    > it wrong was the **category**: "instruments that read prose" silently excluded "instruments that
+    > grep files", and the sweep inherited that category without ever stating it. **A negative result
+    > is only as wide as the set it enumerated — so write down the set, not just the verdict.** The
+    > enumeration above is in this item for exactly that reason.
+    - **The rule for measuring this corpus is unchanged and still one line: import it, never grep it.**
+      Where a raw scan is genuinely required — as in `check-blindspot.mjs`, which must report
+      `file:line` — expand `\n` first and **carry a control that plants a paragraph-initial specimen**.
 
 143. **[Docs/Integrity — filed 2026-08-29 by the run that built §59 (item 130), as the measured
     remainder §59 deliberately does not cover.] Four British spellings live in `AGENT_LOG.md`'s
@@ -3229,6 +3258,114 @@ finding(s); V vacuous; U unavailable`. A bare "no accessibility issues found" is
 > mid-day: entries up to `eb3c11a` (21:18) were *appended* below, and everything after was *prepended*
 > above. `check-log-size.mjs` sums bytes per date into a Map, so its cut plan is byte-correct and
 > blind to this. The live section above is prepend-order (newest first); the archive is ascending.
+### 2026-08-29 (owner-directed: "do item 145 next") — the item said no shipped instrument was affected; two safety checks were blind to the start of every paragraph, and had been for as long as they have existed (item 145)
+
+**Picked item 145** on owner instruction, the day after I filed it. Tree clean but for the untracked
+`UIUX/` and `drafts/`, neither touched. `HEAD` `a0f3aeb` at start and unmoved at commit.
+
+#### Step 3.5 — the premise I wrote one run ago was half right and half false, and the false half was the load-bearing one
+
+- **Claim 1 reproduces exactly.** `/\blenders?\b/gi` over the raw `lessonContent.economy.en.js`
+  returns **12**; a substring scan of the same file returns **13**; imported prose returns **13**; and
+  **normalizing the literal `\n` to a real newline reconciles the raw scan to 13.** That last one is
+  the control — it proves the cause is the escape and not some other difference between the two
+  corpora.
+- **⛔ Claim 2 — *"No shipped instrument is affected, and that was verified rather than assumed"* — is
+  FALSE, and it was assumed.** Last run I checked which scripts *import* the content modules, found
+  they all do, and generalized from six of them. The category "instruments that read prose" silently
+  excluded **instruments that grep raw files**, which is exactly what `check-blindspot.mjs` does.
+
+#### The live defect
+
+`check-blindspot.mjs` reads `src/content/*.js` raw and applies **seven leading-`\b` patterns**: six
+§10.1 investment-advice patterns (en + es) and the §2.3 month-year date pattern. Lesson bodies are one
+physical line each, paragraph breaks written as the two-character escape `\n`, so the character before
+a paragraph-initial word is the letter `n` — a word character — and the leading `\b` cannot match.
+
+**Proven by injection, same phrase, same file, two positions, injection confirmed present each time:**
+
+| injected string | position | result |
+|---|---|---|
+| `We recommend buying now.` | paragraph-initial | §10.1 **clean, build PASSES** |
+| `We recommend buying now.` | mid-paragraph | §10.1 **FAILS** |
+| `January 2026 was the turning point.` | paragraph-initial | §2.3 **clean, build PASSES** |
+| `January 2026 was the turning point.` | mid-paragraph | §2.3 **FAILS** |
+
+**The two checks that exist to keep advice-adjacent language and live-looking dates away from learners
+were blind to the most likely position for a new sentence.** Not a hypothetical: §10.1 is a closed
+blindspot-register item that every run's step-5 self-check cites, and this is the automation that was
+supposed to make it mechanical.
+
+#### What shipped
+
+- **`matchesLine()`** — `grepFiles` now expands the literal `\n` to a real newline before matching.
+  A newline is a non-word character, which is exactly the boundary the leading `\b` needs.
+  **Expansion, not splitting:** splitting would renumber every hit, and the `file:line` in a failure
+  message is how the owner finds the offending string. Scope is deliberately narrow and stated in the
+  header — only `\n` needed it; `\"` and `\\` already leave a non-word character in front, the CJK
+  patterns never had boundaries, and the unanchored patterns were never affected.
+- **An executable control**, not a comment. It plants the banned phrases in the corpus's real
+  `\n`-escaped storage shape and requires they be caught, **and runs the pre-fix matcher on the same
+  line to confirm it still misses** — so "the expansion is load-bearing" is demonstrated rather than
+  asserted. It uses **the real pattern objects** via module-level holders rather than a second copy
+  (item 141's lesson). Three further branches separate the causes: patterns never captured, patterns
+  broken outright, and a false positive on descriptive prose.
+
+#### Verification
+
+**The decisive test is that the two previously-missed injections now FAIL the build** — re-run
+verbatim after the fix, injection confirmed present each time. **Regression:** the pre-fix and
+post-fix scripts were diffed on the real corpus and the *only* difference is the added control line —
+all seven existing `ok:` lines byte-identical, so the expansion produced **zero false positives** on
+live content. **Four mutations, each restored from a scratchpad copy:** **M1** revert the expansion →
+the control fires naming the item-145 defect; **M2** pattern set never captured → "ran against
+nothing"; **M3** widen `/\bbe bullish\b/` to `/bullish/` → the false-positive branch fires on
+`"were bullish"` (and §10.1 itself fails on real content, which is why the narrow pattern exists);
+**M4** neuter the patterns → "the pattern sets themselves are broken — this is not the escape-handling
+case". `npm test` **PASS across all 8 checks, 0 failures**, 2 standing translation warnings unchanged;
+`npm run build` clean in 1.62s. Content files restored from scratchpad copies, never `git checkout --`;
+`git diff` re-checked before committing.
+
+#### Step 5 — adversarial self-check
+
+- **Blindspot register:** this change *strengthens* §10.1 and §2.3 rather than touching content. No
+  lesson, locale, quiz or glossary string is modified. Nothing reintroduces Dalio branding (§10.2),
+  advice-adjacent language (§10.1), child-facing framing (§10.3), or a live-looking market figure —
+  and the §10.1/§2.3 automation is now strictly harder to slip past than it was this morning.
+- **`DECISIONS.md`:** no closed decision is contradicted; this is a bug fix inside an existing script.
+- **Already-done item:** nothing in "Completed and pruned" covers this. The nearest neighbor is item
+  85 (which added the §2.3 date pattern) — this fixes a hole in that pattern's *application*, not its
+  content, and item 85's own stated boundary (English month names only) is untouched and still open.
+- **My own verification claim:** an independent reviewer re-running only the commands above gets the
+  same four-row injection table and the same one-line regression diff. The mutations are reproducible
+  from their descriptions.
+- **The judgment a reviewer could fairly dispute:** the control asserts a property of code that is NOT
+  shipped (the pre-fix matcher). I kept it because a control that only proves "the fix works" cannot
+  distinguish a working fix from a corpus that no longer needs one — and the `ok:` line says which
+  case it is, in words, rather than silently passing either way.
+
+⚠️ **The standing lesson, and it is not about escapes.** The false claim was not a guess: it said
+*"verified rather than assumed"* and listed the scripts it checked. What made it wrong was the
+**category** — "instruments that read prose" quietly excluded "instruments that grep files", and the
+sweep inherited that boundary without ever stating it. **A negative result is only as wide as the set
+it enumerated, so write down the set and not just the verdict.** This run's sweep is written into item
+145 with a reason per script for that reason. This is now the fourth consecutive run to find a control
+or a sweep that could not see the case it was written for.
+
+#### Next run
+
+**Open and unblocked: item 144, item 143, item 142, item 140, item 126, item 120.** Item 117 remains
+open. Item 76's tokenizer half is still the unblocking work for items 76 and 133's inversion residual.
+**A candidate this run created and did not take:** §60's header and item 145 both now assert a sweep
+result over ~16 scripts; nothing re-runs that sweep, so it goes stale exactly like a figure. A check
+that fails when a script gains a leading-`\b` regex over a raw content read would keep it true — but
+**one defect is not a class**, and I am recording it rather than building it.
+**For the owner:** the non-archivable floor is **over budget and this entry adds to it** — `npm test`
+prints the live number; **item 115** holds the rule and the options, and only a backlog-compression
+pass can move it. **O-1 is still the entire critical path: 44 lessons, five languages, 160 minutes of
+content, and zero people have ever opened this app.** **O-3** unchanged — no translated prose was
+added.
+
 ### 2026-08-29 (scheduled dev-agent) — two of item 133's three premises were false, the Korean prose was right as shipped, and the measurement it was blocked on turned out not to need the instrument it named (item 133 → §60, new item 145)
 
 **Picked item 133** over the six items the last entry queued (144, 143, 142, 140, 126, 120), because

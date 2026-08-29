@@ -37,6 +37,48 @@ function walk(dir, exts) {
   return out;
 }
 
+// EXPAND THE LITERAL `\n` ESCAPE BEFORE MATCHING. This is not a tidy-up; it
+// fixes a measured hole in §10.1 and §2.3, and it is the reason this function
+// is not a one-line `pattern.test(line)`.
+//
+// THE DEFECT, proven by injection 2026-08-29 (backlog item 145). Lesson prose
+// in `src/content/*.js` is stored as ONE PHYSICAL LINE per body, with
+// paragraph breaks written as the two-character escape `\n`. So the character
+// immediately before a paragraph-initial word is the LETTER `n` — and `n` is a
+// word character. Every pattern here that opens with `\b` therefore CANNOT
+// MATCH at the start of a paragraph, because there is no word boundary between
+// `n` and the first letter of the word.
+//
+// What that cost, measured both ways on the same phrase in the same file:
+// `"We recommend buying now."` injected at a paragraph start was reported
+// CLEAN by §10.1; the identical string injected mid-paragraph FAILED the
+// build. Same for `"January 2026 was the turning point."` against §2.3. Seven
+// patterns opened with `\b` — six §10.1 advice patterns (en + es) and the
+// §2.3 month-year date pattern — so the two checks that exist to stop
+// investment-advice language and live-looking dates from reaching learners
+// were both blind to the single most likely position for a new sentence.
+//
+// SCOPE OF THE FIX, stated because it is narrower than it looks. Only `\n`
+// matters: the other escapes that occur in this corpus (`\"`, `\\`) put a
+// NON-word character before the following word, so a boundary already exists
+// there. The CJK patterns were never affected — those scripts have no word
+// boundaries and the patterns are plain substrings. `you should (buy|sell)`
+// and the other unanchored patterns were never affected either.
+//
+// WHY EXPAND RATHER THAN SPLIT. Splitting on the expanded newlines would
+// renumber every hit, and the file:line in a failure message is how the owner
+// finds the string. Expanding only the text handed to the matcher keeps
+// physical line numbers exact while giving `\b` the boundary it needs.
+function matchesLine(line, pattern) {
+  // A real newline is a non-word character, which is precisely what the
+  // leading `\b` needs and what the two-character escape denies it.
+  const probe = line.replace(/\\n/g, "\n");
+  pattern.lastIndex = 0; // reset global-flag regexes between lines
+  const hit = pattern.test(probe);
+  pattern.lastIndex = 0;
+  return hit;
+}
+
 function grepFiles(files, pattern, { excludeSelf = true } = {}) {
   const hits = [];
   for (const f of files) {
@@ -44,12 +86,19 @@ function grepFiles(files, pattern, { excludeSelf = true } = {}) {
     const text = readFileSync(f, "utf8");
     const lines = text.split("\n");
     for (let i = 0; i < lines.length; i++) {
-      if (pattern.test(lines[i])) hits.push(`${f}:${i + 1}: ${lines[i].trim()}`);
-      pattern.lastIndex = 0; // reset global-flag regexes between lines
+      if (matchesLine(lines[i], pattern)) hits.push(`${f}:${i + 1}: ${lines[i].trim()}`);
     }
   }
   return hits;
 }
+
+// Populated by the §10.1 and §2.3 blocks below so the escape-expansion control
+// at the end of this file exercises THE REAL PATTERN OBJECTS. A control that
+// declares its own copy of the list inherits that copy's gaps forever — the
+// defect item 141 fixed in the US-English net, and the reason these are holders
+// rather than a second array.
+let ADVICE_PATTERNS = null;
+let MONTH_YEAR_PATTERN = null;
 
 const srcFiles = walk(join(ROOT, "src"), [".js", ".jsx"]);
 const contentFiles = walk(join(ROOT, "src", "content"), [".js"]);
@@ -147,6 +196,7 @@ const readmePath = join(ROOT, "README.md");
   // hash routing makes it the preview for every shared lesson URL — and it
   // sat outside every §10.1 pattern because those scanned src/content and
   // src/locales only. No violation was found there; the gap was the point.
+  ADVICE_PATTERNS = patterns;
   const adviceFiles = [...contentFiles, ...localeFiles, join(ROOT, "index.html")];
   const hits = patterns.flatMap((p) => grepFiles(adviceFiles, p));
   if (hits.length) {
@@ -295,11 +345,64 @@ const readmePath = join(ROOT, "README.md");
   ].filter(existsSync);
   const monthYear =
     /\b(january|february|march|april|may|june|july|august|september|october|november|december)\s+20\d{2}\b/i;
+  MONTH_YEAR_PATTERN = monthYear;
   const hits = grepFiles(teachingFiles, monthYear);
   if (hits.length) {
     fail(`§2.3 a "Month YYYY"-shaped date appears in teaching copy (reads as live/current):\n  ${hits.join("\n  ")}`);
   } else {
     ok(`§2.3 no live-looking dates in ${teachingFiles.length} teaching-copy modules (markets/economicSignals/sectors/moneyVisuals/policyScenarios + lessonContent + quizText)`);
+  }
+}
+
+// --- CONTROL: the `\n`-escape expansion in grepFiles is load-bearing (item 145) ---
+//
+// Everything above is a NEGATIVE result: it reports that banned phrases were
+// not found. A negative result from a matcher that cannot fire is
+// indistinguishable from a clean corpus, and that is exactly the state §10.1
+// and §2.3 were in until 2026-08-29. This control makes the difference
+// observable: it plants the banned phrases in the corpus's real storage shape
+// and requires that they be caught.
+{
+  // One physical line, paragraph breaks as the literal two-character escape —
+  // byte-for-byte the shape `src/content/lessonContent.*.js` stores a body in.
+  const PARA_INITIAL = String.raw`"body": "Rates fell.\n\nWe recommend buying now.\n\nJanuary 2026 was the peak."`;
+  // The same banned phrases with nothing in front of them but ordinary prose.
+  // If this one ever fails, the patterns themselves are broken, not the escape
+  // handling — the two failures are reported separately for that reason.
+  const MID_LINE = String.raw`"body": "Rates fell and we recommend buying now, since January 2026 was the peak."`;
+  // Descriptive, not prescriptive. §10.1 bans the imperative "be bullish", not
+  // the historical "was bullish"; this is what proves the expansion widened the
+  // matcher's REACH without widening its NET.
+  const MUST_STAY_CLEAN = String.raw`"body": "Investors were bullish.\n\nAnalysts were cautious about January of that year."`;
+
+  const advice = ADVICE_PATTERNS ?? [];
+  const monthYear = MONTH_YEAR_PATTERN;
+  const anyHit = (line, pats) => pats.some((p) => matchesLine(line, p));
+  // The naive matcher this function used to be. Kept as an executable
+  // demonstration that the trap is real: if this ever starts catching the
+  // planted line, the corpus stopped escaping its newlines and the expansion
+  // above became dead code that should be removed rather than trusted.
+  const naive = (line, pats) => pats.some((p) => { p.lastIndex = 0; const h = p.test(line); p.lastIndex = 0; return h; });
+
+  if (!advice.length || !monthYear) {
+    fail("§10.1/§2.3 CONTROL: the advice or month-year pattern set was never captured, so the escape-expansion control ran against nothing.");
+  } else if (!anyHit(MID_LINE, advice) || !matchesLine(MID_LINE, monthYear)) {
+    fail("§10.1/§2.3 CONTROL: a banned phrase written mid-sentence was NOT matched. The pattern sets themselves are broken — this is not the escape-handling case.");
+  } else if (!anyHit(PARA_INITIAL, advice)) {
+    fail(`§10.1 CONTROL: "We recommend" at the start of a paragraph was not caught. grepFiles has stopped expanding the literal \\n escape, so every §10.1 pattern that opens with \\b is blind to the first word of every paragraph in src/content — the item-145 defect, reintroduced. See matchesLine's header.`);
+  } else if (!matchesLine(PARA_INITIAL, monthYear)) {
+    fail(`§2.3 CONTROL: "January 2026" at the start of a paragraph was not caught. Same cause as the §10.1 control above — see matchesLine's header.`);
+  } else if (anyHit(MUST_STAY_CLEAN, advice)) {
+    fail("§10.1 CONTROL: descriptive prose (\"were bullish\", \"were cautious\") was flagged as advice. The escape expansion has widened the net, not just its reach — a false positive here would train future runs to ignore this check.");
+  } else {
+    // anyHit(PARA_INITIAL) is already true in this branch; the only open
+    // question is whether the PRE-FIX matcher would have missed the same line.
+    const naiveMissed = !naive(PARA_INITIAL, advice);
+    ok(
+      `§10.1/§2.3 escape-expansion control: paragraph-initial banned phrases ARE caught in the corpus's real \\n-escaped storage shape ` +
+        `(${advice.length} advice patterns + the month-year pattern; descriptive "were bullish"/"were cautious" stays clean; ` +
+        `${naiveMissed ? "and the pre-fix matcher still misses the same line, so the expansion is load-bearing" : "NOTE: the pre-fix matcher now catches it too — the corpus may have stopped escaping newlines, making the expansion dead code"}).`,
+    );
   }
 }
 
