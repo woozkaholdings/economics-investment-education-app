@@ -7110,7 +7110,21 @@ if (keyedGroupsChecked < 4) {
   const before55 = failures;
   const BRITISH = [
     [/\b(labour|colour|behaviour|favour|honour|neighbour|rumour|humour|endeavour|flavour|savour|harbour|vapour|armour|valour|odour|parlour|splendour)\w*/gi, "drop the u (labour → labor)"],
-    [/\b(organis|realis|recognis|specialis|minimis|maximis|prioritis|normalis|summaris|apologis|criticis|utilis|capitalis|localis|stylis|tokenis|standardis|memoris|categoris|penalis|sterilis)\w*/gi, "-ise/-isation → -ize/-ization"],
+    // The suffix set is EXPLICIT, and that is the whole point of this line.
+    // Written as `(stem)\w*` — which is how it shipped from 2026-08-27 to
+    // 2026-08-29 — every stem here is also a prefix of a correct US noun or
+    // adjective, so the net flagged 19 of them: `capitalis` swallows
+    // "capitalism"/"capitalist", `realis` swallows "realism"/"realistic",
+    // `criticis` "criticism", `organis` "organism"/"organist", `specialis`
+    // "specialist", `apologis` "apologist", `stylis` "stylish"/"stylistic".
+    // In an app that TEACHES economics, the first lesson to use the word
+    // "capitalism" would have failed the build and told its author to write
+    // "capitalize" — a check instructing someone to corrupt correct content.
+    // CONTROL C is the guard for exactly this and could not see it, because
+    // its US list held no -ism/-ist/-ic derivation; both halves are fixed
+    // together, and the words above are now IN that list.
+    // Only real British inflections follow an -ise stem, so name them:
+    [/\b(organis|realis|recognis|specialis|minimis|maximis|prioritis|normalis|summaris|apologis|criticis|utilis|capitalis|localis|stylis|tokenis|standardis|memoris|categoris|penalis|sterilis)(e|es|ed|ing|er|ers|ation|ations|ational|able)\b/gi, "-ise/-isation → -ize/-ization"],
     // "analyses" is deliberately ABSENT: it is the correct US plural of
     // "analysis" AND the British third-person verb, spelled identically. It
     // cannot be classified without reading the sentence, and CONTROL C below
@@ -7191,6 +7205,7 @@ if (keyedGroupsChecked < 4) {
     const MUST_CATCH = [
       "labour", "colour", "behaviour", "favour", "honoured", "neighbouring",
       "organised", "capitalisation", "specialised", "analyse", "emphasised",
+      "realise", "criticised", "utilisation", "organisational", "recognisable",
       "centre", "theatre", "kilometre", "fibre", "defence", "licence",
       "practising", "cancelled", "labelled", "programme", "cheque", "whilst",
       "enrol", "fulfil", "judgement", "catalogue", "ageing", "sceptical",
@@ -7212,6 +7227,15 @@ if (keyedGroupsChecked < 4) {
       "fulfill", "judgment", "catalog", "aging", "skeptical", "exercise",
       "compromise", "expertise", "otherwise", "surprise", "franchise",
       "genre", "mediocre", "acre", "four", "hour", "your", "flour",
+      // The -ism/-ist/-ic derivations. Added 2026-08-29 with the suffix fix
+      // above, because this list is what makes that fix a property rather
+      // than a promise: every one of these was flagged by the shipped net,
+      // and this list — whose entire job is to catch a stem widened into a
+      // suffix rule — contained no word of this shape to catch them with.
+      "capitalism", "capitalist", "capitalists", "realism", "realist",
+      "realistic", "realistically", "criticism", "criticisms", "organism",
+      "organisms", "organist", "specialist", "specialists", "apologist",
+      "stylish", "stylist", "stylistic", "stylistically",
     ];
     const falsePositives = MUST_NOT_CATCH.filter((w) => scan(w).length > 0);
     if (falsePositives.length) {

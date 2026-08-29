@@ -1386,6 +1386,25 @@ for the history. No open P1/P2 items.
     - **Honest priority: low.** Zero live instances, measured. Downstream of O-1 like everything
       else — but cheaper than it looks, since the sweep above is written down and reusable.
 
+141. **[Process/Tooling — filed 2026-08-29 by the run that narrowed §55's `-ise` stems, as its
+    stated residual rather than smuggled into the same commit.] §55 has no `hypothesis` stem, and
+    `hypothesised` is a British form this repo has actually shipped.**
+    - **Measured 2026-08-29:** against both the old and the new pattern set, `hypothesised` is
+      **MISSED** — the `-ise` stem list has no `hypothesis`, and `emphasis(e|ed|es|ing)` is its own
+      pattern that does not generalize. It is named in item 91's own removal list
+      (`AGENT_LOG.archive.md:17177`, alongside `localised`/`tokeniser`/`tokenisation`/`stylised`,
+      **all four of which the fixed net still catches** — controlled, so the miss is a real gap and
+      not an artifact of the narrowing).
+    - **This is a coverage gap, NOT a regression from the narrowing.** Neither pattern set caught it.
+      Stated explicitly because the obvious suspicion about a run that made a net narrower is that
+      it lost something, and the four-word control above is what rules that out.
+    - **The fix is one stem, and the shape matters:** `hypothesis` cannot be added to the `-ise`
+      list as a bare stem, because `(hypothesis)(e|es|ed|ing|...)` would flag the correct US noun
+      **"hypotheses"** — the identical trap that keeps `analyses` deliberately unflagged. It needs
+      the `emphasise` treatment: its own pattern over the unambiguous verb forms only.
+    - **Honest priority: low.** Zero live instances in learner-visible strings, measured. Do not
+      pick it alone — it is one stem, and worth folding into the next run that touches §55.
+
 130. **[Process/Tooling — filed 2026-08-27 by the run that built §55, as its stated blind spot.]
     §55 cannot see comments, dev scripts, or Markdown — and that is 21 of the 36 spellings it was
     built in response to.**
@@ -1402,10 +1421,32 @@ for the history. No open P1/P2 items.
       marker. **The marker convention already exists and nothing reads it** — 21 occurrences across
       `AGENT_LOG.md`, `AGENT_LOG.archive.md`, `DECISIONS.md` and `LAUNCH_PLAN.md`, placed by earlier
       runs in anticipation of a checker. Making them load-bearing is most of the work.
-    - **Do not build it until the hand-swept surface has drifted again.** One regrowth is what
-      justified §55; a second, in comments specifically, is what would justify this. **One defect is
-      not a class** (item 125 proved that, and item 126 is filed on the same reasoning).
-    - **Honest priority: low.** Zero live instances as of this entry. Downstream of O-1.
+    - ~~**Do not build it until the hand-swept surface has drifted again.**~~ **✅ THE GATE IS MET,
+      measured 2026-08-29, and the drift source is this agent.** A raw scan of comments in `src/` +
+      `scripts/` (87 files) and the five normative Markdown files found **7 real British spellings
+      in comments**, and `git blame` dated them: **6 of the 7 were written on 2026-08-27 and
+      2026-08-28** — `normalised`/`normalising`/`centre`/`neighbour` in `scripts/a11y-sweep.js`,
+      `neighbouring`/`labelled` in `scripts/check-data.mjs` — i.e. **after** this item's own hand
+      sweep, by the five dev-agent runs `d35218d`/`98f2714`/`24e3757`/`5d3882a`/`7fe2fe5`/`e27d6ea`.
+      Only `Capitalised` in `scripts/jargon-candidates.mjs:287` (2026-08-17) predates the sweep and
+      is a **miss**, not drift. Plus **2 unmarked** hits in Markdown (`DECISIONS.md:672` `labour`,
+      `:708` `licence`) against 4 correctly carrying `us-english:allow`.
+      > **That is ~3 new instances per day, all self-inflicted, and it reframes the item.** The
+      > surface does not drift because contributors are careless; it drifts because *this agent
+      > writes comments faster than anyone re-sweeps them*. A hand sweep is therefore not a cheaper
+      > alternative to the checker — it is a thing that decays measurably within two days.
+      > ⚠️ **The 7 instances were deliberately LEFT IN PLACE.** Fixing them silently would give the
+      > run that builds this checker a swept baseline and no test corpus, and would erase the
+      > evidence above. Sweep them *with* the instrument, in the same commit.
+      > ⚠️ **Instrument note for whoever builds it, both traps hit live.** (a) The blame loop first
+      > returned **seven blank lines** — `set -- $spec` in zsh, which does not word-split, so `$2`
+      > was empty and every `git blame -L ,` failed silently. A control line of known age is what
+      > caught it. (b) The scanner must use the **fixed** `-ise` pattern: run with the pre-2026-08-29
+      > wide stems it reported **45** comment hits against a true 25, because it flagged the correct
+      > US words in §55's own new comment.
+    - **Honest priority: low → LOW-MEDIUM.** Still zero *learner-visible* instances. Downstream of
+      O-1. The `aria-labelledby` false positive (12 in `src/`, 5 in `scripts/`) remains the reason
+      the marker must be honored before the net is turned on.
 
 126. **[Docs/Integrity — filed 2026-08-27 by the run that closed item 125, as its stated residual
     rather than smuggled into the same commit.] §52 only sees a hex that shares a line with the
@@ -3025,6 +3066,105 @@ finding(s); V vacuous; U unavailable`. A bare "no accessibility issues found" is
 > have moved nothing while the file sat at **915 KB**, 1.5x its own trigger. The boundary used here
 > is therefore the byte target, taken on whole days. **The deeper reason is in W-5.3's note:** the
 > run log is no longer what makes this file big.
+### 2026-08-29 (scheduled dev-agent) — the check that teaches economics would have failed the build on the word "capitalism", and the control written to catch that could not see the shape (§55)
+
+**Pick.** Started on **item 130** (extend §55's US-English net past learner-visible strings), whose
+own gate is *"do not build it until the hand-swept surface has drifted again"*. Re-measuring that
+gate is what a run is supposed to do before building — and the scan came back with a finding about
+**§55 itself** that outranked the item. Item 130's gate result is recorded in the item (it is met);
+this run shipped the §55 fix instead, because a live defect in an existing check beats extending it.
+
+#### The defect
+
+§55's `-ise/-isation` family was written as **`(stem)\w*`** over 21 bare stems. Every one of those
+stems is also a prefix of a correct **US** noun or adjective, so the net flagged **19 correct US
+words**: `capitalis` → *capitalism, capitalist, capitalists*; `realis` → *realism, realist,
+realistic, realistically*; `criticis` → *criticism, criticisms*; `organis` → *organism, organisms,
+organist*; `specialis` → *specialist(s)*; `apologis` → *apologist*; `stylis` → *stylish, stylist,
+stylistic, stylistically*.
+
+**This app teaches economics.** The first lesson to use the word *capitalism* would have failed the
+build with `-ise/-isation → -ize/-ization` and the standing instruction *"If it is a verbatim
+quotation, it does not belong in shipped content — reword it."* **A check that tells its author to
+corrupt correct content is worse than no check** — and §55 is currently green only because the
+corpus happens not to contain the word yet (measured: **0 occurrences** of all 19 across `src/`
+and `drafts/`).
+
+**Two live false positives already existed** and are now gone: `stylistic` in
+`check-data.mjs:7628` and in `LAUNCH_PLAN.md:144`. Both are outside §55's scope, which is exactly
+why nothing had noticed.
+
+#### The half that makes it a property, not a patch
+
+**CONTROL C exists to catch precisely this** — its own comment says *"A pattern was widened into a
+suffix rule"* — and it could not, because its 44-word US list contained **no `-ism`/`-ist`/`-ic`
+derivation of any kind**. It held *organized, analysis, exercise, compromise, expertise, otherwise,
+surprise, franchise* and nothing shaped like *criticism*. So both halves shipped together: the
+suffix set is now explicit (`e|es|ed|ing|er|ers|ation|ations|ational|able`), and the 19 words are in
+CONTROL C. **Fixing the net without the list would have left the next stem free to reintroduce it.**
+
+#### Verification — four injections, each restored byte-identically from a scratchpad copy
+
+| # | Injection | Result |
+|---|---|---|
+| 1 | `organise` into `glossary.GDP.en.f` | `FAIL §55: glossary.GDP.en.f uses the British spelling "organise"` |
+| 2 | `capitalisation` into `glossary.CPI.en.f` | `FAIL §55: glossary.CPI.en.f … "capitalisation"` |
+| 3 | stem re-widened to `\w*` | `FAIL §55 CONTROL C:` naming **all 19** |
+| 4 | `ation` dropped from the suffix set | `FAIL §55 CONTROL B:` naming *capitalisation, utilisation, organisational* |
+
+Injection 3 is the one that matters: it proves the guard **now sees the class it was blind to**.
+§55 reports **34 British specimens flagged / 63 US forms silent** (was 29 / 44). `npm test` PASS
+(0 failures, the 4 pre-existing warnings unchanged), `npm run build` ✓ 1.81s. Restores verified by
+`shasum`, never `git checkout --`.
+
+**Coverage was controlled in the other direction too**, since the obvious suspicion about a narrowed
+net is that it lost something: `localised`, `tokeniser`, `tokenisation`, `stylised` — four forms item
+91 actually removed from this repo — are **all still caught**. `hypothesised` is **missed**, by both
+the old and the new pattern, and is filed as **item 141**.
+
+#### Step 5 — adversarial self-check
+
+- **Blindspot register** — no regression. The diff touches one check script; no learner-visible
+  content, no Dalio, no advice language, no kids framing, no market figure. The one date added
+  (`2026-08-29`) is a dated record of when a code change landed, not a live-looking figure.
+  `check-blindspot` PASS.
+- **DECISIONS.md** — no conflict; nothing here touches state, module format or the build tool.
+- **Already-done item** — grepped `stylis|apologist|-ism/-ist|suffix set` across both log files:
+  5 hits, all unrelated ("stylistic"/"stylised" in figure-design prose). **No run has narrowed
+  these stems before**, and this does not redo item 128 (which *built* §55) or item 130 (which
+  *extends its scope*) — it corrects a pattern inside it.
+- **Own verification claim** — reproducible from `node scripts/check-data.mjs`, `npm test`,
+  `npm run build`, and the four injections above. **What I am NOT claiming:** (1) that this was ever
+  a *shipped* defect — it was latent, 0 live instances, and saying otherwise would overstate it;
+  (2) that the other 15 pattern families are free of the same widening — I checked them by reading
+  and only the `-ise` family uses bare stems with an open `\w*`, but that is a reading, not a sweep.
+- ⚠️ **One instrument failure worth carrying, because it produced a confident wrong answer.** The
+  first false-positive probe printed **`count: 0`** — the shell mangled `\\b` into a literal
+  backslash-b, so the regex matched nothing and the screen said the defect did not exist. It was
+  caught only because the probe carried a positive control (`organised` must match) on the next
+  run. **The zsh/heredoc escaping layer is an instrument, and it fails silent-green like any other.**
+
+#### Next run
+
+**Open and unblocked: item 130** — its gate is now **met and dated** (7 British spellings in
+comments, 6 of them written by dev-agent runs on 2026-08-27/28, ~3/day, all deliberately left in
+place as that build's test corpus). It is the natural successor to this run. Also open: **item 141**
+(one stem, fold into the next §55 change), **item 140**, **item 126**, **item 120**.
+
+**For the owner — the log budget, and it is now the shortest fuse in the repo.** Quoting the tool
+rather than retyping it, before this entry: `MEASURED log-size: file 585255 b, run log 323432 b,
+floor 261823 b (backlog 234279 b), archive 2077529 b, 3 live day(s)`. The run log is **73 KB over**
+its warn budget and grows **+9,406 b/commit**, so it reaches the **350 KB hard-fail** in roughly
+**three more runs** — at which point `npm test` fails and *no run can commit anything*.
+**I did not archive, deliberately.** W-5.3's rule as literally written has not fired (it triggers at
+600 KB whole-file; the file is 585 KB), and its byte-driven replacement — *archive whole days,
+oldest first, until under target* — is the rule change W-5.3 explicitly reserves to the owner. The
+instrument already prints the exact cut (`move 1 day(s) — 2026-08-26 (77,928 b) — leaving
+245,504 b`). **This needs a one-line decision, not a run's judgment**, and it now has a deadline
+attached rather than a level. **Item 115's floor options remain pending for a fourth day.**
+**O-1 is still the entire critical path: 44 lessons, five languages, 160 minutes of content, and
+zero people have ever opened this app.** **O-3** unchanged — this run added no translated prose.
+
 ### 2026-08-28 (owner-directed: "do item 136 next") — the axis change that would have swapped the two lines in lesson 3's caption, and the three figures that stay uncovered on measurement rather than on judgment (item 136)
 
 **Pick.** Owner-directed. **HEAD had moved before this run started** — `0ad034f` (item 139) and
