@@ -94,7 +94,33 @@
  *
  *   A11yStates.begin('practice-batch-pause')   // seeds, then reloads the page
  *   ...re-eval both files after the reload...
+ *   ...send ONE `computer` Tab keypress to the pane...   // see below — do not skip this
  *   await A11yStates.finish()                  // drives the steps and sweeps
+ *
+ * ⚠️ THE TAB STEP IS PART OF THE RELOAD RECIPE, and it was missing from this block until
+ * 2026-08-29. `focusVisibleOnTab` needs a document that has been tabbed into, and A11ySweep's
+ * selftest REFUSES to pass without one — so on the no-reload path the operator cannot forget it.
+ * begin() reloads the page, which throws that state away, and nothing re-checks: finish() then
+ * returns `status: "ok", findings: 0` with `verdict: "clean on 10 probe(s); 1 unavailable"`.
+ * The verdict is honest and the status is the field people quote. Measured this date: the first
+ * state of this run's sweep reported exactly that, and so — unremarked — did all seven
+ * reload-gated states of the 2026-08-29 320px sweep whose entry reads "19/19 clean".
+ * coverage() below exists so that number stops being assembled from memory.
+ *
+ * ── STATING WHAT A SESSION ACTUALLY COVERED (2026-08-29) ──────────────────────────────────────
+ * runAll() summarizes the twelve no-reload states in one object. The seven reload-gated states
+ * have no such object: they arrive one at a time, three tool calls apart, across page reloads
+ * that wipe every variable this file holds. So the run-log sentence "19/19 states clean" has
+ * always been assembled by the operator, by hand, from seven separate JSON blobs — and a probe
+ * that did not run on some of them leaves no trace in the sum.
+ *
+ *   A11yStates.coverage()        // the assembled claim: which states, at which axes, which probes
+ *   A11yStates.coverageReset()   // start a fresh claim without reloading the tab
+ *
+ * run(), runAll() and finish() each append to a per-TAB ledger; coverage() reads it back and
+ * REFUSES to state one claim when the rows disagree about language, font scale or viewport
+ * width. That refusal is the point: twelve states at 375px plus seven at 320px is not nineteen
+ * states at either width, and it reads exactly like nineteen if nobody is checking.
  *
  * ZERO dependencies, same as a11y-sweep.js. Not in `npm test`: this is a browser instrument, and
  * making it a Node test means adding a headless browser — item 12's port-cost rule territory.
@@ -595,6 +621,59 @@
     return tally;
   }
 
+  /* ── the session coverage ledger (2026-08-29) ───────────────────────────────────────────────
+   * WHY sessionStorage and not a variable: begin() navigates, and every reload drops this file
+   * and everything in it. The seven reload-gated states cannot be accumulated any other way.
+   * WHY sessionStorage and not localStorage: a coverage claim must not outlive the tab. A ledger
+   * that survived would let a sweep of TODAY's build be summed with one of yesterday's, which is
+   * the stalest possible version of the lying zero this file exists to prevent.
+   *
+   * WHAT DOES NOT RECORD, deliberately: the audit (it sweeps the wrong side of each state on
+   * purpose), selftest() (its four states are fakes), and sweepLangs() (it already returns its
+   * own per-language summary, and folding five languages into one row would produce exactly the
+   * mixed-axis average that coverage() refuses to print). Recording therefore happens at the
+   * three public entry points, not inside drive().
+   */
+  var LEDGER_KEY = "__a11ystates_ledger";
+
+  function ledgerRead() {
+    try {
+      var rows = JSON.parse(sessionStorage.getItem(LEDGER_KEY) || "[]");
+      return Array.isArray(rows) ? rows : [];
+    } catch (e) { return []; }
+  }
+
+  // Last write wins PER STATE. Re-sweeping one state after a fix must replace its row, never add
+  // a second: a ledger that counted both would report 20 rows over 19 states and call it coverage.
+  function ledgerRecord(results) {
+    var rows = ledgerRead();
+    results.forEach(function (r) {
+      if (!r || !r.state) return;
+      var s = find(r.state);
+      rows = rows.filter(function (x) { return x.state !== r.state; });
+      rows.push({
+        state: r.state,
+        status: r.status,
+        findings: typeof r.findings === "number" ? r.findings : null,
+        reload: !!(s && s.reload),
+        // Absent on MISSED and PRECONDITION rows — drive() returns no env when it never swept.
+        // coverage() treats a missing env as an unknown axis rather than as agreement.
+        probeStatus: r.probeStatus || null,
+        env: r.env || null
+      });
+    });
+    try { sessionStorage.setItem(LEDGER_KEY, JSON.stringify(rows)); } catch (e) { /* quota: report below */ }
+    return rows.length;
+  }
+
+  // The axis a row was swept at. `layoutViewportWidth` is deliberately NOT in this key: item 146
+  // measured it varying 320 vs 305 between scrolling and non-scrolling screens at one real width,
+  // so keying on it would report a mixed axis for a session that never changed anything.
+  function axisOf(row) {
+    if (!row.env) return "UNKNOWN — state not reached, nothing was swept";
+    return row.env.htmlLang + " @ " + row.env.rootFontSizePx + "px root @ " + row.env.viewportWidth + "px wide";
+  }
+
   /* ── the state matrix ───────────────────────────────────────────────────────────────────────
    * `arrived.is` must read the DOM for something only this state shows. "A heading exists" is
    * usually not enough — several states share an <h1>. Prefer the thing that CHANGED. */
@@ -1032,7 +1111,7 @@
       var s = find(name);
       if (!s) return Promise.resolve(JSON.stringify({ error: "unknown state: " + name }));
       if (s.reload) return Promise.resolve(JSON.stringify({ error: name + " needs a reload — use begin('" + name + "') then finish()." }));
-      return drive(s).then(function (r) { return JSON.stringify(r, null, 2); });
+      return drive(s).then(function (r) { ledgerRecord([r]); return JSON.stringify(r, null, 2); });
     },
 
     // Every state that needs no reload, in one call. MISSED is counted separately from clean on
@@ -1043,6 +1122,7 @@
         chain = chain.then(function () { return drive(s); }).then(function (r) { out.push(r); });
       });
       return chain.then(function () {
+        ledgerRecord(out);
         var missed = out.filter(function (r) { return r.status === "MISSED"; });
         var findings = out.filter(function (r) { return r.status === "FINDINGS"; });
         // Counted apart from both clean and missed. A precondition failure is not "we could not
@@ -1070,6 +1150,90 @@
           states: out
         }, null, 2);
       });
+    },
+
+    /* ── the assembled coverage claim (2026-08-29) ─────────────────────────────────────────
+     * The sentence a run-log entry wants to write is "N of 19 states, clean, at width W and
+     * scale S". Until this existed that sentence was written by hand from up to eight separate
+     * JSON blobs, and three things could go wrong in it silently — all three are refusals here,
+     * not footnotes:
+     *
+     *   1. MIXED AXES. Twelve states swept at 375px and seven at 320px is not nineteen states
+     *      at either. The rows are grouped by axis and no single claim is printed.
+     *   2. STATES NEVER SWEPT. `missing` is computed against the real matrix, so "19/19" has to
+     *      be earned by nineteen rows rather than asserted.
+     *   3. A PROBE THAT DID NOT RUN EVERYWHERE. This is the one that prompted the whole method:
+     *      a state swept without the Tab step is clean on ten probes, reports `status: "ok"`,
+     *      and disappears into a total. `partialProbes` names any probe that was not `ok` on
+     *      every row, with the states it missed — so a clean total can no longer hide it.
+     */
+    coverage: function () {
+      var rows = ledgerRead();
+      var known = STATES.map(function (st) { return st.name; });
+      var missing = known.filter(function (n) { return rows.every(function (r) { return r.state !== n; }); });
+
+      var byAxis = {};
+      rows.forEach(function (r) { (byAxis[axisOf(r)] = byAxis[axisOf(r)] || []).push(r.state); });
+      var axisKeys = Object.keys(byAxis);
+
+      var clean = rows.filter(function (r) { return r.status === "ok"; });
+      var withFindings = rows.filter(function (r) { return r.status === "FINDINGS"; });
+      var notSwept = rows.filter(function (r) { return r.status !== "ok" && r.status !== "FINDINGS"; });
+
+      // A probe is fully covered only when it reported `ok` on every recorded row. VACUOUS and
+      // UNAVAILABLE both mean "did not actually assert anything here", and both are counted as
+      // gaps rather than as passes — probeTally keeps the breakdown.
+      var partial = {};
+      rows.forEach(function (r) {
+        Object.keys(r.probeStatus || {}).forEach(function (k) {
+          if (r.probeStatus[k] !== "ok" && r.probeStatus[k] !== "FINDINGS") {
+            (partial[k] = partial[k] || []).push(r.state + ":" + r.probeStatus[k]);
+          }
+        });
+      });
+
+      var verdict;
+      if (!rows.length) {
+        verdict = "NO COVERAGE RECORDED — run(), runAll() or finish() has not completed in this tab. " +
+                  "A ledger is per-TAB and does not survive closing it.";
+      } else if (axisKeys.length > 1) {
+        verdict = "MIXED AXES (" + axisKeys.length + ") — these " + rows.length + " row(s) were NOT swept " +
+                  "under one configuration, so there is no single claim to quote. See statesByAxis, and " +
+                  "call coverageReset() before sweeping a new configuration.";
+      } else if (notSwept.length) {
+        verdict = notSwept.length + " of " + rows.length + " recorded state(s) were never actually swept (" +
+                  notSwept.map(function (r) { return r.state + ":" + r.status; }).join(", ") +
+                  ") — their zeros do not exist.";
+      } else {
+        verdict = clean.length + " clean / " + withFindings.length + " with findings, over " + rows.length +
+                  " of " + known.length + " state(s), all at " + axisKeys[0] +
+                  (missing.length ? " — NOT full coverage: " + missing.length + " state(s) unswept." : " — every state in the matrix.") +
+                  (Object.keys(partial).length
+                    ? " ⚠️ " + Object.keys(partial).length + " probe(s) did not run on every state; see partialProbes."
+                    : " All probes ran on every state.");
+      }
+
+      return JSON.stringify({
+        recorded: rows.length,
+        ofStates: known.length,
+        missing: missing,
+        clean: clean.length,
+        withFindings: withFindings.length,
+        notSwept: notSwept.map(function (r) { return { state: r.state, status: r.status }; }),
+        statesByAxis: byAxis,
+        probeTally: probeTally(rows),
+        partialProbes: partial,
+        rows: rows.map(function (r) {
+          return { state: r.state, reload: r.reload, status: r.status, findings: r.findings, axis: axisOf(r) };
+        }),
+        verdict: verdict
+      }, null, 2);
+    },
+
+    coverageReset: function () {
+      var had = ledgerRead().length;
+      sessionStorage.removeItem(LEDGER_KEY);
+      return JSON.stringify({ cleared: had, note: "ledger empty — the next run()/runAll()/finish() starts a new claim." });
     },
 
     // Seeded states: localStorage is only read at mount, so this reloads the page.
@@ -1119,6 +1283,9 @@
           if (wantPx && r.env && Math.abs(r.env.rootFontSizePx - wantPx) > 0.5) bad.push("root font-size is " + (r.env && r.env.rootFontSizePx) + "px, expected ~" + wantPx);
           if (bad.length) { r.status = "AXES-NOT-APPLIED"; r.findings = null; r.axesProblem = bad; }
         }
+        // Recorded AFTER the axis assertion, so a state whose 130% seed silently fell back to
+        // 100% enters the ledger as AXES-NOT-APPLIED and cannot be counted as covered at 130%.
+        ledgerRecord([r]);
         return JSON.stringify(r, null, 2);
       });
     },
@@ -1316,10 +1483,39 @@
                 EXPECT_VW = vwBefore;
                 var vwOk = vwAccepts === true && vwRejects === true;
 
+                /* The ledger's control, two-sided for the same reason the two above are: a
+                 * coverage claim that only ever agrees is indistinguishable from one that never
+                 * compares. One planted row must be COUNTED; a second row at a different viewport
+                 * must make coverage() REFUSE rather than average the two. The real ledger is
+                 * saved and put back either way — running the selftest must not erase a claim the
+                 * session had already accumulated, and must not leave two fake rows inside one. */
+                var ledgerBefore = sessionStorage.getItem(LEDGER_KEY);
+                var realState = STATES[0].name, otherState = STATES[1].name;
+                sessionStorage.removeItem(LEDGER_KEY);
+                ledgerRecord([{ state: realState, status: "ok", findings: 0,
+                  probeStatus: { headingOrder: "ok" },
+                  env: { htmlLang: "en", rootFontSizePx: 16, viewportWidth: 375, layoutViewportWidth: 360 } }]);
+                var oneRow = JSON.parse(A11yStates.coverage());
+                var ledgerCounts = oneRow.recorded === 1 && oneRow.rows[0].state === realState &&
+                                   oneRow.verdict.indexOf("MIXED AXES") === -1;
+                ledgerRecord([{ state: otherState, status: "ok", findings: 0,
+                  probeStatus: { headingOrder: "ok" },
+                  env: { htmlLang: "en", rootFontSizePx: 16, viewportWidth: 320, layoutViewportWidth: 305 } }]);
+                var twoRows = JSON.parse(A11yStates.coverage());
+                var ledgerRefuses = twoRows.recorded === 2 && twoRows.verdict.indexOf("MIXED AXES") === 0;
+                // Same state twice must REPLACE, not accumulate — the 20-rows-over-19-states bug.
+                ledgerRecord([{ state: otherState, status: "ok", findings: 0, probeStatus: { headingOrder: "ok" },
+                  env: { htmlLang: "en", rootFontSizePx: 16, viewportWidth: 320, layoutViewportWidth: 305 } }]);
+                var ledgerDedupes = JSON.parse(A11yStates.coverage()).recorded === 2;
+                if (ledgerBefore === null) sessionStorage.removeItem(LEDGER_KEY);
+                else sessionStorage.setItem(LEDGER_KEY, ledgerBefore);
+                var ledgerRestored = (sessionStorage.getItem(LEDGER_KEY) || null) === ledgerBefore;
+                var ledgerOk = ledgerCounts && ledgerRefuses && ledgerDedupes && ledgerRestored;
+
                 var preconOk = d.status === "PRECONDITION" && d.findings === null && !d.threw &&
                                e.status !== "PRECONDITION";
                 var ok = a.status === "MISSED" && b.status === "MISSED" && !!b.threw &&
-                         a.findings === null && b.findings === null && preconOk && vwOk &&
+                         a.findings === null && b.findings === null && preconOk && vwOk && ledgerOk &&
                          (c.ran ? c.rejected === true : true);
                 return JSON.stringify({
                   unreachableAssertion: { status: a.status, findingsIsNull: a.findings === null },
@@ -1331,8 +1527,10 @@
                   axisAssertion: c,
                   viewportAssertion: { observedWidth: vwNow, acceptsTrueWidth: vwAccepts,
                     rejectsWrongWidth: vwRejects, declarationRestored: EXPECT_VW === vwBefore },
+                  coverageLedger: { countsOneRow: ledgerCounts, refusesMixedAxes: ledgerRefuses,
+                    replacesRatherThanAccumulates: ledgerDedupes, ledgerRestored: ledgerRestored },
                   verdict: ok
-                    ? "PASS — a state that is not reached reports MISSED with null findings (assertion failure AND step throw), a state in the wrong storage reports PRECONDITION without running its steps while a satisfiable one does not, setLang refuses when it cannot confirm the switch, and expectViewport accepts the true width while refusing a wrong one. Zeros from run()/runAll()/sweepLangs() are meaningful this session."
+                    ? "PASS — a state that is not reached reports MISSED with null findings (assertion failure AND step throw), a state in the wrong storage reports PRECONDITION without running its steps while a satisfiable one does not, setLang refuses when it cannot confirm the switch, expectViewport accepts the true width while refusing a wrong one, and the coverage ledger counts one row, replaces rather than accumulates a repeat, and refuses to state one claim across two viewports. Zeros from run()/runAll()/sweepLangs() are meaningful this session."
                     : "FAIL — a control did not fire; every recipe and every language row in this file is an unverified zero until this passes."
                 }, null, 2);
               });

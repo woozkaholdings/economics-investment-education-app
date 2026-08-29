@@ -1450,6 +1450,44 @@ for the history. No open P1/P2 items.
       seven others are three tool calls each. So the lesson and quiz screens are **unmeasured at
       the compounding configuration**. That is a real coverage gap, stated rather than rounded off,
       and it is where the next instance would live.
+    - **✅ THAT GAP IS NOW MEASURED (2026-08-29, scheduled dev-agent) and it is clean.** All seven
+      reload-gated states driven individually at **320px x 130%**, `rootFontSizePx: 20.8` asserted
+      on each: **7/7 clean, `0 unavailable` on every one.** With `runAll`'s 12 that is **19/19 at
+      one declared axis, 18 clean** — the single finding being item 148's known overflow, which
+      reproducing here is a control rather than a regression.
+    - ⛔ **AND THIS ITEM'S OWN "19/19 clean" WAS OVERSTATED.** `focusVisibleOnTab` needs a
+      tabbed-into document; `begin()` reloads and throws that state away, and only the `verdict`
+      string says so while `status` stays `"ok"`. This item's seven states were therefore swept on
+      **ten** probes, not eleven, and a hand-assembled total could not show it. **The findings
+      stand; the coverage did not.** `A11yStates.coverage()` plus the Tab step now in the header
+      recipe are the fix — see item 149.
+
+149. **[Process/QA — filed 2026-08-29 by the run that built `A11yStates.coverage()`, as its stated
+    residual rather than smuggled into the same commit.] `coverage()` can now name a probe that did
+    not run on every state. It cannot tell "not applicable here" apart from "should have applied and
+    silently did not" — and the first real run of it returned three such probes.**
+    - **Measured 2026-08-29, 19 states at 320px x 130%:** `partialProbes` = `imagesWithoutAlt`
+      (ok 1, VACUOUS 11 of 12 no-reload), `figureClaims` (ok 1, VACUOUS 11), `unnamedRegions`
+      (ok 3, VACUOUS 9). Every one of those zeros is *probably* correct — a Practice runner has no
+      `<figure>` and no `<img>` — but "probably" is the whole defect. This is item 118's shape one
+      level up: **a probe that never fires looks exactly like a probe that keeps passing**, and the
+      matrix has never stated which screens each probe is *supposed* to apply to.
+    - **The cheap version, which reuses the whole existing mechanism:** let a state DECLARE the
+      probes it expects to be live (`expects: ["figureClaims"]`), the same opt-in shape `requires`
+      already uses for storage. `coverage()` then reports a VACUOUS-where-expected as a **gap** and
+      a VACUOUS-where-undeclared as fine, and an over-declaration fails loudly. Roughly four states
+      need a declaration; the rest are honestly empty.
+    - **Carry a control if you pick it up**, and the two-sided one is obvious: `reference-markets`
+      genuinely has figures (`figureClaims: ok`) and `practice-runner` genuinely has none — a
+      declaration mechanism that cannot tell those two apart is not measuring anything.
+    - **The other stated boundary, recorded here so it is not rediscovered:** `sweepLangs()`
+      deliberately does not record into the ledger, so **no coverage claim in this repo yet crosses
+      the language axis** — the 19/19 above is `en` only, and light theme only. Folding five
+      languages into one row would produce exactly the mixed-axis average `coverage()` refuses to
+      print, so widening this needs a per-axis claim shape, not a bigger ledger.
+    - **Honest priority: low.** No shipped defect is known to live here. **Do not pick it over
+      content or over an owner-facing item**, and note that item 120 carries the same caveat for the
+      same reason. Downstream of O-1 like everything else.
 
 148. **[A11y/UX — filed 2026-08-29 by the run that closed item 147, as its stated residual rather
     than smuggled into the same commit.] Market signals overflows the document by 18px at 320px x
@@ -3350,6 +3388,147 @@ finding(s); V vacuous; U unavailable`. A bare "no accessibility issues found" is
 > section above is prepend-order (newest first); the archive is ascending.
 > *(The "367 lines apart" this note carried until 2026-08-29 was the first block's own length, not the
 > distance between the blocks. The blocks and their byte totals were right; only the gap figure was.)*
+### 2026-08-29 (scheduled dev-agent) — the seven states item 147 could not reach were clean at the compounding width, and the "19/19" it reported had been assembled by hand (item 147's residual → new item 149)
+
+**Picked item 147's standing note**, not a numbered item: *"the reload-gated states were swept at 320
+portrait but NOT at 130% font… that is a real coverage gap, stated rather than rounded off, and it is
+where the next instance would live."* It needs no owner decision — unlike **item 148**, which the
+previous run deliberately escalated as a product call and which this run therefore left alone.
+Owner-tree fingerprint at open `c2331799fd3ee413aca864fd82d247a35ea31b01a70a6c4e37b00f6aad9105b2`
+(0 tracked modified, 52 untracked) — **identical to the previous two runs, so the owner's tree has not
+moved.** `HEAD` `29b9548` at start and unmoved at commit.
+
+#### Step 3.5 — the premise held, and re-measuring made it sharper
+
+- **The 130% axis does reach reload-gated states.** `begin(name, {fontScale})` seeds
+  `ecycles_font_scale` as a *fraction* and `finish()` asserts the root font size actually landed.
+  Confirmed live on all seven: `rootFontSizePx: 20.8` every time, `axesProblem: null`, no
+  `AXES-NOT-APPLIED`.
+- **The combination really was unmeasured, and by more than item 147 claimed.** `grep` over the log
+  and its archive finds `fontScale: 130` **once** — the 2026-08-25 item-112 run — and that run
+  predates the viewport axis (item 146, 2026-08-29) entirely, so it **declared no width at all**.
+  The true gap was not "320 × 130% is unmeasured" but "**every** prior 130% sweep of these states is
+  unattributable to a width". **Controls fired**: `practice-batch-pause` (2+3 hits),
+  `lesson-midquiz` (2+1), `expectViewport` (5), so the greps were live rather than broken.
+- **One thing I expected to find broken and did not.** I predicted the instrument under-reported a
+  probe that silently stops running across a reload. It does not: `finish()` returns
+  `verdict: "clean on 10 probe(s); 1 unavailable"`. **Measured, not read** — I reproduced it. The
+  instrument was honest; what was missing was one level up.
+
+#### The measurement — 19 of 19 states at 320px × 130%
+
+`A11ySweep.selftest()` **PASS**, 11/11 controls fired, `plantsRemoved true`.
+`A11yStates.selftest()` **PASS** (MISSED both ways, `requires` two-sided, `expectViewport` accepts
+320 and refuses 321).
+
+| set | result |
+|---|---|
+| 12 no-reload (`runAll`) | **11 clean / 1 with findings**, 0 missed, 0 precondition |
+| 7 reload-gated, driven individually | **7/7 clean**, `0 unavailable` on each |
+
+The single finding is `reference-markets`' `horizontalOverflow` — **already filed as item 148**, and
+reproducing it here is itself a control: an instrument that found nothing at a width where a known
+defect lives would be the finding. **No new app defect exists at the compounding configuration**, and
+the lesson and quiz screens specifically — the ones item 147 named as unmeasured — are clean. Read at
+the pixels as well as the probes, per item 147's own lesson: lesson prose, the four quiz options
+(239px wide, `scrollWidth === clientWidth`, 74–122px tall) and the first-run dialog (no internal
+scroll, "Got it, let's start" fully visible at bottom 561 of 812) all render legibly at 130%.
+
+#### ⚠️ What the sweep exposed about the PREVIOUS run's number, which is the part worth keeping
+
+`focusVisibleOnTab` needs a document that has been tabbed into. `A11ySweep.selftest()` **refuses to
+pass** without one, so on the no-reload path an operator cannot forget it. **`begin()` reloads the
+page, which throws that state away, and nothing re-checks.** My own first state reported
+`status: "ok", findings: 0` — on **ten** probes. So did all seven reload-gated states of the
+2026-08-29 320px sweep whose entry reads **"19/19 clean"**. That number was assembled by hand from
+eight separate JSON blobs, and a probe that did not run on seven of them left no trace in the sum.
+**The status field is the one people quote and it cannot carry that.** Corrected here rather than
+tidied away; the earlier sweep's *findings* stand, its *coverage* was overstated for 7 of 19 states.
+
+#### What shipped — `A11yStates.coverage()`, a per-tab ledger (201 lines, one file)
+
+`run()`, `runAll()` and `finish()` append to a `sessionStorage` ledger; `coverage()` reads it back.
+Three things that used to be silent are now refusals:
+
+1. **MIXED AXES.** Twelve states at 375px plus seven at 320px is not nineteen at either, and it reads
+   exactly like nineteen. **Proved live, against real rows and not just planted ones:** after the
+   clean sweep, re-running one state at 375px turned the claim into
+   `MIXED AXES (2) — these 19 row(s) were NOT swept under one configuration`.
+2. **States never swept.** `missing` is computed against the real matrix, so `19/19` is earned.
+3. **A probe that did not run everywhere.** `partialProbes` names it with the states it missed.
+
+`sessionStorage`, not `localStorage`, on purpose: it must survive the reloads `begin()` forces and
+must **not** outlive the tab, or a claim could span two builds. Last-write-wins per state, so
+re-sweeping one replaces its row rather than making 20 rows over 19 states. The audit, `selftest()`
+and `sweepLangs()` deliberately do **not** record — recording happens at the three public entry
+points, not inside `drive()`.
+
+**The first mechanically-assembled claim this repo has produced:**
+> `18 clean / 1 with findings, over 19 of 19 state(s), all at en @ 20.8px root @ 320px wide — every
+> state in the matrix. ⚠️ 3 probe(s) did not run on every state; see partialProbes.`
+
+`focusVisibleOnTab` is **not** among those three — it ran on all 19, because the Tab step is now in
+the header recipe. The three are `imagesWithoutAlt`, `figureClaims` and `unnamedRegions`, VACUOUS on
+screens that have no images, figures or regions. **That is the honest reading and it is also new
+information** — see item 149.
+
+#### Verification
+
+`npm test` **exit 0**, 21 `ok:` lines, the same **3** pre-existing warnings (translation review share,
+translation completeness, the floor budget). `npm run build` **✓ 1.62s**. Both selftests PASS in the
+browser session that produced every number above.
+
+**The ledger's own control is two-sided and built in**, because an instrument that only ever agrees
+is indistinguishable from one that never compares: `selftest()` plants one row (counted), a second
+at a different viewport (**refused**), and the same state twice (**replaced, not accumulated**), then
+restores the real ledger — `countsOneRow`, `refusesMixedAxes`, `replacesRatherThanAccumulates`,
+`ledgerRestored` all `true` live.
+
+#### Step 5 — adversarial self-check
+
+- **Blindspot register: clean.** One instrument file, never bundled into the app — no content,
+  locale, quiz, glossary or market string is touched. No Dalio branding (§10.2), no advice-adjacent
+  language (§10.1), no child-facing framing (§10.3), no hardcoded user-facing date or live-looking
+  market figure (§2.3). The dates added are dated *source comments*, the repo's convention.
+  `check-blindspot.mjs` passes inside `npm test`.
+- **`DECISIONS.md`: no conflict, and I checked the one that looked closest.** "localStorage-only
+  progress and personalization state" governs **per-user app state** declared in
+  `src/lib/storage.js`'s `KEYS`; this is a browser instrument that ships in no bundle, and
+  `a11y-states.js` **already** used `sessionStorage` for three keys (`__a11ystates_pending`,
+  `__a11ystates_axes`, `__a11ystates_audit_cold`). Continuous with existing practice, not a new one.
+  §27's KEYS↔DECISIONS check is unaffected and green.
+- **Already-done item:** `coverage`/`coverageReset` appear **0 times** in `AGENT_LOG.md` and its
+  archive. Items 105/111/112/118/119/146 built the sweep, the matrix, the axes, the preconditions and
+  the audit; none built a session ledger. Nothing is undone.
+- **Item 144's trap:** `git diff | grep -c "us-english:allow"` → **0**.
+- **§59's silence was earned, not assumed.** A negative result from a checker that does not read the
+  new text means nothing, so I **injected** "behaviour" into one of the new comment blocks and ran
+  the suite: **exit 1**, `§59: scripts/a11y-states.js:624 uses the British spelling "behaviour"` —
+  the right file and the right line. Restored from a **scratchpad copy** (never `git checkout --`),
+  verified byte-identical by sha256 `a791e6a8…`, and re-ran to **exit 0 / 21 ok / 3 warns**.
+- **My own verification claim:** an independent reviewer re-running build → serve `dist/` → copy both
+  instrument files in → `resize_window` 320x812 → screenshot → Tab → eval both → both selftests →
+  `coverageReset()` → `expectViewport(320)` → `runAll()` → seven × (`begin(name,{fontScale:130})`,
+  Tab, re-eval, `expectViewport(320)`, `finish()`) → `coverage()` gets these numbers.
+- **⚠️ What I did NOT measure, stated rather than rounded off.** The ledger spans one language only:
+  `sweepLangs()` does not record, by design, so **no coverage claim in this repo yet crosses the
+  language axis** — the 19/19 above is `en`. And the 320 × 130% sweep was run in **light** theme;
+  the theme axis was not part of item 147's note and is not part of this claim.
+- **What a reviewer could fairly dispute:** this is tooling built on tooling, which the backlog
+  warns against. My defense is that it has a **live instance** — the previous run's own "19/19", which
+  this run can now show was overstated — rather than being a zero-instance residual.
+
+#### Next run
+
+**Item 149** (new, below) is the direct follow-on and is cheap. Otherwise the open set is unchanged:
+**148** (real user-visible symptom, but it wants the owner's pick between three priced options),
+then **144, 143, 140, 126, 120**, all measured at zero live instances, and **item 117**, still the one
+open *product* item and still the owner's. **For the owner:** the floor is over budget at **290 KB**
+against 250 KB and only a **backlog compression pass** moves it — **item 115 holds the rule and the
+options, and that decision is still yours.** **O-1 remains the entire critical path: 44 lessons, five
+languages, 160 minutes of content, and zero people have ever opened this app.** **O-3** unchanged —
+no translated prose was added this run.
+
 ### 2026-08-29 (owner-directed: "do item 147 next") — the item said no new code would be needed; the compounding width found a chart drawing its bars 9px tall, and the fix the probe would have accepted was worse than the bug (item 147 -> new item 148)
 
 **Picked item 147** on owner instruction, the run after it was filed. Tree clean but for the
