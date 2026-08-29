@@ -1058,7 +1058,43 @@ for the history. No open P1/P2 items.
       true of `lessonContent` and false of the corpus. **A scope stated in prose is not a scope the
       measurement had** — the same shape as item 128's finding about item 91's "whole-repo scan".
 
-136. **[Process/Tooling — filed 2026-08-28 by the run that built `figureClaims` (items 135+124),
+136. **✅ DONE 2026-08-28 (owner-directed: "do item 136 next"). `figureClaims` now covers 7 of 11
+    primitives; the remaining four are documented as deliberately uncovered WITH the measurement
+    behind each, so no future run has to re-derive them. 2 of 5 built, 3 declined — read the two
+    corrections, because this item dismissed its strongest candidate in a line and misdescribed
+    another.**
+    > ⛔ **`BracketStack` was grouped with `Bar` as rendering "values whose only relation is
+    > proportional to the number beside them". That describes `Bar` and not `BracketStack`**, whose
+    > caption opens *"Below the old income line the two stacks are **identical**"* — an equality
+    > between rendered boxes in two different columns, the same shape as `outcomeGrid`'s claim and
+    > the same shape as the defect that shipped there twice. Built. Measured live: the shared bands
+    > render **65.17px and 78.22px in both columns**, and `minHeight: 2` cannot bind (smallest band
+    > 13.03px).
+    > ⛔ **The strongest candidate of the five was not discussed at all: lesson 3's `GrowthCurve`**,
+    > whose own text states four render claims — same starting point, one line straight, the other
+    > curving, and a gap that widens. Built.
+    > **THE TEST THAT DECIDED BOTH, and it is the transferable part.** Every one of these claims is
+    > true of the source arithmetic **by construction** — which is exactly what refuted
+    > `ProportionBar`. The question that separates them is **whether a CONTEMPLATED edit breaks it**.
+    > For `GrowthCurve` one exists with a date: item 137 gave lesson 23 a log y-axis on 2026-08-28
+    > and declined to do the same here on judgment alone. Measured in the real plot box, a log axis
+    > **swaps the two descriptions** — the "straight" line bends from **0 → 6.69** off its chord
+    > (2.7 stroke widths) while the "curving" one flattens from **15.61 → 0.01**. Proved on the LIVE
+    > figure, not only a plant: injecting that axis fired both halves (7.36px vs a 2.75px stroke;
+    > 0.01px), and restoring the points returned the sweep to 0.
+    > **The three declined, on measurement rather than judgment:** `YieldCurve` and `CycleChart` are
+    > **hardcoded SVG path constants** — no data→render mapping exists to break, so a claim would
+    > assert a literal against itself (a stronger reason than this item's "no stated quantity",
+    > which was wrong: their orderings *are* stated). `Bar` is the one case where this item's own
+    > reasoning holds, and it **prints each value as text above its bar** — the same property item
+    > 137 used to keep `GrowthCurve` linear. **`ProportionBar` stays refuted; do not rebuild it.**
+    > ⚠️ **Latent false positive now written into the probe: `data-figure` sits on the PRIMITIVE.**
+    > `GrowthCurve` is generic and only lesson 3 uses it, so claim and caption agree today. A second
+    > lesson drawing two curving lines through it would inherit a claim its caption does not make.
+    > **Fix is to move `data-figure` to the call site, not to loosen the claim.** The same latency
+    > already applies to `lossAsymmetry` and `outcomeGrid`.
+    (Original text below, kept because the reasoning it records is what the corrections act on.)
+    **[Process/Tooling — filed 2026-08-28 by the run that built `figureClaims` (items 135+124),
     as its stated residual rather than smuggled into the same commit.] Seven of the eleven chart
     primitives still have no declared claim, and for most of them that is correct.**
     - **State:** `figureClaims` covers `outcomeGrid`, `earningsGap`, `lossAsymmetry` and
@@ -2989,6 +3025,144 @@ finding(s); V vacuous; U unavailable`. A bare "no accessibility issues found" is
 > have moved nothing while the file sat at **915 KB**, 1.5x its own trigger. The boundary used here
 > is therefore the byte target, taken on whole days. **The deeper reason is in W-5.3's note:** the
 > run log is no longer what makes this file big.
+### 2026-08-28 (owner-directed: "do item 136 next") — the axis change that would have swapped the two lines in lesson 3's caption, and the three figures that stay uncovered on measurement rather than on judgment (item 136)
+
+**Pick.** Owner-directed. **HEAD had moved before this run started** — `0ad034f` (item 139) and
+`5d3882a` (item 116) landed from scheduled runs, plus a market-data refresh — so the log and the item
+were re-read against the current tree rather than the one this session last saw.
+
+#### Step 3.5 — what was actually left of item 136, which is not what the item's summary says
+
+The item is written as "seven of the eleven chart primitives have no declared claim", and both of its
+two named candidates have since been **resolved by other runs**: `ProportionBar` was **refuted** by
+measurement (its ratio claim is true by construction under every perturbation), and `PreferenceFlip`
+was **built** by item 137's run. So the live remainder is the **five** the item dismissed in one line
+as *"weaker candidates [that] should probably stay uncovered"* — and that judgment was formed at
+filing time by the same reasoning that got both of its other recommendations wrong. It was re-derived
+from each figure's actual caption and text alternative, which is what the item's own bar asks for:
+**name the sentence the figure could contradict, or leave it alone.**
+
+⛔ **Two of the five clear that bar, and the item's stated reason for dismissing one of them is
+factually wrong.** It groups `Bar` and `BracketStack` as rendering "values whose only relation is
+*proportional to the number beside them*, which §21 already asserts". That describes `Bar`. It does
+not describe `BracketStack`, whose caption opens: *"Below the old income line the two stacks are
+**identical** — a raise cannot reach back and re-tax what was already there."* That is an **equality
+between rendered boxes in two different columns** — the same shape as `outcomeGrid`'s claim, and the
+same shape as the defect that shipped there twice.
+
+⛔ **And the strongest candidate of the five was not discussed at all.** Lesson 3's `GrowthCurve`
+carries four render claims in its own text — *"rising from the **same starting point**"*, *"simple
+interest climbs in a **straight line**"*, *"compound interest **curves upward**"*, and the caption's
+*"the gap **widens** every year"*.
+
+**The measurement that settled it, and it is why this is not a coverage count.** Both figures' claims
+are true of the source arithmetic **by construction** — which is exactly the finding that killed
+`ProportionBar`. The difference is whether a *contemplated* edit breaks them, and for `GrowthCurve`
+one exists with a date on it: **item 137 gave lesson 23's figure a logarithmic y-axis on 2026-08-28
+and explicitly declined to do the same here**, on the judgment that this figure prints its endpoint
+values as text. **That decision had no instrument.** Recomputing this figure's own values in its real
+plot box under a log axis:
+
+| | deviation from own chord | |
+|---|---|---|
+| "straight line" (simple) | **0** linear → **6.69** log | bends by 2.7 stroke widths |
+| "curves upward" (compound) | **15.61** linear → **0.01** log | flattens to a straight line |
+
+**A log axis does not weaken the caption — it swaps the two descriptions.** That is a live risk on a
+decision made the same day, not a hypothetical.
+
+#### What shipped
+
+1. **`charts.jsx`** — `data-figure`/`data-figure-part` on `GrowthCurve` and `BracketStack`. Inert
+   markup; nothing renders differently.
+2. **`a11y-sweep.js` — two new `figureClaims` entries.**
+   - **`growthCurve`** asserts all four sentences: the series start together, the lower one is
+     collinear within half a stroke, the upper one departs by more than a stroke, and the drawn gap
+     never narrows. **Which series is which is read off the render** (the one finishing higher is
+     compound), so the claim does not depend on the order `compoundSeries` lists them in.
+   - **`bracketStack`** asserts the caption's first sentence: every shared lower band renders at the
+     same height in both columns, and the second column carries more bands than the first.
+3. **Two planted controls plus two expectations**, each keyed to a number the real app cannot produce
+   (a 9.00px stroke; a 30.00/17.00px band pair). Both plants are tuned so **exactly one** message
+   fires — a control that fires four ways cannot tell you which half rotted.
+
+#### The three that stay uncovered — now on measurement, not on judgment
+
+- **`YieldCurve` (lesson 36).** Its four descriptions do state orderings ("the 2-year sits above the
+  30-year"). But the curve is a **hardcoded SVG path string per type** (`CURVE_PATHS[type]`) — there
+  is no data→render mapping to break, so a claim would assert a literal against itself. **A stronger
+  reason than the item's "no stated quantity", which was wrong: the quantities are unstated but the
+  orderings are not.**
+- **`CycleChart` (lessons 32/33/38).** Same shape — two fixed `<path d="M0,50 Q37,50 …">` constants.
+  Genuinely stylized; the item was right.
+- **`Bar` (lesson 37).** Here the item's reasoning holds: heights are `|value|/max`, the caption's
+  "two large rises, each followed by a smaller fall" follows from values §21 already asserts, and
+  **the figure prints each value as text above its bar** — the same property item 137 used to justify
+  keeping `GrowthCurve` linear. `minHeight: 2` cannot bind (the smallest bar is 10% of the track).
+- **`ProportionBar` stays refuted.** Not rebuilt — that would have been the duplication trap.
+
+#### Verification
+
+- **`npm test`: 7 scripts, `PASS: 0 failure(s)` on each.** `npm run build` ✓. `check-blindspot`
+  **PASS, 0 failures**.
+- **Live sweep, per the Environment note** (build → `python3 -m http.server` → `preview_start` with a
+  plain `url` → screenshot to force layout → one `Tab` → paste the file):
+  - `A11ySweep.selftest()` on lesson 3 and again on lesson 7: **`figureClaims: "control fired"`,
+    `failedProbes: []`, `plantsRemoved: true`, `appFindingsAfterCleanup: 0`.**
+  - **The control genuinely covers both new halves**: the selftest matches its expectation array with
+    `want.every(...)`, checked in the source rather than assumed, so all **six** regexes had to hit.
+  - ⚠️ One intermediate run reported `failedProbes: ["focusVisibleOnTab"]` — because that reload had
+    not been followed by a `Tab`. Re-seeded and re-run clean. Recorded because it is the file's own
+    documented precondition doing its job, not a defect in this change.
+- **The decisive test was run against the REAL figure, not only the plant.** Item 137's contemplated
+  edit was applied to lesson 3's live polylines — same source values, same plot box, log y-axis — and
+  `growthCurve` fired **both** halves with the predicted numbers: *"the lower series departs from its
+  own chord by **7.36px** against a 2.75px stroke"* and *"the upper series departs … by only
+  **0.01px** … so it draws as a straight line too."* **Restoring the original points returned the
+  sweep to 0 findings**, so the control comes back down as well as up.
+
+#### Step 5 — adversarial self-check
+
+- **Blindspot register** — no regression: `check-blindspot` **PASS, 0 failures**. No learner-visible
+  string changed in any language; the `charts.jsx` diff is data attributes and comments. No Dalio
+  reference, no advice-adjacent verb, no kids framing, no date or market figure.
+- **`DECISIONS.md` conflict** — none. No state, content-module or build decision is touched.
+- **Already-done backlog item** — **checked specifically, because this item had one waiting**:
+  `ProportionBar` was refuted on 2026-08-28 and rebuilding it would have been the trap. It was not
+  built, and the refutation is restated above so the next reader does not re-derive it.
+- **Item 136's own warning — "do not turn this into a coverage count"** — honored explicitly: **2 of
+  5 built, 3 declined with a measured reason each**, and the two built were chosen by the test of
+  whether a contemplated edit breaks the claim, not by how many boxes remained unticked.
+- **The latent false positive I went looking for and found**: `data-figure` sits on the **primitive**,
+  and `GrowthCurve` is generic. Only lesson 3 uses it today, so claim and caption agree — but a second
+  lesson drawing two curving lines through it would inherit a claim its own caption does not make and
+  fail on correct copy. Written into the probe as a reuse caveat with the fix (move `data-figure` to
+  the call site, don't loosen the claim). **The same latency already applies to `lossAsymmetry` and
+  `outcomeGrid`**, so this documents an existing convention rather than introducing a new risk.
+- **Own verification claim** — reproducible from `npm test`, `npm run build`, `npm run check-blindspot`
+  and the live sweep sequence above. **What I am NOT claiming:** (1) that `figureClaims` runs in
+  `npm test` — it does not, it is a pasted browser instrument, and that is item 12's port-cost
+  territory as its own header says; (2) that these two claims cover their figures' captions
+  completely — the compound caption's *"by year 30 it is more than twice as wide"* is deliberately
+  **not** asserted, because "twice as wide" as what is genuinely ambiguous in the sentence and a claim
+  should not invent a reading.
+
+#### Next run
+
+**Item 136 is closed.** The `figureClaims` set is now **7 of 11 primitives**, and the remaining four
+are documented as deliberately uncovered with the measurement behind each, so a future run can stop
+re-deriving them. Open and unblocked: **item 130** (low). **Item 27** remains ratio-blocked under
+W-5.2; **item 26**'s stream is complete but for one standing owner decision.
+**For the owner, and this is the one that keeps getting worse:** both log budgets are over — quoting
+the tool rather than retyping it, `MEASURED log-size: file 585178 b, run log 323355 b, floor 261823 b
+(backlog 234279 b), archive 2077529 b, 3 live day(s)`, taken with this entry and item 136's closure
+already in place (the commit adds nothing further to the log). The run log is **73 KB over** its warn
+budget and the never-archivable floor is **11.8 KB over** its own. Archiving
+clears only the first; **item 115's two options for the floor remain the owner's, and have been
+pending for three days.**
+**O-1 is still the entire critical path: 44 lessons, five languages, 160 minutes of content, and zero
+people have ever opened this app.** **O-3** unchanged — this run added no translated prose.
+
 ### 2026-08-28 (scheduled dev-agent) — an invisible focus ring was green across the entire build, and the token that hid it was the right hex for the wrong reason (item 139)
 
 **Pick.** Item 139, from the backlog — the previous run filed it as its own stated residual and named

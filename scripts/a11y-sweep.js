@@ -594,6 +594,124 @@
             }
           });
           return bad;
+        },
+        /* Lesson 3, backlog item 136. This figure's text alternative names the shape of each
+         * line: "simple interest climbs in a STRAIGHT LINE ... while compound interest CURVES
+         * UPWARD", both "rising from the SAME STARTING POINT", and the caption adds that "the gap
+         * WIDENS every year". Four relations, all about the drawn path.
+         *
+         * WHY THIS ONE IS WORTH A CLAIM WHEN `ProportionBar`'s WAS NOT. Both are true of the
+         * source arithmetic by construction — but this one is true only while the y-axis stays
+         * LINEAR, and that is a live, named, contemplated edit rather than a hypothetical: on
+         * 2026-08-28 item 137 gave lesson 23's figure a logarithmic y-axis, and explicitly
+         * declined to do the same here on the judgment that this figure prints its endpoint
+         * values as text. That decision had no instrument. Measured against this figure's own
+         * numbers in the real plot box, a log axis SWAPS the two descriptions: the "straight"
+         * line bends away from its chord by 6.69 units against a 2.5-unit stroke, and the
+         * "curving" one flattens to 0.01. The caption would then describe the opposite picture.
+         *
+         * Which series is which is read off the RENDER, not off an index: the one finishing
+         * higher is the compound one. That keeps the claim independent of the order
+         * `compoundSeries` happens to list them in.
+         *
+         * ⚠️ REUSE CAVEAT, and it applies to `lossAsymmetry` and `outcomeGrid` identically —
+         * `data-figure` sits on the PRIMITIVE, and `GrowthCurve` is generic. Only lesson 3 uses
+         * it today (`LESSON_VISUALS`), so the claim and the description match. A second lesson
+         * drawing two curving lines through this primitive would inherit a claim its own caption
+         * does not make and fail on correct copy. If that ever happens, move `data-figure` up to
+         * the call site rather than loosening the claim. */
+        growthCurve: function (fig) {
+          var els = [].slice.call(fig.querySelectorAll('[data-figure-part="series"]'));
+          if (els.length !== 2) return ["expected 2 series, measured " + els.length];
+          var ctm = fig.getScreenCTM();
+          if (!ctm) return ["the figure has no screen CTM, so nothing about its geometry can be measured"];
+          var cx = function (x) { return ctm.a * x + ctm.e; };
+          var cy = function (y) { return ctm.d * y + ctm.f; };
+          var stroke = parseFloat(getComputedStyle(els[0]).strokeWidth) * ctm.d;
+          var pts = els.map(function (el) {
+            var list = el.points, out = [], k;
+            for (k = 0; k < list.numberOfItems; k++) out.push([cx(list.getItem(k).x), cy(list.getItem(k).y)]);
+            return out;
+          });
+          var n = pts[0].length, bad = [];
+          if (n < 3 || pts[1].length !== n) {
+            return ["the two series carry " + n + " and " + pts[1].length + " points; they are drawn from one x-axis and must be sampled together"];
+          }
+          /* Screen y grows downward, so the series finishing higher has the SMALLER final y. */
+          var hi = pts[0][n - 1][1] <= pts[1][n - 1][1] ? 0 : 1, lo = 1 - hi;
+          if (Math.abs(pts[0][0][1] - pts[1][0][1]) > 1 || Math.abs(pts[0][0][0] - pts[1][0][0]) > 1) {
+            bad.push("the two series start " + Math.abs(pts[0][0][1] - pts[1][0][1]).toFixed(2) + "px apart, but the figure's own description says they rise from the same starting point.");
+          }
+          /* Worst perpendicular-in-y departure from the straight line joining a series' ends. */
+          function bend(p) {
+            var y0 = p[0][1], y1 = p[n - 1][1], x0 = p[0][0], x1 = p[n - 1][0], worst = 0, k;
+            if (Math.abs(x1 - x0) < 1) return 0;
+            for (k = 1; k < n - 1; k++) {
+              var chord = y0 + (y1 - y0) * ((p[k][0] - x0) / (x1 - x0));
+              worst = Math.max(worst, Math.abs(p[k][1] - chord));
+            }
+            return worst;
+          }
+          var bendLo = bend(pts[lo]), bendHi = bend(pts[hi]);
+          if (bendLo > stroke / 2) {
+            bad.push("the lower series departs from its own chord by " + bendLo.toFixed(2) + "px against a " + stroke.toFixed(2) + "px stroke, so it does not read as the straight line the description calls it. A non-linear y-axis does exactly this (item 137 gave lesson 23 one); this figure prints its endpoint values as text, so its axis has to stay readable.");
+          }
+          if (bendHi <= stroke) {
+            bad.push("the upper series departs from its own chord by only " + bendHi.toFixed(2) + "px against a " + stroke.toFixed(2) + "px stroke, so it draws as a straight line too. The description says it curves upward, and the whole lesson is that compounding is not linear.");
+          }
+          /* "the gap widens every year" — monotone in the drawn separation, 1px slack for
+           * sub-pixel layout, same tolerance the rest of this probe uses. */
+          var prev = null, k2;
+          for (k2 = 0; k2 < n; k2++) {
+            var d = pts[lo][k2][1] - pts[hi][k2][1];
+            if (prev !== null && d < prev - 1) {
+              bad.push("the gap between the two series narrows between sample " + (k2 - 1) + " and " + k2 + " (" + prev.toFixed(2) + "px to " + d.toFixed(2) + "px). The caption says it widens every year.");
+              break;
+            }
+            prev = d;
+          }
+          return bad;
+        },
+        /* Lesson 7, backlog item 136. The caption's first sentence is the lesson: "Below the old
+         * income line the two stacks are IDENTICAL — a raise cannot reach back and re-tax what
+         * was already there." That is an equality between rendered boxes in two different
+         * columns, which is the same shape as `outcomeGrid`'s claim and the same shape as the
+         * defect that shipped twice there.
+         *
+         * It holds by construction today — a band's pixel height is amount/max x STACK_H, so
+         * equal amounts give equal pixels regardless of column — and it is guarded anyway because
+         * the construction is one edit deep. The column container is sized
+         * `(col.total / max) * STACK_H` precisely so the two share a scale; normalising each
+         * column to a fixed height instead (a plausible "make the columns match" change) keeps
+         * every source number correct and silently makes the lower layers disagree. The file's
+         * own comment already flags this as load-bearing: "the alignment is the argument here,
+         * not decoration". `minHeight: 2` is the other distortion path and does not bind — the
+         * smallest band renders 13.03px. */
+        bracketStack: function (fig) {
+          var els = [].slice.call(fig.querySelectorAll('[data-figure-part="band"]'));
+          if (!els.length) return ["expected stacked bands, measured none"];
+          var cols = {};
+          els.forEach(function (el) {
+            var c = el.getAttribute("data-figure-column");
+            (cols[c] = cols[c] || []).push(el);
+          });
+          var keys = Object.keys(cols).sort();
+          if (keys.length !== 2) return ["expected 2 columns, measured " + keys.length];
+          keys.forEach(function (c) {
+            cols[c].sort(function (a, b) { return (+a.getAttribute("data-figure-index")) - (+b.getAttribute("data-figure-index")); });
+          });
+          var a = cols[keys[0]], b = cols[keys[1]], bad = [];
+          if (b.length <= a.length) {
+            bad.push("the second column draws " + b.length + " bands against the first column's " + a.length + ". The description says the second column adds layers on top of the shared ones, so it has to carry more.");
+          }
+          var shared = Math.min(a.length, b.length), i;
+          for (i = 0; i < shared; i++) {
+            var ha = a[i].getBoundingClientRect().height, hb = b[i].getBoundingClientRect().height;
+            if (Math.abs(ha - hb) > 1) {
+              bad.push("shared layer " + i + " renders " + ha.toFixed(2) + "px in the first column and " + hb.toFixed(2) + "px in the second. The caption's first sentence is that below the old income line the two stacks are identical — a reader who sees them differ is being told a raise re-taxes income that was already there.");
+            }
+          }
+          return bad;
         }
       };
 
@@ -818,6 +936,33 @@
           'stroke-width="7" points="10,97 150,87 290,60"></polyline>' +
         '<line data-figure-part="marker" x1="30" y1="10" x2="30" y2="130" stroke="#000"></line>' +
       '</svg>' +
+      /* `growthCurve`'s plant (item 136). Identity CTM again, so the numbers below are the
+       * numbers reported. Series A finishes at y=30 and series B at y=120, so B is the "lower"
+       * one the description calls straight — and B is bent 20px off its own chord against a 9px
+       * stroke, which is the one message this plant must produce. Deliberately tuned so the
+       * OTHER three checks stay silent: both series start at 10,100 (same start), A is bent well
+       * clear of its stroke (so the "curves upward" half does not fire), and the gap 0 -> 70 ->
+       * 90 never narrows. A control that fires four ways cannot tell you which half rotted.
+       * Keyed to a 9.00px stroke, which the real figure (2.5px) cannot produce. */
+      '<svg role="img" data-figure="growthCurve" aria-label="planted growth" ' +
+           'viewBox="0 0 300 140" width="300" height="140">' +
+        '<polyline data-figure-part="series" data-figure-index="0" fill="none" stroke="#000" ' +
+          'stroke-width="9" points="10,100 150,20 290,30"></polyline>' +
+        '<polyline data-figure-part="series" data-figure-index="1" fill="none" stroke="#000" ' +
+          'stroke-width="9" points="10,100 150,90 290,120"></polyline>' +
+      '</svg>' +
+      /* `bracketStack`'s plant (item 136). Two columns whose FIRST shared layer matches (40px)
+       * and whose second does not (30px vs 17px), so the equality half fires exactly once and
+       * names both numbers. The second column carries three bands against the first's two, so
+       * the "adds layers on top" half stays silent — again, one plant, one message. Heights are
+       * inline and explicit because the claim reads getBoundingClientRect(). */
+      '<div role="img" data-figure="bracketStack" aria-label="planted stack">' +
+        '<div data-figure-part="band" data-figure-column="0" data-figure-index="0" style="height:40px"></div>' +
+        '<div data-figure-part="band" data-figure-column="0" data-figure-index="1" style="height:30px"></div>' +
+        '<div data-figure-part="band" data-figure-column="1" data-figure-index="0" style="height:40px"></div>' +
+        '<div data-figure-part="band" data-figure-column="1" data-figure-index="1" style="height:17px"></div>' +
+        '<div data-figure-part="band" data-figure-column="1" data-figure-index="2" style="height:10px"></div>' +
+      '</div>' +
       /* focusVisibleOnTab's control. The `!important` is load-bearing rather than lazy: it has
        * to beat index.css's global `:focus-visible` rule, which is precisely the rule whose
        * absence this probe hunts for, so a plant that did NOT beat it would inherit a ring and
@@ -872,10 +1017,16 @@
        * two independent halves and a single control would let either rot silently green. The
        * geometry half must report the short cell; the item-124 half must report the planted
        * line-token border. */
-      /* FOUR regexes now, one per independently-rottable half of this probe: the two from the
-       * outcomeGrid plant, plus the two from the preferenceFlip plant added for item 136. */
+      /* SIX regexes now, one per independently-rottable half of this probe: two from the
+       * outcomeGrid plant, two from the preferenceFlip plant, and one each from the growthCurve
+       * and bracketStack plants added when item 136 was closed. Each is keyed to a number the
+       * real app cannot produce (a 9px or 7px stroke, a negative client x, a 30/17px band pair)
+       * rather than to the shape of the message, so a control cannot report itself fired while
+       * actually matching a live defect in the app. */
       figureClaims: [/the four cells are not equal/, /--line-hairline/,
-                     /swap order between x=-\d/, /each stroke is 7\.\d\dpx wide/],
+                     /swap order between x=-\d/, /each stroke is 7\.\d\dpx wide/,
+                     /chord by 20\.00px against a 9\.00px stroke/,
+                     /renders 30\.00px in the first column and 17\.00px in the second/],
       /* Matches the plant's own id rather than the shape, for unnamedRegions' reason: every
        * control in the app carries the global `:focus-visible` ring today, so a shape match
        * would pass off a REAL regression as a fired control the moment one of them lost it. */

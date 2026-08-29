@@ -150,7 +150,12 @@ export function GrowthCurve({ title, xValues, series, colors, labelInks, formatV
           </Text>
         </figcaption>
       )}
-      <svg viewBox={`0 0 ${CURVE_W} ${CURVE_H}`} style={{ width: "100%", height: 132 }} role="img" aria-label={description}>
+      {/* `data-figure`/`data-figure-part` are read by a11y-sweep.js's figureClaims
+          probe (backlog item 136), which asserts the three relations this figure's
+          own text alternative states: the two series start together, one is drawn
+          straight while the other curves, and the gap between them widens. They
+          are inert markup — nothing renders differently for their presence. */}
+      <svg viewBox={`0 0 ${CURVE_W} ${CURVE_H}`} style={{ width: "100%", height: 132 }} role="img" data-figure="growthCurve" aria-label={description}>
         <line x1={CURVE_PAD.left} y1={py(0)} x2={CURVE_W - CURVE_PAD.right} y2={py(0)} stroke={line.hairline} strokeWidth="1" />
         {xValues.filter((x) => x > 0 && x < lastX).map((x) => (
           <line key={x} x1={px(x)} y1={CURVE_PAD.top} x2={px(x)} y2={py(0)} stroke={line.hairline} strokeWidth="0.5" strokeDasharray="3" />
@@ -158,6 +163,8 @@ export function GrowthCurve({ title, xValues, series, colors, labelInks, formatV
         {series.map((s, i) => (
           <polyline
             key={s.label}
+            data-figure-part="series"
+            data-figure-index={i}
             points={s.values.map((v, j) => `${px(xValues[j])},${py(v)}`).join(" ")}
             fill="none"
             stroke={colors[i]}
@@ -406,15 +413,20 @@ export function BracketStack({ title, columns, tierColors, tierLabels, raiseLabe
         flex row rather than on the taller column so both columns keep the same
         baseline — the alignment is the argument here, not decoration.
       */}
-      <div role="img" aria-label={description} style={{ display: "flex", alignItems: "flex-end", gap: space["5"], paddingTop: space["5"] }}>
-        {columns.map((col) => {
+      {/* `data-figure`/`data-figure-part` feed a11y-sweep.js's figureClaims probe
+          (backlog item 136). The claim they carry is the caption's first sentence —
+          "below the old income line the two stacks are identical" — which is an
+          equality between RENDERED boxes in two different columns, exactly the
+          class of claim a source check cannot see. Inert markup. */}
+      <div role="img" data-figure="bracketStack" aria-label={description} style={{ display: "flex", alignItems: "flex-end", gap: space["5"], paddingTop: space["5"] }}>
+        {columns.map((col, ci) => {
           const raise = col.bands.reduce((sum, b) => sum + (b.isRaise ? b.amount : 0), 0);
           return (
             <div key={col.label} style={{ flex: 1, minWidth: 0 }}>
               <div style={{ position: "relative", height: (col.total / max) * STACK_H }}>
                 <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column-reverse", borderRadius: `${radius.sm}px ${radius.sm}px 0 0`, overflow: "hidden" }}>
                   {col.bands.map((b, i) => (
-                    <div key={i} style={{ height: `${(b.amount / col.total) * 100}%`, background: tierColors[b.tier], minHeight: 2, transition: "height 0.5s" }} />
+                    <div key={i} data-figure-part="band" data-figure-column={ci} data-figure-index={i} style={{ height: `${(b.amount / col.total) * 100}%`, background: tierColors[b.tier], minHeight: 2, transition: "height 0.5s" }} />
                   ))}
                 </div>
                 {raise > 0 && (
