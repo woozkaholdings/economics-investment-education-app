@@ -1388,6 +1388,60 @@ for the history. No open P1/P2 items.
     > both §28 and §28b exclude — produces **14 failures, every one of them §28c, and zero from
     > anything else in the suite.** An invisible focus ring was green across the whole build.
 
+146. **✅ DONE 2026-08-29 (scheduled dev-agent). The a11y matrix has a third axis — viewport width —
+    and §3.0.7's 375px promise now has a stated, refusable measurement behind it.**
+    - **What shipped:** `A11yStates.expectViewport(px)` declares the width a session is sweeping at
+      and **throws** when the DOM disagrees; `env()` gains `layoutViewportWidth`, `viewportExpected`
+      and `viewportMatches` (never silently `true` — `null` means no claim was made); `runAll()`
+      gains an unconditional `viewportClaim` line; and `selftest()` gains a two-sided control that
+      proves the assertion accepts the true width and refuses a wrong one, restoring any prior
+      declaration either way.
+    - **The result it was built to state, 2026-08-29 at `resize_window` mobile:** all **19 states
+      clean at 375px** — 12 no-reload in one `runAll`, plus all 7 reload-seeded states driven
+      individually (`first-run-modal`, `lesson-unfinished`, `lesson-midquiz`,
+      `practice-all-questions`, `practice-runner`, `practice-batch-pause`, `practice-complete`).
+      `smallTargets` and `horizontalOverflow` — the two probes that exist for this clause — reported
+      **12 ok / 0 findings** with **0 vacuous**, over a session in which all 11 sweep controls fired.
+      **§3.0.7 holds; it had simply never been said.**
+    - ⛔ **The item's own opening premise was FALSE and step 5 caught it — do not re-derive the
+      wrong version.** The first draft said the app had never been swept at 375px. It has: the
+      **2026-08-04** accessibility pass swept 375px, 320px portrait, 320px + the 130% font step, and
+      568x320 landscape, `scrollWidth === innerWidth` everywhere. The true, narrower gap is that
+      that pass was **one geometry equality rather than these eleven probes**, and predates this
+      matrix (2026-08-25), the storage preconditions, both other axes, the 2026-08-23 warm palette
+      and serif pairing, and more than half of today's 44 lessons.
+    - **The measurement that justified the item, with its control:** `viewportWidth` appears **zero**
+      times in `AGENT_LOG.md` and its archive — no matrix sweep has ever stated a width — while the
+      control terms `htmlLang` (8) and `sweepLangs` (18) appear, so the grep was live rather than
+      broken. The hazard is the lying zero one level up: **a full sweep at desktop width reports 19
+      clean states and reads exactly like a mobile sweep.**
+    - ⚠️ **`innerWidth` is not the width the app lays out into, and the delta is not constant.**
+      Measured on three screens: Practice cold `375/375` (page does not scroll), Reference `375/360`,
+      lesson 1 `375/360` — this harness renders a classic space-consuming scrollbar only where the
+      page scrolls, which a phone's overlay scrollbar never does. **A first draft of the code comment
+      called the 15px "persistent" from a single sample; that was wrong and is corrected in place.**
+      Assert on `innerWidth` (the only figure constant across states), read `layoutViewportWidth`
+      **per state**, and never from the summary `env`, which is sampled once after the last state.
+      The sweep is therefore *stricter* than a real 375px phone on exactly the scrolling screens, so
+      a clean `horizontalOverflow` cannot be a false pass in that direction.
+    - **Residual, deliberately not built:** 320px and landscape are in the 2026-08-04 pass and in no
+      instrument. One axis with one asserted width is the honest unit of work here — **filed as item
+      147** rather than smuggled in.
+
+147. **[A11y/Tooling — filed 2026-08-29 by the run that built item 146, as its stated residual
+    rather than smuggled into the same commit.] The viewport axis has one declared width; the
+    2026-08-04 pass had four.**
+    - **State:** `expectViewport` will assert any width, and the matrix was swept and recorded at
+      **375 only**. The 2026-08-04 manual pass also covered **320px portrait, 320px combined with
+      the 130% font step, and 568x320 landscape** — the combination case being the interesting one,
+      since it is the only check that the font-scale axis and a narrow viewport do not compound.
+    - **The cheap version:** three more `resize_window` + `expectViewport` + `runAll` rounds, and a
+      line in the run log per width. No new code — that is the point of shipping the axis first.
+    - **What would need code:** nothing, unless a width produces findings. `sweepLangs` cannot loop
+      it (page script cannot resize the pane), so the loop stays the run's, not the file's.
+    - **Honest priority: low, and lower than it looks.** 375 is the clause §3.0.7 actually states,
+      and it came back clean on all 19 states. Downstream of O-1 like everything else.
+
 140. **[A11y/Tooling — filed 2026-08-28 by the run that built §28c (item 139), as its stated
     residual rather than smuggled into the same commit.] §28c assumes the ring lands on a SURFACE.
     That is true today, it was measured rather than assumed, and nothing keeps it true.**
@@ -3254,6 +3308,127 @@ finding(s); V vacuous; U unavailable`. A bare "no accessibility issues found" is
 > section above is prepend-order (newest first); the archive is ascending.
 > *(The "367 lines apart" this note carried until 2026-08-29 was the first block's own length, not the
 > distance between the blocks. The blocks and their byte totals were right; only the gap figure was.)*
+### 2026-08-29 (scheduled dev-agent) — nineteen clean states at 375px, and the sweep that would have read identically at desktop width (new items 146 + 147)
+
+**Picked a backlog refill over another zero-instance tooling residual**, which is what the previous
+two entries and **W-2's standing rule** both name — and W-5.2's "one run in four is not the tranche"
+rule points the same way, the tranche now being meta-tooling about this log rather than item 93. The
+refill's method (2026-08-17, items 55-59) is to read `LAUNCH_PLAN.md` against the real `src/` tree and
+measure every number with a control. **Reading §3.0 that way turned up work worth doing instead of
+filing, so this run did it and filed the residual.** Tree clean but for the untracked `UIUX/` and
+`drafts/`, neither touched; `HEAD` `01d0197` at start and unmoved at commit.
+**Owner-tree fingerprint observed at start:** `c2331799fd3ee413aca864fd82d247a35ea31b01a70a6c4e37b00f6aad9105b2` (0 tracked modified, 52 untracked).
+
+#### What the §3.0 pass rejected before it got to §3.0.7
+
+Three clauses were measured and **not** filed, which is half the value of a refill. §3.0.5's "honest
+minutes estimate" is already `check-data.mjs` §2 — `minutes` is derived, not authored, and the build
+fails on drift. §3.0.3's undefined-jargon clause is item 60, already open with its own standing note.
+§3.0.1/2/4/6 are content-judgment clauses no instrument can hold. **§3.0.7 — "Body text … works at
+375px wide" — was the one with two probes built for it and nothing running them at that width.**
+
+#### Step 3.5 — the premise, and the half of it that was wrong
+
+- **The measurement that holds.** `viewportWidth` appears **zero** times in `AGENT_LOG.md` and its
+  archive. **Control:** the sibling env keys and axis names DO appear — `htmlLang` 8, `sweepLangs` 18,
+  `rootFontSizePx` 2 — so the grep was live and the zero is real. No sweep this matrix has ever run
+  has stated the width it ran at.
+- **The claim about the code holds.** `a11y-states.js` names exactly **two axes** (language, font
+  scale), each with an asserting setter and an explicit lying-zero rationale. `viewportWidth` was
+  *stamped* in `env()` and nothing declared, asserted or read it — and the file's own axis comment
+  says `horizontalOverflow` and `smallTargets` are "the two probes most likely to fire on a mobile
+  viewport", while nothing pinned the viewport.
+- **⛔ The premise I started with was FALSE and the step-5 check caught it before commit.** I was
+  about to ship "the app has never been swept at 375px". It has — the **2026-08-04** accessibility
+  pass covered 375px, 320px portrait, 320px + 130% font, and 568x320 landscape,
+  `scrollWidth === innerWidth` everywhere. **Corrected in the code comment and in item 146 rather
+  than quietly dropped.** The true gap is narrower and still real: that pass was *one geometry
+  equality*, not these eleven probes, and it predates this matrix (2026-08-25), the storage
+  preconditions, both other axes, the 2026-08-23 warm palette and serif pairing, and more than half
+  of today's 44 lessons. **"Never measured" and "not measured by this instrument, and never stated"
+  are different items, and only the second one is true.**
+
+#### The result — §3.0.7 holds, on all nineteen states
+
+Built, served per the Environment note, `resize_window` to mobile **before** measuring geometry (the
+note's standing rule), reloaded, screenshot to force layout, one `Tab` to seed the focus state
+machine. **Both instruments' self-tests passed in the same session as every reading below** — 11 of
+11 sweep controls fired on their planted defects, including `horizontalOverflow` and `smallTargets`.
+
+| what | result at 375px |
+|---|---|
+| `runAll()` — 12 no-reload states, cold storage | **12/12 clean**, 0 findings, 0 missed, 0 precondition |
+| the 7 reload-seeded states, driven individually | **7/7 `ok`**, 0 findings each |
+| `smallTargets` / `horizontalOverflow` tally | **12 ok / 0 findings / 0 vacuous** each |
+
+The 7 are `first-run-modal`, `lesson-unfinished`, `lesson-midquiz`, `practice-all-questions`,
+`practice-runner`, `practice-batch-pause`, `practice-complete` — i.e. every lesson and quiz screen,
+which is where a 375px overflow would actually live.
+
+#### What shipped
+
+One file, `scripts/a11y-states.js` (+121/-5). `expectViewport(px)` declares the width and **throws**
+when the DOM disagrees; `env()` gains `layoutViewportWidth`, `viewportExpected` and `viewportMatches`
+(`null`, never a silent `true`, when nothing was declared); `runAll()` gains an unconditional
+`viewportClaim`; `selftest()` gains a two-sided control. **It is an assertion, not a setter, and that
+is the one way it differs from the other two axes** — page script cannot resize the harness pane, so
+the honest shape is that the run declares and the file refuses.
+
+⚠️ **A second finding, and a second thing I got wrong once.** `innerWidth` is not the width the app
+lays out into: measured on three screens, Practice cold is `375/375`, Reference `375/360`, lesson 1
+`375/360`. **The 15px is the harness's classic scrollbar and appears only where the page scrolls** —
+my first comment called it "persistent" from a single sample. Corrected. Two consequences are now in
+the code: the sweep is *stricter* than a real phone on exactly the scrolling screens (so a clean
+`horizontalOverflow` cannot be a false pass in that direction), and `viewportClaim` reports the
+**observed range across the sweep** rather than one sample — it now reads `laid out into 360-375px
+across 12 state(s)`, where the first version would have said `375px` for a sweep in which ten of
+twelve states got 360.
+
+#### Verification
+
+`npm test` **exit 0**, 0 failures (the 3 warnings — two translation, one log-floor — are unchanged
+and pre-existing). `npm run build` **✓ built in 1.70s**. `node --check` clean. Every live figure above
+was re-taken after the final edit, from cleared storage, in a session whose self-tests passed.
+
+#### Step 5 — adversarial self-check
+
+- **Blindspot register:** no content, locale, quiz, glossary or market string is touched — one dev
+  instrument. Nothing reintroduces Dalio branding (§10.2), advice-adjacent language (§10.1),
+  child-facing framing (§10.3), or a live-looking market figure (§2.3). `check-blindspot.mjs` passes,
+  including item 145's paragraph-initial control.
+- **DECISIONS.md:** nothing about localStorage-only state, `.js`-not-JSON content, or Vite-not-Expo
+  is involved. Item 12's port-cost rule: this stays a browser instrument and does **not** add a
+  headless browser to `npm test`, which is the thing that rule exists to gate.
+- **Already-done item:** item 112 built the language and font-scale axes and explicitly scoped
+  itself to those two; this is a third axis it named the need for and did not build. Not a redo.
+- **Item 144's trap:** the new comment prose does **not** name the `us-english` marker token
+  (`git diff | grep -c` → 0), so nothing self-exempts; §59 passes.
+- **W-5.3 / item 115:** untouched. No threshold moved, no archiving rule reworded, nothing archived.
+- **My own verification claim:** an independent reviewer re-running exactly this — build, serve,
+  `resize_window` mobile, reload, screenshot, one `Tab`, eval both files, `A11ySweep.selftest()`,
+  `A11yStates.selftest()`, `expectViewport(375)`, `runAll()`, then the seven `begin`/`finish`
+  pairs — gets the same numbers. The one thing they must not skip is the `Tab`: without it
+  `focusVisibleOnTab` goes UNAVAILABLE and eleven-of-eleven becomes ten.
+- **What a reviewer could fairly dispute:** the sweep still cannot be *forced* to declare a width —
+  an undeclared sweep is legal and merely says so. I chose that over a hard requirement because
+  making every existing call site pass a width to get a result is how an instrument stops being run
+  at all; the unconditional `viewportClaim` line means an undeclared sweep can no longer be quoted
+  as a mobile one, which is the actual failure mode.
+
+#### Next run
+
+**Open and unblocked: item 147** (the other three widths from the 2026-08-04 pass — no new code
+needed, which is the point), then **144, 143, 140, 126, 120**; item 117 is the one open *product*
+item and its (a)/(b) halves are owner-reversible judgment calls. Item 76's tokenizer half still
+unblocks 76 and item 133's inversion residual.
+**For the owner:** the floor is **286,508 b against a 250,000 b budget** measured after this commit's
+own writing (281,721 b before it — items 146 and 147 cost **+4,787 b**, which is this entry paying its
+own way onto the pile it is reporting), and only a **backlog compression pass** moves it — item 121's entry is right that compression
+is a bailing bucket, so the level is a rate and **item 115 holds the rule and the options; that
+decision is still yours.** **O-1 is still the entire critical path: 44 lessons, five languages, 160
+minutes of content, and zero people have ever opened this app** — this run proved the app is clean at
+phone width for nobody. **O-3** unchanged: no translated prose was added.
+
 ### 2026-08-29 (scheduled dev-agent) — the cut plan could not see that one of its two days was in two pieces, and the live file is the wrong fixture for proving it now can (item 142)
 
 **Picked item 142** from the open-and-unblocked set the previous run named (144, 143, 142, 140, 126,

@@ -63,6 +63,9 @@
  *   fetch('/a11y-states.js').then(r=>r.text()).then(s=>eval(s))
  *   A11ySweep.selftest()        // FIRST. Its zeros are meaningless until this passes.
  *   A11yStates.selftest()       // proves MISSED is detected, and that `requires` refuses two-sidedly
+ *   A11yStates.expectViewport(375)  // declare the width this session sweeps at — see the block
+ *                                   // above env(). Optional, but an UNDECLARED sweep makes no
+ *                                   // viewport claim and now says so in its own verdict.
  *   await A11yStates.runAll()   // every state that needs no reload, one call
  *
  * runAll() and sweepLangs() expect CLEARED STORAGE at page load — several states declare it (see
@@ -394,7 +397,11 @@
   }
 
 
-  /* ── THE TWO AXES: language and font scale ──────────────────────────────────────────────────
+  /* ── THE AXES: language, font scale, and (item 146) viewport width ──────────────────────────
+   * The third is documented at `expectViewport` below, because it is an assertion rather than a
+   * setter and the reason for that is the interesting part. The two setters follow.
+   *
+   * ── language and font scale ─────────────────────────────────────────────────────────────────
    * Every state in the matrix above was measured in `en` at 100% until 2026-08-25 (item 112).
    * That is not a small gap: the four "(Beta)" languages re-render every string in the app, and
    * text length is what drives the two probes most likely to fire on a mobile viewport —
@@ -470,15 +477,109 @@
       });
   }
 
+  /* ── THE THIRD AXIS: viewport width — an ASSERTION, not a setter (item 146, 2026-08-29) ──────
+   * §3.0.7 of LAUNCH_PLAN.md promises the app "works at 375px wide", and `horizontalOverflow` and
+   * `smallTargets` are the two probes that exist to check it. `viewportWidth` has been stamped in
+   * env() since item 112 built the axes — and stamping alone did not make the axis real:
+   * **`viewportWidth` appears ZERO times in AGENT_LOG.md and its archive**, across every sweep ever
+   * recorded (measured 2026-08-29, with a control: `htmlLang` appears 8 times and `sweepLangs` 18,
+   * so the grep was live). No sweep this matrix has ever run has stated the width it ran at.
+   *
+   * ⛔ THE FIRST DRAFT OF THIS NOTE SAID THE APP HAD NEVER BEEN SWEPT AT 375px. That was FALSE and
+   * the step-5 self-check caught it — the correction is kept because it is the useful part. The
+   * app HAS had a broad mobile pass: **2026-08-04** swept 375px, 320px portrait, 320px with the
+   * 130% font step, and 568x320 landscape, `scrollWidth === innerWidth` everywhere. What is true
+   * is narrower and still worth acting on: that pass used a *single* geometry equality, not these
+   * eleven probes; it predates this state matrix (2026-08-25), the storage preconditions, the
+   * language and font-scale axes, the warm palette and serif pairing (2026-08-23), and more than
+   * half of today's 44 lessons. The only 375px reading in the matrix era is ONE screen — lesson 1,
+   * 2026-08-16 — taken incidentally while debugging the zero-width-viewport artifact.
+   * **The gap is not "never measured", it is "not measured by this instrument, and never stated".**
+   *
+   * So the hazard here is not a stale number, it is the SAME lying zero the other two axes are
+   * built against, one level up: a full matrix sweep run at desktop width reports 19 clean states
+   * and reads exactly like a mobile sweep. Nothing in the output contradicts that reading.
+   *
+   * ⚠️ WHY THIS IS AN ASSERTION AND NOT A SETTER, which is the one way it differs from setLang and
+   * setFontScale. Those drive controls the APP owns, so they can set and then confirm. Page script
+   * cannot resize the harness pane — `window.innerWidth` is the browser tool's to set
+   * (`resize_window`). The honest shape is therefore: the RUN declares the width it believes it is
+   * sweeping at, and this file refuses to agree when the DOM says otherwise. An undeclared sweep
+   * is not an error — it just makes no viewport claim, and now says so in its own verdict.
+   *
+   * ⚠️ AND THE NUMBER TO ASSERT IS NOT THE NUMBER THE APP LAID OUT INTO. Measured 2026-08-29 at
+   * `resize_window` mobile: `innerWidth` is 375 everywhere, while `documentElement.clientWidth` is
+   * **360 on any screen that scrolls and 375 on any screen that does not** — this harness renders a
+   * classic space-consuming scrollbar, which a phone's overlay scrollbar does not. Measured on
+   * three screens, not assumed: Practice cold `delta 0` (scrollHeight 812 = clientHeight),
+   * Reference `delta 15` (891 > 812), lesson 1 `delta 15` (4391 > 812).
+   * **The first draft of this note called the 15px "persistent" and that was WRONG** — it was one
+   * sample, taken on a scrolling screen. The delta is a property of the SCREEN, not of the harness.
+   * Consequence for reading a result: the sweep is STRICTER than a real 375px device on precisely
+   * the scrolling screens (15px less room), so a clean `horizontalOverflow` cannot be a false pass
+   * in that direction. Assert on `innerWidth` — that is the knob the harness turns and the only
+   * one that is constant across states — and read `layoutViewportWidth` PER STATE, never from the
+   * summary `env`, which is sampled once after the last state and describes only that screen.
+   */
+  var EXPECT_VW = null;
+
+  function expectViewport(px) {
+    var got = window.innerWidth;
+    if (px !== null && px !== undefined && got !== px) {
+      throw new Error("viewport is " + got + "px, not the declared " + px + "px — resize the " +
+        "browser pane (resize_window) and RELOAD before sweeping; a sweep at the wrong width is a " +
+        "clean result for a screen nobody asked about");
+    }
+    EXPECT_VW = (px === null || px === undefined) ? null : px;
+    return env();
+  }
+
   // The OBSERVED axis values. Stamped onto every result so a clean sweep can never be read as
-  // covering a language or a scale it was not actually in.
+  // covering a language, a scale or a viewport it was not actually in.
   function env() {
+    var vw = window.innerWidth;
     return {
       htmlLang: document.documentElement.lang || null,
       selectLang: (document.querySelector("header select") || {}).value || null,
       rootFontSizePx: parseFloat(getComputedStyle(document.documentElement).fontSize),
-      viewportWidth: window.innerWidth
+      viewportWidth: vw,
+      // What the app actually laid out into: innerWidth minus this harness's scrollbar. Quote THIS
+      // when comparing against a real device width.
+      layoutViewportWidth: document.documentElement.clientWidth,
+      viewportExpected: EXPECT_VW,
+      // null = this sweep declared no width and makes no viewport claim. Never silently `true`.
+      viewportMatches: EXPECT_VW === null ? null : vw === EXPECT_VW
     };
+  }
+
+  // One sentence a run can paste into its log entry without having to reason about `env`.
+  // `results` is optional; when given, the layout width is reported as the RANGE actually observed
+  // across the sweep. Without it there is only one sample, and one sample is how the first version
+  // of this line came to quote "laid out into 375px" for a sweep in which most screens got 360.
+  function viewportClaim(results) {
+    var vw = window.innerWidth;
+    var lays = (results || []).map(function (r) { return r.env && r.env.layoutViewportWidth; })
+                              .filter(function (n) { return typeof n === "number"; });
+    var at;
+    if (lays.length) {
+      var lo = Math.min.apply(null, lays), hi = Math.max.apply(null, lays);
+      at = vw + "px (laid out into " + (lo === hi ? lo + "px" : lo + "-" + hi + "px") +
+           " across " + lays.length + " state(s); the narrower figures are scrolling screens, " +
+           "where this harness takes 15px for a scrollbar that a phone does not)";
+    } else {
+      at = vw + "px (laid out into " + document.documentElement.clientWidth +
+           "px on THIS screen only — pass the sweep's results for the observed range)";
+    }
+    if (EXPECT_VW === null) {
+      return "NO VIEWPORT CLAIM — swept at " + at + ", but nothing was declared. Call " +
+        "expectViewport(<px>) before sweeping if you intend to state coverage at a width; " +
+        "§3.0.7's promise is 375px.";
+    }
+    if (vw !== EXPECT_VW) {
+      return "VIEWPORT MISMATCH — declared " + EXPECT_VW + "px, swept at " + at + ". Discard.";
+    }
+    return "swept at the declared " + at +
+      (EXPECT_VW === 375 ? " — this is §3.0.7's 375px mobile clause" : "");
   }
 
   // Per-probe tally across a set of results. item 112's third axis: a probe that is VACUOUS on
@@ -961,6 +1062,10 @@
             : missed.length
             ? missed.length + " state(s) NOT REACHED — their zeros do not exist, fix the recipes first"
             : findings.length + " state(s) with findings, " + out.length + " reached and swept",
+          // Unconditional, and deliberately worded so an UNDECLARED sweep cannot be quoted as a
+          // mobile one. This is the whole of item 146: the width was always in `env`, and a reader
+          // skimming for zeros never had a reason to look at it.
+          viewportClaim: viewportClaim(out),
           skippedNeedingReload: STATES.filter(function (s) { return s.reload; }).map(function (s) { return s.name; }),
           states: out
         }, null, 2);
@@ -1199,10 +1304,22 @@
           return drive(preconFails).then(function (d) {
             return drive(preconHolds).then(function (e) {
               return axisControl().then(function (c) {
+                /* The viewport axis' control, two-sided for the same reason `requires` is: an
+                 * assertion that only ever accepts is indistinguishable from one that never runs.
+                 * Asserting the TRUE width must pass and true+1 must throw. Restores the prior
+                 * declaration either way, so running the selftest cannot silently disarm a sweep
+                 * that had already declared one. */
+                var vwBefore = EXPECT_VW, vwNow = window.innerWidth;
+                var vwAccepts = null, vwRejects = null;
+                try { expectViewport(vwNow); vwAccepts = true; } catch (err) { vwAccepts = false; }
+                try { expectViewport(vwNow + 1); vwRejects = false; } catch (err) { vwRejects = true; }
+                EXPECT_VW = vwBefore;
+                var vwOk = vwAccepts === true && vwRejects === true;
+
                 var preconOk = d.status === "PRECONDITION" && d.findings === null && !d.threw &&
                                e.status !== "PRECONDITION";
                 var ok = a.status === "MISSED" && b.status === "MISSED" && !!b.threw &&
-                         a.findings === null && b.findings === null && preconOk &&
+                         a.findings === null && b.findings === null && preconOk && vwOk &&
                          (c.ran ? c.rejected === true : true);
                 return JSON.stringify({
                   unreachableAssertion: { status: a.status, findingsIsNull: a.findings === null },
@@ -1212,8 +1329,10 @@
                   preconditionAllows: { status: e.status },
                   bothSidesDiffer: preconOk,
                   axisAssertion: c,
+                  viewportAssertion: { observedWidth: vwNow, acceptsTrueWidth: vwAccepts,
+                    rejectsWrongWidth: vwRejects, declarationRestored: EXPECT_VW === vwBefore },
                   verdict: ok
-                    ? "PASS — a state that is not reached reports MISSED with null findings (assertion failure AND step throw), a state in the wrong storage reports PRECONDITION without running its steps while a satisfiable one does not, and setLang refuses when it cannot confirm the switch. Zeros from run()/runAll()/sweepLangs() are meaningful this session."
+                    ? "PASS — a state that is not reached reports MISSED with null findings (assertion failure AND step throw), a state in the wrong storage reports PRECONDITION without running its steps while a satisfiable one does not, setLang refuses when it cannot confirm the switch, and expectViewport accepts the true width while refusing a wrong one. Zeros from run()/runAll()/sweepLangs() are meaningful this session."
                     : "FAIL — a control did not fire; every recipe and every language row in this file is an unverified zero until this passes."
                 }, null, 2);
               });
@@ -1224,6 +1343,12 @@
     },
 
     // ── the axes ──────────────────────────────────────────────────────────────────────────
+    // The viewport axis. Declares the width this session is sweeping at and REFUSES if the DOM
+    // disagrees — see the block above env() for why this one asserts instead of setting.
+    // Call it after resize_window + reload, before runAll()/sweepLangs()/finish().
+    expectViewport: function (px) { return JSON.stringify(expectViewport(px), null, 2); },
+    viewportClaim: function () { return viewportClaim(); },
+
     setLang: function (code) { return setLang(code).then(function (c) { return JSON.stringify({ lang: c, env: env() }); }); },
     setFontScale: function (pct) { return setFontScale(pct).then(function (r) { return JSON.stringify({ fontScale: r, env: env() }); }); },
     env: function () { return JSON.stringify(env(), null, 2); },
