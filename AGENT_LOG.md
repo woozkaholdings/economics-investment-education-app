@@ -1428,19 +1428,61 @@ for the history. No open P1/P2 items.
       instrument. One axis with one asserted width is the honest unit of work here — **filed as item
       147** rather than smuggled in.
 
-147. **[A11y/Tooling — filed 2026-08-29 by the run that built item 146, as its stated residual
-    rather than smuggled into the same commit.] The viewport axis has one declared width; the
-    2026-08-04 pass had four.**
-    - **State:** `expectViewport` will assert any width, and the matrix was swept and recorded at
-      **375 only**. The 2026-08-04 manual pass also covered **320px portrait, 320px combined with
-      the 130% font step, and 568x320 landscape** — the combination case being the interesting one,
-      since it is the only check that the font-scale axis and a narrow viewport do not compound.
-    - **The cheap version:** three more `resize_window` + `expectViewport` + `runAll` rounds, and a
-      line in the run log per width. No new code — that is the point of shipping the axis first.
-    - **What would need code:** nothing, unless a width produces findings. `sweepLangs` cannot loop
-      it (page script cannot resize the pane), so the loop stays the run's, not the file's.
-    - **Honest priority: low, and lower than it looks.** 375 is the clause §3.0.7 actually states,
-      and it came back clean on all 19 states. Downstream of O-1 like everything else.
+147. **✅ DONE 2026-08-29 (owner-directed: "do item 147 next"), the day it was filed. All three
+    widths swept — and "no new code needed" was wrong: the compounding case found a real defect and
+    the run shipped a fix.** See the run log.
+    - **The three configurations and what they returned.** 320px portrait: **19/19 states clean**
+      (12 no-reload + all 7 reload-seeded). 568x320 landscape: **12/12 clean**, plus the first-run
+      modal specifically (the 2026-08-04 pass called it out) — dialog 320px tall, no internal
+      scroll, "Got it" button fully visible at bottom 241 of 320. **320px x 130% font: 11/12 —
+      one real finding**, below.
+    - ⛔ **The item predicted "no new code, unless a width produces findings". A width produced
+      findings.** `Reference > Market signals` scrolls the document horizontally at 320px x 130%:
+      `scrollWidth=323 vs clientWidth=305`, an 18px overflow, traced to the Fed-balance-sheet
+      `Bar` chart's last column ("Second tightening"). **Clean at 320px x 100% and at 375px** — it
+      is specifically the compounding case, which is exactly what the 2026-08-04 pass was checking
+      for and the reason that configuration is on the list. **Filed as item 148**, because the fix
+      is a design call rather than a defect with one right answer.
+    - **What this run DID ship, which is the other half of the same screen:** `Bar`'s box height is
+      now font-relative. See item 148 for why the horizontal half was separated from it.
+    - **Standing note for the next width sweep.** The reload-gated states were swept at 320
+      portrait but **NOT at 130% font** — `runAll` covers only the 12 no-reload states, and the
+      seven others are three tool calls each. So the lesson and quiz screens are **unmeasured at
+      the compounding configuration**. That is a real coverage gap, stated rather than rounded off,
+      and it is where the next instance would live.
+
+148. **[A11y/UX — filed 2026-08-29 by the run that closed item 147, as its stated residual rather
+    than smuggled into the same commit.] Market signals overflows the document by 18px at 320px x
+    130% font, and all three candidate fixes were priced and none is obviously right.**
+    - **The measurement, reproducible:** `#/reference` > Market signals, viewport 320, font 130%.
+      `document scrolls horizontally: scrollWidth=323 clientWidth=305`. The overflowing nodes are
+      the `Bar` chart's fifth column and its label span, both extending to 323px. **Clean at 100%
+      font and at every width >= 375.** Cause: the columns are `flex: 1` with the default
+      `min-width: auto`, so they cannot shrink below the label's min-content width — "tightening"
+      is 66px at a 130% root and the column's flex size is 45px.
+    - **Three fixes, all measured live in the DOM before any of them was written to source:**
+      - **(a) `minWidth: 0` on the column.** Kills the document overflow (323 -> 305) — **and
+        produces 3 pairs of OVERLAPPING labels**, because the 66px labels stay 66px inside 45px
+        columns. **The probe goes green on this.** ⚠️ Do not ship it alone; that is a worse screen
+        than the one it fixes, and `horizontalOverflow` cannot see the difference.
+      - **(b) (a) + `width: 100%` + `overflowWrap: break-word` on the label.** No overflow, no
+        overlap, all five bars visible. Cost: mid-word breaks. With `hyphens: auto` added, a
+        screenshot shows "Pandemic response" rendering as **"Pande / mic / re- / spons / e"** —
+        five fragments. **Rejected on looking at it**, which no geometry probe would have caught.
+      - **(c) `overflow-x: auto` on the chart row.** No overflow, no overlap, labels intact and
+        readable; the figure scrolls inside itself (`scrollWidth 290 > clientWidth 239`).
+        Permitted by WCAG 1.4.10, which exempts content needing two-dimensional layout. Cost: the
+        fifth bar is off-screen until scrolled — **and this figure's entire teaching point is the
+        side-by-side comparison** (its own component comment records an earlier bug where the
+        ten-fold expansion "was drawn as four bars of equal height"). A scrollable comparison chart
+        is a comparison you cannot make at a glance.
+    - **Why it was not decided this run:** (b) and (c) each break something the app explicitly
+      values — §3.0's clarity standard and the figure's comparison respectively — so this is a
+      product judgment, not a bug with a correct answer. A fourth option nobody has priced: give
+      the chart fewer bars, or a shorter label set, at narrow widths.
+    - **Honest priority: low-to-medium.** One screen, one configuration, and the configuration is
+      the narrowest supported width combined with the largest font step. But it is a **WCAG 1.4.10
+      reflow failure** at 320px, which is the width that criterion names. Downstream of O-1.
 
 140. **[A11y/Tooling — filed 2026-08-28 by the run that built §28c (item 139), as its stated
     residual rather than smuggled into the same commit.] §28c assumes the ring lands on a SURFACE.
@@ -3308,6 +3350,120 @@ finding(s); V vacuous; U unavailable`. A bare "no accessibility issues found" is
 > section above is prepend-order (newest first); the archive is ascending.
 > *(The "367 lines apart" this note carried until 2026-08-29 was the first block's own length, not the
 > distance between the blocks. The blocks and their byte totals were right; only the gap figure was.)*
+### 2026-08-29 (owner-directed: "do item 147 next") — the item said no new code would be needed; the compounding width found a chart drawing its bars 9px tall, and the fix the probe would have accepted was worse than the bug (item 147 -> new item 148)
+
+**Picked item 147** on owner instruction, the run after it was filed. Tree clean but for the
+untracked `UIUX/` and `drafts/`, neither touched; owner-tree fingerprint
+`c2331799fd3ee413aca864fd82d247a35ea31b01a70a6c4e37b00f6aad9105b2` (0 tracked modified, 52
+untracked) — **identical to the previous run's opening fingerprint, so the owner's tree has not
+moved.** `HEAD` `c5c486c` at start and unmoved at commit.
+
+#### Step 3.5 — the premises, and the one that broke
+
+- **The font step exists.** `theme.js` authors scales 0.9 / 1 / 1.15 / **1.3**, and
+  `Settings.jsx` labels them `${Math.round(step.value * 100)}%`, so `setFontScale(130)` addresses a
+  real control rather than a hoped-for one.
+- **The widths are deliverable.** `resize_window` gave 320x812 and 568x320, and `expectViewport`
+  asserted each — `viewportMatches: true` on every result quoted below.
+- **⛔ "No new code needed — that is the point of shipping the axis first" was WRONG**, and it was
+  wrong in the most useful direction: the configuration the item singled out as "the interesting
+  one" is the one that produced a finding. The item is closed on the corrected facts.
+
+#### The three configurations
+
+| configuration | result |
+|---|---|
+| **320px portrait** | **19/19 clean** — 12 no-reload via `runAll`, plus all 7 reload-seeded states driven individually |
+| **568x320 landscape** | **12/12 clean**; first-run modal checked specifically (the 2026-08-04 pass named it) — dialog 320px tall, no internal scroll, "Got it" fully visible at bottom 241 of 320 |
+| **320px x 130% font** | **11/12 — one finding**, `reference-markets`: `scrollWidth=323 clientWidth=305` |
+
+All 11 sweep controls fired in every session above, so each zero is meaningful. Re-checked at
+**375px afterwards: 12/12 clean**, so nothing this run shipped regressed the previous run's baseline.
+
+#### The finding under the finding — which the probe could not see
+
+The 18px overflow is real, but opening the screen at that setting showed something the geometry
+probes had no way to report: **the Fed-balance-sheet chart's five bar tracks were rendering 9px
+tall.** `Bar` takes a fixed *pixel* `height` (both call sites pass `height={90}`), and a column
+spends its height on the value, the bar track and the label in that order — so at a 130% root the
+grown text ate the box and the bars, the only part carrying the comparison, were what got squeezed.
+**This is the same failure the component's own `minHeight: 0` comment already records** ("a
+ten-fold expansion once drew as four equal bars"), reached through the font-scale axis instead of
+through flex sizing.
+
+**What shipped** is one line plus its reasoning: `Bar` converts a numeric `height` to `rem` against
+the 16px baseline. **At 100% this is arithmetically the same number of pixels** — verified, the box
+measures exactly **90px** at 100% at both 320px and 375px — and at 130% it grows to **117px**, taking
+the bar tracks from **9px to 51px** with the proportions intact (bars 5/17/22/51/38 against
+4/11/15/36/26 at 100%). A screenshot before and after is the honest evidence here: before, slivers
+and a misaligned value row; after, five legible bars with the tallest correctly at 9.0.
+
+#### The fix I did NOT ship, and why that is the point
+
+The overflow's obvious fix is `minWidth: 0` on the column. **Measured: it removes the document
+overflow (323 -> 305) and produces 3 pairs of OVERLAPPING labels** — 66px labels inside 45px
+columns, text on top of text. **`horizontalOverflow` reports clean on that.** Adding
+`width: 100%` + `overflowWrap: break-word` + `hyphens: auto` fixes the overlap and renders
+"Pandemic response" as **"Pande / mic / re- / spons / e"** — rejected by looking at a screenshot,
+not by any probe. The third option, scrolling the figure internally, keeps every label readable but
+puts the fifth bar off-screen, and side-by-side comparison is this figure's whole content.
+**All three are priced with live measurements in new item 148; none is obviously right, so it is a
+product call and not mine to make silently.**
+
+#### One generalization I checked instead of assuming
+
+"Every fixed-px figure has this bug" is the plausible next sentence and it is **false, measured.**
+`lossAsymmetry` (lesson 27, `height: 150`) renders bars of **38px and 75px at BOTH 100% and 130%** —
+no squeeze. Reading the source says why: `lossAsymmetry` and `earningsGap` keep their labels
+*outside* the fixed box, and `Bar` is the only figure that stacks value + track + label inside one
+fixed-height column. **One defect is not a class**, which is the rule items 126 and 144 already
+record.
+
+#### Verification
+
+`npm test` **exit 0**, 0 failures, the same 3 pre-existing warnings. `npm run build` **✓ 1.78s**.
+Chart box measured at 90px at 100% and 117px at 130%. 375px baseline re-swept clean after the change.
+
+#### Step 5 — adversarial self-check
+
+- **Blindspot register:** no content, locale, quiz, glossary or market-copy string is touched — one
+  component and a comment. No Dalio branding (§10.2), no advice-adjacent language (§10.1), no
+  child-facing framing (§10.3), no live-looking market figure or hardcoded user-facing date (§2.3);
+  the dates added are dated *source comments*, which this repo uses throughout.
+  `check-blindspot.mjs` passes.
+- **DECISIONS.md:** no closed decision is touched — grep finds no decision about chart heights or
+  `rem`, and nothing here involves localStorage-only state, `.js`-not-JSON content, or Vite.
+  The change is *continuous with* the 2026-08-04 font-scaling work that converted 103 inline
+  `fontSize` values to `rem`; this extends the same principle to the one container that had been
+  left in px.
+- **Already-done item:** nothing in the backlog covers `Bar`'s height. `check-data.mjs` §28b cites
+  Bar's `height={90}` comment — **both call sites still pass `height={90}`, so that citation is
+  still accurate** and no doc drift was introduced.
+- **Item 144's trap:** the new comment does not name the `us-english` marker token
+  (`git diff | grep -c` -> 0); §59 passes.
+- **My own verification claim:** an independent reviewer re-running the sequence — build, serve,
+  `resize_window` to each width, reload, screenshot, one `Tab`, eval both files, both self-tests,
+  `expectViewport(<w>)`, `setFontScale(130)` where applicable, `runAll()` — gets these numbers.
+- **⚠️ What I did NOT measure, stated rather than rounded off:** the **seven reload-gated states
+  were swept at 320 portrait but not at 320 x 130%.** `runAll` covers only the 12 no-reload states,
+  and each reload state costs three tool calls. So the lesson and quiz screens are unmeasured at
+  the compounding configuration — recorded in item 147's closing note as where the next instance
+  would live.
+- **What a reviewer could fairly dispute:** shipping the height fix while leaving the overflow open
+  means Market signals still scrolls horizontally at 320 x 130%. I judged a legible chart with an
+  18px scroll strictly better than an illegible one without it, and the alternative was to make a
+  product decision (item 148) inside a run that was chartered to measure three widths.
+
+#### Next run
+
+**Item 148** is the direct follow-on and is the one with a real user-visible symptom, but it wants
+an owner opinion between its three priced options. Otherwise: **144, 143, 140, 126, 120** (all
+measured at zero live instances), and **item 117**, still the one open *product* item.
+**For the owner:** the floor is over budget and only a **backlog compression pass** moves it;
+**item 115 holds the rule and the options, and that decision is still yours.** **O-1 remains the
+entire critical path: 44 lessons, five languages, 160 minutes of content, and zero people have ever
+opened this app.** **O-3** unchanged — no translated prose was added.
+
 ### 2026-08-29 (scheduled dev-agent) — nineteen clean states at 375px, and the sweep that would have read identically at desktop width (new items 146 + 147)
 
 **Picked a backlog refill over another zero-instance tooling residual**, which is what the previous

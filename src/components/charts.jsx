@@ -23,6 +23,19 @@ import { Text } from "./ui.jsx";
 // resolving to `undefined`.
 export function Bar({ data, title, colors, height = 140, description, caption }) {
   const max = Math.max(...data.map((d) => Math.abs(d.value)));
+  // `height` is authored in px by both call sites, but a PIXEL height does not scale with the
+  // reader's font-size control — and the column spends its height on the value, the bar track and
+  // the label, in that order, so the part that gets squeezed is the bar: the only part carrying
+  // the comparison. Measured 2026-08-29 on Reference > Market signals at 320px x 130%: the five
+  // Fed-balance-sheet bar tracks rendered **9px tall** inside height={90}, because the 130% value
+  // and a three-line 130% label had eaten the rest. That is the same failure mode as the
+  // `minHeight: 0` comment below — the meaning drawn at a size that cannot carry it — reached
+  // through the font-scale axis instead of through flex sizing.
+  // Dividing by the 16px root baseline makes the box grow WITH the text: at 100% this is
+  // arithmetically the same number of pixels the call sites already got (90 / 16 = 5.625rem =
+  // 90px), so the default rendering is unchanged, and at 130% the box grows to 117px instead of
+  // holding 90px while its contents grow into it. A caller may still pass a CSS string to opt out.
+  const boxHeight = typeof height === "number" ? `${height / 16}rem` : height;
   return (
     <figure style={{ background: surface.card, border: `1px solid ${line.hairline}`, borderRadius: radius.lg, padding: space["4"], margin: 0 }}>
       {title && (
@@ -32,7 +45,7 @@ export function Bar({ data, title, colors, height = 140, description, caption })
           </Text>
         </figcaption>
       )}
-      <div role="img" aria-label={description} style={{ display: "flex", alignItems: "flex-end", gap: space["1"], height }}>
+      <div role="img" aria-label={description} style={{ display: "flex", alignItems: "flex-end", gap: space["1"], height: boxHeight }}>
         {data.map((d, i) => (
           <div key={d.label} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "flex-end", height: "100%" }}>
             <span style={{ fontSize: "0.75rem", fontWeight: 700, marginBottom: space["1"], color: ink.body }}>{d.value}</span>
