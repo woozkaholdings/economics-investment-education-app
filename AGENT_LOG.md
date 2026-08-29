@@ -1298,30 +1298,57 @@ for the history. No open P1/P2 items.
     - **Honest priority: low-medium.** Zero live instances *now*, but unlike items 126/130 this one
       has a closed, dated instance behind it. Downstream of O-1 like everything else.
 
-139. **[A11y/Tooling — filed 2026-08-28 by the run that built `focusVisibleOnTab` (item 116), as
-    its stated residual rather than smuggled into the same commit.] The probe asks whether the
-    focus indicator CHANGES, not whether anyone can SEE it.**
-    - **State:** `focusVisibleOnTab` compares eight computed properties focused vs. unfocused and
-      reports an element whose signature is byte-identical. Measured 2026-08-28: **the shipped
-      probe scanned 40 controls over 4 screens and a control-verified hand run of the same method
-      scanned 124 over 9 screens — 0 findings in both.** Every control carries `index.css`'s
-      global `:focus-visible` ring (`outline: 2px solid var(--fill-accent)`), so the entire
-      result rests on **one rule and one token**.
-    - **What it cannot see.** WCAG **2.4.11** (focus appearance) and **1.4.11** (non-text
-      contrast) want the indicator to have adequate area and ≥3:1 contrast against **both** the
-      adjacent unfocused colors and what it covers. A ring rendered in a token that happens to
-      sit at 1.4:1 on its surface would pass this probe and fail a user. The pieces already
-      exist: `check-data.mjs` **§28b** enforces 3:1 on 70 graph×surface pairs and knows how to
-      compute a ratio — this is `--fill-accent` × every surface a focusable control sits on.
-    - ⚠️ **The instrument trap, named in advance because it is the same one twice.** `--fill-accent`
-      resolves per palette, and item 118's dark-mode miss is exactly this shape: a live scan that
-      reads one theme and reports for both. **Measure in light AND dark, with a control per
-      theme** — a planted low-contrast ring the check must catch.
-    - **The cheaper 80%: this is a STATIC question.** One global rule, one token, a knowable set of
-      surfaces. `check-data.mjs` can answer it every `npm test` without a browser — which is worth
-      more than a browser probe nobody runs on a schedule. **Prefer that shape.**
-    - **Honest priority: low.** Zero known live instances; the ring is one token and it currently
-      clears AA everywhere §28 already measures it. Downstream of O-1 like everything else.
+139. **✅ DONE 2026-08-28 (scheduled dev-agent), the same day it was filed. Shipped as
+    `check-data.mjs` §28c — 14 ring x surface pairs at 1.4.11's 3:1, both palettes, the ring token
+    DERIVED from the `:focus-visible` rule rather than hardcoded. The item's "cheaper 80%" was the
+    right shape and its WCAG citation was wrong; read the two corrections below.** See the run log.
+    > **PREMISE CORRECTIONS 2026-08-28, both from measuring rather than reading.**
+    > **(1) The criterion.** The item cites "WCAG **2.4.11** (focus appearance)". In WCAG 2.2,
+    > 2.4.11 is *Focus Not Obscured (Minimum)*; the appearance criterion is **2.4.13, and it is
+    > AAA**. The AA bar that actually binds a focus indicator's contrast is **1.4.11**, which is
+    > what §28c asserts. 2.4.13's AREA/THICKNESS half remains uncovered — `outline: 2px solid`
+    > with a 2px offset is what ships and nothing measures it.
+    > **(2) "It currently clears AA everywhere §28 already measures it" — §28 does not measure it
+    > at all.** §28 pairs `--ink-*` against surfaces and `--ink-on-fill` against fills; §28b pairs
+    > `--graph-*`. **No section paired the ring token against a surface.** That the ring looked
+    > covered is a coincidence of the palette: `--ink-accent` and `--fill-accent` hold the *same
+    > hex* in both palettes, so §28 was measuring an identical number for a different reason.
+    > **The control that settles it:** repointing `:focus-visible` at `--line-hairline` — a token
+    > both §28 and §28b exclude — produces **14 failures, every one of them §28c, and zero from
+    > anything else in the suite.** An invisible focus ring was green across the whole build.
+
+140. **[A11y/Tooling — filed 2026-08-28 by the run that built §28c (item 139), as its stated
+    residual rather than smuggled into the same commit.] §28c assumes the ring lands on a SURFACE.
+    That is true today, it was measured rather than assumed, and nothing keeps it true.**
+    - **State:** `outline-offset: 2px` paints the ring outside the control's border box, so the
+      color beneath it is the nearest ancestor that paints a background — never the control's own
+      fill. §28c therefore asserts ring x the 7 `--surface-*` tokens and deliberately **omits the
+      fills**, because the ring token IS `--fill-accent`: ring-on-`--fill-accent` is **1.00:1 by
+      construction**, and every fill pair fails (1.00–2.25:1 light, 1.00–1.74:1 dark). Asserting
+      them would need an exemption list for pairs the app never renders — F10's shape, and the same
+      reasoning that keeps `--ink-on-fill` out of §28's ink list.
+    - **What was measured, so nobody re-derives it (2026-08-28, live against `dist/`):** 4 routes x
+      2 themes = **8 sweeps, 106 focusable controls, 0 whose under-ring background could not be
+      resolved**, and exactly **four distinct backgrounds** across all of it — `--surface-canvas`
+      and `--surface-card` in each palette. **No `--fill-*` appeared under any ring.** Worst live
+      ratio **7.10:1**, against §28c's static worst of 6.40:1 (light `--surface-sunken`, a surface
+      no focusable currently sits on).
+    - **The residual is a LAYOUT question and only a live sweep answers it.** Put a focusable inside
+      a fill-backgrounded container — a filled callout, a selected segment that paints its own
+      background, a primary-colored banner with a link in it — and the ring is drawn on that fill at
+      ~1:1, while §28c stays green. No static check over `index.css` can see it.
+    - ⚠️ **Two instrument traps this run hit, both of the "clean-looking answer that means nothing"
+      family.** (a) **The pane defaults to system dark** — the first scan resolved `--fill-accent`
+      to `#a9b6ff` with `data-theme` unset, so a single-pass sweep measures dark twice and reports
+      it as both. Force `data-theme` explicitly and **carry a control per palette** (a planted
+      focusable in a `var(--fill-accent)` wrapper; it read 1.00:1 in each). (b) **While the Browser
+      pane is hidden, `innerWidth/innerHeight` are 0 and `getBoundingClientRect()` collapses** — a
+      zero-size filter then silently drops most of the screen (35 of 53 controls on `#/learn`). The
+      Environment note warns about this; front the tab and re-read `innerWidth` before trusting a
+      count. **A timed-out async sweep also keeps running** and mutates `location.hash` underneath
+      the next measurement — reload before re-measuring.
+    - **Honest priority: low.** Zero live instances, measured. Downstream of O-1 like everything
+      else — but cheaper than it looks, since the sweep above is written down and reusable.
 
 130. **[Process/Tooling — filed 2026-08-27 by the run that built §55, as its stated blind spot.]
     §55 cannot see comments, dev scripts, or Markdown — and that is 21 of the 36 spellings it was
@@ -2962,6 +2989,115 @@ finding(s); V vacuous; U unavailable`. A bare "no accessibility issues found" is
 > have moved nothing while the file sat at **915 KB**, 1.5x its own trigger. The boundary used here
 > is therefore the byte target, taken on whole days. **The deeper reason is in W-5.3's note:** the
 > run log is no longer what makes this file big.
+### 2026-08-28 (scheduled dev-agent) — an invisible focus ring was green across the entire build, and the token that hid it was the right hex for the wrong reason (item 139)
+
+**Pick.** Item 139, from the backlog — the previous run filed it as its own stated residual and named
+it first among the open-and-unblocked items. It is the contrast half of the focus-indicator question
+that `focusVisibleOnTab` (item 116) explicitly cannot answer: that probe asks whether the indicator
+**changes**, never whether anyone can **see** it.
+
+#### Step 3.5 — re-measuring the premise, with a control. Two of the item's claims were wrong.
+
+**(1) The WCAG citation.** The item asks for "**2.4.11** (focus appearance)". In WCAG 2.2, 2.4.11 is
+*Focus Not Obscured (Minimum)*; the appearance criterion is **2.4.13 and it is AAA**, and it governs
+the ring's **area and thickness** as well as its contrast. The AA criterion that actually binds a
+focus indicator's contrast is **1.4.11**. §28c asserts 1.4.11's 3:1 and says so; 2.4.13's area half
+is left uncovered and named as uncovered, rather than being quietly claimed by a check that measures
+color.
+
+**(2) "The ring currently clears AA everywhere §28 already measures it" — §28 does not measure it at
+all.** Read off the source rather than from the item: §28's pair set is `--ink-*` x surfaces plus
+`--ink-on-fill` x fills, and §28b's is `--graph-*` x surfaces. **No section in the suite paired the
+ring token against a surface.** The reason it *looked* covered is a coincidence of the palette —
+`--ink-accent` and `--fill-accent` hold the **same hex** in both palettes (`#2f43c4` light,
+`#a9b6ff` dark), so §28 was computing the identical number for an unrelated pair.
+
+**The control that settles it, and the finding of this run.** Repoint `:focus-visible` at
+`--line-hairline` — a token both §28 and §28b deliberately exclude, because a line is not text and
+not a graph — and run the suite: **14 failures, every one of them §28c, and zero from anything
+else.** Before this commit that same edit was **PASS: 0 failures**. A focus ring at **1.24:1 on
+`--surface-canvas`** — invisible to every keyboard user in the app — was green across the whole
+build.
+
+#### What shipped
+
+`scripts/check-data.mjs` **§28c** (132 lines, one section, no other file touched):
+
+- **The ring token is DERIVED from the rule, not hardcoded.** §28c reads `:focus-visible`'s own
+  `outline` declaration out of `index.css` and pulls the `var(--…)` from it, so repointing the ring
+  moves the check with it. A missing rule, an `outline` set to a literal color, or a token the
+  palette does not define are each their own failure with their own message — for a contrast check,
+  "matched nothing" would otherwise read as a pass, which is the trap §28's own header warns about.
+- **14 pairs**: the ring token x all 7 `--surface-*` tokens, in both palettes, at 3:1. It reuses
+  §28's `contrast()` — the one that self-tests against three published probes first — rather than
+  carrying a second luminance implementation.
+- Wider than the finding, like §28b: only 2 of the 7 surfaces carry a focusable today, but all 7
+  are asserted so a control may move onto a wash without reopening the question.
+
+#### Verification
+
+- **`npm test` → PASS: 0 failure(s), 2 warning(s)** (both pre-existing and owner-blocked: the run-log
+  and non-archivable-floor size budgets). New line: `§28c focus ring: 14 --fill-accent x surface
+  pairs at 1.4.11 >= 3:1 across both palettes (worst light 6.40:1 --fill-accent on --surface-sunken;
+  worst dark 7.90:1 --fill-accent on --surface-accent-wash)`.
+- **Four negative controls, each run against a mutated `index.css` and each restored from a
+  scratchpad copy — never `git checkout --`** (the restore was verified by sha256 and an empty
+  `git diff --stat`, twice): a low-contrast ring value → 7 light failures; the `:focus-visible` rule
+  deleted → the missing-rule failure; the outline given a literal hex → the not-a-token failure; the
+  ring repointed at an undefined token → one failure per palette.
+- **Live browser sweep** (the W-1 technique: `npm run build`, `python3 -m http.server 8771` against
+  `dist/`, `preview_start` with a plain `url`), which is what turns §28c's *scope* from an assumption
+  into a measurement — see item 140. 4 routes x 2 themes = **8 sweeps, 106 focusable controls, 0
+  unresolved backgrounds, 4 distinct under-ring colors, all of them surfaces, worst 7.10:1**. The
+  per-palette control (a planted focusable inside a `var(--fill-accent)` wrapper) **fired at 1.00:1
+  in both themes** and cleared on removal.
+- **Two instrument traps hit and recorded in item 140**, both of the family this log keeps warning
+  about. The pane **defaults to system dark**, so the first scan resolved the dark ring with
+  `data-theme` unset — item 118's miss exactly. And while the pane is **hidden**, `innerWidth` is 0
+  and `getBoundingClientRect()` collapses, so the zero-size filter silently dropped **35 of 53**
+  controls on `#/learn`; fronting the tab fixed the viewport, and the 32 that remained zero-size
+  were genuinely inside a collapsed `<ol hidden>` accordion, which is a correct exclusion. A
+  timed-out async sweep also kept running and moved `location.hash` underneath the next call.
+
+#### Step 5 — adversarial self-check
+
+- **Blindspot register** — no regression. Over the 132 added lines: Dalio/`principles of` **0**,
+  advice-adjacent verbs **0**, child-facing framing **0**; **control**: `focus` returns **21** on the
+  same diff, so the greps reach the added text. `npm run check-blindspot` **PASS**, including §2.3's
+  live-date sweep over 26 teaching-copy modules. The one date I added is a `measured 2026-08-28`
+  annotation in dev-script prose — the house convention here, and outside §2.3's scope. **No
+  learner-visible string, locale or rendered UI is touched: the built bundle is byte-identical
+  (`index-C3F1ZUMc.js` before and after), which is the evidence that nothing shipped to users.**
+- **`DECISIONS.md` conflict** — none. No closed decision governs contrast checking; localStorage-only
+  state, `.js`-not-JSON content and Vite-not-Expo are all untouched.
+- **Already-done backlog item** — no, and this was the check most likely to fire, so it was *run*
+  rather than reasoned. §28 and §28b were read off the source (their filters are quoted in the item
+  above) and neither pairs the ring token with a surface; the `--line-hairline` control then proved
+  it behaviorally, with **14 §28c failures and 0 from any other section**. §28c also does not
+  re-litigate §28's `--ink-on-fill` exclusion — it inherits the same reasoning for why fills stay out.
+- **Own verification claim** — an independent reviewer re-running the commands above gets the same
+  numbers; the mutations are three `perl -0pi -e` one-liners and the restores are a `cp` from a
+  scratchpad copy. **What I am NOT claiming:** (1) that the app's focus indicator is *good* — §28c
+  answers contrast only, and 2.4.13's area/thickness half is uncovered; (2) that the ring can never
+  land on a fill — that is a layout property, true today by live measurement and guarded by nothing
+  (**item 140**); (3) that the live sweep covers the app — it covers 4 routes in the storage state
+  they were visited in, with 64 collapsed-accordion controls skipped, like every probe here.
+
+#### Next run
+
+`npm run owner-tree` — record the post-commit fingerprint. **Open and unblocked:** **item 140** (the
+layout half filed by this run — but read its "do not build it until it has drifted" sibling reasoning
+in items 126/130 first, since it too has zero live instances); **item 127** (the per-language numeral
+guard — its "decide before coding" question is still undecided); **item 136**'s remainder and **item
+130**, both still honestly low. **Item 139 is closed.**
+**For the owner, unchanged by this run:** both log-size warnings are live — run log **304,358 b**
+against a 250,000 b warn budget, and the **non-archivable floor at 256,017 b, also over** (measured
+before this entry was appended); archiving clears only the first, and **item 115's two options for
+the second remain the owner's.**
+**O-1 is still the entire critical path: 44 lessons, five languages, 160 minutes of content, and
+zero people have ever opened this app.** **O-3** unchanged — this run added no translated prose;
+human review share is still 0% in all four languages.
+
 ### 2026-08-28 (scheduled dev-agent) — the harness could focus a document all along; nobody had pressed Tab (item 116)
 
 **Pick.** Item 116, from the backlog rather than from the previous run's next-run line. Its own

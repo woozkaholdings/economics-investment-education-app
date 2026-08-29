@@ -3109,6 +3109,137 @@ if (keyedGroupsChecked < 4) {
           : "."),
     );
   }
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // 28c. THE KEYBOARD FOCUS RING at WCAG 1.4.11's 3:1 (backlog item 139).
+  //
+  //     `focusVisibleOnTab` (item 116) asks whether the focus indicator
+  //     CHANGES — it compares eight computed properties focused vs. unfocused
+  //     and reports a control whose signature is byte-identical. It cannot ask
+  //     whether anyone can SEE the change. A ring painted in a token sitting
+  //     at 1.4:1 on its surface passes that probe and fails a user.
+  //
+  //     THE BAR IS 1.4.11 (Non-text Contrast, AA), 3:1, and that citation is
+  //     deliberate. Item 139 filed this as "WCAG 2.4.11 (focus appearance)";
+  //     in WCAG 2.2, 2.4.11 is *Focus Not Obscured* and the appearance
+  //     criterion is 2.4.13, which is AAA and additionally governs the ring's
+  //     AREA and THICKNESS. This section asserts the AA contrast half only.
+  //     The area half is uncovered — `outline: 2px solid` with a 2px offset is
+  //     what ships; nothing here measures it.
+  //
+  //     THE RING TOKEN IS DERIVED FROM THE RULE, NOT HARDCODED. The section
+  //     reads `:focus-visible`'s own `outline` declaration and pulls the
+  //     `var(--…)` out of it, so repointing the ring at a different token
+  //     moves this check with it rather than leaving it asserting a token the
+  //     app no longer uses. A `:focus-visible` rule that goes missing, or
+  //     stops naming a token, is itself a failure — for a contrast check,
+  //     "matched nothing" would otherwise read as a pass.
+  //
+  //     WHY SURFACES ONLY, AND WHY THAT IS A MEASUREMENT RATHER THAN AN
+  //     ASSUMPTION. `outline-offset: 2px` paints the ring outside the border
+  //     box, so the color under it is the nearest ancestor that paints a
+  //     background — not the control's own fill. Measured live 2026-08-28
+  //     against the built app (`dist/`, python http.server, both themes forced
+  //     explicitly): 4 routes x 2 themes = 8 sweeps, 106 focusable controls,
+  //     0 whose under-ring background could not be resolved, and exactly FOUR
+  //     distinct backgrounds across all of it — `--surface-canvas` and
+  //     `--surface-card` in each palette. No `--fill-*` appeared under any
+  //     ring. Worst live ratio 7.10:1.
+  //     The control fired in BOTH palettes (a planted focusable inside a
+  //     `background: var(--fill-accent)` wrapper reported 1.00:1, light and
+  //     dark) — item 118's dark-mode miss is exactly this shape, and the pane
+  //     defaults to system dark here, so a single-theme scan would have
+  //     measured dark twice and called it both.
+  //
+  //     Ring x fills is therefore NOT asserted, and must not be added: the
+  //     ring token IS `--fill-accent`, so ring-on-`--fill-accent` is 1.00:1 by
+  //     construction and every fill pair fails (1.00–2.25:1 light, 1.00–1.74:1
+  //     dark). Adding them would need an exemption list for pairs the app
+  //     never renders — the hand-maintained shape F10 was filed against, and
+  //     the same reasoning that keeps `--ink-on-fill` out of §28's ink list.
+  //     Whether a ring ever lands on a fill is a LAYOUT question; the live
+  //     sweep above is what answers it, and it is item 140.
+  //
+  //     The assertion is wider than the finding, like §28b's: only 2 of the 7
+  //     surfaces carry a focusable today, but all 7 are asserted so a control
+  //     may move onto a wash without reopening a contrast question.
+  // ─────────────────────────────────────────────────────────────────────────
+  {
+    const RING_MIN = 3.0;
+
+    // The rule, read rather than remembered.
+    const focusRule = cssSrc.match(/:focus-visible\s*\{([\s\S]*?)\}/);
+    if (!focusRule) {
+      fail(
+        `§28c: no \`:focus-visible\` rule found in src/index.css. Every focusable control in the app ` +
+          `depends on that one global rule for its keyboard focus ring; if it has been renamed or ` +
+          `removed, this check is asserting a ring that no longer exists.`,
+      );
+    } else {
+      const outline = focusRule[1].match(/outline\s*:\s*[^;]*?var\(\s*(--[a-z-]+)\s*\)/);
+      if (!outline) {
+        fail(
+          `§28c: \`:focus-visible\` in src/index.css no longer sets its \`outline\` color from a ` +
+            `\`var(--…)\` token (rule body: ${focusRule[1].trim().replace(/\s+/g, " ")}). This section ` +
+            `derives the ring token from the rule so the two cannot drift; a literal color, or a ring ` +
+            `moved to \`box-shadow\`, needs this pattern updated in the same change.`,
+        );
+      } else {
+        const ringToken = outline[1];
+        let ringPairs = 0;
+        const ringWorst = {};
+
+        for (const [label, palette] of [["light", light], ["dark", darkExplicit]]) {
+          if (!palette) continue;
+          if (!palette[ringToken]) {
+            fail(
+              `§28c: \`:focus-visible\` paints the ring with \`${ringToken}\`, but the ${label} palette ` +
+                `in src/index.css does not define that token. The ring would fall back to the UA default ` +
+                `(or \`currentColor\`) for every keyboard user in that palette.`,
+            );
+            continue;
+          }
+          const surfaces = Object.keys(palette).filter((k) => k.startsWith("--surface-"));
+          // Floor, for the same reason §28 carries one: a prefix filter that
+          // matched nothing would assert zero pairs and print a clean line.
+          if (surfaces.length < 5) {
+            fail(
+              `§28c: the ${label} palette yielded only ${surfaces.length} surface token(s) (expected at ` +
+                `least 5). The prefix filter is probably broken rather than the design system having ` +
+                `collapsed — and a contrast check that measures nothing reads as a pass.`,
+            );
+            continue;
+          }
+          let low = { ratio: Infinity, pair: null };
+          for (const s of surfaces) {
+            const r = contrast(palette[ringToken], palette[s]);
+            ringPairs++;
+            if (r < low.ratio) low = { ratio: r, pair: `${ringToken} on ${s}` };
+            if (r < RING_MIN) {
+              fail(
+                `§28c: ${label} palette fails WCAG 1.4.11 for the keyboard focus ring — ${ringToken} ` +
+                  `(${palette[ringToken]}) on ${s} (${palette[s]}) is ${r.toFixed(2)}:1, below ` +
+                  `${RING_MIN}:1. A keyboard user cannot see where they are on that surface. The ring ` +
+                  `is one global rule in src/index.css, so this affects every focusable control at once.`,
+              );
+            }
+          }
+          ringWorst[label] = low;
+        }
+
+        if (ringPairs > 0) {
+          console.log(
+            `  §28c focus ring: ${ringPairs} ${ringToken} x surface pairs at 1.4.11 >= ${RING_MIN}:1 ` +
+              `across both palettes` +
+              (ringWorst.light && ringWorst.dark
+                ? ` (worst light ${ringWorst.light.ratio.toFixed(2)}:1 ${ringWorst.light.pair}; ` +
+                  `worst dark ${ringWorst.dark.ratio.toFixed(2)}:1 ${ringWorst.dark.pair}).`
+                : "."),
+          );
+        }
+      }
+    }
+  }
 }
 
 // ───────────────────────────────────────────────────────────────────────────
