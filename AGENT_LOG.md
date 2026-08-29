@@ -1277,21 +1277,43 @@ for the history. No open P1/P2 items.
       item 94 is priced, not before.**
     - **Honest priority: low**, and blocked behind an owner decision, not behind effort.
 
-133. **[Content/Translation — filed 2026-08-27 by the run that reviewed lessons 30 and 40, recorded
-    rather than acted on, per item 129's "over-editing a language whose only check is this review is
-    the larger risk".] `ko` uses `대출자` for *lender*, which reads at least as naturally as
-    *borrower*.**
-    - **Measured across the whole `ko` lesson corpus: `대출자` 13, `차입자` 4, `대출 기관` 8.** So the
-      corpus already carries an unambiguous alternative (`대출 기관`) and uses it eight times, while
-      `대출자` — literally "one who lends out", but in ordinary Korean financial usage frequently the
-      person *taking* the loan — carries the same role thirteen times.
-    - **Not changed, deliberately.** Inside lesson 30 the role is disambiguated by its own apposition
-      ("은행, 신용협동조합, 또는 딜러") and by `차입자` being used for the borrower two paragraphs
-      later, so nothing there misleads. This is a corpus-wide term-consistency question across 21
-      instances, and rewriting it on one run's reading is the unmeasured multi-language drift items 69
-      and 76 exist to prevent.
-    - **The instrument this needs is item 76's** — a per-language tokenizer that can decide whether
-      one term is a pattern or two instances. **Honest priority: low.** Downstream of O-1.
+133. **✅ DECIDED AND CLOSED 2026-08-29 (scheduled dev-agent) — NO PROSE CHANGE, and a guard shipped
+    instead (`check-data.mjs` §60). Read the premise corrections first; two of the item's three
+    factual claims were wrong, and the third does not lead where the item assumed.**
+    > **The original item, kept because the question was a good one:** `ko` uses `대출자` for
+    > *lender*, and the word — literally "one who lends out" — is very frequently read as the person
+    > *taking* the loan in ordinary Korean consumer-finance usage.
+    - **⛔ PREMISE CORRECTION 1 — the alternative the item names does not exist in the corpus.** The
+      item measured "`대출 기관` 8". That string, with the space, occurs **0 times**. The corpus uses
+      **`대출기관`** (no space), 8 times. A run following the item literally would grep, get zero, and
+      conclude the alternative was never adopted — the exact false negative item 127 warns about.
+    - **⛔ PREMISE CORRECTION 2 — the eight uses are a different track, and the split is semantic, not
+      accidental.** `대출기관` appears **only in `essentials`** (credit scores, mortgages, PMI — where
+      the referent really is an institution). `대출자` appears **only in `economy`** (bond buyers,
+      credit markets, "foreign lenders") where 기관 would be wrong or narrowing. So "the corpus
+      already carries an unambiguous alternative and uses it eight times" is false as an argument for
+      swapping: the two words are cleanly partitioned by track and each is right where it sits.
+    - **The third claim reproduces, and it still does not warrant an edit.** All **13** `ko` sites
+      were read in context this run. Every one is resolvable from its own sentence or its immediate
+      neighbors: the apposition `은행, 신용협동조합, 또는 딜러`; the verb `빌려줍니다`; `추가 대가를
+      요구`; and in the glossary the explicit contrast `차입자가 내는 금리는 곧 대출자가 얻는 수익`.
+      **`대출자` is never used for a borrower anywhere in the corpus.** So this is a readability
+      preference in a language with 0% human review, and **item 76's standing rule applies verbatim**
+      — rewriting on one run's reading is the unmeasured multi-language drift items 69 and 76 exist to
+      prevent.
+    - **What shipped instead, and why a guard for a property that currently holds.** The measurement
+      generalized: the five languages' *role vocabulary* had never been checked at all. Measured
+      2026-08-29 across 5 languages x 3 tracks — **zero role errors anywhere.** `economy` carries
+      lender 13x and borrower 3-4x in every language; `es` renders three of English's four
+      "borrower"s as **`deudores`** (a correct synonym the item's method would have scored as
+      missing); `zh` splits `essentials`' eight lenders as `贷方` 5 + `贷款机构` 3. `check-data.mjs`
+      **§60** now asserts, en-anchored, that a track using a role word >= 2x in English has that role
+      lexically present in all four translations. It is **presence, not counts** — a count tripwire
+      fails on any legitimate rewrite.
+    - **The residual that is NOT closed, stated rather than buried:** §60 cannot see a *swap*. A
+      translation that used `대출자` for the borrower and `차입자` for the lender throughout would
+      keep both roles lexically present and pass. Catching that needs per-sentence alignment, which
+      is item 76's instrument and still unbuilt. **§60 catches collapse and drop, not inversion.**
 
 138. **✅ DONE 2026-08-28 (owner-directed: "do item 138 next"), the same day it was filed. Shipped
     as `check-data.mjs` §58, proved able to fail four ways — including by replaying the real
@@ -1417,6 +1439,30 @@ for the history. No open P1/P2 items.
       declarations, all deliberate), and a comment that merely names the token is the negative —
       write one, and the net must still flag its British spelling.
     - **Honest priority: low.** Zero live instances after the fix above, measured.
+
+145. **[Process/Tooling — filed 2026-08-29 by the run that built §60 (item 133), as the instrument
+    trap that made its own first measurement wrong.] A `\b`-anchored regex over the RAW
+    `src/content/*.js` files is blind to every paragraph-initial word, and the miss looks like a
+    clean count.**
+    - **What happened, measured 2026-08-29.** In those files a paragraph break is the literal
+      two-character escape `\n`, so the character preceding a paragraph-initial word is the letter
+      `n`. There is no word boundary at `nLenders`, and `/\blenders?\b/gi` over
+      `lessonContent.economy.en.js` returns **12** of the corpus's **13** "lender" occurrences —
+      silently dropping *"Lenders keep lending freely"*, which follows `\n\n`. The same scan over
+      **imported** prose returns 13. The gap was found only because a substring scan and a
+      word-boundary scan of the same file disagreed.
+    - **No shipped instrument is affected, and that was verified rather than assumed.** Every script
+      that reads lesson prose — `check-data.mjs`, `translation-completeness.mjs`,
+      `jargon-candidates.mjs`, `translation-review.mjs` — **imports** the content modules, where the
+      escapes are already real newlines. `check-data.mjs`'s three `\b` uses are over JSX source and
+      prop strings, not prose. **Zero live defects; this is a hazard for ad-hoc measurement**, which
+      is exactly what a run does when investigating a content item.
+    - **The rule, and it is one line:** to measure this corpus, **import it — never grep the file**.
+      §60's header carries this note at its own call site. If a raw scan is unavoidable, normalize
+      `\\n` to a real newline first, and **carry a control**: count the same term with and without
+      `\b` and require the two to agree.
+    - **Honest priority: low as a defect (zero live), high as a warning** — it produces a confident
+      wrong number rather than an error, in the one file family every content item touches.
 
 143. **[Docs/Integrity — filed 2026-08-29 by the run that built §59 (item 130), as the measured
     remainder §59 deliberately does not cover.] Four British spellings live in `AGENT_LOG.md`'s
@@ -1899,6 +1945,17 @@ for the history. No open P1/P2 items.
     - **Honest priority: low.** Two known strings, both comprehensible to a native reader, in a beta-
       labeled translation layer. The value is the instrument, not these two edits — and if the
       instrument is ever built, run it before deciding anything.
+    > **PARTIAL ANSWER 2026-08-29 (the run that closed item 133), and it narrows what this item still
+    > needs.** This item says "nothing can currently measure whether that generalizes". For
+    > **role-term vocabulary** that is no longer true: `check-data.mjs` §60 measures per-language
+    > presence of a role across a whole track **without segmentation**, by anchoring on English and
+    > matching declared surface forms — §54(e)'s word-matching trick, which sidesteps the zh/ja
+    > tokenizer entirely. That answered item 133 (5 languages x 3 tracks, zero role errors).
+    > **What it does NOT answer, and why this item stays open:** §60 tests presence, so it cannot
+    > tell a *pattern* from *two instances* — which is precisely this item's question about
+    > `Brokerage Account`. A per-language tokenizer is still the unblocking work. **The transferable
+    > part: "is this role represented at all?" is answerable today; "is this phrasing typical?" is
+    > not.**
 
 95. **✅ DONE 2026-08-24 (scheduled dev-agent), same run it was filed. [Process/Tooling — filed by
     the W-5.4 run's own closing note: "nothing stops a future run from writing `## 2026-…` again."]
@@ -3172,6 +3229,124 @@ finding(s); V vacuous; U unavailable`. A bare "no accessibility issues found" is
 > mid-day: entries up to `eb3c11a` (21:18) were *appended* below, and everything after was *prepended*
 > above. `check-log-size.mjs` sums bytes per date into a Map, so its cut plan is byte-correct and
 > blind to this. The live section above is prepend-order (newest first); the archive is ascending.
+### 2026-08-29 (scheduled dev-agent) — two of item 133's three premises were false, the Korean prose was right as shipped, and the measurement it was blocked on turned out not to need the instrument it named (item 133 → §60, new item 145)
+
+**Picked item 133** over the six items the last entry queued (144, 143, 142, 140, 126, 120), because
+every one of those is self-marked "low priority, zero live instances" while 133 was the only open
+item touching learner-visible content. Tree clean but for the untracked `UIUX/` and `drafts/`,
+neither touched. `HEAD` `33897e9` at start and unmoved at commit.
+
+#### Step 3.5 — the premise broke in two places and the disposition changed twice
+
+- **`대출 기관` (with a space) occurs 0 times.** Item 133's headline measurement — "`대출자` 13,
+  `차입자` 4, `대출 기관` 8" — reproduces for the first two and is a **string that does not exist**
+  for the third. The corpus writes `대출기관`, unspaced, 8 times. Item 127's trap exactly: a run
+  trusting the item's own spelling greps, gets zero, and concludes the alternative was never adopted.
+- **The 8 uses are a different track, and that kills the item's argument rather than adjusting it.**
+  `대출기관` appears **only in `essentials`**; `대출자` appears **only in `economy`**. The split is
+  semantic — `essentials` talks about credit bureaus, mortgages and PMI, where the referent is an
+  institution; `economy` talks about bond buyers, credit markets and "foreign lenders", where 기관
+  would be wrong. So "the corpus already carries an unambiguous alternative and uses it eight times"
+  is not a smaller version of the same claim; **there is no drop-in alternative available.**
+- **The third claim reproduces and still does not justify an edit.** All 13 `ko` sites read in
+  context: every one resolves from its own sentence — the apposition `은행, 신용협동조합, 또는
+  딜러`, the verb `빌려줍니다`, `추가 대가를 요구`, and the glossary's explicit `차입자가 내는
+  금리는 곧 대출자가 얻는 수익`. **`대출자` is never used for a borrower anywhere.** Item 76's
+  standing rule then decides it: *"rewriting them on one run's reading is exactly the unmeasured
+  multi-language drift item 69 was filed to prevent — do not treat 'I read them and they look fine'
+  as measurement."* **No prose was changed.**
+
+#### The measurement generalized, and that is where the run's value went
+
+Nothing in the repo had ever checked **role vocabulary** in any language. Measured across 5 languages
+x 3 tracks: **zero role errors.** `economy` carries lender 13x and borrower 3–4x in every language;
+`essentials` lender 8x in every language. Two divergences that looked like defects and are not:
+**`es` renders three of English's four "borrower"s as `deudores`** (correct synonym — a count-matching
+method would have reported it missing), and **`zh` splits `essentials`' eight lenders as `贷方` 5 +
+`贷款机构` 3**.
+
+#### What shipped — `check-data.mjs` §60, 179 lines
+
+En-anchored, in §58's shape: if a track uses a role word >= `MIN_EN` times in English, every
+translation must carry that role lexically. **Presence, not counts** — a count tripwire fails on any
+legitimate rewrite and gets re-tuned until it means nothing. `MIN_EN = 2` is load-bearing and
+measured: English `essentials` uses "borrower" **once** and `ko` renders that one sentence with a verb
+phrase, legitimately — **mutation M5 confirms a threshold of 1 fails the build on a correct
+translation.** Today it makes 3 assertions (economy/lender, economy/borrower, essentials/lender);
+`essentials`/borrower and the whole money track are below threshold and deliberately unasserted.
+
+#### Two instrument traps, one of which made this run's own first number wrong
+
+- ⚠️ **`\b` over the raw `src/content/*.js` files is blind to every paragraph-initial word.** A
+  paragraph break there is the literal two-character escape `\n`, so the character before the word is
+  `n` and there is no boundary: `/\blenders?\b/gi` finds **12** of 13, silently dropping *"Lenders
+  keep lending freely"*. Imported prose finds 13. Caught only because a substring scan and a
+  word-boundary scan of the same file disagreed. **Verified no shipped instrument is affected** —
+  every prose-reading script imports the modules. **Filed as item 145**; §60's header carries the
+  rule at its call site.
+- ⚠️ **A confident zero from an incomplete term list, whose obvious control was insufficient.** The
+  first sweep reported `zh` economy as **0 lender terms / 4 borrower terms**, which reads as a real
+  content defect. The cause was my candidate list: `zh` uses **`放贷者`**, which I had not listed. The
+  control I was carrying — borrower terms matched in the same file — proved only that the file was
+  being read, **not that the list was complete.** The correct control for a term-presence sweep is
+  the English count it must reconcile against, which is what §60 uses.
+
+#### Verification — seven mutations, each restored from a scratchpad copy
+
+**M1** `차입자`→`대출자` in `ko` economy (the exact collapse item 133 fears) → §60 fails, naming
+ko/economy/borrower. **M2** `대출자` listed under both roles → CONTROL C fires. **M4** track lookup
+repointed to a nonexistent track → CONTROL A fires on 0 chars. **M5** `MIN_EN` lowered to 1 → fails on
+ko `essentials`, proving the threshold is measured rather than chosen. **M6/M7** → both CONTROL B
+branches fire by name.
+⚠️ **M3 is the one worth keeping: it did not test what I wrote it to test.** It made `ja`'s borrower
+list identical to its lender list intending to break CONTROL B — but **CONTROL C fired first and B
+never ran**, so B was still unproven after a mutation I had counted as proof. M6 and M7 were written
+to break B while leaving C satisfied (a term disjoint from the lender form but absent from its own
+probe; a term disjoint as a string but matching *inside* the lender probe). This is the third
+consecutive run whose control was measured to be blind — see 2026-08-29's CONTROL B string-literal
+finding and the `-ism`/`-ist` finding before it.
+
+`npm test` **PASS across all 8 checks, 0 failures**, the 2 standing translation warnings unchanged.
+`check-backlog.mjs` **caught a real defect in this commit**: §60's header cited "item 145" before item
+145 existed, and the build failed until it was filed. `npm run build` clean. Working tree re-checked
+`git diff`-clean of every mutation before committing — restored from scratchpad copies, never
+`git checkout --`.
+
+#### Step 5 — adversarial self-check
+
+- **Blindspot register:** the diff is one dev-side script plus `AGENT_LOG.md`. **No lesson, locale,
+  quiz or glossary string is touched — deliberately, and that is the run's main finding.** Nothing
+  reintroduces Dalio branding (§10.2), advice-adjacent language (§10.1), child-facing framing
+  (§10.3), or a live-looking market figure.
+- **`DECISIONS.md`:** no closed decision is contradicted; a new numbered section in `check-data.mjs`
+  is the established shape, and §60 reads content through the existing imports.
+- **Already-done item:** §60 duplicates nothing. It is adjacent to §58 (cross-references survive
+  translation) and §54(e) (per-language prose anchoring) and asserts a different property from both —
+  those check that a *reference* or a *label* survives; §60 checks that a *role* survives.
+- **My own verification claim:** an independent reviewer running only `npm test` sees §60's line at
+  3 track-role assertions with control A reporting 13 lender / 4 borrower. All seven mutations are
+  reproducible from the descriptions above without anything from this session.
+- **The judgment a reviewer could fairly dispute, stated rather than buried:** §60 guards a property
+  with **zero live violations**, which this repo's own rule ("one defect is not a class", items 126
+  and 144) normally argues against. The distinguishing argument is that lender and borrower are exact
+  inverses — the failure mode is teaching the opposite of the lesson, in four languages nobody on the
+  project reads — and that the guard is presence-based, so it carries no register to maintain.
+  Precedent: item 59 was filed on the same logic ("it guards a property that currently holds").
+- **A second dispute worth naming:** §60 **cannot catch a swap**, only a collapse or a drop. A
+  translation using `대출자` for the borrower and `차입자` for the lender throughout would pass. That
+  is recorded in item 133's closing bullet rather than left for someone to discover.
+
+#### Next run
+
+**Open and unblocked: item 145** (this run's residual), **item 144**, **item 143**, **item 142**,
+**item 140**, **item 126**, **item 120**. Item 117 remains open. Item 76 is annotated with what §60
+did and did not answer — its tokenizer half is still the unblocking work.
+**For the owner:** the non-archivable floor grows again with this entry — `npm test` prints the live
+number, and **item 115** holds the rule and the options; archiving cannot move it, only a
+backlog-compression pass can. **O-1 is still the entire critical path: 44 lessons, five languages,
+160 minutes of content, and zero people have ever opened this app.** **O-3** unchanged — this run
+added no translated prose, and deliberately declined to.
+
 ### 2026-08-29 (scheduled dev-agent) — the drift source is this agent, so the sweep and the instrument shipped together; and the control that would have missed its own sabotage (items 130 + 141)
 
 **Picked item 130**, the natural queued pick from the last entry, with **item 141 folded in** exactly

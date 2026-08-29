@@ -8034,5 +8034,184 @@ if (keyedGroupsChecked < 4) {
   }
 }
 
+// §60. ROLE VOCABULARY SURVIVES TRANSLATION: lender vs borrower (backlog
+// items 133 and 76).
+//
+// WHAT THIS GUARDS, and why it is the two roles rather than any other pair.
+// Lender and borrower are the only pair in the catalog that are EXACT
+// INVERSES of each other. Every other translation defect degrades a lesson;
+// collapsing or swapping these two teaches its opposite. Lesson 30 ("How
+// Credit Works") spends its whole body establishing which party hands over
+// the money and which party owes it, and lessons 32-35 build the debt cycle
+// on top of that assignment.
+//
+// THE RISK IS NOT HYPOTHETICAL IN ONE LANGUAGE, which is why a guard exists
+// for a property that currently holds. `ko` renders "lender" as `대출자`
+// (13x in economy). The word is literally "one who lends out", but in
+// ordinary Korean consumer-finance usage it very frequently denotes the
+// person who TOOK the loan — so the corpus's word for lender is a word many
+// readers will read as borrower. Backlog item 133 filed that observation.
+//
+// WHAT WAS MEASURED 2026-08-29, and why NOTHING WAS REWRITTEN. All 13 `ko`
+// sites were read in context: every one is resolvable from its own sentence
+// or its immediate neighbors (apposition "은행, 신용협동조합, 또는 딜러";
+// the verb 빌려줍니다; the explicit contrast with 차입자 in the glossary).
+// The corpus is internally consistent — `대출자` is never used for a
+// borrower — so the finding is a readability preference in a language with
+// 0% human review, and item 76's standing rule applies verbatim: rewriting
+// on one run's reading is the unmeasured multi-language drift items 69 and
+// 76 exist to prevent. The measurement is therefore spent on a GUARD against
+// the catastrophic case rather than on prose edits nobody can review.
+//
+// WHAT IS ASSERTED. Per track, the role set is derived from ENGLISH: if the
+// English prose of that track uses a role word at least MIN_EN times, every
+// other language's prose for that same track must lexically carry that role
+// too. Plus a standing disjointness assertion: no language's lender terms
+// and borrower terms may overlap.
+//
+// PRESENCE, NOT COUNTS — deliberately. A count tripwire would fail on any
+// legitimate rewrite and would be re-tuned until it meant nothing; the same
+// count-shaped brittleness §58's header records. What cannot be legitimate
+// is a translation of this corpus that has no word for one of the two sides
+// of a loan while English uses it throughout.
+//
+// WHY MIN_EN IS 2, with the instance that sets it. English `essentials` uses
+// "borrower" exactly ONCE (lesson "Debt Payoff", the compounding sentence)
+// and `ko` renders that sentence with a verb phrase rather than a role noun
+// — legitimately, and it is the only such site. A threshold of 1 would fail
+// the build on a correct translation. Measured today: economy asserts both
+// roles for all five languages (en 13 lender / 4 borrower); essentials
+// asserts lender only (en 8 / 1); money asserts neither (en 0 / 0).
+//
+// ⚠️ THIS SECTION READS IMPORTED CONTENT, NEVER THE RAW `.js` FILE, and that
+// is load-bearing rather than incidental. In `src/content/*.js` a paragraph
+// break is the literal two-character escape `\n`, so the character before a
+// paragraph-initial word is `n` and `\b` DOES NOT MATCH THERE. Measured
+// 2026-08-29: a `\blenders?\b` scan over the raw economy English file finds
+// 12 of the 13 occurrences, silently dropping "Lenders keep lending freely"
+// because it follows `\n\n`. The same scan over imported prose finds 13.
+// Any future run measuring this corpus by grepping the source files inherits
+// that blind spot — see backlog item 145.
+{
+  const before60 = failures;
+
+  // Per-language surface forms for each role. Every entry below was read in
+  // context before being listed; synonyms are included where the corpus
+  // actually uses them (`es` carries both `prestatario` and `deudor`, `zh`
+  // both `贷方` and `贷款机构`), because a partial list would report a
+  // correct translation as missing the role.
+  const ROLE_TERMS = {
+    en: { lender: [/\blenders?\b/gi], borrower: [/\bborrowers?\b/gi] },
+    es: { lender: [/prestamistas?/gi], borrower: [/prestatarios?/gi, /deudores?/gi] },
+    ko: { lender: [/대출자/g, /대출기관/g], borrower: [/차입자/g] },
+    zh: { lender: [/放贷者/g, /贷方/g, /贷款机构/g], borrower: [/借款人/g] },
+    ja: { lender: [/貸し手/g], borrower: [/借り手/g] },
+  };
+  const ROLES = ["lender", "borrower"];
+  const MIN_EN = 2;
+
+  const roleProse = (ids, lang) => {
+    const parts = [];
+    for (const id of ids) {
+      const c = lessonContent[id];
+      if (!c) continue;
+      for (const s of c.sections ?? []) parts.push(s.heading?.[lang] ?? "", s.body?.[lang] ?? "");
+      parts.push(c.takeaway?.[lang] ?? "", c.thinkAbout?.[lang] ?? "");
+    }
+    return parts.join("\n");
+  };
+  const countRole = (text, lang, role) =>
+    ROLE_TERMS[lang][role].reduce((n, re) => n + (text.match(new RegExp(re.source, re.flags)) ?? []).length, 0);
+
+  const trackIds = new Map();
+  for (const tr of TRACKS) {
+    trackIds.set(
+      tr.key,
+      lessons.filter((l) => l.track === tr.key).map((l) => String(l.id)).filter((id) => lessonContent[id]),
+    );
+  }
+
+  //  (A) THE SCAN REACHES REAL PROSE. English economy is known to use both
+  //      role words heavily; if this comes back thin the walk is reading the
+  //      wrong tree and every clean result below would be about nothing.
+  const enEconomy = roleProse(trackIds.get("economy") ?? [], "en");
+  const enLenders = countRole(enEconomy, "en", "lender");
+  const enBorrowers = countRole(enEconomy, "en", "borrower");
+  if (enEconomy.length < 10000 || enLenders < 5 || enBorrowers < 2) {
+    fail(
+      `§60 CONTROL A: the economy-track English prose scanned to ${enEconomy.length} chars with ${enLenders} lender and ${enBorrowers} borrower mention(s). ` +
+        `It measured 13 and 4 over ~57 KB on 2026-08-29, so numbers this low mean the track split or lessonContent lookup is returning the wrong text.`,
+    );
+  } else {
+    //  (B) THE MATCHER FIRES AND STAYS SILENT, per language, two-directional.
+    //      A one-directional probe cannot tell a working matcher from one
+    //      that reports every role present everywhere — which is the shape
+    //      that would make this whole section green by construction.
+    const PROBES = {
+      en: { lender: "the lender holds an asset", borrower: "the borrower repays it" },
+      es: { lender: "el prestamista posee un activo", borrower: "el prestatario lo paga" },
+      ko: { lender: "대출자는 자산을 보유합니다", borrower: "차입자는 상환합니다" },
+      zh: { lender: "放贷者持有一项资产", borrower: "借款人偿还它" },
+      ja: { lender: "貸し手が資産を保有する", borrower: "借り手が返済する" },
+    };
+    for (const lang of LANGS) {
+      for (const role of ROLES) {
+        const other = role === "lender" ? "borrower" : "lender";
+        const probe = PROBES[lang][role];
+        if (countRole(probe, lang, role) === 0) {
+          fail(`§60 CONTROL B (${lang}/${role}): the planted sentence ${JSON.stringify(probe)} did not register as carrying a ${role} term. The matcher does not fire for this language, so a clean result below would be about nothing.`);
+        } else if (countRole(probe, lang, other) !== 0) {
+          fail(`§60 CONTROL B (${lang}/${role}): the planted ${role}-only sentence ${JSON.stringify(probe)} ALSO registered as carrying a ${other} term. The two roles are not distinguishable in this language's term list, which makes every presence test below pass for the wrong reason.`);
+        }
+      }
+    }
+
+    //  (C) THE ROLE SETS ARE DISJOINT. If a future edit ever lists one
+    //      surface form under both roles, every presence test below passes
+    //      vacuously and the section silently stops guarding anything.
+    for (const lang of LANGS) {
+      const overlap = ROLE_TERMS[lang].lender
+        .map((r) => r.source)
+        .filter((s) => ROLE_TERMS[lang].borrower.some((r) => r.source === s));
+      if (overlap.length) {
+        fail(`§60 CONTROL C (${lang}): ${overlap.map((s) => `/${s}/`).join(", ")} is listed under BOTH lender and borrower. The two roles are inverses; a shared surface form makes every assertion below vacuous.`);
+      }
+    }
+
+    if (failures === before60) {
+      const asserted = [];
+      for (const tr of TRACKS) {
+        const ids = trackIds.get(tr.key) ?? [];
+        if (!ids.length) continue;
+        const enText = roleProse(ids, "en");
+        for (const role of ROLES) {
+          const enCount = countRole(enText, "en", role);
+          if (enCount < MIN_EN) continue;
+          asserted.push(`${tr.key}/${role} (en ${enCount})`);
+          for (const lang of LANGS) {
+            if (lang === "en") continue;
+            if (countRole(roleProse(ids, lang), lang, role) === 0) {
+              fail(
+                `§60: the "${tr.key}" track uses "${role}" ${enCount} times in English, but the "${lang}" prose for those ${ids.length} lessons contains no ${role} term at all ` +
+                  `(looked for ${ROLE_TERMS[lang][role].map((r) => `/${r.source}/`).join(", ")}). ` +
+                  `Lender and borrower are exact inverses — a translation with no word for one side of a loan cannot teach who owes whom. ` +
+                  `If this language legitimately renders the role with a verb phrase throughout, add its surface form to ROLE_TERMS rather than raising MIN_EN.`,
+              );
+            }
+          }
+        }
+      }
+      if (failures === before60) {
+        console.log(
+          `  §60 lender/borrower role vocabulary survives translation: ${asserted.length} track-role assertion(s) — ${asserted.join(", ")} — ` +
+            `each carried by all ${LANGS.length - 1} translations (control A the economy English prose reaches ${enLenders} lender / ${enBorrowers} borrower mentions, ` +
+            `control B planted lender-only and borrower-only sentences read as one role and not the other, control C no surface form is listed under both roles). ` +
+            `essentials/borrower and the money track are below MIN_EN=${MIN_EN} and deliberately unasserted — see the header.`,
+        );
+      }
+    }
+  }
+}
+
 console.log(`\n${failures === 0 ? "PASS" : "FAIL"}: ${failures} failure(s), ${warnings} warning(s).`);
 process.exit(failures === 0 ? 0 : 1);
