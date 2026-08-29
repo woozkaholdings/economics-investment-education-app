@@ -1511,29 +1511,21 @@ for the history. No open P1/P2 items.
       note). Fix the 4 by hand, leave the 22, and do not put the file in §59's scope.
     - **Honest priority: low.** Zero learner-visible instances. Downstream of O-1.
 
-142. **[Process/Tooling — filed 2026-08-29 by the run that performed the W-5.3 archiving pass, as
-    its stated residual rather than smuggled into the same commit.] `check-log-size.mjs`'s cut plan
-    treats a day as a byte total, but a day in the run log can occupy more than one region — and the
-    plan cannot tell you which.**
-    - **What happened, measured 2026-08-29 while executing the plan:** the instrument correctly said
-      `move 2 day(s) — 2026-08-26 (77,928 b), 2026-08-27 (121,136 b)`. Both figures reproduce exactly.
-      But `days` is a `Map<date, bytes>` accumulated by scanning lines, so it is **position-blind**:
-      2026-08-27 was **two blocks, 367 lines apart** (lines 4746–5112 and 6182–7347), because the log
-      changed direction mid-day at `eb3c11a` (21:18) — appended below before, prepended above after.
-    - **Two ways a run following the plan literally gets it wrong**, both of which were avoided by
-      hand this time and neither of which the tool warns about: cutting the day as one region
-      **splits it**; concatenating the blocks in file order writes the archive **08-27, 08-26,
-      08-27**, breaking the ordering invariant the archive's own header promises.
-    - **The fix, if a run picks this up:** have the cut plan report **regions, not just days**, and
-      warn when a day it proposes moving spans more than one — the same shape as control 3, which
-      already exists to stop a byte-correct plan from being structurally wrong. **Carry a control**:
-      the current file is a positive fixture (2026-08-27 in the archive must be seen as ex-two-block),
-      and any single-block day is the negative.
-    - **Do not "fix" this by re-sorting the live log.** The live section is prepend-order by
-      convention and the archive is ascending by convention; both are deliberate. The defect is that
-      the *tool* assumes contiguity, not that the file is wrong.
-    - Low urgency (the run log has ~12 runs of headroom as of 2026-08-29), but it fires exactly when
-      someone is under budget pressure and least likely to check.
+142. **✅ DONE 2026-08-29 (scheduled dev-agent). `check-log-size.mjs` scans the run log into
+    REGIONS, not dates, and its cut plan now says when a day it proposes moving is in more than one
+    piece.** See the run log for the measurements and the sabotage test.
+    - **One of the item's own figures was wrong and is corrected here:** the two 2026-08-27 blocks
+      were **1,070 lines apart**, not 367 — 367 is the length of the *first block* (lines 4746–5112
+      of `744dc8c`). The headline claim and both byte totals (77,928 b / 121,136 b) reproduced
+      exactly.
+    - **The standing lesson, which is about controls and not about archiving.** The live file has one
+      region per day, so running the new splitter on it can only ever prove it does not *hallucinate*
+      a split. Under a sabotage that made the splitter position-blind again, control 3's live line
+      still read **"every day is contiguous"** — a green that means nothing. The positive fixture has
+      to be synthetic (control 4), and it is what makes the negative result on the live file readable.
+    - **Still true and deliberately unchanged:** the live section is prepend-order, the archive is
+      ascending, and both are conventions — the defect was that the *tool* assumed contiguity, never
+      that the file is wrong. Do not "fix" this by re-sorting the live log.
 
 141. **✅ DONE 2026-08-29 (scheduled dev-agent), the same day it was filed — folded into item 130's
     commit exactly as this item directed ("do not pick it alone… worth folding into the next run
@@ -3253,11 +3245,106 @@ finding(s); V vacuous; U unavailable`. A bare "no accessibility issues found" is
 > target, taken on whole days. **The deeper reason is in W-5.3's note:** the run log is no longer what
 > makes this file big.
 >
-> **⚠️ A day in this run log is not necessarily contiguous — check before cutting.** The 2026-08-29
-> pass found 2026-08-27 living in **two blocks 367 lines apart**, because the log changed direction
-> mid-day: entries up to `eb3c11a` (21:18) were *appended* below, and everything after was *prepended*
-> above. `check-log-size.mjs` sums bytes per date into a Map, so its cut plan is byte-correct and
-> blind to this. The live section above is prepend-order (newest first); the archive is ascending.
+> **⚠️ A day in this run log is not necessarily contiguous — but you no longer have to remember that.**
+> The 2026-08-29 pass found 2026-08-27 living in **two blocks** (entry headings at lines 4746–5112 and
+> 6182–7237 of `744dc8c`, **1,070 lines apart**), because the log changed direction mid-day: entries up
+> to `eb3c11a` (21:18) were *appended* below, and everything after was *prepended* above.
+> **`check-log-size.mjs` now scans the run log into REGIONS and says so in its cut plan** (item 142,
+> 2026-08-29) — a non-contiguous proposed day prints a ⚠️ line with every piece's line range. The live
+> section above is prepend-order (newest first); the archive is ascending.
+> *(The "367 lines apart" this note carried until 2026-08-29 was the first block's own length, not the
+> distance between the blocks. The blocks and their byte totals were right; only the gap figure was.)*
+### 2026-08-29 (scheduled dev-agent) — the cut plan could not see that one of its two days was in two pieces, and the live file is the wrong fixture for proving it now can (item 142)
+
+**Picked item 142** from the open-and-unblocked set the previous run named (144, 143, 142, 140, 126,
+120). It is the only one of the six that fires **exactly when someone is under budget pressure and
+least likely to check** — and the floor is over budget today, so the next archiving pass is not
+hypothetical. The other five are all measured at zero live instances with no forcing event. Tree
+clean but for the untracked `UIUX/` and `drafts/`, neither touched. `HEAD` `8a157f6` at start and
+unmoved at commit.
+
+#### Step 3.5 — the headline reproduces, both byte figures reproduce exactly, one figure does not
+
+- **The claim about the code is true.** `check-log-size.mjs` accumulated `days` as a
+  `Map<date, bytes>` by scanning lines, so it was position-blind by construction, and nothing in the
+  cut plan mentioned regions.
+- **Both byte totals reproduce to the byte.** Replaying the script's own accumulation over
+  `git show 744dc8c:AGENT_LOG.md` gives `2026-08-26 → 77,928 b` and `2026-08-27 → 121,136 b`, exactly
+  as the plan printed on the day.
+- **2026-08-27 really was two regions**, at entry-heading lines 4746–5112 and 6182–7237.
+- **⛔ "367 lines apart" is wrong.** The gap between the blocks is **1,070 lines** (5112 → 6182);
+  **367 is the length of the first block** (4746–5112 inclusive). Corrected in item 142 and in the
+  run log's archive-pointer note, which had copied the figure forward.
+- **Control for the measurement:** the same region scan over the *live* file returns 2 days in 2
+  regions, all contiguous — so the scan distinguishes the two shapes rather than reporting "split"
+  for everything.
+
+#### What shipped
+
+`splitRegions()` replaces the date-keyed accumulation; `days` is now **derived** by summing regions,
+line-for-line identically, so the budget arithmetic cannot move with the refactor. The cut plan gained
+a **contiguity line**: contiguous proposals print `all N proposed day(s) are single regions`, and a
+non-contiguous one prints a ⚠️ naming every piece's line range and both ways of getting the cut wrong
+(splitting the day, or concatenating in file order and writing the archive out of date order). Also
+added to control 3's live line: `N dated day(s) in M region(s) … every day is contiguous`.
+
+#### Verification — four runs, and the third is the one that matters
+
+| what | result |
+|---|---|
+| live `npm test` | **PASS**, exit 0. Every figure byte-identical to the pre-change run: file 448,525 b, run log 166,071 b, floor 282,454 b, dayBytes 163,951 b |
+| `npm run build` | **✓ built in 1.90s** |
+| the real historical case (script copied to scratchpad, `LOG` repointed at `744dc8c:AGENT_LOG.md`) | same plan as the day it ran — `move 2 day(s) … 2026-08-26 (77,928 b), 2026-08-27 (121,136 b)` — now followed by `⚠️ NOT CONTIGUOUS — 2026-08-27 in 2 pieces (lines 4746-5112, 6182-7347)` |
+| negative: live log with `RUN_LOG_MAX` lowered to 100 KB so a plan is forced | `Contiguity: all 1 proposed day(s) are single regions` — the ⚠️ does **not** fire on a contiguous cut |
+
+**And a sabotage test, because the live file cannot be the fixture here.** Making `splitRegions()`
+position-blind again (`out.find(r => r.date === currentDay)` instead of checking only the last
+region) makes **control 4 FAIL** and the build exit 1 — while **control 3's live line goes on reading
+"every day is contiguous"**. That is the whole argument for control 4 existing: today's file has one
+region per day, so it can only ever prove the splitter does not hallucinate a split. The positive
+fixture has to be synthetic — two in-memory fixtures with the *same three entries*, interleaved vs.
+contiguous, asserted at 2 regions and 1 **and at an identical byte total**, so a splitter that
+mis-attributes bytes fails too.
+
+#### Step 5 — adversarial self-check
+
+- **Blindspot register:** no content, locale, quiz or glossary string is touched — this is one dev
+  script and the log. Nothing reintroduces Dalio branding (§10.2), advice-adjacent language (§10.1),
+  child-facing framing (§10.3), or a live-looking market figure (§2.3). `check-blindspot.mjs` passes,
+  including the paragraph-initial control item 145 shipped this morning.
+- **DECISIONS.md:** no closed decision is contradicted; nothing about localStorage, content-module
+  format, or Vite is involved.
+- **W-5.3 / item 115:** ⚠️ the one place this could have gone wrong. **No rule was reworded and no
+  threshold changed** — `FILE_CEILING`, `FLOOR_MAX`, `RUN_LOG_HARD`, `RUN_LOG_MAX` and
+  `UNATTRIBUTED_MAX` are untouched, the script still *computes* the cut plan and still does not
+  perform it, and item 115's two options remain the owner's. This adds a fact to a report; it does
+  not move a line.
+- **Already-done item:** item 121 built this script and item 142 was filed by the run that executed
+  its plan, explicitly as a residual rather than smuggled into that commit. This is the filed
+  follow-up, not a redo.
+- **Item 144's trap:** none of the new comment prose names the `us-english` marker token, so nothing
+  is accidentally self-exempting; `§59` passes.
+- **My own verification claim:** an independent reviewer re-running the four rows above gets the same
+  output. Each mutation is one substitution and is written out above.
+- **The judgment a reviewer could fairly dispute:** the ⚠️ fires only when a cut is actually
+  *proposed*, not whenever any live day is non-contiguous. A latent split day therefore stays silent
+  until it matters. I chose that deliberately — a permanent decoration for a hazard nobody is about
+  to hit is how a warning stops being read — but control 3's `ok:` line now states the region count
+  unconditionally, so the fact is always visible even when the warning is not.
+
+#### Next run
+
+**Open and unblocked: item 144, item 143, item 140, item 126, item 120.** Item 117 remains open.
+Item 76's tokenizer half still unblocks items 76 and 133's inversion residual. All five of the
+tooling residuals are measured at zero live instances — **a backlog refill is the more honest pick
+than another one of them** (W-2's standing rule), and W-5.2's list is due a re-read of each
+candidate's own item before picking.
+**For the owner:** the floor is **281,721 b against a 250,000 b budget** and growing ~2,468 b/commit
+— compressing item 142 more than paid for this entry, making this one of the rare net-negative
+intervals (-733 b), but that is a one-off and only a **backlog compression pass** moves the level, and **item 115 holds the rule and the options — that decision is still
+yours.** **O-1 is still the entire critical path: 44 lessons, five languages, 160 minutes of content,
+and zero people have ever opened this app.** **O-3** unchanged — no translated prose was added.
+
 ### 2026-08-29 (owner-directed: "do item 145 next") — the item said no shipped instrument was affected; two safety checks were blind to the start of every paragraph, and had been for as long as they have existed (item 145)
 
 **Picked item 145** on owner instruction, the day after I filed it. Tree clean but for the untracked

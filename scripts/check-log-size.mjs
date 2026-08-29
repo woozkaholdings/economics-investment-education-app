@@ -225,14 +225,95 @@ console.log("");
 // Entries are `### <date> …`. Archiving cuts on whole-day boundaries (the
 // 2026-08-26 pass's convention, and the reason its integrity proof worked), so
 // the unit here is a day, not an entry.
+//
+// A DAY IS NOT NECESSARILY ONE REGION, and that is why the primitive below is a
+// region rather than a date. Item 142, measured while executing this script's
+// own plan on 2026-08-29: the plan correctly said `move 2 day(s) — 2026-08-26
+// (77,928 b), 2026-08-27 (121,136 b)`, and 2026-08-27 was TWO blocks — entry
+// headings at lines 4746–5112 and 6182–7237 of that revision, 1,070 lines apart
+// — because the log changed direction mid-day (appended below before `eb3c11a`,
+// prepended above after). A `Map<date, bytes>` accumulated by scanning lines is
+// position-blind, so both figures were right and the plan still could not say
+// that one of its two days was in two pieces. A run following it literally
+// either cuts the day as one region (splitting it) or concatenates the blocks in
+// file order (writing the archive 08-27, 08-26, 08-27, breaking the ascending
+// order the archive's own header promises). Both were avoided by hand that day.
+//
+// So: scan into REGIONS, derive days by summing them, and make the plan say when
+// a day it proposes moving is not contiguous. Same bytes, same cut, one more
+// fact — the one a run under budget pressure is least likely to check for itself.
 const logLines = raw.split("\n");
+
+// Maximal runs of consecutive lines sharing a date, in file order. Byte
+// attribution is line-for-line identical to the Map-based scan this replaced
+// (every line from the first dated heading onward belongs to the date most
+// recently seen), so day totals are unchanged by construction — see control 4.
+const splitRegions = (lines, from, to) => {
+  const out = [];
+  let currentDay = null;
+  for (let i = from; i < to; i++) {
+    const m = /^#{2,4}\s+(\d{4}-\d{2}-\d{2})/.exec(lines[i]);
+    if (m) currentDay = m[1];
+    if (!currentDay) continue;
+    const last = out[out.length - 1];
+    if (last && last.date === currentDay) {
+      last.bytes += Buffer.byteLength(lines[i]) + 1;
+      last.lastLine = i;
+    } else {
+      out.push({ date: currentDay, bytes: Buffer.byteLength(lines[i]) + 1, firstLine: i, lastLine: i });
+    }
+  }
+  return out;
+};
+
+const regions = splitRegions(logLines, runLogSection.start, runLogSection.end);
 const days = new Map(); // date -> bytes
-let currentDay = null;
-for (let i = runLogSection.start; i < runLogSection.end; i++) {
-  const m = /^#{2,4}\s+(\d{4}-\d{2}-\d{2})/.exec(logLines[i]);
-  if (m) currentDay = m[1];
-  if (currentDay) {
-    days.set(currentDay, (days.get(currentDay) ?? 0) + Buffer.byteLength(logLines[i]) + 1);
+const dayRegions = new Map(); // date -> region[]
+for (const r of regions) {
+  days.set(r.date, (days.get(r.date) ?? 0) + r.bytes);
+  dayRegions.set(r.date, [...(dayRegions.get(r.date) ?? []), r]);
+}
+
+// ── CONTROL 4: the region splitter must actually be able to see a split day. ─
+// The live file today has one region per day, so running the splitter on it
+// proves only that it does not hallucinate a split — a negative fixture. Without
+// a positive one, a splitter that returned "one region per date" unconditionally
+// would look exactly this green, and the item this control exists for would be
+// undetectable by the code written to detect it. Two in-memory fixtures, same
+// entries, differing only in ORDER: interleaved must read 2 regions for the
+// split date, contiguous must read 1. Both are asserted, because either half
+// passing alone is compatible with a broken splitter.
+{
+  const entry = (d, n) => [`### ${d} entry ${n}`, `body ${n}`];
+  const fx = (rows) => rows.flat();
+  const interleaved = fx([entry("2026-08-27", 1), entry("2026-08-26", 2), entry("2026-08-27", 3)]);
+  const contiguous = fx([entry("2026-08-27", 1), entry("2026-08-27", 3), entry("2026-08-26", 2)]);
+  const seen = (lines, date) => splitRegions(lines, 0, lines.length).filter((r) => r.date === date).length;
+  const pos = seen(interleaved, "2026-08-27");
+  const neg = seen(contiguous, "2026-08-27");
+  const bytesOf = (lines) => {
+    const rs = splitRegions(lines, 0, lines.length);
+    return rs.filter((r) => r.date === "2026-08-27").reduce((a, r) => a + r.bytes, 0);
+  };
+  if (pos !== 2 || neg !== 1) {
+    fail(
+      `control 4 (region splitter) FAILED: a date interleaved with another read as ${pos} region(s) ` +
+        `(expected 2) and the same entries written contiguously read as ${neg} (expected 1). The ` +
+        `multi-region warning below cannot fire, so its silence means nothing.`,
+    );
+  } else if (bytesOf(interleaved) !== bytesOf(contiguous)) {
+    // The byte-attribution half: splitting a day into regions must not change
+    // what the day WEIGHS, or the cut plan's arithmetic silently moves with it.
+    fail(
+      `control 4 (region splitter) FAILED: the same entries total ${bytesOf(interleaved)} b split ` +
+        `and ${bytesOf(contiguous)} b contiguous. Region bytes do not sum back to the day.`,
+    );
+  } else {
+    ok(
+      `control 4: the region splitter reads an interleaved date as 2 regions and the same entries ` +
+        `contiguous as 1, at an identical ${bytesOf(interleaved)} b — it can see a split day, and ` +
+        `splitting one does not change its weight`,
+    );
   }
 }
 
@@ -278,10 +359,15 @@ if (days.size === 0) {
       `will over-propose. The budget verdicts are unaffected (they measure the section, not the days).`,
   );
 } else {
+  const split = [...dayRegions.entries()].filter(([, rs]) => rs.length > 1);
   ok(
-    `control 3: ${days.size} dated day(s) in the run log, ${kb(dayBytes)} of ${kb(runLog)} ` +
+    `control 3: ${days.size} dated day(s) in ${regions.length} region(s) in the run log, ` +
+      `${kb(dayBytes)} of ${kb(runLog)} ` +
       `(${pct(dayBytes, runLog)}; the remainder is the section's own heading and archive pointer, ` +
-      `${kb(runLog - dayBytes)}, under the ${kb(UNATTRIBUTED_MAX)} un-attributed ceiling)`,
+      `${kb(runLog - dayBytes)}, under the ${kb(UNATTRIBUTED_MAX)} un-attributed ceiling)` +
+      (split.length
+        ? ` — ${split.length} day(s) NOT contiguous: ${split.map(([d, rs]) => `${d} in ${rs.length} pieces`).join(", ")}`
+        : ` — every day is contiguous`),
   );
 }
 
@@ -301,6 +387,25 @@ const cutPlan = (target) => {
   return { move, remaining, enough: remaining <= target };
 };
 
+// The structural half of the plan: which of the proposed days are in more than
+// one piece, and where those pieces are. A byte-correct plan can still be
+// structurally wrong to execute (item 142), and this is the sentence that says
+// so — printed only alongside a real proposal, because a permanent decoration
+// for a hazard nobody is about to hit is how a warning stops being read.
+const contiguityNote = (move) => {
+  const split = move.map((d) => [d.date, dayRegions.get(d.date) ?? []]).filter(([, rs]) => rs.length > 1);
+  if (!split.length) return `\n  Contiguity: all ${move.length} proposed day(s) are single regions — cut and concatenate in file order.`;
+  const detail = split
+    .map(([d, rs]) => `${d} in ${rs.length} pieces (lines ${rs.map((r) => `${r.firstLine + 1}-${r.lastLine + 1}`).join(", ")})`)
+    .join("; ");
+  return (
+    `\n  ⚠️ NOT CONTIGUOUS — ${detail}. The byte figures above are still right; the CUT is not ` +
+    `obvious. Taking such a day as one region splits it, and concatenating the proposed regions in ` +
+    `file order can write the archive out of date order. Move every piece, and order the archive by ` +
+    `the entries' own dates, not by their position in this file.`
+  );
+};
+
 const report = (target, label) => {
   const { move, remaining, enough } = cutPlan(target);
   if (!move.length) return `  nothing to move: the run log is already under the ${label} budget.`;
@@ -308,7 +413,7 @@ const report = (target, label) => {
   if (enough) {
     return (
       `  move ${move.length} day(s) to AGENT_LOG.archive.md — ${list} — leaving ${kb(remaining)}, ` +
-      `under the ${label} budget of ${kb(target)}.`
+      `under the ${label} budget of ${kb(target)}.` + contiguityNote(move)
     );
   }
   const newest = sortedDays[sortedDays.length - 1];
@@ -316,7 +421,8 @@ const report = (target, label) => {
     `  ARITHMETICALLY IMPOSSIBLE on whole-day boundaries: moving all but the newest day ` +
     `(${newest[0]}, ${kb(newest[1])}) still leaves ${kb(remaining)}, over the ${label} budget of ` +
     `${kb(target)}. The newest day alone is too large — either cut inside a day (and say so, since ` +
-    `it breaks the whole-day convention the integrity proofs rest on) or accept the overage.`
+    `it breaks the whole-day convention the integrity proofs rest on) or accept the overage.` +
+    contiguityNote(move)
   );
 };
 
