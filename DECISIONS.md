@@ -669,7 +669,7 @@ Add a new entry when a run makes a choice future work should be able to look up 
 - **Update, 2026-08-25 (approved from a drafted proposal, `drafts/income-hierarchy.en.md`). Four new
   lessons open the money track; money's id set is now two disjoint blocks, not one range.** New
   lessons — "The Subject That Wasn't on the Timetable," "Four Ways Money Arrives," "Does It Stop
-  When You Stop?," "The Part the Word 'Passive' Leaves Out" (the labour/investment/business/passive
+  When You Stop?," "The Part the Word 'Passive' Leaves Out" (the labor/investment/business/passive
   income frame) — were inserted at the FRONT of money's display order in `lessons.js`, ahead of
   lesson 16, because they are the frame the other thirteen judgment lessons hang on. Per the
   no-renumbering rule directly above, their ids were not taken from a contiguous extension of
@@ -705,7 +705,7 @@ Add a new entry when a run makes a choice future work should be able to look up 
   - **The 40 per-lesson accents in `content/lessons.js`.** Still a field nothing renders, and that
     file's own comment warns against "fixing" them. Untouched.
 - **No webfont.** The display family is `ui-serif, Georgia, "Iowan Old Style", "Times New Roman",
-  serif` — a system stack, so it costs no network request, no layout shift and no licence question.
+  serif` — a system stack, so it costs no network request, no layout shift and no license question.
   An app that must work from a dragged-and-dropped `dist/` folder should not depend on a font CDN.
 - **Contrast was re-derived, not assumed.** All 110 text pairs clear WCAG AA and all 70 graph pairs
   clear 1.4.11's 3:1, with **zero exemptions** — `check-data.mjs` §28/§28b, whose figures were

@@ -270,7 +270,7 @@
   /* Colors have to be compared across two notations: a CSS custom property holds `#e4ddd2` while
    * getComputedStyle always hands back `rgb(228, 221, 210)`. Comparing the strings would make the
    * item-124 border check permanently silent — a lying zero of exactly the kind this file is
-   * about — so both sides are normalised to "r,g,b" first. Returns "" for anything it cannot
+   * about — so both sides are normalized to "r,g,b" first. Returns "" for anything it cannot
    * parse (`transparent`, `currentColor`, a gradient), and "" never matches a token, so an
    * unparseable color is reported as no finding rather than as a false one. */
   function norm(c) {
@@ -427,7 +427,7 @@
           out.push("<img> with no alt attribute at all: " + where(el));
         }
         /* An <img> is named by alt and handled above; every other role="img" — svg or div — is
-         * named by aria-label/labelledby, or by a <title> child in the SVG case. */
+         * named by `aria-label` or `aria-labelledby`, or by a <title> child in the SVG case. */
         if (el.tagName !== "IMG" && !accName(el) && !el.querySelector("title")) {
           out.push("[role=img] with no accessible name: " + where(el));
         }
@@ -537,7 +537,7 @@
          *
          * The third is the one worth measuring here, and it is why this claim was written. §50 (g)
          * proves the ORDERING at the samples bracketing the crossing — which is true and is not
-         * the same question as whether a reader can SEE it. Two 2.5-unit strokes whose centre
+         * the same question as whether a reader can SEE it. Two 2.5-unit strokes whose center
          * lines are 1.6 units apart are one thick line on screen. So the separation is compared
          * against the stroke width the browser actually computed, at the two ENDS specifically:
          * those are the lesson's own two scenarios, named on the axis ("Both a year away" / "The
@@ -681,7 +681,7 @@
          * It holds by construction today — a band's pixel height is amount/max x STACK_H, so
          * equal amounts give equal pixels regardless of column — and it is guarded anyway because
          * the construction is one edit deep. The column container is sized
-         * `(col.total / max) * STACK_H` precisely so the two share a scale; normalising each
+         * `(col.total / max) * STACK_H` precisely so the two share a scale; normalizing each
          * column to a fixed height instead (a plausible "make the columns match" change) keeps
          * every source number correct and silently makes the lower layers disagree. The file's
          * own comment already flags this as load-bearing: "the alignment is the argument here,
@@ -787,7 +787,7 @@
      * `needs` is `focusVisibleSelectors`, the THIRD capability, not `focusSelectors`. The app's
      * only focus styling is `index.css`'s `:focus-visible` rule, so on a session seeded by a
      * CLICK (`:focus` matches, `:focus-visible` does not) this probe would find every control
-     * ringless and report the whole app as broken. Gating one pseudo-class on its neighbour is
+     * ringless and report the whole app as broken. Gating one pseudo-class on its neighbor is
      * the item-108 proxy mistake a third time; each pseudo-class is now measured on its own.
      *
      * METHOD, and why it is a comparison rather than a rule lookup: park focus on a planted

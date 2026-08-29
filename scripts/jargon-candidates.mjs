@@ -284,7 +284,7 @@ const record = (term, id, glossed) => {
 const scanDoc = (text, emit) => {
   const spans = glossSpans(text);
   for (const m of text.matchAll(/\b([A-Z]{2,6}|\d{3}\(k\))\b/g)) emit(m[1], inGloss(spans, m.index));
-  // Capitalised phrases NOT at sentence start — a mid-sentence capital is a
+  // Capitalized phrases NOT at sentence start — a mid-sentence capital is a
   // decent signal the author is naming a thing rather than starting a clause.
   // The match starts on the preceding character, so the group's own offset is
   // where the phrase begins — that is what the gloss test needs.

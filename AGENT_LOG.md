@@ -1399,6 +1399,43 @@ for the history. No open P1/P2 items.
     - **Honest priority: low.** Zero live instances, measured. Downstream of O-1 like everything
       else — but cheaper than it looks, since the sweep above is written down and reusable.
 
+144. **[Process/Tooling — filed 2026-08-29 by the run that built §59 (item 130), as its stated
+    residual.] A comment block that MENTIONS `us-english:allow` in prose is exempted by it, and
+    the first live instance was found by accident.**
+    - **What happened, 2026-08-29:** §55's own header stopped failing §59 partway through the
+      build, before any marker was placed in it. The cause: the header contains the sentence "see
+      the us-english:allow note at §31's duplicate-title check above" — a *reference* to the
+      convention, which the substring test reads as a *declaration* of it. The fix applied was to
+      make that block's exemption explicit and stop the sentence quoting the token, but the
+      mechanism is still there for the next comment that discusses the marker by name.
+    - **Why it was not "fixed" this run.** Every candidate is worse than the defect at today's
+      scale: requiring the marker at line start breaks the two Markdown markers already placed
+      mid-line; requiring a following em-dash clause is a style rule a checker cannot enforce
+      honestly; and a distinct "declaration" token means re-placing all 13. **One defect is not a
+      class** — the same reasoning item 126 records.
+    - **Carry a control if you pick it up:** the current tree is the positive fixture (13 real
+      declarations, all deliberate), and a comment that merely names the token is the negative —
+      write one, and the net must still flag its British spelling.
+    - **Honest priority: low.** Zero live instances after the fix above, measured.
+
+143. **[Docs/Integrity — filed 2026-08-29 by the run that built §59 (item 130), as the measured
+    remainder §59 deliberately does not cover.] Four British spellings live in `AGENT_LOG.md`'s
+    own prose, and one lives in a dev-script string; §59 sees neither by design.**
+    - **Measured 2026-08-29, and the split is the whole point.** `AGENT_LOG.md` carries 27 real
+      hits. **22 are mentions** — quotations of the forms §55 bans, in entries about §55 — and
+      **5 are prose**, of which 4 are genuine British usage: `capitalised-phrase` twice (lines
+      1832, 1938), `neighbour` (3600), `practising` (4087). The fifth is a quoted failure message.
+    - **The dev-script string is `scripts/a11y-sweep.js:525`** ("dot centre", inside a failure
+      message). It is left in place ON PURPOSE and §59's header says so: it is the negative control
+      for the comments-only boundary — if a future widening starts flagging it, the net has stopped
+      reading comment prose and started reading source, which is the shape that would fail the
+      build on `us-english.mjs`'s own specimen list.
+    - **What a run picking this up should NOT do:** sweep `AGENT_LOG.md` with a blind replace. The
+      22 mentions must survive verbatim — they are dated records of what a past run found, and
+      "US English only" has always exempted quotations and dated records (see the owner's 2026-08-21
+      note). Fix the 4 by hand, leave the 22, and do not put the file in §59's scope.
+    - **Honest priority: low.** Zero learner-visible instances. Downstream of O-1.
+
 142. **[Process/Tooling — filed 2026-08-29 by the run that performed the W-5.3 archiving pass, as
     its stated residual rather than smuggled into the same commit.] `check-log-size.mjs`'s cut plan
     treats a day as a byte total, but a day in the run log can occupy more than one region — and the
@@ -1423,9 +1460,15 @@ for the history. No open P1/P2 items.
     - Low urgency (the run log has ~12 runs of headroom as of 2026-08-29), but it fires exactly when
       someone is under budget pressure and least likely to check.
 
-141. **[Process/Tooling — filed 2026-08-29 by the run that narrowed §55's `-ise` stems, as its
+141. **✅ DONE 2026-08-29 (scheduled dev-agent), the same day it was filed — folded into item 130's
+    commit exactly as this item directed ("do not pick it alone… worth folding into the next run
+    that touches §55"). The stem is in `scripts/us-english.mjs` in the `emphasise` shape, and both
+    halves of the trap are now controls: `hypothesised`/`hypothesising` are in MUST_CATCH,
+    `hypothesis`/`hypotheses` in MUST_NOT_CATCH. §55's control line moved 34 → 38 specimens and
+    63 → 67 US forms.** Original text follows.
+    [Process/Tooling — filed 2026-08-29 by the run that narrowed §55's `-ise` stems, as its
     stated residual rather than smuggled into the same commit.] §55 has no `hypothesis` stem, and
-    `hypothesised` is a British form this repo has actually shipped.**
+    `hypothesised` is a British form this repo has actually shipped.
     - **Measured 2026-08-29:** against both the old and the new pattern set, `hypothesised` is
       **MISSED** — the `-ise` stem list has no `hypothesis`, and `emphasis(e|ed|es|ing)` is its own
       pattern that does not generalize. It is named in item 91's own removal list
@@ -1442,9 +1485,28 @@ for the history. No open P1/P2 items.
     - **Honest priority: low.** Zero live instances in learner-visible strings, measured. Do not
       pick it alone — it is one stem, and worth folding into the next run that touches §55.
 
-130. **[Process/Tooling — filed 2026-08-27 by the run that built §55, as its stated blind spot.]
+130. **✅ DONE 2026-08-29 (scheduled dev-agent). Shipped as `scripts/us-english.mjs` (the shared
+    pattern set, its two control lists, and a real comment tokenizer) plus `check-data.mjs` §59,
+    which reads 1,111 comment blocks across 87 source files and 1,892 lines of the five normative
+    Markdown documents. The `us-english:allow` marker is load-bearing from today: 13 exemptions
+    are honored, including the 4 that earlier runs placed in `DECISIONS.md` and `LAUNCH_PLAN.md`
+    in anticipation of a checker that did not exist. All 7 comment spellings and both unmarked
+    Markdown ones were swept IN THE SAME COMMIT, as this item required.**
+    > ⚠️ **One half of the premise was wrong and it changed the section's scope, not just a
+    > figure.** The item's source-side claim reproduced EXACTLY — 7 real British spellings in
+    > comments, the same seven it names. Its Markdown claim ("2 unmarked … against 4 correctly
+    > carrying `us-english:allow`") was measured over `DECISIONS.md` and `LAUNCH_PLAN.md` only.
+    > Over the whole normative set the figure is **40 unmarked, 38 of them in `AGENT_LOG.md`** —
+    > and of that file's 27 real hits (11 more are `aria-labelledby`), **22 are MENTIONS**: a run
+    > log that documents a spelling rule has to quote the spellings, and `AGENT_LOG.md:1465` names
+    > all seven comment spellings in the act of filing this item. **So `AGENT_LOG.md` is out of
+    > §59's scope on measurement**, not on convenience — marking 22 lines would be churn and every
+    > future entry about §55 would fail the build. The 4 real British spellings in the log's own
+    > prose are item 143.
+    Original text follows.
+    [Process/Tooling — filed 2026-08-27 by the run that built §55, as its stated blind spot.]
     §55 cannot see comments, dev scripts, or Markdown — and that is 21 of the 36 spellings it was
-    built in response to.**
+    built in response to.
     - **State:** `check-data.mjs` §55 guards **string values under an `en` key** across the twelve
       content and locale modules — 1,145 learner-visible strings, 16 pattern families, three controls.
       Comments in `src/` and `scripts/`, the check scripts' own prose, and the five normative Markdown
@@ -3110,6 +3172,112 @@ finding(s); V vacuous; U unavailable`. A bare "no accessibility issues found" is
 > mid-day: entries up to `eb3c11a` (21:18) were *appended* below, and everything after was *prepended*
 > above. `check-log-size.mjs` sums bytes per date into a Map, so its cut plan is byte-correct and
 > blind to this. The live section above is prepend-order (newest first); the archive is ascending.
+### 2026-08-29 (scheduled dev-agent) — the drift source is this agent, so the sweep and the instrument shipped together; and the control that would have missed its own sabotage (items 130 + 141)
+
+**Picked item 130**, the natural queued pick from the last entry, with **item 141 folded in** exactly
+as item 141 directed ("do not pick it alone — it is one stem, and worth folding into the next run
+that touches §55"). Tree clean but for the untracked `UIUX/` and `drafts/`, neither touched. `HEAD`
+`5fb991d` at start and unmoved at commit.
+
+#### Step 3.5 — half the premise reproduced exactly, and the half that did not changed the scope
+
+- **The source-side claim is exactly right.** A cold scan of comments across 87 files in `src/` and
+  `scripts/` returns **7 real British spellings, and they are the seven item 130 names**:
+  `normalised`/`centre`/`normalising`/`neighbour` in `a11y-sweep.js`, `neighbouring`/`labelled` in
+  `check-data.mjs`, `Capitalised` in `jargon-candidates.mjs`. The item's reframing — *the surface
+  drifts because this agent writes comments faster than anyone re-sweeps them, ~3/day* — stands.
+- **The Markdown claim was measured over two files, not five.** Item 130 records "2 unmarked hits in
+  Markdown … against 4 correctly carrying `us-english:allow`". Over the whole normative set it is
+  **40 unmarked, 38 of them in `AGENT_LOG.md`**. That is not a bigger version of the same job:
+  of the log's 27 real hits (11 more are `aria-labelledby`), **22 are MENTIONS** — and
+  `AGENT_LOG.md:1465`, inside item 130 itself, quotes all seven comment spellings by name. **A run
+  log that documents a spelling rule must quote the spellings it bans.** So the disposition changed
+  before any code was written: `AGENT_LOG.md` is **out of scope on measurement**, its 4 real prose
+  spellings are filed as **item 143**, and the section that shipped is narrower than the item asked
+  for and says why in its own header.
+- **The marker count also moved** — item 130 counted 21 `us-english:allow` markers across four
+  files; there are **30** today, the archiving pass having moved 22 of them into
+  `AGENT_LOG.archive.md`. Only **4** were ever in files a checker could act on.
+
+#### What shipped
+
+- **`scripts/us-english.mjs` (new)** — the pattern set, `MUST_CATCH`/`MUST_NOT_CATCH`, and a real
+  comment tokenizer. §55 now imports it instead of holding its own copy. **Item 141's `hypothesis`
+  stem went in here**, in the `emphasise` shape (verb forms only, because a bare `-ise` stem would
+  flag the correct US plural "hypotheses" — the identical trap that keeps `analyses` unflagged), and
+  both halves are controls: §55's line moved **16 → 17 pattern families, 34 → 38 specimens, 63 → 67
+  US forms**, all passing. One list, one pair of controls, two call sites — which is the point:
+  item 141 existed because a second copy of a list inherits its gaps forever.
+- **`check-data.mjs` §59 (new)** — the same net over **1,111 comment blocks in 87 source files** and
+  **1,892 lines of the five normative Markdown documents**. `us-english:allow` is load-bearing from
+  today: **13 exemptions honored**, 9 in comments and **4 that earlier runs placed in `DECISIONS.md`
+  and `LAUNCH_PLAN.md` in anticipation of a checker that did not exist**.
+- **The sweep, in the same commit as the instrument, as item 130 required** — all 7 comment
+  spellings fixed, plus `DECISIONS.md:672` `labour`→`labor` and `:708` `licence`→`license`. One
+  prose fix rather than a spelling one: `a11y-sweep.js:430` said `aria-label/labelledby`, which is
+  not the attribute's name; it now reads `` `aria-label` `` or `` `aria-labelledby` ``, and the
+  spec-identifier exemption is a token deletion of that exact string, so the bare word `labelled`
+  still fails.
+
+#### Two instrument defects found by their own controls, both of the "clean answer that means nothing" family
+
+- **The first extractor split a comment run at bare `//` lines**, which silently broke the ONE
+  marker the repo already had in code: §32's `us-english:allow` sits 8 lines below the quotation it
+  exempts, with two bare `//` lines between. The marker landed in a block containing nothing and the
+  quotation was reported. Blocks now merge through blank comment lines — and the cost is written
+  into the header rather than hidden: a marker's scope reaches the end of its comment run.
+- ⚠️ **CONTROL B could not see its own sabotage, which is the finding worth not re-deriving.**
+  The control plants a British word in a string literal and asserts it stays invisible. Deleting the
+  tokenizer's entire string-handling branch **did not trip it** — because the planted string
+  contained no `//`, so a tokenizer that ignores quotes still never enters a comment state there.
+  The control was the right shape and the wrong specimen. Both negatives now carry a literal `//`
+  (`"see // a colour here"`, `/[//] labour/`), and the mutation fires: *"CONTROL B: the extractor
+  reported "colour" from a planted STRING or REGEX literal."* This is the second consecutive run
+  whose §55-family control was measured to be blind, after 2026-08-29's `-ism`/`-ist` finding.
+
+#### Verification — six mutations, each restored from a scratchpad copy and re-verified
+
+Every check is a mutation with a known answer, not a re-read: **T1** British word in a real comment
+→ §59 fails, naming the line. **T2** the same word in a string value of the same file → §59 clean,
+0 failures (the boundary that keeps the net off `us-english.mjs`'s own specimen list). **T3** the
+tokenizer stubbed to return whole-file source → CONTROL A fires on the collapsed block count.
+**T3c/T3d** string- and regex-tracking deleted individually → CONTROL B fires by name in each.
+**T4** the marker made file-scoped → CONTROL C fires: *"Block scope has leaked into file scope."*
+**T5** planted line in `CLAIMS.md` → fails; the same line marked → passes. **T6** `AGENT_LOG.md`'s
+live British spellings → 0 reported, the documented boundary holding.
+`npm test` **PASS across all 8 checks, 0 failures**, the 2 standing translation warnings unchanged;
+`npm run build` clean in 1.54s. Files touched by the mutations were restored from copies under the
+session scratchpad and `git diff` re-checked clean before committing — never `git checkout --`.
+
+#### Step 5 — adversarial self-check
+
+- **Blindspot register:** the diff is five dev-side files plus two prose corrections in
+  `DECISIONS.md`. No lesson, locale, quiz, glossary or market copy is touched; §55's own corpus
+  count is unchanged at 1,154 strings. Nothing reintroduces Dalio branding (§10.2),
+  advice-adjacent language (§10.1), child-facing framing (§10.3), or a live-looking market figure —
+  and the one new user-visible artifact is a build failure message.
+- **`DECISIONS.md`:** the two edits are spellings inside existing prose, not decisions; no closed
+  decision is contradicted, and a new `.mjs` under `scripts/` is the established shape.
+- **Already-done item:** neither 130 nor 141 appears in "Completed and pruned", and the §55 refactor
+  removes no coverage — the control counts went up in both directions, which is the check that would
+  have caught a silent loss.
+- **My own verification claim:** an independent reviewer running only `npm test` sees §55's line at
+  17/38/67 and §59's at 1,111 blocks / 87 files / 1,892 Markdown lines / 13 exemptions. The
+  mutations above are reproducible from the descriptions without anything from this session.
+- **The judgment a reviewer could fairly dispute**, stated rather than buried: `AGENT_LOG.md` is
+  excluded from a house-style check while carrying 4 real British spellings. The measured reason is
+  above and the remainder is item 143 rather than quietly dropped.
+
+#### Next run
+
+**Open and unblocked: item 144** (this run's residual), **item 143**, **item 142**, **item 140**,
+**item 126**, **item 120**. Item 117 remains open.
+**For the owner:** the non-archivable floor is **268,921 b against the 250,000 b budget** and this
+entry adds to it — archiving cannot move that number, only a backlog-compression pass can, and
+**item 115** holds the rule and the options. **O-1 is still the entire critical path: 44 lessons,
+five languages, 160 minutes of content, and zero people have ever opened this app.** **O-3**
+unchanged — this run added no translated prose.
+
 ### 2026-08-29 (scheduled dev-agent) — the fuse was two runs from stopping every future run, and the day it had to cut was in two pieces (W-5.3 archiving pass)
 
 **Picked: the archiving pass**, over the queued item 130, because the previous run's own closing note

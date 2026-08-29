@@ -28,6 +28,14 @@ import { HTML_LANG } from "../src/lib/useAppState.js";
 import { ROUTED_TABS, initialRoute, parseRoute, resolveRoute, routeHash } from "../src/lib/deepLink.js";
 import { computeCoverage } from "./translation-review.mjs";
 import {
+  ALLOW_MARKER,
+  BRITISH,
+  MUST_CATCH,
+  MUST_NOT_CATCH,
+  commentBlocks,
+  scan as scanBritish,
+} from "./us-english.mjs";
+import {
   LANGS as COMPLETENESS_LANGS,
   completeness,
   drift as completenessDrift,
@@ -7090,61 +7098,25 @@ if (keyedGroupsChecked < 4) {
 //       item 91 nearly wrote "check de pago" into a lesson body with a blind
 //       replace; walking only `en`-keyed values makes that unreachable.
 //     * Verbatim quotations of deleted text, which MUST keep their original
-//       spelling — see the us-english:allow note at §31's duplicate-title
-//       check above, where a quoted "colour" is correct and load-bearing.
+//       spelling — see the marker note at §31's duplicate-title check
+//       above, where a quoted "colour" is correct and load-bearing.
+//       us-english:allow — this header NAMES British forms ("colour",
+//       "Labour income", "cheque de pago") as specimens of what §55 catches
+//       and what it must not touch. Every one is a mention, not a use.
 //   Comments and dev scripts are therefore NOT guarded. They were swept by
 //   hand in this run; keeping them swept is a residual, not a check.
 //
-//   EXTENDING THE NET. Add stems, not suffixes. A generic `-ise` rule flags
-//   "exercise", "compromise", "expertise" and "otherwise"; a generic `-re`
-//   rule flags "genre" and "mediocre"; `analys[ei]s` flags the correct US
-//   nouns "analysis" and "analyses", which is precisely how item 91's own
-//   headline count came out wrong in both directions. Every entry below is
-//   an explicit stem, and CONTROL C exists to catch the day someone
-//   forgets that.
+//   THE PATTERNS AND THEIR CONTROL LISTS LIVE IN `scripts/us-english.mjs`,
+//   not here, since 2026-08-29 (item 130): §59 below reads comment prose
+//   with the same net, and item 141 was a gap that a second copy of this
+//   list would have inherited forever. Read that file before adding a stem
+//   — "add stems, not suffixes" is the rule and it is written down there.
 {
   // §55's own controls gate §55's scan, NOT the global failure count. The
   // first draft gated on `failures === 0`, which meant any unrelated failure
   // earlier in this file silently skipped the whole style sweep — a check
   // that disappears exactly when the build is already unhappy.
   const before55 = failures;
-  const BRITISH = [
-    [/\b(labour|colour|behaviour|favour|honour|neighbour|rumour|humour|endeavour|flavour|savour|harbour|vapour|armour|valour|odour|parlour|splendour)\w*/gi, "drop the u (labour → labor)"],
-    // The suffix set is EXPLICIT, and that is the whole point of this line.
-    // Written as `(stem)\w*` — which is how it shipped from 2026-08-27 to
-    // 2026-08-29 — every stem here is also a prefix of a correct US noun or
-    // adjective, so the net flagged 19 of them: `capitalis` swallows
-    // "capitalism"/"capitalist", `realis` swallows "realism"/"realistic",
-    // `criticis` "criticism", `organis` "organism"/"organist", `specialis`
-    // "specialist", `apologis` "apologist", `stylis` "stylish"/"stylistic".
-    // In an app that TEACHES economics, the first lesson to use the word
-    // "capitalism" would have failed the build and told its author to write
-    // "capitalize" — a check instructing someone to corrupt correct content.
-    // CONTROL C is the guard for exactly this and could not see it, because
-    // its US list held no -ism/-ist/-ic derivation; both halves are fixed
-    // together, and the words above are now IN that list.
-    // Only real British inflections follow an -ise stem, so name them:
-    [/\b(organis|realis|recognis|specialis|minimis|maximis|prioritis|normalis|summaris|apologis|criticis|utilis|capitalis|localis|stylis|tokenis|standardis|memoris|categoris|penalis|sterilis)(e|es|ed|ing|er|ers|ation|ations|ational|able)\b/gi, "-ise/-isation → -ize/-ization"],
-    // "analyses" is deliberately ABSENT: it is the correct US plural of
-    // "analysis" AND the British third-person verb, spelled identically. It
-    // cannot be classified without reading the sentence, and CONTROL C below
-    // failed on exactly this when the pattern was first written with `es` in
-    // it. Flagging the two unambiguous verb forms is the honest coverage.
-    [/\banalys(e|ed|ing)\b/gi, "analyse → analyze (the nouns analysis/analyses are correct US; \"analyses\" is ambiguous and is deliberately not flagged)"],
-    [/\bemphasis(e|ed|es|ing)\b/gi, "emphasise → emphasize (the noun emphasis is correct US)"],
-    [/\b(centre|calibre|spectre|lustre|sombre|meagre|theatre)s?\b/gi, "-re → -er"],
-    [/\b\w*(metre|litre|fibre)s?\b/gi, "-re → -er (metre → meter, and the same for kilometre etc.)"],
-    [/\b(defence|offence|licence|pretence)s?\b/gi, "-ce → -se"],
-    [/\bpractis(e|ed|es|ing)\b/gi, "practise → practice (US uses practice for both noun and verb)"],
-    [/\b(travell|cancell|modell|labell|fuell|signall|marvell|counsell|jewell|levell)\w*/gi, "single the l (cancelled → canceled)"],
-    [/\bprogramme\b/gi, "programme → program"],
-    [/\bcheques?\b/gi, "cheque → check"],
-    [/\b(whilst|amongst)\b/gi, "whilst → while, amongst → among"],
-    [/\b(enrol|instalment|skilful|fulfil)(?!l)\w*/gi, "double the l (enrol → enroll, fulfil → fulfill)"],
-    [/\bjudgement\w*/gi, "judgement → judgment"],
-    [/\bcatalogue\w*/gi, "catalogue → catalog"],
-    [/\b(ageing|storey|sceptic\w*|moustache|aluminium|sulphur|kerb|tyres?)\b/gi, "assorted British forms"],
-  ];
 
   // The corpus: every string VALUE sitting under a key named `en`, across the
   // modules that render text. Path-based rather than module-based, so a new
@@ -7175,15 +7147,7 @@ if (keyedGroupsChecked < 4) {
   }
   for (const [name, mod] of EN_SOURCES) collectEn(mod, name, false);
 
-  function scan(text) {
-    const found = [];
-    for (const [re, advice] of BRITISH) {
-      re.lastIndex = 0;
-      const m = text.match(re);
-      if (m) found.push({ words: [...new Set(m)], advice });
-    }
-    return found;
-  }
+  const scan = scanBritish;
 
   // ── CONTROLS, all three mandatory. A style net that silently reads nothing
   //    looks exactly like a style net over clean content.
@@ -7202,14 +7166,6 @@ if (keyedGroupsChecked < 4) {
     //      catch. This is per-pattern rather than one specimen sentence: item
     //      91 lost three passes to a net that was clean only because it had
     //      no rule for the family it was missing.
-    const MUST_CATCH = [
-      "labour", "colour", "behaviour", "favour", "honoured", "neighbouring",
-      "organised", "capitalisation", "specialised", "analyse", "emphasised",
-      "realise", "criticised", "utilisation", "organisational", "recognisable",
-      "centre", "theatre", "kilometre", "fibre", "defence", "licence",
-      "practising", "cancelled", "labelled", "programme", "cheque", "whilst",
-      "enrol", "fulfil", "judgement", "catalogue", "ageing", "sceptical",
-    ];
     const missed = MUST_CATCH.filter((w) => scan(w).length === 0);
     if (missed.length) {
       fail(`§55 CONTROL B: the net does not flag ${missed.map((w) => `"${w}"`).join(", ")}. Every one is a British form this repo has actually shipped or is one keystroke from shipping, so a clean sweep proves nothing while any of them is invisible.`);
@@ -7219,24 +7175,6 @@ if (keyedGroupsChecked < 4) {
     //      shipped a net whose lookbehind matched US "colored", and item 91's
     //      predecessor over-counted by flagging "analysis" and "analyses".
     //      Both would have been caught here.
-    const MUST_NOT_CATCH = [
-      "labor", "color", "colored", "behavior", "favor", "honored", "neighboring",
-      "organized", "analysis", "analyses", "emphasis", "center", "theater",
-      "meter", "fiber", "defense", "license", "practice", "practices",
-      "canceled", "labeled", "program", "check", "while", "among", "enroll",
-      "fulfill", "judgment", "catalog", "aging", "skeptical", "exercise",
-      "compromise", "expertise", "otherwise", "surprise", "franchise",
-      "genre", "mediocre", "acre", "four", "hour", "your", "flour",
-      // The -ism/-ist/-ic derivations. Added 2026-08-29 with the suffix fix
-      // above, because this list is what makes that fix a property rather
-      // than a promise: every one of these was flagged by the shipped net,
-      // and this list — whose entire job is to catch a stem widened into a
-      // suffix rule — contained no word of this shape to catch them with.
-      "capitalism", "capitalist", "capitalists", "realism", "realist",
-      "realistic", "realistically", "criticism", "criticisms", "organism",
-      "organisms", "organist", "specialist", "specialists", "apologist",
-      "stylish", "stylist", "stylistic", "stylistically",
-    ];
     const falsePositives = MUST_NOT_CATCH.filter((w) => scan(w).length > 0);
     if (falsePositives.length) {
       fail(`§55 CONTROL C: the net flags the correct US spellings ${falsePositives.map((w) => `"${w}"`).join(", ")}. A pattern was widened into a suffix rule — add explicit stems instead. Every failure §55 reports is untrustworthy until this passes.`);
@@ -7414,7 +7352,7 @@ if (keyedGroupsChecked < 4) {
   }
 
   //    (C) THE NET IS SILENT ON CORRECT COPY. Each language's own sanctioned
-  //        marks, including the two that look wrong to a neighbouring
+  //        marks, including the two that look wrong to a neighboring
   //        language: `ja` 『』 around a coined label, and `zh` 《》 around a
   //        work name that is not a lesson.
   const MUST_NOT_CATCH = {
@@ -7530,7 +7468,7 @@ if (keyedGroupsChecked < 4) {
       //     answered here the way §54 (e) answers it). Each row label is lifted
       //     from that language's own "two different things" sentence, so a
       //     translation that reworded the lesson would leave the figure
-      //     labelled with a phrase its own lesson never uses.
+      //     labeled with a phrase its own lesson never uses.
       //
       //     CONTROL, per language and both directions: a body that failed to
       //     load returns "not found" for both labels, which is
@@ -7903,6 +7841,196 @@ if (keyedGroupsChecked < 4) {
         `(control A ${refs.length} refs extracted, control B a marked title is found, control C a bare mention and ` +
         `the wrong language's marks are both rejected). Matches spans exactly, so "Credit" cannot match "Credit Scores".`,
     );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// §59. US-ENGLISH HOUSE STYLE, over comment prose and normative Markdown
+//      (backlog item 130, with item 141 folded into the shared pattern set).
+//
+//   WHY THIS EXISTS, and why it is not §55 with a wider glob. §55 guards the
+//   1,154 learner-visible strings and deliberately stops there. Item 130 was
+//   filed as §55's own stated blind spot: 21 of the 36 British spellings that
+//   caused §55 to be written were in comments, dev scripts and Markdown, and
+//   they were swept BY HAND with nothing keeping them swept.
+//
+//   The gate that item set was "do not build it until the hand-swept surface
+//   has drifted again", and the measurement that met the gate is the argument
+//   for the section. Re-measured 2026-08-29: 7 British spellings in comments,
+//   and `git blame` dates 6 of them to 2026-08-27 and 2026-08-28 — i.e. AFTER
+//   the hand sweep, written by five dev-agent runs. That is ~3 per day, and
+//   the drift source is the agent that writes the comments. A hand sweep is
+//   not a cheaper alternative to a check here; it is a thing that decays
+//   measurably within two days.
+//
+//   SCOPE, all three boundaries measured rather than assumed:
+//     * COMMENT PROSE ONLY, never code and never string values — see the
+//       tokenizer note in `us-english.mjs`. This is a safety property, not
+//       tidiness: `us-english.mjs` holds "labour"/"colour"/"cheque" as string
+//       specimens in CONTROL B, and a net that read source as a flat blob
+//       would fail the build on its own test corpus. CONTROL B below plants
+//       both shapes and asserts the string one is invisible.
+//     * MARKDOWN: the five normative documents, and NOT `AGENT_LOG.md` or
+//       `AGENT_LOG.archive.md`. Measured 2026-08-29, and it changed this
+//       section's shape: the log carries 27 hits of which 22 are MENTIONS —
+//       a run log that documents a spelling rule must quote the spellings it
+//       bans, and `AGENT_LOG.md:1465` quotes all seven comment spellings by
+//       name in the course of filing this very item. Marking 22 lines would
+//       be churn, and every future entry about §55 or §59 would fail the
+//       build. The 4 real British spellings left in the log's own prose are
+//       recorded in item 130 as the measured residual, not swept silently.
+//     * STRING VALUES IN DEV SCRIPTS are out, and there is exactly one live
+//       instance (`a11y-sweep.js:525`, "dot centre" in a failure message).
+//       It is left in place deliberately: it is the negative control for the
+//       boundary above — if a future widening of this net starts flagging it,
+//       the net has stopped reading comments and started reading source.
+//
+//   THE MARKER IS NOW LOAD-BEARING. `us-english:allow` was placed by earlier
+//   runs in anticipation of a checker and nothing read it; from today it
+//   exempts the comment BLOCK or the Markdown LINE it sits in. Block scope,
+//   not line scope, because the marker belongs in the sentence that explains
+//   why the spelling is correct, which is rarely the line carrying it — the
+//   marker at §31 above sits 8 lines below the quotation it exempts.
+{
+  const before59 = failures;
+
+  const SRC_ROOTS = [
+    ["src", [".js", ".jsx"]],
+    ["scripts", [".js", ".mjs"]],
+  ];
+  const NORMATIVE_MD = [
+    "DECISIONS.md", "LAUNCH_PLAN.md", "CLAIMS.md", "README.md", "LAUNCH_READINESS.md",
+  ];
+
+  function walkSources(dir, exts, acc = []) {
+    for (const entry of readdirSync(join(ROOT, dir), { withFileTypes: true })) {
+      if (entry.name === "node_modules" || entry.name.startsWith(".")) continue;
+      const rel = `${dir}/${entry.name}`;
+      if (entry.isDirectory()) walkSources(rel, exts, acc);
+      else if (exts.some((x) => entry.name.endsWith(x))) acc.push(rel);
+    }
+    return acc;
+  }
+
+  const sourceFiles = [];
+  for (const [dir, exts] of SRC_ROOTS) walkSources(dir, exts, sourceFiles);
+
+  const hits = [];
+  let blockCount = 0;
+  let exemptCount = 0;
+  for (const rel of sourceFiles) {
+    for (const block of commentBlocks(readFileSync(join(ROOT, rel), "utf8"))) {
+      blockCount++;
+      const found = scanBritish(block.text);
+      if (!found.length) continue;
+      if (block.text.includes(ALLOW_MARKER)) { exemptCount++; continue; }
+      hits.push({
+        where: `${rel}:${block.line}`,
+        words: [...new Set(found.flatMap((f) => f.words))],
+        advice: found[0].advice,
+      });
+    }
+  }
+
+  let mdLines = 0;
+  for (const md of NORMATIVE_MD) {
+    const lines = readFileSync(join(ROOT, md), "utf8").split("\n");
+    mdLines += lines.length;
+    lines.forEach((line, i) => {
+      const found = scanBritish(line);
+      if (!found.length) return;
+      if (line.includes(ALLOW_MARKER)) { exemptCount++; return; }
+      hits.push({
+        where: `${md}:${i + 1}`,
+        words: [...new Set(found.flatMap((f) => f.words))],
+        advice: found[0].advice,
+      });
+    });
+  }
+
+  // ── CONTROLS. §55 owns the two that gate the NET (it fires on British
+  //    forms, it is silent on US ones) and both run against the same shared
+  //    list, so they are not repeated here. These three gate the READER,
+  //    which is the half §55 has never had to have.
+  //
+  //    (A) THE CORPUS IS REAL. Floors well under the live counts, plus a
+  //        sentence that must be reachable. A comment walker that silently
+  //        returns nothing looks exactly like a clean codebase.
+  const KNOWN_COMMENT = "Data-shape checks for the content/locale modules";
+  const corpusReaches = sourceFiles.some((rel) =>
+    commentBlocks(readFileSync(join(ROOT, rel), "utf8")).some((b) => b.text.includes(KNOWN_COMMENT)),
+  );
+  if (sourceFiles.length < 60 || blockCount < 800) {
+    fail(`§59 CONTROL A: the walk found only ${sourceFiles.length} source file(s) and ${blockCount} comment block(s). It measured 87 and 1,111 on 2026-08-29, so a number this low means it is reading the wrong tree and every clean result below would be meaningless.`);
+  } else if (!corpusReaches) {
+    fail(`§59 CONTROL A: no comment block contains check-data.mjs's own header sentence "${KNOWN_COMMENT}", so the extractor is not returning comment text even though it walked ${blockCount} block(s).`);
+  } else if (mdLines < 1000) {
+    fail(`§59 CONTROL A: the ${NORMATIVE_MD.length} normative Markdown files total only ${mdLines} lines. They measured 1,892 lines on 2026-08-29 — check that ${NORMATIVE_MD.join(", ")} all still exist at the repo root.`);
+  } else {
+    //  (B) IT READS COMMENTS AND ONLY COMMENTS. Four shapes, four DISTINCT
+    //      words, so the assertion cannot be satisfied by the wrong one. The
+    //      two negatives are the point: a string literal and a regex literal
+    //      each carry a British spelling that must stay invisible, because
+    //      `us-english.mjs` holds exactly that shape a few hundred lines away.
+    //      Each negative literal CARRIES A `//` SEQUENCE, and that detail is
+    //      the control rather than a flourish: the first draft of this probe
+    //      held a string with no `//` in it, so removing the tokenizer's
+    //      string handling altogether left it silent — the negative could not
+    //      see the shape it was written to catch. Verified by mutation
+    //      2026-08-29: delete the string branch and this fires.
+    const PROBE = [
+      'const s = "see // a colour here";',
+      "const r = /[//] labour/g;",
+      "// a line comment about the centre of the chart",
+      "/* a block comment that is deliberately labelled */",
+    ].join("\n");
+    const probeWords = commentBlocks(PROBE).flatMap((b) => scanBritish(b.text).flatMap((f) => f.words.map((w) => w.toLowerCase())));
+    const probeMissing = ["centre", "labelled"].filter((w) => !probeWords.includes(w));
+    const probeLeaked = ["colour", "labour"].filter((w) => probeWords.includes(w));
+    if (probeMissing.length) {
+      fail(`§59 CONTROL B: the extractor did not report ${probeMissing.map((w) => `"${w}"`).join(", ")} from a planted comment. It is not reading comments, so the clean result below would be about nothing.`);
+    }
+    if (probeLeaked.length) {
+      fail(`§59 CONTROL B: the extractor reported ${probeLeaked.map((w) => `"${w}"`).join(", ")} from a planted STRING or REGEX literal. It is reading source text, not comment prose — which means it will fail the build on us-english.mjs's own specimen list. Fix the tokenizer before trusting any failure this section reports.`);
+    }
+
+    //  (C) THE MARKER IS HONORED, AND ONLY WHERE IT IS. An exemption that
+    //      leaks to the next block is worse than no exemption: it would make
+    //      one marker silence a whole file, and nothing would say so.
+    const MARKED = [
+      `// quoting a deleted line that said colour — ${ALLOW_MARKER}`,
+      "",
+      "// an unrelated comment that says labour on its own",
+    ].join("\n");
+    const markedResults = commentBlocks(MARKED).map((b) => ({
+      exempt: b.text.includes(ALLOW_MARKER),
+      words: scanBritish(b.text).flatMap((f) => f.words.map((w) => w.toLowerCase())),
+    }));
+    const marked = markedResults.find((r) => r.exempt);
+    const unmarked = markedResults.find((r) => !r.exempt);
+    if (!marked || !marked.words.includes("colour")) {
+      fail(`§59 CONTROL C: the planted "${ALLOW_MARKER}" block was not recognized as a marked block carrying a British spelling, so this section cannot prove the exemption is doing anything.`);
+    } else if (!unmarked || !unmarked.words.includes("labour")) {
+      fail(`§59 CONTROL C: a marker in one comment block silenced the NEXT block too. Block scope has leaked into file scope — one marker would then exempt everything after it, silently.`);
+    }
+
+    if (failures === before59) {
+      for (const h of hits.slice(0, 12)) {
+        fail(`§59: ${h.where} uses the British spelling ${h.words.map((w) => `"${w}"`).join(", ")} — ${h.advice}. The owner set US English as the house style on 2026-08-21 (item 91). If this is a verbatim quotation of deleted text, or the word is being NAMED rather than used, add \`${ALLOW_MARKER}\` to this comment block (or this Markdown line) with one clause saying why.`);
+      }
+      if (hits.length > 12) {
+        fail(`§59: ${hits.length - 12} further British spelling(s) not listed above.`);
+      }
+      if (hits.length === 0) {
+        console.log(
+          `  §59 US-English house style holds across ${blockCount} comment blocks in ${sourceFiles.length} source files ` +
+            `and ${mdLines} lines of ${NORMATIVE_MD.length} normative Markdown documents ` +
+            `(${exemptCount} exempted by an explicit ${ALLOW_MARKER} marker; control A the walk reaches real comment text, ` +
+            `control B a planted string and regex literal stay invisible while a planted comment is caught, ` +
+            `control C the marker exempts its own block and not the next one). AGENT_LOG.md is deliberately out of scope — see the header.`,
+        );
+      }
+    }
   }
 }
 
