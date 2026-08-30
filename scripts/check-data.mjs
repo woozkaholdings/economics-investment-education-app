@@ -8578,5 +8578,134 @@ if (keyedGroupsChecked < 4) {
   }
 }
 
+// 62. src/index.css — the Bar chart's narrow-width row layout, and the ONE
+//     property that makes it honest (backlog item 148).
+//
+//     WHAT IS BEING GUARDED, and why it is this and not the whole layout.
+//     Below 375px `Bar` turns its five columns into five rows: label on the
+//     left, track in the middle, value on the right. That fixes a real WCAG
+//     1.4.10 reflow failure — measured 2026-08-30 at 320px x 130% font on
+//     Reference > Market Dashboard, document scrollWidth 323 against a client
+//     width of 320, the fifth column and its label both reaching 323.1px.
+//
+//     But the row layout has a failure mode the column layout does not, and it
+//     is silent. If the label's flex BASIS is elastic (`auto`, `none`, or a
+//     `flex: 1` that resolves to 0-and-grow), each row's label sizes to its own
+//     text, so every row gets a DIFFERENT track length — and a bar's length
+//     stops meaning its value. Measured in the live DOM on 2026-08-30, with
+//     `flex: 0 0 auto`, the 4.5 bar drew at 58% of the 9.0 bar instead of 50%.
+//     Nothing else notices: there is no overflow, no overlap, no clipped label,
+//     and the figure looks entirely reasonable. It is this component's OLDEST
+//     bug — `charts.jsx` records a version where a ten-fold expansion "was
+//     drawn as four bars of equal height with the true numbers printed above
+//     them" — reached through the width axis instead of the height axis.
+//
+//     So the assertion is narrow on purpose: the two elements that bracket the
+//     track must have a FIXED basis. That is the property the geometry depends
+//     on, and it is the one a later "tidy these to auto" would remove.
+//
+//     ⚠️ THIS IS A STATIC READ OF CSS TEXT, which is the kind of instrument
+//     this log has repeatedly caught reading the wrong thing. Hence the
+//     specimens below: the predicate is run against five hand-written rules
+//     with known answers, three of them refutations, on every `npm test`. If
+//     the parser stops understanding `flex`, the specimens fail before the
+//     live assertion can report a false green.
+const BAR_NARROW_MEDIA = "@media (max-width: 374.98px)";
+
+// Returns the text between the braces of `selector`'s rule inside `scope`, or
+// null if the selector is not there.
+function ruleBodyIn(scope, selector) {
+  const at = scope.indexOf(selector);
+  if (at === -1) return null;
+  const open = scope.indexOf("{", at);
+  if (open === -1) return null;
+  const close = scope.indexOf("}", open);
+  if (close === -1) return null;
+  return scope.slice(open + 1, close);
+}
+
+// The `flex` shorthand's basis, classified. "fixed" means a positive length or
+// percentage — the only class that gives every row the same track.
+function flexBasisClass(ruleBody) {
+  const m = /(?:^|[;\s])flex:\s*([^;}]+)/.exec(ruleBody || "");
+  if (!m) return "absent";
+  const value = m[1].trim();
+  const parts = value.split(/\s+/);
+  // `flex: none` == `0 0 auto`; a lone `flex: <number>` == `<n> 1 0%`.
+  if (value === "none" || value === "auto" || value === "initial") return "elastic";
+  const basis = parts.length >= 3 ? parts[2] : parts.length === 1 ? "0%" : null;
+  if (basis === null) return "elastic";
+  const num = /^(\d+(?:\.\d+)?)(px|rem|em|%|ch)$/.exec(basis);
+  if (!num) return "elastic";
+  return Number(num[1]) > 0 ? "fixed" : "elastic";
+}
+
+const BAR_BASIS_SPECIMENS = [
+  { rule: "flex: 0 0 38%;", expect: "fixed", note: "the shipped label rule" },
+  { rule: "flex: 0 0 2.75em;", expect: "fixed", note: "the shipped value rule — an em basis is fixed too" },
+  { rule: "flex: 0 0 auto;", expect: "elastic", note: "REFUTATION: the exact edit that drew 4.5 at 58% of 9.0" },
+  { rule: "flex: none;", expect: "elastic", note: "REFUTATION: `none` is `0 0 auto` spelled differently" },
+  { rule: "flex: 1;", expect: "elastic", note: "REFUTATION: a lone number is basis 0 and grow — the label eats the track" },
+];
+
+{
+  const before62 = failures;
+  const cssPath62 = join(ROOT, "src", "index.css");
+  const css62 = readFileSync(cssPath62, "utf8");
+
+  // The specimens run FIRST: a broken parser must not be able to report a
+  // clean live result.
+  for (const sp of BAR_BASIS_SPECIMENS) {
+    const got = flexBasisClass(sp.rule);
+    if (got !== sp.expect) {
+      fail(`§62: the flex-basis reader classified ${JSON.stringify(sp.rule)} as "${got}", but it is "${sp.expect}" (${sp.note}). Every live assertion below is only as good as this classification.`);
+    }
+  }
+
+  const mediaAt = css62.indexOf(BAR_NARROW_MEDIA);
+  if (mediaAt === -1) {
+    fail(`§62: src/index.css has no \`${BAR_NARROW_MEDIA}\` block. That block IS the narrow-width Bar layout (backlog item 148); without it Reference > Market Dashboard overflows the document at 320px x 130% font, which is WCAG 1.4.10 at the width that criterion names.`);
+  } else {
+    // Brace-match the media block so a selector defined OUTSIDE it can never
+    // satisfy an assertion about what happens INSIDE it.
+    let depth = 0, end = -1;
+    for (let i = css62.indexOf("{", mediaAt); i < css62.length; i++) {
+      if (css62[i] === "{") depth++;
+      else if (css62[i] === "}") { depth--; if (depth === 0) { end = i; break; } }
+    }
+    if (end === -1) {
+      fail("§62: src/index.css's narrow-width Bar block never closes — the brace scan ran off the end of the file.");
+    } else {
+      const scope = css62.slice(mediaAt, end);
+      for (const [selector, role] of [
+        [".ec-bar-label", "the label to the left of the track"],
+        [".ec-bar-value", "the value to the right of the track"],
+      ]) {
+        const body = ruleBodyIn(scope, selector);
+        if (body === null) {
+          fail(`§62: \`${selector}\` has no rule inside ${BAR_NARROW_MEDIA}. It brackets the bar track, so without a fixed width there every row gets a different track length.`);
+          continue;
+        }
+        const cls = flexBasisClass(body);
+        if (cls !== "fixed") {
+          fail(`§62: \`${selector}\`'s flex basis inside ${BAR_NARROW_MEDIA} is "${cls}", not a fixed length — ${role} would then size to its own text, every row would get a different track length, and a bar's length would stop meaning its value. Measured with \`flex: 0 0 auto\` on 2026-08-30: the 4.5 bar drew at 58% of the 9.0 bar instead of 50%, with no overflow and no overlap to give it away.`);
+        }
+      }
+
+      // The percentage swaps AXIS between the two layouts. If the narrow block
+      // stops setting `width`, the bars inherit the column layout's `height`
+      // and every bar renders full-length.
+      const fill = ruleBodyIn(scope, ".ec-bar-fill");
+      if (fill === null || !/width:\s*var\(--ec-bar-pct\)/.test(fill)) {
+        fail(`§62: \`.ec-bar-fill\` inside ${BAR_NARROW_MEDIA} does not set \`width: var(--ec-bar-pct)\`. In the row layout the datum's percentage is a WIDTH; left as the column layout's \`height\`, every bar renders the same length and the figure states that all five values are equal.`);
+      }
+    }
+  }
+  if (failures === before62) {
+    console.log(`  §62 the narrow-width Bar layout holds: ${BAR_BASIS_SPECIMENS.length} flex-basis specimen(s) classified correctly (${BAR_BASIS_SPECIMENS.filter((s) => s.note.startsWith("REFUTATION")).length} refutations), both track-bracketing elements on a fixed basis, and the datum's percentage read as a width.`);
+  }
+}
+
+
 console.log(`\n${failures === 0 ? "PASS" : "FAIL"}: ${failures} failure(s), ${warnings} warning(s).`);
 process.exit(failures === 0 ? 0 : 1);

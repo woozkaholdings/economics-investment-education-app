@@ -29,8 +29,8 @@ export function Bar({ data, title, colors, height = 140, description, caption })
   // the comparison. Measured 2026-08-29 on Reference > Market signals at 320px x 130%: the five
   // Fed-balance-sheet bar tracks rendered **9px tall** inside height={90}, because the 130% value
   // and a three-line 130% label had eaten the rest. That is the same failure mode as the
-  // `minHeight: 0` comment below — the meaning drawn at a size that cannot carry it — reached
-  // through the font-scale axis instead of through flex sizing.
+  // `.ec-bar-track` note in `index.css` — the meaning drawn at a size that cannot carry it —
+  // reached through the font-scale axis instead of through flex sizing.
   // Dividing by the 16px root baseline makes the box grow WITH the text: at 100% this is
   // arithmetically the same number of pixels the call sites already got (90 / 16 = 5.625rem =
   // 90px), so the default rendering is unchanged, and at 130% the box grows to 117px instead of
@@ -45,24 +45,27 @@ export function Bar({ data, title, colors, height = 140, description, caption })
           </Text>
         </figcaption>
       )}
-      <div role="img" aria-label={description} style={{ display: "flex", alignItems: "flex-end", gap: space["1"], height: boxHeight }}>
+      {/*
+        GEOMETRY LIVES IN `index.css` (`.ec-bar-*`), NOT HERE, and that is the
+        one deliberate exception to this file's inline-style habit: below ~356px
+        the column layout does not fit, and a media query cannot reach an inline
+        style. `index.css`'s BAR CHART LAYOUT block carries the measurement, the
+        three fixes that were rejected, and why the breakpoint is 375px.
+        Colors stay here as `theme.js` tokens, so there is still exactly one
+        source of color truth.
+
+        The two custom properties are the seam. `--ec-bar-pct` is read as a
+        HEIGHT in the column layout and as a WIDTH in the narrow row layout —
+        which is precisely the switch an inline `height` could not have made.
+      */}
+      <div role="img" aria-label={description} className="ec-bar-row" style={{ "--ec-bar-box": boxHeight }}>
         {data.map((d, i) => (
-          <div key={d.label} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "flex-end", height: "100%" }}>
-            <span style={{ fontSize: "0.75rem", fontWeight: 700, marginBottom: space["1"], color: ink.body }}>{d.value}</span>
-            {/*
-              The bar's percentage height must resolve against the space left
-              for bars, not against the whole column — the column also holds the
-              value and the (often two-line) label. Measured before this track
-              existed: at height={90} the 4.5, 3.8, 9.0 and 6.7 bars all rendered
-              at exactly 35.5px, so the Fed balance sheet's ten-fold expansion
-              was drawn as four bars of equal height with the true numbers
-              printed above them. `minHeight: 0` is what lets the track actually
-              shrink to its flex size instead of its content's.
-            */}
-            <div style={{ flex: 1, minHeight: 0, width: "100%", display: "flex", alignItems: "flex-end", justifyContent: "center" }}>
-              <div style={{ width: "72%", height: `${(Math.abs(d.value) / max) * 100}%`, background: colors[i], borderRadius: 4, minHeight: 2, transition: "height 0.5s" }} />
+          <div key={d.label} className="ec-bar-col">
+            <span className="ec-bar-value" style={{ color: ink.body }}>{d.value}</span>
+            <div className="ec-bar-track">
+              <div className="ec-bar-fill" style={{ "--ec-bar-pct": `${(Math.abs(d.value) / max) * 100}%`, background: colors[i] }} />
             </div>
-            <span style={{ fontSize: "0.6875rem", color: ink.muted, marginTop: space["2"], textAlign: "center", whiteSpace: "pre-line", lineHeight: 1.25 }}>{d.label}</span>
+            <span className="ec-bar-label" style={{ color: ink.muted }}>{d.label}</span>
           </div>
         ))}
       </div>

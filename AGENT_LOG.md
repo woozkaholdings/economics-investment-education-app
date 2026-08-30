@@ -1488,6 +1488,40 @@ for the history. No open P1/P2 items.
       stand; the coverage did not.** `A11yStates.coverage()` plus the Tab step now in the header
       recipe are the fix — see item 149.
 
+154. **[Process/Docs — filed 2026-08-30 by the run that closed item 148, as an observation it hit
+    rather than a defect it created.] The `HEAD` control copy the Environment note prescribes now
+    needs `drafts/` copied in too, and without it the control fails for its own reasons.**
+    - **What happened:** the prescribed recipe (`git archive HEAD | tar -x`, symlink `node_modules`,
+      copy the two gitignored `economic-cycles-v*.jsx`) produced **exit 1** with a §26 failure —
+      `DECISIONS.md:669` names `drafts/income-hierarchy.en.md`, which lives in the owner's
+      **untracked** `drafts/` folder and so is not in the archive. Adding `cp -R drafts` made the
+      control green (exit 0, 3 warnings, identical warning set to the working tree).
+    - **Why it matters beyond the recipe:** a tracked document names a path that exists only as an
+      untracked user file, so `npm test` on a **fresh clone** would fail §26 for the same reason.
+      That is the owner's call — `drafts/` looks like in-flight work — but it is worth knowing that
+      the suite is currently green only because of a file git does not track.
+    - **Honest priority: low**, and the Environment note has been left alone deliberately: the fix
+      is one line in a recipe, and the underlying question (should `drafts/` be tracked?) is the
+      owner's.
+
+153. **[A11y — filed 2026-08-30 by the run that closed item 148, from a measurement that item did
+    not take.] Under BROWSER text zoom the Fed-balance-sheet screen keeps degrading past the app's
+    own font ceiling, and the bottom tab bar joins it.**
+    - **Measured 2026-08-30, 320px light, `en`, Reference > Market Dashboard, by overriding the root
+      font size directly:** 100% and 115% clean; **130% → 3 overflowing nodes** (scrollWidth 323);
+      **150% → 9** (359); **200% → 15** (447). At 150% and above the overflowing set stops being the
+      chart alone — `NAV`, a `BUTTON` and a `SPAN` from the bottom tab bar appear in it.
+    - **What item 148's fix does and does not cover.** The chart half is fixed: below 375px the bars
+      are rows, so the chart no longer overflows at any of these steps. **The tab bar is untouched**
+      and was never in item 148's scope.
+    - **The honest framing, because it decides the priority.** `FONT_SCALE_STEPS` tops out at **1.3**,
+      so 150% and 200% are not reachable through the app's own control — only through browser or OS
+      text zoom. WCAG **1.4.4 (Resize Text, AA)** is about exactly that path, so this is a real
+      criterion and not a hypothetical, but it is one the app has never claimed.
+    - **Carry a control if you pick it up:** the root-font override used above is the instrument, and
+      its two-sided control is that 100%/115% must read clean on the same screen in the same pass.
+    - **Honest priority: low-to-medium.** Downstream of O-1 like everything else.
+
 152. **[Content/QA — filed 2026-08-30 by the run that closed item 151, as its stated residual rather
     than smuggled into the same commit.] §50 now proves lesson 23's zone/series/axis labels say the
     right things in the right positions. The COLORS those positions are drawn in are paired by index
@@ -1630,9 +1664,57 @@ for the history. No open P1/P2 items.
       content or over an owner-facing item**, and note that item 120 carries the same caveat for the
       same reason. Downstream of O-1 like everything else.
 
-148. **[A11y/UX — filed 2026-08-29 by the run that closed item 147, as its stated residual rather
-    than smuggled into the same commit.] Market signals overflows the document by 18px at 320px x
-    130% font, and all three candidate fixes were priced and none is obviously right.**
+148. **✅ DONE 2026-08-30 (scheduled dev-agent). Shipped as a fourth option the item had not
+    priced — the columns become ROWS below 375px — plus `check-data.mjs` §62. The item's mechanism
+    was exactly right; two of its numbers were not, and the fix had a silent failure mode of its own
+    that the first working version shipped. Read the corrections below.**
+    > **PREMISE RE-MEASUREMENT 2026-08-30 — mechanism CONFIRMED, magnitude and one figure WRONG,
+    > and the scope is one language, not all five.**
+    > - **The overflow is real and the offending nodes are exactly the ones named**: at 320px x 130%
+    >   light, `document.scrollWidth` **323** against `clientWidth` **320**, the fifth column and its
+    >   label span both reaching **323.1px**. Instrument carried a positive control (a planted 500px
+    >   probe moved scrollWidth to 500 and back to 323 on removal).
+    > - **The item said `clientWidth=305`, i.e. an 18px overflow. It is 320, i.e. 3px.** The 305
+    >   implies a 15px classic scrollbar was reserved in the measuring pane. Same defect, and it is
+    >   still a WCAG 1.4.10 failure at the width the criterion names — but "18px" was an artifact of
+    >   the instrument, not a property of the app.
+    > - **The item said the column's flex size is 45px; it is 47.6px.** The 66px figure for
+    >   "tightening" was right (66.3px), and the cause is exactly as stated: `flex: 1` with the
+    >   default `min-width: auto` pins every column at its label's LONGEST WORD. Five of those plus
+    >   four 4px gaps is **290.3px of content in a 254px row**. Control: min-content of the whole
+    >   label equals min-content of "tightening" alone (66.3) and exceeds "First" alone (28.8).
+    > - **NEW, and it changes the fix: this is an `en`-only document overflow.** Required vs
+    >   available at 320px x 130% — **en 290.3 / es 258.5 / ja 134 / ko 131.5 / zh 127.9**, against
+    >   254 available. Only `en` escapes the figure's padding. **`es` misses by 4.5px**; ko/zh/ja fit
+    >   with room to spare because CJK breaks between characters. A width breakpoint therefore
+    >   switches three languages that had no problem — accepted deliberately, see below.
+    > - **The crossover is 356.3px, confirmed to sub-pixel**: at 356px available is 290 against
+    >   required 290.3. At 374px and 375px it fits in all five languages.
+    > - **Also measured, and NOT in the item:** under browser text zoom the figure degrades further
+    >   — **150% → 9 overflowing nodes, 200% → 15**, and at those steps the bottom tab bar overflows
+    >   too. The app's own control caps at 130%, so this is outside its declared configuration space,
+    >   but it is a real WCAG 1.4.4 path. **Filed as item 153.**
+    > **What shipped, and why not (a), (b) or (c).** Below 375px `Bar` renders each datum as a ROW —
+    > label left, track centre, value right — so no label has to fit in a fifth of the width. That
+    > keeps every label intact (which (b) gave up) AND all five bars comparable at a glance (which
+    > (c) gave up). Geometry moved from inline styles into `index.css` `.ec-bar-*` because a media
+    > query cannot reach an inline style; colors stayed inline `theme.js` tokens.
+    > **THE FIX'S OWN SILENT BUG, found by measuring rather than by looking.** The first working
+    > version left the label at `flex: 0 0 auto`, so each row's label sized to its own text and every
+    > row got a **different track length** — the 4.5 bar drew at **58% of the 9.0 bar instead of
+    > 50%**. No overflow, no overlap, no clipped label; the figure looked entirely reasonable. That is
+    > this component's oldest bug (a ten-fold expansion once drawn as four equal bars) reached through
+    > the width axis. A **fixed** basis on the two elements bracketing the track is the whole
+    > correctness argument, and §62 exists to hold it.
+    > **The margin is deliberate and it has a cost.** The breakpoint is 375px against a 356.3px
+    > crossover, because `es` crosses at 325px and item 93 adds translated prose daily. Between 356
+    > and 374 — which includes the very common 360px Android width — the row layout engages where
+    > the column layout would still have fit. Judged not a regression (a horizontal bar is a good
+    > narrow presentation) but it is a visible change on real devices, and reversing it is a
+    > one-number edit.
+    > **Original item text follows.**
+    - **Market signals overflows the document by 18px at 320px x 130% font, and all three candidate
+      fixes were priced and none is obviously right.**
     - **The measurement, reproducible:** `#/reference` > Market signals, viewport 320, font 130%.
       `document scrolls horizontally: scrollWidth=323 clientWidth=305`. The overflowing nodes are
       the `Bar` chart's fifth column and its label span, both extending to 323px. **Clean at 100%
@@ -3529,6 +3611,172 @@ finding(s); V vacuous; U unavailable`. A bare "no accessibility issues found" is
 > section above is prepend-order (newest first); the archive is ascending.
 > *(The "367 lines apart" this note carried until 2026-08-29 was the first block's own length, not the
 > distance between the blocks. The blocks and their byte totals were right; only the gap figure was.)*
+### 2026-08-30 (scheduled dev-agent) — the reflow failure is fixed by a fourth option nobody had priced, and the first working version of it drew 4.5 at 58% of 9.0 with every probe green (item 148 → new items 153 + 154)
+
+**Picked item 148**, over the previous run's suggested 152. Item 148 was the only open item with a
+**measured, live, user-visible standards failure** (WCAG 1.4.10 reflow at 320px); every other open
+item — 152, 149, 144, 143, 140, 126, 120 — records zero live instances. Item 148 had been escalated
+twice as "wants the owner's pick", and that framing was correct *at the time*: all three priced fixes
+broke something the app values, so there was nothing to choose between. **A fourth option removes the
+choice rather than making it**, which is why this was taken autonomously — see the "design call I
+made" paragraph below, which states it plainly rather than burying it.
+
+**Premise re-measurement (step 3.5) — the mechanism held exactly, two numbers did not, and the scope
+was one language rather than five.** Full detail is written into backlog item 148 itself so the next
+run does not re-derive it. In short: `scrollWidth` **323** reproduced to the pixel, but `clientWidth`
+is **320** and not the item's 305, so the overflow is **3px, not 18px** — the 305 implies a 15px
+scrollbar reserved in whatever pane took the original reading. The flex size is **47.6px**, not 45.
+The cause is precisely as the item stated (`min-width: auto` pins each column at its label's longest
+word, 66.3px for "tightening"; **290.3px of content in a 254px row**). And the finding the item did
+not have: **only `en` overflows the document** — required vs available is en 290.3 / es 258.5 / ja 134
+/ ko 131.5 / zh 127.9 against 254, so `es` misses by 4.5px and CJK fits easily.
+
+**Instrument controls, because two of them caught real errors this run.**
+- **Positive control on the overflow scan**: a planted 500px probe moved `scrollWidth` 323 → 500 and
+  back to 323 on removal. Fired.
+- **The min-content probe was WRONG on its first run and the control is what said so.** It cloned the
+  label and copied styles via `getComputedStyle(el).cssText` — which returns **the empty string** in
+  Chrome, so the clone inherited body font and reported "tightening" as 91.1px. Rebuilt to copy the
+  eight font properties explicitly; the two-sided control is that min-content of the whole label must
+  equal min-content of its longest word alone (66.3 = 66.3) and exceed its shortest (28.8). Only then
+  did the numbers agree with the rendered column widths.
+- **The static server was serving a DIFFERENT build.** Port 8781 was already held by a previous run's
+  server, and the first measurements ran against it. Caught by hashing the served asset against the
+  local one. Then the *same class* recurred: after rebuilding, the browser served a cached
+  `index.html` still pointing at the old bundle — caught by reading the live `<script src>` and fixed
+  with a `?v=N` cache-buster. **Two stale-instrument traps in one run, both silent.**
+- **A synchronous multi-state sweep read garbage and looked plausible.** Measuring five languages in
+  one `javascript_tool` call reported all five bars at an identical 35.5px — which is literally the
+  number in `charts.jsx`'s historic-bug comment, so it read as a devastating regression. It was the
+  0.5s bar `transition` plus React's async re-render being measured mid-flight. Re-measured one state
+  per tool round-trip and the ratios were correct. **`rAF` cannot be used to wait here — the Browser
+  pane is hidden, so `requestAnimationFrame` never fires and the call times out at 45s.**
+
+**What shipped.** Below **375px** the `Bar` chart renders each datum as a ROW — label left, track
+centre, value right — so no label has to fit in a fifth of the width. Geometry moved from inline
+styles into `index.css` `.ec-bar-*`, because **a media query cannot reach an inline style**; colors
+stayed inline `theme.js` tokens, so there is still one source of color truth. The datum's percentage
+passes through a custom property `--ec-bar-pct`, read as a **height** in the column layout and a
+**width** in the row layout — the axis switch an inline `height` could not have made.
+
+**The design call I made, stated rather than rounded off.** Item 148 was escalated to the owner
+because (a) produced overlapping labels, (b) produced five mid-word fragments, and (c) made a
+comparison chart scroll. The row layout costs none of those, which is why I did not escalate a fourth
+time — but it *is* a visible design change the owner has not seen, and the breakpoint spends real
+margin: the crossover is **356.3px** and the breakpoint is **375px**, because `es` crosses at 325px
+and item 93 adds translated prose daily. **Between 356 and 374 — which includes the very common 360px
+Android width — the row layout engages where the column layout would still have fit**, and ko/zh/ja
+switch despite never having had the problem. Judged not a regression (a horizontal bar is a good
+narrow presentation, and every label stays intact), but **reversing it is a one-number edit** and the
+owner should know it is theirs to make.
+
+**THE FIX'S OWN SILENT BUG — found by measuring, and no probe in this repo would have caught it.**
+The first working version left the label at `flex: 0 0 auto`. Each row's label then sized to its own
+text, so **every row got a different track length**, and a bar's length stopped meaning its value:
+the 4.5 bar drew at **58% of the 9.0 bar instead of 50%**. There was no overflow, no overlap, no
+clipped label, and the screenshot looked entirely reasonable. This is the component's **oldest** bug
+— `charts.jsx` records a version where a ten-fold expansion "was drawn as four bars of equal height"
+— reintroduced through the width axis by the very change that fixed the width axis. A **fixed** flex
+basis on the two elements bracketing the track is the whole correctness argument. After the fix, the
+rendered-length-to-value error is **0.0004 at worst**, tracks are identical across all five rows
+(137.5 left / 98.6 wide), in all five languages.
+
+**Also shipped: `check-data.mjs` §62**, which guards exactly that property and nothing else — the two
+track-bracketing elements must have a fixed (non-elastic) flex basis inside the narrow block, the
+block must exist, and `.ec-bar-fill` must read the percentage as a `width`. It is a **static read of
+CSS text**, which is the instrument class this log keeps catching in the act, so five hand-written
+`flex` specimens with known answers (three of them refutations: `0 0 auto`, `none`, `1`) run **before**
+the live assertion on every `npm test`.
+
+**Verification — six injections, each restored from a scratchpad copy and confirmed by sha256.**
+1. `.ec-bar-label` basis → `0 0 auto` → §62 fails naming the selector, the block and the 58%/50%
+   measurement.
+2. `.ec-bar-value` basis → `none` → fails (proves `none` is not read as a length).
+3. `.ec-bar-fill` loses `width: var(--ec-bar-pct)` → fails with the "every bar renders the same
+   length" diagnosis.
+4. Breakpoint changed to `400px` → fails with "no `@media (max-width: 374.98px)` block".
+5. **SCOPE CONTROL** — the `.ec-bar-label` rule moved *out* of the media block and a fixed basis put
+   on the base rule instead → still fails ("has no rule inside"). The brace-matching is real; a
+   selector outside the block cannot satisfy an assertion about inside it.
+6. **PARSER CONTROL** — `flexBasisClass` stubbed to always return `"fixed"` → the three refutation
+   specimens fail first, so a broken reader cannot report a clean live result.
+`src/index.css` and `scripts/check-data.mjs` both restored byte-identical (`cb514753…` / `e4706130…`).
+
+**Live verification against `dist/`** (static build + `python3 -m http.server`, per the Environment
+note): 320px x 130% in **all five languages** — 0 document-overflow nodes, uniform tracks, no clipped
+label, worst ratio error 0.0004. 320px at **90/100/115/130%** — all clean. 375px x 100% and 130% in
+all five languages — column layout unchanged, ratios correct, no overflow. **Both `Bar` call sites**
+checked, not just the one the item named: Reference > Market Dashboard *and* lesson 37's
+`LessonVisual` figure render identically, and the `role="img"` `aria-label` ("Five bars, in trillions
+of dollars: 0.9 before 2008, …") is layout-neutral, so §22's text alternative stays true in both
+layouts. Light and dark both screenshotted and looked at.
+
+`npm test` exit 0 — **0 failures, 3 warnings**, all three pre-existing (translation review coverage,
+translation completeness, log floor). Proven pre-existing rather than assumed: the `HEAD` control copy
+produces an **identical warning set**. `npm run build` exit 0 in 939ms; the built CSS carries the
+media query. `node scripts/us-english.mjs` exit 0.
+
+**Adversarial self-check (step 5) — two real findings, both mine, both fixed in this commit.**
+- **The `flex: 0 0 auto` distortion above** is the first, and it is the one that mattered.
+- **A dangling cross-reference I created**: `charts.jsx`'s `boxHeight` comment pointed at "the
+  `minHeight: 0` comment below", which this change moved into `index.css`. Rewritten to name
+  `.ec-bar-track` where it now lives. Small, but it is precisely the comment rot this log has been
+  burned by (§28b's four rotted `file:line` citations).
+- **Blindspot register:** 0 files under `src/content/` or `src/locales/` in the diff — no learner-
+  facing string moved, in any language. 0 hits for Dalio or advice-adjacent patterns in the added
+  lines. The five `2026-08-30` strings are four `//` comments recording when a measurement was taken
+  plus one `fail()` diagnostic; **six existing `fail()` messages already cite dates**, so that is the
+  established shape, and none of it is rendered to a learner.
+- **DECISIONS.md:** no conflict. Nothing here touches localStorage-only state, `.js`-not-JSON content
+  modules, or Vite-not-Expo. Checked specifically for a decision governing inline-styles-vs-CSS and
+  there is none; the color decision ("colors live in CSS so the app can react to the *system* scheme")
+  is **preserved** — only geometry moved, and no hex was added.
+- **Already-done backlog item:** item 148 was open and filed by the run that closed 147. Nothing in
+  "Completed and pruned" is redone or undone.
+- **My own verification claim:** an independent reviewer re-running these commands gets these results
+  — **provided two things are stated, because both bit me.** (i) The `HEAD` control needs `cp -R
+  drafts` on top of the Environment note's recipe, or it fails §26 for its own reasons (**filed as
+  item 154**). (ii) The preview must be cache-busted (`?v=N`) and its served bundle hash compared to
+  the local one, or the measurement runs against a stale build.
+- ⚠️ **A drift I am declaring rather than hiding.** The geometry that moved into `index.css` carries
+  literal `4px`/`8px` gaps, which **duplicate `space["1"]`/`space["2"]` from `theme.js`** — and the
+  App summary says spacing tokens live in `theme.js`. There is no way around it as things stand:
+  `space` is a JS object, a media query cannot read it, and the narrow layout needs a *different* gap
+  from the wide one. It is two numbers, it is commented where it sits, and the honest options
+  (promote `space` to CSS custom properties, or thread both gaps through inline custom properties)
+  are both larger than this item. Not filed as its own item because it is one instance and not a
+  class — the same reasoning item 126 records — but stated here so the next run does not "discover"
+  it as a defect.
+- ⚠️ **What this run did NOT do.** The `A11yStates` ledger's recorded sweeps for the Market Dashboard
+  state at 320px were taken against the **column** layout. Their conclusion ("clean") is still true
+  and is now *more* true — the overflow item 148 recorded is gone — but a future run re-running that
+  sweep will meet a different DOM, and **item 149 is the item that owns that ledger**. Nothing was
+  edited there; the note is so the difference reads as expected rather than as a surprise.
+- **Naming, so it stops costing runs time:** the screen's UI title is **"Market Dashboard"** and has
+  been since the first locale extraction (`76be081`); the component is `MarketSignals.jsx` and the
+  App summary calls it "Market signals". All three are current. Item 148's "Market signals" was never
+  a UI string, and was left alone rather than "corrected" into a dated record.
+
+**Owner-tree fingerprint observed this run:** `OWNER-TREE 187bb0b7eddc5519f55aedeb19eed6533e3da625e79d8c3d762ee2559155263d`
+(3 tracked modified — all mine — 52 untracked). The pre-edit fingerprint was
+`c2331799fd3ee413aca864fd82d247a35ea31b01a70a6c4e37b00f6aad9105b2` (0 tracked modified, 52 untracked),
+which is the number the next run should compare against with `--expect`.
+
+#### Next run
+
+**Item 152** (lesson 23's zone/series colors) is still the cleanest content-adjacent pick and the
+previous run's suggestion — read its two routes first; lifting the color choice into the content
+module is the better one and makes its control free. **New item 153** (browser text zoom at 150/200%,
+where the bottom tab bar overflows) is the direct residual of this run and is the only other item with
+a *measured* live symptom, though it sits outside the app's own font ceiling. Then **149, 144, 143,
+140, 126, 120**, all at zero live instances, plus **new item 154** (a one-line fix to the `HEAD`
+control recipe). **Item 117** remains the one open *product* item and is still the owner's.
+**For the owner:** the log floor is over budget at **314 KB** against 250 KB (measured by `npm test` after this entry landed; it was 306 KB before it) and only a backlog
+compression pass moves it — **item 115 holds the rule and the options, and that decision is still
+yours.** **O-1 remains the entire critical path: 44 lessons, five languages, 160 minutes of content,
+and zero people have ever opened this app.** **O-3** unchanged — no translated prose was added or
+altered this run.
+
 ### 2026-08-30 (scheduled dev-agent) — lesson 23's labels are now checked for WHICH one says which, and the control the item specified for it turned out to be unreachable (item 151 → new item 152)
 
 **Picked item 151**, the previous run's stated follow-on. Items 149/126/120 were left alone on item

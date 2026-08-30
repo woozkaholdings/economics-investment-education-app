@@ -231,3 +231,168 @@ select {
     scroll-behavior: auto !important;
   }
 }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   BAR CHART LAYOUT — and the narrow-width fallback (backlog item 148)
+
+   These rules live here rather than as inline styles for one reason: a media
+   query cannot reach an inline style, and below ~356px the column layout does
+   not fit. Colors are NOT here — they stay inline `theme.js` tokens at the
+   call site, so the "no inline hex, one source of color truth" rule is intact.
+   Only geometry moved.
+
+   THE MEASUREMENT THAT PUT THIS HERE (2026-08-30, live against `dist/`,
+   Reference > Market Dashboard, light, 320px x 130% font):
+     required 290.3px vs available 254px  ->  document scrollWidth 323 / client 320.
+   The five columns are `flex: 1` with the default `min-width: auto`, so each
+   one is pinned at its label's LONGEST WORD: "tightening" is 66.3px at a 130%
+   root and the column's flex size is 47.6px. Five of those plus four 4px gaps
+   is 290.3px of content in a 254px row.
+
+   WHY A ROW LAYOUT AND NOT THE THREE OBVIOUS FIXES, all measured before this
+   was written:
+     (a) `min-width: 0` alone — kills the document overflow and produces three
+         pairs of OVERLAPPING labels, because a 66px label stays 66px inside a
+         47.6px column. A geometry probe goes GREEN on this; it is a worse
+         screen than the bug.
+     (b) (a) + `overflow-wrap: break-word` — no overlap, but "Pandemic
+         response" renders as five mid-word fragments. Rejected on looking at
+         it, which no probe would have caught.
+     (c) `overflow-x: auto` on the row — permitted by WCAG 1.4.10, but this
+         figure's whole teaching point is the side-by-side comparison, and a
+         comparison you have to scroll is not one you can make at a glance.
+   Turning the columns into rows keeps every label intact AND keeps all five
+   bars comparable at a glance, which is the property (b) and (c) each gave up.
+
+   THE BREAKPOINT IS 375px, above the 356.3px crossover, with the margin spent
+   deliberately: `es` ("Respuesta pandemia", required 258.5px) crosses at
+   325px, and a future label longer than today's would cross higher still.
+   ko/zh/ja need 128-134px and fit at every width — they switch too, because
+   one layout rule in five languages is the thing this repo can actually check,
+   and a horizontal bar is a good narrow presentation rather than a regression.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.ec-bar-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 4px;
+  height: var(--ec-bar-box);
+}
+
+.ec-bar-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  height: 100%;
+}
+
+.ec-bar-value {
+  font-size: 0.75rem;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+/* The track, not the column, is what the bar's percentage height resolves
+   against — the column also holds the value and the (often two-line) label.
+   `min-height: 0` is what lets it shrink to its flex size instead of its
+   content's. Measured before this track existed: at height={90} the 4.5, 3.8,
+   9.0 and 6.7 bars all rendered at exactly 35.5px, so the Fed balance sheet's
+   ten-fold expansion was drawn as four bars of equal height with the true
+   numbers printed above them. */
+.ec-bar-track {
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.ec-bar-fill {
+  width: 72%;
+  height: var(--ec-bar-pct);
+  border-radius: 4px;
+  min-height: 2px;
+  transition: height 0.5s;
+}
+
+.ec-bar-label {
+  font-size: 0.6875rem;
+  margin-top: 8px;
+  text-align: center;
+  white-space: pre-line;
+  line-height: 1.25;
+}
+
+@media (max-width: 374.98px) {
+  .ec-bar-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+    height: auto;
+  }
+
+  .ec-bar-col {
+    flex: none;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    height: auto;
+    gap: 8px;
+  }
+
+  /* DOM order is value, track, label; read left-to-right a bar chart wants
+     label, track, value. The row is a single `role="img"` with an `aria-label`,
+     so nothing inside it is announced individually and this visual reorder
+     cannot desynchronize from a reading order. */
+  /* THE BASIS IS FIXED, AND THAT IS THE WHOLE CORRECTNESS ARGUMENT FOR THIS
+     LAYOUT — not a style choice. With `flex: 0 0 auto` the label sizes to its
+     own text, so every row gets a DIFFERENT track length, and a bar's length
+     stops meaning its value: measured 2026-08-30 at 320px x 130%, 4.5 drew at
+     58% of the 9.0 bar instead of 50%. That is this component's oldest bug
+     (see `.ec-bar-track` above — a ten-fold expansion once drew as four equal
+     bars) reintroduced through the width axis. A fixed basis makes every track
+     start at the same x and share one length, which is what makes the five
+     bars comparable at all. 38% clears the longest label's min-content in all
+     five languages (`en` "tightening" is 66.3px; 38% of the 254px row is
+     96.5px), and `overflow-wrap` backstops a future label that does not fit. */
+  .ec-bar-label {
+    order: -1;
+    flex: 0 0 38%;
+    max-width: 38%;
+    min-width: 0;
+    margin-top: 0;
+    text-align: left;
+    overflow-wrap: break-word;
+  }
+
+  .ec-bar-track {
+    order: 0;
+    flex: 1 1 auto;
+    min-width: 0;
+    width: auto;
+    height: 0.875rem;
+    align-items: stretch;
+    justify-content: flex-start;
+  }
+
+  .ec-bar-fill {
+    width: var(--ec-bar-pct);
+    height: 100%;
+    min-height: 0;
+    min-width: 2px;
+    transition: width 0.5s;
+  }
+
+  /* Fixed for the same reason as the label: a value of "0.9" is wider than
+     "9", so an auto basis would end each row's track at a different x and
+     reintroduce the same distortion from the other side. */
+  .ec-bar-value {
+    order: 1;
+    flex: 0 0 2.75em;
+    margin-bottom: 0;
+    text-align: right;
+  }
+}
