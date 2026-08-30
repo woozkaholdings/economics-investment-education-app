@@ -478,11 +478,6 @@ this note is the case for it.
     only thing left and it cannot be done from here. Keep flagging it in every run's output until it
     moves, alongside item 18. Do not re-pick this item to "improve" the deploy docs; the refuting
     number is a URL, and no amount of further writing produces one.**
-    - **Scope, and the trap.** Do *not* let this become another instrument. The deliverable is a
-      deploy path and a URL, not a script that checks whether a deploy path exists. **Some of it is
-      genuinely an owner action** (choosing a host, holding the account) — so the dev-agent half is:
-      make the build deployable as a static artifact, write down exactly what the owner must click, and
-      say so in the run output. Flag the owner half in every run until it moves, alongside item 18.
 
 74. **[Process/Distribution — filed 2026-08-17 by the run that made the build deployable (item 72),
     from a consequence that item's own scope did not cover. Do not pick before a deploy exists — it is
@@ -560,11 +555,6 @@ this note is the case for it.
 
 80. **✅ DONE 2026-08-20 (owner-directed, interactive) — found by the first live QA sweep of the
     `essentials` track. The reader's `Previous` button walked straight through locked lessons.**
-    - **Why it was a defect and not a design choice, which is the part worth keeping.** The same
-      lessons are gated on every other surface: the Learn path renders 35 of 40 rows `disabled`, and
-      a deep link to a locked `#/lesson/40` redirects to `#/learn` — verified live, both directions.
-      `DECISIONS.md` deliberately hardened URLs so that "a URL does not unlock a lesson"; an internal
-      button was more permissive than the external entry point that was hardened.
 
 81. **✅ DONE 2026-08-20 (owner-directed, interactive) — surfaced by the same sweep. Practice was the
     one surface still printing a raw lesson id.** See the run log.
@@ -610,9 +600,6 @@ this note is the case for it.
 90. **✅ DONE 2026-08-21 (owner-directed, same day it was filed). Both mismatches fixed by the `#`
     count, guarded by `check-data.mjs` §32b, and the file is now 36/36 consistent. The item's count
     was right and complete — a whole-file sweep found exactly the two it named, no more.**
-    - **Check before assuming it is safe:** whether anything parses this file by heading depth.
-      `check-data.mjs` §26 and §32 both read it; §32 is depth-agnostic by construction (it strips the
-      number and compares titles), but §26 was not written with this in mind. Verify, do not assume.
 
 91. **✅ DONE 2026-08-21 (owner-directed: "sweep everything except the dated records"). 123 lines
     swept across 32 files; 10 kept, each with a recorded reason.** See the run log.
@@ -736,12 +723,6 @@ this note is the case for it.
     guard (`check-data.mjs` §38) and one extension to `check-blindspot.mjs`, in one commit.
     Premise re-measured and it held; two facts the item did not have narrowed the scope, and the run
     found two defects in its own work. See the run-log entry.**
-    - **The lesson worth carrying, and it is about instruments, not icons.** The first `public/icon.svg`
-      served `200 image/svg+xml` **and rendered nothing** — a `--` inside an XML comment (it named the
-      CSS property `--fill-accent`) makes the document unparseable. The HTTP check that a run would
-      naturally reach for said "fine", and an icon has no console error and no layout to disturb, so
-      **nothing would ever have reported it.** §38 therefore parses the SVG rather than checking the
-      file exists. **Open the asset, do not just fetch it.**
 
 102. **✅ DONE 2026-08-25, same run it was filed — found by a live DOM sweep of the built app, not
     by reading code. `<main role="tabpanel">` and `<nav role="tablist">` exposed NO `main` and NO
@@ -753,28 +734,10 @@ this note is the case for it.
 103. **✅ DONE 2026-08-25 (scheduled dev-agent). Shipped — but as a skip-to-NAVIGATION link, not
     the skip-to-content link this item asked for. Three of the item's premises were wrong, and the
     third one changed the disposition. Read the correction before re-deriving any of this.**
-    - **PREMISE CORRECTION 1 — the header has ONE tab stop, not two.** The item says a keyboard user
-      tabs "the app title, then the 5-option language `<select>`". The app title is a plain `<span>`;
-      it has never been focusable. Measured live on all four screens: `header: 1` focusable, every
-      time.
-    - **THE TRAP THE ITEM DID NOT MENTION, and it is the reason this is a `<button>`.** `lib/deepLink.js`
-      owns `location.hash`. The textbook `<a href="#nav">` fires `hashchange` → `resolveRoute` → no
-      match → fallback. **Proved live before writing the fix**: an injected `<a href="#probe-nav">`
-      clicked from lesson 29 moved the hash `#/lesson/29` → `#/learn` and the `<h1>` from
-      "Transactions" to "Welcome to Economic Cycles", with focus left on `BODY`. Control (a click not
-      touching the hash): route unchanged.
 
 104. **✅ DONE 2026-08-25 (scheduled dev-agent), the day after it was filed. DECIDED (a): the list
     now sorts by `relativeStrength.rank`, and the 1M/3M/6M control was NOT removed — because the
     item's argument for removing it was measurably wrong. Guarded by `check-data.mjs` §42.**
-    - **Residual, deliberately not done:** the item's option (c) — showing the window's own position
-      *as well* — is still available and was rejected as two ranks per row on a beginner screen.
-    ORIGINAL TEXT (retained — it is what was measured):
-    **[Bug/Content — filed 2026-08-25 by the run that shipped item 102, measured during the same
-    sweep and CONFIRMED in both the code and the rendered screen. Not fixed there: which of the two
-    halves is wrong is a product judgment, not a mechanical fix.] The Sector screen sorts by raw
-    return but labels every row with a *relative-strength* rank, so the rank badges render out of
-    order — and the code comment claims the opposite of what the code does.**
 
 105. **✅ DONE 2026-08-25 (scheduled dev-agent), the same day it was filed. Shipped as
     `scripts/a11y-sweep.js` (9 probes, a self-planting control per probe) plus `check-data.mjs` §43
@@ -792,9 +755,41 @@ this note is the case for it.
       probe that scanned nothing.
 
 115. **✅ DONE 2026-08-26 (owner-directed: "compress the backlog — option (a)"), with a SECOND PASS
-    2026-08-27 (owner-directed) that corrected its headline figure. The backlog section is
+    2026-08-27 (owner-directed) that corrected its headline figure, and a THIRD PASS 2026-08-30
+    (owner-directed: "go ahead with the compression pass"). The backlog section is
     481,574 → 176,414 → see item 122 for the current number. All item numbers survive and every open
-    item stayed byte-identical in both passes.**
+    item stayed byte-identical in all three passes.**
+    > **THIRD PASS 2026-08-30 — measured on the artifact, not the transform buffer.**
+    > The compression itself moved the floor **344,130 → 287,564 b** (recovered **56,566 b**) and the
+    > whole file **495,813 → 437,685 b**. **This record note then costs ~2.6 KB of the floor back**, so
+    > the committed state is ~**290 KB** — a net **~−54 KB**. Quoting only the first number would make
+    > this item the kind of figure it exists to warn about; read the live number off `npm test`.
+    > 110 closed items **194,188 → 136,060 b (-29%)**; **36 materially changed**, 74 already minimal.
+    > Six controls, all green before the write: 134/134 item numbers survive in order, all **24 open
+    > items byte-identical**, every compressed item keeps its headline, all 36 changed items have
+    > run-log/archive coverage, the coverage probe returns false for invented numbers (9991/9992),
+    > and the three section headings still parse. `npm test` exit 0.
+    > **What it dropped:** retained-original-text tails (17 items) and non-guidance blocks. **What it
+    > kept:** every headline and every block carrying `⚠️`/`⛔`, a standing rule, a named trap, a
+    > "do not re-derive", or a "carry a control".
+    > ⚠️ **The buffer said 58,128 b recovered; the file said 56,566. This item's own 2026-08-27
+    > correction, reproduced exactly** — a figure computed from a transform's output is not a
+    > measurement of the artifact. Both numbers above are read back off `check-log-size.mjs`.
+    > ⛔ **THE FINDING THAT MATTERS MORE THAN THE BYTES, and it changes what a future pass should
+    > be asked to do. The floor is still 37,564 b over budget, and the entire remaining gap sits
+    > inside blocks this rule PROTECTS.** Measured decomposition of the 287,564 b floor:
+    > open items **91,879** (live work, uncuttable) · closed items **136,060** · W-5/W-6 priority
+    > blocks + backlog preamble **31,279** (still binding) · Environment note **23,248** ·
+    > App summary **4,737** · preamble **360**.
+    > **Cutting all 110 closed items to headline ONLY would reach 214,641 b — under budget by
+    > 35,359.** So the 250,000 b budget IS reachable; it is reachable *only* by deleting every
+    > standing rule, trap and `⚠️` the closed backlog carries. **That is a rule change, not a
+    > pass, and W-5.3's precedent makes it the owner's** — the same boundary item 115 and
+    > item 121 already sit on. A run must not take it unilaterally.
+    > **Honest read: compression is now near its floor under the current rule.** The pass bought
+    > roughly 13 runs of headroom at the measured +4,265 b/commit, and the next pass will buy
+    > less. The lever that has never been pulled is the one W-6.2 rule 2 names — **not filing
+    > zero-live-instance residuals as numbered items in the first place.**
     > ⛔ **PREMISE CORRECTION 2026-08-27 — this item's original "146,979 bytes" was wrong by 43 KB.**
     > Measured live at the compression commit (`d411961`), the backlog section was **190,062 bytes**,
     > not 146,979, so the first pass cut **60%, not the 69% it claimed**. The original table was
@@ -834,11 +829,6 @@ this note is the case for it.
     select by id, position, ARIA, numerals, and labels read from the app at runtime. Residual (a
     static guard) deferred to item 113 because `check-data.mjs` was mid-refactor by another
     session. See the run log.**
-    - **The second axis is the probe set.** Every sweep in this log has been read for
-      `headingOrder`, because that is where the last four defects were. `smallTargets`,
-      `horizontalOverflow` and `namelessControls` have been running the whole time and their zeros
-      have never been the *subject* of a run — worth one deliberate read across all 19 states,
-      especially at the **1.3x font scale**, which no state currently sets.
 
 111. **✅ RETIRED 2026-08-25 (owner-directed) — no defect. All nine of its states measured clean, so
     the yield stopped at three-for-three. The run shipped `scripts/a11y-states.js` (19 states, each
@@ -862,18 +852,6 @@ this note is the case for it.
     disclaimer modal was the only one with a finding. Fixed in two halves (the background is now
     `inert` + `aria-hidden`, and the dialog title is the `<h1>`), guarded by `check-data.mjs` §47.
     Residual filed as item 111. See the run log.**
-    - **Why both halves were needed: fixing the isolation ALONE makes the heading defect worse.**
-      With the background correctly hidden, an `<h2>`-first outline stops being an ordering quirk and
-      becomes the entire document. §47 fails on either half, and on a removed Tab trap — which is the
-      only reason pairing `aria-hidden` with `inert` is safe here.
-    - **What has never been swept in a non-landing state**, all reachable and none measured:
-      the Reference sub-screens past their first tab (Glossary term-detail, Market signals, Sector
-      performance, Parent guide), the first-run disclaimer modal (which is a focus trap over the
-      whole app), `LessonReader` in its COMPLETED state (item 106 measured that one — it is the
-      exception), and the Learn screen with a track collapsed. The Practice runner reached through
-      **"Practice all questions"** rather than "Start Quiz" is the cheapest of all: it renders the
-      identical branch, so it is covered by construction, but it was not measured on 2026-08-25 and
-      that is stated rather than implied.
 
 109. **✅ DONE 2026-08-25 (scheduled dev-agent), the same day it was filed. The suspicion was right
     and the defect was worse than the item guessed: mid-quiz the page had NO `<h1>` at all — its
@@ -881,13 +859,6 @@ this note is the case for it.
     prop on `<Question>`, default `"h3"` so the lesson reader is untouched), guarded by
     `check-data.mjs` §46 — and the `headingOrder` probe, which called this screen "ok" every time it
     ever ran, was fixed in the same commit. See the run log.**
-    - **This is the same trap shape as item 106's, which is why it is worth a run and not a glance.**
-      The interesting state is the one a convenient sweep does not reach: there, an all-complete
-      `localStorage` seed hid the hook; here, not clicking a button hides the questions. Drive it
-      with `javascript_tool` — find the start control by text and `.click()` it, confirm from
-      `main`'s own text that the quiz is actually running **before** recording any number, then run
-      `headingOrder`. The review queue must be non-empty, so seed `ecycles_review` or complete a
-      lesson first; a sweep of an empty-queue Practice screen is the vacuous reading, not a clean one.
 
 123. **✅ DONE 2026-08-27 (scheduled dev-agent), the day after it was filed. Shipped as
     `check-data.mjs` §51 — and the item's headline premise was WRONG in the direction that had made
@@ -909,76 +880,9 @@ this note is the case for it.
     > lexically identical to the ~50 correct card borders — and was found by *reading the file*, not
     > by the scanner. That residual is **item 124**.
 
-    <details><summary>Original item text as filed (2026-08-27), kept verbatim</summary>
-
-    **[A11y/Tooling — filed 2026-08-27 by the run that added lesson 23's figure (item 27), as its
-    stated residual rather than smuggled into the same commit.] `--line-*` tokens are checked by
-    NEITHER contrast section, so a line used as a meaningful graphic is unmeasured.**
-    - **Measured, not suspected.** `check-data.mjs` §28 filters `--ink-*` and `--fill-*` against
-      `--surface-*`; §28b filters `--graph-*` against `--surface-*`. Both prefix filters exclude
-      `--line-*`, on the stated grounds at line ~2711 that a line "is not text" — which is true and is
-      not the same as "is not a graphic".
-    - **It has already produced one real instance.** Lesson 23's crossing marker was drafted as
-      `line.strong` and measures **1.51:1** against the two zone washes. It is a meaningful graphic
-      under WCAG 1.4.11 (3:1) and it is **not** redundant, because the two washes it separates are
-      **1.01:1 against each other in both schemes** — hue-only, no luminance step. It was caught by a
-      live measurement in that run and moved to `ink.muted` (6.20/6.26 light, 6.10/6.06 dark). Nothing
-      in the suite would have caught it, and `DECISIONS.md` advertises "zero exemptions" over a set
-      that never included it.
-    - **Why this is a real piece of work and not a one-line filter change.** Most `line.hairline` uses
-      genuinely ARE decorative (card borders, list separators), and 1.4.11 exempts those — so widening
-      the cartesian to `--line-*` would fail the build on pairs that are correct. The honest scope is
-      to classify the call sites: which `line.*` uses carry meaning (axis baselines, the crossing
-      marker, anything a caption refers to) versus which are decoration, then check only the first
-      group — the same shape as §28b's own `GRAPH_EXEMPT` classification.
-    - **Honest priority: low-medium.** One known instance and it is already fixed. The value is that
-      the class is currently invisible. Downstream of O-1 like everything else.
-
-    </details>
-
 124. **✅ DONE 2026-08-28 (owner-directed, as one half of item 135). Built exactly as this item's
     "shape that could work" specified — a live-DOM probe rather than a widened source pattern —
     and proven firing on a REAL figure, not only on a plant.**
-    > **Why it shipped with item 135 rather than on its own.** This item wants the live DOM for
-    > *border colors inside a figure*; item 135 wants it for *box geometry inside a figure*. Same
-    > walk, same `role="img"` boundary, same controls — building them separately would have meant
-    > two probes walking the same subtrees.
-    > **What it does:** for every `[role="img"]`, every descendant with a non-zero border width is
-    > checked against the live values of `--line-hairline`/`--line-strong`, read from the document
-    > at run time. **Anything inside a picture is datum, not decoration** — so a line token there
-    > is under-contrast by construction (§28b/§51: no line token clears 3:1 on any surface in
-    > either palette). Position and containment, the two things that defeat a source scanner, are
-    > free in the DOM.
-    > **Proven in light AND in dark, which is the trap this repo has hit before.** The token values
-    > are read at run time, not hardcoded: the control fires with `#e4ddd2` in light and `#2e2922`
-    > in dark. A hardcoded light value would have gone silently blind in dark — the exact failure
-    > the Environment note records.
-    > **Color normalisation was load-bearing, not plumbing:** a custom property holds `#e4ddd2`
-    > while `getComputedStyle` always returns `rgb(228, 221, 210)`, so a string comparison would
-    > have made this check permanently silent.
-    > **Live result: 0 findings across all figures on 12 lessons** — this item's "zero known live
-    > instances" is now measured rather than asserted.
-    (Original text below.)
-    **[A11y/Tooling — filed 2026-08-27 by the run that closed item 123, as its stated residual
-    rather than smuggled into the same commit.] A datum line drawn as a CSS `border` is invisible to
-    §51, and that is how the worse of item 123's two defects was actually drawn.**
-    - **State:** §51b matches SVG paint attributes (`stroke={line.x}` / `fill={line.x}`) and holds
-      all 5 current ones in a complete register. `AsymmetryChart`'s zero line was **not** one of
-      those — it is `borderTop: 1px solid ...` on an absolutely-positioned `<div>` inside the plot,
-      which is lexically identical to the ~50 card and separator borders that are correctly
-      decorative. It was found by reading the file.
-    - **Why the obvious widening does not work.** Extending the pattern to `border*` fails the build
-      on every card in the app. Telling "a border that frames a box" from "a border that IS the
-      plot's datum" needs layout context a source scanner does not have.
-    - **The shape that could work, and it is a measurement rather than a parser:** the a11y sweep
-      already renders the app. A probe could walk each `role="img"` subtree in the *live* DOM, read
-      the computed border color of every descendant, and flag any that resolves to a `--line-*`
-      value — position and containment are free there, and the "is it inside a plot" question that
-      defeats the static scanner is answered by the DOM. That also generalizes past `line.*` to any
-      under-contrast border inside a figure.
-    - **Honest priority: low.** Zero known live instances — both are fixed, and §51 covers the SVG
-      half permanently. This is the class, written down so the next one is not found by luck.
-      Downstream of O-1 like everything else.
 
 125. **✅ DONE 2026-08-27 (scheduled dev-agent). The one stale figure is gone, the standing rule is
     now enforced by `check-data.mjs` §52 — and the item's own hypothesis was REFUTED: nothing else
@@ -1031,36 +935,6 @@ this note is the case for it.
     - **Where the controls live now:** §61 asserts the parser against 9 specimens as **exact set
       equality**, 4 of them refutations a greedy parser fails. §21's and §53's own per-language
       controls prove the instrument is *on*; §61 is what proves it is *right*.
-
-    ORIGINAL TEXT (retained — it is what was measured):
-    **[Process/Content — filed 2026-08-27 by the run that added lesson 17's figure (item 27), as
-    its stated residual rather than smuggled into the same commit.] §53 checks the figure's six
-    numbers against the `en` lesson body only, so a translated numeral can drift unseen.**
-    - **State:** `check-data.mjs` §53(f) asserts every number in `gapEarners` appears in
-      `lessonContent["17"].sections[*].body.en`, with a two-sided control. The other four languages
-      get parity checks on the figure's *labels* (§53g) and nothing at all on the lesson's *numerals*.
-      A `ko` body that said 4만 where the figure says \$50,000 would pass every check in the repo.
-    - **Measured this run, so the item is a guard and not a defect report:** all five languages state
-      all six figures today.
-    - ⚠️ **The instrument is the hard part, and this run already fell into it once.** CJK uses myriad
-      grouping — `4만 5천`, `4万5千`, `4.5万` — so an `en`-style thousands-separator regex returns
-      **zero hits on ko/zh/ja and looks exactly like the figures being missing**. That false negative
-      cost a real detour here before the raw text was read. Any check written for this item needs a
-      per-language numeral normalizer **and a control per language**, or it will report a confident
-      clean over three scripts it cannot read.
-    - **✅ A WORKED PRECEDENT NOW EXISTS — read it before writing anything (added 2026-08-27).**
-      `check-data.mjs` **§54(e)** does per-language prose anchoring for lesson 44's figure: for each
-      language it checks that language's legend term against that language's own lesson 42 body, with
-      a two-directional control per language. **It found two real defects on the way in** (`es` and
-      `zh` labels written as plausible translations rather than the lessons' own terms), which is the
-      evidence that the shape works. **It also sidesteps this item's instrument trap entirely by
-      matching WORDS rather than NUMERALS** — no myriad-grouping normalizer is needed. §53's residual
-      is genuinely harder because lesson 17's figures *are* numerals; the open question is whether a
-      per-language numeral normalizer is worth building, or whether §53 should instead anchor on the
-      *labels* the way §54 does and leave numerals to `en`. **Decide that before coding.**
-    - **Honest priority: low.** It generalizes past lesson 17 — the same blind spot applies to §21's
-      and §50's figure-vs-prose checks — which is an argument for doing it once, properly, rather than
-      urgently. Downstream of O-1 like everything else.
 
 128. **✅ DONE 2026-08-27 (scheduled dev-agent), the same day it was filed — but read the premise
     correction, because the item's headline was three times too small, its file list was missing a
@@ -1198,39 +1072,6 @@ this note is the case for it.
     > needs context; that stays with review. It does catch the `zh` drift, and it caught 33 more.
     > **Also corrected: `ja` uses `『』` for SEVEN coined labels, not six** — the sixth-vs-seventh is
     > `moneyVisuals`, outside `lessonContent`, which is the same scope error as the headline.
-    (Original text below, kept because the reasoning it records is what the correction acts on.)
-    **[Process/Tooling — filed 2026-08-27 by the run that reviewed lessons 33/37/39, as the guard
-    its own fix has no instrument for.] Each language's quotation convention is a property of the
-    corpus that nothing checks, and it has already drifted twice.**
-    - **The measurement that makes this an item rather than an opinion.** Classifying every quoted
-      span in lesson content by *role* (lesson title vs ordinary quotation) gives a clean per-language
-      convention: **`en` curly “ ” for titles 55/55 and ASCII " " for inline terms 28/28**; **`es`
-      the same, 49/49 and 23/23**; **`zh` 《》 for titles and full-width “ ” for inline terms**;
-      **`ja` 『』 for titles and 「」 for ordinary quotation**; **`ko` 「」 for titles**. These are
-      not style preferences — in `zh` and `ja` the halfwidth/fullwidth distinction is typographic
-      correctness, and the title/quotation distinction is what tells a reader whether a phrase names
-      another lesson.
-    - **Two drifts have now been found by hand, one per run.** 2026-08-27: `ja` lesson 30 wrote a
-      lesson title in 「」 where 75 others used 『』. Same day: `zh` lessons 3 and 37 wrote inline
-      terms in **ASCII U+0022** where 120 others used U+201C/U+201D. **Both were found by a review
-      that happened to be looking; neither would have been caught by anything in `npm test`.**
-    - **The shape that would work**, and it is close to `check-data.mjs` §55's: walk learner-visible
-      strings per language, classify each quoted span as title-or-not by joining against `lessons.js`,
-      and assert the per-language convention above. §55 already proves the walk; this adds the
-      classification. **The title/non-title join is the load-bearing part** — a naive "no ASCII quotes
-      in CJK" rule would be simpler and would miss the `ja` case entirely.
-    - ⚠️ **Do not write the `ja` rule as "『』 means title".** Measured: `ja` also uses 『』 for six
-      **coined labels and slogans** (『今回は違う』 in lessons 33 and 36, 『美しい/醜いデレバレッジング』
-      in lesson 34). That is a coherent Japanese convention, not drift, and a checker that flags it
-      would be turned off. The rule that holds is the *converse*: **a lesson title must never appear
-      in 「」**.
-    - **Honest priority: low-medium.** Zero live instances as of this entry, which by item 130's
-      standing reasoning argues for waiting — but unlike item 130's case this one has **regrown twice
-      in two runs**, which is the condition item 130 itself names as what would justify building.
-      Downstream of O-1.
-    - **⛔ The "zero live instances" clause above is the sentence the correction overturns.** It was
-      true of `lessonContent` and false of the corpus. **A scope stated in prose is not a scope the
-      measurement had** — the same shape as item 128's finding about item 91's "whole-repo scan".
 
 136. **✅ DONE 2026-08-28 (owner-directed: "do item 136 next"). `figureClaims` now covers 7 of 11
     primitives; the remaining four are documented as deliberately uncovered WITH the measurement
@@ -1267,43 +1108,6 @@ this note is the case for it.
     > lesson drawing two curving lines through it would inherit a claim its caption does not make.
     > **Fix is to move `data-figure` to the call site, not to loosen the claim.** The same latency
     > already applies to `lossAsymmetry` and `outcomeGrid`.
-    (Original text below, kept because the reasoning it records is what the corrections act on.)
-    **[Process/Tooling — filed 2026-08-28 by the run that built `figureClaims` (items 135+124),
-    as its stated residual rather than smuggled into the same commit.] Seven of the eleven chart
-    primitives still have no declared claim, and for most of them that is correct.**
-    - **State:** `figureClaims` covers `outcomeGrid`, `earningsGap`, `lossAsymmetry` and
-      `incomeTradeoff` — the four whose captions state a relation that is checkable off the boxes.
-      Uncovered: `ProportionBar`, `GrowthCurve`, `BracketStack`, `YieldCurve`, `CycleChart`, `Bar`,
-      `PreferenceFlip`.
-    - **Why this is not simply "finish the other seven".** A claim is only worth writing where the
-      caption asserts something a box can falsify. Two look genuinely worth doing:
-      **`ProportionBar`** (lesson 1) — the segments are a division of one number, so their widths
-      should be in the stated 1500/900/600 ratio, and that is a real arithmetic claim about the
-      render; and **`PreferenceFlip`** (lesson 23) — the whole figure is a CROSSING, and "the two
-      series actually cross, exactly once, at the marked month" is checkable from the rendered
-      path. §50 asserts that crossing in source arithmetic today, which is the same gap item 135
-      was filed about.
-    - **The others are weaker candidates and should probably stay uncovered:** `CycleChart` and
-      `YieldCurve` draw stylized shapes with no stated quantity; `Bar` and `BracketStack` render
-      values whose only relation is "proportional to the number beside them", which §21 already
-      asserts and which no reader could check against a caption.
-    - **Do not turn this into a coverage count.** That is exactly how item 27 became count-shaped
-      three times. The bar is the same one item 135 set: name the sentence in the caption that the
-      figure could contradict, or leave it alone.
-    - **Honest priority: low.** Zero known live instances. Downstream of O-1 like everything else.
-    > ⛔ **PREMISE CORRECTION 2026-08-28, from the run that built the `preferenceFlip` half. Both
-    > of this item's two recommendations were wrong, in opposite directions, and the measurements
-    > are below so nobody re-derives them.**
-    > **`ProportionBar` should NOT be built; "a real arithmetic claim about the render" is the false
-    > part.** Lesson 1's three segments render **154.5 / 92.688 / 61.797 px of 309** — exactly
-    > 50/30/20 — and stayed 50/30/20 under every perturbation: a **`gap`** on the container
-    > (flex-shrink is proportional to the bases), **padding** on a segment (`box-sizing:
-    > border-box`), and **28 characters of unbreakable content** in one (`flex-grow: 0` with bases
-    > summing to 100% leaves no free space, so `min-width: auto` never binds). **The control
-    > fired** — forcing `min-width: 150px` gave **32/19/49** — so the measurement can see a break.
-    > The rendered ratio is the value ratio *by construction*: the bar this item sets, failed.
-    > **`PreferenceFlip` should be built, and the reason is stronger than the one filed here** —
-    > it is not "zero known live instances". It is **item 137**.
 
 137. **✅ DONE 2026-08-28 (scheduled dev-agent). Lesson 23's y-axis is logarithmic; the left edge
     went from 1.64px apart under a 2.58px stroke (0.64x) to 7.00px (2.72x), and `figureClaims`
@@ -1367,38 +1171,6 @@ this note is the case for it.
     > **Residual — 7 of 11 primitives still have no declared claim. That is item 136**, and it is
     > deliberate rather than unfinished: a claim is only worth writing where the caption states a
     > checkable relation.
-    (Original text below, kept because the reasoning it records is what the correction acts on.)
-    **[Process/Tooling — filed 2026-08-28 by the run that added lesson 28's figure (item 27), as
-    the class its own defect belongs to.] Every figure check in this repo reads SOURCE, so the
-    proportions a figure actually renders are unguarded — and that is where this run's real defect
-    was.**
-    - **The instance, measured twice.** `OutcomeGrid`'s whole argument is that its four cells are
-      equal. It shipped its first version with the bottom row at **82px against the top row's 52px**,
-      and its second at **65 against 52**. Both times `check-data.mjs` §57 passed and every style
-      literal in the file was correct: the inequality arrived through **content** — first a label
-      inside a cell, then a row heading wrapping to more lines — because CSS grid sizes a row to its
-      tallest item. Found by measuring `getBoundingClientRect()` in a live browser, with a control
-      proving the measurement could see a difference at all.
-    - **Why §57 (e2) is not the fix for the class.** It pins *this* figure structurally (no text in a
-      cell, one fixed shared height) and it is proven by injection. But it is one figure's invariant
-      hand-written by the run that got caught. The other seven figures have no equivalent, and
-      nothing would catch the next one — `GapColumns` asserts two gaps are equal, `AsymmetryChart`
-      asserts one bar is taller than another, and both of those are **rendered** claims checked
-      against **source** numbers.
-    - **The shape that could work, and it already half exists:** `scripts/a11y-sweep.js` renders the
-      app and walks `role="img"` subtrees. A probe could read the computed box of every element in a
-      figure and assert the relations that figure's caption claims — equal cells, a taller bar, a dot
-      clear of a rail (§54 (d) computes that one in source arithmetic today, which is the same gap).
-      **This is item 124's probe, from the other side**: that item wants the live DOM for *border
-      colors inside a figure*, this one for *box geometry inside a figure*. They are one probe and
-      should be built as one.
-    - **Do not build it as a generic "figures look right" check** — that is unfalsifiable. Each
-      figure would declare the relation it claims, which is the same discipline §50/§53/§54 already
-      use, moved from the data to the render.
-    - **Honest priority: low-medium.** Zero known live instances — this run's was found and fixed,
-      and no other figure is known to be wrong. But it is the only defect class in this file's
-      history that shipped *through* a green check written specifically to stop it. Downstream of
-      O-1 like everything else.
 
 132. **✅ DONE 2026-08-28 (owner-directed) — 8 sentences added, cross-track references now 40/40.
     Read the premise correction first: this item's central claim was wrong by 8 and its
@@ -1420,23 +1192,6 @@ this note is the case for it.
     > title and five correctly-translated references read as absent. Caught only because the control
     > was re-keyed to `zh`/`ja` text read by eye. **A split character is a locale, not a delimiter** —
     > item 127's myriad-grouping trap in a new costume.
-    (Original text below, kept because the reasoning it records is what the correction acts on.)
-    **[Content — filed 2026-08-27 by the run that corrected item 131, as the gap that correction
-    exposed rather than smuggled into the same commit.] Lessons 1 and 4 point the reader at another
-    lesson in English and at nothing in any other language.**
-    - **State:** item 84 gave lesson 1 a pointer to "Why 'Later' Never Feels as Real as 'Now'" and
-      lesson 4 one to "Productivity Growth". Both sentences are **absent from all four translations**
-      — the translated section simply ends a paragraph early. Measured, and confirmed pre-existing:
-      those eight translations are byte-identical to their 2026-08-20 state.
-    - **It is item 94's shape, not a bug.** Both lessons are `essentials` and abridged; the missing
-      sentence is one of many. **Do not fix it in isolation** — translating one sentence into four
-      languages inside an otherwise-abridged lesson makes the corpus less coherent, not more, and
-      item 94 exists precisely so continuing the essentials tranche is a decision someone makes.
-    - **Why it is worth its own number anyway:** these are *cross-track* pointers (money→essentials,
-      essentials→economy), the only two in the corpus, and they are the mechanism §3.0.3 uses to make
-      the tracks feel like one product. A non-English reader gets no such thread. **Worth naming when
-      item 94 is priced, not before.**
-    - **Honest priority: low**, and blocked behind an owner decision, not behind effort.
 
 133. **✅ DECIDED AND CLOSED 2026-08-29 (scheduled dev-agent) — NO PROSE CHANGE, and a guard shipped
     instead (`check-data.mjs` §60). Read the premise corrections first; two of the item's three
@@ -1505,30 +1260,6 @@ this note is the case for it.
     > **Scope shipped wider than this item asked:** lesson prose **and** `quizData.explain` — §16's
     > two surfaces, so the title era does not cover less than the numeric era did. **50 references
     > (44 prose, 6 quiz), 200 instances, 0 dropped, 0 unmarked.**
-    (Original text below, kept because the reasoning it records is what the corrections act on.)
-    **[Process/Tooling — filed 2026-08-28 by the run that closed items 131+132, as its stated
-    residual rather than smuggled into the same commit.] The corpus's cross-track pointers are now
-    40/40 and nothing in `npm test` can tell if that changes.**
-    - **State:** 10 cross-track references (essentials→money, essentials→economy, money→essentials,
-      money→economy) out of 44 quoted-title references overall. All 40 language instances resolve as
-      of this commit. The measurement lives in a scratchpad script; **the repo has no guard.**
-    - **Why this clears the bar items 126 and 130 set, which the "one defect is not a class" rule
-      would otherwise fail it on.** This is not a hypothetical: the state was **32/40 for eight days**
-      (item 84 added the two English pointers on 2026-08-20; nothing carried them into any
-      translation) and no check noticed. §16b guards that references are *by title rather than by
-      number*; it does not check that a translation carries the reference **at all**. That is a real,
-      dated, eight-day live instance.
-    - **The shape that would work, and the trap it must avoid.** For each English lesson, resolve
-      quoted title heads to lesson ids; for each other language, assert that language's own title head
-      for the same target appears in the same lesson. ⚠️ **Split the title on `[:：]`, not `:`** — an
-      ASCII-only split makes every `zh`/`ja` head the full title and reports five correct references
-      as missing, which is how this run's first measurement got 15 instead of 8. **Any check written
-      here needs a per-language positive control keyed to text somebody has actually read.**
-    - **Honest scope note:** the same-track references (34 of 44) are the larger set and are already
-      correct; a check should cover all 44 rather than only the cross-track subset, since nothing
-      makes cross-track special except that it is where the failure happened.
-    - **Honest priority: low-medium.** Zero live instances *now*, but unlike items 126/130 this one
-      has a closed, dated instance behind it. Downstream of O-1 like everything else.
 
 139. **✅ DONE 2026-08-28 (scheduled dev-agent), the same day it was filed. Shipped as
     `check-data.mjs` §28c — 14 ring x surface pairs at 1.4.11's 3:1, both palettes, the ring token
@@ -1683,34 +1414,6 @@ this note is the case for it.
     > §26 falls back to the filesystem there, which is correct in that copy *only* while nothing
     > untracked is copied in. To exercise the primary path instead, use `git clone -q .`.
     >
-    > ORIGINAL ITEM TEXT, kept because its scoping is what the corrections above answer:
-    **[Process/Tooling — filed 2026-08-30 by the weekly review, from the class that items 154 and
-    the reverted route (b) both sat inside. This is route (c).] `check-data.mjs` §26 resolves
-    document references against the FILESYSTEM, so any tracked document may cite a path that exists
-    only in one person's working tree — green for them, red for every clone.**
-    - **The live instance is now fixed but the class is not.** Item 154 was cured by tracking the
-      file it named. Nothing stops the next `DECISIONS.md` or `LAUNCH_PLAN.md` edit from citing
-      another untracked path, and it will pass `npm test` for whoever wrote it. **This defect is
-      invisible in exactly the tree that introduces it** — which is why it survived from 08-25 to
-      08-30 and cost two runs plus a weekly review.
-    - **The fix:** resolve §26's references against **git's tracked file list**
-      (`git ls-files`) rather than `fs.existsSync`. Then the working tree and a fresh clone agree
-      **by construction**, which is the property neither (a) nor (b) provides.
-    - ⚠️ **Not a one-liner, and the previous run is right about why.** It re-classifies every
-      existing reference: gitignored-but-present paths (`economic-cycles-v5.jsx`,
-      `economic-cycles-v6.jsx`, `node_modules/`, `dist/`) currently pass and would start failing.
-      Those need a deliberate exemption class of their own — "tracked-or-ignored" is probably the
-      real predicate, not "tracked".
-    - **Carry the two-sided control, and it is cheap here:** a planted reference to an untracked
-      path must FAIL in the working tree (the state that is currently green and wrong), and every
-      reference the suite passes today must still pass. **Run the fresh-clone recipe as the second
-      half** — the whole point is that the two agree.
-    - ⚠️ **One implementation trap already paid for (commit `90bfeaf`):** §26's `MARKER` regex is
-      matched **per line**, so a `path-ok` comment wrapped across lines is silently never seen. It
-      does not error; the exemption just does not exist. Keep markers on one line.
-    - **Honest priority: medium, and genuinely higher than its "zero live instances" cousins** —
-      unlike items 120/126/140/143/144/149/152/153 this one has already fired twice and cost real
-      runs. Not downstream of O-1: it is repo hygiene that any second machine hits immediately.
 
 156. **[A11y — filed 2026-08-30 by the run that closed item 153, as a change made on INSPECTION
     rather than on measurement, which is the reason it is written down.] `PracticeCoachMark` got the
@@ -1768,50 +1471,6 @@ this note is the case for it.
     > MARKDOWN set is exactly five normative documents (`DECISIONS.md`, `LAUNCH_PLAN.md`,
     > `CLAIMS.md`, `README.md`, `LAUNCH_READINESS.md`) — measured, not assumed, and the reason
     > tracking the file introduced no §59 failure.
-    ORIGINAL PRIORITY NOTE, kept because the route (b) record below answers it:
-    **⬆️ RAISED TO PRIORITY by the weekly review 2026-08-30 — see W-6.1 at the top of this
-    backlog. The review REPRODUCED the fresh-clone failure (`npm test` exits 1 on a clean
-    `git archive HEAD`), and route (b) is authorized there as a stopgap. The item's own
-    "honest priority: low" below is superseded; its analysis is correct and is why.**
-    > **⛔ ROUTE (b) DOES NOT WORK — ATTEMPTED AND REVERTED 2026-08-30 (scheduled dev-agent), with
-    > both directions measured. Do not spend another run rediscovering this.**
-    > Route (b) was implemented exactly as W-6.1 and §26's own error message prescribe: a one-line
-    > `<!-- path-ok: drafts/income-hierarchy.en.md — ... -->` in `DECISIONS.md` plus
-    > `EXPECTED_EXEMPTIONS` 13 → 14. **It moves the failure, it does not remove it.**
-    > - **Fresh clone before:** exit **1**, `§26: DECISIONS.md:669 names drafts/income-hierarchy.en.md,
-    >   which does not exist`. (Reproduced first, so the fix had something to prove.)
-    > - **Working tree after the marker:** exit **1**, `§26: DECISIONS.md:669: path-ok:
-    >   drafts/income-hierarchy.en.md is stale — that path exists now. Delete the marker and lower
-    >   EXPECTED_EXEMPTIONS.`
-    > **The two states are mutually exclusive by construction.** §26 fails a reference whose path is
-    > missing AND fails a marker whose path is present, and this path is present in the owner's tree
-    > and absent from every clone. No value of the marker satisfies both. The tree was restored and
-    > `npm test` re-verified at exit 0.
-    > ⚠️ **One implementation trap, since it cost a cycle:** §26's `MARKER` regex is matched
-    > **per line** (`line.matchAll(MARKER)`), so a `path-ok` comment wrapped across several lines is
-    > silently never seen — it does not error, the exemption simply does not exist. Keep it on one line.
-    > **What is actually left, and both are decisions rather than edits:** (a) track
-    > `drafts/income-hierarchy.en.md` — still the better answer if `drafts/` is not scratch, and
-    > still the owner's call, since it is the owner's untracked file; or (c) **make §26 resolve
-    > references against git's tracked file list rather than the filesystem**, which is the only
-    > route that makes the working tree and a fresh clone agree by construction, and which would have
-    > prevented this whole class. (c) is a real change to the checker's semantics and needs its own
-    > run — it will re-classify other references, so it is not a one-liner.
-    [Process/Docs — filed 2026-08-30 by the run that closed item 148, as an observation it hit
-    rather than a defect it created.] The `HEAD` control copy the Environment note prescribes now
-    needs `drafts/` copied in too, and without it the control fails for its own reasons.**
-    - **What happened:** the prescribed recipe (`git archive HEAD | tar -x`, symlink `node_modules`,
-      copy the two gitignored `economic-cycles-v*.jsx`) produced **exit 1** with a §26 failure —
-      `DECISIONS.md:669` names `drafts/income-hierarchy.en.md`, which lives in the owner's
-      **untracked** `drafts/` folder and so is not in the archive. Adding `cp -R drafts` made the
-      control green (exit 0, 3 warnings, identical warning set to the working tree).
-    - **Why it matters beyond the recipe:** a tracked document names a path that exists only as an
-      untracked user file, so `npm test` on a **fresh clone** would fail §26 for the same reason.
-      That is the owner's call — `drafts/` looks like in-flight work — but it is worth knowing that
-      the suite is currently green only because of a file git does not track.
-    - **Honest priority: low**, and the Environment note has been left alone deliberately: the fix
-      is one line in a recipe, and the underlying question (should `drafts/` be tracked?) is the
-      owner's.
 
 153. **✅ DONE 2026-08-30 (scheduled dev-agent) — but read the premise correction first, because
     this item named the WRONG SCREEN, its numbers did not reproduce, and the basis on which W-6.2
@@ -1911,72 +1570,10 @@ this note is the case for it.
     > INSTRUMENT probe it is unreachable: every spec is symmetric, so a passing pair's reverse always
     > fails the `must` half and a "reverse also passes" probe can never go red. It was written, proven
     > dead, and replaced. See the run log for both deleted probes and what shipped instead.
-    ORIGINAL ITEM TEXT, kept because the run log's entry refers to it:
-    **[Content/QA — filed 2026-08-30 by the run that closed item 150, as its stated residual rather
-    than smuggled into the same commit.] §50's new block proves each of lesson 23's zone and series
-    labels STATES the rewards; nothing proves which one states which, and the component reads both
-    pairs by position.**
-    - **Measured 2026-08-30, all five languages, and it is consistent today:**
-      `flipZoneLabels[0]`→$65 / `[1]`→$50 (the pre-crossing zone names the later reward), and
-      `flipSeriesLabels[0]`→$50 / `[1]`→$65 (the series are sooner-then-later).
-      `LessonVisual.jsx:187` maps `flipSeriesLabels[lang][i]` onto `flipSeries()` **by index**, and
-      `:192` passes `flipZoneLabels[lang]` straight through as `zones`.
-    - **The hole:** swap either pair in any one language and that language's figure says most people
-      take the $65 in the stretch where the curve shows them taking the $50 — the exact inversion of
-      the lesson — while §50 (i) stays green, because both surfaces still *contain* both amounts.
-      This is item 150's injection-2 shape one level down: presence satisfied by the wrong string.
-    - **The fix is per-element, not per-key:** assert `zone[0]` states `l.amount` and NOT `s.amount`,
-      `zone[1]` the reverse, and the mirror for the series pair — all four derived from `flipRewards`
-      as block (i) already does. Roughly ten lines inside the existing loop.
-    - **Carry a control, and the two-sided one is free:** swapping the two elements of one language's
-      `flipZoneLabels` must fail and naming the right language, while the untouched four stay clean.
-      A check that cannot tell a swap from the shipped order is not measuring the ordering claim.
-    - ⚠️ **Confirm the drawn order before pinning it.** The premise above is about what the *content*
-      says, not about which zone the *chart* paints first. If `Line`/`zones` renders element 0 on the
-      right of the crossing, the correct assertion is the mirror of the one written here — check the
-      primitive in `charts.jsx`, do not infer it from the array.
-    - **Honest priority: low-medium.** Zero live instances — all five languages are correct today —
-      but unlike items 149/126/120 the failure this would catch is learner-visible and inverts the
-      lesson rather than merely going unmeasured. Downstream of O-1 like everything else.
 
 150. **✅ DONE 2026-08-30 (scheduled dev-agent). Shipped as `check-data.mjs` §50 block (i) —
     FIVE surfaces per language, not the one the item scoped. Both of the item's premises held; the
     scope was wider than it said. Read the correction below.**
-    > **PREMISE CORRECTION 2026-08-30, from measuring rather than reading.** The item scoped this as
-    > "reads no lesson body", which was true. But `flipCaption`, `flipDescription`, `flipZoneLabels`
-    > and `flipSeriesLabels` each write $50 and $65 in all five languages — **20 strings that render
-    > inside the figure** — and none was checked against `flipRewards` either. A stale caption sits
-    > an inch from the curve it labels, so it is the worse half, not the lesser one. Block (i) covers
-    > body + all four keys, 25 strings, every expectation derived from `flipRewards`.
-    > **The item's control shape did not survive contact.** It proposed "§53(f)'s — one numeral known
-    > present, one known absent, per language". **Lesson 23 has no spare numeral:** its body states
-    > exactly {15, 50, 65} in en/es and {12, 13, 15, 50, 65} in ja/ko/zh, so every numeral in it is
-    > one the check asserts, and the 12/13 are missing from en/es only because both write the months
-    > as words. The control that shipped is **$5 must not be found** — a substring of "$50" and
-    > "$65" and an amount in neither, which refutes the `includes()` implementation directly.
-    > **And the first version of the block was wrong in a way re-reading would not have caught:** it
-    > joined the four figure-text keys per language, so an injected `$60` in the Chinese caption
-    > passed, satisfied by `flipDescription` still saying $65. One surface per key now. See the run
-    > log for all five injections.
-    ORIGINAL ITEM TEXT, kept because the run log's entry refers to it:
-    **[Docs/Integrity — filed 2026-08-29 by the run that closed item 127, as its stated residual
-    rather than smuggled into the same commit.] §50 still pins lesson 23's $50/$65 as literals and
-    reads no lesson body — the exact shape §21 carried until this run, and now cheap to close.**
-    - **State:** `check-data.mjs` §50(a) fails if `flipRewards` is not 50/65, with the message
-      "lesson 23's body works through $50 and $65". Nothing checks that it still does, in any
-      language. §21 had the same shape for its caption and now reads it per language through
-      `amountsIn`.
-    - **Measured 2026-08-29, so this is a guard and not a defect report:** all five languages of
-      lesson 23 state both figures (`amountsIn` finds 50 and 65 in en/es/ko/zh/ja).
-    - **It is easier than item 127 was:** both figures are under 1,000, so no myriad decomposition is
-      involved and the whole instrument already exists. The control shape is §53(f)'s — one numeral
-      known present, one known absent, per language.
-    - ⚠️ **One thing to look at rather than assume while in there.** The corpus is **inconsistent
-      about numeral format between a figure's caption and its lesson's prose**: `bracketCaption.ko`
-      writes `$4,000` while lesson 17's Korean body writes `4만 5천 달러`. Both are natural in
-      isolation; a Korean reader meets both on the same screen. **That is a content question for the
-      owner, not a check to write** — do not "fix" it by rewriting either side.
-    - **Honest priority: low.** Zero learner-visible instances. Downstream of O-1 like everything else.
 
 149. **[Process/QA — filed 2026-08-29 by the run that built `A11yStates.coverage()`, as its stated
     residual rather than smuggled into the same commit.] `coverage()` can now name a probe that did
@@ -2009,82 +1606,6 @@ this note is the case for it.
     priced — the columns become ROWS below 375px — plus `check-data.mjs` §62. The item's mechanism
     was exactly right; two of its numbers were not, and the fix had a silent failure mode of its own
     that the first working version shipped. Read the corrections below.**
-    > **PREMISE RE-MEASUREMENT 2026-08-30 — mechanism CONFIRMED, magnitude and one figure WRONG,
-    > and the scope is one language, not all five.**
-    > - **The overflow is real and the offending nodes are exactly the ones named**: at 320px x 130%
-    >   light, `document.scrollWidth` **323** against `clientWidth` **320**, the fifth column and its
-    >   label span both reaching **323.1px**. Instrument carried a positive control (a planted 500px
-    >   probe moved scrollWidth to 500 and back to 323 on removal).
-    > - **The item said `clientWidth=305`, i.e. an 18px overflow. It is 320, i.e. 3px.** The 305
-    >   implies a 15px classic scrollbar was reserved in the measuring pane. Same defect, and it is
-    >   still a WCAG 1.4.10 failure at the width the criterion names — but "18px" was an artifact of
-    >   the instrument, not a property of the app.
-    > - **The item said the column's flex size is 45px; it is 47.6px.** The 66px figure for
-    >   "tightening" was right (66.3px), and the cause is exactly as stated: `flex: 1` with the
-    >   default `min-width: auto` pins every column at its label's LONGEST WORD. Five of those plus
-    >   four 4px gaps is **290.3px of content in a 254px row**. Control: min-content of the whole
-    >   label equals min-content of "tightening" alone (66.3) and exceeds "First" alone (28.8).
-    > - **NEW, and it changes the fix: this is an `en`-only document overflow.** Required vs
-    >   available at 320px x 130% — **en 290.3 / es 258.5 / ja 134 / ko 131.5 / zh 127.9**, against
-    >   254 available. Only `en` escapes the figure's padding. **`es` misses by 4.5px**; ko/zh/ja fit
-    >   with room to spare because CJK breaks between characters. A width breakpoint therefore
-    >   switches three languages that had no problem — accepted deliberately, see below.
-    > - **The crossover is 356.3px, confirmed to sub-pixel**: at 356px available is 290 against
-    >   required 290.3. At 374px and 375px it fits in all five languages.
-    > - **Also measured, and NOT in the item:** under browser text zoom the figure degrades further
-    >   — **150% → 9 overflowing nodes, 200% → 15**, and at those steps the bottom tab bar overflows
-    >   too. The app's own control caps at 130%, so this is outside its declared configuration space,
-    >   but it is a real WCAG 1.4.4 path. **Filed as item 153.**
-    > **What shipped, and why not (a), (b) or (c).** Below 375px `Bar` renders each datum as a ROW —
-    > label left, track centre, value right — so no label has to fit in a fifth of the width. That
-    > keeps every label intact (which (b) gave up) AND all five bars comparable at a glance (which
-    > (c) gave up). Geometry moved from inline styles into `index.css` `.ec-bar-*` because a media
-    > query cannot reach an inline style; colors stayed inline `theme.js` tokens.
-    > **THE FIX'S OWN SILENT BUG, found by measuring rather than by looking.** The first working
-    > version left the label at `flex: 0 0 auto`, so each row's label sized to its own text and every
-    > row got a **different track length** — the 4.5 bar drew at **58% of the 9.0 bar instead of
-    > 50%**. No overflow, no overlap, no clipped label; the figure looked entirely reasonable. That is
-    > this component's oldest bug (a ten-fold expansion once drawn as four equal bars) reached through
-    > the width axis. A **fixed** basis on the two elements bracketing the track is the whole
-    > correctness argument, and §62 exists to hold it.
-    > **The margin is deliberate and it has a cost.** The breakpoint is 375px against a 356.3px
-    > crossover, because `es` crosses at 325px and item 93 adds translated prose daily. Between 356
-    > and 374 — which includes the very common 360px Android width — the row layout engages where
-    > the column layout would still have fit. Judged not a regression (a horizontal bar is a good
-    > narrow presentation) but it is a visible change on real devices, and reversing it is a
-    > one-number edit.
-    > **Original item text follows.**
-    - **Market signals overflows the document by 18px at 320px x 130% font, and all three candidate
-      fixes were priced and none is obviously right.**
-    - **The measurement, reproducible:** `#/reference` > Market signals, viewport 320, font 130%.
-      `document scrolls horizontally: scrollWidth=323 clientWidth=305`. The overflowing nodes are
-      the `Bar` chart's fifth column and its label span, both extending to 323px. **Clean at 100%
-      font and at every width >= 375.** Cause: the columns are `flex: 1` with the default
-      `min-width: auto`, so they cannot shrink below the label's min-content width — "tightening"
-      is 66px at a 130% root and the column's flex size is 45px.
-    - **Three fixes, all measured live in the DOM before any of them was written to source:**
-      - **(a) `minWidth: 0` on the column.** Kills the document overflow (323 -> 305) — **and
-        produces 3 pairs of OVERLAPPING labels**, because the 66px labels stay 66px inside 45px
-        columns. **The probe goes green on this.** ⚠️ Do not ship it alone; that is a worse screen
-        than the one it fixes, and `horizontalOverflow` cannot see the difference.
-      - **(b) (a) + `width: 100%` + `overflowWrap: break-word` on the label.** No overflow, no
-        overlap, all five bars visible. Cost: mid-word breaks. With `hyphens: auto` added, a
-        screenshot shows "Pandemic response" rendering as **"Pande / mic / re- / spons / e"** —
-        five fragments. **Rejected on looking at it**, which no geometry probe would have caught.
-      - **(c) `overflow-x: auto` on the chart row.** No overflow, no overlap, labels intact and
-        readable; the figure scrolls inside itself (`scrollWidth 290 > clientWidth 239`).
-        Permitted by WCAG 1.4.10, which exempts content needing two-dimensional layout. Cost: the
-        fifth bar is off-screen until scrolled — **and this figure's entire teaching point is the
-        side-by-side comparison** (its own component comment records an earlier bug where the
-        ten-fold expansion "was drawn as four bars of equal height"). A scrollable comparison chart
-        is a comparison you cannot make at a glance.
-    - **Why it was not decided this run:** (b) and (c) each break something the app explicitly
-      values — §3.0's clarity standard and the figure's comparison respectively — so this is a
-      product judgment, not a bug with a correct answer. A fourth option nobody has priced: give
-      the chart fewer bars, or a shorter label set, at narrow widths.
-    - **Honest priority: low-to-medium.** One screen, one configuration, and the configuration is
-      the narrowest supported width combined with the largest font step. But it is a **WCAG 1.4.10
-      reflow failure** at 320px, which is the width that criterion names. Downstream of O-1.
 
 140. **[A11y/Tooling — filed 2026-08-28 by the run that built §28c (item 139), as its stated
     residual rather than smuggled into the same commit.] §28c assumes the ring lands on a SURFACE.
@@ -2230,25 +1751,6 @@ this note is the case for it.
     that touches §55"). The stem is in `scripts/us-english.mjs` in the `emphasise` shape, and both
     halves of the trap are now controls: `hypothesised`/`hypothesising` are in MUST_CATCH,
     `hypothesis`/`hypotheses` in MUST_NOT_CATCH. §55's control line moved 34 → 38 specimens and
-    63 → 67 US forms.** Original text follows.
-    [Process/Tooling — filed 2026-08-29 by the run that narrowed §55's `-ise` stems, as its
-    stated residual rather than smuggled into the same commit.] §55 has no `hypothesis` stem, and
-    `hypothesised` is a British form this repo has actually shipped.
-    - **Measured 2026-08-29:** against both the old and the new pattern set, `hypothesised` is
-      **MISSED** — the `-ise` stem list has no `hypothesis`, and `emphasis(e|ed|es|ing)` is its own
-      pattern that does not generalize. It is named in item 91's own removal list
-      (`AGENT_LOG.archive.md:17177`, alongside `localised`/`tokeniser`/`tokenisation`/`stylised`,
-      **all four of which the fixed net still catches** — controlled, so the miss is a real gap and
-      not an artifact of the narrowing).
-    - **This is a coverage gap, NOT a regression from the narrowing.** Neither pattern set caught it.
-      Stated explicitly because the obvious suspicion about a run that made a net narrower is that
-      it lost something, and the four-word control above is what rules that out.
-    - **The fix is one stem, and the shape matters:** `hypothesis` cannot be added to the `-ise`
-      list as a bare stem, because `(hypothesis)(e|es|ed|ing|...)` would flag the correct US noun
-      **"hypotheses"** — the identical trap that keeps `analyses` deliberately unflagged. It needs
-      the `emphasise` treatment: its own pattern over the unambiguous verb forms only.
-    - **Honest priority: low.** Zero live instances in learner-visible strings, measured. Do not
-      pick it alone — it is one stem, and worth folding into the next run that touches §55.
 
 130. **✅ DONE 2026-08-29 (scheduled dev-agent). Shipped as `scripts/us-english.mjs` (the shared
     pattern set, its two control lists, and a real comment tokenizer) plus `check-data.mjs` §59,
@@ -2268,49 +1770,6 @@ this note is the case for it.
     > §59's scope on measurement**, not on convenience — marking 22 lines would be churn and every
     > future entry about §55 would fail the build. The 4 real British spellings in the log's own
     > prose are item 143.
-    Original text follows.
-    [Process/Tooling — filed 2026-08-27 by the run that built §55, as its stated blind spot.]
-    §55 cannot see comments, dev scripts, or Markdown — and that is 21 of the 36 spellings it was
-    built in response to.
-    - **State:** `check-data.mjs` §55 guards **string values under an `en` key** across the twelve
-      content and locale modules — 1,145 learner-visible strings, 16 pattern families, three controls.
-      Comments in `src/` and `scripts/`, the check scripts' own prose, and the five normative Markdown
-      files are all outside it. They were swept **by hand** in this run and nothing keeps them swept.
-    - **Why the scope is narrow on purpose, not by omission.** Item 91's own closing advice was
-      "learner-visible strings only", and reading source text rather than values is what drags in the
-      three false-positive classes §55's header enumerates: `aria-labelledby`, non-English content, and
-      verbatim quotations of deleted text — the last of which is a **live, correct** British spelling
-      in `check-data.mjs`, now carrying a `us-english:allow` marker.
-    - **The shape that could work:** a source-text net over comments with an honored `us-english:allow`
-      marker. **The marker convention already exists and nothing reads it** — 21 occurrences across
-      `AGENT_LOG.md`, `AGENT_LOG.archive.md`, `DECISIONS.md` and `LAUNCH_PLAN.md`, placed by earlier
-      runs in anticipation of a checker. Making them load-bearing is most of the work.
-    - ~~**Do not build it until the hand-swept surface has drifted again.**~~ **✅ THE GATE IS MET,
-      measured 2026-08-29, and the drift source is this agent.** A raw scan of comments in `src/` +
-      `scripts/` (87 files) and the five normative Markdown files found **7 real British spellings
-      in comments**, and `git blame` dated them: **6 of the 7 were written on 2026-08-27 and
-      2026-08-28** — `normalised`/`normalising`/`centre`/`neighbour` in `scripts/a11y-sweep.js`,
-      `neighbouring`/`labelled` in `scripts/check-data.mjs` — i.e. **after** this item's own hand
-      sweep, by the five dev-agent runs `d35218d`/`98f2714`/`24e3757`/`5d3882a`/`7fe2fe5`/`e27d6ea`.
-      Only `Capitalised` in `scripts/jargon-candidates.mjs:287` (2026-08-17) predates the sweep and
-      is a **miss**, not drift. Plus **2 unmarked** hits in Markdown (`DECISIONS.md:672` `labour`,
-      `:708` `licence`) against 4 correctly carrying `us-english:allow`.
-      > **That is ~3 new instances per day, all self-inflicted, and it reframes the item.** The
-      > surface does not drift because contributors are careless; it drifts because *this agent
-      > writes comments faster than anyone re-sweeps them*. A hand sweep is therefore not a cheaper
-      > alternative to the checker — it is a thing that decays measurably within two days.
-      > ⚠️ **The 7 instances were deliberately LEFT IN PLACE.** Fixing them silently would give the
-      > run that builds this checker a swept baseline and no test corpus, and would erase the
-      > evidence above. Sweep them *with* the instrument, in the same commit.
-      > ⚠️ **Instrument note for whoever builds it, both traps hit live.** (a) The blame loop first
-      > returned **seven blank lines** — `set -- $spec` in zsh, which does not word-split, so `$2`
-      > was empty and every `git blame -L ,` failed silently. A control line of known age is what
-      > caught it. (b) The scanner must use the **fixed** `-ise` pattern: run with the pre-2026-08-29
-      > wide stems it reported **45** comment hits against a true 25, because it flagged the correct
-      > US words in §55's own new comment.
-    - **Honest priority: low → LOW-MEDIUM.** Still zero *learner-visible* instances. Downstream of
-      O-1. The `aria-labelledby` false positive (12 in `src/`, 5 in `scripts/`) remains the reason
-      the marker must be honored before the net is turned on.
 
 126. **[Docs/Integrity — filed 2026-08-27 by the run that closed item 125, as its stated residual
     rather than smuggled into the same commit.] §52 only sees a hex that shares a line with the
@@ -2434,6 +1893,7 @@ this note is the case for it.
     > `AGENT_LOG.md`, so the fingerprint would be stale before the next run read it and
     > `check-measurements.mjs` would report RETIRED forever — the vacuous green item 116 warns
     > about. It re-measures live instead; there is no retyped number to guard.
+
 120. **[Process/QA — filed 2026-08-26 by the run that closed item 119, as its stated residual
     rather than smuggled into the same commit.] The storage audit tests ONE point in
     storage-space, so a `requires` that is too COARSE still passes it.**
@@ -2546,43 +2006,14 @@ this note is the case for it.
 108. **✅ DONE 2026-08-26 (scheduled dev-agent). The focus capability is now MEASURED by a planted
     control (`measureFocus()`) instead of inferred from `document.hasFocus()`, and
     `check-data.mjs` §43(d) fails if the proxy ever returns. Residual filed as item 116.**
-    - **Generalized rule, worth more than this item: a proxy signal fails green, a planted control
-      fails loud.** A capability that *can* be measured directly must never be inferred.
-    ORIGINAL TEXT (retained — it is what was measured):
-    **[Tooling/Measurement — filed 2026-08-25 by the run that shipped item 107, as its stated
-    residual rather than smuggled into the same commit.] `scripts/a11y-sweep.js`’s header records
-    that `document.hasFocus()` is *permanently false* in this preview pane. On 2026-08-25 it was
-    TRUE for an entire session, and that disagreement is unexplained.**
-    - **What to do:** re-run the native-listener control (a real `focus` listener on a real button,
-      asserting event count) in a session where `hasFocus()` is true. Two outcomes, both cheap and
-      both useful: events fire, so a whole probe class (focus-visible, focus order, the tab trap) is
-      recoverable and the header’s note 2 needs narrowing; or they do not, and the capability must
-      be detected by an actual planted event rather than by `hasFocus()`.
 
 107. **✅ DONE 2026-08-25 (scheduled dev-agent), the day after it was filed. Shipped as the
     `unnamedRegions` probe in `scripts/a11y-sweep.js`, with a planted control in `selftest()`
     (§43(c) proved able to fail on it) and a five-variant discrimination matrix measured live.**
-    - **PREMISE CORRECTION, and it changed the implementation rather than a figure.** The item
-      specified the probe as "whose accessible name is empty", which reads as "reuse `accName()`".
-      That would have produced a probe that **can never fire**: `accName()` falls back to
-      `textContent`, and every `<section>` has contents — measured, the lesson reader’s three real
-      sections carry 943 / 685 / 1228 characters each, and a planted bare section names itself
-      "body text". **The planted control would have passed against the broken implementation.** A
-      landmark’s name never comes from its contents (HTML-AAM), so the probe uses a separate
-      `landmarkName()` — `aria-labelledby` (resolved), `aria-label`, `title`, no content fallback.
-      Recorded here because the same trap waits for any future name-based probe.
 
 106. **✅ DONE 2026-08-25 (scheduled dev-agent). Fixed by marking up the two block labels the
     lesson reader already had — `as="h2"` on `{t.hookTitle}` and `{t.checkTitle}` — and guarded by
     `check-data.mjs` §45, which was proved able to fail in three modes.**
-    - **THE SAMPLING TRAP, and it is the reusable part.** The obvious way to sample all 40 — seed
-      `ecycles_completed_lessons` with every id so nothing is locked — **suppresses the defect**: the
-      hook renders only while a lesson is UNFINISHED, and the hook's `<h3>` *is* the skip. That sweep
-      returns **40/40 clean** and would have closed this item as unreproducible. Unlock by completing
-      the **predecessor** only: seed all-but-a-non-consecutive-set and sweep that set; two
-      complementary passes (21 + 19) cover the catalog. Seeding `localStorage` on an already-booted
-      app does nothing at all (`isUnlocked` reads React state) — lessons redirect to `#/learn` and
-      the sweep reports the Learn screen as clean under the lesson's name.
 
 101. **[Feature/Distribution — filed 2026-08-24 by the run that closed item 98, as its stated residual
     rather than smuggled into the same commit. Serves `LAUNCH_PLAN.md` §5. **Genuinely blocked on
@@ -2624,24 +2055,10 @@ this note is the case for it.
 99. **✅ DONE 2026-08-24 (scheduled dev-agent) — both halves, the fix and the guard, in one commit.
     `Learn` and the app shell now sit behind error boundaries, and `check-data.mjs` §37 holds the
     invariant.**
-    - **What shipped:** `AppError` (`ui.jsx`) with its own copy in five languages — deliberately not
-      `LoadFailure`'s, which says the content "couldn't be downloaded" and is a lie about code that
-      downloaded fine and then threw; `ScreenBoundary` around App's `<main>`, keyed on `tab` so the
-      header and nav survive **and switching tabs is a real recovery** (verified live: Learn crashed,
-      tapping Review rendered the queue and cleared the alert); and a **root boundary in `main.jsx`**,
-      because `ScreenBoundary` is rendered *by* App and so cannot catch App's own render. The root
-      one reads its language from `localStorage` via `loadLang` — verified by crashing the shell with
-      `ecycles_lang=ja` and getting Japanese copy from a tree where App never rendered.
 
 100. **✅ DONE 2026-08-24 (scheduled dev-agent). Shipped as `src/lib/chunkError.js` (call-site
     tagging), a function-form `ErrorBoundary` fallback, and `check-data.mjs` §39. Read the premise
     correction first — the defect was real and reproduced live, but "one line of code" was wrong.**
-    - **A residual measured and deliberately NOT filed as an item.** A module that downloads and then
-      throws while *evaluating* also rejects `import()`, so it gets the download wording. Narrowing it
-      means asking whether the rejection is a `TypeError` (what the HTML spec rejects a failed module
-      fetch with) — which would trade the known-real case, a content-hashed chunk 404ing after a
-      redeploy, against a case the build and `npm test` import on every run. The reasoning is written
-      into `chunkError.js` so a later run does not "fix" it back.
 
 76. **[Content/Process — filed 2026-08-18 by the run that built item 69's instrument half, which is
     what turned this from an opinion into a blocked measurement.] `zh` and `ja` `Brokerage Account`
@@ -2690,10 +2107,6 @@ this note is the case for it.
 65. **✅ DONE 2026-08-17 — decided AMBER MOVES, because re-measuring the item's own figures changed
     the answer: amber's real contrast margins were 2-3x smaller than the item claimed, so the token
     moved instead of the exemption being made permanent. Proved by injection in both directions.**
-    See the run log.
-    > **Left alone on purpose: two hardcoded `#d97706` literals that are NOT this token — see item
-    > 75**, which established that one of them sat in a field nothing renders, so the defect was a
-    > false comment rather than a hex.
 
 70. **[Process — filed 2026-08-17 by the run that found item 67's headline number was wrong, because the
     error is structural and will recur.] Every measurement this repo reports lands in `AGENT_LOG.md` by
@@ -2771,21 +2184,11 @@ this note is the case for it.
 
 68. **✅ DONE 2026-08-17 — built as scoped, minus one half that was measured and honestly declined.
     The glossary report went 57 → 54, the first time an in-place expansion made the number go DOWN.**
-    See the run log.
-    > **Standing scope, so the next run does not "finish" it wrongly: suppression applies to the
-    > acronym and capitalised-phrase rules ONLY, never to the head-noun rule.** The apposition half
-    > was not built because measuring it said so, not out of timidity. The control ships in both
-    > directions — a suppression rule must fail by doing nothing *and* by doing too much.
 
 67. **🟡 TWO-THIRDS DONE 2026-08-17 (scheduled dev-agent) — the two terms that needed no new key are
     fixed and rendered-verified; only the `Dividend` half is still blocked.** See the run log.
 
 66. **✅ DONE 2026-08-17 (scheduled dev-agent) — measured, and the instrument is permanent.**
-    > **The premise held for once, and the scale held too.** Six of the last seven items had a partly
-    > wrong premise. This one predicted "one confirmed instance, the rest unmeasured" and the rest
-    > measured out at two more — a rare case where the filing run guessed the shape right. Worth not
-    > re-deriving: **`realized gains` appears in zero lessons**, which is the cleanest possible proof
-    > that this corpus was genuinely unreachable rather than merely unchecked.
 
 60. **✅ DONE 2026-08-17 (scheduled dev-agent). The residual now has an instrument (`npm run jargon`),
     and the one real gap it found is closed: Brokerage Account is a glossary entry, chipped on lesson 6.
@@ -3147,9 +2550,6 @@ this note is the case for it.
 
 35. **✅ FULLY DONE 2026-08-21. Both batches shipped — 12 terms 2026-08-16, 2 more 2026-08-21. The
     glossary is 35 terms (38 since the M0/M1/M2 entries).**
-    > **This item is EXHAUSTED as a reach-driven item. Do not pick it for a third batch without first
-    > defining a bar that is not a term count** — and note the candidate list recorded here was
-    > re-measured stale on 2026-08-18. A count is not a gap.
 
 36. **✅ CLOSED 2026-08-16 (fifth pass, owner-requested). `ja` cross-reference coverage 31 → 44,
     equal to `ko` and `zh`. The guard that generalizes is in: `check-data.mjs` §16 prints the
@@ -3386,12 +2786,6 @@ this note is the case for it.
     expanded and checked rather than skipped, which is what catches `DECISIONS.md`'s brace-contracted
     reference to two deleted files. Closing note at the end of this item.] Every repo path
     a tracked document names must exist.**
-    - **Measured before proposing:** 93 distinct path references across the four docs; **11 do not
-      resolve today**. Four are the real, current breakage item 39's scoping fixed. The other seven are
-      exactly the two false-positive classes the exemption vocabulary has to cover, and they are the
-      design work: `LAUNCH_PLAN.md`'s `lessons.json`/`quizzes.json`/`glossary.json` name a format the
-      project **deliberately rejected** (`DECISIONS.md`: `.js`, not JSON) and must never be "fixed";
-      `v5.jsx`/`v6.jsx`/`market.json` are shorthand for paths that do exist elsewhere in the tree.
 
 47. **[Process — ✅ DONE 2026-08-17 (scheduled dev-agent). Shipped as `scripts/refresh-readiness.mjs`
     with three modes; the two live figures are generated and `npm test` holds them. Item 39 is closed
@@ -3457,10 +2851,6 @@ this note is the case for it.
 43. **[Process — ✅ FOUND AND FIXED 2026-08-16 by item 38's guard, on its first run. Filed as its own
     item because the fix is one character and the finding is repo-wide.] `scripts/translation-review.mjs`
     was invisible to `grep` — and had been since it was written on 2026-08-11.**
-    - **Worth generalizing, and deliberately not done in this run:** §24 checks NUL only. Other things
-      make a file effectively unsearchable — invalid UTF-8, a `.gitattributes` binary marking, a
-      minified single line. Whether that is worth a broader "every source file is greppable" assertion
-      is a real question and an honest scoping job, not an obvious yes.
 
 44. **[Small — ✅ DONE 2026-08-17. Filed as small and "no §2.3 violation"; the second half of that
     assessment was wrong, and finding out how was the run. See the closing note.] `useMarketData` treats
