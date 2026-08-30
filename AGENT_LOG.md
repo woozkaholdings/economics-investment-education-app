@@ -89,8 +89,11 @@ for the history. No open P1/P2 items.
 > at a domain root and one directory down); routing is hash-based so no host needs a rewrite rule;
 > `README.md` § Deploying has the clicks. **Netlify Drop is a drag of the `dist/` folder.** Open since
 > 2026-08-17.
-> **The refuting number, unchanged in six days: 40 lessons, 5 languages, 8 check scripts, a claims
-> register, 145 minutes of content — and zero people have ever opened this app.**
+> **The refuting number, re-measured by the weekly review 2026-08-30 (the previous version of this
+> line quoted 40 lessons / 145 minutes and had been stale since the money track opened on 08-25 —
+> W-5.5's rule applies to this line too): 44 lessons, 5 languages, 8 check scripts, a claims
+> register, 160 minutes of content, 62 `check-data.mjs` sections — and zero people have ever opened
+> this app. Open 13 days.** Figures read off `npm test`'s readiness line, not carried forward.
 >
 > **O-2. An analytics provider account and key. (Item 18.)** `src/lib/analytics.js` fires the §9.2
 > event set with the §9.2 payloads; `sink()` writes to one device's `localStorage`. §4.3's Phase-0
@@ -106,6 +109,107 @@ for the history. No open P1/P2 items.
 > falling as a proportion. Item 93 itself flags this ("the owner should know it is happening") and
 > that flag is the honest one. **Nothing here is wrong or blocked — this is a scale change the
 > original decision did not contemplate, and the owner should either re-affirm it or cap it.**
+
+> ## PRIORITY BLOCK W-6 — set by the weekly review 2026-08-30. Supersedes W-5's *active* clauses below. W-5's standing rules (W-5.2's pick-list warning, W-5.3's archiving rule, W-5.5's re-read-the-count rule) are UNCHANGED and still binding. Read this first.
+>
+> **The week was, on craft, the best this project has had. 96 commits, build and tests green, not one
+> regression, and a standard of adversarial self-checking — premises re-measured, controls planted,
+> probes proven dead and replaced — that most funded teams never reach. This block is not about
+> quality. It is about where that quality is being spent.**
+>
+> ### W-6.0 — the measurement this block is built on. Read it before disagreeing with the rest.
+> Measured 2026-08-30 off the tree at `94b4914`, not read off the log:
+> - `scripts/` is **15,480 lines**. The app's own code (`src/` minus `content/` and `locales/`) is
+>   **6,589 lines**. The instruments are **2.3x the application they measure.**
+> - This week: `scripts/` **+8,987** insertions, `src/` **+3,058**. `check-data.mjs` alone is **8,711
+>   lines / 62 sections**.
+> - **29 of the open backlog items** carry the phrase *"filed … by the run that"* — they are residuals
+>   a run filed from its own work, not work derived from the launch plan. **15 open items say
+>   "Downstream of O-1". 8 say "Zero live instances". 27 say "Honest priority: low".**
+> - The last six runs form an unbroken chain: 146→147→148→149, then 150→151→152, then 153+154. **Every
+>   link was filed by the run that closed the previous link.**
+>
+> **This is W-2's note-chain failure in its third costume.** W-2 caught direction coming from the
+> previous run's "next run should pick" line. W-5.2 caught it coming from "continue the tranche".
+> **It now comes from "close my own residual" — and W-5.2's remedy expired without being replaced,
+> because it was written against item 93 and item 93 closed on 08-24.** A rule scoped to one item
+> stops binding when that item does. This one is scoped to the shape instead.
+>
+> ### W-6.1 PRIORITY — `npm test` FAILS ON A FRESH CLONE, and item 154 files that as "low". It is not low. Fix it first.
+> **Reproduced by the weekly review 2026-08-30, not taken on report:** `git archive HEAD` into a clean
+> directory, symlink `node_modules`, copy the two gitignored `economic-cycles-v*.jsx` → `npm test`
+> exits **1**, on `§26: DECISIONS.md:669 names drafts/income-hierarchy.en.md, which does not exist`.
+> The working tree is green **only because the owner has an untracked `drafts/` folder.** Anyone who
+> clones this repo — and any CI that is ever added — gets a red suite on checkout.
+> **Item 154 called this "honest priority: low" and deferred the whole thing to the owner. The
+> deferral is right about the *decision* and wrong about the *urgency*:** a repo that fails its own
+> test suite on a clone is a launch-integrity defect, and it went in with the same commit that
+> discovered it.
+> **Two routes. The choice is the owner's; the delay is not.**
+> - **(a) Track `drafts/`.** `DECISIONS.md:669` cites `drafts/income-hierarchy.en.md` as the approved
+>   proposal behind **shipped lessons 41-44**. A source document for shipped content arguably belongs
+>   in the repo. This is the better answer if `drafts/` is not scratch.
+> - **(b) Declare the citation deliberate history**, which is what `check-data.mjs` §26's own error
+>   message prescribes: add `<!-- path-ok: drafts/income-hierarchy.en.md — cited as the dated source
+>   of lessons 41-44; the draft itself is not repo content -->` to `DECISIONS.md` and raise
+>   `EXPECTED_EXEMPTIONS`.
+> **✅ Route (b) is explicitly AUTHORIZED BY THIS REVIEW as a stopgap** if the owner has not answered
+> by the next scheduled run. It is one line, reversible, and it does not foreclose (a). **Label it a
+> stopgap and cite W-6.1 in the comment**, so route (a) is still visibly open. **Carry the control the
+> rest of this log would demand: the fresh-clone recipe above must exit 0 after the fix.**
+> ⚠️ **And fix the Environment note's `HEAD` control recipe while you are there** — item 154 found it
+> needs `cp -R drafts` today, which is the same defect wearing the other face.
+>
+> ### W-6.2 PRIORITY — the residual-chain rule. This replaces W-5.2's ratio, which expired with item 93.
+> **The rule, and it is about shape, not about any item:**
+> 1. **A run may not take its own previous run's residual as its headline pick more than TWICE in a
+>    row.** The third run picks from the launch plan, from the owner-facing items, or refills the
+>    backlog (W-2's standing rule — still a legitimate, valuable whole run).
+> 2. **A residual measured at "zero live instances" AND "honest priority: low" is a NOTE UNDER ITS
+>    PARENT ITEM, not a numbered backlog item.** Numbering it makes a guard for a property that
+>    currently holds compete for capacity with work that moves launch — and it is what grew the floor
+>    in W-6.4. Items **120, 126, 140, 143, 144, 149, 152, 153** are hereby **PARKED**: leave the text
+>    exactly where it is, do not pick any of them by default, and do not renumber anything.
+> 3. **Every new check must name, in one sentence, the LEARNER-VISIBLE failure it would have caught.**
+>    §50 blocks (i) and (j) pass this test cleanly — a stale caption an inch from the curve, and a
+>    figure that inverts its own lesson, are both things a person would see. Item 152's proposed
+>    regex over `LessonVisual.jsx` props does not obviously pass it. **If the sentence cannot be
+>    written, the check is not due.**
+> ⚠️ **What this rule is NOT saying.** The residual-filing *discipline* — closing an item and filing
+> what you found rather than smuggling it into the same commit — is one of the best habits in this
+> log and must not stop. **The defect is that the filed residual then becomes the next pick by
+> default.** File it; do not turn around and pick it.
+>
+> ### W-6.3 — the instrument-to-app ratio is now a number to watch, not a rule to obey.
+> No threshold is set, deliberately: several of this week's instruments were plainly worth it (§28c
+> caught an invisible focus ring across the entire build; the a11y state matrix caught bars drawn 9px
+> tall at 320px; §59 caught two safety guards blind to the start of every paragraph — all three were
+> real, learner-visible, and shipped). **The number in W-6.0 is here so the next run that proposes a
+> check has to look at it first.** Quote it, re-measure it, and say which side of it the proposal
+> falls on.
+>
+> ### W-6.4 — the floor is over budget, and the CAUSE is W-6.2, not insufficient compression.
+> `npm test` warns every run: the non-archivable floor is **313,522 b against a 250,000 b budget**,
+> growing **+3,834 b per commit**. The backlog alone is **285,978 b** — it is now the floor. Archiving
+> cannot touch it (W-5.3), and two compression passes have already run.
+> **The link nobody has drawn: each residual filed under W-6.2's habit is a 2-4 KB richly-argued
+> backlog item that its own author labels low priority.** That is the growth. **Compression treats the
+> symptom; W-6.2 rule 2 treats the cause.** Item 115's two options for the owner remain open and this
+> review does not pre-empt them.
+>
+> ### W-6.5 — note only, no action: the market-data job appears to have stopped.
+> `public/data/market.json` is `asOf 2026-08-28`. It committed daily 08-24 → 08-28 and has not
+> committed on **08-29 or 08-30**. `STALE_AFTER_DAYS` is **4**, so the Sector-performance screen
+> starts rendering "Market data isn't available right now" on about **2026-09-02**. Item 74 has the
+> full mechanism. **This is the owner's scheduled job, not dev-agent work — flagged, not touched.**
+>
+> ### W-6.6 — O-3 restated, because the scale changed again and the decision has not.
+> The economy track is now **complete in all five languages** and the money track shipped four new
+> lessons. `npm test` reports **es/ko/zh/ja at 100% reviewed, 0% human** — every word of four
+> languages is unreviewed machine translation, and 48 of 176 lesson/language pairs are still condensed
+> summaries rather than translations (item 93/94). The "(Beta)" decision in `DECISIONS.md` was made
+> on 2026-08-11 about a smaller, static surface. **Re-affirm it or cap it — owner's call, unchanged
+> and now larger.**
 
 > ## PRIORITY BLOCK W-5 — set by the weekly review 2026-08-23. Supersedes the 2026-08-16 block below (W-1 through W-4 all closed). Read this first.
 >
@@ -128,7 +232,10 @@ for the history. No open P1/P2 items.
 > at 0.379 added chars per English char, `zh` at 0.226, `ja`'s reference is 0.50); item 93 records that
 > neither inherited the other's, and carries the fuller density bands.
 >
-> ### W-5.2 PRIORITY — reserve one run in four for work that is not item 93.
+> ### W-5.2 — ⛔ **EXPIRED 2026-08-24 when item 93 closed; REPLACED BY W-6.2 ABOVE. Do not act on
+> the ratio below — it is scoped to an item that no longer exists.** The ⚠️ pick-list warning at
+> the end of this clause is STANDING and still binds. Original text kept for the reasoning:
+> **reserve one run in four for work that is not item 93.**
 > Twenty of the week's last twenty-four commits were item 93. That is defensible for a sprint and
 > corrosive as a habit: it is the W-2 note-chain failure in a new costume — direction stops coming
 > from the backlog and starts coming from "continue the tranche". **Every fourth scheduled run picks
@@ -1488,7 +1595,11 @@ for the history. No open P1/P2 items.
       stand; the coverage did not.** `A11yStates.coverage()` plus the Tab step now in the header
       recipe are the fix — see item 149.
 
-154. **[Process/Docs — filed 2026-08-30 by the run that closed item 148, as an observation it hit
+154. **⬆️ RAISED TO PRIORITY by the weekly review 2026-08-30 — see W-6.1 at the top of this
+    backlog. The review REPRODUCED the fresh-clone failure (`npm test` exits 1 on a clean
+    `git archive HEAD`), and route (b) is authorized there as a stopgap. The item's own
+    "honest priority: low" below is superseded; its analysis is correct and is why.**
+    [Process/Docs — filed 2026-08-30 by the run that closed item 148, as an observation it hit
     rather than a defect it created.] The `HEAD` control copy the Environment note prescribes now
     needs `drafts/` copied in too, and without it the control fails for its own reasons.**
     - **What happened:** the prescribed recipe (`git archive HEAD | tar -x`, symlink `node_modules`,
