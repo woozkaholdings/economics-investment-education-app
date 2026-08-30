@@ -1488,7 +1488,56 @@ for the history. No open P1/P2 items.
       stand; the coverage did not.** `A11yStates.coverage()` plus the Tab step now in the header
       recipe are the fix — see item 149.
 
-151. **[Content/QA — filed 2026-08-30 by the run that closed item 150, as its stated residual rather
+152. **[Content/QA — filed 2026-08-30 by the run that closed item 151, as its stated residual rather
+    than smuggled into the same commit.] §50 now proves lesson 23's zone/series/axis labels say the
+    right things in the right positions. The COLORS those positions are drawn in are paired by index
+    too, in a different file, and nothing checks that pairing at all.**
+    - **The coupling, read off `LessonVisual.jsx:190-194` on 2026-08-30:**
+      `colors={[graph.amber, graph.green]}` (series 0 = the sooner $50 = amber, series 1 = the later
+      $65 = green), `labelInks={[ink.warn, ink.ok]}`, `zoneColors={[surface.okWash, surface.warnWash]}`
+      and `zoneEdges={[graph.green, graph.amber]}`. The zone arrays are **deliberately the reverse of
+      the series arrays**: zone 0 is the band where the *later* reward wins, so it is washed with the
+      *later* reward's green. That inversion is correct and it looks like a mistake, which is exactly
+      the shape someone "tidies".
+    - **The hole:** rewrite `zoneColors` to `[surface.warnWash, surface.okWash]` for consistency with
+      `colors`, and the figure washes the wait-for-the-$65 band in the $50's amber and vice versa,
+      while §50 (i) and (j) both stay green — they read content strings and this is a JSX prop. The
+      learner then reads a band whose color says one thing and whose label says the other.
+    - **Why it was not done in item 151's commit:** (j) asserts over `moneyVisuals.js` exports, which
+      `check-data.mjs` already imports. These four arrays are JSX props in a component file that no
+      §50 block reads, so covering them needs either a source-text parse of `LessonVisual.jsx` (brittle)
+      or lifting the color choice into the content module beside the labels it belongs to (a real
+      refactor, and the better answer). **Decide which before writing any check** — a regex over JSX
+      props is the kind of instrument this log has repeatedly found reading the wrong thing.
+    - **Carry a control:** whichever route, injecting the swapped `zoneColors` must fail and the
+      shipped order must pass. If lifting into content, the control is free the way (j)'s was.
+    - **Honest priority: low.** Zero live instances — the pairing is correct today and was measured,
+      not assumed. Downstream of O-1 like everything else.
+
+151. **✅ DONE 2026-08-30 (scheduled dev-agent). Shipped as `check-data.mjs` §50 block (j) —
+    THREE pairs, not the two the item scoped. Every premise held, including the one it flagged as
+    needing confirmation. Read the corrections below.**
+    > **PREMISE RE-MEASUREMENT 2026-08-30 — all four premises TRUE, which is itself worth recording
+    > after ten consecutive items whose premises were wrong somewhere.** `flipZoneLabels[0]`→$65 /
+    > `[1]`→$50 and `flipSeriesLabels[0]`→$50 / `[1]`→$65 in all five languages, read through
+    > `amountsIn` with a live-instrument control, not by eye.
+    > **The ⚠️ "confirm the drawn order" flag resolved in the item's favor.** `PreferenceFlip` fills
+    > `zoneColors[0]` from the left edge to the crossing; at the left vantage the later reward is
+    > perceived higher (4.643 vs 3.846). So zone 0 IS the wait-for-the-$65 band and the item's stated
+    > assertion direction was right, not its mirror. The block derives this from `flipValue` at the two
+    > end vantage points rather than pinning it, so a `k`/reward edit moves the expectation.
+    > **SCOPE WAS WIDER THAN THE ITEM SAID, for the second item running.** `flipAxisLabels` is the same
+    > shape — two elements, consumed by position (`[0]` drawn at the left edge, `[1]` at the right),
+    > `[1]` states $50 in all five languages, `[0]` states neither — and block (i) reads neither of
+    > them. Swapped, the figure captions its left edge, where the lesson says both rewards are a year
+    > off, with "the $50 is available today". Same instrument, no extra cost, so it shipped here.
+    > **The control the item proposed was the one that did not survive.** "A swap must fail while the
+    > other four languages stay clean" covers the CONTENT and is what the five injections do. As an
+    > INSTRUMENT probe it is unreachable: every spec is symmetric, so a passing pair's reverse always
+    > fails the `must` half and a "reverse also passes" probe can never go red. It was written, proven
+    > dead, and replaced. See the run log for both deleted probes and what shipped instead.
+    ORIGINAL ITEM TEXT, kept because the run log's entry refers to it:
+    **[Content/QA — filed 2026-08-30 by the run that closed item 150, as its stated residual rather
     than smuggled into the same commit.] §50's new block proves each of lesson 23's zone and series
     labels STATES the rewards; nothing proves which one states which, and the component reads both
     pairs by position.**
@@ -3480,6 +3529,104 @@ finding(s); V vacuous; U unavailable`. A bare "no accessibility issues found" is
 > section above is prepend-order (newest first); the archive is ascending.
 > *(The "367 lines apart" this note carried until 2026-08-29 was the first block's own length, not the
 > distance between the blocks. The blocks and their byte totals were right; only the gap figure was.)*
+### 2026-08-30 (scheduled dev-agent) — lesson 23's labels are now checked for WHICH one says which, and the control the item specified for it turned out to be unreachable (item 151 → new item 152)
+
+**Picked item 151**, the previous run's stated follow-on. Items 149/126/120 were left alone on item
+149's own instruction (*"Do not pick it over content"*), and 148 is still the product call the run that
+filed it escalated.
+
+**Premise re-measurement (step 3.5) — all four premises held.** Worth stating plainly, because the
+task file's standing note is that ten consecutive items had a premise wrong somewhere; this one did not.
+- `flipZoneLabels[0]`→$65 / `[1]`→$50 and `flipSeriesLabels[0]`→$50 / `[1]`→$65, **in all five
+  languages**, read through `amountsIn` rather than by eye. Control: the scan returned a non-empty set
+  for all 20 strings and never returned the $5 that is a substring of both amounts.
+- **The item's own ⚠️ flag — "confirm the drawn order before pinning it" — resolved in its favor.**
+  `PreferenceFlip` fills `zoneColors[0]` from the left edge to the crossing, and at the left vantage
+  point the later reward is perceived higher (4.643 vs 3.846). Zone 0 is the wait-for-the-$65 band, so
+  the item's direction was right rather than its mirror. The block **derives** this from `flipValue` at
+  the two end vantage points instead of pinning today's answer.
+- **Scope was wider than the item said, for the second item running.** `flipAxisLabels` is the same
+  shape — two elements consumed by position, `[1]` states $50 in all five languages, `[0]` states
+  neither — and block (i) reads neither. Swapped, the figure captions its left edge, where the lesson
+  says both rewards are a year off, with "the $50 is available today". It shipped in the same block.
+
+**What shipped:** `check-data.mjs` §50 block (j). Three ordered pairs x five languages, each element
+asserted to state one reward and **not** the other, every expectation derived from `flipRewards` and
+from `flipValue` at the axis ends. Two guards sit above it: the figure must still reverse (else the zone
+labels have no sides to be on), and some reward must still come due at the last sampled vantage month
+(else `flipAxisLabels[1]` names nothing).
+
+**Two controls were written for this block and only one survived. Both failures are in the code
+comments, because a probe that cannot fire reads as coverage.**
+1. **"The shipped order passes AND its reverse also passes"** — the two-sided control item 151
+   specified. It is **unreachable by construction**: every spec is symmetric (what element 0 must state
+   is exactly what element 1 must not), so whenever the shipped pair passes, element 1 does not state
+   `must[0]` and the reverse always fails the `must` half. Deleted, and replaced by a static assertion
+   that each `ORDERED` entry **is** symmetric — which is the property that makes a swap detectable at
+   all, and which fires the moment someone adds a fourth key that only looks like an ordering check.
+2. **"Dropping the exclusion half is caught by that reversal probe"** — asserted in my first comment,
+   then injected, and **nothing failed**. The claim was false: every string here names exactly one of
+   the two rewards, so the `must` half alone still separates the real pair from its reverse. What ships
+   instead is a probe built from input the predicate must reject — each element concatenated with its
+   sibling, stating both rewards in both positions. The full assertion rejects it on the exclusion half;
+   presence-only accepts it.
+
+**Verification — seven injections, each restored from a scratchpad copy and re-checked by sha256.**
+1. **ko `flipZoneLabels` swapped** → four failures naming `flipZoneLabels.ko[0]`/`[1]`, the amount each
+   should carry, and why. **The first version misdiagnosed this**: it ran the reversal probe
+   unconditionally, so a genuinely swapped pair was reported as an instrument defect — right file, right
+   key, and it told the reader to go fix the checker instead of the content. Found by injection, not by
+   re-reading.
+2. **zh `flipAxisLabels` swapped** (the half the item did not name) → `flipAxisLabels.zh[0] states $50,
+   which belongs to element 1 … labels the wrong end of the x-axis`.
+3. **es `flipSeriesLabels` swapped** → four failures, right language, right key.
+4. **`mustNot` deleted from `ordersCorrectly`, clean content** → **0 failures** against the first
+   design; **15 failures** (3 keys x 5 languages) against what shipped.
+5. **`flipMonths` last element removed** → `neither reward comes due at month 11, the last sampled
+   vantage point`. The derivation guard, diagnosed as itself.
+6. **en zone labels expanded so both name both amounts** → the exclusion half fires per element.
+7. **An `ORDERED` entry rewritten to `[leftWinner, null]`/`[rightWinner, null]`** → `the ORDERED entry
+   for flipZoneLabels is not swap-detectable`.
+
+`src/content/moneyVisuals.js` restored byte-identical (`15fc66f5…`, unchanged from HEAD and confirmed by
+`git status`). `npm test` exit 0 — **0 failures, 1 warning**, and the warning is the pre-existing
+log-floor budget (item 115, the owner's call), not this change. `npm run build` exit 0 in 952ms.
+`node scripts/us-english.mjs` exit 0.
+
+**Adversarial self-check (step 5) — three real findings, all mine, all fixed in this commit.**
+- **Injection 1's misdiagnosis** and **injection 4's silence** are above. The third: after deleting the
+  reversal probe, §50's success line still read *"each pair also proven to FAIL when reversed"* — a
+  claim about a probe that no longer existed, printed on every green run. Rewritten to what is actually
+  proven. This is the §10.1-style failure applied to my own output, and it is the exact trap the task
+  file's "your own verification claim" bullet names.
+- **Blindspot register:** the diff is `scripts/check-data.mjs` only — **0 files under `src/`**, so no
+  learner-facing string moved. 0 hits for Dalio/advice-adjacent patterns in the added lines. The two
+  `2026-08-30` strings are both inside `//` comments recording when a measurement was taken, the same
+  shape the neighboring comments use — not a rendered date.
+- **DECISIONS.md:** no conflict; nothing here touches state, content-module format, or the build.
+- **Already-done item:** item 151 was filed by the previous run as its residual. Nothing is redone or
+  undone; block (i) is untouched and (j) sits beside it.
+- **My own verification claim:** an independent reviewer re-running `npm test` and each of the seven
+  injections above gets these results.
+- ⚠️ **What I did NOT do, stated rather than rounded off.** The block checks the label *text*. The
+  *colors* those labels are drawn in are paired by index too — `LessonVisual.jsx:190-194` — and the zone
+  arrays are deliberately the reverse of the series arrays, an inversion that is correct and looks like
+  a bug. Swapping `zoneColors` washes each band in the other reward's color while (i) and (j) stay
+  green. It is a JSX prop in a file no §50 block reads, so covering it needs either a brittle source
+  parse or lifting the color choice into the content module — a real decision, not a ten-line addition.
+  Filed as **item 152** with the measurement, rather than smuggled in.
+
+#### Next run
+
+**Item 152** (new, above) is the direct follow-on but is genuinely a design call, not a quick one —
+read its two routes before starting. Otherwise unchanged: **148** (real user-visible symptom, wants the
+owner's pick), then **149, 144, 143, 140, 126, 120**, all at zero live instances, and **item 117**,
+still the one open *product* item and still the owner's. **For the owner:** the floor is over budget at
+**302 KB** against 250 KB and only a backlog compression pass moves it — **item 115 holds the rule and
+the options, and that decision is still yours.** **O-1 remains the entire critical path: 44 lessons,
+five languages, 160 minutes of content, and zero people have ever opened this app.** **O-3** unchanged
+— no translated prose was added or altered this run.
+
 ### 2026-08-30 (scheduled dev-agent) — §50 now reads the prose instead of asserting about it, and the first version of that read was satisfied by a caption the learner was not looking at (item 150 → new item 151)
 
 **Picked item 150**, the previous run's stated follow-on and its own filed residual. Item 149 was left

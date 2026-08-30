@@ -6435,8 +6435,155 @@ if (keyedGroupsChecked < 4) {
       if (clean) flipLangsAnchored += 1;
     }
 
+    // (j) WHICH LABEL SAYS WHICH — the ordering claim block (i) does not make
+    //     (backlog item 151, 2026-08-30). Block (i) proves each of the four
+    //     figure-text keys STATES both rewards. `flipZoneLabels`,
+    //     `flipSeriesLabels` and `flipAxisLabels` are two-element arrays that
+    //     `LessonVisual.jsx` and `PreferenceFlip` consume BY POSITION —
+    //     `flipSeriesLabels[lang][i]` is pinned onto `flipSeries()[i]`, `zones`
+    //     is passed straight through and rendered against `zoneColors[i]`, and
+    //     `axisLabels[0]`/`[1]` are drawn at the left and right ends of the
+    //     x-axis. So swapping the two elements of ONE language's array leaves
+    //     both amounts present in both strings and passes (i) — while that
+    //     language's figure now says most people take the $65 in the stretch
+    //     where the curve shows them taking the $50. That is item 150's
+    //     injection-2 shape one level down: the claim satisfied by the right
+    //     string in the wrong place.
+    //
+    //     `flipAxisLabels` IS IN HERE AND THE ITEM DID NOT NAME IT. Item 151
+    //     scoped the zone and series pairs. Measured 2026-08-30: `[1]` states
+    //     the sooner reward in all five languages ("The $50 is available
+    //     today") and `[0]` states neither ("Both a year away"), and (i) reads
+    //     neither of them. Swapped, the figure captions its left edge — the
+    //     vantage point where the lesson says both rewards are a year off —
+    //     with "the $50 is available today". Same file, same instrument, no
+    //     extra cost, so it ships here rather than as a third residual.
+    //
+    //     THE SIDES ARE DERIVED FROM THE ARITHMETIC, NOT TYPED. Writing
+    //     "[0] must say 65" would pin today's content with a literal, which is
+    //     the habit (a) already carries and (i) exists to stop. `PreferenceFlip`
+    //     paints `zoneColors[0]` from the left edge to the crossing and
+    //     `zoneColors[1]` from the crossing to the right edge, so zone 0 is the
+    //     band BEFORE the reversal; which reward wins there is then read out of
+    //     `flipValue` at the two end vantage points. Likewise the axis: the
+    //     right edge is the last sampled vantage month, and the reward that is
+    //     available at it is the one whose `month` equals it. Change `k` or the
+    //     rewards so the figure reverses the other way and these expectations
+    //     move with it instead of going stale.
+    const firstVantage = mv.flipMonths[0];
+    const lastVantage = mv.flipMonths[mv.flipMonths.length - 1];
+    const winnerAt = (now) =>
+      V(l.amount, l.month, now) > V(s.amount, s.month, now) ? l.amount : s.amount;
+    const leftWinner = winnerAt(firstVantage);
+    const rightWinner = winnerAt(lastVantage);
+    const availableAtRightEdge = [s, l].find((r) => r.month === lastVantage)?.amount;
+
+    if (leftWinner === rightWinner) {
+      fail(`§50: the same reward ($${leftWinner}) is perceived larger at both ends of the x-axis, so the figure has no reversal and the zone labels below have no sides to be on. (b)/(c) should have caught this first — repair those before this block.`);
+    }
+    if (availableAtRightEdge === undefined) {
+      fail(`§50: neither reward comes due at month ${lastVantage}, the last sampled vantage point, so "which reward is available at the right edge" — the thing flipAxisLabels[1] names — has no answer. Repoint this block at whatever the x-axis now ends on.`);
+    }
+
+    // Each entry: [key, [what element 0 must state, what it must NOT],
+    //                    [what element 1 must state, what it must NOT], why].
+    // `null` means "no amount required"; the exclusion half is what makes this
+    // an ordering check rather than a second presence check, and the control
+    // below refutes a rewrite that drops it.
+    const ORDERED = [
+      ["flipSeriesLabels",
+        [s.amount, l.amount], [l.amount, s.amount],
+        "LessonVisual.jsx pins flipSeriesLabels[lang][i] onto flipSeries()[i], and flipSeries() is [sooner, later]"],
+      ["flipZoneLabels",
+        [leftWinner, rightWinner], [rightWinner, leftWinner],
+        `PreferenceFlip fills zone 0 from the left edge to the crossing, where $${leftWinner} is the one worth more, and zone 1 from the crossing to the right edge, where $${rightWinner} is`],
+      ["flipAxisLabels",
+        [null, availableAtRightEdge], [availableAtRightEdge, null],
+        `axisLabels[0] is drawn at the left edge, where both rewards are still a year off, and axisLabels[1] at the right edge, where the $${availableAtRightEdge} has come due`],
+    ];
+
+    // Does the shipped pair satisfy the claim? Used twice per key: once on the
+    // pair as written, once on it reversed.
+    const ordersCorrectly = (pair, spec) =>
+      pair.every((text, i) => {
+        const stated = amountsIn(String(text ?? ""));
+        const [must, mustNot] = spec[i];
+        return (must === null || stated.has(must)) && (mustNot === null || !stated.has(mustNot));
+      });
+
+    // WHAT MAKES A SWAP DETECTABLE AT ALL, asserted on the table rather than
+    // trusted. Given a pair that passes, swapping it fails only if element 1
+    // states something element 0 is forbidden to state — i.e. only if
+    // `mustNot[0] === must[1]` and its mirror. Every entry above satisfies
+    // that today; a fourth key added with, say, [[50, null], [65, null]] would
+    // read like an ordering check, pass, and detect nothing. This fires on
+    // that entry at the moment it is written instead of years later.
+    for (const [key, e0, e1] of ORDERED) {
+      if (!(e0[1] === e1[0] && e1[1] === e0[0])) {
+        fail(`§50: the ORDERED entry for ${key} is not swap-detectable: element 0 must-not-state ${JSON.stringify(e0[1])} while element 1 must state ${JSON.stringify(e1[0])}. Unless those are the same amount, swapping the two elements leaves both assertions satisfied and this key is an ordering check in name only. Make each element's exclusion the other's requirement, or drop the key.`);
+      }
+    }
+
+    let flipLangsOrdered = 0;
+    for (const lang of LANGS) {
+      let ordered = true;
+      for (const [key, e0, e1, why] of ORDERED) {
+        const pair = mv[key][lang];
+        const spec = [e0, e1];
+        if (!Array.isArray(pair) || pair.length !== 2) continue; // (h) owns shape
+        let elementsOk = true;
+
+        for (let i = 0; i < 2; i++) {
+          const stated = amountsIn(String(pair[i] ?? ""));
+          const [must, mustNot] = spec[i];
+          if (must !== null && !stated.has(must)) {
+            ordered = false; elementsOk = false;
+            fail(`§50: ${key}.${lang}[${i}] does not state $${must.toLocaleString("en-US")}, though ${why}. Element ${i} and element ${1 - i} are consumed by position, so a swapped pair inverts the lesson in this language while every string in it stays correct in isolation.`);
+          }
+          if (mustNot !== null && stated.has(mustNot)) {
+            ordered = false; elementsOk = false;
+            fail(`§50: ${key}.${lang}[${i}] states $${mustNot.toLocaleString("en-US")}, which belongs to element ${1 - i} — ${why}. Read as drawn, this language's figure now labels ${key === "flipAxisLabels" ? "the wrong end of the x-axis" : "the wrong curve or the wrong band"}.`);
+          }
+        }
+
+        // THE CONTROL THAT SURVIVED, AND THE ONE THAT DID NOT. Item 151 named
+        // a two-sided control — "swapping one language's pair must fail while
+        // the other four stay clean" — and the swap injections above are
+        // exactly that, so the CONTENT side is covered. What is NOT covered by
+        // them is the INSTRUMENT decaying, and two candidate probes were tried
+        // here before this one stuck. Both failures are recorded because a
+        // probe that cannot fire reads as coverage.
+        //
+        // TRIED AND DELETED: "the shipped order passes AND its reverse also
+        // passes". Injected against the real corpus, and it is UNREACHABLE by
+        // construction, not merely quiet. `assertSwapDetectable` below proves
+        // every spec is symmetric — what element 0 must state is exactly what
+        // element 1 must not — so whenever the shipped pair passes, element 1
+        // does NOT state `must[0]` and the reversed pair always fails the
+        // `must` half. A green line that can never go red.
+        //
+        // TRIED AND DELETED: "dropping the exclusion half is caught by the
+        // reversal probe". Injected by deleting `mustNot` from
+        // `ordersCorrectly`; NOTHING FAILED. Today every one of these strings
+        // names exactly one of the two rewards, so the `must` half alone still
+        // separates the real pair from its reverse.
+        //
+        // WHAT SHIPS: refuting a predicate needs input the predicate must
+        // reject, so one is built rather than borrowed — each element
+        // concatenated with its sibling, which states both rewards in both
+        // positions. The full assertion rejects it on the exclusion half;
+        // presence-only accepts it. That injection now fails 15 times (three
+        // keys x five languages) where it used to fail nothing.
+        if (ordersCorrectly([`${pair[0]} ${pair[1]}`, `${pair[1]} ${pair[0]}`], spec)) {
+          ordered = false;
+          fail(`§50: the ordering check for ${key}.${lang} accepts a pair in which BOTH elements state BOTH rewards, so it is not testing position at all — the "must not state" half of the assertion is gone and this is block (i)'s presence check written twice. Restore the exclusion half rather than leaving a green line that cannot fail.`);
+        }
+      }
+      if (ordered) flipLangsOrdered += 1;
+    }
+
     if (failures === 0) {
-      console.log(`  §50 lesson 23's preference flip holds: $${s.amount}@${s.month}mo vs $${l.amount}@${l.month}mo at k=${k} (> the ${kMin} the lesson requires) reverses exactly once, at month ${Number(solved).toFixed(3)} — solved and sampled agree, both options worth $${eqS.toFixed(2)} there — and both of the lesson's stated choices fall out of the curve. $${s.amount}, $${l.amount} and the $${l.amount - s.amount} between them are read out of lesson 23's own body, and $${s.amount}/$${l.amount} out of the caption, description, zone labels and series labels the figure renders, in all ${flipLangsAnchored} language(s) — control proven both directions in each.`);
+      console.log(`  §50 lesson 23's preference flip holds: $${s.amount}@${s.month}mo vs $${l.amount}@${l.month}mo at k=${k} (> the ${kMin} the lesson requires) reverses exactly once, at month ${Number(solved).toFixed(3)} — solved and sampled agree, both options worth $${eqS.toFixed(2)} there — and both of the lesson's stated choices fall out of the curve. $${s.amount}, $${l.amount} and the $${l.amount - s.amount} between them are read out of lesson 23's own body, and $${s.amount}/$${l.amount} out of the caption, description, zone labels and series labels the figure renders, in all ${flipLangsAnchored} language(s) — control proven both directions in each. Which label says which is checked too: the zone, series and axis pairs are consumed by position, and in all ${flipLangsOrdered} language(s) element 0/1 name the $${leftWinner}/$${rightWinner} side the arithmetic puts them on — each key's spec proven swap-detectable, and the exclusion half that makes it one proven live against a pair stating both rewards in both positions.`);
     }
   }
 }
