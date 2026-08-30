@@ -135,6 +135,21 @@ for the history. No open P1/P2 items.
 > because it was written against item 93 and item 93 closed on 08-24.** A rule scoped to one item
 > stops binding when that item does. This one is scoped to the shape instead.
 >
+> ### W-6.1 — ✅ **RESOLVED 2026-08-30 (owner-directed) via route (a): `drafts/income-hierarchy.en.md` is now tracked and a fresh clone exits 0.** See item 154 for the two-direction measurement.
+> ⛔ **RETRACTION, and it is this review's error, not a run's.** The clause below authorized
+> **route (b)** as a "reversible stopgap". **Route (b) cannot work at all**, and a scheduled run
+> spent itself proving that (commit `90bfeaf`): §26 fails a reference whose path is missing AND
+> fails a `path-ok` marker whose path is present. In a clone the path is absent; in the owner's
+> tree it is present. **The two states are mutually exclusive, so no value of the marker
+> satisfies both.** The review authorized it from reading §26's error message rather than from
+> measuring it — the exact failure mode this log names weekly, committed by the reviewer.
+> **The transferable part: an error message that prescribes a fix is a CLAIM about the fix, not
+> a measurement of it.** §26's message says "add a path-ok marker"; that advice is wrong for
+> every reference to a path which exists locally and not in the repo. Authorizing a remedy
+> sight-unseen is the same defect as quoting a stale figure, and a weekly review is not exempt.
+> **What actually shipped:** route (a) — track the file, making the citation true rather than
+> exempted. **Route (c) survives as item 157** and is the only one that fixes the class.
+> ORIGINAL CLAUSE, kept because the retraction above refers to it:
 > ### W-6.1 PRIORITY — `npm test` FAILS ON A FRESH CLONE, and item 154 files that as "low". It is not low. Fix it first.
 > **Reproduced by the weekly review 2026-08-30, not taken on report:** `git archive HEAD` into a clean
 > directory, symlink `node_modules`, copy the two gitignored `economic-cycles-v*.jsx` → `npm test`
@@ -1595,6 +1610,34 @@ for the history. No open P1/P2 items.
       stand; the coverage did not.** `A11yStates.coverage()` plus the Tab step now in the header
       recipe are the fix — see item 149.
 
+157. **[Process/Tooling — filed 2026-08-30 by the weekly review, from the class that items 154 and
+    the reverted route (b) both sat inside. This is route (c).] `check-data.mjs` §26 resolves
+    document references against the FILESYSTEM, so any tracked document may cite a path that exists
+    only in one person's working tree — green for them, red for every clone.**
+    - **The live instance is now fixed but the class is not.** Item 154 was cured by tracking the
+      file it named. Nothing stops the next `DECISIONS.md` or `LAUNCH_PLAN.md` edit from citing
+      another untracked path, and it will pass `npm test` for whoever wrote it. **This defect is
+      invisible in exactly the tree that introduces it** — which is why it survived from 08-25 to
+      08-30 and cost two runs plus a weekly review.
+    - **The fix:** resolve §26's references against **git's tracked file list**
+      (`git ls-files`) rather than `fs.existsSync`. Then the working tree and a fresh clone agree
+      **by construction**, which is the property neither (a) nor (b) provides.
+    - ⚠️ **Not a one-liner, and the previous run is right about why.** It re-classifies every
+      existing reference: gitignored-but-present paths (`economic-cycles-v5.jsx`,
+      `economic-cycles-v6.jsx`, `node_modules/`, `dist/`) currently pass and would start failing.
+      Those need a deliberate exemption class of their own — "tracked-or-ignored" is probably the
+      real predicate, not "tracked".
+    - **Carry the two-sided control, and it is cheap here:** a planted reference to an untracked
+      path must FAIL in the working tree (the state that is currently green and wrong), and every
+      reference the suite passes today must still pass. **Run the fresh-clone recipe as the second
+      half** — the whole point is that the two agree.
+    - ⚠️ **One implementation trap already paid for (commit `90bfeaf`):** §26's `MARKER` regex is
+      matched **per line**, so a `path-ok` comment wrapped across lines is silently never seen. It
+      does not error; the exemption just does not exist. Keep markers on one line.
+    - **Honest priority: medium, and genuinely higher than its "zero live instances" cousins** —
+      unlike items 120/126/140/143/144/149/152/153 this one has already fired twice and cost real
+      runs. Not downstream of O-1: it is repo hygiene that any second machine hits immediately.
+
 156. **[A11y — filed 2026-08-30 by the run that closed item 153, as a change made on INSPECTION
     rather than on measurement, which is the reason it is written down.] `PracticeCoachMark` got the
     nav pill's fix without ever being seen to break.**
@@ -1630,7 +1673,29 @@ for the history. No open P1/P2 items.
     - **Honest priority: low-to-medium.** It guards a property that holds as of 2026-08-30, but it
       holds because of a five-call-site fix that a future layout change could undo silently.
 
-154. **⬆️ RAISED TO PRIORITY by the weekly review 2026-08-30 — see W-6.1 at the top of this
+154. **✅ DONE 2026-08-30 (owner-directed: "fix the fresh-clone test failure now") via ROUTE (a)
+    — `drafts/income-hierarchy.en.md` is now TRACKED, and a fresh clone exits 0.**
+    > **The measurement, both directions, on the tree that shipped the fix:**
+    > `git archive $(git write-tree)` into an empty directory, `node_modules` symlinked, the two
+    > gitignored `economic-cycles-v*.jsx` copied, **and `drafts/` deliberately NOT copied** —
+    > `npm test` exits **0** (4 warnings, all recorded debt). The working tree also exits **0**.
+    > **Before the fix the same recipe exited 1**, which the weekly review reproduced first so
+    > the fix had something to prove.
+    > **Why (a) and not (c):** route (a) makes `DECISIONS.md:669`'s citation TRUE rather than
+    > exempted — the file is the approved proposal behind shipped lessons 41-44, and a source
+    > document for shipped content belongs in the repo. `drafts/` was never gitignored
+    > (`git check-ignore` exits 1), so nothing about the owner's setup argued against it.
+    > **Route (c) is still worth doing and is filed as item 157** — it prevents the whole class,
+    > which (a) does not.
+    > ⚠️ **The file carries British spellings ("labour", "favour", "specialised", "catalogue")
+    > and they are CORRECT AS THEY STAND. Do not "fix" them.** It is a dated approval document
+    > (2026-08-18) cited as a dated record by `DECISIONS.md`, and item 91's house-style rule
+    > exempts quotations and dated records verbatim. It is also genuinely out of scope: §59's
+    > MARKDOWN set is exactly five normative documents (`DECISIONS.md`, `LAUNCH_PLAN.md`,
+    > `CLAIMS.md`, `README.md`, `LAUNCH_READINESS.md`) — measured, not assumed, and the reason
+    > tracking the file introduced no §59 failure.
+    ORIGINAL PRIORITY NOTE, kept because the route (b) record below answers it:
+    **⬆️ RAISED TO PRIORITY by the weekly review 2026-08-30 — see W-6.1 at the top of this
     backlog. The review REPRODUCED the fresh-clone failure (`npm test` exits 1 on a clean
     `git archive HEAD`), and route (b) is authorized there as a stopgap. The item's own
     "honest priority: low" below is superseded; its analysis is correct and is why.**
