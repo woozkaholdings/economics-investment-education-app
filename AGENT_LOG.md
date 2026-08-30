@@ -1610,7 +1610,48 @@ for the history. No open P1/P2 items.
       stand; the coverage did not.** `A11yStates.coverage()` plus the Tab step now in the header
       recipe are the fix — see item 149.
 
-157. **[Process/Tooling — filed 2026-08-30 by the weekly review, from the class that items 154 and
+157. **✅ DONE 2026-08-30 (owner-directed: "do route (c) next"), the same day it was filed —
+    and it re-classified SEVEN references, not "every existing reference". Read the two
+    corrections below before trusting this item's own scoping.**
+    > **CORRECTION 1 — the blast radius was measured, and the item over-estimated it.** Before
+    > touching anything, both trees were computed and every reference resolved under each: exactly
+    > **7 references across 2 paths** change classification — `economic-cycles-v5.jsx` (5 refs:
+    > LAUNCH_READINESS 37, LAUNCH_PLAN 57 + 72, DECISIONS 23, README 7) and
+    > `economic-cycles-v6.jsx` (2 refs: LAUNCH_PLAN 72, README 7). Nothing else moved. The
+    > prediction was then confirmed exactly by the real check, which failed on those 7 lines and no
+    > others. `node_modules/` and `dist/` were never at risk — §26's walk already excluded them and
+    > no reference names them with a guarded extension.
+    > **CORRECTION 2 — "tracked-or-ignored" is the WRONG predicate, and adopting it would have
+    > re-opened the class this item exists to close.** The item proposed it to keep the gitignored
+    > prototypes resolving. But `economic-cycles-v5.jsx` is gitignored precisely so that **no clone
+    > ever has it** (the 2026-08-16 owner decision, "ignored, not deleted"). A README telling a
+    > cloner to read a file they cannot have is the same broken promise as `drafts/` was — the only
+    > difference is which git mechanism hides it. So the predicate implemented is **tracked**, and
+    > the 7 references became honest `path-ok` exemptions: 6 markers, 7 uses,
+    > `EXPECTED_EXEMPTIONS` **13 → 20**.
+    > **THE INDEX, not `HEAD`.** The index is the commit about to be made, so a run that adds a file
+    > and cites it from a document in the SAME commit still passes — this repo's normal shape.
+    > `HEAD` would have forced that into two commits. Proven by control C below.
+    > **Controls — four, run in a REAL `git clone` so the index path was the one exercised, plus the
+    > refutation half the item asked for:**
+    > - **A** baseline clone → exit **0** (git index, 136 files, 20 exempted).
+    > - **B** a file **present on disk but untracked**, cited from README → **exit 1**. The identical
+    >   plant in a non-git copy, where §26 falls back to the filesystem, → **exit 0 with zero
+    >   findings.** That pair is the two-sided proof: the rule changed in the intended direction,
+    >   rather than everything merely continuing to pass.
+    > - **C** the same file **staged** → exit **0** (333 refs, 137 files) — same-commit workflow intact.
+    > - **D** a path existing nowhere → exit **1** — the original catch still works.
+    > - **Both halves green:** working tree exit 0 and fresh clone exit 0, each reporting 20
+    >   exemptions.
+    > ⚠️ **The Environment note's clean-tree recipe changed with this** and has been updated: it must
+    > no longer `cp economic-cycles-v*.jsx` into the archive copy, because that would make the two
+    > paths resolve there and their new markers fail as **stale** — the same "control that fails for
+    > its own reasons" trap, wearing the opposite face. A `git archive` copy is not a git repo, so
+    > §26 falls back to the filesystem there, which is correct in that copy *only* while nothing
+    > untracked is copied in. To exercise the primary path instead, use `git clone -q .`.
+    >
+    > ORIGINAL ITEM TEXT, kept because its scoping is what the corrections above answer:
+    **[Process/Tooling — filed 2026-08-30 by the weekly review, from the class that items 154 and
     the reverted route (b) both sat inside. This is route (c).] `check-data.mjs` §26 resolves
     document references against the FILESYSTEM, so any tracked document may cite a path that exists
     only in one person's working tree — green for them, red for every clone.**
@@ -3580,18 +3621,27 @@ to the repo:
 ```bash
 git archive HEAD | tar -x -C "$SCRATCH/head"
 ln -sfn "$PWD/node_modules" "$SCRATCH/head/node_modules"     # do NOT cp -R: slow enough to time out
-cp economic-cycles-v5.jsx economic-cycles-v6.jsx "$SCRATCH/head/"   # gitignored, so not in the archive
 cd "$SCRATCH/head" && npm test
 ```
 
-**Both extra lines are load-bearing, and each was found by the control failing rather than by reading.**
-`check-data.mjs` reaches `src/lib/deepLink.js`, which imports `react`, so a copy with no `node_modules`
-dies with `ERR_MODULE_NOT_FOUND` — the scripts are *not* dependency-free, whatever their imports look
-like at the top. And `git archive` ships only tracked files, so the two gitignored `economic-cycles-v*.jsx`
-are missing and §26's doc-path check reports **7 failures** naming them — a control that fails for its own
-reasons, which is the exact trap step 3.5 warns about. With both lines, the `HEAD` copy runs the full
-suite to **exit 0**. That gives a two-sided answer: **red on the working tree and green on the `HEAD`
-copy means the owner's dirt caused it; red on both means you did.** Used this run to prove
+**⚠️ UPDATED 2026-08-30 (W-6.1, route (c)): do NOT copy the prototypes in any more.** This recipe used
+to carry a third line, `cp economic-cycles-v5.jsx economic-cycles-v6.jsx "$SCRATCH/head/"`, because
+`git archive` ships only tracked files and §26's doc-path check then reported **7 failures** naming
+them. **§26 no longer resolves against the filesystem**, so those seven are exemptions now and the copy
+is not merely unnecessary — it is actively harmful: it would make the two paths resolve in the copy and
+their `path-ok` markers fail as *stale*, which is the same "control that fails for its own reasons" trap
+wearing the opposite face. The `node_modules` symlink IS still load-bearing, and was also found by the
+control failing rather than by reading: `check-data.mjs` reaches `src/lib/deepLink.js`, which imports
+`react`, so a copy without it dies with `ERR_MODULE_NOT_FOUND` — the scripts are *not* dependency-free,
+whatever their imports look like at the top. With that one line, the `HEAD` copy runs the full suite to
+**exit 0**. That gives a two-sided answer: **red on the working tree and green on the `HEAD` copy means
+the owner's dirt caused it; red on both means you did.**
+
+**A `git archive` copy is not a git repo, and §26 knows.** It falls back to the filesystem walk there,
+which is correct *in that copy specifically* because an archive contains precisely the tracked set —
+but only while nothing untracked is copied in, which is the whole reason the `cp` line above had to go.
+If you need a control that exercises §26's PRIMARY path instead, use a real `git clone -q . "$SCRATCH/gitclone"`;
+it is a git repo, so it resolves against the index the way the owner's tree does. Used this run to prove
 `refresh-readiness.mjs`'s failure was the owner's new third lesson track and not a regression — see
 backlog item 77.
 
@@ -3848,6 +3898,86 @@ zero meaningful: `selftest PASS (8/8 controls fired, plantsRemoved true)` and, p
 finding(s); V vacuous; U unavailable`. A bare "no accessibility issues found" is not a result.
 
 ## Run log
+
+### 2026-08-30 (owner-directed: "do route (c) next") — "exists" now means what the repo SHIPS, and the item's own "re-classifies every existing reference" was seven of them (item 157)
+
+**Picked** item 157 — route (c) for W-6.1: `check-data.mjs` §26 resolved document references against
+the filesystem, so a tracked document could cite a path that existed only in one person's working
+tree: green for them, red for every clone.
+
+**Step 3.5 — the premise held on the defect and broke on the scoping, and one fact changed underfoot.**
+- **The defect is real and was re-derived, not taken on report.** §26's `tree` was a `readdirSync`
+  walk; a working tree carries files git does not.
+- **"Not a one-liner… it re-classifies every existing reference" is an over-estimate.** Both trees
+  were computed and every reference resolved under each *before* editing: exactly **7 references
+  across 2 paths** move — `economic-cycles-v5.jsx` (5) and `economic-cycles-v6.jsx` (2). The real
+  check then failed on precisely those 7 lines and no others, which is the prediction confirming
+  itself. `node_modules/`/`dist/` were never at risk: §26's walk already excluded them.
+- **⚠️ `HEAD` MOVED MID-RUN, twice over, and it changed the problem.** The owner committed
+  **`5d958ff`** — route (a), tracking `drafts/income-hierarchy.en.md` — while this run was measuring,
+  and rewrote item 154 and filed item 157 in the process. So the live instance was cured by the owner
+  and the class by this run. Both were needed; neither makes the other redundant. **The first symptom
+  of this was a contradiction I could not explain**: `git ls-files` reported `drafts/` as tracked
+  while `git status` said `??` and `git ls-tree HEAD` said nothing. That was the file being staged,
+  then committed, underneath a running session — the hazard the Environment note warns about, met in
+  its sharpest form. It was resolved by re-reading the repo rather than by reasoning about it.
+
+**Corrected the item's proposed predicate, which would have re-opened the class it exists to close.**
+Item 157 suggested `tracked-or-ignored`, to keep the gitignored prototypes resolving. But
+`economic-cycles-v5.jsx` is gitignored *precisely so no clone has it* (the 2026-08-16 owner decision,
+"ignored, not deleted"). A README telling a cloner to read a file they cannot have is the same broken
+promise `drafts/` was — only the hiding mechanism differs. **Implemented `tracked`**, and turned the
+7 references into honest exemptions: 6 `path-ok` markers, 7 uses, `EXPECTED_EXEMPTIONS` **13 → 20**.
+Every one of those documents had been making a promise no clone could keep, invisibly, since the
+prototypes were un-tracked on 2026-08-16.
+
+**The index, not `HEAD`, and the distinction is load-bearing.** The index is the commit about to be
+made, so a run that adds a file and cites it from a document in the same commit still passes — this
+repo's normal shape. `HEAD` would have forced that into two commits.
+
+**Controls — four, in a REAL `git clone` so the index path was the one exercised.** The one that
+matters is B, because a green suite proves nothing on its own:
+
+| control | state | expected | got |
+| --- | --- | --- | --- |
+| A | baseline clone | pass | exit 0, git index, 136 files, 20 exempted |
+| B | file present on disk but **untracked**, cited | **fail** | **exit 1** |
+| B' | the identical plant, filesystem fallback (non-git copy) | pass (old rule) | **exit 0, zero findings** |
+| C | the same file **staged** | pass | exit 0, 333 refs, 137 files |
+| D | path existing nowhere | fail | exit 1 |
+
+**B against B' is the two-sided proof** — the same plant fails under the new rule and passes under the
+old one, so the behavior changed in the intended direction rather than everything merely continuing to
+pass. **Both halves green afterwards:** working tree `npm test` exit 0 (git index) and fresh clone
+`npm test` exit 0 (filesystem fallback), each reporting 20 exemptions.
+
+**§10.2's guard caught this run's own marker text.** The first draft of the v6 exemption explained that
+v6 "carries Dalio branding" — in `README.md`, which `check-blindspot.mjs` scans. Naming the thing the
+register exists to keep out is still a hit, and the check was right to fail. Reworded to point at the
+register instead of repeating the name; `grep -c Dalio README.md` is 0.
+
+**The Environment note's clean-tree recipe was updated in the same commit, because this change made it
+wrong.** It must no longer `cp economic-cycles-v*.jsx` into the archive copy: that would make the two
+paths resolve there and their new markers fail as **stale** — the identical "control that fails for its
+own reasons" trap the note already warns about, wearing the opposite face.
+
+**Adversarial self-check (step 5).** The §10.2 near-miss above is the one real finding and it was fixed,
+not argued away. No other blindspot regression: no content, locale or lesson file is touched, so §10.1,
+§10.3 and the §2.3 stale-data rule are untouched. No `DECISIONS.md` conflict — the file is edited only
+to add a `path-ok` comment; no recorded decision changes, and in particular the 2026-08-16 "ignored,
+not deleted" decision is *upheld* rather than reversed: the prototypes stay on disk, stay ignored, and
+are now documented as absent from clones instead of silently assumed present. Not a redo — route (b)
+is refuted and stays refuted, and route (a) is the owner's and was left alone. On my own verification
+claim: a reviewer re-running `git clone -q .` into a scratch directory, copying these five files in and
+running the four plants above gets these numbers; the clone step is in the recipe because the
+`git archive` copy exercises the fallback, not the primary path.
+
+**Filed:** nothing new. Item 157's residual is item 155's permanent text-zoom probe, already open.
+
+**Next run should pick W-6.4 / the log floor** — the fresh-clone run now WARNs that the run log is
+250,201 b, over its 250,000 b budget, and the non-archivable floor is 336,755 b. That is a build
+failure at 350,000 b, and this entry moved it in the wrong direction.
+
 
 ### 2026-08-30 (scheduled dev-agent) — the text-zoom item named the one screen that was already clean, and the probe it prescribed could not see the failure that was actually shipping (item 153)
 

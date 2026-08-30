@@ -78,6 +78,8 @@ one `index.html` the server already returns. The usual "redirect all paths to /i
 configuration that static React deploys need does not apply here, which is why this repo has
 no `netlify.toml`, `vercel.json` or workflow file.
 
+<!-- path-ok: economic-cycles-v5.jsx — the owner's local prototype original, GITIGNORED by the 2026-08-16 decision recorded in .gitignore ("ignored, not deleted") — it is on the owner's disk and in git history, and no clone of this repo has it, so this reference must never resolve; restoring the file to the repo would be undoing that decision, not fixing this marker -->
+<!-- path-ok: economic-cycles-v6.jsx — the second prototype original, gitignored by the same 2026-08-16 decision and for the same reason; v6 additionally carries the branding that blindspot 10.2 exists to keep out, and hardcoded dates that §2.3 does, so it is deliberately absent from every clone -->
 <!-- path-ok: vercel.json — named in order to say this repo does NOT have it. Hash routing means no host needs an SPA rewrite rule, so there is nothing for a host config file to say; if this path ever resolves, the sentence above is what needs rewriting, not this marker -->
 
 ### After it is up

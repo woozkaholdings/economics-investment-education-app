@@ -99,6 +99,7 @@ account/API key a dev-agent run can't create) — until that lands, the installe
 the Phase 0 gate above stays unmeasurable off-device, though it is now inspectable per-device via
 `localStorage.getItem("ecycles_analytics_log")`.
 
+<!-- path-ok: economic-cycles-v5.jsx — the owner's local prototype original, GITIGNORED by the 2026-08-16 decision recorded in .gitignore ("ignored, not deleted") — it is on the owner's disk and in git history, and no clone of this repo has it, so this reference must never resolve; restoring the file to the repo would be undoing that decision, not fixing this marker -->
 <!-- path-ok: SKILL.md — the dev-agent's scheduled-task definition, which lives outside this repo at ~/.claude/scheduled-tasks/economics-app-dev-agent/SKILL.md and is not a repo file -->
 
 ## Process items tracking this scorecard itself

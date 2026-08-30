@@ -5,6 +5,7 @@
 // dangling `t.someKey` reference — without needing a browser.
 
 import { existsSync, readFileSync, readdirSync } from "node:fs";
+import { execFileSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import { dirname, join, relative } from "node:path";
 
@@ -2587,7 +2588,18 @@ if (keyedGroupsChecked < 4) {
   // every future `.toml` mention into this check for no reason anyone has yet.
   // The asymmetry is recorded here rather than papered over, so a later reader
   // does not read the missing marker as an oversight.
-  const EXPECTED_EXEMPTIONS = 13;
+  // 13 → 20 on 2026-08-30 (W-6.1, route (c)): no new *argument*, but the
+  // resolution rule changed under them. §26 now resolves against the git index
+  // rather than the filesystem, so the two `economic-cycles-v*.jsx` prototypes —
+  // gitignored by the 2026-08-16 owner decision, present on the owner's disk and
+  // in NO clone — stopped resolving and became exemptions like any other absent
+  // path. That is the correct classification and it was previously invisible:
+  // every document naming them was making a promise a cloner could not cash.
+  // Seven references across four documents (LAUNCH_READINESS 1, LAUNCH_PLAN 3,
+  // DECISIONS 1, README 2), covered by six markers, because LAUNCH_PLAN.md names
+  // v5 twice. The pre-existing `v5.jsx`/`v6.jsx` prose-shorthand markers are
+  // unrelated and unchanged — they exempt a different string.
+  const EXPECTED_EXEMPTIONS = 20;
 
   const walkAll = (dir, base = "") =>
     readdirSync(dir, { withFileTypes: true }).flatMap((e) => {
@@ -2595,7 +2607,54 @@ if (keyedGroupsChecked < 4) {
       const rel = base ? `${base}/${e.name}` : e.name;
       return e.isDirectory() ? walkAll(join(dir, e.name), rel) : [rel];
     });
-  const tree = walkAll(ROOT);
+
+  // ── ROUTE (c), 2026-08-30 (W-6.1). "Exists" means WHAT THE REPO SHIPS, not
+  //    what this particular disk happens to hold. ────────────────────────────
+  //
+  // This check walked the filesystem until now, which made its answer depend on
+  // who was running it. The owner's disk carries files git does not: the result
+  // was a suite that passed in the working tree and FAILED ON A FRESH CLONE
+  // (`§26: DECISIONS.md:669 names drafts/income-hierarchy.en.md, which does not
+  // exist`) — reproduced by the 2026-08-30 weekly review, and a launch-integrity
+  // defect, since anyone cloning this repo or adding CI got a red suite on
+  // checkout.
+  //
+  // The stopgap that review authorized (a `path-ok` marker) was tried on
+  // 2026-08-30 and CANNOT WORK, which is why the resolution rule moved instead:
+  // §26 fails a reference whose path is missing AND fails a marker whose path is
+  // present, so for a path that exists on one machine and not the other there is
+  // no marker state that satisfies both. Measured in both directions — see
+  // AGENT_LOG.md item 154. Resolving against git makes the two agree BY
+  // CONSTRUCTION rather than by anyone remembering to keep them in sync.
+  //
+  // THE INDEX, NOT `HEAD`, and the distinction is load-bearing: the index is the
+  // commit that is about to be made, so a run that adds a file and references it
+  // from a document in the SAME commit still passes — which is this repo's
+  // normal shape. `HEAD` would fail that and push runs toward two commits.
+  //
+  // The fallback matters as much as the primary. A `git archive HEAD | tar -x`
+  // copy — the control the Environment note prescribes — is NOT a git repo, so
+  // `git ls-files` fails there; the filesystem walk is correct in exactly that
+  // case, because such a copy contains precisely the tracked set. That is only
+  // true if nothing untracked is copied in afterwards, which is why the
+  // Environment note's recipe no longer copies `economic-cycles-v*.jsx`.
+  let tree;
+  let treeSource;
+  try {
+    // `-z` because paths here contain spaces and non-ASCII (`UIUX/`, and the
+    // repo's own parent directory): without it git QUOTES such paths and every
+    // comparison below silently misses.
+    tree = execFileSync("git", ["-C", ROOT, "ls-files", "-z"], {
+      encoding: "utf8",
+      stdio: ["ignore", "pipe", "ignore"],
+    })
+      .split("\0")
+      .filter(Boolean);
+    treeSource = "git index";
+  } catch {
+    tree = walkAll(ROOT);
+    treeSource = "filesystem (not a git repo)";
+  }
 
   const EXT = "js|jsx|mjs|json|md|sh";
   const REF = new RegExp("`([^`\\n]+?\\.(?:" + EXT + "))`", "g");
@@ -2746,7 +2805,8 @@ if (keyedGroupsChecked < 4) {
   }
   console.log(
     `  §26 doc paths: ${occurrences} references across ${DOCS.length} docs (${linkRefs} as Markdown ` +
-      `links), ${exemptionsUsed} exempted, ${commandLike} command lines skipped.`,
+      `links), ${exemptionsUsed} exempted, ${commandLike} command lines skipped; resolved against the ` +
+      `${treeSource} (${tree.length} files) — a fresh clone and this tree must agree.`,
   );
 }
 

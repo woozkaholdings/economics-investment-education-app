@@ -61,6 +61,8 @@ decisions the project actually made.
 | The Markets tab hardcodes "February 2026" and needs fixing (§2.3) | Already fixed — the tab is dateless and figure-free by design (§2.3) | Shipped 2026-08-02. §2.3 now states the standing rule instead of the defect. |
 | Build on Expo (React Native) from week 1 (§2.1, §8) | **Open owner decision.** The runnable app is Vite + React (web-only) today (§2.1) | See `DECISIONS.md`, "Expo vs. Vite". Real cost either way; not an agent's call to make unilaterally. |
 
+<!-- path-ok: economic-cycles-v5.jsx — the owner's local prototype original, GITIGNORED by the 2026-08-16 decision recorded in .gitignore ("ignored, not deleted") — it is on the owner's disk and in git history, and no clone of this repo has it, so this reference must never resolve; restoring the file to the repo would be undoing that decision, not fixing this marker -->
+<!-- path-ok: economic-cycles-v6.jsx — the second prototype original, gitignored by the same 2026-08-16 decision and for the same reason; v6 additionally carries the branding that blindspot 10.2 exists to keep out, and hardcoded dates that §2.3 does, so it is deliberately absent from every clone -->
 <!-- path-ok: v5.jsx — prose shorthand for economic-cycles-v5.jsx, gitignored on disk (see .gitignore); the table above is history and must keep naming it the way v1 did -->
 <!-- path-ok: v6.jsx — prose shorthand for economic-cycles-v6.jsx, gitignored on disk; same reason -->
 <!-- path-ok: lessons.json — a format this project DELIBERATELY REJECTED (see DECISIONS.md, "Content as .js modules, not JSON"). It must never resolve; making it resolve would be undoing the decision -->

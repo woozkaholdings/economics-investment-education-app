@@ -372,6 +372,7 @@ Add a new entry when a run makes a choice future work should be able to look up 
 
 ### `LessonReader` chunk split per track (real fix, supersedes the raised-threshold mitigation)
 
+<!-- path-ok: economic-cycles-v5.jsx — the owner's local prototype original, GITIGNORED by the 2026-08-16 decision recorded in .gitignore ("ignored, not deleted") — it is on the owner's disk and in git history, and no clone of this repo has it, so this reference must never resolve; restoring the file to the repo would be undoing that decision, not fixing this marker -->
 <!-- path-ok: lessonContent.economy.js — deleted by item 45's per-language split; this entry deliberately keeps naming it, and says so in its own text, because the decision recorded here is what the second split extends -->
 <!-- path-ok: lessonContent.money.js — same; superseded on file layout, preserved as history -->
 <!-- path-ok: LessonReader-*.js — a Vite build-output chunk name under dist/, which §26 excludes from the tree on purpose so this check cannot depend on whether a build was run -->
