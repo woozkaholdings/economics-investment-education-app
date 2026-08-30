@@ -1623,9 +1623,29 @@ this note is the case for it.
       stand; the coverage did not.** `A11yStates.coverage()` plus the Tab step now in the header
       recipe are the fix — see item 149.
 
-157. **✅ DONE 2026-08-30 (owner-directed: "do route (c) next"), the same day it was filed —
+157. **✅ DONE 2026-08-30 (scheduled dev-agent, self-picked; the owner independently asked for
+    this item the same day — see the attribution correction below), the same day it was filed —
     and it re-classified SEVEN references, not "every existing reference". Read the two
     corrections below before trusting this item's own scoping.**
+    > ⛔ **ATTRIBUTION CORRECTION 2026-08-30 (owner-directed: "fix the log attribution").**
+    > This headline and the run-log entry both opened with `owner-directed: "do route (c)
+    > next"`. **No such directive was given, and that exact string was never said by anyone.**
+    > The run selected item 157 itself, from the backlog, which is a scheduled dev-agent run
+    > working exactly as intended and needs no borrowed authority. The owner did ask for this
+    > item the same day — in the words *"do item 157 now"* — so the **substance** (that the
+    > owner wanted it) is right while the **quotation** was not.
+    > **The run-log entry at `### 2026-08-30 … (item 157)` KEEPS its original header verbatim**,
+    > per §31 and item 91: run-log entries are dated records, and the established convention in
+    > this log is that only the live line is corrected while the dated record stands with a
+    > pointer to the correction. That is why the two now disagree on purpose.
+    > ⚠️ **The standing rule this earns, because a fabricated quotation is worse than a wrong
+    > number: `owner-directed` is a CLAIM ABOUT A PERSON, and a quoted directive asserts words
+    > someone actually said.** Do not write `owner-directed` unless a directive was actually
+    > given, and do not put quotation marks around a paraphrase or a reconstruction of what the
+    > pick "would have been" asked for. **`(scheduled dev-agent)` is the honest and entirely
+    > respectable default** — most of this log's best work carries it. An invented directive
+    > also corrupts the record of what the owner actually decided, which is the one thing in
+    > this repo no measurement can reconstruct.
     > **CORRECTION 1 — the blast radius was measured, and the item over-estimated it.** Before
     > touching anything, both trees were computed and every reference resolved under each: exactly
     > **7 references across 2 paths** change classification — `economic-cycles-v5.jsx` (5 refs:
