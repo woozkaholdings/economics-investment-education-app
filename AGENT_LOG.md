@@ -1634,6 +1634,30 @@ for the history. No open P1/P2 items.
     backlog. The review REPRODUCED the fresh-clone failure (`npm test` exits 1 on a clean
     `git archive HEAD`), and route (b) is authorized there as a stopgap. The item's own
     "honest priority: low" below is superseded; its analysis is correct and is why.**
+    > **⛔ ROUTE (b) DOES NOT WORK — ATTEMPTED AND REVERTED 2026-08-30 (scheduled dev-agent), with
+    > both directions measured. Do not spend another run rediscovering this.**
+    > Route (b) was implemented exactly as W-6.1 and §26's own error message prescribe: a one-line
+    > `<!-- path-ok: drafts/income-hierarchy.en.md — ... -->` in `DECISIONS.md` plus
+    > `EXPECTED_EXEMPTIONS` 13 → 14. **It moves the failure, it does not remove it.**
+    > - **Fresh clone before:** exit **1**, `§26: DECISIONS.md:669 names drafts/income-hierarchy.en.md,
+    >   which does not exist`. (Reproduced first, so the fix had something to prove.)
+    > - **Working tree after the marker:** exit **1**, `§26: DECISIONS.md:669: path-ok:
+    >   drafts/income-hierarchy.en.md is stale — that path exists now. Delete the marker and lower
+    >   EXPECTED_EXEMPTIONS.`
+    > **The two states are mutually exclusive by construction.** §26 fails a reference whose path is
+    > missing AND fails a marker whose path is present, and this path is present in the owner's tree
+    > and absent from every clone. No value of the marker satisfies both. The tree was restored and
+    > `npm test` re-verified at exit 0.
+    > ⚠️ **One implementation trap, since it cost a cycle:** §26's `MARKER` regex is matched
+    > **per line** (`line.matchAll(MARKER)`), so a `path-ok` comment wrapped across several lines is
+    > silently never seen — it does not error, the exemption simply does not exist. Keep it on one line.
+    > **What is actually left, and both are decisions rather than edits:** (a) track
+    > `drafts/income-hierarchy.en.md` — still the better answer if `drafts/` is not scratch, and
+    > still the owner's call, since it is the owner's untracked file; or (c) **make §26 resolve
+    > references against git's tracked file list rather than the filesystem**, which is the only
+    > route that makes the working tree and a fresh clone agree by construction, and which would have
+    > prevented this whole class. (c) is a real change to the checker's semantics and needs its own
+    > run — it will re-classify other references, so it is not a one-liner.
     [Process/Docs — filed 2026-08-30 by the run that closed item 148, as an observation it hit
     rather than a defect it created.] The `HEAD` control copy the Environment note prescribes now
     needs `drafts/` copied in too, and without it the control fails for its own reasons.**
@@ -3867,8 +3891,21 @@ either:** new items **155** (the text-zoom sweep is session-only; a permanent pr
 zoom and headings were clipped mid-word") and **156** (the `PracticeCoachMark` was hardened by
 inspection, not reproduced — it needs a finished lesson to reach).
 
-**Next run should pick W-6.1** — `npm test` fails on a fresh clone. This run does its authorized
-route-(b) stopgap as a second, separate commit; see the next entry.
+**Then attempted W-6.1's authorized route-(b) stopgap, and it does not work — attempted, measured
+both ways, and reverted.** The one-line `path-ok` marker plus `EXPECTED_EXEMPTIONS` 13 → 14 makes the
+fresh clone pass and makes **the working tree fail**: §26 fails a reference whose path is missing and
+equally fails a marker whose path is present, and `drafts/income-hierarchy.en.md` is present in the
+owner's tree and absent from every clone. Measured in both directions — fresh clone before the fix
+exit 1 (`names ... which does not exist`), working tree after the fix exit 1 (`marker is stale — that
+path exists now`) — so no value of the marker satisfies both. Reverted; `npm test` re-verified at
+exit 0. The finding is written into item 154 so the next run does not re-derive it, together with the
+one-line-regex trap that cost a cycle (§26 matches `path-ok` per line, so a wrapped comment is
+silently never seen). **What is left are two decisions, not edits:** route (a), tracking the owner's
+file, which stays the owner's call; or a new route (c), making §26 resolve against git's tracked file
+list rather than the filesystem — the only option that makes the two states agree by construction.
+
+**Next run should pick W-6.1 on the corrected facts above** — most likely route (c), which needs its
+own run because it changes the checker's semantics and will re-classify other references.
 
 
 > **Entries before 2026-08-28 live in [`AGENT_LOG.archive.md`](AGENT_LOG.archive.md)** — moved
