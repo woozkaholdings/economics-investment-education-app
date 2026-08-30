@@ -2800,6 +2800,22 @@ this note is the case for it.
     > is not the same as "no undefined jargon" — the instrument reports, it does not certify. Its
     > threshold (≥2 lessons or ≥3 uses) suppressed 422 lower-reach candidates that were never
     > individually read; APR is proof that the suppressed tail can hold a real one.
+    > **THE INSTRUMENT FIRED AGAIN 2026-08-30 (scheduled dev-agent), on content that did not exist
+    > when it was built — which is the case for keeping it.** Money lessons 41-44 shipped after
+    > 2026-08-25 and brought a vocabulary the glossary had no entry for: `npm run jargon` ranked
+    > **Labor income the highest-reach unglossed term in the money corpus (3 lessons, 11 uses)**,
+    > with Business income (2/4), Investment income (2/3) and passive income (2/3) behind it. All
+    > four are now glossary entries, chipped on 43 and 44 and excluded `defined-here` on 42.
+    > **The transferable half is what "0 unexplained" was worth here.** §17b reported **0
+    > unexplained** on the morning of this run and was *correct*, because it sweeps glossary keys
+    > and these four were not keys. Its own header says so; nothing else does. **A green coverage
+    > number is a statement about the vocabulary you already admitted, and new content arrives
+    > outside it.** The next run to add lessons should run `npm run jargon` on the track it touched.
+    > **Residual, filed as a note under this item rather than as a numbered one (W-6.2 rule 2):
+    > `FOMO` (2 lessons, 4 uses — money 20 and 28) is the last candidate on the list that is real
+    > jargon rather than a section heading or a cross-reference.** It was not taken this run because
+    > it was not measured — nobody has read whether lesson 20 defines it at first use, and item 60's
+    > own rule is to read the first use before adding a key. Zero live learner instances (O-1).
 
 64. **✅ BOTH CLOSED — struck from the W-5.2 pick list 2026-08-24 after seven days of being
     recommended when nothing was open. `Dividend` shipped 2026-08-20; the other two keys landed
@@ -3931,6 +3947,119 @@ zero meaningful: `selftest PASS (8/8 controls fired, plantsRemoved true)` and, p
 finding(s); V vacuous; U unavailable`. A bare "no accessibility issues found" is not a result.
 
 ## Run log
+
+### 2026-08-30 (scheduled dev-agent) — the four income types had no glossary entry, "0 unexplained" was correct and blind, and the sweep written to prove it read every lesson as empty
+
+**Picked from `LAUNCH_PLAN.md` §3.0.3, not from the backlog chain.** The previous entry closed with
+"pick from the launch plan or the owner-facing items — not from this entry", and W-6.2 rule 1 says the
+same. §3.0.3 ("no undefined jargon: a term either gets defined where it appears or links to the
+glossary") is a *primary success criterion* in §3.0, and `npm run jargon` is the instrument item 60
+built for the half `check-data.mjs` §17b cannot see. It had not been run against money lessons 41-44,
+which shipped after 2026-08-25.
+
+**Step 3.5 — the premise held, and the instrument written to test it did not.**
+- **The gap is real and is the highest-reach one the instrument can name.** `npm run jargon` before
+  the change: **Labor income, 3 lessons, 11 uses (42, 43, 44)** — top of the list — then Business
+  income (2/4), Investment income (2/3), passive income (2/3). None of the four was a glossary key.
+  Read against the prose rather than the ranking: **lesson 42 §0 defines all four inline** in one
+  paragraph, so §3.0.3's FIRST branch already held there; **43 and 44 then use them as settled
+  vocabulary and re-define none of them**, and had nowhere to point.
+- **⛔ THE SWEEP I WROTE TO CONFIRM THIS RETURNED ZERO HITS ACROSS ALL 44 LESSONS, AND THAT WAS THE
+  INSTRUMENT, NOT THE CONTENT.** It read `section.body.en`. The per-language content modules have held
+  **plain strings since the item-45 split** — `.en` is `undefined` there, and `?? ""` turned every
+  lesson into an empty haystack. **Caught only because the control was in the same query**: I swept
+  `emergency fund`, a term I knew was in four lessons, and it came back zero too. Without that term in
+  the list the run would have concluded "the four income terms appear nowhere" and closed the item as
+  a false premise. Re-run against the real strings, the control found all 8 known `emergency fund`
+  uses in their known lessons, and the four income terms in **42, 43 and 44 only** — no essentials or
+  economy use anywhere, which is what made the change small.
+- **"0 unexplained" was true that morning and proved nothing about this.** §17b sweeps the keys in
+  `glossary.js`; four terms that are not keys are invisible to it. Its own header says so. Recorded in
+  item 60 because a green coverage number reads like a certificate and is not one.
+
+**Shipped.** Four glossary entries — `Labor Income`, `Business Income`, `Investment Income`,
+`Passive Income` — in all five languages (`s`/`f`/`ex`), plus chips and exclusions placed by
+`lessonTerms.js`'s own rules:
+- **42: all four `defined-here`.** Rule 2 — the lesson IS the definition, so a chip would point a
+  reader three lines below the sentence they are reading.
+- **43 §0: Labor, Business, Investment Income. 44 §0: Passive Income, Labor Income.** **Rule 4 decides
+  this, not the arc's shape, and the asymmetry is the part worth keeping:** 43's English never says
+  "passive income" (it says "rent and royalties are loosely coupled") and 44's never says "business
+  income" or "investment income". Chipping by theme would have put two dead chips on 44, which §17
+  fails on by design.
+- `LAUNCH_PLAN.md` §1's asset sentence moved **38 → 42 glossary terms**. Not hand-edited: the suite
+  failed on it, `npm run readiness -- --write` wrote it (item 55's generated figures).
+
+**§10.1 got the most attention of anything here, because these four entries are the most exposed
+copy in the file.** The popular literature on this exact vocabulary is prescriptive end to end
+("build passive income", "escape the rat race"). Each definition states what the income IS and how it
+behaves *including how it fails* — a dividend can be cut, a tenant can leave while the mortgage does
+not, a wage has legal minimums the other three do not — and none says which to pursue. That is also
+lesson 44's own stated position, so the glossary and the lesson agree rather than merely coexisting.
+
+**Controls — four.**
+
+| control | expected | got |
+| --- | --- | --- |
+| A: the term sweep can see a term I know is there (`emergency fund`) | 8 uses | **0 — INSTRUMENT BROKEN**, then 8/8 after the fix |
+| B (plant): the 4 keys added with **no** chips and **no** exclusions | §17b must fail | **9 unexplained: 42×4, 43×3, 44×2** — matches A's sweep lesson-for-lesson |
+| C: after chips + exclusions | 0 unexplained | **0**; uses 127 → **136** (+9, exactly B's set) |
+| D: the four move CANDIDATES → CONTROL in the jargon report | pass | 11 candidates/6 control → **7 candidates/10 control** |
+
+**B is the one that matters.** It is the same nine occurrences three independent instruments agree
+on — my own sweep, §17b's matcher, and the jargon extractor — and it proves §17b was blind rather
+than satisfied, which is a claim about the check that a green run could never have made.
+
+**⚠️ What I could NOT verify this run, stated rather than skipped.** The chips are new learner-visible
+UI and I could not render them: **a dev server cannot be started in an unattended scheduled run**, so
+`scripts/a11y-sweep.js` and the 320px width sweep were both unavailable. What I did instead is a
+bounded argument, not a substitute: chips are `flexWrap: "wrap"`, so the binding constraint is the
+**widest single chip**, and every new label is narrower than labels already shipping and already swept
+clean — en **17** units against `Individual Retirement Account (IRA)`'s 35, es **23** against 37, ko
+**11** against 18, zh **8** against 19, ja **8** against 24 (CJK counted double). **That bounds the
+risk; it does not observe the render.** The next run with a browser should look at lesson 43 §0 in
+`es`, the widest new row.
+
+**Verified.** `npm test` **PASS, 0 failures** across all eight scripts (3 pre-existing WARNs: the log
+floor, and the two standing translation warnings — none touched by this run). `npm run build` ✓ in
+923ms. Measured lines, pasted not retyped:
+`  §17b §3.0.3 coverage: 136 glossary-term uses across 44 lessons — 95 chips on 30 lessons, 41 deliberately unlinked (31 defined-here, 10 other-sense), 0 unexplained.`
+`MEASURED jargon money: 7 candidates, 10 control, 0 self-defining, 133 low-reach  [fingerprint c909cf1c]`
+
+**Adversarial self-check (step 5).** **Blindspot register: no regression.** §10.2 — `grep -ci dalio`
+over the diff: **0**. §10.1 — `npm run check-blindspot` PASS, and the judgment half is argued above
+rather than delegated to it. §10.3 — no kids content touched. Stale-data rule — no date and no market
+figure enters user-facing copy; the two `2026-08-30` strings in the diff are provenance comments in
+source, the same shape as every other dated comment in these two files. **DECISIONS.md: no conflict**
+— `.js` content module, no new state, no storage; adding glossary keys is item 35's established
+precedent, not a new architecture. **Not a redo:** item 35 glossed the personal-finance lessons as
+they stood on 2026-08-16/21; lessons 41-44 did not exist then, so their vocabulary was never in its
+scope. **On W-6.2:** this is not my previous run's residual — that run was the archiving pass and it
+explicitly declined to queue anything. **On W-6.2 rule 3 and W-6.3: I added no check at all.**
+`scripts/` is untouched, so the 15,480 : 6,589 instrument-to-app ratio moves the right way for once;
+the existing §17b already guards the new data in both directions. **On O-3:** this adds **16
+unreviewed machine-translated definitions** (4 terms × 4 languages). Glossary entries sit outside the
+translation-review ledger — `glossary.js`'s header records that — so they will not appear in the
+`review-status` figures, which is exactly the kind of quiet growth O-3 asks the owner to price.
+**On my own verification claim:** a reviewer re-running `npm test`, `npm run build` and `npm run
+jargon` gets these numbers; control B is reproducible by deleting `deliberatelyUnlinked[42]` and the
+five new chips and re-running `check-data.mjs`.
+
+**Known limit, not fixed here.** §17b sweeps sections only, never `takeaway`/`thinkAbout` (item 64's
+residual). Lesson 43's takeaway names all three of its terms and 44's `thinkAbout` says "passive
+income"; both lessons already carry the chip in a section, so no learner is worse off — but the
+coverage number does not include those four uses and should not be read as if it did.
+
+**Owner tree at end of run:** `OWNER-TREE 7cd330b52e2b8e421825a80436d49bdc1a9f66735b3031a5dc3dac8dc0fbc623`
+(3 tracked modified — this run's own files, before the log entry — 51 untracked, the owner's `UIUX/`
+reference folder, untouched).
+
+**Next run: pick from the launch plan or the owner-facing items, not from this entry.** The one thing
+I would otherwise queue — `FOMO`, the last real jargon candidate — is filed as a note under item 60
+precisely so it is not the default next pick. **O-1 remains the entire critical path: 44 lessons, five
+languages, 160 minutes of content, and zero people have ever opened this app.** **O-3 is now slightly
+larger than when it was written** — see the self-check above. **W-6.5 still stands: `market.json` is
+`asOf 2026-08-28` and the Sector screen starts suppressing figures around 2026-09-02.**
 
 ### 2026-08-30 (scheduled dev-agent) — the pick the last run prescribed was justified by a threshold that does not exist, and the file was 2,588 b from a ceiling nothing enforces (W-5.3 archiving pass)
 

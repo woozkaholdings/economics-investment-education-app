@@ -113,9 +113,20 @@ export const lessonTerms = {
   28: { 0: ["Stock"] },
   // 42/43/44 (the four-ways-money-arrives arc) each mention Ben's dividend;
   // chipped at its first mention in each lesson.
+  //
+  // The four income terms (added to glossary.js 2026-08-30) follow rule 2 and
+  // rule 4 together, and the two rules land them in different places. Lesson 42
+  // §0 defines all four in its own prose, so all four are excluded there rather
+  // than chipped — that lesson IS the definition. 43 and 44 then use them as
+  // settled vocabulary and define none of them, so each is chipped at its first
+  // use in that lesson. Which terms appear where is not symmetric and rule 4
+  // decides it, not the arc's shape: 43's English never says "passive income"
+  // (it says "rent and royalties are loosely coupled"), and 44's never says
+  // "business income" or "investment income". Chipping by theme rather than by
+  // literal presence would have put two dead chips on 44, which §17 fails on.
   42: { 0: ["Dividend"] },
-  43: { 0: ["Dividend"], 1: ["Emergency Fund"] },
-  44: { 0: ["Dividend"] },
+  43: { 0: ["Dividend", "Labor Income", "Business Income", "Investment Income"], 1: ["Emergency Fund"] },
+  44: { 0: ["Dividend", "Passive Income", "Labor Income"] },
 
   // ── Economy track ────────────────────────────────────────────────────────
   // 29 introduces credit a full lesson before 30 teaches it.
@@ -228,6 +239,17 @@ export const deliberatelyUnlinked = {
   15: { Credit: "other-sense: credit reports and scores, not the macro aggregate" },
   17: { Inflation: "other-sense: lifestyle inflation, not the macroeconomic kind" },
   41: { Credit: "other-sense: credit reporting rules, not credit as a macro aggregate" },
+  42: {
+    // Rule 2, four times over. Lesson 42 §0 is one paragraph that defines all
+    // four in a row ("Labor income is money paid for your time and skill … "),
+    // which is the lesson's entire subject — the chips would point a reader at
+    // a definition three lines below the one they are already reading. The
+    // chips are on 43 and 44, which reuse the vocabulary without restating it.
+    "Labor Income": "defined-here",
+    "Business Income": "defined-here",
+    "Investment Income": "defined-here",
+    "Passive Income": "defined-here",
+  },
 
   // ── Economy track ────────────────────────────────────────────────────────
   30: { Credit: "defined-here" },
