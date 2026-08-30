@@ -291,17 +291,32 @@ const readmePath = join(ROOT, "README.md");
 {
   const enLocale = join(ROOT, "src", "locales", "en.js");
   const text = readFileSync(enLocale, "utf8");
-  const titleMatch = text.match(/kidsTitle:\s*"([^"]*)"/);
-  const introMatch = text.match(/kidsParentIntro:\s*"([^"]*)"/);
-  if (!introMatch || introMatch[1].trim().length === 0) {
-    fail("§10.3 kidsParentIntro missing or empty in src/locales/en.js — parent-facing framing signal is gone");
-  } else {
-    ok("§10.3 kidsParentIntro present in src/locales/en.js");
-  }
-  if (titleMatch && /^economics for kids$/i.test(titleMatch[1].trim())) {
-    fail(`§10.3 kidsTitle reverted to the old child-facing string: "${titleMatch[1]}"`);
-  } else {
-    ok("§10.3 kidsTitle is not the old child-facing string");
+  // RE-POINTED 2026-08-30, and the reason is worth keeping. This block used to
+  // read `kidsTitle` and fail only if it had reverted to the literal string
+  // "Economics for Kids". NOTHING HAS RENDERED `kidsTitle` since the
+  // 2026-08-04 rebuild replaced the "More" tab with Reference's sub-nav, and
+  // two failures followed:
+  //   (1) it guarded a string no learner could see, so a genuinely
+  //       child-facing rewrite of the VISIBLE copy would have passed; and
+  //   (2) with the key absent its match was null and the `else` branch printed
+  //       `ok` — the check reported the property SAFE in exactly the state
+  //       where it had stopped measuring anything. `kidsTitle` was deleted as
+  //       dead the same day, which is what surfaced this.
+  // What §10.3 actually needs is that the copy on the kids surface addresses
+  // an ADULT. These two strings are the ones that do that and both render:
+  // `kidsParentIntro` heads ParentGuide.jsx, `refParentsBlurb` is the hub
+  // card's subtitle. Absence now FAILS rather than passing. (`kidsTabLabel`
+  // is deliberately not read: "Kids" names the topic, not the audience.)
+  const ADULT_AUDIENCE = /parent|grown-?up|adult|caregiver/i;
+  for (const key of ["kidsParentIntro", "refParentsBlurb"]) {
+    const m = text.match(new RegExp(key + ':\\s*"([^"]*)"'));
+    if (!m || m[1].trim().length === 0) {
+      fail(`§10.3 ${key} is missing or empty in src/locales/en.js — it is one of the two strings that make the kids surface parent-facing, so losing it blinds this guard rather than clearing it.`);
+    } else if (!ADULT_AUDIENCE.test(m[1])) {
+      fail(`§10.3 ${key} no longer names an adult audience: "${m[1]}". §10.3 ships parent-facing until the owner decides otherwise — this is a legal/store-classification line, not a copy preference.`);
+    } else {
+      ok(`§10.3 ${key} addresses an adult: "${m[1]}"`);
+    }
   }
 }
 

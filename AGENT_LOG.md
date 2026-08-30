@@ -2494,6 +2494,14 @@ this note is the case for it.
     > horizon or amount to plot. **The rule held in all three, and it is still first in line for any
     > candidate: does the prose state every quantity the shape needs, or only the ones that make it
     > sound plausible?**
+    > **FIVE MORE CANDIDATES MEASURED AND REJECTED 2026-08-30** (scheduled dev-agent, while pricing
+    > this item — coverage re-parsed with the usual control: economy 5/12, essentials 3/15, money
+    > 5/17, 0 orphan ids, agreeing with this item). All five fail the quantity rule: **19** states
+    > Priya's \$120 and nothing on the other side of the comparison; **20** has no number but
+    > "tripled"; **24** states none at all; **26** gives \$200 and \$1,000 but its claim is that the
+    > two are *identical*, a sentence rather than a shape; **42** states four x \$1,000 and then
+    > spends its second half insisting the categories "aren't a ladder" — a figure would harden what
+    > the lesson deliberately loosens. **Do not re-derive these five.**
     > **THE BAR FOR A NINTH IS UNCHANGED AND STILL BINDS**, and there is again **no named
     > candidate** —
     > deliberately, because a named candidate is how this item became count-shaped twice before. A run
@@ -3353,6 +3361,127 @@ zero meaningful: `selftest PASS (8/8 controls fired, plantsRemoved true)` and, p
 finding(s); V vacuous; U unavailable`. A bare "no accessibility issues found" is not a result.
 
 ## Run log
+
+### 2026-08-30 (scheduled dev-agent, self-picked from LAUNCH_PLAN §3.1/§3.5 rather than from a residual) — 18 locale keys were shipping in five languages that nothing renders, and three guards were quietly anchored to them
+
+**Pick, and why it is not a residual (W-6.2 rule 1).** The previous run took its own previous run's
+residual — first consecutive, allowed. Rather than take a second, I re-derived from the plan. I
+priced **item 27** (a ninth lesson visual) first because it is the most learner-visible open item
+and lives in `src/`, which is the side of W-6.3's 15,480 : 6,589 ratio that needs feeding. **I did
+not pick it, and the measurement is worth recording**: I re-parsed `LESSON_VISUALS` against
+`lessons.js` with the item's own parser control (must find 32 and 44, must not find 99) —
+**economy 5/12, essentials 3/15, money 5/17, 0 orphan ids**, which agrees with the item's own latest
+note, so no premise correction there. Then I read the prose of the five money lessons the item has
+never assessed. **None clears its bar**, all on the item's own first-in-line rule (*does the prose
+state every quantity the shape needs?*): **19** states Priya's \$120 but nothing on the other side
+of the comparison it wants drawn; **20** has no number but "tripled"; **24** has none at all;
+**26** gives \$200 and \$1,000 but the claim is that the two dollars are *identical*, which is a
+sentence, not a shape; **42** states four × \$1,000 and then spends its second half telling the
+reader the four categories "aren't a ladder" — a figure would harden exactly what the lesson
+loosens. **That is five more rejected candidates on the record and no ninth visual is due.**
+
+**What I picked instead, found by a live pass over the first-five-minutes path (§3.2).** Walking
+the built app I noticed the nav renders **"Review"** while `src/locales/en.js` carries an unread
+`tabPractice: "Practice"`. That one dead key turned out to be a class.
+
+**Step 3.5 — measured, and the first instrument was WRONG, caught by its own control.** A sweep of
+all 167 `en` keys against every `.js`/`.jsx` outside `src/locales` reported **151 of 167 dead** and
+flagged `reviewTitle`, which I know is rendered as the middle tab's label. **Control A failed, so
+the negative result meant nothing** — the regexes had been mangled by shell escaping. Rewritten as
+a file, with three controls: **A** `reviewTitle` must come back used (it did), **C** a fabricated
+key must come back dead (it did), and **B** the literal-string form must match a non-zero number of
+keys, because `Learn.jsx` and `Practice.jsx` reach locale keys **dynamically** through
+`t[tr.labelKey]` / `t[tr.blurbKey]` / `t[at.labelKey]` and a `t.<key>`-only sweep would call all of
+those dead. **16 keys are reachable only through that path.** Corrected count: **18 of 167 dead
+(11%), carried in all five languages — 90 strings.**
+
+**And a blind delete of those 18 would have broken two guards and left a third citing a ghost.**
+This is the part worth keeping:
+- **`kidsTitle`** is read by `check-blindspot.mjs` **§10.3** — the kids/COPPA blindspot guard.
+- **`heroInsight`** is `check-data.mjs` **§56 CONTROL A**'s corpus anchor, in all five languages.
+- **`lessonProgressTemplate`** is named in **§1b**'s comment and in one of its control messages as
+  the example of a legitimate per-language placeholder reordering.
+
+**The §10.3 finding is the real one, and it is a blindspot-register guard that had gone vacuous.**
+Nothing has rendered `kidsTitle` since the 2026-08-04 rebuild replaced the "More" tab with
+Reference's sub-nav. So (1) it watched a string no learner could see, and (2) when the key is
+absent its match is `null` and the `else` branch printed **`ok`** — it reported the property SAFE in
+exactly the state where it had stopped measuring. **Refuted by running the old script, not by
+reading it:** with `kidsParentIntro` rewritten to *"Hey! Pick your age and learn about money with
+us."* — child-facing copy on the child/COPPA surface — `HEAD`'s `check-blindspot.mjs` printed
+`ok: §10.3 kidsParentIntro present` and `ok: §10.3 kidsTitle is not the old child-facing string`,
+**`PASS: 0 failure(s)`**.
+
+**Shipped.**
+1. **18 dead keys removed from all five locale files** (90 strings). Main bundle **254.63 → 251.23
+   kB** raw, **91.72 → 90.40 kB gzip**. Nine are pre-rebuild relics of the four-tab prototype §3.1
+   explicitly rejected (`tabHome`/`tabMarkets`/`tabMore`, `featuredInsight`, `heroInsight`,
+   `lessonsCompleted`, `totalLessons`, `quizTitle`/`quizTabLabel`).
+2. **§10.3 re-pointed at the two strings that actually render** — `kidsParentIntro` (ParentGuide's
+   header) and `refParentsBlurb` (the hub card, "For grown-ups teaching kids") — asserting each
+   **names an adult audience**, and **failing on absence** instead of passing. `kidsTabLabel` is
+   deliberately not read: "Kids" names the topic, not the audience.
+3. **§56 CONTROL A re-anchored to `disclaimer`**, and its failure message corrected. It used to say
+   the corpus was *"not reading rendered copy"* while keying on a string the app never renders —
+   the same defect the previous run fixed in `jargon-candidates.mjs`: **a control's message is a
+   claim about what it proves, and this one proved only that the walk reached the locale file.**
+   `disclaimer` cannot quietly stop rendering: §10.1 requires it on four surfaces and
+   `check-blindspot.mjs` fails the build over it.
+4. **§1b's two `lessonProgressTemplate` references re-pointed** at `reviewScoreTemplate` and
+   `rankTemplate`, the two live keys that genuinely reorder their tokens in ko/zh/ja (re-derived,
+   not assumed). Templated keys **15 → 14**; §1b's `< 10` control still holds.
+
+**Controls — six, three of them sabotage, and one caught my own error.**
+
+| control | expected | got |
+| --- | --- | --- |
+| A: known-used key (`reviewTitle`) reads as used | used | **FAILED first time** — instrument rewritten as a file |
+| B: dynamic `t[...]` keys visible via literal form | > 0 | 16 keys |
+| C: fabricated key reads as dead | dead | dead |
+| D (sabotage): delete `refParentsBlurb` | §10.3 fails | **FAIL on absence** — the old guard's exact blind spot |
+| E (sabotage): child-facing `kidsParentIntro` | §10.3 fails | **FAIL**; `HEAD`'s guard **passed** the same plant |
+| F (sabotage): corrupt `zh` `disclaimer` only | §56 CONTROL A fails | **FAIL, `zh` only** |
+
+**Live verification, on the rebuilt bundle (`index-BICU1PWS.js`, confirmed served — not the cached
+`index-BJt1cSJd.js`).** Static server over `dist/`, storage cleared. Learn, Practice, the lesson
+reader (29, 41), the Reference hub and its Glossary / Market Dashboard / Kids / About sub-screens,
+plus lesson 41 in **Korean**: **zero** `undefined`, `[object …]`, `NaN` or unsubstituted `{token}`
+anywhere. Probe control: a planted `<div>undefined</div>` was detected and its removal restored a
+clean read. **A second instrument error, caught the same way:** my first Korean run wrote
+`JSON.stringify("ko")` to `ecycles_lang`, which `readRaw` (not `readJSON`) hands to the app as
+`"ko"` **with quotes** — it fell back to English and I nearly read that as a language bug. Written
+raw, `ko` renders throughout.
+
+**Verified.** `npm test` **PASS, 0 failures** (3 pre-existing WARNs: the log floor and the two
+standing translation warnings). `npm run build` ✓ 908ms. **Fresh-tree control** (W-6.1's recipe,
+`git archive` of `git stash create` so it carries *this run's* changes — verified by grepping
+`ADULT_AUDIENCE` present and `kidsTitle:` absent in the copy): **exit 0**.
+
+**Adversarial self-check (step 5).** **Blindspot register: I touched §10.3 and the check is
+strictly stronger, not weaker** — it now fails on two conditions the old one passed (absence, and
+a child-facing rewrite of rendered copy), and no framing changed in the app itself. `grep -ci dalio`
+over the diff: **0**. §10.1: the `disclaimer` string is unmodified in all five languages and now has
+one more thing depending on it. No date or market figure enters user-facing copy. **DECISIONS.md: no
+conflict** — nothing architectural moves; `.js` content modules, localStorage-only state and Vite all
+untouched. **Not a redo:** no item in "Completed and pruned" covers dead locale keys; item 75 is the
+nearest relative and is the *opposite* disposition — there the dead `color` field was kept
+deliberately and the fix was a false comment. **On W-6.2 rule 3, stated because a silent skip looks
+like forgetting: I built NO new check.** A dead locale key renders nothing, so the learner-visible
+failure that rule demands **cannot be written**, and by the rule the check is not due. **On W-6.3:**
+`scripts/` grows by ~30 net comment lines while `src/` **shrinks by 90 strings** and the shipped
+bundle by 1.3 kB gzip — the right side of the ratio for once. **On my own verification claim:** a
+reviewer re-running D, E and F reproduces all three; E's refutation needs
+`git show HEAD:scripts/check-blindspot.mjs` and the plant, and prints `PASS: 0 failure(s)`.
+
+**Owner tree at end of run:** `OWNER-TREE 1ebb68e4047a9e683f26bf22dff469c82aa7ad2e40d14c6148e1a809894dabd9`
+(7 tracked modified — all this run's own — and **51 untracked**, the same count the previous run
+observed for the owner's `UIUX/`, untouched).
+
+**Filed as a note, not a numbered item (W-6.2 rule 2): dead locale keys can regrow and nothing
+stops them.** Zero live instances after this run, honest priority low, no learner-visible failure —
+so it is a note here rather than an item competing for capacity. The instrument is
+`scratchpad/deadkeys.mjs`-shaped and is nine lines; the reason it is not in `scripts/` is W-6.2
+rule 3, and if a future run finds a second crop, that is the evidence that changes the answer.
 
 ### 2026-08-30 (owner-directed: "do FOMO next") — FOMO is defined in the clause that introduces it; the report line that said otherwise was asserting about the content what it had measured about the bucket
 

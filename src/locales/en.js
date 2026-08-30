@@ -2,8 +2,11 @@ export default {
     appTitle: "Economic Cycles", appSub: "Master the Economy",
     langLabel: "Language",
     skipToNav: "Skip to navigation",
-    // Bottom tabs
-    tabHome: "Home", tabLearn: "Learn", tabMarkets: "Markets", tabMore: "More",
+    // Bottom tabs. Only this one lives here; the other two labels are
+    // `tabReference` and `reviewTitle` (App.jsx renders the middle tab from
+    // `reviewTitle`, not from a `tabPractice` — that key existed, was never
+    // read, and was deleted 2026-08-30).
+    tabLearn: "Learn",
     // Home
     welcomeTitle: "Welcome to Economic Cycles",
     welcomeSub: "Learn how the economy really works — step by step",
@@ -20,9 +23,6 @@ export default {
     trackEconomy: "How the Economy Works",
     trackEconomyBlurb: "The main path: what actually drives booms, busts, and interest rates.",
     continueLesson: "Continue Learning", startLesson: "Start Learning",
-    lessonsCompleted: "Lessons Completed", totalLessons: "Total Lessons",
-    featuredInsight: "Featured Insight",
-    heroInsight: "Think of the economy as a machine built from a few simple parts: transactions. Millions of them, repeating every day, add up to booms, busts, and everything in between.",
     disclaimer: "Educational content only — not personalized investment, legal, or tax advice. Markets carry risk; past patterns don't guarantee future results.",
     // Learn
     lessonLabel: "Lesson", ofLabel: "of", completeLabel: "Complete!",
@@ -45,17 +45,16 @@ export default {
     // Markets
     marketsTitle: "Market Dashboard", currentState: "Illustrative Scenario",
     illustrationNote: "Example figures, for teaching — not a projection of your own results",
-    scenarioNote: "For teaching purposes — not live market data", rateTitle: "Interest Rates",
+    scenarioNote: "For teaching purposes — not live market data",
     rateHow: "How Rate Changes Affect Assets",
     ratesRising: "Rates ↑", ratesFalling: "Rates ↓",
     yieldCurveLabel: "Yield Curve Shapes",
     curveNormal: "Normal (Healthy)", curveFlat: "Flat (Warning)",
     curveInverted: "Inverted (Danger)", curveSteep: "Steep (Recovery)",
     // More
-    quizTitle: "Test Your Knowledge", quizStart: "Start Quiz", quizNext: "Next",
+    quizStart: "Start Quiz", quizNext: "Next",
     quizFinish: "See Results", quizCorrect: "Correct!", quizWrong: "Not quite.",
-    quizScore: "Your Score", quizTryAgain: "Try Again", quizExplain: "Explanation",
-    kidsTitle: "Teach Your Kids About Money", kidsAges58: "Ages 5-8", kidsAges912: "Ages 9-12",
+    kidsAges58: "Ages 5-8", kidsAges912: "Ages 9-12",
     kidsAges1317: "Ages 13-17", kidsParentTip: "Parent Tip", kidsActivity: "Try This Activity",
     kidsParentIntro: "A parent's guide — pick your child's age band, then read and share these explanations together.",
     kidsAgeGroupLabel: "Select age group", kidsWhyLabel: "Why it matters",
@@ -65,7 +64,7 @@ export default {
     qeLabel: "Quantitative Easing (QE)", qtLabel: "Quantitative Tightening (QT)",
     moneySupply: "Money Supply (M0, M1, M2)",
     ratePrinciples: "Key Principles",
-    kidsTabLabel: "Kids", quizTabLabel: "Quiz", questionsLabel: "questions",
+    kidsTabLabel: "Kids",
     viewAllLessonsTemplate: "View all {n} lessons →",
     estMinTemplate: "≈{n} min", progressLabel: "Progress",
     streakTemplate: "{n} day streak",
@@ -76,11 +75,10 @@ export default {
     continueTomorrowConfirmed: "Got it — see you tomorrow!",
     qeNarrative: "Fed BUYS bonds → money in → yields ↓ → stocks ↑↑ → USD ↓",
     qtNarrative: "Fed STOPS buying → money out → yields ↑ → stocks ↓ → USD ↑",
-    aboutTabLabel: "About", aboutTitle: "About This App",
+    aboutTabLabel: "About",
     fontSizeLabel: "Text Size",
     aboutBody: "Economic Cycles teaches how economic cycles, interest rates, and market phases work, using historical patterns and principles popularized by economists and investors. It is an educational tool only — it doesn't collect accounts or personal data, and nothing in it is personalized investment, legal, or tax advice.",
     firstLaunchTitle: "Welcome to Economic Cycles", firstLaunchOk: "Got it, let's start",
-    tabPractice: "Practice",
     tabReference: "Reference",
     backLabel: "Back",
     bookmarkAdd: "Save term", bookmarkRemove: "Remove from saved", bookmarkedLabel: "Saved",
@@ -98,7 +96,6 @@ export default {
     themeSystem: "System",
     themeLight: "Light",
     themeDark: "Dark",
-    lessonProgressTemplate: "{done} of {total} lessons",
     hookTitle: "Before you read",
     hookIntro: "Take a guess first. Getting it wrong now actually helps it stick — the lesson below has the answer.",
     hookYourGuess: "your guess",

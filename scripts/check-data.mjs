@@ -154,8 +154,11 @@ function checkNonEmptyString(value, path) {
 //     trade.)
 //
 //     The comparison is deliberately the SET of tokens, not their order or
-//     count: `lessonProgressTemplate` legitimately reorders {done}/{total} per
-//     language, and a language may repeat a token.
+//     count: `reviewScoreTemplate` and `rankTemplate` legitimately reorder
+//     their two tokens in ko/zh/ja, and a language may repeat a token.
+//     (This named `lessonProgressTemplate` until 2026-08-30, when that key was
+//     deleted as dead — an example in a comment goes stale exactly the way a
+//     figure does, and the two above are re-derivable from the locale files.)
 {
   if (checkLangSet(TR, "TR")) {
     const tokens = (v) => [...new Set(String(v).match(/\{[a-zA-Z]+\}/g) ?? [])].sort().join(",");
@@ -188,7 +191,7 @@ function checkNonEmptyString(value, path) {
       fail("§1b CONTROL: the placeholder comparison cannot tell a template from the same string with its token removed, so every result above is meaningless.");
     }
     if (t("{done} of {total}") !== t("{total}: {done}")) {
-      fail("§1b CONTROL: the placeholder comparison is order-sensitive, which would fail lessonProgressTemplate's legitimate per-language reordering.");
+      fail("§1b CONTROL: the placeholder comparison is order-sensitive, which would fail reviewScoreTemplate's and rankTemplate's legitimate per-language reordering.");
     }
     if (templated < 10) {
       fail(`§1b CONTROL: only ${templated} keys were seen to carry placeholders; 14 did when this check was written, so a number this low means the walk or the pattern is broken and the clean result above says nothing.`);
@@ -7603,7 +7606,9 @@ if (keyedGroupsChecked < 4) {
 //   not: it is the main FALSE-POSITIVE source. Several lesson-title heads are
 //   ordinary common nouns, so `locales.ja.heroInsight` — 「取引」, quoting the
 //   concept the way the English says a plain "transactions" — would have been
-//   flagged as a mis-bracketed title reference. Lesson 44's own title
+//   flagged as a mis-bracketed title reference. (That key was deleted as dead
+//   on 2026-08-30; the specimen is kept because it is the clearest example of
+//   the false-positive class, and the class does not depend on the key.) Lesson 44's own title
 //   (`The Part the Word “Passive” Leaves Out`) would have been flagged too,
 //   for containing quotes inside a title. Both are correct prose.
 //
@@ -7704,19 +7709,29 @@ if (keyedGroupsChecked < 4) {
   //
   //    (A) THE CORPORA ARE REAL, in every language, with a known sentence per
   //        language so a collapsed walk cannot look clean.
+  //
+  //    ⛔ RE-ANCHORED 2026-08-30. This control used to key on `heroInsight`,
+  //    and its failure message said the corpus was "not reading RENDERED
+  //    copy" — a claim the anchor could not support, because nothing has
+  //    rendered `heroInsight` since the 2026-08-04 rebuild retired the Home
+  //    tab. A control that passes on a string the app never shows proves the
+  //    walk reached the locale FILE, not the product. The anchor is now
+  //    `disclaimer`, which §10.1 requires on four surfaces and
+  //    `check-blindspot.mjs` fails the build over — so it cannot quietly stop
+  //    being rendered the way `heroInsight` did.
   const KNOWN = {
-    en: "Think of the economy as a machine",
-    es: "Piensa en la economía como una máquina",
-    ko: "경제를 몇 가지 단순한 부분으로",
-    zh: "把经济想象成由几个简单部分",
-    ja: "経済を、いくつかの単純な部品",
+    en: "Educational content only",
+    es: "Solo contenido educativo",
+    ko: "교육용 콘텐츠입니다",
+    zh: "仅供教育用途",
+    ja: "教育目的のコンテンツです",
   };
   for (const lang of LANGS) {
     const n = quoteCorpus[lang].length;
     if (n < 800) {
       fail(`§56 CONTROL A: the "${lang}" corpus collected only ${n} strings. §55 counts ~1,145 per language over the same modules, so a number this low means the walk is reading the wrong shape and every clean result below would be meaningless.`);
     } else if (!quoteCorpus[lang].some((c) => c.text.includes(KNOWN[lang]))) {
-      fail(`§56 CONTROL A: the "${lang}" corpus does not contain that language's own heroInsight opening, so it is not reading rendered copy even though it collected ${n} strings.`);
+      fail(`§56 CONTROL A: the "${lang}" corpus does not contain that language's own disclaimer opening, so it is not reading the copy this app actually renders even though it collected ${n} strings.`);
     }
   }
 
