@@ -6327,8 +6327,116 @@ if (keyedGroupsChecked < 4) {
       }
     }
 
+
+    // (i) THE FIGURE'S NUMBERS ARE THE LESSON'S OWN, READ OUT OF THE PROSE
+    //     rather than asserted about it — in all five languages (backlog item
+    //     150, 2026-08-30). Block (a) fails when `flipRewards` is not 50/65,
+    //     with the message "lesson 23's body works through $50 and $65".
+    //     Nothing checked that it still does, in any language. That is exactly
+    //     the shape §21 carried for lesson 7's caption until item 127 closed
+    //     it, and §53(f) for lesson 17's body; this is the last of the three.
+    //
+    //     TWO SURFACES, NOT ONE, and the second is why this is worth more than
+    //     the item that filed it claimed. The lesson body is what item 150
+    //     named. But `flipCaption`, `flipDescription`, `flipZoneLabels` and
+    //     `flipSeriesLabels` also write $50 and $65, in all five languages, and
+    //     they render INSIDE the figure — a stale one puts the wrong number an
+    //     inch from the curve it labels, which is worse than a stale lesson
+    //     body, not better. Block (h) proves those strings exist; nothing
+    //     proved they say the figure's own numbers. Both surfaces are read
+    //     here, from the same derived expectations.
+    //
+    //     DERIVED, NOT TYPED: every amount below comes out of `flipRewards`, so
+    //     a reward edit moves the expectation and the failure names the prose
+    //     that did not follow — rather than adding a second literal to this
+    //     file to go stale beside the one in (a). The difference between the
+    //     rewards is included because it is the number the lesson states three
+    //     times ("one extra month of waiting for $15 more") and the one a
+    //     partial edit would leave behind.
+    //
+    //     THE CONTROL, PER LANGUAGE, AND ITS HONEST BOUNDARY. §53(f) proves its
+    //     scan is live by finding a numeral that is in the lesson and is NOT
+    //     one of the figure's ($1,450, Priya's raise). Lesson 23 has no such
+    //     spare numeral. Measured 2026-08-30: its entire body states exactly
+    //     {15, 50, 65} in en and es, and {12, 13, 15, 50, 65} in ja/ko/zh — the
+    //     12 and 13 are missing from en/es only because both write the months
+    //     as words ("twelve months", "doce meses"), which is also why a months
+    //     anchor cannot be used here. Nothing cross-language is left over, so
+    //     the control is built from what is: the text must be non-empty, the
+    //     scan over it must return SOMETHING (an empty return from non-empty
+    //     text is the parser blind to that script — item 127's whole subject),
+    //     and $5 must NOT be found.
+    //
+    //     $5 IS THE SHARP HALF. It is a substring of "$50" and of "$65" in
+    //     every one of these strings and an amount in none of them, so a
+    //     `text.includes(String(n))` implementation — the shape every check in
+    //     this file used before `numerals.mjs` existed, and the shape this
+    //     block would most plausibly be rewritten into — fails this line
+    //     immediately. §61 owns the rest of the parser's correctness; what
+    //     this control is for is proving the right text got loaded.
+    const CONTROL_ABSENT = 5;
+
+    // The control is only worth running while it stays a substring of both
+    // rewards and an amount in neither, and a reward edit could make $5 a real
+    // figure. A control that has quietly become part of the claim it is
+    // supposed to be independent of proves nothing, so both halves are
+    // asserted rather than assumed.
+    if (!(String(s.amount).includes(String(CONTROL_ABSENT)) && String(l.amount).includes(String(CONTROL_ABSENT)))
+        || [s.amount, l.amount, l.amount - s.amount].includes(CONTROL_ABSENT)) {
+      fail(`§50: the $${CONTROL_ABSENT} control below is no longer a substring of both $${s.amount} and $${l.amount} while being an amount in neither — the rewards changed under it. Pick a new control digit and say what it refutes, rather than leaving this line green for a reason that has stopped holding.`);
+    }
+
+    // ONE SURFACE PER KEY, NOT THE FOUR CONCATENATED — and this is not a style
+    // preference. The first version of this block joined all four figure-text
+    // keys into one string per language, and an injected `$60` in the Chinese
+    // `flipCaption` DID NOT FAIL IT: `flipDescription` still said $65 a few
+    // lines below, so the joined text still contained 65 and the scan was
+    // satisfied by a string the reader was not looking at. Any one of the four
+    // going stale is invisible to a joined scan, which is the whole failure
+    // this block exists to catch.
+    const flipTextOf = (key, lang) => {
+      const v = mv[key]?.[lang];
+      return Array.isArray(v) ? v.join(" ") : String(v ?? "");
+    };
+    const REWARD_PAIR = [
+      ["the sooner reward", s.amount],
+      ["the later reward", l.amount],
+    ];
+
+    let flipLangsAnchored = 0;
+    for (const lang of LANGS) {
+      const body23 = (lessonContent["23"]?.sections ?? []).map((sec) => sec.body?.[lang] ?? "").join("\n");
+      let clean = true;
+      for (const [what, where, text, expect] of [
+        ["lesson 23's own body", "the reader works through these numbers in the prose", body23, [
+          ...REWARD_PAIR,
+          ["the difference the lesson turns on", l.amount - s.amount],
+        ]],
+        ...["flipCaption", "flipDescription", "flipZoneLabels", "flipSeriesLabels"].map((key) => [
+          `the figure's own ${key}`,
+          "it renders inside the figure, beside the curves it labels",
+          flipTextOf(key, lang),
+          REWARD_PAIR,
+        ]),
+      ]) {
+        const stated = amountsIn(text);
+        if (text.trim().length === 0 || stated.size === 0 || stated.has(CONTROL_ABSENT)) {
+          clean = false;
+          fail(`§50: the scan of ${what} failed its own control in "${lang}" — ${text.trim().length} character(s) of text, ${stated.size} amount(s) read, $${CONTROL_ABSENT} ${stated.has(CONTROL_ABSENT) ? "FOUND" : "not found"} (must not be: it is a substring of "$${s.amount}" and "$${l.amount}" and an amount in neither). This section is reading the wrong text, no text, a script numerals.mjs cannot parse, or reading by substring — so a clean result for this language would mean nothing.`);
+          continue;
+        }
+        for (const [role, n] of expect) {
+          if (!stated.has(n)) {
+            clean = false;
+            fail(`§50: ${what} never states $${n.toLocaleString("en-US")} (${role}) in "${lang}", though the figure is built on it — ${where}. A reader who meets one set of numbers in the words and another in the picture has been handed two lessons. Change the rewards, the lesson and every language's figure text in the same commit, or none of them.`);
+          }
+        }
+      }
+      if (clean) flipLangsAnchored += 1;
+    }
+
     if (failures === 0) {
-      console.log(`  §50 lesson 23's preference flip holds: $${s.amount}@${s.month}mo vs $${l.amount}@${l.month}mo at k=${k} (> the ${kMin} the lesson requires) reverses exactly once, at month ${Number(solved).toFixed(3)} — solved and sampled agree, both options worth $${eqS.toFixed(2)} there — and both of the lesson's stated choices fall out of the curve.`);
+      console.log(`  §50 lesson 23's preference flip holds: $${s.amount}@${s.month}mo vs $${l.amount}@${l.month}mo at k=${k} (> the ${kMin} the lesson requires) reverses exactly once, at month ${Number(solved).toFixed(3)} — solved and sampled agree, both options worth $${eqS.toFixed(2)} there — and both of the lesson's stated choices fall out of the curve. $${s.amount}, $${l.amount} and the $${l.amount - s.amount} between them are read out of lesson 23's own body, and $${s.amount}/$${l.amount} out of the caption, description, zone labels and series labels the figure renders, in all ${flipLangsAnchored} language(s) — control proven both directions in each.`);
     }
   }
 }

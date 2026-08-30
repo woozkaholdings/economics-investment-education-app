@@ -1488,7 +1488,54 @@ for the history. No open P1/P2 items.
       stand; the coverage did not.** `A11yStates.coverage()` plus the Tab step now in the header
       recipe are the fix — see item 149.
 
-150. **[Docs/Integrity — filed 2026-08-29 by the run that closed item 127, as its stated residual
+151. **[Content/QA — filed 2026-08-30 by the run that closed item 150, as its stated residual rather
+    than smuggled into the same commit.] §50's new block proves each of lesson 23's zone and series
+    labels STATES the rewards; nothing proves which one states which, and the component reads both
+    pairs by position.**
+    - **Measured 2026-08-30, all five languages, and it is consistent today:**
+      `flipZoneLabels[0]`→$65 / `[1]`→$50 (the pre-crossing zone names the later reward), and
+      `flipSeriesLabels[0]`→$50 / `[1]`→$65 (the series are sooner-then-later).
+      `LessonVisual.jsx:187` maps `flipSeriesLabels[lang][i]` onto `flipSeries()` **by index**, and
+      `:192` passes `flipZoneLabels[lang]` straight through as `zones`.
+    - **The hole:** swap either pair in any one language and that language's figure says most people
+      take the $65 in the stretch where the curve shows them taking the $50 — the exact inversion of
+      the lesson — while §50 (i) stays green, because both surfaces still *contain* both amounts.
+      This is item 150's injection-2 shape one level down: presence satisfied by the wrong string.
+    - **The fix is per-element, not per-key:** assert `zone[0]` states `l.amount` and NOT `s.amount`,
+      `zone[1]` the reverse, and the mirror for the series pair — all four derived from `flipRewards`
+      as block (i) already does. Roughly ten lines inside the existing loop.
+    - **Carry a control, and the two-sided one is free:** swapping the two elements of one language's
+      `flipZoneLabels` must fail and naming the right language, while the untouched four stay clean.
+      A check that cannot tell a swap from the shipped order is not measuring the ordering claim.
+    - ⚠️ **Confirm the drawn order before pinning it.** The premise above is about what the *content*
+      says, not about which zone the *chart* paints first. If `Line`/`zones` renders element 0 on the
+      right of the crossing, the correct assertion is the mirror of the one written here — check the
+      primitive in `charts.jsx`, do not infer it from the array.
+    - **Honest priority: low-medium.** Zero live instances — all five languages are correct today —
+      but unlike items 149/126/120 the failure this would catch is learner-visible and inverts the
+      lesson rather than merely going unmeasured. Downstream of O-1 like everything else.
+
+150. **✅ DONE 2026-08-30 (scheduled dev-agent). Shipped as `check-data.mjs` §50 block (i) —
+    FIVE surfaces per language, not the one the item scoped. Both of the item's premises held; the
+    scope was wider than it said. Read the correction below.**
+    > **PREMISE CORRECTION 2026-08-30, from measuring rather than reading.** The item scoped this as
+    > "reads no lesson body", which was true. But `flipCaption`, `flipDescription`, `flipZoneLabels`
+    > and `flipSeriesLabels` each write $50 and $65 in all five languages — **20 strings that render
+    > inside the figure** — and none was checked against `flipRewards` either. A stale caption sits
+    > an inch from the curve it labels, so it is the worse half, not the lesser one. Block (i) covers
+    > body + all four keys, 25 strings, every expectation derived from `flipRewards`.
+    > **The item's control shape did not survive contact.** It proposed "§53(f)'s — one numeral known
+    > present, one known absent, per language". **Lesson 23 has no spare numeral:** its body states
+    > exactly {15, 50, 65} in en/es and {12, 13, 15, 50, 65} in ja/ko/zh, so every numeral in it is
+    > one the check asserts, and the 12/13 are missing from en/es only because both write the months
+    > as words. The control that shipped is **$5 must not be found** — a substring of "$50" and
+    > "$65" and an amount in neither, which refutes the `includes()` implementation directly.
+    > **And the first version of the block was wrong in a way re-reading would not have caught:** it
+    > joined the four figure-text keys per language, so an injected `$60` in the Chinese caption
+    > passed, satisfied by `flipDescription` still saying $65. One surface per key now. See the run
+    > log for all five injections.
+    ORIGINAL ITEM TEXT, kept because the run log's entry refers to it:
+    **[Docs/Integrity — filed 2026-08-29 by the run that closed item 127, as its stated residual
     rather than smuggled into the same commit.] §50 still pins lesson 23's $50/$65 as literals and
     reads no lesson body — the exact shape §21 carried until this run, and now cheap to close.**
     - **State:** `check-data.mjs` §50(a) fails if `flipRewards` is not 50/65, with the message
@@ -3433,6 +3480,94 @@ finding(s); V vacuous; U unavailable`. A bare "no accessibility issues found" is
 > section above is prepend-order (newest first); the archive is ascending.
 > *(The "367 lines apart" this note carried until 2026-08-29 was the first block's own length, not the
 > distance between the blocks. The blocks and their byte totals were right; only the gap figure was.)*
+### 2026-08-30 (scheduled dev-agent) — §50 now reads the prose instead of asserting about it, and the first version of that read was satisfied by a caption the learner was not looking at (item 150 → new item 151)
+
+**Picked item 150**, the previous run's stated follow-on and its own filed residual. Item 149 was left
+alone on its own instruction (*"Honest priority: low. Do not pick it over content"*), and item 148 is
+still the product call the run that filed it escalated.
+
+**Premise re-measurement (step 3.5) — both halves held, and the scope was wider than the item said.**
+- **Premise 1, "§50 reads no lesson body," is TRUE.** The string "lesson 23's body" appears in §50
+  exactly once, inside block (a)'s *failure message*. The section's only `LANGS` loop is block (h)'s
+  parity check, which proves the figure's strings are non-empty and nothing else.
+- **Premise 2, "all five languages state both figures," is TRUE.** `amountsIn` finds 50 and 65 in
+  en/es/ko/zh/ja. Full digit inventory of lesson 23's body, which the item did not have:
+  **en/es = {15, 50, 65}; ja/ko/zh = {12, 13, 15, 50, 65}.**
+- **What the item missed, and it is the larger half.** `flipCaption`, `flipDescription`,
+  `flipZoneLabels` and `flipSeriesLabels` each write $50 and $65 in all five languages — **20 strings
+  that render inside the figure**, next to the curves they label — and none of them was checked
+  against `flipRewards` either. A stale caption is worse than a stale lesson body, not better. Item
+  150 scoped this as body-only; the block ships covering both.
+
+**What shipped:** `check-data.mjs` §50 block (i). Five surfaces per language (the lesson body plus each
+of the four figure-text keys), 25 strings, every expectation **derived from `flipRewards`** rather than
+typed — so a reward edit moves the expectation instead of leaving a second literal beside block (a)'s.
+The body must also state **the difference between the rewards** ($15), which is the number lesson 23
+repeats three times and the one a partial edit leaves behind.
+
+**The control, and the thing it cannot be.** §53(f) proves its scan is live with a numeral that is in
+the lesson and is *not* the figure's ($1,450). **Lesson 23 has no spare numeral** — its body states
+exactly the three amounts the figure uses, and the 12/13 that ja/ko/zh carry are absent from en/es
+because both write the months as words ("twelve months", "doce meses"), so a months anchor is not
+available either. The control is therefore built from what is there: non-empty text, a non-empty scan
+over it, and **$5 must not be found**. $5 is the sharp half — it is a substring of "$50" and of "$65"
+in every one of these strings and an amount in none of them, so a `text.includes(String(n))`
+implementation fails it immediately. That is not hypothetical: it is the shape every check in this file
+used before `numerals.mjs` existed, and the shape this block would most plausibly be rewritten into.
+The control's own validity is asserted rather than assumed — a reward edit that made $5 real fails a
+guard that names the problem instead of going quietly green.
+
+**Verification — five injections, each restored from a scratchpad copy and re-checked by sha256.**
+1. **ko body's three "15달러" → "20달러"** → `FAIL: §50: lesson 23's own body never states $15 (the
+   difference the lesson turns on) in "ko"`. Right language, right figure.
+2. **zh `flipCaption`'s $65 → $60** → **PASSED. This was a defect in my own check, not a clean
+   result.** The first version joined all four figure-text keys into one string per language, so
+   `flipDescription` still saying $65 satisfied a scan of a caption that no longer did. Rewritten to
+   **one surface per key**; re-injected → `FAIL: §50: the figure's own flipCaption never states $65
+   (the later reward) in "zh"`. The joined version is the reason the comment in the block says what
+   it says.
+3. **`amountsIn` replaced by `{ has: (n) => text.includes(String(n)) }`** → the $5 control fires on
+   every surface in every language, exit 1.
+4. **`lessonContent["23"]` → `lessonContent["9923"]`** → `failed its own control … 0 character(s) of
+   text, 0 amount(s) read` — instrument failure diagnosed as instrument failure, not as content drift.
+5. **`flipRewards` → 40/62** → `the $5 control below is no longer a substring of both $40 and $62`.
+
+All three touched files restored byte-identical: `lessonContent.money.ko.js` `bde5d1a2…`,
+`moneyVisuals.js` `15fc66f5…`, `numerals.mjs` `b671c210…`. `npm test` exit 0 (0 failures across all
+eight scripts), `npm run build` exit 0 in 890ms, `node scripts/us-english.mjs` exit 0.
+
+**Adversarial self-check (step 5) — one real finding, and it was mine.**
+- **The finding is injection 2 above.** A green result that came from a string the learner was not
+  reading is exactly the failure this section exists to catch, and re-reading the code approvingly
+  would not have found it. It is fixed in this commit, not filed.
+- **Blindspot register:** the diff touches `scripts/check-data.mjs` only — **0 files under `src/`**,
+  so no learner-facing string moved. 0 hits for Dalio/advice-adjacent patterns in the added lines.
+  The "2026-08-30" in the comments is a dated record of when a measurement was taken, the same shape
+  the neighboring comments use — not a rendered date.
+- **DECISIONS.md:** no conflict; nothing here touches state, content-module format, or the build.
+- **Already-done item:** this is the third and last of the three figure-vs-prose sections item 127
+  named (§21 lesson 7, §53 lesson 17, §50 lesson 23). Nothing is redone or undone.
+- **My own verification claim:** an independent reviewer re-running `node scripts/check-data.mjs` and
+  then each of the five injections above gets these results.
+- ⚠️ **What I did NOT do, stated rather than rounded off.** The block asserts each zone label and each
+  series label *states* the rewards; it does not assert **which one states which**. Measured across all
+  five languages: `flipZoneLabels[0]`→65 / `[1]`→50 and `flipSeriesLabels[0]`→50 / `[1]`→65, and
+  `LessonVisual.jsx` indexes both **by position**. Swapping either pair in one language inverts that
+  language's figure and passes everything shipped today. Filed as **item 151** rather than smuggled in.
+  Item 150's numeral-format flag (`bracketCaption.ko`'s `$4,000` beside lesson 17's `4만 5천 달러`) was
+  left alone as instructed — it is an owner content question, and lesson 23 states no myriad amount.
+
+#### Next run
+
+**Item 151** (new, below) is the direct follow-on, is small, and has a two-sided control that already
+exists. Otherwise unchanged: **148** (real user-visible symptom, wants the owner's pick), then **149,
+144, 143, 140, 126, 120**, all at zero live instances, and **item 117**, still the one open *product*
+item and still the owner's. **For the owner:** the floor is over budget at **297 KB** against 250 KB
+and only a backlog compression pass moves it — **item 115 holds the rule and the options, and that
+decision is still yours.** **O-1 remains the entire critical path: 44 lessons, five languages, 160
+minutes of content, and zero people have ever opened this app.** **O-3** unchanged — no translated
+prose was added or altered this run.
+
 ### 2026-08-29 (scheduled dev-agent) — three languages of every figure-vs-prose check were unreadable, not clean; and the parser written to read them reported lesson 7's Korean caption as missing a figure that is plainly there (item 127 → new item 150)
 
 **Picked item 127**, over the queued item 149, on item 149's own instruction: *"Honest priority: low.
