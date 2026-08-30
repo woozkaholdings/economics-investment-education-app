@@ -872,7 +872,33 @@ for the history. No open P1/P2 items.
     > cosmetic — injection 5 removed the boundary and a dated entry's injected probe value
     > immediately failed the build.
 
-127. **[Process/Content — filed 2026-08-27 by the run that added lesson 17's figure (item 27), as
+127. **✅ DONE 2026-08-29 (scheduled dev-agent). Shipped as `scripts/numerals.mjs` + `check-data.mjs`
+    §61, with §53(f) now per-language and §21's caption read rather than asserted about. Read the two
+    corrections below before extending any of it.** See the run log.
+    - **The decision the item left open, made on measurement:** the **numeral normalizer**, not
+      §54(e)-style label anchoring — labels are not available here, because lesson 17's claim *is* its
+      numerals. Scoped to Arabic digits + myriad units (`만/万/萬`, `천/千`, `억/亿/億`, `조/兆`);
+      deliberately no Chinese numeral characters and no written-out English, the corpus using digits
+      throughout.
+    - ⛔ **THE ITEM'S CHARACTERIZATION OF §21 AND §50 WAS WRONG, and the truth is slightly worse.**
+      It said the blind spot "applies to §21's and §50's figure-vs-prose checks". Neither had a
+      body-prose check at all: both pin literals and assert **about** prose ("the caption states these
+      figures in all five languages") with nothing reading it. §21 is fixed; **§50 is not — see item
+      150.**
+    - ⚠️ **THE INSTRUMENT TRAP THIS ITEM WARNED ABOUT HAS A FIFTH CASE IT DID NOT NAME, and it is the
+      one that bites.** Korean `만` is *both* the myriad marker and the particle "only". Lesson 7's
+      Korean caption says `$4,000만 30% 구간에` and the first draft of the parser read it as
+      40,000,000, reporting a figure as missing that is plainly there. **The fix is NOT a
+      currency-prefix rule** — that was tried and the corpus refuted it, since the Korean markets copy
+      writes `$6000억`. It is that **a thousands-separated mantissa never takes a myriad unit**:
+      measured over the whole corpus, 58 digit-runs are followed by a unit char, 57 genuine and none
+      with a comma, 1 false and it has one.
+    - **Where the controls live now:** §61 asserts the parser against 9 specimens as **exact set
+      equality**, 4 of them refutations a greedy parser fails. §21's and §53's own per-language
+      controls prove the instrument is *on*; §61 is what proves it is *right*.
+
+    ORIGINAL TEXT (retained — it is what was measured):
+    **[Process/Content — filed 2026-08-27 by the run that added lesson 17's figure (item 27), as
     its stated residual rather than smuggled into the same commit.] §53 checks the figure's six
     numbers against the `en` lesson body only, so a translated numeral can drift unseen.**
     - **State:** `check-data.mjs` §53(f) asserts every number in `gapEarners` appears in
@@ -1461,6 +1487,25 @@ for the history. No open P1/P2 items.
       **ten** probes, not eleven, and a hand-assembled total could not show it. **The findings
       stand; the coverage did not.** `A11yStates.coverage()` plus the Tab step now in the header
       recipe are the fix — see item 149.
+
+150. **[Docs/Integrity — filed 2026-08-29 by the run that closed item 127, as its stated residual
+    rather than smuggled into the same commit.] §50 still pins lesson 23's $50/$65 as literals and
+    reads no lesson body — the exact shape §21 carried until this run, and now cheap to close.**
+    - **State:** `check-data.mjs` §50(a) fails if `flipRewards` is not 50/65, with the message
+      "lesson 23's body works through $50 and $65". Nothing checks that it still does, in any
+      language. §21 had the same shape for its caption and now reads it per language through
+      `amountsIn`.
+    - **Measured 2026-08-29, so this is a guard and not a defect report:** all five languages of
+      lesson 23 state both figures (`amountsIn` finds 50 and 65 in en/es/ko/zh/ja).
+    - **It is easier than item 127 was:** both figures are under 1,000, so no myriad decomposition is
+      involved and the whole instrument already exists. The control shape is §53(f)'s — one numeral
+      known present, one known absent, per language.
+    - ⚠️ **One thing to look at rather than assume while in there.** The corpus is **inconsistent
+      about numeral format between a figure's caption and its lesson's prose**: `bracketCaption.ko`
+      writes `$4,000` while lesson 17's Korean body writes `4만 5천 달러`. Both are natural in
+      isolation; a Korean reader meets both on the same screen. **That is a content question for the
+      owner, not a check to write** — do not "fix" it by rewriting either side.
+    - **Honest priority: low.** Zero learner-visible instances. Downstream of O-1 like everything else.
 
 149. **[Process/QA — filed 2026-08-29 by the run that built `A11yStates.coverage()`, as its stated
     residual rather than smuggled into the same commit.] `coverage()` can now name a probe that did
@@ -3388,6 +3433,131 @@ finding(s); V vacuous; U unavailable`. A bare "no accessibility issues found" is
 > section above is prepend-order (newest first); the archive is ascending.
 > *(The "367 lines apart" this note carried until 2026-08-29 was the first block's own length, not the
 > distance between the blocks. The blocks and their byte totals were right; only the gap figure was.)*
+### 2026-08-29 (scheduled dev-agent) — three languages of every figure-vs-prose check were unreadable, not clean; and the parser written to read them reported lesson 7's Korean caption as missing a figure that is plainly there (item 127 → new item 150)
+
+**Picked item 127**, over the queued item 149, on item 149's own instruction: *"Honest priority: low.
+Do not pick it over content or over an owner-facing item."* Item 127 is content-integrity and item 149
+is tooling on tooling; item 148 was left alone because the previous run escalated it as a product call.
+Owner-tree fingerprint at open `c2331799fd3ee413aca864fd82d247a35ea31b01a70a6c4e37b00f6aad9105b2`
+(0 tracked modified, 52 untracked) — **unchanged for four runs now.** `HEAD` `1fc74bb` at start,
+unmoved at commit.
+
+#### Step 3.5 — the premise held, and the instrument trap it warned about fired on the first try
+
+- **§53(f) is `en`-only, as filed.** Confirmed at `check-data.mjs:6832`: one `body?.en` join, one
+  `includes()` per figure. §53(g) covers the other four languages for *labels* and nothing for
+  *numerals*.
+- **The trap is real and I reproduced it before writing any code.** A naive `includes("50,000")` scan
+  of lesson 17 returns **5 of 5 figures in `en` and `es`, and 0 of 5 in `ko`, `zh` and `ja`** — which
+  is exactly what all six figures being absent would look like.
+- **They are not absent.** Read at the text: `ko` writes `5만 달러 / 4만 5천 달러 / 5천 달러 / 12만
+  달러 / 11만 5천 달러`, `zh` uses decimal myriads (`4.5万`, `11.5万`), `ja` compounds (`4万5千`).
+  **Item 127's "all five languages state all six figures today" is still true** — it was just not
+  checkable by the method in the repo.
+- ⛔ **One premise was IMPRECISE and is corrected in the item.** Item 127 says the blind spot "applies
+  to §21's and §50's figure-vs-prose checks". Neither §21 nor §50 *has* a body-prose check — they pin
+  literals and assert **about** prose ("the caption states these figures in all five languages") with
+  nothing reading it. That is a different and slightly worse defect than the one filed: not a check
+  that reads one language, a claim that reads none.
+- **Controls fired**, so the negatives above mean something: `figureClaims` returns 20 hits in the log
+  and `amountsIn`/`numerals.mjs` return 0 in the log and its archive, so the duplicate-work grep was
+  live rather than broken.
+
+#### The decision item 127 left open, made on the corrected facts
+
+It asked whether to build a per-language numeral normalizer or to anchor on labels the way **§54(e)**
+does. **Labels are not available here**: §54(e) works because lesson 44 states no numbers, while
+lesson 17's claim *is* its numerals — two incomes more than 2x apart with the same $5,000 gap. So the
+normalizer, but scoped to Arabic digits with myriad grouping (`만/万/萬`, `천/千`, `억/亿/億`,
+`조/兆`) — **no Chinese numeral characters, no written-out English**, because the corpus uses digits
+everywhere and a wider net is more surface to be wrong on with no instance behind it.
+
+#### What shipped
+
+**`scripts/numerals.mjs`** (new, one function + a specimen list) and three call sites:
+
+1. **§53(f) now runs per language** against that language's own lesson-17 body, with the two-sided
+   control per language ($1,450 must be found, $987,654 must not).
+2. **§21 now READS lesson 7's caption** in all five languages instead of pinning literals and
+   asserting about it. Every expected figure is **derived** — the raise, its two slices, the boundary
+   it crosses, the two tax figures — so a tier edit moves the expectation rather than stranding a
+   literal. The old pins stay: they catch tiers moving under a stable caption, this catches the
+   caption moving under stable tiers, and neither implies the other.
+3. **§61 (new) is the parser's own control**, asserted as **exact set equality** rather than
+   containment, because §21's and §53's controls only prove the instrument is *on*.
+
+#### ⚠️ The parser's first draft was wrong, and lesson 7's Korean caption is what said so
+
+Run against the real corpus it reported **`bracketCaption.ko` as missing $4,000**. The caption says
+`$4,000만 30% 구간에` — "**only** the $4,000 reaches the 30% band" — where `만` is the particle
+"only", not the myriad marker. Same character, and 4,000 × 10,000 = 40,000,000.
+
+**The first fix was also wrong, and the corpus refuted it too.** `$` looks like it marks a
+Western-formatted amount; it does not — the Korean markets copy writes `$6000억`, `$950억`, `$1.75조`
+for the Fed balance sheet. **Measured over the whole content corpus: 58 digit-runs are followed by a
+unit character, 57 are genuine myriad amounts and not one carries a comma; the single false one is
+that caption, and it does.** So the rule is that a **thousands-separated mantissa never takes a myriad
+unit** — which is also correct on its own terms, since myriad grouping and thousands grouping are two
+systems and no language here writes a token in both at once.
+
+#### Verification — four injections, each restored from a scratchpad copy and re-checked by sha256
+
+| injection | result |
+|---|---|
+| `ko` lesson-17 body `4만 5천` → `4만 6천` | **§53 fails**, naming `ko` and `spends $45,000` |
+| the same tree, under the **pre-run `en`-only check** | **PASSES** — the drift is invisible to it |
+| `zh` `bracketCaption` `$7,600` → `$7,000` | **§21 fails**, naming `zh` and "what lands in the paycheck" |
+| the parser's descending-unit guard removed | **§61 fails** on both refutation specimens |
+| the comma rule removed | **§61 fails** on the Korean particle specimen, **and §21 reports the false missing $4,000** — the two layers in the right order |
+
+`npm test` **exit 0**, 21 `ok:` lines, the same **3** pre-existing warnings (translation review share,
+translation completeness, the floor budget). `npm run build` **✓ 963ms**. All three touched files
+restored byte-identical after injection (`numerals.mjs` `b671c210…`, `moneyVisuals.js` `15fc66f5…`,
+`lessonContent.money.ko.js` `bde5d1a2…`) and `git status` shows no `src/` file modified.
+
+#### Step 5 — adversarial self-check
+
+- **Blindspot register: clean.** `scripts/` only — no content, locale, quiz, glossary or market string
+  is touched, and `git status --short src/` is empty. No Dalio branding (§10.2), no advice-adjacent
+  language (§10.1), no kids framing (§10.3), no hardcoded user-facing date or live-looking market
+  figure (§2.3); the `$6000억` in a comment is a *quoted specimen of a parse hazard*, not a rendered
+  figure. `check-blindspot.mjs` passes inside `npm test`.
+- ⚠️ **`DECISIONS.md`: one entry is genuinely adjacent and I read it rather than pattern-matching
+  past it.** "In-lesson glossary links are a curated map, not an automatic prose match" (closed
+  2026-08-16) rejects per-language prose matching, and its stated reason — *"five locales, five
+  surface-form inflections, five separate false-positive profiles"* — **is exactly what happened to me
+  today** with Korean `만`. It does not conflict: that decision governs **learner-visible links
+  generated at runtime by matching ambiguous words**, where a false positive ships a wrong definition
+  to a reader. This is a build-time check over numerals that renders nothing, and **§54(e) (2026-08-27)
+  and §60 already do per-language prose scanning in this file**, both post-dating that decision. The
+  warning was predictive and the answer to it is §61, not avoidance.
+- **Already-done item:** `amountsIn` and `numerals.mjs` appear **0 times** in `AGENT_LOG.md` and its
+  archive; the 10 `myriad` hits are item 127's own text. Nothing is redone or undone.
+- **Item 144's trap:** `us-english:allow` appears **0** times in the diff and in the new file.
+- **§59's silence was earned, not assumed** — and this mattered, because `numerals.mjs` is a *new*
+  file and nothing proved §59's walk reaches it. Injected "normalised" into its comment prose:
+  **exit 1, `§59: scripts/numerals.mjs:31 uses the British spelling "normalised"`** — right file,
+  right line. Restored from the scratchpad copy, sha256 `b671c210…` byte-identical, re-ran to exit 0.
+- **A crash I introduced and caught before committing.** §21's new loop read `bracketTiers[topTier -
+  1].upTo`, which throws when the scenario does not straddle a boundary — a case the block above
+  already *fails* on. A checker that crashes reports nothing, including the failure it had found. Now
+  guarded to skip rather than throw.
+- **My own verification claim:** an independent reviewer re-running `node scripts/check-data.mjs`,
+  then each of the five injections above, gets these results.
+- ⚠️ **What I did NOT do, stated rather than rounded off.** §50 still pins lesson 23's $50/$65 with no
+  body read — the same shape §21 had until today, and now cheap. Filed as **item 150** rather than
+  smuggled in.
+
+#### Next run
+
+**Item 150** (new, below) is the direct follow-on and is small. Otherwise unchanged: **148** (real
+user-visible symptom, wants the owner's pick), then **149, 144, 143, 140, 126, 120**, all at zero live
+instances, and **item 117**, still the one open *product* item and still the owner's. **For the owner:**
+the floor is over budget at **297 KB** against 250 KB (measured with this run's own backlog edits in the tree; it was 294 KB at open) and only a backlog compression pass moves it —
+**item 115 holds the rule and the options, and that decision is still yours.** **O-1 remains the entire
+critical path: 44 lessons, five languages, 160 minutes of content, and zero people have ever opened
+this app.** **O-3** unchanged — no translated prose was added or altered this run.
+
 ### 2026-08-29 (scheduled dev-agent) — the seven states item 147 could not reach were clean at the compounding width, and the "19/19" it reported had been assembled by hand (item 147's residual → new item 149)
 
 **Picked item 147's standing note**, not a numbered item: *"the reload-gated states were swept at 320

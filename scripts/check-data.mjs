@@ -35,6 +35,7 @@ import {
   commentBlocks,
   scan as scanBritish,
 } from "./us-english.mjs";
+import { SPECIMENS as NUMERAL_SPECIMENS, amountsIn } from "./numerals.mjs";
 import {
   LANGS as COMPLETENESS_LANGS,
   completeness,
@@ -2060,6 +2061,52 @@ if (keyedGroupsChecked < 4) {
   }
   if (!(lowerSlice > upperSlice)) {
     fail("§21: the part of the raise still taxed at the old rate must be the larger slice — at 375px the smaller one renders too thin to read, and the figure then shows the misconception rather than the correction");
+  }
+
+  // AND THE CAPTION IS NOW READ RATHER THAN ASSERTED ABOUT (backlog item 127,
+  // 2026-08-29). Both blocks above pin their figures because "the caption
+  // states these in all five languages" — a claim about prose that nothing in
+  // this repo checked. It happened to be true; it was true the way an
+  // un-run test is green. `numerals.mjs` makes it cheap to check, so it is
+  // checked, per language, against that language's own caption.
+  //
+  // WHY THE PIN STAYS TOO. The pins above catch the tiers changing under a
+  // stale caption; this catches the caption changing under stable tiers. They
+  // are the two directions of the same drift and neither implies the other.
+  //
+  // THE KOREAN CAPTION IS THIS CHECK'S OWN LIVE CONTROL, and it is the reason
+  // numerals.mjs has a comma rule at all: `$4,000만 30% 구간에` uses `만` as
+  // the particle "only", not as the myriad marker, so a parser reading it as
+  // 40,000,000 reports lesson 7's $4,000 as MISSING in Korean. It does not,
+  // and §61's specimen list pins that both ways.
+  // Guarded rather than assumed: `topTier` is 0 when the scenario does not
+  // straddle a boundary, which the block above already fails on. Reading
+  // `bracketTiers[-1].upTo` there would throw, and a checker that crashes
+  // reports nothing at all — including the failure it had already found.
+  const crossed = topTier > 0 ? bracketTiers[topTier - 1].upTo : null;
+  for (const lang of crossed === null ? [] : LANGS) {
+    const caption = moneyVisualsContent.bracketCaption?.[lang];
+    if (typeof caption !== "string" || caption.trim().length === 0) {
+      fail(`§21: bracketCaption.${lang} is missing or empty — it renders under the figure in that language, and every figure below is checked against it.`);
+      continue;
+    }
+    // Every figure below is DERIVED, not typed: the caption's own numbers are
+    // the raise, its two slices, the boundary it crosses and the two tax
+    // figures, so a tier edit moves the expectation and the failure names the
+    // caption that did not follow rather than a stale literal in this file.
+    const stated = amountsIn(caption);
+    for (const [what, n] of [
+      ["the raise itself", raise],
+      ["the part of the raise in the new band", upperSlice],
+      ["the bracket boundary it crosses", crossed],
+      ["the part still taxed at the old rate", lowerSlice],
+      ["the extra tax", extraTax],
+      ["what lands in the paycheck", raise - extraTax],
+    ]) {
+      if (!stated.has(n)) {
+        fail(`§21: bracketCaption.${lang} never states $${n.toLocaleString("en-US")} (${what}). The caption renders directly under the stack in this language, so the picture and the words beside it would be arguing different arithmetic. Change the tiers and every caption in the same commit.`);
+      }
+    }
   }
 }
 
@@ -6819,27 +6866,47 @@ if (keyedGroupsChecked < 4) {
       }
 
       // (f) THE FIGURES ARE THE LESSON'S OWN, checked against the lesson's own
-      //     body text rather than against this file. This is the check that
-      //     catches the figure and the prose drifting apart — the failure mode
-      //     the header of moneyVisuals.js warns about and that §21 already had
-      //     to guard once on lesson 7.
+      //     body text rather than against this file — IN ALL FIVE LANGUAGES.
+      //     This is the check that catches the figure and the prose drifting
+      //     apart, the failure mode the header of moneyVisuals.js warns about
+      //     and that §21 already had to guard once on lesson 7.
       //
-      //     CONTROL, and it is not decorative: this scan looks for `en`
-      //     thousands-separated numerals in one lesson's body, and a lesson
-      //     whose text moved would return "not found" for every figure —
-      //     indistinguishable from the figures being wrong. So a numeral known
-      //     to be in the text must be found, and one known NOT to be must not.
-      const body17 = (lessonContent["17"]?.sections ?? []).map((s) => s.body?.en ?? "").join("\n");
+      //     THIS RAN en-ONLY FROM 2026-08-27 TO 2026-08-29, and backlog item
+      //     127 filed the reason it had to: `body.includes("50,000")` reads
+      //     English and Spanish and reads NOTHING in ko/zh/ja, where this
+      //     lesson's figures are written `5만 달러`, `5万美元`, `5万ドル`. The
+      //     scan came back empty in three languages, which is exactly what a
+      //     genuinely missing figure looks like, so the honest move at the
+      //     time was to scope the check to the languages it could read.
+      //     `numerals.mjs` is what closed that: it normalizes myriad grouping,
+      //     and §61 holds its two-sided specimen controls. Item 127 also left
+      //     open whether to anchor on labels instead, the way §54(e) does —
+      //     that is not available here, because lesson 17's claim IS its
+      //     numerals (two incomes more than 2x apart with the same gap) and
+      //     there is no word to anchor to.
+      //
+      //     CONTROL, PER LANGUAGE, and it is not decorative: a body that fails
+      //     to load, or a normalizer that cannot read a script, returns "not
+      //     found" for every figure — indistinguishable from the figures being
+      //     wrong. So in each language a numeral known to be in that language's
+      //     text must be found, and one known NOT to be must not. $1,450 —
+      //     Priya's after-tax monthly raise — is stated in all five.
       const usd = (n) => n.toLocaleString("en-US");
       const CONTROL_PRESENT = 1450;   // Priya's after-tax monthly raise
       const CONTROL_ABSENT = 987654;  // a numeral no lesson body contains
-      if (!body17.includes(usd(CONTROL_PRESENT)) || body17.includes(usd(CONTROL_ABSENT))) {
-        fail(`§53: the lesson-17 body scan failed its own control — $${usd(CONTROL_PRESENT)} ${body17.includes(usd(CONTROL_PRESENT)) ? "found" : "NOT FOUND"} (must be found), $${usd(CONTROL_ABSENT)} ${body17.includes(usd(CONTROL_ABSENT)) ? "FOUND" : "not found"} (must not be). It is reading the wrong text or no text, so a clean result below would mean nothing.`);
-      } else {
+      let langsAnchored = 0;
+      for (const lang of LANGS) {
+        const body17 = (lessonContent["17"]?.sections ?? []).map((s) => s.body?.[lang] ?? "").join("\n");
+        const stated = amountsIn(body17);
+        if (!stated.has(CONTROL_PRESENT) || stated.has(CONTROL_ABSENT)) {
+          fail(`§53: the lesson-17 body scan failed its own control in "${lang}" — $${usd(CONTROL_PRESENT)} ${stated.has(CONTROL_PRESENT) ? "found" : "NOT FOUND"} (must be found), $${usd(CONTROL_ABSENT)} ${stated.has(CONTROL_ABSENT) ? "FOUND" : "not found"} (must not be). It is reading the wrong text, no text, or a script numerals.mjs cannot parse, so a clean result for this language would mean nothing.`);
+          continue;
+        }
+        langsAnchored += 1;
         for (const e of earners) {
           for (const [what, n] of [["earns", e.earns], ["spends", e.spends], ["gap", gapOf(e)]]) {
-            if (!body17.includes(usd(n))) {
-              fail(`§53: the figure's "${e.key}" earner ${what} $${usd(n)}, which lesson 17's own body never states. Every number in this figure is the lesson's — a reader who reads one set and sees another has been given two lessons. Change the lesson and the figure together or not at all.`);
+            if (!stated.has(n)) {
+              fail(`§53: the figure's "${e.key}" earner ${what} $${usd(n)}, which lesson 17's own "${lang}" body never states. Every number in this figure is the lesson's — a reader who reads one set and sees another has been given two lessons. Change the lesson and the figure together or not at all, in every language.`);
             }
           }
         }
@@ -6858,7 +6925,7 @@ if (keyedGroupsChecked < 4) {
       }
 
       if (failures === 0) {
-        console.log(`  §53 lesson 17's earnings gap holds: $${usd(lo.earns)}/$${usd(lo.spends)} and $${usd(hi.earns)}/$${usd(hi.spends)} — both gaps exactly $${usd(gapOf(lo))} at ${(frac * 100).toFixed(2)}% of the taller column (${(hi.earns / lo.earns).toFixed(1)}x the income), every one of the six figures found in the lesson's own body, control proven both directions.`);
+        console.log(`  §53 lesson 17's earnings gap holds: $${usd(lo.earns)}/$${usd(lo.spends)} and $${usd(hi.earns)}/$${usd(hi.spends)} — both gaps exactly $${usd(gapOf(lo))} at ${(frac * 100).toFixed(2)}% of the taller column (${(hi.earns / lo.earns).toFixed(1)}x the income), every one of the six figures found in the lesson's own body in all ${langsAnchored} language(s), control proven both directions in each.`);
       }
     }
   }
@@ -8210,6 +8277,49 @@ if (keyedGroupsChecked < 4) {
         );
       }
     }
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 61. scripts/numerals.mjs — the money-amount parser that §21 and §53 read
+//     five-language prose with (backlog item 127, added 2026-08-29).
+//
+//     WHY THE PARSER NEEDS ITS OWN SECTION AND NOT JUST ITS CALLERS' CONTROLS.
+//     §21's and §53's controls ask "did this scan find a numeral I know is
+//     there?". A parser that summed every digit run it saw, or that returned
+//     the whole integer range, would pass all of them — the control proves the
+//     instrument is ON, not that it is RIGHT. So the specimens below are
+//     asserted as EXACT SET EQUALITY, and four of the nine are refutations:
+//     a greedy parser fails them and a correct one cannot.
+//
+//     THE FOUR REFUTATIONS, and each is a mistake this module actually made or
+//     nearly made: equal units do not decompose (`5만 4만` is two amounts),
+//     ascending units do not either, a unit-less number never joins a group
+//     (`3 100` is not 3,100), and Korean `만` after a comma-grouped amount is
+//     the particle "only" rather than the myriad marker — the last one found
+//     live in lesson 7's own Korean caption, where the first draft of this
+//     parser reported a figure missing that is plainly there.
+{
+  const before61 = failures;
+  for (const sp of NUMERAL_SPECIMENS) {
+    const got = [...amountsIn(sp.text)].sort((a, b) => a - b);
+    const want = [...sp.expect].sort((a, b) => a - b);
+    const same = got.length === want.length && got.every((v, i) => v === want[i]);
+    if (!same) {
+      fail(`§61: numerals.mjs read ${JSON.stringify(sp.text)} as [${got.join(", ")}]; the specimen says [${want.join(", ")}] (${sp.note}). §21 and §53 anchor five-language figures through this function, so every presence test they run is only as good as this line.`);
+    }
+  }
+  // Both directions on the function itself: it must also return NOTHING for
+  // text that states no amount, or "the figure is absent" and "the parser is
+  // asleep" become the same result one level up.
+  for (const empty of ["", "no figures here at all", "격차는 정확히 같습니다"]) {
+    const got = [...amountsIn(empty)];
+    if (got.length !== 0) {
+      fail(`§61: numerals.mjs found [${got.join(", ")}] in ${JSON.stringify(empty)}, which states no amount. A parser that invents amounts makes every §21 and §53 presence test pass for the wrong reason.`);
+    }
+  }
+  if (failures === before61) {
+    console.log(`  §61 the five-language money-amount parser holds: ${NUMERAL_SPECIMENS.length} specimen(s) read to an exact set, ${NUMERAL_SPECIMENS.filter((sp) => sp.note.startsWith("REFUTATION")).length} of them refutations a greedy parser would fail, and 3 amount-free strings read as empty.`);
   }
 }
 
