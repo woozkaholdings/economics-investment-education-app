@@ -226,20 +226,38 @@ const STANDALONE = /^(deductible|premium|beneficiary|annuity|escrow|dividends?|e
 // Initial-matching is the whole precision story: it is what separates a real
 // expansion from any capitalized phrase that happens to precede a bracket.
 //
-// DELIBERATELY NOT DETECTED: item 64's apposition shape, `the annual rate —
-// the APR — on your credit card`. Measured, not assumed: `annual rate` spells
-// "ar", not "apr" (the full expansion is "annual percentage rate", which the
-// prose does not say), so no initial rule can verify it. Suppressing on the
-// em-dashes alone would suppress on punctuation rather than on evidence, and
-// would silently hide bare acronyms written in apposition. That instance is
-// also not in any report today — it occurs once, below the lesson corpus's
-// reach threshold — so the honest scope here is the verifiable half.
+// APPOSITION IS DETECTED TOO, since 2026-08-30 (owner-directed "do FOMO next").
+// It was not, and the cost was a false candidate plus a false printed claim.
+// Money lesson 20 §1 writes `has a name: FOMO, the fear of missing out` — the
+// acronym glossed in the same clause that introduces it, which is exactly what
+// this rule exists to recognize. It was reported as undefined jargon for two
+// reasons that were measured separately, because the first hid the second:
+//   1. `glossSpans` only ever built PARENTHESIZED spans, so a comma or dash
+//      apposition was invisible however well its initials verified.
+//   2. Even rewritten as `FOMO (the fear of missing out)` it still missed — the
+//      expansion had no allowance for a LEADING ARTICLE after the bracket. That
+//      made the rule asymmetric between its own two orders: `the fear of
+//      missing out (FOMO)` matched, because there the `\b` floats and the match
+//      can start at "fear", while the acronym-first order had to begin at the
+//      character after `(`. A rule that accepts a gloss in one order and
+//      rejects the same words in the other is wrong on its own terms.
+// Both are fixed. THE SUPPRESSION EVIDENCE IS STILL THE INITIALS, NEVER THE
+// PUNCTUATION — that distinction is the whole precision story and it is why
+// item 64's `the annual rate — the APR — on your credit card` is STILL NOT
+// detected, and correctly so: `annual rate` spells "ar", not "apr" (the full
+// expansion, "annual percentage rate", is not what the prose says), so no
+// initial rule can verify it. Re-measured 2026-08-30 and still false. The
+// punctuation only says where to look; the initials decide.
 //
 // Applies to the acronym and capitalized-phrase rules ONLY, not to the
 // head-noun n-gram sweep below: `Individual Retirement Account (IRA)` really
 // does use the phrase "retirement account", and that phrase's reach is real
 // vocabulary evidence, not an artefact of the gloss.
 const CONNECTORS = "of|and|for|the|in|on|at|to";
+// An expansion may open with an article the acronym does not spell: "FOMO, THE
+// fear of missing out". Optional, and only at the head — a "the" between words
+// is already a CONNECTOR.
+const ARTICLE = "(?:(?:the|a|an)\\s+)?";
 const expansionSrc = (acr) =>
   acr
     .split("")
@@ -249,13 +267,24 @@ const expansionSrc = (acr) =>
     )
     .join("");
 
-// Character ranges of every self-defining gloss in one doc. Both orders occur
-// in real copy: `Expanded Form (ACR)` and `ACR (Expanded Form)`.
+// Character ranges of every self-defining gloss in one doc. Four shapes, in two
+// orders each: the expansion may be bracketed — `Expanded Form (ACR)`,
+// `ACR (Expanded Form)` — or set off by a comma or a dash — `ACR, the Expanded
+// Form`, `Expanded Form, or ACR`. The separator is only ever an ADJACENCY test;
+// the acronym's initials still have to spell the expansion, which is what keeps
+// a dash from suppressing an ordinary bare acronym that happens to sit near a
+// capitalized phrase.
+const SEP = "\\s*[,\u2014\u2013]\\s*";
 const glossSpans = (text) => {
   const spans = [];
   for (const acr of new Set([...text.matchAll(/\b[A-Z]{2,6}\b/g)].map((m) => m[0]))) {
     const exp = expansionSrc(acr);
-    for (const src of [`\\b${exp}\\s*\\(${acr}\\)`, `\\b${acr}\\s*\\(${exp}\\)`]) {
+    for (const src of [
+      `\\b${ARTICLE}${exp}\\s*\\(${acr}\\)`,
+      `\\b${acr}\\s*\\(\\s*${ARTICLE}${exp}\\s*\\)`,
+      `\\b${acr}${SEP}${ARTICLE}${exp}\\b`,
+      `\\b${ARTICLE}${exp}${SEP}(?:or\\s+)?${acr}\\b`,
+    ]) {
       for (const m of text.matchAll(new RegExp(src, "g"))) spans.push([m.index, m.index + m[0].length]);
     }
   }
@@ -267,7 +296,9 @@ const hits = new Map(); // normalized -> { display, lessons: Set, count, glossed
 const record = (term, id, glossed) => {
   const n = norm(term);
   if (!n || n.length < 3) return;
-  if (!hits.has(n)) hits.set(n, { display: term, lessons: new Set(), count: 0, glossed: true });
+  if (!hits.has(n)) {
+    hits.set(n, { display: term, lessons: new Set(), count: 0, glossed: true, glossedIn: new Set() });
+  }
   const h = hits.get(n);
   h.lessons.add(id);
   h.count += 1;
@@ -275,6 +306,13 @@ const record = (term, id, glossed) => {
   // inside a gloss. One bare use anywhere — another lesson, another entry —
   // and it is reported, because that is a reader who never met the expansion.
   if (!glossed) h.glossed = false;
+  // ...but WHERE it was glossed is kept, which `glossed` alone throws away.
+  // A term glossed once and used bare elsewhere is a real candidate AND has a
+  // definition already sitting in the corpus; a run that cannot see the second
+  // half writes a glossary entry for a word the content already explains.
+  // That is not hypothetical: it is why FOMO was filed as undefined jargon on
+  // 2026-08-30 (backlog item 60's note).
+  else h.glossedIn.add(id);
 };
 
 // One doc's extraction, factored out of the loop so the control at the bottom
@@ -336,6 +374,7 @@ for (const [n, h] of hits) {
     lessons: [...h.lessons].sort(byDocId),
     count: h.count,
     glossed: h.glossed,
+    glossedIn: [...h.glossedIn].sort(byDocId),
   };
   (glossaryForms.has(n) ? known : candidates).push(row);
 }
@@ -373,7 +412,10 @@ const pad = isGlossaryCorpus ? 34 : 30;
 for (const h of reported) {
   console.log(
     `  ${h.display.padEnd(pad)} ${String(h.lessons.length).padStart(2)} ${UNIT} ${String(h.count).padStart(3)}x   ` +
-      `${UNIT} ${h.lessons.join(", ")}`,
+      `${UNIT} ${h.lessons.join(", ")}` +
+      // Read this before proposing a glossary entry: the corpus already spells
+      // this one out somewhere, so the gap is reach, not absence.
+      (h.glossedIn.length ? `   ← already spelled out in ${UNIT} ${h.glossedIn.join(", ")}` : ""),
   );
 }
 console.log(
@@ -381,12 +423,31 @@ console.log(
 );
 // Named, never just counted: a suppression rule that hides what it removed is
 // how a report starts lying quietly. These are short lists by construction.
+//
+// ⛔ THE EMPTY-CASE SENTENCE USED TO SAY "no acronym in this corpus is expanded
+// next to itself", AND THAT WAS A CLAIM THE COUNT CANNOT SUPPORT. Suppression
+// needs EVERY occurrence glossed; the sentence reported it as though nothing
+// were glossed at all. The two differ exactly when a term is spelled out once
+// and used bare elsewhere — and on 2026-08-30 a run read that sentence over a
+// money corpus in which lesson 20 §1 writes "FOMO, the fear of missing out",
+// and filed FOMO as undefined jargon on the strength of it. A report line is a
+// measurement like any other, and this one asserted about the CONTENT what it
+// had only measured about the BUCKET.
+const glossedSomewhere = reported.filter((h) => h.glossedIn.length);
 console.log(
   selfDefined.length
     ? `  (${selfDefined.length} self-defining suppressed — the text spells them out where it uses them: ` +
         `${selfDefined.map((h) => `"${h.display}"`).join(", ")})`
-    : `  (0 self-defining suppressed — no acronym in this corpus is expanded next to itself)`,
+    : `  (0 self-defining suppressed — no acronym in this corpus is expanded next to itself EVERY ` +
+      `time it appears)`,
 );
+if (glossedSomewhere.length) {
+  console.log(
+    `  (but ${glossedSomewhere.length} listed above IS spelled out somewhere and bare elsewhere — ` +
+      `${glossedSomewhere.map((h) => `"${h.display}"`).join(", ")}. Read that ${UNIT.slice(0, -1)} ` +
+      `before proposing a glossary entry: the content may already define it.)`,
+  );
+}
 console.log(
   isGlossaryCorpus
     ? `\nREADING THIS: reach is NOT the filter here — everything found is listed, because a reader\n` +
@@ -641,9 +702,21 @@ if (phantoms.length) {
 // not a copy of it — and both directions are asserted on every run. The probe
 // is deliberately NOT drawn from the content: content gets edited, and a
 // control that moves with the thing it checks is not a control.
+//
+// EXTENDED 2026-08-30 with the apposition half. The two clauses added are the
+// two directions that matter and they are deliberately adversarial to each
+// other: `FOMO, the fear of missing out` is an apposition whose initials DO
+// spell the acronym and MUST now be suppressed (it is the real lesson-20 shape
+// that this rule used to miss), while `the annual rate — the APR — on your
+// credit card` is an apposition whose initials do NOT spell it (item 64's
+// shape: "annual rate" spells "ar") and MUST still survive. Together they
+// assert that the widening suppresses on the initials and not on the comma —
+// if it ever starts suppressing on punctuation, `apr` goes quiet and this
+// fails.
 const PROBE =
   "Filings go to the Securities and Exchange Commission (SEC) each quarter, and the " +
-  "Federal Reserve reads them before the FICO cutoff.";
+  "Federal Reserve reads them before the FICO cutoff. The feeling has a name: FOMO, the " +
+  "fear of missing out. Watch the annual rate — the APR — on your credit card.";
 const probe = new Map();
 scanDoc(PROBE, (term, glossed) => {
   const n = norm(term);
@@ -658,6 +731,10 @@ for (const [n, wantGlossed] of [
   ["exchange commission", true],
   ["fico", false],
   ["federal reserve", false],
+  // The apposition pair. `fomo` proves the rule reaches past the bracket;
+  // `apr` proves it still needs the initials to agree.
+  ["fomo", true],
+  ["apr", false],
 ]) {
   if (!probe.has(n)) {
     problems.push(
@@ -666,10 +743,15 @@ for (const [n, wantGlossed] of [
     );
   } else if (probe.get(n) !== wantGlossed) {
     problems.push(
+      // Names the term, not one specific gloss: the probe carries three now, and
+      // the old wording asserted every failure was the SEC clause — it told a
+      // 2026-08-30 sabotage run that "fomo" sat inside "Securities and Exchange
+      // Commission (SEC)". An error message is a claim and goes stale like any
+      // other; this one was wrong for two of the three cases it could report.
       wantGlossed
-        ? `CONTROL FAILED: "${n}" sits inside "Securities and Exchange Commission (SEC)" and was NOT ` +
-            `treated as self-defining — the gloss rule (item 68) is dead, and expanding an acronym in ` +
-            `place will keep making the report longer instead of shorter.`
+        ? `CONTROL FAILED: "${n}" is inside a gloss in the probe and was NOT treated as ` +
+            `self-defining — the gloss rule (item 68) is dead for that shape, and expanding an ` +
+            `acronym in place will keep making the report longer instead of shorter.`
         : `CONTROL FAILED: "${n}" is outside every gloss in the probe and WAS suppressed as ` +
             `self-defining — the gloss rule is over-matching and is now hiding undefined jargon, ` +
             `which is the exact thing this script exists to find.`,
@@ -682,7 +764,8 @@ if (problems.length) {
 }
 console.log(
   `\n✓ control: extractor validated across all ${lessons.length} lessons (${controlCorpus.size} terms re-found); ${known.length} in the "${track}" corpus, buckets disjoint; ` +
-    `gloss rule suppresses a glossed acronym and its expansion, not a bare one.`,
+    `gloss rule suppresses a glossed acronym and its expansion, not a bare one, ` +
+    `in parentheses and in apposition, and still not one whose initials disagree.`,
 );
 
 // ── The quotable line (backlog item 70) ───────────────────────────────────

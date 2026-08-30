@@ -2214,11 +2214,27 @@ this note is the case for it.
     > and these four were not keys. Its own header says so; nothing else does. **A green coverage
     > number is a statement about the vocabulary you already admitted, and new content arrives
     > outside it.** The next run to add lessons should run `npm run jargon` on the track it touched.
-    > **Residual, filed as a note under this item rather than as a numbered one (W-6.2 rule 2):
+    > ~~**Residual, filed as a note under this item rather than as a numbered one (W-6.2 rule 2):
     > `FOMO` (2 lessons, 4 uses — money 20 and 28) is the last candidate on the list that is real
-    > jargon rather than a section heading or a cross-reference.** It was not taken this run because
-    > it was not measured — nobody has read whether lesson 20 defines it at first use, and item 60's
-    > own rule is to read the first use before adding a key. Zero live learner instances (O-1).
+    > jargon rather than a section heading or a cross-reference.**~~ It was not taken that run
+    > because it was not measured — nobody had read whether lesson 20 defines it at first use.
+    > **⛔ MEASURED 2026-08-30 (owner-directed "do FOMO next") AND THE NOTE ABOVE IS WRONG. No
+    > glossary entry is due, and the striking-out is the point: the note's own hedge ("it was not
+    > measured") was the only true sentence in it, and the confident half was written anyway.**
+    > Lesson 20 §1 reads *"The feeling that pulls Marcus in has a name: FOMO, the fear of missing
+    > out"* — the acronym glossed in the clause that introduces it, so §3.0.3's FIRST branch holds.
+    > The heading above it is "FOMO Pulls You In", the takeaway restates the expansion, and **the
+    > single use outside lesson 20 — lesson 28 §1 — is itself a cross-reference carrying lesson
+    > 20's title in parentheses.** So it is *both* of the two things the note said it was not.
+    > Adding a key would also have obliged an exclusion on 20 under rule 2, i.e. the entry would
+    > have been unreachable from the lesson that teaches it.
+    > **The transferable half is about the instrument, and it is now fixed.** `npm run jargon`
+    > printed *"0 self-defining suppressed — no acronym in this corpus is expanded next to
+    > itself"*, which is a claim about the CONTENT that the count could not support: suppression
+    > needs EVERY occurrence glossed, and FOMO is glossed once and bare three times. That sentence
+    > is what made the note's confident half feel checked. The report now says "…EVERY time it
+    > appears" and adds a second line naming the terms that ARE spelled out somewhere, and each
+    > such candidate carries `← already spelled out in lesson N`. See the 2026-08-30 run entry.
 
 64. **✅ BOTH CLOSED — struck from the W-5.2 pick list 2026-08-24 after seven days of being
     recommended when nothing was open. `Dividend` shipped 2026-08-20; the other two keys landed
@@ -3337,6 +3353,109 @@ zero meaningful: `selftest PASS (8/8 controls fired, plantsRemoved true)` and, p
 finding(s); V vacuous; U unavailable`. A bare "no accessibility issues found" is not a result.
 
 ## Run log
+
+### 2026-08-30 (owner-directed: "do FOMO next") — FOMO is defined in the clause that introduces it; the report line that said otherwise was asserting about the content what it had measured about the bucket
+
+**No glossary entry shipped, and that is the finding.** The item was my own note from the previous
+run, which called `FOMO` "the last candidate on the list that is real jargon rather than a section
+heading or a cross-reference." Measured, it is **both** of the things that sentence ruled out.
+
+**Step 3.5 — the premise is false in three independent places.**
+- **Lesson 20 §1: *"The feeling that pulls Marcus in has a name: FOMO, the fear of missing out."***
+  The acronym is glossed in the clause that introduces it, so §3.0.3's FIRST branch already holds.
+  The section heading above it is "FOMO Pulls You In…" and the takeaway restates the expansion.
+- **Lesson 28 §1's single use is a cross-reference**: `a different pattern from FOMO (“Everyone
+  Can't Be Wrong — Can They?”)` — it carries lesson 20's title in the parentheses, so the one
+  out-of-lesson reader is already pointed at the lesson that defines it.
+- **A key would have been unreachable from the lesson that teaches it.** Rule 2 would have excluded
+  it on 20 (`defined-here`), leaving a chip only on 28 — a glossary entry whose sole appearance is
+  the lesson that says "go read the other one".
+- **Control:** the sweep carried `emergency fund`, a term I know is in eight places, and found all
+  eight in their known lessons — the same instrument-blindness trap that fired for real yesterday.
+
+**So the defect is in the instrument, and it is the sentence that made the bad note feel checked.**
+`npm run jargon` printed **"(0 self-defining suppressed — no acronym in this corpus is expanded next
+to itself)"**. Suppression requires **every** occurrence to be glossed; FOMO is glossed **once** and
+bare **three** times, so it was correctly *not* suppressed — and the explanation attached to that
+zero was a claim about the corpus that the count cannot support. **A report line is a measurement
+like any other. This one described its bucket and asserted about the content.**
+
+**Shipped — three changes to `scripts/jargon-candidates.mjs`, no content and no new check.**
+1. **The false line is now true**: "…is expanded next to itself **EVERY time it appears**", plus a
+   second line naming the terms that ARE spelled out somewhere and bare elsewhere, and a
+   `← already spelled out in lesson N` marker on each such candidate row. Today that marks exactly
+   one row, `FOMO`, which is the annotation that would have stopped the note being written.
+2. **The gloss rule now reads apposition, not only parentheses.** Two defects, and the first hid the
+   second — found because my control rewrote the real sentence *with* brackets and it **still**
+   failed: (a) `glossSpans` built parenthesized spans only; (b) the expansion had no allowance for a
+   **leading article**, so `FOMO (the fear of missing out)` missed while `the fear of missing out
+   (FOMO)` matched. **The rule disagreed with itself between its own two orders** — in the
+   expansion-first form the `\b` floats and the match can start at "fear"; in the acronym-first form
+   it had to begin at the character after `(`.
+3. **A control message that was lying.** Sabotage 1 below reported that `"fomo"` *"sits inside
+   'Securities and Exchange Commission (SEC)'"* — hardcoded from when the probe held one gloss. It
+   now names the term instead of one specific clause.
+
+**The evidence is still the initials, never the punctuation** — that is the file's own precision
+story and it is why item 64's `the annual rate — the APR — on your credit card` is **still not
+detected**, correctly: "annual rate" spells `ar`, not `apr`. Re-measured this run, still false.
+
+**Controls — five, and two of them are sabotage.**
+
+| control | expected | got |
+| --- | --- | --- |
+| A: sweep finds a term I know is there (`emergency fund`) | 8 uses | 8/8 in their known lessons |
+| B: isolate *why* FOMO missed — same sentence, bracketed | should match | **false — a SECOND defect (leading article)** |
+| C (precision): candidate/control/self-defining counts, all 5 corpora, before vs after | unchanged | **identical in all five** — 0 newly suppressed |
+| D (sabotage): revert to parens-only spans | `fomo` control fails | **failed as designed** |
+| E (sabotage): suppress on punctuation, initials ignored | `apr` control fails | **failed as designed** |
+
+**C is the one that licenses the widening and D/E are the ones that make the probe worth anything.**
+The rule now recognizes a shape it could not see, and across money, economy, essentials, all and the
+glossary corpus it suppresses **nothing new** — so the change is a precision-preserving widening,
+not a loosening. **Stated plainly because it cuts the other way too: this fix changes no report
+today.** Its value is that the next acronym glossed in apposition is not a false candidate, and D/E
+prove the guard around it is alive rather than decorative.
+
+**Verified.** `npm test` **PASS, 0 failures** (3 pre-existing WARNs: log floor + the two standing
+translation warnings). `npm run build` ✓ 1.21s.
+`MEASURED jargon money: 7 candidates, 10 control, 0 self-defining, 133 low-reach  [fingerprint b72d1b0a]`
+**Note what happened to yesterday's quoted line, because it is the fingerprint working rather than
+failing:** `check-measurements` reported it "enforced and agreeing" this morning and now reports **8
+retired, 0 disagreeing** — the instrument moved, so the claim is retired rather than falsely scored.
+An instrument change is *supposed* to retire the numbers quoted against the old one.
+
+**Adversarial self-check (step 5).** **Blindspot register: no regression, and none is reachable** —
+this run touches one script and the log; no lesson, locale, glossary or market file is edited.
+`grep -ci dalio` over the diff: **0**. §10.1: no learner-facing string changes at all (the only new
+prose is a probe sentence inside a control and comments). §10.3 untouched. No date or market figure
+enters user-facing copy. **DECISIONS.md: no conflict** — nothing architectural moves. **Not a redo:**
+item 68 built the gloss rule for the parenthesized shape and this extends it to one it explicitly
+listed as undetected; the APR case it *deliberately* declined stays declined, on the same reasoning.
+**On W-6.2:** this is my own previous run's residual and it is the **first** consecutive time
+(rule 1 allows two), and it was the owner's pick rather than my default — but the correct reading is
+that it should not have been a numbered-style residual at all, which is why it stays a note under
+item 60. **On W-6.2 rule 3:** I added **no check that can fail a build** — the new assertions are
+inside an existing control that already ran, and the learner-visible failure the underlying rule
+guards is unchanged. **On W-6.3:** `scripts/` grows by ~98 net lines against W-6.0's 15,480 : 6,589.
+That is the wrong side of the ratio and I am not going to pretend otherwise; the defense is that it
+is a *correction to a lying report* plus its probe, not a new instrument, and it deletes a false
+sentence that had already cost one run a wrong conclusion. **On my own verification claim:** a
+reviewer re-running the five corpora before and after gets identical counts; D and E are reproducible
+by deleting either apposition pattern from `glossSpans`, or by replacing `${exp}` in the
+acronym-first apposition with a bare word run.
+
+**Owner tree at end of run:** `OWNER-TREE f54fc023fb026bcb44277af38101071c245bfda0c8ead5c40049acd487b5c975`
+observed at the START of this run (0 tracked modified, 51 untracked — the owner's `UIUX/`, untouched);
+the only tracked changes at the end are this run's own two files.
+
+**Next run: pick from the launch plan or the owner-facing items.** Item 60's list is now down to
+candidates that are section headings, cross-references or ordinary English — **`lifestyle inflation`
+is the only remaining one with a real shape, and it already carries an `other-sense` exclusion on
+lesson 17**, so read that before treating it as open. **O-1 remains the entire critical path: 44
+lessons, five languages, 160 minutes of content, and zero people have ever opened this app.** **O-3
+unchanged — this run added no translated prose.** **W-6.5 still stands: `market.json` is `asOf
+2026-08-28`, so the Sector screen starts suppressing figures around 2026-09-02.**
 
 ### 2026-08-30 (scheduled dev-agent) — the four income types had no glossary entry, "0 unexplained" was correct and blind, and the sweep written to prove it read every lesson as empty
 
