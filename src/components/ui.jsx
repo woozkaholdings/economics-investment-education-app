@@ -195,6 +195,18 @@ export function Segmented({ items, value, onChange, ariaLabel, idPrefix, panelId
               // the Sector screen's period tabs are "1M"/"3M"/"6M", which
               // rendered 19px wide, under even WCAG 2.5.8's 24px AA floor.
               display: "inline-flex", alignItems: "center", justifyContent: "center",
+              // `flexShrink: 0` is what makes the container's `overflowX: auto`
+              // above actually do its job. A flex item shrinks by default, and
+              // these carry `whiteSpace: nowrap` with visible overflow — so
+              // instead of the strip scrolling, each button was squeezed below
+              // its own label and the text spilled across its neighbors.
+              // Measured 2026-08-30 at 320px under 200% browser text zoom, on
+              // the Kids age-band strip: three buttons 79.7/84.3/92px wide
+              // holding labels that needed 101/107/116px, rendering "Ages 5-8",
+              // "Ages 9-12" and "Ages 13-17" overlapping each other. Refusing to
+              // shrink lets the strip overflow, which is the behavior the
+              // container already asked for.
+              flexShrink: 0,
               minHeight: MIN_TAP, minWidth: MIN_TAP,
               padding: `0 0 ${space["3"]}px`,
               marginBottom: -1,
@@ -334,10 +346,36 @@ export function Tile({ icon, label, sublabel, locked = false, onClick, style, ..
 }
 
 // ── TileGrid ──────────────────────────────────────────────────────────────
-// Two columns at every width this app supports (APP_MAX_WIDTH is 460).
+// Two columns at every width this app supports (APP_MAX_WIDTH is 460) — but
+// only while two columns actually FIT. The previous `1fr 1fr` promised two
+// columns unconditionally, and `1fr` is `minmax(auto, 1fr)`, whose automatic
+// minimum is the track's MIN-CONTENT size. So the columns could not shrink
+// below the longest word in a tile, and the grid overflowed instead of
+// reflowing: measured 2026-08-30 at a 320px viewport under 200% browser text
+// zoom, the Reference hub laid out to 408px against a 320px viewport — 88px of
+// horizontal scroll on the app's own hub screen (WCAG 1.4.4 Resize Text, AA).
+//
+// `auto-fit` + an explicit `minmax` floor drops to ONE column the moment two
+// no longer fit, and the floor is in `rem` on purpose: browser text zoom scales
+// `rem`, so the breakpoint moves with the text rather than with the device.
+// The inner `min(..., 100%)` keeps the floor from becoming an overflow of its
+// own in a container narrower than the floor itself.
+//
+// WHY 6.5rem, and not a rounder number. The floor decides WHEN the hub drops to
+// one column, so it is chosen to leave today's layout alone and change only the
+// sizes that are already broken. At the narrowest supported viewport (320px, so
+// 288px of content after `<main>`'s padding, minus this grid's 12px gap) two
+// columns survive while `2 x floor + 12 <= 288`. At 6.5rem that is two columns
+// at 100%, 115% and 130% — 130% being `FONT_SCALE_STEPS`' own ceiling, so
+// nothing reachable through the app's text-size control moves — and one column
+// at 150% and 200%, which are exactly the browser-zoom steps that used to
+// overflow. Anything from 7rem up would collapse the hub at 130%, and 9rem
+// (this fix's first draft) collapsed it at 100%: a density regression on every
+// 320px phone, caught by measuring the threshold instead of eyeballing it.
+const TILE_MIN = "6.5rem";
 export function TileGrid({ children, style }) {
   return (
-    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: space["3"], ...style }}>
+    <div style={{ display: "grid", gridTemplateColumns: `repeat(auto-fit, minmax(min(${TILE_MIN}, 100%), 1fr))`, gap: space["3"], ...style }}>
       {children}
     </div>
   );

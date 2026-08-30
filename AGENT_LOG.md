@@ -1595,6 +1595,41 @@ for the history. No open P1/P2 items.
       stand; the coverage did not.** `A11yStates.coverage()` plus the Tab step now in the header
       recipe are the fix — see item 149.
 
+156. **[A11y — filed 2026-08-30 by the run that closed item 153, as a change made on INSPECTION
+    rather than on measurement, which is the reason it is written down.] `PracticeCoachMark` got the
+    nav pill's fix without ever being seen to break.**
+    - **What was done:** `src/App.jsx`'s coach mark carried the identical `position: fixed` +
+      `left: 50%` + `translateX(-50%)` + `width: calc(100% - 32px)` pattern that the nav pill was
+      just fixed for, so it received the same `left: 0; right: 0; margin: 0 auto` + `100vw` treatment
+      in the same commit.
+    - **The honest gap:** the nav's failure was measured at 320px/200%; **this one was not
+      reproduced.** Reaching the coach mark needs a finished lesson, and the overflow it would have
+      ridden on is fixed in that same commit, so the bug here was latent rather than live.
+    - **If picked:** drive a lesson to completion at 320px/200% and confirm the coach mark centers on
+      the viewport, or decide the pattern-consistency argument is enough and close it as a note.
+    - **Honest priority: low**, and per W-6.2 rule 2 this is a note under item 153 as much as an item.
+
+155. **[A11y/Tooling — filed 2026-08-30 by the run that closed item 153, as its stated residual.]
+    The text-zoom sweep that found five live defects exists only in that session's browser console.**
+    - **W-6.2 rule 3, answered up front:** the learner-visible failure a permanent probe would have
+      caught is **"the Reference hub scrolled sideways at 200% browser zoom, and headings were
+      clipped mid-word by `overflow-x: hidden`"** — both were shipping, on the hub screen, before
+      2026-08-30.
+    - **What the probe has to do, and the part that is easy to get wrong:** a right-edge scan over
+      `getBoundingClientRect()` **is not sufficient** — it cannot see text overflow, because an
+      overflowing word does not widen its element's border box. It needs the second probe
+      (`el.scrollWidth > box width`) restricted to the **XHTML namespace** (SVG `<text>` produces 17
+      phantom findings on the Market Dashboard otherwise), excluding intentional `nowrap` +
+      `text-overflow: ellipsis`, and excluding descendants of genuinely scrollable containers.
+    - **Both controls are cheap and must both fire:** a planted over-wide `<div>` for the box probe,
+      and a planted narrow box holding a long unbreakable word with `overflow-wrap: normal` for the
+      text probe. It must also REFUSE on an unsettled screen — three screens read a clean 0/0/0 while
+      still showing `Loading…`.
+    - **Where it belongs:** `scripts/a11y-sweep.js`, as a probe with the root-font override as its
+      axis, so it composes with `A11yStates`' existing language/font-scale/width axes.
+    - **Honest priority: low-to-medium.** It guards a property that holds as of 2026-08-30, but it
+      holds because of a five-call-site fix that a future layout change could undo silently.
+
 154. **⬆️ RAISED TO PRIORITY by the weekly review 2026-08-30 — see W-6.1 at the top of this
     backlog. The review REPRODUCED the fresh-clone failure (`npm test` exits 1 on a clean
     `git archive HEAD`), and route (b) is authorized there as a stopgap. The item's own
@@ -1615,9 +1650,28 @@ for the history. No open P1/P2 items.
       is one line in a recipe, and the underlying question (should `drafts/` be tracked?) is the
       owner's.
 
-153. **[A11y — filed 2026-08-30 by the run that closed item 148, from a measurement that item did
-    not take.] Under BROWSER text zoom the Fed-balance-sheet screen keeps degrading past the app's
-    own font ceiling, and the bottom tab bar joins it.**
+153. **✅ DONE 2026-08-30 (scheduled dev-agent) — but read the premise correction first, because
+    this item named the WRONG SCREEN, its numbers did not reproduce, and the basis on which W-6.2
+    parked it was the one thing that turned out to be false.**
+    > **PREMISE RE-MEASUREMENT 2026-08-30 — the headline was false at `HEAD` and the item was still
+    > right that a defect existed.** Re-measured on the screen the item named (320px, light, `en`,
+    > Reference > Market Dashboard), with the chart confirmed rendered (all five bars present, so
+    > not a lying zero): **0 overflowing nodes at 100/115/130/150/200%**, scrollWidth 320 at every
+    > step except 324 at 200% — against the item's claimed 3/9/15 nodes and 323/359/447. The item's
+    > figures were taken BEFORE item 148's fix landed and were filed unchanged after it.
+    > **The tab-bar half was real but on a different screen.** Sweeping all nine screens instead of
+    > the one named found the failures on **Reference hub** (scrollWidth **408** vs a 320 viewport,
+    > 16 nodes, at 200%) and **Sector performance** (**379**, the `NAV` itself 347px wide).
+    > **⚠️ The instrument the item prescribed cannot see the worst of it.** A right-edge scan over
+    > `getBoundingClientRect()` misses TEXT overflow, because an overflowing word does not widen its
+    > element's border box. The tell is a `scrollWidth` that disagrees with a zero node count, and
+    > following it found clipped headings the box probe called clean.
+    > **⚠️ W-6.2 parked this item as "zero live instances AND honest priority: low". That parking
+    > was correct given the item's TEXT and wrong about the app:** the real instances were live and
+    > learner-visible — a hub that scrolled sideways, headings cut off mid-word under
+    > `overflow-x: hidden`, and three age-band labels drawn on top of one another. The park is not
+    > the defect; **an item's own numbers going stale between filing and reading is**, which is what
+    > step 3.5 exists for.
     - **Measured 2026-08-30, 320px light, `en`, Reference > Market Dashboard, by overriding the root
       font size directly:** 100% and 115% clean; **130% → 3 overflowing nodes** (scrollWidth 323);
       **150% → 9** (359); **200% → 15** (447). At 150% and above the overflowing set stops being the
@@ -1632,6 +1686,19 @@ for the history. No open P1/P2 items.
     - **Carry a control if you pick it up:** the root-font override used above is the instrument, and
       its two-sided control is that 100%/115% must read clean on the same screen in the same pass.
     - **Honest priority: low-to-medium.** Downstream of O-1 like everything else.
+    - **✅ WHAT SHIPPED (2026-08-30).** One root cause in five places: a flex or grid track whose
+      automatic minimum is its MIN-CONTENT size, so it could not shrink when text grew.
+      `TileGrid` → `repeat(auto-fit, minmax(min(6.5rem, 100%), 1fr))`; the nav pill → `100vw`-based
+      width and auto-margin centering instead of `100%`/`left: 50%`; the tab buttons → `minWidth: 0`
+      plus a wrappable label; `Segmented` → `flexShrink: 0` so its container's `overflowX: auto`
+      scrolls instead of the labels overlapping; Settings' radio rows → `flexWrap: "wrap"`; and
+      `body { overflow-wrap: break-word }` so a long word breaks rather than being CLIPPED by the
+      `overflow-x: hidden` that was already there. **9 screens × 100/130/200% all report 0 box and 0
+      text overflow, scrollWidth 320 throughout**, both probes' controls firing in the same pass.
+    - **The threshold was computed, not eyeballed, and the first draft was a regression.** `9rem`
+      collapsed the hub to one column at 100% on every 320px phone. `6.5rem` keeps two columns at
+      100/115/130% — 130% being `FONT_SCALE_STEPS`' own ceiling, so nothing reachable in-app moves —
+      and collapses only at 150/200%.
 
 152. **[Content/QA — filed 2026-08-30 by the run that closed item 151, as its stated residual rather
     than smuggled into the same commit.] §50 now proves lesson 23's zone/series/axis labels say the
@@ -3692,6 +3759,117 @@ zero meaningful: `selftest PASS (8/8 controls fired, plantsRemoved true)` and, p
 finding(s); V vacuous; U unavailable`. A bare "no accessibility issues found" is not a result.
 
 ## Run log
+
+### 2026-08-30 (scheduled dev-agent) — the text-zoom item named the one screen that was already clean, and the probe it prescribed could not see the failure that was actually shipping (item 153)
+
+**Picked** item 153 (browser text zoom past the app's own font ceiling, WCAG 1.4.4 Resize Text AA).
+**Note on the pick:** the weekly review committed `c55a887` + `a3cf6ae` **while this run was already
+measuring**, and its new W-6.2 rule PARKS item 153. The pick predates the rule. The correction below
+is the part that matters: **W-6.2 parked this item as "zero live instances AND honest priority: low",
+and "zero live instances" was the single claim that turned out to be false.**
+
+**Step 3.5 — the premise broke in three separate places.**
+1. **The headline did not reproduce.** Item 153 said Reference > Market Dashboard degrades at
+   130/150/200% (3/9/15 overflowing nodes; scrollWidth 323/359/447). Re-measured at `HEAD` on that
+   exact screen: **0 nodes at every step**, scrollWidth 320/320/320/320/324. Its numbers were taken
+   before item 148's fix and filed unchanged after it.
+2. **The tab-bar claim was real, on screens the item never looked at.** Sweeping all nine screens:
+   **Reference hub 408px** against a 320px viewport (16 nodes) and **Sector performance 379px**
+   (the `NAV` itself computing to 347px wide) — both at 200%.
+3. **The prescribed instrument was blind to the worst failure.** A right-edge scan over
+   `getBoundingClientRect()` cannot see TEXT overflow: an overflowing word does not widen its
+   element's border box. The tell was a `scrollWidth` of 379 sitting next to a node count of 0, and
+   chasing it found `<h1>` "Sector performance" needing 363px in a 288px box, the header's
+   "Economic Cycles" 224px in a 42px box, and "Communication Services" 202px in 161px. Because
+   `body` already sets `overflow-x: hidden`, none of that scrolled — **it was clipped**, so the text
+   was genuinely gone rather than merely awkward.
+
+**Controls carried, both two-sided, both re-run after every rebuild.** A planted over-wide `<div>`
+had to raise the box count and vanish on removal (`before 0 → during 1..7 → after 0`); a planted
+narrow box holding `Supercalifragilisticexpialidocious` with `overflow-wrap: normal` had to raise the
+text count and vanish (`0 → 1 → 0`). **Four lying zeros were caught by controls rather than by
+reading**, and they are the reason this entry is trustworthy at all:
+- **A stale server from a 2026-08-25 session was squatting port 8781**, serving a scratchpad
+  `head/dist` with no `index.html`. The first "measurement" was a 404 page. Fixed by checking the
+  listening process's `cwd`, not by assuming the port was mine.
+- **`Loading…` reads exactly like a clean screen.** Three screens first reported 0/0/0 while the
+  lazy chunk had not rendered. The screen-identity fingerprint caught it; the probe now REFUSES
+  rather than reporting a clean number for an unsettled screen.
+- **The root-font override only proves anything if the type is in `rem`.** Verified live: body copy
+  14 → 28px and document height 3361 → 7664px across 100 → 200%. A flat `13.3333px` on the tab
+  `<button>` looked like a scale failure and was the button's own unused UA font-size — the label
+  `<span>` does scale, 11 → 22px.
+- **SVG `<text>` has no meaningful `scrollWidth`**, so the text probe reported 17 phantom findings on
+  the Market Dashboard until it was restricted to the XHTML namespace.
+
+**Shipped — one root cause, five call sites.** Every one is a flex or grid track whose *automatic
+minimum* is its min-content size, so it could not shrink when the text grew:
+- `ui.jsx` `TileGrid`: `1fr 1fr` → `repeat(auto-fit, minmax(min(6.5rem, 100%), 1fr))`.
+- `App.jsx` nav pill: width `calc(100% - 32px)` → `calc(100vw - 32px)`, and `left: 50%` +
+  `translateX(-50%)` → `left: 0; right: 0; margin: 0 auto`. A fixed element resolves percentages
+  against an initial containing block that GROWS with horizontal overflow, so the pill was centered
+  on half of the overflow it was itself causing — a genuine feedback loop (`left` computed to 189.5px,
+  half of the 379px the document had grown to).
+- `App.jsx` tab buttons: `minWidth: 0` + a wrappable label.
+- `ui.jsx` `Segmented`: `flexShrink: 0`, so the container's existing `overflowX: auto` scrolls
+  instead of the buttons being squeezed under their own labels and the text overlapping.
+- `Settings.jsx` radio rows: `flexWrap: "wrap"`.
+- `index.css`: `body { overflow-wrap: break-word }` — `break-word`, not `anywhere`, deliberately:
+  `anywhere` also shrinks min-content and would silently re-flow flex and grid tracks app-wide.
+
+**The first version of the grid fix was a regression, caught by computing the threshold instead of
+eyeballing it.** `9rem` collapses the Reference hub to ONE column at 100% on any 320px phone. The
+constraint is `2 x floor + 12px gap <= 288px` of content; **6.5rem** keeps two columns at 100/115/130%
+— 130% is `FONT_SCALE_STEPS`' own ceiling, so nothing reachable through the app's text-size control
+moves — and collapses to one only at 150/200%, exactly where it used to overflow. Verified as
+`5 tiles / 3 rows` at 100/115/130% and `5 tiles / 5 rows` at 150/200%.
+
+**`50vw` was also tried and was wrong on desktop**, which only showed up because the check was run at
+a second width: `vw` includes the classic scrollbar, so against a 900px window with a 15px scrollbar
+the pill centered on 450 while the app column centered on 442.5. Auto margins resolve against the
+layout viewport, which excludes it — re-measured **`offBy: 0`**.
+
+**Verification.** `npm run build` exit 0; `npm test` **exit 0**, 0 failures, and the 2 warnings are
+the pre-existing translation-debt and log-floor ones, unrelated to this change. §62 (item 148's Bar
+guard) still passes. Live sweep against the built bundle (`index-BQ2XP2Au.js`, read back from the DOM
+each reload so no result came from a stale build) at 320px, light, `en`:
+
+| screen | 100% | 130% | 200% | docScrollWidth |
+| --- | --- | --- | --- | --- |
+| Learn, Lesson reader, Review, Reference hub, Glossary, Market Dashboard, Sector performance, Kids, About | 0 box / 0 text | 0 / 0 | 0 / 0 | 320 at all three |
+
+Before the change, the same sweep read **408px on the Reference hub** and **379px on Sector
+performance**, with the age-band labels visibly overlapping on Kids and About's "Dark" button past
+the viewport edge. **One exception is deliberate and left alone:** the header's app title is a
+`nowrap` + `text-overflow: ellipsis` truncation by design, so it reports a `scrollWidth` larger than
+its box on purpose; the probe excludes intentional ellipsis, and elements inside a genuinely
+scrollable container.
+
+**§59 caught this run's own comments** — "neighbours"/"behaviour" — before the commit. Fixed to US
+spelling; the guard did exactly the job item 91 built it for.
+
+**Adversarial self-check (step 5).** No blindspot regression: nothing here touches content, so §10.1
+advice language, §10.2 Dalio, §10.3's parent-facing kids framing and the Markets stale-data rule are
+all untouched — the only dates added are measurement dates inside source comments, which is this
+file's existing convention and not a rendered date. No `DECISIONS.md` conflict: localStorage-only
+state, `.js` content modules and Vite are untouched; `DECISIONS.md` mentions `TileGrid` only as a
+structure adopted from the 2026-08-21 redesign, not as a closed two-column decision — and the
+"two columns at every width this app supports" intent is preserved on its own axis, since 220px of
+tracks fit the 288-428px range at every supported width. Not a redo: item 148 was the Bar chart's
+own columns→rows at narrow widths and `charts.jsx` is untouched here. On my own verification claim —
+an independent reviewer re-running `npm run build`, serving `dist/` on a **fresh** port, and running
+the two planted controls would get these numbers; the port check is in the recipe precisely because
+this run's first attempt did not.
+
+**Filed as residuals rather than smuggled into this commit — and read W-6.2 rule 3 before picking
+either:** new items **155** (the text-zoom sweep is session-only; a permanent probe belongs in
+`a11y-sweep.js`, and its learner-visible sentence is "the Reference hub scrolled sideways at 200%
+zoom and headings were clipped mid-word") and **156** (the `PracticeCoachMark` was hardened by
+inspection, not reproduced — it needs a finished lesson to reach).
+
+**Next run should pick W-6.1** — `npm test` fails on a fresh clone. This run does its authorized
+route-(b) stopgap as a second, separate commit; see the next entry.
+
 
 > **Entries before 2026-08-28 live in [`AGENT_LOG.archive.md`](AGENT_LOG.archive.md)** — moved
 > there in five passes (2026-08-01→08-08 and 2026-08-09→08-15 on 2026-08-16/17; 2026-08-16→08-22 on

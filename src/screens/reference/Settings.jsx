@@ -51,7 +51,16 @@ function ChoiceRow({ label, options, value, onChange }) {
       <Text variant="caption" color={ink.muted} style={{ textTransform: "uppercase", letterSpacing: "0.05em", fontWeight: 700, marginBottom: space["2"] }}>
         {label}
       </Text>
-      <div role="radiogroup" aria-label={label} style={{ display: "flex", gap: space["2"] }}>
+      {/* `flexWrap` so the options drop onto a second line instead of off the
+          side. `flex: 1` below is `1 1 0%`, whose automatic minimum is each
+          button's MIN-CONTENT width, so on one line the row could not shrink
+          past its longest label: measured 2026-08-30 at 320px under 200%
+          browser text zoom, Appearance's three buttons needed 116.9 + 81.1 +
+          76.4px plus two 8px gaps in a 254px row, and "Dark" rendered past the
+          viewport edge. Wrapping is the right answer rather than `minWidth: 0`,
+          which would have shrunk the buttons until "System" broke mid-word.
+          Nothing moves at sizes where the row already fits. */}
+      <div role="radiogroup" aria-label={label} style={{ display: "flex", flexWrap: "wrap", gap: space["2"] }}>
         {options.map((opt, i) => {
           const active = value === opt.value;
           return (

@@ -153,8 +153,17 @@ function PracticeCoachMark({ t, onOpenPractice, onDismiss }) {
         // the nav for anyone using the largest text setting, which is the
         // reader least able to absorb an overlap.
         bottom: "calc(env(safe-area-inset-bottom, 0px) + 12px + 76px + 10px)",
-        left: "50%", transform: "translateX(-50%)",
-        width: "calc(100% - 32px)", maxWidth: 320,
+        // Same centering as the nav pill below, and for the same reason: a
+        // fixed element's percentage offset resolves against an initial
+        // containing block that grows with horizontal overflow. NOTE the
+        // evidence level differs — the nav's failure was measured, this one was
+        // not reproduced. Reaching this coach mark needs a finished lesson, and
+        // the causes of the overflow it would have ridden on are fixed in this
+        // same commit, so the bug here is latent rather than live. It is
+        // hardened because it is the identical pattern, not because it was seen
+        // to break.
+        left: 0, right: 0, margin: "0 auto",
+        width: "calc(100vw - 32px)", maxWidth: 320,
       }}
     >
       <div
@@ -504,8 +513,33 @@ export default function App() {
         style={{
           position: "fixed",
           bottom: "calc(env(safe-area-inset-bottom, 0px) + 12px)",
-          left: "50%", transform: "translateX(-50%)",
-          width: `calc(100% - ${space["4"] * 2}px)`, maxWidth: APP_MAX_WIDTH - space["4"] * 2,
+          // Centred by auto margins between `left: 0` and `right: 0`, NOT by
+          // `left: 50%` + `translateX(-50%)`. A fixed element resolves a
+          // percentage offset against the initial containing block, which GROWS
+          // when the document overflows horizontally, so `left: 50%` centred the
+          // pill on half of the overflow: measured at 320px under 200% browser
+          // text zoom on Sector performance, 2026-08-30, `left` computed to
+          // 189.5px — half of the 379px the document had grown to, not half of
+          // the 320px viewport — putting the pill's right edge at 333.5px and
+          // feeding the overflow that caused it. Auto margins split whatever
+          // room is actually there instead of trusting a percentage.
+          //
+          // `50vw` was tried here first and is WRONG on desktop: `vw` includes
+          // the classic scrollbar, so against a 900px window with a 15px
+          // scrollbar the pill centred on 450 while the app column centred on
+          // 442.5 — 7.5px off. Auto margins resolve against the layout viewport,
+          // which excludes it, and measured dead-on at both widths.
+          left: 0, right: 0, margin: "0 auto",
+          // `100vw`, not `100%`. A fixed element resolves percentages against the
+          // initial containing block, which GROWS when the document overflows
+          // horizontally — so `100%` fed a loop: wide content widened the ICB,
+          // the wider ICB widened this pill, and the wider pill widened the
+          // document again. Measured 2026-08-30 at 320px under 200% browser
+          // text zoom: this nav computed to 347px against a 320px viewport,
+          // with `left: 50%` resolving to 189.5px (half of the 379px the
+          // document had grown to) rather than 160px. `100vw` is the viewport
+          // and cannot be inflated by the overflow it is meant to prevent.
+          width: `calc(100vw - ${space["4"] * 2}px)`, maxWidth: APP_MAX_WIDTH - space["4"] * 2,
           display: "flex", zIndex: 100,
           background: surface.card,
           border: `1px solid ${line.hairline}`,
@@ -544,7 +578,14 @@ export default function App() {
               onClick={() => goToTab(item.key)}
               onKeyDown={(e) => onTabKeyDown(e, index)}
               style={{
-                flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 2,
+                // `minWidth: 0` is what lets `flex: 1` actually shrink: a flex
+                // item's automatic minimum size is its MIN-CONTENT width, so
+                // without this the three labels set a floor the pill could not
+                // go below, and the bar overflowed under text zoom instead of
+                // tightening. Paired with the label's `overflowWrap` below —
+                // shrinking the button is only safe if its text can reflow.
+                flex: 1, minWidth: 0,
+                display: "flex", flexDirection: "column", alignItems: "center", gap: 2,
                 padding: `${space["2"]}px 0`,
                 border: "none", cursor: "pointer",
                 borderRadius: radius.full,
@@ -554,7 +595,7 @@ export default function App() {
               }}
             >
               <Icon name={item.icon} size="1.35rem" strokeWidth={active ? 2.2 : 1.7} />
-              <span style={{ fontSize: "0.6875rem", fontWeight: active ? 700 : 500 }}>{item.label}</span>
+              <span style={{ fontSize: "0.6875rem", fontWeight: active ? 700 : 500, overflowWrap: "anywhere", textAlign: "center" }}>{item.label}</span>
             </button>
           );
         })}

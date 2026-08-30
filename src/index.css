@@ -189,6 +189,22 @@ html {
 body {
   margin: 0;
   overflow-x: hidden;
+  /* Long words break instead of running off the side. This pairs with the
+     `overflow-x: hidden` directly above, which is what makes the omission
+     expensive rather than merely untidy: an overflowing word is not scrolled
+     to, it is CLIPPED, so the text is genuinely gone. Measured 2026-08-30 at a
+     320px viewport under 200% browser text zoom — the Reference header's
+     "Economic Cycles" needed 224px in a 42px box, the pushed-section <h1>
+     "Sector performance" 363px in a 288px box, and the sector name
+     "Communication Services" 202px in a 161px box; all three rendered cut off.
+     WCAG 1.4.4 (Resize Text, AA) is about exactly this path, since the app's
+     own `FONT_SCALE_STEPS` stop at 1.3 and 150%/200% are reachable only through
+     browser or OS text zoom.
+     `break-word` rather than `anywhere` on purpose: `anywhere` also shrinks an
+     element's MIN-CONTENT size, which would quietly re-flow flex and grid
+     tracks all over the app. `break-word` breaks the word only when it would
+     otherwise overflow, so nothing that fits today moves. */
+  overflow-wrap: break-word;
   background: var(--surface-canvas);
   color: var(--ink-body);
   font-family: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
