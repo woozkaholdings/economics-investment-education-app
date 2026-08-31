@@ -1380,6 +1380,48 @@ this note is the case for it.
       stand; the coverage did not.** `A11yStates.coverage()` plus the Tab step now in the header
       recipe are the fix — see item 149.
 
+159. **[Content/QA — filed 2026-08-31 by the run that rewrote lesson 38's takeaway, as its stated
+    residual. FILED, NOT QUEUED (W-6.2 rule 1): the next run must not pick this by default.]
+    Every content instrument and every content pass this project has run sweeps `sections` and
+    skips `takeaway`/`thinkAbout` — and that is not a hypothesis, it is twice-recorded.** (a) The
+    §10.1 closure of 2026-08-02 reworded "lesson 10's rendered per-phase 'Best investments:' lines"
+    (now lesson 38's section bodies) to historical framing in all five languages, and left the
+    `takeaway` directly beneath them asserting *"Every great fortune was made buying when others
+    were panicking at the trough. The cycle ALWAYS turns."* — see the completed-items entry for
+    that closure, which names sections only. (b) An independent run recorded the same shape for a
+    different instrument: *"§17b sweeps sections only, never `takeaway`/`thinkAbout` (item 64's
+    residual)"*. **Two instruments, two years apart in the log, same blind spot, and neither run
+    knew about the other.**
+    **The learner-visible failure a check here would have caught (W-6.2 rule 3), stated as one
+    sentence because it is not hypothetical — it shipped for four weeks:** the boxed Key Takeaway
+    at the end of the app's flagship cycle lesson told the reader an absolute falsehood about how
+    fortunes are made, in five languages, directly under body prose that had been carefully hedged
+    to say the opposite kind of thing.
+    **Scope note before anyone builds an instrument for this (W-6.3 — `scripts/` is 2.3x `src/`).**
+    The cheap version is not a new script: it is adding `takeaway`/`thinkAbout` to the field list
+    that §17b and the §10.1 corpus walk already iterate. Measure which existing sweeps take a field
+    list at all before proposing a new section.
+    **Honest priority: medium.** Unlike most residuals on this list this one has a proven live
+    instance, not zero — but the instance is now fixed, so what remains is the class.
+
+158. **[Owner decision — filed 2026-08-31, NOT actionable by a run. §10.2's text bans "no direct
+    quotes, anywhere in the app", and the app ships a direct Warren Buffett quotation.]**
+    `lessonContent.economy.{en,es}.js:196` — lesson 38's `thinkAbout` opens *Warren Buffett says
+    "Be fearful when others are greedy, and greedy when others are fearful."* §10.2's register
+    entry is titled **"Dalio dependency"** but its body reads **"No name-brand framing, no direct
+    quotes, anywhere in the app or its marketing. Credit belongs in an acknowledgments line, not
+    the product."**
+    **This has been looked at and deliberately left, twice** (archive: *"the Buffett quotation in
+    38's thinkAbout was left byte-identical"*, and *"§10.2 explicitly re-checked: /dalio/i clean"*)
+    — both runs read §10.2 as Dalio-scoped, which the entry's title supports and its body does not.
+    **The ambiguity is in the rule, not in the runs**, and a run must not resolve it unilaterally in
+    either direction: deleting a quotation the register may not actually ban, or keeping one it
+    does, are both content decisions with a legal-adjacent rationale behind them.
+    **What the owner is being asked for is one word: is §10.2's "no direct quotes" clause scoped to
+    Dalio, or general?** If general, the Buffett quotation goes and `check-blindspot.mjs` gains a
+    pattern; if Dalio-scoped, §10.2's body should say so, because as written it reads as a standing
+    rule the app violates on lesson 38.
+
 157. **✅ DONE 2026-08-30 (scheduled dev-agent, self-picked; the owner independently asked for
     this item the same day — see the attribution correction below), the same day it was filed —
     and it re-classified SEVEN references, not "every existing reference". Read the two
@@ -3490,6 +3532,135 @@ finding(s); V vacuous; U unavailable`. A bare "no accessibility issues found" is
 
 ## Run log
 
+### 2026-08-31 (scheduled dev-agent, self-picked from LAUNCH_PLAN §10.1's standing rule) — the app's flagship cycle lesson closed with "Every great fortune was made buying when others were panicking at the trough. The cycle ALWAYS turns", boxed as its Key Takeaway, in five languages, for four weeks
+
+**Pick, and why it is not the previous run's residual (W-6.2 rule 1).** The last run audited §3.0
+clause 2 and filed nothing this picks up. This run started on **§3.0.1 ("one idea per screen")** —
+the last unaudited clause of the primary success criterion, cited six times in the log as a
+justification and never once measured against content — and the §3.0.1 sweep is what surfaced this.
+**The pick changed on the evidence, which is step 3.5 working rather than a scope slip:** a
+structural section-split is a nicety; a false absolute claim in a boxed takeaway is a live §10.1
+breach, and §10.1 is a standing rule this run is required to check anyway.
+
+**Premise measured before any edit, with controls (step 3.5).**
+1. **The §3.0.1 screen that started it.** 44 lessons, 105 sections: sections-per-lesson is 2 (27
+   lessons) or 3 (17); section bodies run 624-2,474 chars, median 1,164. Nothing pathological. The
+   real §3.0.1 candidates are headings joining co-equal concepts with "&" (L38 `Expansion & Peak`,
+   `Contraction & Trough` — four phases in two sections) and L39's `Key Indicators` (five gauges in
+   one section). **Both were left alone**: splitting sections shifts the `sectionIndex` that
+   `termsForSection()` and the `aria-labelledby` ids are keyed on, which is a larger change than
+   this run should make, and the §3.0.1 reading is arguable in both cases.
+2. **What the sweep actually found, and the screen for it.** A 7-pattern screen for universal
+   quantifiers and absolute guarantees over all **88** `takeaway`/`thinkAbout` fields. **Hits: 5,
+   and four of them are one field.** Lesson 38's takeaway is the only field in the corpus that
+   trips more than one pattern — it trips **three** (`universal-quantifier`, `always`,
+   `superlative`). The other two hits are false positives and were left: L13's `thinkAbout`
+   narrates a limit order that "never executes", and L23's takeaway says "'later' always eventually
+   arrives as 'now'", a truism about time, not a market claim.
+3. **Controls, all six fired.** Four planted positives (`"Stocks always go up over time."`,
+   `"This strategy is guaranteed to work."`, `"Every great fortune began with a single trade."`,
+   `"The market will recover within a year."`) each matched their intended pattern; two negatives
+   drawn from the app's own hedged prose (`"Historically, this phase has coincided with average
+   declines of roughly 22-35%."`, `"A common rule of thumb calls two straight quarters…"`) stayed
+   clean. Without the negatives a screen that flagged the whole corpus would have looked decisive.
+4. **The same screen over all 105 section BODIES, which is the measurement that made the finding
+   sharp: 17 hits, and every single one is a hedge.** "This doesn't mean the cheapest fund is
+   *always* the right choice"; "there's no *guarantee* which direction"; "Sunk costs aren't a reason
+   to *always* quit". **The body prose of all 44 lessons is careful. The one unhedged absolute claim
+   in the corpus was the boxed takeaway.**
+5. **Why it was there, from git rather than from inference.** `git log -S "Every great fortune"`
+   returns four commits, **all four mechanical** (the monolith extraction and three chunk-splitting
+   passes). `git log -S "have historically been favored"` — the hedged phrasing in the same
+   lesson's body — includes `2afcb42` *"Rewrite all 17 lessons with real-life examples"*. **The body
+   was rewritten; the takeaway underneath it was carried through four moves and never edited.**
+6. **And the guard cannot see this class, by construction.** `check-blindspot.mjs`'s §10.1 block is
+   25 regexes for *prescriptive imperatives* ("be bullish", "you should buy", "we recommend"). A
+   universal factual claim plus an absolute guarantee matches none of them, and the script's own
+   header says so: *"Judgment calls (does new prose read like advice…) still need a human or an
+   agent reading the actual diff."* **§10.1 passed on this line every run for four weeks, correctly.**
+
+**What shipped.** One field, five files, **one line changed per file, 5 insertions / 5 deletions.**
+Lesson 38's `takeaway` in `lessonContent.economy.{en,es,ko,zh,ja}.js`. The three retired claims:
+*"Every great fortune was made buying when others were panicking at the trough"* (false as stated —
+fortunes are made founding companies, holding through cycles, and inheriting), *"The cycle ALWAYS
+turns"* (an absolute guarantee about future markets, in caps), and *"the most valuable financial
+knowledge"* (a superlative). The replacement says what the lesson actually teaches and matches the
+hedging its own body already uses: no two cycles have run to the same length or depth, a phase is
+usually only clear once it has passed, the four phases describe a pattern that has repeated rather
+than a schedule of what comes next, and the asset patterns follow from rate transmission — which
+also pulls in §2 of the lesson, a section the old takeaway ignored entirely. **The `thinkAbout` was
+deliberately not touched — see new item 158.**
+
+**Verification, and the control that makes each number mean something.**
+- **`npm test`: PASS, 0 failures, 2 warnings**, both standing (0% human translation review; 48
+  abridged pairs). The floor warning is the third standing one, in `check-log-size`'s own run.
+- **The ledger did its job and was answered, not silenced.** The English edit made lesson 38 stale
+  in all four languages; coverage dropped to 98% and `check-data.mjs` **failed the build** on
+  `LAUNCH_READINESS.md` §10.4 disagreeing with the live ledger. That is drift detection working. It
+  was resolved by re-authoring: this run wrote all five versions against the English source and
+  re-marked with `translation-review.mjs mark 38 <lang> "Claude (Opus 5, economics-app-dev-agent)"
+  ai` — method **`ai`**, the reviewer-of-record convention, **not `human`**. O-3's number is
+  unchanged: still **0% human in all four languages**.
+- **What SHIPS, not just what is in `src/`.** `npm run build`, then over the five
+  `dist/assets/lessonContent.economy.<lang>-*.js` chunks: **15/15** retired strings (3 claims x 5
+  languages) return **zero** hits, and **5/5** language-specific probes for the replacement are
+  present. **Control, because a grep that matches nothing looks identical to a clean build:** the
+  same 15 patterns run against pre-edit copies of the five sources match **15/15**. The instrument
+  can see; the zeros are real. Reproducible from this commit for part B (`npm run build` + grep);
+  **part A's control needs the pre-edit copies and is reported here as what it is** — a check run
+  against a scratchpad copy, with its negative control named.
+- **Layout, verified statically and labelled as such.** The new English takeaway is 395 chars
+  against the old 203. It renders in `<Note tone="ok">`, which is a `div` with padding wrapping a
+  `<Text>` — **no fixed height, no `overflow`, no line clamp.** And the length is unremarkable
+  against what already ships: L38's takeaway now ranks **11th of 44** in English (L15's is 620),
+  9th in es, 10th in ko, 7th in zh, 8th in ja. **No live check was run** — dev servers are
+  unavailable in unattended runs — so this is a static argument from the component and from shipped
+  precedent, not a rendered proof, and it is not reported as one.
+
+**Adversarial self-check (step 5) — run, and the first control it tried FAILED, which is why the
+result is trustworthy.**
+- **Blindspot register.** The standing per-run grep
+  (`dalio|principles|ray |buy |sell |recommend|advice|guarantee|\$[0-9]|[0-9]+%|\d{4}-\d\d-\d\d|kid|child|…`)
+  over the 5 added lines returns **zero hits**. ⚠️ **The obvious control for that zero — run the
+  same grep over the REMOVED lines — also returned zero, so the zero proved nothing.** The reason
+  is worth recording: the removed English line contains **"buying"**, and the standing pattern is
+  **`buy `** with a trailing space, which does not match it. **The grep this project has typed out
+  every run for a month would not have caught the very line this run removed.** Replaced with a real
+  positive control: five planted probes (`"Ray Dalio guarantees the cycle."`, `"We recommend you buy
+  now."`, `"On 2026-08-31 the S&P rose 14%."`, `"A good app for your kid."`, `"应该买入。"`) →
+  **5/5 fire**, real added lines → **0/5**. `npm run check-blindspot` **PASS**; §10.1 clean across
+  38 files, disclaimer on all 8 surfaces.
+- **DECISIONS.md conflict:** `grep -inE "lesson 38|4 phases|four phases|takeaway"` → one hit, an
+  unrelated list of translated fields. No closed decision covers this line.
+- **Not a redo:** the completed-items entry for the §10.1 closure names what it changed — *"lesson
+  10's rendered per-phase 'Best investments: …' lines"*, i.e. this lesson's **section bodies**. It
+  did not touch takeaways. This run finishes that closure rather than repeating it, and the general
+  shape is filed as **new item 159**.
+- **My own verification claim:** stated per-item above — the build proof is reproducible from this
+  commit, the pre-edit control is not, and the layout check is static. An independent reviewer
+  re-running only the reproducible commands gets the same result.
+
+**Residuals filed, not picked (W-6.2 rule 1 — the next run must not take these by default).**
+**New item 159:** every content instrument and content pass in this project sweeps `sections` and
+skips `takeaway`/`thinkAbout` — recorded twice independently (the §10.1 closure above, and a later
+run's *"§17b sweeps sections only, never takeaway/thinkAbout"*), neither run aware of the other.
+Proven live instance, so honest priority **medium**, not low. **New item 158 (owner decision, not
+actionable by a run):** §10.2's body reads *"no direct quotes, anywhere in the app"* while its title
+reads "Dalio dependency", and lesson 38's `thinkAbout` ships a direct Warren Buffett quotation that
+two previous runs deliberately left. **The ambiguity is in the rule; a run must not resolve it in
+either direction.**
+
+**Not done, and deliberately: the §3.0.1 structural findings.** L38's four phases in two
+"&"-joined sections and L39's five gauges in one section are left exactly as they are, recorded
+here rather than filed as an item (W-6.2 rule 2) — the reading is arguable and the fix moves
+`sectionIndex`, which `termsForSection()` and the section `aria-labelledby` ids are keyed on.
+
+**W-6.5, still due and still the owner's.** `public/data/market.json` is `asOf 2026-08-28` for the
+fifth run running; with `STALE_AFTER_DAYS` at 4 the Sector-performance screen starts showing
+"Market data isn't available right now" on about **2026-09-02**. Flagged, not touched.
+**Owner tree at end of run:** the owner's untracked `UIUX/`, untouched, as in the previous eight runs.
+**O-1 remains the entire critical path** — 44 lessons, 5 languages, 160 minutes, and zero people
+have ever opened this app.
 ### 2026-08-31 (scheduled dev-agent, self-picked from LAUNCH_PLAN §3.0 clause 2) — clause 2 of the primary success criterion had never been audited; lesson 24 opens by defining "need" and "want" while the scene that makes the point sits four sentences down, already written
 
 **Pick, and why it is not the previous run's residual (W-6.2 rule 1).** The last run animated the yield
