@@ -704,6 +704,32 @@ this note is the case for it.
       would add ~48 pairs of it to the optional track. **The owner should be asked before this starts,
       not after** — see O-3 at the top of this backlog.
 
+    > **NOTE ADDED 2026-08-31 by the run that audited §3.0 clause 2 — a SECOND, independent content
+    > defect on this same track, measured the same day. Filed here rather than as a numbered item
+    > (W-6.2 rule 2 + W-6.4), because it is the same decision as the one above: is the optional track
+    > worth spending runs on before O-1?** §3.0.2 says *"Concrete before abstract. Lead with a thing
+    > that happens to a person, then name the concept."* **`essentials` 10, 11, 12, 13, 14 and 15 —
+    > six consecutive lessons — each open by defining their subject** ("A W-2 and a 1099 are both tax
+    > forms…", "Mutual funds and ETFs charge an annual fee called an expense ratio…", "A brokerage
+    > account is just a container…", "A will is a legal document…", "A credit report is a detailed
+    > record…"). **`essentials` 1-9 are nine for nine concrete-first** — Maria, James, Elena, "Picture
+    > a neighborhood of a thousand homes". The habit stops at lesson 10 and never returns.
+    > **Cost, and why it is bigger than it looks:** unlike `money` 24 — which was fixed the same day
+    > by inverting two paragraphs, because its scene was already written — **none of these six
+    > contains a concrete scene anywhere in the lesson to promote.** Each needs a scene authored from
+    > nothing, then carried into `es`/`ko`/`zh`/`ja`, on lessons that are *also* on this item's
+    > abridged list. **So do it in the same pass as the translation work above, not separately** —
+    > the "read once, translate four times" opportunity applies to both defects at once, and doing
+    > them apart pays the five-language cost twice.
+    > **The measurement, so nobody re-derives it:** first two sentences of section 1, screened for a
+    > named person or a scene verb, 44 lessons, three controls fired (29 and 1 must read concrete, a
+    > synthetic definition-first opener must read abstract). The screen has a **measured 3-in-13
+    > false-positive rate** (lessons 35, 39 and 26 use a metaphor, an analogy and a concrete scenario
+    > and satisfy the clause without a name or a scene verb), so **it is a reading aid and must not
+    > be turned into a build gate** — that is why no check was built. See the 2026-08-31 run-log
+    > entry for the full method and the false-positive list.
+
+
 96. **✅ DONE 2026-08-24 (scheduled dev-agent), same day it was filed. The premise re-measured
     exactly — 772 vs 3,294 characters, to the character — and the item's own scope contained one
     impossible instruction; see the premise correction below. [Bug/UX — filed 2026-08-24 by the
@@ -3463,6 +3489,116 @@ zero meaningful: `selftest PASS (8/8 controls fired, plantsRemoved true)` and, p
 finding(s); V vacuous; U unavailable`. A bare "no accessibility issues found" is not a result.
 
 ## Run log
+
+### 2026-08-31 (scheduled dev-agent, self-picked from LAUNCH_PLAN §3.0 clause 2) — clause 2 of the primary success criterion had never been audited; lesson 24 opens by defining "need" and "want" while the scene that makes the point sits four sentences down, already written
+
+**Pick, and why it is not the previous run's residual (W-6.2 rule 1).** The last run animated the yield
+curve and filed its residual as a note under item 27. This run picks none of it. §3.0 has **seven
+clauses** and the run log has worked clause 3 (undefined jargon — the glossary sweeps), clause 4
+(show don't tell — fourteen figures and now one animation), clause 5 (honest minutes — §2 recomputes
+it), clause 6 (plain language — §55/§59) and clause 7 (readable by default — the whole a11y matrix).
+**Clause 2 — "Concrete before abstract. Lead with a thing that happens to a person, then name the
+concept" — has never been measured.** `grep -rn "3\.0\.2|Concrete before abstract"` over `AGENT_LOG.md`,
+the archive, `scripts/`, `src/` and `DECISIONS.md` returns **two hits, both incidental** (two archived
+entries using the word "concrete" about a single lesson each). No sweep, no instrument, no item.
+
+**Premise measured before any edit, with controls (step 3.5).** There was no premise to re-measure —
+this is the first measurement — so the discipline went into the instrument instead.
+1. **The screen.** For all 44 lessons, take the first two sentences of section 1's body and ask
+   whether they put a **named person** or a **scene** in front of the reader. Two regexes: a
+   scene-verb set (`picture|imagine|think about|meet|say|suppose|consider|…`) and the corpus's own
+   roster of first names.
+2. **Controls, all three fired.** (a) Lesson 29 ("Picture the last coffee you bought") must read
+   concrete → **PASS**. (b) Lesson 1 ("Meet Maria, who just started her first job") must read
+   concrete → **PASS**. (c) A synthetic definition-first opener ("A widget is a unit of account
+   expressed as a ratio.") must be flagged abstract → **PASS**. Without (c) an instrument that
+   passed everything would have returned "0 violations" and looked like a clean corpus.
+3. **The instrument's own false-positive rate, measured rather than assumed, and this is why no
+   check was built.** A first version also counted generic second person (`you`) as concrete. That
+   version cleared lesson 24 — whose opening sentence is *"A need is something **you** can't
+   functionally do without"*, a definition wearing a pronoun — so the loose screen **hid the very
+   defect this run fixed**. The strict version (scene or name only) flags **13 of 44**, and reading
+   all 13 by hand, **three are false positives**: lesson 35 ("Think of the Federal Funds Rate as the
+   master dial in the economy's control room"), lesson 39 ("Just like a doctor doesn't diagnose you
+   from a single vital sign") and lesson 26 ("Two hundred dollars can arrive in your life the same
+   afternoon in two different ways") are a metaphor, an analogy and a concrete scenario respectively
+   — all of them satisfy clause 2 and none of them contain a name or a scene verb. **A screen that
+   is wrong on 3 of 13 is a reading aid, not a build gate**, which is the whole reason this run adds
+   **zero instrument lines** (W-6.2 rule 3: the learner-visible-failure sentence can be written, but
+   the check that would enforce it fails good prose; W-6.3: `scripts/` is already 2.3x `src/`).
+
+**The result, after reading all 13 flags.** Ten are real, and they fall into two groups that have
+nothing to do with each other:
+- **`essentials` 10, 11, 12, 13, 14, 15 — six consecutive lessons, every one definition-first.**
+  *"A W-2 and a 1099 are both tax forms…", "Mutual funds and ETFs charge an annual fee called an
+  expense ratio…", "A brokerage account is just a container…", "A will is a legal document…", "A
+  credit report is a detailed record…"*. **`essentials` 1-9 are nine for nine concrete-first** —
+  Maria, James, Elena, "Picture a neighborhood of a thousand homes". The authorial habit is not
+  missing from this project; it stops at lesson 10 and never comes back. Filed as a note under
+  **item 94** (the `essentials` remainder), not as a new numbered item.
+- **`money` 24 — the one on the main path, and the only money lesson of 17 that opens by defining
+  its own two terms.** That is what this run fixed.
+
+**Why 24 and not the cluster.** `essentials` is the **optional** track since the 2026-08-18 reversal;
+`money` is the product. And 24 is the cheapest correct fix in the corpus, because **its concrete
+scene already exists** — Jordan, the phone with one hairline crack, "I want the new phone" quietly
+becoming "I need a new phone" — sitting in the *second* paragraph, behind two dictionary definitions
+and two sentences about groceries. Nothing had to be invented in five languages; the paragraph order
+was simply inverted. The other six each need a scene written from nothing, times five languages.
+
+**What shipped — a reordering, in all five languages, of sentences that were all already there.**
+§1's two paragraphs swap: ¶1 is now Jordan and the cracked phone, ¶2 opens *"That swap works because
+of what the two words already carry."* and then gives the definitions, the groceries, and the
+"nobody budgets a debate over whether to eat this week" line that had been stranded in the middle of
+the scene. **Per language the diff is: +1 connective sentence, and one full stop turned into a colon**
+where "That's exactly why calling something a need is so useful" merges with "the relabeling isn't a
+lie exactly". Sentence count is **10 before and 10 after in every one of the five languages.**
+The section heading — *"Needs Skip the Question. That's Exactly Why Wants Borrow the Name."* — now
+states the claim, Jordan demonstrates it, and the definitions explain why it works, which is the
+order §3.0.2 asks for.
+
+**Verification, and the control that makes each number mean something.**
+- **Nothing was lost.** A sentence-containment check against a pre-edit copy of all five files:
+  **0 sentences lost in all five languages** (the en/es merge shows up only as a case change, `The
+  relabeling` → `the relabeling`, and reads 0 lost case-insensitively). **Control:** the same checker
+  run on a probe with a sentence deliberately deleted reports exactly 1 lost — it can see a loss.
+- **What SHIPS is in the new order, not just what is in `src/`.** `npm run build`, then for each of
+  the five `dist/assets/lessonContent.money.<lang>-*.js` chunks assert
+  `indexOf(scene) < indexOf(definition)`: **5 of 5 PASS**. **Control:** the identical probe run
+  against the pre-edit sources **fails** in `en` (scene@36318, definition@35802) and `zh`
+  (scene@14320, definition@14139) — so the probe can tell the two orders apart and a PASS is not
+  vacuous. Reproducible from this commit: `npm run build`, then compare those two offsets.
+- **`npm test`: PASS, 0 failures, 3 warnings** — the three standing ones (floor over budget, 0%
+  human translation review, 48 abridged pairs), none new.
+- **The ledger did its job and was answered, not silenced.** The English edit made lesson 24 **stale
+  in all four languages** — coverage dropped to 98% and `check-data.mjs` §11 **failed the build**,
+  which is the drift detection working. It was resolved by actually re-reviewing: this run authored
+  the reordering in all five languages against the English source and re-marked 24 with
+  `translation-review.mjs mark 24 <lang> "Claude (Opus 5, economics-app-dev-agent)" ai` — method
+  **`ai`**, the reviewer-of-record convention, **not `human`**. O-3's number is unchanged: still 0%
+  human in all four languages.
+- `LAUNCH_READINESS.md`'s two generated figures were refreshed by `refresh-readiness.mjs --write`
+  (150,168 → 150,229 English chars), not retyped.
+
+**Adversarial self-check (step 5) — run, and it found nothing that needed a fix.**
+**Blindspot register:** every added line in `src/content/` grepped for
+`dalio|principles|ray |buy |sell |recommend|advice|guarantee|\$[0-9]|[0-9]+%|\d{4}-\d\d-\d\d|kid|child`
+→ **zero hits**; `npm run check-blindspot` **PASS, 0 failures**. No user-facing date, no market
+figure, no advice-adjacent phrasing, no kids-facing move. **DECISIONS.md:** `grep -inE "lesson 24|need
+vs|needs? and wants?|concrete before|3\.0\.2"` → **no hits**; there is no closed decision about this
+lesson or this clause. **Not a redo:** `grep -in "lesson 24"` over `AGENT_LOG.md` + the archive
+returns four hits, **all four about the pre-reversal lesson 24 ("Renting vs. Buying", now lesson 12)**
+— no completed item has ever touched this lesson's prose. **My own verification claim:** the build
+probe above is reproducible by anyone with this commit and `npm run build`; the containment check is
+not, because it needs the pre-edit copies — so it is reported here as what it is, a check run against
+a scratchpad copy, with its own negative control named.
+
+**W-6.5, still due and still the owner's.** `public/data/market.json` is `asOf 2026-08-28` for the
+fourth run running; with `STALE_AFTER_DAYS` at 4 the Sector-performance screen starts showing
+"Market data isn't available right now" on about **2026-09-02**. Flagged, not touched.
+**Owner tree at end of run:** the owner's untracked `UIUX/`, untouched, as in the previous seven runs.
+**O-1 remains the entire critical path** — 44 lessons, 5 languages, 160 minutes, and zero people have
+ever opened this app.
 
 ### 2026-08-31 (scheduled dev-agent, self-picked from LAUNCH_PLAN §3.0.4) — §3.0.4's worked example is "a curve inverting in front of the reader", and the app's yield curve has been sitting perfectly still since the day it was drawn
 
