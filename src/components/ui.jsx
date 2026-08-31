@@ -37,6 +37,34 @@ export function Text({ as: Tag = "p", variant = "body", color = ink.body, align,
   );
 }
 
+// ── SrOnly ────────────────────────────────────────────────────────────────
+// Text for assistive technology that no sighted reader sees. It exists so a
+// meaning carried only by color or by an `aria-hidden` icon has a second,
+// non-visual channel — WCAG 1.4.1 — without the icon growing a caption.
+//
+// The clip technique rather than App.jsx's `top/left: -9999` off-screen
+// pattern, and the difference is deliberate: the skip link must stay
+// FOCUSABLE while hidden, so it has to keep a real box and merely sit
+// elsewhere. These labels are never focused, so they can be given no box at
+// all — which is what keeps them out of `getBoundingClientRect()` sweeps and
+// out of the 320px reflow budget. `display: none` and `visibility: hidden`
+// would remove them from the accessibility tree too, which is the whole point
+// missed.
+export const srOnly = {
+  position: "absolute",
+  width: 1, height: 1,
+  padding: 0, margin: -1,
+  overflow: "hidden",
+  clip: "rect(0 0 0 0)",
+  clipPath: "inset(50%)",
+  whiteSpace: "nowrap",
+  border: 0,
+};
+
+export function SrOnly({ children }) {
+  return <span style={srOnly}>{children}</span>;
+}
+
 // ── Stack ─────────────────────────────────────────────────────────────────
 // Vertical rhythm without margin juggling.
 export function Stack({ gap = space["3"], style, children, ...rest }) {

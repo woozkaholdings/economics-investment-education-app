@@ -35,6 +35,7 @@ export default {
     curveInverted: "逆イールド（危険）", curveSteep: "急勾配（回復）",
     quizStart: "開始", quizNext: "次へ",
     quizFinish: "結果を見る", quizCorrect: "正解！", quizWrong: "惜しい。",
+    quizMarkCorrect: "正解", quizMarkWrong: "あなたの回答、不正解",
     kidsAges58: "5-8歳", kidsAges912: "9-12歳",
     kidsAges1317: "13-17歳", kidsParentTip: "保護者のヒント", kidsActivity: "このアクティビティを試そう",
     kidsParentIntro: "保護者向けガイドです — お子さんの年齢帯を選び、この説明を一緒に読んでみましょう。",

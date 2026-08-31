@@ -35,6 +35,7 @@ export default {
     curveInverted: "Invertida (Peligro)", curveSteep: "Empinada (Recuperación)",
     quizStart: "Iniciar", quizNext: "Siguiente",
     quizFinish: "Ver Resultados", quizCorrect: "¡Correcto!", quizWrong: "No exactamente.",
+    quizMarkCorrect: "Respuesta correcta", quizMarkWrong: "Tu respuesta, incorrecta",
     kidsAges58: "5-8 años", kidsAges912: "9-12 años",
     kidsAges1317: "13-17 años", kidsParentTip: "Consejo para Padres", kidsActivity: "Prueba Esta Actividad",
     kidsParentIntro: "Una guía para padres — elige la banda de edad de tu hijo y lean juntos estas explicaciones.",

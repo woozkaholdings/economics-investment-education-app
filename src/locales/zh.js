@@ -35,6 +35,7 @@ export default {
     curveInverted: "倒挂（危险）", curveSteep: "陡峭（复苏）",
     quizStart: "开始", quizNext: "下一题",
     quizFinish: "查看结果", quizCorrect: "正确！", quizWrong: "不太对。",
+    quizMarkCorrect: "正确答案", quizMarkWrong: "你选的答案，错误",
     kidsAges58: "5-8岁", kidsAges912: "9-12岁",
     kidsAges1317: "13-17岁", kidsParentTip: "家长提示", kidsActivity: "试试这个活动",
     kidsParentIntro: "家长指南——选择孩子的年龄段，然后一起阅读这些讲解。",

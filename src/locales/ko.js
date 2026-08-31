@@ -35,6 +35,7 @@ export default {
     curveInverted: "역전 (위험)", curveSteep: "가파름 (회복)",
     quizStart: "퀴즈 시작", quizNext: "다음",
     quizFinish: "결과 보기", quizCorrect: "정답!", quizWrong: "아쉽네요.",
+    quizMarkCorrect: "정답", quizMarkWrong: "내가 고른 답, 오답",
     kidsAges58: "5-8세", kidsAges912: "9-12세",
     kidsAges1317: "13-17세", kidsParentTip: "부모 팁", kidsActivity: "이 활동을 해보세요",
     kidsParentIntro: "부모를 위한 가이드입니다 — 자녀의 연령대를 선택한 후, 이 설명을 함께 읽어보세요.",

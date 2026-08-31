@@ -18,7 +18,7 @@
 
 import { useState } from "react";
 import Icon from "./Icon.jsx";
-import { Note, Text } from "./ui.jsx";
+import { Note, SrOnly, Text } from "./ui.jsx";
 import { fill, ink, line, MIN_TAP, radius, space, surface } from "../theme.js";
 
 // `headingLevel` exists because the correct level is a property of where the
@@ -113,8 +113,23 @@ export default function Question({ question, t, onAnswered, autoFocusHeading = f
                   {t.hookYourGuess}
                 </span>
               )}
+              {/* Both markers carry an `SrOnly` label, and that text is the
+                  ONLY non-visual signal of which option was right. `Icon` is
+                  `aria-hidden`, and the green/red border and wash are color —
+                  so without these two strings the disclosed state reads to a
+                  screen reader exactly like the neutral one, while
+                  `aria-checked` announces the learner's WRONG pick as the
+                  selected radio and the correct option as unselected. Measured
+                  live 2026-08-30 before the labels existed. The explanation
+                  below is not a substitute: it is prose written to teach the
+                  concept, and 15 of the 46 explanations do not name the
+                  correct option's own words at all.
+                  Appended as content rather than set as `aria-label` so the
+                  visible option text stays the start of the accessible name
+                  (WCAG 2.5.3, and voice control keeps working). */}
               {disclosed && isRight && (
                 <span style={{ color: ink.ok, display: "flex" }}>
+                  <SrOnly>{t.quizMarkCorrect}</SrOnly>
                   <Icon name="check" size="1.1em" strokeWidth={2.5} />
                 </span>
               )}
@@ -124,6 +139,7 @@ export default function Question({ question, t, onAnswered, autoFocusHeading = f
                   merely tinted. */}
               {disclosed && !isRight && picked && (
                 <span style={{ color: ink.bad, display: "flex" }}>
+                  <SrOnly>{t.quizMarkWrong}</SrOnly>
                   <Icon name="x" size="1.1em" strokeWidth={2.5} />
                 </span>
               )}

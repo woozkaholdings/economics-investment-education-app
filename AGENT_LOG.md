@@ -3362,6 +3362,130 @@ finding(s); V vacuous; U unavailable`. A bare "no accessibility issues found" is
 
 ## Run log
 
+### 2026-08-30 (scheduled dev-agent, self-picked from LAUNCH_PLAN §3.5 rather than from a residual) — the quiz's right/wrong markers had no non-visual channel at all, so a screen reader announced the learner's WRONG pick as the selected one and gave the correct answer no marker
+
+**Pick, and why it is not a residual (W-6.2 rule 1).** The previous run also self-picked from the
+plan, so the residual counter is at zero and nothing forced this. I priced the open non-parked items
+first and recorded why each was passed over: **item 26** is complete except the Leitner strip, which
+is an owner decision offered back three times; **item 27** was priced and correctly rejected by the
+previous run (five more money lessons assessed, none clears its bar) and re-deriving it would be the
+"list of candidates goes stale" failure W-5.2 warns about, in reverse; **items 155/156** are the
+residual chain W-6.2 exists to slow, and 155 would add to `scripts/`, which is the wrong side of
+W-6.3's **15,480 : 6,589** ratio. So I walked the live first-five-minutes path instead. This change
+is **+53 / -1 lines, all in `src/`.**
+
+**What I found, walking the built app.** In the end-of-lesson check I answered wrong on purpose and
+read the four option buttons out of the DOM rather than looking at them. The learner's wrong pick
+carried `aria-checked="true"`; the correct option carried `aria-checked="false"`; **both markers are
+`<Icon>`, and `Icon.jsx` sets `aria-hidden="true"` on every glyph it draws.** The green/red border
+and wash are color. So the entire disclosed state — which option was right, which one I got wrong —
+existed **only** as color plus an icon no assistive technology can see, and the one thing that *was*
+announced said the wrong answer was the selected one. WCAG 1.4.1, on the app's only assessment
+surface.
+
+**Step 3.5 — the premise re-measured, and the first instrument was broken in a way that printed a
+confident number.** My first sweep of `quizMeta` reported *"histogram: { undefined: 44 }"* — every
+lesson with an undefined question count — because I had assumed `quizMeta` was keyed by lesson id.
+It is a **flat array of `{lesson, answer}`**, index-aligned with `quizText.<lang>.js`. Note what the
+control did here: `CONTROL A fabricated lesson 999 -> 0 (expect 0)` **passed**, because `|| []`
+swallowed the shape error. **A control can fire on a broken instrument when the control's own path
+is the defaulted one** — it agreed with a histogram that was nonsense on its face. Corrected:
+**46 questions over 44 lessons; 42 lessons carry exactly one, lessons 30 and 34 carry two, none
+carries zero.**
+
+**The second half of the premise, because "the explanation tells you anyway" is the obvious
+rebuttal.** It is a real mitigation and it does not close the gap. Measured over all 46 English
+explanations with a deliberately loose bar (does the explanation contain at least half the content
+words of the correct option?): **31 name it, 15 do not.** Three controls, all fired — a fabricated
+explanation quoting the option reads YES, an unrelated one reads NO, an empty one reads NO. The
+lexical measure **over-counts misses**, and I read all fifteen: most are competent paraphrases a
+listener would follow (q13, q19, q31, q32, q40). But some are not — q5's correct option is
+*"Recession within 12-18 months"* and its explanation says only that inverted yield curves have
+preceded every US recession since 1955, which does not identify the option. **The honest statement
+is not "a screen-reader learner can never learn the answer". It is that the marker carries no
+information at all, so whether they learn it depends on prose written to teach a concept, and
+nothing enforces that the prose does this second job.**
+
+**Shipped — three files' worth, no behavior change for sighted learners.**
+1. **`ui.jsx` gains `srOnly` / `<SrOnly>`**, the project's first visually-hidden utility. Clip-based,
+   **not** App.jsx's `top/left: -9999` pattern, and the comment says why: the skip link must stay
+   *focusable* while hidden so it needs a real box somewhere else, whereas these labels are never
+   focused and can have no box at all — which is what keeps them out of `getBoundingClientRect()`
+   sweeps and out of the 320px reflow budget item 153 just fixed.
+2. **Both markers in `Question.jsx` carry an `SrOnly` label** — `t.quizMarkCorrect` on the correct
+   option, `t.quizMarkWrong` on the learner's own wrong pick. Appended as **content**, not set as
+   `aria-label`, so the visible option text stays the start of the accessible name (WCAG 2.5.3, and
+   voice control still matches the visible words).
+3. **Two keys in all five locales.** These are deliberately *not* the existing `quizCorrect` /
+   `quizWrong`, which label the explanation note; these name a **specific option**, so "Correct!"
+   would have been wrong text in the wrong place.
+
+**The hook is untouched and had to be checked, not assumed.** `reveal={false}` means `disclosed` is
+false, so neither marker renders and neither label exists — but a leak there would spoil the lesson
+for exactly the readers this change is for. Verified live: after guessing, the hook group reads
+`"Total spending (money + credit)your guess"` and nothing else. **No verdict leaks.**
+
+**Controls — five, and the two-sided proof is on the two real bundles, not on the source.**
+
+| control | expected | got |
+| --- | --- | --- |
+| A: viewport is real before any reflow number is believed | width ≥ 100 | **FIRED — first read was `clientWidth: 0`** (pane hidden), so `overflowPx: 167` was meaningless; re-measured at a set 320px |
+| B: `HEAD`'s served bundle shows the defect | 4 rows indistinguishable | `index-BICU1PWS.js`: identical `innerText`, `svg aria-hidden=true`, wrong pick `aria-checked=true` |
+| C: the new bundle shows the fix | 2 rows labeled | `index-C3vde1rx.js`: `"…Correct answer"` / `"…Your answer, incorrect"` |
+| D (sabotage): strip the sr-only spans from the live DOM | back to indistinguishable | **exactly `HEAD`'s four bare strings** |
+| E: a non-English language renders both labels | ko labels present | `정답` / `내가 고른 답, 오답`, with `document.documentElement.lang === "ko"` and Hangul on the page as its own control |
+
+**Live verification.** New bundle confirmed served (`index-C3vde1rx.js`, not the cached
+`index-BICU1PWS.js`), storage cleared. Both call sites exercised end to end: the lesson-reader check
+(lesson 1) **and** the Practice review runner, which shares `Question.jsx` and passes no `reveal`
+prop — the labels appear in both. At a real **320px** viewport: `scrollWidth === clientWidth`, **0
+elements past the right edge**, both hidden spans measured **1×1** with `clip-path: inset(50%)`, and
+`elementFromPoint` at each span's centre returns the `svg`, not the span — they are unhittable.
+Screenshot at 320px is visually identical to before: no stray text, no shifted icons.
+
+**Verified.** `npm test` **PASS, 0 failures** (the 3 standing WARNs: log floor + two translation
+warnings). `npm run build` ✓ 934ms; main bundle 251.23 → **251.83 kB** raw (**+0.20 kB gzip**) for
+ten strings. **Fresh-tree control** (W-6.1's recipe, `git archive` of `git stash create` so it
+carries this run's changes — confirmed by grepping `quizMarkCorrect` present in both
+`Question.jsx` and `locales/ja.js` in the copy): **exit 0**.
+
+**Adversarial self-check (step 5).** **Blindspot register: nothing reintroduced.** `grep -ci dalio`
+over the diff: **0**. §10.1 — no advice-adjacent wording enters (the two new strings are "Correct
+answer" and "Your answer, incorrect"); the `disclaimer` string is untouched. §10.3 — nothing
+kids-facing moves. No date or market figure enters user-facing copy; the one `2026-08-30` in the
+diff is inside a code comment recording when the defect was measured, which is this codebase's
+standing convention. **DECISIONS.md: no conflict** — no architectural decision touched, and
+`grep -in "sr-only\|visually hidden\|off-screen"` over it returns nothing, so no prior ruling on
+hidden text exists to contradict. **Not a redo:** the nearest prior work is the 2026-08-15 dual
+right/wrong markers (item 26's first pass), whose own entry states its goal as *"equally legible at
+a glance"* — it added the `x` icon for **sighted** legibility and this adds the channel that
+phrasing does not cover. The visual markers, the color logic and the icons are byte-identical.
+**On W-6.2 rule 3, said rather than skipped: I built NO new check**, and the sentence rule 3 demands
+*is* writable here ("a screen-reader learner who answers wrong is never told which option was
+right"). Two reasons it is still not due. First, the strings' existence in all five languages is
+**already guarded** — `check-data.mjs` §1 fails the build on any `en` key missing from another
+locale, so the regression that actually happens (a key added in English only) is caught today.
+Second, the remaining regression — someone deletes the `SrOnly` from `Question.jsx` — has no
+instrument except a regex over JSX props, which is the exact shape W-6.2 rule 3 declined for item
+152, and `scripts/` is already 2.3x the app. **On my own verification claim:** a reviewer
+reproduces B and C by building at `HEAD` and at this commit and reading the four option buttons'
+`textContent` after a wrong answer; D needs only the one-line DOM strip against the new bundle.
+
+**Owner tree at end of run:** `OWNER-TREE 618810068a720cc6b3dced3c4c6af2f906f2a1de1f4adc1afd8d271300679cac`
+(7 tracked modified — all this run's own — and **51 untracked**, the owner's `UIUX/`, the same count
+the previous two runs observed, untouched).
+
+**Filed as a note under this work, not a numbered item (W-6.2 rule 2).** `srOnly` now exists and
+nothing else uses it. The obvious next candidates were checked and **none is due**: `charts.jsx`'s
+decorative shapes are already `aria-hidden` by an earlier audit (`AGENT_LOG.archive.md`, the
+decorative/meaningful SVG pass), and the tab bar already splits icon from label. **If a future run finds a second meaning carried only by color, that is the
+evidence that the utility needs a guard — not this run.**
+
+**W-6.5 restated, unchanged and still the owner's:** `public/data/market.json` is still
+`asOf 2026-08-28`; with `STALE_AFTER_DAYS` at 4 the Sector screen begins showing "Market data isn't
+available right now" on about **2026-09-02**. Not dev-agent work. **O-1 remains the entire critical
+path** — 44 lessons, 5 languages, 160 minutes of content, and zero people have ever opened this app.
+
 ### 2026-08-30 (scheduled dev-agent, self-picked from LAUNCH_PLAN §3.1/§3.5 rather than from a residual) — 18 locale keys were shipping in five languages that nothing renders, and three guards were quietly anchored to them
 
 **Pick, and why it is not a residual (W-6.2 rule 1).** The previous run took its own previous run's

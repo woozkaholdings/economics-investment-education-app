@@ -54,6 +54,10 @@ export default {
     // More
     quizStart: "Start Quiz", quizNext: "Next",
     quizFinish: "See Results", quizCorrect: "Correct!", quizWrong: "Not quite.",
+    // Screen-reader-only markers on the answer options themselves; see
+    // components/Question.jsx. Not the same strings as quizCorrect/quizWrong
+    // above, which label the explanation note: these name a SPECIFIC option.
+    quizMarkCorrect: "Correct answer", quizMarkWrong: "Your answer, incorrect",
     kidsAges58: "Ages 5-8", kidsAges912: "Ages 9-12",
     kidsAges1317: "Ages 13-17", kidsParentTip: "Parent Tip", kidsActivity: "Try This Activity",
     kidsParentIntro: "A parent's guide — pick your child's age band, then read and share these explanations together.",
