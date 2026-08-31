@@ -2516,6 +2516,59 @@ this note is the case for it.
     > measuring the live DOM. **Measure a figure's boxes in a browser before claiming anything about
     > its proportions**, and prefer invariants that are structural (no text in a cell; a fixed shared
     > height) over ones that are stylistic. The general instrument is **item 135**.
+    > **Ninth visual added 2026-08-31: lesson 30 (the spending chain), as `SpendingLoop` — and it is
+    > the first figure added for the PATH rather than for a track's count.** Coverage re-parsed with
+    > this item's own control (an id it must find, one it must not, plus a lessons/track control):
+    > **economy 6/12, essentials 3/15, money 5/17 — 14 of 44, 0 orphan ids.** The argument is §3.2,
+    > re-anchored: in display order the first three lessons a new install meets are **29, 30, 31**,
+    > and until this entry the first diagram a new learner ever saw was on the **fourth** screen.
+    > **It cleared the bar on what the lesson's own prose HAD TO DO.** Lesson 30 writes its claim as
+    > an arrow chain — *"More spending → more income → more creditworthy borrowers → more borrowing →
+    > more spending, and so on"* — and note what that sentence is forced into: it writes its first
+    > term **twice** and appends *"and so on"*, because **a line of text cannot close**. The
+    > takeaway calls it "a self-reinforcing loop". The one thing prose cannot do here is join the
+    > last term to the first, and that join is the whole figure.
+    > **The quantity rule passes vacuously and that is the correct reading, not a loophole**: the ring
+    > needs no quantity, and the lesson states none in that section (the worked example — a kitchen
+    > renovation, a work truck — deliberately gives no figures). This is `OutcomeGrid`'s kind, a
+    > structure carrying no magnitude, arriving at a different shape.
+    > ✅ **THE PROPERTY WORTH CARRYING FORWARD, and it is not about this lesson: EVERY STRING THE
+    > FIGURE RENDERS EXCEPT ITS TEXT ALTERNATIVE IS A VERBATIM SUBSTRING OF LESSON 30 IN THE SAME
+    > LANGUAGE.** Title, caption and all four steps are *lifted*, not translated — 6 strings x 5
+    > languages, so **24 of the 28 non-English strings in this figure are not new translation at
+    > all**. `DECISIONS.md` (the 2026-08-16 scope limit, amended the same day for item 27's lesson-7
+    > figure) says the thing this answers in its own words: chart labels are *"the content type where
+    > an unreviewed translation is least visible, because a wrong label still renders as a correctly-
+    > shaped chart"*, and the parity checks catch **a missing language, never a wrong one**.
+    > `check-data.mjs` §64 (a) is the first check in this file that catches a *wrong* one, and it
+    > does it by anchoring to the lesson rather than by reviewing the translation. **A future figure
+    > whose labels can be lifted should be lifted.**
+    > ⚠️ **DO NOT DRAW A SECOND, COUNTER-CLOCKWISE RING.** The caption is the lesson's own *"this
+    > self-reinforcing loop runs in both directions"*, and the obvious reading of it is wrong: both
+    > directions means the loop spirals **up in a boom and down in a bust** (the takeaway says exactly
+    > that), **not** that the causality reverses. A mirrored ring would be an economics error, and it
+    > is the error the caption invites. §64 (c) pins the order. The same reason is why the four boxes
+    > were left carrying the lesson's own "more X" wording rather than a neutral noun: "less spending"
+    > appears nowhere in lesson 30 in any language, so a bust ring would have to be invented in five.
+    > ⚠️ **AND THE BOXES CARRY NO SIZE — enforced, after the live DOM said otherwise.** Measured at
+    > 390px before the fix: the top row drew **35px against the bottom row's 52px**, because "more
+    > creditworthy borrowers" wraps to two lines and CSS grid sizes a row to its tallest item. That is
+    > item 27's own 82-vs-52 finding above, in a new figure, and it says the finding generalizes:
+    > **the first live measurement of any new figure should be its boxes.** Fixed with
+    > `gridTemplateRows: "1fr auto 1fr"` (both rows 52px at 390px/en, 62px at 320px/130%/ko); §64 (d)
+    > holds it, and `LOOP_BOX` may never gain a width/height/flex/grid-span.
+    > ⛔ **THE OTHER TWO BARE PATH-OPENING LESSONS WERE MEASURED AND BOTH FAIL, so do not "finish the
+    > first three".** **Lesson 29** has two candidate claims and neither survives: *Total Spending =
+    > Money Spent + Credit Spent* states **no split**, so a two-segment bar would invent the one
+    > proportion it is about (lesson 16's rejection exactly); and *$500 on 100 loaves is $5 a loaf* is
+    > fully quantified but is a division the sentence already performs in one clause — a figure of it
+    > shows nothing the prose cannot. **Lesson 31** is subtler and is the interesting one: its claim
+    > (productivity a straight gentle line, credit swinging around it) is **precisely what `CycleChart`
+    > draws**, and the 2026-08-31 trend-slope fix was justified *by quoting lesson 31*. But
+    > `CycleChart` also labels **four phase dots**, and the phases are lesson **38**'s content, seven
+    > screens later — mapping it here would front-run its own vocabulary. **A figure that is right
+    > about the lesson's claim can still be wrong for the lesson's position.** Both remain bare on
+    > purpose; that is a measured decision, not an oversight.
     **Status check, 2026-08-16 (item-29 run):** `LESSON_VISUALS` in `src/components/LessonVisual.jsx`
     now maps money lessons **1 (`budgetSplit`), 3 (`compounding`) and 27 (`lossAsymmetry`)**, plus the
     five economy ones — i.e. money is **3/28, not 0/28**, and the three lessons this item's own "Scope
@@ -3375,6 +3428,135 @@ zero meaningful: `selftest PASS (8/8 controls fired, plantsRemoved true)` and, p
 finding(s); V vacuous; U unavailable`. A bare "no accessibility issues found" is not a result.
 
 ## Run log
+
+### 2026-08-31 (scheduled dev-agent, self-picked from LAUNCH_PLAN §3.2 + §3.0.4 via backlog item 27) — the lesson whose own sentence has to write "more spending" twice and then say "and so on", because a line of text cannot close the loop it is describing
+
+**Pick, and why it is not a residual chain (W-6.2 rule 1).** The last four runs self-picked from §3.5
+and §3.0.4; the residual counter is at zero. This run took **item 27**, which is a standing
+launch-plan item on W-5.2's own pick list — not the previous run's residual. The previous run *did*
+file a coverage measurement into item 27 while pricing a different defect, so per W-5.2's standing
+warning (*"a list of candidates is a claim about current state and goes stale exactly like a figure
+does — re-read a candidate's own item before picking it"*) I re-read item 27 in full and **re-derived
+the measurement myself rather than quoting it.**
+
+**Premise re-measured before editing, with two controls (step 3.5).** Own parser over
+`LESSON_VISUALS` joined against `lessons.js`'s `track`, with the control this item prescribes (an id
+it must find, `32` → `cycle`; one it must not, `29`) plus a second control on the lesson list itself
+(a known id/track pair in each of two tracks). Both fired. Result, agreeing with the figures the
+previous run filed: **economy 5/12, essentials 3/15, money 5/17 = 13/44, 0 orphan ids**, and in
+display order the path's first three lessons — **29, 30, 31** — carried none, so **the first diagram a
+new install ever showed was on the fourth screen.** That is §3.2's "first five minutes" clause, and it
+is the same sentence item 27 has been making since 2026-08-16 — except that the bullet stating it had
+been **false since the 2026-08-18 reversal** and was corrected in place yesterday. The premise held
+this time; what I had to re-derive was which lesson it now points at.
+
+**Then I applied item 27's own bar to all three, and only one passed.** The bar is: read the prose
+first and name what the prose cannot do; and *does the prose state every quantity the shape needs, or
+only the ones that make it sound plausible?*
+- **Lesson 29 — rejected, both candidates.** "Total Spending = Money Spent + Credit Spent" states **no
+  split**, so a two-segment bar invents the one proportion it is about (lesson 16's rejection). "$500
+  on 100 loaves is $5 a loaf" is fully quantified but is a division the sentence performs in one
+  clause; drawing it shows nothing the prose cannot.
+- **Lesson 31 — rejected, and this is the one worth keeping.** Its claim (productivity a straight
+  gentle line, credit swinging around it) is **exactly what `CycleChart` draws** — yesterday's
+  trend-slope fix was justified *by quoting lesson 31*. But `CycleChart` also labels four **phase**
+  dots, and the phases are lesson **38**'s content. **A figure that is right about a lesson's claim
+  can still be wrong for the lesson's position**, and mapping it here would front-run its own
+  vocabulary seven screens early. One line of code, declined.
+- **Lesson 30 — passed, on what its prose is FORCED into.** It writes its claim as an arrow chain:
+  *"More spending → more income → more creditworthy borrowers → more borrowing → more spending, and so
+  on."* It writes its first term **twice** and appends "and so on" **because a line of text cannot
+  join its end to its beginning** — and the takeaway calls the thing "a self-reinforcing loop". The
+  closure is the entire figure.
+
+**What shipped.** `SpendingLoop` in `charts.jsx`: four boxes on a 3x3 grid, four arrows — across the
+top, down the right, back along the bottom, and **up the left, closing the ring**. HTML rather than
+SVG for `OutcomeGrid`'s reason (the labels are five-language and long; SVG does not wrap and would
+clip silently in the languages nobody here re-reads). Content in `markets.js`, wired at
+`LESSON_VISUALS[30]`. **`src/` app code +148 lines, `src/content/` +58, `scripts/` +164.**
+
+**The property this figure has that the previous eight do not: every string it renders except its text
+alternative is a VERBATIM SUBSTRING of lesson 30 in the same language.** Title (the section's own
+heading), caption (the lesson's own sentence about the loop) and all four steps are **lifted, not
+translated** — 6 strings x 5 languages, so **24 of the 28 non-English strings in this figure are not
+new machine translation at all**; only the four non-English text alternatives are, because a
+description has to describe the *shape* and no sentence in the lesson does. This is a direct answer to
+something `DECISIONS.md` already wrote down and nothing had acted on: its 2026-08-16 scope limit says
+chart labels are *"the content type where an unreviewed translation is least visible, because a wrong
+label still renders as a correctly-shaped chart"*, and that the parity checks catch **a missing
+language, never a wrong one**. §64 (a) is the first check here that catches a **wrong** one — by
+anchoring to the lesson rather than by reviewing the translation.
+
+**Verified against the BUILT app, in a browser, with the controls this log has learned to demand.**
+(A) `npm run build` clean; `npm test` **exit 0**, three warnings, all pre-existing and documented
+(translation review coverage, 48 condensed pairs, the backlog floor) — no new warning. (B) Served
+`dist/` and read the rendered DOM: `role="img"`, the aria-label, four `[data-figure-part="step"]`
+boxes and four arrows in the geometric positions a closed clockwise ring implies (top row `→` at
+x=188 between the two top boxes; right column `↓`; bottom row `←`; left column `↑`). (C) **The first
+DOM read was worthless and its control is what said so** — `window.innerWidth` came back **0** with
+the browser pane collapsed, and the boxes measured 18px wide inside a 0px figure. A 0 that looks like
+a measurement is exactly the trap the previous two runs hit from the other side; the width control is
+what caught it. Re-run at a real viewport. (D) **The re-run found a real defect**: at 390px the top row
+drew **35px against the bottom row's 52px**, because "more creditworthy borrowers" wraps to two lines
+and CSS grid sizes a row to its tallest item — **item 27's own 82-vs-52 finding, in a new figure, four
+days later.** Nothing in this figure means "bigger", so a box that grows because its label is longer is
+a magnitude arriving through content. Fixed with `gridTemplateRows: "1fr auto 1fr"`; re-measured, all
+four boxes **52px**. (E) At **320px with the font scale at 130% and the app switched to `ko`**: all
+four boxes 62px, **0 px of horizontal overflow**, figure right edge 287 of 320, and the language
+controls fired both ways (a Korean string present, the English one absent, `documentElement.lang` =
+`ko`). Screenshots at 390/en and 320/ko confirm the ring reads as a ring.
+
+**`check-data.mjs` §64, proved able to fail SIX ways by planting, plus two control plants — none by
+inspection.** (1) A `zh` step paraphrased to a plausible translation → caught by (a), (b) and (c) at
+once. (2) Two `en` steps swapped → (c). (3) The `ja` description reworded so it no longer contains a
+step → (b). (4) The closing `↑` arrow removed → (d), *"with three it is a chain that ends, which is
+exactly what the lesson's own sentence already is"*. (5) `LOOP_BOX` given a `height` → (d)'s size
+clause. (6) `LESSON_VISUALS[30]` commented out → (e). **And the two control plants, which matter more
+than the six:** pointing the scan at a nonexistent lesson id makes every language report *"the text is
+empty"* rather than passing, and pointing it at **lesson 29** — real text, no arrow chain — fires the
+positive control, proving the scan reaches *the chain paragraph* and not merely some text. All four
+touched files restored from scratchpad copies — **never `git checkout --`** — and `cmp` confirms all
+four byte-identical to their pre-plant state.
+
+**W-6.3 answered before the check was written, not after, and this run moves the number the other
+way.** Measured with identical commands against a `git archive HEAD` copy and against this tree:
+**HEAD 15,855 : 6,785 = 2.337x → this tree 16,019 : 6,933 = 2.311x.** `scripts/` +164 against the app's
+own +148 — the first run in some time where the instrument grew *slower* than the thing it measures.
+**W-6.2 rule 3's sentence, which is writable here:** *a learner reads the chain sentence and then meets
+a ring whose boxes use different words than the paragraph an inch above — or a ring with its closing
+arrow missing, which is the chain that ends that the sentence already was.*
+
+**Adversarial self-check (step 5) — run, and it found nothing that required a change.**
+**Blindspot register:** grepped every added line for `dalio|principles|ray |buy |sell |recommend|
+advice|guarantee|\$[0-9]|[0-9]%|\d{4}-\d\d-\d\d|kid|child` — the only hits are **four dates, all
+inside code comments** recording when this was added, this codebase's standing convention. No
+user-facing date, no market figure, no advice-adjacent phrasing, no kids-facing move; the figure adds
+no *new* claim at all, since every visible word is already shipping in the paragraph above it.
+`npm run check-blindspot` **PASS, 0 failures**. **DECISIONS.md:** the only relevant entry is the
+2026-08-16 translation scope limit, and this change **moves toward** it rather than against it (see
+above); `grep -inE "spending chain|loop|lesson 30"` finds no closed decision this contradicts. **Not a
+redo:** `grep -inE "spendingLoop|spending chain"` over `AGENT_LOG.md` + the archive returns **nothing**
+— lesson 30 has never carried a figure and nothing has ever proposed one. **My own verification
+claim:** a reviewer reproduces every number above by building at `b27caab` and at this commit, serving
+`dist/`, seeding `ecycles_completed_lessons` to `[29]` (a URL does not unlock a lesson —
+`DECISIONS.md`), and reading `[data-figure="spendingLoop"]`; the six §64 plants are six one-line edits
+and the two control plants are one.
+
+**Filed as notes under item 27, not as new numbered items (W-6.2 rule 2 + W-6.4).** The two rejections
+(29 and 31), the counter-clockwise-ring trap, and the box-sizing rule all went into item 27's own text.
+**No new backlog number was created and the floor did not grow by one.**
+
+**Owner tree at end of run:** `OWNER-TREE f33dcba871f21226d6514171073d53efd2c9cffa031a126726c30ab2eb7e990b`
+(4 tracked modified — all this run's own — and **51 untracked**, the owner's `UIUX/`, the same count
+the previous five runs observed, untouched).
+
+**W-6.5, now due:** `public/data/market.json` is still `asOf 2026-08-28`. With `STALE_AFTER_DAYS` at 4
+the Sector-performance screen begins showing "Market data isn't available right now" on about
+**2026-09-02 — two days from now**. The owner's scheduled job, flagged not touched, and the stale path
+itself was re-read yesterday and is correct as built. **O-1 remains the entire critical path** — 44
+lessons, 5 languages, 160 minutes of content, 14 of 44 lessons now carrying a diagram, and zero people
+have ever opened this app.
+
 
 ### 2026-08-31 (scheduled dev-agent, self-picked from LAUNCH_PLAN §3.0.4 — the clarity standard, not a residual) — the app's most-shown diagram drew the long-run productivity trend as a FLAT line, teaching the exact opposite of the lesson it illustrates
 

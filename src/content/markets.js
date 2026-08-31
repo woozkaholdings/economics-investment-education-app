@@ -36,6 +36,64 @@ export const cycleChartDescription = {
   ja: "右肩上がりの長期の生産性トレンド線の上下に波打つ曲線で、拡大・ピーク・収縮・底が示されています。",
 };
 
+// ── Lesson 30's spending chain, drawn as a closed loop ─────────────────────
+// Backlog item 27, added 2026-08-31. Rendered by `SpendingLoop` in
+// charts.jsx, which carries the reasoning for the figure's shape.
+//
+// ⚠️ THE FOUR STEPS, THE TITLE AND THE CAPTION ARE VERBATIM SUBSTRINGS OF
+// LESSON 30 in the same language — they are lifted, not translated. The
+// lesson's third section writes its own claim as an arrow chain ("more
+// spending → more income → more creditworthy borrowers → more borrowing →
+// more spending, and so on"), so the figure's labels already exist, reviewed
+// to exactly the degree the lesson beside them is. `check-data.mjs` §64 (a)
+// asserts the containment per language, in both directions of failure: edit
+// the lesson's wording without editing these and the check fails; edit these
+// into a paraphrase and it fails too.
+//
+// This is also why the figure adds no new machine translation to four
+// languages nobody on this project reads (AGENT_LOG.md, owner item O-3) —
+// only `spendingLoopDescription` below is new prose, because a text
+// alternative has to describe the SHAPE and there is no sentence in the
+// lesson that does.
+export const spendingLoopTitle = {
+  en: "The Spending Chain",
+  es: "La Cadena de Gasto",
+  ko: "지출의 연쇄",
+  zh: "支出链条",
+  ja: "支出の連鎖",
+};
+
+// Clockwise from the top-left box. The fourth step's arrow returns to the
+// first — the join the lesson's sentence cannot write, which is the whole
+// reason this figure exists.
+export const spendingLoopSteps = {
+  en: ["more spending", "more income", "more creditworthy borrowers", "more borrowing"],
+  es: ["más gasto", "más ingreso", "prestatarios más solventes", "más préstamos"],
+  ko: ["더 많은 지출", "더 많은 소득", "신용도가 더 높아진 차입자", "더 많은 차입"],
+  zh: ["更多支出", "更多收入", "借款人信用更好", "更多借贷"],
+  ja: ["支出増", "収入増", "信用力の高い借り手が増える", "借入増"],
+};
+
+export const spendingLoopCaption = {
+  en: "This self-reinforcing loop runs in both directions",
+  es: "Este bucle que se refuerza a sí mismo funciona en ambas direcciones",
+  ko: "이 자기 강화 고리는 양쪽 방향 모두로 작동합니다",
+  zh: "这个自我强化的回路在两个方向上都会运转",
+  ja: "この自己強化のループは両方向に働きます",
+};
+
+// The one string here that is not lifted from the lesson. It names the shape
+// (a closed ring) and then walks it, because the closing is the only thing a
+// sighted reader gets from the figure that the paragraph above it does not
+// already say.
+export const spendingLoopDescription = {
+  en: "Four steps drawn as a closed ring: more spending leads to more income, which leads to more creditworthy borrowers, which leads to more borrowing, which leads back to more spending.",
+  es: "Cuatro pasos dibujados como un anillo cerrado: más gasto lleva a más ingreso, que lleva a prestatarios más solventes, que lleva a más préstamos, que lleva de vuelta a más gasto.",
+  ko: "닫힌 고리로 그려진 네 단계입니다. 더 많은 지출이 더 많은 소득으로, 더 많은 소득이 신용도가 더 높아진 차입자로, 다시 더 많은 차입으로, 그리고 다시 더 많은 지출로 이어집니다.",
+  zh: "四个步骤画成一个闭合的环：更多支出带来更多收入，更多收入让借款人信用更好，进而带来更多借贷，又回到更多支出。",
+  ja: "閉じた輪として描かれた4つのステップです。支出増が収入増につながり、そこから信用力の高い借り手が増える。それが借入増につながり、再び支出増へと戻ります。",
+};
+
 // The teaching scenario. Deliberately hypothetical and undated — it describes a
 // *kind* of moment, not the present one.
 export const scenario = {

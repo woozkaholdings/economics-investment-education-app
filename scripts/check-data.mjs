@@ -8904,5 +8904,169 @@ function trendDirection(src) {
 }
 
 
+// §64. LESSON 30'S SPENDING CHAIN, DRAWN AS A CLOSED LOOP (backlog item 27,
+//      added 2026-08-31). The fourth KIND of figure this file guards, and the
+//      kind decides the assertions, as it did for §57:
+//
+//        §21/§50/§53 — the figure plots arithmetic its lesson states.
+//        §54         — the figure plots RANKS read off two sentences.
+//        §57         — the figure plots a PARTITION and carries no magnitude.
+//        §64 (here)  — the figure plots a CLOSED CAUSAL LOOP, carries no
+//          magnitude either, and — the part that decides this section's shape
+//          — every string it renders except its text alternative is LIFTED
+//          VERBATIM from lesson 30 in the same language rather than written
+//          for the figure. So the question is not "is this number right" but
+//          "does this figure still say what its lesson says, in the language
+//          it says it in, and does it still close?".
+//
+//      WHY THE LIFTING IS WORTH A CHECK RATHER THAN A COMMENT. The property
+//      is what keeps the figure from adding four languages of unreviewed
+//      machine translation an inch from the paragraph it draws (AGENT_LOG.md,
+//      owner item O-3) — and a property nothing measures is a wish. It also
+//      fails in a direction a human review would not catch here: item 93's
+//      translation passes rewrite lesson bodies, and a rewrite that improves
+//      the `zh` chain leaves this figure quoting the OLD wording, in a
+//      language nobody on this project reads, beside the sentence it no
+//      longer matches. (a) fails in both directions — edit the lesson without
+//      the figure, or paraphrase the figure away from the lesson.
+//
+//      THE LEARNER-VISIBLE FAILURE, in one sentence, per W-6.2 rule 3: a
+//      reader meets a ring whose boxes use different words than the sentence
+//      directly above them, or — (d) — a ring with its closing arrow missing,
+//      which is a C-shaped chain that ends, i.e. exactly the thing prose
+//      already does and the only reason this figure exists.
+{
+  const before64 = failures;
+  const need = [
+    "spendingLoopTitle", "spendingLoopSteps", "spendingLoopCaption", "spendingLoopDescription",
+  ];
+  const missingLoop = need.filter((k) => marketsContent[k] === undefined);
+  if (missingLoop.length > 0) {
+    fail(`§64: src/content/markets.js no longer exports ${missingLoop.join(", ")}. This section is pointed at a structure that no longer exists — repoint it rather than leaving it green.`);
+  } else {
+    const LOOP_LESSON = "30";
+    // The four steps, in the order lesson 30 states them. The array's order is
+    // the ring's clockwise order and the index into every label, so (c) below
+    // is two claims at once.
+    const STEP_COUNT = 4;
+
+    // (a) EVERY VISIBLE STRING IS VERBATIM FROM THE LESSON, per language,
+    //     against that language's own body — §54 (e)'s shape, for §54 (e)'s
+    //     reason: a check that runs on `en` only cannot see a drift that
+    //     happens in `zh`.
+    //
+    //     CONTROLS, per language and in both directions, because a body that
+    //     failed to load returns "not found" for every string and reads
+    //     exactly like a figure that was rewritten wholesale:
+    //       • an absent probe must NOT be found (the text is real text);
+    //       • the lesson's own arrow character MUST be found — this is the
+    //         positive control, and it is specific rather than generic: "→"
+    //         is in all five bodies and is in no other lesson's section 3, so
+    //         finding it proves the scan reached THE chain paragraph and not
+    //         merely some text.
+    const CONTROL_ABSENT = "qzx-no-lesson-says-this";
+    const lessonText = {};
+    for (const lang of LANGS) {
+      const sections = lessonContent[LOOP_LESSON]?.sections ?? [];
+      const text = sections.map((s) => `${s.heading?.[lang] ?? ""}\n${s.body?.[lang] ?? ""}`).join("\n");
+      if (text.trim().length === 0 || text.includes(CONTROL_ABSENT)) {
+        fail(`§64: the lesson-30 scan failed its control in "${lang}" — ${text.trim().length === 0 ? "the text is empty" : "an absent probe was found"}. It is reading the wrong text or no text, so a clean result for this language would mean nothing.`);
+        continue;
+      }
+      if (!text.includes("→")) {
+        fail(`§64: lesson 30's "${lang}" text no longer contains the arrow character the chain paragraph is written with. Either the scan is not reaching "The Spending Chain" section, or that paragraph was rewritten — and the figure is a drawing of that paragraph, so re-read it before repointing this control.`);
+        continue;
+      }
+      lessonText[lang] = text;
+
+      const visible = [
+        ["the title", marketsContent.spendingLoopTitle[lang], "lesson 30's own section heading"],
+        ["the caption", marketsContent.spendingLoopCaption[lang], "the lesson's own sentence about the loop running in both directions"],
+        ...(marketsContent.spendingLoopSteps[lang] ?? []).map((s, i) => [`step ${i}`, s, "one term of the lesson's own arrow chain"]),
+      ];
+      for (const [what, value, whence] of visible) {
+        if (!text.toLowerCase().includes(String(value).toLowerCase())) {
+          fail(`§64: ${what} of the spending-loop figure reads "${value}" in "${lang}", but lesson 30 — the lesson it is drawn beside — does not contain that string in that language. It is ${whence}, lifted rather than translated, and the whole point is that the figure and the paragraph an inch above it use the same words. Take the string from the lesson's current prose; do not translate the English one.`);
+        }
+      }
+    }
+
+    // (b) THE ONE STRING THAT IS NOT LIFTED still names all four steps. The
+    //     description is the figure's only channel for a reader who cannot see
+    //     it, and a `role="img"` swallows the boxes — so a description that
+    //     drops a step drops it entirely for that reader, silently.
+    for (const lang of LANGS) {
+      const desc = marketsContent.spendingLoopDescription[lang] ?? "";
+      const missingStep = (marketsContent.spendingLoopSteps[lang] ?? []).filter((s) => !desc.includes(s));
+      if (missingStep.length > 0) {
+        fail(`§64: the "${lang}" text alternative does not contain ${missingStep.map((s) => `"${s}"`).join(", ")}. The ring is a role="img", so its boxes are not announced individually — whatever the description omits does not exist for a screen-reader learner, and this figure's entire content is those four steps and their order.`);
+      }
+    }
+
+    // (c) THE STEPS ARE IN THE LESSON'S OWN ORDER, per language. This is the
+    //     ring's clockwise order. Drawn out of order the figure still renders,
+    //     still closes, and still passes (a) — and it would teach that
+    //     borrowing causes income.
+    for (const lang of LANGS) {
+      if (!lessonText[lang]) continue;
+      const steps = marketsContent.spendingLoopSteps[lang] ?? [];
+      if (steps.length !== STEP_COUNT) {
+        fail(`§64: spendingLoopSteps.${lang} has ${steps.length} step(s); the ring has ${STEP_COUNT} boxes and charts.jsx indexes them 0-3, so any other count leaves a box undefined or a step undrawn.`);
+        continue;
+      }
+      const lower = lessonText[lang].toLowerCase();
+      const at = steps.map((s) => lower.indexOf(String(s).toLowerCase()));
+      if (at.some((v, i) => i > 0 && v < at[i - 1])) {
+        fail(`§64: the four steps appear in lesson 30's "${lang}" text at ${at.join(", ")} — not in the order the ring draws them. The lesson's chain is spending → income → creditworthiness → borrowing → back to spending; a ring drawn in another order asserts a different causality and nothing on screen would say which one is the lesson's.`);
+      }
+    }
+
+    // (d) THE RING CLOSES, and this is the assertion the figure exists for.
+    //     Three arrows and a stop is what the paragraph already does — it
+    //     writes "more spending" twice and appends "and so on" precisely
+    //     because a line of text cannot join its end to its beginning. Read
+    //     off charts.jsx rather than trusted: a removed arrow renders as a
+    //     tidy C and fails nothing else in this file.
+    const chartsSrc64 = readFileSync(join(ROOT, "src", "components", "charts.jsx"), "utf8");
+    const loopBody = /export function SpendingLoop\([^)]*\)\s*\{([\s\S]*?)\n}\n/.exec(chartsSrc64);
+    if (!loopBody) {
+      fail("§64: SpendingLoop is no longer a top-level function in src/components/charts.jsx, so this section cannot see whether the ring still closes. Repoint it rather than leaving it green.");
+    } else {
+      for (const [glyph, where] of [["→", "across the top"], ["↓", "down the right"], ["←", "back along the bottom"], ["↑", "up the left, closing the ring"]]) {
+        if (!loopBody[1].includes(`arrow("${glyph}"`)) {
+          fail(`§64: SpendingLoop no longer draws the "${glyph}" arrow (${where}). Four arrows are what make this a loop; with three it is a chain that ends, which is exactly what the lesson's own sentence already is and the reason the figure was drawn at all.`);
+        }
+      }
+      // The four boxes share ONE style object. The lesson states no amount
+      // anywhere in this section, so there is nothing to size a box by, and a
+      // per-box width or height would draw a magnitude the lesson does not
+      // have — §57 (e)'s rule arriving at a different figure.
+      const boxUses = [...loopBody[1].matchAll(/style=\{LOOP_BOX\}/g)].length;
+      if (boxUses !== 1) {
+        fail(`§64: the ring's boxes are styled from LOOP_BOX in ${boxUses} place(s), expected exactly 1 (the shared \`box()\` helper). More than one means a box has its own style, and the only thing a per-box style can express here is a magnitude — which lesson 30 does not state anywhere in this section.`);
+      }
+      const loopStyle = /const LOOP_BOX = \{([\s\S]*?)\n\};/.exec(chartsSrc64);
+      if (!loopStyle) {
+        fail("§64: LOOP_BOX is no longer a top-level object literal in charts.jsx, so this section cannot tell whether a box has been given a size.");
+      } else if (/\b(width|height|flexBasis|flexGrow|gridColumn|gridRow)\b/.test(loopStyle[1])) {
+        fail("§64: LOOP_BOX now sets a size (width/height/flex/grid span). The four boxes stretch to their row's tallest label and to nothing else — lesson 30's spending-chain section states no amount at all, so any size drawn here is a quantity the figure invented.");
+      }
+    }
+
+    // (e) THE FIGURE IS STILL ATTACHED TO LESSON 30. Everything above checks a
+    //     figure nobody sees if the mapping is dropped, and dropping it is a
+    //     one-line edit in a different file.
+    const lvSrc64 = readFileSync(join(ROOT, "src", "components", "LessonVisual.jsx"), "utf8");
+    if (!/^\s*30:\s*"spendingLoop"/m.test(lvSrc64)) {
+      fail("§64: LESSON_VISUALS in src/components/LessonVisual.jsx no longer maps lesson 30 to \"spendingLoop\". The figure would stop rendering and every other assertion in this section would keep passing against content nothing displays.");
+    }
+  }
+
+  if (failures === before64) {
+    console.log(`  §64 lesson 30's spending chain closes: ${LANGS.length} language(s) verified verbatim against the lesson's own text (title, caption and 4 steps = ${6 * LANGS.length} containments), steps in the lesson's stated order, 4 arrows closing the ring, boxes unsized.`);
+  }
+}
+
+
 console.log(`\n${failures === 0 ? "PASS" : "FAIL"}: ${failures} failure(s), ${warnings} warning(s).`);
 process.exit(failures === 0 ? 0 : 1);

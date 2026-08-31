@@ -13,11 +13,13 @@
 // (look something up again later), which is not the duplication §3.1 removed.
 // ═══════════════════════════════════════════════════════════════════════════
 
-import { AsymmetryChart, Bar, BracketStack, CycleChart, GapColumns, GrowthCurve, OutcomeGrid, PreferenceFlip, ProportionBar, TradeoffPlot, YieldCurve } from "./charts.jsx";
+import { AsymmetryChart, Bar, BracketStack, CycleChart, GapColumns, GrowthCurve, OutcomeGrid, PreferenceFlip, ProportionBar, SpendingLoop, TradeoffPlot, YieldCurve } from "./charts.jsx";
 import { Text } from "./ui.jsx";
 import {
   balanceSheetCaption, balanceSheetDescription, balanceSheetHistory,
-  cycleChartDescription, phaseNames, trendLabel, yieldCurveDescriptions,
+  cycleChartDescription, phaseNames,
+  spendingLoopCaption, spendingLoopDescription, spendingLoopSteps, spendingLoopTitle,
+  trendLabel, yieldCurveDescriptions,
 } from "../content/markets.js";
 import {
   bracketBands, bracketCaption, bracketColumnLabels, bracketDescription, bracketIncomes,
@@ -49,11 +51,15 @@ import { graph, ink, space, surface } from "../theme.js";
 // essentials split re-tracked 1-15, so of the five personal-finance ids below
 // 1/3/7 are `essentials` and 23/27 are `money`.
 //
-// Re-measured 2026-08-28 with the same parser control after lesson 28 was
-// added: coverage is economy 5/12, essentials 3/15, money 5/17. Lesson 28 is
-// the eighth personal-finance figure and the fifth on the `money` track —
-// the track LAUNCH_PLAN.md §0 has called the product since the 2026-08-18
-// reversal, which had a single diagram across seventeen lessons until 23.
+// Re-measured 2026-08-31 with the same parser control after lesson 30 was
+// added: coverage is economy 6/12, essentials 3/15, money 5/17 — 14 of 44,
+// 0 orphan ids. Lesson 30 is the first figure added for the reason the path
+// itself gives rather than for a track's count: in display order the first
+// three lessons a new install meets are 29, 30 and 31, and until this entry
+// none of them carried a figure, so the first diagram a new learner ever saw
+// was on the fourth screen (§3.2, "the first five minutes"). 29 and 31 are
+// still bare and that is a measured decision, not an oversight — see backlog
+// item 27 for why neither clears the bar on its own prose.
 // Do not quote a coverage count from backlog item 27; re-run the parse.
 export const LESSON_VISUALS = {
   // essentials (1/3/7) and money (17/23/27/28/44) — personal finance either way
@@ -66,6 +72,7 @@ export const LESSON_VISUALS = {
   28: "outcomeGrid",   // Does One Lucky Win Prove You Have a System?
   44: "incomeTradeoff",// The Part the Word "Passive" Leaves Out
   // economy
+  30: "spendingLoop", // Credit: The Most Important Part (its "Spending Chain" section)
   32: "cycle",         // The Short-Term Debt Cycle
   33: "cycle",         // The Long-Term Debt Cycle
   36: "yieldCurve",    // The Yield Curve: Crystal Ball
@@ -97,6 +104,23 @@ export default function LessonVisual({ lessonId, t, lang }) {
           phaseNames={phaseNames[lang]}
           trendLabel={trendLabel[lang]}
           description={cycleChartDescription[lang]}
+        />
+      )}
+
+      {/*
+        The only figure here whose subject is a CLOSED LOOP. Lesson 30 writes
+        its own claim as a line of arrows and has to write its first term
+        twice and then say "and so on", because a sentence cannot join its end
+        to its beginning. Everything this component renders except the text
+        alternative is a verbatim substring of that lesson in the same
+        language — see markets.js and `check-data.mjs` §64.
+      */}
+      {kind === "spendingLoop" && (
+        <SpendingLoop
+          title={spendingLoopTitle[lang]}
+          steps={spendingLoopSteps[lang]}
+          caption={spendingLoopCaption[lang]}
+          description={spendingLoopDescription[lang]}
         />
       )}
 

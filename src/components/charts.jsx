@@ -849,6 +849,130 @@ export function OutcomeGrid({ title, columnLabels, rowLabels, cells, spanLabel, 
   );
 }
 
+// ── SpendingLoop ──────────────────────────────────────────────────────────
+// Lesson 30 ("Credit: The Most Important Part"), section 3 "The Spending
+// Chain" — backlog item 27, added 2026-08-31.
+//
+// WHY A PICTURE, in the lesson's own words rather than in an argument built
+// for it. The lesson writes its own claim as a line of arrows:
+//
+//     "More spending → more income → more creditworthy borrowers → more
+//      borrowing → more spending, and so on."
+//
+// Read what prose had to do there. It writes "more spending" TWICE and then
+// appends "and so on", because **a line of text cannot close**. The loop is
+// the whole point — the lesson's takeaway is "a self-reinforcing loop" — and
+// the one thing the sentence cannot do is join its last term to its first.
+// That join is this figure's entire contribution: four steps, four arrows,
+// and the fourth arrow goes back to the first step instead of stopping.
+//
+// EVERY STRING IN THIS FIGURE IS VERBATIM FROM LESSON 30, in all five
+// languages — the four steps, the title (the section's own heading) and the
+// caption are substrings of that lesson's own text, not new prose. Only
+// `spendingLoopDescription` (the text alternative, which has to describe the
+// *shape* and so cannot be lifted) is written for the figure. That is a
+// deliberate property and `check-data.mjs` §64 (a) holds it: a figure a few
+// hundred pixels from the paragraph it draws must not paraphrase it, and in
+// four languages nobody on this project reads, "must not paraphrase" is only
+// a check away from being a wish.
+//
+// ⚠️ THE FOUR BOXES CARRY NO MAGNITUDE, and a future run must not give them
+// one. The lesson states no amount anywhere in this section — the worked
+// example beside it (a kitchen renovation, a work truck) deliberately gives
+// no figures — so there is nothing to size a box by. Sizing, shading or
+// ranking them would draw a claim the lesson declines to make, which is
+// `OutcomeGrid`'s rule arriving at a different figure. Boxes stretch to their
+// row's tallest label and to nothing else. §64 (d) holds it.
+//
+// ⚠️ AND THE ARROWS ALL RUN THE SAME WAY ROUND, which is not the obvious
+// reading of "this self-reinforcing loop runs in both directions". Both
+// directions means the loop spirals UP in a boom and DOWN in a bust — the
+// takeaway says exactly that ("all the way up in a boom and all the way down
+// in a bust"). It does NOT mean the causality reverses. A second ring drawn
+// counter-clockwise would be an economics error, and it is the error a
+// well-meaning reading of the caption leads to. §64 (c) pins the order.
+const LOOP_BOX = {
+  border: `1px solid ${graph.neutral}`,
+  borderRadius: radius.sm,
+  padding: space["2"],
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  textAlign: "center",
+};
+
+export function SpendingLoop({ title, steps, caption, description }) {
+  // The glyphs are laid out clockwise from the top-left box: across the top,
+  // down the right, back along the bottom, and up the left — where the last
+  // one closes the loop.
+  const arrow = (glyph, key) => (
+    <div key={key} data-figure-part="arrow" style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+      <Text as="span" variant="body" color={ink.body} style={{ lineHeight: 1 }}>{glyph}</Text>
+    </div>
+  );
+  const box = (i) => (
+    <div key={`step-${i}`} data-figure-part="step" style={LOOP_BOX}>
+      <Text as="span" variant="caption" color={ink.body}>{steps[i]}</Text>
+    </div>
+  );
+
+  return (
+    <figure style={{ background: surface.card, border: `1px solid ${line.hairline}`, borderRadius: radius.lg, padding: space["4"], margin: 0 }}>
+      {title && (
+        <figcaption style={{ marginBottom: space["3"] }}>
+          <Text as="span" variant="caption" color={ink.muted} style={{ textTransform: "uppercase", letterSpacing: "0.05em", fontWeight: 700 }}>
+            {title}
+          </Text>
+        </figcaption>
+      )}
+      {/*
+        HTML rather than SVG, for `OutcomeGrid`'s reason: these labels are
+        five-language and long ("신용도가 더 높아진 차입자", "信用力の高い借り手が増える"),
+        SVG does not wrap, and a clipped label fails silently in exactly the
+        languages nobody on this project re-reads. In HTML they wrap, and they
+        grow with the app's own font-scale control.
+
+        The middle cell is empty on purpose. A label in the ring's center would
+        be a fifth thing to read and would push the two side arrows apart at
+        320px; the ring already says what it has to say.
+      */}
+      <div
+        role="img"
+        data-figure="spendingLoop"
+        aria-label={description}
+        style={{
+          display: "grid",
+          gridTemplateColumns: "minmax(0, 1fr) auto minmax(0, 1fr)",
+          // `1fr` on both box rows, not `auto`. Measured live at 390px before
+          // this line existed: the top row drew 35px and the bottom row 52px,
+          // because "more creditworthy borrowers" wraps to two lines and CSS
+          // grid sizes a row to its tallest item. Nothing in the figure means
+          // "bigger", so a box that grows because its label is longer is a
+          // magnitude arriving through content — `OutcomeGrid`'s 82-against-52
+          // bug in a different figure. In an auto-height grid the two `1fr`
+          // tracks equalize to the taller one.
+          gridTemplateRows: "1fr auto 1fr",
+          gap: space["2"],
+          alignItems: "stretch",
+        }}
+      >
+        {box(0)}
+        {arrow("→", "top")}
+        {box(1)}
+
+        {arrow("↑", "left")}
+        <div />
+        {arrow("↓", "right")}
+
+        {box(3)}
+        {arrow("←", "bottom")}
+        {box(2)}
+      </div>
+      {caption && <Text variant="caption" color={ink.muted} style={{ marginTop: space["3"], lineHeight: 1.5 }}>{caption}</Text>}
+    </figure>
+  );
+}
+
 // ── CycleChart ────────────────────────────────────────────────────────────
 const PHASE_DOT = [graph.green, graph.amber, graph.red, graph.blue];
 const PHASE_INK = [ink.ok, ink.warn, ink.bad, ink.accent];
