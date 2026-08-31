@@ -143,7 +143,7 @@ export const quizText = [
       "VIX (Índice de Volatilidad)",
       "PMI"
     ],
-    "explain": "El VIX mide la volatilidad esperada. Por debajo de 15 señala calma; por encima de 40, pánico extremo."
+    "explain": "El VIX mide la volatilidad esperada. No hay umbrales oficiales, pero como guía aproximada, por debajo de 15 sugiere calma y por encima de 40, pánico extremo."
   },
   {
     "q": "¿Por qué el ciclo de deuda a largo plazo tiene que girar eventualmente?",

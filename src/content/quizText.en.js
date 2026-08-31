@@ -143,7 +143,7 @@ export const quizText = [
       "VIX (Volatility Index)",
       "PMI"
     ],
-    "explain": "The VIX measures expected market volatility. Below 15 signals calm markets; above 40 signals extreme panic. Contrarian investors watch for spikes as potential buying opportunities."
+    "explain": "The VIX measures expected market volatility. There are no official cutoffs, but as a rough guide, below 15 suggests calm markets and above 40 extreme panic. Contrarian investors watch for spikes as potential buying opportunities."
   },
   {
     "q": "Why does the long-term debt cycle eventually have to turn?",

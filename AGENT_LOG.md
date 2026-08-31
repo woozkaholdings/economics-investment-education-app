@@ -3532,6 +3532,156 @@ finding(s); V vacuous; U unavailable`. A bare "no accessibility issues found" is
 
 ## Run log
 
+### 2026-08-31 (scheduled dev-agent, self-picked from LAUNCH_PLAN §3.0.6) — §3.0.6 is the only clause of the primary success criterion with ZERO references anywhere in this repo, and the glossary defined the VIX as nothing but three invented thresholds
+
+**Pick, and why it is not the previous run's residual (W-6.2 rule 1).** The last run filed **item
+159** (instruments sweep `sections`, skip `takeaway`/`thinkAbout`) as its stated residual and said
+the next run must not take it by default. It is not taken. Instead: a count of every §3.0.x clause
+across `AGENT_LOG.md`, `AGENT_LOG.archive.md`, `LAUNCH_PLAN.md` and `check-data.mjs` —
+
+| clause | log | archive | check-data |
+|---|---|---|---|
+| §3.0.1 | 11 | 0 | 0 |
+| §3.0.2 | 2 | 0 | 0 |
+| §3.0.3 | 10 | 29 | 11 |
+| §3.0.4 | 10 | 8 | 0 |
+| §3.0.5 | 1 | 3 | 4 |
+| **§3.0.6** | **0** | **0** | **0** |
+| §3.0.7 | 8 | 2 | 2 |
+
+**§3.0.6 ("Plain language over precision theater… where a simplification is genuinely lossy, say so
+in one clause") has never been named, let alone measured, in the entire history of this project.**
+That is a clause of the *primary success criterion*, and it is what this run audited.
+
+**Premise measured before any edit, with controls (step 3.5).**
+
+1. **The plan's own claim, checked rather than trusted.** §3.0.6 cites "the GDP/recession and
+   yield-curve wordings already in the content" as its exemplars. Both are real and both hedge:
+   `lessonContent.economy.en.js:202` says *"A common rule of thumb calls two straight quarters of
+   decline a recession — but in the US, recessions are officially dated by the NBER using broader
+   criteria"*, and `:152` says *"A long-term yield is, roughly, a market bet…"* plus *"it says a
+   slowdown is more likely, not when, and not how severe."* **The plan was right — recorded because
+   W-6.1's transferable lesson is that a document's claim about content is a CLAIM, not a
+   measurement, and this one had never been checked.**
+
+2. **The screen.** A 7-form regex for *comparative numeric thresholds* (`above/below/over/under N`,
+   `N = `, `N or higher`) minus a 40-term hedge vocabulary, over lesson `sections`/`takeaway`/
+   `thinkAbout`, glossary `f`/`ex`, `economicSignals`, and quiz `q`/`explain`. **16 hits.**
+
+3. **⚠️ THE FIRST TWO-SIDED CONTROL FAILED, and that is how the instrument's real scope was found
+   rather than assumed.** The control was: take the shipped `glossary.Recession` entry (*"Widely-used
+   rule of thumb: 2+ consecutive quarters of declining GDP"*), strip its hedge, and require the
+   screen to fire. **It did not fire** — `"A recession is 2+ consecutive quarters of declining GDP"`
+   has no comparative form, so the regex cannot see it. **The instrument screens comparative
+   thresholds, NOT definitional equivalences**, and had the control been drawn from the right class
+   in the first place, that limit would have been invisible. Rebuilt from a real in-class shipped
+   sentence — `glossary.VIX.ex`, *"…the VIX **often** spikes above 30"* — which is clean as shipped
+   and fires with `often` removed. Final control set: **4 planted positives fire, 4 planted negatives
+   stay clean, and the two-sided real-sentence control passes in both directions. INSTRUMENT VALID.**
+   **The class the instrument cannot see is recorded here, not filed as an item** (W-6.2 rule 2).
+
+4. **Judging the 16 hits — 10 are correct as shipped, and the distinction is the whole finding.**
+   Seven are **PMI's 50**, which is *definitional*: the index is constructed so that 50 means no
+   change. Three are narrative or already-approximate (`essentials/4`'s Elena scene, `essentials/11`'s
+   hedged "worth checking", `economy/33`'s "75-100 years" range). **The remaining six are the VIX
+   bands, on three surfaces, in five languages.**
+
+5. **Why the VIX bands are a §3.0.6 breach and PMI's 50 is not — the corpus convicts itself.** The
+   VIX has no official bands; 15/25-35/40 are commentary conventions. They were rendered in the
+   *identical* `N = label` grammar as PMI's 50, one sentence apart, so a learner has no way to tell
+   the construction constant from the convention. And the glossary entry was the clearest instance:
+
+   | entry | says what it measures? | its number |
+   |---|---|---|
+   | `PMI` | yes ("Monthly survey… Leading indicator") | 50 — definitional |
+   | `Credit Spread` | yes | none |
+   | `CPI` | yes | hedged: "Fed targets **~2%**" |
+   | **`VIX`** | **no — nothing at all** | **"Below 15 = calm. 25-35 = fear. Above 40 = extreme panic."** |
+
+   **`glossary.VIX.f` was the only gauge entry in the file that never said what the thing measures,
+   and the only one whose numbers are conventions presented as definitions** — in a file that
+   demonstrably hedges (`~2%`) when a number is soft.
+
+**What shipped — 15 strings, 3 surfaces x 5 languages, one clause each exactly as §3.0.6
+prescribes.**
+- `lessonContent.economy.{en,es,ko,zh,ja}.js` lesson 39 — *"There are no official cutoffs, but as a
+  rough guide: below 15 = calm seas, above 40 = extreme panic."* (two sentences became one; §3.0.6
+  also says prefer the shorter word).
+- `glossary.js` VIX `f`, all five — now opens with what the VIX measures, then hedges the bands.
+- `quizText.{en,es,ko,zh,ja}.js` q12 `explain` — the same hedge, so the *graded* surface cannot
+  teach the invented threshold as fact.
+- **PMI's 50 was deliberately left alone in all seven places.** Hedging a construction constant would
+  make the app *less* accurate, and blurs the exact distinction this change exists to draw.
+- **Each language's existing band set was preserved** — only `en` carries "25-35 = fear". That
+  pre-existing parity gap was neither created nor widened here.
+
+**Verification.**
+- **Screen re-run after the edit: 16 → 10 hits, all six VIX instances gone.** The planted positive
+  (`"Below 15 = calm seas."`) **still fires** on the same run — so the drop is a real content change
+  and not a silently broken instrument.
+- `npm test` → **PASS: 0 failure(s)** across all eight scripts.
+- `npm run build` → `✓ built in 1.11s`.
+- **Two-sided proof that the change reached the artifact a browser loads:** all 6 old band strings
+  are absent from `dist/assets/` (0 files each) and all 6 new ones present (1-3 files each).
+- **⚠️ The suite went RED first, and that was correct behavior, not a problem to route around.**
+  Editing reviewed English drift-flagged lesson 39's four translations (coverage 100% → 98%, 1 stale
+  each). **Diagnosed with the Environment note's control before assuming it was mine:** `git archive
+  HEAD` into a clean dir + `node_modules` symlink → **0 failures on HEAD**, so the failure was mine.
+  Answered, not silenced — I wrote all four translations against the new English in this same commit,
+  so `translation-review.mjs mark 39 <lang> … ai` is the accurate record (method `ai`, matching every
+  existing entry; precedent: the lesson-38 and lesson-24 runs). Then `npm run readiness -- --write`
+  for the two char-count sentences (150,440 → 150,493).
+- **⚠️ Live browser verification was attempted and is unavailable this run (W-1 requires the specific
+  error, not an assertion from memory).** `preview_start` → *"Dev servers can't be started from
+  unattended sessions (scheduled-task runs and remote-dispatched trees) — nobody is present to
+  approve the command."* Fallback attempt: `navigate` to `dist/index.html` over `file://` → the pane
+  reports *"files outside the project folder render as static snapshots"*, loads at a `data:` origin,
+  and `get_page_text` returns an **empty body** — the module scripts never execute, so nothing was
+  rendered and no visual claim is made. **The `dist/` string proof above is what stands in, and it is
+  a payload check, not a rendering check.**
+
+**Adversarial self-check (step 5) — run, and one control was rebuilt because the standing pattern is
+known-broken.**
+- **Blindspot register.** Screened the **exact 15 changed substrings** rather than the diff's `+`
+  lines — lesson bodies are single long lines, so a line-level grep would have been screening mostly
+  pre-existing prose and any zero would have been meaningless. Five families (§10.2 Dalio, §10.1
+  advice, §10.3 child-facing, hardcoded date, live market figure). **Six planted positives all fire —
+  including `"Investors were buying at the trough"`, the stem the standing `buy ` pattern misses, a
+  defect the 2026-08-31 lesson-38 run found and which is still unfixed in the habitual grep.** The 15
+  added strings: **0 hits.** `npm run check-blindspot` PASS. The change moves *away* from §10.1: it
+  weakens an assertion rather than adding one.
+- **DECISIONS.md conflict:** none. `grep -inE "vix|volatility index|rule of thumb|threshold|glossary
+  definition"` returns only chunk-size thresholds, unrelated.
+- **Not a redo — and the archive finding is worth keeping.** `AGENT_LOG.archive.md:741` records an
+  earlier run that **"spot-checked and confirmed correct, left alone: … PMI's 50 threshold, VIX
+  bands."** That run checked whether the *numbers are right*; it never asked whether they are
+  *presented as definitions*. The same run reworded the yield curve's *"predicted every recession"*
+  to *"a strong signal, not a certainty"* across body + quiz `explain` in five languages — **the
+  identical defect class and the identical fix shape, applied to the yield curve and waved past on
+  the VIX.** This change finishes that pass rather than reversing its decision.
+- **My own verification claim, stated exactly.** `npm test`, `npm run build`, the `dist/` two-sided
+  grep and the `git archive HEAD` control are all reproducible from this commit by an independent
+  reviewer. **The §3.0.6 screen and the blindspot screen are NOT committed** (they live in the
+  session scratchpad), so the "16 → 10" figure is **not** reproducible from the tree — the regex
+  forms and the full control set are written out above so it can be rebuilt, and that is the honest
+  status rather than an implied guarantee. The pre-edit measurement is by nature not reproducible
+  from a post-edit tree.
+
+**No backlog item filed, deliberately, and W-6.3 asks the ratio question to be answered out loud.**
+`scripts/` is **15,480** lines against `src/`-minus-content's **6,589** (W-6.0, not re-measured this
+run — quoted with its date). A §3.0.6 guard would be a 63rd `check-data.mjs` section for a property
+that now holds at **zero live instances**, which is exactly the shape W-6.2 rule 2 says is a note and
+not an item, and exactly the growth W-6.4 blames for the floor being over budget. **The audit is
+recorded here; no item, no new check.** Floor measured this run: **308,526 b against 250,000 b** —
+still over, still item 115's, and this entry adds run-log bytes only, which are archivable.
+
+**W-6.5, still due and still the owner's.** `public/data/market.json` is `asOf 2026-08-28` for the
+sixth run running; with `STALE_AFTER_DAYS` at 4 the Sector-performance screen begins showing "Market
+data isn't available right now" on about **2026-09-02**. Flagged, not touched.
+**Owner tree at end of run:** `OWNER-TREE f54fc023fb026bcb44277af38101071c245bfda0c8ead5c40049acd487b5c975 (0 tracked modified, 51 untracked)` — the owner's untracked `UIUX/`, untouched, as in the previous nine runs.
+**O-1 remains the entire critical path** — 44 lessons, 5 languages, 160 minutes of content, and zero
+people have ever opened this app.
+
 ### 2026-08-31 (scheduled dev-agent, self-picked from LAUNCH_PLAN §10.1's standing rule) — the app's flagship cycle lesson closed with "Every great fortune was made buying when others were panicking at the trough. The cycle ALWAYS turns", boxed as its Key Takeaway, in five languages, for four weeks
 
 **Pick, and why it is not the previous run's residual (W-6.2 rule 1).** The last run audited §3.0

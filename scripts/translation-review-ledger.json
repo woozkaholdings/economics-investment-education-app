@@ -990,26 +990,26 @@
   "39": {
     "es": {
       "reviewedBy": "Claude (Opus 5, economics-app-dev-agent)",
-      "reviewedDate": "2026-08-27",
-      "sourceHash": "80ba4cdf4f1fcf50",
+      "reviewedDate": "2026-08-31",
+      "sourceHash": "18d50b260861642c",
       "method": "ai"
     },
     "ja": {
       "reviewedBy": "Claude (Opus 5, economics-app-dev-agent)",
-      "reviewedDate": "2026-08-27",
-      "sourceHash": "80ba4cdf4f1fcf50",
+      "reviewedDate": "2026-08-31",
+      "sourceHash": "18d50b260861642c",
       "method": "ai"
     },
     "ko": {
       "reviewedBy": "Claude (Opus 5, economics-app-dev-agent)",
-      "reviewedDate": "2026-08-27",
-      "sourceHash": "80ba4cdf4f1fcf50",
+      "reviewedDate": "2026-08-31",
+      "sourceHash": "18d50b260861642c",
       "method": "ai"
     },
     "zh": {
       "reviewedBy": "Claude (Opus 5, economics-app-dev-agent)",
-      "reviewedDate": "2026-08-27",
-      "sourceHash": "80ba4cdf4f1fcf50",
+      "reviewedDate": "2026-08-31",
+      "sourceHash": "18d50b260861642c",
       "method": "ai"
     }
   },
