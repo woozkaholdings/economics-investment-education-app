@@ -3362,6 +3362,114 @@ finding(s); V vacuous; U unavailable`. A bare "no accessibility issues found" is
 
 ## Run log
 
+### 2026-08-31 (scheduled dev-agent, self-picked from LAUNCH_PLAN §3.5 applied to the spine screen) — the learning path announced a finished lesson and an unfinished one identically, so a screen-reader learner could not tell where they were on their own path
+
+**Pick, and the residual question answered honestly rather than skipped (W-6.2 rule 1).** The previous
+two runs both self-picked from the plan, so the residual counter is at zero and rule 1 does not bind
+here in any case. But the adjacency deserves naming: the previous run closed the quiz-marker defect and
+filed, as a note rather than a numbered item, *"if a future run finds a second meaning carried only by
+color, that is the evidence."* **I did not pick that note — I walked a screen it explicitly did not
+check.** Its note named the two candidates it had audited (`charts.jsx`'s decorative shapes, already
+`aria-hidden` by an earlier pass; the tab bar, which already splits icon from label) and declared both
+clean. `Learn.jsx` — the app's spine, the screen every learner returns to — was not among them. §3.5's
+standing requirement is "screen-reader labels on every interactive element", and the lesson rows are the
+most-pressed interactive elements in the app. Change is **+30 / −1 lines, all in `src/`; nothing added
+to `scripts/`** (W-6.3: the ratio was **15,480 : 6,589** at the 2026-08-30 measurement, and this run
+does not move the numerator).
+
+**Premise re-measured before editing, with a control, against the BUILT app (step 3.5).** Served `dist/`
+at `127.0.0.1:8811`, seeded `ecycles_completed_lessons=[29,30]` plus the disclaimer flag, reloaded, and
+read the first five `#track-economy-panel` rows' `button.textContent` out of the DOM rather than looking
+at the screen. Measured, before any edit:
+
+| row | state | accessible name |
+|---|---|---|
+| 1 | **done** (29) | `Transactions: The Building Block≈2 min` |
+| 2 | **done** (30) | `Credit: The Most Important Part≈3 min` |
+| 3 | **current** (31) | `Productivity Growth: The Long-Run Driver≈2 min` |
+| 4 | locked | `The Short-Term Debt CycleComplete previous lessons first` |
+| 5 | locked | `The Long-Term Debt CycleComplete previous lessons first` |
+
+**Done, current and plain-unlocked were byte-identical in shape — title plus minutes, three states
+collapsed into one string.** Both meanings were carried entirely by the step marker, and the marker's
+whole `<span>` is `aria-hidden="true"`; what remains is a fill color (`fill.ok` green / `fill.accent`
+blue) and a font weight. **Locked was already correct** and is the reason this is a real finding rather
+than a screen nobody had thought about: `t.locked` *replaces* the minutes as visible text, so that one
+state has a channel and the two the screen exists to communicate did not.
+
+**The control, because a probe that reads nothing looks exactly like a screen that is clean.** The same
+call printed `disabled` per row and got `[false,false,false,true,true]` — the instrument demonstrably
+distinguishes row states — and it read the locked string verbatim, so it can see text appended after a
+title. A negative on "done"/"current" therefore means absent, not unread. A second control pair
+(`control_knownString` on a string I knew was rendered, `control_absentString` on one I knew was not)
+returned `true`/`false` as expected.
+
+**Priced and passed over, measured rather than assumed.** The same sweep read the four `role="progressbar"`
+elements (all four carry `aria-valuenow/min/max` and a labelled `Progress: n/m`), the three track headers
+(`aria-expanded` correct, name from the `<h2>`), and the resume card (`Next up` + title + track + minutes).
+**All clean — no work due there**, which is why this change is two strings and not a screen rewrite.
+
+**What shipped.** `SrOnly` (the utility the previous run added, which until now had exactly one caller) on
+the two states that lacked a channel, plus `lessonStateDone` / `lessonStateCurrent` in all five locales.
+Appended *after* the title, following `Question.jsx`'s precedent, so the visible lesson title stays the
+start of the accessible name (WCAG 2.5.3 — voice control keeps working). `isNext` is labeled even though
+the resume card names the same lesson: that card names one lesson out of context, and this is the row a
+learner meets while reading down the path.
+
+**Verified, four ways.** (A) `npm run build` clean; `npm test` **exit 0**, 0 failures, and the three
+warnings are the pre-existing documented ones (translation review coverage, 48 condensed pairs, the
+backlog floor) — no new warning. (B) Re-read the same five rows off the rebuilt bundle: rows 1-2 now end
+`…≈2 minCompleted`, row 3 `…≈2 minCurrent lesson`, rows 4-5 unchanged. (C) **Exactly 3 `SrOnly` spans in
+the panel** — two done plus one current, so the label does not leak onto ordinary unlocked rows. (D)
+Switched `ecycles_lang` to `ko` and re-read: `완료함` / `현재 레슨`, with a control asserting the *other*
+Korean string (`이전 레슨을 먼저 완료하세요`) was also present, proving the language actually switched
+rather than falling back to `en`. Screenshot confirms the visual is byte-for-byte the same design.
+
+⚠️ **A geometry figure I nearly reported, and did not, because the control killed it.** My first
+after-measurement printed `horizontalOverflowPx: 149`, which would have read as a reflow regression an
+inch from the 320px work of items 148/153. Stripping all three `SrOnly` spans from the live DOM and
+re-measuring gave **149 → 149 → 149** — unchanged, so not mine — and the same call exposed why:
+`documentElement.clientWidth` was **0**. The number was `scrollWidth − 0`, not an overflow at all. This
+is precisely the "layout not yet live" precondition `a11y-sweep.js`'s header hard-gates on, wearing its
+inverse face: not a lying zero but a lying *non*-zero. After forcing layout with a screenshot the honest
+reading is `clientWidth 1265 / scrollWidth 1265` → **0 px of overflow**. The 1×1 clipped boxes were
+confirmed directly.
+
+**Adversarial self-check (step 5) — run, and it found nothing.** **Blindspot register:** grepped the diff
+for `dalio|principles|ray |buy |sell |recommend|advice|\d{4}-\d\d-\d\d` — one hit, the `2026-08-31` inside
+a code comment recording when the defect was measured, which is this codebase's standing convention; no
+user-facing date, no market figure, no advice-adjacent phrasing, no kids-facing move (the two new strings
+are "Completed" and "Current lesson"). **DECISIONS.md:** no architectural decision touched, and
+`grep -in "sr-only\|srOnly\|visually hidden\|off-screen\|screen reader"` over it returns **nothing**, so
+no ruling exists to contradict. **Not a redo:** `grep -in "Learn.jsx"` across `AGENT_LOG.md` and the
+archive, filtered to a11y terms, returns one unrelated 2020s-era hit about map parameter names; the
+2026-08-21 Learn redesign fixed locked-row *contrast* (the `opacity: 0.55` defect) and never touched
+announcement. **My own verification claim:** a reviewer reproduces the before/after by building at
+`cf1b804` and at this commit, seeding the same two lesson ids, and reading `#track-economy-panel`
+`li button` `textContent` — no tooling beyond a static server and one `javascript_tool` call.
+
+**On W-6.2 rule 3, said rather than skipped: I built NO new check, and it is not due.** The sentence rule
+3 demands is writable ("a screen-reader learner cannot tell which lessons they have already finished"),
+but the regression that actually happens — a key added in `en` only — is **already** caught by
+`check-data.mjs` §1's locale-parity failure. The only uncovered regression is someone deleting the two
+`SrOnly` lines from `Learn.jsx`, whose sole instrument would be a regex over JSX props: the exact shape
+rule 3 declined for item 152, on the wrong side of W-6.3's ratio.
+
+**Filed as a note under this work, not a numbered item (W-6.2 rule 2).** `SrOnly` now has two callers.
+The remaining icon-only meanings in `src/` were checked and none is due: `Icon.jsx` is `aria-hidden` by
+design and every current caller pairs it with text. **Two callers is not yet the evidence that the
+utility needs a guard.**
+
+**Owner tree at end of run:** `OWNER-TREE 7bcfa1997e5db472c6e1ef7423b75b47475cf14bff2735db68dfe9e4d8a12141`
+(6 tracked modified — all this run's own — and **51 untracked**, the owner's `UIUX/`, the same count the
+previous three runs observed, untouched).
+
+**W-6.5 restated, unchanged and still the owner's:** `public/data/market.json` is still `asOf 2026-08-28`
+— now four days stale. With `STALE_AFTER_DAYS` at 4 the Sector-performance screen begins showing "Market
+data isn't available right now" on about **2026-09-02**, i.e. within two days. Not dev-agent work.
+**O-1 remains the entire critical path** — 44 lessons, 5 languages, 160 minutes of content, and zero
+people have ever opened this app.
+
 ### 2026-08-30 (scheduled dev-agent, self-picked from LAUNCH_PLAN §3.5 rather than from a residual) — the quiz's right/wrong markers had no non-visual channel at all, so a screen reader announced the learner's WRONG pick as the selected one and gave the correct answer no marker
 
 **Pick, and why it is not a residual (W-6.2 rule 1).** The previous run also self-picked from the

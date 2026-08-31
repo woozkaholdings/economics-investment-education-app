@@ -25,6 +25,7 @@ export default {
     appErrorBody: "此页面遇到意外错误。重新加载页面通常可以解决，您保存的学习进度不会受到影响。",
     keyTakeaway: "关键要点", tryThinking: "想一想",
     locked: "请先完成之前的课程",
+    lessonStateDone: "已完成", lessonStateCurrent: "当前课程",
     marketsTitle: "市场仪表板", currentState: "示例场景",
     illustrationNote: "用于教学的示例数字——并非对你实际结果的预测",
     scenarioNote: "仅供教学用途——非实时市场数据",

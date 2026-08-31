@@ -25,6 +25,7 @@ export default {
     appErrorBody: "この画面で予期しないエラーが発生しました。ページを再読み込みするとほとんどの場合は解決し、保存された学習の進捗には影響ありません。",
     keyTakeaway: "重要ポイント", tryThinking: "考えてみよう",
     locked: "前のレッスンを先に完了してください",
+    lessonStateDone: "完了済み", lessonStateCurrent: "現在のレッスン",
     marketsTitle: "マーケットダッシュボード", currentState: "例示シナリオ",
     illustrationNote: "教育用の例示数値です — あなたの結果の予測ではありません",
     scenarioNote: "教育目的の例です — リアルタイムの市場データではありません",

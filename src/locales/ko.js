@@ -25,6 +25,7 @@ export default {
     appErrorBody: "이 화면에서 예기치 않은 오류가 발생했습니다. 페이지를 새로고침하면 대개 해결되며, 저장된 학습 기록은 그대로 유지됩니다.",
     keyTakeaway: "핵심 포인트", tryThinking: "생각해보세요",
     locked: "이전 레슨을 먼저 완료하세요",
+    lessonStateDone: "완료함", lessonStateCurrent: "현재 레슨",
     marketsTitle: "시장 대시보드", currentState: "예시 시나리오",
     illustrationNote: "교육용 예시 수치입니다 — 실제 결과에 대한 예측이 아닙니다",
     scenarioNote: "교육 목적입니다 — 실시간 시장 데이터가 아닙니다",

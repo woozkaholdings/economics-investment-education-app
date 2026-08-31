@@ -42,6 +42,7 @@ export default {
     appErrorBody: "This screen hit an unexpected error. Reloading the page usually fixes it, and your saved progress is not affected.",
     keyTakeaway: "Key Takeaway", tryThinking: "Think About This",
     locked: "Complete previous lessons first",
+    lessonStateDone: "Completed", lessonStateCurrent: "Current lesson",
     // Markets
     marketsTitle: "Market Dashboard", currentState: "Illustrative Scenario",
     illustrationNote: "Example figures, for teaching — not a projection of your own results",

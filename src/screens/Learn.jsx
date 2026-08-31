@@ -31,7 +31,7 @@
 import { useState } from "react";
 import { TRACKS } from "../content/lessons.js";
 import Icon from "../components/Icon.jsx";
-import { Disclaimer, ProgressBar, ResumeCard, Text } from "../components/ui.jsx";
+import { Disclaimer, ProgressBar, ResumeCard, SrOnly, Text } from "../components/ui.jsx";
 import { fill, font, ink, line, MIN_TAP, radius, shadow, space, surface } from "../theme.js";
 
 export default function Learn({ t, lang, lessons, completedLessons, isUnlocked, streak, openLesson }) {
@@ -286,6 +286,30 @@ export default function Learn({ t, lang, lessons, completedLessons, isUnlocked, 
                           {unlocked ? t.estMinTemplate.replace("{n}", lesson.minutes) : t.locked}
                         </Text>
                       </span>
+                      {/* DONE and CURRENT are the two states this screen
+                          exists to communicate, and until 2026-08-31 neither
+                          had any non-visual channel. Both were carried only by
+                          the step marker — which is `aria-hidden` on the whole
+                          span — plus a fill color and a font weight. Measured
+                          live against the built app with two lessons complete:
+                          a completed row's accessible name was "Transactions:
+                          The Building Block≈2 min" and the current row's was
+                          "Productivity Growth: The Long-Run Driver≈2 min" —
+                          identical in shape, so a screen-reader learner could
+                          not tell finished from unfinished anywhere on the
+                          path. LOCKED was already fine: `t.locked` replaces the
+                          minutes as visible text, which is why it is not
+                          repeated here.
+
+                          Appended after the title, like Question.jsx's answer
+                          markers, so the visible lesson title stays the start
+                          of the accessible name (WCAG 2.5.3 — voice control
+                          keeps working). `isNext` is deliberately not treated
+                          as redundant with the resume card above: that card
+                          names one lesson out of context, and this is the row
+                          a learner lands on while reading down the path. */}
+                      {isDone && <SrOnly>{t.lessonStateDone}</SrOnly>}
+                      {isNext && <SrOnly>{t.lessonStateCurrent}</SrOnly>}
                       {unlocked && (
                         <span style={{ color: isNext ? ink.accent : ink.muted, display: "flex" }}>
                           <Icon name="chevronRight" size="1.1em" strokeWidth={isNext ? 2.4 : 1.8} />

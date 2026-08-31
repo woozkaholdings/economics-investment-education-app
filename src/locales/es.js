@@ -25,6 +25,7 @@ export default {
     appErrorBody: "Esta pantalla encontró un error inesperado. Volver a cargar la página suele solucionarlo, y tu progreso guardado no se ve afectado.",
     keyTakeaway: "Punto Clave", tryThinking: "Piensa en Esto",
     locked: "Completa las lecciones anteriores primero",
+    lessonStateDone: "Completada", lessonStateCurrent: "Lección actual",
     marketsTitle: "Panel de Mercados", currentState: "Escenario Ilustrativo",
     illustrationNote: "Cifras de ejemplo, con fines didácticos — no son una proyección de tus resultados",
     scenarioNote: "Con fines educativos — no son datos de mercado en vivo",
