@@ -29,11 +29,11 @@ export const trendLabel = {
 };
 
 export const cycleChartDescription = {
-  en: "A wave rising above and falling below a long-run productivity trend line, marked at expansion, peak, contraction and trough.",
-  es: "Una onda que sube y baja alrededor de una línea de tendencia de productividad, marcada en expansión, pico, contracción y valle.",
-  ko: "장기 생산성 추세선 위아래로 오르내리는 파동에 확장기·정점·수축기·저점이 표시된 그래프입니다.",
-  zh: "一条围绕长期生产力趋势线上下波动的曲线，标注了扩张、顶峰、收缩和低谷。",
-  ja: "長期の生産性トレンド線の上下に波打つ曲線で、拡大・ピーク・収縮・底が示されています。",
+  en: "A wave rising above and falling below an upward-sloping long-run productivity trend line, marked at expansion, peak, contraction and trough.",
+  es: "Una onda que sube y baja alrededor de una línea de tendencia de productividad ascendente, marcada en expansión, pico, contracción y valle.",
+  ko: "우상향하는 장기 생산성 추세선 위아래로 오르내리는 파동에 확장기·정점·수축기·저점이 표시된 그래프입니다.",
+  zh: "一条围绕向上倾斜的长期生产力趋势线上下波动的曲线，标注了扩张、顶峰、收缩和低谷。",
+  ja: "右肩上がりの長期の生産性トレンド線の上下に波打つ曲線で、拡大・ピーク・収縮・底が示されています。",
 };
 
 // The teaching scenario. Deliberately hypothetical and undated — it describes a

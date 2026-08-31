@@ -8782,5 +8782,127 @@ const BAR_BASIS_SPECIMENS = [
 }
 
 
+// ═══════════════════════════════════════════════════════════════════════════
+// §63. THE CYCLE FIGURE'S LONG-RUN TREND RISES (2026-08-31 run-log entry).
+//
+// The learner-visible failure this would have caught, in one sentence
+// (W-6.2 rule 3): a learner reads in "Productivity Growth: The Long-Run
+// Driver" that productivity "grows in a fairly straight, gentle line" and is
+// "the slow, steady climb in living standards", then meets the figure that
+// illustrates it — on lessons 32, 33 and 38 and on Reference > Market
+// Dashboard, the app's most-shown diagram — drawing that same trend as a
+// PERFECTLY FLAT line, with the cycle returning to its exact starting height,
+// which teaches that an economy ends every cycle precisely where it began.
+//
+// That is not hypothetical. It is what shipped from the figure's first commit
+// until 2026-08-31: `<line x1="0" y1="50" x2="300" y2="50">` under a caption
+// reading "Long-run productivity trend".
+//
+// Why §50's figureClaims did not cover it, and why this section is not a
+// duplicate of it. §50 deliberately excludes CycleChart, on the reasoning
+// (recorded 2026-08-28) that a hardcoded SVG path has no data->render mapping
+// to break, so a claim "would assert a literal against itself". That is
+// correct about the failure §50 hunts and blind to this one: the defect was
+// the literal itself disagreeing with the PROSE, and a probe that compares a
+// literal to itself cannot see a literal that is simply wrong. This section
+// asserts the figure's direction against the lesson's claim instead.
+// ═══════════════════════════════════════════════════════════════════════════
+
+// Reads the two named ends of the trend axis out of charts.jsx. Returns null
+// when either constant is absent, which is itself a failure below — the point
+// is that the direction must be stated somewhere a check can read it.
+function trendEnds(src) {
+  const y0 = /^const TREND_Y0 = (-?\d+(?:\.\d+)?);$/m.exec(src);
+  const y1 = /^const TREND_Y1 = (-?\d+(?:\.\d+)?);$/m.exec(src);
+  if (!y0 || !y1) return null;
+  return { y0: Number(y0[1]), y1: Number(y1[1]) };
+}
+
+// SVG y grows downward, so a rising trend is y0 > y1.
+const TREND_SPECIMENS = [
+  {
+    src: "const TREND_Y0 = 68;\nconst TREND_Y1 = 32;",
+    expect: "rises",
+    note: "the shipped geometry",
+  },
+  {
+    src: "const TREND_Y0 = 50;\nconst TREND_Y1 = 50;",
+    expect: "flat",
+    note: "REFUTATION: the exact pre-2026-08-31 literals, which is the bug this section exists for",
+  },
+  {
+    src: "const TREND_Y0 = 32;\nconst TREND_Y1 = 68;",
+    expect: "falls",
+    note: "REFUTATION: an inverted axis teaches a long-run DECLINE in living standards",
+  },
+  {
+    src: "const SOMETHING_ELSE = 68;",
+    expect: "unstated",
+    note: "REFUTATION: constants deleted and the numbers inlined back into the JSX",
+  },
+];
+
+function trendDirection(src) {
+  const ends = trendEnds(src);
+  if (!ends) return "unstated";
+  if (ends.y0 > ends.y1) return "rises";
+  if (ends.y0 < ends.y1) return "falls";
+  return "flat";
+}
+
+{
+  const before63 = failures;
+
+  // Specimens first: a reader that cannot tell the three directions apart must
+  // not be able to report a clean live result.
+  for (const sp of TREND_SPECIMENS) {
+    const got = trendDirection(sp.src);
+    if (got !== sp.expect) {
+      fail(`§63: the trend-direction reader classified ${JSON.stringify(sp.src)} as "${got}", but it is "${sp.expect}" (${sp.note}). Every live assertion below is only as good as this classification.`);
+    }
+  }
+
+  const chartsSrc = readFileSync(join(ROOT, "src", "components", "charts.jsx"), "utf8");
+  const direction = trendDirection(chartsSrc);
+
+  if (direction !== "rises") {
+    fail(`§63: CycleChart's long-run trend axis ${direction === "unstated" ? "is not stated as TREND_Y0/TREND_Y1 constants" : `"${direction}"`}, but src/content/lessonContent.economy.en.js lesson 31 tells the reader productivity is "the slow, steady climb in living standards". The figure must not contradict the lesson it illustrates. SVG y grows downward, so a rise is TREND_Y0 > TREND_Y1.`);
+  }
+
+  // The drawn line has to USE the constants. Without this, the constants can
+  // stay honest while the rendered line is flattened back to a literal — the
+  // figure would be wrong and the check above would still pass.
+  if (!/<line x1="0" y1=\{TREND_Y0\} x2="300" y2=\{TREND_Y1\}/.test(chartsSrc)) {
+    fail("§63: CycleChart's trend `<line>` does not draw between TREND_Y0 and TREND_Y1. A hardcoded y on the line lets the rendered figure disagree with the constants this section checks.");
+  }
+
+  // Both curves have to be sheared onto that axis rather than re-hardcoded, or
+  // the trend tilts while the cycle it describes keeps oscillating about y=50.
+  for (const [name, why] of [
+    ["GHOST_PATH", "the faint idealized cycle"],
+    ["CYCLE_PATH", "the drawn cycle path"],
+  ]) {
+    const m = new RegExp(`^const ${name} = \`([^\`]*)\`;$`, "m").exec(chartsSrc);
+    if (!m) {
+      fail(`§63: ${name} is not a template literal in charts.jsx, so this section cannot tell whether ${why} follows the trend.`);
+    } else if (!m[1].includes("${sh(")) {
+      fail(`§63: ${name} (${why}) is not built through \`sh()\`, the shear that puts it on the trend axis. Hardcoded points would leave the curve oscillating about the old flat y=50 while the trend line tilts away from it.`);
+    }
+  }
+
+  // The cycle must END on the trend, not at its starting height: one full
+  // cycle finishing higher than it began is the whole claim of the figure.
+  const cycleM = /^const CYCLE_PATH = `([^`]*)`;$/m.exec(chartsSrc);
+  if (cycleM && !cycleM[1].trimEnd().endsWith("${sh(300, 50)}")) {
+    fail("§63: CYCLE_PATH does not end at `sh(300, 50)` — the point where the cycle rejoins the trend at the right edge. Ending anywhere else lets the curve finish at or below its starting height, which is the flat-economy reading this section exists to prevent.");
+  }
+
+  if (failures === before63) {
+    const ends = trendEnds(chartsSrc);
+    console.log(`  §63 the cycle figure's long-run trend rises: ${TREND_SPECIMENS.length} direction specimen(s) classified correctly (${TREND_SPECIMENS.filter((sp) => sp.note.startsWith("REFUTATION")).length} refutations, one of them the exact shipped bug), axis ${ends.y0} -> ${ends.y1} drawn from the constants, and both curves sheared onto it.`);
+  }
+}
+
+
 console.log(`\n${failures === 0 ? "PASS" : "FAIL"}: ${failures} failure(s), ${warnings} warning(s).`);
 process.exit(failures === 0 ? 0 : 1);

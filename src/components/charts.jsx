@@ -852,7 +852,47 @@ export function OutcomeGrid({ title, columnLabels, rowLabels, cells, spanLabel, 
 // ── CycleChart ────────────────────────────────────────────────────────────
 const PHASE_DOT = [graph.green, graph.amber, graph.red, graph.blue];
 const PHASE_INK = [ink.ok, ink.warn, ink.bad, ink.accent];
-const PHASE_POINTS = [{ x: 37, y: 32 }, { x: 75, y: 15 }, { x: 187, y: 68 }, { x: 225, y: 82 }];
+
+// THE LONG-RUN TREND RISES. Until 2026-08-31 this figure drew it perfectly
+// flat — `<line y1="50" y2="50">` — while `trendLabel` named it "Long-run
+// productivity trend" and the cycle path returned to y=50 at both ends, so the
+// economy finished a full cycle exactly where it began. The lesson two screens
+// earlier on the same track ("Productivity Growth: The Long-Run Driver") tells
+// the reader in its own words that productivity "grows in a fairly straight,
+// gentle line" and is "the slow, steady climb in living standards". A flat line
+// under that caption teaches the opposite of the lesson it illustrates, and
+// this is the app's most-shown diagram: lessons 32, 33 and 38 plus Reference →
+// Market signals.
+//
+// Why no check caught it: `check-data.mjs` §50's `figureClaims` deliberately
+// excludes this component, on the correct reasoning that a hardcoded SVG path
+// has no data→render mapping to break. That reasoning is about the wrong
+// failure. The defect here was the literal itself, and a probe that asserts a
+// literal against itself cannot see a literal that disagrees with the prose.
+//
+// The correction is a pure SHEAR, not a redraw. Every y below is its previous
+// value plus `trendOffset(x)`, so the oscillation's shape, its amplitude, the
+// phase dots' positions relative to the curve, and every label-to-line gap
+// measured at the same x are all unchanged — only the axis it oscillates about
+// tilts. A shear is affine, which is also why the two `T` (smooth-quadratic)
+// segments below can stay `T`: the reflected control point a `T` implies is
+// preserved under an affine map, so shearing the stated points shears the
+// implied ones identically.
+//
+// SVG y grows downward, so TREND_Y0 > TREND_Y1 is a rise. The two ends are
+// symmetric about 50, which keeps the figure in the same box and leaves the
+// `trendLabel` text at x=150 exactly as far below the line as it always was.
+const TREND_Y0 = 68;
+const TREND_Y1 = 32;
+const trendOffset = (x) => TREND_Y0 + ((TREND_Y1 - TREND_Y0) * x) / 300 - 50;
+const sh = (x, y) => `${x},${+(y + trendOffset(x)).toFixed(2)}`;
+
+const PHASE_POINTS = [{ x: 37, y: 32 }, { x: 75, y: 15 }, { x: 187, y: 68 }, { x: 225, y: 82 }]
+  .map((p) => ({ ...p, y: p.y + trendOffset(p.x) }));
+
+// The faint ghost curve (the idealized cycle) and the drawn cycle path.
+const GHOST_PATH = `M${sh(0, 50)} Q${sh(37, 50)} ${sh(75, 15)} Q${sh(112, 50)} ${sh(150, 50)} Q${sh(187, 50)} ${sh(225, 85)} Q${sh(262, 50)} ${sh(300, 50)}`;
+const CYCLE_PATH = `M${sh(0, 50)} Q${sh(37, 45)} ${sh(75, 20)} T${sh(150, 50)} Q${sh(187, 55)} ${sh(225, 80)} T${sh(300, 50)}`;
 
 export function CycleChart({ phaseNames, trendLabel, description }) {
   return (
@@ -867,10 +907,10 @@ export function CycleChart({ phaseNames, trendLabel, description }) {
           5.24:1 / 4.47:1. Kept lighter than the cycle path itself (`graph.blue`)
           so the oscillation still reads as the subject and the trend as datum.
         */}
-        <line x1="0" y1="50" x2="300" y2="50" stroke={graph.neutral} strokeDasharray="4" />
+        <line x1="0" y1={TREND_Y0} x2="300" y2={TREND_Y1} stroke={graph.neutral} strokeDasharray="4" />
         <text x="150" y="98" textAnchor="middle" fill={ink.muted} fontSize="8">{trendLabel}</text>
-        <path d="M0,50 Q37,50 75,15 Q112,50 150,50 Q187,50 225,85 Q262,50 300,50" fill="none" stroke={graph.blue} strokeWidth="2" opacity="0.25" />
-        <path d="M0,50 Q37,45 75,20 T150,50 Q187,55 225,80 T300,50" fill="none" stroke={graph.blue} strokeWidth="2.5" strokeLinecap="round" />
+        <path d={GHOST_PATH} fill="none" stroke={graph.blue} strokeWidth="2" opacity="0.25" />
+        <path d={CYCLE_PATH} fill="none" stroke={graph.blue} strokeWidth="2.5" strokeLinecap="round" />
         {PHASE_POINTS.map((p, i) => (
           <g key={phaseNames[i]}>
             <circle cx={p.x} cy={p.y} r="3.5" fill={PHASE_DOT[i]} />

@@ -2552,9 +2552,23 @@ this note is the case for it.
       words: "an LLM can explain a yield curve in text; a curve inverting in front of the reader is what
       a chat window cannot do." §3.0 is the **primary success criterion** and §11's second move is
       "hold the line on §3.0 — it is the one most easily lost to feature work."
-    - **§3.2 "The first five minutes... the most important feature."** First-open routing lands a new
+    - ~~**§3.2 "The first five minutes... the most important feature."** First-open routing lands a new
       install on **money lesson 1 (Budgeting)** — which has no visual at all. The first thing a new
-      learner sees is the case *against* the app's stated differentiator.
+      learner sees is the case *against* the app's stated differentiator.~~
+      > ⛔ **BOTH HALVES OF THAT BULLET ARE NOW FALSE, re-measured 2026-08-31 with the parser control
+      > this item already prescribes.** Lesson 1 (Budgeting) HAS a visual (`budgetSplit`), and since
+      > the 2026-08-18 reversal a new install does not open on it — it opens on **economy lesson 29**.
+      > **The bullet's POINT survives its numbers, and that is why it is corrected rather than
+      > deleted.** Coverage 2026-08-31: **13/44 overall — economy 5/12, money 5/17, essentials 3/15**,
+      > unchanged since 2026-08-28. In display order the path's **first three lessons — 29
+      > (Transactions), 30 (Credit), 31 (Productivity Growth) — carry no figure**, so the screen a new
+      > install actually opens is still the case against the differentiator; only its id moved.
+      > **Re-scoped, which is what this item's own header asks for:** the gap is no longer "the money
+      > track", it is **the opening of the economy track**. Lesson 31 is the strongest candidate on
+      > the "does the prose state every quantity the shape needs?" rule below — but note it states a
+      > *shape* ("grows in a fairly straight, gentle line") and no quantities at all, so any figure
+      > for it must be ordinal, like lesson 44's. **Lesson 29 states its own numbers** (\$500 over 100
+      > loaves = \$5) and is the one a new install opens.
     - **§5 Distribution** makes screen-recorded diagram clips the whole acquisition engine ("every
       lesson yields two or three clips"). With 0/28 money lessons illustrated, the clip pipeline has
       nothing to film on the track the product is actually about.
@@ -3361,6 +3375,141 @@ zero meaningful: `selftest PASS (8/8 controls fired, plantsRemoved true)` and, p
 finding(s); V vacuous; U unavailable`. A bare "no accessibility issues found" is not a result.
 
 ## Run log
+
+### 2026-08-31 (scheduled dev-agent, self-picked from LAUNCH_PLAN §3.0.4 — the clarity standard, not a residual) — the app's most-shown diagram drew the long-run productivity trend as a FLAT line, teaching the exact opposite of the lesson it illustrates
+
+**Pick, and why it is not the previous run's residual (W-6.2 rule 1).** The last three runs all
+self-picked from §3.5 (a11y), so the residual counter is at zero and rule 1 does not bind. But three
+consecutive a11y runs is a tranche forming, which is the shape W-6.2 exists to name even when its
+letter is satisfied — so this run deliberately changed lens and went to §3.0, the plan's **primary
+success criterion**, whose clause 4 calls the animated diagrams "the differentiator… what a chat
+window cannot do". I did not pick any item's stated residual.
+
+**Premise re-measured before editing, with controls, and the FIRST premise turned out to be the wrong
+one (step 3.5).** I started on coverage — §3.0.4's differentiator is absent from most lessons — and
+parsed `LESSON_VISUALS` out of `LessonVisual.jsx` joined against `lessons.js`'s `track`, with the
+parser control the file's own comment prescribes (an id it must find, `32`; an id it must not, `29`;
+a decoy line it must not match). Result, and it reproduces item 27's last figures exactly:
+
+| | with a figure |
+|---|---|
+| economy | 5/12 |
+| money | 5/17 |
+| essentials | 3/15 |
+| **total** | **13/44** |
+
+and in display order the path's first three lessons — **29 (Transactions), 30 (Credit), 31
+(Productivity Growth)** — carry none. **That measurement stands and is filed under item 27** (see
+below; it also refuted two stale claims in that item, so the re-measure changed the item, not just a
+figure). **But reading lesson 31 to price a figure for it is what found the real defect**, and the
+real defect outranked the coverage gap.
+
+**The defect.** `CycleChart` draws a dashed axis with `trendLabel` — *"Long-run productivity trend"* —
+rendered directly beneath naming it. The line was `<line x1="0" y1="50" x2="300" y2="50">`:
+**perfectly horizontal.** Both cycle paths started and ended at exactly `y=50`, so a full cycle
+returned the economy to precisely its starting height. Lesson 31, three screens earlier on the same
+track, tells the reader in its own words that productivity **"grows in a fairly straight, gentle
+line"** and is **"the slow, steady climb in living standards"**. The figure illustrating that claim
+was drawing a long run that goes nowhere. It is the app's **most-shown diagram** — lessons 32, 33 and
+38 plus Reference → Market Dashboard — and it had been wrong since the component's first commit.
+
+**Why nothing caught it, which is the transferable half.** `check-data.mjs` §50's `figureClaims`
+**deliberately excludes** `CycleChart`, on reasoning recorded 2026-08-28 that a hardcoded SVG path has
+no data→render mapping to break, so a claim "would assert a literal against itself". That reasoning is
+correct about the failure §50 hunts and **blind to this one**: the defect was the literal itself
+disagreeing with the prose, and **a probe that compares a literal to itself cannot see a literal that
+is simply wrong.** A decision to leave something uncovered is scoped to the failure mode it was
+reasoning about, and does not transfer to a different one.
+
+**What shipped, and why it is a shear rather than a redraw.** The axis is now named
+(`TREND_Y0 = 68` → `TREND_Y1 = 32`, SVG y grows downward so that is a rise) and every point is its old
+value plus `trendOffset(x)`. A shear is affine, so **the oscillation's shape, its amplitude, the phase
+dots' positions relative to the curve, and every label-to-line gap measured at the same x are provably
+unchanged** — only the axis it oscillates about tilts. That is also why the two `T` (smooth-quadratic)
+segments could stay `T`: the reflected control point a `T` implies is preserved under an affine map.
+The `trendLabel` text sits at x=150, where the trend is still exactly y=50, so its gap to the line is
+byte-identical to before. `cycleChartDescription` gained the same correction in all five languages, so
+the non-visual channel carries it too (`en` "upward-sloping"; `ko` 우상향하는; `ja` 右肩上がりの).
+**`src/` +49 / −9 lines (the net +40 is mostly the comment explaining the above); `scripts/` +122.**
+
+**Verified, five ways, against the BUILT app.** (A) `npm run build` clean; `npm test` **exit 0**, and
+the three warnings are the pre-existing documented ones (translation review coverage, 48 condensed
+pairs, the backlog floor) — no new warning. (B) Served `dist/` and read the rendered SVG out of the
+DOM rather than looking at it: `line y1=68 y2=32`, both path literals matching the values computed
+independently by hand before the edit, four phase dots at the sheared positions, and the `aria-label`
+carrying the new wording — with two controls (`viewBox` read back as a value I knew, and a query I
+knew must return null). (C) **A refutation control on the live DOM**: restoring the exact pre-fix
+`y1="50" y2="50"` made the same assertion fail, and restoring 68/32 made it pass again — the test can
+fail. (D) Switched to `ko` and re-read: `우상향하는…`, with controls asserting a *different* Korean
+string was present and the English one absent, proving the language actually switched. (E) At **375px**
+the figure is 0 px of horizontal overflow with `clientWidth` **375, not 0** — the previous run's
+"lying non-zero" trap checked for explicitly — height unchanged at 88, all geometry inside the viewBox.
+Screenshots at desktop and 375px confirm the trend now visibly climbs.
+
+**A guard IS due here, and W-6.3 answered before building it rather than after.**
+⛔ **Correction to my own first draft of this paragraph, caught by `git diff --numstat` after I had
+written it: I quoted +196 `src/` and +112 `scripts/` as this run's diff. They were not.** +196 was the
+*cumulative* movement of the `src/` line count since the 2026-08-30 baseline — which includes the two
+previous runs' work, not mine. **A delta between two measurements taken at different times is not a
+measurement of the change in between**, and quoting one as if it were is the same defect as quoting a
+stale figure. Re-measured properly, by running the identical two commands against a `git archive HEAD`
+copy and against this tree: **HEAD 15,653 : 6,745 = 2.321x → this tree 15,775 : 6,785 = 2.325x**, so
+this run's own delta is **`scripts/` +122, `src/` +40**. §63 is **+0.8% of the numerator** and moves
+the ratio by **+0.004** — the same side of W-6.3's number, which is what that clause asks be said out
+loud. (The 2026-08-30 baseline of 15,480 : 6,589 is quoted from W-6.0; I did not re-derive it with my
+commands, so treat the 2.35x → 2.32x drift as indicative, not as a measured trend.) **W-6.2 rule 3's sentence, which is
+writable here and is the reason this is not item 152's declined shape:** *a learner reads that
+productivity climbs steadily and then meets the figure illustrating it drawing that trend flat.* That
+is not a hypothetical regression — **it is what shipped, live, undetected, for the whole life of the
+component**, which is precisely the evidence rule 3 asks for and item 152 lacked.
+
+**`check-data.mjs` §63, proved able to fail THREE ways by planting, not by inspection.** Specimens run
+first (4 direction specimens, 3 of them refutations — one being the exact shipped literals). Then
+against the live file: **(1)** flattening `TREND_Y0/Y1` to 50/50 → *"trend axis "flat", but … lesson 31
+tells the reader productivity is 'the slow, steady climb'"*; **(2)** constants left honest but the
+drawn `<line>` hardcoded back to `y1="50"` → caught; **(3)** `CYCLE_PATH` re-hardcoded about the old
+y=50 → caught twice (not sheared, and not ending on the trend). Restored from a scratchpad copy —
+**never `git checkout --`** — and `cmp` confirms the file is byte-identical to the pre-plant copy.
+⚠️ **§63's first version cited "backlog item 158", which does not exist; `check-backlog.mjs` failed the
+build and caught it.** The number was dropped rather than invented, per W-6.4 — see below.
+
+**Adversarial self-check (step 5) — run, and it found one real problem, which is fixed.**
+**Blindspot register:** grepped the added lines for `dalio|principles|ray |buy |sell |recommend|advice|
+\$[0-9]|%|\d{4}-\d\d-\d\d` — the only hits are five dates, all inside code comments recording when a
+defect was measured, this codebase's standing convention; no user-facing date, no market figure, no
+advice-adjacent phrasing, no kids-facing move. **Worth naming explicitly since it is adjacent: "cycles
+oscillating around a rising productivity trend" is a picture associated with Dalio (§10.2), but no
+name, quote or branding is added — the concept is standard macro and the trend line already existed;
+only its slope changed.** `npm run check-blindspot` **PASS, 0 failures**. **DECISIONS.md:**
+`grep -inE "cyclechart|trend line|productivity|long-run"` returns **nothing**, so no closed decision is
+contradicted. **Not a redo:** grepping `AGENT_LOG.md` + archive for `CycleChart|trendLabel|productivity
+trend` returns only (i) the 2026-08-2x contrast pass that moved this same line to `graph.neutral` —
+color, never slope — and (ii) the two §50 declines quoted above; nothing has ever touched the geometry.
+§63 does not duplicate §50, which still does not cover this component. **My own verification claim:** a
+reviewer reproduces it by building at `ef59656` and at this commit, serving `dist/`, and reading
+`svg[role="img"][aria-label*="productivity"] line` — no tooling beyond a static server and one
+`javascript_tool` call; the three §63 plants are three one-line edits.
+
+**Filed into item 27 rather than as a new numbered item (W-6.2 rule 2 + W-6.4).** The coverage
+measurement above went into item 27 — the existing lesson-visuals item, whose own header says
+"re-scope before picking it again" — and **it refuted two claims sitting in that item**: its §3.2
+bullet said a new install opens on "money lesson 1 (Budgeting), which has no visual at all", and
+**both halves are false** — lesson 1 has had `budgetSplit` for some time, and since the 2026-08-18
+reversal a new install opens on economy lesson 29. The bullet's *point* survives its numbers (the
+first three lessons on the path still carry no figure), so it is corrected in place, not deleted.
+**No new backlog number was created, and the floor did not grow by one.**
+
+**Owner tree at end of run:** `OWNER-TREE 282821230948d66845cc4b8af6fbce45042ec50e6440437a5a3933fa8d087919`
+(3 tracked modified — all this run's own — and **51 untracked**, the owner's `UIUX/`, the same count the
+previous four runs observed, untouched).
+
+**W-6.5, restated and now overdue:** `public/data/market.json` is still `asOf 2026-08-28`. With
+`STALE_AFTER_DAYS` at 4 the Sector-performance screen begins showing "Market data isn't available
+right now" on about **2026-09-02 — two days from now**. I re-read that stale path this run while
+orienting and **it is correct as built** (it distinguishes "no file" from "too far from today" and
+names the date only when it can parse it), so there is no dev-agent defect here — the job itself is the
+owner's. **O-1 remains the entire critical path** — 44 lessons, 5 languages, 160 minutes of content,
+and zero people have ever opened this app.
 
 ### 2026-08-31 (scheduled dev-agent, self-picked from LAUNCH_PLAN §3.5 applied to the spine screen) — the learning path announced a finished lesson and an unfinished one identically, so a screen-reader learner could not tell where they were on their own path
 
