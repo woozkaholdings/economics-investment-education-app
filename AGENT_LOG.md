@@ -2605,6 +2605,41 @@ this note is the case for it.
       words: "an LLM can explain a yield curve in text; a curve inverting in front of the reader is what
       a chat window cannot do." §3.0 is the **primary success criterion** and §11's second move is
       "hold the line on §3.0 — it is the one most easily lost to feature work."
+      > ⛔ **THIS BULLET HAS BEEN QUOTED FIFTEEN TIMES FOR ITS FIRST HALF AND NEVER FOR ITS SECOND,
+      > and that was corrected 2026-08-31 (scheduled dev-agent) rather than by adding a fifteenth
+      > figure.** The word is **"animated"**, and the example is **"a curve inverting in front of the
+      > reader"** — which names one specific figure that this app has shipped since before the rebuild.
+      > Measured that day with a control (the same regex fired twice on `index.css`, which does
+      > animate): `charts.jsx` contained **zero** state or motion primitives in 1,047 lines. **Every
+      > figure in the app was still.** Lesson 36's four static curves are now **one curve the reader
+      > moves between the four shapes**, morphing on `requestAnimationFrame` with an explicit
+      > `prefers-reduced-motion` check — `index.css`'s reduce block uses `!important` on CSS
+      > animation/transition and is blind to a rAF loop, so that guard is load-bearing, not ceremony.
+      > **Coverage is UNCHANGED at 14/44 — no figure was added**, so do not re-parse on account of this
+      > note; and **zero new locale keys** were needed, because the four segment labels
+      > (`t.curveNormal` and siblings) were already the four grid captions and `yieldCurveDescriptions`
+      > was already five-language content.
+      > **The transferable finding, which is the point of this note:** a plan clause can be cited
+      > accurately, repeatedly, for years, and still have half of it go unread — because each citation
+      > quotes it to justify the work already being done. **The half nobody acts on is the half that
+      > does not resemble the current tranche.** Fourteen runs read this bullet as "add a figure"; it
+      > also says the figures should move.
+      > ⚠️ **The cost is real and is recorded so a future run does not "restore" the grid without
+      > reading it:** the four shapes are no longer visible *simultaneously* in lesson 36, and its
+      > first section IS a taxonomy the grid matched one-to-one. It was traded for the lesson's second
+      > section and takeaway, which are a *transition* ("that gap flipping negative"), for ~3× the
+      > linear size at 375px (§3.0.7), and for §3.0.1. **The simultaneous comparison still ships
+      > unchanged in Reference > Market signals** — that call site passes neither new prop and was
+      > verified untouched. **If a future run wants the grid back in the lesson, it owes an argument
+      > against those three, not just a preference for grids.**
+      > 🔎 **A geometric result worth keeping, and nobody designed it:** because all four shapes share
+      > the x control points `10,40,70,130` and differ only in height, the halfway frame of a
+      > **normal → inverted** morph is `37.5,37.5,35,35` against the authored **flat** shape's
+      > `38,37,36,34` — **21× closer to flat than to either endpoint**. The animation walks the
+      > lesson's own stated sequence (normal → flat → inverted) with no new copy. **A future run
+      > must not "improve" the easing or re-author a shape's heights without re-checking that
+      > property** — it is the figure's whole pedagogical claim, and it is an accident of the
+      > geometry rather than something the code asserts.
     - ~~**§3.2 "The first five minutes... the most important feature."** First-open routing lands a new
       install on **money lesson 1 (Budgeting)** — which has no visual at all. The first thing a new
       learner sees is the case *against* the app's stated differentiator.~~
@@ -3428,6 +3463,153 @@ zero meaningful: `selftest PASS (8/8 controls fired, plantsRemoved true)` and, p
 finding(s); V vacuous; U unavailable`. A bare "no accessibility issues found" is not a result.
 
 ## Run log
+
+### 2026-08-31 (scheduled dev-agent, self-picked from LAUNCH_PLAN §3.0.4) — §3.0.4's worked example is "a curve inverting in front of the reader", and the app's yield curve has been sitting perfectly still since the day it was drawn
+
+**Pick, and why it is not the previous run's residual (W-6.2 rule 1).** The last run closed lesson 30's
+figure and filed its residuals as notes under item 27. This run does not pick any of them. §3.0.4 is
+quoted in **item 27 itself**, in the 2026-08-31 cycle-figure entry, and in `charts.jsx`'s own file
+header — always in the same direction, as the argument for adding *another static figure*. **The
+clause has two halves and only one has ever been read.** Its exact words are: *"the **animated**
+diagrams are the differentiator — an LLM can explain a yield curve in text; a curve inverting in front
+of the reader is what a chat window cannot do."* Fourteen figures have shipped against the first half.
+The second half names one specific figure, that figure has existed since before the rebuild, and it
+does not move.
+
+**Premise re-measured before any edit, with controls (step 3.5).** Two claims, both mine, both checked
+against the tree rather than assumed:
+1. **"No figure in this app animates."** Scanned `src/components/charts.jsx` for
+   `requestAnimationFrame|@keyframes|animation:|useState|useEffect` → **0 hits**. A zero is what a dead
+   instrument returns, so the **control** ran the identical regex over `src/index.css`, which
+   demonstrably animates → **2 hits** (`@keyframes` ×2, the toast). The scanner works; charts really
+   were state-free and motion-free, all 1,047 lines of them.
+2. **"The four curve shapes can be interpolated."** Parsed the four `d` strings out of `CURVE_PATHS`:
+   **all four x-vectors are `10,40,70,130`, identical**, and only the y-vectors differ. **Control:** the
+   four y-vectors must be *distinct* (they are — 4 of 4), otherwise the parser was reading one row four
+   times and the "identical x" result would be an artifact of that.
+   So the move from any shape to any other is a **four-number interpolation**, not a path-morphing
+   problem. That is the whole reason this was a small change rather than a library.
+
+**What shipped.**
+1. **`YieldCurve` can move.** `CURVE_PATHS` (four `d` strings) became `CURVE_XS` + `CURVE_YS` (four
+   y-vectors) plus a `curvePath()` builder, and the component interpolates between them on
+   `requestAnimationFrame` when `type` changes. Two new props, both opt-in: `animated` (default
+   `false`) and `maxHeight` (default `64`, the four-up grid's existing value) — **so the Reference >
+   Market signals call site is untouched by any of this**, which is deliberate: there the four shapes
+   side by side are a comparison table, and comparison, not motion, is that screen's job.
+2. **Lesson 36 shows ONE curve the reader moves between shapes.** The 2×2 grid of four static SVGs
+   became a `Segmented` tab strip over the four shape names plus a single full-width curve that morphs
+   between them, in a new `YieldCurveShapes` component in `LessonVisual.jsx`.
+3. **Zero new locale keys, in any of the five languages.** The four segment labels are
+   `t.curveNormal/curveFlat/curveInverted/curveSteep`, which were *already* the four grid captions, and
+   the per-shape text alternative is `yieldCurveDescriptions`, already five-language content. Nothing
+   was translated for this and nothing was added to the O-3 pile.
+4. **The `prefers-reduced-motion` guard is read in JS, not left to CSS.** `index.css`'s reduce block
+   neutralizes CSS animation and transition with `!important` and **cannot see a `requestAnimationFrame`
+   loop**. Without the explicit check the one part of the app that actually moves would have been the
+   one part that ignored the setting. It is read at the start of each move rather than cached, so
+   changing the OS setting mid-session takes effect on the next tap.
+
+**The result that argues for the change better than I did, and I did not design it.** The halfway
+frame of a **normal → inverted** morph is `37.5, 37.5, 35, 35`. The authored **flat** shape is
+`38, 37, 36, 34`. Euclidean distance from the midpoint to *flat* is **1.58**; to either endpoint it is
+**32.60** — the halfway frame is **21× closer to FLAT than to either shape it is travelling between**.
+So the animation walks the reader through the lesson's own stated sequence — normal, then flat (*"the
+bond market's way of shrugging: a warning that a slowdown may be coming"*), then inverted — without a
+word of new copy. That falls out of the geometry the shapes were already authored with. It is the
+difference between a figure that illustrates the lesson and one that *is* the lesson's second section.
+
+**THE TRADE, stated because it is real and it cuts against the change.** Lesson 36's **first** section
+is a taxonomy — four named shapes, a definition each — and a 2×2 grid maps onto that one-to-one. The
+grid was **not wrong**, and the four shapes are no longer visible simultaneously in the lesson. Three
+things pay for it, and they are why the change still ships: **(§3.0.4)** the rest of the lesson is a
+*transition*, not a taxonomy — its second section is *"that gap flipping negative"*, the curve
+inverting in mid-2022 and turning positive in 2024, and the takeaway is *"when the yield curve
+inverts"*; four panels say "there are four kinds of curve", one moving curve says "there is one curve,
+and it moves". **(§3.0.7)** at 375px each grid cell had ~160px of width against a 140×75 viewBox capped
+at 64px tall; one curve gets the full column and roughly **3× the linear size**, with the 2Y/10Y/30Y
+labels scaling with it. **(§3.0.1)** one idea per screen. And the simultaneous comparison **still
+ships, unchanged**, in Reference > Market signals.
+
+**Verification, and the one thing it does NOT cover.** `npm run build` ✅ and `npm test` ✅ (0 failures;
+the 2 translation warnings and the 1 log-size floor warning are the pre-existing ones, byte-identical
+before and after). §59 caught a British "labelled" in one of my own comments on the first run and it
+was fixed — the house-style guard doing exactly its job on new prose.
+Because a dev server **cannot be started in an unattended scheduled run**, the usual live-browser sweep
+was not available, so the behavior was proved headlessly instead — this is a real limit of this run and
+is stated rather than papered over:
+- **Server-rendered the actual components** (bundled with the repo's own `esbuild` via
+  `require('esbuild').buildSync({entryPoints:['src/components/charts.jsx','src/components/LessonVisual.jsx'],bundle:true,format:'esm',outdir:'node_modules/.verify-tmp',jsx:'automatic',external:['react','react-dom','react/jsx-runtime']})`,
+  output into gitignored `node_modules/` and deleted after, so nothing was left in the tree).
+  **All four resting shapes render `d` strings byte-identical to the four that shipped** — the
+  regression that mattered most, since a rounding or ordering slip in `curvePath()` would have redrawn
+  every curve slightly wrong and nothing would have failed. Re-run after the final-frame change too.
+  **Control A:** the comparison can fail — `steep`'s path must not equal `normal`'s (it does not).
+  **Control B:** a call site passing no `maxHeight` still renders `max-height:64px`, which is the proof
+  that Market signals is untouched.
+- **Rendered lesson 36 through `LessonVisual` in `en` and `ko`:** one `<svg>` where there were four,
+  four `role="tab"`s with `normal` alone `aria-selected="true"`, the panel wired
+  (`id="yield-curve-panel" role="tabpanel" aria-labelledby="yield-curve-normal"`), all four localized
+  labels present, and the `role="img"` `aria-label` carrying that language's own shape description.
+  **Control:** lesson 32 (the cycle figure) renders no `yield-curve` markup at all, so the scan is
+  figure-specific rather than matching the whole component.
+- **Evaluated the shipped easing and lerp expressions *read out of the committed file*** (not retyped):
+  `p < 0.5 ? 2*p*p : 1 - ((-2*p+2)**2)/2` and `from[i] + (target - from[i]) * e`. p=0 returns the source
+  vector exactly, p=1 the destination vector exactly, and all four control points are **monotonic**
+  across 50 samples — no overshoot, no backtrack. **Control:** a deliberately wrong easing (`p*0.9`)
+  fails the p=1 endpoint assertion, so the assertion can fail.
+- **NOT verified this run, and it needs a browser:** the `requestAnimationFrame` loop actually running,
+  its cancelation on unmount, and `prefers-reduced-motion: reduce` snapping instead of animating.
+  `useEffect` does not run under server rendering. **The next interactive session should tap all four
+  shapes on lesson 36 at 375px, then re-tap with the OS reduce-motion setting on.**
+
+**W-6.3, answered before the change rather than after, and this run moves the number further than any
+before it.** Measured with the previous entry's own commands (`scripts/` all files;
+`src/**/*.{js,jsx}` minus `content/` and `locales/`): **HEAD 16,019 : 6,933 = 2.311x → this tree
+16,019 : 7,072 = 2.265x.** `scripts/` **+0** against the app's **+139** — the first run in this log to
+add **zero** instrument lines. **No new `check-data.mjs` section was written, deliberately**, and
+W-6.2 rule 3 is the reason it was not owed: the failure a guard would have caught here (a per-shape x
+control point drifting so a curve's bend sits at the wrong maturity) **was removed structurally** when
+the four `d` strings collapsed into one shared `CURVE_XS` — there is no longer a per-shape x value that
+*can* drift. A check for a property the code can no longer violate is exactly the floor growth W-6.4
+names. The existing **§22** already covers the part that can still break: it re-reads `YieldCurve`'s
+`aria-label` expression and both call sites on every `npm test`, and it passed with the two new props.
+
+**Adversarial self-check (step 5) — run, and it found two things, both fixed in this commit.**
+**(a)** The animation's last frame applied the lerp's own p=1 output rather than the authored vector,
+so a shape *arrived at by tapping* could differ from the same shape *at first render* by float dust.
+Now the final frame snaps to `CURVE_YS[type]` and the byte-identical assertion was re-run and still
+holds. **(b)** Import order in `LessonVisual.jsx` put `react` after the local modules; corrected.
+**Blindspot register:** grepped every added line for
+`dalio|principles|ray |buy |sell |recommend|advice|guarantee|\$[0-9]|[0-9]+%|\d{4}-\d\d-\d\d|kid|child`
+— three hits, all benign and named here rather than waved off: **two dates inside code comments**
+(this codebase's standing convention for recording when something was added) and **one `100%`**, which
+is `width: "100%"` on the SVG. No user-facing date, no market figure, no advice-adjacent phrasing, no
+kids-facing move; **no new user-visible words at all**, in any language.
+`npm run check-blindspot` **PASS, 0 failures**. **DECISIONS.md:** `grep -inE "animat|motion|yield
+curve|segmented|tab"` finds no closed decision this contradicts — the only `tab` hits are deep-linking
+and the glossary's in-place definition, both untouched. **Not a redo:** `grep -inE "animat"` over
+`AGENT_LOG.md` + the archive returns only (i) §3.0.4 being quoted for its *static* half and (ii) the
+2026-08-05 progress-ring work on the pre-rebuild `Home.jsx`, a screen that no longer exists. **No
+chart in this app has ever been animated, and no completed item claims otherwise.** **My own
+verification claim:** every number above is reproducible from this commit with the esbuild recipe
+quoted in full — and the one claim I could *not* test is named as untested rather than folded into the
+green.
+
+**Filed as a note under item 27, not as a new numbered item (W-6.2 rule 2 + W-6.4).** The
+figure-coverage count is **unchanged at 14/44** — this run added no new figure, so nothing needs
+re-parsing. **No new backlog number was created and the floor did not grow by one.**
+
+**Owner tree at end of run:** 2 tracked modified (both this run's own) and the owner's untracked
+`UIUX/`, untouched, the same as the previous six runs observed.
+
+**W-6.5, now due.** `public/data/market.json` is still `asOf 2026-08-28`. With `STALE_AFTER_DAYS` at 4
+the Sector-performance screen begins showing "Market data isn't available right now" on about
+**2026-09-02 — two days from now**. The owner's scheduled job; flagged, not touched, for the third run
+running. **O-1 remains the entire critical path** — 44 lessons, 5 languages, 160 minutes of content,
+14 of 44 lessons carrying a diagram, **one of which now moves**, and zero people have ever opened this
+app.
+
 
 ### 2026-08-31 (scheduled dev-agent, self-picked from LAUNCH_PLAN §3.2 + §3.0.4 via backlog item 27) — the lesson whose own sentence has to write "more spending" twice and then say "and so on", because a line of text cannot close the loop it is describing
 

@@ -11,6 +11,7 @@
 // or dark scheme without any JS.
 // ═══════════════════════════════════════════════════════════════════════════
 
+import { useEffect, useRef, useState } from "react";
 import { graph, ink, line, radius, space, surface } from "../theme.js";
 import { Text } from "./ui.jsx";
 
@@ -75,25 +76,112 @@ export function Bar({ data, title, colors, height = 140, description, caption })
 }
 
 // ── YieldCurve ────────────────────────────────────────────────────────────
-const CURVE_PATHS = {
-  normal: "M10,60 Q40,50 70,35 T130,15",
-  flat: "M10,38 Q40,37 70,36 T130,34",
-  inverted: "M10,15 Q40,25 70,35 T130,55",
-  steep: "M10,70 Q40,55 70,30 T130,5",
+// The four shapes were authored as four `d` strings. They are stored as four
+// y-vectors instead because **all four shared the same x control points**
+// (10/40/70/130 — measured off the four `d` strings before this change, with a
+// control confirming the four y-vectors were distinct, so the parser was not
+// reading one row four times): only the heights ever differed. That makes the
+// move from one shape to another a four-number interpolation rather than a
+// path-morphing problem, which is what lets `animated` exist at all.
+//
+// It also removes a failure mode rather than needing a check for one: with a
+// single shared `CURVE_XS` there is no longer a per-shape x value that could
+// drift and put a curve's bend at the wrong maturity.
+const CURVE_XS = [10, 40, 70, 130];
+const CURVE_YS = {
+  normal: [60, 50, 35, 15],
+  flat: [38, 37, 36, 34],
+  inverted: [15, 25, 35, 55],
+  steep: [70, 55, 30, 5],
 };
+// Rounded to 2dp so an in-flight frame does not emit a 17-digit float into the
+// DOM; the visual difference at this viewBox is well under a pixel.
+const curvePath = (ys) =>
+  `M${CURVE_XS[0]},${+ys[0].toFixed(2)} Q${CURVE_XS[1]},${+ys[1].toFixed(2)} ${CURVE_XS[2]},${+ys[2].toFixed(2)} T${CURVE_XS[3]},${+ys[3].toFixed(2)}`;
+
 const CURVE_STROKE = { normal: graph.green, flat: graph.amber, inverted: graph.red, steep: graph.blue };
 const CURVE_INK = { normal: ink.ok, flat: ink.warn, inverted: ink.bad, steep: ink.accent };
 
-export function YieldCurve({ type, label, description }) {
+const MORPH_MS = 520;
+
+// index.css's `prefers-reduced-motion` block neutralizes CSS animations and
+// transitions with `!important`, and a requestAnimationFrame loop is invisible
+// to it. So the preference is read here as well — without this, the one place
+// in the app that actually moves would be the one place that ignores the
+// setting. Read at the start of each move rather than cached, so a reader who
+// changes the OS setting mid-session gets the new behavior on the next tap.
+function prefersReducedMotion() {
+  try {
+    return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  } catch {
+    return false;   // no matchMedia (SSR, old browser) — animate, as before
+  }
+}
+
+// `animated` is opt-in per call site, not a default. Reference > Market signals
+// renders all four shapes at once as a static comparison, where nothing ever
+// changes `type` and a morph would be dead code; lesson 36 renders ONE curve
+// the reader moves between shapes, which is the case this exists for.
+//
+// `maxHeight` defaults to the four-up grid's 64px so that call site is
+// untouched by this prop existing.
+export function YieldCurve({ type, label, description, animated = false, maxHeight = 64 }) {
+  // The rendered heights, which are not `CURVE_YS[type]` while a move is in
+  // flight. `ysRef` tracks the same value so an interruption (a second tap
+  // before the first move lands) departs from where the curve visibly IS
+  // rather than snapping back to the previous shape's endpoint.
+  const ysRef = useRef(CURVE_YS[type]);
+  const [ys, setYs] = useState(ysRef.current);
+
+  useEffect(() => {
+    const to = CURVE_YS[type];
+    const from = ysRef.current;
+    const apply = (v) => { ysRef.current = v; setYs(v); };
+
+    if (!animated || prefersReducedMotion() || from.every((v, i) => v === to[i])) {
+      apply(to);
+      return undefined;
+    }
+
+    let raf = 0;
+    let start = 0;
+    const tick = (now) => {
+      if (!start) start = now;
+      const p = Math.min(1, (now - start) / MORPH_MS);
+      // easeInOutQuad: the curve leaves and arrives slowly, so the reader's eye
+      // is on the shape at both ends rather than on the fastest part.
+      const e = p < 0.5 ? 2 * p * p : 1 - ((-2 * p + 2) ** 2) / 2;
+      // The last frame snaps to the authored vector rather than to the lerp's
+      // own p=1 output, so a shape at rest is always byte-identical to the `d`
+      // string it was authored as, whether it was arrived at by tapping or by
+      // first render.
+      if (p < 1) {
+        apply(to.map((target, i) => from[i] + (target - from[i]) * e));
+        raf = requestAnimationFrame(tick);
+      } else {
+        apply(to);
+      }
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [type, animated]);
+
   return (
     <figure style={{ background: surface.card, border: `1px solid ${line.hairline}`, borderRadius: radius.lg, padding: space["3"], textAlign: "center", margin: 0 }}>
-      <svg viewBox="0 0 140 75" style={{ width: "100%", maxHeight: 64 }} role="img" aria-label={description || label}>
+      <svg viewBox="0 0 140 75" style={{ width: "100%", maxHeight }} role="img" aria-label={description || label}>
         <line x1="10" y1="70" x2="130" y2="70" stroke={line.hairline} strokeWidth="1" />
         <line x1="10" y1="5" x2="10" y2="70" stroke={line.hairline} strokeWidth="1" />
         <text x="15" y="68" fill={ink.muted} fontSize="7">2Y</text>
         <text x="60" y="68" fill={ink.muted} fontSize="7">10Y</text>
         <text x="112" y="68" fill={ink.muted} fontSize="7">30Y</text>
-        <path d={CURVE_PATHS[type]} fill="none" stroke={CURVE_STROKE[type]} strokeWidth="2.5" strokeLinecap="round" />
+        {/* The stroke color belongs to the DESTINATION shape from the first
+            frame, not to the shape being left: the color and the label change
+            together on tap, and only the geometry travels. Animating the color
+            too would put the curve in an unnamed in-between state — a
+            yellow-green line that is neither "Normal" nor "Flat" — for half a
+            second, which is exactly the ambiguity the four names exist to
+            remove. */}
+        <path d={curvePath(ys)} fill="none" stroke={CURVE_STROKE[type]} strokeWidth="2.5" strokeLinecap="round" />
       </svg>
       <figcaption style={{ marginTop: space["2"] }}>
         <Text as="span" variant="caption" color={CURVE_INK[type]} style={{ fontWeight: 700 }}>{label}</Text>

@@ -13,8 +13,9 @@
 // (look something up again later), which is not the duplication §3.1 removed.
 // ═══════════════════════════════════════════════════════════════════════════
 
+import { useState } from "react";
 import { AsymmetryChart, Bar, BracketStack, CycleChart, GapColumns, GrowthCurve, OutcomeGrid, PreferenceFlip, ProportionBar, SpendingLoop, TradeoffPlot, YieldCurve } from "./charts.jsx";
-import { Text } from "./ui.jsx";
+import { Segmented, Text } from "./ui.jsx";
 import {
   balanceSheetCaption, balanceSheetDescription, balanceSheetHistory,
   cycleChartDescription, phaseNames,
@@ -93,6 +94,67 @@ const MONEY_VISUALS = new Set(["budgetSplit", "compounding", "taxBrackets", "ear
 // disagree with the prose beside it.
 const usd = (n) => `$${n.toLocaleString("en-US")}`;
 
+// ── Lesson 36's four curve shapes, as ONE curve ───────────────────────────
+//
+// This was a 2x2 grid of four static SVGs until 2026-08-31. The grid matched
+// the lesson's first section, which is a taxonomy — four named shapes with a
+// definition each — so it was not wrong. What it could not do is the thing the
+// REST of the lesson is about: the second section says "that gap flipping
+// negative", describes the curve inverting in mid-2022 and turning positive
+// again in 2024, and the takeaway is "when the yield curve inverts". Four
+// panels say "there are four kinds of curve". One curve that changes shape
+// says "there is one curve, and it moves" — which is the claim the lesson
+// actually makes, and the one prose cannot make on its own.
+//
+// It is also the app's own stated differentiator finally being built:
+// charts.jsx's header has said since it was written that "the point is that a
+// reader *sees* a curve invert rather than reading a description of one", and
+// LAUNCH_PLAN §3.0.4 names the same example. Measured 2026-08-31 before this
+// change: zero of the 14 shipped figures moved at all.
+//
+// THE TRADE, stated because it is real: the four shapes are no longer visible
+// simultaneously here. Two things pay for it. (1) Legibility (§3.0.7) — at
+// 375px a 2-up grid gave each curve about 160px of width against a 140x75
+// viewBox capped at 64px tall; one curve gets the full column and roughly
+// three times the linear size, and the 2Y/10Y/30Y labels scale with it. (2)
+// §3.0.1, one idea per screen. The simultaneous comparison still ships
+// unchanged in Reference > Market signals, which is the "look it up again
+// later" surface where comparison, not motion, is the job.
+//
+// ZERO new locale keys: the four segment labels are `t.curveNormal` and its
+// three siblings, which were already the grid's captions, and the per-shape
+// text alternative is `yieldCurveDescriptions`, already five-language content.
+function YieldCurveShapes({ t, lang }) {
+  const [type, setType] = useState("normal");
+  const labels = { normal: t.curveNormal, flat: t.curveFlat, inverted: t.curveInverted, steep: t.curveSteep };
+
+  return (
+    <div>
+      <Segmented
+        items={CURVE_TYPES.map((key) => ({ key, label: labels[key] }))}
+        value={type}
+        onChange={setType}
+        ariaLabel={t.yieldCurveLabel}
+        idPrefix="yield-curve"
+        panelId="yield-curve-panel"
+      />
+      {/* The figure is the tab's panel, so the shape a screen reader is told
+          about is tied to the tab that selected it. `YieldCurve`'s own
+          `role="img"` carries the per-shape description, so the panel is a
+          container and deliberately not labeled a second time. */}
+      <div id="yield-curve-panel" role="tabpanel" aria-labelledby={`yield-curve-${type}`}>
+        <YieldCurve
+          type={type}
+          label={labels[type]}
+          description={yieldCurveDescriptions[type][lang]}
+          animated
+          maxHeight={190}
+        />
+      </div>
+    </div>
+  );
+}
+
 export default function LessonVisual({ lessonId, t, lang }) {
   const kind = LESSON_VISUALS[lessonId];
   if (!kind) return null;
@@ -124,18 +186,7 @@ export default function LessonVisual({ lessonId, t, lang }) {
         />
       )}
 
-      {kind === "yieldCurve" && (
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: space["2"] }}>
-          {CURVE_TYPES.map((type) => (
-            <YieldCurve
-              key={type}
-              type={type}
-              label={{ normal: t.curveNormal, flat: t.curveFlat, inverted: t.curveInverted, steep: t.curveSteep }[type]}
-              description={yieldCurveDescriptions[type][lang]}
-            />
-          ))}
-        </div>
-      )}
+      {kind === "yieldCurve" && <YieldCurveShapes t={t} lang={lang} />}
 
       {kind === "budgetSplit" && (
         <ProportionBar
