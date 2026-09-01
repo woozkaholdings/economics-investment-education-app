@@ -516,6 +516,16 @@ const rate = (() => {
     deltas.runLog.push(samples[i].runLog - samples[i - 1].runLog);
   }
   const mean = (a) => a.reduce((x, y) => x + y, 0) / a.length;
+  // The NET mean answers "is this file growing"; it cannot answer "how many more
+  // run entries fit", because an archiving or compression commit is a large
+  // negative in the same series. Measured 2026-09-01 over this exact window: the
+  // net run-log mean is +680 b/commit and the writing-only mean is +10,481 b —
+  // a 15.4x gap produced by ONE archiving commit (-115,573 b) and two commits
+  // that touched the file without touching the run log. Dividing headroom by the
+  // net mean reported 101.3 runs of room where the honest figure was 6.6, and
+  // two consecutive runs deferred an archiving pass on the strength of it.
+  // A run is a commit that WROTE; that is the series to project from.
+  const writeMean = (a) => { const p = a.filter((d) => d > 0); return p.length ? { m: mean(p), n: p.length } : null; };
   const head = samples[samples.length - 1];
   return {
     ok: true,
@@ -526,6 +536,8 @@ const rate = (() => {
     floorMax: Math.max(...deltas.floor),
     floorNeg: deltas.floor.filter((d) => d < 0).length,
     runLogMean: mean(deltas.runLog),
+    floorWrite: writeMean(deltas.floor),
+    runLogWrite: writeMean(deltas.runLog),
     // What the working tree has added on top of the newest commit: this run's
     // own spend, which is the only part the run reading this can still change.
     uncommittedFloor: floor - head.floor,
@@ -541,20 +553,30 @@ if (!rate.ok) {
   console.log(`  (The budget verdicts above are unaffected; they measure levels, which need no history.)`);
 } else {
   const runsLeft = (headroom, perRun) => (perRun <= 0 ? Infinity : headroom / perRun);
-  const floorRuns = runsLeft(FLOOR_MAX - floor, rate.floorMean);
-  const runLogRuns = runsLeft(RUN_LOG_MAX - runLog, rate.runLogMean);
+  // Project from the writing rate (see writeMean above). If the sampled window
+  // contains no growing interval at all, there is no writing rate to project
+  // from and the answer is "unknown", not "infinite room" — so fall back to the
+  // net mean, which in that case is <= 0 and prints as "no growth at the
+  // sampled rate" rather than as a large, false headroom.
+  const floorRate = rate.floorWrite ? rate.floorWrite.m : rate.floorMean;
+  const runLogRate = rate.runLogWrite ? rate.runLogWrite.m : rate.runLogMean;
+  const floorRuns = runsLeft(FLOOR_MAX - floor, floorRate);
+  const runLogRuns = runsLeft(RUN_LOG_MAX - runLog, runLogRate);
   const sgn = (n) => `${n >= 0 ? "+" : "-"}${Math.abs(Math.round(n)).toLocaleString("en-US")}`;
   // Two decimals below 2 runs: rounding 0.96 to "1.0" directly under a warning
   // that says "less than ONE run" reads as a contradiction in the instrument.
   const show = (r) => (r === Infinity ? "no growth at the sampled rate" : `${r.toFixed(r < 2 ? 2 : 1)} run(s)`);
   console.log(`  growth rate over the last ${rate.n} interval(s) (from ${rate.oldest}):`);
+  const rateLine = (label, netMean, write, extra = "") =>
+    `    ${label} ${sgn(netMean)} b/commit net${extra}; ` +
+    (write
+      ? `writing ${sgn(write.m)} b over ${write.n} of ${rate.n} interval(s) — the runs-left figures below use THIS`
+      : `no growing interval in the window, so there is no writing rate to project from`);
   console.log(
-    `    floor    ${sgn(rate.floorMean)} b/commit mean ` +
-      `(min ${sgn(rate.floorMin)}, max ${sgn(rate.floorMax)}; ${rate.floorNeg} of ${rate.n} net-negative)`,
+    rateLine("floor  ", rate.floorMean, rate.floorWrite,
+      ` (min ${sgn(rate.floorMin)}, max ${sgn(rate.floorMax)}; ${rate.floorNeg} of ${rate.n} net-negative)`),
   );
-  console.log(
-    `    run log  ${sgn(rate.runLogMean)} b/commit mean`,
-  );
+  console.log(rateLine("run log", rate.runLogMean, rate.runLogWrite));
   // Over budget, "headroom 0 b = -0.67 run(s)" is incoherent — a clamped numerator
   // beside an unclamped ratio. Past the line the useful quantity is the overage and
   // how much writing has to come back out, so say that instead.
@@ -581,7 +603,7 @@ if (!rate.ok) {
     if (!over && left < 1) {
       warn(
         `the ${name} is under its budget by less than ONE run's worth of writing (${show(left)} left at ` +
-          `${sgn(name === "floor" ? rate.floorMean : rate.runLogMean)} b/commit). ` +
+          `${sgn(name === "floor" ? floorRate : runLogRate)} b/commit of writing). ` +
           `The level above still reads green and will not once this run commits. Remedy: ${remedy}.`,
       );
     }
