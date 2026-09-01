@@ -140,7 +140,7 @@ export const quizText = [
     "opts": [
       "PIB",
       "IPC",
-      "VIX (Índice de Volatilidad)",
+      "VIX",
       "PMI"
     ],
     "explain": "El VIX mide la volatilidad esperada. No hay umbrales oficiales, pero como guía aproximada, por debajo de 15 sugiere calma y por encima de 40, pánico extremo."
@@ -229,7 +229,7 @@ export const quizText = [
     "q": "Si la Póliza A tiene un deducible más alto que la Póliza B, con el mismo límite de cobertura, ¿qué esperarías según el balance que describe esta lección?",
     "opts": [
       "La Póliza A tiene una prima más alta que la Póliza B",
-      "La Póliza A tiene una prima más baja que la Póliza B, ya que su asegurado absorbe más de las pérdidas pequeñas",
+      "La Póliza A tiene una prima más baja que la Póliza B",
       "La Póliza A y la Póliza B tienen exactamente la misma prima",
       "El deducible no tiene relación con la prima"
     ],
@@ -390,7 +390,7 @@ export const quizText = [
     "opts": [
       "Hacer que el teléfono nuevo sea más barato",
       "Demostrar que el teléfono nuevo es una mala compra",
-      "Saltarse la evaluación que un deseo debería recibir, ya que una 'necesidad' no requiere justificación",
+      "Saltarse la evaluación que un deseo debería recibir",
       "Arreglar la pantalla agrietada sin pagar por un teléfono nuevo"
     ],
     "explain": "Llamar 'necesidad' a un deseo no cambia el teléfono, la grieta ni el precio — cambia si la compra llega a sopesarse en algún momento. Una necesidad real no tiene que justificarse a sí misma, así que renombrar algo como necesidad es un atajo para evitar la única pregunta que un deseo debe enfrentar: si vale la pena, a este precio, ahora mismo."
@@ -450,7 +450,7 @@ export const quizText = [
     "opts": [
       "Los $1,000 de Tom valen más que los de Priya",
       "Son idénticos, ya que las cantidades coinciden",
-      "Llegaron por mecanismos distintos, que difieren en lo que exigen y en lo que puede salir mal",
+      "Llegaron por mecanismos distintos",
       "Solo el de Priya cuenta como ingreso real"
     ],
     "explain": "Las cantidades son iguales y ninguna vale más por dólar. Lo que difiere es el mecanismo: el de Priya se paga por las horas que trabajó, el de Tom lo produce un activo que tuvo que comprar primero, y cada uno tiene sus propias exigencias y sus propias formas de fallar — un departamento vacío no paga nada, mientras que un turno siempre paga."

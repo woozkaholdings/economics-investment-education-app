@@ -1408,6 +1408,64 @@ this note is the case for it.
       stand; the coverage did not.** `A11yStates.coverage()` plus the Tab step now in the header
       recipe are the fix — see item 149.
 
+160. **[Content/QA — filed 2026-09-01 by the scheduled dev-agent that MEASURED it, with 40 of 46
+    questions affected at filing and four of them fixed in the same commit. Honest priority: HIGH for
+    a learning app, and this is not a residual — nothing in the previous run's entry points at it.]
+    The quiz can be beaten without reading a single lesson by always tapping the LONGEST option.**
+    **Measured 2026-09-01 over the 46 shipped questions, five languages, controls in both directions:
+    tap-the-longest scored `en 40/46 = 87.0%`, `es 39/46 = 84.8%`, `ko 39/46 = 84.8%`,
+    `zh 38/46 = 82.6%`, `ja 38/46 = 82.6%`, against a `25.0%` chance baseline for four options.**
+    After this run's four fixes: `en 78.3%`, `es 76.1%`, `ko 76.1%`, `zh 73.9%`, `ja 73.9%`. Both
+    figures are re-derived by `check-data.mjs` §65 on every `npm test`, so **do not quote the numbers
+    above — read the live line** (W-5.5).
+    **Why this is a real defect and not a curiosity.** The project already treats exactly this class as
+    a defect worth an out-of-priority fix: on 2026-08-02 the weekly reviewer found 12 of 13 correct
+    answers sitting at option index 0 — tap-the-first scored **92%** — and moved the option strings to
+    de-skew it. §3's degenerate-answer warning is the guard that came out of it, and its own message
+    says *"a user who always taps that option would score suspiciously well."* **§3 guards the strategy
+    that was found, not the class it belongs to.** The index spread has been clean ever since (28.3%,
+    well under §3's 50% line) while a second channel scored 87% and nothing looked at it. The quiz
+    feeds both the end-of-lesson check (§3.2's "small win") and the whole Leitner review queue
+    (`src/lib/review.js`), so a learner can complete lessons, build a streak and fill a review schedule
+    without the checks ever measuring understanding.
+    **The cause is structural, which is why the fix is a style rule and not a list of edits.** The
+    correct option tends to carry its own justification — *"…, since its policyholder absorbs more of
+    the smaller losses"* — while the distractors stay bare assertions. **That justification is already
+    in the `explain` field, which the learner is shown the moment they answer**, so in the gratuitous
+    cases it is duplicated text that also leaks the answer. **The rule: an option matches the shape of
+    its siblings; the reasoning belongs in `explain`.**
+    **Done in the filing commit (4 questions × 5 languages = 20 edits), chosen because each is right on
+    its own merits and is a clause DELETION in all five languages, never new prose:**
+    - **q12 (lesson 39)** `VIX (Volatility Index)` → `VIX`. It was the only option of four with a
+      parenthetical expansion, against bare `GDP`/`CPI`/`PMI`; ratio 7.33x, the worst in the corpus.
+      Nothing is lost — `glossary.js` defines VIX in all five languages and the `explain` opens
+      *"The VIX measures expected market volatility."*
+    - **q21 (lesson 8)** dropped *", since its policyholder absorbs more of the smaller losses"*. The
+      remainder is now **exactly** its sibling's length in all five languages (en 43/43, es 52/52,
+      ko 22/22, zh 12/12, ja 15/15) — the two options differ only in `lower`/`higher`, which is the
+      whole question.
+    - **q37 (lesson 24)** dropped *", since a 'need' doesn't require justification"*.
+    - **q43 (lesson 42)** dropped *", which differ in what they demand and what can go wrong"*.
+    **NOT done, deliberately, and the reason is the next holder's decision to make, not a run's.**
+    The remaining ~36 split into two kinds:
+    - **(a) Already well-designed, leave alone.** q25 and q27 give *every* option a "because…" clause,
+      so the shape is uniform and the correct one is only marginally longer — in `ja`, q27's correct
+      option is not even the longest. **Trimming these would break the uniform shape and just invert
+      the tell**; §65 measures the shortest-option strategy for exactly that reason, and this run's
+      edits left it flat (en 2.2%, ko 0.0%).
+    - **(b) The head of the list, q40 (201 chars) and q41 (174), where the honest fix needs new
+      distractor prose in four unreviewed languages.** Their distractors are short `Name — one clause`
+      glosses and the correct answer's concept name is itself long (*"Overconfidence after a lucky
+      outcome"*, *"Loss aversion"* plus its asymmetry), so trimming to match costs the concept name
+      while lengthening the distractors means **writing new machine-translated prose in es/ko/zh/ja**.
+      That is squarely inside **O-3** (the standing owner decision on unreviewed machine translation at
+      scale) and a run must not enlarge that surface unilaterally to move a metric.
+    **Guard shipped in the same commit: `check-data.mjs` §65**, five scorer controls asserted in both
+    directions (correct-always-longest → 100%, always-shortest → 0%, all-equal → 0%, uniform-over-four
+    → the 25% chance baseline, and a CJK-vs-Latin specimen so a 2-character option cannot outrank a
+    10-character one). It **warns rather than fails** — a failing threshold would block every commit
+    until a five-language content pass lands, and (b) above may never be a run's to make.
+
 159. **✅ DONE 2026-09-01 (scheduled dev-agent) — but the premise as written is WRONG in its
     headline and RIGHT in its consequence, and the correction changed what got built. Read the
     correction before citing this item.**
@@ -3618,6 +3676,164 @@ zero meaningful: `selftest PASS (8/8 controls fired, plantsRemoved true)` and, p
 finding(s); V vacuous; U unavailable`. A bare "no accessibility issues found" is not a result.
 
 ## Run log
+
+### 2026-09-01 (scheduled dev-agent, self-picked — the quiz is the least-audited learner-visible subsystem) — the quiz can be beaten without reading a lesson by tapping the longest option, which scored 87%; the guard that exists for exactly this defect measures the other channel
+
+**Pick, and why it is not a residual chain (W-6.2 rule 1).** The previous run closed a dead locale key
+and said plainly: *"Next run should pick from the launch plan or the owner-facing block. Nothing here
+is queued."* Nothing here is queued. I started from a §-reference count across `LAUNCH_PLAN.md`,
+`AGENT_LOG.md`, the archive and `check-data.mjs` — **§9.4 and §9.5 have zero references and §4.4 has
+one**, but all three are owner/process clauses no run can move. The least-audited *learner-visible*
+subsystem is the quiz: 46 questions feeding both the end-of-lesson check (§3.2's "small win") and the
+entire Leitner queue, and `git log`/`AGENT_LOG` show it has been audited for **answer-index spread**
+(2026-08-02) and for **a11y markers** (2026-08-30) and never for anything else.
+
+**Step 3.5 — four hypotheses measured, THREE REFUTED, and the refutations are why this run's finding is
+not the one I set out to make.** Recording them because a run that reports only its hit is claiming a
+hit rate it does not have.
+1. **REFUTED — cross-language option misalignment.** `quizMeta.js` holds the answer key once while
+   option TEXT lives in five separate `quizText.<lang>.js` files, and three file headers call the
+   index alignment "load-bearing". §3 guards only lengths and option counts, so a one-entry drift in
+   one language would ship a wrong answer key to that language's learners. **Measured: clean.** Every
+   numeric token in every question stem and every option position, en vs the other four — 47 flagged
+   pairs, and on reading all 47 are benign: CJK myriad grouping (`$120,000` → `12만`/`12万`), Korean and
+   Japanese SOV reordering, and English words where CJK writes digits (`One week` → `1주일`/`1週間`).
+   **The numeric proxy has a false-positive rate near 100% and is not a usable alignment instrument** —
+   recorded so the next run does not rebuild it.
+2. **REFUTED — a wrong answer key.** All 46 keyed options read and checked against their own question
+   and `explain`, including the arithmetic ones: Rule of 72 at 9% → 8 years (q16 ✓), 3% nominal less 5%
+   inflation → ≈ -2% (q22 ✓), $2,000 at 6% for 10 years → +$1,582 vs the stated "roughly $1,580"
+   (q31 ✓), a 1.00% fee gap over 30 years → 1.01⁻³⁰ ≈ 0.74, "roughly a quarter" (q24 ✓). No key is wrong.
+3. **REFUTED — the keyed option drifting in translation.** All 46 keyed options read in all five
+   languages: every one is a faithful translation of the English. **This is the one place a run can say
+   something concrete about O-3's unreviewed-machine-translation risk, so it is worth the line: on the
+   46 strings where a translation error would be maximally expensive — the graded answer — the machine
+   translations are correct.** That is 46 strings of ~150,000 characters and settles nothing about the
+   rest; it is not a review.
+4. **CONFIRMED, and severe — a second surface cue nobody had measured.**
+
+**The finding.** **Always tapping the LONGEST option scored `en 40/46 = 87.0%`, `es 84.8%`, `ko 84.8%`,
+`zh 82.6%`, `ja 82.6%`, against a `25.0%` chance baseline.** 40 of 46 questions have the correct option
+as the strict longest. A learner who has read nothing clears every end-of-lesson check, builds a
+streak, and fills a spaced-review schedule that certifies an understanding never tested.
+
+**Why every existing guard reported the quiz as clean, which is the durable part.** §3 already warns on
+this exact class, and its message says so: *"a user who always taps that option would score suspiciously
+well."* It exists because of a real 2026-08-02 finding — 12 of 13 answers at index 0, **tap-the-first
+scored 92%** — which the owner had fixed out of priority. **§3 guards the strategy that was FOUND, not
+the class it belongs to.** Position is one channel a learner can read without understanding the
+material; length is another. The index spread has been clean ever since (28.3%, against §3's 50% line)
+and reported clean every run, while a second channel sat 8 points below the one that was treated as a
+defect worth an emergency fix. **A guard written from an instance covers the instance.**
+
+**The cause is structural, not a handful of sloppy items.** The correct option carries its own
+justification — *"…, since its policyholder absorbs more of the smaller losses"* — while the distractors
+stay bare assertions. **That justification is already in the `explain` field the learner is shown the
+moment they answer**, so in the gratuitous cases it is duplicated text that also leaks the answer.
+
+**Controls — six on the scorer, all fired, before any figure above was believed.** A scorer that
+returned 0 would report this corpus as perfectly clean and a scorer that returned 1 would condemn any
+corpus; both look finished from outside. Positive (correct always strictly longest → 100.0%); negative
+(always shortest → 0.0%); degenerate (all options equal length → 0.0%, since a shared maximum is not a
+cue); **chance baseline** (answer spread uniformly over four distinct lengths → 25.0%, which is where
+the 25% in every figure above comes from rather than from arithmetic); and a CJK-vs-Latin specimen
+proving it counts **code points, not bytes** — a 2-character Chinese option must not outrank a
+10-character Latin one, and a byte-counting scorer inverts exactly that. **In-corpus negative control:
+six English questions where the correct option is NOT longest scored as such.**
+
+**Shipped — 20 content edits and one guard.**
+- **`src/content/quizText.{en,es,ko,zh,ja}.js` — 4 questions × 5 languages, every edit a clause
+  DELETION, never new prose in an unreviewed language.** q12 `VIX (Volatility Index)` → `VIX` (the only
+  option of four carrying a parenthetical, against bare `GDP`/`CPI`/`PMI`; ratio 7.33x, the corpus
+  worst — and nothing is lost, `glossary.js` defines VIX in all five languages). q21 dropped *", since
+  its policyholder absorbs more of the smaller losses"*, leaving the correct option **exactly** its
+  sibling's length in all five languages (en 43/43, es 52/52, ko 22/22, zh 12/12, ja 15/15) so the two
+  differ only in `lower`/`higher`, which is the whole question. q37 and q43 dropped their trailing
+  justifications likewise. In `ko` and `ja` these clauses lead rather than trail — the deletion is at
+  the front of the string, which is why this was done by exact-match replacement per language and not
+  by one regex.
+- **`scripts/check-data.mjs` §65** — the measurement, with the six controls asserted in both
+  directions, warning above §3's own 50% line. **It warns rather than fails**: 40 of 46 questions are
+  affected, so a failing threshold blocks every commit until a five-language content pass lands, and
+  part of the remainder may never be a run's to make (item 160(b)).
+- **Both directions are measured on purpose.** Trimming a correct option too hard just inverts the tell
+  — "the short one is right" is the same defect wearing the other face. The shortest-option strategy is
+  scored by the same function against the same threshold, and this run's edits left it flat: **en 0.0%
+  → 2.2%, ko 0.0%, ja 2.2% → 4.3%**, all far under 50%.
+
+**Result: `en 87.0% → 78.3%`, `es 84.8% → 76.1%`, `ko 84.8% → 76.1%`, `zh 82.6% → 73.9%`,
+`ja 82.6% → 73.9%`.** Four questions, ~9 points in every language. **This does not close the defect and
+the entry does not claim it does** — item 160 carries the remaining ~36 with the two kinds they split
+into, and §65 prints the live figure every run so it cannot drift back quietly.
+
+**What was deliberately NOT changed, because the item is already well-designed.** q25 and q27 give
+*every* option a "because…" clause — the shape is uniform and the correct one is only marginally longer
+(in `ja`, q27's correct option is not even the longest). Trimming those would break the uniform shape
+and buy a metric with a worse item. **The two heads of the remaining list, q40 (201 chars) and q41
+(174), need the opposite fix — longer distractors — which means new machine-translated prose in four
+languages nobody fluent has read. That is inside O-3 and a run must not enlarge that surface to move a
+number.**
+
+**Verification — every figure reproducible by re-running only these commands.** `npm test` exits **0**
+(0 failures, 3 warnings: the two standing ones plus §65's new line). `npm run build` succeeds in
+**1.09s**. **The pre-fix 87.0% is reproducible from the repo, not from a scratchpad script**: `git
+archive HEAD` into a clean directory with only `scripts/check-data.mjs` copied over from this tree —
+every content file HEAD's — and §65 independently reports `en 87.0%, es 84.8%, ko 84.8%, ja 82.6%,
+zh 82.6%`, matching the throwaway instrument that found it. Two independent instruments, one of them
+committed. **Plants, because a check that cannot fail is decoration:** (A) the scorer stubbed to
+`return 0` → §65 fails on 5 of its own controls, `check-data.mjs` exit **1**; (B) the language key
+swapped to a nonexistent one → *"no questions could be read"*, exit **1**. Both restored from a
+scratchpad copy, never `git checkout --`, and both verified byte-identical with `cmp` (sha256
+`99c3a1a1db6146fe1f630b0d06c8f79dddd0dcb903066adbcedd36179c89093d`). **Exit codes are quoted
+explicitly** because the previous run learned that a short-circuited `&&` chain and a clean run look
+identical on stdout. A **true fresh clone** of this working tree (`git archive HEAD` + the seven
+modified files, `node_modules` symlinked) runs the full suite to exit **0**, and so does untouched
+`HEAD` — W-6.1 route (a) still holds.
+
+**A control failure of my own, recorded because it is this log's own trap.** My first fresh-clone run
+exited **1** on 7 §26 `path-ok` failures, and none of them were about my change: I had copied the two
+gitignored `economic-cycles-v*.jsx` in, which makes those paths resolve and their markers read as
+*stale*. **The Environment note already says not to do this, in bold, and predicts the exact failure
+count.** I had followed the recipe at `AGENT_LOG.md:154` instead — a **dated record of what the weekly
+review did on 2026-08-30**, when §26 still resolved against the filesystem and the copy was correct.
+That line is a historical account and stays verbatim per §31; the live recipe is the Environment note.
+**W-5.2's lesson — a candidate list is a claim about current state and goes stale like a figure —
+applies to reproduction recipes too, and I re-learned it by walking into it.**
+
+**Adversarial self-check (step 5) — run, and it found nothing that required a change.**
+*Blindspot register:* every content edit is a deletion, and no removed clause was a hedge — §10.1's
+hedges live in `explain` and lesson prose, both untouched (`npm run check-blindspot`: PASS, 0 failures,
+including its 8-surface disclaimer assertion). §10.2 — no Dalio reference touched. §10.3 — no kids
+surface touched. Markets stale-data rule — no rendered string gained a date; the `2026-09-01` and
+`2026-08-02` in §65's comment are source-comment measurement dates, this file's existing convention.
+*DECISIONS.md conflict:* none — content stays `.js` modules, no state or platform decision touched.
+**One divergence found and deliberately not "fixed":** `drafts/income-hierarchy.en.md:178` quotes q43's
+option in its pre-trim form. That file is the dated 2026-08-25 proposal `DECISIONS.md:687` cites as the
+*source* of lessons 41-44, not a spec the shipped quiz must match; nothing asserts equality (§26 checks
+the path exists, and the suite is green). Editing an approved dated proposal to match content that
+evolved after it would falsify the record — §31.
+*Already-done backlog item:* this does not redo the 2026-08-02 de-skew — that fixed the **index**
+channel, and `quizMeta.js` is untouched by this commit (spread still `{0:10,1:13,2:13,3:10}`, 28.3%).
+It is the sibling channel that fix never looked at.
+*W-6.2 rule 3 — the learner-visible sentence a new check must name:* **"a learner who has read nothing
+taps the longest option on every check, scores 87%, and the app records lessons complete, a streak, and
+a review schedule for understanding it never tested."** Written, and it is the reason this is a check
+and not a note.
+*W-6.3 — the ratio, re-measured rather than quoted:* W-6.0 recorded `scripts/` at 15,480 lines against
+6,589 for the app. **Re-measured this run: `scripts/` 13,435, app 7,101 — the ratio has fallen from
+2.35x to 1.89x since W-6.0**, so the number W-6.3 asks the next check-builder to look at has moved in
+the right direction and the quoted figure is now stale. This change adds **115 lines to `scripts/`**
+and **0 net to `src/`** (20 strings got shorter).
+*My own verification claim:* an independent reviewer re-running `npm test`, `npm run build`, the two
+plants and the `git archive HEAD` baseline gets these exact figures; the 87.0% is produced by the
+committed instrument against committed content, not quoted from this run's scratch work.
+
+**Next run should pick from the launch plan or the owner-facing block. Item 160 is filed but must not
+be taken by default** — W-6.2 rule 1, and its remaining head is an O-3 decision, not a run's.
+**O-1 remains the entire critical path** — 44 lessons, five languages, 160 minutes of content, and zero
+people have ever opened this app. **The run-log budget is at 83.6% of warn with 3.9 runs of headroom**
+(`check-log-size.mjs`, measured this run), so an archiving pass is due in about four runs, not this one.
+**Owner tree at start and end of run: the owner's untracked `UIUX/`, untouched, as in the previous ten runs.**
 
 ### 2026-09-01 (scheduled dev-agent, self-picked from LAUNCH_PLAN §3.5's languages clause) — a locale key that shipped in five languages for four weeks, rendered by nothing, and survived the sweep built to delete it because the sweep's only reader of it was a comment
 

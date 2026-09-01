@@ -140,7 +140,7 @@ export const quizText = [
     "opts": [
       "GDP",
       "CPI",
-      "VIX (Volatility Index)",
+      "VIX",
       "PMI"
     ],
     "explain": "The VIX measures expected market volatility. There are no official cutoffs, but as a rough guide, below 15 suggests calm markets and above 40 extreme panic. Contrarian investors watch for spikes as potential buying opportunities."
@@ -229,7 +229,7 @@ export const quizText = [
     "q": "If Policy A has a higher deductible than Policy B, with the same coverage limit, what would you expect based on the trade-off this lesson described?",
     "opts": [
       "Policy A has a higher premium than Policy B",
-      "Policy A has a lower premium than Policy B, since its policyholder absorbs more of the smaller losses",
+      "Policy A has a lower premium than Policy B",
       "Policy A and Policy B have the exact same premium",
       "The deductible has no relationship to the premium"
     ],
@@ -390,7 +390,7 @@ export const quizText = [
     "opts": [
       "Making the new phone cheaper",
       "Proving the new phone is a bad purchase",
-      "Skipping the evaluation a want is supposed to get, since a 'need' doesn't require justification",
+      "Skipping the evaluation a want is supposed to get",
       "Fixing the cracked screen without paying for a new phone"
     ],
     "explain": "Calling a want a need doesn't change the phone, the crack, or the price — it changes whether the purchase ever gets weighed at all. A real need doesn't have to justify itself, so relabeling something as a need is a shortcut past the one question a want is supposed to face: is this worth it, at this price, right now."
@@ -450,7 +450,7 @@ export const quizText = [
     "opts": [
       "Tom's $1,000 is worth more than Priya's",
       "They are identical, since the amounts match",
-      "They arrived by different mechanisms, which differ in what they demand and what can go wrong",
+      "They arrived by different mechanisms",
       "Only Priya's counts as real income"
     ],
     "explain": "The amounts are the same and neither is worth more per pound. What differs is the mechanism: Priya's is paid for hours she worked, Tom's is produced by an asset he had to buy first, and each carries its own demands and its own ways of failing — an empty apartment pays nothing, while a shift always pays."

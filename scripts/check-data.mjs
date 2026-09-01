@@ -9122,5 +9122,120 @@ function trendDirection(src) {
 }
 
 
+// 65. THE QUIZ'S SECOND SURFACE CUE: option LENGTH (backlog item 160).
+//
+//     §3 above already warns when the correct answer's INDEX is degenerate,
+//     and its message says why: "a user who always taps that option would
+//     score suspiciously well." That warning exists because of a real finding
+//     on 2026-08-02 — 12 of 13 answers sat at index 0, so tap-the-first
+//     scored 92% — and the de-skew that followed fixed it. The index spread
+//     has been clean ever since (28.3% max share, well under §3's 50% line).
+//
+//     BUT §3 GUARDS THE STRATEGY THAT WAS FOUND, NOT THE CLASS IT BELONGS TO.
+//     Position is one channel a learner can read without understanding the
+//     material. Length is another, and it was never measured. Measured for the
+//     first time 2026-09-01, over the 46 shipped questions: **always tap the
+//     longest option scored 40/46 = 87.0% in English** and 82.6-84.8% in the
+//     other four languages, against a 25.0% chance baseline for 4 options.
+//     That is very nearly as good as the tap-the-first strategy the project
+//     treated as a defect worth fixing — and every guard in the suite reported
+//     the quiz as clean while it shipped.
+//
+//     THE CAUSE IS STRUCTURAL, WHICH IS WHY THIS IS A STANDING CHECK AND NOT A
+//     ONE-TIME FIX. The correct option tends to carry its own justification
+//     ("...since its policyholder absorbs more of the smaller losses") while
+//     the distractors stay bare assertions. The justification is ALREADY in
+//     the `explain` field the learner is shown the moment they answer, so in
+//     the gratuitous cases it is duplicated text that also happens to leak the
+//     answer. The style rule this section exists to hold: **an option should
+//     match the shape of its siblings; the reasoning belongs in `explain`.**
+//
+//     WHY IT WARNS RATHER THAN FAILS. 40 of 46 questions are affected, so a
+//     failing threshold would block every commit until a five-language content
+//     pass lands, and some of the remainder genuinely cannot be trimmed —
+//     see item 160 for the ones whose distractors are short and whose concept
+//     name is long, which need distractor prose in four unreviewed languages
+//     (an O-3 decision, not a run's). The number stays on screen every run
+//     instead.
+//
+//     BOTH DIRECTIONS ARE MEASURED ON PURPOSE. Trimming a correct option too
+//     hard just inverts the tell — "the short one is right" is the same defect
+//     wearing the other face — so the shortest-option strategy is scored by
+//     the same function and warned on by the same threshold.
+{
+  const before65 = failures;
+
+  // Strict extremes only: a shared maximum is not a cue, because a learner
+  // reading length cannot pick between two equally long options.
+  const strictRate = (items, want) => {
+    let hits = 0;
+    for (const it of items) {
+      const lens = it.opts.map((o) => [...o].length);   // code points, not bytes: a 2-character CJK option must not outrank a 10-character Latin one
+      const target = want === "longest" ? Math.max(...lens) : Math.min(...lens);
+      if (lens[it.answer] === target && lens.filter((x) => x === target).length === 1) hits++;
+    }
+    return items.length ? hits / items.length : 0;
+  };
+
+  // CONTROLS FIRST. A scorer that returned 0 for everything would report this
+  // corpus as perfectly clean, and a scorer that returned 1 would report every
+  // corpus as broken; both look like a finished check from the outside.
+  const pad = (n) => "x".repeat(n);
+  const CONTROLS = [
+    { note: "correct option strictly longest every time", items: Array.from({ length: 20 }, () => ({ opts: [pad(5), pad(6), pad(40), pad(7)], answer: 2 })), longest: 1, shortest: 0 },
+    { note: "correct option strictly shortest every time", items: Array.from({ length: 20 }, () => ({ opts: [pad(50), pad(60), pad(4), pad(70)], answer: 2 })), longest: 0, shortest: 1 },
+    { note: "every option the same length (no strict extreme exists)", items: Array.from({ length: 20 }, () => ({ opts: [pad(9), pad(9), pad(9), pad(9)], answer: 1 })), longest: 0, shortest: 0 },
+    { note: "answer spread uniformly over 4 distinct lengths — the chance baseline", items: [0, 1, 2, 3].flatMap((a) => Array.from({ length: 5 }, () => ({ opts: [10, 20, 30, 40].map(pad), answer: a }))), longest: 0.25, shortest: 0.25 },
+    { note: "a 2-character CJK option must not outrank a 10-character Latin one", items: [{ opts: ["信贷", "abcdefghij", "信", "贷"], answer: 1 }], longest: 1, shortest: 0 },
+  ];
+  for (const c of CONTROLS) {
+    for (const want of ["longest", "shortest"]) {
+      const got = strictRate(c.items, want);
+      if (Math.abs(got - c[want]) > 1e-9) {
+        fail(`§65: the option-length scorer failed its own control (${c.note}) — scored ${want} at ${(100 * got).toFixed(1)}%, must be ${(100 * c[want]).toFixed(1)}%. Every figure this section reports about the real quiz is meaningless until this line passes, and a broken scorer reports the corpus as clean.`);
+      }
+    }
+  }
+
+  // THE REAL CORPUS, one language at a time. English is the product (§3.5),
+  // but a cue in the other four is a cue for the learners reading those.
+  const WARN_AT = 0.5;   // §3's own degenerate-answer line, applied to this channel
+  const scored = [];
+  for (const lang of LANGS) {
+    const items = quizData
+      .filter((q) => Array.isArray(q.opts?.[lang]) && Number.isInteger(q.answer))
+      .map((q) => ({ opts: q.opts[lang], answer: q.answer }));
+    if (!items.length) {
+      fail(`§65: no questions could be read for "${lang}" — quizData's shape changed and this section is measuring nothing, which is indistinguishable from a clean quiz.`);
+      continue;
+    }
+    const longest = strictRate(items, "longest");
+    const shortest = strictRate(items, "shortest");
+    const chance = 1 / Math.max(...items.map((it) => it.opts.length));
+    scored.push({ lang, longest, shortest, n: items.length, chance });
+  }
+
+  // ONE warning per direction, not one per language: the five messages are the
+  // same finding, and five copies of it train the reader to scroll past.
+  for (const want of ["longest", "shortest"]) {
+    const over = scored.filter((s) => s[want] > WARN_AT).sort((a, b) => b[want] - a[want]);
+    if (!over.length) continue;
+    warn(
+      `quizData: option-LENGTH cue — always tapping the ${want} option scores ` +
+        over.map((s) => `${s.lang} ${Math.round(s[want] * s.n)}/${s.n} = ${(100 * s[want]).toFixed(1)}%`).join(", ") +
+        `, against a ${(100 * over[0].chance).toFixed(1)}% chance baseline. The correct answer is readable off ` +
+        `the option shape without understanding the material — the same defect §3 guards on the answer INDEX, ` +
+        `and the same one the 2026-08-02 de-skew fixed there. The reasoning belongs in \`explain\`, which the ` +
+        `learner is shown the moment they answer. Tracked as backlog item 160.`
+    );
+  }
+
+  if (failures === before65) {
+    const line = scored.map((s) => `${s.lang} ${(100 * s.longest).toFixed(1)}%/${(100 * s.shortest).toFixed(1)}%`).join(", ");
+    console.log(`  §65 the quiz's option-length cue is measured, not assumed: longest/shortest-option strategies score ${line} across ${scored[0]?.n ?? 0} question(s) (chance ${(100 * (scored[0]?.chance ?? 0)).toFixed(1)}%), ${CONTROLS.length} scorer control(s) fired in both directions.`);
+  }
+}
+
+
 console.log(`\n${failures === 0 ? "PASS" : "FAIL"}: ${failures} failure(s), ${warnings} warning(s).`);
 process.exit(failures === 0 ? 0 : 1);
