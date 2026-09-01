@@ -38,6 +38,7 @@ import {
 } from "./us-english.mjs";
 import { SPECIMENS as NUMERAL_SPECIMENS, amountsIn } from "./numerals.mjs";
 import {
+  ABRIDGED_BELOW,
   LANGS as COMPLETENESS_LANGS,
   completeness,
   drift as completenessDrift,
@@ -9236,6 +9237,196 @@ function trendDirection(src) {
   }
 }
 
+
+// 66. THE PARENT GUIDE'S TRANSLATIONS ARE MEASURED FOR CONTENT, NOT JUST
+//     PRESENCE (backlog item 161).
+//
+//     §5 above asserts that every `kidsContent` field exists and is non-empty
+//     in all five languages, and it has passed every run since it was written.
+//     IT CANNOT SEE WHETHER A TRANSLATED STRING CARRIES WHAT THE ENGLISH ONE
+//     SAYS. §33 makes exactly that distinction for lesson bodies — the header
+//     of `translation-completeness.mjs` explains why presence is not
+//     completeness — but §33 reads `lessonContent` only. `kidsContent.js` is a
+//     second shipped corpus, rendered on Reference -> For parents
+//     (`ParentGuide.jsx` renders `lesson.text`, `lesson.why`, `activity` and
+//     `parentTip`, all `[lang]`-indexed), and nothing measured it.
+//
+//     WHAT WAS SHIPPING, measured for the first time 2026-09-01: 38 of 204
+//     translated strings carried less than 70% of what a full translation into
+//     the same language carries. Spanish was systematically abridged — 17 of
+//     51 units — and the truncation followed the authoring date rather than
+//     the language: the strings written 2026-08-07 (each band's first three
+//     blurbs, plus every `activity` and `parentTip`) dropped their second
+//     half, while everything added 2026-08-15/16 (the `why` fields and the
+//     money-skills blurbs) was translated in full.
+//
+//     THE LEARNER-VISIBLE FAILURE THIS WOULD HAVE CAUGHT (W-6.2 rule 3), and
+//     it is why this is a check and not a note: a Spanish-speaking parent
+//     opened For parents and read "si tu puesto de limonada va bien y pides
+//     prestado para uno mas grande, eso es deuda BUENA" — the English makes
+//     good debt conditional on earning more than the loan costs, and the
+//     condition was gone, so the Spanish blurb taught that borrowing for a
+//     growing business is simply good. Two others of the same shape: the 2008
+//     blurb dropped "deleveraging — the first in 75 years" (the concept the
+//     blurb exists to name), and every `parentTip` lost the technique it was
+//     telling the parent to use ("Use allowance as a teaching tool." with the
+//     Spend/Save/Give jars deleted). The Spanish was completed in the same
+//     commit; the es column now stands at 0 flagged.
+//
+//     THE METRIC IS §33'S, DELIBERATELY. Ratio of translated code points to
+//     English code points per unit, judged against that language's OWN 90th
+//     percentile across this corpus (`ABRIDGED_BELOW`, imported rather than
+//     re-declared so the two corpora cannot drift apart calibration-wise).
+//     Nothing is compared to a fixed constant, so zh/ja compactness cancels
+//     out instead of being corrected for with a fudge factor.
+//
+//     WHY IT WARNS RATHER THAN FAILS, and the honest limits of the ratio:
+//     21 ko/zh/ja pairs remain (item 161), and closing them means new prose in
+//     four languages no fluent reader has checked — an O-3 decision, not a
+//     run's. The ratio is ALSO a screening proxy with real false positives:
+//     `13-17.parentTip` scores zh 0.23 while being a complete translation.
+//     Short units are where it misreads, so units under MIN_EN are excluded
+//     and the exclusion is controlled below rather than asserted. Every
+//     flagged pair still has to be READ before it is believed.
+{
+  const before66 = failures;
+
+  // A three-word title has no clause to drop, so its ratio measures word-length
+  // convention, not completeness: "Money Adventures!" -> "돈의 모험!" is a
+  // complete translation that scores 0.35. The three titles are 15-20 code
+  // points and every other unit is >= 95, so this threshold separates exactly
+  // the units where the ratio is uninformative. Control 5 proves the gap is
+  // still there rather than trusting this comment.
+  const MIN_EN = 40;
+
+  const cp = (s) => [...(s ?? "")].length;
+
+  const kidsUnits = (kc) => {
+    const out = [];
+    for (const [band, entry] of Object.entries(kc)) {
+      for (const f of ["title", "activity", "parentTip"]) out.push({ path: `${band}.${f}`, m: entry[f] });
+      (entry.lessons ?? []).forEach((l, i) => {
+        for (const f of ["text", "why"]) out.push({ path: `${band}.lessons[${i}].${f}`, m: l[f] });
+      });
+    }
+    return out;
+  };
+
+  const p90 = (xs) => {
+    const sorted = [...xs].sort((a, b) => a - b);
+    if (!sorted.length) return 0;
+    return sorted[Math.min(sorted.length - 1, Math.max(0, Math.ceil(0.9 * sorted.length) - 1))];
+  };
+
+  const scoreKids = (kc) => {
+    const rows = kidsUnits(kc)
+      .map((u) => ({ path: u.path, en: cp(u.m?.en), m: u.m }))
+      .filter((r) => r.en >= MIN_EN);
+    const ratio = {};
+    for (const lang of COMPLETENESS_LANGS) ratio[lang] = rows.map((r) => cp(r.m?.[lang]) / r.en);
+    const reference = {};
+    for (const lang of COMPLETENESS_LANGS) reference[lang] = p90(ratio[lang]);
+    const abridged = [];
+    rows.forEach((r, i) => {
+      for (const lang of COMPLETENESS_LANGS) {
+        if (ratio[lang][i] < ABRIDGED_BELOW * reference[lang]) {
+          abridged.push({ path: r.path, lang, ratio: ratio[lang][i] });
+        }
+      }
+    });
+    return { rows, reference, abridged };
+  };
+
+  // CONTROLS FIRST. A scorer that flagged nothing would certify this corpus as
+  // fully translated, which is precisely the false clean bill §5 has been
+  // giving it; a scorer that flagged everything would be equally useless. Both
+  // look like a finished check from outside, so both are excluded by hand.
+  const synth = (enLen, factor, n = 12) => {
+    const kc = {};
+    for (let b = 0; b < n; b++) {
+      kc[`b${b}`] = {
+        title: { en: "t", es: "t", ko: "t", zh: "t", ja: "t" },
+        activity: { en: "x".repeat(enLen), ...Object.fromEntries(COMPLETENESS_LANGS.map((l) => [l, "x".repeat(Math.round(enLen * factor))])) },
+        parentTip: { en: "x".repeat(enLen), ...Object.fromEntries(COMPLETENESS_LANGS.map((l) => [l, "x".repeat(Math.round(enLen * factor))])) },
+        lessons: [],
+      };
+    }
+    return kc;
+  };
+
+  // 1. Every translation a verbatim copy of its English: nothing may flag.
+  {
+    const kc = JSON.parse(JSON.stringify(kidsContent));
+    for (const u of kidsUnits(kc)) for (const lang of COMPLETENESS_LANGS) u.m[lang] = u.m.en;
+    const got = scoreKids(kc).abridged.length;
+    if (got !== 0) fail(`§66: the completeness scorer failed its positive control — with every translation a verbatim copy of the English it flagged ${got} pair(s), and must flag 0. Every figure this section reports is meaningless until this passes.`);
+  }
+  // 2. One known-complete unit truncated to 20%: it must flag in all four.
+  {
+    const kc = JSON.parse(JSON.stringify(kidsContent));
+    const TARGET = "9-12.lessons[0].why";
+    let touched = 0;
+    for (const u of kidsUnits(kc)) {
+      if (u.path !== TARGET) continue;
+      touched++;
+      for (const lang of COMPLETENESS_LANGS) u.m[lang] = [...u.m[lang]].slice(0, Math.ceil(cp(u.m[lang]) * 0.2)).join("");
+    }
+    if (touched !== 1) fail(`§66: the negative control's target unit ${TARGET} no longer exists (matched ${touched}), so the control is not testing anything — repoint it at a unit that is a full translation today.`);
+    const hits = scoreKids(kc).abridged.filter((a) => a.path === TARGET).length;
+    if (touched === 1 && hits !== COMPLETENESS_LANGS.length) fail(`§66: the completeness scorer failed its negative control — ${TARGET} truncated to 20% flagged in ${hits} of ${COMPLETENESS_LANGS.length} language(s), and must flag in all of them.`);
+  }
+  // 3. Uniformly abridged corpus: the p90 reference moves with it, so NOTHING
+  //    flags. This is the metric's real blind spot and it is recorded as a
+  //    control rather than as prose — a corpus abridged evenly in every unit
+  //    reads as clean here, which is why §33's baseline, not this section, is
+  //    what catches slow uniform decay.
+  {
+    const got = scoreKids(synth(200, 0.3)).abridged.length;
+    if (got !== 0) fail(`§66: the uniform-abridgement control changed behavior — a corpus abridged evenly to 30% flagged ${got} pair(s) where the per-language p90 makes 0 the correct answer. The control documents a known blind spot; if this fires, the reference calculation changed and the section's warnings mean something different than the comment says.`);
+  }
+  // 4. Code points, not bytes: a compact CJK string must not be penalized for
+  //    its UTF-8 byte length.
+  {
+    const zh = "经济需要两者";
+    if (cp(zh) !== 6 || Buffer.byteLength(zh) !== 18) fail(`§66: the length function is not counting code points — cp("${zh}")=${cp(zh)} (want 6) against ${Buffer.byteLength(zh)} bytes. A byte-counting scorer reports every CJK translation as abridged.`);
+  }
+  // 5. MIN_EN still separates the titles from everything else, rather than
+  //    silently excluding real content as the corpus grows.
+  {
+    const all = kidsUnits(kidsContent).map((u) => ({ path: u.path, en: cp(u.m?.en) }));
+    const excluded = all.filter((r) => r.en < MIN_EN);
+    const shortestKept = Math.min(...all.filter((r) => r.en >= MIN_EN).map((r) => r.en));
+    if (!excluded.every((r) => r.path.endsWith(".title"))) {
+      fail(`§66: MIN_EN=${MIN_EN} now excludes a non-title unit (${excluded.filter((r) => !r.path.endsWith(".title")).map((r) => r.path).join(", ")}). It exists only to drop three-word titles, whose ratio measures word-length convention; excluding body content would hide exactly what this section is for.`);
+    }
+    if (excluded.length && shortestKept < MIN_EN * 2) {
+      fail(`§66: the gap MIN_EN=${MIN_EN} sits in has closed — the shortest measured unit is now ${shortestKept} code points. Re-derive the threshold instead of leaving it at a value the corpus grew past.`);
+    }
+  }
+
+  // THE REAL CORPUS.
+  const kids = scoreKids(kidsContent);
+  if (kids.rows.length === 0) {
+    fail(`§66: no kidsContent units could be read — the module's shape changed and this section is measuring nothing, which is indistinguishable from a fully translated corpus.`);
+  } else {
+    const byLang = COMPLETENESS_LANGS.map((lang) => ({ lang, n: kids.abridged.filter((a) => a.lang === lang).length }));
+    const over = byLang.filter((b) => b.n > 0);
+    if (over.length) {
+      warn(
+        `kidsContent: ${kids.abridged.length} of ${kids.rows.length * COMPLETENESS_LANGS.length} translated string(s) on Reference -> For parents carry under ` +
+          `${Math.round(100 * ABRIDGED_BELOW)}% of what a full translation into the same language carries (` +
+          over.map((b) => `${b.lang} ${b.n}`).join(", ") +
+          `). §5 reports this corpus as complete because it checks presence, not content. The worst are ` +
+          kids.abridged.slice().sort((a, b) => a.ratio - b.ratio).slice(0, 3).map((a) => `${a.path} ${a.lang} ${a.ratio.toFixed(2)}`).join(", ") +
+          `. Read each one before believing it — the ratio is a screening proxy and misreads short units. Tracked as backlog item 161.`
+      );
+    }
+    if (failures === before66) {
+      const line = COMPLETENESS_LANGS.map((lang) => `${lang} ${kids.abridged.filter((a) => a.lang === lang).length}`).join(", ");
+      console.log(`  §66 kidsContent translations are measured for content, not just presence: ${kids.abridged.length}/${kids.rows.length * COMPLETENESS_LANGS.length} pair(s) under ${Math.round(100 * ABRIDGED_BELOW)}% of their language's own p90 (${line}) across ${kids.rows.length} unit(s), 5 scorer control(s) fired.`);
+    }
+  }
+}
 
 console.log(`\n${failures === 0 ? "PASS" : "FAIL"}: ${failures} failure(s), ${warnings} warning(s).`);
 process.exit(failures === 0 ? 0 : 1);

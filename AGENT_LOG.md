@@ -1408,6 +1408,42 @@ this note is the case for it.
       stand; the coverage did not.** `A11yStates.coverage()` plus the Tab step now in the header
       recipe are the fix — see item 149.
 
+161. **[Content — filed 2026-09-01 by the scheduled dev-agent that MEASURED it, with the Spanish
+    half FIXED in the same commit. 21 LIVE instances, so W-6.2 rule 2's "note under its parent" does
+    not apply — that rule parks residuals with zero live instances, and this is not one.
+    Honest priority: MEDIUM for ko/zh/ja, and the remainder is an O-3 decision, not a run's.]
+    `kidsContent.js` ships translated strings that are present, non-empty, and materially shorter
+    than the English they translate — and §5 has always reported the file as complete.**
+    **Measured 2026-09-01 over the 48 measurable units × 4 languages: 38 of 192 pairs carried under
+    70% of what a full translation into the SAME language carries.** Do not quote that figure —
+    `check-data.mjs` §66 re-derives it on every `npm test`; read the live line (W-5.5).
+    **The mechanism is authoring date, not language.** The strings written 2026-08-07 — each band's
+    first three blurbs, plus every `activity` and `parentTip` — were authored with condensed
+    translations; everything added 2026-08-15/16 (the `why` fields, the money-skills blurbs) is
+    translated in full. §5 checks presence and non-emptiness, so it certified all of it, and §33's
+    completeness metric reads `lessonContent` only and has never seen this corpus.
+    **Closed in the filing commit: Spanish, 19 strings, es 17 flagged → 0.** It was the systematically
+    abridged language and three of its losses changed what the app teaches, not just how much:
+    `9-12.lessons[2]` dropped *"If you earn more than the loan costs"*, leaving the Spanish blurb
+    teaching that borrowing for a growing business is simply GOOD debt; `13-17.lessons[2]` dropped
+    *"it created a deleveraging — the first in 75 years"*, the concept the blurb exists to name; and
+    all three `parentTip`s lost the technique they were telling the parent to use.
+    **OPEN: 21 pairs in ko/zh/ja** (read the live §66 line for the current split and the worst units).
+    They concentrate in the 5-8 band's first three blurbs and the three `activity` strings — e.g.
+    `5-8.lessons[1]` drops *"That's like inflation!"* in all four languages, which is the blurb's
+    entire point. **The fix is new prose in three unreviewed languages, which is squarely inside O-3**
+    (the standing owner decision on unreviewed machine translation at scale). A run must not enlarge
+    that surface unilaterally; the Spanish above was completed because it is one language and its
+    omissions were changing meaning, and even that is inside O-3's scope to re-affirm or cap.
+    ⚠️ **The ratio is a screening proxy and has BOTH error directions — read every flagged pair
+    before believing it.** False positives on short units: `13-17.parentTip` scores zh 0.23 and is a
+    complete translation; the three `title`s scored 0.35 and are complete, which is why §66 excludes
+    units under 40 code points and controls that exclusion. False negatives too: `13-17.lessons[1]`
+    ko silently drops *"But it takes 12-24 months to feel the change!"* and never flagged.
+    **§66's known blind spot, asserted as a control rather than left as prose:** a corpus abridged
+    EVENLY in every unit moves its own p90 and reads as clean. §33's recorded baseline, not §66, is
+    what would catch slow uniform decay; `kidsContent` has no such baseline.
+
 160. **[Content/QA — filed 2026-09-01 by the scheduled dev-agent that MEASURED it, with 40 of 46
     questions affected at filing and four of them fixed in the same commit. Honest priority: HIGH for
     a learning app, and this is not a residual — nothing in the previous run's entry points at it.]
@@ -3676,6 +3712,144 @@ zero meaningful: `selftest PASS (8/8 controls fired, plantsRemoved true)` and, p
 finding(s); V vacuous; U unavailable`. A bare "no accessibility issues found" is not a result.
 
 ## Run log
+
+### 2026-09-01 (scheduled dev-agent, self-picked from LAUNCH_PLAN §2.6 — the least-referenced learner-visible section) — the parent guide's Spanish told parents that borrowing for a growing business is GOOD debt, because the clause defining good debt was never translated, and the check that certified this file measures presence
+
+**Pick, and why it is not a residual chain (W-6.2 rule 1).** The previous run closed item 160's first
+tranche and said plainly: *"Next run should pick from the launch plan or the owner-facing block. Item
+160 is filed but must not be taken by default."* I did not take it. I started from a §-reference count
+across `LAUNCH_PLAN.md`, `AGENT_LOG.md`, the archive and `scripts/` — **§4.4 (2), §4.5 (4), §4.0 (11)
+and §2.6 (15) are the least-referenced**, and the first three are owner/monetization clauses no run can
+move. **§2.6 is the only one that is learner-visible**: `kidsContent.js`, rendered on
+Reference → For parents, 21 blurbs in five languages, and `git log` shows it has been audited for
+**blurb count and framing** (2026-08-07, 2026-08-15/16) and for **§10.3 adult-addressing** — never for
+whether its translations carry what the English says.
+
+**Step 3.5 — the premise was mine to make, so it was measured before any edit, with four controls.**
+There was no backlog item here to re-measure; the claim I had to establish was that the file's
+translations are incomplete. A ratio instrument that silently returns nothing certifies a corpus as
+perfectly clean, which is exactly the false clean bill this file has been getting, so the scorer was
+validated first: **positive** (every translation a verbatim copy of its English → 0 flagged);
+**negative** (one known-complete unit truncated to 20% → flagged in 4/4 languages); **code points, not
+bytes** (`cp("经济需要两者")=6` against 18 bytes — a byte-counting scorer reports every CJK translation as
+abridged); **degenerate** (all units equal length → 0 flagged). All four fired before any figure below
+was believed.
+
+**The finding. 38 of 204 translated strings carried under 70% of what a full translation into the SAME
+language carries** — and `check-data.mjs` §5 has passed on this file every run since it was written,
+because **§5 asserts that every field is present and non-empty, which is not the same as carrying the
+content.** §33 makes exactly that distinction for lesson bodies; it reads `lessonContent` only.
+**Neither `translation-completeness.mjs` nor `translation-review.mjs` contains the string
+`kidsContent` (0 occurrences, checked)** — so the ledger that reports *"es 100% reviewed"* has never
+included this corpus, and items 93/94 never covered it. This is not a duplicate of that work.
+
+**The mechanism is authoring date, not language, which is why it went unnoticed.** The strings written
+2026-08-07 — each band's first three blurbs plus every `activity` and `parentTip` — were authored with
+condensed translations; everything added 2026-08-15/16 (the `why` fields, the money-skills blurbs) is
+translated in full. Every run since has looked at a file whose newer half is impeccable.
+
+**Three of the Spanish losses changed what the app TEACHES, not just how much of it.** This is the part
+that made the run a content fix rather than only an instrument:
+- **`9-12.lessons[2]`** dropped *"If you earn more than the loan costs"*. The Spanish read *"Si tu
+  puesto de limonada va bien y pides prestado para uno más grande, ¡eso es deuda BUENA!"* — **the
+  condition that defines good debt was gone, so the blurb taught that borrowing for a growing business
+  is simply good.**
+- **`13-17.lessons[2]`** dropped *"it created a deleveraging — the first in 75 years"* — the concept
+  the blurb exists to name, and the app's own cycle framing.
+- **All three `parentTip`s lost the technique they were telling the parent to use.** *"Use allowance as
+  a teaching tool: help them divide money into 'Spend,' 'Save,' and 'Give' jars"* shipped in Spanish as
+  *"Usa la mesada como herramienta de enseñanza."* — a parent was told to use a tool and not told what
+  it was.
+
+**Shipped — 19 Spanish strings and one guard.**
+- **`src/content/kidsContent.js`, Spanish only: `es` 17 flagged → 0.** Applied by exact-match
+  replacement per string, each asserted to match **exactly once** (a regex over this file hits the
+  wrong band), then two of my own wordings corrected before commit: `Muéstrenle` → `Muéstrale` (an
+  *ustedes* form had crept into a sentence that tells the parent to show the child, against the file's
+  *tú* convention in every other `parentTip`), and `emitió` → `imprimió` (the original said "printed";
+  changing the verb was gratuitous).
+- **Spanish only, deliberately, and the limit is O-3.** Completing ko/zh/ja means new prose in three
+  languages no fluent reader has checked. Spanish was completed because it is one language, it was the
+  systematically abridged one, and its omissions were changing meaning — and **even that is inside
+  O-3's scope to re-affirm or cap.** The remaining 21 pairs are item 161 and are not a run's to take.
+- **`scripts/check-data.mjs` §66**, five controls, **warning rather than failing** (21 pairs remain and
+  the head of them is an O-3 decision, so a failing threshold would block every commit on work a run
+  must not do).
+- **The blind spot is asserted as a control, not left as prose.** A corpus abridged EVENLY in every
+  unit moves its own p90 and reads as clean here; control 3 pins that behavior so that if the
+  reference calculation ever changes, the section's warnings stop meaning what its comment says.
+  §33's recorded baseline is what catches uniform decay, and `kidsContent` has none.
+
+**The instrument's error bars, recorded because a screening proxy presented as a verdict is the defect
+this log keeps finding.** It has **both** error directions and every flagged pair was read before being
+believed. **False positives:** `13-17.parentTip` scores `zh 0.23` and is a **complete** translation; the
+three `title`s scored ~0.35 and are complete — a three-word title has no clause to drop, so its ratio
+measures word-length convention. §66 therefore excludes units under 40 code points and **controls that
+exclusion** (control 5 re-derives the gap: the three titles are 15-20 code points, every other unit
+≥ 95, and the check fails if a non-title is ever excluded or the gap closes). **False negatives:**
+`13-17.lessons[1]` `ko` silently drops *"But it takes 12-24 months to feel the change!"* and never
+flagged. **17 of the 38 were `es`; the ratio found them, reading them is what established they were
+real.**
+
+**Verification — every figure reproducible by re-running only these commands.** `npm test` exits **0**
+(0 failures, 4 warnings: the three standing ones plus §66's new line). `npm run build` succeeds in
+**1.09s**, exit **0**. **The pre-fix 38/es-17 is reproducible from the committed instrument against the
+pre-fix content, not from this run's scratch work:** restoring `kidsContent.js` to its HEAD state
+(sha256 `0c2477dc1ef530768759ddacf5ad4244a156df71d305704a87f4091e4c573ae2`) and running the **committed**
+§66 reports `38/192 (es 17, ko 6, zh 5, ja 10)`, matching the throwaway probe that found it; restoring
+the fix reports `21/192 (es 0, …)`. Two independent instruments, one of them committed.
+**Plants, because a check that cannot fail is decoration:** (A) the scorer stubbed to return no flags →
+§66 fails its negative control, `check-data.mjs` exit **1**; (B) `cp()` switched to `Buffer.byteLength`
+→ §66 fails its code-point control, exit **1**. **Exit codes are quoted explicitly** rather than
+inferred from stdout. Both restored from scratchpad copies, never `git checkout --`, and verified
+byte-identical with `cmp`.
+**Render proof, and the substitute for the one I could not run.** A previous run's finding — a locale
+key that shipped in five languages and was rendered by nothing — is the trap here, so it was checked
+first: `ParentGuide.jsx` renders `lesson.text[lang]`, `lesson.why[lang]`, `activity[lang]` and
+`parentTip[lang]` at lines 56/58/66/67. **The dev server could not be started — this session is
+unattended and the harness refuses it, so there is no screenshot.** Instead, four of the completed
+Spanish strings were grepped out of the built bundle and are present in
+`dist/assets/Reference-*.js`, the chunk ParentGuide ships in, **with a negative control** (a string I
+did not add is correctly absent, so the grep is not matching everything).
+
+**Adversarial self-check (step 5) — run, and it found nothing that required a change.**
+*Blindspot register:* `npm run check-blindspot` **PASS, 0 failures**, including §10.1's 8-surface
+disclaimer assertion, §10.2 (no Dalio — none touched), §10.3 (`kidsParentIntro`/`refParentsBlurb` still
+address an adult; my strings are the blurbs a parent shares, and the framing fields are untouched), and
+§2.3's live-looking-date scan. The dates I added — "2008", "75 años", "12 a 24 meses" — are historical
+and already present in the English.
+*DECISIONS.md conflict:* none. Content stays `.js` modules; no state or platform decision touched.
+**The one that needed checking: DECISIONS.md scopes kids content as parent-facing and explicitly
+discourages growing the blurb count by default.** Re-measured after the change: **7 / 7 / 7 = 21
+blurbs, unchanged** — this run completed translations of existing strings and added no blurb, so
+§2.6's published "21 blurbs total" figure also stays true.
+*Already-done backlog item:* not a redo of items 93/94 — both are `lessonContent` work, and the two
+instruments that implement them contain **0 occurrences** of `kidsContent` (grepped, not assumed).
+*W-6.2 rule 2:* item 161 is numbered rather than parked because it has **21 live instances**; that rule
+parks residuals measured at *zero* live instances.
+*W-6.2 rule 3 — the learner-visible sentence a new check must name:* **"a Spanish-speaking parent opens
+For parents and reads that borrowing for a growing lemonade stand is GOOD debt, with the condition that
+makes it good deleted."** Written, and it is why this is a check and not a note.
+*W-6.3 — the ratio, re-measured rather than quoted:* the previous entry recorded `scripts/` at 13,435
+against 7,101 for the app (1.89x). **Re-measured this run: `scripts/*.mjs` 13,626 against src/ 7,101 =
+1.92x.** ⚠️ **Correcting the basis, because the number is about to look like it jumped:** that figure
+counts `scripts/*.mjs` only; **including `scripts/*.js` (`a11y-states.js`, `a11y-sweep.js`, 2,695
+lines) the real ratio is 16,321 / 7,101 = 2.30x**, and W-6.0's original 15,480 was on the wider basis.
+The two recent entries have been quoting the narrower one against W-6.0's wider one, so **the reported
+fall from 2.35x to 1.89x was partly a basis change, not only progress.** This change adds **191 lines
+to `scripts/`** and **0 net to `src/`** (19 Spanish strings got longer; 38 lines changed, 19 of them
+deletions of the old strings).
+*My own verification claim:* an independent reviewer re-running `npm test`, `npm run build`, the two
+plants and the HEAD-content restore gets these exact figures; the 38 and the 21 are produced by the
+committed instrument against committed content.
+
+**Next run should pick from the launch plan or the owner-facing block. Item 161 is filed but must not
+be taken by default** (W-6.2 rule 1) — and its open half is an O-3 decision, not a run's.
+**O-1 remains the entire critical path** — 44 lessons, five languages, 160 minutes of content, and zero
+people have ever opened this app. **The run log is at 89.1% of its warn budget with ~2.5 runs of
+headroom** (`check-log-size.mjs`, measured this run), so **an archiving pass is due within about two
+runs** — sooner than the previous entry's estimate.
+**Owner tree at start and end of run: the owner's untracked `UIUX/`, untouched, as in the previous eleven runs.**
 
 ### 2026-09-01 (scheduled dev-agent, self-picked — the quiz is the least-audited learner-visible subsystem) — the quiz can be beaten without reading a lesson by tapping the longest option, which scored 87%; the guard that exists for exactly this defect measures the other channel
 
