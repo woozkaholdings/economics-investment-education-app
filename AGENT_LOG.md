@@ -1,65 +1,82 @@
 # Agent Log — Economic Cycles App
 
-This file is the memory of the autonomous development agent that runs every 3 hours on this repo. Each run reads this file, picks the single highest-value backlog item, implements it, verifies it, and appends a dated entry below. Do not delete history — prune the backlog as items complete, but keep the run log intact.
+This file is the memory of the autonomous development agent that runs on this repo on a schedule the owner sets (the cadence is the owner's lever and moves; it is deliberately not restated here, because a number written down here goes stale silently). Each run reads this file, picks the single highest-value backlog item, implements it, verifies it, and appends a dated entry below. Do not delete history — prune the backlog as items complete, but keep the run log intact.
 
-## App summary (rewritten 2026-08-04 — third time this rewrite was flagged before anyone did it)
+## App summary (rewritten 2026-09-01 — the fourth rewrite, and the first that DELETES the counts rather than correcting them)
 
-The app was rebuilt from scratch 2026-08-04. `economic-cycles-v5.jsx` and `economic-cycles-v6.jsx` at
-the repo root are both reference material only — neither is imported by anything under `src/` (see
-"Notes for future runs" below for what each one is and why it's there).
+⚠️ **Before you put a figure in this section, read this.** The version it replaces was written
+2026-08-04 and said "17 lessons, 12 macro/cycle-theory + 5 personal-finance" and "17 sequential
+unlocking lessons" — through the 2026-08-07 track split, the 2026-08-14 renumbering and the 2026-08-18
+product reversal, for four weeks, in the document every run reads first. Measured 2026-09-01: **44
+lessons in three independent tracks**, and **14** lessons carry an inline figure where this said four.
+The defect is not that nobody corrected the numbers; it is that they were **retyped here** when
+`npm test` prints them. **So: no count in this section that a script generates.** Read `npm test`'s
+readiness line (lessons / en chars / minutes), `check-log-size.mjs`'s MEASURED line, and §2.5's track
+ranges, which are generated and checked every run.
 
-Current structure, under `src/`:
+**The product, in one paragraph — getting this wrong has cost more runs than any bug in the app.**
+Three independent curricula, not one path (§2.5). **How the Economy Works is the main path**: a new
+install opens on "Transactions", not "Budgeting". **Your Money is the product** — judgment, not
+procedure: the spending and investing decisions that mechanics do not settle. **Essentials is optional
+mechanics**, kept in full, gating nothing and gated by nothing. Lessons gate sequentially **within** a
+track only. The 2026-08-18 reversal that put economy first is in `DECISIONS.md`; **a summary that
+describes one sequential chain is describing the app as it was before 2026-08-07.**
 
-- **`App.jsx`** — the shell. Three bottom tabs (**Learn**, **Review**, **Reference**) plus a pushed
-  lesson-reader view; a sticky header with the 5-language picker (en + Beta-labeled es/ko/zh/ja,
-  §10.4); a first-run disclaimer modal (§10.1) with a focus trap that must be dismissed before first use.
-  Since 2026-08-16 the shell is also addressable: `#/learn`, `#/practice`, `#/reference` and
-  `#/lesson/<id>` (§5, item 31), owned entirely by `lib/deepLink.js` — two call sites here and nothing
-  else. **A URL does not unlock a lesson**; see `DECISIONS.md` for why, and for the owner-facing cost.
-- **`theme.js`** — design tokens (color, type scale, spacing). No inline hex anywhere else in the app.
-- **`lib/`** — pure logic, no JSX: `useAppState.js` (every piece of client state, see below),
-  `storage.js`, `review.js` (Leitner-box spaced-repetition scheduler), `useMarketData.js` (reads the
-  daily job's static file and owns the staleness contract), `marketData/{adapters,fred}.js` (equity/
-  economics fetch adapters — used only by the offline job, never by the browser), `relativeStrength.js`
-  (a pluggable strategy; the owner's own `WJ_Sector_Comparison` formula landed 2026-08-04 —
-  `provisional: false` — replacing the earlier placeholder, see `DECISIONS.md`).
-- **`components/`** — `ui.jsx` (Text/Card/Button/Note/Segmented primitives), `Icon.jsx`, `charts.jsx`,
-  `LessonVisual.jsx`, `Question.jsx`.
-- **`screens/`** — `Learn.jsx` (the lesson path), `LessonReader.jsx` (lesson content, inline charts on
-  the 4 lessons that teach a diagram, and an end-of-lesson check), `Practice.jsx` (the spaced-review
-  queue), `Reference.jsx` (sub-nav: Glossary, Market signals, Sector performance, Parent guide, About)
-  with its five sub-screens under `screens/reference/`.
-- **`content/`** — plain `.js` modules, 5-language parity enforced by `npm test`: `lessons.js` (17
-  lessons, 12 macro/cycle-theory + 5 personal-finance, added `c29bac3` 2026-08-04), `quizData.js`
-  (tagged by lesson — feeds both the end-of-lesson check and spaced review),
-  `glossary.js`, `kidsContent.js`, `markets.js` (dateless yield-curve/QE-QT teaching copy), `sectors.js`,
-  `economicSignals.js`.
-- **`locales/`** — one file per language.
+`economic-cycles-v5.jsx` and `economic-cycles-v6.jsx` at the repo root are reference material only —
+measured 2026-09-01, **zero import statements under `src/` name either** (the one mention is a comment
+in `App.jsx` saying exactly this). See "Notes for future runs" below for what each is.
 
-Feature set as of this entry: 17 sequential unlocking lessons with inline charts on the 4 that teach a
-diagram, an end-of-lesson check per lesson, a Leitner spaced-review queue fed by those same checks, a
-streak counter, `completedLessons`/font-scale/theme all persisted to `localStorage` (`DECISIONS.md`),
-light/dark/system theming, dynamic font scaling, the disclaimer rendered on Learn, the reader, Review,
-and Reference plus the first-run modal, a parent-facing (not child-facing, see below) kids guide, a
-searchable glossary, a dateless Market-signals explainer, and — built across two runs on 2026-08-04 —
-a daily Sector-performance screen: eleven S&P sectors ranked by relative strength against SPY, plus six
-FRED macro readings (Fed funds rate, 2y/10y yields, the yield-curve spread, CPI, unemployment). Both
-source from a static `public/data/market.json` that a scheduled task (`economics-app-market-data`, run
-weekdays after close) writes once a day by running `scripts/fetch-market-data.mjs` — no client-side API
-key, no live calls, and figures older than 4 days are suppressed rather than shown as current (§2.3's
-standing rule).
+**Structure under `src/` — the shape and the invariants, deliberately not a file list**, because a
+list rots on the next file added and this section has now done that twice. `ls` is the source of truth.
 
-`LAUNCH_PLAN.md` (v2, rewritten 2026-08-04) is the authoritative launch plan —
-`Economic_Cycles_Launch_Plan.docx` is superseded. `DECISIONS.md` records the reasoning behind standing
-architectural choices (Vite-not-Expo, `.js`-not-JSON content, localStorage-only state, the market-data
-pipeline).
+- **`App.jsx`** — the shell: three bottom tabs (**Learn**, **Review**, **Reference**), a sticky header
+  with the five-language picker (en + Beta-labeled es/ko/zh/ja, §10.4), a first-run disclaimer modal
+  (§10.1) with a focus trap that must be dismissed before first use, and a pushed lesson-reader view.
+  Hash routing (`#/learn`, `#/practice`, `#/reference`, `#/lesson/<id>`) is owned entirely by
+  `lib/deepLink.js` — two call sites here and nothing else. **A URL does not unlock a lesson**;
+  `DECISIONS.md` has the reasoning and the owner-facing cost.
+- **`theme.js`** — the type scale, spacing, and the semantic *names* for color. ⚠️ **Color VALUES are
+  not in this file.** They are CSS custom properties in `index.css` (a light and a dark palette);
+  `theme.js` exports `var()` references and holds no hex at all, which is what lets the app follow the
+  system setting. AA on every ink-on-surface pair is enforced by `check-data.mjs` §28, and no component
+  carries a hex — measured 2026-09-01 at zero across every `.js`/`.jsx` under `src/`.
+- **`lib/`** — pure logic, no JSX: app state, the Leitner scheduler (`review.js`, keyed by an **opaque
+  question id** since 2026-09-01 and never by array position), deep links, the local analytics sink,
+  chunk-load recovery, the lesson-id migration, and the market-data adapters that only the offline job
+  calls — never the browser. **All client state is `localStorage` and nothing else** (`DECISIONS.md`):
+  completed lessons, the review schedule, the streak, font scale, theme. No account, no sync.
+- **`components/`** — UI primitives, icons, the chart library, the per-lesson figures
+  (`LessonVisual.jsx`), the quiz question, the glossary term chips, the error boundary, and the
+  interactive policy simulator.
+- **`screens/`** — `Learn` (the path), `LessonReader` (lesson body, an inline figure on the lessons
+  that teach one, an end-of-lesson check on every lesson), `Practice` (the spaced-review queue fed by
+  those checks), and `Reference`, whose sub-screens live in `screens/reference/`: glossary and term
+  detail, market signals, sector performance, parent guide, settings/about.
+- **`content/`** — plain `.js` modules, five-language parity enforced by `npm test`. Lesson bodies are
+  split per track and per language (`lessonContent.<track>.<lang>.js`); the quiz is split the same way,
+  `quizMeta.js` holding the answer key and the stable question ids and `quizText.<lang>.js` the prose.
+  Glossary, glossary-to-lesson links, kids content, market teaching copy, sectors, economic signals,
+  money figures and policy scenarios each have their own module.
+- **`locales/`** — one file per language, app chrome only; lesson prose lives in `content/`.
 
-Blindspot register (`LAUNCH_PLAN.md` §10): **10.1** (investment-advice adjacency) and **10.2** (Dalio
-dependency) are closed and are standing rules, not settled history — check any lesson or market-copy
-change against them before assuming they don't apply. **10.3** (kids/COPPA) ships parent-facing today,
-closed on that basis 2026-08-01, but is explicitly **"reopened as a question"** as of 2026-08-04: the
-owner has flagged that a genuinely child-facing product is a legal/store-classification decision, not a
-UI one, and no run should make it unilaterally. The parent-facing framing stands until the owner decides.
+**Market data.** The owner's scheduled task writes `public/data/market.json` once a day via
+`scripts/fetch-market-data.mjs` — no client-side key, no live call from the browser. Sector performance
+ranks the S&P sectors against SPY by the owner's own relative-strength formula; the macro readings come
+from FRED. Data older than `STALE_AFTER_DAYS` is suppressed rather than shown as current: §2.3's
+standing rule is about *fake* freshness, not about numbers.
+
+`LAUNCH_PLAN.md` (v2) is authoritative and supersedes `Economic_Cycles_Launch_Plan.docx`.
+`DECISIONS.md` holds the standing architectural choices (Vite-not-Expo, `.js`-not-JSON content,
+`localStorage`-only state, the market-data pipeline); `LAUNCH_READINESS.md` scores the gates.
+
+**Blindspot register — §10 IS the register and this is a pointer, not a copy.** Only the first three
+of its entries are closed. **10.1** (investment-advice adjacency) and **10.2** (Dalio dependency) are closed and
+are **standing rules, not settled history**: check any lesson or market-copy change against them, and
+run `npm run check-blindspot` before committing one. **10.3** (kids/COPPA) ships parent-facing and is
+closed on that basis, but is reopened as a *question* — a genuinely child-facing product is a legal and
+store-classification decision, not a UI one, and no run may make it. ⚠️ **10.4 through 10.10 are OPEN,
+and the paragraph this replaces did not say they exist.** 10.8 ("process mass exceeds product mass")
+and 10.10 ("nothing owns getting this in front of one person") are what W-6 below is about.
 
 ## Prioritized backlog
 
@@ -3729,6 +3746,131 @@ zero meaningful: `selftest PASS (8/8 controls fired, plantsRemoved true)` and, p
 finding(s); V vacuous; U unavailable`. A bare "no accessibility issues found" is not a result.
 
 ## Run log
+
+### 2026-09-01 (scheduled dev-agent, W-5.3 archiving pass + the section it uncovered) — the document every run reads first said "17 lessons" and "17 sequential unlocking lessons" for four weeks, through the track split, the renumbering and the product reversal, and the fix is to delete the counts rather than correct them
+
+**Pick, and why it is not a residual chain (W-6.2 rule 1).** The previous entry left two things: an
+explicit ⚠️ that **an archiving pass was due this run** (the run log stood at 98.5% of its warn budget
+with **0.34 runs** of headroom), and "next run should pick from the launch plan or the owner-facing
+block". Both were honored. The pass is W-5.3's own "legitimate whole run", and the launch-plan pick was
+made by re-running the §-reference count on my own instrument — **§9.9, a section that does not exist,
+returned 0 as the negative control, and §2.3 returned 250 as the live one** (the previous run measured
+240; the growth is its own entry). The least-referenced actionable clauses were **§9.4 (1) and §9.5 (1)**
+— both post-store-launch owner criteria no run can move — then **§7 (6)**, **§4.6 (8)**, **§4.0 (11)**
+and **§2.2 (14)**. So I audited **§2.2**, the one that is code-shaped, and it came back **CLEAN on all
+three of its rules**, which is a result and is reported as one:
+- *content files contain no JSX* — holds.
+- *screens contain no hardcoded translatable copy* — **0** literal JSX text nodes and **0** hardcoded
+  `aria-label`/`alt`/`placeholder`/`title` strings across `screens/`, `components/` and `App.jsx`.
+- *components read color from `theme.js` rather than literals* — **0** hex literals in any `.js`/`.jsx`
+  under `src/`, against **87** in `index.css`, which is the control proving the scanner can see one.
+
+**That last control is what produced the real pick, and it did so by refuting a sentence in the App
+summary.** The scanner reported **0 hex in `theme.js` itself**. A scanner returning zero everywhere is
+the failure mode this log names weekly, so it was validated before being believed — and it was right.
+`theme.js` holds no color values at all; they are CSS custom properties in `index.css`, and `theme.js`
+exports `var()` references. **The App summary has been sending every run to the wrong file for color**
+since 2026-08-04. Pulling that thread found ten more.
+
+**Step 3.5 — the premise was mine to make, so it was measured claim by claim, and the audit was built
+to be able to say "true".** An audit that returns "stale" for everything is indistinguishable from an
+audit that is not reading anything. **Five claims were re-measured and confirmed TRUE** and are the
+control: `economic-cycles-v5/v6.jsx` are imported by nothing under `src/` (**0** import statements
+naming them, against **152** import statements in `src/` — the grep works, and the one textual mention
+is a comment in `App.jsx` saying exactly this); the three bottom tabs are Learn / Review / Reference;
+the hash routes are owned by `lib/deepLink.js` with **two** call sites in `App.jsx` and no other file
+referencing it; **11** S&P sectors and **6** FRED readings; and no component carries a hex.
+**Eleven claims were measured FALSE**, the four that matter being:
+
+| the summary said | measured 2026-09-01 |
+|---|---|
+| "17 lessons, 12 macro/cycle-theory + 5 personal-finance" | **44** lessons |
+| "17 **sequential** unlocking lessons" | **three independent tracks**, gating only within a track |
+| "inline charts on the **4** lessons that teach a diagram" | **14** (`LESSON_VISUALS`) |
+| "`theme.js` — design tokens (color…). No inline hex anywhere else" | `theme.js` holds **0** hex; the values are 87 custom properties in `index.css` |
+
+The rest: `lib/`, `components/` and `content/` were listed as file inventories and each had gone stale
+(no `analytics.js`, `chunkError.js`, `lessonIdMigration.js`; no `ErrorBoundary.jsx`, `GlossaryTerms.jsx`,
+`PolicySim.jsx`; no `lessonContent.<track>.<lang>.js`, `lessonTerms.js`, `moneyVisuals.js`,
+`policyScenarios.js`, `quizMeta.js`, `quizText.<lang>.js`, and `quizData.js` named as the single quiz
+source when the answer key moved out of it); "five sub-screens" against six files; and the blindspot
+paragraph described **10.1/10.2/10.3 as though they were the register**, when §10 has ten entries and
+**10.4 through 10.10 are open** — including 10.8 and 10.10, which are what the W-6 block is about.
+
+⛔ **THE FIX IS THE RULE, NOT THE NUMBERS, and that is the whole point of the run.** Replacing "17"
+with "44" restores the section to exactly the state it was in on 2026-08-04: correct, and one content
+change from being wrong again. The failure is not that nobody updated the figure; **it is that the
+figure was retyped in this file when `npm test` prints it on every run.** So the rewritten section
+**carries no count that a script generates** and cites the generator instead — the readiness line, the
+MEASURED log-size line, and §2.5's track ranges, which are generated and checked. The counts it does
+keep (three tabs, five languages, two call sites) are structural invariants, each re-measured above.
+The one count I wrote and then deleted was "ten entries" in the blindspot pointer: §10 is the register,
+and a paragraph that counts it will be wrong the day an eleventh is filed.
+
+**Also fixed, and it is the same defect one line higher: the file preamble said this agent "runs every
+3 hours".** The cadence is the owner's lever, they move it deliberately, and the task file is explicit
+that the cron is the truth and the documentation goes stale. A number that is not allowed to be
+investigated and not allowed to be restored **must not be written down here at all**, so the preamble
+now says the schedule is the owner's and says why it is not restated. **The live cron was not read and
+was not touched.**
+
+**The archiving pass, committed separately (`85273c2`) so that W-5.3's "one commit that touches nothing
+else" holds.** 2026-08-30 and 2026-08-31 moved — **18 entries, 181,059 b**. Run log **246,225 → 65,166 b**
+(98.5% → **26.1%** of warn; **0.34 → 16.7** runs of headroom). The date clause was a **no-op for the
+sixth time**: the most recent review boundary is 2026-08-30 and nothing in the log predated it, so the
+trigger acted on was again the measured budget. **Two days were moved where one would have cleared the
+budget**, which is recorded in W-5.3 as a judgment to repeat or refuse rather than inherit — one day
+buys about 7 runs at the measured +11,052 b/commit of writing, half a day at this cadence.
+**The verification is the containment proof, not the suite.** W-5.3's own note says `npm test` cannot
+detect archive loss, so:
+- **18/18** moved entries present **verbatim** in the archive and absent from the live log, re-derived
+  from `git show HEAD:AGENT_LOG.md` rather than from the transform's buffer — so a reviewer who was not
+  present can reproduce it from the repo.
+- **Two plants, both fired.** One character changed inside a moved entry → **17/18, exit 1**. A whole
+  **6,058 b** entry deleted from the archive → **17/18, exit 1**. Both were written to scratchpad copies
+  of the archive; the file itself was never corrupted.
+- ⚠️ **The archive's own title had been stale since the 2026-08-29 pass** — `(2026-08-01 → 2026-08-28)`
+  on a file holding entries through 08-29. Two passes had that file open and neither read its first
+  line. Corrected to 08-31.
+
+**Adversarial self-check (step 5) — run in full; it found no conflict, and here is what was actually
+checked rather than a claim that it was.** *Blindspot register:* `npm run check-blindspot` **PASS, 0
+failures**. No learner-facing string changed this run: `git diff --stat` against the archiving commit
+names **only `AGENT_LOG.md`**, and `npm run build` exits **0**. §10.2 is *named* in the summary as
+the title of blindspot 10.2, exactly as the paragraph it replaces named it; that is a register pointer,
+not Dalio framing. §10.3's parent-facing posture and "no run may make it" are preserved verbatim in
+substance. §2.3: the dated figures added are audit dates in an internal log, not app surfaces, and the
+scan over the 26 teaching-copy modules passes. *DECISIONS.md conflict:* none — the summary asserts
+`localStorage`-only state, `.js`-not-JSON content and Vite-not-Expo, and all three are the live entries
+(`DECISIONS.md` §"Content as `.js` modules, not JSON", §"localStorage-only progress…"). Its two outbound
+pointers were resolved rather than assumed: "Notes for future runs" exists, and `DECISIONS.md`'s
+"see the App summary" for the relative-strength formula still lands on a sentence that says it.
+*Already-done backlog item:* **no** — `grep` for "App summary" across the live log finds no open item
+for it; the only prior rewrite is the 2026-08-04 one this replaces, recorded in the backlog preamble.
+*W-6.2 rule 3 / W-6.3:* **no check was built and none is due** — this run adds **0 lines to `scripts/`
+and 0 to `src/`**, so the 2.3x instrument-to-app ratio is untouched, and a guard that re-measured the
+summary's prose would be an instrument for a document only agents read.
+*My own verification claim:* every figure above comes from committed code against committed content —
+`npm test`, `npm run build`, `node scripts/check-log-size.mjs`, the §-reference count with its two
+controls, and the containment script with its two plants. An independent reviewer re-running them gets
+these numbers.
+
+⚠️ **The honest cost, stated because W-6.4 is about exactly this.** The rewritten section is
+**4,737 → 6,485 b**, and the W-5.3 pass record adds **1,573 b**: the floor goes **325,444 → 328,919 b**,
+still the only budget over its limit and still only a backlog compression pass can move it (**item 115,
+the owner's**). That is less than one commit of the measured +2,282 b/commit floor growth, spent on the
+section with the highest read-to-byte ratio in the repo — but it is spent, not saved.
+⚠️ **One stale figure is deliberately left alone:** item 115's floor decomposition quotes
+"App summary **4,737**". It is a dated measurement inside a completed item, so §31 applies and it stays
+verbatim rather than being quietly re-pointed at 6,485.
+
+**Next run should pick from the launch plan or the owner-facing block; nothing was filed for it to
+inherit, and no numbered item was created (W-6.2 rule 2).** §2.2 is now audited and clean, so it is
+spent as a pick. The unaudited actionable clauses left are **§7 (6 references)** and **§4.6 (8)**.
+**O-1 remains the entire critical path** — 44 lessons, five languages, 160 minutes of content, and zero
+people have ever opened this app. **O-3** unchanged: no translated prose was added or altered.
+**Owner tree at start and end of run: the owner's untracked `UIUX/`, untouched, as in the previous
+thirteen runs.**
 
 ### 2026-09-01 (scheduled dev-agent, self-picked from a §-reference count) — every learner's review schedule was keyed by a question's POSITION in an array, so an ordinary content edit would have re-pointed it at different questions, and the only thing holding the line was a comment asking authors to append
 
