@@ -48,6 +48,28 @@
 //      section's English heading or body — checked by §17, so a later content
 //      edit or section reorder fails the build instead of silently leaving a
 //      chip on a section that no longer mentions the term.
+//   5. The closing pair counts as a place. `TAIL` below is a section key like
+//      any other, standing for the takeaway + reflection prompt that close
+//      every lesson. Rules 1-4 apply to it unchanged; rule 3 orders it last,
+//      which it is, because non-numeric keys iterate after numeric ones.
+//
+// WHY `TAIL` EXISTS, and it is a measured gap rather than a symmetry.
+// Chips rendered under sections only, and §17b's coverage sweep read sections
+// only, so the two agreed with each other and were blind together: a glossary
+// term whose ONLY use in a lesson is in the boxed Key Takeaway or the
+// reflection prompt had no chip, no entry in `deliberatelyUnlinked`, and no
+// failure — §17b printed "0 unexplained" without ever looking. Measured
+// 2026-09-01: 48 glossary-term uses live in those two fields across the 44
+// lessons, 39 of them already chipped from a section, and **9 were visible to
+// no instrument at all** — GDP and Debt-to-GDP Ratio on 33, Deflation and
+// Credit on 34, QE on 35, Interest Rate on 38 and on 9, Emergency Fund on 8,
+// Stock on 11. Those nine are the `TAIL` entries below.
+// None of the nine qualified for `deliberatelyUnlinked`: its two legitimate
+// reasons are "defined-here" and "other-sense", and each of the nine is the
+// glossary's own sense, used without definition. A learner met "debt-to-GDP
+// ratio" in a reflection prompt with nothing to tap. So the fix had to be the
+// chip, not an exemption — which is why this key is a render surface in
+// LessonReader and not just a wider net in check-data.
 //
 // COVERAGE is not stated here on purpose. `scripts/check-data.mjs` §17b
 // computes and prints it — chips, lessons covered, deliberate exclusions,
@@ -68,6 +90,12 @@
 // point at on the 28 lessons §0 called the product at the time. See
 // AGENT_LOG.md item 35.
 // ═══════════════════════════════════════════════════════════════════════════
+
+// The section key for a lesson's closing pair (takeaway + reflection prompt).
+// A string rather than an index so it can never collide with a real section,
+// and so `lessonTerms[id]` still iterates sections in order with the closing
+// pair last (JS orders integer-like keys first).
+export const TAIL = "tail";
 
 export const lessonTerms = {
   // ── Personal finance (essentials 1-15 + money 16-28) ─────────────────────
@@ -98,11 +126,19 @@ export const lessonTerms = {
   // became a glossary entry rather than being left to lesson 13.
   6: { 0: ["Vesting", "Brokerage Account", "Stock", "Bond", "Dividend"] },
   7: { 1: ["401(k)", "IRA"] },
-  9: { 0: ["Purchasing Power", "Savings Account"] },
-  11: { 0: ["Diversification", "Index Fund"] },
+  // 9's reflection prompt is the lesson's only use of the retail sense the
+  // glossary entry explicitly covers ("from mortgages to savings balances").
+  9: { 0: ["Purchasing Power", "Savings Account"], [TAIL]: ["Interest Rate"] },
+  // 11 says "stock" in its body only inside the cross-reference “Stocks, Bonds
+  // & Diversification”, which item 84's rule strips — so "stock-picking skill"
+  // in the reflection prompt is the lesson's first real use of the term.
+  11: { 0: ["Diversification", "Index Fund"], [TAIL]: ["Stock"] },
   12: { 1: ["Principal", "Interest Rate"] },
   13: { 0: ["401(k)", "IRA", "Stock", "Bond", "Savings Account"], 1: ["Diversification"] },
   14: { 1: ["401(k)", "IRA"] },
+  // 8 (Insurance) never says "emergency fund" in its body; the reflection
+  // prompt contrasts the two ideas, which is where the term arrives.
+  8: { [TAIL]: ["Emergency Fund"] },
   17: { 1: ["Emergency Fund"] },
   16: { 0: ["Savings Account"] },
   18: { 0: ["Compound Interest"] },
@@ -137,9 +173,17 @@ export const lessonTerms = {
   30: { 0: ["Interest Rate"], 1: ["M0"] },
   31: { 0: ["Credit"] },
   32: { 0: ["Inflation", "Credit", "Interest Rate"], 1: ["Deflation", "Recession"], 2: ["QE", "Bond"] },
-  33: { 0: ["Bubble", "Stock"], 1: ["Deleveraging", "Recession", "Credit", "Interest Rate"] },
-  34: { 0: ["Bond"], 1: ["Inflation"], 2: ["GDP", "Debt-to-GDP Ratio"] },
-  35: { 0: ["Savings Account"], 1: ["Stock", "Bond"], 2: ["Inflation"] },
+  // 33 teaches the long-term debt cycle without ever writing "GDP" in its
+  // body; the reflection prompt then opens on "the US debt-to-GDP ratio".
+  33: { 0: ["Bubble", "Stock"], 1: ["Deleveraging", "Recession", "Credit", "Interest Rate"], [TAIL]: ["GDP", "Debt-to-GDP Ratio"] },
+  // 34's body says "deflationary tools" (an adjective §17's matcher rightly
+  // will not accept for the noun) and never says "credit" at all — both
+  // arrive as nouns in the closing pair, which is what the takeaway balances.
+  34: { 0: ["Bond"], 1: ["Inflation"], 2: ["GDP", "Debt-to-GDP Ratio"], [TAIL]: ["Deflation", "Credit"] },
+  // 35's takeaway is where QE is named — "that's where QE comes in", a
+  // forward pointer to lesson 37 two lessons before it unlocks. The chip is
+  // the item-60 shape: a reader meets the term before the lesson that owns it.
+  35: { 0: ["Savings Account"], 1: ["Stock", "Bond"], 2: ["Inflation"], [TAIL]: ["QE"] },
   // 36 §1 "weighing it alongside employment, inflation, and credit data" is the
   // macro sense, and was the one unaccounted-for GLOSSARY-TERM use in all 40
   // lessons when item 57 swept them. Not "the only jargon gap": §17b can only
@@ -149,7 +193,10 @@ export const lessonTerms = {
   // one (Brokerage Account, chipped on lesson 6 above).
   36: { 0: ["Recession", "Bond", "Interest Rate"], 1: ["GDP", "Inflation", "Credit"] },
   37: { 0: ["Stock", "Bond", "Interest Rate"] },
-  38: { 0: ["GDP", "Inflation", "Credit", "Stock", "Bond"] },
+  // 38's body names interest rates only inside the cross-reference
+  // “Interest Rates” (stripped by item 84's rule); the takeaway uses the term
+  // plainly — "how interest rates move through the economy".
+  38: { 0: ["GDP", "Inflation", "Credit", "Stock", "Bond"], [TAIL]: ["Interest Rate"] },
   // 39 defines its eight indicators inline and carries no chip for any of them
   // (see deliberatelyUnlinked below) — but it does not define "stock", which is
   // why the one term it does chip is the one it merely uses in passing.
@@ -158,7 +205,7 @@ export const lessonTerms = {
 };
 
 // Terms for one section, or an empty array. Keeps LessonReader from having to
-// know the map's shape.
+// know the map's shape. `sectionIndex` is a section's index or `TAIL`.
 export function termsForSection(lessonId, sectionIndex) {
   return lessonTerms[lessonId]?.[sectionIndex] ?? [];
 }

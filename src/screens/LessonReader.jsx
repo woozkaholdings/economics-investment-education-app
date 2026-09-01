@@ -14,7 +14,7 @@ import { EVENTS, elapsedSeconds, monotonicNow, quizScore, track } from "../lib/a
 import { quizMeta } from "../content/quizMeta.js";
 import { recordContinueChoice, wasContinuePromptShownToday } from "../lib/useAppState.js";
 import { questionsForLesson } from "../lib/review.js";
-import { termsForSection } from "../content/lessonTerms.js";
+import { TAIL, termsForSection } from "../content/lessonTerms.js";
 import GlossaryTerms from "../components/GlossaryTerms.jsx";
 import Icon from "../components/Icon.jsx";
 import LessonVisual from "../components/LessonVisual.jsx";
@@ -405,6 +405,13 @@ export default function LessonReader({ t, lang, lessons, index, completedLessons
           <Stack gap={space["3"]} style={{ marginTop: space["5"] }}>
             <Note tone="ok" label={t.keyTakeaway} icon="target">{content.takeaway}</Note>
             <Note tone="accent" label={t.tryThinking} icon="info">{content.thinkAbout}</Note>
+            {/* §3.0.3 for the closing pair. Nine glossary terms across seven
+                lessons have their only use in these two boxes — "debt-to-GDP
+                ratio" opens 33's reflection prompt, 35's takeaway is where QE
+                is first named — and until this row existed a learner met them
+                with nothing to tap. Own label, because "Terms in this section"
+                would be pointing at two Notes that are not a section. */}
+            <GlossaryTerms terms={termsForSection(lesson.id, TAIL)} t={t} lang={lang} label={t.lessonTermsClosingLabel} />
           </Stack>
         </>
       ) : loadFailed ? (

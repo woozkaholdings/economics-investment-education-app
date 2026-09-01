@@ -66,6 +66,7 @@ export default {
     backLabel: "Atrás",
     bookmarkAdd: "Guardar término", bookmarkRemove: "Quitar de guardados", bookmarkedLabel: "Guardado",
     lessonTermsLabel: "Términos de esta sección",
+    lessonTermsClosingLabel: "Términos de este resumen",
     policySimTitle: "Sea el presidente de la Fed",
     policySimIntro: "El mandato dual no tiene fórmula: decida usted. Elija una palanca para ver qué pone en marcha. No hay puntuación y puede probar las tres.",
     policySimSituation: "La situación",

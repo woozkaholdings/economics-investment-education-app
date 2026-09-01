@@ -1408,7 +1408,32 @@ this note is the case for it.
       stand; the coverage did not.** `A11yStates.coverage()` plus the Tab step now in the header
       recipe are the fix — see item 149.
 
-159. **[Content/QA — filed 2026-08-31 by the run that rewrote lesson 38's takeaway, as its stated
+159. **✅ DONE 2026-09-01 (scheduled dev-agent) — but the premise as written is WRONG in its
+    headline and RIGHT in its consequence, and the correction changed what got built. Read the
+    correction before citing this item.**
+    > ⛔ **PREMISE CORRECTED 2026-09-01, by measurement, before any edit (step 3.5).** The claim
+    > "**every** content instrument sweeps `sections` and skips `takeaway`/`thinkAbout`" is false and
+    > was cheap to refute: `translation-review.mjs`, `translation-completeness.mjs`,
+    > `refresh-readiness.mjs`, `jargon-candidates.mjs` and four separate corpus walks inside
+    > `check-data.mjs` all read both fields today, by name. **And the lesson-38 failure this item was
+    > filed from was not a field-coverage failure at all** — `check-blindspot.mjs` greps whole files
+    > line by line, so §10.1 has never been field-scoped; the takeaway survived because no *pattern*
+    > matched it, not because no sweep read it. Attributing that escape to field coverage would have
+    > sent the fix to the wrong place.
+    > **What the measurement did find, and it is the item's real content:** exactly ONE instrument
+    > was field-blind — §17b's `mentionedIn`, the §3.0.3 coverage sweep — and the UI was blind the
+    > same way, because `GlossaryTerms` rendered under sections only. The two agreed with each other.
+    > **9 glossary-term uses across 7 lessons were visible to nothing**: GDP and Debt-to-GDP Ratio on
+    > 33, Deflation and Credit on 34, QE on 35, Interest Rate on 38 and on 9, Emergency Fund on 8,
+    > Stock on 11. §17b printed "0 unexplained" over a corpus that never contained them.
+    > **Shipped:** `TAIL` is now a section key in `lessonTerms.js` carrying those 9 chips, a chip row
+    > renders under the takeaway/reflection pair with its own five-language label, §17 validates
+    > `TAIL` entries against that pair's text, §17b sweeps it, and two new guards fail if either the
+    > row or the widened corpus goes away. Sweep 136 → 145 uses, 95 → 104 chips, 30 → 31 lessons,
+    > 0 unexplained on both sides. `deliberatelyUnlinked` was NOT used: its only two legitimate
+    > reasons are `defined-here` and `other-sense`, and not one of the nine is either.
+    ORIGINAL TEXT, kept because the correction above refers to it:
+    **[Content/QA — filed 2026-08-31 by the run that rewrote lesson 38's takeaway, as its stated
     residual. FILED, NOT QUEUED (W-6.2 rule 1): the next run must not pick this by default.]
     Every content instrument and every content pass this project has run sweeps `sections` and
     skips `takeaway`/`thinkAbout` — and that is not a hypothesis, it is twice-recorded.** (a) The
@@ -1431,6 +1456,11 @@ this note is the case for it.
     list at all before proposing a new section.
     **Honest priority: medium.** Unlike most residuals on this list this one has a proven live
     instance, not zero — but the instance is now fixed, so what remains is the class.
+    **Residual, filed as a NOTE under this item rather than as a numbered item (W-6.2 rule 2), because
+    it measures zero live instances today:** the same closing-pair blindness could exist in the other
+    direction for `LessonVisual` captions and `PolicySim` copy, which no per-field corpus walk names
+    at all. Not measured this run. **If a future run picks it, measure first — this item is the
+    standing proof that a residual's own headline can be wrong while its consequence is real.**
 
 158. **[Owner decision — filed 2026-08-31, NOT actionable by a run. §10.2's text bans "no direct
     quotes, anywhere in the app", and the app ships a direct Warren Buffett quotation.]**
@@ -3588,6 +3618,119 @@ zero meaningful: `selftest PASS (8/8 controls fired, plantsRemoved true)` and, p
 finding(s); V vacuous; U unavailable`. A bare "no accessibility issues found" is not a result.
 
 ## Run log
+
+### 2026-09-01 (scheduled dev-agent, backlog item 159) — the coverage sweep and the chip row were blind in the same place, so each confirmed the other, and nine glossary terms sat on screen with nothing to tap
+
+**Pick, and why it is legitimate under W-6.2 rule 1.** Item 159 is a residual, but not of the
+previous run — the last run was a W-5.3 archiving pass and the two before it picked from
+`LAUNCH_PLAN.md` §3. Item 159 was filed three runs ago and its "the next run must not pick this by
+default" clause bound the run that immediately followed it, which took something else. No residual
+chain. It is also the only open non-parked item with a **proven live instance**; the rest of the
+open list is `Downstream of O-1` or `Honest priority: low`.
+
+**Premise re-measured before any edit, with controls (step 3.5) — and the headline was wrong.**
+Item 159 claims *"every content instrument and every content pass sweeps `sections` and skips
+`takeaway`/`thinkAbout`"*. One grep refutes it: `translation-review.mjs`, `translation-completeness.mjs`,
+`refresh-readiness.mjs`, `jargon-candidates.mjs` and four separate corpus walks inside
+`check-data.mjs` all name both fields today. **And the failure the item was filed from is not a
+field-coverage failure at all** — `check-blindspot.mjs` greps whole files line by line, so §10.1 was
+never field-scoped; lesson 38's takeaway survived four weeks because no *pattern* matched it. Had the
+premise been taken on report, this run would have widened corpora that were already wide and left the
+actual hole open.
+
+**What the measurement did find.** Exactly one instrument was field-blind — §17b's `mentionedIn`,
+the §3.0.3 coverage sweep — and `GlossaryTerms` rendered under sections only, so **the instrument and
+the UI were blind in the same place and confirmed each other**. Sweeping the closing pair with §17b's
+own matcher: **48** glossary-term uses live in `takeaway`/`thinkAbout` across the 44 lessons, **39**
+already chipped from a section, and **9 accounted for by nothing** — GDP + Debt-to-GDP Ratio on 33,
+Deflation + Credit on 34, QE on 35, Interest Rate on 38 and on 9, Emergency Fund on 8, Stock on 11.
+§17b printed `0 unexplained` the whole time, over a corpus that never contained them. The same
+"correct and blind" shape the 2026-08-30 income-types run recorded.
+
+**Controls carried, because a sweep that returns nothing looks exactly like a clean result.**
+(a) positive — the matcher must find `Credit` in lesson 30's takeaway: **true**; (b) negative — it
+must not find `Zzyzx` there: **false**; (c) the tail corpus must be non-empty for all 44 lessons:
+**0 empty**. All three fired as expected before any number above was believed.
+
+**Three sub-premises the controls caught and corrected.** The sweep called `Deflation` tail-only on
+34, `Interest Rate` tail-only on 38 and `Stock` tail-only on 11 while a plain substring search found
+all three in section bodies. Printing the contexts settled it and the instrument was right every
+time: 34's body says **"deflationary"** (an adjective the anchored matcher correctly refuses for the
+noun), and 38's and 11's only body occurrences are inside the cross-references *“Interest Rates”* and
+*“Stocks, Bonds & Diversification”*, which item 84's rule strips because a pointer to another lesson
+is not a use of the term. **Three chances to file a false "the instrument is broken" note, and the
+contexts are why none was filed.**
+
+**Why chips and not exemptions — the disposition was forced by the data, not chosen.**
+`deliberatelyUnlinked` admits exactly two reasons, `defined-here` and `other-sense`. Not one of the
+nine is either: each is the glossary's own sense, used without definition, in the box that closes the
+lesson. Excluding them would have been an exemption for a defect. So the fix had to be the missing
+render surface.
+
+**Shipped.**
+- `src/content/lessonTerms.js` — exports `TAIL`, a section key standing for the closing pair, with
+  the nine chips on seven lessons and curation rule 5 written down. Rules 1-4 apply to it unchanged;
+  rule 3's "first use" ordering holds for free, because JS iterates integer-like keys before string
+  ones, so the tail is always last.
+- `src/screens/LessonReader.jsx` — one `<GlossaryTerms>` row after the takeaway/reflection pair.
+- `src/components/GlossaryTerms.jsx` + five locales — an optional `label` prop and
+  `lessonTermsClosingLabel`, because the shared caption reads *"Terms in this section"* and two Notes
+  are not a section. The four non-English strings are machine translation like the rest of the app
+  (O-3, unchanged and now one string larger).
+- `scripts/check-data.mjs` — §17 validates `TAIL` entries against the closing pair's English text
+  (rules 3 and 4 unchanged); §17b's corpus is sections **plus** the pair; two new guards.
+- `DECISIONS.md` — an `Update, 2026-09-01` bullet on the in-lesson-glossary entry, whose
+  *"rendered as a chip row under each tagged section"* was true when written and is now partial. The
+  original text is left verbatim per the entry's own convention.
+
+**Verification, and every number here is reproducible by re-running only these commands.**
+`npm test` exits **0** (0 failures, the standing floor-budget warning). `npm run build` succeeds in
+1.34s. §17b's coverage line moved **136 → 145 uses swept, 95 → 104 chips, 30 → 31 lessons, 0
+unexplained on both sides** — the baseline half measured by `git stash push -- src scripts`, running
+`npm test`, and popping, not read off the log. In the built bundle
+(`dist/assets/LessonReader-D0dsTNkE.js`) the row is present in the right DOM position —
+`jsx(G,{tone:"ok",label:o.keyTakeaway…}),jsx(G,{tone:"accent",label:o.tryThinking…}),jsx(de,{terms:ce(s.id,T),t:o,lang:n,label:o.lessonTermsClosingLabel})`
+— and all five closing labels shipped. **No live DOM verification was possible: a dev server cannot
+be started from an unattended scheduled run, so the render claim rests on the built bundle and the
+call-site guard, not on a screenshot.** Stated because the difference matters.
+
+**Three plants, each restored from a scratchpad copy and diffed byte-identical afterwards (never
+`git checkout --`).** (1) Delete the `TAIL` row from `LessonReader` → the new render guard fails:
+*"LessonReader must render `<GlossaryTerms>` for `termsForSection(lesson.id, TAIL)`"*. (2) Drop
+lesson 33's two `TAIL` chips while the terms stay on screen → §17b fails twice with the §3.0.3
+message naming GDP and Debt-to-GDP Ratio. (3) Revert `mentionedIn` to sections-only — the exact old
+behavior → the new corpus probe fails. **Plant 3 is the one that matters:** without it, a future
+edit could quietly restore the blindness and the suite would go on printing `0 unexplained`.
+
+**Adversarial self-check (step 5) — run, and it found nothing that required a change.**
+*Blindspot register:* no prose was added or reworded anywhere; the chips point at glossary entries
+that already shipped. §10.1 — no advice-adjacent language, and `check-blindspot` passes. §10.2 —
+lesson 38's `TAIL` chip is `Interest Rate`; the Buffett quotation in its `thinkAbout` is **untouched
+and unendorsed**, and item 158 remains the owner's open question. §10.3 — untouched. Markets
+stale-data rule — no dates or figures in any rendered string (the `2026-09-01` in the new comments is
+a source-comment measurement date, the file's existing convention).
+*DECISIONS.md conflict:* none — localStorage-only state, `.js`-not-JSON content and Vite-not-Expo are
+all untouched, and the one entry this change makes partial is amended in the same commit rather than
+left to rot.
+*Already-done item:* item 28 built the chip row, item 57 built §17b, items 60/64 curated chips. This
+undoes none of them; it extends a corpus that provably never contained these nine, which the
+136 → 145 delta measured on HEAD is the evidence for.
+*My own verification claim:* an independent reviewer re-running only `npm test`, `npm run build` and
+the stash/pop baseline gets these exact figures; the three plants are re-runnable from the
+descriptions above.
+*W-6.2 rule 3 — the learner-visible failure, in one sentence:* a learner reading lesson 33 met
+**"the US debt-to-GDP ratio"** in its reflection prompt, and lesson 35's takeaway named **QE** two
+lessons before the lesson that teaches it, with no chip to tap and no way to the definition without
+leaving the reader — which is precisely what §3.0.3 exists to prevent.
+*W-6.3 — the instrument-to-app ratio, quoted and re-measured:* W-6.0 recorded `scripts/` at 15,480
+lines against 6,589 for the app. This change is **+63 net lines in `src/` and +54 in `scripts/`** —
+the first pick in a while that puts more into the app than into the instruments, and the instrument
+half is a widened field list plus two guards rather than a new section.
+
+**Next run should pick from the launch plan or the owner-facing block, not from this entry.** The
+residual noticed here is filed as a note under item 159 (W-6.2 rule 2) and measures **zero live
+instances**; it is explicitly not queued. **O-1 remains the entire critical path — 44 lessons, five
+languages, 160 minutes of content, and zero people have ever opened this app.**
 
 ### 2026-09-01 (scheduled dev-agent, W-5.3 archiving pass on the measured trigger) — the archiving instrument reported 101.3 runs of headroom where the honest figure was 6.6, and the reason is that archiving lowers the mean it projects from
 

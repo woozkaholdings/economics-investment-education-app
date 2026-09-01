@@ -66,6 +66,7 @@ export default {
     backLabel: "返回",
     bookmarkAdd: "保存术语", bookmarkRemove: "取消保存", bookmarkedLabel: "已保存",
     lessonTermsLabel: "本节术语",
+    lessonTermsClosingLabel: "本总结术语",
     policySimTitle: "换你来当美联储主席",
     policySimIntro: "双重使命没有公式——这一次由你来判断。选一个操作，看看它会带动什么。没有分数，三个都可以试。",
     policySimSituation: "当前情形",

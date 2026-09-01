@@ -66,6 +66,7 @@ export default {
     backLabel: "戻る",
     bookmarkAdd: "用語を保存", bookmarkRemove: "保存を解除", bookmarkedLabel: "保存済み",
     lessonTermsLabel: "このセクションの用語",
+    lessonTermsClosingLabel: "このまとめの用語",
     policySimTitle: "あなたがFRB議長なら",
     policySimIntro: "デュアルマンデートに公式はありません。あなたが判断してください。レバーを選ぶと、それが何を動かすかがわかります。点数はつかず、三つとも試せます。",
     policySimSituation: "状況",

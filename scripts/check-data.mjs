@@ -14,7 +14,7 @@ import { lessons, TRACKS, lessonsByTrack } from "../src/content/lessons.js";
 import { lessonContent } from "../src/content/lessonContent.js";
 import { quizData } from "../src/content/quizData.js";
 import { glossary } from "../src/content/glossary.js";
-import { deliberatelyUnlinked, lessonTerms } from "../src/content/lessonTerms.js";
+import { TAIL, deliberatelyUnlinked, lessonTerms } from "../src/content/lessonTerms.js";
 import { kidsContent } from "../src/content/kidsContent.js";
 import * as marketsContent from "../src/content/markets.js";
 import * as moneyVisualsContent from "../src/content/moneyVisuals.js";
@@ -1439,11 +1439,16 @@ if (keyedGroupsChecked < 4) {
     }
 
     for (const [indexKey, terms] of Object.entries(byIndex)) {
-      const index = Number(indexKey);
-      const section = entry.sections[index];
-      const path = `lessonTerms[${id}][${index}]`;
+      // TAIL is a section key like any other, standing for the takeaway +
+      // reflection prompt. Its haystack is those two fields; everything below
+      // — rule 3's once-per-lesson, rule 4's literal presence — is unchanged,
+      // which is the point of making it a key rather than a second table.
+      const isTail = indexKey === TAIL;
+      const index = isTail ? TAIL : Number(indexKey);
+      const section = isTail ? null : entry.sections[index];
+      const path = `lessonTerms[${id}][${isTail ? TAIL : index}]`;
 
-      if (!section) {
+      if (!isTail && !section) {
         fail(`${path}: lesson ${id} has only ${entry.sections.length} section(s)`);
         continue;
       }
@@ -1452,7 +1457,12 @@ if (keyedGroupsChecked < 4) {
         continue;
       }
 
-      const haystack = `${section.heading.en}\n${section.body.en}`;
+      const haystack = isTail
+        ? `${entry.takeaway?.en ?? ""}\n${entry.thinkAbout?.en ?? ""}`
+        : `${section.heading.en}\n${section.body.en}`;
+      // Named for the failure message below, which is how the owner finds the
+      // string being complained about.
+      const where = isTail ? "the takeaway/reflection pair" : `"${section.heading.en}"`;
 
       for (const term of terms) {
         if (!glossary[term]) {
@@ -1477,7 +1487,7 @@ if (keyedGroupsChecked < 4) {
         if (!names.some((name) => mentions(haystack, name))) {
           fail(
             `${path}: "${term}" is linked from a section whose English text never mentions it ` +
-              `(looked for ${names.map((n) => `"${n}"`).join(" or ")} in "${section.heading.en}"). ` +
+              `(looked for ${names.map((n) => `"${n}"`).join(" or ")} in ${where}). ` +
               `Either the section was reworded and the link is now stale, or the link was wrong ` +
               `to begin with — see lessonTerms.js curation rule 4.`,
           );
@@ -1498,6 +1508,16 @@ if (keyedGroupsChecked < 4) {
   const reader = readFileSync(new URL("../src/screens/LessonReader.jsx", import.meta.url), "utf8");
   if (!/<GlossaryTerms[\s\S]{0,160}termsForSection\(/.test(reader)) {
     fail("LessonReader must render <GlossaryTerms> with termsForSection() (§3.0.3, backlog item 28)");
+  }
+  // And the TAIL row specifically. A `TAIL` entry in lessonTerms that nothing
+  // renders is the shape the 18-dead-locale-keys sweep found: data that passes
+  // every parity check and reaches no learner.
+  if (!/termsForSection\(lesson\.id,\s*TAIL\)/.test(reader)) {
+    fail(
+      "LessonReader must render <GlossaryTerms> for termsForSection(lesson.id, TAIL) — the closing " +
+        "pair carries 9 glossary-term uses that appear nowhere else in their lesson, and without " +
+        "this row lessonTerms' TAIL entries are data no learner can reach.",
+    );
   }
 }
 
@@ -1579,11 +1599,25 @@ if (keyedGroupsChecked < 4) {
     return out;
   };
 
-  const mentionedIn = (entry, key) =>
-    entry.sections.some((s) => {
-      const hay = stripTitleRefs(`${s.heading.en}\n${s.body.en}`);
-      return namesFor(key).some((n) => mentions(hay, n));
-    });
+  // THE CORPUS IS SECTIONS **PLUS THE CLOSING PAIR**, and the second half is
+  // the correction (2026-09-01). This sweep read `sections` only, and chips
+  // rendered under sections only, so the instrument and the UI were blind
+  // together and agreed: a glossary term whose only use in a lesson was in its
+  // boxed Key Takeaway or its reflection prompt produced no chip, no entry in
+  // `deliberatelyUnlinked`, and no failure — and §17b printed "0 unexplained"
+  // without having looked at the field. Measured before the fix: 48 term uses
+  // live in those two fields, 39 already chipped from a section, and 9 were
+  // accounted for by nothing (GDP + Debt-to-GDP on 33, Deflation + Credit on
+  // 34, QE on 35, Interest Rate on 38 and 9, Emergency Fund on 8, Stock on 11).
+  // The nine are now `TAIL` chips in lessonTerms.js.
+  const tailText = (entry) => `${entry.takeaway?.en ?? ""}\n${entry.thinkAbout?.en ?? ""}`;
+  const mentionedIn = (entry, key) => {
+    const hays = [
+      ...entry.sections.map((s) => `${s.heading.en}\n${s.body.en}`),
+      tailText(entry),
+    ].map(stripTitleRefs);
+    return hays.some((hay) => namesFor(key).some((n) => mentions(hay, n)));
+  };
 
   let linkCount = 0;
   for (const byIndex of Object.values(lessonTerms)) {
@@ -1681,6 +1715,26 @@ if (keyedGroupsChecked < 4) {
   // does: the anchoring is the part that has actually been wrong before (a
   // plain substring test accepted "Vesting" on six lessons that say
   // "investing"), and a corpus floor would not notice.
+  // The corpus widening has its own probe, for the reason the whole widening
+  // exists: a field that is silently absent from a haystack reads exactly like
+  // a field with nothing in it. This asserts against a lesson whose ONLY use
+  // of the term is in the closing pair, so it fails the moment the tail drops
+  // back out of `mentionedIn`.
+  {
+    const l33 = lessonContent[33];
+    const l38 = lessonContent[38];
+    if (!mentionedIn(l33, "Debt-to-GDP Ratio") || !mentionedIn(l38, "Interest Rate")) {
+      fail(
+        `§17b: the corpus no longer reaches takeaway/thinkAbout — lesson 33 mentions ` +
+          `"debt-to-GDP ratio" only in its reflection prompt and lesson 38 "interest rates" only ` +
+          `in its takeaway, so both must be visible here. Without this the sweep silently returns ` +
+          `to reading sections only and reports a clean "0 unexplained" for terms it never saw.`,
+      );
+    }
+    if (mentionedIn(l33, "PMI")) {
+      fail(`§17b: the corpus probe is matching a term lesson 33 does not use — the matcher is too loose.`);
+    }
+  }
   if (
     !mentions("weighing it alongside credit data", "Credit") ||
     mentions("this lesson is about investing", "Vesting") ||

@@ -88,6 +88,7 @@ export default {
     backLabel: "Back",
     bookmarkAdd: "Save term", bookmarkRemove: "Remove from saved", bookmarkedLabel: "Saved",
     lessonTermsLabel: "Terms in this section",
+    lessonTermsClosingLabel: "Terms in this summary",
     // "Be the Fed Chair" policy simulator (backlog item 34) — rendered by
     // components/PolicySim.jsx inside the lessons content/policyScenarios.js
     // names. "No score" is stated in the intro on purpose: without it the

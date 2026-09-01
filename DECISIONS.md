@@ -350,6 +350,23 @@ Add a new entry when a run makes a choice future work should be able to look up 
   decision changes** — curation is still right for exactly the reason recorded above. The bullets are
   left as written because this entry is a dated record; each carries a `track-ok:` marker so
   `check-data.mjs` §31 reads it as history rather than as a live claim.
+- **Update, 2026-09-01 (dev-agent run, backlog item 159). The map's second axis is now a section index
+  OR the key `TAIL`, and "under each tagged section" above is no longer the whole render surface.**
+  The decision is unchanged — curation, not matching — and this extends where a curated chip may sit.
+  **What was measured:** chips rendered under sections only, and §17b's coverage sweep read `sections`
+  only, so the instrument and the UI were blind together and confirmed each other. 48 glossary-term
+  uses live in the `takeaway`/`thinkAbout` pair across the 44 lessons; 39 were already chipped from a
+  section, and **9 were accounted for by nothing** — GDP and Debt-to-GDP Ratio on 33, Deflation and
+  Credit on 34, QE on 35, Interest Rate on 38 and on 9, Emergency Fund on 8, Stock on 11. §17b
+  reported "0 unexplained" throughout, because it never read the field. The sweep now covers 145 uses
+  and 104 chips where it covered 136 and 95.
+  **Why chips and not exemptions:** `deliberatelyUnlinked` admits exactly two reasons, `defined-here`
+  and `other-sense`, and none of the nine is either — each is the glossary's own sense, used without
+  definition, in the box that closes the lesson. So the honest fix was the missing render surface, not
+  a wider exemption table.
+  **Trade-off, added to the one above:** the closing row carries its own label
+  (`lessonTermsClosingLabel`, five languages), because the shared caption says "Terms in this section"
+  and the takeaway/reflection pair is not a section.
 
 ### Content as `.js` modules, not JSON
 

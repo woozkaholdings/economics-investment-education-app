@@ -25,7 +25,11 @@ import Icon from "../components/Icon.jsx";
 import { Text } from "./ui.jsx";
 import { ink, line, MIN_TAP, radius, space, surface } from "../theme.js";
 
-export default function GlossaryTerms({ terms, t, lang }) {
+// `label` overrides the row's caption. The default names a section, which is
+// true of every row but one: LessonReader also renders this under the closing
+// takeaway/reflection pair, which is not a section, and calling it one there
+// would be a small lie in five languages.
+export default function GlossaryTerms({ terms, t, lang, label }) {
   const [openTerm, setOpenTerm] = useState(null);
   const panelId = useId();
 
@@ -45,7 +49,7 @@ export default function GlossaryTerms({ terms, t, lang }) {
         color={ink.muted}
         style={{ display: "inline-flex", alignItems: "center", gap: space["1"], fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.05em" }}
       >
-        <Icon name="book" size="1em" /> {t.lessonTermsLabel}
+        <Icon name="book" size="1em" /> {label || t.lessonTermsLabel}
       </Text>
 
       <div style={{ display: "flex", flexWrap: "wrap", gap: space["2"], marginTop: space["2"] }}>

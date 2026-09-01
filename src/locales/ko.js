@@ -66,6 +66,7 @@ export default {
     backLabel: "뒤로",
     bookmarkAdd: "용어 저장", bookmarkRemove: "저장 해제", bookmarkedLabel: "저장됨",
     lessonTermsLabel: "이 섹션의 용어",
+    lessonTermsClosingLabel: "이 요약의 용어",
     policySimTitle: "당신이 연준 의장이라면",
     policySimIntro: "이중책무에는 공식이 없습니다. 직접 판단해 보세요. 레버를 하나 고르면 그것이 무엇을 움직이는지 보여 줍니다. 점수는 없고, 세 가지 모두 눌러 볼 수 있습니다.",
     policySimSituation: "상황",
