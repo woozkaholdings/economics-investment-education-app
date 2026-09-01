@@ -48,7 +48,6 @@ export default {
     moneySupply: "Oferta Monetaria (M0, M1, M2)",
     ratePrinciples: "Principios Clave",
     kidsTabLabel: "Niños",
-    viewAllLessonsTemplate: "Ver las {n} lecciones →",
     estMinTemplate: "≈{n} min", progressLabel: "Progreso",
     streakTemplate: "Racha de {n} días",
     continueTomorrowTitle: "Sigue tu racha",

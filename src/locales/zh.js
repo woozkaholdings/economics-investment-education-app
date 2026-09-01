@@ -48,7 +48,6 @@ export default {
     moneySupply: "货币供应量（M0、M1、M2）",
     ratePrinciples: "核心原则",
     kidsTabLabel: "儿童",
-    viewAllLessonsTemplate: "查看全部{n}节课 →",
     estMinTemplate: "约{n}分钟", progressLabel: "进度",
     streakTemplate: "连续{n}天",
     continueTomorrowTitle: "保持连续学习",

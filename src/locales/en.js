@@ -70,7 +70,6 @@ export default {
     moneySupply: "Money Supply (M0, M1, M2)",
     ratePrinciples: "Key Principles",
     kidsTabLabel: "Kids",
-    viewAllLessonsTemplate: "View all {n} lessons →",
     estMinTemplate: "≈{n} min", progressLabel: "Progress",
     streakTemplate: "{n} day streak",
     continueTomorrowTitle: "Keep the streak going",

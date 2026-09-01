@@ -484,15 +484,23 @@ export default function Practice({ t, lang, completedLessons, review, recordRevi
               the FIRST state a learner reaches. Both therefore park the count
               outside it, in parentheses. `ko`/`zh`/`ja` have no plural
               agreement and read better with the number inline, exactly as
-              their own `viewAllLessonsTemplate` and `reviewDueTemplate`
-              already write it.
+              their own `reviewDueTemplate` already writes it ("복습할 문제
+              {n}개", "{n} 题待复习", "復習する問題 {n} 問").
             - Spacing is language-specific too, and this file cannot know it:
-              `zh` writes "{n} 题待复习" with spaces and "查看全部{n}节课"
-              without. Appending here would impose the English shape on all
-              five.
-          Every other count in a SENTENCE in this app is a locale template (14
-          keys); the only counts built in JSX are bare numeric ratios
-          ("3 / 12"). This is a sentence. */}
+              `zh` writes "{n} 题待复习" with spaces and "约{n}分钟"
+              (`estMinTemplate`) without. Appending here would impose the
+              English shape on all five.
+          Every other count in a SENTENCE in this app is a locale template (13
+          keys carry {placeholders}); the only counts built in JSX are bare
+          numeric ratios ("3 / 12"). This is a sentence.
+
+          Both citations above were re-anchored 2026-09-01: they used to rest
+          partly on `viewAllLessonsTemplate`, which was defined in all five
+          languages and rendered by nothing — a relic of the pre-rebuild
+          monolith that shipped in every bundle for four weeks. It survived the
+          2026-08-30 dead-key sweep because that sweep read src/ as raw text and
+          THIS COMMENT was its only mention, so the key vouched for itself.
+          Cite live strings here, never a key whose only reader is a comment. */}
       {practicePool.length > 0 && (
         <Button
           full

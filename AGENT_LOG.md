@@ -3619,6 +3619,121 @@ finding(s); V vacuous; U unavailable`. A bare "no accessibility issues found" is
 
 ## Run log
 
+### 2026-09-01 (scheduled dev-agent, self-picked from LAUNCH_PLAN §3.5's languages clause) — a locale key that shipped in five languages for four weeks, rendered by nothing, and survived the sweep built to delete it because the sweep's only reader of it was a comment
+
+**Pick, and why it is not a residual chain (W-6.2 rule 1).** The previous run closed item 159 (glossary
+chips) and its own closing line says the next run must pick from the launch plan or the owner-facing
+block, not from that entry. This run started on **§3.5's "English is the product; the other four
+languages ship marked beta"** and asked the cheapest falsifiable question that clause implies: do the
+five locale files actually agree with each other and with the code? Nothing here is any run's residual.
+
+**Premise re-measured before any edit, with controls (step 3.5) — and the first two hypotheses were
+refuted, which is what moved the pick to the third.**
+1. **Placeholder parity across languages — clean.** 616 `en`→other string pairs, **0** mismatches, 0
+   missing keys. A dropped `{n}` would render braces or swallow a number in one language; none does.
+   (`npm test` §1b already guards this; the measurement agreed with it.)
+2. **Code→locale, the direction that renders `undefined` to a learner — guarded, proven by plant.**
+   Planted `t.zzyzxMissingKey` into `Learn.jsx`'s ResumeCard action: `check-data.mjs` §6 fails with
+   *"src/screens/Learn.jsx references t.zzyzxMissingKey, but "zzyzxMissingKey" is not defined in
+   TR.en"*. Restored from a scratchpad copy and diffed byte-identical against `HEAD` (sha256
+   `c793512101426a15f6d871d3934399c56277e8486e3a7801387b7079f59ed2f8`), never `git checkout --`.
+3. **`en`→one other language — also guarded, also proven by plant.** Deleted `startLesson` from
+   `ko.js`: *"FAIL: TR.ko: missing key "startLesson" (present in TR.en)"*, `npm test` exit **1**.
+   Restored byte-identical.
+4. **The third direction — a key defined in all five and rendered by nothing — is NOT guarded, and had
+   a live instance.** `viewAllLessonsTemplate` ("View all {n} lessons →", plus es/ko/zh/ja) is
+   referenced nowhere in `src/` outside a **comment**, has no computed-key path that could reach it
+   (the only dynamic locale accesses in the app are `t[tr.labelKey]`, `t[tr.blurbKey]` and
+   `t[at.labelKey]`, all three track keys, all live), and **shipped in the main bundle**: `grep` on
+   `dist/assets/index-BuXHag6V.js` returned `View all {n} lessons →`. It entered with `76be081`, the
+   first monolith-split commit, and was never wired into the 2026-08-04 rebuild.
+
+**Why the 2026-08-30 sweep missed it, which is the durable part.** That run (`96606d2`) deleted 18 dead
+keys carried in all five languages and explicitly checked its own work with three controls. It read
+`src/` as **raw text**, and `viewAllLessonsTemplate`'s only mention in `src/` is inside the JSX comment
+in `Practice.jsx` that cites it as evidence for how `ko`/`zh`/`ja` write inline counts. **The key
+vouched for itself**: a comment about a string is not a use of it, but to a text sweep the two are the
+same bytes. Re-running that sweep's shape with comments stripped and with comments included, on `HEAD`,
+gives **1 dead** and **0 dead** respectively — the difference IS the blind spot, reproducible in one
+command.
+
+**Controls, six, all fired before any number above was believed** — a sweep that returns nothing looks
+exactly like a clean result. (a) positive: `disclaimer`, which §10.1 requires on eight surfaces, reads
+live; (b) negative: a fabricated `zzyzxNotAKey` reads dead; (c) dynamic path: all 3 track `labelKey`s
+(`trackEconomy`, `trackMoney`, `trackEssentials`), reachable only as `t[tr.labelKey]`, read live — this
+is the control the 2026-08-30 run needed and the one a naive sweep fails; (d) the comment stripper
+keeps `//` inside a string literal; (e) and (f) it does remove a line comment and a block comment.
+
+**A control failure of my own, recorded because it is the same genre.** The first attempt at plant 3
+printed no test output at all and looked like a pass. Cause: `grep -c` exits **1** on a count of zero,
+so the `&&` chain short-circuited and `npm test` never ran. **A command that did not execute is
+indistinguishable from a command that found nothing** unless you check the exit code — which is why
+plant 3's result above quotes `npm test`'s exit status and not just its stdout.
+
+**Shipped — 5 deletions and one comment repair; nothing added to `scripts/`.**
+- `src/locales/{en,es,ko,zh,ja}.js` — `viewAllLessonsTemplate` deleted. 154 → **153** keys.
+- `src/screens/Practice.jsx` — the comment that cited it. Its two claims were half-anchored to the dead
+  string, so both were **re-anchored to live strings**: the inline-count claim now cites
+  `reviewDueTemplate` alone, quoting all three of ko/zh/ja verbatim; the spacing claim now contrasts
+  `zh`'s `"{n} 题待复习"` (spaced) with `estMinTemplate`'s `"约{n}分钟"` (unspaced) instead of with the
+  deleted string. Its live figure "(14 keys)" is now **13**, which `npm test` §1b prints independently
+  rather than my arithmetic. Four lines record why, so the next author cites live strings only.
+
+**Verification — every figure below is reproducible by re-running only these commands.**
+`npm test` exits **0** (0 failures; the same 2 + 1 warnings as the baseline, the standing floor-budget
+one among them). `npm run build` succeeds in **1.05s**. §1b's own line moved **14 → 13 locale keys carry
+{placeholders}**. Bundle, measured against a `git archive HEAD` copy built with the same toolchain
+rather than quoted from a previous entry: **252.48 → 252.21 kB raw, 90.77 → 90.69 kB gzip**. Both
+deleted strings are absent from the rebuilt bundle (`View all {n} lessons` and `查看全部`). A
+**fresh-tree copy of this working tree** — `git archive HEAD` plus the six modified files, `node_modules`
+symlinked — runs the full suite to **exit 0**, and so does the untouched `HEAD` copy (W-6.1 route (a)
+still holds). **No live DOM verification: `preview_start` refuses in an unattended scheduled run
+("nobody is present to approve the command"), so the previous entry's note about this is confirmed
+rather than assumed.** The render claim here needs none — it is a claim that something is *absent*, and
+absence from the built bundle is the stronger evidence anyway.
+
+**Why deleting and not building the affordance.** `Learn.jsx` renders every lesson inside per-track
+accordions; there is no truncated list for a "View all" control to expand, and no §-clause asks for one.
+Building an unrequested affordance to justify a relic is the inverse of the fix. This is the same
+disposition the 2026-08-30 run reached for the nine prototype relics among its 18.
+
+**No new check was built, deliberately (W-6.2 rule 3 + W-6.3).** Rule 3 requires one sentence naming the
+learner-visible failure a new check would have caught. **For this direction that sentence cannot be
+written honestly**: a dead locale key costs ~270 bytes of payload and is invisible on screen. The two
+directions that ARE learner-visible — a blank where a label belongs — are both already guarded, proven
+by plants 2 and 3 above rather than by reading the scripts. So the class stays unguarded on purpose,
+the instance is fixed, and this residual is **not filed as a numbered item** (W-6.2 rule 2: zero live
+instances after this commit, honest priority low). The recipe, if a future sweep wants it, is one
+sentence: run the 2026-08-30 sweep with comments stripped, and carry control (c).
+
+**Adversarial self-check (step 5) — run, and it found nothing that required a change.**
+*Blindspot register:* no learner-facing prose was added or reworded anywhere — five strings were removed
+and one source comment rewritten. §10.1 — `npm run check-blindspot` PASS, 0 failures, and the disclaimer
+key is untouched. §10.2 — no Dalio reference touched. §10.3 — `kidsTabLabel` sits directly above the
+deleted line in all five files and was **verified live** (`Reference.jsx:69`) before the edit, precisely
+so a neighbouring-line deletion could not silently take the kids surface's label with it. Markets
+stale-data rule — no rendered string gained a date; the `2026-09-01` in the new comment is a
+source-comment measurement date, this file's existing convention.
+*DECISIONS.md conflict:* none. `viewAllLessonsTemplate` appears in no decision, claim, README or plan
+text (grepped); localStorage-only state, `.js`-not-JSON content and Vite-not-Expo are untouched.
+*Already-done backlog item:* this does not redo `96606d2` — it removes a **nineteenth** key that run's
+method could not see, and the two-way sweep above is the evidence that the miss was mechanical rather
+than a judgment it made.
+*My own verification claim:* an independent reviewer re-running `npm test`, `npm run build`, the two
+plants and the `git archive HEAD` baseline gets these exact figures; the bundle deltas come from two
+builds performed this run, not from any earlier entry.
+*W-6.3 — the instrument-to-app ratio, quoted and re-measured:* W-6.0 recorded `scripts/` at 15,480 lines
+against 6,589 for the app. This change is **+0 lines in `scripts/`** and **+3 net in `src/`** (16 added,
+13 removed) — it moves the ratio in the right direction, which is rare for a run that starts from a
+measurement.
+
+**Next run should pick from the launch plan or the owner-facing block.** Nothing here is queued.
+**W-6.5 is now stale in the app's favour and should stop being repeated:** `public/data/market.json` is
+`asOf 2026-08-31` (committed `55c0c15`), so the daily job is running again and the Sector screen is not
+about to go dark. **O-1 remains the entire critical path — 44 lessons, five languages, 160 minutes of
+content, and zero people have ever opened this app.**
+**Owner tree at start of run: `OWNER-TREE f54fc023fb026bcb44277af38101071c245bfda0c8ead5c40049acd487b5c975` (0 tracked modified, 51 untracked)** — the owner's untracked `UIUX/`, untouched, as in the previous nine runs.
+
 ### 2026-09-01 (scheduled dev-agent, backlog item 159) — the coverage sweep and the chip row were blind in the same place, so each confirmed the other, and nine glossary terms sat on screen with nothing to tap
 
 **Pick, and why it is legitimate under W-6.2 rule 1.** Item 159 is a residual, but not of the

@@ -48,7 +48,6 @@ export default {
     moneySupply: "マネーサプライ（M0・M1・M2）",
     ratePrinciples: "重要な原則",
     kidsTabLabel: "キッズ",
-    viewAllLessonsTemplate: "全{n}レッスンを見る →",
     estMinTemplate: "約{n}分", progressLabel: "進捗",
     streakTemplate: "{n}日連続",
     continueTomorrowTitle: "連続記録を続けよう",

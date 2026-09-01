@@ -48,7 +48,6 @@ export default {
     moneySupply: "통화량 (M0, M1, M2)",
     ratePrinciples: "핵심 원칙",
     kidsTabLabel: "키즈",
-    viewAllLessonsTemplate: "{n}개 레슨 모두 보기 →",
     estMinTemplate: "약 {n}분", progressLabel: "진행률",
     streakTemplate: "{n}일 연속 학습",
     continueTomorrowTitle: "연속 학습을 이어가세요",
