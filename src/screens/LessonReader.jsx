@@ -472,7 +472,13 @@ export default function LessonReader({ t, lang, lessons, index, completedLessons
         </Card>
       )}
 
-      {/* Continue-tomorrow prompt — local only, schedules no real notification */}
+      {/* Continue-tomorrow prompt — local only, schedules no real notification.
+          The CTA is therefore a commitment the LEARNER makes ("I'll be back
+          tomorrow"), never one the app makes. It read "Remind me tomorrow" in all
+          five languages from 2026-08-03 to 2026-08-31 — ko and zh said "notify me"
+          outright — while nothing anywhere in this build has ever sent a
+          notification. Do not reword this toward a promise until a reminder
+          actually ships; that needs the held platform decision (LAUNCH_PLAN §2.1). */}
       {prompt === "asking" && (
         <div style={{ background: surface.card, border: `1px solid ${line.hairline}`, borderRadius: radius.lg, padding: space["4"], marginTop: space["4"], textAlign: "center", boxShadow: shadow.raised }}>
           <Text variant="small" color={ink.strong} style={{ fontWeight: 700 }}>{t.continueTomorrowTitle}</Text>

@@ -53,7 +53,7 @@ export default {
     streakTemplate: "{n}일 연속 학습",
     continueTomorrowTitle: "연속 학습을 이어가세요",
     continueTomorrowBody: "내일 다시 와서 이어서 학습해 보세요.",
-    continueTomorrowCta: "내일 알림 받기",
+    continueTomorrowCta: "내일 다시 올게요",
     continueTomorrowDismiss: "괜찮아요",
     continueTomorrowConfirmed: "좋아요 — 내일 만나요!",
     qeNarrative: "연준 채권 매입 → 자금 유입 → 수익률 ↓ → 주식 ↑↑ → 달러 ↓",

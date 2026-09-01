@@ -420,6 +420,20 @@ this note is the case for it.
 >   in a comment, and correctly attributes the blocker to the **held §2.1 platform decision** (a static
 >   web page cannot notify a closed tab without a service worker and push infrastructure). The code is
 >   already honest; filing an item would just restate it. **Owner-blocked, not backlog work.**
+>   > ⛔ **PREMISE CORRECTED 2026-08-31, and this bullet is the reason the defect lived 28 days.**
+>   > *"The code is already honest"* was measured on the **comment**, not on the **string a learner
+>   > reads**. The comment was honest to a developer; the button underneath it said **"Remind me
+>   > tomorrow"** in all five languages — `ko` *"내일 알림 받기"* and `zh` *"明天提醒我"* say **notify
+>   > me** outright — and it fires on the first lesson completed each day, which for a new learner is
+>   > the first lesson they ever finish. **Two conclusions in this bullet were each right about one
+>   > surface and wrong about the other:** "already honest" was true of the comment and false of the
+>   > UI, and "owner-blocked" was true of the *reminder feature* and false of the *copy* — rewording
+>   > a button needs no platform decision. **The transferable part, which this log has now paid for
+>   > in a fourth costume (item 108's proxy, §28c's focus ring, the VIX bands): a developer-facing
+>   > comment is not evidence about the learner-facing surface it sits above.** Fixed 2026-08-31 —
+>   > the CTA is now a commitment the learner makes ("I'll be back tomorrow"), true as shipped, with
+>   > `optedIn` unchanged so a real reminder feature can still read it. The reminder itself remains
+>   > correctly owner-blocked. (The `:188` pointer is also stale — the block is at `:216-233` today.)
 > - *§3.0.7 WCAG AA contrast.* `theme.js` claims "Contrast for both palettes is verified in
 >   `index.css`", and `index.css:91` points at a "contrast note above" **that does not exist**. So the
 >   claim is unverifiable as written — but computing it says the claim is **true**: every ink×surface and
@@ -3531,6 +3545,148 @@ zero meaningful: `selftest PASS (8/8 controls fired, plantsRemoved true)` and, p
 finding(s); V vacuous; U unavailable`. A bare "no accessibility issues found" is not a result.
 
 ## Run log
+
+### 2026-08-31 (scheduled dev-agent, self-picked from LAUNCH_PLAN §3.3) — the app has told every learner "Remind me tomorrow", in five languages, on the first lesson they ever finish, since 2026-08-03; it has never sent a notification and cannot
+
+**Pick, and why it is not the previous run's residual (W-6.2 rule 1).** The last run audited §3.0.6
+and **filed nothing**, so there was no residual to inherit. With all seven §3.0 clauses now audited
+(that stream is exhausted), this run counted references to the *other* §3 subsections the same way:
+
+| subsection | log | archive | scripts |
+|---|---|---|---|
+| §3.1.1 | 0 | 21 | 4 |
+| §3.2 | 9 | 14 | 6 |
+| **§3.3** | **1** | **8** | **0** |
+| §3.4 | 0 | 28 | 4 |
+| §3.5 | 8 | 4 | 1 |
+
+**§3.3 (Habit mechanics) is the least-examined subsection of §3, has zero references in any check,
+and is the only subsection of §3 carrying no status annotation** — §3.2 and §3.4 both have one. That
+missing status line is not a coincidence; it is the mechanism.
+
+**Premise measured before any edit, with controls (step 3.5).** §3.3 names five mechanics. Four are
+built — streak chip and both progress bars (`Learn.jsx`), the derived per-lesson minutes on the path,
+the resume card and the reader, and immediate per-question quiz feedback on both quiz surfaces. The
+fifth, the **opt-in daily reminder**, is where the defect is.
+
+1. **No notification machinery exists anywhere.** `grep -rniE
+   'Notification|serviceWorker|push(Manager|Subscription)|registerSW|setTimeout|scheduler'` over
+   `src` minus `content` returns **five hits, none of them a notification**: a 1,700 ms celebration
+   timer, two comments *saying* nothing is scheduled, and two references to the Leitner box
+   *scheduler*. `public/` holds `data/` and `icon.svg` — **no manifest, no service worker**.
+   **Control: the same grep shape for `localStorage` returns 11 hits**, so the zero is a real zero
+   and not a dead instrument.
+2. **The button promises one anyway, in five languages.** `continueTomorrowCta` read **"Remind me
+   tomorrow"** / *"Recuérdamelo mañana"* / **"내일 알림 받기"** / **"明天提醒我"** /
+   *"明日リマインドする"*. **`ko` and `zh` do not say "remind" — they say *notify me*.** Accepting
+   confirms *"Got it — see you tomorrow!"*
+3. **It is reachable, and on the highest-traffic screen in the product.** `handleComplete`
+   (`LessonReader.jsx:252`) shows it on the **first lesson completed each day** — for a new learner,
+   the first lesson they ever finish. That is the exact screen §4.3's Phase-0 completion gate is
+   about.
+4. **Shipped 2026-08-03** by the run that built step 6e (`AGENT_LOG.archive.md:1128`, "a primary
+   '🔔 Remind me tomorrow' button"). **28 days.**
+
+**⚠️ THE REAL FINDING, and it is a correction to a deliberate decision rather than a gap nobody
+noticed.** The 2026-08-17 owner-directed backlog refill **measured this exact clause and chose not to
+file it**: *"It does not exist — but `src/lib/useAppState.js:188` already says so in a comment… The
+code is already honest; filing an item would just restate it. Owner-blocked, not backlog work."*
+**That bullet checked the comment and concluded the UI was fine.** Both of its conclusions are right
+about one surface and wrong about the other — "already honest" is true of the comment and false of
+the button, and "owner-blocked" is true of the *reminder feature* and false of the *copy*, because
+rewording a button needs no platform decision. **A developer-facing comment is not evidence about the
+learner-facing surface it sits above** — the same proxy failure as item 108's, §28c's invisible focus
+ring, and the VIX bands ("checked whether the numbers are right, never whether they are presented as
+definitions"). **The refill bullet is corrected in place in the backlog above**; it stays where it is
+because the reasoning is the durable part.
+
+**What shipped — 5 strings, plus the two places that would let it regress.**
+- `continueTomorrowCta` in all five locales → a commitment **the learner** makes, which is true as
+  shipped: `en` *"I'll be back tomorrow"*, `es` *"Volveré mañana"*, `ko` *"내일 다시 올게요"*,
+  `zh` *"我明天再来"*, `ja` *"明日また来ます"*. Register matched to each file's existing accept/decline
+  pair; `en` uses a straight apostrophe, matching **0 curly / 12 straight** contractions in `en.js`.
+- **`optedIn`'s stored shape is unchanged**, so the opt-in signal a future reminder feature reads
+  still means the same thing. Nothing else moved: no storage key, no state, no control.
+- `LessonReader.jsx` and `useAppState.js` comments now say the CTA **must not** promise a system
+  action until a reminder actually ships — the comments previously described the absence without
+  constraining the copy, which is precisely how it drifted.
+- **`LAUNCH_PLAN.md` §3.3 gains the status annotation it never had**, naming which four mechanics are
+  built, that the reminder is not and cannot be from this codebase, and that the clause's "worded as
+  curiosity rather than nagging" requirement applies to notification copy that does not exist yet.
+
+**What was deliberately NOT done: build the reminder.** A static web page cannot notify a closed tab
+without a service worker and push infrastructure, and scheduling one needs the **held Expo-vs-Vite
+decision** (§2.1, `DECISIONS.md`, which instructs the dev agent not to migrate on its own
+initiative). The 2026-08-17 bullet was right that the *feature* is owner-blocked. This run fixes only
+the half that never was.
+
+**Verification.**
+- `npm test` → **PASS: 0 failure(s)** across all eight scripts; the 2 warnings are the pre-existing
+  translation-coverage and log-size ones, byte-identical to the pre-edit baseline run.
+- `npm run build` → `✓ built in 1.09s`.
+- **Two-sided proof the change reached the artifact a browser loads:** all **5** old strings are in
+  **0** files under `dist/`, all **5** new strings in **1** file each — same command over the same
+  corpus, so each half is the other's control.
+- **⚠️ Live browser verification is unavailable in an unattended run and no visual claim is made.**
+  `preview_start` refuses ("Dev servers can't be started from unattended sessions… nobody is present
+  to approve the command"), and the previous run recorded that the `file://` fallback loads at a
+  `data:` origin with an empty body. The `dist/` grep is a **payload check, not a rendering check**.
+
+**Adversarial self-check (step 5) — run, with a planted control set, and it found one thing.**
+- **Blindspot register.** Screened the **9 exact changed strings** (not diff `+` lines) against five
+  families — §10.2 Dalio, §10.1 advice, §10.3 child-facing, hardcoded date, live market figure.
+  **All 6 planted positives fire** (including `"Investors were buying at the trough"`, the stem the
+  habitual `buy ` grep misses). The 9 changed strings: **0 hits**. `npm run check-blindspot` PASS.
+  The §3.3 annotation contains the date `2026-08-31`, which is a **dated documentation record**, not
+  a §2.3 live-looking figure in teaching copy — §2.3's own check scans the 26 teaching-copy modules
+  and passed.
+- **DECISIONS.md conflict: none, and this change is load-bearing *for* one.** `grep -niE
+  'continue.?tomorrow|remind|notification'` over `DECISIONS.md` returns **zero** — the wording was
+  never decided, it was inherited from the 2026-08-03 build. The Expo-vs-Vite decision is cited, not
+  touched; localStorage-only state and `.js` content modules are untouched.
+- **Not a redo — and this is the check that earned its keep.** It surfaced the 2026-08-17 refill
+  bullet above, which is the only prior treatment of this clause anywhere in the log or archive. Had
+  I not run it I would have reported this as unnoticed, which is false and would have buried the
+  more useful finding.
+- **One thing an independent reviewer would catch that I should say first: `optedIn` is write-only
+  today.** Nothing in `src/` reads it (`grep -rn 'optedIn' src` → the writer, the setter and the two
+  comments, no reader). So the prompt's persisted half currently does nothing but seed a feature that
+  does not exist. **That does not make the prompt theater** — the streak framing and the commitment
+  are real, and the commitment device is the mechanic §3.3 is actually asking for — but "records a
+  preference" should not be read as "the app acts on it". Recorded here, **not filed as an item**
+  (W-6.2 rule 2: the property is inert until the held §2.1 decision moves, and it is one sentence).
+- **My own verification claim, stated exactly.** `npm test`, `npm run build`, the `dist/` two-sided
+  grep, the `optedIn` grep and the notification-machinery grep with its `localStorage` control are
+  **all reproducible from this commit** by an independent reviewer. The blindspot screen and the
+  reference-count table are **not committed** (session scratchpad); the patterns and plants are
+  written out above so they can be rebuilt, and that is the honest status rather than an implied
+  guarantee.
+
+**No new check, and W-6.3's ratio question answered out loud.** `scripts/` is **15,480** lines
+against `src/`-minus-content's **6,589** (W-6.0's figure, quoted with its date, not re-measured this
+run). A guard here would have to assert that UI copy does not promise a capability the build lacks —
+**a check nobody knows how to write**, since the failure is semantic and the corpus is five
+languages. W-6.2 rule 3's test therefore fails at the first step: the learner-visible failure is easy
+to name, but no mechanical screen catches it. **The constraint is written into the two code comments
+a future run would edit instead** — cheaper than a section, and located where the regression would
+happen. Floor measured this run: **308,526 b against 250,000 b**, unchanged and still item 115's.
+
+**⚠️ An archiving pass is now due on the MEASURED trigger and I did not take it** (`npm test`: run
+log **255,374 b** against the 250,000 b warn budget; the cut plan names 2026-08-29, 85,470 b, a
+single contiguous region). It fails the build at 350,000 b — **15.6 runs of headroom** — and two
+passes already ran on 08-29 and 08-30, so a third in four days would be the third consecutive
+housekeeping run. **Flagged for the next run, which should take it if nothing more learner-visible
+is open.** W-5.3's known defect and item 115 are unchanged.
+
+**W-6.5 is RESOLVED and needs no further flagging: the market-data job is running again.** `HEAD`
+(`55c0c15`) refreshed `public/data/market.json` to **`asOf 2026-08-31`** — it had been stuck at
+08-28 for six runs and the Sector-performance screen was about two days from showing "Market data
+isn't available right now". Nothing was done to it; it recovered on its own.
+
+**Owner tree at end of run:** the owner's untracked `UIUX/` only (51 files), untouched, as in the
+previous ten runs. `HEAD` was re-checked before writing and had not moved.
+**O-1 remains the entire critical path** — 44 lessons, 5 languages, 160 minutes of content, and zero
+people have ever opened this app.
 
 ### 2026-08-31 (scheduled dev-agent, self-picked from LAUNCH_PLAN §3.0.6) — §3.0.6 is the only clause of the primary success criterion with ZERO references anywhere in this repo, and the glossary defined the VIX as nothing but three invented thresholds
 

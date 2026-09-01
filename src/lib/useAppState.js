@@ -217,6 +217,10 @@ export function useAppState() {
 // Shown at most once per day, the first time a lesson is completed that day.
 // Records the choice locally for a future reminder feature to read; it does
 // not schedule a real notification (that needs the held platform decision).
+// `optedIn` therefore means "this learner said they intend to come back", not
+// "this learner is owed a notification" — the CTA was reworded on 2026-08-31 to
+// match, because it had been promising a reminder the app cannot send. The
+// stored shape is unchanged, so a real reminder feature can still read it.
 
 export function wasContinuePromptShownToday() {
   const { lastPromptDate } = readJSON(KEYS.continuePref, {});

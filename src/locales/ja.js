@@ -53,7 +53,7 @@ export default {
     streakTemplate: "{n}日連続",
     continueTomorrowTitle: "連続記録を続けよう",
     continueTomorrowBody: "また明日戻って続きから学習しましょう。",
-    continueTomorrowCta: "明日リマインドする",
+    continueTomorrowCta: "明日また来ます",
     continueTomorrowDismiss: "今回は結構です",
     continueTomorrowConfirmed: "了解しました — また明日！",
     qeNarrative: "FRBが債券購入 → 資金流入 → 利回り↓ → 株↑↑ → ドル↓",

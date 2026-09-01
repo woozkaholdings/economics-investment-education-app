@@ -75,7 +75,7 @@ export default {
     streakTemplate: "{n} day streak",
     continueTomorrowTitle: "Keep the streak going",
     continueTomorrowBody: "Come back tomorrow to continue where you left off.",
-    continueTomorrowCta: "Remind me tomorrow",
+    continueTomorrowCta: "I'll be back tomorrow",
     continueTomorrowDismiss: "No thanks",
     continueTomorrowConfirmed: "Got it — see you tomorrow!",
     qeNarrative: "Fed BUYS bonds → money in → yields ↓ → stocks ↑↑ → USD ↓",

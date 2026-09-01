@@ -53,7 +53,7 @@ export default {
     streakTemplate: "连续{n}天",
     continueTomorrowTitle: "保持连续学习",
     continueTomorrowBody: "明天回来继续学习吧。",
-    continueTomorrowCta: "明天提醒我",
+    continueTomorrowCta: "我明天再来",
     continueTomorrowDismiss: "不用了",
     continueTomorrowConfirmed: "好的 — 明天见！",
     qeNarrative: "美联储购债 → 资金流入 → 收益率↓ → 股票↑↑ → 美元↓",

@@ -318,6 +318,21 @@ Visible streak, progress bar, per-lesson minutes estimate, opt-in daily reminder
 curiosity ("Why do recessions actually start? Lesson 5 is ready") rather than nagging. Immediate,
 kind quiz feedback with explanations.
 
+*Status, added 2026-08-31 — this was the only subsection of §3 carrying no status line, and that is
+how the gap below shipped for 28 days without being named. Four of the five mechanics are built:
+the streak chip and both progress bars (`Learn.jsx`), the per-lesson minutes estimate on the path,
+the resume card and the reader (`estMinTemplate`, derived — see §3.0.5), and immediate quiz feedback
+with a per-question explanation on both quiz surfaces. **The daily reminder is NOT built and cannot
+be from this codebase**: there is no Notification API call, service worker, manifest or push
+subscription anywhere in the build, and scheduling a next-day notification needs the held
+Expo-vs-Vite platform decision (§2.1, `DECISIONS.md`). What ships is the opt-in half only — a
+once-a-day prompt on lesson completion whose choice is persisted for a future reminder feature to
+read. **Its button promised the missing half until 2026-08-31**, reading "Remind me tomorrow" in all
+five languages (`ko`/`zh` said "notify me" outright); it is now a commitment the learner makes ("I'll
+be back tomorrow"), which is true as shipped and still records the same opt-in. When a real reminder
+lands, this clause's "worded as curiosity rather than nagging" requirement applies to the
+notification copy and is not yet met by anything.*
+
 ### 3.4 Theming and typography
 
 **§3.1.1 is the visual system**; this section is only the theming layer under it. ~~One typeface.~~

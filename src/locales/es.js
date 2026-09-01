@@ -53,7 +53,7 @@ export default {
     streakTemplate: "Racha de {n} días",
     continueTomorrowTitle: "Sigue tu racha",
     continueTomorrowBody: "Vuelve mañana para continuar donde lo dejaste.",
-    continueTomorrowCta: "Recuérdamelo mañana",
+    continueTomorrowCta: "Volveré mañana",
     continueTomorrowDismiss: "No, gracias",
     continueTomorrowConfirmed: "Listo — ¡nos vemos mañana!",
     qeNarrative: "El Fed COMPRA bonos → entra dinero → rendimientos ↓ → acciones ↑↑ → USD ↓",
