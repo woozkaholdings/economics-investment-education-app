@@ -19,11 +19,12 @@
 // and the same fix applied one file later.
 //
 // The reassembly below is index-wise: entry i of quizMeta is entry i of every
-// quizText. That alignment is the invariant the whole split rests on, because
-// src/lib/review.js keys persisted Leitner state by a question's index — see
-// quizMeta.js's header. check-data.mjs asserts the lengths agree, so a
-// half-added question fails the build rather than silently shifting a real
-// learner's review history onto different questions.
+// quizText. That alignment is the invariant the whole split rests on. It is a
+// build-time one: check-data.mjs §3 fails on a half-added question, and a
+// misalignment surfaces as visibly wrong words under a question rather than
+// as silent damage on a device. Persisted Leitner state is keyed by the
+// question's `id`, not by this position — see quizMeta.js's header for why
+// that changed on 2026-09-01.
 // ═══════════════════════════════════════════════════════════════════════════
 
 import { quizMeta } from "./quizMeta.js";

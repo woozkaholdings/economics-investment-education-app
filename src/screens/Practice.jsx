@@ -86,11 +86,11 @@ export default function Practice({ t, lang, completedLessons, review, recordRevi
   const [atBatchPause, setAtBatchPause] = useState(false);
 
   // Question TEXT is a per-language module (item 48); the schedule is not.
-  // dueQuestions reads only indices and `lesson`, both of which live in
-  // quizMeta, so the queue is computed from meta and the words are merged in
-  // afterwards by index. Deriving the schedule from the loaded language file
-  // instead would make a learner's review order depend on which module had
-  // finished downloading.
+  // dueQuestions reads only `id` and `lesson`, both of which live in quizMeta,
+  // so the queue is computed from meta and the words are merged in afterwards
+  // by index. Deriving the schedule from the loaded language file instead
+  // would make a learner's review order depend on which module had finished
+  // downloading.
   const [quizText, setQuizText] = useState(null);
   // Both review buttons are already `disabled={!quizText}`, so a rejected
   // fetch did not crash this screen — it left two dead buttons and no
@@ -154,8 +154,8 @@ export default function Practice({ t, lang, completedLessons, review, recordRevi
     () =>
       quizMeta
         .map((question, index) => ({ question, index }))
-        .filter(({ question, index }) =>
-          completedLessons.includes(question.lesson) || Boolean(review[String(index)])
+        .filter(({ question }) =>
+          completedLessons.includes(question.lesson) || Boolean(review[question.id])
         ),
     [completedLessons, review]
   );
@@ -375,7 +375,7 @@ export default function Practice({ t, lang, completedLessons, review, recordRevi
           lang={lang}
           t={t}
           onAnswered={(wasCorrect) => {
-            recordReview(item.index, wasCorrect);
+            recordReview(item.question.id, wasCorrect);
             track(EVENTS.QUIZ_ANSWERED, { lessonId: item.question.lesson, source: "review_queue", correct: wasCorrect });
             setResults((prev) => [...prev, { item, correct: wasCorrect }]);
             setAnswered(true);

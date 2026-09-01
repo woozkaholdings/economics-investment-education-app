@@ -113,9 +113,10 @@ export default function LessonReader({ t, lang, lessons, index, completedLessons
 
   // This lesson's own retrieval check. Answers feed the same spaced schedule
   // the Review tab drives, so a question missed here comes back tomorrow.
-  // Indices come from quizMeta, never from the loaded text — review.js keys
-  // persisted Leitner state by a question's index in that array, so the
-  // schedule must not depend on which language module happens to be loaded.
+  // Questions come from quizMeta, never from the loaded text: the `id` that
+  // keys the schedule and the `answer` that grades it both live there, so
+  // neither depends on which language module happens to be loaded. The index
+  // is used for one thing — merging in that module's words.
   const [quizText, setQuizText] = useState(null);
   const check = useMemo(
     () =>
@@ -399,7 +400,7 @@ export default function LessonReader({ t, lang, lessons, index, completedLessons
               Sits with the body rather than after the takeaway: it is an
               exercise on what was just read, and the takeaway/reflection pair
               should still be what closes every lesson. Renders nothing for the
-              39 lessons that host no scenario. */}
+              43 lessons that host no scenario. */}
           <PolicySim lessonId={lesson.id} t={t} lang={lang} />
 
           <Stack gap={space["3"]} style={{ marginTop: space["5"] }}>
@@ -455,7 +456,7 @@ export default function LessonReader({ t, lang, lessons, index, completedLessons
                 lang={lang}
                 t={t}
                 onAnswered={(wasCorrect) => {
-                  recordReview(qIndex, wasCorrect);
+                  recordReview(question.id, wasCorrect);
                   track(EVENTS.QUIZ_ANSWERED, { lessonId: lesson.id, source: "lesson_check", correct: wasCorrect });
                   // The check has no "finish" button — every question is on
                   // screen at once — so the quiz is "taken" when the last one

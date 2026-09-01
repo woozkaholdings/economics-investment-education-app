@@ -7,8 +7,10 @@
 // ~25 kB), and it was statically imported by both Practice and LessonReader.
 //
 // Index-aligned with quizMeta.js — entry i here is entry i there. That
-// alignment is what keeps every learner's persisted review schedule valid;
-// see quizMeta.js for why the order must not change.
+// alignment is how a question's words are found once its schedule entry has
+// been looked up by id, so all six files reorder together or not at all;
+// see quizMeta.js. (Until 2026-09-01 the alignment also carried every
+// learner's persisted schedule, which is no longer true.)
 //
 // The language-independent `lesson` and `answer` fields are NOT here on
 // purpose. They live once, in quizMeta.js.

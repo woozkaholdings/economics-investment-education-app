@@ -16,7 +16,13 @@ import { todayStr, dayDiff } from "../utils/date.js";
 import { DEFAULT_FONT_SCALE, DEFAULT_THEME_MODE, FONT_SCALE_STEPS, THEME_MODES } from "../theme.js";
 import { TR } from "../locales/index.js";
 import { loadReview, recordAnswer, saveReview } from "./review.js";
+import { quizMeta } from "../content/quizMeta.js";
 import { migrateLegacyLessonIds } from "./lessonIdMigration.js";
+
+// Frozen at module load: the mapping a pre-2026-09-01 review state needs to
+// become id-keyed is "index i meant whatever id sits at i today", and that is
+// only true while this array is the one the old state was written against.
+const QUIZ_IDS_BY_INDEX = quizMeta.map((q) => q.id);
 
 // ── streak ────────────────────────────────────────────────────────────────
 // One increment per calendar day on which at least one lesson is completed.
@@ -99,7 +105,10 @@ export function useAppState() {
   const [streak, setStreak] = useState(0);
   const [fontScale, setFontScaleState] = useState(loadFontScale);
   const [themeMode, setThemeModeState] = useState(loadThemeMode);
-  const [review, setReview] = useState(loadReview);
+  // quizMeta only to migrate a pre-id state object once, on first read (see
+  // review.js). It is already a static import on both quiz screens and is
+  // 3.5 kB, so this adds nothing to the payload.
+  const [review, setReview] = useState(() => loadReview(QUIZ_IDS_BY_INDEX));
 
   // Whether this device has opened the app before. Drives both the one-time
   // disclaimer notice and first-open routing, so a brand-new user lands in
@@ -180,9 +189,9 @@ export function useAppState() {
 
   // Called from both the end-of-lesson check and the review queue, so every
   // answer anywhere feeds one schedule.
-  const recordReview = useCallback((questionIndex, wasCorrect) => {
+  const recordReview = useCallback((questionId, wasCorrect) => {
     setReview((prev) => {
-      const next = recordAnswer(prev, questionIndex, wasCorrect);
+      const next = recordAnswer(prev, questionId, wasCorrect);
       saveReview(next);
       return next;
     });

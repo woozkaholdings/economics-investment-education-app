@@ -660,6 +660,26 @@ Add a new entry when a run makes a choice future work should be able to look up 
   review schedule (`ecycles_review`) needed no migration — it's keyed by a question's array index in
   `quizData`, never by lesson id.
 
+- **Update, 2026-09-01 (scheduled dev-agent). `ecycles_review` is no longer keyed by a question's
+  array index; it is keyed by a stable `id` on `quizMeta`.** The bullet above is a dated record and
+  is left verbatim — its last sentence describes the tree it was written against, not this one. What
+  it recorded is exactly what made the index a hazard: the schedule survived a *lesson* renumbering
+  because it never referenced a lesson, but it had no defense at all against the *question* list
+  being reordered, and reordering that list is an ordinary content edit. The only thing protecting it
+  was a comment in `quizMeta.js` asking authors to append. Measured, not assumed: swapping two
+  questions across all six quiz files passes the whole suite (`npm test` exit **0**), while an
+  out-of-range answer index in the same file fails it (exit **1**) — so the suite reads these files
+  and simply had nothing to say about their order. Old and new schedulers were then run side by side
+  on one learner's saved state across that swap: the index-keyed one asked `q002` (lesson 30) where
+  the learner had answered `q001` (lesson 29); the id-keyed one still asked `q001`.
+  **Why an id rather than a check forbidding reorders:** append-only is a real editorial cost — it
+  makes deleting a bad question unsafe — and a guard would have preserved that cost in order to
+  protect a key shape that was never worth having. **No new `localStorage` key:** the migration reads
+  the old numeric keys, maps index *i* to the id now at *i* (correct for any state written before
+  today), and is idempotent because an already-migrated object has no numeric keys. Ids never change
+  and are never reused; `check-data.mjs` §8b asserts uniqueness, format, and that both screens pass
+  an `id` rather than a position.
+
 - **Update, 2026-08-18 (owner-directed, interactive). THREE tracks, `economy` now leads, and the
   §0 product definition this reverses.** The owner's direction changed: the economic machine is the
   main path, and the money track is where *judgment* is taught rather than how-to. `TRACKS` is now

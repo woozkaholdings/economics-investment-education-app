@@ -3713,6 +3713,141 @@ finding(s); V vacuous; U unavailable`. A bare "no accessibility issues found" is
 
 ## Run log
 
+### 2026-09-01 (scheduled dev-agent, self-picked from a §-reference count) — every learner's review schedule was keyed by a question's POSITION in an array, so an ordinary content edit would have re-pointed it at different questions, and the only thing holding the line was a comment asking authors to append
+
+**Pick, and why it is not a residual chain (W-6.2 rule 1).** The previous run closed a `kidsContent`
+translation gap and wrote: *"Next run should pick from the launch plan or the owner-facing block. Item
+161 is filed but must not be taken by default."* I did not take it, and I did not take 160 either. I
+re-ran the §-reference count that run used, on my own instrument (`§N` occurrences across
+`LAUNCH_PLAN.md`, `AGENT_LOG.md`, the archive, `scripts/`, `src/`, `DECISIONS.md`), with §2.3 at
+**240** as a live control and a nonexistent-token control returning **0**. §2.6 was just done; §4.0/
+§4.4/§4.5 are owner clauses. **§3.3 (17) and §9.3 (16) were next** — but §3.3's notification gap was
+closed 08-31 and §9.3's monthly audit is not due until the first Saturday (09-05), which is also
+every open `CLAIMS.md` check date, so neither was overdue. I then counted module mentions instead:
+`PolicySim` (14) / `policyScenarios` (10) are the least-audited learner-visible feature in the app,
+and `CLAIMS.md` A7 names them as the §3.0.4 differentiator.
+
+**PolicySim was audited and is CLEAN — reporting that, because a search that finds nothing is a
+result.** All three guards its header claims actually exist (`check-data.mjs` §13c, §19,
+`check-blindspot.mjs`'s §2.3 teaching-copy list — grepped, not assumed); `lessonId: 35` still resolves
+to "Interest Rates: The Master Signal" despite two renumberings; all five `policySim*` locale keys are
+present and rendered. **One false figure found and corrected inline** (2 characters, in a file this
+commit already changes): `LessonReader.jsx`'s comment said the simulator "renders nothing for the 39
+lessons that host no scenario" — measured, it is **43** (44 lessons, 1 hosts a scenario). Filing a
+2 KB backlog item for that would be exactly the floor growth W-6.4 describes.
+
+Reading §19 is what produced the real pick: it validates that every question field is **present**, and
+one file over, `quizMeta.js`'s header said in capitals that **array order is load-bearing because
+`review.js` keys persisted Leitner state by a question's index**. A capitalized comment is not a guard.
+
+**Step 3.5 — the premise was mine to make, so it was measured by injection, with a control, before
+any edit.** There was no backlog item to re-measure; the claim to establish was *"nothing detects a
+reorder."* An instrument that silently returns nothing certifies a corpus as clean, so the rewriter
+itself was validated first: it parses each of the six quiz modules, re-serializes the array, and was
+proven to **round-trip all six byte-identically (`cmp`, silent)** before any mutation was trusted.
+- **Defect probe:** swap questions 0 and 1 in `quizMeta.js` **and all five `quizText.<lang>.js`** — a
+  reorder that keeps every field valid and every length equal. `npm test` exits **0**, **0 failures**.
+  The injection is shown to have landed (`quizMeta[0]` reads lesson 30; `quizText.en[0]` reads the
+  other question's text).
+- **Control:** `quizMeta[0].answer = 99` in the same file. `npm test` exits **1** —
+  `FAIL: quizData[0].answer: index 99 out of range for 4 options`. So the suite genuinely reads these
+  files and simply had nothing to say about their order.
+- Also measured: `grep -c quizMeta scripts/*.mjs` = **0**. No script imports the module at all.
+- **The append-only rule had in fact been honored** — `quizMeta.js` has two commits in its life and
+  `b6c9bc9` was 16 insertions at the end, 0 deletions. The property held; nothing enforced it.
+
+**THE FIX IS THE CLASS, NOT A GUARD, and that was a deliberate choice.** A check forbidding reorders
+would have preserved the cost that made this bad — under append-only, **deleting a bad question is
+unsafe** — in order to protect a key shape that was never worth having. So `quizMeta` now carries a
+stable opaque `id` (`q001`…`q046`, assigned once in current order, never reused), `review.js` keys by
+it, and both screens pass `question.id`. Ordering is now only a build-time alignment with the
+`quizText` modules, where a mistake shows up as visibly wrong words rather than as silent damage on
+someone's device. **A one-time migration** maps old numeric keys through "index *i* meant the id now
+at *i*" — correct for any state written before today — and needs no new `localStorage` key, because
+an already-migrated object has no numeric keys and is returned unchanged.
+
+**The two-direction measurement, which is the learner-visible statement.** Both schedulers were run
+side by side on one learner's saved state, before and after two questions are swapped:
+
+| | before the reorder | after the reorder |
+|---|---|---|
+| index-keyed (HEAD) | asks `q001` (lesson 29) | **asks `q002` (lesson 30)** |
+| id-keyed (this commit) | asks `q001` (lesson 29) | asks `q001` (lesson 29) |
+
+They agree before the swap, so the probe is not merely always disagreeing. **The learner answered
+lesson 29's question; the old scheduler brings back lesson 30's.**
+
+**Five plants, because a check that cannot fail is decoration. Exit codes quoted, not inferred.**
+(1) duplicate id → **exit 1**, `quizData[1].id "q001" duplicates quizData[0]`; (2) `dueQuestions`
+reverted to index keying → **exit 1** on the reorder assertion; (3) `migrateIndexKeys` stubbed to
+return its input → **exit 1**; (4) `Practice.jsx`'s call site reverted to `recordReview(item.index,…)`
+→ **exit 1**; (5) the call renamed so the scan sees nothing → **exit 1**, *"either the screen stopped
+recording answers or this check has gone blind."* Every plant restored from a scratchpad copy, never
+`git checkout --`, and each restore verified byte-identical with `cmp`.
+
+⚠️ **Plant 2 refuted my own first version of the test, and that is the durable part of this entry.**
+The assertion was `eq("a reorder does not re-point…", after, before)`. Under index keying both sides
+are **empty arrays** — the state is id-keyed, so an index lookup finds nothing — so `after === before`
+**passed on the exact defect it existed to catch.** A same-shaped comparison is satisfiable by two
+nothings. It now asserts both sides against the expected id (`[[q001],[q001]]`) and fails under the
+plant. **This is the "your instrument must not be vacuously satisfiable" lesson arriving inside a test
+written by the run that was hunting that very failure mode**, and it was caught only because the plant
+was actually run rather than reasoned about.
+
+**Render proof, and the substitute for the one I cannot run.** No dev server: this session is
+unattended and the harness refuses it, so there is no screenshot. Instead the built bundle was
+grepped: **46 `id:"qNNN"` literals ship in `dist/assets/index-*.js`**, `q001` and `q046` both present,
+**with a negative control** — `q999`, a string I did not add, is absent, so the grep is not matching
+everything. `npm run build` exits **0**.
+
+**Adversarial self-check (step 5) — run, and it FOUND ONE REAL CONFLICT, which is fixed in this
+commit.**
+*DECISIONS.md conflict — yes, and it is the one that mattered.* The 2026-08-14 lesson-renumbering
+entry closes: *"The Leitner review schedule (`ecycles_review`) needed no migration — it's keyed by a
+question's array index in `quizData`, never by lesson id."* That sentence is now false. **It is a
+dated record, so it is left verbatim** and a new dated 2026-09-01 note is appended beneath it — the
+rule this repo carries in §29's own failure message, and the same rule that protected the "1/12"
+verification note above it. The old bullet is also the best available evidence for *why* the index was
+a hazard: the schedule survived a **lesson** renumbering precisely because it never referenced a
+lesson, and had no defense at all against the **question** list moving.
+*Blindspot register:* `npm run check-blindspot` **PASS, 0 failures**. No Dalio (§10.2), no
+advice-adjacent language (§10.1 — no learner-facing prose changed at all this run; every string added
+is an opaque id or a source comment), kids framing untouched (§10.3), and §2.3's live-looking-date
+scan passes over `quizText.<lang>.js`, which this commit edits the headers of.
+*localStorage decision:* unchanged and deliberately so — still client-side only, still one key
+(`ecycles_review`), **no new key added**, so §27's `KEYS`-vs-`DECISIONS.md` check is unaffected.
+Content is still `.js` modules; nothing platform-level touched.
+*Already-done backlog item:* not a redo. `grep` for prior work on review keying across `AGENT_LOG.md`
+and the archive returns **nothing**; item 48 split the quiz by language and moved the answer key into
+`quizMeta.js` but never touched the schedule's key shape.
+*W-6.2 rule 2:* nothing is filed as a numbered item by this run, so the rule does not bite.
+*W-6.2 rule 3 — the learner-visible sentence the new check must name:* **"a learner who has been
+reviewing for three weeks opens Practice after a content update and is asked a question they have
+never seen, treated as nearly mastered, while the question they keep missing has silently inherited a
+16-day interval."** For §8b's call-site half the sentence is sharper still: pass a position instead of
+an id and **every answer lands under a key nothing reads back, so Practice stays permanently empty
+however much the learner answers.**
+*W-6.3 — the ratio, re-measured on the wide basis rather than quoted:* the previous entry established
+`scripts/*.mjs` + `scripts/*.js` at **16,321** against **7,101** for `src/` minus `content/` and
+`locales/` = **2.298x**. Re-measured after this change: **16,402 / 7,146 = 2.295x.** This run adds
+**81 lines to `scripts/`** against **45 to `src/`** — it is the rare change that moves the ratio
+*down*, and the check it adds is the smallest of the two options it chose between.
+*My own verification claim:* an independent reviewer re-running `npm test`, `npm run build`, the two
+step-3.5 injections, the five plants and the side-by-side probe gets these exact figures. The 46, the
+43 and the two probe outputs are produced by committed code against committed content; the old
+scheduler in the probe is `git show HEAD:src/lib/review.js`, so it is reproducible by someone who was
+not present for the run.
+
+**Next run should pick from the launch plan or the owner-facing block.** Nothing was filed for it to
+inherit. **O-1 remains the entire critical path** — 44 lessons, five languages, 160 minutes, and zero
+people have ever opened this app. ⚠️ **An archiving pass is due next run:** before this entry the run log
+stood at **234,806 b, 93.9% of its warn budget, 1.39 runs of headroom**; with it the log measures
+**246,225 b, 98.5%** (`check-log-size.mjs`, both figures run 2026-09-01). It does **not** cross the
+warn budget — I checked rather than assuming, having written the sentence the other way first — but
+it leaves **under one run** of room, so the next entry does. The floor is unchanged at **325,444 b against 250,000 b** and only
+a backlog compression pass can move it (item 115, the owner's).
+**Owner tree at start and end of run: the owner's untracked `UIUX/`, untouched, as in the previous twelve runs.**
+
 ### 2026-09-01 (scheduled dev-agent, self-picked from LAUNCH_PLAN §2.6 — the least-referenced learner-visible section) — the parent guide's Spanish told parents that borrowing for a growing business is GOOD debt, because the clause defining good debt was never translated, and the check that certified this file measures presence
 
 **Pick, and why it is not a residual chain (W-6.2 rule 1).** The previous run closed item 160's first

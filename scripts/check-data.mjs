@@ -22,7 +22,7 @@ import { bracketBands, bracketIncomes, bracketTax, bracketTiers } from "../src/c
 import { economicSignals } from "../src/content/economicSignals.js";
 import { policyScenarios } from "../src/content/policyScenarios.js";
 import { sectors } from "../src/content/sectors.js";
-import { MAX_BOX, dueQuestions, recordAnswer } from "../src/lib/review.js";
+import { MAX_BOX, dueQuestions, migrateIndexKeys, recordAnswer } from "../src/lib/review.js";
 import { MIN_BARS, OUTPERFORM_THRESHOLD, WJ_PERIODS, wjSectorComparison } from "../src/lib/relativeStrength.js";
 import { OLD_TO_NEW_LESSON_ID, migrateLegacyLessonIds } from "../src/lib/lessonIdMigration.js";
 import { HTML_LANG } from "../src/lib/useAppState.js";
@@ -634,39 +634,120 @@ if (keyedGroupsChecked < 4) {
     }
   };
 
-  let s = recordAnswer({}, 3, true, "2026-08-04");
-  eq("first correct answer enters box 1, due next day", [s["3"].box, s["3"].due], [1, "2026-08-05"]);
+  // Ids are read out of the real content rather than written as literals, so
+  // these cases keep testing the scheduler and not a hardcoded id scheme.
+  const ID = (i) => quizData[i].id;
 
-  s = recordAnswer(s, 3, true, "2026-08-05");
-  eq("second correct answer advances to box 2", [s["3"].box, s["3"].due], [2, "2026-08-07"]);
+  let s = recordAnswer({}, ID(3), true, "2026-08-04");
+  eq("first correct answer enters box 1, due next day", [s[ID(3)].box, s[ID(3)].due], [1, "2026-08-05"]);
 
-  s = recordAnswer(s, 3, false, "2026-08-07");
-  eq("a miss drops back to box 1", [s["3"].box, s["3"].due, s["3"].wrong], [1, "2026-08-08", 1]);
+  s = recordAnswer(s, ID(3), true, "2026-08-05");
+  eq("second correct answer advances to box 2", [s[ID(3)].box, s[ID(3)].due], [2, "2026-08-07"]);
+
+  s = recordAnswer(s, ID(3), false, "2026-08-07");
+  eq("a miss drops back to box 1", [s[ID(3)].box, s[ID(3)].due, s[ID(3)].wrong], [1, "2026-08-08", 1]);
 
   let capped = {};
-  for (let i = 0; i < 10; i++) capped = recordAnswer(capped, 0, true, "2026-08-04");
-  eq("box is capped", capped["0"].box, MAX_BOX);
+  for (let i = 0; i < 10; i++) capped = recordAnswer(capped, ID(0), true, "2026-08-04");
+  eq("box is capped", capped[ID(0)].box, MAX_BOX);
 
   eq("interval arithmetic crosses a month boundary",
-    recordAnswer({}, 1, true, "2026-08-31")["1"].due, "2026-09-01");
+    recordAnswer({}, ID(1), true, "2026-08-31")[ID(1)].due, "2026-09-01");
 
   // Never-answered questions belong to their lesson's check, not to review —
   // surfacing them here would quiz material the learner hasn't reached.
   eq("unseen questions are never due", dueQuestions({}, quizData, "2026-08-04").length, 0);
 
   const mixed = {
-    "2": { box: 1, due: "2026-08-04", seen: 1, wrong: 0 },
-    "5": { box: 1, due: "2026-08-09", seen: 1, wrong: 0 },
+    [ID(2)]: { box: 1, due: "2026-08-04", seen: 1, wrong: 0 },
+    [ID(5)]: { box: 1, due: "2026-08-09", seen: 1, wrong: 0 },
   };
   eq("due today is included, future is not",
     dueQuestions(mixed, quizData, "2026-08-04").map((x) => x.index), [2]);
 
   const overdue = {
-    "2": { box: 1, due: "2026-08-04", seen: 1, wrong: 0 },
-    "5": { box: 1, due: "2026-08-01", seen: 1, wrong: 0 },
+    [ID(2)]: { box: 1, due: "2026-08-04", seen: 1, wrong: 0 },
+    [ID(5)]: { box: 1, due: "2026-08-01", seen: 1, wrong: 0 },
   };
   eq("most overdue comes first",
     dueQuestions(overdue, quizData, "2026-08-04").map((x) => x.index), [5, 2]);
+
+  // ── The reason any of the above is keyed by id (2026-09-01) ──────────────
+  // A schedule written against one ordering must survive a later reordering
+  // of the content. This is the case that FAILED under index keys, and it is
+  // written as a positive assertion rather than a comment because the whole
+  // defect was that a comment was the only thing enforcing it.
+  {
+    const reordered = [quizData[1], quizData[0], ...quizData.slice(2)];
+    const state = { [ID(0)]: { box: 1, due: "2026-08-04", seen: 1, wrong: 0 } };
+    const before = dueQuestions(state, quizData, "2026-08-04").map((x) => x.question.id);
+    const after = dueQuestions(state, reordered, "2026-08-04").map((x) => x.question.id);
+    // Both sides are asserted against the expected id, not against each other.
+    // `after === before` alone is satisfied by two empty arrays, which is what
+    // index keying actually returns here — the assertion would have passed on
+    // the very defect it exists to catch. Caught by planting that defect.
+    eq("a reorder leaves the schedule pointing at the question that was answered",
+      [before, after], [[ID(0)], [ID(0)]]);
+  }
+
+  // Migration off the old index-keyed shape. Same fixture, read back by id.
+  {
+    const legacy = { "0": { box: 3, due: "2026-08-09", seen: 4, wrong: 1 } };
+    const ids = quizData.map((q) => q.id);
+    eq("a pre-id state object migrates index 0 onto the id at index 0",
+      migrateIndexKeys(legacy, ids)[ID(0)], legacy["0"]);
+    eq("an already-migrated state object is left alone",
+      migrateIndexKeys({ [ID(0)]: legacy["0"] }, ids), { [ID(0)]: legacy["0"] });
+    eq("an index past the end of the catalog is dropped, not invented",
+      Object.keys(migrateIndexKeys({ "9999": legacy["0"] }, ids)), []);
+  }
+}
+
+// 8b. Question ids are the key to every learner's persisted review schedule
+//     (quizMeta.js). Uniqueness is the property that matters: a duplicate id
+//     means two questions sharing one Leitner entry, so answering either one
+//     reschedules both, and the learner-visible result is a question that
+//     never comes back because its twin keeps being answered correctly.
+{
+  const seen = new Map();
+  quizData.forEach((item, i) => {
+    if (typeof item.id !== "string" || !/^q\d{3,}$/.test(item.id)) {
+      fail(`quizData[${i}].id: ${JSON.stringify(item.id)} is not a stable question id (expected /^q\\d{3,}$/) — review.js keys persisted state by this`);
+      return;
+    }
+    if (seen.has(item.id)) {
+      fail(`quizData[${i}].id "${item.id}" duplicates quizData[${seen.get(item.id)}] — two questions would share one learner's review entry`);
+    }
+    seen.set(item.id, i);
+  });
+  // A section that measures nothing looks exactly like a clean one: if the
+  // shape ever changes so that no id is read, say so instead of passing.
+  if (seen.size === 0) fail("§8b read 0 question ids — quizData's shape changed and this section is measuring nothing");
+
+  // And the two screens have to HAND it an id. `recordReview` takes whatever
+  // it is given and makes it a key, so passing the array index back — the
+  // shape both call sites had until 2026-09-01 — writes a numeric key that no
+  // reader ever looks up again. The learner-visible result is a review queue
+  // that never fills: every answer lands under a key `dueQuestions` does not
+  // read, so Practice stays permanently empty however much the learner
+  // answers. Nothing above can see this; it is a call-site property.
+  const CALL_SITES = ["src/screens/Practice.jsx", "src/screens/LessonReader.jsx"];
+  let callsChecked = 0;
+  for (const rel of CALL_SITES) {
+    const src = readFileSync(join(ROOT, rel), "utf8");
+    const calls = [...src.matchAll(/recordReview\(([^,)]+),/g)];
+    if (calls.length === 0) {
+      fail(`§8b: no recordReview() call found in ${rel} — either the screen stopped recording answers or this check has gone blind`);
+      continue;
+    }
+    for (const [, arg] of calls) {
+      callsChecked++;
+      if (!/\.id\b/.test(arg)) {
+        fail(`§8b: ${rel} calls recordReview(${arg.trim()}, …) — the first argument keys persisted Leitner state and must be a question's \`id\`, not its position (quizMeta.js)`);
+      }
+    }
+  }
+  if (callsChecked === 0) fail("§8b: 0 recordReview() call sites checked — the scan is measuring nothing");
 }
 
 

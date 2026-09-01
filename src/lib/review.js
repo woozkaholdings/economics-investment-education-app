@@ -11,8 +11,19 @@
 // Pure functions plus a thin persistence layer, so the schedule can be reasoned
 // about (and tested) without a browser.
 //
-// State shape, keyed by the question's index in `quizData`:
-//   { "3": { box: 2, due: "2026-08-06", seen: 4, wrong: 1 } }
+// State shape, keyed by the question's STABLE `id` (see quizMeta.js):
+//   { "q003": { box: 2, due: "2026-08-06", seen: 4, wrong: 1 } }
+//
+// WHY AN ID AND NOT THE ARRAY INDEX, which is what this keyed on until
+// 2026-09-01. The index is a position in `quizMeta`, and a position is not a
+// question: insert, delete or reorder one entry and every key from that point
+// on names a different question than it did when it was written. The whole
+// suite passes while that happens — a two-question reorder across all six quiz
+// files was injected and `npm test` exited 0 — so the only thing standing
+// between a content edit and a corrupted schedule was a comment asking authors
+// to append. Failures of that kind land on a device, after the edit ships, and
+// look like the app asking about material the learner has never seen while
+// treating a question they keep missing as mastered.
 // ═══════════════════════════════════════════════════════════════════════════
 
 import { KEYS, readJSON, writeJSON } from "./storage.js";
@@ -29,9 +40,29 @@ function addDays(dateStr, days) {
   return `${t.getUTCFullYear()}-${String(t.getUTCMonth() + 1).padStart(2, "0")}-${String(t.getUTCDate()).padStart(2, "0")}`;
 }
 
-export function loadReview() {
+// `idsByIndex` is quizMeta's id list in array order, passed in rather than
+// imported so this module stays free of content. It is only used to migrate a
+// pre-2026-09-01 state object, whose keys are numeric indices into that same
+// array — so index i means exactly idsByIndex[i], and the mapping is correct
+// for every device that wrote its state before the id landed.
+export function loadReview(idsByIndex = []) {
   const raw = readJSON(KEYS.review, {});
-  return raw && typeof raw === "object" && !Array.isArray(raw) ? raw : {};
+  if (!raw || typeof raw !== "object" || Array.isArray(raw)) return {};
+  return migrateIndexKeys(raw, idsByIndex);
+}
+
+// Numeric keys are the old shape. A key past the end of `idsByIndex` names a
+// question that no longer exists and is dropped: the alternative is inventing
+// an id for it, which would put a phantom entry in the schedule forever.
+export function migrateIndexKeys(state, idsByIndex) {
+  if (!Object.keys(state).some((k) => /^\d+$/.test(k))) return state;
+  const out = {};
+  for (const [key, value] of Object.entries(state)) {
+    if (!/^\d+$/.test(key)) { out[key] = value; continue; }
+    const id = idsByIndex[Number(key)];
+    if (id !== undefined && out[id] === undefined) out[id] = value;
+  }
+  return out;
 }
 
 export function saveReview(state) {
@@ -41,8 +72,8 @@ export function saveReview(state) {
 // Applies one answer and returns the updated state. Correct → up a box (capped);
 // wrong → back to box 1, because a missed item deserves the shortest interval
 // regardless of how well it was known before.
-export function recordAnswer(state, questionIndex, wasCorrect, today = todayStr()) {
-  const key = String(questionIndex);
+export function recordAnswer(state, questionId, wasCorrect, today = todayStr()) {
+  const key = String(questionId);
   const prev = state[key] || { box: 0, seen: 0, wrong: 0 };
   const box = wasCorrect ? Math.min(prev.box + 1, MAX_BOX) : 1;
   return {
@@ -60,18 +91,22 @@ export function recordAnswer(state, questionIndex, wasCorrect, today = todayStr(
 // has arrived. Never-seen questions are NOT included — they belong to their
 // lesson's own check, not to review; surfacing them here would ask about
 // material the learner hasn't reached yet.
+// `index` is still carried on every returned item, because it is how the
+// caller merges in the words from the loaded quizText.<lang> module. It is a
+// position for text lookup and nothing else — the schedule is read and written
+// by `question.id`.
 export function dueQuestions(state, allQuestions, today = todayStr()) {
   return allQuestions
     .map((question, index) => ({ question, index }))
-    .filter(({ index }) => {
-      const entry = state[String(index)];
+    .filter(({ question }) => {
+      const entry = state[question.id];
       if (!entry || !entry.due) return false;
       return dayDiff(entry.due, today) >= 0;   // due today or overdue
     })
     // Most-overdue first, then weakest box, so the shakiest material leads.
     .sort((a, b) => {
-      const ea = state[String(a.index)];
-      const eb = state[String(b.index)];
+      const ea = state[a.question.id];
+      const eb = state[b.question.id];
       const overdue = dayDiff(eb.due, today) - dayDiff(ea.due, today);
       return overdue !== 0 ? overdue : (ea.box || 0) - (eb.box || 0);
     });
