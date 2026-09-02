@@ -39,15 +39,40 @@ export default function Learn({ t, lang, lessons, completedLessons, isUnlocked, 
   const total = lessons.length;
 
   // Resume where the learner actually is: the first lesson they haven't
-  // finished, rather than always lesson 1 or the last one they tapped.
+  // finished IN THE TRACK THEY LAST FINISHED ONE IN, falling back to the first
+  // unfinished lesson in the flat path.
+  //
+  // ⚠️ THE TRACK CLAUSE IS NOT DECORATION — without it this pointer sends
+  // every learner who did not start in `economy` back to lesson 1 of the app.
+  // Measured live on 2026-09-02, before the fix, with
+  // `ecycles_completed_lessons = [16,17,18]` (three lessons into "Thinking
+  // About Money", the track the product is named for): the card read
+  // "Pick up where you left off — NEXT UP: Transactions: The Building Block",
+  // the FIRST lesson of a track that learner had never opened, "Continue
+  // Learning" opened it, and the accordion expanded the 0/12 track while
+  // collapsing the 3/17 one. Control, same session: `[29]` gave "Credit: The
+  // Most Important Part" with `economy` expanded, so the probe was reading the
+  // pointer and not a constant.
+  // The three tracks are INDEPENDENT and gate only within themselves
+  // (`App.isUnlocked`), so "first unfinished in the flat list" is not "where
+  // you left off" for anyone outside `economy` — for them it is *always*
+  // lesson 1, which is exactly what the paragraph below says this pointer
+  // exists to avoid.
+  //
+  // `completedLessons` is append-ordered (`useAppState.completeLesson` pushes,
+  // and the one-time id migration `.map`s, so both preserve it), which is what
+  // makes its last entry a usable "where were you" without persisting a second
+  // key. A learner with nothing completed has no last entry and falls through
+  // to the flat pointer, so a new install still opens on `economy`'s first
+  // lesson — see the initialRoute comment in App.jsx, which is the record for
+  // that invariant.
   //
   // `lessons` is `lessonsByTrack()`, so it arrives ECONOMY-track-first
   // (economy → money → essentials) after the 2026-08-18 reversal — see
   // DECISIONS.md's two-tracks section, which is the record if this comment and
-  // that document ever disagree. A new install therefore resumes into the
-  // economy track, the main path. `essentials` is optional and gates nothing,
-  // so it sits last here exactly as it does on the page, and this pointer
-  // reaches it only once the other two tracks are finished.
+  // that document ever disagree. `essentials` is optional and gates nothing,
+  // so it sits last here exactly as it does on the page, and the FALLBACK
+  // pointer reaches it only once the other two tracks are finished.
   //
   // Index-based on purpose: ids are deliberately NOT aligned to display order,
   // so "the next lesson" is a position in this list and never a lowest-id.
@@ -62,9 +87,21 @@ export default function Learn({ t, lang, lessons, completedLessons, isUnlocked, 
   // against this index. The app had no finished state; it looped.
   // -1 is now the app's only "path is done" signal, and both consumers below
   // (`nextLesson`, and `isNext` on each row) read it as one.
-  const nextIndex = lessons.findIndex((l) => !completedLessons.includes(l.id));
+  const flatNextIndex = lessons.findIndex((l) => !completedLessons.includes(l.id));
+  // The track of the last lesson finished, and the first unfinished lesson in
+  // it. -1 when nothing is completed, when the stored id is not a lesson any
+  // more, or when that track is itself finished — all three fall back.
+  const lastFinishedTrack = lessons.find(
+    (l) => l.id === completedLessons[completedLessons.length - 1]
+  )?.track;
+  const trackNextIndex = lastFinishedTrack === undefined
+    ? -1
+    : lessons.findIndex((l) => l.track === lastFinishedTrack && !completedLessons.includes(l.id));
+  const nextIndex = trackNextIndex === -1 ? flatNextIndex : trackNextIndex;
   const nextLesson = nextIndex === -1 ? null : lessons[nextIndex];
-  const pathComplete = total > 0 && nextIndex === -1;
+  // Deliberately the FLAT pointer: "the path is done" is a statement about all
+  // 44 lessons, and must not become true because one track ran out.
+  const pathComplete = total > 0 && flatNextIndex === -1;
   const started = done > 0;
 
   // Each track with its lessons, keeping every lesson's index into `lessons`
