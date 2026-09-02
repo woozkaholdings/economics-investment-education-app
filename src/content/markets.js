@@ -104,12 +104,24 @@ export const scenario = {
   ja: "「拡大後期」の状況：GDP成長は鈍化しつつあり、インフレは中央銀行の目標を上回り、政策金利は高水準で当局者の間で次の一手について意見が分かれ、関税の上昇がコスト圧力を高めています。こうした混在シグナルは、成長がはっきりと転換する前の拡大期後半に歴史的に見られるパターンです。",
 };
 
+// What each asset class's arrow is ABOUT. Until 2026-09-02 the cards rendered a
+// bare "↓" opposite "Rates ↑" with no noun anywhere on the screen naming the
+// thing that fell, so the two arrows in a row were indistinguishable — and on
+// the cash and dollar cards, where both point the same way, the row read as one
+// statement rather than a cause and an effect. The quantity is genuinely not the
+// same for every asset (a bond has a price, cash has a yield, a currency has a
+// value), which is why this is a per-asset field and not one shared label.
+const PRICE = { en: "Price", es: "Precio", ko: "가격", zh: "价格", ja: "価格" };
+const YIELD = { en: "Yield", es: "Rendimiento", ko: "수익률", zh: "收益率", ja: "利回り" };
+const VALUE = { en: "Value", es: "Valor", ko: "가치", zh: "价值", ja: "価値" };
+
 // How asset classes have historically related to rate moves. Direction only —
 // no figures, and framed as historical tendency rather than a recommendation
 // (LAUNCH_PLAN §10.1: general and historical, never personal).
 export const rateEffects = [
   {
     key: "stocks",
+    responds: PRICE,
     name: { en: "Stocks", es: "Acciones", ko: "주식", zh: "股票", ja: "株式" },
     rising: "↓", falling: "↑",
     note: {
@@ -122,6 +134,7 @@ export const rateEffects = [
   },
   {
     key: "bonds",
+    responds: PRICE,
     name: { en: "Bonds", es: "Bonos", ko: "채권", zh: "债券", ja: "債券" },
     rising: "↓", falling: "↑",
     note: {
@@ -134,6 +147,7 @@ export const rateEffects = [
   },
   {
     key: "realEstate",
+    responds: PRICE,
     name: { en: "Real Estate", es: "Bienes Raíces", ko: "부동산", zh: "房地产", ja: "不動産" },
     rising: "↓", falling: "↑",
     note: {
@@ -146,6 +160,7 @@ export const rateEffects = [
   },
   {
     key: "gold",
+    responds: PRICE,
     name: { en: "Gold", es: "Oro", ko: "금", zh: "黄金", ja: "金" },
     rising: "↓", falling: "↑",
     note: {
@@ -158,6 +173,7 @@ export const rateEffects = [
   },
   {
     key: "cash",
+    responds: YIELD,
     name: { en: "Cash", es: "Efectivo", ko: "현금", zh: "现金", ja: "現金" },
     rising: "↑", falling: "↓",
     note: {
@@ -170,6 +186,7 @@ export const rateEffects = [
   },
   {
     key: "usd",
+    responds: VALUE,
     name: { en: "US Dollar", es: "Dólar", ko: "달러", zh: "美元", ja: "米ドル" },
     rising: "↑", falling: "↓",
     note: {

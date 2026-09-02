@@ -49,11 +49,26 @@ export default function MarketSignals({ t, lang }) {
             <Text variant="caption" color={ink.strong} style={{ fontWeight: 700, marginBottom: space["2"] }}>
               {asset.name[lang]}
             </Text>
-            <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.75rem", color: ink.bad }}>
-              <span>{t.ratesRising}</span><span>{asset.rising}</span>
+            {/* Each row is a cause and an effect, and BOTH halves have to name
+                what they are about. The right half used to be a bare arrow
+                ("Rates ↑" opposite "↓"), which left the reader — and any screen
+                reader, which announces the two glyphs identically — to guess
+                what fell. `responds` supplies the noun, and it differs by asset:
+                a bond has a price, cash has a yield, a currency has a value.
+                It matters most on the cash and dollar cards, where the two
+                arrows point the SAME way and the row otherwise read as a single
+                statement about rates rather than as rates → asset.
+                `nowrap` on both halves plus `flexWrap` on the row is load-bearing,
+                not tidying: at 320px the Spanish "Rendimiento" is long enough that
+                adding the noun pushed "Tasas ↑" onto two lines and stranded the
+                ↑ on its own — reintroducing the exact ambiguity this fixes, in the
+                other half of the row. Each half now stays intact and the ROW wraps
+                instead (measured: 2 of 12 es labels broke before, 0 after). */}
+            <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "space-between", gap: space["2"], fontSize: "0.75rem", color: ink.bad }}>
+              <span style={{ whiteSpace: "nowrap" }}>{t.ratesRising}</span><span style={{ whiteSpace: "nowrap" }}>{asset.responds[lang]} {asset.rising}</span>
             </div>
-            <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.75rem", color: ink.ok }}>
-              <span>{t.ratesFalling}</span><span>{asset.falling}</span>
+            <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "space-between", gap: space["2"], fontSize: "0.75rem", color: ink.ok }}>
+              <span style={{ whiteSpace: "nowrap" }}>{t.ratesFalling}</span><span style={{ whiteSpace: "nowrap" }}>{asset.responds[lang]} {asset.falling}</span>
             </div>
             <Text variant="caption" color={ink.muted} style={{ marginTop: space["2"] }}>
               {asset.note[lang]}

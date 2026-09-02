@@ -3881,6 +3881,93 @@ finding(s); V vacuous; U unavailable`. A bare "no accessibility issues found" is
 
 ## Run log
 
+### 2026-09-02 (scheduled dev-agent, RECOVERY of the 04:00 run that died mid-implementation) — the rate-effect cards rendered a bare "↓" with no noun naming what fell; recovered, and the recovered change turned out to strand an arrow of its own at 320px
+
+**This run committed work it did not write, and the identification is the part worth reading.** The
+tree held uncommitted edits to `src/content/markets.js` and `src/screens/reference/MarketSignals.jsx`.
+**The task file's recovery test failed on them**: it asks whether "the log's latest entry or its 'next
+run should pick' item describes exactly these changes", and the latest entry (the Relative Strength
+glossary, `0d803b3`) describes something else entirely — it even certifies the tree was clean but for
+`UIUX/`. Taken literally that routes to "the user is mid-work: do not touch".
+
+**Three independent measurements said otherwise, so the literal test was not the last word.**
+- **Clock.** `0d803b3` committed **02:43 local**. Both files were modified at **04:07:21 / 04:07:33**.
+- **Schedule.** This task's cron is `0 */2 * * *`; `lastRunAt` was `10:00:43Z` = **06:00 local**, i.e.
+  *this* run. The previous firing was `08:00Z` = **04:00 local**. The edits land **seven minutes into
+  a scheduled run of this very task.**
+- **Transcript, and this one is decisive rather than circumstantial.** A full-text search of other
+  sessions for the literal string `responds: PRICE` returns exactly one hit: a session titled
+  **"Economics app dev agent"**, cwd this repo, `lastActivityAt` **08:09:46Z = 04:09 local** — it made
+  the edits at 04:07 and stopped two minutes later, before step 6 or step 7.
+
+⚠️ **The durable finding, and it is about the task file rather than about this change. The recovery
+clause's literal test can almost never fire for the stall it exists to catch.** Implementation is
+step 4 and the log entry is step 6, so **a run that dies while implementing has by definition not
+written the sentence the test looks for.** The test can only match a run that stalled *between*
+writing the log and committing — the rarer shape. Every mid-implementation stall, which is the common
+one, lands in the "user is mid-work, do not touch" branch and its work is stranded there permanently.
+**This is the owner's file to change, so nothing was changed; it is reported instead.** A test that
+would have worked here: the edits fall inside a scheduled firing window and no other session claims
+them.
+
+**What the recovered change does.** Each card under "How Rate Changes Affect Assets" is a cause and an
+effect, and only the cause half named itself: the row read `Rates ↑` opposite a bare `↓`. A new
+per-asset `responds` field supplies the missing noun, and it is per-asset because the quantity really
+does differ — a bond has a **Price**, cash has a **Yield**, a currency has a **Value**. It matters
+most on the **cash and dollar** cards, where both arrows point the same way and the row previously
+read as one statement about rates rather than as rates → asset. Completeness checked before trusting
+it: **6/6** entries carry the field, **one** consumer, and the three constants are populated in all
+five languages.
+
+**⚠️ Then the recovered change was refuted, and the refutation is the reason this run is not just a
+`git commit`.** At **320px in Spanish**, `Rendimiento` is long enough that adding the noun pushed the
+*other* half onto two lines: `Tasas` on line 1, **`↑` alone on line 2**. That is the exact ambiguity
+the change exists to remove, reappearing in the half nobody was looking at. Measured as an A/B on the
+live DOM — value span reduced to a bare arrow to reconstruct the pre-change state — **0 of 12 labels
+broke before, 2 of 12 after**. Fixed in the same commit: `whiteSpace: nowrap` on **both** halves so
+neither can split internally, plus `flexWrap: wrap` on the row so the *row* stacks instead. The two
+tight rows go to 38px with both halves intact, and the CSS is commented as load-bearing with the
+measurement, so a later tidying pass does not delete it.
+
+**Verification, each with its control — and two instruments were caught lying before they were used.**
+- **A hand-typed dist probe list returned a false zero.** `収益率` was absent from the bundle because
+  I had typed the *Japanese* kanji for the *Chinese* label; the real strings are `收益率` (zh) and
+  `利回り` (ja), both present. Re-run driven **from the source constants instead of a typed list**:
+  **15/15** label strings found in `dist/assets/markets-*.js`; a never-added probe absent.
+- **`getClientRects()` on the value span reported "1 line box" for a span that could have been
+  wrapping.** Flex items are blockified, so it returns one border box regardless of internal wrapping
+  — a confident wrong answer. Redone with a **Range over the text node**, which does report per-line
+  boxes, and controlled: a planted long string reports **3**, then **2** on the shipped build.
+- **Live, on a build whose chunk hashes I checked** (`index-Cqgk1Lk2.js`, per the previous entry's
+  stale-bundle rule): at **320px**, all five languages report **0 broken halves, 0 overflowing rows,
+  no horizontal body scroll** — en/ko/zh/ja single-line, es stacking the two `Rendimiento` rows.
+- **Rendered DOM in all five languages**: `Price/Precio/가격/价格/価格`, `Yield/Rendimiento/수익률/收益率/利回り`,
+  `Value/Valor/가치/价值/価値`, each read out of the DOM and each paired with the right asset.
+- **`npm test`: PASS, 0 failures**, the same standing warnings (3 in `check-data`, plus the floor).
+  **`npm run build`: clean. `check-blindspot`: PASS.**
+
+**Adversarial self-check (step 5).** *Blindspot register:* §10.1 — an advice-token matcher over the
+added lines returns **0**, and the same matcher fires on a planted *"debería comprar ahora"*, so the
+zero is a result and not a dead pattern; the added vocabulary is three nouns and no verb. §10.2 — no
+person or firm named (**0** matches for Dalio/Bridgewater). §10.3 untouched. §2.3 — the only date
+anywhere is `2026-09-02` inside a source **comment**; no digits entered any learner-visible string.
+*DECISIONS.md:* a field added to a `.js` content module is the shape that file mandates; no state, no
+routing, no build change. *Already-done:* **0** occurrences of `rateEffects` or "How Rate Changes
+Affect Assets" across `AGENT_LOG.md` and the archive, and no prior commit to `MarketSignals.jsx`
+touched these rows — this is not a redo. *W-6.3:* `scripts/` **+0 lines**; this run adds no instrument.
+*My own claim:* every figure above is re-runnable — `npm test`, the source-driven dist check with its
+negative control, the before/after label-wrap A/B, and the live DOM at 320px in five languages.
+
+⚠️ **Honest limits.** (1) **Twelve new machine-translated strings** (3 nouns × 4 languages) read by no
+fluent speaker — O-3's standing condition. They are single common financial nouns rather than prose,
+which is the low-risk end of that exposure, but they are on the same ledger. (2) The 320px stacking in
+Spanish is **correct, not pretty** — two intact halves on two lines. (3) The screen-reader claim in the
+recovered comment is reasoned, not tested; no assistive technology was run, and the improvement rests
+on the DOM now carrying a noun where it carried a lone glyph.
+
+**Owner tree at start and end: untracked `UIUX/` (51 files), untouched. Committed: exactly the two
+recovered files plus this log.**
+
 ### 2026-09-02 (owner-directed: "do the ko/zh/ja glossary entry for relative strength too") — the entry the earlier run declined, now built in five languages; and a stale bundle in the tab looked exactly like a key rendered by nothing
 
 **Authorization, and one correction to the premise of the ask.** There was no en/es entry for ko/zh/ja
