@@ -2800,6 +2800,19 @@ through two passes that each had it open.
     > **§34**. The previous run had filed only the mildest instance ("the primary button is 42px")
     > and deferred it on the cost of its cheapest part — **a backlog note's characterization of the
     > code is evidence, not fact, and this is the eleventh consecutive time step 3.5 has said so.**
+    > ✅ **BUILT 2026-09-02 (owner-directed: "build the Leitner box-distribution strip"), after being
+    > offered back three times. It was the last unbuilt item from the canvas, so THIS STREAM IS NOW
+    > COMPLETE and item 26 can close.** The cost estimate that held it open was re-measured and was
+    > exactly right: five new locale keys x five languages, 25 strings, all machine-translated (O-3's
+    > standing condition applies). What the estimate got wrong was the OTHER half of its own sentence
+    > — "changes nothing a learner does" was a judgment about behavior, and the strip's actual value
+    > is that it is the only place the schedule's SHAPE is visible: the due card and the practice-all
+    > button both report today, and nothing showed that the boxes exist or that material climbs them.
+    > Built by REUSING `charts.jsx`'s `Bar` at a fifth call site rather than as a new primitive, so
+    > `scripts/` gained 0 lines and the strip inherited the sub-375px row layout and the `rem` box
+    > height that stopped bar tracks rendering 9px tall at 130% root font. See the run-log entry for
+    > the plural defect the n=1 control caught after the rule to prevent it had already been written.
+    > ORIGINAL CLAUSE, kept because the line above answers it:
     > **STILL OPEN AND STILL THE OWNER'S CALL: the Leitner box-distribution strip.** It has now been
     > offered back three times (2026-08-21, and twice on 2026-08-23). "Proceed implementing UIUX" was
     > not read as an answer to it, because it is a translation-debt question (five locale keys x five
@@ -3964,6 +3977,123 @@ zero meaningful: `selftest PASS (8/8 controls fired, plantsRemoved true)` and, p
 finding(s); V vacuous; U unavailable`. A bare "no accessibility issues found" is not a result.
 
 ## Run log
+
+### 2026-09-02 (owner-directed: "build the Leitner box-distribution strip") — the last unbuilt item from the 2026-08-21 design canvas, offered back three times and held open on a cost estimate that turned out to be exactly right about the price and wrong about the value
+
+**Context: the owner asked first why the UIUX design was not implemented, and the honest answer was
+that it is.** Four passes landed 2026-08-21 and 2026-08-23 (`7eaca10`, `cade971`, `4b4a6b1`,
+`ee570bf`). Re-verified on today's tree rather than read off this log: warm palette in **both**
+schemes (`--surface-canvas` `#f8f5f0` light / `#14120f` dark — a warm near-black, not the old cool
+blue), `--font-display: ui-serif, Georgia…` plus the hand-applied fix for the two raw `<h1>`s that
+bypass `Text`, the five primitives under `ui.jsx`'s own `PATTERNS ADAPTED FROM THE UIUX/ REFERENCE
+SET` header wired into three screens, and `MIN_TAP = 44` guarded by §34. **`UIUX/` itself has not
+changed since that work** — 45 entries / 51 files, videos still dated 2026-08-17, and `owner-tree`
+returning the same `f54fc023…` it has returned every run. There was no unread design material; there
+was one deliberately-unbuilt item, and the owner then named it.
+
+**Step 3.5 — the premise re-measured, and it CONFIRMED rather than refuted, which is worth recording
+because ten-plus consecutive items have gone the other way.** The item said the strip "costs five
+locale keys x five languages". Designed against the real screen, it needs **exactly five**:
+`reviewBoxesTitle`, `reviewBoxesUnit`, `reviewBoxDayTemplate`, `reviewBoxesDescription`,
+`reviewBoxAriaTemplate`. **The half that was wrong is "changes nothing a learner does"** — that is a
+claim about behavior, and it is not the case for the reason it was filed under: everything else on
+Review reports what is due *today*, so a learner could use the feature for weeks without meeting the
+boxes at all. A sixth key (an explanatory caption) was designed and then **dropped**, because the
+`howReviewStep2Body` string eight lines below already says "a day, then two, four, eight, sixteen" —
+a caption would have put the same sentence on screen twice.
+
+**Built by reuse, not by building.** `charts.jsx`'s `Bar` at a fifth call site. Measured before
+committing to it, because Practice is a 7 kB lazy chunk and `charts.jsx` lived in the 124 kB
+`markets` chunk: Rollup **split `charts` out on its own** (23.26 kB / 5.15 kB gzip) and `markets`
+**dropped 124 kB → 101 kB**. Practice went 7.13 → 7.65 kB. `scripts/` **+0 lines** (W-6.3: the
+instrument-to-app ratio is untouched by this change).
+
+**What it shows:** five bars, one per Leitner box, labeled by that box's own interval from
+`BOX_INTERVALS` (1d/2d/4d/8d/16d), value on the face, unit on the figcaption. New pure function
+`boxDistribution()` in `lib/review.js`. **Out-of-range boxes are DROPPED, not clamped** — and that
+choice is load-bearing, see control B.
+
+**Placement is the fix, not an afterthought.** No `<h2>`: a figure's label belongs in its figcaption,
+the same call made on the Fed balance-sheet figure earlier today. That leaves the strip owned by the
+screen's `<h1>`, and it sits **before** the `How review works` section for exactly that reason.
+
+**Verification — live, on the built bundle, with the controls that make each result mean something.**
+- **Seeded an asymmetric distribution** (3/5/9/2/1) so a reversed, off-by-one or all-in-one-box
+  mapping could not look correct. Rendered values `3 5 9 2 1`, fills `33.3/55.6/100/22.2/11.1%`,
+  four blue + one green.
+- **Heading ownership, computed the way an AT rotor does** (nearest heading preceding in document
+  order) → `H1 Review`. **Positive control in the same call**: the same probe on the Steps body
+  returns `H2 How review works`, so it is not returning a constant.
+- **Differential control, which proves the placement is load-bearing:** moving the strip below the
+  how-review section in the live DOM flips its owner to `H2 How review works`; moving it back
+  restores `H1 Review`. That is the Market Dashboard defect from earlier today, reproduced on demand
+  and avoided by construction.
+- **All five languages at 320px**: titles, labels, values and `aria-label` correct in each; **0 text
+  overflow**, no horizontal body scroll. At 320px `Bar`'s narrow layout engages (`.ec-bar-row`
+  becomes `column`, each column becomes a `row`) — inherited, not written here.
+- **200% root font (ja, the densest chrome)**: bar tracks **28px**, 0 overflow, no horizontal scroll.
+- **Empty-state controls, three of them, and B is the one that mattered.**
+  **A** no review history → strip absent, no `NaN` in the DOM.
+  **B** a state holding ONLY an out-of-range box → strip absent. `seenCount()` is **1** there, so
+  gating on `seen > 0` (the obvious choice) would have rendered a chart whose bars sum to zero, and
+  `Bar` divides by `max(|value|)` → `--ec-bar-pct: NaN%` in five fills. The gate is `boxTotal`.
+  **C control** one valid entry → strip present, `100%/0/0/0/0`. Without C, A and B prove nothing.
+- **`npm test` exit 0, 0 failures**, same four standing warnings (translation review coverage,
+  translation completeness, the option-length cue, the floor). **`npm run build` clean.**
+
+⛔ **THE DEFECT MY OWN CONTROL CAUGHT, and it is the most useful thing in this entry.** I wrote a
+paragraph reasoning carefully about the English/Spanish plural trap — box 1's interval is always 1,
+so `"After {days} days"` would read "After 1 days" forever — and solved it in the per-box template
+(`"The {days}-day box"`, an attributive compound that never pluralizes; Spanish `"Casilla de {days}
+d"`, an invariable unit symbol). **Then control C rendered `"Your 1 questions"`.** The lead-in
+`reviewBoxesDescription` had the identical bug, written by the same person in the same hour, with the
+rule already on the page. And n=1 is not an edge case here — it is the **first state every learner
+reaches**, one answered check question. Fixed in all five languages by parking the count outside the
+noun phrase (`"Questions in review: {n}, …"`), the same shape `practiceAllTemplate` already uses.
+**The transferable lesson: a plural rule applied to one template in a file is not applied to the
+file** — and the only reason it was caught is that the empty-state control seeded n=1 rather than
+re-reading the string.
+
+**Adversarial self-check (step 5).** *Blindspot register:* §10.1 — planting
+`reviewBoxesTitle: "Your review boxes — you should buy now"` into `en.js` → **FAIL**, so the new keys
+ARE in §10.1's corpus; restored from a scratchpad copy to a byte-identical sha (`95d264fd…`), never
+`git checkout --`. §10.2 — no person or firm named. §10.3 — untouched. §2.3 — no date and no
+live-looking figure; every number on the strip is per-device state. *DECISIONS.md:* state stays
+`localStorage`-only (reads the existing `ecycles_review`), locale strings stay in `.js` modules, no
+routing or build change. *No hex:* **0** hex literals in the added lines; colors are `graph.blue` /
+`graph.green`, both cleared on every surface by §28b. *Color rule 2:* deliberately NOT a red→green
+ramp — a question in box 1 is one answered correctly for the first time today, not an error; green is
+reserved for box 5, where a 16-day interval is unambiguously success. *Already-done:* `boxDistribution`
+and `reviewBoxes` appear **0** times in `AGENT_LOG.md` and **0** in the archive. *W-6.2:* owner-directed,
+so rule 1's residual counter resets; this is not a residual chain. *W-6.3:* `scripts/` +0.
+*My own claim:* the seeding recipe is in this entry and re-runs from the repo.
+
+⚠️ **§22 has a false-positive on prose, found by tripping it and NOT fixed here.** Three `<Bar>`
+mentions inside my JSX comment failed §22's call-site scan ("passes no `description`") while the real
+call site passed. The comment was de-tagged to plain `Bar`; §22 was left alone, because it fails
+**safe** (it can only produce false failures, never false passes) and W-6.2 rule 3 asks for a
+learner-visible failure it would catch — there is none. Filed as a note here rather than as a
+numbered item, per W-6.2 rule 2.
+
+⚠️ **HEAD MOVED MID-RUN and the concurrent run touched the same file.** `7d5cc52` at start,
+`e84b7a6` by the time I wrote this — a scheduled run committed the "Answer a lesson's check" copy fix
+to `Practice.jsx` and all five locale files while I was editing exactly those seven files. **Measured
+rather than assumed:** `git diff e84b7a6` over my tree removes **two lines**, both import lines I
+replaced deliberately, and its five `howReviewStep1` strings are intact. Nothing was clobbered, and
+the green `npm test` / `npm run build` above were run against a tree that already contained it.
+
+⚠️ **Honest limits.** (1) **25 new machine-translated strings** in es/ko/zh/ja — O-3's standing
+condition, and no fluent reviewer has read any of them. The Spanish `"Casilla de {days} d"` leans on
+`d` being an invariable unit symbol to dodge the plural, which is correct typography but a choice a
+fluent reviewer may want to revisit. (2) The English/Spanish column label `1d` / `1 d` is an
+abbreviation; it is what fits five columns at 320px, and the rail directly below spells the intervals
+out in words. (3) The strip is hidden entirely until a learner has answered one check question, so
+the brand-new learner does not see it — deliberate, and the same call `practicePool` already makes
+for the practice-all button.
+
+**Owner tree at start: `OWNER-TREE f54fc023fb026bcb44277af38101071c245bfda0c8ead5c40049acd487b5c975`
+(0 tracked modified, 51 untracked — `UIUX/`), untouched throughout. Committed: `src/lib/review.js`,
+`src/screens/Practice.jsx`, the five locale files, and this log.**
 
 ### 2026-09-02 (scheduled dev-agent, self-picked by completing a lesson the way a learner who skips the quiz does) — the Review tab told a learner "Finish a lesson and its check question starts showing up here"; finishing a lesson has never put anything in the queue, in any of the five languages, since the copy shipped on 2026-08-26
 

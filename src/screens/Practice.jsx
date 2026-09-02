@@ -22,11 +22,12 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { EVENTS, quizScore, track } from "../lib/analytics.js";
 import { lessonPlacement } from "../content/lessons.js";
 import { quizMeta } from "../content/quizMeta.js";
-import { dueQuestions, seenCount } from "../lib/review.js";
+import { BOX_INTERVALS, boxDistribution, dueQuestions, seenCount } from "../lib/review.js";
 import Icon from "../components/Icon.jsx";
+import { Bar } from "../components/charts.jsx";
 import Question from "../components/Question.jsx";
 import { Button, Card, Disclaimer, LoadFailure, ProgressBar, Steps, Text } from "../components/ui.jsx";
-import { ink, line, MIN_TAP, radius, space, surface } from "../theme.js";
+import { graph, ink, line, MIN_TAP, radius, space, surface } from "../theme.js";
 
 // A straight-through 40-question "practice all" session has no natural stop.
 // Pausing every BATCH_SIZE questions with an explicit "keep going or stop
@@ -126,6 +127,15 @@ export default function Practice({ t, lang, completedLessons, review, recordRevi
 
   const due = useMemo(() => dueQuestions(review, quizMeta), [review]);
   const seen = seenCount(review);
+
+  // Questions per Leitner box, for the distribution strip below. Gated on this
+  // total rather than on `seen` because boxDistribution() drops out-of-range
+  // boxes: the two numbers can legitimately disagree on a corrupted state
+  // object, and the strip must not render a chart whose bars sum to zero —
+  // `Bar` divides by max(|value|), so an all-zero series would emit
+  // `--ec-bar-pct: NaN%` into five fills.
+  const boxes = useMemo(() => boxDistribution(review), [review]);
+  const boxTotal = boxes.reduce((sum, n) => sum + n, 0);
 
   // What "Practice all questions" is allowed to ask about. Until 2026-08-26 it
   // was `quizMeta` entire, and that made this button a door around the whole
@@ -517,6 +527,92 @@ export default function Practice({ t, lang, completedLessons, review, recordRevi
       )}
 
       {loadFailed && <LoadFailure t={t} />}
+
+      {/* THE LEITNER BOX STRIP — adapted from UIUX/ (Vocabulary iOS 120, "Word
+          stats"), the reference set's one screen that reports a learner's own
+          accumulated state back to them rather than driving an action.
+          Owner-directed 2026-09-02; it was the last unbuilt item from the
+          2026-08-21 design canvas and had been offered back three times, held
+          open on the cost recorded below.
+
+          WHAT IT SHOWS AND WHY IT IS NOT DECORATION. Everything else on this
+          screen reports what is due TODAY — the due card counts it, the
+          practice-all button counts what is reachable. None of them shows that
+          the boxes exist, or that material is climbing them. `review.js`'s
+          whole mechanic is the widening gap, and until now the only place a
+          learner could meet it was the prose of the Steps rail below.
+
+          REUSED, NOT BUILT. This is `charts.jsx`'s `Bar` at a fifth call
+          site, so it inherits the geometry that block in `index.css` earned:
+          the sub-375px switch from columns to rows, and the `rem` box height
+          that stopped bar tracks rendering 9px tall at 130% root font. A
+          hand-rolled strip here would have re-opened both. `scripts/` gains
+          nothing; the build gains a 23 kB `charts` chunk that Rollup split out
+          on its own, and `markets` DROPPED 124 kB -> 101 kB as a result.
+
+          NO <h2>, AND THE PLACEMENT IS THE POINT. A figure's label belongs in
+          its figcaption, which `Bar`'s `title` prop renders — the same call made on
+          the Fed balance-sheet figure on 2026-09-02. That leaves the strip
+          owned by this screen's <h1>, which is correct for content between the
+          h1 and the first h2. It sits BEFORE the how-review section for
+          exactly that reason: below it, the heading rotor would announce the
+          strip as content of "How review works", which is the defect that same
+          day's Market Dashboard fix removed.
+
+          COLOR IS RULE 2, NOT A GRADIENT. `theme.js` rule 2 reserves
+          green/amber/red for success/caution/error, so the boxes are NOT
+          painted as a red-to-green ramp: a question in box 1 is not an error,
+          it is one a learner answered correctly for the first time today. Blue
+          for the four working boxes, green for the last — reaching a 16-day
+          interval is the one state here that is unambiguously success. Both
+          tokens clear 3:1 on every surface (check-data.mjs section 28b).
+
+          THE DESCRIPTION CARRIES THE NUMBERS, because `Bar`'s role="img"
+          hides the per-column values and labels from a screen reader. A
+          lead-in plus one concatenated sentence per box; each per-box string
+          ends with its OWN punctuation and trailing space so nothing here
+          imposes an English list separator on zh/ja, the same reasoning
+          practiceAllTemplate records above.
+
+          THE ENGLISH AND SPANISH PLURAL TRAP, AND IT BIT TWICE. Box 1's
+          interval is always 1, so "After {days} days" would render "After 1
+          days" on every device, in the first box, forever. English parks that
+          in an attributive compound ("The 1-day box", which never pluralizes);
+          Spanish uses the invariable unit symbol ("Casilla de 1 d"). ko/zh/ja
+          have no agreement to break.
+          The second instance is the one worth recording, because the rule
+          above was already written when it shipped: reviewBoxesDescription
+          read "Your {n} questions", and n = 1 is not an edge case here — it is
+          the FIRST state every learner reaches, one answered check question.
+          It rendered "Your 1 questions" and was caught by seeding a
+          single-entry state in a live browser, not by re-reading the string.
+          Both halves now park the count outside the noun phrase, which is the
+          same fix practiceAllTemplate records above. A plural rule applied to
+          one template in a file is not applied to the file. */}
+      {boxTotal > 0 && (
+        <div style={{ marginTop: space["6"] }}>
+          <Bar
+            title={t.reviewBoxesTitle}
+            unit={t.reviewBoxesUnit}
+            data={boxes.map((count, i) => ({
+              label: t.reviewBoxDayTemplate.replace("{n}", BOX_INTERVALS[i]),
+              value: count,
+            }))}
+            colors={[graph.blue, graph.blue, graph.blue, graph.blue, graph.green]}
+            height={90}
+            description={
+              t.reviewBoxesDescription.replace("{n}", boxTotal) +
+              boxes
+                .map((count, i) =>
+                  t.reviewBoxAriaTemplate
+                    .replace("{days}", BOX_INTERVALS[i])
+                    .replace("{n}", count)
+                )
+                .join("")
+            }
+          />
+        </div>
+      )}
 
       {/* HOW REVIEW WORKS — adapted from UIUX/ (Vocabulary iOS 187 and Quizlet
           iOS "Choose your plan"), whose free-trial screens both explain what

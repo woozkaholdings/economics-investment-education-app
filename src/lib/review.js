@@ -125,3 +125,27 @@ export function questionsForLesson(allQuestions, lessonId) {
     .map((question, index) => ({ question, index }))
     .filter(({ question }) => question.lesson === lessonId);
 }
+
+// How many questions sit in each Leitner box, index 0 = box 1. Feeds the
+// Review screen's distribution strip, which is the only place the schedule's
+// SHAPE is visible — everything else on that screen reports what is due today,
+// so a learner could use review for weeks without ever seeing that the boxes
+// exist or that their material is moving up them.
+//
+// Entries whose box is outside 1..MAX_BOX are DROPPED rather than clamped.
+// `recordAnswer` above can only ever write 1..MAX_BOX, so an out-of-range box
+// came from a corrupted or a future state object; folding it into box 1 or box
+// MAX_BOX would put a question on the strip in a box the schedule does not
+// actually hold it in, and the strip would then disagree with the queue that
+// `dueQuestions` builds from the same state. Dropping means the counts always
+// sum to something the scheduler would recognize — which is why the caller
+// gates on this function's own total and not on `seenCount`.
+export function boxDistribution(state) {
+  const counts = new Array(MAX_BOX).fill(0);
+  for (const entry of Object.values(state || {})) {
+    const box = entry && entry.box;
+    if (!Number.isInteger(box) || box < 1 || box > MAX_BOX) continue;
+    counts[box - 1] += 1;
+  }
+  return counts;
+}
