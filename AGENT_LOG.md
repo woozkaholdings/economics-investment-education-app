@@ -2436,6 +2436,22 @@ through two passes that each had it open.
       > checked any of them, so `check-data.mjs` **§1b** (placeholder parity across languages, proved
       > able to fail three ways) landed with it. It catches a *structurally* wrong translation, never
       > a semantically wrong one.
+    - ⛔ **(a)'s ARGUMENT NOW REFERS TO COPY THAT NO LONGER EXISTS, and the copy it referred to was
+      false (corrected 2026-09-02).** (a) rests on "the Steps rail directly beneath it, which already
+      says a check question joins the queue **when you finish a lesson**". It did say that, in five
+      languages, and **finishing a lesson has never enrolled anything**: `completeLesson` does not
+      touch the schedule and `recordReview` is reachable only from an answer. Measured through the
+      real UI from cleared storage — open lesson 29, press Mark Complete, answer nothing —
+      `ecycles_completed_lessons` is `[29]`, `ecycles_review` **does not exist**, and the Review tab
+      told that learner to do the thing they had just done. Fixed by naming the real trigger in all
+      five languages; **(a) is still open and still a judgment call**, but read its argument as "the
+      rail explains how a question enters the queue", which is now true.
+    - **Two seams noticed while measuring this, filed as notes and not as items (W-6.2 rule 2).**
+      (i) `showPracticeCoachMark` is `completedLessons.length > 0`, so the coach mark sends the
+      learner to Review at exactly the moment Review is empty — harmless now that the card names the
+      right next action, but the trigger is still completion. (ii) The `Steps` rail marks `done` with
+      **color only** — measured, step 1's glyph stays the `book` path and only moves
+      `--ink-accent` → `--ink-ok` — so the done state is carried by hue alone.
     - **Honest priority: low.** The defect is fixed; these are the seams around it. **All of it is
       downstream of O-1** — nobody has opened the app, so no learner has met either branch.
 
@@ -3948,6 +3964,112 @@ zero meaningful: `selftest PASS (8/8 controls fired, plantsRemoved true)` and, p
 finding(s); V vacuous; U unavailable`. A bare "no accessibility issues found" is not a result.
 
 ## Run log
+
+### 2026-09-02 (scheduled dev-agent, self-picked by completing a lesson the way a learner who skips the quiz does) — the Review tab told a learner "Finish a lesson and its check question starts showing up here"; finishing a lesson has never put anything in the queue, in any of the five languages, since the copy shipped on 2026-08-26
+
+**The defect, reproduced through the real UI and not by seeding storage.** Cleared storage, dismissed
+the disclaimer, opened "Transactions: The Building Block", pressed **Mark Complete without answering
+the check** — an entirely ordinary path, since the check is optional and nothing gates completion on
+it. Result: `ecycles_completed_lessons` is `[29]`, `ecycles_review` **does not exist as a key**, and
+the Review tab says **"Nothing to review yet — Finish a lesson and its check question starts showing
+up here."** The learner has finished a lesson. The screen is telling them to do the thing they just
+did, and it will keep telling them that forever.
+
+**The trigger is answering, not finishing, and the code has always said so.** `completeLesson`
+(`lib/useAppState.js`) writes `completedLessons` and bumps the streak; it never touches the schedule.
+`recordReview` has exactly two call sites — `LessonReader`'s end-of-lesson check and `Practice`'s own
+queue — both inside an `onAnswered`. The hook question at the top of a lesson deliberately does *not*
+record (its comment says why). So nothing anywhere converts *completion* into a review entry.
+
+**The same wrong trigger was in two places, and the second one contradicted itself.** The "How review
+works" rail's step 1 was titled **"Finish a lesson"** and ticked by `done: seen > 0` — that is, the
+step was **named by one action and checked off by a different one**. A learner who answers a check
+without pressing Mark Complete gets "Finish a lesson" ticked while the lesson is unfinished; a learner
+who completes without answering gets it un-ticked while the lesson is finished. Both directions wrong,
+from one mismatch.
+
+**Step 3.5 — the premise held, and the item's ancestor is where it came from.** This is not a redo of
+item 117: that run (2026-08-26) *introduced* `reviewNotStartedBody` and verified it live in the
+`review = null` state. Its verification confirmed **the string rendered**, never **that the claim was
+true** — it reached `review = null` by clearing storage, so it never completed a lesson without
+answering one. That is the presence-not-truth defect this log has now named in the Spanish parent
+guide, the Spanish glossary and here: *a check that certifies a file measures presence.* Item 117(a)'s
+own standing argument quotes the false sentence, so the item is corrected in place above.
+
+**The fix is copy, in five languages, and no code.** Three keys × 5:
+`howReviewStep1` "Finish a lesson" → **"Answer a lesson's check"**; `howReviewStep1Body` → *"Answering
+the check question at the end of a lesson puts it in your queue."* + the second sentence
+(*"Questions you have never seen stay out of review"*) **kept verbatim**, because it is already true
+and `Practice.jsx`'s `practicePool` comment and `review.js`'s `dueQuestions` both cite it by wording;
+`reviewNotStartedBody` → **"Answer the check question at the end of a lesson and it starts showing up
+here."**, keeping the original sentence shape with the right trigger in it. `done: seen > 0` is now
+**exactly** what the step's title names, so the tick semantics were repaired by the copy and the
+component needed no change. Two pre-existing intra-language inconsistencies were unified while there:
+`es` said *pregunta de repaso* in one key and *pregunta de comprobación* in the other; `zh` said
+检查题 in one and 检测题 in the other. `scripts/` **+0 lines** (W-6.3: `scripts/` is 2.3x `src/`; this
+proposal falls on the no-new-instrument side, and W-6.2 rule 3's sentence cannot be written for a
+guard here — "the copy names the wrong trigger" is not a property a regex knows).
+
+**Verification, on the served `dist/` at bundle `index-nMnFJLSG.js`** (hash re-checked against the
+final build; the same bundle was driven for every measurement below).
+- **The repro re-run after the fix, from cleared storage through the same clicks**: `[29]` completed,
+  `ecycles_review` still absent, and the card now reads *"Answer the check question at the end of a
+  lesson and it starts showing up here."*
+- **Control — the surfaces must still discriminate, or the new copy proves nothing.** Answered that
+  one check: `ecycles_review` → `{"q001":{"box":1,"due":"2026-09-03","seen":1,"wrong":0}}`, the card
+  flips to *"You're all caught up"*, and step 1's marker goes `--ink-accent` → `--ink-ok`. Same one
+  completed lesson on both sides; the only variable is the answer.
+- **All five languages at 320px**: the new strings render, `documentElement` horizontal scroll **0**,
+  and the three rail rows and the empty-state body all sit inside their boxes. **At 200% root font**
+  (Spanish, the longest), the painted right edge of every one of the three strings is inside both its
+  box and the viewport (285.8/287, 302.1/304, 248.6/304 against a 320 viewport). Screenshotted at
+  320px in English.
+- **`npm test`: PASS, 0 failures**, same standing warnings (3 in `check-data` + the floor).
+  **`npm run build`: clean.**
+
+⛔ **A CONTROL DIED AND I NEARLY REPORTED ITS RESULT — this is the durable part of the run.** The
+first 320px sweep measured overflow as `scrollWidth - clientWidth` and returned **0 on every string in
+every language**, which reads like a clean pass. Planting a 62-character unbreakable token into step
+1's title returned **0 as well** — so at that moment the sweep had proved nothing, exactly as
+W-6.1's retraction warns. Re-instrumented with `Range.getClientRects()` to measure the *painted* right
+edge of the text: the control moved it 229.1 → 302.5 px, so the new probe is alive. **And the fix's
+answer changed the explanation rather than the finding** — the control string does not overflow
+because the element computes `overflow-wrap: break-word`, which was confirmed the only way it can be:
+the planted token grew the element **21.7 → 65.1 px tall**, i.e. it wrapped onto three lines instead
+of escaping. The layout is genuinely immune here. I could not have known that from the zero.
+
+**Adversarial self-check (step 5).** *Blindspot register:* §10.1 proven **by plant, not by
+inspection** — `howReviewStep1: "you should buy now"` → **FAIL: §10.1 investment-advice-adjacent
+language reintroduced**, naming `src/locales/en.js:134`, which establishes the changed keys are inside
+§10.1's corpus. Restored from the scratchpad pre-plant copy, never `git checkout --`, and the restored
+file's sha256 `208ea5567e01b7c0…` was checked against an **independently re-derived** file — the
+pristine `HEAD` blob plus the three intended replacements — rather than against a number I had written
+down. §10.2 — no person or firm named. §10.3 — untouched. §2.3 — no learner-visible date and no
+live-looking figure; the one date added is `2026-09-02` inside a `Practice.jsx` comment recording when
+the rail's wording changed, the same convention as that file's existing "from 2026-08-03 to
+2026-08-31". *DECISIONS.md:* no state-model change (nothing new is stored, and the fix deliberately
+does **not** make completion enroll questions — that would re-open the exact defect the 2026-08-26
+`practicePool` fix closed, feeding never-read material into the queue), strings stay in `.js` locale
+modules, no routing or build change. *No hex:* no color touched. *Already-done:* `howReviewStep1`
+appears **0** times in the log and archive; `reviewNotStartedBody` appears twice, both in item 117's
+history, which is the ancestor this entry corrects rather than repeats. *W-6.2:* the previous run took
+a residual (owner-named), so rule 1's counter stood at one — this pick is **not** a residual and not
+from a pick list; it came from walking the app as a learner who skips the quiz, and it resets the
+counter to zero. *My own claim:* re-runs from the repo — build, serve `dist/`, clear storage, complete
+lesson 29 without answering; the pre-fix state is reproducible at `7d5cc52`.
+
+⚠️ **Honest limits.** (1) **Twelve machine-translated strings** (es/ko/zh/ja × 3) — O-3's standing
+condition, and these sit on the screen that explains the app's core mechanic, so they are read
+carefully rather than skimmed. The `ko` and `ja` titles were shortened to imperative forms
+(*확인 문제에 답하세요* / *確認問題に答える*) that drop "lesson's"; the location is carried by the body
+sentence instead, which a fluent reviewer may want rebalanced. (2) The two seams filed as notes under
+item 117 — the coach mark still triggers on completion, and the rail's `done` state is **color-only**
+— are measured and left. (3) This changes what the screen says, not what it does; whether completing a
+lesson *should* enroll its question is a product question and is not this run's to make.
+
+**Owner tree at start: `OWNER-TREE f54fc023fb026bcb44277af38101071c245bfda0c8ead5c40049acd487b5c975`
+(0 tracked modified, 51 untracked — `UIUX/`), untouched. Committed: the five locale files,
+`src/screens/Practice.jsx`, and this log.**
 
 ### 2026-09-02 (owner-directed: "do item 163(b) next") — the Market Dashboard told a screen-reader user the Fed balance-sheet chart is part of "Yield Curve Shapes"; the item said three sections were missing headings, and the honest answer is one
 

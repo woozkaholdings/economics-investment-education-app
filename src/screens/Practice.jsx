@@ -467,7 +467,10 @@ export default function Practice({ t, lang, completedLessons, review, recordRevi
           Hidden rather than disabled when the pool is empty: a brand-new
           learner has nothing to practice yet, and the only honest label for a
           dead control here is the Steps rail directly below, which already
-          says a check question joins the queue when you finish a lesson.
+          says a check question joins the queue when you ANSWER it. (That rail
+          said "when you finish a lesson" until 2026-09-02; completing a lesson
+          has never enrolled anything — `completeLesson` does not touch the
+          schedule and `recordReview` is only reachable from an answer.)
 
           "All" is a different number for almost every learner, so the label
           says which one. Measured: 46 questions over 44 lessons (42 lessons
