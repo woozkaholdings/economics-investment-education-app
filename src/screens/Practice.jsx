@@ -204,18 +204,46 @@ export default function Practice({ t, lang, completedLessons, review, recordRevi
   if (session) {
     const last = position === session.length - 1;
 
+    // ⚠️ THE HEADER ICON AND THE BATCH HEADLINE BOTH BRANCH ON `anyLanded`, and
+    // this is the whole of backlog item 163(a) plus the half of it the item did
+    // not name. Until 2026-09-02 both recap screens rendered an unconditional
+    // `check` in `ink.ok` at 2rem. Measured live, dark palette, by driving ten
+    // real answers through this runner:
+    //   * 0 of 10 correct → green tick (`#6ede9f`, path `m5 12.5 4.5 4.5L19 7.5`)
+    //     over "10 done — nice work", and on the complete screen the same tick
+    //     over "0 of 10 correct" with TEN red `ink.bad` crosses an inch below.
+    //   * 3 of 3 correct (control) → the identical path, the identical color,
+    //     the identical size. The icon was the same pixels at 0% and at 100%,
+    //     so it carried no information while reading as a verdict in the exact
+    //     vocabulary the rows beneath it use to mean one.
+    // `Icon` is `aria-hidden`, so this was a sighted-reader defect only; the
+    // score line a screen reader gets was always honest.
+    //
+    // Two different problems, deliberately fixed differently:
+    //   * The tick is a SIGNAL, and green is this app's success token — so it
+    //     goes neutral (`info`/`ink.muted`) when nothing landed, the same
+    //     two-state shape the landing card below already uses for `seen > 0`.
+    //     It is NOT turned red: the session was completed, and a miss is a
+    //     productive event in a Leitner scheduler, not a failure.
+    //   * "nice work" is a CLAIM, and over "0 of 10 correct" it is false. It is
+    //     replaced with what actually happened to those questions — every one
+    //     went to box 1 and is due in a day — which is what the "How review
+    //     works" rail on this screen already promises.
+    // `reviewCompleteTitle` ("Review complete") stays unconditional on purpose:
+    // unlike "nice work" it is true at every score.
     if (atBatchPause) {
       const correctCount = results.filter((r) => r.correct).length;
+      const anyLanded = correctCount > 0;
       return (
         <div>
           <Text as="h1" variant="display" color={ink.strong}>{t.reviewTitle}</Text>
           <Card style={{ marginTop: space["5"], textAlign: "center" }}>
-            <div style={{ display: "flex", justifyContent: "center", color: ink.ok, marginBottom: space["3"] }}>
-              <Icon name="check" size="2rem" strokeWidth={2.2} />
+            <div style={{ display: "flex", justifyContent: "center", color: anyLanded ? ink.ok : ink.muted, marginBottom: space["3"] }}>
+              <Icon name={anyLanded ? "check" : "info"} size="2rem" strokeWidth={2.2} />
             </div>
             <h2 ref={resultHeadingRef} tabIndex={-1} style={{ margin: 0, outline: "none" }}>
               <Text as="span" variant="heading" color={ink.strong}>
-                {t.reviewBatchTitle.replace("{n}", results.length)}
+                {(anyLanded ? t.reviewBatchTitle : t.reviewBatchTitleNoneRight).replace("{n}", results.length)}
               </Text>
             </h2>
             <Text variant="small" color={ink.muted} style={{ marginTop: space["1"] }}>
@@ -245,12 +273,13 @@ export default function Practice({ t, lang, completedLessons, review, recordRevi
 
     if (!item) {
       const correctCount = results.filter((r) => r.correct).length;
+      const anyLanded = correctCount > 0;
       return (
         <div>
           <Text as="h1" variant="display" color={ink.strong}>{t.reviewTitle}</Text>
           <Card style={{ marginTop: space["5"], textAlign: "center" }}>
-            <div style={{ display: "flex", justifyContent: "center", color: ink.ok, marginBottom: space["3"] }}>
-              <Icon name="check" size="2rem" strokeWidth={2.2} />
+            <div style={{ display: "flex", justifyContent: "center", color: anyLanded ? ink.ok : ink.muted, marginBottom: space["3"] }}>
+              <Icon name={anyLanded ? "check" : "info"} size="2rem" strokeWidth={2.2} />
             </div>
             <h2 ref={resultHeadingRef} tabIndex={-1} style={{ margin: 0, outline: "none" }}>
               <Text as="span" variant="heading" color={ink.strong}>{t.reviewCompleteTitle}</Text>

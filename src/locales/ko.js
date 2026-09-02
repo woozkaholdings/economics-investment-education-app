@@ -118,6 +118,7 @@ export default {
     reviewFromLesson: "레슨 {n} · {track}",
     doneLabel: "완료",
     reviewBatchTitle: "{n}개 완료 — 잘하고 있어요",
+    reviewBatchTitleNoneRight: "{n}개 완료 — 이 문제들은 내일 다시 나와요",
     reviewKeepGoing: "계속하기",
     reviewStopHere: "여기서 멈추기",
     reviewBoxesTitle: "내 복습 상자",

@@ -1468,16 +1468,33 @@ through two passes that each had it open.
 163. **[UX/A11y — filed 2026-09-02 by the run that put the unit on the balance-sheet chart, as three
     things that run SAW on the same walk and deliberately did not fold into the same commit.]
     All three are live and measured; none is a guess.**
-    - **(a) The Review recap shows a green success check over "0 of 1 correct".** Measured: answer
-      the only queued question wrong → `Practice.jsx`'s recap card renders an unconditional
-      `<Icon name="check">` at `ink.ok` above "Review complete". The per-question rows below it
-      *do* branch (`r.correct ? "check" : "x"`, `ink.ok : ink.bad`), so the screen contradicts
-      itself in two inches. **This is a judgment call, not a falsehood** — "Review complete" is
-      true, and the file's own comment argues the retrieval attempt matters more than the grade, so
-      a tick meaning "session done" is defensible. Whoever picks it is deciding whether the icon
-      reports *completion* or *result*; if result, `correctCount === 0` at minimum should not be a
-      green tick. Note this is NOT item 117's defect — that one was the Practice *landing* card
-      with `review = null`, closed 2026-08-26.
+    - **(a) ✅ DONE 2026-09-02 (owner-directed: "do item 163(a) next") — but READ THE PREMISE
+      CORRECTION: this item named ONE site and there are TWO, and it called the defect "a judgment
+      call, not a falsehood" when half of it is a plain falsehood in five languages.**
+      *As filed:* the recap card renders an unconditional `<Icon name="check">` at `ink.ok` above
+      "Review complete", while the per-question rows below it *do* branch — the screen contradicting
+      itself in two inches. **That much reproduced exactly** (0 of 10 → one 2rem green tick over ten
+      red `ink.bad` crosses). **What the item missed is the `atBatchPause` branch twelve lines
+      above**, which renders the same unconditional tick over `reviewBatchTitle` — **"{n} done —
+      nice work"**, es "bien hecho", ko "잘하고 있어요", zh "做得好", ja "いい調子です". Measured live
+      by driving ten real wrong answers: **"10 done — nice work" over "0 of 10 correct"**. That is
+      not a defensible judgment call; it is praise for a session in which nothing landed, and the
+      item's "not a falsehood" reading is true of `reviewCompleteTitle` and false of this one.
+      **The decision this item said the picker must make, made, and split in two** — because the
+      tick and the headline are different kinds of thing. The tick is a **signal**: it now goes
+      `info`/`ink.muted` when `correctCount === 0` at BOTH sites, matching the two-state shape the
+      landing card already uses for `seen > 0`. It is deliberately **not** red — the session was
+      completed, and a miss is a productive event in a Leitner scheduler. The headline is a
+      **claim**: a new `reviewBatchTitleNoneRight` in five languages says what actually happened to
+      those questions ("{n} done — these come back tomorrow"), which is what this screen's own "How
+      review works" rail already promises. `reviewCompleteTitle` stays unconditional: unlike "nice
+      work" it is true at every score. **The boundary is exactly `correctCount === 0`** — 1 of 10
+      still reads "nice work" with the green tick, measured. Note this was NOT item 117's defect —
+      that one was the Practice *landing* card with `review = null`, closed 2026-08-26, and its
+      conditional-icon shape is the precedent this followed rather than undid.
+      ⚠️ **And the transferable part, which is the second time in two days item 163 has taught it:**
+      **(b)'s numbers were wrong and (a)'s scope was wrong, both filed by the run that had just
+      looked at the screen.** A residual is a claim about the code, not a reading of it.
     - **(b) ✅ DONE 2026-09-02 (owner-directed: "do item 163(b) next") — but READ THE PREMISE
       CORRECTION, because it changed the scope from three blocks to one heading.**
       *As filed:* "the outline names 4 of its 7 blocks … a reader skips three sections". **Both
@@ -1503,7 +1520,9 @@ through two passes that each had it open.
       All three are things a person would meet. **No check is proposed for any of them** — W-6.3's
       number (`scripts/` at 2.3x `src/`) says a regex is the wrong instrument for all three, and
       (a) is a decision rather than a defect. **Honest priority: (b) medium, (a) low-and-owner's,
-      (c) low.**
+      (c) low.** ⛔ **(a)'s priority label was wrong too**: "low-and-owner's" was assigned on the
+      belief that it was purely a judgment call, and the batch-pause half needed no decision from
+      anyone. **Only (c) remains open.**
     - ⚠️ **(b)'s own numbers were wrong, and this item is the evidence.** I filed (b) from a live
       measurement I had just taken, and still got both the total and the count of missing headings
       wrong — and the *disposition* wrong with them, since three of the four "missing" headings turn
@@ -3977,6 +3996,42 @@ zero meaningful: `selftest PASS (8/8 controls fired, plantsRemoved true)` and, p
 finding(s); V vacuous; U unavailable`. A bare "no accessibility issues found" is not a result.
 
 ## Run log
+
+### 2026-09-02 (owner-directed: "do item 163(a) next") — the Review recap congratulated a learner who got every question wrong; the item named one of the two screens that do it, and called the one it named a judgment call rather than the falsehood the other one is
+
+**The item as filed, and the two ways re-measuring changed it.** 163(a) said the recap card renders an unconditional green `check` over "0 of 1 correct" while the per-question rows below it branch — "the screen contradicts itself in two inches" — and judged it **"a judgment call, not a falsehood … honest priority: low-and-owner's."** Reproduced exactly, and then two corrections:
+1. **There are TWO screens, not one.** `Practice.jsx` has an `atBatchPause` branch twelve lines above the complete branch, and it renders the same unconditional 2rem `ink.ok` tick. The item did not name it.
+2. **The unnamed one is a falsehood, and the item's disposition does not survive it.** `reviewBatchTitle` is **"{n} done — nice work"** (es "bien hecho", ko "잘하고 있어요", zh "做得好", ja "いい調子です"). Over "0 of 10 correct", that is not a defensible reading of a neutral completion statement; it is praise for a session in which nothing landed, in five languages. "Review complete" is true at any score. "Nice work" is not.
+
+**How it was measured — ten real answers through the real runner, not a reasoned-about state.** Seeded `ecycles_review` with twelve box-1 entries due in the past and `ecycles_completed_lessons` with the economy track, then drove the session by clicking actual `[role=radio]` buttons. The wrong option was chosen deterministically from an answer key regenerated out of the repo (`quizMeta[i].answer` joined to `quizText.en[i].q`), matched to the live question by the radiogroup's `aria-label`, so no reading of the screen decided what to click.
+
+| state | header icon | headline | score line |
+| --- | --- | --- | --- |
+| 0 of 10 (batch pause) | `check`, `#6ede9f` (`--ink-ok`), 2rem | **"10 done — nice work"** | "0 of 10 correct" |
+| 0 of 10 (complete) | `check`, `#6ede9f`, 2rem | "Review complete" | "0 of 10 correct", above **ten** `#ffa19a` crosses |
+| **control — 3 of 3 (complete)** | `check`, `#6ede9f`, 2rem | "Review complete" | "3 of 3 correct", above three green checks |
+
+**The control is the finding.** At 0% and at 100% the header icon was the *same path string, the same computed color, the same size*. It carried **zero** information while reading as a verdict in the exact green/red vocabulary the rows an inch below use to mean one. `Icon` is `aria-hidden`, so this was a **sighted-reader defect only** — the score line a screen reader receives was always honest.
+
+**The decision the item said the picker owed, made, and split — because the tick and the headline are different kinds of thing.**
+- The tick is a **signal**. Green is this app's success token, so it goes `info` in `ink.muted` when `correctCount === 0`, at **both** sites. Deliberately **not** red: the session *was* completed, and in a Leitner scheduler a miss is a productive event that sends the question to box 1, not a failure. This is the same two-state shape the landing card in this file already uses (`seen > 0 ? "check" : "book"`, `ink.ok : ink.muted`) — the precedent followed rather than undone.
+- The headline is a **claim**. New key `reviewBatchTitleNoneRight` in all five languages states what actually happened to those questions — en "{n} done — these come back tomorrow", es/ko/zh/ja likewise — which is what this screen's own "How review works" rail already promises ("Get it wrong and it returns tomorrow"). `reviewCompleteTitle` is left unconditional on purpose.
+
+**Verified live on the rebuilt bundle (`index-DdfWp2Ww.js`, name read back off the page every time — Environment note failure mode 4):**
+- 0 of 10 batch pause → `info` glyph at `rgb(168,158,144)` = `#a89e90` = `--ink-muted`, "10 done — these come back tomorrow".
+- 0 of 10 complete → same muted `info` over "Review complete / 0 of 10 correct"; the ten red crosses below are unchanged, and the contradiction is gone.
+- **All five languages rendered at that pause** by cycling the picker: en / es "10 completadas — estas vuelven mañana" / ko "10개 완료 — 이 문제들은 내일 다시 나와요" / zh "已完成 10 题 — 这些明天会再出现" / ja "10問完了 — これらは明日また出ます".
+- **Regression control, and the boundary is exactly `correctCount === 0`:** a run of 1 correct + 9 wrong gives "10 done — **nice work**" with the green `#6ede9f` tick at the pause, and the green tick again at "Review complete / 1 of 10 correct". Nobody who got a single question right sees any change.
+- **Contrast, both palettes, computed live:** `ink.muted` on `surface.card` is **7.01:1 light** (`#5f584f` on `#ffffff`) and **6.57:1 dark** (`#a89e90` on `#1d1a16`). The tick it replaces is 6.96:1 and 10.41:1. Both far above the 3:1 non-text floor; light is a slight improvement, dark a reduction that stays well clear.
+- **The new key is guarded, proven by plant not by inspection.** `src/locales/ja.js` copied to the scratchpad, `reviewBatchTitleNoneRight` deleted, `check-data.mjs` → **two** failures (`TR.ja: missing key`, and §1b's placeholder-parity failure naming `{n}`). Restored from the copy, md5 verified identical, suite green.
+
+`npm test`: **0 failures**, the same 4 standing warnings. `npm run build` clean. `npm run check-blindspot`: **0 failures** — which matters here because this run added prose to five locale files, the corpus §10.1 scans.
+
+**Two harness facts this run paid for, written down because both produce confident wrong readings.** (1) **`setTimeout` is throttled in this pane**, so a timer-paced driver spent 45s reaching question 3 and timed out; pacing by `MutationObserver` on `<main>` works and is not throttled. (2) The Environment note's failure mode 3 (**reading in the same call that clicked returns the previous render**) is not a subtlety — a zero-wait loop logged the *same question text three times* while the counter advanced 3 → 5 underneath it, i.e. it was clicking stale element references and its own log said everything was fine.
+
+**Step 5 — adversarial self-check. Three clean, one checked because this change adds shipped prose.** (1) **Blindspot register:** five new locale strings, so §10.1's corpus grew — `check-blindspot` PASS, and the string contains no advice phrasing, no Dalio, no child-facing framing, and "tomorrow" is a relative day word, not the month-year shape §2.3 bans. (2) **`DECISIONS.md`:** no new `localStorage` key; the 2026-08-16 analytics decision explicitly says "a batch pause deliberately does not fire `quiz_taken`", and the `useEffect` that fires it and the `quizScore(...)` payload are untouched, so the event set and its score are byte-identical. (3) **Already-done item:** item 117 (closed 2026-08-26) was the Practice *landing* card with `review = null` — a different branch of this file, not touched, and its conditional-icon shape is the model this followed. Nothing in "Completed and pruned" covers the recap header. (4) **My own verification claim:** the answer key regenerates from the repo in one line, the driver clicks real elements chosen by that key rather than by reading the screen, every bundle name was read back off the live page, and the locale guard was proven by a plant that was restored and md5-checked.
+
+**Residual, filed as a note under item 163 rather than as a numbered item (W-6.2 rule 2).** An empty session (`results.length === 0` on the complete screen) is **unreachable** — both `start()` call sites are gated on a non-empty list — so the `correctCount === 0` branch cannot be entered with no questions; verified by reading both call sites, not assumed. **163(c)** (`Bar` rendering `9` where its siblings render one decimal) is the only part of item 163 still open.
 
 ### 2026-09-02 (scheduled dev-agent, self-picked by resuming the app as a learner who did not start where the app expects) — a learner three lessons into "Thinking About Money" was told "Pick up where you left off — NEXT UP: Transactions: The Building Block", the first lesson of a track they had never opened, and the screen collapsed the track they were in
 

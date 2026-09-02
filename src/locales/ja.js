@@ -118,6 +118,7 @@ export default {
     reviewFromLesson: "レッスン {n} · {track}",
     doneLabel: "完了",
     reviewBatchTitle: "{n}問完了 — いい調子です",
+    reviewBatchTitleNoneRight: "{n}問完了 — これらは明日また出ます",
     reviewKeepGoing: "続ける",
     reviewStopHere: "ここで一旦終了",
     reviewBoxesTitle: "復習ボックス",

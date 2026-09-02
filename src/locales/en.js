@@ -150,6 +150,7 @@ export default {
     reviewFromLesson: "Lesson {n} · {track}",
     doneLabel: "Done",
     reviewBatchTitle: "{n} done — nice work",
+    reviewBatchTitleNoneRight: "{n} done — these come back tomorrow",
     reviewKeepGoing: "Keep going",
     reviewStopHere: "Stop here for now",
     reviewBoxesTitle: "Your review boxes",

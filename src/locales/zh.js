@@ -118,6 +118,7 @@ export default {
     reviewFromLesson: "第 {n} 课 · {track}",
     doneLabel: "完成",
     reviewBatchTitle: "已完成 {n} 题 — 做得好",
+    reviewBatchTitleNoneRight: "已完成 {n} 题 — 这些明天会再出现",
     reviewKeepGoing: "继续",
     reviewStopHere: "先到这里",
     reviewBoxesTitle: "我的复习分组",

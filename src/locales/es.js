@@ -118,6 +118,7 @@ export default {
     reviewFromLesson: "Lección {n} · {track}",
     doneLabel: "Listo",
     reviewBatchTitle: "{n} completadas — bien hecho",
+    reviewBatchTitleNoneRight: "{n} completadas — estas vuelven mañana",
     reviewKeepGoing: "Seguir",
     reviewStopHere: "Parar por ahora",
     reviewBoxesTitle: "Tus casillas de repaso",
