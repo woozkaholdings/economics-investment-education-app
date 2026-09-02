@@ -9509,5 +9509,179 @@ function trendDirection(src) {
   }
 }
 
+// 67. THE GLOSSARY'S TRANSLATIONS ARE MEASURED FOR CONTENT, NOT JUST PRESENCE
+//     (backlog item 162). §66's method, pointed at a THIRD shipped corpus.
+//
+//     §4 above asserts that every glossary term carries a non-empty {s, f, ex}
+//     in all five languages, and it has passed every run since it was written.
+//     LIKE §5 BEFORE §66, IT CANNOT SEE WHETHER THE TRANSLATED DEFINITION SAYS
+//     WHAT THE ENGLISH ONE SAYS. The glossary is also outside the translation
+//     review ledger by design (glossary.js's own header records this), and
+//     §33 reads `lessonContent` only, so nothing measured this file at all.
+//     `entry.f` renders on TWO screens — the Glossary list (Glossary.jsx) and
+//     the term-detail screen (TermDetail.jsx) — in the selected language.
+//
+//     WHAT WAS SHIPPING, measured for the first time 2026-09-02: 72 of 336
+//     translated units under 70% of a full translation into the same language,
+//     and 14 paths flagged in ALL FOUR languages at once. Those 14 are exactly
+//     the original macroeconomic cohort (Bubble, CPI, Credit, Credit Spread,
+//     Deflation, Deleveraging, Fed Funds Rate, GDP, Inflation, PMI,
+//     Productivity Growth, QE, QT, Yield Curve). THE MECHANISM IS AUTHORING
+//     DATE, NOT LANGUAGE — the same finding §66 made about kidsContent: the
+//     personal-finance entries added 2026-08-16 (backlog item 35) are complete
+//     clause-for-clause in every language, while the macro entries carried
+//     over at the 2026-08-01 split were written as terse glosses and never
+//     grew. A second, narrower mechanism rides along with it: an English-only
+//     edit that never propagated, e.g. Credit.f's "monetary base (M0)" clause
+//     added 2026-08-26 by item 114.
+//
+//     THE LEARNER-VISIBLE FAILURE THIS WOULD HAVE CAUGHT (W-6.2 rule 3): a
+//     Spanish reader tapped "Deleveraging" and read "Cuando la deuda es
+//     excesiva. 4 herramientas." — a definition that announces four tools and
+//     names none of them. Two of the same shape: "Inflation" read "Cuando los
+//     precios suben" (the word restated, with the mechanism and the Fed's ~2%
+//     target both gone) and "Bubble" dropped "pushing prices far above fair
+//     value", which is the part that makes it a bubble. Spanish was completed
+//     in the same commit and the es column now stands at 0 flagged.
+//
+//     WHY IT WARNS RATHER THAN FAILS: the ko/zh/ja remainder is new prose in
+//     three languages no fluent reader has checked — an O-3 decision, not a
+//     run's (backlog item 162).
+//
+//     THE RATIO HAS BOTH ERROR DIRECTIONS HERE TOO, and this section found a
+//     false negative in its own corpus rather than only inheriting the warning
+//     from §66: "VIX" es scored 1.00 and was still incomplete — the English
+//     carries three bands (below 15 / 25-35 / above 40) and every translation
+//     carried two. It was fixed alongside the flagged set. Read every flagged
+//     pair, and do not read an unflagged one as certified.
+{
+  const before67 = failures;
+  const MIN_EN = 40; // separates the 42 short names from the bodies; controlled below.
+  const cp = (s) => [...(s ?? "")].length;
+
+  const glossUnits = (g) => {
+    const out = [];
+    for (const [term, e] of Object.entries(g)) {
+      for (const f of ["s", "f", "ex"]) {
+        out.push({ path: `${term}.${f}`, field: f, m: Object.fromEntries(["en", ...COMPLETENESS_LANGS].map((l) => [l, e?.[l]?.[f]])) });
+      }
+    }
+    return out;
+  };
+
+  const p90 = (xs) => {
+    const sorted = [...xs].sort((a, b) => a - b);
+    if (!sorted.length) return 0;
+    return sorted[Math.min(sorted.length - 1, Math.max(0, Math.ceil(0.9 * sorted.length) - 1))];
+  };
+
+  const scoreGloss = (g) => {
+    const rows = glossUnits(g).map((u) => ({ path: u.path, field: u.field, en: cp(u.m.en), m: u.m })).filter((r) => r.en >= MIN_EN);
+    const ratio = {};
+    for (const lang of COMPLETENESS_LANGS) ratio[lang] = rows.map((r) => cp(r.m[lang]) / r.en);
+    const reference = {};
+    for (const lang of COMPLETENESS_LANGS) reference[lang] = p90(ratio[lang]);
+    const abridged = [];
+    rows.forEach((r, i) => {
+      for (const lang of COMPLETENESS_LANGS) {
+        if (ratio[lang][i] < ABRIDGED_BELOW * reference[lang]) abridged.push({ path: r.path, lang, ratio: ratio[lang][i] });
+      }
+    });
+    return { rows, reference, abridged };
+  };
+
+  // CONTROLS FIRST, for §66's reason: a scorer that flags nothing certifies the
+  // corpus, which is exactly the false clean bill §4 has been giving it.
+  // 1. Every translation a verbatim copy of its English: nothing may flag.
+  {
+    const g = JSON.parse(JSON.stringify(glossary));
+    for (const [, e] of Object.entries(g)) for (const f of ["s", "f", "ex"]) for (const lang of COMPLETENESS_LANGS) e[lang][f] = e.en[f];
+    const got = scoreGloss(g).abridged.length;
+    if (got !== 0) fail(`§67: the completeness scorer failed its positive control — with every translation a verbatim copy of the English it flagged ${got} pair(s), and must flag 0. Every figure this section reports is meaningless until this passes.`);
+  }
+  // 2. One known-complete definition truncated to 20%: it must flag in all four.
+  {
+    const g = JSON.parse(JSON.stringify(glossary));
+    const TARGET = "M0";
+    if (!g[TARGET]) {
+      fail(`§67: the negative control's target term "${TARGET}" no longer exists, so the control is not testing anything — repoint it at a term that is a full translation today.`);
+    } else {
+      for (const lang of COMPLETENESS_LANGS) g[TARGET][lang].f = [...g[TARGET][lang].f].slice(0, Math.ceil(cp(g[TARGET][lang].f) * 0.2)).join("");
+      const hits = scoreGloss(g).abridged.filter((a) => a.path === `${TARGET}.f`).length;
+      if (hits !== COMPLETENESS_LANGS.length) {
+        fail(`§67: the completeness scorer failed its negative control — ${TARGET}.f truncated to 20% flagged in ${hits} of ${COMPLETENESS_LANGS.length} language(s), and must flag in all of them.`);
+      }
+    }
+  }
+  // 3. Uniformly abridged corpus: the p90 reference moves with it, so NOTHING
+  //    flags. §66 records this same blind spot; it is asserted here rather than
+  //    inherited, because a change to the reference calculation would silently
+  //    give both sections a different meaning.
+  {
+    const g = {};
+    for (let i = 0; i < 12; i++) {
+      const long = "x".repeat(200);
+      g[`t${i}`] = Object.fromEntries(["en", ...COMPLETENESS_LANGS].map((l) => [l, { s: "s", f: l === "en" ? long : "x".repeat(60), ex: l === "en" ? long : "x".repeat(60) }]));
+    }
+    const got = scoreGloss(g).abridged.length;
+    if (got !== 0) fail(`§67: the uniform-abridgement control changed behavior — a corpus abridged evenly to 30% flagged ${got} pair(s) where the per-language p90 makes 0 the correct answer. This control documents a known blind spot; if it fires, the reference calculation changed and this section's warnings mean something different than the comment says.`);
+  }
+  // 4. Code points, not bytes — a byte-counting scorer calls every CJK
+  //    translation abridged.
+  {
+    const zh = "债务过大时";
+    if (cp(zh) !== 5 || Buffer.byteLength(zh) !== 15) fail(`§67: the length function is not counting code points — cp("${zh}")=${cp(zh)} (want 5) against ${Buffer.byteLength(zh)} bytes.`);
+  }
+  // 5. MIN_EN still excludes exactly the short names, rather than quietly
+  //    dropping real definitions as the corpus grows.
+  {
+    const all = glossUnits(glossary).map((u) => ({ path: u.path, field: u.field, en: cp(u.m.en) }));
+    const excluded = all.filter((r) => r.en < MIN_EN);
+    const kept = all.filter((r) => r.en >= MIN_EN).map((r) => r.en);
+    const nonName = excluded.filter((r) => r.field !== "s");
+    if (nonName.length) {
+      fail(`§67: MIN_EN=${MIN_EN} now excludes a definition or example (${nonName.map((r) => r.path).join(", ")}). It exists only to drop the short names, whose ratio measures word-length convention; excluding body content would hide exactly what this section is for.`);
+    }
+    // The gap is asserted against THIS corpus, not with §66's `MIN_EN * 2`
+    // heuristic. That constant fits kidsContent (shortest body 95) and fails
+    // here for no defect at all: the glossary's longest short name is 35 and
+    // its shortest definition is 70, so 40 sits in a real and empty gap that
+    // 80 would have condemned. Copying a threshold across corpora is the drift
+    // this log keeps catching in figures; it applies to constants too.
+    if (excluded.length && kept.length) {
+      const longestExcluded = Math.max(...excluded.map((r) => r.en));
+      const shortestKept = Math.min(...kept);
+      if (!(longestExcluded < MIN_EN && MIN_EN <= shortestKept)) {
+        fail(`§67: MIN_EN=${MIN_EN} no longer sits in an empty gap — the longest excluded unit is ${longestExcluded} code points and the shortest measured one is ${shortestKept}. Re-derive the threshold from the corpus instead of leaving it at a value the corpus grew past.`);
+      } else if (shortestKept < longestExcluded * 2) {
+        fail(`§67: the gap MIN_EN=${MIN_EN} sits in has narrowed — the longest excluded unit is ${longestExcluded} code points against a shortest measured one of ${shortestKept}, so the two populations this threshold separates are no longer distinct. Re-derive it.`);
+      }
+    }
+  }
+
+  // THE REAL CORPUS.
+  const gloss = scoreGloss(glossary);
+  if (gloss.rows.length === 0) {
+    fail(`§67: no glossary units could be read — the module's shape changed and this section is measuring nothing, which is indistinguishable from a fully translated corpus.`);
+  } else {
+    const byLang = COMPLETENESS_LANGS.map((lang) => ({ lang, n: gloss.abridged.filter((a) => a.lang === lang).length }));
+    const over = byLang.filter((b) => b.n > 0);
+    if (over.length) {
+      warn(
+        `glossary: ${gloss.abridged.length} of ${gloss.rows.length * COMPLETENESS_LANGS.length} translated definition(s) on Reference -> Glossary and the term-detail screen carry under ` +
+          `${Math.round(100 * ABRIDGED_BELOW)}% of what a full translation into the same language carries (` +
+          over.map((b) => `${b.lang} ${b.n}`).join(", ") +
+          `). §4 reports this corpus as complete because it checks presence, not content. The worst are ` +
+          gloss.abridged.slice().sort((a, b) => a.ratio - b.ratio).slice(0, 3).map((a) => `${a.path} ${a.lang} ${a.ratio.toFixed(2)}`).join(", ") +
+          `. Read each one before believing it — the ratio is a screening proxy with both error directions. Tracked as backlog item 162.`
+      );
+    }
+    if (failures === before67) {
+      const line = COMPLETENESS_LANGS.map((lang) => `${lang} ${gloss.abridged.filter((a) => a.lang === lang).length}`).join(", ");
+      console.log(`  §67 glossary translations are measured for content, not just presence: ${gloss.abridged.length}/${gloss.rows.length * COMPLETENESS_LANGS.length} pair(s) under ${Math.round(100 * ABRIDGED_BELOW)}% of their language's own p90 (${line}) across ${gloss.rows.length} unit(s), 5 scorer control(s) fired.`);
+    }
+  }
+}
+
 console.log(`\n${failures === 0 ? "PASS" : "FAIL"}: ${failures} failure(s), ${warnings} warning(s).`);
 process.exit(failures === 0 ? 0 : 1);

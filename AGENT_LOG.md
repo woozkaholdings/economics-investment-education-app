@@ -1442,6 +1442,56 @@ through two passes that each had it open.
       stand; the coverage did not.** `A11yStates.coverage()` plus the Tab step now in the header
       recipe are the fix — see item 149.
 
+162. **[Content — filed 2026-09-02 by the scheduled dev-agent that MEASURED it, with the Spanish
+    half FIXED in the same commit. 58 LIVE instances, so W-6.2 rule 2's "note under its parent" does
+    not apply — that rule parks residuals with zero live instances, and this is not one.
+    Honest priority: MEDIUM for ko/zh/ja, and the remainder is an O-3 decision, not a run's.]
+    `glossary.js` ships translated DEFINITIONS that are present, non-empty, and materially shorter
+    than the English they translate — and §4 has always reported the file as complete.**
+    **This is item 161's defect in a third corpus, found by pointing §66's method at it.** Do not
+    quote the figures below — `check-data.mjs` §67 re-derives them on every `npm test`; read the
+    live line (W-5.5).
+    **`entry.f` renders on TWO screens** — the Glossary list (`Glossary.jsx`) and the term-detail
+    screen (`TermDetail.jsx`) — in whatever language the learner has selected. This is not a
+    latent corpus.
+    **The mechanism is authoring date, not language, and the evidence is the cross-language
+    overlap: 14 paths flagged in ALL FOUR languages at once**, and they are exactly the original
+    macroeconomic cohort (Bubble, CPI, Credit, Credit Spread, Deflation, Deleveraging, Fed Funds
+    Rate, GDP, Inflation, PMI, Productivity Growth, QE, QT, Yield Curve). The personal-finance
+    entries added 2026-08-16 (item 35) are complete clause-for-clause in every language; the macro
+    entries carried over at the 2026-08-01 split were written as terse glosses and never grew.
+    `glossary.js`'s own header already said the file has two vocabularies of two different vintages
+    — nothing had ever measured what that cost the translations.
+    **A second, narrower mechanism rides along: an English-only edit that never propagated.**
+    `Credit.f`'s "monetary base (M0)" clause was added 2026-08-26 by item 114 in English alone,
+    which is why the Spanish scored 0.58 while the rest of its sentence was a full translation.
+    **Closed in the filing commit: Spanish, 15 strings, es 14 flagged → 0.** Three of its losses
+    changed what the app teaches rather than only how much: `Deleveraging` read *"Cuando la deuda es
+    excesiva. 4 herramientas."* — announcing four tools and naming none; `Inflation` read *"Cuando
+    los precios suben"*, the word restated with both the mechanism and the Fed's ~2% target gone;
+    and `Bubble` dropped *"pushing prices far above fair value"*, which is the part that makes it a
+    bubble. `Deflation`, `Fed Funds Rate`, `PMI`, `QE`, `QT`, `Yield Curve` and `Credit Spread` had
+    each lost their second, interpretive sentence the same way.
+    **OPEN: 58 pairs in ko/zh/ja** (read the live §67 line for the current split and the worst
+    units). **The fix is new prose in three unreviewed languages, which is squarely inside O-3** —
+    a run must not enlarge that surface unilaterally. The Spanish above was completed because it is
+    one language and its omissions were changing meaning, and even that is inside O-3's scope to
+    re-affirm or cap. This is item 161's precedent applied deliberately, not a new licence.
+    ⚠️ **The ratio has BOTH error directions here too, and this run found a false negative in its
+    own corpus rather than inheriting the warning from §66.** `VIX` es scored **1.00** — a clean
+    ratio — and was still incomplete: the English carries three bands (below 15 / 25-35 / above 40)
+    and every one of the four translations carried two, dropping the middle "fear" band. It was
+    fixed alongside the flagged set, and it is the reason this item says **an unflagged pair is not
+    a certified pair.** The same shape is likely to remain in ko/zh/ja and §67 cannot see it.
+    ⚠️ **Do NOT re-use §66's `MIN_EN * 2` gap heuristic here.** It fits `kidsContent` (shortest
+    body 95) and fails on this corpus for no defect at all — the glossary's longest short name is
+    35 code points and its shortest definition is 70, so 40 sits in a real and empty gap that 80
+    would have condemned. §67's control 5 asserts the gap **this** corpus has. Copying a threshold
+    across corpora is the drift this log keeps catching in figures; it applies to constants too.
+    **§67's known blind spot, asserted as a control rather than left as prose:** a corpus abridged
+    EVENLY in every unit moves its own p90 and reads as clean. There is no recorded baseline for
+    `glossary.js`, so nothing here would catch slow uniform decay.
+
 161. **[Content — filed 2026-09-01 by the scheduled dev-agent that MEASURED it, with the Spanish
     half FIXED in the same commit. 21 LIVE instances, so W-6.2 rule 2's "note under its parent" does
     not apply — that rule parks residuals with zero live instances, and this is not one.
@@ -3787,6 +3837,123 @@ zero meaningful: `selftest PASS (8/8 controls fired, plantsRemoved true)` and, p
 finding(s); V vacuous; U unavailable`. A bare "no accessibility issues found" is not a result.
 
 ## Run log
+
+### 2026-09-02 (scheduled dev-agent, self-picked from a third-corpus audit) — the Spanish glossary defined inflation as "when prices rise" and told the reader deleveraging has four tools without naming any of them, and §4 had certified the file every run since it was written
+
+**Pick, and why it is not a residual chain (W-6.2 rule 1).** The previous run filed nothing and said
+so explicitly ("nothing else was filed and no numbered item was created"), and it recorded the launch
+plan's actionable-clause lead as spent. So there was nothing to inherit. I self-picked by asking which
+learner-visible corpus has a check that measures **presence** where the sibling corpus already proved
+presence is not completeness — i.e. by generalizing item 161's finding rather than by continuing it.
+`glossary.js` was the answer, and nothing in the backlog named it: `grep -nEi "glossary.*(translat|
+abridg|complete)"` over the whole log returns **zero** prior items.
+
+**Step 3.5 — the premise held and got stronger under measurement, and the instrument failed its first
+run in a way worth recording.** The premise was "§4 checks the glossary for presence, not content,
+exactly as §5 did for `kidsContent` before §66."
+- **§4 confirmed by reading it**: it asserts a non-empty `{s, f, ex}` per language and nothing else.
+  `entry.f` is rendered on **two** screens — `Glossary.jsx:135` and `TermDetail.jsx:59` — so this is
+  live, not latent. The glossary is also outside the translation-review ledger *by design* (its own
+  header says so) and §33 reads `lessonContent` only, so nothing had ever measured this file.
+- ⚠️ **The first measurement returned a clean zero and was meaningless.** My scorer read `MIN_EN`
+  from the wrong `argv` slot, got `NaN`, and printed `scored(en>=NaN)=0 … flagged 0 of 0` — a result
+  that looks exactly like a fully translated corpus. It was caught only because the instrument prints
+  its own scored-unit count next to the verdict. **That is the whole argument for printing the
+  denominator**, and §67 fails hard rather than passing when `rows.length === 0` for the same reason.
+- **Corrected, and reproduced twice: 72 of 336 pairs under 70% of a full translation into the same
+  language** (es 14, ko 19, zh 20, ja 19), concentrated in `f` (66) over `ex` (6) and never in `s`.
+- **The mechanism is authoring date, not language — and the evidence is the cross-language overlap,
+  not the prose.** **14 paths flag in ALL FOUR languages at once**, and they are exactly the original
+  macroeconomic cohort (Bubble, CPI, Credit, Credit Spread, Deflation, Deleveraging, Fed Funds Rate,
+  GDP, Inflation, PMI, Productivity Growth, QE, QT, Yield Curve). The personal-finance batch added
+  2026-08-16 (item 35) is complete clause-for-clause in every language. Same finding §66 made about
+  `kidsContent`, arrived at independently on a different corpus.
+- **A second, narrower mechanism, established from git rather than inferred:** an English-only edit
+  that never propagated. `git log -S"monetary base (M0)"` dates `Credit.f`'s M0 clause to `ef0665a`
+  (2026-08-26, item 114) — English alone, which is why the Spanish scored 0.58 with the rest of its
+  sentence a full translation.
+
+**What shipped — 15 Spanish strings, one line each, and no new prose in any other language.** The 14
+flagged, plus one the ratio missed. Three of the losses changed what the app teaches:
+`Deleveraging` read *"Cuando la deuda es excesiva. 4 herramientas."* — it announces four tools and
+names none; `Inflation` read *"Cuando los precios suben"*, the word restated with the mechanism and
+the Fed's ~2% target both gone; `Bubble` dropped *"pushing prices far above fair value"*, which is
+the part that makes it a bubble. `Deflation`, `Fed Funds Rate`, `PMI`, `QE`, `QT`, `Yield Curve` and
+`Credit Spread` had each lost their second, interpretive sentence the same way. Conventions were read
+off the corpus before writing, not assumed: **"el Fed" 27 uses against "la Fed" 4**, and M0's existing
+`es.s` is "Base Monetaria (M0)".
+
+⚠️ **The finding that most limits this run's own instrument: a FALSE NEGATIVE found in its own
+corpus.** `VIX` es scored **1.00** — as clean as a ratio gets — and was still incomplete. The English
+carries three bands (below 15 / 25-35 / above 40) and **all four** translations carried two, dropping
+the middle "fear" band. This is not a regression from `f38acb4` (2026-08-31): that commit correctly
+propagated its own "no official cutoffs" hedge to all five languages, and the two-band structure it
+left in place predates it. Fixed in es alongside the flagged set. **The transferable part: an
+unflagged pair is not a certified pair**, and the same shape is very likely still in ko/zh/ja where
+§67 cannot see it. Written into item 162 rather than left in this entry.
+
+**§67, and the one place I refused to copy §66.** The check is §66's method pointed at the third
+corpus, with five controls. **Control 5 caught me reusing §66's `MIN_EN * 2` gap heuristic**: it fits
+`kidsContent` (shortest body 95) and fails on the glossary for no defect at all — longest short name
+**35**, shortest definition **70**, so 40 sits in a real and empty gap that 80 condemns. Rewritten to
+assert the gap *this* corpus has. **Copying a threshold across corpora is the drift this log keeps
+catching in figures; it applies to constants too.**
+
+**Verification, with the control that makes each number mean something.**
+- **The check fires on a live plant, and the restore is proven.** `QT.es.f` abridged in the working
+  file → §67 goes **es 0 → 1**; restored from a scratchpad copy (never `git checkout --`) and
+  `diff -q` reports **byte-identical**, with the count back to es 0.
+- **The scorer's controls are not decorative.** Planting a bug in `scoreGloss` — the per-language p90
+  reference replaced by a fixed 1.0, the classic wrong metric — makes **control 3 fail** with 96
+  flagged pairs where 0 is correct. Restored byte-identical from a scratchpad copy of the script.
+- **es 14 → 0, and ko/zh/ja did NOT move** (19/20/19 before and after). That is the control for the
+  per-language independence of the p90 reference: a shared denominator would have shifted them.
+- **What SHIPS carries it, with a negative control.** `npm run build`, then grep `dist/assets/`:
+  4/4 restored clauses land in `markets-DDNM-au6.js` (the Reference chunk), **3/3 deleted terse
+  strings are absent**, and a probe string that was never added is **also absent** — so the greps
+  that found nothing are not greps that cannot match.
+- **`npm test`: PASS, 0 failures, 5 warnings** — the four standing ones plus §67's new one. The
+  citation guard did its job: it failed three times on "backlog item 162" until item 162 existed.
+- **`npm run check-blindspot`: PASS**, and the 15 added strings grep clean for advice, branding and
+  date patterns.
+
+**Adversarial self-check (step 5) — run, and it found two things worth writing down.** *Blindspot
+register:* clean — `check-blindspot` passes and the additions define mechanisms without telling anyone
+what to do ("Meta del Fed: ~2%" is a standing policy target already in the English and in the existing
+`CPI` es entry, not a market reading). ⚠️ **But I checked §2.3's coverage rather than assuming it:
+`glossary.js` is NOT in the 26 teaching-copy modules §2.3's date guard scans.** I then measured the
+file: **12 date-like matches, all 12 in source comments**, zero in learner-visible strings. **Zero live
+instances, so per W-6.2 rule 2 this is a note here and under item 162, not a numbered item.**
+*DECISIONS.md conflict:* none on state, storage, module format or platform. The `.js` content module
+stays `.js`. **The one real tension is O-3 and it is stated rather than finessed:** 15 strings of
+AI-written Spanish were added to a corpus with 0% human review. I followed item 161's precedent
+exactly — one language, omissions that change meaning — and that precedent is itself inside O-3's
+scope for the owner to re-affirm or cap. *Already-done backlog item:* **no.** No prior item covers
+glossary translation completeness (grep above returns zero); item 161 is a different corpus; item 35
+added the entries I did not touch; item 114 and `f38acb4` made English-side changes that this run
+**propagates rather than undoes**. *W-6.2 rule 3 — the learner-visible sentence:* "a Spanish reader
+tapped Deleveraging and read a definition that announces four tools and names none." *W-6.3, quoted
+and re-measured as that clause requires:* `scripts/` **16,576** lines against **7,146** lines of app
+code — **2.31x**, and **I am on the growing side of it**: this run adds **+174** lines to `scripts/`
+and **0** to `src/` outside content. The honest defense is that the corpus it measures was measured
+for the first time today and 58 live defects remain in it; the honest cost is that the ratio moved the
+wrong way again. *My own verification claim:* every figure above comes from committed content and from
+commands an independent reviewer can re-run — `npm test`, `npm run build`, the two plants with their
+byte-identical restores, and the dist greps with their negative control.
+
+⚠️ **The honest size of the win.** One language of four. **58 pairs remain** and they are the majority
+of the defect; a Korean, Chinese or Japanese learner still taps "GDP" and gets a bare noun phrase where
+the English reader gets the recession rule of thumb *and* the caveat that the US does not actually use
+it. That remainder is O-3's, not a run's.
+
+**Next run should NOT take item 162's ko/zh/ja remainder** — it is an owner decision, not work. **O-1
+remains the entire critical path**: 44 lessons, five languages, 160 minutes of content, 62+ check
+sections, and zero people have ever opened this app. A **backlog refill** (W-2's standing rule) is a
+legitimate pick; so is the observation that this run and the last two all found real defects by
+auditing a learner-visible corpus nothing measured, which suggests the remaining ones are worth
+enumerating deliberately rather than one per run.
+**Owner tree at start and end of run: the owner's untracked `UIUX/` (51 files), untouched, as in the
+previous fifteen runs. `OWNER-TREE` at start: `f54fc023…` (0 tracked modified, 51 untracked).**
 
 ### 2026-09-01 (scheduled dev-agent, backlog item 160) — the item said the quiz's remaining length cue splits into "leave alone" and "needs new prose"; measured, it is neither, and three of the obvious trims would have inverted the tell rather than removed it
 
