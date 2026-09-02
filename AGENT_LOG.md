@@ -1442,7 +1442,19 @@ through two passes that each had it open.
       stand; the coverage did not.** `A11yStates.coverage()` plus the Tab step now in the header
       recipe are the fix — see item 149.
 
-162. **[Content — filed 2026-09-02 by the scheduled dev-agent that MEASURED it, with the Spanish
+162. **✅ DONE 2026-09-02 (owner-directed: "do the ko/zh/ja glossary translations too"), the same
+    day it was filed — the O-3 call this item said it needed, made for this corpus.** All 42 true
+    positives completed across ko/zh/ja (45 strings including the three VIX bands), §67 reads
+    **0/336 abridged**. **The durable part is the instrument's false-positive rate, now recorded as
+    data:** after the fix, **30 of 336 pairs (9%)** still scored under threshold and every one was
+    READ and is complete — the discursive item-35 English rendered in compact CJK. They live in §67's
+    `READ_COMPLETE` with the code-point length each had when read; **control 6** proves a listed pair
+    cut to 20% FAILS rather than hides, and a plant on the live file confirmed it (36 → 16 cp, exit 1).
+    ⚠️ **Read this before applying the same method to item 161's kidsContent remainder:** if the
+    parent guide's remaining 21 ko/zh/ja pairs are the same shape, some of them will turn out to be
+    complete compact translations too — read each, do not pad. Original filing kept below as the
+    dated record.
+    [Content — filed 2026-09-02 by the scheduled dev-agent that MEASURED it, with the Spanish
     half FIXED in the same commit. 58 LIVE instances, so W-6.2 rule 2's "note under its parent" does
     not apply — that rule parks residuals with zero live instances, and this is not one.
     Honest priority: MEDIUM for ko/zh/ja, and the remainder is an O-3 decision, not a run's.]
@@ -3837,6 +3849,70 @@ zero meaningful: `selftest PASS (8/8 controls fired, plantsRemoved true)` and, p
 finding(s); V vacuous; U unavailable`. A bare "no accessibility issues found" is not a result.
 
 ## Run log
+
+### 2026-09-02 (owner-directed: "do the ko/zh/ja glossary translations too") — the O-3 call for the glossary, made; 42 true positives completed, and the ratio's 9% false-positive rate on this corpus recorded as data instead of left as a permanent warning
+
+**Authorization.** Item 162 filed the ko/zh/ja remainder as an owner decision under O-3 and did not
+take it. The owner made the call interactively the same day. This entry is that work, and it does not
+widen O-3's scope: it is one corpus, named by the owner.
+
+**What shipped — 45 strings across ko/zh/ja, one line each, no English touched.** The 14-path macro
+cohort in all three languages (GDP, Deflation, Credit's M0 clause, Fed Funds Rate, Yield Curve, Credit
+Spread, Inflation, Productivity Growth, Bubble, PMI, CPI, QT, Deleveraging's four named tools, QE),
+plus the VIX false-negative shape in all three — the missing 25-35 band — and one factual nudge found
+while there: `ja` VIX said 15以下 (at or below 15) where the English says *below* 15. Conventions were
+read off the corpus first: **연준 / 美联储 / FRB** for the Fed (zh had one stray 央行 in QE, now
+美联储 like QT), and M0's existing short names — 본원통화(M0), 基础货币（M0）, マネタリーベース（M0）.
+Register matched the complete item-35 entries in each language rather than the terse macro glosses
+being replaced.
+
+**The finding worth the entry: after the true positives were fixed, §67 still flagged 30 pairs, and
+all 30 are complete.** Fixing the macro cohort moved every language's p90 up (ko 0.580 → 0.615, ja
+0.500 → 0.509, zh 0.368 → 0.373), so the compact-but-complete item-35 translations crossed under the
+threshold — *"The amount of money originally borrowed or invested, kept separate from any interest
+charged or earned on it"* is 23 Chinese characters, and there is nothing missing from it. **Three bad
+options and the one taken:** padding them satisfies a ratio with worse prose; leaving them warning
+teaches every reader to skip the line, which is how the next real regression hides; loosening
+`ABRIDGED_BELOW` breaks the shared calibration §66 imports on purpose. **Taken: a dated
+`READ_COMPLETE` record — each pair read against its English, stored with the code-point length it had
+when read.** It cannot hide a *new* abridgement (an unlisted pair still warns) and it cannot hide a
+listed pair that is later cut (control 6: below 90% of the recorded length FAILS). `deliberatelyUnlinked`
+is the precedent — curation as data, not as prose.
+
+**Verification, each number with the control that gives it meaning.**
+- **The fingerprint fires on the live file, not only in its synthetic control.** `ko Principal.f` cut
+  from 36 to 16 code points → `FAIL: §67 … read complete at 36 … now ships at 16 (44%)`, exit 1.
+  Restored from a scratchpad copy, `diff -q` byte-identical.
+- **The list does not mask a new defect.** `zh QE.f` re-abridged to 美联储购债。→ the warn returns at
+  **zh 1** with the other three at 0. Restored byte-identical.
+- **Per-language independence held again**: es stayed at 0 through the ko/zh/ja edits.
+- **`npm test`: PASS, 0 failures, 4 warnings** — §67's warning is gone; the four standing ones remain.
+  `check-blindspot`: PASS. A blunt token grep over the 45 additions hit 买入 / 買う / 買い / 해야 four
+  times; each read in context is mechanism (*the Fed buys bonds*, *borrow to buy assets*, *must be
+  repaid*, a pre-existing *credit-card purchase* example), none is a directive.
+- **What ships, with negatives.** `npm run build` → `dist/assets/markets-*.js` carries **6/6** probed
+  restored clauses (Deleveraging's tools and VIX's middle band, one per language), **0/4** of the
+  deleted terse strings, and a never-added probe is absent — so the absences are not a grep that
+  cannot match CJK.
+
+**Adversarial self-check (step 5).** *Blindspot register:* clean, as above; "연준 목표: 약 2%" and its
+zh/ja equivalents are the same standing target the English and es already carry. *DECISIONS.md:* the
+"(Beta)" machine-translation decision is exactly what this run enlarges, **by owner instruction, for
+this corpus** — stated, not finessed; the ledger still records 0% human review and this run does not
+change that number. *Already-done:* no — it completes item 162 rather than redoing anything. *W-6.2
+rule 3:* the learner-visible sentence is unchanged from the morning's entry, now in three more
+languages. *W-6.3:* `scripts/` grows again, **+~70 lines** for `READ_COMPLETE` and control 6, against
+0 in `src/` outside content. I am on the growing side twice today. The defense is that this addition
+records a measured false-positive rate that the next corpus audit (item 161's remainder) needs before
+it starts; the cost is that the ratio moved the wrong way again. *My own claim:* every figure comes
+from `npm test`, `npm run build`, the two live plants with byte-identical restores, and the dist greps
+with their negative controls.
+
+⚠️ **Honest limits.** These 45 strings are AI-written ko/zh/ja read by no fluent speaker — O-3's
+standing condition, unchanged. The 30 `READ_COMPLETE` pairs were read by the same agent that wrote the
+neighbors; a fluent reviewer is the only thing that turns "read complete" into "reviewed".
+
+**Owner tree at start and end: untracked `UIUX/` (51 files), untouched.**
 
 ### 2026-09-02 (scheduled dev-agent, self-picked from a third-corpus audit) — the Spanish glossary defined inflation as "when prices rise" and told the reader deleveraging has four tools without naming any of them, and §4 had certified the file every run since it was written
 

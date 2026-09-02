@@ -9544,9 +9544,28 @@ function trendDirection(src) {
 //     value", which is the part that makes it a bubble. Spanish was completed
 //     in the same commit and the es column now stands at 0 flagged.
 //
-//     WHY IT WARNS RATHER THAN FAILS: the ko/zh/ja remainder is new prose in
-//     three languages no fluent reader has checked — an O-3 decision, not a
-//     run's (backlog item 162).
+//     WHY IT WARNS RATHER THAN FAILS: the ko/zh/ja remainder was new prose in
+//     three languages no fluent reader had checked — an O-3 decision, which
+//     the owner made on 2026-09-02 ("do the ko/zh/ja glossary translations
+//     too"). All 42 true positives were completed that day; the warning stays a
+//     warning so a future abridgement is seen without blocking a build.
+//
+//     READ_COMPLETE — THE RATIO'S FALSE-POSITIVE RATE ON THIS CORPUS, RECORDED
+//     AS DATA. After the true positives were fixed, 30 of 336 pairs (9%) still
+//     scored under the threshold, and every one of them was READ against its
+//     English and carries every clause: they are the discursive personal-
+//     finance entries (item 35) rendered in compact ko/zh/ja, where "The
+//     amount of money originally borrowed or invested, kept separate from any
+//     interest charged or earned on it" is 23 Chinese characters. Padding them
+//     to satisfy a ratio would be worse prose in service of a number; leaving
+//     them warning forever would teach every reader to ignore the line, which
+//     is how a real regression hides. So each read pair is listed below WITH
+//     THE CODE-POINT LENGTH IT HAD WHEN READ. The list cannot hide a NEW
+//     abridgement (a new pair is not on it), and it cannot hide a pair that is
+//     later cut shorter (control 6: a listed translation that shrinks below
+//     90% of its recorded length FAILS, because what was read is no longer
+//     what ships). Entries that drift above the threshold as the p90 moves are
+//     inert and are counted, not failed — the p90 is allowed to move.
 //
 //     THE RATIO HAS BOTH ERROR DIRECTIONS HERE TOO, and this section found a
 //     false negative in its own corpus rather than only inheriting the warning
@@ -9558,6 +9577,29 @@ function trendDirection(src) {
   const before67 = failures;
   const MIN_EN = 40; // separates the 42 short names from the bodies; controlled below.
   const cp = (s) => [...(s ?? "")].length;
+
+  // Read against the English on 2026-09-02 and complete. `at` is the code-point
+  // length of the translation when it was read — the fingerprint control 6 uses.
+  const READ_COMPLETE = [
+    { path: "M1.ex", lang: "ko", at: 37 }, { path: "Principal.f", lang: "ko", at: 36 },
+    { path: "Deductible.f", lang: "ko", at: 57 }, { path: "Recession.f", lang: "ko", at: 86 },
+    { path: "Debt-to-GDP Ratio.f", lang: "ko", at: 59 }, { path: "Deflation.f", lang: "ko", at: 29 },
+    { path: "Interest Rate.ex", lang: "ko", at: 43 }, { path: "Credit.f", lang: "ko", at: 84 },
+    { path: "Vesting.f", lang: "ko", at: 75 }, { path: "Credit.ex", lang: "ko", at: 44 },
+    { path: "Savings Account.ex", lang: "ko", at: 63 }, { path: "Compound Interest.ex", lang: "ko", at: 58 },
+    { path: "Principal.f", lang: "zh", at: 23 }, { path: "Savings Account.ex", lang: "zh", at: 35 },
+    { path: "PMI.ex", lang: "zh", at: 23 }, { path: "Vesting.ex", lang: "zh", at: 28 },
+    { path: "Vesting.f", lang: "zh", at: 46 }, { path: "Compound Interest.f", lang: "zh", at: 43 },
+    { path: "Debt-to-GDP Ratio.f", lang: "zh", at: 39 }, { path: "Compound Interest.ex", lang: "zh", at: 35 },
+    { path: "Credit Spread.f", lang: "ja", at: 26 }, { path: "Deductible.f", lang: "ja", at: 49 },
+    { path: "M1.ex", lang: "ja", at: 36 }, { path: "Vesting.f", lang: "ja", at: 62 },
+    { path: "Recession.f", lang: "ja", at: 78 }, { path: "Productivity Growth.ex", lang: "ja", at: 34 },
+    { path: "Debt-to-GDP Ratio.f", lang: "ja", at: 53 }, { path: "Interest Rate.ex", lang: "ja", at: 37 },
+    { path: "Yield Curve.f", lang: "ja", at: 37 }, { path: "Business Income.ex", lang: "ja", at: 58 },
+  ];
+  const SHRUNK_BELOW = 0.9;
+  const readKey = (path, lang) => `${path}\u0000${lang}`;
+  const readMap = new Map(READ_COMPLETE.map((r) => [readKey(r.path, r.lang), r.at]));
 
   const glossUnits = (g) => {
     const out = [];
@@ -9581,13 +9623,18 @@ function trendDirection(src) {
     for (const lang of COMPLETENESS_LANGS) ratio[lang] = rows.map((r) => cp(r.m[lang]) / r.en);
     const reference = {};
     for (const lang of COMPLETENESS_LANGS) reference[lang] = p90(ratio[lang]);
-    const abridged = [];
+    const abridged = [], readComplete = [], shrunk = [];
     rows.forEach((r, i) => {
       for (const lang of COMPLETENESS_LANGS) {
-        if (ratio[lang][i] < ABRIDGED_BELOW * reference[lang]) abridged.push({ path: r.path, lang, ratio: ratio[lang][i] });
+        if (ratio[lang][i] >= ABRIDGED_BELOW * reference[lang]) continue;
+        const hit = { path: r.path, lang, ratio: ratio[lang][i], now: cp(r.m[lang]) };
+        const at = readMap.get(readKey(r.path, lang));
+        if (at === undefined) abridged.push(hit);
+        else if (hit.now < SHRUNK_BELOW * at) shrunk.push({ ...hit, at });
+        else readComplete.push(hit);
       }
     });
-    return { rows, reference, abridged };
+    return { rows, reference, abridged, readComplete, shrunk };
   };
 
   // CONTROLS FIRST, for §66's reason: a scorer that flags nothing certifies the
@@ -9659,8 +9706,30 @@ function trendDirection(src) {
     }
   }
 
+  // 6. READ_COMPLETE cannot mask a regression: a listed translation cut to 20%
+  //    must land in `shrunk`, not in `readComplete`. And every entry must name
+  //    a pair that exists — a typo here is an exemption for nothing.
+  {
+    const live = new Set(glossUnits(glossary).flatMap((u) => COMPLETENESS_LANGS.map((l) => readKey(u.path, l))));
+    const missing = READ_COMPLETE.filter((r) => !live.has(readKey(r.path, r.lang)));
+    if (missing.length) fail(`§67: READ_COMPLETE names ${missing.length} pair(s) that do not exist in glossary.js (${missing.map((r) => `${r.path} ${r.lang}`).join(", ")}) — a read-complete record for a pair that is not there records nothing.`);
+    const g = JSON.parse(JSON.stringify(glossary));
+    const T = READ_COMPLETE[0];
+    const [term, field] = [T.path.slice(0, T.path.lastIndexOf(".")), T.path.slice(T.path.lastIndexOf(".") + 1)];
+    if (g[term]?.[T.lang]?.[field]) {
+      g[term][T.lang][field] = [...g[term][T.lang][field]].slice(0, Math.ceil(cp(g[term][T.lang][field]) * 0.2)).join("");
+      const r = scoreGloss(g);
+      const inShrunk = r.shrunk.some((x) => x.path === T.path && x.lang === T.lang);
+      const inRead = r.readComplete.some((x) => x.path === T.path && x.lang === T.lang);
+      if (!inShrunk || inRead) fail(`§67: the READ_COMPLETE fingerprint failed its control — ${T.path} ${T.lang} cut to 20% was ${inRead ? "still accepted as read-complete" : "not reported as shrunk"}. The list would mask exactly the regression it must not.`);
+    }
+  }
+
   // THE REAL CORPUS.
   const gloss = scoreGloss(glossary);
+  if (gloss.shrunk.length) {
+    for (const x of gloss.shrunk) fail(`§67: ${x.path} ${x.lang} was read complete at ${x.at} code points and now ships at ${x.now} (${Math.round((100 * x.now) / x.at)}%). What was read is no longer what ships — re-read it against the English, then either restore it or update its READ_COMPLETE length.`);
+  }
   if (gloss.rows.length === 0) {
     fail(`§67: no glossary units could be read — the module's shape changed and this section is measuring nothing, which is indistinguishable from a fully translated corpus.`);
   } else {
@@ -9678,7 +9747,7 @@ function trendDirection(src) {
     }
     if (failures === before67) {
       const line = COMPLETENESS_LANGS.map((lang) => `${lang} ${gloss.abridged.filter((a) => a.lang === lang).length}`).join(", ");
-      console.log(`  §67 glossary translations are measured for content, not just presence: ${gloss.abridged.length}/${gloss.rows.length * COMPLETENESS_LANGS.length} pair(s) under ${Math.round(100 * ABRIDGED_BELOW)}% of their language's own p90 (${line}) across ${gloss.rows.length} unit(s), 5 scorer control(s) fired.`);
+      console.log(`  §67 glossary translations are measured for content, not just presence: ${gloss.abridged.length}/${gloss.rows.length * COMPLETENESS_LANGS.length} pair(s) under ${Math.round(100 * ABRIDGED_BELOW)}% of their language's own p90 (${line}) across ${gloss.rows.length} unit(s); ${gloss.readComplete.length} under-threshold pair(s) read complete on 2026-09-02 and unchanged since (${READ_COMPLETE.length - gloss.readComplete.length} listed entries inert above threshold); 6 scorer control(s) fired.`);
     }
   }
 }
