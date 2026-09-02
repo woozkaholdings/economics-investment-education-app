@@ -1442,6 +1442,39 @@ through two passes that each had it open.
       stand; the coverage did not.** `A11yStates.coverage()` plus the Tab step now in the header
       recipe are the fix — see item 149.
 
+163. **[UX/A11y — filed 2026-09-02 by the run that put the unit on the balance-sheet chart, as three
+    things that run SAW on the same walk and deliberately did not fold into the same commit.]
+    All three are live and measured; none is a guess.**
+    - **(a) The Review recap shows a green success check over "0 of 1 correct".** Measured: answer
+      the only queued question wrong → `Practice.jsx`'s recap card renders an unconditional
+      `<Icon name="check">` at `ink.ok` above "Review complete". The per-question rows below it
+      *do* branch (`r.correct ? "check" : "x"`, `ink.ok : ink.bad`), so the screen contradicts
+      itself in two inches. **This is a judgment call, not a falsehood** — "Review complete" is
+      true, and the file's own comment argues the retrieval attempt matters more than the grade, so
+      a tick meaning "session done" is defensible. Whoever picks it is deciding whether the icon
+      reports *completion* or *result*; if result, `correctCount === 0` at minimum should not be a
+      green tick. Note this is NOT item 117's defect — that one was the Practice *landing* card
+      with `review = null`, closed 2026-08-26.
+    - **(b) The Market Dashboard's heading outline names 4 of its 7 blocks.** Measured live:
+      `h1 Market Dashboard`, then `h2` for *How Rate Changes Affect Assets*, *Yield Curve Shapes*,
+      *Money Supply (M0, M1, M2)*, *Key Principles* — and **nothing** for the cycle curve at the
+      top, the QE/QT pair, or the balance-sheet figure. A reader navigating by heading skips three
+      sections, one of which is the chart this run just fixed. Same class as item 106 and the two
+      `<h2>`s added to `LessonReader`; the fix is the same shape (mark up the label that is already
+      there), but two of the three blocks are `Note`/`figcaption` primitives shared elsewhere, so it
+      is not a one-liner.
+    - **(c) `Bar` renders `9` where its own description says `9.0`.** Four of the five values carry
+      one decimal and the fifth does not, because `9.0 === 9` in JavaScript. A `Bar`-wide decimal
+      convention (or a formatted string in the data) would fix it; a `.toFixed(1)` inside `Bar`
+      would be wrong for a future integer-valued chart.
+    - **W-6.2 rule 3, answered:** (a) "a learner who got everything wrong was congratulated with a
+      green tick"; (b) "three sections of the Market Dashboard were unreachable by heading
+      navigation"; (c) "one bar in five was labeled to a different precision than its siblings".
+      All three are things a person would meet. **No check is proposed for any of them** — W-6.3's
+      number (`scripts/` at 2.3x `src/`) says a regex is the wrong instrument for all three, and
+      (a) is a decision rather than a defect. **Honest priority: (b) medium, (a) low-and-owner's,
+      (c) low.**
+
 162. **✅ DONE 2026-09-02 (owner-directed: "do the ko/zh/ja glossary translations too"), the same
     day it was filed — the O-3 call this item said it needed, made for this corpus.** All 42 true
     positives completed across ko/zh/ja (45 strings including the three VIX bands), §67 reads
@@ -3880,6 +3913,93 @@ zero meaningful: `selftest PASS (8/8 controls fired, plantsRemoved true)` and, p
 finding(s); V vacuous; U unavailable`. A bare "no accessibility issues found" is not a result.
 
 ## Run log
+
+### 2026-09-02 (scheduled dev-agent, self-picked by walking a first-run learner from lesson 1 through Review into Reference) — the Fed balance-sheet chart told a screen-reader user the bars are trillions of dollars and told a sighted reader nothing; "9" sat under the title "Fed Balance Sheet" with no unit anywhere on screen
+
+**The defect, and it is an inversion of the usual one.** `charts.jsx`'s `<Bar>` prints `{d.value}`
+bare. Its only content is `balanceSheetHistory` — 0.9 / 4.5 / 3.8 / 9 / 6.7 — and the unit lived in
+exactly one place: `balanceSheetDescription`, the `aria-label` on the `role="img"` container. So the
+figure's **text alternative carried a fact the figure itself did not**. The caption underneath
+(`"The shape, not the exact level, is the point"`) declines to name the level, and `t.balanceSheet`
+("Fed Balance Sheet") is a title, not a unit. A sighted learner met a bar labeled **9** and had no way
+to know whether that was 9 billion, 9 trillion, or an index. **A text alternative may restate what is
+on screen; it must not be the only place a fact appears.**
+
+**Measured live before any edit (step 3.5), on the shipped build `index-D4xvPdq9.js`**, Reference >
+Market Dashboard in English:
+- `/trillion/i.test(document.body.innerText)` → **false**.
+- `/trillion/i.test(document.body.innerHTML)` → **true**, and the surrounding 240 characters are
+  `…<figcaption>…Fed Balance Sheet</figcaption><div role="img" aria-label="Five bars, in trillions of
+  dollars: 0.9 before 2008, …`.
+- **That pair IS the control, and it is two-sided by construction.** The same case-insensitive regex,
+  over the same document, finds the word in the aria-label and cannot find it in the rendered text —
+  so the negative reading is a property of the page, not of a probe that silently matches nothing.
+  (The first post-fix run of this probe *did* return a false negative, for a reason worth keeping:
+  the figcaption is `text-transform: uppercase`, so `innerText` returns `$ TRILLIONS` and a
+  case-sensitive `includes("$ trillions")` misses it. Instrument fixed, then re-run.)
+
+**The fix.** `<Bar>` gains a `unit` prop, rendered as a second span inside the existing `<figcaption>`
+after a `·`, at `fontWeight: 400` against the title's 700 so it reads as subordinate. `unit` is
+**outside** the `role="img"` container on purpose — inside it, the value would be announced twice.
+The strings are a new `balanceSheetUnit` in `src/content/markets.js`, five languages, each one the
+same unit its own language's `balanceSheetDescription` already names, so the face of the figure and
+its text alternative cannot drift: `$ trillions` / `billones de dólares` / `조 달러` / `万亿美元` /
+`兆ドル`. (`es` uses *billones*, which is 10^12 in Spanish and is therefore the correct rendering of
+"trillions" — the description had already made that call.) Both call sites pass it:
+`screens/reference/MarketSignals.jsx` and `components/LessonVisual.jsx` (lesson 37, **QE & QT**, on
+the main path), which are the only two `<Bar>` instances in the app.
+
+**Why the prop is on `Bar` alone.** `charts.jsx` has ten figcaptions; nine belong to primitives that
+label their own geometry (`2Y`/`10Y`/`30Y`, phase names, bracket rows). `Bar` is the only one that
+prints a bare number whose magnitude has no other referent on screen — so this is a fix at one
+primitive, not a new convention nine other charts now have to satisfy.
+
+**Verification, live in all five languages on `index-8UQ_ZkDB.js`** (the built hash was re-checked
+after the final build and is byte-identical to the one driven):
+- Figcaption reads `FED BALANCE SHEET · $ TRILLIONS`, `BALANCE DEL FED · BILLONES DE DÓLARES`,
+  `연준 대차대조표 · 조 달러`, `美联储资产负债表 · 万亿美元`, `FRBのバランスシート · 兆ドル`.
+  The unit is now in `innerText` in all five, with a **negative control in the same probe**
+  (`innerText.includes("zzz-not-present")` → false every time), so "found it" is not "matches
+  everything".
+- **Lesson 37 driven for real**, not asserted: `completed = [29..36]` to unlock it honestly (a URL
+  does not unlock a lesson), `#/lesson/37` → the inline figure renders
+  `FED BALANCE SHEET · $ TRILLIONS` above the same five values.
+- **320px, and the 200% root-font axis, with the differential control that matters.** The Spanish
+  string is the longest; at 320px the figcaption wraps to two lines, `scrollWidth - clientWidth` is
+  **0**, and the page has **no horizontal scroll**. At 200% the sweep reports four `290 > 288`
+  container overflows and 59px of body scroll — **I removed the unit span in place and re-ran the
+  identical probe: the findings are byte-identical (4 vs 4, same elements; 59 vs 59). Pre-existing,
+  not mine.** The text-overflow probe's own control fired first (a planted 42-character unbreakable
+  word in a 40px box with `overflow-wrap: normal` → 1 finding; removed → 0).
+- **`npm test`: PASS, 0 failures**, same standing warnings (3 in `check-data` + the floor).
+  **`npm run build`: clean.**
+
+**Adversarial self-check (step 5).** *Blindspot register:* §10.1 — `check-blindspot` passes, and it is
+**proven non-vacuous over the new field specifically**: planting `"$ trillions — you should buy stocks
+now"` into `balanceSheetUnit.en` (grep confirmed the plant landed at `markets.js:268`) gives
+**FAIL: §10.1 investment-advice-adjacent language reintroduced**; restored from a scratchpad copy to a
+byte-identical sha (`b613b9c9…`), never `git checkout --`. §10.2 — no person or firm named; "Fed" is
+the institution the chart has always been titled after. §10.3 — untouched. §2.3 — no date and no
+live-looking figure added; the five values are unchanged pre-2026 historical era data. *DECISIONS.md:*
+no state-model change (still `localStorage`), the strings are a `.js` content module and not JSON, no
+routing or build change. *No hex:* neither touched file contains one — the unit uses `ink.muted`, the
+same token as the title. *Already-done:* `balanceSheetUnit` appears **0** times in `AGENT_LOG.md` and
+**0** in the archive; the three "axis label" hits are lesson 23's chart and `moneyVisuals.js`, other
+figures. *W-6.2:* not the previous run's residual — the last entry is the Learn screen's finished
+state and points nowhere near `charts.jsx`. *W-6.3:* `scripts/` **+0 lines**; no instrument added,
+and see item 163 for the check that was considered and why it is not filed as due. *My own claim:*
+every figure re-runs from the repo — build, open `#/reference` > Market Dashboard, read the
+figcaption; the pre-fix state rebuilds at `f48b120`.
+
+⚠️ **Honest limits.** (1) **Four new machine-translated strings** (es/ko/zh/ja), read by no fluent
+speaker — O-3's standing condition. These are the mildest end of it: each is a two-or-three-token unit
+copied out of a description already shipping in that language, not new prose. (2) The visible values
+still render `9` where the description says `9.0`, because `9.0` is `9` in JavaScript. Among four
+one-decimal siblings that reads as an inconsistency; it is a `Bar`-wide formatting decision rather
+than a data one, so it is noted in item 163 rather than fixed here. (3) The 200% / 320px container
+overflows above are real and untouched — this run proved only that they are not mine.
+
+**Owner tree at start and end: `OWNER-TREE f54fc023fb026bcb44277af38101071c245bfda0c8ead5c40049acd487b5c975` (0 tracked modified, 51 untracked — `UIUX/`), untouched. Committed: `src/components/charts.jsx`, `src/content/markets.js`, `src/components/LessonVisual.jsx`, `src/screens/reference/MarketSignals.jsx`, and this log.**
 
 ### 2026-09-02 (scheduled dev-agent, self-picked by driving the Learn screen into a state nothing else exercises) — a learner who finishes all 44 lessons is told "NEXT UP: Transactions" over a full progress bar, and lesson 1 is marked Completed and Current lesson in the same row
 

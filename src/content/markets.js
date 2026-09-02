@@ -259,6 +259,19 @@ export const balanceSheetDescription = {
   ja: "棒が5本、単位は兆ドル：2008年以前は0.9、QE1〜3後は4.5、第1次引き締め後は3.8、パンデミック対応後は9.0、第2次引き締め後は6.7。大きな上昇が2回あり、そのたびにより小さな下落が続きます。",
 };
 
+// The unit, shown ON the chart next to its title (charts.jsx's `unit` prop) —
+// not only inside `balanceSheetDescription`. Each string is the same unit its
+// own language's description already names, so the face of the figure and its
+// text alternative cannot drift apart. Note `es` uses "billones", which is
+// 10^12 in Spanish and is therefore the correct rendering of "trillions".
+export const balanceSheetUnit = {
+  en: "$ trillions",
+  es: "billones de dólares",
+  ko: "조 달러",
+  zh: "万亿美元",
+  ja: "兆ドル",
+};
+
 export const balanceSheetCaption = {
   en: "Each expansion came from buying bonds to support the economy; each decline came from letting them mature. The shape, not the exact level, is the point.",
   es: "Cada expansión vino de comprar bonos para apoyar la economía; cada caída, de dejarlos vencer. Lo importante es la forma, no el nivel exacto.",

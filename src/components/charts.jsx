@@ -22,7 +22,7 @@ import { Text } from "./ui.jsx";
 // container is one image. §22 of check-data.mjs asserts every call site passes
 // one, which is what keeps the unconditional `aria-label` below from silently
 // resolving to `undefined`.
-export function Bar({ data, title, colors, height = 140, description, caption }) {
+export function Bar({ data, title, unit, colors, height = 140, description, caption }) {
   const max = Math.max(...data.map((d) => Math.abs(d.value)));
   // `height` is authored in px by both call sites, but a PIXEL height does not scale with the
   // reader's font-size control — and the column spends its height on the value, the bar track and
@@ -44,6 +44,26 @@ export function Bar({ data, title, colors, height = 140, description, caption })
           <Text as="span" variant="caption" color={ink.muted} style={{ textTransform: "uppercase", letterSpacing: "0.05em", fontWeight: 700 }}>
             {title}
           </Text>
+          {/* The unit belongs on the FACE of the chart, not only in
+              `description`. Measured 2026-09-02 on Reference > Market Dashboard:
+              the word "trillions" appeared in the DOM exactly once — inside the
+              `role="img"` aria-label below — and nowhere in `innerText`. So a
+              screen-reader user was told the bars are trillions of dollars while
+              a sighted reader saw a bar labeled "9" under the title "Fed Balance
+              Sheet", with the caption ("the shape, not the exact level, is the
+              point") declining to say what the level measures. A text
+              alternative may restate what is on screen; it must not be the only
+              place a fact appears.
+              Rendered as its own span rather than appended to `title` so the
+              five language strings stay separable, and deliberately OUTSIDE the
+              role="img" below so it is not announced twice. `Bar` is the only
+              primitive here that prints bare numeric values, which is why the
+              prop is on this one and not on the file's other nine figcaptions. */}
+          {unit && (
+            <Text as="span" variant="caption" color={ink.muted} style={{ textTransform: "uppercase", letterSpacing: "0.05em", fontWeight: 400 }}>
+              {" · "}{unit}
+            </Text>
+          )}
         </figcaption>
       )}
       {/*

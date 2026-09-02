@@ -17,7 +17,7 @@ import { useState } from "react";
 import { AsymmetryChart, Bar, BracketStack, CycleChart, GapColumns, GrowthCurve, OutcomeGrid, PreferenceFlip, ProportionBar, SpendingLoop, TradeoffPlot, YieldCurve } from "./charts.jsx";
 import { Segmented, Text } from "./ui.jsx";
 import {
-  balanceSheetCaption, balanceSheetDescription, balanceSheetHistory,
+  balanceSheetCaption, balanceSheetDescription, balanceSheetHistory, balanceSheetUnit,
   cycleChartDescription, phaseNames,
   spendingLoopCaption, spendingLoopDescription, spendingLoopSteps, spendingLoopTitle,
   trendLabel, yieldCurveDescriptions,
@@ -346,6 +346,7 @@ export default function LessonVisual({ lessonId, t, lang }) {
       {kind === "balanceSheet" && (
         <Bar
           title={t.balanceSheet}
+          unit={balanceSheetUnit[lang]}
           data={balanceSheetHistory.map((d) => ({ label: d.label[lang], value: d.value }))}
           colors={[graph.neutral, graph.green, graph.red, graph.green, graph.red]}
           height={90}
