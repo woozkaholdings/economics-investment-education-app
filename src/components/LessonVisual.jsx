@@ -83,8 +83,9 @@ export const LESSON_VISUALS = {
 
 const CURVE_TYPES = ["normal", "flat", "inverted", "steep"];
 
-// Which `kind`s are personal-finance figures — drives the figcaption note
-// below. The constant keeps its MONEY_VISUALS name (it is referenced further
+// Which `kind`s are personal-finance figures — drives the note rendered
+// below the figure (a plain <Text>, not a figcaption — see the wrapper
+// comment in the component). The constant keeps its MONEY_VISUALS name (it is referenced further
 // down and in §21's checks); the set spans `essentials` and `money` since the
 // 2026-08-19 split, so the name is a label, not a track claim.
 const MONEY_VISUALS = new Set(["budgetSplit", "compounding", "taxBrackets", "earningsGap", "preferenceFlip", "lossAsymmetry", "incomeTradeoff", "outcomeGrid"]);
@@ -159,8 +160,37 @@ export default function LessonVisual({ lessonId, t, lang }) {
   const kind = LESSON_VISUALS[lessonId];
   if (!kind) return null;
 
+  // ⚠️ A <div>, NOT a <figure>, and the reason is measured rather than stylistic.
+  // Every one of the twelve primitives in charts.jsx emits its OWN <figure> (and
+  // all but CycleChart its own <figcaption>), so wrapping them here put a
+  // <figure> whose entire content is one <figure> around all 14 shipped lesson
+  // figures — counted live on 2026-09-02, 14 of 14, every one `figures: 2,
+  // nested: 1`.
+  //
+  // The argument for changing it is the app's OWN other chart surface, not a
+  // reading of the spec. `Reference > Market Dashboard` renders these same
+  // primitives unwrapped — measured the same day: 6 figures, 0 nested — and it
+  // ships THIS EXACT NOTE as a plain <p> outside every figure. So lesson figures
+  // and dashboard figures disagreed about their own markup while displaying the
+  // same component, and this makes the lessons match what already shipped.
+  //
+  // ⛔ WHAT WAS NOT MEASURED, because it cannot be here. "A screen reader
+  // announces two figures and two captions" is HTML-AAM's mapping, not an
+  // observation: `read_page` in this environment prints no `figure` role AT ALL,
+  // and the control proves that is the tool and not the page — on the Market
+  // Dashboard, which has six figures and zero nesting, it prints no `figure`
+  // either. Do not upgrade the spec inference into a measurement in a later
+  // entry. The DOM structure and the cross-surface inconsistency are the
+  // measured facts; the announcement is an inference from them.
+  //
+  // The note is now adjacent text rather than a figcaption, so it is no longer
+  // programmatically tied to the figure — a real if small trade, taken because
+  // the alternative (threading a `note` prop through twelve primitives, or
+  // appending it to fourteen `caption` props) is a far larger change to markup
+  // for a disclaimer the app already renders this way elsewhere. It keeps its
+  // position in reading order, immediately after the figure.
   return (
-    <figure style={{ margin: `${space["5"]}px 0 0` }}>
+    <div style={{ margin: `${space["5"]}px 0 0` }}>
       {kind === "cycle" && (
         <CycleChart
           phaseNames={phaseNames[lang]}
@@ -363,11 +393,11 @@ export default function LessonVisual({ lessonId, t, lang }) {
         at the risk they actually have: that a reader takes an illustrative 6%
         for a return to expect (§10.1).
       */}
-      <figcaption style={{ marginTop: space["2"] }}>
+      <div style={{ marginTop: space["2"] }}>
         <Text as="span" variant="caption" color={ink.muted}>
           {MONEY_VISUALS.has(kind) ? t.illustrationNote : t.scenarioNote}
         </Text>
-      </figcaption>
-    </figure>
+      </div>
+    </div>
   );
 }
