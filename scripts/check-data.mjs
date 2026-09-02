@@ -9800,5 +9800,117 @@ function trendDirection(src) {
   }
 }
 
+// ═══════════════════════════════════════════════════════════════════════════
+// §68. THE n = 1 PLURAL TRAP IN COUNT TEMPLATES (en and es).
+//
+// The learner-visible failure this would have caught, in one sentence
+// (W-6.2 rule 3): a Spanish learner finishing their first lesson saw
+// "Racha de 1 días" on the Learn screen, and after their first review —
+// one question due, so total = 1 — "0 de 1 correctas".
+//
+// WHY A CHECK AND NOT JUST A FIX. This class has now bitten THREE times, and
+// Practice.jsx's own comment predicted the third: "A plural rule applied to
+// one template in a file is not applied to the file." The first two were
+// caught by hand (practiceAllTemplate, then reviewBoxesDescription, both by
+// seeding a single-entry state in a live browser); the third shipped anyway,
+// in a different file, with the rule written down two screens away.
+//
+// SCOPE, deliberately narrow. Only `en` and `es` mark number agreement here;
+// ko/zh/ja do not, and this section says nothing about them. The rule is
+// purely syntactic — a count placeholder must not be followed by a space and
+// a plural-marked word — so it makes no claim about grammar it cannot see.
+// It is ~60 lines against W-6.0's instrument ratio, re-measured this run at
+// 16,693 script lines to 7,487 app lines (2.23x, was 2.35x on 2026-08-30).
+//
+// THE EXEMPTIONS ARE NOT TAKEN ON TRUST. `reviewBatchTitle` and
+// `reviewBatchTitleNoneRight` legitimately match: es reads "{n} completadas".
+// They are safe only because Practice.jsx pauses at
+// `(position + 1) % BATCH_SIZE === 0`, so their n is always a multiple of
+// BATCH_SIZE and never 1. That gate is ASSERTED below rather than assumed —
+// an exemption whose premise lives in another file is a stale figure waiting
+// to happen, which is this log's most-repeated lesson.
+// ═══════════════════════════════════════════════════════════════════════════
+{
+  const before68 = failures;
+
+  // Placeholders that carry a COUNT. `{track}`, `{name}`, `{date}`, `{answer}`
+  // and `{window}` are not counts and are ignored.
+  const COUNT_PH = /\{(n|days|total|correct|count|rank|of)\}/;
+  const PLURAL_AFTER = /\{(?:n|days|total|correct|count|rank|of)\}\s+([a-záéíóúüñ]+s)\b/gi;
+
+  // key -> why a match is safe. Every entry must still match, or it is stale.
+  const EXEMPT = {
+    reviewBatchTitle: "n is results.length at a batch pause, gated to multiples of BATCH_SIZE",
+    reviewBatchTitleNoneRight: "same batch-pause gate as reviewBatchTitle",
+  };
+
+  const scan = (text) => [...String(text).matchAll(PLURAL_AFTER)].map((m) => m[1]);
+
+  // ── CONTROLS, both directions. A silent zero here is indistinguishable from
+  // a clean corpus, which is the failure mode this file exists to prevent.
+  const MUST_FLAG = [
+    'Racha de {n} días',                      // the real 2026-09-02 defect
+    '{correct} de {total} correctas',         // the second real one
+    'The {n} days box',                       // the same shape in English
+  ];
+  const MUST_NOT_FLAG = [
+    'Practicar todas las preguntas ({n})',    // count parked in parentheses
+    'Preguntas en repaso: {n}, agrupadas',    // count parked after a colon
+    'The {days}-day box: {n}. ',              // attributive compound
+    '≈{n} min',
+  ];
+  let controls = 0;
+  for (const t of MUST_FLAG) {
+    if (scan(t).length === 0) fail(`§68: control failed — "${t}" was not flagged. The matcher is blind, so a clean corpus below would mean nothing.`);
+    else controls++;
+  }
+  for (const t of MUST_NOT_FLAG) {
+    if (scan(t).length > 0) fail(`§68: control failed — "${t}" was flagged, but its count is already parked outside the noun phrase. The matcher would force a rewrite of a correct string.`);
+    else controls++;
+  }
+
+  // ── THE EXEMPTIONS' PREMISE, asserted against the file that owns it.
+  const practiceSrc = readFileSync(join(ROOT, "src/screens/Practice.jsx"), "utf8");
+  const batchSize = Number((practiceSrc.match(/const BATCH_SIZE = (\d+);/) || [])[1]);
+  if (!(batchSize >= 2)) {
+    fail(`§68: Practice.jsx's BATCH_SIZE is ${JSON.stringify(batchSize)}. The reviewBatchTitle exemptions below rest on it being 2 or more — at 1 the batch headline renders "1 completadas" in Spanish.`);
+  }
+  if (!/\(position \+ 1\) % BATCH_SIZE === 0/.test(practiceSrc)) {
+    fail(`§68: Practice.jsx no longer pauses on \`(position + 1) % BATCH_SIZE === 0\`, so reviewBatchTitle's n is no longer guaranteed to be a multiple of ${batchSize}. Re-derive the exemptions in §68 before trusting them.`);
+  }
+
+  // ── THE REAL CORPUS.
+  const AGREEING = ["en", "es"];
+  let scanned = 0;
+  const hits = [];
+  for (const lang of AGREEING) {
+    for (const [key, value] of Object.entries(TR[lang])) {
+      if (typeof value !== "string" || !COUNT_PH.test(value)) continue;
+      scanned++;
+      const words = scan(value);
+      if (words.length) hits.push({ lang, key, value, words });
+    }
+  }
+  if (scanned === 0) {
+    fail(`§68: no ${AGREEING.join("/")} count templates were found at all. TR's shape changed and this section is measuring nothing, which looks exactly like a clean result.`);
+  }
+  for (const h of hits) {
+    if (EXEMPT[h.key]) continue;
+    fail(
+      `§68: TR.${h.lang}.${h.key} renders "${h.value.replace(/\{(n|days|total|count|rank|of)\}/g, "1").replace(/\{correct\}/g, "0")}" when the count is 1 — "${h.words.join(", ")}" is plural and the count sits inside the noun phrase. ` +
+        `n = 1 is not an edge case in this app: it is the first state every learner reaches. Park the count outside the phrase the way practiceAllTemplate ("… preguntas ({n})") and reviewBoxesDescription ("Preguntas en repaso: {n},") do, rather than adding a plural rule for one string.`
+    );
+  }
+  for (const key of Object.keys(EXEMPT)) {
+    if (!hits.some((h) => h.key === key)) {
+      fail(`§68: the exemption for "${key}" (${EXEMPT[key]}) no longer matches anything. Delete it — a live exemption for a string that no longer has the shape is how a real hit gets waved through later.`);
+    }
+  }
+
+  if (failures === before68) {
+    console.log(`  §68 count templates survive n = 1: ${scanned} ${AGREEING.join("/")} template(s) scanned, ${hits.length} inside a plural noun phrase (${Object.keys(EXEMPT).length} exempt, batch gate at BATCH_SIZE ${batchSize} asserted); ${controls}/${MUST_FLAG.length + MUST_NOT_FLAG.length} control(s) fired.`);
+  }
+}
+
 console.log(`\n${failures === 0 ? "PASS" : "FAIL"}: ${failures} failure(s), ${warnings} warning(s).`);
 process.exit(failures === 0 ? 0 : 1);

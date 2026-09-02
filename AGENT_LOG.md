@@ -229,6 +229,11 @@ for the history. No open P1/P2 items.
 > symptom; W-6.2 rule 2 treats the cause.** Item 115's two options for the owner remain open and this
 > review does not pre-empt them.
 >
+> ### W-6.5 — ✅ **RESOLVED BY ITSELF; re-measured 2026-09-02 (scheduled dev-agent). The job did not stop.**
+> `public/data/market.json` is `asOf 2026-09-01` and committed on 08-31 and 09-01 (`55c0c15`, `18769e0`)
+> after the 08-29/08-30 gap this clause saw. The Sector screen did **not** go stale on 09-02 as predicted
+> below. Nothing to do — this line is annotated rather than deleted so the next run does not re-raise it.
+> ORIGINAL CLAUSE, kept because the correction above refers to it:
 > ### W-6.5 — note only, no action: the market-data job appears to have stopped.
 > `public/data/market.json` is `asOf 2026-08-28`. It committed daily 08-24 → 08-28 and has not
 > committed on **08-29 or 08-30**. `STALE_AFTER_DAYS` is **4**, so the Sector-performance screen
@@ -4021,6 +4026,116 @@ zero meaningful: `selftest PASS (8/8 controls fired, plantsRemoved true)` and, p
 finding(s); V vacuous; U unavailable`. A bare "no accessibility issues found" is not a result.
 
 ## Run log
+
+### 2026-09-02 (scheduled dev-agent, self-picked by rendering every count template at its minimum value) — a Spanish learner's first day read "Racha de 1 días", and their first review read "0 de 1 correctas"; the file that owns this class had already written down that it recurs, and the run that predicted the third instance was right about the class and wrong about which strings
+
+**Where the pick came from, and it is not a residual (W-6.2 rule 1).** `Practice.jsx` carries a comment
+headed "THE ENGLISH AND SPANISH PLURAL TRAP, AND IT BIT TWICE", ending: *"A plural rule applied to one
+template in a file is not applied to the file."* That sentence is a prediction. This run tested it by
+rendering **every** placeholder-carrying locale string at its minimum count, rather than re-reading the
+two the comment already fixed.
+
+**⛔ THE FIRST INSTRUMENT WAS UNDER-SCOPED AND ITS CLEAN AREAS WERE MEANINGLESS.** It filtered on
+`{n}`/`{days}` and reported 10 templates. `reviewScoreTemplate` carries `{correct}`/`{total}` and was
+not in that set — so the second real defect was outside the sweep that was about to declare the corpus
+swept. Widened to *any* `{placeholder}`: **18 keys, 11 distinct placeholder names.** The lesson is not
+"I used the wrong regex" — it is that a sweep's scope is a claim, and this one was never checked
+against the corpus it claimed to cover.
+
+**Two defects, both Spanish, both verified in the browser and not read off the source.**
+
+| key | rendered at n = 1 | reachable because |
+| --- | --- | --- |
+| `es.streakTemplate` | **"Racha de 1 días"** | `bumpStreak()` writes 1 on the first completed lesson — the chip's first state, every install |
+| `es.reviewScoreTemplate` | **"0 de 1 correctas"** | one due question is the state right after the first lesson; read live off the recap after answering it wrong |
+
+**⛔ AND THE PREMISE BROKE ON TWO STRINGS I HAD ALREADY WRITTEN INTO THE FIX — the disposition changed,
+not just a figure (step 3.5).** `reviewBatchTitle` / `reviewBatchTitleNoneRight` read `"{n} completadas"`
+in es and `"{n} done — these come back tomorrow"` in en, which look like the same defect and are not:
+`Practice.jsx` pauses only on `(position + 1) % BATCH_SIZE === 0`, so their `n` is **always a multiple of
+10 and never 1**. Both were about to be rewritten. **`reviewBatchTitleNoneRight` shipped this morning in
+`166b0fe`** — a run "fixing the plural trap" would have silently reworded that commit's new copy on a
+false premise, hours after it landed. Measured by reading the gate, then by driving a real 1-question
+session and watching the batch screen never appear.
+
+**The fix follows the house rule this file already records — park the count outside the noun phrase —
+rather than adding plural machinery for two strings.**
+- `streakTemplate` es: `"Racha de {n} días"` → **`"Días de racha: {n}"`** (the shape es
+  `reviewBoxesDescription` already uses: `"Preguntas en repaso: {n},"`).
+- `reviewScoreTemplate` es: `"{correct} de {total} correctas"` → **`"Aciertos: {correct} de {total}"`**.
+`en`, `ko`, `zh`, `ja` are untouched: en's forms are already agreement-free at 1 and the other three
+mark no number. No new keys, so §1's five-language parity is unchanged.
+
+**Shipped a guard, and W-6.3 asks which side of the ratio it falls on: `scripts/` is 16,693 lines
+against 7,487 app lines this run — 2.23x, against W-6.0's 2.35x on 2026-08-30.** §68 is ~60 lines.
+The learner-visible failure it would have caught (W-6.2 rule 3): *a Spanish learner finishing their
+first lesson sees "Racha de 1 días", and after their first review "0 de 1 correctas".* It is purely
+syntactic — a count placeholder must not be followed by a space and a plural-marked word — and it
+scopes itself to `en`/`es`, saying nothing about the three languages whose grammar it cannot see.
+
+**§68's exemptions do not rest on my reading of another file.** The two batch strings legitimately
+match the pattern. Rather than exempt them on a note, the section **asserts their premise**: it reads
+`BATCH_SIZE` out of `Practice.jsx`, fails if it is below 2, and fails if the
+`(position + 1) % BATCH_SIZE === 0` gate is gone. It also fails if an exemption stops matching, so a
+reworded string cannot leave a live exemption behind to wave through a real hit later.
+
+**Verified — four arms of §68 proven by injection, not by reading it.** Restored each time from a
+scratchpad copy, never `git checkout --`:
+
+| injected | §68 |
+| --- | --- |
+| `"Racha de {n} días"` (the real pre-fix string) | FAILs, quoting "Racha de 1 días" |
+| `"{correct} de {total} correctas"` (the real pre-fix string) | FAILs, quoting "0 de 1 correctas" |
+| `reviewBatchTitle` reworded so it no longer matches | FAILs as a stale exemption |
+| `BATCH_SIZE = 1` | FAILs the exemption premise |
+
+Clean run: `§68 count templates survive n = 1: 24 en/es template(s) scanned, 2 inside a plural noun
+phrase (2 exempt, batch gate at BATCH_SIZE 10 asserted); 7/7 control(s) fired.` The seven are
+two-sided by construction — three strings that MUST flag (including both real defects) and four
+already-correct ones that must NOT, so the section cannot pass by being blind. A `scanned: 0` fails
+outright for the same reason.
+
+**Layout measured against the pre-fix build running beside it, not asserted.** `git archive HEAD` built
+and served on :8932 next to the working tree on :8931, bundle names read back off each page
+(`index-pSIjN-T9.js` vs `index-ChnhApUZ.js`), viewport forced to a real size first — the pane is hidden
+this session and reports `clientWidth: 0`, which silently turned the first geometry read into nonsense
+(chip at `x: -66`, 3 lines). That is the control catching an instrument, not a finding.
+
+| Learn streak chip, es, 390px | pre-fix | post-fix |
+| --- | --- | --- |
+| text | "Racha de 1 días" | "Días de racha: 1" |
+| chip box (x, w, h) | 16, 141, 25 | 16, **143**, 25 |
+| lines / `document.scrollHeight` | 1 / 1879 | 1 / **1879** |
+
+Worst case checked rather than assumed: **320px at the 130% font step with a 3-digit streak** — chip
+194x30, one line, `fits: true`, no horizontal overflow; `"Aciertos: 0 de 1"` at the same settings is
+254px wide on one line. Page height is identical to the pixel between builds.
+
+`npm test`: **0 failures**, the 4 standing warnings. `npm run build` clean. `npm run check-blindspot`:
+**0 failures**. `OWNER-TREE fea7738e6d5e283093d0d582960deed019b4b09471eceabf1577dbefa373259b`
+(2 tracked modified — both mine — 51 untracked, all `UIUX/`); HEAD unmoved at `2ee929f` across the run.
+
+**Step 5 — adversarial self-check.** (1) **Blindspot register:** two chrome strings with no advice
+language, no Dalio, no kids framing, no date or market figure; `check-blindspot` PASS, and neither key
+is in §10.1's or §2.3's scanned corpora. (2) **`DECISIONS.md`:** nothing here touches state, routing,
+content format or the build. The 2026-08-11 "(Beta)" decision accepts machine translation and does not
+forbid correcting it — and Spanish number agreement is not a judgment a fluent reviewer is needed for,
+which is the same ground the 2026-09-02 Spanish-glossary fix stood on. (3) **Already-done item:** this
+**extends** the rule two earlier fixes established rather than undoing them — `practiceAllTemplate` and
+`reviewBoxesDescription` are untouched, and §68's MUST-NOT-FLAG controls now assert their current shape,
+so a later run cannot quietly revert them either. The near-miss is recorded above: two strings from a
+commit three hours old were nearly reworded on a premise measurement refuted. (4) **My own verification
+claim:** every figure here came from a command run this session — the four injections, the two servers
+with their bundle names read off the pages, and a real 1-question review session driven to its recap.
+
+**Two notes, filed here rather than numbered (W-6.2 rule 2).**
+- §68 sees one syntactic shape in two languages. A count inside a phrase that agrees *backward*
+  (`"las {n} preguntas"`) would pass it. Widening is not obviously due — say what learner-visible
+  failure it would catch first.
+- **There is no way for a learner to reset their progress or clear their data.** Measured, not
+  assumed: `resetProgress`, `clearAll` and `removeItem` return **zero hits** anywhere under `src/`.
+  For a `localStorage`-only app with no account this is an owner decision (privacy expectation and
+  a QA affordance), not a defect, so it is a note — but nothing in the backlog names it.
 
 ### 2026-09-02 (owner-directed: "do the nested figure cleanup next") — every one of the 14 lesson figures was a `<figure>` whose entire content was another `<figure>`; the note I filed said this needed a screen-reader measurement first, and the honest finding is that this environment cannot take one
 

@@ -55,7 +55,10 @@ export default {
     ratePrinciples: "Principios Clave",
     kidsTabLabel: "Niños",
     estMinTemplate: "≈{n} min", progressLabel: "Progreso",
-    streakTemplate: "Racha de {n} días",
+    // Count parked outside the noun phrase: "Racha de {n} días" rendered
+    // "Racha de 1 días" on every Spanish learner's first day, which is the
+    // first state the chip has. See Practice.jsx's plural note.
+    streakTemplate: "Días de racha: {n}",
     continueTomorrowTitle: "Sigue tu racha",
     continueTomorrowBody: "Vuelve mañana para continuar donde lo dejaste.",
     continueTomorrowCta: "Volveré mañana",
@@ -114,7 +117,10 @@ export default {
     reviewEmptyBody: "Las preguntas vuelven aquí uno o dos días después de responderlas, para que se fijen.",
     practiceAllTemplate: "Practicar todas las preguntas ({n})",
     reviewCompleteTitle: "Repaso completado",
-    reviewScoreTemplate: "{correct} de {total} correctas",
+    // Same trap: "{correct} de {total} correctas" rendered "0 de 1 correctas"
+    // whenever exactly one question was due — the state right after the
+    // first lesson. "Aciertos" is a label, so nothing agrees with the count.
+    reviewScoreTemplate: "Aciertos: {correct} de {total}",
     reviewFromLesson: "Lección {n} · {track}",
     doneLabel: "Listo",
     reviewBatchTitle: "{n} completadas — bien hecho",
