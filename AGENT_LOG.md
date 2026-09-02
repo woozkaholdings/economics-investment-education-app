@@ -2645,6 +2645,13 @@ through two passes that each had it open.
     > 2026-09-02 run entry for why. **Before building a sweep for this, note the corpus is 6,228
     > chars of English chrome and every other figure on those screens already carries its own `what`
     > line; a whole instrument for one term would land on the wrong side of W-6.3.**
+    > ✅ **UPDATE, same day, owner-directed: the glossary entry was added as well** ("do the ko/zh/ja
+    > glossary entry for relative strength too"). Both surfaces now exist and they do different jobs —
+    > `relativeStrengthNote` on the Sectors screen reconciles the rank with the return column, the
+    > glossary entry says what the measure is. **It is the only glossary key whose use is a Reference
+    > screen rather than lesson prose, so it carries no chip and §17b needs none from it** (that sweep
+    > is about terms a lesson USES). Still open and deliberately not taken: the Sectors screen does not
+    > LINK to the entry — a reader has to know to look it up.
 
 64. **✅ BOTH CLOSED — struck from the W-5.2 pick list 2026-08-24 after seven days of being
     recommended when nothing was open. `Dividend` shipped 2026-08-20; the other two keys landed
@@ -3873,6 +3880,78 @@ zero meaningful: `selftest PASS (8/8 controls fired, plantsRemoved true)` and, p
 finding(s); V vacuous; U unavailable`. A bare "no accessibility issues found" is not a result.
 
 ## Run log
+
+### 2026-09-02 (owner-directed: "do the ko/zh/ja glossary entry for relative strength too") — the entry the earlier run declined, now built in five languages; and a stale bundle in the tab looked exactly like a key rendered by nothing
+
+**Authorization, and one correction to the premise of the ask.** There was no en/es entry for ko/zh/ja
+to catch up with: the run three hours earlier **declined** the glossary key on purpose and explained
+the measure in place on the Sectors screen instead (`relativeStrengthNote`). So this is the whole
+entry, not a remainder — and `check-data.mjs` §4 requires all five languages non-empty, so the ask
+could not have been satisfied with ko/zh/ja alone in any case. Stated rather than quietly widened.
+
+**What shipped — one glossary key, `"Relative Strength"`, in en/es/ko/zh/ja.** The definition is the
+general concept, not this app's implementation: a return compared with a benchmark's over the same
+stretch, positive when it outpaced and negative when it trailed, with the case that makes it click —
+something that fell 2% while the benchmark fell 5% still has positive relative strength — and the note
+that rankings built on it usually sum several lookback windows. Conventions read off the corpus first:
+the `s` names match the labels the app already ships (`Fuerza Relativa` / `상대강도` / `相对强度` /
+`相対強度`), and `S&P 500` is written as the app's own `BENCHMARK.name` in all five rather than
+localized to 标普500. Glossary count 42 → 43; `npm run readiness -- --write` regenerated
+LAUNCH_PLAN §1's asset sentence, which is a generated figure and failed the suite until it did.
+
+**Both surfaces now exist and they do different jobs**, which is why the earlier run's decision is not
+reversed: the screen note reconciles the rank with the return column at the point of confusion, the
+glossary entry says what the measure is. It is **the only key in the file whose use is a Reference
+screen rather than lesson prose** — recorded in a comment above it, because that is exactly why
+`npm run jargon` and §17b could never have surfaced the term, and why it owes §17b no chip (that sweep
+covers terms a lesson USES; measured 0 occurrences of the phrase across all 44 lessons and the quiz).
+
+**⚠️ The finding worth the entry, and it is about verification rather than content: a stale bundle in
+the tab is indistinguishable from a key that renders nothing.** After the build, the Glossary screen
+showed 42 terms and not the new one, while `grep` found all five strings in `dist/`. That is the exact
+signature of this project's known "shipped in five languages, rendered by nothing" defect, and I was
+one step from filing it as one. `performance.getEntriesByType('resource')` settled it: the tab was
+still running **`index-chrQeQwa.js` / `markets-CRYKdSW2.js`**, the *previous* build's chunks, served
+from cache on a same-URL navigation. A cache-busting query string loaded `index-DSLmKZYD.js` /
+`markets-BhyvXf2u.js` and the entry was there. **The transferable rule: before believing a negative
+result from a live page, print the chunk hashes the page actually loaded and check them against
+`ls dist/assets/`.** A DOM read is only evidence about the build the tab is running.
+
+**Verification, each with its control.**
+- **The instrument sees this entry.** Plant: ko's definition cut from 262 to 13 code points → §67 went
+  **0/344 → 1/344 under-threshold, at `ko 1`** with es/zh/ja still 0, so an abridged translation of
+  *this* key would be caught. Restored from a scratchpad copy, `diff -q` byte-identical, never
+  `git checkout --`; §67 back to 0/344.
+- **Live, on the freshly-loaded build**: the full entry renders in **en, es, ko, zh and ja** (each read
+  out of the rendered DOM, not the source), and searching "relative" narrows the list to this one term
+  with `Volatility Index` correctly filtered out — so the row is reachable, not just present.
+- **What ships**: all **5/5** definitions in `dist/assets/markets-*.js`; a never-added probe absent.
+- **`npm test`: PASS, 0 failures, 3 warnings** — the same three standing ones. `check-blindspot`: PASS.
+
+**Adversarial self-check (step 5).** *Blindspot register:* §10.1 — the entry says what the measure is
+and never what to do with a sector's place in it; an advice-token matcher over all five languages
+returns **0**, and the same matcher fires on a planted *"debería comprar ahora"*, so the zero is a
+result rather than a broken pattern. §10.2 no person named. §10.3 untouched. §2.3 — no year and no
+date anywhere in the entry; the only 3-digit runs are the five occurrences of `S&P 500`, the
+benchmark's name, which is the same string the Sectors screen already renders. *DECISIONS.md:* the
+"(Beta)" machine-translation decision is enlarged by **12 strings** (3 fields × 4 languages), by owner
+instruction, for a named entry; the review ledger covers lesson content only and glossary entries sit
+outside it, which this file's header already records — so the 0%-human figure is unchanged and this
+run does not pretend otherwise. *Already-done:* no — item 35 grew the glossary from lesson-prose
+measurement; this key comes from the opposite direction and is marked as such. *W-6.3:* `scripts/`
+**+0 lines**. *My own claim:* every figure from `npm test`, the §67 plant in both directions, dist
+greps with a negative control, and the live DOM in five languages on a build whose chunk hashes I
+checked.
+
+⚠️ **Honest limits.** Twelve more AI-written strings in four languages read by no fluent speaker —
+O-3's standing condition, unchanged. And **the Sectors screen still does not link to the entry**: a
+reader who wants the definition has to know to go and look for it. That is a real gap and it was left
+deliberately rather than folded in — Reference's sub-screen navigation is state, not a route, so
+wiring a term link from that screen is its own change with its own verification, not a line to smuggle
+into a glossary commit.
+
+**Owner tree at start and end: untracked `UIUX/` (51 files), untouched.**
+
 
 ### 2026-09-02 (scheduled dev-agent, self-picked by opening the built app and reading a screen) — the Sector-performance list is ordered by a measure the app names eleven times and defines nowhere, and every instrument that hunts undefined jargon reads a corpus that screen is not in
 
