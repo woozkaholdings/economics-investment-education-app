@@ -239,6 +239,16 @@ export const yieldCurveDescriptions = {
 
 // Historical US Federal Reserve balance sheet, in trillions of dollars. Labeled
 // by era rather than by date so it reads unambiguously as history.
+//
+// ⚠️ ONE DECIMAL, AND IT HAS TO BE STATED RATHER THAN LEFT TO THE LITERALS.
+// `value: 9.0` is the number 9, and React renders it "9" — so four bars showed
+// one decimal and the fifth showed none, while `balanceSheetDescription` below
+// says "9.0" in all five languages (backlog item 163(c), measured live on both
+// screens that draw this series: Reference > Market Dashboard and lesson 37's
+// inline figure). The precision belongs to this series and travels with it, so
+// both call sites pass this formatter and neither restates the rule.
+export const balanceSheetFormat = (n) => n.toFixed(1);
+
 export const balanceSheetHistory = [
   { key: "pre08", value: 0.9, label: { en: "Before\n2008", es: "Antes de\n2008", ko: "2008년\n이전", zh: "2008年\n之前", ja: "2008年\n以前" } },
   { key: "qe123", value: 4.5, label: { en: "After\nQE1–3", es: "Tras\nQE1–3", ko: "QE1~3\n이후", zh: "QE1–3\n之后", ja: "QE1〜3\n後" } },

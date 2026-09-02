@@ -1510,10 +1510,35 @@ through two passes that each had it open.
       Fed-balance-sheet chart belongs to **"Yield Curve Shapes"**. Fixed with **one** `h2`
       (`qeQtSection`, five languages) that owns both — not three headings, and no new primitive.
       See the run log for the differential control that reproduced the pre-fix ownership in place.
-    - **(c) `Bar` renders `9` where its own description says `9.0`.** Four of the five values carry
-      one decimal and the fifth does not, because `9.0 === 9` in JavaScript. A `Bar`-wide decimal
-      convention (or a formatted string in the data) would fix it; a `.toFixed(1)` inside `Bar`
-      would be wrong for a future integer-valued chart.
+    - **(c) ✅ DONE 2026-09-02 (owner-directed: "do item 163(c) next"). The defect reproduced
+      exactly; three things around it did not.**
+      *As filed:* `Bar` renders `9` where its own description says `9.0`, because `9.0 === 9` in
+      JavaScript. **Reproduced live on the built app: `["0.9","4.5","3.8","9","6.7"]` against an
+      aria-label reading "…9.0 after the pandemic response…".** The control is intrinsic — the other
+      four bars DO carry a decimal, so a probe returning a constant could not have produced that row.
+      **Three corrections:**
+      1. **It is on TWO screens, not one.** `balanceSheetHistory` is drawn by two `Bar` call sites —
+         `MarketSignals.jsx` (Reference > Market Dashboard) **and** `LessonVisual.jsx` for
+         `kind === "balanceSheet"`, which is **lesson 37, "QE & QT: The Fed's Power Tools"**. Both
+         measured showing `9`.
+      2. **The "future integer-valued chart" is a PRESENT one.** `Practice.jsx`'s Leitner box strip
+         is the third `Bar` call site and renders question counts — measured at `7 / 3 / 2 / 0 / 0`
+         under the unit "questions". A `.toFixed(1)` inside `Bar` would have shipped "7.0 questions"
+         and "0.0". The item was right to warn and wrong that the risk was hypothetical.
+         (`Bar`'s own comment said "both call sites"; there are three. Corrected in the same commit.)
+      3. **No new convention was needed — `Bar` was the only one MISSING the existing one.**
+         `ProportionBar`, `GrowthCurve` and `GapColumns` in the same file all already take a
+         `formatValue` prop. `Bar` now takes one too, defaulting to identity so the integer strip is
+         untouched. Precision is a property of the series, so `balanceSheetFormat` is exported from
+         `content/markets.js` beside the data and beside the description that states the decimal,
+         and both call sites pass it. Verified after the fix on both screens and in all five
+         languages: `0.9 4.5 3.8 9.0 6.7`; the Leitner strip still reads `7 3 2 0 0`.
+      ⚠️ **What is NOT fixed, measured rather than assumed:** `es` alone writes a comma decimal in
+      its description ("0,9 … 9,0") while the chart face renders a period in every language — the
+      app has no locale-aware runtime number formatter (`numerals.mjs` is script-side, and the only
+      runtime formatter is `usd`, hardcoded `en-US`). Pre-existing, one language, and the fix
+      strictly *reduces* the disagreement: `es` face-vs-description now differs only in separator,
+      where before it also differed in precision.
     - **W-6.2 rule 3, answered:** (a) "a learner who got everything wrong was congratulated with a
       green tick"; (b) "three sections of the Market Dashboard were unreachable by heading
       navigation"; (c) "one bar in five was labeled to a different precision than its siblings".
@@ -1522,7 +1547,7 @@ through two passes that each had it open.
       (a) is a decision rather than a defect. **Honest priority: (b) medium, (a) low-and-owner's,
       (c) low.** ⛔ **(a)'s priority label was wrong too**: "low-and-owner's" was assigned on the
       belief that it was purely a judgment call, and the batch-pause half needed no decision from
-      anyone. **Only (c) remains open.**
+      anyone. **Nothing here remains open.**
     - ⚠️ **(b)'s own numbers were wrong, and this item is the evidence.** I filed (b) from a live
       measurement I had just taken, and still got both the total and the count of missing headings
       wrong — and the *disposition* wrong with them, since three of the four "missing" headings turn
@@ -3996,6 +4021,34 @@ zero meaningful: `selftest PASS (8/8 controls fired, plantsRemoved true)` and, p
 finding(s); V vacuous; U unavailable`. A bare "no accessibility issues found" is not a result.
 
 ## Run log
+
+### 2026-09-02 (owner-directed: "do item 163(c) next") — one bar in five rendered `9` where its four siblings rendered a decimal and its own text alternative said `9.0`; the item was right about the defect and wrong about how many screens show it, whether the integer chart it warned about exists yet, and whether a new convention was needed
+
+**Reproduced first, and the control is intrinsic.** On the built app, Reference > Market Dashboard: `.ec-bar-value` reads **`["0.9","4.5","3.8","9","6.7"]`** while the figure's `aria-label` reads *"…3.8 after the first tightening, **9.0** after the pandemic response…"*. The other four bars **do** carry one decimal, so a probe that had been returning a constant or reading nothing could not have produced that row — the disagreement is between two things measured in the same query. Cause is exactly as filed: `value: 9.0` in `content/markets.js` is the number 9, and React renders `9`.
+
+**Three corrections to the item, all from measuring rather than reading it.**
+1. **Two screens, not one.** `balanceSheetHistory` has **two** `Bar` call sites — `MarketSignals.jsx` and `LessonVisual.jsx` under `kind === "balanceSheet"`, which is **lesson 37, "QE & QT: The Fed's Power Tools"**. Confirmed live at `#/lesson/37`: same five values, same `9`.
+2. **The "future integer-valued chart" already exists**, and it shipped one commit before the item was filed. `Practice.jsx`'s Leitner box-distribution strip is the **third** `Bar` call site — measured at **`7 / 3 / 2 / 0 / 0`** under the unit "questions". The `.toFixed(1)`-inside-`Bar` the item warned against would have rendered "7.0 questions" and "0.0" **today**, not hypothetically. `Bar`'s own comment claimed "both call sites"; corrected to three in the same commit.
+3. **No new convention was needed, because `Bar` was the only primitive MISSING the existing one.** `ProportionBar`, `GrowthCurve` and `GapColumns` — same file — already take a `formatValue` prop, and `LessonVisual` already passes `usd` to three of them. The item proposed "a `Bar`-wide decimal convention (or a formatted string in the data)"; both would have been inventions next to a convention already in the file.
+
+**The fix.** `Bar` gains `formatValue`, **defaulting to identity** — that default is the load-bearing part, and it is what keeps the Leitner strip printing integers. Precision is a property of the series rather than of the chart, so `balanceSheetFormat = (n) => n.toFixed(1)` is exported from `content/markets.js` **beside the data and beside the description that states the decimal**, and both call sites pass it. Four files, +25/−5 lines.
+
+**Verified live on `index-Dz3eyTqz.js` / `markets-Bbgx2tJd.js` (names read back off the page, Environment-note failure mode 4):**
+- Reference > Market Dashboard → **`0.9 4.5 3.8 9.0 6.7`**, and the five visible values now match the five values in the `aria-label` at the same precision.
+- Lesson 37's inline figure → the same five.
+- **All five languages** (picker cycled in place): en/es/ko/zh/ja all render `0.9 4.5 3.8 9.0 6.7`.
+- **Regression control — the integer call site is untouched:** the Review tab's Leitner strip still reads **`7 3 2 0 0`**.
+- No new maximum label width, so §62's narrow-width row layout is unaffected: `"9.0"` is three characters and `"0.9"` already was. §62 passes and reports the same 5 specimens / 3 refutations.
+
+`npm test`: **0 failures**, the 4 standing warnings. `npm run build` clean. `npm run check-blindspot`: **0 failures** — checked deliberately rather than assumed, because `content/markets.js` is one of the 26 modules §2.3 scans and this commit adds a comment carrying a date to it.
+
+**Step 5 — adversarial self-check.** (1) **Blindspot register:** the only shipped-string surface touched is `content/markets.js`, and what was added there is a formatter and a comment, no learner-facing prose; `check-blindspot` PASS, including §2.3's date scan over that exact file. (2) **`DECISIONS.md`:** content modules are `.js`-not-JSON precisely so they can hold more than data, and `content/lessons.js` already exports functions (`lessonsInTrack`, `lessonsByTrack`) — an exported formatter is the established shape, not a new one. No `localStorage`, no routing, no build change. (3) **Already-done item:** the nearest neighbors are `25b119c` (the `unit` prop, 2026-09-02) and `18593da` (the Leitner strip, 2026-09-02). `formatValue` sits beside `unit` rather than replacing it, and the strip was **measured** unchanged rather than argued to be. Item 148's §62 CSS is untouched. (4) **My own verification claim:** every figure above is a DOM read of `.ec-bar-value` and the sibling `aria-label` on a named bundle, on two screens and in five languages, with the integer site read in the same session.
+
+⚠️ **Honest gap in this run's evidence:** the Browser pane refused to paint — two screenshots came back blank or clipped and a `scroll` timed out. **No screenshot is offered for this change.** The DOM reads above are stronger evidence than a picture would have been (a screenshot cannot show that the `aria-label` agrees), but a run that says "verified live" should say which modality it verified in.
+
+**Two notes filed rather than numbered items (W-6.2 rule 2), both measured on this walk.**
+- **Nothing in the suite anchors this figure's numbers to its own description.** `grep balanceSheet scripts/check-data.mjs` returns **zero hits** — item 136's `figureClaims` covers 7 of 11 figures and not this one, so the exact drift this run fixed (data and text alternative disagreeing) is unguarded in both directions. W-6.2 rule 3's sentence writes itself here — *"a bar's number on screen disagreed with the number read out to a screen-reader user"* — so this one **would** clear the bar if someone picks it. Not picked now: the item explicitly proposed no check, the floor is 100 KB over budget, and the fix makes the drift structurally harder by putting the precision in one place next to both.
+- **Every lesson figure in the app is a nested `<figure>` inside a `<figure>`.** Found while counting figures on lesson 37, which returned two: `LessonVisual` wraps its output in an unconditional `<figure>` + `<figcaption>` (the §2.3/§10.1 note), and **all twelve** primitives in `charts.jsx` emit their own `<figure>` + `<figcaption>`. So ~14 shipped figures each announce two figures and two captions. Nested `<figure>` is valid HTML for sub-figures and this is not that. **Deliberately not folded in** — it is a 14-figure structural change to markup two a11y sweeps have already passed over, and it needs its own measurement of what a screen reader actually announces before anyone edits it.
 
 ### 2026-09-02 (owner-directed: "do item 163(a) next") — the Review recap congratulated a learner who got every question wrong; the item named one of the two screens that do it, and called the one it named a judgment call rather than the falsehood the other one is
 

@@ -12,7 +12,7 @@
 import { Bar, CycleChart, YieldCurve } from "../../components/charts.jsx";
 import { Disclaimer, Note, Stack, Text } from "../../components/ui.jsx";
 import {
-  balanceSheetCaption, balanceSheetDescription, balanceSheetHistory, balanceSheetUnit,
+  balanceSheetCaption, balanceSheetDescription, balanceSheetFormat, balanceSheetHistory, balanceSheetUnit,
   cycleChartDescription, moneyAggregates, moneySupplyCaption, phaseNames,
   rateEffects, ratePrinciples, scenario, trendLabel, yieldCurveDescriptions,
 } from "../../content/markets.js";
@@ -126,6 +126,7 @@ export default function MarketSignals({ t, lang }) {
         data={balanceSheetHistory.map((d) => ({ label: d.label[lang], value: d.value }))}
         colors={[graph.neutral, graph.green, graph.red, graph.green, graph.red]}
         height={90}
+        formatValue={balanceSheetFormat}
         description={balanceSheetDescription[lang]}
         caption={balanceSheetCaption[lang]}
       />

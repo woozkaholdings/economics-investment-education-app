@@ -22,9 +22,17 @@ import { Text } from "./ui.jsx";
 // container is one image. §22 of check-data.mjs asserts every call site passes
 // one, which is what keeps the unconditional `aria-label` below from silently
 // resolving to `undefined`.
-export function Bar({ data, title, unit, colors, height = 140, description, caption }) {
+// `formatValue` closes the one gap in this file's own convention: `ProportionBar`,
+// `GrowthCurve` and `GapColumns` all take one, and `Bar` — the only primitive
+// that prints a BARE value with no currency or percent sign around it — did not.
+// It defaults to identity rather than to a decimal format, and that default is
+// load-bearing: `Practice.jsx`'s Leitner box strip renders question COUNTS
+// through this same component (measured 2026-09-02: 7 / 3 / 2 / 0 / 0 under the
+// unit "questions"), so a `.toFixed(1)` baked in here would render "7.0
+// questions" and "0.0". Precision is a property of the series, not of the chart.
+export function Bar({ data, title, unit, colors, height = 140, formatValue = (v) => v, description, caption }) {
   const max = Math.max(...data.map((d) => Math.abs(d.value)));
-  // `height` is authored in px by both call sites, but a PIXEL height does not scale with the
+  // `height` is authored in px by all three call sites, but a PIXEL height does not scale with the
   // reader's font-size control — and the column spends its height on the value, the bar track and
   // the label, in that order, so the part that gets squeezed is the bar: the only part carrying
   // the comparison. Measured 2026-08-29 on Reference > Market signals at 320px x 130%: the five
@@ -82,7 +90,7 @@ export function Bar({ data, title, unit, colors, height = 140, description, capt
       <div role="img" aria-label={description} className="ec-bar-row" style={{ "--ec-bar-box": boxHeight }}>
         {data.map((d, i) => (
           <div key={d.label} className="ec-bar-col">
-            <span className="ec-bar-value" style={{ color: ink.body }}>{d.value}</span>
+            <span className="ec-bar-value" style={{ color: ink.body }}>{formatValue(d.value)}</span>
             <div className="ec-bar-track">
               <div className="ec-bar-fill" style={{ "--ec-bar-pct": `${(Math.abs(d.value) / max) * 100}%`, background: colors[i] }} />
             </div>
