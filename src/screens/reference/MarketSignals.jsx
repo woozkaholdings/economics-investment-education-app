@@ -92,7 +92,29 @@ export default function MarketSignals({ t, lang }) {
         ))}
       </div>
 
-      {/* QE / QT */}
+      {/* QE / QT, and the balance sheet that results from them.
+          THE <h2> IS THE POINT OF THIS BLOCK, not decoration. Measured
+          2026-09-02 on the built app: this screen's heading rotor read
+          `h1 Market Dashboard` then four `h2`s, and between "Yield Curve
+          Shapes" and "Money Supply" sat the two QE/QT notes AND the entire
+          Fed-balance-sheet figure with no heading of their own — so a reader
+          navigating by heading was told the balance-sheet chart is part of
+          "Yield Curve Shapes", which it is not. Same defect as the two <h2>s
+          added to LessonReader: the previous section's title silently acting
+          as a parent for content it does not describe.
+          It names all three blocks it owns rather than echoing the notes'
+          own labels below ("Quantitative Easing (QE)" / "Quantitative
+          Tightening (QT)"), which would announce the same words twice.
+          `marginBottom` only, matching the "Yield Curve Shapes" heading:
+          the grid above already carries `marginBottom: space["5"]`, so this
+          adds a rotor entry without moving anything else on the page.
+          The cycle chart and the Illustrative Scenario note ABOVE the first
+          <h2> are deliberately left unheaded — they sit between the <h1> and
+          the first <h2>, which is the <h1>'s own content and the correct
+          description of a screen's opening. */}
+      <Text as="h2" variant="heading" color={ink.strong} style={{ marginBottom: space["3"] }}>
+        {t.qeQtSection}
+      </Text>
       <Stack gap={space["2"]} style={{ marginBottom: space["5"] }}>
         <Note tone="ok" label={t.qeLabel} icon="chart">{t.qeNarrative}</Note>
         <Note tone="bad" label={t.qtLabel} icon="chart">{t.qtNarrative}</Note>

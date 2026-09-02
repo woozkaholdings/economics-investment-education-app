@@ -50,6 +50,7 @@ export default {
     glossNoResults: "Ningún término coincide con tu búsqueda.",
     balanceSheet: "Balance del Fed",
     qeLabel: "Flexibilización Cuantitativa (QE)", qtLabel: "Ajuste Cuantitativo (QT)",
+    qeQtSection: "QE, QT y el Balance",
     moneySupply: "Oferta Monetaria (M0, M1, M2)",
     ratePrinciples: "Principios Clave",
     kidsTabLabel: "Niños",

@@ -50,6 +50,7 @@ export default {
     glossNoResults: "検索に一致する用語がありません。",
     balanceSheet: "FRBのバランスシート",
     qeLabel: "量的緩和（QE）", qtLabel: "量的引き締め（QT）",
+    qeQtSection: "QE・QTとバランスシート",
     moneySupply: "マネーサプライ（M0・M1・M2）",
     ratePrinciples: "重要な原則",
     kidsTabLabel: "キッズ",

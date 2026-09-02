@@ -77,6 +77,7 @@ export default {
     glossNoResults: "No terms match your search.",
     balanceSheet: "Fed Balance Sheet",
     qeLabel: "Quantitative Easing (QE)", qtLabel: "Quantitative Tightening (QT)",
+    qeQtSection: "QE, QT, and the Balance Sheet",
     moneySupply: "Money Supply (M0, M1, M2)",
     ratePrinciples: "Key Principles",
     kidsTabLabel: "Kids",

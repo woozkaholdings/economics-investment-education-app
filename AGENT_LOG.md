@@ -1442,6 +1442,29 @@ through two passes that each had it open.
       stand; the coverage did not.** `A11yStates.coverage()` plus the Tab step now in the header
       recipe are the fix — see item 149.
 
+164. **[Tooling/Safety — filed 2026-09-02 by the run that closed item 163(b), from a control that
+    did NOT fire when it should have.] §10.1's English advice matcher is five specific phrasings, and
+    "now is a good time to buy" is not one of them.**
+    - **How it surfaced:** planting `qeQtSection: "QE, QT — now is a good time to buy"` into
+      `src/locales/en.js` and running `npm run check-blindspot` gave **PASS**. Re-planted as
+      `"you should buy now"` → **FAIL: §10.1 investment-advice-adjacent language reintroduced**.
+      So the corpus coverage is fine; the **pattern list** is what missed.
+    - **Measured, not inferred:** `check-blindspot.mjs`'s English set is exactly five regexes —
+      `best investments:`, `be bullish`, `be cautious`, `you should (buy|sell|invest)`,
+      `we recommend`. Nothing matches *"a good time to buy"*, *"consider buying"*, *"worth buying"*.
+    - **Why the narrowness is deliberate, and why that is still not a reason to leave it.** The
+      file's own comment says each pattern was "checked against current content for false positives
+      before landing" — a broad buy/sell matcher would fire on teaching copy constantly (this very
+      screen reads "Fed BUYS bonds", "Fed STOPS buying"). But `/good time to (buy|sell)/i` has **no**
+      descriptive use in this corpus and is a genuine advice phrasing.
+    - **W-6.3:** this is **+1 line in an existing array**, not a new instrument. **W-6.2 rule 3:**
+      "a lesson or a label told the reader now is a good time to buy" — learner-visible, and exactly
+      what §10.1 exists to prevent. **Zero live instances** (the only one was my plant).
+    - **Honest priority: low-to-medium** — it guards a closed blindspot whose guard is thinner than
+      the four "closed" claims in the App summary imply. Whoever picks it should add the equivalent
+      to all five languages, and **check each addition against current content for false positives
+      first**, which is the discipline the existing five were built with.
+
 163. **[UX/A11y — filed 2026-09-02 by the run that put the unit on the balance-sheet chart, as three
     things that run SAW on the same walk and deliberately did not fold into the same commit.]
     All three are live and measured; none is a guess.**
@@ -1455,14 +1478,21 @@ through two passes that each had it open.
       reports *completion* or *result*; if result, `correctCount === 0` at minimum should not be a
       green tick. Note this is NOT item 117's defect — that one was the Practice *landing* card
       with `review = null`, closed 2026-08-26.
-    - **(b) The Market Dashboard's heading outline names 4 of its 7 blocks.** Measured live:
-      `h1 Market Dashboard`, then `h2` for *How Rate Changes Affect Assets*, *Yield Curve Shapes*,
-      *Money Supply (M0, M1, M2)*, *Key Principles* — and **nothing** for the cycle curve at the
-      top, the QE/QT pair, or the balance-sheet figure. A reader navigating by heading skips three
-      sections, one of which is the chart this run just fixed. Same class as item 106 and the two
-      `<h2>`s added to `LessonReader`; the fix is the same shape (mark up the label that is already
-      there), but two of the three blocks are `Note`/`figcaption` primitives shared elsewhere, so it
-      is not a one-liner.
+    - **(b) ✅ DONE 2026-09-02 (owner-directed: "do item 163(b) next") — but READ THE PREMISE
+      CORRECTION, because it changed the scope from three blocks to one heading.**
+      *As filed:* "the outline names 4 of its 7 blocks … a reader skips three sections". **Both
+      figures were wrong.** Re-measured on the built app before editing: the screen has **eight**
+      content blocks, four carry an `h2`, and **four** do not — the cycle chart, the *Illustrative
+      Scenario* note, the QE/QT pair, and the balance-sheet figure. I had missed the scenario note.
+      **But the corrected count is not the interesting part.** Three of those four are not defects:
+      the cycle chart and the scenario note sit **between the `h1` and the first `h2`**, which is
+      the `h1`'s own content and the correct description of a screen's opening; and the
+      balance-sheet figure's `figcaption` is a caption, which is what a figure's label should be.
+      **The real defect is narrower and sharper than the item claimed:** the QE/QT pair and the
+      balance-sheet figure sat *between* two unrelated `h2`s, so a rotor user was told the entire
+      Fed-balance-sheet chart belongs to **"Yield Curve Shapes"**. Fixed with **one** `h2`
+      (`qeQtSection`, five languages) that owns both — not three headings, and no new primitive.
+      See the run log for the differential control that reproduced the pre-fix ownership in place.
     - **(c) `Bar` renders `9` where its own description says `9.0`.** Four of the five values carry
       one decimal and the fifth does not, because `9.0 === 9` in JavaScript. A `Bar`-wide decimal
       convention (or a formatted string in the data) would fix it; a `.toFixed(1)` inside `Bar`
@@ -1474,6 +1504,11 @@ through two passes that each had it open.
       number (`scripts/` at 2.3x `src/`) says a regex is the wrong instrument for all three, and
       (a) is a decision rather than a defect. **Honest priority: (b) medium, (a) low-and-owner's,
       (c) low.**
+    - ⚠️ **(b)'s own numbers were wrong, and this item is the evidence.** I filed (b) from a live
+      measurement I had just taken, and still got both the total and the count of missing headings
+      wrong — and the *disposition* wrong with them, since three of the four "missing" headings turn
+      out to be correct markup. **A residual filed by the run that saw the thing is not exempt from
+      step 3.5.** ✅ **(b) closed 2026-09-02. (a) and (c) remain open.**
 
 162. **✅ DONE 2026-09-02 (owner-directed: "do the ko/zh/ja glossary translations too"), the same
     day it was filed — the O-3 call this item said it needed, made for this corpus.** All 42 true
@@ -3913,6 +3948,92 @@ zero meaningful: `selftest PASS (8/8 controls fired, plantsRemoved true)` and, p
 finding(s); V vacuous; U unavailable`. A bare "no accessibility issues found" is not a result.
 
 ## Run log
+
+### 2026-09-02 (owner-directed: "do item 163(b) next") — the Market Dashboard told a screen-reader user the Fed balance-sheet chart is part of "Yield Curve Shapes"; the item said three sections were missing headings, and the honest answer is one
+
+**Step 3.5 corrected the item I filed myself two hours earlier, in both directions.** 163(b) said the
+outline "names 4 of its 7 blocks" and that a reader "skips three sections". Re-measured on the built
+app before any edit, with a planted `<h2>` as the probe's control (`ZZ-CONTROL-HEADING`, seen → then
+removed): the screen has **eight** content blocks, four carry an `h2`, and **four** do not — I had
+missed the *Illustrative Scenario* note entirely.
+
+**And the corrected count is the less important half. Three of those four are not defects:**
+- The **cycle chart** and the **Illustrative Scenario** note sit *between the `h1` and the first
+  `h2`*. That is the `h1`'s own content and the correct description of a screen's opening — a reader
+  meets them third and second-from-top by linear reading. Adding headings there would have invented
+  two section names and two × five locale strings to describe an intro.
+- The **balance-sheet figure** has a `<figcaption>`. A figure's label belongs in a figcaption, and an
+  `h2` reading "Fed Balance Sheet" an inch above a figcaption reading `FED BALANCE SHEET · $ TRILLIONS`
+  would announce the same words twice.
+
+**The real defect is narrower and sharper than the item claimed.** Between `h2 Yield Curve Shapes`
+and `h2 Money Supply` sat the two QE/QT notes **and the entire balance-sheet figure**, with no
+heading of their own — so the heading rotor announced the Fed's balance sheet as content of *Yield
+Curve Shapes*. That is the same defect as the two `<h2>`s added to `LessonReader`: a previous
+section's title silently acting as parent for content it does not describe.
+
+**The fix is one heading, not three.** `qeQtSection` — five languages — immediately before the QE/QT
+`Stack`, so it owns both notes and the chart: `QE, QT, and the Balance Sheet` /
+`QE, QT y el Balance` / `QE, QT 그리고 대차대조표` / `QE、QT 与资产负债表` / `QE・QTとバランスシート`.
+It **names the three blocks it owns** rather than echoing the notes' own labels below
+("Quantitative Easing (QE)" / "Quantitative Tightening (QT)"), which would have put the same words in
+the rotor and in the note. `marginBottom` only, matching the `Yield Curve Shapes` heading — the grid
+above already carries `marginBottom: space["5"]`, so this adds a rotor entry and **moves nothing
+else on the page**. No new component, no new primitive, `scripts/` +0 lines.
+
+**Verification, with the control that actually proves the claim.**
+- **Rotor ownership, measured the way an AT computes it** — for a given element, the nearest heading
+  preceding it in document order. Positive control in the same call: the probe returns *three
+  different, correct* answers on one page — the yield-curve figure → `Yield Curve Shapes`, the money
+  list → `Money Supply (M0, M1, M2)`, the balance-sheet figure → `QE, QT, and the Balance Sheet`. So
+  it is not returning a constant or the last heading.
+- **The differential control reproduced the pre-fix bug in place**: deleting the new `<h2>` from the
+  live DOM and re-running the identical probe returns **both** the QE note and the balance-sheet
+  figure to `H2 Yield Curve Shapes`, and the outline drops back to h1 + 4. That is the defect, on the
+  shipped page, on demand.
+- **All five languages at 320px** on `index-B0CNSMQ7.js` (hash re-checked after the final build and
+  byte-identical to the one driven): outline is `h1` + **five** `h2`s in the right order in every
+  language, `barOwner` is the new heading in every language, **heading overflow 0** on all six
+  headings, **no horizontal body scroll**. At **200% root font** the same measurements hold, and the
+  with/without-heading differential is identical — the heading adds no overflow at either scale.
+  Screenshotted at 320px in Spanish (the longest string), rendering on one line, styled identically
+  to its four siblings.
+- **A survey of the other four Reference sub-screens, so the fix is not mistaken for a pattern**:
+  Glossary `h1` only, Sector performance `h1`+1, Kids `h1`+1, About `h1` only. **About is correctly
+  marked up and needed no heading** — its "APPEARANCE" and "TEXT SIZE" groups are
+  `role="radiogroup"` with `aria-label`, which is the right markup for a control group and not a
+  heading gap. Market Dashboard was the only screen with orphaned blocks.
+- **`npm test`: PASS, 0 failures**, same standing warnings (3 in `check-data` + the floor).
+  **`npm run build`: clean.**
+
+**Adversarial self-check (step 5), and the first plant failed — which is the part worth keeping.**
+*Blindspot register:* §10.1 — planting `qeQtSection: "QE, QT — now is a good time to buy"` into
+`en.js` returned **PASS**. That is a control that did not fire, so at that moment the check proved
+nothing. Re-planted as `"you should buy now"` → **FAIL: §10.1 investment-advice-adjacent language
+reintroduced**, which establishes the new key IS in §10.1's corpus. **The first miss was the pattern
+list, not the corpus** — measured: the English set is exactly five regexes and nothing in it matches
+"a good time to buy". Filed as **item 164**, not fixed here (different change, same-commit smuggling
+is what this log's residual discipline exists to prevent). Restored `en.js` from a scratchpad copy to
+a byte-identical sha (`4b32e794…`), never `git checkout --`. §10.2 — no person or firm named; "Fed"
+and "Balance Sheet" are institutional and already the screen's own vocabulary. §10.3 — untouched.
+§2.3 — no date, no live-looking figure. *DECISIONS.md:* no state-model change, locale strings in
+`.js` modules, no routing or build change. *No hex:* the heading uses `ink.strong`, the same token as
+its four siblings. *Already-done:* `qeQtSection` appears **0** times in `AGENT_LOG.md` and **0** in
+the archive; the only hits for "Market Dashboard … heading" are item 163's own text. *W-6.2:* this is
+the previous run's residual, taken **because the owner named it** — rule 1's counter is at **one**,
+and the next scheduled run must not take a residual by default. *W-6.3:* `scripts/` +0 lines.
+*My own claim:* re-runs from the repo — build, open Reference > Market Dashboard, read the headings;
+the pre-fix state is reproducible either at `25b119c` or by deleting the new `<h2>` in the live DOM.
+
+⚠️ **Honest limits.** (1) **Four new machine-translated strings** (es/ko/zh/ja) — O-3's standing
+condition. These are section headings, so they are read more often than most of the corpus, and
+`QE, QT y el Balance` drops "del Fed" that the Spanish `balanceSheet` key carries; that was a length
+judgment at 320px, not a translation the item required, and a fluent reviewer may want it back.
+(2) The decision that the cycle chart and the scenario note are the `h1`'s own intro is a **judgment
+about document structure**, defensible and recorded, but a reviewer could reasonably want the screen
+to open with a named section instead. (3) 163(a) and 163(c) remain open and untouched.
+
+**Owner tree at start and end: `OWNER-TREE f54fc023fb026bcb44277af38101071c245bfda0c8ead5c40049acd487b5c975` (0 tracked modified, 51 untracked — `UIUX/`), untouched. Committed: `src/screens/reference/MarketSignals.jsx`, the five locale files, and this log.**
 
 ### 2026-09-02 (scheduled dev-agent, self-picked by walking a first-run learner from lesson 1 through Review into Reference) — the Fed balance-sheet chart told a screen-reader user the bars are trillions of dollars and told a sighted reader nothing; "9" sat under the title "Fed Balance Sheet" with no unit anywhere on screen
 
