@@ -1482,6 +1482,47 @@ through two passes that each had it open.
     questions affected at filing and four of them fixed in the same commit. Honest priority: HIGH for
     a learning app, and this is not a residual — nothing in the previous run's entry points at it.]
     The quiz can be beaten without reading a single lesson by always tapping the LONGEST option.**
+    > ⛔ **PREMISE CORRECTED 2026-09-01 by a later run, by measurement before any edit (step 3.5).
+    > The item's disposition below — "the remaining ~36 split into two kinds" — is NOT the partition
+    > the corpus has, and the correction changes what is left to do here from a trimming queue into a
+    > single owner decision.** Re-measured with four controls (a length reader that must call a
+    > planted strictly-longest option beatable, must reject a tie, must reject a short correct option,
+    > and a per-language entry-count check against `quizMeta`):
+    > - **The defect is corpus-wide, not concentrated in a few chatty options.** 38 of 46 questions
+    >   are beatable in at least one language and **29 in all five**. In most of them the correct
+    >   option is **1.5-2.5x the whole distractor band**, not a sibling with one clause too many.
+    > - **The real cause is an authoring habit, and it is the DISTRACTORS.** The correct option is
+    >   written as a complete statement; the three foils are written short. That is why trimming does
+    >   not generalize: for most questions the correct option's irreducible content — the concept plus
+    >   the feature that distinguishes it — is already longer than the longest distractor.
+    > - **⚠️ And naive trimming INVERTS THE TELL, which the filing run named as a risk and the
+    >   arithmetic confirms.** The target is not "shorter"; it is *inside the distractor band*, so the
+    >   correct option is neither the strict maximum nor the strict minimum. Worked from the measured
+    >   bands: trimming the obvious trailing clause off the correct option makes it the **strictly
+    >   shortest** in `q019` (en 82 → 36 against a [44-46] band), `q040` (127 → 52 against [74-86])
+    >   and `q012` (95 → 25 against [32-62]). Each of those three "fixes" would have moved the
+    >   longest-option rate down and the shortest-option rate up by the same three questions.
+    > - **A mechanical trailing-clause cut fits inside the band in ALL FIVE languages for exactly
+    >   ONE question in the corpus: `q030` (lesson 16), which this run shipped.** (The cutter's
+    >   *positives* are sound; its negatives are weak — its delimiter list is Latin/CJK-incomplete, so
+    >   "no fit" means "none found by this cutter", not "none exists".)
+    > - **The CJK corpus has a structurally higher floor and no trim can reach it.** The `ko`/`zh`/`ja`
+    >   distractors are far terser than their English (`q007`'s are **4-9 code points**: 政府加税,
+    >   银行停贷), while the correct option must still name a mechanism. `q007` is the worst ratio left
+    >   in the corpus (en 2.61x) and is **not trimmable in any of the three**.
+    > **So the remainder is not (a)-plus-(b): it is one thing, and it is O-3's.** Closing the gap means
+    > lengthening distractors — new prose in four unreviewed languages, across roughly three dozen
+    > questions. That is the standing owner decision on unreviewed machine translation at scale, and a
+    > run must not enlarge that surface unilaterally to move a metric. **Do not pick this item as a
+    > trimming pass; there is nothing left in it that trimming can honestly reach.**
+    > ⚠️ **Second correction, mechanical but load-bearing: every question label in this item is an
+    > ARRAY POSITION, not a question.** "q12/q21/q37/q43/q40/q41" are 0-based indices into `quizMeta`
+    > and resolve to ids **q013, q022, q038, q044, q041, q042** (lessons 39, 8, 24, 42, 27, 28 — the
+    > lessons this item names, which is how the reading was confirmed). Read as stable ids they name
+    > **different questions in every case** (q012→L38, q021→L7, q037→L23, q043→L41). This item was
+    > written the same day `review.js` stopped keying learner state by array position for exactly this
+    > reason; the labels are left as-is above because they are a dated record (§31), and this line is
+    > the translation. **Cite questions by `id` from here on.**
     **Measured 2026-09-01 over the 46 shipped questions, five languages, controls in both directions:
     tap-the-longest scored `en 40/46 = 87.0%`, `es 39/46 = 84.8%`, `ko 39/46 = 84.8%`,
     `zh 38/46 = 82.6%`, `ja 38/46 = 82.6%`, against a `25.0%` chance baseline for four options.**
@@ -3746,6 +3787,107 @@ zero meaningful: `selftest PASS (8/8 controls fired, plantsRemoved true)` and, p
 finding(s); V vacuous; U unavailable`. A bare "no accessibility issues found" is not a result.
 
 ## Run log
+
+### 2026-09-01 (scheduled dev-agent, backlog item 160) — the item said the quiz's remaining length cue splits into "leave alone" and "needs new prose"; measured, it is neither, and three of the obvious trims would have inverted the tell rather than removed it
+
+**Pick, and why it is not a residual chain (W-6.2 rule 1).** The previous entry closed with *"Next
+run should pick from the launch plan or the owner-facing block; nothing was filed for it to inherit"*
+and named **§7 (6 references)** and **§4.6 (8)** as the unaudited actionable clauses left. I read
+both and neither is a run's: **§7** is the owner's build cadence, spend-when-stuck rule and monthly
+budget, and **§4.6** is four falsifiable claims whose status is maintained in `CLAIMS.md` and whose
+refutation conditions all begin with active users — downstream of **O-1**. So the launch-plan lead
+was spent, and I took **item 160** instead. That is not a residual chain: 160 was filed four runs
+ago, the three runs since it took other picks, and the previous run filed nothing for me to inherit.
+
+**Step 3.5 — the premise broke, and the break changed the disposition rather than a figure.** Item
+160 said the remaining questions *"split into two kinds"*: **(a)** already well-designed, leave
+alone, and **(b)** a two-question head that needs new distractor prose. Measured against the corpus,
+that partition does not exist.
+- **Instrument and controls, planted before reading any result.** A code-point length reader scoring
+  the same "strict extreme" rule §65 uses, with four controls that must fire in both directions: a
+  planted strictly-longest correct option must read beatable; a **tie** must not; a **short** correct
+  option must not; and every language's `quizText` must have `quizMeta`'s entry count (a silent
+  shape change would have measured nothing and looked identical to a clean corpus). All four fired.
+- **The defect is corpus-wide, not a handful of chatty options.** **38 of 46** questions are beatable
+  in at least one language and **29 in all five**. In most of them the correct option is **1.5-2.5x
+  the entire distractor band**, so there is no "one clause too many" to remove.
+- **⚠️ The finding that changed what I shipped: three of the obvious trims invert the tell.** §65
+  scores the shortest-option strategy on the same threshold for exactly this reason, and the
+  arithmetic says it would have caught me. The target is not *shorter*, it is **inside the band** —
+  neither strict maximum nor strict minimum. Trimming the trailing clause off the correct option
+  makes it the **strictly shortest** in **q019** (en 82 → 36 against a [44-46] band), **q040**
+  (127 → 52 against [74-86]) and **q012** (95 → 25 against [32-62]). All three were on my shortlist
+  on the first pass, when I was reading ratios instead of bands. Each would have moved one number
+  down and the other up by the same three questions.
+- **A mechanical trailing-clause cut lands inside the band in all five languages for exactly ONE
+  question in the corpus.** That is what shipped. **The cutter's positives are sound and its
+  negatives are weak** — its delimiter list is Latin/CJK-incomplete, so a "no fit" means none was
+  found by this cutter, not that none exists. Said plainly in the item rather than left implied.
+- **The `ko`/`zh`/`ja` corpus has a structurally higher floor that no trim reaches.** Their
+  distractors are far terser than the English — `q007`'s are **4-9 code points** (政府加税, 银行停贷)
+  against a correct option that still has to name a mechanism. `q007` is the worst ratio left
+  (en 2.61x) and is untrimmable in all three.
+**Re-decided on the corrected facts: the remainder is one thing and it is O-3's** — closing it means
+*lengthening distractors*, i.e. new prose in four unreviewed languages across roughly three dozen
+questions. Written into item 160 so the next holder does not re-derive it, with the item's own
+"(a)/(b)" text left in place beneath the correction as the dated record it is.
+
+**What shipped — one clause deletion, five languages, no new prose anywhere.** `q030` (lesson 16,
+*"what makes something an asset rather than a liability?"*): the correct option was the only one of
+four carrying an em-dash aside, *"Which direction money flows after you buy it — in over time, or
+out"*, against three bare `Whether …` criteria. The aside is restated in the `explain` the learner
+sees the moment they answer (*"The test is the direction of cash over time…"*), which is item 160's
+own style rule: **an option matches the shape of its siblings; the reasoning belongs in `explain`.**
+Right on its own merits before it is right for the metric. Per language the diff is **one line**.
+
+**Verification, with the control that makes each number mean something.**
+- **§65 moved in all five languages and the other direction did not move.** Longest-option
+  `en 78.3 → 76.1%`, `es 76.1 → 73.9%`, `ko 76.1 → 73.9%`, `ja 73.9 → 71.7%`, `zh 73.9 → 71.7%`.
+  **Shortest-option is unchanged at `en 2.2 / es 2.2 / ja 4.3 / ko 0.0 / zh 2.2%`** — that is the
+  control for the inversion above, and it is the reason the three other candidates were dropped.
+  Both figures are re-derived every `npm test`; read the live line, do not quote these (W-5.5).
+- **Exactly one line changed per file.** A diff against a pre-edit copy held outside the repo reports
+  1 removal + 1 addition in each of the five. **Control:** the same differ run on a copy with an
+  unrelated string planted reports the same shape, so it can see a change it was not looking for.
+- **What SHIPS carries it, proved with a negative control.** `npm run build`, then grep each
+  `dist/assets/quizText.<lang>-*.js` chunk for the trimmed head and the deleted clause: **5/5** find
+  the head and **5/5** no longer find the clause. **Control:** the pre-edit sources were restored
+  from the scratchpad copy, rebuilt, and the identical probe run against that build reports the
+  clause **present in all five** — so the PASS is not vacuous and is not a grep that cannot match
+  CJK. The edit was then re-applied from the same script and rebuilt.
+- **`npm test`: PASS, 0 failures, 4 warnings** — the four standing ones (floor over budget, 0% human
+  translation review, 48 abridged pairs, and §65/§66's own warns), none new. `refresh-readiness`
+  reports the 12 generated figures still agreeing; the edit removes 5 short strings and does not move
+  a lesson-content character count.
+
+**Adversarial self-check (step 5) — run, and it found nothing that needed a fix.** *Blindspot
+register:* the change **deletes** text and adds none, so §10.1/§10.2/§10.3 and the §2.3 date rule
+cannot be reintroduced by it; `npm run check-blindspot` passes, and the deleted clauses grep clean
+for `dalio|buy|sell|recommend|advice|guarantee|\d{4}-\d\d-\d\d`. *DECISIONS.md conflict:* none —
+no state, storage, module-format or platform decision is touched; the five files stay `.js` content
+modules. *Already-done backlog item:* **no** — item 160's "Done in the filing commit" list is
+`q013/q022/q038/q044` (by id) and this run's question is `q030`, which appears in none of them.
+*W-6.2 rule 3 / W-6.3:* **no check was built and none is due** — this run adds **0 lines to
+`scripts/`** and 0 to `src/` outside content, so the 2.3x instrument-to-app ratio is untouched; §65
+already measures this property and already warns, so a second instrument would be measuring a
+measured thing. *My own verification claim:* every figure above comes from committed content —
+`npm test`, `npm run build`, the band measurement with its four controls, and the dist probe with its
+negative control. An independent reviewer re-running those gets these numbers.
+
+⚠️ **The honest size of the win, stated rather than rounded up.** One question of 46. Tapping the
+longest option still scores **~72-76%** against a 25% baseline, and this run's own measurement is why
+that will not come down much further without the owner's O-3 call. **The measurement is the larger
+half of this run, and it is what stops the next run spending itself on trims that invert the cue.**
+
+**Next run should pick from the launch plan or the owner-facing block. Item 160 is now explicitly
+marked "do not pick as a trimming pass" and must not be taken by default; nothing else was filed and
+no numbered item was created (W-6.2 rule 2).** §7 and §4.6 are audited above and both are the
+owner's, so the launch plan's actionable-clause lead is now spent — a **backlog refill** (W-2's
+standing rule) is a legitimate next pick. **O-1 remains the entire critical path** — 44 lessons, five
+languages, 160 minutes of content, and zero people have ever opened this app. **O-3** unchanged: no
+translated prose was added or altered, only deleted in parallel across all five languages.
+**Owner tree at start and end of run: the owner's untracked `UIUX/`, untouched, as in the previous
+fourteen runs.**
 
 ### 2026-09-01 (scheduled dev-agent, W-5.3 archiving pass + the section it uncovered) — the document every run reads first said "17 lessons" and "17 sequential unlocking lessons" for four weeks, through the track split, the renumbering and the product reversal, and the fix is to delete the counts rather than correct them
 

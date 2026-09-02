@@ -311,7 +311,7 @@ export const quizText = [
     "q": "Según esta lección, ¿qué hace que algo sea un activo y no un pasivo?",
     "opts": [
       "Si fue lo bastante caro como para valer la pena financiarlo",
-      "Hacia dónde fluye el dinero después de comprarlo — hacia dentro con el tiempo, o hacia fuera",
+      "Hacia dónde fluye el dinero después de comprarlo",
       "Si pagaste en efectivo en lugar de a crédito",
       "Si otras personas considerarían responsable esa compra"
     ],

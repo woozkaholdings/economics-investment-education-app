@@ -311,7 +311,7 @@ export const quizText = [
     "q": "According to this lesson, what makes something an asset rather than a liability?",
     "opts": [
       "Whether it was expensive enough to be worth financing",
-      "Which direction money flows after you buy it — in over time, or out",
+      "Which direction money flows after you buy it",
       "Whether you paid with cash instead of credit",
       "Whether other people would consider the purchase responsible"
     ],
