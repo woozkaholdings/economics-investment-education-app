@@ -34,7 +34,7 @@ import Icon from "../components/Icon.jsx";
 import { Disclaimer, ProgressBar, ResumeCard, SrOnly, Text } from "../components/ui.jsx";
 import { fill, font, ink, line, MIN_TAP, radius, shadow, space, surface } from "../theme.js";
 
-export default function Learn({ t, lang, lessons, completedLessons, isUnlocked, streak, openLesson }) {
+export default function Learn({ t, lang, lessons, completedLessons, isUnlocked, streak, openLesson, goToReview }) {
   const done = completedLessons.length;
   const total = lessons.length;
 
@@ -51,8 +51,20 @@ export default function Learn({ t, lang, lessons, completedLessons, isUnlocked, 
   //
   // Index-based on purpose: ids are deliberately NOT aligned to display order,
   // so "the next lesson" is a position in this list and never a lowest-id.
-  const nextIndex = Math.max(0, lessons.findIndex((l) => !completedLessons.includes(l.id)));
-  const nextLesson = lessons[nextIndex];
+  //
+  // ⚠️ -1 IS KEPT AS -1. `findIndex` returns -1 once every lesson is
+  // complete, and this line used to wrap it in `Math.max(0, …)`, which turned
+  // "there is no next lesson" into "the next lesson is the first one".
+  // Measured live at 44/44 on 2026-09-02, before the fix: the card read
+  // "NEXT UP — Transactions: The Building Block … Progress: 44/44 …
+  // Continue Learning", and lesson 1's row carried BOTH the "Completed" and
+  // the "Current lesson" screen-reader markers, because `isNext` compares
+  // against this index. The app had no finished state; it looped.
+  // -1 is now the app's only "path is done" signal, and both consumers below
+  // (`nextLesson`, and `isNext` on each row) read it as one.
+  const nextIndex = lessons.findIndex((l) => !completedLessons.includes(l.id));
+  const nextLesson = nextIndex === -1 ? null : lessons[nextIndex];
+  const pathComplete = total > 0 && nextIndex === -1;
   const started = done > 0;
 
   // Each track with its lessons, keeping every lesson's index into `lessons`
@@ -84,7 +96,7 @@ export default function Learn({ t, lang, lessons, completedLessons, isUnlocked, 
           {started ? t.returningTitle : t.welcomeTitle}
         </Text>
         <Text variant="small" color={ink.muted} style={{ marginTop: space["2"] }}>
-          {started ? t.returningSub : t.welcomeSub}
+          {pathComplete ? t.pathDoneSub : started ? t.returningSub : t.welcomeSub}
         </Text>
       </div>
 
@@ -123,6 +135,25 @@ export default function Learn({ t, lang, lessons, completedLessons, isUnlocked, 
           progressLabel={`${t.progressLabel}: ${done}/${total}`}
           action={started ? t.continueLesson : t.startLesson}
           onAction={() => openLesson(nextIndex)}
+        />
+      )}
+
+      {/* The finished state. Same card, because a learner who has read all
+          three tracks is still being told "here is where you are and here is
+          the one thing to do next" — only the next thing is no longer a
+          lesson. It points at Review rather than at nothing: the check
+          questions are already in that queue, and spacing them out is the
+          part of the product that outlives the path. */}
+      {pathComplete && (
+        <ResumeCard
+          eyebrow={t.pathDoneEyebrow}
+          title={t.pathDoneTitle}
+          meta={t.pathDoneBody}
+          progressValue={done}
+          progressMax={total}
+          progressLabel={`${t.progressLabel}: ${done}/${total}`}
+          action={t.pathDoneAction}
+          onAction={goToReview}
         />
       )}
 

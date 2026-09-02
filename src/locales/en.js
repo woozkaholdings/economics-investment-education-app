@@ -15,6 +15,16 @@ export default {
     // learner 20 lessons in was still being welcomed. Greet once; then this.
     returningTitle: "Your learning path",
     returningSub: "Pick up where you left off",
+    // Path complete. `returningSub` says "Pick up where you left off",
+    // which is a lie once there is nothing left to pick up — see the
+    // nextIndex comment in screens/Learn.jsx for what the app used to do
+    // instead. Deliberately no lesson COUNT in any of these strings: a
+    // number here would go stale the next time a lesson is added.
+    pathDoneEyebrow: "Path complete",
+    pathDoneTitle: "You've finished every lesson",
+    pathDoneSub: "Nothing left to unlock — what happens now is review",
+    pathDoneBody: "What you keep is what you come back to. Every check question you answered is waiting in Review, returning at wider and wider gaps.",
+    pathDoneAction: "Go to Review",
     // Tracks (see TRACKS in content/lessons.js)
     trackMoney: "Thinking About Money",
     trackMoneyBlurb: "The judgment school never taught: what counts as an asset, and why raises disappear.",

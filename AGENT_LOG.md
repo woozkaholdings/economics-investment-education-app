@@ -3881,6 +3881,102 @@ finding(s); V vacuous; U unavailable`. A bare "no accessibility issues found" is
 
 ## Run log
 
+### 2026-09-02 (scheduled dev-agent, self-picked by driving the Learn screen into a state nothing else exercises) — a learner who finishes all 44 lessons is told "NEXT UP: Transactions" over a full progress bar, and lesson 1 is marked Completed and Current lesson in the same row
+
+**The defect, in one line of code that has been there since the screen was written.**
+`Learn.jsx` computed the resume pointer as `Math.max(0, lessons.findIndex(l => !completed.includes(l.id)))`.
+`findIndex` returns **-1** when every lesson is complete; `Math.max(0, -1)` is **0**. So "there is no
+next lesson" was silently rewritten into "the next lesson is the first one", and the app had **no
+finished state at all** — it looped a learner who had read every word back to lesson 1.
+
+**Measured live before any edit (step 3.5), on the built app at `index-Cqgk1Lk2.js`**, with
+`ecycles_completed_lessons` set to all 44 ids:
+- The card read **`NEXT UP` / `Transactions: The Building Block` / `How the Economy Works · ≈2 min` /
+  `Progress: 44/44` / `Continue Learning`**.
+- Lesson 1's row carried **both** screen-reader markers at once — `Completed` *and* `Current lesson` —
+  because `isNext` compares `i === nextIndex`, and `nextIndex` was 0.
+- The header subtitle still read **"Pick up where you left off"** with nothing left to pick up.
+
+⚠️ **The premise I started from was mine, not an item's, so the thing that needed a control was the
+measurement.** Two controls, both run against the *shipped* build: at **12/44** the card correctly
+named `The Subject That Wasn't on the Timetable` (id41, the money track's first lesson) with exactly
+**one** current row; at **0/44** it read `START HERE` / `Transactions` / `Progress: 0/44`. So the
+44/44 reading is a state the code produces, not an artifact of writing to `localStorage`.
+
+**The fix, and why it is a card rather than a hidden card.** `nextIndex` now keeps **-1 as -1** — it
+is the app's only "the path is done" signal, and both consumers read it as one (`nextLesson` becomes
+`null`; `i === -1` matches no row, so no completed lesson can also be "current"). `pathComplete`
+renders the **same `ResumeCard`** with a different payload: `PATH COMPLETE` / "You've finished every
+lesson" / a line about spacing / a **`Go to Review`** button wired to `goToTab("practice")` (a new
+`goToReview` prop; `App.jsx` passes it). Same card on purpose — a learner who has read all three
+tracks still wants "here is where you are, here is the one thing to do next"; only the next thing is
+no longer a lesson. It points at Review because the check questions are already in that queue and
+spacing them out is the part of the product that outlives the path.
+
+**Deliberately no count in any of the five new strings.** "You've finished every lesson", not
+"…all 44 lessons": the App summary's standing rule is that a retyped figure goes stale silently, and
+a lesson added next week would have made this card lie. `LessonReader`'s forward button was checked
+and is **not** affected — `hasNext = index < lessons.length - 1` already handles the last lesson.
+
+**Verification, with the control that mattered failing first.**
+- **The overflow probe's first control did not fire, and the plant was the broken half.** A planted
+  42-character unbreakable word in a 40px box reported `scrollWidth === clientWidth === 40` and the
+  probe found nothing. Cause: the app sets **`overflow-wrap: break-word`** globally, so the plant
+  *wrapped* instead of overflowing. Re-planted with `overflow-wrap: normal` → `scrollWidth 431 vs
+  clientWidth 40`, **probe detects 1**; removed → **0**. Only then were the five language readings
+  worth anything.
+- **The "current row" probe was controlled in both directions too**: it counts rows whose computed
+  `border-top-width` ≥ 2px (the `isNext` treatment, language-agnostic). At 12/44 it returns **1** and
+  names the right lesson in Japanese (`時間割になかった科目`); at 44/44 it returns **0**.
+- **Live at 320px in all five languages, on a build whose chunk hash I checked** (`index-D4xvPdq9.js`,
+  per the standing stale-bundle rule): **0 current rows, 0 overflowing elements, no horizontal body
+  scroll**, and the card's five lines read correctly in en/es/ko/zh/ja.
+- **The button was clicked, not reasoned about**: `location.hash` becomes `#/practice` and the bottom
+  nav's `aria-selected` tab becomes `Review`.
+- **`npm test`: PASS, 0 failures**, same standing warnings (3 in `check-data`, plus the floor).
+  **`npm run build`: clean.** The final build's hash is byte-identical to the one verified live.
+
+**Adversarial self-check (step 5).** *Blindspot register:* §10.1 — `check-blindspot` already scans
+`src/locales/*.js`, so the new strings were in its corpus and passed; proven non-vacuous by planting
+`"Go to Review — you should buy now"` into `en.js` (grep confirmed the plant landed), re-running →
+**FAIL: §10.1 investment-advice-adjacent language reintroduced**, then restoring from a scratchpad
+copy to a byte-identical sha (`3c64c1d8…`, never `git checkout --`). §10.2 — no person or firm named.
+§10.3 — untouched. §2.3 — no date and no figure in any new string, by design. *DECISIONS.md:* no state
+model change (still `localStorage`), locale strings in `.js` modules, no routing or build change; the
+new prop reuses `goToTab`, the existing navigation seam. *Already-done:* **0** occurrences of
+`pathComplete`/`pathDone` anywhere in `AGENT_LOG.md` or the archive, and `Math.max(0` now appears in
+`src/` only inside the comment explaining its removal — not a redo. *W-6.2:* this is not the previous
+run's residual; nothing in the last entry points at the Learn screen. *W-6.3:* `scripts/` **+0 lines**
+— no instrument added (see the note filed below for why, and what it would have to be). *My own claim:*
+every figure is re-runnable — set `ecycles_completed_lessons` to the 44 ids, load `#/learn`, read the
+card; the pre-fix state is reproducible by rebuilding at `0d12102`.
+
+⚠️ **Honest limits.** (1) **Twenty new machine-translated strings** (5 × es/ko/zh/ja), read by no
+fluent speaker — O-3's standing condition, and these are prose rather than single nouns, which is the
+higher-risk end of it. (2) The completion card is the **same component** as the resume card, so the
+two states are told apart by their words, not by their shape; a learner glancing at the screen sees a
+familiar card. That was a deliberate trade for a small diff and it is the first thing to revisit if
+the finished state ever deserves its own design. (3) **No regression guard was built**, so the exact
+class of bug — a sentinel index laundered through `Math.max`/`||`/`??` into a valid-looking value —
+can return anywhere else — see the note below, which is why no item was filed.
+
+**Owner tree at start and end: untracked `UIUX/` (51 files), untouched. Committed: `src/App.jsx`,
+`src/screens/Learn.jsx`, the five locale files, and this log.**
+
+**Residual, filed as a NOTE and not as a numbered backlog item (W-6.2 rule 2), because the sweep it
+would guard has zero remaining live instances — measured, not assumed.** Every other sentinel-index
+site in `src/` was read this run: `deepLink.js:96` and `Settings.jsx:28` handle `-1` explicitly and
+say so in a comment; `App.jsx:368` indexes an array with the result but is protected by `?.`; and
+`LessonReader.jsx:217`'s `findIndex(...) + 1` would print "Lesson 0 of N" on a miss but cannot miss
+by construction (it searches the very list its argument came from). **So the Learn screen held the
+only live one.** W-6.2 rule 3's question — name the learner-visible failure a check would have caught
+— does have an answer here ("the app congratulated nobody and sent a finished learner back to lesson
+1"), but the check itself would be a regex over `Math.max(0, …findIndex`, which catches one spelling
+of the mistake and not the class; `?? 0`, `|| 0` and `Math.abs` all launder a sentinel the same way.
+**W-6.3's number is the tiebreak: `scripts/` is 2.3x `src/`, and this proposal falls on the wrong
+side of it.** If a future run finds a SECOND live instance, that is the evidence this note is waiting
+for and the check becomes due.
+
 ### 2026-09-02 (scheduled dev-agent, RECOVERY of the 04:00 run that died mid-implementation) — the rate-effect cards rendered a bare "↓" with no noun naming what fell; recovered, and the recovered change turned out to strand an arrow of its own at 320px
 
 **This run committed work it did not write, and the identification is the part worth reading.** The

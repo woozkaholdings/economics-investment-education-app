@@ -461,6 +461,7 @@ export default function App() {
             <Learn
               t={t} lang={lang} lessons={lessons} completedLessons={completedLessons}
               isUnlocked={isUnlocked} streak={streak} openLesson={openLesson}
+              goToReview={() => goToTab("practice")}
             />
           )}
           {tab === "learn" && reading !== null && (
