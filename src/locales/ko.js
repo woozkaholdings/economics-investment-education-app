@@ -125,4 +125,5 @@ export default {
     economyNowTitle: "지금의 경제",
     rankTemplate: "{of}개 중 {rank}위",
     sectorsSortNote: "{name} 대비 상대강도 순으로 정렬했습니다. 오른쪽 수치는 각 섹터의 {window} 수익률입니다.",
+    relativeStrengthNote: "상대강도는 각 섹터를 약 2주, 6주, 3개월이라는 세 구간에서 동시에 {name}과 비교해 그 세 격차를 더한 값입니다. 그래서 이 목록에서 수익률이 가장 높은 섹터가, 세 구간에 걸쳐 고르게 앞선 섹터보다 낮은 순위에 오를 수 있습니다.",
 };

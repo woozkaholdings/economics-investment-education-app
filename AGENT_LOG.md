@@ -2632,6 +2632,19 @@ through two passes that each had it open.
     > is what made the note's confident half feel checked. The report now says "…EVERY time it
     > appears" and adds a second line naming the terms that ARE spelled out somewhere, and each
     > such candidate carries `← already spelled out in lesson N`. See the 2026-08-30 run entry.
+    > **Second residual, measured 2026-09-02 and filed as a NOTE under this item rather than as a
+    > numbered one (W-6.2 rule 2 — one live instance, now fixed). The instrument's corpus is
+    > LESSON PROSE, and the app's densest finance vocabulary is not in lesson prose.**
+    > `jargon-candidates.mjs` reads `lessonContent.*`; §17b's coverage sweep reads lessons too. Neither
+    > can see `src/locales/*.js` or the Reference screens' own content modules — so a term the app
+    > organizes a whole screen around is invisible to both. The live instance was **"relative
+    > strength"**, printed on all eleven Sector-performance rows and in that screen's sort note, and
+    > defined in no lesson, no quiz, no glossary entry and no market copy (measured with controls:
+    > "yield curve" and "fed funds rate" are found in the same corpus and ARE defined; "purchasing
+    > power" is defined and absent from it). Fixed in place rather than by a glossary key — see the
+    > 2026-09-02 run entry for why. **Before building a sweep for this, note the corpus is 6,228
+    > chars of English chrome and every other figure on those screens already carries its own `what`
+    > line; a whole instrument for one term would land on the wrong side of W-6.3.**
 
 64. **✅ BOTH CLOSED — struck from the W-5.2 pick list 2026-08-24 after seven days of being
     recommended when nothing was open. `Dividend` shipped 2026-08-20; the other two keys landed
@@ -3860,6 +3873,93 @@ zero meaningful: `selftest PASS (8/8 controls fired, plantsRemoved true)` and, p
 finding(s); V vacuous; U unavailable`. A bare "no accessibility issues found" is not a result.
 
 ## Run log
+
+### 2026-09-02 (scheduled dev-agent, self-picked by opening the built app and reading a screen) — the Sector-performance list is ordered by a measure the app names eleven times and defines nowhere, and every instrument that hunts undefined jargon reads a corpus that screen is not in
+
+**Pick, and why it is not a residual chain (W-6.2 rule 1).** The three preceding entries are all
+translation-corpus work (Spanish glossary, then the ko/zh/ja glossary and parent guide by owner
+direction). Rule 1 says the third run in a row does not take another link in that chain, so this run
+took none of it: `npm test`'s three standing warnings are all parked on owner decisions (O-3 twice,
+item 160's remainder), so instead of picking off a list I **built `dist/`, served it and read the
+app**, which is the one thing W-6.0 says nobody is spending capacity on. `preview_start` worked in an
+unattended run, contradicting the 2026-09-01 entry's note that it refuses — recorded here because two
+entries have now cited that note as a reason to skip live DOM checks.
+
+**The finding, from the screen and not from a file.** On Reference → Sector performance the eleven
+rows read `#1 of 11 · +12.5%`, `#2 of 11 · +17.8%`, `#3 of 11 · +11.5%` — the numbers go up and down
+against an ordering that never moves. That is not a bug: item 104 fixed the comparator in August, and
+the sort note already says the rank and the percentage are different quantities. **What is missing is
+the quantity itself.** The screen prints `Relative strength` on every row and calls the list "Ranked
+by relative strength", and the term is defined **nowhere in the app**.
+
+**Step 3.5 — measured before editing, in both directions.**
+- **Not in the glossary**: 42 keys, 54 surface forms, `/relative|strength/i` matches none, and no
+  entry's definition text mentions it. *Controls:* `Credit`, `VIX`, `Inflation`, `Yield Curve` all
+  found by the same reader.
+- **Not in any lesson, quiz, market copy, kids or parent content**: 0 hits across
+  `lessonContent.{economy,essentials,money}.en.js`, `quizText.en.js`, `markets.js`, `kidsContent.js`,
+  `economicSignals.js`, `sectors.js`. *Control:* "yield curve" returns 4 in the economy lessons.
+- **It lives in exactly three locale strings and the screen**: `relativeStrengthLabel`,
+  `sectorsSortNote`, `provisionalNotice` (the last renders only when the data says `provisional`,
+  which it does not — the WJ measure shipped 2026-08-04).
+- **The cause is corpus, not oversight.** `npm run jargon` and §17b both read lesson prose. A term
+  used only in UI chrome is outside both, so no instrument in this repo could ever have raised it.
+  Filed as a note under item 60, not as a numbered item (W-6.2 rule 2: one live instance, now fixed).
+- **The learner-visible size of it, re-read live rather than reasoned about**: on the 6M tab
+  Technology shows **+33.9%, the largest number in the list, at rank 6** (read out of the rendered
+  DOM, not out of `market.json`). A reader who assumes the column is the sort key sees a broken list.
+
+**What shipped — one new locale key in five languages, rendered under the existing sort note.**
+`relativeStrengthNote`: *"Relative strength compares each sector with S&P 500 over three stretches at
+once — roughly two weeks, six weeks and three months — and adds the three gaps up. A sector can show
+the biggest return here and still rank below one whose lead is spread across all three."* The three
+stretches are `WJ_PERIODS` (10/30/60 daily bars) read off `relativeStrength.js`, not invented; the
+second sentence is the reconciliation the sort note leaves open, and it is stated as a property of the
+measure rather than as a claim about today's tab (on 1M the biggest return IS rank 1).
+
+**Explained in place rather than as a glossary entry, deliberately.** A reader confused by this list
+is on this screen, not in the glossary; a key no lesson uses would owe §17b a chip or an exclusion for
+nothing; and every other figure on that screen — each sector's `what`, each FRED signal's `what` —
+already carries exactly this kind of line. The one number that ORDERS the list was the only one
+without one. Cost: 4 new machine-translated strings instead of 12.
+
+**Verification, each with its control.**
+- **A plant that did NOT fire, which is the reason the DOM check exists.** Replacing the render with a
+  literal left the key defined in five languages and rendered by nothing — `check-data.mjs` still
+  exited 0. That is correct: commit `054d61c` deleted such a key and explicitly shipped **no** guard
+  for the class. So `npm test` green proves nothing about whether this key renders, and the live DOM
+  is the only proof. Restored from a scratchpad copy, `diff -q` byte-identical, never `git checkout --`.
+- **Live**: the note renders under the sort note in English and, with `{name}` substituted, in Korean
+  (`S&P 500과 비교해…`). At a 320px viewport `scrollWidth === clientWidth === 320` — no overflow. No
+  console errors.
+- **What ships**: `npm run build` → `dist/assets/index-*.js` carries all **5/5** strings; the plant
+  string and a never-added probe are both **absent**, so the CJK greps are not silently failing.
+- **`npm test`: PASS, 0 failures, 3 warnings** — the same three standing ones (0% human review, 48
+  abridged essentials pairs, quiz length cue), unchanged. `check-blindspot`: PASS.
+
+**Adversarial self-check (step 5).** *Blindspot register:* clean — no person named (§10.2); the note
+says what the measure IS and never what to do about a sector's place in it, and an advice-token grep
+over all five strings (should/buy/sell/recommend and the es/ko/zh/ja equivalents) returns 0 (§10.1);
+kids framing untouched (§10.3); **the note carries no date and no figure**, so §2.3 is untouched — the
+dates in the new code comment are comments, matching the file's existing practice. *DECISIONS.md:* no
+conflict with localStorage-only state, `.js` content modules or Vite; the "(Beta)" MT decision is
+enlarged by **4 strings of UI chrome**, which is in-kind and does not move the ledger's 0%-human
+figure (that counts lesson content). Stated, not finessed. *Already-done:* no — item 104 fixed the
+ordering, this explains the measure; the "Completed and pruned" entry for sector relative strength
+records that it ships, not that it is explained. *W-6.3:* `scripts/` **+0 lines**; `src/` +5 locale
+strings and +2 rendered lines. First entry in several days on the shrinking side of that ratio.
+*My own claim:* every figure above comes from `npm test`, `npm run build`, greps with negative
+controls, and the live DOM at two viewport widths.
+
+⚠️ **Honest limits.** Four of the five strings are AI-written and read by no fluent speaker — O-3's
+standing condition, unchanged. And the note explains the measure; it does not make the ordering
+*verifiable* on screen, which would mean printing the score itself. That is deliberate: this screen's
+header comment says a rank is shown rather than a bare number "because a rank is something a
+first-time reader can actually act on", and a summed-excess figure of `-16.6` is not beginner-legible.
+A future run that wants to revisit it should argue with that decision, not quietly reverse it.
+
+**Owner tree at start and end: untracked `UIUX/` (51 files), untouched.**
+
 
 ### 2026-09-02 (owner-directed: "do item 161's remaining ko/zh/ja pairs too") — the parent guide's Korean, Chinese and Japanese completed; the ratio had missed as many abridged blurbs as it caught
 

@@ -149,6 +149,27 @@ export default function Sectors({ t, lang }) {
             .replace("{name}", BENCHMARK.name)
             .replace("{window}", WINDOWS.find((w) => w.key === window).label)}
         </Text>
+        {/* What the sort key MEANS, which the line above only names. Measured
+            2026-09-02: "relative strength" appears in no lesson, no quiz, no
+            glossary entry and no market copy — only here, in this screen's
+            three locale strings. Every other figure on this screen carries a
+            plain-language line saying what it is (`sectors.what`,
+            `economicSignals.what`); the one number that ORDERS the list did
+            not, so the reader met the term for the first and only time as an
+            unexplained ranking.
+            It is explained here rather than as a glossary entry because no
+            lesson teaches it: a reader confused by this list is on this
+            screen, not in the glossary, and a key no lesson uses would owe
+            §17b a chip or an exclusion for nothing.
+            The second sentence is the reconciliation the sort note leaves
+            open — with the shipped data (asOf 2026-09-01) the biggest return
+            in the list sits at rank 2 on the 3M tab and rank 6 on 6M, so a
+            reader who assumes the column is the sort key sees a broken list.
+            Keep it descriptive: it says what the measure IS, never what to do
+            about a sector's place in it (§10.1). */}
+        <Text variant="caption" color={ink.muted} style={{ margin: `${space["1"]}px 0 0` }}>
+          {t.relativeStrengthNote.replace("{name}", BENCHMARK.name)}
+        </Text>
         {/* Genuinely an <ol>: `ranked` is ordered by relative strength, and each
             row states its own "rank N of M". `role="list"` per check-data.mjs §20.
             This sentence was FALSE from the day the screen shipped until

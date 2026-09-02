@@ -125,4 +125,5 @@ export default {
     economyNowTitle: "当前经济状况",
     rankTemplate: "{of} 中第 {rank}",
     sectorsSortNote: "按相对于 {name} 的相对强度排序。右侧数字为各板块的 {window} 回报率。",
+    relativeStrengthNote: "相对强度是把每个板块与 {name} 在约两周、六周和三个月这三个区间上同时比较，再把三个差距相加得出的。所以列表中回报率最高的板块，排名仍可能低于在三个区间上都稳定领先的板块。",
 };
