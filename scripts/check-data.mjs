@@ -9362,13 +9362,25 @@ function trendDirection(src) {
 //     out instead of being corrected for with a fudge factor.
 //
 //     WHY IT WARNS RATHER THAN FAILS, and the honest limits of the ratio:
-//     21 ko/zh/ja pairs remain (item 161), and closing them means new prose in
-//     four languages no fluent reader has checked — an O-3 decision, not a
-//     run's. The ratio is ALSO a screening proxy with real false positives:
-//     `13-17.parentTip` scores zh 0.23 while being a complete translation.
-//     Short units are where it misreads, so units under MIN_EN are excluded
-//     and the exclusion is controlled below rather than asserted. Every
-//     flagged pair still has to be READ before it is believed.
+//     the 21 ko/zh/ja pairs that remained at filing (item 161) were new prose
+//     in three languages no fluent reader had checked — an O-3 decision, which
+//     the owner made on 2026-09-02 ("do item 161's remaining ko/zh/ja pairs
+//     too"). Reading them found 18 true positives and 3 complete translations
+//     among the flagged, and 7 MORE abridged pairs the ratio never flagged
+//     (ko/zh `5-8.lessons[2]` dropping "The economy needs both!", zh
+//     `5-8.lessons[1]` dropping "That's like inflation!", ko `13-17.lessons[1]`
+//     dropping the 12-24 month lag). All 25 were completed that day.
+//
+//     READ_COMPLETE — the false-positive rate, recorded as data (§67's
+//     pattern). After the fix, 9 of 192 pairs still scored under threshold and
+//     every one was read against its English and is complete: compact ko/zh/ja
+//     renderings of discursive English. Each is listed with the code-point
+//     length it had when read. The list cannot hide a NEW abridgement (an
+//     unlisted pair still warns) and cannot hide a listed pair that is later
+//     cut (control 6: below 90% of the recorded length FAILS). Entries that
+//     drift above threshold as the p90 moves are inert and counted, not
+//     failed. The ratio remains a screening proxy: every flagged pair — and,
+//     as the 7 above show, some unflagged ones — has to be READ.
 {
   const before66 = failures;
 
@@ -9381,6 +9393,19 @@ function trendDirection(src) {
   const MIN_EN = 40;
 
   const cp = (s) => [...(s ?? "")].length;
+
+  // Read against the English on 2026-09-02 and complete. `at` is the code-point
+  // length of the translation when it was read — the fingerprint control 6 uses.
+  const READ_COMPLETE = [
+    { path: "5-8.lessons[2].why", lang: "ko", at: 56 }, { path: "5-8.lessons[5].why", lang: "ko", at: 54 },
+    { path: "13-17.lessons[3].text", lang: "ko", at: 97 },
+    { path: "13-17.parentTip", lang: "zh", at: 26 }, { path: "13-17.activity", lang: "zh", at: 29 },
+    { path: "9-12.lessons[2].text", lang: "ja", at: 43 }, { path: "9-12.parentTip", lang: "ja", at: 33 },
+    { path: "9-12.lessons[3].text", lang: "ja", at: 62 }, { path: "13-17.parentTip", lang: "ja", at: 37 },
+  ];
+  const SHRUNK_BELOW = 0.9;
+  const readKey = (path, lang) => `${path}\u0000${lang}`;
+  const readMap = new Map(READ_COMPLETE.map((r) => [readKey(r.path, r.lang), r.at]));
 
   const kidsUnits = (kc) => {
     const out = [];
@@ -9407,15 +9432,18 @@ function trendDirection(src) {
     for (const lang of COMPLETENESS_LANGS) ratio[lang] = rows.map((r) => cp(r.m?.[lang]) / r.en);
     const reference = {};
     for (const lang of COMPLETENESS_LANGS) reference[lang] = p90(ratio[lang]);
-    const abridged = [];
+    const abridged = [], readComplete = [], shrunk = [];
     rows.forEach((r, i) => {
       for (const lang of COMPLETENESS_LANGS) {
-        if (ratio[lang][i] < ABRIDGED_BELOW * reference[lang]) {
-          abridged.push({ path: r.path, lang, ratio: ratio[lang][i] });
-        }
+        if (ratio[lang][i] >= ABRIDGED_BELOW * reference[lang]) continue;
+        const hit = { path: r.path, lang, ratio: ratio[lang][i], now: cp(r.m?.[lang]) };
+        const at = readMap.get(readKey(r.path, lang));
+        if (at === undefined) abridged.push(hit);
+        else if (hit.now < SHRUNK_BELOW * at) shrunk.push({ ...hit, at });
+        else readComplete.push(hit);
       }
     });
-    return { rows, reference, abridged };
+    return { rows, reference, abridged, readComplete, shrunk };
   };
 
   // CONTROLS FIRST. A scorer that flagged nothing would certify this corpus as
@@ -9485,8 +9513,28 @@ function trendDirection(src) {
     }
   }
 
+  // 6. READ_COMPLETE cannot mask a regression: a listed translation cut to 20%
+  //    must land in `shrunk`, not `readComplete`; and every entry must name a
+  //    pair that exists.
+  {
+    const live = new Set(kidsUnits(kidsContent).flatMap((u) => COMPLETENESS_LANGS.map((l) => readKey(u.path, l))));
+    const missing = READ_COMPLETE.filter((r) => !live.has(readKey(r.path, r.lang)));
+    if (missing.length) fail(`§66: READ_COMPLETE names ${missing.length} pair(s) that do not exist in kidsContent.js (${missing.map((r) => `${r.path} ${r.lang}`).join(", ")}).`);
+    const kc = JSON.parse(JSON.stringify(kidsContent));
+    const T = READ_COMPLETE[0];
+    const u = kidsUnits(kc).find((x) => x.path === T.path);
+    if (u?.m?.[T.lang]) {
+      u.m[T.lang] = [...u.m[T.lang]].slice(0, Math.ceil(cp(u.m[T.lang]) * 0.2)).join("");
+      const r = scoreKids(kc);
+      const inShrunk = r.shrunk.some((x) => x.path === T.path && x.lang === T.lang);
+      const inRead = r.readComplete.some((x) => x.path === T.path && x.lang === T.lang);
+      if (!inShrunk || inRead) fail(`§66: the READ_COMPLETE fingerprint failed its control — ${T.path} ${T.lang} cut to 20% was ${inRead ? "still accepted as read-complete" : "not reported as shrunk"}.`);
+    }
+  }
+
   // THE REAL CORPUS.
   const kids = scoreKids(kidsContent);
+  for (const x of kids.shrunk) fail(`§66: ${x.path} ${x.lang} was read complete at ${x.at} code points and now ships at ${x.now} (${Math.round((100 * x.now) / x.at)}%). What was read is no longer what ships — re-read it against the English, then restore it or update its READ_COMPLETE length.`);
   if (kids.rows.length === 0) {
     fail(`§66: no kidsContent units could be read — the module's shape changed and this section is measuring nothing, which is indistinguishable from a fully translated corpus.`);
   } else {
@@ -9504,7 +9552,7 @@ function trendDirection(src) {
     }
     if (failures === before66) {
       const line = COMPLETENESS_LANGS.map((lang) => `${lang} ${kids.abridged.filter((a) => a.lang === lang).length}`).join(", ");
-      console.log(`  §66 kidsContent translations are measured for content, not just presence: ${kids.abridged.length}/${kids.rows.length * COMPLETENESS_LANGS.length} pair(s) under ${Math.round(100 * ABRIDGED_BELOW)}% of their language's own p90 (${line}) across ${kids.rows.length} unit(s), 5 scorer control(s) fired.`);
+      console.log(`  §66 kidsContent translations are measured for content, not just presence: ${kids.abridged.length}/${kids.rows.length * COMPLETENESS_LANGS.length} pair(s) under ${Math.round(100 * ABRIDGED_BELOW)}% of their language's own p90 (${line}) across ${kids.rows.length} unit(s); ${kids.readComplete.length} under-threshold pair(s) read complete on 2026-09-02 and unchanged since (${READ_COMPLETE.length - kids.readComplete.length} listed entries inert above threshold); 6 scorer control(s) fired.`);
     }
   }
 }

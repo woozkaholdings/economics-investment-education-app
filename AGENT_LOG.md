@@ -1504,7 +1504,18 @@ through two passes that each had it open.
     EVENLY in every unit moves its own p90 and reads as clean. There is no recorded baseline for
     `glossary.js`, so nothing here would catch slow uniform decay.
 
-161. **[Content — filed 2026-09-01 by the scheduled dev-agent that MEASURED it, with the Spanish
+161. **✅ DONE 2026-09-02 (owner-directed: "do item 161's remaining ko/zh/ja pairs too") — the O-3
+    call this item said it needed, made for this corpus.** §66 reads **0/192 abridged**. Reading the
+    21 flagged pairs found **18 true positives and 3 complete translations**; reading the UNFLAGGED
+    side found **7 more abridged pairs the ratio never caught** — including the exact one this item
+    predicted (ko `13-17.lessons[1]` dropping the 12-24 month lag) and zh `5-8.lessons[1]` dropping
+    *"That's like inflation!"*, the blurb's entire point, at a ratio the check called clean. All 25
+    completed. **9 pairs remained under threshold after the fix and all 9 are complete** — recorded in
+    §66's `READ_COMPLETE` with the length each had when read; control 6 proves a listed pair cut to
+    20% FAILS (plant on the live file: zh `13-17.parentTip` 26 → 9 cp, exit 1). **Transferable:** on
+    both corpora audited today the ratio's misses were in BOTH directions and roughly equal in count
+    — the reading, not the ratio, is the measurement. Original filing kept below as the dated record.
+    [Content — filed 2026-09-01 by the scheduled dev-agent that MEASURED it, with the Spanish
     half FIXED in the same commit. 21 LIVE instances, so W-6.2 rule 2's "note under its parent" does
     not apply — that rule parks residuals with zero live instances, and this is not one.
     Honest priority: MEDIUM for ko/zh/ja, and the remainder is an O-3 decision, not a run's.]
@@ -3849,6 +3860,61 @@ zero meaningful: `selftest PASS (8/8 controls fired, plantsRemoved true)` and, p
 finding(s); V vacuous; U unavailable`. A bare "no accessibility issues found" is not a result.
 
 ## Run log
+
+### 2026-09-02 (owner-directed: "do item 161's remaining ko/zh/ja pairs too") — the parent guide's Korean, Chinese and Japanese completed; the ratio had missed as many abridged blurbs as it caught
+
+**Authorization.** Item 161 filed the ko/zh/ja remainder under O-3; the owner made the call for this
+corpus in the same session that made it for the glossary. One corpus, named by the owner — O-3's scope
+is not widened by this entry.
+
+**Step 3.5 — the premise was re-read, not inherited, and it was half wrong in the useful direction.**
+The item said 21 pairs. Reading them: **18 true positives, 3 complete** (zh `13-17.parentTip` — the
+false positive the item itself named — and ja `9-12.lessons[2].text` / `9-12.parentTip`). Then the
+**unflagged** side was read too, because item 162's glossary work that morning had found a false
+negative at ratio 1.00. **Seven more abridged pairs, none flagged:** ko and zh `5-8.lessons[2]` both
+drop *"The economy needs both!"*; zh `5-8.lessons[1]` drops *"That's like inflation!"* — the blurb's
+entire point, at 0.26 against a 0.239 threshold; ko `13-17.lessons[1]` drops the 12-24 month lag
+(the exact miss item 161 predicted); ko `13-17.lessons[2]` and ja `13-17.lessons[2]` drop *"to stop
+the collapse"*; ko and zh `9-12.activity` drop *"Did they go up or down?"*. **So the ratio caught 18
+and missed 7 — it is a screening proxy that finds most of the defect, and the reading is the
+measurement.** The `why` fields (written 2026-08-16) were confirmed complete in all three languages,
+as §66's header claimed.
+
+**What shipped — 24 strings across ko/zh/ja, one line each.** Each restores the clause that was the
+blurb's point: the mortgage blurb now says interest is the cost of borrowing in all three; the toy-swap
+blurb says the economy is millions of such trades; the parent tip says interest is the bank paying to
+use the child's money; the pretend-store activity ends on watching prices change when things are
+popular. Register matched the complete 08-16 blurbs in each language (ko `-요` endings, ja `だよ/かな`,
+zh plain). Fed naming read off the corpus — 연준 / 美联储 / FRB.
+
+**After the fix, 9 pairs still scored under threshold and all 9 are complete** — the p90 rose (ko
+0.551 → 0.593) as the abridged blurbs were completed, and compact CJK renderings of discursive English
+crossed under it. Two are `why` fields I had not read before; both carry every clause. Same disposition
+as §67 that morning: **`READ_COMPLETE` in §66, dated, with the code-point length at read time**;
+control 6 proves a listed pair cut to 20% lands in `shrunk` and fails; an unlisted new abridgement
+still warns.
+
+**Verification.** Plant A (shrink listed zh `13-17.parentTip`): **FAIL, 26 → 9 cp, exit 1**; restored
+byte-identical. Plant B (re-abridge unlisted ja `5-8.lessons[1]`): **§66 warns at ja 1**; restored
+byte-identical. `npm test`: **PASS, 0 failures, 3 warnings** — §66's warning is gone; the three
+standing ones remain (0% human review, 48 abridged essentials pairs, quiz length cue). `check-blindspot`
+PASS; the token grep's two hits are *"buy and sell with play money"* and *"borrow to buy a house"*.
+Build: `dist/assets/Reference-*.js` carries **7/7** probed restored clauses, **0/3** deleted terse
+strings, never-added probe absent.
+
+**Adversarial self-check (step 5).** *Blindspot:* clean; the parent tip about a savings account is
+parent-facing and describes what interest is, not what to do — same as the English. *DECISIONS.md:*
+the Beta MT decision enlarged again, by owner instruction, for a named corpus; ledger still 0% human.
+*Already-done:* completes 161, redoes nothing. *W-6.3:* `scripts/` +~50 lines (the record + control
+6), 0 in `src/` outside content — growing side, third time today; the record exists so the next
+reader does not re-derive nine readings. *My own claim:* every figure from `npm test`, `npm run build`,
+two live plants with byte-identical restores, and dist greps with a negative control.
+
+⚠️ **Honest limits.** 24 more AI-written strings in three languages read by no fluent speaker. **Both
+corpora completed today are now translated in full and reviewed by nobody** — O-3's condition,
+unchanged, and the audit's recommendation stands: ship under Beta and let claim A3 decide.
+
+**Owner tree at start and end: untracked `UIUX/`, untouched.**
 
 ### 2026-09-02 (owner-directed: "do the ko/zh/ja glossary translations too") — the O-3 call for the glossary, made; 42 true positives completed, and the ratio's 9% false-positive rate on this corpus recorded as data instead of left as a permanent warning
 
