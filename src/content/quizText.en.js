@@ -210,7 +210,7 @@ export const quizText = [
   {
     "q": "What's the key difference between a Traditional and a Roth retirement account?",
     "opts": [
-      "Traditional is taxed when you withdraw in retirement; Roth is taxed when you contribute now",
+      "Traditional is taxed when you withdraw; Roth is taxed when you contribute",
       "Traditional is taxed when you contribute; Roth is taxed when you withdraw",
       "Both are taxed the exact same way, just at different banks",
       "Neither is ever taxed"
@@ -471,7 +471,7 @@ export const quizText = [
     "q": "What does the phrase 'passive income' tend to leave out?",
     "opts": [
       "That it is always larger than a wage",
-      "The capital, time, skill or risk required up front — and that it lacks a wage's protections",
+      "The capital, time, skill or risk required up front",
       "That it is available to anyone immediately at no cost",
       "That it is taxed identically to wages everywhere"
     ],

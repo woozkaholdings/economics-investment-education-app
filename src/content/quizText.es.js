@@ -210,7 +210,7 @@ export const quizText = [
   {
     "q": "¿Cuál es la diferencia clave entre una cuenta Traditional y una Roth?",
     "opts": [
-      "Traditional se grava al retirar en la jubilación; Roth se grava al contribuir ahora",
+      "Traditional se grava al retirar; Roth se grava al contribuir",
       "Traditional se grava al contribuir; Roth se grava al retirar",
       "Ambas se gravan exactamente igual, solo en bancos distintos",
       "Ninguna se grava nunca"
@@ -471,7 +471,7 @@ export const quizText = [
     "q": "¿Qué suele dejar fuera la frase 'ingreso pasivo'?",
     "opts": [
       "Que siempre es mayor que un sueldo",
-      "El capital, tiempo, habilidad o riesgo requeridos por adelantado — y que carece de las protecciones de un sueldo",
+      "El capital, tiempo, habilidad o riesgo por adelantado",
       "Que está disponible para cualquiera de inmediato y sin costo",
       "Que se grava de forma idéntica a los sueldos en todas partes"
     ],
