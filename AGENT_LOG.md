@@ -1988,19 +1988,32 @@ through two passes that each had it open.
     > untracked is copied in. To exercise the primary path instead, use `git clone -q .`.
     >
 
-156. **[A11y — filed 2026-08-30 by the run that closed item 153, as a change made on INSPECTION
-    rather than on measurement, which is the reason it is written down.] `PracticeCoachMark` got the
-    nav pill's fix without ever being seen to break.**
-    - **What was done:** `src/App.jsx`'s coach mark carried the identical `position: fixed` +
-      `left: 50%` + `translateX(-50%)` + `width: calc(100% - 32px)` pattern that the nav pill was
-      just fixed for, so it received the same `left: 0; right: 0; margin: 0 auto` + `100vw` treatment
-      in the same commit.
-    - **The honest gap:** the nav's failure was measured at 320px/200%; **this one was not
-      reproduced.** Reaching the coach mark needs a finished lesson, and the overflow it would have
-      ridden on is fixed in that same commit, so the bug here was latent rather than live.
-    - **If picked:** drive a lesson to completion at 320px/200% and confirm the coach mark centers on
-      the viewport, or decide the pattern-consistency argument is enough and close it as a note.
-    - **Honest priority: low**, and per W-6.2 rule 2 this is a note under item 153 as much as an item.
+156. **✅ DONE 2026-09-03 (scheduled dev-agent) — the measurement this item asked for was taken, and
+    it cleared the axis the item names while finding a LIVE defect on an axis the item does not
+    mention.** The item's question — does the coach mark center correctly at 320px/200%? — answers
+    **yes**, at 100/115/130/150/200%: `left: 16, right: 304`, `scrollWidth === clientWidth === 320`,
+    0 box and 0 text overflows. **The pattern-consistency argument was sound and the change it
+    defended was right.**
+    ⛔ **What the item did not scope was the VERTICAL clearance, and that was broken in shipping
+    code.** `bottom` was `calc(… + 12px + 76px + 10px)`, where `76px` is the nav pill's height
+    measured at the 1.3x font scale — a text-driven quantity frozen as a constant. Browser/OS text
+    zoom goes past 1.3x (WCAG 1.4.4, AA — the same criterion item 153 established): the clearance
+    fell 23.4 → 18.2 → 12.9 → 6.6px across 100/115/130/150% and **inverted to a 37.2px overlap at
+    200%**, where the pill is 123.2px tall. The coach mark is `zIndex: 150` over the nav's 100, so
+    `elementFromPoint` at the top edge of **all three tabs** returned the coach mark. Tap targets
+    shrank by 32px of 113px rather than dying, and the overlay was plainly visible over the tab bar.
+    - **Fixed:** `--nav-h` is published from a `ResizeObserver` on the nav and the offset reads
+      `var(--nav-h, 76px)`. Verified at six root font sizes in `en` and `ko`: `--nav-h` matches the
+      measured pill to ≤0.02px and clearance is exactly 10px throughout.
+    - ⚠️ **`rem` was considered and is WRONG, which is the transferable part.** The pill's height is
+      not a function of root font size alone — the tab labels wrap (item 153), so at the **same** 200%
+      root font the pill is **123.2px in English and 99.2px in Korean**. No font-relative constant
+      spans a 24px language-dependent gap; re-expressing the px constant as `4.75rem` would have been
+      the same defect in a better-looking unit.
+    - **The durable methodology note is in the run-log entry** and a reviewer needs it: in the Browser
+      pane `requestAnimationFrame` never resolves, and `ResizeObserver` does not deliver while the
+      pane is hidden — a planted control observer fired 0 times and the fix looked like a no-op. A
+      `computer{action:"screenshot"}` forces the paint that delivers the callbacks.
 
 155. **[A11y/Tooling — filed 2026-08-30 by the run that closed item 153, as its stated residual.]
     The text-zoom sweep that found five live defects exists only in that session's browser console.**
@@ -4122,6 +4135,147 @@ zero meaningful: `selftest PASS (8/8 controls fired, plantsRemoved true)` and, p
 finding(s); V vacuous; U unavailable`. A bare "no accessibility issues found" is not a result.
 
 ## Run log
+
+### 2026-09-03 (scheduled dev-agent, backlog item 156) — the coach mark cleared the nav by a hardcoded 76px taken at the app's own 1.3x ceiling, and browser text zoom does not stop there; at 200% it drew on top of all three navigation tabs, and the item that filed it had scoped the wrong axis
+
+**Where the pick came from.** Item 156 was filed 2026-08-30 as a change made on *inspection* rather than
+measurement — `PracticeCoachMark` received the nav pill's overflow fix "without ever being seen to
+break" — and its "if picked" clause names the exact experiment: drive a lesson to completion at
+320px/200% and confirm the coach mark centers on the viewport. The previous run was self-picked and
+queued nothing, so W-6.2 rule 1 is satisfied. This is also the axis item 153 proved is worth sweeping
+(five live defects at 200%), on the one surface that sweep could not reach: it needs a completed lesson.
+
+⛔ **Step 3.5 — the item's premise is HALF RIGHT, and the half it got wrong is the half that was
+broken.** Item 156 is scoped entirely to **horizontal centering** (`left: 0; right: 0; margin: 0 auto`
+vs the `left: 50%` pattern). Measured at 320px, `en`, one completed lesson, over 100/115/130/150/200%:
+**the centering is correct at every step** — the coach mark reads `left: 16, right: 304` throughout,
+`scrollWidth === clientWidth === 320` throughout, 0 box overflows and 0 text overflows. **The item's
+own question answers clean.** What is broken is the **vertical** clearance, which item 156 does not
+mention, and which the code comment beside it presents as settled because it *was* measured — at 1.3x.
+
+| root font | nav pill height | clearance below the coach mark | tab top edge hit-tests to |
+|---|---|---|---|
+| 100% | 62.6px | 23.4px | button / button / button |
+| 115% | 67.8px | 18.2px | button / button / button |
+| 130% | 73.1px | 12.9px | button / button / button |
+| 150% | 79.4px | 6.6px | button / button / button |
+| **200%** | **123.2px** | **−37.2px (OVERLAP)** | **COACH / COACH / COACH** |
+
+**The defect, stated the way a learner meets it.** `bottom` was
+`calc(env(safe-area-inset-bottom,0px) + 12px + 76px + 10px)`. The `76px` is the nav pill's height,
+measured live at the 1.3x font scale and correct there (73.1px today). The pill's height is
+**text-driven**; the offset was a **constant**. `FONT_SCALE_STEPS` tops out at 1.3, but browser and OS
+text zoom do not, and WCAG **1.4.4 (Resize Text, AA)** is about exactly that path — the criterion item
+153 established this app now meets on nine screens. At 200% the coach mark (`zIndex: 150`) drew on top
+of the nav (`zIndex: 100`): `document.elementFromPoint` at the top edge of **all three** tabs — Learn,
+Review, Reference — returned the coach mark, not the button. **The centers still hit**, because the
+tabs are 113.2px tall at that zoom, so the tap target was **shrunk by 32px, not destroyed** — and the
+overlay was plainly visible sitting across the top of the tab bar. That is the honest severity: not a
+dead control, a covered one, shown to a first-time learner who has just finished their first lesson.
+
+**What shipped — 1 file, 55 insertions.** `--nav-h` is now the pill's **measured** height, published
+by a `ResizeObserver` in `App` onto the root element, and the coach mark's `bottom` reads
+`var(--nav-h, 76px)`. Written to a custom property rather than React state on purpose: the observer
+fires on every zoom step and a `setState` there would re-render the whole app to move one fixed
+element. The old constant survives as the `var()` fallback, which is right at 100-130% and is reached
+only where `ResizeObserver` is absent.
+
+⛔ **Why `rem` was rejected, and this is the part worth keeping.** The obvious cheap fix is
+`4.75rem` instead of `76px`. **It would have been the same defect in a better unit.** The pill's
+height is not a function of the root font size alone — item 153 made the three tab labels wrappable,
+so a longer translation wraps at a scale where English does not. Measured at the **same** 200% root
+font: **English 123.2px** ("Referenc/e" wraps), **Korean 99.2px** (학습/복습/자료 do not). A 24px
+spread at identical font size. **No constant in any font-relative unit tracks that**; a value tuned
+for English wastes 24px in Korean, and one tuned for Korean overlaps in English. A ResizeObserver sees
+root font size, language and viewport width without enumerating any of them.
+
+**Verified after the fix, on the shipped bundle `index-BRc6mviH.js`:** at root 16 / 18.4 / 20.8 / 24 /
+32 / 40px (100-250%) and in `en` and `ko`, `--nav-h` matches the measured pill height to ≤0.02px,
+clearance is **exactly 10px at every step** (the intended gap), all three tab top edges hit `button`,
+and `scrollWidth === clientWidth === 320` with 0 box overflows. Behaviorally: clicking the coordinate
+that previously resolved to the coach mark — (160, 672) at 200% — resolves to the **Review** button,
+navigates to `#/practice`, renders the Review screen, dismisses the coach mark and persists
+`ecycles_seen_practice_coachmark = 1`.
+
+⚠️ **THE INSTRUMENT NOTE, and a reviewer who skips it will reproduce a false pass.** Two traps in this
+environment, both of which bit this run:
+1. **`requestAnimationFrame` never resolves in the Browser pane** — an `await` on a double-rAF hangs
+   the tool for 45s. Do not pace a sweep with it.
+2. **`ResizeObserver` callbacks are NOT delivered while the pane is hidden** (`document.visibilityState
+   === "hidden"`, which it is even after `tabs_select`). A planted control observer fired **0** times
+   across three round trips, so `--nav-h` sat at its mount-time value while the nav was demonstrably
+   123.2px — **the fix looked broken and was not.** ✅ **A `computer{action:"screenshot"}` forces a
+   paint and delivers the queued callbacks**; the control fired on the very next read. **So: screenshot
+   between the state change and the measurement, and carry an independent observer as the control.**
+   Without it, an RO-based fix is indistinguishable from a no-op here.
+Third-party controls, both two-sided: **must-fire** — planting `minHeight` on the nav (200px pre-fix,
+260px post-fix) flips the probe to `overlaps: true` with all three tabs reading `COACH`, and removing
+it restores clean; **must-not-fire** — 100/115/130/150% read clean in the same pass that 200% failed.
+Identity was checked too: exactly **1** `[role="status"]` node in the document, carrying the Practice
+button and "Dismiss tip", so the probe was not measuring some other live region.
+⚠️ **And one instrument I had to replace mid-run:** overriding `documentElement.style.fontSize` is what
+item 153 used, but the app **owns that property** (`useAppState.js:138` writes `${fontScale * 100}%`),
+so the app clobbers the probe on any re-render and the sweep silently reads the wrong root size. Two
+rows of my first sweep were mislabeled by exactly that. Replaced with an injected
+`html{font-size:Npx !important}` stylesheet rule, which an inline style cannot override, and every row
+above is labeled by the `rootFont` the probe itself reported rather than by what I asked for.
+
+**Two failures the suite caught in my own diff, both correct, both fixed in this commit.**
+- **§47** — `<nav>` "does not carry `{...behindDialog}`" while also reporting 4 spreads against 4
+  expected. The spread was still there; my `ref={navRef}` had displaced it. §47's regex is
+  `<nav\s*\n\s*\{\.\.\.behindDialog\}` — it asserts the spread is the **first** attribute, so any
+  innocuous attribute added to a shell landmark fails it. **I reordered the attribute rather than
+  loosening the guard**: weakening a live a11y check to accommodate my own edit is the wrong
+  direction, and the other three landmarks already lead with the spread. Noted, not filed (W-6.2
+  rule 2) — the check is brittle, not wrong.
+- **§59** — I wrote "centres" in a comment; US English is the house style (item 91). Fixed.
+  **The interesting part is what §59 cannot see.** Its `-re → -er` family is
+  `/\b(centre|calibre|…)s?\b/` — base form plus an optional `s`, so it catches `centre`/`centres`
+  and **misses every inflection**: `centred`, `centring`. Measured: `centred` appears **4 times**,
+  all in `src/App.jsx` comments (lines 565/568/578×2, part of item 153's dated measurement record),
+  and **0 times anywhere in `src/content/` or `src/locales/`** — the 1,182 learner-visible English
+  strings §59 exists to guard. **No check is due** (W-6.2 rule 3: no learner ever reads a comment;
+  W-6.3: `scripts/` is **17,024** lines against **7,548** of app code, **2.26x**). The four comment
+  instances are left as-is deliberately — they sit inside a dated record — and are written down here
+  so the gap is visible rather than quietly patched.
+
+**Step 5 — adversarial self-check.** *Blindspot register:* nothing learner-visible in any language
+changed — the diff is one CSS offset, one effect and comments; `npm run check-blindspot` passes
+**0 failures** (33 advice patterns, §10.1 timing control green). §10.2 Dalio, §10.3 kids framing and
+§2.3 have no surface here; the only date added is `2026-09-03` inside a source comment, which is
+history, not a market reading, and §2.3 scans `content/` teaching copy. *DECISIONS.md conflict:* none
+— no state, storage, module-format, routing or build decision is touched. `index.css`'s rule that
+"every color in the app is a custom property declared here" is about **colors**; `--nav-h` is a
+runtime length and carries no hex, so `theme.js`'s no-hex-in-components rule is untouched too.
+*Already-done backlog item:* no. Item 153 fixed **horizontal** overflow including this pill's
+centering and did not touch vertical clearance; item 156 is the item this **closes**, and its own
+scoped question (centering) is confirmed **correct** rather than undone. *My own verification claim:*
+the two claims a reviewer would most want to re-run are the pre-fix `elementFromPoint` returning the
+coach mark for all three tabs at 200%, and the post-fix 10px clearance at six root font sizes in two
+languages — both are one probe each, and **both require the screenshot-forces-a-paint step above**,
+which is why that note is in this entry rather than in my head. *W-6.2 rule 2's tax:* this run files
+**no new numbered item**; this working tree adds **floor +1,282 b, run log +11,586 b** on top of HEAD
+(`check-log-size.mjs`'s own line), the floor gain being the item-156 rewrite. The floor stands at
+**365,564 b** against the 250,000 b budget and item 115's owner option remains the only thing that
+moves it. ⚠️ **And a figure the next run needs:** the run log is at **227,796 b, 91.1% of its warn
+budget, 2.6 runs of headroom** — an archiving pass under W-5.3 is due within about two runs, and both
+live days (2026-09-02 and 2026-09-03) are contiguous, so the cut is clean.
+
+**Verification.** `npm run build` clean; `npm test` **PASS, 0 failures**, 3 standing warnings
+(translation review coverage, translation completeness, the §65 option-length cue — all pre-existing
+and unrelated); `npm run check-blindspot` **PASS, 0 failures**. Live measurements above are on the
+committed bundle, not a dev server.
+
+**Top item for the next run.** Nothing is queued from here — item 156 is closed and its residual is a
+measurement, not work. Item **155** (making the text-zoom sweep permanent) is the nearest neighbour
+and this run is evidence **for** it: the 200% axis has now produced live defects on two separate
+occasions, and the instrument still exists only in a session console. It is also the exact thing
+W-6.3's ratio argues against, so it stays a decision rather than a default. **O-1 remains the entire
+critical path** — 44 lessons, five languages, and zero people have ever opened this app.
+
+**Owner tree:** `OWNER-TREE f54fc023…` at run start (0 tracked modified, 51 untracked) — the owner's
+`UIUX/` only, untouched. `HEAD` re-checked before writing and unmoved at `5fe4e6e`.
+
 
 ### 2026-09-03 (scheduled dev-agent, self-picked; W-6.2 rule 1 sent me off the residual chain) — the migration module told every future reader that the review schedule is keyed by an array index, which is the exact belief the module next to it exists to refute; and two blind-spot classes I expected to be full are measured empty
 

@@ -146,13 +146,31 @@ function PracticeCoachMark({ t, onOpenPractice, onDismiss }) {
       role="status"
       style={{
         position: "fixed", zIndex: 150,
-        // Clears the floating nav pill: its own 12px offset + the pill, plus a
-        // 10px gap. The pill is 56px at the default text size and **73px at
-        // the 1.3x scale** (measured in a live browser, not estimated), so the
-        // figure below is the large one — at 56 the coach mark sat on top of
-        // the nav for anyone using the largest text setting, which is the
-        // reader least able to absorb an overlap.
-        bottom: "calc(env(safe-area-inset-bottom, 0px) + 12px + 76px + 10px)",
+        // Clears the floating nav pill: its own 12px offset + the pill's
+        // MEASURED height (`--nav-h`, published by the ResizeObserver in `App`),
+        // plus a 10px gap.
+        //
+        // ⛔ This was the constant `76px` until 2026-09-03, taken from a live
+        // measurement of the pill at the 1.3x font scale — correct there, and
+        // correct nowhere above it. `FONT_SCALE_STEPS` tops out at 1.3, but
+        // browser and OS text zoom do not, and WCAG 1.4.4 (Resize Text, AA) is
+        // about exactly that path. Measured at 320px, `en`, one completed
+        // lesson, by overriding the root font size: the clearance below the
+        // coach mark fell 23.4px → 18.2 → 12.9 → 6.6 at 100/115/130/150% and
+        // inverted to a **37.2px overlap at 200%**, where the pill is 123.2px
+        // tall. The coach mark is `zIndex: 150` over the nav's 100, so it drew
+        // on top of the tab bar: `elementFromPoint` at the top edge of all
+        // three tabs returned the coach mark, not the button. The centers still
+        // hit — the tabs are 113px tall at that zoom — so the tap target was
+        // shrunk rather than destroyed, and the overlay was plainly visible.
+        //
+        // The unit was the whole defect, not the number. Re-expressing 76px as
+        // `4.75rem` would only have been a guess in a better unit: the pill's
+        // height is text-driven AND wrap-driven (item 153 made the tab labels
+        // wrappable), so no constant in any unit tracks it across five
+        // languages. The fallback below is the old constant, which is right at
+        // 100-130% and is only reached where `ResizeObserver` is missing.
+        bottom: "calc(env(safe-area-inset-bottom, 0px) + 12px + var(--nav-h, 76px) + 10px)",
         // Same centering as the nav pill below, and for the same reason: a
         // fixed element's percentage offset resolves against an initial
         // containing block that grows with horizontal overflow. NOTE the
@@ -273,6 +291,35 @@ export default function App() {
 
   // Once per app load, not per tab switch — see LAUNCH_PLAN §9.2.
   useEffect(() => { track(EVENTS.APP_OPENED); }, []);
+
+  // Publishes the floating nav pill's MEASURED height as `--nav-h`, so anything
+  // that has to sit clear of it stops guessing. Today that is the Practice
+  // coach mark alone; see its `bottom` for what the guess cost.
+  //
+  // The pill's height is text-driven and no constant can stand in for it. It is
+  // not even a pure function of the root font size: item 153 made the three tab
+  // labels wrappable, so a longer translation can take two lines at a scale
+  // where English takes one. Measured at 320px, `en`: 62.6px at 100% and
+  // 123.2px at 200% browser text zoom. A ResizeObserver sees every one of those
+  // axes — root font size, language, viewport width — without enumerating any.
+  //
+  // Written to a custom property rather than to React state on purpose: the
+  // observer fires on every text-zoom step, and a `setState` there would
+  // re-render the whole app to move one fixed element.
+  const navRef = useRef(null);
+  useEffect(() => {
+    const nav = navRef.current;
+    // No ResizeObserver (older Safari) leaves the property unset, and every
+    // reader carries the old constant as its `var()` fallback.
+    if (!nav || typeof ResizeObserver === "undefined") return undefined;
+    const publish = () => {
+      document.documentElement.style.setProperty("--nav-h", `${nav.getBoundingClientRect().height}px`);
+    };
+    publish();
+    const ro = new ResizeObserver(publish);
+    ro.observe(nav);
+    return () => { ro.disconnect(); };
+  }, []);
 
   // Keeps the address bar in step with `tab`/`reading` and handles Back,
   // Forward, and a pasted `#/lesson/12`. The whole web-routing surface is
@@ -511,6 +558,7 @@ export default function App() {
           pill clears the home indicator instead of sitting on it. */}
       <nav
         {...behindDialog}
+        ref={navRef}
         style={{
           position: "fixed",
           bottom: "calc(env(safe-area-inset-bottom, 0px) + 12px)",
