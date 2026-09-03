@@ -163,7 +163,7 @@ export const quizText = [
       "70% necesidades / 20% deseos / 10% ahorro",
       "20% necesidades / 50% deseos / 30% ahorro",
       "90% necesidades / 5% deseos / 5% ahorro",
-      "50% necesidades / 30% deseos / 20% ahorro o deudas"
+      "50% necesidades / 30% deseos / 20% ahorro"
     ],
     "explain": "Una división inicial común es 50% necesidades, 30% deseos, 20% ahorro o deudas — una guía a ajustar, no una regla estricta."
   },
@@ -421,7 +421,7 @@ export const quizText = [
     "q": "Marcos compró una acción que desde entonces ha bajado un 20%. Se niega a venderla, aunque tiene un mejor uso para ese dinero, porque 'esperaré hasta que vuelva a lo que pagué por ella.' Otra acción que compró en cambio subió un 20%, y la vendió en una semana para 'asegurar la ganancia.' ¿Qué patrón dice la lección que está llevando a Marcos a tratar estas dos situaciones de forma tan distinta, aunque las cantidades de dinero involucradas sean las mismas?",
     "opts": [
       "Costo hundido — está contando el dinero que ya gastó en la acción que baja como razón para seguir invirtiendo más en ella",
-      "Aversión a la pérdida — el dolor de asegurar la pérdida al vender se siente mucho más pesado que el placer de asegurar una ganancia equivalente, así que evita la sensación de pérdida en vez de evaluar el mejor uso del dinero",
+      "Aversión a la pérdida — el dolor de asegurar la pérdida se siente más pesado que el placer de una ganancia equivalente",
       "Anclaje — está juzgando el precio actual de la acción contra un número de referencia arbitrario",
       "Diversificación — repartir el dinero entre más de una inversión en vez de concentrarlo en una sola"
     ],

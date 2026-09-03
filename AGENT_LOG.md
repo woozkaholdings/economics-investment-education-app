@@ -1699,7 +1699,35 @@ through two passes that each had it open.
     EVENLY in every unit moves its own p90 and reads as clean. §33's recorded baseline, not §66, is
     what would catch slow uniform decay; `kidsContent` has no such baseline.
 
-160. **[Content/QA — filed 2026-09-01 by the scheduled dev-agent that MEASURED it, with 40 of 46
+160. **🟡 PARTLY DONE, and its own stop-clause is CORRECTED (2026-09-02, owner-directed: "do item 160
+    next"). The clause below says "there is nothing left in it that trimming can honestly reach" and
+    routes the remainder to O-3. That is TRUE OF MECHANICAL CUTS — re-proven this run with a stronger
+    cutter — and FALSE OF HAND DELETION, which reached the band in all five languages on two
+    questions, including one of the two the clause names as the head of the O-3 queue.**
+    - **The stop-clause's evidence was a delimiter cutter, and its negatives were weak by its own
+      admission.** Rebuilt with a complete Latin **and** CJK delimiter list (em dash, `——`, `、`,
+      `，`, `。`, `：`, `；`, `, since/which/so/even though`, `, ya que/porque/lo que`, and
+      parenthetical removal in both bracket widths; 7 controls fired, including "no delimiter → no
+      candidate"): **0 of the 28 all-five-beatable questions fit.** So the clause is right that no
+      *delimiter cut* works — and that is not the same claim as "no trim works".
+    - **Shipped this run by word-level deletion of shipped text, no new prose in any language:**
+      **q015** (lesson 1) and **q041** (lesson 27). §65 live: longest-option **en 76.1% → 71.7%**,
+      es/ko 73.9% → 69.6%, zh/ja 71.7% → 67.4%; shortest-option **unchanged** in every language, so
+      the inversion this item warns about did not happen. 28 → **26** beatable in all five.
+    - **q015 is the shape this item is asking for, and it was sitting in the corpus the whole time.**
+      The correct option was the only one of four carrying `or debt payoff` / `o deudas` /
+      `·부채상환` / `或还债` / `・借金返済`; deleting that suffix makes all four options **identical in
+      shape**, differing only in the percentages the question is about. The deleted words are already
+      in the question's own `explain` **verbatim in all five languages**, and in lesson 1's body — so
+      the learner loses nothing and the item's own rule ("the reasoning belongs in `explain`") is
+      satisfied literally.
+    - **What is genuinely left, restated honestly:** 26 questions, and the CJK floor argument in the
+      clause below still holds for most of them (`q007` and friends). **The remainder is smaller than
+      "one thing that is O-3's" — some of it is hand-trimmable and some is not, and the only way to
+      tell is to draft the five strings and measure them against the window.** Do not re-derive the
+      "nothing is trimmable" conclusion from the cutter; it is answering a narrower question.
+    ORIGINAL ITEM TEXT, kept because the correction above refers to it:
+    **[Content/QA — filed 2026-09-01 by the scheduled dev-agent that MEASURED it, with 40 of 46
     questions affected at filing and four of them fixed in the same commit. Honest priority: HIGH for
     a learning app, and this is not a residual — nothing in the previous run's entry points at it.]
     The quiz can be beaten without reading a single lesson by always tapping the LONGEST option.**
@@ -4057,6 +4085,126 @@ zero meaningful: `selftest PASS (8/8 controls fired, plantsRemoved true)` and, p
 finding(s); V vacuous; U unavailable`. A bare "no accessibility issues found" is not a result.
 
 ## Run log
+
+### 2026-09-02 (owner-directed: "do item 160 next") — the item's own stop-clause says nothing is left that trimming can reach and routes the rest to the owner; it was measured with a delimiter cutter, and the two questions it names as the head of that queue both trim clean in five languages
+
+**The pick, and what the item asked me not to do.** Item 160's corrected disposition ends: *"Do not
+pick this item as a trimming pass; there is nothing left in it that trimming can honestly reach"* —
+the remainder being distractor prose in four unreviewed languages, which is **O-3**, the owner's
+standing call. The owner made that call by naming the item. **The run still had to find out whether
+the stop-clause was true, because if it is, doing the item means enlarging O-3.** It is true of the
+instrument it was measured with and not true of the work.
+
+**Step 3.5, first arm — the headline reproduced, with five controls of my own before any edit.** An
+independent length reader (strict-longest, strict-shortest, code-point lengths, per-language entry
+count against `quizMeta`) scored **en 35/46 = 76.1%**, matching `check-data.mjs` §65's live line to
+the question. **28** questions are beatable in all five languages (the item said 29 at filing; `q030`
+closed one since). Controls: a planted strictly-longest option **is** called beatable, a **tie is
+not**, a strictly-shortest correct option is called shortest and not longest, a 2-code-point CJK
+option does not outrank a 10-character Latin one, and all five languages carry `quizMeta`'s 46 entries.
+
+**Step 3.5, second arm — the stop-clause is about a cutter, so I rebuilt the cutter.** The item's own
+note says its delimiter list is "Latin/CJK-incomplete, so 'no fit' means 'none found by this cutter'".
+Mine takes em dash, `——`, `、`, `，`, `。`, `：`, `；`, `, since/which/so/even though/and`,
+`, ya que/porque/lo que/puesto que`, and parenthetical removal in both bracket widths, with **7
+controls** (each delimiter class proven to cut, and "no delimiter → no candidate" proven to refuse).
+
+> **Result: 0 of 28 fit in all five languages** — the same answer the weaker cutter gave, now actually
+> proven. **17 fit in some languages and not others**, which is the trap: `q001`'s parenthetical
+> deletion fits in en/ko/ja and makes the option **strictly shortest** in es and zh. A per-language
+> "fix" would have inverted the tell in two languages while looking clean in three.
+
+**⛔ AND THE STOP-CLAUSE IS STILL TOO STRONG, BECAUSE A DELIMITER CUT IS NOT THE ONLY DELETION.**
+The clause names `q040`/`q041` (ids **q041**/**q042**) as the head of the queue that needs new
+distractor prose. `q041` is one of the two questions this run fixed **by deleting words inside the
+clause** — no delimiter involved, no new prose, in all five languages. **O-3 was not enlarged by a
+single character.**
+
+| shipped | before | after | window `(min, max]` of its own distractors |
+| --- | --- | --- | --- |
+| `q015` en | 50 | **35** | (33, **35**] — ties the top, no strict tell |
+| `q015` es / ko / zh / ja | 50 / 29 / 24 / 29 | **41 / 24 / 21 / 24** | ties the top distractor in all four |
+| `q041` en | 201 | **105** | (88, 113] |
+| `q041` es / ko / zh / ja | 224 / 97 / 64 / 80 | **118 / 45 / 30 / 48** | (95,121] (39,49] (25,32] (28,53] |
+
+**`q015` is the shape this item has been asking for, and it was sitting in the corpus untouched.** Its
+correct option was the only one of four carrying a fifth element — `20% savings **or debt payoff**`,
+`ahorro **o deudas**`, `저축**·부채상환**`, `储蓄**或还债**`, `貯蓄**・借金返済**`. Deleting that suffix
+makes **all four options identical in shape**, differing only in the percentages the question is
+actually about. **Nothing is lost, and that is measured rather than asserted:** the deleted words are
+in the question's own `explain` **verbatim in all five languages** (`"…20% savings or debt payoff — a
+rule of thumb to adjust, not a strict rule"`), which the learner is shown the moment they answer, and
+in lesson 1's own body (`"50% needs, 30% wants, 20% savings or debt payoff. For Maria's $3,000…"`).
+
+**`q041` is five word-level deletions, and I am not going to call it "pure deletion in all five".**
+en drops *"by selling"*, the second *"locking in"*, and the trailing *", so he avoids the loss-feeling
+instead of evaluating the money's best use"*. es drops *"al vender"*, *"mucho"*, the second
+*"asegurar"* and the trailing clause. ja drops everything from *"ため、"* on, ending at a complete
+predicate. zh drops *"感觉"* and both *"带来"*. **ko needed one more thing than a deletion and the log
+should say so:** cutting the trailing clause leaves the verb hanging on the connective *느껴져서*, so
+the ending is closed as *느껴진다*. That is a two-syllable grammatical closure the deletion forces, not
+new content — and it is the kind of thing a "deletions only" claim would have quietly hidden.
+
+**⚠️ My own subsequence control over-accepts on CJK, and I found that out by using it.** I checked
+each replacement is a subsequence of the shipped string (3 controls: accepts a deletion, rejects an
+insertion, rejects a reorder). It flagged the ko string — correctly — but it also **passed** a
+different ko candidate that was assembled from syllables of distant words (`느껴지고 있다` matched
+`느껴`…`따지는`…`피하고 있다`). **A code-point subsequence test is real evidence for en/es and close to
+worthless for Korean, Chinese and Japanese**, where single syllables recur everywhere. So the CJK
+edits above are named explicitly instead of certified by the instrument.
+
+**Measured after, by the same instrument and by §65 independently.**
+
+| | en | es | ko | zh | ja |
+| --- | --- | --- | --- | --- | --- |
+| longest-option, before | 76.1% | 73.9% | 73.9% | 71.7% | 71.7% |
+| longest-option, after | **71.7%** | **69.6%** | **69.6%** | **67.4%** | **67.4%** |
+| shortest-option, after | 2.2% | 2.2% | 0.0% | 2.2% | 4.3% |
+
+**The shortest-option row is the point:** it is identical to before, in all five languages. The risk
+this item names in bold — that trimming inverts the tell — did not happen, and it is checked rather
+than reasoned about. Beatable-in-all-five: **28 → 26**.
+
+**Verified in the built app, not only in the source.** `dist` rebuilt (`index-Oztzq1xG.js`, read back
+off the page) and served; lesson 1 renders its four options as `70% needs / 20% wants / 10% savings`,
+`20%…`, `90%…`, `50% needs / 30% wants / 20% savings` — **shape-identical, 35/35/33/35**. Lesson 27,
+reached by seeding the money track's real predecessor ids (`41,42,43,44,16…26` — the track order is
+not the id order, and a first attempt with `16…26` was correctly refused by the lock), renders
+`Sunk cost 113 / Loss aversion 105 / Anchoring 88 / Diversification 97` in en and
+`サンクコスト 53 / 損失回避 48 / アンカリング 37 / 分散 28` in ja: the answer is no longer the longest
+line on either screen. Both blocks — the pre-lesson hook and the end-of-lesson check — render the new
+strings.
+
+`npm test`: **0 failures**. The three `check-data.mjs` warnings are byte-identical to a `git archive
+HEAD` control copy except §65's own number (35/46 → 33/46), so nothing new was introduced.
+`npm run build` clean. `npm run check-blindspot`: **0 failures**. HEAD unmoved at `2ab2dec`;
+`OWNER-TREE 7e1e18f4…` at commit time (6 tracked modified — all mine — 51 untracked, all `UIUX/`).
+
+**Step 5 — adversarial self-check.** (1) **Blindspot register:** no advice language (the strings got
+*shorter*, and `check-blindspot` passes), no Dalio, no kids framing, no date or market figure.
+(2) **`DECISIONS.md`:** untouched — no state, routing, content-format or build change. The 2026-08-11
+"(Beta)" decision is not enlarged: every edit removes shipped translated text, and the one Korean
+verb ending is a closure the deletion forces. **This is the O-3 boundary the item drew, and the run
+stayed inside it.** (3) **Already-done item:** this extends the 2026-09-01 pass (`q012/q021/q037/q043`
+by that entry's index labels) and `q030`, and undoes none of them — their options are untouched, and
+the answer-index spread is unchanged because no option moved position. `q041`'s `explain` references
+*"Sunk cost (option 0)"*; option 0 is still Sunk cost, so the cross-reference still resolves.
+(4) **My own verification claim:** every figure is from a command run this session — two instruments
+with 12 controls between them, a rebuilt cutter, §65's own line, a `git archive` warning diff, and
+the built app read back in two languages.
+
+**Two notes, filed here rather than numbered (W-6.2 rule 2).**
+- **The 26 that remain are not one homogeneous O-3 block.** The honest test for each is: draft the
+  five strings, measure against each language's window, and check the shortest-option row did not
+  move. That is per-question work, and about half of what is left looks like `q007` — where the CJK
+  distractors are 4-9 code points and the correct option must still name a mechanism — which no
+  deletion reaches.
+- **`q042` was the other question I took and I put it back.** Its three distractors cluster at
+  66/73/66 (en) and 27/28/29 (ja), so the window is 7 characters wide in en and **2** in ja. Every
+  deletion I could write landed outside it in at least one language, and closing a 2-character window
+  by hand produces a string tuned to a number rather than to a reader. It needs the distractor work,
+  which is exactly where item 160 said the boundary is — the boundary is real, it just sits one
+  question further out than the item drew it.
 
 ### 2026-09-02 (scheduled dev-agent, backlog item 164) — the guard on this app's single biggest product risk passed a plant reading "now is a good time to buy"; the item that filed it was right about the hole and wrong about one of the three phrasings it proposed to plug it with, which fires on a shipped lesson
 

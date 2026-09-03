@@ -163,7 +163,7 @@ export const quizText = [
       "70% needs / 20% wants / 10% savings",
       "20% needs / 50% wants / 30% savings",
       "90% needs / 5% wants / 5% savings",
-      "50% needs / 30% wants / 20% savings or debt payoff"
+      "50% needs / 30% wants / 20% savings"
     ],
     "explain": "A commonly cited starting split is about 50% needs, 30% wants, 20% savings or debt payoff — a rule of thumb to adjust, not a strict rule."
   },
@@ -421,7 +421,7 @@ export const quizText = [
     "q": "Marcus bought a stock that has since dropped 20%. He refuses to sell it, even though he has a better use for the money, because 'I'll just wait until it gets back to what I paid for it.' A different stock he bought instead rose 20%, and he sold it within a week to 'lock in the win.' What pattern does the lesson say is driving Marcus to treat these two situations so differently, even though the dollar amounts involved are the same?",
     "opts": [
       "Sunk cost — he's counting the money he already spent on the falling stock as a reason to keep spending more on it",
-      "Loss aversion — the pain of locking in the loss by selling feels far heavier than the pleasure of locking in an equivalent gain, so he avoids the loss-feeling instead of evaluating the money's best use",
+      "Loss aversion — the pain of locking in the loss feels far heavier than the pleasure of an equivalent gain",
       "Anchoring — he's judging the stock's current price against an arbitrary reference number",
       "Diversification — spreading money across more than one holding instead of concentrating it in one"
     ],
