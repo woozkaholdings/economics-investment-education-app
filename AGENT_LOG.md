@@ -1704,6 +1704,14 @@ through two passes that each had it open.
     routes the remainder to O-3. That is TRUE OF MECHANICAL CUTS — re-proven this run with a stronger
     cutter — and FALSE OF HAND DELETION, which reached the band in all five languages on two
     questions, including one of the two the clause names as the head of the O-3 queue.**
+    - ⛔ **AND THE LAST ONE CLOSED THE SAME DAY, owner-directed ("do q042 with the distractor
+      work") — the FIRST deliberate O-3 enlargement in this project, priced at +550 characters
+      across 15 distractor strings, +366 of them in the four unreviewed languages.** `q042` was the
+      question no deletion could reach (a 7-character window in en, **2** in ja). Its three bare
+      distractors now each name what that bias would look like in the story, checked against the
+      question's own `explain`. **Budget the rest of this item at one question per pass, and expect
+      the reading-time coupling:** the option prose is inside `READING_MODEL`, so lesson 28 went
+      4 → 5 minutes and the catalog total 160 → 161, regenerated through `npm run readiness`.
     - **The stop-clause's evidence was a delimiter cutter, and its negatives were weak by its own
       admission.** Rebuilt with a complete Latin **and** CJK delimiter list (em dash, `——`, `、`,
       `，`, `。`, `：`, `；`, `, since/which/so/even though`, `, ya que/porque/lo que`, and
@@ -1711,7 +1719,8 @@ through two passes that each had it open.
       candidate"): **0 of the 28 all-five-beatable questions fit.** So the clause is right that no
       *delimiter cut* works — and that is not the same claim as "no trim works".
     - **Shipped this run by word-level deletion of shipped text, no new prose in any language:**
-      **q015** (lesson 1) and **q041** (lesson 27). §65 live: longest-option **en 76.1% → 71.7%**,
+      **q015** (lesson 1) and **q041** (lesson 27), then **q042** by owner-directed distractor work.
+      §65 live after the deletion pair: longest-option **en 76.1% → 71.7%**,
       es/ko 73.9% → 69.6%, zh/ja 71.7% → 67.4%; shortest-option **unchanged** in every language, so
       the inversion this item warns about did not happen. 28 → **26** beatable in all five.
     - **q015 is the shape this item is asking for, and it was sitting in the corpus the whole time.**
@@ -4086,6 +4095,96 @@ finding(s); V vacuous; U unavailable`. A bare "no accessibility issues found" is
 
 ## Run log
 
+### 2026-09-02 (owner-directed: "do q042 with the distractor work") — the first deliberate enlargement of the O-3 surface, priced before it was spent: +550 characters, +366 of them in four unreviewed languages, to take the last question whose window no deletion fits
+
+**This is the O-3 call being made, by the only person who can make it.** Item 160 routes the
+remainder of the quiz-tell defect to distractor prose in `es`/`ko`/`zh`/`ja`, which is the standing
+owner decision on unreviewed machine translation at scale; the run an hour earlier stopped at `q042`
+for exactly that reason and filed why. The owner named the question and the method. **So the job here
+is not to decide, it is to spend the authorization well and report the bill.**
+
+**The bill, measured against `git archive HEAD` rather than estimated.**
+
+| | en | es | ko | zh | ja |
+| --- | --- | --- | --- | --- | --- |
+| distractors, before | 66/73/66 | 60/74/79 | 31/31/27 | 20/28/23 | 29/28/27 |
+| distractors, after | 124/132/133 | 118/134/132 | 43/66/59 | 37/42/38 | 39/61/54 |
+| correct option | 174 → **130** | 173 → **128** | 83 → **63** | 54 → **40** | 76 → **57** |
+| characters added | +184 | +171 | +79 | +46 | +70 |
+
+**+550 characters across 15 distractor strings, +366 of them in the four languages no fluent reader
+has checked.** That is the whole cost, and it is one question.
+
+**What the new prose says, and why it is better assessment rather than padding.** Each distractor was
+a bare `Concept — one clause`; each now names what that bias *would* look like in Maria's story, which
+is the discrimination the question is supposed to test — sunk cost as *counting what she has spent as
+a reason to keep spending*, FOMO as *fear of missing a move everyone else seems to be making*, loss
+aversion as *a loss weighing more than an equivalent gain would please*. **Every added clause was
+checked against the question's own `explain`, which already characterizes all three** ("FOMO … is
+about copying what other people are doing", "sunk cost … about being influenced by money already
+spent", "loss aversion … the asymmetric pain of a loss"), so the options and the explanation cannot
+now contradict each other. The correct option is trimmed by deletion at the same time: its trailing
+*", and increasing her risk-taking as a result"* is in the `explain` verbatim in all five languages.
+
+**⛔ A COUPLING NOTHING IN THE ITEM PREDICTED, AND `npm test` CAUGHT IT: the option prose is inside
+the reading-time model.** `check-data.mjs` §2's `READING_MODEL` deliberately counts the end-of-lesson
+check — question, four options, and the explanation — because a 2026-08 run found the old model
+omitted ~20% of what the reader actually sees. So +184 English characters pushed **lesson 28 from 4
+minutes to 5**, and the suite failed with `minutes is 4, but its text computes to 5`. Fixed the honest
+way: `lessons.js` id 28 → 5, then `npm run readiness --write` regenerated the 12 derived figures, so
+`LAUNCH_READINESS.md` §4.3, `LAUNCH_PLAN.md` and `CLAIMS.md` A6 now read **44 lessons / 161 min**.
+**The transferable part: distractor work is not free at the catalog level** — anyone budgeting the
+remaining 25 questions should expect the same ~1-minute-per-few-questions drift and the readiness
+regeneration that goes with it.
+
+**Verified as geometry on the built app, not as character counts — pre and post served side by side.**
+`git archive HEAD` built and served on :8944 next to the working tree on :8943, bundle names read off
+each page (`index-Oztzq1xG.js` vs `index-Bx4Z-wKK.js`), viewport forced to 390x844 first.
+
+| lesson 28, en, 390px | before | after |
+| --- | --- | --- |
+| Sunk cost | 62 px | 98 px |
+| FOMO | 80 px | 98 px |
+| **Overconfidence (correct)** | **116 px** | **98 px** |
+| Loss aversion | 62 px | 98 px |
+| reader's estimate | ≈4 min | ≈5 min |
+
+**Before, the answer was a card 36 px taller than its nearest neighbor and nearly double two of them —
+readable across the screen without reading a word. After, all four cards are the same height to the
+pixel.** In `ja` the heights are 98/122/**122**/98: the correct option ties the tallest distractor
+rather than standing alone, which is the same outcome one line of text coarser. No horizontal
+overflow in either language.
+
+**Measured by both instruments.** §65 live: longest-option **en 71.7% → 69.6%**, es/ko 69.6% → 67.4%,
+zh/ja 67.4% → 65.2%. My own reader (5 controls) agrees to the question: 32/46 en. **Shortest-option
+unchanged in all five** (2.2/2.2/0.0/2.2/4.3) — the inversion risk checked, not assumed.
+Beatable-in-all-five: **26 → 25**. Across today's two quiz commits: **35/46 → 32/46 in English.**
+
+`npm test`: **0 failures**, the 3 standing `check-data` warnings (only §65's own number moved).
+`npm run check-blindspot`: **0 failures** — worth stating plainly, because this run added 550
+characters of new investment-adjacent prose about buying, selling and risk-taking, in five languages,
+straight through the §10.1 net that was widened this morning. `npm run build` clean. HEAD unmoved at
+`0598401`; `OWNER-TREE 97979b66…` at commit time (10 tracked modified — all mine — 51 untracked, all `UIUX/`).
+
+**Step 5 — adversarial self-check.** (1) **Blindspot register:** no advice language (checked, not
+assumed — see above), no Dalio, no kids framing, no date or live-looking figure; the added clauses
+describe a fictional character's reasoning, never the reader's. (2) **`DECISIONS.md`:** the
+2026-08-11 "(Beta)" decision is the one this touches, and it is enlarged **deliberately and on the
+owner's instruction**, with the cost stated in characters rather than described as "some new prose".
+Nothing else — no state, routing, content-format or build change. (3) **Already-done item:** option
+*order* is untouched, so `q042`'s `explain` references to "option 0/1/3" still resolve, and §3's
+answer-index spread is unchanged; this does not undo the 2026-09-01 pass or this morning's `q015`/
+`q041` edits. (4) **My own verification claim:** every number here came from a command run this
+session — two builds served concurrently with their bundle names read back, geometry measured in two
+languages, the character delta computed against the `git archive` copy rather than typed.
+
+**One note, filed here rather than numbered (W-6.2 rule 2).** **25 questions remain, and the next one
+should be priced the same way before it is started.** `q042` cost 550 characters for one question and
+one minute of catalog time; `q007`-shaped questions (CJK distractors of 4-9 code points against a
+mechanism the correct option must name) will cost proportionally more in `ko`/`zh`/`ja` and less in
+`en`. **The honest unit of work here is one question, measured in five languages, with the
+shortest-option row checked after** — not a tranche.
+
 ### 2026-09-02 (owner-directed: "do item 160 next") — the item's own stop-clause says nothing is left that trimming can reach and routes the rest to the owner; it was measured with a delimiter cutter, and the two questions it names as the head of that queue both trim clean in five languages
 
 **The pick, and what the item asked me not to do.** Item 160's corrected disposition ends: *"Do not
@@ -4205,6 +4304,9 @@ the built app read back in two languages.
   by hand produces a string tuned to a number rather than to a reader. It needs the distractor work,
   which is exactly where item 160 said the boundary is — the boundary is real, it just sits one
   question further out than the item drew it.
+  ✅ **DONE the same day, owner-directed ("do q042 with the distractor work") — see the entry above
+  this one. The owner made the O-3 call; the cost is +550 characters, +366 of them in the four
+  unreviewed languages.**
 
 ### 2026-09-02 (scheduled dev-agent, backlog item 164) — the guard on this app's single biggest product risk passed a plant reading "now is a good time to buy"; the item that filed it was right about the hole and wrong about one of the three phrasings it proposed to plug it with, which fires on a shipped lesson
 

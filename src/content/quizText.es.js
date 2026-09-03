@@ -430,10 +430,10 @@ export const quizText = [
   {
     "q": "Después de que María elige una acción por corazonada y esta sube un 40% en dos meses, empieza a hacer tres veces más operaciones, cada una con menos investigación que antes, porque ahora siente que tiene un don para elegir acciones. ¿Qué patrón explica mejor su comportamiento?",
     "opts": [
-      "Costo hundido — sigue invirtiendo porque ya ha puesto dinero",
-      "FOMO — está copiando lo que hacen otros inversores exitosos a su alrededor",
-      "Sobreconfianza tras un resultado afortunado — atribuye la victoria a su propia habilidad en vez de considerar cuánta suerte hubo, y como resultado aumenta su toma de riesgos",
-      "Aversión a la pérdida — está tratando de evitar el dolor de admitir una pérdida"
+      "Costo hundido — sigue invirtiendo porque ya ha puesto dinero, contando lo que ya gastó como razón para seguir gastando",
+      "FOMO — está copiando lo que hacen otros inversores exitosos a su alrededor, con miedo a perderse un movimiento que todos parecen hacer",
+      "Sobreconfianza tras un resultado afortunado — atribuye la victoria a su propia habilidad en vez de considerar cuánta suerte hubo",
+      "Aversión a la pérdida — está tratando de evitar el dolor de admitir una pérdida, que pesa más de lo que agradaría una ganancia igual"
     ],
     "explain": "Esto es sobreconfianza tras un resultado afortunado (sesgo de autoatribución): atribuir una victoria a la propia habilidad y aumentar la toma de riesgos como resultado, sin sopesar cuánto del resultado fue en realidad suerte. El FOMO (opción 1, “Tanta Gente No Puede Estar Equivocada, ¿Verdad?”) trata de copiar lo que hacen otras personas, que no es lo que está impulsando a María aquí — no se menciona el comportamiento de nadie más. El costo hundido (opción 0) trata de dejarse influir por dinero ya gastado, y la aversión a la pérdida (opción 3, “¿Por Qué Perder $50 Duele Más Que Encontrar $50 se Siente Bien?”) trata del dolor asimétrico de una pérdida — ninguna encaja con una historia sobre una sola victoria que impulsa más toma de riesgos."
   },

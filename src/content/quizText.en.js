@@ -430,10 +430,10 @@ export const quizText = [
   {
     "q": "After Maria picks a stock on a hunch and it rises 40% in two months, she starts making three times as many trades, each with less research than before, because she now feels like she has a knack for picking stocks. Which pattern best explains her behavior?",
     "opts": [
-      "Sunk cost — she keeps investing because she's already put money in",
-      "FOMO — she's copying what other successful investors around her are doing",
-      "Overconfidence after a lucky outcome — she's crediting the win to her own skill rather than considering how much luck was involved, and increasing her risk-taking as a result",
-      "Loss aversion — she's trying to avoid the pain of admitting a loss"
+      "Sunk cost — she keeps investing because she's already put money in, counting what she has spent as a reason to keep spending",
+      "FOMO — she's copying what other successful investors around her are doing, afraid of missing a move everyone else seems to be making",
+      "Overconfidence after a lucky outcome — she's crediting the win to her own skill rather than considering how much luck was involved",
+      "Loss aversion — she's trying to avoid the pain of admitting a loss, which weighs on her more than an equivalent gain would please her"
     ],
     "explain": "This is overconfidence after a lucky outcome (self-attribution bias): crediting a win to one's own skill and increasing risk-taking as a result, without weighing how much of the outcome was actually luck. FOMO (option 1, “Everyone Can't Be Wrong — Can They?”) is about copying what other people are doing, which isn't what's driving Maria here — no one else's behavior is mentioned. Sunk cost (option 0) is about being influenced by money already spent, and loss aversion (option 3, “Why Does Losing $50 Hurt More Than Finding $50 Feels Good?”) is about the asymmetric pain of a loss — neither fits a story about a single win driving more risk-taking."
   },
