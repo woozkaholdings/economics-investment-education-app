@@ -852,6 +852,18 @@ through two passes that each had it open.
     (owner-directed: "go ahead with the compression pass"). The backlog section is
     481,574 → 176,414 → see item 122 for the current number. All item numbers survive and every open
     item stayed byte-identical in all three passes.**
+    > **FOURTH PASS 2026-09-02 (owner-directed: "do the backlog compression pass next"). Recovered
+    > 8,846 b on the artifact — floor 366,737 → 357,891 b — and its value is the arithmetic, not the
+    > bytes.** Scoped deliberately to material the rule had never touched (8 items added and 6 changed
+    > since `2ce1b6f`); **the 128 items the third pass processed were left alone**, because a
+    > classifier finding ~17 KB more in them is a regex second-guessing this item's own recorded
+    > judgment call, and over-keeping is the stated error direction. All six controls green.
+    > ⛔ **THE OWNER OPTION BELOW IS STILL OPEN AND IS NOW CLOSING.** Measured today: floor over
+    > budget by **107,891 b** (was 37,564 on 08-30); headline-only for closed items projects to
+    > **232,194 b — under budget by 17,806** (was under by 35,359). **The margin halved in three days
+    > and at the floor's writing rate it is gone in about three more**, after which the only moves
+    > left are deleting closed items outright or raising the budget (item 121's `⚠️` anticipates
+    > exactly that). Nothing a run may decide.
     > **THIRD PASS 2026-08-30 — measured on the artifact, not the transform buffer.**
     > The compression itself moved the floor **344,130 → 287,564 b** (recovered **56,566 b**) and the
     > whole file **495,813 → 437,685 b**. **This record note then costs ~2.6 KB of the floor back**, so
@@ -1503,30 +1515,6 @@ through two passes that each had it open.
       — not even `매수하기 좋은 시기`, the phrase it exists for. It looked identical to a clean
       result. The new control asserts each timing pattern against the advice sentence it was written
       for, so a dead pattern fails loudly instead of reporting a clean corpus forever.
-    ORIGINAL ITEM TEXT, kept because the corrections above refer to it — and deliberately NOT
-    left as a second numbered line, which would read as an open item:
-    **[Tooling/Safety — filed 2026-09-02 by the run that closed item 163(b), from a control that
-    did NOT fire when it should have.] §10.1's English advice matcher is five specific phrasings, and
-    "now is a good time to buy" is not one of them.**
-    - **How it surfaced:** planting `qeQtSection: "QE, QT — now is a good time to buy"` into
-      `src/locales/en.js` and running `npm run check-blindspot` gave **PASS**. Re-planted as
-      `"you should buy now"` → **FAIL: §10.1 investment-advice-adjacent language reintroduced**.
-      So the corpus coverage is fine; the **pattern list** is what missed.
-    - **Measured, not inferred:** `check-blindspot.mjs`'s English set is exactly five regexes —
-      `best investments:`, `be bullish`, `be cautious`, `you should (buy|sell|invest)`,
-      `we recommend`. Nothing matches *"a good time to buy"*, *"consider buying"*, *"worth buying"*.
-    - **Why the narrowness is deliberate, and why that is still not a reason to leave it.** The
-      file's own comment says each pattern was "checked against current content for false positives
-      before landing" — a broad buy/sell matcher would fire on teaching copy constantly (this very
-      screen reads "Fed BUYS bonds", "Fed STOPS buying"). But `/good time to (buy|sell)/i` has **no**
-      descriptive use in this corpus and is a genuine advice phrasing.
-    - **W-6.3:** this is **+1 line in an existing array**, not a new instrument. **W-6.2 rule 3:**
-      "a lesson or a label told the reader now is a good time to buy" — learner-visible, and exactly
-      what §10.1 exists to prevent. **Zero live instances** (the only one was my plant).
-    - **Honest priority: low-to-medium** — it guards a closed blindspot whose guard is thinner than
-      the four "closed" claims in the App summary imply. Whoever picks it should add the equivalent
-      to all five languages, and **check each addition against current content for false positives
-      first**, which is the discipline the existing five were built with.
 
 163. **[UX/A11y — filed 2026-09-02 by the run that put the unit on the balance-sheet chart, as three
     things that run SAW on the same walk and deliberately did not fold into the same commit.]
@@ -1615,7 +1603,9 @@ through two passes that each had it open.
       measurement I had just taken, and still got both the total and the count of missing headings
       wrong — and the *disposition* wrong with them, since three of the four "missing" headings turn
       out to be correct markup. **A residual filed by the run that saw the thing is not exempt from
-      step 3.5.** ✅ **(b) closed 2026-09-02. (a) and (c) remain open.**
+      step 3.5.** ✅ **All three closed 2026-09-02** — this line read "(a) and (c) remain open"
+      until 2026-09-02's compression pass; they closed later the same day, and the item's own
+      summary above already said so. A closed item can still contradict itself.
 
 162. **✅ DONE 2026-09-02 (owner-directed: "do the ko/zh/ja glossary translations too"), the same
     day it was filed — the O-3 call this item said it needed, made for this corpus.** All 42 true
@@ -1627,17 +1617,7 @@ through two passes that each had it open.
     cut to 20% FAILS rather than hides, and a plant on the live file confirmed it (36 → 16 cp, exit 1).
     ⚠️ **Read this before applying the same method to item 161's kidsContent remainder:** if the
     parent guide's remaining 21 ko/zh/ja pairs are the same shape, some of them will turn out to be
-    complete compact translations too — read each, do not pad. Original filing kept below as the
-    dated record.
-    [Content — filed 2026-09-02 by the scheduled dev-agent that MEASURED it, with the Spanish
-    half FIXED in the same commit. 58 LIVE instances, so W-6.2 rule 2's "note under its parent" does
-    not apply — that rule parks residuals with zero live instances, and this is not one.
-    Honest priority: MEDIUM for ko/zh/ja, and the remainder is an O-3 decision, not a run's.]
-    `glossary.js` ships translated DEFINITIONS that are present, non-empty, and materially shorter
-    than the English they translate — and §4 has always reported the file as complete.**
-    **This is item 161's defect in a third corpus, found by pointing §66's method at it.** Do not
-    quote the figures below — `check-data.mjs` §67 re-derives them on every `npm test`; read the
-    live line (W-5.5).
+    complete compact translations too — read each, do not pad.
     **`entry.f` renders on TWO screens** — the Glossary list (`Glossary.jsx`) and the term-detail
     screen (`TermDetail.jsx`) — in whatever language the learner has selected. This is not a
     latent corpus.
@@ -1652,18 +1632,6 @@ through two passes that each had it open.
     **A second, narrower mechanism rides along: an English-only edit that never propagated.**
     `Credit.f`'s "monetary base (M0)" clause was added 2026-08-26 by item 114 in English alone,
     which is why the Spanish scored 0.58 while the rest of its sentence was a full translation.
-    **Closed in the filing commit: Spanish, 15 strings, es 14 flagged → 0.** Three of its losses
-    changed what the app teaches rather than only how much: `Deleveraging` read *"Cuando la deuda es
-    excesiva. 4 herramientas."* — announcing four tools and naming none; `Inflation` read *"Cuando
-    los precios suben"*, the word restated with both the mechanism and the Fed's ~2% target gone;
-    and `Bubble` dropped *"pushing prices far above fair value"*, which is the part that makes it a
-    bubble. `Deflation`, `Fed Funds Rate`, `PMI`, `QE`, `QT`, `Yield Curve` and `Credit Spread` had
-    each lost their second, interpretive sentence the same way.
-    **OPEN: 58 pairs in ko/zh/ja** (read the live §67 line for the current split and the worst
-    units). **The fix is new prose in three unreviewed languages, which is squarely inside O-3** —
-    a run must not enlarge that surface unilaterally. The Spanish above was completed because it is
-    one language and its omissions were changing meaning, and even that is inside O-3's scope to
-    re-affirm or cap. This is item 161's precedent applied deliberately, not a new licence.
     ⚠️ **The ratio has BOTH error directions here too, and this run found a false negative in its
     own corpus rather than inheriting the warning from §66.** `VIX` es scored **1.00** — a clean
     ratio — and was still incomplete: the English carries three bands (below 15 / 25-35 / above 40)
@@ -1689,34 +1657,7 @@ through two passes that each had it open.
     §66's `READ_COMPLETE` with the length each had when read; control 6 proves a listed pair cut to
     20% FAILS (plant on the live file: zh `13-17.parentTip` 26 → 9 cp, exit 1). **Transferable:** on
     both corpora audited today the ratio's misses were in BOTH directions and roughly equal in count
-    — the reading, not the ratio, is the measurement. Original filing kept below as the dated record.
-    [Content — filed 2026-09-01 by the scheduled dev-agent that MEASURED it, with the Spanish
-    half FIXED in the same commit. 21 LIVE instances, so W-6.2 rule 2's "note under its parent" does
-    not apply — that rule parks residuals with zero live instances, and this is not one.
-    Honest priority: MEDIUM for ko/zh/ja, and the remainder is an O-3 decision, not a run's.]
-    `kidsContent.js` ships translated strings that are present, non-empty, and materially shorter
-    than the English they translate — and §5 has always reported the file as complete.**
-    **Measured 2026-09-01 over the 48 measurable units × 4 languages: 38 of 192 pairs carried under
-    70% of what a full translation into the SAME language carries.** Do not quote that figure —
-    `check-data.mjs` §66 re-derives it on every `npm test`; read the live line (W-5.5).
-    **The mechanism is authoring date, not language.** The strings written 2026-08-07 — each band's
-    first three blurbs, plus every `activity` and `parentTip` — were authored with condensed
-    translations; everything added 2026-08-15/16 (the `why` fields, the money-skills blurbs) is
-    translated in full. §5 checks presence and non-emptiness, so it certified all of it, and §33's
-    completeness metric reads `lessonContent` only and has never seen this corpus.
-    **Closed in the filing commit: Spanish, 19 strings, es 17 flagged → 0.** It was the systematically
-    abridged language and three of its losses changed what the app teaches, not just how much:
-    `9-12.lessons[2]` dropped *"If you earn more than the loan costs"*, leaving the Spanish blurb
-    teaching that borrowing for a growing business is simply GOOD debt; `13-17.lessons[2]` dropped
-    *"it created a deleveraging — the first in 75 years"*, the concept the blurb exists to name; and
-    all three `parentTip`s lost the technique they were telling the parent to use.
-    **OPEN: 21 pairs in ko/zh/ja** (read the live §66 line for the current split and the worst units).
-    They concentrate in the 5-8 band's first three blurbs and the three `activity` strings — e.g.
-    `5-8.lessons[1]` drops *"That's like inflation!"* in all four languages, which is the blurb's
-    entire point. **The fix is new prose in three unreviewed languages, which is squarely inside O-3**
-    (the standing owner decision on unreviewed machine translation at scale). A run must not enlarge
-    that surface unilaterally; the Spanish above was completed because it is one language and its
-    omissions were changing meaning, and even that is inside O-3's scope to re-affirm or cap.
+    — the reading, not the ratio, is the measurement.
     ⚠️ **The ratio is a screening proxy and has BOTH error directions — read every flagged pair
     before believing it.** False positives on short units: `13-17.parentTip` scores zh 0.23 and is a
     complete translation; the three `title`s scored 0.35 and are complete, which is why §66 excludes
@@ -1901,30 +1842,10 @@ through two passes that each had it open.
     > row or the widened corpus goes away. Sweep 136 → 145 uses, 95 → 104 chips, 30 → 31 lessons,
     > 0 unexplained on both sides. `deliberatelyUnlinked` was NOT used: its only two legitimate
     > reasons are `defined-here` and `other-sense`, and not one of the nine is either.
-    ORIGINAL TEXT, kept because the correction above refers to it:
-    **[Content/QA — filed 2026-08-31 by the run that rewrote lesson 38's takeaway, as its stated
-    residual. FILED, NOT QUEUED (W-6.2 rule 1): the next run must not pick this by default.]
-    Every content instrument and every content pass this project has run sweeps `sections` and
-    skips `takeaway`/`thinkAbout` — and that is not a hypothesis, it is twice-recorded.** (a) The
-    §10.1 closure of 2026-08-02 reworded "lesson 10's rendered per-phase 'Best investments:' lines"
-    (now lesson 38's section bodies) to historical framing in all five languages, and left the
-    `takeaway` directly beneath them asserting *"Every great fortune was made buying when others
-    were panicking at the trough. The cycle ALWAYS turns."* — see the completed-items entry for
-    that closure, which names sections only. (b) An independent run recorded the same shape for a
-    different instrument: *"§17b sweeps sections only, never `takeaway`/`thinkAbout` (item 64's
-    residual)"*. **Two instruments, two years apart in the log, same blind spot, and neither run
-    knew about the other.**
-    **The learner-visible failure a check here would have caught (W-6.2 rule 3), stated as one
-    sentence because it is not hypothetical — it shipped for four weeks:** the boxed Key Takeaway
-    at the end of the app's flagship cycle lesson told the reader an absolute falsehood about how
-    fortunes are made, in five languages, directly under body prose that had been carefully hedged
-    to say the opposite kind of thing.
     **Scope note before anyone builds an instrument for this (W-6.3 — `scripts/` is 2.3x `src/`).**
     The cheap version is not a new script: it is adding `takeaway`/`thinkAbout` to the field list
     that §17b and the §10.1 corpus walk already iterate. Measure which existing sweeps take a field
     list at all before proposing a new section.
-    **Honest priority: medium.** Unlike most residuals on this list this one has a proven live
-    instance, not zero — but the instance is now fixed, so what remains is the class.
     **Residual, filed as a NOTE under this item rather than as a numbered item (W-6.2 rule 2), because
     it measures zero live instances today:** the same closing-pair blindness could exist in the other
     direction for `LessonVisual` captions and `PolicySim` copy, which no per-field corpus walk names
@@ -2469,11 +2390,6 @@ through two passes that each had it open.
     > (The original **+9,170 b/commit** figure quoted below was measured in a window that happened to
     > contain no archiving commit, so it was correct when written — this is drift into a defect, not an
     > error at the time.)
-    ORIGINAL HEADLINE, kept because the correction above refers to it:
-    **✅ DONE 2026-08-27 (scheduled dev-agent, recovering a stalled run); EXTENDED 2026-08-28 from
-    levels to RATES. `AGENT_LOG.md`'s size is now a MEASUREMENT on every `npm test`, split into the
-    two budgets W-5.3 conflated — and the script that does it was sitting uncommitted and unwired.**
-    See the run log.
     > **EXTENDED 2026-08-28 (scheduled dev-agent): the script measures the RATE as well as the level,
     > and warns when a budget is less than one run's writing away.** A level says *where the file is*;
     > it cannot say whether a remedy works. Measured over the 15 intervals since item 122's
@@ -4149,6 +4065,107 @@ zero meaningful: `selftest PASS (8/8 controls fired, plantsRemoved true)` and, p
 finding(s); V vacuous; U unavailable`. A bare "no accessibility issues found" is not a result.
 
 ## Run log
+
+### 2026-09-02 (owner-directed: "do the backlog compression pass next") — the fourth pass, scoped to material the rule has never touched; it recovered 7,708 b net against a 109,029 b gap, and the arithmetic that matters is that item 115's owner option now has about three days left
+
+**Step 3.5 — item 115's own conclusion re-measured before anything was cut, and it is right and has
+gotten much worse.** That item's third pass (2026-08-30) recorded *"compression is now near its
+floor under the current rule"* and put the remaining gap at **37,564 b**. Measured at the start of
+this run: the floor was **366,737 b against 250,000**, a gap of **116,737 b**. The backlog grew
+**262,167 → 336,489 b (+74,322)** in the three days since that pass. **Compression is losing to
+writing by roughly 4x.**
+
+**And the ceiling was measured before the cutting, not discovered during it.** Classifying every
+block of every closed item as protected (carrying `⚠️`/`⛔`, a standing rule, a named trap, a
+"do not re-derive", or a "carry a control") or droppable, under two readings to bracket the answer:
+**droppable is 14,378 b under a broad/over-keeping reading and 25,498 b under the rule's literal
+list.** Against a 116,737 b gap that is **12-22%**. *A perfect pass under the current rule cannot
+reach the budget*, and knowing that before starting is what set this pass's scope.
+
+**Scope, and it is the judgment this entry most wants reviewed.** The rule was applied **only to
+material it has never touched**: measured against the third pass's own commit (`2ce1b6f`), the
+backlog today is **8 items added** (158-165, 46,375 b) + **6 items changed** (+23,101 b) +
+**128 items untouched** (190,001 b). **The 128 were deliberately left alone.** The third pass
+applied this same rule to them and recorded its judgment call — *"where a blockquote mixed guidance
+with chronology it was kept whole; over-keeping is the right error direction for a pass whose only
+irreversible move is deletion."* My classifier finds ~17 KB more it would cut in those items;
+**that is a regex disagreeing with a human judgment on protected text, not a pass**, and the log's
+own error direction says the classifier is the thing more likely to be wrong.
+
+**What was cut, all of it the category item 115 names — retained-original tails and superseded
+status:** item **164**'s `ORIGINAL ITEM TEXT` tail (2,209 b — every claim in it is restated by the
+`⛔` correction above it); item **159**'s original filing and its "honest priority" line (1,779 b,
+keeping its W-6.3 scope note and its residual NOTE); item **161**'s filing block (2,618 b, keeping
+both `⚠️` blocks); item **162**'s filing header and its now-superseded "Closed in the filing
+commit"/"OPEN: 58 pairs" paragraphs (1,944 b, keeping all four `⚠️` blocks and both named
+mechanisms); item **121**'s `ORIGINAL HEADLINE` (395 b, keeping every `⛔`/`⚠️` blockquote under it).
+**Item 163 was not compressed — it is almost entirely premise corrections, which the rule
+protects** — but a line inside it was **false** and is fixed: it ended *"(b) closed 2026-09-02. (a)
+and (c) remain open"* while its own sub-headings above record all three as done. **A closed item can
+still contradict itself**, which is the same defect this run's earlier entry corrected in item 27.
+
+**Result, measured on the artifact rather than the transform buffer — item 115's twice-repeated
+lesson, and the reason every number below is read off `npm test`.** The cuts alone took the floor
+**366,737 → 357,891 b** (**8,846 b**) and the backlog **336,489 → 327,643 b**; the six-line record
+note this pass owes item 115 puts **1,138 b** back, so the committed floor is **359,029 b — a net
+7,708 b**. `npm test` **0 failures**. The floor is still **over budget by 109,029 b**.
+
+**Controls, all six of item 115's, green before the write was trusted.** (1) **142 item numbers
+before and after, identical sequence.** (2) **All 29 open items byte-identical** — 0 changed.
+(3) All **6** changed items keep their bold headline. (4) All 6 have run-log or archive coverage,
+and the **probe control** returns false for invented item numbers 9991/9992, so it is not matching
+everything. (5) The four section headings each still parse exactly once. (6) App summary, Environment
+note, run log and the **W-5/W-6 priority blocks (36,125 b) are byte-identical** — this pass touched
+no weekly-reviewer clause, which W-5.3 forbids a run from rewording.
+⚠️ **Control 6 failed first, and for its own reasons — the exact trap step 3.5 names.** Comparing
+`text.index('## Run log')` to end reported the run log as CHANGED. The literal `## Run log` occurs
+**three** times in the file and the first is a prose mention at offset 31,800, inside a region this
+pass legitimately edited. Line-anchored (`^## Run log$`), the run-log section is **byte-identical,
+177,346 b on both sides**. A control that fails for its own reasons is worth exactly as much as one
+that passes for them.
+
+⛔ **THE DECISION THIS PASS EXISTS TO PUT IN FRONT OF THE OWNER, with today's numbers and a date on
+it.** Item 115 recorded that the budget is reachable *only* by cutting closed items to headline
+only, that doing so deletes every standing rule, trap and `⚠️` the closed backlog carries, and that
+**this is a rule change rather than a pass, and the owner's** (W-5.3's precedent). All of that
+stands. What is new is the margin:
+
+| measured | 2026-08-30 (item 115) | today, after this pass |
+|---|---|---|
+| floor over budget by | 37,564 b | **109,029 b** |
+| headline-only projection | 214,641 b — under by **35,359** | 232,194 b — under by **17,806** |
+
+**The option is still open and it is closing.** Its margin halved in three days; at the floor's
+measured writing rate it stops reaching the budget in roughly **three more days**, after which no
+arrangement of the current backlog fits under 250,000 b and the only remaining moves are deleting
+closed items outright or **raising the budget** — which item 121's own `⚠️` already anticipated:
+*"if it ever becomes permanent, that is the evidence that the BUDGET is wrong rather than the
+writing, and moving a budget is the owner's call."* **Floor decomposition today, for whichever way
+that goes: open items 127,707 · closed items 163,811 (headlines 38,114) · W-5/W-6 blocks + preamble
+36,125 · Environment note 23,249 · App summary + preamble 6,999.**
+
+**Step 5 — adversarial self-check.** *Blindspot register:* vacuous and stated as such — the diff is
+one log file, no `src/`, no teaching copy, no dates or figures in any rendered string. *`DECISIONS.md`:*
+untouched. *Already-done item:* this is the **fourth** compression pass and the whole scope section
+above exists to keep it from redoing the third — control 2 and the 128-item exclusion are the
+evidence, not an assurance. *My own verification claim:* every figure is read off `npm test` or a
+command in this session, and all six controls re-run from this commit against
+`git show HEAD~1:AGENT_LOG.md`. *W-6.3:* **no code changed at all**, 0 lines in `scripts/` or `src/`.
+*W-6.2 rule 2, turned on this pass itself, and the first draft of this line was WRONG in both
+halves:* it said this entry costs the floor ~4.5 KB back. **The run log is not part of the floor** —
+the floor is the App summary, the backlog and the Environment note — so a run-log entry costs it
+nothing. What does cost it is the six-line record note added to **item 115**: **+1,138 b**. So the
+honest figures are **gross 8,846 b, net 7,708 b, floor 366,737 → 359,029 b, still over budget by
+109,029 b.** Item 115's third pass recorded the same tax and priced it at ~2.6 KB; mine is smaller
+because the note is.
+
+**Top item for the next run.** Not more compression — this pass measured its own ceiling and the
+remainder is the owner's. Go back to learner-visible work; nothing here is queued. **O-1 remains the
+entire critical path** — 44 lessons, 5 languages, 161 minutes of content, and zero people have ever
+opened this app. **O-3** unchanged.
+
+**Owner tree at end of run:** the owner's untracked `UIUX/` only (51 files), untouched. `HEAD`
+re-checked before writing and unmoved at `19a6c93`.
 
 ### 2026-09-02 (owner-directed: "do the archiving pass next") — the W-5.3 pass the previous entry made due, taken the same evening; 8 entries and 84,964 b moved, containment 8/8 with a corrupted-plant negative and a deletion positive
 
