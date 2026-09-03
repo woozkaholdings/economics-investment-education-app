@@ -215,7 +215,7 @@ export const quizText = [
       "Ambas se gravan exactamente igual, solo en bancos distintos",
       "Ninguna se grava nunca"
     ],
-    "explain": "Traditional pospone el impuesto y lo paga al retirar; Roth paga el impuesto antes de aportar, por lo que los retiros calificados son libres de impuestos."
+    "explain": "Traditional pospone el impuesto y lo paga al retirar; Roth paga el impuesto antes de aportar, por lo que los retiros calificados son libres de impuestos. Cuál conviene depende de la situación fiscal de cada persona, no de una regla fija."
   },
   {
     "q": "Si un aumento empuja parte de tu ingreso a un tramo fiscal más alto, ¿qué pasa realmente?",

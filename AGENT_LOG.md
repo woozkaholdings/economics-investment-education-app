@@ -1470,15 +1470,37 @@ through two passes that each had it open.
     > references reproduce **exactly** (es 1.162 ko 0.582 zh 0.380 ja 0.520) and the count did not:
     > it was **65 across 18**. A count in an item ages against the work the item describes.
     > ✅ **2026-09-03: nine questions repaired in four languages — `q001`-`q006`, `q008`, `q011`,
-    > `q013`, 36 `explain` values, +1,633 characters.** The ratio measure is now **41 pairs across
-    > 13 questions**, all partial shortfalls rather than stubs, and **none on the main path**.
-    > On a sentence-count measure the whole corpus is down to **`q020` (essentials lesson 6), es and
-    > zh — 2 pairs**, which is what is actually left of the stub class.
-    > ⚠️ **Do not re-derive the selection instrument's one trap.** Sentence counting by terminal
-    > punctuation reads `EE.UU.` as two sentence ends, which scored the Spanish `q006` as three
-    > sentences when it is one — a **false negative that would have left `q006` unrepaired**. Mask
-    > `EE.UU.`/`U.S.`/`vs.`/`etc.` and make that sentence the control. Full account in the
-    > 2026-09-03 run entry.
+    > `q013`, 36 `explain` values, +1,633 characters.**
+    > ⛔ **BOTH FIGURES THAT FOLLOWED THAT LINE WERE WRONG. Corrected 2026-09-03 by the `q020` run;
+    > do not re-quote the originals, which are struck through here and stand uncorrected in commit
+    > `a91b02c`'s message because history is not rewritten.**
+    > ~~"The ratio measure is now 41 pairs across 13 questions"~~ — **41/13 was the reading after the
+    > FIRST of that run's three patches**, quoted as the post-commit figure without re-running after
+    > `q006` and `q013` landed. Recomputed against the trees themselves: `HEAD~1` **65/18**,
+    > `a91b02c` **33 pairs across 11 questions**.
+    > ~~"down to q020 (essentials lesson 6), es and zh — 2 pairs"~~ — it was **4 pairs**. `ko` and
+    > `ja` scored en-equal on sentence count only because they split the English's semicolon-joined
+    > first sentence in two; the second English sentence was absent in all four. **The residual was
+    > filed off the sentence counter when the item's own ratio instrument had it right.**
+    > ✅ **`q020` repaired 2026-09-03 (owner-directed) in all four languages, +207 characters.**
+    > Corpus now: sentence measure **0 pairs**; ratio measure **29 pairs across 10 questions**, all
+    > partial shortfalls and none a dropped sentence.
+    > ⚠️ **What `q020` actually was, and it is why "low priority" was the wrong call:** the sentence
+    > four languages had dropped was not mechanism, it was the **hedge** — *"Which is better depends
+    > on an individual's own tax situation, not a fixed rule."* Scanned across the corpus, **4 of 46
+    > English explanations carry a hedge (`q006`, `q012`, `q013`, `q020`) and `q020` was the only one
+    > that lost it in translation** — `q012`'s "not a guarantee" survives in all four, so this was an
+    > outlier, not a pattern. Stated precisely: a **content-parity** gap, not a missing disclaimer —
+    > §10.1's global disclaimer renders under the explanation in every language.
+    > ⚠️ **Do not re-derive the selection instrument's TWO traps — and do not trust it over the
+    > ratio.** (1) Sentence counting by terminal punctuation reads `EE.UU.` as two sentence ends,
+    > which scored the Spanish `q006` as three sentences when it is one — a false negative that
+    > would have left `q006` unrepaired. Mask `EE.UU.`/`U.S.`/`vs.`/`etc.` and make that sentence
+    > the control. (2) Even masked, it missed `q020` in **ko and ja**, because a translation that
+    > splits one English sentence into two matches the total while dropping a whole sentence's
+    > content. **Sentence count is a proxy for content; re-punctuation defeats it. The ratio
+    > instrument this item was filed with flagged all four correctly, both times.** Full account in
+    > the two 2026-09-03 run entries.
     > ⚠️ **The recurrence this exposed, which is bigger than the item.** `DECISIONS.md` records the
     > 2026-08-16 review fixing "an es-only drop of 'incomes' from lesson 21's inflation-mechanism
     > sentence". Seventeen days later the Spanish **quiz explanation of the same mechanism** (`q004`)
@@ -1508,13 +1530,18 @@ through two passes that each had it open.
       with item 93/94**, whose instrument reads `lessonContent` and has never looked at `quizText`.
       `npm run translation-completeness` does not measure this field; the script above lives in the
       run entry and would need to move into `scripts/` before any check depends on it.
-    - **Priority AFTER the 2026-09-03 pass: low, and the reason is the one that matters.** What
-      remains is off the main path — a new install never reaches it — and the two remaining stubs are
-      one question. **The instrument question is still open and was deliberately NOT answered that
-      run:** a `quizText` completeness check satisfies W-6.2 rule 3 (the learner-visible failure is
-      "answered in Spanish, shown one clause where the English reader is shown the mechanism"), but
-      W-6.3's ratio says `scripts/` is already 2.3x the app, and building a guard the day its class
-      was emptied is W-6.4's named cause of the floor. **It belongs to whoever picks `q020`.**
+    - **Priority after both 2026-09-03 passes: the dropped-sentence class is EMPTY** (sentence
+      measure 0 pairs, hedge parity 4/4). What is left is 29 ratio-flagged pairs across 10 questions,
+      all partial shortfalls, none on the main path.
+    - ⛔ **THE GUARD IS AN OWNER DECISION, AND THE ORDERING IS THE POINT — not a deferral.** A
+      `quizText` completeness check satisfies W-6.2 rule 3 cleanly (the learner-visible failure is
+      "answered in Spanish, shown one clause where the English reader is shown the mechanism"), and
+      the natural form is **§66/§67's scorer applied to a third corpus**. **The blocker is not size.
+      It is that §66 and §67 each landed WITH a `READ_COMPLETE` list built by reading every flagged
+      pair** — 9 and 30 respectively. Here that means **reading 29 unread pairs against their
+      English**, which is O-3 work and therefore the owner's call. Landing the check first would ship
+      a permanent 29-pair warning, which item 121's own ⚠️ already calls evidence that the check or
+      the budget is wrong. **Read first, then guard.**
 
 164. **✅ DONE 2026-09-02 (scheduled dev-agent) — the headline premise reproduced exactly, and the
     item's own list of phrasings did not: one of the three it proposed fires on shipped teaching
@@ -4095,6 +4122,108 @@ zero meaningful: `selftest PASS (8/8 controls fired, plantsRemoved true)` and, p
 finding(s); V vacuous; U unavailable`. A bare "no accessibility issues found" is not a result.
 
 ## Run log
+
+### 2026-09-03 (owner-directed: "do q020 next") — the item's last open pair turned out to be four pairs, not two, and the sentence it was missing is the one that stops the answer reading as a recommendation; my own residual named the wrong count off the wrong instrument, and the previous entry's closing figure was measured mid-patch
+
+**Step 3.5 — the premise here was MINE, filed six hours earlier, and it was wrong twice.** The
+2026-09-03 entry above filed the remainder as *"`q020` (essentials lesson 6), es and zh — 2 pairs"*
+and priced it *low*. Re-measured before editing, with three instruments and a per-language probe
+carrying both a must-fire and a must-not-fire control:
+
+| | es | ko | zh | ja |
+|---|---|---|---|---|
+| sentence count vs en=2 (the instrument I filed off) | 1 | **2** | 1 | **2** |
+| item 165's ratio, vs that language's threshold | 0.607/0.829 | 0.290/0.407 | 0.190/0.266 | 0.266/0.364 |
+| content probe: is the English's second sentence there at all? | **ABSENT** | **ABSENT** | **ABSENT** | **ABSENT** |
+
+⛔ **It is 4 pairs, not 2, and the instrument that said 2 is the one that was wrong.** `ko` and `ja`
+score en-equal on sentence count because they split the English's semicolon-joined first sentence
+into two, so the **total matches while the second English sentence is entirely absent**. This is the
+sentence counter's *second* false negative in two runs and a different mechanism from the first —
+`EE.UU.` was punctuation it could not parse, this is punctuation the translator legitimately moved.
+**Sentence count is a proxy for content and a translation that re-punctuates defeats it.** Item
+165's own ratio instrument flagged all four correctly, both times. **I filed the residual off the
+instrument I had built rather than the one the item came with, and it was the worse of the two.**
+
+⛔ **And the disposition changes, which is the part that matters.** The missing sentence is not
+mechanism. It is *"Which is better depends on an individual's own tax situation, not a fixed rule."*
+— **the hedge**, on a question about Traditional vs Roth retirement accounts. Four languages laid
+out how each account is taxed and then stopped. Measured across the whole corpus with a hedge
+scanner (controls: fires on a known hedge sentence, rejects a plain mechanism sentence), **4 of 46
+English explanations carry a hedge — `q006`, `q012`, `q013`, `q020` — and `q020` was the only one
+whose hedge was dropped in translation.** `q012`'s *"not a guarantee"* is carried in all four
+("no una garantía" / "보장이 아닙니다" / "不是保证" / "保証ではありません"), so this is a single
+outlier and not a pattern, which is worth knowing before anyone builds a guard for it.
+
+⚠️ **Stated precisely, because the honest version is narrower than the alarming one.** This is a
+**content-parity** gap, not "es readers get no disclaimer". §10.1's global disclaimer renders
+directly under the explanation in every language — read live this run: *"Solo contenido educativo —
+no es asesoría de inversión, legal ni fiscal personalizada."* What was missing is the sentence
+inside the teaching text that says the comparison has no fixed answer, which the English reader got
+and the other four did not. **Not low priority, and not a five-alarm §10.1 breach either.**
+
+**What shipped — 4 lines.** `q020`'s `explain` in es/ko/zh/ja, **+207 characters** (es +84, ko +51,
+zh +30, ja +42), counted as the net delta against `HEAD`. `git diff -U0 | grep -vc '"explain"'`
+returns **0**. **The phrasing is not invented: lesson 6's own prose already carries this hedge in
+all five languages**, and I took each opener from it verbatim — `Cuál conviene depende de…` /
+`어느 쪽이 유리한지는…` / `哪种更合适取决于…` / `どちらが有利かは…`. The lesson said it; only the quiz
+had lost it.
+
+**Verification.**
+- `npm test` **0 failures** (3 pre-existing warnings, unchanged in kind); `npm run build` clean.
+- **Live in the built app in all four languages.** `#/lesson/6` first bounced to `#/learn` — correct,
+  not a bug: lesson 6 is gated behind essentials 1-5 and `DECISIONS.md`'s "a URL does not unlock a
+  lesson" is doing its job. Seeded `[1,2,3,4,5]`, opened the lesson, answered wrong, and read the
+  revealed hedge in es, ko, zh and ja in turn.
+- **§10.1 by plant, into the value just written**: replaced the new Spanish hedge with
+  `Deberías comprar Roth.` → **FAIL**; restored from a scratchpad copy (never `git checkout --`),
+  plant greps to 0, re-ran → **PASS**.
+- Corpus after this change: sentence measure **0 pairs**; hedge parity **4 of 4 questions carry
+  their hedge in all four languages**; item 165's ratio measure **29 pairs across 10 questions**,
+  all partial shortfalls and none a dropped sentence.
+
+⛔ **A FIGURE IN THE PREVIOUS ENTRY AND ITS COMMIT MESSAGE IS WRONG, and the mechanism is the one
+this log names weekly.** Both say the ratio measure stood at **"41 pairs across 13 questions"** after
+that commit. Recomputed this run directly against the two trees: `HEAD~1` was **65/18** (correct) and
+`HEAD` (`a91b02c`) is **33 pairs across 11 questions**. **41/13 was the reading after the FIRST of
+that run's three patches** — I re-ran the instrument once, then patched `q006` and `q013`, and quoted
+the stale output as the post-commit figure without re-running. The commit message cannot be corrected
+(history is not rewritten here); **item 165 is corrected, and this entry is the pointer.** The 65/18
+"before" figure and every other number in that entry re-verify.
+
+**Step 5 — adversarial self-check.**
+- **Blindspot register:** §10.1 is the register entry this change is *about*, and it is checked by
+  plant above rather than by reading. §10.2 no Dalio reference. §10.3 untouched. §2.3 no dates added.
+  The four added sentences are anti-recommendation by construction — they say there is no fixed rule.
+- **`DECISIONS.md`:** no conflict. Content stays plain `.js`; the translation-review ledger's scope
+  limit is lesson content, so these four fields ship AI-written under the standing "(Beta)" decision
+  and are **not** in `npm run review-status`'s 100%.
+- **Already-done item:** `q020` was not touched by the previous commit — that commit's nine questions
+  were `q001`-`q006`, `q008`, `q011`, `q013`, and `q020` is the one it filed as remaining.
+- **My own verification claim:** the 41/13 correction above is the direct test of this — I recomputed
+  the previous entry's number from its own tree rather than restating it, and it did not hold.
+- **W-6.3 — the check I said last run "belongs to whoever picks `q020`", and I am that run: NOT
+  BUILT, deliberately, and this is the reasoning rather than a deferral.** The natural form is
+  §66/§67's completeness scorer applied to a third corpus; each of those is ~180 lines against
+  `scripts/`'s 2.23x instrument ratio. **The blocker is not size, it is that both §66 and §67 landed
+  WITH a `READ_COMPLETE` list built by reading every flagged pair** (30 glossary, 9 kids). The ratio
+  currently flags **29 `quizText` pairs nobody has read**. Landing the check without that reading
+  ships a permanent 29-pair warning — which item 121's own ⚠️ already calls evidence that the check
+  or the budget is wrong. **The reading is the prerequisite and it is O-3 work, so it is the owner's
+  call, not a run's.** Filed under item 165 with that ordering made explicit.
+- **Floor cost, measured:** the item-165 corrections take the non-archivable floor **361,824 →
+  364,282 b (+2,458)**; the run-log entry itself costs the floor nothing. The floor is now over its
+  250,000 b budget by **114,282 b**, and **both of today's runs made that worse** — this one buys
+  two corrected figures and a stated ordering for the guard, which is the trade, not a free lunch.
+  Item 115's owner option remains the only thing that moves the number.
+
+**Top item for the next run.** Nothing is queued from here and nothing should be chained off it — the
+`quizText` stub class is empty and the guard question is parked on an owner decision, above. **O-1
+remains the entire critical path.**
+
+**Owner tree at end of run:** the owner's untracked `UIUX/` only, untouched. `HEAD` re-checked before
+writing and unmoved at `a91b02c`.
+
 
 ### 2026-09-03 (scheduled dev-agent, backlog item 165) — a new install opens on lesson 29, and until this run its first question answered a Spanish reader in one clause and a Chinese reader in eight characters where the English reader got the mechanism; the main path is now whole in five languages, and the scope rule I picked it with had a false negative in it
 
