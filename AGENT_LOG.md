@@ -1447,7 +1447,38 @@ through two passes that each had it open.
       stand; the coverage did not.** `A11yStates.coverage()` plus the Tab step now in the header
       recipe are the fix — see item 149.
 
-164. **[Tooling/Safety — filed 2026-09-02 by the run that closed item 163(b), from a control that
+164. **✅ DONE 2026-09-02 (scheduled dev-agent) — the headline premise reproduced exactly, and the
+    item's own list of phrasings did not: one of the three it proposed fires on shipped teaching
+    copy. Widened in all five languages, with a two-sided control.**
+    - **Premise, re-measured before editing (step 3.5), by plant and control:** planting
+      `qeQtSection: "QE, QT — now is a good time to buy"` into `src/locales/en.js` gave **PASS**;
+      the control plant `"you should buy now"` gave **FAIL**. Blind pattern list, live corpus —
+      exactly as filed.
+    - ⛔ **What the item got wrong, and it is the part worth keeping.** It named three missing
+      phrasings: *"a good time to buy"*, *"consider buying"*, *"worth buying"*. **`worth buying`
+      fires on a shipped money-track takeaway** — "wants are everything else, including plenty of
+      things worth buying" — so landing the item as written would have failed the build on correct
+      content. `consider buying` has zero live hits but is a normal teaching framing
+      ("consider buying versus renting") and was dropped for the same reason. **The first Spanish
+      draft repeated the mistake independently**: `momento (de|para) comprar` fires on a shipped
+      lesson's temporal "En el momento de comprar, ambas decisiones se sintieron iguales", so the
+      Spanish patterns now require the evaluative or copular frame (`un buen momento para comprar`,
+      `es el momento de comprar`). Both live sentences are now must-stay-clean controls.
+    - **Shipped:** a **timing** class in five languages (8 patterns) plus the softened first-person
+      verbs the existing recommendation patterns missed (`we suggest|advise`, `sugerimos|aconsejamos`,
+      `권해 드립니다`, `おすすめします`). §10.1 goes from **25 to 33 patterns**. Every one was checked
+      against the current corpus for false positives first — **0 hits across 39 files** — and each of
+      the five plants that a learner could have met (`now is a good time to buy` / `ahora es un buen
+      momento para comprar` / `지금이 매수하기 좋은 시기입니다` / `现在是买入的好时机` / `今が買い時です`)
+      now FAILs the check.
+    - ⚠️ **A pattern's own must-flag sample is not optional, proven by one that was dead when
+      written.** The Korean timing pattern was drafted as `(매수|…|팔)기 좋은` and matched **nothing**
+      — not even `매수하기 좋은 시기`, the phrase it exists for. It looked identical to a clean
+      result. The new control asserts each timing pattern against the advice sentence it was written
+      for, so a dead pattern fails loudly instead of reporting a clean corpus forever.
+    ORIGINAL ITEM TEXT, kept because the corrections above refer to it — and deliberately NOT
+    left as a second numbered line, which would read as an open item:
+    **[Tooling/Safety — filed 2026-09-02 by the run that closed item 163(b), from a control that
     did NOT fire when it should have.] §10.1's English advice matcher is five specific phrasings, and
     "now is a good time to buy" is not one of them.**
     - **How it surfaced:** planting `qeQtSection: "QE, QT — now is a good time to buy"` into
@@ -4026,6 +4057,112 @@ zero meaningful: `selftest PASS (8/8 controls fired, plantsRemoved true)` and, p
 finding(s); V vacuous; U unavailable`. A bare "no accessibility issues found" is not a result.
 
 ## Run log
+
+### 2026-09-02 (scheduled dev-agent, backlog item 164) — the guard on this app's single biggest product risk passed a plant reading "now is a good time to buy"; the item that filed it was right about the hole and wrong about one of the three phrasings it proposed to plug it with, which fires on a shipped lesson
+
+**Where the pick came from.** Backlog item 164, filed by a different run two runs back — not my own
+previous run's residual (W-6.2 rule 1), and not one of the eight PARKED items. It is the only open
+item whose subject is a **closed** blindspot, §10.1 investment-advice adjacency, which is the risk
+`LAUNCH_PLAN` and `DECISIONS.md` treat as the app's largest. W-6.2 rule 3, answered before starting:
+*a lesson, a section heading or a market label told the reader now is a good time to buy.*
+
+**Step 3.5 — the premise reproduced exactly, by plant and control, before anything was edited.**
+`qeQtSection: "QE, QT — now is a good time to buy"` planted into `src/locales/en.js` → **PASS**
+(`ok: §10.1 no advice-adjacent language … across 38 file(s)`). Re-planted as `"you should buy now"`
+→ **FAIL: §10.1 investment-advice-adjacent language reintroduced**. So the corpus is scanned and the
+instrument is alive; the pattern list is what was narrow. Both plants restored from a scratchpad copy
+(`shasum` back to `07e61cf1…`), never `git checkout --`.
+
+**⛔ WHERE THE ITEM WAS WRONG, AND IT WOULD HAVE FAILED THE BUILD ON CORRECT CONTENT.** Item 164
+proposed three phrasings: *"a good time to buy"*, *"consider buying"*, *"worth buying"*. Before
+writing any of them, I ran all candidates over the live corpus (39 files, `\n`-escapes expanded the
+way the check expands them):
+
+| candidate | live hits | disposition |
+| --- | --- | --- |
+| `worth (buying\|selling)` | **1** — `lessonContent.money.en.js`: *"wants are everything else, including plenty of things worth buying"* | **dropped** — a §10.1 that fails on a correct takeaway trains runs to route around §10.1 |
+| `consider (buying\|selling\|investing)` | 0 | **dropped** — zero live hits, but "consider buying versus renting" is ordinary teaching framing, so it is a false positive waiting for its lesson |
+| `(good\|great\|right\|best\|perfect\|ideal) time to (buy\|sell\|invest)` | 0 | shipped |
+
+**And the Spanish draft made the identical mistake independently, which is why this is a class and
+not a slip.** My first Spanish pattern, `momento (de|para) (comprar|vender|invertir)`, hits a shipped
+money lesson: *"En el momento de comprar, ambas decisiones se sintieron iguales"* — "at the moment of
+buying", purely temporal. The shipped Spanish patterns require the evaluative or copular frame
+(`un buen momento para comprar`, `es el momento de comprar`), which leaves that sentence clean.
+
+**Shipped: §10.1 goes from 25 to 33 patterns, in one file, +96/-4 lines.** A **timing** class in all
+five languages, and the softened first-person verbs the existing recommendation patterns missed
+(`we suggest|advise`, `sugerimos|aconsejamos`, `권해 드립니다`, `おすすめします` — measured blind before:
+`/\bwe recommend\b/` returns `false` on "We suggest buying now."). W-6.3, quoted and re-measured:
+`scripts/` is **16,977 lines** against **7,487** app lines — **2.27x**, against the previous run's 2.23x
+and W-6.0's 2.35x on 08-30. This is a widened array plus one control, not a new instrument.
+
+**Verified by injection in every language, not by reading the regexes.** Each plant is the phrase a
+learner could have met, in the locale file that renders it; each restored from a scratchpad copy, with
+`shasum` on all five locale files back to their originals afterwards.
+
+| plant | before | after |
+| --- | --- | --- |
+| en `"now is a good time to buy"` | **PASS** (the hole) | **FAIL** |
+| es `"ahora es un buen momento para comprar"` | — | **FAIL** |
+| ko `"지금이 매수하기 좋은 시기입니다"` | — | **FAIL** |
+| zh `"现在是买入的好时机"` | — | **FAIL** |
+| ja `"今が買い時です"` | — | **FAIL** |
+| en `"we suggest buying now"` | blind (`/\bwe recommend\b/` is `false` on it) | **FAIL** |
+
+**⚠️ THE DURABLE FINDING, AND IT IS ABOUT CONTROLS, NOT ABOUT ADVICE.** The Korean timing pattern I
+first wrote — `((매수|매도|투자|구매)|사|팔)기\s*좋은…` — matched **nothing at all**, not even
+`매수하기 좋은 시기`, the exact phrase it was written for: the `하` is not optional in that verb form.
+A dead pattern in a list of 33 is invisible. It reports `ok: no advice-adjacent language` forever, and
+the file's existing escape-expansion control cannot see it, because that control asks whether the SET
+can fire, not whether each member can. **So every timing pattern now carries the advice sentence it
+exists to catch, and the new control asserts the pair.** Both of its arms were proven by injection,
+using the two real defects rather than invented ones:
+
+| injected | new control |
+| --- | --- |
+| the Korean pattern reverted to its dead form | **FAIL: 1 timing pattern(s) did not match the advice sentence they exist to catch** |
+| item 164's own `worth (buying\|selling)` added to the list | **FAIL: a §10.1 pattern flagged live, correct teaching copy as advice**, quoting the shipped takeaway |
+
+Clean run: `ok: §10.1 timing control: 8 timing pattern(s) each fire on their own advice sentence
+(en/es/ko/zh/ja), and 2 shipped sentence(s) that a wider draft flagged stay clean against all 33
+advice patterns.` The two must-stay-clean lines are **quoted from shipped content**, in the corpus's
+one-physical-line storage shape — arm 2 above proves they are quoted faithfully enough that the same
+pattern which hits the real file hits the control line too.
+
+`npm test`: **0 failures**, the 1 standing floor warning. `npm run build` clean.
+`npm run check-blindspot`: **0 failures**. HEAD unmoved at `bf38f3b` across the run.
+`OWNER-TREE d44e6103…` at commit time (2 tracked modified — both mine — 51 untracked, all `UIUX/`);
+at run start it was `f54fc023…` with 0 tracked modified.
+
+**Step 5 — adversarial self-check.** (1) **Blindspot register:** this change *strengthens* §10.1 and
+touches no content, no Dalio surface, no kids framing, no date or market figure; the two live
+sentences it quotes are copied verbatim into a script, not edited in place. (2) **`DECISIONS.md`:**
+nothing here touches state, routing, content format or the build. The 2026-08-11 "(Beta)" decision is
+untouched — no translated prose changed. (3) **Already-done item:** this does not undo the five
+original patterns or the 2026-08-11 five-language expansion (P-3); it widens two of their classes and
+adds a third, and the escape-expansion control from item 145 still passes with `33 advice patterns`.
+The near-miss is recorded above: the item's own proposed pattern would have undone a shipped lesson's
+takeaway by failing the build on it. (4) **My own verification claim:** every figure here is from a
+command run this session — six repo plants with `shasum` restores, two script injections, the
+false-positive scan over 39 files, and the two-sided sample test. An independent reviewer re-running
+them gets the same output.
+
+**Two notes, filed here rather than numbered (W-6.2 rule 2).**
+- **The platform Back gesture exits the whole Reference tab from a pushed sub-screen — and this is
+  DECIDED, not a defect. Do not "fix" it.** Measured: Reference → Glossary → the *Yield Curve* term,
+  one `history.back()` → `#/learn`, two pushed levels skipped and the tab changed; `history.forward()`
+  returns to `#/reference` showing the **hub**, because `<ScreenBoundary key={tab}>` unmounts the
+  subtree. `lib/deepLink.js`'s header states the Reference sub-nav is deliberately unrouted (item 12,
+  Expo-vs-web, is HELD, and routing it would deepen the web-only surface a native port must
+  reproduce), and `App.jsx`'s `goToTab` already resets the Learn tab's pushed reader the same way —
+  so the behavior is consistent with a recorded decision, not an accident. Recorded because it *looks*
+  exactly like a bug and cost this run a measurement.
+- **The `role="radio"` groups on the About screen (Appearance, Text Size) are four separately
+  tab-focusable buttons, not a roving-tabindex group.** Measured live: each carries a real
+  `aria-label` (`System`/`Light`/`Dark`, `90%`/`100%`/`115%`/`130%`) and correct `aria-checked`, so
+  nothing is unlabeled or unreachable — the deviation is arrow-key navigation within the group. Name
+  the learner-visible failure before building anything here (W-6.2 rule 3); I could not.
 
 ### 2026-09-02 (scheduled dev-agent, self-picked by rendering every count template at its minimum value) — a Spanish learner's first day read "Racha de 1 días", and their first review read "0 de 1 correctas"; the file that owns this class had already written down that it recurs, and the run that predicted the third instance was right about the class and wrong about which strings
 

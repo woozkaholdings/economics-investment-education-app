@@ -99,6 +99,12 @@ function grepFiles(files, pattern, { excludeSelf = true } = {}) {
 // rather than a second array.
 let ADVICE_PATTERNS = null;
 let MONTH_YEAR_PATTERN = null;
+// The timing class added 2026-09-02 (item 164), with the advice sentence each
+// of its patterns exists to catch. Held here so the control at the end of this
+// file can prove every one of them still fires — a pattern that matches nothing
+// is the same clean-looking negative as a clean corpus, and one of these WAS
+// dead when it was written (see the control's header).
+let TIMING_ADVICE = null;
 
 const srcFiles = walk(join(ROOT, "src"), [".js", ".jsx"]);
 const contentFiles = walk(join(ROOT, "src", "content"), [".js"]);
@@ -155,26 +161,62 @@ const readmePath = join(ROOT, "README.md");
 // content/lessonContent.js). Each set targets the same prescriptive-imperative
 // shape as its English counterpart ("be bullish", not descriptive "was bullish"),
 // checked against current content for false positives before landing.
+//
+// WIDENED 2026-09-02 (backlog item 164) in two ways, both because a pattern
+// list is narrower than the phrase class its name implies:
+//   • a TIMING class — "now is a good time to buy" passed this check for a
+//     month. Item 164 found it by planting it and getting PASS; re-measured
+//     this run, same result, against a `you should buy now` plant that FAILs.
+//   • the first-person recommendation patterns now cover the softened verbs
+//     ("we suggest", "we advise", 권해 드립니다, おすすめします), which is the
+//     same phrasing wearing a politer hat.
+// Every addition was checked against the CURRENT corpus for false positives
+// before landing, which is the discipline the original five were built with —
+// and that check earned its keep twice: item 164 proposed `worth buying`,
+// which fires on a shipped money-track takeaway ("plenty of things worth
+// buying"), and the first Spanish draft was `momento (de|para) comprar`,
+// which fires on a shipped lesson's "En el momento de comprar, ambas
+// decisiones se sintieron iguales" — a purely temporal phrase. Both were
+// dropped for the narrower forms below, and both live sentences are now
+// must-stay-clean controls at the end of this file.
 {
+  const timing = [
+    // English
+    { re: /\b(good|great|right|best|perfect|ideal) time to (buy|sell|invest)\b/i, fires: "Rates are low, so now is a good time to buy." },
+    { re: /\bnow is the time to (buy|sell|invest)\b/i, fires: "Now is the time to invest." },
+    // Spanish — both forms require the evaluative or copular frame, so the
+    // descriptive "en el momento de comprar" stays clean.
+    { re: /\b(buen|mejor|ideal) momento (de|para) (comprar|vender|invertir)/i, fires: "Ahora es un buen momento para comprar." },
+    { re: /\bes (el|un) momento (de|para) (comprar|vender|invertir)/i, fires: "Ahora es el momento de comprar." },
+    // Korean — the `하` in `매수하기` is not optional here: the first draft of
+    // this pattern omitted it and matched nothing at all.
+    { re: /((매수|매도|투자|구매)하|사|팔)기\s*좋은\s*(때|시기|시점|타이밍)/, fires: "지금이 매수하기 좋은 시기입니다." },
+    // Chinese
+    { re: /(买入|买进|购买|卖出|投资)的好(时机|时候|时点)/, fires: "现在是买入的好时机。" },
+    // Japanese — 買い時 / 売り時 are the idiom itself, not a description of one.
+    { re: /買い時|売り時/, fires: "今が買い時です。" },
+    { re: /(買う|売る|投資する)のに(良|よ)い(時期|タイミング)/, fires: "今は投資するのに良いタイミングです。" },
+  ];
+  TIMING_ADVICE = timing;
   const patterns = [
     // English
     /best investments\s*:/i,
     /\bbe bullish\b/i,
     /\bbe cautious\b/i,
     /you should (buy|sell|invest)/i,
-    /\bwe recommend\b/i,
+    /\bwe (recommend|suggest|advise)\b/i,
     // Spanish
     /mejores inversiones\s*:/i,
     /\bs(?:é|ea)\s+alcista\b/i,
     /\bs(?:é|ea)\s+cauteloso\b/i,
     /deber[ií]as?\s+(comprar|vender|invertir)/i,
-    /\brecomendamos\b/i,
+    /\b(recomendamos|sugerimos|aconsejamos)\b/i,
     // Korean
     /최고의\s*투자\s*[:：]/,
     /낙관적이어야\s?합니다|강세를\s?예상하세요/,
     /신중해야\s?합니다|조심하세요/,
     /(사야|팔아야|투자해야)\s?합니다/,
-    /추천합니다|권장합니다/,
+    /추천합니다|권장합니다|권해\s?드립니다/,
     // Chinese
     /最佳投资\s*[:：]/,
     /应该看涨|建议看涨/,
@@ -186,7 +228,9 @@ const readmePath = join(ROOT, "README.md");
     /強気になるべき|強気を推奨/,
     /慎重になるべき/,
     /(買う|売る|投資する)べきです/,
-    /推奨します|お勧めします/,
+    /推奨します|お勧めします|おすすめします/,
+    // The timing class, in all five languages.
+    ...timing.map((entry) => entry.re),
   ];
   // index.html joins the scan 2026-08-24 (backlog item 98), for the same
   // reason README.md joined §10.2 above: a rule only covers the files it
@@ -417,6 +461,54 @@ const readmePath = join(ROOT, "README.md");
       `§10.1/§2.3 escape-expansion control: paragraph-initial banned phrases ARE caught in the corpus's real \\n-escaped storage shape ` +
         `(${advice.length} advice patterns + the month-year pattern; descriptive "were bullish"/"were cautious" stays clean; ` +
         `${naiveMissed ? "and the pre-fix matcher still misses the same line, so the expansion is load-bearing" : "NOTE: the pre-fix matcher now catches it too — the corpus may have stopped escaping newlines, making the expansion dead code"}).`,
+    );
+  }
+}
+
+// --- CONTROL: every §10.1 timing pattern still fires, and the two live
+// sentences that nearly became false positives still don't (item 164) ---
+//
+// The control above proves the pattern SET can fire through the corpus's
+// escape shape. It cannot notice that one particular pattern matches nothing,
+// which is a real failure mode and not a hypothetical one: the Korean timing
+// pattern was written as `(매수|…|팔)기` and did not match `매수하기 좋은
+// 시기` — the phrase it was written for — until its must-flag sample caught it
+// before it landed. So each timing pattern carries the sentence it exists to
+// catch, and this asserts the pair.
+//
+// The must-stay-clean half is quoted from SHIPPED CONTENT rather than invented,
+// because both of these are phrasings a wider draft of these patterns did flag:
+// an English takeaway about wants ("things worth buying") and a Spanish lesson's
+// temporal "en el momento de comprar". A §10.1 that fails the build on correct
+// teaching copy is worse than one that is slightly narrow — it trains runs to
+// route around the check.
+{
+  const timing = TIMING_ADVICE ?? [];
+  const advice = ADVICE_PATTERNS ?? [];
+  // Verbatim from src/content/lessonContent.money.en.js and .es.js, in the
+  // corpus's real one-physical-line storage shape.
+  const LIVE_MUST_STAY_CLEAN = [
+    String.raw`"takeaway": "Needs are things you can't function without; wants are everything else, including plenty of things worth buying."`,
+    String.raw`"body": "En el momento de comprar, ambas decisiones se sintieron iguales.\n\nTres años después no lo son."`,
+  ];
+  const dead = timing.filter((entry) => !matchesLine(entry.fires, entry.re));
+  const falsePositives = LIVE_MUST_STAY_CLEAN.filter((line) => advice.some((p) => matchesLine(line, p)));
+
+  if (!timing.length) {
+    fail("§10.1 TIMING CONTROL: the timing pattern set was never captured, so this control ran against nothing.");
+  } else if (dead.length) {
+    fail(
+      `§10.1 TIMING CONTROL: ${dead.length} timing pattern(s) did not match the advice sentence they exist to catch — ` +
+        `a pattern that fires on nothing reports a clean corpus forever:\n  ${dead.map((d) => `${d.re} vs "${d.fires}"`).join("\n  ")}`,
+    );
+  } else if (falsePositives.length) {
+    fail(
+      `§10.1 TIMING CONTROL: a §10.1 pattern flagged live, correct teaching copy as advice:\n  ${falsePositives.join("\n  ")}`,
+    );
+  } else {
+    ok(
+      `§10.1 timing control: ${timing.length} timing pattern(s) each fire on their own advice sentence (en/es/ko/zh/ja), ` +
+        `and ${LIVE_MUST_STAY_CLEAN.length} shipped sentence(s) that a wider draft flagged stay clean against all ${advice.length} advice patterns.`,
     );
   }
 }
