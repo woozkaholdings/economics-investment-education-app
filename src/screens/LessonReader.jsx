@@ -508,7 +508,25 @@ export default function LessonReader({ t, lang, lessons, index, completedLessons
       <Disclaimer text={t.disclaimer} />
 
       {/* Actions */}
-      <div style={{ display: "flex", gap: space["2"], marginTop: space["2"] }}>
+      {/* `flexWrap` is the whole fix for a horizontal overflow that shipped for
+          weeks, and it is here rather than on `Button` because the defect is a
+          property of the ROW, not of any button. Measured 2026-09-03 on the
+          built app at 320px: the two buttons cannot shrink below their
+          min-content width (a flex item's `min-width` is `auto`), so at the
+          app's own 1.3 font scale "Anterior" (142.3px) + "Completar" (163px) +
+          the 8px gap needed 313.3px of a 288px row and the primary action ran
+          9.3px past the viewport — `es` AND `en` ("Mark Complete", 326.6px);
+          ko/zh/ja were clean because CJK breaks between characters. Browser
+          text zoom goes past the app's ceiling, and at 200% the same row
+          reached 447px.
+          Wrapping is the correct condition and not a threshold: a flex line
+          breaks on the items' min-content widths, which is exactly when they
+          stop fitting — so nothing changes at any size where they do fit
+          (verified identical geometry at scale 1.0), and no breakpoint has to
+          be guessed for a future label. `min-width: 0` was rejected for the
+          reason index.css records for `.ec-bar-row`: it silences the geometry
+          probe and leaves the text overflowing its own button. */}
+      <div style={{ display: "flex", flexWrap: "wrap", gap: space["2"], marginTop: space["2"] }}>
         {hasPrev && (
           <Button variant="outline" iconLeft="arrowLeft" onClick={() => onNavigate(index - 1)} style={{ flex: 1 }}>
             {t.prevLesson}

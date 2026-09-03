@@ -2096,6 +2096,25 @@ through two passes that each had it open.
       rather than the figure, and it is exactly the class this item's probe is for — a right-edge scan
       would catch it, since the button's own border box overflows. Untouched by that run (out of its
       scope); this is the first named live instance this item has.
+    - ✅ **THE LIVE INSTANCE IS FIXED 2026-09-03 (scheduled dev-agent) — the app half only; the
+      probe this item is actually about is still unbuilt and still open.** ⛔ **And the instance's
+      own scope, filed one run earlier, was WRONG in the way this log names weekly: it said
+      `es`, and `en` overflowed too.** Re-measured on the built app at 320px before any edit, with
+      a planted 900px probe firing (9 findings) and a clean read at 0.9/1.0/1.15 as the negative
+      control: `es` "Completar" right edge **329.3**, `en` "Mark Complete" **326.6**, both against a
+      320px viewport; `ko`/`zh`/`ja` clean, with the probe re-planted in the `ja` context to prove
+      the zero was a reading and not a dead instrument. **Mechanism, measured rather than inferred:**
+      a flex item's `min-width` is `auto`, so neither button can shrink below min-content —
+      142.3px ("Anterior") + 163px ("Completar") + an 8px gap needs **313.3px of a 288px row**.
+      **Fixed with `flexWrap: "wrap"` on the row** (`src/screens/LessonReader.jsx`), which breaks the
+      line on exactly the min-content condition and so needs no breakpoint: identical geometry at
+      scale 1.0 (both buttons on one line, 128.7/221.3 at 390px), stacked full-width above it.
+      Post-fix sweep, all five languages × {0.9, 1.0, 1.15, 1.3, 1.5, 2.0} root font at 320px:
+      `scrollWidth === 320`, zero findings, control still firing.
+      ⚠️ **The bottom nav's 200% overflow was a SYMPTOM of this one, not a second defect.**
+      Pre-fix at `en`/2.0 the scan also reported `NAV`/`BUTTON:Reference` past the viewport; they are
+      gone post-fix, and the Learn screen — which has no reader row — measures clean at 2.0 on its
+      own. A fixed-position bar sized to a document the reader row had widened.
     - **Honest priority: low-to-medium.** ⛔ **The "property that holds" half of the line below is now
       false** — see the live instance above. It guards a property that held as of 2026-08-30 and does
       not today, which strengthens the item rather than weakening it.
@@ -4240,6 +4259,109 @@ zero meaningful: `selftest PASS (8/8 controls fired, plantsRemoved true)` and, p
 finding(s); V vacuous; U unavailable`. A bare "no accessibility issues found" is not a result.
 
 ## Run log
+
+### 2026-09-03 (scheduled dev-agent, backlog item 155's live instance) — the lesson reader's primary action ran 9.3px off a 320px screen at the app's own largest text size, in two languages rather than the one the note named; the bottom nav's separate-looking overflow turned out to be the same defect seen from underneath
+
+**Where the pick came from.** The previous run took item 27 from the launch plan and, while measuring
+something else, reported a **live overflow it did not fix** — a named, reproducible, learner-visible
+defect sitting inside item 155. W-6.2 rule 1 permits taking a previous run's residual once; rule 1 is
+about not doing it three times running, and this is the first link. **The choice inside item 155 is
+the part worth stating:** the item as filed is an *instrument* — build a permanent text-zoom probe —
+and W-6.3's ratio (`scripts/` at 2.3x `src/`) says the instrument side is the over-served one. This
+run took **the app half and left the probe**, so the change is +1 property and a comment to `src/`
+and **0 lines to `scripts/`**.
+
+**Step 3.5 — the premise reproduced, and its scope did not.** Built the tree, served `dist/`
+statically, drove the real app at 320x812 through `localStorage` (`es`, font scale 1.3, lesson 33
+reachable via completed 29-32).
+- **Headline figure exact:** `es` "Completar" right edge **329.3**, `scrollWidth` **329**, viewport
+  **320** — the digits the note quoted.
+- ⛔ **The scope was wrong. `en` overflows too**, at **326.6** ("Mark Complete"), and the note said
+  `es`. `ko`/`zh`/`ja` are clean because CJK breaks between characters, so the defect is *Latin-script
+  single-word labels*, not Spanish.
+- **Controls, both directions.** Positive: a planted 900px `<div>` produced 9 findings where the
+  page produced 1 — and it was **re-planted in the `ja` context** at 1.3, where it fired the same 9,
+  so the CJK zero is a reading rather than a dead scan. Negative: the same scan returns **empty at
+  0.9, 1.0 and 1.15**, so the instrument is not constant-positive on this button.
+- **Mechanism measured, not inferred.** The row is 288px wide with an 8px gap; a flex item's
+  `min-width` is `auto`, so each button's floor is its min-content width — **142.3 + 163 + 8 =
+  313.3px asked of 280px of usable line.** The 1:2 flex ratio never applies at that width because
+  both items are already clamped.
+
+**The fix, and why it is one property.** `flexWrap: "wrap"` on the actions row. A flex line breaks on
+the items' **hypothetical main sizes**, which `min-width: auto` makes their min-content widths — so
+the wrap fires on exactly the condition "these two no longer fit" and **no breakpoint has to be
+guessed for a future label**. Verified by measuring both sides of it: at 390px/scale 1.0 the two
+buttons stay on one line at 128.7/221.3 (unchanged), and at 320px/1.3 they stack full-width.
+- **`min-width: 0` was considered and rejected**, for the reason `index.css` already records against
+  `.ec-bar-row`: it silences a geometry probe while leaving the text overflowing its own box.
+- **A 375px media query — the app's one existing narrow-width precedent — was also rejected**, and
+  the reason is worth keeping. `.ec-bar-row`'s breakpoint is right *there* because five bars must
+  switch layout **together** or their tracks stop being comparable; two buttons have no such
+  coupling. And a viewport breakpoint cannot see the second axis: browser text zoom goes past the
+  app's 1.3 ceiling (item 156's finding), and at 200% this row reached **447px** at the same 320px
+  viewport.
+
+**Verification, all post-fix and all on the built app.** Five languages x six root sizes
+{0.9, 1.0, 1.15, 1.3, 1.5, 2.0} at 320px: `documentElement.scrollWidth === 320` and **zero findings**
+in every cell, control still firing at the end of the sweep. Both branches of the row checked, not
+just the one in the note — the *done* state (`Anterior`/`Siguiente`) and the **no-prev** state
+(lesson 29, the first lesson of the main path and the screen a new install opens on) are clean at 1.3
+and 2.0. `npm run build` clean; `npm test` **0 failures** across all seven check scripts, with the
+four pre-existing warnings unchanged (O-3 translation coverage, translation completeness, item 160's
+option-length cue, item 115's floor).
+
+⚠️ **The finding I did not expect, and it removes a defect rather than adding one.** Pre-fix at
+`en`/2.0 the scan reported the bottom navigation and its "Reference" tab past the viewport as well.
+They are **gone post-fix**, and the Learn screen — which has no reader row — measures clean at 2.0 on
+its own. So the nav was never independently broken: it is `position: fixed` and full-width against a
+document the reader row had widened to 443px. **Two symptoms, one cause** — and a run that had picked
+"the nav overflows at 200%" as its item would have gone looking in the wrong file.
+
+**Step 5 — adversarial self-check, run and not skipped.**
+- **Blindspot register:** `node scripts/check-blindspot.mjs` passes 0 failures — §10.2 Dalio, §10.1
+  advice language and disclaimer on all 8 surfaces, §10.3 parent-facing kids framing, §2.3 live-looking
+  dates. The change adds no prose in any language and no user-visible string; the only new text is a
+  code comment, and its `2026-09-03` is a dated measurement record (house style throughout this repo),
+  not a date the app renders.
+- **DECISIONS.md:** nothing there governs the actions row; `localStorage`-only state, `.js` content
+  modules and Vite are untouched. The one adjacent recorded decision is `index.css`'s `.ec-bar-row`
+  rationale, which this change **cites and follows** rather than contradicts (see above).
+- **Already-done item:** item 153's text-zoom work was the Reference hub and heading clipping; item
+  156's was the coach mark's vertical clearance. Item 155 states in its own text that this is "the
+  first named live instance this item has", so nothing here redoes a "Completed and pruned" entry.
+- **My own verification claim:** every figure above is a live `getBoundingClientRect` read on the
+  built app, re-runnable from the recipe in this entry, with the planted probe visible on both sides
+  of the sweep. Nothing is carried forward from item 155's text — the one figure I did carry forward
+  to check (329.3) reproduced, and the sentence around it did not.
+- **W-6.2 rule 3 (what a check would have caught):** no check is proposed, so the sentence is owed by
+  item 155's probe rather than by this run — and it already has one: *"the Reference hub scrolled
+  sideways at 200% zoom and headings were clipped mid-word."* This run adds a second live example to
+  that item's case: *"the button that finishes a lesson sat half off the right edge of the screen."*
+- **W-6.3, quoted and re-measured — and my re-measurement disagrees with the previous entry's, which
+  is why the clause says re-measure rather than quote.** Measured this run over `scripts/**` `.mjs`/
+  `.js`/`.sh`: **17,331** lines against `src/` minus `content/` and `locales/` at **7,738** at `HEAD`
+  = **2.240x**. The previous entry reports 17,251 for the same directory on the same tree; the gap is
+  80 lines and is a *definition* difference (which extensions count), not a change — **so the clause's
+  own number is only comparable when the file set is stated, and it has not been.** This change is
+  **+19 lines / -1 to `src/`** (one property, the rest comment) and **+0 to `scripts/`**, taking it to
+  **17,331 / 7,756 = 2.234x** — it moves toward the app side, which W-6 says is under-served.
+- **Floor tax, stated:** the item 155 update and this entry grow the non-archivable floor; the run log
+  is at 33.4% of its warn budget with 17.6 runs of headroom, and the floor stays over by ~125 KB.
+  Item 115's owner options remain the only thing that moves it.
+
+**Queued for next run.** Item 155's actual subject — the **permanent text-zoom probe** in
+`scripts/a11y-sweep.js` — is now better-founded than when it was filed: it has two live instances
+behind it rather than a property that merely held, and this run has just written the scan it needs
+(XHTML-namespace-restricted box probe + planted control). ⚠️ **But W-6.3's number argues against
+picking it next**, and the honest alternative is item 27's `essentials` figures — twelve bare lessons,
+none ever assessed, on the app side of the ratio. **O-1 remains the entire critical path: 44 lessons,
+5 languages, 161 minutes of content, and zero people have ever opened this app** (figures off
+`npm test`'s readiness line this run).
+
+**Owner tree:** `git status` at run start and again before writing showed **0 tracked modified besides
+this run's two files, `UIUX/` untracked and untouched**. `HEAD` re-checked before writing and unmoved
+at `2c4f58b`.
 
 ### 2026-09-03 (scheduled dev-agent, backlog item 27) — lesson 34's takeaway is a two-sided bound written as one sentence, and it is now a dial with the good outcome between the two failures; the ordering control I wrote passed in English and was wrong in the other four
 
