@@ -729,3 +729,125 @@ export const outcomeDescription = {
   zh: "一张二乘二的表格。列表示结果：左边是亏钱了，右边是赚钱了。行表示背后的决策：上面是好的决策，下面是糟糕的或纯属侥幸的决策。四个格子大小相同、标记相同，因为这一课只说这四种情况都会发生，并没有说各自有多频繁。右边这一列上方有一个括号，标注为一次成功能告诉你的全部——它只能把答案缩小到这个包含两个格子的列，再往下就缩不动了。右下角的格子里有一个突出显示的标记，那是玛丽亚上涨了40%的直觉。",
   ja: "2行2列の図です。列は結果を表し、左が負けた、右が勝ったです。行はその背後にある決断を表し、上が良い決断、下が悪い、あるいは運が良かっただけの決断です。4つのマスはすべて同じ大きさで同じ印がついています。この回は4つとも起こると述べるだけで、どのくらいの頻度かについては何も述べていないからです。右の列の上には括弧がかかっており、勝利が教えてくれるすべて、と記されています。それは答えを2マスからなるその列までしか絞り込めません。右下のマスには強調された印があり、40%上昇したマリアの直感です。",
 };
+
+// ── Lesson 12: the split that inverts while the total does not ─────────────
+// Backlog item 27, added 2026-09-03. Section 2, "What a Mortgage Payment Is
+// Actually Made Of". See charts.jsx's `SplitBand` header for why this lesson
+// clears item 27's bar and why the band is the loan part of the payment only.
+//
+// ⛔ THE CURVE IS DERIVED FROM THE ONE FACT THE LESSON STATES, NOT DRAWN BY
+// EYE, and that is the only reason it is allowed to have a shape at all.
+// Lesson 12 gives no payment amount and no interest rate, so a curve chosen
+// for looks would be inventing the rate — item 27's standing rule (does the
+// prose state every quantity the shape needs?) rejected lessons 16, 18 and 21
+// for exactly that. What the lesson DOES state is where the two shares cross:
+// "roughly two-thirds of the way through its term".
+//
+// For any fixed-payment loan the interest share of a payment is
+//
+//     s(t) = 1 - (1+r)^(t-N)        (t periods in, N periods total)
+//
+// which is where the amortization identity lands once the payment and the
+// principal cancel: the interest due is r x the outstanding balance, the
+// balance is P[(1+r)^N - (1+r)^t]/[(1+r)^N - 1], and the level payment is
+// P r (1+r)^N/[(1+r)^N - 1]. Neither P nor the payment survives the division,
+// which is what makes this drawable without either of them.
+//
+// Write it in fractions of the term, f = t/N, and set s(crossing) = 1/2:
+//
+//     s(f) = 1 - k^(f-1),  k = (1+r)^N,  and  k^(crossing-1) = 1/2
+//         => k = 2^(1/(1-crossing)) = 2^3 = 8   for crossing = 2/3
+//
+// So the whole curve follows from the lesson's own "two-thirds" and nothing
+// else — no rate is chosen here, and none is rendered. (For the record, and
+// only for it: k = 8 over 360 monthly periods is an annual nominal rate of
+// about 6.9%, which is why the shape looks like a mortgage. Nothing in the
+// figure or its labels says so, and nothing should — see §10.1.)
+//
+// ⚠️ A FUTURE RUN MUST NOT PIN THE ENDS. s(0) = 7/8 falls out of k = 8; it is
+// derived, not stated, and the lesson says only "mostly". That is precisely
+// why the vertical axis carries no scale: the shape is honest about the
+// ordering and the crossing, and silent about the amounts, because the lesson
+// is. Adding a tick, a percentage, or a real payment schedule would make the
+// figure state what the prose declines to.
+export const splitTermYears = 30;
+export const splitCrossing = 2 / 3;
+
+// One sample per year of the term, as a fraction of it. Sampling by year
+// rather than by pixel keeps the boundary's shape a property of the data.
+export const splitSamples = Array.from({ length: splitTermYears + 1 }, (_, i) => i / splitTermYears);
+
+const SPLIT_K = Math.pow(2, 1 / (1 - splitCrossing));
+
+/** Interest's share of the loan part of one payment, `f` of the way through the term. */
+export const splitInterestShare = (f) => 1 - Math.pow(SPLIT_K, f - 1);
+
+// The lesson's own name for what the figure draws, lifted from the first
+// clause of the sentence that introduces the pattern.
+export const splitTitle = {
+  en: "The principal-and-interest split",
+  es: "La división entre capital e interés",
+  ko: "원금과 이자의 비율",
+  zh: "本金与利息的比例",
+  ja: "元金と利息の割合",
+};
+
+// [top region, bottom region] — the lesson's own parenthetical definitions of
+// the only two components it gives a share for. They are the definitions and
+// not the bare words on purpose: the bare words would leave a reader to assume
+// the band is the whole payment, which lesson 12 says it is not.
+export const splitSegmentLabels = {
+  en: ["interest (the lender's charge for the loan)", "principal (paying down the amount borrowed)"],
+  es: ["interés (el cargo del prestamista por el préstamo)", "capital (reducir el monto prestado)"],
+  ko: ["이자(대출에 대한 대출기관의 청구)", "원금(빌린 금액을 갚아나가는 것)"],
+  zh: ["利息（贷方对贷款收取的费用）", "本金（偿还所借金额）"],
+  ja: ["利息（融資に対する貸し手の請求）", "元金（借りた金額を減らす部分）"],
+};
+
+// The crossing, in the lesson's own hedged words. The hedge is kept ("roughly",
+// "often") because the figure pins the marker at exactly 2/3 and the label is
+// the only thing that says the lesson did not.
+export const splitMarkerLabel = {
+  en: "roughly two-thirds of the way through its term",
+  es: "aproximadamente dos tercios de su plazo",
+  ko: "대출 기간의 약 3분의 2 지점",
+  zh: "贷款期限约三分之二处",
+  ja: "返済期間のおよそ3分の2",
+};
+
+// [left, right]. The left end is the moment the lesson names as the one where
+// the balance — and so the interest portion — is largest. The right end names
+// the axis's extent rather than a point on it; the lesson has no phrase for
+// "the last payment", and inventing one would be four languages of new prose
+// for an axis tick.
+export const splitEndLabels = {
+  en: ["right after buying", "A 30-year loan"],
+  es: ["justo después de comprar", "Un préstamo a 30 años"],
+  ko: ["매수 직후", "30년 대출"],
+  zh: ["刚购房之后", "30年期贷款"],
+  ja: ["購入直後", "30年ローン"],
+};
+
+// Lifted from the section BODY, not from the takeaway — LessonReader draws the
+// KEY TAKEAWAY card a couple of inches below the figure, and lesson 12's
+// takeaway ends on this same claim, so a caption taken from there would print
+// the sentence twice on one screen. §69 (g) caught that shape once already.
+export const splitCaption = {
+  en: "early payments are mostly interest, and later payments are mostly principal",
+  es: "los primeros pagos son sobre todo interés, y los últimos son sobre todo capital",
+  ko: "초기 상환금은 대부분 이자이고, 후기 상환금은 대부분 원금입니다",
+  zh: "早期还款大部分是利息，后期还款大部分是本金",
+  ja: "初期の返済はほとんどが利息で、後期の返済はほとんどが元金です",
+};
+
+// The one string here that is not lifted. The band is a role="img", so nothing
+// inside it is announced on its own: whatever this omits does not exist for a
+// screen-reader learner, and the figure's whole content is the two regions,
+// which one is larger at each end, and where they trade places.
+export const splitDescription = {
+  en: "A band of constant height running left to right across a 30-year loan term, split into two regions by a single line. The upper region is interest and the lower one is principal; together they are the loan part of one monthly payment, so as one grows the other shrinks by the same amount. At the left, right after buying, the dividing line sits low and interest fills most of the band. The line rises steadily to the right until, at a dashed marker about two-thirds of the way along, the two regions are the same size. From there to the end of the term principal is the larger of the two, and the band finishes almost entirely principal. Neither axis carries a scale or a number.",
+  es: "Una banda de altura constante que recorre de izquierda a derecha el plazo de un préstamo a 30 años, dividida en dos regiones por una sola línea. La región superior es el interés y la inferior el capital; juntas son la parte del préstamo de un pago mensual, así que cuando una crece la otra se reduce en la misma medida. A la izquierda, justo después de comprar, la línea divisoria está baja y el interés ocupa la mayor parte de la banda. La línea sube de forma sostenida hacia la derecha hasta que, en un marcador discontinuo situado aproximadamente a dos tercios del recorrido, las dos regiones son del mismo tamaño. Desde ahí hasta el final del plazo el capital es la mayor de las dos, y la banda termina siendo casi todo capital. Ninguno de los dos ejes lleva escala ni cifras.",
+  ko: "30년 대출 기간을 왼쪽에서 오른쪽으로 가로지르는, 높이가 일정한 띠입니다. 선 하나가 이 띠를 두 영역으로 나눕니다. 위쪽 영역은 이자, 아래쪽 영역은 원금이며, 둘을 합치면 월 상환금 가운데 대출 자체에 해당하는 부분입니다. 그래서 한쪽이 커지면 다른 쪽은 그만큼 작아집니다. 매수 직후인 왼쪽 끝에서는 경계선이 아래쪽에 있어 이자가 띠의 대부분을 차지합니다. 선은 오른쪽으로 가면서 꾸준히 올라가고, 전체의 약 3분의 2 지점에 있는 점선 표시에서 두 영역의 크기가 같아집니다. 거기서부터 기간이 끝날 때까지는 원금이 더 크며, 띠의 끝은 거의 전부 원금입니다. 두 축 모두 눈금이나 숫자가 없습니다.",
+  zh: "一条高度始终不变的横带，自左向右贯穿30年期贷款的整个期限，被一条线分成上下两个区域。上方区域是利息，下方区域是本金；两者合起来是每月月供中属于贷款本身的部分，所以一方变大，另一方就会等量变小。在最左端、也就是刚购房之后，这条分界线位置很低，利息占据了横带的大部分。这条线一路向右稳步上升，到大约三分之二处的一个虚线标记时，两个区域大小相等。从那里到期限结束，本金都是两者中较大的一方，横带的末端几乎全是本金。两条轴上都没有刻度和数字。",
+  ja: "30年ローンの返済期間を左から右へ横切る、高さが一定の帯です。1本の線がこの帯を2つの領域に分けています。上の領域が利息、下の領域が元金で、合わせて毎月の返済額のうちローンそのものにあたる部分です。したがって一方が大きくなれば、もう一方は同じだけ小さくなります。左端、購入直後では境界線は低い位置にあり、利息が帯の大部分を占めています。線は右へ向かって着実に上がっていき、およそ3分の2の位置にある破線の目印のところで、2つの領域は同じ大きさになります。そこから期間の終わりまでは元金のほうが大きく、帯の終わりはほぼすべてが元金です。どちらの軸にも目盛りや数値はありません。",
+};

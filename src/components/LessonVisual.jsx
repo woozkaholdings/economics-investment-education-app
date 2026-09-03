@@ -14,7 +14,7 @@
 // ═══════════════════════════════════════════════════════════════════════════
 
 import { useState } from "react";
-import { AsymmetryChart, BalanceBand, Bar, BracketStack, CycleChart, GapColumns, GrowthCurve, OutcomeGrid, PreferenceFlip, ProportionBar, SpendingLoop, TradeoffPlot, YieldCurve } from "./charts.jsx";
+import { AsymmetryChart, BalanceBand, Bar, BracketStack, CycleChart, GapColumns, GrowthCurve, OutcomeGrid, PreferenceFlip, ProportionBar, SpendingLoop, SplitBand, TradeoffPlot, YieldCurve } from "./charts.jsx";
 import { Segmented, Text } from "./ui.jsx";
 import {
   balanceSheetCaption, balanceSheetDescription, balanceSheetFormat, balanceSheetHistory, balanceSheetUnit,
@@ -37,6 +37,8 @@ import {
   lossAxisLabel, lossCaption, lossDescription, lossFelt, lossLabels, lossTitle,
   outcomeCaption, outcomeCells, outcomeColumnLabels, outcomeDescription, outcomeHereLabel,
   outcomeRowLabels, outcomeSpanLabel, outcomeTitle,
+  splitCaption, splitCrossing, splitDescription, splitEndLabels, splitInterestShare,
+  splitMarkerLabel, splitSamples, splitSegmentLabels, splitTitle,
   tradeCaption, tradeDescription, tradeEndLabels, tradeKindLabels, tradeTitle, tradeUpfrontLabel,
 } from "../content/moneyVisuals.js";
 import { graph, ink, space, surface } from "../theme.js";
@@ -69,6 +71,7 @@ export const LESSON_VISUALS = {
   1: "budgetSplit",    // Budgeting: Know Where Your Money Goes
   3: "compounding",    // Compound Interest: Money That Makes Money
   7: "taxBrackets",    // Taxes: How Your Paycheck Is Actually Taxed
+  12: "mortgageSplit",  // Renting vs. Buying (its "What a Mortgage Payment Is Actually Made Of" section)
   17: "earningsGap",   // Where Did the Raise Go?
   23: "preferenceFlip",// Why 'Later' Never Feels as Real as 'Now'
   27: "lossAsymmetry", // Why Does Losing $50 Hurt More Than Finding $50 Feels Good?
@@ -91,7 +94,7 @@ const CURVE_TYPES = ["normal", "flat", "inverted", "steep"];
 // comment in the component). The constant keeps its MONEY_VISUALS name (it is referenced further
 // down and in §21's checks); the set spans `essentials` and `money` since the
 // 2026-08-19 split, so the name is a label, not a track claim.
-const MONEY_VISUALS = new Set(["budgetSplit", "compounding", "taxBrackets", "earningsGap", "preferenceFlip", "lossAsymmetry", "incomeTradeoff", "outcomeGrid"]);
+const MONEY_VISUALS = new Set(["budgetSplit", "compounding", "taxBrackets", "mortgageSplit", "earningsGap", "preferenceFlip", "lossAsymmetry", "incomeTradeoff", "outcomeGrid"]);
 
 // Figures are US dollars in every language — the lessons' own worked examples
 // are written that way, and converting them per locale would make the chart
@@ -303,6 +306,33 @@ export default function LessonVisual({ lessonId, t, lang }) {
           />
         );
       })()}
+
+      {/*
+        The only figure here whose two parts are COMPLEMENTARY. Lesson 12
+        writes the pattern as two snapshots ("early payments are mostly
+        interest, and later payments are mostly principal") and then locates
+        the changeover in a sentence of its own — "roughly two-thirds of the
+        way through its term" — and prose cannot put that position next to the
+        midpoint it is being contrasted with. The boundary is handed the share
+        FUNCTION rather than a sampled series, so the crossing the marker sits
+        on and the curve it sits under are the same arithmetic; see
+        moneyVisuals.js for the derivation and `check-data.mjs` §70.
+      */}
+      {kind === "mortgageSplit" && (
+        <SplitBand
+          title={splitTitle[lang]}
+          samples={splitSamples}
+          share={splitInterestShare}
+          crossing={splitCrossing}
+          segmentLabels={splitSegmentLabels[lang]}
+          markerLabel={splitMarkerLabel[lang]}
+          endLabels={splitEndLabels[lang]}
+          colors={[graph.blue, graph.green]}
+          labelInks={[ink.accent, ink.ok]}
+          description={splitDescription[lang]}
+          caption={splitCaption[lang]}
+        />
+      )}
 
       {/*
         Unlike the four figures above, this one's x-axis is not a quantity —

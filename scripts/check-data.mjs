@@ -10139,5 +10139,280 @@ function trendDirection(src) {
   }
 }
 
+// §70. LESSON 12'S PRINCIPAL-AND-INTEREST SPLIT, DRAWN AS A COMPOSITION THAT
+//      INVERTS (backlog item 27, added 2026-09-03). The sixth KIND of figure
+//      this file guards, and the first on the `essentials` track since
+//      2026-08-16:
+//
+//        §21/§50/§53 — the figure plots arithmetic its lesson states.
+//        §54         — the figure plots RANKS read off two sentences.
+//        §57         — the figure plots a PARTITION and carries no magnitude.
+//        §64         — the figure plots a CLOSED CAUSAL LOOP.
+//        §69         — the figure plots an INTERVAL.
+//        §70 (here)  — the figure plots TWO COMPLEMENTARY SHARES OF A CONSTANT
+//          TOTAL, and the claim is WHERE they trade places: lesson 12 says a
+//          30-year loan "often doesn't cross the halfway point between
+//          interest and principal until roughly two-thirds of the way through
+//          its term". Like §64 and §69, every string it renders except its
+//          text alternative is LIFTED VERBATIM from lesson 12.
+//
+//      THE LEARNER-VISIBLE FAILURE, in one sentence, per W-6.2 rule 3: a
+//      reader meets a band whose two halves they cannot tell apart because the
+//      line dividing them has gone invisible against the fills (d) — measured,
+//      not hypothetical: the first version of this figure drew that line in
+//      `ink.muted` at 1.10:1 and 1.18:1 against the two fills in light and
+//      1.36:1 / 1.58:1 in dark, and it shipped a comment claiming the opposite.
+//      Or the crossing drifts to the middle of the term (c), which turns the
+//      one thing lesson 12 flags as "a pattern many buyers don't expect" into
+//      the pattern everybody expects. Or a tick appears on the vertical axis
+//      (e) and the figure starts stating a payment and a rate that lesson 12
+//      never gives.
+{
+  const before70 = failures;
+  const need70 = [
+    "splitTitle", "splitSegmentLabels", "splitMarkerLabel", "splitEndLabels",
+    "splitCaption", "splitDescription", "splitSamples", "splitCrossing",
+    "splitInterestShare", "splitTermYears",
+  ];
+  const missingSplit = need70.filter((k) => moneyVisualsContent[k] === undefined);
+  if (missingSplit.length > 0) {
+    fail(`§70: src/content/moneyVisuals.js no longer exports ${missingSplit.join(", ")}. This section is pointed at a structure that no longer exists — repoint it rather than leaving it green.`);
+  } else {
+    const SPLIT_LESSON = "12";
+    const {
+      splitTitle, splitSegmentLabels, splitMarkerLabel, splitEndLabels,
+      splitCaption, splitDescription, splitSamples, splitCrossing,
+      splitInterestShare, splitTermYears,
+    } = moneyVisualsContent;
+
+    // (a) EVERY VISIBLE STRING IS VERBATIM FROM LESSON 12, per language, against
+    //     that language's own body — §64 (a)'s and §69 (a)'s shape, for their
+    //     reason (owner item O-3: a figure an inch from the paragraph it draws
+    //     must not add four languages of unreviewed machine translation).
+    //
+    //     CONTROLS, per language and in both directions, because a body that
+    //     failed to load returns "not found" for every string and reads exactly
+    //     like a figure that was rewritten wholesale:
+    //       • an absent probe must NOT be found (the text is real text);
+    //       • the lesson's own word for its subject MUST be found — specific
+    //         rather than generic, so finding it proves the scan reached THIS
+    //         lesson and not merely some lesson.
+    const CONTROL_ABSENT_70 = "qzx-no-lesson-says-this";
+    const MORTGAGE_WORD = { en: "mortgage", es: "hipoteca", ko: "주택담보대출", zh: "房贷", ja: "住宅ローン" };
+    // The bare term each segment label opens with, in each language. Used twice
+    // below: to tie the legend label to the lesson's own word for the part, and
+    // to assert the text alternative names both parts.
+    const SPLIT_TERMS = {
+      en: ["interest", "principal"], es: ["interés", "capital"],
+      ko: ["이자", "원금"], zh: ["利息", "本金"], ja: ["利息", "元金"],
+    };
+    // The fraction the crossing is stated at, in each language's own numerals.
+    // ⚠️ This is NOT a translation of "two-thirds" — it is the substring lesson
+    // 12 actually uses, and ko/zh/ja write the claim as a RATIO REVERSING where
+    // en/es write it as crossing a halfway point. A control scoped to the
+    // English phrasing would pass in English and be wrong in the other four,
+    // which is exactly what §69 (c) had to be rewritten for.
+    const SPLIT_FRACTION = { en: "two-thirds", es: "dos tercios", ko: "3분의 2", zh: "三分之二", ja: "3分の2" };
+    for (const lang of LANGS) {
+      const entry = lessonContent[SPLIT_LESSON] ?? {};
+      const sections = entry.sections ?? [];
+      const text = sections.map((s) => `${s.heading?.[lang] ?? ""}\n${s.body?.[lang] ?? ""}`).join("\n");
+      if (text.trim().length === 0 || text.includes(CONTROL_ABSENT_70)) {
+        fail(`§70: the lesson-12 scan failed its control in "${lang}" — ${text.trim().length === 0 ? "the text is empty" : "an absent probe was found"}. It is reading the wrong text or no text, so a clean result for this language would mean nothing.`);
+        continue;
+      }
+      if (!text.toLowerCase().includes(MORTGAGE_WORD[lang].toLowerCase())) {
+        fail(`§70: lesson 12's "${lang}" text no longer contains "${MORTGAGE_WORD[lang]}". Either the scan is not reaching lesson 12, or the lesson stopped naming its own subject — re-read it before repointing this control.`);
+        continue;
+      }
+
+      const visible = [
+        ["the title", splitTitle[lang], "the first clause of the lesson's own sentence about the split"],
+        ["the caption", splitCaption[lang], "the lesson's own two-snapshot statement of the pattern"],
+        ...(splitSegmentLabels[lang] ?? []).map((v, i) => [`segment label ${i}`, v, "the lesson's own parenthetical definition of that part of the payment"]),
+        ["the crossing marker", splitMarkerLabel[lang], "the lesson's own hedged statement of where the two shares trade places"],
+        ...(splitEndLabels[lang] ?? []).map((v, i) => [`end label ${i}`, v, "the lesson's own phrase for that end of the term"]),
+      ];
+      for (const [what, value, whence] of visible) {
+        if (value === undefined || !text.toLowerCase().includes(String(value).toLowerCase())) {
+          fail(`§70: ${what} of the principal-and-interest split reads "${value}" in "${lang}", but lesson 12 — the lesson it is drawn beside — does not contain that string in that language. It is ${whence}, lifted rather than translated, and the whole point is that the figure and the paragraph an inch above it use the same words. Take the string from the lesson's current prose; do not translate the English one.`);
+        }
+      }
+
+      // The two segment labels must OPEN with the lesson's bare word for the
+      // part. Without this, (a) alone is satisfied by any verbatim sentence
+      // from the lesson — including one about the other part.
+      const terms = SPLIT_TERMS[lang];
+      const segs = splitSegmentLabels[lang] ?? [];
+      if (segs.length !== 2) {
+        fail(`§70: splitSegmentLabels.${lang} has ${segs.length} label(s); the band has exactly two regions and charts.jsx indexes them 0 (upper, interest) and 1 (lower, principal).`);
+      } else {
+        segs.forEach((label, i) => {
+          if (!String(label).toLowerCase().startsWith(terms[i].toLowerCase())) {
+            fail(`§70: the ${i === 0 ? "upper" : "lower"} region's label in "${lang}" is "${label}", which does not start with "${terms[i]}" — the lesson's own word for that part. Index 0 is the upper region and must be interest; index 1 is the lower one and must be principal. Swapping them renders perfectly and teaches that a mortgage starts out mostly principal.`);
+          }
+        });
+      }
+
+      // (b) THE ONE STRING THAT IS NOT LIFTED still names both regions and the
+      //     crossing. The band is a `role="img"`, so nothing inside it is
+      //     announced on its own: whatever the description omits does not exist
+      //     for a screen-reader learner, and this figure's whole content is the
+      //     two regions and where they trade places.
+      const desc = splitDescription[lang] ?? "";
+      const missingDesc = [...terms, SPLIT_FRACTION[lang]].filter((t) => !desc.toLowerCase().includes(t.toLowerCase()));
+      if (missingDesc.length > 0) {
+        fail(`§70 (b): the "${lang}" text alternative does not contain ${missingDesc.map((t) => `"${t}"`).join(", ")}. A description that drops a region, or drops where the two trade places, drops the figure's entire claim for that reader.`);
+      }
+      if (!splitMarkerLabel[lang].includes(SPLIT_FRACTION[lang])) {
+        fail(`§70 (b): the "${lang}" crossing marker no longer contains "${SPLIT_FRACTION[lang]}". The marker is pinned at exactly two-thirds and the label is the only thing carrying the lesson's own hedge about it, so a label that stops naming the fraction leaves the figure stating a precision the prose does not.`);
+      }
+
+      // (c) THE CAPTION IS NOT THE TAKEAWAY. LessonReader draws the KEY TAKEAWAY
+      //     card a couple of inches under the figure, and lesson 12's takeaway
+      //     ends on this same claim — so a caption lifted from there would print
+      //     one sentence twice on one screen. §69 (g) caught this shape once.
+      const takeaway = entry.takeaway?.[lang] ?? "";
+      if (takeaway.trim().length === 0) {
+        fail(`§70 CONTROL (c): lesson 12 has no takeaway in "${lang}", so the duplication test below would pass by comparing against an empty string.`);
+      } else if (takeaway.toLowerCase().includes(String(splitCaption[lang]).toLowerCase())) {
+        fail(`§70 (c): the split band's "${lang}" caption is a substring of lesson 12's own takeaway, which LessonReader draws a couple of inches below the figure — so the learner reads the same sentence twice on one screen. Lift the caption from the section's BODY instead.`);
+      }
+    }
+
+    // (d) THE CURVE IS THE LESSON'S OWN FACT, RE-DERIVED HERE RATHER THAN
+    //     RE-READ. moneyVisuals.js builds the boundary from one stated number —
+    //     the crossing at two-thirds of the term — via the amortization identity
+    //     s(f) = 1 - k^(f-1) with k = 2^(1/(1-crossing)). This block recomputes
+    //     that independently and checks the shipped function against it, so an
+    //     edit to either the constant or the formula has to survive the other.
+    {
+      const k = 2 ** (1 / (1 - splitCrossing));
+      const expect = (f) => 1 - k ** (f - 1);
+      const near = (a, b) => Math.abs(a - b) < 1e-12;
+
+      if (!near(splitInterestShare(splitCrossing), 0.5)) {
+        fail(`§70 (d): the interest share at the stated crossing is ${splitInterestShare(splitCrossing)}, not 0.5. The marker is drawn at splitCrossing and the boundary is drawn from splitInterestShare — if they disagree, the dot sits somewhere the two shares are not equal, which is the one position lesson 12 actually states.`);
+      }
+      if (!near(splitInterestShare(0), 1 - 1 / k) || !near(splitInterestShare(1), 0)) {
+        fail(`§70 (d): the boundary's ends are ${splitInterestShare(0)} and ${splitInterestShare(1)}, expected ${1 - 1 / k} and 0 for a crossing at ${splitCrossing}. The ends are DERIVED from the crossing, not chosen — see moneyVisuals.js.`);
+      }
+      const drift = splitSamples.map((f) => Math.abs(splitInterestShare(f) - expect(f)));
+      if (Math.max(...drift) > 1e-12) {
+        fail(`§70 (d): splitInterestShare no longer matches the amortization identity re-derived from splitCrossing (worst sample off by ${Math.max(...drift)}). One of the two has been edited without the other.`);
+      }
+      // Strictly falling, and — the point of the figure — crossing later than
+      // the middle of the term. A crossing at 0.5 would draw a symmetric band
+      // and teach the thing lesson 12 says buyers wrongly expect.
+      const falling = splitSamples.every((f, i) => i === 0 || splitInterestShare(f) < splitInterestShare(splitSamples[i - 1]));
+      if (!falling) {
+        fail("§70 (d): the interest share is not strictly falling across splitSamples. The band's whole claim is that one part gives way to the other, monotonically.");
+      }
+      if (!(splitCrossing > 0.5 && splitCrossing < 1)) {
+        fail(`§70 (d): splitCrossing is ${splitCrossing}. Lesson 12's stated surprise is that the crossing comes LATE — "roughly two-thirds of the way through its term" — so a value at or before the midpoint draws the expectation the lesson exists to correct.`);
+      }
+      if (splitSamples.length !== splitTermYears + 1 || splitSamples[0] !== 0 || splitSamples[splitSamples.length - 1] !== 1) {
+        fail(`§70 (d): splitSamples should run 0..1 in ${splitTermYears + 1} steps (one per year of the term); it has ${splitSamples.length} and runs ${splitSamples[0]}..${splitSamples[splitSamples.length - 1]}.`);
+      }
+    }
+
+    // (e) THE SEPARATOR IS VISIBLE ON BOTH FILLS, IN BOTH PALETTES — the block
+    //     this section exists for. §28b guarantees each graph token clears 3:1
+    //     against the SURFACES and says nothing about a mark drawn ON a fill,
+    //     which is what the boundary, the crossing marker and the dot all are.
+    //     Measured on the built app before this was written: `graph.blue` and
+    //     `graph.green` are 1.30:1 apart in light and 1.17:1 in dark, so the
+    //     separator is the only thing locating the split by luminance.
+    {
+      const cssSrc70 = readFileSync(join(ROOT, "src", "index.css"), "utf8");
+      const chan = (c) => { const s2 = c / 255; return s2 <= 0.03928 ? s2 / 12.92 : ((s2 + 0.055) / 1.055) ** 2.4; };
+      const lum70 = (hex) => 0.2126 * chan(parseInt(hex.slice(1, 3), 16)) + 0.7152 * chan(parseInt(hex.slice(3, 5), 16)) + 0.0722 * chan(parseInt(hex.slice(5, 7), 16));
+      const cr70 = (a, b) => { const [hi, lo] = lum70(a) > lum70(b) ? [lum70(a), lum70(b)] : [lum70(b), lum70(a)]; return (hi + 0.05) / (lo + 0.05); };
+      // SELF-TEST, for §28's reason: this block asserts numbers are LARGE
+      // ENOUGH, so a broken formula reads as a pass on every pair at once.
+      if (Math.abs(cr70("#ffffff", "#000000") - 21) > 0.01 || Math.abs(cr70("#2563eb", "#ffffff") - 5.17) > 0.01) {
+        fail("§70 (e): the contrast helper failed its own self-test on two published pairs, so every ratio below is meaningless.");
+      } else {
+        const GRAPH_MIN_70 = 3;
+        const blocks = [
+          ["light (`:root`)", /:root\s*\{([\s\S]*?)\n\}/],
+          ["explicit dark (`:root[data-theme=\"dark\"]`)", /:root\[data-theme="dark"\]\s*\{([\s\S]*?)\n\}/],
+          ["system dark (`@media (prefers-color-scheme: dark)`)", /@media \(prefers-color-scheme: dark\)\s*\{\s*:root:not\(\[data-theme="light"\]\)\s*\{([\s\S]*?)\n {2}\}/],
+        ];
+        let paletteChecks = 0;
+        for (const [label, re] of blocks) {
+          const m = cssSrc70.match(re);
+          if (!m) { fail(`§70 (e): could not find the ${label} palette block in src/index.css — the scan matches nothing rather than the palette having gone away, and for a contrast check that reads as a pass.`); continue; }
+          const tok = {};
+          for (const [, k2, v] of m[1].matchAll(/(--[a-z-]+)\s*:\s*(#[0-9a-fA-F]{6})\s*;/g)) tok[k2] = v;
+          const sep = tok["--surface-card"];
+          for (const fillTok of ["--graph-blue", "--graph-green"]) {
+            const fillVal = tok[fillTok];
+            if (!sep || !fillVal) { fail(`§70 (e): the ${label} palette is missing ${!sep ? "--surface-card" : fillTok}, so the separator's contrast cannot be checked there.`); continue; }
+            paletteChecks += 1;
+            const r = cr70(sep, fillVal);
+            if (r < GRAPH_MIN_70) {
+              fail(`§70 (e): in the ${label} palette the split band's separator (--surface-card ${sep}) is ${r.toFixed(2)}:1 against ${fillTok} (${fillVal}), under WCAG 1.4.11's ${GRAPH_MIN_70}:1. That line, the dashed crossing marker and the crossing dot are all drawn in it, and the two fills are barely a ratio apart from each other — so at this contrast the figure renders as one flat two-tone block with no visible split. This is the exact defect the figure shipped with for an hour on 2026-09-03 using ink.muted (1.10:1 / 1.18:1 in light).`);
+            }
+          }
+        }
+        if (paletteChecks < 6) {
+          fail(`§70 (e): only ${paletteChecks} separator/fill pair(s) were checked (expected 6 — two fills across three palette blocks). The palette scan is probably matching nothing rather than the palettes having shrunk.`);
+        }
+      }
+    }
+
+    // (f) THE COMPONENT STILL DRAWS IT THAT WAY. (e) checks the tokens; this
+    //     checks that the figure uses them — one named constant for all three
+    //     marks, so they cannot drift apart, and nothing reverting to an ink
+    //     token without this section noticing.
+    const chartsSrc70 = readFileSync(join(ROOT, "src", "components", "charts.jsx"), "utf8");
+    const splitAt = chartsSrc70.indexOf("export function SplitBand");
+    if (splitAt < 0) {
+      fail("§70 (f): charts.jsx no longer exports SplitBand. The figure's geometry is asserted by reading that function, so this check is pointed at nothing.");
+    } else {
+      const nextFn = chartsSrc70.indexOf("\n// ── ", splitAt);
+      const slice = chartsSrc70.slice(splitAt, nextFn < 0 ? chartsSrc70.length : nextFn);
+      if (!/const SPLIT_SEPARATOR = surface\.card;/.test(chartsSrc70)) {
+        fail("§70 (f): charts.jsx no longer defines `const SPLIT_SEPARATOR = surface.card`. (e) asserts that pair's contrast; if the component stops using it, (e) is checking a color nothing draws.");
+      }
+      for (const part of ["boundary", "marker", "crossing"]) {
+        const re = new RegExp(`data-figure-part="${part}"[^>]*(stroke|fill)=\\{SPLIT_SEPARATOR\\}`);
+        if (!re.test(slice)) {
+          fail(`§70 (f): SplitBand's "${part}" is no longer drawn in SPLIT_SEPARATOR. All three are one color on purpose — together they read as a single crosshair, and separately they are three chances to pick one that vanishes on a fill.`);
+        }
+      }
+      // Both regions are cut from the SAME boundary array, so the band's total
+      // height cannot drift: neither polygon has a height of its own.
+      if (!slice.includes("[...boundary].reverse().join(\" \")") || !slice.includes("${boundary.join(\" \")}")) {
+        fail("§70 (f): SplitBand's two regions are no longer both built from the shared `boundary` array. The figure's premise is that the two shares sum to a constant; two independently computed edges can drift apart while each still looks plausible.");
+      }
+      // ⚠️ NO SCALE ON THE VERTICAL AXIS. Lesson 12 states no payment amount and
+      // no interest rate, and "mostly" is the only word it gives for how
+      // lopsided the early payments are. The two end labels are the only text
+      // the SVG may carry; a third would almost certainly be a tick.
+      const textNodes = (slice.match(/<text\b/g) ?? []).length;
+      if (textNodes !== 2) {
+        fail(`§70 (f): SplitBand's SVG renders ${textNodes} <text> node(s), expected exactly 2 (the two end labels). A third is almost certainly a tick or a percentage on the vertical axis — lesson 12 states no payment, no rate and no share, so a number there would be the figure claiming what the prose declines to.`);
+      }
+    }
+
+    // (g) THE FIGURE IS STILL ATTACHED TO LESSON 12, and still carries the
+    //     personal-finance note rather than the market-scenario one — it plots
+    //     a lesson's own arithmetic, not a market reading (§2.3 vs §10.1).
+    const lvSrc70 = readFileSync(join(ROOT, "src", "components", "LessonVisual.jsx"), "utf8");
+    if (!/^\s*12:\s*"mortgageSplit"/m.test(lvSrc70)) {
+      fail("§70 (g): LESSON_VISUALS in src/components/LessonVisual.jsx no longer maps lesson 12 to \"mortgageSplit\". The figure would stop rendering and every other assertion in this section would keep passing against content nothing displays.");
+    }
+    if (!/const MONEY_VISUALS = new Set\(\[[^\]]*"mortgageSplit"/.test(lvSrc70)) {
+      fail("§70 (g): \"mortgageSplit\" is no longer in MONEY_VISUALS, so the note under the figure switches to the market-scenario wording. This figure plots one lesson's own arithmetic and needs the illustration note (§10.1), not the not-live-market-data one (§2.3).");
+    }
+  }
+
+  if (failures === before70) {
+    console.log(`  §70 lesson 12's principal-and-interest split: ${LANGS.length} language(s) verified verbatim against the lesson's own text (title, caption, 2 segment labels, the crossing marker and 2 end labels = ${7 * LANGS.length} containments), the boundary re-derived from the stated two-thirds crossing, the separator over 3:1 on both fills in all three palette blocks, and no scale on the vertical axis.`);
+  }
+}
+
 console.log(`\n${failures === 0 ? "PASS" : "FAIL"}: ${failures} failure(s), ${warnings} warning(s).`);
 process.exit(failures === 0 ? 0 : 1);

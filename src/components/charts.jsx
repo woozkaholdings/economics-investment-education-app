@@ -1316,3 +1316,189 @@ export function CycleChart({ phaseNames, trendLabel, description }) {
     </figure>
   );
 }
+
+// ── SplitBand ─────────────────────────────────────────────────────────────
+// Lesson 12 ("Renting vs. Buying: The Real Trade-offs of a Home"), section 2
+// "What a Mortgage Payment Is Actually Made Of" — backlog item 27, added
+// 2026-09-03. The first `essentials` figure since 2026-08-16, and the first
+// anywhere in the app whose subject is a COMPOSITION THAT INVERTS while the
+// thing being composed does not move.
+//
+// WHY A PICTURE, in the lesson's own words rather than in an argument built
+// for it. The lesson writes the pattern as two snapshots and then locates the
+// changeover in a separate sentence:
+//
+//     "early payments are mostly interest, and later payments are mostly
+//      principal"
+//     "A 30-year loan often doesn't cross the halfway point between interest
+//      and principal until roughly two-thirds of the way through its term."
+//
+// Three things are being asserted there and prose can only assert them one at
+// a time: that the two parts are shares of ONE payment (so one grows exactly
+// as fast as the other shrinks), that the larger of the two swaps, and that
+// the swap does NOT happen at the middle of the term. The last is the whole
+// surprise — the lesson says so itself, "in a pattern many buyers don't
+// expect" — and it is a POSITION. A sentence can name a position; it cannot
+// put it next to the midpoint it is being contrasted with, which is the only
+// way "two-thirds, not half" is legible at a glance.
+//
+// This is `PreferenceFlip`'s kind (a crossing) arriving at a different shape,
+// and the difference is worth stating because a future run will be tempted to
+// reuse that component here. There the two curves are INDEPENDENT quantities
+// that happen to swap rank, and the panel behind them carries the decision.
+// Here they are COMPLEMENTARY: the band's total height is constant by
+// construction, so the two regions are one boundary seen from both sides, and
+// the crossing is the single point where the boundary is halfway down. Drawn
+// as two free lines that property would be a coincidence of the data; drawn as
+// one boundary it cannot fail to hold.
+//
+// ⚠️ THE BAND IS THE LOAN PART OF THE PAYMENT, NOT THE PAYMENT. Lesson 12 says
+// a monthly payment bundles four things and that "only the first two make up
+// the loan itself" — principal and interest. Property taxes and homeowner's
+// insurance have no stated share anywhere in the lesson, so a four-part band
+// would have to invent two of its four numbers. The two segment labels are the
+// lesson's own parenthetical definitions of the two it does state, which is
+// also what stops the figure reading as the whole bill.
+//
+// ⚠️ AND THE VERTICAL AXIS CARRIES NO SCALE, DELIBERATELY. No tick, no
+// percentage and no dollar figure is drawn: the lesson states no payment
+// amount and no interest rate, and "mostly" is the only word it gives for how
+// lopsided the early payments are. A reader can see which region is larger and
+// where they trade places, which is exactly what the prose claims and no more.
+//
+// EVERY STRING THIS FIGURE RENDERS EXCEPT ITS TEXT ALTERNATIVE IS VERBATIM
+// FROM LESSON 12, in all five languages — `SpendingLoop`'s and `BalanceBand`'s
+// property, for their reason (AGENT_LOG.md, owner item O-3: a figure an inch
+// from the paragraph it draws must not add four languages of unreviewed
+// machine translation). `check-data.mjs` §70 (a) holds it.
+//
+// COLOR, and this paragraph is a correction of the one that stood here for
+// about an hour on 2026-09-03, because the first version of it was wrong in
+// the way this whole file keeps warning about — it reasoned about a rendered
+// property instead of measuring it.
+//
+// The two regions are `graph` tokens and the split between them has to be
+// carried by something else. §28b guarantees each graph token clears 1.4.11's
+// 3:1 against the SURFACES; it guarantees nothing about two graph tokens
+// against EACH OTHER, and this figure's entire content is where one region
+// ends and the other begins. Measured live on the built app: `graph.blue`
+// against `graph.green` is 1.30:1 in light and 1.17:1 in dark — the two fills
+// differ in hue and essentially not at all in luminance, which is exactly the
+// trap `PreferenceFlip`'s header records at 1.01:1 between two washes.
+//
+// ⛔ SO THE SEPARATOR IS NOT `ink.muted`, WHICH IS WHAT THIS FIGURE SHIPPED
+// FIRST AND WHAT ITS COMMENT CLAIMED WAS "a stroke with luminance of its own".
+// Measured against the two fills it is drawn ON: 1.10:1 and 1.18:1 in light,
+// 1.36:1 and 1.58:1 in dark. It is a dark gray chosen to be read as TEXT ON A
+// CARD (7.01:1 there), and on a saturated fill it is very nearly invisible —
+// the boundary, the crossing marker and the crossing dot would all have
+// disappeared and left one flat two-tone block. Found by reading
+// `getComputedStyle` off the rendered figure in both schemes; a source read
+// cannot see it, which is item 27's own standing warning about geometry
+// arriving in a second costume.
+//
+// `surface.card` is the separator instead, and it is the semantically right
+// answer as well as the measured one: the line between the two regions is
+// drawn in the color of the card behind the figure, so it reads as a hairline
+// GAP rather than as a third series. Measured against the two fills:
+// 7.72:1 / 5.93:1 in light, 8.93:1 / 10.41:1 in dark — the worst cell is
+// 5.93:1 against a 3:1 bar. The same color draws the dashed crossing marker
+// and the dot, so the three together read as one crosshair. §70 (d) asserts
+// the ratio against both palettes rather than trusting this paragraph.
+const SPLIT_W = 300;
+const SPLIT_H = 140;
+const SPLIT_PAD = { left: 6, right: 6, top: 10, bottom: 22 };
+// The boundary, the crossing marker and the crossing dot are one color, named
+// once so they cannot drift apart. See the COLOR note above for why it is a
+// surface token in a file whose convention is `graph` for marks.
+const SPLIT_SEPARATOR = surface.card;
+
+export function SplitBand({ title, samples, share, crossing, segmentLabels, markerLabel, endLabels, colors, labelInks, description, caption }) {
+  const plotW = SPLIT_W - SPLIT_PAD.left - SPLIT_PAD.right;
+  const plotH = SPLIT_H - SPLIT_PAD.top - SPLIT_PAD.bottom;
+  const floorY = SPLIT_PAD.top + plotH;
+  const px = (f) => SPLIT_PAD.left + f * plotW;
+  // `share` returns the TOP region's fraction of the band, so y grows downward
+  // as the top region grows. The function belongs to the content module for
+  // `PreferenceFlip`'s reason: the curve is a claim about the loan, and this
+  // file holds no data.
+  const py = (s) => SPLIT_PAD.top + s * plotH;
+  const boundary = samples.map((f) => `${+px(f).toFixed(2)},${+py(share(f)).toFixed(2)}`);
+  const crossX = px(crossing);
+  const crossY = py(0.5);
+
+  return (
+    <figure style={{ background: surface.card, border: `1px solid ${line.hairline}`, borderRadius: radius.lg, padding: space["4"], margin: 0 }}>
+      {title && (
+        <figcaption style={{ marginBottom: space["3"] }}>
+          <Text as="span" variant="caption" color={ink.muted} style={{ textTransform: "uppercase", letterSpacing: "0.05em", fontWeight: 700 }}>
+            {title}
+          </Text>
+        </figcaption>
+      )}
+      <svg viewBox={`0 0 ${SPLIT_W} ${SPLIT_H}`} style={{ width: "100%", height: 150 }} role="img" data-figure="splitBand" aria-label={description}>
+        {/*
+          The two regions are one boundary read from both sides — the top
+          polygon closes along the band's flat top edge, the bottom one along
+          its flat floor. Neither has a height of its own, so no edit here can
+          make them disagree about the total.
+        */}
+        <polygon
+          data-figure-part="segment"
+          data-figure-index="0"
+          points={`${SPLIT_PAD.left},${SPLIT_PAD.top} ${SPLIT_W - SPLIT_PAD.right},${SPLIT_PAD.top} ${[...boundary].reverse().join(" ")}`}
+          fill={colors[0]}
+        />
+        <polygon
+          data-figure-part="segment"
+          data-figure-index="1"
+          points={`${boundary.join(" ")} ${SPLIT_W - SPLIT_PAD.right},${floorY} ${SPLIT_PAD.left},${floorY}`}
+          fill={colors[1]}
+        />
+        <polyline data-figure-part="boundary" points={boundary.join(" ")} fill="none" stroke={SPLIT_SEPARATOR} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+        {/*
+          The crossing. The dashed line runs the full height rather than
+          stopping at the boundary, because what it locates is a point on the
+          HORIZONTAL axis — "two-thirds of the way through the term" — and a
+          stub ending at the curve would read as a value instead.
+        */}
+        <line data-figure-part="marker" x1={crossX} y1={SPLIT_PAD.top} x2={crossX} y2={floorY} stroke={SPLIT_SEPARATOR} strokeWidth="1" strokeDasharray="3 2" />
+        <circle data-figure-part="crossing" cx={crossX} cy={crossY} r="3.5" fill={SPLIT_SEPARATOR} />
+        <text x={SPLIT_PAD.left} y={SPLIT_H - 6} fill={ink.muted} fontSize="9">{endLabels[0]}</text>
+        <text x={SPLIT_W - SPLIT_PAD.right} y={SPLIT_H - 6} textAnchor="end" fill={ink.muted} fontSize="9">{endLabels[1]}</text>
+      </svg>
+      {/*
+        The keys are HTML and not SVG text, for `BalanceBand`'s measured
+        reason: these are five-language strings, two of them full parenthetical
+        definitions, SVG does not wrap, and a clipped label fails silently in
+        exactly the languages nobody on this project re-reads. The marker's key
+        is the third row rather than a label at the top of the dashed line for
+        the same reason — "aproximadamente dos tercios de su plazo" is 39
+        characters against a 300-unit viewBox.
+      */}
+      <ul role="list" style={{ listStyle: "none", margin: `${space["2"]}px 0 0`, padding: 0, display: "grid", gap: space["1"] }}>
+        {segmentLabels.map((label, i) => (
+          <li key={label} style={{ display: "flex", alignItems: "center", gap: space["2"] }}>
+            <span aria-hidden="true" style={{ width: 12, height: 12, borderRadius: radius.sm, background: colors[i], flexShrink: 0 }} />
+            <Text as="span" variant="caption" color={labelInks[i]} style={{ fontWeight: 700 }}>{label}</Text>
+          </li>
+        ))}
+        <li style={{ display: "flex", alignItems: "center", gap: space["2"] }}>
+          {/*
+            The marker's key is a MINIATURE of the marker in place, not a bare
+            dashed rule: the marker is `surface.card`, so a rule of that color
+            drawn straight onto the card would be a 1:1 swatch — invisible, and
+            invisible in a way that reads as a missing key rather than as a
+            styling slip. Drawing it across a chip of the upper region's own
+            fill is the same 7.72:1 / 8.93:1 it has inside the figure.
+          */}
+          <span aria-hidden="true" style={{ width: 12, height: 12, borderRadius: radius.sm, background: colors[0], flexShrink: 0, display: "flex", justifyContent: "center" }}>
+            <span style={{ width: 0, height: "100%", borderLeft: `2px dashed ${SPLIT_SEPARATOR}` }} />
+          </span>
+          <Text as="span" variant="caption" color={ink.muted}>{markerLabel}</Text>
+        </li>
+      </ul>
+      {caption && <Text variant="caption" color={ink.muted} style={{ marginTop: space["3"], lineHeight: 1.5 }}>{caption}</Text>}
+    </figure>
+  );
+}

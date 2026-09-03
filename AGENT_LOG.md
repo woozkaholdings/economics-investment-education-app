@@ -3285,6 +3285,59 @@ through two passes that each had it open.
     > also read: 35 is a dial whose effects the lesson lists sequentially with no magnitude for any of
     > them.** The next figure must come from `essentials` (twelve bare, none ever assessed) or from a
     > lesson whose prose changes. **Do not re-derive any of the rejections above.**
+    > **Eleventh visual added 2026-09-03: lesson 12 (renting vs. buying), as `SplitBand` — the first
+    > `essentials` figure since 2026-08-16, and the first whose subject is a COMPOSITION THAT
+    > INVERTS.** Coverage re-parsed with this item's own control (must find 36, must not find 9999,
+    > 44 lessons, joined against `lessons.js`'s `track`): **economy 7/12, essentials 4/15, money
+    > 5/17 — 16 of 44, 0 orphan ids.** ⚠️ The parser in this item's older text — a regex over
+    > `lessons.js` — returns **0 lessons** today because the entries are multi-line; importing the
+    > module is what works, and the control is what caught it. Do not re-derive that.
+    > **It cleared the bar on section 2's own pair of sentences**: *"early payments are mostly
+    > interest, and later payments are mostly principal"*, then, separately, *"A 30-year loan often
+    > doesn't cross the halfway point between interest and principal until roughly two-thirds of the
+    > way through its term."* Three claims live there and prose can only make them one at a time —
+    > that the two parts are shares of ONE payment, that the larger of the two swaps, and that the
+    > swap is **not** at the middle. The last is the lesson's own flagged surprise ("a pattern many
+    > buyers don't expect") and it is a POSITION: a sentence can name it, and cannot put it beside
+    > the midpoint it is being contrasted with.
+    > ⛔ **THE QUANTITY RULE PASSES BY DERIVATION, WHICH IS NEW HERE AND IS THE PART TO REUSE.**
+    > Lesson 12 gives no payment amount and no interest rate, so a curve drawn by eye would be
+    > inventing the rate — the exact ground lessons 16, 18 and 21 were rejected on. But the interest
+    > share of a fixed payment is `s(f) = 1 - k^(f-1)` with `k = 2^(1/(1-crossing))`, in which
+    > neither the principal nor the payment survives; so the **entire curve follows from the one
+    > number the lesson states**, the two-thirds crossing, and `k = 8`. `check-data.mjs` §70 (d)
+    > re-derives it rather than re-reading it. **The rule to carry: a shape whose parameters cancel
+    > can be sourced from a single stated fact, and that is not the same as inventing one.**
+    > ⚠️ **NO SCALE ON THE VERTICAL AXIS, AND IT MUST STAY THAT WAY.** `s(0) = 7/8` is derived, not
+    > stated; the lesson says only "mostly". §70 (f) asserts the SVG carries exactly two `<text>`
+    > nodes (the two end labels), so a future run cannot add a tick, a percentage or a real
+    > amortization schedule without the check failing — all three would make the figure state what
+    > the prose declines to.
+    > ⛔ **AND THE COLOR LESSON, which is item 135's class arriving in a figure that had already
+    > been checked.** The first version drew the boundary in `ink.muted` and shipped a comment
+    > saying it was "a stroke with luminance of its own". Measured on the built app against the two
+    > fills it is drawn ON: **1.10:1 and 1.18:1 in light, 1.36:1 and 1.58:1 in dark.** It is a text
+    > token (7.01:1 on the card) and on a saturated fill it is nearly invisible — the boundary, the
+    > marker and the dot would all have vanished. `surface.card` replaced it (7.72/5.93 light,
+    > 8.93/10.41 dark) and §70 (e) asserts the pair against all three palette blocks. **§28b covers
+    > graph-on-surface and says nothing about a mark drawn ON a fill; that gap is general, and any
+    > future figure that draws one owes the same live measurement.**
+    > ⛔ **THE ELEVEN `essentials` LESSONS STILL BARE WERE ALL READ ON 2026-09-03 — do not
+    > re-derive these.** **5** (diversification), **8** (insurance), **10** (W-2 vs 1099), **14**
+    > (estate planning) and **15** (credit reports vs scores) state **no quantity at all** in the
+    > section that carries their claim; 5's and 8's shapes would each have to invent a series, and
+    > 15's cross-product of bureaus and models would have to commit to a count the lesson
+    > deliberately leaves open ("multiple scoring models", "such as"). **9** (inflation) looked
+    > strong — a nominal line rising while a real line falls — but states $1,000 and twenty years
+    > and then gives both rates as "a modest percentage" and "a similar or larger percentage": two
+    > lines, two invented slopes, which is lesson 16's rejection exactly. **11** (fees) states every
+    > quantity a chart needs ($10,000, 30 years, 7% vs ~6%, $75,000 vs $57,000) and is rejected on
+    > the OTHER rule: lesson 3's shipped `GrowthCurve` is already two lines from one origin whose
+    > caption is "the gap widens every year", and lesson 11's own prose says a fee works "exactly
+    > like" that — so the figure would redraw a shipped shape to illustrate a stated analogy. **2**,
+    > **4**, **6** and **13** state scattered amounts with no structure joining them. **The next
+    > figure has no named candidate here either**, and that is a finding rather than a gap.
+
     > **THE BAR FOR AN ELEVENTH IS UNCHANGED AND STILL BINDS**, and there is again **no named
     > candidate** —
     > deliberately, because a named candidate is how this item became count-shaped twice before. A run
@@ -4259,6 +4312,157 @@ zero meaningful: `selftest PASS (8/8 controls fired, plantsRemoved true)` and, p
 finding(s); V vacuous; U unavailable`. A bare "no accessibility issues found" is not a result.
 
 ## Run log
+
+### 2026-09-03 (scheduled dev-agent, backlog item 27) — lesson 12's mortgage payment is two shares of one constant that swap places two-thirds of the way through, and the line I drew to separate them was measured invisible against both of the fills it sits on
+
+**Where the pick came from.** The previous run closed item 155's live instance and queued two
+candidates: item 155's own permanent text-zoom probe, and item 27's `essentials` figures. It said
+plainly that **W-6.3's ratio argues against the probe** — it is an instrument, and `scripts/` is over
+2x `src/`. This run took the other one. W-6.2 rule 1 permits a second consecutive residual pick and
+this is not even that: item 27 is launch-plan work (§3.0.4, the diagrams are the stated
+differentiator), not a residual any run filed from its own output.
+
+**Step 3.5 — the premise reproduced exactly, and the instrument the item ships did not.**
+- **Coverage exact:** economy 7/12, essentials 3/15, money 5/17 — **15 of 44, 0 orphan ids**, the
+  numbers item 27's own text quotes. Controls: 44 lessons parsed, visual id 36 found, id 9999 not
+  found.
+- ⛔ **The item's stated parser returns 0 lessons.** Item 27 says to re-run its parse rather than
+  quote a count; done literally, the regex over `lessons.js` matches **nothing** today, because the
+  lesson objects are multi-line and the pattern is `\{[^{}]*id:\s*(\d+)[^{}]*\}`. **The control
+  is the only reason this was visible** — "lessons parsed: 0" printed beside a coverage table that
+  otherwise looked plausible, and a parse that finds no lessons reports every track as bare. Fixed
+  by importing the module; the correction is written into item 27 so the next run does not re-derive
+  it.
+- **The item's disposition held.** Its 2026-09-03 finding — money has no reachable candidate, the
+  next figure must come from `essentials` (twelve bare, none ever assessed) — reproduced, and all
+  twelve were read this run.
+
+**The pick inside `essentials`, and the eleven rejections it rests on.** Lesson 12's section 2 is the
+only one of the twelve that clears the item's own bar. The eleven rejections are written into item 27
+in full; the two worth repeating here are the near misses. **Lesson 9** (inflation) is the shape
+everyone would reach for — a nominal line rising while purchasing power falls — and it states $1,000
+and twenty years and then gives both rates as *"a modest percentage"* and *"a similar or larger
+percentage"*. Two lines, two invented slopes: lesson 16's rejection exactly. **Lesson 11** (fees)
+fails the *other* way and is the more interesting one: it states every quantity a chart needs
+($10,000, 30 years, 7% against ~6%, $75,000 against $57,000) and is rejected because **lesson 3's
+shipped `GrowthCurve` already draws two lines from one origin under the caption "the gap widens every
+year"** — and lesson 11's own prose says a fee works *"exactly like"* that. A figure there would
+redraw a shipped shape to illustrate an analogy the prose has already made.
+
+**What lesson 12 has that those do not.** Its section 2 writes the pattern as two snapshots — *"early
+payments are mostly interest, and later payments are mostly principal"* — and then puts the
+changeover in a sentence of its own: *"A 30-year loan often doesn't cross the halfway point between
+interest and principal until roughly two-thirds of the way through its term."* Three claims, and
+prose can only make them one at a time: that the two parts are shares of ONE payment, that the larger
+of the two swaps, and that the swap is **not** at the middle. The last is the lesson's own flagged
+surprise ("a pattern many buyers don't expect") and it is a **position** — nameable in a sentence,
+and not placeable beside the midpoint it is being contrasted with.
+
+**The quantity rule passes by DERIVATION, which is new and is the part worth carrying forward.**
+Lesson 12 gives no payment and no rate, so a curve drawn by eye would be inventing the rate. But the
+interest share of a fixed payment is `s(f) = 1 - k^(f-1)` with `k = (1+r)^N` — the principal and the
+payment both cancel out of the amortization identity — and pinning `s(crossing) = 1/2` gives
+`k = 2^(1/(1-crossing)) = 8` for two-thirds. **So the whole boundary follows from the single number
+the lesson states.** `s(0) = 7/8` and `s(1) = 0` fall out of it rather than being chosen. §70 (d)
+re-derives `k` independently and checks the shipped function against it, so an edit to the constant
+or to the formula has to survive the other.
+
+⚠️ **The figure states nothing else, on purpose.** No tick, no percentage, no dollar figure: `s(0)`
+is derived and the lesson says only "mostly". §70 (f) asserts the SVG carries exactly **two** `<text>`
+nodes — the two end labels — so a future run cannot add a scale without the check failing. The band
+is also the **loan part** of the payment only; lesson 12 says a payment bundles four things and that
+"only the first two make up the loan itself", and taxes and insurance have no stated share anywhere,
+so a four-part band would invent two of its four numbers.
+
+⛔ **THE FINDING, AND IT REFUTES MY OWN SHIPPED COMMENT ONE HOUR AFTER I WROTE IT.** The first version
+drew the boundary, the crossing marker and the dot in `ink.muted`, and the header I committed claimed
+that was "the load-bearing choice rather than a styling one… a stroke with luminance of its own."
+Measured on the built app with `getComputedStyle`, against the two fills it is drawn **on**:
+**1.10:1 and 1.18:1 in light, 1.36:1 and 1.58:1 in dark.** It is a token designed to be read as text
+on a card (7.01:1 there) and on a saturated fill it is very nearly invisible — the boundary, the
+marker and the dot would all have disappeared and left one flat two-tone block. **The two fills are
+1.30:1 apart in light and 1.17:1 in dark**, so the separator was the only thing locating the split by
+luminance, and it was the thing that did not work. `surface.card` replaced it — **7.72:1 / 5.93:1 in
+light, 8.93:1 / 10.41:1 in dark** — and it is the semantically right answer too: the line is drawn in
+the color of the card behind the figure, so it reads as a hairline gap rather than a third series.
+**The general gap, which outlives this figure: §28b guarantees every `graph` token clears 3:1 against
+the SURFACES and guarantees nothing about a mark drawn ON a fill.** Any future figure that draws one
+owes the same live measurement. §70 (e) now asserts this pair across all three palette blocks.
+- The legend's marker key needed the same fix and did not get it for free: a `surface.card` dashed
+  rule drawn straight onto the card is a **1:1** swatch. It is drawn across a chip of the upper
+  region's own fill instead, which is the same 7.72:1 / 8.93:1 it has inside the figure.
+
+**Verification, all on the built app, all post-fix.**
+- **Live geometry, 390x844:** marker at **0.6587** of the SVG width and the crossing dot at
+  **0.4571** of its height — both exact against the arithmetic (`px(2/3)` = 198 and `py(0.5)` = 64
+  user units under a 1.0714 uniform scale). The two regions measure **308.6px wide each, 0.00px
+  apart**, and the boundary spans 0.9524 of the box (the 6-unit pads).
+- **Five languages x six root sizes {90, 100, 115, 130, 150, 200%} at 320px:** in every cell
+  `documentElement.scrollWidth === 320`, the figure's right edge at 304 against a 320 viewport, zero
+  SVG text nodes outside their own box, and the marker/crossing fractions unchanged at 0.66/0.4661.
+  Both themes measured.
+- ⛔ **One of my three live instruments was DEAD and a control killed it.** A per-`<li>` clipping
+  detector (`scrollWidth` vs `getBoundingClientRect().width`) returned **0 findings against a planted
+  900px span** — the `li` is a flex item and simply grew, so its `scrollWidth` equals its width and
+  it can never report clipping. **The page-`scrollWidth` detector fired correctly on the same probe
+  (320 → 1011 → 320)** and the SVG-text detector fired in both directions on a planted 160-character
+  label (0 → 1 → 0). The dead one is not quoted above and none of the sweep's conclusions rest on it.
+  A second control proved the sweep was not constant-negative for a different reason: the legend row
+  measures 33.6px at 100% and 67.2px at 200%, so the root size really was taking effect in every
+  cell.
+- **§70 proven by injection, eight defects, each restored from a scratchpad copy and md5-verified
+  (all four files byte-identical afterwards):** separator reverted to `ink.muted` → (f) fires;
+  `--graph-blue` moved to `#f2f0ec` in the light palette → **(e) fires at 1.14:1**; `splitCrossing`
+  moved to 1/2 → (d) fires; the two segment labels swapped → both region assertions fire; the `zh`
+  title paraphrased to a plausible non-lift → (a) fires **in `zh` only**; a `50%` tick added to the
+  SVG → (f)'s text-node count fires; the mapping to lesson 12 commented out → (g) fires; the upper
+  region given its own independently computed edge → (f)'s shared-boundary assertion fires.
+- `npm run build` clean; `npm test` **0 failures** across all eight check scripts, with the four
+  pre-existing warnings unchanged (O-3 translation coverage, translation completeness, item 160's
+  option-length cue, item 115's floor).
+
+**Step 5 — adversarial self-check, run and not skipped.**
+- **Blindspot register:** `npm run check-blindspot` passes 0 failures — §10.2 Dalio, §10.1 advice
+  language and the disclaimer on all 8 surfaces, §10.3 parent-facing kids framing, §2.3 live-looking
+  dates across 26 teaching-copy modules including `moneyVisuals.js`, which this run edited. The
+  figure adds no rate, no return and no recommendation; the one number it is built from is a
+  fraction of a term, and `illustrationNote` renders beneath it because `mortgageSplit` is in
+  `MONEY_VISUALS` (§70 (g) asserts that, since the alternative note is the market-data one).
+- **DECISIONS.md:** nothing there governs lesson figures beyond the 2026-08-16 scope limit on chart
+  labels, which this change **follows rather than contradicts** — all 35 non-description strings are
+  verbatim lifts, so 28 of the 35 are not new translation at all. `.js` content modules,
+  `localStorage`-only state and Vite are untouched.
+- **Already-done item:** the ten shipped figures are lessons 1/3/7/17/23/27/28/30/34/44. Lesson 12
+  is not among them and item 27's own text names `essentials` as where the next one must come from.
+  Nothing here redoes a "Completed and pruned" entry.
+- **My own verification claim:** every figure above is either a live `getBoundingClientRect` /
+  `getComputedStyle` read on the built app, re-runnable from the recipe in this entry with the
+  probes named, or an injection whose restoration was md5-verified. The one instrument that did not
+  survive its control is named as dead rather than quietly dropped.
+- **W-6.2 rule 3 (the learner-visible failure a new check would have caught):** *a reader meets a
+  band whose two halves they cannot tell apart, because the line dividing them has gone invisible
+  against the fills* — which is not hypothetical, it is what this figure shipped with for an hour
+  and what §70 (e) now blocks.
+- **W-6.3, quoted and re-measured.** Over `scripts/**` `.mjs`/`.js`/`.sh` against `src/` minus
+  `content/` and `locales/`: **17,606 / 7,972 = 2.208x**, from the previous entry's 17,331 / 7,756 =
+  2.235x on the same file set. **This run did add to `scripts/`** — +275 lines for §70, against +342
+  to `src/` — so unlike the previous run it is not a pure app-side change, and it still moves toward
+  the app side. The check earns it under rule 3 above.
+- **Floor tax, stated:** item 27's update and this entry grow the non-archivable floor, which stays
+  over by ~127 KB; the run log is well inside its budget. Item 115's owner options remain the only
+  thing that moves the floor.
+
+**Queued for next run.** ⚠️ **Item 27 has no named candidate left in any track** — all 44 lessons have
+now been assessed against its rule, and the eleven `essentials` rejections are written into the item
+so nobody re-derives them. That makes the honest next pick item 155's **permanent text-zoom probe**,
+which now has three live instances behind it and a scan already written twice, or a **backlog refill**
+(W-2's standing rule). **O-1 remains the entire critical path: 44 lessons, 5 languages, 161 minutes
+of content, 16 figures — and zero people have ever opened this app** (figures off `npm test`'s
+readiness line and this run's coverage parse).
+
+**Owner tree:** `git status` at run start and again before writing showed **0 tracked modified besides
+this run's five files, `UIUX/` untracked and untouched**. `HEAD` re-checked before writing and unmoved
+at `897393b`.
 
 ### 2026-09-03 (scheduled dev-agent, backlog item 155's live instance) — the lesson reader's primary action ran 9.3px off a 320px screen at the app's own largest text size, in two languages rather than the one the note named; the bottom nav's separate-looking overflow turned out to be the same defect seen from underneath
 
