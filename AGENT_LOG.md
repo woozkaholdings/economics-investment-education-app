@@ -3320,10 +3320,23 @@ through two passes that each had it open.
       > this item already prescribes.** Lesson 1 (Budgeting) HAS a visual (`budgetSplit`), and since
       > the 2026-08-18 reversal a new install does not open on it — it opens on **economy lesson 29**.
       > **The bullet's POINT survives its numbers, and that is why it is corrected rather than
-      > deleted.** Coverage 2026-08-31: **13/44 overall — economy 5/12, money 5/17, essentials 3/15**,
-      > unchanged since 2026-08-28. In display order the path's **first three lessons — 29
+      > deleted.** ~~Coverage 2026-08-31: **13/44 overall — economy 5/12, money 5/17, essentials
+      > 3/15**, unchanged since 2026-08-28. In display order the path's **first three lessons — 29
       > (Transactions), 30 (Credit), 31 (Productivity Growth) — carry no figure**, so the screen a new
-      > install actually opens is still the case against the differentiator; only its id moved.
+      > install actually opens is still the case against the differentiator; only its id moved.~~
+      > ⛔ **BOTH OF THOSE SENTENCES WERE FALSIFIED LATER THE SAME DAY, by the run that added lesson
+      > 30's `SpendingLoop` — whose own note sits 40 lines below in this same item and says 14/44,
+      > economy 6/12. This item has therefore been internally contradictory since 2026-08-31; struck
+      > and corrected 2026-09-02 (scheduled dev-agent).** Re-parsed with this item's own control
+      > (must find 36, must not find 9999): **14/44 — economy 6/12, essentials 3/15, money 5/17.**
+      > **Lesson 30 HAS a figure.** The concrete failure mode of leaving it: a run reading the struck
+      > text adds a SECOND figure to lesson 30. **The bullet's point survives the correction and
+      > narrows** — it is now one lesson, not three: **lesson 29 is the screen a new install opens
+      > and it carries no figure**, measured live 2026-09-02 at 0 figures and 0 `[role="img"]`
+      > (control: lesson 36 returns 1 and 1). See the "dead pick 2" paragraph in that date's run log,
+      > and read the ⛔ block below before proposing one — **both of lesson 29's candidate figures are
+      > already measured and declined there, and a third variant that adds a credit split to the
+      > \$500 invents the proportion the lesson is about, which is the same rejection again.**
       > **Re-scoped, which is what this item's own header asks for:** the gap is no longer "the money
       > track", it is **the opening of the economy track**. Lesson 31 is the strongest candidate on
       > the "does the prose state every quantity the shape needs?" rule below — but note it states a
@@ -4136,6 +4149,191 @@ zero meaningful: `selftest PASS (8/8 controls fired, plantsRemoved true)` and, p
 finding(s); V vacuous; U unavailable`. A bare "no accessibility issues found" is not a result.
 
 ## Run log
+
+### 2026-09-02 (scheduled dev-agent, self-picked — and the pick is the third one this run, because the first two premises died under step 3.5) — every live a11y sweep this project has ever taken was measured in a pane whose animation timeline does not advance, so a CSS transition started after first paint never finishes; the app was read reporting the DARK canvas under `data-theme="light"`
+
+**Pick, and why it is not a residual chain (W-6.2 rule 1).** The last three runs were owner-directed
+quiz-tell work and filed **item 165** (quiz `explain` abridged in 69 of 184 pairs). I did not take it:
+its own text routes it to the owner because closing it is ~60-70 short paragraphs of new machine
+translation, which is O-3's standing call. So this run went looking for learner-visible work of its
+own. **Two candidate picks were measured and both died, and that is recorded here because the
+measurements are the reusable part.**
+
+**Dead pick 1 — a rendered-contrast sweep, because §28's cross product measures DECLARED token pairs
+and nothing measures the pairs the app actually composes.** Built the scanner in-page, validated the
+math against published WCAG values (`#767676`/white → **4.54**, `#949494`/white → **3.03**,
+black/white → **21**) and two-sided plants in both palettes. Swept **Learn, Practice, Reference,
+Glossary, Market Dashboard, Sector performance, lesson 29, lesson 35, lesson 36 and a lesson with a
+question answered wrong**, light and dark: **0 findings**, 31-139 elements per screen. A clipping
+probe (`overflow:hidden` / ellipsis / line-clamp against `scrollWidth`) over the same screens found
+**only the two 1x1 visually-hidden spans** ("Your answer, incorrect", "Correct answer"), which are
+the sr-only pattern working. A locale-leakage scan (a non-English value byte-identical to English)
+found **2 short strings in `es`, 0 in ko/zh/ja, 0 longer than 12 characters**, control: `returningTitle`
+differs in `ko`. **The app is clean on all three. Reporting it because a search that finds nothing is
+a result — and because building the permanent probe would have been ~130 lines of new instrument for
+a hole with zero live instances (W-6.2 rule 2, W-6.3).**
+
+**Dead pick 2 — a figure for lesson 29, the first screen a new install opens, measured live at 0
+figures / 0 `[role="img"]` (control: lesson 36 returns 1/1).** The premise is TRUE and the
+disposition is still WRONG: **backlog item 27 already measured both candidate figures and declined
+them, on 2026-08-31, with reasons I re-derived independently and then found already written down** —
+*Total Spending = Money Spent + Credit Spent* states no split, so a two-segment bar invents the one
+proportion it is about; and *$500 on 100 loaves is $5* is a division the sentence already performs.
+My third variant (spending rises, price rises) invents `$300`/`$800`/`$8` and is the same defect
+wearing a bigger number. **Step 3.5 changed the disposition, not a figure.** Item 27's own coverage
+line is stale in one place and its correction block is now internally contradictory — corrected in
+this commit, see below.
+
+⛔ **THE PICK, AND IT IS A DEFECT IN THE INSTRUMENT EVERY LIVE RUN IN THIS LOG HAS USED.**
+(Deliberately not marked up as a `##` — a second top-level heading inside the run log splits the
+region `check-log-size.mjs` measures, which this entry did on its first save: the run log read
+**3,123 b** and the floor **618,355 b**. Keep entry-internal emphasis to bold.)
+
+**Found by a control disagreeing with itself.** The contrast scanner read `body` as
+**`rgb(20,18,15)`** — the DARK canvas — on a page whose `<html>` carried **`data-theme="light"`** and
+whose `--surface-canvas` computed to **`#f8f5f0`**. There is no CSS that does that: `index.css`'s
+three-layer theme (`:root`, `@media (prefers-color-scheme: dark) :root:not([data-theme="light"])`,
+`:root[data-theme="dark"]`) is correct, there is exactly one stylesheet on the page, no injected
+`<style>`, no inline style on `body`, and `body`'s own inherited `--surface-canvas` read `#f8f5f0`.
+
+**The cause, isolated in one call:** setting `body.style.transition = "none"` changed the computed
+background from `rgb(20,18,15)` to `rgb(248,245,240)` **in the same expression**. `body` carries
+`transition: background-color 0.2s`, React applies `data-theme` after first paint, and
+**`document.visibilityState` is `"hidden"` in this pane even when fronted** (a11y-sweep.js's own
+header note 1 has said so since 2026-08-28). A hidden document's animation timeline does not
+advance, so the transition **never completes** — the sweep reads a frozen frame of a page from
+before the theme was applied.
+
+**Proven on geometry, not just color, by plant:** a 20x20 box given `transition: width .5s, height
+.5s` and then set to `200x60` still measured **20x20 after 4,418 ms**, with 2 entries pending in
+`document.getAnimations()`. `.finish()` on them read `200x60` in the same turn.
+
+**Why neither existing guard could see it — this is the part that generalizes.**
+- `quiesce()` in `a11y-states.js` waits for the DOM to stop **mutating**. A transition changes
+  computed style without touching the DOM, so its MutationObserver never fires. It cannot see this
+  by construction, not by oversight.
+- the `layout` capability asks whether elements **have size**. They do. They have the wrong size.
+- **a frozen sweep and a settled sweep produce byte-identical output.** There has never been a field
+  in any report that could distinguish them, which is why 19/19-clean lines in this log cannot be
+  retroactively audited for it.
+
+**What the app actually transitions, i.e. what was at risk:** `ui.jsx`'s progress fill
+(`width 0.45s`), `charts.jsx`'s `ProportionBar` / `Bar` / `BracketStack` / `GapColumns` segments
+(`0.5s` each), `index.css`'s `.ec-bar-fill`, and `body`'s background. Those are exactly the boxes
+`smallTargets`, `horizontalOverflow` and `figureClaims` read. **Stated precisely: the live instance I
+caught in the app is the COLOR one; the geometry half is proven as a mechanism by plant and is named
+as at-risk, not claimed as an observed app finding.** Item 147's "bars drawn 9px tall at 320px" is
+the shape of finding this would corrupt.
+
+**Shipped — +128 lines in `scripts/`, 0 in `src/`, no new probe, no new script, no new
+`check-data.mjs` section.**
+- `a11y-sweep.js` gains **`settleAnimations()`**: `document.getAnimations().forEach(a => a.finish())`,
+  each call guarded (an infinite animation throws and is **counted**, not swallowed), returning
+  `{supported, pending, finished, failed, remaining}`. `.finish()` rather than injecting
+  `transition: none` — a stylesheet the app never ships re-runs layout under rules it never has, and
+  would also hide a real animation a probe should see.
+- It runs **first inside `runProbes()`, before `capabilities()`** — that function decides whether
+  layout is live by measuring boxes, and a frozen transition is precisely what makes a box lie.
+- The result is reported **unconditionally**, both as `report.animations` and appended to the
+  `verdict` string (`"; settled 2/2 in-flight animation(s) before measuring"` / `"; 0 animations in
+  flight"` / a `NOT SETTLED` branch for a browser without `getAnimations`). Same rule as
+  `viewportClaim`: never silently true, so a sweep that settled twelve and one that settled none can
+  no longer read the same.
+- `a11y-states.js` records `animations` on **each per-state row**, not rolled up — a transition
+  freezes per screen, and a total would erase "12 on the lesson reader, 0 on Reference". Same
+  reasoning as `probeStatus` (item 112): a field the row does not carry is one no reader of this log
+  can ever see.
+- **A twelfth selftest control, deliberately ASYMMETRIC.** The pre-settle read is recorded as
+  *evidence*, never asserted: in a browser whose timeline runs, the transition may legitimately have
+  finished on its own, and a control that demanded a frozen value would fail on the one environment
+  where the harness is healthy — a control firing on its own account, the trap step 3.5 names. What
+  is asserted is the postcondition every environment owes: after `runProbes()` the box measures
+  `200x60` **and** `document.getAnimations()` is empty. The string says which world the session is
+  in, so a future operator can tell "the settle was needed" from "the settle was a no-op".
+
+**⚠️ The cost, written into the code before anyone trips over it.** `.finish()` picks the END state.
+That is right for everything transitioning toward what the reader will be looking at, and **wrong for
+anything deliberately transient**: `LessonReader.jsx`'s completion toast runs
+`ec-toast-out 1.6s ease forwards`, whose end state is `opacity: 0`, so a sweep taken while the toast
+is up now measures it **dismissed** where an unsettled sweep measured it visible. Neither reading was
+ever the whole truth — the old one was an unconsidered mid-flight frame — but they differ. **No state
+in `a11y-states.js` sweeps the toast today (grepped, zero hits for `toast`)**, so there is no live
+regression; a state that ever does must measure the toast before `run()` or take an exemption.
+
+**Verification, all of it re-runnable from this commit.** `npm test` **0 failures** (7 PASS blocks,
+the 3 standing warnings + the floor warning, none moved by this change). `npm run build` ✓ 957ms.
+`npm run check-blindspot` **0 failures**. Live, against `dist/` served statically at `127.0.0.1:8899`
+with the loaded file **sha-256-identical to `scripts/a11y-sweep.js`** (`f3fc3c2f…`):
+- **On a plain reload of the shipped build, one call, both sides:** BEFORE — `data-theme="light"`,
+  `--surface-canvas: #f8f5f0`, `body` `rgb(20,18,15)`, **2 pending**. AFTER `A11ySweep.run()` — `body`
+  `rgb(248,245,240)`, **0 pending**, `animations: {pending:2, finished:2, failed:0, remaining:0}`,
+  verdict `"0 finding(s); 2 vacuous; 1 unavailable; settled 2/2 in-flight animation(s) before
+  measuring"`. Reproduced twice, on two separate reloads.
+- **`A11ySweep.selftest()` → PASS, `failedProbes: []`, 12 controls, `plantsRemoved: true`** (after the
+  documented operator Tab step, without which `focusVisibleOnTab` is UNAVAILABLE — that is header
+  note 2, not a regression from this change).
+- The animation control's own string this session: *"control fired — 20x20 before runProbes(), 200x60
+  after (this environment FREEZES transitions — every unsettled box reading is a lie)"*.
+
+**Also corrected in this commit, because it is a false statement in the document every run reads
+first (W-5.5).** Backlog **item 27**'s §3.2 correction block still reads *"Coverage 2026-08-31: 13/44
+overall — economy 5/12, money 5/17, essentials 3/15"* and *"the path's first three lessons — 29
+(Transactions), 30 (Credit), 31 (Productivity Growth) — carry no figure"*. Both were true when
+written and were falsified **later the same day** by the run that added lesson 30's `SpendingLoop` —
+whose own note, 40 lines below in the same item, says **14/44, economy 6/12**. Re-parsed this run
+with the item's own control (must find 36, must not find 9999): **14/44 — economy 6/12, essentials
+3/15, money 5/17, and lesson 30 HAS a figure.** The failure mode is concrete: a run reading the
+earlier block would add a **second** figure to lesson 30.
+
+**Step 5 — adversarial self-check, run in full.**
+1. **Blindspot register: clean, and nothing here is close to it.** The diff is two files under
+   `scripts/`, neither shipped to the browser (`grep -rn "A11ySweep" src/` returns three *comments*
+   and zero imports). No teaching copy, no advice language, no Dalio, no kids framing. The only
+   literals added are `2026-09-02` in code comments — a dated measurement record, this file's own
+   convention — and `#f8f5f0`/`rgb(20,18,15)`, which are quoted measurements of the app's own
+   palette, not a market figure. `check-blindspot` passes.
+2. **`DECISIONS.md`: none.** Nothing touches localStorage-only state, `.js`-not-JSON content, or
+   Vite-not-Expo. `a11y-sweep.js` is operator-eval'd, so this cannot deepen the web-only investment
+   item 12 guards.
+3. **Not a redo.** Grepped the log and archive for prior treatment (control: `visibilityState` returns
+   real hits in `a11y-sweep.js`'s header, so the grep is live). The pane's hidden state is *known* and
+   documented — for **focus** (item 108/116) and for **timers** (item 109, which is why `quiesce()`
+   exists rather than `setTimeout`). **Nobody had connected it to the animation timeline.** Item 109
+   is the nearest neighbor and it fixed waiting; this fixes measuring.
+4. **My own verification claim.** An independent reviewer re-running only the commands above — serve
+   `dist/`, reload, eval `scripts/a11y-sweep.js`, `A11ySweep.run()`, Tab, `A11ySweep.selftest()` —
+   gets these exact figures. The 4,418 ms plant is re-runnable from its description. Nothing here
+   rests on a scratchpad file; the two `dist/__*.js` copies used to load the script were deleted and
+   `dist/` is gitignored.
+5. **W-6.2 rule 3 — the learner-visible failure, in one sentence:** an accessibility sweep can report
+   *19/19 states clean at 375px* while every box it measured was the size it had **before** the app
+   animated it, so a bar that renders 9px tall or a control that renders under 44x44 is recorded as
+   fine — which is item 147's finding, unfound.
+6. **W-6.3 — the ratio, quoted and re-measured.** W-6.0 recorded `scripts/` at 15,480 lines against
+   6,589 for the app. This is **+128 in `scripts/`, +0 in `src/`**, so it moves the number the wrong
+   way and I am not pretending otherwise. **The argument it falls on the right side of:** it adds no
+   probe, no script and no `check-data.mjs` section — it is a **correction to an existing instrument
+   that was producing false readings**, the same shape as the 2026-09-01 archiving-estimator fix, and
+   roughly 75 of the 128 lines are the comment recording the measurement and its cost.
+
+**Housekeeping status, so the next run does not re-derive it — and both numbers are here on purpose.**
+**At the start of this run** the log measured **239,823 b of the 250,000 b warn budget (95.9%), 1.26
+runs of headroom**, while the *hard* budget — the one that makes `npm test` exit 1 and stops every
+run from committing anything — was **13.6 runs away**. Both previous passes fired against the hard
+budget or from over the warn line, so a pass was **not** due when this run picked, and taking one
+early would have re-injected the negative that item 121's corrected estimator exists to survive.
+**After this entry it measures 255,017 b — over the warn line, as predicted.** So: **the archiving
+pass is now DUE, and it is this entry that made it due.**
+
+**Top item for the next run.** The W-5.3 archiving pass (2026-09-01 is the contiguous day at the
+bottom; carry the containment + corrupted-plant controls, using `git show HEAD:AGENT_LOG.md` as the
+pre-cut copy). **Nothing in this entry is queued** — the three clean sweeps are results, not residuals,
+and are filed nowhere. **O-1 remains the entire critical path** — 44 lessons, 5 languages, 161
+minutes of content, and zero people have ever opened this app. **O-3** unchanged: no translated prose
+was added or altered this run.
+
+**Owner tree at end of run:** the owner's untracked `UIUX/` only (51 files), untouched. `HEAD`
+re-checked before writing and unmoved at `a660927`.
 
 ### 2026-09-02 (owner-directed: "do the next worst one") — `q007`, the worst tell in the corpus at 2.61x, and underneath it the field item 160 keeps moving reasoning INTO turns out to be abridged in 69 of 184 question/language pairs
 

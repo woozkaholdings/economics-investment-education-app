@@ -204,6 +204,68 @@
     };
   }
 
+  /* ── settleAnimations: finish in-flight transitions BEFORE measuring ───────────────────────
+   * ⛔ MEASURED 2026-09-02, and this file had the hole from the day it was written.
+   *
+   * This pane runs with `document.visibilityState === "hidden"` even when fronted (header note
+   * 1). A hidden document's animation timeline does not advance, so a CSS transition started
+   * after first paint NEVER COMPLETES — it stays frozen at its START value for as long as the
+   * sweep lasts. Planted control, 2026-09-02: a 20x20 box with `transition: width .5s, height
+   * .5s` set to 200x60 still read **20x20 after 4,418 ms**, with two entries pending in
+   * `document.getAnimations()`. Calling `.finish()` on them read 200x60 in the same turn.
+   *
+   * Every `needs: "layout"` probe below measures boxes, and this app transitions boxes:
+   * `ui.jsx`'s progress fill (`width 0.45s`), `charts.jsx`'s `ProportionBar` / `Bar` /
+   * `BracketStack` / `GapColumns` segments (`0.5s` each), `index.css`'s `.ec-bar-fill`, and
+   * `body`'s own `background-color 0.2s` — which is how a page with `data-theme="light"` was
+   * measured reporting the DARK canvas `rgb(20,18,15)` while `--surface-canvas` computed to
+   * `#f8f5f0` on the same element. So the failure is not hypothetical and it is not confined to
+   * color: it lands on exactly the geometry `smallTargets`, `horizontalOverflow` and
+   * `figureClaims` exist to check.
+   *
+   * NEITHER EXISTING GUARD CAN SEE IT, which is why it needed its own step:
+   *   • `quiesce()` in a11y-states.js waits for the DOM to stop MUTATING. A transition changes
+   *     computed style without touching the DOM, so its MutationObserver never fires.
+   *   • the `layout` capability asks whether elements have size. They do — the wrong size.
+   * A frozen sweep and a settled sweep produce byte-identical output, so the settle is RECORDED
+   * on every report rather than performed silently.
+   *
+   * `.finish()` rather than injecting `transition: none`: a stylesheet the app never ships
+   * re-runs layout under different rules, and it would also hide a real animation a probe
+   * should see. `.finish()` moves each animation to its END state — the value a reader on a
+   * real, visible page is looking at half a second later. `.finish()` throws on an
+   * infinite-duration animation, so each call is guarded and the throw is counted, not swallowed.
+   *
+   * ⚠️ THE COST, WRITTEN DOWN BEFORE ANYONE TRIPS OVER IT. "End state" is the right answer for
+   * everything that transitions TOWARD what the reader will be looking at — a bar's height, a
+   * progress fill's width, the canvas color. It is the WRONG answer for anything deliberately
+   * transient: `LessonReader.jsx`'s completion toast runs `ec-toast-out 1.6s ease forwards`,
+   * whose end state is `opacity: 0`, so a sweep taken while the toast is up will now measure it
+   * DISMISSED where an unsettled sweep measured it visible. Neither reading is the whole truth —
+   * the pre-fix one was a frozen mid-flight frame, not a considered choice — but they differ, and
+   * the difference is invisible in the output. **No state in a11y-states.js sweeps the toast
+   * today (grepped 2026-09-02, zero hits for `toast`).** A state that ever does must measure the
+   * toast before calling run(), or take an exemption here; it must not read `0 findings` and
+   * conclude the toast is accessible.
+   */
+  function settleAnimations() {
+    if (!document.getAnimations) {
+      return { supported: false, pending: null, finished: 0, failed: 0, remaining: null };
+    }
+    var list = document.getAnimations();
+    var pending = list.length, finished = 0, failed = 0;
+    for (var i = 0; i < list.length; i++) {
+      try { list[i].finish(); finished++; } catch (e) { failed++; }
+    }
+    return {
+      supported: true,
+      pending: pending,
+      finished: finished,
+      failed: failed,
+      remaining: document.getAnimations().length
+    };
+  }
+
   function visible(el) {
     if (el.closest("[" + SKIP_ATTR + "]")) return true; // planted probes are deliberately offscreen
     var r = el.getBoundingClientRect();
@@ -846,6 +908,11 @@
   };
 
   function runProbes() {
+    // FIRST, before capabilities(): that function measures element boxes to decide whether
+    // layout is live, and a frozen transition is precisely what makes a box report a size it
+    // does not have. Settling after it would leave the capability line describing a page the
+    // probes never saw.
+    var animations = settleAnimations();
     var caps = capabilities(), report = {}, findingCount = 0, unavailable = [], suspect = [];
     Object.keys(PROBES).forEach(function (name) {
       var p = PROBES[name];
@@ -864,6 +931,10 @@
     return {
       url: location.href,
       capabilities: caps,
+      // Unconditional, like `viewportClaim` in a11y-states.js and for the same reason: a sweep
+      // that settled twelve in-flight transitions and one that settled none must not read the
+      // same. `pending` is what this state was mid-animation when the sweep arrived.
+      animations: animations,
       totalFindings: findingCount,
       unavailable: unavailable,
       vacuous: suspect,
@@ -875,7 +946,18 @@
             ? "clean on " + (Object.keys(PROBES).length - unavailable.length) + " probe(s); " +
               unavailable.length + " unavailable"
             : findingCount + " finding(s); " + suspect.length + " vacuous; " +
-              unavailable.length + " unavailable")
+              unavailable.length + " unavailable") +
+          // Appended, never substituted: `a11y-states.js` stores this string verbatim, and the
+          // number belongs in the sentence a reader quotes rather than one field over.
+          (animations.supported === false
+            ? "; animations NOT SETTLED — no getAnimations() in this browser, so any transitioned " +
+              "box below may be a frozen intermediate"
+            : animations.pending > 0
+              ? "; settled " + animations.finished + "/" + animations.pending + " in-flight " +
+                "animation(s) before measuring" +
+                (animations.failed ? " (" + animations.failed + " refused to finish)" : "") +
+                (animations.remaining ? ", " + animations.remaining + " still pending" : "")
+              : "; 0 animations in flight")
     };
   }
 
@@ -1047,6 +1129,46 @@
     box.remove();
     wide.remove();
     first.remove();
+
+    /* ── the animation control (2026-09-02) ────────────────────────────────────────────────
+     * Planted AFTER the other controls are gone, because it is the only one that calls
+     * runProbes() itself and a page full of plants would make that pass noisy.
+     *
+     * Deliberately ASYMMETRIC, and the asymmetry is the point. The "before" read is EVIDENCE,
+     * not an assertion: in a browser whose timeline actually runs, the transition may well have
+     * finished on its own before the line below, and a control that demanded a frozen value
+     * would fail on the one environment where the harness is healthy — a control firing on its
+     * own account, which is the trap step 3.5 names. What IS asserted is the postcondition
+     * every environment owes after runProbes(): the box measures its target AND nothing is left
+     * pending. The recorded string says which of the two worlds this session is in, so a future
+     * operator can tell "the settle was needed" from "the settle was a no-op".
+     */
+    var anim = document.createElement("div");
+    anim.setAttribute(SKIP_ATTR, "1");
+    anim.style.cssText = "position:fixed;left:-99999px;top:0;width:300px;height:300px;";
+    anim.innerHTML = '<div id="a11y-selftest-anim" style="width:20px;height:20px;' +
+      'transition:width 0.5s ease,height 0.5s ease"></div>';
+    document.body.appendChild(anim);
+    var animBox = document.getElementById("a11y-selftest-anim");
+    animBox.getBoundingClientRect();          // paint the start value, or there is no transition
+    animBox.style.width = "200px";
+    animBox.style.height = "60px";
+    var beforeSettle = animBox.getBoundingClientRect();
+    runProbes();                              // the thing under test: this is what settles them
+    var afterSettle = animBox.getBoundingClientRect();
+    var animSettled = afterSettle.width === 200 && afterSettle.height === 60 &&
+      (!document.getAnimations || document.getAnimations().length === 0);
+    if (!animSettled) failed.push("animationSettle");
+    results.animationSettle = animSettled
+      ? "control fired — " + beforeSettle.width + "x" + beforeSettle.height + " before " +
+        "runProbes(), 200x60 after" +
+        (beforeSettle.width === 200
+          ? " (this environment's timeline RUNS; the settle was a no-op here)"
+          : " (this environment FREEZES transitions — every unsettled box reading is a lie)")
+      : "CONTROL DID NOT FIRE — " + afterSettle.width + "x" + afterSettle.height +
+        " after runProbes(), not 200x60; " +
+        (document.getAnimations ? document.getAnimations().length : "?") + " still pending";
+    anim.remove();
 
     // The control must also come back DOWN once the plants are gone, or it is not measuring them.
     // Distinguish the two things a post-cleanup finding can be, because conflating them is how a

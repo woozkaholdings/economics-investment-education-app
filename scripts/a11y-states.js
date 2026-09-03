@@ -906,6 +906,11 @@
       // on every screen for weeks would have looked exactly like a probe that kept passing.
       probeStatus: Object.keys(probes).reduce(function (acc, k) { acc[k] = probes[k].status; return acc; }, {}),
       vacuous: rep.vacuous, unavailable: rep.unavailable, verdict: rep.verdict,
+      // Per-state, never rolled up: a transition freezes per SCREEN, so "12 settled on the
+      // lesson reader, 0 on Reference" is the shape of the answer and a total would erase it.
+      // Same reasoning as probeStatus above — a field the row does not carry is a field no
+      // reader of AGENT_LOG.md can ever see. See settleAnimations() in a11y-sweep.js.
+      animations: rep.animations || null,
       env: env()
     };
   }
