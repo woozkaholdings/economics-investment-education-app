@@ -81,9 +81,9 @@ export const quizText = [
     "q": "What is QE (Quantitative Easing)?",
     "opts": [
       "Central bank buys bonds to inject money when rates are at 0%",
-      "Government raises taxes",
-      "Banks stop lending",
-      "Prices frozen by law"
+      "Government raises taxes to pull money out of the economy",
+      "Banks stop lending until borrowers repay what they owe",
+      "Prices frozen by law until inflation comes back down on its own"
     ],
     "explain": "QE is the Fed's emergency tool. When rates are at 0%, it prints money to buy bonds, injecting liquidity into the system."
   },

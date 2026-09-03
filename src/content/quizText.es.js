@@ -81,11 +81,11 @@ export const quizText = [
     "q": "¿Qué es QE?",
     "opts": [
       "Banco central compra bonos cuando tasas están en 0%",
-      "Gobierno sube impuestos",
-      "Bancos dejan de prestar",
-      "Precios congelados"
+      "Gobierno sube impuestos para sacar dinero de la economía",
+      "Bancos dejan de prestar hasta cobrar lo prestado",
+      "Precios congelados por ley hasta que la inflación baje sola"
     ],
-    "explain": "QE es la herramienta de emergencia del Fed."
+    "explain": "QE es la herramienta de emergencia del Fed. Cuando las tasas están en 0%, crea dinero para comprar bonos, inyectando liquidez en el sistema."
   },
   {
     "q": "La primera regla general para manejar la deuda es:",

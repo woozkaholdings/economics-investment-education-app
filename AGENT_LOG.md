@@ -1447,6 +1447,33 @@ through two passes that each had it open.
       stand; the coverage did not.** `A11yStates.coverage()` plus the Tab step now in the header
       recipe are the fix — see item 149.
 
+165. **[Content — filed 2026-09-02 by the run that took `q007`, from a measurement it had to make
+    before it could apply item 160's own style rule.] The quiz's `explain` field — the one surface
+    item 160 moves reasoning INTO — is abridged in 69 of 184 question/language pairs, and the
+    shortfall is concentrated on the main path.**
+    - **Measured, with a per-language reference and two controls** (a language against itself scores
+      1.00; a halved string scores 0.50). Each language's **p90 explain/en ratio across all 46
+      questions** — what a full translation looks like in this corpus — is **es 1.16, ko 0.58,
+      zh 0.38, ja 0.52**; a pair counts as abridged below 0.7x its own language's reference, the same
+      test `translation-completeness.mjs` applies to lesson bodies. **19 of 46 questions are
+      abridged in at least one language; 69 pairs in total.**
+    - **It is not spread evenly and that is what makes it schedulable: q001-q014 are the ECONOMY
+      track (lessons 29-40), which is the main path a new install opens on.** `q001`'s Spanish
+      explanation is 0.32x of the English and its Chinese 0.07x. The worst are 1-sentence stubs of
+      a 2-4 sentence English explanation.
+    - **Why this is worse than an ordinary translation gap.** Item 160's rule is *"the reasoning
+      belongs in `explain`"*, and three runs have now moved reasoning out of options on that basis.
+      **In four languages, for these 19 questions, it is being moved into a field that does not carry
+      it** — the learner answers, and gets one sentence where the English reader gets the mechanism.
+      `q007` was the live instance: es/ko/zh/ja said only "QE is the Fed's emergency tool" while en
+      also explained buying bonds at the zero bound. **Repaired for `q007` only** (+203 characters);
+      the other 18 questions are untouched.
+    - **Honest priority: medium-high, and it is O-3-shaped** — closing it is roughly 60-70 short
+      paragraphs of new machine translation, which is the owner's standing call. **Do not confuse it
+      with item 93/94**, whose instrument reads `lessonContent` and has never looked at `quizText`.
+      `npm run translation-completeness` does not measure this field; the script above lives in the
+      run entry and would need to move into `scripts/` before any check depends on it.
+
 164. **✅ DONE 2026-09-02 (scheduled dev-agent) — the headline premise reproduced exactly, and the
     item's own list of phrasings did not: one of the three it proposed fires on shipped teaching
     copy. Widened in all five languages, with a two-sided control.**
@@ -1712,6 +1739,21 @@ through two passes that each had it open.
       question's own `explain`. **Budget the rest of this item at one question per pass, and expect
       the reading-time coupling:** the option prose is inside `READING_MODEL`, so lesson 28 went
       4 → 5 minutes and the catalog total 160 → 161, regenerated through `npm run readiness`.
+    - ✅ **`q007` too, owner-directed ("do the next worst one") — the worst tell in the corpus
+      (en 2.61x) and the one this item calls untrimmable in all three CJK languages. Confirmed
+      untrimmable; fixed by distractor work at +328 characters (+216 non-English), cheaper than
+      `q042` because its foils were 2-3 word fragments rather than clauses.** **Two things the next
+      pass needs:** (i) lengthening ALL the distractors inverts the tell — they must **straddle** the
+      answer, one shorter and one longer, in every language, and my first draft got this wrong in
+      four of five; (ii) **the queue is better sorted by what the foils ARE than by ratio** —
+      fragment-foil questions are cheap and need no edit to the answer, clause-foil questions cost
+      2-3x and usually need the answer trimmed too.
+    - ⚠️ **AND THE RULE THIS ITEM RESTS ON HAS A HOLE — see item 165.** "The reasoning belongs in
+      `explain`" assumes `explain` carries it. Measured this run: **69 of 184 question/language
+      pairs are abridged**, concentrated on `q001`-`q014`, the economy track. `q007`'s Spanish
+      explanation said only "QE is the Fed's emergency tool" — the mechanism was missing in four
+      languages. **Before moving reasoning out of an option, check that the destination is not a stub
+      in es/ko/zh/ja.**
     - **The stop-clause's evidence was a delimiter cutter, and its negatives were weak by its own
       admission.** Rebuilt with a complete Latin **and** CJK delimiter list (em dash, `——`, `、`,
       `，`, `。`, `：`, `；`, `, since/which/so/even though`, `, ya que/porque/lo que`, and
@@ -4094,6 +4136,94 @@ zero meaningful: `selftest PASS (8/8 controls fired, plantsRemoved true)` and, p
 finding(s); V vacuous; U unavailable`. A bare "no accessibility issues found" is not a result.
 
 ## Run log
+
+### 2026-09-02 (owner-directed: "do the next worst one") — `q007`, the worst tell in the corpus at 2.61x, and underneath it the field item 160 keeps moving reasoning INTO turns out to be abridged in 69 of 184 question/language pairs
+
+**The pick was mechanical: re-ranked, `q007` (lesson 37, "What is QE?") is the worst remaining at
+en 2.61x** — a 60-character answer against distractors of 23/18/20, and 4-6 code points in Chinese.
+Item 160 names it by id as "the worst ratio left in the corpus … not trimmable in any of the three".
+**That much is confirmed:** the English answer would have to fit in 23 characters, and
+`"Central bank buys bonds"` is exactly 23 — but it drops *when rates are at 0%*, which is the whole
+distinction between QE and ordinary open-market operations. So this one is distractor work, on the
+method the owner authorized for `q042`.
+
+**⛔ AND THE PREMISE CHECK FOUND SOMETHING BIGGER THAN THE QUESTION, filed as item 165.** Before
+moving any reasoning out of an option I checked that the `explain` field could hold it — item 160's
+rule is *"the reasoning belongs in `explain`"*. **For `q007` it could not.** en reads *"QE is the
+Fed's emergency tool. When rates are at 0%, it prints money to buy bonds, injecting liquidity into
+the system."* es/ko/zh/ja carry **only the first sentence**. A Spanish learner answered this question
+and was told QE is an emergency tool, and nothing about what it does.
+
+> **So I measured the whole field, with a per-language reference and two controls** (a language
+> against itself scores 1.00; a halved string scores 0.50). p90 explain/en ratio — what a full
+> translation looks like in this corpus — is **es 1.16, ko 0.58, zh 0.38, ja 0.52**; abridged means
+> under 0.7x a language's own reference, the same test `translation-completeness.mjs` uses on lesson
+> bodies. **19 of 46 questions are abridged in at least one language — 69 of 184 pairs — and
+> `q001`-`q014` are the ECONOMY track, the main path a new install opens on.** `q001`'s Chinese
+> explanation is **0.07x** of its English. **Item 160's style rule has been moving reasoning into a
+> field that, in four languages, does not carry it.** Repaired here for `q007` only (+203
+> characters); the other 18 are item 165 and are the owner's to schedule, because closing them is
+> ~60-70 short paragraphs of new machine translation.
+
+**What shipped for the tell, and the correct option is untouched in all five languages this time.**
+The three distractors were 2-3 word fragments (`Government raises taxes`, `Banks stop lending`,
+`Prices frozen by law`); each now names the policy it actually is — raising taxes *to pull money out
+of the economy*, lending stopping *until borrowers repay what they owe*, prices frozen *until
+inflation comes back down on its own*. Each is a real instrument a learner could confuse with QE,
+which is what a distractor is for; none is padding.
+
+| | en | es | ko | zh | ja |
+| --- | --- | --- | --- | --- | --- |
+| distractors, before | 23/18/20 | 23/23/18 | 8/8/9 | 4/4/6 | 5/7/7 |
+| distractors, after | 56/54/63 | 56/48/59 | 21/24/30 | 12/14/16 | 18/19/21 |
+| correct option | 60 → **60** | 51 → **51** | 29 → **29** | 15 → **15** | 20 → **20** |
+
+**The bill: +328 characters of distractor prose (+216 in the four unreviewed languages) plus +203 of
+explanation repair, measured against a `git archive HEAD` copy rather than estimated.** Cheaper than
+`q042`'s +550 because nothing had to be rewritten — this question's problem was that its foils were
+fragments.
+
+**⚠️ MY FIRST DRAFT INVERTED THE TELL AND THE INSTRUMENT CAUGHT IT BEFORE ANYTHING WAS APPLIED.**
+Lengthening all three distractors to full clauses made the correct option the **strictly shortest** in
+en, es, zh and ja — trading item 160's defect for its mirror image, which is the exact failure that
+item warns about in bold. The fix is that the distractors must **straddle** the answer, not exceed it:
+one shorter, one longer, in every language. Final margins are deliberately small (en 3 under the top,
+zh 1, ja 1) because the goal is a band no eye can sort, not a new ordering.
+
+**Verified as geometry on the built app** (`index-DpgqQDv9.js`, read off the page; 390x844): lesson
+37's four options render at **62 px each — identical**, no horizontal overflow. Before, a 60-character
+answer sat over three fragments of 18-23. **And the repaired Spanish explanation was read back from
+the running app, not from the source**: answering the check in `es` now shows *"QE es la herramienta
+de emergencia del Fed. Cuando las tasas están en 0%, crea dinero para comprar bonos, inyectando
+liquidez en el sistema."*
+
+**Measured.** §65 live: longest-option **en 69.6% → 67.4%**, es/ko 67.4% → 65.2%, zh/ja 65.2% → 63.0%.
+**Shortest-option unchanged in all five** (2.2/2.2/0.0/2.2/4.3). Beatable-in-all-five **25 → 24**.
+Across today's three quiz commits: **en 35/46 → 31/46**. No reading-time bump this run — unlike
+`q042`, lesson 37 stayed inside its rounding bucket, so `lessons.js` and the readiness figures are
+untouched; that is a per-lesson accident, not a rule.
+
+`npm test`: **0 failures**, the 3 standing warnings (only §65's number moved).
+`npm run check-blindspot`: **0 failures** — again worth stating, since this adds prose about taxes,
+lending and price controls in five languages. `npm run build` clean. HEAD unmoved at `22c7148`;
+`OWNER-TREE 4240dc04…` (6 tracked modified — all mine — 51 untracked, all `UIUX/`) at commit time.
+
+**Step 5 — adversarial self-check.** (1) **Blindspot register:** no advice language (checked), no
+Dalio, no kids framing, no live-looking date or market figure; the added distractors describe policy
+instruments, never a recommendation. (2) **`DECISIONS.md`:** the "(Beta)" machine-translation
+decision is enlarged again, deliberately, on the same owner instruction, and priced above. Nothing
+else touched. (3) **Already-done item:** `q007`'s option ORDER is unchanged, so §3's answer-index
+spread holds and the answer stays at index 0; the correct option's text is byte-identical to what
+shipped, so no earlier fix is undone. (4) **My own verification claim:** every figure is from a
+command run this session — the re-rank, the explain-coverage measurement with its controls, the
+straddle tuning, the character delta against `git archive HEAD`, and the built app read back in two
+languages including a real answered question.
+
+**One note, filed here rather than numbered (W-6.2 rule 2).** **The remaining 24 now split cleanly by
+what their distractors ARE**, which is a better queue than "by ratio": questions whose foils are
+*fragments* (like `q007`) are cheap — the prose is short and the correct option needs no edit;
+questions whose foils are already full clauses (like `q042`) cost 2-3x more and usually need the
+answer trimmed too. **Check which kind a question is before budgeting it.**
 
 ### 2026-09-02 (owner-directed: "do q042 with the distractor work") — the first deliberate enlargement of the O-3 surface, priced before it was spent: +550 characters, +366 of them in four unreviewed languages, to take the last question whose window no deletion fits
 
