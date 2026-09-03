@@ -1459,10 +1459,33 @@ through two passes that each had it open.
       stand; the coverage did not.** `A11yStates.coverage()` plus the Tab step now in the header
       recipe are the fix — see item 149.
 
-165. **[Content — filed 2026-09-02 by the run that took `q007`, from a measurement it had to make
+165. **🟡 MAIN PATH CLOSED 2026-09-03 (scheduled dev-agent); the essentials/money remainder is open.
+    [Content — filed 2026-09-02 by the run that took `q007`, from a measurement it had to make
     before it could apply item 160's own style rule.] The quiz's `explain` field — the one surface
-    item 160 moves reasoning INTO — is abridged in 69 of 184 question/language pairs, and the
-    shortfall is concentrated on the main path.**
+    item 160 moves reasoning INTO — was abridged in 69 of 184 question/language pairs, and the
+    shortfall was concentrated on the main path.**
+    > ⛔ **HEADLINE FIGURE CORRECTED 2026-09-03, and the correction is about how it went stale.**
+    > "69 pairs across 19 questions" was measured **before** this item's own filing commit repaired
+    > `q007`. Re-measured 2026-09-03 with the same instrument and the same controls, the p90
+    > references reproduce **exactly** (es 1.162 ko 0.582 zh 0.380 ja 0.520) and the count did not:
+    > it was **65 across 18**. A count in an item ages against the work the item describes.
+    > ✅ **2026-09-03: nine questions repaired in four languages — `q001`-`q006`, `q008`, `q011`,
+    > `q013`, 36 `explain` values, +1,633 characters.** The ratio measure is now **41 pairs across
+    > 13 questions**, all partial shortfalls rather than stubs, and **none on the main path**.
+    > On a sentence-count measure the whole corpus is down to **`q020` (essentials lesson 6), es and
+    > zh — 2 pairs**, which is what is actually left of the stub class.
+    > ⚠️ **Do not re-derive the selection instrument's one trap.** Sentence counting by terminal
+    > punctuation reads `EE.UU.` as two sentence ends, which scored the Spanish `q006` as three
+    > sentences when it is one — a **false negative that would have left `q006` unrepaired**. Mask
+    > `EE.UU.`/`U.S.`/`vs.`/`etc.` and make that sentence the control. Full account in the
+    > 2026-09-03 run entry.
+    > ⚠️ **The recurrence this exposed, which is bigger than the item.** `DECISIONS.md` records the
+    > 2026-08-16 review fixing "an es-only drop of 'incomes' from lesson 21's inflation-mechanism
+    > sentence". Seventeen days later the Spanish **quiz explanation of the same mechanism** (`q004`)
+    > still dropped it, and so did zh and ja — because `scripts/translation-review.mjs` (by
+    > `DECISIONS.md`'s stated scope limit) and `check-data.mjs` §33 (by construction) both read
+    > `lessonContent` and neither has ever opened `quizText`. **A fix applied to one corpus is not
+    > applied to the concept.**
     - **Measured, with a per-language reference and two controls** (a language against itself scores
       1.00; a halved string scores 0.50). Each language's **p90 explain/en ratio across all 46
       questions** — what a full translation looks like in this corpus — is **es 1.16, ko 0.58,
@@ -1485,6 +1508,13 @@ through two passes that each had it open.
       with item 93/94**, whose instrument reads `lessonContent` and has never looked at `quizText`.
       `npm run translation-completeness` does not measure this field; the script above lives in the
       run entry and would need to move into `scripts/` before any check depends on it.
+    - **Priority AFTER the 2026-09-03 pass: low, and the reason is the one that matters.** What
+      remains is off the main path — a new install never reaches it — and the two remaining stubs are
+      one question. **The instrument question is still open and was deliberately NOT answered that
+      run:** a `quizText` completeness check satisfies W-6.2 rule 3 (the learner-visible failure is
+      "answered in Spanish, shown one clause where the English reader is shown the mechanism"), but
+      W-6.3's ratio says `scripts/` is already 2.3x the app, and building a guard the day its class
+      was emptied is W-6.4's named cause of the floor. **It belongs to whoever picks `q020`.**
 
 164. **✅ DONE 2026-09-02 (scheduled dev-agent) — the headline premise reproduced exactly, and the
     item's own list of phrasings did not: one of the three it proposed fires on shipped teaching
@@ -4065,6 +4095,155 @@ zero meaningful: `selftest PASS (8/8 controls fired, plantsRemoved true)` and, p
 finding(s); V vacuous; U unavailable`. A bare "no accessibility issues found" is not a result.
 
 ## Run log
+
+### 2026-09-03 (scheduled dev-agent, backlog item 165) — a new install opens on lesson 29, and until this run its first question answered a Spanish reader in one clause and a Chinese reader in eight characters where the English reader got the mechanism; the main path is now whole in five languages, and the scope rule I picked it with had a false negative in it
+
+**Pick, and why it is not a residual chain.** The two commits before this one were owner-directed
+housekeeping (the fourth compression pass, and the archiving pass before it), and the compression
+entry closed with *"Go back to learner-visible work; nothing here is queued."* W-6.2 rule 1 is
+therefore not engaged. I walked the built app first — first-run state cleared, Learn → lesson →
+check → Review → Reference, at 375 and 320 px — found no live defect the log has not already
+closed, and took the highest-value open **learner-visible** item instead: **165**.
+
+**Step 3.5 — item 165's premise re-measured, with four controls, before anything was edited.**
+Its per-language p90 explain/en reference reproduces **exactly**: es 1.162, ko 0.582, zh 0.380,
+ja 0.520 against the item's es 1.16 / ko 0.58 / zh 0.38 / ja 0.52. Its headline count does **not**:
+the item says **69 pairs across 19 questions**; measured today it is **65 across 18**. The
+difference is `q007`, which the filing run repaired in the same commit — so the headline is a
+pre-repair figure, correct when written and stale by exactly the work the item describes. Corrected
+in the item. Controls: **(A)** each language scored against itself returns exactly `{1}`;
+**(B)** every English `explain` halved scores 0.4989 and *is* flagged at the es threshold — so the
+instrument can see a shortfall it was not shown.
+
+⛔ **The scope rule I chose the questions with had a false negative, and I found it by reading the
+text rather than the number.** Item 165 says *"the worst are 1-sentence stubs of a 2-4 sentence
+English explanation"*, so I built a second instrument — sentence counts per pair — to select the
+class rather than a ratio band, with its own controls (a two-sentence English string, a
+one-sentence Chinese string, and a `0.5`-decimal trap that must read as 3 and does). It reported
+`q006` as **es=3** and therefore not "short in all four". **`EE.UU.` is two periods.** The Spanish
+`q006` is one sentence, not three, and it drops the same mechanism clause as the other three
+languages. The v2 counter masks `EE.UU.`/`U.S.`/`vs.`/`etc.`, its new control is that exact
+sentence, and re-running it changed the answer: **`q006` joined the scope, and the corpus-wide
+figure moved from "2 questions short" to the true set.** A sentence counter that cannot read an
+abbreviation returns a clean-looking number for a stub.
+
+**What shipped — 36 lines, and a control proving they are the only 36.** Nine questions
+(`q001`-`q006`, `q008`, `q011`, `q013`) × four languages = **36 `explain` values**. `git diff -U0`
+piped through `grep -vc '"explain"'` returns **0**: not one option, question stem, id, answer key
+or English string changed, and `quizText.en.js` was not opened. Every added clause is the sentence
+the English already carries and the translation dropped:
+
+| id | lesson | what all four translations were missing |
+|---|---|---|
+| q001 | 29 (first lesson a new install opens) | `Spending = money + credit` and *every dollar spent becomes someone else's income* |
+| q002 | 30 | total US credit outstanding vs. the monetary base (M0) |
+| q003 | 32 | that it is the business cycle the central bank runs through interest rates |
+| q004 | 30 | **`and incomes`** — see the recurrence note below — plus *"That's inflation."* |
+| q005 | 34 | why QE and the other tools are needed once cutting rates has stopped working |
+| q006 | 36 | that short rates above long rates is the signal of weakness ahead |
+| q008 | 40 | that the rule applies to nations as well as people |
+| q011 | 35 | that the Fed Funds Rate ripples out to mortgages, savings and credit cards |
+| q013 | 39 | what contrarian investors do with a VIX spike |
+
+**Terminology was taken from the shipped corpus, not invented.** `base monetaria (M0)` /
+`본원통화(M0)` / `基础货币（M0）` / `マネタリーベース（M0）`; `el Fed` (the es corpus uses the
+masculine 19 times and `la Fed` zero); `연준` (34:1 over `연방준비제도`); `FRB` (42:2); `美联储`;
+`La Señal Maestra` / `마스터 신호` / `主导信号` / `マスターシグナル` from lesson 35's own title;
+`tasas cortas por encima de las largas` / `단기 금리가 장기 금리보다 높` / `短期利率高于长期利率` /
+`短期金利が長期金利を上回る` from lesson 36's own prose.
+
+⚠️ **A known translation defect recurred in a corpus no instrument reads, and this is the durable
+part of the run.** `DECISIONS.md` records that the 2026-08-16 AI translation review found *"an
+es-only drop of 'incomes' from lesson 21's inflation-mechanism sentence"* and fixed it. Measured
+this run: the Spanish **lesson** prose does carry `el gasto y los ingresos` — and the Spanish
+**quiz explanation of the same mechanism** still said only `el gasto`, as did zh and ja, seventeen
+days later. **Both instruments that would have caught it read `lessonContent` and neither has ever
+opened `quizText`**: `scripts/translation-review.mjs` by the scope limit `DECISIONS.md` states
+explicitly, and `check-data.mjs` §33 by construction. **A fix applied to one corpus is not applied
+to the concept.**
+
+**Verification.**
+- `npm test` — **0 failures**, 4 warnings, all pre-existing and unchanged in kind (translation
+  review coverage, §33 lesson-body completeness, item 160's option-length cue, the AGENT_LOG floor).
+  §1b placeholder parity, §3 quiz alignment and §58's 200 translated cross-reference instances all
+  still pass, which is what says the six files are still index-aligned.
+- `npm run build` — clean. Verified **live in the built app**, not in source: cleared storage, opened
+  `#/lesson/29`, answered wrong, and read the revealed explanation in **es, zh, ko and ja** in turn.
+  All four render the full mechanism.
+- 320 px overflow sweep on the reader with a planted `white-space:nowrap` probe: **control fired**,
+  `documentElement.scrollWidth` 320, and the only two hits are the `SrOnly` verdict spans, which are
+  clipped by design.
+- ⚠️ **One measurement was wrong before it was right, for the reason this log has written down
+  before.** The Spanish lesson first rendered with **no quiz at all** and a `Siguiente` button — which
+  looks exactly like a content bug. The console said `Failed to fetch dynamically imported module:
+  assets/quizText.es-BTU7MFeM.js`: a **stale tab holding the pre-build chunk hash**. A hard reload
+  fixed it. Reading the app without reloading it after a build measures the previous build.
+
+**Step 5 — adversarial self-check.**
+- **§10.1 (advice adjacency) — the one real risk in this diff, checked by plant and not by reading.**
+  `q013`'s missing sentence is the single closest thing in the corpus to a recommendation
+  (*"Contrarian investors watch for spikes as potential buying opportunities"*), and I put it into
+  four unreviewed languages. `npm run check-blindspot` **PASSES** — but a pass proves nothing unless
+  the check reaches the field, so I planted `지금이 매수하기 좋은 시기입니다.` into the **exact
+  `explain` value I had just written** in `quizText.ko.js`: **FAIL**, on item 164's Korean timing
+  pattern. Restored from a scratchpad copy (never `git checkout --`), re-ran: **PASS**, and the
+  plant greps to 0 occurrences. The four translations stay in the English's third-person descriptive
+  register — what contrarian investors do — and address the reader nowhere.
+- **§10.2 / §10.3 / §2.3:** no Dalio reference added; kids content untouched; the only dates added are
+  `1955`, which the English already carries as history, and §2.3's live-date scan over `quizText`
+  passes.
+- **`DECISIONS.md`:** no conflict. Content stays plain `.js` modules edited in place; no state, build
+  or storage decision is touched. Relevant and stated so nobody misreads a number later: the
+  translation-review ledger's **scope limit is lesson content**, so these 36 fields ship as
+  AI-written under the standing "(Beta)" decision and are **not** counted by `npm run review-status` —
+  its 100% figure did not move and should not be read as covering them.
+- **Already-done item:** `q007` was repaired by the run that filed item 165 and is **not** in this
+  diff — the sentence instrument reads it 2/2/2/2/2, which is also the check that the criterion
+  tracks a real repair. Item 93/94 is a different corpus (`lessonContent`). Item 160 moves reasoning
+  *into* `explain`; this makes that field able to carry it in four more languages, so it compounds
+  with item 160 rather than undoing it.
+- **My own verification claim:** every figure above is printed by a script re-run in this session
+  with its controls visible, or read off `npm test`; the four language renders are quoted verbatim
+  from the built app; the "36 lines and nothing else" claim is a re-runnable `git diff` command, not
+  an assurance.
+- **W-6.3 (instrument-to-app ratio):** **0 lines added to `scripts/`.** Both instruments live in this
+  entry and the scratchpad, deliberately — see the residual below for the one that arguably belongs
+  in `scripts/` and why I did not put it there this run.
+- **W-6.2 rule 2's own tax, paid and stated:** this run's update to **item 115's** neighbour, item 165,
+  costs the non-archivable floor **+2,795 b** (359,029 → 361,824, measured by `npm test` before and
+  after). The run-log entry itself costs the floor nothing — the floor is the App summary, the backlog
+  and the Environment note — and the run log sits at 197,200 b of its 250,000 b warn budget, 2 live
+  days. **The floor stays over budget by 111,824 b and this run made that worse, not better**;
+  item 115's owner option is what moves it.
+
+**O-3 accounting, priced rather than described, because that is the standing ask.** This adds
+**+1,633 characters of unreviewed machine translation** (es +849, ko +306, zh +192, ja +286) across
+four languages, counted as the net delta of the 36 fields against `HEAD` and not as the length of
+what was written — my first draft of this line quoted the latter and was 36% too high. For scale: the 2026-09-02 `q042` run priced its enlargement at +366. **The
+difference in kind matters and the owner should weigh it as such: this is not new surface.** Every
+one of these 36 fields already shipped in all five languages; the change completes a translation
+that was there and short, on the track a new install opens on. Human review share is unchanged at
+**0%**, which is O-3's actual open question.
+
+**What is left, measured not estimated.** On the sentence measure the whole 46-question corpus is
+now down to **`q020` (essentials lesson 6), es and zh — 2 pairs**. On item 165's ratio measure
+**41 pairs across 13 questions** remain (from 65/18), all of them partial shortfalls rather than
+stubs, and **none of them on the main path**. Filed into item 165 rather than turned into a new
+numbered item, per W-6.2 rule 2.
+
+**Residual, filed and deliberately not picked (W-6.2 rule 2's own warning about turning around and
+taking your own residual).** The sentence-count instrument would satisfy W-6.2 rule 3 — the
+learner-visible failure it catches is *"the reader who answers in Spanish is shown one clause where
+the English reader is shown the mechanism"*, which is precisely what this run repaired nine times.
+But **W-6.3 says to quote the ratio and say which side a proposal falls on**: `scripts/` is 2.3x the
+app it measures, and the surface this would guard now has **2 known instances, both off the main
+path**. Building the guard the same day the class was emptied is the shape W-6.4 names as the cause
+of the floor. **It belongs to whoever picks `q020`, with the `EE.UU.` control already written into
+this entry so it is not re-derived.**
+
+**Owner tree at end of run:** the owner's untracked `UIUX/` only, untouched. `HEAD` re-checked
+before writing and unmoved at `767a96f`.
+
 
 ### 2026-09-02 (owner-directed: "do the backlog compression pass next") — the fourth pass, scoped to material the rule has never touched; it recovered 7,708 b net against a 109,029 b gap, and the arithmetic that matters is that item 115's owner option now has about three days left
 

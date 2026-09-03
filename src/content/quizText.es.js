@@ -25,7 +25,7 @@ export const quizText = [
       "Gasto total (dinero + crédito)",
       "Precios de acciones"
     ],
-    "explain": "El gasto total impulsa la economía."
+    "explain": "El gasto total impulsa la economía. Gasto = dinero + crédito. Cada dólar gastado se convierte en el ingreso de otra persona."
   },
   {
     "q": "¿Cuál es la parte más importante?",
@@ -35,7 +35,7 @@ export const quizText = [
       "Gobierno",
       "Tecnología"
     ],
-    "explain": "El crédito es la parte más importante y volátil."
+    "explain": "El crédito es la parte más importante y volátil de la economía. En Estados Unidos, el crédito total pendiente es muchas veces mayor que la base monetaria (M0)."
   },
   {
     "q": "¿Cuánto dura el ciclo corto?",
@@ -45,7 +45,7 @@ export const quizText = [
       "75-100 años",
       "5-8 años"
     ],
-    "explain": "El ciclo corto dura 5-8 años."
+    "explain": "El ciclo corto dura 5-8 años. Es el ciclo económico que el banco central controla principalmente a través de las tasas de interés."
   },
   {
     "q": "¿Qué causa la inflación?",
@@ -55,7 +55,7 @@ export const quizText = [
       "Tasas bajas solas",
       "Caídas bursátiles"
     ],
-    "explain": "Cuando el gasto crece más rápido que la producción, los precios suben."
+    "explain": "Cuando el gasto y los ingresos crecen más rápido que la producción de bienes, los precios suben. Eso es la inflación."
   },
   {
     "q": "¿Qué pasa en un desapalancamiento diferente de recesión?",
@@ -65,7 +65,7 @@ export const quizText = [
       "Bancos tienen demasiado",
       "Tasas ya en 0% — no se pueden bajar más"
     ],
-    "explain": "En un desapalancamiento, las tasas ya están en 0%."
+    "explain": "En un desapalancamiento, las tasas ya están en 0%, así que la herramienta habitual del Fed (bajar las tasas) no funciona. Por eso hacen falta la QE y las demás herramientas."
   },
   {
     "q": "Una curva invertida predice:",
@@ -75,7 +75,7 @@ export const quizText = [
       "Recesión en 12-18 meses",
       "PIB fuerte"
     ],
-    "explain": "Las curvas invertidas han precedido a cada recesión de EE.UU. desde 1955, aunque no toda inversión termina en recesión."
+    "explain": "Las curvas invertidas han precedido a cada recesión de EE.UU. desde 1955, aunque no toda inversión termina en recesión. Cuando las tasas cortas están por encima de las largas, es una señal de debilidad económica por delante."
   },
   {
     "q": "¿Qué es QE?",
@@ -95,7 +95,7 @@ export const quizText = [
       "Ahorrar 50%",
       "No dejes que la deuda crezca más rápido que los ingresos"
     ],
-    "explain": "Si la deuda crece más rápido que los ingresos, te aplastará."
+    "explain": "Si la deuda crece más rápido que los ingresos, la carga de la deuda terminará por aplastarte. Esto vale tanto para las personas como para los países."
   },
   {
     "q": "¿Qué es lo más importante para el crecimiento económico a largo plazo?",
@@ -125,7 +125,7 @@ export const quizText = [
       "La tasa de interés solo de los bonos del Tesoro a 30 años",
       "Una tasa fijada directamente por el Congreso"
     ],
-    "explain": "Es la tasa que los bancos se cobran entre sí de un día para otro, fijada por la Reserva Federal."
+    "explain": "Es la tasa que los bancos se cobran entre sí de un día para otro, fijada por la Reserva Federal. Es la señal maestra que se propaga a las hipotecas, las cuentas de ahorro y las tarjetas de crédito."
   },
   {
     "q": "Durante la fase de 'Valle' del ciclo económico, históricamente:",
@@ -145,7 +145,7 @@ export const quizText = [
       "VIX",
       "PMI"
     ],
-    "explain": "El VIX mide la volatilidad esperada. No hay umbrales oficiales, pero como guía aproximada, por debajo de 15 sugiere calma y por encima de 40, pánico extremo."
+    "explain": "El VIX mide la volatilidad esperada. No hay umbrales oficiales, pero como guía aproximada, por debajo de 15 sugiere calma y por encima de 40, pánico extremo. Los inversores contrarios vigilan los picos como posibles oportunidades de compra."
   },
   {
     "q": "¿Por qué el ciclo de deuda a largo plazo tiene que girar eventualmente?",
