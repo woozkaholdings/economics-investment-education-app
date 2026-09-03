@@ -105,6 +105,7 @@ export default {
     howReviewStep2Body: "맞히면 간격이 넓어집니다 — 하루, 이틀, 나흘, 여드레, 열엿새. 틀리면 내일 다시 나옵니다.",
     howReviewStep3: "점점 덜 물어봅니다",
     howReviewStep3Body: "계속 맞히는 문제는 점점 덜 나타납니다. 간격을 두는 이유가 바로 그것입니다.",
+    howReviewStepDone: "완료함",
     coachMarkPractice: "잘했어요! 배운 내용을 복습하려면 언제든 여기로 돌아오세요.",
     coachMarkDismissLabel: "팁 닫기",
     reviewDueTemplate: "복습할 문제 {n}개",

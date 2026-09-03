@@ -2594,9 +2594,22 @@ through two passes that each had it open.
     - **Two seams noticed while measuring this, filed as notes and not as items (W-6.2 rule 2).**
       (i) `showPracticeCoachMark` is `completedLessons.length > 0`, so the coach mark sends the
       learner to Review at exactly the moment Review is empty — harmless now that the card names the
-      right next action, but the trigger is still completion. (ii) The `Steps` rail marks `done` with
+      right next action, but the trigger is still completion. (ii) ~~The `Steps` rail marks `done` with
       **color only** — measured, step 1's glyph stays the `book` path and only moves
-      `--ink-accent` → `--ink-ok` — so the done state is carried by hue alone.
+      `--ink-accent` → `--ink-ok` — so the done state is carried by hue alone.~~
+      ⛔ **PREMISE WRONG, and the half it got wrong is the half that mattered — corrected and CLOSED
+      2026-09-03 (scheduled dev-agent).** "Color only" is false: measured on the built app, the done
+      step's title also carries `text-decoration: line-through` and drops `--ink-strong` →
+      `--ink-muted`. A sighted learner gets two non-color signals, so there was never a WCAG 1.4.1
+      defect here and the fix this note proposed (swap the glyph) would have addressed nothing.
+      **What the note missed by scoping to color is that NONE of the three signals reaches assistive
+      technology**: the glyph is `aria-hidden`, `line-through` is not announced, and muted ink is a
+      color. Measured with a control that fires (the Learn path's own `SrOnly` "Completed" on a
+      completed lesson, which the same instrument reads back): the done step and its two undone
+      siblings read out **identically, word for word**. Fixed by giving `Steps` a `doneLabel` prop
+      rendered through `SrOnly` — the convention the Learn path already uses — in all five languages.
+      **Transferable: "carried by hue alone" and "carried by nothing an AT can reach" are different
+      defects with different fixes, and the first is the one that is easy to see in a screenshot.**
     - **Honest priority: low.** The defect is fixed; these are the seams around it. **All of it is
       downstream of O-1** — nobody has opened the app, so no learner has met either branch.
 
@@ -4135,6 +4148,121 @@ zero meaningful: `selftest PASS (8/8 controls fired, plantsRemoved true)` and, p
 finding(s); V vacuous; U unavailable`. A bare "no accessibility issues found" is not a result.
 
 ## Run log
+
+### 2026-09-03 (scheduled dev-agent, backlog item 117 note (ii)) — the Review tab's "How review works" rail marks step 1 done with a strikethrough, muted ink and a green glyph, and a screen reader gets none of the three; the note that filed it named the one signal that was never missing
+
+**Where the pick came from.** The previous two runs were item 156 and a self-picked comment-accuracy
+fix, neither of them a residual of the other, so W-6.2 rule 1 does not bind. The last entry queued
+nothing and named item 155 as the nearest neighbour while noting it is exactly what W-6.3's ratio
+argues against — an instrument, in a repo whose `scripts/` is already 2.3x its `src/`. So this run
+took a **note under item 117** instead of a numbered item, which is what W-6.2 rule 2 says such
+material is for, and picked the one thing on that list that is a defect in the app rather than a
+judgment call for the owner.
+
+⛔ **Step 3.5 — the premise is wrong, and correcting it changed the fix rather than a figure.**
+Note (ii) reads: *"The `Steps` rail marks `done` with **color only** — step 1's glyph stays the `book`
+path and only moves `--ink-accent` → `--ink-ok` — so the done state is carried by hue alone."*
+Measured on the built bundle, `en`, light theme, one review entry seeded so `seenCount(review) > 0`:
+
+| | step 1 (done) | steps 2-3 (not done) |
+|---|---|---|
+| title `text-decoration` | **`line-through`** | `none` |
+| title color | `rgb(95,88,79)` (`--ink-muted`) | `rgb(28,26,23)` (`--ink-strong`) |
+| glyph color | `rgb(26,102,64)` (`--ink-ok`) | `rgb(47,67,196)` (`--ink-accent`) |
+| glyph path | `book` (unchanged) | `target` / `check` |
+
+**"Color only" is false.** The strikethrough is right there in `ui.jsx` and renders. A sighted learner
+gets two non-color signals, there is no WCAG 1.4.1 defect, and the fix the note implies — swap the
+glyph the way the landing card at `Practice.jsx:488` does — would have addressed nothing.
+
+**What the note missed by scoping to color: none of the three signals reaches assistive technology.**
+The glyph is `aria-hidden="true"` (every `Icon` is), `text-decoration` is not announced, and muted ink
+is a color. So the done state exists only for people who can see it.
+
+**The control, and it did not fire the first time.** The instrument is a `textContent` read of each
+`<li>`; the control is the Learn path's own done marker, `<SrOnly>{t.lessonStateDone}</SrOnly>`, a
+state I know independently is exposed. First run: **the control came back empty** — and the honest
+reason was not the instrument. Seeding `ecycles_completed_lessons` as `[29]` is silently rewritten to
+`[17]` by `lessonIdMigration`, so I was reading a lesson row that genuinely was not done. Re-read
+against lesson 17: `"Where Did the Raise Go?…Completed"`, carried by a clipped span
+(`clipPath !== "none"`). **Control fires; the instrument is sound.** Only then does the subject's
+negative mean anything: on the rail, `/Completed|Done|完了|완료|已完成|Completada/` over the whole `<ol>`
+returned **false**, with step 1 unambiguously in its done state.
+
+**The change.** `Steps` takes a `doneLabel` prop and renders it through `SrOnly` beside the title of
+any step whose `done` is set — the same convention, the same component, as the Learn path. One call
+site (`Practice.jsx`, the only `<Steps>` in `src/`) passes `t.howReviewStepDone`. Five new locale keys.
+
+**Why a new key rather than reusing `lessonStateDone`.** Reuse costs zero keys and is wrong in
+Spanish: `lessonStateDone` is `"Completada"`, feminine because it agrees with *lección*; a *paso* is
+masculine and wants `"Completado"`. `en` also reads better as `"Done"` than `"Completed"` on a
+three-word step. `ko`/`zh`/`ja` carry no agreement and reuse their existing wording verbatim
+(`완료함` / `已完成` / `完了済み`). This is item 117's own `practiceAllTemplate` lesson in a second
+costume — **"costs zero locale keys" prices a change in the one currency that does not capture what
+makes it wrong** — and it is why the key is `howReviewStepDone`, not a second call to the lesson one.
+
+**Verification, post-fix, on the rebuilt bundle.** Per language, switching via the real `<select>`
+(native value setter + a bubbling `change`, no reload):
+
+| lang | step 1 accessible text | `SrOnly` box | strikethrough | markers on steps 2/3 |
+|---|---|---|---|---|
+| en | `Answer a lesson's check Done…` | 1×1 | `line-through` | none / none |
+| es | `Responde la comprobación Completado…` | 1×1 | `line-through` | none / none |
+| ko | `확인 문제에 답하세요 완료함…` | 1×1 | `line-through` | none / none |
+| zh | `先答一道检测题 已完成…` | 1×1 | `line-through` | none / none |
+| ja | `確認問題に答える 完了済み…` | 1×1 | `line-through` | none / none |
+
+**Negative control:** with `ecycles_review` removed, all three steps report **no** marker and no
+strikethrough — the label tracks the real state rather than being a constant. **Visual:** at 320px,
+`documentElement.scrollWidth === clientWidth === 320`, `ol.scrollWidth === clientWidth === 288`, the
+`SrOnly` span measures 1×1 out of flow, and the screenshot is pixel-unchanged — no visible word was
+added to the rail.
+
+⚠️ **A harness trap that cost a 45s timeout and belongs in the next run's hands.** A `for` loop over
+the five languages with `await setTimeout` between them **hangs**: the Browser pane throttles timers
+while it is hidden. The working shape is one tool call to set the language and a **separate** call to
+read — never both in one call. This is the same paused-timeline family as the 2026-09-02 entry's
+`data-theme="light"` finding.
+
+**Step 5 — adversarial self-check.** *Blindspot register:* clean. No lesson or market copy was
+touched; the five added strings are UI state words with no advice, no date, no figure, no Dalio
+reference, no kids framing — `npm run check-blindspot` **PASS, 0 failures**, including its §10.1
+timing and escape-expansion controls. *DECISIONS.md:* no conflict — no new persistence (localStorage
+untouched), keys added to `.js` locale modules as the closed `.js`-not-JSON decision requires, no
+build-tool change. *Already-done backlog item:* no. The only two prior mentions of this rail in the
+log and archive are item 117's own notes and the 2026-08-26 sweep that confirmed `done` is set on
+step 1 only; **no run has touched its accessibility**, and the change adds a signal rather than
+undoing one. *My own verification claim:* a reviewer re-running this needs the two things that are in
+this entry rather than in my head — the **migration rewrite** (`[29]` → `[17]`), without which the
+control looks like an instrument failure, and the **one-call-per-step** rule above, without which the
+per-language table cannot be reproduced at all. *W-6.2 rule 2's tax:* this run files **no new numbered
+item**.
+
+**One thing seen and deliberately not chased, reported because it looks like a finding.** The seeded
+state put lesson 17 on the Learn path as **"Completed"** *and* disabled with *"Complete previous
+lessons first"* in the same row. That is a real contradiction, but the state producing it is my
+artificial seed surviving `lessonIdMigration`, and I have **not** shown a learner can reach it — you
+cannot complete a lesson you could not open. Filed as this sentence, not as an item, until someone
+demonstrates a real path into it.
+
+**Verification.** `npm run build` clean; `npm test` **PASS, 0 failures**, 4 standing warnings
+(translation review coverage, translation completeness, the §65 option-length cue, the log floor — all
+pre-existing and unrelated); `npm run check-blindspot` **PASS, 0 failures**. All live measurements are
+on the built bundle served from `dist/`, not a dev server.
+
+**Top item for the next run: the W-5.3 archiving pass, and it is now due rather than nearly due.**
+`check-log-size.mjs`, run this run: run log **228,197 b, 91.3% of the 250,000 b warn budget, 2.5 runs
+of headroom**, floor **365,564 b** (over, and only item 115's owner decision moves it). Re-measured
+with this entry in the file: run log **236,759 b, 94.7% of warn, 1.51 runs of headroom**, floor
+**366,859 b** — so the next run is the last one that fits before `npm test` starts warning, and the
+one after that would be writing into a warned budget. Both live days (2026-09-02, 2026-09-03) are
+contiguous, so the cut is clean. **O-1 remains the entire critical path** — 44 lessons, five languages, 161 minutes of content,
+and zero people have ever opened this app.
+
+**Owner tree:** `OWNER-TREE f54fc023…` at run start (0 tracked modified, 51 untracked) — unmoved from
+the previous run's recorded fingerprint, the owner's `UIUX/` only, untouched. `HEAD` re-checked before
+writing and unmoved at `f35e41a`.
+
 
 ### 2026-09-03 (scheduled dev-agent, backlog item 156) — the coach mark cleared the nav by a hardcoded 76px taken at the app's own 1.3x ceiling, and browser text zoom does not stop there; at 200% it drew on top of all three navigation tabs, and the item that filed it had scoped the wrong axis
 

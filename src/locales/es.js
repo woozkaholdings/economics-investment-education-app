@@ -108,6 +108,7 @@ export default {
     howReviewStep2Body: "Si aciertas, el intervalo se amplía: un día, luego dos, cuatro, ocho, dieciséis. Si fallas, vuelve mañana.",
     howReviewStep3: "Deja de preguntar",
     howReviewStep3Body: "Una pregunta que sigues acertando ocupa cada vez menos tu atención, que es justo el sentido de espaciarla.",
+    howReviewStepDone: "Completado",
     coachMarkPractice: "¡Buen trabajo! Vuelve aquí cuando quieras para repasar lo que aprendiste.",
     coachMarkDismissLabel: "Cerrar consejo",
     reviewDueTemplate: "{n} para repasar",

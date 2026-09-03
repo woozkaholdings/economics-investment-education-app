@@ -137,6 +137,7 @@ export default {
     howReviewStep2Body: "Get it right and the gap widens — a day, then two, four, eight, sixteen. Get it wrong and it returns tomorrow.",
     howReviewStep3: "It stops asking",
     howReviewStep3Body: "A question you keep getting right takes less and less of your attention, which is the point of spacing it out.",
+    howReviewStepDone: "Done",
     coachMarkPractice: "Nice work! Come back here anytime to review what you've learned.",
     coachMarkDismissLabel: "Dismiss tip",
     reviewDueTemplate: "{n} ready to review",

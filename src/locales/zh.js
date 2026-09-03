@@ -105,6 +105,7 @@ export default {
     howReviewStep2Body: "答对了，间隔就会拉长——一天、两天、四天、八天、十六天。答错了，明天再见。",
     howReviewStep3: "它会渐渐不再问你",
     howReviewStep3Body: "一直答对的题目会越来越少占用你的注意力，这正是拉开间隔的意义。",
+    howReviewStepDone: "已完成",
     coachMarkPractice: "做得好！随时回到这里复习你学过的内容。",
     coachMarkDismissLabel: "关闭提示",
     reviewDueTemplate: "{n} 题待复习",

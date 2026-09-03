@@ -669,6 +669,7 @@ export default function Practice({ t, lang, completedLessons, review, recordRevi
             { icon: "target", title: t.howReviewStep2, body: t.howReviewStep2Body },
             { icon: "check", title: t.howReviewStep3, body: t.howReviewStep3Body },
           ]}
+          doneLabel={t.howReviewStepDone}
         />
       </section>
 

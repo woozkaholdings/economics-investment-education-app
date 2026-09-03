@@ -420,7 +420,14 @@ export function TileGrid({ children, style }) {
 // invisible — a learner could answer a question and had no way to know it was
 // coming back, or when. `done` strikes a step through the way Vocabulary marks
 // "Install the app" as already complete.
-export function Steps({ items, style }) {
+//
+// A struck-through title and a green glyph are both signals a screen reader
+// gets nothing from: `text-decoration` is not announced and the glyph is
+// `aria-hidden`, so before this label the done step and its two undone
+// siblings read out identically, word for word (measured). `doneLabel` puts
+// the state in the accessibility tree the same way the Learn path marks a
+// completed lesson — `SrOnly` beside the title, not a second visible word.
+export function Steps({ items, doneLabel, style }) {
   return (
     // One continuous rail behind every step rather than a connector broken at
     // each icon: the Vocabulary original (UIUX/ "Vocabulary iOS 187") runs a
@@ -445,6 +452,7 @@ export function Steps({ items, style }) {
               style={{ fontWeight: 700, textDecoration: step.done ? "line-through" : "none" }}
             >
               {step.title}
+              {step.done && doneLabel && <SrOnly>{" " + doneLabel}</SrOnly>}
             </Text>
             <Text variant="caption" color={ink.muted} style={{ marginTop: 2 }}>
               {step.body}
