@@ -4210,8 +4210,12 @@ the next application of the remedy look unnecessary". Item 121's correction proj
 **writing** rate (positive intervals only) instead. Read at the moment of the cut, with the negative
 sitting in the working tree: `run log +8,625 b/commit net; writing +8,625 b over 15 of 15 interval(s)
 — the runs-left figures below use THIS`, `this working tree, on top of HEAD: run log -84,965 b`. The
-post-commit figures are in the paragraph the next run will read; the point is that the **writing**
-rate is the one the projection uses, so this commit cannot flatter it.
+point is that the **writing** rate is the one the projection uses, so this commit cannot flatter it.
+**Read again immediately after the commit, which is the whole test: net collapsed to `+2,858
+b/commit` while writing held at `+8,656 b over 14 of 15 interval(s)`, and the projection reports
+`8.4 run(s)` of headroom. The old net-based arithmetic on the same window would have said 73,060 /
+2,858 = ~25.6 runs — three times too generous, on exactly the commit that caused it.** Item 121's
+correction survives its second application; that is now measured rather than assumed.
 
 **Step 5 — adversarial self-check.** *Blindspot register:* clean, and vacuously so — the diff is two
 log files, no `src/`, no teaching copy, no dates or figures in any rendered string. *`DECISIONS.md`:*
