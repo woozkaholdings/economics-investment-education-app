@@ -4123,6 +4123,125 @@ finding(s); V vacuous; U unavailable`. A bare "no accessibility issues found" is
 
 ## Run log
 
+### 2026-09-03 (scheduled dev-agent, self-picked; W-6.2 rule 1 sent me off the residual chain) — the migration module told every future reader that the review schedule is keyed by an array index, which is the exact belief the module next to it exists to refute; and two blind-spot classes I expected to be full are measured empty
+
+**Where the pick came from, and why it is not a residual.** The two runs before this one were item 165
+and item 165's own residual (`q020`) — W-6.2 rule 1 forbids a third, and both entries said so
+themselves ("nothing is queued from here and nothing should be chained off it"). The remaining
+translation work is O-3's, i.e. the owner's. So this run went looking in the app instead, found
+nothing live, and landed on the class the log calls item 75's: **a comment that asserts a fact about
+the code which the code contradicts.**
+
+**What the live walk found: nothing, and the negative is reported with its controls.** Built app at
+375 and 320 px, light theme, storage cleared, seeded `[29..34]`: lesson 35 (the PolicySim host),
+`#/learn`, `#/practice`, `#/reference`, Glossary, term detail, About and the Market Dashboard.
+Overflow, heading-level jumps, duplicate ids, unnamed controls, unlabeled inputs, alt text — **0 on
+every screen**, `scrollWidth === clientWidth` at both widths. The overflow instrument's control is a
+planted 2000 px element that **must** be caught; ⚠️ **my first run of it reported the control as not
+fired and the instrument was fine** — the probe is body's last child and my assertion read a list
+sliced to 12. *A control that checks a truncated view of the result is not a control.* Re-run
+unsliced: control fires, page clean.
+
+⛔ **And the one thing that looked like a real bug is DECIDED, which step 3.5 is the only reason I
+know.** Reference → Glossary → *Yield Curve* → platform Back lands on **`#/practice`**, discarding
+two levels of in-Reference navigation and changing tab. That is recorded — 2026-09-02's entry
+measured the same thing (it landed on `#/learn`; the difference is only my history stack) and says
+plainly *"this is DECIDED, not a defect. Do not 'fix' it"*, because `lib/deepLink.js`'s header states
+the Reference sub-nav is deliberately unrouted while item 12 (Expo-vs-web) is HELD. **That note also
+says it "cost this run a measurement"; it cost me one too, and the reason is that I did not read
+`deepLink.js`'s header before measuring.** The durable form of this note is already in the code, in
+the right file. I was the reader who did not open it.
+
+**What shipped — 2 files, 17 insertions, and a re-runnable proof that not one line of behavior
+changed.** `git diff -U0` filtered to non-comment lines returns **0**, and the built bundle is
+`index-DHbrXBWj.js` before and after — same hash, same 260.04 kB.
+
+1. **`src/lib/lessonIdMigration.js`** said `ecycles_review` "is keyed by a question's **array index in
+   quizData** ... and that array's order never changed", as the reason the Leitner schedule needs no
+   remapping. **Both halves stopped being true on 2026-09-01**, when `review.js` re-keyed the schedule
+   onto the opaque question `id` *precisely because* a reorder silently repoints every index key —
+   `review.js` and `quizMeta.js` each spend a header block saying so. So the migration module, which
+   is the first file anyone opens before renumbering anything, asserted as current fact the belief its
+   two neighbours exist to refute. **The conclusion was and is correct** (question ids never tracked
+   lesson numbers, so renumbering cannot reach that store) — only the reason was false, so the repair
+   keeps the conclusion, replaces the reason, and adds the sentence a reader most needs: the review
+   store **did** migrate, on a different axis, and `migrateIndexKeys` in `review.js` is where.
+2. **`src/lib/chunkError.js`** cited "App.jsx's `CONTENT_LOADERS` note". `CONTENT_LOADERS` occurs in
+   `App.jsx` **0 times**; it is declared at `screens/LessonReader.jsx:38`, and the literal-specifier
+   reasoning the line wants is the comment above it. The conflation is understandable and still wrong:
+   `chunk()`'s three *callers* are in `App.jsx` (lines 37-39), its *rationale* is in `LessonReader`.
+   Now both are named.
+
+**Step 3.5 — the premise of each repair re-measured against the tree, not read off a comment.**
+`grep -c CONTENT_LOADERS src/App.jsx` → **0**; declared in `screens/LessonReader.jsx`. `review.js:14`
+and `quizMeta.js:19` both state id-keying with dates. **The adjacent claim on the line above finding 1
+was checked too and is TRUE** — `App.jsx:246` is `completedLessons.includes(prev.id)`, verbatim — so
+it was left alone. `loadReview` has exactly one call site (`useAppState.js:111`) and it does pass
+`QUIZ_IDS_BY_INDEX`, so the index→id migration is live rather than silently dropping every legacy
+key; that was the real bug I went looking for behind the false comment, and it does not exist.
+
+**Two blind-spot classes measured for the first time, and BOTH ARE EMPTY — which is the result, and
+the reason no check was built.**
+- **Verbatim-English leaks.** §66/§67 score translation completeness by length ratio, so a translation
+  that is a *verbatim copy of the English* scores 1.0 — perfect — and both sections' own positive
+  controls say exactly that. Nothing anywhere asserts a non-English string differs from its English
+  sibling. Measured across every five-language corpus, both the co-located `{en,es,ko,zh,ja}` shape
+  and the per-language file families (`lessonContent.<track>.<lang>`, `quizText.<lang>`,
+  `locales/<lang>`): **5,612 pairs, 2 hits, both correct Spanish** (`vs {name}`, `≈{n} min` — "vs" and
+  "min" are the same words in Spanish). **Zero real instances.** 7 controls pass, including a live
+  plant of a real 200+ char English body into the in-memory `lessonContent.economy.ko` map (flagged,
+  exactly 1) and `isTrivial` accepting `GDP`/`M0` while rejecting a sentence.
+- **Comment pointers naming the wrong file.** 88 files, 62 comment pointers of the shape
+  "`File.jsx`'s `Symbol`", 34 whose symbol is a real declared identifier: **exactly 1 true positive**,
+  the `chunkError.js` line above. ⚠️ **The other 23 are collisions and the instrument is not worth
+  keeping** — `top`, `coverage`, `keys`, `unit`, `comment`, `controls` and `claims` all happen to be
+  declared as ordinary locals somewhere, and the regex also splits `translation-review.mjs` at the
+  hyphen into `review.mjs`. Precision 1/24. **Two-sided proof the repair landed: control 7 asserted
+  the `chunkError.js` finding is present, and after the edit it FAILS while the other six pass, with
+  findings 24 → 23.**
+
+**Why neither becomes a check, stated against the number W-6.3 says to quote.** `scripts/` is
+**16,576 lines** against **7,146** lines of app code — **2.32x** — and W-6.4 names guards for
+zero-instance classes as the cause of the floor. W-6.2 rule 3 asks for the learner-visible failure a
+check would catch; for the verbatim guard the sentence is writable ("a Korean learner is shown an
+English sentence the translator never translated") but **the class is empty at 5,612 pairs**, and for
+the pointer guard the sentence is not writable at all — no learner ever reads a comment. **Both
+instruments stay in the scratchpad, with their controls written into this entry so the next run does
+not re-derive them. `scripts/`: +0 lines. `src/`: +0 lines of behavior.**
+
+**Verification.**
+- `npm test` — **PASS, 0 failures**, 1 warning: the standing non-archivable-floor warning, unchanged
+  in kind. `npm run build` — clean, and the bundle hash is identical to the pre-edit build.
+- `npm run check-blindspot` — **PASS, 0 failures** (33 advice patterns, §10.1 timing control green).
+- The two audits are re-runnable and both print their controls; every figure above is their output or
+  a `git`/`grep` command, not an assurance.
+
+**Step 5 — adversarial self-check.** *Blindspot register:* nothing here touches learner-visible
+content in any language — the diff is two comment blocks in `src/lib/`, so §10.1, §10.2, §10.3 and
+§2.3 have no surface to regress; `check-blindspot` passes and the only dates added are `2026-09-01`
+and `2026-09-03` inside source comments, which §2.3's scan covers `content/` for and which are
+history, not a market reading. *DECISIONS.md conflict:* none — no state, storage, module format,
+routing or build decision is touched, and the run **declined** to change the one thing that looked
+like a routing defect because `DECISIONS.md`/`deepLink.js` had already decided it. *Already-done
+backlog item:* no. Item 58's doc-vs-tree sweep (2026-08-17) predates both false claims — finding 1's
+comment only became false on 2026-09-01 — and item 75's precedent is what this run *applies* rather
+than redoes. *My own verification claim:* the two strongest numbers here are deliberately of the kind
+a reviewer can re-run in one command each — `git diff -U0 | grep -vE '^[+-]\s*//'` returning 0
+non-comment lines, and the identical bundle hash across two builds. *W-6.2 rule 2's tax:* **the
+backlog gains 0 bytes this run and the floor gains 0 bytes** (`npm test`'s own working-tree line:
+`floor +0 b, run log +0 b`). The floor stays over budget by **114,282 b**; this is the first run in
+several that did not make it worse, which is worth exactly as much as that sounds — item 115's owner
+option is still the only thing that moves it.
+
+**Top item for the next run.** Nothing is queued from here; the two instruments above are answered
+questions, not work. **O-1 remains the entire critical path** — 44 lessons, five languages, 161
+minutes of content, and zero people have ever opened this app. If a run wants a live surface, the
+honest report from this one is that four consecutive learner-facing sweeps have now come back clean,
+which is evidence the remaining defect density is in corpora nothing renders rather than on screen.
+
+**Owner tree:** `OWNER-TREE f54fc023…` at run start (0 tracked modified, 51 untracked) — the owner's
+`UIUX/` only, untouched. `HEAD` re-checked before writing and unmoved at `80416fd`.
+
 ### 2026-09-03 (owner-directed: "do q020 next") — the item's last open pair turned out to be four pairs, not two, and the sentence it was missing is the one that stops the answer reading as a recommendation; my own residual named the wrong count off the wrong instrument, and the previous entry's closing figure was measured mid-patch
 
 **Step 3.5 — the premise here was MINE, filed six hours earlier, and it was wrong twice.** The

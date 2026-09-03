@@ -43,7 +43,11 @@ export class ChunkLoadError extends Error {
 
 // Wraps a `() => import("...")` thunk for `lazy()`. The literal specifier
 // stays inside the caller's own arrow, because Vite needs to see it to split
-// the chunk at all (see App.jsx's CONTENT_LOADERS note and vite.config.js).
+// the chunk at all. The callers are App.jsx's three `lazy(chunk(...))` screen
+// imports; the note explaining the literal-specifier constraint is the
+// CONTENT_LOADERS comment in screens/LessonReader.jsx (this line pointed at
+// App.jsx for it until 2026-09-03, where CONTENT_LOADERS has never been).
+// See also vite.config.js.
 export function chunk(load) {
   return () =>
     load().then(undefined, (cause) => {

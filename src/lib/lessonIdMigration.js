@@ -13,9 +13,18 @@
 // (App.jsx's isUnlocked checks `completedLessons.includes(prev.id)`), so an
 // already-installed user's progress must be remapped or their unlock state
 // silently points at the wrong lessons after this update ships. The Leitner
-// review schedule (`ecycles_review`) does NOT need this — it's keyed by a
-// question's array index in quizData, not by lesson id, and that array's
-// order never changed.
+// review schedule (`ecycles_review`) does NOT need THIS migration — it is
+// keyed by a question's opaque `id` (see quizMeta.js), which has never tracked
+// a lesson number, so renumbering lessons cannot reach it.
+//
+// That is not the same as "the review store never migrates", and this comment
+// asserted otherwise until 2026-09-03: it said `ecycles_review` was "keyed by
+// a question's array index in quizData ... and that array's order never
+// changed". Both halves stopped being true on 2026-09-01, when the schedule
+// was re-keyed off the array index precisely because a reorder silently
+// repoints every key. That store has its own, unrelated migration —
+// `migrateIndexKeys` in review.js — and review.js's header is the record for
+// it. Nothing about it belongs in the table below.
 //
 // This table is a historical fact about this one renumbering, not a general
 // mechanism — a future renumbering would need its own table and migration.
