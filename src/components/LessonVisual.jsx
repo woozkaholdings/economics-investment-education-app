@@ -14,11 +14,13 @@
 // ═══════════════════════════════════════════════════════════════════════════
 
 import { useState } from "react";
-import { AsymmetryChart, Bar, BracketStack, CycleChart, GapColumns, GrowthCurve, OutcomeGrid, PreferenceFlip, ProportionBar, SpendingLoop, TradeoffPlot, YieldCurve } from "./charts.jsx";
+import { AsymmetryChart, BalanceBand, Bar, BracketStack, CycleChart, GapColumns, GrowthCurve, OutcomeGrid, PreferenceFlip, ProportionBar, SpendingLoop, TradeoffPlot, YieldCurve } from "./charts.jsx";
 import { Segmented, Text } from "./ui.jsx";
 import {
   balanceSheetCaption, balanceSheetDescription, balanceSheetFormat, balanceSheetHistory, balanceSheetUnit,
   cycleChartDescription, phaseNames,
+  deleveragingAnchors, deleveragingCaption, deleveragingDescription, deleveragingEndLabels,
+  deleveragingGoodLabel, deleveragingTitle, deleveragingUglyLabel,
   spendingLoopCaption, spendingLoopDescription, spendingLoopSteps, spendingLoopTitle,
   trendLabel, yieldCurveDescriptions,
 } from "../content/markets.js";
@@ -74,6 +76,7 @@ export const LESSON_VISUALS = {
   44: "incomeTradeoff",// The Part the Word "Passive" Leaves Out
   // economy
   30: "spendingLoop", // Credit: The Most Important Part (its "Spending Chain" section)
+  34: "deleveragingMix", // Deleveraging: The 4 Tools (its "Beautiful vs Ugly Deleveraging" section)
   32: "cycle",         // The Short-Term Debt Cycle
   33: "cycle",         // The Long-Term Debt Cycle
   36: "yieldCurve",    // The Yield Curve: Crystal Ball
@@ -213,6 +216,29 @@ export default function LessonVisual({ lessonId, t, lang }) {
           steps={spendingLoopSteps[lang]}
           caption={spendingLoopCaption[lang]}
           description={spendingLoopDescription[lang]}
+        />
+      )}
+
+      {/*
+        The only figure here whose subject is a TWO-SIDED BOUND. Lesson 34's
+        takeaway writes it as one sentence with a "but" in the middle — "Print
+        enough money to offset deflation, but not so much you cause
+        hyperinflation" — and a sentence cannot show that its floor and its
+        ceiling are two ends of the same dial with the good outcome between
+        them. The two outer zones carry the SAME label on purpose; see
+        charts.jsx and `check-data.mjs` §69.
+      */}
+      {kind === "deleveragingMix" && (
+        <BalanceBand
+          title={deleveragingTitle[lang]}
+          zones={[
+            { label: deleveragingUglyLabel[lang], anchor: deleveragingAnchors[lang][0], good: false },
+            { label: deleveragingGoodLabel[lang], anchor: deleveragingAnchors[lang][1], good: true },
+            { label: deleveragingUglyLabel[lang], anchor: deleveragingAnchors[lang][2], good: false },
+          ]}
+          endLabels={deleveragingEndLabels[lang]}
+          caption={deleveragingCaption[lang]}
+          description={deleveragingDescription[lang]}
         />
       )}
 

@@ -94,6 +94,113 @@ export const spendingLoopDescription = {
   ja: "閉じた輪として描かれた4つのステップです。支出増が収入増につながり、そこから信用力の高い借り手が増える。それが借入増につながり、再び支出増へと戻ります。",
 };
 
+// ── Lesson 34's deleveraging dial ─────────────────────────────────────────
+// Backlog item 27, added 2026-09-03. Rendered by `BalanceBand` in charts.jsx,
+// which carries the reasoning for the figure's shape.
+//
+// ⚠️ THE TITLE, BOTH ZONE LABELS, ALL THREE ANCHORS, BOTH END LABELS AND THE
+// CAPTION ARE VERBATIM SUBSTRINGS OF LESSON 34 in the same language — they are
+// lifted, not translated, which is `spendingLoop`'s property above and is held
+// the same way (`check-data.mjs` §69 (a), failing in both directions: rewrite
+// the lesson without these and it fails; paraphrase these away from the lesson
+// and it fails too). 45 of the 50 strings below are therefore reviewed to
+// exactly the degree lesson 34 is, and only the five `deleveragingDescription`
+// values are new prose — a text alternative has to describe the SHAPE, and no
+// sentence in the lesson does that.
+//
+// ⚠️ THE ZONE ORDER IS THE LESSON'S OWN TOOL ORDER and must not be flipped.
+// Tools 1-3 (cutting, defaulting, taxing) are the deflationary ones and tool 4
+// (printing money) is the inflationary one, so left-to-right runs from "not
+// enough printing" to "too much" — which is also the direction the takeaway's
+// two clauses run in ("Print enough money to offset deflation, BUT not so much
+// …"). A mirrored figure would still render and would put the takeaway's floor
+// where its ceiling is. §69 (c) pins it.
+export const deleveragingTitle = {
+  en: "Beautiful vs Ugly Deleveraging",
+  es: "Desapalancamiento Hermoso vs Feo",
+  ko: "아름다운 vs 추한 디레버리징",
+  zh: "漂亮 vs 丑陋的去杠杆",
+  ja: "美しいvs醜いデレバレッジング",
+};
+
+// The two outcome labels. The OUTER zones deliberately share one — that
+// repetition is the figure's claim, not an oversight: the lesson gives both
+// extremes as instances of an "ugly deleveraging", so the failure is not
+// monotonic in the dial. Do not "improve" this by differentiating them.
+// Two FLAT `{lang: string}` maps rather than one `{lang: {ugly, good}}`. The
+// nested shape was written first and check-data.mjs's own content-shape scan
+// rejected it in all five languages ("expected a non-empty string") — every
+// per-language export under src/content/ is a flat lang→string map, and that
+// is what makes the parity and translation checks able to walk them.
+export const deleveragingUglyLabel = {
+  en: "ugly deleveraging",
+  es: "desapalancamiento feo",
+  ko: "추한 디레버리징",
+  zh: "丑陋的去杠杆",
+  ja: "醜いデレバレッジング",
+};
+
+export const deleveragingGoodLabel = {
+  en: "beautiful deleveraging",
+  es: "desapalancamiento hermoso",
+  ko: "아름다운 디레버리징",
+  zh: "漂亮的去杠杆",
+  ja: "美しいデレバレッジング",
+};
+
+// The three historical anchors, one per zone, in left-to-right order. They are
+// ORDINAL — each sits inside its zone and at no particular point in it, because
+// the lesson gives only "almost entirely", "almost entirely" and "reasonably
+// well". Nothing here may be positioned along the axis by year or by any ratio;
+// the lesson states nothing to position them by.
+export const deleveragingAnchors = {
+  en: ["The US in the 1930s", "2008 through roughly 2015", "Germany in the 1920s"],
+  es: ["EE.UU. en los años treinta", "2008 hasta aproximadamente 2015", "Alemania en los años veinte"],
+  ko: ["1930년대 미국", "2008년부터 대략 2015년까지", "1920년대 독일"],
+  zh: ["1930年代的美国", "2008年到2015年前后", "1920年代的德国"],
+  ja: ["1930年代の米国", "2008年からおよそ2015年にかけて", "1920年代のドイツ"],
+};
+
+// What the dial is, at each end — the lesson's own two tool groups.
+export const deleveragingEndLabels = {
+  en: ["cutting, defaulting, taxing", "printing money"],
+  es: ["recortar, impagar, gravar", "imprimir dinero"],
+  ko: ["삭감, 채무불이행, 증세", "화폐 발행"],
+  zh: ["削减、违约、加税", "印钞"],
+  ja: ["削る、踏み倒す、課税する", "紙幣を刷る"],
+};
+
+// The section's own framing sentence — lifted from the BODY, not from the
+// takeaway, and that distinction is a measured one rather than a preference.
+// This was the takeaway's two-sided bound ("Print enough money to offset
+// deflation, but not so much …") until the figure was rendered: LessonReader
+// draws the KEY TAKEAWAY card a couple of inches below the figure, so the
+// caption and the card were the same sentence twice on one screen. It is
+// visible only on screen — nothing in the source says the two are adjacent.
+// `spendingLoop` already followed the rule without stating it (lesson 30's
+// caption is a body sentence and is absent from that lesson's takeaway), so
+// this is the house pattern rather than a new one. §69 (g) holds it.
+export const deleveragingCaption = {
+  en: "The key is BALANCE",
+  es: "La clave es el EQUILIBRIO",
+  ko: "핵심은 균형입니다",
+  zh: "关键在于平衡",
+  ja: "鍵はバランスです",
+};
+
+// The five strings here that are NOT lifted from the lesson. The figure is one
+// `role="img"`, so its zones are not announced individually — whatever this
+// omits does not exist for a screen-reader learner. It therefore names the
+// direction, all three zones in order with their anchors, and the betweenness,
+// which is the whole claim.
+export const deleveragingDescription = {
+  en: "One dial with three zones, drawn left to right. On the left, an ugly deleveraging, where the tools are almost entirely cutting, defaulting, taxing — The US in the 1930s. In the middle, a beautiful deleveraging, where the mix is balanced — 2008 through roughly 2015. On the right, an ugly deleveraging again, where the tool is almost entirely printing money — Germany in the 1920s. The good outcome lies between the two failures, not at either end.",
+  es: "Un solo dial con tres zonas, dibujadas de izquierda a derecha. A la izquierda, un desapalancamiento feo, donde las herramientas son casi por completo recortar, impagar, gravar — EE.UU. en los años treinta. En el medio, un desapalancamiento hermoso, donde la mezcla está equilibrada — 2008 hasta aproximadamente 2015. A la derecha, de nuevo un desapalancamiento feo, donde la herramienta es casi por completo imprimir dinero — Alemania en los años veinte. El buen resultado queda entre los dos fracasos, no en ninguno de los extremos.",
+  ko: "왼쪽에서 오른쪽으로 그려진 하나의 축과 세 개의 구간입니다. 왼쪽은 추한 디레버리징으로, 도구가 거의 전적으로 삭감, 채무불이행, 증세입니다 — 1930년대 미국. 가운데는 아름다운 디레버리징으로, 배합이 균형을 이룹니다 — 2008년부터 대략 2015년까지. 오른쪽은 다시 추한 디레버리징으로, 도구가 거의 전적으로 화폐 발행입니다 — 1920년대 독일. 좋은 결과는 양 끝이 아니라 두 실패 사이에 있습니다.",
+  zh: "一条从左到右的刻度轴，分为三个区间。左边是丑陋的去杠杆，工具几乎完全是削减、违约、加税——1930年代的美国。中间是漂亮的去杠杆，配比达到平衡——2008年到2015年前后。右边又是丑陋的去杠杆，工具几乎完全是印钞——1920年代的德国。好的结果落在两种失败之间，而不在任何一端。",
+  ja: "左から右へ引かれた1本の目盛りと、3つの区間です。左は醜いデレバレッジングで、手段はほぼ完全に削る、踏み倒す、課税する——1930年代の米国。中央は美しいデレバレッジングで、配合が釣り合っています——2008年からおよそ2015年にかけて。右は再び醜いデレバレッジングで、手段はほぼ完全に紙幣を刷る——1920年代のドイツ。良い結果は両端ではなく、2つの失敗のあいだにあります。",
+};
+
 // The teaching scenario. Deliberately hypothetical and undated — it describes a
 // *kind* of moment, not the present one.
 export const scenario = {

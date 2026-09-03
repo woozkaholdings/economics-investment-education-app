@@ -9912,5 +9912,232 @@ function trendDirection(src) {
   }
 }
 
+// §69. LESSON 34'S DELEVERAGING DIAL, DRAWN AS A TWO-SIDED BOUND (backlog
+//      item 27, added 2026-09-03). The fifth KIND of figure this file guards:
+//
+//        §21/§50/§53 — the figure plots arithmetic its lesson states.
+//        §54         — the figure plots RANKS read off two sentences.
+//        §57         — the figure plots a PARTITION and carries no magnitude.
+//        §64         — the figure plots a CLOSED CAUSAL LOOP.
+//        §69 (here)  — the figure plots an INTERVAL: one dial, three ordered
+//          zones, the good outcome BETWEEN the two failures. It carries no
+//          magnitude either, and — like §64 — every string it renders except
+//          its text alternative is LIFTED VERBATIM from lesson 34 in the same
+//          language.
+//
+//      THE LEARNER-VISIBLE FAILURE, in one sentence, per W-6.2 rule 3: a
+//      reader meets a dial whose zones are labeled in words lesson 34 never
+//      uses (a), or drawn in the opposite order from the takeaway they sit
+//      under, so the sentence's floor is where its ceiling is drawn (c), or
+//      with the middle zone widened until the figure claims the band is
+//      forgiving — a quantity lesson 34 states nowhere (d).
+//
+//      WHY (c) IS NOT PARANOIA. "Left is austerity, right is printing" is not
+//      written down anywhere the renderer can see: `deleveragingAnchors` is a
+//      three-element array and `LessonVisual.jsx` indexes it 0/1/2. Reverse
+//      that array and the figure renders perfectly, passes (a), (b), (d) and
+//      (e), and teaches that hyperinflation is what too much austerity does.
+{
+  const before69 = failures;
+  const need69 = [
+    "deleveragingTitle", "deleveragingUglyLabel", "deleveragingGoodLabel", "deleveragingAnchors",
+    "deleveragingEndLabels", "deleveragingCaption", "deleveragingDescription",
+  ];
+  const missingBand = need69.filter((k) => marketsContent[k] === undefined);
+  if (missingBand.length > 0) {
+    fail(`§69: src/content/markets.js no longer exports ${missingBand.join(", ")}. This section is pointed at a structure that no longer exists — repoint it rather than leaving it green.`);
+  } else {
+    const BAND_LESSON = "34";
+    const ZONE_COUNT = 3;
+
+    // (a) EVERY VISIBLE STRING IS VERBATIM FROM THE LESSON, per language,
+    //     against that language's own body — §64 (a)'s shape, for §64 (a)'s
+    //     reason: this figure sits an inch from the paragraph it draws, and a
+    //     paraphrase in a language nobody on this project reads is invisible.
+    //     The scan covers headings, bodies AND the takeaway, because the
+    //     caption is lifted from the takeaway.
+    //
+    //     CONTROLS, per language and in both directions, because a body that
+    //     failed to load returns "not found" for every string and reads
+    //     exactly like a figure that was rewritten wholesale:
+    //       • an absent probe must NOT be found (the text is real text);
+    //       • the lesson's own word for the subject MUST be found — the
+    //         positive control, and it is specific rather than generic:
+    //         "deleveraging" in each language's own spelling appears in
+    //         lesson 34 and is the term the two zone labels are built from,
+    //         so finding it proves the scan reached THIS lesson.
+    const CONTROL_ABSENT_69 = "qzx-no-lesson-says-this";
+    const DELEV_WORD = { en: "deleveraging", es: "desapalancamiento", ko: "디레버리징", zh: "去杠杆", ja: "デレバレッジング" };
+    const bandText = {};
+    for (const lang of LANGS) {
+      const entry = lessonContent[BAND_LESSON] ?? {};
+      const sections = entry.sections ?? [];
+      const text = sections.map((s) => `${s.heading?.[lang] ?? ""}\n${s.body?.[lang] ?? ""}`).join("\n") + `\n${entry.takeaway?.[lang] ?? ""}`;
+      if (text.trim().length === 0 || text.includes(CONTROL_ABSENT_69)) {
+        fail(`§69: the lesson-34 scan failed its control in "${lang}" — ${text.trim().length === 0 ? "the text is empty" : "an absent probe was found"}. It is reading the wrong text or no text, so a clean result for this language would mean nothing.`);
+        continue;
+      }
+      if (!text.toLowerCase().includes(DELEV_WORD[lang].toLowerCase())) {
+        fail(`§69: lesson 34's "${lang}" text no longer contains "${DELEV_WORD[lang]}". Either the scan is not reaching lesson 34, or the lesson stopped using the word both zone labels are built from — re-read it before repointing this control.`);
+        continue;
+      }
+      bandText[lang] = text;
+
+      const visible = [
+        ["the title", marketsContent.deleveragingTitle[lang], "lesson 34's own section heading"],
+        ["the caption", marketsContent.deleveragingCaption[lang], "the lesson's own framing sentence from the section this figure draws"],
+        ["the outer zones' label", marketsContent.deleveragingUglyLabel[lang], "the lesson's own name for what both extremes produce"],
+        ["the middle zone's label", marketsContent.deleveragingGoodLabel[lang], "the lesson's own name for the balanced outcome"],
+        ...(marketsContent.deleveragingAnchors[lang] ?? []).map((a, i) => [`anchor ${i}`, a, "the historical case the lesson puts in that zone"]),
+        ...(marketsContent.deleveragingEndLabels[lang] ?? []).map((e, i) => [`end label ${i}`, e, "one of the lesson's own two tool groups"]),
+      ];
+      for (const [what, value, whence] of visible) {
+        if (value === undefined || !text.toLowerCase().includes(String(value).toLowerCase())) {
+          fail(`§69: ${what} of the deleveraging dial reads "${value}" in "${lang}", but lesson 34 — the lesson it is drawn beside — does not contain that string in that language. It is ${whence}, lifted rather than translated, and the whole point is that the figure and the paragraph an inch above it use the same words. Take the string from the lesson's current prose; do not translate the English one.`);
+        }
+      }
+    }
+
+    // (b) THE ONE STRING THAT IS NOT LIFTED still names every zone and every
+    //     anchor. The dial is a `role="img"`, so its zones are not announced
+    //     individually — whatever the description omits does not exist for a
+    //     screen-reader learner, and this figure's entire content is the three
+    //     zones, their anchors and the fact that the good one is in the middle.
+    for (const lang of LANGS) {
+      const desc = marketsContent.deleveragingDescription[lang] ?? "";
+      const parts = [
+        marketsContent.deleveragingUglyLabel[lang], marketsContent.deleveragingGoodLabel[lang],
+        ...(marketsContent.deleveragingAnchors[lang] ?? []),
+        ...(marketsContent.deleveragingEndLabels[lang] ?? []),
+      ];
+      const missingPart = parts.filter((p) => !desc.toLowerCase().includes(String(p).toLowerCase()));
+      if (missingPart.length > 0) {
+        fail(`§69: the "${lang}" text alternative does not contain ${missingPart.map((s) => `"${s}"`).join(", ")}. The dial is a role="img", so nothing inside it is announced on its own — a description that drops a zone, an anchor or an end label drops it entirely for that reader.`);
+      }
+    }
+
+    // (c) THE ZONES ARE IN THE LESSON'S OWN ORDER: deflationary tools left,
+    //     printing right. Read off the lesson rather than asserted from here.
+    //
+    //     ⛔ SCOPED TO SECTION 2, and the scope is a CORRECTION rather than a
+    //     tidying. Written first against the whole lesson, this assertion
+    //     passed in `en` and FAILED in es/ko/zh/ja — not because those figures
+    //     were backwards, but because section 1's fourth tool ("PRINT MONEY")
+    //     uses the same words as the inflationary end label in those four
+    //     languages and not in English, so the first occurrence in the full
+    //     text landed in section 1. The ordering claim was only ever about
+    //     ONE sentence — the lesson's "the key is BALANCE" sentence, which
+    //     names the deflationary group and then the inflationary one — and
+    //     that sentence lives in the section this figure draws. Verified in
+    //     all five: deflationary first, at 121/143/58/34/50 against
+    //     190/206/93/55/76.
+    const BAND_SECTION = 1;
+    for (const lang of LANGS) {
+      if (!bandText[lang]) continue;
+      const sec = (lessonContent[BAND_LESSON]?.sections ?? [])[BAND_SECTION];
+      const sectionText = `${sec?.heading?.[lang] ?? ""}\n${sec?.body?.[lang] ?? ""}`.toLowerCase();
+      if (sectionText.trim().length === 0) {
+        fail(`§69 CONTROL (c): lesson 34 has no section ${BAND_SECTION} body in "${lang}". The order assertion below would compare two -1s and pass.`);
+        continue;
+      }
+      const ends = marketsContent.deleveragingEndLabels[lang] ?? [];
+      if (ends.length !== 2) {
+        fail(`§69: deleveragingEndLabels.${lang} has ${ends.length} label(s); the dial has exactly two ends and charts.jsx indexes them 0 and 1.`);
+        continue;
+      }
+      const at = ends.map((e) => sectionText.indexOf(String(e).toLowerCase()));
+      if (at.some((v) => v < 0)) {
+        fail(`§69 CONTROL (c): an end label is absent from lesson 34's "${lang}" section ${BAND_SECTION} (indexes ${at.join(", ")}). (a) already reports the containment; the order result here would be meaningless, so it is not reported as an ordering failure.`);
+      } else if (at[0] > at[1]) {
+        fail(`§69 (c): the dial's two end labels appear in lesson 34's "${lang}" "Beautiful vs Ugly Deleveraging" section at ${at.join(", ")} — the inflationary tool is named before the deflationary group, so the figure is drawn the other way round from the lesson's own "the key is BALANCE" sentence. Left-to-right must run "not enough printing" → "too much", which is the direction the takeaway's two clauses run in.`);
+      }
+      const anchors = marketsContent.deleveragingAnchors[lang] ?? [];
+      if (anchors.length !== ZONE_COUNT) {
+        fail(`§69: deleveragingAnchors.${lang} has ${anchors.length} anchor(s); the dial has ${ZONE_COUNT} zones and LessonVisual.jsx indexes them 0-2, so any other count leaves a zone without its historical case.`);
+      }
+    }
+
+    // (d) THE THREE ZONES ARE EQUAL AND CARRY NO MAGNITUDE — the assertion
+    //     this figure exists alongside rather than the one it exists for.
+    //     Lesson 34 states no width for the band and no distance to either
+    //     failure; it says "balance", "too much" and "not enough". A wider
+    //     middle zone would claim the band is forgiving and a narrower one
+    //     that it is a knife edge, and both are answers the lesson declines to
+    //     give. §57 (e)'s rule arriving at a different figure. Read off
+    //     charts.jsx rather than trusted: a per-zone width fails nothing else
+    //     in this file.
+    const chartsSrc69 = readFileSync(join(ROOT, "src", "components", "charts.jsx"), "utf8");
+    const bandStart = chartsSrc69.indexOf("export function BalanceBand(");
+    if (bandStart === -1) {
+      fail("§69: charts.jsx no longer exports BalanceBand. The figure's geometry is asserted by reading that function, so this check is pointed at nothing.");
+    } else {
+      const bandBody = chartsSrc69.slice(bandStart, chartsSrc69.indexOf("\n}\n", bandStart));
+      if (!bandBody.includes("gridTemplateColumns")) {
+        fail("§69 CONTROL (d): the BalanceBand slice does not contain `gridTemplateColumns`, so it is not the layout this section thinks it is reading. Every geometry result below would be vacuous.");
+      } else {
+        const tmpl = /gridTemplateColumns:\s*"([^"]+)"/.exec(bandBody);
+        if (tmpl?.[1] !== "repeat(3, minmax(0, 1fr))") {
+          fail(`§69 (d): BalanceBand's gridTemplateColumns is "${tmpl?.[1] ?? "(unreadable)"}", expected "repeat(3, minmax(0, 1fr))". Three equal tracks is the whole no-magnitude claim: unequal ones would say how wide the balanced band is, and lesson 34 states nothing to size it by.`);
+        }
+        if (!/alignItems:\s*"stretch"/.test(bandBody)) {
+          fail("§69 (d): BalanceBand's zone row no longer sets `alignItems: \"stretch\"`. Without it a zone whose label wraps to more lines draws taller than its siblings, which is a magnitude arriving through content — the 82-against-52 defect OutcomeGrid shipped and the 35-against-52 SpendingLoop shipped, in a third figure.");
+        }
+        const zoneUses = [...bandBody.matchAll(/\.\.\.BAND_ZONE/g)].length;
+        if (zoneUses !== 1) {
+          fail(`§69 (d): the dial's zones are styled from BAND_ZONE in ${zoneUses} place(s), expected exactly 1 (the shared zone renderer). More than one means a zone has its own style, and one of the few things a per-zone style can express here is a size.`);
+        }
+        const bandStyle = /const BAND_ZONE = \{([\s\S]*?)\n\};/.exec(chartsSrc69);
+        if (!bandStyle) {
+          fail("§69 (d): BAND_ZONE is no longer a top-level object literal in charts.jsx, so this section cannot tell whether a zone has been given a size.");
+        } else if (/\b(width|height|flexBasis|flexGrow|gridColumn|gridRow)\b/.test(bandStyle[1])) {
+          fail("§69 (d): BAND_ZONE now sets a size (width/height/flex/grid span). The three zones are equal because the template makes them equal; a size here is a width for the balanced band, which lesson 34 does not state.");
+        }
+      }
+
+      // (e) THE GOOD/UGLY DISTINCTION IS CARRIED BY WORDS, NOT ONLY BY HUE.
+      //     WCAG 1.4.1, and it is the defect item 117's note (ii) closed on a
+      //     different screen. The two outer zones and the middle one differ in
+      //     their LABEL — `zone.label` — and the color only reinforces it. A
+      //     restyle that dropped the label and kept `zone.good ? graph.green`
+      //     would look fine in a screenshot and would leave hue as the only
+      //     signal.
+      if (bandStart !== -1) {
+        const bandBody = chartsSrc69.slice(bandStart, chartsSrc69.indexOf("\n}\n", bandStart));
+        if (!bandBody.includes("{zone.label}")) {
+          fail("§69 (e): BalanceBand no longer renders `zone.label`. The middle zone is also drawn in a different color from the two outer ones, so without the label the good/ugly distinction would be carried by hue alone (WCAG 1.4.1).");
+        }
+      }
+    }
+
+    // (g) THE CAPTION IS NOT THE TAKEAWAY CARD'S OWN SENTENCE. `LessonReader`
+    //     renders the KEY TAKEAWAY card a couple of inches below the figure, so
+    //     a caption lifted from `takeaway` renders the same sentence twice on
+    //     one screen — which is what the first version of this figure shipped
+    //     and what a live render, not a source read, caught. `spendingLoop`
+    //     already satisfies this without ever stating it.
+    for (const lang of LANGS) {
+      const caption = marketsContent.deleveragingCaption[lang] ?? "";
+      const takeaway = lessonContent[BAND_LESSON]?.takeaway?.[lang] ?? "";
+      if (takeaway.length === 0) {
+        fail(`§69 CONTROL (g): lesson 34 has no takeaway in "${lang}", so the duplication test below would pass by comparing against an empty string.`);
+      } else if (caption.length > 0 && takeaway.toLowerCase().includes(caption.toLowerCase())) {
+        fail(`§69 (g): the dial's "${lang}" caption ("${caption}") is a substring of lesson 34's own takeaway, and LessonReader draws the KEY TAKEAWAY card a couple of inches under the figure — so the learner reads the same sentence twice on one screen. Lift the caption from the section's BODY instead, the way spendingLoop does.`);
+      }
+    }
+
+    // (f) THE FIGURE IS STILL ATTACHED TO LESSON 34. Everything above checks a
+    //     figure nobody sees if the mapping is dropped, and dropping it is a
+    //     one-line edit in a different file.
+    const lvSrc69 = readFileSync(join(ROOT, "src", "components", "LessonVisual.jsx"), "utf8");
+    if (!/^\s*34:\s*"deleveragingMix"/m.test(lvSrc69)) {
+      fail("§69: LESSON_VISUALS in src/components/LessonVisual.jsx no longer maps lesson 34 to \"deleveragingMix\". The figure would stop rendering and every other assertion in this section would keep passing against content nothing displays.");
+    }
+  }
+
+  if (failures === before69) {
+    console.log(`  §69 lesson 34's deleveraging dial: ${LANGS.length} language(s) verified verbatim against the lesson's own text (title, caption, 2 zone labels, 3 anchors and 2 end labels = ${9 * LANGS.length} containments), zones in the lesson's stated order, three equal tracks, good/ugly carried by words, caption distinct from the takeaway card.`);
+  }
+}
+
 console.log(`\n${failures === 0 ? "PASS" : "FAIL"}: ${failures} failure(s), ${warnings} warning(s).`);
 process.exit(failures === 0 ? 0 : 1);

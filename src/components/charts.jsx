@@ -1089,6 +1089,161 @@ export function SpendingLoop({ title, steps, caption, description }) {
   );
 }
 
+// ── BalanceBand ───────────────────────────────────────────────────────────
+// Lesson 34 ("Deleveraging: The 4 Tools"), section 2 "Beautiful vs Ugly
+// Deleveraging" — backlog item 27, added 2026-09-03.
+//
+// WHY A PICTURE, in the lesson's own words rather than in an argument built
+// for it. The lesson's takeaway is a TWO-SIDED BOUND written as one sentence:
+//
+//     "Print enough money to offset deflation, but not so much you cause
+//      hyperinflation."
+//
+// Read what prose has to do there. It states a lower bound and an upper bound
+// in two clauses joined by "but", and the reader has to hold both at once and
+// work out that they bound the SAME dial. A sentence is sequential: it can
+// name a floor, then name a ceiling, and it cannot show them as two ends of
+// one axis with the good outcome between them. That betweenness is this
+// figure's entire contribution — and it is the thing section 1 actively works
+// against, because section 1 introduces tool 4 (printing money) as the
+// answer to the first three, so a reader arriving here with "more printing is
+// better" has read the lesson correctly up to that point and is about to be
+// corrected by a single word ("but").
+//
+// The shape is therefore three ordered zones on one dial, and the two OUTER
+// zones carry the SAME label. That repetition is the claim: the failure is
+// not monotonic in the dial, so moving further either way is the same kind of
+// wrong. The lesson says exactly this — Germany in the 1920s (almost entirely
+// printing) and the US in the 1930s (almost entirely austerity) are both
+// given as instances of an "ugly deleveraging".
+//
+// EVERY STRING THIS FIGURE RENDERS EXCEPT ITS TEXT ALTERNATIVE IS VERBATIM
+// FROM LESSON 34, in all five languages — `SpendingLoop`'s property, for
+// `SpendingLoop`'s reason (AGENT_LOG.md, owner item O-3: a figure an inch
+// from the paragraph it draws must not add four languages of unreviewed
+// machine translation, and "must not paraphrase" is only a check away from
+// being a wish). `check-data.mjs` §69 (a) holds it.
+//
+// ⚠️ THE THREE ZONES ARE EQUAL AND CARRY NO MAGNITUDE, and a future run must
+// not give them one. Lesson 34 states no width for the band, no distance to
+// either failure, and no quantity of any kind in this section — it says
+// "balance", "too much" and "not enough". A wider middle zone would claim the
+// band is forgiving; a narrower one would claim it is a knife edge. Both are
+// answers the lesson declines to give, which is `OutcomeGrid`'s rule arriving
+// at a different figure. The three zones are `1fr` siblings in ONE grid row
+// with `alignItems: "stretch"`, so they are equal in width by the template
+// and equal in height by the row, whatever their labels do. §69 (d) holds it.
+//
+// ⚠️ AND THE MARKERS ARE ORDINAL, NOT PLACED. Each historical anchor sits
+// INSIDE its zone and at no particular point in it, because the lesson gives
+// only an ordering ("almost entirely", "reasonably well"). A future run must
+// not position these along the axis by year, by debt ratio, or by anything
+// else — the lesson states nothing to position them by, and `TradeoffPlot`'s
+// ordinal-axis warning (item 27) is the same rule.
+//
+// COLOR. `graph.*` for the zone borders and the dial, never `line.*`: the
+// partition IS the content here, so WCAG 1.4.11 applies at 3:1 and no `line-*`
+// token clears that on any surface in either palette (§28b/§51, and
+// `OutcomeGrid`'s header has the fuller note). The middle zone is `graph.green`
+// / `ink.ok` and the two outer zones are identical to each other
+// (`graph.neutral` / `ink.muted`) — two states, matching the lesson's two
+// outcomes. ⚠️ The good/ugly distinction is NOT carried by color: the zones say
+// "beautiful deleveraging" and "ugly deleveraging" in words, and the color only
+// reinforces what the text already says. That is deliberate (WCAG 1.4.1) and
+// §69 (e) holds the labels, so a future restyle cannot quietly make hue the
+// only signal.
+const BAND_ZONE = {
+  border: `1px solid ${graph.neutral}`,
+  borderRadius: radius.sm,
+  padding: space["2"],
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+  justifyContent: "center",
+  gap: space["1"],
+  textAlign: "center",
+  // A zone's track is `minmax(0, 1fr)` and never grows, so a word longer than
+  // the track has to break inside it or it spills over the border. Measured
+  // live at 320px / 130% / es before this line existed: "desapalancamiento"
+  // (17 characters) drew from x = -1.5 to x = 321.5 across a 79px zone and put
+  // the whole page into horizontal scroll. `es` is the only language of the
+  // five whose zone labels contain a word that long, which is exactly the
+  // failure mode nobody on this project would have seen by looking at the
+  // English (backlog item 155's point, in a figure rather than on a hub).
+  overflowWrap: "anywhere",
+};
+
+export function BalanceBand({ title, zones, endLabels, description, caption }) {
+  return (
+    <figure style={{ background: surface.card, border: `1px solid ${line.hairline}`, borderRadius: radius.lg, padding: space["4"], margin: 0 }}>
+      {title && (
+        <figcaption style={{ marginBottom: space["3"] }}>
+          <Text as="span" variant="caption" color={ink.muted} style={{ textTransform: "uppercase", letterSpacing: "0.05em", fontWeight: 700 }}>
+            {title}
+          </Text>
+        </figcaption>
+      )}
+      {/*
+        HTML rather than SVG, for `OutcomeGrid`'s and `SpendingLoop`'s reason:
+        these labels are five-language and long ("desapalancamiento hermoso",
+        "2008년부터 대략 2015년까지"), SVG does not wrap, and a clipped label fails
+        silently in exactly the languages nobody on this project re-reads.
+      */}
+      <div role="img" data-figure="balanceBand" aria-label={description}>
+        <div
+          style={{
+            display: "grid",
+            // Three EQUAL tracks. `minmax(0, 1fr)` rather than `1fr` so a long
+            // unbreakable label cannot push its own track wider than its
+            // siblings — which is how a magnitude arrives through content
+            // (OutcomeGrid's 82-against-52, SpendingLoop's 35-against-52).
+            gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
+            gap: space["2"],
+            alignItems: "stretch",
+          }}
+        >
+          {zones.map((zone, i) => (
+            <div
+              key={`zone-${i}`}
+              data-figure-part="zone"
+              style={{ ...BAND_ZONE, borderColor: zone.good ? graph.green : graph.neutral }}
+            >
+              <Text as="span" variant="caption" color={zone.good ? ink.ok : ink.muted} style={{ fontWeight: 700 }}>
+                {zone.label}
+              </Text>
+              <Text as="span" variant="caption" color={ink.body}>{zone.anchor}</Text>
+            </div>
+          ))}
+        </div>
+        {/*
+          The dial the three zones sit on. It is one line with an arrowhead at
+          each end, and it is what makes the row of three boxes an AXIS rather
+          than a list of three cases — the figure's whole claim is that they
+          are positions on one continuum. The glyphs are inside the
+          `role="img"`, so they are not announced separately; `description`
+          carries the direction in words.
+        */}
+        <div aria-hidden="true" style={{ display: "flex", alignItems: "center", gap: space["1"], marginTop: space["2"] }}>
+          <Text as="span" variant="caption" color={ink.muted} style={{ lineHeight: 1 }}>←</Text>
+          <span style={{ flex: 1, borderTop: `1px solid ${graph.neutral}` }} />
+          <Text as="span" variant="caption" color={ink.muted} style={{ lineHeight: 1 }}>→</Text>
+        </div>
+        {/*
+          What the dial IS, at each end — the lesson's own two tool groups, in
+          the lesson's own order (tools 1-3 deflationary, tool 4 inflationary).
+          Without these the axis is unlabeled and the reader has to guess what
+          moving right means.
+        */}
+        <div style={{ display: "flex", justifyContent: "space-between", gap: space["3"], marginTop: space["1"] }}>
+          <Text as="span" variant="caption" color={ink.muted} style={{ flex: 1, textAlign: "left" }}>{endLabels[0]}</Text>
+          <Text as="span" variant="caption" color={ink.muted} style={{ flex: 1, textAlign: "right" }}>{endLabels[1]}</Text>
+        </div>
+      </div>
+      {caption && <Text variant="caption" color={ink.muted} style={{ marginTop: space["3"], lineHeight: 1.5 }}>{caption}</Text>}
+    </figure>
+  );
+}
+
 // ── CycleChart ────────────────────────────────────────────────────────────
 const PHASE_DOT = [graph.green, graph.amber, graph.red, graph.blue];
 const PHASE_INK = [ink.ok, ink.warn, ink.bad, ink.accent];

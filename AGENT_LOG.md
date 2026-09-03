@@ -2087,7 +2087,19 @@ through two passes that each had it open.
       still showing `Loading…`.
     - **Where it belongs:** `scripts/a11y-sweep.js`, as a probe with the root-font override as its
       axis, so it composes with `A11yStates`' existing language/font-scale/width axes.
-    - **Honest priority: low-to-medium.** It guards a property that holds as of 2026-08-30, but it
+    - **A LIVE INSTANCE, found 2026-09-03 by a run doing something else and reported rather than
+      fixed — the property does NOT still hold.** At **320px / 130% / es**, the lesson reader's
+      "Completar" button reaches x = **329.3** against a 320px viewport (`scrollWidth` 329). **Control
+      carried, because the run had just added a figure to that screen and had to know whose defect it
+      was:** lesson 33 at identical settings, with no new figure on it, shows the identical button at
+      the identical 329.3 and the identical `scrollWidth`. So it is pre-existing, it is the button
+      rather than the figure, and it is exactly the class this item's probe is for — a right-edge scan
+      would catch it, since the button's own border box overflows. Untouched by that run (out of its
+      scope); this is the first named live instance this item has.
+    - **Honest priority: low-to-medium.** ⛔ **The "property that holds" half of the line below is now
+      false** — see the live instance above. It guards a property that held as of 2026-08-30 and does
+      not today, which strengthens the item rather than weakening it.
+      Original: it guards a property that holds as of 2026-08-30, but it
       holds because of a five-call-site fix that a future layout change could undo silently.
 
 154. **✅ DONE 2026-08-30 (owner-directed: "fix the fresh-clone test failure now") via ROUTE (a)
@@ -3228,7 +3240,33 @@ through two passes that each had it open.
     > two are *identical*, a sentence rather than a shape; **42** states four x \$1,000 and then
     > spends its second half insisting the categories "aren't a ladder" — a figure would harden what
     > the lesson deliberately loosens. **Do not re-derive these five.**
-    > **THE BAR FOR A NINTH IS UNCHANGED AND STILL BINDS**, and there is again **no named
+    > **Tenth visual added 2026-09-03: lesson 34 (deleveraging), as `BalanceBand` — the first figure
+    > whose subject is an INTERVAL.** Coverage re-parsed with this item's own control (must find 36,
+    > must not find 9999, 44 lessons): **economy 7/12, essentials 3/15, money 5/17 — 15 of 44, 0
+    > orphan ids.**
+    > **It cleared the bar on the lesson's own takeaway sentence**: *"Print enough money to offset
+    > deflation, but not so much you cause hyperinflation."* That is a floor and a ceiling on one
+    > dial, delivered as two clauses joined by "but" — prose can name each bound and cannot show that
+    > they bound the same dial with the good outcome between them. The quantity rule passes vacuously,
+    > as it did for `OutcomeGrid` and `SpendingLoop`: the figure needs no quantity and the lesson
+    > states none in that section. **The two OUTER zones carry the same label on purpose** (the lesson
+    > gives Germany in the 1920s and the US in the 1930s as instances of the same "ugly
+    > deleveraging"), which is what makes the figure a claim about non-monotonicity rather than a list
+    > of three cases. 45 of its 50 strings are lifted verbatim from lesson 34; `check-data.mjs` §69
+    > holds all of it, and its (c) block is the one to read — see the run entry for why an ordering
+    > control scoped to the whole lesson passes in English and is wrong in the other four.
+    > ⛔ **THE MONEY TRACK NOW HAS NO REACHABLE CANDIDATE UNDER THIS ITEM'S OWN RULE, measured
+    > 2026-09-03 — this is a finding, not a to-do.** Money is **5/17** and is the track §0 calls the
+    > product. Of its twelve bare lessons, **16, 18, 19, 20, 21, 24, 25, 26 and 42** are this item's
+    > existing measured rejections; the three never assessed were read on 2026-09-03 and all three
+    > fail: **22** (confirmation bias) and **41** (the subject that wasn't on the timetable) state no
+    > quantity and no structure — their claims are about attention and about history — and **43**'s
+    > axis is time-coupling, which is *already one of the two axes lesson 44's `TradeoffPlot` draws*,
+    > so a figure there would redraw a shipped axis one lesson early. **Economy 35, 39 and 40 were
+    > also read: 35 is a dial whose effects the lesson lists sequentially with no magnitude for any of
+    > them.** The next figure must come from `essentials` (twelve bare, none ever assessed) or from a
+    > lesson whose prose changes. **Do not re-derive any of the rejections above.**
+    > **THE BAR FOR AN ELEVENTH IS UNCHANGED AND STILL BINDS**, and there is again **no named
     > candidate** —
     > deliberately, because a named candidate is how this item became count-shaped twice before. A run
     > that wants one must read a lesson's prose first and name what the prose cannot do, the way this
@@ -4202,6 +4240,170 @@ zero meaningful: `selftest PASS (8/8 controls fired, plantsRemoved true)` and, p
 finding(s); V vacuous; U unavailable`. A bare "no accessibility issues found" is not a result.
 
 ## Run log
+
+### 2026-09-03 (scheduled dev-agent, backlog item 27) — lesson 34's takeaway is a two-sided bound written as one sentence, and it is now a dial with the good outcome between the two failures; the ordering control I wrote passed in English and was wrong in the other four
+
+**Where the pick came from, and why it is not the previous run's residual.** The previous entry closed
+item 160 and filed its remainder (`q026`, `q034`, `q039`) inside that item. **W-6.2 rule 1 says file it,
+do not turn around and pick it** — so this run went to the launch plan instead. Item 27 is the item
+`LAUNCH_PLAN.md` §3.0.4 points at ("an LLM can explain a yield curve in text; a curve inverting in
+front of the reader is what a chat window cannot do"), §3.0 is the plan's primary success criterion,
+and item 27 is product rather than instrument, not downstream of O-1, and not translation debt.
+
+**Step 3.5 — the premise reproduced EXACTLY, which is worth saying because ten consecutive items
+before it did not.** Re-parsed `LESSON_VISUALS` against `lessons.js`'s `track` field with the item's
+own three controls (must find 36, must not find 9999, 44 lessons): **14/44 — economy 6/12,
+essentials 3/15, money 5/17, 0 orphan ids**, agreeing with item 27's own line to the digit. Nothing
+in the item's characterization of the code needed correcting.
+
+**The candidate, chosen by reading prose rather than by plausibility — item 27's own rule.** Item 27
+has already measured and declined lessons 16, 18, 19, 20, 21, 24, 25, 26, 29, 31 and 42; the bare
+lessons never assessed were economy 34/35/39/40, money 41/43/22 and twelve `essentials`. Read in
+English: **22** (confirmation bias) and **41** (the subject that wasn't on the timetable) state no
+quantity and no structure — their claims are about attention and about history. **43**'s axis is
+time-coupling, which is *already half of lesson 44's `TradeoffPlot`*, so a figure there would redraw a
+shipped axis. **35** (interest rates) is a dial whose effects the lesson lists sequentially, and the
+lesson states no magnitude for any of them.
+
+**Lesson 34 cleared the bar on its own takeaway sentence, and the argument is the sentence's shape
+rather than its subject:**
+
+> *"Print enough money to offset deflation, but not so much you cause hyperinflation."*
+
+That is an **interval** — a floor and a ceiling on one dial, delivered as two clauses joined by "but".
+Prose is sequential: it can name a floor, then name a ceiling, and it cannot show that they bound the
+same dial with the good outcome between them. **And section 1 actively works against the reader here**,
+because it introduces tool 4 (printing money) as the answer to the first three, so a reader arriving at
+section 2 with "more printing is better" has read the lesson correctly up to that point and is
+corrected by one word. The quantity rule passes the way `OutcomeGrid`'s and `SpendingLoop`'s did — the
+figure needs no quantity, and the lesson states none in that section.
+
+**What shipped.** `BalanceBand` in `charts.jsx` (the fifth kind of figure in the app: an INTERVAL,
+after arithmetic, ranks, a partition and a closed loop), `deleveraging*` content in `markets.js`,
+lesson 34 mapped to `deleveragingMix`, and `check-data.mjs` §69. Three equal zones on one dial:
+**the two OUTER zones carry the same label**, which is the claim rather than an oversight — the lesson
+gives Germany in the 1920s (almost entirely printing) and the US in the 1930s (almost entirely
+austerity) as instances of the same "ugly deleveraging", so the failure is not monotonic in the dial.
+Coverage re-parsed with the same control: **15/44 — economy 7/12, essentials 3/15, money 5/17, 0 orphan
+ids.**
+
+**45 of the figure's 50 strings are LIFTED VERBATIM from lesson 34 in the same language** — title, both
+zone labels, all three anchors, both end labels and the caption, proven per language before any file
+was edited (probe with four controls: an absent probe must not be found, each language's own spelling
+of "deleveraging" must be, a planted paraphrase `难看的去杠杆` and a planted wrong date `Germany in the
+1930s` must both miss — both did). Only the five `deleveragingDescription` values are new prose, four
+of them unreviewed machine translation; that is a real O-3 addition and is stated rather than implied.
+
+**⛔ THE ORDERING CONTROL I WROTE PASSED IN ENGLISH AND WAS WRONG IN THE OTHER FOUR, and this is the
+run's transferable finding.** §69 (c) asserts the dial runs deflationary-left, printing-right. Written
+first as "the deflationary tool group is named before the inflationary one in lesson 34", scanned over
+the **whole lesson**, it passed `en` and **failed es, ko, zh and ja** — at 1608/1131, 745/548, 455/337,
+631/454. The figures were not backwards. **Section 1's fourth tool ("PRINT MONEY") uses the same words
+as the inflationary end label in those four languages and not in English**, so the first occurrence in
+the full text landed one section early. The ordering claim was only ever about **one sentence** — the
+lesson's "the key is BALANCE" sentence, which names the deflationary group and then the inflationary
+one — and that sentence is in the section the figure draws. Rescoped to section 2 it holds in all five
+(121/143/58/34/50 against 190/206/93/55/76). **A control that passes in the language you wrote it in is
+the least informative pass available**, and English was the only language where the coincidence did not
+occur.
+
+**Two more defects the run's own instruments caught before commit, neither found by reading:**
+1. **The content shape.** `deleveragingZoneLabels` was written as `{lang: {ugly, good}}` and
+   `check-data.mjs`'s existing content-shape scan rejected it in all five languages ("expected a
+   non-empty string"). Every per-language export under `src/content/` is a flat `lang → string` map,
+   and that flatness is what lets the parity checks walk them. Split into two flat exports.
+2. **A live overflow in one language only.** At **320px / 130% / es** the label
+   "desapalancamiento" (17 characters) drew from x = **-1.5 to x = 321.5** across a 79px zone and put
+   the whole page into horizontal scroll. `es` is the only one of the five with a zone word that long
+   — the failure nobody here would have seen by looking at the English (item 155's point, in a figure
+   rather than on a hub). Fixed with `overflowWrap: "anywhere"` on the zone.
+
+**And one the SCREENSHOT caught, which no source read could have.** The caption was lifted from the
+takeaway — the interval sentence itself, which seemed like the obvious choice. `LessonReader` draws the
+**KEY TAKEAWAY card two inches below the figure**, so the rendered screen carried the same sentence
+twice. Nothing in the source says those two are adjacent. The caption now lifts the section's own
+framing sentence ("The key is BALANCE" / "La clave es el EQUILIBRIO" / "핵심은 균형입니다" / "关键在于平衡" /
+"鍵はバランスです"), which is also what `spendingLoop` was already doing without anyone writing it down —
+lesson 30's caption is a body sentence and is absent from that lesson's takeaway. §69 (g) is that rule.
+
+**Verification.**
+- `npm test` — **0 failures**, 4 warnings, all pre-existing and unchanged in kind (translation review,
+  translation completeness, §65's option-length cue at an unmoved en 63.0%, and the log floor).
+  `npm run build` clean. Readiness figures unmoved at **44 lessons / 150,493 en chars / 161 min** — a
+  figure adds no lesson prose.
+- **§69 proven able to fail, eight plants, each restored from a scratchpad copy and never
+  `git checkout --`:** (a) a paraphrased `zh` zone label; (b) an anchor dropped from the `en` text
+  alternative; (c) the `en` end labels reversed; (d1) the middle track widened to `1.4fr`; (d2) a
+  `height` on `BAND_ZONE`; (d3) `alignItems: "stretch"` removed; (e) `{zone.label}` removed with the
+  color kept; (f) lesson 34 unmapped; (g) the takeaway sentence restored as the caption. **All nine
+  fired**; the restored tree reports 45 containments and 0 failures.
+- **Live in the built app, not in source** — `dist/` served statically, storage seeded, lesson 34
+  opened in **all five languages** at **320px / 130%** and at 390px: zone widths
+  **79.33 / 79.33 / 79.34** and equal heights in every language, **0 elements overflowing inside the
+  figure**. Both color schemes read back through the tokens (light borders `rgb(115,107,97)` /
+  `rgb(23,114,74)`, dark `rgb(138,128,114)` / `rgb(110,222,159)`), and **the two outer zones are
+  byte-identical to each other in both**.
+- **Contrast, with a published-value control** (black-on-white must read 21.00 and `#767676`-on-white
+  4.54 — both did): every label clears AA in both schemes (6.57-10.41), every border clears 1.4.11's
+  3:1 with margin (worst **4.47**, dark neutral).
+- ⚠️ **One overflow at 320px / 130% / es is NOT mine and is reported rather than quietly fixed:** the
+  lesson reader's "Completar" button reaches x = 329.3 against a 320px viewport. **Control: lesson 33,
+  same settings, no `BalanceBand`, shows the identical button at the identical 329.3 with the identical
+  `scrollWidth` 329.** Filed as a note under item 155; untouched this run.
+- Screenshots worked this run (the previous entry's `computer{screenshot}` returned black frames);
+  the rendered figure is what surfaced the caption duplication above.
+
+**Step 5 — adversarial self-check.**
+- **§10.1 / §10.2 — checked by plant, not by reading, because a pass proves nothing until the check is
+  shown to reach the field.** Both plants went into the *exact strings this run wrote*: `Now is a good
+  time to buy.` appended to the new `en` description → `npm run check-blindspot` **FAILS**, naming
+  `markets.js:197`; `as Ray Dalio puts it` appended to the new `en` caption → **FAILS**, naming
+  `markets.js:184`. Restored from a scratchpad copy both times; the plants grep to **0** and the check
+  is back to PASS. So both blindspots do reach this figure's content. Nothing shipped is
+  advice-adjacent (the subject is national policy, not a reader's portfolio) and no attribution was
+  added — the lesson's own Dalio-derived vocabulary was already shipping without one and this run
+  lifted from it rather than adding to it.
+- **§10.3 / §2.3:** no kids content touched; no current date and no live-looking figure added — "1930s",
+  "1920s" and "2008 through roughly 2015" are the lesson's own historical anchors, and §2.3's scan over
+  `markets.js` passes.
+- **`DECISIONS.md`:** no conflict, and the relevant clause is the 2026-08-16 translation-ledger scope
+  limit as amended by item 27's own lesson-7 figure — `markets.js` chart labels are excluded from the
+  ledger and ship AI-written under "(Beta)". That amendment's closing worry is that "the parity checks
+  catch a **missing** language, never a **wrong** one"; **§69 (a) catches a wrong one**, by anchoring to
+  the lesson rather than by reviewing the translation. Content stays plain `.js` modules; no state,
+  build or storage decision touched.
+- **Already-done item:** lesson 34 is not among item 27's eleven measured rejections and not among the
+  fourteen mapped figures; nothing here redoes or undoes a "Completed and pruned" entry.
+- **W-6.2 rule 3, answered:** the learner-visible failure §69 would have caught is "the dial's zones are
+  labeled in words lesson 34 never uses", "the dial is drawn backwards, so the takeaway's floor sits
+  where its ceiling is", and "the balanced band is drawn wider than the failures, claiming a tolerance
+  the lesson never states". All three are things a person would meet on the screen.
+- **W-6.3, quoted and re-measured as that clause requires:** `scripts/` was **17,024** lines against
+  `src/` (minus content and locales) at **7,557** — **2.253x**, essentially W-6.0's 2.3x. This change
+  is **+289 lines to `src/` and +227 to `scripts/`**, taking the ratio to **17,251 / 7,738 = 2.229x**.
+  It is the first change in a while that falls on the *app* side of that number, which is the side
+  W-6 says is under-served.
+- **My own verification claim:** every figure above is printed by a script or a DOM read re-run in this
+  session with its controls visible, or read off `npm test`; the plants are re-runnable and the
+  contrast numbers carry a published-value control.
+- **W-6.2 rule 2's tax, paid and stated:** the item 27 and item 155 updates cost the non-archivable
+  floor **+3,639 b** (371,777 → 375,416, measured by `npm test` before and after; the backlog section
+  accounts for all of it). The floor stays over budget by **125,416 b** and this run made that worse,
+  not better; **item 115's owner options are still the only thing that moves it.** No new numbered
+  item was filed — both findings are notes under the items they belong to.
+
+**What is left in item 27, measured not estimated.** **29 of 44 lessons carry no figure.** Economy is
+now 7/12 with **29, 31, 35, 39, 40** bare — 29 and 31 are already measured and declined and must not be
+re-derived. **Money is still 5/17 and is the track §0 calls the product**; of its twelve bare lessons,
+16, 18, 19, 20, 21, 24, 25, 26 and 42 are measured rejections, leaving **22, 41 and 43**, all three of
+which this run read and declined above. **So the money track has no reachable candidate left under the
+current rule** — that is a finding about the item, not a to-do, and the next figure will have to come
+from `essentials` (twelve bare and none ever assessed) or from a lesson whose prose changes.
+
+**Owner tree:** `git status` at run start and at run end showed **0 tracked modified besides this run's
+own four files, 51 untracked** — the owner's `UIUX/` only, untouched, as in the previous eighteen runs.
+`HEAD` re-checked before writing and unmoved at `435ce4a`.
+
 
 ### 2026-09-03 (scheduled dev-agent, backlog item 160, self-picked) — the quiz's longest-option tell fell 4.3 points on ten deleted strings, and the cheapest-looking question in the corpus turned out to be the one deletion cannot fix; the ranking everyone would reach for is the wrong one
 
