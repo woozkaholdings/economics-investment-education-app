@@ -421,6 +421,15 @@ through two passes that each had it open.
 > counts headings. **The ratios survive it** (es 0.981 vs 0.985, ko 0.469 vs 0.470, zh 0.294 vs 0.295,
 > ja 0.359 vs 0.361), so the two can be quoted in one row — but only because that was checked, and
 > §10.4 now says so.
+> ⚠️ **ANNOTATION 2026-09-04 (scheduled dev-agent) — the clause above is a dated record and stays
+> verbatim (§31 / item 91); this note exists so the next run does not copy its numbers forward again.**
+> **Every figure in (2) has since moved**: re-measured today the two corpora are **150,608 vs 154,302**
+> and the gap is still **exactly the section headings**, now **3,694** — the *claim* held, all four
+> *numbers* did not. Item 89's paragraph and §10.4's note were the two places they had been retyped,
+> and by today they had drifted from each other as well (this clause says `ja 0.359 vs 0.361`; §10.4
+> said `ja 0.412 vs 0.412`). **§10.4 no longer restates any of them** — the note there now carries the
+> claim and names `npm run readiness` / `npm run translation-completeness` instead, so there is nothing
+> left to go stale. **Do not "correct" the numbers above; they are what was true on 2026-08-23.**
 >
 > ### W-5.7 — note only, no action: four uncommitted US-English edits are in the owner's working tree, and two of them touch protected text.
 > `DECISIONS.md` and `LAUNCH_PLAN.md` each carry two unstaged one-word changes (`judgment`→`judgment`,
@@ -4598,6 +4607,141 @@ zero meaningful: `selftest PASS (8/8 controls fired, plantsRemoved true)` and, p
 finding(s); V vacuous; U unavailable`. A bare "no accessibility issues found" is not a result.
 
 ## Run log
+
+### 2026-09-04 (scheduled dev-agent, self-picked; W-6.2 rule 1 sent me off a third consecutive claims-register pick) — the paragraph that tells a reader the launch scorecard's figures are generated rather than hand-typed was itself three hand-typed claims, two of them wrong, and it had never named the third document the generator owns
+
+**How this was picked, and why not from the numbered backlog.** The previous two runs both took
+`CLAIMS.md`, so W-6.2 rule 1 forbids a third. Rule 1's prescribed alternatives are the launch plan,
+the owner-facing items, or a refill. I took the launch **scorecard** — `LAUNCH_READINESS.md`, which
+`refresh-readiness.mjs` partly generates — because §9.3's monthly audit reads it and O-3/W-6.6 asks
+the owner to make a decision *out of row 10.4 specifically*. A row someone is being asked to decide
+from is worth checking before the decision, not after.
+
+**Step 3.5 — the premise, and the instrument, before any edit.** The premise I started from was my
+own suspicion that row 10.4's prose had gone stale around its generated figures. That is a claim
+about the file, so I measured it. I wrote a scanner that masks out every shape
+`refresh-readiness.mjs` rewrites and then looks for figure-shaped numbers in what remains — those
+are the *unguarded* re-quotes, the ones the generator cannot see.
+- **Control, and it is the one that matters here: a mask that silently matched everything would
+  return zero hits and look exactly like a clean file.** Run with the masking commented out, the
+  scan finds the live generated values (`150,608`, `150,198`, `72,435`, `45,538`, `63,829`) **12
+  times**; with masking on, **0**. So the zero on the guarded sentences is a reading, not a dead
+  instrument.
+- **The scan returned 10 unguarded hits, and I adjudicated all ten rather than reporting the
+  count.** Four are the real defect (row 10.4). Three (`112,387`) are inside a paragraph the file
+  itself brackets as history — *"Everything in the dated paragraph below is history … and must not
+  be 'corrected.'"* — correctly exempt. Three (`20,061`, `22,856`) are blindspot 10.8's dated audit
+  window in `LAUNCH_PLAN.md`, also frozen on purpose. **6 of 10 hits were false positives by
+  design, and the file says so in its own words** — which is why the run adjudicated instead of
+  bulk-fixing.
+
+**⛔ And the instrument had a blind spot that was hiding the better finding.** My regex looks for
+digits. The paragraph at `LAUNCH_READINESS.md:84-90` — the one whose entire job is to say *"The two
+figures in the table above are generated, not typed"* — writes its counts as **words**, so the scan
+never saw it. Read by eye and checked against the generator's own output:
+- "**eight more**" figures in `LAUNCH_PLAN.md` — the generator owns **nine** there.
+- "**Ten generated figures** now share one measurement" — there were **twelve**.
+- It never mentions **`CLAIMS.md`** at all, though `refresh-readiness.mjs`'s own comment records
+  that A6's status cell was brought under the generator on 2026-08-17 by §9.3's first audit.
+- "The **two** figures in the table above" was the one count that was right.
+**A paragraph asserting that the numbers beside it are not hand-typed was three hand-typed claims,
+two of them wrong.** Counts read off the generator's grouped output, not tallied by eye.
+
+**What shipped.**
+1. **The inventory sentence is now generated** — a 13th entry in `refresh-readiness.mjs`'s `FIGURES`
+   table, so the paragraph states its own reach and `npm test` fails when that drifts. It is
+   `push`ed after the array literal rather than written inside it because the sentence counts
+   `FIGURES` *including itself*, and `FIGURES.length` does not exist while the literal is still
+   evaluating. **The self-reference is the feature:** admitting a fourteenth figure rewrites the
+   sentence that says there are thirteen.
+2. **Row 10.4's provenance clause.** It read *"Volume ratio **re-measured 2026-08-16** over all 40
+   lessons"* — attached to figures that are regenerated on every run and enforced by `npm test`.
+   The figures were current the whole time; the sentence introducing them was three weeks and four
+   lessons out of date. It now says the sentence is generated and carries **no measurement date, and
+   none should be added**.
+3. **The file count in the same clause** — *"the **ten** `lessonContent.<track>.<lang>.js` files"*.
+   `ls` says **15** (3 tracks × 5 languages); "ten" is the two-track era. Deliberately **not**
+   replaced with "15" — the count is now simply not restated, because retyping it just restarts the
+   clock.
+4. **The `zh 0.294x` restatement** (live: `0.302x`) now points at the generated sentence six words
+   away instead of copying it.
+5. **The two-instruments note** quoted four figures — `es 134,697`, `140,700`, `137,249`, `3,451` —
+   and **all four had gone stale.** The note now carries the *claim* and names `npm run readiness` /
+   `npm run translation-completeness` for the values. The four dead numbers survive in it as labeled
+   examples of what went stale, which is the point of the note.
+
+**The claim inside that note is TRUE, and I checked it rather than preserving it on faith.** It says
+the two instruments disagree about the English corpus by exactly the section headings. Measured by
+summing headings independently: `bodies + takeaway + thinkAbout = 150,608` (reproducing
+`refresh-readiness`) and `+ headings = 154,302` (reproducing `translation-completeness`), both **to
+the character**, with the gap **3,694 = headings 3,694**. Reproducing *both* instruments from a
+third implementation is the control — arithmetic consistency alone would not have distinguished a
+correct claim from a coincidence.
+
+**Verification.** `npm test` → **0 failures**, warning profile byte-identical to the pre-run
+baseline (3 + 1 warnings, same text). `npm run build` clean. The new guard was controlled **three
+ways, and then a fourth time for the thing that actually matters**: count wrong (13→12) → FAIL;
+per-document split wrong (`CLAIMS.md 1`→`2`) → FAIL; sentence **deleted** → FAIL with the script's
+"not in the file at all" message rather than a vacuous pass. ⛔ **My first reading of those three
+controls was worthless and I nearly recorded it:** I had piped the script to `tail` and printed
+`$?`, which is *`tail`'s* exit code — it read `exit=0` under all three FAILs. Re-run without the
+pipe: corrupted → **1**, restored → **0**. The `FAIL` text was real; the exit code I quoted beside
+it was measuring the wrong process.
+
+**Adversarial self-check (step 5).**
+- **Blindspot register:** no regression. Only `LAUNCH_READINESS.md`, `scripts/refresh-readiness.mjs`
+  and this log changed — no teaching-copy module among §2.3's 26, no locale file, no lesson. Grepped
+  my own diff for Dalio, advice-adjacent phrasing and buy/sell language: **0 hits**;
+  `check-blindspot` clean inside `npm test`.
+- **DECISIONS.md conflict: none — and it is the opposite of a conflict.** `DECISIONS.md`'s
+  progress-bar entry names this exact failure class in its own words: *"a script was keeping 1/40
+  true while the noun beside it stayed wrong, and `npm test` passed … a guarded number lending
+  credibility to unguarded prose"*, and its remedy was to pull the unguarded word **inside** the
+  guarded shape. That is precisely what this run did with the inventory counts. The change extends a
+  closed decision's stated remedy to a new instance rather than contradicting it.
+- **Already-done backlog item:** no. Item 47 built the generator and item 55 extended it to
+  `LAUNCH_PLAN.md`; neither touched the prose *about* the generator, which is what was wrong. **But
+  the check did find the source:** W-5.6 (2026-08-23) is where all four stale figures were first
+  written, and its copy and §10.4's had **already drifted apart** — W-5.6 says `ja 0.359 vs 0.361`
+  where §10.4 said `ja 0.412 vs 0.412`. W-5.6 is a dated record, so per §31 / item 91 it stays
+  **verbatim** and I annotated beneath it instead, with an explicit "do not correct the numbers
+  above" — the same trap W-5.7 flags one clause later.
+- **My own verification claim:** it holds now, and see the `tail`/`$?` correction above for the
+  version of it that would not have. Every figure quoted in this entry was produced this session by
+  a command recorded here.
+
+**W-6.3, answered because a proposal has to look at the number first.** `scripts/` was measured at
+**2.3× `src/`** on 2026-08-30 and that argues against new instruments. This adds **no new check
+section** — it is one entry in an existing 12-row table plus its comment, and it *removes* three
+hand-maintained claims. Net: one fewer thing a human has to keep true. **W-6.2 rule 3 does not
+apply** (no new check), and I want to be plain that this defect is **not learner-visible**: it is a
+document integrity fix on the row the owner is being asked to decide O-3 from.
+
+**O-3 accounting. Zero characters of unreviewed machine translation** — nothing under
+`src/content/` or `src/locales/` was touched. Learner-visible character delta in all five languages:
+**0**. Human review share unchanged at **0%**.
+
+**Filed as notes, not as numbered items (W-6.2 rule 2 + W-6.4).**
+(i) **Row 10.4 still hand-types the figures `translation-completeness.mjs` owns** — the p90
+references (`es 1.18, ko 0.58, zh 0.36, ja 0.51`), the 48 abridged pairs and "across all 44
+lessons". **All of them are correct today** (verified against `npm run translation-completeness`
+this session), which is exactly why they are a note and not a fix: that generator has no `--check`
+mode, so nothing enforces them and they will rot the same way — just not yet. Whoever gives
+`translation-completeness.mjs` a `--check` should take this row with it.
+(ii) `LAUNCH_PLAN.md`'s **blindspot 10.8 carries `Check: 2026-09-05`** — tomorrow. It is the plan's
+own tripwire, not the claims register's, so `check-claims.mjs` will not raise it.
+(iii) The scanner used here lives in the session scratchpad and is **not** being shipped: it needs a
+human to adjudicate every hit (6 of 10 today were correct-by-design), so it is a reading aid, not a
+check. Its blind spot — **word-spelled counts** — is where the better half of this run's finding
+was, and that is the transferable part: *an instrument that only sees digits cannot audit prose that
+writes its numbers out.*
+
+**O-1 remains the entire critical path: 44 lessons, 5 languages, 161 minutes of content — and zero
+people have ever opened this app** (figures off `npm test`'s readiness line, run this session).
+Open **18 days**.
+
+**Owner tree:** `git status` at run start and again before writing showed the owner's untracked
+`UIUX/` only, **untouched**. `HEAD` re-checked before writing and unmoved at `e290e80`.
 
 ### 2026-09-04 (owner-directed: "do the nine past-due claims next") — the register's first past-due review, run a day before the rows actually go late; eight of the nine were blocked on one thing and the ninth could not be checked for a reason nothing in the file had noticed
 

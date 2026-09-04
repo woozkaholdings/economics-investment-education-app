@@ -339,6 +339,31 @@ const FIGURES = [
   },
 ];
 
+// Added 2026-09-04. The paragraph in LAUNCH_READINESS.md that tells a reader
+// "these figures are generated, not typed" was itself hand-typed, and by this
+// date it said "eight more" where the plan had nine, "Ten generated figures"
+// where there were twelve, and did not mention CLAIMS.md at all — a claim about
+// the generator's reach that only the generator can keep true. So it states
+// itself now.
+//
+// Pushed after the literal rather than written inside it because the sentence
+// counts FIGURES, including this entry: `FIGURES.length` is not available while
+// the array literal is still being evaluated. The self-reference is the point —
+// admitting a thirteenth figure updates the sentence that says there are twelve.
+const INVENTORY = {
+  doc: READINESS,
+  label: "generated-figure inventory",
+  shape: /\*\*Generated-figure inventory: \d+ figures — [^*]+\.\*\*/g,
+  expected: "", // filled in below, once FIGURES counts this entry too
+};
+FIGURES.push(INVENTORY);
+INVENTORY.expected =
+  `**Generated-figure inventory: ${FIGURES.length} figures — ` +
+  [...new Set(FIGURES.map((f) => f.doc))]
+    .map((d) => `${d} ${FIGURES.filter((f) => f.doc === d).length}`)
+    .join(", ") +
+  `.**`;
+
 const DOCS = [...new Set(FIGURES.map((f) => f.doc))];
 
 if (mode === "") {
