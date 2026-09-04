@@ -811,6 +811,31 @@ through two passes that each had it open.
     > and satisfy the clause without a name or a scene verb), so **it is a reading aid and must not
     > be turned into a build gate** — that is why no check was built. See the 2026-08-31 run-log
     > entry for the full method and the false-positive list.
+    > ⛔ **THE AUDIT'S OWN ARITHMETIC DID NOT CLOSE, and it was four days before anyone noticed —
+    > corrected 2026-09-04 (scheduled dev-agent) by re-running the screen with its own three
+    > controls.** The 2026-08-31 entry says *"Ten are real"* and then names **seven**: `essentials`
+    > 10-15 and `money` 24. **Three counted defects were never written down**, so the note above —
+    > the only place a picker looks — reads as *"the main path is clean and the cluster is on the
+    > optional track."* **It is not.** Re-running the strict screen (scene verb or name, in the first
+    > two sentences of section 1, controls: lesson 29 and lesson 1 must read concrete, a synthetic
+    > definition-first opener must read abstract — all three fired) flags **15 of 44** today against
+    > the audit's 13, the difference being scene-verb vocabulary rather than corpus drift. Subtracting
+    > the audit's seven named defects and its three recorded false positives leaves exactly three,
+    > **all of them `economy` — the track a new install opens on**:
+    > - **37 (QE & QT)** — the real one, and the only lesson in the whole flag set with **no person,
+    >   no scene and no metaphor of its own** anywhere in the section that carries its claim. Its
+    >   "master dial already turned down to 0%" is lesson 35's metaphor, arriving by explicit
+    >   cross-reference. ✅ **FIXED 2026-09-04** — a concrete lead in five languages; see the run log.
+    > - **34 (the four levers)** and **40 (the three rules)** — **both false positives, and the reason
+    >   generalizes.** Each opens with a one-sentence enumerating stem and then goes concrete
+    >   *immediately*: 34's ¶1 is *"Think of a city government facing a budget shortfall that lays off
+    >   workers"*, 40's second sentence is *"Remember the family from “The Long-Term Debt Cycle”"*.
+    >   A screen that reads two sentences cannot tell a definition-first lesson from a **list whose
+    >   stem is one sentence long**, and both of these are lists.
+    > **So the honest false-positive rate is 6 in 15, not 3 in 13** — the screen is roughly twice as
+    > wrong as the note above says, which strengthens rather than weakens its conclusion that it must
+    > never become a build gate. **Nothing on the main path is now open under this clause**; the
+    > `essentials` 10-15 cluster below is the whole remainder and its deferral is unchanged.
 
 
 96. **✅ DONE 2026-08-24 (scheduled dev-agent), same day it was filed. The premise re-measured
@@ -4573,6 +4598,144 @@ zero meaningful: `selftest PASS (8/8 controls fired, plantsRemoved true)` and, p
 finding(s); V vacuous; U unavailable`. A bare "no accessibility issues found" is not a result.
 
 ## Run log
+
+### 2026-09-04 (scheduled dev-agent, picked from LAUNCH_PLAN §3.0 under W-6.2 rule 1) — the §3.0.2 audit counted ten defects and named seven, and the three it dropped were all on the main path; one of them was real and opened the QE lesson with nothing but mechanism
+
+**Where the pick came from.** The previous run picked from the launch plan and the two before it took
+item 27, so no residual was available to me by default either. I re-ran the previous run's own
+least-audited-clause tally over `AGENT_LOG.md` + the archive and it came out differently than the
+line it published: **§3.0.3 45, §3.0.4 24, §3.0.5 14 (that run's own work), §3.0.1 13, §3.0.6 12,
+§3.0.7 12 — and §3.0.2 at THREE, the least-audited clause in the project's history and the one the
+previous run's tally does not list at all.** Control: the same grep returns 38 for the bare string
+`§3.0`, so it was live. That is where I started, and it is not where the run ended up.
+
+**Step 3.5 — the premise came apart twice, and the second break is this run's finding.**
+§3.0.2 is *"Concrete before abstract. Lead with a thing that happens to a person, then name the
+concept."* It **has** been audited — once, 2026-08-31 — which the low count hides rather than
+disproves. That entry screened all 44 lessons, fixed `money` 24 by inverting two paragraphs, and
+filed a note under item 94 saying the remainder is `essentials` 10-15. **Reading it against its own
+numbers is where this run's work is:**
+- **The entry says "Ten are real" and then names seven** — `essentials` 10-15 (6) plus `money` 24.
+  With its three recorded false positives (35, 39, 26) that accounts for 10 of 13 flags. **Three
+  counted defects were never written down anywhere.**
+- **They were all on `economy`, the track a new install opens on**, so the surviving note — the only
+  thing a picker reads — has said for four days that the main path is clean and the problem is on the
+  optional track. It was not.
+- **Reconstructed the strict screen with the entry's own three controls** (lesson 29 and lesson 1
+  must read concrete; a synthetic definition-first opener must read abstract — **all three fired**).
+  It flags **15 of 44** today against the audit's 13; the gap is scene-verb vocabulary, not corpus
+  drift. Subtracting the seven named and the three recorded false positives leaves exactly
+  **34, 37 and 40**.
+- ⛔ **Then I read all three, and two of them are false positives** — which is the correction I owed
+  my own finding rather than a result I wanted. **34** and **40** each open with a **one-sentence
+  enumerating stem** and go concrete immediately (34's ¶1 is *"Think of a city government facing a
+  budget shortfall that lays off workers"*; 40's second sentence is *"Remember the family from “The
+  Long-Term Debt Cycle”"*). A two-sentence screen cannot tell a definition-first lesson from a list
+  whose stem is one sentence long. **The honest false-positive rate is 6 in 15, not the 3 in 13 the
+  note publishes** — the screen is about twice as wrong as recorded, which *strengthens* that note's
+  own conclusion that it must never become a build gate. Both corrections are written into the note
+  under item 94 so this is not re-derived.
+- **37 is real, and it is the only lesson in the entire flag set with no person, no scene and no
+  metaphor of its own** in the section carrying its claim. Its opener — *"Normally the Fed's master
+  dial (“Interest Rates”) is interest rates"* — borrows **lesson 35's** metaphor by explicit
+  cross-reference, and 35 is on the recorded false-positive list precisely because a metaphor
+  satisfies the clause. A lesson does not inherit the clause from the lesson before it.
+
+**What shipped — one sentence, five languages, and a control proving it is one sentence.** A concrete
+lead prepended to lesson 37 §1's first paragraph, planting the puzzle the lesson already answers in
+its third section (*"A 30-year mortgage rate is priced as a spread on top of the 10-year Treasury
+yield, so when QE's buying pushes that yield down, mortgage rates tend to fall with it"*):
+*"Picture someone shopping for a mortgage: the rate they are quoted keeps falling, month after month,
+while the Fed's own rate sits at zero and does not move."* `git diff --stat` is **five files, five
+insertions, five deletions — one `"body"` line each**, and nothing else in `src/` moved.
+- **It states no new fact.** Every claim in it is already in lesson 37: the Fed's rate at 0% (§1),
+  mortgage rates falling with QE's buying (§3). It asserts no rate, no date and no amount.
+- **The scene verb is the corpus's own, per language, not invented**: `Picture` / `Imagina` /
+  `…를 떠올려 보세요` / `想象…` / `…を思い浮かべてください`, taken from lessons 29, 33 and 38's openers
+  in each language. Terminology likewise from lesson 37's own body — `el Fed`, `연준`, `美联储`, `FRB`,
+  and the plain word for rate each language already uses (`tasa` / `금리` / `利率` / `金利`) rather
+  than a policy-rate term the corpus does not carry.
+- ⚠️ **The word budget was checked before writing, not after.** `minutes` is derived
+  (`round(words/200)`) and the build fails on drift. Lesson 37 was **659 words with 41 to spare**
+  before it rounds to 4; the lead is 28, leaving it at **687 and still 3 minutes**, so no `minutes`
+  field, readiness figure or §3.0.5 line had to move. **13 words of headroom remain — the next run to
+  lengthen lesson 37 will have to bump `minutes` and regenerate the readiness figures.**
+
+**Verification.**
+- `npm test` — **0 failures, 4 warnings**, all four pre-existing and unchanged in kind (translation
+  review human share, 48 abridged pairs, item 160's option-length cue at en 56.5%, the AGENT_LOG
+  floor). `npm run build` clean, 916 ms. `npm run check-blindspot` **0 failures**.
+- **The suite went red first and that was the ledger working.** `translation-review.mjs` marked
+  lesson 37 stale in all four languages the moment the English hash moved, and §11 failed the build
+  on `LAUNCH_READINESS.md` §10.4 disagreeing with the live ledger — the drift detection built for P-4
+  firing on a same-run edit. Re-marked all four `ai` after checking the delta, coverage back to
+  **44/44 in each language, 0% human**. `refresh-readiness.mjs --write` moved three generated figures
+  (150,493 → 150,650 English chars and the four volume ratios, which are unchanged to three decimals).
+- **Scope of that re-review, stated rather than implied:** it is the **delta**, not a fresh read of
+  four whole lessons. That is sound here and only here, because the diff control above proves the
+  English changed by exactly one prepended sentence and each translation by exactly its counterpart;
+  the 2026-08-27 review's judgment on the rest still stands against unchanged text.
+- **Read in the built app, not in source.** Served `dist/` statically, seeded past the disclaimer,
+  opened `#/lesson/37` and confirmed the bundle name back (`index-DGLyBovA.js`, this build), then
+  switched the picker through all five languages and read the paragraph each time. All five render
+  the lead followed by the existing text; the header still reads **≈3 min**.
+- **320 px sweep with a planted `white-space:nowrap` probe: control fired** (`scrollWidth` 1758 with
+  the probe, **320** without it), **0 elements** past the right edge, checked in `ja` and again in
+  `es` — the densest and the longest.
+
+**Step 5 — adversarial self-check.**
+- **§10.1 (advice adjacency) — checked by plant, not by reading**, because this run put new prose
+  about falling mortgage rates into four unreviewed languages. `npm run check-blindspot` passes, but
+  a pass proves nothing unless the check reaches the field, so I planted
+  `지금이 매수하기 좋은 시기입니다.` into **the exact `body` value I had just written** in
+  `lessonContent.economy.ko.js`: **FAIL**, on the Korean timing pattern. Restored from a scratchpad
+  copy (never `git checkout --`), re-ran: **PASS**, the plant greps to **0** occurrences, and the file
+  is still one changed line. The shipped sentence describes what a rate does, addresses no reader and
+  recommends nothing.
+- **§10.2 / §10.3 / §2.3:** no Dalio reference; kids content untouched; **no date and no figure** in
+  the added sentence, and §2.3's live-date scan over `lessonContent` passes.
+- **DECISIONS.md conflict:** none. `grep` for `lesson 37`, `QE & QT` and `master dial` over
+  `DECISIONS.md` returns **nothing** (control: `localStorage` returns 11 in the same file), and no
+  state, build or content-format decision is near a prose edit.
+- **Already-done backlog item:** no. `lesson 37` appears four times in `AGENT_LOG.md` — a numerals
+  note, item 163(c)'s balance-sheet figure, and a browser-timing note — and **none** is about its
+  opening prose. No instrument asserts that opening either: `grep "master dial"` over `scripts/` and
+  `src/` outside the content files returns nothing (control: `figureClaims` returns 1 in
+  `check-data.mjs`), so nothing was silently depending on the old first sentence.
+- **My own verification claim:** every figure here is printed by a command re-run this session with
+  its control beside it, or read off the built app with the bundle name confirmed; the "five lines
+  and nothing else" claim is a re-runnable `git diff --stat`.
+- **W-6.3 (instrument-to-app ratio):** **0 lines added to `scripts/`.** The screen lives in the
+  scratchpad and this entry, deliberately — the 2026-08-31 entry's reason for building no check
+  (6-in-15 false positives now, worse than the 3-in-13 it recorded) is stronger after this run, not
+  weaker. W-6.2 rule 3's sentence is answerable for the *content* fix and not for a check.
+- ⛔ **What the check found against me:** my own headline. I opened this run believing three
+  main-path lessons were unnamed defects and would all need fixing; reading them made two of them
+  false positives. The correction is in the note and above rather than quietly dropped, because the
+  count I would have published — "three defects on the main path" — is the same shape of error as
+  the one I was correcting.
+
+**O-3 accounting, priced as the standing ask requires.** This adds **+360 characters of unreviewed
+machine translation** (es +157, ko +88, ja +68, zh +47 · en +157), the net delta of the five `body`
+fields against `HEAD`. For scale, the 2026-09-04 quiz-explanation run priced its enlargement at
+**+1,633** and the 2026-09-02 `q042` run at **+366**. Human review share is unchanged at **0%**,
+which is O-3's actual open question. **This is new surface, not a completion of existing surface** —
+the honest distinction, and the reason it is priced here rather than described.
+
+**Filed as notes, not as numbered items (W-6.2 rule 2 + W-6.4).** (i) The §3.0.2 class on the main
+path is now at **zero live instances**, so it earns no item; the `essentials` 10-15 cluster is the
+whole remainder and its deferral under item 94 is untouched. (ii) **Lesson 37 has 13 words of
+`minutes` headroom** — recorded above so the next run to touch it is not surprised by a red build.
+(iii) Item 160's own text asks that the next run to open `quizMeta.js` fix its stale "roughly 3/3/4/3"
+header comment; this run did not open that file, so the ask stands.
+
+**O-1 remains the entire critical path: 44 lessons, 5 languages, 161 minutes of content — and zero
+people have ever opened this app** (figures off `npm test`'s readiness line).
+
+**Owner tree:** `git status` at run start and again before writing showed the owner's untracked
+`UIUX/` only, **untouched** (51 untracked files, `owner-tree.mjs` fingerprint `b54068aa`, 8 tracked
+modified — this run's eight). `HEAD` re-checked before writing and unmoved at `11eb6cd`.
+
 
 ### 2026-09-04 (scheduled dev-agent, picked from LAUNCH_PLAN §3.0 under W-6.2 rule 1) — §3.0.5's one hard guard has been pointed at the optional track since the reversal, and it stays green while the lesson a new install actually opens runs five minutes
 
