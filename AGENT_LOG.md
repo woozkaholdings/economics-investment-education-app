@@ -1475,7 +1475,9 @@ through two passes that each had it open.
       stand; the coverage did not.** `A11yStates.coverage()` plus the Tab step now in the header
       recipe are the fix — see item 149.
 
-165. **🟡 MAIN PATH CLOSED 2026-09-03 (scheduled dev-agent); the essentials/money remainder is open.
+165. **🟡 MAIN PATH CLOSED **on content** 2026-09-04 (scheduled dev-agent); the essentials remainder is open.
+    ⛔ **The "MAIN PATH CLOSED 2026-09-03" this line used to carry was FALSE, and so was the
+    "none on the main path" bullet below — see the correction under them.**
     [Content — filed 2026-09-02 by the run that took `q007`, from a measurement it had to make
     before it could apply item 160's own style rule.] The quiz's `explain` field — the one surface
     item 160 moves reasoning INTO — was abridged in 69 of 184 question/language pairs, and the
@@ -1548,7 +1550,53 @@ through two passes that each had it open.
       run entry and would need to move into `scripts/` before any check depends on it.
     - **Priority after both 2026-09-03 passes: the dropped-sentence class is EMPTY** (sentence
       measure 0 pairs, hedge parity 4/4). What is left is 29 ratio-flagged pairs across 10 questions,
-      all partial shortfalls, none on the main path.
+      all partial shortfalls, ~~none on the main path~~.
+      > ⛔ **"NONE ON THE MAIN PATH" WAS FALSE, and it is this item making the mistake its own text
+      > warns against one screen earlier.** Re-measured 2026-09-04 with an independent
+      > re-implementation of this item's ratio instrument (three controls, all fired: a language
+      > against itself scores 1.000 and flags nothing; a uniformly halved corpus scores 0.500 and
+      > still flags nothing, because the reference moves with it; one live pair cut to 20% flags in
+      > all four languages). The 29/10 headline **reproduced exactly**. Then the tracks were read off
+      > `lessons.js` rather than assumed: **`q003` L32, `q010` L34, `q011` L35, `q012` L38 and
+      > `q014` L33 are all `track: "economy"` — the main path.** Five of the ten questions and
+      > **14 of the 29 pairs** were on the track a new install opens on. The "closed" claim came from
+      > the **sentence** measure, which this item's own ⚠️ says two paragraphs earlier not to trust
+      > over the ratio.
+      > ⚠️ **And one reference figure had drifted:** `es` p90 is **1.184**, not the 1.162 the
+      > 2026-09-03 correction certified as reproducing "exactly" — `q020`'s own +207-character
+      > repair raised it. ko 0.582 / zh 0.380 / ja 0.520 are unmoved. **A p90 reference is computed
+      > from the corpus it measures, so repairing the corpus moves the instrument.** Quote it with a
+      > date.
+    - ✅ **THE MAIN PATH IS CLOSED ON CONTENT 2026-09-04 (scheduled dev-agent) — 3 questions × 4
+      languages repaired, and the other 2 were READ and are complete.** All 14 main-path pairs were
+      read against their English, which is the "read first" half this item asks for:
+      - **`q010` (L34) — repaired in all four.** English ends *"Raising rates further isn't one of
+        them — in a deleveraging, rates are usually already near 0%."* **All four dropped the clause
+        after the dash**, i.e. the reason the wrong answer is wrong. `es` had also dropped
+        *"(taxes)"* after "wealth redistribution", which ko/zh/ja all carry; restored.
+      - **`q012` (L38) — repaired in all four.** All four dropped *"since expansion begins again
+        from there"* (the mechanism) and narrowed *"not a guarantee for any specific future trough"*
+        to a bare "not a guarantee". **The hedge itself was never missing** — the 2026-09-03 reading
+        of that was right — but it was less specific than the English in four languages, and the
+        repair makes it more specific, not less. §10.1-sensitive and treated as such.
+      - **`q014` (L33) — repaired in all four,** including `ko` and `es`, which the ratio did
+        **not** flag. English ends *"— which is what the next lesson covers."* and **all four**
+        dropped it. **Repairing only the two flagged languages would have made the corpus less
+        consistent than it was**: the instrument scores a pair, and parity is a property of the set.
+        Uses each language's own chrome wording for "next lesson" (`Lección` / `레슨` /
+        `下一课` / `次のレッスン`), read off `locales/`.
+      - **`q003` (L32, ko/zh/ja) and `q011` (L35, zh) — READ, COMPLETE, NOT EDITED.** Both are
+        two-sentence English rendered whole in compact CJK; they flag because the ratio is 1-3
+        hundredths under a threshold, not because anything is missing. **This is item 162's
+        false-positive class in a third corpus** (there, 30 of 336). `q012`'s `zh` **still flags
+        after the repair** at 0.262 against a 0.266 threshold — one code point — and is likewise
+        complete. **These five pairs are this corpus's `READ_COMPLETE` seed.**
+      - **Result: 29 pairs / 10 questions → 20 pairs / 8 questions**, and every remaining question is
+        on **`essentials`** (L4, L7, L8, L9, L14) — the optional track. The line this item has
+        wanted to write is now true, and true on content rather than on the instrument.
+      - **O-3 applies and is flagged rather than assumed away:** the 12 repaired strings are
+        unreviewed machine translation, like the corpus around them. This restores parity with
+        English prose that already shipped; it authors no new teaching claim.
     - ⛔ **THE GUARD IS AN OWNER DECISION, AND THE ORDERING IS THE POINT — not a deferral.** A
       `quizText` completeness check satisfies W-6.2 rule 3 cleanly (the learner-visible failure is
       "answered in Spanish, shown one clause where the English reader is shown the mechanism"), and
@@ -1558,6 +1606,11 @@ through two passes that each had it open.
       English**, which is O-3 work and therefore the owner's call. Landing the check first would ship
       a permanent 29-pair warning, which item 121's own ⚠️ already calls evidence that the check or
       the budget is wrong. **Read first, then guard.**
+      > ⚠️ **Updated 2026-09-04: the read is now 5 of 20 done and the arithmetic changed with it.**
+      > A check landed today would ship a **15-pair** warning, not 29, and it would already have a
+      > 5-entry `READ_COMPLETE` list (`q003` ko/zh/ja, `q011` zh, `q012` zh) with the code-point
+      > length each had when read. **The ordering rule is unchanged and still the owner's** — the
+      > remaining 15 pairs sit on `essentials` L4/L7/L8/L9/L14 and are unread.
 
 164. **✅ DONE 2026-09-02 (scheduled dev-agent) — the headline premise reproduced exactly, and the
     item's own list of phrasings did not: one of the three it proposed fires on shipped teaching
@@ -4431,6 +4484,120 @@ zero meaningful: `selftest PASS (8/8 controls fired, plantsRemoved true)` and, p
 finding(s); V vacuous; U unavailable`. A bare "no accessibility issues found" is not a result.
 
 ## Run log
+
+### 2026-09-04 (scheduled dev-agent, backlog item 165) — the item said its main path was closed, and five of the ten questions it had left were on it; the reason is that the closing claim was read off the one instrument the item's own ⚠️ says not to trust
+
+**Where the pick came from.** The previous run was self-picked off a live sweep and filed no residual,
+so W-6.2 rule 1 does not bind. Item 165 is a numbered content item at **honest priority medium-high**,
+it is squarely product rather than instrument (W-6.3: **this run adds 0 lines to `scripts/`** — the
+ratio instrument ran from the session scratchpad and is described below), and its subject is the
+learner-visible failure it names in its own text: *answer a quiz question in Spanish and be shown one
+clause where the English reader is shown the mechanism.*
+
+**Step 3.5 — the headline reproduced exactly and a different claim broke.** The instrument is item
+165's own: per-language **p90 of `explain`/en code-point ratio** across all 46 questions is that
+language's "full translation" reference, and a pair is abridged below **0.7x its own reference**. It
+was re-implemented from that description rather than copied, with three controls, **all of which
+fired**:
+- **(1) each language := English** → refs 1.000 across the board, **0 pairs flagged**;
+- **(2) each language := English uniformly halved** → refs 0.500, and still **0 pairs**, which is the
+  control that proves the test is relative and not a length floor;
+- **(3) live corpus with index 3 cut to 20%** → that pair flags in **4 of 4** languages.
+Live: **29 pairs across 10 questions**, refs **es 1.184 / ko 0.582 / zh 0.380 / ja 0.520** — the count
+is exactly what the item records.
+
+⛔ **What broke is the item's disposition line, not its number.** The item's title said *"MAIN PATH
+CLOSED 2026-09-03"* and its priority bullet said the remainder was *"all partial shortfalls, none on
+the main path"*. **Tracks read off `lessons.js` rather than assumed: `q003` L32, `q010` L34, `q011`
+L35, `q012` L38, `q014` L33 are all `track: "economy"`.** Five of the ten questions and **14 of the 29
+pairs** were on the track a new install opens on. The closing claim had been taken from the
+**sentence** measure (which does read 0), and this item's own ⚠️, two paragraphs above the line,
+says: *"Sentence count is a proxy for content; re-punctuation defeats it… do not trust it over the
+ratio."* **The item made the mistake it had written down to prevent.**
+
+⚠️ **And one certified-reproducing figure had drifted.** The 2026-09-03 correction recorded the p90
+references as reproducing "exactly" at **es 1.162**; today `es` is **1.184**. `q020`'s own +207-character
+repair, landed by that same run, raised the Spanish p90. ko/zh/ja are unmoved. **A p90 reference is
+computed from the corpus it measures, so repairing the corpus moves the instrument** — which makes a
+reference figure a dated reading, not a constant.
+
+**What shipped — all 14 main-path pairs READ, 12 strings repaired, 2 questions deliberately not
+touched.** The reading is the half item 165 asks for before any guard can land.
+- **`q010` (L34, "Deleveraging: The 4 Tools") — repaired es/ko/zh/ja.** English: *"Raising rates
+  further isn't one of them — in a deleveraging, rates are usually already near 0%."* **All four had
+  dropped everything after the dash**, which is the reason the wrong answer is wrong; the learner was
+  left with the assertion. `es` had additionally dropped *"(taxes)"* after "wealth redistribution",
+  which ko/zh/ja all carry — restored in the same string.
+- **`q012` (L38, "The 4 Phases of Economic Cycles") — repaired es/ko/zh/ja.** All four dropped
+  *"since expansion begins again from there"* (the mechanism) and flattened *"not a guarantee for any
+  specific future trough"* to a bare "not a guarantee". **The 2026-09-03 hedge-parity reading was
+  right that the hedge survives in all four** — this is a different defect, the hedge being *less
+  specific* than the English. **§10.1-sensitive, and the repair moves it the safe way:** the hedge is
+  now narrower and the added clause is causal, not directional.
+- **`q014` (L33, "The Long-Term Debt Cycle") — repaired in all four, including the two the ratio did
+  NOT flag.** English closes *"— which is what the next lesson covers."* and **all four** dropped it;
+  only `zh` and `ja` scored under threshold. **Repairing only the flagged two would have left the set
+  less consistent than the instrument found it** — the instrument scores a pair, and parity is a
+  property of the set. Each language uses its own chrome wording for "next lesson", read off
+  `locales/` (`Lección` / `레슨` / `下一课` / `次のレッスン`) rather than invented.
+- **`q003` (L32; ko, zh, ja) and `q011` (L35; zh) — READ, COMPLETE, NOT EDITED.** Two-sentence English
+  rendered whole in compact CJK; they flag by **1-3 hundredths** under threshold. This is item 162's
+  false-positive class showing up in a third corpus (there it was 30 of 336). **`q012`'s `zh` still
+  flags after the repair, at 0.262 against a 0.266 threshold — one code point — and is also
+  complete.** These five pairs are the `READ_COMPLETE` seed a future guard needs, recorded in the item.
+
+**Result: 29 pairs / 10 questions → 20 / 8, and every question left is on `essentials`** (L4, L7, L8,
+L9, L14) — the optional track. The sentence item 165 has been trying to write is now true, and true
+of the content rather than of the instrument.
+
+**Verified in the built app, twice, each with a differential control that fires.** Not from the diff:
+- **`q010` in Chinese.** `dist/` served statically, storage seeded `[29..33]` + `lang: zh`, deep link
+  `#/lesson/34`. Before answering, the explanation string is **absent** from `document.body.innerText`;
+  after clicking 进一步加息 it reads **"这4种工具是紧缩、债务重组/违约、财富再分配（增税）和印钞。进一步加息不在其中——在去杠杆阶段，利率通常已经接近0%。"** Absent→present is the control: a probe returning a
+  constant could not produce both readings.
+- **`q012` in Spanish.** Seeded `[29..37]` + `lang: es`, `#/lesson/38`. ⚠️ **The first click read
+  clean and proved nothing** — lesson 38 renders this question **twice**, once as an unanswered
+  "GUARDA ESA IDEA" hook at the top and again as the end-of-lesson check, and the hook deliberately
+  withholds the explanation. Clicking the **last** matching control gave the repaired string, with
+  **§10.1's disclaimer rendering directly beneath it** in Spanish. Worth recording: on a lesson with a
+  hook, "click the option and read" is a false-negative-shaped measurement.
+
+**Step 5, adversarial self-check — the register, the decisions, the redo test, and my own claim.**
+**§10.2** — no Dalio string; `npm run check-blindspot` **0 failures**. **§10.1** — this is the run's
+real exposure, since `q012` is about returns after a market bottom: check-blindspot's 33 advice
+patterns across five languages pass, the added clause is causal rather than directional, the hedge got
+*more* specific, and the disclaimer was confirmed rendering under it live. **§10.3** — no kids surface
+touched. **Stale-data fix** — no dates and no live-looking market figures added; §2.3's sweep over 26
+teaching-copy modules (which includes `quizText`) is green. **DECISIONS.md** — content stays `.js`
+modules, no state or build decision touched; the `translation-review` ledger is untouched **because
+its stated scope is `lessonContent`**, which is the same scope limit item 165 blames for this gap
+existing. **Already-done test** — `git grep`/log search shows `q010`, `q012` and `q014` have been
+named repeatedly but **only ever for the option-LENGTH tell (item 160), which is the `opts` field**;
+no run has repaired their `explain` in any language. **Not an undo either, and that is measured, not
+argued:** I changed `explain` only, and `npm test`'s §65 line still reads **en 26/46 = 56.5%, es/ko
+54.3%, zh/ja 52.2%** — identical to the previous entry's, so item 160's corpus is untouched. **My own
+verification claim** — the ratio figures come from an instrument re-derived from the item's prose whose
+three controls are quoted above with their expected values, and the two app facts are before/after DOM
+reads on a `dist/` build served from disk.
+
+**`npm test` 0 failures, 4 warnings** — all four pre-existing and named in the previous entry
+(translation review share, translation completeness, §65's option-length line, and the floor budget).
+**`npm run build` clean**, 940 ms. **`npm run check-blindspot` 0 failures.** The 12 generated figures
+across `LAUNCH_READINESS.md` + `LAUNCH_PLAN.md` + `CLAIMS.md` still agree with the content
+(44 lessons / 150,493 en chars / 161 min).
+
+**W-6.2 rule 3 — no check proposed, and the reason is item 165's own ordering rule.** The
+learner-visible sentence is easy to write here, so rule 3 is satisfied; the blocker is that a
+`quizText` completeness check must land **with** a `READ_COMPLETE` list, and 15 of the 20 remaining
+pairs are still unread. This run seeded 5 of them. **Read first, then guard** — unchanged, and still
+the owner's call because the remaining read is O-3 work.
+
+**O-1 remains the entire critical path: 44 lessons, 5 languages, 161 minutes of content — and zero
+people have ever opened this app** (figures off `npm test`'s readiness line).
+
+**Owner tree:** `git status` at run start and again before writing showed **UIUX/ untracked and
+untouched** and no tracked file modified besides this run's five. `HEAD` re-checked before writing,
+unmoved at `291eac6`.
 
 ### 2026-09-04 (scheduled dev-agent, self-picked off a live sweep) — the launch scorecard scored a Phase-0 gate on a mechanism the app reversed seventeen days ago; and the two quiz tells I measured to justify NOT picking item 160 both came back clean, which is the finding that closes it
 

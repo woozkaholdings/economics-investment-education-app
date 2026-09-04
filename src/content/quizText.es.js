@@ -115,7 +115,7 @@ export const quizText = [
       "Subir aún más las tasas de interés",
       "Imprimir dinero (QE)"
     ],
-    "explain": "Las 4 herramientas son austeridad, reestructuración/impago, redistribución de riqueza e impresión de dinero. Subir más las tasas no es una de ellas."
+    "explain": "Las 4 herramientas son austeridad, reestructuración/impago de deuda, redistribución de riqueza (impuestos) e impresión de dinero. Subir más las tasas no es una de ellas: en un desapalancamiento, las tasas suelen estar ya cerca del 0%."
   },
   {
     "q": "¿Qué es la Tasa de Fondos Federales?",
@@ -135,7 +135,7 @@ export const quizText = [
       "La inflación suele estar en su punto máximo",
       "Las acciones históricamente han seguido cayendo durante años"
     ],
-    "explain": "En el valle, el sentimiento es el más negativo, pero históricamente el año siguiente ha mostrado retornos fuertes. Esto es un patrón histórico, no una garantía."
+    "explain": "En el valle, el sentimiento es el más negativo, pero históricamente el año siguiente a un suelo de mercado ha mostrado algunos de los retornos promedio más fuertes, porque la expansión vuelve a empezar desde ahí. Esto es un patrón histórico, no una garantía para ningún valle futuro concreto."
   },
   {
     "q": "¿Qué indicador económico se conoce a menudo como el 'Índice del Miedo'?",
@@ -155,7 +155,7 @@ export const quizText = [
       "Porque las tasas de interés se fijan por ley",
       "Porque la productividad deja de crecer por completo"
     ],
-    "explain": "Durante décadas, las deudas pueden crecer más rápido que los ingresos que las sostienen. Eso no puede continuar indefinidamente, así que el ciclo pasa a una fase de desapalancamiento."
+    "explain": "Durante décadas, las deudas pueden crecer más rápido que los ingresos que las sostienen. Eso no puede continuar indefinidamente, así que el ciclo pasa a una fase de desapalancamiento, que es lo que cubre la siguiente lección."
   },
   {
     "q": "¿Cuál es una guía inicial comúnmente citada para dividir el ingreso entre necesidades, deseos y ahorro?",
