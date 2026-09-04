@@ -272,7 +272,7 @@ export const quizText = [
     "opts": [
       "Mostly principal, since most of the loan should already be paid off",
       "Split evenly between principal and interest",
-      "Mostly interest, since interest is charged on the large remaining balance early in the loan",
+      "Mostly interest, since interest is charged on the remaining balance",
       "Entirely interest, since no principal is paid until the loan is refinanced"
     ],
     "explain": "Interest is charged on the remaining balance, which is largest early in a loan, so early payments are mostly interest — the same compounding math from “Compound Interest”, working against the borrower. The principal share only overtakes the interest share around two-thirds of the way through a typical 30-year loan."
@@ -302,7 +302,7 @@ export const quizText = [
     "opts": [
       "One of the apps made a calculation error and should be reported",
       "Credit scores update in real time, so the difference reflects a transaction made between checks",
-      "The two apps likely pulled from different credit bureaus or used different scoring models, since a person has more than one score",
+      "The two apps likely pulled from different credit bureaus or used different scoring models",
       "Only the higher score is accurate; scores can never legitimately be lower than a person's \"true\" score"
     ],
     "explain": "A credit report is kept separately by three bureaus, and multiple scoring models (like FICO and VantageScore) can each turn the same report into a different number — so a single person has several credit scores rather than one, and two apps can legitimately disagree without either being wrong."

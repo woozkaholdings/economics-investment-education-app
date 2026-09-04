@@ -272,7 +272,7 @@ export const quizText = [
     "opts": [
       "Sobre todo capital, ya que la mayor parte del préstamo ya debería estar pagada",
       "Dividido en partes iguales entre capital e interés",
-      "Sobre todo interés, porque el interés se cobra sobre el gran saldo restante al inicio del préstamo",
+      "Sobre todo interés, porque el interés se cobra sobre el saldo restante",
       "Totalmente interés, ya que no se paga capital hasta refinanciar el préstamo"
     ],
     "explain": "El interés se cobra sobre el saldo restante, que es mayor al inicio del préstamo, así que los primeros pagos son sobre todo interés — la misma matemática del interés compuesto de la lección “Interés Compuesto”, funcionando en contra del prestatario. La parte de capital solo supera a la de interés alrededor de dos tercios del plazo de un préstamo típico a 30 años."
@@ -302,7 +302,7 @@ export const quizText = [
     "opts": [
       "Una de las apps cometió un error de cálculo y debería reportarse",
       "Los puntajes de crédito se actualizan en tiempo real, así que la diferencia refleja una transacción hecha entre ambas consultas",
-      "Es probable que las dos apps hayan consultado agencias de crédito distintas o usado modelos de puntuación diferentes, ya que una persona tiene más de un puntaje",
+      "Es probable que las dos apps hayan consultado agencias de crédito distintas o usado modelos de puntuación diferentes",
       "Solo el puntaje más alto es correcto; un puntaje nunca puede ser legítimamente más bajo que el puntaje \"real\" de una persona"
     ],
     "explain": "Un informe de crédito lo mantienen por separado tres agencias, y varios modelos de puntuación (como FICO y VantageScore) pueden convertir el mismo informe en números distintos — así que una sola persona tiene varios puntajes de crédito en lugar de uno, y dos apps pueden discrepar legítimamente sin que ninguna esté equivocada."

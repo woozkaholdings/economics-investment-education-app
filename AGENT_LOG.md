@@ -1745,6 +1745,39 @@ through two passes that each had it open.
     routes the remainder to O-3. That is TRUE OF MECHANICAL CUTS — re-proven this run with a stronger
     cutter — and FALSE OF HAND DELETION, which reached the band in all five languages on two
     questions, including one of the two the clause names as the head of the O-3 queue.**
+    - ✅ **2026-09-03 (scheduled dev-agent, self-picked): `q029` (essentials 15) and `q026`
+      (essentials 12) shipped by pure deletion, ten strings, no new prose in any language.
+      §65 live: longest-option **en 63.0% → 58.7%**, es/ko 60.9% → 56.5%, zh/ja 58.7% → 54.3%;
+      shortest-option **unchanged in all five** (2.2/2.2/0.0/2.2/4.3), so the inversion this item
+      warns about did not happen. Beatable-in-all-five 22 → 20; beatable-in-at-least-one 31 → 29.**
+      - ⛔ **THE PREVIOUS PASS'S CANDIDATE LIST OMITTED THE CORPUS'S WIDEST-WINDOW QUESTION, and the
+        omission is a property of how the list was built rather than an error in it.** That pass
+        named `q026`, `q034`, `q039`, `q012` as "the next candidates", honestly qualified as "of the
+        ones inspected this run". Ranking **all 22** by the window measure this item prescribes puts
+        **`q029` first** — minimum window 17 code points against `q026`'s 14, `q039`'s 12 and
+        `q034`'s 8 — and `q029` appears on no previous list. **Rank the whole set, not the ones you
+        happened to open**; the ranking is four lines of arithmetic over `quizMeta` + the five
+        `quizText` modules and is written out in the run-log entry.
+      - **`q029`** dropped the trailing reason clause `, since a person has more than one score`
+        and its four translations — the clause `explain` already states in all five ("so a single
+        person has several credit scores rather than one"), verified live on the built app.
+        **`ko` and `ja` needed more than the clause**: the leading reason clause alone left them at
+        52/48 and 49/47 against their ceilings, so each also elides one object particle phrase
+        (`정보를`, `データを`) — idiomatic ellipsis in both languages, and still a pure deletion.
+      - **`q026`** dropped the `early in the loan` element in all five (`large `/`gran `/
+        `대출 초기에는 `/`贷款早期`/`ローンの初期は`, plus `それに応じて` in ja for margin). The stem
+        already says "3 years into a 30-year mortgage", and `explain` says "which is largest early
+        in a loan" in all five — so the deleted words are supplied twice over.
+      - ⚠️ **MARGIN IS THE THING TO RECORD, NOT JUST FEASIBILITY — the tightest cell here is `q026`
+        zh at 21 against a ceiling of 23.** A landing that merely clears `bandMax` re-opens the
+        question the moment someone trims a distractor, which is the fragility this item already
+        flagged on `q020`'s four exact ties. Every other cell this pass has ≥4 of margin. **Quote
+        `answer` and `[bandMin, bandMax]` per language when filing a landing, so the next editor can
+        see which cells are load-bearing.**
+      - **O-3 accounting, and it is the first pass in this item that runs the other way: −162
+        characters of unreviewed machine translation** (es −72, ko −38, ja −32, zh −20), −64 en,
+        −226 total. `npm run readiness --check` passes unchanged at 161 minutes, so no cell of the
+        reading model crossed a rounding boundary.
     - ✅ **2026-09-03 (scheduled dev-agent, self-picked): `q046` (lesson 44, main path) and `q020`
       (essentials 6) shipped by pure deletion, ten strings, no new prose in any language.
       §65 live: longest-option **en 67.4% → 63.0%**, es/ko 65.2% → 60.9%, zh/ja 63.0% → 58.7%;
@@ -4312,6 +4345,145 @@ zero meaningful: `selftest PASS (8/8 controls fired, plantsRemoved true)` and, p
 finding(s); V vacuous; U unavailable`. A bare "no accessibility issues found" is not a result.
 
 ## Run log
+
+### 2026-09-03 (scheduled dev-agent, backlog item 160) — the quiz's longest-option tell fell another 4.3 points on ten deleted strings, and the ranking that found the two questions put a question no previous pass had named in first place
+
+**Where the pick came from, and why it is not a residual chain.** The previous run closed item 27 and
+queued two things: item 155's **permanent text-zoom probe** — an instrument, which W-6.3's ratio
+(`scripts/` at 2.2x `src/`) argues against and which that run itself declined twice on exactly that
+ground — or a **backlog refill**. I took neither, and took the highest-value open **learner-visible**
+item instead: **160**, whose own header calls it "HIGH for a learning app". W-6.2 rule 1 is not
+engaged: item 160 is not a residual any recent run filed from its own output — its last dev-agent
+work was three runs ago — and the previous run's residual is the one thing I did not pick.
+
+**Step 3.5 — the premise re-measured with four controls before anything was edited, and it holds
+exactly.** `npm test`'s §65 line at run start: longest-option **en 63.0%, es 60.9%, ko 60.9%, ja
+58.7%, zh 58.7%** against a 25.0% chance baseline — the figures item 160's most recent sub-entry
+quotes, to the tenth. An independent re-implementation of the strict-extreme scorer over `quizMeta` +
+the five `quizText` modules returns **22 beatable-by-longest in all five languages**, which is the
+number that entry closes on, and **31 in at least one**. Controls, all four fired in the direction
+required: **strict-longest → beatable**, **tie at max → NOT beatable** (a shared maximum is not a cue
+and a scorer that missed this would over-report), **strict-shortest → inverted**, **tie at min → NOT
+inverted**. Nothing in the item's headline needed correcting — which is worth saying plainly, because
+it is the first pick in a while where step 3.5 changed nothing.
+
+⛔ **What step 3.5 DID change was the pick, and this is the transferable part.** The previous item-160
+pass closed by naming `q026`, `q034`, `q039` and `q012` as "the next candidates" — honestly qualified
+as *"of the ones inspected this run"*. Item 160's own rule is to **rank by window width**, so I ranked
+**all 22** rather than the four:
+
+| rank | id | lesson | narrowest window (code points) | largest deletion required |
+|---|---|---|---|---|
+| 1 | **`q029`** | 15 | **17** | 33 |
+| 2 | **`q026`** | 12 | 14 | 20 |
+| 3 | `q039` | 25 | 12 | 73 |
+| 4 | `q034` | 20 | 8 | 12 |
+
+**`q029` is the widest-windowed question in the corpus and appears on no previous candidate list.**
+The list was not wrong; it was partial, and a partial list read as a queue costs the best candidate.
+**Rank the whole set, not the ones you happened to open** — it is four lines of arithmetic.
+
+**What shipped — ten strings, two questions, five languages, and a control proving every one is a
+deletion rather than a rewrite.** Each new string is asserted to be a **subsequence** of the shipped
+string it replaces; the subsequence test carries its own two-way control (`abc` ⊂ `axbxc` true, and
+`abcz` ⊂ `axbxc` false, so an appended character cannot slip through as a "deletion"). `git diff -U0`
+is **10 lines, 2 per file, every one an `opts` value**: not one question stem, `explain`, answer key,
+id or ordering changed.
+
+| id | lesson | what came out of the correct option, in all five |
+|---|---|---|
+| `q029` | 15 (credit reports vs. scores) | the trailing reason `, since a person has more than one score` |
+| `q026` | 12 (mortgages) | the `early in the loan` element, plus the intensifier `large` |
+
+**Both deletions are recoverable by the learner from two places, which is the item's own bar.**
+`q029`'s clause is in `explain` — *"so a single person has several credit scores rather than one"* —
+and I read it back off the built app after answering wrong. `q026`'s is in `explain` twice over
+(*"which is largest early in a loan"*) **and in the question stem**, which states "3 years into a
+30-year mortgage": the option was re-asserting a fact the reader had just been given.
+
+⚠️ **`ko` and `ja` did not fit on the obvious cut, and the fix is worth writing down.** Deleting only
+the reason clause left `ko` at **52 against a ceiling of 48** and `ja` at **49 against 47** — the
+leading clause in those languages is shorter than the trailing clause in English, so the same
+semantic cut removes fewer code points. Both were closed by additionally eliding one object particle
+phrase (`정보를`, `データを`), which is idiomatic ellipsis in Korean and Japanese, costs no meaning,
+and keeps the edit a pure deletion. **The English window being generous says nothing about the CJK
+windows on the same question.**
+
+⚠️ **And the number I nearly failed to record: margin.** Landing inside `[bandMin, bandMax]` is the
+pass/fail test, but a landing that clears `bandMax` by one re-opens the moment a distractor is
+trimmed — the fragility this item already flagged on `q020`'s four exact ties at the ceiling. Final
+margins to `bandMax`: `q029` en 13 / es 11 / ko 3 / zh 4 / ja 2; `q026` en 7 / es 8 / ko 4 / **zh 2**
+/ ja 7. **`q026` zh at 21 against 23 is the tightest cell this pass ships** and is named here rather
+than left for someone to rediscover.
+
+**Verification.**
+- `npm test` — **0 failures**, warnings unchanged in kind and count (O-3 translation coverage, §33
+  completeness, item 160's own §65 cue, item 115's floor). §1b placeholder parity and §3 quiz
+  alignment still pass, which is what says the six quiz files are still index-aligned after ten
+  edits.
+- §65 after: longest **en 58.7%, es 56.5%, ko 56.5%, ja 54.3%, zh 54.3%** — down **4.3 points in
+  every language**, exactly two questions of 46. **Shortest-option unchanged in all five**
+  (2.2/2.2/0.0/2.2/4.3): no inversion, which is the failure mode this item warns about and the
+  reason both directions are scored. Beatable-in-all-five **22 → 20**, in-at-least-one **31 → 29**.
+- `npm run build` clean. **Verified live in the built app, not in source**: `dist/` served
+  statically, storage seeded, `#/lesson/15` and `#/lesson/12` opened and every one of the ten
+  strings read back off the DOM in **en, es, ko, zh and ja**. Both `explain` fields read back after
+  a deliberate wrong answer.
+- ⚠️ **Two reads were stale before they were right, for the reason this log has recorded before.**
+  Switching language and reading in the next batched call returned `불러오는 중…` / `加载中…` — the
+  per-language chunk had not resolved. The staleness is self-announcing here (a loading string, not
+  plausible wrong content), but the habit that catches it is asserting `documentElement.lang`
+  alongside the text in the same read, which is what the figures above rest on.
+- **320px overflow sweep with a planted `white-space:nowrap` probe: control fired** (`scrollWidth`
+  320 → 2109 → 320) and the real page measures **320 at 320px** in every language. Deletions cannot
+  create overflow, so this is a guard against the edit having done something other than delete.
+
+**Step 5 — adversarial self-check, run and not skipped.**
+- **Blindspot register — checked by injection, not by reading a green line.** `npm run
+  check-blindspot` passes, but a pass proves nothing unless the check reaches the field, so I planted
+  `— you should buy a home now` into **the exact `q026` option string I had just written**:
+  **FAIL, on §10.1 investment-advice-adjacent language.** Restored from the scratchpad copy (never
+  `git checkout --`), md5 identical to the pre-injection file, plant greps to **0**, re-run
+  **PASS**. §10.2 Dalio, §10.3 kids framing and §2.3's live-date scan are untouched by a diff that
+  only removes words — and removal cannot introduce a date or a recommendation, which is why the
+  injection was aimed at whether the scanner sees this corpus at all.
+- **`DECISIONS.md`:** no conflict. Content stays plain `.js` modules edited in place; no state,
+  storage, build or routing decision is touched. The 2026-08-16 translation-review **scope limit is
+  lesson content**, so these ten fields are not counted by `npm run review-status` and its 100%
+  figure did not move — stated so nobody later reads it as covering them.
+- **Already-done item:** `q029` appears **nowhere** in `AGENT_LOG.md` or the archive before this
+  entry; `q026`'s only two mentions are the candidate-list lines this entry corrects. The shipped
+  deletion passes were `q015`/`q041`, then `q046`/`q020`; the distractor-enlargement passes were
+  `q042` and `q007`. Nothing here redoes or undoes any of them. This **compounds** with item 165
+  rather than fighting it: 165 filled the `explain` fields out in four languages, and this pass is
+  the move that depends on `explain` carrying the reasoning.
+- **My own verification claim:** every figure above is printed by `npm test` or by a script re-run
+  in this session with its controls visible in the output, or read live off the built app's DOM. The
+  "ten lines and nothing else" claim is a re-runnable `git diff -U0`, not an assurance.
+- **W-6.2 rule 3:** no new check is proposed, so the rule does not bite. **W-6.3, quoted and
+  honored: 0 lines added to `scripts/`** — both instruments (the window ranker, the subsequence
+  evaluator) live in this entry and the scratchpad deliberately, because the ratio is 2.2x and the
+  surface they guard is already measured every run by §65.
+- **Floor tax, stated:** this entry and item 160's update grow the non-archivable floor, which was
+  **382,188 b against a 250,000 b budget** before this run and stays over. Item 115's owner options
+  are still the only thing that moves it.
+
+**What is left, measured not estimated.** **20 questions beatable by longest in all five languages**,
+29 in at least one. The next candidates by window width are **`q039` (lesson 25, window 12 but 73
+code points to remove — the largest deletion in the corpus and the one most likely to need a rewrite
+rather than a cut)** and **`q034` (lesson 20, window 8, only 12 to remove — cheapest, tightest)**.
+`q012` should still be picked last or not at all: its correct option is the corpus's most
+advice-adjacent sentence and any edit to it is a §10.1 question rather than a length one.
+**`q001`, `q004`, `q006`, `q011` and `q014` remain unreachable by deletion** — CJK bands 0-3 code
+points wide — and belong to O-3 with `q042`/`q007`. Filed into item 160 per W-6.2 rule 2, not as a
+new numbered item.
+
+**O-1 remains the entire critical path: 44 lessons, 5 languages, 161 minutes of content, 16 figures
+— and zero people have ever opened this app** (figures off `npm test`'s readiness line).
+
+**Owner tree:** `git status` at run start and again before writing showed **0 tracked modified
+besides this run's six files, `UIUX/` untracked and untouched**. `HEAD` re-checked before writing and
+unmoved at `83a4fa8`.
 
 ### 2026-09-03 (scheduled dev-agent, backlog item 27) — lesson 12's mortgage payment is two shares of one constant that swap places two-thirds of the way through, and the line I drew to separate them was measured invisible against both of the fills it sits on
 
