@@ -4599,6 +4599,124 @@ finding(s); V vacuous; U unavailable`. A bare "no accessibility issues found" is
 
 ## Run log
 
+### 2026-09-04 (owner-directed: "do the nine past-due claims next") — the register's first past-due review, run a day before the rows actually go late; eight of the nine were blocked on one thing and the ninth could not be checked for a reason nothing in the file had noticed
+
+**What was asked and what "doing" a claim means.** Nine rows carried Check = 2026-09-05: **A1, A3,
+A4, A5, A7, C2, D1, D2, D3**. §9.1's instruction — and `check-claims.mjs`'s own past-due message —
+is *look, then record the result **or** move the date with a reason*. So this is not a date-bumping
+pass: every row got a measurement or an explicit statement of why one is impossible, and every moved
+date carries its reason **in the row**, where the next reader is.
+
+**Step 3.5 — the premise re-measured, and it is my own note from the previous run.** Controlled both
+directions with the script's `CLAIMS_TODAY` hook: `CLAIMS_TODAY=2026-09-05` → **0 past due**;
+`CLAIMS_TODAY=2026-09-06` → **9 past due**, and the nine warnings name exactly those nine ids. So
+the set was right and the date was right — **these rows go late on 09-06, not on their own check
+date**, because the filter is `c.date < today`.
+
+**The finding that makes this more than bookkeeping: eight of the nine are blocked on the same
+thing, and I measured the blockage instead of quoting it.** `analytics.js`'s `sink()` writes to
+`localStorage` and nothing else — **zero** matches for `fetch(` / `https?://` / `sendBeacon` /
+`XMLHttpRequest` in that file. ⛔ **My first control for that grep was dead and I nearly shipped a
+clean negative off it:** I pointed the same pattern at `scripts/fetch-market-data.mjs` expecting
+hits and got **0**, because that script delegates its network calls to `src/lib/marketData/`. Aimed
+there, the pattern returns **8** across `fred.js` and `adapters.js`. **A control that returns zero is
+not a control** — and this one failed inside a `&&` chain, so the shell ran the fallback `echo` for
+an unrelated command and printed a line that read exactly like a measurement. Both the instrument and
+the chaining were fixed before anything was written down.
+
+**Per row, and only what was actually established.**
+- **A1** — still blocked (measurement above). **Its mechanism citation was wrong and is corrected:**
+  the row sent a reader to `isUnlocked` in `useAppState.js`; measured, that file has **0**
+  occurrences and `App.jsx` has **4** (control: `completedLessons` returns **7** in `useAppState.js`,
+  so the file was being read, not missing). `check-data.mjs` §26 cannot catch this class — it
+  verifies a cited *path* exists, and that path does exist.
+- **A3 — the one row that could not be checked, and not for the reason every other row gives.** The
+  debt clause asks for growth over **two consecutive months**; the review ledger begins **2026-08-11**,
+  so the second month-over-month comparison cannot exist before mid-October. **And the clause never
+  defined "debt" or "grows"** — so two months of data would not have made it checkable either.
+  Defined now, deliberately **before the second data point exists**: debt grows if the abridged
+  lesson/language pair count rises month over month, or if the human-reviewed share falls. **Baseline
+  recorded so the comparison is possible at all:** 44/44 reviewed in es/ko/zh/ja, **100% AI, 0%
+  human**, 0 stale, 0 unreviewed; **48 abridged pairs, 12 per language over 12 lessons, all on the
+  optional `essentials` track**. Against W-5.1's 2026-08-24 figures both are **flat**. Date → **2026-10-16**,
+  not the monthly-audit date the other eight took, because that is the first day the clause can fire.
+- **A4** — still blocked; and §10.3 stays owner-held, so a refutation would still not authorize a run
+  to act. **A5** — still blocked; citations check out (`loadReview` in `lib/review.js`,
+  `screens/Practice.jsx` present), but the claim is about *usage* and no code reading substitutes.
+- **A7** — still blocked, and **its denominator prose was stale in the same way A2 was**: it said
+  `PolicySim` returns `null` for *"the other 39"*, a hand-typed count of a catalog that is now 44.
+  Measured two independent ways that agree — distinct `lessonId` values in `policyScenarios`, and
+  `scenariosForLesson()` evaluated over all 44 lessons — both return **`[35]`**, *Interest Rates: The
+  Master Signal*, `economy` track, 2 scenarios. ⛔ My first instrument read a field named `lesson`
+  and returned `[null]`; the control (`scenariosForLesson(35)` returning a scenario while `(29)`
+  returns `[]`) caught it. **The bullet now names no number**, because the host set is derivable.
+- **C2** — the only row blocked on **two** things: item 18 *and* **O-1**, open since 2026-08-17,
+  **18 days** as of today. It is also the row closest to firing the moment a URL exists.
+- **D1 / D2 / D3 — all three stay REFUTED, and each gained evidence that postdates its own text.**
+  **D1:** the 2026-09-03 archiving pass found two runs had deferred on the script's own *101.3 runs
+  of headroom* line when the honest figure was **6.6**; and a 2026-09-04 run found item 165's
+  "main path closed" claim read off the one instrument that item warns not to trust. **D2:** `npm
+  test` **cannot detect archive loss** — a whole 9,168 b entry deleted from the archive gives 0
+  failures, proven by plant; and `check-claims.mjs` parsed **A2** cleanly for seventeen days after
+  the mechanism its threshold counted had been reversed out of the product (yesterday's `b1960fb`).
+  **The generalization D2 should now carry: a check can be correct, passing, and irrelevant at the
+  same time.** **D3:** measured rather than anecdotalized — over **370** dated run entries across the
+  log and the archive, **36** carry explicit premise-correction phrasing, **113** match a broader
+  pattern, **170** mention a premise at all; controls fired both ways (**369/370** on a
+  should-match-everything pattern, **0** on a nonsense token). Reported as a **bracket, 36–113 of
+  370**, not a rate, because the phrasing is not standardized and any single pattern is a floor.
+  **The refinement worth keeping: 50 entries report a premise that reproduced or held**, so the row's
+  *nine consecutive times* framing overstates the steady state.
+
+**No threshold was softened, and that is checkable rather than asserted.** A diff of every row's
+**Refuted if** cell between `HEAD` and the working tree reports **1 of 17 changed** — A3 — and A3's
+original clause is still present **byte-for-byte** (`t.includes(orig)` → `true`); what was added is a
+metric for a term the clause never defined. The other eight thresholds are untouched.
+
+**Verification.** `npm test` → **0 failures**, warning profile unchanged from before this run. `npm
+run build` clean. Calendar control over the new dates: **0 past due** on 2026-09-06 and on 2026-10-03,
+**16** on 2026-10-04 (the day after §9.3's monthly audit, which is the point), **17** on 2026-10-17
+once A3 joins.
+
+**Adversarial self-check (step 5).**
+- **Blindspot register:** no regression — no Dalio branding or quotation, no advice-adjacent language,
+  no kids framing, no live-looking market figure; `check-blindspot` clean inside `npm test`. Only
+  `CLAIMS.md` changed, and it is not one of §2.3's 26 teaching-copy modules.
+- **DECISIONS.md conflict:** none. A3's added metric serves the P-4 decision's own stated intent
+  (accept AI translation *as a tracked, revisitable state*) rather than contradicting it; no other
+  decision is near this change.
+- **Already-done backlog item:** no. Every prior `past due` occurrence in the log and the archive is
+  a run quoting the trivial `0 past due` in its verification output — **the register has never had a
+  past-due review, because nothing has ever been past due.** This is the first.
+- **My own verification claim:** ⛔ **it would have been false without the calendar control.** After I
+  believed all nine dates were moved, `CLAIMS_TODAY=2026-09-06` still reported **3 past due** — D1,
+  D2 and D3, whose Status cells I had rewritten while their Check cells still read 2026-09-05. Three
+  of nine, in a pass whose entire subject is checking rather than assuming. Fixed, re-controlled
+  across five dates, and recorded here rather than quietly repaired.
+
+**O-3 accounting. This run adds ZERO characters of unreviewed machine translation** — no file under
+`src/content/` or `src/locales/` was touched. Net learner-visible character delta in all five
+languages: **0**. Human review share unchanged at **0%** — and A3's baseline now records that as a
+figure the register can hold the next measurement against.
+
+**Filed as notes, not as numbered items (W-6.2 rule 2 + W-6.4).**
+(i) **The register now points almost entirely at 2026-10-03**, §9.3's monthly-audit date: 16 of 17
+rows. That is deliberate — the audit is the mechanism built to read this file — but it means a
+skipped audit produces 16 warnings at once. Worth one sentence in the next weekly review.
+(ii) **A1's stale citation is a class, not an instance:** §26 checks that a cited path exists, not
+that the cited symbol is in it. A sweep of the register's other citations found **no second
+instance** (`loadReview`, `PolicySim`, `policyScenarios`, `TRACKS` all resolve; `locales/`,
+`screens/reference/`, `Practice.jsx` all exist), so this is a note and not a check — W-6.2 rule 3
+has no learner-visible failure to name here, and W-6.3's ratio argues against a 73rd section.
+(iii) **Item 26 still says in its own text that its stream is complete and it "can close",** carried
+forward from yesterday's entry because it is still true and still unclosed.
+
+**O-1 remains the entire critical path: 44 lessons, 5 languages, 161 minutes of content — and zero
+people have ever opened this app** (figures off `npm test`'s readiness line, run this session).
+
+**Owner tree:** `git status` at run start and again before writing showed the owner's untracked
+`UIUX/` only, **untouched**. `HEAD` re-checked before writing and unmoved at `b1960fb`.
+
 ### 2026-09-04 (scheduled dev-agent, self-picked off the claims register; W-6.2 rule 1 sent me off a fourth consecutive §3.0-clause pick) — the falsifiable-claims register still bet on money-first ordering seventeen days after the owner reversed it, and the row carried a refuting number, so the register was the third file holding the same dead premise and the only one where it had a threshold attached
 
 **Where the pick came from, and why it is not a fourth §3.0 tally.** The three previous runs all
