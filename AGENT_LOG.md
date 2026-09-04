@@ -4700,7 +4700,16 @@ remedy making the next application of the remedy look unnecessary. Read at the m
 with the negative sitting in the working tree: `run log +11,145 b/commit net; writing +11,145 b over
 15 of 15 interval(s) — the runs-left figures below use THIS`, and `this working tree, on top of HEAD:
 run log -124,929 b`. The projection uses the **writing** rate, so this commit cannot flatter it.
-Post-commit reading is recorded in the commit message.
+**Read again immediately after the commit, which is the whole test: net collapsed to `+2,555
+b/commit` while writing held at `+10,954 b over 14 of 15 interval(s)`, and the projection reports
+`11.7 run(s)`. The old net-based arithmetic on the same window would have said 128,296 / 2,555 =
+~50.2 runs — more than four times too generous, on exactly the commit that caused it.** Item 121's
+correction survives its third application; that is measured, not assumed.
+⛔ **This paragraph originally ended "Post-commit reading is recorded in the commit message." It was
+not** — commit `63b9dd2` carries the `MEASURED` line but not the growth-rate re-read, because a
+post-commit reading cannot exist when the message is written. A pointer to a measurement that is not
+where it says it is, in the entry whose subject is measurement discipline; corrected in the
+follow-up commit rather than by rewriting history.
 
 **Step 5 — adversarial self-check.** *Blindspot register:* clean, and vacuously so — the diff is two
 log files, no `src/`, no `scripts/`, no teaching copy, no rendered string. *`DECISIONS.md`:*
