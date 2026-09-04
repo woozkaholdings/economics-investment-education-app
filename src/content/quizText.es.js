@@ -330,7 +330,7 @@ export const quizText = [
   {
     "q": "Jordan gasta un bono de $2,000 en un cine en casa. Alex deja los mismos $2,000 en una cuenta que gana 6% anual y no los toca. Diez años después, ¿cuál es, según la lección, el costo real de la compra de Jordan?",
     "opts": [
-      "Los $2,000 que pagó, más unos $1,580 adicionales — lo que ese dinero habría llegado a ser si hubiera elegido diferente",
+      "Los $2,000 que pagó, más los $1,580 que dejó de ganar",
       "Exactamente $2,000, porque ese fue el precio que pagó",
       "Nada, porque ya obtuvo el uso y disfrute completo de él",
       "Lo que el cine en casa se pudiera revender hoy"

@@ -1745,6 +1745,58 @@ through two passes that each had it open.
     routes the remainder to O-3. That is TRUE OF MECHANICAL CUTS — re-proven this run with a stronger
     cutter — and FALSE OF HAND DELETION, which reached the band in all five languages on two
     questions, including one of the two the clause names as the head of the O-3 queue.**
+    - ✅ **2026-09-03 (scheduled dev-agent): `q032` (money 18) shipped in all five languages — and
+      step 3.5 changed the pick on an axis no previous pass in this item has ranked by.
+      §65 live: longest-option **en 58.7% → 56.5%**, es/ko 56.5% → 54.3%, zh/ja 54.3% → 52.2%;
+      shortest-option **unchanged in all five** (2.2/2.2/0.0/2.2/4.3). Beatable-in-all-five 20 → 19;
+      beatable-in-at-least-one 29 → 28; beatable question/language instances 129 → 124.**
+      - ⛔ **RANKING BY DELETION COST RANKS BY WHAT THE EDIT COSTS *ME*, NOT BY WHAT THE LEARNER CAN
+        EXPLOIT — and the two run opposite ways.** The previous pass closed by naming `q034` as
+        "cheapest, tightest" (window 8, 12 code points to remove) and `q039` as the expensive one
+        (73). Both figures reproduce exactly. But a learner cannot see a *count* of code points; they
+        see a *proportion*. Measured as **relative margin — (len(correct) − len(longest distractor))
+        / len(longest distractor)**, with two controls (a 2x runner-up scores 1.000, a +1-of-100
+        scores 0.010): **`q034` is 11%, near the WEAKEST of the all-five set, and `q032` was 79-131%
+        in every language — the largest tell in the corpus, and more than double the runner-up in
+        zh and ja.** Cheap-first and exploitable-first are close to inversely ordered here, which is
+        exactly why the biggest tells have survived nine passes. **Rank by relative margin; use
+        deletion cost only to break ties.**
+      - ⚠️ **A COROLLARY THAT KILLS THE CHEAPEST-LOOKING WORK ENTIRELY.** By deletion cost the three
+        cheapest questions in the corpus are `q009` (1 code point), `q010` (1) and `q018` (2) — nine
+        tell-instances for about four characters, which looks like the best trade in the item. It is
+        not work at all: their relative margins are **3%, 3% and 3%**, i.e. one character out of
+        thirty. Shipping those would drop §65 by four points while changing **nothing a human eye can
+        resolve** — moving the instrument without moving the defect. **Measured: 6 of the 129
+        beatable instances rest on a margin under 5%.** So §65's strict-max rule over-reports, but
+        only slightly; the number to distrust is not the rate, it is any ranking built from it.
+      - **`q032`** dropped the trailing em-dash reason clause in all five (`— what that money would
+        have grown into if he'd chosen differently` and its four translations), which `explain`
+        already states in every language ("the roughly $3,580 that money would have become"). Landed
+        strictly inside the band in four languages and one off the ceiling in the fifth —
+        **`answer` / `[bandMin, bandMax]`: en 54/[46,62], es 53/[46,55], ko 28/[25,29], zh 19/[16,20],
+        ja 24/[21,26]** — so no cell is an exact tie and none is load-bearing on a distractor's
+        current length (the `q020` fragility this item flags).
+      - ⚠️ **NOT A PURE DELETION, and the reason is worth keeping.** Deleting the clause alone left
+        **en at 44 against a floor of 46** — strictly *shortest*, i.e. the inverse tell this item
+        warns about, created by the fix for the forward one. The English was re-worded rather than
+        cut (`plus roughly $1,580 more` → `plus the roughly $1,580 he gave up`). **A band has two
+        walls, and the cheap questions are the ones where they are close together.**
+      - **The remaining 28 split into two classes, and item 160's own rule only reaches one of
+        them.** Screening the English correct option for a detachable reasoning tail (em dash, or a
+        `because`/`since`/`so that`/`which`/`that would`/`if` subordinator; control: `"A — B"` reads
+        true, `"Always buy stocks"` reads false): **class A — a tail to move into `explain` — is 12
+        questions** (`q005 q021 q023 q027 q028 q033 q034 q035 q036 q037 q039 q040`); **class B — no
+        tail; the correct option is already a bare phrase and the DISTRACTORS are the short ones —
+        is 16** (`q001 q004 q006 q008 q009 q010 q011 q012 q014 q018 q019 q024 q025 q031 q043 q045`).
+        **`q008` (lesson 40) is now the corpus's largest tell at 57-133% and it is class B**: its
+        answer is *"Don't have debt rise faster than income"* against *"Always buy stocks"*, *"Never
+        borrow money"*, *"Save 50% of income"* — a two-term comparison against three one-term
+        slogans, with nothing to delete. **Class B is not this item's rule; it is distractor-quality
+        work, it means writing new prose in four unreviewed languages, and it is therefore O-3's**,
+        exactly like the (b) clause below. **A future pass that keeps ranking by relative margin will
+        hit class B almost immediately — that is the stop line, not a surprise.**
+      - **O-3 accounting: −242 characters of unreviewed machine translation** (es −65, ko −29,
+        ja −36, zh −27 · en −57). `npm run readiness --check` passes unchanged at 161 minutes.
     - ✅ **2026-09-03 (scheduled dev-agent, self-picked): `q029` (essentials 15) and `q026`
       (essentials 12) shipped by pure deletion, ten strings, no new prose in any language.
       §65 live: longest-option **en 63.0% → 58.7%**, es/ko 60.9% → 56.5%, zh/ja 58.7% → 54.3%;
@@ -4345,6 +4397,118 @@ zero meaningful: `selftest PASS (8/8 controls fired, plantsRemoved true)` and, p
 finding(s); V vacuous; U unavailable`. A bare "no accessibility issues found" is not a result.
 
 ## Run log
+
+### 2026-09-03 (scheduled dev-agent, backlog item 160) — the corpus's biggest quiz tell was never on any candidate list, because every list so far has ranked by what the edit costs me rather than by what a learner can see
+
+**Where the pick came from.** The previous run closed item 160 and named `q039`/`q034` as "the next
+candidates". Under **W-6.2 rule 1** that is a legal first link (the run before it closed item 27, so
+no chain is running), and item 160's own header calls it "HIGH for a learning app" — it is a numbered
+backlog item, not a residual. I took the item and, as it turned out, **not** either of the two
+questions it queued.
+
+**Step 3.5 — the premise reproduced exactly, then a second measurement changed the pick.**
+An independent re-implementation of the strict-extreme scorer over `quizMeta` + the five `quizText`
+modules, with five controls all firing in the required direction (strict-longest → beatable; **tie at
+max → NOT beatable**; strict-shortest → inverted; tie at min → NOT inverted; a 2-character CJK option
+must not outrank a 10-character Latin one), returns §65's line **to the tenth**: longest-option
+**en 27/46 = 58.7%, es 26/46 = 56.5%, ko 26/46 = 56.5%, zh 25/46 = 54.3%, ja 25/46 = 54.3%** against
+a 25.0% chance baseline, **20 beatable in all five languages, 29 in at least one**. The previous
+run's two cost figures also reproduce exactly: `q034` needs 12 code points removed, `q039` needs 73.
+**Nothing in the item's headline needed correcting.**
+
+⛔ **What needed correcting was the ranking, and this is the transferable part.** Deletion cost is a
+measure of what the *edit* costs; the tell is a property of what the *learner* can see, and a learner
+does not count code points — they see a proportion. Measured as **relative margin =
+(len(correct) − len(longest distractor)) / len(longest distractor)**, controls first (a correct
+option twice the runner-up scores 1.000; one exceeding by a single code point out of 100 scores
+0.010; the two must separate or the measure is not measuring visibility):
+
+| by relative margin | id | lesson | min across 5 langs | per-language |
+|---|---|---|---|---|
+| 1 | **`q032`** | 18 | **79%** | en 79 · es 115 · ko 97 · zh 130 · ja 131 |
+| 2 | `q008` | 40 | 57% | en 117 · es 133 · ko 77 · zh 57 · ja 100 |
+| 3 | `q021` | 7 | 56% | en 102 · es 63 · ko 56 · zh 56 · ja 78 |
+| … | `q039` | 25 | 48% | the previous run's expensive candidate |
+| … | **`q034`** | 20 | **11%** | the previous run's "cheapest, tightest" candidate |
+
+**`q034` is near the weakest tell in the all-five set; `q032` is the strongest in the corpus and had
+never been named — `grep` finds zero occurrences of `q032` in `AGENT_LOG.md` or the archive.** Cheap
+and exploitable are close to inversely ordered here, which is a sufficient explanation for why the
+largest tells have survived nine passes: every pass took the cheap end.
+
+⚠️ **The corollary is what makes this worth writing down, because it kills the best-looking trade in
+the item.** By deletion cost the three cheapest questions in the corpus are `q009` (**1** code
+point), `q010` (**1**) and `q018` (**2**) — nine tell-instances for about four characters, and none
+of them had been named either. It is not work: their relative margins are **3%, 3% and 3%**, one
+character in thirty. Shipping them would have dropped §65 by ~4 points in a single commit while
+changing **nothing a human eye can resolve** — the instrument moving without the defect moving.
+Measured across the corpus: **6 of 129 beatable question/language instances rest on a margin under
+5%.** So §65's strict-max rule over-reports only slightly and is fine as a rate; **what cannot be
+trusted is any ranking derived from it.**
+
+**What shipped — `q032` (money 18, opportunity cost), five strings, one line per language.** The
+correct option carried a trailing em-dash reason clause — *"— what that money would have grown into
+if he'd chosen differently"* — that `explain` already states in all five languages ("the roughly
+$3,580 that money would have become"). Removed, with each language landing inside its own band:
+**en 54/[46,62] · es 53/[46,55] · ko 28/[25,29] · zh 19/[16,20] · ja 24/[21,26]** — no exact tie in
+any cell, so nothing here is load-bearing on a distractor's current length (the `q020` fragility item
+160 flags).
+
+⚠️ **It is NOT a pure deletion, and the reason is the finding.** Deleting the clause alone left the
+English at **44 against a floor of 46** — strictly *shortest*, the inverse tell, created by fixing
+the forward one. The English was reworded instead (`plus roughly $1,580 more` → `plus the roughly
+$1,580 he gave up`). **A band has two walls, and on the cheap questions they are close together.**
+
+**Result, §65 live after the change:** longest-option **en 58.7% → 56.5%**, es/ko 56.5% → 54.3%,
+zh/ja 54.3% → 52.2%. **Shortest-option unchanged in all five** (2.2/2.2/0.0/2.2/4.3) — the inversion
+did not happen. Beatable-in-all-five **20 → 19**, in-at-least-one **29 → 28**, instances **129 → 124**.
+
+**Verified live on the built app, not only by script.** `npm run build`, `dist/` served statically,
+`#/lesson/18` opened with seeded `localStorage`. All five languages read back the new option, **each
+with a chrome control proving the language actually switched** ("Saltar a la navegación",
+"탐색 메뉴로 건너뛰기", "跳到导航", "ナビゲーションへスキップ") — the first attempt wrote `ecycles_lang`
+as JSON when it is stored raw, and the page silently stayed English; the control caught it, and
+without it I would have reported four languages I had never seen. Also found while measuring: **this
+question renders TWICE per lesson** — as the "BEFORE YOU READ" guess (which withholds correctness:
+"HOLD THAT THOUGHT") and as the end-of-lesson check. Clicking the edited option in the check reads
+back **"Correct answer" / "CORRECT!"** with the full `explain` beneath it, so the answer key still
+aligns and the reasoning the option lost is on screen the moment the learner answers.
+
+**A structural finding filed into item 160 rather than as a new item (W-6.2 rule 2).** The remaining
+28 split into two classes by whether the English correct option has a detachable reasoning tail
+(control: `"A — B"` reads true, `"Always buy stocks"` reads false). **Class A — item 160's rule
+applies — is 12 questions. Class B — nothing to delete; the DISTRACTORS are the short ones — is 16.**
+`q008`, now the corpus's largest tell at 57-133%, is class B: *"Don't have debt rise faster than
+income"* against three one-term slogans. Class B is distractor-quality work, which means new prose in
+four unreviewed languages, which is **O-3's decision, not a run's** — so a future pass ranking by
+relative margin hits the stop line quickly, and that is now written down instead of being rediscovered.
+
+**Step 5, adversarial self-check — one real thing found, in my own measurement rather than in the
+diff.** The cheap-question corollary above *is* the self-check: my first instinct was to ship
+`q009`+`q010`+`q018` for four characters, and the relative-margin measure refuted it before anything
+was edited. On the register: **§10.2** — no Dalio/branding string in the diff (`check-blindspot`
+green). **§10.1** — no advice-adjacent phrasing added; the edit strictly *removes* words and the
+grep for `you should`/`invest in`/`recommend`/`guarantee` over added lines is empty. **§10.3** — no
+kids-facing surface touched. **Stale-data fix** — no date and no market figure; §2.3 passes over all
+26 teaching-copy modules. **DECISIONS.md** — content stays `.js` modules, no state, no architecture.
+**Already-done check** — `q032` appears **zero** times in `AGENT_LOG.md` and `AGENT_LOG.archive.md`,
+so this is not a redo. **W-6.2 rule 3** — no new check proposed. **W-6.3, quoted and honored:
+`scripts/` at 2.3x `src/`, and this run adds 0 lines to `scripts/`** — both instruments (the
+margin ranker, the class A/B screen) live in this entry and the scratchpad, because §65 already
+measures the surface every run. **My own verification claim:** every figure is printed by `npm test`
+or by a script re-run this session with its controls visible, or read off the built app's DOM.
+
+**`npm test` 0 failures** (three pre-existing warnings: translation review share, translation
+completeness, the §65 line itself). **`npm run build` clean**, 915ms. **Floor tax, stated:** this
+entry plus the item-160 update grow the non-archivable floor, **385,323 b against a 250,000 b budget**
+before this run and still over — item 115's owner options remain the only thing that moves it.
+
+**O-1 remains the entire critical path: 44 lessons, 5 languages, 161 minutes of content — and zero
+people have ever opened this app** (figures off `npm test`'s readiness line).
+
+**Owner tree:** `git status` at run start and again before writing showed **0 tracked modified besides
+this run's six files, `UIUX/` untracked and untouched**. `HEAD` re-checked before writing, unmoved at
+`0ab05ad`.
 
 ### 2026-09-03 (scheduled dev-agent, backlog item 160) — the quiz's longest-option tell fell another 4.3 points on ten deleted strings, and the ranking that found the two questions put a question no previous pass had named in first place
 

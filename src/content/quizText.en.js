@@ -330,7 +330,7 @@ export const quizText = [
   {
     "q": "Jordan spends a $2,000 bonus on a home theater. Alex leaves the same $2,000 in an account earning 6% a year and doesn't touch it. Ten years later, what does the lesson say is the real cost of Jordan's purchase?",
     "opts": [
-      "The $2,000 he paid, plus roughly $1,580 more — what that money would have grown into if he'd chosen differently",
+      "The $2,000 he paid, plus the roughly $1,580 he gave up",
       "Exactly $2,000, since that's the price he paid",
       "Nothing, since he already got the full use and enjoyment of it",
       "Whatever the home theater would resell for today"
