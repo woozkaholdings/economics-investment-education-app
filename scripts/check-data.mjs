@@ -357,21 +357,50 @@ const estimateMinutes = (lesson, content) =>
 
   // §3.0.5's one hard number: "Lesson 1 under four minutes." The rest of the
   // clause is a judgment ("an honest minutes estimate") that the derivation
-  // above serves; this half is checkable, and nothing checked it. Lesson 1 is
-  // the first screen of a new install and the subject of §4.3's completion-rate
-  // gate, so it is the one lesson whose length is a product commitment.
-  const first = lessons.find((l) => l.id === 1);
-  if (first && first.minutes >= 4) {
-    fail(
-      `§3.0.5: lesson 1 is ${first.minutes} minutes and the clause requires under four. Either ` +
-        `shorten it or take the clause to the owner — do not adjust the estimate, which is derived.`,
-    );
+  // above serves; this half is checkable, and nothing checked it.
+  //
+  // ⚠️ WHICH LESSON THIS IS ABOUT CHANGED ON 2026-08-18, AND THIS CHECK DID
+  // NOT (corrected 2026-09-04). It read `lessons.find((l) => l.id === 1)`,
+  // under a comment asserting "lesson 1 is the first screen of a new install".
+  // That was true when it was written and the owner-directed reversal in
+  // DECISIONS.md falsified it: `TRACKS` now leads with `economy`, so the first
+  // screen of a new install is lesson **29**, and lesson 1 heads `essentials`
+  // — the optional track that gates nothing. Measured: with lesson 29
+  // consistently at 5 minutes (text lengthened in all five languages and
+  // `minutes` updated to match, so the derivation check above is satisfied),
+  // this block stayed silent and still printed "lesson 1 is 3 min". A guard
+  // whose green is read as §3.0.5's status was reporting on the one track the
+  // clause is not about. Same class as the inverted LAUNCH_READINESS.md
+  // evidence cell fixed earlier the same day — but in an executing check,
+  // where the stale belief is enforced rather than merely written down.
+  //
+  // SO: the target is DERIVED from track order, never an id. And it is every
+  // track's first lesson, not only the path's, because the tracks are
+  // independent — measured from cleared storage, `money`'s first lesson is
+  // unlocked with zero lessons completed, so a learner may legitimately begin
+  // at any of the three. Each of those is a first lesson someone meets, which
+  // is what the clause is a commitment about. All three pass today (29 at 2,
+  // 41 at 3, 1 at 3); the guard exists so a content edit cannot quietly move
+  // one of them past four the way the injection above showed it could.
+  const trackOpeners = TRACKS.map((tr) => ({
+    track: tr.key,
+    lesson: lessonsByTrack().find((l) => l.track === tr.key),
+  })).filter((o) => o.lesson);
+  for (const { track, lesson } of trackOpeners) {
+    if (lesson.minutes >= 4) {
+      fail(
+        `§3.0.5: lesson ${lesson.id} opens the "${track}" track at ${lesson.minutes} minutes and the ` +
+          `clause requires under four. Either shorten it or take the clause to the owner — do not ` +
+          `adjust the estimate, which is derived.`,
+      );
+    }
   }
 
   console.log(
     `  reading model: ${totalWords.toLocaleString("en-US")} words @ ${READING_WPM} wpm → ` +
       `${lessons.reduce((n, l) => n + l.minutes, 0)} min across ${lessons.length} lessons; ` +
-      `lesson 1 is ${first?.minutes} min (§3.0.5 requires <4).`,
+      `track openers ${trackOpeners.map((o) => `${o.track} = lesson ${o.lesson.id} at ${o.lesson.minutes} min`).join(", ")} ` +
+      `(§3.0.5 requires <4; the path opens on ${trackOpeners[0]?.lesson.id}).`,
   );
 }
 
@@ -1923,10 +1952,13 @@ if (keyedGroupsChecked < 4) {
     }
   }
 
-  // §3.2's first-open routing survives: no link still lands a new install in
-  // lesson 1, and a returning visitor still lands on the path.
+  // §3.2's first-open routing survives: no link still lands a new install on
+  // the path's FIRST LESSON (index 0), and a returning visitor still lands on
+  // the path. Index, never an id: index 0 was lesson 1 until the 2026-08-18
+  // reversal and is lesson 29 now, and these messages said "lesson 1" for
+  // seventeen days after it stopped being true — see §2's §3.0.5 block.
   if (initialRoute("", lessonPath, () => true, true).reading !== 0) {
-    fail("deepLink: initialRoute with no hash must still open a first-time visitor in lesson 1 (§3.2)");
+    fail("deepLink: initialRoute with no hash must still open a first-time visitor in the path's first lesson (§3.2)");
   }
   if (initialRoute("", lessonPath, () => true, false).reading !== null) {
     fail("deepLink: initialRoute with no hash must land a returning visitor on the path");
@@ -1940,16 +1972,16 @@ if (keyedGroupsChecked < 4) {
     fail("deepLink: a tab link must win over first-open routing for a first-time visitor");
   }
   // ...but a lesson link a first-time visitor CANNOT open (locked, or a bad
-  // id) falls back to lesson 1, not to a cold menu. This is the §5 arrival
+  // id) falls back to the path's first lesson, not to a cold menu. This is the §5 arrival
   // case — someone sent a clip of lesson 20 has no progress, so the link
   // cannot resolve, and a menu is the §3.2 outcome the app exists to avoid.
   for (const dead of [`#/lesson/${lessonPath[1].id}`, `#/lesson/${maxId + 1}`]) {
     const first = initialRoute(dead, lessonPath, (i) => i === 0, true);
     if (first.reading !== 0) {
-      fail(`deepLink: a first-time visitor arriving at an unopenable ${dead} should land in lesson 1 (§3.2), got ${JSON.stringify(first)}`);
+      fail(`deepLink: a first-time visitor arriving at an unopenable ${dead} should land in the path's first lesson, ${lessonPath[0].id} (§3.2), got ${JSON.stringify(first)}`);
     }
     // A returning visitor keeps the path: they have their own progress on it,
-    // and dropping them back into lesson 1 would discard it.
+    // and dropping them back into the path's first lesson would discard it.
     const returning = initialRoute(dead, lessonPath, (i) => i === 0, false);
     if (returning.reading !== null) {
       fail(`deepLink: a returning visitor arriving at an unopenable ${dead} should land on the path, got ${JSON.stringify(returning)}`);

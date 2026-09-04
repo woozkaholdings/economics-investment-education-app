@@ -4574,6 +4574,118 @@ finding(s); V vacuous; U unavailable`. A bare "no accessibility issues found" is
 
 ## Run log
 
+### 2026-09-04 (scheduled dev-agent, picked from LAUNCH_PLAN §3.0 under W-6.2 rule 1) — §3.0.5's one hard guard has been pointed at the optional track since the reversal, and it stays green while the lesson a new install actually opens runs five minutes
+
+**Where the pick came from.** The previous two runs both took item 27, so **W-6.2 rule 1 binds** and
+this run may not take a residual: it picks from the launch plan. Reading §3.0 clause by clause
+against the tree, **§3.0.5 is the least-audited of the seven** — `§3.0.3` appears 44 times in this
+log and its archive, `§3.0.4` 23, `§3.0.1` 12, `§3.0.7` and `§3.0.6` 11 each, **`§3.0.5` five**, and
+the 2026-08-17 refill measured it once and rejected it as already covered (*"already `check-data.mjs`
+§2 — `minutes` is derived, not authored, and the build fails on drift"*). That rejection is right
+about the clause's judgment half and wrong about its checkable half, which is where this run went.
+W-6.3's number re-read off W-6.0: `scripts/` at 2.3x `src/`, and this run adds **net +32 lines to
+`scripts/`, 30 of them comment**, and **zero** new files, scripts or checks — it repairs the targeting
+of a check that already exists.
+
+**Step 3.5 — the premise, measured with a positive control and then with the real regression shape.**
+§3.0.5 says *"Lesson 1 under four minutes"*, and `check-data.mjs` §2 enforced it as
+`lessons.find((l) => l.id === 1)`, under a comment reading **"Lesson 1 is the first screen of a new
+install and the subject of §4.3's completion-rate gate."**
+- **That comment was true when it was written and the 2026-08-18 owner-directed reversal falsified
+  it.** `TRACKS` now leads with `economy`, so measured off `lessonsByTrack()`: the path opens on
+  **lesson 29 (2 min)**, `money` opens on **41 (3 min)**, and **lesson 1 (3 min) heads `essentials`**
+  — the optional track that gates nothing and is gated by nothing.
+- **Confirmed live on the built app, not inferred.** Served `dist/` statically, cleared
+  `localStorage`, loaded through a `?t=N` cache-buster and read the bundle name back
+  (`index-DQW7K6xE.js`, this build): `location.hash` is **`#/lesson/29`** and the reader header reads
+  **"LESSON 1 OF 12"**. ⚠️ **That header is how this survived seventeen days** — the first screen of a
+  new install literally says "Lesson 1", because item 81 made the reader show a lesson's position
+  *within its track*. Anyone glancing at the app to check the old comment would have read it as true.
+  **Control:** my first attempt seeded `ecycles_completed_lessons=[29]` and the route did not move —
+  **the control was wrong, not the app.** `isFirstVisit` is `readRaw(KEYS.seenDisclaimer) === null`
+  (`useAppState.js:116`), not a function of progress. Setting `ecycles_seen_disclaimer=1` moved the
+  route to **`#/learn`** with the card at **"NEXT UP / Credit"**, so the first-visit reading is live.
+- **Positive control on the instrument:** lesson 1's `minutes` forced 3 → 4 → **`FAIL: §3.0.5: lesson
+  1 is 4 minutes`**. The check was alive; it was aimed.
+- ⛔ **The demonstration, in the shape a real regression takes.** Bumping lesson 29's `minutes` alone
+  trips §2's derivation check, so that proves nothing on its own. I injected a ~460-word section into
+  **lesson 29 in all five economy files** (parity preserved) and set `minutes` to the derived **5** —
+  the consistent state a genuine content edit produces. **§2 was satisfied and §3.0.5 said nothing**,
+  still printing `lesson 1 is 3 min (§3.0.5 requires <4)`. The only failures left were §33's
+  translation-ratio lines, artifacts of the synthetic filler rather than of the length. **A guard whose
+  green is read as §3.0.5's status was reporting on the one track the clause is not about.** All six
+  files restored from scratchpad copies (never `git checkout --`) and verified byte-identical by
+  `shasum`; `git status` clean before the fix went in.
+
+**What shipped.** The target is **derived from track order and never from an id**, and it covers
+**every track's opener** rather than only the path's — because the tracks are independent (the
+2026-09-04 scorecard run measured `money`'s first lesson unlocked with zero lessons completed), so a
+learner may legitimately begin at any of the three, and each is a first lesson someone meets. All
+three pass today. The `npm test` line now reads:
+`track openers economy = lesson 29 at 2 min, money = lesson 41 at 3 min, essentials = lesson 1 at 3 min (§3.0.5 requires <4; the path opens on 29)`.
+- **Four probes, each proven to land, each restored:** lesson 29 → *"lesson 29 opens the "economy"
+  track at 4 minutes"*; lesson 41 → *"opens the "money" track"*; lesson 1 → *"opens the "essentials"
+  track"* (**so the old check's single case is a subset — no coverage was dropped**); and a
+  **derivation control** — a `TRACKS` entry reordered so `essentials` leads made the line report
+  **"the path opens on 1"**. That last one is the property the old check lacked: had the target been
+  derived on 2026-08-18, the guard would have moved with the reversal by itself.
+- **Same class, swept rather than assumed.** `git grep -i "lesson 1"` across tracked non-log files,
+  screened by hand for *live* claims vs. correct history. Five stale mentions in `check-data.mjs` §18
+  and one in `App.jsx` all name "lesson 1" where they mean **index 0** — behaviorally correct, since
+  `initialRoute` returns `reading: 0` and `lessonPath` is `lessonsByTrack()`, but they would send a
+  future debugger to the wrong lesson. Reworded to "the path's first lesson", with the id
+  interpolated into the one failure message that can carry it. `moneyVisuals.js` and
+  `LessonVisual.jsx` also say "lesson 1" and were **left alone** — both are explicitly past-tense and
+  `LessonVisual.jsx` already states the correction ("a new install now opens on lesson 29").
+- **No document needed changing:** `grep -iE "3\.0\.5|under four|four minutes"` over `DECISIONS.md`,
+  `LAUNCH_READINESS.md`, `CLAIMS.md` and `README.md` returns **nothing**. The guard's target was
+  written down in exactly one place, which is why fixing it is one commit.
+
+**W-6.2 rule 3, answered in one sentence.** *"A content edit lengthens the lesson a new install opens
+on past four minutes, and the suite stays green because the only thing guarding that promise is
+watching a lesson on the optional track."* The injection above is that sentence, executed.
+
+**Step 5 — adversarial self-check.** **Blindspot register:** no content, copy or market surface
+touched; the diff is one script and one JSX **comment** (`git diff` over `src/` contains no
+behavior-bearing line). No Dalio, no advice-adjacent language, no kids surface, no date or
+live-looking figure. `npm run check-blindspot` **0 failures**. **DECISIONS.md conflict:** none — the
+reading model (200 wpm, English as reference, §197) is untouched; this changes *which lesson the
+clause is asserted on*, not how any minute is computed, and no state/build/content-format decision is
+near it. **Already-done item:** `trackOpeners` appears **0 times** in `AGENT_LOG.md` and the archive
+(**control:** "reading model" returns 2 in the same file, so the grep is live), and
+`git log -S 'l.id === 1'` over `check-data.mjs` returns exactly **one** commit — `b6f0522`, the run
+that *created* this check under item 56. This corrects its aim and keeps its case; it does not redo
+or undo it. **My own verification claim:** every figure above is printed by a script re-run this
+session with its control beside it, or read off the built app through a cache-buster with the bundle
+name confirmed; the four probes and the six-file injection are re-runnable from the commands that
+produced them. ⛔ **The check did find one thing:** my first live control was invalid and I reported
+it as such above rather than quietly replacing it — the app was right and the instrument was wrong,
+which is the failure mode step 3.5 exists for and which fired against me this run.
+
+**Verification.** `npm test` — **0 failures, 4 warnings**, all four pre-existing and unchanged in
+kind from this run's opening measurement (translation review share, translation completeness at 48
+pairs, item 160's option-length cue at en 56.5%, the AGENT_LOG floor). `npm run build` clean, 914 ms.
+`npm run check-blindspot` **0 failures**.
+
+**Filed as a note, not as a numbered item (W-6.2 rule 2 + W-6.4).** The class this run swept —
+*artifacts encoding a pre-2026-08-18 belief about which lesson is first* — is now at **zero live
+instances**, so it earns no item. Two things for whoever next compresses the backlog:
+**(i) item 26 says in its own text that it can close** ("THIS STREAM IS NOW COMPLETE and item 26 can
+close", 2026-09-02) and is ~50 lines of the floor. **It must not be pruned to a one-liner**, though:
+three of its clauses are standing rules rather than history — the owner's instruction that **no
+paywall/subscription UI be built from the `UIUX/` material while §4.3's Phase-0 gate is open**, *"do
+not re-derive that redesign"*, and *"do not extend this stream with new invented ideas"*. Those three
+must survive into wherever it goes. **(ii) Item 94 and item 158 remain owner-blocked by their own
+text and should not be picked by a run.**
+
+**O-1 remains the entire critical path: 44 lessons, 5 languages, 161 minutes of content — and zero
+people have ever opened this app** (figures off `npm test`'s readiness line).
+
+**Owner tree:** `git status` at run start and again before writing showed the owner's untracked
+`UIUX/` only, **untouched** (51 untracked files, fingerprint `fdf14264`, 2 tracked modified — this
+run's two). `HEAD` re-checked before writing and unmoved at `e231bd9`.
+
+
 ### 2026-09-04 (scheduled dev-agent, backlog item 27) — the item's own rejection list had already killed lesson 25, and the reason it gives does not reach the figure I built; three of the five candidates below it I re-derived from scratch because they sit 85 lines under the headline
 
 **Where the pick came from.** The previous run took item 27 and the two before were item 165 and a

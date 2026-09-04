@@ -32,7 +32,7 @@ import Learn from "./screens/Learn.jsx";
 // gets the same treatment (backlog item 23, chunk-size regression): everyone
 // downloads Learn's lightweight lesson list first, and only pays for a
 // lesson's own text when they open it. Even a first-time visitor, who is
-// routed straight into Lesson 1 (see `reading` below), sees the same brief
+// routed straight into the path's first lesson (see `reading` below), sees the same brief
 // ScreenFallback a Practice/Reference tap already produces.
 const Practice = lazy(chunk(() => import("./screens/Practice.jsx")));
 const Reference = lazy(chunk(() => import("./screens/Reference.jsx")));
