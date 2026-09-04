@@ -14,7 +14,7 @@
 // ═══════════════════════════════════════════════════════════════════════════
 
 import { useState } from "react";
-import { AsymmetryChart, BalanceBand, Bar, BracketStack, CycleChart, GapColumns, GrowthCurve, NestedCycles, OutcomeGrid, PreferenceFlip, ProportionBar, SpendingLoop, SplitBand, TradeoffPlot, YieldCurve } from "./charts.jsx";
+import { AsymmetryChart, BalanceBand, Bar, BracketStack, CycleChart, GapColumns, GrowthCurve, MatchGrid, NestedCycles, OutcomeGrid, PreferenceFlip, ProportionBar, SpendingLoop, SplitBand, TradeoffPlot, YieldCurve } from "./charts.jsx";
 import { Segmented, Text } from "./ui.jsx";
 import {
   balanceSheetCaption, balanceSheetDescription, balanceSheetFormat, balanceSheetHistory, balanceSheetUnit,
@@ -37,6 +37,8 @@ import {
   gapTitle,
   incomeKinds,
   lossAxisLabel, lossCaption, lossDescription, lossFelt, lossLabels, lossTitle,
+  matchCaption, matchCells, matchColumnLabels, matchDescription, matchKeyLabels,
+  matchRowLabels, matchTitle,
   outcomeCaption, outcomeCells, outcomeColumnLabels, outcomeDescription, outcomeHereLabel,
   outcomeRowLabels, outcomeSpanLabel, outcomeTitle,
   splitCaption, splitCrossing, splitDescription, splitEndLabels, splitInterestShare,
@@ -60,7 +62,7 @@ import { graph, ink, space, surface } from "../theme.js";
 //
 // Re-measured 2026-09-04 with the same parser control (it must find 1, 30 and
 // 44 and must not find 2, 29 or 31): coverage is economy 7/12, essentials 4/15,
-// money 5/17 — 16 of 44,
+// money 6/17 — 17 of 44,
 // 0 orphan ids. Lesson 30 is the first figure added for the reason the path
 // itself gives rather than for a track's count: in display order the first
 // three lessons a new install meets are 29, 30 and 31, and until this entry
@@ -77,6 +79,7 @@ export const LESSON_VISUALS = {
   12: "mortgageSplit",  // Renting vs. Buying (its "What a Mortgage Payment Is Actually Made Of" section)
   17: "earningsGap",   // Where Did the Raise Go?
   23: "preferenceFlip",// Why 'Later' Never Feels as Real as 'Now'
+  25: "horizonMatch", // Does This Money Need to Be There Tomorrow, or Can It Wait Ten Years?
   27: "lossAsymmetry", // Why Does Losing $50 Hurt More Than Finding $50 Feels Good?
   28: "outcomeGrid",   // Does One Lucky Win Prove You Have a System?
   44: "incomeTradeoff",// The Part the Word "Passive" Leaves Out
@@ -97,7 +100,7 @@ const CURVE_TYPES = ["normal", "flat", "inverted", "steep"];
 // comment in the component). The constant keeps its MONEY_VISUALS name (it is referenced further
 // down and in §21's checks); the set spans `essentials` and `money` since the
 // 2026-08-19 split, so the name is a label, not a track claim.
-const MONEY_VISUALS = new Set(["budgetSplit", "compounding", "taxBrackets", "mortgageSplit", "earningsGap", "preferenceFlip", "lossAsymmetry", "incomeTradeoff", "outcomeGrid"]);
+const MONEY_VISUALS = new Set(["budgetSplit", "compounding", "taxBrackets", "mortgageSplit", "earningsGap", "preferenceFlip", "horizonMatch", "lossAsymmetry", "incomeTradeoff", "outcomeGrid"]);
 
 // Figures are US dollars in every language — the lessons' own worked examples
 // are written that way, and converting them per locale would make the chart
@@ -423,6 +426,28 @@ export default function LessonVisual({ lessonId, t, lang }) {
           colors={{ rail: graph.neutral, dot: graph.blue }}
           description={tradeDescription[lang]}
           caption={tradeCaption[lang]}
+        />
+      )}
+
+      {/*
+        Lesson 25's grid is a MATCHING, not a partition, which is why it is not
+        `OutcomeGrid` with different labels. `OutcomeGrid`'s stated invariant is
+        that its four cells are equal AND unmarked — lesson 28 says all four
+        cases occur and ranks none of them. Lesson 25 does distinguish two
+        cells from two, so drawing it through that component would either
+        flatten this lesson's claim or break lesson 28's rule. The cells stay
+        the same SIZE here; only the mark differs.
+      */}
+      {kind === "horizonMatch" && (
+        <MatchGrid
+          title={matchTitle[lang]}
+          columnLabels={matchColumnLabels[lang]}
+          rowLabels={matchRowLabels[lang]}
+          cells={matchCells}
+          keyLabels={matchKeyLabels[lang]}
+          colors={{ rule: graph.neutral, fit: graph.neutral, mismatch: graph.blue }}
+          description={matchDescription[lang]}
+          caption={matchCaption[lang]}
         />
       )}
 

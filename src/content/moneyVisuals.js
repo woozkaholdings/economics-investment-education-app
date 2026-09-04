@@ -851,3 +851,88 @@ export const splitDescription = {
   zh: "一条高度始终不变的横带，自左向右贯穿30年期贷款的整个期限，被一条线分成上下两个区域。上方区域是利息，下方区域是本金；两者合起来是每月月供中属于贷款本身的部分，所以一方变大，另一方就会等量变小。在最左端、也就是刚购房之后，这条分界线位置很低，利息占据了横带的大部分。这条线一路向右稳步上升，到大约三分之二处的一个虚线标记时，两个区域大小相等。从那里到期限结束，本金都是两者中较大的一方，横带的末端几乎全是本金。两条轴上都没有刻度和数字。",
   ja: "30年ローンの返済期間を左から右へ横切る、高さが一定の帯です。1本の線がこの帯を2つの領域に分けています。上の領域が利息、下の領域が元金で、合わせて毎月の返済額のうちローンそのものにあたる部分です。したがって一方が大きくなれば、もう一方は同じだけ小さくなります。左端、購入直後では境界線は低い位置にあり、利息が帯の大部分を占めています。線は右へ向かって着実に上がっていき、およそ3分の2の位置にある破線の目印のところで、2つの領域は同じ大きさになります。そこから期間の終わりまでは元金のほうが大きく、帯の終わりはほぼすべてが元金です。どちらの軸にも目盛りや数値はありません。",
 };
+
+// ── Lesson 25: the two mismatches, drawn the same size ─────────────────────
+//
+// ⚠️ CATEGORICAL, LIKE LESSON 28'S GRID AND FOR THE SAME REASON — no amount,
+// no rate, no rank. Lesson 25 states exactly two binary questions and crosses
+// them itself; everything else in that lesson is a worked illustration of one
+// cell (15% the week before the rent is due) or of another (twenty years under
+// inflation), and neither is a magnitude this figure is entitled to plot.
+//
+// The two cells that agree and the two that do not are the lesson's own
+// arithmetic of its own axes, not a judgment added here: a savings account's
+// job is "to be exactly where you left it, in full", so it agrees with money
+// that may be wanted "on a day you don't get to choose"; and money that "won't
+// be touched for many years" is the case the lesson says "has room to recover".
+// The two disagreements are the ones the lesson names in consecutive sentences
+// and calls the same mismatch running the other way.
+//
+// ⚠️ THE MARKS ARE `neutral` AND `blue`, NEVER `green`/`red`. A grid laid over
+// savings against investing is the closest thing in this file to a
+// recommendation (§10.1), and lesson 25 refuses to give one in its own last
+// sentence: "a read of your own situation, not a formula with one right
+// numeric answer". Marking a cell correct would answer it. See `MatchGrid`'s
+// header in charts.jsx for what else a future run must not add.
+export const matchCells = [
+  { key: "savingsSoon", row: 0, col: 0, fit: true },
+  { key: "savingsYears", row: 0, col: 1, fit: false },
+  { key: "investingSoon", row: 1, col: 0, fit: false },
+  { key: "investingYears", row: 1, col: 1, fit: true },
+];
+
+export const matchTitle = {
+  en: "Both mismatches, drawn the same size",
+  es: "Ambas discordancias, dibujadas del mismo tamaño",
+  ko: "두 어긋남을, 같은 크기로",
+  zh: "两种错配，画成同样大小",
+  ja: "どちらの食い違いも、同じ大きさで",
+};
+
+// The columns: the lesson's own closing question, verbatim in each language —
+// "would it be 'possibly any day' or 'not for years'?". §66 (b) asserts both
+// strings are still substrings of lesson 25 in that language.
+export const matchColumnLabels = {
+  en: ["Possibly any day", "Not for years"],
+  es: ["Posiblemente cualquier día", "No en años"],
+  ko: ["아마도 언제든지", "몇 년 동안은 아니"],
+  zh: ["说不定哪天就要用", "好多年都用不到"],
+  ja: ["もしかしたらいつでも", "何年も先まで不要"],
+};
+
+// The rows: lifted from the lesson's own "A savings account and an investment
+// account aren't really trying to do the same job" sentence. §66 (a) asserts it.
+export const matchRowLabels = {
+  en: ["A savings account", "An investment account"],
+  es: ["Una cuenta de ahorros", "Una cuenta de inversión"],
+  ko: ["저축 계좌", "투자 계좌"],
+  zh: ["储蓄账户", "投资账户"],
+  ja: ["貯金口座", "投資口座"],
+};
+
+// The key. Both phrases are the lesson's vocabulary rather than a verdict —
+// "what job does this specific money have" and "the same mismatch runs the
+// other way, too".
+export const matchKeyLabels = {
+  en: ["The job and the place agree", "The same mismatch, running both ways"],
+  es: ["El trabajo y el lugar coinciden", "La misma discordancia, en ambos sentidos"],
+  ko: ["돈이 맡은 일과 있는 곳이 맞아떨어짐", "같은 어긋남이, 양쪽 방향으로"],
+  zh: ["这笔钱的任务和它所在的地方相符", "同样的错配，两个方向都会发生"],
+  ja: ["お金の役目と置き場所が噛み合っている", "同じ食い違いが、両方向に"],
+};
+
+export const matchCaption = {
+  en: "Two of the four disagree, and they are the same size here because the lesson says they are the same mistake seen from two sides. One is loud: a drop of 15% the week before the rent is due, and the one job that money had has failed. The other is quiet, because nothing ever visibly breaks — money not needed for twenty years, sitting the whole time in an account earning less than inflation, losing purchasing power. Neither 'always keep it safe' nor 'always chase growth' is automatically the wise move; no cell carries an amount and none is marked correct.",
+  es: "Dos de los cuatro no coinciden, y aquí tienen el mismo tamaño porque la lección dice que son el mismo error visto desde dos lados. Uno es ruidoso: una caída del 15% la semana antes de pagar el alquiler, y el único trabajo que tenía ese dinero falló. El otro es silencioso, porque nada se rompe visiblemente — dinero que no se necesitará en veinte años, sentado todo ese tiempo en una cuenta que rinde menos que la inflación, perdiendo poder adquisitivo. Ni 'siempre mantenlo seguro' ni 'siempre persigue el crecimiento' es automáticamente la decisión sabia; ninguna celda lleva una cantidad y ninguna está marcada como correcta.",
+  ko: "넷 중 둘은 맞아떨어지지 않으며, 여기서 같은 크기로 그린 것은 그 둘이 한 가지 잘못을 양쪽에서 본 것이라고 수업이 말하기 때문입니다. 하나는 요란합니다. 월세 내기 일주일 전에 가치가 15% 떨어지면, 그 돈이 맡았던 단 하나의 일은 실패한 것입니다. 다른 하나는 조용합니다. 눈에 띄게 무언가가 망가지지 않기 때문입니다 — 20년 동안 필요 없을 돈이 그 내내 인플레이션보다 낮은 이자를 주는 계좌에 앉아 구매력을 잃어갑니다. '항상 안전하게 두라'도 '항상 성장을 좇으라'도 자동으로 현명한 선택은 아닙니다. 어느 칸에도 금액은 없고, 정답으로 표시된 칸도 없습니다.",
+  zh: "四格中有两格并不相符，这里把它们画成同样大小，是因为课程说它们是同一个错误的两个侧面。一个很响：交房租前一周价值跌掉15%，这笔钱本该承担的唯一任务就失败了。另一个很安静，因为没有什么会明显“坏掉”——一笔二十年内都用不到的钱，整段时间放在收益跑不赢通胀的账户里，悄悄流失购买力。“永远求安全”和“永远追求增长”都不是自动就明智的选择；没有哪一格标着金额，也没有哪一格被标为正确答案。",
+  ja: "4つのうち2つは噛み合っておらず、ここで同じ大きさに描いているのは、その2つが一つの誤りを両側から見たものだと各回が述べているからです。一方は騒がしい——家賃の支払い一週間前に価値が15%下がれば、そのお金が担っていたたった一つの仕事は果たされなかったことになります。もう一方は静かです。目に見えて何かが壊れるわけではないからです——二十年間必要ないお金が、その間ずっとインフレ率より低い利率の口座に置かれ、購買力を失っていきます。「常に安全に保て」も「常に成長を追え」も、自動的に賢明な選択とは限りません。どのマスにも金額はなく、正解と記されたマスもありません。",
+};
+
+export const matchDescription = {
+  en: "A two-by-two grid. The columns are when this money might be needed — possibly any day, or not for years. The rows are where it is sitting — a savings account or an investment account. The savings-and-soon cell and the investing-and-years cell carry a filled disc; the other two carry an open ring of the same size. Every cell is the same size and none carries a number.",
+  es: "Una cuadrícula de dos por dos. Las columnas son cuándo podría necesitarse este dinero: posiblemente cualquier día, o no en años. Las filas son dónde está sentado: una cuenta de ahorros o una cuenta de inversión. La celda de ahorros y pronto y la celda de inversión y años llevan un disco relleno; las otras dos llevan un anillo abierto del mismo tamaño. Todas las celdas tienen el mismo tamaño y ninguna lleva un número.",
+  ko: "2×2 격자입니다. 열은 이 돈이 언제 필요할 수 있는지 — 아마도 언제든지, 아니면 몇 년 동안은 아니 — 를 나타냅니다. 행은 그 돈이 어디에 있는지 — 저축 계좌인지 투자 계좌인지 — 를 나타냅니다. 저축과 '언제든지'가 만나는 칸, 그리고 투자와 '몇 년'이 만나는 칸에는 속이 찬 원이 있고, 나머지 두 칸에는 같은 크기의 빈 고리가 있습니다. 모든 칸의 크기는 같고, 어느 칸에도 숫자는 없습니다.",
+  zh: "一个二乘二的格子。列表示这笔钱可能什么时候要用——说不定哪天就要用，还是好多年都用不到。行表示它放在哪里——储蓄账户还是投资账户。储蓄与“随时”相交的格子、投资与“多年”相交的格子里是一个实心圆点；另外两格里是同样大小的空心圆环。每一格大小相同，没有哪一格带有数字。",
+  ja: "2×2の格子です。列は、このお金がいつ必要になるかもしれないか——もしかしたらいつでも、あるいは何年も先まで不要か。行は、それがどこに置かれているか——貯金口座か投資口座か。貯金と「いつでも」が交わるマスと、投資と「何年も」が交わるマスには塗りつぶされた円があり、残る2つには同じ大きさの中空の輪があります。すべてのマスは同じ大きさで、数字が入っているマスはありません。",
+};

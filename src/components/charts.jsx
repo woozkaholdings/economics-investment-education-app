@@ -965,6 +965,151 @@ export function OutcomeGrid({ title, columnLabels, rowLabels, cells, spanLabel, 
   );
 }
 
+// ── MatchGrid ─────────────────────────────────────────────────────────────
+// Lesson 25 ("Does This Money Need to Be There Tomorrow, or Can It Wait Ten
+// Years?") — backlog item 27, added 2026-09-04.
+//
+// WHY A PICTURE, and the argument is about EQUAL AREA rather than about shape.
+// Lesson 25's two axes are its own two questions — how soon might this money
+// be needed, and where is it actually sitting — and crossing them gives two
+// pairings that agree and two that do not. The lesson names both mismatches
+// and explicitly says they are the same defect seen from two sides: "The same
+// mismatch runs the other way, too."
+//
+// What prose cannot do here is give them the same weight, and the lesson says
+// so in the act of failing to. The loud mismatch gets a full paragraph with
+// next month's rent, an emergency fund, a planned trip and a 15% drop. The
+// quiet one gets one clause after a colon — and the lesson itself flags why:
+// "it's quieter because nothing ever visibly breaks". Sequential text is
+// weighted by word count; a reader meets the loud failure for four sentences
+// and the quiet one for part of one. Two cells of identical size, drawn at
+// once, is a claim about symmetry that a paragraph cannot make and stay
+// readable. That claim IS the lesson's takeaway ("Neither 'always keep it
+// safe' nor 'always chase growth'").
+//
+// ⚠️ NO CELL IS MARKED CORRECT, and no cell carries an amount. This is the
+// closest figure in the file to reading as advice (§10.1), because a grid over
+// savings-vs-investment invites a verdict, and the lesson explicitly declines
+// to give one: "that's a read of your own situation, not a formula with one
+// right numeric answer." So the two marks say AGREES and MISMATCHED, which is
+// the lesson's own vocabulary, and neither is drawn in green or red — the same
+// rule `OutcomeGrid` states for the same reason one lesson further on. A
+// future run must not add a tick, a preferred cell, a shaded diagonal, a
+// return figure or a horizon in years: every one of those answers a question
+// lesson 25 leaves to the reader. §66 (d) and (e) hold the cells equal and the
+// marks neutral.
+//
+// The four axis labels are lifted VERBATIM from lesson 25 in each language —
+// the rows from its "A savings account and an investment account aren't really
+// trying to do the same job" sentence, the columns from its own closing
+// question ("'possibly any day' or 'not for years'"). §66 (a)/(b) assert that,
+// following §64 (a)'s precedent: a figure inches from the paragraph it draws
+// must not paraphrase it, least of all in four languages nobody here reads.
+//
+// Cell geometry is `OutcomeGrid`'s and for `OutcomeGrid`'s measured reason: a
+// fixed `GRID_CELL_H` with the mark alone inside it, because CSS grid stretches
+// a row to its tallest item and any text in a cell makes the row whose label
+// wraps taller than the other — which is the weighting this figure must not
+// draw, arrived at by accident.
+const MATCH_MARK = 11;
+
+export function MatchGrid({ title, columnLabels, rowLabels, cells, keyLabels, description, caption, colors }) {
+  const cellAt = (row, col) => cells.find((c) => c.row === row && c.col === col);
+
+  // Filled disc for a pairing that agrees, open ring of the SAME outer size for
+  // one that does not. Shape carries it, not color alone — the two marks stay
+  // distinguishable in a monochrome rendering and to anyone who does not
+  // separate the two `graph` hues.
+  // ⚠️ `display: block` and `flex: none` are both load-bearing, and the KEY is
+  // where that was measured rather than reasoned. A first version wrapped this
+  // in <span aria-hidden> to hide it from the key's row; the wrapper became the
+  // flex item, the mark inside it was an inline span with no line box, and the
+  // key rendered live as ONE stretched purple ellipse and one swatch that was
+  // not there at all. The grid cells looked perfect throughout, because they
+  // center a single child. So the hidden flag goes on the mark itself and the
+  // mark carries its own box — no wrapper.
+  const mark = (fit, hidden = false) => (
+    <span
+      aria-hidden={hidden ? "true" : undefined}
+      data-figure-part={fit ? "fit" : "mismatch"}
+      style={{
+        display: "block",
+        width: MATCH_MARK,
+        height: MATCH_MARK,
+        borderRadius: "50%",
+        background: fit ? colors.fit : "transparent",
+        border: fit ? "none" : `2px solid ${colors.mismatch}`,
+        boxSizing: "border-box",
+        flex: "none",
+      }}
+    />
+  );
+
+  return (
+    <figure style={{ background: surface.card, border: `1px solid ${line.hairline}`, borderRadius: radius.lg, padding: space["4"], margin: 0 }}>
+      {title && (
+        <figcaption style={{ marginBottom: space["3"] }}>
+          <Text as="span" variant="caption" color={ink.muted} style={{ textTransform: "uppercase", letterSpacing: "0.05em", fontWeight: 700 }}>
+            {title}
+          </Text>
+        </figcaption>
+      )}
+      <div role="img" data-figure="matchGrid" aria-label={description} style={{ display: "grid", gridTemplateColumns: "minmax(0, 1.15fr) minmax(0, 1fr) minmax(0, 1fr)", gap: space["1"], alignItems: "stretch" }}>
+        {/* Row 0 — the column headings: when this money might be needed. */}
+        <div />
+        {columnLabels.map((label) => (
+          <div key={label} style={{ textAlign: "center", paddingBottom: space["1"] }}>
+            <Text as="span" variant="caption" color={ink.strong} style={{ fontWeight: 700 }}>{label}</Text>
+          </div>
+        ))}
+
+        {/* Rows 1-2 — the row heading (where it is sitting) and its two cells. */}
+        {rowLabels.map((rowLabel, row) => [
+          <div key={`h-${rowLabel}`} style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", textAlign: "right", paddingRight: space["2"] }}>
+            <Text as="span" variant="caption" color={ink.body}>{rowLabel}</Text>
+          </div>,
+          ...columnLabels.map((_, col) => (
+            <div
+              key={`c-${row}-${col}`}
+              data-figure-part="cell"
+              style={{
+                border: `1px solid ${colors.rule}`,
+                borderRadius: radius.sm,
+                height: GRID_CELL_H,
+                alignSelf: "center",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                padding: space["1"],
+              }}
+            >
+              {mark(Boolean(cellAt(row, col)?.fit))}
+            </div>
+          )),
+        ])}
+      </div>
+      {/*
+        The key. `aria-hidden` goes on the swatches themselves — they are
+        visual pointers into a `role="img"` whose own description already names
+        them — and NOT on a wrapper around them; see `mark`'s comment for the
+        live defect a wrapper caused. The text is `ink.muted` (4.5:1 under §28)
+        rather than a `graph` token, which theme.js marks "Never text".
+      */}
+      {keyLabels && (
+        <div style={{ display: "flex", flexWrap: "wrap", gap: `${space["1"]} ${space["4"]}`, marginTop: space["3"] }}>
+          {keyLabels.map((label, i) => (
+            <div key={label} style={{ display: "flex", alignItems: "center", gap: space["2"] }}>
+              {mark(i === 0, true)}
+              <Text as="span" variant="caption" color={ink.muted}>{label}</Text>
+            </div>
+          ))}
+        </div>
+      )}
+      {caption && <Text variant="caption" color={ink.muted} style={{ marginTop: space["3"], lineHeight: 1.5 }}>{caption}</Text>}
+    </figure>
+  );
+}
+
 // ── SpendingLoop ──────────────────────────────────────────────────────────
 // Lesson 30 ("Credit: The Most Important Part"), section 3 "The Spending
 // Chain" — backlog item 27, added 2026-08-31.

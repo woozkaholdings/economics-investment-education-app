@@ -3427,9 +3427,24 @@ through two passes that each had it open.
     > dollars now" with **no depreciation path** — two diverging lines would have had to invent his
     > slope, which is lesson 16's rejection exactly. **Lesson 21** (anchoring) gives \$220 and \$89 but
     > **deliberately withholds the third number**, what the jacket is independently worth; a figure
-    > would have had to invent the one quantity the lesson says nobody checked. **Lesson 25**
+    > would have had to invent the one quantity the lesson says nobody checked. ~~**Lesson 25**
     > (save vs. invest) closes on *"not a formula with one right numeric answer"* and states no rate,
-    > horizon or amount to plot. **The rule held in all three, and it is still first in line for any
+    > horizon or amount to plot.~~ **✅ LESSON 25 SHIPPED 2026-09-04 (scheduled dev-agent) as
+    > `MatchGrid` — this rejection is RE-DECIDED, not overridden, and the distinction is the useful
+    > part.** Both of its stated facts reproduce exactly: lesson 25 states no rate, horizon or amount,
+    > and it does close by refusing a numeric answer. **What does not follow is the conclusion**, and
+    > the reason is visible in the same entry: the quantity rule asks whether the prose states every
+    > quantity *the shape needs*, and a shape that needs **zero** satisfies it vacuously. The run that
+    > wrote this rejection picked **lesson 28** in the same commit — a partition carrying no magnitude
+    > at all — so the categorical option was in its hand while it applied the quantitative test to
+    > lesson 25. **The rule is about invented quantities; it was read as a requirement to have some.**
+    > The second half of the rejection is the stronger one and it does bind: a grid over savings
+    > against investing can hand the reader the rule the lesson withholds. **The line that survives
+    > the objection is between the PAIRING and the THRESHOLD.** The pairing is stated at length in
+    > lesson 25's own prose in five languages; the threshold — how soon is soon, what rate, what
+    > amount — is what it declines, and `check-data.mjs` §72 (a) fails the build on a digit in any
+    > axis label while §72 (e) fails it on a green, a red, a tick or a cross.
+    > **The rule held in all three, and it is still first in line for any
     > candidate: does the prose state every quantity the shape needs, or only the ones that make it
     > sound plausible?**
     > **FIVE MORE CANDIDATES MEASURED AND REJECTED 2026-08-30** (scheduled dev-agent, while pricing
@@ -3440,6 +3455,13 @@ through two passes that each had it open.
     > two are *identical*, a sentence rather than a shape; **42** states four x \$1,000 and then
     > spends its second half insisting the categories "aren't a ladder" — a figure would harden what
     > the lesson deliberately loosens. **Do not re-derive these five.**
+    > ⚠️ **AND THE 2026-09-04 RUN RE-DERIVED THREE OF THEM ANYWAY (18, 21 and 42), reaching the same
+    > verdicts independently and paying for the privilege. Not because the list is unclear — it is
+    > excellent — but because it sits ~85 lines BELOW this item's headline, past a re-scope notice
+    > and eight "Nth visual added" paragraphs.** The transferable part is not "read more carefully":
+    > it is that **an item this long has a body a picker will not reach before it starts measuring**,
+    > and these two ⛔ candidate lists are the single highest-value thing in it. Whoever next
+    > compresses this item should lift them to the TOP, directly under the item's title.
     > **Tenth visual added 2026-09-03: lesson 34 (deleveraging), as `BalanceBand` — the first figure
     > whose subject is an INTERVAL.** Coverage re-parsed with this item's own control (must find 36,
     > must not find 9999, 44 lessons): **economy 7/12, essentials 3/15, money 5/17 — 15 of 44, 0
@@ -4551,6 +4573,146 @@ zero meaningful: `selftest PASS (8/8 controls fired, plantsRemoved true)` and, p
 finding(s); V vacuous; U unavailable`. A bare "no accessibility issues found" is not a result.
 
 ## Run log
+
+### 2026-09-04 (scheduled dev-agent, backlog item 27) — the item's own rejection list had already killed lesson 25, and the reason it gives does not reach the figure I built; three of the five candidates below it I re-derived from scratch because they sit 85 lines under the headline
+
+**Where the pick came from.** The previous run took item 27 and the two before were item 165 and a
+self-pick, so W-6.2 rule 1 does not bind — no residual chain. Item 165's remainder is out of order
+(the previous entry measured that and wrote it into the item), item 160 is at its measured stop line
+with everything left in it class B and therefore O-3's, and items 120/126/140/143/144/149/152/153 are
+PARKED. **So item 27, which is product rather than instrument** — W-6.3's number re-read off W-6.0 is
+`scripts/` at 2.3x `src/`, and this run adds ~200 lines to `scripts/` against ~270 to `src/`, the
+right side of it. Coverage re-parsed with the item's own control (must find 1, 30, 44; must not find
+2, 29, 31): **economy 7/12, essentials 4/15, money 6/17 after this run — 17 of 44, 0 orphan ids.**
+Money is the track §0 calls the product and was the thinnest of the three.
+
+**Step 3.5 — the premise re-measured, and it condemned the pick before it saved it.**
+Item 27's real content is not a count, it is two ⛔ lists of candidates measured and rejected on its
+own rule (*does the prose state every quantity the shape needs, or only the ones that make it sound
+plausible?*). **Lesson 25 is on the first list, rejected 2026-08-28**, and I found that only in step
+5, after building. Both facts in the rejection reproduce exactly: lesson 25 states no rate, horizon
+or amount, and closes on *"not a formula with one right numeric answer"*.
+- ⛔ **The rejection is RE-DECIDED, not overridden, and the distinction is the whole finding.** The
+  quantity rule asks whether the prose states every quantity **the shape needs** — and a shape that
+  needs **zero** satisfies it vacuously. The run that wrote this rejection picked **lesson 28** in
+  the same commit, a partition carrying no magnitude at all, so the categorical option was in its
+  hand while it applied the quantitative test to lesson 25. **The rule is about invented quantities;
+  it was read as a requirement to have some.** Written into item 27 rather than left as a
+  contradiction between an item and a commit.
+- **The second half of the rejection is the stronger one and it does bind.** A grid over savings
+  against investing can hand the reader the rule the lesson withholds (§10.1). **The line that
+  survives it is between the PAIRING and the THRESHOLD**: the pairing is stated at length in lesson
+  25's own prose in five languages (*"that money needs to be there, in full, on a day you don't get
+  to choose"*; *"money you genuinely won't touch for many years is a different situation"*), and the
+  threshold — how soon is soon, what rate, what amount — is what it declines. §72 (a) fails the build
+  on a digit in any axis label; §72 (e) fails it on a green, a red, a tick or a cross.
+- ⚠️ **I re-derived three of the five candidates on the second list (18, 21, 42) from scratch,
+  reaching the same verdicts, and paid for it.** Lesson 18: a $2,000-against-$3,580 bar would say
+  saving wins, which the lesson's own *"the point isn't that saving always wins"* refutes — the
+  §50 (j) shape, a figure inverting its own lesson. Lesson 21: the independent value is withheld.
+  Lesson 42: lesson 44's `TradeoffPlot` already draws those four names **and** already carries the
+  ladder framing in its caption, two lessons later. **The list is excellent and it is ~85 lines below
+  the item's headline, past a re-scope notice and eight "Nth visual added" paragraphs.** The
+  transferable part is not "read more carefully" — it is that **an item this long has a body a picker
+  will not reach before it starts measuring**. Filed into item 27: whoever next compresses it should
+  lift both ⛔ lists directly under the title.
+
+**What shipped.** Lesson 25 gets `MatchGrid` (`charts.jsx`) + `match*` (`moneyVisuals.js`), a 2x2 of
+where the money is sitting (rows: a savings account / an investment account) against when it might be
+wanted (columns: possibly any day / not for years), with the agreeing pair on the diagonal.
+- **Why it clears item 27's bar, and the argument is about EQUAL AREA rather than shape.** Lesson 25
+  names both mismatches and says they are one defect seen from two sides — *"The same mismatch runs
+  the other way, too"* — and then **weights them unequally in the act of saying so**: the loud one
+  gets a paragraph with next month's rent, an emergency fund, a trip and a 15% drop; the quiet one
+  gets one clause after a colon, and the lesson itself says why (*"it's quieter because nothing ever
+  visibly breaks"*). **Sequential text is weighted by word count.** Two cells of identical size,
+  drawn at once, is a claim about symmetry that a paragraph cannot make and stay readable.
+- **All four axis labels are verbatim from lesson 25 in each language**, so the figure adds no new
+  translated prose to its own axes (O-3): the rows from the lesson's *"A savings account and an
+  investment account aren't really trying to do the same job"* sentence, the columns from its own
+  closing question (*"'possibly any day' or 'not for years'"*). **20 of 20 containments confirmed.**
+  ⚠️ Case is folded in §72 (a) and that is a finding, not a loosening — the check FAILED on its first
+  run on five strings, because the lesson writes both horizons inside a quoted question and both
+  accounts mid-sentence, so its casing is sentence casing and a column header's is not. `ko`/`zh`/`ja`
+  have no case, so the fold is a no-op in three of five.
+- **O-3 accounting: +1 title, +2 key labels, +1 caption and +1 description per language** — the four
+  axis labels cost nothing because they are lifted. Four languages of it are unreviewed machine
+  translation, as every figure on this item has been.
+
+**§72, and W-6.2 rule 3 answered in one sentence per clause.** (a) *an axis names an account or a
+horizon in wording the paragraph an inch above it does not use, in a language nobody here re-reads*;
+(b) *the figure stops rendering, or renders on a lesson that does not teach it*; (c) *the grid marks
+the wrong diagonal and tells the reader the opposite of the lesson*; (d) *one cell draws larger than
+another — the exact claim this figure exists to refute*; (e) *a cell is marked correct on a lesson
+whose last sentence refuses to give one right answer*. All five are things a person meets.
+**Seven probes, each proven to land before it was read, each restored from a scratchpad copy (never
+`git checkout --`):** flip the diagonal → (c) fired twice; reword the `es` row label → (a); put a
+digit on an axis → (a) twice; `minHeight` for the fixed cell height → (d) twice; a `graph.green` mark
+→ (e); remap the lesson to 26 → (b); delete `15%` from lesson 25's `en` body → the positive control
+fired and refused to report the containments. `git status` after the last restore showed
+`lessonContent.money.en.js` unmodified.
+
+**⚠️ The live browser caught a defect every static check passed, and it was in the half I had
+reasoned about least.** Built `dist/`, served it statically, seeded
+`ecycles_legacy_lesson_id_migrated` **before** load (the previous entry's trap) plus
+`[41,42,43,44,16..24]` completed — and the KEY under the grid rendered **one stretched purple ellipse
+and one swatch that was not there at all**. I had wrapped each swatch in `<span aria-hidden>`; the
+wrapper became the flex item and the mark inside it an inline span with no box. **The grid cells
+looked perfect throughout, because they center a single child.** Fixed by putting the hidden flag on
+the mark itself and giving it `display: block`; re-measured at **11x11 for all four cell marks and
+both key marks**. Both facts are now in `mark`'s own comment.
+
+**Live verification, every figure with the control that produced it.**
+- **Equal cells, measured not assumed:** all four at **52px** high and 95.5px wide at 375px.
+  **Control:** a cloned cell forced to `99px` and appended to the same grid read back **99** — so the
+  equality is a live measurement, not a constant. Removed after reading.
+- **320px at the app's 1.3x ceiling, all five languages** (the axis on which `OutcomeGrid` shipped
+  65px against 52px, and the axis this figure's whole claim lives on): **52/52/52/52 in en, es, ko,
+  zh and ja**, `document.documentElement.style.fontSize` confirmed `130%` each time, **0px horizontal
+  overflow** in all five, figure width 254px.
+- **Mark order read off the DOM: `fit, mismatch, mismatch, fit`** — the diagonal, in the rendered
+  output rather than in the data.
+- **Contrast in both schemes, non-text 3:1:** light **fit 5.24:1, ring 7.72:1**; dark **4.47:1 and
+  8.93:1**, against each scheme's own measured card color. **Controls:** black-on-white returned
+  **21** and white-on-white **1**, the two published values, so the formula was live both times.
+- **The stale-bundle trap (Environment note 4) was checked rather than assumed:** every live read
+  above was taken through a `?t=N` cache-buster on `index.html`, and the bundle name was read back
+  from the DOM afterwards — **`index-DQW7K6xE.js`, the post-fix build**, so the key measurement is
+  against the fixed code and not the build that shipped the ellipse.
+- **§10.1's note renders under the figure**, confirmed in the DOM as the element after it —
+  *"Example figures, for teaching — not a projection of your own results"* — which is what the
+  `MONEY_VISUALS` membership is for and what §72 (b) now holds.
+
+**Step 5, adversarial self-check — and it is the step that found this run's real conflict.**
+**§10.2** — `git diff | grep -ci dalio` = **0**; `npm run check-blindspot` **0 failures**. **§10.1** —
+the run's genuine exposure, handled structurally: no amount, no rate, no threshold, no verdict, and
+§72 (e) fails the build on a green/red token or a tick; the disclaimer was confirmed rendering live.
+**§10.3** — no kids surface touched (`git diff --name-only | grep -ci kids` = 0). **Stale-data fix** —
+the only two year-matches in the whole diff are the dated code comments this file's convention asks
+for; no date, no live-looking figure, and no market copy edited. **DECISIONS.md** — `grep -i` returns
+**zero** mentions of lesson 25, `MatchGrid` or `horizonMatch`, so no closed decision is contradicted;
+content stays `.js` modules and no state, build or routing decision is touched. **Already-done test** —
+`MatchGrid`/`horizonMatch`/`matchGrid` appear **zero** times in `AGENT_LOG.md` and the archive, and
+`git log -S '25: "'` over `LessonVisual.jsx` returns nothing, so lesson 25 has never carried a figure.
+⛔ **But the test did NOT come back clean**: it surfaced the 2026-08-28 rejection of this exact
+lesson, which is the finding at the top of this entry. Re-decided on the corrected reading of the
+rule, and written into item 27 rather than left to contradict a commit. **My own verification claim** —
+every figure above is either printed by `npm test`/`check-data.mjs` or a live DOM read whose control
+is quoted beside it with the value it returned; the seven injections are re-runnable from the messages
+they produced.
+
+**`npm test` 0 failures, 4 warnings** — all four pre-existing and unchanged from this run's opening
+measurement (translation review share, translation completeness, §65's option-length line at
+en 56.5%, and the floor budget at 405,227 b). **`npm run build` clean**, 1.10s.
+**`npm run check-blindspot` 0 failures.** **§72 prints 20/20 containments across 5 languages.**
+
+**O-1 remains the entire critical path: 44 lessons, 5 languages, 161 minutes of content — and zero
+people have ever opened this app** (figures off `npm test`'s readiness line).
+
+**Owner tree:** `git status` at run start and again before writing showed **UIUX/ untracked and
+untouched** (51 untracked files, `OWNER-TREE 2edc7fbf…` with 4 tracked modified — this run's four,
+before the log edits) and no tracked file modified besides this run's own. `HEAD` re-checked before
+writing, unmoved at `40492c2`.
 
 ### 2026-09-04 (scheduled dev-agent, backlog item 27) — three lessons rendered a byte-identical figure, and the rule that kept lesson 31 bare was written by a run that never turned it on the two lessons already shipping it
 

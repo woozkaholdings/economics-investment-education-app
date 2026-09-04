@@ -10599,5 +10599,218 @@ function trendDirection(src) {
   }
 }
 
+// §72. LESSON 25'S TWO MISMATCHES, DRAWN THE SAME SIZE (backlog item 27,
+//      added 2026-09-04). A sixth kind is not being added here — this is
+//      §57's kind, a PARTITION carrying no magnitude — but it differs from
+//      §57 in the one way that needed its own component: lesson 25 DOES
+//      distinguish two of its four cells from the other two, where lesson 28
+//      insists all four are equal and unranked. So the invariant §57 (e)
+//      holds (four cells, one size, no weighting) is held here on SIZE only,
+//      and the mark is allowed to differ.
+//
+//      THE LEARNER-VISIBLE FAILURES, per W-6.2 rule 3, one sentence each:
+//        (a) an axis label names an account or a horizon in wording the
+//            paragraph an inch above it does not use, in a language nobody
+//            here re-reads;
+//        (b) the figure stops rendering, or renders on a lesson that does not
+//            teach it, while every other assertion here stays green;
+//        (c) the grid marks three cells as agreeing, or marks the wrong
+//            diagonal, and tells the reader the opposite of the lesson;
+//        (d) one cell draws larger than another, which is a claim about which
+//            mismatch matters more — the exact claim this figure exists to
+//            refute;
+//        (e) a cell is marked correct, in green or red or with a tick, on a
+//            lesson whose last sentence refuses to give one right answer.
+{
+  const before72 = failures;
+  // Declared out here, not inside the else: the summary line at the bottom of
+  // this block reads it, and a block-scoped counter made that line throw.
+  let containments72 = 0;
+  const mv72 = moneyVisualsContent;
+  const need72 = [
+    "matchCells", "matchTitle", "matchColumnLabels", "matchRowLabels",
+    "matchKeyLabels", "matchCaption", "matchDescription",
+  ];
+  const missing72 = need72.filter((k) => mv72[k] === undefined);
+  if (missing72.length > 0) {
+    fail(`§72: src/content/moneyVisuals.js no longer exports ${missing72.join(", ")}. This section is pointed at a structure that no longer exists — repoint it rather than leaving it green.`);
+  } else {
+    const MATCH_LESSON = "25";
+
+    // (a) THE FOUR AXIS LABELS ARE VERBATIM FROM LESSON 25, per language,
+    //     against that language's own body — §64 (a)'s and §71 (a)'s shape,
+    //     for their reason: lifting is what keeps a figure from putting four
+    //     languages of unreviewed machine translation an inch from the
+    //     paragraph it draws (owner item O-3). The title, caption, key and
+    //     description are NOT in this set and cannot be: they describe the
+    //     figure's own construction, which the lesson does not know about.
+    //
+    //     CONTROLS, both directions, per language, because a body that failed
+    //     to load returns "not found" for every string and reads exactly like
+    //     a figure whose labels were all rewritten:
+    //       • an absent probe must NOT be found;
+    //       • "15" MUST be found — lesson 25's second section states the 15%
+    //         drop in all five languages, the digits survive translation, and
+    //         no string this figure renders contains them, so the control is
+    //         not circular.
+    const CONTROL_ABSENT_72 = "qzx-no-lesson-says-this";
+    const CONTROL_PRESENT_72 = "15";
+    for (const lang of LANGS) {
+      const sections = lessonContent[MATCH_LESSON]?.sections ?? [];
+      const text = [
+        ...sections.map((sec) => `${sec.heading?.[lang] ?? ""}\n${sec.body?.[lang] ?? ""}`),
+        lessonContent[MATCH_LESSON]?.takeaway?.[lang] ?? "",
+        lessonContent[MATCH_LESSON]?.thinkAbout?.[lang] ?? "",
+      ].join("\n");
+      if (text.trim().length === 0 || text.includes(CONTROL_ABSENT_72)) {
+        fail(`§72 (a): the lesson-25 scan failed its negative control in "${lang}" — ${text.trim().length === 0 ? "the text is empty" : "an absent probe was found"}. It is reading the wrong text or no text, so a clean result for this language would mean nothing.`);
+        continue;
+      }
+      if (!text.includes(CONTROL_PRESENT_72)) {
+        fail(`§72 (a): the lesson-25 scan failed its positive control in "${lang}" — "${CONTROL_PRESENT_72}" is not in the text. Either the scan is not reaching lesson 25's second section or that section was rewritten; re-read it before repointing this control, because with a dead positive control every containment below passes vacuously.`);
+        continue;
+      }
+      // CASE IS FOLDED and the reason is a real one this check found on its
+      // first run, not a loosening to make it pass. Lesson 25 writes both
+      // horizons inside its own closing question ("'possibly any day' or 'not
+      // for years'") and both accounts mid-sentence ("una cuenta de
+      // inversión"), so the lesson's casing is sentence casing and a column
+      // HEADER's is not. Capitalizing a label's first letter is typography;
+      // the property worth asserting is that the WORDS are the lesson's rather
+      // than a fresh translation, and that survives the fold. `ko`/`zh`/`ja`
+      // have no case, so for three of the five languages this is a no-op.
+      const folded = text.toLowerCase();
+      for (const [what, key] of [["a column label (when it might be needed)", "matchColumnLabels"], ["a row label (where it is sitting)", "matchRowLabels"]]) {
+        const labels = mv72[key]?.[lang];
+        if (!Array.isArray(labels) || labels.length !== 2) {
+          fail(`§72 (a): ${key}.${lang} has ${Array.isArray(labels) ? labels.length : "no"} label(s); the grid is 2x2 and charts.jsx indexes both axes 0 and 1.`);
+          continue;
+        }
+        for (const value of labels) {
+          if (typeof value !== "string" || value.length === 0) {
+            fail(`§72 (a): ${key}.${lang} contains an empty label.`);
+            continue;
+          }
+          if (!folded.includes(value.toLowerCase())) {
+            fail(`§72 (a): ${what} of lesson 25's figure reads "${value}" in "${lang}", but lesson 25 — the lesson it is drawn beside — does not contain that string in that language. It is written or translated rather than lifted, and the whole point is that the figure and the paragraph an inch above it use the same words. Take the string from the lesson's current prose; do not translate the English one.`);
+          } else {
+            containments72 += 1;
+          }
+        }
+      }
+      // The four axis labels carry NO DIGIT. Every quantity in lesson 25 (15%,
+      // twenty years, a decade) belongs to one illustrated case, not to an
+      // axis — putting one on an axis would turn a categorical grid into a
+      // threshold, which is the "formula with one right numeric answer" the
+      // lesson's last sentence declines to give.
+      for (const key of ["matchColumnLabels", "matchRowLabels"]) {
+        for (const value of mv72[key]?.[lang] ?? []) {
+          if (/\d/.test(String(value))) {
+            fail(`§72 (a): ${key}.${lang} contains the digit-bearing label "${value}". The axes are categorical; a number on one reads as the threshold lesson 25 explicitly refuses to name.`);
+          }
+        }
+      }
+    }
+
+    // (c) THE CELLS ARE A COMPLETE 2x2 AND THE AGREEING PAIR IS THE DIAGONAL.
+    //     Savings agrees with money that may be wanted on a day you do not
+    //     choose; investing agrees with money that will not be touched for
+    //     years. Rows are [savings, investing] and columns [soon, years] in
+    //     both moneyVisuals.js and LessonVisual.jsx, so `fit` must be true at
+    //     (0,0) and (1,1) and false at the other two — the reverse would tell
+    //     the reader the opposite of the lesson, and nothing else here would
+    //     notice.
+    const cells72 = mv72.matchCells;
+    if (!Array.isArray(cells72) || cells72.length !== 4) {
+      fail(`§72 (c): matchCells has ${Array.isArray(cells72) ? cells72.length : "no"} entries, expected 4. MatchGrid looks each cell up by (row, col) and renders a mismatch ring for a lookup that misses, so a missing cell fails silently as a mismatch.`);
+    } else {
+      const expect72 = { "0,0": true, "0,1": false, "1,0": false, "1,1": true };
+      for (const [rc, fit] of Object.entries(expect72)) {
+        const [row, col] = rc.split(",").map(Number);
+        const cell = cells72.find((c) => c.row === row && c.col === col);
+        if (!cell) {
+          fail(`§72 (c): matchCells has no cell at row ${row}, column ${col}. The 2x2 must be complete — MatchGrid draws a mismatch ring where the lookup misses, so an absent cell silently becomes a claim.`);
+        } else if (Boolean(cell.fit) !== fit) {
+          fail(`§72 (c): matchCells' cell at row ${row}, column ${col} has fit=${Boolean(cell.fit)}, expected ${fit}. Rows are [a savings account, an investment account] and columns [possibly any day, not for years]; the agreeing pair is the diagonal, and flipping it tells the reader the opposite of lesson 25's own test.`);
+        }
+      }
+      const fits72 = cells72.filter((c) => c.fit).length;
+      if (fits72 !== 2) {
+        fail(`§72 (c): ${fits72} of the four cells are marked as agreeing, expected exactly 2. Lesson 25 names two mismatches and calls them the same mistake seen from two sides; three agreeing cells would draw only one of them.`);
+      }
+    }
+
+    // (d)/(e) THE FIGURE ITSELF: equal cells, no verdict.
+    const chartsSrc72 = readFileSync(join(ROOT, "src", "components", "charts.jsx"), "utf8");
+    const start72 = chartsSrc72.indexOf("export function MatchGrid(");
+    if (start72 < 0) {
+      fail("§72: MatchGrid is no longer a top-level function in src/components/charts.jsx, so (d) and (e) cannot see the figure at all. Repoint them rather than leaving them green.");
+    } else {
+      const next72 = chartsSrc72.indexOf("\nexport function ", start72 + 1);
+      const slice72 = chartsSrc72.slice(start72, next72 < 0 ? chartsSrc72.length : next72);
+
+      // CONTROL: the slice must be the layout this section thinks it is
+      // reading. Without this every regex below would pass against an empty
+      // or mis-sliced string, which is the failure mode §69 (d) planted its
+      // own control for.
+      if (!slice72.includes("gridTemplateColumns") || !slice72.includes("data-figure-part")) {
+        fail("§72 CONTROL (d): the MatchGrid slice does not contain both `gridTemplateColumns` and `data-figure-part`, so it is not the component this section thinks it is reading. Every geometry result below would be vacuous.");
+      } else {
+        // (d) EQUAL CELLS. `GRID_CELL_H` is a FIXED height for OutcomeGrid's
+        //     measured reason — CSS grid stretches a row to its tallest item,
+        //     so a `minHeight` plus any text in a cell draws the row whose
+        //     label wraps taller than the other (65px against 52px, measured
+        //     live on OutcomeGrid; 82 against 52 before that). Here that
+        //     inequality would say one mismatch matters more than the other,
+        //     which is the single claim this figure exists to refute.
+        if (!/height:\s*GRID_CELL_H/.test(slice72)) {
+          fail("§72 (d): MatchGrid's cell no longer sets `height: GRID_CELL_H`. A minHeight, or a height that follows content, lets the row whose label wraps draw taller — and an unequal cell is a weighting, which is the claim this figure exists to refute.");
+        }
+        if (/minHeight/.test(slice72)) {
+          fail("§72 (d): MatchGrid now uses `minHeight` on a cell. That is how OutcomeGrid shipped 65px against 52px: the row grows to its tallest item and the inequality arrives through content, invisible to a static check that only reads the fractions.");
+        }
+        // The mark is the ONLY thing in a cell. Any string literal rendered
+        // inside the cell would grow its row the same way.
+        if (!/\{mark\(Boolean\(cellAt\(row, col\)\?\.fit\)\)\}/.test(slice72)) {
+          fail("§72 (d): MatchGrid's cell no longer renders `mark(...)` and nothing else. Text in a cell grows that grid row, which turns a wrapped label into a size difference between the two mismatches.");
+        }
+        // Both marks are the same outer size: one constant, used for both.
+        const markSizeUses72 = (slice72.match(/MATCH_MARK/g) ?? []).length;
+        if (markSizeUses72 !== 2) {
+          fail(`§72 (d): MATCH_MARK appears ${markSizeUses72} time(s) in MatchGrid, expected 2 (the width and the height of the one shared mark). A second size constant is how the ring and the disc drift apart, and a bigger mismatch mark is a weighting.`);
+        }
+
+        // (e) NO VERDICT. Lesson 25 closes on "a read of your own situation,
+        //     not a formula with one right numeric answer", so no cell may be
+        //     marked correct. Green/red would rank the cells — OutcomeGrid
+        //     states the same rule one lesson further on, for the same reason
+        //     — and a tick or a cross would do it in a shape instead.
+        if (/graph\.(green|red)|ink\.(ok|bad)/.test(slice72)) {
+          fail("§72 (e): MatchGrid now uses a green or red token. A grid laid over savings against investing is the closest figure in this app to a recommendation (§10.1), and lesson 25's last sentence refuses to give one — the marks must stay neutral (`graph.neutral` and `graph.blue`).");
+        }
+        if (/[✓✔✗✘×]/.test(slice72)) {
+          fail("§72 (e): MatchGrid now draws a tick or a cross. That marks a cell correct, which is the verdict lesson 25 declines to give in its own closing sentence; the mark must say only whether the job and the place agree.");
+        }
+      }
+    }
+
+    // (b) THE FIGURE ACTUALLY RENDERS, ON LESSON 25. Without this every
+    //     assertion above keeps passing against content nothing displays —
+    //     §71 (b)'s reason, and §71 (b) exists because a figure HAD been
+    //     mapped to the wrong lesson for weeks.
+    const lvSrc72 = readFileSync(join(ROOT, "src", "components", "LessonVisual.jsx"), "utf8");
+    if (!/\n\s*25:\s*"horizonMatch"/.test(lvSrc72)) {
+      fail("§72 (b): LESSON_VISUALS in src/components/LessonVisual.jsx no longer maps lesson 25 to \"horizonMatch\". The figure would stop rendering and every other assertion in this section would keep passing against content nothing displays.");
+    }
+    if (!/MONEY_VISUALS[\s\S]{0,400}?"horizonMatch"/.test(lvSrc72)) {
+      fail("§72 (b): \"horizonMatch\" is no longer in MONEY_VISUALS. That set drives the educational-disclaimer note rendered under a personal-finance figure (§10.1), and this is the figure in the file closest to reading as a recommendation.");
+    }
+  }
+
+  if (failures === before72) {
+    console.log(`  §72 lesson 25's horizon match: ${LANGS.length} language(s) verified verbatim against the lesson's own text (2 column labels and 2 row labels = ${4 * LANGS.length} containments, ${containments72} confirmed), no digit on either axis, the agreeing pair on the diagonal, cells held equal by one fixed height and one mark size, and no green, red, tick or cross anywhere in the figure.`);
+  }
+}
+
 console.log(`\n${failures === 0 ? "PASS" : "FAIL"}: ${failures} failure(s), ${warnings} warning(s).`);
 process.exit(failures === 0 ? 0 : 1);
