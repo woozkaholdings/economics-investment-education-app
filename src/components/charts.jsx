@@ -1317,6 +1317,171 @@ export function CycleChart({ phaseNames, trendLabel, description }) {
   );
 }
 
+// ── NestedCycles ──────────────────────────────────────────────────────────
+// Lesson 33 ("The Long-Term Debt Cycle") — backlog item 27, added 2026-09-04.
+// The first figure in this file whose subject is a RATIO OF TWO TIMESCALES.
+//
+// WHY A PICTURE, in the lesson's own words. Lesson 33's third section states
+// both spans and then leaves the arithmetic to the reader:
+//
+//     "each one arrives every 5-8 years"
+//     "The long-term cycle spans 75-100 years"
+//     "almost nobody alive personally remembers the last time it peaked"
+//
+// The claim is that the second contains many of the first — which is why the
+// last sentence follows. Prose can only put the two numbers in adjacent
+// sentences; the reader has to divide 75-100 by 5-8 and then imagine the
+// result. A picture is the division, already done.
+//
+// ⛔ WHY THIS REPLACED `CycleChart` ON LESSON 33 RATHER THAN JOINING IT.
+// Lessons 32, 33 and 38 rendered a byte-identical figure (measured on the built
+// app: 1,667 characters, one fingerprint, with lessons 30 and 36 as the
+// controls that differ). `CycleChart` labels four phase dots and the phases are
+// lesson 38's content. Lesson 33's own prose contains ONE of those four labels
+// in all five languages; lesson 38 contains four in all five. The figure was
+// right about a cycle and wrong about WHICH cycle: it draws two and a half
+// oscillations of the 5-8 year kind on the lesson whose entire point is that
+// the thing it teaches is 10-20 times longer and, in its own takeaway,
+// "fundamentally different from a regular recession".
+//
+// ⚠️ THE VERTICAL AXIS CARRIES NO SCALE, DELIBERATELY, and this is the same
+// rule `SplitBand` and `TradeoffPlot` are held to. Lesson 33 defines the axis
+// ("the debt burden (the ratio of what's owed to what's earned)") and states no
+// value for it anywhere — not a level, not a growth rate, not a starting point.
+// So no tick, no percentage and no number is drawn on it. A reader can see that
+// it rises and that it wobbles on the way, which is exactly what the prose
+// claims and no more.
+//
+// ⚠️ AND THERE IS NO TIME ORIGIN AND NO "YOU ARE HERE". The horizontal axis is
+// a SPAN — the bracket says "75-100 years", not a set of dates — and nothing
+// marks a present moment. Lesson 33's closing question asks the reader whether
+// today looks like the late stage of a long-term cycle; §10.1 is why this
+// figure must leave that question open rather than answer it with a marker.
+// A future run must not add a date, a "today" line, or a shaded "we are here"
+// region: that converts a pattern into a call.
+//
+// THE CYCLE COUNT IS BOUNDED BY THE LESSON, not chosen. 75/8 ≈ 9.4 and
+// 100/5 = 20, so any count in [10, 20] is inside what the prose states;
+// `NEST_CYCLES` is 12 and `check-data.mjs` §71 (c) holds it inside that
+// interval rather than trusting this paragraph.
+//
+// LABELS ARE HTML, NOT SVG <text> — `SplitBand`'s and `BalanceBand`'s measured
+// reason. These are five-language strings ("cada 5 a 8 años" is 15 characters
+// against a 300-unit viewBox), SVG does not wrap, and a clipped label fails
+// silently in exactly the languages nobody on this project re-reads. Each key
+// is a MINIATURE of its mark, and the two bracket miniatures differ in width
+// the way the brackets themselves do, so the key restates the figure's one
+// claim rather than merely color-coding it.
+const NEST_W = 300;
+const NEST_H = 108;
+const NEST_PAD = { left: 8, right: 8, top: 14, bottom: 30 };
+// 12 short cycles across the span. See "THE CYCLE COUNT IS BOUNDED" above.
+const NEST_CYCLES = 12;
+// The ripple's amplitude as a fraction of the long rise. Small enough that the
+// long rise is plainly the subject and the short cycles are riding on it —
+// which is the lesson's ordering, not a styling preference.
+const NEST_RIPPLE = 0.12;
+// 10 samples per short cycle. Fewer and the ripple renders as a zigzag, which
+// would read as a count of straight segments rather than as a wave.
+const NEST_SAMPLES = NEST_CYCLES * 10;
+
+// The curve, as one function so the brackets and the wave cannot drift apart:
+// the short bracket below is drawn at exactly `1 / NEST_CYCLES` of the plot
+// width, which is one period of the ripple by construction.
+function nestCurve() {
+  const plotW = NEST_W - NEST_PAD.left - NEST_PAD.right;
+  const plotH = NEST_H - NEST_PAD.top - NEST_PAD.bottom;
+  const raw = (t) => Math.sin((t * Math.PI) / 2) + NEST_RIPPLE * Math.sin(2 * Math.PI * NEST_CYCLES * t);
+  // Normalized against the ripple's own reach so the wave never leaves the plot
+  // and the long rise still uses the full height.
+  const lo = -NEST_RIPPLE;
+  const hi = 1 + NEST_RIPPLE;
+  const pts = [];
+  for (let i = 0; i <= NEST_SAMPLES; i += 1) {
+    const t = i / NEST_SAMPLES;
+    const v = (raw(t) - lo) / (hi - lo);
+    pts.push(`${+(NEST_PAD.left + t * plotW).toFixed(2)},${+(NEST_PAD.top + plotH - v * plotH).toFixed(2)}`);
+  }
+  return pts.join(" ");
+}
+
+// A span bracket: a rule with a tick rising from each end toward the thing it
+// measures. Drawn in a `graph` token (a mark, not text — 3:1 applies).
+function nestBracket(x1, x2, y, stroke) {
+  return (
+    <path
+      d={`M${x1},${y - 4} L${x1},${y} L${x2},${y} L${x2},${y - 4}`}
+      fill="none"
+      stroke={stroke}
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  );
+}
+
+export function NestedCycles({ title, seriesLabel, shortLabel, spanLabel, colors, labelInks, description, caption }) {
+  const plotW = NEST_W - NEST_PAD.left - NEST_PAD.right;
+  const floorY = NEST_PAD.top + (NEST_H - NEST_PAD.top - NEST_PAD.bottom);
+  const right = NEST_W - NEST_PAD.right;
+  const oneCycleX = NEST_PAD.left + plotW / NEST_CYCLES;
+
+  return (
+    <figure style={{ background: surface.card, border: `1px solid ${line.hairline}`, borderRadius: radius.lg, padding: space["4"], margin: 0 }}>
+      {title && (
+        <figcaption style={{ marginBottom: space["3"] }}>
+          <Text as="span" variant="caption" color={ink.muted} style={{ textTransform: "uppercase", letterSpacing: "0.05em", fontWeight: 700 }}>
+            {title}
+          </Text>
+        </figcaption>
+      )}
+      <svg viewBox={`0 0 ${NEST_W} ${NEST_H}`} style={{ width: "100%", height: 132 }} role="img" data-figure="nestedCycles" aria-label={description}>
+        {/* ⛔ NO BASELINE RULE, and it was removed rather than registered.
+            The first draft drew one at `floorY` in `line.hairline`, and
+            `check-data.mjs` §51b failed it: no line token clears 1.4.11's 3:1,
+            so such a rule is legal only as decoration. It is not decoration
+            here. The curve comes within ~5px of the floor at its first trough,
+            and a rule that close under a curve reads as the axis's ZERO — a
+            value lesson 33 states nowhere, on the one axis this figure's header
+            insists carries no scale. The full-span bracket below already frames
+            the plot, in a `graph` token §28b holds to 3:1, and the key names it.
+            A future run must not add the rule back. */}
+        <polyline
+          data-figure-part="series"
+          points={nestCurve()}
+          fill="none"
+          stroke={colors[0]}
+          strokeWidth="2.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        {nestBracket(NEST_PAD.left, oneCycleX, floorY + 10, colors[1])}
+        {nestBracket(NEST_PAD.left, right, floorY + 24, colors[2])}
+      </svg>
+      <ul role="list" style={{ listStyle: "none", margin: `${space["2"]}px 0 0`, padding: 0, display: "grid", gap: space["1"] }}>
+        <li style={{ display: "flex", alignItems: "center", gap: space["2"] }}>
+          <span aria-hidden="true" style={{ width: 20, height: 3, borderRadius: 2, background: colors[0], flexShrink: 0 }} />
+          <Text as="span" variant="caption" color={labelInks[0]} style={{ fontWeight: 700 }}>{seriesLabel}</Text>
+        </li>
+        {[[1, shortLabel, 8], [2, spanLabel, 20]].map(([i, label, w]) => (
+          <li key={label} style={{ display: "flex", alignItems: "center", gap: space["2"] }}>
+            {/* The miniature is the bracket itself at key size — a rule with a
+                tick at each end — and its WIDTH is the claim: 8px against 20px
+                is the figure's own ratio, so the key cannot read as two
+                interchangeable colors. */}
+            <span
+              aria-hidden="true"
+              style={{ width: w, height: 6, flexShrink: 0, borderBottom: `2px solid ${colors[i]}`, borderLeft: `2px solid ${colors[i]}`, borderRight: `2px solid ${colors[i]}` }}
+            />
+            <Text as="span" variant="caption" color={labelInks[i]} style={{ fontWeight: 700 }}>{label}</Text>
+          </li>
+        ))}
+      </ul>
+      {caption && <Text variant="caption" color={ink.muted} style={{ marginTop: space["3"], lineHeight: 1.5 }}>{caption}</Text>}
+    </figure>
+  );
+}
+
 // ── SplitBand ─────────────────────────────────────────────────────────────
 // Lesson 12 ("Renting vs. Buying: The Real Trade-offs of a Home"), section 2
 // "What a Mortgage Payment Is Actually Made Of" — backlog item 27, added

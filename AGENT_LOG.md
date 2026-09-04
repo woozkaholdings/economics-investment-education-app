@@ -1611,6 +1611,15 @@ through two passes that each had it open.
       > 5-entry `READ_COMPLETE` list (`q003` ko/zh/ja, `q011` zh, `q012` zh) with the code-point
       > length each had when read. **The ordering rule is unchanged and still the owner's** — the
       > remaining 15 pairs sit on `essentials` L4/L7/L8/L9/L14 and are unread.
+      > ⛔ **AND THE REMAINDER IS OUT OF ORDER, not merely owner-gated — noticed 2026-09-04 by a run
+      > that considered picking it and did not. All five remaining questions sit on lessons whose
+      > BODIES are abridged in the same four languages.** `npm test`'s translation-completeness line
+      > reads **48 abridged lesson/language pairs, all on `essentials` lessons 1-11 and 14** (item
+      > 93/94); the five questions left here are on **L4, L7, L8, L9 and L14** — every one of them
+      > inside that set. So repairing a question's Spanish explanation for lesson 4 restores parity on
+      > the *check* of a lesson whose *body* the same reader gets as a condensed summary. **That is
+      > the wrong end first**, and it makes the remainder downstream of **item 94**, not merely of
+      > O-3's volume question. Whoever picks this up should take the lesson bodies or neither.
 
 164. **✅ DONE 2026-09-02 (scheduled dev-agent) — the headline premise reproduced exactly, and the
     item's own list of phrasings did not: one of the three it proposed fires on shipped teaching
@@ -3577,6 +3586,64 @@ through two passes that each had it open.
     > screens later — mapping it here would front-run its own vocabulary. **A figure that is right
     > about the lesson's claim can still be wrong for the lesson's position.** Both remain bare on
     > purpose; that is a measured decision, not an oversight.
+    > ⛔ **NINTH VISUAL, 2026-09-04, AND IT IS THE FIRST IN THIS ITEM THAT REPLACED A WRONG FIGURE
+    > RATHER THAN FILLING A GAP — because the rule quoted directly above was applied to the CANDIDATE
+    > and never turned on the INCUMBENTS.** The paragraph above declines `CycleChart` for lesson 31
+    > because its four phase dots are lesson **38**'s vocabulary. That same figure was, at the moment
+    > that sentence was written, **already shipping on lessons 32 and 33** — five and six screens
+    > before the lesson that defines the phases. Measured on the built app 2026-09-04: lessons 32, 33
+    > and 38 rendered a **byte-identical `<figure>`, 1,667 characters, one fingerprint**, with lessons
+    > 30 (3,132 b) and 36 (1,069 b) differing as the controls that prove the extractor was live.
+    > **The mapping was never a decision about lesson 33 at all**: `git log -S` shows `33: "cycle"`
+    > entered in `e15e63d`, the owner-directed lesson-id **renumbering** (item 22), which only re-keyed
+    > `5: "cycle"` — the three-way share predates the track split and no run ever chose it for this
+    > lesson.
+    > **On lesson 33 the mismatch is not marginal, and the instrument had a control that fired.**
+    > Scanning each lesson's own prose for the four rendered phase labels **in its own language**
+    > (positive control: lesson 38, which owns the vocabulary, must score 4/4 — it does, in all five):
+    > **lesson 33 scores 1 of 4 in all five languages** (only "Peak"), lesson 32 scores 2-3 of 4. And
+    > lesson 33's takeaway says what it teaches is *"fundamentally different from a regular
+    > recession"* — over the picture the previous lesson uses for a regular recession.
+    > **Shipped as `NestedCycles` (charts.jsx) + `nestedCycles*` (markets.js), guarded by
+    > `check-data.mjs` §71.** It clears this item's bar on lesson 33's third section, which states
+    > both spans in adjacent sentences — *"each one arrives every 5-8 years"* and *"The long-term cycle
+    > spans 75-100 years"* — and then draws the conclusion that follows from dividing them: *"almost
+    > nobody alive personally remembers the last time it peaked."* **Prose can put two numbers next to
+    > each other; it cannot do the division.** The figure is that division already done: one long rise
+    > with twelve short cycles riding it, bracketed at one cycle and at the whole span.
+    > ⚠️ **BOTH AXES CARRY NO SCALE AND THERE IS NO TIME ORIGIN, and the second one is §10.1.** Lesson
+    > 33 defines the vertical axis (*"the debt burden (the ratio of what's owed to what's earned)"*)
+    > and states no value for it anywhere, so no tick and no number is drawn on it. The horizontal
+    > axis is a **span**, not a set of dates: lesson 33 closes by *asking* the reader whether today
+    > looks like the late stage of a long-term cycle, and a "you are here" marker would answer that
+    > question for them. §71 (d) holds both, and **a future run must not add a date, a "today" line or
+    > a shaded region.**
+    > ⚠️ **THE CYCLE COUNT IS BOUNDED BY THE LESSON, NOT CHOSEN.** 75/8 ≈ 9.4 and 100/5 = 20, so any
+    > whole count in [10, 20] is derivable from the prose and nothing outside it is; `NEST_CYCLES` is
+    > 12 and §71 (c) asserts the interval rather than the constant. **This is the answer to lesson
+    > 16's and lesson 17's rejection test** ("does the prose state every quantity the shape needs?"):
+    > here it states a *range* for the one quantity that matters, which is enough, and states nothing
+    > for the axis — so the axis gets nothing.
+    > ⛔ **THE SUITE CAUGHT A REAL DEFECT IN THE FIRST DRAFT, and the fix was not the one the error
+    > prescribed.** The figure shipped a baseline rule in `line.hairline`; `check-data.mjs` §51b failed
+    > it (no `line.*` token clears 1.4.11's 3:1, so such a rule is legal only as registered
+    > decoration). **Registering it would have been wrong.** Measured from the curve's own arithmetic,
+    > the wave passes within **~5px** of that floor at its first trough, and a rule that close under a
+    > curve reads as the axis's **zero** — a value lesson 33 states nowhere, on the axis this figure's
+    > own header insists carries no scale. The rule was **removed**, not exempted; the full-span
+    > bracket already frames the plot in a `graph` token §28b holds to 3:1. §71 (d) now keeps it out
+    > on the *content* ground as well as the contrast one. (W-6.1's standing lesson, met in the wild:
+    > **an error message that prescribes a fix is a claim about the fix, not a measurement of it.**)
+    > **Coverage re-measured 2026-09-04 with the parser control (must find 1, 30, 44; must not find 2,
+    > 29, 31): economy 7/12, essentials 4/15, money 5/17 — 16 of 44, 0 orphans.** The comment in
+    > `LessonVisual.jsx` said **6/12, 3/15, 14 of 44** — stale since lessons 34 and 12 landed on
+    > 2026-09-03, in the same comment block that says "do not quote a coverage count from backlog item
+    > 27; re-run the parse". Corrected in this commit. **Do not quote these three numbers either.**
+    > **Note, not an item (W-6.2 rule 2): lesson 32 has the same defect in a milder form and is left
+    > alone deliberately.** Its own headings are "Expansion Phase" and "Contraction & Recession", so
+    > 2-3 of the four labels are its own words, and "Trough" is in none of the five. Zero learner
+    > confusion is *claimed* here, not measured — this is a note so that a future run picking it up
+    > starts from the scan above rather than re-deriving it.
     **Status check, 2026-08-16 (item-29 run):** `LESSON_VISUALS` in `src/components/LessonVisual.jsx`
     now maps money lessons **1 (`budgetSplit`), 3 (`compounding`) and 27 (`lossAsymmetry`)**, plus the
     five economy ones — i.e. money is **3/28, not 0/28**, and the three lessons this item's own "Scope
@@ -4484,6 +4551,132 @@ zero meaningful: `selftest PASS (8/8 controls fired, plantsRemoved true)` and, p
 finding(s); V vacuous; U unavailable`. A bare "no accessibility issues found" is not a result.
 
 ## Run log
+
+### 2026-09-04 (scheduled dev-agent, backlog item 27) — three lessons rendered a byte-identical figure, and the rule that kept lesson 31 bare was written by a run that never turned it on the two lessons already shipping it
+
+**Where the pick came from.** The previous run took item 165 and the one before was self-picked, so
+W-6.2 rule 1 does not bind — but I did not take item 165 again either, and the reason is a measurement
+rather than the rule: **its remainder is out of order**, not merely owner-gated. Its five remaining
+questions sit on `essentials` L4/L7/L8/L9/L14, and `npm test`'s completeness line puts **all 48
+abridged lesson/language pairs on `essentials` 1-11 and 14** — every one of those five lessons.
+Repairing a quiz explanation on a lesson whose body the same reader gets as a condensed summary is the
+wrong end first. Written into item 165 so the next run does not re-derive it. Item 160 is at the stop
+line the previous run measured. **So: item 27, which is product rather than instrument** — W-6.3's
+number is `scripts/` at 2.3x `src/`, and this run adds ~150 lines to `scripts/` against ~230 to `src/`,
+which is the right side of it, with the learner-visible sentence written below.
+
+**Step 3.5 — the item's own reasoning reproduced, and it condemned something the item never looked at.**
+Item 27 declines `CycleChart` for lesson 31 because *"a figure that is right about the lesson's claim
+can still be wrong for the lesson's position"* — its four phase dots are lesson **38**'s vocabulary.
+That sentence was written while the same figure was **already shipping on lessons 32 and 33**, five and
+six screens before lesson 38. Two measurements, each with controls:
+- **The figures are identical, measured on the built app rather than read off the source.** Seeded
+  `[29..40]` complete, `#/lesson/{30,32,33,36,38}`, fingerprinting each `<figure>`'s `outerHTML`:
+  lessons **32, 33 and 38 return the same 1,667 characters and the same fingerprint**. **Controls:**
+  lesson 30 (3,132 b) and lesson 36 (1,069 b) both differ, so the extractor was live and not returning
+  a constant. ⚠️ **A first control was dead and it looked clean** — lesson 34 read `len: 0` under a
+  `figure svg` selector, which reads exactly like a lesson with no figure; `BalanceBand` renders no
+  `<svg>` at all. The selector moved to `figure` and two real controls replaced it.
+- **The phase labels against each lesson's own prose, per language.** Scanning each lesson's text for
+  the four labels **in that language**: **lesson 38 scores 4/4 in all five** — the positive control,
+  since 38 is the lesson that owns the vocabulary — lesson 32 scores 2-3 of 4, and **lesson 33 scores
+  1 of 4 in all five languages** (only "Peak"). Lesson 33's takeaway says what it teaches is
+  *"fundamentally different from a regular recession"*, over the picture the previous lesson uses for
+  a regular recession.
+- ⛔ **And the mapping was never a decision about lesson 33.** `git log -S '33: "cycle"'` returns one
+  commit — `e15e63d`, the owner-directed lesson-id **renumbering** (item 22) — which only re-keyed
+  `5: "cycle"`. The three-way share predates the track split; no run ever chose it for this lesson.
+- ⚠️ **One instrument trap worth keeping, because it silently rewrote my fixture.** Seeding
+  `ecycles_completed_lessons` to `[29..40]` and reloading produced `[17..28]`: `lib`'s legacy lesson-id
+  migration read the raw seed as pre-renumber ids. Set `ecycles_legacy_lesson_id_migrated` **before**
+  the app loads, or every "lesson N" reading is taken on a different lesson.
+
+**What shipped.** Lesson 33 gets `NestedCycles` (`charts.jsx`) + `nestedCycles*` (`markets.js`);
+lessons 32 and 38 keep `cycle`, which is right for both. It clears item 27's bar on lesson 33's own
+third section, which states both spans in adjacent sentences — *"each one arrives every 5-8 years"*,
+*"The long-term cycle spans 75-100 years"* — and then draws the conclusion that follows from dividing
+them: *"almost nobody alive personally remembers the last time it peaked."* **Prose can put two numbers
+next to each other; it cannot do the division.** The figure is the division already done.
+- **Every string it renders except the text alternative is a verbatim substring of lesson 33 in the
+  same language** — `SpendingLoop`'s and `SplitBand`'s rule, for O-3's reason. **25 containments, 5
+  languages, controls in both directions** (an absent probe must not be found; "1929", which lesson
+  33's second section names and this figure does not render, must be).
+- ⚠️ **No scale on either axis and no time origin, and the second is §10.1.** Lesson 33 defines the
+  vertical axis and states no value for it, so nothing is drawn on it. Lesson 33 closes by *asking*
+  whether today looks like the late stage of a long-term cycle — a "you are here" marker would answer
+  that question for the reader. §71 (d) holds both.
+- **The cycle count is bounded by the lesson, not chosen:** 75/8 ≈ 9.4 and 100/5 = 20, so [10, 20] is
+  what the prose allows; `NEST_CYCLES` is 12 and §71 (c) asserts the interval, not the constant.
+- **Labels are HTML below the SVG, not SVG `<text>`** — `SplitBand`'s measured reason (SVG does not
+  wrap, and a clipped label fails silently in the four languages nobody here re-reads).
+
+⛔ **THE SUITE CAUGHT A REAL DEFECT IN THE FIRST DRAFT, AND THE RIGHT FIX WAS NOT THE ONE THE ERROR
+PRESCRIBED.** The figure shipped a baseline rule in `line.hairline`; **§51b failed it** and its message
+prescribes registering the use as decoration. **Registering it would have been wrong.** From the
+curve's own arithmetic the wave passes within **~5px** of that floor at its first trough, and a rule
+that close under a curve reads as the axis's **zero** — a value lesson 33 states nowhere, on the axis
+this figure exists to leave unscaled. It was **removed, not exempted**; the full-span bracket already
+frames the plot in a `graph` token §28b holds to 3:1, and §71 (d) now keeps it out on the content
+ground as well. **This is W-6.1's standing lesson met in the wild: an error message that prescribes a
+fix is a CLAIM about the fix, not a measurement of it.**
+
+**Verified live, on the built app served from disk.** Lesson 33 renders `data-figure="nestedCycles"`,
+**zero SVG `<text>` nodes**, a 121-point curve, and two brackets at `8→31.67` and `8→292` — a
+**1:12 ratio**, which is one cycle of twelve by construction rather than by a second constant.
+Lessons 32 and 38 re-read at **1,667 b each, unchanged**. **All five languages at 320px / 130% font:
+0 overflow findings, 0 clipped labels, `document.body.scrollWidth` 320** — with an over-wide element
+**planted and found** in `es` and again in `ja`, so the two ends of the sweep are proven readings and
+not a dead probe. Dark scheme re-read: curve `rgb(169,182,255)`, brackets `rgb(243,189,99)` and
+`rgb(138,128,114)` on a `rgb(29,26,22)` card. §10.1's note renders under the figure in both schemes.
+
+**§71 proved able to fail, in four directions, restoring from scratchpad copies** (never
+`git checkout --`; md5 of all three files matches pre-injection). **(a)** paraphrasing the `zh`
+bracket label to a plausible synonym → fails, naming the language and the string. **(b)** mapping
+lesson 33 back to `"cycle"` → fails twice, once for the missing mapping and once for the restored
+defect. **(c)** `NEST_CYCLES = 25` → fails with the lesson's own arithmetic in the message. **(d)** a
+`<text>0%</text>` tick → fails. **W-6.2 rule 3, answered:** (a) *a reader meets a bracket labeled with
+a span the paragraph an inch above it no longer states*; (b) *a reader on the long-term-cycle lesson is
+shown the short-term cycle's four phase names again, five screens before the lesson that defines them*;
+(c) *the figure draws a number of short cycles its own lesson's two spans cannot produce*; (d) *a
+number appears on an axis whose lesson states no value for it*. All four are things a person meets.
+
+**Step 5, adversarial self-check — the register, the decisions, the redo test, and my own claim.**
+**§10.2** — `git diff | grep -ci dalio` = **0**; `npm run check-blindspot` **0 failures**. Worth stating
+plainly since the shape is a familiar one: nothing here names or brands anyone, and the figure draws
+only what lesson 33's own already-shipped prose states. **§10.1** — the run's real exposure, and it is
+handled structurally rather than by inspection: no time origin, no date, no marker, and §71 (d) fails
+the build on a year or a present-tense position word appearing in the component. The disclaimer was
+confirmed rendering under the figure live in both schemes. **§10.3** — no kids surface touched.
+**Stale-data fix** — no dates and no live-looking figures added; §2.3's sweep over 26 teaching-copy
+modules (which includes `markets.js`, the module I edited) is green. **DECISIONS.md** — `grep -i`
+returns **zero** mentions of lesson 33, `CycleChart` or the phase dots, so no closed decision is
+contradicted; content stays `.js` modules and no state, build or routing decision is touched.
+**Already-done test** — `nestedCycles`/`NestedCycles` appear **zero** times in `AGENT_LOG.md` and the
+archive, and no entry in either has ever proposed a figure for lesson 33: this is not a redo, and the
+`git log -S` above shows it is not an undo of a decision either. **My own verification claim** — every
+figure above is either printed by `npm test`, or a live DOM read whose control is quoted beside it with
+the value it returned; the four injections are re-runnable from the messages they produced.
+
+**Also corrected in this commit: `LessonVisual.jsx`'s own coverage comment.** It read **economy 6/12,
+essentials 3/15, 14 of 44**, stale since lessons 34 and 12 landed on 2026-09-03 — inside the comment
+block that says *"do not quote a coverage count from backlog item 27; re-run the parse"*. Re-measured
+with the parser control (must find 1, 30, 44; must not find 2, 29, 31): **economy 7/12, essentials
+4/15, money 5/17 — 16 of 44, 0 orphans.**
+
+**`npm test` 0 failures, 4 warnings** — all four pre-existing and named in the previous entry
+(translation review share, translation completeness, §65's option-length line, and the floor budget).
+⚠️ **The suite also caught one defect in this run's own writing**: §59 failed two uses of the British
+"labelled" in the §71 header and a failure message (US English, item 91). Fixed before the commit.
+**`npm run build` clean**, 918 ms. **`npm run check-blindspot` 0 failures.** The 12 generated figures
+across `LAUNCH_READINESS.md` + `LAUNCH_PLAN.md` + `CLAIMS.md` still agree with the content
+(44 lessons / 150,493 en chars / 161 min), which is the check proving I edited no generated sentence.
+
+**O-1 remains the entire critical path: 44 lessons, 5 languages, 161 minutes of content — and zero
+people have ever opened this app** (figures off `npm test`'s readiness line).
+
+**Owner tree:** `git status` at run start and again before writing showed **UIUX/ untracked and
+untouched** and no tracked file modified besides this run's five. `HEAD` re-checked before writing,
+unmoved at `669b39e`.
 
 ### 2026-09-04 (scheduled dev-agent, backlog item 165) — the item said its main path was closed, and five of the ten questions it had left were on it; the reason is that the closing claim was read off the one instrument the item's own ⚠️ says not to trust
 

@@ -10414,5 +10414,190 @@ function trendDirection(src) {
   }
 }
 
+// §71. LESSON 33'S LONG CYCLE, DRAWN AS THE SHORT ONES NESTED INSIDE IT
+//      (backlog item 27, added 2026-09-04). The fifth KIND of figure this file
+//      guards:
+//
+//        §21/§50/§53 — the figure plots arithmetic its lesson states.
+//        §54         — the figure plots RANKS read off two sentences.
+//        §57         — the figure plots a PARTITION and carries no magnitude.
+//        §64/§70     — the figure plots a LOOP / a COMPOSITION, and every
+//          string it renders is lifted verbatim from its lesson.
+//        §71 (here)  — the figure plots a RATIO OF TWO TIMESCALES. It carries
+//          no magnitude on either axis: the two spans it brackets are the only
+//          quantities lesson 33 states about the shape, and everything else is
+//          shape.
+//
+//      ⛔ WHY THIS SECTION EXISTS AT ALL, and it is not the usual reason. This
+//      figure did not fill a gap — it REPLACED a figure that was wrong for its
+//      lesson. Lessons 32, 33 and 38 rendered a byte-identical `CycleChart`
+//      until this date (measured on the built app: 1,667-character <figure>,
+//      one fingerprint, lessons 30 and 36 differing as the controls). That
+//      chart labels four phase dots, and the phases are lesson 38's content;
+//      lesson 33's own prose contains ONE of the four in all five languages
+//      while lesson 38 contains four in all five. So (b) below is the load-
+//      bearing assertion in this section: it fails if lesson 33 is ever mapped
+//      back to "cycle".
+//
+//      THE LEARNER-VISIBLE FAILURES, per W-6.2 rule 3, one sentence each:
+//        (a) a reader meets a bracket labeled with a span that the paragraph
+//            an inch above it no longer states, in a language nobody here
+//            re-reads;
+//        (b) a reader on the long-term-cycle lesson is shown the short-term
+//            cycle's four phase names again, five screens before the lesson
+//            that defines them;
+//        (c) the figure draws a number of short cycles that its own lesson's
+//            two spans cannot produce;
+//        (d) a number appears on an axis whose lesson states no value for it.
+{
+  const before71 = failures;
+  const need71 = [
+    "nestedCyclesTitle", "nestedCyclesSeriesLabel", "nestedCyclesShortLabel",
+    "nestedCyclesSpanLabel", "nestedCyclesCaption", "nestedCyclesDescription",
+  ];
+  const missing71 = need71.filter((k) => marketsContent[k] === undefined);
+  if (missing71.length > 0) {
+    fail(`§71: src/content/markets.js no longer exports ${missing71.join(", ")}. This section is pointed at a structure that no longer exists — repoint it rather than leaving it green.`);
+  } else {
+    const NEST_LESSON = "33";
+
+    // (a) EVERY VISIBLE STRING IS VERBATIM FROM THE LESSON, per language,
+    //     against that language's own body — §64 (a)'s shape and §64 (a)'s
+    //     reason: the lifting is what keeps this figure from adding four
+    //     languages of unreviewed machine translation an inch from the
+    //     paragraph it draws (AGENT_LOG.md, owner item O-3), and a property
+    //     nothing measures is a wish. `nestedCyclesDescription` is deliberately
+    //     NOT in this set — it is the text alternative, which the lesson cannot
+    //     contain because the lesson does not know the figure exists.
+    //
+    //     CONTROLS, per language and in both directions, because a body that
+    //     failed to load returns "not found" for every string and reads exactly
+    //     like a figure that was rewritten wholesale:
+    //       • an absent probe must NOT be found;
+    //       • "1929" MUST be found — lesson 33's second section names the 1929
+    //         crash, the digits survive every translation, and the string is
+    //         not one this figure renders, so it proves the scan reached
+    //         lesson 33's real prose without being circular.
+    const CONTROL_ABSENT_71 = "qzx-no-lesson-says-this";
+    const CONTROL_PRESENT_71 = "1929";
+    const visible71 = [
+      ["the title", "nestedCyclesTitle"],
+      ["the series label", "nestedCyclesSeriesLabel"],
+      ["the short-cycle bracket label", "nestedCyclesShortLabel"],
+      ["the full-span bracket label", "nestedCyclesSpanLabel"],
+      ["the caption", "nestedCyclesCaption"],
+    ];
+    let containments71 = 0;
+    for (const lang of LANGS) {
+      const sections = lessonContent[NEST_LESSON]?.sections ?? [];
+      const text = [
+        ...sections.map((sec) => `${sec.heading?.[lang] ?? ""}\n${sec.body?.[lang] ?? ""}`),
+        lessonContent[NEST_LESSON]?.takeaway?.[lang] ?? "",
+        lessonContent[NEST_LESSON]?.thinkAbout?.[lang] ?? "",
+      ].join("\n");
+      if (text.trim().length === 0 || text.includes(CONTROL_ABSENT_71)) {
+        fail(`§71 (a): the lesson-33 scan failed its negative control in "${lang}" — ${text.trim().length === 0 ? "the text is empty" : "an absent probe was found"}. It is reading the wrong text or no text, so a clean result for this language would mean nothing.`);
+        continue;
+      }
+      if (!text.includes(CONTROL_PRESENT_71)) {
+        fail(`§71 (a): the lesson-33 scan failed its positive control in "${lang}" — "${CONTROL_PRESENT_71}" is not in the text. Either the scan is not reaching lesson 33's second section or that section was rewritten; re-read it before repointing this control, because with a dead positive control every containment below passes vacuously.`);
+        continue;
+      }
+      for (const [what, key] of visible71) {
+        const value = marketsContent[key]?.[lang];
+        if (typeof value !== "string" || value.length === 0) {
+          fail(`§71 (a): ${key}.${lang} is missing or empty.`);
+          continue;
+        }
+        if (!text.includes(value)) {
+          fail(`§71 (a): ${what} of lesson 33's figure reads "${value}" in "${lang}", but lesson 33 — the lesson it is drawn beside — does not contain that string in that language. It is written or translated rather than lifted, and the whole point is that the figure and the paragraph an inch above it use the same words. Take the string from the lesson's current prose; do not translate the English one.`);
+          continue;
+        }
+        containments71 += 1;
+      }
+    }
+
+    // (b) THE FIGURE IS ATTACHED TO LESSON 33 — AND LESSON 33 IS NOT BACK ON
+    //     `cycle`. Both halves are asserted because they fail differently: the
+    //     first leaves this whole section green against content nothing
+    //     displays, and the second silently restores the defect the figure was
+    //     built to remove.
+    const lvSrc71 = readFileSync(join(ROOT, "src", "components", "LessonVisual.jsx"), "utf8");
+    if (!/^\s*33:\s*"nestedCycles"/m.test(lvSrc71)) {
+      fail("§71 (b): LESSON_VISUALS in src/components/LessonVisual.jsx no longer maps lesson 33 to \"nestedCycles\". Every other assertion in this section would keep passing against a figure nothing displays.");
+    }
+    if (/^\s*33:\s*"cycle"/m.test(lvSrc71)) {
+      fail("§71 (b): lesson 33 is mapped to \"cycle\" again. That is the figure this one replaced: `CycleChart` labels Expansion/Peak/Contraction/Trough, which is lesson 38's vocabulary, and lesson 33's own prose carries one of those four in all five languages. See charts.jsx's NestedCycles header for the measurement.");
+    }
+    // Lessons 32 and 38 keep `cycle` and that is deliberate — 38 defines the
+    // four phases and 32 introduces the up-and-down. If either loses it, this
+    // section's premise (that the mismatch was specific to 33) is gone.
+    for (const keeps of ["32", "38"]) {
+      if (!new RegExp(`^\\s*${keeps}:\\s*"cycle"`, "m").test(lvSrc71)) {
+        fail(`§71 (b): lesson ${keeps} no longer maps to "cycle". This section's reasoning is that the phase-labeled chart is RIGHT for 32 and 38 and wrong only for 33 — if that changed, re-decide it here rather than leaving this check asserting a premise that moved.`);
+      }
+    }
+
+    const chartsSrc71 = readFileSync(join(ROOT, "src", "components", "charts.jsx"), "utf8");
+    const nestStart = chartsSrc71.indexOf("export function NestedCycles");
+    if (nestStart === -1) {
+      fail("§71: NestedCycles is no longer a top-level function in src/components/charts.jsx, so (c) and (d) cannot see the figure at all. Repoint them rather than leaving them green.");
+    } else {
+      const nestSlice = chartsSrc71.slice(chartsSrc71.indexOf("const NEST_W"), chartsSrc71.indexOf("// ── SplitBand"));
+
+      // (c) THE CYCLE COUNT IS INSIDE WHAT THE LESSON STATES. Lesson 33 gives
+      //     "every 5-8 years" and "75-100 years"; 75/8 ≈ 9.4 and 100/5 = 20, so
+      //     any whole count in [10, 20] is derivable from the prose and nothing
+      //     outside it is. This is the §50 block (j) class — a figure that
+      //     inverts or overshoots its own lesson — applied to a count.
+      const cyclesMatch = nestSlice.match(/const NEST_CYCLES = (\d+);/);
+      if (!cyclesMatch) {
+        fail("§71 (c): NEST_CYCLES is no longer a literal constant in charts.jsx, so the count the figure draws cannot be checked against the two spans lesson 33 states.");
+      } else {
+        const n = Number(cyclesMatch[1]);
+        if (n < 10 || n > 20) {
+          fail(`§71 (c): NestedCycles draws ${n} short cycles. Lesson 33 states "every 5-8 years" and "75-100 years", which bounds the count at 75/8 ≈ 9.4 to 100/5 = 20 — so ${n} is a number the lesson cannot produce, and the figure's whole content is that ratio.`);
+        }
+      }
+      // The short bracket must be ONE period of the ripple by construction
+      // rather than by a second hand-typed constant. Two numbers that are meant
+      // to be equal can drift apart while each still looks plausible — the
+      // failure §21 and §70 (f) are both shaped around.
+      if (!nestSlice.includes("plotW / NEST_CYCLES")) {
+        fail("§71 (c): the short-cycle bracket is no longer derived from `plotW / NEST_CYCLES`. The bracket and the wave must come out of one constant, or the figure can end up bracketing a span that is not one of the cycles it draws — and nothing on screen would say so.");
+      }
+
+      // (d) NO SCALE ON EITHER AXIS, AND NO BASELINE RULE. Lesson 33 defines
+      //     the vertical axis ("the debt burden (the ratio of what's owed to
+      //     what's earned)") and states no value for it anywhere; the
+      //     horizontal axis is a SPAN, not a set of dates. Every label is HTML
+      //     below the figure, so an <text> node inside this SVG is a tick or a
+      //     number by elimination. The baseline rule is asserted absent for its
+      //     own reason: the curve passes within ~5px of the floor at its first
+      //     trough, and a rule that close under a curve reads as the axis's
+      //     zero — a value lesson 33 states nowhere. §51b removed it once
+      //     already, on the contrast rule; this keeps it out on the content one.
+      const textNodes71 = (nestSlice.match(/<text\b/g) ?? []).length;
+      if (textNodes71 !== 0) {
+        fail(`§71 (d): NestedCycles' SVG renders ${textNodes71} <text> node(s), expected 0. Lesson 33 states no value on the debt-burden axis and no date on the time axis, so text inside this figure is almost certainly a tick, a percentage or a year — a quantity the figure would be inventing. Labels belong in the HTML key below the SVG, where they also wrap in five languages.`);
+      }
+      if (/<line\b[^>]*stroke=\{line\./.test(nestSlice)) {
+        fail("§71 (d): NestedCycles draws a baseline rule again. It was removed deliberately: the curve comes within about 5px of the floor at its first trough, so a rule there reads as zero on an axis lesson 33 gives no value for — and separately, no `line.*` token clears WCAG 1.4.11's 3:1 (§51b). The full-span bracket already frames the plot in a `graph` token.");
+      }
+      // §10.1: lesson 33 closes by ASKING the reader whether today looks like
+      // the late stage of a long-term cycle. A marker answering that question
+      // turns a pattern into a call. There is no time origin in this figure and
+      // there must not be one.
+      if (/\b(today|now|hoy|현재|今天|現在)\b/i.test(nestSlice) || /\b(19|20)\d{2}\b/.test(nestSlice)) {
+        fail("§71 (d): NestedCycles' source now contains a year or a present-tense position word. This figure has no time origin on purpose — lesson 33 asks the reader whether today looks like the late stage of a long-term cycle, and a \"you are here\" marker answers that question for them (§10.1).");
+      }
+    }
+  }
+
+  if (failures === before71) {
+    console.log(`  §71 lesson 33's nested cycles: ${LANGS.length} language(s) verified verbatim against the lesson's own text (title, series label, 2 bracket labels and the caption = ${5 * LANGS.length} containments), the cycle count inside the [10, 20] the lesson's own two spans bound, the short bracket derived from that same count, lesson 33 off "cycle" while 32 and 38 keep it, and no scale, baseline or time origin on either axis.`);
+  }
+}
+
 console.log(`\n${failures === 0 ? "PASS" : "FAIL"}: ${failures} failure(s), ${warnings} warning(s).`);
 process.exit(failures === 0 ? 0 : 1);

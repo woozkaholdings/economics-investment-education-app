@@ -14,13 +14,15 @@
 // ═══════════════════════════════════════════════════════════════════════════
 
 import { useState } from "react";
-import { AsymmetryChart, BalanceBand, Bar, BracketStack, CycleChart, GapColumns, GrowthCurve, OutcomeGrid, PreferenceFlip, ProportionBar, SpendingLoop, SplitBand, TradeoffPlot, YieldCurve } from "./charts.jsx";
+import { AsymmetryChart, BalanceBand, Bar, BracketStack, CycleChart, GapColumns, GrowthCurve, NestedCycles, OutcomeGrid, PreferenceFlip, ProportionBar, SpendingLoop, SplitBand, TradeoffPlot, YieldCurve } from "./charts.jsx";
 import { Segmented, Text } from "./ui.jsx";
 import {
   balanceSheetCaption, balanceSheetDescription, balanceSheetFormat, balanceSheetHistory, balanceSheetUnit,
   cycleChartDescription, phaseNames,
   deleveragingAnchors, deleveragingCaption, deleveragingDescription, deleveragingEndLabels,
   deleveragingGoodLabel, deleveragingTitle, deleveragingUglyLabel,
+  nestedCyclesCaption, nestedCyclesDescription, nestedCyclesSeriesLabel, nestedCyclesShortLabel,
+  nestedCyclesSpanLabel, nestedCyclesTitle,
   spendingLoopCaption, spendingLoopDescription, spendingLoopSteps, spendingLoopTitle,
   trendLabel, yieldCurveDescriptions,
 } from "../content/markets.js";
@@ -56,8 +58,9 @@ import { graph, ink, space, surface } from "../theme.js";
 // essentials split re-tracked 1-15, so of the five personal-finance ids below
 // 1/3/7 are `essentials` and 23/27 are `money`.
 //
-// Re-measured 2026-08-31 with the same parser control after lesson 30 was
-// added: coverage is economy 6/12, essentials 3/15, money 5/17 — 14 of 44,
+// Re-measured 2026-09-04 with the same parser control (it must find 1, 30 and
+// 44 and must not find 2, 29 or 31): coverage is economy 7/12, essentials 4/15,
+// money 5/17 — 16 of 44,
 // 0 orphan ids. Lesson 30 is the first figure added for the reason the path
 // itself gives rather than for a track's count: in display order the first
 // three lessons a new install meets are 29, 30 and 31, and until this entry
@@ -81,7 +84,7 @@ export const LESSON_VISUALS = {
   30: "spendingLoop", // Credit: The Most Important Part (its "Spending Chain" section)
   34: "deleveragingMix", // Deleveraging: The 4 Tools (its "Beautiful vs Ugly Deleveraging" section)
   32: "cycle",         // The Short-Term Debt Cycle
-  33: "cycle",         // The Long-Term Debt Cycle
+  33: "nestedCycles",  // The Long-Term Debt Cycle — NOT "cycle"; see charts.jsx's NestedCycles header
   36: "yieldCurve",    // The Yield Curve: Crystal Ball
   37: "balanceSheet",  // QE & QT: The Fed's Power Tools
   38: "cycle",        // The 4 Phases of Economic Cycles
@@ -202,6 +205,29 @@ export default function LessonVisual({ lessonId, t, lang }) {
           phaseNames={phaseNames[lang]}
           trendLabel={trendLabel[lang]}
           description={cycleChartDescription[lang]}
+        />
+      )}
+
+      {/*
+        The only figure here whose subject is a RATIO OF TWO TIMESCALES — and
+        the only one that exists because another figure was WRONG for its
+        lesson rather than absent from it. Lessons 32, 33 and 38 all rendered
+        `cycle` until 2026-09-04, byte-identically; `CycleChart` labels four
+        phase dots that are lesson 38's vocabulary, and lesson 33's own prose
+        carries one of the four in all five languages. Lesson 33 states both
+        spans it needs — "every 5-8 years" and "75-100 years" — in adjacent
+        sentences and asks the reader to divide them; see charts.jsx.
+      */}
+      {kind === "nestedCycles" && (
+        <NestedCycles
+          title={nestedCyclesTitle[lang]}
+          seriesLabel={nestedCyclesSeriesLabel[lang]}
+          shortLabel={nestedCyclesShortLabel[lang]}
+          spanLabel={nestedCyclesSpanLabel[lang]}
+          colors={[graph.blue, graph.amber, graph.neutral]}
+          labelInks={[ink.accent, ink.warn, ink.muted]}
+          description={nestedCyclesDescription[lang]}
+          caption={nestedCyclesCaption[lang]}
         />
       )}
 

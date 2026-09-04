@@ -36,6 +36,92 @@ export const cycleChartDescription = {
   ja: "右肩上がりの長期の生産性トレンド線の上下に波打つ曲線で、拡大・ピーク・収縮・底が示されています。",
 };
 
+// ── Lesson 33's long cycle, drawn as the short ones nested inside it ───────
+// Backlog item 27, added 2026-09-04. Rendered by `NestedCycles` in charts.jsx,
+// which carries the reasoning for the figure's shape.
+//
+// ⚠️ WHY LESSON 33 HAS ITS OWN FIGURE AT ALL, because the answer is a defect
+// and not a gap. Until this date lessons 32, 33 and 38 all rendered `cycle`
+// (`CycleChart`) — measured on the built app, a BYTE-IDENTICAL <figure>, 1,667
+// characters, same fingerprint on all three, with lessons 30 and 36 differing
+// as the controls. That figure labels four phase dots, and the phases are
+// lesson 38's content. Backlog item 27 had already declined to put `CycleChart`
+// on lesson 31 for exactly that reason — "a figure that is right about the
+// lesson's claim can still be wrong for the lesson's position" — and applied
+// the rule only to the candidate, never to the two lessons already shipping it.
+// On lesson 33 the mismatch is not marginal: of the four phase labels the
+// figure draws, lesson 33's own prose contains ONE ("Peak") in all five
+// languages, while lesson 38 contains four in all five. And lesson 33's
+// takeaway says what it teaches is "fundamentally different from a regular
+// recession" — over a picture the previous lesson used for a regular recession.
+//
+// ⚠️ EVERY STRING BELOW EXCEPT THE TEXT ALTERNATIVE IS A VERBATIM SUBSTRING OF
+// LESSON 33 in the same language — lifted, not translated, for `spendingLoop`'s
+// and `mortgageSplit`'s reason (AGENT_LOG.md, owner item O-3: a figure an inch
+// from the paragraph it draws must not add four languages of unreviewed machine
+// translation). `check-data.mjs` §71 (a) holds it in both directions.
+export const nestedCyclesTitle = {
+  en: "Why It's Hard to See From the Inside",
+  es: "Por Qué Es Difícil Verlo Desde Dentro",
+  ko: "왜 안에서는 보기 어려운가",
+  zh: "为什么身处其中难以察觉",
+  ja: "なぜ渦中では見えにくいのか",
+};
+
+// The vertical axis. Lesson 33 defines it in its own parenthesis — "the debt
+// burden (the ratio of what's owed to what's earned)" — and states no VALUE for
+// it anywhere, which is why the figure draws no tick, no percentage and no
+// currency on that axis. See charts.jsx.
+export const nestedCyclesSeriesLabel = {
+  en: "debt burden",
+  es: "carga de la deuda",
+  ko: "부채 부담",
+  zh: "债务负担",
+  ja: "債務負担",
+};
+
+// The two spans the figure brackets, in the lesson's own words. These are the
+// only two quantities lesson 33 states about the shape, and they are what the
+// figure exists to put next to each other: prose delivers them in two separate
+// sentences and asks the reader to divide.
+export const nestedCyclesShortLabel = {
+  en: "every 5-8 years",
+  es: "cada 5 a 8 años",
+  ko: "5-8년마다",
+  zh: "每5-8年",
+  ja: "5-8年ごとに",
+};
+
+export const nestedCyclesSpanLabel = {
+  en: "75-100 years",
+  es: "de 75 a 100 años",
+  ko: "75-100년",
+  zh: "75-100年",
+  ja: "75-100年",
+};
+
+export const nestedCyclesCaption = {
+  en: "almost nobody alive personally remembers the last time it peaked",
+  es: "casi nadie vivo recuerda en persona la última vez que alcanzó su pico",
+  ko: "지금 살아 있는 사람 가운데 마지막 정점을 직접 기억하는 사람은 거의 없습니다",
+  zh: "几乎没有一个还活着的人，亲身记得上一次它见顶是什么样子",
+  ja: "前回それがピークを迎えたときを自分の記憶として持つ人は、ほとんど生きていません",
+};
+
+// The text alternative — the one string here that is written rather than
+// lifted, because the lesson contains no description of a picture it does not
+// know exists. It states the nesting and the two spans and nothing else: no
+// count of small cycles (the lesson bounds it, it does not state it) and no
+// position in time (§10.1 — lesson 33 asks the reader whether today looks late
+// in the cycle, and this figure must not answer that question for them).
+export const nestedCyclesDescription = {
+  en: "One long rise in the debt burden, drawn as many short cycles riding a single much longer one: the short cycles repeat every 5-8 years, and the whole rise spans 75-100 years and ends at a peak.",
+  es: "Una única subida larga de la carga de la deuda, dibujada como muchos ciclos cortos montados sobre uno mucho más largo: los ciclos cortos se repiten cada 5 a 8 años y la subida completa abarca de 75 a 100 años y termina en un pico.",
+  ko: "부채 부담이 길게 한 번 상승하는 모습으로, 짧은 순환이 훨씬 긴 하나의 순환 위에 얹혀 있습니다. 짧은 순환은 5-8년마다 반복되고, 상승 전체는 75-100년에 걸쳐 이어지다가 정점에서 끝납니다.",
+  zh: "债务负担的一次长期上升，由许多短周期叠加在一个长得多的周期之上构成：短周期每5-8年重复一次，整段上升长达75-100年，最后在顶峰结束。",
+  ja: "債務負担が長く一度だけ上昇していく様子で、短いサイクルがはるかに長い一つのサイクルの上に重なっています。短いサイクルは5-8年ごとに繰り返し、上昇全体は75-100年に及んでピークで終わります。",
+};
+
 // ── Lesson 30's spending chain, drawn as a closed loop ─────────────────────
 // Backlog item 27, added 2026-08-31. Rendered by `SpendingLoop` in
 // charts.jsx, which carries the reasoning for the figure's shape.
