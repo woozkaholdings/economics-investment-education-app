@@ -1745,6 +1745,40 @@ through two passes that each had it open.
     routes the remainder to O-3. That is TRUE OF MECHANICAL CUTS — re-proven this run with a stronger
     cutter — and FALSE OF HAND DELETION, which reached the band in all five languages on two
     questions, including one of the two the clause names as the head of the O-3 queue.**
+    - ⛔ **STOP LINE REACHED 2026-09-04 (scheduled dev-agent) — measured, not forecast. Everything
+      still open in this item is class B, and class B is O-3's decision. Read this before picking it again.**
+      - **Length is the ONLY exploitable axis in this quiz, and that is now measured rather than assumed.**
+        Two other tells were scored this date, each with controls that fired in both directions:
+        **answer position** — `0:10 / 1:13 / 2:13 / 3:10` over 46 questions, best single position
+        **28.3% against a 25.0% baseline** (economy 28.6%, essentials 26.7%, money 35.3%); and the
+        **absolute-qualifier tell** ("only/never/always/all…") — 22 of 46 questions carry at least one
+        absolute-worded option, **P(correct | option is absolute) = 22.2% against 25.0%**, and the
+        eliminate-the-absolutes strategy resolves to one survivor on **3 of 46** and is **0 for 3**.
+        **Neither is a tell. Do not re-derive them.** Position is additionally guarded by
+        `check-data.mjs` §3 at a 50% threshold; absolutes have no guard and need none.
+        ⚠️ **`quizMeta.js`'s header still describes the spread as "roughly 3/3/4/3", which is the
+        13-question figure from the 2026-08-02 de-skew.** The property it asserts holds; the number is
+        stale. Left alone deliberately — W-5.5's rule says re-read it, not that a comment's arithmetic is
+        this run's work — but the next run to touch that file should fix it.
+      - ⛔ **CLASS A IS NOT A REACHABILITY SCREEN, and it comes apart at the second-ranked question.**
+        Class A means "the English correct option has a detachable reasoning tail". Ranked by relative
+        margin the queue is **`q008` 57% (B), `q021` 56% (A), `q014` 53% (B), `q005` 50% (A)**.
+        **`q021` (lesson 7, marginal tax brackets) is class A and unreachable:** its tail
+        (`— the rest is unchanged`, 22 code points) leaves the option at **87 against a ceiling of 54**
+        (option 109, band [44,54]), because all three distractors are short slogans; `zh` must reach
+        **≤16 from 25** and `ja` **≤18 from 32**. **A detachable tail does not imply a sufficient one.**
+      - **`q005` (lesson 34) is the last reachable question and was DECLINED on quality, not on cost.**
+        49 → ~23 lands in `en`, but its bands are **`zh` [4,6]** and **`ja` [6,7]** — landing them means
+        re-cutting two unreviewed translations to six and seven characters to move §65 by two points.
+        That is precisely the "moving the instrument without moving the defect" failure this item's own
+        2026-09-03 corollary named. **If a future run wants it, it is a deliberate O-3-shaped choice.**
+      - **Live §65 at this stop line, reproduced independently with five scorer controls:** longest-option
+        **en 56.5%, es/ko 54.3%, zh/ja 52.2%**; shortest-option 2.2/2.2/0.0/2.2/4.3; **19 beatable in all
+        five, 28 in at least one, 124 instances.** ⚠️ **`npm test` will warn at 56.5% every run from here
+        and that is now expected, not a regression** — item 121's "a permanent warning is evidence the
+        check or the budget is wrong" applies, and the resolution is O-3's, not a trim's.
+      - **Honest priority: the remainder is BLOCKED, not low.** Distractor-quality work is new prose in
+        four unreviewed languages. **Owner call (O-3), and it is the same call O-3 already asks for.**
     - ✅ **2026-09-03 (scheduled dev-agent): `q032` (money 18) shipped in all five languages — and
       step 3.5 changed the pick on an axis no previous pass in this item has ranked by.
       §65 live: longest-option **en 58.7% → 56.5%**, es/ko 56.5% → 54.3%, zh/ja 54.3% → 52.2%;
@@ -4397,6 +4431,137 @@ zero meaningful: `selftest PASS (8/8 controls fired, plantsRemoved true)` and, p
 finding(s); V vacuous; U unavailable`. A bare "no accessibility issues found" is not a result.
 
 ## Run log
+
+### 2026-09-04 (scheduled dev-agent, self-picked off a live sweep) — the launch scorecard scored a Phase-0 gate on a mechanism the app reversed seventeen days ago; and the two quiz tells I measured to justify NOT picking item 160 both came back clean, which is the finding that closes it
+
+**Where the pick came from, and why it is not item 160 for a third time.** The previous two runs both
+took item 160, and the one before that took item 27. **W-6.2 rule 1 does not literally bind** — item
+160 is a numbered, owner-touched backlog item, not a residual — but W-5.2's standing lesson is about
+direction coming from "continue the tranche", and two consecutive runs on one item is what that looks
+like. So instead of picking by inertia I **ranked the tells rather than the questions**: before
+spending a run trimming a third option, measure whether option length is even the axis that deserves
+it. That measurement is below, it took two instruments, and it changed the run.
+
+**Step 3.5, part one — the two unmeasured axes, both clean.** `grep` finds **zero** occurrences of
+`position`-as-answer-bias, `correctIndex` or "position bias" in `AGENT_LOG.md` or the archive, so both
+of these looked unexamined.
+- **Answer-position bias.** Controls first (all-answers-at-index-0 must score 1.000; a perfectly even
+  4-way split must score 0.250 — both fired). Live over 46 questions: **0:10 / 1:13 / 2:13 / 3:10**,
+  best single position **28.3% against a 25.0% chance baseline**; per track economy 28.6%, essentials
+  26.7%, money 35.3%. ⛔ **My "unexamined" framing was half wrong and the correction matters:**
+  `check-data.mjs` **§3 already guards this channel** at a 50% threshold (it is the 2026-08-02 de-skew
+  that fixed 12-of-13-at-index-0), and §65's own warning text names it. What was missing was not the
+  guard but a *current reading* — the `quizMeta.js` header still describes the corpus as "roughly
+  3/3/4/3", which is a **13-question** figure carried into a 46-question corpus. The property holds;
+  the number describing it was three and a half years of corpus growth out of date.
+- **The absolute-qualifier tell** — the standard test-taking heuristic that options asserting
+  universality are distractors. This one genuinely has no guard and no prior mention. Detector
+  controls fired in both directions on six hand-checked strings ("Only government spending" → true,
+  "Save 50% of income" → false). Live: **22 of 46 questions contain at least one absolute-worded
+  option**, and **P(correct | the option is absolute) = 22.2% against a 25.0% baseline** — i.e. flat.
+  The eliminate-the-absolutes strategy resolves to a single survivor on only **3 of 46** questions and
+  is **0 for 3** on them. **The corpus does not have this tell.**
+
+**What that buys, and it is the durable half of this run: option length is the ONLY exploitable axis
+in this quiz.** Position is guarded and measured clean; absolutes are unguarded and measured clean;
+length scores **56.5%** against 25.0%. Item 160 was right to exist, and a future run does not have to
+re-derive the two negatives to know that.
+
+**Step 3.5, part two — §65 reproduced exactly, and the class-A screen it left behind is not
+predictive.** An independent re-implementation with five controls (strict-longest → beatable; tie at
+max → NOT beatable; strict-shortest → inverted; tie at min → NOT inverted; a 2-code-point CJK option
+must not outrank a 10-code-point Latin one) returns the live line **to the tenth**: longest-option
+**en 26/46 = 56.5%, es/ko 54.3%, zh/ja 52.2%**, **19 beatable in all five, 28 in at least one, 124
+instances**. Ranked by the relative margin the previous run prescribed (controls: a 2x runner-up
+scores 1.000, +1-of-100 scores 0.010), the head of the queue is **`q008` 57% (class B), `q021` 56%
+(class A), `q014` 53% (class B), `q005` 50% (class A)**.
+⛔ **`q021` is class A and is NOT reachable, and that refutes the screen rather than the question.**
+Class A membership means "the English correct option has a detachable reasoning tail". `q021`'s tail
+(`— the rest is unchanged`, 22 code points) leaves the option at **87 against a ceiling of 54**; the
+option is 109 and the band is [44,54], because the three distractors are short slogans. Its CJK cells
+are worse — `zh` must reach **≤16 from 25**, `ja` **≤18 from 32**. **Having a detachable tail does not
+imply the tail is sufficient**, and on this corpus the two come apart at the second-ranked question.
+`q005` (lesson 34, main path) *is* reachable at 49 → ~23, but its bands are **`zh` [4,6] and `ja`
+[6,7]** — landing those means re-cutting two unreviewed translations to six and seven characters to
+move an instrument by two points, which is the "moving the instrument without moving the defect"
+failure the previous run itself named. **I declined both.**
+
+**So item 160 has reached the stop line its own text predicted**, and now at a measured place rather
+than as a forecast: ranks 1-3 are class B or class-B-in-practice, and rank 4 is reachable only by
+degrading four unreviewed translations. **The remainder is distractor quality, which is new prose in
+four languages, which is O-3's decision and not a run's.** Recorded in the item; nothing further for a
+scheduled run to take there without an owner call.
+
+**What shipped instead — `LAUNCH_READINESS.md`, and the defect was found by driving the app, not by
+reading the file.** §4.3's *structural precondition* row — an evidence cell for a **Phase-0 monetization
+gate** — read *"A new install opens into the money track's first lesson (fixed 2026-08-07), not the
+macro-theory chain."* Measured live on the built app from cleared `localStorage`: a new install opens on
+**"Transactions: The Building Block", `How the Economy Works`** — the macro chain, which is exactly what
+the owner-directed **2026-08-18** reversal in `DECISIONS.md` intends. `LAUNCH_PLAN.md` §0 and
+`DECISIONS.md` were both updated when that decision landed; **this file was not, for seventeen days.**
+- **Control, because a page read that silently returns a constant looks like a clean measurement:**
+  seeding lesson 29 as complete moved the card from "START HERE / Transactions" to "NEXT UP / Credit:
+  The Most Important Part" and the counter from **0/44 to 1/44**. The reading is live.
+- ⚠️ **The verdict survived and the reasoning did not, which is the part worth keeping.** The row's ⚠️
+  rested on *which track opens first*. The property that actually clears the obstacle is that the tracks
+  are **independent**: measured from cleared storage, `Thinking About Money`'s first lesson is
+  **unlocked with zero lessons completed** (16 of its 17 rows locked, the first not), so no money lesson
+  sits behind the macro chain. Had the reversal also re-gated the tracks, this row would have gone on
+  scoring a gate on a premise it no longer had — and nothing would have said so.
+- **Three stale figures in §10.4 fixed with it**, all hand-written: **"12 of 40 lessons" → "12 of 44"**
+  and the p90 full-translation references **ko 0.55 → 0.58, zh 0.35 → 0.36, ja 0.50 → 0.51**, re-run
+  this date. **The abridged set itself did not move** — still 48 pairs, es/ko/zh/ja 12 each, still
+  entirely on the optional `essentials` track (lessons 1-11, 14) — so §10.4's conclusion was right and
+  only its arithmetic was stale.
+- **The mechanism, stated as this file's own rule turned on itself:** "How to refresh this file" guards
+  the **generated** figures with `npm test` (12 of them, across three documents) and leaves every
+  **narrative** evidence cell unguarded. A generated figure cannot go stale here. A hand-written
+  mechanism can, and did, in the cell scoring a Phase-0 gate.
+
+**W-6.2 rule 3 — no check proposed, and the reason is the rule.** The failure this run fixed is not
+learner-visible: no reader of the app can see a wrong sentence in the scorecard. Rule 3 says that if the
+learner-visible sentence cannot be written, the check is not due, so none is. **W-6.3, quoted and
+honored: `scripts/` at 2.3x `src/`, and this run adds 0 lines to `scripts/`** — all four instruments (the
+position scorer, the absolutes detector, the §65 re-implementation, the margin ranker) ran from the
+session scratchpad and are written out here.
+
+**Step 5, adversarial self-check — one real thing found, in my own framing rather than in the diff.**
+The position finding was filed in my head as "an unexamined axis"; grepping the *scripts* rather than
+the log showed §3 has guarded it since 2026-08-02, and the honest claim is narrower — the guard exists,
+the corpus reading was stale in a header comment. That correction is above rather than quietly dropped.
+On the register: **§10.2** — no Dalio string added; `check-blindspot` green (this file deliberately
+names Dalio while *stating* the rule and is not scanned, unchanged by me). **§10.1** — nothing
+advice-adjacent; the diff is track ordering and translation arithmetic. **§10.3** — no kids surface
+touched. **Stale-data fix** — the dates I added are dated document records, not a live-looking market
+figure in teaching copy; §2.3 passes over all 26 teaching-copy modules. **DECISIONS.md** — this change
+*aligns* the scorecard with the 2026-08-18 reversal rather than contradicting any closed decision.
+**Already-done check** — "structural precondition" and "structural obstacle" appear **zero** times in
+`AGENT_LOG.md` and the archive, and `git log -S` shows the sentence entered in `e8cef03` (2026-08-09,
+backlog P-2) and was never touched again: no run has ever examined this row, so this is not a redo.
+**My own verification claim** — every figure here is printed by `npm test`, by
+`npm run translation-completeness`, or by a scratchpad script re-run this session with its controls
+visible; the two app facts were read off the built app's DOM with the control quoted above.
+
+⚠️ **And the suite caught a defect in this run's own log edit, which is worth recording because it is
+the check working on the checker.** My first attempt filed the stop-line finding as a fresh `160.`
+block prepended to the item, producing **two backlog items numbered 160** — `check-data.mjs` failed with
+*"backlog item 160 is defined 2 times (lines 1743, 1778)"* and named the remedy. Re-shaped as content
+*inside* item 160 rather than a second item, and re-run to 0 failures. **I would have committed it:**
+the edit looked right in the diff, and only an instrument that reads the file as a numbered structure
+could see it.
+
+**`npm test` 0 failures, 3 warnings** — all three pre-existing and named in the previous entry
+(translation review share, translation completeness, §65's own line), plus the separate floor-budget
+warning. **The 12 generated figures across `LAUNCH_READINESS.md` + `LAUNCH_PLAN.md` + `CLAIMS.md` still
+agree with the content**, which is the check that proves I edited narrative and not a generated
+sentence. **`npm run build` clean**, 980ms. **`npm run check-blindspot` 0 failures.**
+
+**O-1 remains the entire critical path: 44 lessons, 5 languages, 161 minutes of content — and zero
+people have ever opened this app** (figures off `npm test`'s readiness line).
+
+**Owner tree:** `git status` at run start and again before writing showed **0 tracked modified besides
+this run's two files, `UIUX/` untracked and untouched**. `HEAD` re-checked before writing, unmoved at
+`b06c58b`.
 
 ### 2026-09-03 (scheduled dev-agent, backlog item 160) — the corpus's biggest quiz tell was never on any candidate list, because every list so far has ranked by what the edit costs me rather than by what a learner can see
 
