@@ -4599,6 +4599,156 @@ finding(s); V vacuous; U unavailable`. A bare "no accessibility issues found" is
 
 ## Run log
 
+### 2026-09-04 (scheduled dev-agent, picked from LAUNCH_PLAN §3.0 under W-6.2 rule 1) — the lesson titled "The 4 Phases" named four phases in its title, its subtitle and its figure's four dots, and then rendered two of them per screen; the deferral that left it there was half right about the code and wrong about the cost
+
+**Where the pick came from, and the tally is re-run rather than carried.** No residual was
+available by default — the two previous runs both picked from the launch plan — so I re-ran the
+least-audited-§3.0-clause tally over `AGENT_LOG.md` + `AGENT_LOG.archive.md` + `reviews/`:
+**§3.0.3 48, §3.0.4 26, §3.0.5 16, §3.0.1 14, §3.0.6 13, §3.0.7 13, §3.0.2 7** (control: the bare
+string `§3.0` returns **157**, so the grep was live). §3.0.2 is lowest and was this project's
+previous run; **§3.0.6 (13) and §3.0.1 (14) are next, and I checked both for the trap the previous
+run named — a low count hiding a real audit.** §3.0.6 **was** audited in depth on 2026-08-31 (the
+VIX-bands entry, archive line 32051), so its count is misleading in exactly that way. §3.0.1 was
+screened the same day — **and that screen recorded two findings it deliberately did not fix.** That
+is where this run went.
+
+**Step 3.5 — the premise, and the deferral's stated blocker, measured separately.**
+The 2026-08-31 entry left *"L38's four phases in two '&'-joined sections and L39's five gauges in
+one section … exactly as they are"*, on two grounds: **(i)** "the §3.0.1 reading is arguable in
+both cases" and **(ii)** "the fix moves `sectionIndex`, which `termsForSection()` and the section
+`aria-labelledby` ids are keyed on". Both were checked.
+- **(ii) is half wrong, and that half is the whole cost estimate.** `grep sectionIndex` over `src/`
+  + `scripts/` returns **six live code sites** (three further mentions are comments): two in
+  `lessonTerms.js`'s two-line accessor, and four inside one `.map()` in `LessonReader.jsx`. **The `aria-labelledby` ids are not keyed on anything — they are
+  generated from the map index in the same expression that renders the section**
+  (`lesson-section-${sectionIndex}-title`), so a split renumbers them with no edit and no risk.
+  The real cost is **one data line** in `lessonTerms.js`. Nothing else in the repo hardcodes a
+  lesson-38 section index (`grep 'sections\[[0-9]\]'` over `scripts/` + `src/` returns 3 hits, all
+  comments about lessons 1, 8 and 34).
+- **(i) is right about L39 and wrong about L38, and I have an instrument for the difference.**
+  A heading-conjunction screen over all 105 sections flags **24** (`&`/`and`/`vs`/`or`) — far too
+  blunt, because *"Traditional vs Roth"* and *"Credit vs Money"* each teach **one** idea, the
+  comparison. The sharper screen is the author's own device: **a section whose body carries two or
+  more paragraphs led by an ALL-CAPS label + colon.** That returns **3 of 105** — lesson 38's two
+  sections (`EXPANSION`/`PEAK`, `CONTRACTION`/`TROUGH`) and lesson 40 sec 0 (`RULE 1/2/3`).
+  ⛔ **My first version of that screen returned 2 and I fixed it before using it**: the character
+  class excluded digits, so `RULE 1:` was invisible. A screen that had silently missed lesson 40
+  would have made "lesson 38 is the only instance" a false claim about a dead instrument.
+  Controls both directions: positives `EXPANSION: credit`, `RULE 1: Do not let debt` both fire;
+  negative `Historically favored in this phase: value stocks` (a real line from this very lesson)
+  stays silent.
+- **Lesson 40 is a deliberate non-defect and stays untouched:** its heading is *"The Three Rules"*,
+  a truthful name for the set it contains. Lesson 38's headings joined **two of four** co-equal
+  phases while **the lesson's own title says "The 4 Phases", its subtitle reads
+  `Expansion → Peak → Contraction → Trough`, and the cycle figure on the same screen labels four
+  dots.** Four names in three places, two containers. That is not an arguable reading, and the
+  correction to the 2026-08-31 note is that **it was arguable about L39 only**. L39 is untouched:
+  five gauges under *"Key Indicators"* is a list under a heading that names the list.
+
+**What shipped — four sections where there were two, and NOT ONE WORD of new prose in any language.**
+Headings are `content/markets.js`'s **`phaseNames` verbatim** — the labels the figure on this same
+lesson already draws, and (bar `ko`) the lesson subtitle's own four names: `Expansion/Peak/
+Contraction/Trough`, `Expansión/Pico/Contracción/Valle`, `확장기/정점/수축기/저점`, `扩张/顶峰/收缩/低谷`,
+`拡大/ピーク/収縮/底`. The now-redundant in-body ALL-CAPS phase labels come out, since the heading
+carries what they carried.
+- **The no-new-prose claim is proved, not asserted.** Concatenating the four new bodies and
+  comparing against the two old ones with the four markers deleted is **character-identical**
+  (case- and whitespace-insensitive, which is exactly the `en`/`es` recapitalization after the
+  stripped label): en 1,813 → 1,813, es 2,098 → 2,098, ko 932 → 932, zh 610 → 610, ja 796 → 796,
+  and section "Why These Assets" byte-equal in all five. **Control: the same comparison against one
+  perturbed CJK character, and against one deleted clause, both report DIFFERS** — so the equality
+  is a reading, not a dead instrument.
+- **`lessonTerms[38]` re-curated by hand under the module's own rule 3 (earliest section that uses
+  the term), not automated:** `0: [GDP, Credit, Stock]`, `1: [Inflation, Bond]`, `TAIL` unchanged.
+  Inflation and Bond are first used under **Peak**, not Expansion — measured, not guessed.
+- **The word budget was checked before writing.** `minutes` is derived and the build fails on drift:
+  lesson 38 was **774 words** (4 min, band 700-900) and the split is net **-6** (two heading words
+  removed, four marker words removed, two heading words added). No `minutes` field moved.
+
+**Verification.**
+- `npm test` — **0 failures, 4 warnings**, all four pre-existing and unchanged in kind (translation
+  human share, 48 abridged pairs, item 160's option-length cue at en 56.5%, the AGENT_LOG floor).
+  `npm run build` clean, 907 ms. `npm run check-blindspot` **0 failures**.
+- **The suite went red first, twice, and both were ledgers working.** `translation-review.mjs`
+  marked lesson 38 stale in all four languages the moment the English hash moved (§11 then failed
+  the build on `LAUNCH_READINESS.md` §10.4 disagreeing with the live ledger); re-marked all four
+  `ai` on the strength of the character-identity proof above, coverage back to **44/44, 0% human**.
+  Then §4.3's catalog row disagreed; `refresh-readiness.mjs --write` moved two generated figures
+  (150,650 → 150,608 English chars and the four volume ratios, unchanged to three decimals).
+  **§33 did not fire in either direction** — the completeness ratios did not move.
+- **Read in the built app, not in source.** Served `dist/` statically, seeded past the disclaimer,
+  opened `#/lesson/38`, confirmed the bundle back (`index-6W_t2N_1.js`, this build). **Five
+  `<section>`s, five `aria-labelledby` attributes, all five resolving to a heading with the right
+  text**, in outline order Expansion → Peak → Contraction → Trough → Why These Assets. Switched the
+  picker through all five languages: **in every one the four new section headings are
+  character-equal to the four phase-dot labels the figure draws beside them.** Chips render
+  `Gross Domestic Product / Credit / Stock` under Expansion and `Inflation / Bond` under Peak.
+- **Leftover-marker sweep, five languages, 0 findings, control firing in each** (the per-language
+  regex fires on a planted `扩张期：`/`확장기:`/`拡大期：` string and stays silent on the shipped
+  `Historically favored in this phase:` line).
+- **320 px sweep with a planted 900 px `white-space:nowrap` probe: control fired** (`scrollWidth`
+  900 with the probe, **320** without), **0 elements past the right edge** — checked in `ja` and
+  again in `es` at the app's **1.3x** font scale, the combination that produced item 155's live
+  instance. All five headings' right edge at **304.0** against a 320 px viewport.
+
+**Step 5 — adversarial self-check.**
+- **§10.1 (advice adjacency) — checked by plant, because this run created four brand-new `heading`
+  fields and a pass proves nothing unless the check reaches them.** Planted
+  `지금이 매수하기 좋은 시기입니다.` into the **new `"heading": "정점"` value** in
+  `lessonContent.economy.ko.js`: **FAIL**, on the Korean timing pattern, naming the line. Restored
+  from a scratchpad copy (never `git checkout --`), re-ran: **PASS**, the plant greps to **0**.
+- **§10.2 / §10.3 / §2.3:** `grep -ic dalio` over all six touched files returns **0** in each; kids
+  content untouched; **the diff adds no date and no figure at all** (`grep '^+' | grep -oE
+  '20[0-9]{2}|asOf|today|current'` over the five content files returns empty). The Buffett
+  quotation in 38's `thinkAbout` is **item 158's open owner decision and was not touched** — it is
+  in a field this change does not reach.
+- **DECISIONS.md conflict:** none, and the one relevant entry was read rather than grepped past.
+  "In-lesson glossary links are a curated map, not an automatic prose match" specifies exactly the
+  `{ lessonId: { sectionIndex: [keys] } }` shape this run re-curated, **by hand, per its rule 3** —
+  the decision is honored, not bent. (Control: `localStorage` returns 11 hits in the same file.)
+- **Already-done backlog item:** no. `lesson 38` appears in `AGENT_LOG.md` as item 158's Buffett
+  quotation and as the **positive control** for the phase-vocabulary check — never as a structural
+  edit. **That control was re-run against the new tree rather than assumed:** lesson 38 still scores
+  **4/4 phase labels in all five languages** (negative control: lesson 29 scores 0/4 in en and zh).
+- **My own verification claim:** every figure above is printed by a command re-run this session with
+  its control beside it, or read off the built app with the bundle name confirmed; the
+  no-new-prose claim is a re-runnable character comparison, not a reading of the diff.
+- **W-6.3 (instrument-to-app ratio):** **0 lines added to `scripts/`.** The heading-conjunction and
+  labeled-block screens live in this entry only. W-6.2 rule 3's sentence is answerable for the
+  content fix — *"a learner was shown two phases under one heading on the lesson whose title
+  promises four"* — but the class is now at **zero live instances corpus-wide**, so per rule 2 it
+  earns a note, not an item, and per W-6.3 it does not earn a 73rd check.
+- ⛔ **What the check found against me:** my first labeled-block screen was blind to lesson 40, and
+  I had already half-written the sentence "lesson 38 is the only instance in the corpus." It is
+  still the only *defect*, but only because lesson 40's heading names its set honestly — a
+  distinction I would have skipped had the instrument not been fixed first.
+
+**O-3 accounting, priced as the standing ask requires. This run adds ZERO characters of unreviewed
+machine translation** — the four new headings are `phaseNames` strings already shipping in the app,
+and every other translated character is byte-identical to what was there. Net delta is **negative**
+in all five languages (the deleted markers, net of the two added headings), measured against
+`git show HEAD` over lesson 38's heading + body fields: **en -52, es -51, ko -30, zh -24, ja -26**.
+⛔ These five figures replace a first draft that guessed them at roughly half that; they are the
+measured delta, not an estimate. For scale, the
+previous run priced its enlargement at **+360** and the 2026-09-04 quiz-explanation run at
+**+1,633**. Human review share unchanged at **0%**, which is O-3's actual open question.
+
+**Filed as notes, not as numbered items (W-6.2 rule 2 + W-6.4).** (i) **§3.0.1 is now at zero live
+instances corpus-wide** on the labeled-block screen, and the 2026-08-31 deferral's two grounds are
+corrected above — L39 stays deferred on the "arguable" ground, which holds for it; the
+`sectionIndex` ground does not hold for anything and should not be cited again. (ii) **§3.0.6's
+count of 13 is the same low-count trap §3.0.2's 7 was** — it was audited in depth 2026-08-31; the
+next tally should skip it. (iii) Item 160's own text still asks that the next run to open
+`quizMeta.js` fix its stale "roughly 3/3/4/3" header comment; this run did not open that file, so
+the ask stands for the third entry running.
+
+**O-1 remains the entire critical path: 44 lessons, 5 languages, 161 minutes of content — and zero
+people have ever opened this app** (figures off `npm test`'s readiness line).
+
+**Owner tree:** `git status` at run start and again before writing showed the owner's untracked
+`UIUX/` only, **untouched**. `HEAD` re-checked before writing and unmoved at `3f99542`.
+
+
 ### 2026-09-04 (scheduled dev-agent, picked from LAUNCH_PLAN §3.0 under W-6.2 rule 1) — the §3.0.2 audit counted ten defects and named seven, and the three it dropped were all on the main path; one of them was real and opened the QE lesson with nothing but mechanism
 
 **Where the pick came from.** The previous run picked from the launch plan and the two before it took

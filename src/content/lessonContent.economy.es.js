@@ -180,12 +180,20 @@ export const lessonContent = {
   "38": {
     "sections": [
       {
-        "heading": "Expansión y Pico",
-        "body": "Imagina el mismo pueblo fabril de “El Ciclo de Deuda a Corto Plazo”, ya con varios años de auge encima. EXPANSIÓN: el crédito fluye con soltura, el PIB sube, siguen apareciendo empleos nuevos y la confianza se afianza. La gente pide más prestado, gasta más y se siente más rica; el pueblo suma un segundo restaurante, y luego un tercero. Históricamente, esta fase ha coincidido con retornos promedio del S&P 500 de aproximadamente +14-28%, y activos como las acciones de crecimiento, las acciones cíclicas y los inmuebles han sido históricamente los favorecidos en ella.\n\nPICO: la producción del pueblo está ahora más o menos tan alta como puede llegar: todos los trabajadores tienen empleo, todos los restaurantes están llenos. La inflación corre en máximos y el Fed sube las tasas para enfriar las cosas. El crecimiento se estanca, aunque el ánimo todavía no se haya enterado. Aquí es donde se siembran calladamente las semillas de la siguiente contracción.\n\nHistóricamente favorecidos en esta fase: las acciones de valor, las materias primas y los bonos de corta duración."
+        "heading": "Expansión",
+        "body": "Imagina el mismo pueblo fabril de “El Ciclo de Deuda a Corto Plazo”, ya con varios años de auge encima. El crédito fluye con soltura, el PIB sube, siguen apareciendo empleos nuevos y la confianza se afianza. La gente pide más prestado, gasta más y se siente más rica; el pueblo suma un segundo restaurante, y luego un tercero. Históricamente, esta fase ha coincidido con retornos promedio del S&P 500 de aproximadamente +14-28%, y activos como las acciones de crecimiento, las acciones cíclicas y los inmuebles han sido históricamente los favorecidos en ella."
       },
       {
-        "heading": "Contracción y Valle",
-        "body": "CONTRACCIÓN: de vuelta en el pueblo, el crédito se contrae, el gasto cae y el tercer restaurante despide personal y luego cierra. El desempleo sube en todo el pueblo y el Fed empieza a recortar tasas para intentar frenar la caída. Históricamente, esta fase ha coincidido con caídas promedio del S&P 500 de aproximadamente -22-35%, y activos como los bonos del Tesoro, el oro, las acciones defensivas (servicios públicos, salud) y el simple efectivo han aguantado históricamente mejor en ella.\n\nVALLE: este es el punto de máximo pesimismo: escaparates tapiados, titulares sombríos, nadie que quiera ser quien compre. Pero históricamente aquí también han comenzado los rebotes más fuertes, precisamente porque los precios ya han caído tanto que hasta una noticia buena modesta parece significativa. El retorno promedio del S&P 500 en el primer año después de un fondo ha rondado históricamente el +38-50%.\n\nHistóricamente favorecidos en esta fase: las acciones de calidad castigadas, los bonos de alto rendimiento y los inmuebles a precios de remate."
+        "heading": "Pico",
+        "body": "La producción del pueblo está ahora más o menos tan alta como puede llegar: todos los trabajadores tienen empleo, todos los restaurantes están llenos. La inflación corre en máximos y el Fed sube las tasas para enfriar las cosas. El crecimiento se estanca, aunque el ánimo todavía no se haya enterado. Aquí es donde se siembran calladamente las semillas de la siguiente contracción.\n\nHistóricamente favorecidos en esta fase: las acciones de valor, las materias primas y los bonos de corta duración."
+      },
+      {
+        "heading": "Contracción",
+        "body": "De vuelta en el pueblo, el crédito se contrae, el gasto cae y el tercer restaurante despide personal y luego cierra. El desempleo sube en todo el pueblo y el Fed empieza a recortar tasas para intentar frenar la caída. Históricamente, esta fase ha coincidido con caídas promedio del S&P 500 de aproximadamente -22-35%, y activos como los bonos del Tesoro, el oro, las acciones defensivas (servicios públicos, salud) y el simple efectivo han aguantado históricamente mejor en ella."
+      },
+      {
+        "heading": "Valle",
+        "body": "Este es el punto de máximo pesimismo: escaparates tapiados, titulares sombríos, nadie que quiera ser quien compre. Pero históricamente aquí también han comenzado los rebotes más fuertes, precisamente porque los precios ya han caído tanto que hasta una noticia buena modesta parece significativa. El retorno promedio del S&P 500 en el primer año después de un fondo ha rondado históricamente el +38-50%.\n\nHistóricamente favorecidos en esta fase: las acciones de calidad castigadas, los bonos de alto rendimiento y los inmuebles a precios de remate."
       },
       {
         "heading": "Por Qué Estos Activos, en Esta Fase",

@@ -196,7 +196,10 @@ export const lessonTerms = {
   // 38's body names interest rates only inside the cross-reference
   // “Interest Rates” (stripped by item 84's rule); the takeaway uses the term
   // plainly — "how interest rates move through the economy".
-  38: { 0: ["GDP", "Inflation", "Credit", "Stock", "Bond"], [TAIL]: ["Interest Rate"] },
+  // Split across sections 0 and 1 when 38's two "&"-joined sections became the
+  // lesson's own four phases (§3.0.1): rule 3 puts each term on its earliest
+  // section, and Inflation and Bond are first used under "Peak", not "Expansion".
+  38: { 0: ["GDP", "Credit", "Stock"], 1: ["Inflation", "Bond"], [TAIL]: ["Interest Rate"] },
   // 39 defines its eight indicators inline and carries no chip for any of them
   // (see deliberatelyUnlinked below) — but it does not define "stock", which is
   // why the one term it does chip is the one it merely uses in passing.
