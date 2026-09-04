@@ -902,6 +902,26 @@ through two passes that each had it open.
     (owner-directed: "go ahead with the compression pass"). The backlog section is
     481,574 → 176,414 → see item 122 for the current number. All item numbers survive and every open
     item stayed byte-identical in all three passes.**
+    > ⛔ **FIFTH PASS 2026-09-04 (owner-directed). Recovered 17,157 b on the artifact — floor
+    > 410,754 → 393,597 b — and THE OWNER OPTION BELOW HAS NOW EXPIRED. Read this before running a
+    > sixth.**
+    > **Headline-only for every closed item now projects to 254,621 b — OVER the 250,000 b budget by
+    > 4,621.** On 2026-09-02 the fourth pass measured that same projection at 232,194 b, *under* by
+    > 17,806, and predicted about three days left. It was right. **Control, because a projection
+    > compared against another run's projection is worthless unless the two instruments agree:** my
+    > estimator run against `767a96f` itself reports **232,009 b against their 232,194 — 185 b, 0.08%.**
+    > ⛔ **AND THE FINDING THAT SHOULD STOP A SIXTH PASS BEING ORDERED FOR THIS PURPOSE: the
+    > projection is INVARIANT to compression. Measured before and after this pass: 254,621 b, and
+    > 254,621 b — identical to the byte.** Compression under this rule and the headline-only cut
+    > remove *the same material*, so a pass buys headroom against the floor's growth and moves the
+    > option's reachability by exactly **zero**. No number of further passes reopens it. **What is
+    > left is what item 115 has always said is the owner's: delete closed items outright, or raise the
+    > budget.** A run must not choose.
+    > **Scope, following the fourth pass's precedent:** only the three closed items changed since
+    > `767a96f` (160, 165, 156); items an earlier pass already judged were left alone. **156 was
+    > examined and DECLINED** — 659 b droppable, and it included a run-log pointer a reviewer needs.
+    > All open items byte-identical; 142/142 item numbers survive; all 190 `backlog item N` citations
+    > still resolve.
     > **FOURTH PASS 2026-09-02 (owner-directed: "do the backlog compression pass next"). Recovered
     > 8,846 b on the artifact — floor 366,737 → 357,891 b — and its value is the arithmetic, not the
     > bytes.** Scoped deliberately to material the rule had never touched (8 items added and 6 changed
@@ -1566,10 +1586,6 @@ through two passes that each had it open.
       zh 0.38, ja 0.52**; a pair counts as abridged below 0.7x its own language's reference, the same
       test `translation-completeness.mjs` applies to lesson bodies. **19 of 46 questions are
       abridged in at least one language; 69 pairs in total.**
-    - **It is not spread evenly and that is what makes it schedulable: q001-q014 are the ECONOMY
-      track (lessons 29-40), which is the main path a new install opens on.** `q001`'s Spanish
-      explanation is 0.32x of the English and its Chinese 0.07x. The worst are 1-sentence stubs of
-      a 2-4 sentence English explanation.
     - **Why this is worse than an ordinary translation gap.** Item 160's rule is *"the reasoning
       belongs in `explain`"*, and three runs have now moved reasoning out of options on that basis.
       **In four languages, for these 19 questions, it is being moved into a field that does not carry
@@ -1601,36 +1617,15 @@ through two passes that each had it open.
       > repair raised it. ko 0.582 / zh 0.380 / ja 0.520 are unmoved. **A p90 reference is computed
       > from the corpus it measures, so repairing the corpus moves the instrument.** Quote it with a
       > date.
-    - ✅ **THE MAIN PATH IS CLOSED ON CONTENT 2026-09-04 (scheduled dev-agent) — 3 questions × 4
-      languages repaired, and the other 2 were READ and are complete.** All 14 main-path pairs were
-      read against their English, which is the "read first" half this item asks for:
-      - **`q010` (L34) — repaired in all four.** English ends *"Raising rates further isn't one of
-        them — in a deleveraging, rates are usually already near 0%."* **All four dropped the clause
-        after the dash**, i.e. the reason the wrong answer is wrong. `es` had also dropped
-        *"(taxes)"* after "wealth redistribution", which ko/zh/ja all carry; restored.
-      - **`q012` (L38) — repaired in all four.** All four dropped *"since expansion begins again
-        from there"* (the mechanism) and narrowed *"not a guarantee for any specific future trough"*
-        to a bare "not a guarantee". **The hedge itself was never missing** — the 2026-09-03 reading
-        of that was right — but it was less specific than the English in four languages, and the
-        repair makes it more specific, not less. §10.1-sensitive and treated as such.
-      - **`q014` (L33) — repaired in all four,** including `ko` and `es`, which the ratio did
-        **not** flag. English ends *"— which is what the next lesson covers."* and **all four**
-        dropped it. **Repairing only the two flagged languages would have made the corpus less
-        consistent than it was**: the instrument scores a pair, and parity is a property of the set.
-        Uses each language's own chrome wording for "next lesson" (`Lección` / `레슨` /
-        `下一课` / `次のレッスン`), read off `locales/`.
-      - **`q003` (L32, ko/zh/ja) and `q011` (L35, zh) — READ, COMPLETE, NOT EDITED.** Both are
-        two-sentence English rendered whole in compact CJK; they flag because the ratio is 1-3
-        hundredths under a threshold, not because anything is missing. **This is item 162's
-        false-positive class in a third corpus** (there, 30 of 336). `q012`'s `zh` **still flags
-        after the repair** at 0.262 against a 0.266 threshold — one code point — and is likewise
-        complete. **These five pairs are this corpus's `READ_COMPLETE` seed.**
-      - **Result: 29 pairs / 10 questions → 20 pairs / 8 questions**, and every remaining question is
-        on **`essentials`** (L4, L7, L8, L9, L14) — the optional track. The line this item has
-        wanted to write is now true, and true on content rather than on the instrument.
-      - **O-3 applies and is flagged rather than assumed away:** the 12 repaired strings are
-        unreviewed machine translation, like the corpus around them. This restores parity with
-        English prose that already shipped; it authors no new teaching claim.
+    - **`q003` (L32, ko/zh/ja) and `q011` (L35, zh) — READ, COMPLETE, NOT EDITED.** Both are
+      two-sentence English rendered whole in compact CJK; they flag because the ratio is 1-3
+      hundredths under a threshold, not because anything is missing. **This is item 162's
+      false-positive class in a third corpus** (there, 30 of 336). `q012`'s `zh` **still flags
+      after the repair** at 0.262 against a 0.266 threshold — one code point — and is likewise
+      complete. **These five pairs are this corpus's `READ_COMPLETE` seed.**
+    - **Result: 29 pairs / 10 questions → 20 pairs / 8 questions**, and every remaining question is
+      on **`essentials`** (L4, L7, L8, L9, L14) — the optional track. The line this item has
+      wanted to write is now true, and true on content rather than on the instrument.
     - ⛔ **THE GUARD IS AN OWNER DECISION, AND THE ORDERING IS THE POINT — not a deferral.** A
       `quizText` completeness check satisfies W-6.2 rule 3 cleanly (the learner-visible failure is
       "answered in Spanish, shown one clause where the English reader is shown the mechanism"), and
@@ -1655,6 +1650,12 @@ through two passes that each had it open.
       > the wrong end first**, and it makes the remainder downstream of **item 94**, not merely of
       > O-3's volume question. Whoever picks this up should take the lesson bodies or neither.
 
+    - *Compressed 2026-09-04 (fifth backlog-compression pass, owner-directed). Dropped: the
+      per-question repair chronology for `q010`/`q012`/`q014`, the superseded track-distribution and
+      inter-pass priority bullets, and the per-tranche O-3 accounting — all in the run log under
+      2026-09-03 and 2026-09-04. Kept byte-identical: the headline with all its ⛔/⚠️ corrections and
+      instrument traps, the `q003`/`q011` READ-COMPLETE finding, the live remaining counts, and the
+      ⛔ owner-decision block.*
 164. **✅ DONE 2026-09-02 (scheduled dev-agent) — the headline premise reproduced exactly, and the
     item's own list of phrasings did not: one of the three it proposed fires on shipped teaching
     copy. Widened in all five languages, with a two-sided control.**
@@ -1875,129 +1876,82 @@ through two passes that each had it open.
         check or the budget is wrong" applies, and the resolution is O-3's, not a trim's.
       - **Honest priority: the remainder is BLOCKED, not low.** Distractor-quality work is new prose in
         four unreviewed languages. **Owner call (O-3), and it is the same call O-3 already asks for.**
-    - ✅ **2026-09-03 (scheduled dev-agent): `q032` (money 18) shipped in all five languages — and
-      step 3.5 changed the pick on an axis no previous pass in this item has ranked by.
-      §65 live: longest-option **en 58.7% → 56.5%**, es/ko 56.5% → 54.3%, zh/ja 54.3% → 52.2%;
-      shortest-option **unchanged in all five** (2.2/2.2/0.0/2.2/4.3). Beatable-in-all-five 20 → 19;
-      beatable-in-at-least-one 29 → 28; beatable question/language instances 129 → 124.**
-      - ⛔ **RANKING BY DELETION COST RANKS BY WHAT THE EDIT COSTS *ME*, NOT BY WHAT THE LEARNER CAN
-        EXPLOIT — and the two run opposite ways.** The previous pass closed by naming `q034` as
-        "cheapest, tightest" (window 8, 12 code points to remove) and `q039` as the expensive one
-        (73). Both figures reproduce exactly. But a learner cannot see a *count* of code points; they
-        see a *proportion*. Measured as **relative margin — (len(correct) − len(longest distractor))
-        / len(longest distractor)**, with two controls (a 2x runner-up scores 1.000, a +1-of-100
-        scores 0.010): **`q034` is 11%, near the WEAKEST of the all-five set, and `q032` was 79-131%
-        in every language — the largest tell in the corpus, and more than double the runner-up in
-        zh and ja.** Cheap-first and exploitable-first are close to inversely ordered here, which is
-        exactly why the biggest tells have survived nine passes. **Rank by relative margin; use
-        deletion cost only to break ties.**
-      - ⚠️ **A COROLLARY THAT KILLS THE CHEAPEST-LOOKING WORK ENTIRELY.** By deletion cost the three
-        cheapest questions in the corpus are `q009` (1 code point), `q010` (1) and `q018` (2) — nine
-        tell-instances for about four characters, which looks like the best trade in the item. It is
-        not work at all: their relative margins are **3%, 3% and 3%**, i.e. one character out of
-        thirty. Shipping those would drop §65 by four points while changing **nothing a human eye can
-        resolve** — moving the instrument without moving the defect. **Measured: 6 of the 129
-        beatable instances rest on a margin under 5%.** So §65's strict-max rule over-reports, but
-        only slightly; the number to distrust is not the rate, it is any ranking built from it.
-      - **`q032`** dropped the trailing em-dash reason clause in all five (`— what that money would
-        have grown into if he'd chosen differently` and its four translations), which `explain`
-        already states in every language ("the roughly $3,580 that money would have become"). Landed
-        strictly inside the band in four languages and one off the ceiling in the fifth —
-        **`answer` / `[bandMin, bandMax]`: en 54/[46,62], es 53/[46,55], ko 28/[25,29], zh 19/[16,20],
-        ja 24/[21,26]** — so no cell is an exact tie and none is load-bearing on a distractor's
-        current length (the `q020` fragility this item flags).
-      - ⚠️ **NOT A PURE DELETION, and the reason is worth keeping.** Deleting the clause alone left
-        **en at 44 against a floor of 46** — strictly *shortest*, i.e. the inverse tell this item
-        warns about, created by the fix for the forward one. The English was re-worded rather than
-        cut (`plus roughly $1,580 more` → `plus the roughly $1,580 he gave up`). **A band has two
-        walls, and the cheap questions are the ones where they are close together.**
-      - **The remaining 28 split into two classes, and item 160's own rule only reaches one of
-        them.** Screening the English correct option for a detachable reasoning tail (em dash, or a
-        `because`/`since`/`so that`/`which`/`that would`/`if` subordinator; control: `"A — B"` reads
-        true, `"Always buy stocks"` reads false): **class A — a tail to move into `explain` — is 12
-        questions** (`q005 q021 q023 q027 q028 q033 q034 q035 q036 q037 q039 q040`); **class B — no
-        tail; the correct option is already a bare phrase and the DISTRACTORS are the short ones —
-        is 16** (`q001 q004 q006 q008 q009 q010 q011 q012 q014 q018 q019 q024 q025 q031 q043 q045`).
-        **`q008` (lesson 40) is now the corpus's largest tell at 57-133% and it is class B**: its
-        answer is *"Don't have debt rise faster than income"* against *"Always buy stocks"*, *"Never
-        borrow money"*, *"Save 50% of income"* — a two-term comparison against three one-term
-        slogans, with nothing to delete. **Class B is not this item's rule; it is distractor-quality
-        work, it means writing new prose in four unreviewed languages, and it is therefore O-3's**,
-        exactly like the (b) clause below. **A future pass that keeps ranking by relative margin will
-        hit class B almost immediately — that is the stop line, not a surprise.**
-      - **O-3 accounting: −242 characters of unreviewed machine translation** (es −65, ko −29,
-        ja −36, zh −27 · en −57). `npm run readiness --check` passes unchanged at 161 minutes.
-    - ✅ **2026-09-03 (scheduled dev-agent, self-picked): `q029` (essentials 15) and `q026`
-      (essentials 12) shipped by pure deletion, ten strings, no new prose in any language.
-      §65 live: longest-option **en 63.0% → 58.7%**, es/ko 60.9% → 56.5%, zh/ja 58.7% → 54.3%;
-      shortest-option **unchanged in all five** (2.2/2.2/0.0/2.2/4.3), so the inversion this item
-      warns about did not happen. Beatable-in-all-five 22 → 20; beatable-in-at-least-one 31 → 29.**
-      - ⛔ **THE PREVIOUS PASS'S CANDIDATE LIST OMITTED THE CORPUS'S WIDEST-WINDOW QUESTION, and the
-        omission is a property of how the list was built rather than an error in it.** That pass
-        named `q026`, `q034`, `q039`, `q012` as "the next candidates", honestly qualified as "of the
-        ones inspected this run". Ranking **all 22** by the window measure this item prescribes puts
-        **`q029` first** — minimum window 17 code points against `q026`'s 14, `q039`'s 12 and
-        `q034`'s 8 — and `q029` appears on no previous list. **Rank the whole set, not the ones you
-        happened to open**; the ranking is four lines of arithmetic over `quizMeta` + the five
-        `quizText` modules and is written out in the run-log entry.
-      - **`q029`** dropped the trailing reason clause `, since a person has more than one score`
-        and its four translations — the clause `explain` already states in all five ("so a single
-        person has several credit scores rather than one"), verified live on the built app.
-        **`ko` and `ja` needed more than the clause**: the leading reason clause alone left them at
-        52/48 and 49/47 against their ceilings, so each also elides one object particle phrase
-        (`정보를`, `データを`) — idiomatic ellipsis in both languages, and still a pure deletion.
-      - **`q026`** dropped the `early in the loan` element in all five (`large `/`gran `/
-        `대출 초기에는 `/`贷款早期`/`ローンの初期は`, plus `それに応じて` in ja for margin). The stem
-        already says "3 years into a 30-year mortgage", and `explain` says "which is largest early
-        in a loan" in all five — so the deleted words are supplied twice over.
-      - ⚠️ **MARGIN IS THE THING TO RECORD, NOT JUST FEASIBILITY — the tightest cell here is `q026`
-        zh at 21 against a ceiling of 23.** A landing that merely clears `bandMax` re-opens the
-        question the moment someone trims a distractor, which is the fragility this item already
-        flagged on `q020`'s four exact ties. Every other cell this pass has ≥4 of margin. **Quote
-        `answer` and `[bandMin, bandMax]` per language when filing a landing, so the next editor can
-        see which cells are load-bearing.**
-      - **O-3 accounting, and it is the first pass in this item that runs the other way: −162
-        characters of unreviewed machine translation** (es −72, ko −38, ja −32, zh −20), −64 en,
-        −226 total. `npm run readiness --check` passes unchanged at 161 minutes, so no cell of the
-        reading model crossed a rounding boundary.
-    - ✅ **2026-09-03 (scheduled dev-agent, self-picked): `q046` (lesson 44, main path) and `q020`
-      (essentials 6) shipped by pure deletion, ten strings, no new prose in any language.
-      §65 live: longest-option **en 67.4% → 63.0%**, es/ko 65.2% → 60.9%, zh/ja 63.0% → 58.7%;
-      shortest-option **unchanged in all five** (2.2/2.2/0.0/2.2/4.3), so the inversion this item
-      warns about did not happen. Beatable-in-all-five 24 → 22.**
-      **The item's own count was stale and this is the correction:** the clause above says "26
-      questions" and "28 all-five-beatable"; measured before any edit, with four controls firing
-      (strict-longest→beatable, tie→not, short-correct→not, window arithmetic), the corpus was at
-      **24**, and 33 questions are beatable in at least one language. Read `npm test`'s §65 line,
-      not this paragraph (W-5.5).
-      - **`q046`** dropped the second half of a two-part answer (`— and that it lacks a wage's
-        protections` and its four translations). It was the only option of four naming two things;
-        the deleted clause is in the `explain` **in all five languages** ("gives up protections a
-        wage has — legal minimums, notice periods…"), verified live.
-      - **`q020`** dropped `in retirement` / `now` and their four translations, which made the
-        answer the **exact mirror of its inverted distractor** — the same sentence with `withdraw`
-        and `contribute` swapped, at 73/73 en, 60/60 es, 41/42 ko, 28/28 zh, 37/37 ja. That is the
-        strongest form of this item's style rule: length carries **zero** information, and the pair
-        stays equal-length by construction as long as both are edited together. ⚠️ Four of those
-        five are exact ties at the band ceiling, so an edit to distractor **[1] alone** re-opens the
-        question — edit the pair or neither.
-      - ⚠️ **RANK THE QUEUE BY WINDOW WIDTH, NOT BY HOW MUCH MUST COME OUT — this is the reusable
-        part.** The obvious ranking (total deletion needed across five languages) puts `q001`,
-        `q006`, `q011` first; all three are **infeasible**, because their distractor bands are
-        narrow (`q001` zh window **1**, `q004` zh **1**, `q014` ja **0**). `q046` and `q020` sit
-        8th and 14th on that ranking and are the two easiest in the corpus, because their bands are
-        wide (`q020` en [21,73]). The measurement to take per language is the pair
-        **`[bandMin, bandMax]`** and the allowed deletion range **`[len-bandMax, len-bandMin]`**;
-        a candidate is feasible when the semantically irreducible string fits inside it in **all
-        five**. Prove the candidate is a deletion rather than a rewrite by asserting it is a
-        **subsequence** of the shipped string (control: appending one character must fail).
-      - **The binding constraint is CJK, and it is the distractor ceiling rather than the answer
-        floor.** The clause below says CJK correct options cannot be trimmed; measured across all
-        24, the sharper statement is that `ko`/`zh`/`ja` **distractors** run 2-16 code points, so
-        the ceiling a trimmed answer must fit under is tiny — `q001`'s Chinese band is [4,5]. Its
-        parenthetical `（货币+信贷）` is exactly the shape this item likes and deleting it lands at
-        **3**, i.e. strictly shortest: the tell inverted, not removed. **`q001` is the first
-        question a new install answers and it is O-3's, not a trimmer's.**
+    - ⛔ **RANKING BY DELETION COST RANKS BY WHAT THE EDIT COSTS *ME*, NOT BY WHAT THE LEARNER CAN
+      EXPLOIT — and the two run opposite ways.** The previous pass closed by naming `q034` as
+      "cheapest, tightest" (window 8, 12 code points to remove) and `q039` as the expensive one
+      (73). Both figures reproduce exactly. But a learner cannot see a *count* of code points; they
+      see a *proportion*. Measured as **relative margin — (len(correct) − len(longest distractor))
+      / len(longest distractor)**, with two controls (a 2x runner-up scores 1.000, a +1-of-100
+      scores 0.010): **`q034` is 11%, near the WEAKEST of the all-five set, and `q032` was 79-131%
+      in every language — the largest tell in the corpus, and more than double the runner-up in
+      zh and ja.** Cheap-first and exploitable-first are close to inversely ordered here, which is
+      exactly why the biggest tells have survived nine passes. **Rank by relative margin; use
+      deletion cost only to break ties.**
+    - ⚠️ **A COROLLARY THAT KILLS THE CHEAPEST-LOOKING WORK ENTIRELY.** By deletion cost the three
+      cheapest questions in the corpus are `q009` (1 code point), `q010` (1) and `q018` (2) — nine
+      tell-instances for about four characters, which looks like the best trade in the item. It is
+      not work at all: their relative margins are **3%, 3% and 3%**, i.e. one character out of
+      thirty. Shipping those would drop §65 by four points while changing **nothing a human eye can
+      resolve** — moving the instrument without moving the defect. **Measured: 6 of the 129
+      beatable instances rest on a margin under 5%.** So §65's strict-max rule over-reports, but
+      only slightly; the number to distrust is not the rate, it is any ranking built from it.
+    - ⚠️ **NOT A PURE DELETION, and the reason is worth keeping.** Deleting the clause alone left
+      **en at 44 against a floor of 46** — strictly *shortest*, i.e. the inverse tell this item
+      warns about, created by the fix for the forward one. The English was re-worded rather than
+      cut (`plus roughly $1,580 more` → `plus the roughly $1,580 he gave up`). **A band has two
+      walls, and the cheap questions are the ones where they are close together.**
+    - **The remaining 28 split into two classes, and item 160's own rule only reaches one of
+      them.** Screening the English correct option for a detachable reasoning tail (em dash, or a
+      `because`/`since`/`so that`/`which`/`that would`/`if` subordinator; control: `"A — B"` reads
+      true, `"Always buy stocks"` reads false): **class A — a tail to move into `explain` — is 12
+      questions** (`q005 q021 q023 q027 q028 q033 q034 q035 q036 q037 q039 q040`); **class B — no
+      tail; the correct option is already a bare phrase and the DISTRACTORS are the short ones —
+      is 16** (`q001 q004 q006 q008 q009 q010 q011 q012 q014 q018 q019 q024 q025 q031 q043 q045`).
+      **`q008` (lesson 40) is now the corpus's largest tell at 57-133% and it is class B**: its
+      answer is *"Don't have debt rise faster than income"* against *"Always buy stocks"*, *"Never
+      borrow money"*, *"Save 50% of income"* — a two-term comparison against three one-term
+      slogans, with nothing to delete. **Class B is not this item's rule; it is distractor-quality
+      work, it means writing new prose in four unreviewed languages, and it is therefore O-3's**,
+      exactly like the (b) clause below. **A future pass that keeps ranking by relative margin will
+      hit class B almost immediately — that is the stop line, not a surprise.**
+    - ⛔ **THE PREVIOUS PASS'S CANDIDATE LIST OMITTED THE CORPUS'S WIDEST-WINDOW QUESTION, and the
+      omission is a property of how the list was built rather than an error in it.** That pass
+      named `q026`, `q034`, `q039`, `q012` as "the next candidates", honestly qualified as "of the
+      ones inspected this run". Ranking **all 22** by the window measure this item prescribes puts
+      **`q029` first** — minimum window 17 code points against `q026`'s 14, `q039`'s 12 and
+      `q034`'s 8 — and `q029` appears on no previous list. **Rank the whole set, not the ones you
+      happened to open**; the ranking is four lines of arithmetic over `quizMeta` + the five
+      `quizText` modules and is written out in the run-log entry.
+    - ⚠️ **MARGIN IS THE THING TO RECORD, NOT JUST FEASIBILITY — the tightest cell here is `q026`
+      zh at 21 against a ceiling of 23.** A landing that merely clears `bandMax` re-opens the
+      question the moment someone trims a distractor, which is the fragility this item already
+      flagged on `q020`'s four exact ties. Every other cell this pass has ≥4 of margin. **Quote
+      `answer` and `[bandMin, bandMax]` per language when filing a landing, so the next editor can
+      see which cells are load-bearing.**
+    - **`q020`** dropped `in retirement` / `now` and their four translations, which made the
+      answer the **exact mirror of its inverted distractor** — the same sentence with `withdraw`
+      and `contribute` swapped, at 73/73 en, 60/60 es, 41/42 ko, 28/28 zh, 37/37 ja. That is the
+      strongest form of this item's style rule: length carries **zero** information, and the pair
+      stays equal-length by construction as long as both are edited together. ⚠️ Four of those
+      five are exact ties at the band ceiling, so an edit to distractor **[1] alone** re-opens the
+      question — edit the pair or neither.
+    - ⚠️ **RANK THE QUEUE BY WINDOW WIDTH, NOT BY HOW MUCH MUST COME OUT — this is the reusable
+      part.** The obvious ranking (total deletion needed across five languages) puts `q001`,
+      `q006`, `q011` first; all three are **infeasible**, because their distractor bands are
+      narrow (`q001` zh window **1**, `q004` zh **1**, `q014` ja **0**). `q046` and `q020` sit
+      8th and 14th on that ranking and are the two easiest in the corpus, because their bands are
+      wide (`q020` en [21,73]). The measurement to take per language is the pair
+      **`[bandMin, bandMax]`** and the allowed deletion range **`[len-bandMax, len-bandMin]`**;
+      a candidate is feasible when the semantically irreducible string fits inside it in **all
+      five**. Prove the candidate is a deletion rather than a rewrite by asserting it is a
+      **subsequence** of the shipped string (control: appending one character must fail).
+    - **The binding constraint is CJK, and it is the distractor ceiling rather than the answer
+      floor.** The clause below says CJK correct options cannot be trimmed; measured across all
+      24, the sharper statement is that `ko`/`zh`/`ja` **distractors** run 2-16 code points, so
+      the ceiling a trimmed answer must fit under is tiny — `q001`'s Chinese band is [4,5]. Its
+      parenthetical `（货币+信贷）` is exactly the shape this item likes and deleting it lands at
+      **3**, i.e. strictly shortest: the tell inverted, not removed. **`q001` is the first
+      question a new install answers and it is O-3's, not a trimmer's.**
     - ⛔ **AND THE LAST ONE CLOSED THE SAME DAY, owner-directed ("do q042 with the distractor
       work") — the FIRST deliberate O-3 enlargement in this project, priced at +550 characters
       across 15 distractor strings, +366 of them in the four unreviewed languages.** `q042` was the
@@ -2006,82 +1960,12 @@ through two passes that each had it open.
       question's own `explain`. **Budget the rest of this item at one question per pass, and expect
       the reading-time coupling:** the option prose is inside `READING_MODEL`, so lesson 28 went
       4 → 5 minutes and the catalog total 160 → 161, regenerated through `npm run readiness`.
-    - ✅ **`q007` too, owner-directed ("do the next worst one") — the worst tell in the corpus
-      (en 2.61x) and the one this item calls untrimmable in all three CJK languages. Confirmed
-      untrimmable; fixed by distractor work at +328 characters (+216 non-English), cheaper than
-      `q042` because its foils were 2-3 word fragments rather than clauses.** **Two things the next
-      pass needs:** (i) lengthening ALL the distractors inverts the tell — they must **straddle** the
-      answer, one shorter and one longer, in every language, and my first draft got this wrong in
-      four of five; (ii) **the queue is better sorted by what the foils ARE than by ratio** —
-      fragment-foil questions are cheap and need no edit to the answer, clause-foil questions cost
-      2-3x and usually need the answer trimmed too.
     - ⚠️ **AND THE RULE THIS ITEM RESTS ON HAS A HOLE — see item 165.** "The reasoning belongs in
       `explain`" assumes `explain` carries it. Measured this run: **69 of 184 question/language
       pairs are abridged**, concentrated on `q001`-`q014`, the economy track. `q007`'s Spanish
       explanation said only "QE is the Fed's emergency tool" — the mechanism was missing in four
       languages. **Before moving reasoning out of an option, check that the destination is not a stub
       in es/ko/zh/ja.**
-    - **The stop-clause's evidence was a delimiter cutter, and its negatives were weak by its own
-      admission.** Rebuilt with a complete Latin **and** CJK delimiter list (em dash, `——`, `、`,
-      `，`, `。`, `：`, `；`, `, since/which/so/even though`, `, ya que/porque/lo que`, and
-      parenthetical removal in both bracket widths; 7 controls fired, including "no delimiter → no
-      candidate"): **0 of the 28 all-five-beatable questions fit.** So the clause is right that no
-      *delimiter cut* works — and that is not the same claim as "no trim works".
-    - **Shipped this run by word-level deletion of shipped text, no new prose in any language:**
-      **q015** (lesson 1) and **q041** (lesson 27), then **q042** by owner-directed distractor work.
-      §65 live after the deletion pair: longest-option **en 76.1% → 71.7%**,
-      es/ko 73.9% → 69.6%, zh/ja 71.7% → 67.4%; shortest-option **unchanged** in every language, so
-      the inversion this item warns about did not happen. 28 → **26** beatable in all five.
-    - **q015 is the shape this item is asking for, and it was sitting in the corpus the whole time.**
-      The correct option was the only one of four carrying `or debt payoff` / `o deudas` /
-      `·부채상환` / `或还债` / `・借金返済`; deleting that suffix makes all four options **identical in
-      shape**, differing only in the percentages the question is about. The deleted words are already
-      in the question's own `explain` **verbatim in all five languages**, and in lesson 1's body — so
-      the learner loses nothing and the item's own rule ("the reasoning belongs in `explain`") is
-      satisfied literally.
-    - **What is genuinely left, restated honestly:** 26 questions, and the CJK floor argument in the
-      clause below still holds for most of them (`q007` and friends). **The remainder is smaller than
-      "one thing that is O-3's" — some of it is hand-trimmable and some is not, and the only way to
-      tell is to draft the five strings and measure them against the window.** Do not re-derive the
-      "nothing is trimmable" conclusion from the cutter; it is answering a narrower question.
-    ORIGINAL ITEM TEXT, kept because the correction above refers to it:
-    **[Content/QA — filed 2026-09-01 by the scheduled dev-agent that MEASURED it, with 40 of 46
-    questions affected at filing and four of them fixed in the same commit. Honest priority: HIGH for
-    a learning app, and this is not a residual — nothing in the previous run's entry points at it.]
-    The quiz can be beaten without reading a single lesson by always tapping the LONGEST option.**
-    > ⛔ **PREMISE CORRECTED 2026-09-01 by a later run, by measurement before any edit (step 3.5).
-    > The item's disposition below — "the remaining ~36 split into two kinds" — is NOT the partition
-    > the corpus has, and the correction changes what is left to do here from a trimming queue into a
-    > single owner decision.** Re-measured with four controls (a length reader that must call a
-    > planted strictly-longest option beatable, must reject a tie, must reject a short correct option,
-    > and a per-language entry-count check against `quizMeta`):
-    > - **The defect is corpus-wide, not concentrated in a few chatty options.** 38 of 46 questions
-    >   are beatable in at least one language and **29 in all five**. In most of them the correct
-    >   option is **1.5-2.5x the whole distractor band**, not a sibling with one clause too many.
-    > - **The real cause is an authoring habit, and it is the DISTRACTORS.** The correct option is
-    >   written as a complete statement; the three foils are written short. That is why trimming does
-    >   not generalize: for most questions the correct option's irreducible content — the concept plus
-    >   the feature that distinguishes it — is already longer than the longest distractor.
-    > - **⚠️ And naive trimming INVERTS THE TELL, which the filing run named as a risk and the
-    >   arithmetic confirms.** The target is not "shorter"; it is *inside the distractor band*, so the
-    >   correct option is neither the strict maximum nor the strict minimum. Worked from the measured
-    >   bands: trimming the obvious trailing clause off the correct option makes it the **strictly
-    >   shortest** in `q019` (en 82 → 36 against a [44-46] band), `q040` (127 → 52 against [74-86])
-    >   and `q012` (95 → 25 against [32-62]). Each of those three "fixes" would have moved the
-    >   longest-option rate down and the shortest-option rate up by the same three questions.
-    > - **A mechanical trailing-clause cut fits inside the band in ALL FIVE languages for exactly
-    >   ONE question in the corpus: `q030` (lesson 16), which this run shipped.** (The cutter's
-    >   *positives* are sound; its negatives are weak — its delimiter list is Latin/CJK-incomplete, so
-    >   "no fit" means "none found by this cutter", not "none exists".)
-    > - **The CJK corpus has a structurally higher floor and no trim can reach it.** The `ko`/`zh`/`ja`
-    >   distractors are far terser than their English (`q007`'s are **4-9 code points**: 政府加税,
-    >   银行停贷), while the correct option must still name a mechanism. `q007` is the worst ratio left
-    >   in the corpus (en 2.61x) and is **not trimmable in any of the three**.
-    > **So the remainder is not (a)-plus-(b): it is one thing, and it is O-3's.** Closing the gap means
-    > lengthening distractors — new prose in four unreviewed languages, across roughly three dozen
-    > questions. That is the standing owner decision on unreviewed machine translation at scale, and a
-    > run must not enlarge that surface unilaterally to move a metric. **Do not pick this item as a
-    > trimming pass; there is nothing left in it that trimming can honestly reach.**
     > ⚠️ **Second correction, mechanical but load-bearing: every question label in this item is an
     > ARRAY POSITION, not a question.** "q12/q21/q37/q43/q40/q41" are 0-based indices into `quizMeta`
     > and resolve to ids **q013, q022, q038, q044, q041, q042** (lessons 39, 8, 24, 42, 27, 28 — the
@@ -2091,59 +1975,14 @@ through two passes that each had it open.
     > reason; the labels are left as-is above because they are a dated record (§31), and this line is
     > the translation. **Cite questions by `id` from here on.**
     **Measured 2026-09-01 over the 46 shipped questions, five languages, controls in both directions:
-    tap-the-longest scored `en 40/46 = 87.0%`, `es 39/46 = 84.8%`, `ko 39/46 = 84.8%`,
-    `zh 38/46 = 82.6%`, `ja 38/46 = 82.6%`, against a `25.0%` chance baseline for four options.**
-    After this run's four fixes: `en 78.3%`, `es 76.1%`, `ko 76.1%`, `zh 73.9%`, `ja 73.9%`. Both
-    figures are re-derived by `check-data.mjs` §65 on every `npm test`, so **do not quote the numbers
-    above — read the live line** (W-5.5).
-    **Why this is a real defect and not a curiosity.** The project already treats exactly this class as
-    a defect worth an out-of-priority fix: on 2026-08-02 the weekly reviewer found 12 of 13 correct
-    answers sitting at option index 0 — tap-the-first scored **92%** — and moved the option strings to
-    de-skew it. §3's degenerate-answer warning is the guard that came out of it, and its own message
-    says *"a user who always taps that option would score suspiciously well."* **§3 guards the strategy
-    that was found, not the class it belongs to.** The index spread has been clean ever since (28.3%,
-    well under §3's 50% line) while a second channel scored 87% and nothing looked at it. The quiz
-    feeds both the end-of-lesson check (§3.2's "small win") and the whole Leitner review queue
-    (`src/lib/review.js`), so a learner can complete lessons, build a streak and fill a review schedule
-    without the checks ever measuring understanding.
-    **The cause is structural, which is why the fix is a style rule and not a list of edits.** The
-    correct option tends to carry its own justification — *"…, since its policyholder absorbs more of
-    the smaller losses"* — while the distractors stay bare assertions. **That justification is already
-    in the `explain` field, which the learner is shown the moment they answer**, so in the gratuitous
-    cases it is duplicated text that also leaks the answer. **The rule: an option matches the shape of
-    its siblings; the reasoning belongs in `explain`.**
-    **Done in the filing commit (4 questions × 5 languages = 20 edits), chosen because each is right on
-    its own merits and is a clause DELETION in all five languages, never new prose:**
-    - **q12 (lesson 39)** `VIX (Volatility Index)` → `VIX`. It was the only option of four with a
-      parenthetical expansion, against bare `GDP`/`CPI`/`PMI`; ratio 7.33x, the worst in the corpus.
-      Nothing is lost — `glossary.js` defines VIX in all five languages and the `explain` opens
-      *"The VIX measures expected market volatility."*
-    - **q21 (lesson 8)** dropped *", since its policyholder absorbs more of the smaller losses"*. The
-      remainder is now **exactly** its sibling's length in all five languages (en 43/43, es 52/52,
-      ko 22/22, zh 12/12, ja 15/15) — the two options differ only in `lower`/`higher`, which is the
-      whole question.
-    - **q37 (lesson 24)** dropped *", since a 'need' doesn't require justification"*.
-    - **q43 (lesson 42)** dropped *", which differ in what they demand and what can go wrong"*.
-    **NOT done, deliberately, and the reason is the next holder's decision to make, not a run's.**
-    The remaining ~36 split into two kinds:
-    - **(a) Already well-designed, leave alone.** q25 and q27 give *every* option a "because…" clause,
-      so the shape is uniform and the correct one is only marginally longer — in `ja`, q27's correct
-      option is not even the longest. **Trimming these would break the uniform shape and just invert
-      the tell**; §65 measures the shortest-option strategy for exactly that reason, and this run's
-      edits left it flat (en 2.2%, ko 0.0%).
-    - **(b) The head of the list, q40 (201 chars) and q41 (174), where the honest fix needs new
-      distractor prose in four unreviewed languages.** Their distractors are short `Name — one clause`
-      glosses and the correct answer's concept name is itself long (*"Overconfidence after a lucky
-      outcome"*, *"Loss aversion"* plus its asymmetry), so trimming to match costs the concept name
-      while lengthening the distractors means **writing new machine-translated prose in es/ko/zh/ja**.
-      That is squarely inside **O-3** (the standing owner decision on unreviewed machine translation at
-      scale) and a run must not enlarge that surface unilaterally to move a metric.
-    **Guard shipped in the same commit: `check-data.mjs` §65**, five scorer controls asserted in both
-    directions (correct-always-longest → 100%, always-shortest → 0%, all-equal → 0%, uniform-over-four
-    → the 25% chance baseline, and a CJK-vs-Latin specimen so a 2-character option cannot outrank a
-    10-character one). It **warns rather than fails** — a failing threshold would block every commit
-    until a five-language content pass lands, and (b) above may never be a run's to make.
-
+    - *Compressed 2026-09-04 (fifth backlog-compression pass, owner-directed). Dropped: the
+      per-tranche shipping chronology and its superseded §65 progressions, the per-tranche O-3
+      accounting, the retained ORIGINAL ITEM TEXT block and the old (a)/(b) candidate lists — all of
+      it in the run log and the archive under those dates. Kept byte-identical: the headline, the ⛔
+      stop line, and every block carrying a standing rule or a named trap. Two were nearly lost and
+      are here because a marker count caught them — q020's *edit the pair or neither* tie constraint,
+      and the ⚠️ note that the old `q12`-style labels are ARRAY POSITIONS rather than ids. **The live
+      §65 figures are the stop line's, not any tranche's.***
 159. **✅ DONE 2026-09-01 (scheduled dev-agent) — but the premise as written is WRONG in its
     headline and RIGHT in its consequence, and the correction changed what got built. Read the
     correction before citing this item.**
@@ -4607,6 +4446,107 @@ zero meaningful: `selftest PASS (8/8 controls fired, plantsRemoved true)` and, p
 finding(s); V vacuous; U unavailable`. A bare "no accessibility issues found" is not a result.
 
 ## Run log
+
+### 2026-09-04 (owner-directed: "do the backlog compression pass next") — the fifth pass; 17,157 b recovered, and the owner option item 115 has carried since 2026-08-30 EXPIRED between the fourth pass and this one, exactly on the schedule the fourth pass predicted
+
+**Step 3.5 — the premise, which is item 115's own arithmetic, re-measured with the control that
+makes it comparable.** The fourth pass (2026-09-02, `767a96f`) recorded that cutting every closed
+item to its headline would reach **232,194 b, under the 250,000 b budget by 17,806**, and warned the
+margin was "gone in about three more [days]". **Measured today: 254,621 b — OVER by 4,621.** ⛔ **A
+projection compared against another run's projection is worthless unless the two estimators agree,
+so I ran mine against `767a96f` itself: 232,009 b against their 232,194 — a difference of 185 b,
+0.08%.** The instruments agree; the option really did close. The parser was separately controlled
+against `check-backlog.mjs`: **142 items, the same count the build reports.**
+
+**⛔ The finding that matters more than the bytes, and it should stop a sixth pass being ordered for
+this purpose. The projection is INVARIANT to compression.** Measured before and after this pass:
+**254,621 b, and 254,621 b — identical to the byte.** Compression under item 115's rule and the
+headline-only cut *remove the same material*, so a pass buys headroom against the floor's growth and
+moves the option's reachability by exactly **zero**. **No number of further passes reopens it.** What
+remains is what item 115 has always said is the owner's — delete closed items outright, or raise the
+budget — and a run must not choose. This is now written into item 115 itself so a sixth pass reads
+it before starting rather than deriving it again.
+
+**What was done.** Scope followed the fourth pass's precedent: only material changed since
+`767a96f`, because re-processing items an earlier pass judged is a regex second-guessing a recorded
+judgment call. The diff since that commit is **7 items changed, none added, none removed**; four are
+open (27, 155, 94, 117) and were not touched. That left **three closed items: 160, 165, 156.**
+- **Item 160: 29,406 → 14,038 b.** Dropped the per-tranche shipping chronology and its superseded
+  §65 progressions, the per-tranche O-3 accounting, the retained ORIGINAL ITEM TEXT block and the
+  old (a)/(b) candidate lists. Kept byte-identical: the headline, the ⛔ stop line, and every
+  standing rule and named trap.
+- **Item 165: 13,420 → 11,631 b.** Dropped the per-question repair chronology and the superseded
+  track-distribution bullet.
+- **Item 156: EXAMINED AND DECLINED.** Only 659 b was droppable and it included the pointer to the
+  run-log entry carrying the methodology a reviewer needs. Not worth it; over-keeping is the stated
+  error direction.
+
+**⛔ A marker count caught five blocks that would have been destroyed, and two of them would have
+left the item actively WRONG rather than merely thinner.** The check is crude — count ⚠️/⛔ before
+and after — but it is the one that earned its place:
+- In **160**: `q020`'s *"four of those five are exact ties at the band ceiling, so an edit to
+  distractor [1] alone re-opens the question — edit the pair or neither"*, a live constraint on
+  shipped content; and the note that **the old `q12`-style labels are ARRAY POSITIONS, not ids**
+  (`q12`→`q013`, `q21`→`q022`, …), which is the only place in the repo recording that and ends
+  "Cite questions by `id` from here on."
+- In **165**: the block the headline's own *"see the correction under them"* **points at**, and — the
+  worst of the five — the ⚠️ correcting `es`'s p90 reference to **1.184**, while the headline I was
+  keeping still quotes **1.162**. Dropping it would have left a figure in the item that the item
+  itself had already refuted.
+⚠️ **And the control nearly lied by arithmetic:** on the first build of 160 the count read
+**16 → 16** and looked clean, because my own compression note contributed two markers while two
+originals were dropped. **A total that matches is not a set that matches.** Re-run as "which
+*original* marker lines are not in a kept range", it named them individually. Two were then
+adjudicated as genuinely superseded and dropped on purpose (the 2026-09-01 premise correction and
+the "naive trimming inverts the tell" trap — both restated in blocks that were kept, the second with
+a shipped example the original lacked).
+
+**Verification.**
+- **Floor 410,754 → 393,597 b, read off `check-log-size.mjs`, not off the transform** — item 115's
+  own 2026-08-27 correction. The two agree here (15,368 + 1,789 = 17,157) but the artifact is the
+  number quoted. ⚠️ **This entry and item 115's record note then cost ~1,800 b of the floor back, so
+  the committed state is ~395,400 b — a net ~−15,400 b.** The third pass had to make exactly this
+  correction to itself; quoting only the 17,157 would make this entry the kind of figure it exists
+  to warn about.
+- **All 38 open items byte-identical to `HEAD`**, and the comparison is proven able to see a change:
+  a planted one-character edit to open item 74 is detected. Only **115, 160, 165** differ.
+- **142 → 142 item numbers**, and `npm test`'s own checks agree: *no duplicate backlog item numbers
+  (142 items)* and *all 190 "backlog item N" citations in src/ and scripts/ resolve.*
+- **Coverage, with the invented-number control the third pass used:** items 160 and 165 have 8 and 2
+  run-log/archive mentions; **9991 and 9992 return 0**. Every dropped question label was checked
+  individually — `q032`, `q029`, `q046`, `q007`, `q010`, `q012`, `q014`, `q003` all appear in the run
+  log and the archive. Nothing dropped is lost.
+- `npm test`: **0 failures**, warning profile unchanged.
+
+**Step 5 — adversarial self-check.** *Blindspot register:* clean, vacuously — one file changed,
+`AGENT_LOG.md`; no `src/`, no `scripts/`, no teaching copy. *`DECISIONS.md`:* untouched and not
+implicated. *Already-done backlog item:* this is the fifth pass of a standing rule, and the scope
+rule exists precisely to stop it redoing the first four; the open-item control proves it added
+nothing where it must not. *My own verification claim:* every figure came from a command run this
+session, and the two comparative ones (`232,009` and the invariance) are re-runnable against
+`767a96f` and `HEAD`. *W-6.3:* **no code changed — 0 lines in `scripts/`, 0 in `src/`.**
+
+**Honest accounting of what this pass is worth.** 17,157 b against a **143,597 b** overrun is about
+**4.8 runs** of floor writing. The floor is still the only budget over its limit and archiving cannot
+touch it (W-5.3). **The lever that has never been pulled is still W-6.2 rule 2** — not filing
+zero-live-instance residuals as numbered items in the first place — and this entry, at ~7 KB, adds
+to the thing it is measuring.
+
+**O-3 accounting: zero characters of unreviewed machine translation.** Nothing under `src/` touched;
+learner-visible delta in all five languages **0**.
+
+**Top item for the next run: not another compression pass** — the invariance above says it cannot
+help. Go back to learner-visible work. **O-1 remains the entire critical path — 44 lessons, 5
+languages, 161 minutes of content, and zero people have ever opened this app.**
+
+**Owner tree:** `git status` at run start and before writing showed the owner's untracked `UIUX/`
+only, **untouched**. ⚠️ **`HEAD` moved TWICE during this session, from two different automated
+jobs** — `8a2489c` when the previous run ended, `104e8ca` at this run's start (a scheduled
+dev-agent's yield-curve fix), and `20fde17` by the time this entry was written (the daily
+market-data refresh, `asOf=2026-09-04`). Re-checked before writing. **Neither commit touches
+`AGENT_LOG.md`**, so every backlog and floor figure above stands; the compression figures were
+measured against `104e8ca` and re-confirmed after `20fde17` landed. Recorded because a run that
+quotes a byte count without saying which tree it measured is one merge away from being wrong.
 
 ### 2026-09-04 (scheduled dev-agent, self-picked off a live walk of the main path) — the lesson that teaches the yield curve defined the 2s10s spread backwards, contradicted itself one clause later, and disagreed with the app's own Market Signals label for the identical FRED series — in five languages, for three weeks
 
