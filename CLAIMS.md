@@ -48,17 +48,47 @@ would have to change if the claim is refuted.
 | ID | Claim | Refuted if | Check | Measurable today | Status |
 |---|---|---|---|---|---|
 | A1 | Sequential unlocking within a track raises completion versus letting people browse freely. (`isUnlocked` in `useAppState.js`, rendered by `Learn.jsx`.) | Under 40% of installers finish lesson 1 in month one — §4.3's own Phase-0 clause. | 2026-09-05 | No — item 18 | Open, unmeasured |
-| A2 | Money-first two-track ordering fixes the §0 "vehicle, not the product" mismatch. (`TRACKS` in `lessons.js`; `DECISIONS.md`.) | Under 60% of first sessions start a money-track lesson once measurable. | 2026-09-05 | No — item 18 | Open, unmeasured |
+| A2 | *(claim text as written 2026-08-16, kept verbatim)* Money-first two-track ordering fixes the §0 "vehicle, not the product" mismatch. (`TRACKS` in `lessons.js`; `DECISIONS.md`.) | *(threshold kept verbatim — it has NOT been relaxed)* Under 60% of first sessions start a money-track lesson once measurable. | 2026-10-03 | No — item 18, and since 2026-08-18 unmeasurable in principle | **SUPERSEDED 2026-08-18 by the owner's economy-first reversal (`DECISIONS.md`); recorded here 2026-09-04. Not refuted, and not softened.** The app stopped opening on the money track that day. The count is still nominally takeable — measured live 2026-09-04 on the built app from cleared `localStorage`, all three tracks' first lessons are tappable on a fresh install, so a first session *can* start a money-track lesson — but it no longer measures what it was written to measure. The same live reading shows the START HERE card is "Transactions: The Building Block" in How the Economy Works, so 60% is now a threshold on how many installers navigate *away from* the default, and A2 was written about the default itself. Successor: **A8**. The check date moved from 2026-09-05 to the monthly-audit date **with this reason written down**, per §9.1 — not to postpone a live check, but because the 09-05 date would have queued a dead claim for a measurement nothing can perform. |
 | A3 | Five languages under "(Beta)" are worth their maintenance cost. (`locales/`, five-way parity enforced by `npm test`.) | Non-English sessions under 15% of total once measurable; **or** translation review debt grows for two consecutive months. | 2026-09-05 | Partly — debt half only | Open; debt half checkable now |
 | A4 | Parent-facing kids content costs us little engagement versus a child-facing build. (`screens/reference/`, §10.3.) | Kids-guide views under 2% of sessions once measurable. | 2026-09-05 | No — item 18 | Open, unmeasured. **Not a free choice** — §10.3 is a COPPA/store-classification decision reopened 2026-08-04 and owner-held; if this claim is refuted the response is an owner decision, not a unilateral UI change. |
 | A5 | The Leitner spaced-review queue earns its complexity. (`lib/review.js`, `screens/Practice.jsx`.) | Under 20% of users who finish ≥3 lessons open Review within a week. | 2026-09-05 | No — item 18 | Open, unmeasured |
 | A6 | The catalog is now large enough for Phase 0. | §4.3's content clauses unmet: under 40 lessons or under ~2 hours. | 2026-10-03 | **Yes** | **Holding** — 44 lessons / 161 min, both clauses met (`LAUNCH_READINESS.md`) |
 | A7 | Interactive content — a mechanism the reader drives, not just watches — is the §3.0.4 differentiator a chat window cannot copy. (`components/PolicySim.jsx`, `content/policyScenarios.js`.) | Under 35% of sessions that open the hosting lesson fire at least one `sim_lever_chosen`; **or** learners who move a lever complete that lesson at no higher a rate than those who don't. | 2026-09-05 | No — item 18 | Open, unmeasured; the event exists as of 2026-08-16 |
+| A8 | Economy-first ordering — the macro chain as the main path, judgment second — is what installers actually want to open with. (2026-08-18 owner reversal; `TRACKS` in `lessons.js`; `DECISIONS.md`.) | More than 40% of installers who open any lesson leave the economy track for `money` or `essentials` before finishing three economy lessons; **or** economy lesson 1's completion rate comes in below the money track's first lesson once both are measurable. | 2026-10-03 | No — item 18 | Open, unmeasured. Replaces **A2**. |
 
 **A2 carries a measurement flaw worth stating rather than hiding:** the pre-split single-chain baseline
 was never captured, so this claim can only be checked forward against its own threshold, never as a
 before/after comparison. The split may well have been right — the argument in `DECISIONS.md` is a good
 one — but the evidence for it will always be weaker than it would have been had anyone measured first.
+
+**A2 was superseded by an owner decision on 2026-08-18 and this register did not notice for seventeen
+days (recorded 2026-09-04).** The 2026-08-18 reversal in `DECISIONS.md` made `economy` the first
+track, so the app no longer opens on a money-track lesson — which is exactly what A2's threshold asks
+about. From that day the row's number measured the opposite of its own sentence — how many
+installers navigate away from the track the app opens on, rather than whether opening on money was
+right. It is not that the count became impossible (all three tracks' first lessons are tappable on a
+fresh install, measured live 2026-09-04); it is that the mechanism the claim names stopped existing
+while the number stayed syntactically fine. `LAUNCH_PLAN.md` §0 and `DECISIONS.md` were both updated when the decision landed, and
+`LAUNCH_READINESS.md`'s §4.3 row was repaired on 2026-09-04 by the run that found it — **this file was
+the third carrier of the same reversed premise, and the one with a refuting number attached to it.**
+A2 is therefore marked SUPERSEDED with its claim and its threshold kept verbatim, so that nobody
+reading later can mistake this for the softening §9.1 forbids; **A8 is the live successor**, written
+against the mechanism the product actually has.
+
+**The transferable part, and it is the reason this paragraph is longer than the fix:** *a claim rests
+on a decision, and nothing in this repo joins the two.* A refuting number stays syntactically valid
+after the mechanism under it is reversed — `check-claims.mjs` parsed A2 happily every run for
+seventeen days, because a script can check that a threshold is a number and a date is a date, and
+cannot check that the thing being counted still exists. **So when `DECISIONS.md` records a reversal,
+grep this file in the same change.** No check was built for that (`LAUNCH_PLAN.md` §9.1's own note on
+what this register deliberately does not verify applies: no script can tell a live claim from a dead
+one), and the honest guard is the habit, not another instrument.
+
+**What A8 does differently, stated before any result is known.** A2's threshold could be satisfied by
+the navigation alone — the app opened on the money track, so first sessions started there. A8's first
+clause measures **leaving** the track the app opens on, and its second is a **comparison** between two
+tracks' first lessons, so neither can be won by the ordering the claim is about. The 40% and the
+"three lessons" are first guesses and are recorded as ones, the way A7's 35% is.
 
 **A3's two halves have different strengths.** The debt half is checkable today, and the way to check
 it is to **run `npm run review-status`** — not to read a figure here. This paragraph used to quote one

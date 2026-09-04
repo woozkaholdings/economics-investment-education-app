@@ -4599,6 +4599,145 @@ finding(s); V vacuous; U unavailable`. A bare "no accessibility issues found" is
 
 ## Run log
 
+### 2026-09-04 (scheduled dev-agent, self-picked off the claims register; W-6.2 rule 1 sent me off a fourth consecutive §3.0-clause pick) — the falsifiable-claims register still bet on money-first ordering seventeen days after the owner reversed it, and the row carried a refuting number, so the register was the third file holding the same dead premise and the only one where it had a threshold attached
+
+**Where the pick came from, and why it is not a fourth §3.0 tally.** The three previous runs all
+picked from LAUNCH_PLAN §3.0 by "least-audited clause". That is a sanctioned alternative to a
+residual chain, but three in a row makes it the habit W-6.2 is about wearing a fourth costume, so I
+did not re-run the tally. I went to the artifacts §9.1 and §9.3 read instead — `CLAIMS.md` — because
+the **previous run had just repaired the same defect class in a sibling file** (`LAUNCH_READINESS.md`
+§4.3, commit `291eac6`) and had not swept for other carriers.
+
+**The finding.** `CLAIMS.md`'s **A2** read: *"Money-first two-track ordering fixes the §0 'vehicle,
+not the product' mismatch,"* refuted if *"under 60% of first sessions start a money-track lesson once
+measurable."* The owner's **2026-08-18** reversal made `economy` the first track. `DECISIONS.md` and
+`LAUNCH_PLAN.md` §0 were updated the day the decision landed; `LAUNCH_READINESS.md` was repaired
+2026-09-04; **`CLAIMS.md` was the third carrier and had gone seventeen days** — and it is the one
+where the stale premise has a *number* bolted to it, which is the whole point of the file.
+
+**Step 3.5 — the premise measured live, with a control, and the control caught my instrument first.**
+- **Instrument:** built `dist/`, served it statically on `:4599` with a 12-line static server, drove
+  it in the Browser pane at the mobile preset from cleared `localStorage`.
+- **Reading:** a fresh install's Learn screen shows **START HERE → "Transactions: The Building Block"
+  · How the Economy Works · Progress 0/44**, and the first track section is *How the Economy Works
+  0 / 12*.
+- ⛔ **My first control did not fire, and it was my bug, not a negative result.** Seeding
+  `ecycles_completed_lessons` as `{"29":true}` left the card at *START HERE / 0 of 44* — I had
+  guessed the shape. `storage.js` reads that key with `readArray`, so an object is discarded
+  silently. Re-seeded as `[29]` with a real reload, the card moved to **NEXT UP → "Credit: The Most
+  Important Part" · Progress 1/44**. **A seed that is silently ignored looks exactly like a screen
+  that does not depend on the thing you seeded** — which is this log's standing warning, met on my
+  own first try.
+- **And the measurement changed my own wording before it changed the file.** My first draft of the
+  A2 status cell said the threshold "can no longer be passed or failed by learner behavior." That is
+  an overclaim: measured on the same fresh install, **all three tracks' first lessons are tappable**
+  (economy "Transactions", money "The Subject That Wasn't on the Timetable", essentials "Budgeting";
+  every other row `disabled` with "Complete previous lessons first"). A first session *can* start a
+  money-track lesson. The honest statement is narrower and is what shipped: the count is still
+  takeable, but **60% now measures how many installers navigate *away from* the default, and A2 was
+  written about the default itself.**
+
+**What shipped.**
+1. **A2 is marked SUPERSEDED, with its claim text and its threshold kept verbatim** and labeled as
+   kept verbatim, so no later reader can mistake this for the softening §9.1 forbids. Its check date
+   moved 2026-09-05 → 2026-10-03 **with the reason written into the row**, which is what
+   `check-claims.mjs`'s own past-due message prescribes ("record the result or move the date WITH a
+   reason") — not to duck a live check, but because the 09-05 date would have queued a dead claim.
+2. **A8 is the live successor**, written against the mechanism the product actually has.
+   **Deliberately not A2 with the track name swapped:** A2's threshold could be won by the navigation
+   alone, and so could its mirror image. A8's first clause measures **leaving** the track the app
+   opens on (measurable, since all three tracks' first lessons are open from install), and its second
+   is a **comparison between two tracks' first lessons** — neither is settled by the ordering the
+   claim is about. The 40% and the "three lessons" are first guesses and are recorded as first
+   guesses, the way A7's 35% is.
+3. **`LAUNCH_PLAN.md` §9.1's "It holds all 16 claims" → 17**, which `check-claims.mjs` fails on
+   rather than warns — it caught this before I did.
+4. **The transferable paragraph**, because the fix is smaller than the lesson: *a claim rests on a
+   decision, and nothing in this repo joins the two.* `check-claims.mjs` parsed A2 happily for
+   seventeen days, because a script can check that a threshold is a number and a date is a date and
+   **cannot check that the thing being counted still exists.** The guard written down is a habit —
+   when `DECISIONS.md` records a reversal, grep `CLAIMS.md` in the same change — **not another
+   instrument** (W-6.2 rule 3: no learner-visible failure; W-6.3: `scripts/` is 2.3x `src/`).
+
+**Also in this commit, and named rather than smuggled: `quizMeta.js`'s stale header count.** Item
+160's text has asked *"the next run to open `quizMeta.js`"* to fix its "roughly 3/3/4/3 over 0/1/2/3"
+answer-spread comment, and **three consecutive entries have said the ask still stands.** I opened the
+file this run. Measured: **46 questions, distribution 10/13/13/10** — the quoted figure was true of a
+13-question corpus. It is the same defect as the headline (a hand-typed figure describing something a
+script derives), so it is one class, not two. **Fixed by removing the number rather than retyping it**
+— the comment now points at `check-data.mjs` §3, which recomputes the distribution from this array on
+every `npm test`. Verified §3's severity before writing about it: it **warns**, it does not fail, and
+the comment says warns.
+
+**Verification.** `npm test` → **0 failures**, and the four warnings are the four that were there
+before this run (translation review share, translation completeness, item 160's option-length cue,
+the `AGENT_LOG.md` floor). `npm run build` → clean. `node scripts/check-claims.mjs` → *17 claims, 3
+refuted, 0 past due*. The live readings above are reproducible from the repo: `npm run build`, serve
+`dist/`, clear `localStorage`, load `#/learn`.
+
+**Adversarial self-check (step 5).**
+- **Blindspot register:** no regression. No Dalio branding or quotation, no advice-adjacent language
+  (`npm run check-blindspot` clean, including its §10.1 timing control), no kids framing, no
+  live-looking market figure. The dates I added are **dated-record dates in docs and a comment**, not
+  §2.3's live-looking dates in teaching copy — §2.3's 26 teaching-copy modules are untouched, and
+  `quizMeta.js` is not one of them and carries no learner-visible prose at all.
+- **DECISIONS.md conflict:** none. A8 *restates* the 2026-08-18 owner decision as a belief with a
+  number; it does not question or reverse it, and the decision record itself is a dated entry I did
+  not touch. No `localStorage`/`.js`-content/Vite decision is near this change.
+- **Already-done backlog item:** no. `grep "A2\b"` over `AGENT_LOG.md` returns **zero** hits, so no
+  run has worked this row before. The sibling repair is a **different file and a different row**
+  (`LAUNCH_READINESS.md`:68, which now reads as dated history — *"That was true when…"*); I did not
+  touch that file, and `git status` confirms the diff is three files.
+- **My own verification claim:** every figure above is printed by a command re-run this session or
+  read off the built app in the Browser pane, and the one control that mattered failed first and was
+  fixed before it was used. The "0 failures, four pre-existing warnings" claim is checkable by
+  re-running `npm test` — the warning set is unchanged from the run I took at orientation, before I
+  edited anything.
+- ⛔ **What the check found against me:** the overclaim in bullet 3 of step 3.5 above. I had written
+  a sentence that was rhetorically stronger and factually wrong, and the only reason it did not ship
+  is that I went back to the live app to check whether the money track was reachable. **The stronger
+  sentence would have made this entry a fourth carrier of a wrong premise about track ordering, in
+  the run whose whole subject is that.**
+
+**O-3 accounting. This run adds ZERO characters of unreviewed machine translation** — nothing under
+`src/content/lessonContent.*` or `quizText.*` was touched, and `quizMeta.js` holds no prose in any
+language. Net learner-visible character delta in all five languages: **0**. Human review share
+unchanged at **0%**, which is O-3's actual open question.
+
+**Filed as notes, not as numbered items (W-6.2 rule 2 + W-6.4).**
+(i) ⏰ **NINE claim rows carry Check = 2026-09-05: A1, A3, A4, A5, A7, C2, D1, D2, D3.** Counted with
+`check-claims.mjs`'s own row parser, not by eye — my first draft of this note said "eight" and hedged
+it with a parenthesis, which is the defect this entry is about, committed inside the note recording
+it. **And they go past due on 2026-09-06, not 2026-09-05:** the filter is `c.date < today`, so the
+check date itself is not yet late. Proven both directions with the script's `CLAIMS_TODAY` env hook —
+`CLAIMS_TODAY=2026-09-05` → *0 past due*; `CLAIMS_TODAY=2026-09-06` → *9 past due*, nine warnings.
+From then `npm test` warns on each, every run, which is how a real prompt becomes ignorable noise.
+**This is the obvious next pick and it is launch-plan work (§9.1/§9.3), not a residual:** §9.1 says
+look, then record the result *or* move the date with a reason. Most are blocked on item 18 and the
+honest record is "still blocked, here is the date we look again"; **D1, D2 and D3 are marked
+measurable `Yes`** and are the three that deserve a real re-check, with **A3 at `Partly`** — its
+translation-debt half is checkable today via `npm run review-status`.
+(ii) **The quiz answer key has never been audited and now has been: it is clean.** I read all **46**
+questions against their options and their `explain` text (`quizMeta` joined to `quizText.en`) looking
+for a marked answer that is wrong or an explanation that contradicts it. **Zero defects.** The four
+arithmetic ones check out independently — Rule of 72 at 9% → 8 years; 3% nominal − 5% inflation ≈
+−2% real; a 1-point fee over 30 years costs `1 − 1/1.01^30` ≈ **25.8%** of the ending balance
+("roughly a quarter"); $2,000 at 6% for 10 years → **$3,581.70**, so "$2,000 paid plus roughly $1,580
+given up" is the same number, not a double count. **Recorded so no future run re-derives it**, and it
+is a note rather than an item precisely because it found nothing.
+(iii) **Quiz-to-lesson coverage measured: every one of the 44 lessons has at least one question, no
+question points at a lesson that does not exist, and exactly two lessons (30 and 34) carry two.** The
+App summary's "an end-of-lesson check on every lesson" is true.
+(iv) **Item 26 says in its own text that its stream is complete and it "can close."** It is still
+listed as open and is 3 KB of the floor W-6.4 is about. Closing it is bookkeeping, not this run's
+work, but the next backlog-compression pass should not have to re-derive that it is finished.
+
+**O-1 remains the entire critical path: 44 lessons, 5 languages, 161 minutes of content — and zero
+people have ever opened this app** (figures off `npm test`'s readiness line, run this session).
+
+**Owner tree:** `git status` at run start and again before writing showed the owner's untracked
+`UIUX/` only, **untouched**. `HEAD` re-checked before writing and unmoved at `37ecedd`.
+
 ### 2026-09-04 (scheduled dev-agent, picked from LAUNCH_PLAN §3.0 under W-6.2 rule 1) — the lesson titled "The 4 Phases" named four phases in its title, its subtitle and its figure's four dots, and then rendered two of them per screen; the deferral that left it there was half right about the code and wrong about the cost
 
 **Where the pick came from, and the tally is re-run rather than carried.** No residual was

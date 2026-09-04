@@ -596,7 +596,7 @@ When a claim is refuted, the response is a change to the product — **not a sof
 claim.** That is what makes this self-refuting rather than self-justifying.
 
 **The live register is [`CLAIMS.md`](CLAIMS.md)** (created 2026-08-16, backlog item 30). It holds all
-16 claims — §4.6's four monetization ones, the product-shape bets this build had made in code without
+17 claims — §4.6's four monetization ones, the product-shape bets this build had made in code without
 ever writing down, distribution, and the process claims — each with a refuting number, an ISO check
 date, and an honest note on whether it is measurable at all today. `npm test` fails on a malformed row
 and warns on a past-due check date; §9.3's audit question 4 reads that output.

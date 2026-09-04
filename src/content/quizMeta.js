@@ -30,13 +30,20 @@
 // reordering all six files together, and nothing is lost if you do.
 //
 // NOTE ON ANSWER POSITIONS: the correct option is deliberately spread across
-// indices (roughly 3/3/4/3 over 0/1/2/3) so the quiz cannot be beaten by
-// always tapping the same position. Before this was fixed, 12 of 13 answers
-// were index 0 — tap-the-first scored 92%. `npm test` warns if any single
-// index ever holds more than half the answers again. When adding a question,
-// pick a position that keeps the spread even; when editing options, move the
-// whole option string and update `answer` to match — never leave `answer`
-// pointing at a position by habit.
+// indices so the quiz cannot be beaten by always tapping the same position.
+// Before that was fixed, 12 of 13 answers were index 0 — tap-the-first scored
+// 92%. `check-data.mjs` §3 recomputes the distribution on every `npm test` and
+// warns when any single index holds more than half the answers again. When
+// adding a question, pick a position that keeps the spread even; when editing
+// options, move the whole option string and update `answer` to match — never
+// leave `answer` pointing at a position by habit.
+//
+// This note used to quote the split as "roughly 3/3/4/3 over 0/1/2/3". That
+// was true of a 13-question corpus and was then retyped here, unchecked, until
+// 2026-09-04 — by which date it named neither the count nor the spread of the
+// live file. It quotes no number now, on purpose: §3 derives the distribution
+// from this array on every run, and a figure a script prints is the only kind
+// that cannot rot in a header comment.
 // ═══════════════════════════════════════════════════════════════════════════
 
 export const quizMeta = [
