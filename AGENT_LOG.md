@@ -4608,6 +4608,150 @@ finding(s); V vacuous; U unavailable`. A bare "no accessibility issues found" is
 
 ## Run log
 
+### 2026-09-04 (scheduled dev-agent, self-picked off a live walk of the main path) — the lesson that teaches the yield curve defined the 2s10s spread backwards, contradicted itself one clause later, and disagreed with the app's own Market Signals label for the identical FRED series — in five languages, for three weeks
+
+**Where the pick came from, and why not from the numbered backlog.** The previous entry closed
+"go back to learner-visible work — nothing in this entry is queued," and the two runs before this
+one were an archiving pass and the launch scorecard, so W-6.2 rule 1 does not bind and no residual
+was available by default. I re-read the candidates on W-5.2's standing list rather than trusting it
+(the list's own ⚠️ says a candidate goes stale like a figure does): **item 26 says in its own text
+that it can close**, item 94 and item 158 are owner-blocked by their own text, item 117's open half
+is a judgment call the item hands to the owner, and item 163 closed on 2026-09-02. So I walked the
+product instead — cleared `localStorage`, opened the built app at 375x812, and read the main path.
+
+**What the walk actually found, after four candidate defects that were not defects.** Stated because
+the negative results are the expensive part of this run and they should not be re-derived:
+- Collapsed track sections put ~32 lesson buttons in the DOM. **Not a hidden-focusable defect** —
+  they sit under a `hidden` ancestor (`offsetParent: null`, out of the tab order), and the control
+  is the visible lesson row measured by the same probe at 295x68 with `offsetParent` set.
+- `read_page`'s interactive tree renders `radio`/`tab` nodes with **no accessible name**. **That is
+  the instrument, not the app** — the same nodes read `Learn`/`Review`/`Reference` and the four
+  option labels straight off the DOM. A negative from that tree would have been vacuous.
+- The hook question and the end-of-lesson check render the **same** question twice on lesson 29.
+  Deliberate (pretest → posttest) and documented in place.
+- A "numeric promise in a title the body doesn't deliver" screen over all 44 lessons. **My first
+  version was dead**: it read `section.heading.en` on a module whose headings are already plain
+  strings, so every heading tested as the literal `"undefined"` and the whole heading axis returned
+  silently empty. Re-run correctly, the four countable titles (L34's "4 Tools", L38's "4 Phases",
+  L40's "Three Rules", L42's "Four Ways") each deliver their count. Zero defects — **but the dead
+  version would have reported zero too.**
+
+**The defect. Lesson 36 §1, "Why the Signal Works — and Where It Can Mislead":**
+> The specific spread economists cite most often is '2s10s' — **the 2-year Treasury yield minus the
+> 10-year.** It inverted in mid-2022 and stayed inverted for roughly two years … before **turning
+> positive again in 2024**.
+
+The 2s10s spread is **10-year minus 2-year**. Three independent things say so, and none of them is
+my memory:
+1. **The app's own data.** `public/data/market.json` carries `curveSpread: {value: 0.43, seriesId:
+   "T10Y2Y"}` beside `yield10y: 4.79` and `yield2y: 4.36` — 4.79 − 4.36 = 0.43. `lib/marketData/
+   fred.js:21` comments the same series `// 10y minus 2y`.
+2. **The app's own Reference screen.** `content/economicSignals.js:49` names `curveSpread`
+   **"10-year minus 2-year"** in all five languages, and its `what` line reads "Negative has
+   preceded past recessions." A learner who taps from lesson 36 to Market Signals meets the
+   opposite definition of the same number.
+3. **The sentence contradicts itself and its own paragraph.** Under "2-year minus 10-year" an
+   inversion makes the spread *positive*, so "turning positive again in 2024" would describe the
+   curve **re-inverting**, and the previous paragraph's "that gap flipping negative is the market
+   pricing in future weakness" would be backwards too. Both of those are correct as written; only
+   the definition clause is wrong.
+
+**How long, and what it survived.** The paragraph was written by the run that deepened this lesson
+(archive line 5053, when it was "lesson 8"). Two later runs re-read lesson 36 end-to-end across all
+five languages for translation review and **both certified it** — archive 18298 *"32 probes … all
+four shape names, 2s10s, the 1966 non-recession … All present"* and archive 19797 *"all 41 named
+probes present … including … 「2s10s」"*. ⚠️ **The transferable part: a probe list checks that a term
+is PRESENT, not that the sentence containing it is TRUE.** Both audits were correct about what they
+measured and both walked past a reversed definition sitting in the same clause as the probe.
+
+**Step 3.5 — premise re-measured with a control before editing.** Reproduced by `git grep 2s10s`:
+one hit per language, five total, no other file. Swept the whole class rather than assuming it was
+one line — a subtraction-direction sweep (`minus` / `menos el|la|los` / `…에서 …을 뺀` / `减去` /
+`引いた`) over every `lessonContent.*`, `quizText.*`, `markets.js` and `economicSignals.js` returns
+**13 hits**: this clause in 5 languages, the known-correct `economicSignals.js` label, and 7
+instances of "real return = nominal minus inflation," which is right. **Control: the sweep fired on
+`economicSignals.js`, a positive I knew independently**, so the "nothing else is reversed" result is
+a measurement rather than a dead grep. Lesson 36's quiz (`q006`) is also clean — its `explain` says
+"When short rates exceed long rates," which needs no direction convention at all.
+
+**The fix, and why it adds no prose.** Five one-clause reversals; `2s10s` is kept as the name, which
+lists the two maturities and is standard however the spread is quoted. **Measured, not estimated:
+character delta is exactly 0 in every language** (en 45,687 → 45,687; es 52,600; ko 26,739; zh
+18,199; ja 23,567 — all unchanged, one line differing per file). **O-3 accounting: ZERO characters
+of new machine translation** — every character shipped was already shipping; only the order of two
+existing numerals moved. Human review share unchanged at 0%, which is O-3's actual open question.
+
+**The English edit made four ledger entries stale, and that is the guard working.** `npm test` went
+**red** on `LAUNCH_READINESS.md §10.4's translation-coverage figure disagrees with the live ledger`
+— coverage 100% → 98%, one stale pair per language — because the ledger hashes the *English*
+source. Rather than edit the scorecard figure, I did the review the ledger was asking for: read
+lesson 36's three sections, takeaway and reflection prompt in **all five languages side by side**,
+confirmed the four translations are faithful to the corrected English (and that each renders the
+reversal in its own idiom — `es` "a 10 años menos el de 2 años", `ko` "10년물 … 2년물을 뺀 값",
+`zh` "10年期国债收益率减去2年期", `ja` "10年物国債利回りから2年物を引いたもの"), then re-marked
+all four via `translation-review.mjs mark 36 <lang> … ai`. Back to **44/44, 0 stale** in each
+language and §10.4 agrees again with no document edited.
+
+**Verification.**
+- `npm test` **0 failures, 3 warnings** — all three pre-existing and unchanged in kind (review share
+  0% human, 48 abridged pairs, item 160's option-length cue), plus the standing floor warning.
+  `npm run build` clean, 965 ms. `npm run check-blindspot` **0 failures**.
+- **Live on the built app, with the bundle name confirmed** (`index-CkyPAiRV.js`, matching the build
+  output): lesson 36 renders *"'2s10s' — the 10-year Treasury yield minus the 2-year"*, and the old
+  string is absent. **Korean re-checked through a real reload** — `📐수익률 곡선: 수정 구슬`,
+  `10년물 국채 수익률에서 2년물을 뺀 값` present. ⚠️ **My first Korean read was vacuous and I am
+  recording it rather than replacing it**: I wrote `ecycles_lang` as JSON (`"ko"`) where
+  `storage.js` stores it raw, so the page came back in English and both the NEW and OLD Korean
+  probes returned `false` — a negative result off a page that could not have carried either string.
+  The paired probes are what caught it; a single `OLD === false` assertion would have read as a pass.
+- **Two-sided proof over the shipped chunks**, so the negative is not a dead grep: all five
+  `lessonContent.economy.<lang>-*.js` in `dist/` contain the NEW string and not the OLD one, and the
+  **same OLD strings are present in `git show HEAD:`** for all five source files. The instrument can
+  see the string it reports missing.
+
+**Step 5 — adversarial self-check.**
+*Blindspot register:* **§10.1 checked by plant, not by a pass** — planted *"Now is a good time to
+buy long-term bonds."* into the very body field this run edited: `check-blindspot` **FAIL**, naming
+the line. Restored from a scratchpad copy of the fixed file (never `git checkout --`), re-ran:
+**PASS**, the plant greps to 0 and `git diff --stat` is back to the intended lines. §10.2: `grep -ic
+dalio` over all five touched files returns **0** in each. §2.3 / stale-freshness: the diff adds no
+date and no figure — year-like tokens on added lines **14**, on removed lines **14**, identical.
+§10.3: kids content untouched.
+*DECISIONS.md conflict:* none — `grep -c 2s10s` returns **0** there (control: `yield curve` returns
+2), and nothing here is near localStorage-only state, `.js`-not-JSON content, or Vite-not-Expo. The
+ledger update is the mechanism `DECISIONS.md`'s own P-4 entry prescribes, used as prescribed.
+*Already-done backlog item:* no. `2s10s` appears **0 times** in `AGENT_LOG.md` and **5 times** in
+the archive, all of them the three runs described above — the run that wrote the clause and the two
+that certified it present. Nothing ever asserted the direction deliberately, so this corrects a
+defect rather than reversing a decision.
+*My own verification claim:* every figure above is printed by a command re-run this session with its
+control beside it, or read off the built app with the bundle name confirmed. The two-sided chunk
+proof and the plant/restore are re-runnable from this commit using `git show HEAD~1:`.
+*W-6.3 (instrument-to-app ratio):* **0 lines added to `scripts/`.** The class sweep lives in this
+entry only.
+⛔ **What the check found against me:** two of my own instruments were dead before they were used —
+the heading screen that tested `"undefined"` and the Korean live read that measured an English page.
+Both were caught by controls I had planted for other reasons, not by re-reading the code approvingly.
+
+**W-6.2 rule 3, answered in one sentence, and then declined.** *"A learner is told the spread is
+2-year minus 10-year, opens Reference > Market Signals, and finds the same number defined the other
+way round."* That sentence is writable, so a check would be admissible — but the class is at **zero
+live instances** after the sweep above, a regex over subtraction phrasing in five languages would
+be blunt in exactly the way W-6.2 rule 3 warns about, and W-6.3's number (`scripts/` at 2.3x `src/`)
+says this does not earn a 63rd `check-data.mjs` section. **Filed as a note here, not as an item**
+(W-6.2 rule 2 + W-6.4).
+
+**Still standing, restated because it is now four entries old:** item 160 asks that the next run to
+open `quizMeta.js` fix its stale *"roughly 3/3/4/3"* header comment. This run read that file but did
+not edit it, so the ask stands.
+
+**O-1 remains the entire critical path: 44 lessons, 5 languages, 161 minutes of content — and zero
+people have ever opened this app** (figures off `npm test`'s readiness line; `MEASURED log-size:
+file 533310 b, run log 122556 b, floor 410754 b`).
+
+**Owner tree:** `git status` at run start and again before writing showed the owner's untracked
+`UIUX/` only, **untouched**. `HEAD` re-checked before writing and unmoved at `8a2489c`.
+
 ### 2026-09-04 (owner-directed: "do the archiving pass next") — the fifth W-5.3 pass; 12 entries and 124,929 b moved, containment 12/12 with both plants behaving, and the rule's date clause was a no-op for the SEVENTH consecutive firing
 
 **Why now.** The previous entry closed by making this due and the owner directed it. `npm test` at
