@@ -96,8 +96,10 @@ Add a new entry when a run makes a choice future work should be able to look up 
 
 ### Instrumentation: minimum event set wired to a local sink, not PostHog yet
 
-- **Status:** open — the seam exists, the real provider doesn't yet. See `AGENT_LOG.md` backlog
-  item 18.
+- **Status:** ⚠️ **open, but narrowed 2026-09-05 — the transport now exists; only the account does
+  not.** `sink()` no longer has to be swapped: `track()` writes the local log *and* forwards to
+  whatever `src/lib/analyticsConfig.js` names, which ships as `"none"`. What remains is an account
+  and one pasted value. See `AGENT_LOG.md` backlog item 18 and the 2026-09-05 sub-entry below.
 - **What was decided:** `src/lib/analytics.js` exports a single `track(event, props)` and an
   `EVENTS` map covering `LAUNCH_PLAN.md` §9.2's minimum set (app opened, lesson started/completed,
   quiz taken, paywall viewed, trial started, subscribed, canceled, ad watched). `track()` currently
@@ -149,8 +151,49 @@ Add a new entry when a run makes a choice future work should be able to look up 
   those features exist in the app yet (no paywall/billing code — confirmed by
   `LAUNCH_READINESS.md`'s own grep). The event names exist so the provider swap-in doesn't also have
   to invent names later, but firing them now would be fabricated data.
-- **Revisit when:** a PostHog (or other provider) account and key exist — swap `sink()`, keep every
-  `track()` call site as-is.
+- **Revisit when:** ~~a PostHog (or other provider) account and key exist — swap `sink()`~~ —
+  **superseded 2026-09-05: `sink()` no longer needs swapping.** See below.
+
+- **Update, 2026-09-05 (owner-directed, "set up analytics for O-2"): the transport is built and
+  provider-agnostic; the provider choice is deliberately NOT made here.**
+  - **What was decided.** `src/lib/analyticsConfig.js` is a committed config module with
+    `provider: "none"` as shipped. `track()` now calls two sinks: the existing `localStorage` log,
+    **always**, and `remoteSink()`, which does nothing while the provider is `"none"`. Three provider
+    shapes are supported — `plausible`, `posthog` (the plan's original target) and `custom` (any
+    JSON endpoint). **No `track()` call site changed**, which is what the original entry promised.
+  - **Why the provider is not chosen here.** It is an owner decision with cost and privacy
+    consequences: PostHog is free at this volume and gives funnels that compute §4.3's ≥40% gate
+    directly, but sets a persistent id and ships a heavy SDK; cookieless providers (Plausible,
+    Umami) need no consent banner and weigh ~1-2 KB but cost money or measure less. The seam means
+    that choice no longer blocks the code, so it should be made on its merits rather than by
+    whoever happens to be editing this file.
+  - **Config is a committed `.js` file, not an environment variable.** The deploy is `npm run build`
+    then drag `dist/`; a build-time env var is silently skippable, and forgetting it produces a
+    successful build with analytics quietly off — the precise failure this item exists to end.
+    Nothing in the file is secret: an ingest key or site id is public by construction, and the file
+    says so in a ⛔ block that names the private-key values that must never go there.
+  - **A privacy guard, not tidiness: `sanitizeProps` drops anything that is not a number, a boolean,
+    or an id-shaped string ≤64 chars.** Every current call site passes scalars, so it changes nothing
+    today; it exists so a future call site cannot leak lesson prose or typed text to a third party by
+    passing it as a prop. Objects, arrays, nulls and prose are dropped rather than truncated.
+  - **No persistent id and no cookie.** PostHog needs some `distinct_id`, so it gets a random one
+    generated per page load and held in memory only. **The cost is stated rather than discovered:
+    "unique users" in a PostHog dashboard will read as "sessions".** Plausible is sent no id at all,
+    since it counts visitors server-side.
+  - ⛔ **The bug this cost, worth keeping because it is invisible when it happens:
+    `navigator.sendBeacon` always sends with credentials mode `include`.** A non-simple content type
+    (`application/json`) therefore triggers a *credentialed* preflight, which any endpoint answering
+    `Access-Control-Allow-Origin: *` rejects — and the event vanishes with nothing thrown and nothing
+    logged. Measured against a local receiver: **0 of 5 events arrived**. `sendBeacon` is now used
+    only for `text/plain` (CORS-simple, no preflight — which is also why the Plausible adapter sends
+    `text/plain`, as Plausible's own script does); everything else uses `fetch` with
+    `credentials: "omit"` and `keepalive`. **`mode: "no-cors"` is deliberately not used**: it forbids
+    the JSON content type and makes failures opaque.
+  - **Verified end-to-end without any provider account**, by pointing `custom` at a local receiver
+    and driving the built app in a browser: `app_opened`, `lesson_started{lessonId:29}`,
+    `quiz_answered`, `quiz_taken{correct,total,scorePct}` and `lesson_completed{durationSec:102}`
+    all arrived, under one session id. The two §9.2 payloads that §4.3's gate needs — duration and
+    score — were observed on the wire, not inferred.
 - **Update, 2026-08-21 (owner-directed): the event is `canceled`, not `cancelled`.** The house style  <!-- us-english:allow: specimen: the rule names the wrong form deliberately -->
   is US English (backlog items 91, 92), and this name was the last British spelling left in the repo.
   Renamed in all six places at once — `EVENTS.CANCELED: "canceled"` in `src/lib/analytics.js`,

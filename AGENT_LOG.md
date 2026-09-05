@@ -139,6 +139,21 @@ for the history. No open P1/P2 items.
 > and cannot be scored any other way. O-2 is downstream of O-1 — **and O-1 closed 2026-09-05, so
 > this is now the top of the critical path and nothing is in front of it.** The gate it unblocks is
 > the one that says whether anybody finishes lesson 1.
+> 🟡 **NARROWED 2026-09-05 (owner-directed): the code half is DONE and verified end to end.** This
+> item no longer reads "an analytics provider account **and key**, then swap `sink()`". The
+> transport ships; `src/lib/analyticsConfig.js` says `provider: "none"`. **The whole remaining owner
+> action is four steps:**
+> 1. Create an account at one provider — **PostHog** (free at this volume; its funnels compute
+>    §4.3's ≥40% gate directly) or a **cookieless** one (Plausible/Umami: no consent banner, ~1-2 KB,
+>    but paid or less capable). The trade is written out in `DECISIONS.md`; it is a real choice, not
+>    a formality.
+> 2. Paste that provider's **public** site id / ingest key into `src/lib/analyticsConfig.js` and set
+>    `provider`. ⛔ **Never paste a private or personal API key** — the file ships to every visitor
+>    and says so.
+> 3. `npm run build`.
+> 4. Redeploy `dist/` to <https://magnificent-mochi-73aecc.netlify.app>.
+> **Then §4.3's Phase-0 gate becomes measurable for the first time** — and only then; a per-device
+> `localStorage` log still cannot be aggregated across installs.
 >
 > **O-3 (new, decision not action). A large volume of unreviewed machine translation is now shipping
 > every day, and the "(Beta)" decision was made about a smaller, static surface.** `DECISIONS.md`
@@ -4057,7 +4072,33 @@ diff the first heading against the previous section's first heading.
     mind, not "add one more blurb because the list has room." **Not a design decision (do NOT do this):**
     making kids material child-facing — child accounts, a kids mode, kid-directed lesson UI — changes
     COPPA classification, store privacy category, and ad eligibility. §10.3 reserves it for the owner.
-18. **[Process] Instrumentation (§9.2) — call sites done 2026-08-05, real provider still open.**
+18. **[Process] Instrumentation (§9.2) — 🟡 call sites done 2026-08-05, TRANSPORT done 2026-09-05,
+    only the provider account is still open.**
+    > ✅ **2026-09-05 (owner-directed, "set up analytics for O-2"). The half a run can do is done.**
+    > `src/lib/analyticsConfig.js` ships with `provider: "none"`; `track()` writes the local log
+    > **and** forwards to whichever of `plausible` / `posthog` / `custom` that file names. **No
+    > `track()` call site changed** — the promise the 2026-08-05 entry made. **What is left is one
+    > owner action and it is now much smaller than "swap `sink()`":** create an account, paste the
+    > public site id or ingest key into that file, `npm run build`, redeploy.
+    > **Verified end-to-end with no provider account**, by pointing `custom` at a local receiver and
+    > driving the built app in a browser: **5 events arrived** — `app_opened`,
+    > `lesson_started{lessonId:29}`, `quiz_answered`, `quiz_taken{correct,total,scorePct}`,
+    > `lesson_completed{durationSec:102}` — under **one** session id. §4.3's gate needs exactly the
+    > last two payloads and both were read off the wire.
+    > ⛔ **The finding worth not re-deriving: `navigator.sendBeacon` always sends with credentials
+    > mode `include`,** so an `application/json` beacon triggers a credentialed preflight that any
+    > `Access-Control-Allow-Origin: *` endpoint rejects — **0 of 5 events arrived**, with nothing
+    > thrown and nothing logged. Beacons are now used only for `text/plain`; everything else uses
+    > `fetch` with `credentials: "omit"` + `keepalive`. **A unit test could not have caught this**;
+    > it took a real browser posting at a real receiver.
+    > ⚠️ **No guard was built and none is due** (W-6.2 rule 3, W-6.3 at 2.15x). The learner-visible
+    > failure `sanitizeProps` prevents — prose or typed text leaving the device — has **zero live
+    > instances**: every call site passes scalars, measured. Guarding the guard is not earned yet;
+    > if a call site ever passes a string that is not id-shaped, that is when it is.
+    > ⚠️ **The provider choice was deliberately left to the owner** — cost and privacy differ
+    > materially (PostHog: free here, native funnels for the ≥40% gate, but a persistent id and a
+    > heavy SDK; cookieless: no consent banner, ~1-2 KB, but paid or less capable). The seam means
+    > the choice no longer blocks any code. `DECISIONS.md` has the full reasoning.
     `src/lib/analytics.js` (`track()`/`EVENTS`) fires `app_opened`, `lesson_started`,
     `lesson_completed`, and `quiz_taken` (see run log entry "Wire the §9.2 minimum analytics event set").
     `paywall_viewed`/`trial_started`/`subscribed`/`canceled`/`ad_watched` have names reserved but don't
@@ -4651,6 +4692,97 @@ zero meaningful: `selftest PASS (8/8 controls fired, plantsRemoved true)` and, p
 finding(s); V vacuous; U unavailable`. A bare "no accessibility issues found" is not a result.
 
 ## Run log
+
+### 2026-09-05 (owner-directed, interactive: "now set up analytics for O-2") — the transport half of item 18 is built, provider-agnostic and verified end to end against a local receiver; what is left is an account and one pasted value, and the bug that ate the first attempt was invisible to every test that is not a real browser
+
+**What O-2 was, and what it is now.** `DECISIONS.md` had said since 2026-08-05: *"Revisit when a
+PostHog (or other provider) account and key exist — swap `sink()`."* Two things were bundled in
+that sentence: **code a run can write** and **an account a run cannot create**. This separates
+them. `src/lib/analyticsConfig.js` (new, 75 lines) ships `provider: "none"`; `track()` now writes
+the local log **and** forwards to whichever of `plausible` / `posthog` / `custom` that file names.
+**No `track()` call site changed** — the promise the original entry made, kept.
+
+**⛔ The bug, which is the part worth keeping.** The first end-to-end run delivered **0 of 5
+events**, with nothing thrown and nothing logged — the app looked perfect. The browser console had
+it: *"the value of the 'Access-Control-Allow-Origin' header in the response must not be the wildcard
+'*' when the request's credentials mode is 'include'."* **`navigator.sendBeacon` always sends with
+credentials mode `include`.** So an `application/json` beacon triggers a *credentialed* preflight,
+which every endpoint answering `Access-Control-Allow-Origin: *` rejects. Fixed by using `sendBeacon`
+only for `text/plain` (CORS-simple, no preflight — and the reason the Plausible adapter sends
+`text/plain`, exactly as Plausible's own script does), and `fetch` with `credentials: "omit"` +
+`keepalive` for everything else. **`mode: "no-cors"` was in my first draft and was removed before
+testing**: it forbids the JSON content type outright and makes every failure opaque — the safe-
+looking choice that guarantees the silent zero.
+**The transferable part: this class of defect cannot be unit-tested.** The 21 pure-function
+assertions I wrote all passed against the broken build. Only a real browser posting at a real
+endpoint could tell "the payload is correctly shaped" from "the payload is correctly shaped and
+never sent."
+
+**Verification — end to end, with no provider account.** A local receiver on 127.0.0.1:8899 (proved
+live first by a control POST before the app existed in the picture), `dist/` served statically, the
+built app driven in a browser: dismissed the disclaimer, answered the end-of-lesson check, hit Mark
+Complete. **5 events arrived under 1 session id:** `app_opened`, `lesson_started{lessonId:29}`,
+`quiz_answered{source:"lesson_check",correct:true}`,
+`quiz_taken{correct:1,total:1,scorePct:100}`, `lesson_completed{lessonId:29,durationSec:102}`.
+**§9.2's two payload requirements — "lesson completed *with duration*", "quiz taken *with score*" —
+were read off the wire, not inferred**, and they are exactly what §4.3's ≥40% gate needs.
+**Pure-function layer:** 21 assertions across all four providers with two-sided controls (a blank
+required field reads as OFF; a configured provider returns a request; the guard keeps 3 of 8 props
+and drops prose, an email-shaped string, objects, arrays, null and NaN; and a prose prop cannot
+reach a real request body).
+
+**⭐ Restoring the test config was treated as part of the work, not cleanup.** The build under test
+had `http://127.0.0.1:8899/collect` compiled into it. Restored from a **scratchpad copy** (never
+`git checkout --`), proven byte-identical by `diff`, rebuilt, and then checked in the direction that
+matters: `127.0.0.1:8899` appears in `dist/` **1** time before the rebuild and **0** after, while
+`app_opened` still appears **1** time — so the endpoint is gone and the bundle is still real.
+
+**Deliberately not decided: which provider.** PostHog is free at this volume and its funnels compute
+the ≥40% gate directly, but it sets a persistent id and ships a heavy SDK against a repo that
+maintains `check-payload.mjs` to keep bundles small; cookieless providers need no consent banner and
+weigh 1-2 KB but cost money or measure less. That is an owner call with cost and privacy
+consequences, and the seam means it no longer blocks any code. Written up in `DECISIONS.md` and
+`README.md` § Analytics with the trade stated both ways.
+
+**Two design points recorded rather than left to be discovered.** (1) **No cookie and no stored id.**
+PostHog needs a `distinct_id`, so it gets a random per-page-load one held in memory — which means
+**"unique users" there reads as "sessions"**, stated up front rather than found in a dashboard.
+(2) **`sanitizeProps` is a privacy guard**: numbers, booleans and id-shaped strings ≤64 chars only,
+everything else dropped rather than truncated, so a future call site cannot leak lesson prose or
+typed text to a third party.
+
+**Step 5 — adversarial self-check.** *Blindspot register:* no learner-facing content changed;
+`check-blindspot` exit 0. §10.3 (kids/COPPA) is the one that needed thinking about and is the reason
+the no-cookie/no-stored-id posture is the default rather than an option. *DECISIONS.md conflict:*
+none — the localStorage-only **app state** decision is untouched (this adds no storage key; the
+analytics log key already existed), and `.js`-not-JSON config is followed rather than broken.
+*Already-done item:* no — item 18 has been open since 2026-08-05 and its call-site half is
+explicitly preserved, not redone. *My own verification claim:* the receiver's log file is the
+evidence, the control POST proves the receiver was live before the app was involved, and the
+before/after `dist/` greps let a reviewer confirm the test endpoint is gone without trusting me.
+⛔ **What the check found against me: `npm test` failed 4× on §26** — all four documents I had just
+written cited `src/lib/analyticsConfig.js`, which existed on disk and **was not tracked**. §26 was
+right: on a fresh clone those citations dangle. **This is W-6.1's fresh-clone finding arriving from
+the other direction** — that one was a tracked document citing an untracked file the owner happened
+to have; this was a tracked document citing a file *I* happened to have. `git add` was the fix, and
+the near-miss is that the file could have been left untracked in a commit that looked complete.
+
+**No guard was built and none is due** (W-6.2 rule 3, W-6.3 at 2.15x). The learner-visible failure
+`sanitizeProps` prevents — prose leaving the device — has **zero live instances**: every call site
+passes scalars, measured. `scripts/` is unchanged by this run: **0 lines added.**
+
+**Cost.** Bundle `index-*.js` **261.37 → 263.58 kB** raw, **93.88 → 94.81 kB gzip** (+0.93 kB) for
+the whole transport — no SDK, no dependency added. `npm test` exit 0, same 4 warnings; the W-6.4
+floor moved **415,072 → 418,581 b**, the backlog edits closing out item 18 and O-2.
+
+**Top item for the next run: none from here — O-2's remainder is four owner steps** (create an
+account, paste the public id into `analyticsConfig.js`, `npm run build`, redeploy), now written at
+the top of the backlog. **Until they happen, §4.3's Phase-0 gate stays ❌ Unmeasurable and nobody
+has been measured opening the app** — a per-device `localStorage` log still cannot be aggregated
+across installs.
+
+**Owner tree:** the owner's untracked `UIUX/` and 0-byte `course` **untouched**. `HEAD` re-checked
+before writing and unmoved at `cf1aab3`; `public/data/market.json` untouched at `asOf=2026-09-04`.
 
 ### 2026-09-05 (owner-directed, interactive: "deploy the dist folder to Netlify Drop", then "claimed it, update the README and close out O-1") — O-1 is CLOSED after 19 days: the app is live at <https://magnificent-mochi-73aecc.netlify.app>, and getting there took three steps where the repo's instructions described one
 

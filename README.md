@@ -125,9 +125,43 @@ no `netlify.toml`, `vercel.json` or workflow file.
   (`LAUNCH_PLAN.md` §2.3). Keeping them live means re-deploying after the job runs; a
   deployment left alone simply degrades to the rest of the app, which is fully static.
 - **Nothing measures usage yet.** `src/lib/analytics.js` has call sites but no provider, so
-  `sink()` writes to `localStorage` on one device. Picking a provider and holding the key is
-  the other open owner action (`AGENT_LOG.md` item 18); until then, a URL tells you the app
-  loads, not whether anyone used it.
+  events also forward to a real provider once one is named — see **Analytics** below. Until a
+  provider is configured, a URL tells you the app loads, not whether anyone used it.
+
+## Analytics
+
+**Off as shipped, and one file turns it on.** `src/lib/analytics.js` has fired
+`LAUNCH_PLAN.md` §9.2's event set since 2026-08-05; since 2026-09-05 those events also go to a
+provider. `src/lib/analyticsConfig.js` ships with `provider: "none"`, so nothing leaves the
+device until someone changes it.
+
+**To turn it on:**
+
+1. Create an account with one provider. **PostHog** is free at this volume and its funnels
+   compute §4.3's "≥40% of installers finish lesson 1" gate directly, but it sets a persistent
+   id and ships a heavy SDK. A **cookieless** provider (Plausible, Umami) needs no consent
+   banner and weighs 1–2 KB, but costs money or measures less. `DECISIONS.md` has the trade in
+   full — it is a real choice.
+2. Put that provider's **public** site id or ingest key in `src/lib/analyticsConfig.js` and set
+   `provider` to `"plausible"`, `"posthog"` or `"custom"`.
+3. `npm run build`, then redeploy.
+
+⛔ **Never put a private or personal API key in that file.** It is committed to git and shipped
+to every visitor. Providers issue a public *ingest* value (write-only) and a private one (reads
+your data); only the first belongs here. The file repeats this warning where the values go.
+
+**What is and is not collected.** Event names plus small scalars — a lesson id, a duration in
+seconds, a quiz score. `sanitizeProps` drops anything that is not a number, a boolean, or an
+id-shaped string, so prose and typed text cannot leave the device even if a future call site
+passes them. No cookie is set and no persistent id is stored; PostHog's required `distinct_id`
+is random per page load and held in memory, which means **"unique users" there reads as
+"sessions"**.
+
+**Verifying it without a provider account.** Set `provider: "custom"` with `endpoint` pointing
+at any local server that accepts a JSON POST, `npm run build`, and open the app: you should see
+`app_opened`, `lesson_started`, `quiz_answered`, `quiz_taken` and `lesson_completed` arrive.
+That is how the transport was tested — the two payloads §4.3's gate needs (`durationSec` and
+`scorePct`) were read off the wire rather than assumed.
 
 ## Status
 
