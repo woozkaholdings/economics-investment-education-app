@@ -1551,6 +1551,32 @@ diff the first heading against the previous section's first heading.
 167. **[Content/Accuracy — filed 2026-09-05 by the run that fixed lesson 34's US-1930s claim, from
     the same close reading of the economy track. All three are LIVE and were read on the built app,
     not inferred; none is a residual of that run's own edit.]**
+    > ⚠️ **A FIFTH NOTE, not a sub-item (W-6.2 rule 2). THREE more classes swept 2026-09-05 — do not
+    > re-run any of them.** (1) **Glossary↔lesson definitional agreement — ZERO real instances.** All
+    > 43 glossary terms against 1,319 English lesson sentences, plus `economicSignals.js` and the 68
+    > parallel English strings in `markets.js`; controls fired both ways (`Deflation` >0,
+    > `Blorptronics` 0). Two lookalikes died on inspection and must not be re-derived: lesson 36's
+    > *term premium* is already in `lessonTerms.js`'s `deliberatelyUnlinked` as `other-sense`, and
+    > lesson 11's *index fund* attribution to lesson 5 (which contains `index` zero times in five
+    > languages) is **supported**, because lesson 11 §0 supplies the bridge and lesson 5 describes the
+    > thing without naming it. (2) **Attributed cross-references — ZERO in 24.** Every sentence
+    > claiming another lesson *showed* something, read against its target; controls: a known title
+    > resolves, a fabricated one does not, self-references 0. (3) **Typographic integrity — ONE
+    > instance in 2,380 fields, fixed the same day**: lesson 5 §2 opened a sentence with a lowercase
+    > *the*, left there on 2026-08-20 when item 84's conversion replaced *"Lesson 38's"* and did not
+    > restore the capital; all four translations already read it correctly. Doubled words, double
+    > spaces, missing space after a period, space before punctuation and curly-quote balance are all
+    > **zero**. **No check was built for any of the three** (W-6.2 rule 3, W-6.3 at 2.15x): the
+    > sentence-case probe runs at a **96% false-positive rate** (22 of 23 are `EE.UU.`/`U.S.`/`vs.`
+    > or a `?”` closing a quoted question), so a guard means shipping an abbreviation allowlist for
+    > one defect in 44 lessons.
+    > ⛔ **The instrument trap, and it is a sharper version of the fourth note's:** the doubled-word
+    > probe reported **8 hits, all Spanish, all fake** — JS `\w` is ASCII-only, so in *"una economía a
+    > lo largo"* the `í` is a non-word char and `\b` matched before the final **a**, reading `a a`.
+    > **The control passed and was worthless: an English doubled word was planted to validate an
+    > instrument then pointed at Spanish.** Fixed with `\p{L}` and a control planted in the scanned
+    > language that also asserts the artifact is dead (`por toda una economía a lo largo` → 0).
+    > **A control has to be planted in the same alphabet as the corpus.**
     > ⚠️ **A THIRD NOTE, not a sub-item (W-6.2 rule 2). The QUESTION-ANSWERABILITY class is swept and
     > is CLOSED at one fixed instance — do not re-run this sweep.** 2026-09-05: every one of the 46
     > end-of-lesson checks was scored against the lesson it is attached to *and* against all 44 lesson
@@ -4602,6 +4628,139 @@ zero meaningful: `selftest PASS (8/8 controls fired, plantsRemoved true)` and, p
 finding(s); V vacuous; U unavailable`. A bare "no accessibility issues found" is not a result.
 
 ## Run log
+
+### 2026-09-05 (scheduled dev-agent, self-picked: a class never swept in this repo) — a sentence in the middle of lesson 5 starts with a lowercase "the", because the reference conversion that replaced "Lesson 38's" with "the" on 2026-08-20 did not put the capital back, and the four translations have read it correctly the whole time
+
+**Pick, and why it is not a note-chain.** The previous entry closed with *"Nothing is queued; this run
+files no numbered residual… Go back to learner-visible work"*, so W-6.2 rule 1 has nothing to bind
+against. I did not open the previous run's lesson. The pick came out of a sweep I chose, below.
+
+**Step 3.5 — what I set out to measure, and the disposition it forced.** My starting item was
+**glossary-vs-lesson definitional agreement**: the last four real defects this project shipped fixes for
+(2s10s backwards, QT-as-tapering, the Fed's target hung on CPI, the 1930s austerity case) are all *one
+surface disagreeing with another about what a term means*, and no sweep of that class exists. Built it,
+carried a two-sided control (`Deflation` must return >0 definitional sentences, `Blorptronics` exactly 0;
+both fired), ran it over **1,319 English sentences in 44 lessons** against all **43** glossary terms, then
+over `economicSignals.js` and the **68** parallel English strings in `markets.js`.
+- **The class came back clean, and that is the honest result.** Every definitional use I read agrees with
+  the glossary. **Two apparent finds died on inspection and are recorded so nobody re-derives them:**
+  (i) lesson 36 uses *term premium* five times while the glossary's `Premium` is the insurance sense —
+  already handled, `lessonTerms.js`'s `deliberatelyUnlinked` carries
+  `Premium: "other-sense: the term premium on long bonds, not an insurance premium"`; (ii) lesson 11's
+  `thinkAbout` attributes an *index fund* claim to lesson 5, which contains the string `index` **zero**
+  times in all five languages — but lesson 11's own §0 supplies the bridge (*"A fund that simply tracks a
+  market index (the diversification idea from “Stocks, Bonds & Diversification”, done automatically)"*)
+  and lesson 5 does say *"a fund that holds hundreds or thousands of companies… without picking individual
+  stocks themselves"*. **The attribution is supported; it is not a defect.** I also ran the attributed
+  cross-reference class while the corpus was loaded — **24 sentences that claim another lesson *showed*
+  something**, controls at both ends (a known title resolves, a fabricated one does not, self-references
+  = 0) — and read every one against its target. No defect.
+- **So I redirected to a mechanical class instead: typographic integrity of the shipped prose**, which
+  nothing in `npm test` looks at. Five probes over **2,380 non-empty fields** (44 lessons × 5 languages,
+  plus all 43 glossary `f`/`ex` pairs): doubled words, double spaces, a missing space after a period,
+  a space before punctuation, and curly-quote balance. **Four of the five: zero hits.**
+
+**⛔ The probe that did fire was my own regex, again, and the control I had was the wrong control.**
+`\b(\w+)\s+\1\b` reported **8 doubled words, all Spanish, all fake**: JavaScript's `\w` is ASCII-only, so
+in *"una economía a lo largo"* the `í` is a non-word character and `\b` matches before the final **a** —
+the scanner read `a a`. Every one of the eight was a word ending in an accented vowel or `ñ` followed by
+` a `. **My control passed and was worthless: I planted an English doubled word to check an instrument I
+then pointed at Spanish.** Rebuilt with Unicode property escapes and a control that plants in the
+language being scanned *and* asserts the artifact is gone — `economía economía aquí` → 1, `la la casa` → 1,
+`we we go` → 1, **`por toda una economía a lo largo` → 0**, `una prima pequeña a un fondo` → 0. Re-run:
+**8 → 0.** This is the second consecutive run whose first instrument manufactured a tidy story; the
+transferable part is narrower than "use a control" — **a control has to be planted in the same alphabet
+as the corpus.**
+
+**⭐ The one real defect, out of 23 sentence-start candidates across `en`+`es`.** Twenty-two are
+abbreviation artifacts (`EE.UU.`, `U.S.`, `vs.`, and `?”` closing a quoted question mid-sentence) — read
+and dismissed individually, not batch-suppressed. The twenty-third is live in the shipped English build:
+
+> …something that affects nearly the whole market at once. **the** four cycle phases in “The 4 Phases of
+> Economic Cycles” showed that a broad economic contraction tends to pull most companies' stock prices
+> down together…
+
+It opens the paragraph that carries lesson 5's whole point — that diversification has a limit.
+
+**Provenance, traced rather than guessed, with both controls firing** (`the four cycle phases in` → 2 hits
+at HEAD; `ZZZNOTHERE` → 0). The phrase does not exist before `7046854` (2026-08-20, *"Name the lesson,
+don't number it: 237 cross-references converted to titles"*), whose parent reads **"…at once. Lesson 38's
+four cycle phases showed that…"**. The conversion replaced the sentence's first word and left the
+replacement lowercase. The archive shows the same sentence was authored as *"lesson 10's four cycle
+phases"* and survived the 2026-08-14 renumbering — **three renamings, and the capital was lost on the
+third. 16 days on the shipped English main build.** ⚠️ Worth one line for whoever audits the ledger:
+lesson 5's four translations were re-marked reviewed **on 2026-08-20, the same day this landed**, and the
+review did not catch it.
+
+**The finding that settles the fix: English is the only outlier.** es *"Las cuatro fases de la lección
+«Las 4 Fases del Ciclo Económico»… mostraron que…"*, and ko/zh/ja each open the sentence with the lesson
+title as a proper subject. The correction is English rejoining the other four, not an editorial
+preference. **Fix: one character**, `at once. the four cycle phases in` → `at once. The four cycle phases
+in`, applied through a guarded script that refuses unless it finds **exactly one** occurrence, the target
+is absent afterward, the replacement is unique, **and the file length is unchanged** — which is what makes
+"no generated figure moved" a property of the edit rather than a hope.
+
+**The one consequence, and I did the work it asked for rather than papering over it.** Editing lesson 5's
+English invalidated its four translation hashes → coverage `100% → 98% (1 stale each)` and §11 failed on
+`LAUNCH_READINESS.md`. I read **all three sections, the takeaway and the reflection prompt of lesson 5 in
+es/ko/zh/ja against the corrected English** before re-marking: every claim corresponds, and the sentence in
+question already reads correctly in all four. The abridgment (all four drop s0's coffee-shop opening and
+s2's closing clause) is the **known item-93/94 debt — lesson 5 is on `translation-completeness`'s abridged
+list of 12** — not a new gap. Marked `ai` under the same reviewer identity recent dev-agent runs use.
+Coverage back to `100%, 0 stale`.
+
+**Verification — exit codes read directly, never through a pipe.** `npm test` **exit 0, 0 failures,
+4 warnings**, `diff`ed against a baseline captured *before* I edited anything. ⚠️ **Three of the four are
+byte-identical; the fourth is not, and saying so is the point** — the W-6.4 floor warning moved
+**410,113 → 412,623 b**, which is this entry’s own backlog note being added to the section the floor
+measures. It is the expected cost of writing item 167’s fifth note, not a regression, and the version of
+this sentence I drafted before writing the log claimed all four were identical. `npm run build` **exit 0, 997 ms**. `npm run check-blindspot` **exit 0**.
+Generated figures unmoved: **44 lessons / 151,788 en chars / 162 min**, the same line as the baseline, as
+a length-preserving edit requires. **And the proof it reaches a learner rather than the source tree:**
+`The four cycle phases in` is in the shipped chunk `dist/assets/lessonContent.essentials.en-kBRF6sjp.js`,
+and `once. the four cycle phases` returns **0 occurrences across every asset in `dist/`**.
+
+**Step 5 — adversarial self-check.** *Blindspot register:* a capital letter adds no advice verb, no date,
+no market figure, no Dalio, no child-facing framing — and `check-blindspot` exit 0 over all five languages
+is the evidence, not my reading of my own edit. *DECISIONS.md conflict:* grepped `capitali`, `sentence
+case`, `four cycle phases`, `lesson 5` — one hit, an unrelated 2026-08-13 note about a *"rates already at
+0%"* overclaim; no closed decision touches this, and a prose edit inside a `.js` content module is the
+shape those decisions mandate. *Already-done backlog item:* grepped the live log and the archive — item
+33's *"the lowercase English ones"* is about the `lesson N` **reference form**, a different thing, and the
+archive's only `four cycle phases` hit is the 2026-08 authoring of this very section. Not a redo.
+*My own verification claim:* every figure above was printed by a command re-run this session, the warning
+comparison is a `diff` rather than a memory, and the `dist/` greps let a reviewer confirm the
+learner-facing result from the built output alone.
+
+**W-6.2 rule 3 / W-6.3, answered explicitly: no check is due and none was built.** The learner-visible
+sentence is writable — *"a sentence in the middle of a lesson starts with a lowercase letter"* — so the
+rule does not refuse it on that ground. It is refused on the instrument: **22 of 23 candidates are false
+positives (96%)**, so a permanent guard means shipping an abbreviation allowlist and a quote-boundary rule
+into a `scripts/` tree measured this run at **18,147 lines against `src/`-minus-content-and-locales'
+8,437 — 2.15x**. One defect in 44 lessons does not buy that. `git diff --stat -- scripts/` is **one file,
+`translation-review-ledger.json` — a data record, zero lines of instrument code**; all four sweep scripts
+stay in the session scratchpad.
+
+**O-3 accounting: 0 characters of new translated prose.** English-only, and the character count did not
+move at all. The four translations were re-read and re-marked, not rewritten.
+
+**One measurement taken in passing, recorded here rather than in the backlog** (W-6.4 — the floor is the
+over-budget one, and item 27 already tells pickers to re-parse rather than trust its numbers): lesson-visual
+coverage re-parsed with **item 27's own control** (must find 36 ✓, must not find 9999 ✓, 44 lessons ✓) is
+**economy 7/12, essentials 4/15, money 6/17 — 17 of 44, 0 orphans**, against the `15 of 44` that item last
+recorded on 2026-09-03. Two figures shipped since (lesson 12 `mortgageSplit`, lesson 27 `lossAsymmetry`).
+
+**Top item for the next run.** **Nothing is queued; this run files no numbered residual** (W-6.2 rule 2).
+**Three classes are newly swept and closed** — recorded under item 167 so nobody re-runs them:
+glossary↔lesson definitional agreement (**zero** real instances), attributed cross-references (**zero** in
+24), and typographic integrity (**one** instance in 2,380 fields, fixed here). The run log has ample
+headroom — **archiving is not due, do not pick it.** **O-1 remains the entire critical path — 44 lessons,
+5 languages, 162 minutes of content, and zero people have ever opened this app.**
+
+**Owner tree:** `git status` at run start and again before writing showed the owner's untracked `UIUX/`
+and the 0-byte `course` file only, **untouched** — neither deleted nor committed, per the hard rules.
+`HEAD` re-checked before writing and unmoved at `84a4b3b`; the daily market-data job did not fire during
+the run and `public/data/market.json` is untouched at `asOf=2026-09-04`.
 
 ### 2026-09-05 (scheduled dev-agent, self-picked off a corpus-wide sweep whose original premise was refuted) — the compounding lesson told the reader that Priya withdraws $60 a year from her original $1,000; Priya is the saver two paragraphs above who puts in $200 a month and finishes near $400,000, and all four translations already said "you"
 
