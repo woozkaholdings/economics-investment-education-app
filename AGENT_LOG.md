@@ -4629,6 +4629,109 @@ finding(s); V vacuous; U unavailable`. A bare "no accessibility issues found" is
 
 ## Run log
 
+### 2026-09-05 (scheduled dev-agent, picked from `LAUNCH_PLAN.md` §10 — two blindspot checks fell due TODAY and nothing in the repo watches those dates) — 10.8's tripwire fires at 10.61x against a 5x threshold, every one of the 17 rolling windows since it was filed fires, and 10.10 cannot be closed by any run because its refuting fact is not observable from inside the repo
+
+**Where the pick came from, and why it is not a residual chain.** The previous entry queued nothing
+("this run files no numbered residual"), and item 167's remaining (a)/(c) are explicitly barred as a
+headline pick by their own W-6.2 rule 1 clause. So I went to the launch plan and found two blindspot
+entries whose **Check:** field read **2026-09-05** — today. Both were undone.
+
+**Step 3.5 — the premise re-measured before anything was edited.**
+1. *Are they actually due and undone?* `grep '\*\*Check:\*\*' LAUNCH_PLAN.md` returns three dates:
+   10.8 and 10.10 at **2026-09-05**, 10.9 at 2026-10-03. `grep '10\.8' AGENT_LOG.md` returns two
+   hits, neither a measurement. The 2026-09-04 owner-directed run (`e290e80`) did review the **nine
+   `CLAIMS.md` rows** that shared this date — it did not touch the blindspot register, which is a
+   separate register with its own dates.
+2. *What enforces those dates?* **Nothing.** No script under `scripts/` reads `Check:` or `Refuting
+   number` — `check-claims.mjs` covers `CLAIMS.md` only. The dates arrive unannounced; a run has to
+   notice them. That is why both were still open on the day they came due.
+
+**⭐ 10.8 — the tripwire FIRES, and the number has moved the wrong way.** 7-day window ending
+2026-09-05: **25,173 lines of `AGENT_LOG.md` churn against 2,372 lines of application code
+(`src/` minus `src/content/` and `src/locales/`) = 10.61x**, threshold **5x**, against the **7.56x**
+this entry recorded when it was filed on 2026-08-20 — **+40%**. It is not one bad week: **all 17
+rolling 7-day windows ending 2026-08-20 through 2026-09-05 exceed the threshold**, min **7.07x**,
+max **19.52x**, and the seven windows ending on or after the day W-6.2 landed read 14.59, 14.26,
+16.54, 10.91, 11.12, 10.92, 10.61. **The remedy aimed at this shape is not visibly moving the
+number it was aimed at.** Against all of `src/` the same window reads 6.21x, so unlike 2026-08-20
+the denominator correction is no longer what decides the answer — both readings now fire.
+
+**⛔ The instrument, its control, and the trap it caught in my own first pass.**
+- Instrument: `git log --since --until --numstat --no-merges`, insertions+deletions per path,
+  `AGENT_LOG.md` over `src/`-minus-content-and-locales. `AGENT_LOG.archive.md` **excluded** — an
+  archiving pass is a *move*, not new writing (including it reads 15.45x for this window).
+- **Calibration control, run before the result was believed:** re-measure this entry's own window
+  (2026-08-13 → commit `367707f`, which is the commit that wrote the 7.56x). It returns **3,023
+  application lines exactly**, 22,893 log lines against the 22,856 recorded, **7.57x against 7.56x**.
+  The instrument reproduces the reading it is being compared to. Two more: path classification
+  asserted against **9/9** known paths, and an empty window returns `commits=0` and `NaN` rather
+  than a clean-looking zero.
+- ⛔ **What the control caught against me.** My rolling-window pass and my single-window pass
+  disagreed (26,050/2,385 vs 25,173/2,372) for the *same* stated window. The rolling script labelled
+  each row with `new Date(e).toISOString()` — **which converts an end-of-day local timestamp to UTC
+  and shifts every label one day forward**. Every ratio was right; every date attached to one was
+  wrong, and the version of this entry I had drafted quoted "ending 08-22" and "ending 08-30" for
+  windows that end on 08-21 and 08-29. Caught only because two instruments were run over one window
+  and made to agree. **A date label is a measurement too.**
+
+**10.10 — not refuted, and it cannot be refuted from here.** Still zero: no host-config or CI
+workflow file in the tree, `README.md` §Deploying still opens *"Nothing has ever been deployed"*
+(written 2026-08-17, still accurate), and the only `netlify.app`/`github.io` strings anywhere are
+that section's own instructions, a `vite.config.js` comment and one archive line — four hits, which
+are the scan's positive control; a nonsense probe returns none. **The finding worth recording is
+about the tripwire, not the count:** a reachable URL and "one person has opened the app" are facts
+about the world outside this repo, no local instrument can see either, and the hard rules forbid a
+run touching the remote. **No scheduled run can ever close 10.10.** The entry now says so, and says
+in advance what would count as evidence.
+
+**What shipped.** `LAUNCH_PLAN.md` only — 48 insertions, 2 deletions. Both entries keep their
+original text **verbatim**; the result is appended under each, and each `Check:` moves to
+**2026-10-03** with the reason in the line. That date is not invented: it is §9.3's monthly-audit
+date and the one the 2026-09-04 run moved all nine `CLAIMS.md` rows to, on the reasoning that rows
+falling due on a day no audit runs is how a prompt becomes a warning nobody acts on. The register
+now has one date instead of three.
+
+**Two things deliberately NOT done.**
+- **No script.** W-6.2 rule 3 asks for the learner-visible failure a new check would catch; a churn
+  ratio has none, and `scripts/` is already 2.15x the application. The full recipe and its control
+  are written into the register entry instead, so the next check reproduces rather than re-derives.
+- **No new backlog item.** Filing a 3 KB item about excessive process writing into the 382 KB
+  backlog that W-6.4 says *is* the over-budget floor would be the finding happening again. This
+  entry is also kept deliberately short for the same reason; it lands in the archivable run log
+  (103 KB, 41% of budget), not the floor.
+
+**Verification.** `npm test` **exit 0**; the `WARN`/`FAIL`/`PASS` verdict lines `diff` **byte-identical**
+to a baseline captured before editing (4 warnings, all pre-existing). `npm run build` exit 0, 958 ms.
+`npm run check-blindspot` exit 0. ⚠️ **One thing the build caught:** my first draft of 10.10 named
+`netlify.toml` and `vercel.json` as files that do not exist, and `check-data.mjs` §26 failed on
+`vercel.json` — correctly, since §26 verifies cited paths resolve. **The fix was not a `path-ok`
+exemption** (W-6.1's retraction is about exactly that reflex, and `README.md` already carries the
+marker for that filename): the sentence now defers to `README.md` §Deploying instead of re-listing
+the paths, so no exemption was added and `EXPECTED_EXEMPTIONS` is unmoved.
+
+**Step 5 — adversarial self-check.** *Blindspot register:* no app-facing content changed; added lines
+grep **0** for `dalio` and for advice phrasing, against a positive control (`window`, 7 hits) proving
+the grep is live, and `check-blindspot` exits 0. The dates I added are dated-record fields in a
+planning document, not §2.3's live-looking figures in teaching copy. *DECISIONS.md conflict:* `process
+mass`, `churn` and `10.8` all return **0** there (liveness control: `localStorage` returns 11); no
+recorded decision governs the register's schedule. *Already-done item:* no run has ever measured 10.8
+— the only two hits in the live log are the App summary naming it open and one cross-reference.
+*My own verification claim:* every number in the register entry comes from a command whose exact form
+is written beside it, and the calibration control means a reviewer can tell a working instrument from
+a broken one without trusting me.
+
+**Top item for the next run: nothing is queued from here.** 10.8's reading is evidence for the
+**weekly reviewer and the owner**, not a task a run can take — the response to it is a process
+decision, and a run picking "reduce process mass" as a work item would be the loop closing on itself.
+**O-1 remains the entire critical path — 44 lessons, 5 languages, 162 minutes of content, and zero
+people have ever opened this app; 10.10 is now recorded as unclosable by any run, which is the same
+sentence with the mechanism attached.**
+
+**Owner tree:** `git status` at run start and again before writing showed the owner's untracked
+`UIUX/` and the 0-byte `course` file only, **untouched**. `HEAD` re-checked before writing and
+unmoved at `ed8531a`; the daily market-data job did not fire during the run and
+`public/data/market.json` is untouched at `asOf=2026-09-04`.
+
 ### 2026-09-05 (scheduled dev-agent, self-picked: a class never swept in this repo) — a sentence in the middle of lesson 5 starts with a lowercase "the", because the reference conversion that replaced "Lesson 38's" with "the" on 2026-08-20 did not put the capital back, and the four translations have read it correctly the whole time
 
 **Pick, and why it is not a note-chain.** The previous entry closed with *"Nothing is queued; this run

@@ -689,7 +689,7 @@ content should be checked against them.
   churned 20,061 lines in eight days against 1,964 lines of application code. No individual entry is
   unjustified; the aggregate is. **Refuting number:** over any 7-day window, `AGENT_LOG.md` churn
   exceeding 5× the churn of `src/` **application code** — `src/` excluding `src/content/` and
-  `src/locales/`. **Check:** 2026-09-05.
+  `src/locales/`. **Check:** 2026-10-03 (was 2026-09-05; performed on that date — result below).
   *The audit wrote that threshold against all of `src/`, and the denominator was a transcription
   error between the finding and its tripwire — the audit's own §1 table lists application code as a row
   separate from content and locales precisely because content is the bulk of `src/` churn, and its
@@ -700,6 +700,36 @@ content should be checked against them.
   20,061/1,964; that window re-measures to 10.6× today because it now contains commits that landed after
   the audit did) and **7.56× now** — 22,856 log lines against 3,023 over 2026-08-13→20. The correction
   leaves this blindspot open, which is the answer the uncorrected number would have hidden.*
+  ⛔ **CHECKED 2026-09-05 (scheduled dev-agent), on the date this entry set. The tripwire FIRES, and
+  the ratio has widened by 40% since the correction above certified 7.56×.** 7-day window ending
+  2026-09-05: **25,173 lines of `AGENT_LOG.md` churn against 2,372 lines of application code —
+  10.61×**, against a 5× threshold. **It is not one unrepresentative week: all 17 rolling 7-day
+  windows ending 2026-08-20 through 2026-09-05 exceed the threshold** — min **7.07×** (ending
+  08-21), max **19.52×** (ending 08-29), and none ending after 08-25 reads under 9×. Against **all
+  of `src/`** the same window reads **6.21×**, so the denominator correction above is no longer what
+  decides the answer: both readings now fire.
+  *Instrument, recorded so the next check does not re-derive it and so no permanent script is owed
+  (W-6.2 rule 3 — a churn ratio has no learner-visible failure to name):* `git log --since=<a>
+  --until=<b> --numstat --no-merges`, summing insertions+deletions per path; numerator
+  `AGENT_LOG.md`, denominator `src/` minus `src/content/` and `src/locales/`.
+  `AGENT_LOG.archive.md` is **excluded** — that is what the 2026-08-20 figures were measured on, and
+  an archiving pass is a *move* rather than new writing. Including it reads 15.45× for this window.
+  *Control, run before the result was believed:* re-measuring this entry's own window (2026-08-13 →
+  the `367707f` commit that wrote it) returns **3,023 application lines exactly**, 22,893 log lines
+  against the 22,856 recorded, and **7.57× against the recorded 7.56×** — the instrument reproduces
+  the reading it is being compared to. Path classification was asserted against 9 known paths, and an
+  empty window returns `commits=0` and `NaN`, so a silent zero cannot pass as a clean result.
+  ⚠️ **What this check does NOT say.** Not that any entry is unjustified — the audit's own "no
+  individual entry is unjustified; the aggregate is" still holds, and the same period shipped real
+  learner-visible fixes. It says the ratio the audit named as its red flag **has not responded to the
+  remedy aimed at it** (`AGENT_LOG.md`'s W-6.2, set 2026-08-30 against exactly this shape): 17 of 17
+  windows fire, and the seven that end on or after the day that rule landed read 14.59, 14.26, 16.54,
+  10.91, 11.12, 10.92 and 10.61. A rule written into the log is not visibly moving the number the log
+  is measured by.
+  ⚠️ **Wording note for anyone reading this register as a system: "Refuting number" carries opposite
+  polarity in 10.8 and 10.10.** Here the tripwire firing (above 5×) means the blindspot is real;
+  in 10.10 the refuting fact (a URL exists) means it is closed. Both original sentences are left
+  verbatim — read each entry's polarity off its own text rather than off the field name.
 - **10.9 (new) The four non-English locales are held by sunk cost, not by evidence.** *Open, found
   2026-08-17.* 77% of content bytes, 0% human review, invisible to every instrument (audit §2). The
   owner's P-4 decision stands; what is missing is a date on which it gets re-argued rather than
@@ -710,7 +740,23 @@ content should be checked against them.
   deploy, and no backlog item owns the deploy (audit §3) — though item 72, filed the same day 15
   minutes after this was written, now owns the deploy half; what remains unowned is only the
   click-through, which item 72 already names as owner-only. **Refuting number:** the trivial one — one
-  reachable URL, or one person who has opened the app. **Check:** 2026-09-05.
+  reachable URL, or one person who has opened the app. **Check:** 2026-10-03 (was 2026-09-05;
+  performed on that date — result below).
+  ⛔ **CHECKED 2026-09-05 (scheduled dev-agent), on the date this entry set. NOT refuted — the number
+  is still zero, 19 days on.** No host-config or CI workflow file of any kind exists in the tree —
+  `README.md` §Deploying names the absent ones and says why hash routing needs none, so they are not
+  re-listed here — and the only `netlify.app` / `github.io` strings anywhere are the instructions in
+  `README.md`, a comment in `vite.config.js` and one archive line. `README.md` §Deploying still opens
+  **"Nothing has ever been deployed"**, written 2026-08-17 and still accurate. The scan is live rather
+  than silently empty: those four hits are its positive control, and a nonsense probe returns none.
+  ⛔ **The design defect, recorded so the next check does not re-derive it: this entry's refuting fact
+  is not observable from where the check runs.** A reachable URL and "one person has opened the app"
+  are both facts about the world outside this repo; no local instrument can see either, and the
+  standing rules forbid a run touching the remote. **So no scheduled run can ever close 10.10** — only
+  the owner can supply the fact. That is not a reason to soften the entry; it is the entry's own point
+  (audit §3) reappearing in the shape of its tripwire. **What would count, stated in advance:** a URL
+  written into `README.md` §Deploying, or a non-empty analytics export from a device that is not this
+  one.
 
 ### Held — owner decisions, do not start
 
