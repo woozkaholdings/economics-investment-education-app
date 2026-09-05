@@ -157,7 +157,7 @@ export const lessonContent = {
       }
     ],
     "takeaway": "Cuando la curva de rendimiento se invierte, presta atención. Es el mercado de bonos gritando que vienen recortes de tasas, y eso significa debilidad económica por delante.",
-    "thinkAbout": "La curva de rendimiento se invirtió en 2022. El patrón histórico dice recesión en un plazo de 12 a 18 meses. Algunos dicen que 'esta vez es diferente'. ¿Tú qué opinas?"
+    "thinkAbout": "La curva de rendimiento se invirtió a mediados de 2022, y la ventana de 12 a 18 meses que señala el plazo de anticipación 'típico' se cerró a finales de 2023 sin una recesión en EE.UU. ¿Eso significa que la señal se equivocó, o que lo 'típico' nunca fue una promesa sobre un episodio concreto?"
   },
   "37": {
     "sections": [

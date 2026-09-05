@@ -1538,13 +1538,27 @@ through two passes that each had it open.
       divided by the base. The sentence reads as a claim about the peak, so a learner doing the
       division gets a different number than the sentence gives them. Cheapest of the three; decide
       whether the intended claim is the peak (10x) or the growth (9x) and say which.
-    - **(b) Lesson 36 (Yield Curve): the THINK question contradicts the lesson body on the same
-      screen.** The body's second section now says the 2022 inversion "stayed inverted for roughly
-      two years … before turning positive again in 2024, well past the 'typical' 12-18 month lead
-      time"; the THINK prompt three blocks below still asks *"The yield curve inverted in 2022.
-      Historical pattern says recession within 12-18 months. Some say 'this time is different.' What
-      do you think?"* — i.e. it poses as open a window the body has already closed. Same class as the
-      2026-09-04 QT/tapering and 2s10s finds: a screen disagreeing with itself. Five languages.
+    - **(b) ✅ DONE 2026-09-05 (scheduled dev-agent). Lesson 36's THINK prompt no longer poses a
+      settled episode as an open bet.** Premise re-measured and confirmed exactly as filed in all
+      five languages before editing; see the run log. The replacement anchors on a **closed
+      interval** — "the 12-18 month window … closed at the end of 2023 without a US recession" —
+      because the obvious alternative ("no recession *yet*") is a §2.3 liability that nothing checks.
+      ⚠️ **Two neighbours were checked and deliberately NOT changed; do not re-derive this.** `12-18`
+      appears on three surfaces, not one: the prompt, the end-of-lesson **quiz** question
+      (`quizText.*.js:75`) and the **glossary** `Yield Curve` entry. Both neighbours state the
+      *general* pattern, which is what the lesson teaches and what the 1955 record supports, and the
+      quiz's `explain` already carries the hedge. **The defect was the present tense, not the 12-18
+      month figure** — widening the fix to all three would have hedged the lesson's own thesis on the
+      strength of one episode. "this time is different" leaves lesson 36 but stays in lesson 33,
+      where the corpus actually teaches it as bubble psychology.
+      ORIGINAL TEXT, kept verbatim because the entry above refers to it:
+      > **(b) Lesson 36 (Yield Curve): the THINK question contradicts the lesson body on the same
+      > screen.** The body's second section now says the 2022 inversion "stayed inverted for roughly
+      > two years … before turning positive again in 2024, well past the 'typical' 12-18 month lead
+      > time"; the THINK prompt three blocks below still asks *"The yield curve inverted in 2022.
+      > Historical pattern says recession within 12-18 months. Some say 'this time is different.' What
+      > do you think?"* — i.e. it poses as open a window the body has already closed. Same class as the
+      > 2026-09-04 QT/tapering and 2s10s finds: a screen disagreeing with itself. Five languages.
     - **(c) Lesson 32 (Short-Term Debt Cycle) equates an ordinary recession with deflation** —
       "businesses start cutting prices to attract customers — that's deflation … That's a recession."
       Most postwar US recessions ran *disinflation*, not a falling price level. ⚠️ **Not measured
@@ -1557,7 +1571,10 @@ through two passes that each had it open.
       closed"; (c) "a learner is taught that recession means prices fall". **No check is proposed for
       any of them** — all three are single sentences, and `scripts/` at 2.15x `src/` (W-6.3) says a
       regex is the wrong instrument. **Honest priority: (b) medium — it is a live self-contradiction
-      on the main path; (a) low but near-free; (c) unmeasured.**
+      on the main path; (a) low but near-free; (c) unmeasured.** ⛔ **(b) is DONE, so this item is
+      now a two-part remainder — and W-6.2 rule 1 is EXHAUSTED for this chain: the 2026-09-05 filing
+      run was link one and the (b) run was link two. A run may not take (a) or (c) as its headline
+      pick.**
 
 166. **✅ DONE 2026-09-04 (scheduled dev-agent). The Sector screen now credits both sources, and
     `check-data.mjs` §73 keeps it doing so.** See the run log. Two five-language locale keys —
@@ -4502,6 +4519,135 @@ zero meaningful: `selftest PASS (8/8 controls fired, plantsRemoved true)` and, p
 finding(s); V vacuous; U unavailable`. A bare "no accessibility issues found" is not a result.
 
 ## Run log
+
+
+### 2026-09-05 (scheduled dev-agent, backlog item 167 (b)) — lesson 36 posed the 2022 inversion as a live open bet three blocks under a body paragraph that had already closed it; and the neighbour I checked *because* the last run got caught not checking neighbours turned out to be fine, which is the finding that keeps it from being widened
+
+**Where the pick came from.** Item 167 (b), filed by the previous run off the same close reading of
+the economy track. **W-6.2 rule 1 permits it**: that filing entry counted itself as link one and said
+so explicitly, so this is link two of the allowed two. **The next run may not take a residual of this
+one as its headline** — it picks from the launch plan, the owner-facing items, or refills the backlog.
+
+**⛔ Step 3.5 — the premise re-measured, with a control, before any edit.** Item 167 (b) claims a
+screen that disagrees with itself in five languages. Reproduced by dumping lesson 36's `thinkAbout`
+and section-2 body from all five content modules (not skimmed in the browser):
+
+> body: *"It inverted in mid-2022 and stayed inverted for roughly two years, the longest stretch on
+> record, before turning positive again in 2024, well past the 'typical' 12-18 month lead time."*
+> THINK: *"The yield curve inverted in 2022. Historical pattern says recession within 12-18 months.
+> Some say 'this time is different.' What do you think?"*
+
+**Confirmed exactly as filed, in en/es/ko/zh/ja.** The item's characterization of the code held too —
+the prompt is a single `thinkAbout` string per language and nothing else renders it. Control on the
+grep that established the scope: `2s10s`, a string I knew was in the same lessons, returned 5 files
+from the identical command shape that returned 5 for the `this time is different` family. **The
+prompt has never been edited**: `git log -S"this time is different" -- src/content/` returns five
+commits and **all five are file moves** (the per-track and per-language splits), with the positive
+control `-S"The US in 1930-32"` correctly returning yesterday's content commit. It entered with the
+original content and no run has assessed it.
+
+**⭐ What re-measuring changed, and this time it *narrowed* the item rather than widening it.** The
+last two runs were both caught treating a claim's neighbours as out of scope, so I swept them first.
+`12-18` across `src/` returns three surfaces, not one: the lesson, **the end-of-lesson quiz question**
+(`quizText.*.js:75`, "An inverted yield curve predicts: … Recession within 12-18 months") and **the
+glossary's `Yield Curve` entry** ("Inverted = recession signal within 12-18 months"). Both sit inches
+from the prompt — the quiz renders directly below it on the same screen, which the screenshot shows.
+**Neither is a defect and I am recording why, so the next run does not re-derive it.** They are claims
+about the *general* pattern, which is what the lesson teaches and what the 1955 record supports; the
+quiz's own `explain` already carries the hedge ("not every inversion has been followed by a
+recession, so it isn't a perfect predictor"). **The defect was never the 12-18 month figure — it was
+the present tense.** Only the `thinkAbout` asserted an *open* window over a specific, resolved
+episode. So the fix is one field in five languages, and **the two neighbours are deliberately
+untouched.**
+
+**What shipped.** `src/content/lessonContent.economy.{en,es,ko,zh,ja}.js` — lesson 36's `thinkAbout`,
+one string per language, nothing else in the file. The replacement anchors on the closed interval
+rather than on an open one:
+
+> *"The yield curve inverted in mid-2022, and the 12-18 month window that the 'typical' lead time
+> points to closed at the end of 2023 without a US recession. Does that make the signal wrong — or
+> does it mean 'typical' was never a promise about any single episode?"*
+
+**The construction is the point and it is worth not re-deriving: a bounded interval cannot go stale.**
+"mid-2022 + 18 months closed at the end of 2023" is true forever. The obvious alternative phrasing —
+"no recession has followed it *yet*" — would have been a §2.3 liability of exactly the kind this app
+keeps finding, a sentence that silently becomes false and that nothing checks. **The prompt also
+keeps its pedagogical job**: it still asks the learner to weigh the signal, using the material the
+body's own third section (term premium) and the 1966 counter-example give them.
+**+117 en chars; es +126, ko +56, zh +39, ja +60.** Length is now 259 en chars against a sibling range
+of 139-305 — it had been the second-shortest prompt in the track at 142.
+`scripts/translation-review-ledger.json` — lesson 36 re-marked in es/ko/zh/ja (method `ai`), because
+the English edit correctly flipped all four to **stale**. `LAUNCH_READINESS.md` regenerated through
+`npm run refresh-readiness --write`, never typed.
+
+**Checked and NOT done, so it is not re-derived:** the phrase "this time is different" leaves lesson
+36 but **stays in the corpus where it is actually taught** — lesson 33, as bubble psychology, where
+the archive shows it was deliberately placed. Verified at 1 occurrence after the edit. The concept is
+not lost; it stopped being used to frame a settled question as unsettled.
+
+**Verification.**
+- `npm test` **0 failures, 4 warnings — identical to the baseline taken before editing** (log-size
+  floor, quiz option-length cue, translation completeness, translation review coverage). The
+  intermediate state was proof the ledger works: the prose edit alone produced **1 FAIL** (readiness
+  §10.4 disagreeing with the live ledger) and flipped all four languages to 98% (1 stale), which is
+  the drift detection firing rather than a regression.
+- `npm run build` clean. `npm run check-blindspot` **0 failures**.
+- **Read live on the built app at 375x812**, `dist/` served statically, one language per call and
+  never reading in the same call as the reload. Per language: new string **1**, old string **0**, and
+  an untouched section-2 phrase **1** as a passive control. **The instrument was proven live in each
+  of the five**: before each count I injected a probe element carrying that language's *old* string,
+  confirmed the reader returned **1** for it, removed the probe, and only then counted — so a zero on
+  the old string is a live instrument reading zero, not a dead one returning nothing. Screenshot of
+  the `en` THINK box, with the quiz question visible below it.
+
+**Step 5 — adversarial self-check.**
+*Blindspot register:* clean, checked not assumed. §10.2 — `dalio` returns **0 added lines** across the
+whole diff (the one raw hit is an unchanged *context* line of `LAUNCH_READINESS.md`'s own §10.2 row,
+which states the rule; positive control `151,092` returns 2 added lines from the same command shape).
+§10.1 — `check-blindspot` PASS; the new prose asks a question about a historical episode and no advice
+pattern reaches it. §10.3 — untouched. **§2.3 — this change is a §2.3 *improvement*, which is the
+cleanest way to put it**: the string removed was the one piece of teaching copy that read as
+present-tense-current, and the replacement is bounded.
+*DECISIONS.md conflict:* none. The combined grep returns 6 hits and I read all six rather than
+counting them — FRED as the economics source (39), the translation field set and the tail term-chip
+rule (204, 358), the per-language chunking (456, 471) and track ordering (622). **None governs this
+content**, and the two that could have — the `takeaway`/`thinkAbout` term-chip rules — are satisfied:
+the new text introduces no glossary term needing a chip, and `check-data.mjs` §17b passes. Control:
+`localStorage` returns 11 in the same file, so the grep is live.
+*Already-done backlog item:* no — see the `-S` history above; never edited, never assessed.
+*My own verification claim:* every number above was printed by a command re-run this session.
+*W-6.3 (instrument-to-app ratio):* **re-measured, and the re-measurement caught me misreading the
+previous entry before I quoted it.** My first two counts of `scripts/` gave 15,325 (`*.mjs`) and
+19,643 (all files) against the previous entry's **18,147**, and neither reconciled. The previous
+figure counts **`.mjs` + `.js`, excluding the two JSON data files** — on that basis it reproduces
+**exactly**: 18,147 against `src/` minus content and locales at **8,437**, **2.15x**, unmoved.
+**This run adds 0 lines of instrument code**; the ledger's `8 8` in `--numstat` is four date/hash
+pairs rewritten in place, net zero, not growth. `scripts/` is byte-identical to `ba7fd0d`.
+⛔ **What the check found against me.** The near-miss was in the *opposite* direction from the last
+two runs, and it is worth naming as its own failure mode. Having just been burned twice by ignoring
+neighbours, my first instinct on finding the quiz and the glossary both carrying "12-18 months" was
+that they were part of the defect — three surfaces, one fix. **That would have been wrong and would
+have damaged the lesson**: it would have hedged the general pattern the lesson exists to teach, on
+the strength of one episode. **Over-correcting from the last run's lesson is its own error.** The
+discipline is to check the neighbours, not to assume they are guilty.
+
+**O-3 accounting: one reframed prompt per non-English language — es +126, ko +56, zh +39, ja +60
+characters.** No fluent reviewer has read any of it. The ledger records it as `ai`, not `human`.
+
+**Filed, not picked (W-6.2 rule 2 — this is a NOTE, and deliberately not a numbered item):** item 167
+(a) (the 9x/10x balance-sheet multiple in lesson 37) and (c) (the recession-equals-deflation
+simplification in lesson 32) both remain open under item 167 and are untouched by this run. (c) is
+still unmeasured against the glossary and item 167's own ⚠️ says so.
+
+**Top item for the next run:** ⛔ **not a residual of this one — W-6.2 rule 1 is now exhausted for
+this chain.** Item 167 (a) is near-free but it is this chain's third link; the honest next pick is the
+launch plan, an owner-facing item, or a backlog refill. **O-1 remains the entire critical path — 44
+lessons, 5 languages, 161 minutes of content, and zero people have ever opened this app.**
+
+**Owner tree:** `git status` at run start and again before writing showed the owner's untracked
+`UIUX/` only, **untouched**. `HEAD` re-checked before writing and unmoved at `ba7fd0d`; the daily
+market-data job did not fire during the run, and `public/data/market.json` is untouched at
+`asOf=2026-09-04`.
 
 
 ### 2026-09-05 (scheduled dev-agent, self-picked off a close reading of the economy track) — the lesson teaching "balance is everything" used the US in the 1930s as its pure-austerity failure, which drops the one case in the corpus where the same country ran both mixes; and the claim was not only in the prose, it was the left anchor of the figure drawn an inch below it

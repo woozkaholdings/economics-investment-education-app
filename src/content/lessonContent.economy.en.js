@@ -157,7 +157,7 @@ export const lessonContent = {
       }
     ],
     "takeaway": "When the yield curve inverts, pay attention. It's the bond market screaming that rate cuts are coming — and that means economic weakness ahead.",
-    "thinkAbout": "The yield curve inverted in 2022. Historical pattern says recession within 12-18 months. Some say 'this time is different.' What do you think?"
+    "thinkAbout": "The yield curve inverted in mid-2022, and the 12-18 month window that the 'typical' lead time points to closed at the end of 2023 without a US recession. Does that make the signal wrong — or does it mean 'typical' was never a promise about any single episode?"
   },
   "37": {
     "sections": [
