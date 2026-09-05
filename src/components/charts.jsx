@@ -1259,7 +1259,7 @@ export function SpendingLoop({ title, steps, caption, description }) {
 // zones carry the SAME label. That repetition is the claim: the failure is
 // not monotonic in the dial, so moving further either way is the same kind of
 // wrong. The lesson says exactly this — Germany in the 1920s (almost entirely
-// printing) and the US in the 1930s (almost entirely austerity) are both
+// printing) and the US in 1930-32 (almost entirely the deflationary tools) are both
 // given as instances of an "ugly deleveraging".
 //
 // EVERY STRING THIS FIGURE RENDERS EXCEPT ITS TEXT ALTERNATIVE IS VERBATIM

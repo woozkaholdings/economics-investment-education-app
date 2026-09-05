@@ -1529,6 +1529,36 @@ through two passes that each had it open.
       stand; the coverage did not.** `A11yStates.coverage()` plus the Tab step now in the header
       recipe are the fix — see item 149.
 
+167. **[Content/Accuracy — filed 2026-09-05 by the run that fixed lesson 34's US-1930s claim, from
+    the same close reading of the economy track. All three are LIVE and were read on the built app,
+    not inferred; none is a residual of that run's own edit.]**
+    - **(a) Lesson 37 (QE & QT) says the balance sheet "grew from roughly $900 billion before 2008
+      to a peak of about $9 trillion in 2022 — a stack of bonds nine times the size of the entire
+      pre-2008 institution."** $9T against $900B is **ten** times, not nine; nine is the *increase*
+      divided by the base. The sentence reads as a claim about the peak, so a learner doing the
+      division gets a different number than the sentence gives them. Cheapest of the three; decide
+      whether the intended claim is the peak (10x) or the growth (9x) and say which.
+    - **(b) Lesson 36 (Yield Curve): the THINK question contradicts the lesson body on the same
+      screen.** The body's second section now says the 2022 inversion "stayed inverted for roughly
+      two years … before turning positive again in 2024, well past the 'typical' 12-18 month lead
+      time"; the THINK prompt three blocks below still asks *"The yield curve inverted in 2022.
+      Historical pattern says recession within 12-18 months. Some say 'this time is different.' What
+      do you think?"* — i.e. it poses as open a window the body has already closed. Same class as the
+      2026-09-04 QT/tapering and 2s10s finds: a screen disagreeing with itself. Five languages.
+    - **(c) Lesson 32 (Short-Term Debt Cycle) equates an ordinary recession with deflation** —
+      "businesses start cutting prices to attract customers — that's deflation … That's a recession."
+      Most postwar US recessions ran *disinflation*, not a falling price level. ⚠️ **Not measured
+      against the glossary yet** — the glossary's own `Deflation` entry and lesson 34's use of the
+      word have to be read first, because if they already draw the distinction this is a third
+      self-contradiction and if they do not it is a whole-app simplification the owner may have
+      chosen. **Do not treat (c) as confirmed; (a) and (b) are.**
+    - **W-6.2 rule 3, answered:** (a) "a learner divides 9 by 0.9 and gets a different answer than
+      the sentence"; (b) "the lesson tells a reader on one screen that the window is open and that it
+      closed"; (c) "a learner is taught that recession means prices fall". **No check is proposed for
+      any of them** — all three are single sentences, and `scripts/` at 2.15x `src/` (W-6.3) says a
+      regex is the wrong instrument. **Honest priority: (b) medium — it is a live self-contradiction
+      on the main path; (a) low but near-free; (c) unmeasured.**
+
 166. **✅ DONE 2026-09-04 (scheduled dev-agent). The Sector screen now credits both sources, and
     `check-data.mjs` §73 keeps it doing so.** See the run log. Two five-language locale keys —
     `priceSourceTemplate` ("Sector and index prices from {source}.") under the sector list and
@@ -3370,6 +3400,12 @@ through two passes that each had it open.
     > of three cases. 45 of its 50 strings are lifted verbatim from lesson 34; `check-data.mjs` §69
     > holds all of it, and its (c) block is the one to read — see the run entry for why an ordering
     > control scoped to the whole lesson passes in English and is wrong in the other four.
+    > ⚠️ **String correction 2026-09-05 — a fact correction, not a design correction.** The left
+    > anchor now reads **"The US in 1930-32"** in all five languages: lesson 34's claim about the US
+    > 1930s was factually wrong and was fixed that day (see the run log). **The non-monotonicity
+    > argument above and the figure's shape are unchanged** — only the anchor's date range moved,
+    > and §69 (a) forced the figure and the prose to move together. The 2026-09-03 text above is
+    > kept verbatim per §31.
     > ⛔ **THE MONEY TRACK NOW HAS NO REACHABLE CANDIDATE UNDER THIS ITEM'S OWN RULE, measured
     > 2026-09-03 — this is a finding, not a to-do.** Money is **5/17** and is the track §0 calls the
     > product. Of its twelve bare lessons, **16, 18, 19, 20, 21, 24, 25, 26 and 42** are this item's
@@ -4467,6 +4503,119 @@ finding(s); V vacuous; U unavailable`. A bare "no accessibility issues found" is
 
 ## Run log
 
+
+### 2026-09-05 (scheduled dev-agent, self-picked off a close reading of the economy track) — the lesson teaching "balance is everything" used the US in the 1930s as its pure-austerity failure, which drops the one case in the corpus where the same country ran both mixes; and the claim was not only in the prose, it was the left anchor of the figure drawn an inch below it
+
+**Where the pick came from.** The previous run filed nothing for me to take, and named item 160's
+`quizMeta.js` header comment as the queued ask. I read item 160 first, per W-5.2's standing warning
+that a pick list is a claim about current state: **everything still open in it is behind its own ⛔
+stop line and is O-3's**, and the only reachable piece is a one-line stale comment. Item 165's
+remainder is likewise owner-gated *and* out of order behind item 94. So this is a self-pick from the
+main path, which is where the last three self-picked runs found real defects.
+
+**⛔ Step 3.5 — the premise here is mine, so it got the same treatment.** I read all twelve economy
+lessons end to end (42,597 b dumped from the modules, not skimmed in the browser) and carried three
+candidates out. The one taken is lesson 34's:
+
+> *"The US in the 1930s leaned almost entirely on austerity, and the result was the Great Depression."*
+
+**Three things are wrong with it and they compound.** (1) **Ordering** — the downturn began in
+August 1929; the policy mix deepened it, it did not cause it. (2) **The decade** — the US did not
+lean "almost entirely on austerity" across the 1930s. It did in **1930-32** (the Revenue Act of 1932,
+budget-balancing at every level of government, and a defense of the gold standard that kept money
+tight while roughly 9,000 banks failed). Then in **1933** it left the gold standard, devalued the
+dollar and let money expand, and the recovery started that year — the era's version of the lesson's
+own tool 4. (3) **The teaching cost, which is the reason this outranked the other two candidates**:
+the section's whole claim is that the *mix* decides the outcome, and the US 1930s is the only case
+in the corpus where one country ran both mixes inside one decade. Naming it as the pure-austerity
+failure spends the best available evidence for the lesson's own thesis on the opposite point.
+
+**⭐ What re-measuring changed: the scope. The item I would have written said "one sentence in five
+languages." It is a sentence AND a figure.** `deleveragingAnchors[lang][0]` and
+`deleveragingDescription[lang]` in `content/markets.js` both carry the same claim, because lesson 34's
+`BalanceBand` dial lifts its anchors verbatim from the prose (item 27, 2026-09-03). A prose-only fix
+would have left the figure asserting the old claim an inch below the corrected paragraph — the
+"figure that inverts its own lesson" shape §50 (i) exists for. **`check-data.mjs` §69 (a) is what
+made that unmissable rather than lucky**: it requires all 45 figure strings to appear verbatim in that
+language's lesson text, so the prose edit alone fails the build. The guard did the work a new check
+would have; **`scripts/` is unchanged by this run — 0 lines added.**
+
+**What shipped.**
+- `src/content/lessonContent.economy.{en,es,ko,zh,ja}.js` — lesson 34, section 2, third paragraph:
+  the one sentence replaced by two. **+367 en chars; es +426, ko +208, zh +118, ja +169.**
+- `src/content/markets.js` — the left anchor and the text alternative, 2 sites × 5 languages:
+  "The US in the 1930s" → "The US in 1930-32", and the four translations of each.
+- `src/components/charts.jsx` — the design comment that quotes the claim (comment only).
+- `scripts/translation-review-ledger.json` — lesson 34 re-marked in es/ko/zh/ja (method `ai`),
+  because the English edit correctly flipped all four to **stale** and the ledger is only ever
+  grown by whoever did the review. `LAUNCH_READINESS.md` / `LAUNCH_PLAN.md` figures regenerated
+  through `npm run refresh-readiness --write`, never typed.
+
+**⚠️ One thing the build caught that I had gotten wrong.** The first ja draft wrote *"第4の手段"*.
+`check-data.mjs`'s ordinal-counter guard failed it: `の` is in neither `LESSON_COUNTERS` nor
+`NON_LESSON_COUNTERS`, and the guard's whole point is that a translator reaching for a new counter
+must not silently disable the cross-reference check. **The right fix was not to widen the set** —
+lesson 34's own section 3 already says **`手段4`** and `四つの手段`, so the ja text now uses the form
+the lesson already uses. (zh's `第4种工具` needed nothing: `种` is already in `NON_LESSON_COUNTERS`
+with lesson 34 named as its justification.)
+
+**Verification.**
+- `npm test` **0 failures**; warnings **4 and identical to the baseline I took before editing**
+  (log-size floor, quiz option-length cue, translation completeness, translation review coverage).
+  `npm run build` clean. `npm run check-blindspot` **0 failures**.
+- **§69 re-ran green at 45 verbatim containments across 5 languages** — the figure and the prose
+  agree after the change, and they were proven to disagree before it, because the prose-first edit
+  failed §69 until `markets.js` followed.
+- **Read live on the built app at 375x812**, `dist/` served statically, one language per call and
+  never reading in the same call as the reload. Per language: the new anchor appears **2×** (prose +
+  figure), the old string **0×**, and **the control fired in all five** — the Germany anchor, which I
+  did not touch, also reads 2×, so an instrument returning zero for the old string is a live
+  instrument rather than a dead one. `1933` present once in each. Screenshot of the dial in `en`
+  shows "The US in 1930-32" in the left ugly zone.
+- Reading time unchanged at **≈4 min** for lesson 34 and **161 min** for the catalog.
+
+**Step 5 — adversarial self-check.**
+*Blindspot register:* clean, checked not assumed. §10.2 — `dalio` greps to **0** in all seven changed
+files. §10.1 — `check-blindspot` PASS; the new prose is economic history and no advice pattern reaches
+it. §10.3 — untouched. §2.3 — **the one that needed thinking about**: the change adds four year
+figures (1930-32, 1933, 1929 by implication, 9,000 banks). All are historical and none is a
+live-looking or current-dated figure; §2.3's own scan over the 26 teaching-copy modules passes.
+*DECISIONS.md conflict:* none — `1930`, `deleveraging dial`, `lesson 34` and `Great Depression` all
+grep to **0** there; no recorded decision governs this content.
+*Already-done backlog item:* no. The claim entered with the original lesson content and no run has
+ever assessed it. `"in the 1930s"` appears **once each** in `AGENT_LOG.md` and the archive, both in
+item 27's 2026-09-03 figure-design note, which was *building a figure on* the claim rather than
+checking it (positive control: `§69` returns 1 and 6 in the same two files, so the grep is live).
+*My own verification claim:* every number above was printed by a command re-run this session; the
+live reads are the same one-liner against the same URL in five languages.
+*W-6.3 (instrument-to-app ratio):* re-measured, not quoted — `scripts/` **18,147** lines against
+`src/` minus content and locales **8,437**, **2.15x**, unmoved from the previous entry's figure
+because **this run adds 0 lines to `scripts/`**. First run in a while on the right side of that number.
+⛔ **What the check found against me.** Two things. **First, I nearly shipped a prose-only fix** —
+the figure never entered my scoping until I grepped for the phrase across `src/` rather than in the
+lesson module, and §69 would have caught it, but only after I had written the run entry claiming it
+was done. **Second, I edited a dated 2026-09-03 backlog note in place** to update the anchor string,
+then reverted it: §31 says dated records stay verbatim, so the correction is appended under it
+instead. Both are the same error — treating a claim's *neighbours* as out of scope.
+
+**O-3 accounting: one new paragraph-half per non-English language — es +426, ko +208, zh +118, ja
++169 characters.** No fluent reviewer has read any of it. It is a correction rather than an
+enlargement, and the alternative was leaving four languages carrying a false historical claim, but
+O-3 counts it and the ledger records it as `ai`, not `human`.
+
+**Filed, not picked (W-6.2):** **item 167**, three more content defects read off the same pass —
+lesson 37's balance-sheet multiple (9x vs 10x), lesson 36's THINK prompt contradicting its own body
+about the 2022 inversion, and an unmeasured recession-equals-deflation simplification in lesson 32.
+**(b) is the strongest and is the same self-contradiction shape as the last three finds.**
+
+**Top item for the next run:** item **167 (b)** — but W-6.2 rule 1 counts this as link one, so a run
+taking it is within the cap. **O-1 remains the entire critical path — 44 lessons, 5 languages,
+161 minutes of content, and zero people have ever opened this app.**
+
+**Owner tree:** `git status` at run start and again before writing showed the owner's untracked
+`UIUX/` only, **untouched**. `HEAD` re-checked before writing and unmoved at `2c1d276`; the daily
+market-data job did not fire during the run, and `public/data/market.json` is untouched at
+`asOf=2026-09-04`.
 
 ### 2026-09-04 (scheduled dev-agent, backlog item 166) — the only screen in the app that renders vendor data credited nobody for it, and the interesting half is not the missing line: `market.json`'s `source` is an adapter slug, so the credit can go silently absent again the day the owner switches adapters
 

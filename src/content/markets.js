@@ -240,11 +240,11 @@ export const deleveragingGoodLabel = {
 // well". Nothing here may be positioned along the axis by year or by any ratio;
 // the lesson states nothing to position them by.
 export const deleveragingAnchors = {
-  en: ["The US in the 1930s", "2008 through roughly 2015", "Germany in the 1920s"],
-  es: ["EE.UU. en los años treinta", "2008 hasta aproximadamente 2015", "Alemania en los años veinte"],
-  ko: ["1930년대 미국", "2008년부터 대략 2015년까지", "1920년대 독일"],
-  zh: ["1930年代的美国", "2008年到2015年前后", "1920年代的德国"],
-  ja: ["1930年代の米国", "2008年からおよそ2015年にかけて", "1920年代のドイツ"],
+  en: ["The US in 1930-32", "2008 through roughly 2015", "Germany in the 1920s"],
+  es: ["EE.UU. en 1930-32", "2008 hasta aproximadamente 2015", "Alemania en los años veinte"],
+  ko: ["1930-32년 미국", "2008년부터 대략 2015년까지", "1920년대 독일"],
+  zh: ["1930-32年的美国", "2008年到2015年前后", "1920年代的德国"],
+  ja: ["1930-32年の米国", "2008年からおよそ2015年にかけて", "1920年代のドイツ"],
 };
 
 // What the dial is, at each end — the lesson's own two tool groups.
@@ -280,11 +280,11 @@ export const deleveragingCaption = {
 // direction, all three zones in order with their anchors, and the betweenness,
 // which is the whole claim.
 export const deleveragingDescription = {
-  en: "One dial with three zones, drawn left to right. On the left, an ugly deleveraging, where the tools are almost entirely cutting, defaulting, taxing — The US in the 1930s. In the middle, a beautiful deleveraging, where the mix is balanced — 2008 through roughly 2015. On the right, an ugly deleveraging again, where the tool is almost entirely printing money — Germany in the 1920s. The good outcome lies between the two failures, not at either end.",
-  es: "Un solo dial con tres zonas, dibujadas de izquierda a derecha. A la izquierda, un desapalancamiento feo, donde las herramientas son casi por completo recortar, impagar, gravar — EE.UU. en los años treinta. En el medio, un desapalancamiento hermoso, donde la mezcla está equilibrada — 2008 hasta aproximadamente 2015. A la derecha, de nuevo un desapalancamiento feo, donde la herramienta es casi por completo imprimir dinero — Alemania en los años veinte. El buen resultado queda entre los dos fracasos, no en ninguno de los extremos.",
-  ko: "왼쪽에서 오른쪽으로 그려진 하나의 축과 세 개의 구간입니다. 왼쪽은 추한 디레버리징으로, 도구가 거의 전적으로 삭감, 채무불이행, 증세입니다 — 1930년대 미국. 가운데는 아름다운 디레버리징으로, 배합이 균형을 이룹니다 — 2008년부터 대략 2015년까지. 오른쪽은 다시 추한 디레버리징으로, 도구가 거의 전적으로 화폐 발행입니다 — 1920년대 독일. 좋은 결과는 양 끝이 아니라 두 실패 사이에 있습니다.",
-  zh: "一条从左到右的刻度轴，分为三个区间。左边是丑陋的去杠杆，工具几乎完全是削减、违约、加税——1930年代的美国。中间是漂亮的去杠杆，配比达到平衡——2008年到2015年前后。右边又是丑陋的去杠杆，工具几乎完全是印钞——1920年代的德国。好的结果落在两种失败之间，而不在任何一端。",
-  ja: "左から右へ引かれた1本の目盛りと、3つの区間です。左は醜いデレバレッジングで、手段はほぼ完全に削る、踏み倒す、課税する——1930年代の米国。中央は美しいデレバレッジングで、配合が釣り合っています——2008年からおよそ2015年にかけて。右は再び醜いデレバレッジングで、手段はほぼ完全に紙幣を刷る——1920年代のドイツ。良い結果は両端ではなく、2つの失敗のあいだにあります。",
+  en: "One dial with three zones, drawn left to right. On the left, an ugly deleveraging, where the tools are almost entirely cutting, defaulting, taxing — The US in 1930-32. In the middle, a beautiful deleveraging, where the mix is balanced — 2008 through roughly 2015. On the right, an ugly deleveraging again, where the tool is almost entirely printing money — Germany in the 1920s. The good outcome lies between the two failures, not at either end.",
+  es: "Un solo dial con tres zonas, dibujadas de izquierda a derecha. A la izquierda, un desapalancamiento feo, donde las herramientas son casi por completo recortar, impagar, gravar — EE.UU. en 1930-32. En el medio, un desapalancamiento hermoso, donde la mezcla está equilibrada — 2008 hasta aproximadamente 2015. A la derecha, de nuevo un desapalancamiento feo, donde la herramienta es casi por completo imprimir dinero — Alemania en los años veinte. El buen resultado queda entre los dos fracasos, no en ninguno de los extremos.",
+  ko: "왼쪽에서 오른쪽으로 그려진 하나의 축과 세 개의 구간입니다. 왼쪽은 추한 디레버리징으로, 도구가 거의 전적으로 삭감, 채무불이행, 증세입니다 — 1930-32년 미국. 가운데는 아름다운 디레버리징으로, 배합이 균형을 이룹니다 — 2008년부터 대략 2015년까지. 오른쪽은 다시 추한 디레버리징으로, 도구가 거의 전적으로 화폐 발행입니다 — 1920년대 독일. 좋은 결과는 양 끝이 아니라 두 실패 사이에 있습니다.",
+  zh: "一条从左到右的刻度轴，分为三个区间。左边是丑陋的去杠杆，工具几乎完全是削减、违约、加税——1930-32年的美国。中间是漂亮的去杠杆，配比达到平衡——2008年到2015年前后。右边又是丑陋的去杠杆，工具几乎完全是印钞——1920年代的德国。好的结果落在两种失败之间，而不在任何一端。",
+  ja: "左から右へ引かれた1本の目盛りと、3つの区間です。左は醜いデレバレッジングで、手段はほぼ完全に削る、踏み倒す、課税する——1930-32年の米国。中央は美しいデレバレッジングで、配合が釣り合っています——2008年からおよそ2015年にかけて。右は再び醜いデレバレッジングで、手段はほぼ完全に紙幣を刷る——1920年代のドイツ。良い結果は両端ではなく、2つの失敗のあいだにあります。",
 };
 
 // The teaching scenario. Deliberately hypothetical and undated — it describes a
