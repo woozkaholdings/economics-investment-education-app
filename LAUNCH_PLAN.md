@@ -665,6 +665,45 @@ it, build the smallest test this week. Never sit in ambiguity longer than a week
   A middle path that needs no reclassification: keep the *reading level* accessible to an older
   child throughout while keeping accounts, data collection, and ads adult-only.
 - **Markets stale data (§2.3)** — *closed 2026-08-02.* Dateless and figure-free by design.
+- **10.10 (new) Nothing owns "get this in front of one person."** *Open, found 2026-08-17.* Item 18
+  (analytics) is correctly named as the critical path in every run's output, but it is downstream of a
+  deploy, and no backlog item owns the deploy (audit §3) — though item 72, filed the same day 15
+  minutes after this was written, now owns the deploy half; what remains unowned is only the
+  click-through, which item 72 already names as owner-only. **Refuting number:** the trivial one — one
+  reachable URL, or one person who has opened the app. **Check:** 2026-10-03 (was 2026-09-05;
+  performed on that date — result below).
+  ⛔ **CHECKED 2026-09-05 (scheduled dev-agent), on the date this entry set. NOT refuted — the number
+  is still zero, 19 days on.** No host-config or CI workflow file of any kind exists in the tree —
+  `README.md` §Deploying names the absent ones and says why hash routing needs none, so they are not
+  re-listed here — and the only `netlify.app` / `github.io` strings anywhere are the instructions in
+  `README.md`, a comment in `vite.config.js` and one archive line. `README.md` §Deploying still opens
+  **"Nothing has ever been deployed"**, written 2026-08-17 and still accurate. The scan is live rather
+  than silently empty: those four hits are its positive control, and a nonsense probe returns none.
+  ⛔ **The design defect, recorded so the next check does not re-derive it: this entry's refuting fact
+  is not observable from where the check runs.** A reachable URL and "one person has opened the app"
+  are both facts about the world outside this repo; no local instrument can see either, and the
+  standing rules forbid a run touching the remote. **So no scheduled run can ever close 10.10** — only
+  the owner can supply the fact. That is not a reason to soften the entry; it is the entry's own point
+  (audit §3) reappearing in the shape of its tripwire. **What would count, stated in advance:** a URL
+  written into `README.md` §Deploying, or a non-empty analytics export from a device that is not this
+  one.
+  ✅ **CLOSED 2026-09-05, later the same day, and the entry above is left verbatim because it was
+  right when it was written and wrong four hours later.** The app is live at
+  <https://magnificent-mochi-73aecc.netlify.app> (Netlify project `magnificent-mochi-73aecc`, site
+  id `e485658b-2605-499d-86c6-d441e0bd0221`). **A reachable URL exists, which is this entry's own
+  refuting number** — stated as an OR, and the URL half is satisfied. Verified unauthenticated: `/`
+  **200**, hashed bundle **byte-identical** to the local build, a nonexistent path **404**.
+  ⛔ **The prediction above — "no scheduled run can ever close 10.10" — held exactly, and that is
+  the part worth keeping.** It did not close by a run finding a way. It closed because the owner
+  asked for the deploy directly and then supplied the two things no run could: a Netlify sign-in to
+  claim the site, and the visibility setting. **The blindspot was right about itself: the thing it
+  named as unowned was unowned by the process, and only ever movable by the owner.**
+  ⚠️ **HALF, not all: nobody has been measured opening it.** The refuting number's second clause —
+  *one person who has opened the app* — is still unmeasured and stays that way until O-2 (analytics)
+  lands, because `analytics.js`'s `sink()` writes to one device's `localStorage`. **Do not read this
+  closure as evidence of a user.** §10.6 (building instead of distributing) is the open entry that
+  now carries the weight, and its standing rule — half of weekly hours to distribution until 1,000
+  MAU — starts applying from today rather than from some later launch.
 
 Closed items are **regressions to guard against**, not settled history — every change near this
 content should be checked against them.
@@ -735,29 +774,6 @@ content should be checked against them.
   owner's P-4 decision stands; what is missing is a date on which it gets re-argued rather than
   re-assumed. **Check:** 2026-10-03, and the check is "has anything made A3's session-share half
   measurable yet?"
-- **10.10 (new) Nothing owns "get this in front of one person."** *Open, found 2026-08-17.* Item 18
-  (analytics) is correctly named as the critical path in every run's output, but it is downstream of a
-  deploy, and no backlog item owns the deploy (audit §3) — though item 72, filed the same day 15
-  minutes after this was written, now owns the deploy half; what remains unowned is only the
-  click-through, which item 72 already names as owner-only. **Refuting number:** the trivial one — one
-  reachable URL, or one person who has opened the app. **Check:** 2026-10-03 (was 2026-09-05;
-  performed on that date — result below).
-  ⛔ **CHECKED 2026-09-05 (scheduled dev-agent), on the date this entry set. NOT refuted — the number
-  is still zero, 19 days on.** No host-config or CI workflow file of any kind exists in the tree —
-  `README.md` §Deploying names the absent ones and says why hash routing needs none, so they are not
-  re-listed here — and the only `netlify.app` / `github.io` strings anywhere are the instructions in
-  `README.md`, a comment in `vite.config.js` and one archive line. `README.md` §Deploying still opens
-  **"Nothing has ever been deployed"**, written 2026-08-17 and still accurate. The scan is live rather
-  than silently empty: those four hits are its positive control, and a nonsense probe returns none.
-  ⛔ **The design defect, recorded so the next check does not re-derive it: this entry's refuting fact
-  is not observable from where the check runs.** A reachable URL and "one person has opened the app"
-  are both facts about the world outside this repo; no local instrument can see either, and the
-  standing rules forbid a run touching the remote. **So no scheduled run can ever close 10.10** — only
-  the owner can supply the fact. That is not a reason to soften the entry; it is the entry's own point
-  (audit §3) reappearing in the shape of its tripwire. **What would count, stated in advance:** a URL
-  written into `README.md` §Deploying, or a non-empty analytics export from a device that is not this
-  one.
-
 ### Held — owner decisions, do not start
 
 - **Expo vs. web-first** (§2.1) — needs a human call.

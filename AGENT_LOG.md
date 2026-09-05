@@ -70,13 +70,16 @@ standing rule is about *fake* freshness, not about numbers.
 `localStorage`-only state, the market-data pipeline); `LAUNCH_READINESS.md` scores the gates.
 
 **Blindspot register — §10 IS the register and this is a pointer, not a copy.** Only the first three
-of its entries are closed. **10.1** (investment-advice adjacency) and **10.2** (Dalio dependency) are closed and
+of its entries are closed — ⚠️ **plus 10.10, closed 2026-09-05 when the app went live; that makes four, and this sentence is left in its original shape so the correction is visible rather than smoothed away.** **10.1** (investment-advice adjacency) and **10.2** (Dalio dependency) are closed and
 are **standing rules, not settled history**: check any lesson or market-copy change against them, and
 run `npm run check-blindspot` before committing one. **10.3** (kids/COPPA) ships parent-facing and is
 closed on that basis, but is reopened as a *question* — a genuinely child-facing product is a legal and
-store-classification decision, not a UI one, and no run may make it. ⚠️ **10.4 through 10.10 are OPEN,
+store-classification decision, not a UI one, and no run may make it. ⚠️ **10.4 through 10.9 are OPEN,
 and the paragraph this replaces did not say they exist.** 10.8 ("process mass exceeds product mass")
-and 10.10 ("nothing owns getting this in front of one person") are what W-6 below is about.
+is what W-6 below is about, and it was **checked on 2026-09-05: the tripwire fires at 10.61x against
+a 5x threshold, in all 17 rolling windows since it was filed.** **10.10 ("nothing owns getting this
+in front of one person") is CLOSED 2026-09-05** — a reachable URL exists, which is half of its own
+stated refuting number; the other half, one person having opened the app, is unmeasured until O-2.
 
 ## Prioritized backlog
 
@@ -101,21 +104,41 @@ for the history. No open P1/P2 items.
 > blindspot 10.10". That sentence is correct and it has moved nothing, which is evidence about the
 > *mechanism*, not about the runs. A closing line in a 15,000-line log is not an escalation. It lives
 > here now, and it is repeated at the top of every weekly report.
+> ✅ **UPDATE 2026-09-05: O-1 CLOSED — the app is live at
+> <https://magnificent-mochi-73aecc.netlify.app>.** The block is no longer "these two items"; **O-2
+> is the whole critical path now.** ⭐ **And the mechanism this block diagnosed is confirmed by how
+> it ended:** it did not close because a run escalated harder. It closed the first time the owner
+> asked for it directly, in one interactive session, in about twenty minutes — deploy, claim, set
+> public. **Nineteen days of closing lines moved it none of the way; one instruction moved it all of
+> the way.** Whatever this block is for, that is the evidence about what works, and it argues for
+> asking the owner for a decision rather than restating a blocker.
 >
-> **O-1. A URL. (Item 72's owner half.)** `dist/` builds and is path-agnostic (`base: "./"`, verified
-> at a domain root and one directory down); routing is hash-based so no host needs a rewrite rule;
-> `README.md` § Deploying has the clicks. **Netlify Drop is a drag of the `dist/` folder.** Open since
-> 2026-08-17.
-> **The refuting number, re-measured by the weekly review 2026-08-30 (the previous version of this
-> line quoted 40 lessons / 145 minutes and had been stale since the money track opened on 08-25 —
-> W-5.5's rule applies to this line too): 44 lessons, 5 languages, 8 check scripts, a claims
-> register, 160 minutes of content, 62 `check-data.mjs` sections — and zero people have ever opened
-> this app. Open 13 days.** Figures read off `npm test`'s readiness line, not carried forward.
+> **O-1. A URL. ✅ CLOSED 2026-09-05 (owner-directed, interactive) — the app is live at
+> <https://magnificent-mochi-73aecc.netlify.app>.** Open 2026-08-17 → 2026-09-05, **19 days**, and
+> named as "the entire critical path" in the closing line of every run entry for the last sixteen of
+> them. Netlify project `magnificent-mochi-73aecc`, site id `e485658b-2605-499d-86c6-d441e0bd0221`,
+> on the owner's Netlify team. `dist/` was zipped and dropped on Netlify Drop; the owner claimed the
+> site and set visibility to public. **Verified unauthenticated after each step, not on report:** `/`
+> **200**, the hashed bundle **byte-identical** to the local build, `/data/market.json` at
+> `asOf 2026-09-04`, and a nonexistent path **404** — so the 200s are real files, not a catch-all.
+> `README.md` § Deploying now carries the URL, the verification and the update procedure.
+> ⛔ **Two things the old "Netlify Drop is a drag of the `dist/` folder" line got wrong, both
+> measured on the way through and both now corrected in `README.md`.** (1) An **unclaimed** drop is
+> password-protected and **expires in about an hour** — it is not a URL to hand out, which the line
+> above half-knew and understated. (2) A **claimed** drop is still not public: it lands with
+> *Production visibility* = **Private** and redirects visitors to a Netlify login, until that is
+> changed by hand at Project configuration › General › Visitor access. **Between them, "deployed"
+> and "reachable" were three separate steps, and the repo's instructions described one.**
+> ⚠️ **What is NOT closed by this: the second half of 10.10's refuting number.** A reachable URL
+> exists; **whether one person has opened the app is still unmeasured**, and stays that way until
+> O-2 lands. Do not write "someone has used it" anywhere on the strength of this item.
 >
 > **O-2. An analytics provider account and key. (Item 18.)** `src/lib/analytics.js` fires the §9.2
 > event set with the §9.2 payloads; `sink()` writes to one device's `localStorage`. §4.3's Phase-0
 > completion-rate gate (≥40% finish lesson 1) is scored **❌ Unmeasurable** on the readiness scorecard
-> and cannot be scored any other way. O-2 is downstream of O-1.
+> and cannot be scored any other way. O-2 is downstream of O-1 — **and O-1 closed 2026-09-05, so
+> this is now the top of the critical path and nothing is in front of it.** The gate it unblocks is
+> the one that says whether anybody finishes lesson 1.
 >
 > **O-3 (new, decision not action). A large volume of unreviewed machine translation is now shipping
 > every day, and the "(Beta)" decision was made about a smaller, static surface.** `DECISIONS.md`
@@ -4628,6 +4651,85 @@ zero meaningful: `selftest PASS (8/8 controls fired, plantsRemoved true)` and, p
 finding(s); V vacuous; U unavailable`. A bare "no accessibility issues found" is not a result.
 
 ## Run log
+
+### 2026-09-05 (owner-directed, interactive: "deploy the dist folder to Netlify Drop", then "claimed it, update the README and close out O-1") — O-1 is CLOSED after 19 days: the app is live at <https://magnificent-mochi-73aecc.netlify.app>, and getting there took three steps where the repo's instructions described one
+
+**This is the first deploy in the project's history.** O-1 has been named "the entire critical path"
+in the closing line of every run entry since 2026-08-20. It closed the first time the owner asked for
+it directly, in one session.
+
+**⛔ The part with transferable content: "deployed" and "reachable" are three steps, not one.**
+`README.md` said Netlify Drop "is a drag of the `dist/` folder", written from Netlify's documented
+flow. Measured by doing it:
+1. **An unclaimed drop is not a public URL.** It is password-protected (password shown on the page)
+   **and expires in about an hour**. Verified: every path returned **401**, root and hashed asset
+   both serving the same 3,551 b password gate.
+2. **A claimed drop is still not public.** Claiming produced a real site (`site_id`
+   `e485658b-2605-499d-86c6-d441e0bd0221`, owner's team) that **still 401'd** — with a *different*
+   786 b body redirecting to `app.netlify.com/edge-access`. *Production visibility* was **Private**;
+   visitors got a Netlify login. The setting is at Project configuration › General › Visitor access.
+3. Only after the owner set it public did the URL serve the app.
+**Each step's claim was checked before it was believed, and steps 1 and 2 both failed the check.**
+The owner's message said "claimed it" and the site was still 401 at that moment; had that been taken
+on report, `README.md` would now assert a live URL that redirected every visitor to a login.
+
+**Verification of the live site — unauthenticated `curl` from the shell, no Netlify session.**
+Root **200**; the hashed bundle **byte-identical** to the local build (`cmp`); the deployed
+market-data JSON at `asOf 2026-09-04`; **negative control**: a made-up asset URL returns **404**, so
+the 200s are real files rather than a catch-all. **Cold client-side render**, in the in-app browser
+pane which has no Netlify cookie: the deep link `#/learn` holds its hash, the app boots, and the
+**§10.1 first-run disclaimer modal renders and gates first use** — so the launch-blocking legal
+surface works for a first-time visitor, not just in dev.
+⚠️ **The served `index.html` is NOT byte-identical to the built one and that is expected**: Netlify
+injects one comment and two `<meta>` tags (`hosting-provider`, `netlify-deploy`) — five lines, no
+script, no beacon. Recorded in `README.md` so a future diff is readable.
+
+**What shipped.** `README.md` § Deploying rewritten around the live URL, the verification, an update
+procedure, and the three-step finding above. `AGENT_LOG.md`: **O-1 closed** with its 19-day span;
+**O-2 promoted** to sole critical path; the ⛔ OWNER ACTIONS header corrected from "these two items";
+the App summary's blindspot paragraph corrected from "10.4 through 10.10 are OPEN".
+`LAUNCH_PLAN.md`: **10.10 moved from Open to Closed**, its refuting number satisfied on the URL
+clause.
+
+**⭐ What the day says about the mechanism, and it is the reason this entry exists rather than just a
+commit.** This morning's scheduled run checked 10.8 and 10.10 because both fell due today, and
+recorded of 10.10: *"no scheduled run can ever close 10.10 — only the owner can supply the fact."*
+**That prediction held exactly, hours later.** The two things no run could produce were a Netlify
+sign-in and a visibility setting. **Nineteen days of closing lines moved this none of the way; one
+direct instruction moved it all of the way** — which is evidence for asking the owner for a decision
+over restating a blocker, and is now written into the OWNER ACTIONS block.
+
+**Step 5 — adversarial self-check.** *Blindspot register:* no app content changed — `dist/` was
+rebuilt from HEAD and published unmodified; `check-blindspot` exit 0. Before publishing, `dist/` was
+scanned for secrets and identifiers (no keys, no `woojoongkim`/`Kaeun`/email, no `/Users/` paths, and
+none of the three real values in `api-keys.txt`) with the scan **proven live** — a 40-char probe from
+`api-keys.txt` is absent from `dist/` but found in a planted copy of `index.html`. *DECISIONS.md
+conflict:* none; the Vite/static/hash-routing choices are what made a zip-drop work at all.
+*Already-done item:* no — nothing has ever been deployed before. *My own verification claim:* every
+figure is from a command re-run this session, and the negative controls (404, planted probe) mean a
+reviewer can tell a working instrument from a dead one.
+⛔ **What the check found against me: §26 failed twice on my first `README.md` draft**, which cited
+`/assets/index-DFShU1Ip.js` and `/data/market.json` as evidence. They are URL paths on the live site;
+§26 correctly read them as repo paths that do not exist. **Not fixed with an exemption** — the
+filenames are content-hashed and would have gone stale on the next deploy anyway, so the README now
+describes them instead of pinning them. Second time today that §26 caught a citation and the right
+answer was to stop citing, not to exempt.
+
+**⚠️ What is NOT true now, stated because it is the easy thing to overclaim.** **Nobody has been
+measured opening this app.** 10.10's refuting number is an OR and only the URL clause is satisfied;
+`analytics.js`'s `sink()` still writes to one device's `localStorage`. **O-2 is the whole critical
+path**, and §4.3's Phase-0 completion gate stays ❌ Unmeasurable until it lands. §10.6 (building
+instead of distributing) is the open blindspot that now carries the weight — its standing rule, half
+of weekly hours to distribution, starts applying **today**.
+
+**Cost accounting.** `npm test` exit 0; verdict lines identical to the pre-edit baseline except the
+W-6.4 floor warning, **412,623 → 415,072 b (+2,449)** — backlog and App-summary edits land in the
+non-archivable floor, and this is the expected price of closing the item rather than a regression.
+`npm run build` exit 0. **0 lines added to `scripts/`.**
+
+**Owner tree:** `git status` at run start and before writing showed the owner's untracked `UIUX/` and
+0-byte `course` only, **untouched**. `HEAD` re-checked and unmoved at `7636636` before writing;
+`public/data/market.json` untouched at `asOf=2026-09-04`.
 
 ### 2026-09-05 (scheduled dev-agent, picked from `LAUNCH_PLAN.md` §10 — two blindspot checks fell due TODAY and nothing in the repo watches those dates) — 10.8's tripwire fires at 10.61x against a 5x threshold, every one of the 17 rolling windows since it was filed fires, and 10.10 cannot be closed by any run because its refuting fact is not observable from inside the repo
 

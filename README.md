@@ -49,20 +49,54 @@ directory over HTTP can host it.
 
 ## Deploying
 
-**Nothing has ever been deployed.** As of 2026-08-17 there is no host, no URL, and no
-evidence that anyone outside this repo has opened the app — see `AGENT_LOG.md` backlog item
-72. The build is ready; choosing where to put it is an owner decision, so the steps below
-are written as clicks rather than as a script.
+**LIVE since 2026-09-05: <https://magnificent-mochi-73aecc.netlify.app>**
 
-### Fastest path to a live URL (a few minutes, no account needed to start)
+Netlify project `magnificent-mochi-73aecc`, site id `e485658b-2605-499d-86c6-d441e0bd0221`,
+owned by the owner's Netlify team. Deployed by dropping a zip of `dist/` on Netlify Drop,
+then claimed and set to public. This replaces the "Nothing has ever been deployed" paragraph
+that stood here from 2026-08-17 to 2026-09-05.
+
+**Verified the same day, unauthenticated** (plain `curl`, no Netlify session): the site root
+returns **200**; the hashed JS bundle under the deployed `assets` directory is **byte-identical**
+to the same file in the local build; the deployed market-data JSON serves `asOf 2026-09-04`; and a
+made-up asset URL returns **404**, so the 200s are the real files rather than a catch-all. Hash
+routing resolves `#/learn` with no rewrite rule, which is what `vite.config.js`'s `base: "./"` is
+for. (Asset filenames are content-hashed and change on every rebuild, so they are described here
+rather than pinned — a pinned one would be stale after the next deploy.)
+
+⚠️ **The served `index.html` is not byte-identical to the built one, and that is expected.**
+Netlify injects one HTML comment and two `<meta>` tags (`hosting-provider`,
+`netlify-deploy`) — five lines, no script and no beacon. A diff showing exactly those and
+nothing else means the deploy is clean; a diff showing anything more does not.
+
+### To publish an update
+
+1. `npm run build`.
+2. Drag `dist/` (or a zip of it) onto the project's Deploys page in Netlify.
+
+Market data freezes at whatever `public/data/market.json` held at build time — see
+"After it is up" below.
+
+### How the first deploy actually went — two things the documented Drop flow does not say
+
+Both were measured on 2026-09-05, not read off Netlify's docs, and both surprised the
+instructions that used to stand here:
+
+1. **An unclaimed drop is not a public URL.** It is password-protected (the password is
+   shown on the drop page) **and it expires about an hour after it is created**. Every path
+   returns 401 until it is claimed.
+2. **A claimed drop is still not public.** It lands with *Production visibility* set to
+   **Private**, so visitors are redirected to a Netlify login. The setting is at
+   **Project configuration › General › Visitor access › Edit visibility**, and it has to be
+   changed by hand before anyone outside the team can open the site.
+
+### Deploying from scratch somewhere else (a few minutes, no account needed to start)
 
 1. `npm run build` locally.
 2. Open <https://app.netlify.com/drop>.
-3. Drag the whole `dist/` folder onto the page.
-4. It returns a URL like `https://<random-words>.netlify.app` — that is the app, live.
-   Sign in and claim the site if you want to keep or rename that URL — an unclaimed drop is
-   meant for a quick look, not as an address to hand out. (These are Netlify's steps, checked
-   against their documented Drop flow, not run from this repo.)
+3. Drag the whole `dist/` folder, or a zip of its contents, onto the page.
+4. It returns a URL like `https://<random-words>.netlify.app`. Read the two points above
+   before treating that URL as live: claim the site, then set visibility to public.
 
 ### Durable path (a real address, re-deployable)
 
