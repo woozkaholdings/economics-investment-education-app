@@ -110,3 +110,31 @@ export function formatEconomicReading(entry) {
   if (!entry || !Number.isFinite(entry.value)) return "—";
   return entry.unit === "percent" ? `${entry.value.toFixed(2)}%` : entry.value.toFixed(1);
 }
+
+// ── Data-source credit (backlog item 166) ──────────────────────────────────
+//
+// The Sector screen is the only place in the app that renders vendor data, and
+// until 2026-09-04 it credited nobody: `src/lib/marketData/fred.js`'s own
+// header records that FRED's terms expect the source to be credited, and the
+// price vendors ask the same. This maps `market.json`'s `source` — which is
+// the ADAPTER NAME written by scripts/fetch-market-data.mjs, not a display
+// string — onto the vendor's own name.
+//
+// Deliberately returns `null` rather than the raw slug for anything it does
+// not know, including "fixture": crediting a vendor for placeholder numbers
+// would be a false statement on screen, and printing "twelvedata" at a reader
+// is not a credit. The call site renders nothing when this is null.
+// `check-data.mjs` §73 fails the build if a real adapter is missing here, so
+// "unknown" cannot quietly become the shipped state.
+const PRICE_SOURCE_NAMES = {
+  finnhub: "Finnhub",
+  tiingo: "Tiingo",
+  twelvedata: "Twelve Data",
+  stooq: "Stooq",
+};
+
+export function priceSourceName(source) {
+  return PRICE_SOURCE_NAMES[source] ?? null;
+}
+
+export const PRICE_SOURCE_KEYS = Object.keys(PRICE_SOURCE_NAMES);

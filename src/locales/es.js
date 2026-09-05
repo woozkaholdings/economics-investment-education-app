@@ -145,4 +145,6 @@ export default {
     rankTemplate: "#{rank} de {of}",
     sectorsSortNote: "Clasificados por fuerza relativa frente a {name}. La cifra de la derecha es el rendimiento de cada sector a {window}.",
     relativeStrengthNote: "La fuerza relativa compara cada sector con {name} en tres tramos a la vez — unas dos semanas, seis semanas y tres meses — y suma las tres diferencias. Un sector puede mostrar el mayor rendimiento de esta lista y aun así quedar por debajo de otro cuya ventaja se reparte entre los tres tramos.",
+    priceSourceTemplate: "Precios de sectores e índices de {source}.",
+    economicsSourceCredit: "Datos económicos del Banco de la Reserva Federal de San Luis (FRED®).",
 };

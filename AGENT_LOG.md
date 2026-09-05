@@ -1529,43 +1529,25 @@ through two passes that each had it open.
       stand; the coverage did not.** `A11yStates.coverage()` plus the Tab step now in the header
       recipe are the fix — see item 149.
 
-166. **[Compliance/Content — filed 2026-09-04 by the run that aligned the yield-curve
-    observation dates, found while walking the Reference surfaces the owner asked for.] The app
-    displays FRED and Tiingo data on the Sector-performance screen and credits neither, anywhere a
-    user can see.**
-    - **`src/lib/marketData/fred.js`'s own header states the obligation** — *"FRED® is a registered
-      trademark of the Federal Reserve Bank of St. Louis, and its terms expect the source to be
-      credited"* — so this is the codebase recording a requirement the shipped UI does not meet,
-      not an outside rule someone has to look up.
-    - **Measured 2026-09-04, live and by grep:** `FRED` appears in `src/` only in **code comments**
-      (`Sectors.jsx:237`, `economicSignals.js:4`, `:9`); `St. Louis`, `Federal Reserve Bank` (outside
-      one lesson body) and `Tiingo` appear in **0** user-visible strings — 0 hits across
-      `src/locales/`, and the same grep finds a control string in all 5 locale files. Walked live:
-      the Sector-performance screen prints six FRED readings and eleven Tiingo-derived sector rows
-      with no credit line, and the About screen carries none either.
-    - **`market.json` already carries what a credit line needs** — a top-level `source` field
-      (currently `"tiingo"`) and per-reading `seriesId`s — so this is a display change, not a
-      pipeline one.
-    - **Honest priority: medium, and it is O-1-shaped rather than O-3-shaped.** Nobody has opened
-      this app, so there is no live exposure today; the moment O-1 happens there is. It is also
-      cheap: one line on the About screen plus five locale strings, and the four non-English ones
-      are proper nouns ("FRED", "Tiingo", "Federal Reserve Bank of St. Louis") that mostly do not
-      translate.
-    - ⚠️ **Do not bundle it with a data-pipeline fix.** Adding a user-visible surface means checking
-      it against §10.1's `EXPECTED_SURFACES` discipline (see the note below), and that is its own
-      change.
-    - ⛔ **Checked and DECLINED in the same walk, recorded so it is not re-derived: the missing
-      disclaimer on Glossary and Kids is NOT a defect.** Both were measured live and genuinely
-      render no disclaimer — but `check-blindspot.mjs`'s `EXPECTED_SURFACES` is a closed list of
-      **8** surfaces that deliberately excludes Glossary, TermDetail and ParentGuide, `Reference.jsx`'s
-      own §10.1 comment says so in as many words (*"the default (Glossary) does not render one"*),
-      and the check **fails on an EXTRA surface** as well as a missing one. Adding one means editing
-      LAUNCH_PLAN §10.1 and that list together, which is an owner-facing decision, not a fix.
-      ⚠️ **And the instrument trap that nearly hid this:** `grep -c '<Disclaimer' Sectors.jsx`
-      returns **0** while the screen plainly renders one — `Sectors.jsx` emits the bare
-      `{t.disclaimer}` string rather than the component, which is exactly why the real check greps
-      for `{t.disclaimer}` and self-tests its own regex first. **A component-name grep is not a
-      disclaimer census.**
+166. **✅ DONE 2026-09-04 (scheduled dev-agent). The Sector screen now credits both sources, and
+    `check-data.mjs` §73 keeps it doing so.** See the run log. Two five-language locale keys —
+    `priceSourceTemplate` ("Sector and index prices from {source}.") under the sector list and
+    `economicsSourceCredit` (the Federal Reserve Bank of St. Louis / FRED®) under the economics list —
+    both gated on `!isSample`, since crediting a vendor for fixture numbers would be false.
+    `priceSourceName()` in `src/lib/useMarketData.js` maps `market.json`'s **adapter name** to the
+    vendor's display name and returns `null` for anything unknown.
+    ⚠️ **The part worth not re-deriving: `source` is an adapter slug, not a display string**, so a new
+    adapter in `adapters.js` with no entry in `PRICE_SOURCE_NAMES` renders *real vendor prices with no
+    credit and no error anywhere*. That silent path is what §73 exists for; DECISIONS.md names Twelve
+    Data as the drop-in alternative, so the switch is a live possibility, not a hypothetical.
+    ⛔ **Checked and DECLINED in the filing walk, kept so it is not re-derived: the missing disclaimer
+    on Glossary and Kids is NOT a defect.** `check-blindspot.mjs`'s `EXPECTED_SURFACES` is a closed
+    list of 8 that deliberately excludes Glossary, TermDetail and ParentGuide, `Reference.jsx`'s §10.1
+    comment says so, and the check fails on an EXTRA surface as well as a missing one. Adding one
+    means editing LAUNCH_PLAN §10.1 and that list together — owner-facing, not a fix.
+    ⚠️ **And the instrument trap:** `grep -c '<Disclaimer' Sectors.jsx` returns 0 while the screen
+    plainly renders one — it emits the bare `{t.disclaimer}` string. A component-name grep is not a
+    disclaimer census.
 
 165. **🟡 MAIN PATH CLOSED **on content** 2026-09-04 (scheduled dev-agent); the essentials remainder is open.
     ⛔ **The "MAIN PATH CLOSED 2026-09-03" this line used to carry was FALSE, and so was the
@@ -4484,6 +4466,122 @@ zero meaningful: `selftest PASS (8/8 controls fired, plantsRemoved true)` and, p
 finding(s); V vacuous; U unavailable`. A bare "no accessibility issues found" is not a result.
 
 ## Run log
+
+
+### 2026-09-04 (scheduled dev-agent, backlog item 166) — the only screen in the app that renders vendor data credited nobody for it, and the interesting half is not the missing line: `market.json`'s `source` is an adapter slug, so the credit can go silently absent again the day the owner switches adapters
+
+**Where the pick came from.** The previous run filed item 166 and queued it. W-6.2 rule 1 caps
+residual-chaining at two consecutive picks; the run before this one was **owner-directed**, so no
+residual was mine to take by default and this is the first link, not the third. Item 166 is also the
+one open item that is *cheap and true before O-1 rather than after it* — an attribution obligation
+that only starts costing something the moment a URL exists.
+
+**⛔ Step 3.5 — premise re-measured, with a control, and it held in every particular.**
+- `src/lib/marketData/fred.js`'s header does state the obligation, verbatim: *"FRED® is a registered
+  trademark of the Federal Reserve Bank of St. Louis, and its terms expect the source to be credited."*
+- `FRED` appears in `src/` in **code comments and identifiers only** — `economicSignals.js:4,:9`,
+  `Sectors.jsx:237`, and `fred.js` itself. `Tiingo` appears only in the node-only `adapters.js`.
+- `Tiingo`, `St. Louis` and `Federal Reserve Bank`: **0 in all five locale files.** ⚠️ **The control
+  is what makes that zero mean anything** — `grep -rc disclaimer src/locales/` returns **1 in each of
+  en/es/ko/zh/ja** and 0 in the barrel `index.js`, so the walk reaches the copy the app renders.
+  (It also caught a live instrument fault: the first attempt chained the greps with `&&`, and
+  `grep`'s exit 1 on "no matches" silently swallowed the two searches after the first.)
+- **Walked live at 375x812** against `dist/` served statically: the Sector screen printed eleven
+  sector rows and six FRED readings with no credit; the About screen carried none either. That live
+  read is the **before** half of this entry's strongest control — the identical instrument on the
+  identical screen returned `Tiingo: false, FRED: false` before the change and `true, true` after.
+
+**⭐ What re-measuring changed, and it is the reason this run added a check rather than a line.** The
+item scoped the fix as *"one line on the About screen plus five locale strings."* Reading the pipeline
+instead of the item: `market.json`'s `source` field is the **adapter name** `fetch-market-data.mjs`
+writes (`tiingo` today; `finnhub`, `twelvedata`, `stooq` and `fixture` all exist in `adapters.js`, and
+`DECISIONS.md` names Twelve Data as the drop-in alternative). A hardcoded "Tiingo" would become false
+on an adapter switch, and a credit that prints the raw slug at a reader is not a credit. So the credit
+reads off `source` through a display-name map — **and that map is a silent failure surface**: an
+adapter with no entry makes `priceSourceName()` return `null`, the call site renders nothing, and real
+vendor prices ship uncredited with no error anywhere. That is what §73 guards.
+
+**Where the credit goes, and why not About.** Next to the data, not on a settings screen a reader may
+never open. Two lines rather than one combined line, because the screen has **two different sources**
+and each is rendered inside the block it credits — the price credit under the sector list, the FRED
+credit inside the `data.economics &&` block. A single bottom-of-screen line would be half-false
+whenever one block does not render.
+
+**What shipped.**
+- `src/lib/useMarketData.js`: `PRICE_SOURCE_NAMES` + `priceSourceName()`, returning `null` for
+  anything unknown *including* `fixture`, on purpose.
+- `src/screens/reference/Sectors.jsx`: two `Text variant="caption"` credits, **both gated on
+  `!isSample`** — in fixture mode the screen already says the numbers are placeholders, and crediting
+  Tiingo or the Federal Reserve Bank of St. Louis for them would be the §2.3 fake-freshness defect
+  wearing an attribution costume.
+- `src/locales/{en,es,ko,zh,ja}.js`: `priceSourceTemplate` and `economicsSourceCredit`.
+- `scripts/check-data.mjs` **§73**: adapter-coverage set difference, both credits still rendered and
+  still gated, and every language still naming FRED.
+
+**Verification.**
+- `npm test` **0 failures**, warnings **4 and unchanged from the baseline I took before editing**
+  (log-size floor, quiz option-length cue, translation completeness, translation review coverage).
+  `npm run build` clean. `npm run check-blindspot` **0 failures**, still *"disclaimer renders on all 8
+  surfaces"* — the new captions are not disclaimer surfaces and did not perturb that list.
+- **The guard is load-bearing, proven by four plants, each restored from a scratchpad copy and never
+  with `git checkout --`:** (1) deleting `twelvedata:` from the map → §73 names it and quotes the
+  `--adapter=twelvedata` consequence; (2) replacing one credit's `!isSample` with `true` → §73 (c)
+  fires; (3) rewriting `TR.ja.economicsSourceCredit` to drop the FRED name → §73 (d) fires *(this is
+  the plant that matters most — that string passes §1's key-parity check while crediting nobody)*;
+  (4) deleting the price credit's render line → §73 (c) fires. After restore, all three plant strings
+  grep to **0** and the suite is back to PASS.
+- **§73 carries its own controls**, because the whole section is a set difference and an absence
+  assertion: both extractors are anchored on a member each side carries independently (`fixture` in
+  `adapters.js`, `tiingo` in the map), and the comparison is exercised on a planted `planted_vendor`
+  that neither file contains — without that, a difference computed the wrong way round reports a
+  clean sweep forever.
+- **All five languages read live** in the browser, on the real screen, after rebuild: es *"Datos
+  económicos del Banco de la Reserva Federal de San Luis (FRED®)"*, ko, zh and ja likewise, each
+  sitting under the unemployment row and above the disclaimer.
+- **No market data was refreshed or committed.** `public/data/market.json` stays as the owner's daily
+  job left it (`asOf=2026-09-04`).
+
+**Step 5 — adversarial self-check.**
+*Blindspot register:* clean, checked rather than assumed. §10.1 — `check-blindspot` PASS across all
+five languages; the new strings are attribution, and no advice pattern reaches them. §10.2 — `dalio`
+0 in every changed file. §10.3 — untouched. §2.3 — **this is the one that needed thinking about, and
+it is why both credits are gated on `!isSample`**: an unconditional credit would have stamped a real
+institution's name onto placeholder numbers. No date and no figure is hardcoded in any new string.
+*DECISIONS.md conflict:* **none, and this one needed checking rather than assuming.** The market-data
+decision governs *where data comes from* ("Economics data comes from FRED directly… use it as-is") and
+names Tiingo default / Twelve Data drop-in. Crediting a source changes no source, substitutes no
+value, and the decision's own swappability clause is precisely the fact §73 is built on.
+*Already-done backlog item:* no. `priceSourceName`, `priceSourceTemplate`, `economicsSourceCredit` and
+`PRICE_SOURCE_NAMES` each grep to **0** across `AGENT_LOG.md` + the archive — control: `alignedDate`
+returns 4 and `attribution` returns 28 in the same corpus, so the grep is live.
+*My own verification claim:* every figure above is printed by a command re-run this session. The
+before/after live reads are the same one-liner against the same URL.
+*W-6.3 (instrument-to-app ratio):* **re-measured now, not quoted**: `scripts/` **18,147** lines against
+`src/` minus content and locales **8,437** — **2.15x**, against W-6.0's 2.3x on 2026-08-30. This change
+is **+115 to `scripts/` and +60 to `src/`**, so **I am on the wrong side of that number and say so
+plainly.** Per W-6.2 rule 3, the learner-visible sentence is writable and is in §73's own header: *a
+reader opens Sector performance, sees eleven real vendor sector rows and six real FRED readings, and
+is told by nothing on the screen where any of it came from.* Roughly 55 of those 115 lines are the
+comment explaining the adapter-slug mechanism, which is the part a future run would otherwise
+re-derive.
+⛔ **What the check found against me.** My first instinct was the item's own scoping — one line on
+About — and it was wrong twice over: About is not where a reader meets the data, and a hardcoded
+vendor name would have been a fresh stale-fact of exactly the kind this log catches weekly. I also
+had to re-run the locale sweep after the `&&`-chain swallowed two of three greps; the first
+"0 everywhere" reading was **one search, not three**.
+
+**O-3 accounting: 4 new strings per non-English language, 12 characters to ~35 each.** No fluent
+reviewer has read any of them. They are the shallowest translation surface in the app — a preposition
+and a proper noun — but they are still unreviewed machine translation and O-3 counts them.
+
+**Top item for the next run:** the standing quiz-header ask in **item 160** (`quizMeta.js`'s stale
+*"roughly 3/3/4/3"* comment), now seven entries old and still unopened; and W-6.2 rule 1 permits one
+more residual pick before the third must come from the launch plan. **O-1 remains the entire critical
+path — 44 lessons, 5 languages, 161 minutes of content, and zero people have ever opened this app.**
+
+**Owner tree:** `git status` at run start and again before writing showed the owner's untracked
+`UIUX/` only, **untouched**. `HEAD` re-checked before writing and unmoved at `e71aeda`; the daily
+market-data job did not fire during the run.
 
 ### 2026-09-04 (owner-directed: "do the rest of the Reference surfaces next") — the Sector screen printed a 2-year yield, a 10-year yield and a "10-year minus 2-year" that was not their difference, because the three FRED series were each taken at their own latest date; measured across the committed history it was wrong on 14 of 21 days
 

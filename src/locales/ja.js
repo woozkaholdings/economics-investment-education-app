@@ -139,4 +139,6 @@ export default {
     rankTemplate: "{of} 中 {rank} 位",
     sectorsSortNote: "{name} に対する相対強度の順に並べています。右側の数値は各セクターの {window} リターンです。",
     relativeStrengthNote: "相対強度は、各セクターを約2週間・6週間・3か月という3つの期間で同時に {name} と比べ、その3つの差を合計した値です。そのため、この一覧で最も高いリターンを示すセクターでも、3つの期間すべてで着実に上回るセクターより順位が低くなることがあります。",
+    priceSourceTemplate: "セクターと指数の価格は {source} より。",
+    economicsSourceCredit: "経済指標はセントルイス連邦準備銀行（FRED®）より。",
 };

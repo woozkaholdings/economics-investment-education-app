@@ -171,4 +171,6 @@ export default {
     rankTemplate: "#{rank} of {of}",
     sectorsSortNote: "Ranked by relative strength vs {name}. The figure on the right is each sector's {window} return.",
     relativeStrengthNote: "Relative strength compares each sector with {name} over three stretches at once — roughly two weeks, six weeks and three months — and adds the three gaps up. A sector can show the biggest return here and still rank below one whose lead is spread across all three.",
+    priceSourceTemplate: "Sector and index prices from {source}.",
+    economicsSourceCredit: "Economic readings from the Federal Reserve Bank of St. Louis (FRED®).",
 };

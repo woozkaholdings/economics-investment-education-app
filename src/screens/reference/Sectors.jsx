@@ -14,7 +14,7 @@
 import { useState } from "react";
 import { economicSignals } from "../../content/economicSignals.js";
 import { BENCHMARK, sectors } from "../../content/sectors.js";
-import { formatEconomicReading, formatPercent, useMarketData } from "../../lib/useMarketData.js";
+import { formatEconomicReading, formatPercent, priceSourceName, useMarketData } from "../../lib/useMarketData.js";
 import Icon from "../../components/Icon.jsx";
 import { EmptyState, Note, Segmented, Text } from "../../components/ui.jsx";
 import { ink, line, space } from "../../theme.js";
@@ -234,6 +234,18 @@ export default function Sectors({ t, lang }) {
         <Note tone="neutral" style={{ marginTop: space["4"] }}>{t.provisionalNotice}</Note>
       )}
 
+      {/* Credits the price vendor next to the prices, not on a settings screen
+          a reader may never open (backlog item 166). Suppressed for fixture
+          data — `isSample` already says these are placeholder numbers, and
+          crediting a real vendor for them would be false — and suppressed for
+          an adapter with no display name, since printing a slug is not a
+          credit. */}
+      {!isSample && priceSourceName(data.source) && (
+        <Text variant="caption" color={ink.muted} style={{ marginTop: space["3"] }}>
+          {t.priceSourceTemplate.replace("{source}", priceSourceName(data.source))}
+        </Text>
+      )}
+
       {/* FRED readings the same daily job already fetches (src/lib/marketData/
           fred.js) — each carries its own observation date, since CPI/
           unemployment update monthly while yields update daily; showing one
@@ -271,6 +283,17 @@ export default function Sectors({ t, lang }) {
               );
             })}
           </ul>
+
+          {/* The economics block is FRED and only FRED — `FRED_SERIES` in
+              src/lib/marketData/fred.js is a fixed list of Federal Reserve and
+              BLS releases — so this credit is unconditional on the vendor in a
+              way the price one above cannot be. Still gated on `isSample`,
+              because in fixture mode these readings did not come from FRED. */}
+          {!isSample && (
+            <Text variant="caption" color={ink.muted} style={{ marginTop: space["3"] }}>
+              {t.economicsSourceCredit}
+            </Text>
+          )}
         </div>
       )}
 

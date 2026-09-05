@@ -10895,5 +10895,120 @@ function trendDirection(src) {
   }
 }
 
+// ───────────────────────────────────────────────────────────────────────────
+// 73. DATA-SOURCE CREDIT on the Sector screen (backlog item 166).
+//
+//   THE LEARNER-VISIBLE FAILURE THIS CATCHES (W-6.2 rule 3, in one sentence):
+//   a reader opens Sector performance, sees eleven real vendor sector rows and
+//   six real FRED readings, and is told by nothing on the screen where any of
+//   it came from — either because a credit line was deleted, or because the
+//   owner switched `--adapter=` to one the credit map does not name and the
+//   line silently rendered nothing.
+//
+//   That second half is the reason this is a check and not a one-off edit.
+//   `market.json`'s `source` is the ADAPTER NAME (scripts/fetch-market-data.mjs
+//   writes `adapterName` into it), `priceSourceName()` maps it to the vendor's
+//   own name, and `priceSourceName()` returns null for anything it does not
+//   know — on purpose, since printing "twelvedata" at a reader is not a credit.
+//   Null renders nothing, so an adapter added to adapters.js without a display
+//   name here produces real vendor data with no credit and NO error anywhere.
+//
+//   `src/lib/marketData/fred.js`'s own header states the obligation this
+//   discharges: FRED® is a registered trademark of the Federal Reserve Bank of
+//   St. Louis and its terms expect the source to be credited. Until 2026-09-04
+//   `FRED`, `Tiingo`, `St. Louis` and `Federal Reserve Bank` appeared in ZERO
+//   user-visible strings — measured across src/locales/, live at 375x812 on
+//   both the Sector and the About screen.
+//
+//   Text-based on purpose: useMarketData.js imports React hooks, so this file
+//   cannot import it the way it imports the pure libs at the top.
+{
+  const before73 = failures;
+
+  const adaptersSrc = readFileSync(join(ROOT, "src", "lib", "marketData", "adapters.js"), "utf8");
+  const umdSrc = readFileSync(join(ROOT, "src", "lib", "useMarketData.js"), "utf8");
+  const sectorsSrc = readFileSync(join(ROOT, "src", "screens", "reference", "Sectors.jsx"), "utf8");
+
+  const adapterNames = [...adaptersSrc.matchAll(/^\s*name:\s*"([a-z0-9]+)",/gm)].map((m) => m[1]);
+  const mapBlock = umdSrc.match(/const PRICE_SOURCE_NAMES = \{([\s\S]*?)\};/);
+  const creditedKeys = mapBlock ? [...mapBlock[1].matchAll(/^\s*([a-z0-9]+):\s*"/gm)].map((m) => m[1]) : [];
+
+  // ── CONTROLS. Both extractors are regexes over source text, and a regex
+  //    that matches nothing turns "every adapter is credited" into a vacuous
+  //    pass — the exact shape §26 and §56 were both bitten by.
+  //
+  //    (A) BOTH SIDES ARE REAL, anchored on a member each side is known to
+  //        carry independently of the other.
+  if (adapterNames.length < 4 || !adapterNames.includes("fixture")) {
+    fail(
+      `§73 CONTROL A: the adapter walk found ${adapterNames.length} name(s) ${JSON.stringify(adapterNames)} and ` +
+        `"fixture" ${adapterNames.includes("fixture") ? "is" : "is NOT"} among them. adapters.js has carried at ` +
+        `least five since the pipeline was written, so a reading this low means the pattern is broken and the ` +
+        `coverage result below is meaningless.`,
+    );
+  } else if (!creditedKeys.includes("tiingo")) {
+    fail(
+      `§73 CONTROL A: PRICE_SOURCE_NAMES parsed to ${JSON.stringify(creditedKeys)}, which does not include ` +
+        `"tiingo" — the adapter public/data/market.json is actually stamped with. Either the map was renamed or ` +
+        `the pattern stopped reading it; either way the coverage result below says nothing.`,
+    );
+  } else {
+    //  (B) THE COMPARISON FIRES. The whole check is a set difference, and a
+    //      difference computed the wrong way round reports a clean sweep
+    //      forever. Exercised on a name neither file contains.
+    const diff = (all, known) => all.filter((a) => a !== "fixture" && !known.includes(a));
+    if (diff([...adapterNames, "planted_vendor"], creditedKeys).length === 0) {
+      fail("§73 CONTROL B: the coverage comparison does not report an adapter that is absent from PRICE_SOURCE_NAMES, so every clean result it gives is vacuous.");
+    }
+    if (diff(adapterNames, creditedKeys).includes("fixture")) {
+      fail("§73 CONTROL B: the comparison flags \"fixture\", which must NOT be credited to a vendor — those are placeholder numbers and the screen says so.");
+    }
+
+    const uncredited = diff(adapterNames, creditedKeys);
+    if (uncredited.length) {
+      fail(
+        `§73: adapter(s) ${uncredited.map((a) => `"${a}"`).join(", ")} exist in src/lib/marketData/adapters.js but ` +
+          `have no entry in PRICE_SOURCE_NAMES in src/lib/useMarketData.js. If the owner runs ` +
+          `\`--adapter=${uncredited[0]}\`, the Sector screen renders that vendor's real prices and credits nobody, ` +
+          `silently — priceSourceName() returns null and the call site renders nothing. Add the vendor's own ` +
+          `display name (not the slug) to the map.`,
+      );
+    }
+  }
+
+  // (c) THE CREDITS ACTUALLY RENDER, and stay gated on `isSample`. Without
+  //     this the map above can be perfect while the screen shows neither line
+  //     — §69 (d)/§71 (b)'s reason, applied to a caption instead of a figure.
+  for (const [key, what] of [["priceSourceTemplate", "the price-vendor credit"], ["economicsSourceCredit", "the FRED credit"]]) {
+    if (!sectorsSrc.includes(`t.${key}`)) {
+      fail(`§73 (c): Sectors.jsx no longer renders \`t.${key}\`, so ${what} is gone from the only screen in the app that shows vendor data. Every assertion above would keep passing against a credit nothing displays.`);
+    }
+  }
+  if (!/!isSample && priceSourceName\(data\.source\)/.test(sectorsSrc) || !/!isSample && \(\s*\n\s*<Text/.test(sectorsSrc)) {
+    fail("§73 (c): one of the two credit lines in Sectors.jsx is no longer gated on `!isSample`. In fixture mode the screen already says the numbers are placeholders; crediting Tiingo or the Federal Reserve Bank of St. Louis for them would be a false statement on screen — the §2.3 stale/fake-freshness family, in the attribution register.");
+  }
+
+  // (d) THE CREDIT NAMES THE SOURCE, IN EVERY LANGUAGE. A five-language key
+  //     whose non-English values dropped the proper noun would satisfy §1's
+  //     parity check and credit nobody. "FRED" is the anchor because it is the
+  //     one token that does not translate in any of the five.
+  for (const lang of LANGS) {
+    const credit = TR[lang]?.economicsSourceCredit ?? "";
+    if (!credit.includes("FRED")) {
+      fail(`§73 (d): TR.${lang}.economicsSourceCredit does not contain "FRED" — "${credit}". The string exists to name the source; a translation that drops the name passes §1's key-parity check and credits nobody.`);
+    }
+  }
+  if (!TR.en.economicsSourceCredit.includes("Federal Reserve Bank of St. Louis")) {
+    fail("§73 (d): TR.en.economicsSourceCredit no longer names the Federal Reserve Bank of St. Louis. fred.js's header records that FRED's terms expect the source to be credited, and the bare acronym is not that credit in English.");
+  }
+
+  if (failures === before73) {
+    console.log(
+      `  §73 data-source credit: ${adapterNames.length - 1} real price adapter(s) all carry a display name, both ` +
+        `credit lines render on Sectors.jsx gated on \`!isSample\`, and all ${LANGS.length} languages name FRED.`,
+    );
+  }
+}
+
 console.log(`\n${failures === 0 ? "PASS" : "FAIL"}: ${failures} failure(s), ${warnings} warning(s).`);
 process.exit(failures === 0 ? 0 : 1);
