@@ -443,27 +443,27 @@
   },
   "18": {
     "es": {
-      "reviewedBy": "Claude (Opus 5, interactive)",
-      "reviewedDate": "2026-08-20",
-      "sourceHash": "5aa53268cfad069e",
+      "reviewedBy": "Claude (Opus 5, scheduled dev-agent)",
+      "reviewedDate": "2026-09-05",
+      "sourceHash": "8e0166126d6dd0a8",
       "method": "ai"
     },
     "ja": {
-      "reviewedBy": "Claude (Opus 5, interactive)",
-      "reviewedDate": "2026-08-20",
-      "sourceHash": "5aa53268cfad069e",
+      "reviewedBy": "Claude (Opus 5, scheduled dev-agent)",
+      "reviewedDate": "2026-09-05",
+      "sourceHash": "8e0166126d6dd0a8",
       "method": "ai"
     },
     "ko": {
-      "reviewedBy": "Claude (Opus 5, interactive)",
-      "reviewedDate": "2026-08-20",
-      "sourceHash": "5aa53268cfad069e",
+      "reviewedBy": "Claude (Opus 5, scheduled dev-agent)",
+      "reviewedDate": "2026-09-05",
+      "sourceHash": "8e0166126d6dd0a8",
       "method": "ai"
     },
     "zh": {
-      "reviewedBy": "Claude (Opus 5, interactive)",
-      "reviewedDate": "2026-08-20",
-      "sourceHash": "5aa53268cfad069e",
+      "reviewedBy": "Claude (Opus 5, scheduled dev-agent)",
+      "reviewedDate": "2026-09-05",
+      "sourceHash": "8e0166126d6dd0a8",
       "method": "ai"
     }
   },

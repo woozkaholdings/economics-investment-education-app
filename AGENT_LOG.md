@@ -1532,6 +1532,15 @@ through two passes that each had it open.
 167. **[Content/Accuracy — filed 2026-09-05 by the run that fixed lesson 34's US-1930s claim, from
     the same close reading of the economy track. All three are LIVE and were read on the built app,
     not inferred; none is a residual of that run's own edit.]**
+    > ⚠️ **A NOTE, not a fourth sub-item (W-6.2 rule 2). The research-authority class is swept and
+    > sits at ONE fixed instance — do not re-run this sweep.** 2026-09-05: every sentence in all
+    > three tracks citing research / studies / experiments / economists as authority was regexed and
+    > read — **25 hits, one defect**: lesson 18's ego-depletion claim ("willpower runs low over the
+    > course of a day the way a muscle gets tired"), fixed the same day in five languages. **The two
+    > lookalikes are innocent and were deliberately left alone:** lessons 19/27's loss aversion at
+    > "roughly twice" (the standard ratio, already hedged) and lesson 28's more-trading-lower-returns
+    > (Barber-and-Odean-shaped, replicated across markets). See the run log for the instrument, the
+    > control that caught a bad glossary grep, and why widening would have damaged two good lessons.
     - **(a) Lesson 37 (QE & QT) says the balance sheet "grew from roughly $900 billion before 2008
       to a peak of about $9 trillion in 2022 — a stack of bonds nine times the size of the entire
       pre-2008 institution."** $9T against $900B is **ten** times, not nine; nine is the *increase*
@@ -4519,6 +4528,151 @@ zero meaningful: `selftest PASS (8/8 controls fired, plantsRemoved true)` and, p
 finding(s); V vacuous; U unavailable`. A bare "no accessibility issues found" is not a result.
 
 ## Run log
+
+### 2026-09-05 (scheduled dev-agent, picked from LAUNCH_PLAN §3.0 under W-6.2 rule 1) — the lesson that teaches "don't rely on willpower" proved it with the one willpower finding that has most publicly failed to replicate, three sentences after the same lesson had modeled the careful version of exactly that move
+
+**Where the pick came from.** The previous run closed item 167 (b) and said in its own closing line
+that **W-6.2 rule 1 is exhausted for that chain** — no residual of it may be the headline. So this
+run picks from the launch plan. §3.0 is the plan's *primary success criterion* and its clause 6 is
+about not retreating into precision theater; what I went looking for was the opposite failure —
+**claims the app states more confidently than the evidence supports.** The money track was the place
+to look: it is "the product" since the 2026-08-18 reversal, it leans harder on psychology than the
+other two tracks, and the last two close readings were both of `economy`.
+
+**⛔ Step 3.5 — the premise re-measured, with controls, before any edit.** I did not have a filed
+item to re-measure, so what had to be established was that the defect is real, that it is *one*
+defect and not a pattern, and that the neighbours are innocent.
+
+The claim, in `money` lesson 18 §2 ("Why Later Loses to Now"):
+
+> *"Trying to out-willpower a vivid, present temptation every single time is exhausting, and research
+> on self-control consistently finds it unreliable — **willpower runs low over the course of a day the
+> way a muscle gets tired.**"*
+
+That second half is the **strength / ego-depletion model**, and "research consistently finds" is
+close to the reverse of its record: the multi-lab preregistered replications (23 labs, N≈2,100, then
+a second at N≈3,500) put the effect at or near zero, and the meta-analytic re-reads found heavy
+publication bias in the original literature. It is one of the best-known replication failures in
+psychology, and the app asserts it as settled — **in all five languages.** Confirmed by dumping
+§2 from each of the five money modules rather than skimming the browser: `es` *"la fuerza de voluntad
+se agota a lo largo del día como se cansa un músculo"*, `ko` *"의지력은 근육이 지치듯 하루가 지나면서
+소진됩니다"*, `zh` *"意志力会像肌肉一样，随着一天过去而逐渐疲乏"*, `ja` *"意志力は筋肉が疲れるのと同じ
+ように、一日のうちに目減りしていきます"*. Five for five.
+
+⭐ **What makes it a defect rather than a simplification is where it sits.** The paragraph
+*immediately above it* does the careful thing with a weaker-but-better-surviving finding — the
+marshmallow experiments — and says so out loud: *"Later research complicated the original story…
+That complication doesn't erase the core finding, it sharpens it."* **The lesson already knows how to
+hold a contested result.** It then spends the next paragraph asserting, flatly, the finding that has
+actually collapsed. Two opposite epistemic standards, three sentences apart, and the confident one
+went to the weaker claim.
+
+⭐ **And the claim was load-bearing in the wrong direction.** The paragraph's *conclusion* — stop
+fighting temptation, change the choice — is right and is what the app repeats in three other places.
+Its stated *reason* was a failed finding, so the lesson's advice about not trusting willpower rested
+on a willpower claim the reader should not trust. **Fixing it makes the argument sound rather than
+weaker**, because the replacement reason is better supported than the one it removes.
+
+**Controls, and one of them caught me.** My first neighbour sweep grepped `glossary.js` for term
+names and returned zero for `willpower`/`self-control`/`gratification` — **and the control failed
+too**: `Opportunity Cost`, a term I knew was in there, also returned zero. The glossary stores
+entries as `{en:{s,f,ex}, …}` maps, so grepping the file for a display name proves nothing. Re-run
+through the parsed module with `Gross Domestic Product` as a control that must be true: **43 terms,
+control true, and none of the four search terms present anywhere in the entry text.** A negative from
+the first instrument would have been worthless.
+- **History:** `git log -S"the way a muscle gets tired" -- src/` returns **three commits and all
+  three are the lesson's creation plus two file moves** (`fef3bb1` created it as "lesson 30"; the
+  per-track and per-language splits moved it). **Positive control:** the same command shape on
+  `"this time is different"` returns yesterday's real content edit `21b2431` alongside its moves. So
+  the sentence entered with the original lesson and **no run has ever assessed it.**
+- **Never touched by a previous run, and not undoing one:** `willpower|self-control|ego depletion|
+  muscle gets tired` returns **0** in `AGENT_LOG.md` and **2** in the archive — both about the
+  *technique* (automate the choice so it needs no daily willpower), neither about the mechanism.
+  **Control:** `temporal discounting|opportunity cost|marshmallow` returns 1 and 19 in the same
+  files, so the grep is live. My change preserves both of those runs' point and now supports it
+  correctly.
+
+**⭐ The class swept, and the sweep is what kept this to one sentence.** Regexed every
+research-authority sentence across all three tracks' English bodies, takeaways and think-prompts —
+**25 hits.** I read all 25 rather than counting them. **Exactly one is a failed finding.** The two
+that look like the same shape are **not** defects and I am recording why so the next run does not
+re-derive it:
+- lessons 19 and 27, *"losses feel roughly twice as painful as equivalent gains feel good"* — that
+  is loss aversion at the standard λ≈2, it is hedged with "roughly", and it survives the critiques
+  aimed at it far better than depletion does;
+- lesson 28, *"investors who trade more often after a run of gains tend to earn lower average
+  returns"* — Barber-and-Odean-shaped, replicated across markets.
+**Leaving them alone is the finding.** The last three runs have been caught alternately ignoring
+neighbours and over-correcting toward them; the discipline is to check them, not to convict them.
+
+**What shipped — one paragraph, five languages, no new mechanism invented.** The conclusion, the
+worked example, the takeaway and the think-prompt are untouched. The replacement keeps *"trying to
+out-willpower a vivid, present temptation every single time is exhausting"*, marks the tank/muscle
+story as the *familiar* explanation rather than the finding, says plainly that it held up poorly when
+large teams ran the experiments again, and then gives the reason that did survive: **people who are
+good at self-control are mostly not winning more fights against temptation — they have arranged
+things so there are fewer fights to have.** That is the same paragraph's own advice, now with support
+under it. Deliberately **no citation apparatus and no effect sizes in the body** — §3.0.6 forbids
+retreating into precision theater, and this is a beginner lesson, not a literature review.
+
+**Verification.** `npm test` — **0 failures, 4 warnings**, all four pre-existing and unchanged in
+kind from this run's opening measurement (translation review share, translation completeness at 48
+pairs, item 160's option-length cue at en 56.5%, the `AGENT_LOG` floor). Two transient failures
+appeared mid-run and were the expected consequence of a content edit, not regressions: the review
+ledger correctly marked lesson 18's four translations **stale** (English source changed), re-marked
+`ai` — never `human` — and the four generated catalog figures were rewritten by
+`refresh-readiness.mjs --write` (151,092 → 151,511 en chars). `npm run build` clean, **984 ms**.
+`npm run check-blindspot` **0 failures**.
+**Live, on the built app, not inferred:** served `dist/` statically, seeded the money track's
+prerequisites so lesson 18 is genuinely unlocked (a URL does not unlock a lesson), and read the
+rendered `<main>`. Bundle read back as **`index-COKHCcpZ.js`**, which is this build's output. The new
+paragraph renders in **en**, and switching the header picker to **中文 (Beta)** renders the Chinese
+one. The reader still shows **≈5 min** and `npm test`'s reading model is unmoved at **161 min**, so
+no `minutes` value needed changing. ⚠️ **One instrument note for the next run:** `read_page` first
+returned "(empty page)" at **viewport 0x0** — the pane had no width. Resize before reading, or a
+live check silently returns nothing.
+
+**Step 5 — adversarial self-check.** *Blindspot register:* no market surface, no kids surface, no
+Dalio, no date or live-looking figure; the new text contains no imperative and no advice-adjacent
+construction — it describes what people who do this well tend to have arranged, which is the same
+register as the sentence it replaced. `npm run check-blindspot` **0 failures**, and §17b reports
+**0 unexplained** glossary-term uses, so the new prose introduced no term owing a chip.
+*DECISIONS.md conflict:* none — `willpower|self-control|psycholog|replicat` returns **0** there
+(**control:** `localStorage` returns 11 in the same file), and nothing about state, build, content
+format or track ordering is near this change.
+*Already-done backlog item:* no — see the `-S` history and the archive reading above.
+*My own verification claim:* every figure here was printed by a command re-run this session with its
+control beside it, or read off the built app with the bundle name confirmed.
+*W-6.3 (instrument-to-app ratio):* re-measured on the previous entry's exact basis and it
+**reproduces to the line — `scripts/` 18,147 against `src/` minus content and locales 8,437, 2.15x,
+unmoved.** This run adds **zero** lines of instrument code and **no new check**; `git diff --stat --
+scripts/` shows only `translation-review-ledger.json`, which is the ledger data, not an instrument.
+⛔ **What the check found against me:** the glossary instrument above was invalid and its control is
+the only reason I know that. I also had to stop myself widening this into the loss-aversion and
+retail-trading sentences — three surfaces, one sweep is a tempting shape, and it would have hedged
+two findings that do not need hedging.
+
+**O-3 accounting: one reframed paragraph per non-English language — es +441, ko +205, zh +133,
+ja +186 characters (en +419).** No fluent reviewer has read any of it; the ledger records this run as
+`ai`, not `human`, and the four languages return to 100% reviewed / 0% human.
+
+**Top item for the next run.** This run files **no residual**, so nothing here is a default pick.
+The honest candidates are the launch plan again, an owner-facing item, or the floor: `npm test` has
+warned on every run that the non-archivable floor is **402,049 b against a 250,000 b budget** and the
+backlog alone is **371,801 b** — W-6.4 says the cause is W-6.2 rule 2, not insufficient compression,
+and the last pass was 2026-09-04. **O-1 remains the entire critical path — 44 lessons, 5 languages,
+161 minutes of content, and zero people have ever opened this app.**
+
+**Owner tree:** `git status` at run start and again before writing showed the owner's untracked
+`UIUX/` only, **untouched** (`OWNER-TREE cd1cc722…`, 51 untracked). `HEAD` re-checked before writing
+and unmoved at `21b2431`; the daily market-data job did not fire during the run and
+`public/data/market.json` is untouched at `asOf=2026-09-04`.
+⚠️ **One surprise, left alone and reported rather than acted on:** at staging time a new **empty,
+0-byte, untracked file named `course`** was present at the repo root (mtime 04:13 today), which was
+not there at run start. I cannot account for it, nothing in this run writes to that path, and it is
+not mine to explain — so per the hard rules it was **neither deleted nor committed**, and the owner
+should know it is there.
+
 
 
 ### 2026-09-05 (scheduled dev-agent, backlog item 167 (b)) — lesson 36 posed the 2022 inversion as a live open bet three blocks under a body paragraph that had already closed it; and the neighbour I checked *because* the last run got caught not checking neighbours turned out to be fine, which is the finding that keeps it from being widened
