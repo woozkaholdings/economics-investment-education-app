@@ -1532,6 +1532,21 @@ through two passes that each had it open.
 167. **[Content/Accuracy — filed 2026-09-05 by the run that fixed lesson 34's US-1930s claim, from
     the same close reading of the economy track. All three are LIVE and were read on the built app,
     not inferred; none is a residual of that run's own edit.]**
+    > ⚠️ **A SECOND NOTE, not a sub-item (W-6.2 rule 2). The CHECKABLE-ARITHMETIC class is swept —
+    > do not re-run it.** 2026-09-05: every sentence in all three tracks carrying a multiplier word
+    > or two or more magnitudes was parsed out and recomputed — **120 sentences across 35 lessons,
+    > one defect**, in lesson 3 §2 (the early-saver comparison was false at the lesson's own 6%),
+    > fixed the same day in five languages. **The positive control was (a) below**: a sweep that
+    > misses lesson 37's "nine times the size" proves nothing, and this one caught it. Everything
+    > else checks out to the cent — lesson 11's fee example, lesson 18's $3,580, lesson 17's $1,050
+    > and $400, lesson 4's rate gap (which *understates*), lesson 3's own figure data. **No guard was
+    > built and none is due** (W-6.2 rule 3, W-6.3): one defect in 120 sentences does not earn a
+    > permanent regex. ⛔ **And the trap recorded in the run log: the folk "early saver stops
+    > contributing" framing is ALSO false at 6% ($197,395 vs $200,903) — do not "fix" lesson 3 by
+    > restoring it.**
+    > ⛔ **(a) below was deliberately NOT taken by that run** even though its sweep pointed straight
+    > at it — item 167 is exhausted for headline picks, and folding it in would have been the smuggle
+    > W-6.2's ⚠️ names. It is still open and still near-free.
     > ⚠️ **A NOTE, not a fourth sub-item (W-6.2 rule 2). The research-authority class is swept and
     > sits at ONE fixed instance — do not re-run this sweep.** 2026-09-05: every sentence in all
     > three tracks citing research / studies / experiments / economists as authority was regexed and
@@ -4528,6 +4543,166 @@ zero meaningful: `selftest PASS (8/8 controls fired, plantsRemoved true)` and, p
 finding(s); V vacuous; U unavailable`. A bare "no accessibility issues found" is not a result.
 
 ## Run log
+
+### 2026-09-05 (scheduled dev-agent, self-picked: a class never swept in this repo) — the lesson that teaches compound interest asked the reader to trust that ten early years beat a doubled contribution, and at the 6% the same lesson had established two paragraphs above, they do not
+
+**Where the pick came from, and why it is not a §3.0 content read like the last five.** Item 167 is
+**exhausted for headline picks by its own ⛔ clause** — its (a) and (b) were links one and two of a
+W-6.2 rule 1 chain — so neither the lesson-37 `9x` nor the lesson-32 deflation remainder could be
+this run's pick, and I confirmed at the end that I left both alone. The two live pick-list candidates
+were re-read first per W-5.2's standing warning:
+- **Item 160** — still correctly parked; its own ⛔ clause makes the remainder class-B distractor
+  prose in four unreviewed languages, i.e. O-3's decision. Its `quizMeta.js` header ask stays queued
+  for the next run that touches that file; this run does not.
+- **The floor / archiving** — `check-log-size.mjs` this session: run log **217,087 b, 86.8% of warn,
+  3.3 runs of headroom**, 2 live days, last pass 2026-09-04. Near, not due.
+
+So I went looking for a **class**, not another sentence: **checkable arithmetic** — every place the
+app states a number a reader could verify with a calculator. `AGENT_LOG.md` + archive return **0**
+for `arithmetic sweep`, `does the math` and `does not divide`, so this class has never been swept.
+W-6.2 rule 3, answered before building anything: *"a reader does the arithmetic the sentence invites
+and gets the opposite answer."*
+
+**⛔ Step 3.5 — instrument first, and validated in both directions before I read a single result.**
+`scratchpad/arith.mjs` parses all three tracks' English modules (not greps them) and selects any
+sentence carrying a multiplier word/notation or two or more magnitudes.
+- **Positive control:** item 167(a)'s known-defective sentence (lesson 37's *"nine times the size"*)
+  must appear. It did — **CAUGHT**. A sweep that misses the one defect already on file proves nothing.
+- **Negative control:** no sentence without a number may be selected. **CLEAN, 0 leaked.**
+- Yield: **120 candidate sentences across 35 lessons**, all read.
+
+**What the sweep actually found, and most of it is the app being right.** I recomputed every
+candidate. The corpus is in **very good shape** and that is a real result, not a filler sentence —
+lesson 1's `12+15+9+18 = 54`, `54×12 = 648` and the 50/30/20 split of $3,000; lesson 3's
+`$1,060 × 6% = $63.60` and the Rule-of-72 doubling ladder (`1.06^12 = 2.01`, `^24 = 4.05`,
+`^36 = 8.15`); lesson 11's fee example (`1.0695^30` → **$75,058** vs `1.0595^30` → **$56,637**, and
+"roughly a quarter of the total balance" = **24.5%**); lesson 17's `400+300+100+250 = 1,050` and the
+`$400` that survives a `$1,450` raise; lesson 18's `$2,000 × 1.06^10` = **$3,581.70** against a stated
+"roughly $3,580"; lesson 4's rate-gap interest (actually **$4,723**, so "well over $2,000" understates
+rather than overstates); lesson 37's QE1/QE2/QE3 and the `$95B/month` QT pace. **Every one checks out.**
+The lesson-3 figure checks out too: `compoundSeries` is `1000×1.06^t` and `1000+60t` sampled every
+5 years, and all fourteen values reproduce.
+
+⭐ **One sentence does not, and it is the load-bearing claim of its section.** Lesson 3 §2, "Time
+Beats Timing":
+
+> *"Say Priya starts saving $200 a month at age 25, while her friend Tom waits until 35 and saves
+> $400 a month — twice as much, every month, for the rest of their working lives. Even though Tom is
+> putting in more money each month, **Priya's extra decade of compounding often lets her end up ahead
+> by retirement**…"*
+
+**At the 6% this same lesson establishes in §1 and re-uses in §3 with the same named character, Tom
+ends up ahead, not Priya.** Monthly annuity to age 65:
+
+| annual return | Priya ($200/mo, 40 y) | Tom ($400/mo, 30 y) | who wins |
+|---|---|---|---|
+| 5% | $305,204 | $332,903 | **Tom** by $27,699 |
+| **6%** | **$398,298** | **$401,806** | **Tom** by $3,508 |
+| 7% | $524,963 | $487,988 | Priya by $36,974 |
+
+**Break-even is 6.109%** — the claim is not merely imprecise, it is *false on the wrong side of a
+threshold the lesson itself picked.* Doubling the monthly contribution almost exactly cancels a
+ten-year head start, which is why this particular pairing is unstable.
+- **Instrument controls for the arithmetic itself:** the closed-form annuity and a month-by-month
+  brute-force loop **AGREE to the cent** ($398,298.15 both ways), and a ~0% rate returns exactly
+  `$100 × 120 = $12,000`. I did not trust my own algebra.
+- **Reach measured, not assumed: all five languages carry the same claim**, and the four
+  translations are abridged summaries (part of the 48 known abridged pairs) that kept precisely the
+  unstable pairing — *"ahorra el doble pero empieza una década después"*, *"10년 늦게 두 배를"*,
+  *"十年后才开始存两倍金额"*, *"10年後に2倍の額を"*.
+- **Nothing downstream stakes on it.** Lesson 3's only end-of-lesson check tests the Rule of 72
+  (`72 ÷ 9 ≈ 8`) and is untouched; the lesson's figure draws §1's `$1,000` example, not §2's
+  comparison; `git log -S"Priya's extra decade of compounding" -- src/` returns **five commits, all
+  of them the original authoring (`2afcb42`) plus four file splits** — **no run has ever content-edited
+  this paragraph** (**control:** the same command on `"this time is different"` returns yesterday's
+  real content edit `21b2431` alongside its splits).
+
+**What shipped — one paragraph, five languages, and the corrected version is a better lesson than the
+false one.** English now reads: *"…and both stop at 65. At the 6% from the example above they finish
+within about 1% of each other, near $400,000 apiece. Priya put in $96,000 of her own money along the
+way; Tom put in $144,000. Doubling the monthly amount is what it took to buy back a ten-year head
+start, and it only just did it — push the return a little higher and Priya ends up ahead, a little
+lower and Tom does."*
+- The section's thesis **survives and gets stronger**: the honest finding is that a decade was worth
+  as much as **$48,000 more out of pocket**, which is what "time matters enormously" actually buys.
+  The false version asked the reader to take a win on trust; this one hands them the arithmetic.
+- **The four translations stay abridged** rather than being expanded to full translations — changing
+  their abridgement status is item 93/94 and O-3 territory, not a correctness fix's business.
+- ⚠️ **The Spanish abridgement drops the two names**, so my first draft left `ella`/`él` with no
+  antecedent; corrected to *"quien empezó antes / quien empezó después"* before verifying.
+
+⛔ **THE TRAP, and this is the part most worth not re-deriving — the obvious "fix" is also false.**
+The folk version of this example has the early saver *stop* contributing (invest 10 years, then never
+again, vs. a later saver who pays in for 30). A future run reaching for that framing would reintroduce
+exactly the same defect: measured here, at 6% the early saver ends at **$197,395** against
+**$200,903** — she still loses, and needs about **6.7%** to win. **Neither version of this classic is
+true at 6%. Do not "restore" the striking version.**
+
+**Verification.** `npm test` **0 failures, 3 warnings** — the three are the run's opening baseline
+(translation review share, 48 abridged pairs, item 160's 56.5% length cue) plus the standing floor
+warning, all identical in kind. Two transient failures appeared mid-run and were the *expected*
+consequence of an English content edit: the ledger correctly marked lesson 3's four translations
+**stale** (re-marked `ai`, never `human`) and `refresh-readiness.mjs --write` regenerated the catalog
+figures (151,621 → 151,774 en chars). `npm run build` clean, **969 ms**. `npm run check-blindspot`
+**0 failures**.
+**Live, on the built app, not inferred.** Served `dist/` statically at 420x900 and read the rendered
+`<main>`; bundle read back as **`index-k-r-0tDe.js`**, which is this build's output. Lesson 3 renders
+the new paragraph in **en** and, after switching the header picker, in **中文 (Beta)**. The reader
+still shows **≈3 min** and `npm test`'s reading model is unmoved at **161 min**.
+⚠️ **Instrument note:** the previous entry's two seeding traps both reproduced and its remedy works —
+seed `ecycles_completed_lessons` as **numbers** and set `ecycles_legacy_lesson_id_migrated`, or
+`#/lesson/3` bounces to `#/learn`. Essentials gates within its own track, so `[1,2]` is the seed for
+lesson 3.
+
+**Step 5 — adversarial self-check.**
+*Blindspot register:* §10.2 — no person or firm named; Priya and Tom are the lesson's existing
+fictional characters. §10.3 — untouched. §2.3 — no date and no live-looking market figure; the 6% is
+this lesson's own teaching rate, already defended in `moneyVisuals.js`'s header, and the dollar
+outcomes are arithmetic at that stated rate, the same class as lesson 18's shipped `$3,580`.
+§10.1 — **proved, not asserted**: planted `"You should buy stocks now."` into the *new* sentence →
+`check-blindspot` **FAILS and quotes my exact paragraph back**, so the added text is genuinely inside
+§10.1's scanned corpus; restored from a scratchpad copy to a byte-identical
+`ac5c7548…`, never `git checkout --`, and the restored file passes **0 failures**.
+*DECISIONS.md conflict:* none — `compound|6%|essentials track` returns **0** hits (**control:**
+`localStorage` returns **11** in the same file). No state, build, routing or content-format change;
+content stays `.js`.
+*Already-done backlog item:* no — the `-S` history above shows the paragraph has never been edited,
+and no "Completed and pruned" entry covers lesson 3's prose.
+*My own verification claim:* every number in this entry was printed by a script re-run this session
+with its control beside it, or read off the built app with the bundle name confirmed.
+**W-6.3, and the previous entry asked the next run to state the basis in the same breath as the
+number — so: `scripts/*.mjs` = 15,325 lines against `src/` minus `content/` and `locales/` = 8,437
+lines, a ratio of 1.82x on the `.mjs` basis.** Both figures reproduce the previous entry's exactly, so
+the divergence it flagged was the numerator's basis and is now settled. This run falls on the harmless
+side: **zero lines of instrument code and no new check** — `git diff --stat -- scripts/` shows only
+`translation-review-ledger.json`, which is ledger data. The sweep script lives in the scratchpad and
+is deliberately not committed; a 120-sentence class that came back with one defect does not earn a
+permanent regex.
+⚠️ **What the check found against me:** my first draft of the English replacement said they finish
+"a little under $400,000 each" — Tom finishes at **$401,806**, which is *over*. Caught by re-reading
+my own table rather than my own sentence, and replaced with "within about 1% of each other", which is
+the measured **0.88%**. Small, but it is the exact failure mode this log is about: I had the correct
+number in front of me and wrote a rounder one.
+⚠️ **And what I stopped myself doing:** fixing lesson 37's `9x` while I was in the arithmetic class
+with the sweep already pointing at it. It is **item 167(a)**, its ⛔ clause forbids it as a headline
+pick, and folding it in here would have been the smuggle W-6.2's ⚠️ names. Verified left alone:
+`grep -c "nine times the size"` still returns **1**.
+
+**O-3 accounting: one paragraph per language — en +153, es +115, ko +82, zh +58, ja +65 code points**
+in `lessonContent.essentials.*`. No fluent reviewer has read any of the non-English text; the ledger
+records this run as `ai`, not `human`, and the four languages return to 100% reviewed / 0% human.
+
+**Top item for the next run.** This run files **no numbered residual** — per W-6.2 rule 2 the sweep's
+result is a **note under item 167**, not a new item, because the class came back at one known defect
+and needs no guard. Nothing here is a default pick. **O-1 remains the entire critical path — 44
+lessons, 5 languages, 161 minutes of content, and zero people have ever opened this app.**
+
+**Owner tree:** `git status` at run start and again before writing showed the owner's untracked
+`UIUX/` and the empty `course` file only, **untouched**. `HEAD` re-checked before writing and unmoved
+at `d8c9387`; the daily market-data job did not fire during the run and `public/data/market.json` is
+untouched at `asOf=2026-09-04`. The 0-byte untracked `course` file remains present and unexplained —
+neither deleted nor committed, per the hard rules.
+
 
 ### 2026-09-05 (scheduled dev-agent, picked from LAUNCH_PLAN §3.0 under W-6.2 rule 1) — the app hung the Fed's 2% target on CPI, which is not the index the target is set on, and then spent the next section teaching the reader to read CPI against "the Fed's target" four times
 

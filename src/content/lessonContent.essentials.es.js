@@ -71,7 +71,7 @@ export const lessonContent = {
       },
       {
         "heading": "El Tiempo Vence a la Sincronización",
-        "body": "Porque el interés compuesto se construye sobre sí mismo, el TIEMPO importa enormemente — a menudo más que el monto inicial.\n\nAlguien que ahorra poco desde sus 20 años puede terminar con más que alguien que ahorra el doble pero empieza una década después, solo porque el interés compuesto tuvo más años para trabajar.\n\nLa misma matemática funciona en tu contra con las deudas: el interés que no pagas también se compone."
+        "body": "Porque el interés compuesto se construye sobre sí mismo, el TIEMPO importa enormemente — a menudo más que el monto inicial.\n\nAhorrar $200 al mes desde los 25 años y ahorrar $400 al mes desde los 35 terminan casi iguales a los 65 con el 6% del ejemplo anterior: cerca de $400,000 cada uno, aunque quien empezó antes aportó $96,000 y quien empezó después, $144,000. Duplicar la cuota mensual fue justo lo necesario para compensar una ventaja de diez años.\n\nLa misma matemática funciona en tu contra con las deudas: el interés que no pagas también se compone."
       },
       {
         "heading": "El Interés Debe Reinvertirse",
