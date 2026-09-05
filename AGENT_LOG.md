@@ -1575,6 +1575,22 @@ diff the first heading against the previous section's first heading.
     > 3's sentence: *"a learner is told to expect one question and is shown two."* Fixing it is a
     > five-language copy change (`checkIntro` has no count template; §68 is the precedent for one).
     > **Honest priority: low** — it is a wording mismatch, not a false claim about the material.
+    > ⚠️ **A FOURTH NOTE, not a sub-item (W-6.2 rule 2). The ENGLISH↔TRANSLATION NUMERIC-DRIFT class
+    > is swept and CLOSED at zero instances — do not re-run it.** 2026-09-05: percentages and 4-digit
+    > years compared between each English lesson and its four translations, **176 (lesson, language)
+    > pairs**. **4 flags, all false positives on inspection** — `L12 zh` writes `$1,800` as `1800美元`
+    > (no comma), `L11 ko` renders "exactly one percentage point" as `1%포인트`, `L32`/`L37 ko` render
+    > "approach zero" as `0%`. **No drift exists; no check was built** (W-6.2 rule 3 — after an empty
+    > sweep the learner-visible sentence cannot be written honestly).
+    > ⛔ **The transferable part is the instrument, not the result. The FIRST version reported 36 flags
+    > and every one was an artifact of its own regex:** the lookahead `(?![\d,.%])` rejected any year
+    > followed by a comma, so English lesson 36 — which reads *"turning positive again in 2024, well
+    > past…"* — scanned as containing **no 2024**, manufacturing a tidy story that ko/zh/ja were
+    > carrying a stale inversion window three days after that lesson was corrected in English. **It had
+    > no control.** With a two-sided planted probe (`2024,` `1929.` `2050` must be read; `1,929,000`,
+    > `20.24`, `1799`, `2100`, `12345` must not) the count fell **36 → 4 → 0 real**. A digit-scanner
+    > over prose needs its punctuation boundaries proven, and **"the translations drifted" is a
+    > conclusion attractive enough to skip proving the instrument first** — which is what happened.
     > ⚠️ **A SECOND NOTE, not a sub-item (W-6.2 rule 2). The CHECKABLE-ARITHMETIC class is swept —
     > do not re-run it.** 2026-09-05: every sentence in all three tracks carrying a multiplier word
     > or two or more magnitudes was parsed out and recomputed — **120 sentences across 35 lessons,
@@ -4586,6 +4602,139 @@ zero meaningful: `selftest PASS (8/8 controls fired, plantsRemoved true)` and, p
 finding(s); V vacuous; U unavailable`. A bare "no accessibility issues found" is not a result.
 
 ## Run log
+
+### 2026-09-05 (scheduled dev-agent, self-picked off a corpus-wide sweep whose original premise was refuted) — the compounding lesson told the reader that Priya withdraws $60 a year from her original $1,000; Priya is the saver two paragraphs above who puts in $200 a month and finishes near $400,000, and all four translations already said "you"
+
+**Pick, and it is not a note-chain.** The previous entry (the sixth archiving pass) closed with *"Nothing
+is queued and this run files no numbered residual… Go back to learner-visible work"* — so W-6.2 rule 1
+has nothing to bind against here, and I did not take a handoff. The pick came out of a sweep I chose,
+described below. ⚠️ **Honest disclosure about adjacency:** the defect I shipped a fix for is in
+**lesson 3**, which the 2026-09-05 compound-interest run (`aaee2c0`) also edited. It is a *different
+sentence in a different section*, and I reached it by auditing that lesson's arithmetic as one of ten
+lessons in a mechanical sweep — not by following that run's residual, which explicitly filed none. But
+the adjacency is real and the next run should know it, because "I found more in the lesson the last run
+touched" is the shape W-6.2 exists to catch even when the path there was independent.
+
+**Step 3.5 — THE PREMISE I PICKED WAS WRONG, and the instrument that "proved" it was broken.**
+My starting item was: *the four translations carry numeric drift from their English source, and nothing
+checks it corpus-wide.* The second half held (§21/§50/§53 anchor five-language figures, but each is
+scoped to one named lesson's figure — 7, 17, the rewards pair — so there is no corpus-wide comparison).
+**The first half did not survive its own instrument.**
+- **First scan: 36 of 176 (lesson, language) pairs flagged**, including what looked like a serious find —
+  ko/zh/ja lesson 36 carrying `2022` twice and a `2024` the English "did not have", three days after a
+  run corrected that exact lesson's inversion window in English only.
+- **It was my regex.** Its lookahead `(?![\d,.%])` rejected any year followed by a comma, and English
+  lesson 36 plainly reads *"…turning positive again in 2024, well past the 'typical' lead time."* The
+  scan reported the English as containing **no 2024 at all**. A stale-translation story was sitting
+  there fully formed, and it was an artifact.
+- **Caught by a control I should have had before the first result, not after:** the corrected scan
+  carries a planted probe asserting **both directions** — `2024,` `1929.` and `2050` must be read;
+  `1,929,000`, `20.24`, `1799`, `2100` and `12345` must not; three known percents must parse. It exits
+  non-zero if the probe disagrees, so a silently-empty scan cannot look clean.
+- **Re-run with the control passing: 36 flags → 4.** And **all four of those are false positives too**,
+  each confirmed by reading the sentence: `L12 zh` writes `$1,800`/`$1,900` as `1800美元`/`1900美元`
+  (no comma → my year pattern ate them); `L11 ko` renders English's spelled-out *"exactly one
+  percentage point"* as `1%포인트`; `L32 ko` renders *"rates approach zero"* as `0%`; `L37 ko` the same.
+- **Disposition change, per step 3.5: the item is refuted, not deferred.** There is **no detectable
+  numeric drift between English and the four translations** in the classes that survive translation as
+  literal digits. **No check was built** — W-6.2 rule 3 refuses it, and after the sweep came back empty
+  the sentence naming a learner-visible failure it would have caught cannot be written honestly.
+
+**What the sweep found instead, after I redirected it.** With the corpus already loaded I ran the
+mechanical part over English only: every lesson stating both a rate and a dollar amount (**10 lessons**),
+then checked each one's arithmetic by hand.
+⚠️ **Disclosure, found by step 5 and not by me while I was doing it: this partly RE-RAN a class item 167
+marks "swept — do not re-run it"** (its second note: 120 sentences across 35 lessons, one defect). My
+hand-audit of 10 lessons duplicated a subset of that and **found nothing new, which confirms it** —
+worth exactly one sentence, not a run. **The defect I actually shipped did not come from that
+instrument and could not have:** recomputing arithmetic cannot see a sentence whose numbers are all
+correct and whose *owner* is the wrong person. It came from reading the lesson.
+- **L4** — $20,000 car loan, 5 years, 6% vs 14%, *"well over $2,000 in extra interest"*. Amortized:
+  $3,199 vs $7,922 interest, a **$4,722** gap. True, and conservatively stated. ✓
+- **L18** — $2,000 at 6% for ten years → *"roughly $3,580"*. Actual **$3,581.70**. ✓
+- **L3 §1/§2** — Rule of 72 at 6%/9% → 12/8 years ✓; $1,000 → $2,000/$4,000/$8,000 at 12/24/36 ✓;
+  and the previous run's corrected §2 checks out: **Priya $398,300 vs Tom $401,806** at 6% (0.88% apart,
+  *"within about 1%"*, *"near $400,000 apiece"*), contributions **$96,000 / $144,000** exact, and its
+  claim that the ranking flips with the rate is right — **Priya ahead at 7% ($525k vs $488k), Tom ahead
+  at 5% ($305k vs $333k)**.
+- **⭐ L3 §3 — the defect.** *"If **Priya's** account pays 6% and she withdraws that 6% in cash every
+  year to spend, she's back to simple interest: the same **$60** a year, forever, on her original
+  **$1,000**."* **Priya has no $1,000 and no $60.** She is §2's saver: $200 a month from 25 to 65,
+  finishing near $400,000. The $1,000/$60 belong to **§1's unnamed example**, and the phrase *"the same
+  $60"* points at §1 — which is precisely why the name cannot be hers. Under either reading the sentence
+  is broken: it either misnames §1's saver or invents a Priya balance that contradicts §2 while calling
+  it "the same".
+
+**The finding that settles what the fix should be, and it is the strongest evidence in this entry:
+all four translations already say "you".** es *"Si retiras el interés…"*, ko *"매년 이자를 현금으로
+인출하면…"*, zh *"如果你每年把利息以现金形式取出…"*, ja *"毎年利息を現金で引き出すと…"* — every one is
+impersonal and tied to §1's $1,000/$60. **English was the only outlier**, so the correction is not my
+editorial preference; it is English rejoining the other four.
+**Provenance, measured with a two-sided control rather than assumed:** the phrase has been in the file
+since `5633b79` (2026-08-19) split the essentials track out — present in **all 5** commits that ever
+touched it. Control: `Rule of 72` → 2 hits at HEAD (expect >0), `ZZZNOTHERE` → 0 (expect 0), both fire.
+**17 days on the shipped English main build.**
+
+**The fix — one sentence, and the numbers are untouched.**
+> Go back to that first $1,000 earning 6%: if you withdraw the $60 in cash every year to spend, you're
+> back to simple interest — the same $60 a year, forever, on the original $1,000.
+
+It drops the wrong name, anchors the reader explicitly to §1 (so `$1,000`/`$60` have a referent on the
+page), and matches the voice the other four languages already use. Applied through a guarded script that
+refuses unless it finds **exactly one** occurrence and verifies `Priya's account` is absent afterward.
+
+**The two consequences I had to resolve, both of which the suite caught and neither of which I guessed at.**
+1. **The ledger went stale, correctly.** Editing lesson 3's English invalidated its four translation
+   hashes → coverage `100% → 98% (1 stale each)` and `check-data.mjs` §11 failed on
+   `LAUNCH_READINESS.md`'s recorded figure. **I did not paper over this by editing the doc to say 98%.**
+   I did the re-review the ledger is asking for: I read §2 and §3 of all four translations against the
+   corrected English and confirmed they correspond — §3 matches it *better* than the old text, and §2
+   carries the corrected `$400,000 / $96,000 / $144,000 / 6%` claim in all four. Then marked them
+   `ai`, under the same reviewer identity the previous run used hours earlier for this same lesson.
+   Coverage back to `100%, 0 stale`. **The abridgment (all four drop §2's closing clause) is the known
+   item-93 debt, not a new gap.**
+2. **Two generated figures moved** — English chars `151,774 → 151,788`. Refreshed with
+   `npm run readiness -- --write`; the diff is those two numbers and nothing else.
+
+**Verification — exit codes read directly, never through a pipe.** `npm test` **exit 0, 0 failures,
+4 warnings**, and the four are **byte-for-byte the baseline's four** (translation review, completeness
+48 pairs, item 160's 56.5% length cue, the W-6.4 floor) — captured *before* I edited anything, which is
+what makes "no new warning" a measurement rather than a memory. `npm run build` **exit 0, 911 ms**.
+`npm run check-blindspot` **exit 0**. **And the proof it reaches a learner, not just the source tree:**
+the corrected sentence is in the shipped chunk `dist/assets/lessonContent.essentials.en-sDsS5Uti.js`,
+and `Priya's account` returns **0 occurrences across every asset in `dist/`**.
+
+**Step 5 — adversarial self-check.** *Blindspot register:* the new sentence adds no advice verb, no
+date, no market figure, no Dalio, no child-facing framing — and `check-blindspot` re-run clean over all
+five languages is the evidence, not my reading of my own sentence. *DECISIONS.md conflict:* grepped for
+`Priya`, `lesson 3`, `Compound Interest` — **zero hits**; no closed decision touches this, and a prose
+edit inside a `.js` content module is the shape those decisions mandate. *Already-done backlog item:*
+grepped `Priya's account` / `simple interest` across the whole log — **zero hits**, so this is not a
+redo; the adjacent `aaee2c0` fixed §2's arithmetic, a different sentence. *Persona convention:* checked
+that no `check-data.mjs` section asserts on character names before removing one — none does.
+*My own verification claim:* every figure above was printed by a command re-run this session, the
+arithmetic is recomputed rather than quoted, and the `dist/` greps let a reviewer confirm the
+learner-facing result from the built output alone.
+**W-6.3:** `git diff --stat -- scripts/` is **one file, `translation-review-ledger.json` — a data
+record, zero lines of instrument code.** The sweep script that produced this finding lives in the
+session scratchpad and is deliberately **not** committed: it found no defect in its own class, and
+committing an instrument that proved nothing is exactly what W-6.0 measured 2.3x too much of.
+
+**O-3 accounting: 0 characters of new translated prose.** English-only edit; the four translations were
+re-read and re-marked, not rewritten.
+
+**Top item for the next run.** **Nothing is queued; this run files no numbered residual** (W-6.2 rule 2).
+**One** class is newly swept and closed — recorded under item 167 so nobody re-runs it:
+**English↔translation numeric drift, zero real instances in 176 pairs, and the first instrument lied.**
+(The arithmetic class was **already** closed by item 167's second note; my re-audit of 10 lessons only
+confirmed it and should not have been spent — see the disclosure above.) The run log has ample headroom after yesterday's archive — **archiving is
+not due, do not pick it.** **O-1 remains the entire critical path — 44 lessons, 5 languages, 162 minutes
+of content, and zero people have ever opened this app.**
+
+**Owner tree:** `git status` at run start and again before writing showed the owner's untracked `UIUX/`
+and the 0-byte `course` file only, **untouched** — neither deleted nor committed, per the hard rules.
+`HEAD` re-checked before writing and unmoved at `679b701`; the daily market-data job did not fire during
+the run and `public/data/market.json` is untouched at `asOf=2026-09-04`.
 
 ### 2026-09-05 (scheduled dev-agent, W-5.3 archiving pass — the sixth) — the pass itself was routine; what was not is that the clause telling me how to order the archive also told me a control enforced it, and no such control exists, so the day went in backwards and the full suite passed on it
 
