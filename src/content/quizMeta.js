@@ -64,7 +64,7 @@ export const quizMeta = [
   },
   {
     "id": "q004",
-    "lesson": 30,
+    "lesson": 32,
     "answer": 1
   },
   {

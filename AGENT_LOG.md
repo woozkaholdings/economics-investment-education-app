@@ -1532,6 +1532,30 @@ through two passes that each had it open.
 167. **[Content/Accuracy — filed 2026-09-05 by the run that fixed lesson 34's US-1930s claim, from
     the same close reading of the economy track. All three are LIVE and were read on the built app,
     not inferred; none is a residual of that run's own edit.]**
+    > ⚠️ **A THIRD NOTE, not a sub-item (W-6.2 rule 2). The QUESTION-ANSWERABILITY class is swept and
+    > is CLOSED at one fixed instance — do not re-run this sweep.** 2026-09-05: every one of the 46
+    > end-of-lesson checks was scored against the lesson it is attached to *and* against all 44 lesson
+    > bodies. **44 of 46 rank their own lesson #1** (identity control: every lesson's own takeaway
+    > ranks that lesson #1, 44/44). The two that do not: `q045` at rank 2 inside its own four-lesson
+    > arc, **read and correct**; and **`q004` at rank 21 of 44** — *"What causes inflation?"* was
+    > attached to **lesson 30**, which contains the word *inflation* **zero** times and *production*
+    > **zero** times **in all five languages**, while lesson 32 contains each **twice in all five**.
+    > Fixed the same day by moving `q004` to lesson 32 (one integer; `q004`'s id is unchanged, so
+    > persisted Leitner state survives) plus L32's derived `minutes` 3 → 4. **No guard is due**
+    > (W-6.2 rule 3, W-6.3 at 1.82x): one defect in 46 does not earn a permanent instrument, and both
+    > sweep scripts stayed in the scratchpad.
+    > ⛔ **The trap, because a coverage score alone gets this wrong:** `q010` and `q005` score low for
+    > a legitimate reason — they ask which item is **NOT** one of a list, so the correct option is
+    > *deliberately* absent from the lesson. A word-coverage sweep cannot tell a NOT-question from a
+    > misplaced one. **The instrument that decides has to rank the question against every lesson, not
+    > score it against its own.** `q010` sits at rank 1 under that instrument.
+    > ⚠️ **And a live, unfixed find from the same walk, filed here rather than numbered: `checkIntro`
+    > is a fixed singular string.** *"A quick question before you move on."* renders above **two**
+    > questions on the two lessons that carry two (L34 all along, and L32 since the `q004` move — the
+    > count of affected lessons is 2 before and 2 after, measured, so nothing regressed). W-6.2 rule
+    > 3's sentence: *"a learner is told to expect one question and is shown two."* Fixing it is a
+    > five-language copy change (`checkIntro` has no count template; §68 is the precedent for one).
+    > **Honest priority: low** — it is a wording mismatch, not a false claim about the material.
     > ⚠️ **A SECOND NOTE, not a sub-item (W-6.2 rule 2). The CHECKABLE-ARITHMETIC class is swept —
     > do not re-run it.** 2026-09-05: every sentence in all three tracks carrying a multiplier word
     > or two or more magnitudes was parsed out and recomputed — **120 sentences across 35 lessons,
@@ -4543,6 +4567,176 @@ zero meaningful: `selftest PASS (8/8 controls fired, plantsRemoved true)` and, p
 finding(s); V vacuous; U unavailable`. A bare "no accessibility issues found" is not a result.
 
 ## Run log
+
+### 2026-09-05 (scheduled dev-agent, self-picked: a second class never swept in this repo) — the end-of-lesson check on the second lesson of the main path asked "What causes inflation?", and neither that lesson nor its four translations contains the word inflation, or the word production, anywhere
+
+**Where the pick came from.** Item 167 is still exhausted for headline picks by its own ⛔ clause, and
+its two live sub-items ((a) lesson 37's `9x`, (c) lesson 32's deflation clause) were left alone —
+verified at the end. The other live candidates were re-read first per W-5.2:
+- **Item 165's remainder** — still correctly owner-gated and, by its own ⛔, *out of order*: the five
+  remaining questions sit on `essentials` lessons whose bodies are abridged in the same four
+  languages, so it is downstream of item 94.
+- **The floor / archiving** — `check-log-size.mjs` at run start: run log **229,831 b, 91.9% of warn,
+  2.0 runs of headroom**, 2 live days, last pass 2026-09-04. Near, not due; the floor warning
+  (404,347 b) is W-6.4's and archiving cannot touch it.
+
+So, as on the previous run, a **class** rather than a sentence — and deliberately one axis over from
+that run's, because the last six picks all read lesson *prose*. This one reads the seam between two
+corpora: **is the answer to each end-of-lesson check actually taught by the lesson it is attached
+to?** `AGENT_LOG.md` + archive return **0** for `answer is taught`, `untaught`, `quiz sweep` and
+`not taught in the lesson`; the three `answerable` hits are about other things entirely. Never swept.
+W-6.2 rule 3, answered before building anything: *"a learner finishes a lesson, is handed its check,
+and is asked about a mechanism the lesson never mentioned."*
+
+**⛔ Step 3.5 — two independent instruments, both validated in both directions before any result was
+read.** Both live in the scratchpad and neither is committed.
+- **Instrument 1 (`answerable.mjs`)** parses all three tracks and scores each question's *correct
+  option* against its own lesson body by stemmed content-word coverage.
+  *Positive control:* a planted off-topic answer ("Baltic Dry shipping freight index tonnage") on
+  lesson 29 scores **0.00**. *Negative control:* `q001`'s correct option, which is verbatim in lesson
+  29, scores **1.00**. *Coverage control:* **46/46** questions resolve to a body over 200 chars.
+- **Instrument 2 (`bestfit.mjs`)** is the one that decides, and it is independent of the first:
+  IDF-weighted, it scores each question against **all 44** lesson bodies and reports where the
+  lesson it is actually attached to *ranks*. *Identity control:* every lesson's own takeaway must
+  rank that lesson #1 — **44/44**, which is what makes a low rank mean something. *Positive control:*
+  the off-topic query ranks L29 **30th of 44**.
+
+**The result is one outlier and it is not close.** 44 of 46 questions rank their own lesson **#1**.
+`q045` ranks 2nd inside its own four-lesson arc (L43 0.48 against neighbour L42's 0.51) and is fine —
+read in full, it is on-lesson. **`q004` ranks its own lesson 21st of 44, at 0.12.** The corpus's own
+best fits for it are **L9 (0.63)** and **L32 (0.46)**.
+
+⭐ **`q004` — "What causes inflation?" → *"Spending growing faster than production"* — was attached to
+lesson 30, "Credit: The Most Important Part", which the reader meets as `LESSON 2 OF 12` on the track
+a new install opens on.** Measured across all five languages rather than inferred from English:
+
+| | inflation | production |
+|---|---|---|
+| **L30** en / es / ko / zh / ja | **0 / 0 / 0 / 0 / 0** | **0 / 0 / 0 / 0 / 0** |
+| **L32** en / es / ko / zh / ja | 2 / 2 / 2 / 2 / 2 | 2 / 2 / 2 / 2 / 2 |
+
+The L32 row is the control for the L30 row: the same five per-language patterns that return zero on
+lesson 30 return two on lesson 32, so "nothing found" is not the instrument failing to look. Lesson
+30's three sections are *How Credit Works*, *Credit vs Money* and *The Spending Chain* — credit
+creation, settlement, and spending-as-income. It never reaches prices.
+
+**Where the answer actually IS, in almost the question's own words — lesson 32 §1:** *"When spending
+and incomes grow faster than the town can really produce, businesses respond by raising prices
+instead of magically producing more — that's inflation."* And the corpus itself already says so:
+**lesson 9 cites "the definition of inflation in 'The Short-Term Debt Cycle'"** — which is lesson 32.
+`q004`'s own `explain` ("When spending and incomes grow faster than the production of goods, prices
+rise. That's inflation.") is a paraphrase of that L32 sentence. The question was written for lesson
+32 and landed on lesson 30.
+
+**How it got there, because it says the mapping was never per-question.** At `98a79ce` the quiz was a
+flat ordered list with **no `lesson` field at all**; the field arrived later, in one pass, when
+per-lesson checks were built. In that flat order `q004` sits between `q003` (→ L32) and `q005` (→
+L34). Nothing has touched its assignment since: `q004` appears three times in this log and four in the
+archive, **every one of them about the length of its `explain` translations** — including a
+2026-09-03 parity table that prints `| q004 | 30 |` and quotes *"That's inflation."* in the next
+column without anyone noticing the two disagree.
+
+**What shipped: one integer.** `quizMeta.js` — `q004.lesson` **30 → 32**. Plus the one derived figure
+that moves with it: lesson 32's `minutes` **3 → 4**, because §2's reading model counts a lesson's own
+check text and L32 was already at **679 words / 3.40 min**; with `q004` it is **714 / 3.57**, so 4 is
+now the honest round. (L30 goes 620 → 585 words, **3.10 → 2.93**, and stays at 3.) Four minutes is the
+catalog's modal value — 20 of 44 lessons, and L33-L36 and L38 beside it on the same track.
+- **`q004`'s id does not change, which is the whole point.** `src/lib/review.js` has keyed every
+  learner's Leitner state by the opaque question id since 2026-09-01; a persisted `q004` entry
+  survives the move untouched, and no migration is needed. This is that change collecting its first
+  dividend.
+- **⭐ And the reason this fix is worth naming as a shape: it costs ZERO new translation.** `lesson`
+  lives once, in `quizMeta.js`, so the correction lands in all five languages at once. Every other
+  content fix in the last week added es/ko/zh/ja prose that no fluent reviewer has read (O-3). This
+  one adds none — the O-3 accounting for this run is **0 code points in all five languages**.
+
+⛔ **What I considered and did NOT do.** (1) **Move it to L9**, which scores highest (0.63): wrong —
+L9 is on the optional `essentials` track, already has `q023`, and *defers the definition to L32 in its
+own text*. It scores high because it says "inflation" often, not because it teaches the cause.
+(2) **Write a new L30 question** on *The Spending Chain*: that means a new opaque id and five
+languages of unreviewed machine translation, for a lesson that keeps `q002` and is not left without a
+check. More debt, more risk, less certainty. **L30 retains exactly one question and it is on L30's own
+material** — verified live below.
+
+**Verification.** `npm test` **0 failures, 4 warnings** — the four are this run's opening baseline
+(translation review share 0% human, 48 abridged pairs, item 160's 56.5% length cue, the W-6.4 floor),
+identical in kind to the previous entry's. One transient failure appeared mid-run and was the
+*expected* consequence: `§2 lessons[3] (id 32): minutes is 3, but its text computes to 4`, i.e. the
+check caught the derived figure before I did, and `npm run readiness -- --write` then moved the four
+generated catalog figures 161 → **162 min** across `LAUNCH_READINESS.md` §4.3, `LAUNCH_PLAN.md`
+§4.0/§4.3 and `CLAIMS.md` A6. `npm run build` clean, **919 ms**. `npm run check-blindspot` **0
+failures**.
+**Live, on the built app, not inferred.** Served `dist/` statically at 420x900; bundle read back as
+**`index-D6mmTRPP.js`**, this build's output.
+- **Lesson 30** renders `LESSON 2 OF 12`, `≈3 min`, and a check containing **one** `h3` — *"What is
+  the most important part of the economy?"* The inflation question is gone from it.
+- **Lesson 32** renders `LESSON 4 OF 12`, `≈4 min`, and both questions, in order. Confirmed again
+  after switching the header picker to **한국어 (Beta)**: `약 4분`, and *"인플레이션의 원인은? …
+  지출이 생산보다 빠르게 증가"*.
+- **The `BEFORE YOU READ` hook is unaffected** — it takes a lesson's *first* question, which is
+  `q002` on L30 and `q003` on L32 both before and after. (The duplicate `h3` in lesson 32's outline is
+  that hook, not a regression.)
+- **⭐ The migration property proved by driving three real localStorage states, not by reading
+  `Practice.jsx`:** (**A**) completed `[29,30]` **with** a seeded `ecycles_review` entry for `q004` →
+  *"1 ready to review"*, pool **3**, one question in box 2 — an existing learner keeps their history.
+  (**B**) completed `[29,30]`, no history → pool **2**; `q004` no longer reaches a learner who has not
+  been taught inflation. (**C**) completed `[29,30,31,32]` → pool **5**; it arrives with lesson 32.
+  **Differential control, because B is the only state that discriminates:** the same pool computed
+  against `git show HEAD:src/content/quizMeta.js` gives **3 `["q001","q002","q004"]`** for state B
+  where the working tree gives **2**, and the live app rendered **2**.
+
+**Step 5 — adversarial self-check.**
+*Blindspot register:* §10.1 — **no learner-visible string is added, edited or removed by this commit**,
+so §10.1's scanned corpus is byte-identical and a planted-string proof would be a proof about nothing;
+the check that applies is that the disclaimer still *renders*, and it does, on both lessons and in
+both languages I drove (`Educational content only …` / `교육용 콘텐츠입니다 …`). §10.2 — no person or
+firm named. §10.3 — untouched. §2.3 — no date and no live-looking figure; `minutes` is derived by
+`check-data.mjs` from the text and asserted every run, which is the opposite of a typed number.
+*DECISIONS.md conflict:* ⚠️ **one clause looks like a conflict and is not, so do not re-derive this.**
+`DECISIONS.md:701` lists **`quizMeta.lesson`** among the surfaces that make lesson ids "stable
+identifiers". That bullet forbids **renumbering lessons** — it is naming what a renumber would break.
+No lesson id, `lessonContent` key, `#/lesson/N` link or question id changes here; one question's
+*pointer* moves from a lesson that does not teach its answer to the one that does. Grepped for a
+standing decision on the quiz→lesson mapping specifically: **none exists.**
+*Already-done backlog item:* no — the seven historical `q004` mentions are all about `explain` length,
+and no "Completed and pruned" entry covers a question's lesson assignment.
+*My own verification claim:* every number above was printed by a script re-run this session with its
+control beside it, or read off the built app with the bundle name confirmed; the one comparative claim
+(state B was 3, is 2) was computed against `HEAD`'s own file rather than remembered.
+**W-6.3, with its basis in the same breath:** `scripts/*.mjs` = **15,325** lines against `src/` minus
+`content/` and `locales/` = **8,437**, a ratio of **1.82x** — both figures reproduce the previous
+entry's exactly. This run falls on the harmless side and further than that one did: **zero lines of
+instrument code, no new check, and `git diff --stat -- scripts/` is empty.** Two sweeps of a
+46-question corpus that came back with one defect do not earn a permanent regex.
+⚠️ **What the check found against me:** my first reading had instrument 1 alone deciding the pick, and
+it ranks `q010` (L34) fourth-worst at 0.50 — a question whose correct option is *deliberately* absent
+from its lesson, because it asks which tool is **NOT** one of the four. A coverage score cannot tell a
+misplaced question from a NOT-question; that is why instrument 2 exists and why it, not the first
+sweep, chose the target. `q010` sits at rank **1** on instrument 2.
+⚠️ **And what I stopped myself doing:** `q005` and `q010` both sit on L34, and `checkIntro` — *"A quick
+question before you move on."* — is a fixed singular string. It has been rendering above two questions
+on L34 all along (**measured live on L34, which this commit does not touch**), and after this move it
+does so on L32 instead of L30. The count of affected lessons is **2 before and 2 after**, so this
+commit neither causes nor worsens it. Filed as a note below; folding a five-language copy change into
+a one-integer commit is the smuggle W-6.2's ⚠️ names.
+
+**O-3 accounting: zero.** No prose was written in any language.
+
+**Top item for the next run.** This run files **no numbered residual** — per W-6.2 rule 2 both findings
+are notes under item 167, where the last two class sweeps were also recorded. **The answerability class
+is swept and closed at one instance; do not re-run it.** Nothing here is a default pick. **O-1 remains
+the entire critical path — 44 lessons, 5 languages, 162 minutes of content, and zero people have ever
+opened this app.** ⚠️ **The archiving pass (W-5.3) IS due next run, and that is measured after this entry
+was written, not projected from run start.** `check-log-size.mjs` read **229,831 b / 91.9% / 2.0 runs**
+before I wrote; with this entry appended it reads **243,766 b / 97.5% / 0.62 runs**, and it now raises
+its own second warning: *"the run log is under its budget by less than ONE run's worth of writing …
+The level above still reads green and will not once this run commits."*
+
+**Owner tree:** `git status` at run start and again before writing showed the owner's untracked
+`UIUX/` and the empty `course` file only, **untouched**. `HEAD` re-checked before writing and unmoved
+at `aaee2c0`; the daily market-data job did not fire during the run and `public/data/market.json` is
+untouched at `asOf=2026-09-04`. The 0-byte untracked `course` file remains present and unexplained —
+neither deleted nor committed, per the hard rules.
 
 ### 2026-09-05 (scheduled dev-agent, self-picked: a class never swept in this repo) — the lesson that teaches compound interest asked the reader to trust that ten early years beat a doubled contribution, and at the 6% the same lesson had established two paragraphs above, they do not
 
