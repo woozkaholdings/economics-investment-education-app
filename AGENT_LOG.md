@@ -4529,6 +4529,167 @@ finding(s); V vacuous; U unavailable`. A bare "no accessibility issues found" is
 
 ## Run log
 
+### 2026-09-05 (scheduled dev-agent, picked from LAUNCH_PLAN §3.0 under W-6.2 rule 1) — the app hung the Fed's 2% target on CPI, which is not the index the target is set on, and then spent the next section teaching the reader to read CPI against "the Fed's target" four times
+
+**Where the pick came from.** The previous run filed **no residual**, so nothing was queued by default;
+its own closing line named the launch plan, an owner-facing item, or the floor as the honest
+candidates. I re-read the two live pick-list candidates first, per W-5.2's standing warning that a
+candidate list goes stale exactly like a figure does:
+- **Item 160** (the `npm test` option-length warning, 56.5%) — **re-read and correctly still parked.**
+  Its own ⛔ stop-line clause says everything left in it is class B, which is distractor-quality prose
+  in four unreviewed languages, and therefore O-3's decision. Its one small standing ask (the stale
+  "roughly 3/3/4/3" comment in `quizMeta.js`) is scoped to "the next run to touch that file"; this run
+  does not touch it, so it stays queued rather than being smuggled in here.
+- **The floor** — `check-log-size.mjs` says the run log is at **81.6% of warn with 4.6 runs of
+  headroom**, and the last compression pass was **yesterday** and recovered 17,157 b. Not due.
+
+So: §3.0, and the same question the previous run asked — where does the app state something more
+confidently than the evidence supports? It looked at psychology in the money track. I looked at the
+**macro-indicator vocabulary**, because that is where the app makes its most specific institutional
+claims and because the last four content reads were all lesson prose rather than the Reference
+surfaces the lessons feed into.
+
+**⛔ Step 3.5 — the premise re-measured with controls, before any edit.** No filed item to check, so
+what had to be established was that the claim is wrong, how far it reaches, and that no run has
+already ruled on it.
+
+The claim, in the `CPI` glossary entry:
+
+> *"Measures average price changes. Main inflation gauge. **Fed targets ~2%.**"*
+
+**The Fed's 2% longer-run goal is not defined on CPI.** The FOMC's Statement on Longer-Run Goals
+sets it on the **PCE price index**, and the two do not read the same: CPI runs structurally a little
+higher (fixed-basket weighting, less substitution, out-of-pocket urban scope only, against PCE's
+chained weights and broader scope). Attaching the target to CPI is not a rounding simplification —
+it names the wrong instrument, and the reader then reads the wrong one against 2%.
+
+**Measured through the parsed modules, not grepped** (a grep of `glossary.js` for a display name
+proves nothing — the previous run was caught by exactly that, and its correction is why I parsed):
+- **Instrument controls, both directions:** `glossary` parses to **43 terms**; `GDP`, a term I know is
+  there, reads **present**; `PCE`, a term I believed absent, reads **absent**. A scan for
+  `/inflation|inflaci|인플레|通胀|インフレ/` over the whole glossary returns **4 entries**, so the
+  scanner is live; the same scan for PCE-shaped strings (`PCE|personal consumption|个人消费|개인소비|
+  個人消費`) returns **0 across all 43 terms × 5 languages**. **"PCE" appears nowhere in `src/` or
+  `scripts/` at all.**
+- **Five for five in the glossary:** `es` *"Meta del Fed: ~2%"*, `ko` *"연준 목표: 약 2%"*,
+  `zh` *"美联储目标约2%"*, `ja` *"FRB目標：約2%"*.
+
+⭐ **The reach is what makes it worth a run, and it is bigger than the glossary.** Sweeping every
+lesson body in all three tracks and five languages for a paragraph carrying both a `2%` and an
+inflation word returns **two lessons, and only two**:
+- **Lesson 39, "Reading Economic Indicators"** — §1's CPI paragraph ends *"The Fed targets roughly 2%
+  inflation as healthy"*, in all five languages. **And §2, the section immediately below it, then
+  teaches the reader to use it: *"CPI near the Fed's target"*, *"CPI has drifted above target"* —
+  the conflation is not a stray sentence, it is the reading rule the lesson hands over.**
+- **Lesson 35, "Interest Rates"** — *"stable prices (in practice, roughly 2% inflation per year, **the
+  same target from the indicator dashboard in 'Reading Economic Indicators'**)"*. This one is
+  **innocent and I am recording why so the next run does not re-convict it**: it states the target as
+  a rate, not as a gauge, and its cross-reference points at lesson 39's *number*, which stays true
+  after the fix. Editing it would have been the over-correction, not the fix.
+- **The quiz is clean.** No question in any language stakes an answer on the CPI-target tie
+  (`2%` in `quizText.en.js` returns only the real-return arithmetic in a different lesson), so
+  nothing downstream had to move.
+
+**Never assessed by any run, with a positive control.** `git log -S"Fed targets roughly 2% inflation"
+-- src/` returns **four commits, all of them the lesson's original authoring (`2afcb42`, "Rewrite all
+17 lessons") plus three file splits** — no content edit has ever touched it. **Control:** the same
+command shape on `"this time is different"` returns yesterday's real content edit `21b2431` alongside
+its splits, so the instrument finds content edits when they exist. The glossary line is worse:
+`-S"Main inflation gauge"` returns **one** commit, `98a79ce`, the extraction out of the monolith.
+`PCE` returns **0** in `AGENT_LOG.md`, the archive and `DECISIONS.md` (**control:** `yield curve`
+returns **17 / 40 / 2** in the same three files).
+
+**What shipped — two sentences, five languages each, and deliberately nothing else.** The glossary
+entry now reads *"…The most widely quoted inflation gauge. The Fed's ~2% goal is set on a different
+measure, the PCE price index, which usually reads slightly below CPI."* Lesson 39's sentence becomes
+*"The Fed treats roughly 2% inflation as healthy — though it sets that goal on a close relative of
+CPI, the PCE price index, which usually reads a little lower."*
+- **§2 of lesson 39 was left alone on purpose.** Once §1 tells the reader the target lives on a
+  neighbouring index that reads slightly lower, *"CPI near the Fed's target"* is shorthand the reader
+  has been equipped for rather than a claim they have been misled by. Rewriting four more phrases
+  would have quadrupled an unreviewed-translation diff to restate something the paragraph above now
+  says once.
+- **No effect size and no citation apparatus in the body** — §3.0.6 forbids retreating into precision
+  theater, and "usually reads a little lower" is the part a beginner can use. The acronym is named
+  once because a reader who hears "PCE" in a news bulletin should recognize it; it is not a glossary
+  term, so §17b owes it no chip.
+
+**Verification.** `npm test` — **0 failures, 4 warnings**, all four identical in kind to this run's
+opening baseline (translation review share, 48 abridged pairs, item 160's 56.5% length cue, the
+`AGENT_LOG` floor). Two transient failures appeared mid-run and were the expected consequence of an
+English content edit, not regressions: the ledger correctly marked lesson 39's four translations
+**stale**, re-marked `ai` — never `human` — and `refresh-readiness.mjs --write` rewrote the generated
+catalog figures (151,511 → 151,621 en chars). `npm run build` clean, **966 ms**.
+`npm run check-blindspot` **0 failures**.
+**Live, on the built app, not inferred.** Served `dist/` statically and read the rendered `<main>`;
+bundle read back as **`index-svVhcVEK.js`**, which is this build's output.
+- **Glossary → Consumer Price Index** renders the new definition in **en**, and switching the header
+  picker to **中文 (Beta)** renders the Chinese one.
+- **Lesson 39** renders the new sentence in **en** and in **日本語 (Beta)**. The reader still shows
+  **≈5 min** and `npm test`'s reading model is unmoved at **161 min**.
+⚠️ **Two instrument notes for the next run, both cost me time here.**
+1. **Seeding a lesson unlock has two traps, not one.** `ecycles_completed_lessons` is compared with
+   `includes()` against `lessons.js` ids, which are **numbers** — seeding `["29",…]` as strings
+   silently counts toward the progress total while unlocking nothing. And on reload with
+   `ecycles_legacy_lesson_id_migrated` unset, `migrateLegacyLessonIds` remaps economy ids 29-38 to
+   **money ids 17-26**, so a correct seed is destroyed by the very next reload. **Set the migration
+   marker and seed numbers**, then reload; `#/lesson/39` bounces to `#/learn` until both hold, which
+   is the deep-link guard behaving correctly.
+2. The Browser pane was **hidden** for this run, so `computer` clicks time out with a clear error.
+   `javascript_tool` + `get_page_text` drive it fine; that is not a fallback, it is the right tool
+   when the pane is not displayed. (Last run's note about a 0x0 viewport is a different failure —
+   I resized to 420x900 first and it never fired.)
+
+**Step 5 — adversarial self-check.**
+*Blindspot register:* §10.2 — no person or firm named beyond "the Fed", which the sentence already
+contained. §10.3 — untouched. §2.3 — no date and no live-looking market figure; the `~2%` is a
+standing policy target that was already in both strings, and "reads a little lower" is qualitative by
+design rather than a number that can go stale. §10.1 — **proved rather than asserted**: planted
+`"You should buy stocks now."` into the *new* glossary sentence → `check-blindspot` **FAILS**, so the
+added text is genuinely inside §10.1's scanned corpus and a clean pass means something; restored from
+a scratchpad copy to a byte-identical `c4ebdd52…`, never `git checkout --`, and the restored file
+passes **0 failures**.
+*DECISIONS.md conflict:* none. `CPI|PCE|inflation target` returns **1** hit, line 39, which is the
+FRED-as-data-source decision and is untouched by a prose edit (**control:** `localStorage` returns
+**11** in the same file). No state, build, routing or content-format change — content stays `.js`.
+*Already-done backlog item:* no — see the `-S` history and the zero-with-control PCE grep above.
+*My own verification claim:* every figure in this entry was printed by a command re-run this session
+with its control beside it, or read off the built app with the bundle name confirmed.
+⛔ **What the check found against me — and this one is a correction to the previous entry, not to my
+change.** W-6.3 asks each run to quote and re-measure the instrument-to-app ratio. **The previous
+entry's `scripts/` 18,147 does not reproduce on any basis I can construct.** Measured today on the
+same tree: `scripts/*.mjs` = **15,325** lines; `scripts/` counting every file = **19,643** (the
+difference is `translation-review-ledger.json`, 1,146 lines, plus the non-`.mjs` remainder). `src/`
+minus `content/` and `locales/` = **8,437**, which **reproduces the previous entry exactly** — so the
+divergence is on the numerator only. **The next run should state its basis in the same breath as the
+number**; a ratio quoted without one is the same defect as a count retyped into the App summary.
+Either way this run falls on the harmless side of it: **zero lines of instrument code and no new
+check** — `git diff --stat -- scripts/` shows only `translation-review-ledger.json`, which is ledger
+data, not an instrument.
+⚠️ **And what I stopped myself doing:** rewriting §2's four *"CPI … target"* phrases and lesson 35's
+cross-reference. Three surfaces, one sweep is the tempting shape and it is the exact
+over-correction the last three runs have been caught alternating into. I measured lesson 35, found it
+true as written, and left it — **leaving it alone is part of the finding.**
+
+**O-3 accounting: one clause added per language in two files — lesson bodies en +110, es +105,
+ko +66, zh +36, ja +54 code points; the glossary entry +364 across all five languages in one file.**
+No fluent reviewer has read any of the non-English text; the ledger records this run as `ai`, not
+`human`, and the four languages return to 100% reviewed / 0% human.
+
+**Top item for the next run.** This run files **no residual**, so nothing here is a default pick.
+Two things it *did* surface, both left deliberately unpicked: item 160's `quizMeta.js` header ask is
+still waiting for the next run that touches that file, and the W-6.3 numerator basis above wants
+stating once rather than re-deriving. **O-1 remains the entire critical path — 44 lessons, 5
+languages, 161 minutes of content, and zero people have ever opened this app.**
+
+**Owner tree:** `git status` at run start and again before writing showed the owner's untracked
+`UIUX/` and the empty `course` file only, **untouched** (`OWNER-TREE` 52 untracked at both ends).
+`HEAD` re-checked before writing and unmoved at `2a94251`; the daily market-data job did not fire
+during the run and `public/data/market.json` is untouched at `asOf=2026-09-04`. The 0-byte untracked
+`course` file the previous entry flagged is **still present and still unexplained** — neither deleted
+nor committed, per the hard rules.
+
+
 ### 2026-09-05 (scheduled dev-agent, picked from LAUNCH_PLAN §3.0 under W-6.2 rule 1) — the lesson that teaches "don't rely on willpower" proved it with the one willpower finding that has most publicly failed to replicate, three sentences after the same lesson had modeled the careful version of exactly that move
 
 **Where the pick came from.** The previous run closed item 167 (b) and said in its own closing line
