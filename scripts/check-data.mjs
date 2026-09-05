@@ -48,7 +48,7 @@ import * as storageLib from "../src/lib/storage.js";
 import { EVENTS, MAX_LOGGED_EVENTS, elapsedSeconds, monotonicNow, quizScore, track } from "../src/lib/analytics.js";
 import { redactUrl, getAdapter, fixture, ADAPTERS } from "../src/lib/marketData/adapters.js";
 import { FUTURE_TOLERANCE_DAYS, STALE_AFTER_DAYS, freshness } from "../src/lib/useMarketData.js";
-import { FRED_SERIES, fixtureEconomics } from "../src/lib/marketData/fred.js";
+import { CURVE_GROUP, FRED_SERIES, alignedDate, fixtureEconomics } from "../src/lib/marketData/fred.js";
 import { dayDiff, todayStr } from "../src/utils/date.js";
 
 // A minimal in-memory localStorage mock, installed as a global before
@@ -1196,6 +1196,57 @@ if (keyedGroupsChecked < 4) {
   eq("a different asOf only changes the date field, not the illustrative values",
     Object.fromEntries(Object.entries(outOtherDate).map(([k, v]) => [k, v.value])),
     Object.fromEntries(Object.entries(out).map(([k, v]) => [k, v.value])));
+
+  // ── The yield-curve group shares one observation date ─────────────────────
+  // The Sector-performance screen prints "2-year", "10-year" and "10-year minus
+  // 2-year" together, so a learner can subtract them. Before 2026-09-04 each
+  // series took its own newest row and T10Y2Y ran a day ahead: across the 21
+  // committed market.json snapshots the dates disagreed on 20 and the printed
+  // spread was not yield10y - yield2y on 14 of them (live on 2026-09-04:
+  // 4.77 - 4.34 = 0.43, screen said 0.41). alignedDate() is the rule that
+  // fixes it, and it is pure precisely so it can be checked here — fetchEconomics()
+  // calls fetch() and cannot be.
+  eq("the fixture's own spread is exactly yield10y - yield2y (the invariant the screen prints)",
+    Number((out.yield10y.value - out.yield2y.value).toFixed(2)), out.curveSpread.value);
+
+  eq("CURVE_GROUP is exactly the three series the subtraction relates",
+    [...CURVE_GROUP].sort(), ["DGS10", "DGS2", "T10Y2Y"]);
+
+  // The real-world shape this fixes: T10Y2Y has published 09-04, the two yields
+  // have not. The aligned date must be 09-03, NOT T10Y2Y's own newest row.
+  const lagging = {
+    DGS2:   [{ date: "2026-09-03", value: 4.34 }, { date: "2026-09-02", value: 4.39 }],
+    DGS10:  [{ date: "2026-09-03", value: 4.77 }, { date: "2026-09-02", value: 4.79 }],
+    T10Y2Y: [{ date: "2026-09-04", value: 0.41 }, { date: "2026-09-03", value: 0.43 },
+             { date: "2026-09-02", value: 0.40 }],
+  };
+  eq("a spread series running a day ahead resolves to the yields' date, not its own",
+    alignedDate(lagging), "2026-09-03");
+  eq("and at that date the spread IS the subtraction",
+    lagging.T10Y2Y.find((r) => r.date === alignedDate(lagging)).value,
+    Number((lagging.DGS10[0].value - lagging.DGS2[0].value).toFixed(2)));
+
+  // CONTROL 1 — when all three already agree, alignment must be a no-op rather
+  // than silently walking back to an older row.
+  const aligned = {
+    DGS2:   [{ date: "2026-08-04", value: 3.86 }],
+    DGS10:  [{ date: "2026-08-04", value: 4.21 }],
+    T10Y2Y: [{ date: "2026-08-04", value: 0.35 }],
+  };
+  eq("CONTROL: three series already on one date resolve to that date", alignedDate(aligned), "2026-08-04");
+
+  // CONTROL 2 — no overlap must be reported, not guessed at. fetchEconomics()
+  // throws on this rather than publishing a curve that does not subtract.
+  eq("CONTROL: series with no shared date resolve to null", alignedDate({
+    DGS2:   [{ date: "2026-09-03", value: 4.34 }],
+    DGS10:  [{ date: "2026-09-02", value: 4.79 }],
+    T10Y2Y: [{ date: "2026-09-04", value: 0.41 }],
+  }), null);
+
+  // CONTROL 3 — an empty series is not an overlap.
+  eq("CONTROL: an empty series resolves to null", alignedDate({
+    DGS2: [{ date: "2026-09-03", value: 4.34 }], DGS10: [], T10Y2Y: [{ date: "2026-09-03", value: 0.43 }],
+  }), null);
 }
 
 // 16. In-prose lesson cross-references ("...see Lesson 32") must point at the

@@ -1529,6 +1529,44 @@ through two passes that each had it open.
       stand; the coverage did not.** `A11yStates.coverage()` plus the Tab step now in the header
       recipe are the fix — see item 149.
 
+166. **[Compliance/Content — filed 2026-09-04 by the run that aligned the yield-curve
+    observation dates, found while walking the Reference surfaces the owner asked for.] The app
+    displays FRED and Tiingo data on the Sector-performance screen and credits neither, anywhere a
+    user can see.**
+    - **`src/lib/marketData/fred.js`'s own header states the obligation** — *"FRED® is a registered
+      trademark of the Federal Reserve Bank of St. Louis, and its terms expect the source to be
+      credited"* — so this is the codebase recording a requirement the shipped UI does not meet,
+      not an outside rule someone has to look up.
+    - **Measured 2026-09-04, live and by grep:** `FRED` appears in `src/` only in **code comments**
+      (`Sectors.jsx:237`, `economicSignals.js:4`, `:9`); `St. Louis`, `Federal Reserve Bank` (outside
+      one lesson body) and `Tiingo` appear in **0** user-visible strings — 0 hits across
+      `src/locales/`, and the same grep finds a control string in all 5 locale files. Walked live:
+      the Sector-performance screen prints six FRED readings and eleven Tiingo-derived sector rows
+      with no credit line, and the About screen carries none either.
+    - **`market.json` already carries what a credit line needs** — a top-level `source` field
+      (currently `"tiingo"`) and per-reading `seriesId`s — so this is a display change, not a
+      pipeline one.
+    - **Honest priority: medium, and it is O-1-shaped rather than O-3-shaped.** Nobody has opened
+      this app, so there is no live exposure today; the moment O-1 happens there is. It is also
+      cheap: one line on the About screen plus five locale strings, and the four non-English ones
+      are proper nouns ("FRED", "Tiingo", "Federal Reserve Bank of St. Louis") that mostly do not
+      translate.
+    - ⚠️ **Do not bundle it with a data-pipeline fix.** Adding a user-visible surface means checking
+      it against §10.1's `EXPECTED_SURFACES` discipline (see the note below), and that is its own
+      change.
+    - ⛔ **Checked and DECLINED in the same walk, recorded so it is not re-derived: the missing
+      disclaimer on Glossary and Kids is NOT a defect.** Both were measured live and genuinely
+      render no disclaimer — but `check-blindspot.mjs`'s `EXPECTED_SURFACES` is a closed list of
+      **8** surfaces that deliberately excludes Glossary, TermDetail and ParentGuide, `Reference.jsx`'s
+      own §10.1 comment says so in as many words (*"the default (Glossary) does not render one"*),
+      and the check **fails on an EXTRA surface** as well as a missing one. Adding one means editing
+      LAUNCH_PLAN §10.1 and that list together, which is an owner-facing decision, not a fix.
+      ⚠️ **And the instrument trap that nearly hid this:** `grep -c '<Disclaimer' Sectors.jsx`
+      returns **0** while the screen plainly renders one — `Sectors.jsx` emits the bare
+      `{t.disclaimer}` string rather than the component, which is exactly why the real check greps
+      for `{t.disclaimer}` and self-tests its own regex first. **A component-name grep is not a
+      disclaimer census.**
+
 165. **🟡 MAIN PATH CLOSED **on content** 2026-09-04 (scheduled dev-agent); the essentials remainder is open.
     ⛔ **The "MAIN PATH CLOSED 2026-09-03" this line used to carry was FALSE, and so was the
     "none on the main path" bullet below — see the correction under them.**
@@ -4446,6 +4484,122 @@ zero meaningful: `selftest PASS (8/8 controls fired, plantsRemoved true)` and, p
 finding(s); V vacuous; U unavailable`. A bare "no accessibility issues found" is not a result.
 
 ## Run log
+
+### 2026-09-04 (owner-directed: "do the rest of the Reference surfaces next") — the Sector screen printed a 2-year yield, a 10-year yield and a "10-year minus 2-year" that was not their difference, because the three FRED series were each taken at their own latest date; measured across the committed history it was wrong on 14 of 21 days
+
+**Scope.** The previous run walked Market Dashboard and left Glossary, Sector performance, Kids and
+About unwalked; the owner asked for the rest. All four were walked live at 375x812. **One real
+defect, one filed decision, and one candidate checked and declined** — below in that order.
+
+**⛔ Step 3.5 — the premise re-measured, and the headline number came out much worse than the single
+instance I found by eye.** Live on the Sector-performance screen, "The economy right now":
+> 2-year Treasury yield **4.34%** (As of 2026-09-03) · 10-year Treasury yield **4.77%** (As of
+> 2026-09-03) · **10-year minus 2-year 0.41%** (As of 2026-09-04)
+
+4.77 − 4.34 = **0.43**. The card whose label instructs the subtraction shows a number that is not it.
+Each card carries its own date, so nothing is *false* — but the label is an arithmetic promise and
+three dates in small type do not keep it.
+
+**The cause, read off `src/lib/marketData/fred.js`:** `latestObservation()` took each series' own
+newest usable row independently. `T10Y2Y` publishes ahead of `DGS2`/`DGS10`, so the spread was
+routinely a day in front of the yields it is supposed to be the difference of.
+
+**Not a one-off — replayed over all 21 committed `market.json` snapshots:** the three dates disagreed
+on **20 of 21**, and the printed spread differed from `yield10y − yield2y` by at least a basis point
+on **14 of 21**. The one date-aligned snapshot (2026-08-04) is the offline **fixture**. So roughly
+two days in three, that card did not say what its label says.
+
+**⭐ The measurement that decided the fix, and it is the strongest evidence in this entry.** I
+reconstructed, from the snapshot history, what each series reported *for a given observation date*
+(a spread published on day D, against the yields for D that arrived in the D+1 file). At a **shared
+observation date, FRED's `T10Y2Y` equals `DGS10 − DGS2` in 17 of 17 testable real-data days** — the
+single non-match is the fixture being compared against real yields, not a counterexample. **The two
+series were never inconsistent; only the dates were.** That is what makes date alignment the correct
+fix rather than computing the spread ourselves and dropping the `T10Y2Y` provenance — which would
+also have contradicted the 2026-09-04 run that fixed lesson 36 to match *"the identical FRED
+series"*.
+
+**What shipped.**
+- `src/lib/marketData/fred.js`: `CURVE_GROUP = ["DGS2","DGS10","T10Y2Y"]` and a new **pure**
+  `alignedDate(rowsById, ids)` returning the latest date on which all three carry a number.
+  `fetchEconomics()` resolves those three at that shared date and **throws** if they never overlap,
+  rather than publishing a curve whose spread is not its own two yields. The other three series
+  (monthly, unrelated) keep their own latest row.
+- `scripts/check-data.mjs` §15: six assertions on the new rule. §15's own header said
+  *"fetchEconomics() itself calls fetch() and isn't testable here"* — extracting the selection rule
+  as a pure function is what turns that limitation into coverage.
+
+**Verification.**
+- `npm test` **0 failures, 3 warnings** — all pre-existing and unchanged in kind — `npm run build`
+  clean, `npm run check-blindspot` **0 failures**.
+- ⚠️ **The bundle hash did NOT change (`index-aijF1C87.js`), and that is correct, not a failed
+  edit.** `fred.js` is node-only: `alignedDate|T10Y2Y` greps to **0** files under `dist/assets/`,
+  against a control string from this session's earlier commit that greps to 1. Its only importers
+  are `scripts/fetch-market-data.mjs` and `scripts/check-data.mjs`. **Stated because an unchanged
+  hash is exactly what a no-op edit also looks like.**
+- **The new guard is load-bearing, proven by plant.** I replaced `alignedDate`'s body with the old
+  "each series takes its own newest row" behavior: §15 **FAILED 3 assertions**, and it reproduced
+  the live numbers exactly — *"got 2026-09-04, expected 2026-09-03"* and *"and at that date the
+  spread IS the subtraction — got 0.41, expected 0.43"*. Restored from a scratchpad copy (never
+  `git checkout --`); plant greps to 0 and the suite is back to PASS.
+- **Three controls ship inside §15**, because an alignment rule that quietly walks back to an old
+  row would pass a naive test: already-aligned input resolves to that same date (no-op), no-overlap
+  resolves to `null`, and an empty series is not an overlap.
+- **No market data was refreshed or committed.** The fix changes future fetches only; the committed
+  `market.json` stays as the owner's daily job left it (`asOf=2026-09-04`).
+
+**Step 5 — adversarial self-check.**
+*Blindspot register:* clean, and checked rather than assumed. No learner-visible string changed —
+`git diff` touches one node-only lib and one check script, **0 lines under `src/screens/`,
+`src/content/` or `src/locales/`**. §10.1: `check-blindspot` PASS, and the surface list is untouched.
+§10.2: `dalio` 0 in both changed files. §2.3 / stale-freshness: this change makes a *displayed*
+reading more honest and adds no hardcoded date — the dates in §15 are fixed test input, not app data.
+§10.3: untouched.
+*DECISIONS.md conflict:* **none, and this one needed checking** — the market-data decision says
+"Economics data comes from FRED directly … use it as-is." Aligning *which observation date* three
+FRED series are read at does not substitute a computed value for a FRED one: `curveSpread` is still
+`T10Y2Y`, still FRED's own number, still stamped with its own `seriesId`. Had I computed the spread
+myself, that clause is what it would have contradicted.
+*Already-done backlog item:* no. `alignedDate`, `CURVE_GROUP` and `curveSpread` appear **0** times in
+`AGENT_LOG.md` and the archive (control: `T10Y2Y` returns hits in neither, but `yield curve` returns
+14 in the archive, so the grep is live). §15 has existed since the fixture check and is extended, not
+rewritten.
+*My own verification claim:* every figure is printed by a command re-run this session with a control
+beside it. The 21-snapshot replay and the 17-of-17 invariant are re-runnable from `git log -- public/data/market.json`.
+*W-6.3 (instrument-to-app ratio):* **+~45 lines to `scripts/`** against `scripts/` already at 2.3x
+`src/`. **I am on the wrong side of that number and think this one earns it**, per W-6.2 rule 3's
+test: *"a learner reads 4.34, 4.77 and 0.41 on one screen and the subtraction does not work"* — that
+sentence is writable, it is not hypothetical, and it was true on two days in three for the whole life
+of the file. It is not a regex over prose; it is six assertions on a pure function with three
+controls.
+⛔ **What the check found against me:** my second candidate — "Glossary and Kids render no
+disclaimer" — was **real as an observation and wrong as a defect**, and I nearly filed it as one. It
+is a closed, guarded decision (see item 166's ⛔ block). Worse, the grep I first reached for
+(`grep -c '<Disclaimer'`) reported **0 for `Sectors.jsx`, which visibly renders one** — it emits the
+bare `{t.disclaimer}` string. **My instrument disagreed with the live screen and the live screen was
+right.** I also had to redo several live reads: I was reading `document.body.innerText` in the same
+call as the click that navigated, so two early observations were of the previous screen.
+
+**Filed, not fixed: item 166** — the app shows FRED and Tiingo data and credits neither anywhere a
+user can see, while `fred.js`'s own header records that FRED's terms expect the source to be
+credited. Medium priority, O-1-shaped (no exposure until someone opens the app), and deliberately
+not bundled into a pipeline commit.
+
+**Still standing, restated because it is now six entries old:** item 160 asks that the next run to
+open `quizMeta.js` fix its stale *"roughly 3/3/4/3"* header comment. Not opened this run.
+
+**O-3 accounting: zero characters of machine translation.** No content, locale or lesson file
+touched; learner-visible delta **0 strings in all five languages** — the change alters what future
+`market.json` fetches contain, not any authored text.
+
+**Top item for the next run:** the Reference walk is now complete, and the two things it surfaced are
+**item 166** (cheap, and it is the kind of thing that should be true before a URL exists) and the
+standing quiz-header ask in item 160. **O-1 remains the entire critical path — 44 lessons, 5
+languages, 161 minutes of content, and zero people have ever opened this app.**
+
+**Owner tree:** `git status` at run start and before writing showed the owner's untracked `UIUX/`
+only, **untouched**. `HEAD` re-checked before writing and unmoved at `0a141d0` (this session's
+earlier commit); the daily market-data job did not fire during the run.
 
 ### 2026-09-04 (scheduled dev-agent, self-picked off a live walk of the Reference surfaces) — the Market Dashboard's QT card defined quantitative tightening as the Fed *stopping* purchases, which is tapering; the balance-sheet caption five lines below it stated the correct mechanism, and the app got QT right in four other places
 
