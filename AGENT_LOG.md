@@ -4447,6 +4447,141 @@ finding(s); V vacuous; U unavailable`. A bare "no accessibility issues found" is
 
 ## Run log
 
+### 2026-09-04 (scheduled dev-agent, self-picked off a live walk of the Reference surfaces) — the Market Dashboard's QT card defined quantitative tightening as the Fed *stopping* purchases, which is tapering; the balance-sheet caption five lines below it stated the correct mechanism, and the app got QT right in four other places
+
+**Where the pick came from.** The previous scheduled run closed with "go back to learner-visible
+work — nothing in this entry is queued," and the two runs since were owner-directed passes
+(archiving, backlog compression), so W-6.2 rule 1 does not bind and no residual was mine to take by
+default. Item 165's remainder and item 94 are both O-3-gated by their own text (and 165 says
+explicitly "take the lesson bodies or neither"), so I walked the product instead. The main path has
+been walked by three recent runs; the **Reference** surfaces had not been, so I walked those.
+
+**⛔ Step 3.5 — my first premise was WRONG, and the control is what killed it.** Walking the Learn
+path I thought I had found a product-level defect: `lessons.js`'s exported `lessons` array runs
+economy → **essentials** → money, so the "NEXT UP" fallback after finishing the main path looked
+like it pointed at the *optional* track, contradicting both the 2026-08-18 reversal and Learn.jsx's
+own comment ("after the economy track is finished the learner's next lesson is in `money`").
+**It does not.** `App.jsx:249` consumes `lessonsByTrack()`, not the raw array, and that reorders to
+TRACKS order (economy → money → essentials). Measured live rather than re-read:
+- **control** — 11 of 12 economy lessons complete → NEXT UP "Three Rules of Thumb", economy
+  accordion open. The instrument can distinguish states.
+- **real case** — all 12 complete → NEXT UP **"The Subject That Wasn't on the Timetable" /
+  Thinking About Money**, and the **"Thinking About Money" accordion is the one that opens.**
+The code is correct and the comment is correct. **Recorded because the defect I nearly "fixed" would
+have reordered the learner's path off a premise I got from reading the wrong export.**
+
+**The real finding.** `src/locales/*.js` `qtNarrative` rendered, on Reference › Market Dashboard:
+> **QUANTITATIVE TIGHTENING (QT)** — *"Fed STOPS buying → money out → yields ↑ → stocks ↓ → USD ↑"*
+
+Two things are wrong with it, and the second is the one a learner hits:
+1. **It is the wrong concept.** "Stops buying" is *tapering* / the end of QE — the point where the
+   balance sheet stops *growing*. QT is where it *shrinks*, by letting holdings run off without
+   reinvestment (or selling). The string also fails on its own terms: **stopping purchases cannot
+   produce "money out"**, it only stops money going in. The named cause cannot produce the named
+   effect.
+2. **The app contradicts itself on one screen.** The balance-sheet caption renders **five lines
+   below** it: *"each decline came from letting them mature."* Live page text, one read:
+   `QUANTITATIVE TIGHTENING (QT) | Fed STOPS buying → … | FED BALANCE SHEET · $ TRILLIONS | … |
+   Each expansion came from buying bonds …; each decline came from letting them mature.`
+
+**Four other surfaces already had it right**, which is what makes this an outlier rather than a
+house misconception: lesson 37 (*"the Fed simply lets the bonds it already owns mature and doesn't
+reinvest the proceeds"* — main path), `glossary.js` QT (*"shrinks balance sheet by letting bonds
+mature"*, in all five languages), `policyScenarios.js:176`, and the caption above.
+
+**Class sweep: exactly five instances, one per language, and no others.** `stops buying` /
+`DEJA de comprar` / `매입 중단` / `停止购债` / `購入停止` across `src/` return the five `qtNarrative`
+lines and nothing else.
+
+**Provenance — nobody ever chose this wording.** `git log -S'qtNarrative' -- src/locales/` returns
+**one** commit: `76be081` (2026-08-02, the monolith split that extracted translations). The string
+has been byte-identical for **33 days** and no run has touched it since. It is also **not** inherited
+from `economic-cycles-v6.jsx` — `STOPS buying` returns 0 there, and that grep is live (controls on
+the same file: `Fed` 125, `QE` 143). So this reverses no decision.
+
+**The fix — 5 lines, first segment only, and it introduces ZERO new machine translation.** Every
+non-English phrase is lifted from the app's own glossary entry for QT in that same language, so the
+dashboard now says what the glossary already said:
+| lang | was | now | source of the new phrase |
+|---|---|---|---|
+| en | `Fed STOPS buying` | `Fed LETS bonds mature` | glossary QT *"letting bonds mature"* |
+| es | `El Fed DEJA de comprar` | `El Fed DEJA vencer los bonos` | glossary *"dejando que los bonos venzan"* |
+| ko | `연준 매입 중단` | `연준 채권 만기 상환` | glossary *"만기 상환"* |
+| zh | `美联储停止购债` | `美联储让债券到期` | glossary *"美联储让债券到期而不进行再投资"* |
+| ja | `FRBが購入停止` | `FRBが債券を満期償還` | glossary *"FRBが保有債券を満期償還させて"* |
+Everything after the first `→` is byte-identical to before, and the caps-verb parallel with
+`qeNarrative` ("Fed **BUYS** bonds" / "Fed **LETS** bonds mature") is preserved in en and es.
+
+**Verification.**
+- `npm test` **0 failures, 3 warnings** — all three pre-existing and unchanged in kind (review share
+  0% human, 48 abridged lesson pairs, item 160's option-length cue), plus the standing floor
+  warning. `npm run build` clean, 1.12 s. `npm run check-blindspot` **0 failures**.
+- **Live on the built app with the bundle name confirmed** (`index-aijF1C87.js`, matching the build
+  output and *changed* from the pre-edit `index-CkyPAiRV.js`, which is itself proof the edit reached
+  the bundle): the QT card reads *"Fed LETS bonds mature → money out → …"*, `Fed STOPS buying` is
+  absent, and the caption below now agrees with it.
+- **Korean re-checked through a real reload**, with the trap the 2026-09-04 yield-curve run
+  recorded avoided (`ecycles_lang` stores **raw**, not JSON): page confirmed genuinely Korean
+  (document title `경제 순환 — 경제를 마스터하세요`, and the **qe** line present in Korean, so the page
+  could have carried either string), NEW `연준 채권 만기 상환 → 자금 유출` present, OLD `연준 매입 중단`
+  absent.
+- **Two-sided proof over the shipped bundle**, so the negative is not a dead grep: all five NEW
+  strings are in `dist/assets/`, all five OLD strings return **0** there, and the **same five OLD
+  strings are present in `git show HEAD:src/locales/<lang>.js`** — the instrument can see what it
+  reports missing.
+- **No quiz answer depends on the old definition.** Scan of all 46 questions: `QT|tightening` **0**,
+  `mature|reinvest` **0**, `balance sheet` **0**. **Controls both fired** — `quantitative|QE` finds
+  3 (`q005` L34, `q007` L37, `q010` L34) and an invented term finds 0 — so the zero is real.
+
+**Step 5 — adversarial self-check.**
+*Blindspot register:* **§10.1 checked by plant, not by a pass** — planted *"Now is a good time to
+buy long-term bonds."* into the very `qtNarrative` field this run edited: `check-blindspot`
+**FAIL**, naming `src/locales/en.js:92` exactly. Restored from a scratchpad copy of the fixed file
+(never `git checkout --`); plant greps to 0, check-blindspot back to **PASS**, `git diff --stat`
+back to the intended 5 files / 5 insertions / 5 deletions. §10.2: `grep -ic dalio` returns **0** in
+each of the five touched files. §2.3 / stale-freshness: date-and-figure tokens on added lines **0**,
+on removed lines **0** — the change adds no date and no number. §10.3: kids content untouched.
+*DECISIONS.md conflict:* none — `qtNarrative` appears **0** times there (control: `QT` appears 2),
+and nothing here is near localStorage-only state, `.js`-not-JSON content, or Vite-not-Expo.
+*Already-done backlog item:* no. `qtNarrative` and `STOPS buying` each appear **0** times in
+`AGENT_LOG.md` and **0** in the archive; the archive grep is live (control: `yield curve` returns
+14). Combined with the single-commit provenance above, no run ever asserted this wording, so this
+corrects an inherited defect rather than reversing a judgment.
+*My own verification claim:* every figure above is printed by a command re-run this session with a
+control beside it, or read off the built app with the bundle name confirmed. The two-sided bundle
+proof and the plant/restore are re-runnable from this commit using `git show HEAD~1:`.
+*W-6.3 (instrument-to-app ratio):* **0 lines added to `scripts/`.**
+⛔ **What the check found against me:** my headline premise for this run was wrong (the Learn-path
+ordering above), and I found that by measuring rather than by re-reading — but I had already written
+the "defect" up in my head before the control ran. The lesson is the one this log keeps re-learning:
+**reading the wrong export is indistinguishable from reading the right one until something fires.**
+
+**W-6.2 rule 3, answered in one sentence, and then declined.** *"A learner reads that QT means the
+Fed stopped buying, then reads five lines below that the balance sheet declined because bonds were
+allowed to mature, and cannot tell which is the mechanism."* The sentence is writable, so a check
+would be admissible — but the class is at **zero live instances** after the sweep, a regex over
+"stops buying" phrasing in five languages is exactly the blunt instrument W-6.2 rule 3 warns about,
+and W-6.3's number (`scripts/` at 2.3x `src/`) says this does not earn a 63rd `check-data.mjs`
+section. **Filed as a note here, not as a numbered item** (W-6.2 rule 2 + W-6.4).
+
+**Still standing, restated because it is now five entries old:** item 160 asks that the next run to
+open `quizMeta.js` fix its stale *"roughly 3/3/4/3"* header comment. This run read that file but did
+not edit it, so the ask stands.
+
+**O-3 accounting: zero characters of unreviewed machine translation.** The four non-English strings
+were lifted verbatim in vocabulary from the app's existing glossary QT entry in each language, which
+is already in the review ledger; no new prose was invented. Learner-visible delta: 5 languages ×
+1 string, all of them a correction.
+
+**Top item for the next run: still learner-visible work, and the Reference surfaces are only half
+walked** — I covered Market Dashboard this run; Glossary, Sector performance, Kids and About were
+not read. **O-1 remains the entire critical path — 44 lessons, 5 languages, 161 minutes of content,
+and zero people have ever opened this app** (figures off `npm test`'s readiness line; `MEASURED
+log-size: file 537966 b, run log 142595 b, floor 395371 b`, read before this entry was appended).
+
+**Owner tree:** `git status` at run start and again before writing showed the owner's untracked
+`UIUX/` only, **untouched**. `HEAD` re-checked before writing and unmoved at `fde969b`.
+
 ### 2026-09-04 (owner-directed: "do the backlog compression pass next") — the fifth pass; 17,157 b recovered, and the owner option item 115 has carried since 2026-08-30 EXPIRED between the fourth pass and this one, exactly on the schedule the fourth pass predicted
 
 **Step 3.5 — the premise, which is item 115's own arithmetic, re-measured with the control that

@@ -62,7 +62,7 @@ export default {
     continueTomorrowDismiss: "今回は結構です",
     continueTomorrowConfirmed: "了解しました — また明日！",
     qeNarrative: "FRBが債券購入 → 資金流入 → 利回り↓ → 株↑↑ → ドル↓",
-    qtNarrative: "FRBが購入停止 → 資金流出 → 利回り↑ → 株↓ → ドル↑",
+    qtNarrative: "FRBが債券を満期償還 → 資金流出 → 利回り↑ → 株↓ → ドル↑",
     aboutTabLabel: "概要",
     fontSizeLabel: "文字サイズ",
     aboutBody: "経済サイクルは、経済学者や投資家によって広く知られている原則と歴史的パターンを用いて、経済サイクル・金利・市場の局面がどのように機能するかを教える教育ツールです。アカウントや個人データは収集せず、内容はいずれも個別の投資・法律・税務アドバイスではありません。",

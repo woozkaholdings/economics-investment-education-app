@@ -89,7 +89,7 @@ export default {
     continueTomorrowDismiss: "No thanks",
     continueTomorrowConfirmed: "Got it — see you tomorrow!",
     qeNarrative: "Fed BUYS bonds → money in → yields ↓ → stocks ↑↑ → USD ↓",
-    qtNarrative: "Fed STOPS buying → money out → yields ↑ → stocks ↓ → USD ↑",
+    qtNarrative: "Fed LETS bonds mature → money out → yields ↑ → stocks ↓ → USD ↑",
     aboutTabLabel: "About",
     fontSizeLabel: "Text Size",
     aboutBody: "Economic Cycles teaches how economic cycles, interest rates, and market phases work, using historical patterns and principles popularized by economists and investors. It is an educational tool only — it doesn't collect accounts or personal data, and nothing in it is personalized investment, legal, or tax advice.",
