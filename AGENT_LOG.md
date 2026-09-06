@@ -172,6 +172,154 @@ for the history. No open P1/P2 items.
 > that flag is the honest one. **Nothing here is wrong or blocked — this is a scale change the
 > original decision did not contemplate, and the owner should either re-affirm it or cap it.**
 
+> ## PRIORITY BLOCK W-7 — set by the weekly review 2026-09-06. Supersedes W-6's *active* clauses below. W-6's standing rules (W-6.2's residual-chain rule, W-6.3's ratio-quoting rule) are UNCHANGED, still binding, and W-6.2 WORKED — see W-7.0. Read this first.
+>
+> **The week shipped 113 commits, build and tests green, and the app went LIVE. That is the largest
+> single step this project has taken. W-6.2 changed run behavior in a way that is visible in the
+> data, not just asserted. This block is about one thing W-6 could not have seen, because it did not
+> exist on 2026-08-30: _the app is now deployed, and "committed to main" has stopped meaning
+> "shipped to a learner."_**
+>
+> ### W-7.0 — what last week's block actually did. Credit where it is measured.
+> Re-measured 2026-09-06 off the tree at `656958e`, not read off the log:
+> - **W-6.2 rule 1 bound, and runs said so in their own headings.** Four separate entries this week
+>   open with "W-6.2 rule 1 sent me off a Nth consecutive X pick". Scheduled picks are now dominated
+>   by **live walks of the built app** (7), **corpus-wide sweeps of a never-swept class** (8), and
+>   **`LAUNCH_PLAN.md` clauses** (7). The 146→147→148→149 residual chain W-6.0 measured did not recur.
+> - **The instrument-to-app ratio IMPROVED**, which W-6.3 asked to be re-measured rather than obeyed:
+>   `scripts/` **19,305** lines vs app code (`src/` minus `content/`+`locales/`) **8,833** — **2.19x**,
+>   down from 2.35x (15,480 / 6,589). This week's insertions were `scripts/` **+3,991** vs `src/`
+>   **+3,662** — near parity, against last week's 8,987 / 3,058. **The instruments stopped outgrowing
+>   the app.** ⚠️ One number inside that is still moving the wrong way: `check-data.mjs` is now
+>   **11,597 lines** in one file, up from 8,711 (+33%).
+> - **W-6.2 rule 2 worked on the item COUNT and did nothing to the BYTES**, and that is W-7.2.
+>
+> ### ⛔ W-7.1 PRIORITY — THE APP IS LIVE AND SIX COMMITS OF LEARNER-VISIBLE FIXES ARE NOT ON IT. Fix this before any new feature, sweep, or check.
+> **Measured 2026-09-06 by this review against the running site, not taken on report:**
+> - The live entry bundle is **`assets/index-C1_r8HAt.js`, 263,940 b**. A build of `HEAD` produces
+>   **`assets/index-B1mndoLB.js`, 264,930 b** — a **990 b** difference under content-addressed
+>   hashing, so the deployed artifact is provably not `HEAD`.
+> - **`git rev-list --count 5d6893c..HEAD -- src/ public/ index.html` = 6.** `5d6893c` (2026-09-06
+>   00:24) is the last commit that redeployed `dist/`.
+> - Live `/` **200**, `/data/market.json` **200** at `asOf 2026-09-04` (matching the repo),
+>   `/nonexistent-xyz` **404** — so the site is healthy. **It is serving stale content, not broken
+>   content, which is why nothing noticed.**
+>
+> **What is sitting in `main` and NOT in front of a learner right now:**
+> | commit | what a learner still gets on the live site |
+> |---|---|
+> | `992a057` | Lesson 32 still teaches that **a recession is when prices fall** — the deflation/recession conflation, a factual economics error |
+> | `9ea716b` | Lesson 43 still cites a lesson the app shows as "Complete previous lessons first" |
+> | `855fadd` | One Back press from three levels inside Reference still dumps the learner on the Learn tab |
+> | `480b242` | The review recap still reads four identical rows to a screen reader after "3 of 4 correct" |
+> | `df38ca7` | 15 quiz explanations still drop the last clause of their English |
+> | `c253b8d` | (tooling only — `analytics-check`; no learner impact) |
+>
+> ⭐ **The transferable finding, and it is bigger than these six commits. O-1 changed the definition
+> of "done" and nothing in the repo changed with it.** For nineteen days, a fix merged to `main` was
+> a fix that had shipped, because there was nowhere else for it to go. Since 2026-09-05 that is false,
+> and **every instrument in this repo still measures the tree.** `npm test` (8 checks, 62+ sections),
+> `check-blindspot`, `check-claims`, `refresh-readiness` — all of them certify `main`. **Not one of
+> them can see the deployed artifact**, so the app can be correct in the repo and wrong on the web
+> indefinitely, and every check stays green while it happens.
+>
+> ⚠️ **And this class already bit once, four days after O-1, and was fixed as an incident rather than
+> as a class.** `5d6893c`'s own headline: *"The og:image card shipped in the repo a day ago and every
+> shared link still unfurled as a text stub; dist is redeployed."* **That run redeployed. It did not
+> ask what else was undeployed, or what would notice next time.** Six commits later, here we are.
+> This is the same shape as the W-6.1 finding — a remedy applied to the instance, not the class.
+>
+> **Do, in this order:**
+> 1. **`npm run build` and redeploy `dist/`** to <https://magnificent-mochi-73aecc.netlify.app>. Verify
+>    unauthenticated afterwards the way `README.md` § Deploying prescribes — `/` 200, the hashed
+>    bundle byte-identical to the local build, a 404 control. **This is one run's headline and it is
+>    the highest-value run available.**
+> 2. **Build the guard that makes step 1 unnecessary next time:** a check that fetches the live entry
+>    bundle and compares it to a local build of `HEAD`, and **fails, or at minimum warns loudly, when
+>    they differ.** It satisfies W-6.2 rule 3 in one sentence: *it would have caught five learner-
+>    visible defects, including a factual error about recessions, sitting on the public site for a
+>    day after they were fixed in the repo.* ⛔ Carry the control this log would demand: **prove it
+>    goes red right now, against the current divergence**, before you fix the divergence — the
+>    negative control is available today and will not be after step 1.
+> 3. ⚠️ **Decide the deploy cadence and write it in `DECISIONS.md`**, because a guard that fires every
+>    run and is never acted on is a warning nobody reads (W-5's own lesson). Redeploy-per-commit,
+>    daily, or gated — the owner's call, but **the repo currently has no answer at all**, and
+>    `README.md`'s § Deploying documents the mechanics of a deploy without saying when one is due.
+>
+> ### W-7.2 — the floor grew 40% in a week WITH three compression passes running, and the cause is not new items. It is accretion.
+> `npm test` still warns every run. Measured 2026-09-06 vs the `c55a887` tree of 2026-08-30:
+> | region | 2026-08-30 | 2026-09-06 | change |
+> |---|---|---|---|
+> | backlog section | 295,280 b | **412,906 b** | **+117,626 b (+39.8%)** |
+> | ├ priority blocks (above item 1) | 28,568 b | **46,285 b** | **+17,717 b (+62.0%)** |
+> | └ numbered items | 266,712 b | **366,621 b** | +99,909 b (+37.5%) |
+> | numbered items (count) | 131 | 145 | +14 |
+> | **OPEN items (count)** | **26** | **28** | **+2** |
+>
+> ⭐ **Read those last two rows against the first. Open items grew by TWO and the backlog grew by
+> 118 KB.** W-6.4 diagnosed the growth as newly-filed residual items and W-6.2 rule 2 was written to
+> stop them. **Rule 2 worked — and the file grew anyway, because the growth was never in new items.**
+> It is **existing text accreting**: annotations, retractions, re-measurements and "ORIGINAL CLAUSE,
+> kept because the retraction above refers to it" preservations, layered onto items that are already
+> closed. Mean bytes per item went **2,036 → 2,528**.
+> ⛔ **The fastest-growing region in the whole file is the priority block written by this review's own
+> predecessor (+62%), and W-6.1 is the worst single instance:** a **closed** item now carrying its
+> original clause, a retraction of it, a retraction of the retraction's prescribed fix, a three-row
+> measurement table, and two "kept because the retraction refers to it" preservations. **Five layers
+> on a question that is settled.** This is the reviewer's own defect, and it is named here rather than
+> smoothed away.
+> **Three compression passes ran this week** (3rd ~54 KB, 4th 7,708 b, 5th 17,157 b ≈ **79 KB
+> recovered**) against **~197 KB of gross growth**. **Compression is losing 2.5:1 and cannot win**;
+> it has been tried five times.
+> **The rule, and it is about closed text, not about any item:**
+> 1. **When an item or clause CLOSES, it is replaced by its conclusion, not annotated with one.** One
+>    paragraph: what was true, what is true now, the date, the commit. **The full argument is already
+>    in the run log, which is what the run log is for and which archiving already handles.**
+> 2. **"ORIGINAL CLAUSE, kept because the retraction refers to it" is retired as a pattern.** Rewrite
+>    the retraction so it does not need the original quoted underneath it. If the original wording
+>    genuinely matters, it is in git and in the run log — **cite the commit, do not paste the text.**
+> 3. ⚠️ **This does NOT license deleting run-log history** (W-5.3 is unchanged) and does not license
+>    smoothing away a correction. **The record of having been wrong stays; the five layers of it in
+>    the live backlog do not.**
+> 4. **W-7 supersedes W-6 and W-5's active clauses. Apply rules 1-2 to THIS block first** when its
+>    clauses close — starting with W-7.1, which should collapse to two lines the run after it lands.
+> 5. ⛔ **This block costs 12,508 b (measured after writing: the backlog is 425,414 b, up from 412,906 b), and W-6's cost 17,717 b over its week. A review that diagnoses
+>    accretion in prose that accretes is the defect it is describing.** The measurement is that
+>    **every weekly block so far has grown after being written, and none has ever shrunk.** So the
+>    test of this block is not whether the next run agrees with it — it is whether the backlog is
+>    **smaller** on 2026-09-13 than the 425,414 b it now stands at. **Next review: open
+>    with that number before anything else.**
+>
+> ### W-7.3 — market data has missed two days, and the stale date is now inside the week. Owner's job; flagged, not touched.
+> `public/data/market.json` is `asOf 2026-09-04`; refresh commits ran daily 08-31 → 09-04 and there is
+> **none on 09-05 or 09-06**. `STALE_AFTER_DAYS` is **4** (`src/lib/useMarketData.js:20`, `ageDays >
+> STALE_AFTER_DAYS`), so the Sector and Market Signals screens start rendering the unavailable state on
+> **2026-09-09**. This is the **second** occurrence of the W-6.5 pattern in eight days. ⛔ **It is the
+> owner's scheduled job, not dev-agent work — do not "fix" it in the repo.** ⚠️ **But note what is new
+> since W-6.5: the app is live.** A stale-data gap is no longer invisible; it is a public surface
+> degrading. **W-7.1's guard and this share one root** — nothing in this repo watches anything outside
+> the tree.
+>
+> ### W-7.4 — content quality: no regressions found, and the safety guard was independently re-proved.
+> **This review verified §10.1 rather than reading its green line.** Planted *"With rates this low, now
+> is a good time to buy stocks."* into `src/content/lessonContent.economy.en.js`, confirmed the plant
+> landed (file 47,236 → 47,329 b), ran `check-blindspot` → **exit 1, `FAIL: §10.1
+> investment-advice-adjacent language reintroduced`**; restored from a scratchpad copy (`cmp` identical,
+> tree clean) → **exit 0**. The timing class `2ab2dec` added on 09-02 is real and load-bearing, and its
+> own controls (8 timing patterns each firing on their own sentence, 2 shipped sentences staying clean)
+> are the right shape. **No advice-adjacent or personalized-recommendation language found anywhere this
+> week.** The week's content commits are corrections *toward* accuracy — the 2s10s spread direction, QT
+> vs tapering, the Fed's target index, the compounding arithmetic, the replication-failure citation, the
+> 1930s austerity case, and the recession/deflation distinction. **This is the strongest content-accuracy
+> week in the project's history.** The irony in W-7.1 is that almost none of it is in front of anyone.
+>
+> ### W-7.5 — O-3 restated a third time, and the reason to decide it is now different.
+> Unchanged on the numbers: **es/ko/zh/ja at 100% reviewed, 0% human**; **47 abridged pairs**, all on
+> the optional `essentials` track. **What changed is that it is published.** The "(Beta)" decision of
+> 2026-08-11 was made about an unpublished corpus; four languages of unreviewed machine translation are
+> now on a public URL under the owner's name. **Re-affirm it, cap it, or gate the non-English pickers
+> until review — owner's call, and it is now a shipping decision rather than a roadmap one.**
+
 > ## PRIORITY BLOCK W-6 — set by the weekly review 2026-08-30. Supersedes W-5's *active* clauses below. W-5's standing rules (W-5.2's pick-list warning, W-5.3's archiving rule, W-5.5's re-read-the-count rule) are UNCHANGED and still binding. Read this first.
 >
 > **The week was, on craft, the best this project has had. 96 commits, build and tests green, not one
