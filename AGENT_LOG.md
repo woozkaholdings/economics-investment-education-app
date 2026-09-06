@@ -1897,6 +1897,58 @@ diff the first heading against the previous section's first heading.
     - **Result: 29 pairs / 10 questions → 20 pairs / 8 questions**, and every remaining question is
       on **`essentials`** (L4, L7, L8, L9, L14) — the optional track. The line this item has
       wanted to write is now true, and true on content rather than on the instrument.
+    - ✅ **THE ESSENTIALS REMAINDER IS CLOSED ON CONTENT 2026-09-06 (owner-directed: "do item
+      165's essentials remainder instead"). 15 pairs repaired across 5 questions; open set
+      15 → 1, and that 1 was READ COMPLETE, not padded.**
+      ⛔ **First, the sentence above is TWO different sets and reads as one.** "20 pairs / 8
+      questions" is the **raw** flag count, which still contains the three READ_COMPLETE
+      **economy** questions (q003, q011, q012). "Every remaining question is on essentials" is
+      true of the **open** subset only, which was **15 pairs / 5 questions**. Re-measured
+      2026-09-06: raw **20 / 8**, open **15 / 5** — so both halves reproduce, they just describe
+      different sets. Quote them as a pair or not at all.
+      ⛔ **AND THE INSTRUMENT IS UNDER-SPECIFIED BY ITS OWN NAME — this is the durable part.**
+      "p90" does not identify a computation. An independent re-implementation using nearest-rank
+      `ceil(0.9n)-1` produced **es 1.194 ko 0.584 zh 0.380 ja 0.528** and **21 pairs / 9
+      questions**, against the certified **es 1.184 ko 0.582 zh 0.380 ja 0.520** and 20/8. That
+      gap was about to be written up as corpus drift — **and `git diff 669b39e HEAD -- 'quizText.*'
+      was EMPTY, so the corpus had not moved at all.** Four conventions were tried against the
+      certified references; **`round(0.9n)-1` reproduces all four exactly** and is what this item's
+      figures mean. It also removes a phantom: `q002` `ja` flags at 0.368/0.370 under `ceil` and
+      not at all under `round`. **Recorded here because the item says the script lives only in run
+      entries — a re-implementation must calibrate against these four references before it is
+      believed.**
+      - **What was actually missing, and it is one pattern, not fifteen:** every one of the 15 open
+        pairs dropped the **final explanatory clause** of its English. `q018` es lost both
+        parenthetical glosses ("paying on time", "how much of your available credit you're using");
+        `q021` all four lost *"it can only mean the extra dollars are taxed a bit more"*; `q022` all
+        four lost *"the insurer only pays out once the loss exceeds that threshold"*; `q023`
+        es/ko/ja lost *"a bigger number on the statement didn't mean more real wealth"*; `q028`
+        ko/zh/ja lost *"which is why beneficiary forms need to be updated separately after major
+        life changes"*. **None was a compactness artifact** — unlike the READ_COMPLETE five, each
+        was a clause with teaching content in it, which is what item 160's rule puts in this field.
+      - **`q022` `zh` is the sixth READ_COMPLETE entry, not a sixteenth repair.** After the
+        insurer clause landed it sits at **0.257 against a 0.266 threshold** — nine thousandths —
+        and carries all three English clauses, asserted individually rather than eyeballed. Same
+        class as `q003`/`q011`/`q012` zh (0.252/0.257/0.262). **Padding it would be writing filler
+        to satisfy an instrument.** `READ_COMPLETE` seed is now **6**: q003 ko/zh/ja, q011 zh,
+        q012 zh, q022 zh.
+      - ⚠️ **`ja`'s p90 moved 0.520 → 0.525 and that is this run's own doing**, not neglect — the
+        reference is computed from the corpus it measures, so lengthening four `ja` explanations
+        raised it. es 1.184 / ko 0.582 / zh 0.380 unmoved. Re-measured after every edit.
+      - **Verified:** three controls fired before and after (a language against itself 1.000 flags
+        0; a uniformly halved corpus 0.500 flags 0; `q001` cut to 20% flags in all four).
+        `npm run build` ✅, `npm test` ✅ 0 failures, `npm run check-blindspot` ✅ — the last one
+        mattering because `q028`'s new clause is the closest thing here to procedural advice and
+        clears all 33 §10.1 patterns in five languages. Six new clauses grepped in the **built**
+        bundle with a fake-string control at 0, and two read live on the running app in two
+        languages: `q021` zh and `q028` ja both render their new clause after a real answer, with
+        a negative control at 0.
+      - **What is left of this item: only the guard**, which is unchanged and still the owner's
+        call. A check landed today would ship a **1-pair** warning (`q022` zh) with a 6-entry
+        `READ_COMPLETE` list — down from the 29-pair warning that made "read first, then guard"
+        the right ordering. **The reading is now done.**
+      - **O-3:** ~1,050 characters of new machine translation across es/ko/zh/ja, none reviewed by
+        a fluent speaker. Same standing condition; named, not buried.
     - ⛔ **THE GUARD IS AN OWNER DECISION, AND THE ORDERING IS THE POINT — not a deferral.** A
       `quizText` completeness check satisfies W-6.2 rule 3 cleanly (the learner-visible failure is
       "answered in Spanish, shown one clause where the English reader is shown the mechanism"), and
@@ -4786,6 +4838,88 @@ zero meaningful: `selftest PASS (8/8 controls fired, plantsRemoved true)` and, p
 finding(s); V vacuous; U unavailable`. A bare "no accessibility issues found" is not a result.
 
 ## Run log
+
+### 2026-09-06 (owner-directed, interactive: "do item 165's essentials remainder instead") — the remainder is closed on content at 15 repaired pairs, and the instrument that measures it turned out to be under-specified by its own name: "p90" has four plausible readings and only one reproduces this item's certified figures
+
+**⛔ Step 3.5 — and this is the run where re-measuring nearly manufactured a finding rather than
+correcting one.** Item 165's every headline figure has been corrected at least once, so the ratio
+instrument was re-implemented from the item's *description* rather than copied. First pass, using
+nearest-rank `ceil(0.9n)-1`: **es 1.194 ko 0.584 zh 0.380 ja 0.528**, and **21 pairs / 9 questions**
+— against the item's certified **es 1.184 ko 0.582 zh 0.380 ja 0.520** and 20/8. The obvious story
+was corpus drift, and it was about to be written up as such.
+
+**It was not drift. `git diff 669b39e HEAD -- 'src/content/quizText.*'` is EMPTY** — the corpus had
+not changed by one byte since the figures were certified, so any gap had to be mine. Four p90
+conventions were run against the certified references:
+
+```
+nearest-rank ceil(0.9n)-1    es 1.194  ko 0.584  zh 0.380  ja 0.528
+floor(0.9n)                  es 1.194  ko 0.584  zh 0.380  ja 0.528
+linear interpolation         es 1.189  ko 0.583  zh 0.380  ja 0.524
+index round(0.9n)-1          es 1.184  ko 0.582  zh 0.380  ja 0.520   ← exact, all four
+```
+
+**`round(0.9n)-1` is what this item's numbers mean.** The wrong convention also invented a
+sixteenth pair: `q002` `ja` flags at 0.368/0.370 under `ceil` and not at all under `round`.
+**The transferable part: "p90" is not a specification.** The item says its script lives only in run
+entries; that is the cost — a re-implementation is a different instrument until it is calibrated
+against a certified figure. The convention is now written into the item so the next one calibrates.
+
+**A second correction, to the item's own closing line.** *"Result: 29 pairs / 10 questions → 20
+pairs / 8 questions, and every remaining question is on `essentials`"* is **two different sets read
+as one**. 20/8 is the **raw** count and still contains the three READ_COMPLETE **economy** questions;
+"all essentials" is true of the **open** subset, which is **15 pairs / 5 questions**. Both halves
+reproduce exactly once the convention is right — they simply describe different sets.
+
+**The work: 15 pairs across 5 questions, all `essentials` (L4, L7, L8, L9, L14), every one read
+against its English before editing.** And they are **one pattern, not fifteen**: every open pair had
+dropped the **final explanatory clause** of the English. `q018` es lost both parenthetical glosses;
+`q021` ×4 lost *"it can only mean the extra dollars are taxed a bit more"*; `q022` ×4 lost *"the
+insurer only pays out once the loss exceeds that threshold"*; `q023` es/ko/ja lost *"a bigger number
+on the statement didn't mean more real wealth"*; `q028` ko/zh/ja lost *"which is why beneficiary
+forms need to be updated separately after major life changes"*. None was a compactness artifact —
+each is a clause carrying the mechanism, which is exactly what item 160's rule puts in this field.
+
+**`q022` `zh` was READ, not repaired, and that is a decision rather than an omission.** After the
+insurer clause landed it sits at **0.257 against a 0.266 threshold** — nine thousandths — and
+carries all three English clauses, asserted one at a time rather than eyeballed. Same class as the
+existing READ_COMPLETE zh entries (0.252/0.257/0.262). **Padding it would be writing filler to
+satisfy an instrument**, which is the failure this item's own history is made of. `READ_COMPLETE` is
+now 6.
+
+**Result: raw 20 → 6 pairs; open 15 → 1** (that 1 being `q022` zh, now read complete).
+
+**Verification.**
+- Three controls fired **before and after** every measurement: a language against itself scores
+  1.000 and flags 0; a uniformly halved corpus scores 0.500 and still flags 0 (the reference moves
+  with it); `q001` cut to 20% flags in all four languages.
+- ⚠️ **`ja`'s p90 moved 0.520 → 0.525, and that is this run's own doing** — the reference is computed
+  from the corpus it measures, so lengthening four `ja` explanations raised it. es/ko/zh unmoved.
+  Re-measured after the edits rather than assumed to hold.
+- `npm run build` ✅ (`index-C1_r8HAt.js`), `npm test` ✅ **0 failures** (the one warning is the
+  standing log floor, item 115), `npm run check-blindspot` ✅ — that last one load-bearing here,
+  because `q028`'s new clause is the closest thing in this batch to procedural advice and it clears
+  all 33 §10.1 patterns in five languages.
+- Six new clauses grepped in the **built** bundle across all four languages, with a fake-string
+  control returning 0 chunks so the grep is known live.
+- **Two read on the running app**, served from the new build with its hash asserted: `q021` zh and
+  `q028` ja each render their new clause after a real answer is clicked, with a negative control at
+  0. Different languages and different questions, so it is not a one-off.
+
+**Adversarial self-check (step 5).** *Blindspot register:* clean, and checked deliberately rather
+than by habit — see the `q028` note above. *DECISIONS.md:* nothing contradicted; `.js` content
+modules, no state or schema change, `quizMeta` untouched so every question id and all persisted
+Leitner state is unaffected. *Already-done item:* this is 165's stated remainder, not a redo — and
+it is explicitly **not** item 93/94, whose instrument reads `lessonContent` and has never opened
+`quizText`. *My own verification claim:* the calibration table is reproducible from the four
+conventions named, the empty `git diff` is one command, and the two live reads name their bundle,
+language and question.
+
+**Next.** Item 165 is down to **the guard alone**, unchanged and still the owner's call — but the
+arithmetic that made "read first, then guard" correct has moved: a check landed today would ship a
+**1-pair** warning with a 6-entry `READ_COMPLETE` list, not the 29-pair warning that justified the
+ordering. **The reading is done.** **O-2 remains the entire critical path** and is one PostHog
+account away; `npm run analytics-check` now exists to verify the key before it ships.
 
 ### 2026-09-06 (owner-directed, interactive: "set up analytics with posthog", then "yes, add the analytics-check") — the account is the owner's to make, and the check built while waiting found that PostHog's capture endpoint returns 200 OK for a key that does not exist
 

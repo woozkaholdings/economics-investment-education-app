@@ -195,7 +195,7 @@ export const quizText = [
       "Cuántas sucursales bancarias has visitado",
       "Tu edad y código postal"
     ],
-    "explain": "El historial de pagos y el uso del crédito disponible suelen ser los factores más grandes."
+    "explain": "El historial de pagos (pagar a tiempo) y el uso del crédito disponible (qué proporción de tu crédito disponible estás usando) suelen ser los factores más grandes."
   },
   {
     "q": "¿Cuál es la idea principal detrás de la diversificación?",
@@ -225,7 +225,7 @@ export const quizText = [
       "Solo la porción que cayó en el nuevo tramo se grava a la tasa más alta — el resto no cambia",
       "El gobierno se queda con todo el aumento como impuesto"
     ],
-    "explain": "Los tramos fiscales marginales solo gravan la porción de ingreso que cae en cada tramo, no todo el ingreso a esa tasa. Un aumento nunca puede reducir tu sueldo neto."
+    "explain": "Los tramos fiscales marginales solo gravan la porción de ingreso que cae en cada tramo, no todo el ingreso a esa tasa. Un aumento nunca puede reducir tu sueldo neto: solo significa que los dólares adicionales tributan un poco más."
   },
   {
     "q": "Si la Póliza A tiene un deducible más alto que la Póliza B, con el mismo límite de cobertura, ¿qué esperarías según el balance que describe esta lección?",
@@ -235,7 +235,7 @@ export const quizText = [
       "La Póliza A y la Póliza B tienen exactamente la misma prima",
       "El deducible no tiene relación con la prima"
     ],
-    "explain": "Un deducible más alto generalmente implica una prima más baja, porque el asegurado acepta absorber más de las pérdidas pequeñas y frecuentes él mismo."
+    "explain": "Un deducible más alto generalmente implica una prima más baja, porque el asegurado acepta absorber más de las pérdidas pequeñas y frecuentes él mismo, y la aseguradora solo paga cuando la pérdida supera ese umbral."
   },
   {
     "q": "Una cuenta de ahorros crece 3% en un año donde los precios suben 5%. ¿Qué pasó con su poder adquisitivo real?",
@@ -245,7 +245,7 @@ export const quizText = [
       "Creció 8%, combinando ambas tasas",
       "Se mantuvo exactamente igual sin importar la inflación"
     ],
-    "explain": "Rendimiento real ≈ rendimiento nominal − inflación: 3% − 5% ≈ -2%. El saldo creció en dólares, pero ahora compra menos que hace un año."
+    "explain": "Rendimiento real ≈ rendimiento nominal − inflación: 3% − 5% ≈ -2%. El saldo creció en dólares, pero ahora compra menos que hace un año: un número más grande en el estado de cuenta no significó más riqueza real."
   },
   {
     "q": "Un freelancer recibe ingresos 1099 en lugar de un sueldo W-2. ¿Cuál es la diferencia clave en impuestos?",
