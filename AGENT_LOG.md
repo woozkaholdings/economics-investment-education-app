@@ -3007,7 +3007,44 @@ diff the first heading against the previous section's first heading.
     lesson reader already had — `as="h2"` on `{t.hookTitle}` and `{t.checkTitle}` — and guarded by
     `check-data.mjs` §45, which was proved able to fail in three modes.**
 
-101. **[Feature/Distribution — filed 2026-08-24 by the run that closed item 98, as its stated residual
+101. **✅ DONE 2026-09-05 (scheduled dev-agent), the day after O-1 closed — which is what this item's
+    own "low until O-1, then immediate" line asked for. Both tags ship, and so does the card.**
+    `index.html` now carries `og:url`, `og:image` (+ `:width`/`:height`/`:alt`), `twitter:image` and
+    `twitter:card: summary_large_image`; `public/og-card.png` is 1200x630 / 100,905 b; `check-data.mjs`
+    §38 covers all of it. See the run log for the render that was inspected and the five injected
+    faults that prove the new assertions fire.
+    > ⚠️ **THE ITEM'S OWN "MEASURED" BLOCK IS STALE AND IS NOT THE STATE OF THE FILE.** Its retained
+    > *ORIGINAL TEXT* says index.html is "11 lines" with "no `meta name="description"`, no `og:*`, no
+    > `twitter:*`, no favicon, no `theme-color`". That was true on 2026-08-24 and item 98 fixed all of
+    > it the same day. Measured 2026-09-05 before editing: **54 lines, 12 `<meta>`, an SVG favicon and
+    > two `theme-color` tags.** The item's *live* text was accurate; only the archived measurement had
+    > rotted, which is the ordinary way and the reason the live text is what a picker reads.
+    > ⛔ **A SUSPICION THIS RUN RAISED AND THEN REFUTED, recorded so nobody re-raises it.** The item
+    > and `vite.config.js` both say nothing here may hardcode a leading `/`, and `index.html` source
+    > line 42 reads `href="/icon.svg"`. That looks like a live violation of the property the whole
+    > build rests on and it is not: **Vite rewrites public-directory references in `index.html` against
+    > `base`**, and the built file reads `href="./icon.svg"` — measured on a real `npm run build`, with
+    > a control (the same grep, run over a copy with the slash restored, does find it). **The invariant
+    > is on the BUILT output, not on the source**, and the two documents that state it do not say so.
+    > ⚠️ **What the item got right and what it under-scoped.** Right: og:image needs an image, and the
+    > repo had no raster asset (re-confirmed — `public/` held `data/market.json` and `icon.svg`, and
+    > nothing else anywhere but the read-only launch-plan scans). Under-scoped: it treated the card as
+    > blocked on "adding a raster toolchain". **It is not — a browser is a rasterizer.** The card is
+    > authored as Canvas2D drawing code (`scripts/og-card.js`), rendered once in a browser and decoded
+    > to `public/og-card.png`. Zero new dependencies, so item 12's port-cost rule never engages, and
+    > the card is *editable text* rather than an unexplained binary.
+    > ⛔ **THE COST THIS ITEM NAMED IS REAL AND IS NOW BOUNDED RATHER THAN AVOIDED.** `og:url` and
+    > `og:image` are the only two absolute URLs in the build, so the origin is written into every
+    > `dist/`. §38 pins both to the URL in **README.md's "Deploying" section**, so a move to a custom
+    > domain fails `npm test` instead of silently unfurling the old host. A `dist/` served anywhere
+    > else still *works* — nothing here is fetched by the app — it just advertises this origin.
+    > ⛔ **NOT CLOSED BY THIS, and do not write otherwise: the card is not live.** Measured after the
+    > work landed — `https://magnificent-mochi-73aecc.netlify.app/og-card.png` returns **404** and the
+    > served `index.html` still carries no `og:image` tag. **Shared links keep unfurling as the old
+    > text-only summary until the owner redeploys `dist/`** (README's two-step "To publish an update").
+    > That is the same shape as O-2's remaining half: the code ships, one owner action remains.
+    ORIGINAL TEXT OF THE ITEM (retained — the entry above refers to it):
+    [Feature/Distribution — filed 2026-08-24 by the run that closed item 98, as its stated residual
     rather than smuggled into the same commit. Serves `LAUNCH_PLAN.md` §5. **Genuinely blocked on
     O-1**, not merely downstream of it.] `og:url` and `og:image` are the two preview tags item 98
     could not ship, and both need an origin that does not exist yet.**
@@ -4692,6 +4729,134 @@ zero meaningful: `selftest PASS (8/8 controls fired, plantsRemoved true)` and, p
 finding(s); V vacuous; U unavailable`. A bare "no accessibility issues found" is not a result.
 
 ## Run log
+
+### 2026-09-05 (scheduled dev-agent, backlog item 101 — the one item in the whole backlog whose own text said "low until O-1, then immediate", picked the day after O-1 closed) — the app has been shareable for a day and every shared link unfurled as a text stub; it now ships a 1200x630 card, and the card is drawing code rather than a binary because a binary is a file nobody can edit
+
+**Why this item and not another.** O-1 closed 2026-09-05 and the app is live. Item 101 was filed
+2026-08-24 as *"Honest priority: low until O-1, then immediate — everything here is inert without a
+URL, and the moment there is one it is the difference between a link that sells the app and a bare
+one."* Its blocker cleared yesterday; nothing else in the open backlog changed priority. It is also
+**not a residual chain** (W-6.2 rule 1): filed twelve days ago by the item-98 run, not by the run
+before this one, and the last three scheduled runs picked from `LAUNCH_PLAN.md` §10, a self-picked
+sweep, and item 167(b).
+
+**Step 3.5 — the premise, re-measured with controls, changed one framing and refuted one suspicion.**
+1. **The item's headline claim reproduced exactly.** `og:url` and `og:image` absent; `twitter:card`
+   is `summary`; `public/` holds `data/market.json` and `icon.svg` and no raster asset anywhere in the
+   repo. §38 exists and its own comment says it is deliberately silent about both tags.
+2. **Its retained *"Measured"* block did not.** It describes an 11-line `index.html` with no
+   description, no `og:*`, no favicon and no `theme-color`. Item 98 shipped all of those on the day
+   this item was filed. Measured before editing: **54 lines, 12 `<meta>`, an SVG favicon, two
+   `theme-color` tags.** The live text was right and only the archived measurement had rotted — noted
+   in the item, and it changed nothing about the work.
+3. ⛔ **A suspicion raised and then refuted by measurement, which is the part worth keeping.**
+   `index.html`'s source reads `<link rel="icon" href="/icon.svg">` — a hardcoded leading slash, in
+   the file whose own comment and whose `vite.config.js` both say nothing here may have one. That
+   reads as a live violation of the property the entire build rests on. **It is not: Vite rewrites
+   public-directory references in `index.html` against `base`, and `dist/index.html` reads
+   `./icon.svg`.** Proven on a real build, and **with a control** — the same `grep -oE '(src|href)="/'`
+   over `dist/index.html` returns nothing, and over a copy with the slash restored returns
+   `href="/icon.svg"`, so the empty result is the grep working rather than the grep missing.
+   **The invariant is on the BUILT output, not on the source**, and neither document says so.
+4. **Where the item was under-scoped, and this is what changed the disposition.** It treated the card
+   as blocked on "adding a raster toolchain" (item 12's port-cost rule). **A browser is a rasterizer.**
+   No toolchain was added and no dependency was installed.
+
+**What shipped.**
+- **`scripts/og-card.js`** — the card as Canvas2D drawing code: palette copied from `src/index.css`'s
+  light tokens, the title and subtitle equal to en's `appTitle`/`appSub`, the blurb equal to the
+  `<meta name="description">`, §10.1's disclaimer set across the bottom band, and the favicon's cycle
+  path drawn twice (once inside the 96px icon tile, once as the hero graphic) so the two files carry
+  **one** curve rather than two hand-fitted copies. Its header carries the one-minute regeneration
+  recipe. **This exists so the card is editable text.** A committed PNG with no source is exactly the
+  unexplained binary nobody can change when a color moves.
+- **`public/og-card.png`** — 1200x630, 100,905 b, the rasterization of that file.
+- **`index.html`** — `og:url`, `og:image`, `og:image:width`/`:height`/`:alt`, `twitter:image`, and
+  `twitter:card` raised from `summary` to `summary_large_image`. The comment block that said both
+  tags are "deliberately absent until the app has an origin" is replaced rather than left standing.
+- **`check-data.mjs` §38** — extended, and its own "WHAT IS DELIBERATELY NOT CHECKED" paragraph
+  rewritten, because it named O-1 as the reason and O-1 has closed.
+- **`README.md`** — a "The link preview" subsection under Deploying.
+
+**How the card was actually made, and how the executed code was proven to be the committed code.**
+`scripts/og-card.js` was copied into the scratchpad, served over `http://localhost` beside a
+four-line page that imports it and draws to a 1200x630 canvas, and the two copies were compared by
+**`shasum -a 256` before every render** — identical each time, so the PNG is the output of the file
+that is in the commit and not of something typed into a console. Export went `canvas.toDataURL` →
+`POST` to the scratchpad server → `Buffer.from(b64, "base64")`, so the 135 KB payload never passed
+through the transcript.
+**Controls on the render, because a blank canvas exports as a perfectly valid PNG.** Four sampled
+pixels had to read the palette — background `#f8f5f0`, band `#ecedf9`, icon tile `#2f43c4` — and a
+700x80 scan over the title's baseline had to find near-black ink. All four fired.
+⛔ **And the reason the pixel controls were not enough, which is the transferable part: every control
+passed on a layout that was visibly broken.** The first render placed the hero curve by arithmetic
+and the curve ran **straight through the word "judgment"** on the blurb's first line; the second
+render's band edge sliced the descenders off *everyday* and *money*. Both were invisible to the
+color probes, to §38, and to `npm test`, and both were obvious the moment the PNG itself was opened
+and looked at. **The bug was that the drawn path spans units 10-54 of its 64-unit box, not 0-64, so
+a box positioned by eye lands ~90px left of where it looks like it will.** Fixed by measuring the
+copy in the browser — `ctx.measureText` puts the blurb's first line at **x 805** and the card's box
+now starts at **x 830** — so the clearance in the source comment is a measurement rather than an
+estimate. **A generated image needs a human to look at the image.** That is written into §38's
+comment as the thing it deliberately does not check.
+
+**Verification.**
+- `npm test` — **PASS, 0 failures**, 3 pre-existing warnings (translation review share, translation
+  completeness, the item-160 option-length cue) plus the standing log-floor warning. §38 now reports
+  `12/12 required <meta> present, 19 <meta> total … og:url+og:image pinned to README's live URL,
+  card 1200x630 / 100,905 b`.
+- `npm run build` — clean; `dist/index.html` carries the two absolute URLs verbatim and
+  `dist/og-card.png` is **byte-identical** to `public/og-card.png`.
+- **The built app served and driven in a real browser.** Head-only changes can still break a page —
+  an unterminated comment swallows every tag after it and the page still returns 200. Measured on
+  the real `dist/`: 19 `<meta>` readable **through the DOM** (which is the parse an unfurler sees),
+  `og:url`/`og:image`/`twitter:card` all reading back correctly, `#root` mounted, 3,506 characters of
+  body text, **zero console errors**, `/og-card.png` served as `image/png` at 100,905 b — with a
+  404 control on a made-up path so the 200s are real files.
+- ⭐ **The five new assertions were each proven to FIRE, not merely to pass.** Every fault was
+  injected into the real tree, the injection itself was verified to have landed, and both touched
+  files were restored **from a scratchpad copy and `shasum -c`'d**, never with `git checkout --`:
+  (1) `og:url` pointing at `example.com` → fails against README's URL; (2) `og:image` naming a file
+  not in `public/` → fails; (3) the PNG overwritten with HTML → fails on signature+IHDR, so the check
+  reads the file's header rather than trusting its extension; (4) **a genuine, valid 100x100 PNG
+  built with `zlib` alone** → fails on dimensions only, which is the control that separates "is a
+  PNG" from "is the right size"; (5) `twitter:card` downgraded to `summary` while the card ships →
+  fails, because a 1.91:1 card in a square thumbnail is cropped to its middle third.
+- ⚠️ **§26 caught this work, correctly, and the diagnosis is worth recording.** `npm test` failed with
+  *"README.md:76 names `scripts/og-card.js`, which does not exist"* while the file was sitting on
+  disk. **§26 resolves against the git index, not the working tree** — the W-6.1 fix — so an untracked
+  new file reads as missing, which is exactly right: a fresh clone would not have it. Staging the two
+  new files made the failure disappear with no other edit, which is the control on that reading.
+
+**Adversarial self-check (step 5) — run, and it found one thing.**
+- **Blindspot register.** `npm run check-blindspot` PASS: §10.2 no Dalio, §10.1 no advice-adjacent
+  language across 38 files **including `index.html`** (so the new `og:image:alt` was scanned), the
+  disclaimer on all 8 surfaces, §10.3 parent-facing, §2.3 no live-looking dates. The card itself
+  carries §10.1's disclaimer in full and no date and no market figure. Checked by hand as well: no
+  Dalio string in any new file.
+- **DECISIONS.md.** No closed decision is contradicted. The nearest is `base: "./"`, and the two
+  absolute URLs are metadata an unfurler reads, never a URL the app builds — the three properties
+  `vite.config.js` names all still hold, and property (1) was measured on the built output with a
+  control (above).
+- **Already-done item.** Item 98 shipped the *other* preview tags; item 101 is explicitly the
+  remainder it could not. Not a redo.
+- **The finding.** The check turned up **one live falsehood created by this very change**: with
+  `og:image` in `index.html`, README's Deploying section and §38's summary would both read as though
+  the preview *works*, and it does not — **the card is not on the live site.** Measured after the
+  work landed: `/og-card.png` on the live host returns **404**, and the served `index.html` has no
+  `og:image` tag. Fixed inside this run rather than deferred: README carries a ⛔ line saying shared
+  links keep unfurling as the old text-only summary until the owner redeploys, and item 101 carries
+  the same. **The tags are true of the repo and not yet of the internet, and the documents now say
+  which.**
+
+**Next run.** ⛔ **Item 101 is closed and this run's residuals are notes under it, not new numbered
+items** (W-6.2 rule 2). The redeploy that makes the card live is an **owner action** and belongs
+beside O-2 — both are now "the code ships, one owner step remains", and they are the same step: one
+`npm run build` and one drag of `dist/`. **O-2 remains the entire critical path**, and per this
+log's own 2026-09-05 finding about how O-1 actually closed, the useful move is to ask the owner
+directly rather than restate the blocker. Open and unparked after this: items 26, 27, 70/71, 74, 76,
+94, 117, 155, 160, 165's essentials remainder, and 167(a)/(c) — which W-6.2 rule 1 still bars as a
+headline pick.
 
 ### 2026-09-05 (owner-directed, interactive: "now set up analytics for O-2") — the transport half of item 18 is built, provider-agnostic and verified end to end against a local receiver; what is left is an account and one pasted value, and the bug that ate the first attempt was invisible to every test that is not a real browser
 

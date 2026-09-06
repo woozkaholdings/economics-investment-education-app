@@ -18,27 +18,38 @@
          previews would mean prerendering or a path router, which item 31 chose
          against on purpose (DECISIONS.md).
 
-         Deliberately absent until the app has an origin (owner action O-1):
-         `og:url` and `og:image` are specified as absolute URLs, and this build
-         is path-agnostic by design (`base: "./"` — vite.config.js explains why
-         nothing here may hardcode a leading "/"). Guessing a domain now would
-         ship a preview pointing at a page that does not exist and break the one
-         property the build is built around. `twitter:card` is `summary` rather
-         than `summary_large_image` for the same reason: there is no image. -->
+         `og:url` and `og:image` landed 2026-09-05, when O-1 closed and the app
+         got an origin. Both are specified as ABSOLUTE URLs, so they are the two
+         places in the whole build that name a host — everything else resolves
+         relatively (`base: "./"`, vite.config.js). That is a real cost and it
+         is bounded on purpose: check-data.mjs §38 pins both to the URL recorded
+         in README.md's "Deploying" section, so moving the site to a custom
+         domain fails the suite instead of silently unfurling the old host.
+         A `dist/` served from anywhere else still WORKS — nothing here is
+         fetched by the app — it just advertises this origin in its preview. -->
     <meta name="description" content="A self-paced course on how the economy works: booms and busts, interest rates, and the judgment behind everyday money decisions. Educational content only — not personalized investment, legal, or tax advice." />
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Economic Cycles" />
     <meta property="og:title" content="Economic Cycles — Master the Economy" />
     <meta property="og:description" content="A self-paced course on how the economy works: booms and busts, interest rates, and the judgment behind everyday money decisions. Educational content only — not personalized investment, legal, or tax advice." />
     <meta property="og:locale" content="en" />
-    <meta name="twitter:card" content="summary" />
+    <meta property="og:url" content="https://magnificent-mochi-73aecc.netlify.app/" />
+    <meta property="og:image" content="https://magnificent-mochi-73aecc.netlify.app/og-card.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Economic Cycles — Master the Economy. A self-paced course on how the economy works." />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content="https://magnificent-mochi-73aecc.netlify.app/og-card.png" />
     <meta name="twitter:title" content="Economic Cycles — Master the Economy" />
     <meta name="twitter:description" content="A self-paced course on how the economy works: booms and busts, interest rates, and the judgment behind everyday money decisions. Educational content only — not personalized investment, legal, or tax advice." />
 
     <!-- SVG rather than .ico: it is one text file, it scales, and it is the
          only icon format this repo can author without adding a raster
          toolchain. Its two colors are copies of --fill-accent and
-         --surface-canvas; see the note inside the file. -->
+         --surface-canvas; see the note inside the file. (The preview card above
+         IS a raster and had to be — no unfurler renders SVG — which is why it
+         ships with its drawing code in scripts/og-card.js rather than as an
+         unexplained binary.) -->
     <link rel="icon" type="image/svg+xml" href="/icon.svg" />
 
     <!-- The browser chrome around the app, matched to --surface-canvas in each

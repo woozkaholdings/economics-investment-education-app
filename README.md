@@ -69,6 +69,27 @@ Netlify injects one HTML comment and two `<meta>` tags (`hosting-provider`,
 `netlify-deploy`) — five lines, no script and no beacon. A diff showing exactly those and
 nothing else means the deploy is clean; a diff showing anything more does not.
 
+### The link preview (added 2026-09-05)
+
+`index.html` carries a full unfurl card: `og:url`, `og:image` and
+`twitter:card: summary_large_image`, pointing at `public/og-card.png` — 1200x630, the
+1.91:1 box every major client crops to. The image is drawn by `scripts/og-card.js`, which
+ships alongside it so the wording and the colors can be changed by editing text rather than
+by replacing a binary nobody can open; that file's header has the one-minute recipe for
+regenerating the PNG in a browser.
+
+⚠️ **The URL above is the single definition of this site's origin.** `og:url` and `og:image`
+are the only two absolute URLs in the whole build (everything else resolves relatively — see
+`vite.config.js`), and `check-data.mjs` §38 asserts both against the URL in **this section**.
+So if the site ever moves to a custom domain, **change the URL here first**: `npm test` will
+then fail until `index.html` agrees, instead of the app quietly unfurling a preview for a host
+it no longer lives on.
+
+⛔ **The card is in the repo and is NOT on the live site yet.** Measured 2026-09-05 after this
+landed: `https://magnificent-mochi-73aecc.netlify.app/og-card.png` returns **404**, and the
+served `index.html` still carries no `og:image` tag. Shared links keep unfurling as the old
+text-only summary **until the next redeploy** — the two steps directly below.
+
 ### To publish an update
 
 1. `npm run build`.

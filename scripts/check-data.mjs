@@ -4979,16 +4979,28 @@ if (keyedGroupsChecked < 4) {
 // section pins them to each other rather than to a literal, so there is still
 // exactly one place to make the change.
 //
-// WHAT IS DELIBERATELY NOT CHECKED. Not `og:url` or `og:image`: both are
-// specified as absolute URLs and this app has no origin until owner action O-1
-// lands, and `base: "./"` (vite.config.js) means nothing here may hardcode a
-// path. Requiring them would force a guessed domain into the file. Not the
-// rendered preview — that needs a live unfurler against a real URL, which is
-// O-1 again. Not the description's prose: check-blindspot.mjs owns §10.1 and
-// now scans this file for it (added the same day, for the same reason README
-// was added to §10.2 — a rule only covers the files it reads).
+// `og:url` AND `og:image` ARE NOW CHECKED (2026-09-05, backlog item 101), and
+// the paragraph that used to stand here — "deliberately not checked ... this
+// app has no origin until owner action O-1 lands" — expired when O-1 closed and
+// the app went live. They are the only two strings in the build that name a
+// host; everything else resolves relatively (`base: "./"`). So they are pinned
+// to ONE definition, the URL in README.md's "Deploying" section, exactly the
+// way the title is pinned to the locale rather than to a literal. Move the site
+// to a custom domain and this section fails, which is the point: the failure
+// mode it exists for is a link that unfurls a preview for a host the app no
+// longer lives on, and nothing about that is visible from inside the app.
+//
+// WHAT IS STILL DELIBERATELY NOT CHECKED. Not the rendered preview — that needs
+// a live unfurler and a crawler pass, neither of which runs here. Not the
+// card's pixels: §38 asserts the PNG is a real 1200x630 PNG (its IHDR is read,
+// not its extension), and `scripts/og-card.js` is the drawing code, but whether
+// the card LOOKS right is a human judgment and is recorded in the run log with
+// the render that was inspected. Not the description's prose: check-blindspot.mjs
+// owns §10.1 and now scans this file for it (added the same day, for the same
+// reason README was added to §10.2 — a rule only covers the files it reads).
 {
   const html = readFileSync(join(ROOT, "index.html"), "utf8");
+  let ogCardBytes = null;
 
   // Attribute order is not fixed by anything, so match on the tag and read the
   // pair out of it rather than assuming `name` precedes `content`.
@@ -5010,9 +5022,12 @@ if (keyedGroupsChecked < 4) {
     ["og:title", "the headline of the preview card"],
     ["og:description", "the body of the preview card"],
     ["og:locale", "the language the preview copy is written in"],
+    ["og:url", "the canonical URL of the thing being shared"],
+    ["og:image", "the card image; without it the preview is a text stub"],
     ["twitter:card", "chooses the card shape; without it the link stays bare"],
     ["twitter:title", "not every client falls back to og:*"],
     ["twitter:description", "not every client falls back to og:*"],
+    ["twitter:image", "not every client falls back to og:*"],
   ];
   let presentRequired = 0;
   for (const [key, why] of REQUIRED) {
@@ -5025,6 +5040,113 @@ if (keyedGroupsChecked < 4) {
       );
     } else if (!value.trim()) {
       fail(`§38: index.html's \`${key}\` is empty, which unfurls the same as absent.`);
+    }
+  }
+
+  // ── The two absolute URLs, and the card they point at ────────────────────
+  //
+  // ONE DEFINITION OF THE ORIGIN. README.md's "Deploying" section is where the
+  // live URL is recorded for a human; index.html is where it is recorded for an
+  // unfurler. Two copies of a host name drift silently — the app keeps working
+  // either way, and the only symptom is a shared link that previews the wrong
+  // site — so the second is asserted against the first rather than against a
+  // literal typed here, which would just be a third copy.
+  {
+    const readme = readFileSync(join(ROOT, "README.md"), "utf8");
+    const deploySection = readme.split(/^## /m).find((s) => s.startsWith("Deploying"));
+    const liveUrl = deploySection?.match(/<(https:\/\/[^>\s]+)>/)?.[1];
+    if (!liveUrl) {
+      fail(
+        `§38: README.md's "## Deploying" section names no <https://…> URL, so index.html's og:url ` +
+          `and og:image have nothing to be checked against. Record the live URL there first.`,
+      );
+    } else {
+      const origin = liveUrl.replace(/\/+$/, "");
+      const ogUrl = metaValue("og:url");
+      if (ogUrl && ogUrl.replace(/\/+$/, "") !== origin) {
+        fail(
+          `§38: index.html's og:url is \`${ogUrl}\` but README.md's Deploying section says the site ` +
+            `is at \`${liveUrl}\`. One of them is stale, and a shared link previews the other one.`,
+        );
+      }
+      const ogImage = metaValue("og:image");
+      const twImage = metaValue("twitter:image");
+      if (ogImage && twImage && ogImage !== twImage) {
+        fail(`§38: og:image is \`${ogImage}\` and twitter:image is \`${twImage}\`. Two cards for one page.`);
+      }
+      if (ogImage) {
+        if (!ogImage.startsWith(`${origin}/`)) {
+          fail(
+            `§38: og:image is \`${ogImage}\`, which is not an absolute URL under \`${origin}\`. ` +
+              `og:image is specified as absolute; a relative one is dropped by most unfurlers with ` +
+              `no error anywhere.`,
+          );
+        } else {
+          // The file has to exist in public/ — the same rule as the icon, for
+          // the same reason: a preview that 404s looks handled and is not.
+          const rel = ogImage.slice(origin.length + 1);
+          const imgPath = join(ROOT, "public", rel);
+          if (!existsSync(imgPath)) {
+            fail(
+              `§38: og:image points at \`${rel}\` but public/${rel} does not exist, so every shared ` +
+                `link asks for a card the site does not serve.`,
+            );
+          } else {
+            // Read the PNG's own header rather than trusting the extension. A
+            // renamed JPEG, a truncated download or an HTML error page saved
+            // over the file all keep the name and all unfurl as nothing.
+            const buf = readFileSync(imgPath);
+            const SIG = [0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a];
+            const isPng = buf.length > 24 && SIG.every((b, i) => buf[i] === b) &&
+              buf.slice(12, 16).toString("ascii") === "IHDR";
+            if (!isPng) {
+              fail(`§38: public/${rel} is not a PNG — its first bytes are not the PNG signature + IHDR.`);
+            } else {
+              const w = buf.readUInt32BE(16);
+              const h = buf.readUInt32BE(20);
+              // 1200x630 is the size every major unfurler crops to (1.91:1).
+              // The width/height meta tags below are a promise about the file;
+              // if they disagree with it, clients that trust them lay out a box
+              // the image does not fill.
+              if (w !== 1200 || h !== 630) {
+                fail(
+                  `§38: public/${rel} is ${w}x${h}; the link-preview card must be 1200x630 (the 1.91:1 ` +
+                    `box every major unfurler crops to).`,
+                );
+              }
+              for (const [key, want] of [["og:image:width", "1200"], ["og:image:height", "630"]]) {
+                const got = metaValue(key);
+                if (got !== null && got !== want) {
+                  fail(`§38: ${key} says \`${got}\` and the file is ${w}x${h}. The tag is a promise about the file.`);
+                }
+              }
+              // The card is drawing code plus its output. Without the source it
+              // is an unexplained binary nobody can change; §26 does not cover
+              // it because nothing references it in prose.
+              if (!existsSync(join(ROOT, "scripts", "og-card.js"))) {
+                fail(
+                  `§38: public/${rel} exists but scripts/og-card.js does not. The card ships with the ` +
+                    `code that draws it, so the wording and the colors can be changed by editing text.`,
+                );
+              }
+              ogCardBytes = buf.length;
+            }
+          }
+        }
+      }
+      // A large-image card with no image is the one combination that unfurls
+      // WORSE than a plain summary: clients reserve the big box and fill it
+      // with nothing.
+      const twCard = metaValue("twitter:card");
+      if (twCard === "summary_large_image" && !ogImage && !twImage) {
+        fail(`§38: twitter:card is summary_large_image and no image tag is present.`);
+      }
+      if (twCard === "summary" && ogImage) {
+        fail(
+          `§38: twitter:card is \`summary\` while og:image ships a 1200x630 card. A 1.91:1 card in a ` +
+            `square thumbnail is cropped to its middle third.`,
+        );
+      }
     }
   }
 
@@ -5188,8 +5310,10 @@ if (keyedGroupsChecked < 4) {
   console.log(
     `  §38 link preview: ${presentRequired}/${REQUIRED.length} required <meta> present, ${metas.length} <meta> total in index.html, ` +
       `${themeColors.length} theme-color(s), ${descriptions.length} description tag(s) in agreement, icon ${iconHref ? iconHref[1] : "—"}, ` +
-      `title pinned to en appTitle/appSub, ${titleAssigns.length} runtime title assignment(s) under src/. ` +
-      `(Static check — a rendered unfurl needs a public URL, which is owner action O-1.)`,
+      `title pinned to en appTitle/appSub, ${titleAssigns.length} runtime title assignment(s) under src/, ` +
+      `og:url+og:image pinned to README's live URL, card ${ogCardBytes === null ? "—" : `1200x630 / ${ogCardBytes.toLocaleString("en-US")} b`}. ` +
+      `(Static check — the tags and the file are asserted here; whether the card RENDERS as intended ` +
+      `is a human judgment, recorded in the run log with the image that was inspected.)`,
   );
 }
 
