@@ -234,13 +234,11 @@ for the history. No open P1/P2 items.
 >    unauthenticated afterwards the way `README.md` § Deploying prescribes — `/` 200, the hashed
 >    bundle byte-identical to the local build, a 404 control. **This is one run's headline and it is
 >    the highest-value run available.**
-> 2. **Build the guard that makes step 1 unnecessary next time:** a check that fetches the live entry
->    bundle and compares it to a local build of `HEAD`, and **fails, or at minimum warns loudly, when
->    they differ.** It satisfies W-6.2 rule 3 in one sentence: *it would have caught five learner-
->    visible defects, including a factual error about recessions, sitting on the public site for a
->    day after they were fixed in the repo.* ⛔ Carry the control this log would demand: **prove it
->    goes red right now, against the current divergence**, before you fix the divergence — the
->    negative control is available today and will not be after step 1.
+> 2. ✅ **DONE 2026-09-06 — `npm run check-deployed`.** Compares the live site to `dist/`: the hashed
+>    entry bundle (covers all of `src/`), unhashed `public/` files by sha256 (the entry cannot see
+>    those — the og-card class), `index.html` modulo Netlify's tags; market.json reported, never fatal.
+>    Exit 0/1/2 = in sync/diverged/no verdict. **Proved red on the real divergence before it was
+>    fixed.** Network, so not in `npm test`; it is step 3 of README § Deploying.
 > 3. ⚠️ **Decide the deploy cadence and write it in `DECISIONS.md`**, because a guard that fires every
 >    run and is never acted on is a warning nobody reads (W-5's own lesson). Redeploy-per-commit,
 >    daily, or gated — the owner's call, but **the repo currently has no answer at all**, and
@@ -5135,6 +5133,97 @@ zero meaningful: `selftest PASS (8/8 controls fired, plantsRemoved true)` and, p
 finding(s); V vacuous; U unavailable`. A bare "no accessibility issues found" is not a result.
 
 ## Run log
+
+### 2026-09-06 (scheduled dev-agent, W-7.1 step 2 — picked over step 1 because step 2's control expires the moment step 1 happens) — the guard that watches the live site now exists, and its first version reported a divergence in `index.html` that was not one, because Netlify's injected comment is three lines and the filter read one
+
+**Why this and not the redeploy.** W-7.1 lists the redeploy first and the guard second. I did them in
+the other order deliberately: **the guard's negative control is the current divergence, and step 1
+destroys it.** A guard built after the redeploy could only be proved green, and "it did not fire when
+nothing was wrong" is the weaker half of the proof. Step 1 remains open and is still the highest-value
+*learner-facing* action; it needs the owner's Netlify session (README § Deploying step 2 is a drag onto
+the Deploys page), which is why it is not this run's work.
+
+**Step 3.5 — premise re-measured, and it held exactly.** Three of the review's figures reproduced to
+the byte against the running site: live entry `assets/index-C1_r8HAt.js` **263,940 b**, a local build of
+`HEAD` (`602879f`) **`assets/index-B1mndoLB.js` 264,930 b**, and
+`git rev-list --count 5d6893c..HEAD -- src/ public/ index.html` = **6**. A 404 control on a made-up
+asset path fired. **This is the first picked item in a long run of them whose premise needed no
+correction** — worth recording as the exception it is, and the reason is visible: W-7.1's numbers were
+measured by the review that wrote them, four hours earlier, rather than carried forward.
+
+**What shipped.** `scripts/check-deployed.mjs` + `npm run check-deployed`. It compares the live site
+to `dist/` on three surfaces:
+- **App code — the content-hashed entry bundle.** Vite renames the entry whenever any module in the
+  graph changes, so one filename comparison covers all of `src/`; equal names are then compared
+  byte-for-byte, so a name collision or a mangling proxy cannot pass as agreement.
+- **Unhashed `public/` files by sha256.** ⛔ **This is the part an entry-bundle-only check would have
+  got wrong, and the review's own prescription said "fetches the live entry bundle" and stopped there.**
+  `public/` is copied to the deploy root unhashed and is *not* imported by the entry, so an entry-only
+  guard is blind to precisely the failure that opened this class four days ago — `og-card.png` in the
+  repo while every shared link unfurled a stub (`5d6893c`). Following the prescription literally would
+  have shipped a guard that could not see its own precedent.
+- **`data/market.json` is reported and never fatal.** The owner's daily job rewrites it, so it
+  diverges from any build by design. W-5's lesson and W-7.1's own step 3 both say a guard that goes red
+  every day for an expected reason is a warning nobody reads.
+
+Exit codes follow `check-analytics.mjs`: **0** in sync, **1** diverged, **2** no verdict.
+
+**The controls, and the one that mattered.** Four ways exist to get a green from a blind instrument,
+and each refuses a verdict instead. All four were *run*, not reasoned:
+| control | how it was proved | result |
+|---|---|---|
+| catch-all host (a nonexistent path must 404) | live request to `/assets/index-checkDeployedControl000.js` | **404**, fires |
+| the page is not the app (a Private Netlify site serves a **login page with HTTP 200**, which passes the 404 control) | extraction run against a login-page fixture and a real one | no entry found → no verdict; real page → entry extracted |
+| `dist/` stale | `touch src/App.jsx`, re-run | **exit 2**, names the file and both timestamps |
+| build inputs dirty | untracked probe under `src/`, `dist/` deliberately kept newer so this control was tested in isolation rather than shadowed by the staleness one | **exit 2** |
+
+⚠️ **Two corrections this run made to itself, both caught by measurement rather than by re-reading.**
+1. **The first `index.html` filter under-stripped, and reported a false divergence.** Netlify injects
+   one comment and two `<meta>` tags; **the comment spans three lines** and my per-line
+   `<!-- .*netlify.* -->` matched none of them, so three lines leaked through and `index.html` came back
+   `✗` for a reason that was pure instrument. It is stripped as a block now — and, more to the point,
+   **the completeness of the strip is proved rather than asserted**: `--self-test` neutralizes the one
+   genuine difference (the entry hash) and requires the two documents to be *identical*, which they
+   are. That is the positive direction — the proof that this check **can go green** — obtained today
+   without waiting for a deploy.
+2. **A control test read `tail`'s exit code through a pipe** (`node … | tail; echo $?`) and printed
+   `EXIT=0` for a run that had exited 2. Re-run without the pipe. This is the exact idiom this project
+   has been bitten by before; it cost nothing here only because the printed text disagreed with the
+   code and I read both.
+
+**One honest over-sensitivity, kept.** `package.json` is a build input, so editing an npm *script*
+trips the staleness check even though it cannot change a byte of the bundle — which happened during
+this run, immediately after wiring `check-deployed` in. Kept, with the reason in the header: a
+dependency bump *is* a build input, the error direction is "no verdict" rather than a false pass, and
+the remedy is a one-second rebuild.
+
+**What it cannot do, stated so nobody looks for it.** It cannot tell you *which* commit is deployed —
+a built artifact carries no commit id and nothing records the deploy. `--since <ref>` lists what is
+undeployed if you can supply that ref yourself. **Recording it at deploy time was considered and
+deliberately left out**: it would add one more manual step to a procedure whose manual steps being
+forgotten is the entire reason this file exists.
+
+**Verified.** `npm test` **exit 0** (8 checks, 1 pre-existing warning: the W-7.2 log floor).
+`npm run build` exit 0. `npm run check-deployed` against the live site: **exit 1**, naming the bundle
+divergence and, under `--since 5d6893c`, all six undeployed commits — the same six W-7.1 lists.
+`--self-test` **exit 0**. README § Deploying gains the check as step 3 of publishing an update, plus a
+section on why the rest of the suite cannot see the live site.
+
+**Adversarial self-check (step 5).** No blindspot-register regression: this run adds no lesson,
+market or kids content and touches no user-facing copy — the only prose is a build script's header and
+README's deploy section; `npm run check-blindspot` passes inside `npm test`. No hardcoded current date
+or live-looking figure ships in the app (the dates here are in a log and a comment, and the one date in
+the script header is a "measured on" attribution). No `DECISIONS.md` conflict: this reads
+`localStorage` nothing, adds no dependency, and does not touch the content-module or build decisions.
+Not a redo — nothing in "Completed and pruned" builds a deployed-artifact check, because until
+2026-09-05 there was no deployed artifact to check. On my own verification claim: an independent
+reviewer re-running `npm run check-deployed` today gets exit 1 with the same two problem lines, and
+that is **only true until someone redeploys** — after step 1 the same command should print exit 0, and
+if it does not, this entry is the thing to doubt.
+
+**Next run: W-7.1 step 1 — `npm run build` and redeploy `dist/`**, then `npm run check-deployed` to
+confirm it flips to exit 0. That is now a verifiable action rather than a reported one. Step 3 (the
+deploy cadence, `DECISIONS.md`) is the owner's call and is unchanged.
 
 ### 2026-09-06 (owner-directed, interactive: "do the npm run clean-tree script too" — overriding the previous run's own W-6.2 rule 3 decline) — the recipe is no longer written down anywhere, and the negative control that proves the script can fail came back GREEN the first time, because it was planted in a shape §26 does not read
 

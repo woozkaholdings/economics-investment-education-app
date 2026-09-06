@@ -108,9 +108,45 @@ last deploy.**
 
 1. `npm run build`.
 2. Drag `dist/` (or a zip of it) onto the project's Deploys page in Netlify.
+3. **`npm run check-deployed`** — confirm the live site is now serving this tree.
 
 Market data freezes at whatever `public/data/market.json` held at build time — see
 "After it is up" below.
+
+### ⛔ `npm run check-deployed` — because merging is no longer shipping
+
+Added 2026-09-06. **Nothing else in this repo can see the deployed artifact.** `npm test`
+(8 checks), `check-blindspot`, `check-claims` and `refresh-readiness` all certify the working
+*tree*; every one of them stays green while the live site serves something else. Before
+2026-09-05 that was harmless, because merging to `main` *was* shipping and there was nowhere
+else for a fix to go. Since the app went live it is false, and the gap is not hypothetical:
+measured 2026-09-06, the live site was **six commits behind `main`** and still taught that a
+recession is when prices fall — a factual economics error corrected in the repo the day
+before, sitting in front of learners alongside a screen-reader defect and 15 truncated quiz
+explanations.
+
+The check fetches the live site and compares it to `dist/`:
+
+- **App code** — the content-hashed entry bundle. Vite renames it whenever any module in the
+  graph changes, so one filename comparison covers all of `src/`; matching names are then
+  compared byte-for-byte.
+- **Unhashed `public/` files** (`og-card.png`, `icon.svg`, `index.html`) by sha256. These are
+  *not* imported by the entry bundle, so an entry-only check is blind to them — which is
+  exactly how the og:image card sat in the repo for a day while every shared link unfurled a
+  text stub. `index.html` is compared modulo the one comment and two `<meta>` tags Netlify
+  injects.
+- **`data/market.json`** is reported and never fails the verdict: the owner's daily job
+  rewrites it, so it diverges from any build by design, and a guard that goes red every day
+  for an expected reason is a warning nobody reads.
+
+**Exit codes: `0` in sync · `1` diverged · `2` no verdict.** It is not in `npm test` — it
+makes a network call, and `npm test` must keep passing offline on a fresh clone. It refuses a
+verdict rather than passing when it cannot measure: if a nonexistent path does not 404 (a
+catch-all host or proxy), if the live document contains no Vite entry (a Netlify site set to
+*Private* serves a **login page with HTTP 200**), if `dist/` is older than any build input, or
+if build inputs are uncommitted. `npm run check-deployed -- --self-test` proves the injected-tag
+filter is complete; `-- --since <commit>` lists what is undeployed if you know the last
+deployed commit — nothing records it, so the script cannot work that out for itself.
 
 ### How the first deploy actually went — two things the documented Drop flow does not say
 

@@ -17,6 +17,7 @@
     "check-log-size": "node scripts/check-log-size.mjs",
     "clean-tree": "bash scripts/clean-tree.sh",
     "analytics-check": "node scripts/check-analytics.mjs",
+    "check-deployed": "node scripts/check-deployed.mjs",
     "jargon": "node scripts/jargon-candidates.mjs",
     "review-status": "node scripts/translation-review.mjs report",
     "market": "node scripts/fetch-market-data.mjs",
