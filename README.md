@@ -35,7 +35,16 @@ npm test
 
 Runs `scripts/check-data.mjs`, a fast (~5s) structural check over `src/locales/` and `src/content/`: every language has the same translation keys, every lesson/quiz/glossary/kids entry is present and non-empty in all 5 languages, quiz answers are in range, and every `t.someKey` reference anywhere under `src/` resolves to a real translation key. Catches a missing language field or a dangling reference without needing a browser.
 
-`npm test` then chains four more checks: `scripts/check-blindspot.mjs` (the `LAUNCH_PLAN.md` §10 content rules), `scripts/check-claims.mjs` (`CLAIMS.md`'s §9.1 register), `scripts/check-backlog.mjs` (`AGENT_LOG.md`'s item numbering), and `scripts/refresh-readiness.mjs --check`, which recomputes `LAUNCH_READINESS.md`'s catalog and translation-volume figures from the content and fails if the document disagrees. Run `npm run readiness` to print those figures, or `npm run readiness -- --write` to update the document after a content change.
+`npm test` then chains seven more checks: `scripts/check-blindspot.mjs` (the `LAUNCH_PLAN.md` §10 content rules), `scripts/check-claims.mjs` (`CLAIMS.md`'s §9.1 register), `scripts/check-backlog.mjs` (`AGENT_LOG.md`'s item numbering), `scripts/check-payload.mjs` (bundle size), `scripts/check-measurements.mjs`, `scripts/check-log-size.mjs` (`AGENT_LOG.md`'s size budgets), and `scripts/refresh-readiness.mjs --check`, which recomputes `LAUNCH_READINESS.md`'s catalog and translation-volume figures from the content and fails if the document disagrees. Run `npm run readiness` to print those figures, or `npm run readiness -- --write` to update the document after a content change. (This sentence said "four more" and named four of the seven until 2026-09-06; it was written when there were four.)
+
+### Checking a clean tree
+
+```bash
+npm run clean-tree                  # git archive HEAD, then npm test in the copy
+npm run clean-tree -- --clone       # same, from a real git clone
+```
+
+`npm test` runs against the *working* tree, so an in-flight change can make it red for reasons that have nothing to do with your edit. `scripts/clean-tree.sh` runs the suite against a pristine copy of a committed tree instead, symlinking `node_modules` rather than copying it: green there and red here means the working tree caused it. The two modes are not interchangeable — an archive copy is not a git repo, so `scripts/check-data.mjs`'s doc-path check falls back to walking the filesystem, while a clone exercises the git-index path this tree uses. The copy is deleted on success and kept, with its path printed, on failure.
 
 ## Building
 

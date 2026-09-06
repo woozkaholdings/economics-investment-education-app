@@ -15,6 +15,7 @@
     "check-payload": "node scripts/check-payload.mjs",
     "check-measurements": "node scripts/check-measurements.mjs",
     "check-log-size": "node scripts/check-log-size.mjs",
+    "clean-tree": "bash scripts/clean-tree.sh",
     "analytics-check": "node scripts/check-analytics.mjs",
     "jargon": "node scripts/jargon-candidates.mjs",
     "review-status": "node scripts/translation-review.mjs report",

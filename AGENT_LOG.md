@@ -4684,19 +4684,21 @@ apart by reading the failure. The control is a pristine copy of `HEAD`, which is
 to the repo:
 
 ```bash
-SCRATCH="${SCRATCH:?set to your session scratchpad directory}"   # never defined for you
-mkdir -p "$SCRATCH/head"                                         # tar -x -C does NOT create it
-git archive HEAD | tar -x -C "$SCRATCH/head"
-ln -sfn "$PWD/node_modules" "$SCRATCH/head/node_modules"         # do NOT cp -R: slow enough to time out
-cd "$SCRATCH/head" && npm test
+npm run clean-tree                  # git archive HEAD — §26's filesystem fallback
+npm run clean-tree -- --clone       # real git clone   — §26's primary git-index path
+npm run clean-tree -- --ref <sha>   # any commit-ish; archive mode also takes a tree-ish
 ```
 
-**⚠️ The first two lines were added 2026-09-06 after RUNNING this block verbatim, which is the only
-way any of these three recipes has ever been checked.** `$SCRATCH` is used in three code blocks in
-this note and set in none of them, and `tar -x -C` does not create its destination — verbatim, the
-block dies on `tar: could not chdir to '/head'`. Neither omission is dangerous, both are loud, and
-both cost a run its first attempt. **A recipe in prose is not executed by anything, which is the
-whole class W-6.1's stale `cp` line belongs to.**
+⛔ **THE RECIPE IS NO LONGER WRITTEN DOWN — `scripts/clean-tree.sh` IS the recipe (2026-09-06,
+owner-directed), and this note must never restate its steps again.** It was five lines of prose here
+for six weeks and it was **wrong twice**: it carried a `cp economic-cycles-v*.jsx` step deleted from
+one copy of the recipe and not the other (the only known way to make this suite fail on a clean
+tree — it makes six §26 `path-ok` markers resolve, so all six report *stale* and the count lands at
+13 against 20), and once that was fixed the surviving block still did not run, because `$SCRATCH` was
+used in three code blocks here and defined in none and `tar -x -C` does not create its destination.
+**Both were found by executing the prose, and neither by reading it.** The script cleans up after
+itself on success and **keeps the copy, with its path, on failure**, so a red run can be read where
+it happened.
 
 **⚠️ UPDATED 2026-08-30 (W-6.1, route (c)): do NOT copy the prototypes in any more.** This recipe used
 to carry a third line, `cp economic-cycles-v5.jsx economic-cycles-v6.jsx "$SCRATCH/head/"`, because
@@ -4711,20 +4713,24 @@ whatever their imports look like at the top. With that one line, the `HEAD` copy
 **exit 0**. That gives a two-sided answer: **red on the working tree and green on the `HEAD` copy means
 the owner's dirt caused it; red on both means you did.**
 
-⚠️ **A note, not a numbered item (W-6.2 rule 2): the durable fix for this class is to stop writing
-the recipe down.** It has now been wrong twice — the `cp economic-cycles-v*.jsx` line that survived
-in W-6.1 after being deleted here, and the two missing lines above — and each time a run paid for it
-with a lost baseline. Five lines behind `npm run clean-tree` (`mktemp -d`, archive, symlink, `npm
-test`) cannot drift from what runs, because it *is* what runs. **Not built 2026-09-06, deliberately:**
-W-6.2 rule 3 asks for the learner-visible failure a new check would have caught, and there is none —
-this is a process defect, and `scripts/` is 2.17x the app it measures (W-6.3). It is written here so
-the next run that reaches for it is choosing, not re-deriving.
+✅ **BUILT 2026-09-06 the same day it was filed, owner-directed ("do the `npm run clean-tree` script
+too").** The note below declined it under W-6.2 rule 3 and W-6.3; **the owner overrode that, and the
+decline is kept rather than deleted because the reasoning was sound and the call was not a run's to
+make.** ORIGINAL NOTE:
+> ⚠️ **A note, not a numbered item (W-6.2 rule 2): the durable fix for this class is to stop writing
+> the recipe down.** It has now been wrong twice — the `cp economic-cycles-v*.jsx` line that survived
+> in W-6.1 after being deleted here, and the two missing lines above — and each time a run paid for it
+> with a lost baseline. Five lines behind `npm run clean-tree` (`mktemp -d`, archive, symlink, `npm
+> test`) cannot drift from what runs, because it *is* what runs. **Not built 2026-09-06, deliberately:**
+> W-6.2 rule 3 asks for the learner-visible failure a new check would have caught, and there is none —
+> this is a process defect, and `scripts/` is 2.17x the app it measures (W-6.3). It is written here so
+> the next run that reaches for it is choosing, not re-deriving.
 
 **A `git archive` copy is not a git repo, and §26 knows.** It falls back to the filesystem walk there,
 which is correct *in that copy specifically* because an archive contains precisely the tracked set —
 but only while nothing untracked is copied in, which is the whole reason the `cp` line above had to go.
-If you need a control that exercises §26's PRIMARY path instead, use a real `git clone -q . "$SCRATCH/gitclone"`;
-it is a git repo, so it resolves against the index the way the owner's tree does. Used this run to prove
+If you need a control that exercises §26's PRIMARY path instead, use `npm run clean-tree -- --clone`;
+a clone is a git repo, so it resolves against the index the way the owner's tree does. Used to prove
 `refresh-readiness.mjs`'s failure was the owner's new third lesson track and not a regression — see
 backlog item 77.
 
@@ -4981,6 +4987,88 @@ zero meaningful: `selftest PASS (8/8 controls fired, plantsRemoved true)` and, p
 finding(s); V vacuous; U unavailable`. A bare "no accessibility issues found" is not a result.
 
 ## Run log
+
+### 2026-09-06 (owner-directed, interactive: "do the npm run clean-tree script too" — overriding the previous run's own W-6.2 rule 3 decline) — the recipe is no longer written down anywhere, and the negative control that proves the script can fail came back GREEN the first time, because it was planted in a shape §26 does not read
+
+**Provenance, stated because it matters for W-6.2/W-6.3.** The previous entry filed this as a note
+and **declined to build it**, on the grounds that rule 3 asks for a learner-visible failure and a
+stale sentence in a log file has none. **The owner overrode that.** The decline is kept in the
+Environment note rather than deleted — the reasoning was sound and the call was not a run's to make.
+
+**What shipped.** `scripts/clean-tree.sh` (112 lines, mostly the header explaining why it exists) and
+`npm run clean-tree`. Three flags, and each earns its place:
+- **default `--archive`** — `git archive <ref> | tar -x` into `mktemp -d`, symlink `node_modules`,
+  `npm test`. This is §26's **filesystem fallback** path.
+- **`--clone`** — a real `git clone`, which is §26's **primary git-index** path. ⚠️ **Not
+  interchangeable, and this is the reason both modes exist:** an archive copy is not a git repo, so a
+  green archive run is evidence about the fallback and nothing else. Until this date, "a fresh clone
+  exits 0" had been inferred from archive runs more often than measured.
+- **`--ref <sha>`** — any commit-ish, or in archive mode any **tree-ish**, which is what makes an
+  honest negative control possible without touching a single ref.
+
+**The controls, and the first one is the finding.**
+- **A.** `npm run clean-tree` on `HEAD` → **exit 0**, §26 reporting *resolved against the filesystem
+  (not a git repo)*, 20 exempted, 140 files. Copy removed, `mktemp` dir count back to 0.
+- **B.** `--clone` → **exit 0**, §26 reporting *resolved against the git index*, 20 exempted, 140
+  files. The two modes visibly took different paths, which is the only proof that `--clone` is not
+  decoration.
+- **C — ⛔ THE NEGATIVE CONTROL CAME BACK GREEN AND MEANT NOTHING.** I built a tree carrying a
+  citation of a file that does not exist — a temp `GIT_INDEX_FILE`, `git hash-object -w`,
+  `git write-tree`, **no ref touched, working tree untouched, `HEAD:README.md` verified unchanged
+  afterwards** — and `npm run clean-tree -- --ref <tree>` exited **0**. The plant was proven to have
+  landed (`git cat-file blob <tree>:README.md` and the extracted archive both end with it), so the
+  script and `--ref` were fine. **§26 reads backticked paths and Markdown links; my plant was a bare
+  prose path, which §26 correctly ignores.** Re-planted as `` `docs/nope-does-not-exist.md` `` →
+  **exit 1**, `FAIL: §26: README.md:210`, and the copy **KEPT** at its printed path. **A control has
+  to be planted in the shape the instrument reads** — the same lesson item 167's fourth note learned
+  when an English doubled-word probe was pointed at Spanish, arriving this time through the target's
+  grammar rather than its alphabet. Had I stopped at the first green, I would have shipped a script
+  whose ability to report failure was untested and reported it as verified.
+- **D.** `--clone --ref <tree-ish>` → git cannot check out a tree, and the first version **aborted
+  mid-setup under `set -e` and left a `mktemp` directory behind**. Two fixes, both found by this
+  control rather than by reading: an up-front `rev-parse --verify "$REF^{commit}"` guard that names
+  the other mode (`exit 2`), and a `trap cleanup EXIT` so the copy is removed on **every** path
+  except a suite that actually ran and failed. Re-run: clear message, **0 leftovers**.
+- Exit status is `npm test`'s, **unpiped** — deliberately, because a status read through a pipe is
+  the last command's, and a wrapper that always exits 0 is exactly the failure this script would
+  otherwise introduce.
+
+**The recipe is now written down nowhere.** The Environment note's `bash` block is replaced by the
+three commands; its reasoning prose (the two-sided diagnostic, the load-bearing `node_modules`
+symlink, ⛔ never copy an untracked file in) is kept and moved into the script's header where the
+steps are. **The note now says the steps must never be restated there again**, which is the actual
+remedy for a recipe that was wrong twice in six weeks in two places that could not see each other.
+
+**README:** new *Checking a clean tree* section under Testing. ⚠️ **And one adjacent
+documentation-integrity fix, flagged rather than made silently:** the paragraph I appended to said
+`npm test` *"then chains four more checks"* and named four — it chains **seven**, and
+`check-payload.mjs`, `check-measurements.mjs` and `check-log-size.mjs` were absent from a sentence
+enumerating the suite. Corrected in place with the count and the reason it was ever right.
+
+**Step 5 — adversarial self-check.** *Blindspot register:* no file under `src/` changed at all, so
+§10.1/§10.2/§10.3 are untouched by construction; `npm run check-blindspot` PASS. §2.3: no date or
+figure added under `src/content/`. *DECISIONS.md conflict:* none — no dependency, no state, and the
+script only reads the repo (`git archive`/`git clone` into `mktemp -d`); it writes nothing inside it.
+*Already-done backlog item:* no — this is the note the previous entry filed, built the same day at
+the owner's direction, which is the one case W-6.2's residual rule explicitly does not govern.
+*My own verification claim:* every result above is reproducible from `npm run clean-tree`, its two
+flags, and the six-line `GIT_INDEX_FILE`/`write-tree` plant; the staged suite exits **0** and §26 now
+resolves **398** references across 5 docs (up 6 — the new backticked script paths, `scripts/clean-tree.sh`
+among them, all resolving against the index).
+*W-6.3, re-measured:* `scripts/` **19,193 → 19,305** (+112), `src/` minus content and locales
+unchanged at **8,833** — **2.173x → 2.186x**. **This is process mass and it moved the ratio the wrong
+way**, which the previous entry is on record as declining for exactly that reason. It ships because
+the owner said to, and the argument in its favor is narrow and worth stating: it does not add a
+property to watch, it **deletes** two copies of a recipe that had already been wrong twice.
+
+**Top item for the next run.** Still open and unparked: 26 (closable), 27, 70/71, 74, 76, 94,
+117(a)/(b), 155's probe, 160's stale `quizMeta.js` header comment. ⚠️ **The repo is SEVEN commits
+ahead of the last deploy** (five of them content). **O-2 remains the entire critical path**: one
+PostHog account and one pasted `phc_` key, with `npm run analytics-check` standing by.
+
+**Owner tree:** `git status` throughout showed the owner's untracked `UIUX/` and the empty `course`
+file, **both untouched**; `HEAD` unmoved at `f8b03a5` when this was written;
+`public/data/market.json` untouched.
 
 ### 2026-09-06 (owner-directed, interactive: "do the fresh-clone recipe correction next") — the priority block that exists because `npm test` failed on a fresh clone now contains the only known way to make `npm test` fail on a fresh clone, and the recipe that replaced it does not run verbatim either
 
