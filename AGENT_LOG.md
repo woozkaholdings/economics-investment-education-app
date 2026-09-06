@@ -1593,6 +1593,43 @@ diff the first heading against the previous section's first heading.
       stand; the coverage did not.** `A11yStates.coverage()` plus the Tab step now in the header
       recipe are the fix — see item 149.
 
+168. **✅ DONE 2026-09-06 (scheduled dev-agent), the same run it was found — content and guard in one
+    commit. [Content/QA] A same-track cross-reference that points FORWARD is a pointer at a LOCKED
+    lesson, and three of them were written in backward-citation grammar.**
+    - **The standing rule, which is the part to keep.** `App.isUnlocked` gates on the previous lesson
+      **in display order**, so a reference to a lesson later in the same track names something the app
+      will not open. That is fine as a **signpost** (*"more on that in “Interest Rates”"* — lesson 30
+      has carried one correctly the whole time) and a defect as a **presupposition** (*"the same target
+      **from** …"*, *"the test **from** … stops being a tidy definition"*). **Write forward references
+      forward.**
+    - **Guarded by `check-data.mjs` §75**, a reviewed LIST (4 pairs, each with the phrasing that makes
+      it acceptable) rather than a ban, because the distinction above is a reading and not a regex.
+      Any **unlisted** forward pair fails. Proven to fail two ways, on injections restored from a
+      scratchpad copy: a planted `As “Three Rules of Thumb” showed`, and — with the corpus
+      **unmodified** — deleting the `43→16` entry, which reproduces the original defect's own message.
+    - ⚠️ **DO NOT read §75's forward count as a defect count.** It is **5** before the fix and **5**
+      after, on purpose: the references still point forward, which is correct. The grammar is what
+      changed. A future run "improving" this by driving the count down would be deleting legitimate
+      signposts.
+    - ⛔ **BUILD THE INSTRUMENT ON DISPLAY ORDER, NEVER ON LESSON IDS**, and §75's control C exists to
+      make that unfaultable: money runs `41,42,43,44,16,…`, so lesson 16 citing lesson 43 is
+      **backward** while `16 < 43`. An id-based version reports a clean corpus and is wrong in both
+      directions at once.
+    - **Two notes filed here rather than as numbered items (W-6.2 rule 2).**
+      (i) **Cross-track references also use past tense for lessons the reader may never have opened**
+      — *"“The 4 Phases of Economic Cycles” **showed** how…"* is one of 12 cross-track instances.
+      Deliberately **out of §75's scope**: the tracks are independent, nothing orders them, and item
+      132 built these with an "(in <track>)" tag for exactly this reason. Raising it is an item-132
+      question, not a §75 gap. **Zero action unless the owner wants the convention changed.**
+      (ii) **§58 counts 50 English title references where §75 counts 64, and neither is blind** — §58
+      pools per (lesson, target) while §75 counts occurrences and also reads `takeaway`/`thinkAbout`.
+      Recorded so a future run does not "reconcile" them into agreement.
+    - **The cause is worth naming: prose written against one display order, read in another.**
+      `lessonsByTrack()` has been reordered twice (2026-08-07, 2026-08-18) and a reorder can turn a
+      backward reference forward **without touching a character of prose**. Lesson 43's was not that —
+      `b6c9bc9` put lessons 41-44 in front deliberately and the reference was written forward — but
+      the class is the same, and §75 is what makes the next reorder loud.
+
 167. **[Content/Accuracy — filed 2026-09-05 by the run that fixed lesson 34's US-1930s claim, from
     the same close reading of the economy track. All three are LIVE and were read on the built app,
     not inferred; none is a residual of that run's own edit.]**
@@ -4901,6 +4938,161 @@ zero meaningful: `selftest PASS (8/8 controls fired, plantsRemoved true)` and, p
 finding(s); V vacuous; U unavailable`. A bare "no accessibility issues found" is not a result.
 
 ## Run log
+
+### 2026-09-06 (scheduled dev-agent, self-picked: a defect class never swept in this repo — the DIRECTION of a cross-reference) — lesson 43 told the reader that "the asset-versus-liability test from “Does It Put Money In Your Pocket, or Take It Out?”" stops being a tidy definition, two lessons before the app will let them open it
+
+**Where the pick came from.** The previous run filed no residual and closed its chain, so **W-6.2
+rule 1** is satisfied either way. Three cheaper candidates were opened first and **all three were
+refuted before any edit**, which is the reason to record them:
+1. **A PWA manifest / "add to home screen".** The app is mobile-first, deployed to the web, and has
+   no manifest — which looks like a launch gap. It is not a run's call: `DECISIONS.md`'s Expo entry
+   says the agent must "not deepen the web-only investment beyond already-curated P2 items", and
+   making the web build installable is exactly the surface the held Expo-vs-Vite decision governs.
+   **Not built, deliberately. Do not re-derive this as an oversight.**
+2. **The Leitner scheduler.** A silently wrong due date would break the app's retention mechanic
+   invisibly — but `check-data.mjs` §8/§8b already own it, keyed by stable question id. Covered.
+3. **Item 160's option-length warning (56.5%).** Its own ⛔ stop line holds: the remainder is class B,
+   which means new distractor prose in four unreviewed languages, which is O-3's decision.
+
+**⛔ Step 3.5 — the premise here is a MEASUREMENT I took, not a backlog item's claim, so the burden
+is the same and the controls are planted rather than assumed.** The class: an in-prose reference to
+another lesson **in the same track** that points FORWARD in display order. `App.isUnlocked` gates on
+the previous lesson in **display order**, so a forward target is *locked* — the learner is pointed at
+something the app refuses to open.
+- **The instrument** extracts English title-marked spans (§58's shape: `“…”`, head-or-full-title
+  exact match) and classifies each against `lessonsByTrack()` position.
+- **Six planted probes, both directions, all fired before the corpus was read.** The load-bearing one
+  is **C**: the money track's display order is `41,42,43,44,16,…`, so lesson 16 citing lesson 43 must
+  read **backward** even though `16 < 43` as ids. An instrument built on ids would call it forward and
+  report a clean corpus. It read backward. An **unmarked** title mention correctly registered as
+  nothing (fourteen lesson heads are ordinary nouns — "Credit", "Taxes").
+- **Live corpus: 64 English title references — 47 backward, 12 cross-track, 5 same-track FORWARD**
+  across 4 distinct pairs.
+
+**Reading all five is what turned a count into a disposition, and two of the four were NOT defects.**
+- **L30 → L35 is correct and stays untouched**: *"(more on that in “Interest Rates”)"* — an explicit
+  signpost that claims nothing about what the reader has seen. The corpus already had the right idiom.
+- **L32 → L37 is fine**: *"it's the situation “QE & QT” describes"* is neutral present tense **and**
+  the same sentence glosses quantitative easing inline, so it stands without the target.
+- **L35 → L39 (×2) and L43 → L16 use BACKWARD-CITATION GRAMMAR for a locked lesson.** *"the same
+  target **from** the indicator dashboard in …"*, *"weighing the same **indicators from** …"*, *"the
+  asset-versus-liability test **from** … stops being a tidy definition"*. The corpus's 47 backward
+  references establish that grammar — *"“Taxes” **showed** that…"*, *"the diversification idea **from**
+  “Stocks, Bonds & Diversification”"* — so these three read as *recall*, and there is nothing to recall.
+- **The L43 one is the sharp instance and it is not merely awkward.** The whole sentence's payoff is
+  the test, and **"asset-versus-liability" appears nowhere earlier in the money track** — measured:
+  lesson 41 has zero mentions of asset/liability, lesson 42 has one incidental *"an asset you own"*.
+  Not a reorder casualty either: `b6c9bc9` **"Open the money track with the income-hierarchy arc
+  (lessons 41-44)"** put 41-44 in front deliberately, so the reference was written forward.
+
+**The fix — three sentences, five languages, 15 exact-match replacements.** Each title reference is
+**kept** (§58 requires it to survive translation); only the grammar around it moved, plus one inline
+gloss so lesson 43's sentence stands on its own:
+- L35: *"— the same target the indicator dashboard in “Reading Economic Indicators” comes back to
+  later)"* and *"weighing the indicators “Reading Economic Indicators” goes through later."*
+- L43: *"the asset-versus-liability test — does a thing put money in your pocket, or take it out? —
+  stops being a tidy definition … . “Does It Put Money In Your Pocket, or Take It Out?” takes that
+  test up in full later."*
+⚠️ **The forward count is DELIBERATELY UNCHANGED at 5.** The instrument measures direction and the
+references still point forward — that is correct, because a signpost *should*. Anyone re-running it
+expecting 5 → 2 is reading the wrong number; what changed is the grammar, and the guard below is what
+holds it.
+
+⛔ **A typo in my own Korean needle is why the patcher asserts uniqueness, and it earned its keep on
+the first run.** The script requires each needle to occur **exactly once** and aborts otherwise; it
+aborted at `연 2% 안팔` (should be `안팎`) after two files were already written. Had it used a plain
+replace, that edit would have silently done nothing and the Korean would have shipped unfixed while
+every other check stayed green — §16/§58 both pass a translation that keeps its title.
+
+**The guard: `check-data.mjs` §75, and it is a reviewed LIST rather than a ban.** A forward reference
+is legitimate as a signpost and a defect as a presupposition, and that distinction is a reading, not
+a regex — so §75 asserts the reviewed *set*: each of the 4 pairs is listed with the phrasing that
+makes it acceptable, and **any unlisted forward pair fails**. New ones arrive two ways: an author
+writes one, or a display-order change turns a backward reference forward **without touching a
+character of prose**, which `lessonsByTrack()` has now done twice (2026-08-07, 2026-08-18).
+- **W-6.2 rule 3, the learner-visible failure in one sentence:** it would have caught lesson 43
+  telling the reader about "the asset-versus-liability test **from**" a lesson the Learn path shows as
+  *"Complete previous lessons first"*.
+- **And that is demonstrated, not asserted.** Two injections, each proven to have landed and each
+  restored from a scratchpad copy (never `git checkout --`): (i) an `As “Three Rules of Thumb” showed`
+  planted in lesson 35 → §75 fails naming the 5-lesson distance; (ii) with the corpus **unmodified**,
+  deleting the `43→16` entry from the list → §75 fails with the original defect's own message. The
+  list is load-bearing in both directions.
+- §75 also reports listed entries that have gone **inert** (a pair that stopped being forward), so the
+  list cannot quietly accumulate exemptions for references that no longer exist.
+
+**Why nothing already in the file saw this.** §16 checks a reference **resolves** and that the
+translations **agree with English** — its own header says it "cannot verify English is right". §58
+checks a reference **survives translation**. Both are fully satisfied by a reference that points at
+the right lesson at the wrong time. Cross-**track** references are out of §75's scope on purpose: the
+tracks are independent, nothing orders them, and item 132 built 40 of them deliberately with an
+"(in <track>)" tag for exactly this reason.
+
+**Verification — live on the built app, `dist/` served statically, one action per call and never
+reading in the same call as the click.**
+- **The premise itself, confirmed in the real UI rather than from the source:** with lesson 43 as the
+  *Current lesson*, the Learn path renders "Does It Put Money In Your Pocket, or Take It Out?" as
+  **"Complete previous lessons first"**. The prose cited a test "from" a lesson the app was refusing
+  to open, on the same screen.
+- Lesson 43 **en**: the reworded sentence renders, and **`TERMS IN THIS SECTION: Emergency Fund`
+  still renders on that section** (§17d confirmed in the DOM, not just statically).
+- Lesson 43 **zh**: renders with `《它是把钱放进你的口袋，还是拿走？》` and the inline gloss intact
+  (`ecycles_lang` set **raw**, not JSON — that read function is part of the instrument).
+- Lesson 35 **en**: both reworded clauses render.
+- `npm test` **0 failures**, warnings **4 and identical to the baseline taken before editing**
+  (review coverage, translation completeness, quiz option-length cue, log floor). `npm run build`
+  clean. `npm run check-blindspot` **0 failures**. §58 re-reports **50 English title references / 200
+  translated instances / 0 dropped**.
+- ⚠️ **§58 counts 50 where §75 counts 64, and neither is wrong** — §58 pools per (lesson, target)
+  while §75 counts occurrences, and §75 also reads `takeaway`/`thinkAbout`. Noted so the next run does
+  not read the gap as one of them being blind.
+
+**Step 5 — adversarial self-check.**
+*Blindspot register:* clean, checked not assumed. §10.2 — `dalio` returns **0** added lines
+(positive control: `forward` returns 19 from the identical command shape). §10.1 — `check-blindspot`
+PASS, and the new prose recommends nothing; `you should` returns 0 added lines under `src/content/`.
+§10.3 — untouched. §2.3 — **0** added lines under `src/content/` match a `YYYY-MM-DD`; the dates in
+§75 are code comments recording when a thing was measured, which is this repo's own convention.
+*DECISIONS.md conflict:* none — content stays `.js` modules, no new dependency, no state, and the
+Expo entry was consulted **before** the run picked its item rather than after (candidate 1 above).
+*Already-done backlog item:* no. Item 84 converted references number→title, item 132 built the
+cross-track set, item 138/§58 checks survival, item 60 fixed a *jargon* forward reference (a term used
+before defined). **None of them is direction**, and `grep -n "forward reference\|points forward\|reference
+direction"` over `AGENT_LOG.md` + the archive + `DECISIONS.md` + `scripts/` returns only item 60's
+jargon hit.
+*My own verification claim:* every figure is reproducible from the commands named; the two §75
+failures were produced by injections proven to have landed, and the live renders were read out of the
+built `dist/` in two languages.
+*W-6.3 (instrument-to-app ratio):* re-measured, not quoted — `scripts/` **19,004** lines against
+`src/` minus content and locales **8,820**, **2.15x**, up from the previous entry's 2.14x. **This run
+adds 159 lines to `scripts/` and 0 to `src/`, so it moved the ratio the wrong way**, and W-6.3 asks
+which side of that number a proposal falls on. The honest argument for shipping it anyway: the cause
+of this defect is a display-order change, the repo has made two, and the second control above shows
+§75 reproducing this exact defect's message on the unmodified corpus. A content fix without it resets
+the clock rather than closing the class.
+
+**O-3 accounting.** English prose changed in 2 lessons, so **8 lesson/language pairs went stale** in
+`translation-review-ledger.json` and were re-marked **`ai`, not `human`** (scheduled runs are not
+fluent reviewers) — the O-3 fact that **human review share stays 0%** is unchanged. `npm run readiness
+-- --write` regenerated §4.3's catalog row and §10.4's volume sentence (152,044 → **152,157** en
+chars); neither figure was typed. No language went newly abridged: translation completeness holds at
+**47**.
+
+**Top item for the next run.** ⛔ **Not a residual of this one** — this run files none as an item. Two
+notes are filed under item 168 instead (W-6.2 rule 2). Still open and unparked: 26 (closable), 27, 70/71,
+74, 76, 94, 117, 155's probe, 160's stale `quizMeta.js` header comment, and **the fresh-clone recipe
+correction the 167(c) run filed and nobody has taken** (W-6.1's recipe produces 7 false §26 failures
+because its `cp economic-cycles-v*.jsx` step is now stale — without that step the same recipe exits 0).
+⚠️ **The repo is now FOUR content commits ahead of the last deploy** — `df38ca7`, `992a057`, `855fadd`
+and this one — so nothing about the live site's *content* should be claimed from the repo until it is
+redeployed, which needs the owner's Netlify session.
+**O-2 remains the entire critical path**: one PostHog account and one pasted `phc_` key, with
+`npm run analytics-check` standing by to verify it before it ships.
+
+**Owner tree:** `git status` at run start and again before writing showed the owner's untracked
+`UIUX/` and the empty `course` file, **both untouched**. `HEAD` re-checked before writing and unmoved
+at `855fadd`; the daily market-data job did not fire during the run and `public/data/market.json` is
+untouched at `asOf 2026-09-04`.
 
 ### 2026-09-06 (scheduled dev-agent, picked from `LAUNCH_PLAN.md` §4.3 — the Phase-0 gate is "installer finishes lesson 1", so I walked it) — the Back button threw the learner out of the Reference tab from three levels down, and the draft that fixed it broke a pasted hash, because `popstate` does not mean Back
 

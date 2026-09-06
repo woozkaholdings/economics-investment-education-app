@@ -885,27 +885,27 @@
   },
   "35": {
     "es": {
-      "reviewedBy": "Claude (Opus 5, interactive)",
-      "reviewedDate": "2026-08-20",
-      "sourceHash": "b67c340c1a0c0175",
+      "reviewedBy": "Claude (Opus 5, scheduled dev-agent)",
+      "reviewedDate": "2026-09-06",
+      "sourceHash": "ad72023d1ac46c89",
       "method": "ai"
     },
     "ja": {
-      "reviewedBy": "Claude (Opus 5, interactive)",
-      "reviewedDate": "2026-08-20",
-      "sourceHash": "b67c340c1a0c0175",
+      "reviewedBy": "Claude (Opus 5, scheduled dev-agent)",
+      "reviewedDate": "2026-09-06",
+      "sourceHash": "ad72023d1ac46c89",
       "method": "ai"
     },
     "ko": {
-      "reviewedBy": "Claude (Opus 5, interactive)",
-      "reviewedDate": "2026-08-20",
-      "sourceHash": "b67c340c1a0c0175",
+      "reviewedBy": "Claude (Opus 5, scheduled dev-agent)",
+      "reviewedDate": "2026-09-06",
+      "sourceHash": "ad72023d1ac46c89",
       "method": "ai"
     },
     "zh": {
-      "reviewedBy": "Claude (Opus 5, interactive)",
-      "reviewedDate": "2026-08-20",
-      "sourceHash": "b67c340c1a0c0175",
+      "reviewedBy": "Claude (Opus 5, scheduled dev-agent)",
+      "reviewedDate": "2026-09-06",
+      "sourceHash": "ad72023d1ac46c89",
       "method": "ai"
     }
   },
@@ -1093,27 +1093,27 @@
   },
   "43": {
     "es": {
-      "reviewedBy": "Claude (Opus 5, interactive)",
-      "reviewedDate": "2026-08-27",
-      "sourceHash": "2a88c198d8b8e95b",
+      "reviewedBy": "Claude (Opus 5, scheduled dev-agent)",
+      "reviewedDate": "2026-09-06",
+      "sourceHash": "8b719504f20eeb24",
       "method": "ai"
     },
     "ja": {
-      "reviewedBy": "Claude (Opus 5, interactive)",
-      "reviewedDate": "2026-08-27",
-      "sourceHash": "2a88c198d8b8e95b",
+      "reviewedBy": "Claude (Opus 5, scheduled dev-agent)",
+      "reviewedDate": "2026-09-06",
+      "sourceHash": "8b719504f20eeb24",
       "method": "ai"
     },
     "ko": {
-      "reviewedBy": "Claude (Opus 5, interactive)",
-      "reviewedDate": "2026-08-27",
-      "sourceHash": "2a88c198d8b8e95b",
+      "reviewedBy": "Claude (Opus 5, scheduled dev-agent)",
+      "reviewedDate": "2026-09-06",
+      "sourceHash": "8b719504f20eeb24",
       "method": "ai"
     },
     "zh": {
-      "reviewedBy": "Claude (Opus 5, interactive)",
-      "reviewedDate": "2026-08-27",
-      "sourceHash": "2a88c198d8b8e95b",
+      "reviewedBy": "Claude (Opus 5, scheduled dev-agent)",
+      "reviewedDate": "2026-09-06",
+      "sourceHash": "8b719504f20eeb24",
       "method": "ai"
     }
   },

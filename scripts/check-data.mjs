@@ -11325,5 +11325,164 @@ function trendDirection(src) {
   }
 }
 
+// ═══════════════════════════════════════════════════════════════════════════
+// §75. A SAME-TRACK CROSS-REFERENCE MUST POINT AT A LESSON THE READER CAN
+//      HAVE OPENED — or be on the reviewed list below.
+//
+// THE FAILURE THIS EXISTS FOR, measured 2026-09-06. Lesson 43 ("Does It Stop
+// When You Stop?", money position 3) told the reader "the asset-versus-
+// liability test FROM “Does It Put Money In Your Pocket, or Take It Out?”
+// stops being a tidy definition" — backward-citation grammar aimed at money
+// position 5, which is LOCKED at that point in the path (`App.isUnlocked`
+// gates on the previous lesson IN DISPLAY ORDER). The phrase "asset-versus-
+// liability" appears nowhere earlier in the track, so the sentence's payoff
+// rested on a lesson the reader could not open. Lesson 35 did the same thing
+// twice at "the same target from … “Reading Economic Indicators”" and "the
+// same indicators from …", four lessons ahead of itself.
+//
+// WHY NOTHING ELSE SAW IT. §16 checks that a reference RESOLVES and that the
+// translations agree with English; its own header says it "cannot verify
+// English is right". §58 checks a reference SURVIVES translation. Both are
+// satisfied by a reference that points at the right lesson at the wrong time.
+// Direction has never been checked in this repo.
+//
+// WHY IT IS A LIST AND NOT A BAN. A forward reference is legitimate when it
+// reads as a signpost ("more on that in “Interest Rates”") — lesson 30 has
+// carried one correctly the whole time. It is a defect when the grammar
+// presupposes the reader has already been there. That distinction is a
+// reading, not a regex, so this section asserts the reviewed SET instead: a
+// forward pair that nobody has read fails, and the reviewer records why the
+// listed ones are fine. A new one arrives two ways — an author writes it, or
+// a display-order change turns a backward reference forward without touching
+// a character of prose, which is what `lessonsByTrack()` has now done twice.
+//
+// SCOPE is English lesson prose plus quiz `explain` — the same two surfaces
+// §16 and §58 cover. Cross-TRACK references are out of scope on purpose: the
+// tracks are independent, nothing orders them, and item 132 built 40 of them
+// deliberately (they carry "(in <track>)" for exactly this reason).
+{
+  const before75 = failures;
+
+  // Each entry is a reviewed forward reference: the reader meets `from`
+  // before `to` is unlocked, and that was read and accepted on the date given.
+  const FORWARD_OK = [
+    { from: 30, to: 35, why: 'signpost: "(more on that in “Interest Rates”)" — explicitly forward, claims nothing about what the reader has seen. Pre-dates this section.' },
+    { from: 32, to: 37, why: 'neutral present tense — "it\'s the situation “QE & QT” describes" — and the paragraph glosses quantitative easing inline, so the sentence stands without the target. Read 2026-09-06.' },
+    { from: 35, to: 39, why: "reworded 2026-09-06 from \"the same target from …\"/\"the same indicators from …\" to \"comes back to later\"/\"goes through later\". Two instances." },
+    { from: 43, to: 16, why: "reworded 2026-09-06: the asset-versus-liability test is glossed inline and the pointer moved into its own forward sentence (\"takes that test up in full later\")." },
+  ];
+
+  const displayOrder = new Map();
+  for (const tr of TRACKS) {
+    lessonsByTrack().filter((l) => l.track === tr.key).forEach((l, i) => displayOrder.set(l.id, i));
+  }
+  const trackOf = new Map(lessons.map((l) => [l.id, l.track]));
+  const titleHead = (t) => t.split(":")[0].trim();
+  // Both the full title and its head resolve: the corpus writes “Compound
+  // Interest” for "Compound Interest: Money That Makes Money".
+  const spanToId = new Map();
+  for (const l of lessons) {
+    spanToId.set(l.title.en, l.id);
+    spanToId.set(titleHead(l.title.en), l.id);
+  }
+
+  // English title marks are the curly pair (§56's repertoire). Requiring the
+  // marks is what stops "Credit" and "Taxes" — ordinary common nouns that are
+  // also lesson heads — from reading as references.
+  const refsIn = (text) => {
+    const out = [];
+    const re = /“([^”]{1,160})”/g;
+    let m;
+    while ((m = re.exec(text)) !== null) {
+      const id = spanToId.get(m[1].trim());
+      if (id !== undefined) out.push(id);
+    }
+    return out;
+  };
+
+  const classify = (fromId, text) => {
+    const out = [];
+    for (const to of refsIn(text)) {
+      if (to === fromId) continue;
+      if (trackOf.get(to) !== trackOf.get(fromId)) { out.push({ to, kind: "cross" }); continue; }
+      out.push({ to, kind: displayOrder.get(to) < displayOrder.get(fromId) ? "back" : "forward" });
+    }
+    return out;
+  };
+
+  // ── CONTROLS. Planted probes, both directions, before the corpus is read.
+  // Probe C is the load-bearing one: money display order is 41,42,43,44,16,…
+  // so lesson 16 citing lesson 43 is BACKWARD even though 16 < 43 as ids. If
+  // this section ever gets rewritten against ids it fails here instead of
+  // silently reporting a clean corpus.
+  const PROBES = [
+    ["A back", 40, "see “Transactions”", "back"],
+    ["B forward", 29, "see “Three Rules of Thumb”", "forward"],
+    ["C id-order vs display-order", 16, "see “Does It Stop When You Stop?”", "back"],
+    ["D forward in money", 43, "see “Where Did the Raise Go?”", "forward"],
+    ["E cross-track", 1, "see “Transactions”", "cross"],
+  ];
+  for (const [name, from, text, want] of PROBES) {
+    const got = classify(from, text);
+    if (got.length !== 1 || got[0].kind !== want) {
+      fail(`§75: control ${name} classified ${JSON.stringify(got)} where "${want}" was expected. The direction instrument is wrong, so a clean corpus below would mean nothing.`);
+    }
+  }
+  if (classify(29, "see Three Rules of Thumb").length !== 0) {
+    fail("§75: control F — an UNMARKED title mention registered as a reference. Fourteen lesson heads are ordinary nouns; without the title marks this section would report references the prose never made.");
+  }
+
+  // ── THE REAL CORPUS.
+  const seen = [];
+  const surfaces = [];
+  for (const [idStr, lc] of Object.entries(lessonContent)) {
+    const id = Number(idStr);
+    for (const [i, s] of (lc.sections ?? []).entries()) surfaces.push([id, `lesson ${id} §${i}`, s.body?.en ?? ""]);
+    surfaces.push([id, `lesson ${id} takeaway`, lc.takeaway?.en ?? ""]);
+    surfaces.push([id, `lesson ${id} thinkAbout`, lc.thinkAbout?.en ?? ""]);
+  }
+  for (const q of quizData) surfaces.push([q.lesson, `quiz ${q.id} explain`, q.explain?.en ?? ""]);
+
+  let total = 0;
+  const forward = [];
+  for (const [id, where, text] of surfaces) {
+    if (id === undefined || !trackOf.has(id)) continue;
+    for (const r of classify(id, text)) {
+      total++;
+      seen.push(r.kind);
+      if (r.kind === "forward") forward.push({ from: id, to: r.to, where });
+    }
+  }
+
+  if (total === 0) {
+    fail("§75: no English title references were found at all. The corpus has ~60; a zero means the title marks or the content shape moved and this section is measuring nothing — which looks exactly like a clean result.");
+  }
+
+  const listed = new Set(FORWARD_OK.map((e) => `${e.from}->${e.to}`));
+  for (const f of forward) {
+    if (listed.has(`${f.from}->${f.to}`)) continue;
+    const title = lessons.find((l) => l.id === f.to)?.title.en ?? f.to;
+    fail(
+      `§75: ${f.where} refers to “${title}”, which is ${displayOrder.get(f.to) - displayOrder.get(f.from)} lesson(s) LATER in the same track and therefore locked for a reader at that point. ` +
+        `Read the sentence: if it reads as a forward signpost ("more on that in …"), add {from: ${f.from}, to: ${f.to}} to §75's FORWARD_OK with the phrasing that makes it fine. ` +
+        `If it presupposes the reader has already been there ("the same X from …", "as … showed"), reword it — that is the defect this section exists for.`,
+    );
+  }
+
+  const inert = FORWARD_OK.filter((e) => !forward.some((f) => f.from === e.from && f.to === e.to));
+  for (const e of inert) {
+    console.log(`  §75: note — the reviewed forward pair ${e.from}->${e.to} is no longer a forward reference (reordered, or the reference was removed). The entry is inert and can be deleted.`);
+  }
+
+  if (failures === before75) {
+    const back = seen.filter((k) => k === "back").length;
+    const cross = seen.filter((k) => k === "cross").length;
+    console.log(
+      `  §75 cross-reference direction: ${total} English title reference(s) — ${back} backward, ${cross} cross-track (out of scope), ` +
+        `${forward.length} same-track forward, all ${forward.length} on the reviewed FORWARD_OK list (${inert.length} listed entry/entries inert); 6 control group(s) fired, including id-order-vs-display-order.`,
+    );
+  }
+}
+
 console.log(`\n${failures === 0 ? "PASS" : "FAIL"}: ${failures} failure(s), ${warnings} warning(s).`);
 process.exit(failures === 0 ? 0 : 1);
