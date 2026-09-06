@@ -1750,13 +1750,27 @@ diff the first heading against the previous section's first heading.
       > Historical pattern says recession within 12-18 months. Some say 'this time is different.' What
       > do you think?"* — i.e. it poses as open a window the body has already closed. Same class as the
       > 2026-09-04 QT/tapering and 2s10s finds: a screen disagreeing with itself. Five languages.
-    - **(c) Lesson 32 (Short-Term Debt Cycle) equates an ordinary recession with deflation** —
-      "businesses start cutting prices to attract customers — that's deflation … That's a recession."
-      Most postwar US recessions ran *disinflation*, not a falling price level. ⚠️ **Not measured
-      against the glossary yet** — the glossary's own `Deflation` entry and lesson 34's use of the
-      word have to be read first, because if they already draw the distinction this is a third
-      self-contradiction and if they do not it is a whole-app simplification the owner may have
-      chosen. **Do not treat (c) as confirmed; (a) and (b) are.**
+    - **(c) ✅ DONE 2026-09-06 (scheduled dev-agent). CONFIRMED as a third self-contradiction, and
+      the item's own open question is closed by measurement.** The stop-clause below asked whether the
+      glossary already draws the distinction. It does, in the sharpest possible way: **the `Recession`
+      entry does not mention prices at all** (NBER's broader criteria; its example pairs rising
+      unemployment with falling GDP), so this was never a whole-app simplification the owner chose.
+      `lessonTerms.js` attaches **both** chips to this exact section, so the contradicting definition
+      was one tap below the sentence. Fixed in five languages: businesses **discount**, activity
+      shrinks, that is the recession — and deflation is now a distinct, conditional deeper case that
+      **echoes the glossary's `Deflation` entry** rather than contradicting the `Recession` one.
+      ⚠️ **`disinflation` was deliberately NOT introduced** (zero occurrences corpus-wide; naming it
+      buys a glossary key in five languages to teach a label the lesson does not need), and **both
+      `Deflation` and `Recession` had to stay in the English section** or §17(d) fails the two chips.
+      Lesson 34's "deflationary tools" is the adjective sense and was correctly left alone.
+      ORIGINAL TEXT, kept because the entry above refers to it:
+      > **(c) Lesson 32 (Short-Term Debt Cycle) equates an ordinary recession with deflation** —
+      > "businesses start cutting prices to attract customers — that's deflation … That's a recession."
+      > Most postwar US recessions ran *disinflation*, not a falling price level. ⚠️ **Not measured
+      > against the glossary yet** — the glossary's own `Deflation` entry and lesson 34's use of the
+      > word have to be read first, because if they already draw the distinction this is a third
+      > self-contradiction and if they do not it is a whole-app simplification the owner may have
+      > chosen. **Do not treat (c) as confirmed; (a) and (b) are.**
     - **W-6.2 rule 3, answered:** (a) "a learner divides 9 by 0.9 and gets a different answer than
       the sentence"; (b) "the lesson tells a reader on one screen that the window is open and that it
       closed"; (c) "a learner is taught that recession means prices fall"; (d) "the lesson prints
@@ -1764,7 +1778,10 @@ diff the first heading against the previous section's first heading.
       proposed for any of them** — all four are single sentences, and `scripts/` at 2.15x `src/`
       (W-6.3) says a regex is the wrong instrument. **Honest priority: (b) medium — it is a live
       self-contradiction on the main path; (a) low but near-free; (c) unmeasured.**
-      ⛔ **ONLY (c) IS LEFT. (a), (b) and (d) are done.**
+      ⛔ **ITEM 167 IS FULLY CLOSED 2026-09-06 — (a), (b), (c) and (d) are all done.** Its five
+      notes stay as do-not-re-run records of swept classes.
+      ORIGINAL LINE, kept because the line above supersedes it:
+      > ⛔ **ONLY (c) IS LEFT. (a), (b) and (d) are done.**
       ⚠️ **AND THE W-6.2 rule 1 BAR BELOW HAS LAPSED — corrected 2026-09-05, because it was
       re-read literally rather than carried forward.** Rule 1 reads: *"A run may not take its
       **own previous run's** residual as its headline pick **more than TWICE in a row**."* Both
@@ -4884,6 +4901,110 @@ zero meaningful: `selftest PASS (8/8 controls fired, plantsRemoved true)` and, p
 finding(s); V vacuous; U unavailable`. A bare "no accessibility issues found" is not a result.
 
 ## Run log
+
+### 2026-09-06 (scheduled dev-agent, backlog item 167 (c) — the last open sub-item, and the only one the filing run marked "do not treat as confirmed") — lesson 32 taught that a recession is when prices fall, and the app's own glossary defines a recession without mentioning prices at all
+
+**⛔ Step 3.5 — the premise reproduced, and the item's OPEN QUESTION answered by measurement rather
+than left open.** Item 167(c) was filed with an explicit stop-clause: *"Not measured against the
+glossary yet — the glossary's own `Deflation` entry and lesson 34's use of the word have to be read
+first, because if they already draw the distinction this is a third self-contradiction and if they do
+not it is a whole-app simplification the owner may have chosen."* Both readings were live. The
+measurement settles it:
+- **The prose is exactly as filed, in all five languages.** en *"businesses start cutting prices to
+  attract customers — that's deflation — and overall economic activity shrinks. That's a recession."*
+  and its es/ko/zh/ja counterparts, all carrying the same two-step equation.
+- **The glossary's `Recession` entry does not mention prices at all**, and is careful where the lesson
+  was loose: *"Widely-used rule of thumb: 2+ consecutive quarters of declining GDP. Officially, US
+  recessions are dated by the National Bureau of Economic Research (NBER) using broader criteria
+  (employment, income, spending), not GDP alone."* Its example pairs **rising unemployment with
+  falling GDP** — no price claim.
+- **So it is a self-contradiction, not a chosen simplification**, and the item's alternative
+  hypothesis is refuted rather than merely doubted. The sharpest form of it: `lessonTerms.js` attaches
+  **both** `Deflation` and `Recession` chips to **this exact section** (`32: { 1: ["Deflation",
+  "Recession"] }`), so a learner reading the sentence and tapping the chip an inch below it is handed
+  a definition of recession that omits the very thing the sentence just told them a recession is.
+- **`disinflation` appears ZERO times in the entire content corpus** (32 modules scanned; controls
+  fired both ways — a term known present returns >0, a fabricated key returns 0). The corpus has no
+  vocabulary for the distinction, which is *why* the sentence collapsed the two.
+- **Lesson 34's use is innocent and was deliberately left alone.** Its "deflationary tools (cutting,
+  defaulting, taxing)" is the adjective sense applied to debt reduction — correct, and a different
+  claim. Same call as 167(b)'s two untouched neighbours and (d)'s third surface.
+
+**The fix, in five languages.** The sentence now separates the two: businesses **discount**, activity
+shrinks, *that* is the recession; then — as a distinct, conditional step — *"In most downturns prices
+keep rising, just more slowly; only when the pullback is deep enough for the overall price level to
+actually fall do you get deflation — and that makes a slump harder to escape, because people put off
+purchases to wait for lower prices."* **This now echoes the glossary's `Deflation` entry instead of
+contradicting the `Recession` one** — the glossary already says persistent deflation *"can make people
+delay purchases and slow the economy further"*, so the lesson and the chip beneath it finally agree.
+⚠️ **The word `disinflation` was deliberately NOT introduced.** Naming it would buy a new glossary
+key in five languages plus a `lessonTerms` curation decision, to teach a label the lesson does not
+need; the distinction is carried in plain language instead. **And both `Deflation` and `Recession`
+had to survive in the English section or `check-data.mjs` §17(d) fails the two chips as pointing at
+words no longer on the screen — that constraint was read off §17 before drafting, not discovered by
+the build.**
+
+**Verified.** Each of the five replacements was applied by an exact-match script that **asserts the
+needle occurs exactly once** and aborts otherwise (it did, 5/5), then every paragraph was **read back
+through its module** rather than trusted from the write, with a per-language assertion that the
+deflation term and the recession term are both still present. `npm test` **exit 0**; `npm run build`
+green; `npm run check-blindspot` **0 failures**.
+- **Live on the built app, not inferred.** `dist/` served statically, lesson 32 unlocked through the
+  app's own `ecycles_completed_lessons` (a URL does not unlock a lesson). The corrected paragraph
+  renders in **en**, and **`TERMS IN THIS SECTION: Deflation, Recession` still renders on that
+  section** — §17(d) confirmed in the real DOM and not only statically. Re-checked in **zh**: the
+  translated paragraph renders with 通货紧缩 / 经济衰退 intact.
+- ⛔ **A negative result that was the instrument's fault, caught by checking rather than reported.**
+  The first zh check returned "not found" with `ecycles_lang` set to `"zh"` — because `lang` is read
+  by `readRaw`, not `readJSON`, so the JSON quotes made it unreadable while the page sat there in
+  English looking like a missing translation. Set raw, it renders. **A storage key's read function is
+  part of the instrument**; the miss was mine, and it would have read as "the zh edit did not ship".
+
+**Two doc figures and the review ledger moved with the content, all three regenerated rather than
+typed.** The English body grew, so (i) `LAUNCH_READINESS.md` §4.3's catalog row and §10.4's
+translation-volume sentence disagreed with the live corpus — fixed with `npm run readiness -- --write`
+(151,805 → 152,044 en chars), and (ii) the four translations went **stale** in
+`translation-review-ledger.json`, because the stored `sourceHash` is a hash of the English. Re-marked
+via `scripts/translation-review.mjs mark 32 <lang> … ai` — **`ai`, not `human`**, since a scheduled run
+is not a fluent reviewer; the O-3 fact that **human review share stays 0%** is unchanged, which is the
+whole reason that method field exists. Hash confirmed changed (`863c9cfd6fbe58b2` → `3b98d3c0ecc1d021`).
+
+**Warning count is unchanged at 4, measured on both sides rather than recalled.** A clean
+`git archive HEAD` copy and this tree print the same four `WARN` lines (review coverage, translation
+completeness, quiz option-length cue, AGENT_LOG floor). ⚠️ **Two counters, and they are not the same
+number:** `check-data.mjs` reports "3 warning(s)" and the final line of the chain is
+`check-log-size.mjs`'s "1 warning(s)" — a failing run stops before the later scripts, so comparing a
+red run's total to a green run's total compares different populations. That is why the baseline was
+taken as the list of WARN lines, not as the trailing count.
+
+⚠️ **A FINDING FILED, NOT FIXED (W-6.2: file it, do not turn around and pick it): the log's own
+fresh-clone recipe is stale and now produces seven false failures.** W-6.1 records the recipe as
+*"`git archive HEAD` into a clean directory, symlink `node_modules`, copy the two gitignored
+`economic-cycles-v*.jsx`"*. Following it verbatim today yields **7 × §26 failures** —
+`path-ok: economic-cycles-v5.jsx` *"is stale — that path exists now"* across `LAUNCH_READINESS.md`,
+`LAUNCH_PLAN.md`, `DECISIONS.md` and `README.md`, plus the exemption count landing at 13 against an
+expected 20. **The copy step is what breaks it:** §26's markers exempt those paths precisely because a
+clone does not have them, so copying them in makes every marker stale. **Without the copy step the
+same recipe exits 0.** This cost the first HEAD baseline of this run and would cost the next run that
+uses it the same way. It is the same shape as item 154's `cp -R drafts` correction — the recipe and the
+checks have drifted apart in the other direction — and it is **not** folded into this commit.
+
+**Adversarial self-check (step 5).** *Blindspot register:* `npm run check-blindspot` passes 0/0 —
+§10.2 no Dalio (the new text names no authority at all), §10.1 no advice-adjacent language (the
+paragraph describes a mechanism and recommends nothing), §10.3 untouched, and §2.3 clean because the
+new sentences contain **no date and no figure of any kind**. *DECISIONS.md:* nothing contradicted — no
+dependency, no state, content stays `.js` modules. *Already-done item:* 167(c) was explicitly open and
+explicitly flagged unconfirmed; the three lookalike sweeps 167 records as closed (numeric drift,
+checkable arithmetic, research authority) are not re-run here. *My own verification claim:* every
+number above is reproducible from the commands named — the HEAD baseline is a two-sided measurement
+against a clean `git archive`, the ledger hashes are printed before and after, and the live render was
+read out of the built `dist/`, in two languages, rather than asserted from the source.
+
+**Next.** Item **167 is now fully closed** — (a), (b), (c) and (d) all done, and its five notes stay
+as do-not-re-run records. **O-2 remains the entire critical path**: one PostHog account and one pasted
+`phc_` key, with `npm run analytics-check` standing by to verify it before it ships. Open and unparked
+otherwise: 26 (closable), 27, 70/71, 74, 76, 94, 117, 155's probe, 160, and the fresh-clone recipe
+correction filed above.
 
 ### 2026-09-06 (owner-directed, interactive: "do the guard for item 165") — `check-data.mjs` §74 ships at zero open flags, and the first version of its exemption list carried fabricated numbers that its own control caught on the first run
 
