@@ -85,10 +85,15 @@ So if the site ever moves to a custom domain, **change the URL here first**: `np
 then fail until `index.html` agrees, instead of the app quietly unfurling a preview for a host
 it no longer lives on.
 
-⛔ **The card is in the repo and is NOT on the live site yet.** Measured 2026-09-05 after this
-landed: `https://magnificent-mochi-73aecc.netlify.app/og-card.png` returns **404**, and the
-served `index.html` still carries no `og:image` tag. Shared links keep unfurling as the old
-text-only summary **until the next redeploy** — the two steps directly below.
+✅ **LIVE since the 2026-09-06 redeploy.** `og-card.png` returns **200** and is **byte-identical**
+to `dist/og-card.png` (sha256 compared, not eyeballed); the served `index.html` carries `og:url`,
+`og:image`, `og:image:width/height/alt` and `twitter:card`. Shared links unfurl as the card.
+ORIGINAL CLAUSE, kept because the line above corrects it: ⛔ *"The card is in the repo and is NOT on
+the live site yet. Measured 2026-09-05 after this landed: `…/og-card.png` returns 404, and the served
+`index.html` still carries no `og:image` tag."* That was true for the day between the card landing in
+the repo and the next deploy — **which is the general shape, not a one-off: nothing on this site
+changes until someone redeploys `dist/`, so a repo claim about the live site is a claim about the
+last deploy.**
 
 ### To publish an update
 
