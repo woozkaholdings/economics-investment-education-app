@@ -5130,6 +5130,116 @@ finding(s); V vacuous; U unavailable`. A bare "no accessibility issues found" is
 
 ## Run log
 
+### 2026-09-06 (owner-directed, interactive: "do it", then "why use Netlify?") — W-7.1 step 1 closed by an actual deploy after 12 hours and 4 commits, and step 3's cadence decision came back "nobody should have to remember", so the manual step is gone rather than scheduled
+
+**This is the pattern the O-1 retrospective predicted, a second time.** That block measured that
+nineteen days of closing lines moved O-1 none of the way and one direct owner instruction moved it
+all of the way. The scheduled run three hours earlier ended by naming step 1 as an owner action.
+The owner said "do it" and it took about four minutes. **The escalation that works is a question,
+not a restatement.**
+
+**The deploy.** `npm run build` at `acf117e` → zip → Netlify Deploys page (the owner's Chrome
+session, since there is no CLI and no token) → uploaded via the page's own file input. Netlify
+reported *Published at 1:07 PM*.
+
+**Verified against the site, not the dashboard.** `npm run check-deployed` **exit 0** (read
+directly, not through a pipe): entry bundle `index-B1mndoLB.js` **byte-identical, 264,930 b**,
+`icon.svg` and `og-card.png` byte-identical, `index.html` identical apart from Netlify's injected
+tags, and the 404 control fired. **A dashboard saying "Published" is the class of claim this whole
+week has been about; it is not evidence.**
+
+⭐ **And then the learner-facing check, which is the one that matters.** Byte identity proves the
+artifact moved; it does not prove the defect is gone. I fetched the live
+`lessonContent.economy.en-BAvdW4Cp.js` and grepped it: the corrected lesson 32 sentence
+("In most downturns prices keep rising, just more slowly") **present, 1**; the old wrong text
+("cutting prices to attract customers — that's deflation") **absent, 0**; **control** — an
+untouched sentence from the same lesson ("one person's spending is another's income") **present,
+1**, so the zero is a real absence rather than a dead grep. **The four undeployed commits are live.**
+
+**Then step 3, the cadence — and the owner chose to delete the step rather than schedule it.**
+Offered four options (automate with a token / daily / per-commit / gated by learner impact), the
+last three all keeping the manual drag. Chosen: **automate**. Recorded in `DECISIONS.md`.
+
+**What shipped: `npm run deploy` (`scripts/deploy.mjs`, 228 lines).** Packs `dist/`, uploads to the
+Netlify API, polls until the deploy is `ready`, **then runs `check-deployed` and exits with THAT
+result.** "I uploaded it" is a claim about a process; the only claim worth making is about the site,
+and this repo has already shipped one "deployed ✅" that was not live.
+- **It refuses rather than publishing something no commit describes**: uncommitted build inputs, a
+  `dist/` older than any build input, or no `dist/`.
+- **The token never enters the repo.** `NETLIFY_AUTH_TOKEN` or gitignored `.netlify-token` — and if
+  that path is ever actually *tracked*, the script **refuses to run at all** and says to revoke the
+  token, because an ignored secret someone `git add -f`s is still in history for good. The header
+  contrasts it with `analyticsConfig.js`'s **public** ingest key, which is meant to ship: opposite
+  kinds of value, and the repo now says so where someone would confuse them.
+- Site id and URL are **read from `README.md` § Deploying**, never typed — check-deployed's idiom,
+  so a host move cannot leave two disagreeing copies.
+
+**Verification of the new script.**
+- **Positive control, unplanned and free:** the first `--dry-run` **REFUSED, exit 2**, because
+  `package.json` (a build input) was uncommitted — the guard fired on its first real opportunity
+  rather than on a synthetic one.
+- ⛔ **The network path is UNVERIFIED and this entry will not pretend otherwise.** There is no token
+  yet — creating one is the owner's, and handling one is not mine. Everything up to the POST is
+  exercised; **the upload, the poll and the API error paths have never run.** Their first real run
+  is self-verifying (it ends in `check-deployed`), which is the mitigation, not a substitute.
+- `npm test` **exit 0**. `npm run build` exit 0.
+
+**⚠️ What `npm test` caught that I had wrong, and the right fix was not the one it offered.** §26
+failed on `scripts/deploy.mjs` "which does not exist" — the file was on disk. **§26 resolves against
+the git index on purpose** (changed 2026-08-30, W-6.1), so a document may not promise a path a
+cloner would not get. The file was merely untracked; `git add` was the fix, **not** the exemption
+the failure text suggests. The one genuine exemption is `vercel.json`, named in `DECISIONS.md` for
+the same reason `README.md` already names it — to say this repo does **not** have one —
+`EXPECTED_EXEMPTIONS` **20 → 21** with the reason written at the constant. A marker must also be
+**single-line**; my first was wrapped and silently did not match.
+
+**"Why use Netlify?" — answered, and the answer is now in `DECISIONS.md` because it deserved to
+be.** It was never chosen on the merits: it is where the app landed on 2026-09-05 because Drop was
+the fastest path from a folder to a URL. Nothing depends on it — static build, hash routing,
+`base: "./"`, hence no `netlify.toml`, `vercel.json` or workflow file. **The real constraint,
+recorded so it is not rediscovered: `origin` is unusable, so git-connected hosting is off the table,
+which is what favors a direct-upload host — Netlify or Cloudflare Pages, not a preference between
+them.** A move is § Deploying's URL and site id plus ~10 lines in `deploy.mjs`.
+
+**Step 5 — adversarial self-check.**
+*Blindspot register:* clean. No `content/`, `src/` or market copy touched — the diff is one new
+script, `check-data.mjs`, and three documents; `check-blindspot` is inside the green `npm test`.
+§2.3: the dates added are records of a measurement in documentation, not rendered figures.
+*DECISIONS.md conflict:* none, and I checked the adjacent one rather than assuming — the
+analytics decision governs a **public** key that ships in `src/`; this governs a **private** token
+that must never be in the repo. Opposite handling, so the new entry states the contrast explicitly
+instead of leaving two similar-sounding rules a page apart.
+*Already-done backlog item:* no. W-7.1 step 3 was open and explicitly owner-gated; this closes it
+**with the owner's answer**, not with mine — I offered four options and did not pick.
+*My own verification claim:* every figure above was printed by a command re-run this session, and
+the one thing I could not run is named as unrun rather than smoothed into the list.
+*W-6.3 (instrument-to-app ratio):* **worse again, deliberately, and the second time today.**
+`scripts/` 19,676 → **19,908** against `src/` **8,833** — **2.228x → 2.254x**. Two runs, +352 lines
+of instrument, zero lines of app. (Both figures in this paragraph were wrong in my first draft —
+213/19,894 typed from memory of what I had written rather than counted; `wc -l` says 228/19,908.) The defense is that this one **deletes a recurring manual step**
+rather than watching for it, which is the only kind of instrument growth that pays back — but W-7.2
+should count it against the ratio anyway.
+⛔ **What the check found against me.** I wrote `?.[1 - 1]` extracting the entry bundle name — a
+regex with no capture group, indexed by an expression that evaluates to 0. It worked, which is the
+problem: it would have read as a capture-group bug to the next person. Fixed to `?.[0]` before
+commit. Small, but it is exactly the kind of thing that survives review by being correct.
+
+**Filed, not picked (W-6.2 rule 2 — a NOTE, not a numbered item):** the run log is over its warn
+budget; a W-5.3 archiving pass is the obvious next cheap run. And **the deploy script's network path
+wants its first real run watched** — whoever supplies the token should read `check-deployed`'s
+verdict rather than the script's own output.
+
+**Top item for the next run:** ⛔ **the owner creates the Netlify token** (one-time, README
+§ Deploying step-by-step) — until then `npm run deploy` refuses and deploying is still the manual
+drag. After that, **O-2 (analytics) is the entire critical path**: the app is live, current, and
+nothing can still say whether anyone has opened it.
+
+**Owner tree:** the owner's untracked `UIUX/` and `course` were **untouched** — neither read,
+edited, nor staged. `HEAD` re-checked before writing at `acf117e`; `public/data/market.json`
+untouched at `asOf=2026-09-04`. ⚠️ **W-7.3 stands: market data is still two days stale and starts
+rendering the unavailable state 2026-09-09 — and it is now live-visible.** Owner's job.
+
+
 ### 2026-09-06 (scheduled dev-agent, W-7.1 step 1 — which a scheduled run cannot do, so I measured why and took the thing standing behind it) — the review that diagnosed "no instrument can see the live site" then took the deployed commit off a run-log headline and named the wrong one, and the deployed artifact could have told it, because Vite hashes the entry bundle
 
 **The pick, and why it is not step 2 again.** W-7.1's step 1 is "build and redeploy `dist/`" and is

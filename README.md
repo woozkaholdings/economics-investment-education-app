@@ -106,9 +106,35 @@ last deploy.**
 
 ### To publish an update
 
-1. `npm run build`.
-2. Drag `dist/` (or a zip of it) onto the project's Deploys page in Netlify.
-3. **`npm run check-deployed`** — confirm the live site is now serving this tree.
+```
+npm run build && npm run deploy
+```
+
+`npm run deploy` packs `dist/`, uploads it, waits for Netlify to finish publishing, then runs
+`check-deployed` against the live site and **exits with that check's result**. "Uploaded" is a
+claim about a process; the only claim worth making is about the site.
+
+It **refuses rather than publishing something no commit describes**: uncommitted build inputs,
+a `dist/` older than any build input, or no `dist/` at all each stop it before the upload.
+`npm run deploy -- --dry-run` runs every guard and stops short of uploading; it needs no token.
+
+**One-time setup (owner, once).** The token is not something an agent can create for you:
+
+1. Create a personal access token at <https://app.netlify.com/user/applications> ›
+   *Personal access tokens*.
+2. Put it in **one** of these — never in a tracked file:
+   - `export NETLIFY_AUTH_TOKEN=<token>` (shell, or a scheduled task's environment)
+   - `echo '<token>' > .netlify-token` (gitignored)
+
+⛔ **This token can deploy, rename and delete the site.** Do not paste it into a chat, a commit
+message, or anything under `src/` — everything under `src/` ships to every visitor. Do not
+confuse it with `src/lib/analyticsConfig.js`'s **public** ingest key, which is *meant* to ship.
+If `.netlify-token` ever becomes tracked, `deploy.mjs` refuses to run at all and tells you to
+revoke the token: a secret that reaches history is compromised, ignored or not.
+
+The old manual route still works if you prefer it — drag `dist/` (or a zip) onto the project's
+Deploys page, then `npm run check-deployed`. It is how every deploy up to 2026-09-06 was done,
+and it is the reason the live site spent a day four commits behind `main`.
 
 To see what is pending *before* deciding to deploy, run
 **`npm run check-deployed -- --identify`**: it works out which commit is live from the live

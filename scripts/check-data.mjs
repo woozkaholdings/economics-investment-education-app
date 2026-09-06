@@ -2821,7 +2821,11 @@ if (keyedGroupsChecked < 4) {
   // DECISIONS 1, README 2), covered by six markers, because LAUNCH_PLAN.md names
   // v5 twice. The pre-existing `v5.jsx`/`v6.jsx` prose-shorthand markers are
   // unrelated and unchanged — they exempt a different string.
-  const EXPECTED_EXEMPTIONS = 20;
+  // 20 → 21 on 2026-09-06: DECISIONS.md's deploy-automation entry names
+  // `vercel.json` for exactly the reason README.md § Deploying already does —
+  // to say this repo does NOT have one, because hash routing means no host
+  // needs an SPA rewrite rule. Same string, same justification, second document.
+  const EXPECTED_EXEMPTIONS = 21;
 
   const walkAll = (dir, base = "") =>
     readdirSync(dir, { withFileTypes: true }).flatMap((e) => {

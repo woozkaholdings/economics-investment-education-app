@@ -23,3 +23,10 @@ api-keys.txt
 # content — v6 carries Dalio branding (§10.2) and hardcoded dates (§2.3).
 economic-cycles-v5.jsx
 economic-cycles-v6.jsx
+
+# The Netlify deploy token (owner decision 2026-09-06: automate the deploy).
+# It can deploy, rename and DELETE the live site, so it never enters the repo.
+# scripts/deploy.mjs reads NETLIFY_AUTH_TOKEN or this file, and REFUSES to run
+# at all if this path is ever actually tracked by git — an ignored secret that
+# someone `git add -f`s is still a secret in history for good.
+.netlify-token

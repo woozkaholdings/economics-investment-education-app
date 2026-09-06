@@ -843,3 +843,44 @@ Add a new entry when a run makes a choice future work should be able to look up 
   If a future run adds another raw display heading, set `fontFamily: family.display` on it.
 - **Revisit when:** someone wants the bevel gone — it is one line in `BUTTON_VARIANTS.primary`
   plus the three `--shadow-bevel` declarations.
+
+## The deploy is automated with a token, because a manual step is what failed (2026-09-06, owner-directed)
+
+- **Decision:** deploying is `npm run deploy` — a real command, not a procedure. Owner's choice on
+  2026-09-06, made against three alternatives that all kept the manual drag (deploy daily, deploy
+  per-commit, deploy gated by learner impact). **The cadence question was "how often should someone
+  remember to do this?" and the answer chosen was "nobody should have to."**
+- **What forced it.** The app went live 2026-09-05 and publishing stayed a browser drag of `dist/`
+  onto Netlify. Within a day the live site was **four commits behind `main`** and still taught that
+  a recession is when prices fall — a factual economics error fixed in the repo the day before.
+  Nobody skipped the step on purpose. **Every instrument in this repo certifies the tree, so all of
+  them stayed green while it happened**, and the one review that noticed derived the deployed commit
+  from a run-log headline and named the wrong one. See `AGENT_LOG.md` 2026-09-06 and W-7.1.
+- **The script's exit code is `check-deployed`'s, deliberately.** `scripts/deploy.mjs` uploads and
+  then runs `scripts/check-deployed.mjs` against the live site, and exits with *that* result. "I
+  uploaded it" is a claim about what a process did; the only claim worth making is about the site.
+  This repo has already shipped one "deployed ✅" that was not live — that failure is not available
+  here.
+- **It refuses rather than publishing something no commit describes.** Uncommitted build inputs, a
+  `dist/` older than any build input, or a missing `dist/` all stop it before the upload. Deploying
+  is publishing, and "what is live" must name a commit.
+- ⛔ **The token never enters the repo, and this is the one thing to not get clever about.** A
+  Netlify personal access token can deploy, rename and **delete** the site. It is read from
+  `NETLIFY_AUTH_TOKEN` or from `.netlify-token`, which is gitignored — and if that path is ever
+  actually *tracked* (someone `git add -f`s it), the script **refuses to run at all** rather than
+  treating it as a working setup, because a secret in history is there for good. Note the contrast
+  with `src/lib/analyticsConfig.js`, which holds a **public** ingest key and ships to every visitor
+  by design: these are opposite kinds of value and must not be reasoned about the same way.
+- **Netlify is not load-bearing and was never chosen on the merits.** It is where the app landed on
+  2026-09-05 because Netlify Drop was the fastest path from a folder to a URL. The build is static,
+  routing is hash-based, and `base: "./"` works at a root or a sub-path — which is why this repo has
+  no `netlify.toml`, `vercel.json` or workflow file.
+  <!-- path-ok: vercel.json — named in order to say this repo does NOT have it, the same reason README.md § Deploying names it: hash routing means no host needs an SPA rewrite rule, so there is nothing for a host config file to say. If this path ever resolves, the sentence above is what needs rewriting, not this marker. --> **The host is one URL and one site id in
+  `README.md` § Deploying, which both scripts read rather than hardcode.**
+- **The real constraint on the host, stated so it is not rediscovered:** `origin` is unusable in this
+  project, so git-connected hosting (the normal GitHub Pages / Vercel flow) is off the table. That
+  is what favors a direct-upload host — Netlify or Cloudflare Pages, not a preference between them.
+- **Revisit when:** the token needs rotating (revoke at
+  `https://app.netlify.com/user/applications`, then re-export — no code change), or the site moves
+  host. A move is § Deploying's URL and site id plus the ~10-line upload call in `deploy.mjs`; the
+  guards, the packing and the verification are host-agnostic.
