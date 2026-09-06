@@ -16,6 +16,7 @@ import { glossary } from "../../content/glossary.js";
 import Icon from "../../components/Icon.jsx";
 import { EmptyState, Text } from "../../components/ui.jsx";
 import { ink, line, radius, space, surface } from "../../theme.js";
+import { useDismissOnBack } from "../../lib/deepLink.js";
 import { KEYS, readArray, writeJSON } from "../../lib/storage.js";
 import TermDetail from "./TermDetail.jsx";
 
@@ -32,6 +33,14 @@ export default function Glossary({ t, lang }) {
   // restore focus to the row that was activated.
   const rowRefs = useRef({});
   const [returnFocusTerm, setReturnFocusTerm] = useState(null);
+
+  // Back closes the term detail before it leaves the Reference tab. It runs
+  // the same close path as the on-screen button, focus restore included, so a
+  // keyboard user who backs out lands on the row they opened.
+  useDismissOnBack(selectedTerm !== null, () => {
+    setReturnFocusTerm(selectedTerm);
+    setSelectedTerm(null);
+  });
 
   useEffect(() => {
     if (selectedTerm === null && returnFocusTerm) {

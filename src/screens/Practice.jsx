@@ -22,6 +22,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { EVENTS, quizScore, track } from "../lib/analytics.js";
 import { lessonPlacement } from "../content/lessons.js";
 import { quizMeta } from "../content/quizMeta.js";
+import { useDismissOnBack } from "../lib/deepLink.js";
 import { BOX_INTERVALS, boxDistribution, dueQuestions, seenCount } from "../lib/review.js";
 import Icon from "../components/Icon.jsx";
 import { Bar } from "../components/charts.jsx";
@@ -174,6 +175,13 @@ export default function Practice({ t, lang, completedLessons, review, recordRevi
   const start = (items) => { setSession(items); setPosition(0); setAnswered(false); setResults([]); setAtBatchPause(false); };
   const exit = () => { setSession(null); setPosition(0); setAnswered(false); setResults([]); setAtBatchPause(false); };
   const advance = (to) => { setPosition(to); setAnswered(false); };
+
+  // A session is a pushed view with no hash of its own, so without this Back
+  // would leave the Review tab entirely and drop the session the learner is
+  // in the middle of (lib/deepLink.js, "pushed views that are not routes").
+  // It runs `exit`, the same path as the on-screen exit button: answers
+  // already given are already scheduled, so nothing is lost by closing.
+  useDismissOnBack(session !== null, exit);
 
   // The batch-pause and session-complete screens replace the question in
   // place (no route change), so nothing would otherwise tell a screen-reader

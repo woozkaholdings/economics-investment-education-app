@@ -343,6 +343,19 @@ Add a new entry when a run makes a choice future work should be able to look up 
   without marking progress, or (c) drop sequential unlocking. **This is a product call, not a routing
   one** — it is recorded here rather than settled by the module, and `CLAIMS.md` C2 carries the same
   note so it surfaces at the next audit.
+- **AMENDED 2026-09-06 (dev-agent): Back now closes a pushed view, and the stated port cost above
+  goes up by three lines.** The four routes are unchanged and no hash was added — the amendment is
+  deliberately NOT "route the sub-nav", which is the option this entry and the module header both
+  rule out. Measured on the built app at 375x812: from Reference › Glossary › a term, ONE Back press
+  left all three levels and landed on the Learn tab, and a Back mid-practice-session dropped the
+  session — because none of those views touches the hash, so the entry underneath was whatever tab
+  the learner had been on. A routed lesson, used as the control, behaved correctly throughout.
+  `useDeepLink`'s single `popstate` listener now asks whether a pushed view is open before it
+  resolves a hash, and three screens declare themselves with a one-line `useDismissOnBack` call.
+  **So "delete one file and two call sites" becomes "delete one file, two call sites and three
+  one-line hook calls."** That is a real increase and it is recorded rather than absorbed; the trade
+  is that a native shell has a hardware Back button and needs this navigation stack anyway, so the
+  three call sites are closer to a description of the port than an obstacle to it.
 - **Guarded by `check-data.mjs` §18:** every lesson round-trips through its id, unparseable and
   nonexistent links resolve to the path rather than a blank screen, first-open routing still holds, a
   locked lesson does not open from a URL, and `App.jsx` actually calls both halves. All proven by

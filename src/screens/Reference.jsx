@@ -34,6 +34,7 @@
 import { useEffect, useRef, useState } from "react";
 import Icon from "../components/Icon.jsx";
 import { Disclaimer, Text, Tile, TileGrid } from "../components/ui.jsx";
+import { useDismissOnBack } from "../lib/deepLink.js";
 import { family, ink, MIN_TAP, space } from "../theme.js";
 import Glossary from "./reference/Glossary.jsx";
 import MarketSignals from "./reference/MarketSignals.jsx";
@@ -45,6 +46,11 @@ export default function Reference({ t, lang, fontScale, setFontScale, themeMode,
   // null = the hub itself. Every other value is a pushed section.
   const [section, setSection] = useState(null);
   const headingRef = useRef(null);
+
+  // A pushed section is navigation the learner can see, so Back closes it
+  // rather than leaving the tab (lib/deepLink.js, "pushed views that are not
+  // routes").
+  useDismissOnBack(section !== null, () => setSection(null));
 
   useEffect(() => {
     if (!section) return;

@@ -4902,6 +4902,133 @@ finding(s); V vacuous; U unavailable`. A bare "no accessibility issues found" is
 
 ## Run log
 
+### 2026-09-06 (scheduled dev-agent, picked from `LAUNCH_PLAN.md` §4.3 — the Phase-0 gate is "installer finishes lesson 1", so I walked it) — the Back button threw the learner out of the Reference tab from three levels down, and the draft that fixed it broke a pasted hash, because `popstate` does not mean Back
+
+**Where the pick came from.** The previous run closed item 167 outright and its chain is exhausted
+under **W-6.2 rule 1**, so this is not a residual. W-6.2 names three legitimate alternatives — the
+launch plan, an owner-facing item, a backlog refill — and O-2/O-3 are both owner decisions no run can
+move. So: the launch plan. §4.3's Phase-0 gate is *installer finishes lesson 1*, and
+`LAUNCH_READINESS.md`'s row for it was last measured **structurally** (which track opens first,
+2026-09-04). Nobody has walked it as a visitor. I did, from cleared `localStorage`, at 375x812 on the
+built app.
+
+**⛔ Step 3.5 — the first two candidates the walk turned up were both refuted, and saying so is the
+point of the step.**
+1. Lesson 1 asks *"What drives the economy?"* **twice on one screen** — once under BEFORE YOU READ and
+   again under CHECK WHAT YOU LEARNED, same four options. That looks like a duplication defect. It is
+   not: `LessonReader.jsx:132-146` and `locales/en.js`'s `hookTitle`/`hookIntro`/`hookHeldLabel`/
+   `hookRecallTemplate` are a deliberate predict-then-confirm hook — the guess is taken, the verdict is
+   **withheld** ("Hold that thought"), and the end-of-lesson check recalls it ("Before reading, you
+   guessed: Gold reserves"). Verified live by answering it. **Not a defect; do not re-file it.**
+2. The Sector screen's caption reads "the figure on the right is each sector's 3M return" — a fixed
+   period beside 1M/3M/6M tabs. Also not a defect: the caption **and** the per-sector figure **and**
+   the S&P header all move together (1M `+0.2%`, 3M `+4.7%`, 6M `+15.2%`, read off all three tabs).
+   Health Care outranking Energy on raw return while ranking #2 is likewise already explained on the
+   screen. **Not a defect; do not re-file it.**
+
+**The third one was real, and it had never been filed — `grep -n "back button\|popstate\|browser
+back\|hardware back"` over `AGENT_LOG.md` + the archive + `DECISIONS.md` returns one unrelated hit in
+the archive.** Reference › Glossary › a term is **three pushed views deep and none of them touches the
+hash**, because `deepLink.js`'s grammar is four routes and its header says the Reference sub-nav is
+deliberately not routed. So the history entry underneath all three is whichever tab the learner was on
+before, and **ONE Back press left all three levels at once and landed on the Learn tab.** Mid-practice-
+session Back did the same and dropped the session. On a phone — which is the whole deployment — the
+system Back gesture is the primary control, so this is not an edge case.
+
+**The control that makes the negative readable.** Back from `#/lesson/29`, which IS routed, correctly
+returned to the path. So `history.back()` driven from a script does traverse in this browser, and the
+three failures above are the app's behavior rather than my instrument returning nothing.
+
+**What shipped, and what it deliberately is NOT.** It is **not** four more routes: `DECISIONS.md:314`
+and the module header both rule that out (item 12 is HELD; sub-nav hashes are surface a native port
+must reproduce), and the hash was confirmed to stay `#/reference` through every step below. Instead
+`useDeepLink`'s single `popstate` listener — the one this module already owns — asks whether a pushed
+view is open before it resolves a hash; if one is, it closes the top one and re-pushes the hash the
+app is already at. Three screens declare themselves with a one-line `useDismissOnBack(active, close)`:
+`Reference.jsx` (a section), `reference/Glossary.jsx` (a term, running the same close path as the
+on-screen button so **focus restore still fires**), `Practice.jsx` (a session, running `exit`).
+`App.jsx` is untouched and still has exactly the two call sites the decision records.
+
+**⭐ What the adversarial pass found against me, and it took two rounds.**
+- **Round 1. `popstate` does not mean "Back".** The first draft intercepted every `popstate`, and its
+  comment claimed a hand-edited hash was safe because "a hash typed into the address bar fires no
+  popstate" — which is what the module's *original* comment says, and it is wrong. **Measured in the
+  live page with two listeners attached: `location.hash = '#/practice'` fires `popstate` with
+  `state === null` AND `hashchange`.** So a pasted hash with a sub-view open was being eaten as a
+  dismissal — the fix creating the class of bug it was fixing. Repaired by stamping every entry this
+  module writes with a counter (`entryIndex`) and reading `event.state`: **smaller index = Back
+  (intercept), larger = Forward, null = an entry we never wrote (a fragment navigation)** — none of
+  the last two intercepted.
+- **Round 2. Two entries sharing an index makes the Back between them unreadable.** With the stamp in,
+  Back out of a practice session still escaped to the Reference hub. Cause: a fragment navigation adds
+  an entry, and the early-return branch was stamping it with the *unchanged* counter, so it collided
+  with the entry below. A null state now advances the counter instead of leaving it. **A third, related
+  hole in the same place:** the very first entry took the early-return branch **unstamped** when the
+  landing URL already matched, so the first Back out of a pushed view read as "not ours" and fell
+  through. That branch now does a state-only `replaceState`.
+  **All three were found by re-running the matrix, not by reading the diff approvingly.**
+
+**Verification — live on the built app, `dist/` served statically, one action per call and never
+reading in the same call as the click.** Final bundle `index-Dv17P7zE.js`, confirmed served.
+- Reference › Glossary › term, then Back ×3: **term closes** (and `document.activeElement` is the
+  *Gross Domestic Product* row — focus restore ran), **glossary closes**, **then and only then the tab
+  is left**, landing on `#/learn`. Hash stayed `#/reference` for the first two.
+- Practice session, Back once: **Review tab, session closed, hash still `#/practice`.**
+- **Controls, all four re-run on the final bundle:** (i) Back from `#/lesson/29` still returns to the
+  path, `i` 4→3 — pre-existing behavior unchanged; (ii) Forward still reopens the lesson — not
+  intercepted; (iii) `location.hash='#/practice'` with the Kids section open now **navigates to
+  Review**, which is the exact case round 1 broke; (iv) closing a section with the on-screen back
+  button leaves **no dead entry** — the next Back goes straight to the previous route.
+- `npm test` **0 failures**, warnings **4 and identical to the baseline taken before editing**
+  (review coverage, translation completeness, quiz option-length cue, log floor). `npm run build`
+  clean. `npm run check-blindspot` **0 failures**.
+
+**Step 5 — adversarial self-check.**
+*Blindspot register:* clean, checked not assumed. §10.2 — `dalio` returns **0** added lines
+(positive control: `popstate` returns 8 from the identical command shape). §10.1 — `check-blindspot`
+PASS; this run adds no prose a learner reads. §10.3 — untouched; the Kids section was navigated as a
+test target and not edited. §2.3 — no teaching copy changed, and the dates added are code comments
+recording when a thing was measured, which is this repo's own convention (**105** such dates already
+in `src/` outside `content/` and `locales/`).
+*DECISIONS.md conflict:* **one, and it is recorded rather than absorbed.** The deep-links entry states
+the port cost as "delete one file and two call sites". Three one-line hook calls now sit outside that
+file, so the stated cost is no longer true. Rather than let the entry go quietly stale — the exact
+failure this log catches weekly — an **AMENDMENT is appended to that entry** giving the new cost, the
+measurement, and why the trade is defensible (a native shell has a hardware Back button and needs this
+stack anyway). The routes, the no-library rule and `App.jsx`'s two call sites are all unchanged.
+*Already-done backlog item:* no — the grep above returns nothing; this class has never been assessed.
+*My own verification claim:* every result above was produced by a probe re-run this session against
+the final bundle; the two refuted candidates were refuted by reading the source and the live DOM, not
+by inspection of the rendered text alone.
+*W-6.3 (instrument-to-app ratio):* re-measured, not quoted — `scripts/` **18,845** lines against
+`src/` minus content and locales **8,820**, **2.14x**, down from the previous entry's 2.15x. **This
+run adds 0 lines to `scripts/`** (`git diff --stat -- scripts/` is empty) and 160 to `src/`, so the
+ratio moved by adding application code rather than by adding an instrument. **No new check was
+written, deliberately** — W-6.2 rule 3 asks for the learner-visible failure a proposed check would
+catch, and the honest answer here is that the failure is a *behavior* across three components and a
+history stack, which is a browser-level property this repo's node-side checks cannot reach. Filing a
+weak static guard for it would be moving the instrument without moving the defect.
+
+**O-3 accounting: nothing.** No prose in any language changed, so the translation ledger is untouched
+and no language went stale.
+
+**Top item for the next run.** ⛔ **Not a residual of this one** — this run files none. Still open and
+unparked: 26 (closable), 27, 70/71, 74, 76, 94, 117, 155's probe, 160's stale `quizMeta.js` header
+comment, and **the fresh-clone recipe correction the previous run filed** (W-6.1's recipe now produces
+7 false §26 failures because its `cp` step is stale). ⚠️ **And one fact the next run should know
+before it claims anything about the live site: the repo is TWO content commits ahead of the last
+deploy** — `df38ca7` (15 repaired quiz explanations) and `992a057` (lesson 32's recession/deflation
+fix) landed after the 2026-09-06 00:24 redeploy, and this navigation fix makes three. **A redeploy
+needs the owner's Netlify session and is not a scheduled run's action to take.**
+**O-2 remains the entire critical path**: one PostHog account and one pasted `phc_` key, with
+`npm run analytics-check` standing by to verify it before it ships.
+
+**Owner tree:** `git status` at run start and again before writing showed the owner's untracked
+`UIUX/` and the empty `course` file, **both untouched**. `HEAD` re-checked before writing and unmoved
+at `992a057`; the daily market-data job did not fire during the run and `public/data/market.json` is
+untouched at `asOf=2026-09-04`.
+
+
 ### 2026-09-06 (scheduled dev-agent, backlog item 167 (c) — the last open sub-item, and the only one the filing run marked "do not treat as confirmed") — lesson 32 taught that a recession is when prices fall, and the app's own glossary defines a recession without mentioning prices at all
 
 **⛔ Step 3.5 — the premise reproduced, and the item's OPEN QUESTION answered by measurement rather

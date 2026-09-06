@@ -14,9 +14,11 @@
 // needs neither, and the entire web-specific surface is this one file:
 // `App.jsx` calls `initialRoute()` once and `useDeepLink()` once, and a
 // native shell deletes both calls and this module without touching anything
-// else. The pure half (everything above `useDeepLink`) has no DOM access at
-// all, so `npm test` checks the routing rules without a browser (§18 of
-// scripts/check-data.mjs).
+// else. The pure half (everything above the "browser half" marker below) has
+// no DOM access at all, so `npm test` checks the routing rules without a
+// browser (§18 of scripts/check-data.mjs). That marker moved down on
+// 2026-09-06 when `useDismissOnBack` was added; it used to read "everything
+// above `useDeepLink`", which the new hook would have made false.
 //
 // GRAMMAR — four routes, no query string, no nesting:
 //   #/learn          the lesson path
@@ -126,6 +128,60 @@ export function initialRoute(hash, lessons, isUnlocked, isFirstVisit) {
 // ── the browser half ──────────────────────────────────────────────────────
 // Everything above is pure. This is the only part that touches `window`.
 
+// ── pushed views that are not routes ──────────────────────────────────────
+// WHY THIS EXISTS, and why it is not four more routes. The grammar above is
+// four routes on purpose (see the header: §5 asks for lesson links, and every
+// hash added here is surface a native port has to reproduce). But the app
+// pushes views that grammar does not name — a Reference section, a glossary
+// term on top of it, a practice session — and the learner cannot see the
+// difference between those and a lesson. They pushed a screen; Back should
+// take it back.
+//
+// Measured 2026-09-06 on the built app at 375x812, with a routed lesson as the
+// control: from Reference › Glossary › a term, ONE Back press left all three
+// levels and landed on the Learn tab, because none of them had touched the
+// hash and the entry underneath was whatever tab the learner was on before.
+// Mid-practice-session Back did the same and lost the session. The control —
+// Back from `#/lesson/29` — correctly returned to the path, which is what says
+// the failure is the app's and not the measurement's.
+//
+// THE FIX KEEPS THE GRAMMAR. Nothing is pushed onto history when a view opens
+// and no hash is invented; instead the ONE popstate listener this module
+// already owns asks, before it resolves a hash, whether the navigation was a
+// Back AND a pushed view is open. If so it closes the top one and re-pushes
+// the hash the app is actually at — so the address bar is unchanged,
+// `resolveRoute` is never consulted, and a native shell still deletes this
+// file whole. Two open views take two Back presses, then the third leaves the
+// tab, which is the order a learner means.
+//
+// "AND the navigation was a Back" is load-bearing, and it is there because the
+// first draft left it out: a `location.hash` assignment also fires `popstate`,
+// so a pasted hash was being eaten as a dismissal. See `entryIndex` below.
+//
+// LIFO by registration TIME, not by component tree: a term detail registers
+// when the learner taps a term, which is always after the section it sits in.
+const dismissStack = [];
+
+/**
+ * Register `dismiss` as the thing Back should do while `active` is true.
+ * Pure book-keeping — it touches no DOM, so `check-data.mjs` can import this
+ * module in node exactly as before.
+ */
+export function useDismissOnBack(active, dismiss) {
+  const dismissRef = useRef(dismiss);
+  dismissRef.current = dismiss;
+
+  useEffect(() => {
+    if (!active) return undefined;
+    const entry = () => dismissRef.current();
+    dismissStack.push(entry);
+    return () => {
+      const i = dismissStack.lastIndexOf(entry);
+      if (i !== -1) dismissStack.splice(i, 1);
+    };
+  }, [active]);
+}
+
 /**
  * Keeps the address bar and the app's navigation state in step, in both
  * directions: state changes rewrite the hash, and Back/Forward (or a hand-
@@ -142,12 +198,34 @@ export function useDeepLink({ tab, reading, lessons, isUnlocked, onRoute }) {
   const hash = routeHash({ tab, reading, lessons });
   const initialized = useRef(false);
 
+  // A counter stamped into every history entry this module writes, so the
+  // popstate handler can tell WHICH KIND of navigation it is looking at. It
+  // has to, because `popstate` alone does not mean Back — measured in Chrome
+  // 2026-09-06, assigning `location.hash` fires `popstate` (with a null state)
+  // AND `hashchange`, which is one more event than this module's original
+  // comment assumed. The stamp separates the three cases cleanly: a smaller
+  // index is Back, a larger one is Forward, and a null state is an entry this
+  // module never wrote — a typed or pasted hash.
+  const entryIndex = useRef(0);
+
   useEffect(() => {
     if (typeof window === "undefined") return;
-    if (window.location.hash === hash) { initialized.current = true; return; }
+    if (window.location.hash === hash) {
+      // Nothing to navigate, but the entry still gets stamped: a visitor who
+      // lands on `#/learn` takes this branch, and an UNSTAMPED entry reads to
+      // `onPop` below as "not ours", so the first Back out of a pushed view
+      // would fall through and leave the tab. Same URL, state only.
+      try { window.history.replaceState({ i: entryIndex.current }, "", hash); } catch { /* see below */ }
+      initialized.current = true;
+      return;
+    }
     try {
-      if (initialized.current) window.history.pushState(null, "", hash);
-      else window.history.replaceState(null, "", hash);
+      if (initialized.current) {
+        entryIndex.current += 1;
+        window.history.pushState({ i: entryIndex.current }, "", hash);
+      } else {
+        window.history.replaceState({ i: entryIndex.current }, "", hash);
+      }
     } catch {
       // Some embedded/file:// contexts reject the History API. Losing the
       // address bar is not worth losing the app over.
@@ -160,18 +238,59 @@ export function useDeepLink({ tab, reading, lessons, isUnlocked, onRoute }) {
   const onRouteRef = useRef(onRoute);
   onRouteRef.current = onRoute;
 
+  // The hash the app's own state formats to, read live inside the listener so
+  // Back can put it back without re-running the effect on every render.
+  const hashRef = useRef(hash);
+  hashRef.current = hash;
+
   useEffect(() => {
     if (typeof window === "undefined") return undefined;
     const sync = () => {
       onRouteRef.current(resolveRoute(window.location.hash, lessons, isUnlocked));
     };
+    // Only BACK can mean "close the pushed view I am looking at" (see
+    // `useDismissOnBack` above). Forward is a destination the learner already
+    // left, and a typed or pasted hash is an explicit destination — turning
+    // either into a dismissal would strand them on the screen they are on.
+    // The first draft of this intercepted every `popstate` and did exactly
+    // that to a pasted hash; the stamp on `entryIndex` is what tells them apart.
+    const onPop = (event) => {
+      const to = event.state && typeof event.state.i === "number" ? event.state.i : null;
+      const isBack = to !== null && to < entryIndex.current;
+      // A null state is an entry this module did not write, which means a
+      // fragment navigation just ADDED one on top — so the counter goes up,
+      // not sideways. Leaving it alone made the new entry inherit the index of
+      // the one below it, and two entries sharing an index makes the Back
+      // between them unreadable as a Back.
+      entryIndex.current = to !== null ? to : entryIndex.current + 1;
+
+      if (isBack && dismissStack.length > 0) {
+        dismissStack[dismissStack.length - 1]();
+        try {
+          // Put the entry back, so the address bar and the app agree and the
+          // NEXT Back has something of its own to consume.
+          entryIndex.current += 1;
+          window.history.pushState({ i: entryIndex.current }, "", hashRef.current);
+        } catch {
+          // Same reason as above: an embedded context that rejects the History
+          // API still gets the view closed, it just also changes tab.
+        }
+        return;
+      }
+      sync();
+    };
     // `popstate` covers Back/Forward after a `pushState`; `hashchange` covers
-    // a hash typed or pasted into the address bar, which fires no popstate.
-    window.addEventListener("popstate", sync);
+    // a hash typed or pasted into the address bar. Those two overlap more than
+    // the original comment here said — a fragment navigation fires BOTH, and
+    // so does a Back across differing hashes — but `sync` is idempotent, so a
+    // doubled call resolves to the state the app is already in and writes
+    // nothing.
+    window.addEventListener("popstate", onPop);
     window.addEventListener("hashchange", sync);
     return () => {
-      window.removeEventListener("popstate", sync);
+      window.removeEventListener("popstate", onPop);
       window.removeEventListener("hashchange", sync);
     };
   }, [lessons, isUnlocked]);
 }
+
