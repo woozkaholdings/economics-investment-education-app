@@ -10,6 +10,18 @@
 // TO TURN IT ON: set `provider` to one of "plausible" | "posthog" | "custom"
 // and fill in that provider's field below. Then `npm run build` and redeploy.
 // Nothing else in the app changes. To turn it off again, set "none".
+//
+// VERIFY IT BEFORE YOU DEPLOY:  npm run analytics-check
+// You can check a key before pasting it:  npm run analytics-check -- --key phc_xxx
+//
+// ⛔ DO NOT TREAT A GREEN BUILD AS EVIDENCE. Sending is fire-and-forget by
+// design (analytics must never break a lesson), and PostHog's capture endpoint
+// answers HTTP 200 to ANY key at all — measured 2026-09-06, both regions. So a
+// wrong key, or a US key on the EU host, is INDISTINGUISHABLE from a working
+// one from inside this app: build passes, deploy passes, dashboard empty,
+// nothing anywhere says why. `analytics-check` is the only thing here that can
+// tell those apart; it probes an endpoint that actually validates the token,
+// and it carries its own control so it cannot pass while blind.
 // ─────────────────────────────────────────────────────────────────────────
 //
 // WHY THIS IS A COMMITTED .js FILE AND NOT AN ENVIRONMENT VARIABLE.

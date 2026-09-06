@@ -150,8 +150,15 @@ for the history. No open P1/P2 items.
 > 2. Paste that provider's **public** site id / ingest key into `src/lib/analyticsConfig.js` and set
 >    `provider`. ⛔ **Never paste a private or personal API key** — the file ships to every visitor
 >    and says so.
-> 3. `npm run build`.
-> 4. Redeploy `dist/` to <https://magnificent-mochi-73aecc.netlify.app>.
+> 3. **`npm run analytics-check`** (added 2026-09-06) — verify the key is actually accepted
+>    BEFORE building. ⛔ **Nothing else in this repo can tell you.** PostHog’s capture endpoint
+>    answers **HTTP 200 to any key at all** (measured 2026-09-06, both regions, with a 404
+>    control), and the browser send is fire-and-forget by design, so a typo or a US-key/EU-host
+>    mismatch is indistinguishable from success: build green, deploy green, dashboard empty.
+>    The check probes `/decide/`, which validates the token, and carries an invalid-token
+>    control that must come back 401 or it refuses to give a verdict.
+> 4. `npm run build`.
+> 5. Redeploy `dist/` to <https://magnificent-mochi-73aecc.netlify.app>.
 > **Then §4.3's Phase-0 gate becomes measurable for the first time** — and only then; a per-device
 > `localStorage` log still cannot be aggregated across installs.
 >
@@ -4779,6 +4786,88 @@ zero meaningful: `selftest PASS (8/8 controls fired, plantsRemoved true)` and, p
 finding(s); V vacuous; U unavailable`. A bare "no accessibility issues found" is not a result.
 
 ## Run log
+
+### 2026-09-06 (owner-directed, interactive: "set up analytics with posthog", then "yes, add the analytics-check") — the account is the owner's to make, and the check built while waiting found that PostHog's capture endpoint returns 200 OK for a key that does not exist
+
+**What was asked and what was possible.** O-2 needs a PostHog account; creating accounts is not
+something a run does, and both PostHog clouds — `us.posthog.com` and `eu.posthog.com`, checked
+separately because an EU account would not show on the US host — redirect to a login page in the
+owner's browser, so there is no session to read a key from. Everything else was already in place:
+the transport shipped 2026-09-05 and `analyticsConfig.js` is one field. So the run went to the
+question that actually decides whether O-2 lands cleanly: **when the key is pasted, how would anyone
+know it worked?**
+
+**⛔ The finding, and it is the reason this is not a two-line script.** Measured 2026-09-06:
+
+```
+POST https://us.i.posthog.com/i/v0/e/  {"api_key":"phc_invalid_probe_0…"}  → 200 {"status":"Ok"}
+POST https://eu.i.posthog.com/i/v0/e/  (same)                              → 200 {"status":"Ok"}
+POST https://us.i.posthog.com/i/v0/definitely-not-an-endpoint/             → 404
+```
+
+The 404 control on the same host proves the 200 is real accept-and-discard, not a catch-all.
+**The capture endpoint cannot tell you anything about your key.** Combined with `analytics.js`
+swallowing every failure by design (`sendBeacon`, then `fetch(...).catch(() => {})`, so an analytics
+outage can never break a lesson — correct, and not to be changed), a wrong key or a US-key/EU-host
+mismatch produces **zero signal**: build green, deploy green, dashboard empty, nothing anywhere
+saying why. That is the exact silent-off state `analyticsConfig.js`'s header says the whole item
+exists to end, and **it survived a year of that header because every surface that could catch it
+answers 200.** The obvious version of the requested check — POST an event, read the status — would
+have printed a confident pass for a garbage key.
+
+**What shipped: `scripts/check-analytics.mjs` / `npm run analytics-check`.** It probes `/decide/?v=3`
+instead, the public endpoint PostHog's own SDK calls, which **validates** the project token (401 on
+an unknown one) and lives on the ingest host — so it fails a region mismatch for the same reason it
+fails a typo. **Every run fires a deliberately-invalid-token control FIRST, which must come back
+401; if it does not, the script prints NO VERDICT and exits 2** rather than a pass it cannot support.
+That design also means it needed no valid key to prove itself alive, which is why it could be written
+before the account exists. Exit codes: `0` verified, `1` off or rejected, `2` no verdict (control
+failed), `3` a provider it cannot validate. `--key`/`--host` let a key be tested **before** it is
+pasted; `--send-event` is opt-in and says plainly that its own 200 proves nothing.
+
+⚠️ **One direction is proven, the other is reasoned, and the script says so in its header.** That an
+invalid token is rejected is measured on every run. **That a VALID token is accepted was never
+measured** — there was no account. If the first real key comes back 401 while the owner is sure it is
+right, suspect that assumption and check the region before suspecting the key.
+
+**Verification — every branch exercised, including the one that matters.**
+- **The blind-instrument test, which is the whole design:** pointed at a local server answering
+  200 to everything, the script reported **NO VERDICT, exit 2**. A naive script prints ✅ there.
+- **The accept path** (`✅`, exit 0) and `--send-event`: exercised against a local fake that 401s
+  the dead token and 200s anything else — so the branch the owner will actually hit is not shipping
+  unexercised.
+- Reject (real US host, exit 1), **real EU host** (control fires there too, exit 1), network error
+  (exit 2), empty key (exit 1), `phx_` personal-key warning, plausible (exit 3), custom with an
+  empty field (exit 1), unknown provider (exit 1).
+- ⚠️ **One exit code was misread first time and the repo's own lesson caught it:** `npm run … | tail`
+  then `echo $?` reads **tail's** status, and reported `exit=0` for the plausible branch that
+  actually exits 3. Re-read without the pipe.
+- `npm test` **exit 0**, all 7 check groups PASS (the single warning is the pre-existing
+  non-archivable log floor, item 115). Not wired into `npm test` on purpose — it makes a network
+  call, so it is neither offline nor deterministic. It is an owner tool for one moment, not a gate.
+
+**W-6.3, answered before building rather than after.** `scripts/` is **18,654** lines to the app's
+**8,666** — **2.15x**, unchanged to two decimals from the 2026-09-05 figure, because ~215 lines does
+not move that ratio. This is also not the thing W-6.3 is aimed at: it is not a `npm test` section
+guarding a property that already holds, it is a one-shot owner tool for a step that currently has
+**no** way to succeed-or-fail visibly. W-6.2 rule 3's sentence is owner-visible rather than
+learner-visible, and that is stated rather than stretched: *"the owner pastes a key, ships it, and
+cannot tell an empty dashboard from a broken one."*
+
+**Adversarial self-check (step 5).** *Blindspot register:* no content change; `check-blindspot`
+clean via `npm test`. *DECISIONS.md:* nothing contradicted — no new dependency (global `fetch`), no
+state change, config stays a committed `.js` module. *Already-done item:* the 2026-09-05 run's
+local-receiver verification is **not** redone — that proved payload shape against a receiver we
+controlled, which is a different question from whether a real provider accepts a real credential.
+*My own verification claim:* every probe above is a `curl` a reviewer can re-run, both fake servers
+are five lines and described, and the blind-instrument result is reproducible without any account.
+
+**Also updated in this commit, because a document made wrong by this work is this work's problem:**
+O-2's step list above (now 5 steps, with the verify step and why nothing else can answer it),
+`analyticsConfig.js`'s header, and README § Analytics.
+
+**Still blocked, unchanged:** the PostHog account and one pasted `phc_` key. **O-2 remains the entire
+critical path.**
 
 ### 2026-09-06 (scheduled dev-agent, picked off item 167's unnumbered live-find list) — two lessons show the learner two questions under a line that says "A quick question", "Una pregunta", "先来一个小问题"; it now branches, and the note that filed it named the wrong precedent for how to fix it
 

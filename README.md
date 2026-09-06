@@ -170,7 +170,21 @@ device until someone changes it.
    full — it is a real choice.
 2. Put that provider's **public** site id or ingest key in `src/lib/analyticsConfig.js` and set
    `provider` to `"plausible"`, `"posthog"` or `"custom"`.
-3. `npm run build`, then redeploy.
+3. **`npm run analytics-check`** — verify the key is accepted *before* you ship it.
+4. `npm run build`, then redeploy.
+
+⛔ **A green build is not evidence that analytics works, and neither is a 200 from the
+provider.** Sending is fire-and-forget by design, and PostHog’s capture endpoint answers
+**HTTP 200 to any key at all** — measured 2026-09-06 against both the US and EU hosts with a
+deliberately invalid key, with a 404 control on the same host proving the 200 was real
+accept-and-discard rather than a catch-all. So a typo, or a US key pointed at the EU host, looks
+**exactly** like a working setup from inside this repo: build passes, deploy passes, dashboard
+stays empty, nothing says why. `npm run analytics-check` probes `/decide/` instead, which
+actually validates the project token, and it **runs a deliberately-invalid-token control first
+and refuses to give a verdict if that control does not come back 401** — so it cannot report a
+pass while blind. Exit codes: `0` verified, `1` off or rejected, `2` no verdict (control failed),
+`3` provider it cannot validate. It can also check a key before you paste it:
+`npm run analytics-check -- --key phc_xxx --host https://eu.i.posthog.com`.
 
 ⛔ **Never put a private or personal API key in that file.** It is committed to git and shipped
 to every visitor. Providers issue a public *ingest* value (write-only) and a private one (reads
