@@ -118,6 +118,8 @@ export default {
     reviewCompleteTitle: "복습 완료",
     reviewScoreTemplate: "{total}개 중 {correct}개 정답",
     reviewFromLesson: "레슨 {n} · {track}",
+    reviewResultCorrect: "맞힌 문제",
+    reviewResultWrong: "틀린 문제",
     doneLabel: "완료",
     reviewBatchTitle: "{n}개 완료 — 잘하고 있어요",
     reviewBatchTitleNoneRight: "{n}개 완료 — 이 문제들은 내일 다시 나와요",

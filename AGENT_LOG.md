@@ -4939,6 +4939,133 @@ finding(s); V vacuous; U unavailable`. A bare "no accessibility issues found" is
 
 ## Run log
 
+### 2026-09-06 (scheduled dev-agent, self-picked: a live walk of the RETENTION loop, which sweeps had never driven — every recent sweep read lesson prose) — the screen whose only job is to say which questions you missed said "3 of 4 correct" and then four rows that read identically to a screen reader
+
+**Where the pick came from, and why it is not a residual.** The previous run filed none as an item,
+so W-6.2 rule 1 is satisfied. The launch plan's Phase-0 gate is about finishing lesson 1 and the
+2026-09-06 run walked that; **the second core loop — answer a check, come back, review it — had never
+been driven end to end by any run.** I drove it: seeded `localStorage` from the live DOM, ran a
+review session in `en` and in `ko`, and read the result out of the accessibility tree rather than off
+the screen.
+
+**⛔ Step 3.5 — the premise is a MEASUREMENT I took, so it carries a control.**
+- **The defect.** Finishing a session shows a recap: one row per question, each led by a green tick
+  or a red cross. `Icon` renders `aria-hidden="true"` and the row carries nothing else, so
+  `read_page`'s accessibility tree returned four rows — one of them the question I had just got
+  wrong — as `generic "What drives the economy?"` / `generic "Lesson 1 · How the Economy Works"`,
+  **structurally identical to the three I got right.** The learner is told the score and cannot find
+  out which one to go back to. That is the whole purpose of the screen.
+- **The positive control, and it is the sharp part: the same instrument, one screen earlier, DOES see
+  the labels.** Inside a disclosed question the tree returns `generic "Your answer, incorrect"` and
+  `generic "Correct answer"` — `Question.jsx`'s two `SrOnly` spans, added 2026-08-30. So `read_page`
+  can see clip-hidden text, and the recap's silence is an absence in the app, not a blind instrument.
+- **A second, cheaper control that fired first and mattered.** My first seed produced
+  `Practice all questions (9)` where the pool should have been 5. Not a bug: `ecycles_completed_lessons`
+  had no `ecycles_legacy_lesson_id_migrated` flag beside it, so `migrateLegacyLessonIds` read my
+  `[29,30,31,32]` as OLD ids and rewrote them to `[17,18,19,20]`. **A seeded fixture is an input to
+  the app's own migrations, not a state the app is in** — the count disagreeing with arithmetic is
+  what caught it. Re-seeded with the flag; pool 5, due 4, box strip 2/1/1/0/1, all matching by hand.
+- The scheduler itself was checked in passing and is **correct**: after 1 wrong and 3 right, `q001`
+  went to box 1 due +1d, `q002` 2→3 due +4d, `q003` 1→2 due +2d, `q009` 3→4 due +8d, and the
+  untouched `q004` kept its box-5 date. Nothing to do there — §8/§8b already own it.
+
+**The fix — one `SrOnly`, two new locale keys, five languages.**
+`Practice.jsx`'s recap row now renders `<SrOnly>{r.correct ? t.reviewResultCorrect : t.reviewResultWrong}</SrOnly>`
+inside the same span as the icon.
+⚠️ **`quizMarkCorrect`/`quizMarkWrong` were deliberately NOT reused, and "it costs zero locale keys"
+is exactly the argument item 117 records as the wrong currency.** Those two strings label an
+**option** — "Correct answer", "Your answer, incorrect", `정답`, `正解` — and on a recap row the thing
+being marked is **the attempt**, so reusing them announces a question as though it were an answer.
+New pair instead: en "Answered correctly"/"Answered incorrectly", es "Respondida correctamente"/
+"Respondida incorrectamente", ko `맞힌 문제`/`틀린 문제`, zh `回答正确`/`回答错误`, ja `正解した問題`/`間違えた問題`.
+
+**Verified live against the rebuilt bundle, in two languages and at two widths.**
+- `en`, 375px: the tree now reads `generic "Answered incorrectly"` / `generic "Answered correctly"`
+  ahead of each question, and the visible `innerText` of the row is unchanged.
+- `ko`, **320px**: `documentElement.scrollWidth - 320 = 0` (no reflow cost), each `SrOnly` span
+  measures **1×1** with `clip-path: inset(50%)` while its icon wrapper stays 17.6×17.6, and the five
+  rows read `틀린 문제` ×4 + `맞힌 문제` ×1 against a header of `5개 중 1개 정답` — the label count and
+  the score agree.
+- The session also survived a mid-session language switch (`en` → `ko`) with the recap re-rendering
+  in Korean, which is the seam `withText` exists for.
+
+**The guard: `check-data.mjs` §76 — and it is due by the 2026-08-30 run's OWN stated criterion.**
+That run added the `SrOnly` idiom to `Question.jsx`, declined to build a check, and wrote:
+*"If a future run finds a second meaning carried only by color, that is the evidence that the utility
+needs a guard — not this run."* This is that second instance. ⛔ **And the same entry's survey was
+wrong in a way worth recording: it checked `charts.jsx` and the tab bar and concluded "none is due",
+without checking the recap in `Practice.jsx` — the other half of the same flow, one screen later, in
+the file a learner reaches straight after the one being fixed.** The nearest call site was the one
+the survey did not visit.
+- **The rule:** an `Icon` **all** of whose possible names are `check` or `x`, inside an element whose
+  inline `color` is `ink.ok`/`ink.bad`, must have an `<SrOnly>` in that element. **No exemption list**,
+  because the trigger is the tick-and-cross *pair*: Practice's summary icon is `check`-or-`info` in
+  `ink.ok`-or-`ink.muted` beside a heading and a "{correct} of {total}" line, and Sectors/MarketSignals
+  color a figure that carries its own sign — redundant, not silent, and out of scope by construction.
+- **W-6.2 rule 3's sentence:** *a screen-reader learner finishes a review, is told "3 of 4 correct",
+  and cannot find out which one they missed.*
+- **Three controls, all on synthetic source so none depends on the live files** — an unlabeled marker
+  must flag (A), a labeled one must not (B), and the check-or-info summary icon must NOT match (C).
+  **Control C failed on the first run and changed the code**: my first matcher tested "does any string
+  in the tag equal check or x", which the summary icon passes. Narrowing it to the `name` attribute's
+  full value set is what makes the exemption list unnecessary — and the `name`-attribute parse is
+  itself load-bearing, because `<Icon name="check" size="1.1em">` reads `1.1em` as a second name and
+  a naive every-literal test would match nothing at all and report a clean tree.
+- **Live: 3 marker(s), all labeled.** Asserted non-zero, because three going to zero is what a
+  renamed token or a changed markup shape looks like from here.
+- **Injection, both files, proven to have landed:** deleting `Practice.jsx`'s new `SrOnly` and
+  `Question.jsx`'s `quizMarkWrong` one (grep counts 1→0 printed before the run) gives
+  **`FAIL: 2 failure(s)`** naming `src/components/Question.jsx:142` and `src/screens/Practice.jsx:332`.
+  Restored from scratchpad copies taken before the injection, never `git checkout --`; `git diff --stat`
+  after restore shows `Question.jsx` absent from the diff.
+
+**Step 5 — adversarial self-check, and it found one thing.**
+*What it found:* the fail message's advice originally told every call site to use
+`reviewResultCorrect`/`reviewResultWrong`, which is **wrong for `Question.jsx`**, where the mark
+really does label an option. Rewritten to name what the mark means *where it sits*. Also caught: my
+section comment claimed the 2026-08-30 comment it quotes spells "colour", and it does not — it spells
+"color". The false quotation and the `us-english:allow` marker I had added for it are both gone; the
+section now has no British spelling and needs no allow marker.
+*Blindspot register:* §10.2 — no Dalio string. §10.1 — `npm run check-blindspot` PASS; the two new
+strings recommend nothing and `git diff` over `src/` adds **0** lines matching `you should|should buy|recommend`.
+§10.3 — untouched. §2.3 — **0** added lines under `src/content/` carry a `YYYY-MM-DD`; the 2026-09-06
+dates are code comments recording when a thing was measured, this repo's own convention.
+*DECISIONS.md conflict:* none — no dependency, no state, no route, content stays `.js` modules.
+*Already-done backlog item:* no. The 2026-08-30 work is `Question.jsx`; item 117's struck-through note
+(ii) is the `Steps` rail's done marker, already fixed. Neither touches the recap.
+*My own verification claim:* every figure is reproducible from the commands named — `node scripts/check-data.mjs`
+for §76, and for the live figures, serve `dist/` and read `read_page` plus `getBoundingClientRect()`.
+*W-6.3 (instrument-to-app ratio), re-measured not quoted:* `scripts/` (`*.mjs`/`*.js`/`*.sh`)
+**19,193** lines against `src/` minus `content/` and `locales/` **8,833** — **2.173x**, from
+**19,084 / 8,820 = 2.164x** before this run's diff. ⚠️ **Neither figure is comparable to the previous
+entry's 2.15x**: that run reported `scripts/` at 19,004 where the same tree measures 19,084 here, so
+the two are counting different file sets and only the *within-this-entry* delta is meaningful. **This
+run adds 109 lines to `scripts/` and 14 (−1) to `src/`, so it moved the ratio the wrong way**, and the argument for
+shipping it anyway is the one W-6.3 asks for: the guard is not a new speculative property, it is the
+one the previous run of this class explicitly deferred until a second instance appeared, and the second
+instance appeared in the file next door.
+
+**O-3 accounting.** No lesson prose changed, so **no lesson/language pair went stale** and
+`translation-review-ledger.json` is untouched — the ledger is keyed by lesson id and does not cover
+`src/locales/` at all. **8 new non-English chrome strings shipped unreviewed** (es/ko/zh/ja × 2),
+which is O-3's decision surface and is named here rather than left implicit. `npm run readiness`
+figures unchanged (44 lessons / 152,157 en chars / 162 min) — no content moved.
+
+**Top item for the next run.** ⛔ **Not a residual of this one** — this run files none, as an item or
+as a note. Still open and unparked: 26 (closable), 27, 70/71, 74, 76, 94, 117(a)/(b), 155's probe,
+160's stale `quizMeta.js` header comment, and **the fresh-clone recipe correction filed by the 167(c)
+run, which three runs have now listed and none has taken** (W-6.1's recipe produces 7 false §26
+failures because its `cp economic-cycles-v*.jsx` step is stale — without that step the same recipe
+exits 0). ⚠️ **The repo is now FIVE content commits ahead of the last deploy**, so nothing about the
+live site's *content* should be claimed from the repo until the owner redeploys `dist/`.
+**O-2 remains the entire critical path**: one PostHog account and one pasted `phc_` key, with
+`npm run analytics-check` standing by to verify it before it ships.
+
+**Owner tree:** `git status` at run start and again before writing showed the owner's untracked
+`UIUX/` and the empty `course` file, **both untouched**. `HEAD` re-checked before writing and unmoved
+at `9ea716b`; the daily market-data job did not fire during the run and `public/data/market.json` is
+untouched.
+
 ### 2026-09-06 (scheduled dev-agent, self-picked: a defect class never swept in this repo — the DIRECTION of a cross-reference) — lesson 43 told the reader that "the asset-versus-liability test from “Does It Put Money In Your Pocket, or Take It Out?”" stops being a tidy definition, two lessons before the app will let them open it
 
 **Where the pick came from.** The previous run filed no residual and closed its chain, so **W-6.2

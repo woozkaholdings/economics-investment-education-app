@@ -11484,5 +11484,114 @@ function trendDirection(src) {
   }
 }
 
+// §76. A TICK-OR-CROSS VERDICT MUST CARRY A TEXT ALTERNATIVE.
+//
+// THE FAILURE THIS EXISTS FOR, measured live 2026-09-06 off the accessibility
+// tree of the built app. Finishing a review session shows a recap: one row per
+// question, each with a green check or a red cross. `Icon` renders
+// `aria-hidden`, and the row carried nothing else — so a screen-reader user
+// heard "3 of 4 correct" and then four rows that read IDENTICALLY. The screen
+// whose entire job is to say WHICH one was missed could not say it.
+//
+// WHY A GUARD AND NOT JUST A FIX. This is the class's second instance in a
+// sibling of the file that fixed the first. `Question.jsx` grew exactly this
+// pair of `SrOnly` labels on 2026-08-30, with a header comment explaining that
+// the icon and the color are the only signals and neither reaches assistive
+// technology; `Practice.jsx`'s recap — the other half of the same flow, and
+// the screen the learner lands on straight after — shipped the same markup
+// without them. An idiom that has to be remembered per call site is the thing
+// a check is for.
+//
+// SCOPE, and it is deliberately narrow. The trigger is the TICK-AND-CROSS
+// pair — an `Icon` named `check` or `x` inside an element whose inline color
+// is `ink.ok` or `ink.bad`. That pair is a verdict on the learner's own
+// answer, and a verdict is content. It is NOT every semantically colored icon:
+// Practice's summary card draws `check`-or-`info` in `ink.ok`-or-`ink.muted`
+// beside a heading and a "{correct} of {total}" line that already say it in
+// words, and Sectors/MarketSignals color a figure that carries its own sign.
+// Those are redundant, not silent, and this section does not touch them —
+// which is why it needs no exemption list.
+{
+  const before76 = failures;
+
+  // The smallest source window around an `<Icon>`: from the nearest preceding
+  // element open to the nearest following element close. The markers this
+  // guards are flat leaves (`<span><SrOnly/><Icon/></span>`), so the window is
+  // the element itself; where anything nests, erring toward the INNER open tag
+  // keeps the window tight rather than swallowing a parent's `SrOnly`.
+  const verdictSites = (src) => {
+    const out = [];
+    for (const m of src.matchAll(/<Icon\b[^>]*>/g)) {
+      // The `name` attribute only — an Icon tag also carries `size="1.1em"`,
+      // and a scan of every string literal in the tag would read that as a
+      // third icon name and never match anything.
+      const attr = /\bname=(?:"([^"]*)"|\{([^}]*)\})/.exec(m[0]);
+      if (!attr) continue;
+      const names = attr[1] !== undefined ? [attr[1]] : [...attr[2].matchAll(/"([^"]*)"/g)].map((x) => x[1]);
+      // EVERY name this Icon can take must be a tick or a cross. `check`-or-
+      // `info` is a status, not a verdict, and is out of scope by construction
+      // rather than by exemption (control C).
+      if (names.length === 0 || !names.every((n) => n === "check" || n === "x")) continue;
+      const before = src.slice(0, m.index);
+      const open = Math.max(before.lastIndexOf("<span"), before.lastIndexOf("<div"));
+      if (open === -1) continue;
+      const closeSpan = src.indexOf("</span>", m.index);
+      const closeDiv = src.indexOf("</div>", m.index);
+      const close = Math.min(closeSpan === -1 ? Infinity : closeSpan, closeDiv === -1 ? Infinity : closeDiv);
+      if (!Number.isFinite(close)) continue;
+      const win = src.slice(open, close);
+      const head = win.slice(0, win.indexOf("<Icon"));
+      if (!/color:[^;}]*ink\.(ok|bad)/.test(head)) continue;
+      out.push({ line: src.slice(0, m.index).split("\n").length, labeled: /<SrOnly\b/.test(win) });
+    }
+    return out;
+  };
+
+  // Controls, because a matcher that has gone blind reports a clean corpus.
+  // Both run on synthetic source, so neither depends on the live files.
+  const bad = '<span style={{ color: r.correct ? ink.ok : ink.bad }}><Icon name={r.correct ? "check" : "x"} /></span>';
+  const good = bad.replace("<Icon", "<SrOnly>{x}</SrOnly><Icon");
+  const decorative = '<div style={{ color: anyLanded ? ink.ok : ink.muted }}><Icon name={anyLanded ? "check" : "info"} /></div>';
+  if (verdictSites(bad).length !== 1 || verdictSites(bad)[0].labeled) {
+    fail("§76: control A — an unlabeled tick/cross marker was NOT flagged by this section's own matcher. A clean result below would mean nothing.");
+  }
+  if (verdictSites(good).length !== 1 || !verdictSites(good)[0].labeled) {
+    fail("§76: control B — a marker carrying <SrOnly> did not read as labeled. The section would fail every correct call site.");
+  }
+  if (verdictSites(decorative).length !== 0) {
+    fail("§76: control C — the check-or-info summary icon matched. The trigger is the tick-and-cross verdict pair, not every semantically colored icon; widening it silently would demand an exemption list this section is built to avoid.");
+  }
+
+  // Local, like the five other copies of this three-line walker in this file.
+  const walkJsx76 = (dir) =>
+    readdirSync(dir, { withFileTypes: true }).flatMap((e) => {
+      const full = join(dir, e.name);
+      if (e.isDirectory()) return walkJsx76(full);
+      return e.isFile() && e.name.endsWith(".jsx") ? [full] : [];
+    });
+
+  let sites = 0;
+  for (const jsxPath of walkJsx76(join(ROOT, "src"))) {
+    const rel = jsxPath.slice(ROOT.length + 1);
+    for (const site of verdictSites(readFileSync(jsxPath, "utf8"))) {
+      sites++;
+      if (site.labeled) continue;
+      fail(
+        `§76: ${rel}:${site.line} draws a tick-or-cross in ink.ok/ink.bad with no <SrOnly> beside it. ` +
+          "`Icon` is aria-hidden and a color is a color, so this marker's verdict does not exist for a screen-reader user. " +
+          "Add <SrOnly>{...}</SrOnly> inside the same element, with a locale key that names what the mark means WHERE IT SITS: " +
+          "beside an option it is the option that is right or wrong (quizMarkCorrect / quizMarkWrong); on a recap row it is the " +
+          "learner's attempt (reviewResultCorrect / reviewResultWrong). Reusing the other pair reads as a category error.",
+      );
+    }
+  }
+  if (sites === 0) {
+    fail("§76: no tick-or-cross verdict markers were found anywhere under src/. There are three; a zero means the markup or the token names moved and this section is measuring nothing.");
+  }
+  if (failures === before76) {
+    console.log(`  §76 verdict icons: ${sites} tick/cross marker(s) in ink.ok/ink.bad, all carrying an SrOnly label; 3 control(s) fired.`);
+  }
+}
+
 console.log(`\n${failures === 0 ? "PASS" : "FAIL"}: ${failures} failure(s), ${warnings} warning(s).`);
 process.exit(failures === 0 ? 0 : 1);

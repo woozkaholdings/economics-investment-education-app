@@ -27,7 +27,7 @@ import { BOX_INTERVALS, boxDistribution, dueQuestions, seenCount } from "../lib/
 import Icon from "../components/Icon.jsx";
 import { Bar } from "../components/charts.jsx";
 import Question from "../components/Question.jsx";
-import { Button, Card, Disclaimer, LoadFailure, ProgressBar, Steps, Text } from "../components/ui.jsx";
+import { Button, Card, Disclaimer, LoadFailure, ProgressBar, SrOnly, Steps, Text } from "../components/ui.jsx";
 import { graph, ink, line, MIN_TAP, radius, space, surface } from "../theme.js";
 
 // A straight-through 40-question "practice all" session has no natural stop.
@@ -316,7 +316,20 @@ export default function Practice({ t, lang, completedLessons, review, recordRevi
                       borderBottom: i < results.length - 1 ? `1px solid ${line.hairline}` : "none",
                     }}
                   >
+                    {/* The tick and the cross ARE the recap — they are the only
+                        thing on the row that says whether this one landed. `Icon`
+                        is `aria-hidden`, so without this label every row reads
+                        identically to assistive technology and the screen that
+                        exists to say WHICH one was missed says only "3 of 4
+                        correct". Measured live 2026-09-06 off the accessibility
+                        tree, with the disclosed-option markers in Question.jsx as
+                        the positive control — the same idiom, added there
+                        2026-08-30, in the sibling half of this same flow.
+                        Its two keys are deliberately NOT reused: they label an
+                        OPTION ("Correct answer", "Your answer, incorrect") and
+                        this labels a verdict on an attempt. */}
                     <span style={{ color: r.correct ? ink.ok : ink.bad, display: "flex", marginTop: 2, flexShrink: 0 }}>
+                      <SrOnly>{r.correct ? t.reviewResultCorrect : t.reviewResultWrong}</SrOnly>
                       <Icon name={r.correct ? "check" : "x"} size="1.1em" strokeWidth={2.5} />
                     </span>
                     <div style={{ flex: 1, minWidth: 0 }}>

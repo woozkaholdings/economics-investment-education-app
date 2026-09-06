@@ -118,6 +118,8 @@ export default {
     reviewCompleteTitle: "复习完成",
     reviewScoreTemplate: "{total}题中答对{correct}题",
     reviewFromLesson: "第 {n} 课 · {track}",
+    reviewResultCorrect: "回答正确",
+    reviewResultWrong: "回答错误",
     doneLabel: "完成",
     reviewBatchTitle: "已完成 {n} 题 — 做得好",
     reviewBatchTitleNoneRight: "已完成 {n} 题 — 这些明天会再出现",

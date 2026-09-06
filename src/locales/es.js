@@ -124,6 +124,8 @@ export default {
     // first lesson. "Aciertos" is a label, so nothing agrees with the count.
     reviewScoreTemplate: "Aciertos: {correct} de {total}",
     reviewFromLesson: "Lección {n} · {track}",
+    reviewResultCorrect: "Respondida correctamente",
+    reviewResultWrong: "Respondida incorrectamente",
     doneLabel: "Listo",
     reviewBatchTitle: "{n} completadas — bien hecho",
     reviewBatchTitleNoneRight: "{n} completadas — estas vuelven mañana",

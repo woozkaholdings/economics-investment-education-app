@@ -150,6 +150,12 @@ export default {
     reviewCompleteTitle: "Review complete",
     reviewScoreTemplate: "{correct} of {total} correct",
     reviewFromLesson: "Lesson {n} · {track}",
+    // Read out beside each recap row, never seen. The row's tick or cross is
+    // `aria-hidden`, so this is the only non-visual signal of which questions
+    // were missed. Deliberately not `quizMark*`: those label an option, this
+    // labels the attempt.
+    reviewResultCorrect: "Answered correctly",
+    reviewResultWrong: "Answered incorrectly",
     doneLabel: "Done",
     reviewBatchTitle: "{n} done — nice work",
     reviewBatchTitleNoneRight: "{n} done — these come back tomorrow",

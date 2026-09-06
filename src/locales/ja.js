@@ -118,6 +118,8 @@ export default {
     reviewCompleteTitle: "復習完了",
     reviewScoreTemplate: "{total}問中{correct}問正解",
     reviewFromLesson: "レッスン {n} · {track}",
+    reviewResultCorrect: "正解した問題",
+    reviewResultWrong: "間違えた問題",
     doneLabel: "完了",
     reviewBatchTitle: "{n}問完了 — いい調子です",
     reviewBatchTitleNoneRight: "{n}問完了 — これらは明日また出ます",
