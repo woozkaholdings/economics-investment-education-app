@@ -1679,12 +1679,38 @@ diff the first heading against the previous section's first heading.
     > "roughly twice" (the standard ratio, already hedged) and lesson 28's more-trading-lower-returns
     > (Barber-and-Odean-shaped, replicated across markets). See the run log for the instrument, the
     > control that caught a bad glossary grep, and why widening would have damaged two good lessons.
-    - **(a) Lesson 37 (QE & QT) says the balance sheet "grew from roughly $900 billion before 2008
-      to a peak of about $9 trillion in 2022 — a stack of bonds nine times the size of the entire
-      pre-2008 institution."** $9T against $900B is **ten** times, not nine; nine is the *increase*
-      divided by the base. The sentence reads as a claim about the peak, so a learner doing the
-      division gets a different number than the sentence gives them. Cheapest of the three; decide
-      whether the intended claim is the peak (10x) or the growth (9x) and say which.
+    - **(a) ✅ DONE 2026-09-05 (scheduled dev-agent). "nine times" → "ten times" in all five
+      languages.** Premise reproduced exactly before editing (en/es/ko/zh/ja all carried the 9x
+      wording against the same $900B → $9T pair). **Disposition decided as the item asked:** the
+      em-dash clause modifies *the $9 trillion stack*, so it is a claim about the **peak**, and the
+      peak is 10x — which is also what the lesson's own two rounded figures divide to, and what the
+      real series gives ($8.97T ÷ $0.90T = 9.96). ⚠️ **It was NOT taken as a headline pick on its
+      own** — see (d) below, which is the defect this run actually went looking for and found in the
+      same lesson; (a) rode along because it is the same sentence-level class in the same section,
+      not because the chain resumed.
+      ORIGINAL TEXT, kept because the line above refers to it:
+      > **(a) Lesson 37 (QE & QT) says the balance sheet "grew from roughly $900 billion before 2008
+      > to a peak of about $9 trillion in 2022 — a stack of bonds nine times the size of the entire
+      > pre-2008 institution."** $9T against $900B is **ten** times, not nine; nine is the *increase*
+      > divided by the base. The sentence reads as a claim about the peak, so a learner doing the
+      > division gets a different number than the sentence gives them. Cheapest of the three; decide
+      > whether the intended claim is the peak (10x) or the growth (9x) and say which.
+    - **(d) ✅ DONE 2026-09-05 (scheduled dev-agent), and it is what this run was actually for.
+      Lesson 37's THINK prompt contradicted the lesson's own figure table three blocks above it.**
+      The body lists `QE1 (2008): $1.75 trillion`; the prompt read *"The Fed printed $2+ trillion in
+      2008 and unlimited in 2020."* Both in all five languages. Neither reading rescues it: it is
+      not QE1's $1.75T, and it is not the 2008 balance-sheet expansion (~$1.3T) either — `$2+
+      trillion` matches only the *total* balance sheet at end-2008, which is not a thing that was
+      "printed". Now reads *"$1.75 trillion in QE1 starting in 2008"*, reusing each language's own
+      existing rendering of that figure from the table above it (`$1.75 billones`, `$1.75조`,
+      `1.75万亿美元`, `1兆7500億ドル`) rather than a fresh translation of the number.
+      ⛔ **A THIRD SURFACE carries `$2+ trillion` and was deliberately NOT changed — do not
+      re-derive this.** `src/content/kidsContent.js:84` says *"The Fed printed $2+ trillion to stop
+      the collapse"* in all five languages. It is **not** pinned to a single year and it reads across
+      the whole crisis response, where QE1+QE2 = $2.35T makes "$2+ trillion" fair; and it sits on the
+      parent-facing guide with no adjacent figure to disagree with. **The defect was the
+      self-contradiction, not the number** — same call, and same reasoning, as (b)'s two untouched
+      neighbours.
     - **(b) ✅ DONE 2026-09-05 (scheduled dev-agent). Lesson 36's THINK prompt no longer poses a
       settled episode as an open bet.** Premise re-measured and confirmed exactly as filed in all
       five languages before editing; see the run log. The replacement anchors on a **closed
@@ -1715,13 +1741,26 @@ diff the first heading against the previous section's first heading.
       chosen. **Do not treat (c) as confirmed; (a) and (b) are.**
     - **W-6.2 rule 3, answered:** (a) "a learner divides 9 by 0.9 and gets a different answer than
       the sentence"; (b) "the lesson tells a reader on one screen that the window is open and that it
-      closed"; (c) "a learner is taught that recession means prices fall". **No check is proposed for
-      any of them** — all three are single sentences, and `scripts/` at 2.15x `src/` (W-6.3) says a
-      regex is the wrong instrument. **Honest priority: (b) medium — it is a live self-contradiction
-      on the main path; (a) low but near-free; (c) unmeasured.** ⛔ **(b) is DONE, so this item is
-      now a two-part remainder — and W-6.2 rule 1 is EXHAUSTED for this chain: the 2026-09-05 filing
-      run was link one and the (b) run was link two. A run may not take (a) or (c) as its headline
-      pick.**
+      closed"; (c) "a learner is taught that recession means prices fall"; (d) "the lesson prints
+      $1.75 trillion in a table and $2+ trillion in the prompt three blocks below it". **No check is
+      proposed for any of them** — all four are single sentences, and `scripts/` at 2.15x `src/`
+      (W-6.3) says a regex is the wrong instrument. **Honest priority: (b) medium — it is a live
+      self-contradiction on the main path; (a) low but near-free; (c) unmeasured.**
+      ⛔ **ONLY (c) IS LEFT. (a), (b) and (d) are done.**
+      ⚠️ **AND THE W-6.2 rule 1 BAR BELOW HAS LAPSED — corrected 2026-09-05, because it was
+      re-read literally rather than carried forward.** Rule 1 reads: *"A run may not take its
+      **own previous run's** residual as its headline pick **more than TWICE in a row**."* Both
+      qualifiers had stopped applying. The chain was filing-run → (b)-run, and **ten runs
+      intervened** before this one, so nothing was "in a row"; and item 167 was filed by a run
+      twelve runs back, so it is not **this** run's previous run's residual under any reading.
+      **A bar written while a chain was live does not survive the chain** — the same shape as
+      W-5.2's ratio expiring with item 93, and the same shape as W-5.2's own ⚠️ standing warning
+      that a pick-list goes stale exactly like a figure does. The clause is annotated rather than
+      deleted so the correction is visible.
+      ORIGINAL CLAUSE, kept because the correction above refers to it:
+      > ⛔ **(b) is DONE, so this item is now a two-part remainder — and W-6.2 rule 1 is EXHAUSTED
+      > for this chain: the 2026-09-05 filing run was link one and the (b) run was link two. A run
+      > may not take (a) or (c) as its headline pick.**
 
 166. **✅ DONE 2026-09-04 (scheduled dev-agent). The Sector screen now credits both sources, and
     `check-data.mjs` §73 keeps it doing so.** See the run log. Two five-language locale keys —
@@ -4729,6 +4768,126 @@ zero meaningful: `selftest PASS (8/8 controls fired, plantsRemoved true)` and, p
 finding(s); V vacuous; U unavailable`. A bare "no accessibility issues found" is not a result.
 
 ## Run log
+
+### 2026-09-05 (scheduled dev-agent, self-picked off a corpus-wide sweep of a class this log has hit three times by close reading and never once by instrument) — lesson 37 prints "QE1 (2008): $1.75 trillion" in a table and then asks the reader, three blocks below, about the "$2+ trillion" the Fed printed in 2008; and the sweep that found it says that is the only one left in 44 lessons
+
+**Where the pick came from, and why it is not a chain.** The last three scheduled runs took item 101,
+`LAUNCH_PLAN.md` §10, and a self-picked sweep; item 167 was filed twelve runs back. The live
+candidates were re-read first per W-5.2 rather than taken off the previous entry's closing line:
+**item 26** is complete (the Leitner strip was the last unbuilt piece and shipped 2026-09-02, so it
+can close); **item 117(a)** is an open judgment call the owner has to make, not work; **item 160's**
+remainder is blocked on O-3 by its own stop line; **item 165's** remainder is out of order behind
+item 94. So: a **class**, and deliberately one the log keeps finding by hand — *the closing blocks
+disagreeing with the lesson body*. It has been hit three times (2026-09-04's QT/tapering and 2s10s,
+and item 167(b)'s inversion window) and **swept zero times**: `AGENT_LOG.md` + archive return 0 for
+`takeaway sweep`, `thinkAbout sweep` and `closing block`. W-6.2 rule 3, answered before building
+anything: *"a learner reads a figure in the lesson body, then reads a different figure for the same
+fact in the prompt at the bottom of the same screen."*
+
+**⛔ Step 3.5 — the premise re-measured with controls, and the sweep is what produced the premise
+rather than confirming one.** No backlog item claimed this defect; it came out of the instrument.
+- **Instrument** (`closing.mjs`, scratchpad, not committed): every numeric token in each lesson's
+  `takeaway` + `thinkAbout` normalized (strip `$`, commas, `%`) and looked up in that lesson's own
+  section bodies. **39 closing-block tokens across all 44 lessons, 15 flags.**
+- **Both controls fired, in both directions.** A figure planted in L29's prompt that **matches** its
+  body (`100 loaves for $500`) → **0 flags**; the same figure planted **mismatched** (`140 loaves`)
+  → **flagged**. So a silent result is a reading, not a dead scan.
+- **14 of the 15 flags are legitimate and were read individually**: a THINK prompt is allowed to
+  introduce a *new* hypothetical, and that is what L3's Rule-of-72 exercise, L11's 0.75% fee (inside
+  the body's own stated 0.5%-1.5% active range), L12's $1,800/$1,900 rent-vs-buy, L13's 5% limit
+  order, L15's 705/680 credit scores, L30's $10,000 loan and L35's 5.25-5.50% all are.
+- **The 15th is `L37`, and it is a restatement, not a new scenario.** Body: `QE1 (2008): $1.75
+  trillion`. Prompt: *"The Fed printed $2+ trillion in 2008."* ⚠️ **Neither reading rescues the
+  number, which is why it is a defect and not a rounding**: it is not QE1's $1.75T, and it is not the
+  2008 balance-sheet expansion (~$1.3T of it, mostly emergency facilities rather than purchases)
+  — `$2+ trillion` matches only the *total* balance sheet at end-2008, which is not a quantity that
+  was "printed". Reproduced verbatim in **all five languages** before any edit.
+- ⚠️ **The numeric sweep is a PARTIAL instrument for its own class and this is worth not
+  re-deriving.** Item 167(b)'s defect — a prompt posing a settled episode as an open bet — carries no
+  contradicting *number* and this scan cannot see it. So the 44 `takeaway`/`thinkAbout` pairs were
+  also **read** against their bodies, which is where L35's takeaway ("when rates hit 0%") was
+  confirmed as a forward pointer to lesson 37 rather than a contradiction. **One numeric defect, one
+  reading pass, no second instance.**
+
+**What shipped — ten string replacements, five files, two sentences.**
+- **`thinkAbout`, all five languages:** *"$2+ trillion in 2008"* → *"$1.75 trillion in QE1 starting
+  in 2008"*. **Each translation reuses that language's own existing rendering of the figure from the
+  table above it** (`$1.75 billones`, `$1.75조`, `1.75万亿美元`, `1兆7500億ドル`) rather than a fresh
+  translation of the number — so the prompt and the table now agree *inside each language*, which is
+  the property that was broken.
+- **§0's last sentence, all five languages: item 167(a) closed** — *"nine times the size"* → *"ten
+  times"*. $9T ÷ $900B = 10, and the real series agrees ($8.97T ÷ $0.90T = 9.96). The item asked
+  whoever took it to decide between the peak (10x) and the growth (9x) **and say which**: the
+  em-dash clause modifies *the $9 trillion stack*, so it is the peak.
+- **`scripts/translation-review-ledger.json`** — lesson 37 re-marked in es/ko/zh/ja (see below).
+- **`LAUNCH_READINESS.md`** — the two generated figures via `npm run readiness -- --write`, plus one
+  hand-typed count this change invalidated (see below).
+
+**Verification.**
+- **`npm test` — PASS, 0 failures**, and the **same four** warnings as the previous run's baseline
+  (translation review share, translation completeness, item 160's option-length cue, the W-6.4 log
+  floor). No new warning. `npm run build` clean. `npm run check-blindspot` **PASS**.
+- **Driven in a real browser on the built `dist/`**, served statically **with a 404 control on a
+  made-up path** so the 200s are real files. Lesson 37 opened in **all five languages**, and each
+  language asserted four ways: both new strings present in the rendered DOM, both old strings absent,
+  a **positive control** (the untouched `QE1 (2008): $1.75 trillion` line, which must be present) and
+  a **negative control** (a nonsense string, which must not). **All five languages passed all four.**
+  Zero console errors. The corrected prompt was also screenshotted at 375px and read by eye.
+  ⚠️ **The positive control earned its place mid-run:** a hash-only navigation does not remount the
+  app, so an English probe ran against a still-Japanese screen and returned `false` for every English
+  string. **Without the control that reads as "the fix is missing"; with it, it reads as "you are not
+  looking at English", which is what it was.** A real reload fixed it.
+- **The tree was restored from a scratchpad copy and `shasum -a 256`-verified**, never with
+  `git checkout --`, for the baseline measurement below.
+
+**⛔ Two things this change did that the diff does not show, both found by the self-check.**
+1. **Editing translated content marks it stale, and the ledger `mark` is the documented protocol —
+   but `mark` vouches for the WHOLE lesson, not for the two sentences I wrote.** `npm test` failed on
+   §11 (coverage 100% → 98%, one stale pair per language, and it named lesson 37 — which is the
+   control that the failure was mine). Re-marking on the strength of two sentences would have made
+   the ledger's own claim false, so **all three sections plus the takeaway of lesson 37 were read in
+   es, ko, zh and ja against the English** before marking: complete, no dropped sentences, every
+   figure matching ($95B, $9T, 30-year, 10-year), the two-channel wealth-effect caveat intact, no
+   advice-adjacent language, no Dalio. **Then** marked `ai`, reviewer of record per the script header.
+2. ⭐ **The abridged-pair count moved, and it is a threshold artifact — not an improvement, and not
+   mine to claim.** Baseline measured off restored pre-edit copies: **48 pairs (es 12)**. After:
+   **47 (es 11)**. The pair that left is **lesson 14's `es`, whose Spanish this run never touched** —
+   it reads `0.83` both times. The abridged test is `0.7 x` a **corpus-wide p90**, so editing any
+   lesson's English or Spanish moves the bar every other pair is judged against, and a two-sentence
+   fix in lesson 37 reclassified lesson 14. **Recorded in `LAUNCH_READINESS.md` §10.4 beside the
+   dated 2026-08-24 measurement rather than overwriting it**, with the rule stated: *read a change in
+   this count as a threshold move until a per-lesson diff says otherwise.*
+
+**Adversarial self-check (step 5) — run, and it found the two items above plus one more.**
+- **Blindspot register.** `check-blindspot` PASS on all of it: §10.2 no Dalio, §10.1 no
+  advice-adjacent language in any of the five languages, disclaimer on all 8 surfaces, §10.3
+  parent-facing, §2.3 no live-looking dates. Both edited sentences carry historical figures and years
+  only — no current date, no live market number. Checked by hand as well.
+- **DECISIONS.md.** Nothing contradicted: content-only edits to `.js` content modules, and the ledger
+  update is the procedure that file's own header prescribes.
+- **Already-done item.** 167(a) is being *closed*, which is its purpose; (d) is new. Not a redo.
+- **The third finding: `AGENT_LOG.md` and `LAUNCH_READINESS.md` both quote the 48 figure, and only
+  one of them was mine to fix.** `LAUNCH_READINESS.md` §10.4 states it as a live claim — corrected in
+  this run, because a document made wrong *by this commit* is this commit's problem. The five hits in
+  `AGENT_LOG.md` were left **verbatim**: four are run-log entries and W-5.1's clause (dated records,
+  §31), and item 94's is a dated ⛔ note whose **argument survives** — every remaining pair is still
+  on an `essentials` lesson, and L14 is still abridged in ko/zh/ja, so "take the lesson bodies or
+  neither" is unaffected. Checked, not assumed.
+- **My own verification claim.** An independent reviewer re-running only what is written above gets
+  the same result: the sweep and its two controls are reproducible from the description, `npm test`
+  and `npm run build` are the repo's own commands, and the five-language DOM assertions each carry
+  their own positive and negative control.
+
+**Next run.** ⛔ **No residual is filed as a numbered item** (W-6.2 rule 2): the closing-block class
+is swept at one instance and **needs no guard** — one defect in 39 tokens across 44 lessons does not
+earn a permanent regex, and `scripts/` is still well over 2x `src/` (W-6.3). Item **167 is down to
+(c) alone**, still unmeasured and still needing the glossary read before it is confirmed. Item **26
+can be closed** by the next run that touches the backlog — its stream is complete and nothing in it
+is unbuilt. **O-2 remains the entire critical path and no run can move it**; per this log's own
+finding about how O-1 actually closed, the useful move is to ask the owner directly rather than
+restate the blocker — and the redeploy that would make both the analytics and the 2026-09-05 social
+card live is the *same single owner step*. Open and unparked otherwise: 27, 70/71, 74, 76, 94, 117,
+155, 160, 165's essentials remainder, 167(c).
 
 ### 2026-09-05 (scheduled dev-agent, backlog item 101 — the one item in the whole backlog whose own text said "low until O-1, then immediate", picked the day after O-1 closed) — the app has been shareable for a day and every shared link unfurled as a text stub; it now ships a 1200x630 card, and the card is drawing code rather than a binary because a binary is a file nobody can edit
 
