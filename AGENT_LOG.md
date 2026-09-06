@@ -262,12 +262,24 @@ for the history. No open P1/P2 items.
 > ### W-7.3 — market data has missed two days, and the stale date is now inside the week. Owner's job; flagged, not touched.
 > `public/data/market.json` is `asOf 2026-09-04`; refresh commits ran daily 08-31 → 09-04 and there is
 > **none on 09-05 or 09-06**. `STALE_AFTER_DAYS` is **4** (`src/lib/useMarketData.js:20`, `ageDays >
-> STALE_AFTER_DAYS`), so the Sector and Market Signals screens start rendering the unavailable state on
+> STALE_AFTER_DAYS`), so the Sector screen starts rendering the unavailable state on
 > **2026-09-09**. This is the **second** occurrence of the W-6.5 pattern in eight days. ⛔ **It is the
 > owner's scheduled job, not dev-agent work — do not "fix" it in the repo.** ⚠️ **But note what is new
 > since W-6.5: the app is live.** A stale-data gap is no longer invisible; it is a public surface
 > degrading. **W-7.1's guard and this share one root** — nothing in this repo watches anything outside
 > the tree.
+> ✏️ **Corrected 2026-09-06 (dev-agent), two ways.**
+> **(a) "the Sector and Market Signals screens" was wrong — it is ONE screen**, and this is a
+> *re-regression*, not a new finding: **item 74 corrected exactly this on 2026-08-19 "by measurement,
+> not reading"**, and W-7.3 lost it 18 days later. Re-measured this run: `grep -rn "useMarketData" src/`
+> has one consumer, `Sectors.jsx`. `MarketSignals.jsx` imports only `content/markets.js` and never
+> fetches `market.json` — it is dateless teaching copy, unaffected by staleness in either direction.
+> ⭐ **A weekly review is not a fresh measurement of everything it restates; it can carry a stale claim
+> forward past a correction the backlog already holds.**
+> **(b) The last sentence is now false, and deliberately so:** `npm run check-market`
+> (`scripts/check-market-freshness.mjs`) watches this file on every `npm test` — WARN when it is stale
+> or goes stale tomorrow, FAIL only for a missing/unparseable/unreadable-`asOf` file, which is the half
+> the repo owns and a run can fix. It does not refresh anything; W-7.3's ⛔ stands untouched.
 >
 > ### W-7.4 — content quality: no regressions found, and the safety guard was independently re-proved.
 > **This review verified §10.1 rather than reading its green line.** Planted *"With rates this low, now
@@ -5061,6 +5073,124 @@ zero meaningful: `selftest PASS (8/8 controls fired, plantsRemoved true)` and, p
 finding(s); V vacuous; U unavailable`. A bare "no accessibility issues found" is not a result.
 
 ## Run log
+
+### 2026-09-06 (scheduled dev-agent, picked off W-7.3 — the one open clause of this week's priority block that names a learner-visible surface, and a live walk of the deployed app that was meant to confirm it) — the one artifact in this tree that goes wrong by standing still was the only one no script had ever read, and the review that flagged it re-regressed a correction the backlog had held for 18 days
+
+**Where the pick came from.** The previous run queued **the owner's Netlify token**, then **O-2** —
+both owner actions — and named the stale Environment note as "the cheapest real defect" for a
+scheduled run. W-6.2 rule 1 permits taking a residual, but the Environment note is process text; W-7.3
+is the one clause in the live priority block that names something a **learner** sees, and it is
+time-boxed to **2026-09-09**. I took W-7.3's thread and started by walking the live site.
+
+**⛔ Step 3.5 — the premise, re-measured with controls, and it broke in two places.**
+- **Live walk of <https://magnificent-mochi-73aecc.netlify.app> (fresh install, mobile viewport).**
+  Cleared `localStorage` first — the pane carried `ecycles_lang=ko` and `44/44` complete from an
+  earlier walk, so the *first* read was of a returning learner, not a new one. After clearing:
+  English (matching `navigator.language`), the §10.1 disclaimer modal present and dismissable,
+  lesson 1 (`#/lesson/29`) rendering, hook + check + Mark Complete all present, **zero console
+  errors**, and `data/market.json` fetching **200 from the deployed origin** (`asOf 2026-09-04`,
+  tiingo, 11 sectors). **The live app is healthy end to end** — which `check-deployed` could not
+  have told anyone, because it compares bytes, not behavior.
+- **Premise break 1 — W-7.3 names two screens; there is one.** `MarketSignals.jsx` imports only
+  `content/markets.js` and never touches `market.json`. ⭐ **And this is not my finding: item 74
+  already corrected it on 2026-08-19, "by measurement, not reading."** W-7.3 regressed a fix the
+  backlog had held for 18 days. **A weekly review restating a fact is not re-measuring it.**
+- **Premise break 2, and it is the one that became this run.** W-7.3's closing sentence says
+  "nothing in this repo watches anything outside the tree" — true, and it **misses that
+  `public/data/market.json` is INSIDE the tree and equally unwatched.** Measured: **no script in
+  this repo reads that file at all.** `check-data.mjs` §25 exercises `freshness()` hard but only on
+  synthetic dates; `check-deployed.mjs` names the file solely to *exclude* it from the byte
+  comparison. **Control for that negative** (a silent grep and a true negative look identical): the
+  same grep shape returns five readers of `AGENT_LOG.md` — so the instrument fires, and the zero is
+  real.
+- **The disposition change:** the pick stopped being "look at the stale-data surface" (already
+  correct — item 79 shipped the stale/unavailable message split) and became **"the gap is that
+  nobody is watching, and it has now been caught twice by a human reading `git log`"** — W-6.5 on
+  08-30 and W-7.3 on 09-06, eight days apart, both after the fact.
+
+**What I built.** `scripts/check-market-freshness.mjs` (154 lines) + `npm run check-market`, wired
+into `npm test` after `check-log-size`.
+- **Thresholds are imported, never retyped** — `freshness()`, `STALE_AFTER_DAYS`,
+  `FUTURE_TOLERANCE_DAYS` from `src/lib/useMarketData.js`, the same module the browser runs, so the
+  check cannot report a comfortable number while the learner's screen is already empty.
+- **The design decision is the FAIL/WARN split.** Refreshing is the owner's job (W-7.3's ⛔), so
+  staleness **WARNs and exits 0** — a hard failure would block every run on work no run can do.
+  What **FAILs** is the half the repo owns and a run can fix: file missing, unparseable, or an
+  `asOf` the app cannot read. Note `freshness()` folds all of those into one `isStale: true`, so a
+  check that merely asked "isStale?" could not tell *the job is late* from *the file is corrupt*.
+  These have different owners, so they get different exit codes.
+- **W-6.2 rule 3 sentence** (first line of the file): *a learner opens Reference → Sectors on the
+  live site and sees "market data unavailable" instead of the eleven sector rankings, because the
+  owner's daily job stopped four days earlier and nothing in the repo said so.*
+
+**Verification.**
+- Against the real file: `ok`, exit 0, and it **independently reproduces W-7.3's hand-computed
+  date** — "Sectors goes to the unavailable state on **2026-09-09**" derived from `asOf` + the
+  imported threshold, not copied from the review.
+- **Negative controls — nine branches, each exercised against a scratchpad fixture, never the real
+  file.** The script takes `--file` and `--today` precisely so the controls need neither a mutated
+  `market.json` nor a particular calendar day: stale (17 d) → WARN/0; **boundary 3 d → ok, 4 d →
+  "stale TOMORROW" WARN, 5 d → already-stale WARN**; future-dated (+24 d) → its own
+  clock-disagreement WARN, not folded into "stale"; missing `asOf` → FAIL/1; malformed `2026-9-4`
+  → FAIL/1; unparseable JSON → FAIL/1; missing file → FAIL/1. **Exit codes read from `$?` directly,
+  never through a pipe.**
+- `npm test` **exit 0** (3 pre-existing WARNs unchanged); `npm run build` **exit 0**.
+- **The shipped app is untouched, and I can show it rather than assert it:** the build reproduced
+  entry bundle `index-B1mndoLB.js` at **264.93 kB** — byte-identical to the deployed one — so this
+  commit needs no redeploy and cannot have regressed the live site.
+
+**Step 5 — adversarial self-check.**
+*Blindspot register:* no §10.2 Dalio, no §10.1 advice language, no §10.3 child-facing copy. **On
+§2.3 I have to be precise rather than cite a green check:** `check-blindspot` passed, but its §2.3
+scan is a **fixed list of `src/content/` teaching files**, so it never scanned my new script and its
+green says nothing about it. Verified by reading instead: the only date literals are dated
+measurement records, and the one comment that used a date as an illustration was rewritten to name
+none, because a comment explaining a freshness rule with a frozen date is the defect the rule
+exists to catch. Runtime "today" is `todayStr()`.
+*DECISIONS.md:* no conflict — line 87 records that `freshness(asOf, today)` is what decides this,
+and this check **uses** that function rather than reimplementing it, which is the decision honored.
+*Already-done item:* no item proposes this check. **Adjacent but distinct: item 74** owns "nothing
+owns the *rebuild*" and says the cheapest answer there is probably not a script — I have not
+touched that, and this does **not** close item 74; it only makes the staleness visible. Item 79
+(the stale/unavailable message split) is unaffected and still correct on screen.
+*My own verification claim:* reproducible by an independent reviewer — every control is a one-liner
+with `--file`/`--today` and no dependence on today's date, which is why those flags exist.
+*W-6.3 (ratio) — re-measured, not quoted, and it moves the WRONG way:* `scripts/` **20,254** lines
+against `src/` minus `content`/`locales` **8,833** — **2.293x**, up from 2.254x last run and 2.19x
+at W-7.0's baseline. This run adds **154 lines to `scripts/` and 0 to `src/`**. Stated plainly
+because W-6.3 asks which side of the number a proposal falls on: it grows the instruments, and the
+case for it is that the failure is learner-visible, has **already happened twice in eight days**,
+is currently live-facing, and had **no watcher at all**.
+⛔ **What the check found against me.** I had drafted this as a pure reporter that always exits 0.
+Writing the controls is what broke that: a missing or corrupt `market.json` is not the owner's late
+job — it ships a permanently empty Sectors screen that no amount of waiting fixes — and collapsing
+it into the same WARN would have made the instrument agree with `freshness()`'s single boolean
+instead of improving on it. The split exists because the fixtures forced it, not because I reasoned
+my way there.
+
+**Filed, not picked (W-6.2 rule 2 — NOTES, not numbered items):**
+1. ⚠️ **The Environment note still says this environment has "no Node.js in `PATH`"** and sends every
+   run to `scripts/bootstrap-node.sh`. Re-confirmed this run: `node` is at `/usr/local/bin/node`
+   **v26.7.0** and every command above ran on it unbootstrapped. Carried forward from the previous
+   run's note 1, still the cheapest real defect in the floor, still not taken — it is a different
+   region and this run's scope claim is `scripts/` + `package.json` + this log.
+2. The run log is over the 250,000 b warn budget; a **W-5.3 archiving pass** remains the obvious
+   cheap run and is unaffected by this one.
+3. **`check-blindspot`'s §2.3 scan is a hardcoded file list.** Any new teaching-copy module is
+   unscanned until someone remembers to add it. Not picked, and not obviously worth a check — but
+   the green line means less than it looks like, which is worth knowing before quoting it.
+
+**Top item for the next run:** ⛔ unchanged and still owner-only — **the Netlify token**, then
+**O-2** (the app is live, current, and nothing can yet say whether one person has opened it). For a
+scheduled run, **note 1 (the stale Environment note)** is now twice-queued and genuinely cheap, and
+the **W-5.3 archiving pass** is the other. ⚠️ **W-7.3's clock is still running: `market.json` is
+`asOf 2026-09-04` and Sectors goes blank on 2026-09-09** — but from this commit forward `npm test`
+says so out loud on every run instead of waiting for a weekly review to notice.
+
+**Owner tree:** the owner's untracked `UIUX/` and `course` were **untouched** — not read, not
+edited, not staged. `public/data/market.json` **untouched** (`git diff` empty; every control ran
+against scratchpad fixtures via `--file`). `dist/` unchanged by the build. `HEAD` re-checked before
+writing and unmoved at `365fad0`.
 
 ### 2026-09-06 (scheduled dev-agent, W-7.2 rule 4 — "apply rules 1-2 to THIS block first, starting with W-7.1, which should collapse the run after it lands") — the review that measured the priority-block region as the fastest-growing in the file measured it before inserting itself into it, so it charged its own 12,567 b to nobody and reported +62% for a region that had doubled
 
