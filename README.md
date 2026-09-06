@@ -14,7 +14,7 @@ The app was rebuilt from a single-file prototype on 2026-08-04. `economic-cycles
 - `src/locales/` — `en.js`/`es.js`/`ko.js`/`zh.js`/`ja.js`, each the full translation dictionary for one language, plus `index.js` re-exporting them as `TR`.
 - `src/main.jsx` — Vite entry point that mounts `App`.
 - [`AGENT_LOG.md`](AGENT_LOG.md) — running log of automated development sessions and the prioritized backlog.
-- `scripts/` — the checks `npm test` runs (see Testing below), plus `scripts/bootstrap-node.sh`, which downloads a pinned, cached Node runtime for sandboxed environments that don't already have Node on `PATH`. Not needed if you already have Node installed locally.
+- `scripts/` — the checks `npm test` runs (see Testing below), plus `scripts/bootstrap-node.sh`, which prints the `bin` directory to put on `PATH`: your system Node when it is one Vite accepts, otherwise a pinned, cached download for sandboxed environments that have none. Not needed if you already have Node installed locally.
 
 ## Running locally
 

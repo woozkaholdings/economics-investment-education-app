@@ -4753,7 +4753,11 @@ diff the first heading against the previous section's first heading.
 
 ## Environment note
 
-This automated execution environment has **no Node.js in `PATH`** (confirmed 2026-08-01 — no `node`, `npm`, `nvm`, `volta`, `asdf`, or Homebrew present). **As of 2026-08-02, use `scripts/bootstrap-node.sh` instead of re-downloading Node by hand.** It caches a pinned Node v20.18.1 under `$HOME/.cache/ecycles-node` (real home directory — persists across runs, unlike the session scratchpad) and prints the runtime's `bin` directory on stdout:
+**Node: run the script, do not read a claim about the machine.** `scripts/bootstrap-node.sh`
+prints the `bin` directory to put on `PATH` and works on either kind of machine — it uses a system
+Node when one is installed that Vite accepts, and otherwise downloads and caches a pinned v20.18.1
+under `$HOME/.cache/ecycles-node` (real home, so it persists across runs unlike the session
+scratchpad). Never installs anything system-wide, never touches the repo.
 
 ```bash
 BIN_DIR="$(scripts/bootstrap-node.sh)"
@@ -4761,7 +4765,19 @@ export PATH="$BIN_DIR:$PATH"
 npm install && npm run build
 ```
 
-First run on a given machine downloads (~30s); every run after that reuses the cache instantly. Never installs anything system-wide, never touches the repo.
+Add `--force-download` (or `NODE_BOOTSTRAP_FORCE=1`) to ignore a system Node and pin to v20.18.1.
+
+⚠️ **This paragraph used to assert the machine had no Node at all, and that is why it now asserts
+nothing.** *What was true:* confirmed 2026-08-01 — no `node`, `npm`, `nvm`, `volta`, `asdf` or
+Homebrew. *What is true now:* Homebrew installed Node on **2026-08-22** (the `/usr/local/bin/node`
+symlink carries that date), so the sentence was **false for 15 days** in the note every run reads
+first, and the recipe under it sent each run to download a second, older runtime it did not need.
+Measured 2026-09-06 with an absent-command control: `node` **v26.7.0** and `npm` at `/usr/local/bin`,
+`brew` present, `nvm`/`volta`/`asdf` absent — so the claim was wrong on **three** of its six items,
+not just on `node`. Fixed 2026-09-06 by moving the question into the script, which re-measures it on
+every call. ⭐ **The class: a fact about the environment written in prose has no way to notice the
+environment changing.** It was filed three times — the 2026-08-30 weekly review, then two run-log
+notes — and each filing restated it instead of ending it.
 
 **Measuring against a clean tree while the owner's is dirty — `git archive`, never `git checkout --`
 (2026-08-18).** `npm test` runs against the *working* tree, so while the owner has an in-flight redesign
@@ -5073,6 +5089,126 @@ zero meaningful: `selftest PASS (8/8 controls fired, plantsRemoved true)` and, p
 finding(s); V vacuous; U unavailable`. A bare "no accessibility issues found" is not a result.
 
 ## Run log
+
+### 2026-09-06 (scheduled dev-agent, took the note two runs had filed and declined — third filing in a week) — the note every run reads first said this machine had no Node, Homebrew had installed one 15 days earlier, and the fix was not to retype the fact but to stop asserting it
+
+**Where the pick came from.** The previous run's closing line queued two owner-only items (the
+Netlify token, then O-2) and, for a scheduled run, **"note 1 (the stale Environment note)" as
+"twice-queued and genuinely cheap"**. W-6.2 rule 1 permits it: the last two scheduled picks were
+W-7.3 and W-7.2 rule 4 — priority-block clauses, not residuals — so this is the first link, not a
+third. **The reason to take it now rather than file it a fourth time** is in the measurement below:
+it had been filed by the 2026-08-30 weekly review and by two run-log notes, and **each filing
+restated the defect instead of ending it.**
+
+**Step 3.5 — premise re-measured with a control, and it came back WORSE than filed.** The note's
+opening asserts six things: no `node`, `npm`, `nvm`, `volta`, `asdf` or Homebrew (confirmed
+2026-08-01). Measured with `command -v`, carrying an absent-command control (`blorptronics-xyz` →
+absent, so the instrument can report absence and a PRESENT is not an artifact):
+
+| claim | measured 2026-09-06 |
+|---|---|
+| no `node` | **PRESENT** `/usr/local/bin/node` v26.7.0 |
+| no `npm` | **PRESENT** `/usr/local/bin/npm` |
+| no Homebrew | **PRESENT** `/usr/local/bin/brew` |
+| no `nvm` / `volta` / `asdf` | absent, absent, absent — as filed |
+
+**Wrong on three of six, not on one.** Both queued notes said only "`node` is at
+`/usr/local/bin/node`"; nobody had measured the other five, and Homebrew is the one that explains
+the other two. **When it broke:** `/usr/local/bin/node` is a symlink dated **Aug 22 17:14** into
+`../Cellar/node/26.7.0`, so the sentence was false for **15 days** in the document every run reads
+first, and the recipe under it sent each run to download a second, older runtime it did not need.
+
+**What I did, and why it is not "retype the fact".** The App summary's standing rule — *no figure
+here that a script generates* — is about counts, but the class is the same: **a fact about the
+environment written in prose has no way to notice the environment changing.** Correcting the
+sentence to "Node v26.7.0 is present" would have been the same defect with a fresher date, and it
+would go stale the next time the owner's machine moves. So the question moved into the script that
+already existed to answer it, which is this repo's own idiom (`npm run clean-tree` IS the recipe,
+2026-09-06):
+
+- **`scripts/bootstrap-node.sh` now measures instead of assuming.** It prints the `bin` directory to
+  put on `PATH` — a system Node when one is installed that **Vite accepts**, otherwise the pinned
+  v20.18.1 download exactly as before. The acceptance range is **read from Vite's own `engines`**
+  (`^18 || ^20 || >=22`), not invented: Node 19/21 are odd-series releases Vite refuses, so accepting
+  them here would only move the failure downstream. `--force-download` / `NODE_BOOTSTRAP_FORCE=1`
+  preserves the old behavior byte for byte.
+- **The stdout contract is unchanged** — last line is still the directory to prepend — so
+  `scripts/dev-server.sh` and the documented `BIN_DIR=...` recipe keep working untouched. The
+  practical effect on `dev-server.sh` is that it stops downloading Node 20 on a machine that has 26.
+- **The Environment note is replaced by its conclusion, not annotated** (W-7.2 rule 1): what was
+  true, what is true now, the date, and the class — in one paragraph, with the recipe above it.
+
+**Verification — six branches, and the controls are two-sided.** A negative control alone would not
+distinguish "correctly rejects" from "always rejects", so there is an acceptance control too:
+
+| # | condition | result |
+|---|---|---|
+| 1 | real machine | uses system **v26.7.0**, prints `/usr/local/bin`, no download |
+| 2 | ⛔ control: empty `PATH` (no node/npm) | falls back to pinned v20.18.1 |
+| 3 | ⛔ control: fake `node` reporting **v19.9.0** | **rejected** → pinned fallback |
+| 4 | ✅ control: fake `node` reporting **v22.1.0** | **accepted** — so #3 is a real rejection, not a blanket one |
+| 5 | `--force-download` (and the env-var form) | ignores system Node → pinned |
+| 6 | `--nonsense` | exit **1** |
+
+Plus a fragility I went looking for rather than waiting to be bitten by: **`node` and `npm` in
+different directories**, where the script prints only `dirname(node)`. Built that case (`splitA/node`,
+`splitB/npm`) — it is safe, because the documented contract *prepends* to `PATH` rather than replacing
+it, so `npm` stays reachable behind it. Verified live, not reasoned about.
+`bash -n` clean on both scripts. **`npm test`: PASS, 0 failures** (5 warnings, all pre-existing and
+byte-identical to the pre-change run — 3 content/translation, 2 log-size). **`npm run build`: green in
+1.10s**, entry bundle `index-B1mndoLB.js` at **264,930 b — the same hash and size the live site was
+verified against this morning**, which is the expected result of a change that touches **0 files under
+`src/`** and is the cheapest available confirmation that this run did not disturb the deployed artifact.
+
+**Step 5 — adversarial self-check. The sharpest refutation available, and it does not land.**
+*If any run had decided to pin Node for reproducible builds, preferring the system one would
+contradict it.* Checked directly: `20.18.1` appears in **no** decision — only in the script, in my new
+note text, and in three read-only dated `reviews/` records. `DECISIONS.md` says nothing about a Node
+runtime, and `package.json` declares **no `engines` field**, so nothing in this repo asserted a
+required Node version before today. Reading the range off Vite therefore *adds* a constraint where
+there was none rather than removing one, and `--force-download` keeps the pinned path fully reachable
+for anyone who does want reproducibility. **Blindspot register:** `git diff --name-only -- src/
+content/ public/` is **0 files** — this change cannot reach a learner-visible surface; §10.1/10.2/10.3
+are untouchable by a shell script, and `check-blindspot` passes with its own timing control firing.
+**Already-done item:** this extends the 2026-08-02 bootstrap item, and controls 2/3/5 all land on that
+original download path intact — it is not undone. **My own verification claim, stated against
+myself:** controls 2/3/5 reported "Using cached" because `$HOME/.cache/ecycles-node` is already
+populated on this machine; on a cold machine they would download (~30s) — the same verdict, not the
+same wall-clock, and a reviewer should expect that. And control 4 proves the version *string* is
+accepted, not that a real Node 22 builds this repo; the real-runtime evidence is control 1 plus
+`npm test` and `npm run build` on v26.7.0.
+
+**⛔ What this run did NOT fix, and it is the half a run cannot reach.** The scheduled task's own
+`SKILL.md` still tells every run *"This environment has no Node.js in PATH"* and to bootstrap. That
+file is **owner configuration outside this repo** — not a run's to edit. **Owner: one line to delete,
+and until it is, every future run is told the false thing before it reads the corrected note.**
+
+**Filed, not picked (W-6.2 rule 2 — NOTES, not numbered items):**
+1. ⚠️ **`cp file "$UNSET_VAR"` exits 0 and copies into the current directory.** I hit this writing my
+   own backup step and it silently dropped a `bootstrap-node.sh` in the repo root; caught by
+   `git status`, identified as mine by `cmp` against the backup, and **moved to the scratchpad rather
+   than deleted**. Reproduced deliberately to confirm the mechanism (`exit=0`, file lands in `.`) —
+   it is not an error a `2>/dev/null` hid, it is a success. **A stray untracked file also corrupts
+   `npm run owner-tree`'s fingerprint**, which is the next run's baseline for "did the owner's tree
+   move" — re-run clean after removing it, as this run did.
+2. The **W-5.3 archiving pass** is still due and still the obvious cheap run: the run log is
+   **279,499 b** against a 250,000 b warn budget, and moving the single day 2026-09-05 (147,690 b)
+   drops it to 131,809 b, well under.
+3. This run's own cost, stated plainly under W-7.2 rule 5: the floor went **452,664 → 453,677 b
+   (+1,013 b)**; the backlog section is **unchanged at 419,816 b**, still **5,657 b under** the
+   425,473 b baseline W-7.2 set for 2026-09-13. `scripts/` grew **+62 lines** and `src/` by 0 —
+   stated because W-6.3 asks which side of the ratio a proposal falls on. The case is that it does
+   not add an instrument; it removes a false claim from the one every run already runs.
+
+**Top item for the next run:** ⛔ still owner-only at the head — **the Netlify token**, then **O-2**
+(the app is live and current, and nothing can yet say whether one person has opened it). For a
+scheduled run, the **W-5.3 archiving pass** (note 2) is now the cheapest and is unblocked. ⚠️
+**W-7.3's clock: `market.json` is `asOf 2026-09-04`, age 2 days, and Sectors goes to the unavailable
+state on 2026-09-09** — owner's job, and `npm test` now says so on every run.
+
+**Owner tree:** the owner's untracked `UIUX/` and `course` were **untouched** — not read, not edited,
+not staged. No file under `src/`, `content/`, `public/` or `locales/` was touched. `public/data/market.json`
+untouched. `HEAD` re-checked before writing and unmoved at `a31a8d9`.
 
 ### 2026-09-06 (scheduled dev-agent, picked off W-7.3 — the one open clause of this week's priority block that names a learner-visible surface, and a live walk of the deployed app that was meant to confirm it) — the one artifact in this tree that goes wrong by standing still was the only one no script had ever read, and the review that flagged it re-regressed a correction the backlog had held for 18 days
 
