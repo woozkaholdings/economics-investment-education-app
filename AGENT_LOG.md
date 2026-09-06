@@ -98,40 +98,25 @@ for the history. No open P1/P2 items.
 
 > ## ⛔ OWNER ACTIONS — nothing in this repo can move these, and they are the whole critical path
 >
-> **Standing block, promoted to the top of the backlog by the weekly review 2026-08-23.** These two
-> items have been named in the closing line of **every run entry since 2026-08-20** — sixteen
-> consecutive runs — in the form "item 18 remains the entire critical path… item 72's owner half is
-> blindspot 10.10". That sentence is correct and it has moved nothing, which is evidence about the
-> *mechanism*, not about the runs. A closing line in a 15,000-line log is not an escalation. It lives
-> here now, and it is repeated at the top of every weekly report.
-> ✅ **UPDATE 2026-09-05: O-1 CLOSED — the app is live at
-> <https://magnificent-mochi-73aecc.netlify.app>.** The block is no longer "these two items"; **O-2
-> is the whole critical path now.** ⭐ **And the mechanism this block diagnosed is confirmed by how
-> it ended:** it did not close because a run escalated harder. It closed the first time the owner
-> asked for it directly, in one interactive session, in about twenty minutes — deploy, claim, set
-> public. **Nineteen days of closing lines moved it none of the way; one instruction moved it all of
-> the way.** Whatever this block is for, that is the evidence about what works, and it argues for
-> asking the owner for a decision rather than restating a blocker.
+> **Standing block, promoted to the top of the backlog by the weekly review 2026-08-23.** ⭐ **What
+> it was built to diagnose is settled by how O-1 ended, and this is the conclusion it exists to
+> carry:** naming a blocker in the closing line of every run entry — sixteen consecutive runs across
+> nineteen days — moved it none of the way; **one direct owner instruction moved it all of the way,
+> in about twenty minutes.** A closing line in a 15,000-line log is not an escalation. **Ask the
+> owner for a decision rather than restating a blocker.**
 >
-> **O-1. A URL. ✅ CLOSED 2026-09-05 (owner-directed, interactive) — the app is live at
-> <https://magnificent-mochi-73aecc.netlify.app>.** Open 2026-08-17 → 2026-09-05, **19 days**, and
-> named as "the entire critical path" in the closing line of every run entry for the last sixteen of
-> them. Netlify project `magnificent-mochi-73aecc`, site id `e485658b-2605-499d-86c6-d441e0bd0221`,
-> on the owner's Netlify team. `dist/` was zipped and dropped on Netlify Drop; the owner claimed the
-> site and set visibility to public. **Verified unauthenticated after each step, not on report:** `/`
-> **200**, the hashed bundle **byte-identical** to the local build, `/data/market.json` at
-> `asOf 2026-09-04`, and a nonexistent path **404** — so the 200s are real files, not a catch-all.
-> `README.md` § Deploying now carries the URL, the verification and the update procedure.
-> ⛔ **Two things the old "Netlify Drop is a drag of the `dist/` folder" line got wrong, both
-> measured on the way through and both now corrected in `README.md`.** (1) An **unclaimed** drop is
-> password-protected and **expires in about an hour** — it is not a URL to hand out, which the line
-> above half-knew and understated. (2) A **claimed** drop is still not public: it lands with
-> *Production visibility* = **Private** and redirects visitors to a Netlify login, until that is
-> changed by hand at Project configuration › General › Visitor access. **Between them, "deployed"
-> and "reachable" were three separate steps, and the repo's instructions described one.**
-> ⚠️ **What is NOT closed by this: the second half of 10.10's refuting number.** A reachable URL
-> exists; **whether one person has opened the app is still unmeasured**, and stays that way until
-> O-2 lands. Do not write "someone has used it" anywhere on the strength of this item.
+> **O-1. A URL. ✅ CLOSED 2026-09-05** (owner-directed, interactive; open 2026-08-17 → 2026-09-05,
+> **19 days**), commit `cf1aab3`. The app is live at
+> <https://magnificent-mochi-73aecc.netlify.app>, and since 2026-09-06 `npm run check-deployed`
+> verifies that against the running site rather than against a report. `README.md` § Deploying owns
+> the URL, the site id, the verification and the update procedure — including what cost the time:
+> **"deployed" and "reachable" were three steps and the repo's instructions described one** (an
+> unclaimed Netlify Drop is password-protected and expires in about an hour; a *claimed* drop still
+> lands with Production visibility **Private**, redirecting visitors to a login, until that is
+> changed by hand).
+> ⚠️ **What O-1 did NOT close: blindspot 10.10's second half.** A reachable URL exists; **whether
+> one person has ever opened the app is still unmeasured**, and stays that way until O-2 lands. Do
+> not write "someone has used it" anywhere on the strength of this item.
 >
 > **O-2. An analytics provider account and key. (Item 18.)** `src/lib/analytics.js` fires the §9.2
 > event set with the §9.2 payloads; `sink()` writes to one device's `localStorage`. §4.3's Phase-0
@@ -194,61 +179,44 @@ for the history. No open P1/P2 items.
 >   **11,597 lines** in one file, up from 8,711 (+33%).
 > - **W-6.2 rule 2 worked on the item COUNT and did nothing to the BYTES**, and that is W-7.2.
 >
-> ### ⛔ W-7.1 PRIORITY — THE APP IS LIVE AND FOUR LEARNER-VISIBLE COMMITS ARE NOT ON IT. Fix this before any new feature, sweep, or check.
->
-> ⚠️ **This block said SIX and named the wrong baseline commit. Corrected 2026-09-06 by
-> measurement** (`check-deployed --identify`, added by the run that found this). The review
-> inferred the last deploy from a run-log headline — `5d6893c`, "dist is redeployed" — instead of
-> measuring it. **The live bundle is byte-identical to a build of `0a30707`**, three commits later,
-> so `df38ca7` (15 truncated quiz explanations) and `c253b8d` (tooling) were already live and this
-> block listed the first of them as a learner-visible miss. Per W-7.2 rule 1 the wrong table is
-> replaced by the corrected one rather than annotated under it.
->
-> **Measured 2026-09-06 against the running site:**
-> - Live entry bundle **`assets/index-C1_r8HAt.js`, 263,940 b**; a build of `0a30707` reproduces it
->   **byte for byte**, and the live `index.html` matches that build modulo Netlify's five injected
->   lines. HEAD builds `index-B1mndoLB.js`, 264,930 b — provably not what is served.
-> - `/` **200**, `/data/market.json` **200** at `asOf 2026-09-04`, `/nonexistent-xyz` **404**. The
->   site is healthy; **it serves stale content, not broken content, which is why nothing noticed.**
->
-> **What a learner is still not getting** (`git log 0a30707..HEAD -- src/ public/ index.html`):
-> | commit | what a learner still gets on the live site |
-> |---|---|
-> | `992a057` | Lesson 32 still teaches that **a recession is when prices fall** — a factual economics error |
-> | `855fadd` | One Back press from three levels inside Reference still dumps the learner on the Learn tab |
-> | `9ea716b` | Lesson 43 still cites a lesson the app shows as "Complete previous lessons first" |
-> | `480b242` | The review recap still reads four identical rows to a screen reader after "3 of 4 correct" |
->
-> ⭐ **The transferable finding, unchanged and now demonstrated twice over. O-1 changed the
-> definition of "done" and nothing in the repo changed with it.** Every instrument here certifies the
-> tree; not one could see the deployed artifact, so the app can be correct in the repo and wrong on
-> the web indefinitely with every check green. **And the review that diagnosed this still got the
-> live state wrong, because it derived a claim about the site from the repo.** A claim about the live
-> site that is not measured against the live site is a guess.
->
-> **Do, in this order:**
-> 1. ⛔ **OWNER ACTION — `npm run build` and redeploy `dist/`.** Verify unauthenticated afterwards as
->    `README.md` § Deploying prescribes, then `npm run check-deployed`. **A scheduled run cannot do
->    this**: measured 2026-09-06, there is no Netlify CLI and no token on this machine, and
->    publishing to the owner's public site is not a scheduled agent's call. Every hour this waits,
->    four fixes including a factual economics error stay in front of learners.
-> 2. ✅ **DONE 2026-09-06 — `npm run check-deployed`**, and `-- --identify` on top of it, which
->    rebuilds recent commits until one reproduces the live bundle byte for byte and then lists the
->    undeployed commits. Nothing has to record a deploy; the artifact identifies itself. Carries a
->    control (a rebuild of HEAD must reproduce local `dist/`, else it refuses a verdict).
-> 3. ⚠️ **Decide the deploy cadence and write it in `DECISIONS.md`** — redeploy-per-commit, daily, or
->    gated. **Owner's call; the repo has no answer at all.** Now cheap to act on: `--identify` makes
->    "what is pending" a one-command question rather than an archaeology dig.
+> ### W-7.1 — ✅ CLOSED 2026-09-06, all three steps. The app is live AND current, and the gap this block found now has a permanent instrument.
+> **What was true when this block was written (2026-09-06):** the app had been live since 09-05 and
+> four learner-visible commits were not on it — among them a lesson still teaching that a recession
+> is when prices fall. **What is true now: the site serves HEAD.** Step 1 (redeploy) landed
+> owner-directed the same day. Step 2 shipped `npm run check-deployed` (`b425633`) and its
+> `-- --identify` mode (`acf117e`), which rebuilds recent commits until one reproduces the live
+> bundle byte for byte — so nothing has to *record* a deploy; the artifact identifies itself. Step
+> 3's cadence question was put to the owner and came back **"nobody should have to remember"**, so
+> `npm run deploy` (`1781b87`, recorded in `DECISIONS.md`) deletes the manual drag rather than
+> scheduling it.
+> ⛔ **One owner action remains: create the Netlify token** (`README.md` § Deploying, one-time).
+> Until then `npm run deploy` refuses and deploying is still the manual drag.
+> **Re-verified 2026-09-06 by this run against the site, not the log:** entry bundle
+> `index-B1mndoLB.js` byte-identical at 264,930 b, `icon.svg` / `og-card.png` / `index.html`
+> identical, and the 404 control fired.
+> ⭐ **The transferable finding, and it is why both instruments above exist.** O-1 changed the
+> definition of "done" and nothing in the repo changed with it: every instrument here certifies the
+> **tree**, and not one could see the deployed **artifact**, so the app could be correct in the repo
+> and wrong on the web indefinitely with every check green. **A claim about the live site that is
+> not measured against the live site is a guess** — demonstrated twice, the second time by this
+> block's own author, who named the wrong deployed commit by reading it off a run-log headline.
 >
 > ### W-7.2 — the floor grew 40% in a week WITH three compression passes running, and the cause is not new items. It is accretion.
 > `npm test` still warns every run. Measured 2026-09-06 vs the `c55a887` tree of 2026-08-30:
-> | region | 2026-08-30 | 2026-09-06 | change |
+> | region | 2026-08-30 (`c55a887`) | 2026-09-06 (`602879f`) | change |
 > |---|---|---|---|
-> | backlog section | 295,280 b | **412,906 b** | **+117,626 b (+39.8%)** |
-> | ├ priority blocks (above item 1) | 28,568 b | **46,285 b** | **+17,717 b (+62.0%)** |
+> | backlog section | 295,280 b | **425,473 b** | **+130,193 b (+44.1%)** |
+> | ├ priority blocks (above item 1) | 28,568 b | **58,852 b** | **+30,284 b (+106.0%)** |
 > | └ numbered items | 266,712 b | **366,621 b** | +99,909 b (+37.5%) |
 > | numbered items (count) | 131 | 145 | +14 |
 > | **OPEN items (count)** | **26** | **28** | **+2** |
+>
+> ⚠️ **The 09-06 column is corrected (2026-09-06, dev-agent) and the original is not annotated
+> under it, per rule 1 below.** As first written it read 412,906 / 46,285 — the region measured
+> **before this block was inserted into it**, so W-7 charged its own 12,567 b to nobody and the
+> priority region's growth was reported at +62% when it is **+106%**. Re-measured at `602879f`
+> with the same boundary that reproduces the 08-30 column byte-exactly (295,280 / 28,568 /
+> 266,712), which is the control that says the two columns are comparable.
 >
 > ⭐ **Read those last two rows against the first. Open items grew by TWO and the backlog grew by
 > 118 KB.** W-6.4 diagnosed the growth as newly-filed residual items and W-6.2 rule 2 was written to
@@ -256,12 +224,13 @@ for the history. No open P1/P2 items.
 > It is **existing text accreting**: annotations, retractions, re-measurements and "ORIGINAL CLAUSE,
 > kept because the retraction above refers to it" preservations, layered onto items that are already
 > closed. Mean bytes per item went **2,036 → 2,528**.
-> ⛔ **The fastest-growing region in the whole file is the priority block written by this review's own
-> predecessor (+62%), and W-6.1 is the worst single instance:** a **closed** item now carrying its
-> original clause, a retraction of it, a retraction of the retraction's prescribed fix, a three-row
-> measurement table, and two "kept because the retraction refers to it" preservations. **Five layers
-> on a question that is settled.** This is the reviewer's own defect, and it is named here rather than
-> smoothed away.
+> ⛔ **The fastest-growing region in the whole file is the priority-block region itself — it
+> DOUBLED in a week (+106%), and the single largest contributor is this block.** W-6.1 was the
+> worst individual instance: a **closed** item carrying its original clause, a retraction of it, a
+> retraction of the retraction's prescribed fix, a three-row measurement table, and two "kept
+> because the retraction refers to it" preservations — **five layers on a settled question.** It
+> was collapsed to one paragraph on 2026-09-06 (−3,727 b). This is the reviewer's own defect, and
+> it is named here rather than smoothed away.
 > **Three compression passes ran this week** (3rd ~54 KB, 4th 7,708 b, 5th 17,157 b ≈ **79 KB
 > recovered**) against **~197 KB of gross growth**. **Compression is losing 2.5:1 and cannot win**;
 > it has been tried five times.
@@ -276,13 +245,19 @@ for the history. No open P1/P2 items.
 >    smoothing away a correction. **The record of having been wrong stays; the five layers of it in
 >    the live backlog do not.**
 > 4. **W-7 supersedes W-6 and W-5's active clauses. Apply rules 1-2 to THIS block first** when its
->    clauses close — starting with W-7.1, which should collapse to two lines the run after it lands.
-> 5. ⛔ **This block costs 12,508 b (measured after writing: the backlog is 425,414 b, up from 412,906 b), and W-6's cost 17,717 b over its week. A review that diagnoses
->    accretion in prose that accretes is the defect it is describing.** The measurement is that
->    **every weekly block so far has grown after being written, and none has ever shrunk.** So the
->    test of this block is not whether the next run agrees with it — it is whether the backlog is
->    **smaller** on 2026-09-13 than the 425,414 b it now stands at. **Next review: open
->    with that number before anything else.**
+>    clauses close. ✅ **Done 2026-09-06, the run after W-7.1 landed:** W-7.1, W-6.1, W-6.5 and O-1
+>    were each replaced by their conclusion — **−6,752 b, and the priority region went 58,852 →
+>    52,100 b.** Nothing open was touched and no run-log history was deleted.
+> 5. ⛔ **This block cost 12,567 b to write** — the backlog went 412,906 → **425,473 b** at
+>    `602879f` — **and W-6's cost 17,717 b over its week. A review that diagnoses accretion in prose
+>    that accretes is the defect it is describing.** The measurement was that **every weekly block
+>    so far had grown after being written, and none had ever shrunk.**
+>    **So the test of this block is not whether the next run agrees with it — it is whether the
+>    backlog is smaller on 2026-09-13 than the 425,473 b it stood at when it was written.**
+>    ✅ **First movement in the right direction: 418,721 b on 2026-09-06** after the collapse in
+>    rule 4 — **6,752 b under the baseline, and the first measured shrink of a weekly block.**
+>    **Next review: open with a fresh measurement of that number before anything else** (the
+>    instrument is `check-log-size.mjs`'s MEASURED line; do not retype either figure).
 >
 > ### W-7.3 — market data has missed two days, and the stale date is now inside the week. Owner's job; flagged, not touched.
 > `public/data/market.json` is `asOf 2026-09-04`; refresh commits ran daily 08-31 → 09-04 and there is
@@ -339,70 +314,30 @@ for the history. No open P1/P2 items.
 > because it was written against item 93 and item 93 closed on 08-24.** A rule scoped to one item
 > stops binding when that item does. This one is scoped to the shape instead.
 >
-> ### W-6.1 — ✅ **RESOLVED 2026-08-30 (owner-directed) via route (a): `drafts/income-hierarchy.en.md` is now tracked and a fresh clone exits 0.** See item 154 for the two-direction measurement.
-> ⛔ **DO NOT FOLLOW THE RECIPE IN THE ORIGINAL CLAUSE BELOW. Re-measured three ways 2026-09-06
-> (owner-directed: "do the fresh-clone recipe correction next"), against `480b242`:**
-> | recipe | §26 resolves against | result |
-> |---|---|---|
-> | real `git clone -q .` + `node_modules` symlink | the git index (140 files) | **exit 0**, 20 exempted |
-> | `git archive HEAD` + symlink, **no `cp`** | the filesystem fallback (140 files) | **exit 0**, 20 exempted |
-> | `git archive HEAD` + symlink + **the `cp economic-cycles-v*.jsx` this clause prescribes** | filesystem | **exit 1 — 7 × §26** |
-> **So this block's headline is closed by measurement, and the finding is sharper than that: the
-> priority block that exists because `npm test` failed on a fresh clone now contains the only known
-> way to make `npm test` fail on a fresh clone.** The seven are six `path-ok: economic-cycles-v*.jsx`
-> markers reported *stale — that path exists now* (`LAUNCH_READINESS.md:135`, `LAUNCH_PLAN.md:64/65`,
-> `DECISIONS.md:448`, `README.md:141/142`) plus the count landing at **13 against an expected 20** —
-> because §26's markers exempt those paths *precisely because a clone does not have them*, so copying
-> them in falsifies every marker at once. Filed by the 167(c) run on 2026-09-06 and listed by three
-> run entries before this one took it.
-> ⛔ **And the root cause is not the `cp` line, it is that the recipe is written down twice.** The
-> Environment note's copy was corrected on 2026-08-30 and this one was not, because nothing makes two
-> prose recipes agree. **The Environment note is the single source of truth for it; this clause keeps
-> its original wording only as the dated record the retraction below refers to.**
-> ⛔ **RETRACTION, and it is this review's error, not a run's.** The clause below authorized
-> **route (b)** as a "reversible stopgap". **Route (b) cannot work at all**, and a scheduled run
-> spent itself proving that (commit `90bfeaf`): §26 fails a reference whose path is missing AND
-> fails a `path-ok` marker whose path is present. In a clone the path is absent; in the owner's
-> tree it is present. **The two states are mutually exclusive, so no value of the marker
-> satisfies both.** The review authorized it from reading §26's error message rather than from
-> measuring it — the exact failure mode this log names weekly, committed by the reviewer.
-> **The transferable part: an error message that prescribes a fix is a CLAIM about the fix, not
-> a measurement of it.** §26's message says "add a path-ok marker"; that advice is wrong for
-> every reference to a path which exists locally and not in the repo. Authorizing a remedy
-> sight-unseen is the same defect as quoting a stale figure, and a weekly review is not exempt.
-> **What actually shipped:** route (a) — track the file, making the citation true rather than
-> exempted. **Route (c) survives as item 157** and is the only one that fixes the class.
-> ORIGINAL CLAUSE, kept because the retraction above refers to it:
-> ### W-6.1 PRIORITY — `npm test` FAILS ON A FRESH CLONE, and item 154 files that as "low". It is not low. Fix it first.
-> **Reproduced by the weekly review 2026-08-30, not taken on report:** `git archive HEAD` into a clean
-> directory, symlink `node_modules`, copy the two gitignored `economic-cycles-v*.jsx` → `npm test`
-> exits **1**, on `§26: DECISIONS.md:669 names drafts/income-hierarchy.en.md, which does not exist`.
-> The working tree is green **only because the owner has an untracked `drafts/` folder.** Anyone who
-> clones this repo — and any CI that is ever added — gets a red suite on checkout.
-> **Item 154 called this "honest priority: low" and deferred the whole thing to the owner. The
-> deferral is right about the *decision* and wrong about the *urgency*:** a repo that fails its own
-> test suite on a clone is a launch-integrity defect, and it went in with the same commit that
-> discovered it.
-> **Two routes. The choice is the owner's; the delay is not.**
-> - **(a) Track `drafts/`.** `DECISIONS.md:669` cites `drafts/income-hierarchy.en.md` as the approved
->   proposal behind **shipped lessons 41-44**. A source document for shipped content arguably belongs
->   in the repo. This is the better answer if `drafts/` is not scratch.
-> - **(b) Declare the citation deliberate history**, which is what `check-data.mjs` §26's own error
->   message prescribes: add `<!-- path-ok: drafts/income-hierarchy.en.md — cited as the dated source
->   of lessons 41-44; the draft itself is not repo content -->` to `DECISIONS.md` and raise
->   `EXPECTED_EXEMPTIONS`.
-> **✅ Route (b) is explicitly AUTHORIZED BY THIS REVIEW as a stopgap** if the owner has not answered
-> by the next scheduled run. It is one line, reversible, and it does not foreclose (a). **Label it a
-> stopgap and cite W-6.1 in the comment**, so route (a) is still visibly open. **Carry the control the
-> rest of this log would demand: the fresh-clone recipe above must exit 0 after the fix.**
-> ⚠️ **And fix the Environment note's `HEAD` control recipe while you are there** — item 154 found it
-> needs `cp -R drafts` today, which is the same defect wearing the other face.
-> ⛔ **RETRACTED 2026-09-06. Do not add `cp -R drafts` to anything.** Route (a) TRACKED
-> `drafts/income-hierarchy.en.md`, so `git archive HEAD` ships it — verified this date by listing the
-> extracted archive, which contains `drafts/`. Adding the copy would put untracked siblings into a
-> tree §26 resolves against the filesystem, which is how the `cp economic-cycles-v*.jsx` line above
-> became harmful. **The Environment note was corrected on 2026-08-30 and has needed nothing since;
-> this line has been pointing runs at a fix that was already made, to a file that was already right.**
+> ### W-6.1 — ✅ CLOSED 2026-08-30 via route (a). The recipe this block used to carry is deleted, because it was the last known way to make `npm test` fail on a fresh clone.
+> **What was true:** `npm test` exited 1 on a fresh clone — `§26: DECISIONS.md names
+> drafts/income-hierarchy.en.md, which does not exist` — and the working tree was green only
+> because the owner had that file untracked. **What is true now:** route (a) **tracked** it
+> (`5d958ff`, 2026-08-30; re-verified 2026-09-06 with `git ls-files`), making the citation true
+> rather than exempted. Route (c) — §26 resolving against the git index instead of the filesystem —
+> shipped as **item 157**, and is the one that fixes the class. See item 154 for the two-direction
+> measurement.
+> ⭐ **The transferable finding, and it is this review's own error rather than a run's: an error
+> message that prescribes a fix is a CLAIM about the fix, not a measurement of it.** This block
+> authorized route (b) — §26's own suggested `path-ok` marker — sight-unseen, and **route (b)
+> cannot work at all**: §26 fails a reference whose path is missing *and* fails a `path-ok` marker
+> whose path is present, and a clone and the owner's tree are exactly those two mutually exclusive
+> states. A scheduled run spent itself proving that (`90bfeaf`). §26's advice is wrong for every
+> reference to a path that exists locally and not in the repo, and a weekly review is not exempt
+> from measuring before authorizing.
+> ⛔ **Do not write a fresh-clone recipe anywhere: `npm run clean-tree` IS the recipe** (Environment
+> note, 2026-09-06). The prose recipe this block carried until now copied the gitignored
+> `economic-cycles-v*.jsx` into the clean tree, which falsifies six `path-ok` markers at once and
+> drops the exemption count to 13 against an expected 20 — **the priority block that existed
+> because the suite failed on a fresh clone contained the only known way to make it fail on one**
+> (re-measured three ways 2026-09-06 against `480b242`: real clone **exit 0**, `git archive` **exit
+> 0**, `git archive` + that `cp` **exit 1, 7 × §26**). Adding `cp -R drafts` is the same defect
+> wearing the other face — route (a) already ships `drafts/` inside `git archive HEAD`.
 >
 > ### W-6.2 PRIORITY — the residual-chain rule. This replaces W-5.2's ratio, which expired with item 93.
 > **The rule, and it is about shape, not about any item:**
@@ -441,16 +376,13 @@ for the history. No open P1/P2 items.
 > symptom; W-6.2 rule 2 treats the cause.** Item 115's two options for the owner remain open and this
 > review does not pre-empt them.
 >
-> ### W-6.5 — ✅ **RESOLVED BY ITSELF; re-measured 2026-09-02 (scheduled dev-agent). The job did not stop.**
-> `public/data/market.json` is `asOf 2026-09-01` and committed on 08-31 and 09-01 (`55c0c15`, `18769e0`)
-> after the 08-29/08-30 gap this clause saw. The Sector screen did **not** go stale on 09-02 as predicted
-> below. Nothing to do — this line is annotated rather than deleted so the next run does not re-raise it.
-> ORIGINAL CLAUSE, kept because the correction above refers to it:
-> ### W-6.5 — note only, no action: the market-data job appears to have stopped.
-> `public/data/market.json` is `asOf 2026-08-28`. It committed daily 08-24 → 08-28 and has not
-> committed on **08-29 or 08-30**. `STALE_AFTER_DAYS` is **4**, so the Sector-performance screen
-> starts rendering "Market data isn't available right now" on about **2026-09-02**. Item 74 has the
-> full mechanism. **This is the owner's scheduled job, not dev-agent work — flagged, not touched.**
+> ### W-6.5 — ✅ closed as written, and then RECURRED. The live instance is W-7.3 above, which is open.
+> **What was true (2026-08-30):** `market.json` sat at `asOf 2026-08-28` with no commit on 08-29 or
+> 08-30, and this clause predicted the Sector screen would go stale on about 09-02. **It did not:**
+> the job resumed, committing 08-31 and 09-01 (`55c0c15`, `18769e0`). **What is true now:** a second
+> gap is open — no refresh commit since `20fde17` (`asOf 2026-09-04`), measured 2026-09-06 — and it
+> is **W-7.3's**, not this one's. Item 74 has the mechanism; `STALE_AFTER_DAYS` is 4. Owner's
+> scheduled job either way: flagged, not touched.
 >
 > ### W-6.6 — O-3 restated, because the scale changed again and the decision has not.
 > The economy track is now **complete in all five languages** and the money track shipped four new
@@ -5129,6 +5061,130 @@ zero meaningful: `selftest PASS (8/8 controls fired, plantsRemoved true)` and, p
 finding(s); V vacuous; U unavailable`. A bare "no accessibility issues found" is not a result.
 
 ## Run log
+
+### 2026-09-06 (scheduled dev-agent, W-7.2 rule 4 — "apply rules 1-2 to THIS block first, starting with W-7.1, which should collapse the run after it lands") — the review that measured the priority-block region as the fastest-growing in the file measured it before inserting itself into it, so it charged its own 12,567 b to nobody and reported +62% for a region that had doubled
+
+**Where the pick came from.** The previous run's queued item is **the owner creating the Netlify
+token**, and behind it **O-2**; both are owner actions a scheduled run cannot take, and item 167
+closed fully on 2026-09-06. W-7.2 rule 4 names a task that became due three hours ago: *"apply rules
+1-2 to THIS block first when its clauses close — starting with W-7.1, which should collapse to two
+lines the run after it lands."* W-7.1's three steps all landed today. This is that run.
+
+**⛔ Step 3.5 — the premise, re-measured with a control, and it broke in the review's favor.**
+- **Is W-7.1 actually closed?** That is a claim about the live site, so I measured the live site:
+  `npm run check-deployed` **exit 0** (read directly, not through a pipe) — entry bundle
+  `index-B1mndoLB.js` **byte-identical at 264,930 b**, `icon.svg` / `og-card.png` / `index.html`
+  identical, **404 control fired**. The site serves HEAD. Steps 2 and 3 are in the tree (`b425633`,
+  `acf117e`, `1781b87`). Closed.
+- **Is W-6.1 closed?** `git ls-files --error-unmatch drafts/income-hierarchy.en.md` resolves — route
+  (a) shipped at `5d958ff`. Closed.
+- **Is W-6.5 closed?** ⚠️ **No, and its own text is now false.** It says "the job did not stop." Last
+  refresh commit is `20fde17` (`asOf 2026-09-04`); **none on 09-05 or 09-06**. The clause is closed
+  *as written* and has **recurred** — the live instance is W-7.3, which is open. The collapse says
+  that rather than carrying "the job did not stop" as a standing claim.
+- ⭐ **And the headline: W-7.2's own table is wrong about W-7.2's own region.** It reports the
+  priority-block region at **46,285 b** on 2026-09-06, **+62%**. Measured at `602879f` — the review's
+  own commit — with the same boundary: **58,852 b, +106%. The region DOUBLED.** The gap is
+  **12,567 b**, which is exactly what the block cost to write: **it measured the region before
+  inserting itself into it, then reported that as the after-figure.** Rule 5 half-disclosed this and
+  got both figures slightly wrong too (12,508 b / 425,414 b; actual **12,567 b / 425,473 b**).
+- **The control that makes those numbers comparable rather than merely different:** the same
+  instrument reproduces the review's **2026-08-30** column **byte-exactly** — 295,280 / 28,568 /
+  266,712 at `c55a887` — and reproduces `check-log-size.mjs`'s HEAD backlog figure (424,854 b)
+  exactly. Same boundary, so the 09-06 discrepancy is *when* it was measured, not *how*.
+
+**What shipped — four closed clauses replaced by their conclusions, per rules 1-2. Documentation
+only; no `src/`, no `scripts/`, no content.**
+| clause | was | now | delta |
+|---|---|---|---|
+| **O-1** + the block header it shares | 3,139 b | 1,596 b | **−1,543 b** |
+| **W-7.1** | 3,664 b | 1,923 b | **−1,741 b** |
+| **W-6.1** (the five-layer instance W-7.2 named) | 5,988 b | 2,261 b | **−3,727 b** |
+| **W-6.5** (two headings, one settled) | 977 b | 656 b | **−321 b** |
+| W-7.2's corrected table + rules 4/5 | 1,739 b | 2,938 b | +1,199 b |
+| **backlog section** | **425,473 b** (`602879f`) | **418,721 b** | **−6,752 b** |
+
+Both `ORIGINAL CLAUSE, kept because the retraction above refers to it` preservations are gone — the
+pattern rule 2 retires — and the retractions were rewritten so they no longer need the original
+quoted underneath. **Nothing that was open was touched**; every ⭐ transferable finding survives in
+one paragraph each: the escalation finding (ask, do not restate), "a claim about the live site that
+is not measured against the live site is a guess", and "an error message that prescribes a fix is a
+CLAIM about the fix, not a measurement of it".
+
+**⚠️ What the work caught against itself, mid-run.** My rule-4 and rule-5 text quoted the byte
+figures the collapse achieved — and then the corrections I was writing changed them. **A block that
+quotes its own size invalidates the quote by growing.** Fixed by re-measuring and substituting to a
+fixed point (all four figures the same digit-length, so the substitution is stable, and it was
+re-measured after to confirm). It is the same defect as the one this entry's headline is about,
+committed by the run correcting it, three hours later.
+
+**Verification.**
+- `npm test` **exit 0**, **5 warnings, and the set is identical to the baseline I took before
+  editing** — the only text that differs is the floor figure itself, 457,702 → **451,569 b**, which
+  is the number this run moved.
+- `npm run build` **exit 0**; entry bundle still `index-B1mndoLB.js`, **the same hash the live site
+  serves**, so this commit does not make the deployment stale.
+- `npm run check-blindspot` **exit 0**. `dalio` and advice-pattern greps over the **added lines**
+  return 0, with a positive control (`deploy` returns 11) proving the greps are live.
+- ⭐ **The scope claim is instrumented, not asserted.** SHA-256 of three regions before and after:
+  **numbered items `afafbbc663d5620e` → `afafbbc663d5620e`**, **run log `9d06bfcd3add099d` →
+  `9d06bfcd3add099d`**, App summary unchanged. **Negative control:** planting one word into each of
+  those two regions on a scratchpad copy changes both hashes (`40b51b9b…`, `8f2447a6…`), so the
+  match is a live instrument rather than a dead one. **No run-log history was deleted (W-7.2 rule 3,
+  W-5.3) and item 115's compression work was neither redone nor undone.** All ten diff hunks fall
+  between lines 101 and 454 — the priority-block region only.
+
+**Step 5 — adversarial self-check.**
+*Blindspot register:* clean, greps above, not assumed. §10.1/§10.2 zero in added lines with a live
+control; §10.3 untouched; §2.3 — the dates added are records of a measurement in orienting prose,
+not rendered figures, and no `src/` file was touched.
+*DECISIONS.md conflict:* none, and I checked the two inbound citations rather than assuming they
+survived. `DECISIONS.md:858` cites **W-7.1** — the heading still exists. `check-data.mjs:2813/2837`
+cite **W-6.1, route (c)** — the heading still exists and the collapsed text still names route (c)
+and item 157. A collapse that broke either would have made a document cite a heading that is gone.
+*Already-done backlog item:* no, and this is the one that needed measuring rather than reasoning.
+Five backlog compression passes have run (item 115), and this could easily have been a sixth. It is
+not: **all five worked the numbered items, whose region is byte-identical before and after.** This
+run touched only the priority-block region, which W-7.2 measured as the fastest-growing and which no
+compression pass has ever entered.
+*My own verification claim:* the backlog figure is printed by **`check-log-size.mjs`** on every
+`npm test` (418,721 b), not by my scratchpad script — the two agree to the byte, which is why I trust
+the historical columns the scratchpad script produced from `git show <rev>:AGENT_LOG.md`.
+*W-6.3 (instrument-to-app ratio):* re-measured, not quoted — `scripts/` **19,908** lines against
+`src/` minus `content/` and `locales/` **8,833** — **2.254x, unmoved**, because this run adds **0
+lines to `scripts/`** and 0 to `src/`. Third consecutive run that does not grow the instruments.
+⛔ **What the check found against me.** Two things. **First, the fixed-point bug above** — I wrote
+figures that my own subsequent edits falsified, in a change whose entire subject is prose that
+invalidates its own numbers. **Second, I had planned to collapse W-6.5 to "resolved, nothing to do"
+on the strength of its own ✅ headline**; only re-measuring `git log -- public/data/market.json`
+showed the job has missed 09-05 and 09-06, so the honest collapse says "closed as written, then
+recurred, and the live instance is W-7.3." **A closed clause's own summary of itself is a dated
+claim, not current state** — which is W-7.2's thesis, and I nearly copied a stale one forward while
+enforcing it.
+
+**Filed, not picked (W-6.2 rule 2 — NOTES, not numbered items):**
+1. ⚠️ **The Environment note's opening claim is stale.** It says this environment has **"no Node.js
+   in `PATH`"** (confirmed 2026-08-01) and directs every run to `scripts/bootstrap-node.sh`.
+   Measured this run: `node` **is** in `PATH` at **v26.7.0**, and every command in this entry ran on
+   it without bootstrapping. The note is in the floor, it is the first thing a run reads about how to
+   execute anything, and it is wrong. **Not taken because it is a different region and this run's
+   scope claim is that it touched only the priority blocks** — but it is cheap and it is orienting
+   text, which is exactly the half W-7.2 says has to be current.
+2. The run log is **269,443 b** with this entry in it, over the 250,000 b warn budget; a **W-5.3 archiving pass** (move
+   2026-09-05, 147,690 b) remains the obvious cheap run, and is unaffected by this one.
+
+**Top item for the next run:** ⛔ **the owner creates the Netlify token** (one-time, `README.md`
+§ Deploying) — until then `npm run deploy` refuses and deploying is the manual drag — and then
+**O-2 is the entire critical path**: the app is live, current, and nothing can still say whether one
+person has opened it. For a scheduled run, note 1 above (the stale Environment note) is the cheapest
+real defect on the board.
+
+**Owner tree:** the owner's untracked `UIUX/` and `course` were **untouched** — neither read, edited,
+nor staged. `git status` at run start and again before writing showed only them. `HEAD` re-checked
+before writing and unmoved at `1781b87`. `public/data/market.json` untouched at `asOf=2026-09-04`;
+⚠️ **W-7.3 stands and is now three days stale — the Sector and Market Signals screens start
+rendering the unavailable state on 2026-09-09, on a live public site.** Owner's job.
+
 
 ### 2026-09-06 (owner-directed, interactive: "do it", then "why use Netlify?") — W-7.1 step 1 closed by an actual deploy after 12 hours and 4 commits, and step 3's cadence decision came back "nobody should have to remember", so the manual step is gone rather than scheduled
 
