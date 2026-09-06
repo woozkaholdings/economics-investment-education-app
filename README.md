@@ -110,6 +110,10 @@ last deploy.**
 2. Drag `dist/` (or a zip of it) onto the project's Deploys page in Netlify.
 3. **`npm run check-deployed`** — confirm the live site is now serving this tree.
 
+To see what is pending *before* deciding to deploy, run
+**`npm run check-deployed -- --identify`**: it works out which commit is live from the live
+bundle itself and lists the commits a learner is missing.
+
 Market data freezes at whatever `public/data/market.json` held at build time — see
 "After it is up" below.
 
@@ -120,10 +124,16 @@ Added 2026-09-06. **Nothing else in this repo can see the deployed artifact.** `
 *tree*; every one of them stays green while the live site serves something else. Before
 2026-09-05 that was harmless, because merging to `main` *was* shipping and there was nowhere
 else for a fix to go. Since the app went live it is false, and the gap is not hypothetical:
-measured 2026-09-06, the live site was **six commits behind `main`** and still taught that a
+measured 2026-09-06, the live site was **four commits behind `main`** and still taught that a
 recession is when prices fall — a factual economics error corrected in the repo the day
-before, sitting in front of learners alongside a screen-reader defect and 15 truncated quiz
-explanations.
+before, sitting in front of learners alongside a screen-reader defect and a Back button that
+threw the reader out of the Reference tab.
+
+(That figure read "six commits" until `--identify` was built later the same day and measured
+the deployed commit instead of inferring it. The two extras — a tooling-only commit and the
+15 truncated quiz explanations — were already live. The correction is left visible because it
+is the whole argument for the flag: **a claim about the live site that is derived from the
+repo is a guess.**)
 
 The check fetches the live site and compares it to `dist/`:
 
@@ -145,8 +155,28 @@ verdict rather than passing when it cannot measure: if a nonexistent path does n
 catch-all host or proxy), if the live document contains no Vite entry (a Netlify site set to
 *Private* serves a **login page with HTTP 200**), if `dist/` is older than any build input, or
 if build inputs are uncommitted. `npm run check-deployed -- --self-test` proves the injected-tag
-filter is complete; `-- --since <commit>` lists what is undeployed if you know the last
-deployed commit — nothing records it, so the script cannot work that out for itself.
+filter is complete.
+
+#### `-- --identify` — which commit is actually live
+
+Nothing records a deploy, and the deployed artifact carries no commit id. It does not need
+to. Vite content-hashes the entry bundle, so **the artifact is a fingerprint of the tree that
+built it**: `--identify` rebuilds recent commits (newest first, `--limit` defaults to 40) until
+one reproduces the live bundle **byte for byte**, then lists exactly which commits a learner is
+not getting. `-- --since <commit>` still takes that baseline on trust if you already know it.
+
+⚠️ **Why this is not a nicety.** The weekly review of 2026-09-06 answered this question by
+hand, took the last deploy off a run-log headline, and **named the wrong commit** — reporting
+six undeployed commits when there were four, and listing as "still missing" a fix that was
+already live. Measured the same day: the live bundle is byte-identical to a build of
+**`0a30707`**, and the four undeployed commits are `992a057`, `855fadd`, `9ea716b`, `480b242`.
+
+It carries its own control: a rebuild of `HEAD` must reproduce the `dist/` built here, or the
+probe cannot recognize a commit it just built and a miss would mean nothing — so it refuses to
+run rather than reporting one. Two limits, both stated by the output: it matches on bytes and
+never on the filename, and it rebuilds old trees against **today's** `node_modules`, so a
+candidate whose dependencies have since changed will not reproduce. A failed identification
+therefore says *not identified*, never *not deployed*.
 
 ### How the first deploy actually went — two things the documented Drop flow does not say
 

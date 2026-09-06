@@ -2,7 +2,8 @@
 // Is the LIVE SITE serving this tree, or is it serving something older?
 //
 //   npm run check-deployed                 compare the live site to ./dist
-//   npm run check-deployed -- --since 5d6893c   also list what is undeployed
+//   npm run check-deployed -- --identify     also say WHICH commit is live,
+//                                            and list what a learner is missing
 //
 // ⛔ NOT wired into `npm test`, deliberately — same reason as
 // `scripts/check-analytics.mjs`: it makes a network call, so it is neither
@@ -78,16 +79,34 @@
 //
 // EXIT CODES  0 = live serves this tree · 1 = DIVERGED · 2 = no verdict.
 //
-// ⚠️ ONE THING THIS CANNOT DO, stated so nobody looks for it. It cannot tell
-// you WHICH commit is deployed. A built artifact carries no commit id, and
-// nothing records the deploy. `--since <ref>` will list what is undeployed if
-// you can supply the last deployed commit yourself, but the script cannot
-// discover it. Recording it at deploy time was considered and left out: it
-// would be one more manual step in a procedure whose manual steps being
-// forgotten is the entire reason this file exists.
+// ⚠️ WHICH COMMIT IS DEPLOYED — this CAN be answered, and the paragraph here
+// until 2026-09-06 said it could not. That paragraph was right that a built
+// artifact carries no commit id and that nothing records the deploy, and right
+// to refuse a deploy-time ledger (one more manual step in a procedure whose
+// forgotten manual steps are the entire reason this file exists). It was wrong
+// about the conclusion: Vite content-hashes the entry bundle, so the artifact
+// is already a fingerprint of the tree that built it. `--identify` rebuilds
+// recent commits until one reproduces the live bundle byte for byte. Nobody has
+// to have written anything down.
+//
+// It was not an idle error. The weekly review of 2026-09-06 had to answer this
+// question by hand, took the last deploy off a run-log headline, and named the
+// wrong commit — reporting six undeployed commits when there were four, and
+// listing as "still missing" a fix that was live. That is what a claim about
+// the live site is worth when it is inferred from the repo instead of measured
+// against the site.
 // ═══════════════════════════════════════════════════════════════════════════
 
-import { readFileSync, existsSync, statSync, readdirSync } from "node:fs";
+import {
+  readFileSync,
+  existsSync,
+  statSync,
+  readdirSync,
+  mkdtempSync,
+  symlinkSync,
+  rmSync,
+} from "node:fs";
+import { tmpdir } from "node:os";
 import { join, dirname, relative } from "node:path";
 import { fileURLToPath } from "node:url";
 import { createHash } from "node:crypto";
@@ -265,8 +284,12 @@ say("  ── app code ───────────────────
 say(`     live  ${liveEntry}`);
 say(`     local ${localEntry}`);
 
+// Fetched once and kept: `--identify` below compares candidate builds against
+// these exact bytes, so a name match is never taken for a content match.
+const liveBytes = await get(`${origin}/${liveEntry}`);
+const liveEntryBuf = liveBytes.status === 200 ? liveBytes.buf : null;
+
 if (liveEntry !== localEntry) {
-  const liveBytes = await get(`${origin}/${liveEntry}`);
   const localBytes = readFileSync(join(DIST, localEntry));
   const sizes =
     liveBytes.status === 200
@@ -279,7 +302,6 @@ if (liveEntry !== localEntry) {
       "site is serving different code from `src/`.",
   );
 } else {
-  const liveBytes = await get(`${origin}/${liveEntry}`);
   if (liveBytes.status !== 200) {
     problems.push(`The entry bundle is referenced but returns HTTP ${liveBytes.status}.`);
     say(`     ✗ referenced but returns HTTP ${liveBytes.status}`);
@@ -404,6 +426,92 @@ if (!htmlSame) {
 }
 say();
 
+// ── WHICH COMMIT IS DEPLOYED (--identify) ────────────────────────────────────
+// A built artifact carries no commit id and nothing records the deploy — but it
+// does not have to. Vite content-hashes the entry bundle, so the artifact IS a
+// fingerprint of the tree that produced it: rebuild candidate commits until one
+// reproduces the live bundle BYTE FOR BYTE, and the deployed commit is known
+// without anyone having written it down. Opt-in because it costs one build per
+// candidate (~1s each).
+//
+// ⚠️ It matches on bytes, never on the filename. A name match with different
+// content is exactly the collision the main check already guards against.
+//
+// ⚠️ It rebuilds old trees with TODAY's node_modules. If a candidate's
+// dependencies differ from what is installed now, its bundle will not reproduce
+// and it will be skipped — a silent miss, which is why a failed identification
+// says "not identified", never "not deployed".
+async function identifyDeployedCommit(liveBuf, localEntryName, limit) {
+  if (!liveBuf) {
+    say("  (--identify needs the live entry bundle, which did not download.)");
+    return null;
+  }
+  const viteBin = join(ROOT, "node_modules", "vite", "bin", "vite.js");
+  if (!existsSync(viteBin)) {
+    say("  (--identify needs vite installed; run `npm install`.)");
+    return null;
+  }
+
+  const shas = execFileSync("git", ["log", "--format=%h", `-${limit}`], {
+    cwd: ROOT,
+    encoding: "utf8",
+  })
+    .trim()
+    .split("\n")
+    .filter(Boolean);
+
+  // Build one commit into a throwaway tree and return its entry bundle.
+  const buildAt = (rev) => {
+    const dir = mkdtempSync(join(tmpdir(), "check-deployed-"));
+    try {
+      execFileSync("bash", ["-c", `git archive ${rev} | tar -x -C "${dir}"`], { cwd: ROOT });
+      symlinkSync(join(ROOT, "node_modules"), join(dir, "node_modules"));
+      execFileSync(process.execPath, [viteBin, "build"], { cwd: dir, stdio: "ignore" });
+      const html = readFileSync(join(dir, "dist", "index.html"), "utf8");
+      const name = html.match(ENTRY_RE)?.[1];
+      return name ? { name, buf: readFileSync(join(dir, "dist", name)) } : null;
+    } catch {
+      return null;
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  };
+
+  say(`  ── which commit is live? (--identify, up to ${shas.length} candidates) ──`);
+
+  // CONTROL. Rebuilding HEAD in a throwaway tree must reproduce the dist/ built
+  // here by `npm run build`. If it does not, this probe cannot recognize ANY
+  // commit, and a run of misses would read exactly like "the deploy is ancient".
+  const headProbe = buildAt(shas[0]);
+  if (!headProbe || headProbe.name !== localEntryName) {
+    say(`     ⛔ control FAILED — rebuilding HEAD gave ${headProbe?.name ?? "no build"},`);
+    say(`        but dist/ here is ${localEntryName}. The probe cannot recognize a`);
+    say("        commit it just built, so a miss below would mean nothing. Not run.");
+    return null;
+  }
+  say(`     ✓ control: a rebuild of HEAD reproduces dist/ (${localEntryName})`);
+
+  for (let i = 0; i < shas.length; i++) {
+    const rev = shas[i];
+    const built = i === 0 ? headProbe : buildAt(rev);
+    if (built && built.buf.equals(liveBuf)) {
+      const meta = execFileSync(
+        "git",
+        ["log", "-1", "--format=%h %ad %s", "--date=format:%Y-%m-%d %H:%M", rev],
+        { cwd: ROOT, encoding: "utf8" },
+      ).trim();
+      say(`     ✓ IDENTIFIED after ${i + 1} probe(s), byte-identical:`);
+      say(`       ${meta}`);
+      say();
+      return rev;
+    }
+  }
+  say(`     ✗ not identified in the last ${shas.length} commits. The deploy may be`);
+  say("       older, built from a dirty tree, or built against different deps.");
+  say();
+  return null;
+}
+
 // ── Verdict ──────────────────────────────────────────────────────────────────
 if (problems.length === 0) {
   say(`  ✅ The live site is serving this tree (HEAD ${head}).`);
@@ -415,7 +523,16 @@ say();
 for (const p of problems) say(`     • ${p}`);
 say();
 
-const since = flag("since");
+// What is a learner missing? That needs the last DEPLOYED commit. `--since`
+// takes it on trust; `--identify` derives it from the artifact and is the
+// reason this no longer has to be supplied by hand.
+let since = flag("since");
+if (argv.includes("--identify")) {
+  const n = Number(flag("limit")) || 40;
+  const found = await identifyDeployedCommit(liveEntryBuf, localEntry, n);
+  if (found) since = found;
+}
+
 if (since) {
   try {
     const log = execFileSync(
@@ -423,8 +540,10 @@ if (since) {
       ["log", "--oneline", `${since}..HEAD`, "--", "src/", "public/", "index.html"],
       { cwd: ROOT, encoding: "utf8" },
     ).trim();
-    say(`  Commits touching build inputs since ${since}:`);
-    for (const l of log.split("\n").filter(Boolean)) say(`     ${l}`);
+    const lines = log.split("\n").filter(Boolean);
+    say(`  ${lines.length} commit(s) touching build inputs since ${since} —`);
+    say("  this is what a learner is not getting:");
+    for (const l of lines) say(`     ${l}`);
     say();
   } catch {
     say(`  (--since ${since} is not a commit this repo knows.)`);
@@ -437,7 +556,8 @@ say("  in Netlify (README.md § Deploying › To publish an update). Re-run this
 say("  check afterwards — it is the verification step, not a substitute for one.");
 if (!since) {
   say();
-  say("  `--since <last deployed commit>` lists what a learner is missing, if you");
-  say("  know it. Nothing records the deploy, so this script cannot find it out.");
+  say("  `--identify` rebuilds recent commits until one reproduces the live bundle");
+  say("  byte for byte, then lists exactly what a learner is missing. Nothing has");
+  say("  to have recorded the deploy — the artifact identifies itself.");
 }
 process.exit(1);

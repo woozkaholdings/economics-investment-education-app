@@ -194,55 +194,51 @@ for the history. No open P1/P2 items.
 >   **11,597 lines** in one file, up from 8,711 (+33%).
 > - **W-6.2 rule 2 worked on the item COUNT and did nothing to the BYTES**, and that is W-7.2.
 >
-> ### ⛔ W-7.1 PRIORITY — THE APP IS LIVE AND SIX COMMITS OF LEARNER-VISIBLE FIXES ARE NOT ON IT. Fix this before any new feature, sweep, or check.
-> **Measured 2026-09-06 by this review against the running site, not taken on report:**
-> - The live entry bundle is **`assets/index-C1_r8HAt.js`, 263,940 b**. A build of `HEAD` produces
->   **`assets/index-B1mndoLB.js`, 264,930 b** — a **990 b** difference under content-addressed
->   hashing, so the deployed artifact is provably not `HEAD`.
-> - **`git rev-list --count 5d6893c..HEAD -- src/ public/ index.html` = 6.** `5d6893c` (2026-09-06
->   00:24) is the last commit that redeployed `dist/`.
-> - Live `/` **200**, `/data/market.json` **200** at `asOf 2026-09-04` (matching the repo),
->   `/nonexistent-xyz` **404** — so the site is healthy. **It is serving stale content, not broken
->   content, which is why nothing noticed.**
+> ### ⛔ W-7.1 PRIORITY — THE APP IS LIVE AND FOUR LEARNER-VISIBLE COMMITS ARE NOT ON IT. Fix this before any new feature, sweep, or check.
 >
-> **What is sitting in `main` and NOT in front of a learner right now:**
+> ⚠️ **This block said SIX and named the wrong baseline commit. Corrected 2026-09-06 by
+> measurement** (`check-deployed --identify`, added by the run that found this). The review
+> inferred the last deploy from a run-log headline — `5d6893c`, "dist is redeployed" — instead of
+> measuring it. **The live bundle is byte-identical to a build of `0a30707`**, three commits later,
+> so `df38ca7` (15 truncated quiz explanations) and `c253b8d` (tooling) were already live and this
+> block listed the first of them as a learner-visible miss. Per W-7.2 rule 1 the wrong table is
+> replaced by the corrected one rather than annotated under it.
+>
+> **Measured 2026-09-06 against the running site:**
+> - Live entry bundle **`assets/index-C1_r8HAt.js`, 263,940 b**; a build of `0a30707` reproduces it
+>   **byte for byte**, and the live `index.html` matches that build modulo Netlify's five injected
+>   lines. HEAD builds `index-B1mndoLB.js`, 264,930 b — provably not what is served.
+> - `/` **200**, `/data/market.json` **200** at `asOf 2026-09-04`, `/nonexistent-xyz` **404**. The
+>   site is healthy; **it serves stale content, not broken content, which is why nothing noticed.**
+>
+> **What a learner is still not getting** (`git log 0a30707..HEAD -- src/ public/ index.html`):
 > | commit | what a learner still gets on the live site |
 > |---|---|
-> | `992a057` | Lesson 32 still teaches that **a recession is when prices fall** — the deflation/recession conflation, a factual economics error |
-> | `9ea716b` | Lesson 43 still cites a lesson the app shows as "Complete previous lessons first" |
+> | `992a057` | Lesson 32 still teaches that **a recession is when prices fall** — a factual economics error |
 > | `855fadd` | One Back press from three levels inside Reference still dumps the learner on the Learn tab |
+> | `9ea716b` | Lesson 43 still cites a lesson the app shows as "Complete previous lessons first" |
 > | `480b242` | The review recap still reads four identical rows to a screen reader after "3 of 4 correct" |
-> | `df38ca7` | 15 quiz explanations still drop the last clause of their English |
-> | `c253b8d` | (tooling only — `analytics-check`; no learner impact) |
 >
-> ⭐ **The transferable finding, and it is bigger than these six commits. O-1 changed the definition
-> of "done" and nothing in the repo changed with it.** For nineteen days, a fix merged to `main` was
-> a fix that had shipped, because there was nowhere else for it to go. Since 2026-09-05 that is false,
-> and **every instrument in this repo still measures the tree.** `npm test` (8 checks, 62+ sections),
-> `check-blindspot`, `check-claims`, `refresh-readiness` — all of them certify `main`. **Not one of
-> them can see the deployed artifact**, so the app can be correct in the repo and wrong on the web
-> indefinitely, and every check stays green while it happens.
->
-> ⚠️ **And this class already bit once, four days after O-1, and was fixed as an incident rather than
-> as a class.** `5d6893c`'s own headline: *"The og:image card shipped in the repo a day ago and every
-> shared link still unfurled as a text stub; dist is redeployed."* **That run redeployed. It did not
-> ask what else was undeployed, or what would notice next time.** Six commits later, here we are.
-> This is the same shape as the W-6.1 finding — a remedy applied to the instance, not the class.
+> ⭐ **The transferable finding, unchanged and now demonstrated twice over. O-1 changed the
+> definition of "done" and nothing in the repo changed with it.** Every instrument here certifies the
+> tree; not one could see the deployed artifact, so the app can be correct in the repo and wrong on
+> the web indefinitely with every check green. **And the review that diagnosed this still got the
+> live state wrong, because it derived a claim about the site from the repo.** A claim about the live
+> site that is not measured against the live site is a guess.
 >
 > **Do, in this order:**
-> 1. **`npm run build` and redeploy `dist/`** to <https://magnificent-mochi-73aecc.netlify.app>. Verify
->    unauthenticated afterwards the way `README.md` § Deploying prescribes — `/` 200, the hashed
->    bundle byte-identical to the local build, a 404 control. **This is one run's headline and it is
->    the highest-value run available.**
-> 2. ✅ **DONE 2026-09-06 — `npm run check-deployed`.** Compares the live site to `dist/`: the hashed
->    entry bundle (covers all of `src/`), unhashed `public/` files by sha256 (the entry cannot see
->    those — the og-card class), `index.html` modulo Netlify's tags; market.json reported, never fatal.
->    Exit 0/1/2 = in sync/diverged/no verdict. **Proved red on the real divergence before it was
->    fixed.** Network, so not in `npm test`; it is step 3 of README § Deploying.
-> 3. ⚠️ **Decide the deploy cadence and write it in `DECISIONS.md`**, because a guard that fires every
->    run and is never acted on is a warning nobody reads (W-5's own lesson). Redeploy-per-commit,
->    daily, or gated — the owner's call, but **the repo currently has no answer at all**, and
->    `README.md`'s § Deploying documents the mechanics of a deploy without saying when one is due.
+> 1. ⛔ **OWNER ACTION — `npm run build` and redeploy `dist/`.** Verify unauthenticated afterwards as
+>    `README.md` § Deploying prescribes, then `npm run check-deployed`. **A scheduled run cannot do
+>    this**: measured 2026-09-06, there is no Netlify CLI and no token on this machine, and
+>    publishing to the owner's public site is not a scheduled agent's call. Every hour this waits,
+>    four fixes including a factual economics error stay in front of learners.
+> 2. ✅ **DONE 2026-09-06 — `npm run check-deployed`**, and `-- --identify` on top of it, which
+>    rebuilds recent commits until one reproduces the live bundle byte for byte and then lists the
+>    undeployed commits. Nothing has to record a deploy; the artifact identifies itself. Carries a
+>    control (a rebuild of HEAD must reproduce local `dist/`, else it refuses a verdict).
+> 3. ⚠️ **Decide the deploy cadence and write it in `DECISIONS.md`** — redeploy-per-commit, daily, or
+>    gated. **Owner's call; the repo has no answer at all.** Now cheap to act on: `--identify` makes
+>    "what is pending" a one-command question rather than an archaeology dig.
 >
 > ### W-7.2 — the floor grew 40% in a week WITH three compression passes running, and the cause is not new items. It is accretion.
 > `npm test` still warns every run. Measured 2026-09-06 vs the `c55a887` tree of 2026-08-30:
@@ -5133,6 +5129,124 @@ zero meaningful: `selftest PASS (8/8 controls fired, plantsRemoved true)` and, p
 finding(s); V vacuous; U unavailable`. A bare "no accessibility issues found" is not a result.
 
 ## Run log
+
+### 2026-09-06 (scheduled dev-agent, W-7.1 step 1 — which a scheduled run cannot do, so I measured why and took the thing standing behind it) — the review that diagnosed "no instrument can see the live site" then took the deployed commit off a run-log headline and named the wrong one, and the deployed artifact could have told it, because Vite hashes the entry bundle
+
+**The pick, and why it is not step 2 again.** W-7.1's step 1 is "build and redeploy `dist/`" and is
+called the highest-value run available. **A scheduled run cannot do it, and I checked rather than
+assuming:** `which netlify` → not found, `~/.netlify` does not exist, no `NETLIFY_*` in the
+environment. Netlify Drop is a browser drag on the owner's account, and publishing to the owner's
+public site is not a scheduled agent's call — the task file authorizes local commits and forbids
+pushes. So step 1 is recorded as an owner action with the measurement behind it, and this run took
+what was standing behind step 1: **nobody could say what was undeployed.**
+
+**⛔ Step 3.5 — the premise broke, and it changed the disposition, not a figure.** W-7.1 asserts
+"six commits of learner-visible fixes" against baseline `5d6893c`. I did not reproduce it; I asked
+what the *site* says.
+- `npm run check-deployed`: **DIVERGED**, live `assets/index-C1_r8HAt.js` **263,940 b** vs HEAD's
+  `index-B1mndoLB.js` **264,930 b**.
+- I rebuilt `5d6893c` from `git archive` in the scratchpad: **`index-C07ArQB5.js`, 263,940 b** —
+  the same size as live, a **different** hash. `cmp` against the downloaded live bundle: differs at
+  char 70, **61 differing bytes**, all of them lazy-chunk filenames inside `__vite__mapDeps`. The
+  entry *code* was identical; the tree was not.
+- So I built every commit back from HEAD until one reproduced the live bundle. **The tenth,
+  `0a30707`, is byte-identical** (`cmp`, not a name match), and the live `index.html` matches that
+  build modulo Netlify's five injected lines. **Negative control: the same comparison against the
+  `5d6893c` build differs**, so the instrument discriminates rather than agreeing with everything.
+- **`0a30707` is three commits AFTER `5d6893c`.** The true undeployed set is **four**, not six:
+  `992a057`, `855fadd`, `9ea716b`, `480b242`. **`df38ca7` — the 15 truncated quiz explanations the
+  review listed as something "a learner still gets" — is live**, and `c253b8d` is tooling.
+
+⭐ **The review derived a claim about the live site from the repo, in the very block whose thesis is
+that you cannot do that.** It took `5d6893c` from that run's own headline ("dist is redeployed") and
+counted forward. That is not a slip in an unimportant number: the block is the project's top
+priority and its table told the next reader that a shipped fix was still broken.
+
+**What shipped: `npm run check-deployed -- --identify`.** The script's header carried a reasoned
+paragraph saying this was impossible — "it cannot tell you WHICH commit is deployed. A built
+artifact carries no commit id, and nothing records the deploy" — and explicitly declined a
+deploy-time ledger, because one more manual step in a procedure whose forgotten manual steps are
+the reason the file exists is not a fix. **That reasoning was right and the conclusion was wrong.**
+Vite content-hashes the entry bundle, so the artifact is already a fingerprint of the tree that
+built it. `--identify` rebuilds recent commits (newest first, `--limit` 40) into throwaway trees
+until one reproduces the live bundle byte for byte, then lists what a learner is missing.
+**No deploy-time record, and no discipline, is required.**
+
+**Verification.**
+- `node scripts/check-deployed.mjs --identify` end to end: control ✓, **IDENTIFIED after 10 probes**
+  at `0a30707`, then the four undeployed commits, **exit 1** (read directly, not through a pipe).
+- **Its own control is load-bearing and was proved to fire.** A rebuild of HEAD must reproduce the
+  `dist/` built here or the probe cannot recognize a commit it just built. I injected a mismatch
+  into that comparison: it printed **`⛔ control FAILED … Not run.`** and refused the probe.
+  Restored from a scratchpad copy (`cmp` byte-identical, `grep -c INJECTED` → **0**) — never
+  `git checkout --`.
+- **Negative control on the search:** `--identify --limit 3` caps the walk short of the match at
+  probe 10 and reports **"not identified in the last 3 commits"** rather than a false result.
+- `npm test` **exit 0**, 0 failures. `npm run build` exit 0. `npm run check-blindspot` exit 0.
+  All three exit codes read without a pipe, because a pipe reports the filter's status and not
+  the check's.
+- ⚠️ **Warnings went 4 → 5, and the fifth is mine.** Before this entry: the documented baseline of
+  4. After appending it: a fifth, *"the run log is under its budget by less than ONE run's worth of
+  writing (0.03 run(s) left)"* — `check-log-size` predicting that the next run tips the run-log
+  budget. **Remedy is an archiving pass — W-5.3's standing practice, a run of its own; filed as a note
+  here rather than as a numbered item, per W-6.2 rule 2.**
+  I am recording the number that is true after my change rather than the one I measured before it.
+  The same run also shows the non-archivable **floor DOWN 437 b (458,139 → 457,702)** — the W-7.1
+  replacement, confirmed by the instrument rather than by my own byte count.
+- **Two limits are stated by the output rather than hidden:** it matches on bytes and never on the
+  filename, and it rebuilds old trees against today's `node_modules`, so a candidate whose deps have
+  changed will not reproduce — a failed identification says *not identified*, never *not deployed*.
+
+**Also corrected, because leaving them would propagate the wrong number:** W-7.1's table and
+baseline (replaced with the measured version per W-7.2 rule 1 — **the block SHRANK 437 b** while
+becoming correct, which is rule 5's test), and `README.md`'s "six commits behind `main`", which is
+now four with the correction left visible and `--identify` documented under § Deploying.
+
+**Step 5 — adversarial self-check.**
+*Blindspot register:* clean. `dalio` → **0** in all three changed files; no lesson, market or kids
+copy was touched (the diff is one script, `README.md`, `AGENT_LOG.md`), so §10.1/§10.2/§10.3 have no
+surface here and `check-blindspot` exits 0. §2.3 — the dates I added (`2026-09-06`, `0a30707`) are
+records of a measurement in documentation, not a rendered figure; nothing in `src/` changed.
+*DECISIONS.md conflict:* none — `check-deployed`, `identify` and `deploy cadence` grep to **0**
+there. The cadence question stays open and owner-facing, as W-7.1 step 3 says; I did not decide it.
+*Already-done backlog item:* no — the opposite. The header paragraph I replaced is the record of
+this having been **considered and declined**, so I checked whether the decline still holds: it
+declined a *ledger*, and its objection (a manual step that will be forgotten) does not touch a
+method that reads the artifact. Different mechanism, same question, and the entry says so.
+*My own verification claim:* every figure above was printed by a command re-run this session — the
+`cmp` results, the 61 differing bytes, the probe count, the three exit codes, the 437 b delta.
+*W-6.3 (instrument-to-app ratio):* re-measured, and **my first draft of this paragraph carried
+figures I had carried forward from an older entry instead of measuring; they did not survive the
+measurement and are replaced here.** On W-7.0's basis (`scripts/` `.mjs`+`.js`; `src/` minus
+`content/` and `locales/`), measured this session against a clean `git archive` of `b425633` and
+against the working tree: **19,556 → 19,676** against **8,833** unchanged — **2.214x → 2.228x**.
+`check-deployed.mjs` **443 → 563 lines (+120)**. This run is **on the wrong side of that number**. I am not
+going to pretend that is free. The defense is that it is the one instrument in the repo that looks
+*outside* the tree, and W-7.1's whole finding is that nothing did.
+⛔ **What the check found against me.** I nearly wrote the deploy ledger — `DEPLOYS.md`, seeded rows,
+a new script, a fifth permanent `npm test` warning. I had the design half-written before reading the
+header paragraph that had already considered and rejected exactly that, for a good reason. **The
+existing rejection was better than my plan**, and the right move was to keep its reasoning and
+overturn only its conclusion. **A rejected idea in a comment is a design review that already
+happened; I was about to redo it worse.**
+
+**O-3 accounting: no content change in any language — this run touches no `content/` module.**
+
+**Filed, not picked (W-6.2 rule 2 — a NOTE, deliberately not a numbered item):** the run log tips
+its warn budget on the next entry; a W-5.3 archiving pass is due and is the obvious pick for a run
+that wants a cheap, well-defined one.
+
+**Top item for the next run:** ⛔ **W-7.1 step 1 is an OWNER action and is now the only thing between
+four fixed defects and the people reading them** — including a lesson that teaches a recession is
+when prices fall. It is one `npm run build`, one drag of `dist/`, one `npm run check-deployed`. After
+it lands, W-7.1 collapses to two lines per W-7.2 rule 4, and step 3 (deploy cadence in
+`DECISIONS.md`) is the owner decision that stops this recurring.
+
+**Owner tree:** `git status` at run start and again before writing showed the owner's untracked
+`UIUX/` and `course` only, **untouched** — neither was read, edited, or staged. `HEAD` re-checked
+before writing and unmoved at `b425633`; the daily market-data job did not fire during the run, and
+`public/data/market.json` is untouched at `asOf=2026-09-04`.
+
 
 ### 2026-09-06 (scheduled dev-agent, W-7.1 step 2 — picked over step 1 because step 2's control expires the moment step 1 happens) — the guard that watches the live site now exists, and its first version reported a divergence in `index.html` that was not one, because Netlify's injected comment is three lines and the filter read one
 
