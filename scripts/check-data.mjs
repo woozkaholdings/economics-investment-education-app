@@ -11134,5 +11134,196 @@ function trendDirection(src) {
   }
 }
 
+// ═══════════════════════════════════════════════════════════════════════════
+// §74. QUIZ EXPLANATIONS MEASURED FOR CONTENT (backlog item 165's guard).
+//
+// The learner-visible failure this catches, in one sentence (W-6.2 rule 3):
+// a reader answers in Spanish and is shown one clause where the English
+// reader is shown the mechanism.
+//
+// WHY IT IS DUE NOW AND WAS NOT BEFORE. Item 165 held this check back
+// deliberately, and the ordering was the point rather than a deferral: §66 and
+// §67 each landed WITH a READ_COMPLETE list built by reading every flagged
+// pair, and here that meant reading 29 unread pairs — O-3 work, the owner's
+// call. Landing the check first would have shipped a permanent 29-pair
+// warning, which item 121 already calls evidence that the check or the budget
+// is wrong. The reading was done on 2026-09-06 (15 pairs repaired, 7 read
+// complete), so this section ships at ZERO open flags. It is the third corpus
+// to get §66/§67's scorer, after kidsContent and the glossary.
+//
+// ⛔ THE p90 CONVENTION IS PINNED, AND THIS IS WHY THE SECTION HAS THIS SHAPE.
+// "p90" does not identify a computation. Item 165's historical figures were
+// computed with `round(0.9n)-1`; §66 and §67 use `ceil(0.9n)-1`. On this
+// corpus that is not cosmetic — it is one extra flag (`q002` ja scores 0.368
+// against a 0.370 ceil-threshold and does not flag under round at all) and
+// four references differing in the third decimal. On 2026-09-06 a
+// re-implementation using `ceil` against item 165's `round` figures produced a
+// gap that read exactly like corpus drift, and `git diff` proved the corpus
+// had not moved at all.
+// THIS SECTION USES `ceil`, matching §66/§67 — one convention per file — and
+// control 5 below ASSERTS it against a vector with a hand-checked answer, so a
+// future edit that switches conventions fails here instead of silently
+// changing what every figure in this section means.
+//
+// NO MIN_EN, and that is measured rather than assumed. §67 needs one because
+// the glossary mixes 35-code-point names with 70+ code-point definitions;
+// this corpus is homogeneous (shortest English explanation 92 code points).
+// Control 6 asserts that homogeneity, so if a one-line explanation is ever
+// added the check fails and says to re-derive rather than quietly scoring a
+// label against a paragraph.
+//
+// WARNS RATHER THAN FAILS, for §67's reason: a new abridgement is a fact about
+// unreviewed machine translation, which is an O-3 decision and not a build
+// break. A pair that SHRINKS below what was read still FAILS (control 7).
+// ═══════════════════════════════════════════════════════════════════════════
+{
+  const before74 = failures;
+  const cp = (s) => [...(s ?? "")].length;
+
+  // Read against the English on 2026-09-06 and complete: each carries every
+  // clause of its English and flags only because CJK renders it compactly.
+  // `at` is the code-point length when read — the fingerprint control 7 uses.
+  const READ_COMPLETE = [
+    { id: "q003", lang: "ko", at: 49 }, { id: "q003", lang: "zh", at: 33 },
+    { id: "q003", lang: "ja", at: 40 }, { id: "q011", lang: "zh", at: 47 },
+    { id: "q012", lang: "zh", at: 71 }, { id: "q022", lang: "zh", at: 55 },
+    { id: "q002", lang: "ja", at: 56 },
+  ];
+  const SHRUNK_BELOW = 0.9;
+  const readKey = (id, lang) => `${id} ${lang}`;
+  const readMap = new Map(READ_COMPLETE.map((r) => [readKey(r.id, r.lang), r.at]));
+
+  const p90 = (xs) => {
+    const sorted = [...xs].sort((a, b) => a - b);
+    if (!sorted.length) return 0;
+    return sorted[Math.min(sorted.length - 1, Math.max(0, Math.ceil(0.9 * sorted.length) - 1))];
+  };
+
+  const scoreQuiz = (rowsIn) => {
+    const rows = rowsIn
+      .map((r) => ({ id: r.id, lesson: r.lesson, en: cp(r.explain?.en), m: r.explain }))
+      .filter((r) => r.en > 0);
+    const ratio = {};
+    for (const lang of COMPLETENESS_LANGS) ratio[lang] = rows.map((r) => cp(r.m?.[lang]) / r.en);
+    const reference = {};
+    for (const lang of COMPLETENESS_LANGS) reference[lang] = p90(ratio[lang]);
+    const abridged = [], readComplete = [], shrunk = [];
+    rows.forEach((r, i) => {
+      for (const lang of COMPLETENESS_LANGS) {
+        if (ratio[lang][i] >= ABRIDGED_BELOW * reference[lang]) continue;
+        const hit = { id: r.id, lesson: r.lesson, lang, ratio: ratio[lang][i], now: cp(r.m?.[lang]) };
+        const at = readMap.get(readKey(r.id, lang));
+        if (at === undefined) abridged.push(hit);
+        else if (hit.now < SHRUNK_BELOW * at) shrunk.push({ ...hit, at });
+        else readComplete.push(hit);
+      }
+    });
+    return { rows, reference, abridged, readComplete, shrunk };
+  };
+
+  const clone = () => JSON.parse(JSON.stringify(quizData));
+
+  // ── CONTROLS FIRST. A scorer that flags nothing certifies the corpus, which
+  // is the false clean bill this whole family of sections exists to stop.
+  // 1. Every translation a verbatim copy of its English: nothing may flag.
+  {
+    const q = clone();
+    for (const r of q) for (const lang of COMPLETENESS_LANGS) r.explain[lang] = r.explain.en;
+    const got = scoreQuiz(q).abridged.length;
+    if (got !== 0) fail(`§74: the scorer failed its positive control — with every explanation a verbatim copy of the English it flagged ${got} pair(s), and must flag 0. Every figure below is meaningless until this passes.`);
+  }
+  // 2. One known-complete explanation truncated to 20%: must flag in all four.
+  {
+    const q = clone();
+    const TARGET = "q001";
+    const row = q.find((r) => r.id === TARGET);
+    if (!row) {
+      fail(`§74: the negative control's target question "${TARGET}" no longer exists, so the control tests nothing — repoint it at a question that is a full translation today.`);
+    } else {
+      for (const lang of COMPLETENESS_LANGS) row.explain[lang] = [...row.explain[lang]].slice(0, Math.ceil(cp(row.explain[lang]) * 0.2)).join("");
+      const hits = scoreQuiz(q).abridged.filter((a) => a.id === TARGET).length;
+      if (hits !== COMPLETENESS_LANGS.length) fail(`§74: the scorer failed its negative control — ${TARGET} truncated to 20% flagged in ${hits} of ${COMPLETENESS_LANGS.length} language(s), and must flag in all of them.`);
+    }
+  }
+  // 3. Uniformly abridged corpus: the p90 reference moves with it, so NOTHING
+  //    flags. Asserted here rather than inherited from §66/§67 — a change to
+  //    the reference calculation would silently give all three a new meaning.
+  {
+    const q = [];
+    for (let i = 0; i < 12; i++) {
+      q.push({ id: `t${i}`, lesson: 1, explain: Object.fromEntries(["en", ...COMPLETENESS_LANGS].map((l) => [l, l === "en" ? "x".repeat(200) : "x".repeat(60)])) });
+    }
+    const got = scoreQuiz(q).abridged.length;
+    if (got !== 0) fail(`§74: the uniform-abridgement control changed behavior — a corpus abridged evenly to 30% flagged ${got} pair(s) where the per-language p90 makes 0 correct. If this fires, the reference calculation changed and this section's warnings mean something other than the comment says.`);
+  }
+  // 4. Code points, not bytes — a byte counter calls every CJK line abridged.
+  {
+    const zh = "债务过大时";
+    if (cp(zh) !== 5 || Buffer.byteLength(zh) !== 15) fail(`§74: the length function is not counting code points — cp of a 5-character Chinese string returned ${cp(zh)} (want 5) against ${Buffer.byteLength(zh)} bytes.`);
+  }
+  // 5. THE CONVENTION ITSELF, pinned against hand-checked vectors. At n=10,
+  //    ceil and round agree (index 8), so that case only proves the function
+  //    runs. The n=46 case — this corpus's size — is where they DISAGREE
+  //    (ceil index 41, round index 40), and that is the case that catches a
+  //    silent convention switch.
+  {
+    const v10 = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
+    if (p90(v10) !== 90) fail(`§74: p90 control — p90 of ten evenly spaced values returned ${p90(v10)}, want 90 (ceil(0.9n)-1 = index 8).`);
+    const v46 = Array.from({ length: 46 }, (_, i) => i);
+    const gotIdx = p90(v46);
+    if (gotIdx !== 41) {
+      fail(`§74: p90 CONVENTION CHANGED — on 46 values (this corpus's size) it returned index ${gotIdx}, want 41 (ceil(0.9*46)-1). round(0.9*46)-1 gives 40, which is item 165's historical convention and a DIFFERENT instrument: on this corpus it drops q002 ja from the flagged set and moves all four references in the third decimal. Pick one deliberately and update READ_COMPLETE and item 165 together.`);
+    }
+  }
+  // 6. The corpus is homogeneous, which is why there is no MIN_EN. If a short
+  //    label-like explanation appears, this fails rather than silently scoring
+  //    it against a paragraph population.
+  {
+    const ens = quizData.map((r) => cp(r.explain?.en)).filter((n) => n > 0).sort((a, b) => a - b);
+    if (ens.length !== quizData.length) fail(`§74: ${quizData.length - ens.length} question(s) have an empty English explanation, so their ratio is undefined and they are silently unmeasured.`);
+    const MIN_EXPECTED = 60;
+    if (ens[0] < MIN_EXPECTED) fail(`§74: the shortest English explanation is now ${ens[0]} code points (it was 92 when this section was written; floor ${MIN_EXPECTED}). §67 needs a MIN_EN because its corpus mixes short names with definitions; this one omits it because it is homogeneous. A label-length explanation breaks that assumption — re-derive whether a MIN_EN is needed here.`);
+  }
+  // 7. READ_COMPLETE cannot mask a regression, and cannot name a pair that is
+  //    not there — an exemption for nothing is worse than no exemption.
+  {
+    const live = new Set(quizData.flatMap((r) => COMPLETENESS_LANGS.map((l) => readKey(r.id, l))));
+    const missing = READ_COMPLETE.filter((r) => !live.has(readKey(r.id, r.lang)));
+    if (missing.length) fail(`§74: READ_COMPLETE names ${missing.length} pair(s) that do not exist in quizData (${missing.map((r) => `${r.id} ${r.lang}`).join(", ")}). Question ids are never reused (quizMeta.js), so a name that resolves to nothing is a typo or a deleted question.`);
+    const q = clone();
+    const T = READ_COMPLETE[0];
+    const row = q.find((r) => r.id === T.id);
+    if (row?.explain?.[T.lang]) {
+      row.explain[T.lang] = [...row.explain[T.lang]].slice(0, Math.ceil(cp(row.explain[T.lang]) * 0.2)).join("");
+      const r = scoreQuiz(q);
+      const inShrunk = r.shrunk.some((x) => x.id === T.id && x.lang === T.lang);
+      const inRead = r.readComplete.some((x) => x.id === T.id && x.lang === T.lang);
+      if (!inShrunk || inRead) fail(`§74: the READ_COMPLETE fingerprint failed its control — ${T.id} ${T.lang} cut to 20% was ${inRead ? "still accepted as read-complete" : "not reported as shrunk"}. The list would mask exactly the regression it must not.`);
+    }
+  }
+
+  // ── THE REAL CORPUS.
+  const quiz = scoreQuiz(quizData);
+  for (const x of quiz.shrunk) {
+    fail(`§74: ${x.id} ${x.lang} was read complete at ${x.at} code points and now ships at ${x.now} (${Math.round((100 * x.now) / x.at)}%). What was read is no longer what ships — re-read it against the English, then either restore it or update its READ_COMPLETE length.`);
+  }
+  if (quiz.rows.length === 0) {
+    fail("§74: no quiz explanations could be read — quizData's shape changed and this section is measuring nothing, which is indistinguishable from a fully translated corpus.");
+  } else if (quiz.abridged.length) {
+    const byLang = COMPLETENESS_LANGS.map((l) => `${l} ${quiz.abridged.filter((a) => a.lang === l).length}`).join(", ");
+    warn(
+      `quiz explanations: ${quiz.abridged.length} of ${quiz.rows.length * COMPLETENESS_LANGS.length} translated explanation(s) carry under ` +
+        `${Math.round(100 * ABRIDGED_BELOW)}% of their language's own p90 length ratio (${byLang}) — ` +
+        `${quiz.abridged.map((a) => `${a.id}/L${a.lesson} ${a.lang} ${a.ratio.toFixed(3)}`).join(", ")}. ` +
+        `A learner answering in that language is shown less reasoning than the English reader. Read each against its English (item 160 puts the mechanism in this field): repair it, or add it to §74's READ_COMPLETE with the length you read.`,
+    );
+  }
+
+  if (failures === before74) {
+    const line = COMPLETENESS_LANGS.map((l) => `${l} ${quiz.reference[l].toFixed(3)}`).join(", ");
+    console.log(`  §74 quiz explanations are measured for content, not just presence: ${quiz.abridged.length}/${quiz.rows.length * COMPLETENESS_LANGS.length} pair(s) under ${Math.round(100 * ABRIDGED_BELOW)}% of their language's own p90 (${line}) across ${quiz.rows.length} question(s); ${quiz.readComplete.length} under-threshold pair(s) read complete on 2026-09-06 and unchanged since (${READ_COMPLETE.length - quiz.readComplete.length} listed entries inert above threshold); 7 control group(s) fired.`);
+  }
+}
+
 console.log(`\n${failures === 0 ? "PASS" : "FAIL"}: ${failures} failure(s), ${warnings} warning(s).`);
 process.exit(failures === 0 ? 0 : 1);

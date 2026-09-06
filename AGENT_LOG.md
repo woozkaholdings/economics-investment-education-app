@@ -1800,7 +1800,9 @@ diff the first heading against the previous section's first heading.
     plainly renders one — it emits the bare `{t.disclaimer}` string. A component-name grep is not a
     disclaimer census.
 
-165. **🟡 MAIN PATH CLOSED **on content** 2026-09-04 (scheduled dev-agent); the essentials remainder is open.
+165. **✅ FULLY CLOSED 2026-09-06 — content (15 pairs repaired) and guard (`check-data.mjs` §74) both
+    landed; see the two ✅ blocks below. Original headline kept because the corrections refer to it:**
+    **🟡 MAIN PATH CLOSED **on content** 2026-09-04 (scheduled dev-agent); the essentials remainder is open.
     ⛔ **The "MAIN PATH CLOSED 2026-09-03" this line used to carry was FALSE, and so was the
     "none on the main path" bullet below — see the correction under them.**
     [Content — filed 2026-09-02 by the run that took `q007`, from a measurement it had to make
@@ -1947,6 +1949,50 @@ diff the first heading against the previous section's first heading.
         call. A check landed today would ship a **1-pair** warning (`q022` zh) with a 6-entry
         `READ_COMPLETE` list — down from the 29-pair warning that made "read first, then guard"
         the right ordering. **The reading is now done.**
+      - ✅ **THE GUARD IS BUILT AND ITEM 165 IS CLOSED — 2026-09-06 (owner-directed: "do the guard
+        for item 165"). `check-data.mjs` §74, wired into `npm test`, shipping at ZERO open flags
+        and adding ZERO warnings.** 0/184 pairs abridged; all 7 `READ_COMPLETE` entries live and
+        under threshold (0 inert); 7 control groups fire on every run.
+        ⛔ **THE CONVENTION QUESTION HAD TO BE DECIDED, AND IT IS NOT COSMETIC.** §66 and §67 —
+        the two sections this one is modeled on — compute p90 with **`ceil(0.9n)-1`**. Item 165's
+        figures were computed with **`round(0.9n)-1`**. On this corpus they disagree: `ceil` flags
+        **`q002` ja** (0.368 against a 0.370 threshold) and `round` does not, and all four
+        references differ in the third decimal. **§74 uses `ceil`, matching its siblings — one
+        convention per file** — and the extra pair it surfaces, `q002` ja, was **READ against its
+        English before being listed**: both English sentences are rendered in full, so it is the
+        seventh `READ_COMPLETE` entry, not a repair. **Control 5 now pins the convention against a
+        vector where the two disagree** (n=46 → index 41, not 40), so a future switch fails loudly
+        instead of silently redefining every figure in the section.
+        ⚠️ **Read §74's numbers against §74, not against this item's history.** The item's `round`
+        figures are dated records and stay as written; the section's `ceil` figures are what
+        `npm test` prints. They describe the same corpus with two different instruments.
+      - **No `MIN_EN`, and that is measured.** §67 needs one because the glossary mixes 35-code-point
+        names with 70+ code-point definitions. This corpus is homogeneous — shortest English
+        explanation **92** code points — so a threshold would separate nothing. **Control 6 asserts
+        that homogeneity** rather than leaving it as an assumption, and fails with instructions if a
+        label-length explanation is ever added.
+      - **Verified by live injection, not only by the internal controls** (which run on cloned data
+        and so cannot prove the section reads the real files). Both directions, each restored from
+        a scratchpad copy rather than `git checkout --`, with the restore verified by sha256 and by
+        `git status` returning to 0 changed content files:
+        - **A new abridgement WARNS:** today's `q018` es repair was reverted to its exact pre-repair
+          text, the injection proved landed by reading it back through the module (90 code points),
+          and §74 reported `q018/L4 es 0.657` with the suite's warning count going **3 → 4**. **The
+          guard catches the actual defect this item was filed for.**
+        - **A shrunk exemption FAILS:** `q022` zh cut from 55 to 13 code points landed in `shrunk`,
+          not `readComplete`, and the suite exited **1**. The exemption list cannot mask a
+          regression.
+      - **⚠️ And a control caught me.** The first `READ_COMPLETE` shipped with **fabricated `at`
+        lengths** — I typed plausible numbers instead of measuring them (q003 ko/zh/ja as 68/46/56
+        against the real 49/33/40). Control 7's fingerprint failed the build immediately and named
+        all three. **A fingerprint list is a measurement, not an estimate**, and the control that
+        exists to catch a shrinking translation caught a fabricated baseline on its first run.
+      - **W-6.3:** `scripts/` **18,845** lines to the app's **8,678** — **2.17x**, up from 2.15x.
+        The section is ~190 lines. It is the one case W-6.3 explicitly allows: a learner-visible
+        failure (W-6.2 rule 3's sentence, at the top of §74), a corpus with a **measured** defect
+        history rather than a property that merely holds, and zero standing warnings.
+      - **Baseline discipline:** the suite reports 3 warnings both with and without §74 — measured
+        against a `git archive HEAD` copy, not assumed — so this section added none.
       - **O-3:** ~1,050 characters of new machine translation across es/ko/zh/ja, none reviewed by
         a fluent speaker. Same standing condition; named, not buried.
     - ⛔ **THE GUARD IS AN OWNER DECISION, AND THE ORDERING IS THE POINT — not a deferral.** A
@@ -4838,6 +4884,81 @@ zero meaningful: `selftest PASS (8/8 controls fired, plantsRemoved true)` and, p
 finding(s); V vacuous; U unavailable`. A bare "no accessibility issues found" is not a result.
 
 ## Run log
+
+### 2026-09-06 (owner-directed, interactive: "do the guard for item 165") — `check-data.mjs` §74 ships at zero open flags, and the first version of its exemption list carried fabricated numbers that its own control caught on the first run
+
+**Item 165 is now FULLY CLOSED** — content this morning (15 pairs repaired), guard this afternoon.
+The guard was held back deliberately and the ordering was the point: §66 and §67 each landed *with*
+a `READ_COMPLETE` list built by reading every flagged pair, and here that meant reading 29 unread
+pairs — O-3 work, the owner's call. Landing it first would have shipped a permanent 29-pair warning,
+which item 121 already calls evidence that the check or the budget is wrong. **The reading happened
+first; §74 ships at 0/184.**
+
+**⛔ Step 3.5 — the premise re-measured, and it turned up a decision the item did not know it was
+asking for.** §74 is modeled on §67, so the first question was whether §67's scorer transfers. Two
+things did not:
+1. **§66 and §67 compute p90 with `ceil(0.9n)-1`. Item 165's certified figures use `round(0.9n)-1`.**
+   This morning's run established that "p90" is not a specification; this afternoon it turned into a
+   design decision, because on this corpus the two **disagree**: `ceil` flags **`q002` ja** (0.368
+   against a 0.370 threshold) where `round` flags nothing, and all four references differ in the
+   third decimal. **§74 uses `ceil` — one convention per file, matching its two siblings.** The
+   consequence was handled rather than absorbed: `q002` ja was **read against its English before
+   being listed** (both English sentences rendered in full — complete, compact ja), making it the
+   seventh `READ_COMPLETE` entry rather than a sixteenth repair. **Control 5 pins the convention
+   against a vector where the two disagree** (n = 46 → index 41, not 40), so a future switch fails
+   loudly instead of silently redefining every figure the section prints.
+2. **§67's `MIN_EN` does not transfer, and that is measured rather than dropped.** §67 needs it
+   because the glossary mixes 35-code-point names with 70+ code-point definitions. This corpus is
+   homogeneous — shortest English explanation **92** code points — so a threshold would separate
+   nothing. **Control 6 asserts the homogeneity** and fails with instructions if a label-length
+   explanation is ever added, rather than leaving the omission as an unstated assumption.
+
+**⚠️ A CONTROL CAUGHT ME, on its first run, and this is the part worth keeping.** The first
+`READ_COMPLETE` I wrote carried **fabricated `at` lengths** — I typed plausible-looking numbers
+instead of measuring them (`q003` ko/zh/ja as 68/46/56 against the real 49/33/40). Control 7's
+fingerprint failed the build immediately and named all three. **A fingerprint list is a measurement,
+not an estimate.** The control that exists to catch a translation shrinking after it was read caught
+a fabricated baseline instead — which is a better first outing than a clean pass would have been,
+and is the reason a made-up exemption list did not quietly ship.
+
+**Verified by live injection, because the seven internal controls run on cloned data and therefore
+cannot prove the section reads the real files.** Both directions, each restored from a **scratchpad
+copy** rather than `git checkout --`, with each restore verified by sha256 **and** by `git status`
+returning to 0 changed content files:
+- **A new abridgement WARNS.** Today's `q018` es repair was reverted to its exact pre-repair text;
+  the injection was proven landed by reading it back through the module (90 code points), not by
+  trusting the write. §74 reported `q018/L4 es 0.657` and the suite's warning count went **3 → 4**.
+  **The guard catches the actual defect this item was filed for**, which is a stronger claim than
+  "it catches a synthetic truncation".
+- **A shrunk exemption FAILS.** `q022` zh cut from 55 to 13 code points landed in `shrunk`, not
+  `readComplete`, and the suite exited **1**. The exemption list cannot mask a regression.
+
+**Other verification.** `npm test` **exit 0**, §74 printing `0/184 pair(s) … 7 under-threshold
+pair(s) read complete … 7 control group(s) fired`. **Warning count is 3 both with and without §74 —
+measured against a `git archive HEAD` copy rather than assumed** — so the section added none, which
+was the whole precondition for landing it.
+
+**W-6.3, quoted and answered.** `scripts/` **18,845** lines to the app's **8,678** — **2.17x**, up
+from 2.15x; the section is ~190 lines. This is the case W-6.3 explicitly leaves room for: a
+learner-visible failure written at the top of the section (*"a reader answers in Spanish and is
+shown one clause where the English reader is shown the mechanism"*), a corpus with a **measured**
+defect history — 29 real pairs this month, not a property that merely holds — and zero standing
+warnings. It warns rather than fails for §67's reason: a new abridgement is a fact about unreviewed
+machine translation, an O-3 decision and not a build break.
+
+**Adversarial self-check (step 5).** *Blindspot register:* no content change at all — this commit
+touches `scripts/` and `AGENT_LOG.md` only; `check-blindspot` clean via `npm test`. *DECISIONS.md:*
+nothing contradicted; no new dependency, and the section reads `quizData`, the existing node-only
+merged view whose header says it exists for exactly this. *Already-done item:* this is 165's stated
+remainder and is explicitly **not** §66/§67 re-run — a third corpus, with two of §67's constants
+deliberately not inherited. *My own verification claim:* both injections are reproducible from the
+text above, the restores are sha-verified, and the baseline warning count is a two-sided measurement
+against `HEAD` rather than a recollection.
+
+**Next.** Item **165 is closed**; item **26 can be closed** by the next run that touches the backlog.
+**O-2 remains the entire critical path** — one PostHog account and one pasted `phc_` key, with
+`npm run analytics-check` now standing by to verify it before it ships. Open and unparked otherwise:
+27, 70/71, 74, 76, 94, 117, 155's probe, 160, 167(c).
 
 ### 2026-09-06 (owner-directed, interactive: "do item 165's essentials remainder instead") — the remainder is closed on content at 15 repaired pairs, and the instrument that measures it turned out to be under-specified by its own name: "p90" has four plausible readings and only one reproduces this item's certified figures
 
