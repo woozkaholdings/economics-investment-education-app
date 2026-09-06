@@ -89,6 +89,7 @@ export default {
     hookRecallTemplate: "読む前の予想：{answer}",
     checkTitle: "学んだことを確認",
     checkIntro: "次に進む前に、かんたんな質問です。",
+    checkIntroPlural: "次に進む前に、かんたんな質問がいくつかあります。",
     reviewTitle: "復習",
     resumeLabel: "次のレッスン", startHereLabel: "ここから始める",
     refHubSub: "いつでも調べられる資料です — 学習パスには含まれません。",

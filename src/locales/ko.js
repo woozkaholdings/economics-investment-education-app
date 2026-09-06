@@ -89,6 +89,7 @@ export default {
     hookRecallTemplate: "읽기 전에 고른 답: {answer}",
     checkTitle: "배운 내용 확인하기",
     checkIntro: "다음으로 넘어가기 전에 간단한 질문입니다.",
+    checkIntroPlural: "다음으로 넘어가기 전에 간단한 질문 몇 가지입니다.",
     reviewTitle: "복습",
     resumeLabel: "다음 레슨", startHereLabel: "여기서 시작",
     refHubSub: "언제든 찾아볼 수 있는 자료입니다 — 학습 경로에는 포함되지 않습니다.",

@@ -92,6 +92,7 @@ export default {
     hookRecallTemplate: "Antes de leer, elegiste: {answer}",
     checkTitle: "Comprueba lo aprendido",
     checkIntro: "Una pregunta rápida antes de continuar.",
+    checkIntroPlural: "Unas preguntas rápidas antes de continuar.",
     reviewTitle: "Repaso",
     resumeLabel: "Siguiente", startHereLabel: "Empieza aquí",
     refHubSub: "Material de consulta, cuando quieras — nada de esto forma parte del camino.",

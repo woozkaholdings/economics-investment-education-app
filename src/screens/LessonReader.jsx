@@ -436,7 +436,13 @@ export default function LessonReader({ t, lang, lessons, index, completedLessons
             {t.checkTitle}
           </Text>
           <Text variant="small" color={ink.muted} style={{ margin: `${space["1"]}px 0 ${space["4"]}px` }}>
-            {t.checkIntro}
+            {/* Two lessons carry two check questions, and this line said "A
+                quick question" over both of them — "una pregunta", "一个小问题"
+                — until 2026-09-06. Two keys rather than one count template:
+                §68 exists because a {n} parked inside a noun phrase renders
+                "1 preguntas" the moment the count reaches its first state,
+                and the branch this needs already exists in check.length. */}
+            {check.length > 1 ? t.checkIntroPlural : t.checkIntro}
           </Text>
           <Stack gap={space["5"]}>
             {check.map(({ question, index: qIndex }) => (

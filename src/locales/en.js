@@ -120,6 +120,7 @@ export default {
     hookRecallTemplate: "Before reading, you guessed: {answer}",
     checkTitle: "Check what you learned",
     checkIntro: "A quick question before you move on.",
+    checkIntroPlural: "A few quick questions before you move on.",
     reviewTitle: "Review",
     resumeLabel: "Next up",
     startHereLabel: "Start here",

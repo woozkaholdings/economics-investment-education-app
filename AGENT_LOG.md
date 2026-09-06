@@ -1639,6 +1639,17 @@ diff the first heading against the previous section's first heading.
     > 3's sentence: *"a learner is told to expect one question and is shown two."* Fixing it is a
     > five-language copy change (`checkIntro` has no count template; §68 is the precedent for one).
     > **Honest priority: low** — it is a wording mismatch, not a false claim about the material.
+    > ✅ **DONE 2026-09-06 (scheduled dev-agent). Two keys, not a count template — and the note
+    > above pointed at the wrong precedent.** §68 IS about count templates, and its own failure
+    > message says to park a count outside the noun phrase rather than add a plural rule; a `{n}`
+    > here would have bought a scanned template needing an exemption, to render a number the learner
+    > can see by counting to two. The branch this needed already existed as `check.length`, so:
+    > `checkIntroPlural` in five languages, rendered on `check.length > 1`, one line in
+    > `LessonReader.jsx`. **The three languages that said "one" literally** — en "A quick question",
+    > es "Una pregunta", zh "先来一个小问题" — now read "A few quick questions", "Unas preguntas
+    > rápidas", "先来几个小问题"; ko and ja carried a singular by implication and now read 몇 가지 /
+    > いくつか. **Plural wording carries no number**, so a third question on some future lesson does
+    > not falsify it the way "a couple" would.
     > ⚠️ **A FOURTH NOTE, not a sub-item (W-6.2 rule 2). The ENGLISH↔TRANSLATION NUMERIC-DRIFT class
     > is swept and CLOSED at zero instances — do not re-run it.** 2026-09-05: percentages and 4-digit
     > years compared between each English lesson and its four translations, **176 (lesson, language)
@@ -4768,6 +4779,117 @@ zero meaningful: `selftest PASS (8/8 controls fired, plantsRemoved true)` and, p
 finding(s); V vacuous; U unavailable`. A bare "no accessibility issues found" is not a result.
 
 ## Run log
+
+### 2026-09-06 (scheduled dev-agent, picked off item 167's unnumbered live-find list) — two lessons show the learner two questions under a line that says "A quick question", "Una pregunta", "先来一个小问题"; it now branches, and the note that filed it named the wrong precedent for how to fix it
+
+**Where the pick came from, and why it is not a residual chain.** W-6.2 rule 1 counts: the last two
+scheduled runs took a **self-picked corpus sweep** (the QE closing-block class) and **backlog item
+101**. Neither was the previous run's residual, so this run is link one, not link three. The live
+candidates were re-read rather than taken off the last entry's closing line, per W-5.2 — and two of
+them had moved since they were listed: **item 155's live instance is already FIXED** (2026-09-03,
+`flexWrap` on the reader's button row); what is left of 155 is the *probe*, which W-6.3 argues
+against. **Item 117(a)/(b)** re-read as filed: both are owner judgment calls, not work. **Item
+167(c)** is explicitly barred as a headline pick by its own W-6.2 rule 1 clause. What was left was
+the `checkIntro` find — filed 2026-09-05 as a note under 167 rather than numbered, **live, unfixed,
+and app-side rather than instrument-side**, which is the direction W-6.0/§10.8 keep pointing.
+W-6.2 rule 3's sentence was already written by the filing run: *"a learner is told to expect one
+question and is shown two."*
+
+**⛔ Step 3.5 — the premise re-measured, with controls, before anything was edited. It held, and the
+first instrument was dead.**
+- **The corpus claim** ("two lessons carry two questions"). A regex over `quizMeta.js` for
+  `lesson:\s*(\d+)` returned **0 questions across 0 lessons** — a clean-looking zero that was
+  entirely an artifact: the file's keys are **quoted** (`"lesson": 29`). This is the log's own
+  weekly lesson and it fired on the first command of the run. Corrected to `"lesson":\s*(\d+)`:
+  **46 questions across 44 lessons; exactly two lessons carry two — L32 and L34.** Matches the
+  filing note.
+- **Controls, both directions.** *Positive:* a duplicate entry for lesson 29 planted into an
+  in-memory copy → L29 reads 2, total 47. The counter can see a two-question lesson. *Negative:* a
+  lesson number that does not exist (999) reads `undefined`, not 0 — so an absent lesson is
+  distinguishable from a lesson with no questions.
+- **The render claim.** `LessonReader.jsx:439` was `{t.checkIntro}`, unconditional, above
+  `check.map(...)` — confirmed by reading, and then by the pre-fix browser control below.
+- **The call-site claim.** `checkIntro` has exactly one live call site. Its former second site on
+  the Practice landing was removed on 2026-08-26 (item 117's premise correction); what remains
+  there is a **comment** naming the key, not a render. Grepped, not assumed.
+
+**⛔ And the filing note's prescription was wrong, which is the part worth carrying.** It said
+*"§68 is the precedent for one [count template]"*. **§68 is the precedent AGAINST one.** That
+section exists because `{n}` parked inside a noun phrase renders *"Racha de 1 días"* and *"1
+preguntas"*, and its own failure message tells the reader to park the count outside the phrase
+rather than add a plural rule for one string. A `{n}` template here would have added a key that §68
+scans, needing an exemption whose premise lives in another file — to render a number the learner can
+get by counting to two. **The branch this needed already existed as `check.length`.** So: a second
+key, `checkIntroPlural`, in five languages, rendered on `check.length > 1`. **An error message that
+prescribes a fix is a claim about the fix** — the same shape as W-6.1's retraction, one level down.
+
+**What shipped.** `checkIntroPlural` in all five locales + one branch in `LessonReader.jsx`
+(12 insertions, 1 deletion, 6 files). **Three languages said "one" literally** — en *"A quick
+question"*, es *"Una pregunta"*, zh *"先来一个小问题"* — and now read *"A few quick questions"*,
+*"Unas preguntas rápidas"*, *"先来几个小问题"*; ko and ja carried the singular by implication and now
+read 질문 몇 가지 / 質問がいくつか. **The plural wording carries no number on purpose**, so a third
+question on some future lesson does not falsify it the way "a couple" would.
+
+**Verification — 21 live DOM readings on the built app, plus a pre-fix control on a separately built
+bundle.**
+- `npm run build` ✅, `npm test` ✅ **PASS: 0 failure(s), 1 warning(s)** — the warning is the
+  pre-existing non-archivable floor (425,778 b of 250,000 b), item 115, the owner's. `npm run
+  check-blindspot` ✅ 0 failures.
+- `dist/` served at `127.0.0.1:8771`; **bundle identity asserted** (`index-C07ArQB5.js`, byte-matching
+  the build that had just printed it) against the Environment note's known "the browser is running the
+  PREVIOUS build" trap.
+- **5 languages × 4 lessons = 20 readings**, seeded through `localStorage` because a URL does not
+  unlock a lesson: L29 and L33 (one question each) render the **singular** in every language; L32 and
+  L34 (two each) render the **plural** in every language. The probe reads the intro as the sibling of
+  the `checkTitle` `h2` and counts `h3`s inside that card — L32's two came back as *"¿Cuánto dura el
+  ciclo corto?"* and *"¿Qué causa la inflación?"*, i.e. `q003` + the `q004` moved on 2026-09-05, so
+  the DOM count and `quizMeta` agree.
+- **The instrument is not a constant** — it returns two different strings inside one build, keyed on
+  the count, which is the in-band control that it can see the difference at all.
+- **The pre-fix control, and it is the one that matters.** `git archive HEAD` → scratchpad →
+  `npm run build` → served at `:8772`. Bundle `index-cmXs89F6.js`, **a different hash from the fixed
+  build**, asserted in the same read so the two cannot be confused. Lesson 32, `es`:
+  **`"Una pregunta rápida antes de continuar."` over `q: 2`.** The defect is reproduced on the
+  shipped code, not inferred from the diff.
+- ⚠️ **One probe died mid-run and died LOUDLY, which is worth recording.** The walker keyed its
+  expected heading off `document.documentElement.lang`; in Chinese that is **`zh-Hans`**, not `zh`,
+  so the lookup missed and the poll ran to a 45-second timeout instead of returning a clean zero.
+  Keyed off `localStorage.ecycles_lang` instead. **A dead instrument that hangs is the good failure
+  mode; the same miss inside a `while` with a `return null` would have read as "no check card" on
+  every Chinese lesson.**
+
+**Adversarial self-check (step 5) — run, and it found one thing.**
+- **Blindspot register.** `npm run check-blindspot` PASS: §10.2 no Dalio, §10.1 no advice-adjacent
+  language in any of the five languages and the disclaimer on all 8 surfaces, §10.3 parent-facing,
+  §2.3 no live-looking dates. The five new strings are UI chrome with no figure, no date and no
+  market claim.
+- **DECISIONS.md.** Nothing contradicted: `.js` locale modules, no state change, no new dependency,
+  no routing change.
+- **Already-done item.** Not in "Completed and pruned"; the note was filed 2026-09-05 as explicitly
+  unfixed and is closed by this commit.
+- **§68 regression.** The two new keys carry **no count placeholder**, so §68 does not scan them and
+  no exemption was added — which was the whole reason to prefer two keys. Asserted by the suite
+  passing with §68's own control count intact, not by reading the regex.
+- **The one thing it found: the filing note's precedent claim was wrong and I had copied it into my
+  plan.** I had drafted a `{n}` template before re-reading §68's source. Corrected in the item text
+  as well as here, so the next reader of item 167 does not inherit it.
+- **My own verification claim.** An independent reviewer re-running only what is written above gets
+  the same result: the two builds are made by the repo's own command, both bundle hashes are quoted,
+  the pre-fix control is reproducible from `git archive HEAD` alone, and every DOM reading names the
+  lesson, the language and the question count it was taken with.
+
+**O-3 note, because this run added prose to four unreviewed languages.** Five new strings, ~120
+characters, in `es`/`ko`/`zh`/`ja`, **none reviewed by a fluent speaker** — the same standing
+condition O-3/W-6.6 ask the owner to re-affirm or cap. Small in volume and named here rather than
+left implicit.
+
+**Next run.** ⛔ **No residual is filed as a numbered item** (W-6.2 rule 2) — the class is one string
+in one component and needs no guard. **O-2 is still the entire critical path and no run can move it**;
+per this log's own finding about how O-1 actually closed, the useful move is to ask the owner directly
+rather than restate the blocker, and the redeploy that would make the analytics transport, the
+2026-09-05 social card and this fix all live is the **same single owner step**. Item **26 can be
+closed** by the next run that touches the backlog. Open and unparked otherwise: 27, 70/71, 74, 76, 94,
+117, 155's probe, 160, 165's essentials remainder, 167(c).
 
 ### 2026-09-05 (scheduled dev-agent, self-picked off a corpus-wide sweep of a class this log has hit three times by close reading and never once by instrument) — lesson 37 prints "QE1 (2008): $1.75 trillion" in a table and then asks the reader, three blocks below, about the "$2+ trillion" the Fed printed in 2008; and the sweep that found it says that is the only one left in 44 lessons
 

@@ -89,6 +89,7 @@ export default {
     hookRecallTemplate: "阅读前你选的是：{answer}",
     checkTitle: "检验所学",
     checkIntro: "继续之前，先来一个小问题。",
+    checkIntroPlural: "继续之前，先来几个小问题。",
     reviewTitle: "复习",
     resumeLabel: "接下来", startHereLabel: "从这里开始",
     refHubSub: "随时可以查阅的资料——这些都不属于学习路径。",
