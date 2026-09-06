@@ -198,6 +198,25 @@ for the history. No open P1/P2 items.
 > stops binding when that item does. This one is scoped to the shape instead.
 >
 > ### W-6.1 — ✅ **RESOLVED 2026-08-30 (owner-directed) via route (a): `drafts/income-hierarchy.en.md` is now tracked and a fresh clone exits 0.** See item 154 for the two-direction measurement.
+> ⛔ **DO NOT FOLLOW THE RECIPE IN THE ORIGINAL CLAUSE BELOW. Re-measured three ways 2026-09-06
+> (owner-directed: "do the fresh-clone recipe correction next"), against `480b242`:**
+> | recipe | §26 resolves against | result |
+> |---|---|---|
+> | real `git clone -q .` + `node_modules` symlink | the git index (140 files) | **exit 0**, 20 exempted |
+> | `git archive HEAD` + symlink, **no `cp`** | the filesystem fallback (140 files) | **exit 0**, 20 exempted |
+> | `git archive HEAD` + symlink + **the `cp economic-cycles-v*.jsx` this clause prescribes** | filesystem | **exit 1 — 7 × §26** |
+> **So this block's headline is closed by measurement, and the finding is sharper than that: the
+> priority block that exists because `npm test` failed on a fresh clone now contains the only known
+> way to make `npm test` fail on a fresh clone.** The seven are six `path-ok: economic-cycles-v*.jsx`
+> markers reported *stale — that path exists now* (`LAUNCH_READINESS.md:135`, `LAUNCH_PLAN.md:64/65`,
+> `DECISIONS.md:448`, `README.md:141/142`) plus the count landing at **13 against an expected 20** —
+> because §26's markers exempt those paths *precisely because a clone does not have them*, so copying
+> them in falsifies every marker at once. Filed by the 167(c) run on 2026-09-06 and listed by three
+> run entries before this one took it.
+> ⛔ **And the root cause is not the `cp` line, it is that the recipe is written down twice.** The
+> Environment note's copy was corrected on 2026-08-30 and this one was not, because nothing makes two
+> prose recipes agree. **The Environment note is the single source of truth for it; this clause keeps
+> its original wording only as the dated record the retraction below refers to.**
 > ⛔ **RETRACTION, and it is this review's error, not a run's.** The clause below authorized
 > **route (b)** as a "reversible stopgap". **Route (b) cannot work at all**, and a scheduled run
 > spent itself proving that (commit `90bfeaf`): §26 fails a reference whose path is missing AND
@@ -236,6 +255,12 @@ for the history. No open P1/P2 items.
 > rest of this log would demand: the fresh-clone recipe above must exit 0 after the fix.**
 > ⚠️ **And fix the Environment note's `HEAD` control recipe while you are there** — item 154 found it
 > needs `cp -R drafts` today, which is the same defect wearing the other face.
+> ⛔ **RETRACTED 2026-09-06. Do not add `cp -R drafts` to anything.** Route (a) TRACKED
+> `drafts/income-hierarchy.en.md`, so `git archive HEAD` ships it — verified this date by listing the
+> extracted archive, which contains `drafts/`. Adding the copy would put untracked siblings into a
+> tree §26 resolves against the filesystem, which is how the `cp economic-cycles-v*.jsx` line above
+> became harmful. **The Environment note was corrected on 2026-08-30 and has needed nothing since;
+> this line has been pointing runs at a fix that was already made, to a file that was already right.**
 >
 > ### W-6.2 PRIORITY — the residual-chain rule. This replaces W-5.2's ratio, which expired with item 93.
 > **The rule, and it is about shape, not about any item:**
@@ -4659,10 +4684,19 @@ apart by reading the failure. The control is a pristine copy of `HEAD`, which is
 to the repo:
 
 ```bash
+SCRATCH="${SCRATCH:?set to your session scratchpad directory}"   # never defined for you
+mkdir -p "$SCRATCH/head"                                         # tar -x -C does NOT create it
 git archive HEAD | tar -x -C "$SCRATCH/head"
-ln -sfn "$PWD/node_modules" "$SCRATCH/head/node_modules"     # do NOT cp -R: slow enough to time out
+ln -sfn "$PWD/node_modules" "$SCRATCH/head/node_modules"         # do NOT cp -R: slow enough to time out
 cd "$SCRATCH/head" && npm test
 ```
+
+**⚠️ The first two lines were added 2026-09-06 after RUNNING this block verbatim, which is the only
+way any of these three recipes has ever been checked.** `$SCRATCH` is used in three code blocks in
+this note and set in none of them, and `tar -x -C` does not create its destination — verbatim, the
+block dies on `tar: could not chdir to '/head'`. Neither omission is dangerous, both are loud, and
+both cost a run its first attempt. **A recipe in prose is not executed by anything, which is the
+whole class W-6.1's stale `cp` line belongs to.**
 
 **⚠️ UPDATED 2026-08-30 (W-6.1, route (c)): do NOT copy the prototypes in any more.** This recipe used
 to carry a third line, `cp economic-cycles-v5.jsx economic-cycles-v6.jsx "$SCRATCH/head/"`, because
@@ -4676,6 +4710,15 @@ control failing rather than by reading: `check-data.mjs` reaches `src/lib/deepLi
 whatever their imports look like at the top. With that one line, the `HEAD` copy runs the full suite to
 **exit 0**. That gives a two-sided answer: **red on the working tree and green on the `HEAD` copy means
 the owner's dirt caused it; red on both means you did.**
+
+⚠️ **A note, not a numbered item (W-6.2 rule 2): the durable fix for this class is to stop writing
+the recipe down.** It has now been wrong twice — the `cp economic-cycles-v*.jsx` line that survived
+in W-6.1 after being deleted here, and the two missing lines above — and each time a run paid for it
+with a lost baseline. Five lines behind `npm run clean-tree` (`mktemp -d`, archive, symlink, `npm
+test`) cannot drift from what runs, because it *is* what runs. **Not built 2026-09-06, deliberately:**
+W-6.2 rule 3 asks for the learner-visible failure a new check would have caught, and there is none —
+this is a process defect, and `scripts/` is 2.17x the app it measures (W-6.3). It is written here so
+the next run that reaches for it is choosing, not re-deriving.
 
 **A `git archive` copy is not a git repo, and §26 knows.** It falls back to the filesystem walk there,
 which is correct *in that copy specifically* because an archive contains precisely the tracked set —
@@ -4938,6 +4981,86 @@ zero meaningful: `selftest PASS (8/8 controls fired, plantsRemoved true)` and, p
 finding(s); V vacuous; U unavailable`. A bare "no accessibility issues found" is not a result.
 
 ## Run log
+
+### 2026-09-06 (owner-directed, interactive: "do the fresh-clone recipe correction next") — the priority block that exists because `npm test` failed on a fresh clone now contains the only known way to make `npm test` fail on a fresh clone, and the recipe that replaced it does not run verbatim either
+
+**Step 3.5 — the premise is another run's finding, so it was reproduced before anything was edited,
+in both directions and with a third arm the finding did not have.** Measured this date against
+`480b242`, `node_modules` symlinked in every arm:
+
+| recipe | §26 resolves against | result |
+|---|---|---|
+| real `git clone -q .` | the git **index** (140 files) | **exit 0**, 20 exempted |
+| `git archive HEAD`, **no `cp`** | the **filesystem** fallback (140 files) | **exit 0**, 20 exempted |
+| `git archive HEAD` **+ the `cp economic-cycles-v*.jsx` W-6.1 prescribes** | filesystem | **exit 1 — 7 × §26** |
+
+The 167(c) run's figures reproduce **exactly**: six `path-ok: economic-cycles-v*.jsx` markers reported
+*"stale — that path exists now"* (`LAUNCH_READINESS.md:135`, `LAUNCH_PLAN.md:64/65`, `DECISIONS.md:448`,
+`README.md:141/142`) and the exemption count at **13 against an expected 20**. The mechanism is that
+§26's markers exempt those two paths *precisely because a clone does not have them*, so copying them
+in falsifies every marker at once. **The clone arm is the one the finding did not carry and it is the
+one that closes W-6.1's headline**: an archive copy is not a git repo and exercises §26's *fallback*,
+so "a fresh clone exits 0" was, until this date, an inference. It is now a measurement of §26's
+primary git-index path.
+
+**⛔ What was actually stale, and it is not what the item's title suggests.** The **Environment note's
+recipe was already correct** — item 154 fixed it on 2026-08-30. Three of the eight `cp` mentions in
+this file are run-log entries (dated records, left verbatim per §31) and one is item 154's own correct
+text. **The two live, actable ones were both inside the W-6.1 block**, which is what a run reads when
+it orients on this subject:
+1. The **ORIGINAL CLAUSE**'s recipe, kept because the retraction above it refers to it — and followed
+   verbatim by the 167(c) run, which lost its first HEAD baseline to it. Annotated with the table
+   above; **its wording is not rewritten**, because it is the dated text the retraction cites.
+2. **`⚠️ And fix the Environment note's HEAD control recipe while you are there — item 154 found it
+   needs cp -R drafts today.`** Retracted. Route (a) **tracked** `drafts/income-hierarchy.en.md`, so
+   `git archive HEAD` ships it — verified by listing the extracted archive, which contains `drafts/`.
+   **This line has been sending runs to fix a file that was already right, using a step that would
+   break it the same way the first one does.**
+
+**⛔ And then the replacement recipe turned out not to run either, which is only visible if you run
+it.** I extracted the Environment note's `bash` block programmatically and executed it verbatim:
+`$SCRATCH` is used in **three** code blocks in that note and **defined in none**, and `tar -x -C`
+does not create its destination — so the block dies on `tar: could not chdir to '/head'`. Two lines
+added: a `${SCRATCH:?…}` guard and a `mkdir -p`. **Neither omission was dangerous and both were
+loud, which is exactly why nobody had fixed them: each cost one attempt, not a wrong answer.**
+- **Control, both directions, on the block as it now stands in this file:** extracted verbatim →
+  with `SCRATCH` unset it exits **1** with `SCRATCH: set to your session scratchpad directory` (the
+  guard, not a confusing tar error); with `SCRATCH` set to a directory that does not yet exist it
+  creates it and reaches **`npm test` exit 0**.
+
+**The root cause is named in the fix: the recipe is written down twice and nothing makes the two
+agree.** The Environment note's copy was corrected on 2026-08-30 and W-6.1's was not. The annotation
+says the Environment note is the single source of truth, so the next drift has one place to happen.
+
+**No new check, said rather than skipped (W-6.2 rule 3).** The sentence rule 3 demands cannot be
+written here — the defect is a stale sentence in a log file, and no learner ever sees it. The durable
+fix (`npm run clean-tree`, five lines that cannot drift from what runs because they *are* what runs)
+is filed as a **note under the Environment note**, not as a numbered item, so the next run that wants
+it is choosing rather than re-deriving. `scripts/` is unchanged at **19,193** lines against `src/`
+minus content and locales **8,833** — **2.173x**, unmoved, the first run in a while not to push it up.
+
+**Step 5 — adversarial self-check.** *Blindspot register:* nothing under `src/` or `src/content/`
+changed at all — this commit touches `AGENT_LOG.md` only — so §10.1/§10.2/§10.3 are untouched by
+construction, and `npm run check-blindspot` passes. §2.3: the dates added are dated log records, this
+file's own convention. *DECISIONS.md conflict:* none; the correction *reinforces* route (a), which
+`DECISIONS.md` records. *Already-done backlog item:* **checked carefully, because this looks like item
+154.** It is not: 154 corrected the Environment note and left the W-6.1 clause alone; this corrects the
+W-6.1 clause and the two lines 154 never had reason to notice, because 154 reasoned about the recipe
+and did not execute it. Nothing 154 shipped is undone. *My own verification claim:* an independent
+reviewer reproduces the whole table with `git archive HEAD` / `git clone -q .` into two directories and
+one `cp`, and reproduces the recipe control by extracting the `bash` block from this file and running
+it with `SCRATCH` unset and then set. `npm test` on the working tree: **exit 0**, 3 + 1 warnings, the
+same four as `HEAD`.
+
+**Top item for the next run.** Still open and unparked: 26 (closable), 27, 70/71, 74, 76, 94,
+117(a)/(b), 155's probe, 160's stale `quizMeta.js` header comment. **The fresh-clone recipe item is
+CLOSED by this entry** and should stop appearing in "next run" lists. ⚠️ **The repo is FIVE content
+commits ahead of the last deploy.** **O-2 remains the entire critical path**: one PostHog account and
+one pasted `phc_` key, with `npm run analytics-check` standing by.
+
+**Owner tree:** `git status` at run start and again before writing showed the owner's untracked
+`UIUX/` and the empty `course` file, **both untouched**. `HEAD` re-checked before writing and unmoved
+at `480b242`; `public/data/market.json` untouched.
 
 ### 2026-09-06 (scheduled dev-agent, self-picked: a live walk of the RETENTION loop, which sweeps had never driven — every recent sweep read lesson prose) — the screen whose only job is to say which questions you missed said "3 of 4 correct" and then four rows that read identically to a screen reader
 
