@@ -284,18 +284,25 @@ for the history. No open P1/P2 items.
 > (`scripts/check-market-freshness.mjs`) watches this file on every `npm test` — WARN when it is stale
 > or goes stale tomorrow, FAIL only for a missing/unparseable/unreadable-`asOf` file, which is the half
 > the repo owns and a run can fix. It does not refresh anything; W-7.3's ⛔ stands untouched.
-> ⛔ **DIAGNOSIS CHANGED 2026-09-07 (owner-directed environment audit), and it is not what this clause
-> assumed. The job is not missing days — it does not exist on this machine.** Every scheduler on the
-> build host was enumerated: the Claude scheduled-task list (20 tasks; `economics-app-dev-agent` is
-> there, no market task is), `crontab -l` (one entry, an unrelated `htf_miner` job), and
-> `~/Library/LaunchAgents` + `launchctl list` (no match for `econom`/`ecycle`/`market`). **Nothing
-> here runs `scripts/fetch-market-data.mjs`.** The refresh commits are real and were clockwork —
-> `git log` shows them at **18:31 daily** through **`20fde17`, 2026-09-04 18:31** — and then they
-> stop, which is the shape of a job that was deleted or disabled, not one that missed a day.
-> **This does not change whose job it is** (still the owner's, still ⛔ not repo work), but it changes
-> the ask: **re-create or re-enable the daily task**, rather than wait for it to catch up. The
-> deadline is unchanged and close — Sectors renders the unavailable state on **2026-09-09**.
->
+> ⚠️ **2026-09-07 (owner-directed environment audit) — read the correction inside it before acting.**
+> Every scheduler on this host was enumerated: the Claude scheduled-task list (20 tasks;
+> `economics-app-dev-agent` is there, no market task is), `crontab -l` (one entry, an unrelated
+> `htf_miner` job), and `~/Library/LaunchAgents` + `launchctl list` (no match for
+> `econom`/`ecycle`/`market`). **Nothing visible from this host runs `scripts/fetch-market-data.mjs`**,
+> and the audit concluded from that that the job had been deleted or disabled. ✏️ **The owner corrected
+> it the same day: the task lives on "machine A" and stays there.** ⛔ **The conclusion was drawn from
+> one machine's scheduler about a setup with more than one machine — the second time in this session
+> that local absence was read as global absence** (the first was an Apple Developer account, run-log
+> 2026-09-07). **`~/.claude/scheduled-tasks/` is per-machine: a job on another host is not absent from
+> here, it is invisible from here, and those are different findings.**
+> **What this checkout can still say, measured:** the sampled refresh commits `20fde17`, `83a4fa8` and
+> `55c0c15` are all in **this** working copy's reflog — 502 entries back to the initial commit, one
+> committer identity, one timezone, **zero merge commits** — so the job commits into *this* directory
+> rather than a separate clone someone merges. **The falsifiable test, which costs nothing:** if the
+> job is live, the next refresh commit arrives here by itself. `market.json` is `asOf 2026-09-04` and
+> Sectors renders the unavailable state on **2026-09-09**, so **no new refresh commit in this log by
+> 09-09 is the answer** — and until then this clause must not be re-diagnosed from this host. Still ⛔
+> owner-only, still not repo work.
 > ### W-7.4 — content quality: no regressions found, and the safety guard was independently re-proved.
 > **This review verified §10.1 rather than reading its green line.** Planted *"With rates this low, now
 > is a good time to buy stocks."* into `src/content/lessonContent.economy.en.js`, confirmed the plant
@@ -7317,9 +7324,23 @@ enumerated: the Claude scheduled-task list (**20 tasks** — `economics-app-dev-
 market task is), `crontab -l` (**one** entry, an unrelated `htf_miner` job), and
 `~/Library/LaunchAgents` + `launchctl list` (**no match** for `econom`/`ecycle`/`market`). The
 refresh commits were clockwork at **18:31 daily** through `20fde17` (2026-09-04) and then stop —
-the shape of a job deleted or disabled, not one running badly. **Still ⛔ owner-only and not repo
-work**, but the ask changes from *wait* to **re-create the task**. Sectors goes to the unavailable
-state on **2026-09-09**. Recorded under W-7.3.
+which I read as a job deleted or disabled.
+✏️ **CORRECTED the same day, by the owner: "the market data task will remain live in machine A".**
+⛔ **So this finding is wrong in the way that matters, and it is the SECOND time in one session I read
+local absence as global absence** — the first was the Apple account two findings up.
+**`~/.claude/scheduled-tasks/` is per-machine.** Enumerating every scheduler on *this* host supports
+exactly one sentence — *nothing visible from here runs the job* — and I wrote a second one it does not
+support. **The tell was available and I walked past it:** the same audit had just found this project
+spans machines (the folder is named *"문서 - Kaeun의 노트북"*, "Documents — Kaeun's laptop"), and a
+per-machine scheduler list cannot see another host.
+**What survives, re-measured after the correction:** the sampled refresh commits `20fde17`, `83a4fa8`
+and `55c0c15` are all in **this** working copy's reflog — **502 entries** back to the initial commit,
+one committer identity, one timezone, **zero merge commits**, control fired on a commit I had just
+made — so the job commits into *this* directory, not a separate clone that someone merges. **That
+turns the open question into a falsifiable one that needs no access to machine A:** if the task is
+live there, the next refresh commit appears here by itself. `market.json` is `asOf 2026-09-04`;
+Sectors renders the unavailable state on **2026-09-09**; **no refresh commit in this log by 09-09 is
+the answer.** Still ⛔ owner-only and not repo work. Recorded under W-7.3.
 
 **Finding 5 — the plan is silent about the environment, and where it does speak it was stale.**
 `grep` over `LAUNCH_PLAN.md`, `DECISIONS.md` and `README.md` for `macOS`/`Mac`/`Xcode`/`Apple
