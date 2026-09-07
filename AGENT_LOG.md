@@ -258,8 +258,11 @@ for the history. No open P1/P2 items.
 >    so far had grown after being written, and none had ever shrunk.**
 >    **So the test of this block is not whether the next run agrees with it — it is whether the
 >    backlog is smaller on 2026-09-13 than the 425,473 b it stood at when it was written.**
->    ✅ **First movement in the right direction: 418,721 b on 2026-09-06** after the collapse in
->    rule 4 — **6,752 b under the baseline, and the first measured shrink of a weekly block.**
+>    ✅ **Standing at 397,785 b on 2026-09-07 — 27,688 b UNDER the baseline** (09-06's rule-4
+>    collapse took it to 418,721 b; two days of writing put it back over at 431,186 b; item 27's
+>    collapse this run took −33,704 b). **Rule 1 is what moves this number:** one closed item, more
+>    than twice the ~15.8 KB mean of the five generic compression passes — though not more than the
+>    largest of them (~54 KB), and that comparison is stated rather than rounded in rule 1's favor.
 >    **Next review: open with a fresh measurement of that number before anything else** (the
 >    instrument is `check-log-size.mjs`'s MEASURED line; do not retype either figure).
 >
@@ -3836,507 +3839,158 @@ instead of hand-rolling an eighth mover. A working one is in this run's scratchp
 
 27. **[Content/UX — ✅ CLOSED 2026-09-07 (scheduled dev-agent): NO CANDIDATE REMAINS under this
     item's own two rules, in any track. Do not pick it again without a new rule.] Lesson visuals.**
-    > **What was true:** the money track was the least illustrated of the three and this item drove
-    > twelve figures onto it and its neighbours. **What is true now, measured 2026-09-07 with the
-    > parse below and its control:** **26** lessons carry no figure, and **all 26 are now on the ⛔
-    > measured-rejection list** — the list has no stale entry either (every id on it is genuinely
-    > bare, checked programmatically, not by eye). Coverage stands at economy **7/12**, money
-    > **7/17**, essentials **4/15**.
-    > **The money track specifically is exhausted**: all ten of its bare lessons were already
-    > rejected before this run, so the item as scoped had zero candidates left. The last two
-    > unevaluated lessons in the whole app were **economy 29 and 31**, and this run evaluated both.
-    > **⛔ 29 — "Transactions: The Building Block" — REJECTED, rule 2, and it is the highest-stakes
-    > rejection in this item** (it is lesson 1 of the main path, the lesson §4.3's Phase-0 gate is
-    > about). Three designs were considered and each is already shipped: **(i)** the transaction/
-    > income chain as a closed loop **is lesson 30's `SpendingLoop`**, one lesson later and
-    > deliberately placed there; **(ii)** `$500 ÷ 100 loaves = $5` as a partitioned total is
-    > `budgetSplit` / `mortgageSplit` / `BracketStack`'s shape, and the prose does that arithmetic in
-    > one sentence that no reader struggles with — plausible, not earned; **(iii)** transaction →
-    > market → economy as containment is `NestedCycles`' shape one axis over. **Rule 1 is NOT what
-    > rejects 29** — it states $500, 100 and $5 in all five languages and would invent nothing.
-    > **⛔ 31 — "Productivity Growth: The Long-Run Driver" — REJECTED, rules 1 AND 2.** **Rule 1, with
-    > the invented quantities named as the rule requires:** the obvious figure is the straight
-    > productivity trend with credit swinging around it, and its entire visual claim is **the
-    > amplitude of the swings relative to the trend, and their period** — lesson 31 states **neither**,
-    > in any language. Scanned all five: the lesson contains exactly **one** number, `$15,000`, and
-    > nothing else. This is the opposite of lesson 33, where `NestedCycles` was allowed *because* the
-    > prose bounds the count ("5-8 years", "75-100 years" — control re-run this run, both present).
-    > **Rule 2:** that shape is `NestedCycles` (a rising line that wobbles, two lessons later), and
-    > section 2's "same $15,000, opposite outcome" is **`SunkFork`'s** topology — one amount, a fork,
-    > two branches — shipped on lesson 19 the day before.
-    > ⭐ **The transferable finding: the economy track's remaining gaps are surrounded by the shapes
-    > that would fill them.** 29 sits beside lesson 30's loop; 31 sits beside 32/33/38's cycles. That
-    > is not a coincidence to route around — it is the do-not-redraw rule reporting that this track's
-    > figure vocabulary is complete.
-    > **What would legitimately reopen this item:** a NEW shape nobody has drawn here, argued from a
-    > sentence a lesson's prose cannot write — not a new lesson from the list above, and not a
-    > softening of either rule. The rules are doing real work: between them they killed six named
-    > designs this run alone.
-    > ## ⭐ READ THIS FIRST — the two rules and the rejection list, lifted to the top 2026-09-07 because this item asked for it in its own body and the last three runs paid for their being buried.
-    > **This item asked for this, and was right to.** Its body says the two ⛔ lists "are the single
-    > highest-value thing in it" and sit ~85 lines down; the 2026-09-04 run re-derived three listed
-    > rejections and the 2026-09-07 run re-derived five. Everything a picker needs is now above.
+    > **COLLAPSED 2026-09-07 (W-7.2 rule 1) from 48,083 b to this.** It was **11.2% of the entire
+    > backlog** — the largest single object in the file — and what it held was twelve chronological
+    > "Nth visual added" narratives, their layered corrections, and a decade of dated coverage counts
+    > that **this item's own text forbids anyone from quoting**. All of it is in the run log, in
+    > `AGENT_LOG.archive.md`, and in git (`413f9cc` is the last revision carrying the full text; each
+    > figure's design argument is one `git log -S` away). **Every per-figure do-not-improve warning
+    > that was dropped is asserted by `check-data.mjs` in code, with the same reasoning written into
+    > its failure message** — verified before deleting, not assumed. **The four constraints under
+    > "Standing constraints" below are the ones NO check holds; they are kept because of that.**
     >
-    > **⛔ NEVER QUOTE A COVERAGE COUNT FROM THIS ITEM — including from the paragraphs below this
-    > one.** Every count ever typed here has gone stale: "money is 4/28" survived four weeks, and the
-    > 2026-08-27 figures were still being quoted on 2026-09-07 when all three were wrong. The counts
-    > that remain in the body are **dated historical record** and are deliberately not maintained
-    > (§31 keeps them verbatim). **Run the parse instead**; it takes one command and cannot be stale:
+    > **What was true:** the money track was the least illustrated of the three, and this item drove
+    > twelve figures onto it and its neighbours. **What is true now, measured 2026-09-07 with the
+    > parse below and its control:** **26** lessons carry no figure, and **all 26 are on the ⛔
+    > rejection list** — which has no stale entry either (bare-set against rejection-set, both
+    > directions, programmatically). Coverage: economy **7/12**, money **7/17**, essentials **4/15**.
+    > **The money track was exhausted before the closing run began** — all ten of its bare lessons
+    > were already rejected — so the last two unevaluated lessons in the whole app were economy 29
+    > and 31. Both were evaluated; both reject.
+    > **⛔ 29 — "Transactions: The Building Block" — REJECTED, rule 2, and it is the highest-stakes
+    > rejection in this item:** it is lesson 1 of the main path, the lesson §4.3's Phase-0 gate is
+    > about. Four designs, each already shipped or self-defeating: the transaction/income chain as a
+    > closed loop **is lesson 30's `SpendingLoop`**, one lesson later and deliberately placed there;
+    > `$500 ÷ 100 loaves = $5` as a partitioned total is `budgetSplit`/`mortgageSplit`/`BracketStack`'s
+    > shape, and the prose performs that division in one clause; transaction → market → economy as
+    > containment is `NestedCycles` one axis over; and a two-segment bar splitting the $500 into cash
+    > and credit **invents the one proportion the lesson is about**. **Rule 1 does NOT reject 29** — it
+    > states $500, 100 and $5 in all five languages and would invent nothing.
+    > **⛔ 31 — "Productivity Growth: The Long-Run Driver" — REJECTED, rules 1 AND 2.** Rule 1 with the
+    > invented quantity named, as the rule requires: the obvious figure is the straight productivity
+    > trend with credit swinging around it, and its entire visual claim is **the amplitude of those
+    > swings relative to the trend, and their period** — lesson 31 states **neither**, in any language
+    > (all five scanned: the lesson contains exactly **one** number, `$15,000`). The contrast that
+    > proves this reading is lesson 33, where `NestedCycles` was allowed *because* the prose bounds
+    > both spans ("5-8 years", "75-100 years"). Rule 2 rejects it twice over: that shape **is**
+    > `NestedCycles`, two lessons later, and section 2's "same $15,000, opposite outcome" is
+    > **`SunkFork`'s** topology, shipped on lesson 19. ⚠️ It is also **Dalio's signature chart**;
+    > §10.2 is *not* what rejected it — rules 1 and 2 did, independently and first — but a run
+    > reaching for that design should know it is adjacent to a closed blindspot as well.
+    > ⭐ **The transferable finding, and it is why this closes rather than parks: the economy track's
+    > two remaining gaps are surrounded by the shapes that would fill them.** 29 sits beside lesson
+    > 30's loop; 31 sits between 32/33/38's cycles. That is not an obstacle to route around — it is
+    > the do-not-redraw rule reporting that **this track's figure vocabulary is complete.**
+    > **What would legitimately reopen this item:** a genuinely NEW shape nobody has drawn here,
+    > argued from a sentence some lesson's prose cannot write — **not** a lesson off the list below,
+    > and **not** a softening of either rule. The rules are load-bearing, not ceremony: between them
+    > they killed six named designs on the closing run alone.
+    >
+    > **⛔ NEVER QUOTE A COVERAGE COUNT FROM THIS ITEM, including the one three paragraphs up.** Every
+    > count ever typed here has gone stale — "money is 4/28" survived four weeks, and the 2026-08-27
+    > figures were still being quoted on 2026-09-07 when all three were wrong. **Run the parse; it
+    > takes one command and cannot be stale:**
     > ```
     > node -e "const u=new URL('file://'+process.cwd()+'/src/content/lessons.js').href;import(u).then(async({lessons})=>{const fs=await import('node:fs');const m=fs.readFileSync('src/components/LessonVisual.jsx','utf8').match(/LESSON_VISUALS\s*=\s*\{([\s\S]*?)\n\}/);const ids=[...m[1].matchAll(/^\s*(?:'([^']+)'|\"([^\"]+)\"|([\w-]+))\s*:/gm)].map(x=>x[1]||x[2]||x[3]);const by={};for(const l of lessons)(by[l.track]??=[]).push(String(l.id));for(const[t,v]of Object.entries(by))console.log(t,v.filter(i=>ids.includes(i)).length+'/'+v.length,'bare:',v.filter(i=>!ids.includes(i)).join(' '))})"
     > ```
-    > **Carry the control the older text prescribes** (must find 36, must not find 9999, 44 lessons).
-    > ⚠️ A regex over `lessons.js` returns **0 lessons** — the entries are multi-line; importing the
-    > module is what works, and the control is what catches it.
+    > **Carry the control:** it must parse **44** lessons, must find `36`, must not find `9999`, and
+    > must report **0 orphan ids**. ⚠️ A *regex* over `lessons.js` returns **0 lessons** — the entries
+    > are multi-line; importing the module is what works, and the control is what catches it.
     >
-    > **THE TWO RULES, and every rejection below is one of them.**
+    > **THE TWO RULES. Every rejection below is one of them.**
     > 1. **The quantity rule.** Does the prose state every quantity *the shape needs*, or only the
     >    ones that make it sound plausible? A shape needing **zero** passes vacuously.
-    >    ⛔ **IT IS ABOUT INVENTED QUANTITIES, NOT ABOUT HAVING SOME — misread that way it has now
-    >    wrongly rejected TWO lessons**: 25 (shipped 2026-09-04) and 19 ("states Priya's $120 and
-    >    nothing on the other side", shipped 2026-09-07). **When this rule rejects a lesson, name the
-    >    quantity that would have to be invented and the mark it would be invented for.** If that
-    >    sentence cannot be written, the rule is not what is doing the rejecting.
+    >    ⛔ **IT IS ABOUT INVENTED QUANTITIES, NOT ABOUT HAVING SOME — misread that way it has
+    >    wrongly rejected TWO lessons**, 25 (shipped 2026-09-04) and 19 (shipped 2026-09-07), both
+    >    re-decided under this correction rather than overridden. **When this rule rejects a lesson,
+    >    name the quantity that would have to be invented and the mark it would be invented for.** If
+    >    that sentence cannot be written, the rule is not what is doing the rejecting.
+    >    ⭐ **A shape whose parameters cancel can be sourced from a single stated fact, and that is
+    >    not inventing one** — `SplitBand` (lesson 12) is the worked case: neither principal nor
+    >    payment survives the amortization algebra, so the whole curve follows from the one number
+    >    the lesson states.
     > 2. **The do-not-redraw rule.** A figure may not restate a shape this app already ships.
-    >    Rejected under it: **11** (a fee gap = lesson 3's `GrowthCurve`, two lines from one origin,
-    >    "the gap widens every year") and **18** (same shape, same 6%, one track apart) and **43**
-    >    (its time-coupling axis is already the horizontal axis of lesson 44's shipped
-    >    `TradeoffPlot`).
     >
-    > **⛔ MEASURED REJECTIONS — DO NOT RE-DERIVE ANY OF THESE.** Reasons are in the body below.
-    > `money`: **16, 18, 20, 21, 22, 24, 26, 41, 42, 43**. `essentials`: **2, 4, 5, 6, 8, 9, 10, 11,
-    > 13, 14, 15**. `economy`: **35, 39, 40**. ~~19~~ and ~~25~~ were on this list and are now
-    > **shipped** — both re-decided under rule 1's correction, not overridden.
-    > **There is no named candidate**, deliberately: a named candidate is how this item became
-    > count-shaped twice. A run that wants one reads a lesson's prose and names what the prose cannot
-    > do. **Do not pick a lesson because a diagram is "plausible" there.**
+    > **⛔ MEASURED REJECTIONS — DO NOT RE-DERIVE ANY OF THESE.** `money`: **16, 18, 20, 21, 22, 24,
+    > 26, 41, 42, 43**. `essentials`: **2, 4, 5, 6, 8, 9, 10, 11, 13, 14, 15**. `economy`: **29, 31,
+    > 35, 39, 40**. That is all 26 bare lessons. ~~19~~ and ~~25~~ were on this list and are now
+    > **shipped**, both via rule 1's correction rather than an override. **There is no named
+    > candidate, deliberately** — a named candidate is how this item became count-shaped twice. A run
+    > that wants one reads a lesson's prose and names what the prose cannot do. **Do not pick a
+    > lesson because a diagram is "plausible" there.**
     >
-    > **Twelfth visual added 2026-09-07: lesson 19 (sunk cost), as `SunkFork` — the first figure whose
-    > subject is TOPOLOGY, where a number sits relative to a decision.** The $120 left the account
-    > before tonight's choice existed, so it is common to both branches and cancels; prose asserts
-    > that once per branch and the reader must hold both, while drawn it is just upstream of the
-    > fork. **Not two columns** — that is lesson 17's `GapColumns` (rule 2), and columns would put the
-    > cost *inside* each option, which is the reasoning the lesson argues against. `check-data.mjs`
-    > §77 holds it, **(d) load-bearing**: both branches share one color and the caption names neither
-    > correct, because lesson 19 refuses to. Marking one would be §10.1 drawn rather than written.
-    > **⛔ PREMISE CORRECTED 2026-08-27** (collapsed 2026-09-07, W-7.2 rule 1 — the correction closed
-    > and the top block replaced counting with a command). Its finding: this item's original "money is
-    > 4/28" framing died at the 2026-08-19 `essentials` split, because the four earlier
-    > personal-finance figures are not one track's — 1/3/7 are `essentials`, 27 is `money`. The
-    > argument that survived is the one the item still runs on: `money` is the judgment track §0 calls
-    > the product, and it was the least illustrated of the three.
-    > **Fifth visual added 2026-08-27: lesson 23 (present bias), as `PreferenceFlip`.** It cleared the
-    > bar below on the stated ground that a preference *reversal* is a crossing: the lesson's own
-    > heading is "The Preference That Flips When 'Later' Becomes 'Now'", its body gives the flip as two
-    > disconnected snapshots, and prose can neither draw a crossing nor say *when* the answer changes.
-    > Guarded by `check-data.mjs` §50, which asserts the lesson's two stated choices and the discount
-    > bound they imply — **not** the stylized constant. See the run log for the three defects verifying
-    > it surfaced, one of which (a wrong closed form putting the marker at month 6.667 instead of
-    > 9.667) would have drawn a confident marker where nothing happens.
-    > **Sixth visual added 2026-08-27: lesson 17 (lifestyle inflation), as `GapColumns`.** Money is
-    > **3/17**; economy 5/12 and essentials 3/15 are unchanged. Re-measured with the same parser
-    > control — do not quote a coverage count from this item, re-run the parse.
-    > **⛔ THE "TWO RISING LINES" FRAMING BELOW WAS WRONG, and the correction is the useful part.**
-    > That line said lesson 17 is "where the gap between two rising lines is the lesson". Reading the
-    > lesson refutes it: it gives Priya's income at both ends (\$50,000 six years ago, \$75,000 today)
-    > but **never states her spending or her gap at either end**, and places the four upgrades "at
-    > various points". Two lines over six years would have had to invent the starting gap — the one
-    > quantity the entire claim is about. **A backlog item naming a chart shape is a hypothesis about
-    > the prose, and this one had never been checked against it.**
-    > **What the lesson does state exactly, in all five languages, is the gap at LEVELS**, in its second
-    > section: \$50,000 earned against \$45,000 spent is a gap of \$5,000, and \$120,000 against
-    > \$115,000 is also \$5,000. Six verbatim numbers carrying the lesson's own flagged counterintuitive
-    > result. That is what shipped, and §53 asserts all six against the lesson's own body text.
-    > **Seventh visual added 2026-08-27: lesson 44 (what "passive" leaves out), as `TradeoffPlot`.**
-    > Money is **4/17**; economy 5/12 and essentials 3/15 are unchanged. Re-measured with the same
-    > parser control — do not quote a coverage count from this item, re-run the parse.
-    > **It cleared the bar on the lesson's own closing sentence**: *"Hold both halves at once and the
-    > picture stops being a ladder and becomes a set of trades."* Lesson 43 states one axis, lesson 44
-    > states "a second axis running the other way", and prose is sequential — it delivers them a
-    > lesson apart and asks the reader to superimpose them from memory. **A ladder is
-    > one-dimensional and a trade is not, and that difference is a shape.** First figure here whose
-    > subject is the *dimensionality* of a claim rather than a quantity. Guarded by `check-data.mjs`
-    > §54, which asserts sentences rather than values — including, per language, that each legend term
-    > is the one that language's own lesson 42 uses.
-    > **⚠️ BOTH ITS AXES ARE ORDINAL and must stay that way.** Lesson 44 states no numbers: an order,
-    > a *tendency* ("generally demands more of something else up front"), and one absolute claim about
-    > one item. No tick or number is drawn on the vertical axis. **A future run must not "improve"
-    > this by sourcing real capital requirements** — it would render beautifully and would make a
-    > claim the lesson explicitly declines to make ("Neither column is the smart one").
-    > **⛔ THE TEST THAT REFUTED THE OTHER STRONG CANDIDATE, and it generalizes lesson 17's
-    > correction into a rule.** Lesson 16 (asset vs. liability) looked ideal — its own stated test is
-    > "which direction the money flows after you buy", and direction-over-time is undrawable in prose.
-    > But it quantifies **only Maya's side** (\$300/month, \$10,800 over three years) while Dan's
-    > tools "paid for themselves in the first few months", with no rate and no horizon. Two diverging
-    > lines would have had to invent Dan's slope. **The rule, now first in line for any candidate:
-    > does the prose state every quantity the shape needs, or only the ones that make it sound
-    > plausible?**
-    > **Eighth visual added 2026-08-28: lesson 28 (outcome vs. process), as `OutcomeGrid`.** Money is
-    > **5/17**; economy 5/12 and essentials 3/15 are unchanged. Re-measured with the same parser
-    > control — do not quote a coverage count from this item, re-run the parse.
-    > **It cleared the bar on the lesson's own sentence**: *"outcome and process are two different
-    > things — a good decision can still lose ... and a bad or lucky decision can still win."* Two
-    > different things is two axes, and the claim the lesson actually needs is that **one column holds
-    > both rows**: a win tells you which column you are in and nothing about which cell. Prose can
-    > assert that twice; it cannot show a column with two cells in it. First figure here that is a
-    > **partition** rather than a quantity or a rank — it carries no magnitude at all, which is what
-    > `check-data.mjs` §57 is shaped around.
-    > ⚠️ **ITS FOUR CELLS ARE EQUAL AND UNWEIGHTED, and that must stay true.** Lesson 28 says all four
-    > cases occur and says **nothing** about how often ("very weak evidence", never "usually luck").
-    > A future run must not "improve" this by weighting, shading or resizing a cell, or by adding a
-    > base rate: that answers a question the lesson leaves open and reads as guidance about how far to
-    > trust a result (§10.1). §57 (e)/(e2) hold it.
-    > ⛔ **THE THREE CANDIDATES THIS RUN MEASURED AND REJECTED, all on the rule below — worth keeping,
-    > because each looked ideal until the prose was read.** **Lesson 18** (opportunity cost) states
-    > Jordan's \$2,000 and Alex's \$3,580 but gives Jordan's home theater only "maybe a couple hundred
-    > dollars now" with **no depreciation path** — two diverging lines would have had to invent his
-    > slope, which is lesson 16's rejection exactly. **Lesson 21** (anchoring) gives \$220 and \$89 but
-    > **deliberately withholds the third number**, what the jacket is independently worth; a figure
-    > would have had to invent the one quantity the lesson says nobody checked. ~~**Lesson 25**
-    > (save vs. invest) closes on *"not a formula with one right numeric answer"* and states no rate,
-    > horizon or amount to plot.~~ **✅ LESSON 25 SHIPPED 2026-09-04 (scheduled dev-agent) as
-    > `MatchGrid` — this rejection is RE-DECIDED, not overridden, and the distinction is the useful
-    > part.** Both of its stated facts reproduce exactly: lesson 25 states no rate, horizon or amount,
-    > and it does close by refusing a numeric answer. **What does not follow is the conclusion**, and
-    > the reason is visible in the same entry: the quantity rule asks whether the prose states every
-    > quantity *the shape needs*, and a shape that needs **zero** satisfies it vacuously. The run that
-    > wrote this rejection picked **lesson 28** in the same commit — a partition carrying no magnitude
-    > at all — so the categorical option was in its hand while it applied the quantitative test to
-    > lesson 25. **The rule is about invented quantities; it was read as a requirement to have some.**
-    > The second half of the rejection is the stronger one and it does bind: a grid over savings
-    > against investing can hand the reader the rule the lesson withholds. **The line that survives
-    > the objection is between the PAIRING and the THRESHOLD.** The pairing is stated at length in
-    > lesson 25's own prose in five languages; the threshold — how soon is soon, what rate, what
-    > amount — is what it declines, and `check-data.mjs` §72 (a) fails the build on a digit in any
-    > axis label while §72 (e) fails it on a green, a red, a tick or a cross.
-    > **The rule held in all three, and it is still first in line for any
-    > candidate: does the prose state every quantity the shape needs, or only the ones that make it
-    > sound plausible?**
-    > **FIVE MORE CANDIDATES MEASURED AND REJECTED 2026-08-30** (scheduled dev-agent, while pricing
-    > this item — coverage re-parsed with the usual control: economy 5/12, essentials 3/15, money
-    > 5/17, 0 orphan ids, agreeing with this item). All five fail the quantity rule: **19** states
-    > Priya's \$120 and nothing on the other side of the comparison; **20** has no number but
-    > "tripled"; **24** states none at all; **26** gives \$200 and \$1,000 but its claim is that the
-    > two are *identical*, a sentence rather than a shape; **42** states four x \$1,000 and then
-    > spends its second half insisting the categories "aren't a ladder" — a figure would harden what
-    > the lesson deliberately loosens. **Do not re-derive these five.**
-    > ⚠️ **THE 2026-09-04 RUN RE-DERIVED THREE OF THESE ANYWAY (18, 21, 42) and the 2026-09-07 run
-    > five — not because the list is unclear but because an item this long has a body a picker will
-    > not reach before it starts measuring.** ✅ **Its prescription — lift both ⛔ lists to the top —
-    > was carried out 2026-09-07** (W-7.2 rule 1; this clause is its conclusion, not an annotation).
-    > **Tenth visual added 2026-09-03: lesson 34 (deleveraging), as `BalanceBand` — the first figure
-    > whose subject is an INTERVAL.** Coverage re-parsed with this item's own control (must find 36,
-    > must not find 9999, 44 lessons): **economy 7/12, essentials 3/15, money 5/17 — 15 of 44, 0
-    > orphan ids.**
-    > **It cleared the bar on the lesson's own takeaway sentence**: *"Print enough money to offset
-    > deflation, but not so much you cause hyperinflation."* That is a floor and a ceiling on one
-    > dial, delivered as two clauses joined by "but" — prose can name each bound and cannot show that
-    > they bound the same dial with the good outcome between them. The quantity rule passes vacuously,
-    > as it did for `OutcomeGrid` and `SpendingLoop`: the figure needs no quantity and the lesson
-    > states none in that section. **The two OUTER zones carry the same label on purpose** (the lesson
-    > gives Germany in the 1920s and the US in the 1930s as instances of the same "ugly
-    > deleveraging"), which is what makes the figure a claim about non-monotonicity rather than a list
-    > of three cases. 45 of its 50 strings are lifted verbatim from lesson 34; `check-data.mjs` §69
-    > holds all of it, and its (c) block is the one to read — see the run entry for why an ordering
-    > control scoped to the whole lesson passes in English and is wrong in the other four.
-    > ⚠️ **String correction 2026-09-05 — a fact correction, not a design correction.** The left
-    > anchor now reads **"The US in 1930-32"** in all five languages: lesson 34's claim about the US
-    > 1930s was factually wrong and was fixed that day (see the run log). **The non-monotonicity
-    > argument above and the figure's shape are unchanged** — only the anchor's date range moved,
-    > and §69 (a) forced the figure and the prose to move together. The 2026-09-03 text above is
-    > kept verbatim per §31.
-    > ⛔ **"THE MONEY TRACK HAS NO REACHABLE CANDIDATE" (2026-09-03) IS REFUTED, twice, and the
-    > refutations are the useful part.** It listed 16, 18, 19, 20, 21, 24, 25, 26 and 42 as settled
-    > rejections and 22, 41 and 43 as newly assessed ones. **Lesson 25 shipped the next day and
-    > lesson 19 shipped on 2026-09-07** — both were on the list, and both came off it through rule
-    > 1's correction above rather than through any change to the prose. The survey was accurate about
-    > every lesson it read; what it got wrong was the rule it read them against. **A "no candidate
-    > remains" finding is a statement about the current reading of the rules, not about the corpus** —
-    > 43's rejection (its axis is already drawn at lesson 44) is the one on this list that rests on
-    > rule 2 and still stands.
-    > **Eleventh visual added 2026-09-03: lesson 12 (renting vs. buying), as `SplitBand` — the first
-    > `essentials` figure since 2026-08-16, and the first whose subject is a COMPOSITION THAT
-    > INVERTS.** Coverage re-parsed with this item's own control (must find 36, must not find 9999,
-    > 44 lessons, joined against `lessons.js`'s `track`): **economy 7/12, essentials 4/15, money
-    > 5/17 — 16 of 44, 0 orphan ids.** ⚠️ The parser in this item's older text — a regex over
-    > `lessons.js` — returns **0 lessons** today because the entries are multi-line; importing the
-    > module is what works, and the control is what caught it. Do not re-derive that.
-    > **It cleared the bar on section 2's own pair of sentences**: *"early payments are mostly
-    > interest, and later payments are mostly principal"*, then, separately, *"A 30-year loan often
-    > doesn't cross the halfway point between interest and principal until roughly two-thirds of the
-    > way through its term."* Three claims live there and prose can only make them one at a time —
-    > that the two parts are shares of ONE payment, that the larger of the two swaps, and that the
-    > swap is **not** at the middle. The last is the lesson's own flagged surprise ("a pattern many
-    > buyers don't expect") and it is a POSITION: a sentence can name it, and cannot put it beside
-    > the midpoint it is being contrasted with.
-    > ⛔ **THE QUANTITY RULE PASSES BY DERIVATION, WHICH IS NEW HERE AND IS THE PART TO REUSE.**
-    > Lesson 12 gives no payment amount and no interest rate, so a curve drawn by eye would be
-    > inventing the rate — the exact ground lessons 16, 18 and 21 were rejected on. But the interest
-    > share of a fixed payment is `s(f) = 1 - k^(f-1)` with `k = 2^(1/(1-crossing))`, in which
-    > neither the principal nor the payment survives; so the **entire curve follows from the one
-    > number the lesson states**, the two-thirds crossing, and `k = 8`. `check-data.mjs` §70 (d)
-    > re-derives it rather than re-reading it. **The rule to carry: a shape whose parameters cancel
-    > can be sourced from a single stated fact, and that is not the same as inventing one.**
-    > ⚠️ **NO SCALE ON THE VERTICAL AXIS, AND IT MUST STAY THAT WAY.** `s(0) = 7/8` is derived, not
-    > stated; the lesson says only "mostly". §70 (f) asserts the SVG carries exactly two `<text>`
-    > nodes (the two end labels), so a future run cannot add a tick, a percentage or a real
-    > amortization schedule without the check failing — all three would make the figure state what
-    > the prose declines to.
-    > ⛔ **AND THE COLOR LESSON, which is item 135's class arriving in a figure that had already
-    > been checked.** The first version drew the boundary in `ink.muted` and shipped a comment
-    > saying it was "a stroke with luminance of its own". Measured on the built app against the two
-    > fills it is drawn ON: **1.10:1 and 1.18:1 in light, 1.36:1 and 1.58:1 in dark.** It is a text
-    > token (7.01:1 on the card) and on a saturated fill it is nearly invisible — the boundary, the
-    > marker and the dot would all have vanished. `surface.card` replaced it (7.72/5.93 light,
-    > 8.93/10.41 dark) and §70 (e) asserts the pair against all three palette blocks. **§28b covers
-    > graph-on-surface and says nothing about a mark drawn ON a fill; that gap is general, and any
-    > future figure that draws one owes the same live measurement.**
-    > ⛔ **THE ELEVEN `essentials` LESSONS STILL BARE WERE ALL READ ON 2026-09-03 — do not
-    > re-derive these.** **5** (diversification), **8** (insurance), **10** (W-2 vs 1099), **14**
-    > (estate planning) and **15** (credit reports vs scores) state **no quantity at all** in the
-    > section that carries their claim; 5's and 8's shapes would each have to invent a series, and
-    > 15's cross-product of bureaus and models would have to commit to a count the lesson
-    > deliberately leaves open ("multiple scoring models", "such as"). **9** (inflation) looked
-    > strong — a nominal line rising while a real line falls — but states $1,000 and twenty years
-    > and then gives both rates as "a modest percentage" and "a similar or larger percentage": two
-    > lines, two invented slopes, which is lesson 16's rejection exactly. **11** (fees) states every
-    > quantity a chart needs ($10,000, 30 years, 7% vs ~6%, $75,000 vs $57,000) and is rejected on
-    > the OTHER rule: lesson 3's shipped `GrowthCurve` is already two lines from one origin whose
-    > caption is "the gap widens every year", and lesson 11's own prose says a fee works "exactly
-    > like" that — so the figure would redraw a shipped shape to illustrate a stated analogy. **2**,
-    > **4**, **6** and **13** state scattered amounts with no structure joining them. **The next
-    > figure has no named candidate here either**, and that is a finding rather than a gap.
-
-    > ⛔ **NEW, AND IT GENERALIZES PAST THIS ITEM: a figure's geometry is a RENDERED property, and a
-    > source check cannot see it.** This run's figure shipped its intended claim ("the four cells are
-    > equal") while rendering the bottom row **82px against the top row's 52px**, then **65 against
-    > 52** after the first fix. Both times every style literal in the file was correct and §57 passed:
-    > the inequality arrived through **content** — a label inside a cell, then a row heading that
-    > wrapped to more lines — because CSS grid sizes a row to its tallest item. It was found only by
-    > measuring the live DOM. **Measure a figure's boxes in a browser before claiming anything about
-    > its proportions**, and prefer invariants that are structural (no text in a cell; a fixed shared
-    > height) over ones that are stylistic. The general instrument is **item 135**.
-    > **Ninth visual added 2026-08-31: lesson 30 (the spending chain), as `SpendingLoop` — and it is
-    > the first figure added for the PATH rather than for a track's count.** Coverage re-parsed with
-    > this item's own control (an id it must find, one it must not, plus a lessons/track control):
-    > **economy 6/12, essentials 3/15, money 5/17 — 14 of 44, 0 orphan ids.** The argument is §3.2,
-    > re-anchored: in display order the first three lessons a new install meets are **29, 30, 31**,
-    > and until this entry the first diagram a new learner ever saw was on the **fourth** screen.
-    > **It cleared the bar on what the lesson's own prose HAD TO DO.** Lesson 30 writes its claim as
-    > an arrow chain — *"More spending → more income → more creditworthy borrowers → more borrowing →
-    > more spending, and so on"* — and note what that sentence is forced into: it writes its first
-    > term **twice** and appends *"and so on"*, because **a line of text cannot close**. The
-    > takeaway calls it "a self-reinforcing loop". The one thing prose cannot do here is join the
-    > last term to the first, and that join is the whole figure.
-    > **The quantity rule passes vacuously and that is the correct reading, not a loophole**: the ring
-    > needs no quantity, and the lesson states none in that section (the worked example — a kitchen
-    > renovation, a work truck — deliberately gives no figures). This is `OutcomeGrid`'s kind, a
-    > structure carrying no magnitude, arriving at a different shape.
-    > ✅ **THE PROPERTY WORTH CARRYING FORWARD, and it is not about this lesson: EVERY STRING THE
-    > FIGURE RENDERS EXCEPT ITS TEXT ALTERNATIVE IS A VERBATIM SUBSTRING OF LESSON 30 IN THE SAME
-    > LANGUAGE.** Title, caption and all four steps are *lifted*, not translated — 6 strings x 5
-    > languages, so **24 of the 28 non-English strings in this figure are not new translation at
-    > all**. `DECISIONS.md` (the 2026-08-16 scope limit, amended the same day for item 27's lesson-7
-    > figure) says the thing this answers in its own words: chart labels are *"the content type where
-    > an unreviewed translation is least visible, because a wrong label still renders as a correctly-
-    > shaped chart"*, and the parity checks catch **a missing language, never a wrong one**.
-    > `check-data.mjs` §64 (a) is the first check in this file that catches a *wrong* one, and it
-    > does it by anchoring to the lesson rather than by reviewing the translation. **A future figure
-    > whose labels can be lifted should be lifted.**
-    > ⚠️ **DO NOT DRAW A SECOND, COUNTER-CLOCKWISE RING.** The caption is the lesson's own *"this
-    > self-reinforcing loop runs in both directions"*, and the obvious reading of it is wrong: both
-    > directions means the loop spirals **up in a boom and down in a bust** (the takeaway says exactly
-    > that), **not** that the causality reverses. A mirrored ring would be an economics error, and it
-    > is the error the caption invites. §64 (c) pins the order. The same reason is why the four boxes
-    > were left carrying the lesson's own "more X" wording rather than a neutral noun: "less spending"
-    > appears nowhere in lesson 30 in any language, so a bust ring would have to be invented in five.
-    > ⚠️ **AND THE BOXES CARRY NO SIZE — enforced, after the live DOM said otherwise.** Measured at
-    > 390px before the fix: the top row drew **35px against the bottom row's 52px**, because "more
-    > creditworthy borrowers" wraps to two lines and CSS grid sizes a row to its tallest item. That is
-    > item 27's own 82-vs-52 finding above, in a new figure, and it says the finding generalizes:
-    > **the first live measurement of any new figure should be its boxes.** Fixed with
-    > `gridTemplateRows: "1fr auto 1fr"` (both rows 52px at 390px/en, 62px at 320px/130%/ko); §64 (d)
-    > holds it, and `LOOP_BOX` may never gain a width/height/flex/grid-span.
-    > ⛔ **THE OTHER TWO BARE PATH-OPENING LESSONS WERE MEASURED AND BOTH FAIL, so do not "finish the
-    > first three".** **Lesson 29** has two candidate claims and neither survives: *Total Spending =
-    > Money Spent + Credit Spent* states **no split**, so a two-segment bar would invent the one
-    > proportion it is about (lesson 16's rejection exactly); and *$500 on 100 loaves is $5 a loaf* is
-    > fully quantified but is a division the sentence already performs in one clause — a figure of it
-    > shows nothing the prose cannot. **Lesson 31** is subtler and is the interesting one: its claim
-    > (productivity a straight gentle line, credit swinging around it) is **precisely what `CycleChart`
-    > draws**, and the 2026-08-31 trend-slope fix was justified *by quoting lesson 31*. But
-    > `CycleChart` also labels **four phase dots**, and the phases are lesson **38**'s content, seven
-    > screens later — mapping it here would front-run its own vocabulary. **A figure that is right
-    > about the lesson's claim can still be wrong for the lesson's position.** Both remain bare on
-    > purpose; that is a measured decision, not an oversight.
-    > ⛔ **NINTH VISUAL, 2026-09-04, AND IT IS THE FIRST IN THIS ITEM THAT REPLACED A WRONG FIGURE
-    > RATHER THAN FILLING A GAP — because the rule quoted directly above was applied to the CANDIDATE
-    > and never turned on the INCUMBENTS.** The paragraph above declines `CycleChart` for lesson 31
-    > because its four phase dots are lesson **38**'s vocabulary. That same figure was, at the moment
-    > that sentence was written, **already shipping on lessons 32 and 33** — five and six screens
-    > before the lesson that defines the phases. Measured on the built app 2026-09-04: lessons 32, 33
-    > and 38 rendered a **byte-identical `<figure>`, 1,667 characters, one fingerprint**, with lessons
-    > 30 (3,132 b) and 36 (1,069 b) differing as the controls that prove the extractor was live.
-    > **The mapping was never a decision about lesson 33 at all**: `git log -S` shows `33: "cycle"`
-    > entered in `e15e63d`, the owner-directed lesson-id **renumbering** (item 22), which only re-keyed
-    > `5: "cycle"` — the three-way share predates the track split and no run ever chose it for this
-    > lesson.
-    > **On lesson 33 the mismatch is not marginal, and the instrument had a control that fired.**
-    > Scanning each lesson's own prose for the four rendered phase labels **in its own language**
-    > (positive control: lesson 38, which owns the vocabulary, must score 4/4 — it does, in all five):
-    > **lesson 33 scores 1 of 4 in all five languages** (only "Peak"), lesson 32 scores 2-3 of 4. And
-    > lesson 33's takeaway says what it teaches is *"fundamentally different from a regular
-    > recession"* — over the picture the previous lesson uses for a regular recession.
-    > **Shipped as `NestedCycles` (charts.jsx) + `nestedCycles*` (markets.js), guarded by
-    > `check-data.mjs` §71.** It clears this item's bar on lesson 33's third section, which states
-    > both spans in adjacent sentences — *"each one arrives every 5-8 years"* and *"The long-term cycle
-    > spans 75-100 years"* — and then draws the conclusion that follows from dividing them: *"almost
-    > nobody alive personally remembers the last time it peaked."* **Prose can put two numbers next to
-    > each other; it cannot do the division.** The figure is that division already done: one long rise
-    > with twelve short cycles riding it, bracketed at one cycle and at the whole span.
-    > ⚠️ **BOTH AXES CARRY NO SCALE AND THERE IS NO TIME ORIGIN, and the second one is §10.1.** Lesson
-    > 33 defines the vertical axis (*"the debt burden (the ratio of what's owed to what's earned)"*)
-    > and states no value for it anywhere, so no tick and no number is drawn on it. The horizontal
-    > axis is a **span**, not a set of dates: lesson 33 closes by *asking* the reader whether today
-    > looks like the late stage of a long-term cycle, and a "you are here" marker would answer that
-    > question for them. §71 (d) holds both, and **a future run must not add a date, a "today" line or
-    > a shaded region.**
-    > ⚠️ **THE CYCLE COUNT IS BOUNDED BY THE LESSON, NOT CHOSEN.** 75/8 ≈ 9.4 and 100/5 = 20, so any
-    > whole count in [10, 20] is derivable from the prose and nothing outside it is; `NEST_CYCLES` is
-    > 12 and §71 (c) asserts the interval rather than the constant. **This is the answer to lesson
-    > 16's and lesson 17's rejection test** ("does the prose state every quantity the shape needs?"):
-    > here it states a *range* for the one quantity that matters, which is enough, and states nothing
-    > for the axis — so the axis gets nothing.
-    > ⛔ **THE SUITE CAUGHT A REAL DEFECT IN THE FIRST DRAFT, and the fix was not the one the error
-    > prescribed.** The figure shipped a baseline rule in `line.hairline`; `check-data.mjs` §51b failed
-    > it (no `line.*` token clears 1.4.11's 3:1, so such a rule is legal only as registered
-    > decoration). **Registering it would have been wrong.** Measured from the curve's own arithmetic,
-    > the wave passes within **~5px** of that floor at its first trough, and a rule that close under a
-    > curve reads as the axis's **zero** — a value lesson 33 states nowhere, on the axis this figure's
-    > own header insists carries no scale. The rule was **removed**, not exempted; the full-span
-    > bracket already frames the plot in a `graph` token §28b holds to 3:1. §71 (d) now keeps it out
-    > on the *content* ground as well as the contrast one. (W-6.1's standing lesson, met in the wild:
-    > **an error message that prescribes a fix is a claim about the fix, not a measurement of it.**)
-    > **Coverage re-measured 2026-09-04 with the parser control (must find 1, 30, 44; must not find 2,
-    > 29, 31): economy 7/12, essentials 4/15, money 5/17 — 16 of 44, 0 orphans.** The comment in
-    > `LessonVisual.jsx` said **6/12, 3/15, 14 of 44** — stale since lessons 34 and 12 landed on
-    > 2026-09-03, in the same comment block that says "do not quote a coverage count from backlog item
-    > 27; re-run the parse". Corrected in this commit. **Do not quote these three numbers either.**
-    > **Note, not an item (W-6.2 rule 2): lesson 32 has the same defect in a milder form and is left
-    > alone deliberately.** Its own headings are "Expansion Phase" and "Contraction & Recession", so
-    > 2-3 of the four labels are its own words, and "Trough" is in none of the five. Zero learner
-    > confusion is *claimed* here, not measured — this is a note so that a future run picking it up
-    > starts from the scan above rather than re-deriving it.
-    **Status check, 2026-08-16 (item-29 run):** `LESSON_VISUALS` in `src/components/LessonVisual.jsx`
-    now maps money lessons **1 (`budgetSplit`), 3 (`compounding`) and 27 (`lossAsymmetry`)**, plus the
-    five economy ones — i.e. money is **3/28, not 0/28**, and the three lessons this item's own "Scope
-    guidance" names verbatim (compound interest first; budgeting's needs/wants/savings split and loss
-    aversion's asymmetric-weight diagram as the seconds) are **exactly the three that exist**. §3.2's
-    sharpest point is closed too: a new install opens on money lesson 1, which now has a visual. So the
-    work this item specifies is done, and its own guidance ("do **not** bulk-add 28 visuals... a visual
-    that merely decorates fails §3.0.1") argues against treating the remaining 25 as a queue.
-    **A run wanting to add a fourth money visual must first name the specific lesson where a diagram
-    teaches something the prose cannot** — otherwise this becomes the count-shaped backlog item that
-    items 17, 21 and 24 each turned into. Original text retained below for the reasoning.
-    > **Fourth visual added 2026-08-16 (evening dev-agent run) — money is now 4/28. The bar above was
-    > met by the lesson's own prose, not by an argument constructed for it.** Lesson 7 (marginal tax
-    > brackets) opens with *"Imagine income tax as a stack of buckets, each with its own rate, and money
-    > fills them from the bottom up"* — the lesson was already asking the reader to picture a diagram the
-    > app declined to draw, and then spending three paragraphs on the misconception ("a raise can push
-    > you into a higher bracket and leave you with less") that one picture settles. Shipped as
-    > `BracketStack` in `charts.jsx` + `bracket*` in `moneyVisuals.js`, guarded by `check-data.mjs` §21.
-    > **The guard checks the diagram's teaching claim, not its data shape** — that the two stacks are
-    > band-for-band identical below the old income line, that the raise splits across two bands with the
-    > old-rate slice the larger of them, and that take-home rises. See the run log for the injection
-    > tests and for the rendered measurement that changed the scenario mid-run.
-    > **The bar for a fifth is unchanged and still binds.** Note what this one did *not* do: it added no
-    > visual to lessons 9, 11 or 12, each of which has a plausible diagram, because "plausible" is the
-    > count-shaped reasoning this item warns about.
-    *(Original framing — PRIORITY, the highest-value open item)*
-    `LAUNCH_PLAN.md` §3.0.4, §3.2, §5.** Measured 2026-08-16 by the weekly review, from
-    `LESSON_VISUALS` in `src/components/LessonVisual.jsx` against `src/content/lessons.js`:
-    **money 0/28 lessons have a visual; economy 5/12 do** (ids 32, 33, 36, 37, 38 — cycle, yield curve,
-    balance sheet). Money is 28 of the 40 lessons and, per §0, *is the product* — economics is "the
-    vehicle, not the product." So the entire diagram differentiator currently sits on the vehicle.
-    Three separate plan clauses converge on this, which is why it ranks first:
-    - **§3.0.4 "Show, don't only tell"** names the animated diagrams as *the* differentiator, in those
-      words: "an LLM can explain a yield curve in text; a curve inverting in front of the reader is what
-      a chat window cannot do." §3.0 is the **primary success criterion** and §11's second move is
-      "hold the line on §3.0 — it is the one most easily lost to feature work."
-      > ⛔ **THIS BULLET HAS BEEN QUOTED FIFTEEN TIMES FOR ITS FIRST HALF AND NEVER FOR ITS SECOND,
-      > and that was corrected 2026-08-31 (scheduled dev-agent) rather than by adding a fifteenth
-      > figure.** The word is **"animated"**, and the example is **"a curve inverting in front of the
-      > reader"** — which names one specific figure that this app has shipped since before the rebuild.
-      > Measured that day with a control (the same regex fired twice on `index.css`, which does
-      > animate): `charts.jsx` contained **zero** state or motion primitives in 1,047 lines. **Every
-      > figure in the app was still.** Lesson 36's four static curves are now **one curve the reader
-      > moves between the four shapes**, morphing on `requestAnimationFrame` with an explicit
-      > `prefers-reduced-motion` check — `index.css`'s reduce block uses `!important` on CSS
-      > animation/transition and is blind to a rAF loop, so that guard is load-bearing, not ceremony.
-      > **Coverage is UNCHANGED at 14/44 — no figure was added**, so do not re-parse on account of this
-      > note; and **zero new locale keys** were needed, because the four segment labels
-      > (`t.curveNormal` and siblings) were already the four grid captions and `yieldCurveDescriptions`
-      > was already five-language content.
-      > **The transferable finding, which is the point of this note:** a plan clause can be cited
-      > accurately, repeatedly, for years, and still have half of it go unread — because each citation
-      > quotes it to justify the work already being done. **The half nobody acts on is the half that
-      > does not resemble the current tranche.** Fourteen runs read this bullet as "add a figure"; it
-      > also says the figures should move.
-      > ⚠️ **The cost is real and is recorded so a future run does not "restore" the grid without
-      > reading it:** the four shapes are no longer visible *simultaneously* in lesson 36, and its
-      > first section IS a taxonomy the grid matched one-to-one. It was traded for the lesson's second
-      > section and takeaway, which are a *transition* ("that gap flipping negative"), for ~3× the
-      > linear size at 375px (§3.0.7), and for §3.0.1. **The simultaneous comparison still ships
-      > unchanged in Reference > Market signals** — that call site passes neither new prop and was
-      > verified untouched. **If a future run wants the grid back in the lesson, it owes an argument
-      > against those three, not just a preference for grids.**
-      > 🔎 **A geometric result worth keeping, and nobody designed it:** because all four shapes share
-      > the x control points `10,40,70,130` and differ only in height, the halfway frame of a
-      > **normal → inverted** morph is `37.5,37.5,35,35` against the authored **flat** shape's
-      > `38,37,36,34` — **21× closer to flat than to either endpoint**. The animation walks the
-      > lesson's own stated sequence (normal → flat → inverted) with no new copy. **A future run
-      > must not "improve" the easing or re-author a shape's heights without re-checking that
-      > property** — it is the figure's whole pedagogical claim, and it is an accident of the
-      > geometry rather than something the code asserts.
-    - ~~**§3.2 "The first five minutes... the most important feature."** First-open routing lands a new
-      install on **money lesson 1 (Budgeting)** — which has no visual at all. The first thing a new
-      learner sees is the case *against* the app's stated differentiator.~~
-      > ⛔ **BOTH HALVES OF THAT BULLET ARE NOW FALSE, re-measured 2026-08-31 with the parser control
-      > this item already prescribes.** Lesson 1 (Budgeting) HAS a visual (`budgetSplit`), and since
-      > the 2026-08-18 reversal a new install does not open on it — it opens on **economy lesson 29**.
-      > **The bullet's POINT survives its numbers, and that is why it is corrected rather than
-      > deleted.** ~~Coverage 2026-08-31: **13/44 overall — economy 5/12, money 5/17, essentials
-      > 3/15**, unchanged since 2026-08-28. In display order the path's **first three lessons — 29
-      > (Transactions), 30 (Credit), 31 (Productivity Growth) — carry no figure**, so the screen a new
-      > install actually opens is still the case against the differentiator; only its id moved.~~
-      > ⛔ **BOTH OF THOSE SENTENCES WERE FALSIFIED LATER THE SAME DAY, by the run that added lesson
-      > 30's `SpendingLoop` — whose own note sits 40 lines below in this same item and says 14/44,
-      > economy 6/12. This item has therefore been internally contradictory since 2026-08-31; struck
-      > and corrected 2026-09-02 (scheduled dev-agent).** Re-parsed with this item's own control
-      > (must find 36, must not find 9999): **14/44 — economy 6/12, essentials 3/15, money 5/17.**
-      > **Lesson 30 HAS a figure.** The concrete failure mode of leaving it: a run reading the struck
-      > text adds a SECOND figure to lesson 30. **The bullet's point survives the correction and
-      > narrows** — it is now one lesson, not three: **lesson 29 is the screen a new install opens
-      > and it carries no figure**, measured live 2026-09-02 at 0 figures and 0 `[role="img"]`
-      > (control: lesson 36 returns 1 and 1). See the "dead pick 2" paragraph in that date's run log,
-      > and read the ⛔ block below before proposing one — **both of lesson 29's candidate figures are
-      > already measured and declined there, and a third variant that adds a credit split to the
-      > \$500 invents the proportion the lesson is about, which is the same rejection again.**
-      > **Re-scoped, which is what this item's own header asks for:** the gap is no longer "the money
-      > track", it is **the opening of the economy track**. Lesson 31 is the strongest candidate on
-      > the "does the prose state every quantity the shape needs?" rule below — but note it states a
-      > *shape* ("grows in a fairly straight, gentle line") and no quantities at all, so any figure
-      > for it must be ordinal, like lesson 44's. **Lesson 29 states its own numbers** (\$500 over 100
-      > loaves = \$5) and is the one a new install opens.
-    - **§5 Distribution** makes screen-recorded diagram clips the whole acquisition engine ("every
-      lesson yields two or three clips"). With 0/28 money lessons illustrated, the clip pipeline has
-      nothing to film on the track the product is actually about.
-    **Scope guidance:** do **not** bulk-add 28 visuals. Pick the two or three money lessons where a
-    diagram teaches something prose cannot (compound interest over time is the obvious first — a curve
-    is the concept; budgeting's needs/wants/savings split and loss aversion's asymmetric-weight
-    diagram are plausible seconds), build them to the existing `charts.jsx`/`LessonVisual.jsx` pattern
-    and `theme.js` tokens, and verify each in a live browser per **W-1**. A visual that merely decorates
-    fails §3.0.1 ("one idea per screen") — if it doesn't teach, don't ship it.
+    > **Where each shipped figure's argument and guard live.** Twelve figures ship; each is a
+    > component in `src/components/charts.jsx` and each is asserted by a numbered `check-data.mjs`
+    > block whose failure messages carry the reasoning. The pointer, verified alive 2026-09-07 (all
+    > twelve return ≥2 hits in both files, which is the control):
+    > `grep -n '<Component>' src/components/charts.jsx scripts/check-data.mjs` for `BracketStack`,
+    > `GrowthCurve`, `GapColumns`, `PreferenceFlip`, `TradeoffPlot`, `OutcomeGrid`, `SpendingLoop`,
+    > `BalanceBand`, `SplitBand`, `NestedCycles`, `MatchGrid`, `SunkFork`.
+    > ⚠️ **Do NOT grep the `LESSON_VISUALS` kind names** (`outcomeGrid`, `budgetSplit`, `earningsGap`,
+    > …): measured 2026-09-07, six of nine return **zero** hits in `check-data.mjs`, so that pointer
+    > reads as "unguarded" for figures that are in fact guarded. The component name is the live key.
+    >
+    > **STANDING CONSTRAINTS — the four things here that NO check asserts. Everything else in this
+    > item's old body was either dated record or a warning `check-data.mjs` now enforces.**
+    > 1. 🔎 **The yield-curve morph's halfway frame is the lesson's own flat shape, and nothing in
+    >    the code asserts it.** All four shapes share the x control points `10,40,70,130` and differ
+    >    only in height, so the halfway frame of a **normal → inverted** morph is `37.5,37.5,35,35`
+    >    against the authored **flat** shape's `38,37,36,34` — **21× closer to flat than to either
+    >    endpoint**, so the animation walks lesson 36's own stated sequence (normal → flat →
+    >    inverted) with no new copy. Nobody designed this; it is an accident of the geometry. **A
+    >    future run must not re-author a shape's heights or "improve" the easing without re-checking
+    >    that property** — it is the figure's whole pedagogical claim.
+    > 2. ⚠️ **Lesson 36's four-up grid was TRADED, not lost.** The four shapes are no longer visible
+    >    simultaneously in the lesson; that was traded for the lesson's second section and takeaway
+    >    (which are a *transition*), for ~3× the linear size at 375px (§3.0.7), and for §3.0.1. **The
+    >    simultaneous comparison still ships unchanged in Reference > Market signals.** A run that
+    >    wants the grid back in the lesson **owes an argument against those three**, not a preference
+    >    for grids.
+    > 3. ⛔ **A figure's geometry is a RENDERED property and a source check cannot see it.** Two
+    >    figures shipped with every style literal correct and rendered unequal rows: `OutcomeGrid` at
+    >    **82px against 52px** (a label inside a cell) and `SpendingLoop` at **35px against 52px** (a
+    >    row heading wrapping to two lines) — CSS grid sizes a row to its tallest item, so the
+    >    inequality arrived through *content*. Both were found only by measuring the live DOM.
+    >    **The first live measurement of any new figure should be its boxes**, and prefer structural
+    >    invariants (no text in a cell; a fixed shared height) over stylistic ones. The two instances
+    >    are now held by §57 (e2) and §64; **the practice is general and is held by nothing.** The
+    >    general instrument is item 135.
+    > 4. ✅ **Lift a figure's labels from the lesson; do not translate them.** Every string
+    >    `SpendingLoop` renders except its text alternative is a **verbatim substring of lesson 30 in
+    >    the same language** (6 strings × 5 languages), so 24 of its 28 non-English strings are not
+    >    new translation at all. This matters because `DECISIONS.md`'s 2026-08-16 scope limit says
+    >    chart labels are *"the content type where an unreviewed translation is least visible, because
+    >    a wrong label still renders as a correctly-shaped chart"*, and the parity checks catch **a
+    >    missing language, never a wrong one**. `check-data.mjs` §64 is the first check here that
+    >    catches a *wrong* label, and it does it by anchoring to the lesson rather than by reviewing
+    >    the translation. **A future figure whose labels can be lifted should be lifted.**
+    >    ⚠️ **Pointer correction 2026-09-07:** the text this replaces cited "§64 (a)", "§64 (c)" and
+    >    "§64 (d)". **§64 carries no lettered sub-blocks** — all three properties (labels lifted
+    >    verbatim, the ring's step order, `LOOP_BOX` never gaining a size) are asserted inside a
+    >    single unlettered §64. Cite it plainly; the lettered form resolves to nothing.
+    >
+    > **⛔ One do-not-re-derive note that is NOT about a bare lesson, kept because a run could
+    > otherwise "fix" it: lesson 32 shares the `cycle` figure with lesson 38, deliberately.** When
+    > `NestedCycles` replaced the shared `cycle` figure on lesson 33 (2026-09-04), lesson 32 was left
+    > on it on measured grounds: scanning each lesson's own prose for the four rendered phase labels
+    > **in its own language** (positive control: lesson 38, which owns the vocabulary, scores 4/4 in
+    > all five), **lesson 33 scored 1 of 4 and lesson 32 scores 2-3 of 4** — lesson 32's own headings
+    > are "Expansion Phase" and "Contraction & Recession", so most of the labels are its own words.
+    > The parse above still shows `32 -> cycle` and `38 -> cycle`. **Zero learner confusion is
+    > *claimed* here, not measured** — a run picking this up should start from that scan rather than
+    > re-deriving it, and should not treat the shared figure as an oversight.
+    >
+    > ⭐ **And the finding that outlived the item, kept because it is about reading plans, not about
+    > figures.** §3.0.4 — the clause this item was built on — reads *"an LLM can explain a yield curve
+    > in text; a curve inverting in front of the reader is what a chat window cannot do."* **It was
+    > quoted fifteen times for its first half and never for its second.** The word is **"animated"**,
+    > and `charts.jsx` contained **zero** state or motion primitives in 1,047 lines until 2026-08-31 —
+    > every figure in the app was still. (Lesson 36's morph runs on `requestAnimationFrame` with an
+    > explicit `prefers-reduced-motion` check, because `index.css`'s reduce block uses `!important` on
+    > CSS animation/transition and is **blind to a rAF loop** — that guard is load-bearing, not
+    > ceremony.) **A plan clause can be cited accurately, repeatedly, for months, and still have half
+    > of it go unread — because each citation quotes it to justify the work already being done. The
+    > half nobody acts on is the half that does not resemble the current tranche.**
 
 28. **✅ MECHANISM DONE 2026-08-16 — `src/content/lessonTerms.js`, a curated lesson→glossary link
     table, guarded by `check-data.mjs` §17. Do not re-pick this item to "finish" it: what remains is
@@ -7548,3 +7202,135 @@ re-ran the suite afterwards anyway rather than relying on that.
   the same 26 / 24 / 2 and the same two lesson ids. The rejections are judgments and are labeled as
   such; what is measured about them (the quantity scan across five languages, the shipped-shape
   inventory) is quoted as commands rather than conclusions.
+
+### 2026-09-07 (scheduled dev-agent; W-7.2 rule 1 applied to backlog item 27) — the largest object in the file was a closed item, and every warning it was holding for safekeeping was already asserted in code with the same reasoning in its failure message
+
+**The pick, and the honest thing about it first.** W-7.2 rule 1 says a closing item is **replaced by
+its conclusion, not annotated with one**, and rule 4 says apply it as clauses close. Item 27 closed
+on the previous run and was not collapsed by it. So this is the rule firing on the most recent
+closure — **and it is also the second consecutive run whose headline names item 27**, which is
+W-5.2's continue-the-tranche shape. The two readings are both true and the second is named here
+rather than left for a reviewer: what makes it not a chain is that the work is a different kind (the
+previous run *evaluated candidates*; this one applies a priority-block rule to the item's body), and
+what would have made it a chain is if I had picked item 27 because it was warm.
+
+**⛔ Step 3.5 — the premise, measured with a control before anything was edited.**
+- **Instrument agreement.** An independent line-range sum over the `## Prioritized backlog` region
+  reproduced `check-log-size.mjs`'s MEASURED backlog figure **byte-exactly at 431,186 b**. That
+  agreement is the control that says my per-item measurements are in the same units as the budget.
+- **The headline figure.** Item 27 measured **48,083 b — 11.2% of the whole backlog**, the largest
+  single object in the file, and 145 numbered items sum to 373,736 b, so one closed item was worth
+  more than the median 25 items put together.
+- **W-7 rule 5's own test was failing when this run started.** The block's baseline is 425,473 b and
+  09-06's rule-4 collapse had taken it to 418,721 b; two days of writing had put it back to
+  **431,186 b — 5,713 b OVER the baseline**, moving away from the test.
+- **The rejection list is complete and current, re-derived not read.** The parse with its four
+  controls (44 lessons; finds `36`; does not find `9999`; 0 orphan ids) returns economy **7/12**,
+  money **7/17**, essentials **4/15** — **26 bare lessons**, and the item's ⛔ list names exactly
+  those 26 once 29 and 31 are folded in. Nothing on it is stale.
+
+**⛔ The instruments that read `AGENT_LOG.md` were proven alive by injection before I trusted a clean
+run afterwards.** A clean `npm test` over a file I had just deleted 35 KB from means nothing unless
+something in the suite can actually see this file. Planted a **duplicate `27. **` heading** in the
+backlog (file 660,953 → 660,996 b, the injection confirmed landed by reading the line back);
+`check-backlog.mjs` → **exit 1, "backlog item 27 is defined 2 times (lines 3837, 3839)"** — it named
+my own two lines, so the failure is mine and not a coincidence. Restored from the **scratchpad
+copy** (never `git checkout --`), `cmp` identical, `git status` clean, re-run → PASS.
+
+**⛔ The claim this whole change rests on, and it was verified per warning rather than asserted:
+every per-figure "do not "improve" this" warning that was deleted is asserted by `check-data.mjs` in
+code, with the warning's own reasoning written into its failure message.** Checked one at a time:
+§57 (e2) (no text in an `OutcomeGrid` cell — its message still carries the "82px against 52px"
+history), §70 (e)/(f) (`SplitBand`'s separator contrast, and exactly two `<text>` nodes so no tick
+can appear on an axis lesson 12 gives no scale for), §71 (c)/(d) (`NestedCycles`' cycle count
+bounded by the two spans; zero `<text>` nodes, no baseline rule, no year or present-tense position
+word), §72 (a)/(e) (no digit in a `MatchGrid` axis label; no green/red/tick/cross), and §64 (labels
+verbatim from lesson 30, the ring's step order, `LOOP_BOX` never gaining a size). **The backlog was
+holding a duplicate of a self-documenting guard, not the only copy.**
+
+**✏️ Two corrections the check produced, both of which changed what shipped.**
+1. **§64 has no lettered sub-blocks.** Item 27 cited "§64 (a)", "§64 (c)" and "§64 (d)"; all three
+   properties live in a single unlettered §64, so the lettered form resolves to nothing. I had
+   copied the stale pointers straight into the replacement before grepping for them — caught only
+   because the verification above was done per-warning instead of per-section. The correction is in
+   the collapsed item.
+2. **A do-not-re-derive note was nearly lost, and it is not about a bare lesson.** Lesson 32 shares
+   the `cycle` figure with lesson 38 **deliberately** — measured on a scan of each lesson's prose
+   for the four rendered phase labels in its own language (control: lesson 38 scores 4/4 in all
+   five), where lesson 33 scored 1/4 and lesson 32 scores 2-3/4 because most of the labels are its
+   own headings. That note sat 400 lines down in the old body and is the difference between a future
+   run reading a measured decision and "fixing" an oversight that is not one. Restored.
+
+**What was deliberately dropped, and where it is.** Twelve chronological "Nth visual added"
+narratives with their per-figure design arguments, every layered correction of them, and every dated
+coverage count — the counts being text **this item's own body forbids anyone from quoting**. All of
+it is in the run log, in `AGENT_LOG.archive.md`, and in git; `413f9cc` is the last revision carrying
+the full text, and each figure's argument is one `git log -S` away. Per W-7.2 rule 2 the commit is
+cited rather than the text pasted.
+
+**What was kept, because nothing else holds it.** The conclusion; the two rules with rule 1's
+invented-quantities correction; the parse command **copied byte-identically** (`diff` against the
+original line, not retyped) with its controls; the 26-id rejection list; a live per-figure pointer;
+and four standing constraints no check asserts — the yield-curve morph's halfway-frame geometry, the
+lesson-36 grid trade, "a figure's geometry is a RENDERED property and a source check cannot see it",
+and "lift a figure's labels from the lesson, do not translate them".
+⚠️ **The per-figure pointer was itself nearly shipped dead.** The obvious form — grep the
+`LESSON_VISUALS` kind name — returns **zero** hits in `check-data.mjs` for six of nine kinds
+(`outcomeGrid`, `budgetSplit`, `earningsGap`, `incomeTradeoff`, `taxBrackets`, `lossAsymmetry`),
+so it would have read as "unguarded" for figures that are in fact guarded. The **component** name is
+the live key: all twelve return ≥2 hits in both `charts.jsx` and `check-data.mjs`, measured, and
+that count is quoted in the item as the pointer's control.
+
+**Result, off the instrument's own line rather than retyped.** Backlog **431,186 → 397,785 b**;
+`check-log-size.mjs` reports **`this working tree, on top of HEAD: floor -33,401 b`**. W-7 rule 5's
+test — smaller than 425,473 b on 2026-09-13 — now stands **27,688 b under** the baseline, from
+5,713 b over it when the run began. For scale: this is one item against the five generic compression
+passes' ~15.8 KB mean, though **not** larger than the largest of them (~54 KB), and that comparison
+is stated rather than rounded in rule 1's favor.
+
+**Verification.** `npm test` ✅ **0 failures**, with the **same four pre-existing warnings** as the
+baseline (translation review 0% human, 47 abridged pairs, the quiz option-length cue, and the
+log-size floor — whose *number* moved 465,660 → 431,956 b but whose existence did not).
+`check-backlog.mjs` ✅ 145 items, no duplicate ids, all **200** `"backlog item N"` citations in
+`src/` and `scripts/` still resolve. `check-blindspot` ✅ 0 failures. `npm run build` ✅ — entry
+bundle `index-BnvrHnCR.js` at 264.93 kB, byte-for-byte the same name as before, which is the control
+that says no source file was touched. **No `src/` file changed in this commit.**
+
+**Adversarial self-check (step 5) — run, and it found three things.**
+- **Blindspot register.** No lesson prose, market copy, component or content module touched. One
+  thing worth stating rather than waving past: I **added** the phrase "Dalio's signature chart" to
+  the backlog item (as the reason a future run should know lesson 31's obvious figure is adjacent to
+  a closed blindspot). §10.2 is about Dalio branding and quotes **in the app**; `check-blindspot.mjs`
+  does not read `AGENT_LOG.md` at all (verified — its only mention of the file is a comment), and
+  the previous run's own entry already carries the identical phrase. Not a regression; re-ran
+  `check-blindspot` to 0 failures rather than reasoning about it alone.
+- **DECISIONS.md.** No conflict: no code, no dependency, no state, no content module. Nothing there
+  records a rule about backlog text, and W-5.3 — the rule that *does* protect history — is about the
+  **run log**, which this commit only appends to.
+- **Already-done item.** Not a redo of anything in "Completed and pruned": the 09-06 pass under rule
+  4 collapsed W-7.1/W-6.1/W-6.5/O-1 (priority-block clauses), and the 09-07 run lifted item 27's two
+  ⛔ lists to its top. **Neither touched the 400-line body**, which is what this run removed.
+- **The first thing it found: I nearly shipped three dead cross-references** (§64's letters), inside
+  the very paragraph claiming the deletions were safe because the guards exist. The claim was true
+  and the citation for it was not.
+- **The second: my instrument for "is this figure guarded?" was wrong on two thirds of the corpus**
+  and would have quietly justified a much larger deletion. It failed the only way that matters —
+  by returning **zero**, which reads as "no guard" and is indistinguishable from "guard exists under
+  another name" unless you check a figure you *know* is guarded.
+- **The third, and it is about this run's own honesty: an accretion fix that accretes.** The two
+  corrections above cost **+1,371 b** back onto the item after the collapse (397,482 vs 396,111 b at
+  first splice). That is charged here rather than left out of the headline; the net is still
+  −33,401 b, and W-7 rule 5's whole point is that a pass which does not charge itself is not
+  measuring anything. ⚠️ **And the same defect once more, one layer up:** the first draft of this
+  entry quoted 397,482 b / −33,704 b — correct when written and stale two edits later, because
+  updating W-7 rule 5's own progress line cost a further **+303 b**. Every figure above is the final
+  MEASURED line; the drafting figures are named here so the correction is visible rather than
+  smoothed away.
+- **My own verification claim.** An independent reviewer re-running only what is quoted here gets
+  the same result: every byte figure is `check-log-size.mjs`'s own MEASURED line or its
+  "this working tree, on top of HEAD" delta rather than arithmetic of mine; the coverage numbers
+  come with the parse's four controls; each guard claim is a grep whose match text is quoted; and
+  the injection control is quoted with the failure message that named my own two line numbers. The
+  one judgment that is not measurable is *which* text was worth keeping — that is labeled as a
+  judgment, and the four kept constraints are each justified by naming the check that does **not**
+  cover them.
