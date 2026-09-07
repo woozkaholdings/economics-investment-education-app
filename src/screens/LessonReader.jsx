@@ -462,7 +462,14 @@ export default function LessonReader({ t, lang, lessons, index, completedLessons
                 lang={lang}
                 t={t}
                 onAnswered={(wasCorrect) => {
-                  recordReview(question.id, wasCorrect);
+                  // `onlyWhenDue`: this block re-mounts on any ordinary
+                  // navigation — a language switch, or leaving the lesson and
+                  // coming back — and a re-mount resets `Question`'s own
+                  // one-answer lock, which is component state. Without this
+                  // flag the second answer landed in the schedule as a new
+                  // one, promoting a question the learner had just missed.
+                  // See `acceptsScheduleUpdate` in lib/review.js.
+                  recordReview(question.id, wasCorrect, { onlyWhenDue: true });
                   track(EVENTS.QUIZ_ANSWERED, { lessonId: lesson.id, source: "lesson_check", correct: wasCorrect });
                   // The check has no "finish" button — every question is on
                   // screen at once — so the quiz is "taken" when the last one

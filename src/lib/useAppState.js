@@ -15,7 +15,7 @@ import { KEYS, readArray, readJSON, readRaw, writeJSON, writeRaw } from "./stora
 import { todayStr, dayDiff } from "../utils/date.js";
 import { DEFAULT_FONT_SCALE, DEFAULT_THEME_MODE, FONT_SCALE_STEPS, THEME_MODES } from "../theme.js";
 import { TR } from "../locales/index.js";
-import { loadReview, recordAnswer, saveReview } from "./review.js";
+import { acceptsScheduleUpdate, loadReview, recordAnswer, saveReview } from "./review.js";
 import { quizMeta } from "../content/quizMeta.js";
 import { migrateLegacyLessonIds } from "./lessonIdMigration.js";
 
@@ -189,8 +189,16 @@ export function useAppState() {
 
   // Called from both the end-of-lesson check and the review queue, so every
   // answer anywhere feeds one schedule.
-  const recordReview = useCallback((questionId, wasCorrect) => {
+  // `onlyWhenDue` is the end-of-lesson check's mode: record this answer only
+  // if the question is actually waiting for one (see `acceptsScheduleUpdate`).
+  // The default is off, so the review queue — where answering something that
+  // is not due is a deliberate feature — keeps its existing behavior.
+  //
+  // The test reads `prev` inside the updater rather than a `review` prop at the
+  // call site, so it can never run against a render's stale copy of the state.
+  const recordReview = useCallback((questionId, wasCorrect, { onlyWhenDue = false } = {}) => {
     setReview((prev) => {
+      if (onlyWhenDue && !acceptsScheduleUpdate(prev, questionId)) return prev;
       const next = recordAnswer(prev, questionId, wasCorrect);
       saveReview(next);
       return next;

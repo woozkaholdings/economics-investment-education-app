@@ -2455,6 +2455,22 @@ instead of hand-rolling an eighth mover. A working one is in this run's scratchp
         check or the budget is wrong" applies, and the resolution is O-3's, not a trim's.
       - **Honest priority: the remainder is BLOCKED, not low.** Distractor-quality work is new prose in
         four unreviewed languages. **Owner call (O-3), and it is the same call O-3 already asks for.**
+    > ⚠️ **NOTE ADDED 2026-09-07 (W-6.2 rule 2 — a note, not a numbered item). A DIFFERENT quiz
+    > defect class was swept to ZERO the same day; do not re-run it.** Every prior distractor pass in
+    > this log is about LENGTH. The class *"a distractor the lesson itself asserts is true"* — a
+    > learner picks an option the lesson told them was true and the app marks it wrong — had never
+    > been swept (`AGENT_LOG.md` + archive return 0 for `also true`, `more than one correct`, `two
+    > defensible`). Swept all **138 distractors** (46 questions x 3) against their own lesson body by
+    > content-word coverage and by longest contiguous phrase match; controls fired in both directions
+    > (`q001`'s verbatim correct option cov 1.00, an off-topic string cov 0.00, a verbatim L29 phrase
+    > matching 5/5, and 46/46 questions resolving to a body). **Zero full-containment distractors,
+    > and the 25 top-ranked read clean by hand.** Two structural notes so the ranking is not
+    > re-derived: **`q010` is the corpus's only true negation-form question** ("which is NOT one of
+    > the 4 tools"), where every distractor SHOULD be lesson-asserted and a high score is correct;
+    > and numeric/acronym options (`q013` GDP/CPI/PMI, `q017`'s year figures) rank top on any
+    > word-overlap measure and are noise. The instrument was a scratchpad reading aid and is
+    > deliberately not committed — it has no threshold that could be a gate (W-6.2 rule 3).
+
     - ⛔ **RANKING BY DELETION COST RANKS BY WHAT THE EDIT COSTS *ME*, NOT BY WHAT THE LEARNER CAN
       EXPLOIT — and the two run opposite ways.** The previous pass closed by naming `q034` as
       "cheapest, tightest" (window 8, 12 code points to remove) and `q039` as the expensive one
@@ -4213,6 +4229,19 @@ instead of hand-rolling an eighth mover. A working one is in this run's scratchp
     > thrown and nothing logged. Beacons are now used only for `text/plain`; everything else uses
     > `fetch` with `credentials: "omit"` + `keepalive`. **A unit test could not have caught this**;
     > it took a real browser posting at a real receiver.
+    > ⚠️ **NOTE ADDED 2026-09-07 (W-6.2 rule 2 — a note under this item, not a numbered item). The
+    > same re-mount that was corrupting the review schedule also double-fires `quiz_answered`, and
+    > that half was deliberately NOT fixed.** The schedule fix (`onlyWhenDue`, see "Completed and
+    > pruned") guards `recordReview` only; `track(EVENTS.QUIZ_ANSWERED, …)` sits on the next line and
+    > still fires once per answer per mount, so re-opening a lesson and re-answering its check sends
+    > a second `quiz_answered` for the same question. **It is invisible today** — `provider: "none"`,
+    > so the events go to one device's `localStorage` and nowhere else — **and it stops being
+    > invisible the moment step 1 of O-2 lands**, which is why it is filed here rather than under the
+    > fix. `quiz_taken` is already guarded per lesson-open by `quizFiredRef` and is unaffected;
+    > §4.3's ≥40% gate reads `lesson_completed`, not this event, so the gate is not at risk. **Decide
+    > it with the provider, not before:** whether a re-answer is one event or two is a question about
+    > what the funnel is supposed to count, and answering it now would be guessing.
+
     > ⚠️ **No guard was built and none is due** (W-6.2 rule 3, W-6.3 at 2.15x). The learner-visible
     > failure `sanitizeProps` prevents — prose or typed text leaving the device — has **zero live
     > instances**: every call site passes scalars, measured. Guarding the guard is not earned yet;
@@ -4415,6 +4444,14 @@ instead of hand-rolling an eighth mover. A working one is in this run's scratchp
 > space, so a label wrapped as `former item` / newline / `55` does not register at all; two of them
 > were wrapped that way and had been contributing nothing. Full detail for every line below is in the
 > run log at the date given; this section is pointers, not history.
+
+- **The end-of-lesson check counted one answer as many** — 2026-09-07. `Question`'s "one answer per
+  question" lock is component state, so it lasted as long as the mount; the check re-mounts on a
+  language switch and on leaving/re-entering the lesson, and each re-mount re-armed it. A question
+  the learner had just MISSED was promoted a box and pushed a day further out. Fixed by
+  `acceptsScheduleUpdate` (`src/lib/review.js`) applied at the lesson-check call site only, guarded
+  by `check-data.mjs` §8b(ii). Found by a live walk, not by a sweep; four injections, both
+  directions. Never had a numbered item.
 
 - **§3.0.3 glossary coverage enforced in both directions (former item 57)** — 2026-08-17.
   `check-data.mjs` §17b: every glossary-term use is either linked or listed in `deliberatelyUnlinked`
@@ -7334,3 +7371,150 @@ that says no source file was touched. **No `src/` file changed in this commit.**
   one judgment that is not measurable is *which* text was worth keeping — that is labeled as a
   judgment, and the four kept constraints are each justified by naming the check that does **not**
   cover them.
+
+### 2026-09-07 (scheduled dev-agent; W-6.2 rule 1 — three consecutive runs had headlined item 27, so this one had to come from somewhere else, and a live walk is where it came from) — the end-of-lesson check counted one answer as many, and the question it promoted was one the learner had just missed
+
+**The pick, and the two candidates it beat.** W-6.2 rule 1 forbids a third consecutive run off the
+previous run's residual; the last three entries all headline item 27. So: a live walk of the built
+app, which W-7.0 measured as one of the three shapes that dominated the best week this project has
+had. Two other candidates were re-measured first and both were correctly refused. **A non-English
+live walk** looked like a never-swept class until item 112 was re-read — 13 states x 5 languages x 2
+font scales already ran on 2026-08-25, and item 117's post-fix sweep covered five languages x six
+font scales at 320px. **A Settings "reset progress" guard** looked like a real destructive-action
+risk until `grep -rn reset src/` returned nothing outside lesson prose: **there is no reset feature
+to guard.** Both premises were wrong before any edit, which is step 3.5 doing its job on the pick
+rather than on the item.
+
+**⛔ Step 3.5 — this run had no backlog item, so the premise IS the defect, and it was measured with
+a control before anything was edited.** Served the real `dist/` build statically and drove it at
+375x812 from cleared `localStorage`.
+- **The defect, reproduced twice by two independent routes.** Answer lesson 1's end-of-lesson check
+  **wrong** → `{"q001":{"box":1,"due":"2026-09-08","seen":1,"wrong":1}}`. Then (route 1) switch the
+  language picker to `zh` and answer the same check again, correctly → **`box` 2, `seen` 2, `due`
+  2026-09-09**. Or (route 2) leave the lesson to `#/learn`, re-open `#/lesson/29`, answer again →
+  **the same**. ⭐ **The learner-visible harm is not the `seen` count. It is that a question they had
+  just MISSED was PROMOTED into a longer interval** — the Leitner scheduler's one job is to bring
+  back what was missed, and this stopped it from coming back.
+- **⛔ The control that says the defect is a re-mount and not loose click handling.** Inside the
+  **same** mount, clicking a second option in the already-answered quiz changed `ecycles_review`
+  **not at all**. So the "one answer per question" lock exists and works; it is `useState` in
+  `Question.jsx`, so it lasts as long as the mount and not as long as the answer. Every re-mount
+  re-arms it and `onAnswered` fires again into `recordReview`.
+- **Why no instrument could see it.** `check-data.mjs` §8b already scans both `recordReview` call
+  sites — for *which* argument they pass, after the 2026-09-01 id-vs-index fix. It had nothing to say
+  about *how many times* one is passed, because that is not a property of the source at all; it is a
+  property of the component lifecycle. **This is the same shape as W-7.1's finding one level down:
+  the tree was correct and the running app was not.**
+
+**The fix, and the reason it is a scheduler rule rather than a lock.** A persisted "already answered
+this check" flag would need new storage, and it would also be *wrong* a week later — re-opening a
+lesson whose question is genuinely due again SHOULD record. So the rule is the scheduler's own:
+`acceptsScheduleUpdate(state, id, today)` in `src/lib/review.js` returns true when the question has
+never been answered or when it is due today/overdue — **deliberately the same predicate
+`dueQuestions` filters on**, so the lesson check now accepts an answer exactly when review would have
+served the question. `useAppState`'s `recordReview` takes an `onlyWhenDue` option (default off) and
+tests it against `prev` **inside** the updater, so it can never read a render's stale copy;
+`LessonReader` is the one call site that passes it.
+⛔ **Practice deliberately does NOT get this, and that is asserted rather than assumed.** That
+screen's own comment says "practicing more than the schedule asks is fine", and its "practice all
+questions" pool exists to re-drill things that are not due. Moving the rule into `recordReview`
+itself — the obvious one-line version of this fix — would have silently deleted that feature.
+
+**Verification, all six measurements on the built app running the bundle under test.** The browser
+was hard-reloaded and `index-Ca1KPbhW.js` read off the DOM before each phase, because a stale bundle
+is this project's recorded way of getting a false green here.
+| # | what | result |
+|---|---|---|
+| 1 | pre-fix, language switch | `seen` 1 → 2, box 1 → **2** (defect) |
+| 2 | pre-fix, leave + return | `seen` 1 → 2, box 1 → **2** (defect) |
+| 3 | pre-fix, second click in the same mount | **unchanged** (control: the lock works) |
+| 4 | post-fix, both routes | **unchanged**, byte-identical state string |
+| 5 | post-fix, `q001` forced overdue (`due` 2026-09-01) | **records** — box 1 → 2, `seen` → 2 |
+| 6 | post-fix, Practice "practice all" on a not-due question | **records** — box 3 → 4, `seen` → 6 |
+Rows 5 and 6 are the ones that matter: without them a fix that simply stopped recording anything
+would look identical to row 4.
+**And the case most likely to break, tested rather than reasoned about:** lesson 32 owns **two**
+questions (`q003`, `q004` — the only two-question lessons are 32 and 34). Answering both in one
+mount records **both** at `seen: 1`; leaving, returning and answering both again leaves the state
+byte-identical. No stale-state suppression of the second question.
+
+**The guard, and it was extended rather than added.** W-6.3 asks which side of the instrument-to-app
+ratio a proposal falls on, and `check-data.mjs` is the one number W-7.0 flagged as still moving the
+wrong way (+33% in a week). So this went into the **existing** §8b — which already reads these two
+call sites — as §8b(ii), not a new section. W-6.2 rule 3's sentence: *a learner answers a lesson
+check, comes back to the lesson later, answers again, and the app promotes a question they had just
+missed so it stops coming back.* It asserts three things: the lesson-check call site passes
+`{ onlyWhenDue: true }`, the Practice call site does **not**, and `acceptsScheduleUpdate` agrees on
+five cases in both directions.
+**⛔ Proven able to fail — four injections, each confirmed landed by byte count, each restored from a
+scratchpad copy and `cmp`-verified, never `git checkout --`.**
+1. Flag removed from `LessonReader` (30,349 → 30,326 b, `grep -c` 0) → **exit 1**, and the failure
+   names my own file.
+2. Flag added to `Practice` — the wrong-direction "fix" (37,918 → 37,941 b) → **exit 1**.
+3. `acceptsScheduleUpdate` stuck **true**, i.e. the original defect restored (9,168 → 9,142 b) →
+   **exit 1** on the `scheduled ahead` case.
+4. Stuck **false**, i.e. the check silently records nothing (9,143 b) → **exit 1** on `due today` and
+   `overdue`.
+
+**✏️ A defect the injections found in my own guard, fixed in the same run.** Injection 1 failed
+correctly and the section's summary line printed beside it read *"2 call sites carry the right
+mode … agrees on 5 cases in both directions"* — an "ok" summary sitting under its own FAIL, which is
+exactly the "reviews as correct" shape §44's failure message warns about. Both halves now count
+their own failures: injection 2 prints `1/2 … (1 WRONG — see the failure(s) above)` and injection 4
+prints `3/5 … — DISAGREES`.
+
+**Also swept, to zero, and filed as a note under item 160 so nobody re-runs it.** Every distractor
+pass in this log is about LENGTH; the class *"a distractor the lesson itself asserts is true"* had
+never been swept. 138 distractors against their own lesson bodies, controls firing both ways —
+**zero full-containment, and the 25 top-ranked read clean by hand.** The instrument is a scratchpad
+reading aid and is deliberately **not** committed: it has no threshold that could honestly be a gate.
+That sweep is what the run started as; the walk that found the real defect came after it returned
+nothing.
+
+**Adversarial self-check (step 5) — run, and it found two things.**
+- **Blindspot register.** No lesson prose, market copy, kids framing, date or market figure touched:
+  the diff is two `src/lib` files, one call site in `LessonReader`, and `check-data.mjs`. No
+  user-visible string changed in any language. `npm run check-blindspot` **0 failures**, run rather
+  than reasoned about.
+- **DECISIONS.md.** No conflict, and the check is load-bearing here rather than a formality:
+  `localStorage`-only state is the decision this change was most at risk of breaking, and the
+  scheduler-rule design was chosen **because** the alternative — a persisted "already answered" flag
+  — would have added a storage key. No key added, no shape changed, no migration.
+- **Already-done item.** Not a redo. `grep -in "double.count\|recorded twice\|answered twice\|
+  remount\|idempot"` over the log and archive returns nothing about this: the two near-misses are a
+  StrictMode double-fire explicitly recorded as *"not a real double-count a learner would ever see"*
+  and the 2026-09-01 id-vs-index change, which is about *which* key an answer writes, not *how many
+  times*. ⚠️ **One archive line looked like a contradiction and is not:** 2026-09-04 recorded that
+  *"a hash-only navigation does not remount the app"*. True of the **app shell**; the pushed lesson
+  view is a different scope, and route 2 above is the measurement that settles it.
+- **The first thing it found: my guard's summary line contradicted its own failure** — written up
+  above, fixed in this commit.
+- **The second: I nearly shipped the analytics half silently.** `track(EVENTS.QUIZ_ANSWERED, …)` sits
+  on the line after the call I guarded and still double-fires on a re-mount. It is invisible while
+  `provider: "none"` and stops being invisible the moment O-2's step 1 lands, so it is filed as a
+  note under item 18 rather than fixed here — whether a re-answer is one event or two is a question
+  about what the funnel should count, and deciding it without the provider would be guessing. **The
+  honest framing is that this commit fixes the learner-visible half of a two-part defect and says so.**
+- **My own verification claim.** An independent reviewer re-running only what is quoted gets the same
+  result: every review-state figure above is the raw `ecycles_review` string read out of
+  `localStorage`, not arithmetic of mine; every injection is quoted with its byte count before and
+  after and with the failure text it produced; the bundle hash is quoted because the build changed it
+  (`index-BnvrHnCR` → `index-Ca1KPbhW`) and that is the control that the walk ran against this code.
+  **The one thing a reviewer cannot reproduce from the text alone is the live driving itself** — it
+  needs a served `dist/` and a browser; the six rows are stated as what that produced, and rows 3, 5
+  and 6 are the controls that make row 4 mean something.
+
+**Verification.** `npm test` ✅ **0 failures**, with the **same four pre-existing warnings** as the
+run's opening baseline (translation review 0% human, 47 abridged pairs, the quiz option-length cue at
+56.5%, and the log-size floor). §8b(ii) reports `2/2 recordReview() call site(s) carry the right
+mode, acceptsScheduleUpdate agrees on 5/5 case(s) in both directions`. `npm run build` ✅ 584 ms.
+`npm run check-blindspot` ✅ 0 failures.
+
+**W-7 rule 5's test, charged against this run rather than left out.** The backlog went **397,785 →
+401,084 b (+3,299)** — two filed notes and one "Completed and pruned" pointer. It is still **24,389 b
+under** the block's 425,473 b baseline, but this run moved the number the **wrong** way, and rule 5's
+whole point is that a pass which does not charge itself is not measuring anything. The trade is
+stated rather than hidden: the item-160 note costs ~1.6 KB and buys a future run not re-running a
+138-distractor sweep that returns zero, and the item-18 note costs ~1.1 KB and buys O-2's first day
+not shipping a silently inflated funnel. Figures are `check-log-size.mjs`'s own MEASURED line at both
+ends, not arithmetic of mine.

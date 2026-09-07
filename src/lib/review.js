@@ -87,6 +87,36 @@ export function recordAnswer(state, questionId, wasCorrect, today = todayStr()) 
   };
 }
 
+// Whether an answer to this question should move the schedule at all.
+//
+// True when the question has never been answered, or when its interval has
+// elapsed and it is due — deliberately the SAME rule `dueQuestions` filters
+// on, so the end-of-lesson check accepts an answer exactly when review would
+// have served the question.
+//
+// This exists because `Question`'s "one answer per question" lock is component
+// state, so it lasts as long as the mount and not as long as the answer. The
+// lesson check re-mounts on any ordinary navigation — switching language,
+// leaving the lesson and coming back — and every re-mount re-armed it, so a
+// second answer to the same question landed in the schedule as if it were a
+// new one. Measured live 2026-09-07 on the built app: answer lesson 1's check
+// wrong (`q001` box 1, seen 1, due tomorrow), switch to Chinese, answer it
+// again — box 2, seen 2, due a day further out. The question the learner had
+// just missed was PROMOTED, and re-opening the lesson did the same thing.
+//
+// The rule is the scheduler's own, not a lock, which is what makes the other
+// direction still work: come back after the interval and the check records
+// normally, because by then the question really is due.
+//
+// Practice deliberately does NOT use this — practicing more than the schedule
+// asks is one of that screen's stated design choices, and its "all questions"
+// pool exists precisely to re-drill things that are not due.
+export function acceptsScheduleUpdate(state, questionId, today = todayStr()) {
+  const entry = (state || {})[String(questionId)];
+  if (!entry || !entry.due) return true;
+  return dayDiff(entry.due, today) >= 0;
+}
+
 // Questions waiting to be reviewed today: anything already seen whose due date
 // has arrived. Never-seen questions are NOT included — they belong to their
 // lesson's own check, not to review; surfacing them here would ask about

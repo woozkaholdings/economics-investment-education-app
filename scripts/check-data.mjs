@@ -22,7 +22,7 @@ import { bracketBands, bracketIncomes, bracketTax, bracketTiers } from "../src/c
 import { economicSignals } from "../src/content/economicSignals.js";
 import { policyScenarios } from "../src/content/policyScenarios.js";
 import { sectors } from "../src/content/sectors.js";
-import { MAX_BOX, dueQuestions, migrateIndexKeys, recordAnswer } from "../src/lib/review.js";
+import { MAX_BOX, acceptsScheduleUpdate, dueQuestions, migrateIndexKeys, recordAnswer } from "../src/lib/review.js";
 import { MIN_BARS, OUTPERFORM_THRESHOLD, WJ_PERIODS, wjSectorComparison } from "../src/lib/relativeStrength.js";
 import { OLD_TO_NEW_LESSON_ID, migrateLegacyLessonIds } from "../src/lib/lessonIdMigration.js";
 import { HTML_LANG } from "../src/lib/useAppState.js";
@@ -777,6 +777,89 @@ if (keyedGroupsChecked < 4) {
     }
   }
   if (callsChecked === 0) fail("§8b: 0 recordReview() call sites checked — the scan is measuring nothing");
+
+  // §8b(ii). The SAME two call sites, on a different property of the same
+  // argument list: the lesson check must pass `onlyWhenDue`, and the review
+  // runner must not.
+  //
+  // `Question`'s "one answer per question" lock is component state, so it
+  // lasts as long as the mount. The lesson check re-mounts on any ordinary
+  // navigation — a language switch, or leaving the lesson and coming back —
+  // and every re-mount re-armed it. Measured live 2026-09-07 on the built
+  // app: answer lesson 1's check wrong (`q001` box 1, seen 1, due tomorrow),
+  // switch to Chinese, answer again — box 2, seen 2, due a day further out.
+  // The learner-visible failure this catches: a question they had just MISSED
+  // is promoted into a longer interval and stops coming back, because the app
+  // counted one answer twice.
+  //
+  // Practice is the other direction and is asserted here too, because the
+  // cheap "fix" for the above is to move the rule into `recordReview` itself,
+  // which would silently delete that screen's stated design — practicing more
+  // than the schedule asks, which is exactly what its "all questions" pool is
+  // for.
+  const DUE_MODE = {
+    "src/screens/LessonReader.jsx": true,
+    "src/screens/Practice.jsx": false,
+  };
+  let modesChecked = 0;
+  let modeFails = 0;
+  for (const [rel, wantsFlag] of Object.entries(DUE_MODE)) {
+    const src = readFileSync(join(ROOT, rel), "utf8");
+    const calls = [...src.matchAll(/recordReview\(([^;]*?)\);/g)];
+    if (calls.length === 0) {
+      fail(`§8b(ii): no recordReview() call parsed in ${rel} — the scan has gone blind`);
+      continue;
+    }
+    for (const [, args] of calls) {
+      modesChecked++;
+      const hasFlag = /onlyWhenDue\s*:\s*true/.test(args);
+      if (wantsFlag && !hasFlag) {
+        modeFails++;
+        fail(
+          `§8b(ii): ${rel} calls recordReview() without { onlyWhenDue: true }. The end-of-lesson ` +
+          `check re-mounts on a language switch and on leaving/re-entering the lesson, and each ` +
+          `re-mount resets Question's own one-answer lock — so a second answer promotes a question ` +
+          `the learner just missed (measured: q001 box 1 seen 1 -> box 2 seen 2). See ` +
+          `acceptsScheduleUpdate in src/lib/review.js.`,
+        );
+      }
+      if (!wantsFlag && hasFlag) {
+        modeFails++;
+        fail(
+          `§8b(ii): ${rel} calls recordReview() with { onlyWhenDue: true }. The review runner ` +
+          `deliberately records answers to questions that are NOT due — that is what its ` +
+          `"practice all questions" pool exists for — so this flag would make that pool score nothing.`,
+        );
+      }
+    }
+  }
+  if (modesChecked === 0) fail("§8b(ii): 0 call sites checked — the scan is measuring nothing");
+
+  // The rule itself, on the pure function rather than the call site, so the
+  // two cannot drift apart. Both directions, because a predicate stuck at
+  // `false` would silently make the lesson check stop recording anything.
+  const AS_TODAY = "2026-09-07";
+  const cases = [
+    ["never answered", {}, true],
+    ["scheduled ahead", { q001: { box: 1, due: "2026-09-08", seen: 1, wrong: 1 } }, false],
+    ["due today", { q001: { box: 1, due: AS_TODAY, seen: 1, wrong: 1 } }, true],
+    ["overdue", { q001: { box: 2, due: "2026-09-01", seen: 3, wrong: 1 } }, true],
+    ["entry with no due date", { q001: { box: 1, seen: 1, wrong: 1 } }, true],
+  ];
+  let caseFails = 0;
+  for (const [label, state, expected] of cases) {
+    const got = acceptsScheduleUpdate(state, "q001", AS_TODAY);
+    if (got !== expected) {
+      caseFails++;
+      fail(`§8b(ii) acceptsScheduleUpdate("${label}") returned ${got}, expected ${expected} (as of ${AS_TODAY})`);
+    }
+  }
+  console.log(
+    `  §8b(ii) lesson-check idempotence: ${modesChecked - modeFails}/${modesChecked} recordReview() call site(s) carry the right mode` +
+    `${modeFails ? ` (${modeFails} WRONG — see the failure(s) above)` : ""}, ` +
+    `acceptsScheduleUpdate agrees on ${cases.length - caseFails}/${cases.length} case(s) in both directions` +
+    `${caseFails ? " — DISAGREES, see the failure(s) above" : ""}`,
+  );
 }
 
 
