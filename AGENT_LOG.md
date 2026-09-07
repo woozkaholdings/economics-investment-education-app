@@ -3834,8 +3834,44 @@ instead of hand-rolling an eighth mover. A working one is in this run's scratchp
     > that AI review has correlated blind spots. **The generalization: a mechanical, checkable property
     > should get a script in `check-data.mjs`, not a reviewer's attention.**
 
-27. **[Content/UX — the scope this item defines is now BUILT (2026-08-16); re-scope before picking it
-    again.] Lesson visuals for the money track.**
+27. **[Content/UX — ✅ CLOSED 2026-09-07 (scheduled dev-agent): NO CANDIDATE REMAINS under this
+    item's own two rules, in any track. Do not pick it again without a new rule.] Lesson visuals.**
+    > **What was true:** the money track was the least illustrated of the three and this item drove
+    > twelve figures onto it and its neighbours. **What is true now, measured 2026-09-07 with the
+    > parse below and its control:** **26** lessons carry no figure, and **all 26 are now on the ⛔
+    > measured-rejection list** — the list has no stale entry either (every id on it is genuinely
+    > bare, checked programmatically, not by eye). Coverage stands at economy **7/12**, money
+    > **7/17**, essentials **4/15**.
+    > **The money track specifically is exhausted**: all ten of its bare lessons were already
+    > rejected before this run, so the item as scoped had zero candidates left. The last two
+    > unevaluated lessons in the whole app were **economy 29 and 31**, and this run evaluated both.
+    > **⛔ 29 — "Transactions: The Building Block" — REJECTED, rule 2, and it is the highest-stakes
+    > rejection in this item** (it is lesson 1 of the main path, the lesson §4.3's Phase-0 gate is
+    > about). Three designs were considered and each is already shipped: **(i)** the transaction/
+    > income chain as a closed loop **is lesson 30's `SpendingLoop`**, one lesson later and
+    > deliberately placed there; **(ii)** `$500 ÷ 100 loaves = $5` as a partitioned total is
+    > `budgetSplit` / `mortgageSplit` / `BracketStack`'s shape, and the prose does that arithmetic in
+    > one sentence that no reader struggles with — plausible, not earned; **(iii)** transaction →
+    > market → economy as containment is `NestedCycles`' shape one axis over. **Rule 1 is NOT what
+    > rejects 29** — it states $500, 100 and $5 in all five languages and would invent nothing.
+    > **⛔ 31 — "Productivity Growth: The Long-Run Driver" — REJECTED, rules 1 AND 2.** **Rule 1, with
+    > the invented quantities named as the rule requires:** the obvious figure is the straight
+    > productivity trend with credit swinging around it, and its entire visual claim is **the
+    > amplitude of the swings relative to the trend, and their period** — lesson 31 states **neither**,
+    > in any language. Scanned all five: the lesson contains exactly **one** number, `$15,000`, and
+    > nothing else. This is the opposite of lesson 33, where `NestedCycles` was allowed *because* the
+    > prose bounds the count ("5-8 years", "75-100 years" — control re-run this run, both present).
+    > **Rule 2:** that shape is `NestedCycles` (a rising line that wobbles, two lessons later), and
+    > section 2's "same $15,000, opposite outcome" is **`SunkFork`'s** topology — one amount, a fork,
+    > two branches — shipped on lesson 19 the day before.
+    > ⭐ **The transferable finding: the economy track's remaining gaps are surrounded by the shapes
+    > that would fill them.** 29 sits beside lesson 30's loop; 31 sits beside 32/33/38's cycles. That
+    > is not a coincidence to route around — it is the do-not-redraw rule reporting that this track's
+    > figure vocabulary is complete.
+    > **What would legitimately reopen this item:** a NEW shape nobody has drawn here, argued from a
+    > sentence a lesson's prose cannot write — not a new lesson from the list above, and not a
+    > softening of either rule. The rules are doing real work: between them they killed six named
+    > designs this run alone.
     > ## ⭐ READ THIS FIRST — the two rules and the rejection list, lifted to the top 2026-09-07 because this item asked for it in its own body and the last three runs paid for their being buried.
     > **This item asked for this, and was right to.** Its body says the two ⛔ lists "are the single
     > highest-value thing in it" and sit ~85 lines down; the 2026-09-04 run re-derived three listed
@@ -7427,3 +7463,88 @@ exist on this machine, so `npm run deploy` still refuses (W-7.1's one remaining 
   quoted with the negative control that fired, and the two clean sweeps are quoted with the probe
   that proves the instrument was alive. The one thing not re-verifiable from this entry is the
   scheduled-task list, which is machine state rather than repo state — it is quoted as what it is.
+
+### 2026-09-07 (scheduled dev-agent, resumed after the owner-directed audit; backlog item 27) — the money track had no candidates left before this run started, and the two lessons nobody had ever evaluated are surrounded by the shapes that would have filled them
+
+**Where the pick came from, stated honestly because it is the weakest part of this run.** The owner
+said "resume the backlog work", and I picked item 27 — **which the previous scheduled run had also
+picked.** That is W-5.2's *continue-the-tranche* shape, and naming it is cheaper than defending it.
+What rescues the run is that **step 3.5 broke the premise on the first command**, and the corrected
+facts made closing the item the right work rather than adding a thirteenth figure to it.
+
+**⛔ Step 3.5 — the premise, with the item's own prescribed control. It broke immediately.**
+- **Coverage re-parsed** (import `lessons.js`, parse `LESSON_VISUALS`, join on `track`). Controls the
+  item prescribes: **44 lessons parsed**, `36` found, `9999` not found, 18 visual ids, **0 orphans**
+  — all fired. **economy 7/12, money 7/17, essentials 4/15.**
+- ⛔ **The finding that changed the run: item 27 is scoped to the money track, and the money track
+  had ZERO candidates left before I started.** All **ten** bare money lessons were already on the
+  item's ⛔ measured-rejection list. So were all **eleven** bare `essentials` lessons. I checked this
+  **programmatically rather than by eye** — bare-set minus rejection-set, both directions — which
+  also confirmed the list carries **no stale entry**: every id recorded on it is genuinely still
+  bare. **26 bare lessons, 24 already rejected, exactly 2 never evaluated: economy 29 and 31.**
+- **So the item could not be advanced as scoped, and the honest work was to evaluate the last two
+  lessons in the app and close it.** Both were evaluated against the item's two rules; both reject.
+
+**⛔ 29 — "Transactions: The Building Block" — rejected under rule 2, and it is the rejection I most
+wanted to talk myself out of.** It is **lesson 1 of the main path** — what a new install opens on,
+and the lesson §4.3's Phase-0 gate is about — so a figure there would be the highest-leverage one in
+the app. Three designs, each already shipped: the transaction/income chain **as a closed loop is
+lesson 30's `SpendingLoop`**, one lesson later and deliberately placed there (I had this half-drawn
+before I read `LessonVisual.jsx`); `$500 ÷ 100 loaves = $5` **as a partitioned total** is
+`budgetSplit`/`mortgageSplit`/`BracketStack`'s shape, and the prose does that arithmetic in one
+sentence nobody struggles with — **plausible, which the item explicitly forbids as a reason**;
+transaction → market → economy **as containment** is `NestedCycles` one axis over. **Rule 1 does not
+reject 29**: it states $500, 100 and $5 in all five languages and would invent nothing.
+
+**⛔ 31 — "Productivity Growth: The Long-Run Driver" — rejected under rule 1 AND rule 2.** Rule 1
+requires naming the quantity that would have to be invented, so: the obvious figure is the straight
+productivity trend with credit swinging around it, and **its entire visual claim is the amplitude of
+those swings relative to the trend, and their period.** Lesson 31 states **neither**. Measured across
+all five languages rather than read in English: the lesson contains **exactly one number, `$15,000`**
+(`ja` renders it `1万5,000`, which is the same figure, not two). **The contrast that proves this is
+the right reading is lesson 33**, where `NestedCycles` was allowed *because* the prose bounds the
+count — "5-8 years" and "75-100 years", both re-confirmed present this run as the scan's control.
+Rule 2 rejects it twice over: the trend-plus-wobble **is** `NestedCycles` two lessons later, and
+section 2's *"same $15,000, opposite outcome"* is **`SunkFork`'s** topology — one amount, a fork, two
+branches — shipped on lesson 19 **the day before**.
+
+⭐ **The transferable finding, and it is why the item is closed rather than parked: the economy
+track's two remaining gaps are surrounded by the shapes that would fill them.** 29 sits beside lesson
+30's loop; 31 sits between 32/33/38's cycles. That is not an obstacle to route around — it is the
+do-not-redraw rule reporting that **this track's figure vocabulary is complete.** Item 27 is closed
+with the conclusion that no candidate remains under its own rules, and with what would legitimately
+reopen it: a genuinely new shape argued from a sentence some lesson's prose cannot write.
+
+**No code changed, and that is the point of the entry.** Six named designs were killed by the two
+rules this run; the rules are load-bearing, not ceremony. **Nothing was drawn to make the run look
+productive** — the item's own text forbids exactly that, and a thirteenth figure that restated
+lesson 30's loop on lesson 29 would have been the most plausible-looking mistake available.
+
+**Verification.** `npm test` ✅ **PASS: 0 failure(s)** with the **same 4 pre-existing warnings** as
+the baseline. Confirmed no instrument parses item 27's lists before editing it (`§31` reads
+track/lesson attributions in `src/` + `scripts/` + `DECISIONS.md` — **17 references, 8 exempted** —
+and treats the log's dated records as out of scope), so collapsing the item could not break the suite;
+re-ran the suite afterwards anyway rather than relying on that.
+
+**Adversarial self-check (step 5) — run, and it found two things.**
+- **Blindspot register.** No content, no prose, no component touched. ⚠️ **Worth recording: the
+  figure I rejected for lesson 31 is Dalio's signature chart** (a productivity trend with debt cycles
+  around it). **§10.2 is not what rejected it** — rules 1 and 2 did, independently and first — but a
+  future run reaching for that design should know it is adjacent to a closed blindspot as well as to
+  `NestedCycles`.
+- **DECISIONS.md.** No conflict: no code, no dependency, no state, no content module touched.
+- **Already-done item.** This closes an item rather than redoing one; nothing in "Completed and
+  pruned" is reopened, and no shipped figure was altered.
+- **The first thing it found: my pick was chain-shaped and I nearly did not say so.** Picking the
+  item the previous run picked is the shape W-5.2 named, and the draft of this entry opened with the
+  measurement instead — which would have made a tranche-continuation read as a fresh derivation.
+  Moved to the top of the entry.
+- **The second: I was one file-read away from shipping a duplicate of lesson 30's figure.** The loop
+  design for lesson 29 was chosen on the lesson's prose and killed only when I read
+  `LessonVisual.jsx` — i.e. **rule 2 caught it, my judgment did not.** That is the argument against
+  ever softening it, recorded from the inside rather than as advice.
+- **My own verification claim.** An independent reviewer re-running the two commands quoted here —
+  the item's parse with its three controls, and the bare-set-versus-rejection-set comparison — gets
+  the same 26 / 24 / 2 and the same two lesson ids. The rejections are judgments and are labeled as
+  such; what is measured about them (the quantity scan across five languages, the shipped-shape
+  inventory) is quoted as commands rather than conclusions.
