@@ -1,5 +1,5 @@
 {
-  "asOf": "2026-09-04",
+  "asOf": "2026-09-07",
   "source": "tiingo",
   "benchmark": {
     "symbol": "SPY",
@@ -186,8 +186,8 @@
       "seriesId": "DGS10"
     },
     "curveSpread": {
-      "value": 0.41,
-      "date": "2026-09-04",
+      "value": 0.43,
+      "date": "2026-09-03",
       "unit": "percent",
       "seriesId": "T10Y2Y"
     },
