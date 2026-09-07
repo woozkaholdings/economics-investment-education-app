@@ -806,6 +806,138 @@ export function TradeoffPlot({ title, points, endLabels, upfrontLabel, colors, d
   );
 }
 
+// ── SunkFork ──────────────────────────────────────────────────────────────
+// Lesson 19 ("Throwing Good Money After Bad"), backlog item 27.
+//
+// A FOURTH kind of figure for this file, and naming the kind is what decides
+// what may be drawn. `GrowthCurve`/`GapColumns`/`AsymmetryChart` plot
+// arithmetic their lesson states; `TradeoffPlot` plots ranks read off two
+// sentences; `OutcomeGrid` plots a partition. This one plots TOPOLOGY — where
+// a cost sits relative to a decision — and carries exactly one number.
+//
+// WHY IT EARNS A PICTURE, and the argument is positional rather than
+// numerical. Lesson 19's claim is not that $120 is large or small; it is that
+// the $120 left the account BEFORE tonight's choice existed ("It left her
+// account the moment she bought the ticket, weeks before she ever got sick"),
+// so it is common to both branches and cancels. Prose has to assert that
+// twice — once per branch — and the reader has to hold both assertions at
+// once to see them cancel. Drawn, nothing has to be asserted at all: the
+// amount is on the trunk, the trunk is upstream of the fork, and there is
+// visibly nowhere else for it to be. That is a shape, and it is the one shape
+// this file does not already draw.
+//
+// ⚠️ WHY IT IS NOT TWO COLUMNS, which is the obvious drawing and the wrong
+// one. Two columns each carrying an identical $120 band at the base is
+// `GapColumns` — lesson 17's figure, whose caption already turns on "It is
+// exactly the same height in both". It would also misplace the money: columns
+// put the cost INSIDE each option, which is precisely the reasoning the lesson
+// is arguing against ("I'd be wasting the money if I stayed home"). The cost
+// belongs upstream of the fork, drawn once, because it was spent once.
+//
+// ⛔ THE TWO BRANCHES ARE DRAWN IDENTICALLY, and that is load-bearing rather
+// than lazy. Lesson 19 explicitly refuses to rank them: "Sunk costs aren't a
+// reason to always quit, either — sometimes the honest fresh look still says
+// continue. The point isn't which answer is right." So both branches take the
+// same stroke, the same dot radius and the same token, and neither carries a
+// mark the other lacks. Coloring one `graph.green` would render a
+// recommendation the lesson declines to make — §10.1 drawn rather than
+// written — and `check-data.mjs` §77 (d) is what holds it.
+const FORK_W = 300;
+const FORK_H = 150;
+// The fork sits left of center on purpose: the trunk carries one short label
+// and the branches carry the comparison, so the space belongs downstream.
+const FORK_X = 118;
+const FORK_MID_Y = 78;
+const FORK_SPREAD = 36;
+const FORK_START_X = 20;
+const FORK_END_X = 268;
+const FORK_DOT_R = 5;
+
+export function SunkFork({ title, amountLabel, trunkLabel, branches, colors, description, caption }) {
+  const endY = [FORK_MID_Y - FORK_SPREAD, FORK_MID_Y + FORK_SPREAD];
+
+  return (
+    <figure style={{ background: surface.card, border: `1px solid ${line.hairline}`, borderRadius: radius.lg, padding: space["4"], margin: 0 }}>
+      {title && (
+        <figcaption style={{ marginBottom: space["3"] }}>
+          <Text as="span" variant="caption" color={ink.muted} style={{ textTransform: "uppercase", letterSpacing: "0.05em", fontWeight: 700 }}>
+            {title}
+          </Text>
+        </figcaption>
+      )}
+      <svg viewBox={`0 0 ${FORK_W} ${FORK_H}`} style={{ width: "100%", height: 150 }} role="img" data-figure="sunkFork" aria-label={description}>
+        {/*
+          The trunk. `graph.neutral` rather than `graph.blue`: it is the part
+          of the picture the lesson says to stop weighing, and the two live
+          options are the blue ones. It is drawn once because the money was
+          spent once.
+        */}
+        <line data-figure-part="trunk" x1={FORK_START_X} y1={FORK_MID_Y} x2={FORK_X} y2={FORK_MID_Y} stroke={colors.trunk} strokeWidth="2" />
+        {/*
+          The amount, printed on the trunk and nowhere else — the single number
+          in this figure, and the only place it may appear. `ink.muted` is a
+          4.5:1 text token; `graph.*` is "never text" (theme.js), so the label
+          does not borrow the trunk's stroke color.
+        */}
+        <text x={FORK_START_X} y={FORK_MID_Y - 10} fill={ink.muted} fontSize="12" fontWeight="700">{amountLabel}</text>
+        {/* The fork: one node, both branches leaving it at the same point. */}
+        <circle data-figure-part="fork" cx={FORK_X} cy={FORK_MID_Y} r="3.5" fill={colors.trunk} />
+        {endY.map((y, i) => (
+          <line
+            key={`branch-${i}`}
+            data-figure-part="branch"
+            data-figure-index={i}
+            x1={FORK_X}
+            y1={FORK_MID_Y}
+            x2={FORK_END_X}
+            y2={y}
+            stroke={colors.branch}
+            strokeWidth="2"
+          />
+        ))}
+        {endY.map((y, i) => (
+          <circle key={`end-${i}`} data-figure-part="end" data-figure-index={i} cx={FORK_END_X} cy={y} r={FORK_DOT_R} fill={colors.branch} />
+        ))}
+        {/*
+          The key numerals sit BESIDE each end dot, never inside it, for the
+          reason TradeoffPlot states: `graph.blue` is a 3:1 graphics token that
+          theme.js marks "Never text", so a numeral printed on a dot would be
+          the one label in this file whose contrast rests on a token never
+          measured for it.
+        */}
+        {endY.map((y, i) => (
+          <text key={`n-${i}`} x={FORK_END_X - 11} y={y - 8} textAnchor="middle" fill={ink.muted} fontSize="10" fontWeight="700">
+            {i + 1}
+          </text>
+        ))}
+      </svg>
+      {/*
+        Every long string lives in HTML rather than in the SVG, which is
+        TradeoffPlot's measured convention: at SVG font sizes the Spanish and
+        Korean strings here overrun 300 units and clip, while in HTML they wrap
+        and scale with the app's text-size control.
+      */}
+      <Text variant="caption" color={ink.muted} style={{ marginTop: space["1"] }}>{trunkLabel}</Text>
+      {/*
+        An <ol> whose order is the two branch dots top-to-bottom. `role="list"`
+        is not redundant — WebKit drops list semantics from a list styled
+        `listStyle: none` (backlog item 34, checked by §24). The numeral is
+        `aria-hidden` because it keys dots inside a `role="img"`, so nothing
+        announces it on the figure side.
+      */}
+      <ol role="list" style={{ margin: `${space["3"]}px 0 0`, padding: 0, listStyle: "none", display: "grid", gap: space["1"] }}>
+        {branches.map((b, i) => (
+          <li key={b.key} style={{ display: "flex", alignItems: "baseline", gap: space["2"] }}>
+            <Text as="span" aria-hidden="true" variant="caption" color={ink.muted} style={{ fontWeight: 700, minWidth: "1.2em" }}>{i + 1}</Text>
+            <Text as="span" variant="caption" color={ink.strong} style={{ fontWeight: 700 }}>{b.label}</Text>
+          </li>
+        ))}
+      </ol>
+      {caption && <Text variant="caption" color={ink.muted} style={{ marginTop: space["3"], lineHeight: 1.5 }}>{caption}</Text>}
+    </figure>
+  );
+}
+
 // ── OutcomeGrid ───────────────────────────────────────────────────────────
 // Lesson 28 ("Does One Lucky Win Prove You Have a System?"), backlog item 27.
 //

@@ -14,7 +14,7 @@
 // ═══════════════════════════════════════════════════════════════════════════
 
 import { useState } from "react";
-import { AsymmetryChart, BalanceBand, Bar, BracketStack, CycleChart, GapColumns, GrowthCurve, MatchGrid, NestedCycles, OutcomeGrid, PreferenceFlip, ProportionBar, SpendingLoop, SplitBand, TradeoffPlot, YieldCurve } from "./charts.jsx";
+import { AsymmetryChart, BalanceBand, Bar, BracketStack, CycleChart, GapColumns, GrowthCurve, MatchGrid, NestedCycles, OutcomeGrid, PreferenceFlip, ProportionBar, SpendingLoop, SplitBand, SunkFork, TradeoffPlot, YieldCurve } from "./charts.jsx";
 import { Segmented, Text } from "./ui.jsx";
 import {
   balanceSheetCaption, balanceSheetDescription, balanceSheetFormat, balanceSheetHistory, balanceSheetUnit,
@@ -43,6 +43,7 @@ import {
   outcomeRowLabels, outcomeSpanLabel, outcomeTitle,
   splitCaption, splitCrossing, splitDescription, splitEndLabels, splitInterestShare,
   splitMarkerLabel, splitSamples, splitSegmentLabels, splitTitle,
+  sunkAmount, sunkBranchLabels, sunkCaption, sunkDescription, sunkTitle, sunkTrunkLabel,
   tradeCaption, tradeDescription, tradeEndLabels, tradeKindLabels, tradeTitle, tradeUpfrontLabel,
 } from "../content/moneyVisuals.js";
 import { graph, ink, space, surface } from "../theme.js";
@@ -78,6 +79,7 @@ export const LESSON_VISUALS = {
   7: "taxBrackets",    // Taxes: How Your Paycheck Is Actually Taxed
   12: "mortgageSplit",  // Renting vs. Buying (its "What a Mortgage Payment Is Actually Made Of" section)
   17: "earningsGap",   // Where Did the Raise Go?
+  19: "sunkFork",      // Throwing Good Money After Bad
   23: "preferenceFlip",// Why 'Later' Never Feels as Real as 'Now'
   25: "horizonMatch", // Does This Money Need to Be There Tomorrow, or Can It Wait Ten Years?
   27: "lossAsymmetry", // Why Does Losing $50 Hurt More Than Finding $50 Feels Good?
@@ -100,7 +102,7 @@ const CURVE_TYPES = ["normal", "flat", "inverted", "steep"];
 // comment in the component). The constant keeps its MONEY_VISUALS name (it is referenced further
 // down and in §21's checks); the set spans `essentials` and `money` since the
 // 2026-08-19 split, so the name is a label, not a track claim.
-const MONEY_VISUALS = new Set(["budgetSplit", "compounding", "taxBrackets", "mortgageSplit", "earningsGap", "preferenceFlip", "horizonMatch", "lossAsymmetry", "incomeTradeoff", "outcomeGrid"]);
+const MONEY_VISUALS = new Set(["budgetSplit", "compounding", "taxBrackets", "mortgageSplit", "earningsGap", "preferenceFlip", "horizonMatch", "lossAsymmetry", "incomeTradeoff", "outcomeGrid", "sunkFork"]);
 
 // Figures are US dollars in every language — the lessons' own worked examples
 // are written that way, and converting them per locale would make the chart
@@ -417,6 +419,28 @@ export default function LessonVisual({ lessonId, t, lang }) {
         them in array order, so the horizontal ordering is the data's own and
         cannot drift away from `moneyVisuals.js` by an edit here.
       */}
+      {/*
+        The only figure here whose subject is a POSITION rather than a
+        quantity. Lesson 19 carries one number and the figure's claim is about
+        where that number sits — on the stem, upstream of the fork — because
+        the lesson says it left the account two months before tonight's choice
+        existed. The two branches are deliberately identical: the lesson
+        refuses to name a right answer ("sometimes the honest fresh look still
+        says continue"), so marking one would draw a recommendation it declines
+        to make. See charts.jsx and `check-data.mjs` §77.
+      */}
+      {kind === "sunkFork" && (
+        <SunkFork
+          title={sunkTitle[lang]}
+          amountLabel={usd(sunkAmount)}
+          trunkLabel={sunkTrunkLabel[lang]}
+          branches={sunkBranchLabels[lang].map((label, i) => ({ key: `branch-${i}`, label }))}
+          colors={{ trunk: graph.neutral, branch: graph.blue }}
+          description={sunkDescription[lang]}
+          caption={sunkCaption[lang]}
+        />
+      )}
+
       {kind === "incomeTradeoff" && (
         <TradeoffPlot
           title={tradeTitle[lang]}

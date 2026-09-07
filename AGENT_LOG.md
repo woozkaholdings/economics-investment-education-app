@@ -3818,16 +3818,59 @@ instead of hand-rolling an eighth mover. A working one is in this run's scratchp
 
 27. **[Content/UX — the scope this item defines is now BUILT (2026-08-16); re-scope before picking it
     again.] Lesson visuals for the money track.**
-    > **⛔ PREMISE CORRECTED 2026-08-27 by the run that added the fifth visual. The "money is 4/28"
-    > line below, and every count in this item's older text, stopped being true at the 2026-08-19
-    > `essentials` split — do not quote them.** Measured that day by parsing `LESSON_VISUALS` out of
-    > `LessonVisual.jsx` and joining it against `lessons.js`'s `track` field, with a parser control
-    > (three ids it must find, three it must not): **economy 5/12, essentials 3/15, money 1/17** before
-    > that run, **money 2/17** after it. The four earlier personal-finance figures are not one track's
-    > — 1/3/7 are `essentials`, 27 is `money`.
-    > **The corrected number is the stronger argument.** Since the 2026-08-18 reversal `money` is the
-    > judgment track §0 calls the product, and it carried **one** diagram across seventeen lessons
-    > while the *vehicle* carried five across twelve.
+    > ## ⭐ READ THIS FIRST — the two rules and the rejection list, lifted to the top 2026-09-07 because this item asked for it in its own body and the last three runs paid for their being buried.
+    > **This item asked for this, and was right to.** Its body says the two ⛔ lists "are the single
+    > highest-value thing in it" and sit ~85 lines down; the 2026-09-04 run re-derived three listed
+    > rejections and the 2026-09-07 run re-derived five. Everything a picker needs is now above.
+    >
+    > **⛔ NEVER QUOTE A COVERAGE COUNT FROM THIS ITEM — including from the paragraphs below this
+    > one.** Every count ever typed here has gone stale: "money is 4/28" survived four weeks, and the
+    > 2026-08-27 figures were still being quoted on 2026-09-07 when all three were wrong. The counts
+    > that remain in the body are **dated historical record** and are deliberately not maintained
+    > (§31 keeps them verbatim). **Run the parse instead**; it takes one command and cannot be stale:
+    > ```
+    > node -e "const u=new URL('file://'+process.cwd()+'/src/content/lessons.js').href;import(u).then(async({lessons})=>{const fs=await import('node:fs');const m=fs.readFileSync('src/components/LessonVisual.jsx','utf8').match(/LESSON_VISUALS\s*=\s*\{([\s\S]*?)\n\}/);const ids=[...m[1].matchAll(/^\s*(?:'([^']+)'|\"([^\"]+)\"|([\w-]+))\s*:/gm)].map(x=>x[1]||x[2]||x[3]);const by={};for(const l of lessons)(by[l.track]??=[]).push(String(l.id));for(const[t,v]of Object.entries(by))console.log(t,v.filter(i=>ids.includes(i)).length+'/'+v.length,'bare:',v.filter(i=>!ids.includes(i)).join(' '))})"
+    > ```
+    > **Carry the control the older text prescribes** (must find 36, must not find 9999, 44 lessons).
+    > ⚠️ A regex over `lessons.js` returns **0 lessons** — the entries are multi-line; importing the
+    > module is what works, and the control is what catches it.
+    >
+    > **THE TWO RULES, and every rejection below is one of them.**
+    > 1. **The quantity rule.** Does the prose state every quantity *the shape needs*, or only the
+    >    ones that make it sound plausible? A shape needing **zero** passes vacuously.
+    >    ⛔ **IT IS ABOUT INVENTED QUANTITIES, NOT ABOUT HAVING SOME — misread that way it has now
+    >    wrongly rejected TWO lessons**: 25 (shipped 2026-09-04) and 19 ("states Priya's $120 and
+    >    nothing on the other side", shipped 2026-09-07). **When this rule rejects a lesson, name the
+    >    quantity that would have to be invented and the mark it would be invented for.** If that
+    >    sentence cannot be written, the rule is not what is doing the rejecting.
+    > 2. **The do-not-redraw rule.** A figure may not restate a shape this app already ships.
+    >    Rejected under it: **11** (a fee gap = lesson 3's `GrowthCurve`, two lines from one origin,
+    >    "the gap widens every year") and **18** (same shape, same 6%, one track apart) and **43**
+    >    (its time-coupling axis is already the horizontal axis of lesson 44's shipped
+    >    `TradeoffPlot`).
+    >
+    > **⛔ MEASURED REJECTIONS — DO NOT RE-DERIVE ANY OF THESE.** Reasons are in the body below.
+    > `money`: **16, 18, 20, 21, 22, 24, 26, 41, 42, 43**. `essentials`: **2, 4, 5, 6, 8, 9, 10, 11,
+    > 13, 14, 15**. `economy`: **35, 39, 40**. ~~19~~ and ~~25~~ were on this list and are now
+    > **shipped** — both re-decided under rule 1's correction, not overridden.
+    > **There is no named candidate**, deliberately: a named candidate is how this item became
+    > count-shaped twice. A run that wants one reads a lesson's prose and names what the prose cannot
+    > do. **Do not pick a lesson because a diagram is "plausible" there.**
+    >
+    > **Twelfth visual added 2026-09-07: lesson 19 (sunk cost), as `SunkFork` — the first figure whose
+    > subject is TOPOLOGY, where a number sits relative to a decision.** The $120 left the account
+    > before tonight's choice existed, so it is common to both branches and cancels; prose asserts
+    > that once per branch and the reader must hold both, while drawn it is just upstream of the
+    > fork. **Not two columns** — that is lesson 17's `GapColumns` (rule 2), and columns would put the
+    > cost *inside* each option, which is the reasoning the lesson argues against. `check-data.mjs`
+    > §77 holds it, **(d) load-bearing**: both branches share one color and the caption names neither
+    > correct, because lesson 19 refuses to. Marking one would be §10.1 drawn rather than written.
+    > **⛔ PREMISE CORRECTED 2026-08-27** (collapsed 2026-09-07, W-7.2 rule 1 — the correction closed
+    > and the top block replaced counting with a command). Its finding: this item's original "money is
+    > 4/28" framing died at the 2026-08-19 `essentials` split, because the four earlier
+    > personal-finance figures are not one track's — 1/3/7 are `essentials`, 27 is `money`. The
+    > argument that survived is the one the item still runs on: `money` is the judgment track §0 calls
+    > the product, and it was the least illustrated of the three.
     > **Fifth visual added 2026-08-27: lesson 23 (present bias), as `PreferenceFlip`.** It cleared the
     > bar below on the stated ground that a preference *reversal* is a crossing: the lesson's own
     > heading is "The Preference That Flips When 'Later' Becomes 'Now'", its body gives the flip as two
@@ -3923,13 +3966,10 @@ instead of hand-rolling an eighth mover. A working one is in this run's scratchp
     > two are *identical*, a sentence rather than a shape; **42** states four x \$1,000 and then
     > spends its second half insisting the categories "aren't a ladder" — a figure would harden what
     > the lesson deliberately loosens. **Do not re-derive these five.**
-    > ⚠️ **AND THE 2026-09-04 RUN RE-DERIVED THREE OF THEM ANYWAY (18, 21 and 42), reaching the same
-    > verdicts independently and paying for the privilege. Not because the list is unclear — it is
-    > excellent — but because it sits ~85 lines BELOW this item's headline, past a re-scope notice
-    > and eight "Nth visual added" paragraphs.** The transferable part is not "read more carefully":
-    > it is that **an item this long has a body a picker will not reach before it starts measuring**,
-    > and these two ⛔ candidate lists are the single highest-value thing in it. Whoever next
-    > compresses this item should lift them to the TOP, directly under the item's title.
+    > ⚠️ **THE 2026-09-04 RUN RE-DERIVED THREE OF THESE ANYWAY (18, 21, 42) and the 2026-09-07 run
+    > five — not because the list is unclear but because an item this long has a body a picker will
+    > not reach before it starts measuring.** ✅ **Its prescription — lift both ⛔ lists to the top —
+    > was carried out 2026-09-07** (W-7.2 rule 1; this clause is its conclusion, not an annotation).
     > **Tenth visual added 2026-09-03: lesson 34 (deleveraging), as `BalanceBand` — the first figure
     > whose subject is an INTERVAL.** Coverage re-parsed with this item's own control (must find 36,
     > must not find 9999, 44 lessons): **economy 7/12, essentials 3/15, money 5/17 — 15 of 44, 0
@@ -3951,17 +3991,15 @@ instead of hand-rolling an eighth mover. A working one is in this run's scratchp
     > argument above and the figure's shape are unchanged** — only the anchor's date range moved,
     > and §69 (a) forced the figure and the prose to move together. The 2026-09-03 text above is
     > kept verbatim per §31.
-    > ⛔ **THE MONEY TRACK NOW HAS NO REACHABLE CANDIDATE UNDER THIS ITEM'S OWN RULE, measured
-    > 2026-09-03 — this is a finding, not a to-do.** Money is **5/17** and is the track §0 calls the
-    > product. Of its twelve bare lessons, **16, 18, 19, 20, 21, 24, 25, 26 and 42** are this item's
-    > existing measured rejections; the three never assessed were read on 2026-09-03 and all three
-    > fail: **22** (confirmation bias) and **41** (the subject that wasn't on the timetable) state no
-    > quantity and no structure — their claims are about attention and about history — and **43**'s
-    > axis is time-coupling, which is *already one of the two axes lesson 44's `TradeoffPlot` draws*,
-    > so a figure there would redraw a shipped axis one lesson early. **Economy 35, 39 and 40 were
-    > also read: 35 is a dial whose effects the lesson lists sequentially with no magnitude for any of
-    > them.** The next figure must come from `essentials` (twelve bare, none ever assessed) or from a
-    > lesson whose prose changes. **Do not re-derive any of the rejections above.**
+    > ⛔ **"THE MONEY TRACK HAS NO REACHABLE CANDIDATE" (2026-09-03) IS REFUTED, twice, and the
+    > refutations are the useful part.** It listed 16, 18, 19, 20, 21, 24, 25, 26 and 42 as settled
+    > rejections and 22, 41 and 43 as newly assessed ones. **Lesson 25 shipped the next day and
+    > lesson 19 shipped on 2026-09-07** — both were on the list, and both came off it through rule
+    > 1's correction above rather than through any change to the prose. The survey was accurate about
+    > every lesson it read; what it got wrong was the rule it read them against. **A "no candidate
+    > remains" finding is a statement about the current reading of the rules, not about the corpus** —
+    > 43's rejection (its axis is already drawn at lesson 44) is the one on this list that rests on
+    > rule 2 and still stands.
     > **Eleventh visual added 2026-09-03: lesson 12 (renting vs. buying), as `SplitBand` — the first
     > `essentials` figure since 2026-08-16, and the first whose subject is a COMPOSITION THAT
     > INVERTS.** Coverage re-parsed with this item's own control (must find 36, must not find 9999,
@@ -4015,11 +4053,6 @@ instead of hand-rolling an eighth mover. A working one is in this run's scratchp
     > **4**, **6** and **13** state scattered amounts with no structure joining them. **The next
     > figure has no named candidate here either**, and that is a finding rather than a gap.
 
-    > **THE BAR FOR AN ELEVENTH IS UNCHANGED AND STILL BINDS**, and there is again **no named
-    > candidate** —
-    > deliberately, because a named candidate is how this item became count-shaped twice before. A run
-    > that wants one must read a lesson's prose first and name what the prose cannot do, the way this
-    > run did. **Do not pick a lesson because a diagram is "plausible" there.**
     > ⛔ **NEW, AND IT GENERALIZES PAST THIS ITEM: a figure's geometry is a RENDERED property, and a
     > source check cannot see it.** This run's figure shipped its intended claim ("the four cells are
     > equal") while rendering the bottom row **82px against the top row's 52px**, then **65 against
@@ -7046,3 +7079,152 @@ finding about how O-1 actually closed, **ask the owner directly rather than rest
 Open and unparked otherwise: 26 (blocked, see above), 27, 70/71, 74, 76, 94, 117, 155's probe, 160,
 165's essentials remainder. W-7.3's clock is still running: `market.json` is `asOf 2026-09-04`, age 2
 days, and Sectors goes to the unavailable state on **2026-09-09** if the owner's job does not run.
+
+### 2026-09-07 (scheduled dev-agent, backlog item 27 — the money track's figure coverage) — the item's own rejection list had already refused lesson 19, on a reading of its own quantity rule that the item had already corrected once for lesson 25 and never propagated back to the list
+
+**Where the pick came from.** W-6.2 rule 1 counts: the previous two scheduled runs took a corpus
+sweep of docs stating an expected output and item 167's live-find list. Neither was this run's own
+residual and the last entry filed none, so this is link one. Item 27 was chosen as the highest-value
+open, unblocked, learner-visible item on the track §0 calls the product. O-2 remains the entire
+critical path and no scheduled run can move it.
+
+**⛔ Step 3.5 — the premise, measured with a control, before anything was edited. It broke in three
+places, and one of the three changed what shipped.**
+- **Coverage re-parsed** (import `lessons.js`, parse `LESSON_VISUALS` out of `LessonVisual.jsx`,
+  join on `track`; parser control: 3 ids it must find, 3 it must not — fired): **economy 7/12,
+  essentials 4/15, money 6/17, 0 orphan ids.** The item's headline figures (money 4/17, economy
+  5/12, essentials 3/15, dated 2026-08-27) are **all three stale**, the fourth time a typed count in
+  this item has gone stale. ⚠️ The first instrument I wrote returned **`lessons parsed: 0`** — a
+  regex over multi-line entries — which the item's own text warns about and which the control
+  caught before it produced a number.
+- **The item's framing is stale too.** "Money carried one diagram across seventeen lessons while
+  the *vehicle* carried five across twelve" is now **6/17 against 7/12**, and `essentials` is the
+  lowest-covered track at **4/15**. The product-vs-vehicle gap the item was filed about has
+  substantially closed; it is 35% against 58%, not 6% against 42%.
+- ⛔ **The finding that mattered: I re-derived five rejections the item already held** — 16, 18, 21,
+  43 and 19 — reading each lesson's prose from scratch before reaching the two ⛔ lists ~85 lines
+  down. **The item predicted exactly this**, in its own body, about the 2026-09-04 run: the lists
+  "are the single highest-value thing in it" and sit below "eight 'Nth visual added' paragraphs"
+  (eleven by now). Two consecutive runs have now paid the same toll. My independent verdicts agreed
+  with the recorded ones in all five cases, which is corroboration and not news.
+
+**So the actual work was re-deciding one of them, and the ground was already in the item.**
+Lesson 19's recorded rejection reads, in full: *"**19** states Priya's $120 and nothing on the other
+side of the comparison."* That is the **quantity rule read as a requirement to HAVE quantities**,
+which is the precise misreading the item itself records and corrects for lesson 25 — *"the rule is
+about invented quantities; it was read as a requirement to have some"* — when lesson 25 was
+re-decided and shipped on 2026-09-04. **The correction was made for one lesson and never applied to
+the rest of the list it came from.** Lesson 19's figure needs exactly one number and invents nothing:
+its subject is *where* the $120 sits, not how big it is.
+
+**What shipped.** `SunkFork` (lesson 19, "Throwing Good Money After Bad") — a trunk carrying the
+$120, a fork node, and two branches. The claim is topological: the money left the account two months
+before tonight's choice existed, so it is common to both paths and cannot tell them apart. Prose has
+to assert that once per branch and the reader has to hold both at once; drawn, nothing is asserted —
+the amount is upstream of the fork and there is visibly nowhere else for it to be.
+- **Not two columns**, which is the obvious drawing and wrong twice over: two columns each carrying
+  an identical $120 base band **is** lesson 17's shipped `GapColumns` (the do-not-redraw rule), and
+  columns put the cost *inside* each option, which is the reasoning lesson 19 argues against ("I'd
+  be wasting the money if I stayed home").
+- **Every string is the lesson's own, per language, not a translation of the English.** The two
+  branch labels are lesson 19's words for what is left to compare — en "A miserable night out" / "A
+  restful night in", zh 一个难受的外出夜晚 / 一个安静休息的夜晚, and the ko/ja/es equivalents — each
+  taken from that language's own body.
+- **The two branches are drawn identically and that is load-bearing, not lazy.** Lesson 19 refuses
+  to name a right answer: *"Sunk costs aren't a reason to always quit, either — sometimes the honest
+  fresh look still says continue. The point isn't which answer is right."*
+- Registered in `MONEY_VISUALS`, so the figure carries the §10.1 educational note rather than the
+  market-scenario one.
+
+**`check-data.mjs` §77, and the learner-visible failure it names (W-6.2 rule 3).** A future run
+marking one branch as the right one — a green dot, a tick, a heavier stroke — would render the app
+telling a reader which way to decide in a lesson that explicitly declines to. That is §10.1 drawn
+rather than written, and it is exactly the well-meaning tidy-up a later pass would make. (a)/(b)
+anchor the single amount to the lesson body; (c) holds the fork at two arms in five languages;
+**(d1)** bans a verdict token in the component, requires one branch element rendered twice so both
+arms cannot drift to different origins, and requires `amountLabel` drawn exactly once; **(d2)** scans
+each language's caption and text alternative for verdict phrasing; (e) anchors both branch labels and
+the amount to that language's own lesson 19, with a per-language absent-probe control.
+**W-6.3's ratio, re-measured this run rather than quoted:** `scripts/` **20,472** lines against app
+code **8,989** = **2.28x**, against the 2.29x the previous run measured. This change is +162 script
+lines to +160 app lines — near parity — so it nudges the number down rather than up.
+
+**Verification.**
+- `npm test` ✅ **PASS: 0 failure(s)**, with the same **4** pre-existing warnings as the pre-edit
+  baseline run (translation review share, translation completeness, the quiz option-length cue, the
+  non-archivable floor).
+- `npm run build` ✅ in 1.05s. `npm run check-blindspot` ✅ **0 failures** — and §2.3's scan covers
+  `moneyVisuals` by name, so the new strings were read for live-looking dates, not assumed clean.
+- **§77 proved able to fail, four planted controls, restored from scratchpad copies** (never
+  `git checkout --`), each restore verified byte-identical with `cmp`: a `graph.green` branch →
+  **(d1)** fired; a paraphrased `zh` branch label → **(e)** fired naming the language; `sunkAmount`
+  120 → 150 → **(a)** and **(e)** fired in all five languages; *"Staying home is the right choice
+  here"* in the `en` caption → **(d2)** fired. §77 returns to 0 failures after each restore.
+- **Live walk of the built app**, `dist/` served statically, seeded `localStorage` (a URL does not
+  unlock a lesson) — and the seed needed `ecycles_legacy_lesson_id_migrated` set, because the first
+  attempt's raw ids were silently remapped by the legacy migration and unlocked the *economy* track
+  instead. Lesson 19 at 375px: figure present, trunk present, **2 branches and 2 end dots**, both
+  branches reading `x1=118 y1=78` — **the same fork node** — with identical stroke color, identical
+  `stroke-width` and identical end-dot fill and radius, read off the live DOM rather than the source.
+  The §10.1 note renders under it. Re-checked in `zh` and `es`: labels render, nothing clipped, no
+  horizontal page overflow (`scrollWidth` == `clientWidth` == 375).
+- ⚠️ **The Browser pane returned two blank screenshots after a reload while every DOM read on the
+  same tab worked.** Reported as what it is — the pixels were not usable, so the geometry claims
+  above rest on measured DOM values, not on an image I could not see.
+
+**US English (item 91) caught three of my own strings on the first `check-data` run** — "labelled"
+in the shipped `en` text alternative, "cancellation" and "centre" in two comments — all three fixed
+before the build. The guard worked; the mistake was mine.
+
+**Adversarial self-check (step 5) — run, and it found two things.**
+- **Blindspot register.** No Dalio reference (§10.2 green). §10.1 clean, and the figure's whole
+  design constraint is the §10.1 one — it declines to recommend a branch, and §77 (d) is what keeps
+  it declining. §10.3 untouched. §2.3: the figure carries one amount, which is lesson 19's own
+  worked example and not a market figure, and no date — "two months ago" is the lesson's own
+  relative time, not a current date.
+- **DECISIONS.md.** No conflict: content went into a `.js` content module (not JSON), no new state,
+  no new dependency, Vite unchanged.
+- **Already-done item.** Not a redo — this adds a twelfth figure under an open item. The
+  do-not-redraw rule was applied to the change itself, which is what rejected the two nearest
+  alternatives (lesson 18 duplicating lesson 3's `GrowthCurve`; a two-column lesson 19 duplicating
+  lesson 17's `GapColumns`).
+- **The first thing it found: I nearly reported four independent "findings" that were already
+  written down.** The rejections of 16, 18, 21 and 43 are all in item 27, and 18's is even recorded
+  under the same do-not-redraw rule I re-derived for it (it is how lesson 11 was rejected). Recorded
+  here as re-derivation, not discovery, and the fix shipped in the item rather than in this entry:
+  both ⛔ lists and both rules are now directly under the item's title, which is what the item's own
+  body asked the next compressor to do.
+- **The second: my own verification claim.** An independent reviewer re-running only what is written
+  above gets the same result — every count is quoted with the control that validated the instrument,
+  the four §77 controls are each quoted with the sub-check that fired, the ratio is re-measured
+  rather than carried, and the DOM geometry is quoted as the attribute values that were read. The
+  one claim I cannot support with an image is the visual appearance, and that is flagged above rather
+  than smoothed over.
+
+**⛔ This commit changes the built bundle, so the live site is now behind HEAD.** `npm run
+check-deployed` correctly **refused a verdict** while the tree was dirty ("dist/ is not a build of
+HEAD"), which is the instrument working. Deploying still needs the owner's Netlify token (W-7.1's
+one remaining owner action); until it exists `npm run deploy` refuses and this figure is in the repo
+and not in front of anyone — W-7.1's finding, now with a concrete instance.
+
+**⚠️ W-7.2's number, reported the way W-7.2 asks rather than the way that flatters this run.** The
+backlog was **422,250 b** when this run started and is **425,468 b** now: **+3,218 b net**, after
+four rule-1 collapses inside item 27 recovered **1,652 b** of the block I added (the 2026-08-27
+premise correction, the stale "bar for an eleventh" paragraph, the completed lift-the-lists
+prescription, and a trim of my own new prose). That lands **5 b under W-7.2 rule 5's 425,473 b
+baseline** — and quoting only that would be the same favorable-boundary reporting W-7.2 was written
+about, so: it is also **6,747 b above the 418,721 b the 2026-09-06 collapse reached**, which is the
+most recent measurement and the honest comparison. **This run grew the backlog.** The defense is that
+the added block is the one the item's own body asked for and that three runs have now paid for its
+absence; the defense is not that the number went down, because it did not. Figures from
+`check-log-size.mjs`'s MEASURED line, not retyped.
+
+**Next run.** ⛔ **No residual is filed as a numbered item** (W-6.2 rule 2). The one thing worth
+carrying is not a to-do but a caution: **item 27's rejection list has now been wrong twice for the
+same reason**, and both corrections came from re-reading the rule rather than the lesson — so a
+listed rejection is evidence, not a verdict, and the list now says so at the top. O-2 remains the
+entire critical path and no scheduled run can move it; per this log's finding about how O-1 actually
+closed, **ask the owner directly rather than restating the blocker.** Open and unparked otherwise:
+26 (blocked), 27, 70/71, 74, 76, 94, 117, 155's probe, 160 (at its measured stop line, blocked on
+O-3), 165's essentials remainder. **W-7.3's clock: `market.json` is `asOf 2026-09-04`, age 3 days,
+and Sectors goes to the unavailable state on 2026-09-09 if the owner's job does not run.**

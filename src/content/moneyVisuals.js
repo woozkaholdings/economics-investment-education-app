@@ -936,3 +936,69 @@ export const matchDescription = {
   zh: "一个二乘二的格子。列表示这笔钱可能什么时候要用——说不定哪天就要用，还是好多年都用不到。行表示它放在哪里——储蓄账户还是投资账户。储蓄与“随时”相交的格子、投资与“多年”相交的格子里是一个实心圆点；另外两格里是同样大小的空心圆环。每一格大小相同，没有哪一格带有数字。",
   ja: "2×2の格子です。列は、このお金がいつ必要になるかもしれないか——もしかしたらいつでも、あるいは何年も先まで不要か。行は、それがどこに置かれているか——貯金口座か投資口座か。貯金と「いつでも」が交わるマスと、投資と「何年も」が交わるマスには塗りつぶされた円があり、残る2つには同じ大きさの中空の輪があります。すべてのマスは同じ大きさで、数字が入っているマスはありません。",
 };
+
+// ── Lesson 19: where the sunk cost sits relative to the decision ───────────
+//
+// ⚠️ TOPOLOGICAL, NOT MEASURED — a fourth kind of constant in this file, and
+// the distinction is what keeps it honest. §21/§50/§53 plot arithmetic their
+// lessons state; §54 plots ranks read off two sentences; §57 plots a
+// partition. This one plots a POSITION: the $120 is on the trunk, upstream of
+// the fork, because lesson 19 says it left the account two months before
+// tonight's choice existed. The single number below is the lesson's own, and
+// it is the only number the figure is allowed to carry — there is no second
+// amount anywhere in lesson 19, so a value axis, a "cost of going" or a
+// price put on either night would all be invented.
+//
+// ⛔ THE TWO BRANCHES ARE NOT RANKED, and this is the constraint most likely
+// to be "improved" away. Lesson 19's second section says plainly: "Sunk costs
+// aren't a reason to always quit, either — sometimes the honest fresh look
+// still says continue. The point isn't which answer is right." So the two
+// branches carry the same color, the same dot and the same weight, and the
+// caption names neither as correct. `check-data.mjs` §77 (d) holds it.
+export const sunkAmount = 120;
+
+export const sunkTitle = {
+  en: "Where the $120 actually sits",
+  es: "Dónde están realmente los $120",
+  ko: "120달러가 실제로 놓인 자리",
+  zh: "这120美元实际上在哪里",
+  ja: "120ドルが実際に置かれている場所",
+};
+
+// The trunk's caption: when the money left, in each lesson's own words.
+export const sunkTrunkLabel = {
+  en: "Spent two months ago — before tonight's choice existed",
+  es: "Gastados hace dos meses — antes de que existiera la decisión de esta noche",
+  ko: "두 달 전에 이미 나간 돈 — 오늘 밤의 선택이 생기기도 전에",
+  zh: "两个月前就已经花掉——早在今晚这个选择出现之前",
+  ja: "2か月前に支払い済み — 今夜の選択が生まれるより前に",
+};
+
+// The two branch labels are lesson 19's OWN words for what is left to compare
+// ("what's actually left to compare is a miserable night out against a
+// restful night in"), taken from each language's own body rather than
+// translated from the English. §77 (e) checks each one against that language's
+// lesson 19.
+export const sunkBranchLabels = {
+  en: ["A miserable night out", "A restful night in"],
+  es: ["Una noche miserable afuera", "Una noche tranquila en casa"],
+  ko: ["끔찍한 외출", "편안한 저녁"],
+  zh: ["一个难受的外出夜晚", "一个安静休息的夜晚"],
+  ja: ["つらい外出の夜", "ゆったりした家での夜"],
+};
+
+export const sunkCaption = {
+  en: "The $120 is on the stem, not on either branch — it left the account two months ago, and no choice made tonight reaches back to it. That is what makes it cancel: it is the same on both paths, so it cannot tell the two apart. What is left after the fork is the only thing the decision is actually between. Neither branch is marked correct, because the lesson does not mark one — a fresh look sometimes still says go.",
+  es: "Los $120 están en el tronco, no en ninguna de las ramas: salieron de la cuenta hace dos meses, y ninguna decisión tomada esta noche los alcanza. Eso es lo que hace que se cancelen: son idénticos en ambos caminos, así que no pueden distinguirlos. Lo que queda después de la bifurcación es lo único entre lo que la decisión realmente elige. Ninguna rama está marcada como correcta, porque la lección no marca ninguna: una mirada fresca a veces sigue diciendo que vayas.",
+  ko: "120달러는 가지가 아니라 줄기 위에 있습니다 — 두 달 전에 이미 계좌를 떠났고, 오늘 밤의 어떤 선택도 거기까지 닿지 않습니다. 그래서 이 돈은 상쇄됩니다. 두 갈래 모두에서 똑같으니, 둘을 구별해 주지 못하는 것입니다. 갈림길 이후에 남는 것만이 이 결정이 실제로 고르는 대상입니다. 어느 가지에도 정답 표시는 없습니다. 수업이 표시하지 않기 때문입니다 — 새로 따져 봐도 가는 쪽이 맞을 때가 있습니다.",
+  zh: "这120美元在主干上，不在任何一根分支上——它两个月前就离开了账户，今晚做的任何选择都够不着它。这正是它会被抵消的原因：它在两条路上完全一样，所以分不出两者的高下。分岔之后剩下的部分，才是这个决定真正要在其中做选择的东西。两根分支都没有被标为正确，因为课程本身就没有标——重新掂量一遍，有时答案仍然是去。",
+  ja: "120ドルは幹の上にあり、どちらの枝にも乗っていません——2か月前に口座を離れており、今夜下すどの選択もそこには届きません。だからこそ相殺されるのです。両方の道でまったく同じである以上、二つを区別する材料にはなりません。分岐の先に残るものだけが、この決断が実際に選んでいる対象です。どちらの枝にも正解の印はついていません。各回自身が印をつけていないからです——改めて見直しても、行くほうが正しいことはあります。",
+};
+
+export const sunkDescription = {
+  en: "A branching diagram. A short horizontal stem runs in from the left, labeled $120, and ends at a small node. From that node two lines of equal weight spread out to the right, one rising and one falling, each ending in a dot of the same size and color: a miserable night out, and a restful night in. The $120 appears once, on the stem before the node, and nowhere after it. Neither branch is marked as the right one.",
+  es: "Un diagrama ramificado. Un tronco horizontal corto entra desde la izquierda, etiquetado $120, y termina en un pequeño nodo. Desde ese nodo dos líneas del mismo grosor se abren hacia la derecha, una que sube y otra que baja, cada una terminada en un punto del mismo tamaño y color: una noche miserable afuera, y una noche tranquila en casa. Los $120 aparecen una sola vez, en el tronco antes del nodo, y en ningún lugar después. Ninguna rama está marcada como la correcta.",
+  ko: "갈라지는 그림입니다. 왼쪽에서 짧은 수평 줄기가 들어오고 120달러라는 표시가 붙어 있으며, 작은 마디에서 끝납니다. 그 마디에서 굵기가 같은 두 선이 오른쪽으로 벌어지는데 하나는 올라가고 하나는 내려가며, 각각 크기와 색이 같은 점으로 끝납니다. 끔찍한 외출, 그리고 편안한 저녁입니다. 120달러는 마디 앞 줄기 위에 딱 한 번만 나타나고 그 뒤에는 어디에도 없습니다. 어느 가지도 정답으로 표시되어 있지 않습니다.",
+  zh: "一幅分岔的示意图。左边伸入一段短的水平主干，标着120美元，止于一个小节点。从这个节点出发，两条同样粗细的线向右分开，一条向上、一条向下，各自以一个大小和颜色都相同的圆点结束：一个难受的外出夜晚，和一个安静休息的夜晚。120美元只出现一次，在节点之前的主干上，节点之后的任何地方都没有。两根分支都没有被标为正确的那一根。",
+  ja: "枝分かれする図です。左から短い水平の幹が伸びてきて、120ドルと記され、小さな節で終わります。その節から同じ太さの線が2本、右へ広がり、一方は上がり、もう一方は下がって、それぞれ同じ大きさ・同じ色の点で終わります。つらい外出の夜と、ゆったりした家での夜です。120ドルは節より手前の幹の上に一度だけ現れ、その先にはどこにもありません。どちらの枝にも正解の印はついていません。",
+};

@@ -11597,5 +11597,167 @@ function trendDirection(src) {
   }
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// 77. src/content/moneyVisuals.js — lesson 19's sunk-cost fork (backlog item
+//     27, added 2026-09-07). Like §21, §50, §53, §54 and §57 this checks the
+//     CLAIM THE DIAGRAM MAKES rather than that it renders.
+//
+//     WHAT IS DIFFERENT HERE. The other figures plot a quantity (§53), a rank
+//     (§54) or a partition (§57). This one plots a POSITION: lesson 19's whole
+//     argument is that the $120 sits UPSTREAM of tonight's choice ("It left
+//     her account the moment she bought the ticket, weeks before she ever got
+//     sick"), so it is common to both branches and cancels. The figure is
+//     allowed to draw that and one number, and nothing else.
+//
+//     THE LEARNER-VISIBLE FAILURE THIS EXISTS TO CATCH (W-6.2 rule 3), and it
+//     is (d): a future run marking one branch as the right one — a green dot,
+//     a tick, a heavier stroke — would render the app telling a reader which
+//     way to decide, in a lesson that explicitly declines to ("Sunk costs
+//     aren't a reason to always quit, either ... The point isn't which answer
+//     is right"). That is §10.1 drawn rather than written, and it is exactly
+//     the well-meaning "improvement" a later pass would make while tidying the
+//     figure up.
+{
+  const before77 = failures;
+  const mv = moneyVisualsContent;
+  const need = ["sunkAmount", "sunkTitle", "sunkTrunkLabel", "sunkBranchLabels", "sunkCaption", "sunkDescription"];
+  const missing = need.filter((k) => mv[k] === undefined);
+  if (missing.length > 0) {
+    fail(`§77: src/content/moneyVisuals.js no longer exports ${missing.join(", ")}. This section is pointed at a structure that no longer exists — repoint it rather than leaving it green.`);
+  } else {
+    const body19 = (lessonId) => (lessonContent[lessonId]?.sections ?? []);
+
+    // (a) THE AMOUNT IS THE LESSON'S OWN, checked against the en body rather
+    //     than trusted. 120 is the only figure lesson 19 states.
+    const en19 = body19("19").map((sec) => sec.body?.en ?? "").join("\n");
+    if (en19.trim().length === 0) {
+      fail("§77 (a): lesson 19's English body is empty, so every check below would pass against nothing. The content module moved or the id changed.");
+    } else if (!en19.includes(`$${mv.sunkAmount}`)) {
+      fail(`§77 (a): the figure is drawn with sunkAmount=${mv.sunkAmount}, but lesson 19's English body never writes "$${mv.sunkAmount}". The figure would print a number its own lesson does not use.`);
+    }
+
+    // (b) EXACTLY ONE NUMBER. Lesson 19 states one amount and no second one —
+    //     no price on the evening, no value on either night. A figure that
+    //     grew a value axis would be making a comparison the lesson does not.
+    if (typeof mv.sunkAmount !== "number" || !Number.isFinite(mv.sunkAmount)) {
+      fail(`§77 (b): sunkAmount is ${JSON.stringify(mv.sunkAmount)}, not a finite number. This figure carries exactly one quantity and this is it.`);
+    }
+
+    // (c) TWO BRANCHES, in every language. The fork has two arms because the
+    //     lesson names two ("a miserable night out against a restful night
+    //     in"); a third would be an invention and one would not be a fork.
+    for (const lang of LANGS) {
+      const labels = mv.sunkBranchLabels?.[lang];
+      if (!Array.isArray(labels) || labels.length !== 2) {
+        fail(`§77 (c): sunkBranchLabels["${lang}"] has ${Array.isArray(labels) ? labels.length : "no"} entries, not 2. Lesson 19 names exactly two things left to compare after the sunk cost comes out.`);
+      }
+    }
+
+    // (d) ⛔ NEITHER BRANCH IS RANKED — the section's reason to exist.
+    //     Two independent halves, because the ranking could enter through
+    //     either the drawing or the prose.
+    //
+    //     (d1) The DRAWING. Both branches must be handed the same color. In
+    //     LessonVisual.jsx they come from one `colors.branch`, and in
+    //     charts.jsx both the <line> and the <circle> read that single prop —
+    //     so the check is that no second branch token appears. A `graph.green`
+    //     or `graph.red` anywhere in this component is the failure.
+    const chartsSrc77 = readFileSync(join(ROOT, "src/components/charts.jsx"), "utf8");
+    const forkStart = chartsSrc77.indexOf("export function SunkFork(");
+    if (forkStart === -1) {
+      fail("§77 (d1): charts.jsx no longer exports SunkFork, so nothing below is measuring the figure this section is about.");
+    } else {
+      const forkEnd = chartsSrc77.indexOf("\n// ── ", forkStart);
+      const forkBody = chartsSrc77.slice(forkStart, forkEnd === -1 ? chartsSrc77.length : forkEnd);
+      for (const banned of ["graph.green", "graph.red", "ink.ok", "ink.bad"]) {
+        if (forkBody.includes(banned)) {
+          fail(`§77 (d1): SunkFork draws with ${banned}. Lesson 19 refuses to name a right answer — "sometimes the honest fresh look still says continue" — so a verdict token on either branch renders a recommendation the lesson declines to make. Both branches take one shared color.`);
+        }
+      }
+      // Both arms must leave the SAME node, which is the whole topological
+      // claim: one fork, not two separate paths that merely look joined.
+      const branchLines = forkBody.match(/data-figure-part="branch"/g) ?? [];
+      if (branchLines.length !== 1) {
+        fail(`§77 (d1): expected exactly one branch <line> element (rendered twice from the two endpoints), found ${branchLines.length}. Two hand-written branch elements can drift to different origins, and the figure's claim is that both leave one node.`);
+      }
+      if (!/x1=\{FORK_X\}\s*\n?\s*y1=\{FORK_MID_Y\}/.test(forkBody.replace(/\s+/g, " ").replace(/x1=\{FORK_X\} y1=\{FORK_MID_Y\}/, "x1={FORK_X}\ny1={FORK_MID_Y}"))
+          && !forkBody.includes("x1={FORK_X}")) {
+        fail("§77 (d1): the branch lines no longer start at FORK_X/FORK_MID_Y. The figure's entire argument is that both branches leave the same node, downstream of the amount on the trunk.");
+      }
+      // The amount is printed on the trunk and must not appear after the fork.
+      if (!forkBody.includes("{amountLabel}")) {
+        fail("§77 (d1): SunkFork no longer prints amountLabel. The one number this figure carries has to be visible on the trunk, or the picture makes no claim at all.");
+      }
+      if ((forkBody.match(/\{amountLabel\}/g) ?? []).length !== 1) {
+        fail("§77 (d1): amountLabel is drawn more than once. It is on the trunk BECAUSE it was spent once, before the fork — a second copy on a branch draws the reasoning the lesson is arguing against.");
+      }
+    }
+
+    //     (d2) The PROSE. The caption and the text alternative must not name a
+    //     branch as the right one. Checked per language against that
+    //     language's own strings.
+    const VERDICT_WORDS = {
+      en: ["the right choice", "should stay home", "should go", "the correct answer", "the better option"],
+      es: ["la opción correcta", "debería quedarse", "la mejor opción"],
+      ko: ["옳은 선택", "집에 있어야", "더 나은 선택"],
+      zh: ["正确的选择", "应该待在家", "更好的选择"],
+      ja: ["正しい選択", "家にいるべき", "より良い選択"],
+    };
+    for (const lang of LANGS) {
+      const prose = `${mv.sunkCaption?.[lang] ?? ""}\n${mv.sunkDescription?.[lang] ?? ""}`.toLowerCase();
+      if (prose.trim().length === 0) {
+        fail(`§77 (d2): the caption and description for "${lang}" are both empty, so this language's verdict scan would pass against nothing.`);
+        continue;
+      }
+      for (const word of VERDICT_WORDS[lang] ?? []) {
+        if (prose.includes(word.toLowerCase())) {
+          fail(`§77 (d2): the "${lang}" caption or description contains "${word}", which names one branch as right. Lesson 19's own position is that the sunk cost should not decide it and that either answer can survive a fresh look.`);
+        }
+      }
+    }
+
+    // (e) FIVE-LANGUAGE PROSE ANCHOR — §54 (e)'s shape, and for the same
+    //     reason: the branch labels are the lesson's own words for what is
+    //     left to compare, so a translation that paraphrases them is caught in
+    //     the language it happened in rather than drifting unseen behind the
+    //     English.
+    //
+    //     CONTROL, per language and in both directions: a body that failed to
+    //     load returns "not found" for both labels, which is indistinguishable
+    //     from two paraphrased labels. An absent probe must read absent.
+    const CONTROL_ABSENT_77 = "qzx-no-lesson-says-this";
+    for (const lang of LANGS) {
+      const body = body19("19").map((sec) => sec.body?.[lang] ?? "").join("\n").toLowerCase();
+      if (body.trim().length === 0 || body.includes(CONTROL_ABSENT_77)) {
+        fail(`§77 (e): the lesson-19 body scan failed its control in "${lang}" — ${body.trim().length === 0 ? "the body is empty" : "an absent probe was found"}. It is reading the wrong text or no text, so a clean result for this language would mean nothing.`);
+        continue;
+      }
+      for (const [i, label] of (mv.sunkBranchLabels?.[lang] ?? []).entries()) {
+        if (!body.includes(String(label).toLowerCase())) {
+          fail(`§77 (e): the figure labels branch ${i + 1} "${label}" in "${lang}", but lesson 19 never uses that phrase in that language. Both labels are meant to be the lesson's own words for what is left to compare — take them from the prose rather than translating the English label.`);
+        }
+      }
+      // The amount has to be readable in this language's body too, since the
+      // figure prints it beside prose the learner is reading in that language.
+      if (!body.includes(String(mv.sunkAmount))) {
+        fail(`§77 (e): lesson 19's "${lang}" body never writes ${mv.sunkAmount}, but the figure prints it beside that body.`);
+      }
+    }
+
+    // (f) The figure is registered for lesson 19 and carries the §10.1
+    //     educational note, not the market-data one (§70 (g)'s shape).
+    const lvSrc77 = readFileSync(join(ROOT, "src/components/LessonVisual.jsx"), "utf8");
+    if (!/\b19:\s*"sunkFork"/.test(lvSrc77)) {
+      fail("§77 (f): lesson 19 is no longer mapped to \"sunkFork\" in LESSON_VISUALS. The figure and its five-language strings would ship unreferenced.");
+    }
+    if (!/const MONEY_VISUALS = new Set\(\[[^\]]*"sunkFork"/.test(lvSrc77)) {
+      fail("§77 (f): \"sunkFork\" is no longer in MONEY_VISUALS, so the note under the figure switches to the market-scenario wording. This figure plots one lesson's own worked example and needs the illustration note (§10.1), not the not-live-market-data one (§2.3).");
+    }
+  }
+  if (failures === before77) {
+    console.log(`  §77 lesson 19 sunk-cost fork: one amount ($${mv.sunkAmount}) anchored to the lesson body, 2 branches × ${LANGS.length} languages anchored to their own prose, both branches unranked in drawing and caption.`);
+  }
+}
+
 console.log(`\n${failures === 0 ? "PASS" : "FAIL"}: ${failures} failure(s), ${warnings} warning(s).`);
 process.exit(failures === 0 ? 0 : 1);
