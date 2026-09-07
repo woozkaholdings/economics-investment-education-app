@@ -284,6 +284,17 @@ for the history. No open P1/P2 items.
 > (`scripts/check-market-freshness.mjs`) watches this file on every `npm test` — WARN when it is stale
 > or goes stale tomorrow, FAIL only for a missing/unparseable/unreadable-`asOf` file, which is the half
 > the repo owns and a run can fix. It does not refresh anything; W-7.3's ⛔ stands untouched.
+> ⛔ **DIAGNOSIS CHANGED 2026-09-07 (owner-directed environment audit), and it is not what this clause
+> assumed. The job is not missing days — it does not exist on this machine.** Every scheduler on the
+> build host was enumerated: the Claude scheduled-task list (20 tasks; `economics-app-dev-agent` is
+> there, no market task is), `crontab -l` (one entry, an unrelated `htf_miner` job), and
+> `~/Library/LaunchAgents` + `launchctl list` (no match for `econom`/`ecycle`/`market`). **Nothing
+> here runs `scripts/fetch-market-data.mjs`.** The refresh commits are real and were clockwork —
+> `git log` shows them at **18:31 daily** through **`20fde17`, 2026-09-04 18:31** — and then they
+> stop, which is the shape of a job that was deleted or disabled, not one that missed a day.
+> **This does not change whose job it is** (still the owner's, still ⛔ not repo work), but it changes
+> the ask: **re-create or re-enable the daily task**, rather than wait for it to catch up. The
+> deadline is unchanged and close — Sectors renders the unavailable state on **2026-09-09**.
 >
 > ### W-7.4 — content quality: no regressions found, and the safety guard was independently re-proved.
 > **This review verified §10.1 rather than reading its green line.** Planted *"With rates this low, now
@@ -4825,16 +4836,23 @@ npm install && npm run build
 Add `--force-download` (or `NODE_BOOTSTRAP_FORCE=1`) to ignore a system Node and pin to v20.18.1.
 
 ⚠️ **This paragraph used to assert the machine had no Node at all, and that is why it now asserts
-nothing.** *What was true:* confirmed 2026-08-01 — no `node`, `npm`, `nvm`, `volta`, `asdf` or
-Homebrew. *What is true now:* Homebrew installed Node on **2026-08-22** (the `/usr/local/bin/node`
-symlink carries that date), so the sentence was **false for 15 days** in the note every run reads
-first, and the recipe under it sent each run to download a second, older runtime it did not need.
-Measured 2026-09-06 with an absent-command control: `node` **v26.7.0** and `npm` at `/usr/local/bin`,
-`brew` present, `nvm`/`volta`/`asdf` absent — so the claim was wrong on **three** of its six items,
-not just on `node`. Fixed 2026-09-06 by moving the question into the script, which re-measures it on
-every call. ⭐ **The class: a fact about the environment written in prose has no way to notice the
-environment changing.** It was filed three times — the 2026-08-30 weekly review, then two run-log
-notes — and each filing restated it instead of ending it.
+nothing.** It was confirmed true on 2026-08-01, was false from 2026-08-22, and stayed in the note
+every run reads first for 15 days, sending each run to download a second runtime it did not need.
+Fixed 2026-09-06 by moving the question into `bootstrap-node.sh`, which re-measures it on every call.
+⭐ **The class: a fact about the environment written in prose has no way to notice the environment
+changing.** It was filed three times — the 2026-08-30 weekly review, then two run-log notes — and
+each filing restated it instead of ending it.
+⛔ **And it has now happened a second time, to the correction itself (measured 2026-09-07, the
+owner-directed environment audit).** The replacement paragraph carried its own dated inventory —
+*"`node` **v26.7.0** … `brew` present"*, measured 2026-09-06 — and **not one of those items
+describes the machine this ran on a day later**: `node` is **v24.18.0**, `/usr/local/bin/node` is a
+root-owned universal binary dated 2026-06-23 (the official installer, not a Homebrew symlink), and
+`brew` is **not found at all**. **Whether that is a second machine or the same one changed does not
+matter** — which is the point: a prose inventory cannot tell those two apart, and a run that trusts
+one is wrong either way. **The mechanism held perfectly through it**: `scripts/bootstrap-node.sh`
+printed `/usr/local/bin` and *"Using system Node v24.18.0"* on the first call, with no edit. **So the
+inventory is deleted rather than corrected a second time** — run the script; it is the only thing
+here that has never been stale.
 
 **Measuring against a clean tree while the owner's is dirty — `git archive`, never `git checkout --`
 (2026-08-18).** `npm test` runs against the *working* tree, so while the owner has an in-flight redesign
@@ -7228,3 +7246,139 @@ closed, **ask the owner directly rather than restating the blocker.** Open and u
 26 (blocked), 27, 70/71, 74, 76, 94, 117, 155's probe, 160 (at its measured stop line, blocked on
 O-3), 165's essentials remainder. **W-7.3's clock: `market.json` is `asOf 2026-09-04`, age 3 days,
 and Sectors goes to the unavailable state on 2026-09-09 if the owner's job does not run.**
+
+### 2026-09-07 (owner-directed, interactive: "audit the project and validate if the project plan is adjusted to this MacOS environment") — the plan says nothing about the machine it is built on, and the one place a machine fact WAS written down had gone stale a second time, one day after being corrected
+
+**Where the pick came from.** This run had opened on backlog item selection when the owner
+interrupted with the instruction above; the scheduled workflow was set aside for it. **The audit is
+the deliverable**, and the two code changes below are things it found, not a backlog item folded in.
+
+**⛔ The environment, measured rather than read.** macOS **26.6.2**, `arm64` (Apple silicon), zsh,
+APFS **case-insensitive** (probed: `CaseProbe.txt` resolves as `caseprobe.txt`). `git` 2.50.1 (Apple
+Git-155). `zip`, `unzip`, `tar`, `curl`, `rsync` all present. **`scripts/bootstrap-node.sh` printed
+`/usr/local/bin` and *"Using system Node v24.18.0"* on the first call**, and Vite's own
+`engines` (`^18 || ^20 || >=22`) accepts it. `npm test` **exit 0** and `npm run build` **exit 0** on
+this machine, unmodified.
+
+**Finding 1 — the Environment note's replacement inventory was stale in a day, and is now deleted
+rather than corrected.** That note's ⚠️ paragraph was itself written on 2026-09-06 to end a claim
+that had been false for 15 days; the correction carried **its own** dated inventory — *"`node`
+**v26.7.0** … `brew` present"* — and **not one of those items describes the machine this ran on**:
+`node` is **v24.18.0**, `/usr/local/bin/node` is a root-owned universal binary dated 2026-06-23 (the
+official installer, not a Homebrew symlink), and **`brew` is not found at all**. Whether that is a
+second machine or the same one changed **does not matter, and that is the finding**: prose cannot
+tell those apart. ⭐ **The mechanism the 09-06 run shipped held perfectly through it** — the script
+re-measured and printed the right answer with no edit. So the inventory is **deleted**, not
+re-corrected; the paragraph keeps the history and the lesson and asserts nothing about the machine.
+
+**Finding 2 — `.DS_Store` ships in every build, and would be published the moment deploying is
+automated. Fixed.** Traced end to end rather than inferred: Finder wrote `public/.DS_Store` (8,196 b,
+2026-08-22); Vite copies `publicDir` verbatim, so it lands in `dist/`; `deploy.mjs` zips `dist/`
+recursively — **confirmed by packing the real `dist/` and listing the archive: `8196  .DS_Store`**.
+Once the Netlify token exists, `npm run deploy` publishes `https://<site>/.DS_Store`, which hands any
+visitor the file listing of that folder. **It is gitignored and untracked, which is exactly why
+nothing here sees it**: every instrument in this repo reads the tree, and this file is not in the
+tree — 20k lines of `scripts/` mention `DS_Store` **zero** times, and `AGENT_LOG.md`,
+its archive and `DECISIONS.md` mention it **zero** times, so this is not a redo. The only thing that
+ever noticed was `npm run check-deployed`, which has been carrying it as a standing `✗` against the
+live site.
+- **Fixed in `vite.config.js`, on the build output rather than the source** — deleting
+  `public/.DS_Store` does not hold, because Finder rewrites it on the next window open. A ~10-line
+  inline plugin (`closeBundle`) walks `dist/` and removes any `.DS_Store`. **No new dependency, no
+  new file under `scripts/`** (W-6.3: this adds 0 script lines).
+- **Resolved against the config file, not the working directory**, so it is also correct inside the
+  throwaway trees `check-deployed.mjs --identify` builds — each carries its own copy of the config
+  beside its own `dist/`.
+- **Proved both ways.** With the plugin: `find dist -name .DS_Store` → **0**, and a planted
+  `dist/data/.DS_Store` is removed too (the walk recurses); all three real public assets survive
+  (`icon.svg`, `og-card.png`, `data/market.json`). **Negative control — plugin removed from the
+  `plugins` array, rebuilt: the file comes back, count 1.** Config restored from a scratchpad copy
+  and verified byte-identical with `cmp`, never `git checkout --`.
+- **W-6.2 rule 3's sentence:** *"a visitor to the live site could fetch `/.DS_Store` and read the
+  names of every file in the site's public folder."*
+
+**Finding 3 — `check-deployed.mjs` masked a failure through a pipe, in the one command that decides
+which commit is live. Fixed.** Line 467 ran `git archive ${rev} | tar -x -C "${dir}"` under
+`bash -c` with no `pipefail`, so bash reported **`tar`'s** status. Measured with both controls: a
+real rev → **exit 0, 19 files**; a bad rev → *"fatal: not a valid object name"* on stderr, **exit 0,
+0 files**; the same command with `set -o pipefail` → **exit 128**. The visible symptom was not an
+error but a **misattribution** — the empty tree's `vite build` fails next, so `--identify` blames the
+commit for a failure that was this line's. Fixed with `set -o pipefail`; the patched form re-checked
+against a real rev (**exit 0, 19 files**).
+
+**Finding 4 — nothing on this machine refreshes the market data. It is not a job missing days.**
+W-7.3 has read this as the owner's daily job skipping runs. Every scheduler on the host was
+enumerated: the Claude scheduled-task list (**20 tasks** — `economics-app-dev-agent` is there, no
+market task is), `crontab -l` (**one** entry, an unrelated `htf_miner` job), and
+`~/Library/LaunchAgents` + `launchctl list` (**no match** for `econom`/`ecycle`/`market`). The
+refresh commits were clockwork at **18:31 daily** through `20fde17` (2026-09-04) and then stop —
+the shape of a job deleted or disabled, not one running badly. **Still ⛔ owner-only and not repo
+work**, but the ask changes from *wait* to **re-create the task**. Sectors goes to the unavailable
+state on **2026-09-09**. Recorded under W-7.3.
+
+**Finding 5 — the plan is silent about the environment, and where it does speak it was stale.**
+`grep` over `LAUNCH_PLAN.md`, `DECISIONS.md` and `README.md` for `macOS`/`Mac`/`Xcode`/`Apple
+Silicon`/`arm64`: **zero hits in all three**. The plan is not *wrong* about this machine; it says
+nothing, including where the machine is load-bearing. Two cells corrected:
+- **§2.1 Hosting** said *Planned: Vercel / EAS Hosting* while §10.10 of the same document records
+  the app live on **Netlify** since 2026-09-05 and `DECISIONS.md` says the git-connected Vercel flow
+  is **off the table** because `origin` is unusable. The document contradicted itself.
+- **§2.1 App** (the Expo-vs-web call) now carries the measured local toolchain — **Xcode 26.6,
+  Swift 6.3.3, 11 iOS simulators, macOS 26.6.2 arm64** (the owner confirmed Xcode independently
+  mid-run) — so no future run treats a missing Mac toolchain as an implicit blocker. **What blocks
+  it is the product call and an Apple Developer account, not the machine.**
+- **`README.md`'s "chains seven more checks"** names seven; `package.json` chains **eight**
+  (`check-market-freshness.mjs` is missing). ⭐ **This count has now been wrong twice**, and the
+  second correction was stale the day it was written — `check-market` landed 2026-09-06, the same
+  day the sentence went four → seven. Corrected, and pointed at `package.json` as the list that
+  cannot go stale.
+
+**Two things the audit checked and found CLEAN — reported because a null result with a live control
+is a result.**
+- **Import case.** APFS here is case-insensitive, so a wrong-case import builds fine and would break
+  on any case-sensitive host. 72 files under `src/` parsed, every relative specifier resolved and
+  compared byte-for-byte against the real directory entry: **0 mismatches**. **Both controls fired**
+  — a synthetic `./Theme.js` was flagged, the real `./theme.js` was not.
+- **GNU-vs-BSD portability.** `sed -i`, `date -d`, `stat -c`, `readlink -f`, `grep -P`, `sha256sum`,
+  `xargs -r`, `sort -V`, `base64 -w`, `realpath`: **zero hits** across `scripts/`. Nothing in the
+  repo assumes GNU coreutils. Key hygiene also clean: `api-keys.txt` and `.netlify-token` are
+  gitignored, `api-keys.txt` is untracked, and no key assignment appears in tracked `src/`/`scripts/`.
+
+**Verification.** `npm test` ✅ **PASS: 0 failure(s)** with the **same 4 pre-existing warnings** as
+the pre-edit baseline (translation review share, translation completeness, the quiz option-length
+cue, the non-archivable floor). `npm run build` ✅ exit 0. `npm run check-blindspot` ✅ **0 failures**.
+`npm run check-deployed` correctly **refused a verdict** while the tree was dirty.
+
+**W-7 rule 5's own accounting, charged rather than left to the next reviewer.** The backlog region
+went **425,468 b → 426,549 b (+1,081 b)** this run, both figures off `check-log-size.mjs`'s MEASURED
+line before and after. All of it is the W-7.3 diagnosis; the two doc corrections are outside that
+region and the Environment note's deletion is a net **shrink** there. The block's test — smaller than
+425,473 b on 2026-09-13 — is **1,076 b further away** because of this run, and that is the honest
+number to start the next review from.
+
+**⛔ Unchanged and still true: the live site is behind HEAD.** `check-deployed` reports the live
+entry bundle as `index-B1mndoLB.js` against a local `index-BnvrHnCR.js` — different content at an
+identical 264,930 b, which is why a hash and not a size is the instrument. `.netlify-token` does not
+exist on this machine, so `npm run deploy` still refuses (W-7.1's one remaining owner action).
+
+**Adversarial self-check (step 5) — run, and it found one thing.**
+- **Blindspot register.** No content touched, no lesson prose, no market copy: §10.1/§10.2/§10.3
+  untouched, and `check-blindspot` re-run to 0 failures rather than assumed. §2.3 (hardcoded dates)
+  is about learner-visible surfaces; the dates added here are in `AGENT_LOG.md` and `LAUNCH_PLAN.md`,
+  which ship to nobody, and no date entered `src/`.
+- **DECISIONS.md.** No conflict: no new dependency (the plugin is inline and stdlib-only),
+  `base: "./"` and all three properties its comment says to preserve are untouched, no host config
+  file was added, and no host detail was hardcoded into a script.
+- **Already-done item.** Not a redo: `DS_Store` appears **0** times in `AGENT_LOG.md`, `0` in the
+  archive, `0` in `DECISIONS.md` and `0` in `scripts/`.
+- **The thing it found: my own instrument nearly produced a confident zero.** The first
+  `grep -c "DS_Store"` returned 0 for three files and **exited 1**, which short-circuited the `&&`
+  chain and swallowed the two commands after it — the same class as this repo's own
+  exit-code-through-a-pipe finding above, in my own shell, three commands after I had written the
+  fix for it. Re-run separately. **A zero from a command whose exit status you did not look at is
+  not a measurement.**
+- **My own verification claim.** An independent reviewer re-running only what is written here gets
+  the same result: every count is quoted with the control that validated it, both code fixes are
+  quoted with the negative control that fired, and the two clean sweeps are quoted with the probe
+  that proves the instrument was alive. The one thing not re-verifiable from this entry is the
+  scheduled-task list, which is machine state rather than repo state — it is quoted as what it is.

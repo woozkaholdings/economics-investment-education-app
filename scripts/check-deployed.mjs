@@ -464,7 +464,17 @@ async function identifyDeployedCommit(liveBuf, localEntryName, limit) {
   const buildAt = (rev) => {
     const dir = mkdtempSync(join(tmpdir(), "check-deployed-"));
     try {
-      execFileSync("bash", ["-c", `git archive ${rev} | tar -x -C "${dir}"`], { cwd: ROOT });
+      // `set -o pipefail` is load-bearing: without it bash reports the exit
+      // status of `tar`, and `tar -x` reading a failed `git archive`'s empty
+      // stdout exits 0. Measured 2026-09-07: a bad rev gives `fatal: not a
+      // valid object name` on stderr, an empty directory, and **exit 0** —
+      // so the build below would fail instead, blaming the commit for a
+      // failure that was actually this line's.
+      execFileSync(
+        "bash",
+        ["-c", `set -o pipefail; git archive ${rev} | tar -x -C "${dir}"`],
+        { cwd: ROOT },
+      );
       symlinkSync(join(ROOT, "node_modules"), join(dir, "node_modules"));
       execFileSync(process.execPath, [viteBin, "build"], { cwd: dir, stdio: "ignore" });
       const html = readFileSync(join(dir, "dist", "index.html"), "utf8");

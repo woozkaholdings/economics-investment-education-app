@@ -112,12 +112,12 @@ web-only, no backend, all state in `localStorage`.
 
 | Layer | Current | Planned | Notes |
 |---|---|---|---|
-| App | Vite + React (web) | **Open** — Expo (React Native) vs. staying web-first | `DECISIONS.md`. Blocks store release, not web release. |
+| App | Vite + React (web) | **Open** — Expo (React Native) vs. staying web-first | `DECISIONS.md`. Blocks store release, not web release. **The local toolchain is not what blocks it** — measured 2026-09-07 on the build machine: macOS 26.6.2 arm64, Xcode 26.6, Swift 6.3.3, 11 iOS simulators. The open questions are the §2.1 product call and an Apple Developer account (§7's $99/yr), not a missing Mac. |
 | Content | `.js` modules in `src/content/`, `src/locales/` | Same; possibly server-hosted later | Closed decision. |
 | State | `localStorage` | Supabase accounts + sync | Closed as current approach; revisit with real accounts. |
 | Payments | none | Route depends on §4.3 phase and the §2.1 platform call | Not built. See §4 — the current phase has no payment code by design. |
 | Analytics | local event sink (`src/lib/analytics.js`) | PostHog | Events are defined and fire; the log is capped and stays on the device. Wiring a provider is owner-blocked on an account and key (§9.2, backlog item 18). |
-| Hosting | static build | Vercel / EAS Hosting | $0 at launch scale. |
+| Hosting | **Netlify, live since 2026-09-05** (§10.10, `README.md` § Deploying) | same — the host is not load-bearing | $0 at launch scale. `origin` is unusable here, so git-connected hosting (the normal Vercel / GitHub Pages flow) is off the table; `DECISIONS.md` records why a direct-upload host is what that leaves. This cell said "Vercel / EAS Hosting" until 2026-09-07; it went stale on 2026-09-05, when the app went live on a host it did not name. |
 
 ### 2.2 Code structure
 
