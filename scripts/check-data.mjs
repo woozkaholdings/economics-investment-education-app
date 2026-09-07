@@ -12103,5 +12103,113 @@ function trendDirection(src) {
 }
 
 
+// §79. THE CJK PROPORTIONAL-WIDTH RULE'S LANGUAGE SCOPE MUST MATCH THE CORPUS.
+//
+// THE LEARNER-VISIBLE FAILURE THIS WOULD CATCH (W-6.2 rule 3): a reader in a
+// language that writes fullwidth brackets, using browser or OS text zoom, sees
+// bracketed labels clipped — because index.css's `font-variant-east-asian:
+// proportional-width` rule, which is what stops that, does not name their
+// language. This is NOT a guard on the rule's existence (that would be a
+// tautology, asserting a line is still in a file). It guards the rule's
+// SCOPE, which is a fact about the content and is therefore free to drift
+// without anybody editing the CSS.
+//
+// WHAT WAS SHIPPING when this was written, measured 2026-09-07 on the built
+// app at a 320px viewport with the root font at 32px (browser/OS text zoom;
+// the in-app control stops at 1.3) — seven elements, and `body { overflow-x:
+// hidden }` clips rather than scrolls, so the punctuation was simply gone:
+//   ja  Learn        SPAN "お金の基礎（任意）"          172 box / 180 content
+//   ja  Glossary     SPAN "マネーサプライ（M1）"        288 / 290
+//   ja  Glossary     SPAN "マネーサプライ（M2）"        288 / 294
+//   ja  Market Dash  FIGCAPTION "逆イールド（危険）"    114 / 120
+//   ja  Market Dash  DIV "量的引き締め（QT）"           253 / 263
+//   ja  Market Dash  H2 "マネーサプライ（M0・M1・M2）"  288 / 301
+//   zh  Market Dash  H2 "货币供应量（M0、M1、M2）"      288 / 301
+//
+// THE COUPLING. The scope was chosen by measurement, not by assumption: `ko`
+// writes these same labels with ASCII parentheses ("통화량 (M0, M1, M2)") and
+// its corpus held ZERO fullwidth brackets, against 131 in `ja` and 138 in
+// `zh`. So Korean is excluded on evidence. The day a Korean translation adopts
+// fullwidth brackets — one plausible edit, in files that change often and that
+// no fluent reviewer reads (O-3) — the CSS silently stops covering a language
+// that now needs it, and nothing else in this repo would say so.
+{
+  const before79 = failures;
+  const css = readFileSync(join(ROOT, "src", "index.css"), "utf8");
+
+  // The bracket set is deliberately the CJK ones only: ASCII "(" is not at
+  // issue and appears everywhere in every language.
+  const FULLWIDTH_BRACKETS = /[（）【】〔〕｛｝［］]/g;
+  const countBrackets = (text) => (text.match(FULLWIDTH_BRACKETS) || []).length;
+
+  // Which languages the rule actually names. `:lang(zh)` matches the app's
+  // `documentElement.lang = "zh-Hans"` by language-range, so compare on the
+  // primary subtag rather than the full tag.
+  // Comments are stripped FIRST, and that is not tidiness. The comment above
+  // this rule explains why it says `:lang(zh)` rather than `:lang(zh-Hans)` —
+  // so it contains the literal `:lang(zh)`, and a selector regex run over the
+  // raw file reads the scope out of the PROSE. Measured: with `:lang(zh)`
+  // deleted from the rule, this section still reported the scope as {ja, zh}
+  // and passed. The injection that narrowed the scope is what found it; a
+  // section that reads its own documentation as evidence cannot fail.
+  const cssNoComments = css.replace(/\/\*[\s\S]*?\*\//g, " ");
+  const ruleMatch = cssNoComments.match(/([^{}]*)\{[^{}]*font-variant-east-asian:\s*proportional-width/);
+  const scoped = new Set(
+    ruleMatch ? [...ruleMatch[1].matchAll(/:lang\(\s*([A-Za-z]+)/g)].map((m) => m[1].toLowerCase()) : [],
+  );
+
+  // Which languages the CONTENT actually needs it for.
+  const LANGS = ["en", "es", "ko", "ja", "zh"];
+  const needs = new Map();
+  for (const lang of LANGS) {
+    let n = 0;
+    const locale = join(ROOT, "src", "locales", `${lang}.js`);
+    if (existsSync(locale)) n += countBrackets(readFileSync(locale, "utf8"));
+    const contentDir = join(ROOT, "src", "content");
+    for (const f of readdirSync(contentDir)) {
+      if (f.endsWith(`.${lang}.js`)) n += countBrackets(readFileSync(join(contentDir, f), "utf8"));
+    }
+    needs.set(lang, n);
+  }
+
+  // CONTROL, and it must fire or a clean result here means nothing: the
+  // counter has to see a bracket it is shown, and not see one in a string
+  // that only holds ASCII parentheses.
+  if (countBrackets("マネーサプライ（M0・M1・M2）") !== 2 || countBrackets("Money Supply (M0, M1, M2)") !== 0) {
+    fail(
+      "§79 control: the fullwidth-bracket counter does not distinguish （ from ( — it is not measuring " +
+        "anything, so both the scope and the corpus figures below are meaningless.",
+    );
+  }
+  if (scoped.size === 0) {
+    fail(
+      `§79: no \`font-variant-east-asian: proportional-width\` rule with a :lang() scope was found in ` +
+        `index.css. Either the rule was removed — in which case the seven clipped elements listed above ` +
+        `are back — or it was rewritten in a shape this section cannot read, which is the same silence.`,
+    );
+  } else {
+    for (const [lang, n] of needs) {
+      if (n > 0 && !scoped.has(lang)) {
+        fail(
+          `§79: \`${lang}\` content contains ${n} fullwidth CJK bracket(s), but index.css's ` +
+            `proportional-width rule is scoped to {${[...scoped].join(", ")}} and does not name it. At ` +
+            `200% browser text zoom those brackets are one em wide and get clipped by ` +
+            `body { overflow-x: hidden }. Add :lang(${lang}) to the rule, or confirm by measurement that ` +
+            `this language's brackets never land in a narrow container.`,
+        );
+      }
+    }
+  }
+
+  if (failures === before79) {
+    const summary = LANGS.map((l) => `${l} ${needs.get(l)}`).join(", ");
+    console.log(
+      `  §79 CJK bracket scope: rule covers {${[...scoped].sort().join(", ")}}; fullwidth brackets per corpus — ` +
+        `${summary}; every language with a nonzero count is covered, and the counter's ( vs （ control fires.`,
+    );
+  }
+}
+
+
 console.log(`\n${failures === 0 ? "PASS" : "FAIL"}: ${failures} failure(s), ${warnings} warning(s).`);
 process.exit(failures === 0 ? 0 : 1);

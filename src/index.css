@@ -212,6 +212,55 @@ body {
   transition: background-color 0.2s ease, color 0.2s ease;
 }
 
+/* Japanese and Simplified Chinese only: render CJK punctuation at its natural
+   width instead of a full em each.
+
+   THIS IS NOT A LINE-BREAKING FIX, and that matters, because the obvious
+   reading of the symptom sends you to the wrong property. Measured 2026-09-07
+   on the built app at a 320px viewport with the root font overridden to 32px
+   (browser/OS text zoom; the in-app control stops at 1.3), `ja`:
+     Learn                 SPAN "お金の基礎（任意）"        172 box / 180 content
+     Reference > Glossary  SPAN "マネーサプライ（M1）"      288 / 290
+     Reference > Glossary  SPAN "マネーサプライ（M2）"      288 / 294
+     Market Dashboard      FIGCAPTION "逆イールド（危険）"  114 / 120
+     Market Dashboard      DIV "量的引き締め（QT）"         253 / 263
+     Market Dashboard      H2 "マネーサプライ（M0・M1・M2）" 288 / 301
+   and `zh`, the same H2, 288 / 301. `body { overflow-x: hidden }` above CLIPS
+   that rather than scrolling to it, so the punctuation is simply gone.
+
+   Every one of those strings contains a fullwidth bracket, and a fullwidth
+   bracket is one em wide with roughly half of it blank. The overflow is the
+   WIDTH of the punctuation, not a word that failed to break — which is why
+   `line-break: anywhere`, `overflow-wrap: anywhere`, `word-break: break-all`
+   and `line-break: loose` were each measured on these elements and each left
+   every figure above unchanged, except `line-break: anywhere` on the one H2.
+   (`line-break: anywhere` is not a no-op in this browser — it re-split that H2
+   from "マネーサプライ" / "（M0・M1・M2）" to "マネーサプライ（" / "M0・M1・M2）",
+   which is the behavioral control that says the property was live when the
+   other elements did not move under it. `CSS.supports` returns true for all of
+   them and proves only that they parse.)
+   `proportional-width` takes the font's real metrics for those glyphs: all
+   seven elements go to zero overflow at every scale, in both languages.
+
+   Scoped to ja and zh because it is measured to be theirs: `ko` writes these
+   labels with ASCII parentheses ("통화량 (M0, M1, M2)") and the Korean corpus
+   contains zero fullwidth `（` , against 131 in `ja` and 138 in `zh`. So this
+   is corpus-wide for those two rather than seven patches, and Korean, English
+   and Spanish are untouched by construction.
+   `:lang(zh)` is written, not `:lang(zh-Hans)`: the app sets
+   `documentElement.lang = "zh-Hans"` (`lib/useAppState.js`), and `:lang(zh)`
+   matches it by language-range — verified by the fix taking effect in `zh`.
+
+   ⚠️ The one limit, stated because it cannot be measured from here: this asks
+   the FONT for proportional forms. It was verified against this host's CJK
+   fallback; a platform whose CJK font ships no proportional metrics will
+   ignore it. That degrades to exactly today's rendering, so the rule cannot be
+   worse than its absence — but it is not a guarantee on every device. */
+:lang(ja),
+:lang(zh) {
+  font-variant-east-asian: proportional-width;
+}
+
 button,
 input,
 select {

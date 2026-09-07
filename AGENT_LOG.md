@@ -2870,21 +2870,26 @@ instead of hand-rolling an eighth mover. A working one is in this run's scratchp
     > **What the sweep found when run this way, and it is why the item is worth building:** ONE live
     > defect (fixed the same run — `MarketSignals.jsx`'s bare `1fr` grid, `check-data.mjs` §78) and
     > ONE more filed as **item 169**. Both were invisible to the box probe alone.
-    > ⚠️ **A NOTE, not a sub-item (W-6.2 rule 2) — a THIRD live class this probe found, on
-    > 2026-09-07, while closing item 169. CJK text overflows at 200% where Latin text does not, and
-    > the cause is the fullwidth bracket.** Same instrument, same screen (Reference › Market
-    > Dashboard), same settings, controls firing: `ja` reports 6 flags and `zh` 4 at 200% only, both
-    > **unchanged by item 169's fix in either direction** (measured before and after, which is what
-    > says they are a separate class and not a side effect). Every one is a run containing `（…）`:
-    > `H2 マネーサプライ（M0・M1・M2）` and `H2 货币供应量（M0、M1、M2）` both 301 in a 288 box;
-    > `DIV 量的引き締め（QT）` 263/253; `FIGCAPTION 逆イールド（危険）` 120/114. CJK line-breaking
-    > forbids a break before a closing bracket or after an opening one, so `（M0・M1・M2）` is one
-    > unbreakable run and `overflow-wrap: break-word` — which breaks *words*, and treats the whole
-    > run as one — cannot get inside it. **Honest priority: low**, and the reason is the size: 10-13px
-    > on elements 253-288px wide, so it is a clipped bracket rather than the third of a label item 169
-    > was. `line-break: loose` / `anywhere` is the candidate and neither has been measured. **Not
-    > picked this run and deliberately not numbered** — filed here so the next run does not re-derive
-    > it from a fresh sweep.
+    > ✅ **CLOSED 2026-09-07** (owner-directed, the run after it was filed), replaced by its
+    > conclusion per W-7.2 rule 1. **What was true:** seven elements in `ja`/`zh` clipped their
+    > fullwidth brackets at 200% text zoom — one on **Learn**, two in the **Glossary**, four on the
+    > Market Dashboard. **What is true now:** `index.css` carries
+    > `:lang(ja), :lang(zh) { font-variant-east-asian: proportional-width; }`, all seven read zero at
+    > every scale, and `check-data.mjs` §79 ties the rule's language scope to the corpus.
+    > ⛔ **This note's DIAGNOSIS was wrong and the correction is the reusable part: it is not a
+    > line-breaking defect.** The note said `（M0・M1・M2）` is "one unbreakable run" that
+    > `overflow-wrap: break-word` cannot get inside, and named `line-break: loose`/`anywhere` as the
+    > candidates. Measured on the live elements: `line-break: anywhere`, `line-break: loose`,
+    > `overflow-wrap: anywhere` and `word-break: break-all` each left **every** figure unchanged,
+    > except `line-break: anywhere` on the one H2. **The overflow is the WIDTH of the punctuation,
+    > not a failure to break** — a fullwidth bracket is one em with about half of it blank, and
+    > taking the font's proportional metrics for those glyphs is what fixes it.
+    > ⭐ **Two instrument lessons worth more than the fix.** (1) `CSS.supports()` returned **true**
+    > for all four properties and proves only that they *parse*; the real control was behavioral —
+    > `line-break: anywhere` re-split that H2's lines, which is what says it was live while the
+    > other six elements did not move under it. (2) The note counted "6 flags in ja, 4 in zh". The
+    > honest counts are **3 and 1**: the rest were ancestors inheriting a descendant's overflow. A
+    > flag count is not a defect count unless the scan keeps only the deepest element.
     - **W-6.2 rule 3, answered up front:** the learner-visible failure a permanent probe would have
       caught is **"the Reference hub scrolled sideways at 200% browser zoom, and headings were
       clipped mid-word by `overflow-x: hidden`"** — both were shipping, on the hub screen, before
@@ -6459,3 +6464,122 @@ the block set for 2026-09-13.
 **Next run.** ⛔ **W-6.2 rule 1: this was link one of a residual chain, and the CJK-bracket note under
 item 155 is this run's residual** — a run may take it as link two, but the run after that may not.
 Open and unparked: **70/71, 74, 76, 94, 117, 155, 160**. O-2 is still the entire critical path.
+
+### 2026-09-07 (owner-directed: "fix the CJK bracket overflow in zh/ja next") — the note I filed one run earlier had the mechanism wrong, and the four properties it pointed at were each measured doing nothing
+
+**Where the pick came from.** Direct owner instruction, taking the note filed under item 155 by the
+previous run. W-6.2 rule 1 would have allowed it as link two in any case. **O-2 remains the entire
+critical path and no scheduled run can move it.**
+
+#### Step 3.5 — my own note from one run ago, re-measured with controls. Its numbers were right, its counts were inflated, and its diagnosis was wrong.
+- ⛔ **"6 flags in `ja`, 4 in `zh`" counted ancestors.** Filtering to the **deepest** flagged element
+  — an element with a flagged descendant is just reporting its child's overflow — the honest counts
+  are **3 and 1**. The three in `ja` are `FIGCAPTION 逆イールド（危険）` 114/120,
+  `DIV 量的引き締め（QT）` 253/263 and `H2 マネーサプライ（M0・M1・M2）` 288/301; the one in `zh` is
+  that same H2 at 288/301. **A flag count is not a defect count.**
+- ⛔ **The diagnosis — "an unbreakable run that `overflow-wrap` cannot get inside" — is false, and
+  it is the reason the note pointed at four properties that do nothing.** Applied to the real
+  elements at 320px/200%: `line-break: loose`, `overflow-wrap: anywhere` and `word-break: break-all`
+  left **every** figure identical, and `line-break: anywhere` moved **one** of the three (the H2,
+  301 → 288). `hanging-punctuation: allow-end` and `text-spacing-trim: trim-both` do not even parse
+  in this browser.
+- ✅ **What it actually is: the WIDTH of the punctuation.** A fullwidth bracket is one em wide with
+  roughly half of it blank. `font-feature-settings: "halt"` took the figcaption's overflowing line
+  from 120 → 96 and `"palt"` from 120 → 72 without changing a single break — which is what says the
+  glyph metrics, not the line breaker, were the problem. The shipped form is the standard-CSS
+  spelling of that, `font-variant-east-asian: proportional-width`.
+- ⭐ **The control that made the negative results trustworthy, and the one that nearly fooled me.**
+  `CSS.supports()` returns **true** for `line-break: anywhere`, `overflow-wrap: anywhere`,
+  `word-break: break-all` and `line-break: loose` — and it proves only that they **parse**. The
+  usable control was **behavioral**: `line-break: anywhere` re-split the H2 from
+  `マネーサプライ` / `（M0・M1・M2）` to `マネーサプライ（` / `M0・M1・M2）`. That is what licenses
+  reading "no change" on the other elements as the property being applied and not mattering, rather
+  than as the property being ignored.
+- ⚠️ **A planted control of mine was uninformative and is reported as such rather than counted.** I
+  planted `SUPERCALIFRAGILISTIC` in a pinned 114px box expecting it to discriminate between the
+  candidates; it wrapped identically under all of them, because `body`'s `overflow-wrap: break-word`
+  already breaks it. It validated nothing.
+- ⚠️ **And one thing I could not determine: WHY the browser refuses to break `ド（危険）` even under
+  `line-break: anywhere`,** when the run has a legal break between 危 and 険. Reproduced in a bare
+  pinned 114px box outside the app, so it is not something the app is doing. Recorded as measured
+  and unexplained rather than given a plausible-sounding cause.
+
+#### The scope, measured rather than assumed
+The sweep was widened past the Market Dashboard, and the class is **not confined to it**: `ja`'s
+`SPAN お金の基礎（任意）` overflows **172/180 on Learn**, the app's main path, and the Glossary carries
+`マネーサプライ（M1）` 288/290 and `（M2）` 288/294. Seven elements, three screens, two languages.
+**Korean is excluded on evidence, not by oversight:** `ko` writes these same labels with ASCII
+parentheses (`통화량 (M0, M1, M2)`) and its corpus holds **zero** fullwidth brackets, against 262 in
+`ja` and 276 in `zh`. `en` and `es` are zero as well.
+⚠️ **The one instance in this sweep that was mine, not the app's:** the first pass flagged Learn's
+sr-only `現在のレッスン` span at 1/92 — the visually-hidden idiom item 155's own notes say to
+exclude, which my simplified scan had dropped. Re-run with the exclusion restored, it is gone.
+
+#### What shipped
+- **`src/index.css`** — `:lang(ja), :lang(zh) { font-variant-east-asian: proportional-width; }`,
+  with the measurement table, the four refuted properties and the scope reasoning in the comment.
+  `:lang(zh)` rather than `:lang(zh-Hans)`: the app sets `documentElement.lang = "zh-Hans"` and
+  `:lang(zh)` matches it by language-range — **verified by the fix taking effect in `zh`**, not by
+  reading the spec.
+- **`check-data.mjs` §79** — the rule's language scope must cover every language whose corpus
+  contains fullwidth brackets. **Deliberately not a check that the rule still exists**, which would
+  be a tautology; it guards the SCOPE, which is a fact about content and drifts silently. Its
+  W-6.2 rule 3 sentence: *a Korean reader at 200% zoom sees clipped brackets because the rule that
+  fixes them does not name their language.*
+- **Re-measured on the rebuilt bundle** (`index-DIME4rXp.css` → `index-nwfqziZz.css`), five
+  languages × five root-font settings, control firing on every pass: `ja` and `zh` **0 flags at
+  every scale** on Learn, Glossary and Market Dashboard; `computed font-variant-east-asian` reads
+  `proportional-width` in ja/zh and **`normal` in en, es and ko**, so the three untouched languages
+  are untouched by construction and by measurement. The H2 now sets as
+  `マネーサプライ` / `（M0・M1・M2）` at 221.8px inside 288.
+
+#### The injection tests — three, and the second one found a real defect in my own check
+1. **Fullwidth bracket planted into `ko`** (`통화량（M0, M1, M2）`): §79 → **exit 1**, naming `ko`, its
+   2 brackets and the `{zh, ja}` scope. This is the case the section exists for. Restored from a
+   scratchpad copy, `cmp` byte-identical.
+2. **`:lang(zh)` deleted from the rule** — and §79 **passed anyway**, still reporting the scope as
+   `{ja, zh}`. ⛔ **The selector regex was reading `:lang(zh)` out of the COMMENT above the rule**,
+   which exists precisely to explain why the rule says `zh` and not `zh-Hans`. **A section that
+   reads its own documentation as evidence cannot fail.** Fixed by stripping CSS comments before
+   matching; re-run with the injection still in place → **exit 1**, naming `zh` and its 276
+   brackets. Without this injection the check would have shipped unable to detect the one thing it
+   is for.
+3. **The whole rule deleted, rebuilt, and driven live**: the CSS bundle lost the declaration
+   (`grep` 0) and all three `ja` defects returned at **exactly** 114/120, 253/263 and 288/301 —
+   the original figures. Restored, rebuilt, hash back to `index-nwfqziZz.css`, green again.
+
+#### Step 5 — adversarial self-check
+**Blindspot register: nothing found.** No lesson prose, content module, market figure or rendered
+date changed; the diff is one CSS rule and one check section. `check-blindspot` **0 failures**.
+⚠️ **The change is worth naming against §10.4 (the open non-English blindspot) explicitly**: it
+alters how `ja`/`zh` *render*, never what they say — no translated string was edited, and the
+corpus counts above are read-only measurements. **DECISIONS.md:** grepped for
+font/typography/CSS/i18n decisions — none conflict, and nothing here touches localStorage-only
+state, `.js`-not-JSON content, or Vite-not-Expo. **Already-done:** §78 (grid tracks) and the
+`minWidth: 0` fix earlier today are the automatic-minimum family in Latin script; this is a glyph
+metrics fix in CJK, and the measurements above are what separate them rather than my assertion.
+**My own verification claim, weakest part first:** ⛔ **the fix asks the FONT for proportional
+forms, and I verified it against one host's CJK fallback only.** A platform whose CJK font ships no
+proportional metrics will ignore the rule — that degrades to exactly today's rendering, so it cannot
+be worse than its absence, but "works everywhere" is **not** claimed and is not measured. The §79
+half is fully re-runnable by anyone (`npm test`, and each injection is a two-line edit); the live
+half needs a browser harness, so every probe, exclusion and control is written above precisely
+enough to rebuild.
+
+**Verified:** `npm test` **exit 0, 0 failures**, 4 warnings, all pre-existing and named in the
+backlog; `npm run build` clean; `npm run check-blindspot` **exit 0**; the built app driven at 320px
+across five languages, five root-font settings and three screens, before, after, and with the rule
+removed.
+
+**⭐ W-7.3's falsifiable test has ANSWERED, and the answer is the opposite of the audit's
+conclusion.** While this run was working, commit `1dc747a` "Refresh market data (asOf=2026-09-07)"
+arrived **in this working copy by itself**, touching only `public/data/market.json`. W-7.3's test
+was "if the job is live, the next refresh commit arrives here on its own, and no commit by 09-09 is
+the answer" — **it arrived, two days early.** The job on machine A is live and commits directly into
+this directory; the 2026-09-07 environment audit's "nothing visible from this host runs it, so it
+has been deleted or disabled" was **local absence read as global absence for the third time**, and
+the owner's correction was right. The stale-date clause is closed by data, not by argument.
+
+**Next run.** W-6.2 rule 1: this pick was owner-directed rather than a residual chain, and **it
+filed no residual of its own**. Open and unparked: **70/71, 74, 76, 94, 117, 155, 160**. O-2 is
+still the entire critical path.
