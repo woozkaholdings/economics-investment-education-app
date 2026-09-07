@@ -1821,6 +1821,45 @@ instead of hand-rolling an eighth mover. A working one is in this run's scratchp
 167. **[Content/Accuracy — filed 2026-09-05 by the run that fixed lesson 34's US-1930s claim, from
     the same close reading of the economy track. All three are LIVE and were read on the built app,
     not inferred; none is a residual of that run's own edit.]**
+    > ⚠️ **A SEVENTH NOTE, not a sub-item (W-6.2 rule 2). The ANSWER-KEY-vs-TRANSLATED-OPTION-ORDER
+    > class is swept and CLOSED at zero instances — do not re-run it.** 2026-09-07. `quizMeta.answer`
+    > is an **index**, and entry i of `quizMeta.js` is entry i of all five `quizText.<lang>.js`, so a
+    > translation that reordered its own `opts` would grade a correct pick as wrong **in that language
+    > only**. `check-data.mjs` §3 checks option **count** parity and answer-index range; nothing tied
+    > the key to non-English content, and `quizMeta.js`'s header carries the rule as prose ("when
+    > editing options, move the whole option string and update `answer` to match") — the same shape as
+    > the order comment that file records having been burned by before 2026-09-01. **Zero
+    > misalignments, by three instruments.** (1) **Positional anchors** — digits + ALL-CAPS acronyms:
+    > 12 of 184 (question, language) pairs decisively evaluable, 0 flags. (2) **Per-option numeric
+    > agreement**: 136 of 736 (question, option, language) triples covered (18%), **4 flags, all
+    > legitimate rendering** — "longer than a year" → `1년`/`1年`, and "Priya's" → `프리야의 1,000달러`
+    > restoring the elided noun; a planted `ko` swap fired the control. (3) **`explain` ranked against
+    > that language's OWN options** by character 2/3-gram Jaccard (no segmentation, so es/ko/zh/ja
+    > score identically well): full coverage, and the usable signal is **cross-language differencing** —
+    > the 5 questions where exactly one language disagrees (`q007` ja, `q021` ko, `q031` ja, `q038` es,
+    > `q046` ja) were **all read by hand and are all correctly aligned and correctly keyed**. Also
+    > swept: **duplicate options, 0 across 230 (question, language) sets**, control fired.
+    > ⛔ **Two instrument findings, because both are traps this log has hit before.** **(a) In a
+    > Latin-script language an ordinary Latin word is not an anchor.** The first version scored
+    > shared vocabulary and returned 8 flags, **6 of them `es`, every one at a 0.01 margin** — the
+    > same shape as the fourth note's `\w`-is-ASCII artifact, one alphabet later. Anchors must be
+    > things translation cannot touch: digits and acronyms. **(b) Option LENGTH cannot be a guard, and
+    > this is measured rather than asserted.** Against every single adjacent swap of the real corpus
+    > as planted positives: raw length-rank Kendall tau catches **27%** at a threshold that already
+    > costs 7 false positives, and the per-question-normalized form **49% at a 10% flag rate**. It is
+    > a fine **ranking** — the 7 worst-ranked pairs were read by hand and all were aligned — and it is
+    > not a test. ⚠️ **A related fact for item 160, measured on the way:** option-length rank is
+    > **strongly preserved by translation** (median tau **0.67** over 179 pairs), which is the
+    > mechanism behind §65 scoring 52-57% in all five languages rather than in English alone — the
+    > four translations **inherit** the tell rather than adding one.
+    > **No check was built** (W-6.2 rule 3 — after an empty sweep the learner-visible sentence cannot
+    > be written honestly; and the only instrument with real coverage would ship a 4-entry exemption
+    > list for zero defects, the trade the fifth note declined). `scripts/` untouched; W-6.3's ratio
+    > unmoved. The scripts stayed in the scratchpad; the definitions above are the record.
+    > ⚠️ **Overlap disclosed rather than glossed:** the sixth note swept explain-vs-distractor in
+    > **English** and says do not re-run it — this ran the **four translations**, for a different
+    > question (option ORDER, not distractor plausibility); the fourth note swept numeric drift in
+    > **lesson bodies**, this swept **quiz options**. Neither English half is claimed as new work.
     > ⚠️ **A SIXTH NOTE, not a sub-item (W-6.2 rule 2). The EXPLAIN-vs-KEYED-ANSWER class is swept
     > and CLOSED at zero instances — do not re-run it.** 2026-09-07: the `explain` field a learner is
     > shown the moment they answer was ranked against all four of its own options for every question,
@@ -5999,3 +6038,88 @@ paste, a check, a build and a redeploy. ⚠️ **W-7.3's falsifiable test comes 
 `market.json` is `asOf 2026-09-04`, and Sectors renders the unavailable state on **2026-09-09**. The
 test is that a live job commits a refresh into this working copy by itself — **no new refresh commit
 in this log by 09-09 is the answer**, and until then no run should re-diagnose it from this host.
+
+### 2026-09-07 (scheduled dev-agent; W-6.2 rule 1 free — the previous run was an archiving pass, so this pick came from the code rather than from a residual) — the answer key is an array index that five translation files have to stay aligned with, and nothing in the repo tied it to a single non-English word
+
+**Pick.** `quizMeta.answer` is an **index**, and entry i of `quizMeta.js` is entry i of every
+`quizText.<lang>.js`. `check-data.mjs` §3 asserts option **count** parity across languages and that
+the index is in range — so a translation that reordered its own `opts` passes the entire suite and
+**grades a correct pick as wrong in that language only**. `quizMeta.js`'s own header carries the rule
+as prose ("when editing options, move the whole option string and update `answer` to match — never
+leave `answer` pointing at a position by habit"), which is the same shape as the order comment that
+same file records having been burned by before 2026-09-01: *"It was an unenforced comment."*
+
+**Step 3.5 — the premise re-measured before anything was touched.** Reproduced exactly: §3's
+per-language assertion is `opts[lang].length === enCount` plus an in-range `answer`, and `grep` finds
+no other check anywhere that reads a non-English option against the key. The claim about the code
+held.
+
+**Result: ZERO misalignments.** Three instruments, each with a control; full detail is item 167's
+new seventh note, which exists so this sweep is not re-run.
+- **Positional anchors** (digits + ALL-CAPS acronyms): **12 of 184** (question, language) pairs
+  decisively evaluable, **0 flags**.
+- **Per-option numeric agreement**: **136 of 736** triples covered (18%), **4 flags, all legitimate
+  rendering** — "longer than a year" → `1년`/`1年`; "Priya's" → `프리야의 1,000달러`, the elided noun
+  restored. A planted `ko` option swap fired the control, so the zero means something.
+- **`explain` ranked against that language's OWN options**, character 2/3-gram Jaccard — no word
+  segmentation, so `es`/`ko`/`zh`/`ja` all score. Full coverage. The usable signal is
+  **cross-language differencing**: the **5** questions where exactly one language disagrees (`q007`
+  ja, `q021` ko, `q031` ja, `q038` es, `q046` ja) were **all read by hand — all correctly aligned and
+  correctly keyed**. Also swept: **duplicate options, 0 across 230 (question, language) sets**.
+
+**Two hypotheses I formed and then refuted by measurement, which is most of what this run is worth.**
+- ⛔ **Option LENGTH cannot be a guard for this.** Scored against every single adjacent swap of the
+  real corpus as planted positives: raw length-rank Kendall tau catches **27%** at a threshold that
+  already costs **7 false positives**, and the per-question-normalized form **49% at a 10% flag
+  rate**. I had been about to treat a low tau as a finding. It is a **ranking**, not a test — the 7
+  worst-ranked pairs read by hand were all correctly aligned, and their low tau is script
+  compression, not a swap.
+- ⛔ **`Question.jsx`'s `key={option}` is NOT a defect, and the failure I predicted for it does not
+  happen.** The list is keyed by option TEXT, so I expected a duplicate to drop a row or mis-place
+  the "your guess" marker. **Measured live instead of asserted:** planted a duplicate into `q001`
+  (`quizText.en.js` 33,766 → 33,777 b, plant confirmed on screen — two identical options rendered),
+  built, served `dist/`, drove the first-run flow at 420px and clicked the duplicate row. **Four rows
+  render and the marker lands on the row actually clicked (index 1).** No dropped row, no mis-mark;
+  React's duplicate-key warning is dev-only and this is a production build. **Nothing changed** —
+  "fixing" it would have been churn sold as a fix. Restored from the scratchpad copy (`cmp`
+  identical, `git status` clean), never `git checkout --`.
+
+**Why no check shipped.** W-6.2 rule 3: after an empty sweep the learner-visible sentence cannot be
+written honestly, and the only instrument with real coverage (numeric, 18%) would ship a **4-entry
+exemption list to guard zero defects** — the same trade item 167's fifth note declined. W-6.3:
+`scripts/` is untouched this run, so the ratio is unmoved. The instruments stayed in the scratchpad
+(the item-167 precedent); their definitions are recorded in the note precisely enough to rebuild.
+
+**Also measured, not repo work.** `npm run check-deployed`: the live site has **DIVERGED again** —
+entry bundle `index-B1mndoLB.js` **264,930 b** live against local `index-BXgien3w.js` **265,245 b**,
+and `index.html` 5,093 b live against 4,557 b local; `icon.svg` and `og-card.png` identical; the 404
+control fired. `npm run deploy` still **REFUSES — no Netlify token**, which W-7.1 already names as
+the one remaining owner action. This is the second observation of W-7.1's class and it is not a new
+finding; it is recorded here because a run that measured it should say so, not because restating it
+moves it. Market data unchanged at `asOf 2026-09-04` (age 3, Sectors flips 2026-09-09) — W-7.3's
+falsifiable test is still running and this checkout must not re-diagnose it.
+
+**Step 5 — adversarial self-check.** **Blindspot register:** no content or app code changed; the one
+file I touched was restored byte-identical and the tree is clean, so §10.1/§10.2/§10.3 and the
+stale-data rule cannot have moved — and `check-blindspot` is green in the `npm test` run below.
+**DECISIONS.md:** nothing here touches localStorage-only state, `.js`-not-JSON content, or
+Vite-not-Expo. **Already-done:** the closest overlap is real and is disclosed rather than glossed —
+item 167's **sixth** note swept explain-vs-distractor in **English** and says do not re-run it; this
+ran the **four translations**, for a different question (option ORDER, not distractor plausibility),
+and item 167's **fourth** note swept numeric drift in **lesson bodies** where this swept **quiz
+options**. Neither English half is claimed as new work. Item **160** was deliberately NOT picked:
+its own ⛔ stop line (2026-09-04) says the remainder is class B and O-3's call, and the one thing this
+run adds to it — that option-length rank is strongly preserved by translation, median tau **0.67**
+over 179 pairs, which is *why* §65 scores 52-57% in all five languages rather than English alone — is
+filed as a fact in the note, not as a reason to reopen it. **My own verification claim:** the
+weakest part of this entry is that the instruments are not committed, so a reviewer cannot re-run my
+exact commands; that is stated plainly above rather than left for them to discover, the method is
+recorded in full, and the two claims that do NOT depend on my scripts — the live-app duplicate-option
+walk and `check-deployed`'s byte comparison — are both independently re-runnable.
+
+**Verified:** `npm test` green (0 failures; the 3 standing WARNs — translation review share,
+translation completeness, §65 option length — and the floor WARN are all pre-existing and named in
+the backlog), `npm run build` clean, and the built app driven live at 420px and 375px.
+
+**Next run should pick from the launch plan or the owner-facing items** — not from this entry. This
+run filed no residual and closed no numbered item, so there is nothing here to chain from.
