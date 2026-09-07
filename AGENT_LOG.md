@@ -135,6 +135,11 @@ for the history. No open P1/P2 items.
 > 2. Paste that provider's **public** site id / ingest key into `src/lib/analyticsConfig.js` and set
 >    `provider`. ⛔ **Never paste a private or personal API key** — the file ships to every visitor
 >    and says so.
+> ✅ **Step 3's pre-flight actually works as of 2026-09-07** (owner-directed, "set up posthog"). The
+> documented `npm run analytics-check -- --key phc_xxx` — the form meant to check a key BEFORE pasting
+> it — read `provider` from the committed file, saw `"none"`, and exited without probing. A CLI
+> `--key`/`--host`/`--provider` now overrides the file. **Nothing about the owner action changed; the
+> tool for it did.**
 > 3. **`npm run analytics-check`** (added 2026-09-06) — verify the key is actually accepted
 >    BEFORE building. ⛔ **Nothing else in this repo can tell you.** PostHog’s capture endpoint
 >    answers **HTTP 200 to any key at all** (measured 2026-09-06, both regions, with a 404
@@ -7744,3 +7749,71 @@ the glossary bookmark is still uninstrumented, and that is now a *choice* rather
 the whole critical path and no run can move it; **ask the owner rather than restating it.** W-7.3's clock
 is unchanged: `market.json` is `asOf 2026-09-04`, age 3 days, and Sectors renders the unavailable state
 on **2026-09-09** if the owner's job on machine A does not commit here first.
+
+### 2026-09-07 (owner-directed, interactive: "set up posthog") — the account is the owner's to create, and the pre-flight command this repo tells them to run first never ran: it read `provider` from the committed file, saw "none", and exited before probing anything
+
+**What a run can do here was already done on 2026-09-05; what was left is one owner action.** Re-measured
+rather than read off item 18: `src/lib/analyticsConfig.js` ships `provider: "none"` with
+`projectApiKey: ""`, `isConfigured()` returns false, and `npm run analytics-check` says so and exits 1.
+⛔ **Creating the PostHog account is not something this agent does** — it is account creation behind a
+password, and it stays with the owner. Everything up to the key is verified below.
+
+**The defect, and it was directly in front of the owner.** `analyticsConfig.js`'s header and
+`check-analytics.mjs`'s own usage block both print **`npm run analytics-check -- --key phc_xxx`**,
+described as *"check a key BEFORE pasting it in"* — the safer order, and the whole reason the flag exists.
+Measured 2026-09-07: that command **never reached the probe.** `provider` resolved as
+`flag('provider') ?? analyticsConfig.provider`, the file says `"none"`, and the `provider === 'none'`
+guard sits **above** the point where `--key` is used. So the documented pre-flight printed "Analytics is
+OFF" and stopped. **The one command written specifically for the moment the key arrives was the one
+command that could not work at that moment.**
+⭐ **Same class as the fresh-clone recipe (item 154) and the scorecard's expected-output line: a document
+stating what a command does, where nothing ever ran it in the state the reader will be in.** Here the
+state is "provider still none", which is *by definition* every pre-flight run.
+
+**Fixed in `scripts/check-analytics.mjs`, three edits, no new script (W-6.3 — `scripts/` net +~25 lines).**
+1. **A CLI `--key`/`--host`/`--provider` now overrides the committed file**, via `inferProvider()`:
+   explicit `--provider` wins; a bare `--key` matching `/^phc_/i` infers `posthog`; a `--key`/`--host`
+   that is genuinely ambiguous **asks** rather than guessing or silently falling through to "OFF".
+2. **The usage block now prints only forms that run**, and says that CLI args override the file.
+3. **The region-mismatch remediation names the region NOT just tried.** It previously said "set host to
+   https://eu.i.posthog.com" *even when it had just checked EU* — "try what you just did", at the exact
+   moment someone is stuck. It now derives the other region from `host`.
+
+**Proven by running all four paths, exit codes captured (not inferred from output text).**
+| invocation | before | after |
+|---|---|---|
+| `analytics-check` (no args, provider none) | "OFF", exit 1 | unchanged — "OFF", exit 1 |
+| `-- --key phc_<bad>` (the documented pre-flight) | **"OFF", never probed** | probes; control **401**, key **401**, exit 1 |
+| `-- --key phc_<bad> --host https://eu…` | "OFF", never probed | probes **EU**, exit 1, hint names **US** |
+| `-- --key notaposthogkey…` | "OFF", never probed | names the ambiguity, exit 1 |
+**The instrument's own control fires on every probing run** — a deliberately dead token
+(`phc_invalid_probe_0…`) must come back 401 before any verdict is given, and it did (`✓ HTTP 401 — the
+probe can distinguish a bad token`). That control is what makes a 401 on the real key mean "rejected"
+rather than "endpoint unreachable". **No valid key was available to this run, so the PASS branch is
+unexercised and is not claimed as verified** — stated rather than rounded up.
+
+**Two facts about the PostHog choice, measured in the code, because they are what the owner's step-1
+trade turned on.** (i) `analytics.js` posts to PostHog's capture endpoint **directly over `fetch`** — it
+does not load `posthog-js`. (ii) It sets **no cookie** and stores **no persistent id**: the distinct id is
+random per page load and held in memory only, so PostHog's "unique users" reads as *sessions*. **The
+cookie-banner consideration that made the cookieless alternatives attractive does not apply to this
+implementation** — which is worth knowing before choosing, and is already recorded in `DECISIONS.md`
+rather than left to be discovered in a dashboard.
+
+**Adversarial self-check (step 5).** **Blindspot register:** no learner-visible string changed — the diff
+is one script and the app bundle is byte-identical in behavior; `npm run check-blindspot` **0 failures**.
+**DECISIONS.md:** no conflict, and the one at risk was checked by name — the "committed `.js` config, not
+an environment variable" decision is *strengthened*, since the fix keeps the committed file as the single
+source of truth and makes the CLI a pre-flight override rather than a second config. **Already-done item:**
+not a redo — the 2026-09-06 run built `analytics-check`'s probe and its control, both of which are
+untouched and still passing; what changed is only which invocations reach them. **My own verification
+claim:** every row of the table above is a real invocation with its exit code captured in the shell, not
+read off the message; the unexercised PASS branch is named as unexercised.
+
+**Verification.** `npm test` ✅ **0 failures**, same four pre-existing warnings; `npm run build` ✅ 572 ms;
+`npm run check-blindspot` ✅ 0 failures.
+
+**O-2 status after this run — narrowed again, and the remaining part is unchanged in substance.** The
+owner creates the account and copies the **public** Project API Key (`phc_…`) and its region host; step 3
+of O-2 (`npm run analytics-check`) now actually works before the paste rather than after. Steps 4 and 5
+(`npm run build`, redeploy) are unchanged, and `npm run deploy` still needs the Netlify token.

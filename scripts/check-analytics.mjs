@@ -3,8 +3,13 @@
 //
 //   npm run analytics-check                       check src/lib/analyticsConfig.js
 //   npm run analytics-check -- --key phc_xxx      check a key BEFORE pasting it in
-//   npm run analytics-check -- --host https://eu.i.posthog.com
+//   npm run analytics-check -- --key phc_xxx --host https://eu.i.posthog.com
 //   npm run analytics-check -- --send-event       also post one real test event
+//
+// A --key/--host/--provider on the command line OVERRIDES the committed file,
+// so the pre-flight forms above work while `provider` is still "none". That is
+// the whole point of them, and it did not hold until 2026-09-07 — see
+// inferProvider() below for what was measured.
 //
 // ⛔ NOT wired into `npm test`, deliberately: it makes a network call, so it is
 // neither offline nor deterministic. It is an owner tool for the one moment the
@@ -97,9 +102,36 @@ async function post(url, body, contentType = 'application/json') {
 // key BEFORE editing the committed file, which is the safer order. A project
 // API key is public by construction (it ships in the bundle), so putting one
 // on a command line costs nothing — a PERSONAL key would, and never belongs here.
-const provider = flag('provider') ?? analyticsConfig.provider;
 const cliKey = flag('key');
 const cliHost = flag('host');
+
+// The pre-flight order this script advertises is "check the key BEFORE pasting
+// it in", and at that moment the committed provider is still "none" — so
+// reading `provider` from the file alone sent every --key run into the
+// "analytics is OFF" branch below and exited without probing anything.
+// Measured 2026-09-07: `npm run analytics-check -- --key phc_…`, the exact
+// command this file's usage block and analyticsConfig.js's header both print,
+// never reached the probe. A CLI argument therefore overrides the file, and a
+// bare --key infers its provider from the key's own shape.
+function inferProvider() {
+  const explicit = flag('provider');
+  if (explicit) return explicit;
+  if (cliKey && /^phc_/i.test(cliKey)) return 'posthog';
+  if (cliKey || cliHost) return null; // known-ambiguous — asked for below
+  return analyticsConfig.provider;
+}
+const provider = inferProvider();
+
+if (provider === null) {
+  say('analytics-check');
+  say();
+  say('  A --key or --host was given but the provider is ambiguous.');
+  say('  `provider` in src/lib/analyticsConfig.js is "' + analyticsConfig.provider + '", and the');
+  say('  key does not start with phc_, so it is not obviously a PostHog key.');
+  say('  Say which one explicitly, e.g.:');
+  say('    npm run analytics-check -- --provider posthog --key phc_xxx');
+  process.exit(1);
+}
 
 say(`analytics-check — provider "${provider}"`);
 say();
@@ -168,10 +200,16 @@ if (provider === 'posthog') {
     say();
     say('  ❌ Rejected. TWO causes look identical here, and the second is the likely one:');
     say('     1. the key is wrong (typo, or a key from a different project);');
+    // Name the region NOT just tried. Suggesting the host that was already
+    // used reads as "try what you just did" at the one moment the owner is
+    // stuck, which is how this message read until 2026-09-07.
+    const OTHER = /eu\.i\.posthog\.com/i.test(host)
+      ? 'https://us.i.posthog.com'
+      : 'https://eu.i.posthog.com';
     say(`     2. REGION MISMATCH — this checked ${host}.`);
-    say('        A US project key 401s against the EU host and the reverse. If you');
-    say('        picked the EU region at signup, set `host` to https://eu.i.posthog.com');
-    say('        in src/lib/analyticsConfig.js and re-run.');
+    say('        A US project key 401s against the EU host and the reverse.');
+    say(`        Try the other region: re-run with --host ${OTHER}, and if that`);
+    say(`        passes set \`host\` to ${OTHER} in src/lib/analyticsConfig.js.`);
     exitCode = 1;
   } else {
     say(`             ? HTTP ${real.status}`);
