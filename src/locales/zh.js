@@ -48,6 +48,7 @@ export default {
     kidsAgeGroupLabel: "选择年龄段", kidsWhyLabel: "为什么重要",
     glossTitle: "术语表", glossSearch: "搜索术语...",
     glossNoResults: "没有与您的搜索匹配的术语。",
+    glossSavedFilter: "已保存 {n} 个",
     balanceSheet: "美联储资产负债表",
     qeLabel: "量化宽松（QE）", qtLabel: "量化紧缩（QT）",
     qeQtSection: "QE、QT 与资产负债表",

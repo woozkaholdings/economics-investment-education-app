@@ -75,6 +75,7 @@ export default {
     kidsAgeGroupLabel: "Select age group", kidsWhyLabel: "Why it matters",
     glossTitle: "Glossary", glossSearch: "Search terms...",
     glossNoResults: "No terms match your search.",
+    glossSavedFilter: "Saved ({n})",
     balanceSheet: "Fed Balance Sheet",
     qeLabel: "Quantitative Easing (QE)", qtLabel: "Quantitative Tightening (QT)",
     qeQtSection: "QE, QT, and the Balance Sheet",

@@ -48,6 +48,7 @@ export default {
     kidsAgeGroupLabel: "年齢帯を選択", kidsWhyLabel: "大切な理由",
     glossTitle: "用語集", glossSearch: "用語を検索...",
     glossNoResults: "検索に一致する用語がありません。",
+    glossSavedFilter: "保存済み {n} 件",
     balanceSheet: "FRBのバランスシート",
     qeLabel: "量的緩和（QE）", qtLabel: "量的引き締め（QT）",
     qeQtSection: "QE・QTとバランスシート",

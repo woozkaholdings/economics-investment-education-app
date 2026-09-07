@@ -5,6 +5,14 @@
 // Search matches the English key *and* the translated name, so a Korean reader
 // can find "수익률 곡선" without knowing it is filed under "Yield Curve".
 //
+// The bookmark toggle on the term detail promises a learner they can mark
+// terms "worth revisiting"; the SAVED FILTER above the list is what makes
+// revisiting possible. Without it the only trace of a save is a small icon on
+// one row of 43, so a saved set could be built and never read back. The chip
+// renders only when at least one term is saved — a control that can never do
+// anything is worse than no control — and it clears itself if the last
+// bookmark is removed while it is on.
+//
 // Each row's aria-label carries only the term (plus a bookmarked marker), which
 // overrides its contents for name computation — so the definition and example
 // inside the row would otherwise never reach a screen reader navigating by
@@ -15,7 +23,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { glossary } from "../../content/glossary.js";
 import Icon from "../../components/Icon.jsx";
 import { EmptyState, Text } from "../../components/ui.jsx";
-import { ink, line, radius, space, surface } from "../../theme.js";
+import { ink, line, MIN_TAP, radius, space, surface } from "../../theme.js";
 import { useDismissOnBack } from "../../lib/deepLink.js";
 import { KEYS, readArray, writeJSON } from "../../lib/storage.js";
 import TermDetail from "./TermDetail.jsx";
@@ -23,6 +31,7 @@ import TermDetail from "./TermDetail.jsx";
 export default function Glossary({ t, lang }) {
   const [query, setQuery] = useState("");
   const [selectedTerm, setSelectedTerm] = useState(null); // null | a glossary key
+  const [savedOnly, setSavedOnly] = useState(false);
   const [bookmarks, setBookmarks] = useState(() => readArray(KEYS.glossaryBookmarks));
 
   // TermDetail moves focus to its own heading on open (its useEffect), but
@@ -49,6 +58,13 @@ export default function Glossary({ t, lang }) {
     }
   }, [selectedTerm, returnFocusTerm]);
 
+  // Removing the last bookmark happens on the term detail, so the list comes
+  // back with the filter still on and nothing to show. Clear it rather than
+  // render an empty list under a "Saved (0)" chip.
+  useEffect(() => {
+    if (savedOnly && bookmarks.length === 0) setSavedOnly(false);
+  }, [savedOnly, bookmarks]);
+
   const toggleBookmark = (term) => {
     setBookmarks((prev) => {
       const next = prev.includes(term) ? prev.filter((x) => x !== term) : [...prev, term];
@@ -61,10 +77,11 @@ export default function Glossary({ t, lang }) {
     const q = query.trim().toLowerCase();
     return Object.entries(glossary)
       .map(([term, translations]) => ({ term, entry: translations[lang] || translations.en }))
+      .filter(({ term }) => !savedOnly || bookmarks.includes(term))
       .filter(({ term, entry }) =>
         !q || term.toLowerCase().includes(q) || (entry.s || "").toLowerCase().includes(q)
       );
-  }, [query, lang]);
+  }, [query, lang, savedOnly, bookmarks]);
 
   if (selectedTerm && glossary[selectedTerm]) {
     const entry = glossary[selectedTerm][lang] || glossary[selectedTerm].en;
@@ -106,6 +123,30 @@ export default function Glossary({ t, lang }) {
           }}
         />
       </div>
+
+      {bookmarks.length > 0 && (
+        <div style={{ display: "flex", marginTop: `-${space["2"]}px`, marginBottom: space["4"] }}>
+          <button
+            type="button"
+            aria-pressed={savedOnly}
+            onClick={() => setSavedOnly((v) => !v)}
+            style={{
+              display: "inline-flex", alignItems: "center", gap: space["1"],
+              padding: `${space["1"]}px ${space["4"]}px`,
+              minHeight: MIN_TAP,
+              borderRadius: radius.full,
+              border: `1px solid ${savedOnly ? ink.accent : line.strong}`,
+              background: savedOnly ? surface.accentWash : surface.card,
+              color: savedOnly ? ink.accent : ink.body,
+              fontSize: "0.875rem", fontWeight: 600, cursor: "pointer",
+              fontFamily: "inherit",
+            }}
+          >
+            <Icon name="bookmark" size="1em" style={savedOnly ? { fill: "currentColor" } : undefined} />
+            {t.glossSavedFilter.replace("{n}", bookmarks.length)}
+          </button>
+        </div>
+      )}
 
       {entries.length === 0 ? (
         <EmptyState icon="search">{t.glossNoResults}</EmptyState>

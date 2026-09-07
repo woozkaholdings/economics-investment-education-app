@@ -48,6 +48,7 @@ export default {
     kidsAgeGroupLabel: "Seleccionar grupo de edad", kidsWhyLabel: "Por qué importa",
     glossTitle: "Glosario", glossSearch: "Buscar términos...",
     glossNoResults: "Ningún término coincide con tu búsqueda.",
+    glossSavedFilter: "Guardados ({n})",
     balanceSheet: "Balance del Fed",
     qeLabel: "Flexibilización Cuantitativa (QE)", qtLabel: "Ajuste Cuantitativo (QT)",
     qeQtSection: "QE, QT y el Balance",

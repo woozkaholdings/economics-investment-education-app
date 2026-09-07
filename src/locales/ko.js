@@ -48,6 +48,7 @@ export default {
     kidsAgeGroupLabel: "연령대 선택", kidsWhyLabel: "왜 중요할까요",
     glossTitle: "용어집", glossSearch: "용어 검색...",
     glossNoResults: "검색과 일치하는 용어가 없습니다.",
+    glossSavedFilter: "저장됨 {n}개",
     balanceSheet: "연준 대차대조표",
     qeLabel: "양적완화 (QE)", qtLabel: "양적긴축 (QT)",
     qeQtSection: "QE, QT 그리고 대차대조표",

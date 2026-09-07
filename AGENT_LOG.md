@@ -3710,70 +3710,30 @@ instead of hand-rolling an eighth mover. A working one is in this run's scratchp
     > should pick" notes pointed at work that was already finished.** Re-check a candidate's own item
     > before picking it — a pick list is a claim about current state and goes stale like a figure.
 
-26. **[UX — owner-directed, entered as a backlog item by the 2026-08-16 weekly review] Quizlet/Vocabulary
-    design-reference review.** The owner shared ~200 Mobbin-exported screenshots of the Quizlet and
-    Vocabulary iOS apps in a 2026-08-15 interactive session and asked for transferable patterns to be
-    applied. Six commits have shipped from it (dual right/wrong quiz markers, Review results recap,
-    one-time Practice coach mark, glossary example sentences, Practice review-batch interstitial,
-    term-detail screen + bookmark toggle). It was driven entirely from run-log notes and never appeared in
-    this backlog — recorded here so the stream is visible and prioritizable. **Status: the ideas the
-    review named are all built.** The one named-but-deferred follow-up is surfacing bookmarked glossary
-    terms (a filter chip or a "Saved terms" count); three consecutive runs correctly deferred it pending
-    evidence the toggle gets used, and that reasoning still holds — **it is blocked on item 18's analytics,
-    not on effort.** Do not extend this stream with new invented ideas; the owner's explicit instruction
-    was that no paywall/subscription UI be built from the reference material while §4.3's Phase-0 gate is
-    open, and that still binds.
-    > **~~New reference material appeared 2026-08-17, unread and uninterpreted.~~ ✅ READ AND
-    > IMPLEMENTED 2026-08-21; this note is superseded and is kept only so the sequence is legible.**
-    > The untracked `UIUX/` directory (now 35 screenshots + 16 videos of Buddy, Duolingo, Quizlet,
-    > Vocabulary and Nibble) was owner material with no brief, and the standing instruction was to
-    > leave it alone until the owner named what they wanted. **They did, on 2026-08-21.** A design
-    > canvas was drafted from the folder and implemented: the finding was that **four of the five
-    > mocked screens were already built to these references** and only `Learn.jsx` had a substantive
-    > gap — which turned out to hide a real WCAG failure (`opacity: 0.55` on locked rows, 2.31:1,
-    > invisible to §28 because it composites *on top of* a token pair). Five primitives derived from
-    > the folder live in `components/ui.jsx` under its own "PATTERNS ADAPTED FROM THE UIUX/ REFERENCE
-    > SET" header — `IconTile`, `Tile`, `TileGrid`, `Steps`, `ResumeCard` — and are wired into
-    > `Reference.jsx`, `Practice.jsx` and `Learn.jsx` respectively. **Do not re-derive that redesign.**
-    > **Second pass, 2026-08-23 (owner-directed, "apply the design"): the *visual language*, which the
-    > first pass did not touch.** The 2026-08-21 work adopted the reference set's *structures* while
-    > the palette stayed cool blue-on-near-black; the references are uniformly warm and editorial.
-    > `src/index.css` was repainted to a warm palette in both schemes and screen titles took a system
-    > serif. See `DECISIONS.md` and the 2026-08-23 run-log entry. **What is deliberately still NOT
-    > built, and why, is in the 2026-08-21 entry's "Three things from the canvas deliberately NOT
-    > built" section** — two because the design was wrong against `theme.js`'s rules, one (the Leitner
-    > box-distribution strip) because it costs five locale keys x five languages and changes nothing a
-    > learner does. **That third one is an open owner decision, not an oversight.**
-    > **The owner's no-paywall instruction above still binds** — much of the `UIUX/` set is
-    > subscription UI (Vocabulary's "Go Premium"/"Unlock all", its Settings "Manage subscription",
-    > Duolingo's friends-invite), and none of it may be built from while §4.3's Phase-0 gate is open.
-    > **Fourth pass, 2026-08-23 (owner-directed mid-run, "proceed implementing UIUX"): the reference
-    > set's *touch targets*.** The first three passes took the folder's structures, its palette and
-    > three of its patterns; all of them are iOS apps built to a 44pt floor, and the app was not.
-    > **Measured with a control: eleven control classes rendered under 44x44 — the coach-mark dismiss
-    > at 20x20 and the Sector period tabs at 19x31, the latter under even WCAG 2.5.8's 24px AA
-    > floor.** Fixed against a new `MIN_TAP` token in `theme.js` and guarded by `check-data.mjs`
-    > **§34**. The previous run had filed only the mildest instance ("the primary button is 42px")
-    > and deferred it on the cost of its cheapest part — **a backlog note's characterization of the
-    > code is evidence, not fact, and this is the eleventh consecutive time step 3.5 has said so.**
-    > ✅ **BUILT 2026-09-02 (owner-directed: "build the Leitner box-distribution strip"), after being
-    > offered back three times. It was the last unbuilt item from the canvas, so THIS STREAM IS NOW
-    > COMPLETE and item 26 can close.** The cost estimate that held it open was re-measured and was
-    > exactly right: five new locale keys x five languages, 25 strings, all machine-translated (O-3's
-    > standing condition applies). What the estimate got wrong was the OTHER half of its own sentence
-    > — "changes nothing a learner does" was a judgment about behavior, and the strip's actual value
-    > is that it is the only place the schedule's SHAPE is visible: the due card and the practice-all
-    > button both report today, and nothing showed that the boxes exist or that material climbs them.
-    > Built by REUSING `charts.jsx`'s `Bar` at a fifth call site rather than as a new primitive, so
-    > `scripts/` gained 0 lines and the strip inherited the sub-375px row layout and the `rem` box
-    > height that stopped bar tracks rendering 9px tall at 130% root font. See the run-log entry for
-    > the plural defect the n=1 control caught after the rule to prevent it had already been written.
-    > ORIGINAL CLAUSE, kept because the line above answers it:
-    > **STILL OPEN AND STILL THE OWNER'S CALL: the Leitner box-distribution strip.** It has now been
-    > offered back three times (2026-08-21, and twice on 2026-08-23). "Proceed implementing UIUX" was
-    > not read as an answer to it, because it is a translation-debt question (five locale keys x five
-    > languages) rather than a design one. **It is the only unbuilt item left from the canvas** — if
-    > the owner declines it, this stream is complete and item 26 can close.
+26. **[UX — owner-directed] Quizlet/Vocabulary + `UIUX/` design-reference review. ✅ CLOSED
+    2026-09-07 (scheduled dev-agent), when its last named follow-up — surfacing saved glossary terms —
+    shipped. Per W-7.2 rule 1 this is the conclusion, not the four passes that produced it; those are
+    in the run log for 2026-08-16, 08-21, 08-23 and 09-02, and in `DECISIONS.md`.**
+    - **What it was:** ~200 Mobbin screenshots of Quizlet/Vocabulary (2026-08-15) and later the
+      `UIUX/` folder (Buddy, Duolingo, Quizlet, Vocabulary, Nibble), read for transferable patterns.
+      Everything the two reviews named is now built — quiz markers, review recap, the Practice coach
+      mark, glossary examples, the review-batch interstitial, term detail + bookmark toggle, the five
+      `ui.jsx` primitives under its own header, the warm repaint, `MIN_TAP` (guarded by
+      `check-data.mjs` §34), and the Leitner box strip.
+    - ⛔ **Two standing instructions survive the close and still bind.** (1) **The owner's no-paywall
+      rule:** much of `UIUX/` is subscription UI, and none of it may be built from while §4.3's
+      Phase-0 gate is open. (2) **Do not re-derive the 2026-08-21 redesign**, and do not extend this
+      stream with newly invented ideas — the reference set is read, not a well to return to.
+    - ⛔ **The last follow-up was deferred for three years' worth of runs on a premise that could not
+      have come true, and the correction is the transferable part.** From 2026-08-16 the rule was
+      *"that should wait to see whether the underlying toggle gets used"*, restated four more times and
+      finally recorded here as *"blocked on item 18's analytics, not on effort."* Measured 2026-09-07:
+      `src/` has **8 `track()` call sites** (`grep -rn "track(" src`, control: the known
+      `EVENTS.LESSON_COMPLETED` site is among them) and **not one is the bookmark toggle**; there is
+      no term-bookmark event in §9.2's set. **No provider key would ever have produced the evidence the
+      wait was waiting for.** On top of that the wait was circular: a save with nowhere to read it back
+      has no reason to be used, so usage data would have under-reported it even if it existed.
+      ⭐ **A deferral names a condition; check that something in the tree can actually report it.**
 
 > **PRIORITY BLOCK — set by the weekly review 2026-08-09. SUPERSEDED 2026-08-16 (see above); all four
 > items below are closed. Retained for history.**
@@ -4239,6 +4199,15 @@ instead of hand-rolling an eighth mover. A working one is in this run's scratchp
     COPPA classification, store privacy category, and ad eligibility. §10.3 reserves it for the owner.
 18. **[Process] Instrumentation (§9.2) — 🟡 call sites done 2026-08-05, TRANSPORT done 2026-09-05,
     only the provider account is still open.**
+    > ⚠️ **NOTE 2026-09-07 (W-6.2 rule 2 — a note, not an item). The instrumented set is 8 call sites
+    > and it is narrower than "the app".** Measured (`grep -rn "track(" src`, control:
+    > `EVENTS.LESSON_COMPLETED` resolves to one of them): APP_OPENED, LESSON_STARTED,
+    > LESSON_COMPLETED, QUIZ_TAKEN x2, QUIZ_ANSWERED x3, SIM_LEVER_CHOSEN. **The glossary bookmark
+    > toggle fires nothing**, and §9.2's event set has no term-bookmark event — so a question like
+    > "does anyone save terms?" is unanswerable even with a key pasted in. That is a plan question,
+    > not a run's call. ⛔ **The transferable half is in item 26's close:** a follow-up was deferred
+    > five times on evidence this list could never produce. **Before deferring anything "until
+    > analytics", check this list for the event it needs.**
     > ✅ **2026-09-05 (owner-directed, "set up analytics for O-2"). The half a run can do is done.**
     > `src/lib/analyticsConfig.js` ships with `provider: "none"`; `track()` writes the local log
     > **and** forwards to whichever of `plausible` / `posthog` / `custom` that file names. **No
@@ -7662,3 +7631,116 @@ does not charge itself is not measuring anything. The trade is stated rather tha
 costs ~2.6 KB and buys a future run not re-deriving a 278-reference sweep that returns one defect, and
 not rebuilding its detector wrong in either of the two ways this run did. Both figures are
 `check-log-size.mjs`'s own MEASURED line, run before and after, not arithmetic of mine.
+
+
+### 2026-09-07 (scheduled dev-agent, backlog item 26 — the one open follow-up in it, deferred by five runs since 2026-08-16) — the bookmark toggle promised a learner they could mark terms worth revisiting, and nothing in the app could show them back; the deferral was waiting on usage evidence no call site fires
+
+**⛔ Step 3.5: the item's premise did not survive, and the refutation is the reason this run exists.**
+Item 26's deferral read *"three consecutive runs correctly deferred it pending evidence the toggle gets
+used… blocked on item 18's analytics, not on effort."* Traced to its origin (archive, 2026-08-16 seventh
+run): *"that should wait to see whether the underlying toggle gets used before building a view around
+it."* **Measured before touching anything, with a control:** `grep -rn "track(" src` returns **8 call
+sites** outside `lib/analytics.js` — APP_OPENED, LESSON_STARTED, LESSON_COMPLETED, QUIZ_TAKEN x2,
+QUIZ_ANSWERED x3, SIM_LEVER_CHOSEN — and the control (`grep -rn "EVENTS.LESSON_COMPLETED" src`, a site
+I knew existed) resolves to one of them, so the scan was live. **Not one is the bookmark toggle, and
+§9.2's event set has no term-bookmark event.** O-2's provider key would not have produced this evidence;
+the wait had no terminating condition. It was also circular — a save with nowhere to read it back gives
+a learner no reason to use it, so usage data would under-report it even if the event existed.
+⭐ **A deferral names a condition; check that something in the tree can actually report it.**
+
+**The second half of the premise — that nothing surfaces the saved set — reproduced exactly, also with a
+control.** `grep -rn "glossaryBookmarks" src scripts` returns **3 lines**: the key's definition in
+`lib/storage.js` and the read/write pair in `Glossary.jsx`. Control: `completedLessons` resolves to
+**7 files**. The only trace of a save on the list was a 0.9em glyph on one row of 43, with no filter, no
+sort, no count and no saved view — and the toggle itself lives on the term detail, which replaces the
+list, so a learner never sees the two together.
+
+**What shipped — the item's own named remedy ("a filter chip or a \"Saved terms\" count"), as the chip.**
+A toggle above the Glossary list, styled on `GlossaryTerms.jsx`'s existing chip (same
+`surface.accentWash`/`ink.accent` pair, `MIN_TAP`, `radius.full`), `aria-pressed` matching the
+`bookmarkAdd` button's own convention. **It renders only when at least one term is saved** — a control
+that can never do anything is worse than no control, and this also leaves a new install's Glossary
+byte-identical to before. One new locale key in five languages, `glossSavedFilter`, with the count
+parked outside the noun phrase exactly as `practiceAllTemplate` does (§68's rule): en "Saved ({n})",
+es "Guardados ({n})", ko "저장됨 {n}개", zh "已保存 {n} 个", ja "保存済み {n} 件" — the CJK three take
+their own counter word rather than parentheses, matching `practiceAllTemplate`'s shipped forms. Net
+**+48 lines across 6 files**, no new primitive, no new persisted key, `scripts/` **+0** (W-6.3).
+
+**Driven live on the built `dist/`, served statically at :8791 with a 404 control (200 / 404).**
+- **3 bookmarks seeded → chip reads "Saved (3)", `aria-pressed=false`, 43 rows.** Toggled on →
+  `aria-pressed=true` and **exactly the 3 saved rows** ("Gross Domestic Product, Saved", "Yield Curve,
+  Saved", "Quantitative Easing, Saved").
+- **Composes with search rather than replacing it:** saved-on + `zzz` → 0 rows and the existing
+  `glossNoResults` empty state; saved-on + `yield` → 1 row.
+- **The self-clearing case, which is the one a learner actually hits:** with 1 bookmark, filter on, open
+  the term, tap "Remove from saved", press Back — **the chip is gone and the list is back to 43 rows**,
+  rather than an empty list under a "Saved (0)" chip. `localStorage` reads `[]`.
+- **Negative control:** clean load with `[]` bookmarks → **0 chips, 43 rows**. The control is two-sided —
+  the same instrument printed 1 chip with bookmarks present and 0 without.
+- **All five languages on the real bundle**, each with a translated-placeholder control proving the app
+  had actually switched: ko `저장됨 2개` (`용어 검색...`, `<html lang=ko>`), zh `已保存 2 个`
+  (`搜索术语...`, `zh-Hans`) with filtering verified to 2 rows, ja `保存済み 2 件` (`用語を検索...`),
+  es `Guardados (2)` (`Buscar términos...`), en `Saved (2)`.
+⛔ **The instrument was wrong first and a control caught it.** Seeding `ecycles_lang` with
+`JSON.stringify("ko")` left the UI in English while `localStorage` said `"ko"` — `useAppState.js`
+reads that key with `readRaw`, not `readJSON`, so the quoted value was garbage; the disclaimer key is
+`ecycles_seen_disclaimer`, not the name I guessed. **The tell was `document.documentElement.lang`
+disagreeing with the stored value**, and without the placeholder control I would have reported "the chip
+does not translate" as a defect of my own change. **A storage-seeded language test needs a rendered
+string to confirm the seed took.**
+
+**Item 26 CLOSED, and collapsed per W-7.2 rule 1 rather than annotated.** Its last unbuilt piece was the
+Leitner strip (2026-09-02); its last *deferred* piece was this. The item was five layered passes plus an
+"ORIGINAL CLAUSE, kept because…" block that rule 2 retires; it is now one conclusion carrying the two
+standing instructions that survive the close — the owner's no-paywall rule, and "do not re-derive the
+2026-08-21 redesign" — plus the deferral correction above. **6,329 → 2,333 b (−3,996).**
+
+**Adversarial self-check (step 5) — run; it found no conflict, and here is each branch rather than the
+word "clean".**
+- **Blindspot register.** Nothing advice-adjacent (the five new strings are a UI label and a number), no
+  Dalio attribution, no kids framing, no hardcoded date or market figure. `npm run check-blindspot`
+  **0 failures**, run rather than reasoned about. `grep -cE '#[0-9a-fA-F]{3,8}'` on the changed
+  component: **0** — the chip is tokens only, so §28's AA assertion still owns its colors, and the
+  `accentWash`/`ink.accent` pair is not new: `GlossaryTerms.jsx` has shipped it since item 28.
+- **DECISIONS.md.** No conflict, and the two at risk were checked by name. **localStorage-only state:**
+  no key added, no shape changed — this reads the `glossaryBookmarks` array that has existed since
+  2026-08-16. **The curated in-lesson glossary map** (`lessonTerms.js`) is untouched; this is the
+  Reference-tab list, a different surface.
+- **Already-done item.** Not a redo, and the archive says so in the builder's own words: the 2026-08-16
+  entry that shipped the toggle scopes itself as *"No new routing, no filter/bookmarks-only view, no
+  wiring into review.js"*. `grep -in "bookmarks-only|saved terms|filter chip"` over log + archive
+  returns 8 lines, **all of them the follow-up being deferred, none of it being built** (control:
+  `bookmarkAdd` returns 2 in the archive, so the grep reaches that region).
+- **Overriding a recorded decision.** This is the branch that needed the most care, because five runs
+  deferred this deliberately. It is overridden on a **measured refutation of the deferral's stated
+  condition**, not on preference — and the owner's own instruction on item 26 ("do not extend this
+  stream with new invented ideas") is respected: this is the item's own named follow-up, in the item's
+  own words, not an invention.
+- **My own verification claim.** A reviewer re-running what is quoted gets the same result: every grep is
+  quoted with its match count and its control, the byte figures are `check-log-size.mjs`'s own MEASURED
+  line, and `npm test`'s warning set is quoted rather than characterized. **The one thing not
+  reproducible from the text alone is the live drive** — it needs a served `dist/` and a browser — so
+  each result above is stated as what that produced, including the instrument failure.
+
+**Verification.** `npm run build` ✅ 588 ms. `npm test` ✅ **0 failures**, with the **same four
+warnings as this run's opening baseline** and no new one: translation review 0% human, 47 abridged
+pairs, the quiz option-length cue at en 56.5%, and the log-size floor. The five-language parity checks
+pass, which is what proves `glossSavedFilter` exists in all five locale files rather than en alone.
+`npm run check-blindspot` ✅ 0 failures.
+
+**W-7 rule 5's test, charged against this run — the final number, not the flattering intermediate one.**
+Backlog **403,657 b at this run's opening baseline → 400,500 b at the tree that is being committed**:
+**net −3,157 b**, and **24,973 b under** the block's 425,473 b baseline. The item-26 collapse bought
+−3,996 and this run then spent 839 of it back on the item-18 note, which is the honest way round to
+state it. Both endpoints are `check-log-size.mjs`'s own MEASURED line, run before and after, not
+arithmetic of mine. **Rule 1 is still the only thing moving this number downward.**
+
+**Next run.** ⛔ **No numbered residual filed** (W-6.2 rule 2): the change is one screen and five strings
+and needs no guard — the learner-visible failure a check would catch ("a saved term could not be found
+again") is now structurally impossible rather than merely absent, since the chip is derived from the same
+array the rows are. **One note, under item 18 rather than as an item:** if a provider is ever configured,
+the glossary bookmark is still uninstrumented, and that is now a *choice* rather than an oversight —
+§9.2's event set does not include it, and adding an event is a plan change, not a run's call. O-2 remains
+the whole critical path and no run can move it; **ask the owner rather than restating it.** W-7.3's clock
+is unchanged: `market.json` is `asOf 2026-09-04`, age 3 days, and Sectors renders the unavailable state
+on **2026-09-09** if the owner's job on machine A does not commit here first.
