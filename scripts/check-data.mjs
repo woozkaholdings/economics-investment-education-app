@@ -11452,11 +11452,30 @@ function trendDirection(src) {
 
   // Each entry is a reviewed forward reference: the reader meets `from`
   // before `to` is unlocked, and that was read and accepted on the date given.
+  // `mark` pins the phrase that makes each reference forward, PER LANGUAGE —
+  // see §75b. English-only review is what let the 32->37 Japanese ship in
+  // backward grammar for a day; that entry's `why` described the English.
   const FORWARD_OK = [
-    { from: 30, to: 35, why: 'signpost: "(more on that in “Interest Rates”)" — explicitly forward, claims nothing about what the reader has seen. Pre-dates this section.' },
-    { from: 32, to: 37, why: 'neutral present tense — "it\'s the situation “QE & QT” describes" — and the paragraph glosses quantitative easing inline, so the sentence stands without the target. Read 2026-09-06.' },
-    { from: 35, to: 39, why: "reworded 2026-09-06 from \"the same target from …\"/\"the same indicators from …\" to \"comes back to later\"/\"goes through later\". Two instances." },
-    { from: 43, to: 16, why: "reworded 2026-09-06: the asset-versus-liability test is glossed inline and the pointer moved into its own forward sentence (\"takes that test up in full later\")." },
+    {
+      from: 30, to: 35,
+      why: 'signpost: "(more on that in “Interest Rates”)" — explicitly forward, claims nothing about what the reader has seen. Pre-dates this section.',
+      mark: { en: "more on that in", es: "más sobre esto en", ko: "에서 더 자세히 다룹니다", zh: "详见", ja: "詳しくは" },
+    },
+    {
+      from: 32, to: 37,
+      why: 'neutral present tense — "it\'s the situation “QE & QT” describes" — and the paragraph glosses quantitative easing inline, so the sentence stands without the target. English read 2026-09-06; the other four read 2026-09-07, when ja turned out to say 『QE & QT』で扱った状況 ("the situation covered in QE & QT") and was corrected to が扱う状況.',
+      mark: { en: "“QE & QT” describes", es: "que describe", ko: "가 다루는 상황", zh: "描述的正是", ja: "が扱う状況" },
+    },
+    {
+      from: 35, to: 39,
+      why: 'reworded 2026-09-06 from "the same target from …"/"the same indicators from …" to "comes back to later"/"goes through later". Two instances; the pinned mark is each language\'s forward word, which both instances carry. Translations read 2026-09-07.',
+      mark: { en: "later", es: "más adelante", ko: "뒤에", zh: "后面", ja: "後の" },
+    },
+    {
+      from: 43, to: 16,
+      why: 'reworded 2026-09-06: the asset-versus-liability test is glossed inline and the pointer moved into its own forward sentence ("takes that test up in full later"). Translations read 2026-09-07.',
+      mark: { en: "takes that test up in full later", es: "más adelante", ko: "뒤에서", zh: "会在后面", ja: "後で" },
+    },
   ];
 
   const displayOrder = new Map();
@@ -11568,6 +11587,125 @@ function trendDirection(src) {
       `  §75 cross-reference direction: ${total} English title reference(s) — ${back} backward, ${cross} cross-track (out of scope), ` +
         `${forward.length} same-track forward, all ${forward.length} on the reviewed FORWARD_OK list (${inert.length} listed entry/entries inert); 6 control group(s) fired, including id-order-vs-display-order.`,
     );
+  }
+
+  // ── §75b. THE SAME QUESTION IN THE OTHER FOUR LANGUAGES.
+  //
+  // THE FAILURE THIS EXISTS FOR, measured 2026-09-07. §75 above declares its
+  // scope as English, and the 32->37 entry's `why` — "neutral present tense"
+  // — was true of the English and false of the Japanese shipping beside it:
+  // 『QE & QT』で扱った状況, "the situation COVERED IN “QE & QT”", backward-
+  // citation grammar aimed at a lesson five ahead in the same track. Driven
+  // live on the built app: with lessons 29-31 complete, lesson 32 opens and
+  // lesson 37 renders 前のレッスンを先に完了してください. The sentence told a
+  // Japanese reader they had already been through a lesson the same screen
+  // refuses to open. es/ko/zh all carried the English's present tense.
+  //
+  // WHY A PIN AND NOT A REGEX. §75's own reasoning stands: signpost-versus-
+  // presupposition is a reading, not a pattern, and it does not get easier in
+  // four more languages. So this asserts the REVIEWED WORDING instead — each
+  // entry's `mark` is the phrase a reviewer read and accepted, and it must
+  // still be in the field that carries the reference. A translation edit that
+  // changes the grammar drops the mark and comes back to a reviewer; it does
+  // not try to judge the new wording itself.
+  //
+  // THE PIN IS A SAMPLE, NOT A CENSUS, and 35->39 is where that shows: it has
+  // two instances per language and one mark, chosen because both carry it.
+  // A third instance appearing in one language would not be seen here.
+  //
+  // SPLIT TITLES ON [:：], NOT ":" — item 132 lost five correctly-translated
+  // references to an ASCII-only split, and control H below is why that cannot
+  // recur silently.
+  {
+    const beforeB = failures;
+    const LANGS_B = ["es", "ko", "zh", "ja"];
+    const OPEN_MARKS = new Set(["“", "「", "『", "《"]);
+    const headOf = (t) => t.split(/[:：]/)[0].trim();
+
+    // The fields of `id` in `lang` that carry an opening-marked reference to
+    // `toId`. Requiring the mark is §75 control F's reasoning in every script.
+    const fieldsCiting = (id, toId, lang) => {
+      const lc = lessonContent[String(id)];
+      if (!lc) return [];
+      const title = lessons.find((l) => l.id === toId)?.title?.[lang];
+      if (!title) return [];
+      const spans = [title, headOf(title)].filter((v, i, a) => v && a.indexOf(v) === i);
+      const fields = [];
+      (lc.sections ?? []).forEach((s, i) => fields.push([`§${i}`, s.body?.[lang] ?? ""]));
+      fields.push(["takeaway", lc.takeaway?.[lang] ?? ""], ["thinkAbout", lc.thinkAbout?.[lang] ?? ""]);
+      const hits = [];
+      for (const [name, text] of fields) {
+        for (const span of spans) {
+          let at = text.indexOf(span);
+          while (at !== -1) {
+            if (at > 0 && OPEN_MARKS.has(text[at - 1])) { hits.push([name, text]); at = -1; break; }
+            at = text.indexOf(span, at + span.length);
+          }
+          if (hits.length && hits[hits.length - 1][0] === name) break;
+        }
+      }
+      return hits;
+    };
+
+    // ── CONTROLS, before the corpus is read.
+    // G: the defect this section exists for must fail its own pin. The string
+    //    is the pre-fix Japanese, kept verbatim so the control cannot drift
+    //    with the corpus.
+    const PRE_FIX_JA = "これは仮の話ではありません。『QE & QT』で扱った状況、つまりこれ以上金利を下げられないために中央銀行が債券を直接買い入れるようになった（量的緩和）局面がそれです。";
+    const jaMark = FORWARD_OK.find((e) => e.from === 32 && e.to === 37)?.mark?.ja;
+    if (!jaMark || PRE_FIX_JA.includes(jaMark)) {
+      fail(`§75b: control G — the pinned ja mark for 32->37 (${JSON.stringify(jaMark)}) is satisfied by the PRE-FIX sentence this section exists to catch. The pin does not discriminate, so every green below is meaningless.`);
+    }
+    if (!PRE_FIX_JA.includes("で扱った状況")) {
+      fail("§75b: control G2 — the pre-fix fixture no longer contains the backward wording it is a fixture of. Someone edited the control instead of the corpus.");
+    }
+    // H: CJK marks and the full-width colon both work. 30->35 in zh is 《利率》
+    //    for a title whose head splits on ：.
+    if (fieldsCiting(30, 35, "zh").length === 0) {
+      fail("§75b: control H — the known zh reference 30->35 (《利率》) was not located. Either the mark repertoire lost 《》 or the title split lost ：, which is item 132's exact trap; a clean corpus below would mean nothing.");
+    }
+    // I: an unmarked mention is not a reference, in a CJK script too.
+    if (fieldsCiting(30, 35, "zh").some(([, text]) => !text.includes("《"))) {
+      fail("§75b: control I — a field with no opening mark registered as citing. The mark requirement is gone.");
+    }
+    // J: a wrong pin must fail rather than pass vacuously.
+    if (fieldsCiting(30, 35, "zh").some(([, text]) => text.includes("这句话不在语料库里"))) {
+      fail("§75b: control J — a phrase that is not in the corpus was found in it. The substring test is not testing anything.");
+    }
+
+    let checked = 0;
+    for (const e of FORWARD_OK) {
+      if (!e.mark) {
+        fail(`§75b: the reviewed forward pair ${e.from}->${e.to} carries no per-language \`mark\`. Read the reference in es/ko/zh/ja and pin the phrase that makes each one forward — English-only review is the hole this section closes.`);
+        continue;
+      }
+      for (const lang of LANGS_B) {
+        const cites = fieldsCiting(e.from, e.to, lang);
+        if (cites.length === 0) {
+          fail(`§75b: lesson ${e.from} cites lesson ${e.to} in English but no ${lang} field carries that reference. Either the translation dropped the pointer (§58's question) or the ${lang} title moved — check before assuming the reference is fine.`);
+          continue;
+        }
+        const mark = e.mark[lang];
+        if (!mark) {
+          fail(`§75b: forward pair ${e.from}->${e.to} has no ${lang} mark pinned.`);
+          continue;
+        }
+        checked++;
+        if (!cites.some(([, text]) => text.includes(mark))) {
+          fail(
+            `§75b: lesson ${e.from}'s ${lang} reference to lesson ${e.to} no longer contains its reviewed forward mark ${JSON.stringify(mark)}. ` +
+              `A forward reference points at a LOCKED lesson, so the wording has to stay a signpost ("more on that in …") and must not presuppose the reader has been there ("the situation COVERED IN …"). ` +
+              `Read the ${lang} sentence: if it is still forward, re-pin \`mark.${lang}\` in §75's FORWARD_OK; if it drifted into backward grammar, reword it — that is the defect, and it shipped in ja on 2026-09-06.`,
+          );
+        }
+      }
+    }
+
+    if (failures === beforeB) {
+      console.log(
+        `  §75b forward-reference wording, non-English: ${checked} (pair, language) reference(s) across ${FORWARD_OK.length} reviewed pair(s) still carry the exact phrasing a reviewer accepted; 4 control group(s) fired, including the pre-fix ja sentence that this section exists for and item 132's full-width-colon trap.`,
+      );
+    }
   }
 }
 

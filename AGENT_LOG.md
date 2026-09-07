@@ -1752,6 +1752,33 @@ instead of hand-rolling an eighth mover. A working one is in this run's scratchp
 168. **✅ DONE 2026-09-06 (scheduled dev-agent), the same run it was found — content and guard in one
     commit. [Content/QA] A same-track cross-reference that points FORWARD is a pointer at a LOCKED
     lesson, and three of them were written in backward-citation grammar.**
+    - ⚠️ **NOTE ADDED 2026-09-07 (W-6.2 rule 2 — a note, not a numbered item). §75 WAS ENGLISH-ONLY
+      AND ONE LISTED PAIR WAS WRONG IN JAPANESE; `check-data.mjs` §75b now covers the other four
+      languages. Do not re-sweep this class.** §75's header declares its scope as English prose plus
+      quiz `explain`, and each `FORWARD_OK` entry's `why` reviews the **English** phrasing. The
+      `32->37` entry recorded *"neutral present tense"* on 2026-09-06 — true of the English, false of
+      the `ja` shipping beside it, which read **『QE & QT』で扱った状況** (*"the situation covered in
+      “QE & QT”"*), backward-citation grammar aimed five positions ahead in the same gated track.
+      `es`/`ko`/`zh` all carried the English's present tense. Fixed to **が扱う状況**; confirmed live
+      with lessons 29-31 complete, where lesson 32 opens and lesson 37 renders
+      `前のレッスンを先に完了してください`.
+      **§75b pins the reviewed WORDING per language** (`mark` on each entry) rather than judging new
+      wording, for §75's own stated reason — signpost-versus-presupposition is a reading, not a regex.
+      **16 (pair, language) references across the 4 listed pairs.** Proven to fail four ways
+      (the defect restored; a `mark` deleted; `[:：]` narrowed to `[:]`, item 132's trap; a translation
+      dropping the pointer), each restored from a scratchpad copy.
+      ⚠️ **The pin is a SAMPLE, not a census:** `35->39` has two instances per language and one mark.
+      **The whole class is otherwise swept to zero and does not need re-running:** all **278** resolved
+      title references (44 lessons x 5 languages) — **193 same-track backward**, **25 same-track
+      forward** across 4 sentences (the one defect above), **60 cross-track** (out of scope). The
+      mirror class, a forward-phrased reference pointing *backward*, is **0 in 193**.
+      ⛔ **Two instrument traps, so the sweep is not rebuilt wrong a third time.** Matching **full
+      titles only** misses the shipped convention (references cite the **pre-colon head**), and
+      extracting **quoted spans** silently loses every reference to a title that contains its own
+      quotes (*"Why 'Later' Never Feels as Real as 'Now'"*, `为什么“以后”…`) — that cost 2 of 278 and
+      looked exactly like a clean corpus. **Substring-on-title with an opening-mark requirement** is
+      the shape that survives both. A backward-cue regex is **not** shippable: measured false-positive
+      rate one flag in two.
     - **The standing rule, which is the part to keep.** `App.isUnlocked` gates on the previous lesson
       **in display order**, so a reference to a lesson later in the same track names something the app
       will not open. That is fine as a **signpost** (*"more on that in “Interest Rates”"* — lesson 30
@@ -7518,3 +7545,120 @@ stated rather than hidden: the item-160 note costs ~1.6 KB and buys a future run
 138-distractor sweep that returns zero, and the item-18 note costs ~1.1 KB and buys O-2's first day
 not shipping a silently inflated funnel. Figures are `check-log-size.mjs`'s own MEASURED line at both
 ends, not arithmetic of mine.
+
+### 2026-09-07 (scheduled dev-agent; W-6.2 rule 1 — the previous run's residuals were notes under items 18 and 160, so this pick came from a corpus sweep instead) — §75 reviewed the English of every forward reference and shipped a Japanese one that told the reader they had already been through a locked lesson
+
+**⛔ Step 3.5, and the premise did not survive it — the class I picked as "never swept" was swept
+yesterday.** The pick was *"a lesson cites another lesson in grammar that presupposes the reader has
+already been there, while that lesson is later in the same sequentially-gated track"*, chosen after
+`grep` over `AGENT_LOG.md` + archive + `check-data.mjs` for `forward reference|later lesson|out of
+order|ordering` returned nothing in that sense. **That grep was too narrow and the class is item 168,
+closed 2026-09-06 with `check-data.mjs` §75.** The adversarial self-check found it, not the opening
+orientation — recorded that way round on purpose.
+⭐ **Re-decided on the corrected facts, which is where the run's actual value is.** §75 states its own
+scope in its header: *"SCOPE is English lesson prose plus quiz `explain`."* It asserts that every
+same-track forward reference is on a reviewed list, and each list entry records **why the English
+reads as a signpost rather than a presupposition**. It says nothing about the other four languages.
+**One of its four listed pairs was wrong in one of them.**
+
+**The defect, and it is the exact failure §75 exists for, one language over.** `FORWARD_OK`'s
+`{from: 32, to: 37}` entry reads *"neutral present tense — \"it's the situation “QE & QT” describes\""*,
+read and accepted 2026-09-06. True of the English. The Japanese beside it read **『QE & QT』で扱った状況**
+— *"the situation **covered in** “QE & QT”"*, past tense, backward-citation grammar aimed at a lesson
+**five positions ahead in the same track**. `es` (*"la situación que describe"*), `ko`
+(*"「QE & QT」가 다루는 상황"*) and `zh` (*"《QE与QT》描述的正是这种处境"*) all carried the English's
+present tense; `ja` alone drifted.
+**Driven live on the built app, and this is the control that makes it a defect rather than a style
+note.** Served the real `dist/` statically, `ecycles_lang=ja`, `ecycles_completed_lessons=[29,30,31]`,
+hard-reloaded (a hash-only navigation does not re-read storage — that cost one false negative here
+before the reload was made explicit). Lesson 32 opens and renders the sentence; **lesson 37 on the same
+Learn list renders `前のレッスンを先に完了してください`**. The prose told a Japanese reader they had
+already been through a lesson the screen next to it refuses to open.
+
+**The content fix — one string, three bytes.** 『QE & QT』**で扱った**状況 → 『QE & QT』**が扱う**状況,
+the direct parallel of the Korean already shipping (`가 다루는 상황`) and of the file's own forward
+signpost in lesson 30 (`詳しくは『金利』で扱います`). `ja` corpus 64,530 → 64,529 chars; §10.4's
+generated volume sentence regenerated through `npm run readiness --write`, which is what caught it —
+`refresh-readiness.mjs --check` failed the build on the one-character drift before I thought to look.
+
+**The guard: `check-data.mjs` §75b, inside §75's own block rather than as a new section** (W-6.3 —
+`scripts/` is the ratio W-7.0 flagged as the one number still moving the wrong way, and §8b(ii) last
+run is the precedent). **It pins the reviewed WORDING rather than judging new wording**, because
+§75's own reasoning — signpost-versus-presupposition is a reading, not a regex — does not get easier
+in four more languages. Each `FORWARD_OK` entry now carries `mark`, the phrase a reviewer read and
+accepted per language; §75b requires that each language's field carrying the reference still contains
+it. A translation edit that changes the grammar drops the mark and returns the sentence **to a
+reviewer** instead of being silently judged. Live: **16 (pair, language) references across 4 reviewed
+pairs**.
+⚠️ **The pin is a sample, not a census, and that is stated in the header rather than glossed:** 35→39
+has two instances per language and one mark, chosen because both carry it; a third instance appearing
+in one language would not be seen.
+**⛔ Proven able to fail — four injections, each confirmed landed by byte count, each restored from a
+scratchpad copy and `cmp`-verified, never `git checkout --`.**
+1. **The original defect restored** in `ja` content (61,120 → 61,123 b) → **exit 1**, and the message
+   names the lesson, the language and the missing mark.
+2. **`mark` deleted from the 43→16 entry** (709,623 → 709,495 b) → **exit 1**: an entry with no
+   per-language review fails rather than passing as English-only.
+3. **`[:：]` narrowed to `[:]`** (709,620 b) — item 132's recorded trap — → **exit 1** on control H
+   *and* on two derived assertions, so the trap cannot recur as a silent clean corpus.
+4. **The `es` translation drops the pointer entirely** (55,031 → 55,005 b) → **exit 1** on the branch
+   that separates "the translation lost the reference" from "the wording drifted".
+
+**Also swept, and filed under item 168 so nobody re-runs it.** All **278 resolved title references**
+across 44 lessons x 5 languages: **193 same-track backward** (correct), **25 same-track forward**
+across 4 distinct sentences (1 defect — the above), **60 cross-track** (out of scope by §75's header
+and item 132's design; they carry "(in <track>)"). The mirror class — a *forward*-phrased reference
+pointing at an *earlier* lesson — is **zero in 193**.
+⛔ **Two instrument corrections worth more than the result, because the first two versions were both
+wrong and both looked clean.** (i) Matching on **full titles only** missed the shipped convention:
+references cite the **pre-colon head** (`“Interest Rates”` for *"Interest Rates: The Master Signal"*),
+and the control caught it by asserting a reference I knew existed. (ii) The replacement extracted
+**quoted spans** and resolved them, which silently lost every reference to a title that **contains its
+own quotes** — *"Why 'Later' Never Feels as Real as 'Now'"*, `为什么“以后”从来不像“现在”那样真实？` —
+so L1→L23 in `zh`/`ja` vanished. Found only because a near-miss probe was pointed at the *unresolved*
+spans. **Rebuilt as substring-on-title with an opening-mark requirement**, which is immune to nesting;
+the resolved count went 276 → 278. **A reference detector must be validated against a title that is
+itself quoted.** The sweep script is a scratchpad reading aid and is deliberately **not** committed —
+its backward-cue regexes are natural-language judgment with a measured false-positive rate of one flag
+in two (the `es` sentence flags on an unrelated `ya`, the `zh` on a present-tense `描述的`), which is
+the "96% false-positive sentence-case probe" §75 and item 167 both correctly declined to ship.
+
+**Adversarial self-check (step 5) — run, and it is what produced this entry's headline.**
+- **The first thing it found is the premise refutation above.** The run was written up as a
+  never-swept class until this step's "already-done backlog item" grep hit item 168 and §75. **A
+  narrow grep is not an absence result** — the same shape as the 2026-09-07 local-absence correction
+  two entries up, one level down.
+- **Blindspot register.** No advice-adjacent language, no Dalio attribution, no kids framing, no date
+  or market figure: the content diff is one Japanese verb, and the only user-visible string changed in
+  any language is that one. `npm run check-blindspot` **0 failures**, run rather than reasoned about.
+- **DECISIONS.md.** No conflict. The one at risk was the `.js`-not-JSON content decision — the fix is
+  an edit to a content module, not a new data file — and `localStorage`-only state is untouched (no
+  key added, no shape changed).
+- **Already-done item.** §75b is **not** a redo of §75: §75 asserts membership of the English forward
+  set, §75b asserts the phrasing of the four translations of that set. Injection 2 is the proof they
+  are different assertions — it fails §75b while §75 stays green. §16 (references resolve, translations
+  agree) and §58 (references survive translation) are both satisfied by exactly the sentence that
+  shipped, which is why neither saw it; §75's header already says so about English and §75b's says the
+  same about the rest.
+- **My own verification claim.** An independent reviewer re-running what is quoted gets the same
+  result: every byte figure is a `wc -c` before and after the injection that produced it; each
+  injection is quoted with the failure text it produced; the `§75`/`§75b` summary lines are the
+  script's own output, not arithmetic of mine; the ja character count is `refresh-readiness.mjs`'s
+  own regenerated sentence. **The one thing a reviewer cannot reproduce from the text alone is the
+  live drive** — it needs a served `dist/` and a browser — so the locked-lesson control is stated as
+  what that produced, and the shipped bundle carrying the fix was checked independently
+  (`grep -c` on `dist/assets/lessonContent.economy.ja-DYqNlvkz.js`: 1 for the new wording, 0 for the old).
+
+**Verification.** `npm test` ✅ **0 failures**, with the **same four pre-existing warnings** as this
+run's opening baseline (translation review 0% human, 47 abridged pairs, the quiz option-length cue at
+56.5%, and the log-size floor). `npm run build` ✅ 568 ms. `npm run check-blindspot` ✅ 0 failures.
+§75 reports `64 English title reference(s) — 47 backward, 12 cross-track, 5 same-track forward`;
+§75b reports `16 (pair, language) reference(s) across 4 reviewed pair(s)`.
+
+**W-7 rule 5's test, charged against this run rather than left out.** The backlog went **401,084 →
+403,657 b (+2,573)** — one filed note under item 168. Still **21,816 b under** the block's 425,473 b
+baseline, but this run moved the number the **wrong** way, and rule 5's point is that a pass which
+does not charge itself is not measuring anything. The trade is stated rather than hidden: the note
+costs ~2.6 KB and buys a future run not re-deriving a 278-reference sweep that returns one defect, and
+not rebuilding its detector wrong in either of the two ways this run did. Both figures are
+`check-log-size.mjs`'s own MEASURED line, run before and after, not arithmetic of mine.
