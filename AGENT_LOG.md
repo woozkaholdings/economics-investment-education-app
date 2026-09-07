@@ -1818,38 +1818,35 @@ instead of hand-rolling an eighth mover. A working one is in this run's scratchp
       `b6c9bc9` put lessons 41-44 in front deliberately and the reference was written forward — but
       the class is the same, and §75 is what makes the next reorder loud.
 
-169. **[UX/A11y — filed 2026-09-07 by the run that fixed `MarketSignals`' grid (item 155's premise
-    work), from its own post-fix sweep. LIVE and measured, not a guess — but note it IS that run's
-    residual, so a run taking it as its headline pick starts a W-6.2 rule 1 chain at link one.]
-    Reference › Market Dashboard: the QE/QT cards' label rows overflow their card in `es` under text
-    zoom, and the grid fix does not touch them.**
-    - **Measured 2026-09-07** on the built app, 320px viewport, root font overridden: the
-      `display: flex; flex-wrap: wrap; justify-content: space-between` label row inside each QE/QT
-      card reads **`scrollWidth 119 > box 114` at `es`/150%** and **`scrollWidth 154 > box 114` at
-      `es`/200%** — 40px of a 114px box, so roughly a third of "Rendimiento ↑" is outside its own
-      card. `en` reads **0 findings at 100%, 130% AND 200%**, which is both the scope of the defect
-      and the control that says the instrument was alive when it reported the zero. ko/zh/ja unmeasured
-      for this specific row; they read clean on the sibling grid at the same settings.
-    - **Same root cause family as the fix that found it, third costume.** The row's items have
-      `min-width: auto`, so a flex item cannot shrink below the min-content width of the unbroken word
-      "Rendimiento". `flex-wrap: wrap` is already set and does not help — wrapping moves items to a new
-      line, it does not narrow one item. `index.css`'s `overflow-wrap: break-word` does not help either,
-      and its own comment says why: `break-word` deliberately does not shrink min-content (`anywhere`
-      would). Compare the grid case (`minmax(0, 1fr)`, `check-data.mjs` §78) and the 2026-09-03
-      `LessonReader` case (`flexWrap: "wrap"` on a row whose two buttons could not shrink).
-    - **Two candidate fixes, and the choice is a real one — price both before picking.** (a)
-      `minWidth: 0` on the flex items, which lets them shrink so `break-word` can break the word;
-      (b) `overflow-wrap: anywhere` scoped to this row, which shrinks min-content directly. (b) is
-      the more precise semantics for a tight two-word label; (a) is the pattern the rest of the app
-      already uses. ⛔ **Do not apply `anywhere` globally** — `index.css`'s comment records that it
-      re-flows flex and grid tracks app-wide, which is exactly why `break-word` was chosen there.
-    - **W-6.2 rule 3, answered:** the learner-visible failure is "a Spanish reader at 200% text zoom
-      sees the QE/QT card labels spill outside their card." **Honest priority: medium** — it is live,
-      it is on a public URL, and it is one declaration; it is one language on a Reference sub-screen
-      rather than on the main path.
-    - **Whoever fixes it should re-run item 155's text probe rather than eyeballing it**, because the
-      box probe reports zero for this defect: nothing crosses the viewport edge.
-
+169. **✅ CLOSED 2026-09-07** (commit below), and it is replaced by its conclusion per W-7.2 rule 1.
+    **What was true:** on the Reference › Market Dashboard, a two-word label spilled ~40px outside
+    its own card in `es` under browser/OS text zoom. **What is true now:** the offending span carries
+    `minWidth: 0` instead of `whiteSpace: "nowrap"`, so the body's `overflow-wrap: break-word` can
+    break the word; measured 0 overflow at 100/130/150/175/200% in all five languages.
+    ⚠️ **Three things this item asserted were wrong, and they are kept here because they are the
+    reusable part — every one of them was refuted by measuring, not by reading.**
+    **(a) It named the wrong component.** "The QE/QT cards' label rows" — the QE/QT block is two
+    `<Note>` elements with no flex row in them. The defect was in the **rate-effects** cards
+    ("How rate moves have historically related to asset classes"), on the **one** card of six whose
+    noun is YIELD → es "Rendimiento". The numbers in the item were right; the name on them was not.
+    **(b) Its fix (a), `minWidth: 0` alone, is a TRAP, not a weaker option.** Measured on the live
+    page: the span's box shrinks 154 → 114 and **the ink does not move** — still one line, still
+    `scrollWidth` 154, still spilling onto the next card. A row-level geometry probe goes GREEN on it
+    while the learner sees the identical screen. It works only in combination with dropping `nowrap`.
+    **(c) Its fix (b), `overflow-wrap: anywhere`, changes nothing at all** while `white-space: nowrap`
+    is on the same element — `nowrap` suppresses every break, and no `overflow-wrap` value overrides
+    it. ⭐ **And a fourth, which was this run's own hypothesis and died the same way:** a non-breaking
+    space does **not** pin the arrow to its noun under `anywhere`, which treats the nbsp as an
+    arbitrary break point (control: a synthetic noun that fits alone but not with the arrow renders
+    `"Cotizado " / "↑"` with nbsp and plain space alike). The arrow survives on the shipped corpus
+    because "Rendimiento" is itself wider than the card, so the break lands mid-word — **incidental,
+    not guaranteed**, and said plainly here rather than claimed as a property.
+    **No check was built** (W-6.2 rule 3 / W-6.3). The learner-visible sentence is writable, but the
+    only statically decidable form is a regex for one declaration in one file, which is a guard for a
+    property that currently holds; the generalizable rule — "a `nowrap` on a flex item that has to fit
+    a container" — is not statically decidable. `scripts/` untouched, so W-6.3's ratio stays at the
+    **2.25x** (20,616 / 9,124) measured this run. The regression guard is item 155's text probe, and
+    the trap in (b) is written into the source comment where the next editor will hit it.
 167. **[Content/Accuracy — filed 2026-09-05 by the run that fixed lesson 34's US-1930s claim, from
     the same close reading of the economy track. All three are LIVE and were read on the built app,
     not inferred; none is a residual of that run's own edit.]**
@@ -2873,6 +2870,21 @@ instead of hand-rolling an eighth mover. A working one is in this run's scratchp
     > **What the sweep found when run this way, and it is why the item is worth building:** ONE live
     > defect (fixed the same run — `MarketSignals.jsx`'s bare `1fr` grid, `check-data.mjs` §78) and
     > ONE more filed as **item 169**. Both were invisible to the box probe alone.
+    > ⚠️ **A NOTE, not a sub-item (W-6.2 rule 2) — a THIRD live class this probe found, on
+    > 2026-09-07, while closing item 169. CJK text overflows at 200% where Latin text does not, and
+    > the cause is the fullwidth bracket.** Same instrument, same screen (Reference › Market
+    > Dashboard), same settings, controls firing: `ja` reports 6 flags and `zh` 4 at 200% only, both
+    > **unchanged by item 169's fix in either direction** (measured before and after, which is what
+    > says they are a separate class and not a side effect). Every one is a run containing `（…）`:
+    > `H2 マネーサプライ（M0・M1・M2）` and `H2 货币供应量（M0、M1、M2）` both 301 in a 288 box;
+    > `DIV 量的引き締め（QT）` 263/253; `FIGCAPTION 逆イールド（危険）` 120/114. CJK line-breaking
+    > forbids a break before a closing bracket or after an opening one, so `（M0・M1・M2）` is one
+    > unbreakable run and `overflow-wrap: break-word` — which breaks *words*, and treats the whole
+    > run as one — cannot get inside it. **Honest priority: low**, and the reason is the size: 10-13px
+    > on elements 253-288px wide, so it is a clipped bracket rather than the third of a label item 169
+    > was. `line-break: loose` / `anywhere` is the candidate and neither has been measured. **Not
+    > picked this run and deliberately not numbered** — filed here so the next run does not re-derive
+    > it from a fresh sweep.
     - **W-6.2 rule 3, answered up front:** the learner-visible failure a permanent probe would have
       caught is **"the Reference hub scrolled sideways at 200% browser zoom, and headings were
       clipped mid-word by `overflow-x: hidden`"** — both were shipping, on the hub screen, before
@@ -6321,3 +6333,129 @@ re-diagnose it before then.
 residual — but note that **item 169 below IS my residual**, so a run taking it starts a chain at link
 one). Open and unparked: **70/71, 74, 76, 94, 117, 155, 160, 169**. O-2 is still the entire critical
 path.
+
+### 2026-09-07 (scheduled dev-agent, backlog item 169 — W-6.2 rule 1 chain at link one) — the item named the wrong component and both of the fixes it proposed are refuted on the live page, one of them by going green while the screen does not change
+
+**Where the pick came from, stated because the rule makes it a question.** Item 169 is the previous
+run's own residual, so this is **link one** of a W-6.2 rule 1 chain and the next run must not take a
+residual of mine as its headline. It was picked over the other open items (70/71, 74, 76, 94, 117,
+155, 160) on one property none of them has: it is a **live defect on the public URL**, measured, in
+one declaration. W-6.2's ⚠️ warns against picking a filed residual *by default* — the defence here is
+that it is a shipping bug rather than a guard for a property that holds. **O-2 remains the entire
+critical path and no scheduled run can move it.**
+
+#### Step 3.5 — the premise, re-measured with controls before anything was edited. Its numbers held; its component name and both of its prescribed fixes did not.
+Instrument: item 155's text probe, rebuilt to that item's written definition (HTMLElement only — which
+is how the SVG-`<text>` phantom exclusion falls out; visible box; not `clip`/`clip-path` hidden; not
+`overflow-x: auto|scroll` itself or under an ancestor that is; then `scrollWidth > clientWidth + 1`),
+plus a **row-count floor** and a **planted 40px box holding an unbreakable word**, both required to
+report on every single pass. `dist/` served at 127.0.0.1, 320px viewport, root font overridden to
+emulate browser/OS text zoom.
+
+- ✅ **The numbers are exactly right.** `es`, root font 24px/28px/32px: the row measures **114/119**,
+  **114/136**, **114/154** — item 169's 119 and 154 against a 114px box, reproduced.
+- ⛔ **"The QE/QT cards" is the wrong component.** The QE/QT block is two `<Note>` elements and has no
+  flex row in it. The defect is in the **rate-effects** cards above it, and on **one of six** — the
+  `Efectivo` card, the only asset whose noun is YIELD (`es` "Rendimiento"). PRICE/"Precio" (89px) and
+  VALUE/"Valor" (76px) fit at every scale. A name carried forward from one screen's neighbour, and
+  the kind of thing a fix applied by reading would have missed.
+- ⛔ **Its fix (a), `minWidth: 0`, is a trap rather than a weaker option.** Applied live with `nowrap`
+  kept: the span's box shrinks **153.9 → 114** and the **ink does not move** — one line, `scrollWidth`
+  still **154**, still painted 40px past the card onto the `Dólar` card beside it. **The row-level
+  probe reads clean and the screen is identical.** This is the single most useful thing this run
+  found, and only applying the proposed fix and re-measuring could find it.
+- ⛔ **Its fix (b), `overflow-wrap: anywhere`, does nothing at all** while `white-space: nowrap` sits
+  on the same element: **154 before, 154 after, one line**. `nowrap` suppresses every break
+  opportunity and no `overflow-wrap` value overrides it.
+- ⛔ **My own replacement hypothesis, refuted by its own control before it could ship.** I predicted a
+  non-breaking space between noun and arrow would guarantee the 2026-09-02 property (the ↑ never
+  alone on a line) under a wrapping mode. **False.** Calibrated against synthetic nouns of increasing
+  width in the real span: at "Cotizado" — which fits alone but not with the arrow — nbsp and plain
+  space render **identically**, `"Cotizado " / "↑"`. `anywhere` treats the nbsp as an arbitrary break
+  point. The arrow survives on the *shipped* corpus only because "Rendimiento" is itself wider than
+  the card, so the break lands mid-word: **incidental, not guaranteed**, and the source comment says
+  so rather than claiming the property.
+
+#### What shipped
+**One declaration, on the right-hand half of the rate-effects label row only:**
+`whiteSpace: "nowrap"` → `minWidth: 0`. The flex item can then drop below its min-content width, and
+the body's inherited `overflow-wrap: break-word` (`index.css`) breaks the word — which is the exact
+pairing `.ec-bar-label` already uses, so this is the house pattern rather than a new idea.
+**The left half keeps `nowrap` and the asymmetry is the fix, not an oversight**: it is short in all
+five languages (83px at the worst measured setting, in a 114px box), so `nowrap` costs it nothing and
+the 2026-09-02 finding it was added for stands untouched.
+
+**Re-measured on the rebuilt bundle** (`Reference` chunk `DB4FnBqH` → `CTaLD3Ve`), five languages ×
+five root-font settings, control firing and row count 12 on every pass:
+
+| language | 100% | 130% | 150% | 175% | 200% |
+|---|---|---|---|---|---|
+| `es` before | 0 | 0 | **2** | **2** | **2** |
+| `es` after | 0 | 0 | 0 | 0 | 0 |
+| `en` / `ko` before & after | 0 | 0 | 0 | 0 | 0 |
+| `zh` / `ja` before & after | 0 | 0 | 0 | 0 | **4 / 6, identical set** |
+
+`en` and `ko` at zero on both sides are the control that says the instrument was alive when it
+reported the `es` zeros. The `zh`/`ja` 200% flags are **byte-for-byte the same set before and after**
+— a different class, filed as a note under item 155, not touched here. Rendered result at `es`/200%:
+`Rendimien` / `to ↑` inside the card, arrow attached, and nothing crosses the card border.
+Nothing that fits today moved: `en` row heights are 14px at 100% on both sides.
+
+#### The injection test
+`whiteSpace: "nowrap"` was put back on the **rising** row only, in source, and rebuilt (`CTaLD3Ve` →
+`LNbMyBH0`, and `grep` confirmed the injection landed before the build). The defect returned at
+exactly **114/119, 114/136, 114/154** — **and the falling row one line below it, still carrying
+`minWidth: 0`, stayed at 0 through all five settings.** Same card, same word, same paint, one
+declaration apart: the failure is mine and the fix is what closes it. Restored from the scratchpad
+copy (`cmp` byte-identical, never `git checkout --`), rebuilt, hash back to `CTaLD3Ve`, and re-measured
+green with the controls still firing.
+⚠️ **One instrument finding, because it nearly became a false all-clear.** A restored-tree pass
+returned **0 flags at every scale** — from the Reference *hub*, because the call that navigates had
+aborted earlier and the sweep never reached the Market Dashboard. The **row-count floor caught it**
+(`rowCount: 0` beside the zeros). A zero from an instrument that never arrived looks exactly like a
+clean result, which is the eighth-archiving-pass lesson one screen over.
+
+#### Why no check was built
+W-6.2 rule 3's sentence is writable here — "a Spanish reader at 200% text zoom sees the yield label
+spill out of its card onto the next one" — but the only **statically decidable** form is a regex for
+one declaration in one file, which is a guard for a property that now holds; the generalizable rule,
+"a `nowrap` on a flex item that must fit its container", is not statically decidable. W-6.3's ratio,
+re-measured this run rather than quoted from the block: **2.25x** (`scripts/` 20,616 lines vs `src/`
+minus `content/`+`locales/` 9,124), up from W-7.0's 2.19x. Declining leaves it there. The regression
+guard is item 155's probe plus the trap written into the source comment, where the next editor meets
+it.
+
+#### Step 5 — adversarial self-check
+**Blindspot register: nothing found.** No lesson prose, content module, market figure or rendered date
+changed — the diff is one file, two style objects and a comment; the only date written is a
+measurement date inside a source comment, which is this repo's convention for a measured number.
+`check-blindspot` **0 failures** on the final tree. **DECISIONS.md:** grepped for
+layout/flex/overflow/min-width/nowrap — it records no layout decision this could contradict, and
+nothing here touches localStorage-only state, `.js`-not-JSON content, or Vite-not-Expo.
+**Already-done:** the neighbours were checked and this is none of them — `check-data.mjs` §78 and the
+`minmax(0, 1fr)` fix (2026-09-07) are the **grid** module on a different element; the `flexWrap:
+"wrap"` fix (2026-09-03) is `LessonReader`'s button row; and the 2026-09-02 `nowrap` addition on
+**this** row is the one thing here that could have been undone, so it was preserved deliberately on
+the half that needs it and the run log entry for it was read before the edit rather than after.
+**My own verification claim, weakest part first:** the live half needs a browser harness a reviewer
+would have to rebuild, so the probe definition, its two controls and every exclusion are written into
+this entry precisely enough to reconstruct — and the injection test's discriminating result (one row
+regressed, its sibling clean) does not depend on the probe at all, because it is visible in a
+screenshot. The static half — `npm test`, `npm run build`, `npm run check-blindspot` — is fully
+re-runnable by anyone.
+
+**Verified:** `npm test` **exit 0, 0 failures**, 4 warnings, all pre-existing and named in the backlog
+(translation review share, translation completeness, §65 option length, AGENT_LOG floor);
+`npm run build` clean; `npm run check-blindspot` **exit 0, 0 failures**; the built app driven at 320px
+across five languages and five root-font scales, before, after, and with the regression injected.
+
+**Also measured, not repo work.** `npm test`'s own line: market data still `asOf 2026-09-04`, age 3,
+Sectors flips to the unavailable state **2026-09-09** — **W-7.3's falsifiable test is still running,
+no refresh commit has arrived in this working copy, and it comes due in two days**; this checkout must
+not re-diagnose it before then. W-7.2 rule 5's number, from `check-log-size.mjs`'s MEASURED line
+before this entry was written: backlog **412,578 b**, still **12,895 b under** the 425,473 b baseline
+the block set for 2026-09-13.
+
+**Next run.** ⛔ **W-6.2 rule 1: this was link one of a residual chain, and the CJK-bracket note under
+item 155 is this run's residual** — a run may take it as link two, but the run after that may not.
+Open and unparked: **70/71, 74, 76, 94, 117, 155, 160**. O-2 is still the entire critical path.

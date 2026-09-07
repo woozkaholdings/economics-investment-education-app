@@ -58,17 +58,47 @@ export default function MarketSignals({ t, lang }) {
                 It matters most on the cash and dollar cards, where the two
                 arrows point the SAME way and the row otherwise read as a single
                 statement about rates rather than as rates → asset.
-                `nowrap` on both halves plus `flexWrap` on the row is load-bearing,
-                not tidying: at 320px the Spanish "Rendimiento" is long enough that
-                adding the noun pushed "Tasas ↑" onto two lines and stranded the
-                ↑ on its own — reintroducing the exact ambiguity this fixes, in the
-                other half of the row. Each half now stays intact and the ROW wraps
-                instead (measured: 2 of 12 es labels broke before, 0 after). */}
+                The two halves are styled DIFFERENTLY and the asymmetry is the
+                fix, not an oversight. `nowrap` on the LEFT half plus `flexWrap`
+                on the row is load-bearing, not tidying: at 320px, adding the noun
+                pushed "Tasas ↑" onto two lines and stranded the ↑ on its own —
+                reintroducing the exact ambiguity this fixes, in the other half of
+                the row (measured 2026-09-02: 2 of 12 es labels broke before, 0
+                after). The left half is short in all five languages — 83px at the
+                worst measured setting, inside a 114px box — so `nowrap` costs it
+                nothing.
+                The RIGHT half carries `minWidth: 0` INSTEAD of `nowrap`, because
+                it is the half that outgrows the card. `nowrap` there could not be
+                honored: es "Rendimiento ↑" is 154px of text in a 114px box at 200%
+                text zoom, so it spilled 40px past its own card onto the one beside
+                it, where `body { overflow-x: hidden }` clips rather than scrolls.
+                Measured 2026-09-07 on the built app at a 320px viewport with the
+                root font overridden (browser/OS text zoom; the in-app control stops
+                at 1.3), on the Efectivo card, the one asset whose noun is YIELD:
+                  es 100%/130%  row 114 / content 114  — fits
+                  es 150%       row 114 / content 119  — 5px out
+                  es 175%       row 114 / content 136  — 22px out
+                  es 200%       row 114 / content 154  — 40px out
+                en/ko/zh/ja read 0 at every scale, which is the control the es
+                numbers are trusted on: same instrument, same screen, same settings.
+                `minWidth: 0` lets the flex item drop below its min-content width so
+                the body's `overflow-wrap: break-word` (index.css) can break the
+                word; the arrow stays attached to the word's tail ("Rendimien" /
+                "to ↑"), so the 2026-09-02 property survives. This is the same
+                pairing `.ec-bar-label` already uses.
+                ⛔ `minWidth: 0` ALONE, with `nowrap` kept, was measured and is a
+                TRAP: the span's box shrinks 154 → 114 and the ink does not move —
+                one line, `scrollWidth` still 154, still spilling — so a row-level
+                geometry probe reads clean while the learner sees the identical
+                screen. `overflow-wrap: anywhere` with `nowrap` kept changes
+                nothing at all, and a non-breaking space does not pin the arrow
+                under `anywhere`, which breaks at one. All three were tried on the
+                live page before this line was written. */}
             <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "space-between", gap: space["2"], fontSize: "0.75rem", color: ink.bad }}>
-              <span style={{ whiteSpace: "nowrap" }}>{t.ratesRising}</span><span style={{ whiteSpace: "nowrap" }}>{asset.responds[lang]} {asset.rising}</span>
+              <span style={{ whiteSpace: "nowrap" }}>{t.ratesRising}</span><span style={{ minWidth: 0 }}>{asset.responds[lang]} {asset.rising}</span>
             </div>
             <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "space-between", gap: space["2"], fontSize: "0.75rem", color: ink.ok }}>
-              <span style={{ whiteSpace: "nowrap" }}>{t.ratesFalling}</span><span style={{ whiteSpace: "nowrap" }}>{asset.responds[lang]} {asset.falling}</span>
+              <span style={{ whiteSpace: "nowrap" }}>{t.ratesFalling}</span><span style={{ minWidth: 0 }}>{asset.responds[lang]} {asset.falling}</span>
             </div>
             <Text variant="caption" color={ink.muted} style={{ marginTop: space["2"] }}>
               {asset.note[lang]}
