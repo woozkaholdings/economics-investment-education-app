@@ -119,18 +119,23 @@ billing code."** No billing/paywall code exists in `src/` — confirmed by `grep
 
 | Requirement | Status |
 |---|---|
-| Analytics call-site abstraction present | 🟡 Built 2026-08-05 — `src/lib/analytics.js` (`track()`/`EVENTS`), not PostHog yet |
+| Analytics call-site abstraction present | ✅ Built 2026-08-05 — `src/lib/analytics.js` (`track()`/`EVENTS`). Whether a *provider* is wired is the separate row below; this row asks only for the seam, and it exists. `grep -rn "track(EVENTS\." src/` for the call sites |
 | Minimum event set — app opened | ✅ Fires (`App.jsx`, once per load) |
 | Minimum event set — lesson started / completed **(with duration)** | ✅ Fires (`LessonReader.jsx`); `lesson_completed` carries `durationSec` since 2026-08-16 (item 29) — §9.2's duration clause, which the event did not satisfy before that date |
 | Minimum event set — quiz taken **(with score)** | ✅ Fires once per finished quiz with `{correct, total, scorePct}` since 2026-08-16 (item 29) — `LessonReader.jsx`'s lesson check (at its last answer) and `Practice.jsx`'s review session (at its complete screen), tagged `source`. The per-question signal it used to carry is preserved under `quiz_answered`. Before 2026-08-16 this row read "✅ fires per answered question", which met the event-name half of §9.2 but not its *with score* half |
 | Minimum event set — paywall viewed / trial started / subscribed / canceled / ad watched | ❌ Not fired — no paywall/billing/ad feature exists yet to fire them from |
-| Real analytics provider (events actually collected off-device) | ❌ None — `track()` writes to a local `localStorage` rolling log only; `grep -rn "posthog" src/ package.json` returns zero matches. See `DECISIONS.md`. |
+| Real analytics provider (events actually collected off-device) | ❌ None — and **the reason changed on 2026-09-05: it is no longer that the code is missing.** `src/lib/analyticsConfig.js` ships `provider: "none"`, so `isConfigured()` is false and `remoteSink()` does nothing; the `localStorage` log is all that runs. The remote transport itself is built and provider-agnostic (`plausible` / `posthog` / `custom`). **The one thing missing is a provider key** — O-2 in `AGENT_LOG.md`, `README.md` § Analytics, and `DECISIONS.md`'s 2026-09-05 update. Read the status off `analyticsConfig.js`'s `provider` field, which is the only thing that decides it. |
 
-This is backlog item 18 in `AGENT_LOG.md`. The call-site plumbing for every event the app can
-currently produce is done; **still open** is swapping the local sink for a real provider (needs an
-account/API key a dev-agent run can't create) — until that lands, the installer-completion half of
-the Phase 0 gate above stays unmeasurable off-device, though it is now inspectable per-device via
-`localStorage.getItem("ecycles_analytics_log")`.
+This is backlog item 18 in `AGENT_LOG.md`, and **O-2 there is the narrowed, current statement of what
+is left.** The call-site plumbing for every event the app can currently produce is done, and since
+2026-09-05 so is the transport — **this paragraph used to say "still open is swapping the local sink
+for a real provider," and there is nothing left to swap.** What is still open is an owner action a
+run cannot take: create an account at one provider, paste its **public** site id / ingest key into
+`src/lib/analyticsConfig.js` and set `provider`, run **`npm run analytics-check`** to confirm the key
+is actually accepted *before* building (PostHog's capture endpoint answers HTTP 200 to any key at
+all, so nothing else in this repo can tell you), then `npm run build` and `npm run deploy`. Until
+that lands the installer-completion half of the Phase 0 gate above stays unmeasurable off-device,
+though it is inspectable per-device via `localStorage.getItem("ecycles_analytics_log")`.
 
 <!-- path-ok: economic-cycles-v5.jsx — the owner's local prototype original, GITIGNORED by the 2026-08-16 decision recorded in .gitignore ("ignored, not deleted") — it is on the owner's disk and in git history, and no clone of this repo has it, so this reference must never resolve; restoring the file to the repo would be undoing that decision, not fixing this marker -->
 <!-- path-ok: SKILL.md — the dev-agent's scheduled-task definition, which lives outside this repo at ~/.claude/scheduled-tasks/economics-app-dev-agent/SKILL.md and is not a repo file -->
@@ -176,9 +181,17 @@ the Phase 0 gate above stays unmeasurable off-device, though it is now inspectab
   correct: the figure was right and the *method* had rotted. A script that runs on every `npm test`
   cannot name a missing file, and a derived figure cannot disagree with its source. See backlog items
   39 (the scoping) and 47 in `AGENT_LOG.md`.
-- Instrumentation: `grep -rn "track(EVENTS\." src/` for call sites (expect App/LessonReader/Practice);
-  `grep -rn "posthog" src/ package.json` for whether a real provider has been wired in yet (expect no
-  matches until that happens).
+- Instrumentation: `grep -rln "track(EVENTS\." src/` for the call sites. ⚠️ **No expected file list is
+  written here on purpose.** This bullet named "App/LessonReader/Practice" from 2026-08-05 until
+  2026-09-06, and `components/PolicySim.jsx` had been firing `sim_lever_chosen` since 2026-08-16 —
+  a typed list of call sites goes stale the moment an event is added, which is the one thing this
+  bullet exists to notice. Read the list the command prints.
+- Whether a real provider is wired: **do not grep for `posthog`.** That grep is what this file
+  asserted until 2026-09-06 ("returns zero matches"), and it had returned matches since 2026-09-05,
+  when the provider-agnostic transport shipped with `posthog` as one of three supported shapes — the
+  string now says nothing about whether anything is switched on. **The deciding value is
+  `provider` in `src/lib/analyticsConfig.js`:** `"none"` means nothing leaves the device, whatever
+  else is in the tree. If it is set, `npm run analytics-check` says whether the key actually works.
 - Installer completion / paywall conversion: not checkable until §9.2 ships — leave marked
   "Unmeasured," don't estimate.
 - Do not mark a gate closed here without the same command a skeptical reviewer would run producing the

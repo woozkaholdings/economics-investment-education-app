@@ -146,6 +146,10 @@ for the history. No open P1/P2 items.
 > 5. Redeploy `dist/` to <https://magnificent-mochi-73aecc.netlify.app>.
 > **Then §4.3's Phase-0 gate becomes measurable for the first time** — and only then; a per-device
 > `localStorage` log still cannot be aggregated across installs.
+> ✏️ **`LAUNCH_READINESS.md`'s Instrumentation section agrees with this item as of 2026-09-06.** Until
+> then it said the provider work had not started ("`track()` writes to a local `localStorage` rolling
+> log only") and told a reviewer to expect `grep -rn "posthog" src/ package.json` to return nothing,
+> which stopped being true on 2026-09-05. Nothing about O-2 changed — **the scorecard did.**
 >
 > **O-3 (new, decision not action). A large volume of unreviewed machine translation is now shipping
 > every day, and the "(Beta)" decision was made about a smaller, static surface.** `DECISIONS.md`
@@ -6927,3 +6931,118 @@ rather than restate the blocker, and the redeploy that would make the analytics 
 2026-09-05 social card and this fix all live is the **same single owner step**. Item **26 can be
 closed** by the next run that touches the backlog. Open and unparked otherwise: 27, 70/71, 74, 76, 94,
 117, 155's probe, 160, 165's essentials remainder, 167(c).
+
+### 2026-09-06 (scheduled dev-agent, self-picked: a corpus sweep of a class this repo has never swept — a doc that states the expected OUTPUT of a command it names) — the scorecard whose closing rule is "do not mark a gate closed without the same command a skeptical reviewer would run producing the same result" told that reviewer to expect the wrong result, about the one item on the critical path
+
+**Where the pick came from.** W-6.2 rule 1 counts: the last two scheduled runs took item 167's
+unnumbered live-find list and a self-picked corpus sweep. Neither was this run's own residual and the
+previous entry filed none, so this is link one. The candidate came from reading `LAUNCH_READINESS.md`
+against the tree rather than from any closing line — it is the file the owner reads to decide what is
+left, and **O-2 is the entire critical path**, so what it says about O-2 is the highest-leverage
+sentence in the repo that a run can actually fix.
+
+**⛔ Step 3.5 — the premise, measured with controls, before anything was edited. It held, and the
+sweep found more than the one line that prompted it.** The class: **a claim of the form "run X and
+you will see Y", written into a doc.** Four such claims exist in `LAUNCH_READINESS.md`; all four were
+run.
+- **`grep -rn "posthog" src/ package.json` "returns zero matches" (lines 127 and 180) — FALSE.**
+  Returns **9 matches across 2 files** (`lib/analyticsConfig.js`, `lib/analytics.js`).
+- **`grep -rn "track(EVENTS\." src/` "(expect App/LessonReader/Practice)" (line 179) — FALSE.**
+  Returns **9 call sites across 4 files**; the fourth is `components/PolicySim.jsx`, firing
+  `sim_lever_chosen`.
+- **`grep -rni "paywall\|stripe\|purchase\|subscri" src/` "no matches outside comments/content copy
+  that merely describes the future plan" (line 116) — HOLDS.** 41 matches, every one lesson/quiz
+  prose about purchases, the `EVENTS` name constants, or a comment — plus one `stripe`/"stripes"
+  false positive in `ui.jsx`. **This is the sweep's in-band control**: the instrument distinguishes a
+  stale claim from a live one, so the two negatives above are findings rather than a broken read.
+- **Provenance measured from git, not inferred.** `git log -S` dates each defect: the call-site list
+  was written **2026-08-05** (`81c52ea`) and `PolicySim.jsx` shipped **2026-08-16** (`2836338`,
+  `20f82e7`) — **21 days stale**. The posthog claim was true through `9e00f95^` and went false at
+  `9e00f95` on **2026-09-05**, when the transport shipped — **1 day stale**.
+- ⭐ **The two ages are the finding.** The one-day-old defect is the one that looks like a mistake;
+  the 21-day-old one sat through a weekly review and four content sweeps because **an expectation
+  written as a file list does not look like a number, so nobody re-measured it.**
+
+**And the substantive half, which is what actually matters.** `analyticsConfig.js` ships
+`provider: "none"`, so `isConfigured()` is false and nothing leaves the device — **the row's ❌
+verdict is correct and was left alone.** What was wrong was its *reason*: "`track()` writes to a
+local `localStorage` rolling log only" describes the code as it was before 2026-09-05. The remote
+transport is built and provider-agnostic. So the scorecard told the one person who can close O-2 that
+the provider work had not started, when only the key remains. `LAUNCH_PLAN.md` §9.2's table had it
+right the whole time ("owner-blocked on an account and key"), and so did `DECISIONS.md`'s 09-05
+update — **the file whose entire job is "what is true now" was the only one of the three that was
+wrong.**
+
+**What shipped.** `LAUNCH_READINESS.md` only, 4 edits, no code:
+1. The provider row keeps ❌ and states the real reason, pointing at `analyticsConfig.js`'s `provider`
+   field as the single deciding value.
+2. The paragraph under the table replaces "still open is swapping the local sink for a real provider"
+   with O-2's four actual steps, including **`npm run analytics-check` before building** — the step
+   that exists because PostHog answers HTTP 200 to any key at all.
+3. The call-site row goes 🟡 → ✅: the requirement is "abstraction present", and it is.
+4. The two refresh bullets **no longer state an expected output at all.** The call-site bullet names
+   `grep -rln` and says to read what it prints; the provider bullet says *do not grep for `posthog`*
+   and names `provider` in `analyticsConfig.js` instead.
+
+⛔ **No check was built, deliberately, and this is the reasoning rather than an omission.** The class
+is real and has now rotted **four times in this one file** — twice as inlined `node -e` snippets
+(recorded at lines 171-178) and twice here. But **W-6.2 rule 3 requires naming the learner-visible
+failure a new check would catch, and there is none**: a wrong scorecard row renders to nobody. W-6.3's
+ratio was re-measured this run rather than quoted from W-7.0 — **`scripts/` 20,310 lines vs app code
+8,833 = 2.29x**, up from the 2.19x W-7.0 measured on 2026-09-06, so the number is moving the wrong way
+again and a proposal falls on the wrong side of it. **The remedy applied instead is the one this file
+already used on the `node -e` snippets: stop typing the derived value and name the thing that decides
+it.** A bullet that says "read what the command prints" cannot go stale.
+
+**Verification.**
+- `npm test` ✅ **PASS: 0 failure(s)** across every check, with the same 4 pre-existing warnings as the
+  pre-edit baseline run (translation review share, translation completeness, the quiz option-length
+  cue, and the non-archivable floor — item 115, the owner's). §26 re-resolved **415 doc references, 0
+  command lines skipped**.
+- `npm run check-blindspot` ✅ **0 failures** — §10.1, §10.2, §10.3 and §2.3 all clean.
+- `npm run build` ✅ in 1.09s.
+- **Every command the rewritten file now names was executed and reproduced what the file says**, with
+  a control: the five cited `npm` scripts (`analytics-check`, `build`, `deploy`, `check-blindspot`,
+  `readiness`) all resolve in `package.json`, and a deliberately absent script name reads absent — so
+  the resolver can return a negative.
+- **`npm run check-deployed` ✅ "The live site is serving this tree (HEAD 55b4765)"** — entry bundle
+  `index-B1mndoLB.js` byte-identical at 264,930 b (sha256 `213bd424b562…`), `icon.svg`, `og-card.png`
+  and `index.html` identical. Run **because this change is Markdown-only**: the built artifact is
+  unchanged, so **this commit needs no redeploy**, and that is measured against the running site
+  rather than asserted from the diff.
+
+**Adversarial self-check (step 5) — run, and it found one thing.**
+- **Blindspot register.** No learner-facing string changed. §10.1/§10.2/§10.3 untouched and green.
+  §2.3: I added several **dates**, so I checked what kind — all are historical provenance ("shipped
+  2026-08-16", "went false 2026-09-05"), not a current-date or live-market figure, which is the shape
+  §2.3 bans. The edit **removes** typed expectations and adds none.
+- **DECISIONS.md.** No conflict — this change makes the scorecard *agree* with DECISIONS.md's
+  2026-09-05 update, which it had been contradicting.
+- **Already-done item.** Not a redo. The nearest neighbor is parked item 126 (Docs/Integrity), which
+  is about hex/token attribution in `check-data.mjs` §52 — a different class, and its own closing
+  principle ("one defect is not a class; do not build until there is a second real instance") is the
+  same reasoning that governed the decision not to build here.
+- **The one thing it found: I asserted a date before measuring it.** The draft said the call-site
+  bullet had named those three files "from 2026-08-05" — taken from the surrounding row's text, not
+  from git. `git log -S` was then run and the date **held** (`81c52ea`, 2026-08-05), but it held by
+  luck, and the same shortcut is what put the two wrong claims in this file in the first place. The
+  date in the shipped text is now the measured one.
+- **A second thing, about the previous run's closing line rather than my own diff.** It says *"Item
+  **26** can be closed by the next run that touches the backlog."* Re-read against the item: item 26's
+  one named follow-up (surfacing bookmarked glossary terms) is **explicitly "blocked on item 18's
+  analytics, not on effort."** Blocked is not closed, and the item already says so correctly. **No
+  change made, and none is needed** — recorded here so the next run does not close it on the strength
+  of a closing line. This log's own W-5.2 warns about exactly that inheritance.
+- **My own verification claim.** An independent reviewer re-running only what is written above gets
+  the same result: every grep is quoted verbatim with its match count, every date carries the commit
+  that establishes it, the control claim is named alongside the two failures, and the deployed-artifact
+  check quotes the bundle hash and byte count it compared.
+
+**Next run.** ⛔ **No residual is filed as a numbered item** (W-6.2 rule 2) — the fix is four edits in
+one file and needs no guard, for the reason argued above. **O-2 remains the entire critical path and
+no run can move it**; what this run did was make the document the owner would read to act on O-2 stop
+misdescribing it, which is the most a scheduled run can contribute to that item. Per this log's
+finding about how O-1 actually closed, **ask the owner directly rather than restating the blocker.**
+Open and unparked otherwise: 26 (blocked, see above), 27, 70/71, 74, 76, 94, 117, 155's probe, 160,
+165's essentials remainder. W-7.3's clock is still running: `market.json` is `asOf 2026-09-04`, age 2
+days, and Sectors goes to the unavailable state on **2026-09-09** if the owner's job does not run.
