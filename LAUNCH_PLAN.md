@@ -112,7 +112,7 @@ web-only, no backend, all state in `localStorage`.
 
 | Layer | Current | Planned | Notes |
 |---|---|---|---|
-| App | Vite + React (web) | **Open** — Expo (React Native) vs. staying web-first | `DECISIONS.md`. Blocks store release, not web release. **The local toolchain is not what blocks it** — measured 2026-09-07 on the build machine: macOS 26.6.2 arm64, Xcode 26.6, Swift 6.3.3, 11 iOS simulators. The open questions are the §2.1 product call and an Apple Developer account (§7's $99/yr), not a missing Mac. |
+| App | Vite + React (web) | **Open** — Expo (React Native) vs. staying web-first | `DECISIONS.md`. Blocks store release, not web release. **Nothing external blocks it — measured 2026-09-07 on the build machine, and corrected the same day.** macOS 26.6.2 arm64, Xcode 26.6, Swift 6.3.3, 11 iOS simulators, **and a paid Apple Developer Program membership signed in to Xcode** (`isFreeProvisioningTeam = 0`, `teamType = Company`, beside the free Personal Team every Apple ID carries). This cell first read "the open questions are the product call **and an Apple Developer account**"; the account half was wrong, and the owner said so. **The only open question is the §2.1 product call itself.** ⚠️ One thing is genuinely not set up, and it is a step rather than a purchase: there is **no Apple Distribution certificate and no provisioning profile** on this machine (one `Apple Development` identity, 0 profiles). Xcode issues those on the first archive/distribute — membership is not the same thing as configured signing, and a run must not read the absence of a distribution cert as an absent membership. |
 | Content | `.js` modules in `src/content/`, `src/locales/` | Same; possibly server-hosted later | Closed decision. |
 | State | `localStorage` | Supabase accounts + sync | Closed as current approach; revisit with real accounts. |
 | Payments | none | Route depends on §4.3 phase and the §2.1 platform call | Not built. See §4 — the current phase has no payment code by design. |
@@ -553,8 +553,10 @@ When stuck — and it will usually be environment problems, not code — paste t
 for an explanation before a fix; search the exact error text; and if walled for more than two days,
 buy an hour of expert help. One $50 hour beats a lost week.
 
-Budget: ~$30–35/month steady state, plus Apple ($99/yr) and Google ($25 one-time) before store
-release.
+Budget: ~$30–35/month steady state, plus Google ($25 one-time) before store
+release. **Apple's $99/yr is already being paid** — the Developer Program membership is active and
+signed in to Xcode (measured 2026-09-07, §2.1). It is a renewal to keep in the steady-state budget,
+not a purchase standing between here and a store submission.
 
 ---
 

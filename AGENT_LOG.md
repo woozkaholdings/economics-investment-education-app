@@ -4673,6 +4673,11 @@ instead of hand-rolling an eighth mover. A working one is in this run's scratchp
 12. **[HELD] Expo vs. Vite** (§2.1) — needs a human call; blocks store release, not the web launch. See
     `DECISIONS.md`. The dev agent must not migrate to Expo on its own initiative or deepen the web-only
     investment in a way that raises the eventual port cost beyond what's already committed.
+    ⭐ **Every external prerequisite is now measured present (2026-09-07, owner-directed audit): Mac,
+    Xcode 26.6, 11 simulators, and a paid Apple Developer Program membership signed in to Xcode.** This
+    item is a **pure product decision** — there is nothing left to buy, install or wait for. ⛔ **That
+    does not make it a run's call**; it stays HELD and owner-only, and this note exists so no future run
+    files "we would need an Apple account first" as a reason it cannot be decided.
 19. **[HELD] Genuinely child-facing kids content** (§10.3, reopened 2026-08-04) — a COPPA/store-
     classification decision, not a UI one. The parent-facing framing (closed 2026-08-01) stands until the
     owner decides otherwise; do not change `ParentGuide.jsx`'s framing on this run's own initiative.
@@ -7348,6 +7353,25 @@ is a result.**
 the pre-edit baseline (translation review share, translation completeness, the quiz option-length
 cue, the non-archivable floor). `npm run build` ✅ exit 0. `npm run check-blindspot` ✅ **0 failures**.
 `npm run check-deployed` correctly **refused a verdict** while the tree was dirty.
+
+**✏️ CORRECTED the same day, by the owner: "apple developer account is active in xcode".** The §2.1
+cell above went out reading *"the open questions are the product call **and an Apple Developer
+account**"*. **The account half was wrong, and I had not measured it** — I measured the toolchain
+(Xcode, Swift, simulators) and then asserted the account beside it, in the same sentence, on nothing.
+Measured after the correction: `IDEProvisioningTeamByIdentifier` holds **two** teams —
+`isFreeProvisioningTeam = 0, teamType = Company` (a paid Developer Program membership) beside the
+free `Personal Team` every Apple ID carries. **So item 12 has no remaining external prerequisite: it
+is a pure product decision**, and §7's budget line no longer lists Apple's $99/yr as a purchase
+standing in front of a submission.
+⛔ **The instrument trap, and it fired twice in four commands.** My first probe read
+`IDEProvisioningTeams` — **the wrong key**; the right one is `IDEProvisioningTeamByIdentifier`, so
+the "no such key" I got back was a **dead instrument, not a negative result**, and it would have read
+as *"no team configured"* if I had stopped there. The control that caught it was reading the whole
+domain first: **7,069 b, exit 0**, which proved the domain was alive and named the real key. And the
+second: `security find-identity` shows **one `Apple Development` identity, no `Apple Distribution`,
+and 0 provisioning profiles** — which is *not* evidence of a free account. Xcode issues a distribution
+cert on the first archive/distribute, so a paid member who has never archived looks identical.
+**Membership and configured signing are two different facts, and only one of them was in question.**
 
 **W-7 rule 5's own accounting, charged rather than left to the next reviewer.** The backlog region
 went **425,468 b → 426,549 b (+1,081 b)** this run, both figures off `check-log-size.mjs`'s MEASURED
