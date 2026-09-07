@@ -11980,5 +11980,128 @@ function trendDirection(src) {
   }
 }
 
+// ───────────────────────────────────────────────────────────────────────────
+// §78. NO BARE `fr` TRACK IN A `gridTemplateColumns` UNDER src/.
+//
+// THE LEARNER-VISIBLE FAILURE THIS WOULD HAVE CAUGHT (W-6.2 rule 3), and it
+// was shipping when this section was written: a Spanish reader using browser
+// or OS text zoom on Reference > Market Dashboard lost the right-hand quarter
+// of the yield-curve cards. Measured 2026-09-07 on the built app at a 320px
+// viewport — es at 200% root font overflowed its container by 75.5px, es at
+// 175% by 38.1px, es at 150% by 4.1px, en at 200% by 1.8px — and
+// `body { overflow-x: hidden }` (index.css) CLIPS that rather than scrolling
+// to it, so the text is genuinely gone. ko/zh/ja read clean at every scale,
+// which is the control the es figure is trusted on: one instrument, one
+// screen, one setting, zero for three languages and 75.5px for the fourth.
+//
+// THE MECHANISM, and it is why this is a source check rather than a live one.
+// A bare `1fr` is `minmax(auto, 1fr)`. That `auto` minimum is the item's
+// MIN-CONTENT size, so a track whose widest unbreakable word does not fit its
+// fr share grows past it and pushes the whole grid out of its container. This
+// is the grid twin of the flex `min-width: auto` blowout fixed in
+// LessonReader on 2026-09-03 — same automatic-minimum rule, one layout module
+// over. `minmax(0, 1fr)` opts out of it, and `overflow-wrap: break-word` on
+// body then wraps the caption instead of clipping it.
+//
+// WHY IT IS A CHECK AND NOT JUST A FIX. Every other grid in the app already
+// wrote the guarded form before this — charts.jsx's five use `minmax(0, 1fr)`,
+// ui.jsx uses `minmax(min(…, 100%), 1fr)`, MarketSignals' sibling grid pins an
+// explicit 120px floor. The house pattern was already unanimous; nothing said
+// so, and the one declaration that missed it is the one that clipped.
+{
+  const before78 = failures;
+  const GRID_FILES = [];
+  const walk78 = (dir) => {
+    for (const e of readdirSync(dir, { withFileTypes: true })) {
+      const full = join(dir, e.name);
+      if (e.isDirectory()) walk78(full);
+      else if (/\.(js|jsx)$/.test(e.name)) GRID_FILES.push(full);
+    }
+  };
+  walk78(join(ROOT, "src"));
+
+  // Remove every balanced `name(...)` span for the listed functions, innermost
+  // first. A regex cannot do this: `repeat(auto-fit, minmax(min(${X}, 100%), 1fr))`
+  // nests three deep, and a non-greedy `minmax\([^)]*\)` would stop at the
+  // FIRST `)` and leave a `1fr` exposed — a false positive on the safest
+  // declaration in the app.
+  const stripGuarded = (value) => {
+    const NAMES = ["minmax", "min", "max", "clamp", "fit-content"];
+    let out = value, changed = true;
+    while (changed) {
+      changed = false;
+      for (const name of NAMES) {
+        const start = out.indexOf(name + "(");
+        if (start === -1) continue;
+        let depth = 0, end = -1;
+        for (let i = start + name.length; i < out.length; i++) {
+          if (out[i] === "(") depth++;
+          else if (out[i] === ")" && --depth === 0) { end = i; break; }
+        }
+        if (end === -1) continue;
+        out = out.slice(0, start) + " " + out.slice(end + 1);
+        changed = true;
+      }
+    }
+    return out;
+  };
+  // A bare flex track: a `<flex>` that survived the strip above. `1fr`, `.5fr`,
+  // `2fr` all count; `minmax(0, 1fr)` does not, because it is gone by now.
+  const bareFr = (value) => /(^|[\s,(])\d*\.?\d*fr\b/.test(stripGuarded(value));
+  // §22's `lineIn` is block-scoped to §22. Redeclaring it here rather than
+  // reaching for it is not tidiness: the first version of this section called
+  // it, and because the call sits on the FAILURE path it never ran while the
+  // app was clean. The injection test that re-planted `1fr 1fr` is what found
+  // it — a ReferenceError instead of the finding. A failure path that has
+  // never executed is not a guard.
+  const lineIn78 = (src, index) => src.slice(0, index).split("\n").length;
+
+  // The instrument's own controls, asserted before any verdict is believed.
+  // A scan that matched nothing would report a clean app.
+  if (bareFr("1fr 1fr") !== true || bareFr("repeat(3, 1fr)") !== true) {
+    fail("§78 control: the bare-`fr` matcher does not fire on `1fr 1fr` or `repeat(3, 1fr)`. It is not measuring anything, so a clean result would mean nothing.");
+  }
+  if (bareFr("minmax(0, 1fr) minmax(0, 1fr)") !== false ||
+      bareFr("repeat(auto-fit, minmax(min(11rem, 100%), 1fr))") !== false ||
+      bareFr("repeat(auto-fit, minmax(120px, 1fr))") !== false) {
+    fail("§78 control: the matcher flags a GUARDED declaration. It would fail the whole app rather than the one case this section is about — check stripGuarded()'s balanced-paren walk before trusting any finding.");
+  }
+
+  let declarations = 0;
+  for (const file of GRID_FILES) {
+    const src = readFileSync(file, "utf8");
+    const rel = file.slice(ROOT.length + 1);
+    for (const m of src.matchAll(/gridTemplateColumns\s*:\s*(?:"([^"]*)"|'([^']*)'|`([^`]*)`)/g)) {
+      declarations++;
+      const value = m[1] ?? m[2] ?? m[3];
+      if (bareFr(value)) {
+        fail(
+          `§78: ${rel}:${lineIn78(src, m.index)}: gridTemplateColumns is \`${value}\` — a bare \`fr\` ` +
+            `track. \`1fr\` means \`minmax(auto, 1fr)\`, and that \`auto\` minimum is the item's ` +
+            `min-content size, so a track whose widest unbreakable word exceeds its fr share pushes ` +
+            `the grid out of its container, where \`body { overflow-x: hidden }\` clips it. Write ` +
+            `\`minmax(0, 1fr)\` (or give the track an explicit floor). Measured cost of the one ` +
+            `instance this section was written for: 75.5px of a 320px viewport lost, es at 200% ` +
+            `root font, Reference > Market Dashboard.`,
+        );
+      }
+    }
+  }
+  // A floor on the scan itself: if the extraction regex stops matching (a
+  // rename, a move to a CSS file, a different quoting style), every file reads
+  // clean and this section silently stops guarding anything.
+  if (declarations < 5) {
+    fail(
+      `§78: found only ${declarations} gridTemplateColumns declaration(s) under src/ (expected at ` +
+        `least 5). The scan, not the app, is what looks broken — check the extraction regex before ` +
+        `reading this section's silence as a pass.`,
+    );
+  }
+  if (failures === before78) {
+    console.log(`  §78 grid track minimums: ${declarations} gridTemplateColumns declaration(s) across ${GRID_FILES.length} source file(s), 0 bare \`fr\` tracks; matcher fires on 2 planted bare forms and stays silent on 3 guarded ones.`);
+  }
+}
+
+
 console.log(`\n${failures === 0 ? "PASS" : "FAIL"}: ${failures} failure(s), ${warnings} warning(s).`);
 process.exit(failures === 0 ? 0 : 1);

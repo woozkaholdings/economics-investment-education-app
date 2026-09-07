@@ -1818,6 +1818,38 @@ instead of hand-rolling an eighth mover. A working one is in this run's scratchp
       `b6c9bc9` put lessons 41-44 in front deliberately and the reference was written forward — but
       the class is the same, and §75 is what makes the next reorder loud.
 
+169. **[UX/A11y — filed 2026-09-07 by the run that fixed `MarketSignals`' grid (item 155's premise
+    work), from its own post-fix sweep. LIVE and measured, not a guess — but note it IS that run's
+    residual, so a run taking it as its headline pick starts a W-6.2 rule 1 chain at link one.]
+    Reference › Market Dashboard: the QE/QT cards' label rows overflow their card in `es` under text
+    zoom, and the grid fix does not touch them.**
+    - **Measured 2026-09-07** on the built app, 320px viewport, root font overridden: the
+      `display: flex; flex-wrap: wrap; justify-content: space-between` label row inside each QE/QT
+      card reads **`scrollWidth 119 > box 114` at `es`/150%** and **`scrollWidth 154 > box 114` at
+      `es`/200%** — 40px of a 114px box, so roughly a third of "Rendimiento ↑" is outside its own
+      card. `en` reads **0 findings at 100%, 130% AND 200%**, which is both the scope of the defect
+      and the control that says the instrument was alive when it reported the zero. ko/zh/ja unmeasured
+      for this specific row; they read clean on the sibling grid at the same settings.
+    - **Same root cause family as the fix that found it, third costume.** The row's items have
+      `min-width: auto`, so a flex item cannot shrink below the min-content width of the unbroken word
+      "Rendimiento". `flex-wrap: wrap` is already set and does not help — wrapping moves items to a new
+      line, it does not narrow one item. `index.css`'s `overflow-wrap: break-word` does not help either,
+      and its own comment says why: `break-word` deliberately does not shrink min-content (`anywhere`
+      would). Compare the grid case (`minmax(0, 1fr)`, `check-data.mjs` §78) and the 2026-09-03
+      `LessonReader` case (`flexWrap: "wrap"` on a row whose two buttons could not shrink).
+    - **Two candidate fixes, and the choice is a real one — price both before picking.** (a)
+      `minWidth: 0` on the flex items, which lets them shrink so `break-word` can break the word;
+      (b) `overflow-wrap: anywhere` scoped to this row, which shrinks min-content directly. (b) is
+      the more precise semantics for a tight two-word label; (a) is the pattern the rest of the app
+      already uses. ⛔ **Do not apply `anywhere` globally** — `index.css`'s comment records that it
+      re-flows flex and grid tracks app-wide, which is exactly why `break-word` was chosen there.
+    - **W-6.2 rule 3, answered:** the learner-visible failure is "a Spanish reader at 200% text zoom
+      sees the QE/QT card labels spill outside their card." **Honest priority: medium** — it is live,
+      it is on a public URL, and it is one declaration; it is one language on a Reference sub-screen
+      rather than on the main path.
+    - **Whoever fixes it should re-run item 155's text probe rather than eyeballing it**, because the
+      box probe reports zero for this defect: nothing crosses the viewport edge.
+
 167. **[Content/Accuracy — filed 2026-09-05 by the run that fixed lesson 34's US-1930s claim, from
     the same close reading of the economy track. All three are LIVE and were read on the built app,
     not inferred; none is a residual of that run's own edit.]**
@@ -2810,6 +2842,37 @@ instead of hand-rolling an eighth mover. A working one is in this run's scratchp
 
 155. **[A11y/Tooling — filed 2026-08-30 by the run that closed item 153, as its stated residual.]
     The text-zoom sweep that found five live defects exists only in that session's browser console.**
+    > ⛔ **PREMISE CORRECTED 2026-09-07 (scheduled dev-agent), and half of the work this item scopes
+    > ALREADY EXISTS.** `scripts/a11y-sweep.js` has carried a `horizontalOverflow` probe since before
+    > this item was filed (the box half), and `scripts/a11y-states.js` has carried the font-scale axis
+    > this item asks a new probe to "compose with" (`setFontScale`). **What is missing is only the
+    > TEXT half.** A run picking this up builds one probe, not two, and adds no axis.
+    > ⛔ **A hypothesis about `horizontalOverflow` REFUTED by measurement 2026-09-07, so nobody spends
+    > a run on it:** its element scan is gated on `de.scrollWidth > de.clientWidth + 1`, and
+    > `body { overflow-x: hidden }` does **not** close that gate — a planted 900px `<div>` takes
+    > `de.scrollWidth` 320 → 900 on the live app. The probe is narrow, not blind.
+    > ✅ **This item's central claim is now measured on THIS app rather than argued:** with a narrow
+    > box holding a long unbreakable word planted live, the text probe fires (`scrollWidth 335 > box
+    > 80`) and the box probe reports **exactly zero**. A right-edge scan cannot see text overflow.
+    > ⭐ **TWO EXCLUSIONS THIS ITEM DOES NOT NAME, both found by running the probe rather than
+    > writing it. Build them in or the probe ships noisy from day one:**
+    > 1. **The visually-hidden idiom** — skip any element whose computed `clip-path` is not `none` or
+    >    whose `clip` is not `auto`. Learn's sr-only "Current lesson" span reports `scrollWidth 90 >
+    >    box 1` at every scale, by design, and it is the FIRST thing the text probe finds.
+    > 2. **The scrollable-ancestor exclusion applies to the BOX probe too**, not just the text probe
+    >    as this item says. The parent guide's age-band rail is `overflow-x: auto` deliberately
+    >    (WCAG 1.4.10 permits it); without the exclusion `BUTTON#age-band-13-17` reports 440px against
+    >    a 320px viewport as a false positive on every run at 200%.
+    > **The probe as it was actually run** (scratchpad, per the item-167 precedent; this is the
+    > record): text probe = XHTML namespace only, visible box, not clip/clip-path hidden, not
+    > `nowrap`+`ellipsis`, not `overflow-x: auto|scroll` itself or under an ancestor that is, then
+    > `el.scrollWidth > Math.ceil(rect.width) + 1`. Box probe = same visibility and scrollable-ancestor
+    > rules, then `rect.right > clientWidth + 1`. Controls, both of which must fire every pass: a
+    > planted 900px `<div>` for the box probe, and an 80px box holding a long word with
+    > `overflow-wrap: normal` for the text probe.
+    > **What the sweep found when run this way, and it is why the item is worth building:** ONE live
+    > defect (fixed the same run — `MarketSignals.jsx`'s bare `1fr` grid, `check-data.mjs` §78) and
+    > ONE more filed as **item 169**. Both were invisible to the box probe alone.
     - **W-6.2 rule 3, answered up front:** the learner-visible failure a permanent probe would have
       caught is **"the Reference hub scrolled sideways at 200% browser zoom, and headings were
       clipped mid-word by `overflow-x: hidden`"** — both were shipping, on the hub screen, before
@@ -6123,3 +6186,138 @@ the backlog), `npm run build` clean, and the built app driven live at 420px and 
 
 **Next run should pick from the launch plan or the owner-facing items** — not from this entry. This
 run filed no residual and closed no numbered item, so there is nothing here to chain from.
+
+### 2026-09-07 (scheduled dev-agent, backlog item 155's premise) — the one bare `1fr` under `src/`, in an app whose every other grid already wrote `minmax(0, 1fr)`, is the one that clipped a quarter of a screen off a Spanish reader at 200% text zoom
+
+**Where the pick came from.** W-6.2 rule 1 is free: the previous two scheduled runs were an archiving
+pass and a quiz-alignment sweep, neither one's own residual, and the last entry filed none and said to
+pick from the launch plan or the owner-facing items. Item 155 was taken because it is the only open,
+unblocked item whose W-6.2 rule 3 sentence was already written and already *witnessed* — the Reference
+hub scrolled sideways at 200% zoom and headings were clipped mid-word, both shipping before
+2026-08-30 — and because it is the §3.0 clause 7 path (WCAG 1.4.4), which the app's own text-size
+control cannot reach: `FONT_SCALE_STEPS` stop at 1.3. **O-2 remains the entire critical path and no
+scheduled run can move it.**
+
+#### Step 3.5 — the premise, measured with controls, before anything was edited. It broke twice, and the second break is what shipped.
+- ⛔ **"The text-zoom sweep exists only in that session's browser console" is HALF FALSE, and the
+  half that is false would have been rebuilt from scratch.** `scripts/a11y-sweep.js` has carried a
+  `horizontalOverflow` probe all along (line 449), and `scripts/a11y-states.js` has carried the
+  font-scale axis item 155 asks a new probe to compose with (`setFontScale`, which drives the app's
+  real radio rather than writing `documentElement.style.fontSize`). **What is genuinely missing is
+  only the text half** — `horizontalOverflow` reads `getBoundingClientRect()` and nothing else.
+- ⛔ **A hypothesis of mine, refuted by its own control before it could become a finding.** I
+  predicted that `body { overflow-x: hidden }` (index.css:191) would make `documentElement.scrollWidth`
+  never exceed `clientWidth`, leaving `horizontalOverflow`'s element scan behind a gate that never
+  opens — a structurally blind probe. **Measured on the built app: false.** A planted 900px `<div>`
+  takes `de.scrollWidth` 320 → 900 and the gate opens. The probe is not blind; it is narrow.
+- ✅ **The claim item 155 makes that DOES hold, now measured on this app rather than argued.** With a
+  narrow box holding a long unbreakable word (`overflow-wrap: normal`) planted on the live page, the
+  **text probe fires (scrollWidth 335 > box 80) and the box probe reports exactly ZERO** — the
+  planted element's border box never leaves the viewport. A right-edge scan cannot see text overflow,
+  demonstrated rather than reasoned.
+- **Two probe-design findings item 155 does not name, both found by running it rather than writing
+  it** (recorded in the item so the next run does not re-derive them): the text probe must exclude the
+  **visually-hidden idiom** (`clip-path: inset(50%)` / `clip: rect(0,0,0,0)`) — Learn's sr-only
+  "Current lesson" span reports `scrollWidth 90 > box 1` at every scale, by design — and the **box**
+  probe needs the scrollable-ancestor exclusion item 155 specifies only for the text probe: the parent
+  guide's age-band rail is `overflow-x: auto` on purpose (WCAG 1.4.10), and `BUTTON#age-band-13-17`
+  reaches 440px against a 320px viewport as a **false positive**, on every run, at 200%.
+
+#### What the sweep actually found, and it is a live defect on a public URL
+Built app, `dist/` served at 127.0.0.1, 320px viewport, root font overridden to emulate browser/OS
+text zoom; both probes carrying their plants in every pass. Reference › Market Dashboard, the
+yield-curve shape grid:
+
+| language | 130% | 150% | 175% | 200% | tracks at 200% |
+|---|---|---|---|---|---|
+| `en` | — | — | — | **1.8px** | 132.1 / 149.7 |
+| `es` | 0 | **4.1px** | **38.1px** | **75.5px** | 156.2 / 199.3 |
+| `ko` / `zh` / `ja` | — | 0 | — | 0 | 140 / 140 |
+
+The figure is how far the grid's right column overflows its 288px container — and `body
+{ overflow-x: hidden }` **clips** that rather than scrolling to it, so at `es`/200% a quarter of the
+viewport's worth of the "Plana (Advertencia)" and "Empinada (Recuperación)" cards is simply gone.
+**The three clean languages are the control the 75.5px is trusted on:** one instrument, one screen,
+one setting, zero for three languages and 75.5 for the fourth — CJK breaks between characters, so its
+min-content is small. `es` at the in-app maximum (130%) still fits; this is only reachable through
+text zoom, which is exactly the path WCAG 1.4.4 is about and the path §3.0 clause 7 promises.
+
+**Mechanism, and it is the reason this is one line.** A bare `1fr` is `minmax(auto, 1fr)`, and that
+`auto` minimum is the item's **min-content** size, so a track whose widest unbreakable caption exceeds
+its fr share grows past it and pushes the grid out of its container. This is the **grid twin of the
+flex `min-width: auto` blowout fixed in `LessonReader` on 2026-09-03** — same automatic-minimum rule,
+one layout module over. `index.css`'s `overflow-wrap: break-word` does not save it, and its own
+comment says why: `break-word` deliberately does **not** shrink an element's min-content size
+(`anywhere` would).
+
+⭐ **The finding that made this worth a check and not just a fix: the house pattern was already
+unanimous, and nothing said so.** Every other grid under `src/` already writes the guarded form —
+`charts.jsx`'s five all use `minmax(0, 1fr)`, `ui.jsx` uses `minmax(min(…, 100%), 1fr)`, and
+`MarketSignals`' own sibling grid twelve lines up pins an explicit `120px` floor and measures
+`140px 140px` clean at every scale. **`MarketSignals.jsx:84` was the single bare `1fr` in the
+application, and it is the one that clipped.**
+
+#### What shipped
+- **The fix**, one declaration: `1fr 1fr` → `minmax(0, 1fr) minmax(0, 1fr)`, with the measurement
+  table and the mechanism in the comment above it. **Re-measured on the rebuilt bundle** (`Reference`
+  chunk `BrRvwgK2` → `DB4FnBqH`, and `grep` confirms no `"1fr 1fr"` survives anywhere in `dist/`):
+  `es` at 150% and 200% now read **`140px 140px`, overflow 0.0, `documentElement.scrollWidth` 320**,
+  and the captions **wrap instead of clipping** — every `figcaption` reports `scrollWidth === box`
+  (114/114) at 200%, "Empinada (Recuperación)" included, at 117px tall inside a 140px card.
+- **`check-data.mjs` §78** — no bare `fr` track in any `gridTemplateColumns` under `src/`. It strips
+  `minmax()`/`min()`/`max()`/`clamp()` spans with a **balanced-paren walk, not a regex**: a
+  non-greedy `minmax\([^)]*\)` stops at the first `)` and would flag
+  `repeat(auto-fit, minmax(min(${TILE_MIN}, 100%), 1fr))` — the *safest* declaration in the app — as
+  a violation. It carries five controls (fires on `1fr 1fr` and `repeat(3, 1fr)`, stays silent on the
+  three guarded real forms) plus a floor on the scan itself (≥5 declarations, currently 7 across 72
+  files), because an extraction regex that stops matching reads as a clean app.
+
+#### The injection test, which is the part of this run I would keep if I could keep one thing
+Re-planting `"1fr 1fr"` and re-running did **not** produce the finding. It produced
+`ReferenceError: lineIn is not defined` — §22's `lineIn` helper is block-scoped to §22, and because
+the call sat on the **failure path** it had never executed while the app was clean. **The section
+reported `PASS` on 7 declarations and would have crashed the entire suite the first time it found
+anything.** Fixed with a local `lineIn78` and re-verified with the plant still in place: **exit 1,
+one finding, correct file:line (`MarketSignals.jsx:103`) and the full message.** Then restored from
+the scratchpad copy — `cmp` byte-identical, never `git checkout --` — and green again. **A failure
+path that has never executed is not a guard, and only the injection could say so.**
+
+#### A second live defect, on the same screen, filed rather than smuggled in — item 169
+The post-fix sweep found a different overflow at `es`/150%+ that the grid fix does not touch: the
+QE/QT cards' `justify-content: space-between` label rows measure `scrollWidth 154 > box 114` at 200%.
+Same automatic-minimum family, third costume (flex item `min-width: auto` this time), different
+component. `en` reads **0 at 100%, 130% and 200%**, which is both the scope and the control. It is
+filed with its numbers as **item 169** and deliberately not folded into this commit.
+
+#### Step 5 — adversarial self-check
+**Blindspot register:** no content module, no lesson prose, no market figure and no rendered date
+changed — the only date I wrote is a measurement date inside a source comment, which is this repo's
+own convention for a measured number, and `MarketSignals.jsx` is not one of the 26 teaching-copy
+modules §2.3 scans. `check-blindspot` green (0 failures) on the final tree. **DECISIONS.md:** grepped
+for grid/layout/overflow — it records no layout decision this could contradict, and nothing here
+touches localStorage-only state, `.js`-not-JSON content, or Vite-not-Expo. **Already-done:** the
+nearest neighbours were checked and neither is this — item 163 is the review recap card, and the
+2026-09-03 `flexWrap: "wrap"` fix is `LessonReader`'s button row, a sibling instance of the same rule
+in a different module and a different file. Item 155 is **not** closed by this run and is not claimed
+to be; its probe is still unbuilt. **My own verification claim, and its weakest part stated rather
+than left to be found:** the `check-data.mjs` half is fully re-runnable by anyone (`npm test`, and the
+injection test is four lines), but **the live half depends on a browser harness a reviewer would have
+to rebuild** — the probe definitions and every exclusion are therefore written into item 155 precisely
+enough to reconstruct, and the one number that does not depend on my scripts is the one in the fix's
+own comment: the computed `grid-template-columns` string, which `getComputedStyle` reports the same
+way to anyone who opens the built app at 320px with the root font at 32px.
+
+**Verified:** `npm test` **0 failures** (the 4 standing WARNs — translation review share, translation
+completeness, §65 option length, and the AGENT_LOG floor — are all pre-existing and named in the
+backlog); `npm run build` clean; `npm run check-blindspot` 0 failures; the built app driven at 320px
+across five languages and four root-font scales.
+
+**Also measured, not repo work.** Market data unchanged at `asOf 2026-09-04` (age 3; Sectors flips to
+the unavailable state **2026-09-09**) — **W-7.3's falsifiable test is still running and no refresh
+commit has arrived in this working copy**; it comes due in two days and this checkout must not
+re-diagnose it before then.
+
+**Next run.** W-6.2 rule 1 does not bind (this pick came from an open item's premise, not from my own
+residual — but note that **item 169 below IS my residual**, so a run taking it starts a chain at link
+one). Open and unparked: **70/71, 74, 76, 94, 117, 155, 160, 169**. O-2 is still the entire critical
+path.

@@ -81,7 +81,26 @@ export default function MarketSignals({ t, lang }) {
       <Text as="h2" variant="heading" color={ink.strong} style={{ marginBottom: space["3"] }}>
         {t.yieldCurveLabel}
       </Text>
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: space["2"], marginBottom: space["5"] }}>
+      {/* `minmax(0, 1fr)`, not `1fr`. A bare `1fr` is `minmax(auto, 1fr)`, and that `auto`
+          minimum is the item's MIN-CONTENT size, so a track that cannot fit its widest
+          unbreakable caption grows past its fr share and pushes the grid out of its own
+          container — where `body { overflow-x: hidden }` clips it rather than scrolling to it.
+          Measured 2026-09-07 on the built app at a 320px viewport, root font overridden
+          (browser/OS text zoom; the in-app control stops at 1.3):
+            en  200%  tracks 132.1 / 149.7  →  right column clipped by  1.8px
+            es  150%                        →                           4.1px
+            es  175%                        →                          38.1px
+            es  200%  tracks 156.2 / 199.3  →                          75.5px
+          ko/zh/ja read 140/140 and clean at every scale — CJK breaks between characters, so
+          their min-content is small. That is also the control the es number is trusted on:
+          the same instrument on the same screen at the same settings reports zero for three
+          languages and 75.5px for one. `es` at the in-app maximum (130%) still fits; this is a
+          text-zoom path, WCAG 1.4.4.
+          Every other grid in this app already writes the guarded form — charts.jsx's five all
+          use `minmax(0, 1fr)`, ui.jsx uses `minmax(min(…, 100%), 1fr)`, and the sibling grid
+          above pins an explicit 120px floor. This was the one bare `1fr` under src/, and it is
+          the one that clipped. check-data.mjs asserts there is not a second. */}
+      <div style={{ display: "grid", gridTemplateColumns: "minmax(0, 1fr) minmax(0, 1fr)", gap: space["2"], marginBottom: space["5"] }}>
         {CURVE_TYPES.map((type) => (
           <YieldCurve
             key={type}
