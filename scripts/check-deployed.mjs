@@ -249,6 +249,91 @@ if (control.status !== 404) {
 say("             ✓ HTTP 404 — 200s below are real files");
 say();
 
+// How a Vite build names itself in the served HTML. Declared here rather than
+// beside its first use below, because the retired-origin probe that follows
+// needs the same test: "is what is answering actually this app?"
+const ENTRY_RE = /<script[^>]+type="module"[^>]+src="\.?\/?(assets\/index-[A-Za-z0-9_-]+\.js)"/;
+
+// ── RETIRED ORIGINS: a host we walked away from must actually be gone ────────
+//
+// Every check in this repo points at ONE origin — the canonical URL in
+// README.md § Deploying — which is the right single definition and is also a
+// blind spot with a shape: the moment the project moves hosts, the OLD host
+// stops being watched by anything, while a copy of the app keeps answering on
+// it. "Retired" is a decision; it is not a measurement.
+//
+// Measured 2026-09-07, the day after the Netlify → GitHub Pages move: the
+// canonical origin returned 404 and the retired one returned 200 with a real
+// Vite bundle (`index-B1mndoLB.js`, a day old). The two authoritative docs had
+// already split — README.md described Netlify in the past tense while
+// LAUNCH_PLAN.md §10.10 still said the app is live there, and LAUNCH_PLAN.md
+// was the one telling the truth. The learner-visible failure this exists to
+// catch: a reader follows the canonical link and gets a 404, while the only
+// copy of the app that answers is one the project believes it deleted, serving
+// a build that is out of date and that nothing in this repo can see.
+//
+// Origins are declared in README.md, not here, for the same reason the
+// canonical one is: a literal typed into a script is a second copy of a host
+// name, and the symptom of drift is a check confidently watching nothing.
+// Marker, one per line, anywhere in the file:
+//
+//     <!-- retired-origin: https://example.example.app — why it was retired -->
+//
+// The reason is required. A bare URL is a claim with no author.
+// Parsed in two steps on purpose. A single regex that REQUIRES the em dash
+// would silently skip a marker whose reason is missing — the one malformed
+// marker most likely to be written — and a check that ignores what it cannot
+// parse is a check that passes for the wrong reason.
+const RETIRED_RE = /<!--\s*retired-origin:\s*([^]*?)-->/g;
+const retired = [...readme.matchAll(RETIRED_RE)].map((m) => {
+  const [url, ...rest] = m[1].split("—");
+  return {
+    origin: url.trim().replace(/\/+$/, ""),
+    reason: rest.join("—").trim().replace(/\s+/g, " "),
+  };
+});
+const retiredServing = [];
+if (retired.length) {
+  say(`  retired  → ${retired.length} origin(s) declared in README.md must no longer serve this app`);
+  for (const r of retired) {
+    if (!/^https:\/\/[^\s/]+$/.test(r.origin)) {
+      say(`             ⚠ "${r.origin}" is not an origin (expected https://host, no path).`);
+      say("               Marker: <!-- retired-origin: https://host — why it was retired -->");
+      continue;
+    }
+    if (!r.reason) {
+      say(`             ⚠ ${r.origin} — marker gives no reason; add one after the em dash`);
+    }
+    const root = await get(`${r.origin}/`);
+    if (root.status === null) {
+      say(`             ✓ ${r.origin} does not answer (${root.error})`);
+      continue;
+    }
+    if (root.status !== 200) {
+      say(`             ✓ ${r.origin} returns HTTP ${root.status}`);
+      continue;
+    }
+    // It answers 200. That means nothing until a path which cannot exist is
+    // shown to 404 — a parked domain, a proxy or a captive portal answers 200
+    // to everything, and would otherwise be read as "still serving the app".
+    const ctl = await get(`${r.origin}${controlPath}`);
+    if (ctl.status !== 404) {
+      say(`             ⚠ ${r.origin} answers HTTP 200, but so does a path that cannot`);
+      say(`               exist (control: HTTP ${ctl.status ?? ctl.error}). No verdict for this origin.`);
+      continue;
+    }
+    const entry = root.buf.toString("utf8").match(ENTRY_RE)?.[1];
+    if (!entry) {
+      say(`             ⚠ ${r.origin} answers HTTP 200 with ${root.buf.length} bytes that carry no`);
+      say("               Vite entry bundle — something is there, but it is not this app.");
+      continue;
+    }
+    say(`             ✗ ${r.origin} is STILL SERVING this app (${entry})`);
+    retiredServing.push(`${r.origin} is declared retired in README.md (${r.reason}) and is still serving the app (${entry}).`);
+  }
+  say();
+}
+
 // ── Fetch the live document, then CONTROL 2 ──────────────────────────────────
 say(`  live     → GET ${origin}/`);
 const liveDoc = await get(`${origin}/`);
@@ -256,7 +341,6 @@ if (liveDoc.status === null) noVerdict([`Could not fetch the site root: ${liveDo
 if (liveDoc.status !== 200) noVerdict([`The site root returned HTTP ${liveDoc.status}, not 200.`]);
 const liveHtml = liveDoc.buf.toString("utf8");
 
-const ENTRY_RE = /<script[^>]+type="module"[^>]+src="\.?\/?(assets\/index-[A-Za-z0-9_-]+\.js)"/;
 const liveEntry = liveHtml.match(ENTRY_RE)?.[1];
 if (!liveEntry) {
   noVerdict([
@@ -529,14 +613,32 @@ async function identifyDeployedCommit(liveBuf, localEntryName, limit) {
 }
 
 // ── Verdict ──────────────────────────────────────────────────────────────────
-if (problems.length === 0) {
+if (problems.length === 0 && retiredServing.length === 0) {
   say(`  ✅ The live site is serving this tree (HEAD ${head}).`);
   process.exit(0);
+}
+
+// A retired origin that is still up is a separate failure from a canonical
+// origin that is behind, and collapsing the two would print "DIVERGED — the
+// live site is NOT serving this tree" about a site that is.
+if (problems.length === 0) {
+  say(`  ⚠️  The canonical site is serving this tree (HEAD ${head}), but a host this`);
+  say("     repo has declared RETIRED is still answering with a copy of the app:");
+  say();
+  for (const r of retiredServing) say(`     • ${r}`);
+  say();
+  say("  Retiring a host is an action on that host, not a sentence in a document.");
+  say("  Until the old site is deleted or unpublished, two versions of this app are");
+  say("  reachable, only one of them is watched, and links already shared point at");
+  say("  the unwatched one. Delete it, or drop the marker from README.md and say");
+  say("  there why it is deliberately being left up.");
+  process.exit(1);
 }
 
 say("  ❌ DIVERGED — the live site is NOT serving this tree.");
 say();
 for (const p of problems) say(`     • ${p}`);
+for (const r of retiredServing) say(`     • ${r}`);
 say();
 
 // What is a learner missing? That needs the last DEPLOYED commit. `--since`

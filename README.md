@@ -82,10 +82,17 @@ workflow will run and the site will not appear:
   Netlify both do) — in which case change the URL in **this section first**, and `npm test` will
   fail until `index.html` agrees.
 
-> ⚠️ **NETLIFY IS RETIRED (owner decision, 2026-09-07).** The site lived at
-> `https://magnificent-mochi-73aecc.netlify.app` from 2026-09-05 to 2026-09-07. It was retired
-> because publishing required a personal access token that only the owner could create, and until
-> it existed **every** update was a manual drag — which is exactly how the live site spent a day
+> ⚠️ **NETLIFY IS RETIRED BY DECISION AND IS STILL SERVING (owner decision, 2026-09-07).**
+> `https://magnificent-mochi-73aecc.netlify.app` went up 2026-09-05 and, **measured 2026-09-07,
+> still returns HTTP 200 with a real build** — one that is already a day behind `main`. It is
+> therefore the only reachable copy of this app while the canonical URL above returns 404, and
+> `LAUNCH_PLAN.md` §10.10 is right to say the app is live there. **Retiring a host is an action on
+> that host, not a sentence in a document:** the site has to be deleted or unpublished in the
+> Netlify dashboard, which is the owner's to do. Until then two versions are reachable, only the
+> canonical one is watched, and every link already shared points at the unwatched one.
+> <!-- retired-origin: https://magnificent-mochi-73aecc.netlify.app — retired 2026-09-07 when GitHub Pages became canonical; `npm run check-deployed` fails while it is still answering, because "retired" was a decision and not yet a measurement. -->
+> **Why it was retired:** publishing required a personal access token that only the owner could
+> create, and until it existed **every** update was a manual drag — which is exactly how the live site spent a day
 > four commits behind `main`, and then nine. `scripts/deploy.mjs` was the Netlify uploader and is <!-- path-ok: scripts/deploy.mjs — DELETED 2026-09-07 when Netlify was retired. Named here as history: this sentence exists to say the file is gone, so the reference must never resolve. Restoring the file to make this marker unnecessary would be undoing the decision, not fixing a path. -->
 > **deleted**, along with the `npm run deploy` script and the `.netlify-token` mechanism; if you
 > find a reference to any of them, it is stale. `.gitignore` keeps its `.netlify-token` line on

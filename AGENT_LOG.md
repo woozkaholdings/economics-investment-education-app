@@ -165,6 +165,30 @@ for the history. No open P1/P2 items.
 > falling as a proportion. Item 93 itself flags this ("the owner should know it is happening") and
 > that flag is the honest one. **Nothing here is wrong or blocked — this is a scale change the
 > original decision did not contemplate, and the owner should either re-affirm it or cap it.**
+>
+> **O-4 (new 2026-09-07, and it inverts what this repo believes about where the app is). The
+> canonical URL returns 404 and the RETIRED one returns 200.** Measured this run with controls:
+> `https://woozkaholdings.github.io/economics-investment-education-app/` → **404** (the instrument's
+> own nonexistent-path control fired first, so the 404 is real); the Netlify site the 09-07 decision
+> retired → **200, serving `index-B1mndoLB.js`** with `market.json` at `asOf 2026-09-04`. A
+> nonexistent `*.netlify.app` subdomain → 404, so that 200 is not a catch-all. **`LAUNCH_PLAN.md`
+> §10.10 — "the app is live at <the Netlify URL>" — is the document that is telling the truth**, and
+> `README.md`, the one the migration updated, was the one describing a dead host as live and a live
+> host in the past tense. Corrected this run.
+> **Two owner actions, and they are independent:**
+> 1. **Publish the canonical site.** README § Deploying already carries the measured blocker (this
+>    repository is private; Pages from a private repo needs a paid plan) and its three routes. This
+>    run re-confirmed the premise rather than restating it: unauthenticated `GET` of the repo API →
+>    **404** against a **200** control on a public repo, `git ls-remote` over HTTPS → *Repository not
+>    found*, and `woozkaholdings.github.io/` itself → **404**, so no Pages site is published from the
+>    account at all. ⚠️ The account's plan is **not** visible from here; do not write down which of
+>    the three routes is needed (see the environment note on local vs global absence).
+> 2. **Actually retire the old host** — delete or unpublish the Netlify site — or decide to keep it
+>    and drop the `retired-origin` marker from README § Deploying, saying there why. Until one of
+>    those, two versions of the app are reachable and only one is watched.
+> **What is no longer an owner action: noticing.** `npm run check-deployed` now reads
+> `retired-origin` markers from README and fails while a retired origin still answers with a Vite
+> bundle. It is the first thing in this repo that looks at a host other than the canonical one.
 
 > ## PRIORITY BLOCK W-7 — set by the weekly review 2026-09-06. Supersedes W-6's *active* clauses below. W-6's standing rules (W-6.2's residual-chain rule, W-6.3's ratio-quoting rule) are UNCHANGED, still binding, and W-6.2 WORKED — see W-7.0. Read this first.
 >
@@ -6971,3 +6995,116 @@ the project sub-path.
    can flip. Until it is set the workflow runs and the deploy step fails.
 **Then, and only then:** `npm run check-deployed` against the new URL. It will say DIVERGED right
 now and that is correct — the site does not exist yet.
+
+### 2026-09-07 (scheduled dev-agent; W-6.2 rule 1 free — the previous two runs were owner-directed and filed no residual, so this pick came from measuring the one claim the host migration left unmeasured) — the canonical URL 404s, the "retired" one serves, and every instrument in this repo was pointed at the wrong one of the two
+
+**The pick, and why it was not any of the open backlog items.** I went looking for a live walk and
+started by re-measuring where "live" is. `npm run check-deployed` **exit 2**: canonical origin
+`https://woozkaholdings.github.io/economics-investment-education-app/` → **HTTP 404**, with the
+tool's own nonexistent-path control returning 404 first, so the 404 is a real answer from a real
+host and not a dead network. That much `README.md` already said, dated the same day. **What nothing
+in the repo had measured is the other half:** the Netlify origin the 2026-09-07 decision retired
+returns **HTTP 200** and serves a real build — `assets/index-B1mndoLB.js`, 264,930 b, the 09-06
+artifact — with `data/market.json` at `asOf 2026-09-04` against the repo's 09-07.
+
+⭐ **So the two authoritative documents had split, and the one the migration updated is the one that
+was wrong about reality.** `README.md` described Netlify in the past tense ("The site lived at …
+from 2026-09-05 to 2026-09-07"); `LAUNCH_PLAN.md` §10.10 still says "The app is live at
+<the Netlify URL>". **§10.10 is correct.** It is the only reachable copy of this app, it is a day
+behind `main`, its own `og:url` advertises the Netlify origin so links shared from it keep pointing
+there, and **no instrument in this repo could see it**, because every check here resolves the single
+canonical origin from README § Deploying — the right single definition, and a blind spot with a
+shape: *the moment the project moves hosts, the old host stops being watched by anything while a
+copy of the app keeps answering on it.* This is W-7.1's own transferable finding one turn further
+on. W-7.1 said a claim about the live site that is not measured against the live site is a guess;
+the sharper version is that **"retired" is a decision, and it stays a guess until something measures
+the host you walked away from.**
+
+**Step 3.5 — the premise I started with was REFUTED, and re-measuring changed the disposition.**
+My first hypothesis was a defect in `index.html`: `<link rel="icon" href="/icon.svg">` is a
+leading-slash absolute path, which under a GitHub Pages *project* sub-path would resolve to the
+domain root and 404 the favicon — and `vite.config.js`'s own comment claims "nothing in the app
+builds a URL from a hardcoded leading `/`". **Measured: Vite rewrites it.** `dist/index.html`
+emits `href="./icon.svg"` beside `src="./assets/index-….js"`. No defect, the comment is true of the
+build, and I dropped it rather than "fixing" a file that is already correct.
+
+**Step 3.5 — the second premise, re-confirmed rather than restated.** README's private-repo blocker
+was already written down, so I re-derived it instead of quoting it: unauthenticated `GET
+api.github.com/repos/woozkaholdings/economics-investment-education-app` → **404** against a
+**200 control** on `vitejs/vite`; `git ls-remote` over HTTPS → *Repository not found*;
+`api.github.com/users/woozkaholdings` → `public_repos: 0`; and `https://woozkaholdings.github.io/`
+itself → **404**, so no Pages site is published from that account at all. **What I did not do is
+write down which of README's three routes is required** — the account's plan is not visible from
+this host, and the environment note on local-vs-global absence is two days old.
+⚠️ **Also measured and NOT acted on: `origin/main` is at `ba9285c` = HEAD, three `update by push`
+entries in its reflog.** The previous run's entry ends "the push is blocked … none of this is on
+GitHub"; it landed afterwards. The push is done; the site still 404s, which is what narrows the
+remaining blocker to the two owner actions in O-4.
+
+**What shipped.** `scripts/check-deployed.mjs` reads `<!-- retired-origin: https://host — why -->`
+markers from `README.md` — the same single-definition discipline the canonical origin already uses,
+and the same marker shape as §26's `path-ok` — and probes each one before it touches the canonical
+site, so the probe runs even on the runs where the canonical origin gives no verdict (which is every
+run today). A retired origin still answering **200 with a Vite entry bundle** is a failure with its
+own verdict text, deliberately not folded into "DIVERGED — the live site is NOT serving this tree",
+which would be a false sentence about a site that is. README's retirement note is corrected from
+past tense to the measured present and names the action that actually completes a retirement:
+deleting the site in the Netlify dashboard. **The canonical URL is unchanged and no decision is
+reversed** — this implements the 09-07 decision by making its unfinished half visible.
+
+**Six branches, six controls, all exercised live.** Markers were planted in `README.md`, run, and
+the file restored from a scratchpad copy (`cmp` identical; never `git checkout --`):
+- ✗ **still serving** — the real Netlify origin, `index-B1mndoLB.js`. Independently corroborated by
+  hand: root 200, a nonexistent asset under it 404, and a nonexistent `*.netlify.app` subdomain 404,
+  so the 200 is not a catch-all.
+- ✓ **gone** — `https://this-site-cannot-exist-zzq7.netlify.app` → reported gone, not serving.
+- ⚠ **200 but not this app** — `https://example.com` (559 b, no entry bundle).
+- ⚠ **catch-all** — `https://app.netlify.com`, which answers **200 to a path that cannot exist**;
+  the probe refuses a verdict for that origin instead of reading the 200 as "still serving".
+- ⚠ **marker with no reason** — reported rather than accepted.
+- ⚠ **malformed origin** (`not-a-url/with/a/path`) — reported rather than silently skipped, which is
+  why the marker is parsed in two steps: a single regex requiring the em dash would have dropped the
+  one malformed marker most likely to be written, and a check that ignores what it cannot parse
+  passes for the wrong reason.
+- The **DIVERGED fold-in** was exercised by temporarily pointing README's canonical URL at the
+  Netlify site: exit 1, the retired line printed alongside the bundle and `index.html` diffs.
+  ⛔ **One branch is UNEXERCISED and I am not claiming otherwise:** the `⚠️ canonical is serving
+  HEAD but a retired origin is up` verdict needs a canonical origin that serves HEAD, which does not
+  exist yet. It will first run on the day the Pages site publishes.
+
+**W-6.2 rule 3, answered:** *"a reader follows the README's canonical link and gets a 404, while the
+only copy of the app that answers is one the project believes it deleted, serving a build that is a
+day out of date."* That is not hypothetical — it is the state of the world today, and it is why this
+check exists rather than being deferred.
+**W-6.3's ratio, re-measured this run rather than quoted from W-7.0:** `scripts/` **20,754** lines
+vs app code (`src/` minus `content/`+`locales/`) **9,252** — **2.24x**, up from the 2.19x measured
+2026-09-06. This change adds **~106 lines** to `scripts/` (+0.5%) and 0 to `src/`, so it moves the
+number the wrong way, and the honest defense is not the size: it is that this is the only check in
+the repo that looks outside the canonical origin, and the class it covers has one live instance
+today.
+
+#### Step 5 — adversarial self-check
+**Blindspot register: nothing found.** No lesson prose, quiz, glossary, market figure or rendered
+date changed; nothing under `src/` was touched at all. `check-blindspot` **exit 0**, read from the
+exit code. The dates I wrote are in a Markdown document, which is this project's convention for a
+measurement, not a date rendered to a learner (the Markets-tab fix's class).
+**DECISIONS.md conflict: none, and I checked the one it could have been.** The 2026-09-07 hosting
+entry says Pages is canonical and Netlify is retired. This change does not restore Netlify, move the
+canonical URL, or resurrect `npm run deploy`; it measures whether the retirement happened. ⚠️ Worth
+recording separately: DECISIONS.md's *older* entry still says "the repo is private, so git-connected
+hosting … is off the table", and the commit that superseded it said that constraint "expired".
+**Measured today, the constraint has not expired — the repo is still private.** The owner dissolved
+it by decision, which is theirs to do; README already carries the consequence as a blocker, so
+nothing here needed changing and I did not reopen it.
+**Already-done: no.** `grep` for `retired-origin` / "still serving" across AGENT_LOG.md,
+DECISIONS.md and LAUNCH_PLAN.md returns nothing outside this entry — no run has looked at a
+non-canonical host before.
+**My own verification claim, weakest part first:** ⚠️ **`npm run check-deployed`'s ✗ is a
+measurement of the world, so an independent reviewer may legitimately get a different result** —
+if the owner deletes the Netlify site, the line becomes ✓, and that is the check working rather
+than a discrepancy. Two of the six controls run against third-party hosts (`example.com`,
+`app.netlify.com`) whose behavior is theirs to change; both are named above so a future reviewer
+knows what to re-pick rather than assuming the branch is dead. Everything repo-local reproduces:
+`npm test` **exit 0, 0 failures, 4 warnings** — byte-identical warning set to the pre-change
+baseline, diffed, not eyeballed — `npm run build` **exit 0**, `npm run check-blindspot` **exit 0**,
+each read from the process exit code and not from a grep count (the defect `ba9285c` was repairing).
