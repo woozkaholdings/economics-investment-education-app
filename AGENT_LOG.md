@@ -1869,6 +1869,8 @@ instead of hand-rolling an eighth mover. A working one is in this run's scratchp
     ⛔ **Reuse the guard, do not re-derive it.** `Reference.jsx`'s effect restores only when
     `document.activeElement` has actually fallen to `body`/`documentElement`. Without it a tab
     re-tap steals focus off the nav tab button — measured, and it is why that guard exists.
+    ✅ **Premise re-confirmed 2026-09-08 on a LATER bundle (`index-BC_zH3HN.js`), as the negative
+    control of the run that fixed `Question.jsx` — still BODY. It does not need re-measuring.**
     **W-6.2 rule 3, answered:** "a keyboard or screen-reader learner who closes a lesson is returned
     to the top of the document instead of to the lesson they were reading." **Honest priority:
     medium** — it is the main path, and it is the last site of a class whose other two are closed.
@@ -6383,5 +6385,112 @@ described it as a pure improvement. The row is in the table because the check ea
 **Backlog:** no item closed (this collected a deferral recorded in a run-log entry, not a numbered
 item); **one opened — item 173**, the lesson-reader half, with the scroll-vs-focus-ring tension named
 and W-6.2 rule 1 flagged against picking it next.
+
+**Schedule:** the cron is the owner's lever and was not read, compared or touched.
+
+### 2026-09-08 (scheduled dev-agent; W-6.2 rule 1 SATISFIED — my own previous run filed item 173 and flagged it as not-to-be-picked, so this pick came from a corpus-wide sweep of a never-swept class rather than from the chain) — answering any question in the app threw a keyboard learner to the top of the document, on all 46 checks and every Practice session, because the option they had just pressed became `disabled` under their focus
+
+**The pick, and it is not item 173.** The previous run (mine) closed the Reference half of the
+focus-restore class and filed **item 173** — the lesson-reader half — with W-6.2 rule 1 explicitly
+flagged against picking it next. So this run went looking for a different class and swept every
+`disabled` in `src/`: **six real call sites.** The question is which of them can go
+enabled→disabled *while holding focus*, because that is the only configuration in which the browser
+blurs the element. Two (`Practice.jsx:518/608`, `disabled={!quizText}`) only ever go the other
+direction as a lazy module resolves; two (`Learn.jsx:347`, `ui.jsx:375`) are locked-row states a
+learner cannot be standing on. **One does it on every single use of the app:
+`Question.jsx:88`, `disabled={answered}`.**
+
+**Step 3.5 — premise measured live before any edit, with a control that fires.** Built `dist/`,
+served on `127.0.0.1:8873` (404 control fired), Browser pane at 375x812 and confirmed non-zero.
+Every reading is a `javascript_tool` read of `document.activeElement`, never in the call that
+clicked. Pre-fix bundle **`index-DkIEnxqk.js`**, read off `script[src]` before each measurement.
+- **Lesson reader, end-of-lesson check:** focus an option, press it → `activeElement` **BODY**;
+  sequentially-focusable elements **16 → 12**; tabbable options **4 → 0**.
+- **Practice session:** same gesture → **BODY**; focusables **8 → 5**. Worse here, because the
+  "See Results"/next control that is the only way forward is now reachable only by tabbing from the
+  top of the document.
+- **Control (the reason a BODY reading is readable):** the same `activeElement` read reported the
+  language `<select>` still focused across a full re-render into `ko`, and reported the "See
+  Results" button when focused. **The instrument can see a preserved focus when there is one.**
+
+⭐ **What the measurement added that the sweep could not.** The two `SrOnly` markers that are the
+**only** non-visual signal of which option was right — "Your answer, incorrect" and "Correct
+answer" — sit *inside* those buttons. Native `disabled` takes them out of the tab order, so a
+keyboard-driven screen-reader user could not reach them at all. The verdict prose itself is fine:
+it is in an `aria-live="polite"` region and was announced correctly throughout.
+
+**What shipped — 1 file, +27/−1, and exactly ONE substantive line.** `disabled={answered}` →
+`aria-disabled={answered || undefined}`. The re-entry guard is `choose`'s own
+`if (answered) return`, which was already there; that is what makes it safe, because an
+`aria-disabled` button still fires click on Enter and Space. No focus-management code was added at
+all — the browser never blurs, so focus simply stays on the option the learner activated. **That
+sidesteps item 173's scroll-vs-focus-ring tension rather than inheriting it**: there is nothing to
+restore and nothing to scroll.
+
+**Verification, in the form a reviewer can re-run.** Post-fix bundle **`index-BC_zH3HN.js`**,
+confirmed served before each read, same viewport, storage cleared between runs.
+| surface | pre | post |
+|---|---|---|
+| lesson check — `activeElement` after answering | BODY | **the answered option** |
+| lesson check — focusables / tabbable options | 16→12 / 4→0 | **16→16 / 4→4** |
+| Practice — `activeElement` after answering | BODY | **the answered option** |
+| Practice — focusables | 8→5 | **8→9** (the next control appears) |
+| pre-lesson hook (`reveal={false}`) | — | **focus kept; verdict still withheld** ("HOLD THAT THOUGHT"), no correct-answer marker leaked, end check untouched |
+| **lesson-reader Back (item 173, untouched)** | BODY | **BODY** |
+**Nothing visual changed, and that is measured rather than argued.** `color / background-color /
+border-color / opacity / cursor / font-weight` were captured for all four options in both the
+unanswered and the answered state, pre and post: **identical, string for string** — including the
+red-wash wrong pick and the green-wash bold correct answer. `index.css` has **no** `:disabled`,
+`:hover` or `:active` rule at all and every property here is inline, so the UA's disabled styling
+was never reaching these buttons in the first place.
+**The one-answer-per-question invariant holds, tested adversarially rather than assumed:** after
+answering wrong, clicking the *correct* option and dispatching Enter left `aria-checked` unchanged
+(`true,false,false,false`), the verdict unchanged, and `ecycles_review` byte-identical at
+`{"q001":{"box":1,"due":"2026-09-09","seen":1,"wrong":1}}` — so `onAnswered` did not re-fire and
+`quiz_answered` cannot double-count.
+`npm test` **exit 0** (read from `$?` on an unpiped run), **4 warnings, the documented baseline
+set**: review coverage, translation completeness, quiz option-length cue, log floor. `npm run
+build` exit **0**, `npm run check-blindspot` exit **0**.
+
+#### Step 5 — adversarial self-check
+**Blindspot register: nothing found, and proved directly rather than by an exit code.** Filtering
+the diff to added lines that are neither comment nor blank leaves **one line and zero string
+literals** — there is no learner-facing copy in this change to regress. No Dalio reference, no
+advice-adjacent language, no disclaimer touched, no kids framing, no date string, no market figure.
+`check-blindspot` exit 0 as well.
+**DECISIONS.md conflict: none.** The only entries in range are the analytics ones, and they are
+*strengthened* rather than contradicted: `quiz_answered` still fires once per question and
+`quiz_taken` once per finished quiz, both verified through the unchanged review state above. No
+`localStorage` key, no route, no hash touched.
+**Already-done backlog item: no**, and this is the one to be careful about, because the *symptom*
+(focus → `<body>`) is the same one my previous two runs fixed. It is a different **cause** and a
+different fix: those were unmount-then-fall-to-body, repaired with a ref map and a restore effect;
+this is browser-blurs-a-disabled-element, repaired by not disabling. `aria-disabled` appears
+**nowhere else in `src/`**, and no entry in `AGENT_LOG.md`, the archive or `DECISIONS.md` pairs
+"disabled" with focus.
+**My own verification claim, weakest part first.**
+⚠️ **(1) The pre/post columns are two builds, not one reversible experiment** — the same weakness
+my previous run disclosed. Two things carry the weight instead, and both are on the **final**
+bundle: the **negative control**, where the lesson-reader Back still reports BODY, so the
+instrument was still capable of reporting failure at the moment it reported success one screen
+over; and the **CSS equality**, where every computed property of every option matches the pre-fix
+build exactly, which is what says the two builds are otherwise the same rendering.
+⚠️ **(2) I did not test with a real screen reader.** The claim about the `SrOnly` markers is about
+**tab reachability**, which I measured; the browse-mode reading of a `disabled` button is
+unaffected either way and is not claimed as fixed.
+(3) The `activeElement` reads, the `localStorage` comparison and the exit codes are reproducible
+from the commands above. The browser pane was in **dark mode** throughout — irrelevant to a
+pre/post comparison run identically both times, and stated because a past run's color scan was
+silently voided by exactly this.
+**Backlog:** no numbered item opened or closed. Per W-6.2 rule 2 the sweep's two dead ends are a
+**note under this entry, not new items**: `disabled={!quizText}` and the two locked-row sites were
+measured and **cannot reach the enabled→disabled-under-focus configuration** — the language-switch
+path that looked most likely was driven directly (focus the "Practice all questions" button, switch
+to `zh`) and focus survived, because the quiz module is already cached. **Zero live instances; do
+not re-sweep this class.** Item **173 is re-confirmed live** on the final bundle as this run's
+negative control, so its premise needs no re-measuring when it is picked — that one annotation is
+the only thing this run wrote into the backlog region, and it cost **+197 b** (424,727 → **424,924
+b**, `check-log-size.mjs`'s own MEASURED line, not retyped from anywhere). **549 b under** W-7.2
+rule 5's 425,473 b baseline for 2026-09-13, and this run moved it the wrong way.
 
 **Schedule:** the cron is the owner's lever and was not read, compared or touched.

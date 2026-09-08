@@ -85,7 +85,33 @@ export default function Question({ question, t, onAnswered, autoFocusHeading = f
               type="button"
               role="radio"
               aria-checked={picked}
-              disabled={answered}
+              // `aria-disabled`, NOT `disabled` — and the difference is a
+              // learner's place on the page. A native `disabled` button is
+              // removed from the tab order, so the browser blurs it the moment
+              // it is set: answering a question with the keyboard dropped
+              // `document.activeElement` to `<body>`, and the learner had to
+              // tab from the top of the document to reach the explanation and
+              // the Continue button. Measured live 2026-09-08 on
+              // `index-DkIEnxqk.js` at 375x812, on BOTH surfaces this component
+              // renders — the lesson reader's check and a Practice session
+              // (focusables 16 -> 12 and 8 -> 5, tabbable options 4 -> 0,
+              // `activeElement` BODY in both).
+              //
+              // `aria-disabled` announces the same state and keeps the node
+              // focusable, so focus simply stays on the option that was just
+              // activated. That also makes the two `SrOnly` markers below
+              // reachable by Tab rather than only in a screen reader's browse
+              // mode — they are the ONLY non-visual signal of which option was
+              // right, so a keyboard-driven screen-reader user could not get to
+              // them at all.
+              //
+              // The re-entry guard is `choose`'s own `if (answered) return`,
+              // which was already there and is what makes this safe: an
+              // `aria-disabled` button still fires click on Enter and Space.
+              // Nothing visual changes — no `:disabled` rule exists in
+              // `index.css` and every property here is inline, so the UA's
+              // disabled styling was never reaching these buttons.
+              aria-disabled={answered || undefined}
               onClick={() => choose(i)}
               style={{
                 display: "flex", alignItems: "center", gap: space["3"],
