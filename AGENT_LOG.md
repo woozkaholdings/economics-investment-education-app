@@ -5177,6 +5177,37 @@ probe `UNAVAILABLE`. A probe that scanned nothing reports `VACUOUS`, never `ok`.
 zero meaningful: `selftest PASS (8/8 controls fired, plantsRemoved true)` and, per screen, `N
 finding(s); V vacuous; U unavailable`. A bare "no accessibility issues found" is not a result.
 
+### The Browser pane cannot answer a modality question, and it fails at it SILENTLY (2026-09-08)
+
+**Measured, after a run reported a ring as "reasoned, not measured" and the owner asked for the real
+walk.** The pane is frequently **hidden** (`tabs_context` says so; `tabs_select` does not un-hide it,
+and nothing exposed to a run does). In that state:
+- `document.hasFocus()` is **`true`** while `document.visibilityState` is **`hidden`**.
+- `computer key Tab` returns **`pressed Tab x1`** — a success string — and **focus does not move.**
+  Verified against a seeded, still-focused row. A hidden document does not perform sequential focus
+  navigation.
+- Draw-waiting actions (`left_click`, scroll, hover) **time out** with a clear error. Keys do not.
+  ⛔ **Do not generalize from the timeout to "no real input works"** — that was the wrong inference
+  the first time, and it is the more dangerous direction: a timeout tells you it failed, a delivered
+  keypress that moves nothing does not.
+- Consequence: **`:focus-visible`, focus order and `:hover` cannot be measured in the pane.**
+  Programmatic `focus()` is all a run can do there, and `:focus-visible` correctly does not match it,
+  so the pane will report "no ring" for a page whose ring is fine.
+
+**The instrument that does work, and it needs nothing committed.** Real Chrome is on this machine at
+`/Applications/Google Chrome.app`. Install `puppeteer-core` **into the session scratchpad, never into
+the repo**, point `executablePath` at that Chrome, and drive the same statically-served `dist/`:
+
+```bash
+cd "$SCRATCHPAD/kbwalk" && npm init -y && npm install puppeteer-core
+# executablePath: "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
+```
+`page.keyboard.press("Tab")` performs genuine focus navigation and sets keyboard modality;
+`page.mouse.click()` sets pointer modality. ⭐ **Run BOTH and report both** — a modality claim with
+only the keyboard walk is unfalsifiable. The pair that means something is keyboard →
+`:focus-visible true` + a painted outline, mouse → `false` + `none`, on the same element after the
+same journey.
+
 ## Run log
 
 ### 2026-09-08 (scheduled dev-agent, backlog item 155 — the previous scheduled run's residuals were both OWNER actions, so this pick was free) — the overflow probe this repo has shipped since August cannot see text overflow, and the ad-hoc probe that keeps finding the defects has evaporated into a session scratchpad four times in ten days
@@ -6566,12 +6597,28 @@ localStorage-only state (untouched — no key added, no route, no hash change).
 Reference's hub, Glossary's term rows, and `Question.jsx`'s self-disabling option. This is the lesson
 reader, and it is the site those runs explicitly left open and named.
 **Verification claim, weakest parts first.**
-⚠️ **(1) I could NOT verify the focus ring is visible.** The restored row takes `:focus` and the live
-stylesheet carries one unqualified `:focus-visible` rule (`outline: 2px solid var(--fill-accent)`),
-but whether it *paints* depends on the browser's input-modality heuristic, and the Browser pane was
-hidden for this session — real key events time out against it, so I could not establish keyboard
-modality. My whole walk was script-driven, under which `:focus-visible` correctly does not match.
-**The DOM-position half of the fix is measured; the ring is reasoned, and is stated as reasoned.**
+✅ **(1) The focus ring — RESOLVED the same day, owner-directed ("verify the focus ring with a real
+keyboard walk"), and the original caveat is replaced rather than annotated per W-7.2 rule 1. What it
+said: the ring was reasoned, not measured, because the Browser pane could not host a real keyboard
+walk. What is true now: it is measured, with a control that discriminates.** Real Chrome driven by
+`puppeteer-core` against the same served `dist/`, 375x812, every keypress genuine — 8 Tab presses to
+the row, Enter to open, 12 Tab presses to Back, Enter to close:
+| walk | at the restored row after close | `:focus-visible` | painted outline |
+|---|---|---|---|
+| **keyboard** (real Tab/Enter throughout) | the row, in viewport, `scrollY 712` | **true** | **`2px solid rgb(169,182,255)`, offset 2px** — the accent token |
+| **mouse** (real clicks throughout), the control | the row, in viewport, `scrollY 712` | **false** | **`none`** |
+**Both walks restore the row; only the keyboard walk paints a ring.** That is the correct pair — a
+keyboard learner gets a visible ring on the row they came back to, a mouse user gets the tab order
+fixed with no visual noise — and the mouse column is what makes the keyboard column mean something,
+because an instrument that reported a ring for both would be reporting nothing.
+⚠️ **The environment finding is the reusable part, and it corrects a wrong generalization I made from
+one failed call.** I had concluded "real key events time out against a hidden pane" from a
+`left_click` that timed out. Wrong: **key presses are delivered to a hidden pane and are silently
+ineffective**, which is worse than a timeout. `document.hasFocus()` returns **true** while
+`document.visibilityState` is **`hidden`**, `computer key Tab` reports `pressed Tab x1`, and focus
+does not move — measured directly, a seeded row still focused after the press. A hidden document does
+not perform sequential focus navigation. **Anything modality-dependent — `:focus-visible`, focus
+order, `:hover` — needs a real browser, not the pane.** See the Environment note.
 ⚠️ **(2) The pre/post columns are two builds, not one reversible experiment.** Two things carry the
 weight instead, both on the final bundle: the **negative controls**, where the nav-tab re-tap and a
 fresh page load still report the old behavior, so the instrument was still able to report "no
