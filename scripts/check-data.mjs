@@ -27,6 +27,7 @@ import { MIN_BARS, OUTPERFORM_THRESHOLD, WJ_PERIODS, wjSectorComparison } from "
 import { OLD_TO_NEW_LESSON_ID, migrateLegacyLessonIds } from "../src/lib/lessonIdMigration.js";
 import { HTML_LANG } from "../src/lib/useAppState.js";
 import { ROUTED_TABS, initialRoute, parseRoute, resolveRoute, routeHash } from "../src/lib/deepLink.js";
+import { isLessonUnlocked } from "../src/lib/lessonUnlock.js";
 import { computeCoverage } from "./translation-review.mjs";
 import {
   ALLOW_MARKER,
@@ -12234,6 +12235,134 @@ function trendDirection(src) {
     console.log(
       `  §79 CJK bracket scope: rule covers {${[...scoped].sort().join(", ")}}; fullwidth brackets per corpus — ` +
         `${summary}; every language with a nonzero count is covered, and the counter's ( vs （ control fires.`,
+    );
+  }
+}
+
+// 80. src/lib/lessonUnlock.js — the predicate that decides whether a lesson row
+//     on the path is open (backlog item 171, fixed 2026-09-08).
+//
+//     THE LEARNER-VISIBLE FAILURE THIS EXISTS TO CATCH (W-6.2 rule 3): a
+//     learner who has FINISHED a lesson opens the path and finds that lesson
+//     greyed out and unclickable under "Complete previous lessons first",
+//     while the same row still announces "Completed" — and they cannot reopen
+//     their own finished work. Measured on the built app 2026-09-08 with
+//     completed `[16,17,18]`: the id-16 row came back `disabled: true`
+//     carrying both labels, with `[44,16,17,18]` as the control that opened it.
+//
+//     WHY IT HAPPENS, so a future edit does not reintroduce it: the old rule
+//     asked only whether the PREVIOUS lesson was completed and never whether
+//     THIS one was, so anything inserted at the FRONT of a track re-locked
+//     completed work. `b6c9bc9` (2026-08-25) did exactly that — it prepended
+//     ids 41-44 to `money` — and the app adds lessons routinely, so this is a
+//     standing hazard rather than one historical accident.
+//
+//     The sweep in (d) is the part that outlives the specific ids: it says the
+//     Learn.jsx contradiction is unreachable for ANY completed set, so nobody
+//     has to remember which insertion re-locks which row.
+{
+  const before80 = failures;
+  const path = lessonsByTrack();
+  const idAt = (i) => path[i].id;
+  const firstOfTrack = new Set(
+    TRACKS.map((tr) => path.findIndex((l) => l.track === tr.key)).filter((i) => i >= 0),
+  );
+
+  // (a) Clause 2 — the sequential chain (CLAIMS.md A1) is INTACT. With nothing
+  //     completed, exactly the first lesson of each track is open. This is the
+  //     control that stops clause 1 from being written as `return true`.
+  const openOnEmpty = path.map((_, i) => isLessonUnlocked(path, i, [])).flatMap((u, i) => (u ? [i] : []));
+  const expectedOpen = [...firstOfTrack].sort((a, b) => a - b);
+  if (JSON.stringify(openOnEmpty) !== JSON.stringify(expectedOpen)) {
+    fail(
+      `§80: with nothing completed, the open lesson indices are ${JSON.stringify(openOnEmpty)}; expected exactly ` +
+        `the first of each track, ${JSON.stringify(expectedOpen)}. Sequential unlocking (CLAIMS.md A1) is the app's ` +
+        `central bet — if this widened, a learner can now browse lessons they have not earned.`,
+    );
+  }
+
+  // (b) Clause 1 — a COMPLETED lesson is open even though the lesson in front
+  //     of it is not. Run against the real seam: the money track's display
+  //     order is 41,42,43,44,16,17,… so id 16's predecessor is id 44.
+  const seam = path.findIndex((l, i) => i > 0 && path[i - 1].track === l.track);
+  const seamIdx = path.findIndex((l) => l.id === 16);
+  if (seamIdx > 0) {
+    if (!isLessonUnlocked(path, seamIdx, [16, 17, 18])) {
+      fail(
+        `§80: lesson id 16 is COMPLETED but renders locked, because its predecessor in display order ` +
+          `(id ${idAt(seamIdx - 1)}) is not. This is backlog item 171 exactly: the learner sees their own finished ` +
+          `lesson greyed out under "Complete previous lessons first" and cannot reopen it.`,
+      );
+    }
+    // The control that makes the line above mean something: the SAME index
+    // must still be locked when it is not completed and its predecessor is not
+    // either. Without this, `return true` would pass (b).
+    if (isLessonUnlocked(path, seamIdx, [17, 18])) {
+      fail(
+        `§80: lesson id 16 is NOT completed and its predecessor (id ${idAt(seamIdx - 1)}) is not either, yet it ` +
+          `reports unlocked. Clause 1 has been widened past "already completed" and the sequential gate is gone.`,
+      );
+    }
+  } else {
+    fail("§80: no lesson with id 16 in the display path — this section is pointed at a structure that no longer exists; repoint it rather than leaving it green.");
+  }
+  if (seam < 1) fail("§80: no track has a second lesson, so the sequential rule cannot be exercised at all.");
+
+  // (c) The predecessor rule is still keyed to the TRACK, not to the flat list:
+  //     the first lesson of a track opens even though the row above it — the
+  //     last lesson of the previous track — is untouched. Tracks gate
+  //     independently (2026-08-07); a regression here re-chains all 44.
+  for (const i of firstOfTrack) {
+    if (i > 0 && !isLessonUnlocked(path, i, [])) {
+      fail(
+        `§80: index ${i} (id ${idAt(i)}) is the first lesson of the "${path[i].track}" track and must open with ` +
+          `nothing completed, but it is gated behind id ${idAt(i - 1)} on the "${path[i - 1].track}" track. ` +
+          `Tracks unlock independently — this is the single global chain that put the money curriculum behind ` +
+          `twelve macro-theory lessons before 2026-08-07.`,
+      );
+    }
+  }
+
+  // (d) THE INVARIANT, swept rather than spot-checked: for any completed set,
+  //     no lesson is ever both completed and locked. That pair is what makes
+  //     Learn.jsx render "Complete previous lessons first" and "Completed" on
+  //     one row, so proving it unreachable here is what retires the defect
+  //     class instead of the one instance. The sets below deliberately include
+  //     out-of-order and front-insertion shapes, which is how it arose.
+  const sets = [
+    [], [16, 17, 18], [44, 16, 17, 18], [28], [1, 15], [29, 40],
+    path.map((l) => l.id),                                    // everything done
+    path.filter((_, i) => i % 2 === 1).map((l) => l.id),      // every other row
+  ];
+  for (const done of sets) {
+    for (let i = 0; i < path.length; i += 1) {
+      if (done.includes(path[i].id) && !isLessonUnlocked(path, i, done)) {
+        fail(
+          `§80: with completed=${JSON.stringify(done.slice(0, 8))}${done.length > 8 ? "…" : ""}, index ${i} ` +
+            `(id ${idAt(i)}) is completed AND locked. Learn.jsx computes "Completed" from the id and ` +
+            `"Complete previous lessons first" from this predicate, so that row renders both at once and the ` +
+            `learner cannot reopen a lesson they finished.`,
+        );
+      }
+    }
+  }
+
+  // (e) The shell actually uses the module. A predicate nothing calls is
+  //     indistinguishable from no predicate, and the inline copy this replaced
+  //     lived in App.jsx for five weeks.
+  const appSrc = readFileSync(join(ROOT, "src/App.jsx"), "utf8");
+  if (!/isLessonUnlocked\(/.test(appSrc) || !/lib\/lessonUnlock\.js/.test(appSrc)) {
+    fail(
+      "§80: src/App.jsx no longer imports and calls isLessonUnlocked() from lib/lessonUnlock.js. If the rule was " +
+        "inlined back into the shell, everything above this line is testing a module the app does not use.",
+    );
+  }
+
+  if (failures === before80) {
+    console.log(
+      `  §80 lesson unlocking: ${path.length} lessons, ${expectedOpen.length} open on a fresh install (one per track); ` +
+        `a completed lesson stays open across ${sets.length} completed-set shapes, and the not-completed control at ` +
+        `the id-16 seam still reports locked.`,
     );
   }
 }

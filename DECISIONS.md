@@ -846,6 +846,27 @@ Add a new entry when a run makes a choice future work should be able to look up 
   `quizMeta.js` and all five `quizText.*.js` files (appended, per those files' append-only order
   rule), and `lessonTerms.js` (linked "Dividend" on the three lessons that mention it, excused
   "Credit" as other-sense on the first — a credit-reporting mention, not the macro aggregate).
+- **Update, 2026-09-08 (scheduled dev-agent, backlog item 171). The unlock rule gains a second
+  clause: a lesson the learner has ALREADY COMPLETED is always open.** The Update directly above is
+  what made this necessary and is the reason it is recorded here rather than as a bug note. The rule
+  had one clause — "the previous lesson in display order is completed" — and it never asked whether
+  *this* lesson was completed, so inserting lessons at the FRONT of a track re-locked finished work.
+  Measured on the built app before the change, with the id-migration flag already set so nothing was
+  remapped: completed `[16,17,18]` rendered the id-16 row **`disabled: true`** carrying **both**
+  "Complete previous lessons first" **and** "Completed" — `Learn.jsx` computes those two labels from
+  different facts — and the learner could not reopen it. Control: `[44,16,17,18]` opened the same row.
+  **The sequential bet (`CLAIMS.md` A1) is untouched, and that is measured rather than asserted:**
+  with nothing completed, exactly the first lesson of each track is open — 3 of 44 — and
+  `check-data.mjs` §80 fails if that widens. Clause 1 opens nothing the learner has not already been
+  through, and A1 is a claim about gating **unseen** lessons.
+  **Two consequences worth recording.** (1) The predicate moved out of `App.jsx` into
+  `src/lib/lessonUnlock.js` so §80 can exercise it without rendering a screen; `CLAIMS.md` A1's
+  mechanism citation is updated in the same commit, because §26 verifies that a cited *path* exists
+  and `App.jsx` still does — it could not have caught the staleness. (2) A shared link to a lesson the
+  learner has completed now opens it, where before it was refused. **This does not touch "a URL does
+  not unlock a lesson"** (the deep-link entry above): the lesson was unlocked by the learner's own
+  completion, not by the link, and §18(d)'s injection — which resolves with *nothing* completed —
+  still proves no URL opens a locked lesson.
 
 ## The app's palette is warm, and screen titles are a system serif (2026-08-23, owner-directed)
 

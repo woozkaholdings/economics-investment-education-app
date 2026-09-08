@@ -1814,37 +1814,21 @@ instead of hand-rolling an eighth mover. A working one is in this run's scratchp
       stand; the coverage did not.** `A11yStates.coverage()` plus the Tab step now in the header
       recipe are the fix — see item 149.
 
-171. **[UX/Correctness — filed 2026-09-08 by the run that shipped the failed-lesson-link notice,
-    from a state that run built to test something else. Measured live on the built app with a
-    control, NOT inferred from the unlock rule.] A lesson the learner has COMPLETED can render as
-    locked and disabled, with "Complete previous lessons first" and "Completed" on the same row —
-    and they cannot reopen it.**
-    - **The mechanism, and it is structural rather than a bug in a line.** `isUnlocked(index)` is
-      "the previous lesson *in display order* is completed" (`App.jsx`). It never consults whether
-      *this* lesson is completed. So any edit that puts an uncompleted lesson in front of a
-      completed one re-locks it. **Inserting lessons at the FRONT of a track does exactly that**,
-      and this repo has done it: `b6c9bc9` (2026-08-25) prepended ids 41-44 to the `money` track,
-      whose display order is now 41,42,43,44,16,17,…,28.
-    - **Measured 2026-09-08, built app, storage written directly with the id-migration flag already
-      set so nothing was remapped** (`stored` read back as exactly what was written, which is the
-      control for the contamination that caught this run once already — see the run log):
-      `[16,17,18]` → the id16 row is **`disabled: true`**, labelled **"Complete previous lessons
-      first | Completed"**. **Control:** `[44,16,17,18]` → the same row is **`disabled: false`**,
-      labelled "≈5 min | Completed". Only the row at the seam is affected; rows after it are open
-      because their own predecessors are completed.
-    - **Reachability, stated honestly.** **Zero live instances today** — the app went live
-      2026-09-05, after `b6c9bc9`, so no field install predates the insertion, and normal play can
-      only complete a display-order prefix. **It is not low priority, though, and that is why this
-      is a numbered item and not a note under one** (W-6.2 rule 2's test is zero instances *and*
-      low priority; the second conjunct fails): the next front-of-track insertion re-locks a
-      finished lesson for **every** installed learner at once, and the app adds lessons routinely.
-      This is a guard owed ahead of a content change, and the content change is a habit here.
-    - **Deliberately NOT fixed in the run that found it.** The obvious fix — a completed lesson is
-      always unlocked — is a change to the predicate that gates `CLAIMS.md` A1, so it deserves its
-      own premise measurement rather than riding along in a routing commit. **Whoever picks it:
-      decide between (a) `isUnlocked` returns true when this lesson is itself completed, and (b)
-      the row stops claiming both things at once while staying locked.** (a) is almost certainly
-      right and (b) is the one that changes nothing a learner can do.
+171. **✅ DONE 2026-09-08 (scheduled dev-agent), the day it was filed** — replaced by its conclusion
+    per W-7.2 rule 1; the measurements are in this date's fifth run-log entry. **What was true:**
+    `isUnlocked(index)` asked only whether the PREVIOUS lesson in display order was completed and
+    never whether THIS one was, so anything inserted at the front of a track re-locked finished
+    work — `b6c9bc9` (2026-08-25) prepended ids 41-44 to `money`. Re-measured live before editing,
+    with the id-migration flag pre-set so nothing was remapped: completed `[16,17,18]` rendered the
+    id-16 row `disabled: true` carrying **both** "Complete previous lessons first" and "Completed",
+    and the learner could not reopen it; control `[44,16,17,18]` opened the same row. **What is true
+    now:** the rule moved to `src/lib/lessonUnlock.js` and gained clause 1 — a completed lesson is
+    always open — chosen over option (b) because (a) subsumes it: the contradictory row is now
+    unreachable by construction rather than merely relabelled. Guarded by `check-data.mjs` §80,
+    which sweeps the completed-AND-locked invariant across 8 completed-set shapes and carries the
+    control that fails if the sequential gate widens (3 of 44 open on a fresh install). Proven by
+    four injections. `CLAIMS.md` A1's mechanism citation and `DECISIONS.md`'s tracks section were
+    updated in the same commit.
 
 170. **✅ DONE 2026-09-08 (owner-directed: "do item 170 next"), the day it was filed** — replaced by
     its conclusion per W-7.2 rule 1; the measurements are in this date's second run-log entry.
@@ -7885,5 +7869,118 @@ is inserted ahead of it in its track — which `b6c9bc9` did on 2026-08-25 by pr
 **both** "Complete previous lessons first" and "Completed"), control fired (`[44,16,17,18]` → same row
 open). Not fixed here: the fix changes the predicate that gates `CLAIMS.md` A1 and should not ride along
 in a routing commit.
+
+**Schedule:** the cron is the owner's lever and was not read, compared or touched.
+
+### 2026-09-08 (scheduled dev-agent, backlog item 171 — W-6.2 rule 1 chain at link one; the previous run filed it and deliberately did not fix it) — a lesson the learner had FINISHED rendered greyed out under "Complete previous lessons first" while the same row announced "Completed", and the rule that did it had never once asked whether this lesson was done
+
+**The pick.** Item 171, filed by the previous run out of a state it built to test something else. W-6.2
+rule 1 permits it at link one. It is the rare residual whose reachability is *zero live instances today*
+and whose priority is still not low, because the trigger — inserting lessons at the front of a track —
+is a routine habit here, and the next one re-locks finished work for **every** installed learner at once.
+
+**Step 3.5 — the premise reproduced exactly, live, with the control firing in both directions.** Built
+app on `127.0.0.1:8834` (static `dist/`, 404 control fired), returning learner, storage written directly
+with `ecycles_legacy_lesson_id_migrated` **pre-set** so nothing was remapped — that flag is the control
+for the contamination that cost the previous run a detour, and `stored` was read back as exactly what
+was written every time.
+
+| completed | display order | id-16 row (index 16) | labels |
+|---|---|---|---|
+| `[16,17,18]` | money = 41,42,43,44,**16**,17,… | **`disabled: true`** | **"Complete previous lessons first" AND "Completed"** |
+| `[44,16,17,18]` **control** | same | `disabled: false` | "≈5 min \| Completed" |
+
+Both halves of the item hold. Display order was measured off `lessonsByTrack()` rather than read off the
+item: `money => 41,42,43,44,16,…,28`, so id 16's predecessor is id 44. ⭐ **The control also moved the
+defect onto id 44** — completed, predecessor not — which is what showed the trigger is not "front
+insertion" specifically but **any** lesson completed while its predecessor is not; front insertion is
+just the way this repo produces that state.
+
+**The disposition, re-decided on the corrected facts.** The item offered (a) a completed lesson is
+always unlocked, and (b) the row stops claiming both things while staying locked. **(a), because it
+subsumes (b):** under (a) the contradictory row is unreachable by construction, where (b) would relabel
+a row while still refusing to reopen a lesson the learner finished — the actual complaint.
+
+**What shipped** (5 files, 1 new).
+1. **`src/lib/lessonUnlock.js`** (new, 56 lines) — the predicate, moved out of `App.jsx` as pure logic
+   so it can be exercised without rendering a screen. Two clauses: a completed lesson is always open;
+   otherwise the previous lesson **of the same track** must be completed.
+2. **`src/App.jsx`** — `isUnlocked` is now a `useCallback` wrapper. No behavior in the shell.
+3. **`scripts/check-data.mjs` §80** — the guard. W-6.2 rule 3's sentence: *a learner who has finished a
+   lesson opens the path, finds it greyed out and unclickable under "Complete previous lessons first"
+   while the same row says "Completed", and cannot reopen their own work.*
+4. **`CLAIMS.md` A1** and **`DECISIONS.md`** — the record, below.
+
+**§80 is a swept invariant, not a spot check**, which is what retires the class rather than the
+instance: for **8 completed-set shapes** (including out-of-order and front-insertion shapes, all-done,
+and every-other-row) no lesson may be both completed and locked. Plus three directional controls — the
+open-set on a fresh install must be **exactly the first of each track (3 of 44)**, the id-16 seam must
+still report **locked** when it is *not* completed, and `App.jsx` must actually import and call the
+module.
+
+**Verification, on the rebuilt bundle `index-DQNXxYN1.js`, not on the source.**
+- **The defect, gone:** completed `[16,17,18]` → id-16 row `disabled: false`, "≈5 min | Completed", and
+  **contradictions across all 44 rows = 0**.
+- **The learner can actually reopen it** — clicked the row, reader opened at `#/lesson/16`, "LESSON 5 OF 17".
+- **Control, the gate still holds:** id 44 still `disabled: true` with **only** the locked label, and
+  **7 rows open, not 44**.
+- **Control, "NEXT UP" cannot land on finished work:** `nextIndex` is computed from
+  `!completedLessons.includes(l.id)` and never consults the predicate — read in `Learn.jsx` and seen
+  live (Progress 3/44, NEXT UP = id 41, uncompleted).
+- **A shared link to a COMPLETED lesson now opens it** (real page load, `#/lesson/16` → reader), where
+  before it was refused. **The unlock bet is untouched:** `#/lesson/35` (locked) still lands on the path
+  and still renders the previous run's notice — *"That lesson isn't open yet…"* — verified on a real load.
+- **Guard proven by four injections, each restored from a scratchpad copy and `cmp`-verified identical
+  afterwards** — never `git checkout --`, and each plant asserted to have landed before running. Removing
+  clause 1 → the item-171 message by name plus the sweep, **20 failures**; widening clause 1 to `return
+  true` → *"the open lesson indices are [0..43]; expected [0,12,29]"* — **this is the control that stops
+  clause 1 from being written as "always unlock"**; collapsing the track check → the money and essentials
+  first lessons report gated behind the previous track; deleting the `App.jsx` call → §80(e).
+- `npm run build` clean, `npm run check-blindspot` **exit 0**, `npm test` **exit 0**.
+  ⚠️ **The warning count is asserted rather than eyeballed:** HEAD's own `check-data.mjs` run against
+  this working tree returns **0 failures / 3 warnings**, identical to the post-change run, so §80 added
+  neither — it contains **0** `warn(` calls.
+
+⭐ **§26 caught the new file before I did, and it was right.** `npm test` failed three ways the moment
+the docs cited `lessonUnlock.js`: §26 resolves paths **against the git index**, and the file was still
+untracked. That is item 157's design working exactly as intended — a fresh clone and this tree must
+agree — and it is the check that would have caught shipping a module the repo does not contain.
+
+**W-6.3's ratio, re-measured this run rather than quoted:** `scripts/` **+119** lines vs `src/` **+62**.
+The instruments grew faster this run, and that is stated rather than shaded: the app fix is genuinely
+small (one clause), and the guard is a sweep over 8×44 cases with three controls because a spot check
+here is what let the defect exist for two weeks.
+
+#### Step 5 — adversarial self-check
+**Blindspot register: nothing found, and the one shape that looked like a hit was measured rather than
+argued.** No lesson, quiz, glossary, kids or market copy is touched; §10.2 zero name matches in the diff;
+§10.3 untouched; §10.1 makes no financial claim and `check-blindspot` is **exit 0**. ⚠️ I wrote
+`2026-09-08`, `2026-08-25` and a commit hash into code comments, which is the §2.3 shape — so: `grep -c`
+against the shipped bundle returns **0** for each, against a control of **1** for a string that *is*
+shipped copy.
+**DECISIONS.md conflict: none, and the two entries this touches are amended in the same commit** so the
+record does not go stale. `localStorage`-only state unchanged — no key read, written or added. ⚠️ **The
+entry that needed real checking is "a URL does not unlock a lesson"**, because a link to a completed
+lesson now opens where it did not: it holds, because the lesson was unlocked by the learner's own
+completion and not by the link, and §18(d)'s injection resolves with **nothing** completed and still
+proves no URL opens a locked lesson. §75's standing rule ("a same-track forward reference names something
+the app will not open") also survives — clause 1 only opens lessons already completed, and a forward
+reference names one that is not.
+**Already-done: no.** `grep -c lessonUnlock` returns **0** in `AGENT_LOG.md`. The prior art is item 171
+itself and item 168's §75 note, neither of which changed the predicate.
+**My own verification claim, weakest part first.** ⚠️ **(1) The "zero live instances today" reachability
+is inherited from the item, not re-derived.** I confirmed normal play can only complete a display-order
+prefix and that no URL opens a locked lesson, which is the argument — but the app has been live since
+2026-09-05 with no analytics, so *nobody can measure what any real install actually holds*, and that is
+O-2's subject rather than something this run closed. (2) Everything else above is reproducible from an
+exit code or a read-back DOM value, and the live figures come from the rebuilt bundle by name.
+⚠️ **(3) One probe of mine was wrong before it was right, and it is kept here rather than smoothed
+away:** driving `location.hash` from the console reported the link-miss notice as **missing**, which
+looked like a regression in the feature shipped hours earlier. It is not — an in-app hash mutation is
+followed by the app's own rewrite to `#/learn`, which self-clears the notice by design. Re-measured with
+a **real page load**, the notice renders. **A same-page hash write is not the same event as opening a
+link**, and the app is built to tell them apart.
+**Backlog bytes:** one numbered item **closed and collapsed** (171, 31 → 15 lines per W-7.2 rule 1) and
+**none opened** — this run files no residual.
 
 **Schedule:** the cron is the owner's lever and was not read, compared or touched.

@@ -15,6 +15,7 @@ import { lessonsByTrack } from "./content/lessons.js";
 import { EVENTS, track } from "./lib/analytics.js";
 import { chunk, isChunkLoadError } from "./lib/chunkError.js";
 import { initialRoute, useDeepLink } from "./lib/deepLink.js";
+import { isLessonUnlocked } from "./lib/lessonUnlock.js";
 import { useAppState } from "./lib/useAppState.js";
 import Icon from "./components/Icon.jsx";
 import { AppError, Button, Card, EmptyState, LoadFailure, Note, Text } from "./components/ui.jsx";
@@ -254,21 +255,15 @@ export default function App() {
   // its position on the Learn path. Lesson `id` is unchanged by the reorder.
   const lessons = useMemo(() => lessonsByTrack(), []);
 
-  // Lessons unlock in order WITHIN a track, not across tracks: the first
-  // lesson of each track is always open, the rest need the previous lesson of
-  // that same track completed. Before 2026-08-07 this was a single global
-  // chain, which gated the whole money curriculum behind twelve macro-theory
-  // lessons — see the TRACKS comment in content/lessons.js.
+  // Lessons unlock in order WITHIN a track, not across tracks, and a lesson
+  // the learner has already finished stays open regardless — the rule and the
+  // reasoning live in lib/lessonUnlock.js, which is where check-data.mjs
+  // §80 exercises it without rendering a screen.
   //
   // Declared above the navigation state because the opening route consults
   // it: a deep link to a locked lesson lands on the path (see deepLink.js).
   const isUnlocked = useCallback(
-    (index) => {
-      const lesson = lessons[index];
-      const prev = lessons[index - 1];
-      if (!prev || prev.track !== lesson.track) return true;   // first of its track
-      return completedLessons.includes(prev.id);
-    },
+    (index) => isLessonUnlocked(lessons, index, completedLessons),
     [completedLessons, lessons]
   );
 
