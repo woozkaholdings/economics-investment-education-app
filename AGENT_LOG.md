@@ -6640,3 +6640,44 @@ anywhere), **1,119 b under** W-7.2 rule 5's 425,473 b baseline for 2026-09-13. C
 conclusion form paid for this entry and left change; that is rule 1 doing what it was written to do.
 
 **Schedule:** the cron is the owner's lever and was not read, compared or touched.
+
+### 2026-09-08 (owner-directed: "run the archiving pass" — fourteenth entry this date) — the tenth firing, and NOTHING WAS CUT: the only live day is today, and all three triggers are unmet
+
+**No cut. No file changed except this entry.** Recorded because a no-op is a measurement, and because
+this is the **seventh consecutive firing** in which W-5.3's date clause moves nothing — the evidence
+item 115 exists to collect.
+
+**All three triggers, measured this run rather than read off the last pass:**
+| trigger | value | due? |
+|---|---|---|
+| W-5.3's 600 KB whole-file clause | file **581,000 b** | **no** — 19,000 b under |
+| the measured warn budget (what all nine real passes acted on) | run log **118,240 b** = 47.3%, headroom **131,760 b** = **15.4 runs** | **no** |
+| W-5.3's date action clause (older than the most recent review boundary, W-7 = 2026-09-06) | only live day is **2026-09-08** | **no — seventh no-op** |
+
+**And the decisive fact, which no byte count states: the only live day IS today.** 13 entries, all
+2026-09-08, the last two written hours ago in this session; the archive already runs through
+**2026-09-07** (the ninth pass took it). Cutting "oldest first until under target" has nothing
+eligible to take — the oldest day is the current one, still in progress. **A pass that cut here would
+be archiving the day it is standing in.**
+
+**Archive integrity verified instead, because that is the half of a pass that is always available and
+`npm test` provably cannot do it** (the ninth pass proved it by plant: deleting a 9,168 b archived
+entry gives 0 failures).
+- **427 archived entries across 37 distinct days** + **13 live entries across 1 day**.
+- **No day appears in both files** — clean partition, so nothing was duplicated or stranded.
+- `## Archived` sections: **15, none duplicated, sorted ascending.** (These are *pass boundaries*, not
+  day coverage — 15 sections carrying 37 days. A naive gap check over the section headings alone
+  reports 23 "missing" days and is **wrong**; that is a trap for the next pass and is why the entry
+  headings are the thing to count.)
+- Calendar span 2026-08-01 → 2026-09-08 is 38 days; **exactly one has no entry anywhere, 2026-08-10**
+  — and that is not loss: **`git log` shows zero commits that day**, against controls of 5 on 08-09
+  and 3 on 08-11, so the query works and the day was genuinely quiet.
+
+⚠️ **What this pass cannot help with, stated because the ask may have been aimed at file size.** The
+file is 581,000 b and **73.0% of it is the backlog** (424,354 b). The floor is **462,760 b against a
+250,000 b budget — 185% of it — and archiving cannot move that number by construction** (W-5.3). The
+remedy is a backlog compression pass, and W-7.2 rule 1 is the form of it that has been working:
+closing item 173 in conclusion form earlier today paid for two run-log entries and still left the
+backlog 1,119 b under W-7.2 rule 5's baseline.
+
+**Schedule:** the cron is the owner's lever and was not read, compared or touched.
