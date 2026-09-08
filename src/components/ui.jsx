@@ -255,14 +255,40 @@ export function Segmented({ items, value, onChange, ariaLabel, idPrefix, panelId
 }
 
 // ── ProgressBar ───────────────────────────────────────────────────────────
+//
+// `value` IS CLAMPED INTO [0, max], and the same clamped number drives both the
+// fill and `aria-valuenow` — so the bar a sighted learner sees and the value a
+// screen reader announces cannot disagree, and neither can leave the track.
+//
+// Measured live 2026-09-08 at 320px, before this clamp existed, with a
+// `ecycles_completed_lessons` holding more ids than the catalog has lessons:
+// Learn's ResumeCard rendered `width: 136.364%` on the fill and shipped
+// `aria-valuenow="60"` against `aria-valuemax="44"`, which is out of range and
+// so invalid ARIA — a screen reader is free to report anything for it. The
+// track's own `overflow: hidden` is what kept the spill invisible, which is
+// exactly why this was worth fixing rather than leaving: the visual half was
+// already being swallowed, so nothing on screen would ever have reported it.
+//
+// ⚠️ HOW A COUNT GETS AHEAD OF ITS OWN MAXIMUM, because "that cannot happen"
+// is what makes this look like dead code. `completeLesson` dedupes and only
+// ever writes a real lesson id, so no device in the field can exceed the
+// catalog TODAY. It can the day a lesson is removed: `completedLessons`
+// persists raw ids and nothing prunes ids that stopped naming a lesson, so a
+// returning learner keeps counting one that is gone. This repo has renumbered
+// lesson ids once already (`lib/lessonIdMigration.js`) and adds lessons
+// routinely. The clamp is here so that change is a content edit and not also
+// an accessibility regression; `Learn.jsx` fixes the count itself, which is
+// the half that makes the NUMBER right rather than merely in range.
 export function ProgressBar({ value, max, label }) {
-  const pct = max > 0 ? (value / max) * 100 : 0;
+  const safeMax = max > 0 ? max : 0;
+  const shown = Math.min(Math.max(value || 0, 0), safeMax);
+  const pct = safeMax > 0 ? (shown / safeMax) * 100 : 0;
   return (
     <div
       role="progressbar"
       aria-valuemin={0}
-      aria-valuemax={max}
-      aria-valuenow={value}
+      aria-valuemax={safeMax}
+      aria-valuenow={shown}
       aria-label={label}
       style={{ background: line.hairline, borderRadius: radius.full, height: 6, overflow: "hidden" }}
     >

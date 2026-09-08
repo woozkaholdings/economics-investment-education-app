@@ -35,8 +35,26 @@ import { Disclaimer, ProgressBar, ResumeCard, SrOnly, Text } from "../components
 import { fill, font, ink, line, MIN_TAP, radius, shadow, space, surface } from "../theme.js";
 
 export default function Learn({ t, lang, lessons, completedLessons, isUnlocked, streak, openLesson, goToReview }) {
-  const done = completedLessons.length;
   const total = lessons.length;
+
+  // Count only completed ids that still name a lesson in the live catalog.
+  //
+  // `completedLessons` persists RAW lesson ids and nothing prunes it, so an id
+  // survives the lesson it names. `completeLesson` dedupes and only ever writes
+  // a real id, so today `completedLessons.length` and this agree exactly — the
+  // divergence starts the day a lesson is removed, and then it is permanent for
+  // every returning learner who had finished it. Unfiltered, this card read
+  // "Progress: 60/44" (measured live 2026-09-08 at 320px with a storage value
+  // holding more ids than the catalog has lessons) and `progressLabel` is
+  // rendered as VISIBLE text below the bar as well as being its `aria-label`,
+  // so the wrong number is on screen, not just announced.
+  //
+  // The per-track counters below already filter this way
+  // (`completedLessons.includes(lesson.id)`); this is the flat total catching up
+  // with them, so the headline number and the three track numbers can no longer
+  // tell a learner two different things about the same progress.
+  const liveIds = new Set(lessons.map((lesson) => lesson.id));
+  const done = completedLessons.filter((id) => liveIds.has(id)).length;
 
   // Resume where the learner actually is: the first lesson they haven't
   // finished IN THE TRACK THEY LAST FINISHED ONE IN, falling back to the first

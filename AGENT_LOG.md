@@ -7616,3 +7616,114 @@ canonical site serves `14da22d` while HEAD is ahead, and the retired Netlify ori
 **Backlog bytes:** no item opened or closed; this entry is run-log, which archiving can move.
 
 **Schedule:** the cron is the owner's lever and was not read, compared or touched.
+
+### 2026-09-08 (scheduled dev-agent; W-6.2 rule 1 free — the previous run was owner-directed and filed no residual, so this pick was a corpus-wide sweep with the probe that shipped yesterday) — the sweep came back clean across 17 screen-states, and the one flag it raised was my own instrument standing inside a flex row
+
+**The pick.** Item 155 shipped `textOverflow` into `scripts/a11y-sweep.js` on 2026-09-08 and proved
+it against plants. **Nothing had then run it over the app.** A probe validated only against its own
+plants is an untested claim about the corpus, so this run swept the corpus with it: 320px viewport,
+`ecycles_font_scale` **1.3** (the app's own maximum, `FONT_SCALE_STEPS` in `theme.js` — not a browser
+zoom), against the built `dist/` served on 127.0.0.1:8815 with a 404 control.
+
+**Step 3.5 — the premise was "the app has more of the class item 155 kept finding." It is REFUTED,
+and the refutation is the run's main result.**
+- **17 screen-states swept, 0 defects:** Learn / Practice hub / Practice **question runner** /
+  Reference hub / Glossary / Market Dashboard / Sector performance / Kids / About in `en`; Learn,
+  Practice, Reference in `zh`; Reference hub in `ja`; and **all 44 lesson reader pages** in `en`.
+- **Every sweep carried a firing control** — an off-flow `position: fixed` plant at `left: -9999px`
+  holding one long unbreakable word in an 80px box, verified in the same run that produced each
+  result, so no zero here is an unfired instrument.
+- **The one flag, lesson 7, is a false positive and stays one:** a `div` 3px past its box on both
+  sides at `left: -3px; right: -3px`, `aria-hidden="true"`, `pointer-events: none` — the dashed
+  highlight ring the stacked-column figure draws deliberately outside its column. Filed as a note
+  below, not as an item and not as a probe exclusion (W-6.2 rule 3: no learner can see it).
+
+⚠️ **AND THE CONTROL CAUGHT ME CONTAMINATING THE APP, which is the part worth keeping.** My first two
+control plants were appended to `<main>` and their `remove()` never ran, because the call that would
+have run it timed out. `<main>` is `display: flex; flex-direction: row`, so two 80px plants took
+160px and squeezed the content column **288px → 128px**. The probe then reported two findings — a
+progress bar and a "Go to Review" button — that were **entirely my own doing**, and they looked
+exactly like real narrow-viewport defects. Removing the plants took the column back to 288px and both
+findings vanished. **A plant that participates in layout is not a control, it is an edit**; the
+shipped `selftest()` already knew this and positions its own plants fixed and offscreen. Every sweep
+after that used the same shape.
+
+**What shipped, and it is the one real finding the sweep left standing** (2 files, `src/` only,
+48 insertions / 4 deletions, no `scripts/` change).
+`ProgressBar` had **no clamp**: `pct = (value / max) * 100` and `aria-valuenow={value}` raw.
+- **Measured live before the fix**, with `ecycles_completed_lessons` holding more ids than the
+  catalog has lessons: Learn's ResumeCard rendered the fill at **`width: 136.364%`**
+  (`scrollWidth 346` in a **254px** box) and shipped **`aria-valuenow="60"` against
+  `aria-valuemax="44"`** — out of range, so invalid ARIA. The visible label read **"Progress: 60/44"**;
+  `progressLabel` is rendered as text *and* used as the bar's `aria-label`, so the wrong number was
+  on screen, not merely announced.
+- **The spill was invisible** — the track's own `overflow: hidden` swallowed it — which is precisely
+  why it needed a probe to find and why leaving it was not an option: nothing on screen would ever
+  have reported it.
+1. `ui.jsx`: `value` is clamped into `[0, max]` and **the same clamped number drives both the fill and
+   `aria-valuenow`**, so the bar and the announcement cannot disagree and neither can leave the track.
+2. `Learn.jsx`: `done` now counts only completed ids that still name a live lesson
+   (`new Set(lessons.map(l => l.id))`), so the NUMBER is right rather than merely in range. The
+   per-track counters below it already filtered this way; this is the flat total catching up with
+   them. **Both halves are needed together** — the clamp alone would have drawn a full bar under a
+   label still reading "60/44", which is a new disagreement rather than a fix.
+
+⚠️ **REACHABILITY, STATED HONESTLY BECAUSE IT IS THE WEAKEST PART OF THE CASE.** `completeLesson`
+dedupes and only ever writes a real id, and the live catalog is ids **1-44 contiguous** (measured),
+so **no device in the field can be over-count today**. It becomes reachable the day a lesson is
+removed: `completedLessons` persists raw ids, nothing prunes an id whose lesson is gone, and this
+repo has renumbered lesson ids once (`lib/lessonIdMigration.js`) and adds lessons routinely. This is
+a guard placed ahead of a content change, not a live defect repaired — and it is written that way in
+the code comment too.
+
+**Verification, live on the rebuilt bundle `index-xAcYx9gX.js`, not on the source.**
+- **Over-count case, after:** `aria-valuenow="44"` / `aria-valuemax="44"` / label `Progress: 44/44` /
+  fill `100%` / `scrollWidth 254 === box 254`. The 136.364% and the 60/44 are both gone.
+- **Control, run because "everything clamps to full" would look identical to a fix:**
+  `[29,30,31,32,33,999,1000]` — five live economy ids and two orphans — reads **`5/44`**, fill
+  **11.3636%**, with the track bars at `5/12`, `0/17`, `0/15`. It counts, it does not saturate, and
+  the headline now agrees with the three track bars instead of contradicting them. ⚠️ The *pre-fix*
+  value for this second case (7/44) is read off the diff, not measured; the measured before-evidence
+  is the 60/44 case above.
+- `npm run build` clean, `npm test` **exit 0, 0 failures, 4 warnings** — the same four as the
+  pre-change baseline this run took.
+
+**W-6.3's ratio, re-measured this run rather than quoted:** `scripts/` **21,091** lines vs app code
+**9,368** — **2.25x**, down from 2.26x earlier today. `scripts/` **+0**, `src/` **+44**. This run
+moves it the right way, and the reason is not restraint: the fix that the sweep found belonged in the
+component, and the probe that found it already existed.
+
+#### Step 5 — adversarial self-check
+**Blindspot register: nothing found.** No lesson, quiz, glossary, kids or market copy is touched; no
+§10.1 disclaimer surface (the two `ScreenFrame` fixes of 2026-09-08 are untouched, and the Practice
+runner's disclaimer was observed intact during the sweep); no §10.2 name; no §10.3 framing. ⚠️ **I
+wrote `2026-09-08` into two code comments**, which is the §2.3 shape — so I measured rather than
+argued: `grep -c "2026-09-08"` against the shipped `dist/assets/index-xAcYx9gX.js` returns **0**
+(Vite strips comments), and §2.3 is about rendered copy regardless. `npm run check-blindspot`
+**exit 0**, and unlike the previous run's case its green **does** cover this change — both edited
+files are under `src/`, which is what that script scans.
+**DECISIONS.md conflict: none.** The one decision that names this component is "Progress is a bar,
+not a ring" (2026-08-17) and the change keeps the bar. `localStorage`-only state is unchanged — the
+same key is read, nothing new is written, and no storage migration is introduced.
+**Already-done: no.** `grep -i progressbar` returns 0 hits in the live `AGENT_LOG.md`, 2 in
+`DECISIONS.md` (the ring decision) and 10 in the archive — all of them about the ARIA attributes
+existing or the bar-vs-ring shape, **none about a clamp or about filtering the completed count.**
+**My own verification claim, weakest part first:** ⚠️ the fix guards a state **no shipping device can
+currently be in** (see REACHABILITY above), so its live value today is the ARIA correctness of a
+branch nobody reaches; I am not claiming a learner is helped this week. The sweep's 17 clean states
+are each a single-run measurement, not a repeated one, and `es`/`ko` were not swept at all — the
+languages I chose were `zh` and `ja` on the argument that CJK has the defect history, which is a
+prior, not a measurement. Everything above is reproducible from exit codes rather than grep counts:
+`npm test` **exit 0**, `npm run check-blindspot` **exit 0**, `npm run build` clean.
+**Backlog bytes:** no numbered item opened or closed; the false positive below is a note under item
+155, per W-6.2 rule 2.
+
+📝 **Note filed under item 155 rather than as a numbered item (W-6.2 rule 2 — zero learner-visible
+instances).** `textOverflow` has a fifth false-positive class it does not exclude: **a decorative
+overlay deliberately drawn outside its parent's box.** The live instance is lesson 7's stacked-column
+figure, whose dashed highlight ring is `position: absolute; left: -3px; right: -3px`, `aria-hidden`,
+`pointer-events: none` — 3px of overflow on each side, by design. One instance corpus-wide, and the
+flag is 3px, so it is cheap to read past; an exclusion for `aria-hidden` + negative inline inset
+would be the shape if a second instance ever appears. **Do not build it for this one.**
+
+**Schedule:** the cron is the owner's lever and was not read, compared or touched.
