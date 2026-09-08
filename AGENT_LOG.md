@@ -189,6 +189,18 @@ for the history. No open P1/P2 items.
 > **What is no longer an owner action: noticing.** `npm run check-deployed` now reads
 > `retired-origin` markers from README and fails while a retired origin still answers with a Vite
 > bundle. It is the first thing in this repo that looks at a host other than the canonical one.
+> ✅ **HALF CLOSED 2026-09-07, hours later, owner-directed ("publish the canonical site").** Action
+> 1 is **DONE and certified**: the owner made the repository public and set Settings › Pages ›
+> Source to GitHub Actions; `npm run check-deployed` reports the canonical URL serving HEAD with the
+> entry bundle **byte-identical** and the 404 control firing. ⭐ **The diagnosis that unblocked it is
+> the part worth keeping:** four workflow runs had failed and the obvious reading — a broken build —
+> was wrong. Every one had a **green `build` job** and failed on `actions/deploy-pages@v4` in the
+> **`deploy`** job, which is gated on a repository setting that no re-run substitutes for. **Read
+> which job failed, not that the run failed.** ⛔ **Action 2 is still open and is now SAFE to do**,
+> which it was not this morning: Netlify was the only reachable copy, so deleting it would have
+> taken the app offline. The canonical site is verified, so the old host can go.
+> ⚠️ **And the branch this run's own entry recorded as unexercised — "canonical serves HEAD but a
+> retired origin is up" — fired for the first time on that same check, exactly as written.**
 
 > ## PRIORITY BLOCK W-7 — set by the weekly review 2026-09-06. Supersedes W-6's *active* clauses below. W-6's standing rules (W-6.2's residual-chain rule, W-6.3's ratio-quoting rule) are UNCHANGED, still binding, and W-6.2 WORKED — see W-7.0. Read this first.
 >

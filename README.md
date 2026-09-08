@@ -60,11 +60,15 @@ directory over HTTP can host it.
 
 **CANONICAL URL: <https://woozkaholdings.github.io/economics-investment-education-app>**
 
-⚠️ **NOT SERVING YET as of 2026-09-07 — measured, `HTTP 404`.** This section names the site's
-origin, which is what `check-data.mjs` §38 and `check-deployed.mjs` both read; it does **not**
-claim the site is up. It says LIVE only when `npm run check-deployed` says so against the running
-URL. (This repo has shipped one "deployed ✅" that was not live; that is why the wording here is
-deliberate rather than optimistic.)
+✅ **LIVE, and this line is written on the only evidence that licenses it.** `npm run
+check-deployed` against the running URL, 2026-09-07: the hashed entry bundle came back
+**byte-identical** at 267,686 b (sha256 `7260fd67788f…`), `icon.svg`, `og-card.png` and
+`index.html` all identical, and the nonexistent-path control returned 404 first so the 200s are
+real files. (The bundle's *name* is deliberately not written here — Vite content-hashes it, so a
+filename in a document goes stale on the next build. §26 caught a draft of this line doing it.) **The green Actions run is not what closed this** — a green run says the job ran. This
+section says LIVE only when `check-deployed` says so; it had said "NOT SERVING YET — measured,
+`HTTP 404`" for two days while the workflow was failing, which is the wording working as intended.
+(This repo once shipped a "deployed ✅" that was not live. That is why.)
 
 GitHub Pages, built and published by `.github/workflows/deploy-pages.yml` on every push to
 `main`. **Nothing is dragged anywhere and nothing has to be remembered** — that is the whole
