@@ -19,7 +19,6 @@
     "clean-tree": "bash scripts/clean-tree.sh",
     "analytics-check": "node scripts/check-analytics.mjs",
     "check-deployed": "node scripts/check-deployed.mjs",
-    "deploy": "node scripts/deploy.mjs",
     "jargon": "node scripts/jargon-candidates.mjs",
     "review-status": "node scripts/translation-review.mjs report",
     "market": "node scripts/fetch-market-data.mjs",

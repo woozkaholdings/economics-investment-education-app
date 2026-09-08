@@ -894,7 +894,51 @@ Add a new entry when a run makes a choice future work should be able to look up 
 - **Revisit when:** someone wants the bevel gone — it is one line in `BUTTON_VARIANTS.primary`
   plus the three `--shadow-bevel` declarations.
 
-## The deploy is automated with a token, because a manual step is what failed (2026-09-06, owner-directed)
+## Hosting: GitHub Pages, canonical (2026-09-07, owner-directed) — supersedes the token-based Netlify deploy below
+
+- **Decision:** the site is **<https://woozkaholdings.github.io/economics-investment-education-app>**,
+  published by `.github/workflows/deploy-pages.yml` on every push to `main`. **Netlify is retired.**
+  `scripts/deploy.mjs` and the `npm run deploy` script are **deleted**; `.gitignore` keeps its
+  `.netlify-token` line so a leftover token file can still never be committed.
+- ⭐ **What changed was a PREMISE, not a preference — and the old entry below states it in its own
+  words.** Its closing constraint reads: *"`origin` is unusable in this project, so git-connected
+  hosting (the normal GitHub Pages / Vercel flow) is off the table. That is what favors a
+  direct-upload host."* **The owner made `origin` usable on 2026-09-07** (the remote is live and
+  local `main` is a fast-forward of it). The single fact that ruled out git-connected hosting is
+  gone, so the choice it forced is re-decided rather than defended.
+- **Why this is strictly better on the criterion the 2026-09-06 decision itself chose.** That
+  decision's question was *"how often should someone remember to do this?"* and its answer was
+  **"nobody should have to."** A token-based `npm run deploy` still required a human to run it —
+  and, worse, required the owner to first create a credential no agent could make, which is why the
+  site sat **nine commits behind `main`** on 2026-09-07. Pages publishes on push: the action a
+  developer already takes *is* the deploy. **The 2026-09-06 goal is met more completely by the host
+  that made its own script unnecessary.**
+- **What was NOT given up.** `npm run check-deployed` is unchanged in purpose and was never
+  Netlify-specific: it reads the URL from `README.md` § Deploying and compares the running site's
+  hashed entry bundle byte for byte against a local build. **The instrument that certifies the
+  artifact survives the host change**, which is W-7.1's whole finding.
+- **A project site means a sub-path**, and that is why `base: "./"` must not be "fixed" to an
+  absolute path. Verified 2026-09-07 by serving the real `dist/` under
+  `/economics-investment-education-app/`: app boots, all three routes render, `icon.svg` and
+  `data/market.json` resolve, `og:url`/`og:image` serve the new origin, 0 console errors, and a
+  made-up asset 404s (the control that makes the 200s mean something).
+- ✅ **A whole risk class disappears with the manual upload.** The old flow zipped the **local**
+  `dist/`, so local junk shipped — an earlier run caught `public/.DS_Store` heading for the live
+  site that way. Pages builds from a **clean checkout**, so an untracked local file cannot reach
+  the artifact at all.
+- ⛔ **One owner action, and it is a browser setting rather than a secret:** Settings › Pages ›
+  Build and deployment › Source: **GitHub Actions**. Until it is set the workflow runs and the
+  deploy step fails. The workflow authenticates with Actions' own `GITHUB_TOKEN` — nothing to
+  create, nothing to store, nothing to rotate.
+- **Revisit when:** the app moves to a custom domain — change `README.md` § Deploying's URL first
+  and `npm test` fails until `index.html` agrees (§38, injection-tested 2026-09-07: a moved URL
+  fails on both `og:url` and `og:image`).
+
+## SUPERSEDED 2026-09-07 — The deploy is automated with a token, because a manual step is what failed (2026-09-06, owner-directed)
+
+> ⚠️ **Kept because the entry above is an argument against it and cites its reasoning.** Everything
+> below was true and correctly decided on 2026-09-06; what invalidated it is the `origin` premise in
+> its last bullet, not an error in it. `npm run deploy` and `scripts/deploy.mjs` no longer exist.
 
 - **Decision:** deploying is `npm run deploy` — a real command, not a procedure. Owner's choice on
   2026-09-06, made against three alternatives that all kept the manual drag (deploy daily, deploy

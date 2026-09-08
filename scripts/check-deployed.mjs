@@ -361,6 +361,12 @@ for (const rel of unhashed.sort()) {
   }
 }
 
+// index.html, modulo the tags the host injects. ⚠️ Netlify was retired
+// 2026-09-07 and GitHub Pages injects NOTHING, so the two filters below
+// now match nothing and the comparison is effectively exact. They are kept
+// rather than deleted because they cost one pass and would have to be
+// rewritten from scratch for the next host that does inject; if they ever
+// start stripping something again, the host has changed.
 // index.html, modulo the tags the host injects. README § Deploying documents
 // exactly what those are for Netlify: one HTML comment and two <meta> tags.
 //
@@ -561,9 +567,10 @@ if (since) {
   }
 }
 
-say("  To fix: `npm run build`, then drag dist/ onto the project's Deploys page");
-say("  in Netlify (README.md § Deploying › To publish an update). Re-run this");
-say("  check afterwards — it is the verification step, not a substitute for one.");
+say("  To fix: push to `main` — .github/workflows/deploy-pages.yml builds and");
+say("  publishes (README.md § Deploying › To publish an update). Re-run this");
+say("  check after the workflow finishes: a green Actions run says the job ran,");
+say("  not that the site serves this tree, which is what this check measures.");
 if (!since) {
   say();
   say("  `--identify` rebuilds recent commits until one reproduces the live bundle");

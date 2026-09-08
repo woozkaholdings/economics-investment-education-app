@@ -1,0 +1,76 @@
+# ═══════════════════════════════════════════════════════════════════════════
+# PUBLISH TO GITHUB PAGES
+#
+# Owner decision 2026-09-07: GitHub Pages is canonical and Netlify is retired.
+# The reason is not that Pages is better hosting — it is that publishing here
+# needs no personal access token, so no human has to remember a manual step.
+# The Netlify site spent a day four commits behind `main`, and then nine,
+# because every update was a drag-and-drop that only the owner could perform.
+#
+# ⚠️ ONE-TIME OWNER SETUP, in the browser, or every run of this fails at the
+# deploy step: Settings › Pages › Build and deployment › Source: GitHub Actions.
+# There is no token and no secret to add — `GITHUB_TOKEN` below is minted per
+# run by Actions itself.
+#
+# This publishes on every push to `main`. It deliberately does NOT run the test
+# suite as a gate: `npm test` needs the repo's own scheduled-job state (market
+# freshness against the real clock) and would fail here for reasons that have
+# nothing to do with whether the build is publishable. Tests are run before
+# committing, which is where this project's verification has always lived.
+# `npm run build` failing DOES stop the deploy, which is the gate that matters.
+# ═══════════════════════════════════════════════════════════════════════════
+
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  # Lets the owner re-publish the current `main` without an empty commit —
+  # useful after flipping the Pages source setting above for the first time.
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# One publish at a time. `cancel-in-progress: false` on purpose: cancelling a
+# half-finished Pages deploy is how a site ends up serving a partial upload.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # PINNED, and stated as pinned rather than dressed up as derived: this
+      # value is NOT read from the repo, because the root package.json has no
+      # `engines` field to read (checked 2026-09-07). What it has to satisfy is
+      # Vite 6's own `engines`, `^18.0.0 || ^20.0.0 || >=22.0.0`. 22 is the
+      # lowest currently-supported major that satisfies it, so a build here
+      # cannot pass on a version newer than the floor developers actually use.
+      # If `npm ci` ever fails on an engine check, this line is the one to move.
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - run: npm ci
+      - run: npm run build
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

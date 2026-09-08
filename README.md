@@ -58,27 +58,38 @@ directory over HTTP can host it.
 
 ## Deploying
 
-**LIVE since 2026-09-05: <https://magnificent-mochi-73aecc.netlify.app>**
+**LIVE: <https://woozkaholdings.github.io/economics-investment-education-app>**
 
-Netlify project `magnificent-mochi-73aecc`, site id `e485658b-2605-499d-86c6-d441e0bd0221`,
-owned by the owner's Netlify team. Deployed by dropping a zip of `dist/` on Netlify Drop,
-then claimed and set to public. This replaces the "Nothing has ever been deployed" paragraph
-that stood here from 2026-08-17 to 2026-09-05.
+GitHub Pages, built and published by `.github/workflows/deploy-pages.yml` on every push to
+`main`. **Nothing is dragged anywhere and nothing has to be remembered** — that is the whole
+reason this host was chosen.
 
-**Verified the same day, unauthenticated** (plain `curl`, no Netlify session): the site root
-returns **200**; the hashed JS bundle under the deployed `assets` directory is **byte-identical**
-to the same file in the local build; the deployed market-data JSON serves `asOf 2026-09-04`; and a
-made-up asset URL returns **404**, so the 200s are the real files rather than a catch-all. Hash
-routing resolves `#/learn` with no rewrite rule, which is what `vite.config.js`'s `base: "./"` is
-for. (Asset filenames are content-hashed and change on every rebuild, so they are described here
-rather than pinned — a pinned one would be stale after the next deploy.)
+> ⚠️ **NETLIFY IS RETIRED (owner decision, 2026-09-07).** The site lived at
+> `https://magnificent-mochi-73aecc.netlify.app` from 2026-09-05 to 2026-09-07. It was retired
+> because publishing required a personal access token that only the owner could create, and until
+> it existed **every** update was a manual drag — which is exactly how the live site spent a day
+> four commits behind `main`, and then nine. `scripts/deploy.mjs` was the Netlify uploader and is
+> **deleted**, along with the `npm run deploy` script and the `.netlify-token` mechanism; if you
+> find a reference to any of them, it is stale. `.gitignore` keeps its `.netlify-token` line on
+> purpose, so a leftover token file on any machine can still never be committed.
+> **`npm run check-deployed` is NOT Netlify-specific and is unchanged in purpose** — it reads the
+> URL from this section and verifies the running site, whoever serves it.
 
-⚠️ **The served `index.html` is not byte-identical to the built one, and that is expected.**
-Netlify injects one HTML comment and two `<meta>` tags (`hosting-provider`,
-`netlify-deploy`) — five lines, no script and no beacon. A diff showing exactly those and
-nothing else means the deploy is clean; a diff showing anything more does not.
+**This is a project site, so it is served from a sub-path** (`/economics-investment-education-app/`),
+not a domain root. That works unchanged and is not a coincidence: `vite.config.js` sets
+`base: "./"` so every asset resolves relatively, the market-data fetch uses `document.baseURI`
+(`src/lib/useMarketData.js`), and routing is hash-based. **Do not "fix" `base` to an absolute path
+to make a URL look tidy** — that is the setting that lets one `dist/` serve from a root or a
+sub-path without being rebuilt. Verified 2026-09-07 by serving the real `dist/` under a
+`/economics-investment-education-app/` prefix locally: app renders, `icon.svg` and
+`data/market.json` both resolve, and a made-up asset 404s.
 
-### The link preview (added 2026-09-05)
+**One-time setup (owner, once, in the browser).** An agent cannot flip this:
+GitHub → the repo → **Settings › Pages › Build and deployment › Source: GitHub Actions**.
+Until that is set, the workflow runs and the deploy step fails. There is **no token to create**
+and no secret to store — the workflow authenticates with the repo's own `GITHUB_TOKEN`.
+
+### The link preview
 
 `index.html` carries a full unfurl card: `og:url`, `og:image` and
 `twitter:card: summary_large_image`, pointing at `public/og-card.png` — 1200x630, the
@@ -94,55 +105,23 @@ So if the site ever moves to a custom domain, **change the URL here first**: `np
 then fail until `index.html` agrees, instead of the app quietly unfurling a preview for a host
 it no longer lives on.
 
-✅ **LIVE since the 2026-09-06 redeploy.** `og-card.png` returns **200** and is **byte-identical**
-to `dist/og-card.png` (sha256 compared, not eyeballed); the served `index.html` carries `og:url`,
-`og:image`, `og:image:width/height/alt` and `twitter:card`. Shared links unfurl as the card.
-ORIGINAL CLAUSE, kept because the line above corrects it: ⛔ *"The card is in the repo and is NOT on
-the live site yet. Measured 2026-09-05 after this landed: `…/og-card.png` returns 404, and the served
-`index.html` still carries no `og:image` tag."* That was true for the day between the card landing in
-the repo and the next deploy — **which is the general shape, not a one-off: nothing on this site
-changes until someone redeploys `dist/`, so a repo claim about the live site is a claim about the
-last deploy.**
-
 ### To publish an update
 
+**Push to `main`.** That is the whole procedure; the workflow builds and publishes.
+
 ```
-npm run build && npm run deploy
+git push origin main
+npm run check-deployed
 ```
 
-`npm run deploy` packs `dist/`, uploads it, waits for Netlify to finish publishing, then runs
-`check-deployed` against the live site and **exits with that check's result**. "Uploaded" is a
-claim about a process; the only claim worth making is about the site.
-
-It **refuses rather than publishing something no commit describes**: uncommitted build inputs,
-a `dist/` older than any build input, or no `dist/` at all each stop it before the upload.
-`npm run deploy -- --dry-run` runs every guard and stops short of uploading; it needs no token.
-
-**One-time setup (owner, once).** The token is not something an agent can create for you:
-
-1. Create a personal access token at <https://app.netlify.com/user/applications> ›
-   *Personal access tokens*.
-2. Put it in **one** of these — never in a tracked file:
-   - `export NETLIFY_AUTH_TOKEN=<token>` (shell, or a scheduled task's environment)
-   - `echo '<token>' > .netlify-token` (gitignored)
-
-⛔ **This token can deploy, rename and delete the site.** Do not paste it into a chat, a commit
-message, or anything under `src/` — everything under `src/` ships to every visitor. Do not
-confuse it with `src/lib/analyticsConfig.js`'s **public** ingest key, which is *meant* to ship.
-If `.netlify-token` ever becomes tracked, `deploy.mjs` refuses to run at all and tells you to
-revoke the token: a secret that reaches history is compromised, ignored or not.
-
-The old manual route still works if you prefer it — drag `dist/` (or a zip) onto the project's
-Deploys page, then `npm run check-deployed`. It is how every deploy up to 2026-09-06 was done,
-and it is the reason the live site spent a day four commits behind `main`.
-
-To see what is pending *before* deciding to deploy, run
-**`npm run check-deployed -- --identify`**: it works out which commit is live from the live
-bundle itself and lists the commits a learner is missing.
+⛔ **The push is not the verification, and the green check mark on the Actions run is not
+either.** `npm run check-deployed` fetches the running site and compares the hashed entry bundle
+byte for byte against a local build — run it after the workflow finishes. To see what is pending
+*before* pushing, run **`npm run check-deployed -- --identify`**: it works out which commit is
+live from the live bundle itself and lists the commits a learner is missing.
 
 Market data freezes at whatever `public/data/market.json` held at build time — see
 "After it is up" below.
-
 ### ⛔ `npm run check-deployed` — because merging is no longer shipping
 
 Added 2026-09-06. **Nothing else in this repo can see the deployed artifact.** `npm test`
@@ -237,7 +216,7 @@ to handle. Do not change that setting to make a path "look right"; it is what le
 so every screen and every lesson deep link — `#/learn`, `#/lesson/12`, `#/reference` — is the
 one `index.html` the server already returns. The usual "redirect all paths to /index.html"
 configuration that static React deploys need does not apply here, which is why this repo has
-no `netlify.toml`, `vercel.json` or workflow file.
+no `netlify.toml` and no `vercel.json`. It *does* carry one workflow file — `.github/workflows/deploy-pages.yml` — which exists to publish to Pages, not to satisfy a routing requirement; the no-rewrite-rule point above is unaffected.
 
 <!-- path-ok: economic-cycles-v5.jsx — the owner's local prototype original, GITIGNORED by the 2026-08-16 decision recorded in .gitignore ("ignored, not deleted") — it is on the owner's disk and in git history, and no clone of this repo has it, so this reference must never resolve; restoring the file to the repo would be undoing that decision, not fixing this marker -->
 <!-- path-ok: economic-cycles-v6.jsx — the second prototype original, gitignored by the same 2026-08-16 decision and for the same reason; v6 additionally carries the branding that blindspot 10.2 exists to keep out, and hardcoded dates that §2.3 does, so it is deliberately absent from every clone -->

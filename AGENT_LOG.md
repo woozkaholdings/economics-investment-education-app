@@ -198,8 +198,17 @@ for the history. No open P1/P2 items.
 > 3's cadence question was put to the owner and came back **"nobody should have to remember"**, so
 > `npm run deploy` (`1781b87`, recorded in `DECISIONS.md`) deletes the manual drag rather than
 > scheduling it.
-> ⛔ **One owner action remains: create the Netlify token** (`README.md` § Deploying, one-time).
-> Until then `npm run deploy` refuses and deploying is still the manual drag.
+> ✏️ **SUPERSEDED 2026-09-07 (owner decision): Netlify is retired and GitHub Pages is canonical.**
+> The one owner action this clause named — create a Netlify token — **no longer exists**, and the
+> token was the reason it was named: publishing needed a credential only the owner could make, so
+> every update in between was a manual drag. The site now publishes from
+> `.github/workflows/deploy-pages.yml` on push, authenticating with Actions' own `GITHUB_TOKEN`.
+> `npm run deploy` and `scripts/deploy.mjs` are **deleted**. The remaining owner action is a
+> one-time browser setting (Settings › Pages › Source: GitHub Actions), not a secret.
+> ⭐ **W-7.1's finding is unchanged and is what made this the right trade:** the instrument that
+> matters is `npm run check-deployed`, which certifies the **artifact** rather than the process,
+> and it is host-agnostic — it reads the URL from `README.md` and survived the host change
+> untouched in purpose.
 > **Re-verified 2026-09-06 by this run against the site, not the log:** entry bundle
 > `index-B1mndoLB.js` byte-identical at 264,930 b, `icon.svg` / `og-card.png` / `index.html`
 > identical, and the 404 control fired.
@@ -6840,3 +6849,102 @@ today's measurement.
 Netlify token; the owner has supplied the GitHub remote, and **whether to push is unresolved and
 deliberately not acted on** — pushing contradicts this task's standing HARD RULE and publishes 508
 commits including a 594 KB `AGENT_LOG.md`. O-2 remains the critical path for measurement.
+
+### 2026-09-07 (owner-directed: "make github pages canonical and retire netlify") — the constraint that ruled out git-connected hosting was written down in the decision itself, and the owner dissolved it in one message
+
+**Where the pick came from.** Direct owner instruction, following the iOS/Expo decision earlier the
+same day and the owner supplying the GitHub remote.
+
+#### Step 3.5 — the premise, and it is the cleanest one this log has recorded
+The 2026-09-06 decision "the deploy is automated with a token" closes with its own constraint:
+*"`origin` is unusable in this project, so git-connected hosting (the normal GitHub Pages / Vercel
+flow) is off the table. That is what favors a direct-upload host."* **That sentence is the whole
+reason Netlify was there.** The owner made `origin` usable, so the premise is gone and the choice it
+forced is **re-decided rather than defended**. Measured before acting: `git ls-remote` shows
+`origin/main` at `fc6acfd`, `git merge-base --is-ancestor origin/main HEAD` **succeeds** — the
+remote holds this project's real history and local is a **fast-forward**, 192 ahead and 0 behind.
+⭐ **This also settles the disclosure question I had raised:** the remote **already contains**
+`AGENT_LOG.md`, so pushing is not a new exposure. I had held the push pending that answer; the
+answer was in the remote, not in an opinion.
+
+#### Why Pages is better on the 2026-09-06 decision's OWN criterion, not on a new one
+That decision asked *"how often should someone remember to do this?"* and answered **"nobody should
+have to."** A token-based `npm run deploy` still needed a human to run it, and first needed the
+owner to create a credential **no agent could make** — which is exactly why the site sat **nine
+commits behind `main`** on 2026-09-07, the third recurrence of the same pattern. Pages publishes on
+push: **the action a developer already takes is the deploy.** The earlier goal is met more
+completely by the host that made its own script unnecessary.
+
+#### What shipped
+- **`.github/workflows/deploy-pages.yml`** — build + `actions/deploy-pages` on push to `main`, plus
+  `workflow_dispatch` so the owner can re-publish after flipping the Pages source setting.
+  `concurrency: cancel-in-progress: false` on purpose — cancelling a half-finished Pages deploy is
+  how a site serves a partial upload. ⚠️ **It deliberately does NOT gate on `npm test`**: the suite
+  checks market-data freshness against the real clock and repo-local scheduled-job state, so it
+  would fail in CI for reasons unrelated to publishability. `npm run build` failing **does** stop
+  the deploy, which is the gate that matters.
+- **`README.md` § Deploying** — rewritten. The Pages URL is now the first `<https://…>` in the
+  section, which is the single definition both `check-data.mjs` §38 and `check-deployed.mjs` read.
+- **`index.html`** — `og:url`, `og:image`, `twitter:image` → the new origin. **These three are the
+  only absolute URLs in the whole build**; everything else was already relative.
+- **Deleted `scripts/deploy.mjs` and the `npm run deploy` script.** `.gitignore` keeps
+  `.netlify-token` so a leftover file on any machine still cannot be committed.
+- **`scripts/check-deployed.mjs`** — kept, because it was never Netlify-specific. Its remediation
+  text now says "push to `main`", and its Netlify injected-tag stripper is annotated as now matching
+  nothing rather than left with a stale rationale.
+- **`DECISIONS.md`** — new hosting decision; the 2026-09-06 entry marked SUPERSEDED and kept,
+  because the new entry argues against it and cites its reasoning. **`AGENT_LOG.md` W-7.1's
+  "one owner action remains: create the Netlify token"** — superseded in place; that action no
+  longer exists.
+
+#### The verification, and what makes each negative result mean something
+- **A project site is a SUB-PATH, and that is the thing that usually breaks.** Served the real
+  `dist/` under `/economics-investment-education-app/` and drove it: app boots (**3,506 chars**),
+  **all three routes render their own screen** (`#/learn` 1,417 / `#/practice` 681 / `#/reference`
+  397 chars in the tabpanel — different lengths are what say routing resolved rather than one screen
+  being redrawn), `icon.svg` **200**, `og-card.png` **200**, `data/market.json` **200 asOf
+  2026-09-07** through `document.baseURI`, and **0 console errors**. ⭐ **The control: a made-up
+  asset returns 404**, so the 200s are real files and not a catch-all.
+- **`base: "./"` is why this works, and Vite had already done the hard part**: the source
+  `index.html` carries `href="/icon.svg"`, and the build rewrites it to `./icon.svg`. Checked in
+  `dist/`, not assumed from the setting.
+- **§38 injection test.** Replaced README's live URL with `https://example.com/moved-somewhere-else`
+  → **two FAILs**, one for `og:url` disagreeing and one for `og:image` no longer being under the
+  origin. Restored from a scratchpad copy, `cmp` byte-identical. **Without this the check being
+  green would only have meant it was pointed at something.**
+- ✅ **A risk class retired rather than mitigated.** The old flow zipped the **local** `dist/`; an
+  earlier run caught `public/.DS_Store` heading for the live site that way. `public/.DS_Store`
+  **still exists on this disk and is untracked** — so a fresh CI checkout cannot contain it, and the
+  class is gone by construction rather than by remembering.
+
+#### Step 5 — adversarial self-check
+**Blindspot register: nothing found.** No lesson prose, market figure or rendered date changed; no
+`src/` content file was touched. `check-blindspot` **exit 0**. **DECISIONS.md conflict:** the one
+entry this contradicts is the 2026-09-06 deploy decision, and it is superseded **explicitly and in
+place** rather than silently — with the note that its reasoning was sound and its premise expired.
+**Already-done:** this does not redo W-7.1; it retires the one owner action W-7.1 was still waiting
+on. **My own verification claim, weakest part first:** ⛔ **nothing here has been verified against
+GitHub Pages itself, because nothing is published yet** — the push is blocked (below) and the Pages
+source setting is unset. What is verified is that the **artifact** works under a project sub-path,
+served locally. **"It will work on Pages" is an inference from that; `npm run check-deployed` against
+the real URL is the only thing that will settle it**, and it is deliberately the first thing to run
+after the first successful workflow.
+⚠️ **A false comment I wrote and then removed rather than shipped:** the workflow's Node step
+originally carried *"the version range is read from the repo rather than pinned here."* It is
+pinned, and the root `package.json` has **no `engines` field to read**. Corrected to state the pin,
+the value it must satisfy (Vite 6's `^18 || ^20 || >=22`) and which line to move if `npm ci` ever
+fails an engine check.
+
+**Verified:** `npm test` **exit 0, 0 failures, 4 warnings** (all pre-existing); `npm run build`
+clean; `check-blindspot` **exit 0**; §38 injection-tested both ways; the built app driven live under
+the project sub-path.
+
+**⛔ NOT DONE, and it is the owner's to clear — two things, both outside this repo.**
+1. **The push is blocked by the harness, not by the repo.** `git push origin main` was refused by
+   Claude Code's auto-mode permission classifier after the owner had explicitly authorized it. Local
+   is **192 commits ahead, 0 behind**, a clean fast-forward. Until it lands, **none of this is on
+   GitHub and Pages has nothing to build.**
+2. **Settings › Pages › Build and deployment › Source: GitHub Actions** — a browser setting no agent
+   can flip. Until it is set the workflow runs and the deploy step fails.
+**Then, and only then:** `npm run check-deployed` against the new URL. It will say DIVERGED right
+now and that is correct — the site does not exist yet.
