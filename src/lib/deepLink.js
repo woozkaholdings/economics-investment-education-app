@@ -77,7 +77,7 @@ export function routeHash({ tab, reading, lessons }) {
 
 /**
  * Resolve a hash against the real catalog and unlock state, into the
- * `{ tab, reading }` pair `App.jsx` holds. Always returns a usable
+ * `{ tab, reading, missed }` triple `App.jsx` holds. Always returns a usable
  * destination — an unparseable hash, a nonexistent lesson id, or a locked
  * lesson all land on the lesson path rather than on an error.
  *
@@ -88,17 +88,37 @@ export function routeHash({ tab, reading, lessons }) {
  * links to a lesson most new visitors cannot yet open, so they land on the
  * path instead. That is a product question for the owner, not one a routing
  * module should answer by being permissive.
+ *
+ * `missed` IS NOT THAT QUESTION, and it is why this returns three things now.
+ * Landing on the path was the decision; landing there with nothing said was
+ * not decided anywhere — it fell out of `fallback` being the same object for
+ * "you asked for nothing" and "you asked for something I refused". Measured
+ * 2026-09-08 on the built app, returning learner, `#/lesson/35`: the reader
+ * never opens, the path renders, `useDeepLink` rewrites the address bar to
+ * `#/learn`, and no `role="status"`/`role="alert"` node exists anywhere on the
+ * screen — the last trace of what the learner clicked is gone. The control
+ * (`#/lesson/29`, unlocked) opened the reader and kept its hash, so the two
+ * are distinguishable and only one of them says so.
+ *
+ * So `missed` is `null`, or `{ lessonId, reason }` with reason:
+ *   "locked"  — the lesson exists and `isUnlocked` refused it
+ *   "unknown" — no lesson in the catalog carries that id (a rotted or
+ *               hand-edited link)
+ * Ids only, no title: this module is deliberately free of content, and the
+ * caller already has the catalog to look one up in.
  */
 export function resolveRoute(hash, lessons, isUnlocked) {
   const route = parseRoute(hash);
-  const fallback = { tab: "learn", reading: null };
+  const fallback = { tab: "learn", reading: null, missed: null };
   if (!route) return fallback;
-  if (route.lessonId === null) return { tab: route.tab, reading: null };
+  if (route.lessonId === null) return { tab: route.tab, reading: null, missed: null };
 
   const index = lessons.findIndex((l) => l.id === route.lessonId);
-  if (index === -1) return fallback;
-  if (typeof isUnlocked === "function" && !isUnlocked(index)) return fallback;
-  return { tab: "learn", reading: index };
+  if (index === -1) return { ...fallback, missed: { lessonId: route.lessonId, reason: "unknown" } };
+  if (typeof isUnlocked === "function" && !isUnlocked(index)) {
+    return { ...fallback, missed: { lessonId: route.lessonId, reason: "locked" } };
+  }
+  return { tab: "learn", reading: index, missed: null };
 }
 
 /**
@@ -114,14 +134,23 @@ export function resolveRoute(hash, lessons, isUnlocked) {
  * demonstrably wanted a lesson, they clicked one. A working `#/practice` or
  * `#/reference` link still wins; this only catches the link that couldn't be
  * honored.
+ *
+ * That branch deliberately reports NO `missed`, and the asymmetry is the
+ * point: a first-time visitor is not stranded on a menu, they are reading a
+ * lesson, and the cost DECISIONS.md accepted for them ("they land in lesson 1
+ * having been promised lesson 20") is a fact about the reader, not about the
+ * path. A path notice on a screen that is not the path would be a second
+ * surface for a case the record already settled. The returning visitor is who
+ * this reaches, because landing on the path with nothing said is the half
+ * nobody ever decided.
  */
 export function initialRoute(hash, lessons, isUnlocked, isFirstVisit) {
   const route = parseRoute(hash);
-  if (!route) return { tab: "learn", reading: isFirstVisit ? 0 : null };
+  if (!route) return { tab: "learn", reading: isFirstVisit ? 0 : null, missed: null };
 
   const resolved = resolveRoute(hash, lessons, isUnlocked);
   const lessonLinkFailed = route.lessonId !== null && resolved.reading === null;
-  if (lessonLinkFailed && isFirstVisit) return { tab: "learn", reading: 0 };
+  if (lessonLinkFailed && isFirstVisit) return { tab: "learn", reading: 0, missed: null };
   return resolved;
 }
 

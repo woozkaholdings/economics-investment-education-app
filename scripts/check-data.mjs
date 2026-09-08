@@ -2084,6 +2084,31 @@ if (keyedGroupsChecked < 4) {
     if (openBack.reading !== 0) {
       fail(`deepLink: lesson ${lessonPath[0].id} is the first of its track and must open from a URL, got ${JSON.stringify(openBack)}`);
     }
+
+    // (d2) ...and the refusal is REPORTED. Landing on the path was decided
+    // (DECISIONS.md); landing there with nothing said was not. The learner-
+    // visible failure this catches: someone opens a shared link to a lesson
+    // they have not unlocked, gets the 44-row path with no indication which
+    // row was theirs or that a link was involved, and the address bar is
+    // rewritten to `#/learn` so the last trace of it is gone. Measured on the
+    // built app 2026-09-08 before the fix — zero notices on screen — with an
+    // unlocked link as the control that opened its lesson and kept its hash.
+    if (back.missed?.reason !== "locked" || back.missed?.lessonId !== lockedId) {
+      fail(`deepLink: a locked lesson link must report why it was not honored, got ${JSON.stringify(back.missed)}`);
+    }
+    const unknown = resolveRoute(`#/lesson/${maxId + 1}`, lessonPath, nothingCompleted);
+    if (unknown.missed?.reason !== "unknown") {
+      fail(`deepLink: a link to a nonexistent lesson id must report itself as unknown, got ${JSON.stringify(unknown.missed)}`);
+    }
+    // The control, and it is the half that makes the two above mean anything:
+    // a route that WAS honored must report no miss, or the notice would sit on
+    // the path after every successful navigation.
+    if (openBack.missed !== null) {
+      fail(`deepLink: an honored lesson link must report no miss, got ${JSON.stringify(openBack.missed)}`);
+    }
+    if (resolveRoute("#/practice", lessonPath, nothingCompleted).missed !== null) {
+      fail("deepLink: a tab route must report no miss");
+    }
   }
 
   // §3.2's first-open routing survives: no link still lands a new install on

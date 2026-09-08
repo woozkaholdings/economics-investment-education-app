@@ -290,6 +290,12 @@ export default function App() {
   const [tab, setTab] = useState(opening.current.tab);
   // null = showing the path; a number = reading that lesson.
   const [reading, setReading] = useState(opening.current.reading);
+  // The lesson link this load (or this hashchange) could not honor, so the
+  // path can say so instead of silently absorbing it — see deepLink.js's
+  // `resolveRoute` for the measurement and for why this is not the unlock
+  // question. `null` whenever the route resolved, which is what makes it
+  // self-clearing: the next honored navigation writes null through `onRoute`.
+  const [linkMiss, setLinkMiss] = useState(opening.current.missed ?? null);
 
   const scrollTop = useCallback(() => {
     try { window.scrollTo({ top: 0, behavior: "smooth" }); } catch { /* older browsers */ }
@@ -334,10 +340,13 @@ export default function App() {
   const onRoute = useCallback((route) => {
     setTab(route.tab);
     setReading(route.reading);
+    setLinkMiss(route.missed ?? null);
   }, []);
   useDeepLink({ tab, reading, lessons, isUnlocked, onRoute });
 
-  const openLesson = useCallback((index) => { setReading(index); setTab("learn"); }, []);
+  // Opening any lesson answers the notice — the learner has moved on, and a
+  // stale "that link didn't work" waiting on the path behind them is noise.
+  const openLesson = useCallback((index) => { setReading(index); setTab("learn"); setLinkMiss(null); }, []);
   const closeLesson = useCallback(() => { setReading(null); scrollTop(); }, [scrollTop]);
 
   const goToTab = useCallback((key) => {
@@ -528,9 +537,55 @@ export default function App() {
             <Button
               variant="quiet"
               onClick={() => setStorageNoticeDismissed(true)}
-              style={{ marginTop: space["2"], minHeight: MIN_TAP, paddingLeft: 0 }}
+              // Same two properties, and the same reason, as the link notice
+              // below — this notice shipped 2026-09-07 with the button running
+              // onto the end of its own last sentence. Measured 2026-09-08 with
+              // an off-flow plant of this exact shape: 44px in from the
+              // paragraph's left edge, i.e. same line; 0px with these added.
+              style={{ marginTop: space["2"], minHeight: MIN_TAP, paddingLeft: 0, display: "flex", width: "fit-content" }}
             >
               {t.storageBlockedDismiss}
+            </Button>
+          </Note>
+        )}
+        {/* A lesson link the router could not honor. Sits in the same slot as
+            the storage notice and follows the same reasoning about live
+            regions: it mounts already-populated on the case that actually
+            happens (a clicked link, i.e. a fresh load), which is the case
+            browsers and screen readers announce inconsistently, so DOM order
+            carries it instead. The one case that leaves uncovered — pasting a
+            locked `#/lesson/<id>` into the address bar of an already-open app,
+            where this appears mid-session with nothing announced — is real,
+            rarer than the link click this exists for, and named rather than
+            papered over.
+            Gated on `reading === null` because the notice is about landing on
+            the PATH: `openLesson` clears it, but Back out of a lesson must not
+            resurrect it either. */}
+        {linkMiss && tab === "learn" && reading === null && (
+          <Note
+            tone="neutral"
+            icon="info"
+            label={t.linkMissLabel}
+            style={{ marginBottom: space["4"] }}
+          >
+            {linkMiss.reason === "locked"
+              ? t.linkMissLockedTemplate.replace(
+                  "{title}",
+                  lessons.find((l) => l.id === linkMiss.lessonId)?.title[lang] ?? "",
+                )
+              : t.linkMissUnknown}
+            <Button
+              variant="quiet"
+              onClick={() => setLinkMiss(null)}
+              // `Note` wraps its children in one <p> and `Button` is
+              // inline-flex, so the default puts the control on the end of the
+              // sentence — measured on the built app, the notice read "…and it
+              // opens.Dismiss" with no space. A block-level box shrink-wrapped
+              // to its label puts it on its own line without going full width,
+              // and `marginTop` only does anything once it is one.
+              style={{ marginTop: space["2"], minHeight: MIN_TAP, paddingLeft: 0, display: "flex", width: "fit-content" }}
+            >
+              {t.linkMissDismiss}
             </Button>
           </Note>
         )}

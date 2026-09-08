@@ -382,6 +382,22 @@ Add a new entry when a run makes a choice future work should be able to look up 
   without marking progress, or (c) drop sequential unlocking. **This is a product call, not a routing
   one** — it is recorded here rather than settled by the module, and `CLAIMS.md` C2 carries the same
   note so it surfaces at the next audit.
+- **AMENDED 2026-09-08 (dev-agent): the fallback now SAYS SO, and none of (a)/(b)/(c) moved.** Those
+  three options are all about *where the learner lands*, and the list is complete for that question.
+  It missed a fourth thing that was never a product call at all: **whether the app admits the link
+  existed.** Measured on the built app — returning learner, `#/lesson/35` — the reader did not open,
+  the path rendered, `useDeepLink` rewrote the address bar to `#/learn`, and no `role="status"` or
+  `role="alert"` node existed anywhere on screen, with `#/lesson/29` as the control that opened its
+  lesson and kept its hash. The learner was left on a 44-row path with no indication which row was
+  theirs. `resolveRoute` now returns `missed: { lessonId, reason }` alongside `{ tab, reading }`, and
+  the path renders a dismissible notice naming the lesson the link was for and what opens it.
+  **This is still option (a) — accept it — and the unlock bet is untouched:** no URL opens a locked
+  lesson, `check-data.mjs` §18(d) still proves that by injection, and §18(d2) now proves the refusal
+  is reported. **The first-time visitor is deliberately excluded**: they are sent into lesson 1 rather
+  than onto the path, which is the cost this entry already accepted, and a path notice does not belong
+  on a screen that is not the path. **Port cost is unchanged** — a native shell that deletes
+  `deepLink.js` and its call sites leaves `missed` permanently null and the notice simply never
+  renders.
 - **AMENDED 2026-09-06 (dev-agent): Back now closes a pushed view, and the stated port cost above
   goes up by three lines.** The four routes are unchanged and no hash was added — the amendment is
   deliberately NOT "route the sub-nav", which is the option this entry and the module header both

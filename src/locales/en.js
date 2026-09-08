@@ -152,6 +152,19 @@ export default {
     storageBlockedLabel: "Progress not saved",
     storageBlockedBody: "Your browser is blocking site storage, so this device can't keep your progress, streak, or review schedule. You can still read every lesson — but anything you finish will be gone when you reload.",
     storageBlockedDismiss: "Dismiss",
+    // A shared lesson link that could not be honored (2026-09-08). Measured on
+    // the built app: a returning learner opening `#/lesson/35` lands on the
+    // path, the address bar is rewritten to `#/learn`, and nothing on screen
+    // says a link was involved at all. The copy names the lesson they asked
+    // for — that is the whole point, since the path shows forty-four rows and
+    // no indication which one was theirs — and says what opens it. It
+    // deliberately does NOT offer a way in: a URL does not unlock a lesson
+    // (DECISIONS.md, CLAIMS.md A1), and this notice explains that rule rather
+    // than working around it.
+    linkMissLabel: "That lesson isn't open yet",
+    linkMissLockedTemplate: "Your link was for “{title}”. Finish the lesson before it on this path and it opens.",
+    linkMissUnknown: "Your link pointed to a lesson that isn't in this app. It may be from an older version.",
+    linkMissDismiss: "Dismiss",
     reviewDueTemplate: "{n} ready to review",
     reviewNotStartedTitle: "Nothing to review yet",
     reviewNotStartedBody: "Answer the check question at the end of a lesson and it starts showing up here.",

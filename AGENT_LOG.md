@@ -1814,6 +1814,38 @@ instead of hand-rolling an eighth mover. A working one is in this run's scratchp
       stand; the coverage did not.** `A11yStates.coverage()` plus the Tab step now in the header
       recipe are the fix — see item 149.
 
+171. **[UX/Correctness — filed 2026-09-08 by the run that shipped the failed-lesson-link notice,
+    from a state that run built to test something else. Measured live on the built app with a
+    control, NOT inferred from the unlock rule.] A lesson the learner has COMPLETED can render as
+    locked and disabled, with "Complete previous lessons first" and "Completed" on the same row —
+    and they cannot reopen it.**
+    - **The mechanism, and it is structural rather than a bug in a line.** `isUnlocked(index)` is
+      "the previous lesson *in display order* is completed" (`App.jsx`). It never consults whether
+      *this* lesson is completed. So any edit that puts an uncompleted lesson in front of a
+      completed one re-locks it. **Inserting lessons at the FRONT of a track does exactly that**,
+      and this repo has done it: `b6c9bc9` (2026-08-25) prepended ids 41-44 to the `money` track,
+      whose display order is now 41,42,43,44,16,17,…,28.
+    - **Measured 2026-09-08, built app, storage written directly with the id-migration flag already
+      set so nothing was remapped** (`stored` read back as exactly what was written, which is the
+      control for the contamination that caught this run once already — see the run log):
+      `[16,17,18]` → the id16 row is **`disabled: true`**, labelled **"Complete previous lessons
+      first | Completed"**. **Control:** `[44,16,17,18]` → the same row is **`disabled: false`**,
+      labelled "≈5 min | Completed". Only the row at the seam is affected; rows after it are open
+      because their own predecessors are completed.
+    - **Reachability, stated honestly.** **Zero live instances today** — the app went live
+      2026-09-05, after `b6c9bc9`, so no field install predates the insertion, and normal play can
+      only complete a display-order prefix. **It is not low priority, though, and that is why this
+      is a numbered item and not a note under one** (W-6.2 rule 2's test is zero instances *and*
+      low priority; the second conjunct fails): the next front-of-track insertion re-locks a
+      finished lesson for **every** installed learner at once, and the app adds lessons routinely.
+      This is a guard owed ahead of a content change, and the content change is a habit here.
+    - **Deliberately NOT fixed in the run that found it.** The obvious fix — a completed lesson is
+      always unlocked — is a change to the predicate that gates `CLAIMS.md` A1, so it deserves its
+      own premise measurement rather than riding along in a routing commit. **Whoever picks it:
+      decide between (a) `isUnlocked` returns true when this lesson is itself completed, and (b)
+      the row stops claiming both things at once while staying locked.** (a) is almost certainly
+      right and (b) is the one that changes nothing a learner can do.
+
 170. **✅ DONE 2026-09-08 (owner-directed: "do item 170 next"), the day it was filed** — replaced by
     its conclusion per W-7.2 rule 1; the measurements are in this date's second run-log entry.
     **What was true:** `Practice.jsx` rendered the §10.1 disclaimer once, at the foot of the queue
@@ -7725,5 +7757,133 @@ figure, whose dashed highlight ring is `position: absolute; left: -3px; right: -
 `pointer-events: none` — 3px of overflow on each side, by design. One instance corpus-wide, and the
 flag is 3px, so it is cheap to read past; an exclusion for `aria-hidden` + negative inline inset
 would be the shape if a second instance ever appears. **Do not build it for this one.**
+
+**Schedule:** the cron is the owner's lever and was not read, compared or touched.
+
+### 2026-09-08 (scheduled dev-agent; W-6.2 rule 1 free — the previous run's only residual was a note under item 155 that ends "do not build it for this one", so this pick came from a live walk of the routing the app has had since August) — a shared link to a locked lesson is discarded in silence, and the address bar is rewritten so the last trace of what the learner clicked is gone
+
+**The pick.** Not a backlog item. The open numbered items are either closed-in-substance (167, 163),
+owner decisions (117(a)/(b), 158), or blocked on O-3 (94, 160's remainder), so this came from reading
+`lib/deepLink.js` against `LAUNCH_PLAN.md` §5 — *"each lesson a shareable URL"* — now that the app is
+actually live and those URLs can be clicked by someone other than me.
+
+**Step 3.5 — the premise reproduced exactly, with controls firing in both directions.** Built app on
+`127.0.0.1:8821` (static `dist/`, 404 control fired), returning learner
+(`ecycles_seen_disclaimer` set), nothing completed:
+
+| case | link | lands on | hash after | notice |
+|---|---|---|---|---|
+| A | `#/lesson/35` (locked) | Learn path | **`#/learn`** | **none** |
+| B **control** | `#/lesson/29` (unlocked) | the lesson reader | `#/lesson/29` | — |
+| C | `#/lesson/9999` (no such id) | Learn path | **`#/learn`** | **none** |
+| D **control** | `#/practice` | Review | `#/practice` | — |
+
+"None" is `document.querySelectorAll('[role="status"],[role="alert"]')` returning **zero nodes** — and
+B is what makes that zero mean something, because a probe that could not see a honored link either
+would have produced the same table.
+
+⚠️ **AND THE FIRST RUN OF THAT MEASUREMENT WAS CONTAMINATED BY MY OWN SETUP, which is the part worth
+keeping.** I seeded `ecycles_completed_lessons` with `[29,30]` after a `localStorage.clear()`. The
+clear also removed `ecycles_legacy_lesson_id_migrated`, so `loadCompletedLessons` did its job and
+remapped my ids through `OLD_TO_NEW_LESSON_ID` — I read the state back as **`[17,18]`** and spent a
+detour reading two money-track rows as an economy-track contradiction. **A `localStorage.clear()` is
+not a neutral starting state in an app that owns a migration**; every measurement after that point
+sets the flag and reads the stored value back to prove nothing moved.
+
+**What shipped** (8 files, 148 insertions / 10 deletions).
+1. **`lib/deepLink.js`** — `resolveRoute` returns `missed` beside `{ tab, reading }`: `null`, or
+   `{ lessonId, reason: "locked" | "unknown" }`. Ids only, no title — the module is deliberately free
+   of content. `initialRoute` passes it through **except** on the first-visit branch, which keeps
+   reporting nothing: that visitor is reading lesson 1, not stranded on a menu, and a path notice does
+   not belong on a screen that is not the path.
+2. **`App.jsx`** — a `linkMiss` state fed from both call sites, rendered as a dismissible `Note` in
+   the same slot as the storage notice. Self-clearing: any honored navigation writes `null` through
+   `onRoute`, and `openLesson` clears it too.
+3. **`locales/*.js`** — `linkMissLabel`, `linkMissLockedTemplate` (`{title}`, so §1b's placeholder
+   parity check covers it), `linkMissUnknown`, `linkMissDismiss`, five languages.
+4. **`check-data.mjs` §18(d2)** — the refusal must be *reported*. W-6.2 rule 3's sentence: *a learner
+   opens a shared link to a lesson they have not unlocked and gets a 44-row path with no indication
+   which row was theirs or that a link was involved.*
+
+**This does not touch the unlock bet, and that is checked rather than asserted.** No URL opens a
+locked lesson; §18(d)'s existing injection still proves it, and live case A's reader never opened.
+`DECISIONS.md` is amended rather than contradicted — its (a)/(b)/(c) list is about *where the learner
+lands* and is complete for that question; it never contemplated whether the app admits the link
+existed. This is still option (a).
+
+**A second, separate defect fixed because measuring mine exposed it.** The notice rendered
+*"…and it opens.Dismiss"* — `Note` wraps children in one `<p>` and `Button` is `inline-flex`, so the
+control lands on the end of the sentence and its `marginTop` does nothing. ⚠️ **The storage notice
+shipped 2026-09-07 has the identical defect**, measured with an **off-flow** plant of that exact shape
+(`position: fixed; left: -9999px`, so it could not disturb layout — the lesson from the previous run's
+contaminating plants): button at **44px** from the paragraph's left edge, i.e. same line; **0px** with
+`display: flex; width: fit-content`. Both call sites fixed. Shipping one corrected notice beside an
+identical uncorrected one would have been worse than either.
+
+**Verification, live on the rebuilt bundle `index-WoER86X-.js`, not on the source.**
+- **Locked:** notice reads *"That lesson isn't open yet — Your link was for "Interest Rates: The
+  Master Signal". Finish the lesson before it on this path and it opens."* Dismiss at offset **0px**,
+  **75px** wide inside a **308px** paragraph — its own line, not full width.
+- **Unknown id:** *"Your link pointed to a lesson that isn't in this app."*
+- **Dismiss:** button present → clicked → button gone, notice gone.
+- **Control, honored link:** `#/lesson/29` opens the reader, `noticePresent: false`, hash kept.
+- **Control, first visit:** `#/lesson/35` with cleared storage still opens lesson index 0 with the
+  disclaimer modal and **no** notice — the §3.2 behavior `DECISIONS.md` settled is untouched.
+- **All five languages**, each with the localized lesson title and `html lang` read back:
+  `es` (ESA LECCIÓN AÚN NO ESTÁ ABIERTA / "Tasas de Interés: La Señal Maestra"), `ko` (`ko`,
+  "금리: 마스터 신호"), `zh` (`zh-Hans`, "利率：主导信号"), `ja` (`ja`), `en`.
+- **Guard proven by injection, three times, each restored from a scratchpad copy and `cmp`-verified
+  identical afterwards** — never `git checkout --`. Each injection produced **exit 1 with exactly one
+  failure, and it was mine**: dropping the `locked` report → *"a locked lesson link must report why it
+  was not honored, got null"*; dropping the `unknown` report → *"must report itself as unknown"*;
+  making an honored link report a miss → *"an honored lesson link must report no miss"*. The third is
+  the control that stops the first two from passing under "always report something".
+- `npm run build` clean, `npm run check-blindspot` **exit 0**, `npm test` **exit 0, 0 failures,
+  4 warnings** — the same four as this run's pre-change baseline.
+
+**W-6.3's ratio, re-measured this run rather than quoted:** `scripts/` **+25** lines vs `src/` **+123**.
+This is the second consecutive run where the app grew faster than the instruments, and again not out of
+restraint — the defect was in the app, and the one check added is 25 lines because the module it guards
+is pure and needs no browser.
+
+#### Step 5 — adversarial self-check
+**Blindspot register: nothing found, and the one shape that looked like a hit was measured rather than
+argued.** No lesson, quiz, glossary, kids or market copy is touched. §10.2: zero name matches in the
+diff. §10.3: untouched. §10.1: the new copy is about lesson unlocking and makes no financial claim, and
+the path's own disclaimer was verified **still rendering on the same screen as the notice** (present:
+true, with a nonsense control string absent). ⚠️ I wrote `2026-09-08` / `2026-09-07` into code comments,
+which is the §2.3 shape — so: `grep -c` against the shipped bundle returns **0** for both, against a
+control of **1** for a string that *is* shipped copy. `npm run check-blindspot` **exit 0**, and its green
+covers this change: every edited runtime file is under `src/`, which is what it scans.
+**DECISIONS.md conflict: none, and the one entry this change touches is amended in the same commit** so
+the record does not go stale. `localStorage`-only state is unchanged — no key read, written or added.
+Hash-routing-with-no-router is unchanged: no route added, no dependency, and the stated port cost does
+not move (a shell that deletes `deepLink.js` leaves `missed` null and the notice never renders).
+**Already-done: no.** `grep -c linkMiss` returns **0** in `AGENT_LOG.md`, the archive and `DECISIONS.md`.
+The prior art is item 31 and the `DECISIONS.md` entry, both of which record the decision to *fall back*
+and neither of which mentions telling the learner.
+**My own verification claim, weakest parts first, because two of them are real.**
+⚠️ **(1) The storage-notice half was measured on a reconstruction, not on the shipped notice.** I could
+not force `persistenceBroken` in this browser pane, so I built a plant with that notice's exact
+structure and measured it. The structure is identical by reading, and the 44px→0px result is a real
+measurement of *that shape* — but it is one inference short of measuring the thing itself, and it is
+written that way here rather than rounded up.
+⚠️ **(2) The four non-English notices are unreviewed machine translation** — 16 new strings on
+`es`/`ko`/`zh`/`ja`, which is O-3's subject. They are app chrome rather than lesson prose, which is the
+class this project has shipped routinely, but the honest statement is that no fluent reader has seen
+them.
+(3) Every claim above is reproducible from an exit code or a read-back DOM value rather than from a grep
+count, and the live figures come from the rebuilt bundle by name.
+**Backlog bytes:** one numbered item **opened** (171) and none closed — filed rather than fixed, with its
+reachability stated as **zero live instances today**, which is why the item says so in its own text.
+
+📝 **Item 171 filed, and it came out of the contaminated setup above rather than out of the pick.** While
+reading state back I found that `isUnlocked` never asks whether *this* lesson is completed, so a lesson
+the learner has **finished** renders disabled under "Complete previous lessons first" the moment anything
+is inserted ahead of it in its track — which `b6c9bc9` did on 2026-08-25 by prepending ids 41-44 to
+`money`. Reproduced with clean, unmigrated state (`[16,17,18]` → the id16 row `disabled: true`, carrying
+**both** "Complete previous lessons first" and "Completed"), control fired (`[44,16,17,18]` → same row
+open). Not fixed here: the fix changes the predicate that gates `CLAIMS.md` A1 and should not ride along
+in a routing commit.
 
 **Schedule:** the cron is the owner's lever and was not read, compared or touched.
