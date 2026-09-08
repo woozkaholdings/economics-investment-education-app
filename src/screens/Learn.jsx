@@ -28,13 +28,13 @@
 //      that was previously only a "3 / 12" text pair.
 // ═══════════════════════════════════════════════════════════════════════════
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { TRACKS } from "../content/lessons.js";
 import Icon from "../components/Icon.jsx";
 import { Disclaimer, ProgressBar, ResumeCard, SrOnly, Text } from "../components/ui.jsx";
 import { fill, font, ink, line, MIN_TAP, radius, shadow, space, surface } from "../theme.js";
 
-export default function Learn({ t, lang, lessons, completedLessons, isUnlocked, streak, openLesson, goToReview }) {
+export default function Learn({ t, lang, lessons, completedLessons, isUnlocked, streak, openLesson, goToReview, returnFocusIndex = null, onReturnFocusHandled, scrollTop }) {
   const total = lessons.length;
 
   // Count only completed ids that still name a lesson in the live catalog.
@@ -135,11 +135,60 @@ export default function Learn({ t, lang, lessons, completedLessons, isUnlocked, 
     };
   }).filter((tr) => tr.items.length > 0);
 
+  // The lesson being returned to, when this render is a learner backing out of
+  // the reader. `lessons` is the live catalog, so a stale index simply reads
+  // `undefined` and the restore below is skipped.
+  const returnLesson = returnFocusIndex === null ? null : lessons[returnFocusIndex];
+
   // Only the track you are actually in is open on arrival. Deliberately seeded
   // from `nextLesson` rather than defaulting to the first track: after the
   // economy track is finished the learner's next lesson is in `money`, and
   // opening `economy` would hide the one row they came back for.
-  const [openTrack, setOpenTrack] = useState(nextLesson?.track ?? groupedTracks[0]?.key);
+  //
+  // `returnLesson` takes precedence, and it is not a nicety — it is what keeps
+  // the focus restore below from failing SILENTLY. This screen unmounts while a
+  // lesson is open, so closing one re-runs this initializer from scratch and
+  // `openTrack` snaps back to the next lesson's track. Measured on the built
+  // app: read a lesson in `essentials` while `money` holds the next lesson,
+  // close it, and the essentials `<ol>` is `hidden` again — and `focus()` on a
+  // row inside a hidden subtree is a no-op that reports no error (measured, with
+  // a visible row as the control, which took focus on the same call). Seeding
+  // the accordion from the row we are about to focus means the row is already on
+  // screen in the same commit, so there is nothing to re-open and no second pass.
+  const [openTrack, setOpenTrack] = useState(returnLesson?.track ?? nextLesson?.track ?? groupedTracks[0]?.key);
+
+  // One entry per rendered lesson row, keyed by the row's index in `lessons` —
+  // the same index `openLesson`/`reading` use, so no second identifier exists to
+  // drift out of step with them.
+  const rowRefs = useRef({});
+
+  // Post-commit, so the row exists to receive focus.
+  //
+  // The guard is `Reference.jsx`'s and is reused rather than re-derived: restore
+  // only when focus actually FELL to <body>, which is the whole defect. Closing
+  // from somewhere that leaves focus on a live control — re-tapping the Learn
+  // tab, say — must not have the path reach up and steal it.
+  //
+  // The two branches are exclusive on purpose. `App.closeLesson` deliberately no
+  // longer scrolls, because "go to the top of the path" and "put me back on the
+  // row I was reading" cannot both be honored; whichever one runs here is the
+  // only scroll the learner gets.
+  useEffect(() => {
+    if (returnFocusIndex === null) return;
+    const row = rowRefs.current[returnFocusIndex];
+    const active = document.activeElement;
+    const focusFell = active === null || active === document.body || active === document.documentElement;
+    // `row.focus()` is CHECKED rather than trusted. Every row is in the DOM
+    // whether or not its track is expanded — `hidden` on the <ol>, not a
+    // conditional render — so the ref map hands back rows that cannot take
+    // focus, and focus() on one throws nothing and returns nothing. Reading
+    // `activeElement` back is what turns that silent no-op into the scroll-to-top
+    // the learner would otherwise have got, instead of leaving them on <body>
+    // with the screen unmoved.
+    if (row && focusFell) row.focus();   // scrolls the row into view by itself
+    if (document.activeElement !== row) scrollTop?.();
+    onReturnFocusHandled?.();
+  }, [returnFocusIndex, onReturnFocusHandled, scrollTop]);
 
   return (
     <div>
@@ -344,6 +393,7 @@ export default function Learn({ t, lang, lessons, completedLessons, isUnlocked, 
                         made, and why the suite could not catch the old one. */}
                     <button
                       type="button"
+                      ref={(el) => { if (el) rowRefs.current[i] = el; else delete rowRefs.current[i]; }}
                       disabled={!unlocked}
                       onClick={() => openLesson(i)}
                       style={{

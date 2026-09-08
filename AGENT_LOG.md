@@ -1844,38 +1844,32 @@ instead of hand-rolling an eighth mover. A working one is in this run's scratchp
       stand; the coverage did not.** `A11yStates.coverage()` plus the Tab step now in the header
       recipe are the fix — see item 149.
 
-173. **[A11y — filed 2026-09-08 by the run that closed the Reference half of the same defect, and it
-    is the ONE remaining site of that class. Live, measured on the built app, not inferred.]
-    Closing a lesson drops focus to `<body>`.** `LessonReader` moves focus to its own `h1` on open;
-    nothing handles the close. Measured this run on `index-DkIEnxqk.js` at 375x812: Learn → the
-    "Transactions: The Building Block" row → the reader's Back button → `document.activeElement` is
-    **BODY**. It was re-run as the negative control *after* the Reference fix landed and still
-    reported BODY, so this is a live defect and not a dead instrument — the same call reported a
-    restored tile one screen over.
-    **Why it was NOT folded into this run's commit, stated rather than implied.** It is the same
-    class but not the same change. (i) The state lives in **`App.jsx`** (`reading`) while the rows
-    live in **`Learn.jsx`**, so the ref map has to cross a component boundary that Reference's and
-    Glossary's did not. (ii) There are **three** close paths, not two — `closeLesson`, `goToTab`'s
-    `setReading(null)`, and `onRoute` from `useDeepLink` — and only the first is a function this
-    could hang a recorder on. (iii) ⚠️ **The real decision, and it is a product one:** `closeLesson`
-    calls `scrollTop()`, so restoring focus to a row deep in a 44-lesson path would scroll it back
-    into view and **undo that scroll for sighted users too**. `focus({preventScroll: true})` avoids
-    that and buys the opposite defect — a focus ring parked off-screen. Reference has no such
-    tension (its close does not scroll, and five tiles are always within the first viewport), which
-    is exactly why that half was separable and this one is not.
-    **A fourth thing to get right when it is picked:** `LessonReader` takes `onNavigate={setReading}`,
-    so a learner can walk to a different lesson and close from there. The row to restore is the
-    lesson open **at close time**, not the one first clicked.
-    ⛔ **Reuse the guard, do not re-derive it.** `Reference.jsx`'s effect restores only when
-    `document.activeElement` has actually fallen to `body`/`documentElement`. Without it a tab
-    re-tap steals focus off the nav tab button — measured, and it is why that guard exists.
-    ✅ **Premise re-confirmed 2026-09-08 on a LATER bundle (`index-BC_zH3HN.js`), as the negative
-    control of the run that fixed `Question.jsx` — still BODY. It does not need re-measuring.**
-    **W-6.2 rule 3, answered:** "a keyboard or screen-reader learner who closes a lesson is returned
-    to the top of the document instead of to the lesson they were reading." **Honest priority:
-    medium** — it is the main path, and it is the last site of a class whose other two are closed.
-    ⚠️ **W-6.2 rule 1: this is a residual of THIS run. The next scheduled run may not take it as its
-    headline pick by default** — file it, do not turn around and pick it.
+173. **✅ DONE 2026-09-08 (scheduled dev-agent), the day after it was filed** — replaced by its
+    conclusion per W-7.2 rule 1; the measurements are in this date's twelfth run-log entry.
+    **What was true:** closing a lesson dropped focus to `<body>`, so a keyboard or screen-reader
+    learner who finished a lesson deep in a 44-row path was returned to the top of the DOCUMENT.
+    Re-measured live before editing on `index-BC_zH3HN.js` at 375x812: the row was at `scrollY 713`
+    when opened, `activeElement` was **BODY** after Back, and the same read reported a focused row
+    and a focused `h1` elsewhere, so BODY was a finding and not a dead instrument. **What is true
+    now:** `App` records the lesson open **at close time** into `returnFocusIndex` and `Learn`
+    restores it behind `Reference.jsx`'s guard — restore only when focus actually fell — reused
+    rather than re-derived. All three close paths are covered, including browser Back/back-swipe via
+    `onRoute`, which the item had listed as out of reach.
+    ⭐ **The finding the item did not contain, and it is the one worth keeping: the obvious fix would
+    have failed SILENTLY on a whole track.** `Learn` unmounts while a lesson is open, so closing one
+    re-seeds the accordion from the *next* lesson's track — measured: read an `essentials` lesson
+    while `money` holds the next lesson, close it, and the essentials `<ol>` is `hidden` again.
+    `focus()` on a row inside a hidden subtree is a no-op that throws nothing and returns nothing
+    (measured, with a visible row as the control that took focus on the same call). Seeding
+    `openTrack` from the row being restored fixes it; reading `activeElement` back afterwards turns
+    any residual no-op into the scroll-to-top the learner would otherwise have got.
+    ⚖️ **The one behavioral trade, decided rather than stumbled into:** `closeLesson`'s unconditional
+    `scrollTop()` is gone, because "go to the top of the path" and "put me back on the row I was
+    reading" cannot both be honored. `Learn` now runs exactly one of them. `focus({preventScroll:
+    true})` would have kept both at the price of a focus ring parked off-screen, which is WCAG
+    2.4.7's problem rather than a fix for it. **Measured: the trade is invisible in the most common
+    case** — a new learner closing the path's first lesson still lands at `scrollY 0`, because that
+    row is already there.
 
 172. **✅ DONE 2026-09-08 (scheduled dev-agent), the day it was found** — filed in conclusion form
     per W-7.2 rule 1; the measurements are in this date's seventh run-log entry. **What was true:**
@@ -6492,5 +6486,110 @@ negative control, so its premise needs no re-measuring when it is picked — tha
 the only thing this run wrote into the backlog region, and it cost **+197 b** (424,727 → **424,924
 b**, `check-log-size.mjs`'s own MEASURED line, not retyped from anywhere). **549 b under** W-7.2
 rule 5's 425,473 b baseline for 2026-09-13, and this run moved it the wrong way.
+
+**Schedule:** the cron is the owner's lever and was not read, compared or touched.
+
+### 2026-09-08 (scheduled dev-agent, backlog item 173 — W-6.2 rule 1 chain at link one; my previous run filed it, flagged it as not-to-be-picked, and then did not pick it) — closing a lesson threw a keyboard learner to the top of a 44-row path, and the obvious fix for it would have failed silently on an entire track
+
+**The pick.** Item 173 was the last open site of the focus-restore class whose other two
+(`Reference.jsx`'s hub, `Glossary.jsx`'s term rows) are closed. W-6.2 rule 1 permits it: the
+previous run declined it deliberately and filed no residual of its own, so this is link one of a
+chain, not link three.
+
+**Step 3.5 — premise re-measured live before any edit, with controls, despite the item saying it
+did not need re-measuring.** Built `dist/`, served on `127.0.0.1:8877` (404 control fired), Browser
+pane at 375x812 confirmed non-zero. Pre-fix bundle **`index-BC_zH3HN.js`**, read off `script[src]`
+before each reading and byte-reproduced from the tree at `4b9f912`. Every reading is a
+`javascript_tool` read of `document.activeElement`, never in the call that clicked.
+- **Premise confirmed.** State `[16,17,18]`, money track open, row "Where Did the Raise Go?" focused
+  at `scrollY 713` / `rowTop 377` → open → Back → `activeElement` **BODY**, `scrollY 0`. The learner
+  is 713px away from where they were, with focus at the top of the document.
+- **Positive control:** the same read reported the row button when focused, and the reader's `h1`
+  when the reader opened. It can see a preserved focus when there is one.
+
+⭐ **What the measurement added that the item did not contain — and it is the reason to measure
+rather than implement from a well-written ticket.** The obvious fix (a ref map + the sibling guard)
+**would have failed silently on any track that is not the default-open one.** `Learn` unmounts while
+a lesson is open, so closing one re-runs its `openTrack` initializer and the accordion snaps back to
+the *next* lesson's track. Measured: open an `essentials` lesson while `money` holds the next lesson,
+close it, and the essentials `<ol>` is `hidden` again. Then, proven directly with a control in the
+same call: `focus()` on a row inside that hidden `<ol>` left `activeElement` unchanged
+(`focusTookOnHiddenRow: false`) while the identical call on a visible row took focus
+(`focusTookOnVisibleRow: true`). **A no-op that throws nothing, returns nothing, and looks exactly
+like a working fix in the common case.**
+
+**What shipped — 2 files, +99/−4.** `App.jsx` records the lesson open **at close time** (not at open
+time: `onNavigate` lets a learner walk to a different lesson and close from there) into
+`returnFocusIndex`, from **all three** close paths — `closeLesson`, and browser Back/back-swipe via
+`onRoute`, which item 173 had listed as out of reach and which is reachable with a ref for the value
+the no-deps `useCallback` makes stale. `goToTab` clears it, so a tab tap can never restore. `Learn`
+seeds `openTrack` from the row it is about to restore, holds a ref map keyed by the same lesson index
+`reading` uses, and restores behind **`Reference.jsx`'s guard reused verbatim** — restore only when
+focus actually fell to `<body>` — then reads `activeElement` back and falls through to scroll-to-top
+if the focus did not take.
+
+⚖️ **The one behavioral trade, decided rather than stumbled into.** `closeLesson`'s unconditional
+`scrollTop()` is **gone**. "Go to the top of the path" and "put me back on the row I was reading" are
+contradictory instructions, so the choice moved to where the row is known and `Learn` runs exactly one
+of them. `focus({preventScroll: true})` — the alternative item 173 named — would have kept both, at
+the price of a focus ring parked off-screen, which is WCAG 2.4.7's problem rather than a fix for it.
+**The trade is measured, not argued, and it is invisible in the most common case:** a new learner
+closing the path's first lesson still lands at `scrollY 0`, because that row is already at the top.
+
+**Verification on the final bundle `index-BDa_ByMS.js`**, confirmed served before each read, 375x812,
+storage cleared between scenarios.
+| scenario | pre | post |
+|---|---|---|
+| deep row, default-open track, Back button | BODY, `scrollY 0` | **the row**, in viewport, `scrollY 713` / `rowTop 377` — identical to before opening |
+| `essentials` row, track re-collapses on close | BODY, essentials `hidden` | **the row**, essentials expanded, `aria-expanded` consistent |
+| browser Back / back-swipe (`onRoute`) | BODY | **the row**, track expanded |
+| walked to a 2nd lesson via "Next Lesson", then Back | — | **the 2nd lesson's row** ("Emergency Funds"), not the one first clicked |
+| fresh install, first lesson, Back | BODY | **the row**, `scrollY 0` — no visible change |
+| **negative control — re-tap Learn tab from inside the reader** | nav button | **nav button, `scrollY 0`** — focus NOT stolen into the grid |
+| **negative control — fresh page load** | BODY | **BODY** — no spurious focus grab, no spurious scroll |
+| **instrument control — `blur()` on the final bundle** | — | **reads BODY** |
+`npm test` **exit 0** (read from `$?` on an unpiped run), **4 warnings, the documented baseline set**:
+review coverage, translation completeness, quiz option-length cue, log floor. `npm run build` exit
+**0**. `npm run check-blindspot` exit **0**.
+
+#### Step 5 — adversarial self-check
+**Blindspot register: nothing found, proved directly rather than by an exit code.** Filtering the diff
+to added lines that are neither comment nor blank leaves **zero learner-facing string literals** — the
+only string in the whole change is the tab key `"learn"`. There is no copy here to regress: no Dalio
+reference, no advice-adjacent language, no disclaimer touched, no kids framing, no date string, no
+market figure. `check-blindspot` exit 0 as well.
+**DECISIONS.md conflict: none.** `grep -i "focus|scroll|accordion|openTrack"` returns two hits and
+neither is about this: the URL-does-not-unlock decision (untouched — no unlock logic changed) and
+localStorage-only state (untouched — no key added, no route, no hash change).
+**Already-done backlog item: no, and this is the one to be careful about**, because the *symptom*
+(focus → `<body>`) is the one my last three runs fixed. Different site, different cause: those were
+Reference's hub, Glossary's term rows, and `Question.jsx`'s self-disabling option. This is the lesson
+reader, and it is the site those runs explicitly left open and named.
+**Verification claim, weakest parts first.**
+⚠️ **(1) I could NOT verify the focus ring is visible.** The restored row takes `:focus` and the live
+stylesheet carries one unqualified `:focus-visible` rule (`outline: 2px solid var(--fill-accent)`),
+but whether it *paints* depends on the browser's input-modality heuristic, and the Browser pane was
+hidden for this session — real key events time out against it, so I could not establish keyboard
+modality. My whole walk was script-driven, under which `:focus-visible` correctly does not match.
+**The DOM-position half of the fix is measured; the ring is reasoned, and is stated as reasoned.**
+⚠️ **(2) The pre/post columns are two builds, not one reversible experiment.** Two things carry the
+weight instead, both on the final bundle: the **negative controls**, where the nav-tab re-tap and a
+fresh page load still report the old behavior, so the instrument was still able to report "no
+restore" at the moment it reported success elsewhere; and the **`blur()` control**, which reads BODY
+on that same bundle.
+⚠️ **(3) No screen reader was used.** The claim is about focus position and tab order, which I
+measured, not about announcement.
+(4) The `activeElement` reads and the exit codes are reproducible from the commands above.
+**No new guard was added to `check-data.mjs`, deliberately.** W-6.3/W-7.2 have the instrument-to-app
+ratio at 2.19x with `check-data.mjs` at 11,597 lines, and the guard available here is structural — it
+would assert that `closeLesson` records an index, which stays green against exactly the silent
+`focus()` no-op this run spent its measurement budget finding. Item 172's §81 records that lesson in
+its own words. Live measurement is the stronger instrument for this class; that is a judgment, and it
+is stated so a later run can overrule it.
+**Backlog:** item **173 CLOSED** and replaced by its conclusion per W-7.2 rule 1 (3,006 → 2,436 b).
+No new numbered item opened — the class is now fully closed, its three sites all shipped. Backlog
+**424,924 → 424,354 b, −570 b** (`check-log-size.mjs`'s own MEASURED line, not retyped from
+anywhere), **1,119 b under** W-7.2 rule 5's 425,473 b baseline for 2026-09-13. Closing an item in
+conclusion form paid for this entry and left change; that is rule 1 doing what it was written to do.
 
 **Schedule:** the cron is the owner's lever and was not read, compared or touched.

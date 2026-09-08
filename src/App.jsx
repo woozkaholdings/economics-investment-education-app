@@ -291,6 +291,19 @@ export default function App() {
   // question. `null` whenever the route resolved, which is what makes it
   // self-clearing: the next honored navigation writes null through `onRoute`.
   const [linkMiss, setLinkMiss] = useState(opening.current.missed ?? null);
+  // The lesson index to hand focus back to once the path re-renders, or null.
+  //
+  // Closing the reader unmounts the Back button that had focus, and the browser
+  // drops focus to <body> — so a keyboard or screen-reader learner who finished
+  // a lesson deep in a 44-row path was returned to the top of the DOCUMENT,
+  // measured BODY on the built app. `Learn` owns the rows, this component owns
+  // `reading`, so the index has to cross that boundary; `Reference.jsx` does the
+  // same thing one level down and its guard is reused rather than re-derived.
+  //
+  // Recorded at CLOSE time, not at open time: `LessonReader` takes
+  // `onNavigate={setReading}`, so a learner can walk from one lesson to the next
+  // and close from a different row than the one they clicked.
+  const [returnFocusIndex, setReturnFocusIndex] = useState(null);
 
   const scrollTop = useCallback(() => {
     try { window.scrollTo({ top: 0, behavior: "smooth" }); } catch { /* older browsers */ }
@@ -332,7 +345,17 @@ export default function App() {
   // Forward, and a pasted `#/lesson/12`. The whole web-routing surface is
   // this call plus `initialRoute` above — see deepLink.js for why it is hash
   // routing with no router (backlog items 31 and 12).
+  // `onRoute` is memoized with no deps so `useDeepLink` never re-subscribes,
+  // which makes `reading` stale inside it — hence the ref. It is read for one
+  // thing only: browser Back (and the phone's back-swipe) closes the reader
+  // through THIS path rather than through `closeLesson`, and leaving it out
+  // would ship the identical defect one gesture over.
+  const readingRef = useRef(reading);
+  useEffect(() => { readingRef.current = reading; }, [reading]);
   const onRoute = useCallback((route) => {
+    if (readingRef.current !== null && route.reading === null && route.tab === "learn") {
+      setReturnFocusIndex(readingRef.current);
+    }
     setTab(route.tab);
     setReading(route.reading);
     setLinkMiss(route.missed ?? null);
@@ -342,7 +365,20 @@ export default function App() {
   // Opening any lesson answers the notice — the learner has moved on, and a
   // stale "that link didn't work" waiting on the path behind them is noise.
   const openLesson = useCallback((index) => { setReading(index); setTab("learn"); setLinkMiss(null); }, []);
-  const closeLesson = useCallback(() => { setReading(null); scrollTop(); }, [scrollTop]);
+  const clearReturnFocus = useCallback(() => { setReturnFocusIndex(null); }, []);
+  // No `scrollTop()` here any more, and that is the one behavioral trade in
+  // this change rather than an oversight. Scrolling to the top of the path and
+  // restoring focus to a row deep in it are contradictory instructions, so the
+  // choice between them belongs where the row is known — `Learn` runs exactly
+  // one of the two. When the restore fires, the row is scrolled into view by
+  // the focus itself; when it does not, `Learn` scrolls to the top exactly as
+  // this line did. `focus({preventScroll:true})` would have kept both, at the
+  // price of a focus ring parked off-screen, which is WCAG 2.4.7's problem
+  // rather than a fix for it.
+  const closeLesson = useCallback(() => {
+    setReturnFocusIndex(reading);
+    setReading(null);
+  }, [reading]);
 
   const goToTab = useCallback((key) => {
     // Tapping the tab you are already on means "take me to the root of this
@@ -355,6 +391,12 @@ export default function App() {
     if (key === tab) dismissAllPushed();
     setTab(key);
     setReading(null);   // leaving Learn always exits the reader
+    // A tab tap is not "back out of this lesson", so it never asks the path to
+    // restore a row — and it clears any pending request so one cannot survive
+    // into a later visit to Learn. Re-tapping Learn from inside the reader
+    // closes it with focus still on the nav button, which `Learn`'s guard would
+    // decline anyway; this makes that independent of the guard.
+    setReturnFocusIndex(null);
     scrollTop();
     // Tapping Practice is the coach mark's own suggestion acted on, not a
     // dismissal of something unwanted — but it's the same "seen it" state.
@@ -598,6 +640,9 @@ export default function App() {
               t={t} lang={lang} lessons={lessons} completedLessons={completedLessons}
               isUnlocked={isUnlocked} streak={streak} openLesson={openLesson}
               goToReview={() => goToTab("practice")}
+              returnFocusIndex={returnFocusIndex}
+              onReturnFocusHandled={clearReturnFocus}
+              scrollTop={scrollTop}
             />
           )}
           {tab === "learn" && reading !== null && (
