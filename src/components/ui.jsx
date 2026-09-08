@@ -360,9 +360,16 @@ export function IconTile({ icon, tone = "accent", size = 40, filled = false, chi
 // reference library with four quick tiles and a grid of category cards rather
 // than a row of tabs. Adapted: Vocabulary's cards carry full illustrations,
 // which this app has no art budget for, so the icon tile carries the weight.
-export function Tile({ icon, label, sublabel, locked = false, onClick, style, ...rest }) {
+// Forwards its ref for the same reason `Button` does: Reference.jsx restores
+// focus to the tile a learner opened when its pushed section closes, which
+// needs a real node to call .focus() on.
+export const Tile = forwardRef(function Tile(
+  { icon, label, sublabel, locked = false, onClick, style, ...rest },
+  ref
+) {
   return (
     <button
+      ref={ref}
       type="button"
       onClick={onClick}
       disabled={locked}
@@ -397,7 +404,7 @@ export function Tile({ icon, label, sublabel, locked = false, onClick, style, ..
       </span>
     </button>
   );
-}
+});
 
 // ── TileGrid ──────────────────────────────────────────────────────────────
 // Two columns at every width this app supports (APP_MAX_WIDTH is 460) — but

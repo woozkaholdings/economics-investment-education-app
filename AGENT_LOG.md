@@ -1844,6 +1844,37 @@ instead of hand-rolling an eighth mover. A working one is in this run's scratchp
       stand; the coverage did not.** `A11yStates.coverage()` plus the Tab step now in the header
       recipe are the fix — see item 149.
 
+173. **[A11y — filed 2026-09-08 by the run that closed the Reference half of the same defect, and it
+    is the ONE remaining site of that class. Live, measured on the built app, not inferred.]
+    Closing a lesson drops focus to `<body>`.** `LessonReader` moves focus to its own `h1` on open;
+    nothing handles the close. Measured this run on `index-DkIEnxqk.js` at 375x812: Learn → the
+    "Transactions: The Building Block" row → the reader's Back button → `document.activeElement` is
+    **BODY**. It was re-run as the negative control *after* the Reference fix landed and still
+    reported BODY, so this is a live defect and not a dead instrument — the same call reported a
+    restored tile one screen over.
+    **Why it was NOT folded into this run's commit, stated rather than implied.** It is the same
+    class but not the same change. (i) The state lives in **`App.jsx`** (`reading`) while the rows
+    live in **`Learn.jsx`**, so the ref map has to cross a component boundary that Reference's and
+    Glossary's did not. (ii) There are **three** close paths, not two — `closeLesson`, `goToTab`'s
+    `setReading(null)`, and `onRoute` from `useDeepLink` — and only the first is a function this
+    could hang a recorder on. (iii) ⚠️ **The real decision, and it is a product one:** `closeLesson`
+    calls `scrollTop()`, so restoring focus to a row deep in a 44-lesson path would scroll it back
+    into view and **undo that scroll for sighted users too**. `focus({preventScroll: true})` avoids
+    that and buys the opposite defect — a focus ring parked off-screen. Reference has no such
+    tension (its close does not scroll, and five tiles are always within the first viewport), which
+    is exactly why that half was separable and this one is not.
+    **A fourth thing to get right when it is picked:** `LessonReader` takes `onNavigate={setReading}`,
+    so a learner can walk to a different lesson and close from there. The row to restore is the
+    lesson open **at close time**, not the one first clicked.
+    ⛔ **Reuse the guard, do not re-derive it.** `Reference.jsx`'s effect restores only when
+    `document.activeElement` has actually fallen to `body`/`documentElement`. Without it a tab
+    re-tap steals focus off the nav tab button — measured, and it is why that guard exists.
+    **W-6.2 rule 3, answered:** "a keyboard or screen-reader learner who closes a lesson is returned
+    to the top of the document instead of to the lesson they were reading." **Honest priority:
+    medium** — it is the main path, and it is the last site of a class whose other two are closed.
+    ⚠️ **W-6.2 rule 1: this is a residual of THIS run. The next scheduled run may not take it as its
+    headline pick by default** — file it, do not turn around and pick it.
+
 172. **✅ DONE 2026-09-08 (scheduled dev-agent), the day it was found** — filed in conclusion form
     per W-7.2 rule 1; the measurements are in this date's seventh run-log entry. **What was true:**
     tapping the tab you are already standing on returned you to that tab's root on **Learn only**.
@@ -6254,5 +6285,103 @@ saying otherwise would have been wrong: `check-log-size.mjs` counts the priority
 backlog region, so this run's two W-5.3 annotations land there. Measured after this entry:
 **421,918 b**, which is **3,555 b under** W-7.2 rule 5's 425,473 b baseline for 2026-09-13. The floor
 moved for the same reason — the archiving MOVE takes 0 b out of it, W-5.3's own point.
+
+**Schedule:** the cron is the owner's lever and was not read, compared or touched.
+
+### 2026-09-08 (scheduled dev-agent; W-6.2 rule 1 free — the previous run was owner-directed and filed no residual, so this pick came from the code surface rather than from a chain) — the Reference hub dropped focus to `<body>` every time a learner closed a section, and the run that fixed the identical bug one level down had written the words "the identical gap one level up" and walked past it
+
+**The pick, and it is a deferral being collected rather than a discovery.** Grepping `src/` for
+focus-restore call sites returned exactly one — `Glossary.jsx`'s `rowRefs`/`returnFocusTerm` pair.
+Its own header comment says the open direction is handled "app-wide (LessonReader, TermDetail
+itself); the close direction wasn't." The run that built it (archived entry, `Glossary.jsx` +23/−2)
+closes with: *"Scoped to this file on purpose: `Reference.jsx`'s hub↔section navigation has the
+identical gap one level up, but that file is one of the 26 owner-dirty ones."* **The constraint was
+the owner's working tree on that day, and it is gone** — `Reference.jsx` is tracked and clean, and
+`git status` this run shows only `Migration/` and `UIUX/` untracked, both the owner's.
+
+**Step 3.5 — premise re-measured live, with a control that fires, before anything was edited.**
+Built `dist/`, served it on `127.0.0.1:8871` (404 control fired on a nonexistent path), Browser pane
+resized to 375x812 and confirmed non-zero. Every reading below is a direct `javascript_tool` read of
+`document.activeElement`, one action per call, never in the same call as the click.
+- **Control (known-good, and the reason a negative below is readable):** Reference › Glossary › the
+  *Gross Domestic Product* row › Back → `activeElement` is the `<div role="button"
+  aria-label="Gross Domestic Product">` row. **The instrument can see a restore when one happens.**
+- **Case A, the pick:** Reference hub › Glossary tile › the section's Back → **BODY**.
+- **Case B:** Learn › a lesson row › the reader's Back → **BODY**. Same class, different owner — see
+  item 173, filed rather than folded in.
+Open-direction focus was correct at every one of the three sites, exactly as the log already said.
+
+**What shipped — 2 files, +55/−5, and not one string a learner can read.**
+1. **`components/ui.jsx`** — `Tile` becomes `forwardRef`. This is the idiom already in the file:
+   `Button` is `forwardRef` for the same stated reason ("needs a real node to call .focus() on"),
+   and `Tile` has exactly **one** call site, so the blast radius is the file being fixed. React here
+   is **18.3.1**, checked rather than assumed — `ref` is not a plain prop, so it does not reach the
+   `<button>` through the existing `...rest` spread.
+2. **`screens/Reference.jsx`** — a `tileRefs` map, a `returnFocusSection` state, and one
+   `closeSection` that both the on-screen Back button and `useDismissOnBack` now run, so the restore
+   fires whichever way the section closes. Same shape as `Glossary.jsx`, one level up.
+
+**⭐ The adversarial pass found a real regression in my own first version, and it is the part worth
+keeping.** Restoring unconditionally made the fix **steal focus**: re-tapping the already-selected
+Reference tab drains the same dismiss stack (`dismissAllPushed`, `DECISIONS.md` 2026-09-08), and
+that gesture has focus sitting on the **nav tab button** — measured, `activeElement` went from the
+tab button up into the tile grid, costing a keyboard user their place in the tab bar. **The defect
+was never "a section closed"; it is "the node holding focus was unmounted and focus fell to
+`<body>`."** So the effect now restores only when `activeElement` is `body`/`documentElement`/null.
+That keys on the invariant instead of on the gesture, which is what makes the boundary case come out
+right: a tab re-tap **with focus inside the section** (in the glossary search box) *does* restore,
+because there focus genuinely fell. Both halves of that one gesture were measured. It also keeps
+`DECISIONS.md`'s "Back and the re-tap stay different gestures on purpose" true in the focus
+dimension, which was luck the first time and is now intentional.
+
+**Verification, in the form a reviewer can re-run.** Final bundle **`index-DkIEnxqk.js`**, confirmed
+served by reading `script[src]` off the page before each measurement (the documented
+`http.server`-caching trap), viewport 375x812.
+| gesture | before | after |
+|---|---|---|
+| section, on-screen Back | BODY | **Glossary tile** |
+| section, browser Back (`history.back()`) | BODY | **Sector performance tile** |
+| section, tab re-tap, focus on nav tab | tab button | **tab button (unchanged — the guard)** |
+| section, tab re-tap, focus in search box | BODY | **Glossary tile** |
+| nested: term › Back › Back | row, then BODY | **row, then Glossary tile** |
+| **lesson reader Back (untouched)** | BODY | **BODY** |
+Per-tile keying is measured, not assumed: About restored to About and Sectors to Sectors, so nothing
+is hardcoded to the first tile. `location.hash` stayed `#/reference` throughout — no route added,
+which is what `DECISIONS.md` and `deepLink.js`'s header both require.
+`npm test` **exit 0** (read from `$?` on an unpiped run — `${PIPESTATUS[0]}` is a bashism and this
+shell is zsh, where it silently reads as empty), **4 warnings, the documented baseline set**:
+review coverage, translation completeness, quiz option-length cue, log floor. `npm run build` exit
+**0**, `npm run check-blindspot` exit **0**.
+
+#### Step 5 — adversarial self-check
+**Blindspot register: nothing found, and proved directly rather than by an exit code.** Filtering the
+diff to added lines that are neither comment nor blank leaves **21 lines and zero string literals** —
+there is no learner-facing copy in this change to regress. No Dalio reference, no advice-adjacent
+language, no disclaimer touched (`Reference.jsx`'s `<Disclaimer>` on the hub is untouched and still
+renders), no kids framing, no date string, no market figure. `check-blindspot` exit 0 as well.
+**DECISIONS.md conflict: none, checked against the three entries that could have collided.** No route
+and no hash added (measured, not reasoned — the hash stayed `#/reference` through every step), so the
+"sub-nav is deliberately unrouted" decision holds; **no new `useDismissOnBack` call site** — the
+existing one now takes a named callback instead of an inline arrow, so the recorded port cost of
+"three one-line hook calls" is unchanged; no `localStorage` and no persistence of any kind (a ref map
+and one piece of in-memory state).
+**Already-done backlog item: no, and this is the one to be careful about.** It is the *same class* as
+the archived `Glossary.jsx` fix and deliberately reuses its shape — but that run fixed **term rows
+inside** the glossary and named this hub as explicitly not done. The nested control above shows both
+now firing in sequence, which is what a duplicate could not produce.
+**My own verification claim, weakest part first.**
+⚠️ **(1) The "before" column of the table is from the pre-fix bundle (`index-CVin1QBJ.js`) and the
+"after" from `index-DkIEnxqk.js` — two builds, not a single reversible experiment.** I did not build
+a pre-fix tree on a second port the way the archived Glossary run did. What carries the weight
+instead is the **in-session negative control**: the lesson-reader row still reports BODY on the
+*final* bundle, so the instrument was still capable of reporting failure at the moment it reported
+success for Reference. That is weaker than a two-port A/B and is stated as such.
+⚠️ **(2) The tab-re-tap regression was found by measurement and not by reading.** My first version
+read correctly and shipped a focus theft; had I not driven that gesture I would have committed it and
+described it as a pure improvement. The row is in the table because the check earned its place.
+(3) The `activeElement` reads and the exit codes are reproducible from the commands above.
+**Backlog:** no item closed (this collected a deferral recorded in a run-log entry, not a numbered
+item); **one opened — item 173**, the lesson-reader half, with the scroll-vs-focus-ring tension named
+and W-6.2 rule 1 flagged against picking it next.
 
 **Schedule:** the cron is the owner's lever and was not read, compared or touched.

@@ -29,9 +29,20 @@
 // than kept as decoration — the tiles are plain buttons, and opening one moves
 // focus to the detail's heading, the same pattern LessonReader and TermDetail
 // already use for a pushed view.
+//
+// CLOSING it restores focus to the tile that was opened. Without that the
+// browser drops focus to <body> when the section unmounts the Back button that
+// had it, so a keyboard or screen-reader user backing out of Glossary lands at
+// the top of the document instead of on the "Glossary" tile — measured on the
+// built app, `document.activeElement` was BODY. `reference/Glossary.jsx`
+// already does this one level down for its term rows; the run that built it
+// named this hub as having "the identical gap one level up" and deliberately
+// left it, because Reference.jsx was owner-dirty that day. Both close paths
+// (the on-screen button and Back, via useDismissOnBack) run `closeSection` so
+// the restore fires either way.
 // ═══════════════════════════════════════════════════════════════════════════
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Icon from "../components/Icon.jsx";
 import { Disclaimer, Text, Tile, TileGrid } from "../components/ui.jsx";
 import { useDismissOnBack } from "../lib/deepLink.js";
@@ -46,17 +57,48 @@ export default function Reference({ t, lang, fontScale, setFontScale, themeMode,
   // null = the hub itself. Every other value is a pushed section.
   const [section, setSection] = useState(null);
   const headingRef = useRef(null);
+  const tileRefs = useRef({});
+  const [returnFocusSection, setReturnFocusSection] = useState(null);
+
+  // The one close path. Recording the section before clearing it is what lets
+  // the effect below find the tile again after the hub re-renders. Reading
+  // `section` from the closure rather than from a `setSection` updater keeps
+  // that updater pure — `useDismissOnBack` re-reads this callback on every
+  // render, so it never goes stale.
+  const closeSection = useCallback(() => {
+    if (section !== null) setReturnFocusSection(section);
+    setSection(null);
+  }, [section]);
 
   // A pushed section is navigation the learner can see, so Back closes it
   // rather than leaving the tab (lib/deepLink.js, "pushed views that are not
   // routes").
-  useDismissOnBack(section !== null, () => setSection(null));
+  useDismissOnBack(section !== null, closeSection);
 
   useEffect(() => {
     if (!section) return;
     window.scrollTo({ top: 0 });
     headingRef.current?.focus();
   }, [section]);
+
+  // Post-commit, so the tile exists to receive focus.
+  //
+  // Only when focus actually FELL, which is the whole defect: removing the
+  // focused node drops focus to <body>, and React has already committed that
+  // removal by the time a passive effect runs. Closing from somewhere outside
+  // the section leaves focus on a live control instead — re-tapping the
+  // already-selected Reference tab runs this same close path (deepLink.js's
+  // `dismissAllPushed`) with focus sitting on the nav tab button, and stealing
+  // it up into the tile grid would cost that learner their place in the tab
+  // bar. Measured both ways on the built app.
+  useEffect(() => {
+    if (section !== null || !returnFocusSection) return;
+    const active = document.activeElement;
+    if (active === null || active === document.body || active === document.documentElement) {
+      tileRefs.current[returnFocusSection]?.focus();
+    }
+    setReturnFocusSection(null);
+  }, [section, returnFocusSection]);
 
   const sections = {
     glossary: {
@@ -94,7 +136,7 @@ export default function Reference({ t, lang, fontScale, setFontScale, themeMode,
       <div>
         <button
           type="button"
-          onClick={() => setSection(null)}
+          onClick={closeSection}
           style={{
             display: "inline-flex", alignItems: "center", gap: space["2"],
             background: "none", border: "none", padding: `${space["2"]}px 0`,
@@ -137,6 +179,7 @@ export default function Reference({ t, lang, fontScale, setFontScale, themeMode,
         {Object.entries(sections).map(([key, s]) => (
           <Tile
             key={key}
+            ref={(el) => { tileRefs.current[key] = el; }}
             icon={s.icon}
             label={s.label}
             sublabel={s.blurb}
