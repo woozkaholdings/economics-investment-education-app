@@ -662,8 +662,18 @@ it, build the smallest test this week. Never sit in ambiguity longer than a week
   branch can bypass). **The guard was green the entire time and is not at fault: it greps for the
   string, and a grep cannot see which branch the string is in — a check for that is a parser, not a
   regex.** So this list stays a list of screens, and the standing rule that reads it must be applied
-  to states. One instance is still open: Practice renders it on the queue overview and not inside a
-  started session (AGENT_LOG.md item 170 — a product call, not a plain defect).
+  to states.
+  ✅ **BOTH INSTANCES CLOSED 2026-09-08, and the class is now swept rather than assumed.** The second
+  was Practice: the disclaimer rendered on the queue overview and on none of the three states inside
+  a started session — the question runner, the batch pause and the completion card — i.e. for the
+  whole of a review. It was fixed the same structural way, and the option to accept the runner as
+  deliberately chrome-free was **declined on a measurement**: `LessonReader` renders the same
+  `components/Question.jsx` with the disclaimer directly beneath it, so the end-of-lesson check
+  already showed the notice under a quiz and the review of that same question did not. **The other
+  six surfaces were then checked rather than presumed clean:** each has exactly one top-level
+  `return` in its component, so no branch can skip the string. Re-derive that with
+  `awk`-over-`return`-lines between the component's `export default function` and its `t.disclaimer`
+  line, not by reading.
 - **10.2 Dalio dependency** — *closed 2026-08-01.* No name-brand framing, no direct quotes, anywhere
   in the app or its marketing. Credit belongs in an acknowledgments line, not the product.
   *(v1's own §1 violated this; corrected in v2.)*

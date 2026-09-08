@@ -1814,29 +1814,24 @@ instead of hand-rolling an eighth mover. A working one is in this run's scratchp
       stand; the coverage did not.** `A11yStates.coverage()` plus the Tab step now in the header
       recipe are the fix — see item 149.
 
-170. **[UX/Product — filed 2026-09-08 by the run that fixed the same class on `Sectors.jsx`, as the
-    ONE instance it deliberately did not fold into that commit, because this one is a decision and
-    that one was not.] Practice renders the §10.1 disclaimer on the queue overview and NOT inside a
-    started session.** Measured live on the built app, `en`, 320px, with `t.disclaimer` as the probe
-    string: the Review landing contains it; the moment `Practice all questions` is pressed, it is
-    gone, and it stays gone through the in-session question, the batch pause and the completion card.
-    Mechanism is the same shape `Sectors.jsx` had — `Practice.jsx`'s `if (session)` block has three
-    `return`s ahead of the queue-overview return that carries the string at line 697 — and
-    `check-blindspot.mjs` is green on all of it, for the reason recorded in LAUNCH_PLAN.md §10.1: it
-    greps for the string and cannot see which branch the string is in.
-    ⚠️ **Why this was NOT fixed with the other one.** The session view is a deliberate full-screen
-    runner (UIUX/ Quizlet reference, close control + counter + progress bar), and a legal footer
-    under a live quiz question is a product change, not a repair. `Sectors.jsx` needed no decision:
-    the whole screen is market figures, and its disclaimer-less state becomes the DEFAULT for every
-    visitor whenever the daily file stops reaching the live host (O-5). This one has three honest
-    options — (a) render it in the session states too, (b) render it once at the batch pause and
-    completion card only, where the learner is reading rather than answering, (c) accept the runner
-    as chrome-free and say so in §10.1 so the register stops implying otherwise.
-    **W-6.2 rule 3, answered:** "a learner answering questions about markets and investing is shown
-    no 'not personalized advice' notice for the whole session." **No check is proposed** — the
-    statically decidable form is the parser §10.1 already rules out, and `scripts/` is at 2.27x
-    `src/` (W-6.3, measured 2026-09-08). **Honest priority: medium, and it is an owner call, not a
-    trimmer's.**
+170. **✅ DONE 2026-09-08 (owner-directed: "do item 170 next"), the day it was filed** — replaced by
+    its conclusion per W-7.2 rule 1; the measurements are in this date's second run-log entry.
+    **What was true:** `Practice.jsx` rendered the §10.1 disclaimer once, at the foot of the queue
+    overview, behind the three `return`s inside `if (session)` — so it was gone from the moment
+    "Practice all questions" was pressed, through the question runner, the batch pause and the
+    completion card. Re-measured before editing, with the landing as the control: landing ✅ ×1,
+    all three session states ❌. **What is true now:** one `<Disclaimer>` in the file inside a local
+    `ScreenFrame`, all four returns through it, all four states verified ✅ ×1 on the built app.
+    ⭐ **The item offered three options and the choice was made on a measurement, not a preference.**
+    Option (c) was to accept the runner as deliberately chrome-free; it lost because `LessonReader`
+    renders the **same `components/Question.jsx`** with `<Disclaimer>` directly beneath it — the app
+    had already decided that a quiz question carries the notice, and the only open question was
+    whether its two screens agree. Option (b) (pause and completion card only) would have left the
+    runner disagreeing with the lesson reader over the identical question.
+    ⛔ **The class is CLOSED at two instances and that is swept, not assumed** — the other six §10.1
+    surfaces each have exactly one top-level `return` in their component, so no branch can skip the
+    string. `App.jsx`'s is in `FirstRunNotice`, defined above the default export; the awk recipe is
+    in LAUNCH_PLAN.md §10.1. **Do not re-run this sweep.**
 
 168. **✅ DONE 2026-09-06 (scheduled dev-agent), the same run it was found — content and guard in one
     commit. [Content/QA] A same-track cross-reference that points FORWARD is a pointer at a LOCKED
@@ -7427,6 +7422,105 @@ branch can bypass.
 **Backlog bytes (W-7.2 rule 1):** nothing closed this run, so nothing was replaced by a conclusion;
 item 170 is new and costs **+2,161 b**, measured by `check-log-size.mjs` and not by my arithmetic —
 the backlog goes **414,428 b → 416,589 b**. This run grew it. It stays **8,884 b under** the
+425,473 b W-7.2 rule 5 measures against.
+
+**Schedule:** the cron is the owner's lever and was not read, compared or touched.
+
+### 2026-09-08 (owner-directed: "do item 170 next", the day it was filed — second entry this date) — The app already decided that a quiz question carries the "not advice" notice; it just decided it on one of the two screens that render the same quiz component
+
+**The pick was the owner's.** Item 170 was filed by my own previous run as the one instance of the
+`Sectors.jsx` class it deliberately did not fold into that commit, because this one needed a decision
+and that one did not. **W-6.2 rule 1 does not bind an owner-directed pick, and it would not have bound
+this one anyway** — it names a run taking its *own previous run's* residual, and the previous run's
+entire argument for filing rather than fixing was that the choice was not a run's to make. The owner
+made it.
+
+**Step 3.5 — the premise reproduces exactly, and the item's own three options do NOT survive contact
+with a measurement it never took.**
+The premise, re-measured on the built app at 320px in `en` with the queue overview as the control and
+`t.disclaimer` as the probe string, each state driven by hand rather than inferred:
+
+| Practice state | how it was reached | disclaimer |
+|---|---|---|
+| queue overview — **control** | `#/practice` | ✅ present ×1 |
+| question runner | pressed "Practice all questions (24)" | ❌ absent |
+| batch pause | answered 10, reached "10 done — nice work / 2 of 10 correct" | ❌ absent |
+| completion card | pool reduced to 2 lessons, answered both, "See Results" | ❌ absent |
+
+Mechanism confirmed in source too: `if (session)` at line 212 holds three `return`s (`atBatchPause`,
+`!item`, and the runner) ahead of the queue-overview return that carried the string. **A fourth state
+that could have been a fourth defect is not one:** `loadFailed` renders `<LoadFailure>` *inside* the
+queue-overview return, so it was always covered.
+
+⭐ **What re-measuring changed: the item framed this as a product call with three options, and one
+measurement settles it.** Item 170's option (c) was to accept the runner as deliberately chrome-free
+and record that in §10.1. **`LessonReader` and `Practice` import and render the SAME
+`components/Question.jsx`** — measured, both files, line 22/29 — and `LessonReader` puts
+`<Disclaimer>` directly beneath it. Read live: the end-of-lesson check ends *"…Stock prices |
+Educational content only — …| Next Lesson"*. **So the app had already decided that a quiz question
+carries the notice; the only open question was whether its two screens agree about the same
+question.** (c) would have shipped that disagreement deliberately, and (b) — pause and completion card
+only — would have left the runner as the one place the disagreement lives. **Option (a), uniform.**
+
+**What shipped: one file in `src/`, 45 insertions / 10 deletions.** `Practice.jsx` gains a local
+`ScreenFrame` and its four returns pass through it, so the file holds exactly one `<Disclaimer>` —
+the same structural shape `Sectors.jsx` took this morning, deliberately, so the two read as one rule
+rather than two patches. **All four states re-measured after the build: ✅ present, count 1, in every
+one.** Order checked too, because a footer can bury an action: in the answered runner the `Next`
+button is at y=584 and the disclaimer at y=628, so nothing moved below the control.
+
+⛔ **The other six §10.1 surfaces were then SWEPT rather than presumed clean, and this is the part
+worth keeping.** Between each component's `export default function` and its `t.disclaimer` line,
+`Learn`, `LessonReader`, `Reference`, `MarketSignals`, `Settings` and `App` have **exactly one**
+top-level `return` each — one component, one return, nothing to skip. `App.jsx`'s hit is in
+`FirstRunNotice`, a single-return modal defined above the default export, which is why its disclaimer
+line (130) precedes its component line (237) and why a naive line-order reading would have flagged it.
+**The class is closed at two instances; the recipe is written into LAUNCH_PLAN.md §10.1 so nobody
+re-runs it.**
+
+**Layout re-checked, because the fix adds a node to three branches that had none:** the runner swept
+in `ja` at 320px/200% — `textOverflow` 39 scanned / 0 findings, `horizontalOverflow` 0,
+`smallTargets` 0, `headingOrder` clean — with the `textOverflow`, `horizontalOverflow`,
+`smallTargets` and `headingOrder` controls all re-fired in that same context, `plantsRemoved: true`,
+`appFindingsAfterCleanup: 0`.
+
+**W-6.3's ratio, re-measured this run rather than quoted:** `scripts/` **21,067** lines vs app code
+(`src/` minus `content/`+`locales/`) **9,324** — **2.26x**, down from the **2.27x** measured earlier
+today. `scripts/` +0, `src/` +35. **Two consecutive runs have now moved it the right way**, both by
+fixing the app.
+
+#### Step 5 — adversarial self-check
+**Blindspot register: this change is IN §10.1 and closes its second instance rather than opening
+anything.** No lesson, quiz, glossary or market prose changed — the only string rendered is the
+existing `t.disclaimer`, in more states. No Dalio-adjacent content (§10.2), no child-facing framing
+(§10.3); the diff contains neither. The Markets-tab class: **the dates in the new comment are code
+comments recording measurements, not a date rendered to a learner** — this screen renders no date at
+all. `npm run check-blindspot` **exit 0**, read from `$?`, and it IS evidence here because the diff is
+under `src/`, which is what that script scans.
+**DECISIONS.md conflict: none, and I checked the two it could have been.** `localStorage`-only state
+is untouched — `ScreenFrame` is presentational and reads nothing. Item 12's port-cost rule is not
+engaged: `ScreenFrame` is a local function component, nothing was added to `components/`, and no
+dependency appeared. The Leitner scheduler, `review.js` and the session state machine are byte-for-byte
+unchanged; only four JSX wrappers moved.
+**Already-done: no** — item 170 is one run old and this is its first implementation; `grep -c
+"ScreenFrame"` over `AGENT_LOG.md` returns hits only from today's two entries.
+**A trap I could have walked into and did not:** the obvious edit is to append `<Disclaimer>` to each
+of the four returns. That ships four copies of the string, and `check-blindspot`'s regex would have
+been just as green about four as about one — the same instrument that could not see the defect cannot
+see that shape either. One frame, one string, four call sites.
+**My own verification claim, weakest part first:** ⚠️ **the four-row before/after table is a reading
+of a rendering, and an independent reviewer cannot reproduce it from a command list** — it needs a
+build, a static serve of `dist/`, a browser pane and roughly a dozen scripted clicks per row. ⚠️ **And
+one row is weaker than the others: the completion card was reached by shrinking the pool to two
+lessons rather than by finishing all 24**, which is a different route to the same `!item` branch, and
+I am recording that rather than implying I answered twenty-four questions. What reproduces exactly,
+from exit codes and not from grep counts: `npm test` **exit 0, 0 failures, 4 warnings**, `npm run
+build` **exit 0**, `npm run check-blindspot` **exit 0**. ⚠️ **And the same sentence as this morning
+still holds and is still the point: `check-blindspot` printed the identical green line before this
+change and after it.**
+**Backlog bytes (W-7.2 rule 1):** item 170 closed and was replaced by its conclusion rather than
+annotated with one — **2,143 b → 1,709 b, −434 b**. Measured by `check-log-size.mjs` and not by my
+arithmetic: the backlog goes **416,589 b → 416,162 b, −427 b.** It stays **9,311 b under** the
 425,473 b W-7.2 rule 5 measures against.
 
 **Schedule:** the cron is the owner's lever and was not read, compared or touched.

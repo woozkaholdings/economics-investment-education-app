@@ -37,6 +37,43 @@ import { graph, ink, line, MIN_TAP, radius, space, surface } from "../theme.js";
 // the learner has to either finish or abandon mid-question.
 const BATCH_SIZE = 10;
 
+// ═══════════════════════════════════════════════════════════════════════════
+// The §10.1 disclaimer is a property of THIS SCREEN, not of one of its states.
+// Same rule and same shape as `screens/reference/Sectors.jsx`, and the second
+// of the two instances that fix found (backlog item 170).
+//
+// Until 2026-09-08 the string was rendered once, at the foot of the queue
+// overview, behind the three `return`s inside `if (session)`. Measured on the
+// built app at 320px, `en`, with `t.disclaimer` as the probe: the Review
+// landing carries it, and it is gone from the moment "Practice all questions"
+// is pressed — through the question runner, the batch pause and the completion
+// card — i.e. for the whole of a session, which is the entire time the learner
+// is actually answering questions about markets and investing.
+//
+// ⚠️ THE MEASUREMENT THAT DECIDED THIS, because option (c) in item 170 was to
+// accept the runner as deliberately chrome-free and say so in §10.1. The app
+// already answers the question one screen over: `LessonReader` renders the
+// SAME `<Question>` component (both import `components/Question.jsx`) with
+// `<Disclaimer>` directly beneath it, so the end-of-lesson check shows the
+// notice under the options and the review of that same question did not. The
+// choice was never "does a quiz carry the notice" — the app had already made
+// that choice — it was only whether the two screens agree. Uniform wins.
+//
+// ⚠️ `check-blindspot.mjs`'s §10.1 surface check greps this file for the
+// rendered string and was green throughout, for the reason LAUNCH_PLAN.md
+// §10.1 now records: a grep cannot see which branch the string is in. So the
+// fix is structural rather than a new guard — one `<Disclaimer>` in the file,
+// and no return can leave without passing through it.
+// ═══════════════════════════════════════════════════════════════════════════
+function ScreenFrame({ t, children }) {
+  return (
+    <div>
+      {children}
+      <Disclaimer text={t.disclaimer} />
+    </div>
+  );
+}
+
 // "Which lesson did this question come from?" — answered by the lesson's
 // position within its track plus the track's name, never by its raw id.
 //
@@ -243,7 +280,7 @@ export default function Practice({ t, lang, completedLessons, review, recordRevi
       const correctCount = results.filter((r) => r.correct).length;
       const anyLanded = correctCount > 0;
       return (
-        <div>
+        <ScreenFrame t={t}>
           <Text as="h1" variant="display" color={ink.strong}>{t.reviewTitle}</Text>
           <Card style={{ marginTop: space["5"], textAlign: "center" }}>
             <div style={{ display: "flex", justifyContent: "center", color: anyLanded ? ink.ok : ink.muted, marginBottom: space["3"] }}>
@@ -275,7 +312,7 @@ export default function Practice({ t, lang, completedLessons, review, recordRevi
           >
             {t.reviewStopHere}
           </Button>
-        </div>
+        </ScreenFrame>
       );
     }
 
@@ -283,7 +320,7 @@ export default function Practice({ t, lang, completedLessons, review, recordRevi
       const correctCount = results.filter((r) => r.correct).length;
       const anyLanded = correctCount > 0;
       return (
-        <div>
+        <ScreenFrame t={t}>
           <Text as="h1" variant="display" color={ink.strong}>{t.reviewTitle}</Text>
           <Card style={{ marginTop: space["5"], textAlign: "center" }}>
             <div style={{ display: "flex", justifyContent: "center", color: anyLanded ? ink.ok : ink.muted, marginBottom: space["3"] }}>
@@ -349,12 +386,12 @@ export default function Practice({ t, lang, completedLessons, review, recordRevi
           <Button full variant="outline" onClick={exit} style={{ marginTop: space["4"] }}>
             {t.doneLabel}
           </Button>
-        </div>
+        </ScreenFrame>
       );
     }
 
     return (
-      <div>
+      <ScreenFrame t={t}>
         {/* Runner chrome from UIUX/ (Quizlet iOS Screens 4): a close control,
             the position counter centered between it and the lesson tag, and the
             progress bar directly under them. The close button is the part that
@@ -461,13 +498,13 @@ export default function Practice({ t, lang, completedLessons, review, recordRevi
             {last ? t.quizFinish : t.quizNext}
           </Button>
         )}
-      </div>
+      </ScreenFrame>
     );
   }
 
   // ── queue overview ──────────────────────────────────────────────────────
   return (
-    <div>
+    <ScreenFrame t={t}>
       <Text as="h1" variant="display" color={ink.strong}>{t.reviewTitle}</Text>
 
       {due.length > 0 ? (
@@ -693,8 +730,6 @@ export default function Practice({ t, lang, completedLessons, review, recordRevi
           doneLabel={t.howReviewStepDone}
         />
       </section>
-
-      <Disclaimer text={t.disclaimer} />
-    </div>
+    </ScreenFrame>
   );
 }
