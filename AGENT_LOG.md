@@ -7524,3 +7524,95 @@ arithmetic: the backlog goes **416,589 b → 416,162 b, −427 b.** It stays **9
 425,473 b W-7.2 rule 5 measures against.
 
 **Schedule:** the cron is the owner's lever and was not read, compared or touched.
+
+### 2026-09-08 (owner-directed: "fix the strings" — third entry this date) — A verdict line that named a retired vendor and credited a strip that never ran, replaced by one that reports what it actually stripped
+
+**The pick was the owner's**, from a finding my 2026-09-08 run reported and deliberately did not act
+on ("a different item's scope"). `check-deployed.mjs` printed *"identical apart from Netlify's
+injected tags"* / *"differs beyond Netlify's injected tags"* against a GitHub Pages site, one day
+after Netlify was retired.
+
+**Step 3.5 — the premise held and grew a second defect.** The claim to re-measure was "the code is
+right and only the two verdict strings are stale."
+- **The filters are inert against this host — measured, not inferred.** Against the live canonical
+  `index.html` (4,625 b, fetched this run) the netlify-comment filter removes **0 b** and the
+  hosting-`<meta>` filter removes **0 b**.
+- **Control, run before the zero was believed:** Netlify's own shape — its three-line comment and
+  its two `<meta name="hosting-provider"/"netlify-deploy">` tags — planted before `</head>` fires
+  them at **52 b** and **100 b**. **So the filters are inert HERE and are not broken**, which is the
+  distinction the old comment was reaching for and the verdict string was not.
+- ⚠️ **What the item did not say, found on the way: the comment block above the filter opened
+  TWICE.** Two `// index.html, modulo the tags the host injects.` lines, four lines apart — the
+  2026-09-07 host migration prepended a new header without removing the old one. Fixed here; it is
+  the same accretion shape W-7.2 describes, one file over.
+
+**What shipped (two files, no `src/` change, 40 insertions / 13 deletions).**
+1. `stripInjected` split into `stripHostTags` (the two host filters) + the blank-line/trim
+   normalization, **so the byte count and the comparison read the same definition** rather than
+   keeping two copies of one regex pair.
+2. The verdict reports `hostTagBytes`, measured per run: `apart from N b of host-injected tags` when
+   the host injects, `with nothing to strip — this host injects no tags` when it does not. ⭐ **No
+   host is named in either branch.** The point is not that "Netlify" was the wrong word — it is that
+   a hardcoded claim about the host goes stale exactly the way a hardcoded claim about the machine
+   does, which this repo has now written down for Node, for the App summary's counts, and here.
+3. `README.md` § check-deployed said the same stale thing in prose ("modulo the one comment and two
+   `<meta>` tags Netlify injects") and now carries the measurement and the control's numbers.
+
+**Branches exercised, and one is NOT.**
+- **red / `=== 0`** — live, end to end: `✗ index.html — differs (4625 b live vs 4625 b local),
+  compared with nothing to strip — this host injects no tags`.
+- **green / `=== 0`** — live, end to end, by making the fixture genuinely in-sync: the live
+  `index.html` **and** the live entry bundle `index-Ddd60uv_.js` (267,686 b, fetched) copied into
+  `dist/`, which took the whole check to `✓ byte-identical` and printed
+  `✓ index.html — identical, with nothing to strip — this host injects no tags`. `dist/` was rebuilt
+  afterwards and re-verified (`cmp dist/data/market.json public/data/market.json`, entry back to
+  `index-BX9VoYlv.js`).
+- ⛔ **green / `> 0` — EXPRESSION ONLY, wiring unexercised, and I am not claiming otherwise.**
+  It needs a live host that injects. I built one (a copy of `dist/` with Netlify's tags planted,
+  served on 127.0.0.1:8812) and it could not be reached: **the README canonical-URL parser matches
+  `<https://…>` only**, so a local `http://` origin is skipped. The two definitions were therefore
+  evaluated directly against that same planted document — `apart from 152 b of host-injected tags`
+  — with the real canonical document as the negative control in the same run.
+  ⚠️ **And the failed attempt is worth recording rather than deleting:** with the canonical line
+  malformed, the parser silently took the next `https://` URL in § Deploying — `app.netlify.com/drop`
+  — and ran against it. It **refused a verdict** (`⛔ NO VERDICT`, the 404 control returned 200), so
+  no wrong answer was produced, and `check-data.mjs` §38 pins that line anyway, so this is not an
+  open hole. It is a note about how the fallback behaves, not an item.
+- **`--self-test` exit 0 both before and after**, which is the control that says the strip is still
+  complete after being split in two.
+
+**W-6.3's ratio, re-measured this run rather than quoted:** `scripts/` **21,091** lines vs app code
+**9,324** — **2.26x**, unchanged at two decimal places from earlier today. ⚠️ `scripts/` **+24**,
+`src/` **0**, so this run moves it the wrong way and the two runs before it moved it the right way.
+The honest defense is not the size: it is that the change **deletes a false sentence** from output an
+owner reads, and the deletion is what was asked for.
+
+#### Step 5 — adversarial self-check
+⛔ **`npm run check-blindspot` exit 0 is NOT evidence about this change, and quoting it as if it were
+is a mistake a previous run of mine made.** It scans `src/`, `README.md`, `index.html` and the v5
+prototype — so its green **does** cover `README.md` here, and does **not** cover
+`scripts/check-deployed.mjs`. `git diff --name-only` returns those two files; no string in the script
+half can reach a learner, and the README half is covered by the guard.
+**Blindspot register: nothing found.** No lesson, quiz, glossary or market copy; no §10.1 disclaimer
+surface (the two `ScreenFrame` fixes earlier today are untouched); no §10.2 name; no §10.3 framing.
+The `2026-09-08` dates I wrote are code comments recording measurements, not a learner-facing date.
+**DECISIONS.md conflict: none.** Hosting is the one it touches and the change does not move it:
+GitHub Pages stays canonical, the Netlify-shaped filters are **kept** rather than deleted, and the
+decision that origins are declared in `README.md` and never as a literal in a script is the reason
+this fix reports a number instead of hardcoding a host name.
+**Already-done: no.** The finding was filed as prose in the 2026-09-08 item-74 entry and no run has
+acted on it; `grep -c "hostTagBytes"` over `AGENT_LOG.md` and `DECISIONS.md` returns 0 and 0.
+**A change I could have made and deliberately did not:** delete the two filters, since they strip
+nothing today. That would be the same mistake in the other direction — the control proves they work,
+and the next host that injects would need them written from scratch by someone who no longer has the
+Netlify document to look at.
+**My own verification claim, weakest part first:** ⚠️ **the `> 0` branch's wiring is unexercised**,
+stated above rather than smoothed over, and the green branch was exercised against a fixture I
+assembled from the live site rather than against a genuinely in-sync deploy — which does not exist
+yet, because the two commits before this one are unpushed. Reproducible from exit codes, not grep
+counts: `npm test` **exit 0, 0 failures, 4 warnings**, `check-deployed --self-test` **exit 0**,
+`npm run check-deployed` **exit 1** (unchanged, and for two reasons that predate this change: the
+canonical site serves `14da22d` while HEAD is ahead, and the retired Netlify origin still answers).
+**Backlog bytes:** no item opened or closed; this entry is run-log, which archiving can move.
+
+**Schedule:** the cron is the owner's lever and was not read, compared or touched.

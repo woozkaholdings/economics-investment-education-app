@@ -515,14 +515,24 @@ for (const rel of unhashed.sort()) {
   }
 }
 
-// index.html, modulo the tags the host injects. ⚠️ Netlify was retired
-// 2026-09-07 and GitHub Pages injects NOTHING, so the two filters below
-// now match nothing and the comparison is effectively exact. They are kept
-// rather than deleted because they cost one pass and would have to be
-// rewritten from scratch for the next host that does inject; if they ever
-// start stripping something again, the host has changed.
-// index.html, modulo the tags the host injects. README § Deploying documents
-// exactly what those are for Netlify: one HTML comment and two <meta> tags.
+// index.html, modulo the tags the host injects.
+//
+// The two filters below are shaped for NETLIFY — one HTML comment and two
+// <meta> tags, documented in README § Deploying — and Netlify was retired
+// 2026-09-07. They are kept rather than deleted because they cost one pass and
+// would have to be written from scratch for the next host that does inject.
+//
+// ⚠️ THE VERDICT BELOW MUST NOT NAME A HOST, AND THIS IS WHY. It read
+// "identical apart from Netlify's injected tags" for a day after the move to
+// GitHub Pages, which injects nothing — so the line credited a strip that had
+// not happened, in the voice of a measurement, about a vendor no longer in the
+// path. Measured 2026-09-08 against the live canonical document: both filters
+// remove **0 b**, and a planted control (Netlify's own three-line comment and
+// its two <meta> tags, inserted before </head>) fires at 52 b and 100 b — so
+// the filters are inert here and are NOT broken. `hostTagBytes` below reports
+// what was actually stripped, so the sentence stays true through the next host
+// change without anyone editing it. A hardcoded claim about the host goes stale
+// exactly the way a hardcoded claim about the machine does.
 //
 // ⚠️ The comment SPANS THREE LINES. The first version of this filter matched
 // `<!-- .*netlify.* -->` per line and therefore stripped only the two <meta>
@@ -532,11 +542,18 @@ for (const rel of unhashed.sort()) {
 // completeness of the strip is proved by a control (`--self-test`) rather than
 // asserted. A filter that under-strips turns this guard into a warning nobody
 // reads, which is the failure mode the whole file is written against.
-const stripInjected = (s) =>
+//
+// Split in two so the byte count and the comparison cannot drift apart: they
+// are the same filter, read twice, rather than two copies of one regex pair.
+const stripHostTags = (s) =>
   s
     .replace(/<!--[\s\S]*?-->/g, (c) => (/netlify/i.test(c) ? "" : c))
     .split("\n")
     .filter((l) => !/<meta[^>]+name="(hosting-provider|netlify-deploy)"/.test(l))
+    .join("\n");
+const stripInjected = (s) =>
+  stripHostTags(s)
+    .split("\n")
     .filter((l) => l.trim() !== "")
     .join("\n")
     .trim();
@@ -573,10 +590,17 @@ if (argv.includes("--self-test")) {
 }
 
 const htmlSame = stripInjected(liveHtml) === stripInjected(localHtml);
+// What the strip actually removed from the LIVE document, measured rather than
+// named. Zero on a host that injects nothing; the parenthetical then says so
+// instead of crediting a strip that did not happen.
+const hostTagBytes = liveHtml.length - stripHostTags(liveHtml).length;
+const scope = hostTagBytes > 0
+  ? `apart from ${hostTagBytes} b of host-injected tags`
+  : "with nothing to strip — this host injects no tags";
 say(
   htmlSame
-    ? "     ✓ index.html — identical apart from Netlify's injected tags"
-    : `     ✗ index.html — differs beyond Netlify's injected tags (${liveHtml.length} b live vs ${localHtml.length} b local)`,
+    ? `     ✓ index.html — identical, ${scope}`
+    : `     ✗ index.html — differs (${liveHtml.length} b live vs ${localHtml.length} b local), compared ${scope}`,
 );
 if (!htmlSame) {
   problems.push(

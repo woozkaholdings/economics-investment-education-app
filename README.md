@@ -183,8 +183,11 @@ The check fetches the live site and compares it to `dist/`:
 - **Unhashed `public/` files** (`og-card.png`, `icon.svg`, `index.html`) by sha256. These are
   *not* imported by the entry bundle, so an entry-only check is blind to them — which is
   exactly how the og:image card sat in the repo for a day while every shared link unfurled a
-  text stub. `index.html` is compared modulo the one comment and two `<meta>` tags Netlify
-  injects.
+  text stub. `index.html` is compared modulo whatever the host injects, and the verdict line
+  reports how many bytes that actually was rather than naming a host — **measured 2026-09-08
+  against the canonical site: 0 b, because GitHub Pages injects nothing.** The two filters are
+  shaped for Netlify (one comment, two `<meta>` tags) and are kept for the next host that does
+  inject; a planted control fires them at 52 b and 100 b, so they are inert here and not broken.
 - **`data/market.json`** is reported and never fails the verdict: the owner's daily job
   rewrites it, so it diverges from any build by design, and a guard that goes red every day
   for an expected reason is a warning nobody reads.
