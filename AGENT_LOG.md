@@ -4699,6 +4699,31 @@ instead of hand-rolling an eighth mover. A working one is in this run's scratchp
 
 ## Environment note
 
+⛔ **`git write-tree` can silently produce a PARTIAL tree, because a concurrent run can leave the
+index EMPTY. Verify the tree's file count before `update-ref`.** Happened 2026-09-07 and it produced
+a commit recording **145 deletions** out of 145 tracked files. The sequence: the owner's market-data
+job committed `1dc747a` mid-run, and the index was left with **0 entries**; `git add` of three files
+therefore built an index of exactly three; `git write-tree` faithfully wrote a three-file tree; and
+`commit-tree` recorded everything else as deleted. **Nothing in that chain errors** — each command
+did precisely what it was asked, and `git status` beforehand looked normal because it compares the
+working tree, which was fine.
+**The guard costs one line, and it goes between `write-tree` and `update-ref`:**
+
+```bash
+TREE=$(git write-tree)
+git ls-tree -r "$TREE" --name-only | wc -l     # must match `git ls-files | wc -l` at HEAD
+git diff --stat HEAD "$TREE"                    # must show ONLY your files, and no deletions
+```
+
+**Recovery, if it already happened** (non-destructive — neither command touches a working-tree
+file, and every file is still on disk): `git update-ref refs/heads/main <good-sha>` then
+`git read-tree <good-sha>`. Confirm first with a content-hash comparison rather than by assuming —
+`git rev-parse <good-sha>:<path>` against `git hash-object <path>` for every tracked file said 142
+of 145 identical and the 3 differing were exactly the intended edits. ⚠️ **Both commands may be
+refused by the permission classifier**; that is a stop-and-ask, not something to work around.
+⚠️ **`git commit-tree -F <file>` for anything long** — a heredoc'd message in the command itself
+hits zsh's argument limit ("command too long") and the commit silently does not happen.
+
 **Node: run the script, do not read a claim about the machine.** `scripts/bootstrap-node.sh`
 prints the `bin` directory to put on `PATH` and works on either kind of machine — it uses a system
 Node when one is installed that Vite accepts, and otherwise downloads and caches a pinned v20.18.1
