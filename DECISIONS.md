@@ -9,9 +9,27 @@ Add a new entry when a run makes a choice future work should be able to look up 
 
 ### Expo (React Native) vs. Vite (web-only)
 
-- **Status:** open — owner decision needed. See `AGENT_LOG.md` backlog item 12 (HELD).
-- **What was decided:** the 2026-08-01 scaffolding run built the runnable prototype on
-  **Vite + React, web-only**.
+- **Status:** ✅ **DECIDED 2026-09-07 by the owner, interactively: the app ships on iOS, to the App
+  Store, and the route is Expo / React Native.** Backlog item 12 is unheld. **The web app stays live
+  and current** — it remains the only way to measure `LAUNCH_PLAN.md` §4.3's completion gate before
+  an App Store review, and it is the O-2 analytics path. This entry stays under its original heading
+  because the heading is the question; the answer is Expo.
+  > ⛔ **What was decided is the DESTINATION and the ROUTE, not a schedule and not a migration plan.**
+  > No `src/` file has been migrated on the strength of this line. The two rejected options are
+  > recorded so nobody re-derives them: a **Capacitor** wrapper was rejected for Apple guideline 4.2
+  > (thin web wrappers are routinely rejected) despite being much the fastest to a first build, and a
+  > **native Swift** rewrite was rejected on cost — it is the only option that also discards `lib/`.
+  > **Measured 2026-09-07, and this is the number that made Expo the choice:** `content/` + `locales/`
+  > is **10,569 lines** of plain `.js` data — the whole curriculum, five languages — and it ports
+  > **as-is**. `lib/` is **1,884** and ports with two substitutions (`localStorage` → an RN storage
+  > API, hash routing → navigation). The rewrite is confined to `components/` + `screens/` +
+  > `App.jsx`, **7,345 lines**, carrying 452 inline `style={{}}`, 298 DOM tags, 169 `aria-*`/`role=`
+  > attributes and 51 SVG elements. **`theme.js` is the sharpest single item and is not in that
+  > count's spirit:** it holds no hex at all and exports **34 `var()` references** into `index.css`'s
+  > two palettes — React Native has no CSS custom properties, so the light/dark mechanism the whole
+  > design system rests on has to be rebuilt, not translated.
+- **What was decided (2026-08-01, superseded above):** the scaffolding run built the runnable
+  prototype on **Vite + React, web-only**.
 - **What the launch plan asked for:** **v1** of the plan specified **Expo (React Native)** from week 1,
   so web/iOS/Android share one codebase and the web release (weeks 1–8) is not thrown away when
   app-store builds start (weeks ~9–14). **The current plan does not ask for this** — §0's change table
@@ -25,11 +43,32 @@ Add a new entry when a run makes a choice future work should be able to look up 
 - **Cost of staying on Vite:** every web-only UI change since then (the four-way `App` split, the
   first-session flow, translation cleanup) raises the eventual Expo port cost, since none of it is
   React Native-aware (DOM-only styling, `localStorage` instead of an RN-compatible storage API, etc).
-- **Why still open:** this is a stack choice with real cost either way, not a small technical toggle —
-  the dev agent is instructed not to migrate to Expo on its own initiative and not to deepen the
-  web-only investment beyond already-curated P2 items. Needs the project owner's call.
-- **Revisit when:** before starting any large new web-only UI feature, or whenever the owner is ready
-  to schedule the Expo migration.
+- **Why it was open (settled 2026-09-07):** a stack choice with real cost either way, not a small
+  technical toggle. It needed the owner's call and now has it.
+- ⚠️ **The standing instruction to scheduled runs is NARROWED, not lifted.** "Do not migrate to Expo
+  on your own initiative" still binds: the destination being decided does not authorize a scheduled
+  run to start rewriting the UI layer, which is a multi-week change that cannot be made one
+  two-hour run at a time. **What changes is the other half** — "do not deepen the web-only
+  investment" is now a live cost, not a theoretical one: every new inline `style={{}}` and every new
+  DOM-only component is added to the 7,345-line rewrite. Prefer content, `lib/`, and content-parity
+  work until a migration plan exists.
+- ✅ **No external prerequisite remains, and this is measured rather than assumed.** A **paid Apple
+  Developer Program membership is active and signed in to Xcode** — verified 2026-09-07 via
+  `isFreeProvisioningTeam = 0, teamType = Company`, beside the free `Personal Team` every Apple ID
+  carries. (That day's audit first shipped this as an *open question* on no evidence; the owner
+  corrected it and the correction was then measured. See `AGENT_LOG.md` item 12 and commit `ee18288`
+  — the record of having been wrong is kept deliberately.)
+  ⚠️ **But membership and configured distribution signing are two different facts, and only the
+  first is established.** `security find-identity` showed **one `Apple Development` identity and no
+  `Apple Distribution`** — enough to build and run on a device, not enough to ship. Obtaining a
+  distribution certificate and provisioning profile is a real step and is not done.
+- ⛔ **One owner decision this forces, which no run may make. Blindspot §10.3 (kids content / COPPA)
+  stops being hypothetical**: App Store submission requires an age rating and an answer on whether
+  the app is directed to children. The app ships parent-facing today and is closed on that basis;
+  submission is the moment that has to be decided rather than deferred.
+- **Revisit when:** a costed migration plan exists and is scheduled. **Xcode 26.6 is present on this
+  machine** (measured 2026-09-07, `xcode-select -p` → `/Applications/Xcode.app/Contents/Developer`);
+  that is a fact about *this* host only, and this project is known to span machines.
 
 ### Market data: FRED direct, a swappable equity adapter, and a pluggable relative-strength formula
 

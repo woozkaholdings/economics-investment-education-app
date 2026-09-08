@@ -4551,14 +4551,20 @@ instead of hand-rolling an eighth mover. A working one is in this run's scratchp
     > to `check-data.mjs` collided with concurrent dev-agent runs on 2026-08-16/17, twice forcing a
     > commit to be reconstructed. A standalone file has no such conflict and matches the sibling pattern.
 
-12. **[HELD] Expo vs. Vite** (§2.1) — needs a human call; blocks store release, not the web launch. See
-    `DECISIONS.md`. The dev agent must not migrate to Expo on its own initiative or deepen the web-only
-    investment in a way that raises the eventual port cost beyond what's already committed.
-    ⭐ **Every external prerequisite is now measured present (2026-09-07, owner-directed audit): Mac,
-    Xcode 26.6, 11 simulators, and a paid Apple Developer Program membership signed in to Xcode.** This
-    item is a **pure product decision** — there is nothing left to buy, install or wait for. ⛔ **That
-    does not make it a run's call**; it stays HELD and owner-only, and this note exists so no future run
-    files "we would need an Apple account first" as a reason it cannot be decided.
+12. **✅ DECIDED AND UNHELD 2026-09-07 (owner, interactive): the app ships on iOS to the App Store,
+    via Expo / React Native. The web app stays live and current.** Replaced by its conclusion per
+    W-7.2 rule 1; the full reasoning, the two rejected options and the measured port surface are in
+    `DECISIONS.md` § "Expo (React Native) vs. Vite (web-only)" and in this date's run log.
+    ⛔ **What did NOT change, and a run must not read this as permission.** "Do not migrate to Expo on
+    your own initiative" **still binds** — the rewrite is ~7,345 lines of UI and cannot be done one
+    two-hour run at a time. **What did change:** "do not deepen the web-only investment" is now a
+    measured cost rather than a theoretical one. Every new inline `style={{}}` and DOM-only component
+    joins the rewrite. **Prefer content, `lib/` and content-parity work until a costed migration plan
+    exists** — and that plan is the next thing this item wants, not code.
+    ⚠️ **The one external fact that is NOT settled**, separated from the one that is: the paid Apple
+    Developer Program membership is measured present, but `security find-identity` showed **one
+    `Apple Development` identity and no `Apple Distribution`** — build-and-run on a device, not ship.
+    A distribution certificate and provisioning profile are still real, undone steps.
 19. **[HELD] Genuinely child-facing kids content** (§10.3, reopened 2026-08-04) — a COPPA/store-
     classification decision, not a UI one. The parent-facing framing (closed 2026-08-01) stands until the
     owner decides otherwise; do not change `ParentGuide.jsx`'s framing on this run's own initiative.
@@ -6755,3 +6761,82 @@ nothing else, so a residual chain is available but not required. Open and unpark
 94, 117, 155, 160**. ⚠️ **Also noticed and deliberately not acted on:** items **163** and **167** are
 in the OPEN section with every sub-item closed — W-7.2 rule 1 candidates for whoever does the next
 collapse. O-2 is still the entire critical path.
+
+### 2026-09-07 (owner-directed, interactive: "this app will be on iOS for App Store") — the decision this repo has held open since 2026-08-01 is made, and the measured port surface is why the route is Expo rather than the wrapper that would have shipped fastest
+
+**Not a scheduled pick.** The owner asked whether Netlify was required and whether Xcode was enough,
+and the answer to the second question turned into the §2.1 decision itself.
+
+#### What was actually asked, and the two different answers it needed
+- **"Is Netlify a must?" — no, and the repo was already built for that.** `README.md` § Deploying
+  says GitHub Pages / Cloudflare Pages / Vercel / Netlify "all work unchanged", and there is **no
+  `netlify.toml`, no `vercel.json`, no workflow file** — routing is hash-based, so no host needs the
+  SPA rewrite rule static React deploys usually need, and `base: "./"` lets one `dist/` serve from a
+  domain root or a sub-path unrebuilt. Only `deploy.mjs` / `check-deployed.mjs` are Netlify-bound,
+  and they are bound to the *site*, not to the app.
+- **"Isn't Xcode enough?" — different category, not a cheaper option.** Xcode builds and signs native
+  iOS apps; it hosts nothing. There is no Xcode project, no React Native and no Swift in this tree.
+
+#### The decision
+**iOS, App Store, via Expo / React Native. The web app stays live and current.** Two options were
+put up and rejected, recorded so nobody re-derives them: **Capacitor** (fastest to a first `.ipa`,
+near-zero code change) was rejected for **Apple guideline 4.2** — thin web wrappers are routinely
+rejected — and a **native Swift** rewrite on cost, being the only option that also discards `lib/`.
+The web app stays because it is the **only** way to measure §4.3's completion gate before an App
+Store review, and it is O-2's path.
+
+#### The measurement that chose the route, taken before advising rather than after
+| layer | lines | fate |
+|---|---|---|
+| `content/` + `locales/` — the whole curriculum, five languages | **10,569** | plain `.js` data, ports **as-is** |
+| `lib/` | **1,884** | ports with two substitutions (`localStorage` → RN storage, hash routing → navigation) |
+| `components/` + `screens/` + `App.jsx` | **7,345** | **rewritten** |
+The rewrite layer carries **452** inline `style={{}}`, **298** DOM tags, **169** `aria-*`/`role=`
+attributes and **51** SVG elements. ⭐ **`theme.js` is the sharpest single item and is worse than its
+line count suggests:** it holds no hex at all and exports **34 `var()` references** into `index.css`'s
+two palettes. **React Native has no CSS custom properties**, so the light/dark mechanism the entire
+design system rests on has to be *rebuilt*, not translated — and that mechanism is what
+`check-data.mjs` §28's AA enforcement is written against.
+**Why this is the number that mattered:** the bulk of the product is data, not UI. The 2026-08-18
+product reversal's content work, and every translation phase, survives the port untouched.
+
+#### ⚠️ A correction I made to my own record, in the direction of NOT under-claiming
+Writing this up I first put into `DECISIONS.md` that an Apple Developer Program membership "is
+required" and that *nothing here asserts whether one exists* — reasoning from the 2026-09-07
+memory that an audit had asserted the Apple account on nothing. **That was backwards.** `ee18288`
+shows the audit wrongly filed the account as an **open question**, the owner corrected it
+(*"apple developer account is active in xcode"*), and the correction was then **measured**:
+`isFreeProvisioningTeam = 0, teamType = Company`. Item 12 has said so since. **The lesson is
+symmetrical to the one the log already carries:** "do not assert what you have not measured" does not
+license restating a settled fact as unknown — I would have re-opened a question the owner had already
+closed, and told them to go buy something they already have.
+✅ **The nuance worth keeping, which the same audit found:** `security find-identity` showed **one
+`Apple Development` identity and no `Apple Distribution`**. **Membership and configured distribution
+signing are two different facts** — the first is established, the second is not, and shipping needs
+both.
+
+#### What shipped
+`DECISIONS.md` § "Expo (React Native) vs. Vite (web-only)" — status open → **decided**, with the
+rejected options, the measured port surface, the narrowed standing instruction, and §10.3's
+forced age-rating question. `AGENT_LOG.md` item 12 — **HELD → decided**, replaced by its conclusion
+per W-7.2 rule 1 (the argument lives here and in `DECISIONS.md`, not in the backlog).
+⛔ **No `src/` file was touched.** The destination and route are decided; **no migration has begun**,
+and the next artifact this wants is a costed plan, not code.
+
+#### Step 5 — adversarial self-check
+**Blindspot register:** no content, market figure or date changed — the diff is two documents.
+**§10.3 is the one register entry this decision moves**, and it moves it *toward* the owner, not
+past them: App Store submission forces an age rating and a child-directed answer, and this entry
+records that as owner-only rather than answering it. **DECISIONS.md conflict:** this *is* the
+DECISIONS.md entry; it supersedes its own prior status and contradicts nothing else — `localStorage`-
+only state and `.js`-not-JSON content are unaffected today, though the first is explicitly named as
+one of the two `lib/` substitutions the port will need. **Already-done:** item 12 was HELD, not done;
+this closes it rather than redoing it. **My own verification claim:** the port-surface figures are
+`grep`/`wc` counts over `src/`, re-runnable verbatim; the Apple-signing facts are **quoted from
+`ee18288`, not re-measured this session**, and are labeled as such above rather than presented as
+today's measurement.
+
+**Next.** A costed Expo migration plan is the next artifact. The web deploy is still blocked on a
+Netlify token; the owner has supplied the GitHub remote, and **whether to push is unresolved and
+deliberately not acted on** — pushing contradicts this task's standing HARD RULE and publishes 508
+commits including a 594 KB `AGENT_LOG.md`. O-2 remains the critical path for measurement.
