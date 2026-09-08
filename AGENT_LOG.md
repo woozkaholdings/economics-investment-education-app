@@ -2882,109 +2882,29 @@ instead of hand-rolling an eighth mover. A working one is in this run's scratchp
       pane is hidden — a planted control observer fired 0 times and the fix looked like a no-op. A
       `computer{action:"screenshot"}` forces the paint that delivers the callbacks.
 
-155. **[A11y/Tooling — filed 2026-08-30 by the run that closed item 153, as its stated residual.]
-    The text-zoom sweep that found five live defects exists only in that session's browser console.**
-    > ⛔ **PREMISE CORRECTED 2026-09-07 (scheduled dev-agent), and half of the work this item scopes
-    > ALREADY EXISTS.** `scripts/a11y-sweep.js` has carried a `horizontalOverflow` probe since before
-    > this item was filed (the box half), and `scripts/a11y-states.js` has carried the font-scale axis
-    > this item asks a new probe to "compose with" (`setFontScale`). **What is missing is only the
-    > TEXT half.** A run picking this up builds one probe, not two, and adds no axis.
-    > ⛔ **A hypothesis about `horizontalOverflow` REFUTED by measurement 2026-09-07, so nobody spends
-    > a run on it:** its element scan is gated on `de.scrollWidth > de.clientWidth + 1`, and
-    > `body { overflow-x: hidden }` does **not** close that gate — a planted 900px `<div>` takes
-    > `de.scrollWidth` 320 → 900 on the live app. The probe is narrow, not blind.
-    > ✅ **This item's central claim is now measured on THIS app rather than argued:** with a narrow
-    > box holding a long unbreakable word planted live, the text probe fires (`scrollWidth 335 > box
-    > 80`) and the box probe reports **exactly zero**. A right-edge scan cannot see text overflow.
-    > ⭐ **TWO EXCLUSIONS THIS ITEM DOES NOT NAME, both found by running the probe rather than
-    > writing it. Build them in or the probe ships noisy from day one:**
-    > 1. **The visually-hidden idiom** — skip any element whose computed `clip-path` is not `none` or
-    >    whose `clip` is not `auto`. Learn's sr-only "Current lesson" span reports `scrollWidth 90 >
-    >    box 1` at every scale, by design, and it is the FIRST thing the text probe finds.
-    > 2. **The scrollable-ancestor exclusion applies to the BOX probe too**, not just the text probe
-    >    as this item says. The parent guide's age-band rail is `overflow-x: auto` deliberately
-    >    (WCAG 1.4.10 permits it); without the exclusion `BUTTON#age-band-13-17` reports 440px against
-    >    a 320px viewport as a false positive on every run at 200%.
-    > **The probe as it was actually run** (scratchpad, per the item-167 precedent; this is the
-    > record): text probe = XHTML namespace only, visible box, not clip/clip-path hidden, not
-    > `nowrap`+`ellipsis`, not `overflow-x: auto|scroll` itself or under an ancestor that is, then
-    > `el.scrollWidth > Math.ceil(rect.width) + 1`. Box probe = same visibility and scrollable-ancestor
-    > rules, then `rect.right > clientWidth + 1`. Controls, both of which must fire every pass: a
-    > planted 900px `<div>` for the box probe, and an 80px box holding a long word with
-    > `overflow-wrap: normal` for the text probe.
-    > **What the sweep found when run this way, and it is why the item is worth building:** ONE live
-    > defect (fixed the same run — `MarketSignals.jsx`'s bare `1fr` grid, `check-data.mjs` §78) and
-    > ONE more filed as **item 169**. Both were invisible to the box probe alone.
-    > ✅ **CLOSED 2026-09-07** (owner-directed, the run after it was filed), replaced by its
-    > conclusion per W-7.2 rule 1. **What was true:** seven elements in `ja`/`zh` clipped their
-    > fullwidth brackets at 200% text zoom — one on **Learn**, two in the **Glossary**, four on the
-    > Market Dashboard. **What is true now:** `index.css` carries
-    > `:lang(ja), :lang(zh) { font-variant-east-asian: proportional-width; }`, all seven read zero at
-    > every scale, and `check-data.mjs` §79 ties the rule's language scope to the corpus.
-    > ⛔ **This note's DIAGNOSIS was wrong and the correction is the reusable part: it is not a
-    > line-breaking defect.** The note said `（M0・M1・M2）` is "one unbreakable run" that
-    > `overflow-wrap: break-word` cannot get inside, and named `line-break: loose`/`anywhere` as the
-    > candidates. Measured on the live elements: `line-break: anywhere`, `line-break: loose`,
-    > `overflow-wrap: anywhere` and `word-break: break-all` each left **every** figure unchanged,
-    > except `line-break: anywhere` on the one H2. **The overflow is the WIDTH of the punctuation,
-    > not a failure to break** — a fullwidth bracket is one em with about half of it blank, and
-    > taking the font's proportional metrics for those glyphs is what fixes it.
-    > ⭐ **Two instrument lessons worth more than the fix.** (1) `CSS.supports()` returned **true**
-    > for all four properties and proves only that they *parse*; the real control was behavioral —
-    > `line-break: anywhere` re-split that H2's lines, which is what says it was live while the
-    > other six elements did not move under it. (2) The note counted "6 flags in ja, 4 in zh". The
-    > honest counts are **3 and 1**: the rest were ancestors inheriting a descendant's overflow. A
-    > flag count is not a defect count unless the scan keeps only the deepest element.
-    - **W-6.2 rule 3, answered up front:** the learner-visible failure a permanent probe would have
-      caught is **"the Reference hub scrolled sideways at 200% browser zoom, and headings were
-      clipped mid-word by `overflow-x: hidden`"** — both were shipping, on the hub screen, before
-      2026-08-30.
-    - **What the probe has to do, and the part that is easy to get wrong:** a right-edge scan over
-      `getBoundingClientRect()` **is not sufficient** — it cannot see text overflow, because an
-      overflowing word does not widen its element's border box. It needs the second probe
-      (`el.scrollWidth > box width`) restricted to the **XHTML namespace** (SVG `<text>` produces 17
-      phantom findings on the Market Dashboard otherwise), excluding intentional `nowrap` +
-      `text-overflow: ellipsis`, and excluding descendants of genuinely scrollable containers.
-    - **Both controls are cheap and must both fire:** a planted over-wide `<div>` for the box probe,
-      and a planted narrow box holding a long unbreakable word with `overflow-wrap: normal` for the
-      text probe. It must also REFUSE on an unsettled screen — three screens read a clean 0/0/0 while
-      still showing `Loading…`.
-    - **Where it belongs:** `scripts/a11y-sweep.js`, as a probe with the root-font override as its
-      axis, so it composes with `A11yStates`' existing language/font-scale/width axes.
-    - **A LIVE INSTANCE, found 2026-09-03 by a run doing something else and reported rather than
-      fixed — the property does NOT still hold.** At **320px / 130% / es**, the lesson reader's
-      "Completar" button reaches x = **329.3** against a 320px viewport (`scrollWidth` 329). **Control
-      carried, because the run had just added a figure to that screen and had to know whose defect it
-      was:** lesson 33 at identical settings, with no new figure on it, shows the identical button at
-      the identical 329.3 and the identical `scrollWidth`. So it is pre-existing, it is the button
-      rather than the figure, and it is exactly the class this item's probe is for — a right-edge scan
-      would catch it, since the button's own border box overflows. Untouched by that run (out of its
-      scope); this is the first named live instance this item has.
-    - ✅ **THE LIVE INSTANCE IS FIXED 2026-09-03 (scheduled dev-agent) — the app half only; the
-      probe this item is actually about is still unbuilt and still open.** ⛔ **And the instance's
-      own scope, filed one run earlier, was WRONG in the way this log names weekly: it said
-      `es`, and `en` overflowed too.** Re-measured on the built app at 320px before any edit, with
-      a planted 900px probe firing (9 findings) and a clean read at 0.9/1.0/1.15 as the negative
-      control: `es` "Completar" right edge **329.3**, `en` "Mark Complete" **326.6**, both against a
-      320px viewport; `ko`/`zh`/`ja` clean, with the probe re-planted in the `ja` context to prove
-      the zero was a reading and not a dead instrument. **Mechanism, measured rather than inferred:**
-      a flex item's `min-width` is `auto`, so neither button can shrink below min-content —
-      142.3px ("Anterior") + 163px ("Completar") + an 8px gap needs **313.3px of a 288px row**.
-      **Fixed with `flexWrap: "wrap"` on the row** (`src/screens/LessonReader.jsx`), which breaks the
-      line on exactly the min-content condition and so needs no breakpoint: identical geometry at
-      scale 1.0 (both buttons on one line, 128.7/221.3 at 390px), stacked full-width above it.
-      Post-fix sweep, all five languages × {0.9, 1.0, 1.15, 1.3, 1.5, 2.0} root font at 320px:
-      `scrollWidth === 320`, zero findings, control still firing.
-      ⚠️ **The bottom nav's 200% overflow was a SYMPTOM of this one, not a second defect.**
-      Pre-fix at `en`/2.0 the scan also reported `NAV`/`BUTTON:Reference` past the viewport; they are
-      gone post-fix, and the Learn screen — which has no reader row — measures clean at 2.0 on its
-      own. A fixed-position bar sized to a document the reader row had widened.
-    - **Honest priority: low-to-medium.** ⛔ **The "property that holds" half of the line below is now
-      false** — see the live instance above. It guards a property that held as of 2026-08-30 and does
-      not today, which strengthens the item rather than weakening it.
-      Original: it guards a property that holds as of 2026-08-30, but it
-      holds because of a five-call-site fix that a future layout change could undo silently.
-
+155. **✅ CLOSED 2026-09-08 (scheduled dev-agent)** — replaced by its conclusion per W-7.2 rule 1;
+    the full argument, every measurement and the refuted premise are in this date's run-log entry.
+    **What was true:** the text-zoom sweep that had found the class's live defects existed only in
+    each session's browser console, and `a11y-sweep.js`'s `horizontalOverflow` could not see text
+    overflow at all — an overflowing word does not widen its element's border box, so a right-edge
+    scan reads the box as innocent. Four live defects in this class in ten days (the Reference hub's
+    clipped headings, the lesson reader's "Completar" button, `MarketSignals.jsx`'s bare `1fr` grid,
+    seven ja/zh fullwidth-bracket clips), each found by an ad-hoc probe that then evaporated.
+    **What is true now:** `a11y-sweep.js` carries a 12th probe, `textOverflow`, reading
+    `el.scrollWidth` against the element's own box, with the four exclusions each chosen from a
+    measurement on this app (XHTML namespace only — 16 phantom SVG `<text>` findings on the Market
+    Dashboard; the visually-hidden idiom; deliberate `nowrap` + `ellipsis`; scrollable self or
+    ancestor) and a deepest-element rule, because one planted leaf produced **17** flags. It has a
+    planted control that `check-data.mjs` §43 now requires (11 → 12 probes declared, all
+    layout-gated ones controlled). Swept clean and non-vacuous over 10 screen readings at 320px/200%
+    in `en` and `ja`, with the control re-fired in the `ja` context to prove the zero was a reading.
+    ⛔ **One premise of this item was REFUTED and must not be re-derived:** it said the
+    scrollable-ancestor exclusion "applies to the BOX probe too", citing the parent guide's age-band
+    rail as a false positive "on every run at 200%". Measured 2026-09-08: it is **not**.
+    `horizontalOverflow`'s element scan is gated on `documentElement.scrollWidth > clientWidth`, and
+    on that screen the rail is clipped so the document never scrolls — the gate never opens and the
+    scan never runs. The exclusion is needed for the **new, ungated** text probe (where the rail
+    reports 424 against a 288px box) and **`horizontalOverflow` was correctly left untouched.**
 154. **✅ DONE 2026-08-30 (owner-directed: "fix the fresh-clone test failure now") via ROUTE (a)
     — `drafts/income-hierarchy.en.md` is now TRACKED, and a fresh clone exits 0.**
     > **The measurement, both directions, on the tree that shipped the fix:**
@@ -7120,3 +7040,121 @@ knows what to re-pick rather than assuming the branch is dead. Everything repo-l
 `npm test` **exit 0, 0 failures, 4 warnings** — byte-identical warning set to the pre-change
 baseline, diffed, not eyeballed — `npm run build` **exit 0**, `npm run check-blindspot` **exit 0**,
 each read from the process exit code and not from a grep count (the defect `ba9285c` was repairing).
+
+### 2026-09-08 (scheduled dev-agent, backlog item 155 — the previous scheduled run's residuals were both OWNER actions, so this pick was free) — the overflow probe this repo has shipped since August cannot see text overflow, and the ad-hoc probe that keeps finding the defects has evaporated into a session scratchpad four times in ten days
+
+**The pick.** Item 155 has been open since 2026-08-30. It is the only open item whose class has
+produced **four live defects in the last ten days** — the Reference hub's headings clipped mid-word
+at 200%, the lesson reader's "Completar" button off the right edge at 320px, `MarketSignals.jsx`'s
+bare `1fr` grid clipping a quarter of a screen, and seven `ja`/`zh` elements clipping their
+fullwidth brackets — and **every one of the four was found by a probe pasted into a browser console
+that then vanished with the session.** W-6.2 rule 3's sentence writes itself here, which is why this
+was worth a run rather than a note.
+
+**Step 3.5 — three premises re-measured on the built app, two confirmed and ONE REFUTED. The
+refutation shrank the change.**
+
+*(1) Confirmed, and sharper than the item filed it.* The item says a right-edge scan "is not
+sufficient". Measured with an 80px box holding one long unbreakable word planted live at 320px:
+- **clipped by an ancestor — the app's normal case:** `documentElement.scrollWidth` stays
+  **320 === clientWidth**, so `horizontalOverflow`'s gate never opens and its element scan never
+  runs. It reports **exactly zero** while **363px** of text sits in an **80px** box.
+- **not clipped:** the gate opens and the probe names **seven** elements — the whole bottom nav and
+  its children, sized to a document the plant widened — and **never the plant itself**, whose border
+  box ends at **304px** against a 321px limit. ⭐ **It does not merely miss the defect; it fires at
+  the symptom and names innocent elements.** That is not a new shape: item 155 already recorded the
+  bottom nav reported past the viewport while the real defect was the lesson reader's button row.
+
+*(2) Confirmed — all four exclusion classes exist on this app and were measured, not reasoned:*
+16 phantom SVG `<text>` findings on the Market Dashboard ("Peak" 17px box / 43px scroll, "Trough"
+25/120); Learn's sr-only "Current lesson" span at **scrollWidth 90 against a 1px box**, the first
+thing an unexcluded probe finds; the header's brand text, **224px of content in a 42px box**,
+ellipsised on purpose; and the parent guide's age-band rail at **424 against 288**.
+
+*(3) ⛔ **REFUTED, and this is the one that changed the disposition.** The item says the
+scrollable-ancestor exclusion "applies to the BOX probe too, not just the text probe", and cites the
+age-band rail reporting 440px "as a false positive **on every run at 200%**". **It is not.** Run at
+320px/200% on that screen, the shipped `horizontalOverflow` returns `status: ok, findings: []` —
+because its element scan is gated on `documentElement.scrollWidth > clientWidth`, the rail is
+clipped, the document does not scroll, and **the scan never runs at all.** The exclusion is required
+for the **new, ungated** text probe and for nothing else. **So `horizontalOverflow` was left
+untouched** — the item would have had me "fix" a probe whose gate already protects it, which is the
+2026-09-07 favicon shape one week later.
+
+**What shipped.** `scripts/a11y-sweep.js` gains a 12th probe, `textOverflow` (+114 lines, one file,
+purely additive; nothing under `src/` touched). It reads `el.scrollWidth > Math.ceil(box) + 1` —
+the element's **own** box, which is the only measurement that names the element at fault — with the
+four exclusions above and a helper, `inScrollableBox`, deliberately not wired into
+`horizontalOverflow` per (3).
+
+⭐ **The deepest-element rule, and it is the part I would have got wrong by reasoning.** Overflow
+propagates UP: **one planted leaf produced SEVENTEEN flags**, the leaf plus its whole ancestor chain
+to `<main>`. Item 155 hit this from the other side and recorded the correction — a ja/zh sweep
+reporting "6 flags in ja, 4 in zh" where the honest defect counts were **3 and 1**. The probe drops
+any flagged element containing another flagged element and reports the leaf.
+
+⚠️ **And the control had to be rebuilt twice, because the first two versions fired on their own
+account.** Dropped into `<main>`, the plant produced **fourteen extra findings** across the Learn
+cards that were not there a moment earlier — sibling boxes re-sizing around a new flex item — with a
+baseline of 0 measured immediately before. Wrapping it in `overflow:hidden` so it could not widen the
+document (`scrollWidth` back to 320) **did not fix that.** Only taking it out of flow entirely did:
+`position:fixed` far offscreen, the file's own plant idiom. **A control that perturbs the app it is
+measuring proves nothing**, and the two failed versions are written into the plant's comment so the
+next person does not re-derive them.
+
+**Verification — 10 screen readings, all `ok`, none vacuous, zero findings, at 320px / 200% root
+font** (browser text zoom, which is the real WCAG 1.4.4 axis; the app's own control caps at 130% and
+silently falls back to 100% if you write `2` into its localStorage key — measured, and worth knowing
+before anyone reads a 200% figure off that route). `en`: Learn 149 elements, Practice 42, Reference
+hub 54, Glossary 328, Sector performance 153, Kids 74, About 40. `ja`: Reference hub 54, Market
+Dashboard 175, lesson reader 85. **Every screen label was asserted against the rendered `<h1>` before
+its reading was kept** — two navigations silently did not happen during this run (a `history.back()`
+landed on a lesson reader while I had labeled the reading "About"), and both were caught that way
+rather than reported.
+**The zeros are readings, not a dead instrument:** the planted control fired in the `ja` /
+Market Dashboard / 200% / 320px context itself, `plantsRemoved: true`,
+`appFindingsAfterCleanup: 0`. **And exclusion 4 is doing work rather than describing an absent
+element** — on the Kids screen the rail is present and would flag (`scrollWidth 424 > box 288`,
+`wouldFlag: true`) while the probe reads clean.
+⛔ **What is NOT claimed:** three screens (en lesson reader, en Market Dashboard, en Kids) were swept
+with the prototype before the exclusions were final, and the term-detail, mid-session Practice, quiz
+and first-run-dialog states were not swept at all. `focusVisibleOnTab`'s control did not fire this
+session and did not before my change either — it is the documented operator step (one real `Tab`
+into the pane), unrelated to this work, and I verified it failed identically on the pre-change file.
+
+**W-6.3's ratio, re-measured this run rather than quoted:** `scripts/` **20,970** lines vs app code
+(`src/` minus `content/`+`locales/`) **9,252** — **2.27x**, up from the 2.24x measured 2026-09-07.
+This change is **+114 lines to `scripts/` (+0.55%) and 0 to `src/`, so it moves the number the wrong
+way**, and the honest defense is not the size: it is that four defects in this class shipped or were
+caught in ten days, and the instrument that caught each one was thrown away immediately afterwards.
+
+#### Step 5 — adversarial self-check
+**Blindspot register: nothing found.** Nothing under `src/` was touched — the diff is one file in
+`scripts/`, 114 insertions and **0 deletions**. No lesson prose, quiz, glossary, market copy or
+learner-rendered date changed; no Dalio-adjacent content, no advice language, no child-facing
+framing. `npm run check-blindspot` **exit 0**, read from the process exit code. The `2026-09-08`
+dates I wrote are in code comments recording measurements — this project's convention, not the
+Markets-tab class of a date rendered to a learner.
+**DECISIONS.md conflict: none.** `localStorage`-only state, `.js`-not-JSON content and Vite-not-Expo
+are all untouched. The one it could have been is item 12's port-cost rule on adding a headless
+browser: **I did not.** The file stays a zero-dependency script pasted into a browser, exactly as its
+own header describes, and is still deliberately outside `npm test`. `grep -in "headless|a11y-sweep|
+puppeteer|playwright" DECISIONS.md` returns nothing.
+**Already-done: no.** `grep -ic "textoverflow"` over `AGENT_LOG.md` and `DECISIONS.md` returns
+**0 and 0** — no run has built or pruned this probe before.
+**My own verification claim, weakest part first:** ⚠️ **the live sweep is the half an independent
+reviewer cannot reproduce from my commands alone** — it needs a build, a static serve of `dist/` and
+a browser pane, and its numbers are readings of a rendering rather than of the tree. What does
+reproduce exactly, from the exit codes and not from a grep count: `npm test` **exit 0, 0 failures,
+4 warnings**, `npm run build` **exit 0**, `npm run check-blindspot` **exit 0**. ⚠️ I initially read
+`npm test`'s result through `| tail` and got an **empty** exit code — the environment note's own
+pipe trap — and re-ran it writing to a file to read `$?` directly; the exit 0 above is from the
+second run. **`check-data.mjs` §43 is the reproducible guard on this change specifically**: it
+requires every `needs: "layout"` probe to carry a planted control, and its line moved from 11 probes
+to **"12 probe(s) declared (11 layout-gated, all with planted controls)"** — verified by re-running
+its own probe-table regex against the pre-change file (11) and the post-change file (12), rather than
+by trusting the printed sentence.
+**Backlog bytes (W-7.2 rule 1 + rule 5):** item 155 closed and was **replaced by its conclusion, not
+annotated with one** — **9,568 b → 2,242 b, −7,326 b.** W-7.2 rule 5's standing number,
+measured by `check-log-size.mjs` this run and not retyped from the block: the backlog is
+**413,234 b**, against the **425,473 b** it stood at when W-7 was written — **12,239 b under**.

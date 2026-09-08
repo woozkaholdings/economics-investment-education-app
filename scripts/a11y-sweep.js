@@ -276,6 +276,24 @@
 
   function exposed(el) { return !el.closest('[aria-hidden="true"]'); }
 
+  /* Is `el`, or anything it sits inside, a deliberately scrollable box? Used by `textOverflow`
+   * below and NOT by `horizontalOverflow`, which does not need it — see that probe's note.
+   * WCAG 1.4.10 explicitly permits a region the reader can scroll sideways, and this app uses
+   * one: the parent guide's age-band rail is `overflow-x: auto` on purpose. Measured on the
+   * built app 2026-09-08 at 320px/200%: that rail reports scrollWidth 424 against a 288px box,
+   * and without this walk it is a false positive on every run, on a screen with no defect.
+   * `s` is the caller's already-computed style for `el`, so the common case costs no extra
+   * getComputedStyle. */
+  function inScrollableBox(el, s) {
+    var n = el;
+    while (n && n !== document.body) {
+      var ns = (n === el) ? s : getComputedStyle(n);
+      if (ns.overflowX === "auto" || ns.overflowX === "scroll") return true;
+      n = n.parentElement;
+    }
+    return false;
+  }
+
   /* Approximate accessible-name computation: enough to catch a control with NO name at all,
    * which is the defect class worth catching. Not a full AccName implementation. */
   function accName(el) {
@@ -461,6 +479,78 @@
         });
       }
       return { findings: out, scanned: 1 };
+    } },
+
+    /* Item 155. THE PROBE ABOVE CANNOT SEE TEXT OVERFLOW, and that is not a gap in its
+     * thoroughness — it is arithmetic. An overflowing word does not widen its element's border
+     * box, so a right-edge scan over getBoundingClientRect() reads the box as innocent no matter
+     * how far the text spills. Measured on the built app 2026-09-08, 320px viewport, with an 80px
+     * box holding one long unbreakable word planted live:
+     *
+     *   - clipped by an ancestor (the app's normal case): documentElement.scrollWidth stays
+     *     320 === clientWidth, so `horizontalOverflow`'s gate never opens and its element scan
+     *     never runs. It reports EXACTLY ZERO while 363px of text sits in an 80px box.
+     *   - not clipped: the gate opens, and the probe names SEVEN elements — the whole bottom nav
+     *     and its children, sized to a document the plant widened — and never the plant itself,
+     *     whose border box ends at 304px against a 321px limit. It fires at the SYMPTOM.
+     *
+     * That second shape is not hypothetical: item 155 recorded the bottom nav reported past the
+     * viewport at 200% while the actual defect was the lesson reader's button row, and the nav
+     * findings vanished when the row was fixed. So the two probes are complementary rather than
+     * redundant — this one reads `scrollWidth` against the element's OWN box, which is the only
+     * measurement that names the element at fault.
+     *
+     * W-6.2 rule 3, the learner-visible failure this would have caught: **"the Reference hub
+     * scrolled sideways at 200% browser zoom and headings were clipped mid-word"** — shipping
+     * before 2026-08-30 — and since then a Spanish reader losing the lesson reader's "Completar"
+     * button off the right edge at 320px, `MarketSignals.jsx`'s bare `1fr` grid clipping a quarter
+     * of a screen, and seven ja/zh elements clipping their fullwidth brackets. Four live defects
+     * in this class in ten days, every one found by an ad-hoc probe that then evaporated into a
+     * session scratchpad. This file is where it stops evaporating.
+     *
+     * ⚠️ FOUR EXCLUSIONS, EVERY ONE CHOSEN FROM A MEASUREMENT ON THIS APP RATHER THAN FROM
+     * CAUTION. Without them the probe ships noisy on day one and gets ignored, which is the only
+     * way an instrument like this actually dies:
+     *   1. XHTML NAMESPACE ONLY. SVG <text> reports a scrollWidth unrelated to CSS overflow:
+     *      the Market Dashboard produces SIXTEEN phantom findings ("Peak" 17px box / 43px
+     *      scroll, "Trough" 25/120, "Contraction" 42/106 …), all legitimate chart labels.
+     *   2. THE VISUALLY-HIDDEN IDIOM (`clip-path` not `none`, or `clip` not `auto`). Learn's
+     *      sr-only "Current lesson" span reports scrollWidth 90 against a 1px box at every
+     *      scale, by design — and it is the FIRST thing an unexcluded probe finds.
+     *   3. DELIBERATE TRUNCATION (`white-space: nowrap` + `text-overflow: ellipsis`). The
+     *      header's brand text is 224px of content in a 42px box at 200%, ellipsised on purpose.
+     *   4. SCROLLABLE SELF OR ANCESTOR — see `inScrollableBox` above.
+     *
+     * ⚠️ AND THE DEEPEST-ELEMENT RULE, which is about counting rather than filtering. Overflow
+     * propagates UP: every ancestor of an overflowing leaf reports the same oversized
+     * scrollWidth. Measured with the plant above — ONE planted leaf produced SEVENTEEN flags,
+     * the leaf plus its whole ancestor chain up to <main>. Item 155 hit this from the other side
+     * and recorded the correction: a ja/zh sweep reported "6 flags in ja, 4 in zh" where the
+     * honest defect counts were 3 and 1. **A flag count is not a defect count unless the scan
+     * keeps only the deepest element**, so this probe drops any flagged element that contains
+     * another flagged element, and reports the leaf that is actually at fault. */
+    textOverflow: { needs: "layout", run: function () {
+      var XHTML = "http://www.w3.org/1999/xhtml", hits = [], scanned = 0;
+      [].forEach.call(document.querySelectorAll("body *"), function (el) {
+        if (el.namespaceURI !== XHTML) return;              // exclusion 1
+        if (!visible(el)) return;
+        scanned++;
+        var s = getComputedStyle(el);
+        if (s.clipPath !== "none" || s.clip !== "auto") return;                    // exclusion 2
+        if (s.whiteSpace === "nowrap" && s.textOverflow === "ellipsis") return;    // exclusion 3
+        if (inScrollableBox(el, s)) return;                                        // exclusion 4
+        var r = el.getBoundingClientRect();
+        if (el.scrollWidth > Math.ceil(r.width) + 1) hits.push(el);
+      });
+      // Deepest-element only. `contains()` is true for an element and itself, hence the !==.
+      var out = hits.filter(function (el) {
+        return !hits.some(function (other) { return other !== el && el.contains(other); });
+      }).map(function (el) {
+        var r = el.getBoundingClientRect();
+        return "text overflows its box by " + (el.scrollWidth - Math.ceil(r.width)) + "px " +
+               "(scrollWidth=" + el.scrollWidth + " box=" + Math.round(r.width) + "): " + where(el);
+      });
+      return { findings: out, scanned: scanned };
     } },
 
     /* ⚠️ THE SELECTOR WAS `img, svg[role='img']` UNTIL 2026-08-28 AND THAT WAS A HOLE, measured
@@ -1062,6 +1152,24 @@
     wide.style.cssText = "position:absolute;left:0;top:0;height:1px;width:" +
       (document.documentElement.clientWidth + 500) + "px;";
     document.body.appendChild(wide);
+    /* textOverflow's control. Planted SEPARATELY from `box` and positioned fixed far offscreen,
+     * for a reason measured on 2026-09-08 rather than inherited: a text-overflow plant appended
+     * into the app's own flow CHANGES THE LAYOUT IT IS MEANT TO MEASURE. Dropped into <main> at
+     * 320px it produced fourteen extra findings across the Learn cards that were not there a
+     * moment before — sibling boxes re-sized around the new flex item — and wrapping it in
+     * `overflow:hidden` so it could not widen the document did NOT fix that. Taking it out of
+     * flow entirely does: document scrollWidth unchanged at 320, app findings unchanged at 0,
+     * control fires. **A control that perturbs the app is a control firing on its own account**,
+     * which is the trap this file's header calls note 3 and step 3.5 calls a control that proves
+     * nothing. `overflow-wrap: normal` and `word-break: normal` are load-bearing and explicit:
+     * they must beat any inherited wrapping rule, or the word breaks and the plant never fires. */
+    var textovf = document.createElement("div");
+    textovf.setAttribute(SKIP_ATTR, "1");
+    textovf.id = "a11y-selftest-textovf";
+    textovf.style.cssText = "position:fixed;left:-99999px;top:0;width:80px;font-size:16px;" +
+      "overflow-wrap:normal;word-break:normal;";
+    textovf.textContent = "Wirtschaftswissenschaftskonjunkturzyklusanalyse";
+    document.body.appendChild(textovf);
     // The first-heading control has to be planted at the TOP of the document,
     // not in `box` above: what it tests is document ORDER, and a plant appended
     // after the app's own <h1> would sit second and prove nothing. Hence a
@@ -1090,6 +1198,11 @@
       smallTargets: /< 44x44/,
       imagesWithoutAlt: /no alt attribute/,
       horizontalOverflow: /scrolls horizontally/,
+      // Keyed to the plant's own id, not to the message shape, for `unnamedRegions`'
+      // reason: the shape `text overflows its box by Npx` is exactly what a REAL
+      // regression produces, so a shape match would report this control fired while
+      // actually matching a live defect in the app.
+      textOverflow: /a11y-selftest-textovf/,
       landmarks: /<main> landmarks/,
       // Matches the plant's own id, not the shape: the app's own sections are all named as of
       // item 82 + the 2026-08-25 lesson-reader fix, so a shape match would pass off a REAL
@@ -1128,6 +1241,7 @@
 
     box.remove();
     wide.remove();
+    textovf.remove();
     first.remove();
 
     /* ── the animation control (2026-09-02) ────────────────────────────────────────────────
