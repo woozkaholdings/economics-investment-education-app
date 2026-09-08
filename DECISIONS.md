@@ -896,6 +896,31 @@ Add a new entry when a run makes a choice future work should be able to look up 
 
 ## Hosting: GitHub Pages, canonical (2026-09-07, owner-directed) — supersedes the token-based Netlify deploy below
 
+> ⭐ **AMENDED 2026-09-07 (owner-directed, "publish the canonical site"): the repository goes
+> PUBLIC, and that is the route chosen out of four.** The decision above was made on the premise
+> that `origin` had become usable, which was true — and it did not reach the *next* fact: **GitHub
+> Pages does not publish from a private repository on the Free plan**, and this repository is
+> private. Measured before the choice, not after: unauthenticated `GET` of the repo API → **404**
+> against a **200** control on a public repo, `git ls-remote` over HTTPS → *Repository not found*,
+> and `woozkaholdings.github.io/` itself → **404**, so no Pages site exists for the account at all.
+> The owner was given four routes (public repo / GitHub Pro / stay on Netlify / Cloudflare Pages)
+> and chose **public repo**.
+> **The basis, because "is it safe to publish" was measured rather than assumed.** No key in any
+> tracked file and none anywhere in **29,065,030 bytes** of `git log --all -p`, swept for the known
+> credential prefixes — and the sweep carries an in-corpus control, because an empty stream and a
+> clean corpus look identical: a string known to be in history matched **85** times through the same
+> pipeline and a fabricated one matched **0**. `api-keys.txt` was **never committed**; the two
+> tracked key-shaped files (`.env.example`, `API_KEYS.template.txt`) are templates with empty values.
+> **What publishing does disclose is judgment, not credentials**, and the owner accepted it: the
+> candid internal record (`AGENT_LOG.md`, `AGENT_LOG.archive.md`, `DECISIONS.md`, `CLAIMS.md`,
+> `reviews/`) and every commit's author line, `woojoongkim <expansewj@gmail.com>`, on all **512**
+> commits. ⛔ **That email is not removable without rewriting history, which the standing rules
+> forbid and which is not worth it** — GitHub's noreply-email setting only affects future commits.
+> ⚠️ **PENDING, and this entry must not be read as done:** flipping visibility is a browser setting
+> on an account no agent here has API access to (this host has an SSH key, which pushes and cannot
+> change settings; no `gh`, no token). **The decision is recorded; the action is the owner's.**
+> `npm run check-deployed` against the canonical URL is the only thing that closes it.
+
 - **Decision:** the site is **<https://woozkaholdings.github.io/economics-investment-education-app>**,
   published by `.github/workflows/deploy-pages.yml` on every push to `main`. **Netlify is retired.**
   `scripts/deploy.mjs` and the `npm run deploy` script are **deleted**; `.gitignore` keeps its <!-- path-ok: scripts/deploy.mjs — DELETED 2026-09-07 when Netlify was retired. Named here as history: this sentence exists to say the file is gone, so the reference must never resolve. Restoring the file to make this marker unnecessary would be undoing the decision, not fixing a path. -->
