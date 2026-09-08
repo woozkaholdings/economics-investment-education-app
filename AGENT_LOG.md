@@ -1814,6 +1814,23 @@ instead of hand-rolling an eighth mover. A working one is in this run's scratchp
       stand; the coverage did not.** `A11yStates.coverage()` plus the Tab step now in the header
       recipe are the fix — see item 149.
 
+172. **✅ DONE 2026-09-08 (scheduled dev-agent), the day it was found** — filed in conclusion form
+    per W-7.2 rule 1; the measurements are in this date's seventh run-log entry. **What was true:**
+    tapping the tab you are already standing on returned you to that tab's root on **Learn only**.
+    `goToTab` resets what the shell owns (`reading`), and a pushed view owned by a SCREEN —
+    Reference's `section`, Glossary's `selectedTerm`, Practice's `session` — was invisible to it, so
+    from Reference › Glossary two taps on the highlighted Reference tab left the screen
+    byte-identical (14,378 chars both times) and the Review tab did the same mid-session, while the
+    identical gesture on Learn returned to the path. Switching tabs and back DID clear them, but only
+    as a side effect of `ScreenBoundary` being keyed by `tab`. **What is true now:** `goToTab` calls
+    `dismissAllPushed()` when `key === tab`, draining the same stack Back pops — so no new state, no
+    remount, and Learn's track accordion is measurably preserved. Back still closes ONE level and the
+    re-tap goes to the root; that difference is deliberate and is guarded. `check-data.mjs` §81,
+    proven by six injections. ⭐ **The transferable part is that this section's own first draft was
+    structural and went GREEN on a broken drain** — swapping the loop for `stack[stack.length - 1]()`
+    leaves a function that still exists and still closes something. Splitting the pure `dismissAll(stack)`
+    out so the guard can *run* it, rather than pattern-match its source, is what made injection 5 fire.
+
 171. **✅ DONE 2026-09-08 (scheduled dev-agent), the day it was filed** — replaced by its conclusion
     per W-7.2 rule 1; the measurements are in this date's fifth run-log entry. **What was true:**
     `isUnlocked(index)` asked only whether the PREVIOUS lesson in display order was completed and
@@ -7982,5 +7999,127 @@ a **real page load**, the notice renders. **A same-page hash write is not the sa
 link**, and the app is built to tell them apart.
 **Backlog bytes:** one numbered item **closed and collapsed** (171, 31 → 15 lines per W-7.2 rule 1) and
 **none opened** — this run files no residual.
+
+**Schedule:** the cron is the owner's lever and was not read, compared or touched.
+
+### 2026-09-08 (scheduled dev-agent; W-6.2 rule 1 free — the previous run filed no residual, so this pick came from a live walk of the tab bar, the one control on every screen that had never been walked) — the app has a "take me back to the top of this tab" gesture, it works on exactly one of the three tabs, and the two where it does nothing are the two whose screens own their own pushed views
+
+**The pick.** Not a backlog item. A live walk of the built app on `127.0.0.1:8841` (static `dist/`,
+404 control fired) at 375x812, starting from the Reference tab because it is the least recently
+swept surface. **Two premises died on the way, and both are recorded rather than smoothed away —
+neither cost a commit.**
+
+**Step 3.5 — the two refuted premises first, because they are the useful part.**
+1. ⚠️ **"Back from a Reference sub-screen skips the index and lands in a lesson."** Reproduced, then
+   **withdrawn: it was my own instrument.** I had reached `#/reference` by writing `location.hash`,
+   and this app deliberately distinguishes a same-page hash write from a real navigation — two
+   history entries ended up sharing an `entryIndex`, so `isBack` read false and the dismissal was
+   skipped. Re-measured with a **real page load and in-app taps only**: Back closes the glossary and
+   lands on the Reference index, correctly. **This is the second run in two days to be caught by the
+   same trap**, and the previous run's note in the log is what named it.
+2. ⚠️ **"The glossary list has no clickable rows"** — 43 terms rendered with zero `<button>`s.
+   Also mine: the rows are `div[role="button"]` with `tabIndex={0}`, an `aria-label` and a real
+   `onKeyDown` for Enter/Space. A `button`-only query cannot see them, and `el.onkeydown` is null on
+   a React-delegated handler, so the follow-up "no keyboard support" reading was wrong the same way.
+   Read in the source before believing it. **No defect; nothing changed.**
+
+**What the walk actually found, measured with the Learn tab as the control.** Tapping the tab you
+are already standing on:
+
+| tab | pushed view open | tap the ALREADY-SELECTED tab | tap a different tab, then return |
+|---|---|---|---|
+| Learn | lesson reader | ✅ returns to the path | ✅ resets |
+| Review | running review session | ❌ **screen byte-identical** | ✅ resets |
+| Reference | Glossary (or any sub-screen) | ❌ **byte-identical, twice** (14,378 chars) | ✅ resets |
+
+The control fires in both directions: tapping a *different* tab changed the screen every time, so the
+app was reachable and simply ignored that one gesture; and the tab reports `aria-selected="true"`
+while doing nothing, so it is a dead control for a keyboard or screen-reader user too.
+
+⭐ **The diagnosis, which is what makes this one line rather than a feature.** `goToTab` resets what
+the **shell** owns — `reading`, the lesson reader — which is why Learn was always right. Reference's
+`section`, Glossary's `selectedTerm` and Practice's `session` are the **screen's** own `useState`,
+which the shell cannot reach. And the "resets on tab switch" column above is **not a design
+decision**: `ScreenBoundary` is keyed by `tab`, so the screen unmounts. The one route into a tab that
+does *not* unmount it was therefore the one route that behaved differently, and nothing had ever
+decided that it should.
+
+**What shipped** (4 files, 0 new).
+1. **`src/lib/deepLink.js`** — `dismissAllPushed()`, which drains the stack `useDismissOnBack`
+   already maintains, plus the pure `dismissAll(stack)` underneath it (see the self-check below for
+   why that split exists). No new hook call sites, no new state, no route, no remount.
+2. **`src/App.jsx`** — `goToTab` calls it when `key === tab`, and `tab` joins the dependency array.
+3. **`scripts/check-data.mjs` §81** — the guard. W-6.2 rule 3's sentence: *a learner reading a
+   Reference sub-screen, or part-way through a review session, taps the highlighted tab they are
+   already standing on and nothing happens, while the identical tap on Learn returns them to the
+   path.*
+4. **`DECISIONS.md`** — the 2026-09-06 pushed-view amendment extended, including the explicit note
+   that the port cost is **unchanged** because this adds no call sites.
+
+**Back and the re-tap are kept as different gestures on purpose** — Back means one step, a re-tap
+means the root of the tab — so Reference › Glossary › a term takes two Backs or one tap. §81(d)
+exists precisely because merging them is the plausible simplification.
+
+**Verification, on the rebuilt bundle `index-CVin1QBJ.js`, not on the source.**
+- **Fixed:** one tap on the active Reference tab from **two levels deep** (Glossary › term detail)
+  returns to the Reference index; one tap on the active Review tab mid-session returns to the review
+  root.
+- **Control, Learn unchanged:** in a lesson → tap Learn → back on the path, and the track accordion
+  the learner had opened by hand (`Thinking About Money`, not the default) is **still open** — the
+  measurement that says this reused the dismiss path instead of blunt-remounting the screen.
+- **Control, Back still pops ONE level:** term detail → Back → glossary (14,378 chars) → Back →
+  Reference index. Not drained.
+- **Control, the previous two runs' features intact on a real page load:** `#/lesson/35` (locked)
+  still lands on the path and still renders *"THAT LESSON ISN'T OPEN YET"* with the lesson named.
+- `npm run build` clean, `npm run check-blindspot` **exit 0**, `npm test` **exit 0**.
+  ⚠️ **The warning count is asserted rather than eyeballed:** HEAD's own `check-data.mjs`, run
+  against this working tree, returns **0 failures / 3 warnings** — identical to the post-change run,
+  so §81 added neither. It contains **0** `warn(` calls.
+
+⭐ **§26 caught a citation before I did.** `npm test` failed on `check-data.mjs:12372` citing
+"backlog item 172" while no such item existed — the guard shipped before the item was filed. That is
+the doc-vs-tree check doing exactly its job.
+
+**W-6.3's ratio, re-measured this run rather than quoted:** `scripts/` **+131** lines vs `src/`
+**+63**. The instruments grew faster again, and the honest reason is that the app fix is one guarded
+call while the guard runs a behavioral drain test plus four structural assertions — but see the
+self-check: the structural half alone was not enough, and that is not padding.
+
+#### Step 5 — adversarial self-check
+**Blindspot register: nothing found.** No lesson, quiz, glossary, kids or market copy is touched —
+the diff is navigation plumbing and one guard. §10.2 zero name matches; §10.3 untouched; §10.1 makes
+no financial claim and `check-blindspot` is **exit 0**. ⚠️ I wrote `2026-09-08` into code comments,
+which is the §2.3 shape, so: `grep -c` against the shipped bundle returns **0** for it, against a
+control of **1** for a string that *is* shipped copy.
+**DECISIONS.md conflict: none, and the entry this touches is extended in the same commit.** The one
+that needed real checking is the deep-link grammar's *"its sub-nav is deliberately not routed"* —
+it **holds, and this change is the reason it can keep holding**: no hash was added and no route
+invented, which is the option that entry and the module header both rule out. `localStorage`-only
+state unchanged: no key read, written or added.
+**Already-done: no.** `grep -c dismissAllPushed` returns **0** in `AGENT_LOG.md` before this entry.
+The prior art is the 2026-09-06 Back work, which built the stack this drains and deliberately left
+the tab bar alone.
+**My own verification claim, weakest part first.**
+⚠️ **(1) The guard's first draft was WRONG and my own injection is what found it.** §81 was
+structural — it asserted the call site, the dependency array, and that `popstate` still pops one.
+Injection 5 replaced the drain's loop with `stack[stack.length - 1]()` and **§81 stayed green**,
+because a function that still exists and still closes *something* satisfies every source-shape
+assertion. That broken drain would have left one tap on the Reference tab sitting in the glossary
+instead of at the tab's root. Fixed by splitting the pure `dismissAll(stack)` out so the section can
+**run** it with three recording entries and assert `[top, middle, bottom]`. **Six injections now
+fire** (call site removed; `tab` dropped from the deps; Back made to drain; Reference unregistered;
+drain made a pop; drain reversed to bottom-up) — each planted, asserted to have landed, then restored
+from a scratchpad copy and `cmp`-verified identical. Never `git checkout --`.
+⚠️ **(2) Two of my own measurements were wrong before they were right** (the two premises above), and
+in both cases the instrument, not the app, was the defect. Neither reached a commit, and the reason
+they did not is that each had a control that disagreed with it.
+(3) Everything else above is reproducible from an exit code or a read-back DOM value, and the live
+figures come from the rebuilt bundle by name.
+⚠️ **(4) What this run did NOT measure: whether any real learner has ever made this gesture.** The
+app has been live since 2026-09-05 with no analytics provider, so the reachability argument is
+design-level only. That is O-2's subject, not something this run closed.
+**Backlog bytes:** one numbered item **opened and closed in the same entry** (172, filed in
+conclusion form per W-7.2 rule 1, 15 lines). `MEASURED log-size` after this run's edits: backlog
+**419,193 b** — still under W-7.2 rule 5's 425,473 b baseline, by 6,280 b.
 
 **Schedule:** the cron is the owner's lever and was not read, compared or touched.

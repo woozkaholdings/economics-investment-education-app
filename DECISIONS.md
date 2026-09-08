@@ -411,6 +411,20 @@ Add a new entry when a run makes a choice future work should be able to look up 
   one-line hook calls."** That is a real increase and it is recorded rather than absorbed; the trade
   is that a native shell has a hardware Back button and needs this navigation stack anyway, so the
   three call sites are closer to a description of the port than an obstacle to it.
+- **EXTENDED 2026-09-08 (dev-agent): the same pushed-view stack now also serves "tap the tab you are
+  already on", and this costs no new call sites.** The 09-06 amendment gave Back a way to close a
+  pushed view; nothing gave the TAB BAR one. `goToTab` resets what the shell owns (`reading`), which
+  is why re-tapping Learn always returned to the path — but Reference's `section` and Practice's
+  `session` are the screen's own state, so the identical gesture on those two tabs did nothing at
+  all. Measured on the built app at 375x812 with Learn as the control: two taps on the highlighted
+  Reference tab from inside the Glossary left the screen byte-identical, and mid-session the Review
+  tab did the same, while tapping a *different* tab changed the screen every time. Switching away and
+  back DID clear them — but only because `ScreenBoundary` is keyed by `tab` and the screen unmounted,
+  so the one route into a tab that does not unmount it behaved unlike every other route.
+  `goToTab` now calls `dismissAllPushed()` when `key === tab`, which drains the SAME stack Back pops.
+  **Back and the re-tap stay different gestures on purpose:** Back means one step, a re-tap means the
+  root of that tab, so Reference › Glossary › a term takes two Backs or one tap. The port cost is
+  unchanged from the 09-06 amendment — no new hook call sites, no new state, and no route added.
 - **Guarded by `check-data.mjs` §18:** every lesson round-trips through its id, unparseable and
   nonexistent links resolve to the path rather than a blank screen, first-open routing still holds, a
   locked lesson does not open from a URL, and `App.jsx` actually calls both halves. All proven by

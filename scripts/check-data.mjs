@@ -26,7 +26,7 @@ import { MAX_BOX, acceptsScheduleUpdate, dueQuestions, migrateIndexKeys, recordA
 import { MIN_BARS, OUTPERFORM_THRESHOLD, WJ_PERIODS, wjSectorComparison } from "../src/lib/relativeStrength.js";
 import { OLD_TO_NEW_LESSON_ID, migrateLegacyLessonIds } from "../src/lib/lessonIdMigration.js";
 import { HTML_LANG } from "../src/lib/useAppState.js";
-import { ROUTED_TABS, initialRoute, parseRoute, resolveRoute, routeHash } from "../src/lib/deepLink.js";
+import { ROUTED_TABS, dismissAll, dismissAllPushed, initialRoute, parseRoute, resolveRoute, routeHash } from "../src/lib/deepLink.js";
 import { isLessonUnlocked } from "../src/lib/lessonUnlock.js";
 import { computeCoverage } from "./translation-review.mjs";
 import {
@@ -12363,6 +12363,136 @@ function trendDirection(src) {
       `  §80 lesson unlocking: ${path.length} lessons, ${expectedOpen.length} open on a fresh install (one per track); ` +
         `a completed lesson stays open across ${sets.length} completed-set shapes, and the not-completed control at ` +
         `the id-16 seam still reports locked.`,
+    );
+  }
+}
+
+
+// 81. TAPPING THE TAB YOU ARE ALREADY ON MUST RETURN YOU TO THAT TAB'S ROOT
+//     (backlog item 172, fixed 2026-09-08).
+//
+//     THE LEARNER-VISIBLE FAILURE THIS EXISTS TO CATCH (W-6.2 rule 3): a
+//     learner reading a Reference sub-screen, or part-way through a review
+//     session, taps the highlighted tab they are already standing on — the
+//     ordinary way to get back to the top of a tab — and NOTHING HAPPENS,
+//     while the identical tap on the Learn tab does return them to the path.
+//     Measured on the built app 2026-09-08 with Learn as the control: from
+//     Reference › Glossary two taps on the Reference tab left the screen
+//     byte-identical (14,378 chars both times), and mid-session the Review tab
+//     did the same, while tapping a DIFFERENT tab changed the screen every
+//     time — so the app was reachable, it just ignored that one gesture.
+//
+//     WHY IT HAPPENED, so an edit does not reintroduce it: `goToTab` resets
+//     what the SHELL owns (`reading`), which is why Learn was always right. A
+//     pushed view owned by a SCREEN — Reference's `section`, Glossary's
+//     `selectedTerm`, Practice's `session` — is that component's own state and
+//     the shell cannot see it. Switching to another tab and back DID clear
+//     them, but only because `ScreenBoundary` is keyed by `tab` and the screen
+//     unmounted; nothing had decided that, so the single route into a tab that
+//     does NOT unmount it behaved differently from every other route.
+{
+  const before81 = failures;
+
+  // (a) The drain exists, is importable in node (no DOM), and reports "nothing
+  //     to close" on an empty stack — which is also the control that says the
+  //     function ran at all rather than throwing past the assertions below.
+  if (typeof dismissAllPushed !== "function") {
+    fail("§81: src/lib/deepLink.js no longer exports dismissAllPushed().");
+  } else if (dismissAllPushed() !== false) {
+    fail("§81: dismissAllPushed() must return false when no pushed view is open; it reported that it closed something.");
+  }
+
+  // (a2) It DRAINS rather than popping one, exercised rather than pattern-
+  //      matched. This exists because the structural version of this section
+  //      could not tell the two apart: replacing the loop with
+  //      `stack[stack.length - 1]()` left a function that still exists, still
+  //      returns true and still closes something, and the section went green —
+  //      while one tap on the Reference tab would have dropped the learner in
+  //      the glossary instead of at the tab's root. Found by injection, in this
+  //      section's own first draft.
+  {
+    const order = [];
+    const stack = [() => order.push("bottom"), () => order.push("middle"), () => order.push("top")];
+    const drained = dismissAll(stack);
+    if (drained !== true) {
+      fail(`§81: dismissAll() reported ${JSON.stringify(drained)} on a 3-entry stack; it must report that it closed something.`);
+    }
+    if (order.join(",") !== "top,middle,bottom") {
+      fail(
+        `§81: dismissAll() ran [${order.join(", ")}] on a 3-entry stack; expected [top, middle, bottom] — every pushed ` +
+          "view, top down, exactly once. A tab re-tap means the ROOT of that tab, so closing only the top one leaves " +
+          "a learner two levels deep (Reference › Glossary › a term) still inside the glossary.",
+      );
+    }
+    // The empty case is the other direction, and it is what `goToTab` relies on
+    // to be a no-op when the learner re-taps a tab that has nothing open.
+    if (dismissAll([]) !== false) fail("§81: dismissAll([]) must report false — a re-tap at a tab's root closes nothing.");
+  }
+
+  const deepLinkSrc = readFileSync(join(ROOT, "src/lib/deepLink.js"), "utf8");
+  const appSrc81 = readFileSync(join(ROOT, "src/App.jsx"), "utf8");
+
+  // (b) The shell imports it and calls it, guarded on "the tab I am already
+  //     on". An unguarded call would close a pushed view on EVERY tab change,
+  //     which is harmless-looking and wrong for a different reason: it is not
+  //     what makes the re-tap work, so removing the guard would leave this
+  //     section green while the gesture it is about stopped being tested.
+  if (!/lib\/deepLink\.js/.test(appSrc81) || !/dismissAllPushed/.test(appSrc81)) {
+    fail("§81: src/App.jsx no longer imports dismissAllPushed from lib/deepLink.js, so a tab re-tap cannot reach a screen's pushed view.");
+  }
+  const goToTabBody = appSrc81.match(/const goToTab = useCallback\(\(key\) => \{[\s\S]*?\n  \}, \[([^\]]*)\]\);/);
+  if (!goToTabBody) {
+    fail("§81: could not find goToTab's useCallback in src/App.jsx — repoint this section rather than leaving it green.");
+  } else {
+    if (!/if \(key === tab\) dismissAllPushed\(\);/.test(goToTabBody[0])) {
+      fail(
+        "§81: goToTab no longer calls dismissAllPushed() guarded by `key === tab`. Without it, tapping the tab you are " +
+          "already on leaves a Reference sub-screen or a running review session exactly where it was.",
+      );
+    }
+    // (c) The stale-closure trap, and it is the reason this is checked at all:
+    //     `tab` is READ inside the callback, so it must be in the dependency
+    //     array. Left out, `goToTab` keeps whichever `tab` was current when it
+    //     was created, `key === tab` compares against a stale value, and the
+    //     re-tap silently stops firing — with no error anywhere.
+    if (!/\btab\b/.test(goToTabBody[1])) {
+      fail(
+        `§81: goToTab reads \`tab\` but its dependency array is [${goToTabBody[1].trim()}] — without \`tab\` the callback ` +
+          "closes over a stale value and the tab re-tap stops working silently.",
+      );
+    }
+  }
+
+  // (d) Back must still close ONE level, not drain to the root. These are two
+  //     different gestures: Back means "one step", a tab re-tap means "the root
+  //     of this tab". Collapsing them into one call is the plausible
+  //     simplification, and it would make Back from Reference › Glossary › a
+  //     term skip the glossary entirely.
+  if (!/dismissStack\[dismissStack\.length - 1\]\(\)/.test(deepLinkSrc)) {
+    fail(
+      "§81: the popstate handler no longer closes exactly the TOP pushed view. Back must pop one level; only the tab " +
+        "re-tap drains to the root, and merging them makes Back skip intermediate screens.",
+    );
+  }
+
+  // (e) Every screen that owns a pushed view has to register it, or neither
+  //     Back nor the re-tap can reach it. These three are the pushed views the
+  //     app has; a fourth added without this call is invisible to both.
+  const owners = [
+    ["src/screens/Reference.jsx", "the Reference tab's pushed section"],
+    ["src/screens/reference/Glossary.jsx", "the glossary term detail"],
+    ["src/screens/Practice.jsx", "a running review session"],
+  ];
+  for (const [file, what] of owners) {
+    if (!/useDismissOnBack\(/.test(readFileSync(join(ROOT, file), "utf8"))) {
+      fail(`§81: ${file} no longer registers ${what} with useDismissOnBack(), so neither Back nor a tab re-tap can close it.`);
+    }
+  }
+
+  if (failures === before81) {
+    console.log(
+      `  §81 tab re-tap: goToTab drains pushed views when key === tab (with \`tab\` in its deps), popstate still closes ` +
+        `only the top one, and all ${owners.length} pushed-view owner(s) register with useDismissOnBack.`,
     );
   }
 }

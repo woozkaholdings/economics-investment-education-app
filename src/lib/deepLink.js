@@ -212,6 +212,59 @@ export function useDismissOnBack(active, dismiss) {
 }
 
 /**
+ * Close every pushed view that is currently open, top down, and report whether
+ * there was anything to close.
+ *
+ * WHAT THIS IS FOR. `App.jsx`'s `goToTab` resets everything the SHELL owns —
+ * `reading`, the lesson reader — so re-tapping the highlighted Learn tab has
+ * always returned the learner to the path. It could not reach the pushed views
+ * a SCREEN owns: Reference's `section` and Practice's `session` are that
+ * component's own `useState`. Measured live on the built app 2026-09-08, with
+ * the Learn tab as the control: from Reference › Glossary, tapping the already
+ * selected Reference tab twice changed nothing at all, and mid-review-session
+ * the Review tab did the same — while the identical gesture on Learn returned
+ * to the path. Switching to another tab and back DID clear them, but only
+ * because `ScreenBoundary` is keyed by `tab` and the screen unmounted; nothing
+ * had decided that, so the one route into the tab that does not unmount it
+ * behaved differently from every other.
+ *
+ * It drains rather than popping one, because a tab re-tap means "the root of
+ * this tab", not "one step back" — Reference › Glossary › a term is two pushed
+ * views and one tap clears both. Only the active tab's screen is mounted
+ * (`ScreenBoundary` is keyed by `tab`), so everything registered here belongs
+ * to it.
+ *
+ * Top-down over a snapshot, and each entry is called exactly once: a dismisser
+ * sets its own state to null, and the `useEffect` cleanups that unregister
+ * these entries do not run until React has re-rendered, so the stack does not
+ * shrink underneath this loop.
+ *
+ * Same book-keeping as `useDismissOnBack`, and no DOM — `check-data.mjs`
+ * imports this module in node.
+ */
+export function dismissAllPushed() {
+  return dismissAll(dismissStack);
+}
+
+/**
+ * The pure half of the above, over an explicit stack, so the DRAIN can be
+ * exercised without React registering anything — `check-data.mjs` §81 calls it
+ * with three recording entries and asserts all three ran, top down, once each.
+ *
+ * It is separate because the structural check that replaced it could not see
+ * the difference: swapping the loop for `stack[stack.length - 1]()` leaves a
+ * function that still exists, still returns true and still closes SOMETHING,
+ * so a source-shape assertion went green while one tap on the Reference tab
+ * would have left the learner in the glossary instead of at the tab's root.
+ * Measured by injection 2026-09-08 — the section passed on the broken drain.
+ */
+export function dismissAll(stack) {
+  if (!stack || stack.length === 0) return false;
+  for (const dismiss of [...stack].reverse()) dismiss();
+  return true;
+}
+
+/**
  * Keeps the address bar and the app's navigation state in step, in both
  * directions: state changes rewrite the hash, and Back/Forward (or a hand-
  * edited hash) call `onRoute` with a resolved `{ tab, reading }`.

@@ -14,7 +14,7 @@ import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } fro
 import { lessonsByTrack } from "./content/lessons.js";
 import { EVENTS, track } from "./lib/analytics.js";
 import { chunk, isChunkLoadError } from "./lib/chunkError.js";
-import { initialRoute, useDeepLink } from "./lib/deepLink.js";
+import { dismissAllPushed, initialRoute, useDeepLink } from "./lib/deepLink.js";
 import { isLessonUnlocked } from "./lib/lessonUnlock.js";
 import { useAppState } from "./lib/useAppState.js";
 import Icon from "./components/Icon.jsx";
@@ -345,13 +345,21 @@ export default function App() {
   const closeLesson = useCallback(() => { setReading(null); scrollTop(); }, [scrollTop]);
 
   const goToTab = useCallback((key) => {
+    // Tapping the tab you are already on means "take me to the root of this
+    // tab". `setReading(null)` below is that gesture for Learn and always has
+    // been, because the shell owns the lesson reader. It owns nothing of
+    // Reference's pushed section or Practice's running session — those are the
+    // screen's own state — so on those two tabs the same tap did nothing at
+    // all until this call. `dismissAllPushed` is the same close path Back
+    // already runs, so a re-tap and a Back agree about what "close this" does.
+    if (key === tab) dismissAllPushed();
     setTab(key);
     setReading(null);   // leaving Learn always exits the reader
     scrollTop();
     // Tapping Practice is the coach mark's own suggestion acted on, not a
     // dismissal of something unwanted — but it's the same "seen it" state.
     if (key === "practice" && showPracticeCoachMark) dismissPracticeCoachMark();
-  }, [scrollTop, showPracticeCoachMark, dismissPracticeCoachMark]);
+  }, [tab, scrollTop, showPracticeCoachMark, dismissPracticeCoachMark]);
 
   const tabs = [
     { key: "learn", label: t.tabLearn, icon: "book" },
