@@ -70,17 +70,23 @@ GitHub Pages, built and published by `.github/workflows/deploy-pages.yml` on eve
 `main`. **Nothing is dragged anywhere and nothing has to be remembered** — that is the whole
 reason this host was chosen.
 
-⛔ **BLOCKER, measured 2026-09-07: this repository is PRIVATE** (unauthenticated `GET` of the repo
-URL returns 404 while an authenticated push to it succeeds — so it exists and is not public).
-**GitHub Pages will not publish from a private repository on a free plan**; Pages from private
-repos requires GitHub Pro, Team, or Enterprise Cloud. Until one of the following is true, the
-workflow will run and the site will not appear:
-- the repository is made **public** — note this publishes `AGENT_LOG.md`, ~600 KB of candid
-  internal development record, along with the full history; or
-- the account is on a **paid plan** that includes Pages for private repos; or
-- the site moves to a host that serves private-source builds on a free tier (Cloudflare Pages and
-  Netlify both do) — in which case change the URL in **this section first**, and `npm test` will
-  fail until `index.html` agrees.
+✅ **The private-repo blocker is CLEARED, 2026-09-07 (owner-directed).** This section used to
+carry it as the reason nothing published: Pages does not serve a private repository on the free
+plan, and this one was private. **The owner made the repository public**, chosen over GitHub Pro,
+staying on Netlify, and Cloudflare Pages — see `DECISIONS.md` § Hosting for the four routes and
+why this one. Measured after the change: the repo API returns `"private": false` against a
+known-public control, and the raw-content host serves `AGENT_LOG.md` at **HTTP 200**.
+**So the candid internal record is public now** — `AGENT_LOG.md`, `AGENT_LOG.archive.md`,
+`DECISIONS.md`, `CLAIMS.md` and `reviews/`, plus every commit's author line. That was measured
+before the decision, not after: no credential appears in any tracked file or anywhere in
+**29,065,030 bytes** of `git log --all -p`, and the sweep carried an in-corpus control, because an
+empty stream and a clean corpus look identical. `api-keys.txt` was never committed.
+
+⚠️ **What the four failed workflow runs before this were, so nobody re-diagnoses them.** Every one
+had a **green `build` job** — checkout, `npm ci`, `npm run build`, `upload-pages-artifact` — and
+failed on `actions/deploy-pages@v4` in the `deploy` job. **That step is the one that needs
+Settings › Pages › Source set to GitHub Actions**, and no amount of re-running the workflow
+substitutes for it. ⛔ **Do not read a failed run as a broken build.** Read which job failed.
 
 > ⚠️ **NETLIFY IS RETIRED BY DECISION AND IS STILL SERVING (owner decision, 2026-09-07).**
 > `https://magnificent-mochi-73aecc.netlify.app` went up 2026-09-05 and, **measured 2026-09-07,
