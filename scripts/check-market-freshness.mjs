@@ -36,6 +36,15 @@
 // `src/lib/useMarketData.js`, the same module the browser runs. A check that
 // hardcoded "4 days" could drift from the app and report a comfortable number
 // while the learner's screen was already empty.
+//
+// ⚠️ SCOPE, corrected 2026-09-08. This file reads `public/data/market.json`
+// IN THE TREE and nothing else. It cannot see the deployed site, and until
+// this date two of its messages said "on the live site, for anyone who opens
+// it" anyway — a claim about a host, made from a file on disk, which is
+// exactly the guess W-7.1 named. The two genuinely differ: publishing follows
+// a push to `main`, and measured 2026-09-08 nothing owns that push (the daily
+// market commits of 09-01 through 09-04 all landed inside a twelve-day gap
+// between pushes). `npm run check-deployed` owns the live half.
 // ═══════════════════════════════════════════════════════════════════════════
 
 import { readFileSync, existsSync } from "node:fs";
@@ -125,19 +134,24 @@ if (!existsSync(FILE)) {
       } else if (isStale) {
         warn(
           `market.json is ${ageDays} days old (asOf=${data.asOf}, today=${TODAY}) against STALE_AFTER_DAYS=${STALE_AFTER_DAYS}. ` +
-            `Reference → Sectors is ALREADY rendering the unavailable state — on the live site, for anyone who opens it. ` +
+            `Reference → Sectors renders the unavailable state for anyone loading THIS TREE. ` +
+            `⚠️ That is a statement about the repo, not about the deployed site: the live host serves whatever ` +
+            `was last PUSHED, which can be older or newer than this file. \`npm run check-deployed\` measures the ` +
+            `age of the market.json the live host actually served, and is the only thing here that can. ` +
             `This is the owner's daily job, not dev-agent work (W-7.3): flag it, do not "fix" it in the repo.`,
         );
       } else if (ageDays === STALE_AFTER_DAYS) {
         warn(
           `market.json goes stale TOMORROW: ${ageDays} days old (asOf=${data.asOf}), and Sectors flips to the ` +
-            `unavailable state on ${goesStale}. Owner's daily job. This is the warning W-6.5 and W-7.3 both ` +
+            `unavailable state on ${goesStale} FOR THIS TREE (the live site has its own asOf — see ` +
+            `\`npm run check-deployed\`). Owner's daily job. This is the warning W-6.5 and W-7.3 both ` +
             `wanted and neither had.`,
         );
       } else {
         ok(
           `market.json is ${ageDays} day(s) old (asOf=${data.asOf}) — fresh against STALE_AFTER_DAYS=${STALE_AFTER_DAYS}; ` +
-            `Sectors goes to the unavailable state on ${goesStale} if the job does not run again.`,
+            `Sectors goes to the unavailable state on ${goesStale} if the job does not run again — for a reader of ` +
+            `this tree. The live site has its own asOf and its own date; \`npm run check-deployed\` projects that one.`,
         );
       }
     }

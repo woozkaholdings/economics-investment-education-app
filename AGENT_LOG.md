@@ -202,6 +202,28 @@ for the history. No open P1/P2 items.
 > ⚠️ **And the branch this run's own entry recorded as unexercised — "canonical serves HEAD but a
 > retired origin is up" — fired for the first time on that same check, exactly as written.**
 
+>
+> **O-5 (new 2026-09-08, and it is the residual of item 74 rather than a new discovery). Publishing
+> follows a push to `main`, and nothing owns the push — so the live site's market data is current by
+> coincidence.** The Pages workflow builds and deploys on every push, which is what closed item 74's
+> headline gap. But the `economics-app-market-data` scheduled job **commits without pushing**, and a
+> dev-agent run is forbidden to push. **Measured from `origin/main`'s reflog 2026-09-08:** pushes at
+> **2026-08-26 00:15**, then nothing until **2026-09-07 22:06** — a **twelve-day gap** containing the
+> daily market commits of 09-01 through 09-04. They went live only because eight owner-directed
+> pushes went out that evening for an unrelated reason.
+> **Why it matters and when:** `STALE_AFTER_DAYS` is 4. The live site serves `asOf 2026-09-07`, so
+> **Reference → Sectors goes to its unavailable state for every visitor on 2026-09-12** unless a push
+> carrying a fresher `market.json` lands first. The rest of the app is unaffected — 44 lessons, the
+> glossary, review and the parent guide all keep working on a stale deployment.
+> **Two routes, and they are the owner's to choose:**
+> 1. **Have the market job push** after its commit. It already runs on the owner's machine with the
+>    owner's credentials; this makes the daily refresh reach learners without anyone remembering.
+> 2. **Decide the Sectors screen may go dark between pushes** and say so in `README.md` § Deploying,
+>    at which point this stops being a defect and becomes a documented property.
+> ✅ **What is no longer an owner action: noticing.** `npm run check-deployed` now measures the age of
+> the market.json the live host actually served and projects the date the live screen goes dark. It is
+> an advisory and never fails the verdict, deliberately.
+
 > ## PRIORITY BLOCK W-7 — set by the weekly review 2026-09-06. Supersedes W-6's *active* clauses below. W-6's standing rules (W-6.2's residual-chain rule, W-6.3's ratio-quoting rule) are UNCHANGED, still binding, and W-6.2 WORKED — see W-7.0. Read this first.
 >
 > **The week shipped 113 commits, build and tests green, and the app went LIVE. That is the largest
@@ -841,42 +863,35 @@ instead of hand-rolling an eighth mover. A working one is in this run's scratchp
     moves, alongside item 18. Do not re-pick this item to "improve" the deploy docs; the refuting
     number is a URL, and no amount of further writing produces one.**
 
-74. **[Process/Distribution — filed 2026-08-17 by the run that made the build deployable (item 72),
-    from a consequence that item's own scope did not cover. Do not pick before a deploy exists — it is
-    a maintenance problem for a site nobody has yet.] A deployed copy's market data freezes at build
-    time, and the app is designed to notice.** `public/data/market.json` is written on the owner's
-    machine by the `economics-app-market-data` scheduled job and is baked into `dist/` at build time.
-    A deployment left alone therefore ages: after `STALE_AFTER_DAYS` (**4**, `src/lib/useMarketData.js`)
-    the Sector-performance and Market-signals figures **stop being shown** rather than being shown as
-    current — which is §2.3's rule working exactly as intended, not a bug.
-    - **The gap is that nothing owns the rebuild.** Keeping those two screens populated on a live site
-      means re-building and re-deploying after the daily job runs; no scheduled task, script or
-      document owns that step today.
-    - **Cheapest real answer is probably not a script.** Connecting the host to the repo (the README's
-      "durable path") makes a deploy follow a commit, at which point the existing job's commit is the
-      trigger and nothing new has to be built. Consider that before writing automation.
-    - **Honest scope note:** the rest of the app is fully static and unaffected — 40 lessons, the
-      glossary, review and the kids guide all keep working indefinitely on a stale deployment. ~~This
-      item is about two screens~~ — **one screen. Corrected 2026-08-19 by measurement, not reading:**
-      `grep -rn "useMarketData" src/` has exactly one consumer outside the hook, `Sectors.jsx:33`, and
-      the Market Dashboard screen was confirmed live to render `For teaching purposes — not live
-      market data` and never fetch `market.json`. Market signals is dateless teaching copy; it is not
-      affected by this item at all.
-    - **⚠️ "Do not pick before a deploy exists" understates this — the condition is ALREADY TRUE in the
-      repo (2026-08-19).** `HEAD`'s committed `public/data/market.json` is `asOf: 2026-08-14` against a
-      `STALE_AFTER_DAYS` of 4, so a build from `HEAD` today renders the whole Sector-performance screen
-      as `Market data isn't available right now. (As of 2026-08-14)` — verified in a live browser
-      against a real `HEAD` build. **This is still not dev-agent work**, and the reason matters: the
-      `economics-app-market-data` job refuses to commit while other files are dirty, and the owner's
-      standing instruction is that `market.json` is committed **alone, once the tree is otherwise
-      clean**. Fourteen consecutive runs of a static dirty tree is why it has aged. The unblock is the
-      owner's tree landing, not a script. — **✅ RESOLVED the same day: the owner directed that
-      `market.json` be committed immediately, overriding the wait-for-clean condition, and it landed
-      alone as `Refresh market data (asOf=2026-08-19)`.** `HEAD` now carries same-day data, so a build
-      from `HEAD` renders real figures again. **The underlying item is untouched** — the next weekday
-      the job runs, `HEAD` starts aging again for exactly the same reason, and nothing yet owns the
-      rebuild-and-redeploy step. Treat the above as the worked example, not as the item closing.
-
+74. **✅ CLOSED 2026-09-08 (scheduled dev-agent)** — replaced by its conclusion per W-7.2 rule 1; the
+    measurements, the controls and the refuted half are in this date's run-log entry.
+    **What was true when it was filed (2026-08-17):** a deployed copy's `market.json` freezes at build
+    time, so after `STALE_AFTER_DAYS` (**4**) the Sector-performance screen stops showing figures —
+    §2.3 working as intended — and **nothing owned the rebuild**. The item's own recommendation was
+    *"cheapest real answer is probably not a script: connect the host to the repo, and the existing
+    job's commit is the trigger."*
+    **What is true now:** that is exactly what shipped. `.github/workflows/deploy-pages.yml` (owner
+    decision 2026-09-07) publishes on every push to `main`, so a deploy follows a commit and no human
+    has to remember a drag-and-drop. **The item's headline gap is closed by the host migration, not by
+    this run.**
+    ⛔ **But the gap MOVED rather than vanished, and this is the part to keep: the deploy follows a
+    PUSH, and nothing owns the push.** Measured 2026-09-08 from `origin/main`'s reflog: pushes happened
+    **2026-08-26 00:15**, then not again until **2026-09-07 22:06** — a **twelve-day gap**, inside which
+    the daily market commits of 09-01, 09-02, 09-03 and 09-04 all landed. They reached the live host
+    only when eight owner-directed pushes went out on 09-07 for an unrelated reason. The scheduled
+    market job **commits and does not push**, and a dev-agent run is forbidden to. So the live site's
+    market data is current **by coincidence**, not by ownership. → **filed as owner action O-5.**
+    ✅ **What this run built, because it is the half a run CAN own — noticing.** `npm run check-deployed`
+    now computes the age of the market.json **the live host actually served** against
+    `STALE_AFTER_DAYS` (imported from `src/lib/useMarketData.js`, never restated) and projects the date
+    the live Sectors screen goes dark, as an **advisory that never touches the verdict** — the header's
+    standing rule, kept, because a guard that reds every few days for an expected reason is a warning
+    nobody reads. A `--today` flag makes the projection exercisable on any day.
+    ⛔ **And the defect that made this worth a run rather than a note:** `check-market-freshness.mjs`
+    reads the file **in the tree** and then said *"Reference → Sectors is ALREADY rendering the
+    unavailable state — on the live site, for anyone who opens it."* That is a claim about a host made
+    from a file on disk — W-7.1's guess, in `npm test`, on every run. Three messages corrected to say
+    what they measured and to point at the check that owns the live half.
 73. **✅ DONE 2026-08-20 (scheduled dev-agent). The audit's three §10 blindspots are now
     `LAUNCH_PLAN.md` §10.8/10.9/10.10 and claim D3 is `CLAIMS.md` row 16 (§9.1 says "16 claims").**
     See the run log for the full staged wordings and the two premise breaks.
@@ -7158,3 +7173,123 @@ by trusting the printed sentence.
 annotated with one** — **9,568 b → 2,242 b, −7,326 b.** W-7.2 rule 5's standing number,
 measured by `check-log-size.mjs` this run and not retyped from the block: the backlog is
 **413,234 b**, against the **425,473 b** it stood at when W-7 was written — **12,239 b under**.
+
+### 2026-09-08 (scheduled dev-agent, backlog item 74 — gated since 2026-08-17 on "do not pick before a deploy exists", and a deploy now exists) — `npm test` has been saying "on the live site, for anyone who opens it" about a file on disk, and the live site's market data is current by coincidence rather than by ownership
+
+**The pick, and why not my own previous run's residual.** The last run closed item 155 and left
+unswept screens behind it; W-6.2's ⚠️ says file it, do not turn around and pick it. Item 74 was the
+one open item whose **blocking condition changed underneath it**: it says in its own header *"do not
+pick before a deploy exists — it is a maintenance problem for a site nobody has yet."* The site went
+live 2026-09-05 and canonical on 2026-09-07.
+
+**Step 3.5 — the item's headline premise is now FALSE, and re-measuring changed the disposition from
+"build the missing rebuild automation" to "the automation shipped; the gap moved one step upstream".**
+Item 74 said a deployed copy freezes at build time and **nothing owns the rebuild**, and recommended
+*"cheapest real answer is probably not a script: connect the host to the repo."* Measured:
+`.github/workflows/deploy-pages.yml` does exactly that — `on: push: branches: [main]`, build then
+`actions/deploy-pages@v4`. **The item's own recommendation shipped on 2026-09-07.** Writing the
+script it half-proposed would have duplicated a workflow that already exists.
+
+⭐ **But the gap moved rather than closed, and this is the measurement worth keeping. The deploy
+follows a PUSH, and nothing owns the push.** From `origin/main`'s reflog: pushes at **2026-08-26
+00:15**, then nothing until **2026-09-07 22:06** — a **twelve-day gap**. The daily market refreshes
+committed **09-01 18:31, 09-02 18:31, 09-03 18:31 and 09-04 18:31** all fall inside it, so the
+scheduled job demonstrably **commits without pushing**; they reached the live host only when eight
+owner-directed pushes went out on the evening of 09-07 for an unrelated reason. A dev-agent run is
+forbidden to push. **So the live site's market data being current today is a coincidence.** Filed as
+**O-5**, with the date it stops being one: the live site serves `asOf 2026-09-07` against
+`STALE_AFTER_DAYS=4`, so **Sectors goes dark for every visitor on 2026-09-12** absent a push.
+
+⛔ **And the defect that made this a run rather than a note — this repo's own test suite makes the
+claim W-7.1 forbids, once per run.** `scripts/check-market-freshness.mjs` reads
+`public/data/market.json` **in the tree** — it has no network code at all (grepped; its three
+`fetch` hits are prose) — and then said, verbatim:
+> *"Reference → Sectors is ALREADY rendering the unavailable state — on the live site, for anyone who
+> opens it."*
+
+That is a statement about a host, made from a file on disk, printed by `npm test`. Two more messages
+in the same file made the same slide in miniature ("Sectors goes to the unavailable state on
+{date}"). **W-7.1's rule is that a claim about the live site that is not measured against the live
+site is a guess; this was the guess wearing the suit of a measurement.**
+
+**Step 3.5, second premise — REFUTED, and it shrank the change.** I went in intending to add live
+market-age reporting to `check-deployed.mjs`. It **already reports it**: line 425's `MARKET_DATA`
+branch has printed `live asOf X, repo asOf Y` since the file was written, with a deliberate header
+rule that the age *"is REPORTED and never fails the verdict."* So the missing piece was never the
+fetch or the report — it was the **age arithmetic and the projection**, and the rule about not
+failing was already decided and is kept rather than re-litigated.
+
+**What shipped (two files, both in `scripts/`, 100 insertions).**
+1. `check-deployed.mjs` computes the served file's age via `freshness()` and `STALE_AFTER_DAYS`
+   **imported from `src/lib/useMarketData.js`** — the same single-definition discipline
+   `check-market-freshness` already uses, so the threshold cannot drift from the app — and projects
+   the date the live screen goes dark. It lands in a new **advisory channel** printed in all three
+   verdict branches and deliberately kept out of `problems`, honoring the header's existing rule.
+   A `--today` flag exists for the reason `check-market-freshness` has one, quoted from that file:
+   *"a freshness check whose only test case is 'whatever day it happens to be' can only be proven on
+   the day it fires."*
+2. `check-market-freshness.mjs`'s three messages now say what they measured and name
+   `check-deployed` as the owner of the live half, plus a scope note in its header.
+
+**Five branches, five controls, all exercised.** The clock was moved with `--today`; the repo-vs-live
+divergence was driven by editing **`dist/data/market.json`** — a gitignored build artifact, never
+`public/data/market.json`, which is the owner's file — and `dist/` was rebuilt afterwards and
+re-verified back at `asOf 2026-09-07`:
+- **silent** at the real clock (live age 1d) — the negative control, and the one that matters most:
+  a projection that fires every day is not a projection.
+- **`--today 2026-09-11`** (age 4) → *"goes to the unavailable state on 2026-09-12 — tomorrow"*.
+- **`--today 2026-09-12`** (age 5) → *"ALREADY showing the unavailable state ON THE LIVE SITE"*, and
+  because repo and live agree it correctly says a redeploy will not fix it — the daily job must run.
+- **repo ahead, both fresh** → the "not a defect, the deploy follows a push" line.
+- **repo ahead, live stale** → *"The data exists; it just is not deployed. Push to `main`."*
+  The boundary is exactly `STALE_AFTER_DAYS`: 4 → tomorrow, 5 → already dark.
+⛔ **One branch is UNEXERCISED and I am not claiming otherwise:** the unreadable-`asOf` path needs the
+live host to serve a malformed file, which I cannot arrange without touching the deployed site.
+
+⚠️ **A separate finding, reported and NOT acted on (it is a different item's scope):** the
+`index.html` comparison still prints *"identical apart from Netlify's injected tags"* against a
+GitHub Pages site that injects nothing. The filters are documented as intentionally kept for the next
+host, so the code is right and only the two verdict strings are stale. Left alone rather than
+smuggled into this commit.
+
+**W-6.3's ratio, re-measured this run rather than quoted:** `scripts/` **21,067** lines vs app code
+(`src/` minus `content/`+`locales/`) **9,252** — **2.28x**, up from the 2.27x I measured yesterday.
+⚠️ **This is the SECOND consecutive run to add to `scripts/` and nothing to `src/`, and that is the
+honest concern with this pick**, not its size (+100 lines, +0.5%). The defense is specific rather
+than general: this is not a new instrument but arithmetic added to one that already fetched the file,
+and it is paired with **deleting a false sentence** from a check that runs on every commit.
+
+#### Step 5 — adversarial self-check
+⛔ **`npm run check-blindspot` exit 0 is NOT evidence about this change, and saying so is the point.**
+I checked what it scans before quoting it: `src/`, `README.md`, `index.html` and the v5 prototype —
+**not `scripts/`**. So its green is true and irrelevant here. The real argument is stronger and
+narrower: `git diff --name-only` returns **two files, both under `scripts/`**, nothing outside it, so
+no string in this change can reach a learner. **A previous run of mine quoted this same exit code as
+if it covered a `scripts/`-only diff; it did not.**
+**DECISIONS.md conflict: none, and I checked the one it could have been.** The market-data decision
+is that the app never calls a provider and reads a file the offline job writes — untouched; this
+reads the *deployed copy of that file* over HTTP from a script, not from the browser. `localStorage`,
+`.js`-not-JSON and Vite-not-Expo are all untouched.
+**Already-done: no.** `grep -c "live age\|goesDark"` over `AGENT_LOG.md` and `DECISIONS.md` returns
+**0 and 0**.
+**A rule I could have broken and deliberately did not:** `check-deployed.mjs`'s header records the
+decision that the market file's age *"is REPORTED and never fails the verdict — a guard that goes red
+every day for an expected reason is a warning nobody reads."* The obvious version of this change
+makes staleness a `problems.push`. That would have reversed a recorded decision to make my own output
+louder, so the age is an advisory and the exit code is unchanged.
+**My own verification claim, weakest part first:** ⚠️ **the advisory's real-clock silence is a
+measurement of the world and will change** — on 2026-09-12 the same command starts printing the
+already-stale line without anything in this repo changing. That is the instrument working, not a
+regression, and it is written here so the next run does not read it as one. Reproducible from exit
+codes, not grep counts: `npm test` **exit 0, 0 failures, 4 warnings**, `npm run build` **exit 0**.
+`npm run check-deployed` exits **1** for the retired Netlify origin (O-4 action 2, owner's), which is
+unrelated to this change and was exit 1 before it.
+⭐ **And the branch my previous run recorded as unexercised has now fired, exactly as written.** That
+entry said the `⚠️ canonical is serving HEAD but a retired origin is up` verdict *"will first run on
+the day the Pages site publishes"*. It is the verdict `check-deployed` returns today.
+**Backlog bytes (W-7.2 rule 1):** item 74 closed and replaced by its conclusion, **3,394 b → 2,739 b
+(−655 b)**; O-5 costs **+1,848 b**. ⚠️ I first wrote both of those from arithmetic in my head (1,847 / net
++1,192) — item 70's defect, in the entry that closes an item about not retyping numbers — so the
+figure that counts here is `check-log-size.mjs`'s own, not mine: **the backlog goes 413,234 b →
+414,428 b, +1,194 b.** This run grew it, and I am not dressing that up as a reduction. It stays
+**11,045 b under** the 425,473 b W-7.2 rule 5 measures against.

@@ -112,6 +112,13 @@ import { fileURLToPath } from "node:url";
 import { createHash } from "node:crypto";
 import { execFileSync } from "node:child_process";
 
+// The freshness contract is READ FROM THE MODULE THE BROWSER RUNS, never
+// restated here — the same single-definition discipline `check-market-freshness`
+// uses, and for the same reason: a threshold retyped into a second file is a
+// threshold that can disagree with the app.
+import { STALE_AFTER_DAYS, freshness } from "../src/lib/useMarketData.js";
+import { todayStr } from "../src/utils/date.js";
+
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const DIST = join(ROOT, "dist");
 const TIMEOUT_MS = 20000;
@@ -364,6 +371,23 @@ say();
 
 // ── THE VERDICT: app code ────────────────────────────────────────────────────
 const problems = [];
+
+// Advisory lines: true things a reader needs that are NOT this check's verdict.
+// Kept separate from `problems` on purpose — the market file diverges from any
+// build by design, so folding its age into the verdict would make this check
+// go red every few days for an expected reason, which is the failure mode the
+// header already refuses once.
+const notes = [];
+
+// `--today` exists for the same reason check-market-freshness has one: a
+// freshness projection whose only test case is "whatever day it happens to be"
+// can only be exercised on the day it fires. It moves the CLOCK, never the file.
+const TODAY = flag("today") ?? todayStr();
+const addDays = (iso, n) => {
+  const [y, m, d] = iso.split("-").map(Number);
+  const t = new Date(Date.UTC(y, m - 1, d + n));
+  return `${t.getUTCFullYear()}-${String(t.getUTCMonth() + 1).padStart(2, "0")}-${String(t.getUTCDate()).padStart(2, "0")}`;
+};
 say("  ── app code ──────────────────────────────────────────────────────────");
 say(`     live  ${liveEntry}`);
 say(`     local ${localEntry}`);
@@ -425,11 +449,57 @@ for (const rel of unhashed.sort()) {
   if (rel === MARKET_DATA) {
     // Reported, never fatal. See this file's header: the owner's daily job
     // rewrites this, so it diverges from any given build BY DESIGN.
+    //
+    // ⚠️ WHAT THIS BLOCK MEASURES CHANGED 2026-09-08, and the reason is the
+    // whole point of this file. `npm test`'s `check-market-freshness` already
+    // projects the day Sectors goes dark — but it reads `public/data/market.json`
+    // IN THE TREE, and then says "on the live site, for anyone who opens it".
+    // That sentence is W-7.1's guess: the tree is not what a learner loads.
+    // The two can diverge for a reason this repo has measured — the deploy
+    // follows a PUSH, and nothing owns the push. So the age is computed here
+    // from the file the live host actually served.
     let note = `HTTP ${res.status}`;
     try {
       const asOf = JSON.parse(res.buf.toString("utf8")).asOf;
       const localAsOf = JSON.parse(local.toString("utf8")).asOf;
       note = `live asOf ${asOf}, repo asOf ${localAsOf}`;
+      const { ageDays, isStale } = freshness(asOf, TODAY);
+      if (ageDays === null) {
+        note += " — live asOf is unreadable, so the live app treats it as stale";
+        notes.push(
+          `The LIVE market file has no readable \`asOf\`, so Reference → Sectors renders the ` +
+            `unavailable state for every visitor regardless of how current the numbers are.`,
+        );
+      } else {
+        const goesDark = addDays(asOf, STALE_AFTER_DAYS + 1);
+        note += `, live age ${ageDays}d`;
+        if (isStale) {
+          notes.push(
+            `Reference → Sectors is ALREADY showing the unavailable state ON THE LIVE SITE: the ` +
+              `served market.json is ${ageDays} day(s) old (asOf ${asOf}, today ${TODAY}) against ` +
+              `STALE_AFTER_DAYS=${STALE_AFTER_DAYS}` +
+              (localAsOf === asOf
+                ? `. The repo's copy is the same age, so a redeploy alone will not fix it — the ` +
+                  `owner's daily job is what has to run.`
+                : `, while the repo has ${localAsOf}. The data exists; it just is not deployed. ` +
+                  `Push to \`main\`.`),
+          );
+        } else if (ageDays >= STALE_AFTER_DAYS) {
+          notes.push(
+            `The LIVE site's Sectors screen goes to the unavailable state on ${goesDark} — ` +
+              `tomorrow. Served market.json is ${ageDays} day(s) old (asOf ${asOf}).` +
+              (localAsOf === asOf
+                ? ` The repo has no fresher copy to deploy.`
+                : ` The repo already has ${localAsOf}; pushing to \`main\` publishes it.`),
+          );
+        } else if (localAsOf !== asOf) {
+          notes.push(
+            `The live site is serving ${asOf} market data while the repo has ${localAsOf}. Not a ` +
+              `defect — the deploy follows a push — but it is the gap that becomes the line above ` +
+              `on ${goesDark} if nothing is pushed.`,
+          );
+        }
+      }
     } catch {}
     say(`     · ${rel} — ${note} (not part of the verdict: regenerated daily)`);
     continue;
@@ -612,8 +682,19 @@ async function identifyDeployedCommit(liveBuf, localEntryName, limit) {
   return null;
 }
 
+// Advisory notes print in EVERY verdict branch, above the verdict. They are
+// not the verdict: a green "the live site is serving this tree" can be entirely
+// true while the tree it is serving shows a learner an empty Sectors screen.
+function sayNotes() {
+  if (notes.length === 0) return;
+  say("  ── advisory (not part of the verdict) ────────────────────────────────");
+  for (const n of notes) say(`     ⓘ ${n}`);
+  say();
+}
+
 // ── Verdict ──────────────────────────────────────────────────────────────────
 if (problems.length === 0 && retiredServing.length === 0) {
+  sayNotes();
   say(`  ✅ The live site is serving this tree (HEAD ${head}).`);
   process.exit(0);
 }
@@ -622,6 +703,7 @@ if (problems.length === 0 && retiredServing.length === 0) {
 // origin that is behind, and collapsing the two would print "DIVERGED — the
 // live site is NOT serving this tree" about a site that is.
 if (problems.length === 0) {
+  sayNotes();
   say(`  ⚠️  The canonical site is serving this tree (HEAD ${head}), but a host this`);
   say("     repo has declared RETIRED is still answering with a copy of the app:");
   say();
@@ -635,6 +717,7 @@ if (problems.length === 0) {
   process.exit(1);
 }
 
+sayNotes();
 say("  ❌ DIVERGED — the live site is NOT serving this tree.");
 say();
 for (const p of problems) say(`     • ${p}`);
