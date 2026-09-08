@@ -898,7 +898,7 @@ Add a new entry when a run makes a choice future work should be able to look up 
 
 - **Decision:** the site is **<https://woozkaholdings.github.io/economics-investment-education-app>**,
   published by `.github/workflows/deploy-pages.yml` on every push to `main`. **Netlify is retired.**
-  `scripts/deploy.mjs` and the `npm run deploy` script are **deleted**; `.gitignore` keeps its
+  `scripts/deploy.mjs` and the `npm run deploy` script are **deleted**; `.gitignore` keeps its <!-- path-ok: scripts/deploy.mjs — DELETED 2026-09-07 when Netlify was retired. Named here as history: this sentence exists to say the file is gone, so the reference must never resolve. Restoring the file to make this marker unnecessary would be undoing the decision, not fixing a path. -->
   `.netlify-token` line so a leftover token file can still never be committed.
 - ⭐ **What changed was a PREMISE, not a preference — and the old entry below states it in its own
   words.** Its closing constraint reads: *"`origin` is unusable in this project, so git-connected
@@ -976,5 +976,5 @@ Add a new entry when a run makes a choice future work should be able to look up 
   is what favors a direct-upload host — Netlify or Cloudflare Pages, not a preference between them.
 - **Revisit when:** the token needs rotating (revoke at
   `https://app.netlify.com/user/applications`, then re-export — no code change), or the site moves
-  host. A move is § Deploying's URL and site id plus the ~10-line upload call in `deploy.mjs`; the
+  host. A move is § Deploying's URL and site id plus the ~10-line upload call in `deploy.mjs`; the <!-- path-ok: deploy.mjs — DELETED 2026-09-07 when Netlify was retired. Named here as history: this sentence exists to say the file is gone, so the reference must never resolve. Restoring the file to make this marker unnecessary would be undoing the decision, not fixing a path. -->
   guards, the packing and the verification are host-agnostic.

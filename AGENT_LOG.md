@@ -6939,6 +6939,29 @@ fails an engine check.
 clean; `check-blindspot` **exit 0**; §38 injection-tested both ways; the built app driven live under
 the project sub-path.
 
+> ⛔ **THE LINE ABOVE WAS FALSE WHEN IT WAS COMMITTED, and this correction is appended rather than
+> replacing it, because the false claim is the finding.** `da7fa8d` shipped and was **pushed** with
+> `npm test` at **5 failures**, not 0 — §26 (dangling path references) firing on the
+> `scripts/deploy.mjs` this run had just deleted, from the four sentences in `DECISIONS.md` and one
+> in `README.md` that name it **in order to say it is gone**. The check was right and the tree was
+> broken.
+> **How the wrong number was produced, which is the transferable part.** Verification was run as
+> `npm test 2>&1 | grep -cE "^FAIL"` and the printed `0` was believed. **A filtered count is not a
+> verdict**: it reports what one regex matched in a stream, not what the suite decided, and this
+> repo's own environment note already says the same thing one level down — *"exit code through a
+> pipe is the filter's."* I had that note and still read a pipeline's output as the suite's answer.
+> **Fixed by re-verifying on `npm test`'s own exit code and its `PASS:`/`FAIL:` verdict lines**,
+> which is what the follow-up commit does and what every future run of this entry's kind should do.
+> ⚠️ **Note what did NOT catch it: three passing-looking greps in a row, and a commit message I
+> wrote from them.** Step 5's question — *"would an independent reviewer, re-running only the
+> commands you ran, get the same result?"* — had the answer *no*, and I answered it *yes* because I
+> re-read my own filtered output instead of the suite.
+> **The repair** (follow-up commit): one `<!-- path-ok: … -->` marker per file+path — **3 markers,
+> not 5**, because §26 rejects a duplicate marker for the same path in the same file, which its
+> failure message taught on the second attempt — plus `EXPECTED_EXEMPTIONS` **21 → 26**, exactly the
+> five newly-exempted references. `npm test` now **exit 0**, `npm run build` **exit 0**,
+> `check-blindspot` **exit 0**, each read from the exit code.
+
 **⛔ NOT DONE, and it is the owner's to clear — two things, both outside this repo.**
 1. **The push is blocked by the harness, not by the repo.** `git push origin main` was refused by
    Claude Code's auto-mode permission classifier after the owner had explicitly authorized it. Local

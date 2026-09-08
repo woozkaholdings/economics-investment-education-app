@@ -58,17 +58,35 @@ directory over HTTP can host it.
 
 ## Deploying
 
-**LIVE: <https://woozkaholdings.github.io/economics-investment-education-app>**
+**CANONICAL URL: <https://woozkaholdings.github.io/economics-investment-education-app>**
+
+⚠️ **NOT SERVING YET as of 2026-09-07 — measured, `HTTP 404`.** This section names the site's
+origin, which is what `check-data.mjs` §38 and `check-deployed.mjs` both read; it does **not**
+claim the site is up. It says LIVE only when `npm run check-deployed` says so against the running
+URL. (This repo has shipped one "deployed ✅" that was not live; that is why the wording here is
+deliberate rather than optimistic.)
 
 GitHub Pages, built and published by `.github/workflows/deploy-pages.yml` on every push to
 `main`. **Nothing is dragged anywhere and nothing has to be remembered** — that is the whole
 reason this host was chosen.
 
+⛔ **BLOCKER, measured 2026-09-07: this repository is PRIVATE** (unauthenticated `GET` of the repo
+URL returns 404 while an authenticated push to it succeeds — so it exists and is not public).
+**GitHub Pages will not publish from a private repository on a free plan**; Pages from private
+repos requires GitHub Pro, Team, or Enterprise Cloud. Until one of the following is true, the
+workflow will run and the site will not appear:
+- the repository is made **public** — note this publishes `AGENT_LOG.md`, ~600 KB of candid
+  internal development record, along with the full history; or
+- the account is on a **paid plan** that includes Pages for private repos; or
+- the site moves to a host that serves private-source builds on a free tier (Cloudflare Pages and
+  Netlify both do) — in which case change the URL in **this section first**, and `npm test` will
+  fail until `index.html` agrees.
+
 > ⚠️ **NETLIFY IS RETIRED (owner decision, 2026-09-07).** The site lived at
 > `https://magnificent-mochi-73aecc.netlify.app` from 2026-09-05 to 2026-09-07. It was retired
 > because publishing required a personal access token that only the owner could create, and until
 > it existed **every** update was a manual drag — which is exactly how the live site spent a day
-> four commits behind `main`, and then nine. `scripts/deploy.mjs` was the Netlify uploader and is
+> four commits behind `main`, and then nine. `scripts/deploy.mjs` was the Netlify uploader and is <!-- path-ok: scripts/deploy.mjs — DELETED 2026-09-07 when Netlify was retired. Named here as history: this sentence exists to say the file is gone, so the reference must never resolve. Restoring the file to make this marker unnecessary would be undoing the decision, not fixing a path. -->
 > **deleted**, along with the `npm run deploy` script and the `.netlify-token` mechanism; if you
 > find a reference to any of them, it is stale. `.gitignore` keeps its `.netlify-token` line on
 > purpose, so a leftover token file on any machine can still never be committed.

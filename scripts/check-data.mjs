@@ -2908,7 +2908,10 @@ if (keyedGroupsChecked < 4) {
   // `vercel.json` for exactly the reason README.md § Deploying already does —
   // to say this repo does NOT have one, because hash routing means no host
   // needs an SPA rewrite rule. Same string, same justification, second document.
-  const EXPECTED_EXEMPTIONS = 21;
+  // 21 → 26 on 2026-09-07: `scripts/deploy.mjs` was deleted when Netlify was
+  // retired, and five sentences in DECISIONS.md and README.md name it in order
+  // to say it is gone. Those references must never resolve.
+  const EXPECTED_EXEMPTIONS = 26;
 
   const walkAll = (dir, base = "") =>
     readdirSync(dir, { withFileTypes: true }).flatMap((e) => {
