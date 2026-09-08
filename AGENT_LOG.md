@@ -1814,6 +1814,30 @@ instead of hand-rolling an eighth mover. A working one is in this run's scratchp
       stand; the coverage did not.** `A11yStates.coverage()` plus the Tab step now in the header
       recipe are the fix — see item 149.
 
+170. **[UX/Product — filed 2026-09-08 by the run that fixed the same class on `Sectors.jsx`, as the
+    ONE instance it deliberately did not fold into that commit, because this one is a decision and
+    that one was not.] Practice renders the §10.1 disclaimer on the queue overview and NOT inside a
+    started session.** Measured live on the built app, `en`, 320px, with `t.disclaimer` as the probe
+    string: the Review landing contains it; the moment `Practice all questions` is pressed, it is
+    gone, and it stays gone through the in-session question, the batch pause and the completion card.
+    Mechanism is the same shape `Sectors.jsx` had — `Practice.jsx`'s `if (session)` block has three
+    `return`s ahead of the queue-overview return that carries the string at line 697 — and
+    `check-blindspot.mjs` is green on all of it, for the reason recorded in LAUNCH_PLAN.md §10.1: it
+    greps for the string and cannot see which branch the string is in.
+    ⚠️ **Why this was NOT fixed with the other one.** The session view is a deliberate full-screen
+    runner (UIUX/ Quizlet reference, close control + counter + progress bar), and a legal footer
+    under a live quiz question is a product change, not a repair. `Sectors.jsx` needed no decision:
+    the whole screen is market figures, and its disclaimer-less state becomes the DEFAULT for every
+    visitor whenever the daily file stops reaching the live host (O-5). This one has three honest
+    options — (a) render it in the session states too, (b) render it once at the batch pause and
+    completion card only, where the learner is reading rather than answering, (c) accept the runner
+    as chrome-free and say so in §10.1 so the register stops implying otherwise.
+    **W-6.2 rule 3, answered:** "a learner answering questions about markets and investing is shown
+    no 'not personalized advice' notice for the whole session." **No check is proposed** — the
+    statically decidable form is the parser §10.1 already rules out, and `scripts/` is at 2.27x
+    `src/` (W-6.3, measured 2026-09-08). **Honest priority: medium, and it is an owner call, not a
+    trimmer's.**
+
 168. **✅ DONE 2026-09-06 (scheduled dev-agent), the same run it was found — content and guard in one
     commit. [Content/QA] A same-track cross-reference that points FORWARD is a pointer at a LOCKED
     lesson, and three of them were written in backward-citation grammar.**
@@ -7293,3 +7317,116 @@ the day the Pages site publishes"*. It is the verdict `check-deployed` returns t
 figure that counts here is `check-log-size.mjs`'s own, not mine: **the backlog goes 413,234 b →
 414,428 b, +1,194 b.** This run grew it, and I am not dressing that up as a reduction. It stays
 **11,045 b under** the 425,473 b W-7.2 rule 5 measures against.
+
+### 2026-09-08 (scheduled dev-agent, self-picked from a live walk — not a backlog item, and the item I went looking for turned out to be clean) — The one screen whose entire subject is market figures drops the "not advice" disclaimer in every state except the one where the data is fresh, and that is the state it stops being in on 2026-09-12
+
+**The pick, and the two premises that died on the way to it.** My previous two runs both landed
+entirely in `scripts/` and both said so as their own honest concern, so this run went looking for
+learner-visible work in `src/`. Two candidate premises were measured and **refuted before any edit**:
+
+1. **"`index.html`'s `href="/icon.svg"` is a root-absolute path that breaks on a GitHub Pages project
+   site."** `vite.config.js`'s own comment says nothing in the app builds a URL from a hardcoded
+   leading `/`, and `index.html` appears to contain two. **Vite rewrites it**: `dist/index.html`
+   ships `href="./icon.svg"` and `src="./assets/index-<hash>.js"`. No defect. Do not re-derive this.
+2. **"The four states item 155's new `textOverflow` probe never swept are where the next clip is."**
+   Swept all four at **320px and 200%** — first-run dialog (`en`), lesson reader + end-of-lesson quiz
+   unanswered and answered (`en`), mid-session Practice and its answered state (`ja`), glossary list
+   and term detail (`ja`). **Zero findings, 8 readings, and the zeros are readings**: `A11ySweep.selftest()`
+   fired the `textOverflow`, `horizontalOverflow` and `smallTargets` controls at the start in the
+   `en` context and again in the `ja`/200% context, `plantsRemoved: true`, `appFindingsAfterCleanup: 0`,
+   and the scans were non-vacuous (90 / 85 / 93 / 38 / 47 / 328 / 31 elements). **The class is clean;
+   no check was built and none is due** (W-6.2 rule 3 — after an empty sweep the learner-visible
+   sentence cannot be written honestly). ⛔ `focusVisibleOnTab`'s control did **not** fire, so nothing
+   above is claimed about focus rings; that is the documented operator step and it failed identically
+   for the previous run.
+
+⭐ **What the walk found instead, and it is a §10.1 register instance rather than a layout one.**
+Driving the Sectors screen through its non-success states: with `market.json` fresh the screen ends
+with *"Educational content only — not personalized investment, legal, or tax advice…"*; with the same
+build and `asOf 2026-08-25`, **the entire screen is one sentence about the data being too old and the
+disclaimer is gone.** Same with the file returning 404. `Sectors.jsx` rendered `{t.disclaimer}` once,
+at the bottom of the success branch, behind two earlier `return`s.
+
+⛔ **This is not an exotic state.** `STALE_AFTER_DAYS` is 4, publishing follows a push that nothing
+owns (O-5, filed by my previous run), and the live site serves `asOf 2026-09-07` — so **2026-09-12 is
+the date on which this becomes what every visitor to Reference › Sector performance sees**, on the
+screen whose entire content is market figures and investing vocabulary.
+
+⚠️ **`npm run check-blindspot` was green through all of it, and it is not at fault.** Its §10.1
+surface check greps each named file for the rendered string and prints *"disclaimer renders on all 8
+surfaces §10.1 names"*. That claim is about **files**; a learner meets **states**. LAUNCH_PLAN.md
+§10.1 already records that this exact file was the reason the guard matches the string rather than
+the `<Disclaimer>` component — **and a grep for a string still cannot see which branch the string is
+in.** A source check that could is a parser, not a regex, so the fix is structural rather than a new
+guard: `Sectors.jsx` now has exactly **one** `{t.disclaimer}`, inside a local `ScreenFrame`, and all
+three returns go through it.
+
+**What shipped (one file in `src/`, 47 insertions / 10 deletions, plus the two records).**
+`src/screens/reference/Sectors.jsx` gains `ScreenFrame` and loses the branch-local footer;
+`LAUNCH_PLAN.md` §10.1 gains the state-vs-screen rule; `AGENT_LOG.md` gains **item 170**.
+
+**Four states, measured before and after on the built app at 320px — and `dist/data/market.json` is
+what was edited, never `public/data/market.json`, which is the owner's file.**
+
+| state | how it was produced | before | after |
+|---|---|---|---|
+| fresh (`asOf 2026-09-07`) | shipped file | ✅ disclaimer, 11 sectors | ✅ disclaimer **×1**, 11 sectors |
+| stale (`asOf 2026-08-25`) | `perl -i` on `dist/`, substitution count asserted `== 1` | ❌ **absent** | ✅ present |
+| unavailable | `dist/data/market.json` moved away, `GET` → **404** | ❌ **absent** | ✅ present |
+| loading | `window.fetch` patched to a never-settling promise for `market.json`, then Sectors remounted | (same `return` as the diff's first hunk) | ✅ present |
+
+The before column for **stale** and **unavailable** was taken by rebuilding the **pre-fix** file out
+of a scratchpad copy and serving it, not by reading the diff; the fixed file was restored with `cmp`
+proving it byte-identical, and `dist/` was rebuilt afterwards with `cmp dist/data/market.json
+public/data/market.json` proving the fixture is gone. ⚠️ **The loading row's "before" is the one
+cell I did not measure** — it is the same early `return` visible in the diff's first hunk, and I am
+recording that rather than implying a fifth measurement.
+
+**Layout re-checked after the change, because the fix adds a node to three branches:** the fixed
+stale screen swept in `ja` at 320px/200% — `textOverflow` 27 scanned / 0 findings, `horizontalOverflow`
+0, `smallTargets` 0, with both controls re-fired in that same context.
+
+**W-6.3's ratio, re-measured this run rather than quoted:** `scripts/` **21,067** lines vs app code
+(`src/` minus `content/`+`locales/`) **9,289** — **2.27x**, down from the **2.28x** measured
+2026-09-08 by my previous run. ⭐ **`scripts/` +0, `src/` +37. This is the first run in three to move
+that number the right way**, and it did so by fixing the app rather than by building an instrument
+for it.
+
+#### Step 5 — adversarial self-check
+**Blindspot register: this change is IN the register, and it closes an instance rather than opening
+one.** §10.1 is the entry; the change adds no prose a learner reads (the only new string is the
+existing `t.disclaimer`, rendered in more states) and touches no lesson, quiz, glossary or market
+copy. §10.2 (Dalio) and §10.3 (child-facing framing) are untouched — the diff contains no name and
+no kids surface. The Markets-tab class is the one worth naming explicitly: **the dates in my new
+comment (`2026-09-08`, `2026-08-25`) are code comments recording measurements, not a date rendered
+to a learner** — the screen's own dates still come from `data.asOf` and `t.asOfTemplate`, untouched.
+`npm run check-blindspot` **exit 0**, read from `$?`, and here it IS evidence: the diff is under
+`src/`, which is what that script scans.
+**DECISIONS.md conflict: none, and I checked the two it could have been.** The market-data decision
+(app reads a file the offline job writes, never a provider) is untouched — no fetch was added or
+moved. `localStorage`-only state, `.js`-not-JSON content and Vite-not-Expo are all untouched.
+`ScreenFrame` is a local function component, so item 12's port-cost rule is not engaged: nothing was
+added to `components/`, and no dependency exists that a native shell would have to replace.
+**Already-done: no.** `grep -ic "ScreenFrame"` over `AGENT_LOG.md` and `DECISIONS.md` returns **0**
+and **0**; item 79 is the closest prior work on this screen and it changed the stale *sentence*, not
+what surrounds it.
+**A rule I could have broken and deliberately did not:** the obvious tidy-up is to swap the raw
+`<Text>` for the shared `<Disclaimer>` component. That would change a fact LAUNCH_PLAN.md §10.1
+states in writing and alter the footer's padding for no learner benefit, so the markup is preserved
+byte-for-byte and only its position moved.
+**My own verification claim, weakest part first:** ⚠️ **the state table is a reading of a rendering
+and an independent reviewer cannot reproduce it from a command list alone** — it needs a build, a
+static serve of `dist/` and a browser pane, and two of its four rows required editing a build
+artifact. What reproduces exactly, from exit codes rather than from grep counts: `npm test`
+**exit 0, 0 failures, 4 warnings**, `npm run build` **exit 0**, `npm run check-blindspot` **exit 0**.
+⚠️ **And the sharpest thing I can say against my own report: `check-blindspot` printed the same
+green line before this change as after it.** That is not the fix being unverified — it is the
+measurement this entry exists to record, and it is why no new check was written to "prove" the fix.
+The proof is the four-row table and the fact that the file now contains one `{t.disclaimer}` that no
+branch can bypass.
+**Backlog bytes (W-7.2 rule 1):** nothing closed this run, so nothing was replaced by a conclusion;
+item 170 is new and costs **+2,161 b**, measured by `check-log-size.mjs` and not by my arithmetic —
+the backlog goes **414,428 b → 416,589 b**. This run grew it. It stays **8,884 b under** the
+425,473 b W-7.2 rule 5 measures against.
+
+**Schedule:** the cron is the owner's lever and was not read, compared or touched.

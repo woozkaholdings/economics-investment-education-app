@@ -654,6 +654,16 @@ it, build the smallest test this week. Never sit in ambiguity longer than a week
   could not be checked as written.* Note that Sector performance renders the disclaimer string
   directly rather than through the `Disclaimer` component; a guard that greps for the component and
   not the string inherits exactly that blind spot, and one did.
+  ⚠️ **"Renders on a screen" means IN EVERY STATE OF THAT SCREEN, and that was not true until
+  2026-09-08.** Measured on the built app: Sector performance rendered the disclaimer only in its
+  success branch, so with `market.json` stale, missing or still loading the whole screen was one
+  sentence about the data and no disclaimer at all — a state `STALE_AFTER_DAYS` and backlog O-5 make
+  routine rather than exotic. Fixed structurally (`Sectors.jsx` now has one `{t.disclaimer}` that no
+  branch can bypass). **The guard was green the entire time and is not at fault: it greps for the
+  string, and a grep cannot see which branch the string is in — a check for that is a parser, not a
+  regex.** So this list stays a list of screens, and the standing rule that reads it must be applied
+  to states. One instance is still open: Practice renders it on the queue overview and not inside a
+  started session (AGENT_LOG.md item 170 — a product call, not a plain defect).
 - **10.2 Dalio dependency** — *closed 2026-08-01.* No name-brand framing, no direct quotes, anywhere
   in the app or its marketing. Credit belongs in an acknowledgments line, not the product.
   *(v1's own §1 violated this; corrected in v2.)*

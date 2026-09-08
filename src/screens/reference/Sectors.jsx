@@ -25,6 +25,41 @@ const WINDOWS = [
   { key: "6m", label: "6M" },
 ];
 
+// ═══════════════════════════════════════════════════════════════════════════
+// The §10.1 disclaimer is a property of THIS SCREEN, not of one of its states.
+//
+// Until 2026-09-08 the string was rendered once, at the bottom of the success
+// branch, behind two earlier `return`s. Measured on the built app that day, at
+// 320px: with `market.json` fresh the screen ends "Educational content only —
+// not personalized investment, legal, or tax advice…"; with the SAME build and
+// an `asOf` of 2026-08-25, the whole screen is one sentence about the data
+// being too old and the disclaimer is GONE. Same for a missing or unparseable
+// file, and for the loading frame.
+//
+// That is not a hypothetical state. `STALE_AFTER_DAYS` is 4 and publishing
+// follows a push that nothing owns (backlog O-5), so this is what every
+// visitor meets whenever the daily file stops reaching the live host.
+//
+// ⚠️ `check-blindspot.mjs`'s §10.1 surface check greps this file for the
+// rendered string and passed throughout — which is the blind spot LAUNCH_PLAN
+// §10.1 already records about this very file, one level up: it was written to
+// match the string rather than the `<Disclaimer>` component, and a grep for a
+// string still cannot see which branch the string is in. A source guard that
+// could is a parser, not a regex; the durable fix is structural, so there is
+// now exactly ONE `{t.disclaimer}` in this file and no branch can leave
+// without passing through it.
+// ═══════════════════════════════════════════════════════════════════════════
+function ScreenFrame({ t, children }) {
+  return (
+    <div>
+      {children}
+      <Text variant="caption" color={ink.muted} style={{ marginTop: space["4"], textAlign: "center" }}>
+        {t.disclaimer}
+      </Text>
+    </div>
+  );
+}
+
 export default function Sectors({ t, lang }) {
   // `ageDays` is never *rendered* here (backlog item 44). This screen states
   // the absolute date the figures were taken and never phrases it as "N days
@@ -36,7 +71,11 @@ export default function Sectors({ t, lang }) {
   const [window, setWindow] = useState("3m");
 
   if (status === "loading") {
-    return <EmptyState icon="chart">{t.loadingLabel}</EmptyState>;
+    return (
+      <ScreenFrame t={t}>
+        <EmptyState icon="chart">{t.loadingLabel}</EmptyState>
+      </ScreenFrame>
+    );
   }
 
   // Two different failures used to share one sentence (backlog item 79): "no
@@ -62,9 +101,11 @@ export default function Sectors({ t, lang }) {
   if (status === "unavailable" || !data || isStale) {
     const datedStale = isStale && Number.isFinite(ageDays) && data?.asOf;
     return (
-      <EmptyState icon="chart">
-        {datedStale ? t.dataStaleTemplate.replace("{date}", data.asOf) : t.dataUnavailable}
-      </EmptyState>
+      <ScreenFrame t={t}>
+        <EmptyState icon="chart">
+          {datedStale ? t.dataStaleTemplate.replace("{date}", data.asOf) : t.dataUnavailable}
+        </EmptyState>
+      </ScreenFrame>
     );
   }
 
@@ -100,7 +141,7 @@ export default function Sectors({ t, lang }) {
   const benchChange = data.benchmark?.change?.[window];
 
   return (
-    <div>
+    <ScreenFrame t={t}>
       {isSample && (
         <Note tone="warn" icon="info" style={{ marginBottom: space["4"] }}>
           {t.sampleDataNotice}
@@ -296,10 +337,6 @@ export default function Sectors({ t, lang }) {
           )}
         </div>
       )}
-
-      <Text variant="caption" color={ink.muted} style={{ marginTop: space["4"], textAlign: "center" }}>
-        {t.disclaimer}
-      </Text>
-    </div>
+    </ScreenFrame>
   );
 }
