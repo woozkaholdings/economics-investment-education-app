@@ -82,11 +82,31 @@
 // discipline). If any control does not hold, the block reports UNAVAILABLE and
 // says which one, rather than printing a comfortable number.
 //
-// THRESHOLDS, derived rather than chosen. FILE_CEILING keeps W-5.3's original
-// 600 KB, which was never the part that was wrong. The two budgets partition
-// it: RUN_LOG_HARD = FILE_CEILING - FLOOR_MAX, so while both budgets hold the
-// whole file cannot reach 600 KB. The warn lines sit far enough below to leave
-// a run time to act rather than to discover.
+// THRESHOLDS, derived rather than chosen. The two budgets partition
+// FILE_CEILING: RUN_LOG_HARD = FILE_CEILING - FLOOR_MAX, so while both budgets
+// hold the whole file cannot reach the ceiling. The warn lines sit far enough
+// below to leave a run time to act rather than to discover.
+//
+// ⛔ RAISED 2026-09-08 BY OWNER DECISION ("raise the budget"), closing the option
+// item 115 had held open since 2026-08-26. FLOOR_MAX 250,000 -> 500,000 and
+// FILE_CEILING 600,000 -> 850,000, TOGETHER AND FOR A MEASURED REASON: these
+// constants are coupled, and raising the floor alone silently lowers the run
+// log's FAIL line by the same amount. Measured before the change -- FLOOR_MAX
+// at 500,000 with the ceiling left at 600,000 drives RUN_LOG_HARD to 100,000,
+// puts the fail line BELOW its own 250,000 warn line, and fails the suite on a
+// 127,076 b run log, which is the state where no run can commit anything.
+// Raising the ceiling by the same 250,000 keeps RUN_LOG_HARD at 350,000, so
+// archiving discipline is UNCHANGED by this decision -- only the floor's
+// allowance moved. COHERENCE is now asserted below rather than left to whoever
+// edits these next.
+//
+// Why the floor needed it: compression cannot reach 250,000. Item 115's fifth
+// pass measured the headline-only projection as INVARIANT to compression
+// (identical to the byte before and after), so the budget was unreachable by
+// the one remedy it names -- a permanent warning, which item 121 says is
+// evidence the BUDGET is wrong rather than the writing. The floor stood at
+// 430,586 b when this was set, leaving ~69 KB (~37 runs of writing at the
+// measured rate): real headroom, and still a line that can fire.
 // ═══════════════════════════════════════════════════════════════════════════
 
 import { readFileSync, existsSync } from "node:fs";
@@ -98,10 +118,24 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const LOG = join(ROOT, "AGENT_LOG.md");
 const ARCHIVE = join(ROOT, "AGENT_LOG.archive.md");
 
-const FILE_CEILING = 600_000; // W-5.3's original trigger, unchanged in value.
-const FLOOR_MAX = 250_000; // warn — remedy is backlog compression, NOT archiving
+const FILE_CEILING = 850_000; // owner-raised 2026-09-08 with FLOOR_MAX; see above.
+const FLOOR_MAX = 500_000; // warn — remedy is backlog compression, NOT archiving
 const RUN_LOG_HARD = FILE_CEILING - FLOOR_MAX; // 350,000 — fail
 const RUN_LOG_MAX = 250_000; // warn — remedy is an archiving pass
+// The trap this asserts is the one that was measured above, not a hypothetical:
+// RUN_LOG_HARD is DERIVED, so editing FLOOR_MAX or FILE_CEILING alone moves the
+// run log's fail line without mentioning the run log. Below its own warn line
+// the pair is incoherent — the suite would fail before it ever warned — so say
+// so at startup instead of printing a confident verdict from broken thresholds.
+if (RUN_LOG_HARD <= RUN_LOG_MAX) {
+  console.error(
+    `check-log-size: incoherent thresholds — RUN_LOG_HARD is ${RUN_LOG_HARD} b ` +
+    `(= FILE_CEILING ${FILE_CEILING} - FLOOR_MAX ${FLOOR_MAX}), at or below the ` +
+    `${RUN_LOG_MAX} b warn line. Raise FILE_CEILING by the same amount you raised ` +
+    `FLOOR_MAX, or lower FLOOR_MAX. No verdict is printed from these values.`
+  );
+  process.exit(1);
+}
 // Everything in '## Run log' that is not under a dated entry heading: the section's own
 // heading and its archive pointer. Measured at 1,599 b on 2026-08-27 and structurally flat.
 // 5,000 b leaves room for that pointer to grow while still catching a single dropped entry

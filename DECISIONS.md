@@ -1054,3 +1054,37 @@ Add a new entry when a run makes a choice future work should be able to look up 
   `https://app.netlify.com/user/applications`, then re-export — no code change), or the site moves
   host. A move is § Deploying's URL and site id plus the ~10-line upload call in `deploy.mjs`; the <!-- path-ok: deploy.mjs — DELETED 2026-09-07 when Netlify was retired. Named here as history: this sentence exists to say the file is gone, so the reference must never resolve. Restoring the file to make this marker unnecessary would be undoing the decision, not fixing a path. -->
   guards, the packing and the verification are host-agnostic.
+
+### The `AGENT_LOG.md` floor budget is 500,000 b, and the file ceiling 850,000 b (2026-09-08, owner)
+
+**Decision:** raise `FLOOR_MAX` 250,000 → **500,000** and `FILE_CEILING` 600,000 → **850,000** in
+`scripts/check-log-size.mjs`. Owner-directed ("raise the budget"), closing the option **item 115**
+had held open since 2026-08-26 and which every pass since has recorded as "the owner's, and a run
+must not choose."
+
+**Why the budget rather than the writing.** The floor is the App summary + backlog + Environment
+note — the regions archiving can never touch — and its only remedy is a backlog compression pass.
+Item 115's fifth pass measured that remedy's headline-only projection as **invariant to
+compression**: 254,621 b before a pass and 254,621 b after, identical to the byte. **The 250,000 b
+budget was unreachable by the one remedy it names**, so it had become a permanent warning — and
+item 121's own clause says a permanent warn is evidence the *budget* is wrong rather than the
+writing. Six compression passes and the standing warning since 2026-08-27 are the evidence.
+
+⛔ **The two constants are COUPLED and must move together — this is the trap, and it was measured
+rather than reasoned.** `RUN_LOG_HARD` is *derived*: `FILE_CEILING - FLOOR_MAX`. Raising the floor
+alone to 500,000 with the ceiling left at 600,000 drives the run log's **fail** line to 100,000 —
+**below its own 250,000 warn line** — and fails the suite on a 127,076 b run log, which is the state
+where no run can commit anything. Raising the ceiling by the same 250,000 holds `RUN_LOG_HARD` at
+**350,000**, so **archiving discipline is unchanged by this decision**; only the floor's allowance
+moved. A startup assertion now refuses to print a verdict when the derived pair is incoherent, and
+it names the fix — proven by injection (exit 1 injected, exit 0 restored, byte-identical).
+
+**What this is not.** It is not a license to write more: the floor stood at **430,586 b** when the
+budget was set, leaving ~69 KB ≈ **37 runs** of writing at the measured rate. The line can still
+fire, and W-7.2 rule 1 (a closed item is replaced by its conclusion) is unchanged and still the
+thing that actually moves the number.
+
+**Revisit when:** the floor warning returns. At that point compression has already been tried six
+times and the honest options are the two item 115 always named — delete closed items outright, or
+raise again. **W-5.3's archiving rule still states a 600 KB whole-file trigger in its own text; that
+clause's date-vs-byte defect is untouched by this decision and remains item 115/121 territory.**

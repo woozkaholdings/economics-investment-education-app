@@ -543,6 +543,10 @@ for the history. No open P1/P2 items.
 > that repeat it are dated records and stay verbatim, per §31.)
 >
 > ### W-5.3 — the archiving rule. ✅ **DONE 2026-08-23**, and the rule below is STANDING; leave it here.
+> ⚠️ **The 600 KB in the next sentence is a DATED figure as of 2026-09-08.** The owner raised
+> `FILE_CEILING` to **850,000 b** that day (`DECISIONS.md`, closing item 115). The rule's own
+> date-vs-byte defect is untouched by that and is still item 115/121 territory; **read the live
+> thresholds off `check-log-size.mjs`, never off this clause.**
 > **The rule:** when `AGENT_LOG.md` exceeds **600 KB**, the next run moves run-log entries older than
 > the most recent weekly-review boundary into `AGENT_LOG.archive.md`, in one commit that touches
 > nothing else. That is a legitimate whole run. **Backlog items, the App summary and the Environment
@@ -1212,93 +1216,30 @@ instead of hand-rolling an eighth mover. A working one is in this run's scratchp
       mark only focus-EVENT-dependent probes `UNAVAILABLE`; report `VACUOUS` — never `ok` — for a
       probe that scanned nothing.
 
-115. **✅ DONE 2026-08-26 (owner-directed: "compress the backlog — option (a)"), with a SECOND PASS
-    2026-08-27 (owner-directed) that corrected its headline figure, and a THIRD PASS 2026-08-30
-    (owner-directed: "go ahead with the compression pass"). The backlog section is
-    481,574 → 176,414 → see item 122 for the current number. All item numbers survive and every open
-    item stayed byte-identical in all three passes.**
-    > ⛔ **FIFTH PASS 2026-09-04 (owner-directed). Recovered 17,157 b on the artifact — floor
-    > 410,754 → 393,597 b — and THE OWNER OPTION BELOW HAS NOW EXPIRED. Read this before running a
-    > sixth.**
-    > **Headline-only for every closed item now projects to 254,621 b — OVER the 250,000 b budget by
-    > 4,621.** On 2026-09-02 the fourth pass measured that same projection at 232,194 b, *under* by
-    > 17,806, and predicted about three days left. It was right. **Control, because a projection
-    > compared against another run's projection is worthless unless the two instruments agree:** my
-    > estimator run against `767a96f` itself reports **232,009 b against their 232,194 — 185 b, 0.08%.**
-    > ⛔ **AND THE FINDING THAT SHOULD STOP A SIXTH PASS BEING ORDERED FOR THIS PURPOSE: the
-    > projection is INVARIANT to compression. Measured before and after this pass: 254,621 b, and
-    > 254,621 b — identical to the byte.** Compression under this rule and the headline-only cut
-    > remove *the same material*, so a pass buys headroom against the floor's growth and moves the
-    > option's reachability by exactly **zero**. No number of further passes reopens it. **What is
-    > left is what item 115 has always said is the owner's: delete closed items outright, or raise the
-    > budget.** A run must not choose.
-    > **Scope, following the fourth pass's precedent:** only the three closed items changed since
-    > `767a96f` (160, 165, 156); items an earlier pass already judged were left alone. **156 was
-    > examined and DECLINED** — 659 b droppable, and it included a run-log pointer a reviewer needs.
-    > All open items byte-identical; 142/142 item numbers survive; all 190 `backlog item N` citations
-    > still resolve.
-    > **FOURTH PASS 2026-09-02 (owner-directed: "do the backlog compression pass next"). Recovered
-    > 8,846 b on the artifact — floor 366,737 → 357,891 b — and its value is the arithmetic, not the
-    > bytes.** Scoped deliberately to material the rule had never touched (8 items added and 6 changed
-    > since `2ce1b6f`); **the 128 items the third pass processed were left alone**, because a
-    > classifier finding ~17 KB more in them is a regex second-guessing this item's own recorded
-    > judgment call, and over-keeping is the stated error direction. All six controls green.
-    > ⛔ **THE OWNER OPTION BELOW IS STILL OPEN AND IS NOW CLOSING.** Measured today: floor over
-    > budget by **107,891 b** (was 37,564 on 08-30); headline-only for closed items projects to
-    > **232,194 b — under budget by 17,806** (was under by 35,359). **The margin halved in three days
-    > and at the floor's writing rate it is gone in about three more**, after which the only moves
-    > left are deleting closed items outright or raising the budget (item 121's `⚠️` anticipates
-    > exactly that). Nothing a run may decide.
-    > **THIRD PASS 2026-08-30 — measured on the artifact, not the transform buffer.**
-    > The compression itself moved the floor **344,130 → 287,564 b** (recovered **56,566 b**) and the
-    > whole file **495,813 → 437,685 b**. **This record note then costs ~2.6 KB of the floor back**, so
-    > the committed state is ~**290 KB** — a net **~−54 KB**. Quoting only the first number would make
-    > this item the kind of figure it exists to warn about; read the live number off `npm test`.
-    > 110 closed items **194,188 → 136,060 b (-29%)**; **36 materially changed**, 74 already minimal.
-    > Six controls, all green before the write: 134/134 item numbers survive in order, all **24 open
-    > items byte-identical**, every compressed item keeps its headline, all 36 changed items have
-    > run-log/archive coverage, the coverage probe returns false for invented numbers (9991/9992),
-    > and the three section headings still parse. `npm test` exit 0.
-    > **What it dropped:** retained-original-text tails (17 items) and non-guidance blocks. **What it
-    > kept:** every headline and every block carrying `⚠️`/`⛔`, a standing rule, a named trap, a
-    > "do not re-derive", or a "carry a control".
-    > ⚠️ **The buffer said 58,128 b recovered; the file said 56,566. This item's own 2026-08-27
-    > correction, reproduced exactly** — a figure computed from a transform's output is not a
-    > measurement of the artifact. Both numbers above are read back off `check-log-size.mjs`.
-    > ⛔ **THE FINDING THAT MATTERS MORE THAN THE BYTES, and it changes what a future pass should
-    > be asked to do. The floor is still 37,564 b over budget, and the entire remaining gap sits
-    > inside blocks this rule PROTECTS.** Measured decomposition of the 287,564 b floor:
-    > open items **91,879** (live work, uncuttable) · closed items **136,060** · W-5/W-6 priority
-    > blocks + backlog preamble **31,279** (still binding) · Environment note **23,248** ·
-    > App summary **4,737** · preamble **360**.
-    > **Cutting all 110 closed items to headline ONLY would reach 214,641 b — under budget by
-    > 35,359.** So the 250,000 b budget IS reachable; it is reachable *only* by deleting every
-    > standing rule, trap and `⚠️` the closed backlog carries. **That is a rule change, not a
-    > pass, and W-5.3's precedent makes it the owner's** — the same boundary item 115 and
-    > item 121 already sit on. A run must not take it unilaterally.
-    > **Honest read: compression is now near its floor under the current rule.** The pass bought
-    > roughly 13 runs of headroom at the measured +4,265 b/commit, and the next pass will buy
-    > less. The lever that has never been pulled is the one W-6.2 rule 2 names — **not filing
-    > zero-live-instance residuals as numbered items in the first place.**
-    > ⛔ **PREMISE CORRECTION 2026-08-27 — this item's original "146,979 bytes" was wrong by 43 KB.**
-    > Measured live at the compression commit (`d411961`), the backlog section was **190,062 bytes**,
-    > not 146,979, so the first pass cut **60%, not the 69% it claimed**. The original table was
-    > internally inconsistent on its face — it reported the 97 items at 153,020 b inside a section it
-    > called 146,979 b, and items cannot exceed the section containing them. **The lesson is this
-    > project's oldest one in a new costume: a figure computed from a transform's own output buffer is
-    > not a measurement of the file.** Measure the artifact after writing it.
-    > **What was kept, so a future pass does not re-derive the rule.** Every item keeps its **bold
-    > headline** — already the summary a past run wrote — plus every block carrying guidance meant to
-    > outlive the item: standing rules, `⚠️`/`⛔` warnings, "do not re-derive", "deliberately not",
-    > known limits, traps. **What was dropped:** per-tranche chronology, retained original text, and
-    > "Update, `<date>`" accretion. **Nothing dropped is lost** — all 79 compressed items were checked
-    > to have run-log coverage, with the probe proven to fire on real item numbers and not on invented ones.
-    > **The one judgment call, recorded because it is arguable:** where a blockquote mixed guidance with
-    > chronology it was kept whole. **Over-keeping is the right error direction for a pass whose only
-    > irreversible move is deletion** — and it is why the first cut was 60% rather than the ~85% a
-    > headline-only pass would have produced.
-    > **The half this did NOT fix**, and it is still open: W-5.3's trigger is byte-based while its
-    > action clause is date-based. **Option (b) does not fix it either** — see W-5.3 above and item 121.
+115. **✅ CLOSED 2026-09-08 BY OWNER DECISION ("raise the budget") — the option this item held open
+    since 2026-08-26 is taken, and the full reasoning is in `DECISIONS.md`.** Collapsed to its
+    conclusion per W-7.2 rule 1 from 8,082 b; the six passes' methods and figures are in the run log
+    for 2026-08-26, 08-27, 08-30, 09-02, 09-04 and 09-08.
+    **What was true:** the never-archived floor was over a 250,000 b budget, and this item held the
+    two remedies only the owner could authorize — delete closed items outright, or raise the budget.
+    Six compression passes ran against it. **What is true now:** `FLOOR_MAX` is **500,000** and
+    `FILE_CEILING` **850,000**; the floor stood at 430,586 b when the decision landed and the suite
+    reports **0 warnings on this section for the first time since 2026-08-27**.
+    ⭐ **The measurement that decided it, and it is the one to keep: the budget was unreachable by the
+    only remedy it named.** This item's fifth pass measured the headline-only projection as
+    **invariant to compression** — 254,621 b before a pass and 254,621 b after, identical to the byte
+    — because compression and the headline-only cut remove *the same material*. So no number of
+    further passes could reopen the option, and the standing warning was evidence the **budget** was
+    wrong rather than the writing (item 121's own clause).
+    ⛔ **`FLOOR_MAX` and `FILE_CEILING` are COUPLED; never move one alone.** `RUN_LOG_HARD` is derived
+    (`FILE_CEILING - FLOOR_MAX`), so raising the floor alone drops the run log's *fail* line below its
+    own warn line and fails the suite — measured, not reasoned. A startup assertion now refuses to
+    print a verdict from an incoherent pair, proven by injection.
+    ⚠️ **Still true and not changed by this:** compression is near its floor under the current rule —
+    the remaining closed-item mass is standing rules, traps and `⚠️`/`⛔` blocks that the rule's
+    kept-list protects, corroborated from the other direction by the sixth pass declining items 115,
+    121, 168 and 125 as protected. **The lever that still works is W-7.2 rule 1**, and the lever never
+    pulled is W-6.2 rule 2 — not filing zero-live-instance residuals as numbered items at all.
 
 114. **✅ DONE 2026-08-26 (scheduled dev-agent). Lesson 30 §1 now says "monetary base (M0)" — and
     the matching standard term in each language — and carries a §3.0.3 chip to the `M0` glossary
@@ -6409,5 +6350,70 @@ already judged. **My own verification claim:** the six controls and both measure
 reproducible from the pre-cut copy, which is the only evidence that counts here — `npm test` cannot
 detect backlog loss any more than it can detect archive loss, and it is not offered as proof.
 `npm test` exit 0, **4 warnings, the documented baseline set**.
+
+**Schedule:** the cron is the owner's lever and was not read, compared or touched.
+
+### 2026-09-08 (owner-directed: "raise the budget" — sixteenth entry this date) — item 115's standing owner option is CLOSED, and raising the one budget that was named would have broken the build
+
+**The decision:** `FLOOR_MAX` **250,000 → 500,000** and `FILE_CEILING` **600,000 → 850,000** in
+`scripts/check-log-size.mjs`, recorded in `DECISIONS.md`. This closes the option **item 115** had held
+open since 2026-08-26 and that six passes each recorded as "the owner's, and a run must not choose."
+**`npm test` now reports 3 warnings, not 4 — the floor warning is gone for the first time since
+2026-08-27.**
+
+⛔ **THE FINDING, AND IT IS WHY THIS WAS NOT A ONE-CONSTANT EDIT. The two budgets are COUPLED, and
+raising the named one alone fails the build.** `RUN_LOG_HARD` is *derived* — `FILE_CEILING -
+FLOOR_MAX` — so the floor's budget silently owns the run log's **fail** line. Measured before
+committing anything, by making the naive edit and running it:
+- `FLOOR_MAX = 500_000` with the ceiling left at 600,000 → `RUN_LOG_HARD` **100,000**, which is
+  **below its own 250,000 warn line**, and the suite exits **1** on a 127,076 b run log:
+  *"FAIL: run log is 127,076 b, over the hard budget of 100,000 b."*
+- That is precisely the state W-5.3's 2026-08-29 note describes as the one where **no run can commit
+  anything** — reached by raising a budget to relieve pressure.
+**Raising the ceiling by the same 250,000 holds `RUN_LOG_HARD` at 350,000, so archiving discipline is
+UNCHANGED by this decision.** Only the floor's allowance moved.
+
+✅ **The trap is now loud instead of latent.** A startup assertion refuses to print any verdict when
+the derived pair is incoherent and names the fix in its message. **Proven by injection rather than
+asserted:** `FLOOR_MAX = 700_000` → *"incoherent thresholds — RUN_LOG_HARD is 150000 b … at or below
+the 250000 b warn line"*, **exit 1 read from `$?` on an unpiped run**; restored from a scratchpad copy,
+`cmp` byte-identical, **exit 0**. It is ~14 lines and no new script (W-6.3).
+
+**Why the budget was the right thing to move, and this is item 115's own measurement rather than a
+preference.** The floor's only remedy is compression, and item 115's fifth pass measured the
+headline-only projection as **invariant to compression** — 254,621 b before a pass and 254,621 b
+after, identical to the byte — because compression and the headline-only cut remove *the same
+material*. **The 250,000 b budget was unreachable by the one remedy it names.** Item 121's own clause
+says a permanent warn is evidence the *budget* is wrong rather than the writing; six passes and a
+warning standing since 2026-08-27 are that evidence.
+
+**State after, measured:** floor **425,136 b** against 500,000 — **74,864 b of headroom = 38.2 runs**
+at the measured writing rate. The line can still fire; it has not been set to infinity. Backlog
+**386,730 b** (item 115 collapsed to its conclusion in the same commit, −5,802 b), **38,743 b under**
+W-7.2 rule 5's 425,473 b baseline for 2026-09-13.
+
+⚠️ **Two documents still state the old ceiling and were handled differently, deliberately.**
+`DECISIONS.md` carries the decision in full. **W-5.3's rule text still says "600 KB" and was
+annotated, not rewritten** — one line pointing at the live thresholds — because its date-vs-byte
+defect is a *separate* open question that this decision does not touch, and rewriting a standing
+rule's action clause is not what "raise the budget" authorized.
+
+#### Step 5 — adversarial self-check
+**Blindspot register: nothing found** — no learner-facing copy, no `src/` file touched;
+`check-blindspot` exit 0. **DECISIONS.md conflict: none — this ADDS a decision**, and it contradicts
+nothing: the localStorage, content-module and host decisions are untouched, and the one clause in
+range (item 121's "a permanent warn means the budget is wrong") is what this action *follows*.
+**Already-done backlog item: no** — this is the first time the option has been exercised; six passes
+declined it because a run may not take it.
+**My own verification claim, weakest part first.** ⚠️ **(1) The 38.2-runs headroom figure is a
+projection from a 15-interval window that contains this session's own −32,174 b compression pass**,
+which is exactly the self-concealing shape item 121 corrected: a large negative in the window flatters
+the estimate. The script now projects from the *writing* rate (positive intervals only, +1,959 b over
+8 of 15), which is the fix for that defect, so the figure is the honest one available — but it is a
+projection and is labeled as one. (2) The threshold change is verified by the assertion's injection
+and by the suite going 4 warnings → 3; both are reproducible from the commands above. (3) **A caught
+error worth recording: my own `DECISIONS.md` prose failed `check-data.mjs` §59** for the British
+"licence" — the house-style guard fired on the run that was writing about guards, and the entry
+stands as evidence the check works on new prose rather than only on old.
 
 **Schedule:** the cron is the owner's lever and was not read, compared or touched.
