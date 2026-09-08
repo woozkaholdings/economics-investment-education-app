@@ -1742,6 +1742,57 @@ instead of hand-rolling an eighth mover. A working one is in this run's scratchp
       stand; the coverage did not.** `A11yStates.coverage()` plus the Tab step now in the header
       recipe are the fix — see item 149.
 
+174. **[A11y — filed 2026-09-08 by the run that fixed `Question.jsx`'s live region, as the two
+    instances it measured and deliberately did NOT fold into the same commit, because their fix is a
+    different shape.] The app has six ARIA live regions; the mount shape is now right in one place
+    and still wrong in two, and the two are wrong in a way "always render it" does not fix.**
+    Swept live on the built app 2026-09-08 — all six enumerated, each classified by whether the
+    region exists BEFORE it gets its content:
+    | region | shape | verdict |
+    |---|---|---|
+    | `PolicySim.jsx` outcome panel (×2 on lesson 35) | always rendered, empty | ✅ correct, and it is the idiom the fix copied |
+    | `Question.jsx` verdict | ~~inserted with content~~ | ✅ **FIXED this run** |
+    | `LessonReader.jsx` `Toast` ("Complete!") | inserted with content | ⛔ open |
+    | `App.jsx` `PracticeCoachMark` | inserted with content | ⛔ open |
+    | `ui.jsx` `LoadFailure`, `AppError` | inserted with content, but `role="alert"` | ✅ not a defect — an inserted `alert` is the documented exception AT announces |
+    - **(a) `Toast` — measured, not inferred.** Marking a lesson complete inserts a `role="status"`
+      node **already containing** its 9 characters ("Complete!"), `position: fixed`, which then
+      animates out and unmounts after ~1.9s. Measured on `index-CqKQuTCJ.js` by stamping every
+      pre-existing live region, clicking Mark Complete on lesson 36, and reading after a 120ms tick:
+      **1 node created by the interaction, 0 pre-existing populated.** ⚠️ **The first read returned 0
+      created and was wrong** — it ran in the same task as the click, before React committed. A
+      live-DOM probe of a React state change must wait a tick.
+    - **(b) `PracticeCoachMark`** — same shape by inspection (`role="status"` inside
+      `{!showDisclaimer && showPracticeCoachMark && …}`), fires once per install. Not driven live.
+    - ⛔ **Why this is not "make them always-rendered too", and why folding it in would have been
+      wrong.** `Question.jsx`'s region is a block element in normal flow whose empty state measures
+      **0×0 with 0px margin** — always-rendering it is free. Both of these are `position: fixed`
+      overlays that are *supposed* to appear and leave. Always-rendering them means a permanent fixed
+      node. The correct fix is a **persistent, empty `SrOnly` announcer** that the visual toast and
+      coach mark write into while the visual node itself goes `aria-hidden` — a new primitive, two
+      call sites, and a real risk of double-announcement to measure. That is a separable piece of
+      work, not a line in someone else's commit.
+    - **W-6.2 rule 3, answered honestly, and the check is DECLINED for now.** The learner-visible
+      sentence is writable for (a) — "a screen-reader learner marks a lesson complete and is not told
+      it worked" — so the rule does not block a check. **W-6.3's ratio, re-measured this run:
+      `scripts/` 21,409 lines vs app code 9,758 — 2.19x**, unchanged, because this run added no
+      script. What blocks it is the instrument: deciding "is this live region conditionally mounted"
+      from JSX source is exactly the brittle regex item 152's was declined for, and the honest
+      instrument is a live probe that drives each populating interaction and asserts the region
+      pre-existed. Six regions is a small enough corpus that the sweep above IS the coverage.
+      **Whoever picks (a) should build that probe with (a)'s fix, not before it** — it needs
+      something to fire on.
+    - ⛔ **The transferable finding, and it is about this log rather than the app.** `aria-live` being
+      present is not the region announcing. **Two run-log entries treated it as the same thing**:
+      the run that added the attribute (archived, `More.jsx` era) wrote that the verdict is "announced
+      automatically rather than requiring the user to find it", and 2026-09-08's `aria-disabled` entry
+      wrote "**it is in an `aria-live="polite"` region and was announced correctly throughout**" —
+      annotated in place this run. A third leaned on it to justify hiding the redundant ✓/✗ SVGs.
+      **No screen reader is drivable from this host**, so none of the three measured an announcement;
+      all three read an attribute. The precondition the attribute does not carry is that the region
+      must be in the accessibility tree before its content changes.
+    - **Honest priority: (a) medium — it is every lesson completion; (b) low — once per install.**
+
 173. **✅ DONE 2026-09-08 (scheduled dev-agent), the day after it was filed** — replaced by its
     conclusion per W-7.2 rule 1; the measurements are in this date's twelfth run-log entry.
     **What was true:** closing a lesson dropped focus to `<body>`, so a keyboard or screen-reader
@@ -6043,6 +6094,13 @@ clicked. Pre-fix bundle **`index-DkIEnxqk.js`**, read off `script[src]` before e
 answer" — sit *inside* those buttons. Native `disabled` takes them out of the tab order, so a
 keyboard-driven screen-reader user could not reach them at all. The verdict prose itself is fine:
 it is in an `aria-live="polite"` region and was announced correctly throughout.
+✏️ **That last sentence is WRONG and is left standing with this annotation under it (2026-09-08,
+dev-agent, seventeenth entry this date). No screen reader is drivable from this host, so "was
+announced correctly throughout" was not measured by anything — this run's probe was a focus and
+tab-order probe, and it read an attribute.** And the attribute was on the one region least likely to
+announce: measured live, the region did not exist until the answer landed and arrived carrying all
+191 characters of the verdict, which is the shape ARIA documents as not reliably announced. Fixed in
+this date's seventeenth entry; the class is backlog item 174.
 
 **What shipped — 1 file, +27/−1, and exactly ONE substantive line.** `disabled={answered}` →
 `aria-disabled={answered || undefined}`. The re-entry guard is `choose`'s own
@@ -6417,3 +6475,119 @@ error worth recording: my own `DECISIONS.md` prose failed `check-data.mjs` §59*
 stands as evidence the check works on new prose rather than only on old.
 
 **Schedule:** the cron is the owner's lever and was not read, compared or touched.
+
+### 2026-09-08 (scheduled dev-agent; W-6.2 rule 1 free — the previous run was owner-directed and closed item 115, filing no residual, so this pick came from the least-covered code surface rather than from a chain) — every quiz verdict in the app is delivered into a live region that does not exist until the verdict does, and two run-log entries had already recorded it as "announced correctly"
+
+**How the item was chosen, since it was not on the backlog.** The open numbered items are parked
+(W-6.2 rule 2: 120, 126, 140, 143, 144, 149, 152), owner actions (O-2 through O-5, 18, 158),
+exhausted (17, 24, 21), held (19), or judgment calls their own text labels low and downstream of O-1
+(117, 163 and 167 are both fully closed and were checked rather than assumed). So I ranked `src/` by
+how little of it the 557 KB log has ever mentioned: `Settings.jsx` **4** mentions, `TermDetail` **4**,
+`Icon.jsx` **0**, `storage.js` **0**, `PolicySim` **1**, `GlossaryTerms` **1**, `ErrorBoundary` **1**.
+Reading the two least-covered UI files turned up the shape below in a file that is NOT under-covered
+— `Question.jsx` — which is the useful part: the sweep found it, not the file's own reputation.
+
+**THE DEFECT, and it is on every question surface the app has.** `Question.jsx` rendered its verdict
+as `{answered && (<div aria-live="polite">…</div>)}` — the live region was created **by** the answer,
+already containing the verdict. A live region has to be in the accessibility tree *before* its content
+changes: assistive technology registers the region and then watches it for mutations, so a node that
+arrives with its text already inside is one insertion rather than a change to anything monitored.
+`PolicySim.jsx`, eleven files away, already does it the other way and says so in a comment — so the
+app contained both shapes and no rule.
+
+**Step 3.5 — the premise was mine, so it was measured before anything was edited, with a control that
+fired.** Built the tree, served `dist/` statically on :4599, `preview_start`-ed it. Seeded a returning
+learner (`completed [29,30,31,32,33,34]`) and opened `#/lesson/35`, which hosts BOTH surfaces at once:
+the policy simulator (always-rendered region) and an end-of-lesson check (the suspect).
+- **The instrument**: stamp `data-preexisting` on every `[aria-live],[role="status"],[role="alert"]`
+  node *before* interacting, then re-query after. A node that survives keeps its stamp; a node the
+  interaction created has none. That is the whole discriminator.
+- **CONTROL — the simulator, pre-fix**: its region was present and **empty** before any lever, kept
+  its stamp after clicking "Raise the rate", and went **0 → 521 characters**. So the instrument can
+  see a pre-existing region being populated, which is the reading a negative result needs.
+- **DEFECT — the check, pre-fix, same page, same instrument**: `1` node **created by the
+  interaction**, `aria-live="polite"`, carrying **191 characters at insertion** ("Correct!" plus the
+  explanation). Zero pre-existing regions in the question block, before or after.
+- **Focus does not rescue it**: `activeElement` after answering is the option button (that is
+  2026-09-08's `aria-disabled` fix working as designed), so nothing carries the reader to the verdict.
+  The two `SrOnly` markers are inside the options and name the right answer without explaining it —
+  and `question.explain` is what this component's own header calls "the point".
+
+⛔ **A SEED ERROR CAUGHT BY THE APP, worth recording because it looked like a defect.** The first seed
+wrote `completed [29…34]` and lesson 35 stayed locked — the hash was rewritten to `#/learn`. Not an
+unlock bug: `ecycles_legacy_lesson_id_migrated` was unset, so the one-time 2026-08-14 migration ran
+over my seed and remapped it to `[17…22]`. **The instrument was wrong, not the app.** Setting the flag
+fixed it. A localStorage seed that skips a migration flag is measuring a different learner.
+
+⛔ **AND AN ERROR IN MY OWN PROBE, which produced a confident wrong figure.** The first post-fix read
+reported the region as already holding 191 characters *before* the click — i.e. the fix appearing not
+to work. Cause: I held **live node references** in a `before` array and read `.textContent.length`
+off them in the `return`, which runs after the click. The count and the attribute were right; the
+length was read from the future. Re-run with every value copied to a primitive eagerly. **A snapshot
+of the DOM is not a list of DOM nodes**, and this is the second time in this session's class of work
+that a probe agreed with a wrong answer rather than failing loudly.
+
+**WHAT SHIPPED — 1 file, and one structural line.** The region is now rendered always and empty, with
+`{answered && …}` moved INSIDE it and the margin made conditional (`style={answered ? {…} : undefined}`)
+— which is verbatim the idiom `PolicySim` already uses, so this is the app's own convention rather
+than a new one. `role="alert"` was considered and rejected: it announces on insertion, which is the
+documented exception, but it is assertive and interrupts, and a verdict the reader just asked for is
+not an interruption.
+
+**Verified after, on `index-CqKQuTCJ.js`, on all three surfaces `Question` renders:**
+| surface | region before | created by the interaction | same node after |
+|---|---|---|---|
+| end-of-lesson check (disclosed) | present, **0 chars** | **0** | 0 → **191** chars |
+| pre-lesson hook (`reveal={false}`, verdict withheld) | present, 0 chars | **0** | 0 → **96** chars ("Hold that thought") |
+| Practice review session (wrong answer) | present, 0 chars | **0** | 0 → **193** chars ("Not quite.") |
+
+**Layout is provably unchanged**, which is what makes always-rendering free here: the empty region
+measures `height 0`, `offsetHeight 0`, `marginTop 0px`. `npm test` **exit 0** — 0 failures, the same
+**3** pre-existing warnings as before the change (translation review coverage, translation
+completeness, the option-length cue / item 160); `npm run check-blindspot` **exit 0**.
+
+⚠️ **THE LIMIT OF THIS CLAIM, stated rather than left for a reader to find.** I did **not** measure an
+announcement and cannot from this host — there is no assistive technology in the Browser pane. What is
+measured is the DOM precondition: the region now exists before its content does, which it did not
+before. Anyone who wants "NVDA/VoiceOver says the verdict" has to run a screen reader, and nothing in
+this repo can.
+
+⛔ **The finding that outlives the fix, and it is about this log.** Three run-log entries treated
+"`aria-live` is present" as "the region announces": the run that added the attribute (archived), the
+2026-09-08 `aria-disabled` entry — which wrote *"it is in an `aria-live="polite"` region and was
+announced correctly throughout"* — and a third that leaned on it to justify hiding the redundant ✓/✗
+SVGs. None of the three could have measured an announcement. **That sentence is annotated in place
+this run rather than rewritten**, per W-7.2 rule 3: the record of having been wrong stays.
+
+**Filed as item 174, not fixed here:** `Toast` and `PracticeCoachMark` are the same shape and were
+measured, but they are `position: fixed` overlays meant to appear and leave, so "always render it" is
+the wrong fix — they need a persistent `SrOnly` announcer, a new primitive and two call sites. Item
+174 carries the six-region sweep, both measurements, and the reason the guard is declined for now
+(**W-6.3 ratio re-measured: `scripts/` 21,409 vs app code 9,758 = 2.19x, unchanged — this run added no
+script**).
+
+#### Step 5 — adversarial self-check
+**Blindspot register: nothing found.** No learner-facing copy changed — no locale key, no lesson
+prose, no market figure, no date; the diff is JSX structure plus a comment. `check-blindspot` exit 0.
+§10.2 (Dalio), §10.1 (advice adjacency) and §10.3 (kids framing) are untouched by a markup change.
+**DECISIONS.md conflict: none.** Grepped it for `aria-live` / `live region` / `role="status"` — the
+only hit is item 169's routing note, unrelated. localStorage-only state, `.js`-not-JSON content and
+Vite-not-Expo are all untouched.
+**Already-done backlog item: no, and I checked the specific risk rather than the list.** The risk was
+that a past run had *deliberately* chosen the conditional shape, which would make this an undo. It did
+not: the run that introduced the attribute (archive, `More.jsx` era) wrote that it was added "so it's
+announced automatically rather than requiring the user to find it" — **this run serves that stated
+intent rather than reversing it.** It also does not touch 2026-09-08's `aria-disabled` fix; the two
+are complementary, and the new comment cites it.
+**My own verification claim, weakest part first.** ⚠️ **(1) The headline is a DOM-shape claim, not an
+announcement claim** — see the limit above; if a reviewer expects a screen-reader transcript, this run
+does not have one and says so three times. **(2) Two of my own instruments were wrong before they were
+right** (the migration-flag seed, the deferred read on live nodes), and both are written up above with
+what the wrong figure looked like, because in both cases the broken instrument returned a plausible
+answer instead of failing. **(3) Reproducible**: the control (simulator 0 → 521 with its stamp intact)
+and the defect (1 node created carrying 191 chars) come from the same stamp-then-requery probe in the
+same page load, so a reviewer re-running it gets the differential rather than two separate readings.
+**(4)** `Toast`'s measurement is honest about the first read being wrong for a reason unrelated to the
+defect — same task as the click, before React committed.
+
+**Schedule:** the cron is the owner's lever; not read, not compared, not touched.

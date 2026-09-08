@@ -174,25 +174,48 @@ export default function Question({ question, t, onAnswered, autoFocusHeading = f
         })}
       </div>
 
-      {answered && (
-        <div aria-live="polite" style={{ marginTop: space["3"] }}>
-          {disclosed ? (
-            <Note
-              tone={correct ? "ok" : "bad"}
-              label={correct ? t.quizCorrect : t.quizWrong}
-              icon={correct ? "check" : "info"}
-            >
-              {question.explain}
-            </Note>
-          ) : (
-            // The curiosity gap, held open on purpose. No verdict, and
-            // explicitly no `question.explain` — that string names the answer.
-            <Note tone="accent" label={t.hookHeldLabel} icon="info">
-              {t.hookHeldBody}
-            </Note>
-          )}
-        </div>
-      )}
+      {/* The live region is rendered ALWAYS, empty, and the verdict is switched
+          in and out INSIDE it — `{answered && …}` used to wrap the region
+          itself, and that is the difference between an announcement and
+          silence. A live region has to be in the accessibility tree before its
+          content changes: assistive technology registers the region and then
+          watches it for mutations, so a node that arrives with its text
+          already inside is one insertion rather than a change to anything
+          being monitored, and is not reliably announced. Measured on the built
+          app 2026-09-08 at lesson 35 with the policy simulator as the control:
+          answering the check inserted an `aria-live="polite"` node that had
+          not existed a moment earlier, carrying all 191 characters of
+          "Correct!" plus the explanation; the simulator's always-rendered
+          region, stamped before the interaction, kept its stamp and went 0 ->
+          521 characters, which is the shape that DOES announce.
+          The cost of getting it wrong is the whole point of this component:
+          `question.explain` is the teaching, and since answering now leaves
+          focus on the option that was pressed (see `aria-disabled` above),
+          nothing carries the reader to the verdict either — the two `SrOnly`
+          markers on the options are the only other non-visual trace, and they
+          name the right answer without explaining it.
+          `role="alert"` would announce on insertion — that is the documented
+          exception — but it is assertive and interrupts, which is wrong for a
+          verdict the reader asked for. `PolicySim` already uses exactly this
+          always-rendered idiom, including the conditional `style`, so this is
+          the app's own convention rather than a new one. */}
+      <div aria-live="polite" style={answered ? { marginTop: space["3"] } : undefined}>
+        {answered && (disclosed ? (
+          <Note
+            tone={correct ? "ok" : "bad"}
+            label={correct ? t.quizCorrect : t.quizWrong}
+            icon={correct ? "check" : "info"}
+          >
+            {question.explain}
+          </Note>
+        ) : (
+          // The curiosity gap, held open on purpose. No verdict, and
+          // explicitly no `question.explain` — that string names the answer.
+          <Note tone="accent" label={t.hookHeldLabel} icon="info">
+            {t.hookHeldBody}
+          </Note>
+        ))}
+      </div>
     </div>
   );
 }
