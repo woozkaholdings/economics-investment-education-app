@@ -17,7 +17,7 @@ import { chunk, isChunkLoadError } from "./lib/chunkError.js";
 import { initialRoute, useDeepLink } from "./lib/deepLink.js";
 import { useAppState } from "./lib/useAppState.js";
 import Icon from "./components/Icon.jsx";
-import { AppError, Button, Card, EmptyState, LoadFailure, Text } from "./components/ui.jsx";
+import { AppError, Button, Card, EmptyState, LoadFailure, Note, Text } from "./components/ui.jsx";
 import ErrorBoundary from "./components/ErrorBoundary.jsx";
 import { APP_MAX_WIDTH, fill, ink, line, MIN_TAP, radius, shadow, space, surface } from "./theme.js";
 import Learn from "./screens/Learn.jsx";
@@ -240,9 +240,15 @@ export default function App() {
     completedLessons, completeLesson,
     streak, fontScale, setFontScale, themeMode, setThemeMode,
     review, recordReview,
-    isFirstVisit, showDisclaimer, dismissDisclaimer,
+    isFirstVisit, persistenceBroken, showDisclaimer, dismissDisclaimer,
     showPracticeCoachMark, dismissPracticeCoachMark,
   } = useAppState();
+
+  // Dismissed for THIS SESSION only, and it cannot be otherwise: remembering
+  // the dismissal would mean writing it to the storage that is broken. Coming
+  // back on the next load is the correct behavior anyway — the condition is
+  // still true, and so is its consequence.
+  const [storageNoticeDismissed, setStorageNoticeDismissed] = useState(false);
 
   // Whole tracks in TRACKS order (money first), so a lesson's index here is
   // its position on the Learn path. Lesson `id` is unchanged by the reorder.
@@ -503,6 +509,31 @@ export default function App() {
           aria-labelledby={`tab-${tab}`}
           style={{ flex: 1, minWidth: 0 }}
         >
+        {/* Above the panel and inside <main>, so it is in the reading order
+            right after the header on every tab rather than attached to one
+            screen — the loss it describes is not a Learn-tab fact, and a
+            learner meets it before the content it is about.
+            Deliberately NOT a live region: it mounts already-populated (the
+            probe runs in a mount effect), which is exactly the case browsers
+            and screen readers announce inconsistently. DOM order is a property
+            this repo can verify; an announcement here would not be. */}
+        {persistenceBroken && !storageNoticeDismissed && (
+          <Note
+            tone="warn"
+            icon="info"
+            label={t.storageBlockedLabel}
+            style={{ marginBottom: space["4"] }}
+          >
+            {t.storageBlockedBody}
+            <Button
+              variant="quiet"
+              onClick={() => setStorageNoticeDismissed(true)}
+              style={{ marginTop: space["2"], minHeight: MIN_TAP, paddingLeft: 0 }}
+            >
+              {t.storageBlockedDismiss}
+            </Button>
+          </Note>
+        )}
         <ScreenBoundary t={t} key={tab}>
           {tab === "learn" && reading === null && (
             <Learn

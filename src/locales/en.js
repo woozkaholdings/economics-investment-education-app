@@ -142,6 +142,16 @@ export default {
     howReviewStepDone: "Done",
     coachMarkPractice: "Nice work! Come back here anytime to review what you've learned.",
     coachMarkDismissLabel: "Dismiss tip",
+    // Site storage unavailable (2026-09-07). Measured on the built app: with
+    // storage blocked a learner completes lesson 1, is shown "Progress: 1/44"
+    // and a streak, and loses all of it on reload with nothing said. The copy
+    // names the condition and the consequence and deliberately does NOT tell
+    // the learner to change a browser setting — the app cannot know which one,
+    // and "turn off your privacy protection" is not a thing to ask for a free
+    // course. It also says the lessons still work, because they do.
+    storageBlockedLabel: "Progress not saved",
+    storageBlockedBody: "Your browser is blocking site storage, so this device can't keep your progress, streak, or review schedule. You can still read every lesson — but anything you finish will be gone when you reload.",
+    storageBlockedDismiss: "Dismiss",
     reviewDueTemplate: "{n} ready to review",
     reviewNotStartedTitle: "Nothing to review yet",
     reviewNotStartedBody: "Answer the check question at the end of a lesson and it starts showing up here.",

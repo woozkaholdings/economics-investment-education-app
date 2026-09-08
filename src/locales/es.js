@@ -113,6 +113,16 @@ export default {
     howReviewStepDone: "Completado",
     coachMarkPractice: "¡Buen trabajo! Vuelve aquí cuando quieras para repasar lo que aprendiste.",
     coachMarkDismissLabel: "Cerrar consejo",
+    // Site storage unavailable (2026-09-07). Measured on the built app: with
+    // storage blocked a learner completes lesson 1, is shown "Progress: 1/44"
+    // and a streak, and loses all of it on reload with nothing said. The copy
+    // names the condition and the consequence and deliberately does NOT tell
+    // the learner to change a browser setting — the app cannot know which one,
+    // and "turn off your privacy protection" is not a thing to ask for a free
+    // course. It also says the lessons still work, because they do.
+    storageBlockedLabel: "El progreso no se guarda",
+    storageBlockedBody: "Tu navegador está bloqueando el almacenamiento del sitio, así que este dispositivo no puede conservar tu progreso, tu racha ni tu programa de repaso. Puedes seguir leyendo todas las lecciones, pero lo que completes desaparecerá al recargar.",
+    storageBlockedDismiss: "Descartar",
     reviewDueTemplate: "{n} para repasar",
     reviewNotStartedTitle: "Aún no hay nada que repasar",
     reviewNotStartedBody: "Responde la pregunta de comprobación del final de una lección y empezará a aparecer aquí.",

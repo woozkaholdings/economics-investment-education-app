@@ -11,7 +11,10 @@
 // ═══════════════════════════════════════════════════════════════════════════
 
 import { useCallback, useEffect, useState } from "react";
-import { KEYS, readArray, readJSON, readRaw, writeJSON, writeRaw } from "./storage.js";
+import {
+  KEYS, readArray, readJSON, readRaw, writeJSON, writeRaw,
+  isPersistenceBroken, probePersistence, subscribePersistence,
+} from "./storage.js";
 import { todayStr, dayDiff } from "../utils/date.js";
 import { DEFAULT_FONT_SCALE, DEFAULT_THEME_MODE, FONT_SCALE_STEPS, THEME_MODES } from "../theme.js";
 import { TR } from "../locales/index.js";
@@ -127,6 +130,20 @@ export function useAppState() {
     () => readRaw(KEYS.seenPracticeCoachMark) !== null
   );
 
+  // Whether this browser is keeping anything the app writes. Two sources,
+  // because they catch different halves of the same failure:
+  //   - the startup probe, which answers before the learner has invested
+  //     anything (site data blocked outright);
+  //   - the subscription, for storage that starts working and stops — a quota
+  //     filled mid-session, which no startup probe can see.
+  // Initialized from `isPersistenceBroken()` rather than `false` so a write
+  // that already failed during this module's own load is not missed.
+  const [persistenceBroken, setPersistenceBroken] = useState(isPersistenceBroken);
+  useEffect(() => {
+    probePersistence();
+    return subscribePersistence(setPersistenceBroken);
+  }, []);
+
   // Read after mount rather than during render: the streak depends on today's
   // date, and deriving it lazily would freeze it for the session.
   useEffect(() => { setStreak(loadStreak()); }, []);
@@ -224,6 +241,7 @@ export function useAppState() {
     themeMode, setThemeMode,
     review, recordReview,
     isFirstVisit,
+    persistenceBroken,
     showDisclaimer, dismissDisclaimer,
     showPracticeCoachMark: completedLessons.length > 0 && !seenPracticeCoachMark,
     dismissPracticeCoachMark,

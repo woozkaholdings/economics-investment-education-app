@@ -3514,6 +3514,22 @@ instead of hand-rolling an eighth mover. A working one is in this run's scratchp
       rendered through `SrOnly` — the convention the Learn path already uses — in all five languages.
       **Transferable: "carried by hue alone" and "carried by nothing an AT can reach" are different
       defects with different fixes, and the first is the one that is easy to see in a screenshot.**
+    > ⚠️ **A NOTE, not a sub-item (W-6.2 rule 2), filed 2026-09-07 by the run that made storage
+    > failure visible.** (a) is a judgment call about what a learner sees when the review pool is
+    > empty. There is now a **second** way that screen can be empty that (a) does not contemplate:
+    > **site storage blocked**, where the pool is empty on every load no matter how much the learner
+    > has answered, because `ecycles_review` never persists. The new storage notice sits above the
+    > panel on the Review tab too, so that learner is no longer told nothing — **but whichever branch
+    > of (a) the owner picks, it should be read against a Review screen that is permanently
+    > not-started-yet rather than briefly so.**
+    > **Measured live on the built app 2026-09-07, not inferred.** Storage blocked, lesson 1
+    > completed, end-of-lesson check answered correctly: *in the same session* Review reads
+    > **"Practice all questions (1)"** with the 1-day Leitner box at **1** — React state holds it.
+    > After a `location.reload()` (marker asserted gone, blocker asserted still installed) the same
+    > screen reads **"Nothing to review yet / Answer the check question at the end of a lesson and it
+    > starts showing up here"** — to a learner who had just done exactly that. **The empty state is
+    > not merely uninformative here; it describes the learner's behavior wrongly**, which is a
+    > sharper version of the same defect (a) was filed about.
     - **Honest priority: low.** The defect is fixed; these are the seams around it. **All of it is
       downstream of O-1** — nobody has opened the app, so no learner has met either branch.
 
@@ -6608,3 +6624,134 @@ the owner's correction was right. The stale-date clause is closed by data, not b
 **Next run.** W-6.2 rule 1: this pick was owner-directed rather than a residual chain, and **it
 filed no residual of its own**. Open and unparked: **70/71, 74, 76, 94, 117, 155, 160**. O-2 is
 still the entire critical path.
+
+### 2026-09-07 (scheduled dev-agent; W-6.2 rule 1 free — the previous run was owner-directed and filed no residual, so this pick came from a class the repo has never swept) — with site data blocked the app looks like it is working, congratulates the learner, and throws it all away on reload; every write already knew, and all 13 call sites discarded the boolean that said so
+
+**Where the pick came from.** Not a residual and not a backlog item. `src/lib/storage.js` carries a
+claim in its own header — *"a storage failure degrades a feature (no streak) instead of blanking the
+screen"* — and nothing in the repo had ever tested it. The app went live on 2026-09-05, which is what
+makes the untested half worth a run: a browser set to block site data is now a real visitor, not a
+hypothetical. **O-2 remains the entire critical path and no scheduled run can move it.**
+
+#### Step 3.5 — the premise, measured with a control. The header's claim is HALF true, and the false half is the one that costs a learner the course.
+Harness: `dist/` served statically, plus a second copy of `index.html` with one injected script that
+makes the property getter itself throw — the Firefox / "block all cookies" shape, which is stricter
+than a `setItem`-only failure:
+```js
+Object.defineProperty(window, "localStorage", {
+  configurable: true,
+  get: function () { throw new DOMException("The operation is insecure.", "SecurityError"); },
+});
+```
+- ✅ **The "no blank screen" half is TRUE and reproduced.** With every `localStorage` access throwing,
+  the app renders (root text 3,506 chars), the first-run disclaimer appears, and the Learn path is
+  fully usable. The `try`/`catch` wrappers do what the header says.
+- ⛔ **The half nobody had stated: the app is CONFIDENTLY WRONG.** Driven through the real UI with
+  storage blocked — dismiss disclaimer, open lesson 1, Mark Complete — the app reports
+  **"Progress: 1/44"**, **"1 day streak"**, *"Nice work!"*, lesson 1 **Completed** and lesson 2
+  unlocked as **Current lesson**. Every one of those is false the moment the tab reloads.
+- ⛔ **After a real reload: `Progress: 0/44`, no streak, and the first-run disclaimer back.** The
+  scan for any word the app might have used to warn about this — *save/saved/storage/private/
+  browser/cookies* — returns **zero matches** anywhere in the rendered app.
+- ⭐ **The control that makes the above mean something, because "progress lost" has other causes.**
+  The identical script-driven flow on the **unblocked** page, storage cleared first: after the same
+  reload it reads **`Progress: 1/44`**, **"1 day streak"**, no disclaimer, and
+  `ecycles_completed_lessons === "[29]"`. The instrument discriminates; the loss is storage, not the
+  flow I drove.
+- ⚠️ **An instrument defect of my own, caught by its own control and reported rather than smoothed.**
+  My first "after reload" reading showed progress *surviving* with storage blocked, which is
+  impossible. `navigate` to the same URL differing only in `#hash` is a **same-document** navigation:
+  nothing reloaded and React state simply persisted. Every reload figure above was re-taken through
+  `location.reload()` with a `window.__marker` set beforehand, asserted **gone** afterwards
+  (`reloadHappened: true`) and the blocker asserted **still installed**. **A "reload" that does not
+  reload is indistinguishable from a fix.**
+- **The code fact behind all of it, measured:** `writeRaw`/`writeJSON` have always returned a boolean,
+  and `grep` finds **13 call sites, none of which reads it** (`useAppState.js` ×8, `review.js`,
+  `analytics.js`, `Glossary.jsx`, and the migration pair).
+
+#### The disposition, and why the fix is not at the call sites
+None of the 13 can do anything useful with a `false`: a failed streak write is not a streak problem,
+it is a storage problem, and the only honest response is to tell the learner once for the whole app.
+**So the module that already learns about every failure reports it, and all 13 call sites are
+unchanged.** Deliberately **not** a blank screen or a blocked app — reading the course without
+persistence is a perfectly good way to use it, and the fallbacks already make that work.
+
+#### What shipped
+- **`src/lib/storage.js`** — `probePersistence()` (a real **round-trip write**, because the Safari
+  failure mode allowed `getItem` and threw only on `setItem`, so a read-only probe reports healthy
+  storage on exactly the browser this is for), an idempotent `markBroken()` called from both write
+  `catch`es, `isPersistenceBroken()` and `subscribePersistence()`. The probe key is written and
+  removed, and is deliberately **not** in `KEYS` — `KEYS` documents the *persisted* surface.
+  `writeJSON` now serializes **outside** the try that reports health: a `JSON.stringify` throw is a
+  caller bug, not a storage failure, and reporting it as one would tell a learner their browser is
+  blocking data when it is not.
+- **`src/lib/useAppState.js`** — probes on mount and subscribes; returns `persistenceBroken`.
+  Two sources on purpose: the probe answers **before** the learner has invested anything, the
+  subscription catches storage that starts working and **stops** (a quota filled mid-session), which
+  no startup probe can see.
+- **`src/App.jsx`** — one `Note tone="warn" icon="info"` (the pairing 4 existing sites already use;
+  **no new primitive**) as the first child of `<main>`, above the panel, so it is not attached to one
+  screen — the loss it describes is not a Learn-tab fact. Dismissible **for the session only**, and it
+  cannot be otherwise: remembering the dismissal would mean writing it to the storage that is broken.
+  Returning on the next load is correct anyway — the condition is still true.
+- **Five languages** of `storageBlockedLabel` / `storageBlockedBody` / `storageBlockedDismiss`. The
+  copy names the condition and the consequence and deliberately does **not** tell the learner to
+  change a browser setting: the app cannot know which one, and "turn off your privacy protection" is
+  not a thing to ask for a free course. It also says the lessons still work, because they do.
+- **`DECISIONS.md`** — a dated note under "localStorage-only progress and personalization state".
+  **The decision is unchanged**; that entry has said since 2026-08-04 that `localStorage` "throws in
+  private-browsing contexts", so the repo has *known* about this condition for over a month. What
+  changed is that the degradation is no longer silent.
+
+#### ⚠️ No check was built, and this is the W-6.3 reasoning rather than an omission
+`npm test` **already** guards the part that drifts: §1 requires every language to carry `en`'s full
+key set as non-empty strings, and the dead-locale-key sweep would flag a key nothing renders. A new
+section asserting "the notice still exists" would be the tautology W-7's §79 note warns about.
+`scripts/` is untouched, so W-6.3's ratio is unmoved.
+
+#### Verification, live, with every negative result carrying a control
+| case | notice | result |
+|---|---|---|
+| storage blocked, on load, before any interaction | **shown** | probe path — first child of `<main>` |
+| storage healthy (control) | **absent** | app renders 1,565 chars; probe key not left behind (`null`) |
+| healthy at startup, `setItem` patched to throw mid-session | **appears** | subscription path — the half the probe cannot see |
+| Dismiss pressed | hidden, and stays hidden across a tab change | session-only, as designed |
+| five languages | `PROGRESS NOT SAVED` / `EL PROGRESO NO SE GUARDA` / `진도가 저장되지 않습니다` / `进度不会被保存` / `進捗は保存されません` | first child of `<main>`, `<html lang>` correct in each |
+- **320px × {100%, 200%} × five languages: 0 overflow flags**, deepest-element filtered. ⭐ **That
+  all-zero result is only trustworthy because of its control**: a planted `white-space: nowrap` string
+  inside the same Note flagged **671/288**, and the Note measured clean again after removal.
+- **The in-updater write path was measured, not assumed.** `completeLesson` calls `writeJSON`
+  **inside** a `setCompletedLessons` updater, so a failure fires my listener mid-update. Clicked
+  Mark Complete with storage blocked: notice shown, app alive (3,415 chars), UI advanced to
+  "Next Lesson", and **0 console errors**. `markBroken`'s idempotence is what keeps repeated failures
+  from re-notifying — many writes failed across that session and the notice appeared once.
+
+#### Step 5 — adversarial self-check
+**Blindspot register: nothing found.** No lesson prose, content module, market figure or rendered date
+changed; the new copy is about browser storage and mentions no asset, market or timing. §10.2 (Dalio),
+§10.3 (kids framing) and the Markets stale-data rule are untouched. `npm run check-blindspot` **exit 0**.
+**DECISIONS.md:** the one relevant decision is `localStorage`-only state, and this **implements** its
+"degrades safely" clause rather than contradicting it — no backend, no blocked feature, read-only use
+still works. Vite-not-Expo and `.js`-not-JSON are untouched. **Already-done:** grepped the log for
+*private browsing / storage blocked / quota* — **no prior item or completed entry covers this class**;
+the nearest neighbour is item 96's load-failure copy, which is about a failed chunk fetch, not storage.
+**My own verification claim, weakest part first:** ⛔ **the mid-session case was measured by patching
+`Storage.prototype.setItem` from the console, which is a simulation of a full quota, not a full
+quota.** I did not fill a real quota. What that proves is the code path (a write throwing after a
+successful probe surfaces the notice); it does not prove any particular browser's quota behavior.
+⚠️ Also: the production build does not run StrictMode's double-invocation, so idempotence protecting
+against a double-notify is **reasoned there and measured only** in the sense that many real failures
+in one session produced one notice. The `npm test` / `npm run build` / `check-blindspot` halves are
+fully re-runnable by anyone; the live half needs the four-line blocker above, which is quoted in full
+precisely so it can be rebuilt.
+
+**Verified:** `npm test` **exit 0, 0 failures, 4 warnings** (all pre-existing and named in the
+backlog — translation review, translation completeness, option-length cue, log floor); `npm run build`
+clean (`index-Ddd60uv_.js`); `npm run check-blindspot` **exit 0**; the built app driven live in five
+languages, two font scales, blocked / healthy / fails-mid-session, each with its control.
+
+**Next run.** W-6.2 rule 1: this run's residual is **one note filed under item 117** (below) and
+nothing else, so a residual chain is available but not required. Open and unparked: **70/71, 74, 76,
+94, 117, 155, 160**. ⚠️ **Also noticed and deliberately not acted on:** items **163** and **167** are
+in the OPEN section with every sub-item closed — W-7.2 rule 1 candidates for whoever does the next
+collapse. O-2 is still the entire critical path.

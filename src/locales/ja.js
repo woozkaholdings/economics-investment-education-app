@@ -110,6 +110,16 @@ export default {
     howReviewStepDone: "完了済み",
     coachMarkPractice: "よくできました！学んだことはいつでもここで復習できます。",
     coachMarkDismissLabel: "ヒントを閉じる",
+    // Site storage unavailable (2026-09-07). Measured on the built app: with
+    // storage blocked a learner completes lesson 1, is shown "Progress: 1/44"
+    // and a streak, and loses all of it on reload with nothing said. The copy
+    // names the condition and the consequence and deliberately does NOT tell
+    // the learner to change a browser setting — the app cannot know which one,
+    // and "turn off your privacy protection" is not a thing to ask for a free
+    // course. It also says the lessons still work, because they do.
+    storageBlockedLabel: "進捗は保存されません",
+    storageBlockedBody: "ブラウザーがサイトのストレージをブロックしているため、この端末では進捗・連続学習日数・復習スケジュールを保存できません。レッスンはすべて読めますが、完了した内容は再読み込みすると消えます。",
+    storageBlockedDismiss: "閉じる",
     reviewDueTemplate: "復習する問題 {n} 問",
     reviewNotStartedTitle: "まだ復習する内容はありません",
     reviewNotStartedBody: "レッスン末尾の確認問題に答えると、その問題がここに出てくるようになります。",

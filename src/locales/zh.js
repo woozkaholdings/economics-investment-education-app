@@ -110,6 +110,16 @@ export default {
     howReviewStepDone: "已完成",
     coachMarkPractice: "做得好！随时回到这里复习你学过的内容。",
     coachMarkDismissLabel: "关闭提示",
+    // Site storage unavailable (2026-09-07). Measured on the built app: with
+    // storage blocked a learner completes lesson 1, is shown "Progress: 1/44"
+    // and a streak, and loses all of it on reload with nothing said. The copy
+    // names the condition and the consequence and deliberately does NOT tell
+    // the learner to change a browser setting — the app cannot know which one,
+    // and "turn off your privacy protection" is not a thing to ask for a free
+    // course. It also says the lessons still work, because they do.
+    storageBlockedLabel: "进度不会被保存",
+    storageBlockedBody: "您的浏览器正在阻止网站存储，因此本设备无法保存您的进度、连续学习天数和复习计划。您仍然可以阅读所有课程，但已完成的内容会在重新加载后消失。",
+    storageBlockedDismiss: "关闭",
     reviewDueTemplate: "{n} 题待复习",
     reviewNotStartedTitle: "还没有可复习的内容",
     reviewNotStartedBody: "答完课程末尾的检测题，它就会开始出现在这里。",

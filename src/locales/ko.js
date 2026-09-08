@@ -110,6 +110,16 @@ export default {
     howReviewStepDone: "완료함",
     coachMarkPractice: "잘했어요! 배운 내용을 복습하려면 언제든 여기로 돌아오세요.",
     coachMarkDismissLabel: "팁 닫기",
+    // Site storage unavailable (2026-09-07). Measured on the built app: with
+    // storage blocked a learner completes lesson 1, is shown "Progress: 1/44"
+    // and a streak, and loses all of it on reload with nothing said. The copy
+    // names the condition and the consequence and deliberately does NOT tell
+    // the learner to change a browser setting — the app cannot know which one,
+    // and "turn off your privacy protection" is not a thing to ask for a free
+    // course. It also says the lessons still work, because they do.
+    storageBlockedLabel: "진도가 저장되지 않습니다",
+    storageBlockedBody: "브라우저가 사이트 저장소를 차단하고 있어 이 기기에 진도, 연속 학습일, 복습 일정을 저장할 수 없습니다. 모든 레슨은 그대로 읽을 수 있지만, 완료한 내용은 새로고침하면 사라집니다.",
+    storageBlockedDismiss: "닫기",
     reviewDueTemplate: "복습할 문제 {n}개",
     reviewNotStartedTitle: "아직 복습할 내용이 없습니다",
     reviewNotStartedBody: "레슨 끝의 확인 문제에 답하면 그 문제가 여기에 나타나기 시작합니다.",

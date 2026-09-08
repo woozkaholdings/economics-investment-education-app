@@ -567,6 +567,17 @@ Add a new entry when a run makes a choice future work should be able to look up 
   > `localStorage` like every other key above, which is the decision. Only the names it verified
   > *through* are historical. *Dated 2026-08-17 (item 62's F11); F11 named two of the four dead
   > names, the other two turned up on re-measuring.*
+- **The learner is now TOLD when this degradation is happening (2026-09-07).** The "degrades safely"
+  clause above has been true since 2026-08-04 and was, on its own, not enough: measured on the built
+  app with site data blocked, a learner completes lesson 1, is shown *"Progress: 1/44"*, a *"1 day
+  streak"* and an unlocked lesson 2, and loses all of it on the next load — with the first-run
+  disclaimer back. Every write knew: `writeRaw`/`writeJSON` have always returned a boolean and none
+  of their 13 call sites read it. `src/lib/storage.js` now reports the condition itself (a startup
+  round-trip probe, plus a flag set in the write `catch`es for a quota that fills mid-session) and
+  `App.jsx` renders one warn `Note` above the panel in all five languages. **The decision is
+  unchanged** — no backend, no blocked feature, read-only use still works. What changed is that
+  silent data loss is no longer silent.
+
 - **Revisit when:** the app gains real accounts (Supabase), at which point this whole section should
   be superseded by a sync strategy (local-first with server sync, vs. server-authoritative).
 
