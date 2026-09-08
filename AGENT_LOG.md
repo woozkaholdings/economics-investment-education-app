@@ -1471,73 +1471,30 @@ instead of hand-rolling an eighth mover. A working one is in this run's scratchp
     > a native-speaker pass, and the correlated-blind-spot caveat applies. **Human review share is
     > still 0% in all four languages** — that is O-3, and it is the owner's.
 
-131. **✅ DONE 2026-08-28 (owner-directed: "do items 131 and 132 next") — 28 of 28 pairs.
-    Coverage 95% → 100% in all four languages, 7 stale → 0.** The last 8 pairs (lessons 1 and 4 x
-    es/ko/zh/ja) were read in full, not re-stamped, and the reading found a defect no consistency
-    check could ever have seen — see the run log and the box below. Read the premise correction
-    kept underneath: the staleness flag was UNDERSTATING this item, and its own "scope it to one
-    language per run" was the wrong axis.
-    > ⛔ **The defect the final 8 pairs produced, and it is item 33's lesson recurring: lesson 1
-    > named María in §1 and §2 while ALL FOUR translations had dropped her introduction from §0.**
-    > Measured: `es`/`ko`/`zh`/`ja` each had **0** mentions in §0 and first named her in §1, against
-    > English's 4 in §0. **Because all four agreed with each other, no consistency check could see
-    > it** — §16 verifies translations against English, not English against sense, and this was a
-    > uniform omission. Fixed in all four. **The transferable part: a uniform omission is invisible
-    > to every cross-language check in this repo, and reading is the only instrument for it.**
-    > ⚠️ **And one the source read could not see at all.** The `es` lesson spelled the name both
-    > `María` (§1) and `Maria` (§2). Normalizing on that file's majority was **wrong** — the live
-    > page then showed two more `María` from `moneyVisuals.js`'s figure, a different module. Every
-    > Spanish surface outside that one body writes `María` (moneyVisuals 5/0, quizText.es 2/0,
-    > lessonContent.money.es 1/0), so it was reversed. **"The majority in this file" is a sample,
-    > not a convention** — item 128's scope error, one module over. **A lesson's rendered surface
-    > spans `lessonContent` AND `moneyVisuals`; a review that reads only the first has read part of
-    > the screen.**
-    > **What the English drift actually is, measured with a two-sided control rather than assumed.**
-    > All seven lessons share **one** reviewed-English state — commit `e43dded` (2026-08-20), *not* the
-    > 2026-08-14/15 the ledger's `reviewedDate` shows; the English never moved between the review and
-    > that date. Exactly two commits then moved it: **`7046854`** (2026-08-20, item 84's "name the
-    > lesson, don't number it") touching all seven, and **`ef0665a`** (2026-08-26, item 114's monetary
-    > base) touching lesson 30 alone. So the English drift is **six cross-reference renames plus one
-    > semantic edit** — very nearly the item-129 shape this item said it was not.
-    > ⛔ **But the English is the wrong thing to size this by, and that is the correction that matters.**
-    > Staleness is computed from an English hash, so it truthfully reported "the English moved a
-    > little". Measured on the *translations* instead, lessons **30/33/37/39/40 grew 2.8x–4.7x in every
-    > language** since that reviewed state (lesson 30 `es` 987→3,421 chars; lesson 39 `ja` 383→1,674),
-    > **10,855 → 39,627 characters across the twenty pairs**. Those five are `economy`, and **item 93's
-    > economy tranche landed after 2026-08-20** — so the 2026-08-14 review saw the *abridged*
-    > translation and what stands today is ~**29,000 characters of new, never-reviewed machine
-    > translation**. The flag says "re-review"; the work is a **first** review. **A hash over the
-    > source language cannot see drift in the target.**
-    > ⛔ **FIGURE CORRECTION 2026-08-27, and it is a correction to this item's own first version.** That
-    > version said *2.5x–4.5x* and *"~55,000 characters"*, and the 12-pair line below said
-    > *"~40,000-character"*. Those were **byte counts read as characters**: `wc -m` counts bytes when
-    > no UTF-8 locale is set (verified — three Han characters report 9), which inflates `ko`/`zh`/`ja`
-    > roughly threefold and leaves `es` near-correct. The **ratios survived** because both sides were
-    > measured the same way; the absolute figures did not. Re-measured over Unicode code points, the
-    > real numbers are the ones above and **26,568** for the twelve. **Count code points, not `wc -m`,
-    > on any CJK corpus.** (Only this live item is corrected; the 2026-08-27 run-log entry that quotes
-    > the old figures is a dated record and stays verbatim, per §31.)
-    > **Lessons 1 and 4 are the exact opposite case.** Their translations are **byte-identical** to the
-    > reviewed state in all four languages; what changed is that the *English* gained a cross-reference
-    > sentence with **no counterpart in any translation**, because both are `essentials` and abridged
-    > (0.50x and 0.68x against `es`'s 1.18 reference). Verified pre-existing, not a regression from
-    > `7046854`. That gap is **item 132**, and it belongs to item 94's track, not to staleness.
-    - **✅ DONE — lessons 30 and 40 x es/ko/zh/ja (8 pairs)**, each read in full in all five languages;
-      one real defect found and fixed (`ja` lesson 30's title brackets). Coverage **84% → 89%**.
-    - **✅ DONE — lessons 33, 37, 39 x es/ko/zh/ja (12 pairs)**, the 26,568-character never-reviewed
-      block, all read in full. Coverage **89% → 95%**, 7 stale → 2. **All twelve are complete and
-      faithful**: every section, takeaway and thinkAbout present, and every figure converts correctly
-      into each language's own number scale — which was the live risk here and is worth stating,
-      because lesson 37 is nothing but large dollar figures (`es` correctly splits *billones* from
-      *mil millones*, `ko` 조/억, `zh` 万亿/亿, `ja` 兆/億). One real defect found and fixed (`zh`
-      lesson 37's ASCII quotes; see **item 134**).
-    - **✅ DONE — lessons 1 and 4 x es/ko/zh/ja (8 pairs)**, 2026-08-28, together with item 132 as
-      this bullet instructed. **The "closer to a re-stamp than a read" prediction was wrong**, and
-      usefully so: the text being unchanged said nothing about whether it was *right*. The read found
-      the dangling-María defect in all four languages plus a two-way name spelling, and item 132's
-      eight missing pointer sentences landed in the same commit. **A pair whose source has not moved
-      is not thereby correct** — that is the reason this bullet's own cost estimate was wrong.
-    - **Closed. Every figure above is superseded by the 28/28, 100%-coverage state.**
+131. **✅ DONE 2026-08-28 (owner-directed: "do items 131 and 132 next") — 28 of 28 pairs, coverage
+    95% → 100% in all four languages, 7 stale → 0.** Collapsed to its conclusion 2026-09-08 per W-7.2
+    rule 1 from 6,461 b; the per-tranche chronology and the superseded figure corrections are in the
+    run log for 2026-08-27 and 2026-08-28.
+    **What was true:** seven lessons were flagged stale against their reviewed-English hash, and this
+    item scoped the work as a re-stamp, one language per run. **What is true now:** all 28 pairs were
+    **read in full**, not re-stamped, and the reading found defects no consistency check could reach.
+    ⭐ **Five findings that outlive the item, which is why it is collapsed rather than deleted.**
+    1. **A uniform omission is invisible to every cross-language check in this repo.** Lesson 1 named
+       María in §1/§2 while **all four** translations had dropped her introduction from §0 — and
+       because they agreed with each other, §16 (which verifies translations against English, not
+       English against sense) could not see it. **Reading is the only instrument for that class.**
+    2. **A lesson's rendered surface spans `lessonContent` AND `moneyVisuals`.** Normalizing the `es`
+       body's two spellings on that file's majority was wrong; the live page then showed the other
+       spelling from a different module. **"The majority in this file" is a sample, not a convention.**
+    3. **Count code points, not `wc -m`, on any CJK corpus.** `wc -m` counts bytes with no UTF-8
+       locale set (three Han characters report 9), inflating ko/zh/ja roughly threefold. Ratios
+       survived because both sides were measured the same way; absolute figures did not.
+    4. **A hash over the source language cannot see drift in the target.** Staleness truthfully said
+       "the English moved a little" while the *translations* had grown 2.8x–4.7x — ~29,000 characters
+       of never-reviewed machine translation that the flag called a re-review and which was a **first**
+       review.
+    5. **A pair whose source has not moved is not thereby correct.** Lessons 1 and 4 were
+       byte-identical to their reviewed state and the read still found the defect in (1).
 
 134. **✅ DONE 2026-08-27 (owner-directed: "do item 134 next"), the same day it was filed — shipped
     as `check-data.mjs` §56, with 33 live repairs. Read the premise correction: this item was wrong
@@ -2298,231 +2255,40 @@ instead of hand-rolling an eighth mover. A working one is in this run's scratchp
     plainly renders one — it emits the bare `{t.disclaimer}` string. A component-name grep is not a
     disclaimer census.
 
-165. **✅ FULLY CLOSED 2026-09-06 — content (15 pairs repaired) and guard (`check-data.mjs` §74) both
-    landed; see the two ✅ blocks below. Original headline kept because the corrections refer to it:**
-    **🟡 MAIN PATH CLOSED **on content** 2026-09-04 (scheduled dev-agent); the essentials remainder is open.
-    ⛔ **The "MAIN PATH CLOSED 2026-09-03" this line used to carry was FALSE, and so was the
-    "none on the main path" bullet below — see the correction under them.**
-    [Content — filed 2026-09-02 by the run that took `q007`, from a measurement it had to make
-    before it could apply item 160's own style rule.] The quiz's `explain` field — the one surface
-    item 160 moves reasoning INTO — was abridged in 69 of 184 question/language pairs, and the
-    shortfall was concentrated on the main path.**
-    > ⛔ **HEADLINE FIGURE CORRECTED 2026-09-03, and the correction is about how it went stale.**
-    > "69 pairs across 19 questions" was measured **before** this item's own filing commit repaired
-    > `q007`. Re-measured 2026-09-03 with the same instrument and the same controls, the p90
-    > references reproduce **exactly** (es 1.162 ko 0.582 zh 0.380 ja 0.520) and the count did not:
-    > it was **65 across 18**. A count in an item ages against the work the item describes.
-    > ✅ **2026-09-03: nine questions repaired in four languages — `q001`-`q006`, `q008`, `q011`,
-    > `q013`, 36 `explain` values, +1,633 characters.**
-    > ⛔ **BOTH FIGURES THAT FOLLOWED THAT LINE WERE WRONG. Corrected 2026-09-03 by the `q020` run;
-    > do not re-quote the originals, which are struck through here and stand uncorrected in commit
-    > `a91b02c`'s message because history is not rewritten.**
-    > ~~"The ratio measure is now 41 pairs across 13 questions"~~ — **41/13 was the reading after the
-    > FIRST of that run's three patches**, quoted as the post-commit figure without re-running after
-    > `q006` and `q013` landed. Recomputed against the trees themselves: `HEAD~1` **65/18**,
-    > `a91b02c` **33 pairs across 11 questions**.
-    > ~~"down to q020 (essentials lesson 6), es and zh — 2 pairs"~~ — it was **4 pairs**. `ko` and
-    > `ja` scored en-equal on sentence count only because they split the English's semicolon-joined
-    > first sentence in two; the second English sentence was absent in all four. **The residual was
-    > filed off the sentence counter when the item's own ratio instrument had it right.**
-    > ✅ **`q020` repaired 2026-09-03 (owner-directed) in all four languages, +207 characters.**
-    > Corpus now: sentence measure **0 pairs**; ratio measure **29 pairs across 10 questions**, all
-    > partial shortfalls and none a dropped sentence.
-    > ⚠️ **What `q020` actually was, and it is why "low priority" was the wrong call:** the sentence
-    > four languages had dropped was not mechanism, it was the **hedge** — *"Which is better depends
-    > on an individual's own tax situation, not a fixed rule."* Scanned across the corpus, **4 of 46
-    > English explanations carry a hedge (`q006`, `q012`, `q013`, `q020`) and `q020` was the only one
-    > that lost it in translation** — `q012`'s "not a guarantee" survives in all four, so this was an
-    > outlier, not a pattern. Stated precisely: a **content-parity** gap, not a missing disclaimer —
-    > §10.1's global disclaimer renders under the explanation in every language.
-    > ⚠️ **Do not re-derive the selection instrument's TWO traps — and do not trust it over the
-    > ratio.** (1) Sentence counting by terminal punctuation reads `EE.UU.` as two sentence ends,
-    > which scored the Spanish `q006` as three sentences when it is one — a false negative that
-    > would have left `q006` unrepaired. Mask `EE.UU.`/`U.S.`/`vs.`/`etc.` and make that sentence
-    > the control. (2) Even masked, it missed `q020` in **ko and ja**, because a translation that
-    > splits one English sentence into two matches the total while dropping a whole sentence's
-    > content. **Sentence count is a proxy for content; re-punctuation defeats it. The ratio
-    > instrument this item was filed with flagged all four correctly, both times.** Full account in
-    > the two 2026-09-03 run entries.
-    > ⚠️ **The recurrence this exposed, which is bigger than the item.** `DECISIONS.md` records the
-    > 2026-08-16 review fixing "an es-only drop of 'incomes' from lesson 21's inflation-mechanism
-    > sentence". Seventeen days later the Spanish **quiz explanation of the same mechanism** (`q004`)
-    > still dropped it, and so did zh and ja — because `scripts/translation-review.mjs` (by
-    > `DECISIONS.md`'s stated scope limit) and `check-data.mjs` §33 (by construction) both read
-    > `lessonContent` and neither has ever opened `quizText`. **A fix applied to one corpus is not
-    > applied to the concept.**
-    - **Measured, with a per-language reference and two controls** (a language against itself scores
-      1.00; a halved string scores 0.50). Each language's **p90 explain/en ratio across all 46
-      questions** — what a full translation looks like in this corpus — is **es 1.16, ko 0.58,
-      zh 0.38, ja 0.52**; a pair counts as abridged below 0.7x its own language's reference, the same
-      test `translation-completeness.mjs` applies to lesson bodies. **19 of 46 questions are
-      abridged in at least one language; 69 pairs in total.**
-    - **Why this is worse than an ordinary translation gap.** Item 160's rule is *"the reasoning
-      belongs in `explain`"*, and three runs have now moved reasoning out of options on that basis.
-      **In four languages, for these 19 questions, it is being moved into a field that does not carry
-      it** — the learner answers, and gets one sentence where the English reader gets the mechanism.
-      `q007` was the live instance: es/ko/zh/ja said only "QE is the Fed's emergency tool" while en
-      also explained buying bonds at the zero bound. **Repaired for `q007` only** (+203 characters);
-      the other 18 questions are untouched.
-    - **Honest priority: medium-high, and it is O-3-shaped** — closing it is roughly 60-70 short
-      paragraphs of new machine translation, which is the owner's standing call. **Do not confuse it
-      with item 93/94**, whose instrument reads `lessonContent` and has never looked at `quizText`.
-      `npm run translation-completeness` does not measure this field; the script above lives in the
-      run entry and would need to move into `scripts/` before any check depends on it.
-    - **Priority after both 2026-09-03 passes: the dropped-sentence class is EMPTY** (sentence
-      measure 0 pairs, hedge parity 4/4). What is left is 29 ratio-flagged pairs across 10 questions,
-      all partial shortfalls, ~~none on the main path~~.
-      > ⛔ **"NONE ON THE MAIN PATH" WAS FALSE, and it is this item making the mistake its own text
-      > warns against one screen earlier.** Re-measured 2026-09-04 with an independent
-      > re-implementation of this item's ratio instrument (three controls, all fired: a language
-      > against itself scores 1.000 and flags nothing; a uniformly halved corpus scores 0.500 and
-      > still flags nothing, because the reference moves with it; one live pair cut to 20% flags in
-      > all four languages). The 29/10 headline **reproduced exactly**. Then the tracks were read off
-      > `lessons.js` rather than assumed: **`q003` L32, `q010` L34, `q011` L35, `q012` L38 and
-      > `q014` L33 are all `track: "economy"` — the main path.** Five of the ten questions and
-      > **14 of the 29 pairs** were on the track a new install opens on. The "closed" claim came from
-      > the **sentence** measure, which this item's own ⚠️ says two paragraphs earlier not to trust
-      > over the ratio.
-      > ⚠️ **And one reference figure had drifted:** `es` p90 is **1.184**, not the 1.162 the
-      > 2026-09-03 correction certified as reproducing "exactly" — `q020`'s own +207-character
-      > repair raised it. ko 0.582 / zh 0.380 / ja 0.520 are unmoved. **A p90 reference is computed
-      > from the corpus it measures, so repairing the corpus moves the instrument.** Quote it with a
-      > date.
-    - **`q003` (L32, ko/zh/ja) and `q011` (L35, zh) — READ, COMPLETE, NOT EDITED.** Both are
-      two-sentence English rendered whole in compact CJK; they flag because the ratio is 1-3
-      hundredths under a threshold, not because anything is missing. **This is item 162's
-      false-positive class in a third corpus** (there, 30 of 336). `q012`'s `zh` **still flags
-      after the repair** at 0.262 against a 0.266 threshold — one code point — and is likewise
-      complete. **These five pairs are this corpus's `READ_COMPLETE` seed.**
-    - **Result: 29 pairs / 10 questions → 20 pairs / 8 questions**, and every remaining question is
-      on **`essentials`** (L4, L7, L8, L9, L14) — the optional track. The line this item has
-      wanted to write is now true, and true on content rather than on the instrument.
-    - ✅ **THE ESSENTIALS REMAINDER IS CLOSED ON CONTENT 2026-09-06 (owner-directed: "do item
-      165's essentials remainder instead"). 15 pairs repaired across 5 questions; open set
-      15 → 1, and that 1 was READ COMPLETE, not padded.**
-      ⛔ **First, the sentence above is TWO different sets and reads as one.** "20 pairs / 8
-      questions" is the **raw** flag count, which still contains the three READ_COMPLETE
-      **economy** questions (q003, q011, q012). "Every remaining question is on essentials" is
-      true of the **open** subset only, which was **15 pairs / 5 questions**. Re-measured
-      2026-09-06: raw **20 / 8**, open **15 / 5** — so both halves reproduce, they just describe
-      different sets. Quote them as a pair or not at all.
-      ⛔ **AND THE INSTRUMENT IS UNDER-SPECIFIED BY ITS OWN NAME — this is the durable part.**
-      "p90" does not identify a computation. An independent re-implementation using nearest-rank
-      `ceil(0.9n)-1` produced **es 1.194 ko 0.584 zh 0.380 ja 0.528** and **21 pairs / 9
-      questions**, against the certified **es 1.184 ko 0.582 zh 0.380 ja 0.520** and 20/8. That
-      gap was about to be written up as corpus drift — **and `git diff 669b39e HEAD -- 'quizText.*'
-      was EMPTY, so the corpus had not moved at all.** Four conventions were tried against the
-      certified references; **`round(0.9n)-1` reproduces all four exactly** and is what this item's
-      figures mean. It also removes a phantom: `q002` `ja` flags at 0.368/0.370 under `ceil` and
-      not at all under `round`. **Recorded here because the item says the script lives only in run
-      entries — a re-implementation must calibrate against these four references before it is
-      believed.**
-      - **What was actually missing, and it is one pattern, not fifteen:** every one of the 15 open
-        pairs dropped the **final explanatory clause** of its English. `q018` es lost both
-        parenthetical glosses ("paying on time", "how much of your available credit you're using");
-        `q021` all four lost *"it can only mean the extra dollars are taxed a bit more"*; `q022` all
-        four lost *"the insurer only pays out once the loss exceeds that threshold"*; `q023`
-        es/ko/ja lost *"a bigger number on the statement didn't mean more real wealth"*; `q028`
-        ko/zh/ja lost *"which is why beneficiary forms need to be updated separately after major
-        life changes"*. **None was a compactness artifact** — unlike the READ_COMPLETE five, each
-        was a clause with teaching content in it, which is what item 160's rule puts in this field.
-      - **`q022` `zh` is the sixth READ_COMPLETE entry, not a sixteenth repair.** After the
-        insurer clause landed it sits at **0.257 against a 0.266 threshold** — nine thousandths —
-        and carries all three English clauses, asserted individually rather than eyeballed. Same
-        class as `q003`/`q011`/`q012` zh (0.252/0.257/0.262). **Padding it would be writing filler
-        to satisfy an instrument.** `READ_COMPLETE` seed is now **6**: q003 ko/zh/ja, q011 zh,
-        q012 zh, q022 zh.
-      - ⚠️ **`ja`'s p90 moved 0.520 → 0.525 and that is this run's own doing**, not neglect — the
-        reference is computed from the corpus it measures, so lengthening four `ja` explanations
-        raised it. es 1.184 / ko 0.582 / zh 0.380 unmoved. Re-measured after every edit.
-      - **Verified:** three controls fired before and after (a language against itself 1.000 flags
-        0; a uniformly halved corpus 0.500 flags 0; `q001` cut to 20% flags in all four).
-        `npm run build` ✅, `npm test` ✅ 0 failures, `npm run check-blindspot` ✅ — the last one
-        mattering because `q028`'s new clause is the closest thing here to procedural advice and
-        clears all 33 §10.1 patterns in five languages. Six new clauses grepped in the **built**
-        bundle with a fake-string control at 0, and two read live on the running app in two
-        languages: `q021` zh and `q028` ja both render their new clause after a real answer, with
-        a negative control at 0.
-      - **What is left of this item: only the guard**, which is unchanged and still the owner's
-        call. A check landed today would ship a **1-pair** warning (`q022` zh) with a 6-entry
-        `READ_COMPLETE` list — down from the 29-pair warning that made "read first, then guard"
-        the right ordering. **The reading is now done.**
-      - ✅ **THE GUARD IS BUILT AND ITEM 165 IS CLOSED — 2026-09-06 (owner-directed: "do the guard
-        for item 165"). `check-data.mjs` §74, wired into `npm test`, shipping at ZERO open flags
-        and adding ZERO warnings.** 0/184 pairs abridged; all 7 `READ_COMPLETE` entries live and
-        under threshold (0 inert); 7 control groups fire on every run.
-        ⛔ **THE CONVENTION QUESTION HAD TO BE DECIDED, AND IT IS NOT COSMETIC.** §66 and §67 —
-        the two sections this one is modeled on — compute p90 with **`ceil(0.9n)-1`**. Item 165's
-        figures were computed with **`round(0.9n)-1`**. On this corpus they disagree: `ceil` flags
-        **`q002` ja** (0.368 against a 0.370 threshold) and `round` does not, and all four
-        references differ in the third decimal. **§74 uses `ceil`, matching its siblings — one
-        convention per file** — and the extra pair it surfaces, `q002` ja, was **READ against its
-        English before being listed**: both English sentences are rendered in full, so it is the
-        seventh `READ_COMPLETE` entry, not a repair. **Control 5 now pins the convention against a
-        vector where the two disagree** (n=46 → index 41, not 40), so a future switch fails loudly
-        instead of silently redefining every figure in the section.
-        ⚠️ **Read §74's numbers against §74, not against this item's history.** The item's `round`
-        figures are dated records and stay as written; the section's `ceil` figures are what
-        `npm test` prints. They describe the same corpus with two different instruments.
-      - **No `MIN_EN`, and that is measured.** §67 needs one because the glossary mixes 35-code-point
-        names with 70+ code-point definitions. This corpus is homogeneous — shortest English
-        explanation **92** code points — so a threshold would separate nothing. **Control 6 asserts
-        that homogeneity** rather than leaving it as an assumption, and fails with instructions if a
-        label-length explanation is ever added.
-      - **Verified by live injection, not only by the internal controls** (which run on cloned data
-        and so cannot prove the section reads the real files). Both directions, each restored from
-        a scratchpad copy rather than `git checkout --`, with the restore verified by sha256 and by
-        `git status` returning to 0 changed content files:
-        - **A new abridgement WARNS:** today's `q018` es repair was reverted to its exact pre-repair
-          text, the injection proved landed by reading it back through the module (90 code points),
-          and §74 reported `q018/L4 es 0.657` with the suite's warning count going **3 → 4**. **The
-          guard catches the actual defect this item was filed for.**
-        - **A shrunk exemption FAILS:** `q022` zh cut from 55 to 13 code points landed in `shrunk`,
-          not `readComplete`, and the suite exited **1**. The exemption list cannot mask a
-          regression.
-      - **⚠️ And a control caught me.** The first `READ_COMPLETE` shipped with **fabricated `at`
-        lengths** — I typed plausible numbers instead of measuring them (q003 ko/zh/ja as 68/46/56
-        against the real 49/33/40). Control 7's fingerprint failed the build immediately and named
-        all three. **A fingerprint list is a measurement, not an estimate**, and the control that
-        exists to catch a shrinking translation caught a fabricated baseline on its first run.
-      - **W-6.3:** `scripts/` **18,845** lines to the app's **8,678** — **2.17x**, up from 2.15x.
-        The section is ~190 lines. It is the one case W-6.3 explicitly allows: a learner-visible
-        failure (W-6.2 rule 3's sentence, at the top of §74), a corpus with a **measured** defect
-        history rather than a property that merely holds, and zero standing warnings.
-      - **Baseline discipline:** the suite reports 3 warnings both with and without §74 — measured
-        against a `git archive HEAD` copy, not assumed — so this section added none.
-      - **O-3:** ~1,050 characters of new machine translation across es/ko/zh/ja, none reviewed by
-        a fluent speaker. Same standing condition; named, not buried.
-    - ⛔ **THE GUARD IS AN OWNER DECISION, AND THE ORDERING IS THE POINT — not a deferral.** A
-      `quizText` completeness check satisfies W-6.2 rule 3 cleanly (the learner-visible failure is
-      "answered in Spanish, shown one clause where the English reader is shown the mechanism"), and
-      the natural form is **§66/§67's scorer applied to a third corpus**. **The blocker is not size.
-      It is that §66 and §67 each landed WITH a `READ_COMPLETE` list built by reading every flagged
-      pair** — 9 and 30 respectively. Here that means **reading 29 unread pairs against their
-      English**, which is O-3 work and therefore the owner's call. Landing the check first would ship
-      a permanent 29-pair warning, which item 121's own ⚠️ already calls evidence that the check or
-      the budget is wrong. **Read first, then guard.**
-      > ⚠️ **Updated 2026-09-04: the read is now 5 of 20 done and the arithmetic changed with it.**
-      > A check landed today would ship a **15-pair** warning, not 29, and it would already have a
-      > 5-entry `READ_COMPLETE` list (`q003` ko/zh/ja, `q011` zh, `q012` zh) with the code-point
-      > length each had when read. **The ordering rule is unchanged and still the owner's** — the
-      > remaining 15 pairs sit on `essentials` L4/L7/L8/L9/L14 and are unread.
-      > ⛔ **AND THE REMAINDER IS OUT OF ORDER, not merely owner-gated — noticed 2026-09-04 by a run
-      > that considered picking it and did not. All five remaining questions sit on lessons whose
-      > BODIES are abridged in the same four languages.** `npm test`'s translation-completeness line
-      > reads **48 abridged lesson/language pairs, all on `essentials` lessons 1-11 and 14** (item
-      > 93/94); the five questions left here are on **L4, L7, L8, L9 and L14** — every one of them
-      > inside that set. So repairing a question's Spanish explanation for lesson 4 restores parity on
-      > the *check* of a lesson whose *body* the same reader gets as a condensed summary. **That is
-      > the wrong end first**, and it makes the remainder downstream of **item 94**, not merely of
-      > O-3's volume question. Whoever picks this up should take the lesson bodies or neither.
+165. **✅ FULLY CLOSED 2026-09-06 (owner-directed), content and guard both** — collapsed to its
+    conclusion 2026-09-08 per W-7.2 rule 1 from 20,571 b. The repair chronology, the layered headline
+    corrections and the instrument-convention argument are in the run log for 2026-09-02 through
+    2026-09-06; `0a30707` is the guard's commit.
+    **What was true:** the quiz's `explain` field — the surface item 160 moves reasoning *into* — was
+    abridged in a large share of question/language pairs, concentrated on the main path, so a learner
+    answering in es/ko/zh/ja got one sentence where the English reader got the mechanism.
+    **What is true now:** every open pair is repaired, and `check-data.mjs` **§74** guards the field on
+    every `npm test`, shipping at **0/184 abridged, 7 `READ_COMPLETE` entries (0 inert), 7 control
+    groups firing** — read off the suite this run, not off this item. The 7 exemptions are compact-CJK
+    renderings that carry every English clause and flag by hundredths: **item 162's false-positive
+    class recurring in a third corpus**, and padding them would be writing filler to satisfy an
+    instrument.
+    ⛔ **Read §74's numbers against §74, never against this item.** §74 computes p90 with
+    `ceil(0.9n)-1`, matching its §66/§67 siblings; this item's historical figures used
+    `round(0.9n)-1`, and on this corpus the two genuinely disagree (third decimal, and whether `q002`
+    ja flags). Control 5 pins the convention against a vector where they diverge, so a future switch
+    fails loudly instead of silently redefining every figure.
+    ⚠️ **Three traps kept because nothing else states them.** (1) **A p90 reference is computed from
+    the corpus it measures**, so repairing the corpus moves the instrument — quote one with a date.
+    (2) **Sentence-counting is a proxy for content and re-punctuation defeats it**: a translation that
+    splits one English sentence in two matches the total while dropping a whole sentence, which is how
+    a "closed" claim got made twice off a measure this item's own text said not to trust over the
+    ratio. (3) **A fingerprint list is a measurement, not an estimate** — the first `READ_COMPLETE`
+    list shipped with lengths typed rather than measured, and control 7 named all three on its first run.
+    ⭐ **The finding that outlives the item: a fix applied to one corpus is not applied to the
+    concept.** `DECISIONS.md` records a 2026-08-16 review repairing an es-only dropped word in a lesson
+    body; seventeen days later the quiz explanation *of the same mechanism* still dropped it in three
+    languages, because `translation-review.mjs` and `check-data.mjs` §33 both read `lessonContent` and
+    neither had ever opened `quizText`.
+    **Tracked elsewhere, not here:** the lesson *bodies* on those same `essentials` lessons are still
+    condensed summaries — item 94 and `npm test`'s translation-completeness warning. **O-3 applies:**
+    ~1,050 characters of machine translation shipped here, none read by a fluent speaker.
 
-    - *Compressed 2026-09-04 (fifth backlog-compression pass, owner-directed). Dropped: the
-      per-question repair chronology for `q010`/`q012`/`q014`, the superseded track-distribution and
-      inter-pass priority bullets, and the per-tranche O-3 accounting — all in the run log under
-      2026-09-03 and 2026-09-04. Kept byte-identical: the headline with all its ⛔/⚠️ corrections and
-      instrument traps, the `q003`/`q011` READ-COMPLETE finding, the live remaining counts, and the
-      ⛔ owner-decision block.*
 164. **✅ DONE 2026-09-02 (scheduled dev-agent) — the headline premise reproduced exactly, and the
     item's own list of phrasings did not: one of the three it proposed fires on shipped teaching
     copy. Widened in all five languages, with a two-sided control.**
@@ -3375,55 +3141,29 @@ instead of hand-rolling an eighth mover. A working one is in this run's scratchp
       instance to justify the cost. **One defect is not a class** (this item's parent proved that).
     - **Honest priority: low.** Zero known live instances. Downstream of O-1 like everything else.
 
-122. **✅ DONE 2026-08-27 (owner-directed: "compress the backlog to bring the floor under budget").
-    The never-archived floor is 218,895 → 191,956 bytes; the backlog section 192,933 → 165,994. Every
-    item number survives and all 17 open items are byte-identical.** See the run log for the method.
-    > ⚠️ **The premise was corrected before the pass, and the correction is the durable part.** The
-    > floor was **already under budget** (218,895 b = 88% of 250 KB), so "under budget" was read as
-    > *create real headroom*, which is what the number above is. **Item 115's claimed post-compression
-    > backlog figure of 146,979 b was also wrong by 43 KB** — the real figure at that commit was
-    > 190,062 b, measured live from `d411961`. See item 115's premise-correction box.
-    > **Where the bytes actually were, which is not where the first pass looked.** Item 115 compressed
-    > 79 closed *items* and left the backlog's 396-line **preamble byte-identical** — and that preamble
-    > held **34,857 b**, of which the closed W-1…W-4 block and the W-5 block's four "(original text,
-    > retained)" duplicates were the bulk. Compressing those to their standing rules gave **16,519 b**,
-    > more than the five largest closed items combined. **Item 115's own original text predicted this**
-    > ("W-1 through W-4 are all closed and still occupy their full original text") and the pass that
-    > wrote it did not act on it.
-    > **What was kept:** every standing rule (W-1's browser-verification rule, W-2's refill rule,
-    > W-5.2's one-run-in-four rule and its pick-lists-go-stale lesson, W-5.3's archiving rule and its
-    > defect, W-5.4's measure-the-shape method note, W-5.5's both-places rule, W-5.6's two premise
-    > corrections), O-1/O-2/O-3 verbatim, and every `⚠️`/`⛔` warning. **What was dropped:** superseded
-    > chronology and retained original text, all of which is in the run log and the archive.
-    > ⛔ **All 17 open items were left byte-identical, deliberately** — asserted, not eyeballed. **That
-    > is now the binding constraint: open items are 76,643 b, 47% of the backlog**, and item 26 is
-    > 11,556 b of it. The closed-item tier below the top ten is genuinely tight (81 items, 68,475 b,
-    > ~845 b each); do not expect another pass to find much there.
-    > ⛔ **FIGURE CORRECTED 2026-08-28, and the correction moves a 23 KB lever from "owner decision"
-    > to "any run may take it".** This item said *"item 19 (23,478 b, HELD) … the largest single lever
-    > left"* and concluded *"compressing a HELD item risks dropping scope … that is an owner decision,
-    > not a run's."* **Item 19's own body is 307 b — three lines.** The 23,478 came from a per-item
-    > split that bounds the LAST item at the end of the section instead of at the next section header,
-    > so it absorbed everything below it: **"Notes for future runs" (4,304 b) + "Completed and pruned"
-    > (18,864 b) = 23,169 b**, which are closed history, not backlog items, and hold no owner scope —
-    > two of the three "Notes" are themselves marked RESOLVED (2026-08-13, 2026-08-16). **So the
-    > largest remaining lever is real, is 23 KB, and nothing gates it.** Measured with a control: the
-    > four parts (preamble 18,337 + numbered items 180,053 + Notes 4,304 + Completed 18,864) sum
-    > byte-exactly to the backlog's 221,562 b. **The same artifact bit twice in one day** — the run
-    > that wrote this correction hit it first and caught it only by reading item 19 itself.
-    > ⛔ **LEVER TAKEN 2026-08-28, and it yielded 10,652 b, not 23,169 b. Both halves of the sentence
-    > above — "closed history" and "hold no owner scope" — are wrong in the same direction.** The two
-    > sections compressed 23,170 → 12,518 b; **the 12.5 KB that stayed is load-bearing, not padding.**
-    > (a) `check-backlog.mjs` builds its valid-item-number set from every `former item N` string in
-    > this file, and **items 22 and 23 are cited from four source files with no other accounting
-    > anywhere** — proven by injection, replacing `former item 22` fails `npm test` with 4 errors.
-    > (b) The third "Note" is **an open owner decision** (a dozen orphaned commits off `main`), not
-    > closed history. (c) The rest is standing rules — v6 is contaminated with §10.2 and §2.3 content,
-    > the pre-renumbering lesson-id warning, the palette-hex trap of item 63. **The transferable part:
-    > a byte count over a section of closed items measures what CAN be read, not what can be deleted,
-    > and only opening it distinguishes the two.** Two stale pointers surfaced while opening it — the
-    > quiz answer-key invariant had moved to `quizMeta.js`, and two `former item` labels were
-    > line-wrapped and so had never registered with the matcher at all.
+122. **✅ DONE 2026-08-27 (owner-directed: "compress the backlog to bring the floor under budget")
+    — floor 218,895 → 191,956 b, backlog 192,933 → 165,994 b, every item number surviving and all 17
+    open items byte-identical.** Collapsed to its conclusion 2026-09-08 per W-7.2 rule 1 from 4,839 b;
+    the pass method and its two figure corrections are in the 2026-08-27 and 2026-08-28 run entries.
+    ⭐ **Four findings that outlive the pass, and the first two are about measuring a backlog — read
+    them before running another one.**
+    1. **A byte count over a section of closed items measures what CAN be read, not what can be
+       deleted, and only opening it distinguishes the two.** The "23 KB lever" this item identified
+       yielded **10,652 b**: the rest was load-bearing — `check-backlog.mjs` builds its valid-item
+       set from every `former item N` string in this file (items 22 and 23 are cited from four source
+       files with no other accounting, proven by injection), one "Note" is an *open* owner decision,
+       and the remainder is standing rules.
+    2. ⛔ **A per-item byte split must bound the LAST item at the next SECTION header, not at the end
+       of the section.** Bounding it at the end made item 19 read as 23,478 b when its body is
+       **307 b** — it had absorbed "Notes for future runs" and "Completed and pruned" beneath it, and
+       that false figure was used to call a 23 KB lever an owner decision. Sum the parts against the
+       section total as a control; they must agree byte-exactly.
+    3. **The bytes were not where the first pass looked.** Item 115 compressed 79 closed items and
+       left the backlog's preamble byte-identical — and that preamble held 34,857 b, of which the
+       closed W-1…W-4 blocks and W-5's retained-original duplicates were the bulk. Compressing those
+       gave 16,519 b, **more than the five largest closed items combined.**
+    4. **Open items stay byte-identical, asserted rather than eyeballed** — that is the binding
+       constraint on every pass since.
 
 121. **✅ DONE 2026-08-27; EXTENDED 2026-08-28 to rates; RATE PROJECTION CORRECTED 2026-09-01 —
     read the correction first, because the extension shipped a figure that was wrong by 15x in the
@@ -3663,79 +3403,32 @@ instead of hand-rolling an eighth mover. A working one is in this run's scratchp
     lesson reader already had — `as="h2"` on `{t.hookTitle}` and `{t.checkTitle}` — and guarded by
     `check-data.mjs` §45, which was proved able to fail in three modes.**
 
-101. **✅ DONE 2026-09-05 (scheduled dev-agent), the day after O-1 closed — which is what this item's
-    own "low until O-1, then immediate" line asked for. Both tags ship, and so does the card.**
-    `index.html` now carries `og:url`, `og:image` (+ `:width`/`:height`/`:alt`), `twitter:image` and
-    `twitter:card: summary_large_image`; `public/og-card.png` is 1200x630 / 100,905 b; `check-data.mjs`
-    §38 covers all of it. See the run log for the render that was inspected and the five injected
-    faults that prove the new assertions fire.
-    > ⚠️ **THE ITEM'S OWN "MEASURED" BLOCK IS STALE AND IS NOT THE STATE OF THE FILE.** Its retained
-    > *ORIGINAL TEXT* says index.html is "11 lines" with "no `meta name="description"`, no `og:*`, no
-    > `twitter:*`, no favicon, no `theme-color`". That was true on 2026-08-24 and item 98 fixed all of
-    > it the same day. Measured 2026-09-05 before editing: **54 lines, 12 `<meta>`, an SVG favicon and
-    > two `theme-color` tags.** The item's *live* text was accurate; only the archived measurement had
-    > rotted, which is the ordinary way and the reason the live text is what a picker reads.
-    > ⛔ **A SUSPICION THIS RUN RAISED AND THEN REFUTED, recorded so nobody re-raises it.** The item
-    > and `vite.config.js` both say nothing here may hardcode a leading `/`, and `index.html` source
-    > line 42 reads `href="/icon.svg"`. That looks like a live violation of the property the whole
-    > build rests on and it is not: **Vite rewrites public-directory references in `index.html` against
-    > `base`**, and the built file reads `href="./icon.svg"` — measured on a real `npm run build`, with
-    > a control (the same grep, run over a copy with the slash restored, does find it). **The invariant
-    > is on the BUILT output, not on the source**, and the two documents that state it do not say so.
-    > ⚠️ **What the item got right and what it under-scoped.** Right: og:image needs an image, and the
-    > repo had no raster asset (re-confirmed — `public/` held `data/market.json` and `icon.svg`, and
-    > nothing else anywhere but the read-only launch-plan scans). Under-scoped: it treated the card as
-    > blocked on "adding a raster toolchain". **It is not — a browser is a rasterizer.** The card is
-    > authored as Canvas2D drawing code (`scripts/og-card.js`), rendered once in a browser and decoded
-    > to `public/og-card.png`. Zero new dependencies, so item 12's port-cost rule never engages, and
-    > the card is *editable text* rather than an unexplained binary.
-    > ⛔ **THE COST THIS ITEM NAMED IS REAL AND IS NOW BOUNDED RATHER THAN AVOIDED.** `og:url` and
-    > `og:image` are the only two absolute URLs in the build, so the origin is written into every
-    > `dist/`. §38 pins both to the URL in **README.md's "Deploying" section**, so a move to a custom
-    > domain fails `npm test` instead of silently unfurling the old host. A `dist/` served anywhere
-    > else still *works* — nothing here is fetched by the app — it just advertises this origin.
-    > ⛔ **NOT CLOSED BY THIS, and do not write otherwise: the card is not live.** Measured after the
-    > work landed — `https://magnificent-mochi-73aecc.netlify.app/og-card.png` returns **404** and the
-    > served `index.html` still carries no `og:image` tag. **Shared links keep unfurling as the old
-    > text-only summary until the owner redeploys `dist/`** (README's two-step "To publish an update").
-    > That is the same shape as O-2's remaining half: the code ships, one owner action remains.
-    ORIGINAL TEXT OF THE ITEM (retained — the entry above refers to it):
-    [Feature/Distribution — filed 2026-08-24 by the run that closed item 98, as its stated residual
-    rather than smuggled into the same commit. Serves `LAUNCH_PLAN.md` §5. **Genuinely blocked on
-    O-1**, not merely downstream of it.] `og:url` and `og:image` are the two preview tags item 98
-    could not ship, and both need an origin that does not exist yet.**
-    - **Why they were left out rather than guessed.** Both are specified as **absolute** URLs. This
-      build is path-agnostic on purpose (`base: "./"`), and `vite.config.js` states that nothing here
-      may hardcode a leading `/` — writing a domain into `index.html` now would ship a preview
-      pointing at a page that does not exist and break the property the whole build rests on.
-    - **`og:image` needs a second thing besides a URL: an image.** Measured 2026-08-24 — the repo has
-      **no shippable raster asset**; the only images anywhere are the read-only launch-plan page scans
-      in `working_files/`, and `public/` holds only `data/market.json` and now `icon.svg`. A preview
-      card image is roughly 1200×630 and wants the product name set in type, which this repo cannot
-      author without adding a raster toolchain (**item 12's port-cost rule applies** — scope it before
-      adding anything). `twitter:card` should move `summary` → `summary_large_image` in the same
-      change, and not before.
-    - **When picked, do it in the same session as the deploy**, so the URL is a fact rather than a
-      guess, and extend §38 to require both tags at that point — the section is written to be silent
-      about them today and says so in its own comment.
-    - **Honest priority: low until O-1, then immediate.** Everything here is inert without a URL, and
-      the moment there is one it is the difference between a link that sells the app and a bare one.
-
-    ORIGINAL TEXT (retained — it is what was measured):
-    - **Measured:** `index.html` is 11 lines and carries `charset`, `viewport` and `<title>` — and
-      **no `meta name="description"`, no `og:*`, no `twitter:*`, no favicon, no `theme-color`.**
-    - **Why it belongs to §5 specifically.** Item 31 shipped hash routing so that "each lesson is a
-      shareable URL" — that clause exists to make sharing a *funnel*. A URL that unfurls as a naked
-      `localhost`-shaped link in a message does not do that job, so the routing work is currently
-      only half-collected.
-    - **One thing to decide rather than assume:** routes are **hash-based**, so every lesson URL is
-      the same document to a crawler or unfurler — `#/lesson/29` is not sent to the server. Per-lesson
-      previews therefore are **not** available without prerendering or a real path router, and item 31
-      chose hash routing deliberately (see `DECISIONS.md`). **Scope this as one good site-level
-      preview, not per-lesson**, unless the owner wants to reopen that decision.
-    - Also fix `index.html`'s `<title>` hardcoding English while the app ships five languages, and its
-      `lang="en"` — which is now the correct *initial* value, since `useAppState` overwrites it at
-      mount (this date).
+101. **✅ DONE 2026-09-05 (scheduled dev-agent), the day after O-1 closed** — collapsed to its
+    conclusion 2026-09-08 per W-7.2 rule 1 from 6,819 b, including two `ORIGINAL TEXT (retained)`
+    tails that rule 2 retires. The measurements are in the 2026-09-05 run entry.
+    **What was true:** `og:url` and `og:image` were the two preview tags item 98 could not ship —
+    both must be absolute and there was no origin, and `og:image` also needed an image the repo did
+    not have. **What is true now:** `index.html` carries `og:url`, `og:image`
+    (+`:width`/`:height`/`:alt`), `twitter:image` and `twitter:card: summary_large_image`;
+    `public/og-card.png` is 1200x630; `check-data.mjs` §38 covers all of it.
+    ✅ **And it is LIVE, measured 2026-09-08 rather than assumed.** The ⛔ block this item carried said
+    the card was not live — true of the *retired Netlify host*. Against the canonical URL:
+    `og-card.png` → **200** with a nonexistent-path control at **404**, and the served `index.html`
+    carries `og:image` pointing at the canonical origin. Pages deploys on push, so the owner action
+    that block named no longer exists.
+    ⛔ **The refuted suspicion, recorded so nobody re-raises it.** `index.html` source reads
+    `href="/icon.svg"`, which looks like a live violation of the no-leading-slash rule the whole
+    path-agnostic build rests on. It is not: **Vite rewrites public-directory references in
+    `index.html` against `base`**, and the built file reads `./icon.svg` — measured on a real build,
+    with a control (the same grep over a copy with the slash restored does find it). **The invariant
+    is on the BUILT output, not on the source**, and neither `vite.config.js` nor this item said so.
+    ⚠️ **`og:url`/`og:image` are the only two absolute URLs in the build**, so the origin is written
+    into every `dist/`. §38 pins both to the URL in README's Deploying section, so a move to a custom
+    domain fails `npm test` instead of silently unfurling the old host.
+    ⭐ **The under-scoping worth keeping: a browser is a rasterizer.** This item treated the card as
+    blocked on "adding a raster toolchain". It was not — the card is authored as Canvas2D drawing code
+    (`scripts/og-card.js`), rendered once and decoded to PNG. Zero new dependencies, so item 12's
+    port-cost rule never engaged, and the card is editable text rather than an opaque binary.
 
 99. **✅ DONE 2026-08-24 (scheduled dev-agent) — both halves, the fix and the guard, in one commit.
     `Learn` and the app shell now sit behind error boundaries, and `check-data.mjs` §37 holds the
@@ -3875,71 +3568,37 @@ instead of hand-rolling an eighth mover. A working one is in this run's scratchp
 
 66. **✅ DONE 2026-08-17 (scheduled dev-agent) — measured, and the instrument is permanent.**
 
-60. **✅ DONE 2026-08-17 (scheduled dev-agent). The residual now has an instrument (`npm run jargon`),
-    and the one real gap it found is closed: Brokerage Account is a glossary entry, chipped on lesson 6.
-    For the seventh item running the premise was partly wrong — and this time the wrong half was the
-    *scale*, not a number.**
-    > **Two premise corrections worth not re-deriving.** (a) **APR is not money-track jargon** — it
-    > appears exactly once in all 40 lessons, in *economy* lesson 35's list of rates that follow the Fed
-    > ("the APR on your credit card"), where the sentence's job is the Fed transmission, not APR. Filed
-    > with its disposition in item 64. (b) **"beneficiary" is not a gap**: lesson 14 is titled "Wills
-    > and Beneficiary Designations" and rule 2 applies — its 9 uses are the lesson teaching the term.
-    > **And the residual is still a residual.** `0 unexplained` now covers 30 keys instead of 29, which
-    > is not the same as "no undefined jargon" — the instrument reports, it does not certify. Its
-    > threshold (≥2 lessons or ≥3 uses) suppressed 422 lower-reach candidates that were never
-    > individually read; APR is proof that the suppressed tail can hold a real one.
-    > **THE INSTRUMENT FIRED AGAIN 2026-08-30 (scheduled dev-agent), on content that did not exist
-    > when it was built — which is the case for keeping it.** Money lessons 41-44 shipped after
-    > 2026-08-25 and brought a vocabulary the glossary had no entry for: `npm run jargon` ranked
-    > **Labor income the highest-reach unglossed term in the money corpus (3 lessons, 11 uses)**,
-    > with Business income (2/4), Investment income (2/3) and passive income (2/3) behind it. All
-    > four are now glossary entries, chipped on 43 and 44 and excluded `defined-here` on 42.
-    > **The transferable half is what "0 unexplained" was worth here.** §17b reported **0
-    > unexplained** on the morning of this run and was *correct*, because it sweeps glossary keys
-    > and these four were not keys. Its own header says so; nothing else does. **A green coverage
-    > number is a statement about the vocabulary you already admitted, and new content arrives
-    > outside it.** The next run to add lessons should run `npm run jargon` on the track it touched.
-    > ~~**Residual, filed as a note under this item rather than as a numbered one (W-6.2 rule 2):
-    > `FOMO` (2 lessons, 4 uses — money 20 and 28) is the last candidate on the list that is real
-    > jargon rather than a section heading or a cross-reference.**~~ It was not taken that run
-    > because it was not measured — nobody had read whether lesson 20 defines it at first use.
-    > **⛔ MEASURED 2026-08-30 (owner-directed "do FOMO next") AND THE NOTE ABOVE IS WRONG. No
-    > glossary entry is due, and the striking-out is the point: the note's own hedge ("it was not
-    > measured") was the only true sentence in it, and the confident half was written anyway.**
-    > Lesson 20 §1 reads *"The feeling that pulls Marcus in has a name: FOMO, the fear of missing
-    > out"* — the acronym glossed in the clause that introduces it, so §3.0.3's FIRST branch holds.
-    > The heading above it is "FOMO Pulls You In", the takeaway restates the expansion, and **the
-    > single use outside lesson 20 — lesson 28 §1 — is itself a cross-reference carrying lesson
-    > 20's title in parentheses.** So it is *both* of the two things the note said it was not.
-    > Adding a key would also have obliged an exclusion on 20 under rule 2, i.e. the entry would
-    > have been unreachable from the lesson that teaches it.
-    > **The transferable half is about the instrument, and it is now fixed.** `npm run jargon`
-    > printed *"0 self-defining suppressed — no acronym in this corpus is expanded next to
-    > itself"*, which is a claim about the CONTENT that the count could not support: suppression
-    > needs EVERY occurrence glossed, and FOMO is glossed once and bare three times. That sentence
-    > is what made the note's confident half feel checked. The report now says "…EVERY time it
-    > appears" and adds a second line naming the terms that ARE spelled out somewhere, and each
-    > such candidate carries `← already spelled out in lesson N`. See the 2026-08-30 run entry.
-    > **Second residual, measured 2026-09-02 and filed as a NOTE under this item rather than as a
-    > numbered one (W-6.2 rule 2 — one live instance, now fixed). The instrument's corpus is
-    > LESSON PROSE, and the app's densest finance vocabulary is not in lesson prose.**
-    > `jargon-candidates.mjs` reads `lessonContent.*`; §17b's coverage sweep reads lessons too. Neither
-    > can see `src/locales/*.js` or the Reference screens' own content modules — so a term the app
-    > organizes a whole screen around is invisible to both. The live instance was **"relative
-    > strength"**, printed on all eleven Sector-performance rows and in that screen's sort note, and
-    > defined in no lesson, no quiz, no glossary entry and no market copy (measured with controls:
-    > "yield curve" and "fed funds rate" are found in the same corpus and ARE defined; "purchasing
-    > power" is defined and absent from it). Fixed in place rather than by a glossary key — see the
-    > 2026-09-02 run entry for why. **Before building a sweep for this, note the corpus is 6,228
-    > chars of English chrome and every other figure on those screens already carries its own `what`
-    > line; a whole instrument for one term would land on the wrong side of W-6.3.**
-    > ✅ **UPDATE, same day, owner-directed: the glossary entry was added as well** ("do the ko/zh/ja
-    > glossary entry for relative strength too"). Both surfaces now exist and they do different jobs —
-    > `relativeStrengthNote` on the Sectors screen reconciles the rank with the return column, the
-    > glossary entry says what the measure is. **It is the only glossary key whose use is a Reference
-    > screen rather than lesson prose, so it carries no chip and §17b needs none from it** (that sweep
-    > is about terms a lesson USES). Still open and deliberately not taken: the Sectors screen does not
-    > LINK to the entry — a reader has to know to look it up.
+60. **✅ DONE 2026-08-17 (scheduled dev-agent).** The residual has an instrument (`npm run jargon`)
+    and the gap it found is closed: Brokerage Account is a glossary entry, chipped on lesson 6.
+    Collapsed to its conclusion 2026-09-08 per W-7.2 rule 1 from 6,265 b; the FOMO and
+    relative-strength investigations are in the 2026-08-30 and 2026-09-02 run entries.
+    ⚠️ **The instrument REPORTS, it does not certify.** `0 unexplained` covers the glossary keys that
+    exist, and its threshold (≥2 lessons or ≥3 uses) suppresses hundreds of lower-reach candidates
+    that nobody has read. Two premise corrections stand: **APR is not money-track jargon** (one use in
+    all 40 lessons, in economy L35, filed with its disposition in item 64) and **"beneficiary" is not
+    a gap** (lesson 14 is titled for it and teaches it).
+    ⭐ **A green coverage number is a statement about the vocabulary you already admitted, and new
+    content arrives outside it.** §17b reported 0 unexplained and was *correct* while money lessons
+    41-44 shipped four unglossed high-reach terms (Labor/Business/Investment/passive income), because
+    they were not keys. **A run that adds lessons should run `npm run jargon` on the track it touched.**
+    ⛔ **And the instrument's own report line once overstated what it had checked.** It printed "no
+    acronym in this corpus is expanded next to itself" — a claim about content the count could not
+    support, since suppression needs *every* occurrence glossed. FOMO was glossed once and bare three
+    times; the report now says "…EVERY time it appears" and names the terms spelled out somewhere.
+    **The meta-lesson is sharper than the fix:** the note that sent a run after FOMO hedged that it
+    "was not measured", and that hedge was the only true sentence in it — the confident half was
+    written anyway, and measuring showed no entry was due at all.
+    ⚠️ **The corpus is LESSON PROSE, and the app's densest finance vocabulary is not all in lesson
+    prose.** `jargon-candidates.mjs` and §17b both read `lessonContent`; neither can see
+    `src/locales/*.js` or the Reference screens' own modules. The live instance was **"relative
+    strength"**, on all eleven Sector rows and defined nowhere (controls: "yield curve" and "fed funds
+    rate" are found and defined in the same corpus). Fixed in place, and a glossary entry added
+    2026-09-02 — the only key whose use is a Reference screen rather than lesson prose, so it carries
+    no chip and §17b needs none from it. **Before building a sweep for this, note the corpus is ~6,228
+    chars of English chrome and every other figure on those screens already carries its own `what`
+    line; a whole instrument for one term lands on the wrong side of W-6.3.**
+    **Still open, deliberately not taken:** the Sectors screen does not LINK to that glossary entry —
+    a reader has to know to look it up.
 
 64. **✅ BOTH CLOSED — struck from the W-5.2 pick list 2026-08-24 after seven days of being
     recommended when nothing was open. `Dividend` shipped 2026-08-20; the other two keys landed
@@ -6679,5 +6338,76 @@ file is 581,000 b and **73.0% of it is the backlog** (424,354 b). The floor is *
 remedy is a backlog compression pass, and W-7.2 rule 1 is the form of it that has been working:
 closing item 173 in conclusion form earlier today paid for two run-log entries and still left the
 backlog 1,119 b under W-7.2 rule 5's baseline.
+
+**Schedule:** the cron is the owner's lever and was not read, compared or touched.
+
+### 2026-09-08 (owner-directed: "run a compression pass over the closed items" — fifteenth entry this date) — the sixth pass, −32,174 b under W-7.2 rule 1, and it nearly shipped a 150 KB deletion because the backlog is not in the order I assumed
+
+**Result: backlog 424,354 → 392,180 b (−32,174 b); floor 462,760 → 430,586 b; file 584,030 →
+551,856 b.** Five closed items collapsed to their conclusions: **165** (20,571 → 2,963), **60**
+(6,265 → 2,938), **101** (6,819 → 2,432), **131** (6,461 → 2,254), **122** (4,839 → 2,082). All
+figures are `check-log-size.mjs`'s MEASURED line before and after, not a transform buffer — item
+115's oldest lesson.
+
+⛔ **THE NEAR-MISS, FIRST, BECAUSE IT IS THE DURABLE PART. The backlog is NOT in monotonic item
+order, and a boundary built on that assumption deleted 150,782 b.** Slicing item 131 as
+`s.index('131. ')` → `s.index('130. ')` looked obviously right and was not, two ways at once: the
+global `index()` searched from the **start of the file** rather than from the item, and **item 134
+follows 131 while item 130 sits 168 KB further down.** The transform reported "recovered 150,782 b"
+— a number ~7x the largest item in the file — and *that implausibility was the only thing that
+surfaced it*, because every other signal looked normal.
+**Restored byte-identically from a scratchpad copy taken before the first edit** (`cmp` against
+`git show HEAD:AGENT_LOG.md` — identical; `git diff` empty), never with `git checkout --`.
+**The fix is a boundary function with three assertions, and it is what the next pass should reuse:**
+end at the **next `^\d+\. ` header whatever number it carries**; refuse if the removed block contains
+any item header but its own; refuse if the block's size is outside an expected range; refuse if the
+replacement is not smaller. **Under those assertions the bad slice cannot be written** — the block
+spanned 47 other headers.
+⭐ This is **item 122's finding number 2 in a new costume** — that item's own 23 KB phantom came from
+bounding the last item at the end of a section instead of at the next header. **Twice now, a
+backlog-measuring bug has come from assuming where an item ends.**
+
+**Scope, and two deliberate refusals.**
+- ⛔ **Items 115 and 121 were examined and DECLINED.** Both are marked done but are almost entirely
+  standing rules and *open owner options*, cited by number from W-5.3, from `check-log-size.mjs`'s
+  own warning text, and from each other. Compressing them would delete live decisions.
+- ⛔ **Item 168 examined and DECLINED, and item 125 too** — nearly every block in them carries a
+  ⚠️/⛔, a standing rule or a named trap, which the compression rule's kept-list protects. **This
+  corroborates item 115's "compression is near its floor under the current rule" from the other
+  direction: the remaining mass is protected, not padding.**
+- **Open items were never candidates.** Item 167 is the single largest object in the backlog
+  (25,122 b) and carries a rule-2 retained-original tail, and it is OPEN — left byte-identical.
+
+**Six controls, each proven able to FAIL rather than merely reported green.** Against the pre-cut
+copy: (1) item count and **order** unchanged 150/150; (2) every untouched item byte-identical;
+(3) all five touched items were `✅`-closed before the edit; (4) **zero** new unresolved `item N`
+citations (the 9 that do not resolve — items 1, 13-16, 20, 22, 23, 25 — are pre-existing pruned
+numbers, measured on both copies); (5) zero citations dropped — one link to item 162 was lost in
+drafting and **restored**; (6) every touched item keeps its headline and a run-log pointer.
+**Negative control:** on a deliberately corrupted copy — an open item edited, one item header
+removed — C1 reported 150 → 149 and C2 fired on items 132, 133 and 167. **The controls are live.**
+
+⚠️ **What this pass did NOT do, stated because the ask could be read as aiming at it.** It did not
+bring the floor under budget and **no compression pass can**: item 115's fifth pass measured the
+headline-only projection as **invariant to compression** — identical to the byte before and after —
+so a pass buys headroom against growth and moves that option's reachability by exactly zero. The
+floor is **430,586 b against 250,000**. What is left is what item 115 has always said is the
+owner's: delete closed items outright, or raise the budget. **A run must not choose.**
+
+**W-7.2 rule 5's number:** the backlog stands at **392,180 b**, **33,293 b under** the 425,473 b
+baseline set for 2026-09-13. At −32,174 b this is the second-largest single recovery on record
+(after the third pass's ~54 KB) and roughly twice the ~15.8 KB mean of the five generic passes —
+consistent with rule 1 outperforming generic compression, which is what rule 5 predicted.
+
+#### Step 5 — adversarial self-check
+**Blindspot register: nothing found.** No learner-facing copy exists in this change — it is backlog
+prose only, no `src/` file touched. `check-blindspot` exit 0. **DECISIONS.md conflict: none** — no
+decision is restated or contradicted; the two items that carry live owner decisions were the two I
+refused to touch. **Already-done backlog item: this IS a redo by design** (the sixth pass of item
+115's rule), and the scope refusals above are what keep it from re-cutting material earlier passes
+already judged. **My own verification claim:** the six controls and both measured figures are
+reproducible from the pre-cut copy, which is the only evidence that counts here — `npm test` cannot
+detect backlog loss any more than it can detect archive loss, and it is not offered as proof.
+`npm test` exit 0, **4 warnings, the documented baseline set**.
 
 **Schedule:** the cron is the owner's lever and was not read, compared or touched.
