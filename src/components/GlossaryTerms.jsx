@@ -14,9 +14,29 @@
 //
 // Disclosure semantics: each chip is a button with aria-expanded, and all of a
 // section's chips control one shared panel that sits immediately after the
-// row, so opening a second term swaps the panel rather than stacking. The
-// panel is not a live region — it follows its trigger in DOM order, which is
-// where a screen reader looks next.
+// row, so opening a second term swaps the panel rather than stacking.
+//
+// ── WHY THE PANEL IS A LIVE REGION (corrected 2026-09-09) ─────────────────
+// This header used to read "the panel is not a live region — it follows its
+// trigger in DOM order, which is where a screen reader looks next." That is
+// true of the LAST chip in a row and false of every other one, and the corpus
+// is half made of the other ones: `lessonTerms.js` yields 54 chip rows, 29 of
+// them with more than one chip, so 50 of 104 chips have at least one sibling
+// between them and the panel they open. `aria-controls` does not close that
+// gap — most screen readers ignore it.
+//
+// The swap case is worse and is the one `PolicySim.jsx` already reasoned out
+// eleven files away, in a component with this exact shape (a row of buttons
+// over one shared always-rendered panel): opening a second term replaces the
+// text *in place*, which a sighted reader sees and a screen-reader user is
+// told nothing about. Measured on the built app 2026-09-09: opening "Stock"
+// then "Bond" on lesson 35 swapped 361 characters of panel content while the
+// page's live-region total did not move.
+//
+// So the panel carries `role="status"` — the same idiom, on a container that
+// is always rendered, so the region exists before its content does (the rule
+// backlog item 174 landed). `aria-expanded` still carries the state change;
+// the live region carries the definition the learner actually asked for.
 // ═══════════════════════════════════════════════════════════════════════════
 
 import { useId, useState } from "react";
@@ -83,9 +103,11 @@ export default function GlossaryTerms({ terms, t, lang, label }) {
         })}
       </div>
 
-      {/* Always rendered so aria-controls always resolves to a real element. */}
+      {/* Always rendered so aria-controls always resolves to a real element,
+          and so the live region exists before the definition is put into it. */}
       <div
         id={panelId}
+        role="status"
         style={
           open
             ? {

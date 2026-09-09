@@ -1742,6 +1742,35 @@ instead of hand-rolling an eighth mover. A working one is in this run's scratchp
       stand; the coverage did not.** `A11yStates.coverage()` plus the Tab step now in the header
       recipe are the fix — see item 149.
 
+175. **✅ DONE 2026-09-09 (scheduled dev-agent), the same run it was found** — filed in conclusion
+    form per W-7.2 rule 1; the instrument, its control and the full before/after are in this date's
+    run-log entry.
+    **What was true:** the in-lesson glossary chips (`GlossaryTerms.jsx`, the §3.0.3 surface) put a
+    term's definition into a panel that was **not a live region**, and the component's own header
+    said why: *"it follows its trigger in DOM order, which is where a screen reader looks next."*
+    That is true of the **last** chip in a row and false of every other one — `lessonTerms.js` yields
+    **54 chip rows, 29 of them multi-chip, 104 chips of which 50 are not last in their row.** The
+    worst case is a 5-chip row (essentials 6, economy 25) where the first chip's definition sits four
+    nodes past it. `aria-controls` does not bridge that; most screen readers ignore it.
+    **What is true now:** the panel carries `role="status"` on the container that was already always
+    rendered, so the region exists before its content — item 174's rule, and verbatim the idiom
+    `PolicySim.jsx` has used eleven files away since item 34, for a component with the identical shape
+    (a row of buttons over one shared panel). Measured live: opening "Stock" on lesson 35 moves the
+    page's live-region character total **0 → 361** where it previously moved **0 → 0**, and the swap
+    to "Bond" moves it **361 → 337** in place — the case PolicySim's header names as its whole reason
+    for a live region, and the case the old rationale did not cover at all.
+    ⭐ **Why the item-174 sweep did not catch it, and it is the third recurrence of one shape.** That
+    run swept the app's live regions and closed the class at "all six are now correct". **The class
+    was "a surface that swaps content in place"; the sweep's scope was "elements already carrying a
+    live-region role"** — so a surface with no region could not appear in it. Identical to §82, whose
+    class was "an ARIA composite role with no keyboard contract" and whose scope was one role string.
+    **A sweep keyed on the marker cannot find the surfaces missing the marker.**
+    ⚠️ **Unchanged limit:** no screen reader is drivable from this host, so this is a DOM-precondition
+    claim, not a measured announcement.
+    **No check shipped** (W-6.2 rule 3, W-6.3 quoted in the run-log entry): deciding from JSX which
+    panels *ought* to be live is the brittle regex item 152 was declined for, and nothing in
+    `scripts/` reads live regions today.
+
 174. **✅ DONE 2026-09-09 (scheduled dev-agent), the day after it was filed** — replaced by its
     conclusion per W-7.2 rule 1; the two instruments, their controls and the full measurements are in
     this date's run-log entry.
@@ -7133,6 +7162,130 @@ recorded in both directions.
 **Filed as nothing.** One observation not worth an item: `Learn.jsx:236` still does the
 `TRACKS.find(...).labelKey` lookup inline where `lessonPlacement` would do it — a one-line tidy on a
 line that is correct today, not a defect.
+
+⚠️ **Reported, not fixed — O-4/O-5, not repo work.** A run may not push, so this commit does not reach
+a learner until the owner pushes `main`.
+
+**Schedule:** the cron is the owner's lever; not read, not compared, not touched.
+
+### 2026-09-09 (scheduled dev-agent; W-6.2 rule 1 free — the previous run filed nothing, so this pick came from a live walk of the least-walked interactive component, chosen by counting each component's mentions across both logs) — the glossary chips put a definition on screen and announced nothing, and the header explaining why cites a DOM order that half the chips in the corpus do not have
+
+**What this is.** `src/components/GlossaryTerms.jsx` — the §3.0.3 surface, a row of term chips under a
+lesson section, each opening that term's definition in one shared panel below the row. The panel was
+**not a live region**, and the component's header gave the reason: *"the panel is not a live region —
+it follows its trigger in DOM order, which is where a screen reader looks next."* W-6.2 rule 3's
+sentence: *a learner taps "Stock" mid-lesson, the definition appears, and nothing tells them it did —
+and the definition is not where they are.*
+
+⭐ **The rationale is true of exactly one chip per row.** `lessonTerms.js` (filtered the way the
+component filters, by presence in `glossary.js`) yields **54 chip rows, histogram 1:25 2:17 3:6 4:3
+5:3 — 104 chips, of which 54 are last in their row and 50 are not.** For those 50 the panel is one to
+four siblings past the trigger, and `aria-controls` does not close the gap: most screen readers ignore
+it. **48% of the corpus is the case the header says does not exist.**
+
+⭐ **And the app already reasoned this out, eleven files away, for the identical shape.**
+`PolicySim.jsx` is a row of buttons over one shared always-rendered panel, and its header says: *"THE
+OUTCOME IS ANNOUNCED, NOT JUST SHOWN. The panel is a live region (`role="status"`, polite) because the
+text replaces itself in place when a second lever is picked — a sighted reader sees the swap, and
+without the live region a screen-reader user would not be told it happened."* `GlossaryTerms`'s own
+header describes the same swap ("opening a second term swaps the panel rather than stacking") one
+sentence before reaching the opposite conclusion.
+
+#### Premise re-measured before editing, subject and control on the same page load
+Browser pane against a static server over `dist/` on `127.0.0.1:8831` (**404 control fired** — the
+server falls back to `index.html` only for extension-less paths, which is the trap the 2026-09-09
+reader run recorded). Returning learner, economy 29-34 seeded, `#/lesson/35` — the one lesson carrying
+**both** a multi-chip glossary row and PolicySim, so the control is not a separate load. HEAD's tree
+rebuilt to `index-C7lf2LJ0.js` / `LessonReader-BU95B60g.js`, which is the bundle the previous run
+recorded for HEAD.
+
+| on `index-C7lf2LJ0.js` | panel `role` | panel chars | page live-region chars |
+|---|---|---|---|
+| at render | **`null`** | 0 | 0 |
+| open "Stock" (chip 1 of 2) | `null` | 361 | **0** |
+| swap to "Bond" | `null` | 337 | **0** |
+| **control** — PolicySim lever, same load | **`status`** | — | **0 → 521** |
+
+**The control is what makes the zeros mean something.** An instrument that could not see a live-region
+update would have produced the same subject column; it saw PolicySim's 521 on the same page, in the
+same call. The measure is deliberately **character totals, not node presence** — `DECISIONS.md`'s
+2026-09-09 annotation retires the presence test, because `App` now renders a persistent empty
+`Announcer` and *"does a `role="status"` exist"* answers YES on every screen.
+
+#### What shipped
+**One file, 26 insertions / 4 deletions: one attribute and a corrected header.** `role="status"` on
+the panel container that was already always rendered — so the region exists before its content, which
+is item 174's rule and the property PolicySim was the *control* for in that run. The header's false
+sentence is replaced by the measurement above rather than deleted. **0 style or token lines** (diff
+grepped for `padding|margin|color:|font|border|space\[|minHeight|surface\.|fill\.|ink\.` → 0), **0
+files under `content/` or `locales/`**, no new locale key — the definitions are already written in
+five languages and this changes only who is told about them.
+
+#### After, `index-COeFb-NF.js` / `LessonReader-CMHhnMHO.js`, same instrument
+- Lesson 35, en: panel is `role="status"` **at render with 0 characters**; open "Stock" → live total
+  **0 → 361**; swap to "Bond" → **361 → 337 in place**; close → **0**. Control unchanged: PolicySim
+  still `role="status"` at 521.
+- **Worst case in the corpus, measured in Japanese** — essentials lesson 6, a **5-chip** row
+  (`権利確定（ベスティング）` first): the first chip's panel sits **4 nodes past it**, `role="status"`,
+  live total **0 → 128** on open. `documentElement.lang` read `ja` and the panel text is Japanese, so
+  this is not the byte-identical-English artifact the 2026-09-09 reader run was caught by.
+- Before and after were each taken on a **named bundle**, with HEAD's component restored from a
+  scratchpad copy and rebuilt to produce the before column — `cmp` identical in both directions.
+
+#### No check shipped, deliberately
+Deciding from JSX which panels *ought* to announce is the brittle source-regex item 152 was declined
+for, and item 174 declined the same guard for the same reason. Nothing in `scripts/` reads live
+regions at all today (`grep -rn 'role=.status\|aria-live' scripts/` → **0**). **W-6.3 measured on
+this tree rather than carried forward** — `scripts/` **21,395** lines (`.mjs`+`.js`) vs app code
+(`src/` `.js`+`.jsx` minus `content/`+`locales/`) **10,001** — **2.14x**. ⚠️ **The method matters and
+is stated because I got two answers:** counting `scripts/*.sh` and `src/**/*.css` too gives **21,643 /
+10,464 = 2.07x**. The 2.14x form is the one comparable with the 2.15x the previous run quoted, and the
+0.01 between them is this run's own +26 `src/` lines. Blindspot **10.8's tripwire at 10.61x against a
+5x threshold** is read off the App summary's 2026-09-05 measurement, not re-run here. A one-attribute
+change is the wrong place to spend script mass. `scripts/` untouched; the ratio moves down.
+
+**`npm test` exit 0**, the same **3** pre-existing warnings (translation review coverage, translation
+completeness, option-length cue / item 160), **0 FAIL**; `npm run check-blindspot` exit 0; `npm run
+build` clean. `LessonReader` 93.81 → **93.82 kB**, `index` **271.53 kB unchanged**.
+
+#### Step 5 — adversarial self-check
+**Blindspot register: nothing found, grepped rather than assumed.** **0** files under `content/` or
+`locales/` in the diff; no lesson prose, no market figure, no date, no new learner-facing string of
+any kind — the change is one ARIA attribute and comments. `check-blindspot` **exit 0**. §10.1/§10.2/
+§10.3 cannot be reached by a markup attribute on a container whose text comes from `glossary.js`.
+**DECISIONS.md conflict: none, and the nearest entry was read rather than the file skimmed.** Grepping
+for `role="status"` / `live region` / `aria-live` / `announcer` returns one region, the 2026-09-08
+deep-link entry and its 2026-09-09 annotation. That entry is about the **discarded-link notice**, is
+untouched here, and its standing instruction — *"read the announcer's CONTENT, never its presence"* —
+is the rule this run's instrument was built on rather than one it breaks. **Item 12 (Expo/RN port
+cost) is the standing rule the last five runs have had to argue against, and this run does not: 0 DOM
+APIs added** (`document.`/`window.`/`addEventListener`/`.focus()`/`onKeyDown`/`tabIndex` → **0** in
+the diff), and `role="status"` has a direct React Native equivalent in `accessibilityLiveRegion`.
+localStorage-only state, `.js`-not-JSON content and Vite-not-Expo untouched.
+**Already-done backlog item: no, and the specific risk was checked rather than the list scanned.** The
+risk was that item 174 had considered this panel and declined it. It did not — its six regions are
+2 PolicySim, 1 Question, 2 `ui.jsx` `role="alert"` and the new `Announcer`, and a panel with no role
+could not appear in a sweep of elements carrying one. `grep`ping both logs and `DECISIONS.md` for a
+glossary-panel live-region decision returns nothing. The 2026-08 live walk that touched this component
+**quoted the false sentence approvingly** ("there was nothing to fix even in principle") without ever
+testing it, which is how it survived.
+**My own verification claim, weakest part first.** ⚠️ **(1) Not a screen-reader claim.** No assistive
+technology is drivable from this host; what is measured is the DOM precondition and the character
+delta, and "VoiceOver announces it" is not asserted. **(2) The clicks are synthetic** `element.click()`
+calls, not real pointer events — the archive records a false focus finding caused by exactly that, so
+nothing here is claimed about focus, only about `aria-expanded` and text content, which is what that
+entry established synthetic clicks do drive correctly. **(3) A cost accepted, not hidden:** for the 54
+last-in-row chips a screen reader may now hear the definition twice — once announced, once on reading
+forward. That is the standard trade for `role="status"`, it is the trade `PolicySim` already took on
+this same screen, and it is strictly better than 50 chips whose content is announced not at all.
+**(4) Reproducible:** every figure comes from a named bundle, both columns measured by the same
+function, with HEAD's component rebuilt to produce the before column and `cmp`-identical restores
+recorded in both directions.
+
+**Filed as nothing.** No residual. One observation not worth an item and explicitly not picked next:
+`PolicySim.jsx` and `GlossaryTerms.jsx` now carry the same always-rendered-panel idiom in two
+hand-written copies — a shared primitive is a refactor, not a defect, and W-6.2 rule 2 says a note,
+not a number.
 
 ⚠️ **Reported, not fixed — O-4/O-5, not repo work.** A run may not push, so this commit does not reach
 a learner until the owner pushes `main`.
