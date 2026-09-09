@@ -6811,3 +6811,57 @@ identical script.
 swept to zero across all 20 `.jsx` files; §82 guards the next one. No residual.
 
 **Schedule:** the cron is the owner's lever; not read, not compared, not touched.
+
+### 2026-09-08 (owner-directed: "fix" — second entry this date) — the comment explaining why the shell scopes its `aria-controls` described five tablists that do not exist and a technique the app does not use
+
+**What this is.** The previous run noticed this in passing while measuring `Segmented` and did not act
+on it. Both copies of the claim are now corrected. **Comments only — the built bundle hash is
+identical before and after (`index-y_VDZhYV.js`), which is the control that says no shipped code
+moved**, and every changed line matches `^[+-]\s*//`.
+
+**The claim, which lived in `src/App.jsx`'s tab comment AND in `check-data.mjs` §40's own header:**
+that an unconditional `aria-controls` is *"the exact shape five other tablists in this app carry a
+comment about avoiding"*, whose answer is *"render the panel and `hidden` it"*.
+
+**Both halves are false, measured 2026-09-08:**
+- **The count.** `grep -rn 'role="tablist"' src/` returns **two** definitions — the shell's nav and
+  `ui.jsx`'s `Segmented` — and `Segmented` is instantiated **three** times. So "five other" is wrong
+  at one (definitions) or three (instances), never five. `Reference.jsx`'s third hit is a note that
+  its old strip *was* a tablist and deliberately is not one now, i.e. a retired one.
+- **The technique.** `grep -rn "hidden"` across all three panel sites (`ParentGuide.jsx`,
+  `Sectors.jsx`, `LessonVisual.jsx`) returns **zero**. **No panel in this app is rendered-and-hidden.**
+  The comment credits the other tablists with an approach none of them takes.
+
+⭐ **The real contrast was there to be stated and had been replaced by a fabricated one.** `Segmented`
+gives all of its tabs **ONE always-present panel**, which is exactly why its unconditional
+`aria-controls` is truthful. The shell cannot do that — its three screens are separate lazy chunks
+with a panel each, so mounting all three would download all three on open. That is a sharper reason
+for the shell's scoped reference than the one the comment gave, and it is now what both copies say.
+
+**Why this is worth a commit rather than a note.** §40's header is a **check's own documentation** —
+the text a future run reads to decide whether the check still describes reality. A false count there
+is the same failure class as the App-summary counts the 2026-09-01 rewrite deleted: a number retyped
+into a document every run reads first. Per W-7.2 rule 2 the original wording is **not** quoted
+underneath the correction in `check-data.mjs`; it is in git and quoted once here.
+
+#### Step 5 — adversarial self-check
+**Blindspot register: not reachable.** No learner-facing surface exists in a source comment; no locale
+key, lesson prose, market figure or shipped date changed. `check-blindspot` exit 0. The identical
+bundle hash is the strongest form of this claim — §10.1/10.2/10.3 cannot be moved by a diff that
+changes no shipped byte.
+**DECISIONS.md conflict: none, and item 12 specifically is NOT engaged.** The previous entry took a
+real item-12 conflict (DOM-only code deepening the port surface) and left it flagged for the owner.
+**This change adds no DOM-only code and no code at all** — it cannot deepen the port surface, and it
+does not settle or quietly re-argue that open question, which stands exactly as filed.
+**Already-done backlog item: no.** Nothing in the backlog or the pruned list concerns §40's header
+text. This corrects a claim, it does not redo a fix.
+**My own verification claim.** ⚠️ **(1)** The measurement is a `grep` over `src/`, so it is a claim
+about **this tree** and nothing else. **(2)** The strongest evidence is negative — *no* panel uses
+`hidden` — and a negative from a grep is only as good as the pattern; the pattern here is the bare
+word `hidden`, which is deliberately over-broad (it would match `hidden` in any form) and still
+returned zero, so a narrower true instance cannot be hiding behind it. **(3)** The bundle-hash
+identity is reproducible: build before, build after, compare the emitted entry chunk name.
+
+**Filed as nothing.** No residual.
+
+**Schedule:** the cron is the owner's lever; not read, not compared, not touched.

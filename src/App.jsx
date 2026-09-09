@@ -766,11 +766,22 @@ export default function App() {
               // Only the selected tab's panel is in the DOM, so only the
               // selected tab may claim one. Unconditionally, the two inactive
               // tabs pointed at `panel-practice`/`panel-reference`, which no
-              // element had — a dangling IDREF, not a relationship, and the
-              // shape five other tablists in this app carry a comment about
-              // avoiding. Their answer (`hidden` instead of unmounting) is not
-              // available here: these three screens are separate lazy chunks,
-              // so mounting all of them would download all of them on open.
+              // element had — a dangling IDREF, not a relationship.
+              //
+              // ⚠️ CORRECTED 2026-09-08. This used to read "the shape five
+              // other tablists in this app carry a comment about avoiding.
+              // Their answer (`hidden` instead of unmounting)" — false in both
+              // halves, measured. There are TWO tablists in the app, not six:
+              // this one and `ui.jsx`'s `Segmented` (instantiated three times).
+              // And NO panel anywhere is rendered-and-hidden — `hidden` appears
+              // in none of the three panel sites.
+              //
+              // What `Segmented` actually does, which is the real contrast:
+              // ONE panel serves all of its tabs and is always present, so its
+              // unconditional `aria-controls` is truthful. That is unavailable
+              // here, because these three screens are separate lazy chunks with
+              // a panel each — mounting all of them would download all of them
+              // on open, so only the active tab's panel exists.
               // Activation follows focus in `onTabKeyDown`, so a tab can never
               // be focused while inactive — nothing loses a reference it could
               // have used.

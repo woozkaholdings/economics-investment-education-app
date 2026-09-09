@@ -5637,13 +5637,19 @@ if (keyedGroupsChecked < 4) {
 // so only the ACTIVE tab's panel exists — but all three tabs carried
 // `aria-controls={`panel-${item.key}`}` unconditionally, leaving the two
 // inactive tabs pointing at ids no element had. A dangling IDREF is an
-// authoring error (axe's `aria-valid-attr-value`), and it is the exact shape
-// five other tablists in this app carry a comment about avoiding. Their answer
-// — render the panel and `hidden` it — is unavailable in the shell, because
-// these three screens are separate lazy chunks and mounting all three would
-// download all three on open. So the reference is scoped to the selected tab
-// instead, which is truthful: activation follows focus, so a tab can never be
-// focused while inactive.
+// authoring error (axe's `aria-valid-attr-value`).
+// ⚠️ CORRECTED 2026-09-08, and the original is not quoted under this (W-7.2
+// rule 2): this header said the dangling IDREF was "the exact shape five other
+// tablists in this app carry a comment about avoiding", whose answer was "render
+// the panel and `hidden` it". Both halves are false, measured — the app has TWO
+// tablists (this shell's nav and `ui.jsx`'s `Segmented`, instantiated three
+// times), and `hidden` appears in none of the three panel sites.
+// The real contrast: `Segmented` gives all of its tabs ONE always-present
+// panel, so its unconditional `aria-controls` is truthful. The shell cannot,
+// because its three screens are separate lazy chunks with a panel each and
+// mounting all three would download all three on open. So the reference is
+// scoped to the selected tab instead, which is truthful: activation follows
+// focus, so a tab can never be focused while inactive.
 //
 // WHAT IS CHECKED, AND WHY EACH PART.
 //   (a) GENERAL, and the reason this is a rule rather than a patch: no element
