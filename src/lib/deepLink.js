@@ -76,6 +76,15 @@ export function routeHash({ tab, reading, lessons }) {
 }
 
 /**
+ * The hash for the lesson path with no lesson open — the app's home, and the
+ * destination `reloadOntoPath()` recovers a crashed screen to.
+ *
+ * Derived from `routeHash` rather than written as a literal so it cannot drift
+ * out of the grammar it has to be a member of.
+ */
+export const PATH_HASH = routeHash({ tab: "learn", reading: null });
+
+/**
  * Resolve a hash against the real catalog and unlock state, into the
  * `{ tab, reading, missed }` triple `App.jsx` holds. Always returns a usable
  * destination — an unparseable hash, a nonexistent lesson id, or a locked
@@ -386,3 +395,55 @@ export function useDeepLink({ tab, reading, lessons, isUnlocked, onRoute }) {
   }, [lessons, isUnlocked]);
 }
 
+// ── crash recovery ────────────────────────────────────────────────────────
+/**
+ * Reload the document onto the lesson path, for an error boundary whose only
+ * offer to a stuck learner is a reload.
+ *
+ * WHY THIS IS NOT `window.location.reload()`, which is what `AppError` called
+ * from 2026-08-24 until 2026-09-09. Routing is hash-based, so the screen that
+ * just crashed is IN the address bar: a render crash in the lesson reader
+ * happens at `#/lesson/<id>`, and a plain reload re-enters that same route and
+ * crashes again. Measured on the built app with a throw injected for one
+ * lesson id — three presses, three real document loads (`app_opened` 1 → 2 → 3
+ * in the analytics log), the identical error at the identical hash every time.
+ * Reproduced at `#/practice` with a throw injected into that screen, so it is a
+ * property of the routing and not of one lesson. The copy the learner was
+ * reading while it happened said "Reloading the page usually fixes it."
+ *
+ * The learner was never SEALED in — the bottom nav survives the boundary
+ * (`ScreenBoundary` is keyed by tab) and one tap on it recovered, measured in
+ * the same session. The defect is narrower and worse than a trap: the one
+ * control the error screen actually offers is the one that cannot work, and
+ * the one that works is not mentioned on it.
+ *
+ * `#/learn` rather than dropping the hash, and the difference is load-bearing:
+ * `initialRoute` sends a FIRST-TIME visitor with no hash into the path's first
+ * lesson (§3.2), so a cleared hash re-enters a lesson — the crashed one, if
+ * that is where they were. An explicit `#/learn` resolves to
+ * `{tab:"learn", reading:null}` for first-time and returning visitors alike.
+ * Little is lost by landing there: the path leads with "Pick up where you left
+ * off".
+ *
+ * `replace` rather than an assignment, so the crashed URL is not left behind in
+ * history for a Back press to walk straight back into.
+ *
+ * ⚠️ `LoadFailure` deliberately does NOT use this and still reloads in place —
+ * see the note on it in `components/ui.jsx`. The two failures want opposite
+ * things and that is the whole reason they are two messages (item 100).
+ */
+export function reloadOntoPath() {
+  if (typeof window === "undefined") return;
+  try {
+    const url = new URL(window.location.href);
+    if (url.hash !== PATH_HASH) {
+      url.hash = PATH_HASH;
+      window.location.replace(url.toString());
+    }
+  } catch {
+    // The same embedded contexts that reject the History API above. The reload
+    // below still runs, which is exactly the behavior this replaced — a context
+    // that cannot be helped is never made worse.
+  }
+  window.location.reload();
+}

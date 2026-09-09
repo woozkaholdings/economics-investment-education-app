@@ -9,6 +9,7 @@
 import { forwardRef, useRef } from "react";
 import { fill, font, ink, line, MIN_TAP, radius, shadow, space, surface, type } from "../theme.js";
 import Icon from "./Icon.jsx";
+import { reloadOntoPath } from "../lib/deepLink.js";
 
 // ── Text ──────────────────────────────────────────────────────────────────
 // One component for every piece of prose, so hierarchy is chosen from the
@@ -640,6 +641,14 @@ export function EmptyState({ icon, children }) {
 // map for the life of the document, so re-calling the same loader fails
 // again without touching the network (measured 2026-08-24). `role="alert"`
 // because this replaces content the reader was already waiting on.
+//
+// AND IT RELOADS IN PLACE, where `AppError` below deliberately does not. Not
+// an oversight — the two failures want opposite things. Here the fresh
+// document IS the fix (it is the only thing that clears the poisoned module
+// map) and the dominant cause is a redeploy invalidating a content-hashed
+// chunk under an open tab, which one reload at the same URL repairs while
+// keeping the reader's place. A render crash has neither property: the route
+// itself is what throws, so reloading into it is a loop.
 export function LoadFailure({ t, style }) {
   return (
     <div role="alert" style={{ marginTop: space["4"], ...style }}>
@@ -667,6 +676,15 @@ export function LoadFailure({ t, style }) {
 // Shown by the two ErrorBoundary fallbacks that have no more specific message
 // to offer — the root one in `main.jsx` and the per-tab one around App's
 // `<main>`. `role="alert"` because it replaces a screen the reader was on.
+//
+// THE RECOVERY LEAVES THE CRASHED ROUTE, and until 2026-09-09 it did not.
+// Routing is hash-based, so a screen that throws does it at its own URL:
+// `window.location.reload()` re-entered `#/lesson/<id>` and crashed again,
+// measured three presses deep on the built app while this very copy told the
+// reader "Reloading the page usually fixes it". `reloadOntoPath()` owns the
+// destination because `lib/deepLink.js` owns `location.hash` (§41) — the
+// reasoning, the measurement and why it is `#/learn` rather than no hash at
+// all are there.
 export function AppError({ t, style }) {
   return (
     <div role="alert" style={{ marginTop: space["4"], ...style }}>
@@ -675,7 +693,7 @@ export function AppError({ t, style }) {
       </Note>
       <Button
         variant="outline"
-        onClick={() => window.location.reload()}
+        onClick={() => reloadOntoPath()}
         style={{ marginTop: space["3"] }}
       >
         {t.loadFailedRetry}

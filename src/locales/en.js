@@ -46,10 +46,15 @@ export default {
     loadFailedRetry: "Reload",
     // Render crash (item 99). Deliberately NOT loadFailedBody: that copy
     // says the content "couldn't be downloaded", which is a lie about a bug
-    // in code that downloaded fine. The reload action is the same, so
-    // `loadFailedRetry` is reused rather than duplicated.
+    // in code that downloaded fine.
+    // The LABEL `loadFailedRetry` is still reused rather than duplicated —
+    // both buttons reload. The ACTIONS stopped being the same on 2026-09-09:
+    // this one reloads onto the lesson path, because routing is hash-based
+    // and reloading the crashed route re-enters it (measured; see
+    // `lib/deepLink.js`'s `reloadOntoPath`). Hence this body names where the
+    // reader lands, and loadFailedBody does not.
     appErrorTitle: "Something went wrong",
-    appErrorBody: "This screen hit an unexpected error. Reloading the page usually fixes it, and your saved progress is not affected.",
+    appErrorBody: "This screen hit an unexpected error. Reloading takes you back to your learning path — your saved progress is not affected.",
     keyTakeaway: "Key Takeaway", tryThinking: "Think About This",
     locked: "Complete previous lessons first",
     lessonStateDone: "Completed", lessonStateCurrent: "Current lesson",

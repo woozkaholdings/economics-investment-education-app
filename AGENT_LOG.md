@@ -3429,6 +3429,19 @@ instead of hand-rolling an eighth mover. A working one is in this run's scratchp
 100. **✅ DONE 2026-08-24 (scheduled dev-agent). Shipped as `src/lib/chunkError.js` (call-site
     tagging), a function-form `ErrorBoundary` fallback, and `check-data.mjs` §39. Read the premise
     correction first — the defect was real and reproduced live, but "one line of code" was wrong.**
+    > ⚠️ **A NOTE, not a sub-item (W-6.2 rule 2). `LoadFailure` still reloads in place, and against a
+    > PERMANENTLY missing chunk that is also a loop.** Filed 2026-09-09 by the run that fixed the
+    > `AppError` half. Measured the same session, not inferred: the built `LessonReader` chunk was
+    > moved out of `dist/`, `#/lesson/29` produced `LoadFailure` (so the tagging still discriminates
+    > after that run's edit — a free regression control), and its button reloaded to `app_opened`
+    > 1 → 2 **at the same hash**, back onto the same message. **This is the accepted trade, not an
+    > oversight**, and the reason is written into `ui.jsx`: the dominant cause of a chunk 404 is a
+    > redeploy invalidating a content-hashed chunk under an open tab, which a reload at the SAME url
+    > repairs while keeping the reader's place — routing them to `#/learn` would cost every one of
+    > those readers their place to help the rarer case where the file is genuinely gone from the
+    > server. **Honest priority: low; one live instance, and it needs a judgment (or a
+    > reload-attempt counter in `sessionStorage`) rather than a measurement — do not pick it by
+    > default.**
 
 76. **[Content/Process — filed 2026-08-18 by the run that built item 69's instrument half, which is
     what turned this from an opinion into a blocked measurement.] `zh` and `ja` `Brokerage Account`
@@ -7754,5 +7767,146 @@ default.**
 a learner until the owner pushes `main`. `public/data/market.json` is untouched by this run. ✅ **W-7.3's
 falsifiable test resolved in the job's favour:** a refresh commit (`8c385a4`, `asOf 2026-09-08`) arrived
 in this working copy by itself, so the market job is live on machine A as the owner said.
+
+**Schedule:** the cron is the owner's lever; not read, not compared, not touched.
+
+### 2026-09-09 (scheduled dev-agent; W-6.2 rule 1 free — the previous run's only residual was a note under item 60 ending "do not pick this by default", so this pick came from a corpus-wide sweep of the least-covered surface in the app, chosen by counting each component's mentions across both logs) — the app's crash screen offers one button, that button re-enters the route that just crashed, and the copy beside it promised "Reloading the page usually fixes it"
+
+**How this was picked, since it is the part that generalizes.** Every component under `src/` was
+counted across `AGENT_LOG.md` + the archive. `ErrorBoundary.jsx` came last by a wide margin —
+**2 mentions total, 0 in the live log** (next lowest: `Icon.jsx` 13, `GlossaryTerms.jsx` 16). The
+boundary component itself turned out to be in good shape; what had never been walked was **what
+happens after it catches.**
+
+**The defect, in one sentence: routing is hash-based, so the screen that crashed is in the address
+bar, and `AppError`'s only control called `window.location.reload()` — which re-enters it.**
+
+#### Premise re-measured on the built app before editing, with controls — and the premise HELD, then widened
+Served `dist/` statically (404 control fired on a nonexistent path) and drove the built app.
+- **Control first, before any injection:** cold install, disclaimer dismissed, `#/lesson/29` renders
+  its `<h1>`, no `role="alert"` anywhere. The app is healthy.
+- **Injected** a `throw` for **one lesson id** into `LessonReader` (proved landed: +95 b, and the
+  built chunk moved 93.86 → 93.94 kB), and set up a **returning** learner with `[29]` complete so
+  lesson 30 was genuinely unlocked.
+- ⚠️ **The first attempt measured nothing and said so.** Writing `localStorage` under a running app
+  and assigning `location.hash` never reloaded the document — `app_opened` stayed at **1** — so the
+  app was still holding its old in-memory progress and reported lesson 30 as *locked*. That looked
+  exactly like a wrong premise. The analytics counter is what caught it; a forced reload was the fix.
+- **The loop, measured three presses deep:** `app_opened` **1 → 2 → 3** (three real document loads),
+  the identical `SOMETHING WENT WRONG` at the identical `#/lesson/30` every time.
+- **Widened, and this is what changed the fix's shape:** a throw injected into `Practice` reproduced
+  it at **`#/practice`**. It is a property of the routing, not of one lesson — so the fix is "leave
+  the crashed route", not "strip a lesson id".
+
+⭐ **The premise that broke was my own headline, and it made the finding sharper rather than
+weaker.** I expected "the learner is trapped". They are not: the bottom nav survives the boundary
+(`ScreenBoundary` is keyed by `tab`) and **one tap on Learn recovered, measured**. The real defect is
+worse-shaped than a trap and easier to miss — **the one control the error screen offers is the one
+that cannot work, and the one that works is not mentioned on it**, while the copy beside the dead
+button said *"Reloading the page usually fixes it."*
+
+#### What shipped
+- **`lib/deepLink.js`** — `PATH_HASH` (derived from `routeHash`, not written as a literal, so it
+  cannot drift out of the grammar it must belong to) and `reloadOntoPath()`. It lives here because
+  **§41 already establishes that `lib/deepLink.js` owns `location.hash`**; a component reaching for
+  the hash itself is the thing that check exists to stop.
+- **`components/ui.jsx`** — `AppError`'s button calls it. **`LoadFailure` is deliberately unchanged**
+  and both comments now say why.
+- **`locales/*.js` ×5** — `appErrorBody` now names where the reader lands instead of promising a fix
+  the app could not deliver. Each uses that locale's own existing term for the path (`returningTitle`).
+
+Three decisions stated rather than defaulted:
+- **`#/learn`, not a cleared hash.** `initialRoute` sends a **first-time** visitor with no hash into
+  the path's first lesson (§3.2) — so clearing the hash re-enters a lesson, which may be the crashed
+  one. `#/learn` resolves to `{tab:"learn", reading:null}` for first-time and returning visitors alike.
+- **`replace`, not an assignment**, so the crashed URL is not left in history for Back to walk into.
+- **`LoadFailure` keeps its in-place reload.** There the fresh document *is* the fix (a rejected
+  dynamic import stays errored in the module map for the document's life) and the dominant cause is a
+  redeploy invalidating a chunk under an open tab, which one same-url reload repairs **while keeping
+  the reader's place**. Its residual is filed as a note under item 100.
+
+#### Verification — the fix proved live, and the guard proved live, both with controls
+**The fix, on the built app with the same injection re-applied:** one press → `app_opened` **1 → 2**
+(a real reload), `#/lesson/30` → **`#/learn`**, no alert, "Your learning path" rendering, and
+`ecycles_completed_lessons` still `[29]` — so the copy's "your saved progress is not affected" is
+true rather than asserted.
+| control | result |
+|---|---|
+| healthy lesson still opens from its URL | `#/lesson/29`, `<h1>` renders, no alert |
+| Back after a recovery | `history.length` **unchanged at 10**, lands on `#/lesson/29` — the healthy lesson, **not** the crashed URL |
+| chunk 404 (built chunk moved out of `dist/`) | `LoadFailure`, not `AppError` — the tag still discriminates after this edit |
+| that button | reloads **in place**, `app_opened` 1 → 2, hash kept — the asymmetry is real, not just commented |
+| final shipping bundle, cold install | `#/lesson/29` and `#/reference` clean, no console error from `index-C_6Fzds0.js` |
+
+**`check-data.mjs` §39 block (f)** — W-6.2 rule 3's sentence: *a learner whose lesson screen crashed
+presses the only button the app offers and is returned to the identical error screen, every time.*
+It is **behavioral, not a spelling scan**: it asserts `PATH_HASH` lands **both** a first-time and a
+returning visitor on the path with no lesson open, and **carries the control that makes that
+non-vacuous** — an empty hash must still open a lesson for a first-time visitor, or the assertion
+proves nothing and the check says so.
+| plant | result |
+|---|---|
+| `AppError` reverts to `window.location.reload()` | **exit 1**, both the "reloads the current URL" and the "no longer calls reloadOntoPath()" failures |
+| `LoadFailure` stops reloading in place | **exit 1** |
+| `PATH_HASH` points at `#/lesson/29` | **exit 1**, and it names the landing state for both visitor kinds |
+All three restored from `cmp`-verified scratchpad copies; never `git checkout --`.
+
+`npm test` **exit 0**, 0 FAIL, the same **3** pre-existing warnings (translation review coverage,
+translation completeness, option-length cue / item 160); `npm run check-blindspot` exit 0; `npm run
+build` exit 0. ⚠️ All exit codes read **without a pipe**. Bundle: `index` **271.53 → 271.74 kB**
+(+0.21 kB, this run's code) and `LessonReader` **93.86 kB unchanged** — reported rather than claimed
+byte-identical, because this run did add code to the main bundle.
+
+#### Step 5 — adversarial self-check
+**Blindspot register: nothing found, grepped rather than assumed.** `check-blindspot` **exit 0**.
+§10.1 is reachable this run (five learner-facing strings changed), so it was checked directly: the
+new copy is about a reload destination and progress, and greps **0** for
+`dalio|should buy|should sell|we recommend|best time to|guaranteed return|your portfolio`; no lesson
+or market content was touched. §2.3: no date or figure is rendered by anything here. §10.3 untouched.
+**DECISIONS.md conflict: none.** localStorage-only state is untouched (the recovery reads no storage
+and the run measured progress surviving it); `.js`-not-JSON content and Vite-not-Expo untouched. Item
+12 (Expo/RN port cost) is the one worth stating rather than waving past: `deepLink.js`'s header
+promises a native shell deletes that module whole, and **`ui.jsx` now imports from it** — so the port
+cost moved from "delete two call sites" to "delete two call sites and one import". Judged the right
+side of the trade, because the alternative was `ui.jsx` manipulating `location.hash` itself, which is
+precisely what §41 forbids; and `AppError` already called `window.location.reload()`, so that
+component was never native-portable at this line.
+**Already-done backlog item: no, and the specific history was searched.** `location.reload` returns
+**1** hit in `AGENT_LOG.md` and **1** in the archive, both using reload as an *instrument* in an
+unrelated test; `reload loop`/`crash loop` return **0** in both. Items 96, 99 and 100 built the
+boundary, the second message and the tagging — **none of them ever asked where the button goes.**
+**My own verification claim, weakest part first.** **(1)** The crash is **injected**; no lesson in the
+shipped corpus is known to throw today, so this is a guard on a reachable failure, not a repair of a
+live one — the reachability is real (`ErrorBoundary.jsx`'s own header: 27 content-hashed chunks, a
+redeploy under an open tab) but the specific loop needed a plant to see. **(2)** The Browser pane was
+**hidden** for this session, so clicks were JS-dispatched rather than real pointer events; that is
+fine for routing and boundary state, and it means **nothing here is a claim about focus, hit targets
+or pixels**. **(3)** The "least-covered surface" ranking is a mention count over two log files — a
+reasonable proxy for attention, not a measurement of coverage. **(4)** `W-6.3 re-measured on this
+tree: scripts/ 21,937 lines vs app code 10,127 — 2.17x`, flat against the previous run's 2.17x. This
+run's insertions, counted from `git diff --numstat` rather than estimated: **`scripts/` +84** against
+**`src/` +92** (ui.jsx 19, deepLink.js 61, locales 12) — the first run in a while where the app side
+is the larger half.
+
+#### Filed as a note under item 100, deliberately NOT numbered (W-6.2 rule 2)
+`LoadFailure`'s permanent-404 loop, measured this run in both directions. One live instance, honest
+priority low, and the fix is a judgment (or a `sessionStorage` attempt counter) rather than a
+measurement — **next run: do not pick this by default.**
+
+⚠️ **Reported, not fixed — O-4/O-5, not repo work.** A run may not push, so this commit does not
+reach a learner until the owner pushes `main`. `public/data/market.json` is untouched by this run.
+
+⚠️ **This entry pushed `npm test` to a FOURTH warning, and it is this run's own doing — stated
+rather than left for the next run to discover.** The run log is now **246,819 b against a 250,000 b
+warn budget** when the trigger first fired, with **0.37 runs of headroom**, and the check names its
+own remedy: *an archiving pass*. (No exact byte figure is pinned here, and that is deliberate: this
+paragraph is itself in the run log, so any number written in it is stale the moment it is written.
+`check-log-size.mjs`'s MEASURED line is the instrument — read it, do not retype this.) It is
+**not** done here on purpose. The run log now holds **2 live days** (09-08 and 09-09), so a pass would
+finally have something to cut — the last two firings cut nothing because the only live day was the one
+they stood in — but W-5.3's pass is a whole run's work on a 679 KB file, the standing instructions for
+it were found false in both halves on 09-08, and a sixth compression pass nearly shipped a wrong
+150 KB deletion. **Bolting it onto this commit is how that happens again.** `npm test` is still
+**exit 0**; the trigger is named here so the next run can take it as a clean pick.
 
 **Schedule:** the cron is the owner's lever; not read, not compared, not touched.

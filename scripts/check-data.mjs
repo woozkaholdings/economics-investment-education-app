@@ -26,7 +26,7 @@ import { MAX_BOX, acceptsScheduleUpdate, dueQuestions, migrateIndexKeys, recordA
 import { MIN_BARS, OUTPERFORM_THRESHOLD, WJ_PERIODS, wjSectorComparison } from "../src/lib/relativeStrength.js";
 import { OLD_TO_NEW_LESSON_ID, migrateLegacyLessonIds } from "../src/lib/lessonIdMigration.js";
 import { HTML_LANG } from "../src/lib/useAppState.js";
-import { ROUTED_TABS, dismissAll, dismissAllPushed, initialRoute, parseRoute, resolveRoute, routeHash } from "../src/lib/deepLink.js";
+import { PATH_HASH, ROUTED_TABS, dismissAll, dismissAllPushed, initialRoute, parseRoute, resolveRoute, routeHash } from "../src/lib/deepLink.js";
 import { isLessonUnlocked } from "../src/lib/lessonUnlock.js";
 import { computeCoverage } from "./translation-review.mjs";
 import {
@@ -5650,6 +5650,85 @@ if (keyedGroupsChecked < 4) {
     );
   }
 
+  // (f) The render-crash recovery LEAVES the route that crashed, and the
+  // download recovery deliberately does not.
+  //
+  // THE LEARNER-VISIBLE FAILURE THIS WOULD HAVE CAUGHT (W-6.2 rule 3): a
+  // learner whose lesson screen crashed presses the only button the error
+  // screen offers and is returned to the identical error screen, every time.
+  // Routing is hash-based, so the crashed screen is in the address bar, and
+  // `window.location.reload()` re-enters it. Measured on the built app
+  // 2026-09-09 with a throw injected for one lesson id: three presses, three
+  // real document loads (`app_opened` 1 → 2 → 3), same error at `#/lesson/30`
+  // each time; reproduced at `#/practice`. It shipped that way from 2026-08-24
+  // and the copy on screen said "Reloading the page usually fixes it."
+  const uiSrc39 = readFileSync(join(ROOT, "src/components/ui.jsx"), "utf8");
+  const bodyOf = (name) => {
+    const start = uiSrc39.indexOf(`export function ${name}(`);
+    if (start === -1) return null;
+    const end = uiSrc39.indexOf("\n}", start);
+    return end === -1 ? null : uiSrc39.slice(start, end);
+  };
+  const appErrorBody39 = bodyOf("AppError");
+  const loadFailureBody39 = bodyOf("LoadFailure");
+  if (appErrorBody39 === null || loadFailureBody39 === null) {
+    fail("§39: could not find AppError's and LoadFailure's bodies in src/components/ui.jsx. This check is pointed at the wrong shape.");
+  } else {
+    if (/location\s*\.\s*reload\s*\(/.test(appErrorBody39)) {
+      fail(
+        "§39: AppError reloads the current URL. Routing is hash-based, so that re-enters the route " +
+          "that just crashed and the reader gets the identical error screen back — the only control " +
+          "the screen offers, looping. Use reloadOntoPath() from lib/deepLink.js.",
+      );
+    }
+    if (!/reloadOntoPath\s*\(/.test(appErrorBody39)) {
+      fail("§39: AppError no longer calls reloadOntoPath(), so its recovery does not leave the crashed route.");
+    }
+    // The asymmetry is deliberate and is asserted rather than left to a
+    // comment: a rejected dynamic import stays errored in the module map for
+    // the life of the document, so a fresh document at the SAME url is the fix
+    // there, and it keeps the reader's place.
+    if (!/location\s*\.\s*reload\s*\(/.test(loadFailureBody39)) {
+      fail(
+        "§39: LoadFailure no longer reloads in place. That reload IS the fix for a chunk that 404'd " +
+          "(the module map is poisoned for the document's life) and it keeps the reader's place; " +
+          "the two failures want opposite recoveries, which is why they are two messages.",
+      );
+    }
+  }
+
+  // PATH_HASH has to be a member of the grammar and has to mean "the path,
+  // no lesson" — for a first-time visitor as well as a returning one. That
+  // second half is the whole reason the recovery names a hash instead of
+  // clearing one, and it is behavioral rather than a source scan.
+  // §18 has its own fixture in its own block; this one is local on purpose so
+  // neither check can be quietly disarmed by an edit to the other.
+  const path39 = lessonsByTrack();
+  const recovered = {
+    first: initialRoute(PATH_HASH, path39, () => true, true),
+    returning: initialRoute(PATH_HASH, path39, () => true, false),
+  };
+  for (const [who, got] of Object.entries(recovered)) {
+    if (got.tab !== "learn" || got.reading !== null) {
+      fail(
+        `§39: recovering to PATH_HASH ("${PATH_HASH}") lands a ${who} visitor on ` +
+          `${JSON.stringify(got)}, not on the path with no lesson open. A crash recovery that opens a ` +
+          `lesson can open the lesson that crashed.`,
+      );
+    }
+  }
+  // CONTROL, and without it the two assertions above are vacuous: the thing
+  // PATH_HASH is chosen OVER — an empty hash — must fail that same test for a
+  // first-time visitor (§3.2 routes them into the path's first lesson). If this
+  // control ever stops firing, the check above has stopped discriminating.
+  const clearedHashFirstVisit = initialRoute("", path39, () => true, true);
+  if (clearedHashFirstVisit.reading === null) {
+    fail(
+      "§39: control did not fire — an empty hash no longer opens a lesson for a first-time visitor, " +
+        "so the assertion that PATH_HASH does not open one proves nothing. Re-derive this check.",
+    );
+  }
+
   // Every figure below is counted, never asserted. §38 shipped a summary that
   // printed "9 required present" from a constant and so read as green beside
   // its own failure; the words "by tag" here are derived from the behavioral
@@ -5663,7 +5742,10 @@ if (keyedGroupsChecked < 4) {
     `  §39 failure copy: ${taggedLazy}/${lazyCalls.length} lazy screen(s) tagged via chunk(); AsyncScreen picks ` +
       `LoadFailure vs AppError ${method}; ${falsePositives} false positive(s) across ${mustNotMatch.length} untagged ` +
       `error shape(s), ${messageReads.length} error-text read(s) in chunkError.js; ` +
-      `${distinctPairs}/${Object.keys(TR).length} language(s) with two distinct bodies. ` +
+      `${distinctPairs}/${Object.keys(TR).length} language(s) with two distinct bodies; ` +
+      `AppError recovers via reloadOntoPath() to "${PATH_HASH}" (path, no lesson, for a first-time ` +
+      `and a returning visitor; empty-hash control fired at reading=${clearedHashFirstVisit.reading}) ` +
+      `while LoadFailure reloads in place. ` +
       `(Static + behavioral — the rendered two-sided proof is in the run log.)`,
   );
 }

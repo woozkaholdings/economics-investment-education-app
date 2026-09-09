@@ -27,7 +27,7 @@ export default {
     loadFailedBody: "このコンテンツをダウンロードできませんでした。接続を確認してから、ページを再読み込みしてください。",
     loadFailedRetry: "再読み込み",
     appErrorTitle: "問題が発生しました",
-    appErrorBody: "この画面で予期しないエラーが発生しました。ページを再読み込みするとほとんどの場合は解決し、保存された学習の進捗には影響ありません。",
+    appErrorBody: "この画面で予期しないエラーが発生しました。再読み込みするとあなたの学習パスに戻り、保存された学習の進捗には影響ありません。",
     keyTakeaway: "重要ポイント", tryThinking: "考えてみよう",
     locked: "前のレッスンを先に完了してください",
     lessonStateDone: "完了済み", lessonStateCurrent: "現在のレッスン",
