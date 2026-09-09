@@ -2309,6 +2309,36 @@ instead of hand-rolling an eighth mover. A working one is in this run's scratchp
     ⚠️ **And the instrument trap:** `grep -c '<Disclaimer' Sectors.jsx` returns 0 while the screen
     plainly renders one — it emits the bare `{t.disclaimer}` string. A component-name grep is not a
     disclaimer census.
+    > ⚠️ **A NOTE, not a sub-item and not a new numbered item (W-6.2 rule 2). The RELATIVE-STRENGTH
+    > MEASURE was swept 2026-09-09 and is CLEAN — do not re-open it, and in particular do not "fix"
+    > the threshold's units.** The measure, its published payload, its five-language learner-facing
+    > copy and `check-data.mjs`'s assertions were read together against real data. **Zero defects.**
+    > Three things are worth not re-deriving:
+    > **(1) The units hypothesis is WRONG, and it is attractive.** A thinkScript field named
+    > `Outperform_Percent_1` = 0.5, compared against the RAW decimal sum, sitting in a payload block
+    > that declares `unit: "percentage-points"`, reads like a 100x mismatch. It is not one.
+    > `DECISIONS.md` records the raw-decimal reading as the closed decision, and the data agrees with
+    > it: read as 0.5 **percentage points** the flag would fire on 8 of 11 sectors on an ordinary day,
+    > which is not a highlight. **The only source of truth for the study's intent is the owner's
+    > thinkScript, which is not in this repo** — so this is not a run's call in either direction.
+    > **(2) The reachability measurement, and the control that decides it, because the pooled number
+    > lies.** Every `public/data/market.json` ever committed was replayed — 23 distinct `asOf` dates,
+    > 2026-08-04 → 2026-09-08, 264 sector observations. **Pooled: 2 of 264 clear the threshold, so it
+    > looks live.** Split by `source`: **both of those 2 are `source: "fixture"`** — synthetic
+    > placeholder rows — and across the **242 real (`tiingo`) observations the maximum is 35.9 pp
+    > (raw 0.359), 72% of the threshold, with ZERO clearing it.** So 0.5-as-raw is strict but not
+    > absurd: it marks outperformance the real data has approached and not yet reached. ⛔ **`source`
+    > is the control on this file. A distribution computed across `market.json` history without
+    > splitting on it is measuring the fixtures too.**
+    > **(3) `outperforming` and `outperformThreshold` have NO consumer, measured with controls.** Both
+    > grep to **0** under `src/` outside `relativeStrength.js`, while the sibling fields of the same
+    > published block — `provisional`, `rank`, `method`, `unit`, `periods` — return **4 to 55**, so
+    > the grep plainly reaches these files. The job drops the flag and `parts` at serialization;
+    > `market.json` carries the threshold as metadata and no flag at all. **Kept, not deleted:** the
+    > "why does it rank there" UI they exist for is the owner's to build. **No check was built** —
+    > W-6.2 rule 3, because after a clean sweep of a surface no learner can see, the learner-visible
+    > sentence cannot be written honestly. `scripts/` untouched; the replay stayed in the scratchpad
+    > and the figures above are the record.
 
 165. **✅ FULLY CLOSED 2026-09-06 (owner-directed), content and guard both** — collapsed to its
     conclusion 2026-09-08 per W-7.2 rule 1 from 20,571 b. The repair chronology, the layered headline
@@ -2374,96 +2404,28 @@ instead of hand-rolling an eighth mover. A working one is in this run's scratchp
       result. The new control asserts each timing pattern against the advice sentence it was written
       for, so a dead pattern fails loudly instead of reporting a clean corpus forever.
 
-163. **[UX/A11y — filed 2026-09-02 by the run that put the unit on the balance-sheet chart, as three
-    things that run SAW on the same walk and deliberately did not fold into the same commit.]
-    All three are live and measured; none is a guess.**
-    - **(a) ✅ DONE 2026-09-02 (owner-directed: "do item 163(a) next") — but READ THE PREMISE
-      CORRECTION: this item named ONE site and there are TWO, and it called the defect "a judgment
-      call, not a falsehood" when half of it is a plain falsehood in five languages.**
-      *As filed:* the recap card renders an unconditional `<Icon name="check">` at `ink.ok` above
-      "Review complete", while the per-question rows below it *do* branch — the screen contradicting
-      itself in two inches. **That much reproduced exactly** (0 of 10 → one 2rem green tick over ten
-      red `ink.bad` crosses). **What the item missed is the `atBatchPause` branch twelve lines
-      above**, which renders the same unconditional tick over `reviewBatchTitle` — **"{n} done —
-      nice work"**, es "bien hecho", ko "잘하고 있어요", zh "做得好", ja "いい調子です". Measured live
-      by driving ten real wrong answers: **"10 done — nice work" over "0 of 10 correct"**. That is
-      not a defensible judgment call; it is praise for a session in which nothing landed, and the
-      item's "not a falsehood" reading is true of `reviewCompleteTitle` and false of this one.
-      **The decision this item said the picker must make, made, and split in two** — because the
-      tick and the headline are different kinds of thing. The tick is a **signal**: it now goes
-      `info`/`ink.muted` when `correctCount === 0` at BOTH sites, matching the two-state shape the
-      landing card already uses for `seen > 0`. It is deliberately **not** red — the session was
-      completed, and a miss is a productive event in a Leitner scheduler. The headline is a
-      **claim**: a new `reviewBatchTitleNoneRight` in five languages says what actually happened to
-      those questions ("{n} done — these come back tomorrow"), which is what this screen's own "How
-      review works" rail already promises. `reviewCompleteTitle` stays unconditional: unlike "nice
-      work" it is true at every score. **The boundary is exactly `correctCount === 0`** — 1 of 10
-      still reads "nice work" with the green tick, measured. Note this was NOT item 117's defect —
-      that one was the Practice *landing* card with `review = null`, closed 2026-08-26, and its
-      conditional-icon shape is the precedent this followed rather than undid.
-      ⚠️ **And the transferable part, which is the second time in two days item 163 has taught it:**
-      **(b)'s numbers were wrong and (a)'s scope was wrong, both filed by the run that had just
-      looked at the screen.** A residual is a claim about the code, not a reading of it.
-    - **(b) ✅ DONE 2026-09-02 (owner-directed: "do item 163(b) next") — but READ THE PREMISE
-      CORRECTION, because it changed the scope from three blocks to one heading.**
-      *As filed:* "the outline names 4 of its 7 blocks … a reader skips three sections". **Both
-      figures were wrong.** Re-measured on the built app before editing: the screen has **eight**
-      content blocks, four carry an `h2`, and **four** do not — the cycle chart, the *Illustrative
-      Scenario* note, the QE/QT pair, and the balance-sheet figure. I had missed the scenario note.
-      **But the corrected count is not the interesting part.** Three of those four are not defects:
-      the cycle chart and the scenario note sit **between the `h1` and the first `h2`**, which is
-      the `h1`'s own content and the correct description of a screen's opening; and the
-      balance-sheet figure's `figcaption` is a caption, which is what a figure's label should be.
-      **The real defect is narrower and sharper than the item claimed:** the QE/QT pair and the
-      balance-sheet figure sat *between* two unrelated `h2`s, so a rotor user was told the entire
-      Fed-balance-sheet chart belongs to **"Yield Curve Shapes"**. Fixed with **one** `h2`
-      (`qeQtSection`, five languages) that owns both — not three headings, and no new primitive.
-      See the run log for the differential control that reproduced the pre-fix ownership in place.
-    - **(c) ✅ DONE 2026-09-02 (owner-directed: "do item 163(c) next"). The defect reproduced
-      exactly; three things around it did not.**
-      *As filed:* `Bar` renders `9` where its own description says `9.0`, because `9.0 === 9` in
-      JavaScript. **Reproduced live on the built app: `["0.9","4.5","3.8","9","6.7"]` against an
-      aria-label reading "…9.0 after the pandemic response…".** The control is intrinsic — the other
-      four bars DO carry a decimal, so a probe returning a constant could not have produced that row.
-      **Three corrections:**
-      1. **It is on TWO screens, not one.** `balanceSheetHistory` is drawn by two `Bar` call sites —
-         `MarketSignals.jsx` (Reference > Market Dashboard) **and** `LessonVisual.jsx` for
-         `kind === "balanceSheet"`, which is **lesson 37, "QE & QT: The Fed's Power Tools"**. Both
-         measured showing `9`.
-      2. **The "future integer-valued chart" is a PRESENT one.** `Practice.jsx`'s Leitner box strip
-         is the third `Bar` call site and renders question counts — measured at `7 / 3 / 2 / 0 / 0`
-         under the unit "questions". A `.toFixed(1)` inside `Bar` would have shipped "7.0 questions"
-         and "0.0". The item was right to warn and wrong that the risk was hypothetical.
-         (`Bar`'s own comment said "both call sites"; there are three. Corrected in the same commit.)
-      3. **No new convention was needed — `Bar` was the only one MISSING the existing one.**
-         `ProportionBar`, `GrowthCurve` and `GapColumns` in the same file all already take a
-         `formatValue` prop. `Bar` now takes one too, defaulting to identity so the integer strip is
-         untouched. Precision is a property of the series, so `balanceSheetFormat` is exported from
-         `content/markets.js` beside the data and beside the description that states the decimal,
-         and both call sites pass it. Verified after the fix on both screens and in all five
-         languages: `0.9 4.5 3.8 9.0 6.7`; the Leitner strip still reads `7 3 2 0 0`.
-      ⚠️ **What is NOT fixed, measured rather than assumed:** `es` alone writes a comma decimal in
-      its description ("0,9 … 9,0") while the chart face renders a period in every language — the
-      app has no locale-aware runtime number formatter (`numerals.mjs` is script-side, and the only
-      runtime formatter is `usd`, hardcoded `en-US`). Pre-existing, one language, and the fix
-      strictly *reduces* the disagreement: `es` face-vs-description now differs only in separator,
-      where before it also differed in precision.
-    - **W-6.2 rule 3, answered:** (a) "a learner who got everything wrong was congratulated with a
-      green tick"; (b) "three sections of the Market Dashboard were unreachable by heading
-      navigation"; (c) "one bar in five was labeled to a different precision than its siblings".
-      All three are things a person would meet. **No check is proposed for any of them** — W-6.3's
-      number (`scripts/` at 2.3x `src/`) says a regex is the wrong instrument for all three, and
-      (a) is a decision rather than a defect. **Honest priority: (b) medium, (a) low-and-owner's,
-      (c) low.** ⛔ **(a)'s priority label was wrong too**: "low-and-owner's" was assigned on the
-      belief that it was purely a judgment call, and the batch-pause half needed no decision from
-      anyone. **Nothing here remains open.**
-    - ⚠️ **(b)'s own numbers were wrong, and this item is the evidence.** I filed (b) from a live
-      measurement I had just taken, and still got both the total and the count of missing headings
-      wrong — and the *disposition* wrong with them, since three of the four "missing" headings turn
-      out to be correct markup. **A residual filed by the run that saw the thing is not exempt from
-      step 3.5.** ✅ **All three closed 2026-09-02** — this line read "(a) and (c) remain open"
-      until 2026-09-02's compression pass; they closed later the same day, and the item's own
-      summary above already said so. A closed item can still contradict itself.
+163. **✅ CLOSED 2026-09-02, all three parts** — replaced by its conclusion per W-7.2 rule 1. The full
+    argument, the premise corrections and the live measurements are in the 2026-09-02 run-log entries.
+    **What was true:** (a) the Review recap told a learner who got 0 of 10 right "nice work" under a
+    green success tick, an inch above ten red crosses; (b) the heading rotor put the whole Fed
+    balance-sheet chart inside "Yield Curve Shapes", because two blocks sat between unrelated `h2`s;
+    (c) `Bar` rendered `9` where its own `aria-label` read `9.0`. **What is true now:** the tick and the
+    headline both branch at `correctCount === 0` (`166b0fe`), one `qeQtSection` heading owns the QE/QT
+    pair and the figure (`7d5cc52`), and `Bar` takes the `formatValue` prop its three siblings in the
+    same file already had (`154b152`).
+    ⭐ **The durable half, and it is why this item is worth remembering at all: all three sub-items were
+    filed by the run that had just LOOKED at the screen, and (a)'s scope, (b)'s two figures and (a)'s
+    priority label were every one of them wrong.** (b) claimed "4 of 7 blocks" and the screen has eight,
+    of which three unheaded blocks turned out to be correct markup; (a) named one site and there were
+    two, and called the defect "a judgment call, not a falsehood" when the second site was a plain
+    falsehood in five languages. **A residual is a claim about the code, not a reading of it — a
+    residual filed by the run that saw the thing is not exempt from step 3.5.**
+    ⚠️ **One thing deliberately left open, measured rather than assumed:** `es` alone writes a comma
+    decimal in the balance-sheet description while the chart face renders a period in every language.
+    The app has no locale-aware runtime number formatter (`numerals.mjs` is script-side; the only
+    runtime one is `usd`, hardcoded `en-US`). Pre-existing, one language, and (c) strictly *reduced* the
+    disagreement — `es` face-vs-description now differs only in separator, where before it also
+    differed in precision.
 
 162. **✅ DONE 2026-09-02 (owner-directed: "do the ko/zh/ja glossary translations too"), the same
     day it was filed — the O-3 call this item said it needed, made for this corpus.** All 42 true
@@ -2541,10 +2503,14 @@ instead of hand-rolling an eighth mover. A working one is in this run's scratchp
         eliminate-the-absolutes strategy resolves to one survivor on **3 of 46** and is **0 for 3**.
         **Neither is a tell. Do not re-derive them.** Position is additionally guarded by
         `check-data.mjs` §3 at a 50% threshold; absolutes have no guard and need none.
-        ⚠️ **`quizMeta.js`'s header still describes the spread as "roughly 3/3/4/3", which is the
-        13-question figure from the 2026-08-02 de-skew.** The property it asserts holds; the number is
-        stale. Left alone deliberately — W-5.5's rule says re-read it, not that a comment's arithmetic is
-        this run's work — but the next run to touch that file should fix it.
+        ✏️ **DONE 2026-09-04 — and this clause stayed stale about its own residual until 2026-09-09.**
+        It read *"`quizMeta.js`'s header still describes the spread as 'roughly 3/3/4/3'"* and handed the
+        fix to "the next run to touch that file". **That run was 2026-09-04's, five days before anyone
+        read this line again.** The header now quotes **no number at all** and says why: §3 derives the
+        distribution from the array on every `npm test`, and a figure a script prints is the only kind
+        that cannot rot in a comment. Measured 2026-09-09 for the record: 46 questions, **10/13/13/10**.
+        ⭐ **A handoff addressed to "the next run to touch that file" is not addressed to anybody** — the
+        run that did the work never saw this clause, and the clause could not see the work.
       - ⛔ **CLASS A IS NOT A REACHABILITY SCREEN, and it comes apart at the second-ranked question.**
         Class A means "the English correct option has a detachable reasoning tail". Ranked by relative
         margin the queue is **`q008` 57% (B), `q021` 56% (A), `q014` 53% (B), `q005` 50% (A)**.
@@ -6193,5 +6159,130 @@ is one screen's tab order, not a measured failure.
 run: canonical URL live and the 404 control firing, but **DIVERGED** — the live bundle is an older
 build and the retired Netlify origin is **still serving the app**. A run may not push, so this commit
 does not reach a learner until the owner pushes `main`.
+
+**Schedule:** the cron is the owner's lever; not read, not compared, not touched.
+
+### 2026-09-09 (scheduled dev-agent; W-6.2 rule 1 free — the previous run's only residual was an unnumbered note ending "do not pick this by default", so this pick came from a corpus-wide sweep of the least-covered files in `src/`, chosen by counting each file's mentions across both logs) — the pick's premise was refuted twice by its own measurement, the second refutation reversed the first, and what separates them is one field in the data
+
+**What this is, stated as the outcome rather than as the plan.** The pick was `src/lib/relativeStrength.js`
+— the owner's own `WJ_Sector_Comparison`, 10 mentions across both logs against 42 for `theme.js` and 55
+for `LessonVisual.jsx`, and the only barely-read file whose output a learner actually reads (Reference →
+Sectors prints its rank on every row). **I went in with a units hypothesis, measured it, and it is
+wrong.** No code defect exists in the measure. This entry is the measurement and the two corrections;
+the shipped diff is the file learning what was measured, so the next reader does not re-derive it.
+
+#### The hypothesis, because it is attractive and someone will have it again
+`OUTPERFORM_THRESHOLD = 0.5` is compared against the **raw decimal** sum, while the published
+`relativeStrength` block declares `unit: "percentage-points"` in the field beside it, and the study's own
+parameter is named `Outperform_Percent_1`. That reads like a 100x unit mismatch: 0.5 raw is **50
+percentage points**, and the shipped sector scores run ±20 pp. If it were really 0.5 pp, the flag should
+be firing constantly and is instead never seen.
+
+#### Refutation 1 — the premise, re-measured before editing anything
+Replayed **every `public/data/market.json` ever committed** (24 commits, 23 distinct `asOf` dates,
+2026-08-04 → 2026-09-08; 264 sector observations) and scored each against the threshold. **2 of 264
+clear it.** So the flag is reachable, the "can never fire" half of the hypothesis is false, and the
+edit I was about to make would have been wrong.
+
+#### Refutation 2 — which reverses refutation 1, and the control is a field in the data
+Splitting the same 264 rows by `source`:
+
+| | n | max \|value\| | as raw | clearing raw ≥ 0.5 |
+|---|---|---|---|---|
+| **real** (`tiingo`) | **242** | **35.9 pp** | 0.359 | **0** |
+| **fixture** (synthetic) | 22 | 57.9 pp | 0.579 | **2** |
+
+**Both threshold-clearing observations in the entire published history are fixture rows** — the
+synthetic placeholder data the app itself labels "sample data" and withholds vendor credit for. Against
+real market data the largest score ever published reaches **72% of the threshold and never crosses it.**
+⛔ **So the pooled number and the split number support opposite conclusions, and `source` is the control
+on this file.** A distribution computed over `market.json` history without splitting on it is measuring
+the fixtures too — which is exactly what my first refutation did.
+
+#### Re-decided on the corrected facts (step 3.5), and the disposition is "no change to the measure"
+0.5-as-raw is **strict but not absurd**: it marks outperformance the real data has approached and not
+yet reached. The alternative reading, 0.5 percentage points, would flag **8 of 11 sectors on an ordinary
+day** — not a highlight, a background color. `DECISIONS.md` records the raw-decimal reading as the closed
+decision and the data agrees with it, so the units are not a run's call in either direction; **the only
+source of truth for the study's intent is the owner's thinkScript, which is not in this repo.** Nothing
+about the threshold changed.
+
+**Third measurement, taken on the way and with its own controls: `outperforming` and
+`OUTPERFORM_THRESHOLD` have no consumer.** Both grep to **0** under `src/` outside `relativeStrength.js`;
+the sibling fields of the same published block — `provisional`, `rank`, `method`, `unit`, `periods` —
+return **4, 55, 4, 38, 8**, so the grep plainly reaches these files and the zero is a real zero. The job
+drops the flag and `parts` at serialization. **Kept rather than deleted:** the "why does it rank there"
+UI they exist for is the owner's to build, not a run's to delete.
+
+#### What shipped
+**One file, comments only: `src/lib/relativeStrength.js`, +30/−3.** The header no longer implies this
+module shades anything (the shading is the *study's*); the threshold carries the refuted hypothesis and
+the real-vs-fixture split; `outperforming` carries the zero-consumer measurement and the reason it is
+kept. **0 lines added to `scripts/`, 0 content or locale files, no check built** — W-6.2 rule 3: after a
+clean sweep of a surface no learner can see, the learner-visible sentence cannot be written honestly,
+and an instrument for a property that holds would be W-6.3's defect exactly.
+
+#### Two backlog corrections found while writing this up, both of the same shape as the finding
+- **Item 160's handoff was already done, five days ago, and the clause never learned it.** It said
+  *"`quizMeta.js`'s header still describes the spread as 'roughly 3/3/4/3' … the next run to touch that
+  file should fix it."* The 2026-09-04 run fixed it: the header now quotes **no number at all** and says
+  why. Measured this run: 46 questions, **10/13/13/10**. ⭐ **A handoff addressed to "the next run to
+  touch that file" is not addressed to anybody** — the run that did the work never saw the clause, and
+  the clause could not see the work.
+- **Item 163 was fully closed on 2026-09-02 and was still carrying all three sub-items' arguments.**
+  Collapsed to its conclusion per W-7.2 rule 1 — **8,455 → 2,084 b, −6,371** — keeping the three commits
+  (`166b0fe`, `7d5cc52`, `154b152`), the standing rule (*a residual filed by the run that saw the thing
+  is not exempt from step 3.5*) and the one genuinely open `es` comma-decimal note. No run-log history
+  was touched.
+
+**Verification.** `npm test` **exit 0**, warnings **3 → 3** (unchanged: the standing translation-review,
+translation-completeness and option-length-cue ones). `npm run check-blindspot` **exit 0**.
+`npm run build` **exit 0**. ⭐ **The entry bundle rebuilt to the SAME hash and the same bytes —
+`index-BwxkZOjx.js`, 271.74 kB — which is the proof the change is comment-only rather than an assertion
+that it is.** All exit codes read without a pipe.
+
+#### Step 5 — adversarial self-check
+**Blindspot register: nothing found, grepped rather than assumed.** `check-blindspot` **exit 0**. The
+added lines grep **0** for `dalio|principles|should buy|should sell|we recommend|best time to|guaranteed
+return|your portfolio|for kids`, with a live control (`threshold|sector` → 5 of those 30 lines) proving the grep reached
+them. §2.3: the dates added are measurement notes in a **source comment**, the house convention here, and
+the file is comment-only so they reach **0 bytes of `dist/`** — the identical bundle hash above is that
+proof. §10.3 untouched — no content or locale file was opened.
+**DECISIONS.md conflict: none, and this was the load-bearing check this run rather than a formality.**
+The change deliberately **preserves** the closed decision it examined — DECISIONS.md's *"the study's
+`Outperform_Percent_1` threshold of 0.5 applied to the raw decimal sum"* is quoted, agreed with, and left
+alone. Had I shipped my original hypothesis I would have contradicted it. `localStorage`-only state,
+`.js` content modules and Vite are untouched.
+**Already-done backlog item: no, and I checked rather than assumed.** `Outperform_Percent|outperforming`
+across both logs returns only DECISIONS-echoing prose and the 2026-08-04 landing — no prior run has
+measured this distribution. The two corrections above are the opposite case: work that WAS already done
+and whose items did not know it, which is why they are corrections and not new work.
+**My own verification claim, weakest parts first.** **(1)** The replay script is **not committed** — a
+reviewer re-running only my commands gets `npm test` / `build` / `check-blindspot` reproducibly but must
+rebuild the replay from the definition above (`git show <commit>:public/data/market.json` over
+`git log --format=%H -- public/data/market.json`, bucket `sectors[].relativeStrength.value` by
+`source`). **(2)** The 242/22 split is a property of **what has been committed**, not of the market: it
+covers 23 dates in five weeks, all from one adapter, and a longer or more volatile history could clear
+0.5 honestly. The claim is "never in the published record", never "cannot happen". **(3)** No live
+browser was opened this run — the change is comment-only and reaches no rendered surface, so every claim
+here is about source text, git history and build output, and **no claim is made about anything on
+screen**. ⛔ **Both figures in the two sentences above were TYPED FROM MEMORY first — "+33/−3" and a control of
+"14" — and are corrected in place before the commit, not annotated after it.** They were the only two
+numbers in this entry I had not run a command for, and both were wrong: `git diff --numstat` says **30**
+added lines and **5** of them match the control. Same defect the App summary's "no count that a script
+generates" rule exists to stop, caught inside the step whose job is to catch it — and the **second
+consecutive run** to catch it in exactly this place.
+**(4)** W-6.3 re-measured on this tree with `find | wc -l`, not carried forward from the
+previous entry: `scripts/` **21,689** lines vs app code (`src/` minus `content/`+`locales/`) **10,166** —
+**2.13x**, unmoved, and this run added **0** lines to `scripts/`.
+
+#### Log size, since two of this run's three edits are to the log itself
+Net effect on the floor this run: item 163's collapse **−6,371 b**, item 160's correction **+440 b**, the
+item 166 sweep note **+2,852 b** — **net −3,079 b before this entry**, which is the direction W-7.2 rule 5
+asks for. Quote `check-log-size.mjs`'s MEASURED line rather than this arithmetic.
+
+⚠️ **Reported, not fixed — O-4 action 2 and O-5 remain owner actions,** unchanged by this run. A run may
+not push, so this commit does not reach a learner until the owner pushes `main` — and this one changes
+nothing a learner would see even then.
 
 **Schedule:** the cron is the owner's lever; not read, not compared, not touched.

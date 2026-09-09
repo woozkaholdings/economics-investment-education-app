@@ -14,8 +14,9 @@
 //     score     = excess(10) + excess(30) + excess(60)
 //
 //   The study plots `round(score * 100, 1)` — percentage points, one decimal —
-//   and shades the background when the raw (decimal) sum clears
-//   `Outperform_Percent_1`, default 0.5.
+//   and shades ITS OWN chart background when the raw (decimal) sum clears
+//   `Outperform_Percent_1`, default 0.5. That shading belongs to the study;
+//   this app renders nothing from it — see the note on `outperforming` below.
 //
 //   Combining three lookbacks is what makes it a *strength* measure rather
 //   than a return: a sector only scores well by leading the benchmark across
@@ -32,7 +33,25 @@
 export const WJ_PERIODS = [10, 30, 60];
 
 // The study's `Outperform_Percent_1`. Compared against the RAW decimal sum,
-// not the ×100 plotted value — keep that distinction when tuning it.
+// not the ×100 plotted value — keep that distinction when tuning it. The same
+// reading is recorded in DECISIONS.md and is the closed decision here.
+//
+// ⚠️ THE ×100 DISTINCTION INVITES A UNITS HYPOTHESIS, AND THE HYPOTHESIS IS
+// WRONG. Written down because refuting it consumed most of a run: a field named
+// `..._Percent_1` sitting next to a payload that declares
+// `unit: "percentage-points"` reads like a 100x mismatch, and it is not one.
+// Measured 2026-09-09 by replaying every `public/data/market.json` ever
+// committed (23 distinct `asOf` dates, 2026-08-04 → 2026-09-08):
+//   - Pooled, 2 of 264 sector observations clear 0.5, so the flag looks live.
+//   - Split by `source` — the control that decides it — BOTH of those 2 are
+//     `source: "fixture"`, i.e. synthetic placeholder rows. Across the 242 real
+//     (`tiingo`) observations the largest score is 35.9 pp (raw 0.359): 72% of
+//     the threshold, and ZERO clear it.
+// So 0.5-as-raw is strict but not absurd — it marks outperformance real data has
+// approached and not yet reached. The alternative reading, 0.5 percentage
+// points, would flag 8 of 11 sectors on an ordinary day, which is not a
+// highlight. Do not "re-unit" this constant: the only source of truth for the
+// study's intent is the owner's thinkScript, which is not in this repo.
 export const OUTPERFORM_THRESHOLD = 0.5;
 
 // Longest lookback plus the current bar: the minimum history the measure needs.
@@ -79,6 +98,14 @@ export function wjSectorComparison(series, benchmark, opts = {}) {
     // Per-lookback excess, so a future UI can show *why* a sector ranks where
     // it does rather than only the total.
     parts,
+    // ⚠️ NO CONSUMER, measured rather than assumed (2026-09-09): `outperforming`
+    // and `OUTPERFORM_THRESHOLD` both grep to 0 under `src/` outside this file,
+    // while the sibling fields of the same published block — `provisional`,
+    // `rank`, `method`, `unit`, `periods` — return 4 to 55, so the grep plainly
+    // reaches these files. The job drops this flag and `parts` at serialization;
+    // `market.json` publishes the THRESHOLD as metadata and no flag at all. Both
+    // are kept because the "why does it rank there" UI they exist for is the
+    // owner's to build — not because anything reads them today.
     outperforming: sum >= threshold,
     method: "wj-sector-comparison",
   };
