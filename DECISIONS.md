@@ -848,6 +848,15 @@ Add a new entry when a run makes a choice future work should be able to look up 
   view: `LessonReader` now shows a lesson's **position within its track** ("Lesson 1 of 12") instead
   of its raw id. The global "Lesson 29 of 40" was already wrong for two independent curricula; it is
   simply more visible now. **Do not repair this by renumbering again.**
+  **Amended 2026-09-09 (scheduled dev-agent): the reader's caption carries the TRACK NAME as well —
+  "Lesson 1 of 12 · How the Economy Works".** Position-within-track fixed the id half and left an
+  ambiguity the third track created: with three curricula there are three "Lesson 1"s, and the
+  reader named none of them. Item 81 had already settled the same question on the review queue
+  (`reviewFromLesson`, "Lesson {n} · {track}") and did not carry it back here. Same shape, number
+  first so it survives truncation; no new locale key, since the three track labels already ship in
+  all five languages. Measured cost: the two "Next Lesson" track crossings (economy 12/12 → money
+  1/17, money 17/17 → essentials 1/15) had been changing curriculum with the counter reset as the
+  only cue.
 - **Update, 2026-08-25 (approved from a drafted proposal, `drafts/income-hierarchy.en.md`). Four new
   lessons open the money track; money's id set is now two disjoint blocks, not one range.** New
   lessons — "The Subject That Wasn't on the Timetable," "Four Ways Money Arrives," "Does It Stop

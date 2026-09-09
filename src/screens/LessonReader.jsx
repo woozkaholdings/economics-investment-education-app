@@ -11,6 +11,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { EVENTS, elapsedSeconds, monotonicNow, quizScore, track } from "../lib/analytics.js";
+import { lessonPlacement } from "../content/lessons.js";
 import { quizMeta } from "../content/quizMeta.js";
 import { recordContinueChoice, wasContinuePromptShownToday } from "../lib/useAppState.js";
 import { questionsForLesson } from "../lib/review.js";
@@ -216,11 +217,26 @@ export default function LessonReader({ t, lang, lessons, index, completedLessons
   // about a lesson the reader is about to be shown none of.
   const hook = !done && !loadFailed && check.length > 0 ? check[0] : null;
 
-  // Derived from the same flat, track-ordered list the path renders, so the
-  // two can't disagree — rather than re-deriving from TRACKS here.
-  const trackLessons = lessons.filter((l) => l.track === lesson.track);
-  const trackPosition = trackLessons.findIndex((l) => l.id === lesson.id) + 1;
-  const trackTotal = trackLessons.length;
+  // Position and track label, from `lessonPlacement` — the shared helper
+  // `Practice.jsx` already uses, passed THIS screen's `lessons` prop so the
+  // position is still derived from the same flat, track-ordered list the path
+  // renders and the two can't disagree. (The helper defaults to the raw
+  // catalog order; passing the prop is what keeps the original guarantee.)
+  // Only `labelKey` comes from TRACKS, which is where the label lives — the
+  // ORDERING is still never re-derived here.
+  //
+  // This was three inline lines doing `lessonPlacement`'s position/total
+  // arithmetic a second time. Item 81 made the same call on Practice — "a
+  // shared helper rather than a third inline derivation, because this is the
+  // third surface to ask the question and the second to get it wrong."
+  //
+  // `lesson` is `lessons[index]`, so the lookup cannot miss and there is no
+  // not-found branch to write here. Practice needs one because it resolves a
+  // stored quiz id that can outlive its lesson; this screen does not.
+  const placement = lessonPlacement(lesson.id, lessons);
+  const trackPosition = placement.position;
+  const trackTotal = placement.total;
+  const trackName = (placement.labelKey && t[placement.labelKey]) || "";
   const hasNext = index < lessons.length - 1;
 
   // Previous stops at the track boundary, and that is a lock, not a nicety
@@ -300,9 +316,29 @@ export default function LessonReader({ t, lang, lessons, index, completedLessons
             independent curricula, so a global "Lesson 29 of 40" numbered a
             sequence nobody reads in that order — and after the 2026-08-18
             reordering it would open the app on "Lesson 29 of 40". Ids stay
-            stable for storage and deep links; this is the display. */}
+            stable for storage and deep links; this is the display.
+
+            AND THE TRACK NAME, because a position alone is ambiguous three
+            ways. Item 81 settled this exact question on the review queue —
+            "with three tracks there are three 'Lesson 1's" — and named the
+            reader as the surface that already showed a position rather than
+            an id. It did not carry the track half back here, so the reader
+            spent the interval saying "LESSON 1 OF 12" with nothing on screen
+            naming which curriculum that is. Measured on the built app: the
+            two places the learner most needs it are the two track boundaries,
+            where "Next Lesson" walks from economy 12/12 into money 1/17 and
+            from money 17/17 into essentials 1/15 — a different curriculum,
+            the second one the app itself labels "(Optional)", with the
+            counter resetting as the only cue.
+
+            Shape matches `reviewFromLesson` ("Lesson {n} · {track}") rather
+            than inventing a second one: NUMBER FIRST, so the number is what
+            survives truncation. No new locale key — the three track labels
+            already exist in all five languages and the separator is
+            punctuation. */}
         <Text variant="caption" color={ink.accent} style={{ fontWeight: 700, letterSpacing: "0.05em", textTransform: "uppercase" }}>
           {t.lessonLabel} {trackPosition} {t.ofLabel} {trackTotal}
+          {trackName ? ` · ${trackName}` : ""}
         </Text>
         <h1
           ref={headingRef}

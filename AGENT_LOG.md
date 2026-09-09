@@ -7013,3 +7013,128 @@ Live `market.json` is `asOf 2026-09-07` against the repo's `2026-09-08`. A run m
 commit does not reach a learner until the owner pushes `main`.
 
 **Schedule:** the cron is the owner's lever; not read, not compared, not touched.
+
+### 2026-09-09 (scheduled dev-agent; W-6.2 rule 1 free — the previous run filed nothing, so this pick came from a live walk of the reader, and the walk started somewhere else and found this on the way) — the reader has said "LESSON 1 OF 12" since the third track landed, and there are three "Lesson 1"s: item 81 settled that exact ambiguity on the review queue and never carried it back
+
+**What this is.** `src/screens/LessonReader.jsx`'s title caption rendered `LESSON {n} OF {total}` and
+**named no track**. The catalog is three independent curricula, so that string identifies a lesson
+three ways at once. W-6.2 rule 3's sentence: *a learner reading any lesson — or arriving on one from a
+shared `#/lesson/N` link, which is the whole of §5's distribution motion — cannot tell which of the
+three curricula they are in.*
+
+⭐ **This is the same finding as item 81's, one surface later, and the archive says so in its own
+words.** That entry fixed Practice printing a raw lesson id and, forced by the same three-track
+ambiguity, gave `reviewFromLesson` the shape `"Lesson {n} · {track}"` — *"with three tracks there are
+three 'Lesson 1's."* It names the reader in passing as a surface that had **already** been fixed for
+the **id** half. It never carried the **track** half back. Measured live: **no run has ever declined
+this** — `grep` for a reader-plus-track-name decision over `AGENT_LOG.md`, `AGENT_LOG.archive.md` and
+`DECISIONS.md` returns nothing.
+
+#### Premise re-measured before editing — and the item I had written in my head was WRONG
+Real Chrome via `puppeteer-core`, `dist/` on `127.0.0.1:8802`, 375x812, seeded `localStorage`.
+**I set out to report that "Next Lesson" at the end of the main path drops the learner into the
+OPTIONAL track. It does not.** I had derived the order from the raw `lessons` array in `lessons.js`
+(economy, essentials, money); the app's list is `lessonsByTrack()`, whose order is **economy → money →
+essentials**. Measured, not inferred: economy 12/12 → **money 1/17**, which is the correct
+destination. The optional crossing is real but it is the **second** boundary, money 17/17 →
+essentials 1/15. **The defect survived the correction and got narrower: it is not the routing, it is
+that neither crossing is named.**
+
+**Before / after, same instrument, HEAD's component rebuilt to get the "before" rather than inferred**
+(`cmp`-identical restore from a scratchpad copy in both directions; HEAD's tree reproduced
+`index-CYDqaUx5.js`, this tree builds `index-C7lf2LJ0.js`):
+
+| reader state | before `index-CYDqaUx5.js` | after `index-C7lf2LJ0.js` |
+|---|---|---|
+| economy 1/12 | `LESSON 1 OF 12` | `LESSON 1 OF 12 · HOW THE ECONOMY WORKS` |
+| economy 12/12 — **main path ends** | `LESSON 12 OF 12` | `LESSON 12 OF 12 · HOW THE ECONOMY WORKS` |
+| money 1/17 — **what Next lands on** | `LESSON 1 OF 17` | `LESSON 1 OF 17 · THINKING ABOUT MONEY` |
+| money 17/17 | `LESSON 17 OF 17` | `LESSON 17 OF 17 · THINKING ABOUT MONEY` |
+| essentials 1/15 — **the "(Optional)" crossing** | `LESSON 1 OF 15` | `LESSON 1 OF 15 · MONEY BASICS (OPTIONAL)` |
+
+#### What shipped
+**42 insertions in one file, 0 style or token lines** (diff grepped for
+`padding|margin|color:|font|border|space\[|minHeight|surface\.|fill\.` → **0**), **0 files under
+`content/` or `locales/`**, **no new locale key** — the three track labels already ship in five
+languages, and the separator is punctuation. Shape copied from `reviewFromLesson` rather than invented:
+**number first, so the number survives truncation**, which is the reason item 81 recorded for it.
+The three inline lines that re-derived position/total were replaced by `lessonPlacement(lesson.id,
+lessons)` — the helper item 81 built for exactly this, **passed this screen's own `lessons` prop** so
+the original guarantee ("derived from the same list the path renders") is kept rather than traded away;
+only `labelKey` comes from `TRACKS`, and the ordering is still never re-derived in the reader.
+
+#### Layout, because item 81's own entry says `pageOverflow: false` is not "the layout is fine"
+Worst case at **320px x 130% font scale**, all five languages, essentials (the longest label):
+`LECCIÓN 1 DE 15 · FUNDAMENTOS DEL DINERO (OPCIONAL)` wraps to **2 lines, 44px, no horizontal
+overflow**; ko/zh/ja stay at **1 line, 22px**. **This site is not item 81's site and that is why no
+`flexShrink` fix was needed**: the reader's caption is a block-level `Text` above the `h1` with nothing
+beside it, so a wrap costs 22px of vertical space and squeezes no neighbor — item 81's caption was in a
+flex row, where the same wrap doubled the row and had to be fixed. All five languages verified to
+render their own label with `documentElement.lang` read in the same page load as the control that the
+language actually switched.
+
+⛔ **Three dead instruments this run, all caught by controls, recorded because two of them returned
+clean-looking nulls.** (1) My static server fell back to `index.html` for **every** path, so the 404
+control returned 200 — a missing asset would have looked fine; fixed to fall back only for
+extension-less paths. (2) Seeding `localStorage` and then setting `location.hash` **does not reboot the
+app**, so the seed never reached React state and `#/lesson/40` read as locked; the tell was the
+analytics log showing no second `app_opened`. (3) `ecycles_lang` is stored **raw**, not JSON, so my
+first five-language sweep returned **byte-identical English five times** — that identity is the only
+reason it was caught.
+
+⛔ **And one false finding, dropped before it became work.** I opened the walk on the first-run
+disclaimer and reported that the app behind it was not hidden from assistive tech: `#root` carried no
+`inert` and 19 of 20 focusables sat outside the dialog. **Wrong — I had walked the dialog's ancestors,
+and `inert` is spread onto its siblings.** Re-measured: `header`, `main`, `nav` and the skip link all
+carry `inert` + `aria-hidden`, **every one of the 19 is under an inert ancestor**, and a direct
+`.focus()` on a background quiz option is refused while the modal is open and succeeds after dismissal.
+The modal is correct.
+
+#### No check shipped, deliberately
+A guard here would assert that one JSX expression still interpolates `placement.labelKey` — brittle,
+and a presence check for a string the live differential above already proves. **W-6.3 quoted before
+proposing:** `scripts/` **21,319** lines vs app code **9,943** — **2.15x**, and blindspot **10.8's
+tripwire fires at 10.61x against a 5x threshold**. A one-line render change is the wrong place to spend
+script mass. `scripts/` untouched; the ratio moves down, not up.
+
+**`npm test` exit 0**, the same **3** pre-existing warnings (translation review coverage, translation
+completeness, option-length cue / item 160), **0 FAIL**; `npm run check-blindspot` exit 0; `npm run
+build` clean. Bundle deltas: `LessonReader` 93.79 → **93.81 kB**, `index` **271.53 kB unchanged**.
+`DECISIONS.md`'s 2026-08-18 bullet — the one that describes what the reader displays — was amended in
+the same commit rather than left saying "position within its track" about a caption that now says more.
+
+#### Step 5 — adversarial self-check
+**Blindspot register: nothing found, grepped rather than assumed.** **0** files under `content/` or
+`locales/`; no lesson prose, no market figure, no date added to shipped content; no new learner-facing
+string at all — the three labels were already written and already reviewed. `check-blindspot` exit 0.
+§10.1/§10.2/§10.3 cannot be reached by a caption that interpolates existing locale values. (My own
+crude banned-string grep returned one hit — the word *guarantee* in a **code comment** about a
+derivation guarantee. Named here rather than quietly discounted; the real instrument passes.)
+**DECISIONS.md conflict: none, and the nearest bullet was checked rather than the file skimmed.** The
+2026-08-18 entry's rule is *ids are stable, display order is a product decision, do not renumber* —
+this changes only the display and renumbers nothing. **Item 12 (Expo/RN port cost) is the standing rule
+the last four runs had to argue against, and this run does not: 0 DOM APIs added** (`document.`/
+`window.`/`tabIndex`/`onKeyDown`/`.focus()`/`addEventListener` → **0** in the diff), and it *deletes*
+three lines of inline derivation in favor of a pure helper in `content/` that ports as-is. localStorage-
+only state, `.js`-not-JSON content and Vite-not-Expo untouched.
+**Already-done backlog item: no, and the specific risk was checked, not the list scanned.** The risk was
+that item 80/81 had considered the reader and declined; it did not — it names the reader only as the
+surface already fixed for the **id**, and `git log -S` on the caption line returns one commit,
+`5633b79`, which introduced it. Not a redo, not an undo.
+**My own verification claim, weakest part first.** ⚠️ **(1) My headline premise was wrong** — I
+predicted the optional track and measured the money track; the item survived only because the
+measurement came before the edit. **(2) Three instruments died on me** and two of those failures looked
+like clean results. **(3) I opened with a false finding** on the disclaimer modal, recorded above rather
+than dropped. **(4) Not a screen-reader claim**: I measured rendered text and DOM, and I do not assert
+what VoiceOver announces. **(5) Reproducible**: every figure comes from named bundles, with HEAD's
+component rebuilt to produce the "before" column rather than inferred, and `cmp`-identical restores
+recorded in both directions.
+
+**Filed as nothing.** One observation not worth an item: `Learn.jsx:236` still does the
+`TRACKS.find(...).labelKey` lookup inline where `lessonPlacement` would do it — a one-line tidy on a
+line that is correct today, not a defect.
+
+⚠️ **Reported, not fixed — O-4/O-5, not repo work.** A run may not push, so this commit does not reach
+a learner until the owner pushes `main`.
+
+**Schedule:** the cron is the owner's lever; not read, not compared, not touched.
