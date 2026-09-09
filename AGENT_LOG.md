@@ -7429,3 +7429,149 @@ question with a live disagreement already documented under 163(c), not a residua
 a learner until the owner pushes `main`.
 
 **Schedule:** the cron is the owner's lever; not read, not compared, not touched.
+
+### 2026-09-09 (scheduled dev-agent; W-6.2 rule 1 free — the previous run filed nothing, so this pick came from a live walk of the least-walked interactive component, chosen by counting mentions across both logs) — the simulator offers "Raise the rate" twice on one screen, meaning opposite things, and the run that BUILT it enumerated all six lever labels in Korean without ever comparing them to each other
+
+**What this is.** `src/components/PolicySim.jsx` — "Be the Fed Chair", the app's only simulator, the
+§3.0.4 bet and CLAIMS.md A7's numerator. It hosts **two** scenarios on lesson 35 (the only lesson that
+mounts it): an overheating room and a contraction room, three levers each. **"Raise the rate" is a
+lever in both** — the textbook move in the first, the move that deepens the slump in the second — and
+nothing wrapped either row, so the six buttons were six flat siblings under one `h2`.
+
+W-6.2 rule 3's sentence: *a screen-reader learner pulls up the button list on the simulator, hears
+"Raise the rate" twice with nothing to say which room it belongs to, and reads the outcome for the
+wrong scenario.* Voice control ("click Raise the rate") is ambiguous in the same way.
+
+⭐ **The pick came from counting, not from a hunch.** `PolicySim` has **37** mentions across
+`AGENT_LOG.md` + the archive — the least-mentioned interactive component that had not just been
+walked (`GlossaryTerms` is lower at 23 and was walked yesterday). It had been walked exactly once,
+by the run that built it.
+
+#### Premise re-measured before editing, on the built app, with controls
+`npm run build` at HEAD → `index-B-OKozBU.js` / `LessonReader-BeOlXB8V.js`, served from `dist/` by
+`python3 -m http.server` on `127.0.0.1:8853` (**404 control fired** on a nonexistent path, so this is
+not the index.html-fallback trap). Viewport 375x812, `window.innerWidth` read **375** before anything
+was measured — it read **0** on the first attempt and was fixed before any figure was taken.
+
+- ⚠️ **The instrument caught its own blindness first, and this is the control that mattered.** The
+  opening scan returned **1 visible control on the whole page**. Cause: the §10.1 first-run disclaimer
+  modal was still up, so the entire document behind it was `aria-hidden="true"` and my visibility
+  filter was correctly excluding all of it. **A scan that had not modeled `aria-hidden` would have
+  reported the page clean and been believed.** Dismissed the modal, re-ran: **27 controls**.
+- **Planted control**: two identically-named buttons appended to the body were flagged as a duplicate
+  pair, a uniquely-named third was not flagged, and both vanished from the scan when the probe was
+  removed.
+- **Subject, `en`:** 5 duplicate (role, accessible-name) pairs on lesson 35. **Four are the quiz** —
+  the same question renders twice (Before-you-read and the end check) — and they are **not** a defect:
+  each set of four radios sits in a `role="radiogroup"` carrying `aria-label="What is the Fed Funds
+  Rate?"`, so the group tells them apart. **The fifth is `button "Raise the rate" ×2`, and its
+  ancestry was `div < div < div < div < div` — no role, no label, nothing.** The app already had the
+  right pattern one component away and the simulator did not use it.
+- **All five languages carry the duplicate**, read off the content module: en *Raise the rate*, es
+  *Subir la tasa*, ko *금리 인상*, zh *加息*, ja *利上げする*. The two scenario **questions** are
+  distinct in all five, which is what made a fix possible with no new string.
+
+#### What shipped
+**Two files, 75 insertions / 1 deletion.** `PolicySim.jsx`: the existing flex row that holds each
+scenario's levers gains `role="group"` and `aria-label={scenario.question[lang]}` — **no new element,
+no new locale key, no content file touched** (`git diff --name-only` under `src/content/` or
+`src/locales/` → **0**). The prompt paragraph stays *outside* the group so it is not read twice, which
+is exactly `Question.jsx`'s shape on this same screen.
+
+⭐ **`group` and deliberately not `radiogroup`.** This file's own header rule 1 is that no lever is
+correct and nothing is submitted; `radiogroup` would assert a right answer. §13d fails the build if
+anyone changes it to one.
+
+`check-data.mjs` **§13d** (new, ~40 lines) holds the invariant the fix depends on: **two scenarios on
+one lesson may not share a question in any language**, because the question is now the only thing
+telling their lever groups apart. Its learner-visible sentence: *a third scenario is added reusing an
+existing question, and the learner is back to two identically-named buttons in two identically-named
+groups — silently, because everything still renders.* It also asserts the markup itself.
+
+**§13d proven against three plants, each reverted from a `cmp`-verified scratchpad copy** (never
+`git checkout --`), with a clean baseline before and after:
+| plant | result |
+|---|---|
+| duplicate the `en` question across both lesson-35 scenarios | FAIL, naming `overheating`/`contraction` |
+| revert the markup to a bare `<div>` — **the exact pre-fix state** | FAIL, naming the missing `role="group"` |
+| switch `group` → `radiogroup` | FAIL, citing rule 1 |
+Baseline before plants **exit 0**; after all three restores **exit 0**. ⭐ **The middle row is the one
+that matters: the guard fails on the state this repo was in an hour ago**, so it is a test of the
+defect and not a restatement of the patch.
+
+#### After — `index-1vMDhlg3.js` / `LessonReader-q3Tk_INS.js`, same instrument, same session
+- **The two "Raise the rate" buttons now sit in differently-named groups**, read off the live
+  accessibility tree: `GROUP "You chair the policy committee. Which way do you turn the dial?"` and
+  `GROUP "Same chair, a very different room. What do you do?"`.
+- **All five languages**: the duplicate lever still exists in each (it is correct content), and in each
+  the two group names are distinct, non-empty and in that language — including `zh` resolving
+  `documentElement.lang` to `zh-Hans`.
+- **Behavior unregressed, driven rather than argued.** Picking in scenario 2 left scenario 1's panel
+  and `aria-pressed` untouched; swapping within a scenario replaced its panel text; toggling a lever
+  off cleared its panel. **The analytics guard still holds: three choices fired three
+  `sim_lever_chosen` events and the toggle-off fired none** (3 → 3), which is §13c's whole point.
+- **Layout untouched**: the wrapper still computes `display:flex`, `flex-wrap:wrap`, `gap:8px`; levers
+  ≥44px tall; `scrollWidth <= innerWidth` at 375px. **0 style or token lines in the diff**
+  (`padding|margin|color:|font|border|space\[|minHeight|surface\.|ink\.` → 0 added).
+
+**`npm test` exit 0** with **0 FAIL** and the same **3** pre-existing warnings (translation review
+coverage, translation completeness, option-length cue / item 160); `npm run check-blindspot` exit 0;
+`npm run build` exit 0. ⚠️ All three exit codes read **without a pipe** — `cmd | grep; echo $?` reports
+the filter's status, which is how a failing guard reads as a pass. `LessonReader` 93.82 → **93.86 kB**;
+`index` **271.53 kB unchanged**.
+
+**W-6.3 re-measured on this tree rather than carried forward:** `scripts/` **21,445** lines vs app code
+(`src/` minus `content/`+`locales/`) **10,048** — **2.13x**, unchanged from the previous run's 2.13x.
+This run added 50 script lines against 24 app lines.
+
+#### Step 5 — adversarial self-check
+**Blindspot register: nothing found, grepped rather than assumed.** **0** files under `src/content/`
+or `src/locales/` in the diff; the diff greps **0** for
+`dalio|should buy|should sell|we recommend|best time to|guaranteed return|your portfolio`;
+`check-blindspot` **exit 0**. §10.1 is not reachable here — the change adds no prose, and the levers it
+groups are *central-bank* policy, which `policyScenarios.js`'s header is explicit is safe ground where
+a personal-finance lesson would not be. §2.3: the two `2026-09-09` stamps I added are in **source
+comments that render nowhere**, and both are written as dated records of a state that is now over.
+§10.3 untouched. **One near-miss caught before committing:** a draft of the comment said the simulator
+"has six levers", a live count that goes stale the moment a scenario is added — it now names the
+scenarios instead of counting them.
+**DECISIONS.md conflict: none.** localStorage-only state, `.js`-not-JSON content and Vite-not-Expo are
+all untouched — this adds two ARIA attributes. The nearest live constraint is not in `DECISIONS.md` at
+all but in `PolicySim.jsx`'s own header (rule 1: no scoring, no correct answer), and it is the reason
+the role is `group`; §13d now enforces it. **Item 12 (Expo/RN port cost), stated rather than waved
+through: zero** — `accessibilityRole="none"` plus `accessibilityLabel` is a direct RN equivalent, and
+no new string needs translating.
+**Already-done backlog item: no, and the specific history was searched rather than skimmed.** Grepping
+`AGENT_LOG.md`, the archive and `DECISIONS.md` for PolicySim + grouping/duplicate-label returns **0**;
+no decision against grouping exists. ⭐ **The archive does hold the run that BUILT this component, and
+reading it is the transferable finding: that run walked the live DOM thoroughly** — scenario
+independence, `aria-pressed`, `aria-controls` resolution, `role="status"`, heading order, no second
+`h1`, no horizontal overflow at 375px — **and its own entry says it watched "all six lever labels"
+re-render in Korean. It enumerated the six and never compared them to each other.** A checklist walked
+item by item does not see a collision *between* items.
+**My own verification claim, weakest part first.** ⚠️ **(1) Not a screen-reader claim.** What is
+measured is the DOM and computed accessible names; no assistive technology is drivable from this host,
+so "a screen reader will announce the group" is the ARIA contract, not something I observed.
+**(2) Screenshots were not available and the run says so rather than omitting it** — the Browser pane
+was hidden, so it renders nothing and returned a black frame; I confirmed via the DOM
+(`h2.getBoundingClientRect().top ≈ 0`, `scrollY 3585`) that the page really was where I had scrolled
+it, and then used the accessibility tree, which is the right evidence for this change anyway.
+**(3) The interactions are synthetic** — `element.click()` and a React-aware `<select>` value setter,
+not real pointer or key events. **(4) One assertion was reported loosely and is corrected here:** my
+`ambiguousPairNowDistinct` expression returned a truthy *string* rather than `true`, because `&&`
+yields its last operand — the conclusion is right and is independently visible in the group dump
+above, but the boolean was not a boolean. **(5) Reproducible:** every figure comes from a named
+bundle, before and after measured by the same functions in the same browser session, with plants
+restored from `cmp`-verified scratchpad copies in both directions.
+
+#### Filed as a note, deliberately NOT numbered (W-6.2 rule 2)
+The two scenarios still share a single `h2` ("Be the Fed Chair") with **no per-scenario heading**, so a
+rotor user cannot jump between the two rooms — only tab through them. That is the item 163(b) class
+and it is real, but it has **one live instance**, honest priority **low**, and the obvious fix (promote
+each scenario's question to an `h3`) is a judgment about whether a prompt reads as a heading, not a
+measurement. **Next run: do not pick this by default.**
+
+⚠️ **Reported, not fixed — O-4/O-5, not repo work.** A run may not push, so this commit does not reach
+a learner until the owner pushes `main`. `public/data/market.json` is untouched by this run.
+
+**Schedule:** the cron is the owner's lever; not read, not compared, not touched.

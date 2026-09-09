@@ -82,7 +82,31 @@ function Scenario({ scenario, lessonId, t, lang }) {
         {scenario.question[lang]}
       </Text>
 
-      <div style={{ display: "flex", flexWrap: "wrap", gap: space["2"] }}>
+      {/*
+        The levers are grouped and the group is NAMED, because two scenarios on
+        one lesson can offer the same lever under opposite conditions. Measured
+        2026-09-09 on the built app at lesson 35, the only lesson that hosts
+        this: six buttons, and "Raise the rate" appears twice — once in the
+        overheating room where it is the textbook move, once in the contraction
+        room where it makes things worse — in all five languages (en "Raise the
+        rate", es "Subir la tasa", ko "금리 인상", zh "加息", ja "利上げする").
+        Nothing wrapped them, so a screen-reader or voice-control user met two
+        identically-named buttons with no way to tell which room they were in.
+
+        `role="group"` + `aria-label` is the same shape `Question.jsx` uses to
+        keep two copies of one quiz apart on this very screen (its radiogroup is
+        named with the question, prompt left outside so it is not read twice).
+        Deliberately `group` and not `radiogroup`: rule 1 in this file's header
+        is that there is no correct answer here, and a radiogroup would assert
+        one. The name is the scenario's own question, so no new string in five
+        languages — check-data.mjs §13d holds those questions distinct per
+        lesson, which is what keeps the two groups tellable apart.
+      */}
+      <div
+        role="group"
+        aria-label={scenario.question[lang]}
+        style={{ display: "flex", flexWrap: "wrap", gap: space["2"] }}
+      >
         {scenario.options.map((o) => {
           const isChosen = chosen === o.id;
           return (

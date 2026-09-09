@@ -1195,6 +1195,56 @@ if (keyedGroupsChecked < 4) {
       Object.entries(EVENTS).filter(([, v]) => v === EVENTS.SIM_LEVER_CHOSEN).length === 1);
 }
 
+// 13d. The lever groups must stay tellable apart. Measured 2026-09-09 on the
+//      built app: lesson 35 hosts two scenarios, and "Raise the rate" is an
+//      option in BOTH — the textbook move in the overheating room, the wrong
+//      one in the contraction room — identical in all five languages. Nothing
+//      grouped the buttons, so the two were indistinguishable to a
+//      screen-reader or voice-control user. PolicySim now wraps each lever row
+//      in `role="group"` named with that scenario's question, which works only
+//      while the questions on one lesson differ.
+//      The learner-visible failure this catches: a third scenario is added to a
+//      lesson reusing an existing question, and the learner is back to two
+//      "Raise the rate" buttons in two groups that also announce identically —
+//      silently, because everything still renders.
+{
+  const byLesson = new Map();
+  for (const s of policyScenarios) {
+    if (!byLesson.has(s.lessonId)) byLesson.set(s.lessonId, []);
+    byLesson.get(s.lessonId).push(s);
+  }
+  // The group name is only load-bearing where a lever label actually repeats,
+  // but requiring distinctness everywhere is the cheaper invariant to keep.
+  for (const [lessonId, group] of byLesson) {
+    for (const lang of LANGS) {
+      const seen = new Map();
+      for (const s of group) {
+        const q = s.question?.[lang];
+        if (!q) { fail(`§13d: scenario ${s.id} has no ${lang} question — it is the group's accessible name`); continue; }
+        if (seen.has(q)) {
+          fail(
+            `§13d: lesson ${lessonId} scenarios "${seen.get(q)}" and "${s.id}" share their ${lang} question, ` +
+            `so their lever groups get the same accessible name. Two scenarios can offer the same lever ` +
+            `(lesson 35 offers "Raise the rate" twice), and the question is the only thing telling them apart.`,
+          );
+        }
+        seen.set(q, s.id);
+      }
+    }
+  }
+  // The grouping itself, so this cannot pass because the markup quietly lost it.
+  const simSrc = readFileSync(new URL("../src/components/PolicySim.jsx", import.meta.url), "utf8");
+  if (!/role="group"[\s\S]{0,80}?aria-label=\{scenario\.question\[lang\]\}/.test(simSrc)) {
+    fail(
+      `§13d: PolicySim.jsx must wrap each scenario's levers in \`role="group"\` named with ` +
+      `\`scenario.question[lang]\` — without it the duplicate lever labels are indistinguishable again.`,
+    );
+  }
+  if (/role="radiogroup"/.test(simSrc)) {
+    fail(`§13d: PolicySim must not use \`role="radiogroup"\` — this file's rule 1 is that no lever is correct.`);
+  }
+}
+
 // 14. src/lib/marketData/adapters.js — the daily market-data job's provider
 //     interface. Only the three pure, network-free pieces are testable here
 //     (dailyCloses() itself calls fetch()): redactUrl(), which exists
