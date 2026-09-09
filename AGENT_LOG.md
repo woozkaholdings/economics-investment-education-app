@@ -3591,6 +3591,26 @@ instead of hand-rolling an eighth mover. A working one is in this run's scratchp
     line; a whole instrument for one term lands on the wrong side of W-6.3.**
     **Still open, deliberately not taken:** the Sectors screen does not LINK to that glossary entry —
     a reader has to know to look it up.
+    > ⛔ **NOTE 2026-09-09 — the app's OWN LESSON AND TRACK NAMES were being reported as undefined
+    > jargon, and the instrument now suppresses them. Do not re-derive this.** A lesson that
+    > cross-references another by title (the item 36 practice) fed that title to the capitalized-phrase
+    > rule: on `all`, **11 of 81 listed candidates were lesson-title or track-label fragments**, and
+    > the top three of the whole report were `Short-Term Debt`, `Short-Term Debt Cycle` and
+    > `long-term debt` — i.e. lessons **32 and 33**, whose titles those are. Item 68's shape exactly:
+    > adding a cross-reference made the report worse while making the content better. Suppressed by a
+    > word-aligned n-gram of **≥2 words** over the 44 titles + 3 track labels, printed with its
+    > citation, not applied to the `glossary` corpus, with a four-way control.
+    > ⚠️ **The one-word half is NOT covered and is the open residual.** This item's own
+    > *"beneficiary is not a gap (lesson 14 is titled for it)"* is a **one-word** fragment of
+    > *Estate Planning Basics: Wills and Beneficiary Designations*, and the two-word floor
+    > deliberately leaves it listed — a one-word title fragment is too ambiguous to suppress without
+    > eating `MORE`, `LESS`, `AND` and `RULE`, which were the first draft's false positives.
+    > **One live instance, honest priority low; do not pick by default.**
+    > ✅ **And the main path was swept for the first time and is CLEAN** — the script defaults to
+    > `money` (`argv[2] ?? "money"`) and neither log recorded an economy or essentials run. After the
+    > title fragments come out, every economy candidate is ordinary English, a glossary term the
+    > extractor split (`Funds Rate`), or defined inline (`Term Premium`, lesson 36, under its own
+    > heading). **No glossary entry is owed on the economy track.**
 
 64. **✅ BOTH CLOSED — struck from the W-5.2 pick list 2026-08-24 after seven days of being
     recommended when nothing was open. `Dividend` shipped 2026-08-20; the other two keys landed
@@ -7573,5 +7593,166 @@ measurement. **Next run: do not pick this by default.**
 
 ⚠️ **Reported, not fixed — O-4/O-5, not repo work.** A run may not push, so this commit does not reach
 a learner until the owner pushes `main`. `public/data/market.json` is untouched by this run.
+
+**Schedule:** the cron is the owner's lever; not read, not compared, not touched.
+
+### 2026-09-09 (scheduled dev-agent; W-6.2 rule 1 free — the previous run's only residual was an unnumbered note ending "do not pick this by default", so this pick came from a LAUNCH_PLAN clause: §3.0 clause 3, the primary success criterion) — the jargon instrument's top three findings on the main path were lessons 32 and 33, and the rule it was missing is the one item 68 already wrote down
+
+**What this is.** `LAUNCH_PLAN.md` §3.0 is the clarity standard and its clause 3 is *"no undefined
+jargon — a term either gets defined where it appears or links to the glossary."* `npm run jargon`
+(item 60) is the instrument for it. Two things were true and neither was written down: the script
+**defaults to the `money` track** (`process.argv[2] ?? "money"`), and **the main path had never been
+swept** — `AGENT_LOG.md` + the archive contain no economy or essentials sweep. So this run swept
+them, and the sweep is what found the instrument defect.
+
+**The defect, in one sentence: a lesson that cross-references another lesson by title fed that title
+into the candidate list as undefined jargon.** Lesson 33 §1 reads *many short-term cycles like the one
+in "The Short-Term Debt Cycle"* — a pointer to lesson 32, which is the cross-referencing practice item
+36 built and maintains. The capitalized-phrase rule read it as a term used across four lessons with no
+glossary entry.
+
+⭐ **This is item 68's finding with a different cause, and this file's own header states the
+standard:** *"An instrument whose number rises when the text improves is worse than a noisy one: it
+trains a run to distrust its own fix."* Item 68's instance was an acronym expanded in place. This one
+is a cross-reference — **adding a fifth pointer to lesson 32 makes the report worse while making the
+content better.** And a lesson title is not a near-miss: it is by construction the *best*-defined
+phrase in the corpus, because it has a whole lesson.
+
+W-6.2 rule 3's sentence, and it is deliberately stated as the indirect thing it is: *a run reads
+`Short-Term Debt Cycle — 4 lessons, not in the glossary` at the top of the report, adds a glossary
+entry for it, and the learner gets a chip on lesson 33 whose definition is a one-line restatement of
+lesson 32 — pointed sideways at a paragraph instead of at the lesson that teaches it.*
+
+#### Premise re-measured before editing, with controls, and the FIRST premise broke
+The item I started on was *"the main path teaches Short-Term Debt Cycle across four lessons and the
+glossary has no entry for it"*, which the tool's own output says and which is **wrong**. Measured
+before touching anything:
+- **`lessons.js`: lesson 32 IS "The Short-Term Debt Cycle" and lesson 33 IS "The Long-Term Debt
+  Cycle".** The "candidates" are the app's own lesson titles. Disposition changed from *write two
+  glossary entries* to *fix the instrument* — the item-65/75 shape, and the third premise-break in
+  this log to change a disposition rather than a figure.
+- **The second-ranked survivor also broke.** `Term Premium`, 8x in lesson 36, is defined inline under
+  its own section heading: *"That extra compensation is called the term premium."* §3.0 clause 3 met.
+- **Control (a term I knew independently):** the glossary's 43 keys were read directly and
+  `Short-Term Debt Cycle` genuinely is not among them — so the absence is real and only the
+  *interpretation* was wrong.
+- **Classified by hand before writing any code**, over the `all` corpus parsed from the tool's real
+  output rather than retyped: **9 of 81 listed candidates were lesson-title fragments.** A first-draft
+  substring rule scored 7 and its extra hits were `MORE`, `LESS`, `AND` and `RULE` — single common
+  words sitting inside four unrelated titles. **That false-positive set is why the shipped rule has a
+  two-word floor.**
+- **Two more were track labels, not lesson titles:** `Money Basics` and `Economy Works` are
+  `trackEssentials` / `trackEconomy` in `locales/en.js`. Hand count 9 + 2 = 11; the shipped rule
+  reports **11** on `all`, which is the independent agreement.
+
+#### What shipped
+**Two script files, no app code, no content.** `git diff --name-only` under `src/` → **0**.
+`jargon-candidates.mjs` gains `nameGrams()` — word-aligned n-grams of **≥2 words** over the 44 lesson
+titles plus the three track labels — and a `navReferenced` bucket that is **suppressed from CANDIDATES
+and printed with its citation**, matching the file's existing "named, never just counted" rule for the
+gloss bucket. Each line reads `"Short-Term Debt Cycle" → The Short-Term Debt Cycle`, so a wrong
+suppression is visible on its face.
+
+Three things decided deliberately and stated rather than defaulted:
+- **≥2 words.** A one-word title fragment is genuinely ambiguous; under-suppressing is the safe
+  direction for a script whose whole job is finding undefined terms.
+- **Not applied to the `glossary` corpus.** There the reader is mid-lookup, and "a lesson elsewhere
+  teaches this" is not an answer to a definition that leans on an unexplained term. Reports **0**.
+- **Bucket scoped to rows that would have been listed**, so the three suppression buckets stay
+  disjoint and the lower-reach arithmetic still balances.
+
+**`check-measurements.mjs` had to change in the same commit, and it said so itself.** The new field
+broke its `CLAIM` regex and it failed with *"If the line was renamed, update this script's CLAIM
+pattern in the same change."* It is now **named groups, not positions** — with positional groups every
+field after the insertion shifted by one, so the checker would have compared self-defining against
+low-reach and reported a mismatch as a mistyped number — and the new field is **optional**, because
+the log holds 9 claims written before it existed and a claim that stops parsing is reported as *the
+instrument printed no MEASURED line*, a FAIL aimed at the wrong thing.
+
+⚠️ **One bug I introduced and caught before committing.** The fingerprint hashes this file's bytes,
+`glossaryForms` and `docs` — and **`docs` carries section headings and bodies, but not titles**, while
+track labels come from `locales/en.js`, which was not an input at all. Renaming a lesson could
+therefore move the candidate count while the fingerprint held, and a quoted claim would be enforced
+against a corpus it no longer described — **failing in the one direction this line must never fail
+in.** The name set is now hashed too.
+
+#### Verification — plants, both directions, restored from a `cmp`-verified scratchpad copy
+Baseline exit 0 before and after. Never `git checkout --`.
+| plant | result |
+|---|---|
+| gram builder emits nothing (rule dead) | **exit 1** — "was NOT treated as part of…, or the rule is dead"; the live structural check also fired on 47 names |
+| two-word floor removed (1-word grams) | **exit 1** — `"widget" WAS treated as part of…` |
+| contiguity removed (word bag, via `.sort()`) | **exit 1** — caught by the suffix assertion and the 26-name structural check |
+
+⚠️ **Reported precisely rather than rounded in my favor: the third plant did NOT trip the
+`short widget` assertion** (sorting leaves that pair non-adjacent), it tripped the other two. The
+plant was caught; not every assertion caught it.
+
+**Then the part that would otherwise have been vacuous.** After the change all 9 existing claims
+**retire** on fingerprint, so `enforced` is 0 — and a regex I had broken into never matching would
+print exactly the same reassuring line. So enforcement was proved live: pasting the current economy
+MEASURED line into `AGENT_LOG.md` gave **1 enforced and agreeing**; corrupting the **new** field gave
+`FAIL … Disagrees on: navNames (log 4, actual 3)`; corrupting a **pre-existing** field gave
+`Disagrees on: candidates (log 27, actual 26)`. `AGENT_LOG.md` restored **byte-identical at 653,199 b**.
+
+`npm test` **exit 0**, 0 FAIL, the same **3** pre-existing warnings (translation review coverage,
+translation completeness, option-length cue / item 160); `npm run check-blindspot` exit 0; `npm run
+build` exit 0. ⚠️ All exit codes read **without a pipe**. **Bundle control that this touched no app
+code:** `index-1vMDhlg3.js` **271.53 kB** and `LessonReader-q3Tk_INS.js` **93.86 kB** — byte-identical
+to the previous run's reported figures.
+
+**MEASURED lines, pasted verbatim, not retyped:**
+MEASURED jargon economy: 26 candidates, 12 control, 1 self-defining, 3 lesson/track names, 278 low-reach  [fingerprint 3232cadf]
+MEASURED jargon all: 70 candidates, 30 control, 1 self-defining, 11 lesson/track names, 672 low-reach  [fingerprint 03089d80]
+
+#### The content answer, which is the other half of this run
+**The main path has now been swept for undefined jargon for the first time, and it is clean.** After
+the 3 title fragments come out, every remaining economy candidate is ordinary compositional English
+(`car loan`, `mortgage payment`, `more income`), a glossary term the extractor split (`Funds Rate` —
+`Fed Funds Rate` is an entry), or a term the lesson defines inline (`Term Premium`). **No glossary
+entry is owed on the economy track**, and no content file was touched.
+
+#### Step 5 — adversarial self-check
+**Blindspot register: nothing found, grepped rather than assumed.** **0** files under `src/content/`
+or `src/locales/` in the diff; added lines grep **0** for
+`dalio|should buy|should sell|we recommend|best time to|guaranteed return|your portfolio`;
+`check-blindspot` **exit 0**. §10.1 is not reachable — this run wrote no learner-facing prose at all.
+§2.3: the two `2026-09-09` stamps are in `scripts/` comments that render nowhere and are written as
+dated records. §10.3 untouched.
+**DECISIONS.md conflict: none.** localStorage-only state, `.js`-not-JSON content and Vite-not-Expo are
+untouched; this is two build-time scripts. Item 12 (Expo/RN port cost): **zero** — nothing here ships
+to a client.
+**Already-done backlog item: no, and the specific history was searched.** `lesson title` returns 15
+hits in the archive and 1 in `AGENT_LOG.md`, none about jargon suppression; no decision against it
+exists.
+⭐ **But item 60 already contains a hand-correction of this exact class, and that is the finding.** It
+records *"**beneficiary** is not a gap (lesson 14 is titled for it and teaches it)"* — a run met one
+instance, correctly diagnosed it, wrote it in the backlog **as a fact about that term**, and the
+instrument went on producing the class. **A premise correction filed against one term does not
+generalize itself.**
+⚠️ **And the shipped rule does NOT cover that instance — stated plainly rather than claimed closed.**
+`Beneficiary` is a **one-word** fragment of *"Estate Planning Basics: Wills and Beneficiary
+Designations"*, and the two-word floor deliberately leaves it listed. **Half the class is covered.**
+The other half needs a judgment the floor exists to avoid making.
+**My own verification claim, weakest part first.** **(1)** The learner-visible failure is
+**indirect** — a bad glossary entry a future run would have written, not a defect on screen today.
+Nothing was fixed in the app, and this run does not claim otherwise. **(2)** The "first-ever sweep"
+claim rests on grepping both logs for an economy/essentials jargon run; absence in the logs is not
+proof none was ever run, only that none was recorded. **(3)** The 11 suppressions were read by hand
+and every one is a genuine title or track fragment; that is inspection of a short list, not a
+measurement. **(4)** `W-6.3 re-measured on this tree: scripts/ 21,855 lines vs app code 10,048 —
+2.17x`, up from the previous run's 2.13x. **This run added ~173 script lines against 0 app lines and
+moved the ratio the wrong way**, which W-6.3 asks be stated rather than hidden: the defense is that it
+corrects an instrument that was already there and mis-reporting, not that it is free.
+
+#### Filed as a note under item 60, deliberately NOT numbered (W-6.2 rule 2)
+The one-word half of the lesson-title class is open (`Beneficiary`, above). **One live instance,
+honest priority low, and the fix is a judgment, not a measurement — next run: do not pick this by
+default.**
+
+⚠️ **Reported, not fixed — O-4/O-5, not repo work.** A run may not push, so this commit does not reach
+a learner until the owner pushes `main`. `public/data/market.json` is untouched by this run. ✅ **W-7.3's
+falsifiable test resolved in the job's favour:** a refresh commit (`8c385a4`, `asOf 2026-09-08`) arrived
+in this working copy by itself, so the market job is live on machine A as the owner said.
 
 **Schedule:** the cron is the owner's lever; not read, not compared, not touched.

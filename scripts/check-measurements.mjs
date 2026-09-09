@@ -24,7 +24,7 @@
 //
 // HOW IT WORKS. `jargon-candidates.mjs` ends with one line built to be pasted:
 //
-//   MEASURED jargon glossary: 54 candidates, 14 control, 3 self-defining, 0 low-reach  [fingerprint 8e8cf29e]
+//   MEASURED jargon glossary: 82 candidates, 24 control, 3 self-defining, 0 lesson/track names, 0 low-reach  [fingerprint 5bb42a7e]
 //
 // This script finds every such line anywhere in AGENT_LOG.md or its archive,
 // re-runs the
@@ -79,8 +79,30 @@ const ok = (msg) => console.log(`ok: ${msg}`);
 // line stays checkable when it is quoted, indented under a bullet, or fenced —
 // all three occur in this log, and a claim that stops being seen because of
 // markdown around it is a claim that silently stops being checked.
+// NAMED GROUPS, not positions, since 2026-09-09. The `lesson/track names`
+// field was added to the instrument's line that day, and with positional
+// groups every field after it silently shifted by one — the checker would have
+// compared self-defining against low-reach and reported a mismatch as a
+// mistyped number. A field added in the middle is the ordinary way this line
+// grows, so the parse must not care where it sits.
+//
+// THAT FIELD IS OPTIONAL ON PURPOSE, and it is not leniency: the log holds
+// claims written BEFORE it existed, and those lines must still parse. A claim
+// that stops parsing is reported as "the instrument printed no MEASURED line"
+// — a FAIL aimed at the instrument — when the truth is that the claim is
+// simply old and should retire on its fingerprint like any other.
 const CLAIM =
-  /^[\s>`*_-]*MEASURED\s+jargon\s+(\w+):\s+(\d+)\s+candidates,\s+(\d+)\s+control,\s+(\d+)\s+self-defining,\s+(\d+)\s+low-reach\s+\[fingerprint\s+([0-9a-f]+)\]/;
+  /^[\s>`*_-]*MEASURED\s+jargon\s+(?<mode>\w+):\s+(?<candidates>\d+)\s+candidates,\s+(?<control>\d+)\s+control,\s+(?<selfDefining>\d+)\s+self-defining,(?:\s+(?<navNames>\d+)\s+lesson\/track\s+names,)?\s+(?<lowReach>\d+)\s+low-reach\s+\[fingerprint\s+(?<fingerprint>[0-9a-f]+)\]/;
+
+// Only the fields the line actually carried. An absent `navNames` must not
+// become a key holding `undefined`: the comparison below iterates the claim's
+// own keys, so a phantom key would compare undefined against a real count and
+// report a disagreement that is really an age difference.
+const claimNumbers = (g) => {
+  const n = { candidates: +g.candidates, control: +g.control, selfDefining: +g.selfDefining, lowReach: +g.lowReach };
+  if (g.navNames !== undefined) n.navNames = +g.navNames;
+  return n;
+};
 
 const claims = [];
 for (const log of LOGS) {
@@ -99,9 +121,9 @@ for (const log of LOGS) {
     claims.push({
       file: where,
       line: i + 1,
-      mode: m[1],
-      numbers: { candidates: +m[2], control: +m[3], selfDefining: +m[4], lowReach: +m[5] },
-      fingerprint: m[6],
+      mode: m.groups.mode,
+      numbers: claimNumbers(m.groups),
+      fingerprint: m.groups.fingerprint,
     });
   });
 }
@@ -139,8 +161,8 @@ const measure = (mode) => {
     return null;
   }
   const current = {
-    numbers: { candidates: +m[2], control: +m[3], selfDefining: +m[4], lowReach: +m[5] },
-    fingerprint: m[6],
+    numbers: claimNumbers(m.groups),
+    fingerprint: m.groups.fingerprint,
   };
   measured.set(mode, current);
   return current;

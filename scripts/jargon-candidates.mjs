@@ -91,8 +91,9 @@ import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 
 import { glossary } from "../src/content/glossary.js";
-import { lessons } from "../src/content/lessons.js";
+import { lessons, TRACKS } from "../src/content/lessons.js";
 import { lessonContent } from "../src/content/lessonContent.js";
+import EN from "../src/locales/en.js";
 
 const track = process.argv[2] ?? "money";
 if (!["money", "economy", "essentials", "all", "glossary"].includes(track)) {
@@ -382,6 +383,66 @@ const byReach = (a, b) => b.lessons.length - a.lessons.length || b.count - a.cou
 known.sort(byReach);
 candidates.sort(byReach);
 
+// ── The names of the app's own lessons and tracks are not jargon ──────────
+// Added 2026-09-09, and it is item 68's failure with a different cause.
+//
+// That header rule reads: an instrument whose number RISES when the text
+// IMPROVES trains a run to distrust its own fix. Item 68's version was an
+// acronym expanded in place. This one is a CROSS-REFERENCE. Lesson 33 §1 says
+// `many short-term cycles like the one in "The Short-Term Debt Cycle"` — a
+// pointer to lesson 32, which is the practice item 36 built and maintains —
+// and the capitalized-phrase rule read it as an undefined term used across
+// four lessons. Adding a fifth cross-reference makes the report worse while
+// making the content better, which is exactly the shape item 68 named.
+//
+// It is not a near-miss either: a lesson title is, by construction, the
+// BEST-defined phrase in the corpus — it has a whole lesson. Measured on
+// `all` before this rule: 9 of 81 listed candidates were lesson-title or
+// track-name fragments, and the top three of the whole report were
+// `Short-Term Debt`, `Short-Term Debt Cycle` and `long-term debt` — i.e.
+// lessons 32 and 33, the two lessons the main path is built around. A run
+// reading that list would have added a glossary entry restating a lesson.
+//
+// TRACK LABELS ARE HERE FOR THE SAME REASON AND ARE NOT AN EXTRA: `Money
+// Basics` and `Economy Works` are `trackEssentials` and `trackEconomy` in
+// `locales/en.js`, so they are names of things the learner opens, exactly
+// like a title. They live in the locale file rather than in `lessons.js`,
+// which is the only reason they read as unrelated.
+//
+// THE RULE IS A WORD-ALIGNED n-GRAM OF AT LEAST TWO WORDS, and both halves
+// are load-bearing. Contiguous-and-aligned is what makes it a fragment of the
+// name rather than a bag of its words; the two-word floor is what keeps it
+// from eating `MORE`, `LESS`, `AND` and `RULE`, which are single common words
+// sitting inside four unrelated titles and were the false positives of the
+// first draft. A one-word title fragment is genuinely ambiguous, so it stays
+// listed — under-suppressing is the safe direction for a script whose whole
+// job is finding undefined terms.
+function nameGrams(labels) {
+  const grams = new Map();
+  for (const label of labels) {
+    if (!label) continue;
+    const words = norm(label).split(" ").filter(Boolean);
+    for (let i = 0; i < words.length; i++) {
+      for (let j = i + 2; j <= words.length; j++) {
+        const gram = words.slice(i, j).join(" ");
+        if (!grams.has(gram)) grams.set(gram, label);
+      }
+    }
+  }
+  return grams;
+}
+
+// NOT applied to the glossary corpus. There the question is whether a
+// DEFINITION leans on a term it does not explain, and "a lesson elsewhere
+// teaches this" is not an answer to it — the reader of a definition is
+// mid-lookup, not mid-path.
+const navNames = isGlossaryCorpus
+  ? new Map()
+  : nameGrams([
+      ...lessons.map((l) => l.title?.en),
+      ...TRACKS.map((tr) => EN[tr.labelKey]),
+    ]);
+
 // ── Report ────────────────────────────────────────────────────────────────
 const corpusLabel = isGlossaryCorpus
   ? `glossary definitions (en.f + en.ex)`
@@ -404,8 +465,14 @@ const USES = isGlossaryCorpus ? 1 : 3;
 // extraction time would have quietly cut the control from 14 to fewer, i.e.
 // weakened the one check that proves the extractor still matches anything.
 const selfDefined = candidates.filter((h) => h.glossed);
+// Scoped to rows that WOULD have been listed, so the three suppression buckets
+// stay disjoint and the lower-reach arithmetic below still balances: a
+// low-reach lesson title was already accounted for as low-reach.
+const navReferenced = candidates.filter(
+  (h) => !h.glossed && navNames.has(h.n) && (h.lessons.length >= REACH || h.count >= USES),
+);
 const reported = candidates.filter(
-  (h) => !h.glossed && (h.lessons.length >= REACH || h.count >= USES),
+  (h) => !h.glossed && !navNames.has(h.n) && (h.lessons.length >= REACH || h.count >= USES),
 );
 console.log(`\nCANDIDATES not in the glossary, used in >= ${REACH} ${UNIT} or >= ${USES}x (${reported.length}):`);
 const pad = isGlossaryCorpus ? 34 : 30;
@@ -419,8 +486,18 @@ for (const h of reported) {
   );
 }
 console.log(
-  `\n  (${candidates.length - reported.length - selfDefined.length} lower-reach candidates suppressed; most are ordinary English)`,
+  `\n  (${candidates.length - reported.length - selfDefined.length - navReferenced.length} lower-reach candidates suppressed; most are ordinary English)`,
 );
+// Named, never just counted — same rule as the gloss bucket below, and the
+// citation is the point: "suppressed as a lesson name" is only checkable if
+// the report says WHICH lesson, so a wrong suppression is visible on its face.
+if (navReferenced.length) {
+  console.log(
+    `  (${navReferenced.length} suppressed as the app's own lesson/track names — a title is taught by ` +
+      `its whole lesson, so it is defined, not undefined: ` +
+      `${navReferenced.map((h) => `"${h.display}" → ${navNames.get(h.n)}`).join("; ")})`,
+  );
+}
 // Named, never just counted: a suppression rule that hides what it removed is
 // how a report starts lying quietly. These are short lists by construction.
 //
@@ -694,6 +771,59 @@ if (phantoms.length) {
       `a clause boundary (a comma or a full stop), so these are artefacts, not vocabulary.`,
   );
 }
+// ── Control for the lesson/track-name rule (2026-09-09). Both directions, over
+// a SYNTHETIC name, because the real titles are content and a control that
+// moves with the thing it checks is not a control — the same reason the gloss
+// probe below is not drawn from the corpus.
+//
+// The four assertions are the rule's four ways of being wrong: dead (suppresses
+// nothing), over-matching on a single word (the MORE/LESS/AND/RULE false
+// positives the first draft of this rule actually produced), over-matching on a
+// non-contiguous word bag, and unanchored to the real catalog.
+{
+  const probeGrams = nameGrams(["The Short-Term Widget Cycle"]);
+  for (const [gram, want, why] of [
+    ["short term widget", true,
+      "a multi-word fragment of a name must be recognized, or the rule is dead and lesson titles are back in the candidate list"],
+    ["widget cycle", true,
+      "the rule must reach the END of a name, not only its start — `Economy Works` and `Economic Cycles` are both suffixes"],
+    ["widget", false,
+      "a ONE-word fragment must survive: it is too ambiguous to suppress, and the two-word floor is the only thing keeping MORE, LESS, AND and RULE out of this bucket"],
+    ["short widget", false,
+      "a non-contiguous word bag must NOT match, or the rule is suppressing on shared vocabulary rather than on the name itself"],
+  ]) {
+    if (probeGrams.has(gram) !== want) {
+      problems.push(
+        `CONTROL FAILED: lesson/track-name rule — "${gram}" ` +
+          `${want ? "was NOT" : "WAS"} treated as part of "The Short-Term Widget Cycle". ${why}.`,
+      );
+    }
+  }
+  // The live half asserts a STRUCTURAL property rather than any specific title,
+  // so renaming a lesson cannot quietly disarm it: every multi-word name must
+  // contribute its own leading gram. If the catalog or locale import ever
+  // yields empty names this fires, instead of suppressing nothing in silence.
+  if (!isGlossaryCorpus) {
+    const words = (s) => norm(s).split(" ").filter(Boolean);
+    const multiWord = [
+      ...lessons.map((l) => l.title?.en),
+      ...TRACKS.map((tr) => EN[tr.labelKey]),
+    ].filter((n) => n && words(n).length >= 2);
+    const missing = multiWord.filter((n) => !navNames.has(words(n).slice(0, 2).join(" ")));
+    if (!multiWord.length) {
+      problems.push(
+        "CONTROL FAILED: no multi-word lesson or track name was read at all, so the lesson/track-name " +
+          "suppression is being asserted against an empty set — the catalog or the locale import changed shape.",
+      );
+    } else if (missing.length) {
+      problems.push(
+        `CONTROL FAILED: ${missing.length} multi-word name(s) contributed no gram (e.g. "${missing[0]}") — ` +
+          "the gram builder and the names it is fed have drifted apart.",
+      );
+    }
+  }
+}
+
 // ── Control for the gloss rule (item 68). A suppression rule is an absence
 // machine too, and it fails in BOTH directions: suppress nothing and the rule
 // is dead; suppress everything and the report is empty and reassuring. Neither
@@ -803,11 +933,21 @@ const fingerprint = createHash("sha256")
   .update([...glossaryForms].sort().join("\0"))
   .update("\0docs\0")
   .update(docs.map((d) => `${d.id}\0${d.text}`).join(""))
+  // The lesson/track names, because the suppression rule reads them and NOTHING
+  // ELSE IN THIS HASH DOES: `docs` carries section headings and bodies, not
+  // titles, and track labels come from `locales/en.js`, which is not an input
+  // above. Without this, renaming a lesson could move the candidate count while
+  // the fingerprint HELD — and a quoted claim would then be enforced against a
+  // corpus it no longer describes, i.e. reported as a failure when it is really
+  // a retirement. That is the one direction this line must never fail in.
+  .update("\0names\0")
+  .update([...navNames.keys()].sort().join("\0"))
   .digest("hex")
   .slice(0, 8);
 console.log(
   `\nMEASURED jargon ${track}: ${reported.length} candidates, ${known.length} control, ` +
-    `${selfDefined.length} self-defining, ${candidates.length - reported.length - selfDefined.length} ` +
+    `${selfDefined.length} self-defining, ${navReferenced.length} lesson/track names, ` +
+    `${candidates.length - reported.length - selfDefined.length - navReferenced.length} ` +
     `low-reach  [fingerprint ${fingerprint}]`,
 );
 console.log(
