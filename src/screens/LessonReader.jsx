@@ -20,7 +20,7 @@ import Icon from "../components/Icon.jsx";
 import LessonVisual from "../components/LessonVisual.jsx";
 import PolicySim from "../components/PolicySim.jsx";
 import Question from "../components/Question.jsx";
-import { Button, Card, Disclaimer, EmptyState, LoadFailure, Note, Stack, Text } from "../components/ui.jsx";
+import { Announcer, Button, Card, Disclaimer, EmptyState, LoadFailure, Note, Stack, Text } from "../components/ui.jsx";
 import { family, fill, ink, line, MIN_TAP, radius, shadow, space, surface } from "../theme.js";
 
 // Lesson body text is split two ways: by track (item 25, 2026-08-14) and by
@@ -67,8 +67,13 @@ const QUIZ_TEXT_LOADERS = {
 
 function Toast({ label }) {
   return (
+    // `aria-hidden` rather than `role="status"`: this node is inserted with its
+    // text already inside it, which is the one shape a live region cannot
+    // announce (see `Announcer`). It carries no focusable content and is
+    // already `pointerEvents: none`, so hiding it costs a reader nothing — the
+    // announcement is made by the persistent `Announcer` below instead.
     <div
-      role="status"
+      aria-hidden="true"
       style={{
         position: "fixed", top: "12%", left: "50%", zIndex: 300,
         display: "flex", alignItems: "center", gap: space["2"],
@@ -264,6 +269,10 @@ export default function LessonReader({ t, lang, lessons, index, completedLessons
 
   return (
     <div>
+      {/* Always mounted and empty until there is something to say, so that the
+          region pre-exists its own content. The toast beside it is the visual
+          half of the same message and is `aria-hidden`. */}
+      <Announcer message={celebrating ? t.completeLabel : ""} />
       {celebrating && <Toast label={t.completeLabel} />}
 
       <button

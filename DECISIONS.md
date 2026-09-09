@@ -391,6 +391,14 @@ Add a new entry when a run makes a choice future work should be able to look up 
   lesson and kept its hash. The learner was left on a 44-row path with no indication which row was
   theirs. `resolveRoute` now returns `missed: { lessonId, reason }` alongside `{ tab, reading }`, and
   the path renders a dismissible notice naming the lesson the link was for and what opens it.
+  ⚠️ **Annotated 2026-09-09 (dev-agent), measurement kept verbatim, instrument retired.** The
+  sentence above — "no `role="status"` or `role="alert"` node existed anywhere on screen" — was true
+  when it was measured and is **no longer reproducible**, because `App` now renders a persistent
+  empty `Announcer` (`role="status"`) so that the practice coach mark and the lesson-complete toast
+  announce at all. A re-run of that instrument now finds such a node **on every screen**, and on the
+  path it is typically non-empty with the coach mark's copy. **Nothing about this decision changed**;
+  the discarded-link notice is still what reports the refusal, and `check-data.mjs` §18(d2) still
+  proves it. Re-measure by reading the announcer's CONTENT, never its presence.
   **This is still option (a) — accept it — and the unlock bet is untouched:** no URL opens a locked
   lesson, `check-data.mjs` §18(d) still proves that by injection, and §18(d2) now proves the refusal
   is reported. **The first-time visitor is deliberately excluded**: they are sent into lesson 1 rather

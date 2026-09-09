@@ -18,7 +18,7 @@ import { dismissAllPushed, initialRoute, useDeepLink } from "./lib/deepLink.js";
 import { isLessonUnlocked } from "./lib/lessonUnlock.js";
 import { useAppState } from "./lib/useAppState.js";
 import Icon from "./components/Icon.jsx";
-import { AppError, Button, Card, EmptyState, LoadFailure, Note, Text } from "./components/ui.jsx";
+import { Announcer, AppError, Button, Card, EmptyState, LoadFailure, Note, Text } from "./components/ui.jsx";
 import ErrorBoundary from "./components/ErrorBoundary.jsx";
 import { APP_MAX_WIDTH, fill, ink, line, MIN_TAP, radius, shadow, space, surface } from "./theme.js";
 import Learn from "./screens/Learn.jsx";
@@ -137,14 +137,21 @@ function FirstRunNotice({ t, onDismiss }) {
 }
 
 // ── Practice coach mark ─────────────────────────────────────────────────
-// A one-time, non-modal pointer at the Practice tab (see useAppState.js).
-// `role="status"` so it's announced to screen readers without stealing
-// focus or trapping it the way FirstRunNotice's dialog does — the point is
-// to introduce the next step, not to block on it.
+// A one-time, non-modal pointer at the Practice tab (see useAppState.js). It
+// must not steal or trap focus the way FirstRunNotice's dialog does — the
+// point is to introduce the next step, not to block on it.
+//
+// ⛔ This carried `role="status"` until 2026-09-09, which did not announce it:
+// the node is inserted with its 64 characters already inside, and a live
+// region only announces CHANGES to a region already in the accessibility
+// tree (measured; see `Announcer`). The announcement is now made by the
+// persistent `Announcer` at the render site below. This container is NOT
+// `aria-hidden` — it owns two real buttons, and hiding a container with
+// reachable buttons in it is a worse defect than the one being fixed. It
+// simply stops claiming to be a live region.
 function PracticeCoachMark({ t, onOpenPractice, onDismiss }) {
   return (
     <div
-      role="status"
       style={{
         position: "fixed", zIndex: 150,
         // Clears the floating nav pill: its own 12px offset + the pill's
@@ -445,6 +452,10 @@ export default function App() {
   // aria-hidden content that is still reachable by keyboard is the failure
   // mode this would otherwise CREATE, and it is worse than the one it fixes.
   const behindDialog = showDisclaimer ? { inert: "", "aria-hidden": "true" } : null;
+  // Drives the coach mark AND its announcement; see the render site below for
+  // why it is one value rather than two copies of the same expression.
+  const coachMarkVisible =
+    !showDisclaimer && showPracticeCoachMark && tab === "learn" && reading === null;
 
   return (
     <div style={{ maxWidth: APP_MAX_WIDTH, margin: "0 auto", minHeight: "100vh", background: surface.canvas, display: "flex", flexDirection: "column" }}>
@@ -492,7 +503,14 @@ export default function App() {
       </button>
 
       {showDisclaimer && <FirstRunNotice t={t} onDismiss={dismissDisclaimer} />}
-      {!showDisclaimer && showPracticeCoachMark && tab === "learn" && reading === null && (
+      {/* The announcer is mounted for the life of the app and empty until the
+          coach mark is actually shown, so the region pre-exists its message.
+          ONE condition drives both halves deliberately: two copies of it would
+          be free to drift, and a drift here is silent — the reader would be
+          told about a coach mark that is not on screen, or not told about one
+          that is. */}
+      <Announcer message={coachMarkVisible ? t.coachMarkPractice : ""} />
+      {coachMarkVisible && (
         <PracticeCoachMark t={t} onOpenPractice={() => goToTab("practice")} onDismiss={dismissPracticeCoachMark} />
       )}
 

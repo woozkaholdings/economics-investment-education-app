@@ -100,6 +100,16 @@ export function routeHash({ tab, reading, lessons }) {
  * (`#/lesson/29`, unlocked) opened the reader and kept its hash, so the two
  * are distinguishable and only one of them says so.
  *
+ * ⚠️ THE MEASUREMENT ABOVE IS DATED AND STAYS VERBATIM; ITS INSTRUMENT DOES
+ * NOT REPRODUCE. Since 2026-09-09 `App` renders a persistent, always-mounted
+ * `Announcer` (`role="status"`, `SrOnly`, empty until it has something to
+ * say), so "does a `role="status"` node exist on this screen" now answers YES
+ * on every screen and has stopped being the discriminator it was. Worse for a
+ * casual re-run: on the path it is usually NON-EMPTY, carrying the practice
+ * coach mark's 64 characters, which have nothing to do with any deep link.
+ * To re-measure THIS behavior, read the announcer's CONTENT and ask whether
+ * anything names the lesson that was refused — presence proves nothing.
+ *
  * So `missed` is `null`, or `{ lessonId, reason }` with reason:
  *   "locked"  — the lesson exists and `isUnlocked` refused it
  *   "unknown" — no lesson in the catalog carries that id (a rotted or

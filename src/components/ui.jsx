@@ -65,6 +65,45 @@ export function SrOnly({ children }) {
   return <span style={srOnly}>{children}</span>;
 }
 
+// ── Announcer ─────────────────────────────────────────────────────────────
+// A persistent, visually hidden live region for messages carried by a node
+// that is NOT persistent — a toast, a coach mark, anything that appears and
+// then leaves.
+//
+// ⛔ Why this exists rather than `role="status"` on the transient node itself,
+// which is what the app did until 2026-09-09. A live region has to be in the
+// accessibility tree BEFORE its content changes: assistive technology
+// registers the region and then watches it for mutations, so a node that
+// arrives with its text already inside is one insertion rather than a change
+// to anything monitored. `Question.jsx` and `PolicySim.jsx` fix that by
+// rendering their region always and empty, which is free for a block element
+// in normal flow. It is NOT free for these two: both are `position: fixed`
+// overlays that are supposed to leave, and always-rendering them means a
+// permanent fixed node. So the ANNOUNCEMENT is made persistent and the
+// VISUAL is left transient.
+//
+// Measured 2026-09-09 with two independent instruments, both carrying
+// controls: the toast inserted a `role="status"` node already holding its 9
+// characters, and the coach mark one already holding 64.
+//
+// The caller keeps ownership of the transient node's own semantics — it must
+// stop being a live region, or the reader gets the message twice. Where that
+// node has no focusable content (a toast) `aria-hidden` is the clean way;
+// where it does (a coach mark, which owns two buttons) it must only DROP its
+// role, because hiding a container with reachable buttons inside it is a
+// worse defect than the one being fixed.
+//
+// `message` is "" when there is nothing to say. Going non-empty → empty →
+// non-empty again is what lets the same message announce twice, which is why
+// callers clear it rather than leaving the last one sitting there.
+export function Announcer({ message = "" }) {
+  return (
+    <div role="status" style={srOnly}>
+      {message}
+    </div>
+  );
+}
+
 // ── Stack ─────────────────────────────────────────────────────────────────
 // Vertical rhythm without margin juggling.
 export function Stack({ gap = space["3"], style, children, ...rest }) {
