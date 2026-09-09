@@ -6073,3 +6073,125 @@ learner-visible-failure sentence cannot be written honestly, because no learner 
 commit does not reach a learner until the owner pushes `main`.
 
 **Schedule:** the cron is the owner's lever; not read, not compared, not touched.
+
+### 2026-09-09 (scheduled dev-agent; W-6.2 rule 1 free — the previous run was the recurring archiving pass and filed no residual, so this pick came from a live walk of the §4.3 gate path: a fresh install through lesson 1) — the button a learner presses 44 times deletes itself and drops focus on the floor, and `Practice.jsx`'s comment for the same transition already names this file as a place that handles it
+
+**What this is.** `Mark Complete` renders on `!done`, so the click that sets `done` **unmounts the
+control that was just pressed** — and nothing claims the focus it takes with it. Measured on the built
+app: `document.activeElement` becomes `BODY` and stays there. W-6.2 rule 3's sentence: *a keyboard
+reader who finishes a lesson is returned to the top of the document, so reaching `Next Lesson` — which
+has just appeared in the exact slot their button occupied — costs a walk through every glossary chip
+and both radiogroups of the lesson they have already finished.*
+
+⭐ **This is the eighth application of a pattern this repo has applied seven times and the class it
+belongs to is already in the archive.** The `Glossary`/`TermDetail` **close** direction was exactly
+this bug and was fixed in August ("with nothing else claiming it, focus falls to `document.body`").
+`Practice.jsx` fixed its own in-place swap, and its comment reads *"Same 'new page' pattern as
+LessonReader/TermDetail"* — naming **this file** as one that follows the pattern. It does, on a lesson
+**change** (a `useEffect` on `[index]` focuses the `<h1>`). The **completion** swap — the only
+transition in the app that replaces content without a route change *and* without a heading appearing —
+was never given the same treatment.
+
+#### Premise re-measured before editing, with the control in the same page load
+`dist/` on `127.0.0.1:8842` (nonexistent-asset control → **404**), driven through the real UI.
+**Control: the reader's own `<h1>` focus on lesson open**, probed by the same expression on the same
+page load → `H1 :: 💳Credit: The Most Important Part`, `tabindex="-1"`. So `.focus()` takes effect and
+`activeElement` is readable in this pane **even though `document.hasFocus()` is `false` and
+`visibilityState` is `"hidden"`** — a null subject reading could not have been a dead instrument.
+In the subject's own page load, `mcFocused: true` before the click proved the same two things again.
+
+| | before click | after click |
+|---|---|---|
+| **subject** `Mark Complete` | focused, in DOM | **unmounted; `activeElement` = `BODY` at 200 / 800 / 2000 ms** |
+| **control** lesson-open `<h1>` | — | focused, `tabindex="-1"` |
+
+⚠️ **Three claims I started to file and killed by measuring — all three were mine, not the app's.**
+1. *"The first-run modal does not hide the app behind it."* `aria-hidden` and `inert` are absent
+   everywhere outside the dialog — but `aria-modal="true"` **is** set, and `<main>` carries
+   `aria-hidden="true"` while it is open. Not a defect.
+2. *"The lesson renders the same quiz question twice."* Two `role="radiogroup"`s with identical
+   options **is the design** — the pre-lesson hook (`reveal={false}`) and the graded check. Both
+   documented at length in this file.
+3. *"Completion is never announced."* **My selector was wrong.** `Announcer` uses `role="status"`,
+   which `[aria-live]` does not match. With `[role="status"]` in the query, "Complete!" is present
+   from ~200 ms to ~1700 ms, exactly as written. **The announcement half of this transition was
+   correct all along and is untouched by this commit** — re-confirmed after the fix.
+   ⛔ **A live-region sweep that queries `[aria-live]` alone cannot see this app's announcer.**
+
+#### What shipped
+**One file, +40/−1, `src/screens/LessonReader.jsx`.** A ref on the `Next Lesson` button plus an
+intent ref set by `handleComplete` and consumed by an effect. **0 style or token lines** (the diff's
+one `style=` hit is the pre-existing `flex: 2` on the line the ref was added to), 0 content or locale
+files, 0 lines added to `scripts/`.
+
+The intent is a **ref set by the click**, not a dependency on `done` — `done` is also true on arrival
+at an already-completed lesson, where nothing should move.
+
+#### After, same instrument
+- **Main branch** (first lesson of a fresh install, continue-prompt showing): `Mark Complete` →
+  **`BUTTON :: Next Lesson`** at 250 / 900 / 2100 ms. "Complete!" still announced; prompt still shown.
+- **Fallback branch, and it is genuinely exercised rather than argued.** On the lesson the app renders
+  last, nothing replaces the button, and focus falls back to the `<h1>` (`nextLessonPresent: false`
+  confirms which branch ran) instead of to `BODY`.
+  ⚠️ **I had the wrong lesson first, and only the test caught it.** `lessons` (authoring order) ends
+  on **money 28**; `lessonsByTrack()` — what `App.jsx` actually passes — ends on **essentials 15**.
+  Seeding 43-of-44 complete against the authoring order produced a `Next Lesson` button on the lesson
+  I had called last, which is what exposed the mistake. The corrected fact is now in the code comment
+  as a **derivation** (`lessonsByTrack()`'s last entry) rather than a lesson name, so it cannot rot.
+- **Two no-steal guards, because an effect with no dependency array runs after every render.**
+  Arriving at an already-completed lesson (where `Next Lesson` **is** present) → focus lands on the
+  `<h1>`, not the button. An ordinary re-render on that lesson (opening a glossary chip) → focus stays
+  on the chip.
+
+**Verification.** `npm test` **exit 0**, warnings **3 → 3** (unchanged: the standing translation-review,
+translation-completeness and option-length-cue ones). `npm run check-blindspot` **exit 0**.
+`npm run build` **exit 0**; `index-BwxkZOjx.js` **271,742 b** (unchanged — the change is in the lazy
+chunk), `LessonReader-CUlTc7ax.js` **94,006 b**, +148 b. All exit codes read **without a pipe**.
+⭐ The comment-only second edit rebuilt to the **same chunk hash**, which is the proof that it was
+comment-only rather than an assertion that it was.
+
+#### Step 5 — adversarial self-check
+**Blindspot register: nothing found, grepped rather than assumed.** `check-blindspot` **exit 0**. The
+40 added lines grep **0** for `dalio|principles|should buy|should sell|we recommend|best time to|
+guaranteed return|your portfolio|for kids`, with a live control (`focus|lesson` → **24**) proving the
+grep reached them. §2.3: the one date in the diff is a measurement note in a **source comment**, the
+house convention in this file; it reaches **0** files in `dist/assets/` (control: `Complete` → 3), so
+no learner sees it. §10.3 untouched — no content or locale file was opened.
+**DECISIONS.md conflict: none.** `grep -in focus DECISIONS.md` → **0 hits**. No closed decision covers
+focus management; localStorage-only state, `.js` content modules and Vite are all untouched.
+**Already-done backlog item: no, and I checked the near-miss rather than assuming.** `completionFocus`
+→ 0 across both logs; `focus falls` → 1, and reading it is what turned up the August
+`Glossary`/`TermDetail` fix cited above. That is the **same class in a different transition**, which
+makes this the eighth application of the pattern, not a redo of the seventh.
+**My own verification claim, weakest parts first.** **(1)** The driving scripts ran in the browser
+pane and are **not committed**; a reviewer re-running "only the commands I ran" gets `npm test` /
+`build` / `check-blindspot` reproducibly, but must rebuild the DOM probes from the definitions above.
+**(2)** I never pressed a real Tab key — the pane delivers key presses but does not move focus with
+them (Environment note). "The next Tab restarts at Skip to navigation" is an **inference** from
+`activeElement === body`, which is well-defined sequential-focus behavior, not something I observed.
+**(3)** No screen reader was pointed at this. Every claim here is about `document.activeElement` and
+DOM presence, never about what a screen reader speaks. **(4)** `innerWidth` read **0** in this pane, so
+**no geometry claim is made anywhere in this entry** — all of it is DOM and focus state. **(5)** W-6.3
+re-measured on this tree: `scripts/` **21,689** lines vs app code **10,166** — **2.13x**, and this run
+added **0** lines to `scripts/`.
+⛔ **This figure was wrong when first written into this entry and is corrected in place before the
+commit, not annotated after it.** I typed `21,937 / 10,167 = 2.16x` by carrying the previous entry's
+`scripts/` number forward and pairing it with an app figure I had not run — the exact defect the App
+summary's "no count that a script generates" rule exists to stop, committed inside the self-check
+step whose job is to catch it. The numbers above are `find | wc -l`, run after noticing.
+
+#### Seen on the same walk, deliberately NOT folded in (W-6.2 rule 2 — a note, not a numbered item)
+The continue-tomorrow prompt renders **above** the action row, so with focus correctly on `Next Lesson`
+a forward Tab now reaches the bottom nav and skips it (one Shift+Tab reaches it; before this commit it
+was ~50 forward Tabs away through the whole lesson). It is also silent — the only `role="status"`
+message is "Complete!". **This is a product question, not a defect**: the prompt "schedules no real
+notification" by explicit design, and focusing an optional commitment ahead of the primary action is a
+nudge a run may not decide unilaterally. **Do not pick this by default** — it needs the owner, and it
+is one screen's tab order, not a measured failure.
+
+⚠️ **Reported, not fixed — O-4 action 2 and O-5 remain owner actions.** `npm run check-deployed` this
+run: canonical URL live and the 404 control firing, but **DIVERGED** — the live bundle is an older
+build and the retired Netlify origin is **still serving the app**. A run may not push, so this commit
+does not reach a learner until the owner pushes `main`.
+
+**Schedule:** the cron is the owner's lever; not read, not compared, not touched.

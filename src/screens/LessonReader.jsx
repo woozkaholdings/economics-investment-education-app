@@ -106,6 +106,11 @@ export default function LessonReader({ t, lang, lessons, index, completedLessons
   // it back to the reader — that recall is the whole point of asking early.
   const [hookChoice, setHookChoice] = useState(null);
   const headingRef = useRef(null);
+  // Where focus goes when Mark Complete disappears out from under it — see the
+  // effect below. Points at the Next Lesson button, which takes the pressed
+  // button's own slot in the action row.
+  const completionFocusRef = useRef(null);
+  const wantsCompletionFocusRef = useRef(false);
 
   // §9.2 payload state. Refs, not state, on purpose: none of this is rendered,
   // and re-rendering the reader every time a check question is answered would
@@ -211,6 +216,38 @@ export default function LessonReader({ t, lang, lessons, index, completedLessons
     return () => clearTimeout(timer);
   }, [celebrating]);
 
+  // Completing a lesson is the one transition in this app that swaps content
+  // WITHOUT a route change, and it unmounts the very control the reader just
+  // pressed: `Mark Complete` renders on `!done`, so the click that sets `done`
+  // deletes it. A removed element takes focus with it, and the browser drops
+  // focus to <body> — measured on the built app 2026-09-09, with the reader's
+  // own <h1> focus as the live control on the same page load. For a keyboard
+  // reader that means the next Tab restarts at "Skip to navigation", so
+  // reaching `Next Lesson` — which has just appeared in the exact slot the
+  // pressed button occupied — costs a walk through every glossary chip and
+  // both radiogroups of the lesson they have already finished.
+  //
+  // This is the pattern `Practice.jsx` already applies to its own in-place
+  // swap, and whose comment names this file as a place that follows it: the
+  // reader does move focus on a lesson CHANGE (the effect above), and this
+  // one transition was never given the same treatment.
+  //
+  // Ordinary renders must not steal focus, so the intent is a ref set by the
+  // click rather than a dependency on `done` — which is also true on arrival
+  // at an already-completed lesson, where nothing should move.
+  useEffect(() => {
+    if (!wantsCompletionFocusRef.current) return;
+    wantsCompletionFocusRef.current = false;
+    // `Next Lesson` is absent on exactly one lesson — `lessonsByTrack()`'s
+    // LAST entry, where nothing replaces the button. That is the track-ordered
+    // list, not the authoring order `lessons` is written in, and the two end on
+    // different lessons; this branch was verified against the one the app
+    // actually renders last. Falling back to the title keeps focus inside the
+    // document rather than destroying it, and reuses the "you are here" target
+    // the lesson-change effect above already uses.
+    (completionFocusRef.current ?? headingRef.current)?.focus();
+  });
+
   const done = completedLessons.includes(lesson.id);
   // `!loadFailed` is not belt-and-braces: the two loaders are independent, so
   // the body can 404 while the quiz text arrives — which would ask for a guess
@@ -272,6 +309,8 @@ export default function LessonReader({ t, lang, lessons, index, completedLessons
       durationSec: elapsedSeconds(startedAtRef.current),
     });
     setCelebrating(true);
+    // Consumed by the focus effect above, on the render this click causes.
+    wantsCompletionFocusRef.current = true;
     if (!wasContinuePromptShownToday()) {
       recordContinueChoice(null); // records "asked today"; the answer follows
       setPrompt("asking");
@@ -600,7 +639,7 @@ export default function LessonReader({ t, lang, lessons, index, completedLessons
         )}
         {/* Unlocks exactly when this lesson is finished, so there is no dead end. */}
         {hasNext && done && (
-          <Button iconRight="arrowRight" onClick={() => onNavigate(index + 1)} style={{ flex: 2 }}>
+          <Button ref={completionFocusRef} iconRight="arrowRight" onClick={() => onNavigate(index + 1)} style={{ flex: 2 }}>
             {t.nextLesson}
           </Button>
         )}
