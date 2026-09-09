@@ -5,6 +5,27 @@
 // Search matches the English key *and* the translated name, so a Korean reader
 // can find "수익률 곡선" without knowing it is filed under "Yield Curve".
 //
+// THE LIST IS SORTED FOR THE READER'S LANGUAGE, and that is the only ordering
+// this screen has ever had a reason to use. `glossary.js` is in AUTHORING
+// order — batches accreted over time (the original macro entries, the
+// personal-finance entries item 35 added, then the income types) — and
+// until 2026-09-09 the rows rendered in exactly that order in all five
+// languages. Measured on the built app that day: 43 rows, `Bond` at 36,
+// `Stock` at 35, `401(k)` at 28, and Korean row-for-row identical to English
+// because the order came from the English keys. LAUNCH_PLAN §"Reference"
+// calls this tab "genuinely look-it-up material"; scanning 43 rows in the
+// order someone happened to write them is not lookup.
+//
+// `Intl.Collator(lang)` rather than `localeCompare` on a bare string, because
+// the sort key is the TRANSLATED name and the four non-English locales need
+// their own collation, not English's: ko orders by Hangul jamo, zh by pinyin,
+// ja puts kana before kanji and orders kanji by reading, es puts Ñ after N.
+// Verified in the browser engine on all five before shipping — an ASCII sort
+// would have produced Unicode code-point order in three of them, which reads
+// as no order at all. `numeric: true` so "401(k)" files as four-oh-one.
+// The sort key is `entry.s || term` — what the row actually DISPLAYS — so a
+// reader's eye and the ordering agree; the English key stays searchable.
+//
 // The bookmark toggle on the term detail promises a learner they can mark
 // terms "worth revisiting"; the SAVED FILTER above the list is what makes
 // revisiting possible. Without it the only trace of a save is a small icon on
@@ -75,12 +96,14 @@ export default function Glossary({ t, lang }) {
 
   const entries = useMemo(() => {
     const q = query.trim().toLowerCase();
+    const collator = new Intl.Collator(lang, { numeric: true });
     return Object.entries(glossary)
       .map(([term, translations]) => ({ term, entry: translations[lang] || translations.en }))
       .filter(({ term }) => !savedOnly || bookmarks.includes(term))
       .filter(({ term, entry }) =>
         !q || term.toLowerCase().includes(q) || (entry.s || "").toLowerCase().includes(q)
-      );
+      )
+      .sort((a, b) => collator.compare(a.entry.s || a.term, b.entry.s || b.term));
   }, [query, lang, savedOnly, bookmarks]);
 
   if (selectedTerm && glossary[selectedTerm]) {

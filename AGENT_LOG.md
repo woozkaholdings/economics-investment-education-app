@@ -7291,3 +7291,141 @@ not a number.
 a learner until the owner pushes `main`.
 
 **Schedule:** the cron is the owner's lever; not read, not compared, not touched.
+
+### 2026-09-09 (scheduled dev-agent; W-6.2 rule 1 free — the previous run filed nothing, so this pick came from a LAUNCH_PLAN clause rather than a chain) — the tab the launch plan calls "genuinely look-it-up material" opens on 43 terms in the order somebody happened to type them, and the Korean list is the English order with Korean words in it
+
+**What this is.** `src/screens/reference/Glossary.jsx` — Reference › Glossary, the §3.0.3 surface,
+tile subtitle *"Every term, defined"*. The list rendered `Object.entries(glossary)` straight through,
+so the row order was `glossary.js`'s **authoring** order: the original macro entries, then the
+personal-finance entries item 35 added, then the income types, each batch unordered inside itself.
+W-6.2 rule 3's sentence: *a learner opens the glossary to look up "Bond" and has to read 36 rows to
+find it, because the list is in the order the entries were written.*
+
+⭐ **The pick came from `LAUNCH_PLAN.md`'s Reference row — "Genuinely look-it-up material, grouped
+honestly rather than as 'everything else'"** — which is a claim about this screen that the screen did
+not keep. Nothing in `AGENT_LOG.md`, the archive or `DECISIONS.md` has ever decided this order:
+grepping both logs and `DECISIONS.md` for glossary + order/sort/alphabetical returns three hits and
+none is about display order (the nearest, archive line 12939, says a glossary has *no* reading-order
+dependency, which supports sorting rather than conflicting with it).
+
+#### Premise re-measured before editing, on the built app, with two controls
+`npm run build` at HEAD → `index-COeFb-NF.js` / **`Reference-DwdmyvRS.js`**, served from `dist/` by
+`python3 -m http.server` on `127.0.0.1:8842` (**404 control fired** — a nonexistent path returns 404,
+so this server is not the index.html-fallback trap the 2026-09-09 reader run recorded), viewport
+375x812, `window.innerWidth` read **375** before anything was measured.
+
+- **Subject, `en`:** 43 rows, read off `dl > div[role="button"]`'s `aria-label`. `Bond` at **36**,
+  `Stock` at **35**, `401(k)` at **28**, `Yield Curve` at **4**. Not alphabetical by any key.
+- **Subject, `ko`:** 43 rows, **row-for-row the same sequence** — 국내총생산, 소비자물가지수,
+  연방기금금리, 수익률 곡선 … 주식 at 35, 채권 at 36. The Korean reader was being shown the English
+  key order with Korean words in it.
+- **Control A — the reader is not returning a static list.** Typing `in` into the search box took the
+  list **43 → 20**, and clearing it took it **20 → 43**, in the same call.
+- **Control B — the reader follows the live language.** Switching the picker to `ko` changed
+  `documentElement.lang` to `ko` and every one of the 43 names to Korean, in the same call. An
+  instrument blind to a re-render would have failed both.
+
+#### What shipped
+**One file, 24 insertions / 1 deletion: one `.sort()` and a header that records the measurement.**
+`new Intl.Collator(lang, { numeric: true })`, comparing **`entry.s || term` — what the row actually
+displays** — so the reader's eye and the ordering agree. **0 style or token lines** (diff grepped for
+`padding|margin|color:|font|border|space\[|minHeight|surface\.|fill\.|ink\.` → 0), **0 files under
+`content/` or `locales/`**, no new locale key: this changes the order of strings that are already
+written in five languages, not any string.
+
+⭐ **`Intl.Collator(lang)` rather than a bare `localeCompare` or an ASCII sort, and the reason is
+measured rather than assumed.** The sort key is the **translated** name, and three of the five
+locales need collation English does not have. Checked in the browser engine, all five resolving to
+their own locale (`en→en, es→es, ko→ko, zh→zh, ja→ja`):
+- **ko** — 개인은퇴계좌 · 경기침체 · 구매관리자지수 · 구매력 · 국내총생산 · 근로 소득 · 금리 …
+  (Hangul jamo order, ㄱ before ㅂ before ㅈ)
+- **zh** — 保费 · 被动收入 · 本金 · 波动率指数 · 采购经理人指数 · 储蓄账户 (pinyin: bǎo bèi běn bō cǎi chǔ)
+- **ja** — FF金利 · PMI · イールドカーブ · インフレ · … · 量的引き締め · 量的緩和 · 労働所得
+  (Latin, then kana, then kanji **by reading** — りょう before ろう)
+- **es** — Acción · Ajuste Cuantitativo · Base Monetaria · Bono · Burbuja (and Ñ after N)
+An ASCII/code-point sort would have produced no discernible order in ko, zh and ja at all.
+`numeric: true` files `401(k)` as four-oh-one rather than by the character `4`.
+
+#### After, `index-B-OKozBU.js` / `Reference-D_FwgfmH.js`, same instrument, same session
+- **All five languages: 43 rows, and each list equals its own `Intl.Collator(lang)` sort of itself**
+  — asserted programmatically per language, not eyeballed. `en` opens 401(k) · Bond · Brokerage
+  Account · Bubble · Business Income and ends Vesting · Volatility Index · Yield Curve.
+- **The search subset stays sorted** (query `in` → 20 rows, sorted assertion true), the **Saved
+  filter stays sorted** (4 seeded bookmarks → 401(k), Bubble, Stock, Yield Curve), and the
+  **no-results empty state still renders** (query `zzzznope` → 0 rows).
+- ⭐ **The specific regression risk was disproven rather than argued.** Reordering the list changes
+  every row's index, and this screen has index-derived `aria-describedby` ids (`gloss-def-${i}`) and
+  a focus-restore path. Measured on the moved row: **`Bond` went from row 36 to row 2**, opening it
+  put focus on the detail `h2` ("Bond"), and Back restored focus to the row whose `aria-label` is
+  **"Bond"**. `rowRefs` is keyed by term and the ids are recomputed per render, so neither depends on
+  position. Bookmarks are likewise stored as **glossary keys** (`["Yield Curve","401(k)",…]`, read
+  back live), so this is not the array-position hazard `DECISIONS.md`'s 2026-09-01 `review.js` entry
+  is about — that hazard was real because the *stored* state carried indices; here nothing does.
+- **Before and after were each taken on a named bundle.** HEAD's file restored from a scratchpad copy
+  (`cmp`-identical to `git show HEAD:` before use) rebuilds to `Reference-DwdmyvRS.js`; mine rebuilds
+  to `Reference-D_FwgfmH.js`; restoring mine back is `cmp`-identical. The final comment-only edit
+  produced the **same** `Reference-D_FwgfmH.js` — comments are stripped in the minified build — so
+  the bytes I measured are the bytes being committed.
+
+#### No check shipped, deliberately
+A guard would be "the rendered order equals a collator sort", which is a restatement of the one line
+that just shipped rather than an independent test of it, and it cannot fail while that line exists.
+**W-6.3 re-measured on this tree rather than carried forward:** `scripts/` **21,395** lines
+(`.mjs`+`.js`) vs app code (`src/` `.js`+`.jsx` minus `content/`+`locales/`) **10,024** — **2.13x**,
+down from the 2.14x the previous run quoted, and the 0.01 is this run's own +23 `src/` lines.
+`scripts/` untouched.
+
+**`npm test` exit 0**, the same **3** pre-existing warnings (translation review coverage, translation
+completeness, option-length cue / item 160), **0 FAIL**; `npm run check-blindspot` exit 0; `npm run
+build` exit 0. ⚠️ Both exit codes re-read **without a pipe** — `cmd | tail; echo $?` reports `tail`'s
+status, which is how a failing guard reads as a pass. `Reference` chunk 68.83 → **68.92 kB**; `index`
+**271.53 kB unchanged**.
+
+#### Step 5 — adversarial self-check
+**Blindspot register: nothing found, grepped rather than assumed.** **0** files under `content/` or
+`locales/` in the diff; the diff greps **0** for `dalio|should buy|should sell|we recommend|best time
+to`; `check-blindspot` **exit 0**. §10.1/§10.2/§10.3 cannot be reached by a comparator over strings
+that already shipped. §2.3 (live-looking dates): the header carries `2026-09-09`, but as a **dated
+record of a state that is over** ("until 2026-09-09 the rows rendered in that order"), in a source
+comment that renders nowhere and in a file §2.3's scanner does not cover; its 43/36/35/28 figures are
+attributed to that date for the same reason. One live count was removed from the header before
+committing — a draft said "the 21 macro entries", which is a claim about the current file that goes
+stale on the next term added; it now names the batches without counting them.
+**DECISIONS.md conflict: none, and the nearest entry was read rather than the file skimmed.** The
+2026-09-01 `review.js` entry is the one that could bite — it is precisely about a list being
+reordered under state keyed by array position. It does not apply and the reason is measured above:
+glossary bookmarks store keys. localStorage-only state, `.js`-not-JSON content and Vite-not-Expo
+untouched. **Item 12 (Expo/RN port cost), stated honestly rather than waved through:** `Intl.Collator`
+exists in React Native, but on Hermes/Android its collation quality depends on the platform ICU, so
+this is a **small** port cost rather than zero — smaller than the alternative, since a hand-rolled
+comparator would have to be re-derived there too. **0 DOM APIs added** (`document.`/`window.`/
+`addEventListener`/`.focus()`/`onKeyDown`/`tabIndex` → 0 in the diff).
+**Already-done backlog item: no, and the specific list was searched rather than scanned.** Grepping
+`AGENT_LOG.md`, the archive and `DECISIONS.md` for glossary + `order|sort|alphabet|localeCompare`
+returns nothing about display order; `check-data.mjs` imports `glossary` for key/field checks and
+asserts nothing about ordering; `src/` contained **zero** uses of `Intl` or `localeCompare` before
+this commit.
+**My own verification claim, weakest part first.** ⚠️ **(1) Not a screen-reader claim** — what is
+measured is DOM order and `aria-label` text; no assistive technology is drivable from this host.
+**(2) The interactions are synthetic** — `element.click()` and dispatched `input`/`change` events
+through the native value setters, not real pointer or key events. The archive records a false *focus*
+finding caused by exactly that, so the focus result above is stated as what it is: `bond.focus()`
+then `.click()`, then reading `document.activeElement` after Back — it shows the restore path runs
+and targets the right row, and it is not a claim about a real keyboard user's tab order.
+**(3) A judgment, not a measurement:** that alphabetical beats the batch grouping. The grouping is
+invisible on screen — no headings, no separators, and the third batch is appended after the
+personal-finance one — so a reader cannot use it; I did not consider adding group headings, which
+would be a five-language content decision rather than a presentation one. **(4) Reproducible:** every
+figure comes from a named bundle, both columns measured by the same function in the same browser
+session, with `cmp`-identical restores recorded in both directions.
+
+**Filed as nothing.** No residual, and one observation deliberately not numbered (W-6.2 rule 2):
+`Intl.Collator` is now the app's only locale-aware formatter, while `usd` in `charts.jsx` is still
+hardcoded `en-US` and item 163(c) recorded `es` writing a comma decimal against a period on the chart
+face. That is the same *class* — a locale-aware runtime formatter — but it is a content-facing number
+question with a live disagreement already documented under 163(c), not a residual of this commit.
+
+⚠️ **Reported, not fixed — O-4/O-5, not repo work.** A run may not push, so this commit does not reach
+a learner until the owner pushes `main`.
+
+**Schedule:** the cron is the owner's lever; not read, not compared, not touched.
