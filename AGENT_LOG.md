@@ -6683,3 +6683,131 @@ and correct, and the one thing it uncovered (item 169's retired instrument) was 
 commit rather than deferred.
 
 **Schedule:** the cron is the owner's lever; not read, not compared, not touched.
+
+### 2026-09-08 (scheduled dev-agent; W-6.2 rule 1 free — the previous run closed item 174 and explicitly filed nothing, so this pick came from a sweep of a never-swept class rather than from a chain) — three tab strips claim the ARIA tabs role and implement none of its keyboard contract, and the app has had the correct implementation on the bottom nav since August
+
+**How this was picked.** The open backlog is thin (167 and 163 are fully closed; the rest is parked,
+owner-blocked or exhausted), so per W-6.2 rule 1 this came from a class sweep. Four candidate classes
+were probed and **three came back already covered** — `prefers-reduced-motion` (handled in
+`index.css` + `charts.jsx`), `<html lang>` / `document.title` per language (`useAppState.js:171,179`),
+and browser-Back on pushed views (`useDismissOnBack`, three registered owners). The fourth was not.
+
+**Step 3.5 — the premise was re-measured in REAL CHROME with a same-page-load control, before any
+edit.** The Browser pane cannot answer this at all: it performs no sequential focus navigation, so
+`Tab` reports success and moves nothing. Used `puppeteer-core` in the session scratchpad driving
+`/Applications/Google Chrome.app` against the statically served `dist/` — never installed into the
+repo. **The control is the bottom nav**, measured on the same page loads by the same instrument,
+because it is a `role="tablist"` that is known to implement the pattern.
+
+| screen | strip | `tabIndex` | in Tab sequence | ArrowRight | End |
+|---|---|---|---|---|---|
+| ParentGuide | Select age group | `[0, 0, 0]` | **3 of 3** | no-op | no-op |
+| ParentGuide | *(control)* bottom nav | `[-1,-1,0]` | 1 of 3 | sel 2→0, focus moved | → 2 |
+| Sectors | Sector performance | `[0, 0, 0]` | **3 of 3** | no-op | no-op |
+| Sectors | *(control)* bottom nav | `[-1,-1,0]` | 1 of 3 | sel 2→0, focus moved | → 2 |
+| Lesson 36 | Yield Curve Shapes | `[0,0,0,0]` | **4 of 4** | no-op | no-op |
+| Lesson 36 | *(control)* bottom nav | `[0,-1,-1]` | 1 of 3 | sel 0→1, focus moved | → 2 |
+
+**The control fired on all three page loads and the subject failed on all three** — so the negative
+result is a property of `Segmented`, not of the instrument or of headless Chrome.
+
+⭐ **The finding is not "a component is missing a feature." It is that the app already contains the
+correct implementation and it was never applied to the shared component.** `ebf64a5` (2026-08-15)
+added the roving tabindex and arrow keys to the bottom nav, and to nothing else; `Segmented`'s
+`role="tab"` markup shipped in the 2026-08-04 rebuild (`79d9507`) and never got the keyboard half.
+**24 days, three screens, every instrument in this repo green the whole time**, because nothing here
+looks at this. Note also that `Settings.jsx` implements the same keys for its own `radiogroup`. The
+pattern was written twice by hand and the one place it belonged — the primitive three screens share —
+was skipped both times.
+
+**WHAT SHIPPED.** `Segmented` gains the keyboard contract, in `App.jsx`'s `onTabKeyDown` shape
+deliberately (same keys, same wrap, same activation-follows-focus) — a second idiom for the same role
+is what stops a learner's habit transferring between screens. **45 insertions, 2 deletions, and zero
+style or token lines touched** (verified by grepping the diff for `style|padding|margin|color|font|
+border|space\[|minHeight|minWidth|flex` → 0 hits), so this is behavior only.
+- Roving tabindex, with a fallback: when `value` matches nothing in `items` the FIRST tab stays
+  tabbable. Without it a caller passing an unknown value would strand the whole strip out of the Tab
+  order — a worse failure than the one being fixed.
+- Up/Down deliberately NOT handled: this tablist is horizontal and the nav does not handle them.
+- Activation-follows-focus is safe **here specifically** because all three panels are already
+  rendered — unlike the bottom nav, whose three screens are separate lazy chunks.
+
+**Verified after, on `index-y_VDZhYV.js`, same instrument, all six strips:** every Segmented strip
+now reads 1 in the Tab sequence, ArrowRight advances focus *and* selection, End jumps to the last tab
+(including the 4-tab yield-curve strip, 0→1→3). **10 Tab stops across the three strips collapse to
+3.** The nav control is unchanged on every screen.
+**The mouse path was verified too, because a roving tabindex is exactly the change that can break
+it:** a real `page.mouse.click()` on the third age band still selects it, the panel heading and
+`aria-labelledby` update, **and `tabIndex` follows to `[-1,-1,0]`** — so a learner who clicks and then
+presses Tab lands on the tab they chose, not back at the first. `ArrowLeft` immediately after a mouse
+click works (2→1), so the two modalities compose. Geometry unchanged: tabs 63/67/73 x 44px (MIN_TAP
+satisfied), no horizontal overflow at 420px.
+
+**A GUARD SHIPPED, and W-6.3's number is quoted against it rather than after it.** `check-data.mjs`
+**§82**: every JSX opening tag carrying `role="tab"` must also carry `tabIndex` and `onKeyDown`.
+W-6.2 rule 3's sentence is writable here — *the arrow keys the app taught you on the nav are dead,
+and Tab costs one stop per tab* — which is why this was built where item 152's regex was declined.
+⚠️ **The ratio is against it and that is stated, not buried: 22,825 / 9,877 = 2.31x, UP from the
+2.19x the 09-06 review recorded** (which said "unchanged, because this run added no script"). Taken
+anyway for one reason: the class went undetected for 24 days across three screens.
+
+⛔ **THE GUARD'S FIRST DRAFT WAS WRONG, AND THE REAL CORPUS CAUGHT IT RATHER THAN MY CONTROLS.** A
+naive `<[^>]*>` ends a tag inside the first arrow function it meets, so the scanner is brace- and
+quote-aware — and on its first run it **failed on `src/App.jsx`'s own tab**, because a `//` comment
+inside that tag reads *"only the selected tab's panel"* and the apostrophe opened a string that
+swallowed the rest of the tag. **My two controls both passed while the instrument was broken**; they
+were clean strings with no comments in them. Fixed by skipping comments *before* opening quotes, and
+**control 3 is now that exact shape** (apostrophe + a `>` after it). The tell was that it failed
+loudly on a file I knew was correct — had `App.jsx` been the *defective* one, this would have looked
+like a true positive.
+**Proven able to fail on the real corpus, not just on its controls:** deleted `tabIndex` from
+`ui.jsx` (34,227 → 34,171 b, plant confirmed landed) → `FAIL: §82: src/components/ui.jsx declares
+role="tab" without tabIndex`; restored from a scratchpad copy and re-ran → PASS. Repeated for
+`onKeyDown` → `without onKeyDown`. Restored file `cmp`-identical to the shipped version.
+
+**`npm test` exit 0**, same **3** pre-existing warnings as before the change (translation review
+coverage, translation completeness, option-length cue / item 160); `npm run check-blindspot` exit 0;
+`npm run build` clean, and the committed tree builds to `index-y_VDZhYV.js` — **the exact bundle every
+"after" figure above was measured on**.
+
+#### Step 5 — adversarial self-check
+**Blindspot register: nothing found, grepped rather than assumed.** No learner-facing copy changed —
+no locale key, no lesson prose, no market figure, no date in shipped content; the diff is JSX
+behavior, one guard, and comments. `check-blindspot` exit 0 including its §10.1 timing control and
+§2.3 date sweep. §10.2 (Dalio), §10.1 (advice adjacency) and §10.3 (kids framing) cannot be reached by
+a keyboard-handler change — and although ParentGuide is one of the three screens touched, **nothing
+about its parent-facing framing was altered**: no copy, no labels, no `kidsContent`.
+⚠️ **DECISIONS.md conflict: ONE REAL HIT, and it is named rather than waived.** Item 12 was unheld
+2026-09-07 — the app ships on iOS via Expo/React Native — and its standing rule is *"do not deepen the
+web-only investment … every new inline `style={{}}` and DOM-only component joins the rewrite. Prefer
+content, `lib/` and content-parity work."* **This pick is none of those three, and `tabIndex` /
+`onKeyDown` / `ref.focus()` are DOM-only.** Taken anyway, on two grounds stated for the owner to
+overrule: (1) the marginal port cost is ~0 — **no new component and no new inline style** (measured
+above at zero style lines), and a native port replaces `Segmented` wholesale, where the tabs keyboard
+contract does not exist; (2) the same decision says *"the web app stays live and current"*, and this
+is a live defect on that surface. §82 lives in `scripts/`, which does not port at all. **If the owner
+reads item 12 more strictly than this, the 45 lines revert cleanly and §82 stands on its own.**
+localStorage-only state, `.js`-not-JSON content and Vite-not-Expo are untouched.
+**Already-done backlog item: no, and the specific risk was checked rather than the list scanned.** The
+risk was that a past run had deliberately declined arrow keys here, making this an undo.
+`ArrowRight`/`ArrowLeft` appear **nowhere** in AGENT_LOG.md, `onTabKeyDown` **zero** times, and
+`git log -S` shows the pattern added once (`ebf64a5`, nav only). No run has ever considered this
+component's keyboard behavior. Not a redo, not an undo.
+**My own verification claim, weakest part first.** ⚠️ **(1) The guard is a PRESENCE check, not a
+behavior check** — it asserts two attributes sit on the same element, and would pass an `onKeyDown`
+that does nothing. Behavior is covered only by the live differential above, which is not in `npm
+test`. **(2) My controls failed to catch my own instrument bug** (see above); the real corpus did.
+**(3) This is a real keyboard measurement, not a DOM-shape inference** — `page.keyboard.press` in
+headless Chrome performs actual sequential focus navigation, which is precisely what the Browser pane
+cannot do. **(4) It is still not a screen-reader claim**: nothing here drives NVDA or VoiceOver, and I
+do not assert what one announces. **(5) Reproducible**: every figure comes from two scripts
+(`tabs.mjs`, `sweep.mjs`) run against a named bundle, each carrying the bottom nav as a control taken
+in the same page load — so a reviewer gets the differential, not two unrelated readings. Before and
+after are from **different bundles** (`index-DnLpZ5BO.js` → `index-y_VDZhYV.js`) and labeled as such;
+the "before" column was re-measured by restoring HEAD's `ui.jsx`, rebuilding, and re-running the
+identical script.
+
+**Filed as nothing.** All three `Segmented` call sites are fixed by the one change and the class is
+swept to zero across all 20 `.jsx` files; §82 guards the next one. No residual.
+
+**Schedule:** the cron is the owner's lever; not read, not compared, not touched.

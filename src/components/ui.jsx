@@ -6,7 +6,7 @@
 // rather than re-litigated on every screen.
 // ═══════════════════════════════════════════════════════════════════════════
 
-import { forwardRef } from "react";
+import { forwardRef, useRef } from "react";
 import { fill, font, ink, line, MIN_TAP, radius, shadow, space, surface, type } from "../theme.js";
 import Icon from "./Icon.jsx";
 
@@ -235,24 +235,67 @@ export function PageTitle({ title, subtitle, trailing }) {
 // ── Segmented ─────────────────────────────────────────────────────────────
 // Underlined segments rather than pill buttons — quieter, and it reads as
 // "sections of this page" instead of competing with the bottom navigation.
+//
+// KEYBOARD: this is a real `tablist`/`tab`/`tabpanel` trio at all three call
+// sites (ParentGuide's age bands, Sectors' 1M/3M/6M windows, LessonVisual's
+// yield-curve shapes), so it owes the tabs pattern's keyboard contract — and
+// until 2026-09-08 it implemented none of it. Measured in real Chrome against
+// the bottom nav as a control, on one page load of the built app: this strip
+// put **3 of 3** tabs in the Tab sequence (`tabIndex` 0/0/0) and ArrowRight
+// moved neither focus nor selection, while the nav put **1 of 3** in it
+// (-1/-1/0) and ArrowRight moved both. So a keyboard learner paid three Tab
+// stops to cross a control the nav crosses in one, and the arrow keys the
+// same app teaches them on the nav did nothing here.
+//
+// The shape is `App.jsx`'s `onTabKeyDown`, deliberately — same keys, same
+// wrap, same activation-follows-focus — because a second idiom for the same
+// role is what makes a learner's habit stop transferring between screens.
+// Activation-follows-focus is safe here in a way it is not always: all three
+// panels are already rendered (no lazy chunk per tab), so arrowing onto a tab
+// costs nothing to activate. Up/Down are deliberately NOT handled — this
+// tablist is horizontal, and the nav does not handle them either.
 export function Segmented({ items, value, onChange, ariaLabel, idPrefix, panelId }) {
+  const tabRefs = useRef([]);
+
+  const onKeyDown = (e, currentIndex) => {
+    let nextIndex = null;
+    if (e.key === "ArrowRight") nextIndex = (currentIndex + 1) % items.length;
+    else if (e.key === "ArrowLeft") nextIndex = (currentIndex - 1 + items.length) % items.length;
+    else if (e.key === "Home") nextIndex = 0;
+    else if (e.key === "End") nextIndex = items.length - 1;
+    if (nextIndex === null) return;
+    e.preventDefault();
+    onChange(items[nextIndex].key);
+    tabRefs.current[nextIndex]?.focus();
+  };
+
+  // The roving tabindex needs exactly one tab in the sequence even when
+  // `value` matches nothing in `items` — otherwise a caller passing an unknown
+  // value would strand the whole strip out of the Tab order, which is a worse
+  // failure than the one being fixed. Falls back to the first tab.
+  const selectedIndex = items.findIndex((item) => item.key === value);
+  const tabbableIndex = selectedIndex === -1 ? 0 : selectedIndex;
+
   return (
     <div
       role="tablist"
       aria-label={ariaLabel}
       style={{ display: "flex", gap: space["4"], borderBottom: `1px solid ${line.hairline}`, marginBottom: space["4"], overflowX: "auto" }}
     >
-      {items.map((item) => {
+      {items.map((item, index) => {
         const active = value === item.key;
         return (
           <button
             key={item.key}
+            ref={(el) => { tabRefs.current[index] = el; }}
             type="button"
             role="tab"
             id={`${idPrefix}-${item.key}`}
             aria-selected={active}
             aria-controls={panelId}
+            tabIndex={index === tabbableIndex ? 0 : -1}
             onClick={() => onChange(item.key)}
+            onKeyDown={(e) => onKeyDown(e, index)}
             style={{
               appearance: "none", background: "none", border: "none",
               // Flex-centered rather than relying on the button's default text

@@ -12498,5 +12498,157 @@ function trendDirection(src) {
 }
 
 
+// 82. EVERY `role="tab"` MUST CARRY THE KEYBOARD HALF OF THE PATTERN IT CLAIMS.
+//
+//     THE LEARNER-VISIBLE FAILURE THIS EXISTS TO CATCH (W-6.2 rule 3): a
+//     keyboard learner reaches a tab strip and the arrow keys the app taught
+//     them on the bottom nav do nothing, while Tab — which crosses the nav in
+//     ONE stop — now costs one stop per tab before they can reach anything
+//     past the strip. Measured in real Chrome on the built app 2026-09-08,
+//     with the bottom nav as a same-page-load control: `Segmented` put 3 of 3
+//     tabs in the Tab sequence (tabIndex 0/0/0) on the Kids age bands, 3 of 3
+//     on Sectors' 1M/3M/6M and 4 of 4 on lesson 36's yield-curve shapes, and
+//     ArrowRight/End moved neither focus nor selection at any of the three;
+//     the nav, on those same three page loads, read -1/-1/0 and moved both.
+//
+//     WHY IT HAPPENS, so a future component does not reintroduce it: the ARIA
+//     markup and the keyboard behavior are written in different places and
+//     nothing couples them. `role="tab"` shipped on `Segmented` in the
+//     2026-08-04 rebuild; the roving tabindex and arrow keys were added to the
+//     bottom nav on 2026-08-15 (`ebf64a5`) and to nothing else. The shared
+//     component serving three screens then sat 24 days making an ARIA promise
+//     it did not keep, and every instrument in this repo was green throughout
+//     — none of them looks at this.
+//
+//     SCOPE, stated because it is narrow: this asserts the two attributes are
+//     PRESENT on the same element, not that the handler is correct. Behavior
+//     is verified live (see the run log's before/after differential); this is
+//     the cheap guard that the next tab strip cannot ship with the half that
+//     is invisible until someone puts a keyboard on it.
+//
+//     W-6.3, quoted before proposing rather than after: the instrument-to-app
+//     ratio re-measured 2026-09-08 is 22,825 / 9,877 = 2.31x, UP from the
+//     2.19x the 09-06 review recorded. This proposal falls on the wrong side
+//     of a rising number and is taken anyway, for one stated reason: the class
+//     it guards went undetected for 24 days across three screens, and it is
+//     ~40 lines against a corpus this file already reads for six other rules.
+{
+  const before82 = failures;
+
+  // Brace- and quote-aware, because a naive `<[^>]*>` ends the tag inside the
+  // first arrow function it meets — and `onKeyDown={(e) => f(e)}` contains a
+  // `>`. That failure mode would truncate the tag right before the attribute
+  // being looked for, so the check would report the defect it was built to
+  // clear. The control below plants exactly that shape.
+  const openingTagAt = (src, roleIdx) => {
+    let start = src.lastIndexOf("<", roleIdx);
+    if (start === -1) return null;
+    let depth = 0, quote = null;
+    for (let i = start; i < src.length; i++) {
+      const c = src[i];
+      if (quote) { if (c === quote && src[i - 1] !== "\\") quote = null; continue; }
+      // Comments are skipped BEFORE quotes are opened, and that order is the
+      // whole point: a `//` comment inside a tag routinely contains an
+      // apostrophe ("only the selected tab's panel"), which as a quote
+      // character swallows the rest of the tag and every `>` in it. That is
+      // not hypothetical — it is what this scanner did on src/App.jsx's own
+      // tab on its first run, and control 3 below is that exact shape.
+      if (c === "/" && src[i + 1] === "/") { const nl = src.indexOf("\n", i); if (nl === -1) return null; i = nl; continue; }
+      if (c === "/" && src[i + 1] === "*") { const end = src.indexOf("*/", i + 2); if (end === -1) return null; i = end + 1; continue; }
+      if (c === '"' || c === "'" || c === "`") { quote = c; continue; }
+      if (c === "{") depth++;
+      else if (c === "}") depth--;
+      else if (c === ">" && depth === 0) return src.slice(start, i + 1);
+    }
+    return null;
+  };
+
+  const tabRoleRe = /role="tab"/g;
+  const audit = (src) => {
+    const out = [];
+    for (const m of src.matchAll(tabRoleRe)) {
+      const tag = openingTagAt(src, m.index);
+      out.push({
+        tag: tag ? tag.slice(0, 60).replace(/\s+/g, " ") : "(unparsed)",
+        parsed: tag !== null,
+        hasTabIndex: tag !== null && /\btabIndex=/.test(tag),
+        hasKeyDown: tag !== null && /\bonKeyDown=/.test(tag),
+      });
+    }
+    return out;
+  };
+
+  // CONTROLS, and both must hold or a clean sweep below means nothing.
+  // (1) a positive: a tab with the arrow-function handler that breaks naive
+  //     tag parsing must come back complete. (2) a negative: a bare tab must
+  //     come back missing both, or the audit is answering "yes" to everything.
+  const GOOD = `<button role="tab" tabIndex={i === sel ? 0 : -1} onKeyDown={(e) => onKey(e, i)}>{x}</button>`;
+  const BARE = `<button role="tab" aria-selected={active} onClick={() => pick(k)}>{x}</button>`;
+  // Control 3's comment carries an apostrophe AND a `>` after it. Both are
+  // ordinary in this codebase, and together they are what broke the first
+  // draft of the scanner.
+  const CMT = `<button role="tab"\n  // only the selected tab's panel is in the DOM => one owner\n  tabIndex={0} onKeyDown={(e) => onKey(e)}>{x}</button>`;
+  const cGood = audit(GOOD)[0], cBare = audit(BARE)[0], cCmt = audit(CMT)[0];
+  if (!cCmt?.parsed || !cCmt.hasTabIndex || !cCmt.hasKeyDown) {
+    fail(
+      `§82 control 3: the tag scanner mis-reads a tab whose inline comment contains an apostrophe ` +
+        `(parsed=${cCmt?.parsed}, tabIndex=${cCmt?.hasTabIndex}, onKeyDown=${cCmt?.hasKeyDown}). That is the ` +
+        `shape it failed on first, so this control must hold before the sweep below is believed.`,
+    );
+  }
+  if (!cGood?.parsed || !cGood.hasTabIndex || !cGood.hasKeyDown) {
+    fail(
+      `§82 control 1: the tag scanner cannot read a well-formed tab whose onKeyDown holds an arrow ` +
+        `function (parsed=${cGood?.parsed}, tabIndex=${cGood?.hasTabIndex}, onKeyDown=${cGood?.hasKeyDown}). ` +
+        `It would report every correct tab strip as broken, so its verdict below is meaningless.`,
+    );
+  }
+  if (!cBare?.parsed || cBare.hasTabIndex || cBare.hasKeyDown) {
+    fail(
+      `§82 control 2: the tag scanner does not flag a tab carrying neither attribute ` +
+        `(tabIndex=${cBare?.hasTabIndex}, onKeyDown=${cBare?.hasKeyDown}) — it cannot fail, so a clean ` +
+        `sweep below proves nothing.`,
+    );
+  }
+
+  const jsxFiles = [];
+  const walk = (dir) => {
+    for (const e of readdirSync(join(ROOT, dir), { withFileTypes: true })) {
+      const rel = `${dir}/${e.name}`;
+      if (e.isDirectory()) walk(rel);
+      else if (e.name.endsWith(".jsx")) jsxFiles.push(rel);
+    }
+  };
+  walk("src");
+
+  let tabsSeen = 0;
+  for (const rel of jsxFiles) {
+    for (const t of audit(readFileSync(join(ROOT, rel), "utf8"))) {
+      tabsSeen++;
+      if (!t.parsed) {
+        fail(`§82: ${rel} has a \`role="tab"\` whose opening tag this section could not parse — it cannot be checked, which is the same silence as a defect.`);
+      } else if (!t.hasTabIndex || !t.hasKeyDown) {
+        const missing = [!t.hasTabIndex && "tabIndex", !t.hasKeyDown && "onKeyDown"].filter(Boolean).join(" and ");
+        fail(
+          `§82: ${rel} declares \`role="tab"\` without ${missing} — \`${t.tag}…\`. A tab strip that claims ` +
+            `the ARIA tabs role owes the keyboard contract with it: exactly ONE tab in the Tab sequence ` +
+            `(roving tabIndex) and ArrowLeft/ArrowRight/Home/End moving focus and selection together. ` +
+            `Without it a keyboard learner pays one Tab stop per tab and the arrow keys the bottom nav ` +
+            `taught them are dead here. See src/App.jsx's onTabKeyDown and ui.jsx's Segmented.`,
+        );
+      }
+    }
+  }
+
+  if (failures === before82) {
+    console.log(
+      `  §82 tab keyboard contract: ${tabsSeen} \`role="tab"\` site(s) across ${jsxFiles.length} .jsx file(s), ` +
+        `every one carrying both tabIndex and onKeyDown; the scanner's three controls all fire (arrow-function ` +
+        `positive, bare-tab negative, and the apostrophe-in-a-comment shape it failed on first).`,
+    );
+  }
+}
+
+
 console.log(`\n${failures === 0 ? "PASS" : "FAIL"}: ${failures} failure(s), ${warnings} warning(s).`);
 process.exit(failures === 0 ? 0 : 1);
