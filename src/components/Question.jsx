@@ -16,7 +16,7 @@
 // below needs it.
 // ═══════════════════════════════════════════════════════════════════════════
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Icon from "./Icon.jsx";
 import { Note, SrOnly, Text } from "./ui.jsx";
 import { fill, ink, line, MIN_TAP, radius, space, surface } from "../theme.js";
@@ -44,6 +44,58 @@ export default function Question({ question, t, onAnswered, autoFocusHeading = f
     if (answered) return;                 // one answer per question
     setChoice(i);
     onAnswered?.(i === question.answer, i);
+  };
+
+  // ── THE RADIOGROUP KEYBOARD CONTRACT ──────────────────────────────────────
+  //
+  // The markup below has claimed `role="radiogroup"`/`role="radio"` since the
+  // 2026-08-02 a11y pass, and until now it implemented none of the keyboard
+  // half of that role: every option was its own Tab stop and the arrow keys
+  // did nothing. `Settings.jsx`'s `ChoiceRow` has shipped the correct pattern
+  // since 2026-08-16 and the shared component the whole quiz runs through was
+  // never given it — the same shape as `Segmented`'s `role="tab"` (§82), one
+  // role later.
+  //
+  // ⚠️ ONE DELIBERATE DIVERGENCE FROM `ChoiceRow`, and it is the whole design
+  // of this block: **the arrow keys move focus and do NOT select.** APG's
+  // radio pattern selects on arrow, and `ChoiceRow` does exactly that because
+  // changing the theme is instant and reversible. Here, selecting IS
+  // answering: `choose` fires `onAnswered`, which grades the question, writes
+  // it into the Leitner schedule and locks the option set for good. An arrow
+  // key that answered on the learner's behalf while they were reading the
+  // options would be worse than the defect this fixes. This is APG's own
+  // guidance for the case ("do not make selection follow focus when the user
+  // could inadvertently change a setting with significant consequences");
+  // Space and Enter still activate the focused option, which is how a radio
+  // is chosen deliberately.
+  //
+  // Focus stays live AFTER answering on purpose: the two `SrOnly` markers
+  // below are the only non-visual signal of which option was right, and
+  // `aria-disabled` (not `disabled`) keeps every option reachable to read.
+  // `choose`'s own `if (answered) return` is what makes that safe.
+  const optionRefs = useRef([]);
+  const [focusIndex, setFocusIndex] = useState(0);
+
+  // Exactly ONE option is in the Tab sequence. Once answered that is the
+  // learner's own pick, so tabbing back into the question lands on the answer
+  // they gave rather than at the top of a list they can no longer change.
+  const tabbable = choice !== null ? choice : focusIndex;
+
+  const moveFocusTo = (i) => {
+    const next = (i + question.opts.length) % question.opts.length;
+    setFocusIndex(next);
+    optionRefs.current[next]?.focus();
+  };
+
+  const handleKeyDown = (e, i) => {
+    const keys = {
+      ArrowRight: i + 1, ArrowDown: i + 1,
+      ArrowLeft: i - 1, ArrowUp: i - 1,
+      Home: 0, End: question.opts.length - 1,
+    };
+    if (!(e.key in keys)) return;
+    e.preventDefault();
+    moveFocusTo(keys[e.key]);
   };
 
   return (
@@ -85,6 +137,9 @@ export default function Question({ question, t, onAnswered, autoFocusHeading = f
               type="button"
               role="radio"
               aria-checked={picked}
+              ref={(el) => { optionRefs.current[i] = el; }}
+              tabIndex={i === tabbable ? 0 : -1}
+              onKeyDown={(e) => handleKeyDown(e, i)}
               // `aria-disabled`, NOT `disabled` — and the difference is a
               // learner's place on the page. A native `disabled` button is
               // removed from the tab order, so the browser blurs it the moment

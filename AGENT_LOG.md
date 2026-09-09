@@ -6865,3 +6865,151 @@ identity is reproducible: build before, build after, compare the emitted entry c
 **Filed as nothing.** No residual.
 
 **Schedule:** the cron is the owner's lever; not read, not compared, not touched.
+
+### 2026-09-09 (scheduled dev-agent; W-6.2 rule 1 free — the previous run was owner-directed and filed no residual, so this pick came from a live walk of the two least-walked interactive components) — the app's most-used interactive component has claimed the ARIA radiogroup role since August and implemented none of its keyboard contract, and §82 reported the class swept one day earlier because §82 only knew about one role
+
+**What this is.** `src/components/Question.jsx` — the component every one of the **46 end-of-lesson
+checks and every Practice session** renders — declares `role="radiogroup"` / `role="radio"` and, until
+this commit, shipped **no roving tabindex and no key handler**. W-6.2 rule 3's sentence: *a learner is
+told by their screen reader that these are radio buttons, and the arrow keys do nothing while Tab costs
+one stop per option.*
+
+⭐ **This is the same finding as `Segmented`'s two days ago, one role later, and the reason it survived
+that run is the interesting part.** That run swept `role="tab"` to zero across all 20 `.jsx` files and
+shipped §82 to guard it, reporting the class closed. **The class was "an ARIA composite role with no
+keyboard contract"; the sweep's scope was one role string.** The correct implementation has been in
+this repo since **2026-08-16**, when `Settings.jsx`'s `ChoiceRow` got the APG radiogroup pattern —
+and, exactly as with the nav and `Segmented`, it was written by hand in one place and never applied to
+the shared component. `Question.jsx`'s radiogroup markup dates to the 2026-08-02 a11y pass (then in
+`More.jsx`), which added the roles and the `aria-checked` and nothing else.
+
+#### Premise re-measured before editing, with the control in the same page load
+Real Chrome via `puppeteer-core` in the scratchpad, `dist/` on `127.0.0.1:8801` (404 control fired),
+375x812, HEAD's bundle **`index-y_VDZhYV.js`**. **The control is `Settings.jsx`'s known-correct
+radiogroup, probed by the identical function on the same page load** — so a null subject reading could
+not be a dead instrument.
+
+| | radios | `tabindex` | **in Tab sequence** | ArrowDown → focus | ArrowDown → `aria-checked` |
+|---|---|---|---|---|---|
+| **subject** `Question.jsx`, lesson 35 check | 4 | `[(none)×4]` | **4 of 4** | **no-op** | **unchanged** |
+| **control** `Settings.jsx` ChoiceRow | 3 | `[0,-1,-1]` | 1 of 3 | moved 0→1 | `[t,f,f]`→`[f,t,f]` |
+
+**The control fired and the subject failed on the same load.** An earlier attempt reported the subject
+as "group not found"; that was the reader never having rendered, not a finding, so the script gained a
+**polled precondition that aborts rather than reporting a null** — a missing group and a defective
+group must not look alike.
+
+#### What shipped, and the one deliberate divergence from `ChoiceRow`
+Roving tabindex (`tabbable = choice ?? focusIndex`, so after answering the single stop is the learner's
+**own pick**) plus Arrow/Home/End on each option. **57 insertions in `Question.jsx`, 0 style or token
+lines** (diff grepped for `style|padding|margin|color|font|border|space\[|minHeight|surface\.|fill\.|ink\.`
+→ **0**), 0 content or locale files.
+
+⚖️ **The arrows move focus and deliberately do NOT select, where `ChoiceRow` selects on arrow.** APG's
+radio pattern selects on arrow and `ChoiceRow` is right to: changing the theme is instant and
+reversible. **Here selecting IS answering** — `choose` fires `onAnswered`, which grades the question,
+writes it into the Leitner schedule and locks the option set permanently. An arrow key that answered on
+the learner's behalf while they were reading down the options would be **worse than the defect being
+fixed**. This is APG's own carve-out ("do not make selection follow focus when the user could
+inadvertently change a setting with significant consequences"); Space and Enter still activate.
+**Measured, not asserted:** two ArrowDowns leave `aria-checked` at `[false,false,false,false]`, and the
+Space that follows is what answers.
+
+#### After, on `index-CYDqaUx5.js`, same instrument
+- **subject** `[0,-1,-1,-1]`, **1 of 4** in the Tab sequence; ArrowDown moves focus 0→1 with
+  `aria-checked` still all-false. **Control unchanged and still selects on arrow** — the two rows now
+  differ on the selection axis, which is itself the proof that both behaviors are the intended ones.
+- **Space after arrowing to option 3** → `aria-checked` `[f,f,true,f]`, all four `aria-disabled`, roving
+  stop `[-1,-1,0,-1]`, and **focus stays on the answered option** — the 2026-09-08 `aria-disabled` fix
+  is intact, which is the thing a roving tabindex could most easily have undone.
+- **Real `page.mouse.click()` on option 4** still answers and moves the stop to it (`[-1,-1,-1,0]`).
+- **Lesson 32, measured both ways by rebuilding HEAD's component and re-running the identical script:**
+  3 radiogroups, 12 options, **12 tab stops → 3**.
+- **Practice runner** (seeded `ecycles_review`, "Start Quiz"): 1 group, 1 stop — the second surface.
+- **The verdict live region still populates in place**, `""` → `"Correct!The Fed Funds Rate is…"`, so
+  item 174's fix is untouched.
+
+⛔ **One instrument error, recorded because it nearly became a finding:** the first verdict probe
+queried `[role="status"]` and returned empty, which reads exactly like "the change broke the verdict".
+`Question.jsx`'s region is `aria-live="polite"`, **not** `role="status"` — the selector was wrong, not
+the app. Re-queried for both. A second artifact in the same probe: `[role="radio"] span` counted the
+`SrOnly` marker twice because it is a span inside a span, which is why "2 markers from 1 answer"
+appeared and is not a double render.
+
+#### The guard: §82 WIDENED rather than a new section
+`role="tab"` → `role="tab"|role="radio"`, one scanner, because both roles owe the same two attributes;
+the thing that differs between them is whether selection follows focus, which §82 deliberately does not
+read (its stated SCOPE is presence, not behavior — behavior is the live differential above).
+**Now 4 sites across 20 `.jsx` files**, all carrying both attributes.
+**Proven able to fail on the real corpus, not only on its controls:** deleted the roving `tabIndex`
+from the shipped `Question.jsx` (14,819 → 14,770 b, plant confirmed landed) → `FAIL: §82:
+src/components/Question.jsx declares role="radio" without tabIndex`; restored from a scratchpad copy
+(`cmp` identical) → PASS. Repeated for `onKeyDown` (→ 14,766 b) → `without onKeyDown` → restored
+identical → PASS.
+
+⛔ **AND THE WIDENING'S FIRST RUN FAILED ON THE FILE IT HAD JUST FIXED — a false positive, caught by
+the real corpus rather than by my controls.** The scanner read **comments as markup**, and the header
+comment this very commit added to `Question.jsx` quotes `role="radio"` and `role="tab"` verbatim. §82
+had always had this hole; it only looked correct because no comment in the corpus had yet quoted a role
+string *exactly* (`role="tablist"` does not match `role="tab"`). **Fixed in the scanner, not by
+rewording the comment** — comments are masked to same-length spaces so every index still lines up and
+`openingTagAt` needed no change. **Control 5 is that exact shape in both directions**: a source quoting
+two roles in a comment beside one real defective radio must yield **exactly one** site — a mask that
+blanked everything would pass the "no false positive" half on its own. Five controls now.
+
+**W-6.3, quoted before proposing rather than after:** `scripts/` **21,319** lines vs app code (`src/`
+minus `content/`+`locales/`) **9,943** — **2.14x before, 2.15x after**, and **down from the 2.31x the
+2026-09-08 run recorded**. This proposal falls on the *right* side of the number and adds ~45 lines to
+an existing section rather than a new one.
+
+**`npm test` exit 0**, same **3** pre-existing warnings (translation review coverage, translation
+completeness, option-length cue / item 160); `npm run check-blindspot` exit 0; `npm run build` clean,
+and the committed tree builds to `index-CYDqaUx5.js` — the bundle every "after" figure above was
+measured on.
+
+#### Step 5 — adversarial self-check
+**Blindspot register: nothing found, grepped rather than assumed.** No learner-facing copy changed — 0
+files under `content/` or `locales/`, no lesson prose, no market figure, no date in shipped content;
+the diff is JSX behavior, one guard, and comments. `check-blindspot` exit 0 including its §10.1 timing
+control and §2.3 date sweep. §10.1, §10.2 (Dalio) and §10.3 (kids framing) cannot be reached by a
+keyboard-handler change, and no copy string in `Question.jsx` was touched.
+⚠️ **DECISIONS.md conflict: ONE REAL HIT, the same one the 2026-09-08 `Segmented` run flagged, and it
+is named again rather than treated as settled by precedent.** Item 12 was unheld 2026-09-07 — the app
+ships on iOS via Expo/React Native — and its standing rule is that *the dev agent must not deepen the
+web-only investment in a way that raises the eventual port cost*. **`tabIndex` / `onKeyDown` /
+`ref.focus()` are DOM-only.** Taken anyway, on grounds stated for the owner to overrule: the marginal
+port cost is ~0 — **no new component, no new dependency, no new inline style** (measured at zero style
+lines above), and a native port replaces the option list with `Pressable` + `accessibilityRole`
+wholesale, where a roving tabindex has no counterpart. §82 lives in `scripts/`, which does not port at
+all. **If the owner reads item 12 more strictly, the 57 lines revert cleanly and the §82 widening
+stands on its own.** localStorage-only state, `.js`-not-JSON content and Vite-not-Expo are untouched.
+**Already-done backlog item: no, and the specific risk was checked rather than the list scanned.** The
+risk was that the 2026-08-16 `ChoiceRow` run had considered `Question.jsx` and declined it — it did
+not: that entry's scope is `Settings.jsx` and its own "not a redo" note is about font scaling.
+`radiogroup` appears **once** in the live log (the `Segmented` entry noting Settings implements it) and
+**13** times in the archive, none of them proposing or declining arrow keys on the quiz. `git log -S
+'role="radiogroup"' -- src/components/Question.jsx` returns the single commit that introduced the
+markup. Not a redo, not an undo.
+**My own verification claim, weakest part first.** ⚠️ **(1) §82 is a PRESENCE check, not a behavior
+check** — it would pass an `onKeyDown` that does nothing, and it cannot see the selection-follows-focus
+distinction that is the whole design decision here; only the live differential covers that, and it is
+not in `npm test`. **(2) My controls did not catch my own instrument bug** — the comments-as-markup
+false positive was caught by the real corpus, and the tell was that it failed on a file I had just
+fixed. **(3) I made an instrument error on the verdict probe** and it is recorded above rather than
+dropped. **(4) This is a real keyboard measurement** — `page.keyboard.press` in real Chrome performs
+genuine sequential focus navigation, which the Browser pane cannot. **(5) It is still not a
+screen-reader claim**: nothing here drives VoiceOver or NVDA, and I do not assert what one announces.
+**(6) Reproducible**: every figure comes from scripts run against named bundles, each carrying
+`Settings.jsx` as a control taken in the same page load, and the lesson-32 before/after was obtained by
+rebuilding HEAD's component rather than by inference.
+
+**Filed as nothing.** The class is now swept across both composite roles present in the app and §82
+guards the next one.
+
+⚠️ **Reported, not fixed — measured this run and it is O-5/O-4, not repo work.** `npm run
+check-deployed` says **DIVERGED**: the canonical site serves `index-BX9VoYlv.js` against this tree's
+`index-CYDqaUx5.js`, and the **retired Netlify origin is still answering** with `index-B1mndoLB.js`.
+Live `market.json` is `asOf 2026-09-07` against the repo's `2026-09-08`. A run may not push, so this
+commit does not reach a learner until the owner pushes `main`.
+
+**Schedule:** the cron is the owner's lever; not read, not compared, not touched.

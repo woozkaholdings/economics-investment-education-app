@@ -12569,12 +12569,55 @@ function trendDirection(src) {
     return null;
   };
 
-  const tabRoleRe = /role="tab"/g;
-  const audit = (src) => {
+  // WIDENED 2026-09-09 from `role="tab"` to every composite-widget role in
+  // this app that owes a roving tabindex and arrow keys. It was `tab` alone
+  // for one day, and on the next `Question.jsx` was found declaring
+  // `role="radio"` with neither attribute — the app's most-used interactive
+  // component, 46 lesson checks and every Practice session, while this section
+  // reported the class swept. The sweep was real; its SCOPE was one role, and
+  // the summary line below now names the roles so that is visible.
+  //
+  // `radio` and `tab` owe the same two attributes, which is what makes one
+  // scanner correct for both. They differ only in whether selection follows
+  // focus — a property of the handler, which this section deliberately does
+  // not read (see SCOPE above) and which the run log measures live instead.
+  const COMPOSITE_ROLES = ["tab", "radio"];
+  const compositeRoleRe = new RegExp(`role="(${COMPOSITE_ROLES.join("|")})"`, "g");
+
+  // COMMENTS ARE NOT MARKUP, and this section learned that the hard way on the
+  // very commit that widened it: the run that added the roving tabindex to
+  // `Question.jsx` documented it in a header comment that quotes `role="radio"`
+  // and `role="tab"` verbatim, and this scanner reported BOTH as defective
+  // elements in a file it had just fixed. The scanner had always read comments
+  // as code; it only looked correct because no comment in the corpus had yet
+  // happened to quote a role string exactly (`role="tablist"` does not match).
+  //
+  // Masked rather than stripped, so every index still lines up with the
+  // original source and `openingTagAt` needs no adjustment. Comment bodies
+  // become spaces of the same length; newlines are kept so the mask cannot
+  // merge two lines into one.
+  const maskComments = (src) => {
+    const out = src.split("");
+    const blank = (from, to) => { for (let i = from; i < to && i < out.length; i++) if (out[i] !== "\n") out[i] = " "; };
+    for (let i = 0; i < src.length; i++) {
+      if (src[i] === "/" && src[i + 1] === "/") {
+        const nl = src.indexOf("\n", i); const end = nl === -1 ? src.length : nl;
+        blank(i, end); i = end;
+      } else if (src[i] === "/" && src[i + 1] === "*") {
+        const close = src.indexOf("*/", i + 2); const end = close === -1 ? src.length : close + 2;
+        blank(i, end); i = end - 1;
+      }
+    }
+    return out.join("");
+  };
+
+  const audit = (rawSrc) => {
+    const src = maskComments(rawSrc);
     const out = [];
-    for (const m of src.matchAll(tabRoleRe)) {
+    for (const m of src.matchAll(compositeRoleRe)) {
       const tag = openingTagAt(src, m.index);
       out.push({
+        role: m[1],
         tag: tag ? tag.slice(0, 60).replace(/\s+/g, " ") : "(unparsed)",
         parsed: tag !== null,
         hasTabIndex: tag !== null && /\btabIndex=/.test(tag),
@@ -12594,7 +12637,35 @@ function trendDirection(src) {
   // ordinary in this codebase, and together they are what broke the first
   // draft of the scanner.
   const CMT = `<button role="tab"\n  // only the selected tab's panel is in the DOM => one owner\n  tabIndex={0} onKeyDown={(e) => onKey(e)}>{x}</button>`;
+  // Control 4 is the widening's own control: the scanner must SEE a radio at
+  // all. Without it, adding "radio" to the list above and mistyping it would
+  // read as "zero defective radios" — the silent pass that looks like a sweep.
+  const RADIO_BARE = `<button role="radio" aria-checked={picked} onClick={() => choose(i)}>{o}</button>`;
+  const RADIO_GOOD = `<button role="radio" aria-checked={picked} tabIndex={i === t ? 0 : -1} onKeyDown={(e) => onKey(e, i)}>{o}</button>`;
+  // Control 5, in both directions on ONE string: the commented role must be
+  // invisible and the real one beside it must still be found and still be
+  // flagged. A mask that blanked everything would pass the first half alone.
+  const COMMENTED = `// a header explaining role="radio" and role="tab"\n<button role="radio" aria-checked={p}>{o}</button>`;
+  const cMasked = audit(COMMENTED);
   const cGood = audit(GOOD)[0], cBare = audit(BARE)[0], cCmt = audit(CMT)[0];
+  const cRadioBare = audit(RADIO_BARE)[0], cRadioGood = audit(RADIO_GOOD)[0];
+  if (cMasked.length !== 1 || cMasked[0].role !== "radio" || cMasked[0].hasTabIndex || cMasked[0].hasKeyDown) {
+    fail(
+      `§82 control 5: the scanner does not mask comments correctly — a source quoting two roles in a ` +
+        `comment beside one real defective radio yielded ${cMasked.length} site(s) ` +
+        `(roles: ${cMasked.map((x) => x.role).join(",") || "none"}). It must yield exactly the one real ` +
+        `element: reading comments as markup invents defects, and masking too greedily hides them.`,
+    );
+  }
+  if (cRadioBare?.role !== "radio" || cRadioBare.hasTabIndex || cRadioBare.hasKeyDown ||
+      cRadioGood?.role !== "radio" || !cRadioGood.hasTabIndex || !cRadioGood.hasKeyDown) {
+    fail(
+      `§82 control 4: the scanner does not read \`role="radio"\` in both directions ` +
+        `(bare: role=${cRadioBare?.role}, tabIndex=${cRadioBare?.hasTabIndex}, onKeyDown=${cRadioBare?.hasKeyDown}; ` +
+        `good: role=${cRadioGood?.role}, tabIndex=${cRadioGood?.hasTabIndex}, onKeyDown=${cRadioGood?.hasKeyDown}). ` +
+        `The widening to radiogroups is then decorative and a clean sweep below proves nothing about them.`,
+    );
+  }
   if (!cCmt?.parsed || !cCmt.hasTabIndex || !cCmt.hasKeyDown) {
     fail(
       `§82 control 3: the tag scanner mis-reads a tab whose inline comment contains an apostrophe ` +
@@ -12632,15 +12703,18 @@ function trendDirection(src) {
     for (const t of audit(readFileSync(join(ROOT, rel), "utf8"))) {
       tabsSeen++;
       if (!t.parsed) {
-        fail(`§82: ${rel} has a \`role="tab"\` whose opening tag this section could not parse — it cannot be checked, which is the same silence as a defect.`);
+        fail(`§82: ${rel} has a \`role="${t.role}"\` whose opening tag this section could not parse — it cannot be checked, which is the same silence as a defect.`);
       } else if (!t.hasTabIndex || !t.hasKeyDown) {
         const missing = [!t.hasTabIndex && "tabIndex", !t.hasKeyDown && "onKeyDown"].filter(Boolean).join(" and ");
         fail(
-          `§82: ${rel} declares \`role="tab"\` without ${missing} — \`${t.tag}…\`. A tab strip that claims ` +
-            `the ARIA tabs role owes the keyboard contract with it: exactly ONE tab in the Tab sequence ` +
-            `(roving tabIndex) and ArrowLeft/ArrowRight/Home/End moving focus and selection together. ` +
-            `Without it a keyboard learner pays one Tab stop per tab and the arrow keys the bottom nav ` +
-            `taught them are dead here. See src/App.jsx's onTabKeyDown and ui.jsx's Segmented.`,
+          `§82: ${rel} declares \`role="${t.role}"\` without ${missing} — \`${t.tag}…\`. A composite widget ` +
+            `that claims an ARIA role owes the keyboard contract with it: exactly ONE element in the Tab ` +
+            `sequence (roving tabIndex) and ArrowLeft/ArrowRight/Up/Down/Home/End moving focus. Without it a ` +
+            `keyboard learner pays one Tab stop per option and the arrow keys the bottom nav taught them are ` +
+            `dead here. Whether selection follows that focus is the one thing that differs by widget: tabs ` +
+            `and Settings' ChoiceRow select on arrow, Question.jsx deliberately does NOT, because there ` +
+            `selecting is answering and cannot be undone. See src/App.jsx's onTabKeyDown, ui.jsx's ` +
+            `Segmented, Settings.jsx's ChoiceRow and Question.jsx's handleKeyDown.`,
         );
       }
     }
@@ -12648,9 +12722,11 @@ function trendDirection(src) {
 
   if (failures === before82) {
     console.log(
-      `  §82 tab keyboard contract: ${tabsSeen} \`role="tab"\` site(s) across ${jsxFiles.length} .jsx file(s), ` +
-        `every one carrying both tabIndex and onKeyDown; the scanner's three controls all fire (arrow-function ` +
-        `positive, bare-tab negative, and the apostrophe-in-a-comment shape it failed on first).`,
+      `  §82 composite-widget keyboard contract: ${tabsSeen} site(s) across ${jsxFiles.length} .jsx file(s) ` +
+        `declaring role="${COMPOSITE_ROLES.join('"/role="')}", every one carrying both tabIndex and onKeyDown; ` +
+        `the scanner's five controls all fire (arrow-function positive, bare-tab negative, the ` +
+        `apostrophe-in-a-comment shape it failed on first, a radio read in both directions, and a role ` +
+        `quoted in a comment staying invisible while a real one beside it does not).`,
     );
   }
 }
