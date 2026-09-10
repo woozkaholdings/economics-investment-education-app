@@ -6580,3 +6580,78 @@ unmoved.
 **Log size.** `MEASURED log-size: file 564398 b, run log 128893 b, floor 435505 b (backlog 397099 b),
 archive 3881729 b` (`npm test`, 2026-09-10, before this entry). The backlog is unchanged; this run added
 no numbered item and put its notes here, in the archivable run log, rather than under item 21.
+
+### 2026-09-10 (scheduled dev-agent; W-6.2 rule 1 free — the previous run's two notes both end "not picked by default" and were not taken; this pick came from a sweep of content modules never read for accuracy) — lesson 3's compound-interest caption says the gap "is more than twice as wide" by year 30, and no reading of that sentence is true; the app's own figure instrument declined to assert it on 2026-08-28 for exactly that reason and nobody fixed the sentence
+
+**The pick.** Item 160 was checked first (the standing `npm test` WARN) and **not** taken: its ⛔ stop line
+says everything still open is class B, which is O-3's. `sectors.js` and `policyScenarios.js` read clean.
+`moneyVisuals.js` has **44** mentions across both logs and **0** of them are about accuracy, against
+`lessonTerms` at 2 (a control showing the grep can hit). Five of its seven figures have `check-data.mjs`
+guards (§21, §50, §53, §54, §57). Lesson 3's compound figure and lesson 27's loss figure have none.
+
+#### Step 3.5 — premise measured, with controls, before editing
+- **The data is right.** Recomputed `1000·1.06^t` and `1000+60t` in Node (control `1.06^10` =
+  1.790847697, published value, fired): **7/7 compound and 7/7 simple values match** the shipped series.
+- **The caption is not.** `compoundCaption.en`: *"…so the gap widens every year — and by year 30 **it** is
+  more than twice as wide."* The subject is the gap, and the sentence does not say twice as wide as what.
+  Measured: the gap at 30 is **$2,943**, which is **1.64×** the year-25 gap and **2.92×** the year-20 gap.
+  No natural referent gives "twice". What the chart shows at its right edge is the compound **balance** at
+  **2.051×** the simple one ($5,743 / $2,800). es/ko/zh/ja all make the same "the gap is more than
+  double" claim.
+- **Not previously decided.** `AGENT_LOG.archive.md:28996` (item 136, 2026-08-28) saw it: *"deliberately
+  **not** asserted, because 'twice as wide' as what is genuinely ambiguous"*. That run declined to encode
+  the sentence in `figureClaims` and did not fix it, so this run reverses nothing. `DECISIONS.md` has no
+  entry on the wording. (My first "known present" control for that grep, `budgetCaption`, returned **0**
+  and so proved nothing. `bracketCaption` at **3** is the control that fired.)
+- **Live, `index-BFgba3Tq.js` (= HEAD), `#/lesson/3`, one page load:** subject **true**, lesson-body
+  control `Rule of 72` **true**, negative control **false**. ⚠️ Two instrument misses, both caught by their
+  own controls. (1) The first pass seeded `localStorage` and then changed only the hash. `useAppState`
+  reads `seenDisclaimer` once at mount, so the page stayed on the first-run dialog and every probe read
+  false, the positive control included. A real `location.reload()` fixed it. (2) The title probe read
+  false because CSS uppercases the title in `innerText`; `figcaption` shows it present.
+
+#### What shipped
+`src/content/moneyVisuals.js`, `compoundCaption` only (`git diff --numstat` **5 / 5**). English now
+ends *"— and by year 30 the compound balance is more than double the simple one."*, which is 2.051×, true
+as measured. The other four languages say the same thing (`el saldo compuesto es más del doble que el
+simple` / `복리 잔액이 단리 잔액의 두 배를 넘습니다` / `复利的余额已超过单利的两倍` /
+`複利の残高が単利の2倍を超えます`). The first half of the caption, the data, the title and the description are
+unchanged. ⚠️ **O-3, disclosed:** four unreviewed machine translations replace four unreviewed ones, in a
+file `DECISIONS.md:721-739` records as **outside** translation-ledger coverage. No fluent reader has checked them.
+
+#### Verification
+| Check | Result |
+|---|---|
+| `npm test` | **exit 0**, WARN **3 → 3**, FAIL **0**; §55 and §56 hold over 1,239 strings per language |
+| `scripts/build-out-of-tree.sh` (copy-back) | **exit 0**; `LessonReader-BRP-xIFf.js` 94.01 kB → **`LessonReader-DsBnwP7-.js` 94.15 kB**; entry `index-BFgba3Tq.js` → **`index-DNIjzpEU.js`** |
+| `dist/assets` grep | new string, all 5 languages → `LessonReader-DsBnwP7-.js`; the 5 old strings → **no file**; control `Simple interest adds $60 a year forever` → `LessonReader-DsBnwP7-.js` |
+| Live, `index-DNIjzpEU.js`, `#/lesson/3`, language set through the real `<select>` change event | **en/es/ko/zh/ja: new true, old false, same-caption control true, negative false**; `html lang` en/es/ko/zh-Hans/ja |
+
+#### Step 5 — adversarial self-check
+**Blindspot register: nothing found.** Added lines grep **0** for
+`dalio|principles|should buy|should sell|we recommend|buy now|good time to buy|for kids|for children|kids
+mode|as of 20xx|today|guarantee`, against **17** in `check-blindspot.mjs` (positive control). No date,
+no market figure, and no return claim: the 6% stays the lesson's teaching rate under `illustrationNote`,
+and "more than double" describes that example's arithmetic, not an expectation. `check-blindspot`
+passed inside `npm test`.
+**DECISIONS.md conflict: none.** Its two `moneyVisuals` hits (721-739) are the ledger-scope note, which
+this entry discloses rather than contradicts. Content stays a `.js` module, and no state or build path changed.
+**Already-done backlog item: none.** Item 27 created the caption (`39513e9`, 2026-08-16) and item 136
+declined to assert it. `git log -S'more than twice as wide'` shows only the creating commit.
+**My own verification claim.** Every row above is reproducible from the commands named. The limit: "no
+natural referent gives twice" rests on the gap ratios measured above against the obvious comparisons
+(the previous sample, 10 years earlier, the simple balance, simple interest earned: 1.64 / 2.92 / 1.05 /
+1.64). A reader could invent some other referent, and that is itself the defect. W-6.3: `scripts/` is
+untouched and the ratio has not moved.
+
+#### Seen, deliberately NOT fixed and NOT numbered (W-6.2 rule 2)
+- **The new caption now carries a checkable ratio, and nothing checks it.** Change lesson 3's teaching rate
+  to 5% and the balance ratio at 30 becomes **1.73×**, so the caption goes false with every check green.
+  The learner-visible failure is real (W-6.2 rule 3 passes), but there are zero live instances and the rate
+  has never moved. **Not picked by default.**
+
+**Schedule:** the cron is the owner's lever; not read, not compared, not touched.
+
+**Log size.** `MEASURED log-size: file 571681 b, run log 136176 b, floor 435505 b (backlog 397099 b),
+archive 3881729 b, 2 live day(s)` (`npm test`, 2026-09-10, before this entry). The backlog is unchanged
+and no numbered item was added.

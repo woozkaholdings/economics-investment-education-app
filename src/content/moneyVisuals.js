@@ -119,11 +119,11 @@ export const compoundLabels = {
 };
 
 export const compoundCaption = {
-  en: "The same $1,000 at the same 6%. Simple interest adds $60 a year forever; compound interest earns on the interest too, so the gap widens every year — and by year 30 it is more than twice as wide.",
-  es: "Los mismos $1,000 al mismo 6%. El interés simple suma $60 cada año para siempre; el compuesto también gana intereses sobre los intereses, así que la diferencia crece cada año — y en el año 30 es más del doble.",
-  ko: "같은 $1,000, 같은 6%입니다. 단리는 매년 $60씩만 더하지만, 복리는 이자에도 이자가 붙어 격차가 해마다 벌어지고 30년째에는 두 배가 넘습니다.",
-  zh: "同样的 $1,000，同样的 6%。单利每年只加 $60；复利让利息也生利息，差距逐年拉大——到第 30 年已超过两倍。",
-  ja: "同じ$1,000、同じ6%です。単利は毎年$60を加えるだけですが、複利は利息にも利息がつくため差は年々広がり、30年目には2倍以上になります。",
+  en: "The same $1,000 at the same 6%. Simple interest adds $60 a year forever; compound interest earns on the interest too, so the gap widens every year — and by year 30 the compound balance is more than double the simple one.",
+  es: "Los mismos $1,000 al mismo 6%. El interés simple suma $60 cada año para siempre; el compuesto también gana intereses sobre los intereses, así que la diferencia crece cada año — y en el año 30 el saldo compuesto es más del doble que el simple.",
+  ko: "같은 $1,000, 같은 6%입니다. 단리는 매년 $60씩만 더하지만, 복리는 이자에도 이자가 붙어 격차가 해마다 벌어지고 30년째에는 복리 잔액이 단리 잔액의 두 배를 넘습니다.",
+  zh: "同样的 $1,000，同样的 6%。单利每年只加 $60；复利让利息也生利息，差距逐年拉大——到第 30 年，复利的余额已超过单利的两倍。",
+  ja: "同じ$1,000、同じ6%です。単利は毎年$60を加えるだけですが、複利は利息にも利息がつくため差は年々広がり、30年目には複利の残高が単利の2倍を超えます。",
 };
 
 export const compoundDescription = {
