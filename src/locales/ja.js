@@ -24,7 +24,7 @@ export default {
     nextLesson: "次のレッスン", prevLesson: "前へ", markComplete: "完了にする",
     loadingLabel: "読み込み中…",
     loadFailedTitle: "読み込めませんでした",
-    loadFailedBody: "このコンテンツをダウンロードできませんでした。接続を確認してから、ページを再読み込みしてください。",
+    loadFailedBody: "このコンテンツをダウンロードできませんでした。ページを再読み込みすると再取得します。それでも失敗する場合は接続を確認してください。",
     loadFailedRetry: "再読み込み",
     appErrorTitle: "問題が発生しました",
     appErrorBody: "この画面で予期しないエラーが発生しました。再読み込みするとあなたの学習パスに戻り、保存された学習の進捗には影響ありません。",

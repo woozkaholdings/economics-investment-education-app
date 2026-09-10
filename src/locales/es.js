@@ -24,7 +24,7 @@ export default {
     nextLesson: "Siguiente", prevLesson: "Anterior", markComplete: "Completar",
     loadingLabel: "Cargando…",
     loadFailedTitle: "No se cargó",
-    loadFailedBody: "No se pudo descargar este contenido. Revisa tu conexión y vuelve a cargar la página.",
+    loadFailedBody: "No se pudo descargar este contenido. Vuelve a cargar la página para obtenerlo de nuevo; si sigue fallando, revisa tu conexión.",
     loadFailedRetry: "Volver a cargar",
     appErrorTitle: "Algo salió mal",
     appErrorBody: "Esta pantalla encontró un error inesperado. Al volver a cargar, regresarás a tu ruta de aprendizaje; tu progreso guardado no se ve afectado.",

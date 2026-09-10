@@ -40,9 +40,36 @@ export default {
     // Load failure (item 96). "Reload" and not "Try again" on purpose: once a
     // dynamic import rejects, the specifier stays errored in the document's
     // module map, so only a fresh document can recover.
+    //
+    // THE REMEDIES ARE ORDERED, and the order changed 2026-09-09. This body
+    // led with "Check your connection, then reload the page" — a DIAGNOSIS
+    // first, and the wrong one in the case this repo names as the ordinary
+    // one: a content-hashed chunk 404ing after a redeploy, where the network
+    // is fine (`lib/chunkError.js`, `components/ErrorBoundary.jsx`, and
+    // `LoadFailure` in `components/ui.jsx` all say so). So the reader hitting
+    // the common case was sent to check a connection that was working before
+    // being offered the one action that fixes it — which is also the only
+    // thing the button does.
+    //
+    // ⚠️ This is NOT item 100's rejected fallback, and the difference is the
+    // whole point. Item 100 (2026-08-24) declined to "widen loadFailedBody to
+    // cover both" because that "discards the network hint in the one case
+    // where the hint is true". The hint is NOT discarded here — it is demoted
+    // to the branch where it is actually informative ("if it still fails").
+    // The sentence still opens with "couldn't be downloaded", which is true
+    // of both causes and is what keeps it distinct from `appErrorBody`
+    // (check-data.mjs §39 asserts the two are not the same sentence).
+    //
+    // Why the order matters more now than it did in August: the redeploy
+    // cause "becomes reachable the day the app gets a URL, not before"
+    // (ErrorBoundary.jsx). The app went live 2026-09-05 and now publishes on
+    // every push to `main`, and chunk hashes churn on nearly every build —
+    // 115 distinct entry-bundle hashes are recorded across the two agent
+    // logs. This surface is the fallback for all 27 chunks, 20 of them lesson
+    // content and quiz text, so it is the app's widest failure surface.
     loadingLabel: "Loading…",
     loadFailedTitle: "Didn't load",
-    loadFailedBody: "This content couldn't be downloaded. Check your connection, then reload the page.",
+    loadFailedBody: "This content couldn't be downloaded. Reload the page to fetch it again — if it still fails, check your connection.",
     loadFailedRetry: "Reload",
     // Render crash (item 99). Deliberately NOT loadFailedBody: that copy
     // says the content "couldn't be downloaded", which is a lie about a bug

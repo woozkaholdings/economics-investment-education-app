@@ -24,7 +24,7 @@ export default {
     nextLesson: "다음 레슨", prevLesson: "이전", markComplete: "완료하기",
     loadingLabel: "불러오는 중…",
     loadFailedTitle: "불러오지 못했습니다",
-    loadFailedBody: "이 콘텐츠를 내려받지 못했습니다. 연결 상태를 확인한 뒤 페이지를 새로고침하세요.",
+    loadFailedBody: "이 콘텐츠를 내려받지 못했습니다. 페이지를 새로고침하면 다시 내려받습니다. 그래도 실패하면 연결 상태를 확인하세요.",
     loadFailedRetry: "새로고침",
     appErrorTitle: "문제가 발생했습니다",
     appErrorBody: "이 화면에서 예기치 않은 오류가 발생했습니다. 새로고침하면 나의 학습 경로로 돌아가며, 저장된 학습 기록은 그대로 유지됩니다.",

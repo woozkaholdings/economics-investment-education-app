@@ -6286,3 +6286,114 @@ not push, so this commit does not reach a learner until the owner pushes `main` 
 nothing a learner would see even then.
 
 **Schedule:** the cron is the owner's lever; not read, not compared, not touched.
+
+### 2026-09-09 (scheduled dev-agent; W-6.2 rule 1 free — the previous run's only residual was an unnumbered sweep note, so this pick came from a corpus-wide sweep of the least-mentioned files in `src/`) — the app's widest failure surface opens by telling the learner to check a connection that is fine, and the run that built it had already declined the fix I was about to ship
+
+**The pick.** Counted every non-`content`/`locales` file under `src/` by mentions across both logs.
+The three least-covered were `lessonUnlock.js` (3), `ErrorBoundary.jsx` (4) and `chunkError.js` (7) —
+and the first two are **miscounts of coverage, not gaps**: `lessonUnlock.js` was extracted and given
+`check-data.mjs` §80 on 09-08, and `ErrorBoundary.jsx`'s crash screen was rewritten on 09-09
+(`c8c338a`). The mention count lags the work by a run. **Reading the third led to the copy the three
+of them share.**
+
+#### The finding
+`loadFailedBody`, in all five languages, opened with a **diagnosis** and not an action — en: *"This
+content couldn't be downloaded. Check your connection, then reload the page."* Three separate files in
+this repo name the ordinary cause of that failure as **a content-hashed chunk 404ing after a redeploy**
+(`lib/chunkError.js`, `components/ErrorBoundary.jsx`, `LoadFailure` in `components/ui.jsx`), and in
+that case the connection is **fine**. So the reader hitting the common case was sent to check working
+hardware before being offered the one thing that fixes it — which is also the only thing the button does.
+
+#### Step 3.5 — premise re-measured, and it moved the disposition twice
+- **Reach, measured not assumed.** `LoadFailure` has **3 call sites** (`AsyncScreen`, `LessonReader`,
+  `Practice`) and is the fallback for **all 27** built chunks — **20 of them lesson content and quiz
+  text**. It is the widest failure surface in the app, not an edge screen.
+- **Hash churn, with controls.** **115 distinct `index-<hash>.js` names** appear across the two logs
+  (control: a fabricated hash → 0; a real chunk pattern → 6). The entry bundle's hash moves on nearly
+  every substantive commit, and **this run's own build moved it `BwxkZOjx` → `DKsM5VMX`** — the claim
+  demonstrating itself.
+- **⛔ REFUTATION 1, and it nearly stopped the run: item 100 ALREADY DECLINED THIS.** 2026-08-24
+  (archive) considered *"widen `loadFailedBody` to cover both"* and rejected it because it *"discards
+  the network hint in the one case where the hint is true."* **That rejection is correct and stands.**
+  What ships here is **not** that change: the hint is **demoted, not discarded** — moved to the branch
+  where it is informative (*"if it still fails"*). The sentence still opens with "couldn't be
+  downloaded", true of both causes, which is what keeps it distinct from `appErrorBody`.
+- **REFUTATION 2 — the thing that changed since that decision is not taste, it is reachability.**
+  `ErrorBoundary.jsx` says the redeploy cause *"becomes reachable the day the app gets a URL, not
+  before."* On 2026-08-24 there was no URL. The app went live 09-05 and now publishes on every push.
+  **The decision was right for its facts; the facts moved.**
+- **A defect I went looking for and did NOT find, recorded so nobody re-derives it.** If the live host
+  cached `index.html` hard, the reload this copy prescribes would not fix anything and the app would be
+  giving advice that fails. Measured against the canonical site: `cache-control: max-age=600` with an
+  `ETag` (404 control on a nonexistent path fired). A reload revalidates the top-level document, so
+  **the prescribed action genuinely works.** No change needed.
+
+#### What shipped
+**Five files, one string each: `src/locales/{en,es,ko,zh,ja}.js`.** en now reads *"This content
+couldn't be downloaded. Reload the page to fetch it again — if it still fails, check your connection."*
+Plus a comment in `en.js` recording the remedy order, why item 100's rejection is not being overturned,
+and the reachability change — so the next reader does not re-derive this or read it as undoing item 100.
+**0 lines added to `scripts/`, no check built** (W-6.2 rule 3): §39 already asserts the two bodies stay
+distinct in all five languages, which is the property that could regress, and it stayed green.
+
+#### Verification — rendered, not inferred
+Served `dist/` statically and drove the built app with a **real** 404: moved
+`lessonContent.economy.en-BAvdW4Cp.js` aside (`curl` → **404**, sibling `quizText.en` → **200** as the
+control that the server was otherwise healthy).
+
+| State | Result |
+|---|---|
+| en, chunk 404 at `#/lesson/29` | **"DIDN'T LOAD — This content couldn't be downloaded. Reload the page to fetch it again — if it still fails, check your connection."** + Reload, in `[role=alert]` |
+| **ja**, chunk 404, `<html lang>`=`ja` | **読み込めませんでした — …ページを再読み込みすると再取得します。それでも失敗する場合は接続を確認してください。** |
+| **CONTROL** — chunk restored, reload | **0 alerts**, lesson 1 renders ("Transactions: The Building Block") |
+
+All five new strings found in the built `dist/` entry chunk; **the old en string is absent from `dist/`**.
+`npm test` **exit 0**, warnings **3 → 3** (the standing translation-review, translation-completeness and
+option-length-cue ones). §39 still reports *5/5 language(s) with two distinct bodies*. §80 unchanged.
+`npm run check-blindspot` **exit 0**. `npm run build` **exit 0**. Exit codes read directly, never through
+a pipe.
+
+#### Step 5 — adversarial self-check
+**Blindspot register: nothing found, and the first attempt at this check was BROKEN.** The 32 added
+lines grep **0** for `dalio|principles|should buy|should sell|we recommend|best time to|guaranteed
+return|your portfolio|for kids|for children`. ⛔ **My first run of that grep proved nothing and looked
+like it did:** `grep -c` exits 1 on zero matches, so the `&&` chain printed the 0 and then **silently
+skipped the control**. Re-run with `;`: positive control (`reload|connection`) → **3**, negative control
+→ **0**. The grep reaches the lines. §2.3: the dates I added are in a **source comment**, and the
+comment is **stripped from `dist/`** (grepped: absent, against a shipped string present at 1) — 0 bytes
+reach a learner. §10.3 untouched; no lesson or kids content opened.
+**DECISIONS.md conflict: none, checked with a control.** `loadFailedBody|LoadFailure|Check your
+connection` → **0 hits** in DECISIONS.md, against a `localStorage` control at **13** proving the grep
+reaches the file. No closed decision covers this copy. `localStorage`-only state, `.js` content modules
+and Vite untouched; the translation-review ledger is keyed by **lesson id** and app chrome is not in it,
+so no review status changed.
+**Already-done backlog item: the load-bearing check this run, and it fired.** `loadFailedBody` returns
+**0** hits in the live `AGENT_LOG.md`; the only prior treatment is item 100 in the **archive**, which
+declined a *different* change. Had I not read it I would have shipped the rejected one. It is quoted
+above and in the code comment rather than paraphrased.
+**My own verification claim.** A reviewer re-running `npm test` / `build` / `check-blindspot` gets my
+results reproducibly. The browser walk is **not** a committed script — it must be rebuilt from the
+procedure above (serve `dist/`, move that chunk aside, load `#/lesson/29`). Two honest limits: the
+Browser pane was **hidden**, so every rendered claim here is read from `innerText` and `[role=alert]`,
+**not from pixels** — I make no claim about layout or contrast; and "the ordinary cause is a redeploy"
+is this repo's own characterization, which I confirmed is *mechanically reachable* and did **not**
+measure against real learner traffic, because blindspot 10.10's second half is still unmeasured.
+**W-6.3 re-measured on this tree:** `scripts/` **21,689** lines vs app code **10,166** — **2.13x**,
+unmoved; this run added **0** lines to `scripts/`.
+
+#### A note, deliberately not a numbered item (W-6.2 rule 2)
+`AppError` reassures the reader that *"your saved progress is not affected"* before asking them to
+reload; `LoadFailure` does not, and the same reassurance would be true there. **Declined on purpose:**
+adding it pushes `loadFailedBody` toward `appErrorBody` and dilutes the two-message split item 100 built.
+Recorded here so the trade is visible, not so a future run picks it by default.
+
+⚠️ **Reported, not fixed — O-4 action 2 and O-5 remain owner actions.** A run may not push, so this does
+not reach a learner until the owner pushes `main`; the live host was serving `last-modified 2026-09-08`
+when measured this run, already behind HEAD.
+
+**Schedule:** the cron is the owner's lever; not read, not compared, not touched.
+
+**Log size.** `MEASURED log-size: file 555923 b, run log 120418 b, floor 435505 b (backlog 397099 b),
+archive 3881729 b` (`npm test`, 2026-09-09). **The backlog floor is unchanged at 397,099 b** — this run
+edited only the run log, which archiving handles, and added no numbered item. W-7.2 rule 5's baseline
+was 425,473 b.

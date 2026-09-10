@@ -24,7 +24,7 @@ export default {
     nextLesson: "下一课", prevLesson: "上一课", markComplete: "标记完成",
     loadingLabel: "加载中…",
     loadFailedTitle: "加载失败",
-    loadFailedBody: "无法下载此内容。请检查网络连接，然后重新加载页面。",
+    loadFailedBody: "无法下载此内容。请重新加载页面以再次获取；如果仍然失败，请检查网络连接。",
     loadFailedRetry: "重新加载",
     appErrorTitle: "出现了问题",
     appErrorBody: "此页面遇到意外错误。重新加载后会返回您的学习路径，您保存的学习进度不会受到影响。",
