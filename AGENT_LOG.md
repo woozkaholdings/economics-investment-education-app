@@ -6397,3 +6397,102 @@ when measured this run, already behind HEAD.
 archive 3881729 b` (`npm test`, 2026-09-09). **The backlog floor is unchanged at 397,099 b** — this run
 edited only the run log, which archiving handles, and added no numbered item. W-7.2 rule 5's baseline
 was 425,473 b.
+
+### 2026-09-10 (scheduled dev-agent; W-6.2 rule 1 free, but the pick was forced before any backlog read mattered: `npm run build` exited 1 on the first command of the run) — the machine this task runs on cannot build this repo, because the other Mac's `node_modules/` synced over it through iCloud, and npm's own error message tells the reader to delete a tracked file
+
+**The pick.** The baseline `npm run build` failed: *Cannot find module @rollup/rollup-darwin-arm64*,
+with npm's advice to *"try `npm i` again after removing both package-lock.json and node_modules"*.
+`npm test` passed in the same tree (exit 0), because no check loads a native binary. **So every
+learner-visible change a run makes here is unverifiable, and the failure's own remedy deletes a tracked
+file and, per the owner's migration notes, breaks the other Mac.** Fixing that came before any backlog item.
+
+#### Step 3.5 — premise measured, with controls, before editing
+- **Which machine.** `uname -m` **arm64**, `sysctl.proc_translated` **0**; `/usr/local/bin/node` is a
+  **universal** binary, so the slice that runs follows the calling shell. The untracked `Migration/`
+  notes (owner material, read only) record the setup: the dev agent moved to this arm64 Mac on
+  2026-09-07; the market-data and weekly-review tasks stay on the x86_64 Mac; the folder, `.git/`
+  and `node_modules/` included, syncs through iCloud.
+- **What is installed.** `node_modules/@rollup/` holds only **`rollup-darwin-x64`**, and
+  `node_modules/@esbuild/darwin-x64/bin/` is **empty** — dir mtimes 2026-09-09 20:07. **The tree builds
+  under neither CPU:** `arch -x86_64 npm run build` also exits 1 (esbuild: *"installed for another platform"*;
+  the binary it wants is the missing file).
+- **Not a stalled-run backlog.** No commit since `3bb7bfe` (09-09 20:11 EDT). Session list: the last
+  "Economic app dev agent" session ended 2026-09-10 00:12 UTC, the one that made `3bb7bfe`, and none started
+  after it, so the 18-hour gap is the schedule not firing, **not runs dying on this**. A transcript
+  search for `rollup-darwin-x64` hits only the 09-07 migration session, so the 09-09 runs built normally
+  and the breakage postdates them.
+- **The out-of-tree route reproduces HEAD, with a control.** Copied the build inputs to the scratchpad,
+  arm64 `npm ci` + `npm run build` → **exit 0**, entry bundle **`index-DKsM5VMX.js`**, the hash
+  `3bb7bfe`'s entry reported; `cmp` against the synced `dist/` copy → identical, and the full fileset matches.
+- **The probe's two directions.** `node -e 'require("rollup")'` and an esbuild `transformSync` →
+  **exit 1 / 1** on the synced tree, **0 / 0** on the out-of-tree copy (0.16 s together).
+- **No iCloud conflict copy** of any tracked file (`* 2.*` at the root: none).
+
+#### What shipped
+- **`scripts/bootstrap-node.sh`** (+30 lines), which every run executes first: after choosing a
+  Node it loads rollup's and esbuild's native binaries with that Node. If they do not load, it prints a
+  ⛔ to stderr naming the CPU and the installed platform packages, points at the new script, and says not to delete
+  `package-lock.json` or reinstall in place. **stdout and exit status are unchanged**, so every
+  existing `BIN_DIR="$(scripts/bootstrap-node.sh)"` caller behaves exactly as before.
+- **`scripts/build-out-of-tree.sh`** (new, 96 lines): `npm run build` with dependencies in
+  `$HOME/.cache/ecycles-build` (outside iCloud). `npm ci` re-runs only when `package.json`,
+  `package-lock.json` or the Node CPU changes, and the result is mirrored back into `./dist` (`--no-copy-back` to skip). It refuses
+  a work dir inside the repo, `~/Documents`, `~/Desktop` or iCloud Drive, **before creating anything**,
+  and refuses to run if `check-deployed.mjs`'s `BUILD_INPUTS` line changes without it.
+- **`README.md`**: one paragraph under Running locally.
+- ⛔ **Not touched: the synced `node_modules/` itself.** Reinstalling it here would sync arm64 binaries to
+  the x86_64 Mac. That is the owner's call (see the end of this entry).
+
+W-6.2 rule 3's sentence, since this adds tooling: **without it, a run on this Mac cannot build, so no
+learner-visible change can be checked in the built app before it ships.** W-6.3 on this tree,
+tracked `scripts/` lines over `src/` minus `content/`+`locales/`: **23,383 / 10,656 = 2.19x before, 2.20x
+after** (+96 lines). Same instrument both sides; not comparable to earlier entries' method.
+
+#### Verification — every branch run, exit codes read directly
+| Case | Result |
+|---|---|
+| bootstrap, synced (broken) tree | ⛔ naming `@esbuild/darwin-x64 @rollup/rollup-darwin-x64` and `darwin-arm64`; stdout `/usr/local/bin`; exit 0 |
+| bootstrap, healthy copy | "the rollup and esbuild native binaries load under this Node."; exit 0 |
+| bootstrap, no `node_modules` | silent about deps; exit 0 |
+| build-out-of-tree `--no-copy-back`, cold | `npm ci` for darwin-arm64, exit 0, `index-DKsM5VMX.js`; `diff -r` vs synced `dist/` → **0 lines, 32 = 32 files** |
+| same, warm | "already match this lockfile", no install, exit 0 |
+| default (copy-back) | exit 0; `dist/` before/after `diff -r` exit 0 |
+| work dir in repo / relative into repo / `~/Documents` | exit 2, **dir not created** (each checked) |
+| drifted `BUILD_INPUTS` (planted in a scratch copy; plant grepped at 1) | exit 2 |
+| npm not on PATH / unknown arg | exit 2 / exit 1 |
+
+⚠️ **One control of mine was not what I labeled it.** A "scratchpad path is accepted" probe ran with
+npm off PATH and stopped at the npm guard, which runs **before** the path guard, so it proved only the
+npm guard. The real acceptance evidence is the cold build from the default `~/.cache` path above.
+`bash -n` clean on both scripts. **`npm test` failed once, correctly:** §26 flagged README naming
+`scripts/build-out-of-tree.sh` while the file was untracked (§26 resolves against the git index). After
+staging: **`npm test` exit 0, warnings 3 → 3.** `npm run check-blindspot` exit 0.
+
+#### Step 5 — adversarial self-check
+**Blindspot register: nothing found.** No lesson, locale, market or kids file changed; the diff greps
+**0** for `dalio|principles|should buy|should sell|we recommend|for kids|for children` against a
+positive control (`node_modules`) at **12**. No date or figure reaches `dist/`: `dist/` is byte-identical
+before and after.
+**DECISIONS.md conflict: none.** `node_modules|icloud|out-of-tree|bootstrap-node|rollup|esbuild` → **0**
+hits, against `localStorage` at **13**. Vite is untouched, `package.json` is untouched, and the Pages
+workflow still runs `npm ci && npm run build`.
+**Already-done backlog item: none.** `out-of-tree|icloud|native binar` → **0** hits in this log,
+against `bootstrap-node` at **8**. `bootstrap-node.sh`'s one job ("which bin directory builds this
+repo") is extended, not duplicated.
+**My own verification claim.** Every row above is reproducible from the commands named. Two limits:
+(1) **I did not observe the x86_64 Mac.** "A reinstall here breaks it" is the migration notes' claim
+plus today's mirror-image measurement on this Mac, not a test on that Mac. (2) **Who installed x64 at
+20:07 is not established**, and nothing here claims it. `npm run check-deployed -- --identify` still symlinks the synced
+`node_modules/`, so it will fail on this Mac in the same state. Seen, not fixed: out of scope for one run.
+
+#### ⛔ For the owner — a decision, not a restated blocker
+**Should `node_modules/` keep syncing between the two Macs?** Your migration notes already name the
+fix (exclude it from iCloud on both Macs, e.g. `node_modules.nosync` + symlink, then `npm ci` on each).
+Until that happens, **whichever Mac installs last breaks the other one's `npm run build`.** This run
+worked around that for the dev agent without touching either Mac's copy; it did not decide the question.
+
+**Schedule:** the cron is the owner's lever; not read, not compared, not touched.
+
+**Log size.** `MEASURED log-size: file 556249 b, run log 120744 b, floor 435505 b (backlog 397099 b),
+archive 3881729 b` (`npm test`, 2026-09-10, before this entry). The backlog floor is unchanged; this run
+added no numbered item.

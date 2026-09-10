@@ -27,6 +27,8 @@ npm run dev
 
 Then open the printed local URL (default `http://localhost:5173`).
 
+**If this folder is shared between Macs with different CPUs** (for example through iCloud Drive), `node_modules/` syncs too, and Vite's native build tools (rollup, esbuild) only run on the CPU that installed them. `scripts/bootstrap-node.sh` says so when the installed binaries do not load; build with `scripts/build-out-of-tree.sh` instead, which keeps the dependencies outside the synced folder. Do not delete `package-lock.json` or reinstall `node_modules/` in place to fix it — the reinstall syncs to the other Mac and breaks that one.
+
 ## Testing
 
 ```bash

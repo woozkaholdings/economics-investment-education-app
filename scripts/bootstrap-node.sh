@@ -32,6 +32,34 @@ CACHE_DIR="${NODE_CACHE_DIR:-$HOME/.cache/ecycles-node}"
 
 log() { echo "[bootstrap-node] $*" >&2; }
 
+# WHY THE NATIVE-DEPENDENCY PROBE EXISTS (2026-09-10): a Node that Vite
+# accepts is not enough to build. Vite loads native rollup and esbuild
+# binaries from node_modules/, each installed for ONE CPU, and this repo lives
+# in an iCloud-synced folder shared by an x86_64 Mac and an arm64 Mac, so
+# node_modules/ syncs between them. Measured 2026-09-10 on the arm64 Mac: only
+# @rollup/rollup-darwin-x64, and an @esbuild/darwin-x64 whose bin/ was empty
+# -- `npm run build` failed under both CPUs, and npm's own error told the
+# reader to delete package-lock.json. The probe loads both binaries with the
+# Node chosen below and reports on stderr. It never touches node_modules/, and
+# it never changes stdout or the exit status.
+check_native_deps() {
+  local bin="$1" repo cpu installed
+  repo="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+  # Nothing installed yet: `npm ci` fetches the right binaries for this CPU.
+  [ -d "${repo}/node_modules/vite" ] || return 0
+  if (cd "${repo}" && "${bin}/node" -e 'require("rollup"); require("esbuild").transformSync("let a = 1")') >/dev/null 2>&1; then
+    log "node_modules/: the rollup and esbuild native binaries load under this Node."
+    return 0
+  fi
+  cpu="$("${bin}/node" -p 'process.platform + "-" + process.arch' 2>/dev/null || echo unknown)"
+  installed="$(cd "${repo}/node_modules" && ls -d @rollup/* @esbuild/* 2>/dev/null | tr '\n' ' ' || true)"
+  log "⛔ node_modules/ CANNOT BUILD here: its native rollup/esbuild binaries do not load under Node ${cpu}."
+  log "   Platform packages installed: ${installed:-<none>}"
+  log "   Build with scripts/build-out-of-tree.sh -- it installs dependencies outside this synced folder."
+  log "   Do NOT delete package-lock.json (npm's error suggests it; the file is tracked), and do NOT"
+  log "   reinstall node_modules/ in place: it syncs to the other Mac, which is how this one broke."
+}
+
 force_download=0
 for arg in "$@"; do
   case "$arg" in
@@ -63,6 +91,7 @@ if [ "${force_download}" -eq 0 ]; then
     if major_is_supported "${system_major}"; then
       system_bin="$(cd "$(dirname "${system_node}")" && pwd)"
       log "Using system Node ${system_version} at ${system_node} (npm: ${system_npm})"
+      check_native_deps "${system_bin}"
       echo "${system_bin}"
       exit 0
     fi
@@ -112,5 +141,6 @@ fi
 
 installed_version="$("${bin_dir}/node" --version)"
 log "node ${installed_version} ready at ${bin_dir}"
+check_native_deps "${bin_dir}"
 
 echo "${bin_dir}"
