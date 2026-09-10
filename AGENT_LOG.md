@@ -6496,3 +6496,87 @@ worked around that for the dev agent without touching either Mac's copy; it did 
 **Log size.** `MEASURED log-size: file 556249 b, run log 120744 b, floor 435505 b (backlog 397099 b),
 archive 3881729 b` (`npm test`, 2026-09-10, before this entry). The backlog floor is unchanged; this run
 added no numbered item.
+
+### 2026-09-10 (scheduled dev-agent; W-6.2 rule 1 free — the previous run's residual, `check-deployed -- --identify` symlinking the synced `node_modules/`, was seen and deliberately not taken; this pick came from a sweep of the least-mentioned files in `src/`) — the parent guide tells a parent that one scarce toy getting pricier "is exactly what grown-ups mean by inflation", and every definition of inflation this app teaches says the opposite
+
+**The pick.** Counting each `src/` file's basename across both logs put `MarketSignals.jsx` (3) and
+`ParentGuide.jsx` (5) at the bottom of the screens. Both have had layout and a11y passes; **neither's
+content has been read for accuracy.** Item 167's fifth note swept glossary↔lesson agreement across
+`markets.js` and `economicSignals.js`, **not `kidsContent.js`**. `markets.js`'s `rateEffects` read
+clean (directions only, hedged notes). `kidsContent.js` did not.
+
+#### Step 3.5 — premise measured on the built app, with a control in the same page load
+- **The defect.** `kidsContent["5-8"].lessons[1]`: the kid-facing text is *"If everyone wants the same
+  toy but there aren't many, the price goes UP. That's like inflation!"* (an analogy, and fine as one).
+  Its `why`, the line addressed to the parent, said *"This is exactly what grown-ups mean by inflation —
+  prices for things like groceries and gas can rise the same way."* **Too many buyers for one scarce good
+  is a relative price change, not inflation.** Inflation is a rise across the general price level.
+- **The app's own definition is the control, and it disagrees with the sentence.** English lessons:
+  economy *"When spending and incomes grow faster than the town can really produce … that's inflation"*;
+  essentials lesson 9 *"when spending and incomes across an economy grow faster than the goods and
+  services actually produced, prices rise"*; glossary `Inflation` *"When prices rise because spending
+  grows faster than production."* All three are economy-wide, and none is about one good.
+- **Live, `index-DKsM5VMX.js` (= HEAD), Reference → Kids → Ages 5-8:** subject sentence present
+  **true**, control `TRANSACTION` (the row above, known present) **true**, same page load.
+- **Not previously decided.** `grown-ups mean` → **0** hits across both logs against `kidsContent` at
+  **56**. Item 167(d) deliberately left `kidsContent.js:84`'s `$2+ trillion` alone. That is a different row
+  and a different class, and it is still untouched.
+
+#### What shipped
+One line, `src/content/kidsContent.js` (`git diff --numstat` **1 / 1**): the `why` in all five
+languages now reads, in English, *"One toy getting pricier is just that toy. Inflation is when prices of
+almost everything — groceries, gas, rent — rise together, usually because spending across the whole
+economy grows faster than what gets produced, so the same money buys less."* That is the app's own
+definition, hedged with "usually" (cost-push inflation exists). The translations reuse each language's
+existing term from essentials lesson 9 (`inflación`, `인플레이션`, `通胀`, `インフレ`), carry **no quotation
+marks** (§56's per-language repertoire) and **no digits** (ja writes `ひとつ`, not `1つ`). The kid-facing
+`text` is unchanged: the analogy stays, and the parent now gets the bridge instead of a false equation.
+⚠️ **O-3, disclosed:** the four translations are new unreviewed machine prose replacing old unreviewed
+machine prose on the same unit (~130-300 code points each). No fluent reader has checked them.
+
+#### Verification
+| Check | Result |
+|---|---|
+| `npm test` | **exit 0**, WARN **3 → 3**, FAIL **0**; §66 `0/192` under threshold (this `why` is not in `READ_COMPLETE`, and every new translation is longer than the old); §55 and §56 hold; §10.3 both `ok` |
+| `scripts/build-out-of-tree.sh` | **exit 0**; `Reference-D7EZqbym.js` 68.92 kB → **`Reference-DH3_Im7Z.js` 69.76 kB**, entry → `index-BFgba3Tq.js` |
+| `dist/assets` grep | new string in **all 5 languages** → `Reference-DH3_Im7Z.js`; old string in en/es/ko/zh/ja → **no file**; control `TRANSACTION`/`TRANSACCIÓN` → `Reference-DH3_Im7Z.js` |
+| Live, `index-BFgba3Tq.js`, language set through the real `<select>` change event | **en/es/ko/zh/ja: new true, old false, control true**, `html lang` and the age tab label switching each time |
+
+⚠️ **One instrument miss of my own, caught by its own output:** the first multi-language pass looked for
+the picker among buttons and returned `no picker button` for all five languages. The picker is a
+`<select>`. English had been verified separately on that load; the other four were verified only on the
+second pass, above.
+
+#### Step 5 — adversarial self-check
+**Blindspot register: nothing found.** Added lines grep **0** for
+`dalio|principles|should buy|should sell|we recommend|buy now|good time to buy|for kids|for children|kids
+mode|as of 20xx|today`, against **1** over the whole `kidsContent.js` (positive control). No date or
+figure added. §10.3: the `why` still addresses an adult and renders only in `ParentGuide.jsx`.
+`check-blindspot` passed inside `npm test`.
+**DECISIONS.md conflict: none.** Its `kidsContent|ParentGuide` hits (lines 330-349, 507, 723) record
+that kids copy stays parent-facing and that content is `.js` modules. This edit keeps both and changes
+no shape.
+**Already-done backlog item: none.** Item 21 added the `why` field (2026-08-16); nothing since corrected
+this row's meaning (`36c0f5a`/`899426c` completed abridged *translations*, which is §66's class, not accuracy).
+**My own verification claim.** Every row above is reproducible from the commands named. The limit:
+**the claim that one good's price rise is not inflation rests on the standard textbook definition plus
+the app's own three definitions**, not on a source fetched this run. W-6.3: `scripts/` untouched, ratio
+unmoved.
+
+#### Seen on the same read, deliberately NOT fixed and NOT numbered (W-6.2 rule 2)
+- **ko/ja `9-12.lessons[6].text` teach a US checkout.** All five languages say the shelf price usually
+  isn't what you pay because sales tax is added at the register (ja: `売上税`). Japan has required
+  tax-inclusive display since April 2021, and Korean shelf prices include VAT, **so for a ja/ko parent the
+  blurb describes a country they are not in.** That is from knowledge, not measured this run; it is also a
+  localization decision (O-3-shaped), not a wording fix.
+- **Two unsourced superlatives in `why` lines**: `9-12.lessons[5]` *"the single habit that keeps adult
+  budgets … out of trouble"* and `13-17.lessons[3]` *"the single biggest predictor of whether a first
+  bank account … stays out of trouble"*. Both are empirical claims nothing in the corpus supports, and
+  both are rhetorical overreach rather than a wrong definition. Lower priority than this run's fix.
+  **Neither is picked by default.**
+
+**Schedule:** the cron is the owner's lever; not read, not compared, not touched.
+
+**Log size.** `MEASURED log-size: file 564398 b, run log 128893 b, floor 435505 b (backlog 397099 b),
+archive 3881729 b` (`npm test`, 2026-09-10, before this entry). The backlog is unchanged; this run added
+no numbered item and put its notes here, in the archivable run log, rather than under item 21.
