@@ -7087,3 +7087,75 @@ read through the summarizer, so reopen it. Plus O-3.
 
 **Log size.** `MEASURED log-size: file 611886 b, run log 176381 b, floor 435505 b (backlog 397099 b),
 archive 3881729 b, 3 live day(s)` (`npm test`, 2026-09-11, before this entry). No backlog change.
+
+### 2026-09-11 (owner-directed, interactive: "fix the lesson 43 labor income claim too") — lesson 43 said labor income is "the only one of the four that reliably becomes zero when you stop", inside a test whose named causes are illness and a new baby, and whether it reaches zero depends on the country: the UK pays statutory sick pay for up to 28 weeks, while US federal leave is unpaid
+
+**The pick** is the owner's, and it is the second note under the first 2026-09-11 lesson-44 entry above. That
+entry and the business-closure fix are both pushed (`e709605`, `1e2e188`), and `check-deployed` certified
+each one live.
+
+#### Step 3.5 — premise measured, with controls, before editing
+- **The claim.** L43 §1: *"Labor income is the most tightly coupled to your hours: it is the only one of the
+  four that reliably becomes zero when you stop."* The same section frames the test as *"If you stopped
+  working entirely for three months — illness, a new baby, burnout, a broken leg"*. The **takeaway** compresses
+  it to *"Labor income goes to zero"*. es/ko/zh/ja carry both.
+- **UK, `gov.uk/statutory-sick-pay`** (control: had to quote a £ figure or say none; it quoted one): *"You can
+  get up to £123.25 per week Statutory Sick Pay (SSP) if you're too ill to work. It's paid by your employer for
+  up to 28 weeks."* So for illness, the lesson's own first example, a UK employee's labor income does **not**
+  reach zero in three months.
+- **US, `dol.gov/agencies/whd/fmla`** (control: had to state paid or unpaid): FMLA gives *"unpaid,
+  job-protected leave"*, up to 12 workweeks, for *"The birth of a child"* and *"A serious health condition"*.
+  So the federal floor there **is** zero. The claim is not false everywhere, and the fix must not overcorrect
+  to "you will be paid". The honest version is that it depends on country and employer, and any pay that
+  continues is usually partial and time-limited (the SSP cap and the 28 weeks above).
+- **Surfaces, read in English with a regex over every lesson field in all three tracks, the glossary and the
+  quiz.** Changed: L43 §1 and the L43 takeaway. **Deliberately kept:** L43 §1's *"Priya's shifts stop the day
+  she does; her income goes to zero"* (extra shifts do stop). L43 §2's *"'all my income stops the day I stop'
+  is a fact about your situation"* (it is conditional on the reader's own case). The glossary's `Labor Income`
+  (*"normally stops when the work stops"*, already hedged). `q045`'s *"It would fall to zero immediately, like a
+  wage"* (a distractor, so not asserted). ⚠️ **Flagged to the owner, not changed:** L44 §2's summary column,
+  *"Labor income: reliable, protected, capped by your hours, and it stops when you stop."* The owner asked for
+  lesson 43. The draft `drafts/income-hierarchy.en.md:199,208,306` carries all three and stays a record.
+- **Not previously decided.** Logs, `DECISIONS.md` and `CLAIMS.md`: the only hit is this morning's note. HEAD
+  was `1e2e188` and matched `origin/main` before editing.
+- **On the build, `index-CHHfeuFa.js` (= HEAD):** both old English strings were in `lessonContent.money.en`,
+  the control (the business-closure fix) was present, and the negative matched no file.
+
+#### What shipped
+`lessonContent.money.{en,es,ko,zh,ja}.js`, two fields each (**2 / 2** each). §1 English: *"…it is the one of
+the four most likely to stop outright when you stop, and whatever sick or parental pay carries on depends on
+where you live and who employs you, and is usually partial and for a limited time."* The ordering the
+paragraph teaches, "the most tightly coupled to your hours", is kept. Takeaway: *"Labor income stops or drops
+sharply, …"*. es/ko/zh/ja carry the same two meanings (`el que más probablemente se detiene por completo …
+suele ser parcial y por tiempo limitado` / `완전히 끊길 가능성이 가장 큰 소득이며 … 대개 일부만, 정해진 기간
+동안만` / `最有可能彻底断掉的就是它 … 通常只是部分工资，也有期限` / `完全に途絶える可能性がもっとも高い … 多くは一部で、期間も
+限られています`; takeaways `se detiene o cae con fuerza` / `끊기거나 크게 줄고` / `中断或大幅减少` / `途絶えるか大きく減り`). No
+figure was added. Ledger: L43 es/ko/zh/ja re-marked `ai` (**12 / 12**). `refresh-readiness.mjs --write`: en
+chars **152,356 → 152,502**, the §10.4 volume sentence, and `LAUNCH_PLAN.md` §4.0's rounded
+"~152,000 → ~153,000" (**1 / 1**).
+⚠️ **O-3, disclosed:** eight new machine-written clauses, unreviewed by a fluent reader.
+
+#### Verification
+| Check | Result |
+|---|---|
+| Node import probe | **5/5**: new §1 clause and new takeaway present, both old forms absent module-wide, L44 business-closure fix present (control), negative absent; en keeps Priya's line. ⚠️ The first run never executed: zsh read the apostrophe in `Priya's` as closing the single-quoted `node -e`. It was rerun from a heredoc script file |
+| `npm test` | **exit 0**; WARN/FAIL lines **identical** to the committed `1e2e188` state (`diff`), WARN 3, FAIL 0; readiness agrees at 152,502 |
+| `scripts/build-out-of-tree.sh` (unpiped) | **exit 0**; entry `index-CHHfeuFa.js` → **`index-baaFuGAq.js`** |
+| `dist/assets` grep | all **10** new strings → their own `lessonContent.money.<lang>` chunk; all **10** old forms → no file; control → en chunk; negative → no file |
+| Live, `index-baaFuGAq.js` (static server, 404 control fired), `#/lesson/43`, real `<select>` change event, one call per language | **en/es/ko/zh/ja: new §1 true, new takeaway true, both old false, negative false**; en Priya control true; `html lang` en/es/ko/zh-Hans/ja |
+
+#### Step 5 — adversarial self-check
+**Blindspot register: nothing found.** Added lines match
+`dalio|principles|should buy|should sell|we recommend|buy now|good time to buy|for kids|for children|kids
+mode|as of 20xx|today|guarantee|will crash|expect a|start a business|you should|quit your job` **0** times
+(removed: 0; fragments: 0), against **19** in `check-blindspot.mjs`. The clause says what the rules do and
+does not tell a reader to seek leave, change jobs or build other income. The £123.25 and the 12 workweeks
+appear only in this entry.
+**DECISIONS.md conflict: none.** The lessons' 2026-08-25 approval says nothing about this wording.
+**Already-done item: none reversed.** Both lesson-44 fixes are untouched, and the business-closure one is the control.
+**My own verification claim.** Every row reproduces from the commands named. The limits: two jurisdictions
+were read, one each way. "Parental pay" was measured only as the US's absence of it, so the UK half of that
+word rests on knowledge. Both pages came through the summarizer, so reopen them. Plus O-3.
+
+**Log size.** `MEASURED log-size: file 617761 b, run log 182256 b, floor 435505 b (backlog 397099 b),
+archive 3881729 b, 3 live day(s)` (`npm test`, 2026-09-11, before this entry). No backlog change.
