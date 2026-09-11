@@ -1121,25 +1121,25 @@
     "es": {
       "reviewedBy": "Claude (Opus 5, interactive)",
       "reviewedDate": "2026-09-11",
-      "sourceHash": "d4ed6386d48d5132",
+      "sourceHash": "178a4a835eeb0570",
       "method": "ai"
     },
     "ja": {
       "reviewedBy": "Claude (Opus 5, interactive)",
       "reviewedDate": "2026-09-11",
-      "sourceHash": "d4ed6386d48d5132",
+      "sourceHash": "178a4a835eeb0570",
       "method": "ai"
     },
     "ko": {
       "reviewedBy": "Claude (Opus 5, interactive)",
       "reviewedDate": "2026-09-11",
-      "sourceHash": "d4ed6386d48d5132",
+      "sourceHash": "178a4a835eeb0570",
       "method": "ai"
     },
     "zh": {
       "reviewedBy": "Claude (Opus 5, interactive)",
       "reviewedDate": "2026-09-11",
-      "sourceHash": "d4ed6386d48d5132",
+      "sourceHash": "178a4a835eeb0570",
       "method": "ai"
     }
   }

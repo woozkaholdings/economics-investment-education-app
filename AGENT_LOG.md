@@ -7159,3 +7159,62 @@ word rests on knowledge. Both pages came through the summarizer, so reopen them.
 
 **Log size.** `MEASURED log-size: file 617761 b, run log 182256 b, floor 435505 b (backlog 397099 b),
 archive 3881729 b, 3 live day(s)` (`npm test`, 2026-09-11, before this entry). No backlog change.
+
+### 2026-09-11 (owner-directed, interactive: "fix the lesson 44 line too") — lesson 44's summary column still said labor income "stops when you stop", one lesson after lesson 43 was corrected to say it stops or drops sharply
+
+**The pick** is the owner's. It is the echo the lesson-43 entry above flagged and deliberately did not change.
+That entry is pushed (`bb57eb0`), and `check-deployed` certified it live.
+
+#### Step 3.5 — premise measured before editing
+- **The claim.** L44 §2: *"Labor income: reliable, protected, capped by your hours, and it stops when you
+  stop."* es/ko/zh/ja say the same (`se detiene cuando tú te detienes` / `당신이 멈추면 함께 멈춥니다` /
+  `你一停下来它就停` / `あなたが止まれば止まる`).
+- **Sources: the same two pages, fetched earlier this session for lesson 43, not re-fetched.** gov.uk
+  statutory sick pay runs *"up to 28 weeks"*, and dol.gov FMLA is *"unpaid, job-protected leave"*. So "stops"
+  is true under one floor and not the other.
+- **Irony recorded, because it is the reason this was worth a commit:** the same sentence calls labor income
+  *"protected"*, and one paragraph up, the same section lists what that protection is. An unqualified "stops"
+  undercut the paragraph's own word.
+- **On the build, `index-baaFuGAq.js` (= HEAD `bb57eb0`):** the old English line was in
+  `lessonContent.money.en-2ZIhm_cZ.js`, the lesson-43 control was in the same chunk, and the negative matched
+  no file. HEAD matched `origin/main`.
+
+#### What shipped
+`lessonContent.money.{en,es,ko,zh,ja}.js`, one clause each (**1 / 1** each). English: *"…capped by your
+hours, and it **stops or drops sharply** when you stop."* It uses the exact verb pair of lesson 43's corrected
+takeaway, in every language (`se detiene o cae con fuerza` / `끊기거나 크게 줄어듭니다` / `中断或大幅减少` /
+`途絶えるか大きく減る`), so the two lessons now say the same thing. The *"Everything else"* parallel and the
+rest of the paragraph are untouched. Ledger: L44 es/ko/zh/ja re-marked `ai` (**4 / 4**, the hash only,
+since today's earlier re-mark already carried this reviewer and date). `refresh-readiness.mjs --write`: en
+chars **152,502 → 152,519** (`LAUNCH_READINESS.md` **2 / 2**).
+⚠️ **O-3, disclosed:** four machine-written clause edits, unreviewed by a fluent reader.
+
+#### Verification
+| Check | Result |
+|---|---|
+| Node import probe (heredoc script) | **5/5**: new present, old absent module-wide, L43 takeaway fix and L44 creditor fix present (controls), negative absent |
+| `npm test` | **exit 0**; WARN/FAIL lines **identical** to the committed `bb57eb0` state (`diff`), WARN 3, FAIL 0; readiness agrees at 152,519 |
+| `scripts/build-out-of-tree.sh` (unpiped) | **exit 0**; entry `index-baaFuGAq.js` → **`index-DF5NKDNV.js`** |
+| `dist/assets` grep | each new clause → its own `lessonContent.money.<lang>` chunk; **5 old forms → no file**; control → en chunk; negative → no file |
+| Live, `index-DF5NKDNV.js` (static server, 404 control fired), `#/lesson/44`, real `<select>` change event | **en/es/ko/zh/ja: new true, old false, creditor control true, business control true, negative false**; `html lang` en/es/ko/zh-Hans/ja |
+
+⚠️ **Instrument miss, caught by the controls, and a sharper version of this morning's.** The first English
+probe and the first Spanish probe both read **every** string false, both controls included. The page was showing
+the reader's *"Cargando…"* placeholder with `visibilityState: "hidden"`: the lesson chunk had been fetched (200
+in the network log, 200 from `curl`) and had not rendered yet. The switch-then-read-in-the-next-call pattern that
+worked this morning was not enough on this load. **Fixed by separating the switch and the read into different
+calls and accepting a read only when both controls are true.** English was re-measured that way, not
+carried over from the void read.
+
+#### Step 5 — adversarial self-check
+**Blindspot register: nothing found.** Added lines match
+`dalio|principles|should buy|should sell|we recommend|buy now|good time to buy|for kids|for children|kids
+mode|as of 20xx|today|guarantee|will crash|expect a|start a business|you should|quit your job` **0** times
+(removed: 0; fragment: 0), against **19** in `check-blindspot.mjs`. No figure, date or recommendation was added.
+**DECISIONS.md conflict: none.** **Already-done item: none reversed.** All three of today's earlier fixes
+are untouched, and two of them are this entry's controls.
+**My own verification claim.** Every row reproduces from the commands named. The limit is the same as the
+lesson-43 entry's: two jurisdictions, one each way, read through the summarizer. Plus O-3.
+
+**Log size.** `MEASURED log-size: file 624730 b, run log 189225 b, floor 435505 b (backlog 397099 b),
+archive 3881729 b, 3 live day(s)` (`npm test`, 2026-09-11, before this entry). No backlog change.
