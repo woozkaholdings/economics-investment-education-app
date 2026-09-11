@@ -7394,3 +7394,93 @@ Plus O-3. W-6.3: `scripts/` changed only in the ledger JSON (12 / 12, net 0). No
 **Log size.** `MEASURED log-size: file 637600 b, run log 202095 b, floor 435505 b (backlog 397099 b),
 archive 3881729 b, 3 live day(s)` (`npm test`, 2026-09-11, before this entry). No backlog change, and the notes
 are in the archivable run log.
+
+### 2026-09-11 (scheduled dev-agent; W-6.2 rule 1 free — the previous run was a census pick, so taking one of its notes is the first residual pick, and it was taken on merit against a fresh candidate rather than by default) — lesson 21 said whoever names a figure first pulls the final number toward theirs, "which is exactly why" guides say to let the other side go first, and its takeaway said an anchor "carries no information about value" a paragraph after saying $220 was sometimes the real price
+
+**The pick.** The census was re-run over both logs (the same `lesson N` / `LN` regex; numbering contamination as
+before, so it ranks and proves nothing). Least-read, excluding the four the previous run read: **L26 8 / 1, L2
+13 / 0, L42 15 / 0, L25 16 / 1, L15 17 / 0**. Read in English: **L2, L15, L25, L26, L42**. L2, L25 and L26 have no
+sentence-level defect. L15 and L42 have notes below. The previous run's L21 note was weighed against L15's fresh
+finding and taken: L21 is on `money` (the product), L15 on optional `essentials`, and the L21 fix needs no new
+contested claim.
+
+#### Step 3.5 — premise measured, with controls, before editing
+- **The claim.** L21 §2: *"whoever names a figure first pulls the eventual number toward theirs, which is exactly
+  why the advice 'let the other side name a number first' shows up so often in negotiation guides"*. The mechanism
+  favors going first, and the advice it is offered as the reason for says go second. All four translations carry
+  the same link (es `que es exactamente por qué el consejo`, ko `…이유가 바로 이것입니다`, zh `这正是为什么“让对方先报数字”`,
+  ja `まさにこのためです`).
+- **Source, and its limit.** Galinsky & Mussweiler (2001), *First offers as anchors* (PubMed 11642352): across three
+  experiments, whichever party made the first offer got the better outcome; Study 3 reports r = .85 between first
+  offer and final price. Orr & Guthrie's meta-analysis reports r ≈ .50. Both are **via search-result summaries, not
+  the full texts**. So the research contradicts the advice rather than explaining it, and the flat "pulls"
+  overstates a correlation, so the edit says "tends to".
+- **The takeaway.** *"The number itself carries no information about value"* is the only absolute in the lesson.
+  §1 says the $220 "might reflect what the jacket actually used to sell for", §2 says "sometimes $220 was the real
+  prior price" and "an anchor's size tells you almost nothing about whether it's fair", and `quizText.en.js:368`
+  says an anchor's size "doesn't tell you whether the resulting price is actually fair".
+- **The only surface.** Fixed-string scans of `src/` for `name a number first`, `names a figure first`, `first
+  offer` and `hand that placed` hit `lessonContent.money.en.js:107` plus `:111`, whose thinkAbout mentions "a
+  first offer" and stays. `salary` / `negotiat` finds no quiz item on negotiation. `negociaci|협상|谈判|交渉` finds
+  the L21 bodies plus option 364, an unrelated "negotiated a lower price".
+- **Not previously decided.** `git log -S 'name a number first' -- src` → `28e5555` (lesson added), then `0f46283`
+  and `6f5c48c` (splits). DECISIONS / CLAIMS / LAUNCH_PLAN / LAUNCH_READINESS **0** hits; the logs only hold the
+  previous entry's note (control `localStorage`: 13 / 3 / 3 / 3 / 29 / 396).
+- **Pre-edit build, `index-C6wHy-MM.js` (= HEAD `8d9fcd5`).** Old clause, old takeaway and the control were in
+  `lessonContent.money.en-CH0Q9phB.js`. The new string was in **0** files.
+
+#### What shipped
+`lessonContent.money.{en,es,ko,zh,ja}.js`, two fields each. The edit script asserted old = 1 and new = 0 for all
+**10** strings before writing anything. §2 now reads *"…whoever names a figure first **tends to pull** the
+eventual number toward theirs: the anchor is a tool, and tools work better in the hand that placed them."* The
+guide advice is **deleted, not replaced**, so the lesson recommends neither going first nor going second. The
+takeaway reads *"**The number's size tells you almost nothing about whether it's fair;** treat it as a starting
+offer…"*. Each language reuses its own §2 wording (es `casi no te dice nada sobre si es justo`, ko `…거의 아무것도
+말해주지 않습니다`, zh `几乎不能告诉你它是否公平`, ja `ほとんど何も教えてくれません`).
+**Knock-on.** L21's text now computes **4 → 3 min**, so `lessons.js` changed. L21 is not a track opener, and
+§3.0.5's under-4 rule is untouched. Ledger: L21 es/ko/zh/ja re-marked `ai` (**12 / 12**). `refresh-readiness.mjs
+--write` (twice): en chars **152,537 → 152,445**, catalog **162 → 161 min** in LAUNCH_READINESS §4.3, LAUNCH_PLAN
+§4.0 and §4.3, and CLAIMS A6, plus the §10.4 volume sentence.
+⚠️ **O-3, disclosed:** eight machine-written clause edits, unreviewed by a fluent reader.
+
+#### Verification
+| Check | Result |
+|---|---|
+| Node import probe | **5/5**: both new strings in L21, both old strings absent module-wide, own-language §2 control present, negative absent, 2 sections |
+| `npm test` | After edit + re-mark + refresh: **exit 1**, `FAIL: lessons[36] (id 21): minutes is 4, but its text computes to 3`. After `lessons.js`: **exit 0**; WARN/FAIL lines **identical** to this run's pre-edit baseline (`diff`), WARN 3, FAIL 0 |
+| `scripts/build-out-of-tree.sh` (unpiped) | **exit 0**; entry `index-C6wHy-MM.js` → **`index-Bqus07Wp.js`** |
+| `dist/assets` grep | all **10** new strings → their own `lessonContent.money.<lang>` chunk; all **10** old forms → no file; control → en chunk; negative → no file |
+| Live, `python3 -m http.server` on `127.0.0.1:8871` | index **200**, nonexistent path **404** (control fired), served `index.html` names `index-Bqus07Wp.js`; `preview_start` `?cb=1`; seeded disclaimer + completed `[41,42,43,44,16..20]` + `en`, reloaded to `?cb=2#/lesson/21`, read in a separate call |
+| Live `#/lesson/21`, language set through the real `<select>`, switch and read in separate calls | **en/es/ko/zh/ja: both new strings true, both old false, control true (en title + §2 heading; others their own §2 "almost nothing" sentence), negative false**; `html lang` en/es/ko/zh-Hans/ja; entry `index-Bqus07Wp.js` on every read |
+
+#### Step 5 — adversarial self-check
+**Blindspot register: nothing found.** Added and removed diff lines under `src/` match
+`dalio|principles|should buy|should sell|we recommend|buy now|good time to buy|for kids|for children|kids
+mode|as of 20xx|today|guarantee|will crash|you should|go first|name.*first yourself|always negotiate` **0 / 0**; a
+planted `now is a good time to buy stocks` fires **1**. `check-blindspot` ran inside the green `npm test`. No
+investment content, date or market figure was touched.
+**DECISIONS.md conflict: none.** Content stays in `.js` modules, and `minutes` stays derived, which is why it moved.
+**Already-done item: none reversed.** Item 167's arithmetic sweep is unaffected (no figure). The L27 fix is untouched.
+**My own verification claim.** Every row reproduces from the commands named. The limits are that both sources came
+through search summaries, not full texts, and that the 2025 OBHDP synthesis is titled *"The power and peril of
+first offers"*, which signals boundary conditions that "tends to" leaves room for and this lesson does not
+teach. W-6.2: residual pick #1 in the chain. W-6.3: `scripts/` changed only in the ledger JSON (12 / 12, net 0).
+No instrument was added.
+
+#### Seen, deliberately NOT fixed and NOT numbered (W-6.2 rule 2)
+- **L15 §1: "who has recently checked the report (a "hard inquiry")".** A hard inquiry is a lender's check after a
+  credit application. A person checking their own report is a soft inquiry that does not affect a score. The
+  parenthetical calls every check a hard inquiry, in a lesson whose §2 tells the reader to pull their own report.
+  All four translations carry it (es `consulta dura`, ko `엄격 조회`, zh `硬查询`, ja `ハードインクワイアリー`), and it
+  is the only `inquir` in `src/`. This is knowledge, not measured against a source. **Not picked by default.**
+- **L42 §2 + takeaway: "almost every dollar of the other three started life as labor income belonging to
+  someone"** is a contested claim about where capital comes from, stated as "the honest shape of the whole
+  thing". L41-44 are the lessons the owner has been correcting interactively, so this is a framing call.
+  **Not picked by default.**
+- The previous run's `q041` and L22 notes are unchanged and still open.
+
+**Schedule:** the cron is the owner's lever; not read, not compared, not touched.
+
+**Log size.** `MEASURED log-size: file 646939 b, run log 211434 b, floor 435505 b (backlog 397099 b),
+archive 3881729 b, 3 live day(s)` (`npm test`, 2026-09-11, before this entry). No backlog change, and the notes
+are in the archivable run log.
