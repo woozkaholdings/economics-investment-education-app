@@ -6686,3 +6686,58 @@ within-tolerance drifts are still unrecorded, which is deliberate: they are othe
 
 **Log size.** Before this entry: `MEASURED log-size: file 595022 b, run log 160007 b, floor 435015 b` (the previous
 entry's `npm test`, unchanged since). After it: not retyped (W-7.2 rule 4).
+
+### 2026-09-11 (owner-directed, interactive: "fix the lesson 7 subtitle too") — lesson 7's subtitle promised "Why a raise can never shrink your take-home pay" as the headline rule, and the body now scopes that rule to brackets, so the subtitle names the mechanism instead
+
+#### Step 3.5 — premise measured, with controls, before editing
+- **What the subtitle said, and why it is not flatly false.** en *"Why a raise can never shrink your take-home pay"*
+  (es `Por qué un aumento nunca puede reducir tu sueldo neto`, ko `왜 급여 인상이 실수령액을 줄일 수 없는가`, zh
+  `为什么加薪永远不会让到手工资变少`, ja `昇給が手取りを減らすことは絶対にない理由`). For pay after taxes it holds. But it is the
+  lesson's headline, and since `e561b4d` the body says the rule is about brackets, and that near a benefits cliff a
+  raise can leave a household with less overall. A headline stating the unscoped rule is what a learner remembers.
+- **The only surface.** `git grep -F` for each language's string → **1** file, `src/content/lessons.js`. It renders
+  once, under the title in `LessonReader.jsx:394`. No script, doc or quiz repeats it.
+- **Constraints.** Subtitle lengths across all 44 lessons: en max **210**, p90 **134**; L7 was 47. No length guard
+  exists. `check-data.mjs:262` counts subtitle words toward `minutes`, and `translation-review.mjs:85` excludes
+  title/subtitle from the ledger hash, so no re-mark is due.
+- **Not previously decided.** `L7 subtitle` → **1** (the previous entry naming it as left alone), `lesson 7 subtitle` →
+  **0**, generic `subtitle` hits are unrelated (control `localStorage` 24 / 414 / 13 / 3 / 3 / 3). `git log -S` →
+  `3306bad` (2026-08-06, lesson added).
+- **Pre-edit build `index-DYKziaIz.js` (= HEAD `e561b4d`).** The old en and ko subtitles and the title control → the
+  entry chunk.
+
+#### What shipped
+`src/content/lessons.js`, the L7 `subtitle` map, 5 strings. The edit script asserted old = 1 / new = 0 for each before
+writing.
+- en *"Why moving up a tax bracket can't shrink your take-home pay"* · es `Por qué subir de tramo fiscal no puede reducir
+  tu sueldo neto` · ko `왜 더 높은 세율 구간으로 올라가도 실수령액이 줄지 않는가` · zh `为什么升入更高税级不会让到手工资变少` · ja
+  `税率区分が上がっても手取りが減らない理由`
+- It stays true of the bracket mechanism in every case, including a benefits cliff, which is not a bracket. The
+  caveat stays in the body, where there is room to explain it.
+- **Knock-on: none.** `minutes` stays 5, readiness figures unchanged (`refresh-readiness --write` found nothing to
+  update: subtitles are not in the en-chars count), no ledger or §33 change.
+- ⚠️ **O-3, disclosed:** four machine-written subtitles, unreviewed by a fluent reader.
+
+#### Verification
+| Check | Result |
+|---|---|
+| Node import probe (from a file) | **5/5** new subtitles exact; L7 title control unchanged; `minutes` 5 |
+| `npm test` | **exit 0**; WARN/FAIL lines **identical** to this session's pre-edit baseline (`diff`), WARN 3, FAIL 0 |
+| `scripts/build-out-of-tree.sh` | **exit 0**; entry `index-DYKziaIz.js` → **`index-CICXcxY3.js`** |
+| `dist/assets` grep | all **5** new subtitles → `index-CICXcxY3.js`; all **5** old → no file; title control → same chunk; negative → no file |
+| Live, `python3 -m http.server` on `127.0.0.1:8879` | index **200**, nonexistent path **404** (control fired), served `index.html` names `index-CICXcxY3.js`; seeded in a non-navigating call, then `navigate` to `?cb=2#/lesson/7` (the split shape from the previous entry) |
+| Live `#/lesson/7`, 8 s waits, language set through the real `<select>`, switch and read in separate calls | **en/es/ko/zh/ja: new subtitle true, old false, own-language title control true, no English leak, negative false, not loading**; `html lang` en/es/ko/zh-Hans/ja; entry `index-CICXcxY3.js` on every read. No read came back void |
+
+#### Step 5 — adversarial self-check
+**Blindspot register: nothing found.** The 1 added and 1 removed diff line match the standing pattern plus the
+raise-advice terms **0 / 0**; both plants fire (**1** / **1**). **DECISIONS.md conflict: none.** **Already-done item:
+none reversed.** The body's "This is why a raise can never make your take-home pay go down" (kept in `e561b4d`),
+`q021`'s explanation and L10's thinkAbout are unchanged and still agree: all three are about take-home pay.
+**My own verification claim.** Every row reproduces from the commands named. One judgment to own: "moving up a tax
+bracket" drops the word "raise" from the headline. The body opens on raises immediately, so nothing is lost there,
+but a Learn-path reader who sees only the subtitle gets the mechanism rather than the scenario.
+
+**Schedule:** the cron is the owner's lever; not read, not compared, not touched.
+
+**Log size.** Before this entry: `MEASURED log-size: file 603541 b, run log 168526 b, floor 435015 b` (the previous
+entry's `npm test`, unchanged since). After it: not retyped (W-7.2 rule 4).

@@ -257,7 +257,7 @@ export const lessons = [
   {
     id: 7, track: "essentials", icon: "🧾", color: "#57534e", minutes: 5,
     title: {"en":"Taxes: How Your Paycheck Is Actually Taxed","es":"Impuestos: Cómo Se Grava Realmente Tu Sueldo","ko":"세금: 급여가 실제로 과세되는 방식","zh":"税收：你的薪水究竟是怎么被征税的","ja":"税金：あなたの給料は実際どう課税されるか"},
-    subtitle: {"en":"Why a raise can never shrink your take-home pay","es":"Por qué un aumento nunca puede reducir tu sueldo neto","ko":"왜 급여 인상이 실수령액을 줄일 수 없는가","zh":"为什么加薪永远不会让到手工资变少","ja":"昇給が手取りを減らすことは絶対にない理由"},
+    subtitle: {"en":"Why moving up a tax bracket can't shrink your take-home pay","es":"Por qué subir de tramo fiscal no puede reducir tu sueldo neto","ko":"왜 더 높은 세율 구간으로 올라가도 실수령액이 줄지 않는가","zh":"为什么升入更高税级不会让到手工资变少","ja":"税率区分が上がっても手取りが減らない理由"},
   },
   {
     id: 8, track: "essentials", icon: "🛡️", color: "#0369a1", minutes: 4,
