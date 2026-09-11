@@ -7218,3 +7218,85 @@ lesson-43 entry's: two jurisdictions, one each way, read through the summarizer.
 
 **Log size.** `MEASURED log-size: file 624730 b, run log 189225 b, floor 435505 b (backlog 397099 b),
 archive 3881729 b, 3 live day(s)` (`npm test`, 2026-09-11, before this entry). No backlog change.
+
+### 2026-09-11 (owner-directed, interactive: "fix the lesson 41 curriculum claim too") — lesson 41 called school personal finance "often … a single optional module" and asked why it is "largely absent from most school curricula", where England's statutory citizenship curriculum has included it since 2013 and US graduation requirements are rising fast — and the first fix broke §3.0.5's four-minute rule for a track opener
+
+**The pick** is the owner's, and it is the fourth note under the first 2026-09-11 lesson-44 entry above. The
+lesson-44 summary fix is pushed (`ae789b4`), and `check-deployed` certified it live.
+
+#### Step 3.5 — premise measured, with controls, before editing
+- **The claims.** L41 §1: *"Personal finance appears in some school systems, patchily and recently, and often
+  as a single optional module."* L41 takeaway: *"Almost nobody is taught how money works"*. It is stronger than
+  the body, which says *"A great many working adults"*. `q043`: *"Why is personal finance largely absent from most
+  school curricula?"* es/ko/zh/ja carry all three.
+- **England, `gov.uk` national curriculum citizenship programmes of study** (control: had to quote the financial
+  bullets or say none). KS3: *"the functions and uses of money, the importance and practice of budgeting, and
+  managing risk"*. KS4: *"income and expenditure, credit and debt, insurance, savings and pensions, financial
+  products and services"*. The publication page reads *"Published 11 September 2013"* and *"All
+  local-authority-maintained schools should teach them."* So it is statutory curriculum content inside another
+  subject, not an optional module.
+- **US, Council for Economic Education, Survey of the States 2024** (control: had to give a state count or say
+  none; it said **NO STATE COUNT FOUND**, so no count is claimed anywhere). It gives *"a 12-state increase in states
+  from 2022 passing personal finance requirements"* and *"an additional 21% of US HS students required to take
+  personal finance for graduation"*. So the courses are required, and mostly recent.
+- **Surfaces** (regex over every lesson field in all three tracks, the quiz, the glossary and `kidsContent`):
+  changed §1, the takeaway and `q043`'s question. **Kept:** *"For most people there wasn't one"* and *"A great many
+  working adults … never once been taught"* (both about adults' own schooling, and consistent with both sources),
+  and `q043`'s options, answer key and explanation (they explain the gap, not its size). ⚠️ **Flagged to the owner,
+  not changed:** the section heading *"Thirteen Years, and Not One Hour on This"*, a rhetorical title that is not
+  literally true for a learner schooled in England after 2014. The draft `drafts/income-hierarchy.en.md:35,45,96`
+  carries the originals and stays a record.
+- **Not previously decided.** The only hit is this morning's note. HEAD was `ae789b4` and matched `origin/main`.
+- **On the build, `index-DF5NKDNV.js` (= HEAD):** the old §1 and takeaway were in `lessonContent.money.en`, the old
+  question in `quizText.en`, control present, negative in no file.
+
+#### ⛔ The first fix FAILED `npm test`, and the failure was right
+The first draft (*"has started to appear in some school systems, much of it only recently, sometimes as a required
+course and sometimes as a few lessons inside another subject"*, plus *"…never taught how money works at school"*
+and *"Why has personal finance so often been left out…"*) failed with *"lessons[27] (id 41): minutes is 3, but its
+text computes to 4"*. **Bumping `minutes` was not available.** L41 opens the `money` track, and §3.0.5's guard
+(`check-data.mjs` ~386-397) fails any track opener at 4 or more: *"Either shorten it or take the clause to the owner —
+do not adjust the estimate, which is derived."* Measured with a replica of `lessonWords()` whose controls reproduce
+L29 = 2, L1 = 3 and L44 = 4 exactly: L41 was **697** words before today, the draft made it **714** (+17), and rounding
+to 3 needs **≤ 699**. **Two words of slack.** So all three edits were rewritten to be word-neutral (17 → 17,
+7 → 7, 10 → 10, each verified by count before editing) while keeping every sourced point. Final: **697 words, 3
+minutes**, unchanged from this morning.
+
+#### What shipped
+`lessonContent.money.{en,es,ko,zh,ja}.js` (**2 / 2** each) and `quizText.{en,es,ko,zh,ja}.js` (**1 / 1** each).
+- §1: *"Personal finance appears in some school systems, mostly recently, as a required course or inside another
+  subject."* (US graduation requirements / England's citizenship curriculum / the 2022 increase.)
+- Takeaway: *"Many people aren't taught how money works, and the gap gets filled anyway …"*
+- `q043`: *"Why is personal finance often left out of school curricula?"* The id, `answer: 1` and the four options
+  are unchanged, so persisted review state survives.
+- es/ko/zh/ja carry the same three meanings. zh's question needed only the old "most curricula" reframed
+  (`为什么个人理财常常被排除在学校课程之外`). Ledger: L41 es/ko/zh/ja re-marked `ai` (**12 / 12**).
+  `refresh-readiness.mjs --write`: en chars **152,519 → 152,524** (`LAUNCH_READINESS.md` **2 / 2**).
+- ⚠️ **O-3, disclosed:** twelve machine-written string edits, unreviewed by a fluent reader. `quizText` is outside
+  translation-ledger coverage.
+
+#### Verification
+| Check | Result |
+|---|---|
+| Word replica | L41 **697 → 3 min**; controls L29 471 → 2, L1 649 → 3, L44 754 → 4 all equal their `minutes` |
+| Node import probe (heredoc script) | **5/5**: new §1, takeaway and question present; original strings AND first-draft strings absent; `q043` meta `{answer:1}`, 4 options; L44 summary fix present (control); negative absent |
+| `npm test` | first draft **exit 1** (§2 minutes, above). Final **exit 0**; WARN/FAIL lines **identical** to the committed `ae789b4` state (`diff`), WARN 3, FAIL 0; `track openers economy = lesson 29 at 2 min, money = lesson 41 at 3 min, essentials = lesson 1 at 3 min` |
+| `scripts/build-out-of-tree.sh` (unpiped) | **exit 0**; entry `index-DF5NKDNV.js` → **`index-XCHlbiWZ.js`** |
+| `dist/assets` grep | all **15** new strings → their own language's `lessonContent.money` or `quizText` chunk; **10** original and draft forms → no file; control → en chunk; negative → no file |
+| Live, `index-XCHlbiWZ.js` (static server, 404 control fired), `#/lesson/41`, real `<select>` change event, switch and read in separate calls | **en/es/ko/zh/ja: on-page controls (an unchanged §1 sentence + `q043`'s keyed option) true; new §1, takeaway and question true; original, draft and negative false**; `html lang` en/es/ko/zh-Hans/ja |
+
+#### Step 5 — adversarial self-check
+**Blindspot register: nothing found.** The added- and removed-line counts are **1 / 1**, and both are the same
+pre-existing L41 §1 phrase *"decided you shouldn't know this"* (`you should` matches inside "shouldn't"). Each lesson
+body is one line, so the match rides along with any edit. The three new fragments match **0**, against **19** in
+`check-blindspot.mjs`. No date, count or recommendation was added. "Mostly recently" rests on the 2022 increase,
+and no figure is stated.
+**DECISIONS.md conflict: none.** `minutes` stays derived and untouched, as `DECISIONS.md`'s reading-model entry and
+§3.0.5's guard require.
+**Already-done item: none reversed.** All four earlier fixes today are untouched, and the L44 summary fix is a control.
+**My own verification claim.** Every row reproduces from the commands named. The limits: two jurisdictions;
+England's curriculum binds maintained schools, and the page does not say academies must follow it; the CEE
+page gave no absolute count; both came through the summarizer. Plus O-3.
+
+**Log size.** `MEASURED log-size: file 629647 b, run log 194142 b, floor 435505 b (backlog 397099 b),
+archive 3881729 b, 3 live day(s)` (`npm test`, 2026-09-11, before this entry). No backlog change.

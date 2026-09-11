@@ -438,7 +438,7 @@ export const quizText = [
     "explain": "This is overconfidence after a lucky outcome (self-attribution bias): crediting a win to one's own skill and increasing risk-taking as a result, without weighing how much of the outcome was actually luck. FOMO (“Everyone Can't Be Wrong — Can They?”) is about copying what other people are doing, which isn't what's driving Maria here — no one else's behavior is mentioned. Sunk cost is about being influenced by money already spent, and loss aversion (“Why Does Losing $50 Hurt More Than Finding $50 Feels Good?”) is about the asymmetric pain of a loss — neither fits a story about a single win driving more risk-taking."
   },
   {
-    "q": "Why is personal finance largely absent from most school curricula?",
+    "q": "Why is personal finance often left out of school curricula?",
     "opts": [
       "There is nothing useful that could be taught about it",
       "Curricula favor examinable subjects, and money rules are local and change often",

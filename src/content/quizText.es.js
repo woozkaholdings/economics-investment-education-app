@@ -438,7 +438,7 @@ export const quizText = [
     "explain": "Esto es sobreconfianza tras un resultado afortunado (sesgo de autoatribución): atribuir una victoria a la propia habilidad y aumentar la toma de riesgos como resultado, sin sopesar cuánto del resultado fue en realidad suerte. El FOMO (“Tanta Gente No Puede Estar Equivocada, ¿Verdad?”) trata de copiar lo que hacen otras personas, que no es lo que está impulsando a María aquí — no se menciona el comportamiento de nadie más. El costo hundido trata de dejarse influir por dinero ya gastado, y la aversión a la pérdida (“¿Por Qué Perder $50 Duele Más Que Encontrar $50 se Siente Bien?”) trata del dolor asimétrico de una pérdida — ninguna encaja con una historia sobre una sola victoria que impulsa más toma de riesgos."
   },
   {
-    "q": "¿Por qué las finanzas personales están en gran parte ausentes de la mayoría de los planes de estudio escolares?",
+    "q": "¿Por qué las finanzas personales suelen quedar fuera de los planes de estudio escolares?",
     "opts": [
       "No hay nada útil que se pudiera enseñar al respecto",
       "Los planes de estudio favorecen las materias evaluables, y las reglas del dinero son locales y cambian con frecuencia",
