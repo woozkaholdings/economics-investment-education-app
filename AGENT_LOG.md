@@ -6921,3 +6921,104 @@ lines). No instrument was added, and the ratio is unmoved.
 **Log size.** `MEASURED log-size: file 593415 b, run log 157910 b, floor 435505 b (backlog 397099 b),
 archive 3881729 b, 2 live day(s)` (`npm test`, 2026-09-11, before this entry). The backlog is unchanged,
 no numbered item was added, and the two notes are here in the archivable run log.
+
+### 2026-09-11 (scheduled dev-agent; W-6.2 rule 1 free — the previous run's two notes both end "not picked by default" and were not taken; this pick came from the same census of lesson bodies never read for accuracy, re-run with the numbering contamination named) — lesson 44 tells a learner that a wage comes with "a queue position ahead of other creditors if the employer fails", and in both jurisdictions measured the claim ranks behind some creditors and only up to a cap
+
+**The pick.** The open numbered items were weighed first and not taken: 117(a) and 94 are owner judgments,
+76 is blocked on a tokenizer, 71's own trigger has never fired, and 160's remainder is O-3's. Then the
+previous run's census was re-run (`lesson N` mentions across both logs / those mentioning
+`accura|factual|false|wrong|incorrect|contradict`). Control: **L37 4**, the 2026-09-05 "nine times" fix, so
+the counter can hit. ⚠️ **The census is contaminated, and the previous run's version was too:** most hits
+for `lesson 40` and `lesson 26` are the **pre-2026-08-14 numbering** (old L40 was the lucky-win lesson, old
+L26 estate planning). `quizMeta.js`'s `lesson` field is the reliable map. So the counts rank candidates and
+prove nothing. Read in English this run: **L40, L41, L42, L43, L44, L26.** L40's two cross-references
+resolve (L33's family mortgage and L31's farmer's tractor, 4 and 5 sentence hits; negative false). L26,
+L41, L42 and L43 have no sentence-level defect (knowledge-only notes below). L44 has one.
+
+#### Step 3.5 — premise measured, with controls, before editing
+- **The claim.** L44 §2: *"In most countries it comes with legal minimums, notice periods and a queue position
+  ahead of other creditors if the employer fails"*. es/ko/zh/ja carry the same unqualified claim (`por delante
+  de otros acreedores` / `다른 채권자들보다 앞서는 순위` / `排在其他债权人前面优先受偿` / `他の債権者より先に並べる順位`).
+  It is the only such surface: a five-language grep for creditor terms also hits essentials L15 (credit
+  bureaus' "other creditors") and the glossary's `Stock` entry (owners rank behind lenders, correct).
+- **US, `law.cornell.edu/uscode/text/11/507`** (control: the fetch had to quote a dollar figure verbatim or
+  say it found none; it quoted one). Wages are **"Fourth, allowed unsecured claims, but only to the extent of
+  $10,000"** (the base figure, adjusted every three years), earned within 180 days, behind (a)(1) domestic
+  support, (a)(2) administrative expenses and (a)(3) involuntary-gap claims. §507 orders **unsecured** claims,
+  so secured creditors are outside it entirely.
+- **UK, `legislation.gov.uk/ukpga/1986/45/schedule/6`** (control: had to be Schedule 6's text or say not; it
+  was). Paragraph 9 makes pay for the 4 months before the relevant date preferential only *"as does not exceed
+  so much as may be prescribed by order"*. `gov.uk/your-rights-if-your-employer-is-insolvent/what-you-can-get`:
+  the government payment is capped at **£751 a week for up to 8 weeks**. The overview page carried no figure
+  and said so (the control working), and `normlex.ilo.org` returned **403**, so ILO C173 was **not** read.
+- **Not previously decided.** Logs, `DECISIONS.md`, `CLAIMS.md` and `LAUNCH_PLAN.md` have **0** hits for
+  `creditor`. `DECISIONS.md` approved the four lessons as content on 2026-08-25 and says nothing about this
+  wording (control `localStorage` **13**). `git log -S` → `b6c9bc9` (created) and `5d958ff` (draft tracked).
+  The sentence comes from `drafts/income-hierarchy.en.md:295`.
+- **Live, `index-BsQYrOG_.js` (= HEAD `5ed3eb6`), `dist/` served statically, `#/lesson/44`:** subject
+  **true**, same-section control (the dividend sentence) **true**, section-1 control **true**, negative
+  **false**. ⚠️ **Two instrument misses, both caught by their controls.** (1) The seeded reload landed on
+  `#/learn`, so every probe read false, the controls included. (2) A probe batched directly after setting the
+  hash read false again: it ran before the lazily loaded lesson chunk rendered (the title was there, the body
+  was not). A text dump, and then a separate call, read true.
+
+#### What shipped
+`src/content/lessonContent.money.{en,es,ko,zh,ja}.js`, the one clause only (`git diff --numstat` **1 / 1**
+each). English now reads *"legal minimums, notice periods and, if the employer fails, a claim for unpaid wages
+that puts you ahead of many other creditors, usually only up to a limit — and…"*. The softer form holds in
+both jurisdictions measured, and the lesson still carries no figure that could go stale. Same meaning in
+es/ko/zh/ja (`un derecho sobre los salarios adeudados … normalmente solo hasta un límite` / `밀린 임금을 대개 일정
+한도까지는 … 먼저 받을 수 있는 순위` / `被拖欠的工资通常还能在一定限额内…` / `未払いの給与について、通常は一定の上限までですが…`).
+The rest of the paragraph, the takeaway and `q046` (which names neither creditors nor insolvency) are
+untouched. Ledger: L44 es/ko/zh/ja re-marked `ai` after reading each against the new English (**12 / 12**:
+reviewer, date and hash × 4). `refresh-readiness.mjs --write`: en chars **152,270 → 152,327** and the
+§10.4 volume sentence (`LAUNCH_READINESS.md` **2 / 2**).
+⚠️ **O-3, disclosed:** four new machine-written clauses. No fluent reader has checked them.
+⚠️ **`drafts/income-hierarchy.en.md:295` still carries the old sentence, deliberately.** Its header says
+*"Nothing here ships as-is"*, it is the pre-approval record `DECISIONS.md` cites, and no script ties the
+lesson to it (`grep income-hierarchy scripts src` → a §26 comment only).
+
+#### Verification
+| Check | Result |
+|---|---|
+| Node import probe | **5/5** languages: new clause present, old absent across the whole module, same-section control present, negative absent, 2 sections |
+| `npm test` | **exit 0**; WARN/FAIL lines **identical** to this run's pre-edit baseline (`diff`), WARN 3, FAIL 0; readiness figures agree at 152,327 |
+| `scripts/build-out-of-tree.sh` | **exit 0** (re-run unpiped: zsh has no `PIPESTATUS`, and the first run printed an empty exit code); entry `index-BsQYrOG_.js` → **`index-D3SGxhni.js`** |
+| `dist/assets` grep | each new clause → its own `lessonContent.money.<lang>` chunk; **all 5 old forms → no file**; control → `lessonContent.money.en-CQ1dcecz.js`; negative → no file |
+| Live, `index-D3SGxhni.js`, `#/lesson/44`, language set through the real `<select>` change event, each probe a separate call | **en/es/ko/zh/ja: new true, old false, control true, negative false**; `html lang` en/es/ko/zh-Hans/ja |
+
+#### Step 5 — adversarial self-check
+**Blindspot register: nothing found.** The diff's added lines match
+`dalio|principles|should buy|should sell|we recommend|buy now|good time to buy|for kids|for children|kids
+mode|as of 20xx|today|guarantee|will crash|expect a` **0** times (removed lines: 0), against **17** in
+`check-blindspot.mjs` (positive control). The fix describes how a legal claim ranks and adds no date, figure,
+return or recommendation. The fetched figures ($10,000, £751) appear only in this entry. `check-blindspot`
+passed inside `npm test`.
+**DECISIONS.md conflict: none** (above). Content stays a `.js` module, and no state or build path changed.
+**Already-done backlog item: none reversed.** Item 167's fifth note swept glossary↔lesson agreement and
+attributed cross-references, not claims about law. No run had touched this sentence.
+**My own verification claim.** Every row reproduces from the commands named. The limits: (1) two
+jurisdictions were read, and "most countries" is the lesson's framing, which the softer wording makes safer
+rather than proven; (2) the statutes were read through WebFetch's summarizer, so a reviewer should reopen the
+three URLs; (3) O-3 above. W-6.3: `scripts/` changed only in the ledger JSON, net 0 lines. No instrument was
+added, and the ratio is unmoved.
+
+#### Seen, deliberately NOT fixed and NOT numbered (W-6.2 rule 2)
+- **L44 §2: "A business can consume years and return nothing, which is the ordinary outcome rather than the
+  unlucky one."** Closure is not the same as returning nothing, and no survival source was fetched this run.
+  **Not picked by default.**
+- **L43: labor income is "the only one of the four that reliably becomes zero when you stop"**, in a test whose
+  named causes include illness and a new baby, where statutory sick and parental pay exist in many countries.
+  It is the lesson's thesis, so changing it is a framing decision. It comes from knowledge and was not
+  measured. **Not picked by default.**
+- **zh L44 §2 opens `工资受到的保护，比人们通常意识到的要多得多`** ("much better protected than people usually
+  realize") where en says "unusually well protected". This is O-3's class. **Not picked by default.**
+- **L41 / `q043` present "largely absent from most school curricula"** as current fact. A growing number of US
+  states now require a course, the lesson body already hedges ("some school systems, patchily and recently"),
+  and this was not measured. **Not picked by default.**
+
+**Schedule:** the cron is the owner's lever; not read, not compared, not touched.
+
+**Log size.** `MEASURED log-size: file 602318 b, run log 166813 b, floor 435505 b (backlog 397099 b),
+archive 3881729 b, 3 live day(s)` (`npm test`, 2026-09-11, before this entry). The backlog is unchanged,
+no numbered item was added, and the notes are here in the archivable run log.
