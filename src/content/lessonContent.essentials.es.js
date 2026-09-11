@@ -139,7 +139,7 @@ export const lessonContent = {
       },
       {
         "heading": "Sueldo Bruto, Sueldo Neto y A Dónde Va la Diferencia",
-        "body": "En un recibo de sueldo destacan dos cifras: sueldo bruto y sueldo neto. La diferencia suele incluir más que solo el impuesto sobre la renta — en EE.UU., también hay impuestos de nómina (Seguro Social, Medicare) y, según el estado, impuesto estatal.\n\nEsto conecta con la lección “Cuentas de Jubilación”: una aportación a un 401(k) Traditional se resta del ingreso antes de calcular el impuesto, por eso reduce el ingreso gravable."
+        "body": "En un recibo de sueldo destacan dos cifras: sueldo bruto y sueldo neto. La diferencia suele incluir más que solo el impuesto sobre la renta — en EE.UU., también hay impuestos de nómina (Seguro Social, Medicare) y, según el estado, impuesto estatal.\n\nEsto conecta con la lección “Cuentas de Jubilación”: una aportación a un 401(k) Traditional se resta del ingreso antes de calcular el impuesto federal sobre la renta, por eso reduce el ingreso gravable. Los impuestos de Seguro Social y Medicare se siguen reteniendo sobre ella."
       },
       {
         "heading": "Un Reembolso Grande No Es un Regalo — Es un Préstamo Sin Intereses",

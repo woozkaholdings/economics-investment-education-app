@@ -6334,3 +6334,102 @@ order, subject), not scripted. W-6.2: not a residual pick. W-6.3: `scripts/` unc
 **Schedule:** the cron is the owner's lever; not read, not compared, not touched.
 
 **Log size.** Before this entry: see the verification table. After it: not retyped. Read `check-log-size.mjs`'s MEASURED line, because this sentence changes it (W-7.2 rule 4).
+
+### 2026-09-11 (scheduled dev-agent; W-6.2 rule 1 free — the previous run was an archiving pass, not a residual, and this pick came from the lesson-body census, not from any note) — lesson 7 said a Traditional 401(k) **or IRA** contribution lowers the taxable income "shown on that pay stub" through "this same withholding process", and an IRA deduction is claimed on the tax return, while a 401(k) deferral still has Social Security and Medicare withheld on it
+
+**The pick.** Item 160 (the standing option-length WARN) was re-read first and declined: its ⛔ stop line says the
+remainder is class B and O-3's call. The census then re-ran over both logs (`grep -o -w -E "(L<n>|[Ll]esson <n>)"`;
+numbering contamination as before, so it ranks and proves nothing, and no census-specific control was run). Lowest:
+**L26 11, L24 12, L2 17, L22 19, L8 21, L25 25, L41 25, L7 26, L21 27, L42 27, L4 29, L10 30**. Excluding lessons
+read in the last runs, read in English: **L24, L7, L4, L10.** L24 has no sentence-level defect. L4 and L10 have notes
+below. L7 has the defect. The open L6 / L18 / `q041` / L22 / L42 notes were not weighed as headline picks.
+
+#### Step 3.5 — premise measured, with controls, before editing
+- **The claim.** L7 §2, last paragraph: *"a Traditional 401(k) or IRA contribution is subtracted from income before
+  it's taxed, which is exactly why it lowers the taxable income shown on that pay stub in the first place — not a
+  separate mechanism, but this same withholding process working on a smaller number."* The same section has just
+  listed Social Security and Medicare as part of what is withheld.
+- **Sources (IRS, read through WebFetch's summarizer).** *Topic 424, 401(k) plans*: elective deferrals are not
+  subject to income tax withholding and are not in W-2 box 1, *"However, it's included as wages subject to
+  withholding for Social Security and Medicare taxes."* *Topic 451, IRAs*: *"claim your IRA deduction on Form 1040
+  … (attach Schedule 1 …)"*, for *"some or all"* of the contributions. So the sentence is wrong for the IRA (no pay
+  stub, no withholding) and overbroad for the 401(k) (income tax only). A third page, *Payroll Deduction IRAs for
+  Small Businesses*, returned **404**. Nothing rests on it, which is why the new sentence says nothing about
+  payroll-deduction IRAs.
+- **The translations are narrower.** es/ko/zh/ja name only the 401(k), with no IRA, no pay stub and no "same
+  process". But each says it is subtracted "before the tax is calculated" (`antes de calcular el impuesto`,
+  `과세 전`, `计税前`, `課税前`) one sentence after listing payroll taxes, so they carry the overbroad half.
+- **The only surface.** Fixed-string scans of `src/` (en) for `pay stub`, `withholding process`, `IRA contribution`
+  and `taxable income` hit L7 §2 plus L6 §2, L7's thinkAbout and L10 §2. None of those repeats the claim. ⚠️ **The
+  first scan used `.{0,80}` and ugrep aborted with "exceeds complexity limits"**, printing no matches. It was re-run
+  with `-F`; control `W-4` → 1.
+- **Not previously decided.** `same withholding process`, `shown on that pay stub`, `subtracted from income before`,
+  `payroll deduction`, `FICA` → **0** in the live log, the archive, DECISIONS, CLAIMS, LAUNCH_PLAN and
+  LAUNCH_READINESS (control `localStorage` 19 / 410 / 13 / 3 / 3 / 3). `git log -S` → `3306bad` (lesson added
+  2026-08-06), then only splits.
+- **Pre-edit build `index-C6h9tgZ0.js` (= HEAD `5490e00`; the archiving commit touched no build input).** Old en
+  sentence → `lessonContent.essentials.en`. Each old translation phrase → its own chunk. The new string → no file.
+
+#### What shipped
+`lessonContent.essentials.{en,es,ko,zh,ja}.js`, one sentence each. The edit script asserted old = 1 / new = 0 in all
+five files before writing anything, and 0 / 1 after. Pristine copies are in the scratchpad.
+- en: *"a Traditional 401(k) contribution comes out of pay before federal income tax is withheld, which is why it
+  lowers the federal income tax taken from that pay stub. Social Security and Medicare taxes are still withheld on
+  it. A Traditional IRA is handled on the tax return instead: any deduction it earns is claimed there, not on the
+  pay stub."* "Federal" is deliberate: state treatment of deferrals varies, and this adds no state claim.
+- es `…antes de calcular el impuesto federal sobre la renta… Los impuestos de Seguro Social y Medicare se siguen
+  reteniendo sobre ella.` · ko `연방 소득세를 계산하기 전에… 다만 사회보장세와 메디케어세는 이 금액에도 그대로 원천징수됩니다.` · zh
+  `在计算联邦所得税前…不过，社保税和医疗保险税仍会照常从这部分收入中预扣。` · ja `連邦所得税の計算前に…ただし、社会保障税とメディケア税はその分にも引き続き源泉徴収されます。`
+  The condensed summaries were not given the IRA sentence; that is item 93's debt, as in the L6 fix.
+- **Knock-on.** L7 stays at 4 min, so `lessons.js` did not change. Ledger: L7 es/ko/zh/ja re-marked `ai` after
+  reading each against the new English (**12 / 12**). `refresh-readiness.mjs --write`: en chars **152,720 →
+  152,792**, plus the §10.4 volume sentence. The catalog stays at 161 min.
+- ⚠️ **O-3, disclosed:** four machine-written clause edits, unreviewed by a fluent reader.
+
+#### Verification
+| Check | Result |
+|---|---|
+| Node import probe | **5/5**: new string(s) in L7 §2, old absent module-wide, own-language W-4 / §2 control present, negative absent, 3 sections |
+| `npm test` | After edit: **exit 1**, the expected pair (4 × stale ledger, §10.4 FAIL). After re-mark + `--write`: **exit 0**; WARN/FAIL lines **identical** to this run's pre-edit baseline (`diff`), WARN 3, FAIL 0 |
+| `scripts/build-out-of-tree.sh` (unpiped) | **exit 0**; entry `index-C6h9tgZ0.js` → **`index-BD0s1g-_.js`** |
+| `dist/assets` grep | all **6** new strings → their own `lessonContent.essentials.<lang>` chunk; all **6** old forms → no file; controls `The W-4 is the lever` (en) and `W-4는 그 추정치를…` (ko) → own chunk; negative → none |
+| Live, `python3 -m http.server` on `127.0.0.1:8874` | index **200**, nonexistent path **404** (control fired), served `index.html` names `index-BD0s1g-_.js`; seeded disclaimer + completed `[1..6]` + `en`, navigated to `?cb=2#/lesson/7` |
+| Live `#/lesson/7`, language set through the real `<select>` (native setter + `change`), switch and read in separate calls | ⚠️ **The first en read was VOID, and the control caught it**: body text 123 chars, "Loading…", control false. The pane reported a 0×0 viewport; the chunk request showed **200**. After a 3 s wait: **en both new true, both old false, §2 heading control true, negative false.** **es/ko/zh/ja: new true, old false, own §2 heading true, no English leak, negative false**; `html lang` en/es/ko/zh-Hans/ja; entry `index-BD0s1g-_.js` on every read |
+
+#### Step 5 — adversarial self-check
+**Blindspot register: nothing found.** The 5 added and 5 removed diff lines under `src/` match `dalio|principles|should
+buy|should sell|we recommend|buy now|good time to buy|for kids|for children|kids mode|as of 20[0-9][0-9]|guarantee|will
+crash|you should|open an ira|contribute to|best account|choose traditional|choose roth` **0 / 0**. A planted `now is a
+good time to buy stocks` → **1**. `check-blindspot` ran inside the green `npm test`. The edit describes where each
+tax is handled and recommends no account. No date, threshold or market figure was added.
+**DECISIONS.md conflict: none.** Content stays in `.js` modules, and `minutes` stays derived (unchanged).
+**Already-done item: none reversed.** The L6 fix (`8334695`) says a Traditional account *"usually"* lowers taxable
+income, and this edit is consistent with it: the IRA deduction is "any deduction it earns". The glossary `IRA` entry,
+`q020` and `q021` are untouched.
+**My own verification claim.** Every row reproduces from the commands named. The limits: both IRS quotes came
+through the summarizer, so a reviewer should reopen Topics 424 and 451. "Not on the pay stub" is inferred from
+Topic 451's "claimed on Form 1040", not quoted. And the void first read is recorded rather than dropped. W-6.2: not a
+residual. W-6.3: `scripts/` changed only in the ledger JSON (12 / 12, net 0). No instrument was added.
+
+#### Seen, deliberately NOT fixed and NOT numbered (W-6.2 rule 2)
+- **L7 §1 + takeaway: a raise "can never" shrink take-home pay.** It holds for brackets and pay-stub net pay, which
+  is the lesson's scope. Benefit cliffs and credit phase-outs are the real cases where more gross income leaves
+  less money overall, and the lesson neither claims nor denies them. Knowledge, not measured. **Not picked by
+  default.**
+- **L7 thinkAbout: "A Traditional contribution reduces taxable income at today's marginal rate"** is unconditional
+  after L6's "usually" (all five languages). **Not picked by default.**
+- **L10 thinkAbout:** *"'Taxes' showed that a raise can never shrink your take-home pay because payroll withholding
+  just takes a slightly bigger automatic slice"*. L7's reason is marginal brackets, not withholding. **Not picked by
+  default.**
+- **L4 §2: the 6% vs 14% gap on a $20,000, 5-year loan "can add up to well over $2,000".** Computed: **$3,199 vs
+  $7,922 interest, a $4,723 gap** (control: a 0% loan → $0). True, but it understates the gap by more than half.
+  **Not picked by default.**
+- The L6, L18, `q041`, L22 and L42 notes are unchanged and still open.
+
+**Owner-facing, one line:** the local `origin/main` ref (not fetched) was 6 commits behind HEAD before the archiving
+pass. The lesson 6 / 7 / 15 / 21 / 27 / 41 fixes and the O-block fix reach learners on the next push.
+
+**Schedule:** the cron is the owner's lever; not read, not compared, not touched.
+
+**Log size.** `MEASURED log-size: file 567338 b, run log 132323 b, floor 435015 b (backlog 396609 b), archive
+4002486 b, 2 live day(s)` (`npm test`, 2026-09-11, before this entry). After it: not retyped (W-7.2 rule 4).
