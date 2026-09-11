@@ -7300,3 +7300,97 @@ page gave no absolute count; both came through the summarizer. Plus O-3.
 
 **Log size.** `MEASURED log-size: file 629647 b, run log 194142 b, floor 435505 b (backlog 397099 b),
 archive 3881729 b, 3 live day(s)` (`npm test`, 2026-09-11, before this entry). No backlog change.
+
+### 2026-09-11 (scheduled dev-agent; W-6.2 rule 1 free — the last four runs were owner-directed, and their one open flag is a framing call left to the owner; this pick came from the lesson-body census, re-run on the money track) — lesson 27 describes a bet with "a genuinely favorable balance of upside and downside", then makes its gain "equally likely, equally sized", which is a fair bet worth zero on average, and its takeaway calls it "a fair bet" while telling the learner to go by the actual math
+
+**The pick.** The numbered items were weighed and not taken, for the reasons the first 2026-09-11 lesson-44 entry
+gives. The previous entry's one flag (L41's heading) is explicitly the owner's call. The census was re-run over
+`AGENT_LOG.md` + `AGENT_LOG.archive.md` (`lesson N` / `LN` lines, and those also matching
+`accura|factual|false|wrong|incorrect|contradict`). The pre-2026-08-14 numbering still contaminates it, so it
+ranks and proves nothing. The least-read lessons are **L22 10 / 0, L24 10 / 0, L21 16 / 0, L27 26 / 0**, all
+in `money`. Control: **L37 83 / 5**, the "nine times" fix. Read in English: **L21, L22, L24, L27.** L22 and
+L24 have no sentence-level defect. L21 has one (a note below). L27 contradicts itself.
+⚠️ **Instrument trap: this shell's `grep` is ugrep, and it rejects bounded repetition (`.{0,60}`) with
+"exceeds complexity limits".** The first surface scan printed that error and no lines, which reads like a
+clean result. It was re-run as fixed-string greps with a known-present control (`roughly twice` → 5 lines).
+
+#### Step 3.5 — premise measured, with controls, before editing
+- **The claim.** L27 §1: *"turning down a choice with a genuinely favorable balance of upside and downside because
+  the possible loss looms larger in the mind than the equally likely, equally sized possible gain."* A gain
+  exactly as likely and as large as the loss makes the bet fair, worth zero on average, not favorable. The
+  takeaway says *"turning down a fair bet"*, and the thinkAbout asks *"what does the actual math say"*. On a fair
+  bet the math is indifferent, so by the lesson's own test declining it is not the error being taught.
+  es/ko/zh/ja carry both halves (`igualmente probable e igual de grande` / `apuesta justa`, `똑같은 크기` / `공정한
+  내기`, `同样大小` / `公平的赌注`, `同じ大きさ` / `公正な賭け`). zh's "favorable" was already `对等有利`
+  ("equally favorable"). **The translations close off English's idiomatic reading** of "a fair bet" as "a
+  reasonable one": all four say fair in the equal-odds sense.
+- **The premise is arithmetic on the lesson's own words, and no source was fetched.** That the standard
+  loss-aversion demonstration uses a *favorable* 50/50 bet is knowledge. The fix states neither that nor any
+  figure.
+- **The only surface.** Fixed-string scans of `src/` for `fair bet`, `equally sized`, `equally likely` and
+  `favorable balance` hit `lessonContent.money.en.js:195,198` only. L27's figure (`moneyVisuals.js` `loss*`)
+  plots the found and lost $50 at 1 vs 2 and shows no bet in any language. `q041` names no bet.
+- **Not previously decided.** `git log -S` → `0289979` (2026-08-09, lesson added), then `0f46283` and `6f5c48c`
+  (file splits). DECISIONS / CLAIMS / LAUNCH_PLAN / LAUNCH_READINESS and both logs have **0** hits for all
+  three phrases (control `localStorage`: 13 / 3 / 3 / 3 / 28 / 400). Item 167's research-authority note cleared
+  L27's "roughly twice", and that text is untouched.
+- **Live, `index-XCHlbiWZ.js` (= HEAD `d3b1dc9`).** `dist/` served statically (404 control fired), state
+  seeded then `location.reload()`, hash set and read in separate calls, `#/lesson/27`: old body **true**, old
+  takeaway **true**, both new strings **false**, title and "roughly twice" controls **true**, negative
+  **false**. The build grep agreed: both old strings and the control were in
+  `lessonContent.money.en-C5FVUQZm.js`.
+
+#### What shipped
+`lessonContent.money.{en,es,ko,zh,ja}.js`, two fields each (**2 / 2** each). The edit script asserted that every
+old string occurred exactly once and every new string zero times before writing anything. §1 now reads *"…than
+**an equally likely possible gain that is actually bigger**."* The takeaway reads *"…or turning down **a
+favorable bet**:"*. A gain as likely as the loss and bigger than it makes the sentence's own "genuinely favorable
+balance" true. es `una posible ganancia igual de probable y, en realidad, mayor` / `una apuesta favorable`; ko
+`똑같이 일어날 법하면서 실제로는 더 큰 가능한 이득` / `유리한 내기`; zh `上行和下行的权衡真正有利` + `同样可能、实际上更大的收益` /
+`对自己有利的赌注`; ja `同じくらい起こりやすく実際にはそれより大きい起こりうる利益` / `自分に有利な賭け`. No figure was added.
+Ledger: L27 es/ko/zh/ja re-marked `ai` (**12 / 12**). `refresh-readiness.mjs --write`: en chars **152,524 →
+152,537**, plus the §10.4 volume sentence (`LAUNCH_READINESS.md` **2 / 2**). Words 32,855 → 32,857. L27 stays at 4
+min, and no track opener moved.
+⚠️ **O-3, disclosed:** eight machine-written clause edits, unreviewed by a fluent reader.
+
+#### Verification
+| Check | Result |
+|---|---|
+| Node import probe | **5/5**: both new strings present, both old strings absent module-wide, "roughly twice" control present, negative absent, 2 sections |
+| `npm test` | First run after the edit **exit 1**, as expected: §10.4's coverage figure against 4 stale ledger records. After the re-mark and `--write`: **exit 0**; WARN/FAIL lines **identical** to this run's pre-edit baseline (`diff`), WARN 3, FAIL 0 |
+| `scripts/build-out-of-tree.sh` (unpiped) | **exit 0**; entry `index-XCHlbiWZ.js` → **`index-C6wHy-MM.js`** |
+| `dist/assets` grep | all **10** new strings → their own `lessonContent.money.<lang>` chunk; all **10** old forms → no file; control → en chunk; negative → no file |
+| Live, `index-C6wHy-MM.js`, `#/lesson/27`, language set through the real `<select>`, switch and read in separate calls | **en/es/ko/zh/ja: both new strings true, both old false, on-page control true (en title + `roughly twice`; es `aproximadamente el doble`; ko `대략 두 배`; zh `大约是同等收益带来的快乐的两倍`; ja `およそ二倍`), negative false**; zh also asserted `上行和下行的权衡真正有利` true and the old `对等有利` false; every read on entry `index-C6wHy-MM.js`; `html lang` en/es/ko/zh-Hans/ja. No read came back void this run |
+
+#### Step 5 — adversarial self-check
+**Blindspot register: nothing found.** Added and removed diff lines under `src/` match
+`dalio|principles|should buy|should sell|we recommend|buy now|good time to buy|for kids|for children|kids
+mode|as of 20xx|today|guarantee|will crash|expect a|you should|take the bet|accept the bet` **0 / 0**, and the
+new English fragments match **0**, against **19** in `check-blindspot.mjs`. The fix says which bets loss aversion
+makes people turn down. It does not tell a reader to take one, and §1's *"None of this means losses don't matter
+or that risk should be ignored"* is untouched. No date or market figure was added.
+**DECISIONS.md conflict: none.** Content stays in `.js` modules, and `minutes` stays derived.
+**Already-done item: none reversed.** Item 167's cleared "roughly twice" is untouched. Its checkable-arithmetic
+sweep looked for multiplier words or two magnitudes, and this sentence has neither, so it sat outside that
+regex. It was not a missed hit.
+**My own verification claim.** Every row reproduces from the commands named. The limits: the premise is the
+lesson's internal arithmetic, and the claim about the standard experiment is knowledge. "Actually bigger" is one
+of two ways to make a bet favorable (the other is a likelier gain), chosen because it keeps "equally likely".
+Plus O-3. W-6.3: `scripts/` changed only in the ledger JSON (12 / 12, net 0). No instrument was added.
+
+#### Seen, deliberately NOT fixed and NOT numbered (W-6.2 rule 2)
+- **L21 §1: "whoever names a figure first pulls the eventual number toward theirs, which is exactly why the advice
+  'let the other side name a number first' shows up so often".** That mechanism favors naming first, so it
+  cannot be the reason for the advice to go second, and the next clause ("tools work better in the hand that
+  placed them") says as much. A fix has to word a contested negotiation finding neutrally, and must not become
+  advice to go first. Not measured against a source. **Not picked by default.**
+- **`q041`: "even though the dollar amounts involved are the same"** holds only if Marcus put the same amount
+  into both stocks, which the question does not say. **Not picked by default.**
+- **L22 §2** states the feed-amplifier mechanism flatly (*"his own past clicks trained it to"*), where the evidence
+  on algorithmic filter bubbles is mixed. This is knowledge and was not measured. **Not picked by default.**
+
+**Schedule:** the cron is the owner's lever; not read, not compared, not touched.
+
+**Log size.** `MEASURED log-size: file 637600 b, run log 202095 b, floor 435505 b (backlog 397099 b),
+archive 3881729 b, 3 live day(s)` (`npm test`, 2026-09-11, before this entry). No backlog change, and the notes
+are in the archivable run log.
