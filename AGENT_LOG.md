@@ -6734,3 +6734,93 @@ under any reading, and that part is measured. W-6.3: `scripts/` is untouched and
 **Log size.** `MEASURED log-size: file 578338 b, run log 142833 b, floor 435505 b (backlog 397099 b),
 archive 3881729 b, 2 live day(s)` (`npm test`, 2026-09-10, before this entry). The backlog is unchanged
 and no numbered item was added.
+
+### 2026-09-10 (scheduled dev-agent; W-6.2 rule 1 free — the previous run's notes all end "not picked by default" or "already recorded" and were not taken; this pick came from the same sweep of content modules never read for accuracy) — the glossary defined GDP as the value of "all goods/services produced", which counts the flour and then the bread, and said the Fed sets a rate that "influences ALL other rates" when its own Interest Rate entry and lesson 35 both say otherwise
+
+**The pick.** Counting each `src/content/` module's log mentions, and how many of those concern accuracy:
+`glossary.js` **86 / 0** and `markets.js` **47 / 0**, the two largest modules never read for accuracy
+(control: `quizText.en.js` at **8 / 1**, the previous run's pick, so the counter can hit). Both were
+read end to end in English. `markets.js` produced no finding (see the last note). The glossary produced
+three candidates, and step 3.5 dropped one of them.
+
+#### Step 3.5 — premise measured, with controls, before editing
+- **Dropped: `Yield Curve`'s "Inverted = recession signal within 12-18 months".** It sits against
+  `markets.js`'s "not every inversion was followed by one", but item (b) (2026-09-05, `AGENT_LOG.md`
+  ~2230) checked this exact line and kept it **deliberately**: *"do not re-derive this"*. Not reversed.
+  ⚠️ Instrument miss, caught by its control: the first `ugrep` for `invert` returned **nothing** although
+  `markets.js` contains "inverted" (the multibyte `.{0,N}` pattern exceeded ugrep's complexity limit,
+  silently there and loudly on the other two greps). `/usr/bin/grep` hit the control on the re-run.
+- **GDP.** BEA's page (`bea.gov/data/gdp/gross-domestic-product`, fetched this run; control: it had to
+  quote a definition verbatim or say it found none) defines GDP as the value of the **final** goods and
+  services produced in the US, *"without double counting the intermediate goods and services used up to
+  produce them"*, and reports **real** GDP. The glossary said *"Total value of all goods/services
+  produced. Rising = expansion."* ko/zh/ja also said "all" (`모든` / `所有` / `全ての`), and es said "total
+  value of goods and services produced". Nothing better is on the path: lesson 39 is `defined-here` for
+  GDP and says "the total value of everything the economy produced".
+- **Fed Funds Rate.** The Fed's open-market page (fetched; control: it had to give a dated target-range
+  row, and it did: **3.50-3.75%, 2025-12-11**) describes "the target range set by the FOMC". The glossary
+  said *"Set by the Fed. THE key rate that influences ALL other rates."* The same file's `Interest Rate`
+  entry says "most other rates" and lesson 35 says "nearly every other rate", so the app disagreed with
+  itself one tab apart. es/ko/zh/ja carried both claims (`TODAS` / `다른 모든` / `所有其他` / `他のすべて`).
+- **Live, `index-BbEqwSdA.js` (= HEAD `df47efb`), `dist/` served statically, Reference › Glossary:** old
+  GDP **true**, "ALL other rates" **true**, "Set by the Fed." **true**. Controls: CPI "PCE price index"
+  **true**, Interest Rate "most other rates" **true**. Negative **false**. ⚠️ The first probe read **all
+  false, controls included**: it looked for the tile before the hub had rendered. The controls are what
+  said so.
+- **Not previously decided.** Logs grep for `goods/services produced|ALL other rates|Set by the
+  Fed|final goods`: only archive:730 (added GDP's rule of thumb and did not judge the definition) and
+  archive:8208 (quotes it as an example). `DECISIONS.md` has no glossary-wording entry. Both strings
+  date to the 2026-08-02 monolith split (`98a79ce`).
+
+#### What shipped
+`src/content/glossary.js`, the `f` of two entries only (`git diff --numstat` **2 / 2**). **GDP:** the final
+goods and services produced within a country over a period; inputs are not counted again (the flour a
+bakery buys is already inside the price of its bread); **real (inflation-adjusted)** GDP rising =
+expansion. The rule-of-thumb sentence is kept word for word. **Fed Funds Rate:** the Fed does not set it
+directly; it sets a target range and steers the market rate into it. The rate influences **most** other
+rates, from mortgages to savings accounts, which is the `Interest Rate` entry's own wording. `s` and `ex`
+are untouched in both. ⚠️ **O-3, disclosed:** eight new machine-written `f` strings (es/ko/zh/ja × 2), in
+a file whose header records it as outside translation-ledger coverage. No fluent reader has checked them.
+
+#### Verification
+| Check | Result |
+|---|---|
+| Node import of `glossary.js` | new strings **10/10** present, old forms **10/10** absent, 43 terms; CPI control present, negative absent |
+| `npm test` | **exit 0**; WARN/FAIL lines **identical** before/after (`diff`), WARN 3, FAIL 0; §55/§56 hold over 1,239 strings per language |
+| `scripts/build-out-of-tree.sh` (copy-back) | **exit 0**; entry `index-BbEqwSdA.js` → **`index-DEzHCSTd.js`** |
+| `dist/assets` grep | the 10 new strings → `markets-C9nU5ptm.js`, the chunk the CPI control lands in; 7 of 8 old forms → no file; `由美联储设定` → `quizText.zh` (a different surface, see the first note) |
+| Live, `index-DEzHCSTd.js`, Reference › Glossary, language set through the real `<select>` change event | **en/es/ko/zh/ja: both new true, both old false, CPI control true, negative false**; `html lang` en/es/ko/zh-Hans/ja |
+| Live, same load, `#/lesson/38`, GDP chip | new definition **false before the click, true after**; `aria-expanded` true; old false |
+
+#### Step 5 — adversarial self-check
+**Blindspot register: nothing found.** The 2 added lines grep **0** for
+`dalio|principles|should buy|should sell|we recommend|buy now|good time to buy|for kids|for children|kids
+mode|as of 20xx|today|guarantee`, against **17** in `check-blindspot.mjs` (positive control). The
+2025-12-11 range appears only in this entry and never in the app, so no live-looking figure was added.
+Both entries still say what a thing IS, the header's §10.1 rule. `check-blindspot` passed inside `npm test`.
+**DECISIONS.md conflict: none.** Its glossary hits are Back navigation and the curated chip map. Content
+stays a `.js` module.
+**Already-done backlog item: none reversed.** Item (b)'s kept yield-curve line is untouched, and
+archive:730's GDP rule of thumb is kept word for word.
+**My own verification claim.** Every row reproduces from the commands named. The limits: both external
+pages were read through WebFetch's summarizer, which quoted them, so a reviewer should reopen the two
+URLs rather than trust the quotes. The bakery flour is an illustration of an intermediate good under
+BEA's definition, not a measured figure. W-6.3: `scripts/` is untouched and the ratio has not moved.
+
+#### Seen, deliberately NOT fixed and NOT numbered (W-6.2 rule 2)
+- **The quiz still says the rate is "set by the Federal Reserve"**: `quizText.{en,es,zh}.js:128`
+  `explain`. ko/ja did not match the pattern and were not read. It is common shorthand in an explanation
+  about the ripple to other rates, and the glossary one tap away is now precise. **Not picked by default.**
+- **Lesson 39's inline GDP line** ("the total value of everything the economy produced") is missing
+  "final" too. It is analogy prose inside ledger-reviewed lesson bodies in five languages. **Not picked by
+  default.**
+- **es glossary mixes "el Fed" and "la Fed"**: CPI's `f` says "del Fed", and Fed Funds now says "La Fed",
+  matching its own `ex`. Pre-existing, O-3's class. **Not picked by default.**
+- `markets.js`'s balance-sheet bars (0.9 / 4.5 / 3.8 / 9.0 / 6.7 $T) were **not** checked against a
+  source this run. Its caption says the shape, not the level, is the point.
+
+**Schedule:** the cron is the owner's lever; not read, not compared, not touched.
+
+**Log size.** `MEASURED log-size: file 585373 b, run log 149868 b, floor 435505 b (backlog 397099 b),
+archive 3881729 b, 2 live day(s)` (`npm test`, 2026-09-10, before this entry). The backlog is unchanged
+and no numbered item was added.
