@@ -1,4 +1,4 @@
-# Agent Log — Archived Run Log (2026-08-01 → 2026-09-08)
+# Agent Log — Archived Run Log (2026-08-01 → 2026-09-09)
 
 Archived 2026-08-16 by the weekly review (backlog item W-3). `AGENT_LOG.md` had grown to
 909 KB / 9,814 lines, of which the run log was ~93% — a cost paid by every dev-agent run, since
@@ -46608,4 +46608,1481 @@ identity is reproducible: build before, build after, compare the emitted entry c
 **Filed as nothing.** No residual.
 
 **Schedule:** the cron is the owner's lever; not read, not compared, not touched.
+
+## Archived 2026-09-09
+
+### 2026-09-09 (scheduled dev-agent; W-6.2 rule 1 free — the previous run was owner-directed and filed no residual, so this pick came from a live walk of the two least-walked interactive components) — the app's most-used interactive component has claimed the ARIA radiogroup role since August and implemented none of its keyboard contract, and §82 reported the class swept one day earlier because §82 only knew about one role
+
+**What this is.** `src/components/Question.jsx` — the component every one of the **46 end-of-lesson
+checks and every Practice session** renders — declares `role="radiogroup"` / `role="radio"` and, until
+this commit, shipped **no roving tabindex and no key handler**. W-6.2 rule 3's sentence: *a learner is
+told by their screen reader that these are radio buttons, and the arrow keys do nothing while Tab costs
+one stop per option.*
+
+⭐ **This is the same finding as `Segmented`'s two days ago, one role later, and the reason it survived
+that run is the interesting part.** That run swept `role="tab"` to zero across all 20 `.jsx` files and
+shipped §82 to guard it, reporting the class closed. **The class was "an ARIA composite role with no
+keyboard contract"; the sweep's scope was one role string.** The correct implementation has been in
+this repo since **2026-08-16**, when `Settings.jsx`'s `ChoiceRow` got the APG radiogroup pattern —
+and, exactly as with the nav and `Segmented`, it was written by hand in one place and never applied to
+the shared component. `Question.jsx`'s radiogroup markup dates to the 2026-08-02 a11y pass (then in
+`More.jsx`), which added the roles and the `aria-checked` and nothing else.
+
+#### Premise re-measured before editing, with the control in the same page load
+Real Chrome via `puppeteer-core` in the scratchpad, `dist/` on `127.0.0.1:8801` (404 control fired),
+375x812, HEAD's bundle **`index-y_VDZhYV.js`**. **The control is `Settings.jsx`'s known-correct
+radiogroup, probed by the identical function on the same page load** — so a null subject reading could
+not be a dead instrument.
+
+| | radios | `tabindex` | **in Tab sequence** | ArrowDown → focus | ArrowDown → `aria-checked` |
+|---|---|---|---|---|---|
+| **subject** `Question.jsx`, lesson 35 check | 4 | `[(none)×4]` | **4 of 4** | **no-op** | **unchanged** |
+| **control** `Settings.jsx` ChoiceRow | 3 | `[0,-1,-1]` | 1 of 3 | moved 0→1 | `[t,f,f]`→`[f,t,f]` |
+
+**The control fired and the subject failed on the same load.** An earlier attempt reported the subject
+as "group not found"; that was the reader never having rendered, not a finding, so the script gained a
+**polled precondition that aborts rather than reporting a null** — a missing group and a defective
+group must not look alike.
+
+#### What shipped, and the one deliberate divergence from `ChoiceRow`
+Roving tabindex (`tabbable = choice ?? focusIndex`, so after answering the single stop is the learner's
+**own pick**) plus Arrow/Home/End on each option. **57 insertions in `Question.jsx`, 0 style or token
+lines** (diff grepped for `style|padding|margin|color|font|border|space\[|minHeight|surface\.|fill\.|ink\.`
+→ **0**), 0 content or locale files.
+
+⚖️ **The arrows move focus and deliberately do NOT select, where `ChoiceRow` selects on arrow.** APG's
+radio pattern selects on arrow and `ChoiceRow` is right to: changing the theme is instant and
+reversible. **Here selecting IS answering** — `choose` fires `onAnswered`, which grades the question,
+writes it into the Leitner schedule and locks the option set permanently. An arrow key that answered on
+the learner's behalf while they were reading down the options would be **worse than the defect being
+fixed**. This is APG's own carve-out ("do not make selection follow focus when the user could
+inadvertently change a setting with significant consequences"); Space and Enter still activate.
+**Measured, not asserted:** two ArrowDowns leave `aria-checked` at `[false,false,false,false]`, and the
+Space that follows is what answers.
+
+#### After, on `index-CYDqaUx5.js`, same instrument
+- **subject** `[0,-1,-1,-1]`, **1 of 4** in the Tab sequence; ArrowDown moves focus 0→1 with
+  `aria-checked` still all-false. **Control unchanged and still selects on arrow** — the two rows now
+  differ on the selection axis, which is itself the proof that both behaviors are the intended ones.
+- **Space after arrowing to option 3** → `aria-checked` `[f,f,true,f]`, all four `aria-disabled`, roving
+  stop `[-1,-1,0,-1]`, and **focus stays on the answered option** — the 2026-09-08 `aria-disabled` fix
+  is intact, which is the thing a roving tabindex could most easily have undone.
+- **Real `page.mouse.click()` on option 4** still answers and moves the stop to it (`[-1,-1,-1,0]`).
+- **Lesson 32, measured both ways by rebuilding HEAD's component and re-running the identical script:**
+  3 radiogroups, 12 options, **12 tab stops → 3**.
+- **Practice runner** (seeded `ecycles_review`, "Start Quiz"): 1 group, 1 stop — the second surface.
+- **The verdict live region still populates in place**, `""` → `"Correct!The Fed Funds Rate is…"`, so
+  item 174's fix is untouched.
+
+⛔ **One instrument error, recorded because it nearly became a finding:** the first verdict probe
+queried `[role="status"]` and returned empty, which reads exactly like "the change broke the verdict".
+`Question.jsx`'s region is `aria-live="polite"`, **not** `role="status"` — the selector was wrong, not
+the app. Re-queried for both. A second artifact in the same probe: `[role="radio"] span` counted the
+`SrOnly` marker twice because it is a span inside a span, which is why "2 markers from 1 answer"
+appeared and is not a double render.
+
+#### The guard: §82 WIDENED rather than a new section
+`role="tab"` → `role="tab"|role="radio"`, one scanner, because both roles owe the same two attributes;
+the thing that differs between them is whether selection follows focus, which §82 deliberately does not
+read (its stated SCOPE is presence, not behavior — behavior is the live differential above).
+**Now 4 sites across 20 `.jsx` files**, all carrying both attributes.
+**Proven able to fail on the real corpus, not only on its controls:** deleted the roving `tabIndex`
+from the shipped `Question.jsx` (14,819 → 14,770 b, plant confirmed landed) → `FAIL: §82:
+src/components/Question.jsx declares role="radio" without tabIndex`; restored from a scratchpad copy
+(`cmp` identical) → PASS. Repeated for `onKeyDown` (→ 14,766 b) → `without onKeyDown` → restored
+identical → PASS.
+
+⛔ **AND THE WIDENING'S FIRST RUN FAILED ON THE FILE IT HAD JUST FIXED — a false positive, caught by
+the real corpus rather than by my controls.** The scanner read **comments as markup**, and the header
+comment this very commit added to `Question.jsx` quotes `role="radio"` and `role="tab"` verbatim. §82
+had always had this hole; it only looked correct because no comment in the corpus had yet quoted a role
+string *exactly* (`role="tablist"` does not match `role="tab"`). **Fixed in the scanner, not by
+rewording the comment** — comments are masked to same-length spaces so every index still lines up and
+`openingTagAt` needed no change. **Control 5 is that exact shape in both directions**: a source quoting
+two roles in a comment beside one real defective radio must yield **exactly one** site — a mask that
+blanked everything would pass the "no false positive" half on its own. Five controls now.
+
+**W-6.3, quoted before proposing rather than after:** `scripts/` **21,319** lines vs app code (`src/`
+minus `content/`+`locales/`) **9,943** — **2.14x before, 2.15x after**, and **down from the 2.31x the
+2026-09-08 run recorded**. This proposal falls on the *right* side of the number and adds ~45 lines to
+an existing section rather than a new one.
+
+**`npm test` exit 0**, same **3** pre-existing warnings (translation review coverage, translation
+completeness, option-length cue / item 160); `npm run check-blindspot` exit 0; `npm run build` clean,
+and the committed tree builds to `index-CYDqaUx5.js` — the bundle every "after" figure above was
+measured on.
+
+#### Step 5 — adversarial self-check
+**Blindspot register: nothing found, grepped rather than assumed.** No learner-facing copy changed — 0
+files under `content/` or `locales/`, no lesson prose, no market figure, no date in shipped content;
+the diff is JSX behavior, one guard, and comments. `check-blindspot` exit 0 including its §10.1 timing
+control and §2.3 date sweep. §10.1, §10.2 (Dalio) and §10.3 (kids framing) cannot be reached by a
+keyboard-handler change, and no copy string in `Question.jsx` was touched.
+⚠️ **DECISIONS.md conflict: ONE REAL HIT, the same one the 2026-09-08 `Segmented` run flagged, and it
+is named again rather than treated as settled by precedent.** Item 12 was unheld 2026-09-07 — the app
+ships on iOS via Expo/React Native — and its standing rule is that *the dev agent must not deepen the
+web-only investment in a way that raises the eventual port cost*. **`tabIndex` / `onKeyDown` /
+`ref.focus()` are DOM-only.** Taken anyway, on grounds stated for the owner to overrule: the marginal
+port cost is ~0 — **no new component, no new dependency, no new inline style** (measured at zero style
+lines above), and a native port replaces the option list with `Pressable` + `accessibilityRole`
+wholesale, where a roving tabindex has no counterpart. §82 lives in `scripts/`, which does not port at
+all. **If the owner reads item 12 more strictly, the 57 lines revert cleanly and the §82 widening
+stands on its own.** localStorage-only state, `.js`-not-JSON content and Vite-not-Expo are untouched.
+**Already-done backlog item: no, and the specific risk was checked rather than the list scanned.** The
+risk was that the 2026-08-16 `ChoiceRow` run had considered `Question.jsx` and declined it — it did
+not: that entry's scope is `Settings.jsx` and its own "not a redo" note is about font scaling.
+`radiogroup` appears **once** in the live log (the `Segmented` entry noting Settings implements it) and
+**13** times in the archive, none of them proposing or declining arrow keys on the quiz. `git log -S
+'role="radiogroup"' -- src/components/Question.jsx` returns the single commit that introduced the
+markup. Not a redo, not an undo.
+**My own verification claim, weakest part first.** ⚠️ **(1) §82 is a PRESENCE check, not a behavior
+check** — it would pass an `onKeyDown` that does nothing, and it cannot see the selection-follows-focus
+distinction that is the whole design decision here; only the live differential covers that, and it is
+not in `npm test`. **(2) My controls did not catch my own instrument bug** — the comments-as-markup
+false positive was caught by the real corpus, and the tell was that it failed on a file I had just
+fixed. **(3) I made an instrument error on the verdict probe** and it is recorded above rather than
+dropped. **(4) This is a real keyboard measurement** — `page.keyboard.press` in real Chrome performs
+genuine sequential focus navigation, which the Browser pane cannot. **(5) It is still not a
+screen-reader claim**: nothing here drives VoiceOver or NVDA, and I do not assert what one announces.
+**(6) Reproducible**: every figure comes from scripts run against named bundles, each carrying
+`Settings.jsx` as a control taken in the same page load, and the lesson-32 before/after was obtained by
+rebuilding HEAD's component rather than by inference.
+
+**Filed as nothing.** The class is now swept across both composite roles present in the app and §82
+guards the next one.
+
+⚠️ **Reported, not fixed — measured this run and it is O-5/O-4, not repo work.** `npm run
+check-deployed` says **DIVERGED**: the canonical site serves `index-BX9VoYlv.js` against this tree's
+`index-CYDqaUx5.js`, and the **retired Netlify origin is still answering** with `index-B1mndoLB.js`.
+Live `market.json` is `asOf 2026-09-07` against the repo's `2026-09-08`. A run may not push, so this
+commit does not reach a learner until the owner pushes `main`.
+
+**Schedule:** the cron is the owner's lever; not read, not compared, not touched.
+
+### 2026-09-09 (scheduled dev-agent; W-6.2 rule 1 free — the previous run filed nothing, so this pick came from a live walk of the reader, and the walk started somewhere else and found this on the way) — the reader has said "LESSON 1 OF 12" since the third track landed, and there are three "Lesson 1"s: item 81 settled that exact ambiguity on the review queue and never carried it back
+
+**What this is.** `src/screens/LessonReader.jsx`'s title caption rendered `LESSON {n} OF {total}` and
+**named no track**. The catalog is three independent curricula, so that string identifies a lesson
+three ways at once. W-6.2 rule 3's sentence: *a learner reading any lesson — or arriving on one from a
+shared `#/lesson/N` link, which is the whole of §5's distribution motion — cannot tell which of the
+three curricula they are in.*
+
+⭐ **This is the same finding as item 81's, one surface later, and the archive says so in its own
+words.** That entry fixed Practice printing a raw lesson id and, forced by the same three-track
+ambiguity, gave `reviewFromLesson` the shape `"Lesson {n} · {track}"` — *"with three tracks there are
+three 'Lesson 1's."* It names the reader in passing as a surface that had **already** been fixed for
+the **id** half. It never carried the **track** half back. Measured live: **no run has ever declined
+this** — `grep` for a reader-plus-track-name decision over `AGENT_LOG.md`, `AGENT_LOG.archive.md` and
+`DECISIONS.md` returns nothing.
+
+#### Premise re-measured before editing — and the item I had written in my head was WRONG
+Real Chrome via `puppeteer-core`, `dist/` on `127.0.0.1:8802`, 375x812, seeded `localStorage`.
+**I set out to report that "Next Lesson" at the end of the main path drops the learner into the
+OPTIONAL track. It does not.** I had derived the order from the raw `lessons` array in `lessons.js`
+(economy, essentials, money); the app's list is `lessonsByTrack()`, whose order is **economy → money →
+essentials**. Measured, not inferred: economy 12/12 → **money 1/17**, which is the correct
+destination. The optional crossing is real but it is the **second** boundary, money 17/17 →
+essentials 1/15. **The defect survived the correction and got narrower: it is not the routing, it is
+that neither crossing is named.**
+
+**Before / after, same instrument, HEAD's component rebuilt to get the "before" rather than inferred**
+(`cmp`-identical restore from a scratchpad copy in both directions; HEAD's tree reproduced
+`index-CYDqaUx5.js`, this tree builds `index-C7lf2LJ0.js`):
+
+| reader state | before `index-CYDqaUx5.js` | after `index-C7lf2LJ0.js` |
+|---|---|---|
+| economy 1/12 | `LESSON 1 OF 12` | `LESSON 1 OF 12 · HOW THE ECONOMY WORKS` |
+| economy 12/12 — **main path ends** | `LESSON 12 OF 12` | `LESSON 12 OF 12 · HOW THE ECONOMY WORKS` |
+| money 1/17 — **what Next lands on** | `LESSON 1 OF 17` | `LESSON 1 OF 17 · THINKING ABOUT MONEY` |
+| money 17/17 | `LESSON 17 OF 17` | `LESSON 17 OF 17 · THINKING ABOUT MONEY` |
+| essentials 1/15 — **the "(Optional)" crossing** | `LESSON 1 OF 15` | `LESSON 1 OF 15 · MONEY BASICS (OPTIONAL)` |
+
+#### What shipped
+**42 insertions in one file, 0 style or token lines** (diff grepped for
+`padding|margin|color:|font|border|space\[|minHeight|surface\.|fill\.` → **0**), **0 files under
+`content/` or `locales/`**, **no new locale key** — the three track labels already ship in five
+languages, and the separator is punctuation. Shape copied from `reviewFromLesson` rather than invented:
+**number first, so the number survives truncation**, which is the reason item 81 recorded for it.
+The three inline lines that re-derived position/total were replaced by `lessonPlacement(lesson.id,
+lessons)` — the helper item 81 built for exactly this, **passed this screen's own `lessons` prop** so
+the original guarantee ("derived from the same list the path renders") is kept rather than traded away;
+only `labelKey` comes from `TRACKS`, and the ordering is still never re-derived in the reader.
+
+#### Layout, because item 81's own entry says `pageOverflow: false` is not "the layout is fine"
+Worst case at **320px x 130% font scale**, all five languages, essentials (the longest label):
+`LECCIÓN 1 DE 15 · FUNDAMENTOS DEL DINERO (OPCIONAL)` wraps to **2 lines, 44px, no horizontal
+overflow**; ko/zh/ja stay at **1 line, 22px**. **This site is not item 81's site and that is why no
+`flexShrink` fix was needed**: the reader's caption is a block-level `Text` above the `h1` with nothing
+beside it, so a wrap costs 22px of vertical space and squeezes no neighbor — item 81's caption was in a
+flex row, where the same wrap doubled the row and had to be fixed. All five languages verified to
+render their own label with `documentElement.lang` read in the same page load as the control that the
+language actually switched.
+
+⛔ **Three dead instruments this run, all caught by controls, recorded because two of them returned
+clean-looking nulls.** (1) My static server fell back to `index.html` for **every** path, so the 404
+control returned 200 — a missing asset would have looked fine; fixed to fall back only for
+extension-less paths. (2) Seeding `localStorage` and then setting `location.hash` **does not reboot the
+app**, so the seed never reached React state and `#/lesson/40` read as locked; the tell was the
+analytics log showing no second `app_opened`. (3) `ecycles_lang` is stored **raw**, not JSON, so my
+first five-language sweep returned **byte-identical English five times** — that identity is the only
+reason it was caught.
+
+⛔ **And one false finding, dropped before it became work.** I opened the walk on the first-run
+disclaimer and reported that the app behind it was not hidden from assistive tech: `#root` carried no
+`inert` and 19 of 20 focusables sat outside the dialog. **Wrong — I had walked the dialog's ancestors,
+and `inert` is spread onto its siblings.** Re-measured: `header`, `main`, `nav` and the skip link all
+carry `inert` + `aria-hidden`, **every one of the 19 is under an inert ancestor**, and a direct
+`.focus()` on a background quiz option is refused while the modal is open and succeeds after dismissal.
+The modal is correct.
+
+#### No check shipped, deliberately
+A guard here would assert that one JSX expression still interpolates `placement.labelKey` — brittle,
+and a presence check for a string the live differential above already proves. **W-6.3 quoted before
+proposing:** `scripts/` **21,319** lines vs app code **9,943** — **2.15x**, and blindspot **10.8's
+tripwire fires at 10.61x against a 5x threshold**. A one-line render change is the wrong place to spend
+script mass. `scripts/` untouched; the ratio moves down, not up.
+
+**`npm test` exit 0**, the same **3** pre-existing warnings (translation review coverage, translation
+completeness, option-length cue / item 160), **0 FAIL**; `npm run check-blindspot` exit 0; `npm run
+build` clean. Bundle deltas: `LessonReader` 93.79 → **93.81 kB**, `index` **271.53 kB unchanged**.
+`DECISIONS.md`'s 2026-08-18 bullet — the one that describes what the reader displays — was amended in
+the same commit rather than left saying "position within its track" about a caption that now says more.
+
+#### Step 5 — adversarial self-check
+**Blindspot register: nothing found, grepped rather than assumed.** **0** files under `content/` or
+`locales/`; no lesson prose, no market figure, no date added to shipped content; no new learner-facing
+string at all — the three labels were already written and already reviewed. `check-blindspot` exit 0.
+§10.1/§10.2/§10.3 cannot be reached by a caption that interpolates existing locale values. (My own
+crude banned-string grep returned one hit — the word *guarantee* in a **code comment** about a
+derivation guarantee. Named here rather than quietly discounted; the real instrument passes.)
+**DECISIONS.md conflict: none, and the nearest bullet was checked rather than the file skimmed.** The
+2026-08-18 entry's rule is *ids are stable, display order is a product decision, do not renumber* —
+this changes only the display and renumbers nothing. **Item 12 (Expo/RN port cost) is the standing rule
+the last four runs had to argue against, and this run does not: 0 DOM APIs added** (`document.`/
+`window.`/`tabIndex`/`onKeyDown`/`.focus()`/`addEventListener` → **0** in the diff), and it *deletes*
+three lines of inline derivation in favor of a pure helper in `content/` that ports as-is. localStorage-
+only state, `.js`-not-JSON content and Vite-not-Expo untouched.
+**Already-done backlog item: no, and the specific risk was checked, not the list scanned.** The risk was
+that item 80/81 had considered the reader and declined; it did not — it names the reader only as the
+surface already fixed for the **id**, and `git log -S` on the caption line returns one commit,
+`5633b79`, which introduced it. Not a redo, not an undo.
+**My own verification claim, weakest part first.** ⚠️ **(1) My headline premise was wrong** — I
+predicted the optional track and measured the money track; the item survived only because the
+measurement came before the edit. **(2) Three instruments died on me** and two of those failures looked
+like clean results. **(3) I opened with a false finding** on the disclaimer modal, recorded above rather
+than dropped. **(4) Not a screen-reader claim**: I measured rendered text and DOM, and I do not assert
+what VoiceOver announces. **(5) Reproducible**: every figure comes from named bundles, with HEAD's
+component rebuilt to produce the "before" column rather than inferred, and `cmp`-identical restores
+recorded in both directions.
+
+**Filed as nothing.** One observation not worth an item: `Learn.jsx:236` still does the
+`TRACKS.find(...).labelKey` lookup inline where `lessonPlacement` would do it — a one-line tidy on a
+line that is correct today, not a defect.
+
+⚠️ **Reported, not fixed — O-4/O-5, not repo work.** A run may not push, so this commit does not reach
+a learner until the owner pushes `main`.
+
+**Schedule:** the cron is the owner's lever; not read, not compared, not touched.
+
+### 2026-09-09 (scheduled dev-agent; W-6.2 rule 1 free — the previous run filed nothing, so this pick came from a live walk of the least-walked interactive component, chosen by counting each component's mentions across both logs) — the glossary chips put a definition on screen and announced nothing, and the header explaining why cites a DOM order that half the chips in the corpus do not have
+
+**What this is.** `src/components/GlossaryTerms.jsx` — the §3.0.3 surface, a row of term chips under a
+lesson section, each opening that term's definition in one shared panel below the row. The panel was
+**not a live region**, and the component's header gave the reason: *"the panel is not a live region —
+it follows its trigger in DOM order, which is where a screen reader looks next."* W-6.2 rule 3's
+sentence: *a learner taps "Stock" mid-lesson, the definition appears, and nothing tells them it did —
+and the definition is not where they are.*
+
+⭐ **The rationale is true of exactly one chip per row.** `lessonTerms.js` (filtered the way the
+component filters, by presence in `glossary.js`) yields **54 chip rows, histogram 1:25 2:17 3:6 4:3
+5:3 — 104 chips, of which 54 are last in their row and 50 are not.** For those 50 the panel is one to
+four siblings past the trigger, and `aria-controls` does not close the gap: most screen readers ignore
+it. **48% of the corpus is the case the header says does not exist.**
+
+⭐ **And the app already reasoned this out, eleven files away, for the identical shape.**
+`PolicySim.jsx` is a row of buttons over one shared always-rendered panel, and its header says: *"THE
+OUTCOME IS ANNOUNCED, NOT JUST SHOWN. The panel is a live region (`role="status"`, polite) because the
+text replaces itself in place when a second lever is picked — a sighted reader sees the swap, and
+without the live region a screen-reader user would not be told it happened."* `GlossaryTerms`'s own
+header describes the same swap ("opening a second term swaps the panel rather than stacking") one
+sentence before reaching the opposite conclusion.
+
+#### Premise re-measured before editing, subject and control on the same page load
+Browser pane against a static server over `dist/` on `127.0.0.1:8831` (**404 control fired** — the
+server falls back to `index.html` only for extension-less paths, which is the trap the 2026-09-09
+reader run recorded). Returning learner, economy 29-34 seeded, `#/lesson/35` — the one lesson carrying
+**both** a multi-chip glossary row and PolicySim, so the control is not a separate load. HEAD's tree
+rebuilt to `index-C7lf2LJ0.js` / `LessonReader-BU95B60g.js`, which is the bundle the previous run
+recorded for HEAD.
+
+| on `index-C7lf2LJ0.js` | panel `role` | panel chars | page live-region chars |
+|---|---|---|---|
+| at render | **`null`** | 0 | 0 |
+| open "Stock" (chip 1 of 2) | `null` | 361 | **0** |
+| swap to "Bond" | `null` | 337 | **0** |
+| **control** — PolicySim lever, same load | **`status`** | — | **0 → 521** |
+
+**The control is what makes the zeros mean something.** An instrument that could not see a live-region
+update would have produced the same subject column; it saw PolicySim's 521 on the same page, in the
+same call. The measure is deliberately **character totals, not node presence** — `DECISIONS.md`'s
+2026-09-09 annotation retires the presence test, because `App` now renders a persistent empty
+`Announcer` and *"does a `role="status"` exist"* answers YES on every screen.
+
+#### What shipped
+**One file, 26 insertions / 4 deletions: one attribute and a corrected header.** `role="status"` on
+the panel container that was already always rendered — so the region exists before its content, which
+is item 174's rule and the property PolicySim was the *control* for in that run. The header's false
+sentence is replaced by the measurement above rather than deleted. **0 style or token lines** (diff
+grepped for `padding|margin|color:|font|border|space\[|minHeight|surface\.|fill\.|ink\.` → 0), **0
+files under `content/` or `locales/`**, no new locale key — the definitions are already written in
+five languages and this changes only who is told about them.
+
+#### After, `index-COeFb-NF.js` / `LessonReader-CMHhnMHO.js`, same instrument
+- Lesson 35, en: panel is `role="status"` **at render with 0 characters**; open "Stock" → live total
+  **0 → 361**; swap to "Bond" → **361 → 337 in place**; close → **0**. Control unchanged: PolicySim
+  still `role="status"` at 521.
+- **Worst case in the corpus, measured in Japanese** — essentials lesson 6, a **5-chip** row
+  (`権利確定（ベスティング）` first): the first chip's panel sits **4 nodes past it**, `role="status"`,
+  live total **0 → 128** on open. `documentElement.lang` read `ja` and the panel text is Japanese, so
+  this is not the byte-identical-English artifact the 2026-09-09 reader run was caught by.
+- Before and after were each taken on a **named bundle**, with HEAD's component restored from a
+  scratchpad copy and rebuilt to produce the before column — `cmp` identical in both directions.
+
+#### No check shipped, deliberately
+Deciding from JSX which panels *ought* to announce is the brittle source-regex item 152 was declined
+for, and item 174 declined the same guard for the same reason. Nothing in `scripts/` reads live
+regions at all today (`grep -rn 'role=.status\|aria-live' scripts/` → **0**). **W-6.3 measured on
+this tree rather than carried forward** — `scripts/` **21,395** lines (`.mjs`+`.js`) vs app code
+(`src/` `.js`+`.jsx` minus `content/`+`locales/`) **10,001** — **2.14x**. ⚠️ **The method matters and
+is stated because I got two answers:** counting `scripts/*.sh` and `src/**/*.css` too gives **21,643 /
+10,464 = 2.07x**. The 2.14x form is the one comparable with the 2.15x the previous run quoted, and the
+0.01 between them is this run's own +26 `src/` lines. Blindspot **10.8's tripwire at 10.61x against a
+5x threshold** is read off the App summary's 2026-09-05 measurement, not re-run here. A one-attribute
+change is the wrong place to spend script mass. `scripts/` untouched; the ratio moves down.
+
+**`npm test` exit 0**, the same **3** pre-existing warnings (translation review coverage, translation
+completeness, option-length cue / item 160), **0 FAIL**; `npm run check-blindspot` exit 0; `npm run
+build` clean. `LessonReader` 93.81 → **93.82 kB**, `index` **271.53 kB unchanged**.
+
+#### Step 5 — adversarial self-check
+**Blindspot register: nothing found, grepped rather than assumed.** **0** files under `content/` or
+`locales/` in the diff; no lesson prose, no market figure, no date, no new learner-facing string of
+any kind — the change is one ARIA attribute and comments. `check-blindspot` **exit 0**. §10.1/§10.2/
+§10.3 cannot be reached by a markup attribute on a container whose text comes from `glossary.js`.
+**DECISIONS.md conflict: none, and the nearest entry was read rather than the file skimmed.** Grepping
+for `role="status"` / `live region` / `aria-live` / `announcer` returns one region, the 2026-09-08
+deep-link entry and its 2026-09-09 annotation. That entry is about the **discarded-link notice**, is
+untouched here, and its standing instruction — *"read the announcer's CONTENT, never its presence"* —
+is the rule this run's instrument was built on rather than one it breaks. **Item 12 (Expo/RN port
+cost) is the standing rule the last five runs have had to argue against, and this run does not: 0 DOM
+APIs added** (`document.`/`window.`/`addEventListener`/`.focus()`/`onKeyDown`/`tabIndex` → **0** in
+the diff), and `role="status"` has a direct React Native equivalent in `accessibilityLiveRegion`.
+localStorage-only state, `.js`-not-JSON content and Vite-not-Expo untouched.
+**Already-done backlog item: no, and the specific risk was checked rather than the list scanned.** The
+risk was that item 174 had considered this panel and declined it. It did not — its six regions are
+2 PolicySim, 1 Question, 2 `ui.jsx` `role="alert"` and the new `Announcer`, and a panel with no role
+could not appear in a sweep of elements carrying one. `grep`ping both logs and `DECISIONS.md` for a
+glossary-panel live-region decision returns nothing. The 2026-08 live walk that touched this component
+**quoted the false sentence approvingly** ("there was nothing to fix even in principle") without ever
+testing it, which is how it survived.
+**My own verification claim, weakest part first.** ⚠️ **(1) Not a screen-reader claim.** No assistive
+technology is drivable from this host; what is measured is the DOM precondition and the character
+delta, and "VoiceOver announces it" is not asserted. **(2) The clicks are synthetic** `element.click()`
+calls, not real pointer events — the archive records a false focus finding caused by exactly that, so
+nothing here is claimed about focus, only about `aria-expanded` and text content, which is what that
+entry established synthetic clicks do drive correctly. **(3) A cost accepted, not hidden:** for the 54
+last-in-row chips a screen reader may now hear the definition twice — once announced, once on reading
+forward. That is the standard trade for `role="status"`, it is the trade `PolicySim` already took on
+this same screen, and it is strictly better than 50 chips whose content is announced not at all.
+**(4) Reproducible:** every figure comes from a named bundle, both columns measured by the same
+function, with HEAD's component rebuilt to produce the before column and `cmp`-identical restores
+recorded in both directions.
+
+**Filed as nothing.** No residual. One observation not worth an item and explicitly not picked next:
+`PolicySim.jsx` and `GlossaryTerms.jsx` now carry the same always-rendered-panel idiom in two
+hand-written copies — a shared primitive is a refactor, not a defect, and W-6.2 rule 2 says a note,
+not a number.
+
+⚠️ **Reported, not fixed — O-4/O-5, not repo work.** A run may not push, so this commit does not reach
+a learner until the owner pushes `main`.
+
+**Schedule:** the cron is the owner's lever; not read, not compared, not touched.
+
+### 2026-09-09 (scheduled dev-agent; W-6.2 rule 1 free — the previous run filed nothing, so this pick came from a LAUNCH_PLAN clause rather than a chain) — the tab the launch plan calls "genuinely look-it-up material" opens on 43 terms in the order somebody happened to type them, and the Korean list is the English order with Korean words in it
+
+**What this is.** `src/screens/reference/Glossary.jsx` — Reference › Glossary, the §3.0.3 surface,
+tile subtitle *"Every term, defined"*. The list rendered `Object.entries(glossary)` straight through,
+so the row order was `glossary.js`'s **authoring** order: the original macro entries, then the
+personal-finance entries item 35 added, then the income types, each batch unordered inside itself.
+W-6.2 rule 3's sentence: *a learner opens the glossary to look up "Bond" and has to read 36 rows to
+find it, because the list is in the order the entries were written.*
+
+⭐ **The pick came from `LAUNCH_PLAN.md`'s Reference row — "Genuinely look-it-up material, grouped
+honestly rather than as 'everything else'"** — which is a claim about this screen that the screen did
+not keep. Nothing in `AGENT_LOG.md`, the archive or `DECISIONS.md` has ever decided this order:
+grepping both logs and `DECISIONS.md` for glossary + order/sort/alphabetical returns three hits and
+none is about display order (the nearest, archive line 12939, says a glossary has *no* reading-order
+dependency, which supports sorting rather than conflicting with it).
+
+#### Premise re-measured before editing, on the built app, with two controls
+`npm run build` at HEAD → `index-COeFb-NF.js` / **`Reference-DwdmyvRS.js`**, served from `dist/` by
+`python3 -m http.server` on `127.0.0.1:8842` (**404 control fired** — a nonexistent path returns 404,
+so this server is not the index.html-fallback trap the 2026-09-09 reader run recorded), viewport
+375x812, `window.innerWidth` read **375** before anything was measured.
+
+- **Subject, `en`:** 43 rows, read off `dl > div[role="button"]`'s `aria-label`. `Bond` at **36**,
+  `Stock` at **35**, `401(k)` at **28**, `Yield Curve` at **4**. Not alphabetical by any key.
+- **Subject, `ko`:** 43 rows, **row-for-row the same sequence** — 국내총생산, 소비자물가지수,
+  연방기금금리, 수익률 곡선 … 주식 at 35, 채권 at 36. The Korean reader was being shown the English
+  key order with Korean words in it.
+- **Control A — the reader is not returning a static list.** Typing `in` into the search box took the
+  list **43 → 20**, and clearing it took it **20 → 43**, in the same call.
+- **Control B — the reader follows the live language.** Switching the picker to `ko` changed
+  `documentElement.lang` to `ko` and every one of the 43 names to Korean, in the same call. An
+  instrument blind to a re-render would have failed both.
+
+#### What shipped
+**One file, 24 insertions / 1 deletion: one `.sort()` and a header that records the measurement.**
+`new Intl.Collator(lang, { numeric: true })`, comparing **`entry.s || term` — what the row actually
+displays** — so the reader's eye and the ordering agree. **0 style or token lines** (diff grepped for
+`padding|margin|color:|font|border|space\[|minHeight|surface\.|fill\.|ink\.` → 0), **0 files under
+`content/` or `locales/`**, no new locale key: this changes the order of strings that are already
+written in five languages, not any string.
+
+⭐ **`Intl.Collator(lang)` rather than a bare `localeCompare` or an ASCII sort, and the reason is
+measured rather than assumed.** The sort key is the **translated** name, and three of the five
+locales need collation English does not have. Checked in the browser engine, all five resolving to
+their own locale (`en→en, es→es, ko→ko, zh→zh, ja→ja`):
+- **ko** — 개인은퇴계좌 · 경기침체 · 구매관리자지수 · 구매력 · 국내총생산 · 근로 소득 · 금리 …
+  (Hangul jamo order, ㄱ before ㅂ before ㅈ)
+- **zh** — 保费 · 被动收入 · 本金 · 波动率指数 · 采购经理人指数 · 储蓄账户 (pinyin: bǎo bèi běn bō cǎi chǔ)
+- **ja** — FF金利 · PMI · イールドカーブ · インフレ · … · 量的引き締め · 量的緩和 · 労働所得
+  (Latin, then kana, then kanji **by reading** — りょう before ろう)
+- **es** — Acción · Ajuste Cuantitativo · Base Monetaria · Bono · Burbuja (and Ñ after N)
+An ASCII/code-point sort would have produced no discernible order in ko, zh and ja at all.
+`numeric: true` files `401(k)` as four-oh-one rather than by the character `4`.
+
+#### After, `index-B-OKozBU.js` / `Reference-D_FwgfmH.js`, same instrument, same session
+- **All five languages: 43 rows, and each list equals its own `Intl.Collator(lang)` sort of itself**
+  — asserted programmatically per language, not eyeballed. `en` opens 401(k) · Bond · Brokerage
+  Account · Bubble · Business Income and ends Vesting · Volatility Index · Yield Curve.
+- **The search subset stays sorted** (query `in` → 20 rows, sorted assertion true), the **Saved
+  filter stays sorted** (4 seeded bookmarks → 401(k), Bubble, Stock, Yield Curve), and the
+  **no-results empty state still renders** (query `zzzznope` → 0 rows).
+- ⭐ **The specific regression risk was disproven rather than argued.** Reordering the list changes
+  every row's index, and this screen has index-derived `aria-describedby` ids (`gloss-def-${i}`) and
+  a focus-restore path. Measured on the moved row: **`Bond` went from row 36 to row 2**, opening it
+  put focus on the detail `h2` ("Bond"), and Back restored focus to the row whose `aria-label` is
+  **"Bond"**. `rowRefs` is keyed by term and the ids are recomputed per render, so neither depends on
+  position. Bookmarks are likewise stored as **glossary keys** (`["Yield Curve","401(k)",…]`, read
+  back live), so this is not the array-position hazard `DECISIONS.md`'s 2026-09-01 `review.js` entry
+  is about — that hazard was real because the *stored* state carried indices; here nothing does.
+- **Before and after were each taken on a named bundle.** HEAD's file restored from a scratchpad copy
+  (`cmp`-identical to `git show HEAD:` before use) rebuilds to `Reference-DwdmyvRS.js`; mine rebuilds
+  to `Reference-D_FwgfmH.js`; restoring mine back is `cmp`-identical. The final comment-only edit
+  produced the **same** `Reference-D_FwgfmH.js` — comments are stripped in the minified build — so
+  the bytes I measured are the bytes being committed.
+
+#### No check shipped, deliberately
+A guard would be "the rendered order equals a collator sort", which is a restatement of the one line
+that just shipped rather than an independent test of it, and it cannot fail while that line exists.
+**W-6.3 re-measured on this tree rather than carried forward:** `scripts/` **21,395** lines
+(`.mjs`+`.js`) vs app code (`src/` `.js`+`.jsx` minus `content/`+`locales/`) **10,024** — **2.13x**,
+down from the 2.14x the previous run quoted, and the 0.01 is this run's own +23 `src/` lines.
+`scripts/` untouched.
+
+**`npm test` exit 0**, the same **3** pre-existing warnings (translation review coverage, translation
+completeness, option-length cue / item 160), **0 FAIL**; `npm run check-blindspot` exit 0; `npm run
+build` exit 0. ⚠️ Both exit codes re-read **without a pipe** — `cmd | tail; echo $?` reports `tail`'s
+status, which is how a failing guard reads as a pass. `Reference` chunk 68.83 → **68.92 kB**; `index`
+**271.53 kB unchanged**.
+
+#### Step 5 — adversarial self-check
+**Blindspot register: nothing found, grepped rather than assumed.** **0** files under `content/` or
+`locales/` in the diff; the diff greps **0** for `dalio|should buy|should sell|we recommend|best time
+to`; `check-blindspot` **exit 0**. §10.1/§10.2/§10.3 cannot be reached by a comparator over strings
+that already shipped. §2.3 (live-looking dates): the header carries `2026-09-09`, but as a **dated
+record of a state that is over** ("until 2026-09-09 the rows rendered in that order"), in a source
+comment that renders nowhere and in a file §2.3's scanner does not cover; its 43/36/35/28 figures are
+attributed to that date for the same reason. One live count was removed from the header before
+committing — a draft said "the 21 macro entries", which is a claim about the current file that goes
+stale on the next term added; it now names the batches without counting them.
+**DECISIONS.md conflict: none, and the nearest entry was read rather than the file skimmed.** The
+2026-09-01 `review.js` entry is the one that could bite — it is precisely about a list being
+reordered under state keyed by array position. It does not apply and the reason is measured above:
+glossary bookmarks store keys. localStorage-only state, `.js`-not-JSON content and Vite-not-Expo
+untouched. **Item 12 (Expo/RN port cost), stated honestly rather than waved through:** `Intl.Collator`
+exists in React Native, but on Hermes/Android its collation quality depends on the platform ICU, so
+this is a **small** port cost rather than zero — smaller than the alternative, since a hand-rolled
+comparator would have to be re-derived there too. **0 DOM APIs added** (`document.`/`window.`/
+`addEventListener`/`.focus()`/`onKeyDown`/`tabIndex` → 0 in the diff).
+**Already-done backlog item: no, and the specific list was searched rather than scanned.** Grepping
+`AGENT_LOG.md`, the archive and `DECISIONS.md` for glossary + `order|sort|alphabet|localeCompare`
+returns nothing about display order; `check-data.mjs` imports `glossary` for key/field checks and
+asserts nothing about ordering; `src/` contained **zero** uses of `Intl` or `localeCompare` before
+this commit.
+**My own verification claim, weakest part first.** ⚠️ **(1) Not a screen-reader claim** — what is
+measured is DOM order and `aria-label` text; no assistive technology is drivable from this host.
+**(2) The interactions are synthetic** — `element.click()` and dispatched `input`/`change` events
+through the native value setters, not real pointer or key events. The archive records a false *focus*
+finding caused by exactly that, so the focus result above is stated as what it is: `bond.focus()`
+then `.click()`, then reading `document.activeElement` after Back — it shows the restore path runs
+and targets the right row, and it is not a claim about a real keyboard user's tab order.
+**(3) A judgment, not a measurement:** that alphabetical beats the batch grouping. The grouping is
+invisible on screen — no headings, no separators, and the third batch is appended after the
+personal-finance one — so a reader cannot use it; I did not consider adding group headings, which
+would be a five-language content decision rather than a presentation one. **(4) Reproducible:** every
+figure comes from a named bundle, both columns measured by the same function in the same browser
+session, with `cmp`-identical restores recorded in both directions.
+
+**Filed as nothing.** No residual, and one observation deliberately not numbered (W-6.2 rule 2):
+`Intl.Collator` is now the app's only locale-aware formatter, while `usd` in `charts.jsx` is still
+hardcoded `en-US` and item 163(c) recorded `es` writing a comma decimal against a period on the chart
+face. That is the same *class* — a locale-aware runtime formatter — but it is a content-facing number
+question with a live disagreement already documented under 163(c), not a residual of this commit.
+
+⚠️ **Reported, not fixed — O-4/O-5, not repo work.** A run may not push, so this commit does not reach
+a learner until the owner pushes `main`.
+
+**Schedule:** the cron is the owner's lever; not read, not compared, not touched.
+
+### 2026-09-09 (scheduled dev-agent; W-6.2 rule 1 free — the previous run filed nothing, so this pick came from a live walk of the least-walked interactive component, chosen by counting mentions across both logs) — the simulator offers "Raise the rate" twice on one screen, meaning opposite things, and the run that BUILT it enumerated all six lever labels in Korean without ever comparing them to each other
+
+**What this is.** `src/components/PolicySim.jsx` — "Be the Fed Chair", the app's only simulator, the
+§3.0.4 bet and CLAIMS.md A7's numerator. It hosts **two** scenarios on lesson 35 (the only lesson that
+mounts it): an overheating room and a contraction room, three levers each. **"Raise the rate" is a
+lever in both** — the textbook move in the first, the move that deepens the slump in the second — and
+nothing wrapped either row, so the six buttons were six flat siblings under one `h2`.
+
+W-6.2 rule 3's sentence: *a screen-reader learner pulls up the button list on the simulator, hears
+"Raise the rate" twice with nothing to say which room it belongs to, and reads the outcome for the
+wrong scenario.* Voice control ("click Raise the rate") is ambiguous in the same way.
+
+⭐ **The pick came from counting, not from a hunch.** `PolicySim` has **37** mentions across
+`AGENT_LOG.md` + the archive — the least-mentioned interactive component that had not just been
+walked (`GlossaryTerms` is lower at 23 and was walked yesterday). It had been walked exactly once,
+by the run that built it.
+
+#### Premise re-measured before editing, on the built app, with controls
+`npm run build` at HEAD → `index-B-OKozBU.js` / `LessonReader-BeOlXB8V.js`, served from `dist/` by
+`python3 -m http.server` on `127.0.0.1:8853` (**404 control fired** on a nonexistent path, so this is
+not the index.html-fallback trap). Viewport 375x812, `window.innerWidth` read **375** before anything
+was measured — it read **0** on the first attempt and was fixed before any figure was taken.
+
+- ⚠️ **The instrument caught its own blindness first, and this is the control that mattered.** The
+  opening scan returned **1 visible control on the whole page**. Cause: the §10.1 first-run disclaimer
+  modal was still up, so the entire document behind it was `aria-hidden="true"` and my visibility
+  filter was correctly excluding all of it. **A scan that had not modeled `aria-hidden` would have
+  reported the page clean and been believed.** Dismissed the modal, re-ran: **27 controls**.
+- **Planted control**: two identically-named buttons appended to the body were flagged as a duplicate
+  pair, a uniquely-named third was not flagged, and both vanished from the scan when the probe was
+  removed.
+- **Subject, `en`:** 5 duplicate (role, accessible-name) pairs on lesson 35. **Four are the quiz** —
+  the same question renders twice (Before-you-read and the end check) — and they are **not** a defect:
+  each set of four radios sits in a `role="radiogroup"` carrying `aria-label="What is the Fed Funds
+  Rate?"`, so the group tells them apart. **The fifth is `button "Raise the rate" ×2`, and its
+  ancestry was `div < div < div < div < div` — no role, no label, nothing.** The app already had the
+  right pattern one component away and the simulator did not use it.
+- **All five languages carry the duplicate**, read off the content module: en *Raise the rate*, es
+  *Subir la tasa*, ko *금리 인상*, zh *加息*, ja *利上げする*. The two scenario **questions** are
+  distinct in all five, which is what made a fix possible with no new string.
+
+#### What shipped
+**Two files, 75 insertions / 1 deletion.** `PolicySim.jsx`: the existing flex row that holds each
+scenario's levers gains `role="group"` and `aria-label={scenario.question[lang]}` — **no new element,
+no new locale key, no content file touched** (`git diff --name-only` under `src/content/` or
+`src/locales/` → **0**). The prompt paragraph stays *outside* the group so it is not read twice, which
+is exactly `Question.jsx`'s shape on this same screen.
+
+⭐ **`group` and deliberately not `radiogroup`.** This file's own header rule 1 is that no lever is
+correct and nothing is submitted; `radiogroup` would assert a right answer. §13d fails the build if
+anyone changes it to one.
+
+`check-data.mjs` **§13d** (new, ~40 lines) holds the invariant the fix depends on: **two scenarios on
+one lesson may not share a question in any language**, because the question is now the only thing
+telling their lever groups apart. Its learner-visible sentence: *a third scenario is added reusing an
+existing question, and the learner is back to two identically-named buttons in two identically-named
+groups — silently, because everything still renders.* It also asserts the markup itself.
+
+**§13d proven against three plants, each reverted from a `cmp`-verified scratchpad copy** (never
+`git checkout --`), with a clean baseline before and after:
+| plant | result |
+|---|---|
+| duplicate the `en` question across both lesson-35 scenarios | FAIL, naming `overheating`/`contraction` |
+| revert the markup to a bare `<div>` — **the exact pre-fix state** | FAIL, naming the missing `role="group"` |
+| switch `group` → `radiogroup` | FAIL, citing rule 1 |
+Baseline before plants **exit 0**; after all three restores **exit 0**. ⭐ **The middle row is the one
+that matters: the guard fails on the state this repo was in an hour ago**, so it is a test of the
+defect and not a restatement of the patch.
+
+#### After — `index-1vMDhlg3.js` / `LessonReader-q3Tk_INS.js`, same instrument, same session
+- **The two "Raise the rate" buttons now sit in differently-named groups**, read off the live
+  accessibility tree: `GROUP "You chair the policy committee. Which way do you turn the dial?"` and
+  `GROUP "Same chair, a very different room. What do you do?"`.
+- **All five languages**: the duplicate lever still exists in each (it is correct content), and in each
+  the two group names are distinct, non-empty and in that language — including `zh` resolving
+  `documentElement.lang` to `zh-Hans`.
+- **Behavior unregressed, driven rather than argued.** Picking in scenario 2 left scenario 1's panel
+  and `aria-pressed` untouched; swapping within a scenario replaced its panel text; toggling a lever
+  off cleared its panel. **The analytics guard still holds: three choices fired three
+  `sim_lever_chosen` events and the toggle-off fired none** (3 → 3), which is §13c's whole point.
+- **Layout untouched**: the wrapper still computes `display:flex`, `flex-wrap:wrap`, `gap:8px`; levers
+  ≥44px tall; `scrollWidth <= innerWidth` at 375px. **0 style or token lines in the diff**
+  (`padding|margin|color:|font|border|space\[|minHeight|surface\.|ink\.` → 0 added).
+
+**`npm test` exit 0** with **0 FAIL** and the same **3** pre-existing warnings (translation review
+coverage, translation completeness, option-length cue / item 160); `npm run check-blindspot` exit 0;
+`npm run build` exit 0. ⚠️ All three exit codes read **without a pipe** — `cmd | grep; echo $?` reports
+the filter's status, which is how a failing guard reads as a pass. `LessonReader` 93.82 → **93.86 kB**;
+`index` **271.53 kB unchanged**.
+
+**W-6.3 re-measured on this tree rather than carried forward:** `scripts/` **21,445** lines vs app code
+(`src/` minus `content/`+`locales/`) **10,048** — **2.13x**, unchanged from the previous run's 2.13x.
+This run added 50 script lines against 24 app lines.
+
+#### Step 5 — adversarial self-check
+**Blindspot register: nothing found, grepped rather than assumed.** **0** files under `src/content/`
+or `src/locales/` in the diff; the diff greps **0** for
+`dalio|should buy|should sell|we recommend|best time to|guaranteed return|your portfolio`;
+`check-blindspot` **exit 0**. §10.1 is not reachable here — the change adds no prose, and the levers it
+groups are *central-bank* policy, which `policyScenarios.js`'s header is explicit is safe ground where
+a personal-finance lesson would not be. §2.3: the two `2026-09-09` stamps I added are in **source
+comments that render nowhere**, and both are written as dated records of a state that is now over.
+§10.3 untouched. **One near-miss caught before committing:** a draft of the comment said the simulator
+"has six levers", a live count that goes stale the moment a scenario is added — it now names the
+scenarios instead of counting them.
+**DECISIONS.md conflict: none.** localStorage-only state, `.js`-not-JSON content and Vite-not-Expo are
+all untouched — this adds two ARIA attributes. The nearest live constraint is not in `DECISIONS.md` at
+all but in `PolicySim.jsx`'s own header (rule 1: no scoring, no correct answer), and it is the reason
+the role is `group`; §13d now enforces it. **Item 12 (Expo/RN port cost), stated rather than waved
+through: zero** — `accessibilityRole="none"` plus `accessibilityLabel` is a direct RN equivalent, and
+no new string needs translating.
+**Already-done backlog item: no, and the specific history was searched rather than skimmed.** Grepping
+`AGENT_LOG.md`, the archive and `DECISIONS.md` for PolicySim + grouping/duplicate-label returns **0**;
+no decision against grouping exists. ⭐ **The archive does hold the run that BUILT this component, and
+reading it is the transferable finding: that run walked the live DOM thoroughly** — scenario
+independence, `aria-pressed`, `aria-controls` resolution, `role="status"`, heading order, no second
+`h1`, no horizontal overflow at 375px — **and its own entry says it watched "all six lever labels"
+re-render in Korean. It enumerated the six and never compared them to each other.** A checklist walked
+item by item does not see a collision *between* items.
+**My own verification claim, weakest part first.** ⚠️ **(1) Not a screen-reader claim.** What is
+measured is the DOM and computed accessible names; no assistive technology is drivable from this host,
+so "a screen reader will announce the group" is the ARIA contract, not something I observed.
+**(2) Screenshots were not available and the run says so rather than omitting it** — the Browser pane
+was hidden, so it renders nothing and returned a black frame; I confirmed via the DOM
+(`h2.getBoundingClientRect().top ≈ 0`, `scrollY 3585`) that the page really was where I had scrolled
+it, and then used the accessibility tree, which is the right evidence for this change anyway.
+**(3) The interactions are synthetic** — `element.click()` and a React-aware `<select>` value setter,
+not real pointer or key events. **(4) One assertion was reported loosely and is corrected here:** my
+`ambiguousPairNowDistinct` expression returned a truthy *string* rather than `true`, because `&&`
+yields its last operand — the conclusion is right and is independently visible in the group dump
+above, but the boolean was not a boolean. **(5) Reproducible:** every figure comes from a named
+bundle, before and after measured by the same functions in the same browser session, with plants
+restored from `cmp`-verified scratchpad copies in both directions.
+
+#### Filed as a note, deliberately NOT numbered (W-6.2 rule 2)
+The two scenarios still share a single `h2` ("Be the Fed Chair") with **no per-scenario heading**, so a
+rotor user cannot jump between the two rooms — only tab through them. That is the item 163(b) class
+and it is real, but it has **one live instance**, honest priority **low**, and the obvious fix (promote
+each scenario's question to an `h3`) is a judgment about whether a prompt reads as a heading, not a
+measurement. **Next run: do not pick this by default.**
+
+⚠️ **Reported, not fixed — O-4/O-5, not repo work.** A run may not push, so this commit does not reach
+a learner until the owner pushes `main`. `public/data/market.json` is untouched by this run.
+
+**Schedule:** the cron is the owner's lever; not read, not compared, not touched.
+
+### 2026-09-09 (scheduled dev-agent; W-6.2 rule 1 free — the previous run's only residual was an unnumbered note ending "do not pick this by default", so this pick came from a LAUNCH_PLAN clause: §3.0 clause 3, the primary success criterion) — the jargon instrument's top three findings on the main path were lessons 32 and 33, and the rule it was missing is the one item 68 already wrote down
+
+**What this is.** `LAUNCH_PLAN.md` §3.0 is the clarity standard and its clause 3 is *"no undefined
+jargon — a term either gets defined where it appears or links to the glossary."* `npm run jargon`
+(item 60) is the instrument for it. Two things were true and neither was written down: the script
+**defaults to the `money` track** (`process.argv[2] ?? "money"`), and **the main path had never been
+swept** — `AGENT_LOG.md` + the archive contain no economy or essentials sweep. So this run swept
+them, and the sweep is what found the instrument defect.
+
+**The defect, in one sentence: a lesson that cross-references another lesson by title fed that title
+into the candidate list as undefined jargon.** Lesson 33 §1 reads *many short-term cycles like the one
+in "The Short-Term Debt Cycle"* — a pointer to lesson 32, which is the cross-referencing practice item
+36 built and maintains. The capitalized-phrase rule read it as a term used across four lessons with no
+glossary entry.
+
+⭐ **This is item 68's finding with a different cause, and this file's own header states the
+standard:** *"An instrument whose number rises when the text improves is worse than a noisy one: it
+trains a run to distrust its own fix."* Item 68's instance was an acronym expanded in place. This one
+is a cross-reference — **adding a fifth pointer to lesson 32 makes the report worse while making the
+content better.** And a lesson title is not a near-miss: it is by construction the *best*-defined
+phrase in the corpus, because it has a whole lesson.
+
+W-6.2 rule 3's sentence, and it is deliberately stated as the indirect thing it is: *a run reads
+`Short-Term Debt Cycle — 4 lessons, not in the glossary` at the top of the report, adds a glossary
+entry for it, and the learner gets a chip on lesson 33 whose definition is a one-line restatement of
+lesson 32 — pointed sideways at a paragraph instead of at the lesson that teaches it.*
+
+#### Premise re-measured before editing, with controls, and the FIRST premise broke
+The item I started on was *"the main path teaches Short-Term Debt Cycle across four lessons and the
+glossary has no entry for it"*, which the tool's own output says and which is **wrong**. Measured
+before touching anything:
+- **`lessons.js`: lesson 32 IS "The Short-Term Debt Cycle" and lesson 33 IS "The Long-Term Debt
+  Cycle".** The "candidates" are the app's own lesson titles. Disposition changed from *write two
+  glossary entries* to *fix the instrument* — the item-65/75 shape, and the third premise-break in
+  this log to change a disposition rather than a figure.
+- **The second-ranked survivor also broke.** `Term Premium`, 8x in lesson 36, is defined inline under
+  its own section heading: *"That extra compensation is called the term premium."* §3.0 clause 3 met.
+- **Control (a term I knew independently):** the glossary's 43 keys were read directly and
+  `Short-Term Debt Cycle` genuinely is not among them — so the absence is real and only the
+  *interpretation* was wrong.
+- **Classified by hand before writing any code**, over the `all` corpus parsed from the tool's real
+  output rather than retyped: **9 of 81 listed candidates were lesson-title fragments.** A first-draft
+  substring rule scored 7 and its extra hits were `MORE`, `LESS`, `AND` and `RULE` — single common
+  words sitting inside four unrelated titles. **That false-positive set is why the shipped rule has a
+  two-word floor.**
+- **Two more were track labels, not lesson titles:** `Money Basics` and `Economy Works` are
+  `trackEssentials` / `trackEconomy` in `locales/en.js`. Hand count 9 + 2 = 11; the shipped rule
+  reports **11** on `all`, which is the independent agreement.
+
+#### What shipped
+**Two script files, no app code, no content.** `git diff --name-only` under `src/` → **0**.
+`jargon-candidates.mjs` gains `nameGrams()` — word-aligned n-grams of **≥2 words** over the 44 lesson
+titles plus the three track labels — and a `navReferenced` bucket that is **suppressed from CANDIDATES
+and printed with its citation**, matching the file's existing "named, never just counted" rule for the
+gloss bucket. Each line reads `"Short-Term Debt Cycle" → The Short-Term Debt Cycle`, so a wrong
+suppression is visible on its face.
+
+Three things decided deliberately and stated rather than defaulted:
+- **≥2 words.** A one-word title fragment is genuinely ambiguous; under-suppressing is the safe
+  direction for a script whose whole job is finding undefined terms.
+- **Not applied to the `glossary` corpus.** There the reader is mid-lookup, and "a lesson elsewhere
+  teaches this" is not an answer to a definition that leans on an unexplained term. Reports **0**.
+- **Bucket scoped to rows that would have been listed**, so the three suppression buckets stay
+  disjoint and the lower-reach arithmetic still balances.
+
+**`check-measurements.mjs` had to change in the same commit, and it said so itself.** The new field
+broke its `CLAIM` regex and it failed with *"If the line was renamed, update this script's CLAIM
+pattern in the same change."* It is now **named groups, not positions** — with positional groups every
+field after the insertion shifted by one, so the checker would have compared self-defining against
+low-reach and reported a mismatch as a mistyped number — and the new field is **optional**, because
+the log holds 9 claims written before it existed and a claim that stops parsing is reported as *the
+instrument printed no MEASURED line*, a FAIL aimed at the wrong thing.
+
+⚠️ **One bug I introduced and caught before committing.** The fingerprint hashes this file's bytes,
+`glossaryForms` and `docs` — and **`docs` carries section headings and bodies, but not titles**, while
+track labels come from `locales/en.js`, which was not an input at all. Renaming a lesson could
+therefore move the candidate count while the fingerprint held, and a quoted claim would be enforced
+against a corpus it no longer described — **failing in the one direction this line must never fail
+in.** The name set is now hashed too.
+
+#### Verification — plants, both directions, restored from a `cmp`-verified scratchpad copy
+Baseline exit 0 before and after. Never `git checkout --`.
+| plant | result |
+|---|---|
+| gram builder emits nothing (rule dead) | **exit 1** — "was NOT treated as part of…, or the rule is dead"; the live structural check also fired on 47 names |
+| two-word floor removed (1-word grams) | **exit 1** — `"widget" WAS treated as part of…` |
+| contiguity removed (word bag, via `.sort()`) | **exit 1** — caught by the suffix assertion and the 26-name structural check |
+
+⚠️ **Reported precisely rather than rounded in my favor: the third plant did NOT trip the
+`short widget` assertion** (sorting leaves that pair non-adjacent), it tripped the other two. The
+plant was caught; not every assertion caught it.
+
+**Then the part that would otherwise have been vacuous.** After the change all 9 existing claims
+**retire** on fingerprint, so `enforced` is 0 — and a regex I had broken into never matching would
+print exactly the same reassuring line. So enforcement was proved live: pasting the current economy
+MEASURED line into `AGENT_LOG.md` gave **1 enforced and agreeing**; corrupting the **new** field gave
+`FAIL … Disagrees on: navNames (log 4, actual 3)`; corrupting a **pre-existing** field gave
+`Disagrees on: candidates (log 27, actual 26)`. `AGENT_LOG.md` restored **byte-identical at 653,199 b**.
+
+`npm test` **exit 0**, 0 FAIL, the same **3** pre-existing warnings (translation review coverage,
+translation completeness, option-length cue / item 160); `npm run check-blindspot` exit 0; `npm run
+build` exit 0. ⚠️ All exit codes read **without a pipe**. **Bundle control that this touched no app
+code:** `index-1vMDhlg3.js` **271.53 kB** and `LessonReader-q3Tk_INS.js` **93.86 kB** — byte-identical
+to the previous run's reported figures.
+
+**MEASURED lines, pasted verbatim, not retyped:**
+MEASURED jargon economy: 26 candidates, 12 control, 1 self-defining, 3 lesson/track names, 278 low-reach  [fingerprint 3232cadf]
+MEASURED jargon all: 70 candidates, 30 control, 1 self-defining, 11 lesson/track names, 672 low-reach  [fingerprint 03089d80]
+
+#### The content answer, which is the other half of this run
+**The main path has now been swept for undefined jargon for the first time, and it is clean.** After
+the 3 title fragments come out, every remaining economy candidate is ordinary compositional English
+(`car loan`, `mortgage payment`, `more income`), a glossary term the extractor split (`Funds Rate` —
+`Fed Funds Rate` is an entry), or a term the lesson defines inline (`Term Premium`). **No glossary
+entry is owed on the economy track**, and no content file was touched.
+
+#### Step 5 — adversarial self-check
+**Blindspot register: nothing found, grepped rather than assumed.** **0** files under `src/content/`
+or `src/locales/` in the diff; added lines grep **0** for
+`dalio|should buy|should sell|we recommend|best time to|guaranteed return|your portfolio`;
+`check-blindspot` **exit 0**. §10.1 is not reachable — this run wrote no learner-facing prose at all.
+§2.3: the two `2026-09-09` stamps are in `scripts/` comments that render nowhere and are written as
+dated records. §10.3 untouched.
+**DECISIONS.md conflict: none.** localStorage-only state, `.js`-not-JSON content and Vite-not-Expo are
+untouched; this is two build-time scripts. Item 12 (Expo/RN port cost): **zero** — nothing here ships
+to a client.
+**Already-done backlog item: no, and the specific history was searched.** `lesson title` returns 15
+hits in the archive and 1 in `AGENT_LOG.md`, none about jargon suppression; no decision against it
+exists.
+⭐ **But item 60 already contains a hand-correction of this exact class, and that is the finding.** It
+records *"**beneficiary** is not a gap (lesson 14 is titled for it and teaches it)"* — a run met one
+instance, correctly diagnosed it, wrote it in the backlog **as a fact about that term**, and the
+instrument went on producing the class. **A premise correction filed against one term does not
+generalize itself.**
+⚠️ **And the shipped rule does NOT cover that instance — stated plainly rather than claimed closed.**
+`Beneficiary` is a **one-word** fragment of *"Estate Planning Basics: Wills and Beneficiary
+Designations"*, and the two-word floor deliberately leaves it listed. **Half the class is covered.**
+The other half needs a judgment the floor exists to avoid making.
+**My own verification claim, weakest part first.** **(1)** The learner-visible failure is
+**indirect** — a bad glossary entry a future run would have written, not a defect on screen today.
+Nothing was fixed in the app, and this run does not claim otherwise. **(2)** The "first-ever sweep"
+claim rests on grepping both logs for an economy/essentials jargon run; absence in the logs is not
+proof none was ever run, only that none was recorded. **(3)** The 11 suppressions were read by hand
+and every one is a genuine title or track fragment; that is inspection of a short list, not a
+measurement. **(4)** `W-6.3 re-measured on this tree: scripts/ 21,855 lines vs app code 10,048 —
+2.17x`, up from the previous run's 2.13x. **This run added ~173 script lines against 0 app lines and
+moved the ratio the wrong way**, which W-6.3 asks be stated rather than hidden: the defense is that it
+corrects an instrument that was already there and mis-reporting, not that it is free.
+
+#### Filed as a note under item 60, deliberately NOT numbered (W-6.2 rule 2)
+The one-word half of the lesson-title class is open (`Beneficiary`, above). **One live instance,
+honest priority low, and the fix is a judgment, not a measurement — next run: do not pick this by
+default.**
+
+⚠️ **Reported, not fixed — O-4/O-5, not repo work.** A run may not push, so this commit does not reach
+a learner until the owner pushes `main`. `public/data/market.json` is untouched by this run. ✅ **W-7.3's
+falsifiable test resolved in the job's favour:** a refresh commit (`8c385a4`, `asOf 2026-09-08`) arrived
+in this working copy by itself, so the market job is live on machine A as the owner said.
+
+**Schedule:** the cron is the owner's lever; not read, not compared, not touched.
+
+### 2026-09-09 (scheduled dev-agent; W-6.2 rule 1 free — the previous run's only residual was a note under item 60 ending "do not pick this by default", so this pick came from a corpus-wide sweep of the least-covered surface in the app, chosen by counting each component's mentions across both logs) — the app's crash screen offers one button, that button re-enters the route that just crashed, and the copy beside it promised "Reloading the page usually fixes it"
+
+**How this was picked, since it is the part that generalizes.** Every component under `src/` was
+counted across `AGENT_LOG.md` + the archive. `ErrorBoundary.jsx` came last by a wide margin —
+**2 mentions total, 0 in the live log** (next lowest: `Icon.jsx` 13, `GlossaryTerms.jsx` 16). The
+boundary component itself turned out to be in good shape; what had never been walked was **what
+happens after it catches.**
+
+**The defect, in one sentence: routing is hash-based, so the screen that crashed is in the address
+bar, and `AppError`'s only control called `window.location.reload()` — which re-enters it.**
+
+#### Premise re-measured on the built app before editing, with controls — and the premise HELD, then widened
+Served `dist/` statically (404 control fired on a nonexistent path) and drove the built app.
+- **Control first, before any injection:** cold install, disclaimer dismissed, `#/lesson/29` renders
+  its `<h1>`, no `role="alert"` anywhere. The app is healthy.
+- **Injected** a `throw` for **one lesson id** into `LessonReader` (proved landed: +95 b, and the
+  built chunk moved 93.86 → 93.94 kB), and set up a **returning** learner with `[29]` complete so
+  lesson 30 was genuinely unlocked.
+- ⚠️ **The first attempt measured nothing and said so.** Writing `localStorage` under a running app
+  and assigning `location.hash` never reloaded the document — `app_opened` stayed at **1** — so the
+  app was still holding its old in-memory progress and reported lesson 30 as *locked*. That looked
+  exactly like a wrong premise. The analytics counter is what caught it; a forced reload was the fix.
+- **The loop, measured three presses deep:** `app_opened` **1 → 2 → 3** (three real document loads),
+  the identical `SOMETHING WENT WRONG` at the identical `#/lesson/30` every time.
+- **Widened, and this is what changed the fix's shape:** a throw injected into `Practice` reproduced
+  it at **`#/practice`**. It is a property of the routing, not of one lesson — so the fix is "leave
+  the crashed route", not "strip a lesson id".
+
+⭐ **The premise that broke was my own headline, and it made the finding sharper rather than
+weaker.** I expected "the learner is trapped". They are not: the bottom nav survives the boundary
+(`ScreenBoundary` is keyed by `tab`) and **one tap on Learn recovered, measured**. The real defect is
+worse-shaped than a trap and easier to miss — **the one control the error screen offers is the one
+that cannot work, and the one that works is not mentioned on it**, while the copy beside the dead
+button said *"Reloading the page usually fixes it."*
+
+#### What shipped
+- **`lib/deepLink.js`** — `PATH_HASH` (derived from `routeHash`, not written as a literal, so it
+  cannot drift out of the grammar it must belong to) and `reloadOntoPath()`. It lives here because
+  **§41 already establishes that `lib/deepLink.js` owns `location.hash`**; a component reaching for
+  the hash itself is the thing that check exists to stop.
+- **`components/ui.jsx`** — `AppError`'s button calls it. **`LoadFailure` is deliberately unchanged**
+  and both comments now say why.
+- **`locales/*.js` ×5** — `appErrorBody` now names where the reader lands instead of promising a fix
+  the app could not deliver. Each uses that locale's own existing term for the path (`returningTitle`).
+
+Three decisions stated rather than defaulted:
+- **`#/learn`, not a cleared hash.** `initialRoute` sends a **first-time** visitor with no hash into
+  the path's first lesson (§3.2) — so clearing the hash re-enters a lesson, which may be the crashed
+  one. `#/learn` resolves to `{tab:"learn", reading:null}` for first-time and returning visitors alike.
+- **`replace`, not an assignment**, so the crashed URL is not left in history for Back to walk into.
+- **`LoadFailure` keeps its in-place reload.** There the fresh document *is* the fix (a rejected
+  dynamic import stays errored in the module map for the document's life) and the dominant cause is a
+  redeploy invalidating a chunk under an open tab, which one same-url reload repairs **while keeping
+  the reader's place**. Its residual is filed as a note under item 100.
+
+#### Verification — the fix proved live, and the guard proved live, both with controls
+**The fix, on the built app with the same injection re-applied:** one press → `app_opened` **1 → 2**
+(a real reload), `#/lesson/30` → **`#/learn`**, no alert, "Your learning path" rendering, and
+`ecycles_completed_lessons` still `[29]` — so the copy's "your saved progress is not affected" is
+true rather than asserted.
+| control | result |
+|---|---|
+| healthy lesson still opens from its URL | `#/lesson/29`, `<h1>` renders, no alert |
+| Back after a recovery | `history.length` **unchanged at 10**, lands on `#/lesson/29` — the healthy lesson, **not** the crashed URL |
+| chunk 404 (built chunk moved out of `dist/`) | `LoadFailure`, not `AppError` — the tag still discriminates after this edit |
+| that button | reloads **in place**, `app_opened` 1 → 2, hash kept — the asymmetry is real, not just commented |
+| final shipping bundle, cold install | `#/lesson/29` and `#/reference` clean, no console error from `index-C_6Fzds0.js` |
+
+**`check-data.mjs` §39 block (f)** — W-6.2 rule 3's sentence: *a learner whose lesson screen crashed
+presses the only button the app offers and is returned to the identical error screen, every time.*
+It is **behavioral, not a spelling scan**: it asserts `PATH_HASH` lands **both** a first-time and a
+returning visitor on the path with no lesson open, and **carries the control that makes that
+non-vacuous** — an empty hash must still open a lesson for a first-time visitor, or the assertion
+proves nothing and the check says so.
+| plant | result |
+|---|---|
+| `AppError` reverts to `window.location.reload()` | **exit 1**, both the "reloads the current URL" and the "no longer calls reloadOntoPath()" failures |
+| `LoadFailure` stops reloading in place | **exit 1** |
+| `PATH_HASH` points at `#/lesson/29` | **exit 1**, and it names the landing state for both visitor kinds |
+All three restored from `cmp`-verified scratchpad copies; never `git checkout --`.
+
+`npm test` **exit 0**, 0 FAIL, the same **3** pre-existing warnings (translation review coverage,
+translation completeness, option-length cue / item 160); `npm run check-blindspot` exit 0; `npm run
+build` exit 0. ⚠️ All exit codes read **without a pipe**. Bundle: `index` **271.53 → 271.74 kB**
+(+0.21 kB, this run's code) and `LessonReader` **93.86 kB unchanged** — reported rather than claimed
+byte-identical, because this run did add code to the main bundle.
+
+#### Step 5 — adversarial self-check
+**Blindspot register: nothing found, grepped rather than assumed.** `check-blindspot` **exit 0**.
+§10.1 is reachable this run (five learner-facing strings changed), so it was checked directly: the
+new copy is about a reload destination and progress, and greps **0** for
+`dalio|should buy|should sell|we recommend|best time to|guaranteed return|your portfolio`; no lesson
+or market content was touched. §2.3: no date or figure is rendered by anything here. §10.3 untouched.
+**DECISIONS.md conflict: none.** localStorage-only state is untouched (the recovery reads no storage
+and the run measured progress surviving it); `.js`-not-JSON content and Vite-not-Expo untouched. Item
+12 (Expo/RN port cost) is the one worth stating rather than waving past: `deepLink.js`'s header
+promises a native shell deletes that module whole, and **`ui.jsx` now imports from it** — so the port
+cost moved from "delete two call sites" to "delete two call sites and one import". Judged the right
+side of the trade, because the alternative was `ui.jsx` manipulating `location.hash` itself, which is
+precisely what §41 forbids; and `AppError` already called `window.location.reload()`, so that
+component was never native-portable at this line.
+**Already-done backlog item: no, and the specific history was searched.** `location.reload` returns
+**1** hit in `AGENT_LOG.md` and **1** in the archive, both using reload as an *instrument* in an
+unrelated test; `reload loop`/`crash loop` return **0** in both. Items 96, 99 and 100 built the
+boundary, the second message and the tagging — **none of them ever asked where the button goes.**
+**My own verification claim, weakest part first.** **(1)** The crash is **injected**; no lesson in the
+shipped corpus is known to throw today, so this is a guard on a reachable failure, not a repair of a
+live one — the reachability is real (`ErrorBoundary.jsx`'s own header: 27 content-hashed chunks, a
+redeploy under an open tab) but the specific loop needed a plant to see. **(2)** The Browser pane was
+**hidden** for this session, so clicks were JS-dispatched rather than real pointer events; that is
+fine for routing and boundary state, and it means **nothing here is a claim about focus, hit targets
+or pixels**. **(3)** The "least-covered surface" ranking is a mention count over two log files — a
+reasonable proxy for attention, not a measurement of coverage. **(4)** `W-6.3 re-measured on this
+tree: scripts/ 21,937 lines vs app code 10,127 — 2.17x`, flat against the previous run's 2.17x. This
+run's insertions, counted from `git diff --numstat` rather than estimated: **`scripts/` +84** against
+**`src/` +92** (ui.jsx 19, deepLink.js 61, locales 12) — the first run in a while where the app side
+is the larger half.
+
+#### Filed as a note under item 100, deliberately NOT numbered (W-6.2 rule 2)
+`LoadFailure`'s permanent-404 loop, measured this run in both directions. One live instance, honest
+priority low, and the fix is a judgment (or a `sessionStorage` attempt counter) rather than a
+measurement — **next run: do not pick this by default.**
+
+⚠️ **Reported, not fixed — O-4/O-5, not repo work.** A run may not push, so this commit does not
+reach a learner until the owner pushes `main`. `public/data/market.json` is untouched by this run.
+
+⚠️ **This entry pushed `npm test` to a FOURTH warning, and it is this run's own doing — stated
+rather than left for the next run to discover.** The run log is now **246,819 b against a 250,000 b
+warn budget** when the trigger first fired, with **0.37 runs of headroom**, and the check names its
+own remedy: *an archiving pass*. (No exact byte figure is pinned here, and that is deliberate: this
+paragraph is itself in the run log, so any number written in it is stale the moment it is written.
+`check-log-size.mjs`'s MEASURED line is the instrument — read it, do not retype this.) It is
+**not** done here on purpose. The run log now holds **2 live days** (09-08 and 09-09), so a pass would
+finally have something to cut — the last two firings cut nothing because the only live day was the one
+they stood in — but W-5.3's pass is a whole run's work on a 679 KB file, the standing instructions for
+it were found false in both halves on 09-08, and a sixth compression pass nearly shipped a wrong
+150 KB deletion. **Bolting it onto this commit is how that happens again.** `npm test` is still
+**exit 0**; the trigger is named here so the next run can take it as a clean pick.
+
+**Schedule:** the cron is the owner's lever; not read, not compared, not touched.
+
+### 2026-09-09 (scheduled dev-agent; W-6.2 rule 1 free — the previous run filed only an unnumbered note ending "do not pick this by default", and named the log-size trigger as a clean pick, which is what this run took) — the archiving pass the instrument had been reporting as an awkward two-piece cut was a one-piece cut all along, and the thing making it look otherwise was a single mistyped character in a heading
+
+**How this was picked.** `check-log-size.mjs` was at **0.23 runs of headroom** (run log 248,004 b
+against a 250,000 b warn budget) — the trigger that has driven all ten previous firings — and unlike
+the last two firings there were **2 live days**, so a pass finally had something to cut. The previous
+run deliberately did not bolt it onto its own commit and said why. Taken as this run's whole work,
+which W-5.3 says is legitimate.
+
+#### ⛔ Step 3.5 — the premise re-measured with a control, and it CHANGED THE SHAPE OF THE CUT
+The item's premise was "archive the older of two live days". Both halves were checked before any
+file was touched.
+- **The budget half held exactly**, read off the instrument rather than retyped: 248,004 b, 99.2% of
+  warn, 0.23 runs left. Per-day weights measured independently: **09-08 157,579 b, 09-09 90,414 b**.
+- **The structural half did not.** `check-log-size.mjs` reported **2 days in 4 regions — "2026-09-08
+  in 2 pieces, 2026-09-09 in 2 pieces"** and warned that such a cut "is not obvious". Its own
+  control 4 (a synthetic interleaved day) was passing, so the splitter was working.
+- **The instrument was right about itself and wrong about the log.** Item 142's rule — verify against
+  `git log` author timestamps, never file position — was applied to every live entry: extract the
+  `### 2026-…` heading each commit ADDED and compare it to that commit's author date. **26 of 27
+  agreed. One did not:** the entry for item 174 is headed `### 2026-09-09`; the commit that wrote it,
+  `4e08fd8`, is authored **2026-09-08 20:12**.
+- **Controls on that instrument, because a date comparison that silently matches nothing looks like a
+  clean result.** (1) Coverage: 29 headings found across 32 commits, and the 27 live entries map 1:1
+  onto the top 27 commits — no commit added two headings, so nothing was skipped by the `head -1`.
+  (2) Timezone: `%aI` across the **whole repository** returns a single offset, `-04:00`, matching the
+  host — so the mismatch is not a rendering artifact, which was the obvious way to be wrong here.
+  (3) The 28 agreeing rows either side of the mismatch are the positive control.
+- **Corrected before cutting** (one character, file size unchanged at 680,646 b, exactly one line
+  differing from the backup), after which the instrument reports **1 day in 1 region, "every day is
+  contiguous"**. The awkward cut the previous run had been warned about did not exist.
+
+⭐ **What generalizes: the instrument was not broken and its warning was not noise — it was faithfully
+reporting a corrupted input.** Two runs had read "NOT CONTIGUOUS" as a property of the archiving job.
+It was a property of one mistyped character, and the check that finds it is four lines of `git show`.
+
+#### The blast radius of that one character, which is the reason it was worth a paragraph
+It had already propagated into the backlog. Item 174 read **"✅ DONE 2026-09-09 … the day after it
+was filed"**; it was filed by `3ec70af` 2026-09-08 18:16 and closed by `4e08fd8` 2026-09-08 20:12 —
+**1h56m later, the same day.** Both halves wrong. Sweeping the relative-day prose of items 170-175
+against their filing and closing commits found **5 evaluable, 2 wrong** — item 173 makes the same
+"the day after" claim for a **4h02m** same-day close. Both corrected; the class and its instrument
+are recorded under item 174 so it need not be re-derived.
+**Why these two were in scope for an archiving pass rather than smuggled work:** they are the live
+one-line summaries of the two entries this pass was archiving. Shipping the evidence to the archive
+while leaving a false date live is the exact failure W-7.2 rule 1 is written against.
+
+#### What shipped
+- **2026-09-08 moved to `AGENT_LOG.archive.md`** under `## Archived 2026-09-08` — **20 entries,
+  167,824 b**, verbatim, reversing nothing (the ninth pass's corrected rule).
+- **The archive title's date range** advanced to `→ 2026-09-08`.
+- **Items 173 and 174 corrected** in the live backlog, each carrying how it was measured.
+- **W-5.3** records the tenth (no-op) and eleventh firings; **W-7.3 is resolved** (below).
+- **No clause was reworded, no budget touched, no script changed.** `git status`: two markdown files.
+  The date clause was a **no-op for the eleventh firing running** — every live entry is newer than
+  W-7's boundary — and the trigger acted on was the measured warn budget, as in all ten before it.
+  Its date-vs-byte defect is untouched and remains item 115/121 territory.
+
+#### Verification — conservation proved in both directions, each with a planted control
+| proof | result |
+|---|---|
+| live run log **+** the moved block reconstructs HEAD's run log byte-for-byte (with only the one date character changed) | **true** |
+| that comparison can fail — HEAD's run log ≠ the date-fixed one | **true** (non-vacuous) |
+| archive == HEAD's archive, retitled line only, **+** the new section **+** the moved block | **true** |
+| heading accounting: HEAD 27 = archived 20 + still live 7 | **true** |
+| no 09-08 entry left live; no 09-09 entry archived | **true** |
+| everything above the run log unchanged except items 173/174 | **3 hunks, all inside 173/174** (real `diff`, not a hand-rolled one) |
+
+| planted control | fires on | silent on |
+|---|---|---|
+| delete one archived entry (**7,484 b**) from the archive | archive-tail proof, heading accounting | live-file proof ✓ |
+| delete one line from the live file | live-file proof | archive proofs ✓ |
+Both restored from `cmp`-verified scratchpad copies; never `git checkout --`. The clean state
+re-verified after each restore.
+
+⚠️ **An instrument bug found on the way, stated because it nearly became a false alarm.** The first
+reconstruction check anchored on `indexOf("## Run log")` — and that string occurs **3 times** in this
+file, twice as prose inside the backlog — so it sliced from a backlog mention and reported a mismatch
+that did not exist. **Anchor on the heading (`\n## Run log\n\n`, which occurs once) and carry the
+occurrence count as a control.** The whole-file proof run before the backlog edits was the one that
+was right, which is why it was run first.
+
+**Results — the figures below are what the CUT did**, measured after the move and before this entry
+was written into the file it measures; the live numbers are always `check-log-size.mjs`'s MEASURED
+line, which is why no current figure is pinned here. Run log **248,004 → 80,180 b** (99.2% →
+**32.1%** of warn; **0.23 → 19.4 runs** of headroom). File **680,646 → 514,806 b**. This entry and
+the backlog corrections then add to the floor, which stays well inside budget and leaves the backlog
+under W-7.2 rule 5's 425,473 b baseline. `npm test` **exit 0**, and warnings **4 → 3** — the log-size
+warning this pass exists to clear is gone; the 3 remaining are the standing translation-review,
+translation-completeness and option-length-cue ones. `npm run check-blindspot` **exit 0**; `npm run
+build` **exit 0**, entry bundle `index-C_6Fzds0.js` **271.74 kB, unchanged** — no source file was
+touched, and that is reported as the bundle figure rather than asserted. ⚠️ All exit codes read
+**without a pipe**.
+
+#### Step 5 — adversarial self-check
+**Blindspot register: nothing found, grepped rather than assumed.** `check-blindspot` **exit 0**. The
+24 lines this run added above the run log grep **0** for
+`dalio|should buy|should sell|we recommend|best time to|guaranteed return|your portfolio`, with a
+live control (`archiving pass` → 2) proving the grep was running. §2.3 is not reachable: no learner
+sees `AGENT_LOG.md`, and no date or figure rendered by the app was touched. §10.3 untouched.
+**DECISIONS.md conflict: none, and the near-miss is named.** The 2026-09-08 budget decision ends
+*"W-5.3's archiving rule still states a 600 KB whole-file trigger in its own text; that clause's
+date-vs-byte defect is untouched by this decision and remains item 115/121 territory."* This pass
+acted on the measured warn budget and **did not reword the clause**, which a run is forbidden to do
+unilaterally — the same choice the five earlier byte-triggered passes made.
+**Already-done backlog item: no.** This is the eleventh firing of a standing recurring rule, not a
+redo — and the specific finding is new: `4e08fd8` appears **0 times** in the archive and
+`mis-dated`/`misdated`/`heading date` return **0** in both files.
+**My own verification claim, weakest part first.** **(1)** The proof scripts are in the session
+scratchpad and are **not committed**, so an independent reviewer re-running "only the commands I ran"
+would have to rebuild them from the definitions above — the previous run flagged exactly this
+evaporation pattern, and the decision to leave them there is argued rather than defaulted in the next
+paragraph. **(2)** The relative-day sweep covers items **170-175 only**, not the whole backlog; 2 of 5
+evaluable were wrong, and older items are unmeasured. **(3)** "26 of 27 agreed" is a claim about
+headings a commit **added** — an entry whose heading was later edited by a different commit would not
+be caught, and none was looked for. **(4)** W-6.3 re-measured on this tree: `scripts/` **21,937**
+lines vs app code **10,127** — **2.17x**, flat, and untouched by this run, which added **0** lines to
+`scripts/` and **0** to `src/`.
+
+#### The mover question, decided deliberately rather than hand-rolled again (the ninth pass asked for this)
+The standing note says seven passes have each reimplemented the move by hand and asks the next pass to
+**decide** rather than hand-roll an eighth mover. Decided: **still not due**, and this pass supplies
+the strongest evidence yet for that answer rather than against it. A script frozen on the ninth pass's
+recipe would have taken the day by its heading dates, moved **19 of 20 entries**, and left one 09-08
+entry live wearing a 09-09 heading — a silent, permanent corruption of precisely the kind the note
+argues a script would never make. **The recipe moved a third time in four days.** What did transfer is
+the ninth pass's other prescription — *build the assertion first, the mover second* — and both
+assertions ran here, with controls. They stay in the scratchpad under W-6.2 rule 3: the
+learner-visible-failure sentence cannot be written honestly, because no learner reads this file.
+
+⚠️ **Reported, not fixed — O-4 action 2 and O-5 remain owner actions.** A run may not push, so this
+commit does not reach a learner until the owner pushes `main`.
+
+**Schedule:** the cron is the owner's lever; not read, not compared, not touched.
+
+### 2026-09-09 (scheduled dev-agent; W-6.2 rule 1 free — the previous run was the recurring archiving pass and filed no residual, so this pick came from a live walk of the §4.3 gate path: a fresh install through lesson 1) — the button a learner presses 44 times deletes itself and drops focus on the floor, and `Practice.jsx`'s comment for the same transition already names this file as a place that handles it
+
+**What this is.** `Mark Complete` renders on `!done`, so the click that sets `done` **unmounts the
+control that was just pressed** — and nothing claims the focus it takes with it. Measured on the built
+app: `document.activeElement` becomes `BODY` and stays there. W-6.2 rule 3's sentence: *a keyboard
+reader who finishes a lesson is returned to the top of the document, so reaching `Next Lesson` — which
+has just appeared in the exact slot their button occupied — costs a walk through every glossary chip
+and both radiogroups of the lesson they have already finished.*
+
+⭐ **This is the eighth application of a pattern this repo has applied seven times and the class it
+belongs to is already in the archive.** The `Glossary`/`TermDetail` **close** direction was exactly
+this bug and was fixed in August ("with nothing else claiming it, focus falls to `document.body`").
+`Practice.jsx` fixed its own in-place swap, and its comment reads *"Same 'new page' pattern as
+LessonReader/TermDetail"* — naming **this file** as one that follows the pattern. It does, on a lesson
+**change** (a `useEffect` on `[index]` focuses the `<h1>`). The **completion** swap — the only
+transition in the app that replaces content without a route change *and* without a heading appearing —
+was never given the same treatment.
+
+#### Premise re-measured before editing, with the control in the same page load
+`dist/` on `127.0.0.1:8842` (nonexistent-asset control → **404**), driven through the real UI.
+**Control: the reader's own `<h1>` focus on lesson open**, probed by the same expression on the same
+page load → `H1 :: 💳Credit: The Most Important Part`, `tabindex="-1"`. So `.focus()` takes effect and
+`activeElement` is readable in this pane **even though `document.hasFocus()` is `false` and
+`visibilityState` is `"hidden"`** — a null subject reading could not have been a dead instrument.
+In the subject's own page load, `mcFocused: true` before the click proved the same two things again.
+
+| | before click | after click |
+|---|---|---|
+| **subject** `Mark Complete` | focused, in DOM | **unmounted; `activeElement` = `BODY` at 200 / 800 / 2000 ms** |
+| **control** lesson-open `<h1>` | — | focused, `tabindex="-1"` |
+
+⚠️ **Three claims I started to file and killed by measuring — all three were mine, not the app's.**
+1. *"The first-run modal does not hide the app behind it."* `aria-hidden` and `inert` are absent
+   everywhere outside the dialog — but `aria-modal="true"` **is** set, and `<main>` carries
+   `aria-hidden="true"` while it is open. Not a defect.
+2. *"The lesson renders the same quiz question twice."* Two `role="radiogroup"`s with identical
+   options **is the design** — the pre-lesson hook (`reveal={false}`) and the graded check. Both
+   documented at length in this file.
+3. *"Completion is never announced."* **My selector was wrong.** `Announcer` uses `role="status"`,
+   which `[aria-live]` does not match. With `[role="status"]` in the query, "Complete!" is present
+   from ~200 ms to ~1700 ms, exactly as written. **The announcement half of this transition was
+   correct all along and is untouched by this commit** — re-confirmed after the fix.
+   ⛔ **A live-region sweep that queries `[aria-live]` alone cannot see this app's announcer.**
+
+#### What shipped
+**One file, +40/−1, `src/screens/LessonReader.jsx`.** A ref on the `Next Lesson` button plus an
+intent ref set by `handleComplete` and consumed by an effect. **0 style or token lines** (the diff's
+one `style=` hit is the pre-existing `flex: 2` on the line the ref was added to), 0 content or locale
+files, 0 lines added to `scripts/`.
+
+The intent is a **ref set by the click**, not a dependency on `done` — `done` is also true on arrival
+at an already-completed lesson, where nothing should move.
+
+#### After, same instrument
+- **Main branch** (first lesson of a fresh install, continue-prompt showing): `Mark Complete` →
+  **`BUTTON :: Next Lesson`** at 250 / 900 / 2100 ms. "Complete!" still announced; prompt still shown.
+- **Fallback branch, and it is genuinely exercised rather than argued.** On the lesson the app renders
+  last, nothing replaces the button, and focus falls back to the `<h1>` (`nextLessonPresent: false`
+  confirms which branch ran) instead of to `BODY`.
+  ⚠️ **I had the wrong lesson first, and only the test caught it.** `lessons` (authoring order) ends
+  on **money 28**; `lessonsByTrack()` — what `App.jsx` actually passes — ends on **essentials 15**.
+  Seeding 43-of-44 complete against the authoring order produced a `Next Lesson` button on the lesson
+  I had called last, which is what exposed the mistake. The corrected fact is now in the code comment
+  as a **derivation** (`lessonsByTrack()`'s last entry) rather than a lesson name, so it cannot rot.
+- **Two no-steal guards, because an effect with no dependency array runs after every render.**
+  Arriving at an already-completed lesson (where `Next Lesson` **is** present) → focus lands on the
+  `<h1>`, not the button. An ordinary re-render on that lesson (opening a glossary chip) → focus stays
+  on the chip.
+
+**Verification.** `npm test` **exit 0**, warnings **3 → 3** (unchanged: the standing translation-review,
+translation-completeness and option-length-cue ones). `npm run check-blindspot` **exit 0**.
+`npm run build` **exit 0**; `index-BwxkZOjx.js` **271,742 b** (unchanged — the change is in the lazy
+chunk), `LessonReader-CUlTc7ax.js` **94,006 b**, +148 b. All exit codes read **without a pipe**.
+⭐ The comment-only second edit rebuilt to the **same chunk hash**, which is the proof that it was
+comment-only rather than an assertion that it was.
+
+#### Step 5 — adversarial self-check
+**Blindspot register: nothing found, grepped rather than assumed.** `check-blindspot` **exit 0**. The
+40 added lines grep **0** for `dalio|principles|should buy|should sell|we recommend|best time to|
+guaranteed return|your portfolio|for kids`, with a live control (`focus|lesson` → **24**) proving the
+grep reached them. §2.3: the one date in the diff is a measurement note in a **source comment**, the
+house convention in this file; it reaches **0** files in `dist/assets/` (control: `Complete` → 3), so
+no learner sees it. §10.3 untouched — no content or locale file was opened.
+**DECISIONS.md conflict: none.** `grep -in focus DECISIONS.md` → **0 hits**. No closed decision covers
+focus management; localStorage-only state, `.js` content modules and Vite are all untouched.
+**Already-done backlog item: no, and I checked the near-miss rather than assuming.** `completionFocus`
+→ 0 across both logs; `focus falls` → 1, and reading it is what turned up the August
+`Glossary`/`TermDetail` fix cited above. That is the **same class in a different transition**, which
+makes this the eighth application of the pattern, not a redo of the seventh.
+**My own verification claim, weakest parts first.** **(1)** The driving scripts ran in the browser
+pane and are **not committed**; a reviewer re-running "only the commands I ran" gets `npm test` /
+`build` / `check-blindspot` reproducibly, but must rebuild the DOM probes from the definitions above.
+**(2)** I never pressed a real Tab key — the pane delivers key presses but does not move focus with
+them (Environment note). "The next Tab restarts at Skip to navigation" is an **inference** from
+`activeElement === body`, which is well-defined sequential-focus behavior, not something I observed.
+**(3)** No screen reader was pointed at this. Every claim here is about `document.activeElement` and
+DOM presence, never about what a screen reader speaks. **(4)** `innerWidth` read **0** in this pane, so
+**no geometry claim is made anywhere in this entry** — all of it is DOM and focus state. **(5)** W-6.3
+re-measured on this tree: `scripts/` **21,689** lines vs app code **10,166** — **2.13x**, and this run
+added **0** lines to `scripts/`.
+⛔ **This figure was wrong when first written into this entry and is corrected in place before the
+commit, not annotated after it.** I typed `21,937 / 10,167 = 2.16x` by carrying the previous entry's
+`scripts/` number forward and pairing it with an app figure I had not run — the exact defect the App
+summary's "no count that a script generates" rule exists to stop, committed inside the self-check
+step whose job is to catch it. The numbers above are `find | wc -l`, run after noticing.
+
+#### Seen on the same walk, deliberately NOT folded in (W-6.2 rule 2 — a note, not a numbered item)
+The continue-tomorrow prompt renders **above** the action row, so with focus correctly on `Next Lesson`
+a forward Tab now reaches the bottom nav and skips it (one Shift+Tab reaches it; before this commit it
+was ~50 forward Tabs away through the whole lesson). It is also silent — the only `role="status"`
+message is "Complete!". **This is a product question, not a defect**: the prompt "schedules no real
+notification" by explicit design, and focusing an optional commitment ahead of the primary action is a
+nudge a run may not decide unilaterally. **Do not pick this by default** — it needs the owner, and it
+is one screen's tab order, not a measured failure.
+
+⚠️ **Reported, not fixed — O-4 action 2 and O-5 remain owner actions.** `npm run check-deployed` this
+run: canonical URL live and the 404 control firing, but **DIVERGED** — the live bundle is an older
+build and the retired Netlify origin is **still serving the app**. A run may not push, so this commit
+does not reach a learner until the owner pushes `main`.
+
+**Schedule:** the cron is the owner's lever; not read, not compared, not touched.
+
+### 2026-09-09 (scheduled dev-agent; W-6.2 rule 1 free — the previous run's only residual was an unnumbered note ending "do not pick this by default", so this pick came from a corpus-wide sweep of the least-covered files in `src/`, chosen by counting each file's mentions across both logs) — the pick's premise was refuted twice by its own measurement, the second refutation reversed the first, and what separates them is one field in the data
+
+**What this is, stated as the outcome rather than as the plan.** The pick was `src/lib/relativeStrength.js`
+— the owner's own `WJ_Sector_Comparison`, 10 mentions across both logs against 42 for `theme.js` and 55
+for `LessonVisual.jsx`, and the only barely-read file whose output a learner actually reads (Reference →
+Sectors prints its rank on every row). **I went in with a units hypothesis, measured it, and it is
+wrong.** No code defect exists in the measure. This entry is the measurement and the two corrections;
+the shipped diff is the file learning what was measured, so the next reader does not re-derive it.
+
+#### The hypothesis, because it is attractive and someone will have it again
+`OUTPERFORM_THRESHOLD = 0.5` is compared against the **raw decimal** sum, while the published
+`relativeStrength` block declares `unit: "percentage-points"` in the field beside it, and the study's own
+parameter is named `Outperform_Percent_1`. That reads like a 100x unit mismatch: 0.5 raw is **50
+percentage points**, and the shipped sector scores run ±20 pp. If it were really 0.5 pp, the flag should
+be firing constantly and is instead never seen.
+
+#### Refutation 1 — the premise, re-measured before editing anything
+Replayed **every `public/data/market.json` ever committed** (24 commits, 23 distinct `asOf` dates,
+2026-08-04 → 2026-09-08; 264 sector observations) and scored each against the threshold. **2 of 264
+clear it.** So the flag is reachable, the "can never fire" half of the hypothesis is false, and the
+edit I was about to make would have been wrong.
+
+#### Refutation 2 — which reverses refutation 1, and the control is a field in the data
+Splitting the same 264 rows by `source`:
+
+| | n | max \|value\| | as raw | clearing raw ≥ 0.5 |
+|---|---|---|---|---|
+| **real** (`tiingo`) | **242** | **35.9 pp** | 0.359 | **0** |
+| **fixture** (synthetic) | 22 | 57.9 pp | 0.579 | **2** |
+
+**Both threshold-clearing observations in the entire published history are fixture rows** — the
+synthetic placeholder data the app itself labels "sample data" and withholds vendor credit for. Against
+real market data the largest score ever published reaches **72% of the threshold and never crosses it.**
+⛔ **So the pooled number and the split number support opposite conclusions, and `source` is the control
+on this file.** A distribution computed over `market.json` history without splitting on it is measuring
+the fixtures too — which is exactly what my first refutation did.
+
+#### Re-decided on the corrected facts (step 3.5), and the disposition is "no change to the measure"
+0.5-as-raw is **strict but not absurd**: it marks outperformance the real data has approached and not
+yet reached. The alternative reading, 0.5 percentage points, would flag **8 of 11 sectors on an ordinary
+day** — not a highlight, a background color. `DECISIONS.md` records the raw-decimal reading as the closed
+decision and the data agrees with it, so the units are not a run's call in either direction; **the only
+source of truth for the study's intent is the owner's thinkScript, which is not in this repo.** Nothing
+about the threshold changed.
+
+**Third measurement, taken on the way and with its own controls: `outperforming` and
+`OUTPERFORM_THRESHOLD` have no consumer.** Both grep to **0** under `src/` outside `relativeStrength.js`;
+the sibling fields of the same published block — `provisional`, `rank`, `method`, `unit`, `periods` —
+return **4, 55, 4, 38, 8**, so the grep plainly reaches these files and the zero is a real zero. The job
+drops the flag and `parts` at serialization. **Kept rather than deleted:** the "why does it rank there"
+UI they exist for is the owner's to build, not a run's to delete.
+
+#### What shipped
+**One file, comments only: `src/lib/relativeStrength.js`, +30/−3.** The header no longer implies this
+module shades anything (the shading is the *study's*); the threshold carries the refuted hypothesis and
+the real-vs-fixture split; `outperforming` carries the zero-consumer measurement and the reason it is
+kept. **0 lines added to `scripts/`, 0 content or locale files, no check built** — W-6.2 rule 3: after a
+clean sweep of a surface no learner can see, the learner-visible sentence cannot be written honestly,
+and an instrument for a property that holds would be W-6.3's defect exactly.
+
+#### Two backlog corrections found while writing this up, both of the same shape as the finding
+- **Item 160's handoff was already done, five days ago, and the clause never learned it.** It said
+  *"`quizMeta.js`'s header still describes the spread as 'roughly 3/3/4/3' … the next run to touch that
+  file should fix it."* The 2026-09-04 run fixed it: the header now quotes **no number at all** and says
+  why. Measured this run: 46 questions, **10/13/13/10**. ⭐ **A handoff addressed to "the next run to
+  touch that file" is not addressed to anybody** — the run that did the work never saw the clause, and
+  the clause could not see the work.
+- **Item 163 was fully closed on 2026-09-02 and was still carrying all three sub-items' arguments.**
+  Collapsed to its conclusion per W-7.2 rule 1 — **8,455 → 2,084 b, −6,371** — keeping the three commits
+  (`166b0fe`, `7d5cc52`, `154b152`), the standing rule (*a residual filed by the run that saw the thing
+  is not exempt from step 3.5*) and the one genuinely open `es` comma-decimal note. No run-log history
+  was touched.
+
+**Verification.** `npm test` **exit 0**, warnings **3 → 3** (unchanged: the standing translation-review,
+translation-completeness and option-length-cue ones). `npm run check-blindspot` **exit 0**.
+`npm run build` **exit 0**. ⭐ **The entry bundle rebuilt to the SAME hash and the same bytes —
+`index-BwxkZOjx.js`, 271.74 kB — which is the proof the change is comment-only rather than an assertion
+that it is.** All exit codes read without a pipe.
+
+#### Step 5 — adversarial self-check
+**Blindspot register: nothing found, grepped rather than assumed.** `check-blindspot` **exit 0**. The
+added lines grep **0** for `dalio|principles|should buy|should sell|we recommend|best time to|guaranteed
+return|your portfolio|for kids`, with a live control (`threshold|sector` → 5 of those 30 lines) proving the grep reached
+them. §2.3: the dates added are measurement notes in a **source comment**, the house convention here, and
+the file is comment-only so they reach **0 bytes of `dist/`** — the identical bundle hash above is that
+proof. §10.3 untouched — no content or locale file was opened.
+**DECISIONS.md conflict: none, and this was the load-bearing check this run rather than a formality.**
+The change deliberately **preserves** the closed decision it examined — DECISIONS.md's *"the study's
+`Outperform_Percent_1` threshold of 0.5 applied to the raw decimal sum"* is quoted, agreed with, and left
+alone. Had I shipped my original hypothesis I would have contradicted it. `localStorage`-only state,
+`.js` content modules and Vite are untouched.
+**Already-done backlog item: no, and I checked rather than assumed.** `Outperform_Percent|outperforming`
+across both logs returns only DECISIONS-echoing prose and the 2026-08-04 landing — no prior run has
+measured this distribution. The two corrections above are the opposite case: work that WAS already done
+and whose items did not know it, which is why they are corrections and not new work.
+**My own verification claim, weakest parts first.** **(1)** The replay script is **not committed** — a
+reviewer re-running only my commands gets `npm test` / `build` / `check-blindspot` reproducibly but must
+rebuild the replay from the definition above (`git show <commit>:public/data/market.json` over
+`git log --format=%H -- public/data/market.json`, bucket `sectors[].relativeStrength.value` by
+`source`). **(2)** The 242/22 split is a property of **what has been committed**, not of the market: it
+covers 23 dates in five weeks, all from one adapter, and a longer or more volatile history could clear
+0.5 honestly. The claim is "never in the published record", never "cannot happen". **(3)** No live
+browser was opened this run — the change is comment-only and reaches no rendered surface, so every claim
+here is about source text, git history and build output, and **no claim is made about anything on
+screen**. ⛔ **Both figures in the two sentences above were TYPED FROM MEMORY first — "+33/−3" and a control of
+"14" — and are corrected in place before the commit, not annotated after it.** They were the only two
+numbers in this entry I had not run a command for, and both were wrong: `git diff --numstat` says **30**
+added lines and **5** of them match the control. Same defect the App summary's "no count that a script
+generates" rule exists to stop, caught inside the step whose job is to catch it — and the **second
+consecutive run** to catch it in exactly this place.
+**(4)** W-6.3 re-measured on this tree with `find | wc -l`, not carried forward from the
+previous entry: `scripts/` **21,689** lines vs app code (`src/` minus `content/`+`locales/`) **10,166** —
+**2.13x**, unmoved, and this run added **0** lines to `scripts/`.
+
+#### Log size, since two of this run's three edits are to the log itself
+Net effect on the floor this run: item 163's collapse **−6,371 b**, item 160's correction **+440 b**, the
+item 166 sweep note **+2,852 b** — **net −3,079 b before this entry**, which is the direction W-7.2 rule 5
+asks for. Quote `check-log-size.mjs`'s MEASURED line rather than this arithmetic.
+
+⚠️ **Reported, not fixed — O-4 action 2 and O-5 remain owner actions,** unchanged by this run. A run may
+not push, so this commit does not reach a learner until the owner pushes `main` — and this one changes
+nothing a learner would see even then.
+
+**Schedule:** the cron is the owner's lever; not read, not compared, not touched.
+
+### 2026-09-09 (scheduled dev-agent; W-6.2 rule 1 free — the previous run's only residual was an unnumbered sweep note, so this pick came from a corpus-wide sweep of the least-mentioned files in `src/`) — the app's widest failure surface opens by telling the learner to check a connection that is fine, and the run that built it had already declined the fix I was about to ship
+
+**The pick.** Counted every non-`content`/`locales` file under `src/` by mentions across both logs.
+The three least-covered were `lessonUnlock.js` (3), `ErrorBoundary.jsx` (4) and `chunkError.js` (7) —
+and the first two are **miscounts of coverage, not gaps**: `lessonUnlock.js` was extracted and given
+`check-data.mjs` §80 on 09-08, and `ErrorBoundary.jsx`'s crash screen was rewritten on 09-09
+(`c8c338a`). The mention count lags the work by a run. **Reading the third led to the copy the three
+of them share.**
+
+#### The finding
+`loadFailedBody`, in all five languages, opened with a **diagnosis** and not an action — en: *"This
+content couldn't be downloaded. Check your connection, then reload the page."* Three separate files in
+this repo name the ordinary cause of that failure as **a content-hashed chunk 404ing after a redeploy**
+(`lib/chunkError.js`, `components/ErrorBoundary.jsx`, `LoadFailure` in `components/ui.jsx`), and in
+that case the connection is **fine**. So the reader hitting the common case was sent to check working
+hardware before being offered the one thing that fixes it — which is also the only thing the button does.
+
+#### Step 3.5 — premise re-measured, and it moved the disposition twice
+- **Reach, measured not assumed.** `LoadFailure` has **3 call sites** (`AsyncScreen`, `LessonReader`,
+  `Practice`) and is the fallback for **all 27** built chunks — **20 of them lesson content and quiz
+  text**. It is the widest failure surface in the app, not an edge screen.
+- **Hash churn, with controls.** **115 distinct `index-<hash>.js` names** appear across the two logs
+  (control: a fabricated hash → 0; a real chunk pattern → 6). The entry bundle's hash moves on nearly
+  every substantive commit, and **this run's own build moved it `BwxkZOjx` → `DKsM5VMX`** — the claim
+  demonstrating itself.
+- **⛔ REFUTATION 1, and it nearly stopped the run: item 100 ALREADY DECLINED THIS.** 2026-08-24
+  (archive) considered *"widen `loadFailedBody` to cover both"* and rejected it because it *"discards
+  the network hint in the one case where the hint is true."* **That rejection is correct and stands.**
+  What ships here is **not** that change: the hint is **demoted, not discarded** — moved to the branch
+  where it is informative (*"if it still fails"*). The sentence still opens with "couldn't be
+  downloaded", true of both causes, which is what keeps it distinct from `appErrorBody`.
+- **REFUTATION 2 — the thing that changed since that decision is not taste, it is reachability.**
+  `ErrorBoundary.jsx` says the redeploy cause *"becomes reachable the day the app gets a URL, not
+  before."* On 2026-08-24 there was no URL. The app went live 09-05 and now publishes on every push.
+  **The decision was right for its facts; the facts moved.**
+- **A defect I went looking for and did NOT find, recorded so nobody re-derives it.** If the live host
+  cached `index.html` hard, the reload this copy prescribes would not fix anything and the app would be
+  giving advice that fails. Measured against the canonical site: `cache-control: max-age=600` with an
+  `ETag` (404 control on a nonexistent path fired). A reload revalidates the top-level document, so
+  **the prescribed action genuinely works.** No change needed.
+
+#### What shipped
+**Five files, one string each: `src/locales/{en,es,ko,zh,ja}.js`.** en now reads *"This content
+couldn't be downloaded. Reload the page to fetch it again — if it still fails, check your connection."*
+Plus a comment in `en.js` recording the remedy order, why item 100's rejection is not being overturned,
+and the reachability change — so the next reader does not re-derive this or read it as undoing item 100.
+**0 lines added to `scripts/`, no check built** (W-6.2 rule 3): §39 already asserts the two bodies stay
+distinct in all five languages, which is the property that could regress, and it stayed green.
+
+#### Verification — rendered, not inferred
+Served `dist/` statically and drove the built app with a **real** 404: moved
+`lessonContent.economy.en-BAvdW4Cp.js` aside (`curl` → **404**, sibling `quizText.en` → **200** as the
+control that the server was otherwise healthy).
+
+| State | Result |
+|---|---|
+| en, chunk 404 at `#/lesson/29` | **"DIDN'T LOAD — This content couldn't be downloaded. Reload the page to fetch it again — if it still fails, check your connection."** + Reload, in `[role=alert]` |
+| **ja**, chunk 404, `<html lang>`=`ja` | **読み込めませんでした — …ページを再読み込みすると再取得します。それでも失敗する場合は接続を確認してください。** |
+| **CONTROL** — chunk restored, reload | **0 alerts**, lesson 1 renders ("Transactions: The Building Block") |
+
+All five new strings found in the built `dist/` entry chunk; **the old en string is absent from `dist/`**.
+`npm test` **exit 0**, warnings **3 → 3** (the standing translation-review, translation-completeness and
+option-length-cue ones). §39 still reports *5/5 language(s) with two distinct bodies*. §80 unchanged.
+`npm run check-blindspot` **exit 0**. `npm run build` **exit 0**. Exit codes read directly, never through
+a pipe.
+
+#### Step 5 — adversarial self-check
+**Blindspot register: nothing found, and the first attempt at this check was BROKEN.** The 32 added
+lines grep **0** for `dalio|principles|should buy|should sell|we recommend|best time to|guaranteed
+return|your portfolio|for kids|for children`. ⛔ **My first run of that grep proved nothing and looked
+like it did:** `grep -c` exits 1 on zero matches, so the `&&` chain printed the 0 and then **silently
+skipped the control**. Re-run with `;`: positive control (`reload|connection`) → **3**, negative control
+→ **0**. The grep reaches the lines. §2.3: the dates I added are in a **source comment**, and the
+comment is **stripped from `dist/`** (grepped: absent, against a shipped string present at 1) — 0 bytes
+reach a learner. §10.3 untouched; no lesson or kids content opened.
+**DECISIONS.md conflict: none, checked with a control.** `loadFailedBody|LoadFailure|Check your
+connection` → **0 hits** in DECISIONS.md, against a `localStorage` control at **13** proving the grep
+reaches the file. No closed decision covers this copy. `localStorage`-only state, `.js` content modules
+and Vite untouched; the translation-review ledger is keyed by **lesson id** and app chrome is not in it,
+so no review status changed.
+**Already-done backlog item: the load-bearing check this run, and it fired.** `loadFailedBody` returns
+**0** hits in the live `AGENT_LOG.md`; the only prior treatment is item 100 in the **archive**, which
+declined a *different* change. Had I not read it I would have shipped the rejected one. It is quoted
+above and in the code comment rather than paraphrased.
+**My own verification claim.** A reviewer re-running `npm test` / `build` / `check-blindspot` gets my
+results reproducibly. The browser walk is **not** a committed script — it must be rebuilt from the
+procedure above (serve `dist/`, move that chunk aside, load `#/lesson/29`). Two honest limits: the
+Browser pane was **hidden**, so every rendered claim here is read from `innerText` and `[role=alert]`,
+**not from pixels** — I make no claim about layout or contrast; and "the ordinary cause is a redeploy"
+is this repo's own characterization, which I confirmed is *mechanically reachable* and did **not**
+measure against real learner traffic, because blindspot 10.10's second half is still unmeasured.
+**W-6.3 re-measured on this tree:** `scripts/` **21,689** lines vs app code **10,166** — **2.13x**,
+unmoved; this run added **0** lines to `scripts/`.
+
+#### A note, deliberately not a numbered item (W-6.2 rule 2)
+`AppError` reassures the reader that *"your saved progress is not affected"* before asking them to
+reload; `LoadFailure` does not, and the same reassurance would be true there. **Declined on purpose:**
+adding it pushes `loadFailedBody` toward `appErrorBody` and dilutes the two-message split item 100 built.
+Recorded here so the trade is visible, not so a future run picks it by default.
+
+⚠️ **Reported, not fixed — O-4 action 2 and O-5 remain owner actions.** A run may not push, so this does
+not reach a learner until the owner pushes `main`; the live host was serving `last-modified 2026-09-08`
+when measured this run, already behind HEAD.
+
+**Schedule:** the cron is the owner's lever; not read, not compared, not touched.
+
+**Log size.** `MEASURED log-size: file 555923 b, run log 120418 b, floor 435505 b (backlog 397099 b),
+archive 3881729 b` (`npm test`, 2026-09-09). **The backlog floor is unchanged at 397,099 b** — this run
+edited only the run log, which archiving handles, and added no numbered item. W-7.2 rule 5's baseline
+was 425,473 b.
 
