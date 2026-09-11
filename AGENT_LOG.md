@@ -6655,3 +6655,82 @@ untouched and the ratio has not moved.
 **Log size.** `MEASURED log-size: file 571681 b, run log 136176 b, floor 435505 b (backlog 397099 b),
 archive 3881729 b, 2 live day(s)` (`npm test`, 2026-09-10, before this entry). The backlog is unchanged
 and no numbered item was added.
+
+### 2026-09-10 (scheduled dev-agent; W-6.2 rule 1 free — the previous run's only note, the unchecked caption ratio, ends "not picked by default" and was not taken; this pick came from a sweep of content modules never read for accuracy) — two quiz explanations send the learner to "option 0", "option 1" and "option 3" on answer options that carry no numbers, and a learner who counts from 1 lands "option 3" on the correct answer
+
+**The pick.** Counting each `src/content/` module's mentions across both logs, and how many of those
+mention accuracy: `economicSignals.js` 15 / 0 (read, clean: hedged and dateless) and `quizText.en.js`
+11 / 1. The quiz is the module a learner is graded on, so it was read end to end against `quizMeta.js`.
+The answer key held (46/46 matched by reading). The explanations did not.
+
+#### Step 3.5 — premise measured, with controls, before editing
+- **The defect.** `q041` (lesson 27) and `q042` (lesson 28) name distractors by **zero-based array index**:
+  *"Sunk cost (option 0)"*, *"FOMO (option 1, “Everyone Can't Be Wrong — Can They?”)"*, *"loss aversion
+  (option 3, …)"*. That is 4 references per language and 20 in all (`opción N` / `선택지 N` / `选项N` /
+  `選択肢N`), and no other quiz or lesson string has one (grep, all five languages).
+- **What the learner sees.** `Question.jsx` renders each option as bare text: no number, no letter, no
+  shuffle anywhere in `src/`. So "option 0" names nothing on screen. A learner who counts from 1 reads
+  "FOMO (option 1)" as *Sunk cost* and "loss aversion (option 3)" as *Overconfidence*, **the correct
+  answer**, in the explanation that is supposed to rule it out.
+- **Live, `index-DNIjzpEU.js` (= HEAD), `#/lesson/28`, state seeded then `location.reload()`:** clicked
+  option index 1. The explanation contained `(option 1` **true** and `(option 3` **true**, and a label
+  regex over the four option texts returned **false**. Controls: `FOMO` in the body **true**, a
+  nonexistent string **false**.
+- **Not previously decided.** `AGENT_LOG.archive.md:34758` and `:34856` each checked that these refs
+  "still resolve" after an edit, meaning against the array and never against the screen, so this
+  reverses nothing. `git log -S'(option 0)'` → `95e60a5` (the 2026-08-17 quiz split, which carried the
+  text over from `quizData.js`).
+- **Same file, one word, disclosed as a second fix:** `q044` (lesson 42, `b6c9bc9`) said *"neither is worth
+  more **per pound**"* of two **$1,000** amounts. es/ko/ja say per dollar (`por dólar` / `1달러당` /
+  `1ドルあたり`) and zh says per unit (`单位价值`). §55 cannot see it: "pound" is not a spelling variant.
+
+#### What shipped
+`quizText.{en,es,ko,zh,ja}.js` (`git diff --numstat` en **3 / 3**, the other four **2 / 2** each). All 20
+index parentheticals are gone. Each distractor is already named by the words its option starts with,
+and the two lesson-title cross-references are kept as bare parentheticals, so §16's title-reference
+checks see the same text. en `per pound` → `per dollar`. **No option text, option order, `quizMeta.js`
+or answer index changed.** The translations are **deletions only**, so this adds no new machine prose
+(O-3 unaffected). ko keeps `매몰비용은`, since `용` ends in a consonant.
+⚠️ **One slip of my own, caught before verification:** the first es `replace_all` dropped the trailing
+space and wrote `hundidoes` / `hundidotrata`. Repaired; `grep -c` for both is **0**, and the live es read
+below asserts `El costo hundido trata` is present.
+
+#### Verification
+| Check | Result |
+|---|---|
+| `npm test` | **exit 0**, WARN **3 → 3**, FAIL **0**; WARN/FAIL lines **byte-identical** before/after (`diff`); §16b 0 in all languages; §55/§56 hold over 1,239 strings per language |
+| `scripts/build-out-of-tree.sh` (copy-back) | **exit 0**; `quizText.en-CBxzlRI7.js` etc.; entry `index-DNIjzpEU.js` → **`index-BbEqwSdA.js`** |
+| `dist/assets` grep | 7 new strings → their own language's `quizText` chunk (3 also match `lessonContent.money.<lang>`, which carries its own reference to that title); **12 old forms → no file**; control `Present bias means an immediate reward` → `quizText.en-CBxzlRI7.js` |
+| Live, `index-BbEqwSdA.js`, `#/lesson/28`, language set through the real `<select>` change event | **en/es/ko/zh/ja: positional ref false, title kept true, new sunk-cost clause true, options unlabeled**; `html lang` en/es/ko/zh-Hans/ja |
+| Live, same load, en | `#/lesson/27`: positional ref **false**, new clause **true**. `#/lesson/42`: `per dollar` **true**, `per pound` **false** |
+| Instrument controls | the positional regex **fires** on the old en and ko wording and stays **silent** on the new; negative body string **false** |
+
+#### Step 5 — adversarial self-check
+**Blindspot register: nothing found.** Added lines grep **0** for
+`dalio|principles|should buy|should sell|we recommend|buy now|good time to buy|for kids|for children|kids
+mode|as of 20xx|today|guarantee`, against **17** in `check-blindspot.mjs` (positive control). Nothing was
+added except the word "dollar". `check-blindspot` passed inside `npm test`.
+**DECISIONS.md conflict: none.** Its 3 hits for `quizText|explain|(option` are a glossary sweep (494), the
+translation-review option (b) (711) and quiz append order (877). Order is untouched.
+**Already-done backlog item: none.** The two archived checks verified that these refs resolved; removing
+the refs leaves nothing depending on option order.
+**My own verification claim.** Every row is reproducible from the commands named. The limit: "a learner
+counts from 1" is a reading of how people count, not a user study. But "option 0" names nothing visible
+under any reading, and that part is measured. W-6.3: `scripts/` is untouched and the ratio has not moved.
+
+#### Seen on the same read, deliberately NOT fixed and NOT numbered (W-6.2 rule 2)
+- **Nothing guards against a positional option reference coming back.** W-6.2 rule 3's sentence exists
+  ("an explanation pointing a learner at 'option 3' when options carry no numbers"), but there are zero
+  live instances. **Not picked by default.**
+- **`q021`: "A raise can never shrink your take-home pay"** holds for brackets alone. Credit and benefit
+  cliffs are exceptions; that comes from knowledge and was not measured this run. The question is scoped to
+  brackets, so this is overreach at the edge, not a wrong definition. **Not picked by default.**
+- `q025`'s "two-thirds of the way through" crossover depends on the rate (roughly 42% at 4% and 67% at
+  7%, computed this run). **Already recorded:** `moneyVisuals.js:744-764` derives the figure's curve from
+  that phrase at about 6.9%. Not a new finding.
+
+**Schedule:** the cron is the owner's lever; not read, not compared, not touched.
+
+**Log size.** `MEASURED log-size: file 578338 b, run log 142833 b, floor 435505 b (backlog 397099 b),
+archive 3881729 b, 2 live day(s)` (`npm test`, 2026-09-10, before this entry). The backlog is unchanged
+and no numbered item was added.

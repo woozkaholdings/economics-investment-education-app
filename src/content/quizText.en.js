@@ -425,7 +425,7 @@ export const quizText = [
       "Anchoring — he's judging the stock's current price against an arbitrary reference number",
       "Diversification — spreading money across more than one holding instead of concentrating it in one"
     ],
-    "explain": "Loss aversion is the tendency for a loss to feel roughly twice as painful as an equivalent gain feels good, which pushes people to avoid officially realizing a loss even when the money would be better used elsewhere. Sunk cost (option 0) is a related but distinct pattern about being influenced by money already spent; here, the deciding factor is the asymmetric pain of admitting the loss is real, not the amount already invested."
+    "explain": "Loss aversion is the tendency for a loss to feel roughly twice as painful as an equivalent gain feels good, which pushes people to avoid officially realizing a loss even when the money would be better used elsewhere. Sunk cost is a related but distinct pattern about being influenced by money already spent; here, the deciding factor is the asymmetric pain of admitting the loss is real, not the amount already invested."
   },
   {
     "q": "After Maria picks a stock on a hunch and it rises 40% in two months, she starts making three times as many trades, each with less research than before, because she now feels like she has a knack for picking stocks. Which pattern best explains her behavior?",
@@ -435,7 +435,7 @@ export const quizText = [
       "Overconfidence after a lucky outcome — she's crediting the win to her own skill rather than considering how much luck was involved",
       "Loss aversion — she's trying to avoid the pain of admitting a loss, which weighs on her more than an equivalent gain would please her"
     ],
-    "explain": "This is overconfidence after a lucky outcome (self-attribution bias): crediting a win to one's own skill and increasing risk-taking as a result, without weighing how much of the outcome was actually luck. FOMO (option 1, “Everyone Can't Be Wrong — Can They?”) is about copying what other people are doing, which isn't what's driving Maria here — no one else's behavior is mentioned. Sunk cost (option 0) is about being influenced by money already spent, and loss aversion (option 3, “Why Does Losing $50 Hurt More Than Finding $50 Feels Good?”) is about the asymmetric pain of a loss — neither fits a story about a single win driving more risk-taking."
+    "explain": "This is overconfidence after a lucky outcome (self-attribution bias): crediting a win to one's own skill and increasing risk-taking as a result, without weighing how much of the outcome was actually luck. FOMO (“Everyone Can't Be Wrong — Can They?”) is about copying what other people are doing, which isn't what's driving Maria here — no one else's behavior is mentioned. Sunk cost is about being influenced by money already spent, and loss aversion (“Why Does Losing $50 Hurt More Than Finding $50 Feels Good?”) is about the asymmetric pain of a loss — neither fits a story about a single win driving more risk-taking."
   },
   {
     "q": "Why is personal finance largely absent from most school curricula?",
@@ -455,7 +455,7 @@ export const quizText = [
       "They arrived by different mechanisms",
       "Only Priya's counts as real income"
     ],
-    "explain": "The amounts are the same and neither is worth more per pound. What differs is the mechanism: Priya's is paid for hours she worked, Tom's is produced by an asset he had to buy first, and each carries its own demands and its own ways of failing — an empty apartment pays nothing, while a shift always pays."
+    "explain": "The amounts are the same and neither is worth more per dollar. What differs is the mechanism: Priya's is paid for hours she worked, Tom's is produced by an asset he had to buy first, and each carries its own demands and its own ways of failing — an empty apartment pays nothing, while a shift always pays."
   },
   {
     "q": "Alina owns a small cleaning company with one employee and works in it herself. If she stopped working for three months, what would most likely happen to her business income?",

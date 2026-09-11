@@ -425,7 +425,7 @@ export const quizText = [
       "Anclaje — está juzgando el precio actual de la acción contra un número de referencia arbitrario",
       "Diversificación — repartir el dinero entre más de una inversión en vez de concentrarlo en una sola"
     ],
-    "explain": "La aversión a la pérdida es la tendencia a que una pérdida se sienta aproximadamente el doble de dolorosa de lo que una ganancia equivalente se siente placentera, lo cual empuja a la gente a evitar hacer oficial una pérdida incluso cuando el dinero se usaría mejor en otro lugar. El costo hundido (opción 0) es un patrón relacionado pero distinto sobre dejarse influir por el dinero ya gastado; aquí, lo que decide es el dolor asimétrico de admitir que la pérdida es real, no la cantidad ya invertida."
+    "explain": "La aversión a la pérdida es la tendencia a que una pérdida se sienta aproximadamente el doble de dolorosa de lo que una ganancia equivalente se siente placentera, lo cual empuja a la gente a evitar hacer oficial una pérdida incluso cuando el dinero se usaría mejor en otro lugar. El costo hundido es un patrón relacionado pero distinto sobre dejarse influir por el dinero ya gastado; aquí, lo que decide es el dolor asimétrico de admitir que la pérdida es real, no la cantidad ya invertida."
   },
   {
     "q": "Después de que María elige una acción por corazonada y esta sube un 40% en dos meses, empieza a hacer tres veces más operaciones, cada una con menos investigación que antes, porque ahora siente que tiene un don para elegir acciones. ¿Qué patrón explica mejor su comportamiento?",
@@ -435,7 +435,7 @@ export const quizText = [
       "Sobreconfianza tras un resultado afortunado — atribuye la victoria a su propia habilidad en vez de considerar cuánta suerte hubo",
       "Aversión a la pérdida — está tratando de evitar el dolor de admitir una pérdida, que pesa más de lo que agradaría una ganancia igual"
     ],
-    "explain": "Esto es sobreconfianza tras un resultado afortunado (sesgo de autoatribución): atribuir una victoria a la propia habilidad y aumentar la toma de riesgos como resultado, sin sopesar cuánto del resultado fue en realidad suerte. El FOMO (opción 1, “Tanta Gente No Puede Estar Equivocada, ¿Verdad?”) trata de copiar lo que hacen otras personas, que no es lo que está impulsando a María aquí — no se menciona el comportamiento de nadie más. El costo hundido (opción 0) trata de dejarse influir por dinero ya gastado, y la aversión a la pérdida (opción 3, “¿Por Qué Perder $50 Duele Más Que Encontrar $50 se Siente Bien?”) trata del dolor asimétrico de una pérdida — ninguna encaja con una historia sobre una sola victoria que impulsa más toma de riesgos."
+    "explain": "Esto es sobreconfianza tras un resultado afortunado (sesgo de autoatribución): atribuir una victoria a la propia habilidad y aumentar la toma de riesgos como resultado, sin sopesar cuánto del resultado fue en realidad suerte. El FOMO (“Tanta Gente No Puede Estar Equivocada, ¿Verdad?”) trata de copiar lo que hacen otras personas, que no es lo que está impulsando a María aquí — no se menciona el comportamiento de nadie más. El costo hundido trata de dejarse influir por dinero ya gastado, y la aversión a la pérdida (“¿Por Qué Perder $50 Duele Más Que Encontrar $50 se Siente Bien?”) trata del dolor asimétrico de una pérdida — ninguna encaja con una historia sobre una sola victoria que impulsa más toma de riesgos."
   },
   {
     "q": "¿Por qué las finanzas personales están en gran parte ausentes de la mayoría de los planes de estudio escolares?",
