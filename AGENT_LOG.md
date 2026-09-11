@@ -6605,3 +6605,84 @@ contribution is not much larger than the top slice, which is the common case and
 
 **Log size.** Before this entry: `MEASURED log-size: file 587955 b, run log 152940 b, floor 435015 b` (the previous
 entry's `npm test`, unchanged since). After it: not retyped (W-7.2 rule 4).
+
+### 2026-09-11 (owner-directed, interactive: "fix the lesson 7 raise line too") — lesson 7 told learners a raise can't leave them with "less money overall" and "can only ever add", which is true of take-home pay and false near a benefits cliff, where NCSL's worked example is a 50-cent raise that cuts annual net resources by 25%
+
+#### Step 3.5 — premise measured, with controls, before editing
+- **What is and is not wrong.** Every "can never" line in L7 is about **take-home pay**, and for pay after taxes it
+  holds: brackets tax only the extra slice. Two places reach further. §1 ¶3 says a raise can't *"leave you with less
+  money overall"*, and the takeaway says extra income *"can only ever add"*. A learner reads both as "more income
+  always leaves you better off".
+- **Source (NCSL, *Introduction to Benefits Cliffs*, read through WebFetch's summarizer).** *"the sudden and often
+  unexpected decrease in public benefits that can occur with a small increase in earnings"*; worked example: a raise
+  *"from $15 per hour to $15.50 per hour"* with *"a 25% decrease in annual net resources"*. The programs discussed
+  include Medicaid and child care subsidies. It does not name tax credits, so the edit does not either.
+- **Surfaces, and which were deliberately left.** Fixed-string scans of `src/` (`can never`, `never subtract`, `less
+  money overall`, `shrink your take-home`, `can only ever add`, plus each language's "never"): L7 §1 ¶2-3 and the
+  takeaway (edited); the **L7 subtitle** in `lessons.js:260`, **`q021`'s explain** (`quizText.*:228`) and **L10's
+  thinkAbout** (`cc25e63`). The last three speak only of take-home pay and stay true, so they were not edited and are
+  named to the owner. `q021`'s distractor *"You take home less money overall"* is correctly wrong under its
+  bracket-only stem.
+- **Not previously decided.** `never subtract from it` → **0** everywhere. `less money overall` / `benefit cliff` /
+  `can never shrink` → only this session's notes in the live log, **0** in the archive, DECISIONS, CLAIMS, LAUNCH_PLAN
+  and LAUNCH_READINESS (control `localStorage` 23 / 414 / 13 / 3 / 3 / 3). `git log -S` → `3306bad` (2026-08-06,
+  lesson added), then only splits.
+- **Pre-edit build `index-De_4OJqD.js` (= HEAD `26e2ed2`).** Each language's old takeaway sentence and misconception
+  sentence → its own chunk; `benefits cliff` / `福利悬崖` → no file.
+
+#### What shipped
+- **`lessonContent.essentials.{en,es,ko,zh,ja}.js`**, 10 strings. The edit script asserted old = 1 / new = 0 for all
+  10 before writing anything. Nothing was deleted: each original sentence stays and gains a scope.
+  - en §1 ¶3 appends: *"Brackets aren't the only thing tied to income, though. Some public benefits, such as child care
+    help or Medicaid, drop sharply once income crosses a limit, and near one of those limits (what's called a benefits
+    cliff) a small raise can leave a household with less money overall even while its take-home pay goes up."*
+  - en takeaway: *"…can only ever add to your take-home pay, never subtract from it, **though near the income limit for
+    a public benefit, losing that benefit can cost more than the raise adds.**"*
+  - es/ko/zh/ja carry the same two additions in their condensed form (es `precipicio de beneficios`, ko `복지 절벽`, zh
+    `福利悬崖`, ja `給付の崖`).
+  - **No figure, threshold, program rule or date** was added, so nothing goes stale when a limit changes. The text
+    recommends nothing: no "turn down", "apply for" or "qualify for".
+- **Knock-on, three instruments, each FAIL read before acting.** (1) `npm test` FAILed *"lessons[18] (id 7): minutes is
+  4, but its text computes to 5"* → `lessons.js` id 7 `minutes: 5` (asserted one-line edit; L7 is not a track opener).
+  `refresh-readiness --write`: en chars **152,912 → 153,334**, catalog **161 → 162 min** in LAUNCH_READINESS, LAUNCH_PLAN
+  and CLAIMS. (2) §33 FAILed *"lesson 7 [es] is now at 0.79, up from a recorded 0.73"*. (3) Ledger: L7 es/ko/zh/ja
+  re-marked `ai`.
+- ⚠️ **§33's prescribed fix over-reached, and it was narrowed rather than committed.** `translation-completeness --write`
+  rewrote **64 lines: 32 ratios across 16 lessons**, 28 of them outside lesson 7 (3, 4, 6, 10, 18, 24, 32, 34-39, 41,
+  44), each inside the 0.03 tolerance. That was other edits' drift since the last write (`1e3f6be`, 2026-08-28), and
+  it includes today's lesson 4 / 6 / 10 fixes, which never crossed tolerance. ✏️ My first draft of this sentence said
+  "13 lessons" and omitted 4, 6 and 10. A recount before commit caught it. Past baseline commits changed 2-24 lines. The script defines a ratio **per lesson** (no corpus
+  normalization, so the other movements are not caused by this edit), and its own header warns that a reflexively
+  regenerated baseline *"is the same as no baseline at all"*. So the committed baseline is **HEAD's, with only
+  `ratios.7` updated**: es 0.73→0.79, ko 0.35→0.37, zh 0.22→0.24, ja 0.31→0.32. Format control: re-serializing HEAD's
+  JSON reproduces its bytes exactly; the patched file differs from HEAD in exactly those 4 leaves (4 / 4 lines).
+  ⭐ **An error message that prescribes a fix is a claim about the fix** (W-6.1), and here the regenerate command's
+  scope was wider than the failure it answered.
+- ⚠️ **O-3, disclosed:** eight machine-written sentence additions, unreviewed by a fluent reader.
+
+#### Verification
+| Check | Result |
+|---|---|
+| Node import probe (from a file) | **5/5**: both additions in §1 and the takeaway, §1 heading control exact, negative absent, 3 sections; `lessons.js` id 7 = **5**, control id 6 = 3 |
+| `npm test` | Edit + re-mark + refresh: **exit 1**, the two FAILs above. After `minutes` + the full `--write`: exit 0. After narrowing the baseline to L7: **exit 0**; WARN/FAIL lines **identical** to this session's pre-edit baseline (`diff`), WARN 3, FAIL 0 |
+| `scripts/build-out-of-tree.sh` | **exit 0**; entry `index-De_4OJqD.js` → **`index-DYKziaIz.js`** (the baseline is not a build input) |
+| `dist/assets` grep | all **10** additions → their own `lessonContent.essentials.<lang>` chunk; all 5 old takeaway endings (`…"`) → no file; control → en chunk; negative → no file |
+| Live, `python3 -m http.server` on `127.0.0.1:8878` | index **200**, nonexistent path **404** (control fired), served `index.html` names `index-DYKziaIz.js` |
+| Live `#/lesson/7`, 8 s waits, language set through the real `<select>`, switch and read in separate calls | ⚠️ **The first batch did not run at all**: the seed script also set `location.href`, and with the pane hidden it timed out at 45 s as the page unloaded, so nothing after it executed. It was re-run with seeding and navigation split (script seed, then the `navigate` tool). **en/es/ko/zh/ja: §1 addition adjacent to the kept sentence true, takeaway addition true, heading control true, no English leak, negative false, not loading**; `html lang` en/es/ko/zh-Hans/ja; entry `index-DYKziaIz.js` on every read |
+
+#### Step 5 — adversarial self-check
+**Blindspot register: nothing found.** The 11 added and 11 removed diff lines match the standing pattern plus `turn
+down|decline the raise|refuse|avoid a raise|apply for|qualify for` **0 / 0**; two plants fire: `now is a good time to
+buy stocks` → **1**, and `Consider whether to turn down the raise` → **1**. A benefits-cliff sentence could drift toward
+advice ("don't take the raise"). This one describes the mechanism and stops there. No market figure or date.
+**DECISIONS.md conflict: none.** `minutes` stays derived, and the translation baseline stays a recorded file that is
+updated when a ratio legitimately moves, which is its documented purpose. **Already-done item: none reversed.** The L7
+§2 and thinkAbout fixes (`3074fd0`, `26e2ed2`) are untouched, and the bracket explanation is kept verbatim. **My own
+verification claim.** Every row reproduces from the commands named. Limits: the NCSL quotes came through a
+summarizer. "Medicaid" as a cliff program rests on the page's list, not a quoted sentence. And the 28 unrecorded
+within-tolerance drifts are still unrecorded, which is deliberate: they are other runs' residue, not this commit's.
+
+**Schedule:** the cron is the owner's lever; not read, not compared, not touched.
+
+**Log size.** Before this entry: `MEASURED log-size: file 595022 b, run log 160007 b, floor 435015 b` (the previous
+entry's `npm test`, unchanged since). After it: not retyped (W-7.2 rule 4).

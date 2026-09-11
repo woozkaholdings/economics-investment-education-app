@@ -255,7 +255,7 @@ export const lessons = [
     subtitle: {"en":"Ordinary accounts with an unusual perk: the tax rules","es":"Cuentas comunes con una ventaja poco común: las reglas fiscales","ko":"특별한 혜택이 있는 평범한 계좌: 세금 규칙","zh":"普通账户里藏着不普通的福利：税收规则","ja":"普通の口座に隠された特典：税制優遇"},
   },
   {
-    id: 7, track: "essentials", icon: "🧾", color: "#57534e", minutes: 4,
+    id: 7, track: "essentials", icon: "🧾", color: "#57534e", minutes: 5,
     title: {"en":"Taxes: How Your Paycheck Is Actually Taxed","es":"Impuestos: Cómo Se Grava Realmente Tu Sueldo","ko":"세금: 급여가 실제로 과세되는 방식","zh":"税收：你的薪水究竟是怎么被征税的","ja":"税金：あなたの給料は実際どう課税されるか"},
     subtitle: {"en":"Why a raise can never shrink your take-home pay","es":"Por qué un aumento nunca puede reducir tu sueldo neto","ko":"왜 급여 인상이 실수령액을 줄일 수 없는가","zh":"为什么加薪永远不会让到手工资变少","ja":"昇給が手取りを減らすことは絶対にない理由"},
   },
