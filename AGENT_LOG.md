@@ -7484,3 +7484,86 @@ No instrument was added.
 **Log size.** `MEASURED log-size: file 646939 b, run log 211434 b, floor 435505 b (backlog 397099 b),
 archive 3881729 b, 3 live day(s)` (`npm test`, 2026-09-11, before this entry). No backlog change, and the notes
 are in the archivable run log.
+
+### 2026-09-11 (scheduled dev-agent; W-6.2 rule 1 free — residual pick #2 in the chain, which the rule allows; the next run may not take a third) — lesson 15 called anyone who has checked a credit report a "hard inquiry", one section before telling the reader to pull their own report, and a person's own check is a soft inquiry that does not touch the score
+
+**The pick.** The previous entry's three open notes were weighed. L42 is the owner's framing call. `q041`'s "same dollar
+amounts" is an unstated premise in a quiz stem. L22's filter-bubble line would need a contested research claim
+worded neutrally. L15's parenthetical is a flat factual error with a primary source, so it was taken on merit. It
+is on the optional `essentials` track, not the product track, and that is the cost of the pick.
+
+#### Step 3.5 — premise measured, with controls, before editing
+- **The claim.** L15 §1 lists what a report holds: *"who has recently checked the report (a \"hard inquiry\")"*.
+  That defines every check as hard. §2 then sends the reader to AnnualCreditReport.com, so a learner could take
+  away the idea that checking their own report is a hard inquiry.
+- **Source, fetched directly and not via a search summary.** CFPB, *What is a credit inquiry?* (ask-cfpb 1317):
+  hard inquiries are *"often inquiries by lenders after you apply for credit"* and *"will impact your credit
+  score"*. Soft inquiries include *"your requests for your credit reports"* and are *"shown only to you when you
+  review your own credit report"*. On checking your own report: *"Doing so will not affect your credit scores."*
+  A first URL guess (ask-cfpb 2051) returned **404** and was not used.
+- **All four translations carry it** (es `quién ha consultado recientemente el informe (una "consulta dura")`, ko
+  `최근에 누가 보고서를 조회했는지("엄격 조회")`, zh `最近谁查询过该报告（“硬查询”）`, ja
+  `最近誰が報告書を照会したか（「ハードインクワイアリー」）`). Fixed-string `inquir` over `src/` → **1** hit
+  (this line). Each translated term → **1** hit in its own file. No quiz item, glossary entry or takeaway mentions
+  inquiries. The L15 quiz item is about 705 vs 680.
+- **Not previously decided.** `git log -S 'hard inquiry' -- src` → `16ae96e` (2026-08-07, lesson added as "27")
+  then four split/renumber commits. DECISIONS / CLAIMS / LAUNCH_PLAN / LAUNCH_READINESS **0** hits. The logs hold
+  only the previous entry's note (control `localStorage`: 13 / 3 / 3 / 3 / 30 / 396).
+- **Pre-edit build, `index-Bqus07Wp.js` (= HEAD `6714631`).** ⚠️ **The first probe returned no file while its
+  control fired.** The pattern carried the source file's `\"` escape, and the bundle stores a bare `"`. It was
+  re-run quote-free: old clause, `hard inquiry` and the GPA control → `lessonContent.essentials.en-kBRF6sjp.js`;
+  negative → none.
+
+#### What shipped
+`lessonContent.essentials.{en,es,ko,zh,ja}.js`, one clause each. The edit script asserted old = 1 / new = 0 in all
+five files before writing anything, and old = 0 / new = 1 after. Pristine copies were kept in the scratchpad. §1 now
+reads *"…**which lenders have recently checked the report after an application for credit** (a \"hard inquiry\";
+**a person's check of their own report is a \"soft inquiry\" and doesn't lower their score**), and any public
+records…"*. es `qué prestamistas … tras una solicitud de crédito (una "consulta dura"; que una persona revise su
+propio informe es una "consulta blanda" y no baja su puntaje)`. ko `신용을 신청한 뒤 어떤 대출기관이 …("엄격 조회";
+본인이 자신의 보고서를 확인하는 것은 "소프트 조회"이며 점수를 낮추지 않습니다)`. zh `最近有哪些贷款机构在当事人申请信贷后查询过该报告（“硬查询”；本人查看自己的报告属于“软查询”，不会降低评分）`. ja
+`信用の申し込みを受けて最近どの貸し手が…（「ハードインクワイアリー」と呼ばれます。本人が自分の報告書を確認するのは「ソフトインクワイアリー」で、スコアは下がりません）`.
+The fix does not say how much a hard inquiry lowers a score. It adds no figure and no instruction to check or not
+check anything.
+**Knock-on.** L15 stays at 4 min, so `lessons.js` did not change. Ledger: L15 es/ko/zh/ja re-marked `ai` (**12 /
+12**). `refresh-readiness.mjs --write`: en chars **152,445 → 152,576**, LAUNCH_PLAN §4.0 **~152,000 → ~153,000**,
+plus the §10.4 volume sentence. §33 completeness stayed inside its 0.03 tolerance (no FAIL).
+⚠️ **O-3, disclosed:** four machine-written clause edits, unreviewed by a fluent reader. ko's existing `엄격 조회` is
+not the usual Korean rendering, and `소프트 조회` was chosen as its pair without changing it.
+
+#### Verification
+| Check | Result |
+|---|---|
+| Node import probe | **5/5**: new string in L15 §1, old string absent module-wide, own-language control present, negative absent, 2 sections |
+| `npm test` | **exit 0**; WARN/FAIL lines **identical** to this run's pre-edit baseline (`diff`), WARN 3, FAIL 0 |
+| `scripts/build-out-of-tree.sh` (unpiped) | **exit 0**; entry `index-Bqus07Wp.js` → **`index-cYfTo8_j.js`** |
+| `dist/assets` grep | all **5** new strings → their own `lessonContent.essentials.<lang>` chunk; all **5** old forms → no file; GPA control → en chunk; negative → none. ⚠️ **The ko old-form probe was first typed with `最近에` (Han, not `최근에`) and would have matched nothing either way.** Re-run with the correct string: still no file. Its instrument control, the escaped form in the scratchpad pre-edit copy, → **1**; the quote-format controls `("엄격 조회"; 본인이`, `(una "consulta dura"; que`, `(a "hard inquiry"; a person's` → each in its own chunk |
+| Live, `python3 -m http.server` on `127.0.0.1:8872` | index **200**, nonexistent path **404** (control fired), served `index.html` names `index-cYfTo8_j.js`; seeded disclaimer + completed `[41..44, 1..14]` + `en`, navigated to `?cb=2#/lesson/15`, read in a separate call |
+| Live `#/lesson/15`, language set through the real `<select>`, switch and read in separate calls | **en/es/ko/zh/ja: new string true, old false, control true (en GPA sentence; others their own unchanged bureau-list clause), negative false**; `html lang` en/es/ko/zh-Hans/ja; entry `index-cYfTo8_j.js` on every read. No read came back void |
+
+#### Step 5 — adversarial self-check
+**Blindspot register: nothing found.** Added and removed diff lines under `src/` match
+`dalio|principles|should buy|should sell|we recommend|buy now|good time to buy|for kids|for children|kids mode|as of
+20xx|today|guarantee|will crash|you should|pull your report now|apply for|check your score` **0 / 0**. A planted
+`now is a good time to buy stocks` fires **1**. `check-blindspot` ran inside the green `npm test`. The clause
+describes what a soft inquiry is and does not tell anyone to check their report or apply for credit. No date or
+market figure was touched.
+**DECISIONS.md conflict: none.** Content stays in `.js` modules, and `minutes` stays derived (unchanged).
+**Already-done item: none reversed.** The L21/L27 fixes and item 167's arithmetic sweep are untouched, and this
+sentence carries no figure.
+**My own verification claim.** Every row reproduces from the commands named. The limits: the source is US (CFPB),
+and so is the lesson ("the three major ones in the U.S."). "Doesn't lower their score" is CFPB's own claim. Two
+probes were broken on first use (the escaped quote, then the Han-for-Hangul typo), each caught by a control, and
+both are recorded above rather than smoothed. Plus O-3. W-6.2: residual pick #2, so **the next run may not take a
+residual as its headline pick.** W-6.3: `scripts/` changed only in the ledger JSON (12 / 12, net 0). No instrument
+was added.
+
+#### Seen, deliberately NOT fixed and NOT numbered (W-6.2 rule 2)
+- The previous two entries' `q041`, L22 and L42 notes are unchanged and still open. None is picked by default, and
+  the next run is barred from a third residual pick anyway.
+
+**Schedule:** the cron is the owner's lever; not read, not compared, not touched.
+
+**Log size.** `MEASURED log-size: file 655819 b, run log 220314 b, floor 435505 b (backlog 397099 b),
+archive 3881729 b, 3 live day(s)` (`npm test`, 2026-09-11, before this entry). No backlog change, and the notes
+are in the archivable run log.
