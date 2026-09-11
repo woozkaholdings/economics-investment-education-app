@@ -89,7 +89,7 @@ export const lessonContent = {
       },
       {
         "heading": "Why It Follows You",
-        "body": "When Elena and David each apply for a $20,000 car loan, the bank might offer Elena 6% interest and David 14% for the exact same car — over a 5-year loan, that gap alone can add up to well over $2,000 in extra interest for David. A credit score can also affect whether an apartment will rent to you, and — depending on where you live — sometimes even job applications or insurance rates.\n\nBuilding a score like Elena's is mostly unglamorous: pay on time, every time; keep balances low relative to your limits; and let accounts age instead of closing them the moment they're paid off. There's no shortcut that replaces consistency over time."
+        "body": "When Elena and David each apply for a $20,000 car loan, the bank might offer Elena 6% interest and David 14% for the exact same car — over a 5-year loan, that gap alone comes to about $4,700 in extra interest for David. A credit score can also affect whether an apartment will rent to you, and — depending on where you live — sometimes even job applications or insurance rates.\n\nBuilding a score like Elena's is mostly unglamorous: pay on time, every time; keep balances low relative to your limits; and let accounts age instead of closing them the moment they're paid off. There's no shortcut that replaces consistency over time."
       },
       {
         "heading": "Starting From Zero",

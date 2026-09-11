@@ -6433,3 +6433,53 @@ pass. The lesson 6 / 7 / 15 / 21 / 27 / 41 fixes and the O-block fix reach learn
 
 **Log size.** `MEASURED log-size: file 567338 b, run log 132323 b, floor 435015 b (backlog 396609 b), archive
 4002486 b, 2 live day(s)` (`npm test`, 2026-09-11, before this entry). After it: not retyped (W-7.2 rule 4).
+
+### 2026-09-11 (owner-directed, interactive: "fix the lesson 4 car loan figure too") — lesson 4 said the 6% vs 14% gap on a $20,000 five-year car loan "can add up to well over $2,000" in extra interest, and the amortized gap is $4,722, more than twice that
+
+#### Step 3.5 — premise measured, with controls, before editing
+- **The claim.** L4 §2: *"over a 5-year loan, that gap alone can add up to well over $2,000 in extra interest for
+  David."* The previous entry filed it as a note.
+- **Recomputed two ways.** Closed form: **$3,199 vs $7,922, gap $4,723**. A month-by-month amortization loop with
+  payments rounded to the cent: **$3,199.35 vs $7,921.84, gap $4,722.49** (residuals −$0.25 / −$0.36). Controls: a
+  ~0% loan → **$0** interest, and a $10,000 / 5% / 36-month loan → a **$299.71** payment, the published figure.
+- **Previously checked, never decided.** The archive has two sweeps that computed this gap ($4,723 and $4,722) and
+  marked it "true, conservatively stated" / "understates rather than overstates". Both were arithmetic checks, not a
+  decision to keep the wording, so the owner's instruction reverses no ruling. DECISIONS / CLAIMS / LAUNCH_PLAN /
+  LAUNCH_READINESS: **0** hits (control `localStorage` 13 / 3 / 3 / 3). `git log -S` → `2afcb42` (2026-08-05,
+  owner-directed real-life-examples rewrite), then only splits.
+- **The only surface.** es/ko/zh/ja L4 §2 are condensed summaries with no loan figure. Fixed-string `20,000` /
+  `14%` over `src/` find only unrelated examples (the L7 bracket figure, the economy track's $20,000 car). No script
+  references the figure.
+- **Pre-edit build `index-BD0s1g-_.js` (= HEAD `3074fd0`'s `src/`).** The old phrase and the heading control →
+  `lessonContent.essentials.en`; `about $4,700` → no file.
+
+#### What shipped
+`lessonContent.essentials.en.js`, one clause. The edit script asserted old = 1 / new = 0 before writing, and 0 / 1
+after. §2 now reads *"…over a 5-year loan, that gap alone **comes to about $4,700** in extra interest for David."*
+"About" rounds $4,722 down by $22, and no extra hedge was added: at the stated rates and term, the gap is
+deterministic. **Knock-on.** L4 stays at its `minutes`. Ledger: L4 es/ko/zh/ja re-marked `ai` (the English hash
+moved; none of the four carries the figure) (**12 / 12**). `refresh-readiness.mjs --write`: en chars **152,792 →
+152,783**, plus the §10.4 volume sentence. No translation text changed, so O-3 adds nothing.
+
+#### Verification
+| Check | Result |
+|---|---|
+| Node import probe | **5/5**: new clause in L4 §2, `well over $2,000` absent module-wide, the Elena/David rate sentence control present, negative absent, 3 sections |
+| `npm test` | **exit 0**; WARN/FAIL lines **identical** to this session's pre-edit baseline (`diff`), WARN 3, FAIL 0 |
+| `scripts/build-out-of-tree.sh` | **exit 0**; entry `index-BD0s1g-_.js` → **`index-Cte1hici.js`** |
+| `dist/assets` grep | new clause → `lessonContent.essentials.en-BX0p7YGl.js`; `well over $2,000` → no file; control → same en chunk; negative → no file |
+| Live, `python3 -m http.server` on `127.0.0.1:8875` | index **200**, nonexistent path **404** (control fired), served `index.html` names `index-Cte1hici.js`; seeded disclaimer + completed `[1,2,3]` + `en`, navigated to `?cb=2#/lesson/4`, waited 3 s, then read in a separate call: **new true, old false, control true, negative false, not loading**, entry `index-Cte1hici.js` |
+
+#### Step 5 — adversarial self-check
+**Blindspot register: nothing found.** The 1 added and 1 removed diff line match the standing pattern plus `take the
+loan|best rate|apply now` **0 / 0**; a planted `now is a good time to buy stocks` → **1**. The sentence is a
+hypothetical illustration of what a rate gap costs. It recommends no loan or lender, and no date or market figure
+was touched. **DECISIONS.md conflict: none.** **Already-done item: none reversed.** Item 167's arithmetic sweep is
+honored, not re-litigated: the figure it verified is now stated rather than understated. **My own verification
+claim.** Every row reproduces from the commands named. One limit: "about $4,700" assumes a standard fully amortizing
+loan paid on schedule, which the lesson implies but does not state.
+
+**Schedule:** the cron is the owner's lever; not read, not compared, not touched.
+
+**Log size.** Before this entry: `MEASURED log-size: file 577437 b, run log 142422 b, floor 435015 b` (the previous
+entry's `npm test`, unchanged since). After it: not retyped (W-7.2 rule 4).
