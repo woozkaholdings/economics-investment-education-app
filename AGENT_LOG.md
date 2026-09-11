@@ -6741,3 +6741,119 @@ but a Learn-path reader who sees only the subtitle gets the mechanism rather tha
 
 **Log size.** Before this entry: `MEASURED log-size: file 603541 b, run log 168526 b, floor 435015 b` (the previous
 entry's `npm test`, unchanged since). After it: not retyped (W-7.2 rule 4).
+
+### 2026-09-11 (scheduled dev-agent; W-6.2 rule 1 free — the last scheduled pick was a census pick and every run since was owner-directed; this pick came from reading the nine main-path lessons the census never reached) — lesson 35 said Fed rate cuts have "historically coincided with rising asset prices", and US stocks fell sharply through the 2001-03 and 2007-08 easing cycles, while lesson 38 tells the same learner the Fed cuts in Contraction as the S&P 500 falls
+
+**The pick.** Item 160 was not re-weighed: its stop line is unchanged. No archiving was due: `check-log-size` put the run
+log at **69.4%** of warn, **10.1 runs** of headroom. The census's lowest lessons (L2, L8, L25, L26) were all read in
+English in the last two days and found clean, so the census is spent at the bottom. The live log's "Read in English"
+lines (control: **4** hits live, **0** in the archive, which predates the census) cover L2-4, L6-8, L10, L15, L18-22,
+L24-28, L31, L33 and L40-44. **Unread on the main path: L29, L30, L32, L34-39.** All nine were read in English this run.
+L35 has the defect. Four notes are below.
+
+#### Step 3.5 — premise measured, with controls, before editing
+- **The claim, in all five languages.** L35 §2, last paragraph: *"The informal rule investors cite for all of this:
+  "Don't fight the Fed." Historically, Fed easing (rate cuts) has coincided with rising asset prices, while Fed
+  tightening (rate hikes) has coincided with more cautious market conditions."* Each translation says the same (es
+  `ha coincidido con precios de activos al alza`, ko `자산 가격 상승과 함께 나타났고`, zh `往往伴随着资产价格上涨`, ja
+  `資産価格の上昇と同時に現れ`).
+- **The app contradicts itself.** L38, Contraction: *"the Fed starts cutting rates to try to stop the slide.
+  Historically, this phase has coincided with S&P 500 average declines of roughly -22-35%"*.
+- **Measured, FRED CSV, no key.** Easing cycles came from `DFEDTAR` (to 2008-12-15) and `DFEDTARU` (after), first cut to
+  last cut with no hike between. Control: the 2001-01-03 cut, 6.50 → 6.00, is detected as a cycle start (**true**).
+  The broad market is Z.1's market value of all US corporate equities (`BOGZ1LM893064105Q`, the quarter-ends nearest
+  each cycle's ends). The cross-check is `NASDAQCOM` (control: the 2000-03-10 close reads **5048.62**, the known
+  figure). `SP500` starts only in 2016, and `WILL5000PR` returns 404.
+
+  | cycle (target) | Z.1 equities | index |
+  |---|---|---|
+  | 1995-96 (6.00 → 5.25) | +20.9% | Nasdaq +11.2% |
+  | 1998 (5.50 → 4.75) | +19.8% | Nasdaq +8.3% |
+  | 2001-03 (6.50 → 1.00) | **−18.9%** | Nasdaq **−38.8%** |
+  | 2007-08 (5.25 → 0.25) | **−39.7%** | Nasdaq **−40.0%** |
+  | 2019-20 (2.50 → 0.25) | −15.6% | S&P −19.2% |
+  | 2024-25 (5.50 → 3.75) | — | S&P +20.8% |
+
+  Z.1 control: 2018Q4 → 2019Q4 is **+24.7%**, in a year the S&P 500 rose about 29%. Z.1 is a level, so issuance
+  moves it too, but its sign agrees with the index in every row. **So the sentence holds in three of six cycles and is
+  false in the three around recessions.** 2019-20 is left out of the new text: its fall was the pandemic, and most
+  of that cycle's cuts came while stocks rose.
+- **The tightening half** ("more cautious market conditions") is vague rather than false. It is removed, not
+  defended: §2 ¶1 already says what a hike does, all else equal.
+- **Never decided on accuracy.** An early run wrote this sentence as a §10.1 fix, replacing "When the Fed is cutting →
+  be bullish" (archive, line 80). The only other assessment (the zh translation run, archive ~line 19790) cleared it
+  for advice adjacency, "stating no view about any asset", and did not check the history. `coincided with rising asset
+  prices` → live **0**, archive **1** (that rewording); DECISIONS / CLAIMS / LAUNCH_PLAN / LAUNCH_READINESS **0**
+  (control `localStorage` 25 / 418 / 13 / 3 / 3 / 3). `git log -S` → only the splits, back to `053f8b2`.
+- **The only surface.** `git grep -i -F` over `src` and `scripts` for `fight the Fed`, `coincided with rising asset`
+  and `easing (rate cuts)` → L35 en only (control `The Fed Funds Rate` → 2 files). An en scan of `markets.js`,
+  glossary, quiz, signals, policy scenarios and `LessonVisual.jsx` for `rate cuts?|easing|cutting rates` found no
+  repeat of the claim.
+- **Pre-edit build `index-CICXcxY3.js` (= HEAD `37e065b`).** The old en sentence and the §2 heading control →
+  `lessonContent.economy.en-mWLvZDCB.js`. A new phrase → no file.
+
+#### What shipped
+`lessonContent.economy.{en,es,ko,zh,ja}.js`, one sentence replaced by four in each. The edit script asserted old = 1 /
+new = 0 in all five files before writing anything, and 0 / 1 after. Pristine copies are in the scratchpad.
+- en: *"History is more mixed than the rule sounds. US stocks rose through the Fed's rate cuts of 1995-96 and 1998, but
+  fell sharply through the cuts of 2001-03 and 2007-08. The Fed usually cuts because the economy is already
+  weakening, so the cut and the falling prices can arrive together: a rate cut pushes asset prices up only if
+  everything else holds still, and in a downturn it rarely does."*
+- es/ko/zh/ja carry the same four sentences and the same four year spans (es `La historia es más variada de lo que la
+  regla sugiere…`, ko `실제 역사는 이 규칙이 들리는 것보다 엇갈립니다…`, zh `但历史比这句话听起来要复杂…`, ja
+  `実際の歴史は、この経験則が思わせるほど単純ではありません…`).
+- The quoted rule stays. So does ¶2's *"Cut rates, and the sequence tends to run in reverse"*: that is the
+  mechanism, and the new sentences say when it does not show up.
+- **No percentage was added.** The S&P fall a reader may know for 2001-03 (about −28%) is smaller than the Nasdaq's,
+  so the text says "fell sharply" and nothing that one index could contradict.
+- **Knock-on.** L35 stays at 4 minutes. Ledger: L35 es/ko/zh/ja re-marked `ai`. `refresh-readiness.mjs --write`: en
+  chars **153,334 → 153,560**, the §10.4 volume sentence, and LAUNCH_PLAN's **~153,000 → ~154,000** characters and
+  **~26,600 → ~26,700** words. §33 did not fire.
+- ⚠️ **O-3, disclosed:** four machine-written four-sentence replacements, unreviewed by a fluent reader.
+
+#### Verification
+| Check | Result |
+|---|---|
+| FRED instruments | cycle-detection control and Nasdaq control both fired; Z.1 2019 control +24.7% |
+| Node import probe (from a file) | **5/5**: new text in L35 §2, old phrase absent module-wide, own-language quoted-rule control present, negative absent, 3 sections |
+| `npm test` | After edit: **exit 1**, the expected pair (4 × stale ledger, §10.4 FAIL). After re-mark + `--write`: **exit 0**; WARN/FAIL lines **identical** to this run's pre-edit baseline (`diff`), WARN 3, FAIL 0 |
+| `scripts/build-out-of-tree.sh` | **exit 0**; entry `index-CICXcxY3.js` → **`index-E9b-M51S.js`** |
+| `dist/assets` grep | all **5** new → their own `lessonContent.economy.<lang>` chunk; all **5** old → no file; en and ja heading controls → own chunk; negative → no file |
+| Live, `python3 -m http.server` on `127.0.0.1:8880` | index **200**, nonexistent path **404** (control fired), served `index.html` names `index-E9b-M51S.js`; seeded disclaimer + completed `[29..34]` + `en` in a non-navigating call, then `navigate` to `?cb=2#/lesson/35` |
+| Live `#/lesson/35`, 8 s waits, language set through the real `<select>`, switch and read in separate calls | **en/es/ko/zh/ja: new true, old false, heading control true, no English leak, negative false, not loading**; en also shows its closing clause and the kept rule; `html lang` en/es/ko/zh-Hans/ja; entry `index-E9b-M51S.js`. No read came back void |
+
+#### Step 5 — adversarial self-check
+**Blindspot register: nothing found, and the edit moves away from §10.1.** The 5 added and 5 removed diff lines match
+the standing pattern plus `be bullish|buy the dip|time to buy|stay invested` **0 / 0**. The quoted rule "Don't fight
+the Fed", present on both sides, is excluded from the count, and that exclusion is named here. Plants: `now is a good
+time to buy stocks` → **1**, `When the Fed cuts, be bullish and buy the dip` → **1**. The old sentence could be read
+as "a cut means prices rise". The new text says why cuts and falling prices often arrive together. The years are
+history, not a current date or live figure. `check-blindspot` ran inside the green `npm test`.
+**DECISIONS.md conflict: none.** **Already-done item: none reversed.** The early §10.1 rewording removed a directive,
+and the new text is still descriptive.
+**My own verification claim.** Every row reproduces from the commands named. Limits: Z.1 is quarterly and a level,
+not a return. And "The Fed usually cuts because the economy is already weakening" is a reading consistent with 2001,
+2007 and L38, not a count. The 1995-96 and 1998 cuts came without a recession, and that is the split the text draws.
+
+#### Seen, deliberately NOT fixed and NOT numbered (W-6.2 rule 2)
+- **L35 §3: "2021-2023 is widely read as a case where the Fed judged inflation was overheating and leaned hard toward
+  the price-stability half".** FRED `DFEDTARU` holds at **0.25 through all of 2021**, and the first hike is
+  **2022-03-17** (control: 2020-03-16 → 0.25). L35's own thinkAbout says "2022-23". **Not picked by default.**
+- **L30 §2: total credit is many times the monetary base, "a gap that has only widened over time".** As a ratio it
+  narrowed sharply once QE grew the base. As a dollar difference it may hold. Knowledge, not measured. **Not picked by
+  default.**
+- **L39 §2, Contraction: "CPI cooling as weaker demand pulls prices down"** reads as falling prices, where L32 says
+  prices usually keep rising, more slowly. **Not picked by default.**
+- **L37 §2: "The Fed ran QT at $95 billion a month starting in 2022".** The cap started lower in June 2022 and reached
+  $95B in September, and the section does not say whether QT has ended. Knowledge, not measured. **Not picked by
+  default.**
+- L39 §1's GDP line is already recorded (the 09-10 glossary entry) and was not re-filed.
+
+**Owner-facing, one line:** `npm run check-deployed` (this run, before the edit) reports the live site **DIVERGED**
+from HEAD, as expected with today's commits unpushed, and serving `market.json` `asOf 2026-09-10` (1 day old), so
+O-5's "goes dark 2026-09-12" date has already moved. Today's lesson fixes reach learners on the next push.
+
+**Schedule:** the cron is the owner's lever; not read, not compared, not touched.
+
+**Log size.** Before this entry: `MEASURED log-size: file 608639 b, run log 173624 b, floor 435015 b` (this run's
+`npm test`). After it: not retyped (W-7.2 rule 4).
