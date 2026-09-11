@@ -193,7 +193,7 @@ export const lessonContent = {
       }
     ],
     "takeaway": "El mismo trabajo puede llegar como W-2 o 1099, y esa distinción decide si los impuestos se retienen automáticamente o si el trabajador debe apartarlos y pagarlos él mismo — incluido un impuesto de trabajo por cuenta propia que cubre la mitad que normalmente paga el empleador.",
-    "thinkAbout": "La lección “Impuestos” mostró que un aumento nunca reduce tu sueldo neto, porque la retención automática solo toma una porción algo mayor. Ahora imagina ese mismo aumento llegando como ingreso 1099 — sin nada retenido. ¿Cambia eso cómo evaluarías una oportunidad freelance frente a un salario con el mismo número nominal?"
+    "thinkAbout": "La lección “Impuestos” mostró que un aumento nunca reduce tu sueldo neto, porque solo la porción que rebosa a un tramo superior se grava a la tasa más alta. Ahora imagina ese mismo aumento llegando como ingreso 1099 — sin nada retenido. ¿Cambia eso cómo evaluarías una oportunidad freelance frente a un salario con el mismo número nominal?"
   },
   "11": {
     "sections": [

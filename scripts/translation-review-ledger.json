@@ -236,26 +236,26 @@
   "10": {
     "es": {
       "reviewedBy": "Claude (Opus 5, interactive)",
-      "reviewedDate": "2026-08-20",
-      "sourceHash": "073941b16c5de355",
+      "reviewedDate": "2026-09-11",
+      "sourceHash": "ef3607500941a1ad",
       "method": "ai"
     },
     "ja": {
       "reviewedBy": "Claude (Opus 5, interactive)",
-      "reviewedDate": "2026-08-20",
-      "sourceHash": "073941b16c5de355",
+      "reviewedDate": "2026-09-11",
+      "sourceHash": "ef3607500941a1ad",
       "method": "ai"
     },
     "ko": {
       "reviewedBy": "Claude (Opus 5, interactive)",
-      "reviewedDate": "2026-08-20",
-      "sourceHash": "073941b16c5de355",
+      "reviewedDate": "2026-09-11",
+      "sourceHash": "ef3607500941a1ad",
       "method": "ai"
     },
     "zh": {
       "reviewedBy": "Claude (Opus 5, interactive)",
-      "reviewedDate": "2026-08-20",
-      "sourceHash": "073941b16c5de355",
+      "reviewedDate": "2026-09-11",
+      "sourceHash": "ef3607500941a1ad",
       "method": "ai"
     }
   },

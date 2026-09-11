@@ -6483,3 +6483,58 @@ loan paid on schedule, which the lesson implies but does not state.
 
 **Log size.** Before this entry: `MEASURED log-size: file 577437 b, run log 142422 b, floor 435015 b` (the previous
 entry's `npm test`, unchanged since). After it: not retyped (W-7.2 rule 4).
+
+### 2026-09-11 (owner-directed, interactive: "fix the lesson 10 thinkAbout line too") — lesson 10's thinkAbout said "Taxes" showed a raise can never shrink take-home pay "because payroll withholding just takes a slightly bigger automatic slice", and "Taxes" gives the bracket reason instead, and says withholding only controls timing
+
+#### Step 3.5 — premise measured, with controls, before editing
+- **The claim, in all five languages.** en *"because payroll withholding just takes a slightly bigger automatic slice"*;
+  es `porque la retención automática solo toma una porción algo mayor`; ko `자동 원천징수가 그저 조금 더 큰 몫을 가져갈 뿐이기
+  때문입니다`; zh `因为自动代扣只是多拿走了稍大的一部分`; ja `自動源泉徴収がやや大きめの分を取るだけだからです`.
+- **What "Taxes" (L7) actually says, read in all five languages.** §1: *"Only the new, additional slice of income —
+  the part that overflowed into that higher bucket — gets taxed at the higher rate"* (each translation carries its own
+  form: `Solo la porción que rebosa…`, `위 양동이로 넘친 부분만…`, `只有溢出到上层水桶的那部分…`, `上のバケツにあふれた部分だけ…`).
+  §3: *"Withholding only controls timing, not the size of the bill."* So the thinkAbout credits L7 with a reason L7
+  does not give, and one that L7's §3 contradicts.
+- **The only surface.** Fixed-string scans of all of `src/` for the five old phrases → each **1** file, its own
+  `lessonContent.essentials.<lang>.js`. Control `Self-Employment Tax: Paying Both Halves` → en file.
+- **Not previously decided.** `slightly bigger automatic slice` / `L10 thinkAbout` → **1** each in the live log (this
+  session's own note), **0** in the archive, DECISIONS, CLAIMS, LAUNCH_PLAN and LAUNCH_READINESS (control
+  `localStorage` 21 / 410 / 13 / 3 / 3 / 3). `git log -S` → `a81bd23` (2026-08-06, lesson added), then only splits.
+- **Pre-edit build `index-Cte1hici.js` (= HEAD `2c03544`).** The old en phrase and the §2 heading control →
+  `lessonContent.essentials.en`.
+
+#### What shipped
+`lessonContent.essentials.{en,es,ko,zh,ja}.js`, one clause each, reusing each language's own L7 §1 wording. The edit
+script asserted old = 1 / new = 0 in all five files before writing, and 0 / 1 after. Pristine copies are in the
+scratchpad.
+- en *"…because only the new slice of income that spills into a higher bracket is taxed at the higher rate."* · es
+  `porque solo la porción que rebosa a un tramo superior se grava a la tasa más alta.` · ko `더 높은 세율 구간으로 넘친 부분만
+  더 높은 세율로 과세되기 때문입니다.` · zh `因为只有溢出到更高税级的那部分收入才按更高税率征税。` · ja
+  `より高い税率区分にあふれた部分だけがより高い税率で課税されるからです。`
+- The rest of the thinkAbout, its 1099 contrast, is unchanged: "nothing withheld" is still the right hook for L10.
+- **Knock-on.** L10 stays at its `minutes`. Ledger: L10 es/ko/zh/ja re-marked `ai`. `refresh-readiness.mjs --write`:
+  en chars **152,783 → 152,809**, the §10.4 volume sentence, and LAUNCH_PLAN's word figure **~26,500 → ~26,600**.
+- ⚠️ **O-3, disclosed:** four machine-written clause edits, unreviewed by a fluent reader.
+
+#### Verification
+| Check | Result |
+|---|---|
+| Node import probe | **5/5**: new clause in each thinkAbout, old phrase absent module-wide, own-language 1099 sentence control present, negative absent |
+| `npm test` | **exit 0**; WARN/FAIL lines **identical** to this session's pre-edit baseline (`diff`), WARN 3, FAIL 0 |
+| `scripts/build-out-of-tree.sh` | **exit 0**; entry `index-Cte1hici.js` → **`index-NQuxDE_o.js`** |
+| `dist/assets` grep | all **5** new clauses → their own `lessonContent.essentials.<lang>` chunk; all **5** old phrases → no file; controls (en, ja) → own chunk; negative → no file |
+| Live, `python3 -m http.server` on `127.0.0.1:8876` | index **200**, nonexistent path **404** (control fired), served `index.html` names `index-NQuxDE_o.js`; seeded disclaimer + completed `[1..9]` + `en`, navigated to `?cb=2#/lesson/10` |
+| Live `#/lesson/10`, language set through the real `<select>`, switch and read in separate calls | ⚠️ **The first pass was VOID in all five languages, and the controls caught every one**: with a **3 s** wait, en was still "Loading…" and es/ko/zh/ja held 226-553 chars with the control false. A full-text read then showed the whole ja lesson rendered, with the new clause under 考えてみよう: the chunk had loaded late, and nothing was wrong. `thinkAbout` renders in the reader body (`LessonReader.jsx:492`), so a body read is the right instrument. Re-read with an **8 s** wait: **ja/en/es/ko/zh: new true, old false, control true, no English leak, negative false, not loading**; `html lang` ja/en/es/ko/zh-Hans; entry `index-NQuxDE_o.js` on every read |
+
+#### Step 5 — adversarial self-check
+**Blindspot register: nothing found.** The 5 added and 5 removed diff lines match the standing pattern plus `take the
+job|go freelance|better choice` **0 / 0**; a planted `now is a good time to buy stocks` → **1**. The question still
+asks the learner to weigh the two offers and recommends neither. **DECISIONS.md conflict: none.** **Already-done item:
+none reversed.** The L7 fix (`3074fd0`) touched §2, not §1 or §3, whose wording this clause now matches. **My own
+verification claim.** Every row reproduces from the commands named, but **only with a wait long enough for the lesson
+chunk**. A 3 s read reproduces the void pass, not a pass or a fail. The O-3 limit applies to the four translations.
+
+**Schedule:** the cron is the owner's lever; not read, not compared, not touched.
+
+**Log size.** Before this entry: `MEASURED log-size: file 581956 b, run log 146941 b, floor 435015 b` (the previous
+entry's `npm test`, unchanged since). After it: not retyped (W-7.2 rule 4).

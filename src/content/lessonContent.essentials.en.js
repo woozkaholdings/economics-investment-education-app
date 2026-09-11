@@ -193,7 +193,7 @@ export const lessonContent = {
       }
     ],
     "takeaway": "The same work can arrive as a W-2 or a 1099, and that single distinction decides whether taxes are withheld automatically or become the worker's own responsibility to set aside and pay — including a self-employment tax that covers the half an employer would otherwise pay.",
-    "thinkAbout": "“Taxes” showed that a raise can never shrink your take-home pay because payroll withholding just takes a slightly bigger automatic slice. Now picture that same raise arriving as 1099 income instead — with nothing withheld at all. Does thinking through what you'd need to set aside yourself change how you'd size up a freelance opportunity against a salaried one paying the same headline number?"
+    "thinkAbout": "“Taxes” showed that a raise can never shrink your take-home pay because only the new slice of income that spills into a higher bracket is taxed at the higher rate. Now picture that same raise arriving as 1099 income instead — with nothing withheld at all. Does thinking through what you'd need to set aside yourself change how you'd size up a freelance opportunity against a salaried one paying the same headline number?"
   },
   "11": {
     "sections": [
