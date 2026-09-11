@@ -376,7 +376,7 @@ increasingly check this and it widens the audience at near-zero cost.
 
 Measure before pricing. The lesson content today is
 **44 lessons, ~152,000 characters of English body text, ~162 minutes of reading end to end**.
-That is roughly **26,400 words** — a short book, not the long magazine article this line described
+That is roughly **26,500 words** — a short book, not the long magazine article this line described
 when the catalog held twelve lessons.
 
 This sentence used to end "count it again rather than trusting this line," and for two weeks nobody

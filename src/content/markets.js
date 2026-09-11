@@ -101,11 +101,11 @@ export const nestedCyclesSpanLabel = {
 };
 
 export const nestedCyclesCaption = {
-  en: "almost nobody alive personally remembers the last time it peaked",
-  es: "casi nadie vivo recuerda en persona la última vez que alcanzó su pico",
-  ko: "지금 살아 있는 사람 가운데 마지막 정점을 직접 기억하는 사람은 거의 없습니다",
-  zh: "几乎没有一个还活着的人，亲身记得上一次它见顶是什么样子",
-  ja: "前回それがピークを迎えたときを自分の記憶として持つ人は、ほとんど生きていません",
+  en: "by the time it peaks again, almost nobody alive personally remembers the last time it peaked",
+  es: "para cuando vuelve a alcanzar su pico, casi nadie vivo recuerda en persona la última vez que alcanzó su pico",
+  ko: "다시 정점에 이를 무렵에는 살아 있는 사람 가운데 마지막 정점을 직접 기억하는 사람은 거의 없습니다",
+  zh: "等到它再次见顶时，几乎没有一个还活着的人，亲身记得上一次它见顶是什么样子",
+  ja: "次にピークが来るころには、前回それがピークを迎えたときを自分の記憶として持つ人は、ほとんど生きていません",
 };
 
 // The text alternative — the one string here that is written rather than

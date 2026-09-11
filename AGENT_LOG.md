@@ -6824,3 +6824,100 @@ BEA's definition, not a measured figure. W-6.3: `scripts/` is untouched and the 
 **Log size.** `MEASURED log-size: file 585373 b, run log 149868 b, floor 435505 b (backlog 397099 b),
 archive 3881729 b, 2 live day(s)` (`npm test`, 2026-09-10, before this entry). The backlog is unchanged
 and no numbered item was added.
+
+### 2026-09-11 (scheduled dev-agent; W-6.2 rule 1 free — the previous run's notes all end "not picked by default" and were not taken; this pick came from a census of lesson BODIES never read for accuracy) — lesson 33 names the US in 2008 as a long-term debt peak, then tells the learner that almost nobody alive remembers the last time it peaked, and its figure repeats that sentence as a caption
+
+**The pick.** The last four runs counted `src/content/` modules by log mentions. That census cannot see
+lesson bodies, because the logs name a lesson by number and not by file (`lessonContent.economy.ja.js`:
+**0** mentions). So this run counted `lesson N` mentions across both logs, and how many of them concern
+accuracy. On the main path, **L31 27 / 0** and **L33 70 / 0** (control: L34, whose US-1930s claim was
+fixed on 2026-09-05, returns **2** for `1930`). Both lessons were read in English. L31 has one
+knowledge-only note (below). L33 contradicts itself.
+
+#### Step 3.5 — premise measured, with controls, before editing
+- **The defect.** L33 §2 says the long-term peak pattern is behind *"the US in 2008, Japan in 1989, and the
+  US in 1929"*. L33 §3 then says *"That means almost nobody alive personally remembers the last time it
+  peaked"*, and that the 1929 generation *"is now gone"*. L34 and `markets.js`'s deleveraging figure both
+  call **2008 through roughly 2015** a deleveraging. **By the app's own account the last US peak was 2008,
+  and every adult learner remembers it.** All four translations say the same thing.
+- **It is on screen twice.** `nestedCyclesCaption` lifts the sentence verbatim (§71 (a)) and renders it
+  under the lesson-33 figure. Item 27's entry (2026-09-04) quoted it as the conclusion the figure draws.
+- **Not previously decided.** `git log -S` on the sentence: `9e08cd2` (created 2026-08-14), `6f5c48c`
+  (the language split), `40492c2` (the figure), `679b701` (archiving). No run corrected it or kept it on
+  purpose. `DECISIONS.md` has **0** hits for lesson 33 / `nestedCycles` / `1929` (control
+  `localStorage` **13**). Its one `long-term debt` hit (766) is the track-order history.
+- **Live, `index-DEzHCSTd.js` (= HEAD `38a66f4`), `#/lesson/33`, one page load:** the sentence occurs
+  **2** times, "the US in 2008" **true**, controls `1929` **true** and "How Debt Accumulates" **true**,
+  negative **false**. ⚠️ Instrument miss, caught by the count: my first probe looked for the second
+  occurrence in a `<figcaption>` and read **false**. `NestedCycles`' figcaption holds only the title; the
+  caption is a `<p>` below the key, inside the `<figure>`, which a text-node walk confirmed.
+
+#### What shipped
+- **L33 §3, all five languages, two sentences.** (1) *"That means that by the time it peaks again,
+  almost nobody alive personally remembers the last time it peaked."* That is true of any peak 75-100
+  years after the previous one, which is the lesson's own span. (2) *"By 2008, anyone who had been an
+  adult in 1929 would have been over 95, so almost none of them were still alive — and what they learned
+  firsthand …"* replaces *"But that generation is now gone"*. **The 95 is arithmetic, not a demographic
+  figure:** 18 in 1929 means born 1911 or earlier, so at least 96 during 2008. §2, the hedge paragraph,
+  the takeaway and the thinkAbout are untouched. Every language carries the same digits.
+- **`markets.js` `nestedCyclesCaption`, five languages:** the longer clause, still a verbatim substring of
+  each language's lesson. ko drops `지금` ("now"), the word that made the ko caption false.
+- **Ledger:** L33 es/ko/zh/ja re-marked `ai` after reading each against the new English
+  (`englishSourceHash` covers English only). ⚠️ The es first draft was wrong and was fixed before
+  marking: the conditional *tendría* for a past fact, and *ninguno* leaving *lo que aprendió* with no
+  subject. It now reads *"ya tenía más de 95 años, así que esa generación casi había desaparecido"*.
+- **`refresh-readiness.mjs --write`:** en chars 152,157 → **152,270**, words ~26,400 → **~26,500**, and the
+  es/ko/zh/ja volume sentence.
+- `git diff --numstat`: lesson files **1 / 1** each, `markets.js` **5 / 5**, ledger **8 / 8**,
+  `LAUNCH_READINESS.md` **2 / 2**, `LAUNCH_PLAN.md` **1 / 1**.
+- ⚠️ **O-3, disclosed:** eight new machine-written sentences (es/ko/zh/ja × 2), plus four caption edits
+  that are lifts of them. No fluent reader has checked them.
+
+#### Verification
+| Check | Result |
+|---|---|
+| `npm test` | exit 1 twice, both expected: 4 stale ledger records, then 3 generated doc figures. After `--write`: **exit 0**, WARN/FAIL lines **identical** to this run's pre-edit baseline (`diff`), WARN 3, FAIL 0; §71: 25 containments |
+| Node import probe | **5/5** languages: new caption contained in L33, both old sentences absent, `2008` × 2, `1929` control true, negative absent |
+| `scripts/build-out-of-tree.sh` | **exit 0**; entry `index-DEzHCSTd.js` → **`index-BsQYrOG_.js`**; `markets-C9nU5ptm.js` → `markets-CnEP_k9v.js` |
+| `dist/assets` grep | new §3 sentence per language → its own `lessonContent.economy.<lang>` chunk; quoted new en caption → `markets-CnEP_k9v.js`; **11 old forms, the quoted old captions included → no file**; control → en chunk; negative → no file |
+| Live, `index-BsQYrOG_.js`, `#/lesson/33`, language set through the real `<select>` change event | **en/es/ko/zh/ja: caption count 2, the figure's caption `<p>` equals the new caption exactly, both old sentences false, new 2008 sentence true, `1929` true, negative false**; `html lang` en/es/ko/zh-Hans/ja |
+| 375px, ja (longest caption) | no page overflow (scrollWidth 375); caption inside the 343px figure. ⚠️ **The screenshot came back blank** (hidden pane), so this rests on DOM geometry only |
+
+⚠️ **One instrument trap, handled:** the old en caption is a **substring of the new one**, so a plain grep
+would report it "still present" forever. Its absence was tested as the quoted literal, and the quoted
+new literal served as the control that the quote form survives minification (it did).
+
+#### Step 5 — adversarial self-check
+**Blindspot register: nothing found.** The diff's added lines match the pattern
+(`dalio|principles|should buy|should sell|we recommend|buy now|good time to buy|for kids|for children|kids
+mode|as of 20xx|today|guarantee|will crash|expect a`) **twice**, and the removed lines match the **same
+two**. Each lesson body is one line, so both are pre-existing text: *"most adults alive today"* and the
+§3 hedge *"a reason to expect a repeat"*. The fragments this run wrote match **0**, against **17** in
+`check-blindspot.mjs` (positive control). The added years are historical, and §2 already names both. No
+current date and no market figure were added. The caption carries no year, and §71 (d)'s no-time-origin
+rule, which scans `charts.jsx`, still passes. `check-blindspot` passed inside `npm test`.
+**DECISIONS.md conflict: none** (above). Content stays a `.js` module, and no state or build path changed.
+**Already-done backlog item: none reversed.** `9e08cd2`'s section keeps its point, that a lifetime-length
+cycle outruns living memory, now stated in a form that is true. Item 27's figure, its lifting rule and §71
+are unchanged in structure.
+**My own verification claim.** Every row reproduces from the commands named. The limits: (1) "2008 was a
+long-term peak" is the lesson's own §2 and L34's, not an external source fetched this run; (2) "over 95"
+assumes adulthood at 18; (3) O-3 above. W-6.3: `scripts/` changed only in the ledger JSON (8 / 8, net 0
+lines). No instrument was added, and the ratio is unmoved.
+
+#### Seen, deliberately NOT fixed and NOT numbered (W-6.2 rule 2)
+- **L33's thinkAbout asks whether "the US debt-to-GDP ratio … well past 100%" sounds like "the late stage
+  of a long-term debt cycle".** By the lesson's own arithmetic, a 2008 peak puts today early in a
+  75-100-year cycle, and *which* debt is unspecified, while the lesson's mechanism is private borrowing.
+  It is a leading question sitting against §3's hedge. §71 (d)'s comment cites this very question as the
+  reason the figure has no time origin, so changing it is a §10.1 content decision with a guard built
+  around it. **Not picked by default.**
+- **L31 §1: "Without credit, the only way an economy grows is by becoming more productive"** leaves out
+  growth from more workers and more capital. That comes from knowledge and was not measured this run.
+  **Not picked by default.**
+
+**Schedule:** the cron is the owner's lever; not read, not compared, not touched.
+
+**Log size.** `MEASURED log-size: file 593415 b, run log 157910 b, floor 435505 b (backlog 397099 b),
+archive 3881729 b, 2 live day(s)` (`npm test`, 2026-09-11, before this entry). The backlog is unchanged,
+no numbered item was added, and the two notes are here in the archivable run log.
